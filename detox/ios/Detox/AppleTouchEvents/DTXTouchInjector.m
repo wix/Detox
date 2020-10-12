@@ -42,9 +42,12 @@
 	// whether an injected touch needs to be stationary or not.
 	// May be nil.
 	DTXTouchInfo* _previousTouchInfo;
+	
+	BOOL (^_callback)(UITouchPhase);
+	BOOL _abortedByCallback;
 }
 
-- (instancetype)initWithWindow:(UIWindow *)window
+- (instancetype)initWithWindow:(UIWindow *)window onTouchInectCallback:(nullable BOOL(^)(UITouchPhase))callback
 {
 	NSParameterAssert(window != nil);
 	
@@ -55,6 +58,7 @@
 		_enqueuedTouchInfoList = [[NSMutableArray alloc] init];
 		_state = kDTXTouchInjectorPendingStart;
 		_ongoingUITouches = [[NSMutableArray alloc] init];
+		_callback = callback;
 	}
 	return self;
 }
@@ -128,19 +132,33 @@
 		}
 		return;
 	}
+	
+	UITouchPhase reportedPhase;
+	
 	if ([_ongoingUITouches count] == 0)
 	{
+		reportedPhase = UITouchPhaseBegan;
 		[self dtx_extractAndChangeTouchToStartPhase:touchInfo];
 	}
 	else if (touchInfo.phase == DTXTouchInfoPhaseTouchEnded)
 	{
+		reportedPhase = UITouchPhaseEnded;
 		[self dtx_changeTouchToEndPhase:touchInfo];
 	}
 	else
 	{
-		[self dtx_changeTouchToMovePhase:touchInfo];
+		reportedPhase = UITouchPhaseMoved;
+		if(_abortedByCallback == NO)
+		{
+			[self dtx_changeTouchToMovePhase:touchInfo];
+		}
 	}
 	[self dtx_injectTouches:touchInfo];
+	
+	if(_callback && _abortedByCallback == NO)
+	{
+		_abortedByCallback = _callback(reportedPhase) == NO;
+	}
 }
 
 

@@ -78,14 +78,8 @@ else \
 { \
 	target = self.contentSize._size + self.adjustedContentInset.otherInset - self.bounds.size._size; \
 } \
-CGFloat delta = self.contentOffset.axis - target; \
-CGPoint offset = pointMakeMacro(delta); \
-if(offset.axis != 0.0 && [self _dtx_canScrollWithOffset:offset] == NO) \
-{\
-	/* Already at edge */ \
-	return; \
-}\
-[self dtx_scrollWithOffset:offset];
+[self setContentOffset:pointMakeMacro(target) animated:YES]; \
+[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:[[self valueForKeyPath:@"animation.duration"] doubleValue] + 0.05]];
 
 - (void)dtx_scrollToNormalizedEdge:(CGPoint)edge
 {
@@ -99,30 +93,6 @@ if(offset.axis != 0.0 && [self _dtx_canScrollWithOffset:offset] == NO) \
 	}
 }
 
-#define DTX_CAN_SCROLL_AXIS(main, inset, otherInset, _size) \
-if(offset.main > 0 && floor(self.contentOffset.main) <= - floor(self.adjustedContentInset.inset)) \
-{ \
-	return NO; \
-} \
-else if(offset.main < 0 && floor(self.contentOffset.main) >= floor(self.contentSize._size + self.adjustedContentInset.otherInset - self.bounds.size._size)) \
-{ \
-	return NO; \
-}
-
-- (BOOL)_dtx_canScrollWithOffset:(CGPoint)offset
-{
-	if(offset.x != 0)
-	{
-		DTX_CAN_SCROLL_AXIS(x, left, right, width);
-	}
-	else if(offset.y != 0)
-	{
-		DTX_CAN_SCROLL_AXIS(y, top, bottom, height);
-	}
-	
-	return YES;
-}
-
 DTX_ALWAYS_INLINE
 static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)
 {
@@ -132,9 +102,19 @@ static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)
 	return offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up";
 }
 
-- (void)_dtx_assertCanScrollWithOffset:(CGPoint)offset
+- (void)_dtx_assertSupportedTransform
 {
-	DTXViewAssert([self _dtx_canScrollWithOffset:offset], self.dtx_viewDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
+	BOOL isAffineIdentity = CGAffineTransformIsIdentity(self.transform);
+	BOOL is3DIdentity = YES;
+	if (@available(iOS 13.0, *))
+	{
+		is3DIdentity = CATransform3DIsIdentity(self.transform3D);
+	}
+	
+	BOOL identity = isAffineIdentity && is3DIdentity;
+	BOOL scaleMinusOneY = CGAffineTransformEqualToTransform(self.transform, CGAffineTransformMakeScale(1.0, -1.0));
+	
+	DTXViewAssert(identity || scaleMinusOneY, self.dtx_viewDebugAttributes, @"Unsupported transform for “%@”", self.dtx_shortDescription);
 }
 
 - (void)dtx_scrollWithOffset:(CGPoint)offset
@@ -153,14 +133,8 @@ while (offset.main != 0 && startPoint.main > window.safeAreaInsets.windowSafeAre
 }
 
 DTX_ALWAYS_INLINE
-static void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoint offset, CGPoint* remainingOffset)
+static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoint offset, CGPoint* remainingOffset)
 {
-	if([scrollView _dtx_canScrollWithOffset:offset] == NO)
-	{
-		*remainingOffset = CGPointZero;
-		return;
-	}
-	
 	NSMutableArray<NSValue*>* points = [NSMutableArray new];
 	
 	[points addObject:@(startPoint)];
@@ -205,12 +179,42 @@ static void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 	
 	if(points.count > 1)
 	{
-		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnLastTouch:0.0];
+		__block NSUInteger consecutiveTouchPointsWithSameContentOffset = 0;
+		__block CGPoint prevOffset = scrollView.contentOffset;
+		
+		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnLastTouch:0.0 onTouchCallback:^ BOOL (UITouchPhase phase) {
+			if(phase != UITouchPhaseMoved)
+			{
+				return YES;
+			}
+			
+			if(CGPointEqualToPoint(scrollView.contentOffset, prevOffset))
+			{
+				consecutiveTouchPointsWithSameContentOffset++;
+			}
+			
+			prevOffset = scrollView.contentOffset;
+			
+			if(consecutiveTouchPointsWithSameContentOffset > 12)
+			{
+				return NO;
+			}
+			
+			return YES;
+		}];
+		
+		//10 points for UIPanGestureRecognizer to recognizer the pan, plus 2 for leeway.
+		if(consecutiveTouchPointsWithSameContentOffset > 12)
+		{
+			return NO;
+		}
 		
 		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
 	}
 	
 	*remainingOffset = offset;
+	
+	return YES;
 }
 
 #define DTX_RESET_START_POINT(normalizedStartingPoint, main, other, offset) \
@@ -231,9 +235,12 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	}
 	
 	NSAssert(offset.x == 0.0 || offset.y == 0.0, @"Scrolling simultaneously in both directions is unsupported");
-	[self _dtx_assertCanScrollWithOffset:offset];
+//	[self _dtx_assertSupportedTransform];
+//	[self _dtx_assertCanScrollWithOffset:offset];
 	
 	self.dtx_disableDecelerationForScroll = YES;
+	BOOL oldBounces = self.bounces;
+	self.bounces = NO;
 	
 	CGRect safeAreaToScroll = UIEdgeInsetsInsetRect(self.bounds, self.adjustedContentInset);
 	
@@ -254,10 +261,12 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	
 	while (offset.x != 0.0 || offset.y != 0.0)
 	{
-		_DTXApplyScroll(self, startPoint, offset, &offset);
+		BOOL appliedScroll = _DTXApplyScroll(self, startPoint, offset, &offset);
+		DTXViewAssert(appliedScroll == YES, self.dtx_viewDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
 	}
 	
 	self.dtx_disableDecelerationForScroll = NO;
+	self.bounces = oldBounces;
 }
 
 @end

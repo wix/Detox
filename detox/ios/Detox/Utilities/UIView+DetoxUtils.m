@@ -448,6 +448,13 @@ DTX_DIRECT_MEMBERS
 	rv[@"hittable"] = @(self.dtx_isHittable);
 	rv[@"visible"] = @(self.dtx_isVisible);
 	
+	if([self isKindOfClass:UIScrollView.class])
+	{
+		rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
+		rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
+		rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
+	}
+	
 	if([self isKindOfClass:UISlider.class])
 	{
 		rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);

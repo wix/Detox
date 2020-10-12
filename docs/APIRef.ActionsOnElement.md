@@ -108,6 +108,8 @@ Simulates a scroll to the specified edge.
 
 `edge`—the edge to scroll to (valid input: `"left"`/`"right"`/`"top"`/`"bottom"`)
 
+**Note:** On iOS, extra care should be taken with the `edge` parameter in cases where the scroll element’s transform is not `identity`. For example, if a scroll view is flipped vertically, the `top` edge is visually at the `bottom`, thus calling `scrollTo('top’)` will visually scroll to bottom.
+
 ```js
 await element(by.id('scrollView')).scrollTo('bottom');
 await element(by.id('scrollView')).scrollTo('top');
@@ -227,7 +229,10 @@ Retrieved attributes are:
 - `safeAreaInsets`—the safe area insets of the element, in element coordinate space <br/>
 - `elementSafeBounds`—the safe area bounds of the element, in element coordinate space <br/>
 - `date`—the date of the element (in case the element is a date picker) <br/>
-- `normalizedSliderPosition`—the normalized slider position (in case the element is a slider)
+- `normalizedSliderPosition`—the normalized slider position (in case the element is a slider) <br/>
+- `contentOffset`—the content offset (in case the element is a scroll view) <br/>
+- `contentInset`—the content inset (in case the element is a scroll view) <br/>
+- `adjustedContentInset`—the adjusted content inset (in case the element is a scroll view) <br/>
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 
