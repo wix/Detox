@@ -26,18 +26,12 @@ function isRunningInCMDEXE() {
          /* istanbul ignore next */ !process.env['SHELL'];
 }
 
-const UNSAFE = /[\s!"#$&'()*;<=>^?`{,}|~\[\\\]]/m;
+const UNSAFE_SHELL = /[\s!"#$&'()*;<=>^?`{,}|~\[\\\]]/m;
+const UNSAFE_CMD = /[\s!"#$&'()*;<=>^?`{,}|~\[\]]/m;
+
 /* @see https://unix.stackexchange.com/a/357932 */
 function hasUnsafeShellChars(str) {
-  return UNSAFE.test(str);
-}
-
-function autoEscapeCmd(str) {
-  if (!hasUnsafeShellChars(str)) {
-    return str;
-  }
-
-  return escapeWithDoubleQuotedString(str);
+  return UNSAFE_SHELL.test(str);
 }
 
 function autoEscapeShell(str) {
@@ -47,6 +41,22 @@ function autoEscapeShell(str) {
 
   return escapeWithSingleQuotedString(str);
 }
+
+function hasUnsafeCMDChars(str) {
+  return UNSAFE_CMD.test(str);
+}
+
+function autoEscapeCmd(str) {
+  if (!hasUnsafeCMDChars(str)) {
+    return str;
+  }
+
+  return escapeWithDoubleQuotedString(str);
+}
+
+const hasUnsafeChars = isRunningInCMDEXE()
+  /* istanbul ignore next */ ? hasUnsafeCMDChars
+  /* istanbul ignore next */ : hasUnsafeShellChars;
 
 const autoEscape = isRunningInCMDEXE()
   /* istanbul ignore next */ ? autoEscapeCmd
@@ -58,7 +68,10 @@ module.exports = {
   escapeWithSingleQuotedString,
   escapeWithDoubleQuotedString,
   isRunningInCMDEXE,
-  hasUnsafeShellChars,
+  hasUnsafeChars: Object.assign(hasUnsafeChars, {
+    cmd: hasUnsafeCMDChars,
+    shell: hasUnsafeShellChars,
+  }),
   autoEscape: Object.assign(autoEscape, {
     cmd: autoEscapeCmd,
     shell: autoEscapeShell,

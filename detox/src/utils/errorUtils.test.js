@@ -54,8 +54,10 @@ describe('replaceErrorStack(source, target)', () => {
 
 describe('createErrorWithUserStack()', () => {
   it('should not have /detox/src/ lines in stack', () => {
-    expect(new Error().stack).toContain('/detox/src/'); // sanity assertion
-    expect(errorUtils.createErrorWithUserStack()).not.toContain('/detox/src/');
+    expect(new Error().stack).toMatch(/[\\\/]detox[\\\/]src[\\\/]/m); // sanity assertion
+
+    expect(errorUtils.createErrorWithUserStack()).not.toContain('/detox/src/'); // POSIX
+    expect(errorUtils.createErrorWithUserStack()).not.toContain('\\detox\\src\\'); // WIN32
   });
 });
 
