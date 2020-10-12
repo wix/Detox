@@ -217,7 +217,7 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 			
 			prevOffset = scrollView.contentOffset;
 			
-			if(scrollView.bounces && scrollView._isBouncing)
+			if(didSomeScroll == NO && scrollView.bounces && scrollView._isBouncing)
 			{
 				didFailTouches = YES;
 				return NO;
