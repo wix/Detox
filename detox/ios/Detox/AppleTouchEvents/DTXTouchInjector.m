@@ -158,6 +158,12 @@
 	if(_callback && _abortedByCallback == NO)
 	{
 		_abortedByCallback = _callback(reportedPhase) == NO;
+		
+		if(_abortedByCallback)
+		{
+			//Clean up the pending touches list from any subsequent non -Ended touches.
+			[_enqueuedTouchInfoList filterUsingPredicate:[NSPredicate predicateWithFormat:@"phase == %@", @(DTXTouchInfoPhaseTouchEnded)]];
+		}
 	}
 }
 

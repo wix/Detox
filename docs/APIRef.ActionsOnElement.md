@@ -108,8 +108,6 @@ Simulates a scroll to the specified edge.
 
 `edge`—the edge to scroll to (valid input: `"left"`/`"right"`/`"top"`/`"bottom"`)
 
-**Note:** On iOS, extra care should be taken with the `edge` parameter in cases where the scroll element’s transform is not `identity`. For example, if a scroll view is flipped vertically, the `top` edge is visually at the `bottom`, thus calling `scrollTo('top’)` will visually scroll to bottom.
-
 ```js
 await element(by.id('scrollView')).scrollTo('bottom');
 await element(by.id('scrollView')).scrollTo('top');
