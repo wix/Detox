@@ -66,7 +66,7 @@ class Element : NSObject {
 		let element : UIView
 		if let index = index {
 			guard index < array.count else {
-				dtx_fatalError("Index \(index) beyond bounds [0 .. \(array.count - 1)] for “\(self.description)”", viewDescription: failDebugAttributes)
+				dtx_fatalError("Index \(index) beyond bounds \(array.count > 0 ? "[0 .. \(array.count - 1)] " : " ")for “\(self.description)”", viewDescription: failDebugAttributes)
 			}
 			element = array[index]
 		} else {
