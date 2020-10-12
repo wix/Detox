@@ -51,7 +51,14 @@ describe('CLI', () => {
       test('should pass --use-custom-logger true', () => expect(cliCall().command).toMatch(/--use-custom-logger true/));
       test('should not override process.env', () => expect(cliCall().env).toStrictEqual({}));
       test('should produce a default command (integration test)', () => {
-        const args = `--opts e2e/mocha.opts --grep :android: --invert --config-path ${detoxConfigPath} --use-custom-logger true`;
+        const quoteChar = !isInCMD() && detoxConfigPath.indexOf('\\') >= 0 ? `'` : '';
+        const args = [
+          `--opts`, `e2e/mocha.opts`,
+          `--grep`, `:android:`, `--invert`,
+          `--config-path`, quote(detoxConfigPath, quoteChar),
+          `--use-custom-logger`, `true`
+        ].join(' ');
+
         expect(cliCall().command).toBe(`mocha ${args} e2e`);
       });
     });
@@ -217,9 +224,9 @@ describe('CLI', () => {
     });
 
     test.each([
-      [`--runner-config "mocha configs/.mocharc"`, `--config 'mocha configs/.mocharc'`],
-      [`--artifacts-location "artifacts dir/"`, `--artifacts-location 'artifacts dir/'`],
-      [`--device-name "iPhone X"`, `--device-name 'iPhone X'`],
+      [`--runner-config "mocha configs/.mocharc"`, `--config ${quote('mocha configs/.mocharc')}`],
+      [`--artifacts-location "artifacts dir/"`, `--artifacts-location ${quote('artifacts dir/')}`],
+      [`--device-name "iPhone X"`, `--device-name ${quote('iPhone X')}`],
       [`"e2e tests/first test.spec.js"`, `"e2e tests/first test.spec.js"`],
     ])('should escape %s when forwarding it as a CLI argument', async (cmd, expected) => {
       await run(cmd);
@@ -239,7 +246,7 @@ describe('CLI', () => {
       });
 
       test('should produce a default command (integration test, ios)', () => {
-        const args = `--config e2e/config.json --testNamePattern '^((?!:android:).)*$' --maxWorkers 1`;
+        const args = `--config e2e/config.json --testNamePattern ${quote('^((?!:android:).)*$')} --maxWorkers 1`;
         expect(cliCall().command).toBe(`jest ${args} e2e`);
       });
 
@@ -260,7 +267,7 @@ describe('CLI', () => {
       });
 
       test('should produce a default command (integration test)', () => {
-        const args = `--config e2e/config.json --testNamePattern '^((?!:ios:).)*$' --maxWorkers 1`;
+        const args = `--config e2e/config.json --testNamePattern ${quote('^((?!:ios:).)*$')} --maxWorkers 1`;
         expect(cliCall().command).toBe(`jest ${args} e2e`);
       });
 
@@ -285,11 +292,11 @@ describe('CLI', () => {
         detoxConfig.configurations.androidTest.type = 'android.emulator';
 
         await run(`${__configuration} androidTest`);
-        expect(cliCall(0).command).toContain(`--testNamePattern '^((?!:ios:).)*$'`);
+        expect(cliCall(0).command).toContain(`--testNamePattern ${quote('^((?!:ios:).)*$')}`);
         expect(cliCall(0).env.configuration).toBe('androidTest');
 
         await run(`${__configuration} iosTest`);
-        expect(cliCall(1).command).toContain(`--testNamePattern '^((?!:android:).)*$'`);
+        expect(cliCall(1).command).toContain(`--testNamePattern ${quote('^((?!:android:).)*$')}`);
         expect(cliCall(1).env.configuration).toBe('iosTest');
       }
     );
@@ -578,7 +585,7 @@ describe('CLI', () => {
     });
 
     test.each([
-      [`--testNamePattern "should tap"`, `--testNamePattern 'should tap'`],
+      [`--testNamePattern "should tap"`, `--testNamePattern ${quote('should tap')}`],
       [`"e2e tests/first test.spec.js"`, `"e2e tests/first test.spec.js"`],
     ])('should escape %s when forwarding it as a CLI argument', async (cmd, expected) => {
       await run(cmd);
@@ -704,5 +711,13 @@ describe('CLI', () => {
 
   function singleConfig() {
     return Object.values(detoxConfig.configurations)[0];
+  }
+
+  function isInCMD() {
+    return process.platform === 'win32' && !process.env.SHELL;
+  }
+
+  function quote(s, q = isInCMD() ? `"` : `'`) {
+    return q + s + q;
   }
 });
