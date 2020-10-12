@@ -637,12 +637,13 @@ describe('CLI', () => {
       expect(cliCall().command).toMatch(RegExp(`^node --inspect-brk ${testRunner}`));
     });
 
-    test('should append $DETOX_ARGV_OVERRIDE to detox test ... command', async () => {
+    test('should append $DETOX_ARGV_OVERRIDE to detox test ... command and print a warning', async () => {
       process.env.PLATFORM = 'ios';
       process.env.DETOX_ARGV_OVERRIDE = '--inspect-brk --testNamePattern "[$PLATFORM] tap" e2e/sanity/*.test.js';
       await run();
 
       expect(cliCall().command).toMatch(/^node --inspect-brk.* --testNamePattern '\[ios\] tap'.* e2e\/sanity\/\*\.test.js$/);
+      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
     });
   });
 
