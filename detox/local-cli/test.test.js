@@ -14,8 +14,12 @@ describe('CLI', () => {
   let detoxConfig;
   let detoxConfigPath;
   let DeviceRegistry;
+  let _env;
 
   beforeEach(() => {
+    _env = process.env;
+    process.env = { ..._env };
+
     detoxConfig = {
       configurations: {
         single: {
@@ -33,6 +37,8 @@ describe('CLI', () => {
   });
 
   afterEach(async () => {
+    process.env = _env;
+
     await Promise.all(temporaryFiles.map(name => fs.remove(name)));
   });
 
@@ -637,6 +643,15 @@ describe('CLI', () => {
       await run('--inspect-brk');
       expect(cliCall().command).toMatch(RegExp(`^node --inspect-brk ${testRunner}`));
     });
+
+    test('should append $DETOX_ARGV_OVERRIDE to detox test ... command and print a warning', async () => {
+      process.env.PLATFORM = 'ios';
+      process.env.DETOX_ARGV_OVERRIDE = '--inspect-brk --testNamePattern "[$PLATFORM] tap" e2e/sanity/*.test.js';
+      await run();
+
+      expect(cliCall().command).toMatch(/^node --inspect-brk.* --testNamePattern '\[ios\] tap'.* e2e\/sanity\/\*\.test.js$/);
+      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
+    });
   });
 
   test('should fail for unrecognized test runner', async () => {
@@ -659,34 +674,42 @@ describe('CLI', () => {
   }
 
   async function runRaw(command = '') {
-    return new Promise((resolve, reject) => {
-      const testCommand = require('./test');
-      const originalHandler = testCommand.handler;
+    let argv;
 
-      const parser = yargs()
-        .scriptName('detox')
-        .parserConfiguration({
-          'boolean-negation': false,
-          'camel-case-expansion': false,
-          'dot-notation': false,
-          'duplicate-arguments-array': false,
-          'populate--': true,
-        })
-        .command({
-          ...testCommand,
-          async handler(argv) {
-            try {
-              await originalHandler(argv);
-              resolve();
-            } catch (e) {
-              reject(e);
-            }
-          },
-        })
-        .wrap(null);
+    try {
+      argv = process.argv.splice(2, Infinity, ...command.trim().split(' '));
 
-      parser.parse(command, err => err && reject(err));
-    });
+      return await new Promise((resolve, reject) => {
+        const testCommand = require('./test');
+        const originalHandler = testCommand.handler;
+
+        const parser = yargs()
+          .scriptName('detox')
+          .parserConfiguration({
+            'boolean-negation': false,
+            'camel-case-expansion': false,
+            'dot-notation': false,
+            'duplicate-arguments-array': false,
+            'populate--': true,
+          })
+          .command({
+            ...testCommand,
+            async handler(argv) {
+              try {
+                await originalHandler(argv);
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            },
+          })
+          .wrap(null);
+
+        parser.parse(command, err => err && reject(err));
+      });
+    } finally {
+      argv && process.argv.splice(2, Infinity, ...argv);
+    }
   }
 
   async function run(command = '') {

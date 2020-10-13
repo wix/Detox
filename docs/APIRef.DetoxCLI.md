@@ -91,7 +91,33 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --inspect-brk | Uses [node's --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the jest/mocha test runner <br />*Default: false* |
 | --help                                        | Show help |
 
-##### Notices
+#### DETOX_ARGV_OVERRIDE
+
+If you happen to be troubleshooting Detox tests inside a complex script, or a failing CI build
+(e.g., on TeamCity or Jenkins), there is an escape-hatch feature for running Detox with
+some extra CLI args just by setting the `DETOX_ARGV_OVERRIDE` environment variable before
+rerunning it again.
+
+```
+> export DETOX_ARGV_OVERRIDE="--forceExit -w 1 --testNamePattern='that hanging test' e2e/sanity/login.test.js"
+> bash scripts/ci.e2e.sh
+  # ... some output ...
+  > detox test -c ios.sim.release -l verbose --workers 3
+    # ...
+    configuration=ios.sim.release ... jest --maxWorkers 1 --forceExit --testNamePattern='that hanging test' e2e/sanity/login.test.js
+```
+
+Consider the example above, where `DETOX_ARGV_OVERRIDE` forces Detox to run Jest in a single worker
+mode with a forceful exit (after 1 second) only for a selected test in a specific file.
+
+As you might see, the idea of `DETOX_ARGV_OVERRIDE` is quite similar to [NODE_OPTIONS](https://nodejs.org/api/cli.html#cli_node_options_options)
+except for the fact you use it not for regular flows, but for forced ad-hoc patching of a failing Detox configuration to
+save your time.
+
+Please avoid using it in your regular flows – instead, use Detox configuration files (`.detoxrc.js`)
+as your primary choice.
+
+#### Notices
 
 1. <a name="notice-passthrough">It</a> should be noted that `detox test` is a convenience method to trigger an execution
 of a supported test runner, so for the most part it reads configuration from CLI args and `package.json` and remaps it
