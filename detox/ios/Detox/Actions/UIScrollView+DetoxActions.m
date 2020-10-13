@@ -210,7 +210,7 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 			{
 				consecutiveTouchPointsWithSameContentOffset++;
 			}
-			else
+			else if(scrollView._isBouncing == NO)
 			{
 				didSomeScroll |= YES;
 			}
