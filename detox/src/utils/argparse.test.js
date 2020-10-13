@@ -3,23 +3,40 @@ jest.unmock('process');
 describe('argparse', () => {
   describe('getArgValue()', () => {
     describe('using env variables', () => {
+      let _env;
       let argparse;
 
       beforeEach(() => {
-        process.env.fooBar = 'a value';
-        process.env.testUndefinedProp = 'undefined';
+        _env = process.env;
+
+        process.env = {
+          ..._env,
+          fooBar: 'legacy env format',
+          DETOX_FOO_BAR: 'new env format',
+          testUndefinedProp: 'undefined',
+        };
+
         argparse = require('./argparse');
       });
 
-      it(`nonexistent key should return undefined result`, () => {
+      afterEach(() => {
+        process.env = _env;
+      });
+
+      it(`nonexistent key should return undefined`, () => {
         expect(argparse.getArgValue('blah')).not.toBeDefined();
       });
 
-      it(`existing key should return a result`, () => {
-        expect(argparse.getArgValue('foo-bar')).toBe('a value');
+      it(`existing key should return DETOX_SNAKE_FORMAT value first`, () => {
+        expect(argparse.getArgValue('foo-bar')).toBe('new env format');
       });
 
-      it('should return undefiend if process.env contain something with a string of undefiend' ,() => {
+      it(`existing key should return legacyCamelFormat value if there is no DETOX_SNAKE_FORMAT`, () => {
+        delete process.env.DETOX_FOO_BAR;
+        expect(argparse.getArgValue('foo-bar')).toBe('legacy env format');
+      });
+
+      it('should return undefined if process.env contain something with a string of undefined' ,() => {
         expect(argparse.getArgValue('testUndefinedProp')).toBe(undefined);
       });
     });

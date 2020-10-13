@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const argv = require('minimist')(process.argv.slice(2));
 const {escape} = require('./pipeCommands');
+const toUpper = (s) => s.toUpperCase();
 
 function getArgValue(key) {
   let value;
@@ -8,14 +9,34 @@ function getArgValue(key) {
   if (argv && argv[key]) {
     value = argv[key];
   } else {
-    const camelCasedKey = key.replace(/(\-\w)/g, (m) => m[1].toUpperCase());
-    value = process.env[camelCasedKey];
+    const resolvedKey = resolveProcessEnvKey([
+      toUpper(`DETOX_${_.snakeCase(key)}`),
+      _.camelCase(key),
+    ]);
+
+    if (resolvedKey !== undefined) {
+      value = process.env[resolvedKey];
+    }
+
     if (value === 'undefined') {
       value = undefined;
     }
   }
 
   return value;
+}
+
+function resolveProcessEnvKey(searchedKeys) {
+  let envKeys = _.keys(process.env);
+
+  /* istanbul ignore next */
+  if (process.platform === 'win32') {
+    searchedKeys = searchedKeys.map(toUpper);
+    envKeys = envKeys.map(toUpper);
+  }
+
+  const keySet = new Set(envKeys);
+  return searchedKeys.find(key => keySet.has(key));
 }
 
 function getFlag(key) {

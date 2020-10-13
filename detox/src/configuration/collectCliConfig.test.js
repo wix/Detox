@@ -26,7 +26,7 @@ describe('collectCliConfig', () => {
     ['configuration', 'configuration'],
     ['debugSynchronization', 'debug-synchronization'],
     ['deviceLaunchArgs', 'device-launch-args'],
-    ['appLaunchArgs', 'DETOX_APP_LAUNCH_ARGS'],
+    ['appLaunchArgs', 'app-launch-args'],
     ['deviceName', 'device-name'],
     ['forceAdbInstall', 'force-adb-install'],
     ['gpu', 'gpu'],
