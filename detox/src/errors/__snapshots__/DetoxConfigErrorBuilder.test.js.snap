@@ -29,6 +29,24 @@ exports[`DetoxConfigErrorBuilder .failedToReadConfiguration should create a simp
 EISDIR: illegal operation on a directory, read]
 `;
 
+exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgs should create an error with specifying the config name 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in detox.configurations["android.release"]
+Expected an object.
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator',
+      utilBinaryPaths: '/valid/path/outside/of/array',
+      device: 'Pixel 4',
+      launchArgs: 'do not use strings here please'
+    }
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
 [DetoxConfigError: Invalid type of "utilBinaryPaths" property in detox.configurations["android.release"]
 Expected an array of strings of paths.

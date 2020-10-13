@@ -143,6 +143,27 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
+  describe('.malformedAppLaunchArgs', () => {
+    beforeEach(() => {
+      build = () => builder.malformedAppLaunchArgs()
+      builder.setConfigurationName('android.release');
+      builder.setDetoxConfig({
+        configurations: {
+          'android.release': {
+            type: 'android.emulator',
+            utilBinaryPaths: '/valid/path/outside/of/array',
+            device: 'Pixel 4',
+            launchArgs: 'do not use strings here please',
+          },
+        },
+      });
+    });
+
+    it('should create an error with specifying the config name', () => {
+      expect(build()).toMatchSnapshot();
+    });
+  });
+
   describe('.malformedUtilBinaryPaths', () => {
     beforeEach(() => {
       build = () => builder.malformedUtilBinaryPaths()
