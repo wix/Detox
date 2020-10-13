@@ -4,7 +4,7 @@ const {
   escapeWithSingleQuotedString,
   escapeWithDoubleQuotedString,
   isRunningInCMDEXE,
-  hasUnsafeShellChars,
+  hasUnsafeChars,
   autoEscape,
 } = require('./shellUtils');
 
@@ -51,46 +51,60 @@ describe('shellUtils', function() {
     });
   });
 
-  describe('hasUnsafeShellChars', () => {
-    test.each([
+  describe('hasUnsafeChars', () => {
+    const CASES = [
+    /* cmd    shell  input comment */
       /* pin-pointer tests */
-      [false, '',  'just an empty string'],
-      [true, ' ',  'a whitespace character'],
-      [true, '\t', 'a whitespace character'],
-      [true, '\n', 'a newline character'],
-      [true, '!',  'a history expansion'],
-      [true, '"',  'shell syntax'],
-      [true, '#',  'a comment start'],
-      [true, '$',  'shell syntax'],
-      [true, '&',  'shell syntax'],
-      [true, `'`,  'shell syntax'],
-      [true, '(',  'globs and wildcards'],
-      [true, ')',  'globs and wildcards'],
-      [true, '*',  'a sh wildcard'],
-      [true, ';',  'shell syntax'],
-      [true, '<',  'shell syntax'],
-      [true, '=',  'zsh syntax'],
-      [true, '>',  'shell syntax'],
-      [true, '?',  'a sh wildcard'],
-      [true, '[',  'a sh wildcard'],
-      [true, "\\", 'shell syntax'],
-      [true, ']',  'a sh wildcard'],
-      [true, '^',  'a history expansion, zsh wildcard'],
-      [true, '`',  'shell syntax'],
-      [true, '{',  'a brace expansion start'],
-      [true, ',',  'unsafe inside a brace expansion'],
-      [true, '}',  'a brace expansion end'],
-      [true, '|',  'shell syntax'],
-      [true, '~',  'a home directory expansion'],
-      [false, '-',  'almost safe, except when a filename begins with dash, it needs extra handling'],
-      [false, '.',  'almost safe, except that dot files are excluded from * globs by default.'],
-      [false, ':',  'almost safe, expect when it can indicate a remote file (hostname:filename)'],
-
+      [false, false, '',   'just an empty string'],
+      [true,  true,  ' ',  'a whitespace character'],
+      [true,  true,  '\t', 'a whitespace character'],
+      [true,  true,  '\n', 'a newline character'],
+      [true,  true,  '!',  'a history expansion'],
+      [true,  true,  '"',  'shell syntax'],
+      [true,  true,  '#',  'a comment start'],
+      [true,  true,  '$',  'shell syntax'],
+      [true,  true,  '&',  'shell syntax'],
+      [true,  true,  `'`,  'shell syntax'],
+      [true,  true,  '(',  'globs and wildcards'],
+      [true,  true,  ')',  'globs and wildcards'],
+      [true,  true,  '*',  'a sh wildcard'],
+      [true,  true,  ';',  'shell syntax'],
+      [true,  true,  '<',  'shell syntax'],
+      [true,  true,  '=',  'zsh syntax'],
+      [true,  true,  '>',  'shell syntax'],
+      [true,  true,  '?',  'a sh wildcard'],
+      [true,  true,  '[',  'a sh wildcard'],
+      [false, true,  "\\", 'shell syntax'],
+      [true,  true,  ']',  'a sh wildcard'],
+      [true,  true,  '^',  'a history expansion, zsh wildcard'],
+      [true,  true,  '`',  'shell syntax'],
+      [true,  true,  '{',  'a brace expansion start'],
+      [true,  true,  ',',  'unsafe inside a brace expansion'],
+      [true,  true,  '}',  'a brace expansion end'],
+      [true,  true,  '|',  'shell syntax'],
+      [true,  true,  '~',  'a home directory expansion'],
+      [false, false, '-', 'almost safe, except when a filename begins with dash, it needs extra handling'],
+      [false, false, '.', 'almost safe, except that dot files are excluded from * globs by default.'],
+      [false, false, ':', 'almost safe, expect when it can indicate a remote file (hostname:filename)'],
       /* integration tests */
-      [false, '123-abc-абв.test.js',  'just a mere test filename'],
-      [true, 'some tests/my test.js',  'a filename with spaces'],
-    ])('should return %j for %j because it is %s', (expected, str) => {
-      expect(hasUnsafeShellChars(str)).toBe(expected);
+      [false, false, '123-abc-абв.test.js',  'just a mere test filename'],
+      [true, true, 'some tests/my test.js',  'a filename with spaces'],
+    ];
+
+    describe('.cmd', () => {
+      const CMD_CASES = CASES.map(([expected, _shell, input, comment]) => [expected, input, comment]);
+
+      test.each(CMD_CASES)('should return %j for %j because it is %s', (expected, str, comment) => {
+        expect(hasUnsafeChars.cmd(str)).toBe(expected);
+      });
+    });
+
+    describe('.shell', () => {
+      const SHELL_CASES = CASES.map(([_cmd, expected, input, comment]) => [expected, input, comment]);
+
+      test.each(SHELL_CASES)('should return %j for %j because it is %s', (expected, str, comment) => {
+        expect(hasUnsafeChars.shell(str)).toBe(expected);
+      });
     });
   });
 

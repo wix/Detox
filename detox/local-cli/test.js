@@ -2,7 +2,7 @@ const _ = require('lodash');
 const cp = require('child_process');
 const path = require('path');
 const unparse = require('yargs-unparser');
-const { quote } = require('./utils/shellQuote');
+const { parse, quote } = require('./utils/shellQuote');
 const splitArgv = require('./utils/splitArgv');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
@@ -11,6 +11,7 @@ const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
+const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./utils/warnings');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
@@ -47,6 +48,21 @@ module.exports.handler = async function test(argv) {
   const retries = runner === 'jest' ? detoxArgs.retries : 0;
   await runTestRunnerWithRetries(forwardedArgs, retries);
 };
+
+module.exports.middlewares = [
+  function applyEnvironmentVariableAddendum(argv, yargs) {
+    if (process.env.DETOX_ARGV_OVERRIDE) {
+      log.warn(DETOX_ARGV_OVERRIDE_NOTICE);
+
+      return yargs.parse([
+        ...process.argv.slice(2),
+        ...parse(process.env.DETOX_ARGV_OVERRIDE),
+      ]);
+    }
+
+    return argv;
+  }
+];
 
 function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
