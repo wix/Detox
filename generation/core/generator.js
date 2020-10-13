@@ -81,7 +81,9 @@ module.exports = function getGenerator({
     const args = json.args.map(({ name }) => t.identifier(name));
 
     if (!json.static) {
-      args.unshift(t.identifier('element'));
+      const prefixedArgs = [ t.identifier('element') ];
+      args.unshift(...prefixedArgs);
+      json.prefixedArgs = prefixedArgs;
     }
 
     const body = isOverloading ? createOverloadedMethodBody(classJson, json) : createMethodBody(classJson, json);
@@ -103,18 +105,21 @@ module.exports = function getGenerator({
     // args: instance.args
     // Let's check the length of the call and use the matching one of the instances then
 
-    const overloadFunctionExpressions = json.instances.map(({ args }) =>
-      t.functionDeclaration(
-        t.identifier(sanitizedName + args.length),
-        args.filter(filterBlacklistedArguments).map(({ name }) => t.identifier(name)),
-        createMethodBody(classJson, Object.assign({}, json, { args }))
-      )
+    const overloadFunctionExpressions = json.instances.map(({ args }) => {
+      const params = [...(json.prefixedArgs || []), ...args];
+        return t.functionDeclaration(
+          t.identifier(sanitizedName + params.length),
+          params.filter(filterBlacklistedArguments).map(({ name }) => t.identifier(name)),
+          createMethodBody(classJson, Object.assign({}, json, { args }))
+        )
+      }
     );
 
+    const offset = (json.prefixedArgs || []).length;
     const returnStatementsForNumber = (num) =>
       template(`
-      if (arguments.length === ${num}) {
-        return ${sanitizedName + num}.apply(null, arguments);
+      if (arguments.length === ${num + offset}) {
+        return ${sanitizedName + (num + offset)}.apply(null, arguments);
       }
     `)();
 

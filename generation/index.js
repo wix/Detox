@@ -16,11 +16,12 @@ const downloadedEspressoFilesMap = Object
   );
 
 const externalFilesToDownload = {
-// Disabled temporarily as we've switched to the androidx version of this class, which doesn't seem to exist online (not even
-// on android/android-test on Github). My only hope, for now, is to be able to inquire where it is released from (maven group/name
-// is androidx.test.uiautomator:uiautomator:x.y.z) either in Google i/o 2019 or on the next AMA on the /androiddev subreddit.
-// Note: the 'new' (androidx) and 'old' versions are identical (except for the package name, obviously).
-//  'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT': '../detox/src/android/espressoapi/UIDevice.js'
+  // TODO replace this with the non-deprecated version of UiDevice (i.e. released as uiautomator under androidx).
+  // This is pending because the new code doesn't seem to exist online (not even on android/android-test on Github).
+  // Note: for now, it appears that the 'new' (androidx) and 'old' versions are identical (except for the package name, obviously).
+
+  // Disabled so as to avoid having to download this each time while there are no code changes...
+  // 'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT': '../detox/src/android/espressoapi/UIDevice.js'
 };
 
 const downloadedAndroidFilesMap = Object
@@ -42,4 +43,5 @@ const androidFiles = {
   '../detox/android/detox/src/main/java/com/wix/detox/espresso/EspressoDetox.java': '../detox/src/android/espressoapi/EspressoDetox.js',
   '../detox/android/detox/src/main/java/com/wix/detox/uiautomator/UiAutomator.java': '../detox/src/android/espressoapi/UIAutomator.js'
 };
+
 generateAndroidAdapters(androidFiles);
