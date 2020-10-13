@@ -151,7 +151,7 @@ class UiDevice {
   }
 
   static pressKeyCode(element, keyCode) {
-    function pressKeyCode1(keyCode) {
+    function pressKeyCode2(element, keyCode) {
       if (typeof keyCode !== "number") throw new Error("keyCode should be a number, but got " + (keyCode + (" (" + (typeof keyCode + ")"))));
       return {
         target: element,
@@ -163,7 +163,7 @@ class UiDevice {
       };
     }
 
-    function pressKeyCode2(keyCode, metaState) {
+    function pressKeyCode3(element, keyCode, metaState) {
       if (typeof keyCode !== "number") throw new Error("keyCode should be a number, but got " + (keyCode + (" (" + (typeof keyCode + ")"))));
       if (typeof metaState !== "number") throw new Error("metaState should be a number, but got " + (metaState + (" (" + (typeof metaState + ")"))));
       return {
@@ -179,12 +179,12 @@ class UiDevice {
       };
     }
 
-    if (arguments.length === 1) {
-      return pressKeyCode1.apply(null, arguments);
-    }
-
     if (arguments.length === 2) {
       return pressKeyCode2.apply(null, arguments);
+    }
+
+    if (arguments.length === 3) {
+      return pressKeyCode3.apply(null, arguments);
     }
   }
 
