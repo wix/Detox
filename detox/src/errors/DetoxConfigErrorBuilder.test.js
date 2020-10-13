@@ -145,7 +145,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
   describe('.malformedAppLaunchArgs', () => {
     beforeEach(() => {
-      build = () => builder.malformedAppLaunchArgs()
+      build = () => builder.malformedAppLaunchArgs();
       builder.setConfigurationName('android.release');
       builder.setDetoxConfig({
         configurations: {
@@ -160,6 +160,30 @@ describe('DetoxConfigErrorBuilder', () => {
     });
 
     it('should create an error with specifying the config name', () => {
+      expect(build()).toMatchSnapshot();
+    });
+  });
+
+  describe('.malformedAppLaunchArgsProperty', () => {
+    beforeEach(() => {
+      build = () => builder.malformedAppLaunchArgsProperty('invalidFalseProperty');
+      builder.setConfigurationName('android.release');
+      builder.setDetoxConfig({
+        configurations: {
+          'android.release': {
+            type: 'android.emulator',
+            utilBinaryPaths: '/valid/path/outside/of/array',
+            device: 'Pixel 4',
+            launchArgs: {
+              validFalseProperty: 'false',
+              invalidFalseProperty: false,
+            },
+          },
+        },
+      });
+    });
+
+    it('should create an error with specifying the exact launch arg', () => {
       expect(build()).toMatchSnapshot();
     });
   });

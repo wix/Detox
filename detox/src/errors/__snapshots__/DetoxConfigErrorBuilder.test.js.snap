@@ -47,6 +47,24 @@ HINT: Check that in your Detox config.
 }]
 `;
 
+exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgsProperty should create an error with specifying the exact launch arg 1`] = `
+[DetoxConfigError: Invalid property "invalidFalseProperty" inside detox.configurations["android.release"].launchArgs
+Expected a string.
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      launchArgs: {
+        validFalseProperty: 'false',
+        invalidFalseProperty: false
+      }
+    }
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
 [DetoxConfigError: Invalid type of "utilBinaryPaths" property in detox.configurations["android.release"]
 Expected an array of strings of paths.

@@ -96,6 +96,15 @@ class DetoxConfigErrorBuilder {
     });
   }
 
+  malformedAppLaunchArgsProperty(argKey) {
+    return new DetoxConfigError({
+      message: `Invalid property "${argKey}" inside detox.configurations["${this.configurationName}"].launchArgs\nExpected a string.`,
+      hint: `Check that in your Detox config${_atPath(this.filepath)}`,
+      debugInfo: this._focusOnConfiguration(c => _.pick(c, ['launchArgs'])),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
   malformedUtilBinaryPaths() {
     return new DetoxConfigError({
       message: `Invalid type of "utilBinaryPaths" property in detox.configurations["${this.configurationName}"]\nExpected an array of strings of paths.`,

@@ -51,6 +51,16 @@ describe('composeDeviceConfig', () => {
       rawDeviceConfig.launchArgs = '-detoxAppArgument NO';
       expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgs());
     });
+
+    it('should not throw if app launch args has an undefined property', () => {
+      rawDeviceConfig.launchArgs = { arg: undefined };
+      expect(compose).not.toThrowError();
+    });
+
+    it('should throw if app launch args has a non-string property', () => {
+      rawDeviceConfig.launchArgs = { debugSomething: false };
+      expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgsProperty('debugSomething'));
+    });
   });
 
   describe('if a device configuration has the old .name property', () => {

@@ -16,8 +16,22 @@ function getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig }) {
 }
 
 function validateAppLaunchArgs({ errorBuilder, rawDeviceConfig }) {
-  if (rawDeviceConfig.launchArgs && !_.isObject(rawDeviceConfig.launchArgs)) {
+  if (!rawDeviceConfig.launchArgs) {
+    return;
+  }
+
+  if (!_.isObject(rawDeviceConfig.launchArgs)) {
     throw errorBuilder.malformedAppLaunchArgs();
+  }
+
+  const nonStringPropertyName = _.chain(rawDeviceConfig.launchArgs)
+    .entries()
+    .find(([key, value]) => value != null && !_.isString(value))
+    .thru((entry) => entry ? entry[0] : null)
+    .value()
+
+  if (nonStringPropertyName) {
+    throw errorBuilder.malformedAppLaunchArgsProperty(nonStringPropertyName);
   }
 }
 
@@ -25,6 +39,23 @@ function validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig }) {
   if (rawDeviceConfig.utilBinaryPaths && !_.isArray(rawDeviceConfig.utilBinaryPaths)) {
     throw errorBuilder.malformedUtilBinaryPaths();
   }
+}
+
+function mergeAppLaunchArgsFromCLI(deviceConfig, cliConfig) {
+  if (!cliConfig.appLaunchArgs) {
+    return;
+  }
+
+  deviceConfig.launchArgs = _.chain({})
+    .thru(() => parse(cliConfig.appLaunchArgs, {
+      configuration: {
+        'short-option-groups': false,
+      },
+    }))
+    .omit(['_', '--'])
+    .defaults(deviceConfig.launchArgs)
+    .omitBy(value => value === false)
+    .value();
 }
 
 /**
@@ -37,22 +68,11 @@ function validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig }) {
 function composeDeviceConfig({ errorBuilder, rawDeviceConfig, cliConfig }) {
   validateType({ errorBuilder, rawDeviceConfig });
   validateAppLaunchArgs({ errorBuilder, rawDeviceConfig });
+  mergeAppLaunchArgsFromCLI(rawDeviceConfig, cliConfig);
 
   rawDeviceConfig.device = getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig });
   delete rawDeviceConfig.name;
 
-  if (cliConfig.appLaunchArgs) {
-    rawDeviceConfig.launchArgs = _.chain({})
-      .thru(() => parse(cliConfig.appLaunchArgs, {
-        configuration: {
-          'short-option-groups': false,
-        },
-      }))
-      .omit(['_', '--'])
-      .defaults(rawDeviceConfig.launchArgs)
-      .omitBy(value => value === false)
-      .value();
-  }
 
   validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig });
   return rawDeviceConfig;
