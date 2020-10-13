@@ -91,6 +91,7 @@ Detox can store artifacts such as transient screenshots and device logs. You can
     "plugins": {
       "instruments": { "enabled": false },
       "log": { "enabled": true },
+      "uiHierarchy": "enabled",
       "screenshot": {
         "shouldTakeAutomaticSnapshots": true,
         "keepOnlyFailedTestsArtifacts": true,
