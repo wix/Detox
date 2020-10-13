@@ -137,7 +137,7 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
 
       ...passthrough,
     },
-    env: _.pick(cliConfig, ['deviceLaunchArgs']),
+    env: _.pick(cliConfig, ['appLaunchArgs', 'deviceLaunchArgs']),
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
   };
 }
@@ -174,6 +174,7 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
         'recordTimeline',
         'deviceName',
         'deviceLaunchArgs',
+        'appLaunchArgs',
         'useCustomLogger',
         platform === 'android' && 'forceAdbInstall',
       ])),
