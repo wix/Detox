@@ -130,7 +130,9 @@ CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
 			CGRect bounds = obj.bounds;
 			CGRect boundsInRootViewCoords = [rootView convertRect:bounds fromView:obj];
 			CGContextTranslateCTM(ctx, boundsInRootViewCoords.origin.x, boundsInRootViewCoords.origin.y);
-			[_DTXLayerForView(obj, afterUpdates) renderInContext:ctx];
+			CALayer* layer = _DTXLayerForView(obj, afterUpdates);
+			CGContextConcatCTM(ctx, [layer affineTransform]);
+			[layer renderInContext:ctx];
 			CGContextRestoreGState(ctx);
 		}
 		else
