@@ -25,6 +25,24 @@
 
 DTX_CREATE_LOG(ReactNativeSupport);
 
+@interface NSObject (DTXRNFix) @end
+@implementation NSObject (DTXRNFix)
+
+//Disable live reload for Detox
+- (void)__detox_sync__reloadWithDefaults:(NSDictionary *)defaultValues
+{
+	NSMutableDictionary* dv = [defaultValues mutableCopy];
+	dv[@"hotLoadingEnabled"] = @NO;
+	
+	[self __detox_sync__reloadWithDefaults:defaultValues];
+	
+	NSMutableDictionary* _settings = [self valueForKey:@"_settings"];
+	_settings[@"hotLoadingEnabled"] = @NO;
+	[NSUserDefaults.standardUserDefaults setObject:_settings forKey:@"RCTDevMenu"];
+}
+
+@end
+
 static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 static dispatch_queue_t __currentIdlingResourceSerialQueue;
@@ -219,6 +237,12 @@ static void __setupRNSupport()
 		dtx_log_info(@"Adding idling resource for Animated display link");
 		
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
+	}
+	
+	cls = NSClassFromString(@"RCTDevSettingsUserDefaultsDataSource");
+	if(cls != nil)
+	{
+		DTXSwizzleMethod(cls, NSSelectorFromString(@"_reloadWithDefaults:"), @selector(__detox_sync__reloadWithDefaults:), NULL);
 	}
 	
 	//🤦‍♂️ RN doesn't set the data source and relies on undocumented behavior.
