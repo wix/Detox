@@ -119,14 +119,20 @@ CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
 		return;
 	}
 	
-	for (UIView* obj in self.subviews.reverseObjectEnumerator) {
+	NSArray* zSorted = [self.subviews.reverseObjectEnumerator.allObjects sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult(UIView* _Nonnull obj1, UIView* _Nonnull obj2) {
+		return [@(obj2.layer.zPosition) compare:@(obj1.layer.zPosition)];
+	}];
+	
+	for (UIView* obj in zSorted) {
 		if([subview isDescendantOfView:obj] == NO)
 		{
 			CGContextSaveGState(ctx);
 			CGRect bounds = obj.bounds;
 			CGRect boundsInRootViewCoords = [rootView convertRect:bounds fromView:obj];
 			CGContextTranslateCTM(ctx, boundsInRootViewCoords.origin.x, boundsInRootViewCoords.origin.y);
-			[_DTXLayerForView(obj, afterUpdates) renderInContext:ctx];
+			CALayer* layer = _DTXLayerForView(obj, afterUpdates);
+			CGContextConcatCTM(ctx, [layer affineTransform]);
+			[layer renderInContext:ctx];
 			CGContextRestoreGState(ctx);
 		}
 		else
