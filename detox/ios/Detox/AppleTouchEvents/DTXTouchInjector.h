@@ -54,11 +54,12 @@ NS_ASSUME_NONNULL_BEGIN
  *  Initializes with the @c window to which touches will be delivered.
  *
  *  @param window The window that receives the touches.
+ *  @param callback An optional callback to be invoked upon every touch injection.
  *
  *  @return An instance of GREYSingleSequenceTouchInjector, initialized with the window to be
  *          touched.
  */
-- (instancetype)initWithWindow:(UIWindow *)window NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithWindow:(UIWindow *)window onTouchInectCallback:(nullable BOOL(^)(UITouchPhase))callback NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Enqueues @c touchInfo that will be materialized into a UITouch and delivered to application.

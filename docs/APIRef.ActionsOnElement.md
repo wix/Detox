@@ -23,7 +23,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
 - [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
-- [`.takeScreenshot([name])`](#takescreenshotname-android-only) **Android only**
+- [`.takeScreenshot(name)`](#takescreenshotname-android-only) **Android only**
 
 ### `tap(point)`
 
@@ -227,7 +227,10 @@ Retrieved attributes are:
 - `safeAreaInsets`—the safe area insets of the element, in element coordinate space <br/>
 - `elementSafeBounds`—the safe area bounds of the element, in element coordinate space <br/>
 - `date`—the date of the element (in case the element is a date picker) <br/>
-- `normalizedSliderPosition`—the normalized slider position (in case the element is a slider)
+- `normalizedSliderPosition`—the normalized slider position (in case the element is a slider) <br/>
+- `contentOffset`—the content offset (in case the element is a scroll view) <br/>
+- `contentInset`—the content inset (in case the element is a scroll view) <br/>
+- `adjustedContentInset`—the adjusted content inset (in case the element is a scroll view) <br/>
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 
@@ -242,9 +245,11 @@ jestExpect(multipleMatchedElements.elements.length).toBe(5);
 jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 ```
 
-### `takeScreenshot([name])` Android Only
+### `takeScreenshot(name)` Android Only
 
-Takes a screenshot containing the matched element. For full details on taking screenshots with Detox, refer to the [screen-shots guide](APIRef.Screenshots.md).
+Takes a screenshot of the matched element. For full details on taking screenshots with Detox, refer to the [screenshots guide](APIRef.Screenshots.md).
+
+`name`—the name of the screenshot
 
 ## Deprecated Methods
 
