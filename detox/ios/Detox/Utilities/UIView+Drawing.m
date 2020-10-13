@@ -119,7 +119,11 @@ CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
 		return;
 	}
 	
-	for (UIView* obj in self.subviews.reverseObjectEnumerator) {
+	NSArray* zSorted = [self.subviews.reverseObjectEnumerator.allObjects sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult(UIView* _Nonnull obj1, UIView* _Nonnull obj2) {
+		return [@(obj2.layer.zPosition) compare:@(obj1.layer.zPosition)];
+	}];
+	
+	for (UIView* obj in zSorted) {
 		if([subview isDescendantOfView:obj] == NO)
 		{
 			CGContextSaveGState(ctx);
