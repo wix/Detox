@@ -96,7 +96,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 If you happen to be troubleshooting Detox tests inside a complex script, or a failing CI build
 (e.g., on TeamCity or Jenkins), there is an escape-hatch feature for running Detox with
 some extra CLI args just by setting the `DETOX_ARGV_OVERRIDE` environment variable before
-re-running it again.
+rerunning it again.
 
 ```
 > export DETOX_ARGV_OVERRIDE="--forceExit -w 1 --testNamePattern='that hanging test' e2e/sanity/login.test.js"

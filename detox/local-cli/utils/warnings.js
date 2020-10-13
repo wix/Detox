@@ -18,7 +18,7 @@ const DETOX_ARGV_OVERRIDE_NOTICE = `
   \\____/  \\_/  \\___/\\_|      failing builds.
 
   Do not use this feature in scripts and do not rely on it
-  for anything that is not a quick-and-dirty re-run of your
+  for anything that is not a quick-and-dirty rerun of your
   failing E2E script.
 
   Use it sparingly for emergency Detox launches with extra
