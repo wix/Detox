@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const SET_AND_GET_ITERATIONS = 100;
-const GLOBAL_ITERATIONS = 3;
+const SET_AND_GET_ITERATIONS = 50;
+const GLOBAL_ITERATIONS = 4;
 
 export async function runStressTest() {
-  let keyCount = 0;
-  for (let globalCount = 0; globalCount < GLOBAL_ITERATIONS; globalCount++, keyCount += 10) {
+  for (let globalCount = 1, keyCount = 10;
+        globalCount <= GLOBAL_ITERATIONS;
+        globalCount++, keyCount += 10) {
     console.log(`Storage@Stress Global iteration #${globalCount}`);
     await AsyncStorage.clear();
 
