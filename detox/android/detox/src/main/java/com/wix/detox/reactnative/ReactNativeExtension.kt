@@ -99,13 +99,6 @@ object ReactNativeExtension {
         }
     }
 
-    @JvmStatic
-    fun toggleJSBridgeSynchronization(enable: Boolean) {
-        rnIdlingResources?.let {
-            if (enable) it.resumeJSBridgeIdlingResource() else it.pauseJSBridgeIdlingResource()
-        }
-    }
-
     private fun reloadReactNativeInBackground(reactApplication: ReactApplication) {
         val rnReloader = ReactNativeReLoader(InstrumentationRegistry.getInstrumentation(), reactApplication)
         rnReloader.reloadInBackground()

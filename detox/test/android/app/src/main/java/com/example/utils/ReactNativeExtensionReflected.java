@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 
 public class ReactNativeExtensionReflected {
     private final Method toggleUISynchronization;
-    private final Method toggleJSBridgeSynchronization;
     private final Method toggleTimersSynchronization;
     private final Method toggleNetworkSynchronization;
 
@@ -20,7 +19,6 @@ public class ReactNativeExtensionReflected {
         try {
             Class<?> clazz = Class.forName("com.wix.detox.reactnative.ReactNativeExtension");
             toggleUISynchronization = clazz.getDeclaredMethod("toggleUISynchronization", boolean.class);
-            toggleJSBridgeSynchronization = clazz.getDeclaredMethod("toggleJSBridgeSynchronization", boolean.class);
             toggleTimersSynchronization = clazz.getDeclaredMethod("toggleTimersSynchronization", boolean.class);
             toggleNetworkSynchronization = clazz.getDeclaredMethod("toggleNetworkSynchronization", boolean.class);
         } catch (Exception e) {
@@ -30,10 +28,6 @@ public class ReactNativeExtensionReflected {
 
     public void toggleUISynchronization(boolean enable) {
         invokeToggleMethod(toggleUISynchronization, enable);
-    }
-
-    public void toggleJSBridgeSynchronization(boolean enable) {
-        invokeToggleMethod(toggleJSBridgeSynchronization, enable);
     }
 
     public void toggleTimersSynchronization(boolean enable) {
