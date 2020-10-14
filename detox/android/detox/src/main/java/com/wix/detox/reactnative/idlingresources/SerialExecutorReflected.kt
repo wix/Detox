@@ -7,6 +7,7 @@ class SerialExecutorReflected(executor: Any) {
     private val reflected = Reflect.on(executor)
 
     fun hasPendingTasks(): Boolean = pendingTasks().isNotEmpty()
+    fun pendingTasksCount(): Int = pendingTasks().size
     fun hasActiveTask(): Boolean = (activeTask() != null)
     fun executeTask(runnable: Runnable) = executor().execute(runnable)
     fun executor(): Executor = reflected.get()

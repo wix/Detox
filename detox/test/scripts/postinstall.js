@@ -26,4 +26,15 @@ function patchHermesLocationForRN60Android() {
     }
   }
 }
+
+function dbgAsyncStorage() {
+  const fs = require('fs-extra');
+  fs.copySync('./AsyncStorageModule.java', 'node_modules/@react-native-community/async-storage/android/src/main/java/com/reactnativecommunity/asyncstorage/AsyncStorageModule.java')
+}
+
 patchHermesLocationForRN60Android();
+dbgAsyncStorage();
+
+module.exports = {
+  dbgAsyncStorage
+}

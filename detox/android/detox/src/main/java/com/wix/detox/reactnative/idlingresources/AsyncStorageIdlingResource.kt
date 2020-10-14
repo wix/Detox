@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.Detox
 import com.wix.detox.reactnative.helpers.RNHelpers
 import org.joor.Reflect
 import java.util.concurrent.Executor
@@ -36,10 +37,13 @@ open class AsyncStorageIdlingResource
     private val idleCheckTaskImpl = Runnable {
         with(moduleReflected.sexecutor) {
             synchronized(executor()) {
+                clearIdleCheckTask()
+
                 if (hasPendingTasks()) {
-                    executeTask(idleCheckTask!!)
+                    Log.d(LOG_TAG, "[inspection task] Busy!, pendingTasks#=${pendingTasksCount()}")
+                    enqueueIdleCheckTask()
                 } else {
-                    clearIdleCheckTask()
+                    Log.d(LOG_TAG, "[inspection task] IDLE! (calling callback)")
                     callback?.onTransitionToIdle()
                 }
             }
@@ -47,14 +51,16 @@ open class AsyncStorageIdlingResource
     }
 
     override fun getName(): String = javaClass.name
+
     override fun isIdleNow(): Boolean =
         checkIdle().also { idle ->
             if (!idle) {
-                Log.d(LOG_TAG, "Async-storage is busy!")
                 enqueueIdleCheckTask()
             }
         }
+
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
+        Log.d(LOG_TAG, "Registering a new resource callback")
         this.callback = callback
         enqueueIdleCheckTask()
     }
@@ -62,16 +68,20 @@ open class AsyncStorageIdlingResource
     private fun checkIdle(): Boolean =
         with(moduleReflected.sexecutor) {
             synchronized(executor()) {
-                !hasActiveTask() && !hasPendingTasks()
+                (!hasActiveTask() && !hasPendingTasks()).also { result: Boolean ->
+                    Log.d(LOG_TAG, "[idle check]: ${if (result) "IDLE" else "busy! pendingTasks#=${pendingTasksCount()}"}")
+                }
             }
         }
-
     private fun enqueueIdleCheckTask() =
         with(moduleReflected.sexecutor) {
             synchronized(executor()) {
                 if (idleCheckTask == null) {
                     initIdleCheckTask()
+                    Log.d(LOG_TAG, "Enqueued an inspection task!")
                     executeTask(idleCheckTask!!)
+                } else {
+                    Log.d(LOG_TAG, "NOT enqueueing an inspection task")
                 }
             }
         }
@@ -88,10 +98,10 @@ open class AsyncStorageIdlingResource
         private const val LOG_TAG = "AsyncStorageIR"
 
         fun createIfNeeded(reactContext: ReactContext, legacy: Boolean): AsyncStorageIdlingResource? {
-            Log.d(LOG_TAG, "Checking whether a custom IR for Async-Storage is required... (legacy=$legacy)")
+            Log.d(Detox.LOG_TAG, "Checking whether a custom IR for Async-Storage is required... (legacy=$legacy)")
 
             return RNHelpers.getNativeModule(reactContext, className(legacy))?.let { module ->
-                Log.d(LOG_TAG, "IR for Async-Storage is required! (legacy=$legacy)")
+                Log.d(Detox.LOG_TAG, "IR for Async-Storage is required! (legacy=$legacy)")
                 createInstance(module, legacy)
             }
         }

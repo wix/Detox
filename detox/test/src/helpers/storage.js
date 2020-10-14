@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
 const SET_AND_GET_ITERATIONS = 100;
-const GLOBAL_ITERATIONS = 3;
+const GLOBAL_ITERATIONS = 4;
 
 export async function runStressTest() {
-  let keyCount = 0;
+  let keyCount = 10;
   for (let globalCount = 0; globalCount < GLOBAL_ITERATIONS; globalCount++, keyCount += 10) {
     console.log(`Storage@Stress Global iteration #${globalCount}`);
     await AsyncStorage.clear();
@@ -21,17 +21,20 @@ async function _setAndGetGeneratedData(keyCount) {
 }
 
 async function _storeGeneratedData(keyCount) {
+  console.log(`Storage@Stress Setting up ${keyCount} keys`);
   for (let index = 0; index < keyCount; index++) {
     const key = `@key${index}`;
     const value = {
       index,
       text: `Greetings from your SSD! I'm the stored-value of ${key} :-)`,
     };
+    console.log(`Storage@Stress storing value for ${key}`);
     await AsyncStorage.setItem(key, JSON.stringify(value));
   }
 }
 
 async function _getAllData() {
+  console.log('Storage@Stress Reading back all keys...');
   const keys = await AsyncStorage.getAllKeys();
   await AsyncStorage.multiGet(keys)
 }
