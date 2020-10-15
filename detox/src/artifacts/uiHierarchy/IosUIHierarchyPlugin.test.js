@@ -96,14 +96,26 @@ describe('IosUIHierarchyPlugin', () => {
       plugin = new IosUIHierarchyPlugin({ api, client });
     });
 
-    it('should propogate launchArg to native', async () => {
+    it('should propagate -detoxDisableHierarchyDump YES to native', async () => {
       const event = {
         launchArgs: {}
       };
 
       await plugin.onTestStart(testSummary);
       await plugin.onBeforeLaunchApp(event);
-      expect(event.launchArgs.detoxDisableHierarchyDump).toBeDefined();
+      expect(event.launchArgs.detoxDisableHierarchyDump).toBe('YES');
+    });
+
+    it('should not propagate -detoxDisableHierarchyDump YES to native if there is a custom value set', async () => {
+      const event = {
+        launchArgs: {
+          detoxDisableHierarchyDump: 'NO'
+        }
+      };
+
+      await plugin.onTestStart(testSummary);
+      await plugin.onBeforeLaunchApp(event);
+      expect(event.launchArgs.detoxDisableHierarchyDump).toBe('NO');
     });
 
     it('should remove the file artifact', () => {

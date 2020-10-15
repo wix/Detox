@@ -174,6 +174,13 @@ describe('CLI', () => {
       });
     });
 
+    test('--app-launch-args should be passed as an environment variable', async () => {
+      await run(`--app-launch-args "--debug yes"`);
+      expect(cliCall().env).toEqual({
+        appLaunchArgs: '--debug yes',
+      });
+    });
+
     test('--use-custom-logger false should be prevent passing CLI argument', async () => {
       await run(`--use-custom-logger false`);
       expect(cliCall().command).not.toContain('--use-custom-logger');
@@ -515,6 +522,13 @@ describe('CLI', () => {
       await run(`--device-launch-args "--verbose"`);
       expect(cliCall().env).toEqual(expect.objectContaining({
         deviceLaunchArgs: '--verbose'
+      }));
+    });
+
+    test('--app-launch-args should be passed as an environment variable', async () => {
+      await run(`--app-launch-args "--debug yes"`);
+      expect(cliCall().env).toEqual(expect.objectContaining({
+        appLaunchArgs: '--debug yes',
       }));
     });
 
