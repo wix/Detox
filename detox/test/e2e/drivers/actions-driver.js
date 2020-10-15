@@ -5,7 +5,7 @@ const driver = {
     testId: 'UniqueId819',
     get coordinates() {
       return {
-        x: (device.getPlatform() === 'ios' ? 180 : 125),
+        x: (device.getPlatform() === 'ios' ? 180 : 100),
         y: 107,
       };
     },
@@ -18,7 +18,7 @@ const driver = {
 
   doubleTapsElement: {
     testId: 'doubleTappableText',
-    coordinates: { x: 200, y: 160 },
+    coordinates: { x: 180, y: 160 },
     tapOnce: () => element(by.id(driver.doubleTapsElement.testId)).tap(),
     tapTwice: async () => {
       await driver.doubleTapsElement.tapOnce();
@@ -33,6 +33,11 @@ const driver = {
     },
     assertTapsCount: (count) => expect(element(by.id(driver.doubleTapsElement.testId))).toHaveText(`Double-Taps: ${count}`),
     assertNoTaps: () => driver.doubleTapsElement.assertTapsCount(0),
+  },
+
+  sluggishTapElement: {
+    testId: 'sluggishTappableText',
+    tap: () => element(by.id(driver.sluggishTapElement.testId)).tap()
   }
 };
 

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Choreographer;
 import android.view.View;
 
+import com.wix.detox.espresso.common.utils.UiControllerUtils;
+
 import org.hamcrest.core.IsAnything;
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -25,10 +27,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 public class UiAutomatorHelper {
     private static final String LOG_TAG = "detox";
 
-    private static final String FIELD_UI_CONTROLLER = "uiController";
-
     private static final String METHOD_LOOP_UNTIL_IDLE = "loopMainThreadUntilIdle";
-    private static final String METHOD_LOOP_AT_LEAST = "loopMainThreadForAtLeast";
 
     /**
      * This triggers a full Espresso sync. It's intended use is to sync UIAutomator calls.
@@ -37,12 +36,11 @@ public class UiAutomatorHelper {
         // I want to invoke Espresso's sync mechanism manually.
         // This turned out to be amazingly difficult. This below is the
         // nicest solution I could come up with.
-        final ViewInteraction interaction = Espresso.onView(new IsAnything<View>());
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Reflect.on(interaction).field(FIELD_UI_CONTROLLER).call(METHOD_LOOP_UNTIL_IDLE);
+                    Reflect.on(UiControllerUtils.getUiController()).call(METHOD_LOOP_UNTIL_IDLE);
                 } catch (ReflectException e) {
                     Log.e(LOG_TAG, "Failed to sync Espresso manually.", e.getCause());
                 }
@@ -59,12 +57,11 @@ public class UiAutomatorHelper {
         // I want to invoke Espresso's sync mechanism manually.
         // This turned out to be amazingly difficult. This below is the
         // nicest solution I could come up with.
-        final ViewInteraction interaction = Espresso.onView(new IsAnything<View>());
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Reflect.on(interaction).field(FIELD_UI_CONTROLLER).call(METHOD_LOOP_AT_LEAST, millis);
+                    Reflect.on(UiControllerUtils.getUiController()).call(METHOD_LOOP_UNTIL_IDLE, millis);
                 } catch (ReflectException e) {
                     Log.e(LOG_TAG, "Failed to sync Espresso manually.", e.getCause());
                 }
