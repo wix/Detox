@@ -1,67 +1,71 @@
-jest.mock('../utils/argparse');
-
 describe('collectCliConfig', () => {
   let collectCliConfig;
   let argv, env;
+  let __env__;
 
   beforeEach(() => {
+    __env__ = process.env;
+    env = process.env = { ...__env__ };
     argv = {};
-    env = {};
-
-    require('../utils/argparse').getArgValue
-      .mockImplementation(key => env[key]);
 
     collectCliConfig = require('./collectCliConfig');
   });
 
+  afterEach(() => {
+    process.env = __env__;
+  });
+
   describe.each([
-    ['artifactsLocation', 'artifacts-location'],
-    ['recordLogs', 'record-logs'],
-    ['takeScreenshots', 'take-screenshots'],
-    ['recordVideos', 'record-videos'],
-    ['recordPerformance', 'record-performance'],
-    ['recordTimeline', 'record-timeline'],
-    ['cleanup', 'cleanup'],
-    ['configPath', 'config-path'],
-    ['configuration', 'configuration'],
-    ['debugSynchronization', 'debug-synchronization'],
-    ['deviceLaunchArgs', 'device-launch-args'],
-    ['appLaunchArgs', 'app-launch-args'],
-    ['deviceName', 'device-name'],
-    ['forceAdbInstall', 'force-adb-install'],
-    ['gpu', 'gpu'],
-    ['headless', 'headless'],
-    ['jestReportSpecs', 'jest-report-specs'],
-    ['keepLockFile', 'keepLockFile'],
-    ['loglevel', 'loglevel'],
-    ['noColor', 'no-color'],
-    ['reuse', 'reuse'],
-    ['runnerConfig', 'runner-config'],
-    ['useCustomLogger', 'use-custom-logger'],
-    ['workers', 'workers'],
-    ['inspectBrk', 'inspect-brk'],
-  ])('.%s property', (key, argName) => {
+    ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',    'artifacts-location'],
+    ['recordLogs',           'DETOX_RECORD_LOGS',           'record-logs'],
+    ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',      'take-screenshots'],
+    ['recordVideos',         'DETOX_RECORD_VIDEOS',         'record-videos'],
+    ['recordPerformance',    'DETOX_RECORD_PERFORMANCE',    'record-performance'],
+    ['recordTimeline',       'DETOX_RECORD_TIMELINE',       'record-timeline'],
+    ['cleanup',              'DETOX_CLEANUP',               'cleanup'],
+    ['configPath',           'DETOX_CONFIG_PATH',           'config-path'],
+    ['configuration',        'DETOX_CONFIGURATION',         'configuration'],
+    ['debugSynchronization', 'DETOX_DEBUG_SYNCHRONIZATION', 'debug-synchronization'],
+    ['deviceLaunchArgs',     'DETOX_DEVICE_LAUNCH_ARGS',    'device-launch-args'],
+    ['appLaunchArgs',        'DETOX_APP_LAUNCH_ARGS',       'app-launch-args'],
+    ['deviceName',           'DETOX_DEVICE_NAME',           'device-name'],
+    ['forceAdbInstall',      'DETOX_FORCE_ADB_INSTALL',     'force-adb-install'],
+    ['gpu',                  'DETOX_GPU',                   'gpu'],
+    ['headless',             'DETOX_HEADLESS',              'headless'],
+    ['jestReportSpecs',      'DETOX_JEST_REPORT_SPECS',     'jest-report-specs'],
+    ['keepLockFile',         'DETOX_KEEP_LOCK_FILE',        'keepLockFile'],
+    ['loglevel',             'DETOX_LOGLEVEL',              'loglevel'],
+    ['noColor',              'DETOX_NO_COLOR',              'no-color'],
+    ['reuse',                'DETOX_REUSE',                 'reuse'],
+    ['runnerConfig',         'DETOX_RUNNER_CONFIG',         'runner-config'],
+    ['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',     'use-custom-logger'],
+    ['workers',              'DETOX_WORKERS',               'workers'],
+    ['inspectBrk',           'DETOX_INSPECT_BRK',           'inspect-brk'],
+  ])('.%s property' , (key, envName, argName) => {
+    const legacyEnvName = key;
+
     beforeEach(() => {
+      env[legacyEnvName] = Math.random();
+      env[envName] = Math.random();
       argv[argName] = Math.random();
-      env[argName] = Math.random();
     });
 
-    it('should be extracted from argv', () => {
-      argv[argName] = Math.random();
-      expect(collectCliConfig({ argv })[key]).toBe(argv[argName]);
+    it('should be extracted from argv if it is provided', () => {
+      const expected = argv[argName];
+      expect(collectCliConfig({ argv })[key]).toBe(expected);
     });
 
-    it('should be extracted from environment (via argparse)', () => {
-      argv = undefined;
-      env[argName] = Math.random();
+    it('should be extracted from environment otherwise, preferring DETOX_SNAKE_CASE', () => {
+      const expected = env[envName];
 
-      expect(collectCliConfig({ argv })[key]).toBe(env[argName]);
+      expect(collectCliConfig({})[key]).toBe(expected);
     });
 
-    it('should be extracted from argv, even if argparse has it too', () => {
-      argv[argName] = Math.random();
-      env[argName] = Math.random();
-      expect(collectCliConfig({ argv })[key]).toBe(argv[argName]);
+    it('should be extracted from environment otherwise, when there is no DETOX_SNAKE_CASE, only camelCase', () => {
+      delete env[envName];
+      const expected = env[legacyEnvName];
+
+      expect(collectCliConfig({})[key]).toBe(expected);
     });
   });
 });
