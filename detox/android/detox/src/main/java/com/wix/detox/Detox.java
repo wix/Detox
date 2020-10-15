@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.wix.detox.config.DetoxConfig;
+import com.wix.detox.espresso.UiControllerProxying;
 
 import java.util.concurrent.TimeUnit;
 
@@ -191,6 +192,8 @@ public final class Detox {
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
         DetoxConfig.CONFIG = detoxConfig;
         detoxConfig.apply();
+
+        UiControllerProxying.tapIntoEventsInjectorStrategy();
 
         sActivityTestRule = activityTestRule;
 
