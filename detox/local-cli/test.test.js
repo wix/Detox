@@ -663,7 +663,9 @@ describe('CLI', () => {
       process.env.DETOX_ARGV_OVERRIDE = '--inspect-brk --testNamePattern "[$PLATFORM] tap" e2e/sanity/*.test.js';
       await run();
 
-      expect(cliCall().command).toMatch(/^node --inspect-brk.* --testNamePattern '\[ios\] tap'.* e2e\/sanity\/\*\.test.js$/);
+      const pattern = new RegExp(`^node --inspect-brk.* --testNamePattern ${quote('\\[ios\\] tap')}.* e2e/sanity/\\*\\.test.js$`);
+
+      expect(cliCall().command).toMatch(pattern);
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
     });
   });
