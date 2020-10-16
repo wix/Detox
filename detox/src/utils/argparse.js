@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const argv = require('minimist')(process.argv.slice(2));
 const {escape} = require('./pipeCommands');
-const toUpper = (s) => s.toUpperCase();
 
 function getArgValue(key) {
   let value;
@@ -9,14 +8,10 @@ function getArgValue(key) {
   if (argv && argv[key]) {
     value = argv[key];
   } else {
-    const resolvedKey = resolveProcessEnvKey([
-      toUpper(`DETOX_${_.snakeCase(key)}`),
+    value = getEnvVar([
+      `DETOX_${_.snakeCase(key)}`.toUpperCase(),
       _.camelCase(key),
     ]);
-
-    if (resolvedKey !== undefined) {
-      value = process.env[resolvedKey];
-    }
 
     if (value === 'undefined') {
       value = undefined;
@@ -26,18 +21,27 @@ function getArgValue(key) {
   return value;
 }
 
-function resolveProcessEnvKey(searchedKeys) {
-  let envKeys = _.keys(process.env);
+function getEnvVar(aliases) {
+  const env = getNormalizedEnv();
 
-  /* istanbul ignore next */
-  if (process.platform === 'win32') {
-    searchedKeys = searchedKeys.map(toUpper);
-    envKeys = envKeys.map(toUpper);
+  for (const key of getNormalizedAliases(aliases)) {
+    if (env[key] !== undefined) {
+      return env[key];
+    }
   }
-
-  const keySet = new Set(envKeys);
-  return searchedKeys.find(key => keySet.has(key));
 }
+
+const getNormalizedEnv = _.once(() => {
+  return /* istanbul ignore next */ process.platform === 'win32'
+    ? _.mapKeys(process.env, (value, key) => key.toUpperCase())
+    : { ...process.env };
+});
+
+const getNormalizedAliases = (aliases) => {
+  return /* istanbul ignore next */ process.platform === 'win32'
+    ? aliases.map(key => key.toUpperCase())
+    : aliases;
+};
 
 function getFlag(key) {
   if (argv && argv[key]) {
