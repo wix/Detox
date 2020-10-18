@@ -40,6 +40,8 @@ end
 
 target 'example' do
   rn_pods
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
 end
 
 target 'example_ci' do

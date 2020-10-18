@@ -37,7 +37,7 @@
     "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.62.x",
+    "react-native": "0.63.x",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {

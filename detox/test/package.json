@@ -38,7 +38,8 @@
     "jest-junit": "^10.0.0",
     "lodash": "^4.14.1",
     "nyc": "^15.1.0",
-    "pngjs": "^3.4.0"
+    "pngjs": "^3.4.0",
+    "react-native-webview": "7.0.1"
   },
   "jest-junit": {
     "suiteName": "Detox E2E tests",
@@ -111,9 +112,6 @@
       },
       "android.emu.debug": {
         "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
-        "utilBinaryPaths": [
-          "./cache/test-butler-app.apk"
-        ],
         "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "device": {
@@ -122,9 +120,6 @@
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
-        "utilBinaryPaths": [
-          "./cache/test-butler-app.apk"
-        ],
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "device": {
@@ -149,9 +144,6 @@
       },
       "android.emu.debug.fromSource": {
         "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
-        "utilBinaryPaths": [
-          "./cache/test-butler-app.apk"
-        ],
         "build": "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "device": {

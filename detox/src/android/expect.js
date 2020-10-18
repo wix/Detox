@@ -475,6 +475,7 @@ class AndroidExpect {
     this.waitFor = this.waitFor.bind(this);
   }
 
+
   element(matcher) {
     return new Element(this._invocationManager, this._emitter, matcher);
   }

@@ -1,5 +1,5 @@
 const funpermaproxy = require('funpermaproxy');
-const Detox = require('./Detox');
+const    = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
 const logger = require('./utils/logger');
@@ -30,6 +30,7 @@ class DetoxExportWrapper {
 
     this._defineProxy('by');
     this._defineProxy('device');
+    this._defineProxy('web');
   }
 
   async init(configOverride, userParams) {

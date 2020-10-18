@@ -107,6 +107,7 @@ class example extends Component {
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
+        {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
 
         { /* TODO: Push this into a dedicated screen */ }
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>

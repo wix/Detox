@@ -165,15 +165,20 @@ class Detox {
 
     await this.device.prepare();
 
-    const matchers = matchersRegistry.resolve(this.device, {
+    const {matchers, webMatchers} = matchersRegistry.resolve(this.device, {
       invocationManager,
       emitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
+    Object.assign(this, { web: webMatchers });
+
+    console.log("matchers", matchers);
+    console.log("webMatchers", webMatchers);
 
     if (behaviorConfig.exposeGlobals) {
       Object.assign(Detox.global, {
         ...matchers,
+        web: webMatchers,
         device: this.device,
       });
     }

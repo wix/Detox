@@ -5,13 +5,16 @@ const { isNumber, isString, isBoolean, isArray, isDefined } = require('../core/t
 
 const typeCheckInterfaces = {
   'ArrayList<String>': isArray,
+  'ArrayList<Object>': isArray,
   'Matcher<View>': null, // isOfClass('Matcher') would be better,
   boolean: isBoolean,
   Double: isNumber,
   Integer: isNumber,
   String: isString,
   ViewAction: null, // there are optional view actions
-  ViewInteraction: null // there are optional view actions
+  ViewInteraction: null, // there are optional view actions
+  WebInteraction: null,
+  Atom: null
 };
 
 const contentSanitizersForFunction = {
@@ -60,6 +63,7 @@ module.exports = generator({
   contentSanitizersForType,
   supportedTypes: [
     'ArrayList<String>',
+    'ArrayList<Object>',
     'boolean',
     'double',
     'Double',
@@ -68,12 +72,16 @@ module.exports = generator({
     'Matcher<View>',
     'String',
     'ViewAction',
-    'ViewInteraction'
+    'ViewInteraction',
+    'WebInteraction',
+    'Atom'
   ],
   renameTypesMap: {
     int: 'Integer', // TODO: add test
     double: 'Double',
-    ViewInteraction: 'Invocation'
+    ViewInteraction: 'Invocation',
+    WebInteraction: 'Invocation',
+    Atom: 'Invocation'
   },
   classValue: ({ package: pkg, name }) => `${pkg}.${name}`
 });
