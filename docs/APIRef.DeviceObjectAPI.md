@@ -279,9 +279,12 @@ Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/18.user-activities.test.js)
 
 ### `device.setOrientation(orientation)`
+
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
-Currently only available in the iOS Simulator.
-Check out Detox's [own test suite](../detox/test/e2e/06.device-orientation.test.js)
+
+**Note:** Setting device orientation is only supported for iPhone devices, or for apps declared as requiring full screen on iPad. For all other cases, the current test will be failed.
+
+Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test.js)
 
 ### `device.setLocation(lat, lon)`
 >Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
