@@ -89,6 +89,8 @@ dependencies {
     fromSourceImplementation(project(path: ':ReactAndroid'))
     // noinspection GradleDynamicVersion
     fromBinImplementation 'com.facebook.react:react-native:+'
+    // noinspection GradleDynamicVersion
+    implementation(project(path: ':AsyncStorage'))
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'

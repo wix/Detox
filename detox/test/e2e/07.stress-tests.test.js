@@ -34,4 +34,13 @@ describe('StressTests', () => {
       await element(by.text('Consecutive Stress ' + i)).tap();
     }
   });
+
+  it(':android: should handle tap during storage stress', async () => {
+    try {
+      await element(by.text('Storage Stress')).tap();
+      await expect(element(by.text('StorageStress'))).toBeVisible();
+    } finally {
+      await device.reloadReactNative();
+    }
+  });
 });

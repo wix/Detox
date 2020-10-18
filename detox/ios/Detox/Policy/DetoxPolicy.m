@@ -32,6 +32,11 @@ static DetoxPolicy* _activePolicy;
 	return 0.75;
 }
 
+- (NSUInteger)consecutiveTouchPointsWithSameContentOffsetThreshold
+{
+	return 2;
+}
+
 + (NSString*)descriptionForDouble:(CGFloat)number
 {
 	static NSNumberFormatter* formatter;

@@ -207,21 +207,18 @@ DTX_DIRECT_MEMBERS
 	
 	DTXAssert(indexOfTestedWindow != NSNotFound, @"Window hierarchy mutated while iterated; should not happen");
 	
-	if(testedView != nil)
-	{
-		[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
-	}
-	else
+	if(testedView == nil)
 	{
 		[UIColor.blackColor setFill];
 		[[UIBezierPath bezierPathWithRect:windowToUse.bounds] fill];
-		[windowToUse drawViewHierarchyInRect:windowToUse.bounds afterScreenUpdates:NO];
 	}
+	
+	[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
 	
 	for (NSUInteger idx = indexOfTestedWindow + 1; idx < windows.count; idx++) {
 		UIWindow* currentWindow = windows[idx];
 		
-		[currentWindow drawViewHierarchyInRect:currentWindow.bounds afterScreenUpdates:NO];
+		[currentWindow dtx_drawViewHierarchyUpToSubview:nil inRect:currentWindow.bounds afterScreenUpdates:NO];
 	}
 	
 	//Overlay the keyboard scene windows on top
@@ -233,7 +230,7 @@ DTX_DIRECT_MEMBERS
 			windows = [UIWindow dtx_allWindowsForScene:scene];
 			
 			for (UIWindow* keyboardSceneWindow in windows) {
-				[keyboardSceneWindow drawViewHierarchyInRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
+				[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
 			}
 		}
 	}
@@ -447,6 +444,13 @@ DTX_DIRECT_MEMBERS
 	
 	rv[@"hittable"] = @(self.dtx_isHittable);
 	rv[@"visible"] = @(self.dtx_isVisible);
+	
+	if([self isKindOfClass:UIScrollView.class])
+	{
+		rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
+		rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
+		rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
+	}
 	
 	if([self isKindOfClass:UISlider.class])
 	{

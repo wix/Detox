@@ -129,6 +129,10 @@ module.exports = {
     group: 'Execution:',
     describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.',
   },
+  'app-launch-args': {
+    group: 'Execution:',
+    describe: 'Custom arguments to pass (through) onto the app every time it is launched.',
+  },
   'use-custom-logger': {
     boolean: true,
     default: true,

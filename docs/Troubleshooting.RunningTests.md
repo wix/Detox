@@ -10,6 +10,7 @@
 * [Compare to a working setup](#compare-to-a-working-setup)
 * [Take a look at past issues](#take-a-look-at-past-issues)
 * [How to open a new issue](#how-to-open-a-new-issue)
+* [A component is not visible](#a-component-is-not-visible)
 
 ### Enable trace mode
 
@@ -178,6 +179,30 @@ in `package.json` (no deprecation warnings starting from `12.4.0`), as shown bel
 
 Please mind that if your e2e tests are located at the default path (`e2e`),
 then you don't need to add `"specs"` property explicitly to `package.json`.
+
+### A component is not visible
+
+On iOS, you may run in a situation, when one of the interactions (tap, scroll, etc.) with some element fails with an error like:
+
+```
+Test Failed: View "<RCTScrollView: 0x7f8d32296d70>" is not visible: view does not pass visibility threshold (0% visible of 75% required)
+```
+
+1. Try retriving `ui.viewhierarchy` artifact — sometimes examining the hierarchy visually can give you insights.
+Add a line `"uiHierarchy": "enabled"` to your artifacts configuration in `.detoxrc.js`, like in an example here: [Artifacts Configuration](https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration). After a rerun, you should find
+a `ui.viewhierarchy` in a folder of your failing test. Please mind that you need Xcode 12 at least to open `*.viewhierarchy` files.
+
+2. Besides, you can rerun your iOS app with `-detoxDebugVisibility YES` launch argument (do not confuse with Detox CLI arguments). What will happen is, for each view that fails visibility, two images will be saved in your `~/Desktop` folder (e.g., `DETOX_VISIBILITY_CustomView_0x7ffe9f50df10_TEST.png`):
+
+| Visible | Internals |
+|:-------:|:---------:|
+|<img alt="visible" src="https://user-images.githubusercontent.com/2270433/94178906-68872380-fea4-11ea-845c-c55c25b68c0e.png" height=480>|<img alt="internals" src="https://user-images.githubusercontent.com/2270433/94178919-6c1aaa80-fea4-11ea-8db6-64f1f4b21361.png" height=480>|
+
+The first is supposed to show what is seen on screen. The second shows the internal buffer that Detox tests for visibility; if the pixels aren't transparent enough and less than 75% of tested region is not transparent, the view is not considered visible.
+
+If you are developing a React Native app, then the following applies. If, for instance, you see that tapping fails due to a view with `pointerEvents="none"` obscuring your target — well, the only solutions are: either to make the obscurer a descendant of your target (instead of being a sibling), or to tap on the parent container.
+
+If you see that your issue cannot be solved via testID replacement or a simple hierarchy rearrangment, then there's a chance this is a bug in Detox. Make sure to provide your `ui.viewhierarchy` artifact, the pictures generated with `-detoxDebugVisiblity` option and a comprehensive description of the issue backed up with cold and strong arguments.
 
 ### Debug view hierarchy
 

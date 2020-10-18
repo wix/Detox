@@ -21,7 +21,8 @@
 
 #pragma mark - Implementation
 
-@implementation DTXSyntheticEvents {
+@implementation DTXSyntheticEvents
+{
 	/**
 	 *  The touch injector that completes the touch sequence for an event.
 	 */
@@ -31,20 +32,43 @@
 	 *  The last injected touch point.
 	 */
 	NSValue *_lastInjectedTouchPoint;
+	
+	BOOL (^_onTouchCallback)(UITouchPhase);
+}
+
+- (instancetype)initWithOnTouchCallback:(nullable BOOL (^)(UITouchPhase))onTouchCallback
+{
+	self = [super init];
+	if(self)
+	{
+		_onTouchCallback = onTouchCallback;
+	}
+	
+	return self;
 }
 
 + (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration
 {
-	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnLastTouch:holdDuration];
+	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnLastTouch:holdDuration onTouchCallback:nil];
+}
+
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration onTouchCallback:(BOOL (^)(UITouchPhase))callback
+{
+	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnLastTouch:holdDuration onTouchCallback:callback];
 }
 
 + (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration
+{
+	[self touchAlongMultiplePaths:touchPaths relativeToWindow:window holdDurationOnLastTouch:holdDuration onTouchCallback:nil];
+}
+
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration onTouchCallback:(BOOL (^)(UITouchPhase))callback
 {
 	NSParameterAssert(touchPaths.count >= 1);
 	NSParameterAssert(holdDuration >= 0);
 	
 	NSUInteger firstTouchPathSize = [touchPaths[0] count];
-	DTXSyntheticEvents *eventGenerator = [DTXSyntheticEvents new];
+	DTXSyntheticEvents *eventGenerator = [[DTXSyntheticEvents alloc] initWithOnTouchCallback:callback];
 	
 	// Inject "begin" event for the first points of each path.
 	[eventGenerator dtx_beginTouchesAtPoints:[self dtx_objectsAtIndex:0 ofArrays:touchPaths] relativeToWindow:window immediateDelivery:NO];
@@ -120,7 +144,7 @@
 - (void)dtx_beginTouchesAtPoints:(NSArray *)points relativeToWindow:(UIWindow *)window immediateDelivery:(BOOL)immediate
 {
 	NSAssert(_touchInjector == nil, @"Cannot call this method more than once until endTouch is called.");
-	_touchInjector = [[DTXTouchInjector alloc] initWithWindow:window];
+	_touchInjector = [[DTXTouchInjector alloc] initWithWindow:window onTouchInectCallback:_onTouchCallback];
 	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points phase:DTXTouchInfoPhaseTouchBegan deliveryTimeDeltaSinceLastTouch:0 expendable:NO];
 	[_touchInjector enqueueTouchInfoForDelivery:touchInfo];
 	

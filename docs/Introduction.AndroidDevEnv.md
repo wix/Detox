@@ -1,4 +1,4 @@
-# Setting Up an Android Development & Testing Envrionment
+# Setting Up an Android Development & Testing Environment
 
 This guide provides some core practices to follow in setting up a stable, reliable environment for running automated UI tests using Android emulators (using Detox, in particular) -- be it on a personal, _local_ computer, or a powerful CI machine.
 

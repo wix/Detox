@@ -33,8 +33,14 @@ typedef NS_ENUM(NSInteger, GREYSyntheticEventInjectionErrorCode) {
  */
 @interface DTXSyntheticEvents : NSObject
 
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
 + (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration onTouchCallback:(nullable BOOL (^)(UITouchPhase))callback;
+
 + (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration onTouchCallback:(nullable BOOL (^)(UITouchPhase))callback;
 
 /**
  *  Begins interaction with a new touch starting at a specified point within a specified

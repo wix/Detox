@@ -74,18 +74,28 @@ object ReactNativeExtension {
     }
 
     @JvmStatic
-    fun toggleNetworkSynchronization(enable: Boolean) {
-        if (!ReactNativeInfo.isReactNativeApp()) {
-            return
-        }
-
+    fun setNetworkSynchronization(enable: Boolean) {
         rnIdlingResources?.setNetworkSynchronization(enable)
+    }
+
+    @JvmStatic
+    fun toggleNetworkSynchronization(enable: Boolean) {
+        rnIdlingResources?.let {
+            if (enable) it.resumeNetworkSynchronization() else it.pauseNetworkSynchronization()
+        }
     }
 
     @JvmStatic
     fun toggleTimersSynchronization(enable: Boolean) {
         rnIdlingResources?.let {
             if (enable) it.resumeRNTimersIdlingResource() else it.pauseRNTimersIdlingResource()
+        }
+    }
+
+    @JvmStatic
+    fun toggleUISynchronization(enable: Boolean) {
+        rnIdlingResources?.let {
+            if (enable) it.resumeUIIdlingResource() else it.pauseUIIdlingResource()
         }
     }
 

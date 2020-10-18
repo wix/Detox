@@ -13,7 +13,7 @@ class DetoxCrashHandler(private val wsClient: WebSocketClient) {
     }
 
     companion object {
-        val LOG_TAG: String = DetoxCrashHandler::class.java.simpleName
+        private val LOG_TAG: String = DetoxCrashHandler::class.java.simpleName
 
         private const val ACTION_NAME = "AppWillTerminateWithError"
         private const val MESSAGE_ID = -10000L

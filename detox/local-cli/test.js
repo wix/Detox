@@ -2,15 +2,16 @@ const _ = require('lodash');
 const cp = require('child_process');
 const path = require('path');
 const unparse = require('yargs-unparser');
+const { parse, quote } = require('./utils/shellQuote');
+const splitArgv = require('./utils/splitArgv');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
-const shellQuote = require('./utils/shellQuote');
-const splitArgv = require('./utils/splitArgv');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
+const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./utils/warnings');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
@@ -24,7 +25,6 @@ module.exports.handler = async function test(argv) {
   const prepareArgs = choosePrepareArgs({
     cliConfig,
     runner,
-    platform,
     detoxArgs,
   });
 
@@ -49,7 +49,22 @@ module.exports.handler = async function test(argv) {
   await runTestRunnerWithRetries(forwardedArgs, retries);
 };
 
-function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
+module.exports.middlewares = [
+  function applyEnvironmentVariableAddendum(argv, yargs) {
+    if (process.env.DETOX_ARGV_OVERRIDE) {
+      log.warn(DETOX_ARGV_OVERRIDE_NOTICE);
+
+      return yargs.parse([
+        ...process.argv.slice(2),
+        ...parse(process.env.DETOX_ARGV_OVERRIDE),
+      ]);
+    }
+
+    return argv;
+  }
+];
+
+function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
     if (hasMultipleWorkers(cliConfig)) {
       log.warn('Cannot use -w, --workers. Parallel test execution is only supported with iOS and Jest');
@@ -122,7 +137,7 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
 
       ...passthrough,
     },
-    env: _.pick(cliConfig, ['deviceLaunchArgs']),
+    env: _.pick(cliConfig, ['appLaunchArgs', 'deviceLaunchArgs']),
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
   };
 }
@@ -135,7 +150,7 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     argv: {
       color: !cliConfig.noColor && undefined,
       config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
-      testNamePattern: platformFilter ? shellQuote(`^((?!${platformFilter}).)*$`) : undefined,
+      testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
       maxWorkers: cliConfig.workers,
 
       ...passthrough,
@@ -159,6 +174,7 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
         'recordTimeline',
         'deviceName',
         'deviceLaunchArgs',
+        'appLaunchArgs',
         'useCustomLogger',
         platform === 'android' && 'forceAdbInstall',
       ])),
@@ -183,9 +199,13 @@ async function resetLockFile({ platform }) {
   }
 }
 
-function launchTestRunner({ argv, env, specs, rerunIndex }) {
+function launchTestRunner({ argv, env, specs }) {
   const { $0: command, ...restArgv } = argv;
-  const fullCommand = [command, ...unparse(restArgv), ...specs].join(' ');
+  const fullCommand = [
+    command,
+    quote(unparse(_.omitBy(restArgv, _.isUndefined))),
+    specs.join(' ')
+  ].join(' ');
 
   log.info(printEnvironmentVariables(env) + fullCommand);
 

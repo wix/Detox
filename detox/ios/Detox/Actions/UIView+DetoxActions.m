@@ -297,6 +297,7 @@ static void _ensureSelectionAtRange(id<UITextInput> textInput, UITextRange* text
 	textInput.selectedTextRange = textRange;
 }
 
+__attribute__((constructor))
 static void _DTXFixupKeyboard(void)
 {
 	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";

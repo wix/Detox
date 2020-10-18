@@ -49,7 +49,7 @@
 
 @end
 
-@interface UIWindow (GREYExposed)
+@interface UIWindow ()
 
 - (id)firstResponder;
 + (instancetype)keyWindow;
@@ -67,7 +67,7 @@
 
 @end
 
-@interface UIViewController (GREYExposed)
+@interface UIViewController ()
 - (void)viewWillMoveToWindow:(id)window;
 - (void)viewDidMoveToWindow:(id)window shouldAppearOrDisappear:(BOOL)arg;
 @end
@@ -197,7 +197,7 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
 - (void)_setSubtype:(int)eventSubType;
 @end
 
-@interface UIApplication (GREYExposed)
+@interface UIApplication ()
 - (BOOL)_isSpringBoardShowingAnAlert;
 - (UIWindow *)statusBarWindow;
 /**
@@ -240,7 +240,10 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
 - (void)_sendMotionEnded:(UIEventSubtype)subtype;
 @end
 
-@interface UIScrollView (GREYExposed)
+@interface UIScrollView ()
+
+@property (nonatomic, readonly) BOOL _isBouncing;
+
 /**
  *  Called when user finishes scrolling the content. @c deceleration is @c YES if scrolling movement
  *  will continue, but decelerate, after user stopped dragging the content. If @c deceleration is
@@ -265,11 +268,11 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
 - (void)_stopScrollDecelerationNotify:(BOOL)notify;
 @end
 
-@interface UIDevice (GREYExposed)
+@interface UIDevice ()
 - (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
 @end
 
-@interface UITouch (GREYExposed)
+@interface UITouch ()
 /**
  *  Sets flag marking this touch as the first touch for view.
  *

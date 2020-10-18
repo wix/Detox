@@ -109,7 +109,7 @@ public class EspressoDetox {
     }
 
     public static void setSynchronization(boolean enabled) {
-        ReactNativeExtension.toggleNetworkSynchronization(enabled);
+        ReactNativeExtension.setNetworkSynchronization(enabled);
     }
 
     public static void setURLBlacklist(final ArrayList<String> urls) {

@@ -1,6 +1,5 @@
 package com.wix.detox.reactnative.idlingresources;
 
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -8,15 +7,12 @@ import com.facebook.react.bridge.ReactContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import androidx.test.espresso.IdlingResource;
-
+import androidx.annotation.NonNull;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
-import okhttp3.OkHttpClient;
 
 /**
  * Created by simonracz on 09/10/2017.
@@ -28,11 +24,9 @@ import okhttp3.OkHttpClient;
  * <p>
  * Must call stop() on it, before removing it from Espresso.
  */
-public class NetworkIdlingResource implements IdlingResource, Choreographer.FrameCallback {
+public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Choreographer.FrameCallback {
 
     private static final String LOG_TAG = "Detox";
-
-    private AtomicBoolean stopped = new AtomicBoolean(false);
 
     private ResourceCallback callback;
     private Dispatcher dispatcher;
@@ -71,13 +65,7 @@ public class NetworkIdlingResource implements IdlingResource, Choreographer.Fram
     }
 
     @Override
-    public boolean isIdleNow() {
-        if (stopped.get()) {
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
-            return true;
-        }
+    protected boolean checkIdle() {
         boolean idle = true;
         List<Call> calls = dispatcher.runningCalls();
         for (Call call : calls) {
@@ -115,8 +103,10 @@ public class NetworkIdlingResource implements IdlingResource, Choreographer.Fram
         isIdleNow();
     }
 
-    public void stop() {
-        stopped.set(true);
+    @Override
+    protected void notifyIdle() {
+        if (callback != null) {
+            callback.onTransitionToIdle();
+        }
     }
-
 }

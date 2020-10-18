@@ -7,13 +7,10 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
 import java.util.Arrays;
 import java.util.List;
-
-/**
- * Created by simonracz on 11/06/2017.
- */
 
 public class MainApplication extends Application implements ReactApplication {
     private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -26,7 +23,8 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-                    new NativeModulePackage()
+                    new NativeModulePackage(),
+                    new AsyncStoragePackage()
             );
         }
     };
