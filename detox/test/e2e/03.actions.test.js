@@ -72,6 +72,9 @@ describe('Actions', () => {
       await driver.sluggishTapElement.tap();
     } catch (e) {
       console.log('Got an expected error', e);
+      if (!e.toString().includes('Tap handled too slowly, and turned into a long-tap!')) {
+        throw new Error('Error content isn\'t as expected!');
+      }
       return;
     }
 
