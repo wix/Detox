@@ -23,7 +23,8 @@ public class NativeModulePackage implements ReactPackage {
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         return Arrays.asList(
                 new AnimationViewManager(),
-                new DoubleTapsTextViewManager()
+                new DoubleTapsTextViewManager(),
+                new SluggishTextTextViewManager()
         );
     }
 
