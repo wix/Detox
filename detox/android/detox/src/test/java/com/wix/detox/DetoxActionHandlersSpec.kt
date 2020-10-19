@@ -138,8 +138,8 @@ object DetoxActionHandlersSpec : Spek({
                         eq(messageId))
             }
 
-            it("should handle an InvocationTargetException") {
-                val targetException = Exception("mock-error-reason")
+            it("should handle an InvocationTargetException and extract view hierarchy") {
+                val targetException = Exception("before View Hierarchy: after")
                 val exception = InvocationTargetException(targetException)
                 whenever(methodInvocationMock.invoke(isA<String>())).thenThrow(exception)
 
@@ -147,9 +147,30 @@ object DetoxActionHandlersSpec : Spek({
 
                 verify(wsClient).sendAction(
                         eq("testFailed"),
-                        argThat { size == 2 && this["details"] is String &&
-                                               this["viewHierarchy"] is String },
+                        argThat {
+                            this["details"] == "before\n" &&
+                            this["viewHierarchy"] == "after" &&
+                            size == 2
+                        },
                         eq(messageId))
+            }
+
+            it("should handle a non-view-hierarchy InvocationTargetException") {
+                val rootException = RuntimeException("root-exception-mock")
+                val targetException = Exception("target-exception-mock", rootException)
+                val exception = InvocationTargetException(targetException)
+                whenever(methodInvocationMock.invoke(isA<String>())).thenThrow(exception)
+
+                uut().handle(params, messageId)
+
+                verify(wsClient).sendAction(
+                        eq("testFailed"),
+                        argThat {
+                            this["details"] == "root-exception-mock" &&
+                            size == 1
+                        },
+                        eq(messageId))
+
             }
         }
 
