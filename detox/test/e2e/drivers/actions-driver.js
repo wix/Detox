@@ -6,7 +6,7 @@ const driver = {
     get coordinates() {
       return {
         x: (device.getPlatform() === 'ios' ? 180 : 100),
-        y: 107,
+        y: 100,
       };
     },
     multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
@@ -18,7 +18,7 @@ const driver = {
 
   doubleTapsElement: {
     testId: 'doubleTappableText',
-    coordinates: { x: 180, y: 160 },
+    coordinates: { x: 180, y: 100 },
     tapOnce: () => element(by.id(driver.doubleTapsElement.testId)).tap(),
     tapTwice: async () => {
       await driver.doubleTapsElement.tapOnce();
