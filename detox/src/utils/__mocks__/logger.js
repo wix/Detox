@@ -7,6 +7,7 @@ class FakeLogger {
     this.opts = opts;
     this.log = jest.fn();
     this.reinitialize = jest.fn();
+    this.level = jest.fn();
 
     for (const method of METHODS) {
       this[method] = jest.fn().mockImplementation((...args) => {
