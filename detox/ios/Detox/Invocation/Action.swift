@@ -281,21 +281,21 @@ class ScrollAction : Action {
 	}
 	
 	override func perform(on element: Element, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-		let pixels = params![0] as! Double
+		let points = params![0] as! Double
 		let directionString = params![1] as! String
 		let targetOffset : CGPoint
 		switch directionString {
 		case "up":
-			targetOffset = CGPoint(x: 0, y: pixels)
+			targetOffset = CGPoint(x: 0, y: points)
 			break;
 		case "down":
-			targetOffset = CGPoint(x: 0, y: -pixels)
+			targetOffset = CGPoint(x: 0, y: -points)
 			break;
 		case "left":
-			targetOffset = CGPoint(x: pixels, y: 0)
+			targetOffset = CGPoint(x: points, y: 0)
 			break;
 		case "right":
-			targetOffset = CGPoint(x: -pixels, y: 0)
+			targetOffset = CGPoint(x: -points, y: 0)
 			break;
 		default:
 			fatalError("Unknown scroll direction")
@@ -330,26 +330,26 @@ class ScrollAction : Action {
 class ScrollToEdgeAction : Action {
 	override func perform(on element: Element)  -> [String: Any]? {
 		let directionString = params![0] as! String
-		let targetOffset : CGPoint
+		let targetEdge : UIRectEdge
 		switch directionString {
 		case "top":
-			targetOffset = CGPoint(x: 0, y: -1)
+			targetEdge = .top
 			break;
 		case "bottom":
-			targetOffset = CGPoint(x: 0, y: 1)
+			targetEdge = .bottom
 			break;
 		case "left":
-			targetOffset = CGPoint(x: -1, y: 0)
+			targetEdge = .left
 			break;
 		case "right":
-			targetOffset = CGPoint(x: 1, y: 0)
+			targetEdge = .right
 			break;
 		default:
 			fatalError("Unknown scroll direction")
 			break;
 		}
 		
-		element.scroll(toNormalizedEdge: targetOffset)
+		element.scroll(to: targetEdge)
 		
 		return nil
 	}

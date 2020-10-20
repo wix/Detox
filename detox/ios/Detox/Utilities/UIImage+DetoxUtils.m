@@ -92,8 +92,7 @@
 	return visible;
 }
 
-#if DEBUG
-- (void)dtx_saveToDesktop
+- (void)dtx_saveToDesktopWithName:(NSString*)name
 {
 	static NSURL* desktopURL;
 	static dispatch_once_t onceToken;
@@ -103,8 +102,7 @@
 		desktopURL = [[NSURL fileURLWithPath:userPath] URLByAppendingPathComponent:@"Desktop"];
 	});
 	
-	[UIImagePNGRepresentation(self) writeToURL:[desktopURL URLByAppendingPathComponent:@"view.png"] atomically:YES];
+	[UIImagePNGRepresentation(self) writeToURL:[desktopURL URLByAppendingPathComponent:name] atomically:YES];
 }
-#endif
 
 @end

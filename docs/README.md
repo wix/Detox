@@ -47,6 +47,7 @@
 - [Using Mocha as a Test Runner](Guide.Mocha.md)
 - [Using Cucumber with Detox](https://github.com/mathanpec/react-native-detox-cucumber)
 - [Parallel Test Execution](Guide.ParallelTestExecution.md)
+- [Uninstalling Detox](Guide.Uninstalling.md)
 
 ## Under The Hood
 

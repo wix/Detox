@@ -29,4 +29,6 @@ object DetoxViewConfigurations {
         }
         return 40 // Based on hard-coded value in raw implementation of ViewConfiguration
     }
+
+    fun getLongTapMinTime(): Long = ViewConfiguration.getLongPressTimeout().toLong()
 }

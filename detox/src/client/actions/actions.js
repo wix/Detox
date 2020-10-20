@@ -114,11 +114,15 @@ class Invoke extends Action {
   async handle(response) {
     switch (response.type) {
       case 'testFailed':
-        throw new Error('Test Failed: ' + response.params.details +
+        let message = 'Test Failed: ' + response.params.details;
+        if (response.params.viewHierarchy) {
           /* istanbul ignore next */
-          (log.level() <= bunyan.DEBUG ?
-          '\nView Hierarchy:\n' + response.params.viewHierarchy :
-          '\nTIP: To print view hierarchy on failed actions/matches, use loglevel verbose and above.'));
+          message += (log.level() <= bunyan.DEBUG ?
+              '\nView Hierarchy:\n' + response.params.viewHierarchy :
+              '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.');
+        }
+
+        throw new Error(message);
       case 'invokeResult':
         return response.params;
       case 'error':

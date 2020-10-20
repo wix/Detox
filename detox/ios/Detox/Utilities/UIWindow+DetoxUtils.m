@@ -42,7 +42,15 @@
 	if (@available(iOS 13.0, *))
 	{
 		scene = scene ?: UIWindowScene._keyWindowScene;
-		[windows filterUsingPredicate:[NSPredicate predicateWithFormat:@"windowScene == %@", scene]];
+		NSPredicate* predicate = [NSPredicate predicateWithFormat:@"windowScene == %@", scene];
+		
+		UIScene* keyboardScene = [UIWindowScene _keyboardWindowSceneForScreen:[scene screen] create:NO];
+		if(keyboardScene != nil)
+		{
+			predicate = [NSCompoundPredicate orPredicateWithSubpredicates:@[predicate, [NSPredicate predicateWithFormat:@"windowScene == %@", keyboardScene]]];
+		}
+		
+		[windows filterUsingPredicate:predicate];
 	}
 	
 	return windows;

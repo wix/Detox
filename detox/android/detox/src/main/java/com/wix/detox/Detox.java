@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.wix.detox.config.DetoxConfig;
+import com.wix.detox.espresso.UiControllerSpy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +72,8 @@ import androidx.test.rule.ActivityTestRule;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
-    private static final String LOG_TAG = "Detox";
+    public static final String LOG_TAG = "Detox";
+
     private static final String INTENT_LAUNCH_ARGS_KEY = "launchArgs";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
 
@@ -189,9 +191,11 @@ public final class Detox {
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
         DetoxConfig.CONFIG = detoxConfig;
-        detoxConfig.apply();
+        DetoxConfig.CONFIG.apply();
 
         sActivityTestRule = activityTestRule;
+
+        UiControllerSpy.attachThroughProxy();
 
         Intent intent = extractInitialIntent();
         sActivityTestRule.launchActivity(intent);

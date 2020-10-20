@@ -16,6 +16,7 @@ import {
 import TextInput from '../Views/TextInput';
 
 const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
+const SluggishTapsText = requireNativeComponent('DetoxSluggishTapsTextView');
 
 const { width } = Dimensions.get('window');
 
@@ -91,9 +92,13 @@ export default class ActionsScreen extends Component {
               testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
           </TouchableOpacity>
 
-          {isAndroid && <Text style={{width: 10}}> | </Text>}
+          {isAndroid && this.renderInlineSeparator()}
           {isAndroid && <View style={{ width: 110 }}>
             <DoubleTapsText style={{ flex: 1 }}/>
+          </View>}
+          {isAndroid && this.renderInlineSeparator()}
+          {isAndroid && <View style={{ width: 75 }}>
+            <SluggishTapsText style={{ flex: 1 }}/>
           </View>}
         </View>
 
@@ -177,6 +182,10 @@ export default class ActionsScreen extends Component {
         </View>
       </SafeAreaView>
     );
+  }
+
+  renderInlineSeparator() {
+    return <Text style={{width: 10}}> | </Text>;
   }
 
   renderAfterButton() {

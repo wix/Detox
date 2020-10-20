@@ -23,7 +23,10 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
 
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
-    event.launchArgs['detoxDisableHierarchyDump'] = !this.enabled;
+
+    if (!this.enabled && !event.launchArgs.hasOwnProperty('detoxDisableHierarchyDump')) {
+      event.launchArgs['detoxDisableHierarchyDump'] = 'YES';
+    }
   }
 
   async onCreateExternalArtifact(e) {

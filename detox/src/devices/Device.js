@@ -31,6 +31,7 @@ class Device {
     }
 
     const baseLaunchArgs = {
+      ...this._deviceConfig.launchArgs,
       ...params.launchArgs,
     };
 

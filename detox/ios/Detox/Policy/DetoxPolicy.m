@@ -32,16 +32,27 @@ static DetoxPolicy* _activePolicy;
 	return 0.75;
 }
 
-- (NSString *)visibilityVisiblePixelRatioThresholdDescription
+- (NSUInteger)consecutiveTouchPointsWithSameContentOffsetThreshold
+{
+	return 2;
+}
+
++ (NSString*)descriptionForDouble:(CGFloat)number
 {
 	static NSNumberFormatter* formatter;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		formatter = [NSNumberFormatter new];
+		formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
 		formatter.numberStyle = NSNumberFormatterPercentStyle;
 	});
 	
-	return [formatter stringFromNumber:@(self.visibilityVisiblePixelRatioThreshold)];
+	return [formatter stringFromNumber:@(number)];
+}
+
+- (NSString *)visibilityVisiblePixelRatioThresholdDescription
+{
+	return [self.class descriptionForDouble:self.visibilityVisiblePixelRatioThreshold];
 }
 
 @end

@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.example.utils.ReactNativeExtensionReflected;
 import com.example.utils.ViewSpies;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -111,6 +112,14 @@ public class NativeModule extends ReactContextBaseJavaModule {
         reactContext.getCurrentActivity().runOnUiThread(() -> {
             throw new RuntimeException("Simulated crash (native)");
         });
+    }
+
+    @ReactMethod
+    public void toggleNonStorageSynchronization(Boolean enable) {
+        ReactNativeExtensionReflected rnExtension = ReactNativeExtensionReflected.getInstance();
+        rnExtension.toggleUISynchronization(enable);
+        rnExtension.toggleTimersSynchronization(enable);
+        rnExtension.toggleNetworkSynchronization(enable);
     }
 
     private WritableMap parseIntentExtras(String bundleKey) {

@@ -15,9 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIImage*)dtx_imageByCroppingInRect:(CGRect)rect;
 - (NSUInteger)dtx_numberOfVisiblePixelsWithAlphaThreshold:(CGFloat)threshold totalPixels:(NSUInteger*)totalPixels;
 
-#if DEBUG
-- (void)dtx_saveToDesktop;
-#endif
+- (void)dtx_saveToDesktopWithName:(NSString*)name;
 
 @end
 

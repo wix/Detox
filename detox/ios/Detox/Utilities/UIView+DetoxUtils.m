@@ -66,6 +66,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return __DTXDoulbeEqualToDouble(floor(a.x), floor(b.x)) && __DTXDoulbeEqualToDouble(floor(a.y), floor(b.y));
 }
 
+DTX_DIRECT_MEMBERS
 @implementation UIView (DetoxUtils)
 
 - (void)dtx_assertVisible
@@ -136,7 +137,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (CGPoint)dtx_accessibilityActivationPointInViewCoordinateSpace
 {
-	return [self.window.screen.coordinateSpace convertPoint:self.dtx_accessibilityActivationPoint toCoordinateSpace:self.coordinateSpace];
+	UIWindow* windowToUse = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
+	
+	return [windowToUse.screen.coordinateSpace convertPoint:self.dtx_accessibilityActivationPoint toCoordinateSpace:self.coordinateSpace];
 }
 
 - (CGRect)dtx_contentBounds
@@ -181,15 +184,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (BOOL)dtx_isVisible
 {
-	NSError* error;
-	BOOL rv = [self dtx_isVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:&error];
-#if DEBUG
-	if(rv == NO)
-	{
-		NSLog(@"%@", error.localizedDescription);
-	}
-#endif
-	return rv;
+	return [self dtx_isVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:NULL];
 }
 
 - (BOOL)dtx_isVisibleAtPoint:(CGPoint)point
@@ -197,7 +192,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self dtx_isVisibleAtPoint:point error:NULL];
 }
 
-- (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView drawTestedRectWithColor:(UIColor*)testedRectColor
+- (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView inRect:(CGRect)testedRect drawTestedRect:(BOOL)drawTestedRect
 {
 	UIGraphicsBeginImageContextWithOptions(windowToUse.bounds.size, NO, windowToUse.screen.scale);
 	
@@ -212,12 +207,18 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	DTXAssert(indexOfTestedWindow != NSNotFound, @"Window hierarchy mutated while iterated; should not happen");
 	
+	if(testedView == nil)
+	{
+		[UIColor.blackColor setFill];
+		[[UIBezierPath bezierPathWithRect:windowToUse.bounds] fill];
+	}
+	
 	[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
 	
 	for (NSUInteger idx = indexOfTestedWindow + 1; idx < windows.count; idx++) {
 		UIWindow* currentWindow = windows[idx];
 		
-		[currentWindow drawViewHierarchyInRect:currentWindow.bounds afterScreenUpdates:NO];
+		[currentWindow dtx_drawViewHierarchyUpToSubview:nil inRect:currentWindow.bounds afterScreenUpdates:NO];
 	}
 	
 	//Overlay the keyboard scene windows on top
@@ -229,18 +230,25 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 			windows = [UIWindow dtx_allWindowsForScene:scene];
 			
 			for (UIWindow* keyboardSceneWindow in windows) {
-				[keyboardSceneWindow drawViewHierarchyInRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
+				[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
 			}
 		}
 	}
 	
-	if(testedRectColor != nil)
+	if(drawTestedRect && testedView != nil)
 	{
 		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		CGRect testedRect = [windowToUse convertRect:testedView.bounds fromView:testedView];
 		CGContextSetLineWidth(ctx, 1);
-		[testedRectColor setStroke];
-		CGContextStrokeRect(ctx, testedRect);
+		CGContextSetAllowsAntialiasing(ctx, NO);
+		
+		CGFloat* lengths = (CGFloat[]){2.0, 2.0};
+		[@[UIColor.systemRedColor, UIColor.whiteColor] enumerateObjectsUsingBlock:^(UIColor * _Nonnull color, NSUInteger idx, BOOL * _Nonnull stop) {
+			CGContextSetLineDash(ctx, idx * 2.0, lengths, 2);
+			[color setStroke];
+			CGContextStrokeRect(ctx, testedRect);
+			
+//			*stop = YES;
+		}];
 	}
 	
 	UIImage* rv = UIGraphicsGetImageFromCurrentImageContext();
@@ -249,9 +257,17 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return rv;
 }
 
-- (BOOL)_dtx_isTestedRegionWithVisiblePixelsObscured:(NSUInteger)visible totalPixels:(NSUInteger)total ofView:(UIView*)lookingFor
+- (BOOL)_dtx_isTestedRegionObscuredWithVisiblePixels:(NSUInteger)visible totalPixels:(NSUInteger)total ofView:(UIView*)lookingFor explanation:(NSString**)explanation
 {
-	return (visible / (double)total) < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
+	CGFloat fraction = (visible / (double)total);
+	BOOL rv = fraction < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
+	
+	if(rv == YES)
+	{
+		*explanation = [NSString stringWithFormat:@"view does not pass visibility threshold (%@ visible of %@ required)", [DetoxPolicy descriptionForDouble:fraction], DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription];
+	}
+	
+	return rv;
 }
 
 - (BOOL)_dtx_isRegionObscured:(CGRect)intersection fromTestedRegion:(CGRect)testedRegion
@@ -265,7 +281,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self _dtx_isRegionObscured:intersection fromTestedRegion:testedRegion];
 }
 
-- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong *)error
+- (BOOL)_dtx_testVisibilityInRect:(CGRect)rect error:(NSError* __strong *)error
 {
 	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
 	
@@ -301,7 +317,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return NO;
 	}
 	
-	CGRect testedRegionInWindowCoords = [windowToUse convertRect:self.bounds fromView:self];
+	CGRect testedRegionInWindowCoords = [windowToUse convertRect:rect fromView:self];
 	
 	CGRect visibleBounds = self.dtx_visibleBounds;
 	
@@ -321,22 +337,23 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return NO;
 	}
 	
-	UIImage* image = [self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self drawTestedRectWithColor:nil];
-	CGRect testedRect = [windowToUse convertRect:self.bounds fromView:self];
-	image = [image dtx_imageByCroppingInRect:testedRect];
+	UIImage* image = [self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self inRect:testedRegionInWindowCoords drawTestedRect:NO];
+	image = [image dtx_imageByCroppingInRect:testedRegionInWindowCoords];
 	
 	NSUInteger total;
 	NSUInteger visible = [image dtx_numberOfVisiblePixelsWithAlphaThreshold:DetoxPolicy.activePolicy.visibilityPixelAlphaThreshold totalPixels:&total];
 	
-	if([self _dtx_isTestedRegionWithVisiblePixelsObscured:visible totalPixels:total ofView:self] == YES)
+	NSString* explanation;
+	if([self _dtx_isTestedRegionObscuredWithVisiblePixels:visible totalPixels:total ofView:self explanation:&explanation] == YES)
 	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(explanation)}];
 		_DTXPopulateError(err);
 		
-#if DEBUG
-//		[image dtx_saveToDesktop];
-//		[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self drawTestedRectWithColor:UIColor.blackColor] dtx_saveToDesktop];
-#endif
+		if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDebugVisibility"])
+		{
+			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:nil inRect:testedRegionInWindowCoords drawTestedRect:NO] dtx_saveToDesktopWithName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_SCREEN.png", NSStringFromClass(self.class), self]];
+			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self inRect:testedRegionInWindowCoords drawTestedRect:YES] dtx_saveToDesktopWithName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_TEST.png", NSStringFromClass(self.class), self]];
+		}
 		
 		return NO;
 	}
@@ -344,9 +361,14 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return YES;
 }
 
+- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong *)error
+{
+	return [self _dtx_testVisibilityInRect:self.bounds error:error];
+}
+
 - (BOOL)dtx_isHittable
 {
-	return [self dtx_isHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace];
+	return [self dtx_isHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:NULL];
 }
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point
@@ -354,9 +376,29 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self dtx_isHittableAtPoint:point error:NULL];
 }
 
+- (CGRect)_dtx_hitBoundsAroundPoint:(CGPoint)point
+{
+	return CGRectIntersection(self.bounds, CGRectMake(point.x - 22, point.y - 22, 44, 44));
+}
+
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
 {
-	return [self dtx_isVisibleAtPoint:point error:error];
+	return [self _dtx_testVisibilityInRect:[self _dtx_hitBoundsAroundPoint:point] error:error];
+}
+
+- (BOOL)dtx_isEnabled
+{
+	BOOL enabled = self.userInteractionEnabled;
+	if([self isKindOfClass:UIControl.class])
+	{
+		enabled = enabled && [[self valueForKey:@"enabled"] boolValue];
+	}
+	return enabled;
+}
+
+- (void)dtx_assertEnabled
+{
+	DTXViewAssert(self.dtx_isEnabled == YES, self.dtx_viewDebugAttributes, @"View is not enabled.");
 }
 
 - (NSDictionary<NSString *,id> *)dtx_attributes
@@ -388,12 +430,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		}
 	}];
 	
-	BOOL enabled = self.userInteractionEnabled;
-	if([self isKindOfClass:UIControl.class])
-	{
-		enabled = enabled && [[self valueForKey:@"enabled"] boolValue];
-	}
-	rv[@"enabled"] = enabled ? @YES : @NO;
+	rv[@"enabled"] = @(self.dtx_isEnabled);
 	
 	rv[@"frame"] = DTXRectToDictionary(self.dtx_accessibilityFrame);
 	rv[@"elementFrame"] = DTXRectToDictionary(self.frame);
@@ -405,8 +442,15 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
 	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(CGRectGetWidth(self.bounds) == 0 ? 0 : accessibilityActivationPointInViewCoordinateSpace.x / CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds) == 0 ? 0 : accessibilityActivationPointInViewCoordinateSpace.y / CGRectGetHeight(self.bounds)));
 	
-	rv[@"hittable"] = self.dtx_isHittable ? @YES : @NO;
-	rv[@"visible"] = self.dtx_isVisible ? @YES : @NO;
+	rv[@"hittable"] = @(self.dtx_isHittable);
+	rv[@"visible"] = @(self.dtx_isVisible);
+	
+	if([self isKindOfClass:UIScrollView.class])
+	{
+		rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
+		rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
+		rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
+	}
 	
 	if([self isKindOfClass:UISlider.class])
 	{
@@ -465,45 +509,5 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	return rv;
 }
-
-#if DEBUG
-- (void)dtx_saveSnapshotToDesktop
-{
-	[self _dtx_saveSnapshotToDesktopWithPointPtr:NULL rects:nil];
-}
-
-- (void)dtx_saveSnapshotToDesktopWithPoint:(CGPoint)point rects:(NSArray*)rects
-{
-	[self _dtx_saveSnapshotToDesktopWithPointPtr:&point rects:rects];
-}
-
-- (void)_dtx_saveSnapshotToDesktopWithPointPtr:(CGPoint*)pointPtrOrNULL rects:(NSArray*)rects
-{
-	UIWindow* windowToUse = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
-	UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, windowToUse.screen.scale);
-	[self drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
-	
-	if(pointPtrOrNULL != NULL)
-	{
-		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		[UIColor.blackColor setFill];
-		CGContextFillRect(ctx, CGRectMake(pointPtrOrNULL->x - 0.5, pointPtrOrNULL->y - 0.5, 1, 1));
-	}
-	
-	[rects enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		CGRect rect = [obj CGRectValue];
-		
-		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		[UIColor.blackColor setStroke];
-		CGContextSetLineWidth(ctx, 1.0);
-		CGContextStrokeRect(ctx, rect);
-	}];
-	
-	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	
-	[image dtx_saveToDesktop];
-}
-#endif
 
 @end

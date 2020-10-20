@@ -7,8 +7,6 @@ import com.facebook.react.bridge.ReactContext;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.test.espresso.IdlingResource;
-
 /**
  * Created by simonracz on 01/06/2017.
  */
@@ -19,7 +17,7 @@ import androidx.test.espresso.IdlingResource;
  * React Native's JS bridge.
  * </p>
  */
-public class BridgeIdlingResource implements IdlingResource, NotThreadSafeBridgeIdleDebugListener {
+public class BridgeIdlingResource extends DetoxBaseIdlingResource implements NotThreadSafeBridgeIdleDebugListener {
     private static final String LOG_TAG = "Detox";
     private final ReactContext reactContext;
 
@@ -41,7 +39,7 @@ public class BridgeIdlingResource implements IdlingResource, NotThreadSafeBridge
     }
 
     @Override
-    public boolean isIdleNow() {
+    protected boolean checkIdle() {
         boolean ret = idleNow.get();
         if (!ret) {
             Log.i(LOG_TAG, "JS Bridge is busy");
@@ -57,10 +55,7 @@ public class BridgeIdlingResource implements IdlingResource, NotThreadSafeBridge
     @Override
     public void onTransitionToBridgeIdle() {
         idleNow.set(true);
-        if (callback != null) {
-            callback.onTransitionToIdle();
-        }
-        // Log.i(LOG_TAG, "JS Bridge transitions to idle.");
+        notifyIdle();
     }
 
     @Override
@@ -70,5 +65,13 @@ public class BridgeIdlingResource implements IdlingResource, NotThreadSafeBridge
     }
 
     public void onBridgeDestroyed() {
+    }
+
+    @Override
+    protected void notifyIdle() {
+        // Log.i(LOG_TAG, "JS Bridge transitions to idle.");
+        if (callback != null) {
+            callback.onTransitionToIdle();
+        }
     }
 }

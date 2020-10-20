@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (Drawing)
 
-- (void)dtx_drawViewHierarchyUpToSubview:(UIView*)subview inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates;
+- (void)dtx_drawViewHierarchyUpToSubview:(nullable UIView*)subview inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates;
 
 @end
 
