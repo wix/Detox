@@ -1,5 +1,5 @@
 const funpermaproxy = require('funpermaproxy');
-const    = require('./Detox');
+const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
 const logger = require('./utils/logger');

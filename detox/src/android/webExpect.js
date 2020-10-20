@@ -1,8 +1,6 @@
 const invoke = require('../invoke');
 const DetoxWebActionsApi = require('./espressoapi/web/DetoxWebAtomAction');
-const DetoxWebAssertionApi = require('./espressoapi/web/DetoxWebAssertion');
 const EspressoWebDetoxApi = require('./espressoapi/web/EspressoWebDetox');
-const DetoxWebMatcherApi = require('./espressoapi/web/DetoxWebAtomMatcher');
 const {
   IdMatcher
 } = require('./webMatcher');
@@ -56,21 +54,14 @@ class WebViewElement {
   }
 
   element(webMatcher) {
-    return new WebElement(this._invocationManager, this._emitter, webMatcher)
+    return new WebElement(this._invocationManager, this, webMatcher)
   }
 }
 
 class WebElement {
-  constructor(invocationManager, emitter, matcher) {
+  constructor(invocationManager, webViewElement, matcher) {
     this._invocationManager = invocationManager;
-    this._emitter = emitter;
-    this._originalMatcher = matcher;
-
-    this.element = this.element.bind(this);
-  }
-
-  element(webMatcher) {
-    return new WebElement(this._invocationManager, this._emitter, webMatcher)
+    this._call = EspressoWebDetoxApi.withElement(call(webViewElement._call), matcher._call);
   }
 
   async tap() {

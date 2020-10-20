@@ -6,7 +6,7 @@ class WebMatcher {
 }
 
 class IdMatcher extends WebMatcher {
-  constructor(value) {
+  constructor(id) {
     super();
     this._call = invoke.callDirectly(DetoxWebMatcherApi.matcherForId(id));
   }

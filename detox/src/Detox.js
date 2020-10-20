@@ -172,9 +172,6 @@ class Detox {
     Object.assign(this, matchers);
     Object.assign(this, { web: webMatchers });
 
-    console.log("matchers", matchers);
-    console.log("webMatchers", webMatchers);
-
     if (behaviorConfig.exposeGlobals) {
       Object.assign(Detox.global, {
         ...matchers,
