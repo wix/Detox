@@ -29,6 +29,7 @@ DriverRegistry.default = new DriverRegistry({
   'ios.simulator': require('./drivers/ios/SimulatorDriver'),
   'android.emulator': require('./drivers/android/emulator/EmulatorDriver'),
   'android.attached': require('./drivers/android/attached/AttachedAndroidDriver'),
+  'android.genycloud': require('./drivers/android/genycloud/GenyCloudDriver'),
 });
 
 module.exports = DriverRegistry;

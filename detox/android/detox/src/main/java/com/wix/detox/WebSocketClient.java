@@ -2,8 +2,6 @@ package com.wix.detox;
 
 import android.util.Log;
 
-import com.wix.detox.systeminfo.Environment;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,10 +39,6 @@ public class WebSocketClient {
 
     public WebSocketClient(ActionHandler actionHandler) {
         this.actionHandler = actionHandler;
-    }
-
-    public void connectToServer(String sessionId) {
-        connectToServer(Environment.getServerHost(), sessionId);
     }
 
     public void connectToServer(String url, String sessionId) {

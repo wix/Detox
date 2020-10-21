@@ -131,6 +131,22 @@
           "avdName": "Pixel_API_28"
         }
       },
+      "android.genycloud.release": {
+        "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
+        "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.genycloud",
+        "device": {
+          "recipeName": "Detox_Pixel_API_29"
+        }
+      },
+      "android.genycloud.release2": {
+        "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
+        "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.genycloud",
+        "device": {
+          "recipeUUID": "a9da8503-c1d0-4aa0-9d8d-8b551da877d3"
+        }
+      },
       "android.emu.debug.fromSource": {
         "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
         "utilBinaryPaths": [
