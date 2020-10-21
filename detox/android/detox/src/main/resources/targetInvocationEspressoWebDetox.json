@@ -1,0 +1,60 @@
+{
+    "target": {
+      "type": "Class",
+      "value": "com.wix.detox.espresso.web.EspressoWebDetox"
+    },
+    "method": "perform",
+    "args": [
+      {
+        "type": "Invocation",
+        "value": {
+          "target": {
+            "type": "Class",
+            "value": "com.wix.detox.espresso.web.EspressoWebDetox"
+          },
+          "method": "withElement",
+          "args": [
+            {
+              "type": "Invocation",
+              "value": {
+                "target": {
+                  "type": "Class",
+                  "value": "androidx.test.espresso.web.sugar.Web"
+                },
+                "method": "onWebView",
+                "args": [
+
+                ]
+              }
+            },
+            {
+              "type": "Invocation",
+              "value": {
+                "target": {
+                  "type": "Class",
+                  "value": "com.wix.detox.espresso.web.DetoxWebAtomMatcher"
+                },
+                "method": "matcherForId",
+                "args": [
+                  "textInput"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Invocation",
+        "value": {
+          "target": {
+            "type": "Class",
+            "value": "com.wix.detox.espresso.web.DetoxWebAtomAction"
+          },
+          "method": "click",
+          "args": [
+
+          ]
+        }
+      }
+    ]
+}

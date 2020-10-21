@@ -24,7 +24,7 @@ class WebInteraction {
 class ActionInteraction extends WebInteraction {
   constructor(invocationManager, element, action) {
     super(invocationManager);
-    this._call = EspressoWebDetoxApi.perform(call(element._call), action._call);
+    this._call = EspressoWebDetoxApi.perform(call(element._call), action._call.value);
   }
 }
 
@@ -38,12 +38,77 @@ class WebTapAction extends WebAction {
   }
 }
 
+class WebTypeTextAction extends WebAction {
+  constructor(text) {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.typeText(text));
+  }
+}
+
+class WebReplaceTextction extends WebAction {
+  constructor(text) {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.replaceText(text));
+  }
+}
+
+class WebClearTextAction extends WebAction {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.clearText());
+  }
+}
+
+class WebScrollToViewAction extends WebAction {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.scrollToView());
+  }
+}
+
+class WebGetTextAction extends WebAction {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.getText());
+  }
+}
+
+class WebRunScriptAction extends WebAction {
+  constructor(script) {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.runScript(script));
+  }
+}
+
+class WebRunScriptWithArgsAction extends WebAction {
+  constructor(script, args) {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.runScriptWithArgs(script, args));
+  }
+}
+
+class WebGetCurrentUrlAction extends WebAction {
+  constructor(script, args) {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.getCurrentUrl());
+  }
+}
+
+class WebGetTitleAction extends WebAction {
+  constructor(script, args) {
+    super();
+    this._call = invoke.callDirectly(DetoxWebActionsApi.getTitle());
+  }
+}
+
 
 class WebViewElement {
   constructor(invocationManager, emitter, matcher) {
     this._invocationManager = invocationManager;
     this._emitter = emitter;
     this._originalMatcher = matcher;
+
+    this.element = this.element.bind(this);
   }
 
    async _find(webViewMatcher) {
@@ -61,11 +126,47 @@ class WebViewElement {
 class WebElement {
   constructor(invocationManager, webViewElement, matcher) {
     this._invocationManager = invocationManager;
-    this._call = EspressoWebDetoxApi.withElement(call(webViewElement._call), matcher._call);
+    this._call = EspressoWebDetoxApi.withElement(call(webViewElement._call), matcher._call.value);
   }
 
   async tap() {
     return await new ActionInteraction(this._invocationManager, this, new WebTapAction()).execute();
+  }
+
+  async typeText(text) {
+    return await new ActionInteraction(this._invocationManager, this, new WebTypeTextAction(text)).execute();
+  }
+
+  async replaceText(text) {
+    return await new ActionInteraction(this._invocationManager, this, new WebReplaceTextction(text)).execute();
+  }
+
+  async clearText() {
+    return await new ActionInteraction(this._invocationManager, this, new WebClearTextAction()).execute();
+  }
+
+  async scrollToView() {
+    return await new ActionInteraction(this._invocationManager, this, new WebScrollToViewAction()).execute();
+  }
+
+  async getText() {
+    return await new ActionInteraction(this._invocationManager, this, new WebGetTextAction()).execute();
+  }
+
+  async runScript(script) {
+    return await new ActionInteraction(this._invocationManager, this, new WebRunScriptAction(script)).execute();
+  }
+
+  async runScriptWithArgs(script, args) {
+    return await new ActionInteraction(this._invocationManager, this, new WebRunScriptWithArgsAction(script, args)).execute();
+  }
+
+  async getCurrentUrl() {
+    return await new ActionInteraction(this._invocationManager, this, new WebGetCurrentUrlAction()).execute();
+  }
+
+  async getTitle() {
+    return await new ActionInteraction(this._invocationManager, this, new WebGetTextAction()).execute();
   }
 }
 
@@ -85,6 +186,8 @@ class WebExpectElement extends WebExpect {
     super(invocationManager);
     this._element = element;
   }
+
+  
 }
 
 class WaitFor {
