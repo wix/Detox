@@ -207,6 +207,10 @@ describe('Actions', () => {
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
+  it.todo(':ios: should swipe down at a specified position');
+    // await element(by.id('ScrollView799')).swipe('down', 'fast', NaN, 0.25, 0.5);
+    // await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
+
   it('should not wait for long timeout (>1.5s)', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
