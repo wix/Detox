@@ -54,19 +54,25 @@ Simulates a long press on the element at its activation point.
 await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
 ```
-### `swipe(direction, speed, percentage)`
+
+### `swipe(direction, speed, percentage, startPositionX=NaN, startPositionY=NaN)`
 
 Simulates a swipe on the element with the provided options.
 
 `direction`—the swipe's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
 `speed`—the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
 `percentage`—the percentage of the screen to swipe (optional, valid input: [0.0, 1.0], default is 0.75)
+`startPositionX`—the normalized x percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically) <br/>
+`startPositionY`—the normalized y percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
 
 ```js
 await element(by.id('scrollView')).swipe('down');
 await element(by.id('scrollView')).swipe('down', 'fast');
 await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
+await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.5);
+await element(by.id('scrollView')).swipe('down', 'fast', 0.5, NaN, 0.25);
 ```
+
 ### `pinch(scale, speed, angle)`  iOS only
 
 Simulates a pinch on the element with the provided options.

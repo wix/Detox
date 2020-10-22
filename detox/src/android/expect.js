@@ -107,8 +107,14 @@ class ScrollEdgeAction extends Action {
 }
 
 class SwipeAction extends Action {
-  // This implementation ignores the percentage parameter
-  constructor(direction, speed, percentage) {
+  /**
+   * @param {'up' | 'right' | 'down' | 'left'} - direction
+   * @param {'slow' | 'fast'} - speed
+   * @param percentage - ignored
+   * @param startPositionX - ignored
+   * @param startPositionY - ignored
+   */
+  constructor(direction, speed, percentage, startPositionX, startPositionY) {
     super();
     if (speed === 'fast') {
       this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, true));
