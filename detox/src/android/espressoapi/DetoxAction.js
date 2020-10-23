@@ -168,18 +168,17 @@ class DetoxAction {
   }
 
   static accessibilityAction(actionName) {
+    if (typeof actionName !== "string") throw new Error("actionName should be a string, but got " + (actionName + (" (" + (typeof actionName + ")"))));
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxAction"
       },
       method: "accessibilityAction",
-      args: [{
-        type: "String",
-        value: actionName
-      }]
-    }
+      args: [actionName]
+    };
   }
+
 }
 
 module.exports = DetoxAction;
