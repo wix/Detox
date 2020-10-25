@@ -331,7 +331,7 @@ DTX_DIRECT_MEMBERS
 
 - (CGRect)_dtx_hitBoundsAroundPoint:(CGPoint)point
 {
-	return CGRectIntersection(self.bounds, CGRectMake(point.x - 22, point.y - 22, 44, 44));
+	return CGRectIntersection(self.bounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
 }
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error

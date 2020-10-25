@@ -91,16 +91,28 @@ static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoin
 	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
-#define DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, main, other, CGRectGetMinMain, CGRectGetMidMain, CGRectGetMidOther, CGRectGetMaxMain, CGRectGetMainSize) \
-CGFloat mainStart = MAX(MIN(CGRectGetMidMain(screenBounds) - 0.5 * normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMaxMain(safeBoundsInScreenSpace) - 1), CGRectGetMinMain(safeBoundsInScreenSpace) + 1); \
-startPoint.main = mainStart; \
-startPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace); \
-endPoint.main = MIN(MAX(mainStart + normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMinMain(screenBounds) + 1), CGRectGetMaxMain(screenBounds) - 1); \
-endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
-
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
 {
+	[self dtx_swipeWithNormalizedOffset:normalizedOffset velocity:velocity normalizedStartingPoint:CGPointMake(NAN, NAN)];
+}
+
+#define DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedStartingPoint) \
+if((isnan(normalizedStartingPoint.x) == NO && (normalizedStartingPoint.x < 0 || normalizedStartingPoint.x > 1)) || isnan(normalizedStartingPoint.y) == NO && (normalizedStartingPoint.y < 0 || normalizedStartingPoint.y > 1)) \
+{ \
+DTXAssert(NO, @"Bad normalized starting point provided."); \
+} \
+
+#define DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, main, other, CGRectGetMinMain, CGRectGetMinOther, CGRectGetMidMain, CGRectGetMidOther, CGRectGetMaxMain, CGRectGetMainSize, CGRectGetOtherSize) \
+CGFloat mainStart = !isnan(normalizedStartingPoint.main) ? CGRectGetMinMain(safeBoundsInScreenSpace) + CGRectGetMainSize(safeBoundsInScreenSpace) * normalizedStartingPoint.main : MAX(MIN(CGRectGetMidMain(screenBounds) - 0.5 * normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMaxMain(safeBoundsInScreenSpace) - 1), CGRectGetMinMain(safeBoundsInScreenSpace) + 1); \
+startPoint.main = mainStart; \
+startPoint.other = !isnan(normalizedStartingPoint.other) ? CGRectGetMinOther(safeBoundsInScreenSpace) + CGRectGetOtherSize(safeBoundsInScreenSpace) * normalizedStartingPoint.other : CGRectGetMidOther(safeBoundsInScreenSpace); \
+endPoint.main = MIN(MAX(mainStart + normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMinMain(screenBounds) + 1), CGRectGetMaxMain(screenBounds) - 1); \
+endPoint.other = !isnan(normalizedStartingPoint.other) ? CGRectGetMinOther(safeBoundsInScreenSpace) + CGRectGetOtherSize(safeBoundsInScreenSpace) * normalizedStartingPoint.other : CGRectGetMidOther(safeBoundsInScreenSpace);
+
+- (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity normalizedStartingPoint:(CGPoint)normalizedStartingPoint
+{
 	NSParameterAssert(velocity > 0.0);
+	DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedStartingPoint);
 	
 	if(normalizedOffset.x == 0 && normalizedOffset.y == 0)
 	{
@@ -119,11 +131,11 @@ endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
 	
 	if(normalizedOffset.x != 0)
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, x, y, CGRectGetMinX, CGRectGetMidX, CGRectGetMidY, CGRectGetMaxX, CGRectGetWidth);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, x, y, CGRectGetMinX, CGRectGetMinY, CGRectGetMidX, CGRectGetMidY, CGRectGetMaxX, CGRectGetWidth, CGRectGetHeight);
 	}
 	else
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, y, x, CGRectGetMinY, CGRectGetMidY, CGRectGetMidX, CGRectGetMaxY, CGRectGetHeight);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, y, x, CGRectGetMinY, CGRectGetMinX, CGRectGetMidY, CGRectGetMidX, CGRectGetMaxY, CGRectGetHeight, CGRectGetWidth);
 	}
 	
 	
