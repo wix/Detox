@@ -9,9 +9,9 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
-- [`.swipe()`](#swipedirection-speed-percentage)
+- [`.swipe()`](#swipedirection-speed-percentage-startpositionx-startpositiony)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
-- [`.scroll()`](#scrolloffset-direction-startpositionxnan-startpositionynan)
+- [`.scroll()`](#scrolloffset-direction-startpositionx-startpositiony)
   - [`whileElement()`](#whileelementelement)
 - [`.scrollTo()`](#scrolltoedge)
 - [`.typeText()`](#typetexttext)
@@ -29,7 +29,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 
 Simulates a tap on the element at the specified point, or at element's activation point if no point is specified.
 
-`point`—a point in the element's coordinate space (optional, valid input: object with x and y numerical values)
+`point`—a point in the element's coordinate space (optional, valid input: object with x and y numerical values, default is `null`)
 
 **Note:** Special care should be applied when specifying a point with this method. Elements may have different dimensions when displayed on different device screen sizes, different text sizes, etc.
 
@@ -46,24 +46,25 @@ Simulates multiple taps on the element at its activation point. All taps are app
 await element(by.id('tappable')).multiTap(3);
 ```
 ### `longPress(duration)`
+
 Simulates a long press on the element at its activation point.
 
-`duration`—the duration to press for, in ms (optional)
+`duration`—the duration to press for, in ms (optional, default is 1000)
 
 ```js
 await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
 ```
 
-### `swipe(direction, speed, percentage, startPositionX=NaN, startPositionY=NaN)`
+### `swipe(direction, speed, percentage, startPositionX, startPositionY)`
 
 Simulates a swipe on the element with the provided options.
 
 `direction`—the swipe's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
 `speed`—the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
-`percentage`—the percentage of the screen to swipe (optional, valid input: [0.0, 1.0], default is 0.75)
-`startPositionX`—the normalized x percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically) <br/>
-`startPositionY`—the normalized y percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
+`percentage`—the percentage of the screen to swipe (optional, valid input: [0.0, 1.0], default is 0.75) <br/>
+`startPositionX`—the normalized x percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`) <br/>
+`startPositionY`—the normalized y percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`)
 
 ```js
 await element(by.id('scrollView')).swipe('down');
@@ -86,14 +87,14 @@ await element(by.id('PinchableScrollView')).pinch(1.1); //Zooms in a little bit
 await element(by.id('PinchableScrollView')).pinch(2.0); //Zooms in a lot
 await element(by.id('PinchableScrollView')).pinch(0.001); //Zooms out a lot
 ```
-### `scroll(offset, direction, startPositionX=NaN, startPositionY=NaN)`
+### `scroll(offset, direction, startPositionX, startPositionY)`
 
 Simulates a scroll on the element with the provided options.
 
 `offset`—the offset to scroll, in points <br/>
 `direction`—the scroll's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
-`startPositionX`—the normalized x percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically) <br/>
-`startPositionY`—the normalized y percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
+`startPositionX`—the normalized x percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`) <br/>
+`startPositionY`—the normalized y percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`)
 
 ```js
 await element(by.id('scrollView')).scroll(100, 'up');
@@ -122,7 +123,7 @@ await element(by.id('scrollView')).scrollTo('top');
 
 Simulates typing of the specified text into the element, using the system's builtin keyboard and typing behavior.
 
-On iOS, any element can be typed into, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol.
+On iOS, any element can be typed into, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before typing the text, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
 
 `text`—the text to type (valid input: string)
 
@@ -134,7 +135,7 @@ await element(by.id('textField')).typeText('passcode');
 
 Replaces the element's text with the specified text, without using the system's builtin keyboard or typing behavior. **Note**, that using this method is faster than using [`.typeText()`](#typetexttext), but may not trigger all text input callbacks, causing an undefined state in your app.
 
-On iOS, any element's text can be replaced, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol.
+On iOS, any element's text can be replaced, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before replacing the text, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
 
 `text`—the text to replace with (valid input: string)
 
@@ -145,16 +146,16 @@ await element(by.id('textField')).replaceText('passcode again');
 ### `clearText()`
 Simulates clearing the text of the element, using the system's builtin keyboard and typing behavior.
 
-On iOS, any element's text can be cleared, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol.
+On iOS, any element's text can be cleared, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before clearing the text, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
 
 ```js
 await element(by.id('textField')).clearText();
 ```
 
 ### `tapReturnKey()`
-Simulates tapping of the return key into the element, using the system's builtin keyboard and typing behavior.
+Simulates tapping on the return key into the element, using the system's builtin keyboard and typing behavior.
 
-On iOS, any element can be sent return key input, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol.
+On iOS, any element can be sent return key input, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before tapping on the return key, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
 
 ```js
 await element(by.id('textField')).tapReturnKey();
@@ -164,7 +165,7 @@ await element(by.id('textField')).tapReturnKey();
 
 Simulates tapping of the backspace key into the element, using the system's builtin keyboard and typing behavior.
 
-On iOS, any element can be sent backspace key input, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol.
+On iOS, any element can be sent backspace key input, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before tapping on the backspace key, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
 
 ```js
 await element(by.id('textField')).tapBackspaceKey();
