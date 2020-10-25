@@ -125,7 +125,7 @@ class Element : NSObject {
 			return
 		}
 		
-		view.dtx_tap(atPoint: point, numberOfTaps: UInt(numberOfTaps))
+		view.dtx_tap(at: point, numberOfTaps: UInt(numberOfTaps))
 	}
 	
 	func longPress(at point: CGPoint? = nil, duration: TimeInterval = 1.0) {
@@ -134,11 +134,15 @@ class Element : NSObject {
 			return
 		}
 		
-		view.dtx_longPress(atPoint: point, duration: duration)
+		view.dtx_longPress(at: point, duration: duration)
 	}
 	
-	func swipe(normalizedOffset: CGPoint, velocity: CGFloat = 1.0) {
-		view.dtx_swipe(withNormalizedOffset: normalizedOffset, velocity: velocity)
+	func swipe(normalizedOffset: CGPoint, velocity: CGFloat = 1.0, normalizedStartingPoint: CGPoint? = nil) {
+		if let normalizedStartingPoint = normalizedStartingPoint {
+			view.dtx_swipe(withNormalizedOffset: normalizedOffset, velocity: velocity, normalizedStartingPoint: normalizedStartingPoint)
+		} else {
+			view.dtx_swipe(withNormalizedOffset: normalizedOffset, velocity: velocity)
+		}
 	}
 	
 	func pinch(withScale scale: CGFloat, velocity: CGFloat = 2.0, angle: CGFloat = 0.0) {
