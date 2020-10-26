@@ -207,9 +207,10 @@ describe('Actions', () => {
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
-  it.todo(':ios: should swipe down at a specified position');
-    // await element(by.id('ScrollView799')).swipe('down', 'fast', NaN, 0.25, 0.5);
-    // await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
+  it(':ios: should swipe down at a specified position', async () => {
+    await element(by.id('toggleScrollOverlays')).tap();
+    await element(by.id('ScrollView161')).swipe('down', 'slow', 0.2, 0.9, 1);
+  });
 
   it('should not wait for long timeout (>1.5s)', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
