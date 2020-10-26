@@ -13,6 +13,14 @@ const val MOTION_DIR_RIGHT = 2
 const val MOTION_DIR_UP = 3
 const val MOTION_DIR_DOWN = 4
 
+fun isAscending(@MotionDir direction: Int): Boolean {
+    return direction == MOTION_DIR_RIGHT || direction == MOTION_DIR_DOWN
+}
+
+fun isDescending(@MotionDir direction: Int): Boolean {
+    return direction == MOTION_DIR_LEFT || direction == MOTION_DIR_UP
+}
+
 fun isHorizontal(@MotionDir direction: Int): Boolean {
     return direction == MOTION_DIR_LEFT || direction == MOTION_DIR_RIGHT
 }

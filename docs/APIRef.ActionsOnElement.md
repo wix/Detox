@@ -9,7 +9,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
-- [`.swipe()`](#swipedirection-speed-percentage-startpositionx-startpositiony)
+- [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
 - [`.scroll()`](#scrolloffset-direction-startpositionx-startpositiony)
   - [`whileElement()`](#whileelementelement)
@@ -56,22 +56,22 @@ await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
 ```
 
-### `swipe(direction, speed, percentage, startPositionX, startPositionY)`
+### `swipe(direction, speed, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY)`
 
 Simulates a swipe on the element with the provided options.
 
-`direction`—the swipe's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
-`speed`—the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
-`percentage`—the percentage of the screen to swipe (optional, valid input: [0.0, 1.0], default is 0.75) <br/>
-`startPositionX`—the normalized x percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`) <br/>
-`startPositionY`—the normalized y percentage of the element to use as swipe start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`)
+`direction` — the direction of the swipe (reuqired, valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
+`speed` — the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
+`normalizedOffset` — swipe amount relative to the screen width/height (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
+`normalizedStartingPointX` — X coordinate of swipe starting point, relative to the view width (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
+`normalizedStartingPointY` — Y coordinate of swipe starting point, relative to the view height (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically)
 
 ```js
 await element(by.id('scrollView')).swipe('down');
-await element(by.id('scrollView')).swipe('down', 'fast');
-await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
-await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.5);
-await element(by.id('scrollView')).swipe('down', 'fast', 0.5, NaN, 0.25);
+await element(by.id('scrollView')).swipe('down', 'slow'); // set swipe speed
+await element(by.id('scrollView')).swipe('down', 'fast', 0.75); // set swipe amount
+await element(by.id('scrollView')).swipe('down', 'fast', NaN, 0.8); // set starting point X
+await element(by.id('scrollView')).swipe('down', 'fast', NaN, NaN, 0.25); // set starting point Y
 ```
 
 ### `pinch(scale, speed, angle)`  iOS only

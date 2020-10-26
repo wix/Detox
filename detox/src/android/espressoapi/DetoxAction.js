@@ -137,9 +137,12 @@ class DetoxAction {
     };
   }
 
-  static swipeInDirection(direction, fast) {
+  static swipeInDirection(direction, fast, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY) {
     if (typeof direction !== "string") throw new Error("direction should be a string, but got " + (direction + (" (" + (typeof direction + ")"))));
     if (typeof fast !== "boolean") throw new Error("fast should be a boolean, but got " + (fast + (" (" + (typeof fast + ")"))));
+    if (typeof normalizedOffset !== "number") throw new Error("normalizedOffset should be a number, but got " + (normalizedOffset + (" (" + (typeof normalizedOffset + ")"))));
+    if (typeof normalizedStartingPointX !== "number") throw new Error("normalizedStartingPointX should be a number, but got " + (normalizedStartingPointX + (" (" + (typeof normalizedStartingPointX + ")"))));
+    if (typeof normalizedStartingPointY !== "number") throw new Error("normalizedStartingPointY should be a number, but got " + (normalizedStartingPointY + (" (" + (typeof normalizedStartingPointY + ")"))));
     return {
       target: {
         type: "Class",
@@ -152,6 +155,15 @@ class DetoxAction {
       }, {
         type: "boolean",
         value: fast
+      }, {
+        type: "Double",
+        value: normalizedOffset
+      }, {
+        type: "Double",
+        value: normalizedStartingPointX
+      }, {
+        type: "Double",
+        value: normalizedStartingPointY
       }]
     };
   }
