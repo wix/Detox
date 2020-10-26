@@ -1,7 +1,9 @@
 package com.wix.detox.espresso.web;
 
 
-import androidx.test.espresso.web.sugar.Web.WebInteraction;
+import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.espresso.web.assertion.WebAssertion;
+import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.webdriver.DriverAtoms;
 
 import org.hamcrest.Matchers;
@@ -14,7 +16,9 @@ public class DetoxWebAssertion {
         // static class
     }
 
-    public static WebInteraction<String> assertHasText(WebInteraction webInteraction, String text) {
-        return webInteraction.check(webMatches(DriverAtoms.getText(), Matchers.containsString(text)));
+    public static WebAssertion<String> assertHasText(Atom atom, String text) {
+        return webMatches(atom, ViewMatchers.isDisplayed());
     }
+
+
 }
