@@ -184,6 +184,8 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(2));
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(-1));
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(NaN));
+
+      await expectToThrow(() => e.element(e.by.id('someId')).performAccessibilityAction());
     });
 
   });
@@ -223,6 +225,8 @@ describe('expectTwo API Coverage', () => {
       // await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).clearText());
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'notADirection', 0, 0));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scrollTo('notADirection'));
+
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id')).performAccessibilityAction());
     });
 
     it(`waitFor....whileElement() actions`, async () => {
