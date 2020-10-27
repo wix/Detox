@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const sleep = require('./sleep');
 
 const DEFAULT_RETRIES = 9;
@@ -5,13 +6,14 @@ const DEFAULT_INTERVAL = 500;
 const DEFAULT_CONDITION_FN = () => true;
 const DEFAULT_BACKOFF_MODE = 'linear';
 const backoffModes = {
-  'linear': () => ({ interval, totalRetries }) => totalRetries * interval,
+  'linear': () => ({ interval, totalTries }) => totalTries * interval,
   'none': () => ({ interval }) => interval,
 };
 
-async function retry(options, func) {
-  if (typeof options === 'function') {
-    func = options;
+async function retry(optionsOrFunc, func) {
+  let options = optionsOrFunc;
+  if (typeof optionsOrFunc === 'function') {
+    func = optionsOrFunc;
     options = {};
   }
 
@@ -24,14 +26,16 @@ async function retry(options, func) {
 
   const backoffFn = backoffModes[backoff]();
 
-  for (let totalRetries = 1; true; totalRetries++) {
+  for (let totalTries = 1, lastError = null; true; totalTries++) {
     try {
-      return await func(totalRetries);
+      return await func(totalTries, lastError);
     } catch (e) {
-      if (!conditionFn(e) || (totalRetries > retries)) {
+      lastError = e;
+
+      if (!conditionFn(e) || (totalTries > retries)) {
         throw e;
       }
-      await sleep(backoffFn({ interval, totalRetries }));
+      await sleep(backoffFn({ interval, totalTries }));
     }
   }
 }

@@ -7,21 +7,23 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, interval = 1000) {
+async function execWithRetriesAndLogs(bin, options, statusLogs = {}, retries = 9, interval = 1000) {
   const trackingId = _operationCounter++;
   const cmd = _composeCommand(bin, options);
   const execTimeout = _.get(options, 'timeout', 0);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
   const verbosity = _.get(options, 'verbosity', 'normal');
-  log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
   try {
-    await retry({retries, interval}, async (retryNumber) => {
-      if (statusLogs && statusLogs.trying) {
-        log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
-      }
+    log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
+    await retry({retries, interval}, async (retryNumber, lastError) => {
+      if (statusLogs.trying) {
+        _logTrying(log, statusLogs.trying, retryNumber, lastError);
+      } else if (statusLogs.retrying) {
+        _logRetrying(log, cmd, retryNumber, lastError);
+      }
       result = await exec(cmd, { timeout: execTimeout });
     });
   } catch (err) {
@@ -45,7 +47,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, int
 
   _logExecOutput(log, result, verbosity === 'high' ? 'debug' : 'trace');
 
-  if (statusLogs && statusLogs.successful) {
+  if (statusLogs.successful) {
     log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
   }
 
@@ -85,6 +87,20 @@ function _logExecOutput(log, process, level) {
 
   if (!stdout && !stderr) {
     log[level]({ event: 'EXEC_SUCCESS' }, '');
+  }
+}
+
+function _logTrying(log, message, retryNumber, lastError) {
+  if (lastError && lastError.stderr) {
+    log.trace({ event: 'EXEC_TRY_FAIL' }, lastError.stderr);
+  }
+  log.debug({ event: 'EXEC_TRY', retryNumber }, message);
+}
+
+function _logRetrying(log, message, retryNumber, lastError) {
+  if (retryNumber > 1) {
+    log.trace({ event: 'EXEC_TRY_FAIL' }, lastError.stderr);
+    log.debug({ event: 'EXEC_RETRY', retryNumber }, `(Retry #${retryNumber - 1})`, message);
   }
 }
 
