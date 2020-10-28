@@ -28,6 +28,7 @@ public class UiAutomatorHelper {
     private static final String LOG_TAG = "detox";
 
     private static final String METHOD_LOOP_UNTIL_IDLE = "loopMainThreadUntilIdle";
+    private static final String METHOD_LOOP_AT_LEAST = "loopMainThreadForAtLeast";
 
     /**
      * This triggers a full Espresso sync. It's intended use is to sync UIAutomator calls.
@@ -61,7 +62,7 @@ public class UiAutomatorHelper {
             @Override
             public void run() {
                 try {
-                    Reflect.on(UiControllerUtils.getUiController()).call(METHOD_LOOP_UNTIL_IDLE, millis);
+                    Reflect.on(UiControllerUtils.getUiController()).call(METHOD_LOOP_AT_LEAST, millis);
                 } catch (ReflectException e) {
                     Log.e(LOG_TAG, "Failed to sync Espresso manually.", e.getCause());
                 }
