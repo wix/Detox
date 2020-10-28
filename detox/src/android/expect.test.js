@@ -142,10 +142,13 @@ describe('expect', () => {
   describe('element interactions', () => {
     it('should tap and long-press', async () => {
       await e.element(e.by.label('Tap Me')).tap();
+      await e.element(e.by.label('Tap Me')).tap({ strict: false });
       await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
       await e.element(e.by.label('Tap Me')).tapAtPoint({x: 100, y: 200});
+      await e.element(e.by.label('Tap Me')).tapAtPoint({x: 100, y: 200, strict: false});
       await e.element(e.by.label('Tap Me')).longPress();
       await e.element(e.by.id('UniqueId819')).multiTap(3);
+      await e.element(e.by.id('UniqueId819')).multiTap(3, { strict: false });
     });
 
     it('should not tap and long-press given bad args', async () => {

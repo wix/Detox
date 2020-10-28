@@ -72,13 +72,16 @@ describe('Actions', () => {
       await driver.sluggishTapElement.tap();
     } catch (e) {
       console.log('Got an expected error', e);
-      if (!e.toString().includes('Tap handled too slowly, and turned into a long-tap!')) {
+      if (!e.toString().includes('Tap handled too slowly, and has turned into a long-tap, instead!!!')) {
         throw new Error('Error content isn\'t as expected!');
       }
       return;
     }
-
     throw new Error('Expected an error');
+  });
+
+  it(':android: should NOT throw if tap handling is too slow, if strict-mode is disabled', async () => {
+    await driver.sluggishTapElement.tap({ strict: false });
   });
 
   it('should type in an element', async () => {
