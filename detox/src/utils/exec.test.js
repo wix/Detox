@@ -130,7 +130,7 @@ describe('exec', () => {
     mockCppFailure(cpp);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', null, 0, 1);
+      await exec.execWithRetriesAndLogs('bin', { retries: 0, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -143,7 +143,7 @@ describe('exec', () => {
     mockCppFailure(cpp);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, 0, 1);
+      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low', retries: 0, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -156,7 +156,7 @@ describe('exec', () => {
     mockCppFailure(cpp);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, 0, 1);
+      await exec.execWithRetriesAndLogs('bin', { timeout: 1, retries: 0, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 1 });
@@ -175,7 +175,7 @@ describe('exec', () => {
       .mockRejectedValueOnce(errorResult);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', null, 5, 1);
+      await exec.execWithRetriesAndLogs('bin', { retries: 5, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -196,7 +196,7 @@ describe('exec', () => {
       .mockRejectedValueOnce(errorResult)
       .mockResolvedValueOnce(successfulResult);
 
-    await exec.execWithRetriesAndLogs('bin', null, 6, 1);
+    await exec.execWithRetriesAndLogs('bin', { retries: 6, interval: 1 });
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });

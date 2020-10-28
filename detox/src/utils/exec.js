@@ -7,12 +7,19 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(bin, options, retries = 9, interval = 1000) {
+async function execWithRetriesAndLogs(bin, options = {}) {
+  const {
+    retries = 9,
+    interval = 1000,
+    prefix = null,
+    args = null,
+    timeout = 0,
+    statusLogs = {},
+    verbosity = 'normal',
+  } = options;
+
   const trackingId = _operationCounter++;
-  const cmd = _composeCommand(bin, options);
-  const execTimeout = _.get(options, 'timeout', 0);
-  const verbosity = _.get(options, 'verbosity', 'normal');
-  const statusLogs = _.get(options, 'statusLogs', {});
+  const cmd = _composeCommand(bin, prefix, args);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
 
   let result;
@@ -25,11 +32,11 @@ async function execWithRetriesAndLogs(bin, options, retries = 9, interval = 1000
       } else if (statusLogs.retrying) {
         _logRetrying(log, cmd, retryNumber, lastError);
       }
-      result = await exec(cmd, { timeout: execTimeout });
+      result = await exec(cmd, { timeout });
     });
   } catch (err) {
-    const _failReason = err.code == null && execTimeout > 0
-      ? `timeout = ${execTimeout}ms`
+    const _failReason = err.code == null && timeout > 0
+      ? `timeout = ${timeout}ms`
       : `code = ${err.code}`;
 
     const level = (verbosity === 'low' ? 'debug' : 'error');
@@ -105,15 +112,15 @@ function _logRetrying(log, message, retryNumber, lastError) {
   }
 }
 
-function _composeCommand(bin, options) {
-  if (!options) {
+function _composeCommand(bin, prefix, args) {
+  if (!(prefix || args)) {
     return bin;
   }
 
-  const prefix = options.prefix ? `${options.prefix} && ` : '';
-  const args = options.args ? ` ${options.args}` : '';
+  const _prefix = prefix ? `${prefix} && ` : '';
+  const _args = args ? ` ${args}` : '';
 
-  return `${prefix}${bin}${args}`;
+  return `${_prefix}${bin}${_args}`;
 }
 
 function spawnAndLog(command, flags, options) {
