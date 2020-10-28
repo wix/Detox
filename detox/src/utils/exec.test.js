@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 describe('exec', () => {
   let logger;
   let exec;
@@ -7,9 +5,11 @@ describe('exec', () => {
 
   beforeEach(() => {
     jest.mock('./logger');
-    jest.mock('child-process-promise');
     logger = require('./logger');
+
+    jest.mock('child-process-promise');
     cpp = require('child-process-promise');
+
     exec = require('./exec');
   });
 
@@ -20,9 +20,7 @@ describe('exec', () => {
   });
 
   it(`exec command with no arguments successfully`, async () => {
-    const successfulResult = returnSuccessfulNoValue();
-    const resolvedPromise = Promise.resolve(successfulResult);
-    cpp.exec.mockReturnValueOnce(resolvedPromise);
+    mockCppSuccessful(cpp);
     await exec.execWithRetriesAndLogs('bin');
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
   });
@@ -48,17 +46,39 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`, { timeout: 0 });
   });
 
-  it(`exec command with arguments and status logs successfully`, async () => {
-    mockCppSuccessful(cpp);
+  it(`exec command with arguments and try-based status logs successfully, with status logging`, async () => {
+    cpp.exec
+      .mockRejectedValueOnce(returnErrorWithValue('error result'))
+      .mockResolvedValueOnce(returnSuccessfulWithValue('successful result'));
 
     const options = {args: `--argument 123`};
     const statusLogs = {
-      trying: `trying status log`,
-      successful: `successful status log`
+      trying: 'trying status log',
+      successful: 'successful status log',
     };
     await exec.execWithRetriesAndLogs('bin', options, statusLogs);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 1}, statusLogs.trying);
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 2}, statusLogs.trying);
+    expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
+  });
+
+  it(`exec command with arguments and retry-based status logs successfully, with status logging`, async () => {
+    cpp.exec
+      .mockRejectedValueOnce(returnErrorWithValue('error result'))
+      .mockResolvedValueOnce(returnSuccessfulWithValue('successful result'));
+
+    const options = {args: `--argument 123`};
+    const statusLogs = {
+      retrying: true,
+    };
+    await exec.execWithRetriesAndLogs('bin', options, statusLogs);
+
+    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 2}, '(Retry #1)', 'bin --argument 123');
+    expect(logger.debug).not.toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 1}, expect.any(String), expect.any(String));
+    expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
   });
 
   it(`exec command should output success and err logs`, async () => {
@@ -75,7 +95,7 @@ describe('exec', () => {
         exitCode: 0
       }
     };
-    cpp.exec.mockReturnValueOnce(Promise.resolve(cppResult));
+    cpp.exec.mockResolvedValueOnce(cppResult);
 
     await exec.execWithRetriesAndLogs('bin');
 
@@ -103,9 +123,7 @@ describe('exec', () => {
   });
 
   it(`exec command and fail with error code`, async () => {
-    const errorResult = returnErrorWithValue('error result');
-    const rejectedPromise = Promise.reject(errorResult);
-    cpp.exec.mockReturnValueOnce(rejectedPromise);
+    mockCppFailure(cpp);
 
     try {
       await exec.execWithRetriesAndLogs('bin', null, '', 0, 1);
@@ -118,9 +136,7 @@ describe('exec', () => {
   });
 
   it(`exec command and fail with error code, report only to debug log if verbosity is low`, async () => {
-    const errorResult = returnErrorWithValue('error result');
-    const rejectedPromise = Promise.reject(errorResult);
-    cpp.exec.mockReturnValueOnce(rejectedPromise);
+    mockCppFailure(cpp);
 
     try {
       await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, '', 0, 1);
@@ -133,9 +149,7 @@ describe('exec', () => {
   });
 
   it(`exec command and fail with timeout`, async () => {
-    const errorResult = returnErrorWithValue('error result');
-    const rejectedPromise = Promise.reject(errorResult);
-    cpp.exec.mockReturnValueOnce(rejectedPromise);
+    mockCppFailure(cpp);
 
     try {
       await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, '', 0, 1);
@@ -148,13 +162,14 @@ describe('exec', () => {
 
   it(`exec command with multiple failures`, async () => {
     const errorResult = returnErrorWithValue('error result');
-    const rejectedPromise = Promise.reject(errorResult);
-    cpp.exec.mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise);
+    cpp.exec
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult);
+
     try {
       await exec.execWithRetriesAndLogs('bin', null, '', 5, 1);
       fail('expected execWithRetriesAndLogs() to throw');
@@ -167,16 +182,15 @@ describe('exec', () => {
 
   it(`exec command with multiple failures and then a success`, async () => {
     const errorResult = returnErrorWithValue('error result');
-    const rejectedPromise = Promise.reject(errorResult);
     const successfulResult = returnSuccessfulWithValue('successful result');
-    const resolvedPromise = Promise.resolve(successfulResult);
 
-    cpp.exec.mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(rejectedPromise)
-       .mockReturnValueOnce(resolvedPromise);
+    cpp.exec
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockRejectedValueOnce(errorResult)
+      .mockResolvedValueOnce(successfulResult);
 
     await exec.execWithRetriesAndLogs('bin', null, '', 6, 1);
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -298,42 +312,36 @@ function toStream(string) {
   return stream;
 }
 
-function returnSuccessfulWithValue(value) {
-  const result = {
+const returnSuccessfulWithValue = (value) => ({
     stdout: JSON.stringify(value),
     stderr: "err",
     childProcess: {
       exitCode: 0
     }
-  };
-  return result;
-}
+  });
 
-function returnErrorWithValue(value) {
-  const result = {
+const returnErrorWithValue = (value) => ({
     stdout: "out",
     stderr: value,
     childProcess: {
       exitCode: 1
     }
-  };
-  return result;
-}
+  });
 
-function returnSuccessfulNoValue() {
-  const result = {
+const returnSuccessfulNoValue = () => ({
     childProcess: {
       exitCode: 0
     }
-  };
-  return result;
-}
+  });
 
 function mockCppSuccessful(cpp) {
   const successfulResult = returnSuccessfulWithValue('successful result');
-  const resolvedPromise = Promise.resolve(successfulResult);
-  cpp.exec.mockReturnValueOnce(resolvedPromise);
-
+  cpp.exec.mockResolvedValueOnce(successfulResult);
   return successfulResult;
 }
 
+function mockCppFailure(cpp) {
+  const errorResult = returnErrorWithValue('error result');
+  cpp.exec.mockRejectedValueOnce(errorResult);
+  return errorResult;
+}
