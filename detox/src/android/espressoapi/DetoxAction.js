@@ -34,8 +34,9 @@ function sanitize_android_direction(direction) {
   }
 } 
 class DetoxAction {
-  static multiClick(times) {
+  static multiClick(times, strictMode) {
     if (typeof times !== "number") throw new Error("times should be a number, but got " + (times + (" (" + (typeof times + ")"))));
+    if (typeof strictMode !== "boolean") throw new Error("strictMode should be a boolean, but got " + (strictMode + (" (" + (typeof strictMode + ")"))));
     return {
       target: {
         type: "Class",
@@ -45,13 +46,17 @@ class DetoxAction {
       args: [{
         type: "Integer",
         value: times
+      }, {
+        type: "boolean",
+        value: strictMode
       }]
     };
   }
 
-  static tapAtLocation(x, y) {
+  static tapAtLocation(x, y, strictMode) {
     if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
     if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+    if (typeof strictMode !== "boolean") throw new Error("strictMode should be a boolean, but got " + (strictMode + (" (" + (typeof strictMode + ")"))));
     return {
       target: {
         type: "Class",
@@ -64,6 +69,9 @@ class DetoxAction {
       }, {
         type: "Integer",
         value: y
+      }, {
+        type: "boolean",
+        value: strictMode
       }]
     };
   }
