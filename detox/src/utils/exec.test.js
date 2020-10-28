@@ -51,16 +51,18 @@ describe('exec', () => {
       .mockRejectedValueOnce(returnErrorWithValue('error result'))
       .mockResolvedValueOnce(returnSuccessfulWithValue('successful result'));
 
-    const options = {args: `--argument 123`};
-    const statusLogs = {
-      trying: 'trying status log',
-      successful: 'successful status log',
+    const options = {
+      args: `--argument 123`,
+      statusLogs: {
+        trying: 'trying status log',
+        successful: 'successful status log',
+      },
     };
-    await exec.execWithRetriesAndLogs('bin', options, statusLogs);
+    await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 1}, statusLogs.trying);
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 2}, statusLogs.trying);
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 1}, options.statusLogs.trying);
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 2}, options.statusLogs.trying);
     expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
   });
 
@@ -69,11 +71,13 @@ describe('exec', () => {
       .mockRejectedValueOnce(returnErrorWithValue('error result'))
       .mockResolvedValueOnce(returnSuccessfulWithValue('successful result'));
 
-    const options = {args: `--argument 123`};
-    const statusLogs = {
-      retrying: true,
+    const options = {
+      args: `--argument 123`,
+      statusLogs: {
+        retrying: true,
+      },
     };
-    await exec.execWithRetriesAndLogs('bin', options, statusLogs);
+    await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
     expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 2}, '(Retry #1)', 'bin --argument 123');
@@ -126,7 +130,7 @@ describe('exec', () => {
     mockCppFailure(cpp);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', null, '', 0, 1);
+      await exec.execWithRetriesAndLogs('bin', null, 0, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -139,7 +143,7 @@ describe('exec', () => {
     mockCppFailure(cpp);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, '', 0, 1);
+      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, 0, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -152,7 +156,7 @@ describe('exec', () => {
     mockCppFailure(cpp);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, '', 0, 1);
+      await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, 0, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 1 });
@@ -171,7 +175,7 @@ describe('exec', () => {
       .mockRejectedValueOnce(errorResult);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', null, '', 5, 1);
+      await exec.execWithRetriesAndLogs('bin', null, 5, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -192,7 +196,7 @@ describe('exec', () => {
       .mockRejectedValueOnce(errorResult)
       .mockResolvedValueOnce(successfulResult);
 
-    await exec.execWithRetriesAndLogs('bin', null, '', 6, 1);
+    await exec.execWithRetriesAndLogs('bin', null, 6, 1);
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });

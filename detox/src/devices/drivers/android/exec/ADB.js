@@ -277,7 +277,7 @@ class ADB {
     const retries = _.get(options, 'retries', 1);
     _.unset(options, 'retries');
 
-    return execWithRetriesAndLogs(cmd, options, undefined, retries);
+    return execWithRetriesAndLogs(cmd, options, retries);
   }
 
   /***

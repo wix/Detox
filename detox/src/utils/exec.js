@@ -7,12 +7,13 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(bin, options, statusLogs = {}, retries = 9, interval = 1000) {
+async function execWithRetriesAndLogs(bin, options, retries = 9, interval = 1000) {
   const trackingId = _operationCounter++;
   const cmd = _composeCommand(bin, options);
   const execTimeout = _.get(options, 'timeout', 0);
-  const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
   const verbosity = _.get(options, 'verbosity', 'normal');
+  const statusLogs = _.get(options, 'statusLogs', {});
+  const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
 
   let result;
   try {
