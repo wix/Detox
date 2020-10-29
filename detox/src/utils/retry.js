@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const sleep = require('./sleep');
 
 const DEFAULT_RETRIES = 9;
