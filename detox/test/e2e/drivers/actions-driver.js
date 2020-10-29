@@ -37,7 +37,7 @@ const driver = {
 
   sluggishTapElement: {
     testId: 'sluggishTappableText',
-    tap: (value) => element(by.id(driver.sluggishTapElement.testId)).tap(value)
+    tap: () => element(by.id(driver.sluggishTapElement.testId)).tap()
   }
 };
 

@@ -20,13 +20,18 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
 public class RNClickAction implements ViewAction {
     private final GeneralClickAction clickAction;
 
-    public RNClickAction(boolean strictMode) {
-        this(GeneralLocation.VISIBLE_CENTER, strictMode);
+    public RNClickAction() {
+        clickAction = new GeneralClickAction(
+                        new DetoxSingleTap(),
+                        GeneralLocation.VISIBLE_CENTER,
+                        Press.FINGER,
+                        InputDevice.SOURCE_UNKNOWN,
+                        MotionEvent.BUTTON_PRIMARY);
     }
 
-    public RNClickAction(CoordinatesProvider coordinatesProvider, boolean strictMode) {
+    public RNClickAction(CoordinatesProvider coordinatesProvider) {
         clickAction = new GeneralClickAction(
-                        new DetoxSingleTap(strictMode),
+                        new DetoxSingleTap(),
                         coordinatesProvider,
                         Press.FINGER,
                         InputDevice.SOURCE_UNKNOWN,

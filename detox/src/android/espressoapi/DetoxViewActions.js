@@ -7,18 +7,14 @@
 
 
 class DetoxViewActions {
-  static click(strictMode) {
-    if (typeof strictMode !== "boolean") throw new Error("strictMode should be a boolean, but got " + (strictMode + (" (" + (typeof strictMode + ")"))));
+  static click() {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxViewActions"
       },
       method: "click",
-      args: [{
-        type: "boolean",
-        value: strictMode
-      }]
+      args: []
     };
   }
 

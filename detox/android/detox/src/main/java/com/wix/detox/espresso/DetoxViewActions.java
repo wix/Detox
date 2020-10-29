@@ -12,8 +12,8 @@ import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
  * An alternative to {@link ViewActions} - providing alternative implementations, where needed.
  */
 public class DetoxViewActions {
-    public static ViewAction click(boolean strictMode) {
-        return actionWithAssertions(new RNClickAction(strictMode));
+    public static ViewAction click() {
+        return actionWithAssertions(new RNClickAction());
     }
 
     public static ViewAction typeText(String text) {
