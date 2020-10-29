@@ -46,6 +46,15 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`, { timeout: 0 });
   });
 
+  it(`exec command with prefix (no args) successfully`, async () => {
+    mockCppSuccessful(cpp);
+
+    const options = {prefix: `export MY_PREFIX`};
+    await exec.execWithRetriesAndLogs('bin', options);
+
+    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin`, { timeout: 0 });
+  });
+
   it(`exec command with arguments and try-based status logs successfully, with status logging`, async () => {
     cpp.exec
       .mockRejectedValueOnce(returnErrorWithValue('error result'))

@@ -275,11 +275,9 @@ class ADB {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `"${this.adbBin}" ${serial} ${params}`;
     const _options = {
+      retries: 1,
       ...options,
-      retries: options.retries || 1,
     }
-
-    _.unset(options, 'retries');
     return execWithRetriesAndLogs(cmd, _options);
   }
 
