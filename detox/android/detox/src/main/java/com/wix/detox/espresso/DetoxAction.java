@@ -41,15 +41,17 @@ import static org.hamcrest.Matchers.allOf;
  */
 
 public class DetoxAction {
+    private static final String LOG_TAG = "detox";
+
     private DetoxAction() {
         // static class
     }
 
-    public static ViewAction multiClick(int times, boolean strictMode) {
-        return actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(strictMode, times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+    public static ViewAction multiClick(int times) {
+        return actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
 
-    public static ViewAction tapAtLocation(final int x, final int y, boolean strictMode) {
+    public static ViewAction tapAtLocation(final int x, final int y) {
         final int px = UiAutomatorHelper.convertDiptoPix(x);
         final int py = UiAutomatorHelper.convertDiptoPix(y);
         CoordinatesProvider c = new CoordinatesProvider() {
@@ -62,7 +64,7 @@ public class DetoxAction {
                 return new float[] {fx, fy};
             }
         };
-        return actionWithAssertions(new RNClickAction(c, strictMode));
+        return actionWithAssertions(new RNClickAction(c));
     }
 
     /**

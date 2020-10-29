@@ -17,7 +17,7 @@ public class DetoxTypeTextAction implements ViewAction {
 
     public DetoxTypeTextAction(String text) {
         this.text = text;
-        clickAction = new RNClickAction(false);
+        clickAction = new RNClickAction();
         typeTextAction = new TypeTextAction(text, false);
     }
 

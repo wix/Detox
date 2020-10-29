@@ -63,7 +63,6 @@ object DetoxMultiTapSpec: Spek({
                 whenever(uiControllerCallSpy.eventInjectionsIterator()).thenReturn(injectionsHistory.iterator())
 
         fun uut(times: Int) = DetoxMultiTap(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy)
-        fun uutNonStrict(times: Int) = DetoxMultiTap(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy, false)
         fun sendOneTap(uut: DetoxMultiTap = uut(1)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
         fun sendTwoTaps(uut: DetoxMultiTap = uut(2)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
 
@@ -211,17 +210,5 @@ object DetoxMultiTapSpec: Spek({
                 sendOneTap()
             }
         }
-
-        it("should NOT throw even though ui-controller spy indicates tap has turned into a long-tap, in non-strict mode") {
-            givenInjectionSuccess()
-
-            val injectionsHistory = listOf(
-                    CallInfo(longTapMinTimeMs - 1, longTapMinTimeMs),
-                    CallInfo(0, 1)
-            )
-            givenInjectionCallsHistory(injectionsHistory)
-            uutNonStrict(1).sendTap(uiController, coordinates, precision, -1, -1)
-        }
-
     }
 })

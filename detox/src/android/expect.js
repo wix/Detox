@@ -29,20 +29,16 @@ class Action {
 }
 
 class TapAction extends Action {
-  constructor(value = {}) {
+  constructor(value) {
     super();
-
-    const { strict = true } = value;
-    this._call = invoke.callDirectly((value.x && value.y) ? DetoxActionApi.tapAtLocation(value.x, value.y, strict) : DetoxViewActionsApi.click(strict));
+    this._call = invoke.callDirectly(value ? DetoxActionApi.tapAtLocation(value.x, value.y) : DetoxViewActionsApi.click());
   }
 }
 
 class TapAtPointAction extends Action {
   constructor(value) {
     super();
-
-    const { strict = true } = value;
-    this._call = invoke.callDirectly(DetoxActionApi.tapAtLocation(value.x, value.y, strict));
+    this._call = invoke.callDirectly(DetoxActionApi.tapAtLocation(value.x, value.y));
   }
 }
 
@@ -54,11 +50,9 @@ class LongPressAction extends Action {
 }
 
 class MultiClickAction extends Action {
-  constructor(times, value = {}) {
+  constructor(times) {
     super();
-
-    const { strict = true } = value;
-    this._call = invoke.callDirectly(DetoxActionApi.multiClick(times, strict));
+    this._call = invoke.callDirectly(DetoxActionApi.multiClick(times));
   }
 }
 
@@ -247,8 +241,8 @@ class Element {
     return await new ActionInteraction(this._invocationManager, this, new LongPressAction()).execute();
   }
 
-  async multiTap(times, value) {
-    return await new ActionInteraction(this._invocationManager, this, new MultiClickAction(times, value)).execute();
+  async multiTap(times) {
+    return await new ActionInteraction(this._invocationManager, this, new MultiClickAction(times)).execute();
   }
 
   async tapBackspaceKey() {
