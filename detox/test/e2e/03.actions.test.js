@@ -67,6 +67,20 @@ describe('Actions', () => {
     });
   });
 
+  it.skip(':android: should throw if tap handling is too slow', async () => {
+    try {
+      await driver.sluggishTapElement.tap();
+    } catch (e) {
+      console.log('Got an expected error', e);
+      if (!e.toString().includes('Tap handled too slowly, and turned into a long-tap!')) {
+        throw new Error('Error content isn\'t as expected!');
+      }
+      return;
+    }
+
+    throw new Error('Expected an error');
+  });
+
   it('should type in an element', async () => {
     const typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
     await element(by.id('UniqueId937')).typeText(typedText);

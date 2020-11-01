@@ -3,6 +3,7 @@ package com.wix.detox
 import android.content.Context
 import android.util.Log
 import androidx.test.espresso.IdlingResource
+import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
@@ -47,22 +48,33 @@ class InvokeActionHandler(
         private val errorParse: (e: Throwable?) -> String)
     : DetoxActionHandler {
 
+    private val VIEW_HIERARCHY_TEXT = "View Hierarchy:"
+
     override fun handle(params: String, messageId: Long) {
         try {
             val invocationResult = methodInvocation.invoke(params)
             wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
             Log.i(LOG_TAG, "Test exception", e)
-            val message = e.targetException.message
-            val error = message?.substringBefore("View Hierarchy:")?.trim()
-            val viewHierarchy = message?.substringAfter("View Hierarchy:")
-            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to "${error}\n",
-                                                                        "viewHierarchy" to viewHierarchy), messageId)
+            val payload = extractFailurePayload(e)
+            wsClient.sendAction("testFailed", payload, messageId)
         }  catch (e: Exception) {
             Log.e(LOG_TAG, "Exception", e)
             wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
         }
     }
+
+    private fun extractFailurePayload(e: InvocationTargetException): Map<String, Any?>
+        = e.targetException.message?.let { message: String ->
+            if (message.contains(VIEW_HIERARCHY_TEXT)) {
+                val error = message.substringBefore(VIEW_HIERARCHY_TEXT).trim()
+                val viewHierarchy = message.substringAfter(VIEW_HIERARCHY_TEXT).trim()
+                mapOf<String, Any?>("details" to "${error}\n", "viewHierarchy" to viewHierarchy)
+            } else {
+                val error = extractRootCause(e.targetException)
+                mapOf<String, Any?>("details" to error.message)
+            }
+        } ?: emptyMap()
 }
 
 class CleanupActionHandler(

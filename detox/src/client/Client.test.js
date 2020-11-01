@@ -9,6 +9,7 @@ describe('Client', () => {
   let WebSocket;
   let Client;
   let client;
+  let bunyan;
   let log;
 
   beforeEach(() => {
@@ -18,8 +19,12 @@ describe('Client', () => {
     jest.mock('../utils/argparse');
     argparse = require('../utils/argparse');
 
+    jest.mock('bunyan')
+    bunyan = require('bunyan');
+
     Client = require('./Client');
     log = require('../utils/logger');
+    log.level.mockReturnValue(bunyan.DEBUG)
   });
 
   it(`reloadReactNative() - should receive ready from device and resolve`, async () => {
@@ -279,14 +284,41 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
-  it(`execute() - "testFailed" result should throw`, async () => {
+  it(`execute() - "testFailed" result should throw with view hierarchy`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("testFailed",  {details: "this is an error"}, 1));
+    client.ws.send.mockReturnValueOnce(response("testFailed",  {details: "this is an error", viewHierarchy: 'mock-hierarchy'}, 1));
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     try {
       await client.execute(call);
     } catch (ex) {
       expect(ex).toBeDefined();
+      expect(ex.toString()).toContain('View Hierarchy:\nmock-hierarchy');
+    }
+  });
+
+  it(`execute() - "testFailed" result should throw with view-hierarchy hint`, async () => {
+    log.level.mockReturnValue(bunyan.INFO);
+
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("testFailed",  {details: "this is an error", viewHierarchy: 'mock-hierarchy'}, 1));
+    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
+    try {
+      await client.execute(call);
+    } catch (ex) {
+      expect(ex).toBeDefined();
+      expect(ex.toString()).toContain('use log-level verbose or higher');
+    }
+  });
+
+  it(`execute() - "testFailed" result should throw without a view hierarchy`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("testFailed",  {details: "this is an error", viewHierarchy: undefined}, 1));
+    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
+    try {
+      await client.execute(call);
+    } catch (ex) {
+      expect(ex).toBeDefined();
+      expect(ex.toString()).not.toContain('View Hierarchy:');
     }
   });
 

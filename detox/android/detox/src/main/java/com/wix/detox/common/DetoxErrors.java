@@ -20,4 +20,10 @@ public interface DetoxErrors {
             super(cause);
         }
     }
+
+    class DetoxIllegalStateException extends DetoxRuntimeException {
+        public DetoxIllegalStateException(String message) {
+            super(message);
+        }
+    }
 }
