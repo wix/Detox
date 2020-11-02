@@ -5,11 +5,11 @@ const {log, logSection, getVersionSafe} = require('./ci.common');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
-const ONLY_ON_BRANCH = 'origin/master';
+// const ONLY_ON_BRANCH = 'origin/master';
 
 function run() {
 	logSection('Script started');
-	if (!validateEnv()) {
+	if (!isEnvValid()) {
 		return;
 	}
 
@@ -19,7 +19,7 @@ function run() {
 	versionTagAndPublish();
 }
 
-function validateEnv() {
+function isEnvValid() {
 	if (!process.env.JENKINS_CI) {
 		throw new Error(`Release blocked: Not on a CI build machine!`);
 	}
@@ -29,10 +29,10 @@ function validateEnv() {
 		return false;
 	}
 
-	if (process.env.GIT_BRANCH !== ONLY_ON_BRANCH) {
-		log(`Release blocked: Not publishing on branch ${process.env.GIT_BRANCH}, which isn't ${ONLY_ON_BRANCH}`);
-		return false;
-	}
+	// if (process.env.GIT_BRANCH !== ONLY_ON_BRANCH) {
+	// 	log(`Release blocked: Not publishing on branch ${process.env.GIT_BRANCH}, which isn't ${ONLY_ON_BRANCH}`);
+	// 	return false;
+	// }
 
 	return true;
 }
@@ -65,11 +65,11 @@ function versionTagAndPublish() {
 	log(`    package version: ${packageVersion}`);
 
 	const currentPublished = findCurrentPublishedVersion();
-	log(`    current published version: ${currentPublished}`);
+	log(`    current published version from process.env.GIT_BRANCH: ${currentPublished}`);
 
 	if (isRelease) {
 		const publishNewVersion = require('./ci.publish');
-		publishNewVersion(packageVersion);
+		publishNewVersion(packageVersion, releaseNpmTag());
 	} else {
 		// Disabled for the time being
 		// const tagVersion = require('./ci.tagversion');
@@ -79,8 +79,18 @@ function versionTagAndPublish() {
 	log(`Great success, much amaze`);
 }
 
+function releaseNpmTag() {
+	if (process.env.GIT_BRANCH === 'master') {
+		return 'latest';
+	} else if (process.env.RELEASE_NPM_TAG) {
+		return process.env.RELEASE_NPM_TAG;
+	} else {
+		return process.env.GIT_BRANCH;
+	}
+}
+
 function findCurrentPublishedVersion() {
-	return exec.execSyncRead(`npm view detox dist-tags.latest`);
+	return exec.execSyncRead(`npm view detox dist-tags.${releaseNpmTag()}`);
 }
 
 run();

@@ -3,14 +3,14 @@ const exec = require('shell-utils').exec;
 
 const {log, logSection, getVersionSafe} = require('./ci.common');
 
-function publishNewVersion(packageVersion) {
+function publishNewVersion(packageVersion, npmTag) {
   validatePrerequisites();
   projectSetup();
-  publishToNpm();
+  publishToNpm(npmTag);
 
   const newVersion = getVersionSafe();
   if (newVersion === packageVersion) {
-    log(`Stopping: Lerna\'s completed without upgrading the version - nothing to publish (version is ${newVersion})`);
+    log(`Stopping: Lerna completed without upgrading the version - nothing to publish (version is ${newVersion})`);
     return false;
   }
 
@@ -32,11 +32,11 @@ function validatePrerequisites() {
 
 function projectSetup() {
   logSection('Project setup');
+  exec.execSync(`git checkout ${process.env.BRANCH}`);
   exec.execSync(`lerna bootstrap`);
-  exec.execSync(`git checkout master`);
 }
 
-function publishToNpm() {
+function publishToNpm(npmTag) {
   logSection('Lerna publish');
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
@@ -49,7 +49,7 @@ function publishToNpm() {
     log('SKIP NPM is set: Lerna-publishing without publishing to NPM');
   }
 
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
+  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --dist-tag ${npmTag} --skip-git ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
   exec.execSync('git status');
 }
 
@@ -64,8 +64,8 @@ function updateGit(newVersion) {
   if (dryRun) {
     log('DRY RUN: not pushing to git');
   } else {
-    exec.execSync(`git push deploy master`);
-    exec.execSync(`git push --tags deploy master`);
+    exec.execSync(`git push deploy ${process.env.BRANCH}`);
+    exec.execSync(`git push --tags deploy ${process.env.BRANCH}`);
   }
 }
 
