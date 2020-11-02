@@ -1,12 +1,12 @@
 {
   "name": "demo-plugin",
-  "version": "17.10.7-alpha.0",
+  "version": "17.10.6",
   "private": true,
   "scripts": {
     "test:plugin": "detox test --configuration plugin -l verbose"
   },
   "devDependencies": {
-    "detox": "^17.10.7-alpha.0",
+    "detox": "^17.10.6",
     "jest": "^26.5.0"
   },
   "detox": {
