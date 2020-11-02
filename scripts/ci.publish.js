@@ -24,10 +24,10 @@ function validatePrerequisites() {
     throw new Error(`Cannot publish: lerna not installed!`);
   }
 
-  const lernaVersion = exec.execSyncRead('lerna --version');
-  if (!lernaVersion.startsWith('2.')) {
-    throw new Error(`Cannot publish: lerna version isn't 2.x.x (actual version is ${lernaVersion})`);
-  }
+  // const lernaVersion = exec.execSyncRead('lerna --version');
+  // if (!lernaVersion.startsWith('2.')) {
+  //   throw new Error(`Cannot publish: lerna version isn't 2.x.x (actual version is ${lernaVersion})`);
+  // }
 }
 
 function projectSetup() {
