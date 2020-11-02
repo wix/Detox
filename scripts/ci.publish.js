@@ -32,7 +32,7 @@ function validatePrerequisites() {
 
 function projectSetup() {
   logSection('Project setup');
-  exec.execSync(`git checkout ${process.env.BRANCH}`);
+  exec.execSync(`git checkout ${process.env.GIT_BRANCH}`);
   exec.execSync(`lerna bootstrap`);
 }
 
@@ -64,8 +64,8 @@ function updateGit(newVersion) {
   if (dryRun) {
     log('DRY RUN: not pushing to git');
   } else {
-    exec.execSync(`git push deploy ${process.env.BRANCH}`);
-    exec.execSync(`git push --tags deploy ${process.env.BRANCH}`);
+    exec.execSync(`git push deploy ${process.env.GIT_BRANCH}`);
+    exec.execSync(`git push --tags deploy ${process.env.GIT_BRANCH}`);
   }
 }
 
