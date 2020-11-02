@@ -65,7 +65,7 @@ function versionTagAndPublish() {
 	log(`    package version: ${packageVersion}`);
 
 	const currentPublished = findCurrentPublishedVersion();
-	log(`    current published version from process.env.GIT_BRANCH: ${currentPublished}`);
+	log(`    current published version from ${process.env.GIT_BRANCH}: ${currentPublished}`);
 
 	if (isRelease) {
 		const publishNewVersion = require('./ci.publish');
