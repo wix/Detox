@@ -124,9 +124,21 @@ class DetoxConfigErrorBuilder {
     });
   }
 
-  missingServerProperty() {
+  invalidServerProperty() {
     return new DetoxConfigError({
-      message: `session.server property is missing, should hold the server address`,
+      message: `session.server property is not a valid WebSocket URL`,
+      hint: `Expected something like "ws://localhost:8099".\nCheck that in your Detox config${_atPath(this.filepath)}`,
+      inspectOptions: { depth: 3 },
+      debugInfo: _.omitBy({
+        session: _.get(this.contents, ['session']),
+        ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
+      }, _.isEmpty),
+    });
+  }
+
+  invalidSessionIdProperty() {
+    return new DetoxConfigError({
+      message: `session.sessionId property should be a non-empty string`,
       hint: `Check that in your Detox config${_atPath(this.filepath)}`,
       inspectOptions: { depth: 3 },
       debugInfo: _.omitBy({
@@ -136,9 +148,9 @@ class DetoxConfigErrorBuilder {
     });
   }
 
-  missingSessionIdProperty() {
+  invalidDebugSynchronizationProperty() {
     return new DetoxConfigError({
-      message: `session.sessionId property is missing, should hold the server session id`,
+      message: `session.debugSynchronization should be a positive number`,
       hint: `Check that in your Detox config${_atPath(this.filepath)}`,
       inspectOptions: { depth: 3 },
       debugInfo: _.omitBy({

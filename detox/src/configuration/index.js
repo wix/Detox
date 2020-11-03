@@ -67,8 +67,10 @@ async function composeDetoxConfig({
   });
 
   const sessionConfig = await composeSessionConfig({
+    cliConfig,
     detoxConfig,
     deviceConfig,
+    errorBuilder,
   });
 
   return {

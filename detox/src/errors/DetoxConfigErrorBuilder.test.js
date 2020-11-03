@@ -257,13 +257,13 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.missingServerProperty', () => {
+  describe('.invalidServerProperty', () => {
     beforeEach(() => {
-      build = () => builder.missingServerProperty();
+      build = () => builder.invalidServerProperty();
       builder.setConfigurationName('android.release');
       builder.setDetoxConfig({
         session: {
-          sessionId: '234589798234',
+          server: 'localhost',
         },
         configurations: {
           'android.release': {
@@ -286,9 +286,9 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.missingSessionId', () => {
+  describe('.invalidSessionId', () => {
     beforeEach(() => {
-      build = () => builder.missingSessionIdProperty();
+      build = () => builder.invalidSessionIdProperty();
       builder.setConfigurationName('android.release');
       builder.setDetoxConfig({
         configurations: {
@@ -298,7 +298,48 @@ describe('DetoxConfigErrorBuilder', () => {
               avdName: 'Pixel_2_API_29',
             },
             session: {
-              server: 'ws://localhost:12837',
+              sessionId: 234589798234,
+            },
+          }
+        }
+      });
+    });
+
+    it('should create a generic error, if the config location is not known', () => {
+      expect(build()).toMatchSnapshot();
+    });
+
+    it('should create an error with a hint, if the config location is known', () => {
+      builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+      expect(build()).toMatchSnapshot();
+    });
+
+    it('should point to global session if there is one', () => {
+      builder.setDetoxConfig({
+        session: {
+          server: 'ws://localhost:12837',
+        },
+        configurations: {},
+      })
+
+      builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+      expect(build()).toMatchSnapshot();
+    });
+  });
+
+  describe('.invalidDebugSynchronizationProperty', () => {
+    beforeEach(() => {
+      build = () => builder.invalidDebugSynchronizationProperty();
+      builder.setConfigurationName('android.release');
+      builder.setDetoxConfig({
+        configurations: {
+          'android.release': {
+            type: 'android.emulator',
+            device: {
+              avdName: 'Pixel_2_API_29',
+            },
+            session: {
+              debugSynchronization: '3000',
             },
           }
         }
