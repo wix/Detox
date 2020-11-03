@@ -10,7 +10,7 @@ function run() {
 
   const npmTag = releaseNpmTag();
   const preid = npmTag === 'latest'? '': `--preid=${npmTag}`;
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes ${preid} --no-git-tag-version --no-push --skip-npm`);
+  exec.execSync(`lerna version --yes ${versionType} ${preid} --no-git-tag-version --no-push`);
   const futureVersion = getVersionSafe();
   log('Version is: ' + futureVersion);
   exec.execSync('git reset --hard');
