@@ -1,7 +1,7 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {log, logSection, getVersionSafe} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag} = require('./ci.common');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
@@ -72,15 +72,6 @@ function versionTagAndPublish() {
 	log(`Great success, much amaze`);
 }
 
-function releaseNpmTag() {
-	if (process.env.RELEASE_NPM_TAG) {
-		return process.env.RELEASE_NPM_TAG;
-	} else if (process.env.GIT_BRANCH === 'master') {
-		return 'latest';
-	} else {
-		return process.env.GIT_BRANCH;
-	}
-}
 
 function findCurrentPublishedVersion() {
 	return exec.execSyncRead(`npm view detox dist-tags.${releaseNpmTag()}`);
