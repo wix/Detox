@@ -1,4 +1,4 @@
-/* tslint:disable: no-console */
+/* tslint:disable: no-console */ 
 const exec = require('shell-utils').exec;
 
 const {log, logSection, getVersionSafe} = require('./ci.common');
