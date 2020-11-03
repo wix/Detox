@@ -33,7 +33,7 @@ function validatePrerequisites() {
 function projectSetup() {
   logSection('Project setup');
   exec.execSync(`git checkout ${process.env.GIT_BRANCH}`);
-  exec.execSync(`lerna bootstrap`);
+  exec.execSync(`lerna bootstrap --no-ci`);
 }
 
 function publishToNpm(npmTag) {
