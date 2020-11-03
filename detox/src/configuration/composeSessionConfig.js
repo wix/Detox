@@ -1,5 +1,6 @@
 const getPort = require('get-port');
 const uuid = require('../utils/uuid');
+const isValidWebsocketURL = require('../utils/isValidWebsocketURL');
 
 /**
  *
@@ -7,22 +8,45 @@ const uuid = require('../utils/uuid');
  * @param {*} detoxConfig
  * @param {*} deviceConfig
  */
-async function composeSessionConfig({ errorBuilder, detoxConfig, deviceConfig }) {
-  const session = deviceConfig.session || detoxConfig.session || {
-    autoStart: true,
-    server: `ws://localhost:${await getPort()}`,
-    sessionId: uuid.UUID(),
+async function composeSessionConfig({ errorBuilder, cliConfig, detoxConfig, deviceConfig }) {
+  const session = {
+    ...detoxConfig.session,
+    ...deviceConfig.session,
   };
 
-  if (!session.server) {
-    throw errorBuilder.missingServerProperty();
+  if (session.server != null) {
+    const value = session.server;
+    if (typeof value !== 'string' || !isValidWebsocketURL(value)) {
+      throw errorBuilder.invalidServerProperty();
+    }
   }
 
-  if (!session.sessionId) {
-    throw errorBuilder.missingSessionIdProperty();
+  if (session.sessionId != null) {
+    const value = session.sessionId;
+    if (typeof value !== 'string' || value.length === 0) {
+      throw errorBuilder.invalidSessionIdProperty();
+    }
   }
 
-  return session;
+  if (session.debugSynchronization != null) {
+    const value = session.debugSynchronization;
+    if (typeof value !== 'number' || value < 0) {
+      throw errorBuilder.invalidDebugSynchronizationProperty();
+    }
+  }
+
+  if (cliConfig.debugSynchronization > 0) {
+    session.debugSynchronization = +cliConfig.debugSynchronization;
+  }
+
+  return {
+    autoStart: !session.server,
+    server: `ws://localhost:${await getPort()}`,
+    sessionId: uuid.UUID(),
+    debugSynchronization: false,
+
+    ...session,
+  };
 }
 
 module.exports = composeSessionConfig;
