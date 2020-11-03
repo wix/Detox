@@ -11,7 +11,7 @@ class Client {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
     this.slowInvocationStatusHandler = null;
-    this.slowInvocationTimeout = argparse.getArgValue('debug-synchronization');
+    this.slowInvocationTimeout = config.debugSynchronization;
     this.successfulTestRun = true; // flag for cleanup
     this.pandingAppCrash;
 

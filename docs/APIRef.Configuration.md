@@ -38,6 +38,9 @@ Please find the [Detox example app](/examples/demo-react-native/detox.config.js)
   // ...
   "detox": {
     // ...
+    "session": {
+      "debugSynchronization": 20000
+    },
     "configurations": {
       "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
@@ -193,12 +196,12 @@ Detox can either initialize a server using a generated configuration, or can be 
 ```json
 {
   "session": {
-  "server": "ws://localhost:8099",
-  "sessionId": "YourProjectSessionId"
-}
+    "server": "ws://localhost:8099",
+    "sessionId": "YourProjectSessionId"
+  }
 ```
 
-Session can also be set per configuration:
+Session can be set also per configuration — then it takes a higher priority over the global session config:
 
 ```json
 {  
@@ -207,14 +210,25 @@ Session can also be set per configuration:
       ...
       "session": {
         "server": "ws://localhost:8099",
-        "sessionId": "YourProjectSessionId"
+        "sessionId": "YourProjectSessionId",
       }
     }
   }
 }
 ```
 
+Also, you can specify an optional numeric `debugSynchronization` parameter
+(see also `--debug-synchronization` in [APIRef.DetoxCLI.md#test](APIRef.DetoxCLI.md#test)).
+When an action/expectation takes a significant amount time, use this option to print device synchronization status.
+The status will be printed if the action takes more than _[N]_ ms to complete.
 
+```json
+{
+    "session": {
+      "debugSynchronization": 20000
+    }
+}
+```
 
 ## detox-cli
 
