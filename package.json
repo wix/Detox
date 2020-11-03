@@ -19,5 +19,5 @@
     "semver": "5.x.x",
     "shell-utils": "1.x.x"
   },
-  "version": "17.10.7"
+  "version": "18.0.0-alpha.0"
 }
