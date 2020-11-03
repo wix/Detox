@@ -73,10 +73,10 @@ function versionTagAndPublish() {
 }
 
 function releaseNpmTag() {
-	if (process.env.GIT_BRANCH === 'master') {
-		return 'latest';
-	} else if (process.env.RELEASE_NPM_TAG) {
+	if (process.env.RELEASE_NPM_TAG) {
 		return process.env.RELEASE_NPM_TAG;
+	} else if (process.env.GIT_BRANCH === 'master') {
+		return 'latest';
 	} else {
 		return process.env.GIT_BRANCH;
 	}
