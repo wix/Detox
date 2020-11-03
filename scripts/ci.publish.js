@@ -49,7 +49,7 @@ function publishToNpm(npmTag) {
     log('SKIP NPM is set: Lerna-publishing without publishing to NPM');
   }
 
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --npm-tag ${npmTag} ${npmTag === 'latest'? '': '--preid=alpha'} --skip-git ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
+  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --dist-tag ${npmTag} ${npmTag === 'latest'? '': '--preid=alpha'} --skip-git ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
   exec.execSync('git status');
 }
 
