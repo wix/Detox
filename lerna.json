@@ -31,7 +31,8 @@
     },
     "bootstrap": {
       "npmClientArgs": [
-        "--no-package-lock"
+        "--no-package-lock",
+        "--no-ci"
       ]
     }
   }
