@@ -1,4 +1,4 @@
-/* tslint:disable: no-console */ 
+/* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 
 const {log, logSection, getVersionSafe} = require('./ci.common');
@@ -44,8 +44,7 @@ function publishToNpm(npmTag) {
     log('SKIP NPM is set: Lerna-publishing without publishing to NPM');
   }
   const preid = npmTag === 'latest'? '': `--preid=${npmTag}`;
-  exec.execSync(`lerna version --yes ${versionType} ${preid} --no-git-tag-version --no-push`);
-  exec.execSync(`lerna publish --yes --dist-tag ${npmTag} ${preid} --no-git-tag-version --no-push ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
+  exec.execSync(`lerna publish ${versionType} --yes --dist-tag ${npmTag} ${preid} --no-git-tag-version --no-push ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
   exec.execSync('git status');
 }
 
