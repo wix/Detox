@@ -5,8 +5,6 @@ const {log, logSection, getVersionSafe} = require('./ci.common');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
-// const ONLY_ON_BRANCH = 'origin/master';
-
 function run() {
 	logSection('Script started');
 	if (!isEnvValid()) {
@@ -28,11 +26,6 @@ function isEnvValid() {
 		log(`Release blocked: Not on jenkins' master build job!`);
 		return false;
 	}
-
-	// if (process.env.GIT_BRANCH !== ONLY_ON_BRANCH) {
-	// 	log(`Release blocked: Not publishing on branch ${process.env.GIT_BRANCH}, which isn't ${ONLY_ON_BRANCH}`);
-	// 	return false;
-	// }
 
 	return true;
 }
