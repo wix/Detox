@@ -3,7 +3,7 @@ const {log, logSection, getVersionSafe} = require('./ci.common');
 
 function run() {
   logSection('Initializing');
-  exec.execSync('lerna bootstrap');
+  exec.execSync('lerna bootstrap --no-ci');
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
   logSection(`Pre-calculating future version... (versionType=${versionType})`);

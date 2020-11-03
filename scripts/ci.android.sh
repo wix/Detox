@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 # Approve unapproved SDK licenses
 yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses

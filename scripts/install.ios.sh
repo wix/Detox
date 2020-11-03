@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-$(dirname "$0")/install.sh
+source $(dirname "$0")/install.sh
 
 gem install xcpretty >/dev/null 2>&1
 
