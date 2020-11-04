@@ -44,6 +44,19 @@ describe('Android driver', () => {
     });
   });
 
+  it.only('should', async () => {
+    class A {
+      doSmt() {
+        console.log('doing smt');
+      }
+    }
+
+    const _  = require('lodash');
+    expect(_.isObjectLike(new A())).toEqual(true);
+    expect(_.isObjectLike({})).toEqual(true);
+    expect(_.isObjectLike('bla bla')).toEqual(false);
+  });
+
   describe('Initialization', () => {
     it('should properly create a FileXfer object', async () => {
       expect(FileXferClass).toHaveBeenCalledWith(adbObj());

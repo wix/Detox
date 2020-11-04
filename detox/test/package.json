@@ -136,7 +136,7 @@
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.genycloud",
         "device": {
-          "recipeName": "Detox_Pixel_API_29"
+          "recipeUUID": "a50a71d6-da90-4c67-bdfa-5b602b0bbd15"
         }
       },
       "android.genycloud.release2": {
@@ -144,7 +144,7 @@
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.genycloud",
         "device": {
-          "recipeUUID": "a9da8503-c1d0-4aa0-9d8d-8b551da877d3"
+          "recipeName": "Detox_Pixel_API_29"
         }
       },
       "android.emu.debug.fromSource": {

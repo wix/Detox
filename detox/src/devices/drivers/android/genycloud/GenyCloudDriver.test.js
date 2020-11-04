@@ -45,7 +45,7 @@ describe('Genymotion-cloud driver', () => {
   let emitter;
   let adb;
   let deviceQueryHelper;
-  let allocationHelper;
+  let deviceAllocator;
   let uut;
   beforeEach(() => {
     const Emitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
@@ -66,9 +66,9 @@ describe('Genymotion-cloud driver', () => {
     const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
     deviceQueryHelper = () => latestInstanceOf(DeviceQueryHelper);
 
-    jest.mock('./helpers/GenyAllocationHelper');
-    const AllocationHelper = require('./helpers/GenyAllocationHelper');
-    allocationHelper = () => latestInstanceOf(AllocationHelper);
+    jest.mock('./GenyCloudDeviceAllocator');
+    const DeviceAllocator = require('./GenyCloudDeviceAllocator');
+    deviceAllocator = () => latestInstanceOf(DeviceAllocator);
 
     const GenyCloudDriver = require('./GenyCloudDriver');
     uut = new GenyCloudDriver({
@@ -83,32 +83,35 @@ describe('Genymotion-cloud driver', () => {
   });
 
   describe('device (instance) allocation', () => {
-    const givenNoReceipes = () => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(null);
+    const givenNoRecipes = () => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(null);
     const givenResolvedRecipeForQuery = (recipe) => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(recipe);
-    const givenInstanceAllocationResult = ({ instance, coldBooted = false }) => allocationHelper().allocateInstance.mockResolvedValue({ instance, coldBooted });
+    const givenDeviceAllocationResult = ({ instance, created = false }) => deviceAllocator().allocateDevice.mockResolvedValue({ instance, created });
 
     it('should get a recipe and allocate a device', async () => {
       const recipe = aRecipe();
       const instance = anInstance();
       givenResolvedRecipeForQuery(recipe);
-      givenInstanceAllocationResult({ instance });
+      givenDeviceAllocationResult({ instance });
 
       const deviceQuery = aDeviceQuery();
       const result = await uut.acquireFreeDevice(deviceQuery);
 
-      expect(result).toEqual(instance.adbName);
+      expect(result).toEqual({
+        adbName: instance.adbName,
+        uuid: instance.uuid,
+      });
       expect(deviceQueryHelper().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
-      expect(allocationHelper().allocateInstance).toHaveBeenCalledWith(recipe.uuid);
+      expect(deviceAllocator().allocateDevice).toHaveBeenCalledWith(recipe);
     });
 
     it('should throw a descriptive error recipe not found', async () => {
       const deviceQuery = aDeviceQuery();
-      givenNoReceipes();
-      givenInstanceAllocationResult({ instance: anInstance() });
+      givenNoRecipes();
+      givenDeviceAllocationResult({ instance: anInstance() });
 
       try {
         await uut.acquireFreeDevice(deviceQuery);
-        fail('Excpected an error');
+        fail('Expected an error');
       } catch (e) {
         expect(e.toString()).toContain('No Genycloud devices found for recipe!');
         expect(e.toString()).toContain('HINT: Check that your Genycloud account has a template associated with your Detox device configuration: ' + JSON.stringify(deviceQuery));
@@ -119,7 +122,7 @@ describe('Genymotion-cloud driver', () => {
       const recipe = aRecipe();
       const instance = anInstance();
       givenResolvedRecipeForQuery(recipe);
-      givenInstanceAllocationResult({ instance });
+      givenDeviceAllocationResult({ instance });
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
@@ -130,7 +133,7 @@ describe('Genymotion-cloud driver', () => {
       const recipe = aRecipe();
       const instance = anInstance();
       givenResolvedRecipeForQuery(recipe);
-      givenInstanceAllocationResult({ instance });
+      givenDeviceAllocationResult({ instance });
 
       const error = new Error('mocked error');
       try {
@@ -146,7 +149,7 @@ describe('Genymotion-cloud driver', () => {
       const recipe = aRecipe();
       const instance = anInstance();
       givenResolvedRecipeForQuery(recipe);
-      givenInstanceAllocationResult({ instance, coldBooted: true });
+      givenDeviceAllocationResult({ instance, created: true });
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
@@ -156,17 +159,17 @@ describe('Genymotion-cloud driver', () => {
     it('should return a descriptive device name in post-allocation state', async () => {
       const instance = anInstance();
       givenResolvedRecipeForQuery(aRecipe());
-      givenInstanceAllocationResult({ instance });
+      givenDeviceAllocationResult({ instance });
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
-      expect(uut.name).toEqual(`GenyCloud-${instance.adbName}`);
+      expect(uut.name).toEqual(`GenyCloud:${instance.uuid} (${instance.adbName})`);
     });
 
-    it('should init ADb\'s API-level', async () => {
+    it('should init ADB\'s API-level', async () => {
       const instance = anInstance();
       givenResolvedRecipeForQuery(aRecipe());
-      givenInstanceAllocationResult({ instance });
+      givenDeviceAllocationResult({ instance });
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
@@ -176,7 +179,7 @@ describe('Genymotion-cloud driver', () => {
     it('should disable native animations', async () => {
       const instance = anInstance();
       givenResolvedRecipeForQuery(aRecipe());
-      givenInstanceAllocationResult({ instance });
+      givenDeviceAllocationResult({ instance });
 
       await uut.acquireFreeDevice(aDeviceQuery());
 

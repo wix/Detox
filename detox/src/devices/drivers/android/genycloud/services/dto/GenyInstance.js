@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const Recipe = require('./GenyRecipe');
 
+const STATE_ONLINE = 'ONLINE';
+const STATE_TERMINATED = 'RECYCLED';
+
 class GenyInstance {
   constructor(rawInstance) {
     Object.assign(this, _.pick(rawInstance, 'uuid', 'name', 'state'));
@@ -15,8 +18,12 @@ class GenyInstance {
     return this.adb.name !== '0.0.0.0';
   }
 
+  isOnline() {
+    return this.state === STATE_ONLINE;
+  }
+
   isTerminated() {
-    return this.state === 'RECYCLED';
+    return this.state === STATE_TERMINATED;
   }
 
   get recipeName() {

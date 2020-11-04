@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Instance = require('./dto/GenyInstance');
 
 class GenyInstanceLookupService {
@@ -12,15 +13,21 @@ class GenyInstanceLookupService {
     return (freeInstances[0] || null);
   }
 
+  async getInstance(instanceUUID) {
+    const instances = await this._getAllInstances();
+    return _.find(instances, (instance) => instance.uuid === instanceUUID);
+  }
+
   async _getRelevantInstances(recipeUUID) {
+    const busyDevices = this.deviceRegistry.getBusyDevices();
     const isRelevant = (instance) =>
       instance.recipeUUID === recipeUUID &&
       !instance.isTerminated() &&
       this.instanceNaming.isFamilial(instance.name) &&
-      this._isInstanceFree(instance);
+      this._isInstanceFree(instance, busyDevices);
 
-    const result = await this._getAllInstances();
-    return result.filter(isRelevant);
+    const instances = await this._getAllInstances();
+    return instances.filter(isRelevant);
   }
 
   async _getAllInstances() {
@@ -29,11 +36,8 @@ class GenyInstanceLookupService {
       .map((rawInstance) => new Instance(rawInstance));
   }
 
-  _isInstanceFree(instance) {
-    if (!instance.isAdbConnected()) {
-      return instance;
-    }
-    return !this.deviceRegistry.isDeviceBusy(instance.adbName);
+  _isInstanceFree(instance, busyDevices) {
+    return !_.some(busyDevices, { uuid: instance.uuid });
   }
 }
 

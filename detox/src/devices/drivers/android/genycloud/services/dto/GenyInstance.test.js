@@ -22,6 +22,12 @@ describe('Genymotion-Cloud Instance DTO', () => {
     state: 'RECYCLED',
   }
 
+  const onlineInstance = disconnectedRawInstance;
+  const bootingInstance = {
+    ...onlineInstance,
+    state: 'BOOTING',
+  };
+
   let Instance;
   beforeEach(() => {
     Instance = require('./GenyInstance');
@@ -55,8 +61,18 @@ describe('Genymotion-Cloud Instance DTO', () => {
     expect(instance.isTerminated()).toEqual(true);
   });
 
-  it('should indicate termination', () => {
+  it('should indicate non-termination', () => {
     const instance = new Instance(disconnectedRawInstance);
     expect(instance.isTerminated()).toEqual(false);
+  });
+
+  it('should indicate instance is online', () => {
+    const instance = new Instance(onlineInstance);
+    expect(instance.isOnline()).toEqual(true);
+  });
+
+  it('should indicate instance in not online-state', () => {
+    const instance = new Instance(bootingInstance);
+    expect(instance.isOnline()).toEqual(false);
   });
 });
