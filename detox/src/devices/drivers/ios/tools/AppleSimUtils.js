@@ -7,25 +7,30 @@ const environment = require('../../../../utils/environment');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
-    const statusLogs = {
-      trying: `Trying to set permissions...`,
-      successful: 'Permissions are set'
-    };
     let permissions = [];
     _.forEach(permissionsObj, function (shouldAllow, permission) {
       permissions.push(permission + '=' + shouldAllow);
     });
-    await this._execAppleSimUtils({
-      args: `--byId ${udid} --bundle ${bundleId} --restartSB --setPermissions ${_.join(permissions, ',')}`
-    }, statusLogs, 1);
+
+    const options = {
+      args: `--byId ${udid} --bundle ${bundleId} --restartSB --setPermissions ${_.join(permissions, ',')}`,
+      statusLogs: {
+        trying: `Trying to set permissions...`,
+        successful: 'Permissions are set'
+      },
+      retries: 1,
+    }
+    await this._execAppleSimUtils(options);
   }
 
-  async list(query, options = {}) {
-    const args = `--list ${joinArgs(query)}`;
-    const statusLogs = options.trying ? { trying: options.trying } : undefined;
-    const response = await this._execAppleSimUtils({ args }, statusLogs,  1);
+  async list(query, listOptions = {}) {
+    const options = {
+      args: `--list ${joinArgs(query)}`,
+      retries: 1,
+      statusLogs: listOptions.trying ? { trying: listOptions.trying } : undefined,
+    };
+    const response = await this._execAppleSimUtils(options);
     const parsed = this._parseResponseFromAppleSimUtils(response);
-
     return parsed;
   }
 
@@ -119,45 +124,61 @@ class AppleSimUtils {
     if (!_.includes(['Face', 'Finger'], matchType)) {
       return;
     }
-    const statusLogs = {
-      trying: `Trying to match ${matchType}...`,
-      successful: `Matched ${matchType}!`
-    };
 
-    await this._execAppleSimUtils({ args: `--byId ${udid} --match${matchType}` }, statusLogs, 1);
+    const options = {
+      args: `--byId ${udid} --match${matchType}`,
+      retries: 1,
+      statusLogs: {
+        trying: `Trying to match ${matchType}...`,
+        successful: `Matched ${matchType}!`
+      },
+    };
+    await this._execAppleSimUtils(options);
   }
 
   async unmatchBiometric(udid, matchType) {
     if (!_.includes(['Face', 'Finger'], matchType)) {
       return;
     }
-    const statusLogs = {
-      trying: `Trying to unmatch ${matchType}...`,
-      successful: `Unmatched ${matchType}!`
-    };
 
-    await this._execAppleSimUtils({ args: `--byId ${udid} --unmatch${matchType}` }, statusLogs, 1);
+    const options = {
+      args: `--byId ${udid} --unmatch${matchType}`,
+      retries: 1,
+      statusLogs: {
+        trying: `Trying to unmatch ${matchType}...`,
+        successful: `Unmatched ${matchType}!`
+      },
+    }
+    await this._execAppleSimUtils(options);
   }
 
   async setBiometricEnrollment(udid, yesOrNo) {
     if (!_.includes(['YES', 'NO'], yesOrNo)) {
       return;
     }
-    let toggle = yesOrNo === 'YES'
-    const statusLogs = {
-      trying: `Turning ${toggle ? 'on' : 'off'} biometric enrollment...`,
-      successful: toggle ? 'Activated!' : 'Deactivated!'
-    };
-    await this._execAppleSimUtils({ args: `--byId ${udid} --biometricEnrollment ${yesOrNo}` }, statusLogs, 1);
+
+    const toggle = yesOrNo === 'YES';
+    const options = {
+      args: `--byId ${udid} --biometricEnrollment ${yesOrNo}`,
+      retries: 1,
+      statusLogs: {
+        trying: `Turning ${toggle ? 'on' : 'off'} biometric enrollment...`,
+        successful: toggle ? 'Activated!' : 'Deactivated!'
+      },
+    }
+    await this._execAppleSimUtils(options);
   }
 
   async clearKeychain(udid) {
-    const statusLogs = {
-      trying: `Clearing Keychain...`,
-      successful: 'Cleared Keychain!'
-    };
-
-    await this._execAppleSimUtils({ args: `--byId ${udid} --clearKeychain` }, statusLogs, 1);
+    const options = {
+      args: `--byId ${udid} --clearKeychain`,
+      retries: 1,
+      statusLogs: {
+        trying: `Clearing Keychain...`,
+        successful: 'Cleared Keychain!'
+      },
+    }
+    await this._execAppleSimUtils(options);
   }
 
   async getAppContainer(udid, bundleId) {
@@ -211,9 +232,9 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, undefined, undefined, 1);
+    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, { retries: 1 });
     if (_.get(result, 'stdout')) {
-      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, undefined, undefined, 1);
+      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, { retries: 1 });
     } else {
       throw new Error(`setLocation currently supported only through fbsimctl.
       Install fbsimctl using:
@@ -241,14 +262,18 @@ class AppleSimUtils {
     return exec.spawnAndLog('/usr/bin/xcrun', args);
   }
 
-  async _execAppleSimUtils(options, statusLogs, retries, interval) {
+  async _execAppleSimUtils(options) {
     const bin = `applesimutils`;
-    return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
+    return await exec.execWithRetriesAndLogs(bin, options);
   }
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
-    const verbosity = silent ? 'low' : 'normal';
-    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { verbosity }, statusLogs, retries);
+    const options = {
+      verbosity: silent ? 'low' : 'normal',
+      statusLogs,
+      retries,
+    }
+    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, options);
   }
 
   _parseResponseFromAppleSimUtils(response) {
@@ -278,10 +303,6 @@ class AppleSimUtils {
   async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
     const args = this._joinLaunchArgs(launchArgs);
 
-    const statusLogs = {
-      trying: `Launching ${bundleId}...`,
-    };
-
     let dylibs = `${frameworkPath}/Detox`;
     if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
@@ -298,8 +319,13 @@ class AppleSimUtils {
         launchBin += ` -AppleLocale ${languageAndLocale.locale}`;
       }
 
-    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
-
+    const options = {
+      retries: 1,
+      statusLogs: {
+        trying: `Launching ${bundleId}...`,
+      },
+    };
+    const result = await exec.execWithRetriesAndLogs(launchBin, options);
     return result;
   }
 

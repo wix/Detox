@@ -7,8 +7,8 @@ describe('retry', () => {
     .mockReturnValueOnce(Promise.reject())
     .mockReturnValueOnce(Promise.resolve());
   const mockFailingTwiceUserFn = () => jest.fn()
-    .mockReturnValueOnce(Promise.reject('once'))
-    .mockReturnValueOnce(Promise.reject('twice'))
+    .mockReturnValueOnce(Promise.reject(new Error('once')))
+    .mockReturnValueOnce(Promise.reject(new Error('twice')))
     .mockReturnValueOnce(Promise.resolve());
 
   beforeEach(() => {
@@ -34,6 +34,14 @@ describe('retry', () => {
     const mockFn = mockFailingTwiceUserFn();
     await retry({retries: 999, interval: 0}, mockFn);
     expect(mockFn).toHaveBeenCalledTimes(3);
+  });
+
+  it('should provide error info in each failure', async () => {
+    const mockFn = mockFailingTwiceUserFn();
+    await retry({retries: 999, interval: 0}, mockFn);
+    expect(mockFn).toHaveBeenCalledWith(1, null);
+    expect(mockFn).toHaveBeenCalledWith(2, new Error('once'));
+    expect(mockFn).toHaveBeenCalledWith(3, new Error('twice'));
   });
 
   it('should adhere to retries parameter', async () => {

@@ -29,6 +29,131 @@ exports[`DetoxConfigErrorBuilder .failedToReadConfiguration should create a simp
 EISDIR: illegal operation on a directory, read]
 `;
 
+exports[`DetoxConfigErrorBuilder .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        debugSynchronization: '3000'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidDebugSynchronizationProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        debugSynchronization: '3000'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidDebugSynchronizationProperty should point to global session if there is one 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidServerProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.server property is not a valid WebSocket URL
+
+HINT: Expected something like "ws://localhost:8099".
+Check that in your Detox config.
+
+{
+  session: {
+    server: 'localhost'
+  },
+  configurations: {
+    'android.release': {}
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidServerProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.server property is not a valid WebSocket URL
+
+HINT: Expected something like "ws://localhost:8099".
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'localhost'
+  },
+  configurations: {
+    'android.release': {}
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidSessionId should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        sessionId: 234589798234
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidSessionId should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        sessionId: 234589798234
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder .invalidSessionId should point to global session if there is one 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'ws://localhost:12837'
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgs should create an error with specifying the config name 1`] = `
 [DetoxConfigError: Invalid type of "launchArgs" property in detox.configurations["android.release"]
 Expected an object.
@@ -171,83 +296,6 @@ HINT: Check that in your Detox config at path:
     'android.release': {
       type: 'android.emulator'
     }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingServerProperty should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: session.server property is missing, should hold the server address
-
-HINT: Check that in your Detox config.
-
-{
-  session: {
-    sessionId: '234589798234'
-  },
-  configurations: {
-    'android.release': {}
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingServerProperty should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: session.server property is missing, should hold the server address
-
-HINT: Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  session: {
-    sessionId: '234589798234'
-  },
-  configurations: {
-    'android.release': {}
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingSessionId should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: session.sessionId property is missing, should hold the server session id
-
-HINT: Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      session: {
-        server: 'ws://localhost:12837'
-      }
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingSessionId should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: session.sessionId property is missing, should hold the server session id
-
-HINT: Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    'android.release': {
-      session: {
-        server: 'ws://localhost:12837'
-      }
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingSessionId should point to global session if there is one 1`] = `
-[DetoxConfigError: session.sessionId property is missing, should hold the server session id
-
-HINT: Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  session: {
-    server: 'ws://localhost:12837'
   }
 }]
 `;

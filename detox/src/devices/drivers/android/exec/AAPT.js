@@ -16,7 +16,7 @@ class AAPT {
     await this._prepare();
     const process = await exec(
       `${this.aaptBin} dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
-      undefined, undefined, 1
+      { retries: 1 }
     );
 
     const packageName = new RegExp(/package: name='([^']+)'/g).exec(process.stdout);

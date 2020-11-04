@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "17.10.2",
+  "version": "17.10.7",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -11,8 +11,8 @@
     "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test -c ios.sim.release --debug-synchronization",
-    "e2e:ios-debug": "detox test -c ios.sim.debug --debug-synchronization",
+    "e2e:ios": "detox test -c ios.sim.release",
+    "e2e:ios-debug": "detox test -c ios.sim.debug",
     "e2e:android": "detox test -c android.emu.release",
     "e2e:android-debug": "detox test -c android.emu.debug",
     "e2e:ios-ci": "npm run e2e:ios -- --workers 3 --retries 1",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
-    "detox": "^17.10.2",
+    "detox": "^17.10.7",
     "express": "^4.15.3",
     "jest": "^26.5.0",
     "jest-circus": "^26.5.2",
@@ -95,6 +95,9 @@
         "type": "ios.simulator",
         "device": {
           "type": "iPhone 11 Pro"
+        },
+        "session": {
+          "debugSynchronization": 3000
         }
       },
       "ios.none": {

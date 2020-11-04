@@ -7,26 +7,36 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, interval = 1000) {
+async function execWithRetriesAndLogs(bin, options = {}) {
+  const {
+    retries = 9,
+    interval = 1000,
+    prefix = null,
+    args = null,
+    timeout = 0,
+    statusLogs = {},
+    verbosity = 'normal',
+  } = options;
+
   const trackingId = _operationCounter++;
-  const cmd = _composeCommand(bin, options);
-  const execTimeout = _.get(options, 'timeout', 0);
+  const cmd = _composeCommand(bin, prefix, args);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
-  const verbosity = _.get(options, 'verbosity', 'normal');
-  log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
   try {
-    await retry({retries, interval}, async (retryNumber) => {
-      if (statusLogs && statusLogs.trying) {
-        log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
-      }
+    log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
-      result = await exec(cmd, { timeout: execTimeout });
+    await retry({retries, interval}, async (retryNumber, lastError) => {
+      if (statusLogs.trying) {
+        _logTrying(log, statusLogs.trying, retryNumber, lastError);
+      } else if (statusLogs.retrying) {
+        _logRetrying(log, cmd, retryNumber, lastError);
+      }
+      result = await exec(cmd, { timeout });
     });
   } catch (err) {
-    const _failReason = err.code == null && execTimeout > 0
-      ? `timeout = ${execTimeout}ms`
+    const _failReason = err.code == null && timeout > 0
+      ? `timeout = ${timeout}ms`
       : `code = ${err.code}`;
 
     const level = (verbosity === 'low' ? 'debug' : 'error');
@@ -45,7 +55,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, int
 
   _logExecOutput(log, result, verbosity === 'high' ? 'debug' : 'trace');
 
-  if (statusLogs && statusLogs.successful) {
+  if (statusLogs.successful) {
     log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
   }
 
@@ -88,15 +98,29 @@ function _logExecOutput(log, process, level) {
   }
 }
 
-function _composeCommand(bin, options) {
-  if (!options) {
+function _logTrying(log, message, retryNumber, lastError) {
+  if (lastError && lastError.stderr) {
+    log.trace({ event: 'EXEC_TRY_FAIL' }, lastError.stderr);
+  }
+  log.debug({ event: 'EXEC_TRY', retryNumber }, message);
+}
+
+function _logRetrying(log, message, retryNumber, lastError) {
+  if (retryNumber > 1) {
+    log.trace({ event: 'EXEC_TRY_FAIL' }, lastError.stderr);
+    log.debug({ event: 'EXEC_RETRY', retryNumber }, `(Retry #${retryNumber - 1})`, message);
+  }
+}
+
+function _composeCommand(bin, prefix, args) {
+  if (!(prefix || args)) {
     return bin;
   }
 
-  const prefix = options.prefix ? `${options.prefix} && ` : '';
-  const args = options.args ? ` ${options.args}` : '';
+  const _prefix = prefix ? `${prefix} && ` : '';
+  const _args = args ? ` ${args}` : '';
 
-  return `${prefix}${bin}${args}`;
+  return `${_prefix}${bin}${_args}`;
 }
 
 function spawnAndLog(command, flags, options) {

@@ -45,7 +45,7 @@ describe('ADB', () => {
 
     it(`should invoke ADB`, async () => {
       await adb.devices();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  devices`, { verbosity: 'high' }, undefined, 1);
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  devices`, { verbosity: 'high', retries: 1 });
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
@@ -83,11 +83,11 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "getprop ro.build.version.sdk"'),
-      {}, undefined, 5);
+      { retries: 5 });
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
-      undefined, undefined, 1);
+      { retries: 1 });
   });
 
   it(`uninstall`, async () => {
@@ -120,7 +120,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
-      undefined, undefined, expect.anything());
+      expect.anything());
   });
 
   it('remote-install', async () => {
@@ -130,7 +130,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
-      undefined, undefined, expect.anything());
+      expect.anything());
   });
 
   describe('unlockScreen', () => {
@@ -259,17 +259,17 @@ describe('ADB', () => {
   describe('animation disabling', () => {
     it('should disable animator (e.g. ObjectAnimator) animations', async () => {
       await adb.disableAndroidAnimations();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global animator_duration_scale 0"`, undefined, undefined, 1);
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global animator_duration_scale 0"`, { retries: 1 });
     });
 
     it('should disable window animations', async () => {
       await adb.disableAndroidAnimations();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global window_animation_scale 0"`, undefined, undefined, 1);
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global window_animation_scale 0"`, { retries: 1 });
     });
 
     it('should disable transition (e.g. activity launch) animations', async () => {
       await adb.disableAndroidAnimations();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global transition_animation_scale 0"`, undefined, undefined, 1);
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global transition_animation_scale 0"`, { retries: 1 });
     });
   });
 });
