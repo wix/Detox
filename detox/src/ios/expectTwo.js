@@ -534,7 +534,7 @@ class WaitFor {
     });
   }
 
-  performAccessibilityAction(actionName = 'activate') {
+  performAccessibilityAction(actionName) {
     this.action = this.actionableElement.performAccessibilityAction(actionName);
     return this.waitForWithAction();
   }
