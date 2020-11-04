@@ -25,10 +25,10 @@ function getVersionSafe() {
 function releaseNpmTag() {
   if (process.env.RELEASE_NPM_TAG) {
     return process.env.RELEASE_NPM_TAG;
-  } else if (process.env.GIT_BRANCH === 'master') {
+  } else if (process.env.BRANCH === 'master') {
     return 'latest';
   } else {
-    return process.env.GIT_BRANCH;
+    return process.env.BRANCH;
   }
 }
 
