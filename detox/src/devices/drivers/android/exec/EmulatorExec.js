@@ -21,7 +21,7 @@ class ListAVDsCommand extends ExecCommand {
 
 class QueryVersionCommand extends ExecCommand {
   _getArgs() {
-    return ['-version'];
+    return ['-version', `${argparse.getArgValue('headless')}` === 'true' ? '-no-window' : ''];
   }
 }
 
