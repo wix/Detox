@@ -19,33 +19,93 @@ describe('DeviceRegistry', () => {
       await fs.remove(lockfilePath);
     });
 
-    it('should throw on attempt to checking if device is busy outside of allocation/disposal context', async () => {
-      const deviceId = 'emulator-5554';
+    function allocateDevice(deviceId) {
+      return registry.allocateDevice(() => deviceId);
+    }
 
-      const assertForbiddenOutOfContext = () =>
-        expect(() => registry.isDeviceBusy(deviceId)).toThrowError();
-
-      assertForbiddenOutOfContext();
-      const result = await registry.allocateDevice(() => {
-        expect(registry.isDeviceBusy(deviceId)).toBe(false);
-        return deviceId;
-      });
-
-      expect(result).toBe(deviceId);
-
-      assertForbiddenOutOfContext();
-      await registry.disposeDevice(() => {
+    function checkBusyAndDisposeDevice(deviceId) {
+      return registry.disposeDevice(() => {
         expect(registry.isDeviceBusy(deviceId)).toBe(true);
         return deviceId;
       });
+    }
 
-      assertForbiddenOutOfContext();
-      await registry.allocateDevice(() => {
+    function disposeDevice(deviceId) {
+      return registry.disposeDevice(() => deviceId);
+    }
+
+    function checkDeviceNotBusy(deviceId) {
+      return registry.allocateDevice(() => {
         expect(registry.isDeviceBusy(deviceId)).toBe(false);
-        throw new Error();
-      }).catch(() => {});
+        throw new Error('ignored'); // So it wouldn't really allocate anything
+      }).catch((e) => { if (e.message !== 'ignored') throw e });
+    }
 
-      assertForbiddenOutOfContext();
+    function checkBusyListIs(...deviceIds) {
+      return registry.allocateDevice(() => {
+        expect(registry.getBusyDevices()).toEqual([ ...deviceIds ]);
+        throw new Error('ignored'); // So it wouldn't really allocate anything
+      }).catch((e) => { if (e.message !== 'ignored') throw e });
+    }
+
+    const assertForbiddenOutOfContextForIsBusy = () =>
+      expect(() => registry.isDeviceBusy('whatever')).toThrowError();
+
+    const assertForbiddenOutOfContextForGetBusyList = () =>
+      expect(() => registry.getBusyDevices()).toThrowError();
+
+    it('should be able to tell whether a device is busy', async () => {
+      const deviceId = 'emulator-5554';
+      await allocateDevice(deviceId);
+      await checkBusyAndDisposeDevice(deviceId);
+      await checkDeviceNotBusy(deviceId);
+    });
+
+    it('should be able to tell whether an object-for-a-device-ID is busy', async () => {
+      const rawDeviceId = {
+        'type': 'mocked-device-type',
+        'adbName': 'localhost:11111',
+      };
+      const deviceId = {
+        ...rawDeviceId,
+        mockFunc: () => 'mocked-func-result',
+      };
+
+      await allocateDevice(deviceId);
+      await checkBusyAndDisposeDevice(rawDeviceId);
+      await checkDeviceNotBusy(deviceId);
+    });
+
+    it('should throw on attempt of checking whether a device is busy outside of allocation/disposal context', async () => {
+      const deviceId = 'emulator-5554';
+
+      assertForbiddenOutOfContextForIsBusy();
+
+      await allocateDevice(deviceId);
+      assertForbiddenOutOfContextForIsBusy();
+    });
+
+    it('should be able to return a valid busy-list', async () => {
+      const deviceId = 'emulator-5554';
+      const anotherDeviceId = {
+        "type": "mocked-device-type",
+        "adbName": "emulator-5556",
+      };
+
+      await allocateDevice(deviceId);
+      await allocateDevice(anotherDeviceId);
+      await checkBusyListIs(deviceId, anotherDeviceId);
+      await disposeDevice(deviceId);
+      await checkBusyListIs(anotherDeviceId);
+      await disposeDevice(anotherDeviceId);
+      await checkBusyListIs();
+    });
+
+    it('should throw on attempt of getting busy-list outside of allocation/disposal context', async () => {
+      const deviceId = 'emulator-5554';
+
+      await allocateDevice(deviceId);
+      assertForbiddenOutOfContextForGetBusyList();
     });
 
     describe('.reset() method', () => {
