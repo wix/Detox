@@ -2,10 +2,12 @@ package com.wix.detox.espresso.scroll
 
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
-import com.wix.detox.espresso.common.annot.MOTION_DIR_DOWN
-import com.wix.detox.espresso.common.annot.MOTION_DIR_LEFT
-import com.wix.detox.espresso.common.annot.MOTION_DIR_RIGHT
-import com.wix.detox.espresso.common.annot.MOTION_DIR_UP
+import com.wix.detox.espresso.common.annot.*
+import kotlin.math.min
+import kotlin.math.max
+import kotlin.math.sign
+
+typealias Point = Pair<Double, Double>
 
 object SwipeHelper {
     fun swipeFastInDirection(direction: Int): ViewAction? {
@@ -18,29 +20,81 @@ object SwipeHelper {
         }
     }
 
-    fun swipeSlowInDirection(direction: Int): ViewAction? {
-        return when (direction) {
-            MOTION_DIR_LEFT -> ViewActions.actionWithAssertions(GeneralSwipeAction(Swipe.SLOW,
-                    translate(GeneralLocation.CENTER_RIGHT, -EDGE_FUZZ_FACTOR, 0f),
-                    GeneralLocation.CENTER_LEFT, Press.FINGER))
-            MOTION_DIR_RIGHT -> ViewActions.actionWithAssertions(GeneralSwipeAction(Swipe.SLOW,
-                    translate(GeneralLocation.CENTER_LEFT, EDGE_FUZZ_FACTOR, 0f),
-                    GeneralLocation.CENTER_RIGHT, Press.FINGER))
-            MOTION_DIR_UP -> ViewActions.actionWithAssertions(GeneralSwipeAction(Swipe.SLOW,
-                    translate(GeneralLocation.BOTTOM_CENTER, 0f, -EDGE_FUZZ_FACTOR),
-                    GeneralLocation.TOP_CENTER, Press.FINGER))
-            MOTION_DIR_DOWN -> ViewActions.actionWithAssertions(GeneralSwipeAction(Swipe.SLOW,
-                    translate(GeneralLocation.TOP_CENTER, 0f, EDGE_FUZZ_FACTOR),
-                    GeneralLocation.BOTTOM_CENTER, Press.FINGER))
-            else -> throw RuntimeException("Unsupported swipe direction: $direction")
+    fun swipeCustomInDirection(direction: Int, fast: Boolean, offset: Double, startPositionX: Double, startPositionY: Double): ViewAction? {
+        val swiper = if (fast) Swipe.FAST else Swipe.SLOW
+        val (from, to) = calculateSwipe(direction, offset, startPositionX, startPositionY)
+        val start = translate(from)
+        val end = translate(to)
+        val swipeAction = GeneralSwipeAction(swiper, start, end, Press.FINGER)
+        return ViewActions.actionWithAssertions(swipeAction)
+    }
+
+    fun calculateSwipe(
+            direction: Int,
+            unsafeOffset: Double = Double.NaN,
+            unsafeStartX: Double = Double.NaN,
+            unsafeStartY: Double = Double.NaN
+    ): Pair<Point, Point> {
+        val isHorizontal = direction == MOTION_DIR_LEFT || direction == MOTION_DIR_RIGHT
+        val isVertical = direction == MOTION_DIR_UP || direction == MOTION_DIR_DOWN
+        val isDescending = direction == MOTION_DIR_UP || direction == MOTION_DIR_LEFT
+
+        if (!isHorizontal && !isVertical) {
+            throw RuntimeException("Unsupported swipe direction: $direction")
+        }
+
+        var offset = safeProportion(unsafeOffset, 0.5 + EDGE_FUZZ_FACTOR);
+        if (isDescending) {
+            offset *= -1
+        }
+
+        val startPrimary = safeProportion(
+                if (isHorizontal) unsafeStartX else unsafeStartY,
+                0.5 - sign(offset) * EDGE_FUZZ_FACTOR
+        )
+
+        val startSecondary = safeProportion(
+                if (isVertical) unsafeStartX else unsafeStartY,
+                0.5
+        )
+
+        val (from, to) = getPrimaryAxisMove(offset, startPrimary);
+        val fromPoint = if (isHorizontal) Pair(from, startSecondary) else Pair(startSecondary, from)
+        val toPoint =   if (isHorizontal) Pair(to,   startSecondary) else Pair(startSecondary, to)
+
+        return Pair(fromPoint, toPoint)
+    }
+
+    private fun safeProportion(value: Double, nanFallback: Double): Double {
+        return if (value.equals(Double.NaN)) {
+            nanFallback
+        } else {
+            max(0.0, min(value, 1.0))
         }
     }
 
-    private fun translate(coords: CoordinatesProvider, dx: Float, dy: Float): CoordinatesProvider? {
+    private fun getPrimaryAxisMove(offset: Double, start: Double): Pair<Double, Double> {
+        val from = if (offset > 0.0) {
+            min(start, 1.0 - offset)
+        } else {
+            max(start, -offset)
+        }
+
+        val to = if (offset > 0.0) {
+            min(1.0, from + offset)
+        } else {
+            max(0.0, from + offset)
+        }
+
+        return Pair(from, to);
+    }
+
+    private fun translate(point: Point): CoordinatesProvider {
+        val (dx, dy) = point
         return CoordinatesProvider { view ->
-            val xy = coords.calculateCoordinates(view)
-            xy[0] += dx * view.width
-            xy[1] += dy * view.height
+            val xy = GeneralLocation.TOP_LEFT.calculateCoordinates(view)
+            xy[0] += dx.toFloat() * view.width
+            xy[1] += dy.toFloat() * view.height
             xy
         }
     }

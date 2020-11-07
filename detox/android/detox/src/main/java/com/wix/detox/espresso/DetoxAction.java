@@ -174,20 +174,16 @@ public class DetoxAction {
      *
      * @param direction Direction to swipe (see {@link MotionDir})
      * @param fast true if fast, false if slow
-     * @param amountInDP amount in display points
+     * @param amount relative value from 0 to 1
      * @param startOffsetPercentX relative value from 0 to 1
      * @param startOffsetPercentY relative value from 0 to 1
      */
-    public static ViewAction swipeInDirection(final int direction, boolean fast, double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
-        final boolean isInCompatibilityMode = (amountInDP == Double.NaN && startOffsetPercentX == Double.NaN && startOffsetPercentY == Double.NaN);
+    public static ViewAction swipeInDirection(final int direction, boolean fast, double amount, double startOffsetPercentX, double startOffsetPercentY) {
+        final boolean isInCompatibilityMode = (fast && amount == Double.NaN && startOffsetPercentX == Double.NaN && startOffsetPercentY == Double.NaN);
 
-        if (isInCompatibilityMode) {
-            return fast
-                ? SwipeHelper.INSTANCE.swipeFastInDirection(direction)
-                : SwipeHelper.INSTANCE.swipeSlowInDirection(direction);
-        }
-
-        throw new RuntimeException("Custom swipe is not implemented: " + direction);
+        return (isInCompatibilityMode)
+            ? SwipeHelper.INSTANCE.swipeFastInDirection(direction)
+            : SwipeHelper.INSTANCE.swipeCustomInDirection(direction, fast, amount, startOffsetPercentX, startOffsetPercentY);
     }
 
     public static ViewAction takeViewScreenshot() {
