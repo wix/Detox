@@ -175,24 +175,44 @@ public class DetoxAction {
      *
      * @param direction Direction to swipe (see {@link MotionDir})
      * @param fast true if fast, false if slow
-     *
+     * @param amountInDP amount in display points
+     * @param startOffsetPercentX relative value from 0 to 1
+     * @param startOffsetPercentY relative value from 0 to 1
      */
-    public static ViewAction swipeInDirection(final int direction, boolean fast) {
-        if (fast) {
-            switch (direction) {
-                case MOTION_DIR_LEFT:
-                    return swipeLeft();
-                case MOTION_DIR_RIGHT:
-                    return swipeRight();
-                case MOTION_DIR_UP:
-                    return swipeUp();
-                case MOTION_DIR_DOWN:
-                    return swipeDown();
-                default:
-                    throw new RuntimeException("Unsupported swipe direction: " + direction);
+    public static ViewAction swipeInDirection(final int direction, boolean fast, double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
+        final boolean compatibleMode = (
+            amountInDP == Double.NaN &&
+            startOffsetPercentX == Double.NaN &&
+            startOffsetPercentY == Double.NaN
+        );
+
+        if (compatibleMode) {
+            if (fast) {
+                return swipeFastInDirection(direction);
+            } else {
+                return swipeSlowInDirection(direction);
             }
         }
 
+        throw new RuntimeException("Custom swipe is not implemented: " + direction);
+    }
+
+    private static ViewAction swipeFastInDirection(final int direction) {
+        switch (direction) {
+            case MOTION_DIR_LEFT:
+                return swipeLeft();
+            case MOTION_DIR_RIGHT:
+                return swipeRight();
+            case MOTION_DIR_UP:
+                return swipeUp();
+            case MOTION_DIR_DOWN:
+                return swipeDown();
+            default:
+                throw new RuntimeException("Unsupported swipe direction: " + direction);
+        }
+    }
+
+    private static ViewAction swipeSlowInDirection(final int direction) {
         switch (direction) {
             case MOTION_DIR_LEFT:
                 return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,

@@ -116,13 +116,20 @@ class SwipeAction extends Action {
    */
   constructor(direction, speed, percentage, startPositionX, startPositionY) {
     super();
-    if (speed === 'fast') {
-      this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, true));
-    } else if (speed === 'slow') {
-      this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, false));
-    } else {
+
+    if (speed !== 'fast' && speed !== 'slow') {
       throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
     }
+
+    this._call = invoke.callDirectly(
+      DetoxActionApi.swipeInDirection(
+        direction,
+        speed === 'fast',
+        percentage >= 0 ? percentage : NaN,
+        startPositionX >= 0 ? startPositionX : NaN,
+        startPositionY >= 0 ? startPositionY : NaN,
+      )
+    );
   }
 }
 

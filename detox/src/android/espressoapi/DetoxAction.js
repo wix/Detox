@@ -137,9 +137,12 @@ class DetoxAction {
     };
   }
 
-  static swipeInDirection(direction, fast) {
+  static swipeInDirection(direction, fast, amountInDP, startOffsetPercentX, startOffsetPercentY) {
     if (typeof direction !== "string") throw new Error("direction should be a string, but got " + (direction + (" (" + (typeof direction + ")"))));
     if (typeof fast !== "boolean") throw new Error("fast should be a boolean, but got " + (fast + (" (" + (typeof fast + ")"))));
+    if (typeof amountInDP !== "number") throw new Error("amountInDP should be a number, but got " + (amountInDP + (" (" + (typeof amountInDP + ")"))));
+    if (typeof startOffsetPercentX !== "number") throw new Error("startOffsetPercentX should be a number, but got " + (startOffsetPercentX + (" (" + (typeof startOffsetPercentX + ")"))));
+    if (typeof startOffsetPercentY !== "number") throw new Error("startOffsetPercentY should be a number, but got " + (startOffsetPercentY + (" (" + (typeof startOffsetPercentY + ")"))));
     return {
       target: {
         type: "Class",
@@ -152,6 +155,45 @@ class DetoxAction {
       }, {
         type: "boolean",
         value: fast
+      }, {
+        type: "Double",
+        value: amountInDP
+      }, {
+        type: "Double",
+        value: startOffsetPercentX
+      }, {
+        type: "Double",
+        value: startOffsetPercentY
+      }]
+    };
+  }
+
+  static swipeFastInDirection(direction) {
+    if (typeof direction !== "number") throw new Error("direction should be a number, but got " + (direction + (" (" + (typeof direction + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "swipeFastInDirection",
+      args: [{
+        type: "Integer",
+        value: direction
+      }]
+    };
+  }
+
+  static swipeSlowInDirection(direction) {
+    if (typeof direction !== "number") throw new Error("direction should be a number, but got " + (direction + (" (" + (typeof direction + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "swipeSlowInDirection",
+      args: [{
+        type: "Integer",
+        value: direction
       }]
     };
   }
