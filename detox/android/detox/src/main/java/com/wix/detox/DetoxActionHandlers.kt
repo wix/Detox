@@ -3,6 +3,7 @@ package com.wix.detox
 import android.content.Context
 import android.util.Log
 import androidx.test.espresso.IdlingResource
+import com.wix.detox.common.DetoxLog
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
@@ -43,6 +44,7 @@ class ReactNativeReloadActionHandler(
 }
 
 class InvokeActionHandler(
+        private val log: DetoxLog,
         private val methodInvocation: MethodInvocation,
         private val wsClient: WebSocketClient,
         private val errorParse: (e: Throwable?) -> String)
@@ -55,11 +57,11 @@ class InvokeActionHandler(
             val invocationResult = methodInvocation.invoke(params)
             wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
-            Log.i(LOG_TAG, "Test exception", e)
+            log.info(LOG_TAG, "Test exception", e)
             val payload = extractFailurePayload(e)
             wsClient.sendAction("testFailed", payload, messageId)
         }  catch (e: Exception) {
-            Log.e(LOG_TAG, "Exception", e)
+            log.error(LOG_TAG, "Exception", e)
             wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
         }
     }

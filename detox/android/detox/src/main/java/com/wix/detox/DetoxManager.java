@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.wix.detox.common.DetoxLog;
 import com.wix.detox.instruments.DetoxInstrumentsManager;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.systeminfo.Environment;
@@ -151,12 +152,14 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     private void initActionHandlers() {
+        final DetoxLog logger = DetoxLog.Companion.getInstance();
+
         readyActionHandler = new ReadyActionHandler(wsClient, testEngineFacade);
         actionHandlers.clear();
         actionHandlers.put("isReady", readyActionHandler);
         actionHandlers.put("reactNativeReload", new ReactNativeReloadActionHandler(reactNativeHostHolder, wsClient, testEngineFacade));
         actionHandlers.put("currentStatus", new QueryStatusActionHandler(wsClient, testEngineFacade));
-        actionHandlers.put("invoke", new InvokeActionHandler(new MethodInvocation(), wsClient, errorParseFn));
+        actionHandlers.put("invoke", new InvokeActionHandler(logger, new MethodInvocation(), wsClient, errorParseFn));
         actionHandlers.put("cleanup", new CleanupActionHandler(wsClient, testEngineFacade, new Function0<Unit>() {
             @Override
             public Unit invoke() {

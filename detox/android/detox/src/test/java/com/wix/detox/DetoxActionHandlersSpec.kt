@@ -3,6 +3,7 @@ package com.wix.detox
 import android.content.Context
 import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.common.DetoxLog
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
@@ -22,11 +23,13 @@ object DetoxActionHandlersSpec : Spek({
         val messageId = 666L
 
         lateinit var appContext: Context
+        lateinit var log: DetoxLog
         lateinit var wsClient: WebSocketClient
         lateinit var testEngineFacade: TestEngineFacade
 
         beforeEachTest {
             appContext = mock()
+            log = mock()
             wsClient = mock()
 
             testEngineFacade = mock()
@@ -96,7 +99,7 @@ object DetoxActionHandlersSpec : Spek({
         describe("Invoke actions") {
             lateinit var methodInvocationMock: MethodInvocation
 
-            fun uut() = InvokeActionHandler(methodInvocationMock, wsClient, mockErrorParser)
+            fun uut() = InvokeActionHandler(log, methodInvocationMock, wsClient, mockErrorParser)
 
             beforeEachTest {
                 methodInvocationMock = mock()
