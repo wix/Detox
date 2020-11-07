@@ -10,6 +10,7 @@ import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.common.annot.MotionDir;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
 import com.wix.detox.espresso.scroll.ScrollHelper;
+import com.wix.detox.espresso.scroll.SwipeHelper;
 
 import org.hamcrest.Matcher;
 
@@ -168,8 +169,6 @@ public class DetoxAction {
         });
     }
 
-    private final static float EDGE_FUZZ_FACTOR = 0.083f;
-
     /**
      * Swipes the View in a direction.
      *
@@ -180,75 +179,18 @@ public class DetoxAction {
      * @param startOffsetPercentY relative value from 0 to 1
      */
     public static ViewAction swipeInDirection(final int direction, boolean fast, double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
-        final boolean compatibleMode = (
-            amountInDP == Double.NaN &&
-            startOffsetPercentX == Double.NaN &&
-            startOffsetPercentY == Double.NaN
-        );
+        final boolean isInCompatibilityMode = (amountInDP == Double.NaN && startOffsetPercentX == Double.NaN && startOffsetPercentY == Double.NaN);
 
-        if (compatibleMode) {
-            if (fast) {
-                return swipeFastInDirection(direction);
-            } else {
-                return swipeSlowInDirection(direction);
-            }
+        if (isInCompatibilityMode) {
+            return fast
+                ? SwipeHelper.INSTANCE.swipeFastInDirection(direction)
+                : SwipeHelper.INSTANCE.swipeSlowInDirection(direction);
         }
 
         throw new RuntimeException("Custom swipe is not implemented: " + direction);
     }
 
-    private static ViewAction swipeFastInDirection(final int direction) {
-        switch (direction) {
-            case MOTION_DIR_LEFT:
-                return swipeLeft();
-            case MOTION_DIR_RIGHT:
-                return swipeRight();
-            case MOTION_DIR_UP:
-                return swipeUp();
-            case MOTION_DIR_DOWN:
-                return swipeDown();
-            default:
-                throw new RuntimeException("Unsupported swipe direction: " + direction);
-        }
-    }
-
-    private static ViewAction swipeSlowInDirection(final int direction) {
-        switch (direction) {
-            case MOTION_DIR_LEFT:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.CENTER_RIGHT, -EDGE_FUZZ_FACTOR, 0),
-                        GeneralLocation.CENTER_LEFT, Press.FINGER));
-            case MOTION_DIR_RIGHT:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.CENTER_LEFT, EDGE_FUZZ_FACTOR, 0),
-                        GeneralLocation.CENTER_RIGHT, Press.FINGER));
-            case MOTION_DIR_UP:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.BOTTOM_CENTER, 0, -EDGE_FUZZ_FACTOR),
-                        GeneralLocation.TOP_CENTER, Press.FINGER));
-            case MOTION_DIR_DOWN:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.TOP_CENTER, 0, EDGE_FUZZ_FACTOR),
-                        GeneralLocation.BOTTOM_CENTER, Press.FINGER));
-            default:
-                throw new RuntimeException("Unsupported swipe direction: " + direction);
-        }
-    }
-
     public static ViewAction takeViewScreenshot() {
         return new TakeViewScreenshotAction();
-    }
-
-    private static CoordinatesProvider translate(final CoordinatesProvider coords,
-                                                 final float dx, final float dy) {
-        return new CoordinatesProvider() {
-            @Override
-            public float[] calculateCoordinates(View view) {
-                float xy[] = coords.calculateCoordinates(view);
-                xy[0] += dx * view.getWidth();
-                xy[1] += dy * view.getHeight();
-                return xy;
-            }
-        };
     }
 }

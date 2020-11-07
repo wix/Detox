@@ -168,36 +168,6 @@ class DetoxAction {
     };
   }
 
-  static swipeFastInDirection(direction) {
-    if (typeof direction !== "number") throw new Error("direction should be a number, but got " + (direction + (" (" + (typeof direction + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxAction"
-      },
-      method: "swipeFastInDirection",
-      args: [{
-        type: "Integer",
-        value: direction
-      }]
-    };
-  }
-
-  static swipeSlowInDirection(direction) {
-    if (typeof direction !== "number") throw new Error("direction should be a number, but got " + (direction + (" (" + (typeof direction + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxAction"
-      },
-      method: "swipeSlowInDirection",
-      args: [{
-        type: "Integer",
-        value: direction
-      }]
-    };
-  }
-
   static takeViewScreenshot() {
     return {
       target: {
