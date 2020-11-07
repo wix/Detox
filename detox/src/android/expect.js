@@ -107,13 +107,6 @@ class ScrollEdgeAction extends Action {
 }
 
 class SwipeAction extends Action {
-  /**
-   * @param {'up' | 'right' | 'down' | 'left'} - direction
-   * @param {'slow' | 'fast'} - speed
-   * @param percentage - ignored
-   * @param startPositionX - ignored
-   * @param startPositionY - ignored
-   */
   constructor(direction, speed, percentage, startPositionX, startPositionY) {
     super();
 
@@ -125,9 +118,9 @@ class SwipeAction extends Action {
       DetoxActionApi.swipeInDirection(
         direction,
         speed === 'fast',
-        percentage >= 0 ? percentage : NaN,
-        startPositionX >= 0 ? startPositionX : NaN,
-        startPositionY >= 0 ? startPositionY : NaN,
+        Math.max(0, Math.min(percentage, 1)),
+        Math.max(0, Math.min(startPositionX, 1)),
+        Math.max(0, Math.min(startPositionY, 1)),
       )
     );
   }
@@ -290,10 +283,18 @@ class Element {
     return await new ActionInteraction(this._invocationManager, this, new ScrollEdgeAction(edge)).execute();
   }
 
-  async swipe(direction, speed = 'fast', percentage = 0) {
+  /**
+   * @param {'up' | 'right' | 'down' | 'left'} direction
+   * @param {'slow' | 'fast'} [speed]
+   * @param {number} [percentage] - relative value between 0 and 1
+   * @param {number} [startPositionX] - relative value between 0 and 1
+   * @param {number} [startPositionY] - relative value between 0 and 1
+   */
+  async swipe(direction, speed = 'fast', percentage, startPositionX, startPositionY) {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
-    return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
+    const action = new SwipeAction(direction, speed, percentage, startPositionX, startPositionY);
+    return await new ActionInteraction(this._invocationManager, this, action).execute();
   }
 
   async takeScreenshot(screenshotName) {
