@@ -41,17 +41,41 @@ static void __setupRNSupport()
 		SEL sel = @selector(initWithFrame:);
 		Method m = class_getInstanceMethod(cls, sel);
 		
-		if(m == nil)
+		if(m != NULL)
 		{
-			return;
+			id (*orig)(id, SEL, CGRect) = (void*)method_getImplementation(m);
+			method_setImplementation(m, imp_implementationWithBlock(^ (UIPickerView<UIPickerViewDataSource>* _self, CGRect frame) {
+				_self = orig(_self, sel, frame);
+				_self.dataSource = _self;
+				
+				return _self;
+			}));
 		}
-		
-		id (*orig)(id, SEL, CGRect) = (void*)method_getImplementation(m);
-		method_setImplementation(m, imp_implementationWithBlock(^ (UIPickerView<UIPickerViewDataSource>* _self, CGRect frame) {
-			_self = orig(_self, sel, frame);
-			_self.dataSource = _self;
-			
-			return _self;
-		}));
 	}
+	
+	cls = NSClassFromString(@"FlipperClient");
+	if(cls != nil)
+	{
+		SEL sel = NSSelectorFromString(@"sharedClient");
+		Method m = class_getClassMethod(cls, sel);
+		
+		if(m != NULL)
+		{
+			method_setImplementation(m, imp_implementationWithBlock(^id(id _self) {
+				return nil;
+			}));
+		}
+	}
+	
+	NSArray* flapperPlugins = @[@"FlipperKitLayoutPlugin", @"FKUserDefaultsPlugin", @"FlipperKitReactPlugin", @"FlipperKitNetworkPlugin", ];
+	[flapperPlugins enumerateObjectsUsingBlock:^(NSString*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		Class cls = objc_getMetaClass(obj.UTF8String);
+		if(cls != nil)
+		{
+			SEL sel = NSSelectorFromString(@"alloc");
+			class_addMethod(cls, @selector(alloc), imp_implementationWithBlock(^id(id _self) {
+				return nil;
+			}), "@@:");
+		}
+	}];
 }
