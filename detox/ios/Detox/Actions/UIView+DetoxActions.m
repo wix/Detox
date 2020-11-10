@@ -251,7 +251,6 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	}
 	
 	UIView* firstResponder = _isViewOrDescendantFirstResponder(view);
-	
 	if(firstResponder != nil)
 	{
 		return firstResponder;
@@ -400,26 +399,26 @@ static void _DTXTypeText(NSString* text)
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
-	BOOL isControl = [self isKindOfClass:UIControl.class];
-	BOOL isTextField = [self isKindOfClass:UITextField.class];
-	BOOL isTextView = [self isKindOfClass:UITextView.class];
-	UITextView* textView = (UITextView*)self;
+	BOOL isControl = [firstResponder isKindOfClass:UIControl.class];
+	BOOL isTextField = [firstResponder isKindOfClass:UITextField.class];
+	BOOL isTextView = [firstResponder isKindOfClass:UITextView.class];
+	UITextView* textView = (UITextView*)firstResponder;
 	
 	if(isControl == YES)
 	{
-		[(UIControl*)self sendActionsForControlEvents:UIControlEventEditingDidBegin];
+		[(UIControl*)firstResponder sendActionsForControlEvents:UIControlEventEditingDidBegin];
 	}
 	
 	if(isTextField == YES)
 	{
-		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidBeginEditingNotification object:self];
+		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidBeginEditingNotification object:firstResponder];
 	}
 	
 	if(isTextView == YES)
 	{
 		if([textView.delegate respondsToSelector:@selector(textViewDidBeginEditing:)])
 		{
-			[textView.delegate textViewDidBeginEditing:(id)self];
+			[textView.delegate textViewDidBeginEditing:textView];
 		}
 	}
 	
@@ -428,29 +427,29 @@ static void _DTXTypeText(NSString* text)
 		
 	UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
 	
-	[(id<UITextInput>)self replaceRange:range withText:text];
+	[firstResponder replaceRange:range withText:text];
 	
 	if(isControl == YES)
 	{
-		[(UIControl*)self sendActionsForControlEvents:UIControlEventEditingChanged];
-		[(UIControl*)self sendActionsForControlEvents:UIControlEventEditingDidEnd];
+		[(UIControl*)firstResponder sendActionsForControlEvents:UIControlEventEditingChanged];
+		[(UIControl*)firstResponder sendActionsForControlEvents:UIControlEventEditingDidEnd];
 	}
 	
 	if(isTextField == YES)
 	{
-		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidChangeNotification object:self];
-		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidEndEditingNotification object:self];
+		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidChangeNotification object:firstResponder];
+		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidEndEditingNotification object:firstResponder];
 	}
 	
 	if(isTextView == YES)
 	{
 		if([textView.delegate respondsToSelector:@selector(textViewDidChange:)])
 		{
-			[textView.delegate textViewDidChange:(id)self];
+			[textView.delegate textViewDidChange:textView];
 		}
 		if([textView.delegate respondsToSelector:@selector(textViewDidEndEditing:)])
 		{
-			[textView.delegate textViewDidEndEditing:(id)self];
+			[textView.delegate textViewDidEndEditing:textView];
 		}
 	}
 }
