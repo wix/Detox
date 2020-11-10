@@ -148,6 +148,10 @@ class EmulatorDriver extends AndroidDriver {
     }
   }
 
+  async setLocation(deviceId, lat, lon) {
+    await this.adb.setLocation(deviceId, lat, lon);
+  }
+
   _createDevice() {
     const {min, max} = DetoxEmulatorsPortRange;
     let port = Math.random() * (max - min) + min;

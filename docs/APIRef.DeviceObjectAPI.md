@@ -60,7 +60,7 @@ Launch the app defined in the current [`configuration`](APIRef.Configuration.md)
 
 ##### 1. `newInstance`—Launching a New Instance of the App
 
-Terminate the app and launch it again. 
+Terminate the app and launch it again.
 
 If set to `false`, the device will try to resume the app (e.g. bring from foreground to background). If the app isn't running, **it will launch a new instance** nonetheless. **Default is `false`.**
 
@@ -177,11 +177,11 @@ With this API, you can run sets of e2e tests per language. For example:
 
 
     it('Test A', () => {
-      
+
     })
 
     it('Test B', () => {
-      
+
     })
 
   });
@@ -196,18 +196,18 @@ Launches the app with the synchronization mechanism enabled or disabled. Useful 
 await device.launchApp({
   newInstance: true,
   launchArgs: { detoxEnableSynchronization: 0 }
-}); 
+});
 ```
 
 ##### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
 
-Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
+Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
 
 ```js
 await device.launchApp({
   newInstance: true,
   launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
-}); 
+});
 ```
 
 ### `device.relaunchApp(params)`
@@ -287,8 +287,13 @@ Takes `"portrait"` or `"landscape"` and rotates the device to the given orientat
 Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test.js)
 
 ### `device.setLocation(lat, lon)`
->Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
-Sets the simulator location to the given latitude and longitude.
+
+> Note: On iOS `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/master/fbsimctl).
+> If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+> On Android `setLocation` currently will only work with Android Emulator bundled with Android development tools, as long as you've set the correct permissions in your app manifest.
+
+Sets the simulator/emulator location to the given latitude and longitude.
+
 ```js
 await device.setLocation(32.0853, 34.7818);
 ```

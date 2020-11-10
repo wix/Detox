@@ -109,6 +109,28 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
+  async setLocation(deviceId, lat, lon) {
+    // NOTE: QEMU for Android for the telnet part relies on C stdlib
+    // function `strtod` which is locale-sensitive, meaning that depending
+    // on user environment you'll have to send either comma-separated
+    // numbers or dot-separated ones.
+    //
+    // See: https://android.googlesource.com/platform/external/qemu/+/ae0eaf51751391abea2639a65200e724131dc3d6/android/console.c#2273
+    //
+    // As by default Node.js is distributed without ICU, the locale issue
+    // becomes tricky to solve across different platforms, that's why
+    // it's easier for us just to send 2 commands in a row, ignoring one
+    // which will obviosuly fail.
+    //
+    // Since `adb emu` commands fail silently, .catch() is not necessary.
+
+    const dot = `${lon} ${lat}`;
+    const comma = dot.replace(/\./g, ',');
+
+    await this.emu(deviceId, `geo fix ${dot}`);
+    await this.emu(deviceId, `geo fix ${comma}`);
+  }
+
   async pidof(deviceId, bundleId) {
     const bundleIdRegex = escape.inQuotedRegexp(bundleId) + '$';
 
@@ -268,6 +290,10 @@ class ADB {
 
   async reverseRemove(deviceId, port) {
     return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+  }
+
+  async emu(deviceId, cmd, options) {
+    return (await this.adbCmd(deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
   }
 
   // TODO refactor the whole thing so as to make usage of BinaryExec -- similar to EmulatorExec
