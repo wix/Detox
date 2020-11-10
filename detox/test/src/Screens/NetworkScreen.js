@@ -3,11 +3,7 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Platform
 } from 'react-native';
-
-// TODO Use 10.0.3.2 for Genymotion
-const HOST = Platform.OS === 'ios' ? 'localhost': '10.0.2.2';
 
 export default class NetworkScreen extends Component {
 
@@ -46,8 +42,8 @@ export default class NetworkScreen extends Component {
 
   async onNetworkButtonPress(greeting, delayMs) {
     try {
-      let response = await fetch(`http://${HOST}:9001/delay/${delayMs}`);
-      let responseJson = await response.json();
+      const response = await fetch(`http://localhost:9001/delay/${delayMs}`);
+      const responseJson = await response.json();
       console.log(responseJson.message);
 
       this.setState({

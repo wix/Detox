@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.wix.detox.instruments.DetoxInstrumentsManager;
 import com.wix.detox.reactnative.ReactNativeExtension;
-import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
 import java.util.HashMap;
@@ -56,9 +55,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
         Bundle arguments = InstrumentationRegistry.getArguments();
         detoxServerUrl = arguments.getString(DETOX_SERVER_ARG_KEY);
-        if (detoxServerUrl != null) {
-            detoxServerUrl = detoxServerUrl.replace(Environment.DEVICE_LOCALHOST, Environment.getServerHost());
-        }
         detoxSessionId = arguments.getString(DETOX_SESSION_ID_ARG_KEY);
 
         if (detoxServerUrl == null || detoxSessionId == null) {
