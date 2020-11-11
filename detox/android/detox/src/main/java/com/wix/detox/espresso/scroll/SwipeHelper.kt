@@ -2,6 +2,7 @@ package com.wix.detox.espresso.scroll
 
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
+import com.wix.detox.common.DetoxErrors
 import com.wix.detox.espresso.common.annot.*
 import kotlin.math.min
 import kotlin.math.max
@@ -10,14 +11,12 @@ import kotlin.math.sign
 typealias Point = Pair<Double, Double>
 
 object SwipeHelper {
-    fun swipeFastInDirection(direction: Int): ViewAction? {
-        return when (direction) {
-            MOTION_DIR_LEFT -> ViewActions.swipeLeft()
-            MOTION_DIR_RIGHT -> ViewActions.swipeRight()
-            MOTION_DIR_UP -> ViewActions.swipeUp()
-            MOTION_DIR_DOWN -> ViewActions.swipeDown()
-            else -> throw RuntimeException("Unsupported swipe direction: $direction")
-        }
+    fun swipeFastInDirection(direction: Int) = when (direction) {
+        MOTION_DIR_LEFT -> ViewActions.swipeLeft()
+        MOTION_DIR_RIGHT -> ViewActions.swipeRight()
+        MOTION_DIR_UP -> ViewActions.swipeUp()
+        MOTION_DIR_DOWN -> ViewActions.swipeDown()
+        else -> throw DetoxErrors.DetoxIllegalArgumentException("Unsupported swipe direction: $direction")
     }
 
     fun swipeCustomInDirection(direction: Int, fast: Boolean, offset: Double, startPositionX: Double, startPositionY: Double): ViewAction? {
@@ -40,7 +39,7 @@ object SwipeHelper {
         val isDescending = direction == MOTION_DIR_UP || direction == MOTION_DIR_LEFT
 
         if (!isHorizontal && !isVertical) {
-            throw RuntimeException("Unsupported swipe direction: $direction")
+            throw DetoxErrors.DetoxIllegalArgumentException("Unsupported swipe direction: $direction")
         }
 
         var offset = safeProportion(unsafeOffset, 0.5 + EDGE_FUZZ_FACTOR);
