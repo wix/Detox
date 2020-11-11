@@ -10,8 +10,8 @@ describe('Genymotion-Cloud instances lookup service', () => {
     const GenyInstanceNaming = jest.genMockFromModule('./GenyInstanceNaming');
     instanceNaming = new GenyInstanceNaming();
 
-    const DeviceRegistry = jest.genMockFromModule('../../../../DeviceRegistry');
-    deviceRegistry = new DeviceRegistry();
+    const GenyCloudDeviceRegistry = jest.genMockFromModule('../GenyCloudDeviceRegistry');
+    deviceRegistry = new GenyCloudDeviceRegistry();
 
     const GenyInstancesLookupService = require('./GenyInstanceLookupService');
     uut = new GenyInstancesLookupService(exec, instanceNaming, deviceRegistry);
@@ -39,8 +39,8 @@ describe('Genymotion-Cloud instances lookup service', () => {
     },
   });
 
-  const givenRegisteredDevices = (...instances) => deviceRegistry.getRegisteredDevices.mockReturnValue([ ...instances.map((instance) => instance.uuid) ]);
-  const givenNoRegisteredDevices = () => deviceRegistry.getRegisteredDevices.mockReturnValue([]);
+  const givenRegisteredInstances = (...instances) => deviceRegistry.getRegisteredInstanceUUIDs.mockReturnValue([ ...instances.map((instance) => instance.uuid) ]);
+  const givenNoRegisteredInstances = () => deviceRegistry.getRegisteredInstanceUUIDs.mockReturnValue([]);
   const givenInstances = (...instances) => exec.getInstances.mockResolvedValue({ instances });
   const givenNoInstances = () => exec.getInstances.mockResolvedValue({ instances: [] });
   const givenAllDevicesFamilial = () => instanceNaming.isFamilial.mockReturnValue(true);
@@ -49,7 +49,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
   describe('finding a free instance', () => {
     it('should return null if there are no cloud-instances available', async () => {
       givenNoInstances();
-      givenNoRegisteredDevices();
+      givenNoRegisteredInstances();
       givenAllDevicesFamilial();
       expect(await uut.findFreeInstance('mock-recipe-uuid')).toEqual(null);
     });
@@ -57,7 +57,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
     it('should return a free instance', async () => {
       const instance = anInstance();
       givenInstances(instance);
-      givenNoRegisteredDevices();
+      givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
       const result = await uut.findFreeInstance(instance.recipe.uuid);
@@ -68,7 +68,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
     it('should not return an instance of a different recipe', async () => {
       const instance = anInstance();
       givenInstances(instance);
-      givenNoRegisteredDevices();
+      givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
       expect(await uut.findFreeInstance('different-recipe-uuid')).toEqual(null);
@@ -77,7 +77,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
     it('should not return an instance whose name isn\'t in the family', async () => {
       const instance = anInstance();
       givenInstances(instance);
-      givenNoRegisteredDevices();
+      givenNoRegisteredInstances();
       givenNoDevicesFamilial();
 
       expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
@@ -87,7 +87,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
     it('should not return an instance already taken by another worker', async () => {
       const instance = anInstance();
       givenInstances(instance);
-      givenRegisteredDevices(instance);
+      givenRegisteredInstances(instance);
       givenAllDevicesFamilial();
 
       expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
@@ -99,7 +99,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
         state: 'RECYCLED',
       };
       givenInstances(instance);
-      givenNoRegisteredDevices();
+      givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
       expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
@@ -108,7 +108,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
     it('should filter multiple matches of multiple instances', async () => {
       const instance = anInstance();
       givenInstances(anInstanceOfOtherRecipe(), instance, anotherInstance());
-      givenNoRegisteredDevices();
+      givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
       const result = await uut.findFreeInstance(instance.recipe.uuid);

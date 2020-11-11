@@ -12,9 +12,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
 
   async _preAllocateDevice(deviceQuery, cookie) {
     await super._preAllocateDevice(deviceQuery);
-
     cookie.isNew = false;
-    cookie.instance = undefined;
   }
 
   async _allocateDeviceSynchronized(recipe, cookie) {
@@ -23,16 +21,14 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
       instance = await this.instanceLifecycleService.createInstance(recipe.uuid);
       cookie.isNew = true;
     }
-    cookie.instance = instance;
-
-    return instance.uuid;
+    return instance;
   }
 
-  async _postAllocateDevice(deviceQuery, deviceId, cookie) {
-    let { instance, isNew } = cookie;
+  async _postAllocateDevice(deviceQuery, instance, cookie) {
+    let { isNew } = cookie;
 
     if (isNew) {
-      await this.deviceCleanupRegistry.allocateDevice(deviceId);
+      await this.deviceCleanupRegistry.allocateDevice(instance.uuid);
     }
 
     await super._postAllocateDevice(deviceQuery, {
@@ -42,7 +38,6 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
 
     instance = await this._waitForInstanceBoot(instance);
     instance = await this._adbConnectIfNeeded(instance);
-    instance.toUniqueId = () => deviceId;
     return {
       instance,
       isNew,
@@ -54,7 +49,6 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
       return instance;
     }
 
-    const instanceUUID = instance.uuid;
     const options = {
       backoff: 'none',
       retries: 18,
@@ -62,11 +56,11 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
     };
 
     return await retry(options, async () => {
-      const instance = await this.instanceLookupService.getInstance(instanceUUID);
-      if (!instance.isOnline()) {
-        throw new Error(`Timeout waiting for instance ${instanceUUID} to be ready`);
+      const _instance = await this.instanceLookupService.getInstance(instance.uuid);
+      if (!_instance.isOnline()) {
+        throw new Error(`Timeout waiting for instance ${instance.uuid} to be ready`);
       }
-      return instance;
+      return _instance;
     });
   }
 

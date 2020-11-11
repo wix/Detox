@@ -206,27 +206,18 @@ describe('Genymotion-Cloud device allocator', () => {
     expect(result.isNew).toEqual(false);
   });
 
-  it('should return the instance ID to device registry (potentially different than the final value returned by allocation)', async () => {
+  it('should return the instance to device registry (potentially different than the final value returned by allocation)', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
 
     deviceRegistry.allocateDevice.mockImplementation(async (func) => {
       const result = await func();
-      expect(result).toEqual(instance.uuid);
+      expect(result).toEqual(instance);
       return result;
     });
 
     await uut.allocateDevice(aRecipe());
     expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
-  });
-
-  it('should hold a toUniqueId() func in returned instance, returning the instance ID', async () => {
-    const instance = aFullyConnectedInstance();
-    givenFreeInstance(instance);
-
-    const result = await uut.allocateDevice(aRecipe());
-    const deviceId = result.instance.toUniqueId();
-    expect(deviceId).toEqual(instance.uuid);
   });
 
   it('should log pre-allocate event', async () => {

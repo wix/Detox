@@ -16,6 +16,7 @@ const mockBaseClassesDependencies = () => {
 };
 
 const mockDirectDependencies = () => {
+  jest.mock('./GenyCloudDeviceRegistry');
   jest.mock('./exec/GenyCloudExec');
   jest.mock('./services/GenyRecipesService');
   jest.mock('./services/GenyInstanceLookupService');
@@ -65,8 +66,10 @@ describe('Genymotion-cloud driver', () => {
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((doAllocateFn) => doAllocateFn());
     DeviceRegistry.forAndroid.mockReturnValue(deviceRegistry);
+
+    const GenyCloudDeviceRegistry = require('./GenyCloudDeviceRegistry');
     cleanupDeviceRegistry = new DeviceRegistry();
-    DeviceRegistry.forGenyCloudCleanup.mockReturnValue(cleanupDeviceRegistry);
+    GenyCloudDeviceRegistry.forGlobalCleanup.mockReturnValue(cleanupDeviceRegistry);
 
     jest.mock('./helpers/GenyDeviceQueryHelper');
     const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
@@ -214,17 +217,6 @@ describe('Genymotion-cloud driver', () => {
     });
   });
 
-  describe('clean-up', () => {
-    it('should dispose device based on its unique-Id', async () => {
-      const deviceId = {
-        ...anInstance(),
-        toUniqueId: () => 'unique-id-mock',
-      };
-      await uut.cleanup(deviceId, 'bundle-id');
-      expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith('unique-id-mock');
-    });
-  });
-
   describe('global (static) clean-up', () => {
     const anInstanceLifecycleService = () => {
       const InstanceLifecycleService = require('./services/GenyInstanceLifecycleService');
@@ -254,14 +246,12 @@ describe('Genymotion-cloud driver', () => {
 
       killPromise1.assertResolved();
       killPromise2.assertResolved();
-      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith('device1-uuid');
-      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith('device2-uuid');
+      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(deviceUUIDs[0]);
+      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(deviceUUIDs[1]);
     });
 
     it('should fallback to a default lifecycle-service', async () => {
-      const deviceUUIDs = ['device1-uuid', 'device2-uuid'];
-      cleanupDeviceRegistry.getRegisteredDevices.mockResolvedValue(deviceUUIDs);
-
+      cleanupDeviceRegistry.getRegisteredDevices.mockResolvedValue(['device-uuid']);
       await GenyCloudDriver.globalCleanup();
     });
   });

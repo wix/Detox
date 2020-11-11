@@ -1,5 +1,6 @@
 const AndroidDriver = require('../AndroidDriver');
 const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
+const GenyCloudDeviceRegistry = require('./GenyCloudDeviceRegistry');
 const GenyCloudExec = require('./exec/GenyCloudExec');
 const RecipesService = require('./services/GenyRecipesService');
 const InstanceLookupService = require('./services/GenyInstanceLookupService');
@@ -7,7 +8,6 @@ const InstanceLifecycleService = require('./services/GenyInstanceLifecycleServic
 const InstanceNaming = require('./services/GenyInstanceNaming');
 const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const DeviceRegistry = require('../../../DeviceRegistry');
 const logger = require('../../../../utils/logger').child({ __filename });
 
 class GenyCloudDriver extends AndroidDriver {
@@ -17,7 +17,9 @@ class GenyCloudDriver extends AndroidDriver {
 
     const exec = new GenyCloudExec();
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
-    const deviceCleanupRegistry = DeviceRegistry.forGenyCloudCleanup();
+    const deviceCleanupRegistry = GenyCloudDeviceRegistry.forGlobalCleanup();
+    this.deviceRegistry = new GenyCloudDeviceRegistry(this.deviceRegistry);
+
     const recipeService = new RecipesService(exec, logger);
     const instanceLookupService = new InstanceLookupService(exec, instanceNaming, this.deviceRegistry);
     const instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
@@ -52,10 +54,6 @@ class GenyCloudDriver extends AndroidDriver {
     await this.appInstallHelper.install(adbName, binaryPath, testBinaryPath);
   }
 
-  async cleanup(deviceId, bundleId) {
-    return super.cleanup(deviceId.toUniqueId(), bundleId);
-  }
-
   _assertRecipe(deviceQuery, recipe) {
     if (!recipe) {
       throw new DetoxRuntimeError({
@@ -71,7 +69,8 @@ class GenyCloudDriver extends AndroidDriver {
       instanceLifecycleService = new InstanceLifecycleService(exec, null);
     }
 
-    const deviceUUIDs = await DeviceRegistry.forGenyCloudCleanup().getRegisteredDevices();
+    const deviceCleanupRegistry = GenyCloudDeviceRegistry.forGlobalCleanup();
+    const deviceUUIDs = await deviceCleanupRegistry.getRegisteredDevices();
     const killPromises = deviceUUIDs.map((uuid) => instanceLifecycleService.deleteInstance(uuid));
     await Promise.all(killPromises);
   }

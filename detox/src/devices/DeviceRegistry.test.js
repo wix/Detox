@@ -128,13 +128,5 @@ describe('DeviceRegistry', () => {
         expect.anything(),
       );
     });
-
-    it('should expose method for custom Genymotion-cloud registry instantiation', () => {
-      expect(DeviceRegistry.forGenyCloudCleanup()).toBeInstanceOf(DeviceRegistry);
-      expect(ExclusiveLockFile).toHaveBeenCalledWith(
-        environment.getGenyCloudPostCleanupFilePath(),
-        expect.anything(),
-      );
-    });
   });
 });

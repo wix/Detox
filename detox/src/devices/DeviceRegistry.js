@@ -89,12 +89,6 @@ class DeviceRegistry {
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
   }
-
-  static forGenyCloudCleanup() {
-    return new DeviceRegistry({
-      lockfilePath: environment.getGenyCloudPostCleanupFilePath(),
-    });
-  }
 }
 
 module.exports = DeviceRegistry;
