@@ -1,23 +1,24 @@
 const tempfile = require('tempfile');
 const actions = require('./actions/actions');
-const config = require('../configuration/configurations.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 const sleep = require('../utils/sleep');
+const { validOneDeviceAndSession } = require('../configuration/configurations.mock');
 
 describe('Client', () => {
-  let argparse;
   let WebSocket;
   let Client;
   let client;
   let bunyan;
   let log;
+  let sessionConfig;
 
   beforeEach(() => {
+    sessionConfig = {
+      ...validOneDeviceAndSession.session,
+    };
+
     jest.mock('../utils/logger');
     WebSocket = jest.mock('./AsyncWebSocket');
-
-    jest.mock('../utils/argparse');
-    argparse = require('../utils/argparse');
 
     jest.mock('bunyan')
     bunyan = require('bunyan');
@@ -169,7 +170,7 @@ describe('Client', () => {
   });
 
   it(`cleanup() - if not connected should do nothing`, async () => {
-    client = new Client(config);
+    client = new Client(sessionConfig);
     client.ws.send.mockReturnValueOnce(response("cleanupDone", {}, 1));
     await client.cleanup();
 
@@ -215,7 +216,7 @@ describe('Client', () => {
     });
 
     it(`execute() - fast invocation should not trigger "slowInvocationStatus"`, async () => {
-      argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+      sessionConfig.debugSynchronization = 2;
       await connect();
       await executeWithSlowInvocation(1);
       expect(client.ws.send).toHaveBeenLastCalledWith({"params": {"args": ["test"], "method": "matcherForAccessibilityLabel:", "target": {"type": "Class", "value": "GREYMatchers"}}, "type": "invoke"}, undefined);
@@ -223,7 +224,7 @@ describe('Client', () => {
     });
 
     it(`execute() - slow invocation should trigger "slowInvocationStatus:`, async () => {
-      argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+      sessionConfig.debugSynchronization = 2;
       await connect();
       await executeWithSlowInvocation(3);
       expect(client.ws.send).toHaveBeenLastCalledWith({"params": {}, "type": "currentStatus"}, undefined);
@@ -231,7 +232,7 @@ describe('Client', () => {
     });
 
     it(`execute() - slow invocation should do nothing if ws was closed`, async () => {
-      argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+      sessionConfig.debugSynchronization = 2;
       await connect();
       client.ws.isOpen.mockReturnValue(false);
       await executeWithSlowInvocation(4);
@@ -242,7 +243,7 @@ describe('Client', () => {
     // NOTE: this test prevents geometrical progression of currentStatus calls
     // when the device gets really busy. Otherwise, we can get 1000 pending currentStatus calls.
     it(`slowInvocationStatus() - should not schedule currentStatus thrice`, async () => {
-      argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+      sessionConfig.debugSynchronization = 2;
       await connect();
 
       jest.spyOn(client, 'slowInvocationStatus');
@@ -440,7 +441,7 @@ describe('Client', () => {
   });
 
   async function connect() {
-    client = new Client(config);
+    client = new Client(sessionConfig);
     client.ws.send.mockReturnValueOnce(response("loginSuccess", {}, 1));
     await client.connect();
     client.ws.isOpen.mockReturnValue(true);

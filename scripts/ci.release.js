@@ -1,15 +1,13 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {log, logSection, getVersionSafe} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag} = require('./ci.common');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
-const ONLY_ON_BRANCH = 'origin/master';
-
 function run() {
 	logSection('Script started');
-	if (!validateEnv()) {
+	if (!isEnvValid()) {
 		return;
 	}
 
@@ -19,18 +17,13 @@ function run() {
 	versionTagAndPublish();
 }
 
-function validateEnv() {
+function isEnvValid() {
 	if (!process.env.JENKINS_CI) {
 		throw new Error(`Release blocked: Not on a CI build machine!`);
 	}
 
 	if (!process.env.JENKINS_MASTER) {
 		log(`Release blocked: Not on jenkins' master build job!`);
-		return false;
-	}
-
-	if (process.env.GIT_BRANCH !== ONLY_ON_BRANCH) {
-		log(`Release blocked: Not publishing on branch ${process.env.GIT_BRANCH}, which isn't ${ONLY_ON_BRANCH}`);
 		return false;
 	}
 
@@ -42,7 +35,7 @@ function setupGitConfig() {
 	exec.execSyncSilent(`git config --global user.email "${process.env.GIT_EMAIL}"`);
 	exec.execSyncSilent(`git config --global user.name "${process.env.GIT_USER}"`);
 	const remoteUrl = new RegExp(`https?://(\\S+)`).exec(exec.execSyncRead(`git remote -v`))[1];
-	exec.execSyncSilent(`git remote add deploy "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
+	exec.execSyncSilent(`git remote set-url origin "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
 }
 
 function setupNpmConfig() {
@@ -65,11 +58,11 @@ function versionTagAndPublish() {
 	log(`    package version: ${packageVersion}`);
 
 	const currentPublished = findCurrentPublishedVersion();
-	log(`    current published version: ${currentPublished}`);
+	log(`    current published version from ${process.env.BRANCH}: ${currentPublished}`);
 
 	if (isRelease) {
 		const publishNewVersion = require('./ci.publish');
-		publishNewVersion(packageVersion);
+		publishNewVersion(packageVersion, releaseNpmTag());
 	} else {
 		// Disabled for the time being
 		// const tagVersion = require('./ci.tagversion');
@@ -79,8 +72,9 @@ function versionTagAndPublish() {
 	log(`Great success, much amaze`);
 }
 
+
 function findCurrentPublishedVersion() {
-	return exec.execSyncRead(`npm view detox dist-tags.latest`);
+	return exec.execSyncRead(`npm view detox dist-tags.${releaseNpmTag()}`);
 }
 
 run();

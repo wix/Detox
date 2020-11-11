@@ -3,7 +3,8 @@ package com.wix.detox.espresso.action
 import android.view.MotionEvent
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
-import com.wix.detox.common.DetoxErrors.DetoxIllegalStateException
+import com.wix.detox.Detox
+import com.wix.detox.common.DetoxLog
 import com.wix.detox.common.collect.PairsIterator
 import com.wix.detox.common.proxy.CallInfo
 import com.wix.detox.espresso.UiControllerSpy
@@ -35,7 +36,8 @@ open class DetoxMultiTap
             private val coolDownTimeMs: Long = getPostTapCoolDownTime(),
             private val longTapMinTimeMs: Long = getLongTapMinTime(),
             private val tapEvents: TapEvents = TapEvents(),
-            private val uiControllerCallSpy: UiControllerSpy = UiControllerSpy.instance)
+            private val uiControllerCallSpy: UiControllerSpy = UiControllerSpy.instance,
+            private val log: DetoxLog = DetoxLog.instance)
     : Tapper {
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?)
@@ -103,7 +105,7 @@ open class DetoxMultiTap
     private fun verifyTapEventTimes(upEvent: CallInfo, downEvent: CallInfo) {
         val delta: Long = (upEvent - downEvent)!!
         if (delta >= longTapMinTimeMs) {
-            throw DetoxIllegalStateException("Tap handled too slowly, and turned into a long-tap!")
+            log.warn(Detox.LOG_TAG, "Tap handled too slowly, and turned into a long-tap!") // TODO conditionally turn into an error, based on a global strict-mode detox config
         }
     }
 }

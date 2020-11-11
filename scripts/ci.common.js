@@ -22,8 +22,19 @@ function getVersionSafe() {
   return version;
 }
 
+function releaseNpmTag() {
+  if (process.env.RELEASE_NPM_TAG) {
+    return process.env.RELEASE_NPM_TAG;
+  } else if (process.env.BRANCH === 'master') {
+    return 'latest';
+  } else {
+    return process.env.BRANCH;
+  }
+}
+
 module.exports = {
   log,
   logSection,
   getVersionSafe,
+  releaseNpmTag
 };

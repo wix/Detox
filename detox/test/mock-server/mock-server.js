@@ -1,19 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-
 class Mockserver {
-
   constructor() {
     this.app = express();
     this.server = null;
+    this.port = process.env.PORT || 9001;
   }
 
   init() {
     this.app.use(bodyParser.urlencoded({extended: true}));
     this.app.use(bodyParser.json());
-
-    const port = process.env.PORT || 9001;
 
     const router = express.Router();
 
@@ -32,8 +29,8 @@ class Mockserver {
 
     this.app.use('/', router);
 
-    this.server = this.app.listen(port);
-    console.log('Mock server', `Listening on port ${port}`);
+    this.server = this.app.listen(this.port);
+    console.log('Mock server', `Listening on port ${this.port}`);
   }
 
   close() {

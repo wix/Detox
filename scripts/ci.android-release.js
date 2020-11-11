@@ -1,13 +1,16 @@
 const exec = require('shell-utils').exec;
-const {log, logSection, getVersionSafe} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag} = require('./ci.common');
 
 function run() {
   logSection('Initializing');
-  exec.execSync('lerna bootstrap');
+  exec.execSync('lerna bootstrap --no-ci');
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
   logSection(`Pre-calculating future version... (versionType=${versionType})`);
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git --skip-npm`);
+
+  const npmTag = releaseNpmTag();
+  const preid = npmTag === 'latest'? '': `--preid=${npmTag}`;
+  exec.execSync(`lerna version --yes ${versionType} ${preid} --no-git-tag-version --no-push`);
   const futureVersion = getVersionSafe();
   log('Version is: ' + futureVersion);
   exec.execSync('git reset --hard');

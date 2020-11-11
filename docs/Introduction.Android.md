@@ -100,7 +100,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
 > **Starting Detox 12.5.0, Detox is shipped as a precompiled `.aar`.**
 > To configure Detox as a _compiling dependency_, nevertheless -- refer to the _Setting Detox up as a compiling dependency_ section at the bottom.
 
-In your *root* buildscript (i.e. `build.gradle`), register both `google()` _and_ detox as repository lookup points in all projects:
+In your *root* buildscript (i.e. `android/build.gradle`), register both `google()` _and_ detox as repository lookup points in all projects:
 
 ```groovy
 // Note: add the 'allproject' section if it doesn't exist
@@ -118,7 +118,7 @@ allprojects {
 
 
 
-In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` section:
+In your app's buildscript (i.e. `android/app/build.gradle`) add this in `dependencies` section:
 
 ```groovy
 dependencies {
@@ -212,7 +212,7 @@ For full details, refer to [Android's security-config guide](https://developer.a
 
 ### 7. Proguard (Minification)
 
-In apps running [minification using Proguard](https://developer.android.com/studio/build/shrink-code), in order for Detox to work well on release builds, please enable some Detox proguard-configuration rules by applying the custom configuration file on top of your own. Typically, this is defined using the `proguardFiles` statement in the minification-enabled build-type in your `app/build.gradle`:
+In apps running [minification using Proguard](https://developer.android.com/studio/build/shrink-code), in order for Detox to work well on release builds, please enable some Detox proguard-configuration rules by applying the custom configuration file on top of your own. Typically, this is defined using the `proguardFiles` statement in the minification-enabled build-type in your `android/app/build.gradle`:
 
 ```groovy
     buildTypes {
@@ -240,7 +240,7 @@ Setting Test Butler up for working with Detox is a bit different than explained 
 1. Preinstalling the test-butler-app APK onto the test device.
 2. Integrating the test-butler-lib into your own test APK, and initializing it in a custom test-runner (as explained).
 
-The library part can be easily acheived as explained there (i.e. by using Gradle's `androidTestImplementation`). Same goes for initialization. As for the APK, the suggested usage of Gradle's `androidTestUtil` is scarce when running with Detox (i.e. non-native instrumentation tests). Here's what to do instead.
+The library part can be easily achieved as explained there (i.e. by using Gradle's `androidTestImplementation`). Same goes for initialization. As for the APK, the suggested usage of Gradle's `androidTestUtil` is scarce when running with Detox (i.e. non-native instrumentation tests). Here's what to do instead.
 
 #### Solution 1: Prebaked Images
 
@@ -297,7 +297,7 @@ project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules
 
 
 
-In your *root* buildscript (i.e. `build.gradle`), register `google()` as a repository lookup point in all projects:
+In your *root* buildscript (i.e. `android/build.gradle`), register `google()` as a repository lookup point in all projects:
 
 ```groovy
 // Note: add the 'allproject' section if it doesn't exist
@@ -311,7 +311,7 @@ allprojects {
 
 
 
-In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` section:
+In your app's buildscript (i.e. `android/app/build.gradle`) add this in `dependencies` section:
 
 ```groovy
 dependencies {
@@ -322,7 +322,7 @@ dependencies {
 
 
 
-In your app's buildscript (i.e. `app/build.gradle`) add this to the `defaultConfig` subsection:
+In your app's buildscript (i.e. `android/app/build.gradle`) add this to the `defaultConfig` subsection:
 
 ```groovy
 android {

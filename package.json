@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "root",
   "private": true,
   "scripts": {
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
@@ -14,9 +14,10 @@
   },
   "devDependencies": {
     "chalk": "^2.4.2",
+    "lerna": "3.22.1",
     "lodash": "4.17.x",
     "semver": "5.x.x",
     "shell-utils": "1.x.x"
   },
-  "version": "17.10.3"
+  "version": "17.11.3"
 }

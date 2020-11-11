@@ -29,9 +29,9 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams)
+- [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
-- [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
+- [`device.setLocation(lat, lon)` **iOS Only**](#devicesetlocationlat-lon-ios-only)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
@@ -270,9 +270,7 @@ Mock handling of a user notification previously received in the system, while th
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/11.user-notifications.test.js)
 
-### `device.sendUserActivity(params)`
-
-> iOS-only API
+### `device.sendUserActivity(params)` **iOS Only**
 
 Mock handling of received user activity when app is in foreground.
 Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
@@ -286,9 +284,12 @@ Takes `"portrait"` or `"landscape"` and rotates the device to the given orientat
 
 Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test.js)
 
-### `device.setLocation(lat, lon)`
->Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+### `device.setLocation(lat, lon)` **iOS Only**
+
+> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/master/fbsimctl). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+
 Sets the simulator location to the given latitude and longitude.
+
 ```js
 await device.setLocation(32.0853, 34.7818);
 ```

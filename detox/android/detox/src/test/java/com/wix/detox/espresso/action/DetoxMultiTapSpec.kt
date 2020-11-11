@@ -5,6 +5,7 @@ import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
 import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.common.DetoxErrors.DetoxIllegalStateException
+import com.wix.detox.common.DetoxLog
 import com.wix.detox.common.proxy.CallInfo
 import com.wix.detox.espresso.UiControllerSpy
 import com.wix.detox.espresso.common.TapEvents
@@ -27,6 +28,7 @@ object DetoxMultiTapSpec: Spek({
         lateinit var mock2ndTapEventsSeq: List<MotionEvent>
         lateinit var tapEvents: TapEvents
         lateinit var uiControllerCallSpy: UiControllerSpy
+        lateinit var log: DetoxLog
 
         beforeEachTest {
             uiController = mock()
@@ -46,6 +48,8 @@ object DetoxMultiTapSpec: Spek({
             uiControllerCallSpy = mock() {
                 on { eventInjectionsIterator() }.doReturn(emptyList<CallInfo?>().iterator())
             }
+
+            log = mock()
         }
 
         fun verify1stTapEventsSeqGenerated() = verify(tapEvents).createEventsSeq(coordinates, precision, null)
@@ -62,7 +66,7 @@ object DetoxMultiTapSpec: Spek({
         fun givenInjectionCallsHistory(injectionsHistory: List<CallInfo?>) =
                 whenever(uiControllerCallSpy.eventInjectionsIterator()).thenReturn(injectionsHistory.iterator())
 
-        fun uut(times: Int) = DetoxMultiTap(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy)
+        fun uut(times: Int) = DetoxMultiTap(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy, log)
         fun sendOneTap(uut: DetoxMultiTap = uut(1)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
         fun sendTwoTaps(uut: DetoxMultiTap = uut(2)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
 
@@ -183,7 +187,7 @@ object DetoxMultiTapSpec: Spek({
             verify(uiControllerCallSpy).stop()
         }
 
-        it("should throw if ui-controller spy indicates tap has turned into a long-tap") {
+        it("should warn if ui-controller spy indicates tap has turned into a long-tap") {
             givenInjectionSuccess()
 
             val injectionsHistory = listOf(
@@ -192,12 +196,11 @@ object DetoxMultiTapSpec: Spek({
             )
             givenInjectionCallsHistory(injectionsHistory)
 
-            assertFailsWith(DetoxIllegalStateException::class, "Tap handled too slowly, and turned into a long-tap!") {
-                sendOneTap()
-            }
+            sendOneTap()
+            verify(log).warn("Detox", "Tap handled too slowly, and turned into a long-tap!")
         }
 
-        it("should throw if ui-controller spy indicates tap 1 of 2 has turned into a long-tap") {
+        it("should warn if ui-controller spy indicates tap 1 of 2 has turned into a long-tap") {
             givenInjectionSuccess()
 
             val injectionsHistory = listOf(
@@ -206,9 +209,8 @@ object DetoxMultiTapSpec: Spek({
             )
             givenInjectionCallsHistory(injectionsHistory)
 
-            assertFailsWith(DetoxIllegalStateException::class) {
-                sendOneTap()
-            }
+            sendOneTap()
+            verify(log, times(1)).warn("Detox", "Tap handled too slowly, and turned into a long-tap!")
         }
     }
 })
