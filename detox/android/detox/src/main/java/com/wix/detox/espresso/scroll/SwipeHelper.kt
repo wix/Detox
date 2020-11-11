@@ -88,14 +88,12 @@ object SwipeHelper {
         return Pair(from, to);
     }
 
-    private fun translate(point: Point): CoordinatesProvider {
+    private fun translate(point: Point) = CoordinatesProvider { view ->
         val (dx, dy) = point
-        return CoordinatesProvider { view ->
-            val xy = GeneralLocation.TOP_LEFT.calculateCoordinates(view)
-            xy[0] += dx.toFloat() * view.width
-            xy[1] += dy.toFloat() * view.height
-            xy
-        }
+        val xy = GeneralLocation.TOP_LEFT.calculateCoordinates(view)
+        xy[0] += dx.toFloat() * view.width
+        xy[1] += dy.toFloat() * view.height
+        xy
     }
 
     private const val EDGE_FUZZ_FACTOR = 0.083f
