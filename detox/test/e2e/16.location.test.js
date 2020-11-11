@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const exec = require('child-process-promise').exec;
 
 //TODO: Ignoring the test in CI until fbsimctl supports Xcode 9
