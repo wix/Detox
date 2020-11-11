@@ -18,8 +18,8 @@ function validatePrerequisites() {
 
 function projectSetup() {
   logSection('Project setup');
-  exec.execSync(`git checkout ${process.env.BRANCH}`);
-  exec.execSync(`lerna bootstrap --no-ci --loglevel verebose`);
+  // exec.execSync(`git checkout ${process.env.BRANCH}`);
+  // exec.execSync(`lerna bootstrap --no-ci --loglevel verebose`);
 }
 
 function publishToNpm(npmTag) {
