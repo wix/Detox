@@ -179,7 +179,7 @@ public class DetoxAction {
      * @param startOffsetPercentY relative value from 0 to 1
      */
     public static ViewAction swipeInDirection(final int direction, boolean fast, double amount, double startOffsetPercentX, double startOffsetPercentY) {
-        final boolean isInCompatibilityMode = (fast && amount == Double.NaN && startOffsetPercentX == Double.NaN && startOffsetPercentY == Double.NaN);
+        final boolean isInCompatibilityMode = fast && Double.isNaN(amount) && Double.isNaN(startOffsetPercentX) && Double.isNaN(startOffsetPercentY);
 
         return (isInCompatibilityMode)
             ? SwipeHelper.INSTANCE.swipeFastInDirection(direction)
