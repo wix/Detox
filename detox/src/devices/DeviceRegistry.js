@@ -44,12 +44,20 @@ class DeviceRegistry {
     });
   }
 
-  isDeviceBusy(deviceId) {
-    return !!_.find(this._lockfile.read(), (item) => _.isEqual(item, deviceId));
+  async includes(deviceId) {
+    let result;
+    await this._lockfile.exclusively(() => {
+      result = !!_.find(this._lockfile.read(), (item) => _.isEqual(item, deviceId));
+    })
+    return result;
   }
 
-  getBusyDevices() {
-     return this._lockfile.read();
+  async getRegisteredDevices() {
+    let result;
+    await this._lockfile.exclusively(() => {
+      result = this._lockfile.read();
+    })
+    return result;
   }
 
   /***
@@ -79,6 +87,12 @@ class DeviceRegistry {
   static forAndroid() {
     return new DeviceRegistry({
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
+    });
+  }
+
+  static forGenyCloudCleanup() {
+    return new DeviceRegistry({
+      lockfilePath: environment.getGenyCloudPostCleanupFilePath(),
     });
   }
 }

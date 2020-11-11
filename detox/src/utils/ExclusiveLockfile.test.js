@@ -73,6 +73,29 @@ describe('ExclusiveLockFile', () => {
     expect(fs.readFileSync(filePath, 'utf8')).toBe('"DETOX"');
   });
 
+  it('should support nested locking by free-running the nested callbacks', async () => {
+    const lockfile = new ExclusiveLockFile(filePath, {
+      getInitialState: () => 42,
+    });
+
+    expect(plock.lockSync).not.toHaveBeenCalled();
+    const result = await lockfile.exclusively(async () => {
+      return await lockfile.exclusively(async () => {
+        expect(plock.lockSync).toHaveBeenCalledTimes(1);
+
+        expect(lockfile.read()).toBe(42);
+        lockfile.write(84);
+        expect(lockfile.read()).toBe(84);
+
+        expect(plock.unlockSync).not.toHaveBeenCalled();
+        return 'result';
+      });
+    });
+
+    expect(plock.unlockSync).toHaveBeenCalledTimes(1);
+    expect(result).toBe('result');
+  });
+
   describe('constructor', () => {
     it('should have 1 required arg', () => {
       expect(() => new ExclusiveLockFile()).toThrowError(/non-empty string/);

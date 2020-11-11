@@ -6,6 +6,7 @@ const { parse, quote } = require('./utils/shellQuote');
 const splitArgv = require('./utils/splitArgv');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
+const environment = require('../src/utils/environment');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
@@ -196,6 +197,7 @@ async function resetLockFile({ platform }) {
 
   if (platform === 'android') {
     await DeviceRegistry.forAndroid().reset();
+    await DeviceRegistry.forGenyCloudCleanup().reset();
   }
 }
 

@@ -4,6 +4,7 @@ describe('Genymotion-Cloud device allocator', () => {
   let log;
   let retry;
   let deviceRegistry;
+  let deviceCleanupRegistry;
   let instanceLookupService;
   let instanceLifecycleService;
   let GenyInstance;
@@ -19,6 +20,7 @@ describe('Genymotion-Cloud device allocator', () => {
     const DeviceRegistry = jest.genMockFromModule('../../../../devices/DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
+    deviceCleanupRegistry = new DeviceRegistry();
 
     const InstanceLookupService = jest.genMockFromModule('./services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
@@ -29,7 +31,7 @@ describe('Genymotion-Cloud device allocator', () => {
     GenyInstance = jest.genMockFromModule('./services/dto/GenyInstance');
 
     const DeviceAllocator = require('./GenyCloudDeviceAllocator');
-    uut = new DeviceAllocator(deviceRegistry, instanceLookupService, instanceLifecycleService);
+    uut = new DeviceAllocator(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService);
   });
 
   const aRecipe = () => ({
@@ -117,24 +119,6 @@ describe('Genymotion-Cloud device allocator', () => {
     await uut.allocateDevice(aRecipe());
   });
 
-  it('should return a fully qualified, genymotion-instance-based device ID object from locking callback', async () => {
-    const connectedInstance = aFullyConnectedInstance();
-    const expectedDeviceId = {
-      uuid: connectedInstance.uuid,
-      type: 'genycloud',
-    };
-    givenFreeInstance(connectedInstance);
-    givenConnectionInstance(connectedInstance);
-
-    deviceRegistry.allocateDevice.mockImplementation(async (func) => {
-      const result = await func();
-      expect(result).toEqual(expectedDeviceId);
-      return result;
-    });
-
-    await uut.allocateDevice(aRecipe());
-  });
-
   it('should create a device if no free one is available', async () => {
     const instance = aFullyConnectedInstance();
     givenNoFreeInstances();
@@ -211,7 +195,7 @@ describe('Genymotion-Cloud device allocator', () => {
     givenCreatedInstance(instance);
 
     const result = await uut.allocateDevice(aRecipe());
-    expect(result.created).toEqual(true);
+    expect(result.isNew).toEqual(true);
   });
 
   it('should return created=false if a device was reused', async () => {
@@ -219,29 +203,30 @@ describe('Genymotion-Cloud device allocator', () => {
     givenFreeInstance(instance);
 
     const result = await uut.allocateDevice(aRecipe());
-    expect(result.created).toEqual(false);
+    expect(result.isNew).toEqual(false);
   });
 
-  it('should return raw device-ID to device registry (different than the final value returned by allocation', async () => {
+  it('should return the instance ID to device registry (potentially different than the final value returned by allocation)', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
 
     deviceRegistry.allocateDevice.mockImplementation(async (func) => {
       const result = await func();
-      expect(result).toEqual({ type: 'genycloud', uuid: instance.uuid });
+      expect(result).toEqual(instance.uuid);
       return result;
     });
 
     await uut.allocateDevice(aRecipe());
+    expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
   });
 
-  it('should hold a toUniqueId() func in returned instance, returning the raw device-ID', async () => {
+  it('should hold a toUniqueId() func in returned instance, returning the instance ID', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
 
     const result = await uut.allocateDevice(aRecipe());
     const deviceId = result.instance.toUniqueId();
-    expect(deviceId).toEqual({ type: 'genycloud', uuid: instance.uuid });
+    expect(deviceId).toEqual(instance.uuid);
   });
 
   it('should log pre-allocate event', async () => {

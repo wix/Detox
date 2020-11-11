@@ -9,12 +9,12 @@ describe('FreeDeviceFinder', () => {
   beforeEach(() => {
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     mockDeviceRegistry = new DeviceRegistry();
-    mockDeviceRegistry.isDeviceBusy.mockReturnValue(false);
+    mockDeviceRegistry.includes.mockResolvedValue(false);
 
     uut = new FreeDeviceFinder(mockAdb, mockDeviceRegistry);
   });
 
-  it('should return the only device when it matches, is online and not busy', async () => {
+  it('should return the only device when it matches, is online and not already taken by other workers', async () => {
     mockAdbDevices([emulator5556]);
 
     const result = await uut.findFreeDevice(emulator5556.adbName);
@@ -28,9 +28,9 @@ describe('FreeDeviceFinder', () => {
     expect(result).toEqual(null);
   });
 
-  it('should return null when device is busy', async () => {
+  it('should return null when device is already taken by other workers', async () => {
     mockAdbDevices([emulator5556]);
-    mockAllDevicesBusy();
+    mockAllDevicesTaken();
 
     expect(await uut.findFreeDevice(emulator5556.adbName)).toEqual(null);
   });
@@ -47,5 +47,5 @@ describe('FreeDeviceFinder', () => {
   });
 
   const mockAdbDevices = (devices) => mockAdb.devices.mockResolvedValue({ devices });
-  const mockAllDevicesBusy = () => mockDeviceRegistry.isDeviceBusy.mockReturnValue(true);
+  const mockAllDevicesTaken = () => mockDeviceRegistry.includes.mockResolvedValue(true);
 });

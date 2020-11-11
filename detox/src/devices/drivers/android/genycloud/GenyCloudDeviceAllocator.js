@@ -2,9 +2,10 @@ const AndroidDeviceAllocator = require('../AndroidDeviceAllocator');
 const retry = require('../../../../utils/retry');
 
 class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
-  constructor(deviceRegistry, instanceLookupService, instanceLifecycleService) {
+  constructor(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService) {
     super(deviceRegistry);
 
+    this.deviceCleanupRegistry = deviceCleanupRegistry;
     this.instanceLookupService = instanceLookupService;
     this.instanceLifecycleService = instanceLifecycleService;
   }
@@ -12,7 +13,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
   async _preAllocateDevice(deviceQuery, cookie) {
     await super._preAllocateDevice(deviceQuery);
 
-    cookie.created = false;
+    cookie.isNew = false;
     cookie.instance = undefined;
   }
 
@@ -20,21 +21,22 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
     let instance = await this.instanceLookupService.findFreeInstance(recipe.uuid);
     if (!instance) {
       instance = await this.instanceLifecycleService.createInstance(recipe.uuid);
-      cookie.created = true;
+      cookie.isNew = true;
     }
     cookie.instance = instance;
 
-    return {
-      uuid: instance.uuid,
-      type: 'genycloud',
-    };
+    return instance.uuid;
   }
 
   async _postAllocateDevice(deviceQuery, deviceId, cookie) {
-    let { instance, created } = cookie;
+    let { instance, isNew } = cookie;
+
+    if (isNew) {
+      await this.deviceCleanupRegistry.allocateDevice(deviceId);
+    }
 
     await super._postAllocateDevice(deviceQuery, {
-      ...deviceId,
+      uuid: instance.uuid,
       toString: () => `GenyCloud:${instance.uuid}`,
     });
 
@@ -43,7 +45,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
     instance.toUniqueId = () => deviceId;
     return {
       instance,
-      created,
+      isNew,
     }
   }
 

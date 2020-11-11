@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const funpermaproxy = require('funpermaproxy');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
@@ -102,6 +101,15 @@ class DetoxExportWrapper {
   _suppressLoggingInitErrors() {
     this[_shouldLogInitError] = false;
     return this;
+  }
+}
+
+DetoxExportWrapper.prototype.globalCleanup = async function() {
+  try {
+    const GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
+    await GenyCloudDriver.globalCleanup();
+  } catch (error) {
+    log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred trying to shut down Genymotion-cloud emulator instances!', error);
   }
 }
 

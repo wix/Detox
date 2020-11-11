@@ -7,6 +7,7 @@ const InstanceLifecycleService = require('./services/GenyInstanceLifecycleServic
 const InstanceNaming = require('./services/GenyInstanceNaming');
 const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const DeviceRegistry = require('../../../DeviceRegistry');
 const logger = require('../../../../utils/logger').child({ __filename });
 
 class GenyCloudDriver extends AndroidDriver {
@@ -16,11 +17,12 @@ class GenyCloudDriver extends AndroidDriver {
 
     const exec = new GenyCloudExec();
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
+    const deviceCleanupRegistry = DeviceRegistry.forGenyCloudCleanup();
     const recipeService = new RecipesService(exec, logger);
     const instanceLookupService = new InstanceLookupService(exec, instanceNaming, this.deviceRegistry);
     const instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
     this._deviceQueryHelper = new DeviceQueryHelper(recipeService);
-    this._deviceAllocator = new GenyCloudDeviceAllocator(this.deviceRegistry, instanceLookupService, instanceLifecycleService);
+    this._deviceAllocator = new GenyCloudDeviceAllocator(this.deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService);
   }
 
   get name() {
@@ -31,10 +33,10 @@ class GenyCloudDriver extends AndroidDriver {
     const recipe = await this._deviceQueryHelper.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
-    const { instance, created } = await this._deviceAllocator.allocateDevice(recipe);
+    const { instance, isNew } = await this._deviceAllocator.allocateDevice(recipe);
     const { adbName, uuid } = instance;
 
-    await this.emitter.emit('bootDevice', { coldBoot: created, deviceId: adbName, type: recipe.name});
+    await this.emitter.emit('bootDevice', { coldBoot: isNew, deviceId: adbName, type: recipe.name});
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
 
@@ -61,6 +63,17 @@ class GenyCloudDriver extends AndroidDriver {
         hint: `Check that your Genycloud account has a template associated with your Detox device configuration: ${JSON.stringify(deviceQuery)}\n`,
       });
     }
+  }
+
+  static async globalCleanup(instanceLifecycleService) {
+    if (!instanceLifecycleService) {
+      const exec = new GenyCloudExec();
+      instanceLifecycleService = new InstanceLifecycleService(exec, null);
+    }
+
+    const deviceUUIDs = await DeviceRegistry.forGenyCloudCleanup().getRegisteredDevices();
+    const killPromises = deviceUUIDs.map((uuid) => instanceLifecycleService.deleteInstance(uuid));
+    await Promise.all(killPromises);
   }
 }
 

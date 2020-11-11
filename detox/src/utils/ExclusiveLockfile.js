@@ -32,8 +32,11 @@ class ExclusiveLockfile {
    * @returns {Promise<any>}
    */
   async exclusively(fn) {
-    await this._lock();
+    if (this._isLocked) {
+      return await fn();
+    }
 
+    await this._lock();
     try {
       return (await fn());
     } finally {

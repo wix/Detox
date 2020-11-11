@@ -24,9 +24,9 @@ class FreeDeviceFinder {
   async _isDeviceFreeAndMatching(candidate, deviceQuery) {
     const { adbName } = candidate;
 
-    const isBusy = this.deviceRegistry.isDeviceBusy(adbName);
-    if (isBusy) {
-      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} is busy, skipping...`);
+    const isTaken = await this.deviceRegistry.includes(adbName);
+    if (isTaken) {
+      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} is already taken, skipping...`);
       return false;
     }
 

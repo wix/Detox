@@ -19,49 +19,45 @@ describe('DeviceRegistry', () => {
       await fs.remove(lockfilePath);
     });
 
-    function allocateDevice(deviceId) {
+    async function allocateDevice(deviceId) {
       return registry.allocateDevice(() => deviceId);
     }
 
-    function checkBusyAndDisposeDevice(deviceId) {
-      return registry.disposeDevice(() => {
-        expect(registry.isDeviceBusy(deviceId)).toBe(true);
+    async function checkDeviceRegistered(deviceId) {
+      expect(await registry.includes(deviceId)).toBe(true);
+    }
+
+    async function checkDeviceRegisteredAndDispose(deviceId) {
+      return registry.disposeDevice(async () => {
+        expect(await registry.includes(deviceId)).toBe(true);
         return deviceId;
       });
     }
 
-    function disposeDevice(deviceId) {
+    async function disposeDevice(deviceId) {
       return registry.disposeDevice(() => deviceId);
     }
 
-    function checkDeviceNotBusy(deviceId) {
-      return registry.allocateDevice(() => {
-        expect(registry.isDeviceBusy(deviceId)).toBe(false);
+    async function checkDeviceNotRegistered(deviceId) {
+      return registry.allocateDevice(async () => {
+        expect(await registry.includes(deviceId)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
       }).catch((e) => { if (e.message !== 'ignored') throw e });
     }
 
-    function checkBusyListIs(...deviceIds) {
-      return registry.allocateDevice(() => {
-        expect(registry.getBusyDevices()).toEqual([ ...deviceIds ]);
-        throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+    async function checkRegisteredDevicesEqual(...deviceIds) {
+      expect(await registry.getRegisteredDevices()).toEqual([ ...deviceIds ]);
     }
 
-    const assertForbiddenOutOfContextForIsBusy = () =>
-      expect(() => registry.isDeviceBusy('whatever')).toThrowError();
-
-    const assertForbiddenOutOfContextForGetBusyList = () =>
-      expect(() => registry.getBusyDevices()).toThrowError();
-
-    it('should be able to tell whether a device is busy', async () => {
+    it('should be able to tell whether a device is registered', async () => {
       const deviceId = 'emulator-5554';
       await allocateDevice(deviceId);
-      await checkBusyAndDisposeDevice(deviceId);
-      await checkDeviceNotBusy(deviceId);
+      await checkDeviceRegistered(deviceId);
+      await checkDeviceRegisteredAndDispose(deviceId);
+      await checkDeviceNotRegistered(deviceId);
     });
 
-    it('should be able to tell whether an object-for-a-device-ID is busy', async () => {
+    it('should be able to tell whether a device is registered for object-like IDs', async () => {
       const rawDeviceId = {
         'type': 'mocked-device-type',
         'adbName': 'localhost:11111',
@@ -72,20 +68,12 @@ describe('DeviceRegistry', () => {
       };
 
       await allocateDevice(deviceId);
-      await checkBusyAndDisposeDevice(rawDeviceId);
-      await checkDeviceNotBusy(deviceId);
+      await checkDeviceRegistered(rawDeviceId);
+      await checkDeviceRegisteredAndDispose(rawDeviceId);
+      await checkDeviceNotRegistered(deviceId);
     });
 
-    it('should throw on attempt of checking whether a device is busy outside of allocation/disposal context', async () => {
-      const deviceId = 'emulator-5554';
-
-      assertForbiddenOutOfContextForIsBusy();
-
-      await allocateDevice(deviceId);
-      assertForbiddenOutOfContextForIsBusy();
-    });
-
-    it('should be able to return a valid busy-list', async () => {
+    it('should be able to return a valid list of registered devices', async () => {
       const deviceId = 'emulator-5554';
       const anotherDeviceId = {
         "type": "mocked-device-type",
@@ -94,18 +82,11 @@ describe('DeviceRegistry', () => {
 
       await allocateDevice(deviceId);
       await allocateDevice(anotherDeviceId);
-      await checkBusyListIs(deviceId, anotherDeviceId);
+      await checkRegisteredDevicesEqual(deviceId, anotherDeviceId);
       await disposeDevice(deviceId);
-      await checkBusyListIs(anotherDeviceId);
+      await checkRegisteredDevicesEqual(anotherDeviceId);
       await disposeDevice(anotherDeviceId);
-      await checkBusyListIs();
-    });
-
-    it('should throw on attempt of getting busy-list outside of allocation/disposal context', async () => {
-      const deviceId = 'emulator-5554';
-
-      await allocateDevice(deviceId);
-      assertForbiddenOutOfContextForGetBusyList();
+      await checkRegisteredDevicesEqual();
     });
 
     describe('.reset() method', () => {
@@ -123,7 +104,7 @@ describe('DeviceRegistry', () => {
     })
   });
 
-  describe('static methods', () => {
+  describe('instantiation methods', () => {
     let ExclusiveLockFile;
 
     beforeEach(() => {
@@ -132,7 +113,7 @@ describe('DeviceRegistry', () => {
       DeviceRegistry = require('./DeviceRegistry');
     });
 
-    it('should expose static convenience method DeviceRegistry.forIOS()', () => {
+    it('should expose method for iOS-lock-based method', () => {
       expect(DeviceRegistry.forIOS()).toBeInstanceOf(DeviceRegistry);
       expect(ExclusiveLockFile).toHaveBeenCalledWith(
         environment.getDeviceLockFilePathIOS(),
@@ -140,10 +121,18 @@ describe('DeviceRegistry', () => {
       );
     });
 
-    it('should expose static convenience method DeviceRegistry.forAndroid()', async () => {
+    it('should expose method for Android-lock-based method', () => {
       expect(DeviceRegistry.forAndroid()).toBeInstanceOf(DeviceRegistry);
       expect(ExclusiveLockFile).toHaveBeenCalledWith(
         environment.getDeviceLockFilePathAndroid(),
+        expect.anything(),
+      );
+    });
+
+    it('should expose method for custom Genymotion-cloud registry instantiation', () => {
+      expect(DeviceRegistry.forGenyCloudCleanup()).toBeInstanceOf(DeviceRegistry);
+      expect(ExclusiveLockFile).toHaveBeenCalledWith(
+        environment.getGenyCloudPostCleanupFilePath(),
         expect.anything(),
       );
     });

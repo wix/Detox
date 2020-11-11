@@ -159,6 +159,32 @@ describe('index (regular)', () => {
         expect(Detox.none.initContext).not.toHaveBeenCalled();
       });
     });
+
+    describe('global API', () => {
+
+      let GenyCloudDriver;
+      beforeEach(() => {
+        jest.mock('./devices/drivers/android/genycloud/GenyCloudDriver');
+        GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
+      });
+
+      it('should invoke genymotion-cloud\'s global cleanup API', async () => {
+        await detox.globalCleanup();
+        expect(GenyCloudDriver.globalCleanup).toHaveBeenCalled();
+      });
+
+      it('should catch and warn errors from genymotion-cloud driver', async () => {
+        const error = new Error('mocked-error');
+        GenyCloudDriver.globalCleanup.mockRejectedValue(error);
+
+        await detox.globalCleanup();
+        expect(logger.warn).toHaveBeenCalledWith(
+          { event: 'GLOBAL_CLEANUP' },
+          'An error occurred trying to shut down Genymotion-cloud emulator instances!',
+          error,
+        );
+      });
+    });
   });
 
   describe('detox.cleanup()', () => {

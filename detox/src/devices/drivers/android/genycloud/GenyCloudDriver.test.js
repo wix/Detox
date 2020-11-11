@@ -21,6 +21,7 @@ const mockDirectDependencies = () => {
   jest.mock('./services/GenyInstanceLookupService');
   jest.mock('./services/GenyInstanceLifecycleService');
   jest.mock('./services/GenyInstanceNaming');
+  jest.mock('../../../../utils/getAbsoluteBinaryPath');
 };
 
 const aRecipe = () => ({
@@ -45,7 +46,10 @@ describe('Genymotion-cloud driver', () => {
   let emitter;
   let adb;
   let deviceQueryHelper;
+  let deviceRegistry;
+  let cleanupDeviceRegistry;
   let deviceAllocator;
+  let GenyCloudDriver;
   let uut;
   beforeEach(() => {
     const Emitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
@@ -58,9 +62,11 @@ describe('Genymotion-cloud driver', () => {
     adb = () => latestInstanceOf(ADB);
 
     const DeviceRegistry = require('../../../DeviceRegistry');
-    const deviceRegistry = new DeviceRegistry();
+    deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((doAllocateFn) => doAllocateFn());
     DeviceRegistry.forAndroid.mockReturnValue(deviceRegistry);
+    cleanupDeviceRegistry = new DeviceRegistry();
+    DeviceRegistry.forGenyCloudCleanup.mockReturnValue(cleanupDeviceRegistry);
 
     jest.mock('./helpers/GenyDeviceQueryHelper');
     const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
@@ -70,7 +76,7 @@ describe('Genymotion-cloud driver', () => {
     const DeviceAllocator = require('./GenyCloudDeviceAllocator');
     deviceAllocator = () => latestInstanceOf(DeviceAllocator);
 
-    const GenyCloudDriver = require('./GenyCloudDriver');
+    GenyCloudDriver = require('./GenyCloudDriver');
     uut = new GenyCloudDriver({
       invocationManager,
       emitter,
@@ -85,7 +91,7 @@ describe('Genymotion-cloud driver', () => {
   describe('device (instance) allocation', () => {
     const givenNoRecipes = () => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(null);
     const givenResolvedRecipeForQuery = (recipe) => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(recipe);
-    const givenDeviceAllocationResult = ({ instance, created = false }) => deviceAllocator().allocateDevice.mockResolvedValue({ instance, created });
+    const givenDeviceAllocationResult = ({ instance, isNew = false }) => deviceAllocator().allocateDevice.mockResolvedValue({ instance, isNew });
 
     it('should get a recipe and allocate a device', async () => {
       const recipe = aRecipe();
@@ -149,7 +155,7 @@ describe('Genymotion-cloud driver', () => {
       const recipe = aRecipe();
       const instance = anInstance();
       givenResolvedRecipeForQuery(recipe);
-      givenDeviceAllocationResult({ instance, created: true });
+      givenDeviceAllocationResult({ instance, isNew: true });
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
@@ -184,6 +190,79 @@ describe('Genymotion-cloud driver', () => {
       await uut.acquireFreeDevice(aDeviceQuery());
 
       expect(adb().disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
+    });
+  });
+
+  describe('app installation', () => {
+    const appInstallHelperObj = () => latestInstanceOf(AppInstallHelperClass);
+
+    let AppInstallHelperClass;
+    let getAbsoluteBinaryPath;
+    beforeEach(() => {
+      AppInstallHelperClass = require('../tools/AppInstallHelper');
+      getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
+    });
+
+    it('should install using install helper', async () => {
+      getAbsoluteBinaryPath
+        .mockReturnValueOnce('bin-install-path')
+        .mockReturnValueOnce('testbin-install-path');
+
+      const deviceId = anInstance();
+      await uut.installApp(deviceId, 'bin-path', 'testbin-path');
+      expect(appInstallHelperObj().install).toHaveBeenCalledWith(deviceId.adbName, 'bin-install-path', 'testbin-install-path');
+    });
+  });
+
+  describe('clean-up', () => {
+    it('should dispose device based on its unique-Id', async () => {
+      const deviceId = {
+        ...anInstance(),
+        toUniqueId: () => 'unique-id-mock',
+      };
+      await uut.cleanup(deviceId, 'bundle-id');
+      expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith('unique-id-mock');
+    });
+  });
+
+  describe('global (static) clean-up', () => {
+    const anInstanceLifecycleService = () => {
+      const InstanceLifecycleService = require('./services/GenyInstanceLifecycleService');
+      return new InstanceLifecycleService();
+    }
+
+    const assertablePendingPromise = () => {
+      let promiseAck = jest.fn();
+      const promise = new Promise(resolve => setTimeout(resolve, 1)).then(promiseAck);
+      promise.assertResolved = () => expect(promiseAck).toHaveBeenCalled();
+      return promise;
+    };
+
+    it('should kill all devices preregistered for clean-up', async () => {
+      const killPromise1 = assertablePendingPromise();
+      const killPromise2 = assertablePendingPromise();
+
+      const instanceLifecycleService = anInstanceLifecycleService();
+      instanceLifecycleService.deleteInstance
+        .mockReturnValueOnce(killPromise1)
+        .mockReturnValueOnce(killPromise2);
+
+      const deviceUUIDs = ['device1-uuid', 'device2-uuid'];
+      cleanupDeviceRegistry.getRegisteredDevices.mockResolvedValue(deviceUUIDs);
+
+      await GenyCloudDriver.globalCleanup(instanceLifecycleService);
+
+      killPromise1.assertResolved();
+      killPromise2.assertResolved();
+      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith('device1-uuid');
+      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith('device2-uuid');
+    });
+
+    it('should fallback to a default lifecycle-service', async () => {
+      const deviceUUIDs = ['device1-uuid', 'device2-uuid'];
+      cleanupDeviceRegistry.getRegisteredDevices.mockResolvedValue(deviceUUIDs);
+
+      await GenyCloudDriver.globalCleanup();
     });
   });
 });

@@ -19,12 +19,12 @@ class GenyInstanceLookupService {
   }
 
   async _getRelevantInstances(recipeUUID) {
-    const busyDevices = this.deviceRegistry.getBusyDevices();
+    const takenDevices = await this.deviceRegistry.getRegisteredDevices();
     const isRelevant = (instance) =>
-      instance.recipeUUID === recipeUUID &&
+      instance.recipeUUID === recipeUUID && // TODO isn't this redundant, as we check for familiality?
       !instance.isTerminated() &&
       this.instanceNaming.isFamilial(instance.name) &&
-      this._isInstanceFree(instance, busyDevices);
+      !takenDevices.includes(instance.uuid);
 
     const instances = await this._getAllInstances();
     return instances.filter(isRelevant);
@@ -34,10 +34,6 @@ class GenyInstanceLookupService {
     return (await this.genyCloudExec.getInstances())
       .instances
       .map((rawInstance) => new Instance(rawInstance));
-  }
-
-  _isInstanceFree(instance, busyDevices) {
-    return !_.some(busyDevices, { uuid: instance.uuid });
   }
 }
 

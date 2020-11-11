@@ -33,7 +33,7 @@ describe('CLI', () => {
     logger = require('../src/utils/logger');
     temporaryFiles = [];
     DeviceRegistry = require('../src/devices/DeviceRegistry')
-    DeviceRegistry.forAndroid = DeviceRegistry.forIOS = () => new DeviceRegistry();
+    DeviceRegistry.forAndroid = DeviceRegistry.forIOS = DeviceRegistry.forGenyCloudCleanup = () => new DeviceRegistry();
   });
 
   afterEach(async () => {
