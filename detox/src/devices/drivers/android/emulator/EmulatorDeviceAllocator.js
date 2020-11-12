@@ -1,15 +1,15 @@
 const AndroidDeviceAllocator = require('../AndroidDeviceAllocator');
-const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
   max: 20000
 };
 
+// TODO unit test
 class EmulatorDeviceAllocator extends AndroidDeviceAllocator {
-  constructor(deviceRegistry, adb) {
+  constructor(deviceRegistry, freeDeviceFinder) {
     super(deviceRegistry);
-    this._freeDeviceFinder = new FreeEmulatorFinder(adb, this.deviceRegistry); // TODO push this back to the driver
+    this._freeDeviceFinder = freeDeviceFinder;
   }
 
   async _preAllocateDevice(deviceQuery, cookie) {

@@ -8,6 +8,7 @@ const AVDValidator = require('./AVDValidator');
 const AVDsResolver = require('./AVDsResolver');
 const EmulatorLauncher = require('./EmulatorLauncher');
 const EmulatorVersionResolver = require('./EmulatorVersionResolver');
+const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const { EmulatorExec } = require('../exec/EmulatorExec');
 const EmulatorTelnet = require('../tools/EmulatorTelnet');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
@@ -28,7 +29,9 @@ class EmulatorDriver extends AndroidDriver {
 
     const avdsResolver = new AVDsResolver(emulatorExec);
     this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
-    this._deviceAllocator = new EmulatorDeviceAllocator(this.deviceRegistry, this.adb);
+
+    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry)
+    this._deviceAllocator = new EmulatorDeviceAllocator(this.deviceRegistry, freeEmulatorFinder);
 
     this._name = 'Unspecified Emulator';
   }

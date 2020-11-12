@@ -16,7 +16,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
   }
 
   async _allocateDeviceSynchronized(recipe, cookie) {
-    let instance = await this.instanceLookupService.findFreeInstance(recipe.uuid);
+    let instance = await this.instanceLookupService.findFreeInstance();
     if (!instance) {
       instance = await this.instanceLifecycleService.createInstance(recipe.uuid);
       cookie.isNew = true;

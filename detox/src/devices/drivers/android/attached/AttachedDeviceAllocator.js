@@ -1,10 +1,10 @@
 const AndroidDeviceAllocator = require('../AndroidDeviceAllocator');
-const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
 
+// TODO unit test
 class AttachedDeviceAllocator extends AndroidDeviceAllocator {
-  constructor(deviceRegistry, adb) {
+  constructor(deviceRegistry, freeDeviceFinder) {
     super(deviceRegistry);
-    this.freeDeviceFinder = new FreeDeviceFinder(adb, this.deviceRegistry); // TODO push this back to the driver
+    this.freeDeviceFinder = freeDeviceFinder;
   }
 
   async _allocateDeviceSynchronized(deviceQuery) {

@@ -80,7 +80,7 @@ describe('Genymotion-Cloud device allocator', () => {
 
     const result = await uut.allocateDevice(aRecipe());
     expect(result.instance).toEqual(connectedInstance);
-    expect(instanceLookupService.findFreeInstance).toHaveBeenCalledWith(recipeUUID);
+    expect(instanceLookupService.findFreeInstance).toHaveBeenCalledWith();
   });
 
   it('should adb-connect device if disconnected', async () => {

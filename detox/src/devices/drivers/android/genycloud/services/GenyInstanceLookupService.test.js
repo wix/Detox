@@ -54,24 +54,15 @@ describe('Genymotion-Cloud instances lookup service', () => {
       expect(await uut.findFreeInstance('mock-recipe-uuid')).toEqual(null);
     });
 
-    it('should return a free instance', async () => {
+    it('should return a free online instance', async () => {
       const instance = anInstance();
       givenInstances(instance);
       givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
-      const result = await uut.findFreeInstance(instance.recipe.uuid);
+      const result = await uut.findFreeInstance();
       expect(result.uuid).toEqual(instance.uuid);
       expect(result.constructor.name).toContain('Instance');
-    });
-
-    it('should not return an instance of a different recipe', async () => {
-      const instance = anInstance();
-      givenInstances(instance);
-      givenNoRegisteredInstances();
-      givenAllDevicesFamilial();
-
-      expect(await uut.findFreeInstance('different-recipe-uuid')).toEqual(null);
     });
 
     it('should not return an instance whose name isn\'t in the family', async () => {
@@ -80,7 +71,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
       givenNoRegisteredInstances();
       givenNoDevicesFamilial();
 
-      expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
+      expect(await uut.findFreeInstance()).toEqual(null);
       expect(instanceNaming.isFamilial).toHaveBeenCalledWith(instance.name);
     });
 
@@ -90,19 +81,33 @@ describe('Genymotion-Cloud instances lookup service', () => {
       givenRegisteredInstances(instance);
       givenAllDevicesFamilial();
 
-      expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
+      expect(await uut.findFreeInstance()).toEqual(null);
     });
 
-    it('should not return a recycled (auto-shutdown) instance', async () => {
+    it('should not return an offline instance', async () => {
       const instance = {
         ...anInstance(),
-        state: 'RECYCLED',
+        state: 'OFFLINE',
       };
       givenInstances(instance);
       givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
-      expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
+      expect(await uut.findFreeInstance()).toEqual(null);
+    });
+
+    it('should return a free initializing instance', async () => {
+      const instance = {
+        ...anInstance(),
+        state: 'BOOTING',
+      };
+      givenInstances(instance);
+      givenNoRegisteredInstances();
+      givenAllDevicesFamilial();
+
+      const result = await uut.findFreeInstance();
+      expect(result.uuid).toEqual(instance.uuid);
+      expect(result.constructor.name).toContain('Instance');
     });
 
     it('should filter multiple matches of multiple instances', async () => {
@@ -111,7 +116,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
       givenNoRegisteredInstances();
       givenAllDevicesFamilial();
 
-      const result = await uut.findFreeInstance(instance.recipe.uuid);
+      const result = await uut.findFreeInstance();
       expect(result.uuid).toEqual(instance.uuid);
     });
   });

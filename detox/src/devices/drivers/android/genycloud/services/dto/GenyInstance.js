@@ -2,7 +2,14 @@ const _ = require('lodash');
 const Recipe = require('./GenyRecipe');
 
 const STATE_ONLINE = 'ONLINE';
-const STATE_TERMINATED = 'RECYCLED';
+const STATE_CREATING = 'CREATING';
+const STATE_BOOTING = 'BOOTING';
+const STATE_STARTING = 'STARTING';
+const initStates = [
+  STATE_CREATING,
+  STATE_BOOTING,
+  STATE_STARTING,
+];
 
 class GenyInstance {
   constructor(rawInstance) {
@@ -22,8 +29,8 @@ class GenyInstance {
     return this.state === STATE_ONLINE;
   }
 
-  isTerminated() {
-    return this.state === STATE_TERMINATED;
+  isInitializing() {
+    return initStates.includes(this.state);
   }
 
   get recipeName() {
