@@ -33,7 +33,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
 
     await super._postAllocateDevice(deviceQuery, {
       uuid: instance.uuid,
-      toString: () => `GenyCloud:${instance.uuid}`,
+      toString: () => `GenyCloud:${instance.name} (${instance.uuid})`,
     });
 
     instance = await this._waitForInstanceBoot(instance);

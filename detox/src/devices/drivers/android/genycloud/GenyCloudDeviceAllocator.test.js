@@ -231,6 +231,6 @@ describe('Genymotion-Cloud device allocator', () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
     await uut.allocateDevice(aRecipe());
-    expect(log.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(`Settled on GenyCloud:${instance.uuid}`));
+    expect(log.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(`Settled on GenyCloud:${instance.name} (${instance.uuid})`));
   });
 });

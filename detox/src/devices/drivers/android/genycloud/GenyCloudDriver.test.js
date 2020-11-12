@@ -172,7 +172,7 @@ describe('Genymotion-cloud driver', () => {
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
-      expect(uut.name).toEqual(`GenyCloud:${instance.uuid} (${instance.adbName})`);
+      expect(uut.name).toEqual(`GenyCloud:${instance.name} (${instance.uuid} ${instance.adbName})`);
     });
 
     it('should init ADB\'s API-level', async () => {
