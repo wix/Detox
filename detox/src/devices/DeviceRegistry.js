@@ -44,18 +44,18 @@ class DeviceRegistry {
     });
   }
 
-  async includes(deviceId) {
-    let result;
-    await this._lockfile.exclusively(() => {
-      result = !!_.find(this._lockfile.read(), (item) => _.isEqual(item, deviceId));
-    })
-    return result;
+  includes(deviceId) {
+    return !!_.find(this._lockfile.read(), (item) => _.isEqual(item, deviceId));
   }
 
-  async getRegisteredDevices() {
+  getRegisteredDevices() {
+    return this._lockfile.read();
+  }
+
+  async readRegisteredDevices() {
     let result;
     await this._lockfile.exclusively(() => {
-      result = this._lockfile.read();
+      result = this.getRegisteredDevices();
     })
     return result;
   }

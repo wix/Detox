@@ -70,7 +70,7 @@ class GenyCloudDriver extends AndroidDriver {
     }
 
     const deviceCleanupRegistry = GenyCloudDeviceRegistry.forGlobalCleanup();
-    const deviceUUIDs = await deviceCleanupRegistry.getRegisteredDevices();
+    const deviceUUIDs = await deviceCleanupRegistry.readRegisteredDevices();
     const killPromises = deviceUUIDs.map((uuid) => instanceLifecycleService.deleteInstance(uuid));
     await Promise.all(killPromises);
   }

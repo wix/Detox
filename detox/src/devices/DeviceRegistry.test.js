@@ -23,8 +23,11 @@ describe('DeviceRegistry', () => {
       return registry.allocateDevice(() => deviceId);
     }
 
-    async function checkDeviceRegistered(deviceId) {
-      expect(await registry.includes(deviceId)).toBe(true);
+    function expectRegisteredDevices(...deviceIds) {
+      return registry.allocateDevice(() => {
+        expect(registry.getRegisteredDevices()).toEqual([ ...deviceIds ]);
+        throw new Error('ignored'); // So it wouldn't really allocate anything
+      }).catch((e) => { if (e.message !== 'ignored') throw e });
     }
 
     async function checkDeviceRegisteredAndDispose(deviceId) {
@@ -46,21 +49,35 @@ describe('DeviceRegistry', () => {
     }
 
     async function checkRegisteredDevicesEqual(...deviceIds) {
-      expect(await registry.getRegisteredDevices()).toEqual([ ...deviceIds ]);
+      expect(await registry.readRegisteredDevices()).toEqual([ ...deviceIds ]);
     }
+
+    const assertForbiddenOutOfContextRegistryQuery = () =>
+      expect(() => registry.includes('whatever')).toThrowError();
+
+    const assertForbiddenOutOfContextDeviceListQuery = () =>
+      expect(() => registry.getRegisteredDevices()).toThrowError();
 
     it('should be able to tell whether a device is registered', async () => {
       const deviceId = 'emulator-5554';
       await allocateDevice(deviceId);
-      await checkDeviceRegistered(deviceId);
       await checkDeviceRegisteredAndDispose(deviceId);
       await checkDeviceNotRegistered(deviceId);
     });
 
-    it('should be able to tell whether a device is registered for object-like IDs', async () => {
+    it('should throw on attempt of checking whether a device is registered outside of allocation/disposal context', async () => {
+      const deviceId = 'emulator-5554';
+
+      assertForbiddenOutOfContextRegistryQuery();
+
+      await allocateDevice(deviceId);
+      assertForbiddenOutOfContextRegistryQuery();
+    });
+
+    it('should be able to tell whether a device is registered, given object-like IDs', async () => {
       const rawDeviceId = {
-        'type': 'mocked-device-type',
-        'adbName': 'localhost:11111',
+        type: 'mocked-device-type',
+        adbName: 'localhost:11111',
       };
       const deviceId = {
         ...rawDeviceId,
@@ -68,16 +85,36 @@ describe('DeviceRegistry', () => {
       };
 
       await allocateDevice(deviceId);
-      await checkDeviceRegistered(rawDeviceId);
       await checkDeviceRegisteredAndDispose(rawDeviceId);
       await checkDeviceNotRegistered(deviceId);
     });
 
-    it('should be able to return a valid list of registered devices', async () => {
+    it('should be able to fast-get a valid list of registered devices', async () => {
       const deviceId = 'emulator-5554';
       const anotherDeviceId = {
-        "type": "mocked-device-type",
-        "adbName": "emulator-5556",
+        type: 'mocked-device-type',
+        adbName: 'emulator-5556',
+      };
+
+      await allocateDevice(deviceId);
+      await allocateDevice(anotherDeviceId);
+      await expectRegisteredDevices(deviceId, anotherDeviceId);
+    });
+
+    it('should throw on attempt of fast-getting registered devices list outside of allocation/disposal context', async () => {
+      const deviceId = 'emulator-5554';
+
+      assertForbiddenOutOfContextDeviceListQuery();
+
+      await allocateDevice(deviceId);
+      assertForbiddenOutOfContextDeviceListQuery();
+    });
+
+    it('should be able to read a valid list of registered devices', async () => {
+      const deviceId = 'emulator-5554';
+      const anotherDeviceId = {
+        type: 'mocked-device-type',
+        adbName: 'emulator-5556',
       };
 
       await allocateDevice(deviceId);
