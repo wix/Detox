@@ -29,14 +29,14 @@ object SwipeHelper {
     }
 
     private fun getSafeStartingPoint(unsafeStartingPoint: AgnosticPoint2D, direction: Int): AgnosticPoint2D {
-        val isDescending = direction == MOTION_DIR_UP || direction == MOTION_DIR_LEFT
-        val safeMiddle = if (isDescending)
-            0.5 + EDGE_FUZZ_FACTOR
+        val isDescendingMove = direction == MOTION_DIR_UP || direction == MOTION_DIR_LEFT
+        val safeEdge = if (isDescendingMove)
+            1.0 - EDGE_FUZZ_FACTOR
         else
-            0.5 - EDGE_FUZZ_FACTOR
+            0.0 + EDGE_FUZZ_FACTOR
 
         return AgnosticPoint2D(
-                safeProportion(unsafeStartingPoint.primary, safeMiddle),
+                safeProportion(unsafeStartingPoint.primary, safeEdge),
                 safeProportion(unsafeStartingPoint.secondary, 0.5)
         )
     }
