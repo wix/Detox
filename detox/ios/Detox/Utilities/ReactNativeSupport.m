@@ -52,7 +52,9 @@ static void __setupRNSupport()
 			}));
 		}
 	}
-	
+
+	//Disable broken RN Flopper until it is fixed:
+	//	https://github.com/facebook/flipper/issues/1674
 	cls = NSClassFromString(@"FlipperClient");
 	if(cls != nil)
 	{
