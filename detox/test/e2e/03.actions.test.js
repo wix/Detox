@@ -207,8 +207,9 @@ describe('Actions', () => {
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
+  it.only('should swipe down at a specified position', async () => {
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).swipe('up', 'fast', 0.95, 0.9, 0.95);
+    await element(by.id('ScrollView161')).swipe('up', 'fast', 1, 0.9, 0.95);
   });
 
   it('should not wait for long timeout (>1.5s)', async () => {

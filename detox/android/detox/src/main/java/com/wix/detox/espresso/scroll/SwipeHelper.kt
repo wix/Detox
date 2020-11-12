@@ -60,13 +60,13 @@ object SwipeHelper {
     private fun translateTo(relativeStart: AgnosticPoint2D, direction: Int, unsafeOffset: Double) = CoordinatesProvider { view ->
         val relativeStartF = relativeStart.toFloatingPoint(direction)
         val xy = GeneralLocation.TOP_LEFT.calculateCoordinates(view)
-        var absoluteStart = AgnosticPoint2D.fromFloats(
+        val absoluteStart = AgnosticPoint2D.fromFloats(
                 xy[0] + relativeStartF.x * view.width,
                 xy[1] + relativeStartF.y * view.height,
                 direction
         )
-        var screenEdge = getScreenEdge(view, direction)
-        val offset = safeProportion(unsafeOffset, 1.0 - EDGE_FUZZ_FACTOR)
+        val screenEdge = getScreenEdge(view, direction)
+        val offset = max(safeProportion(unsafeOffset, 1.0), 1.0 - EDGE_FUZZ_FACTOR)
         val end = AgnosticPoint2D(
                 absoluteStart.primary + (screenEdge - absoluteStart.primary) * offset,
                 absoluteStart.secondary
