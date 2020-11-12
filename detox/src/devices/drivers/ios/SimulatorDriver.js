@@ -215,7 +215,7 @@ class SimulatorDriver extends IosDriver {
 
   async _groupDevicesByStatus(deviceQuery) {
     const searchResults = await this._queryDevices(deviceQuery);
-    const takenDevices = await this.deviceRegistry.getRegisteredDevices();
+    const takenDevices = this.deviceRegistry.getRegisteredDevices();
     const { busy, free }  = _.groupBy(searchResults, ({ udid }) => takenDevices.includes(udid) ? 'busy' : 'free');
 
     const targetOS = _.get(busy, '0.os.identifier');

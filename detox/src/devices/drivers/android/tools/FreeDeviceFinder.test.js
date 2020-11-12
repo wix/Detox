@@ -9,7 +9,7 @@ describe('FreeDeviceFinder', () => {
   beforeEach(() => {
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     mockDeviceRegistry = new DeviceRegistry();
-    mockDeviceRegistry.includes.mockResolvedValue(false);
+    mockDeviceRegistry.includes.mockReturnValue(false);
 
     uut = new FreeDeviceFinder(mockAdb, mockDeviceRegistry);
   });
@@ -47,5 +47,5 @@ describe('FreeDeviceFinder', () => {
   });
 
   const mockAdbDevices = (devices) => mockAdb.devices.mockResolvedValue({ devices });
-  const mockAllDevicesTaken = () => mockDeviceRegistry.includes.mockResolvedValue(true);
+  const mockAllDevicesTaken = () => mockDeviceRegistry.includes.mockReturnValue(true);
 });

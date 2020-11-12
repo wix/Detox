@@ -8,7 +8,7 @@ describe('FreeEmulatorFinder', () => {
   beforeEach(() => {
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     mockDeviceRegistry = new DeviceRegistry();
-    mockDeviceRegistry.includes.mockResolvedValue(false);
+    mockDeviceRegistry.includes.mockReturnValue(false);
 
     const FreeEmulatorFinder = require('./FreeEmulatorFinder');
     uut = new FreeEmulatorFinder(mockAdb, mockDeviceRegistry);

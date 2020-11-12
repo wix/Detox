@@ -42,7 +42,7 @@ class GenyCloudDriver extends AndroidDriver {
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
 
-    this._name = `GenyCloud:${instance.name} (${instance.uuid} ${adbName})`;
+    this._name = `GenyCloud:${instance.name} (${uuid} ${adbName})`;
     return instance;
   }
 

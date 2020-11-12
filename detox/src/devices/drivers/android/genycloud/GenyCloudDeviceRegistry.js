@@ -19,11 +19,11 @@ class GenyCloudDeviceRegistry {
     return this.deviceRegistry.disposeDevice(instance.uuid);
   }
 
-  async includes(instance) {
+  includes(instance) {
     return this.deviceRegistry.includes(instance.uuid);
   }
 
-  async getRegisteredInstanceUUIDs() {
+  getRegisteredInstanceUUIDs() {
     return this.deviceRegistry.getRegisteredDevices();
   }
 

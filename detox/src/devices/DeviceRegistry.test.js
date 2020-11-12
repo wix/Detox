@@ -32,7 +32,7 @@ describe('DeviceRegistry', () => {
 
     async function checkDeviceRegisteredAndDispose(deviceId) {
       return registry.disposeDevice(async () => {
-        expect(await registry.includes(deviceId)).toBe(true);
+        expect(registry.includes(deviceId)).toBe(true);
         return deviceId;
       });
     }
@@ -43,7 +43,7 @@ describe('DeviceRegistry', () => {
 
     async function checkDeviceNotRegistered(deviceId) {
       return registry.allocateDevice(async () => {
-        expect(await registry.includes(deviceId)).toBe(false);
+        expect(registry.includes(deviceId)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
       }).catch((e) => { if (e.message !== 'ignored') throw e });
     }

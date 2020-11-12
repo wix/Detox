@@ -55,17 +55,17 @@ describe('Genymotion-cloud custom device-registry', () => {
   });
 
   it('should query instance inclusion in delegated registry based on its UUID', async () => {
-    deviceRegistry.includes.mockResolvedValue(true);
+    deviceRegistry.includes.mockReturnValue(true);
 
-    const result = await uut.includes(instance);
+    const result = uut.includes(instance);
     expect(result).toEqual(true);
     expect(deviceRegistry.includes).toHaveBeenCalledWith(instanceUUID);
   });
 
   it('should return registered instance UUIDs from delegated registry', async () => {
-    deviceRegistry.getRegisteredDevices.mockResolvedValue([instanceUUID]);
+    deviceRegistry.getRegisteredDevices.mockReturnValue([instanceUUID]);
 
-    const result = await uut.getRegisteredInstanceUUIDs();
+    const result = uut.getRegisteredInstanceUUIDs();
     expect(result).toEqual([instanceUUID]);
   });
 });
