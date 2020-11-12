@@ -53,31 +53,31 @@ static void __setupRNSupport()
 		}
 	}
 
-	//Disable broken RN Flopper until it is fixed:
-	//	https://github.com/facebook/flipper/issues/1674
-	cls = NSClassFromString(@"FlipperClient");
-	if(cls != nil)
-	{
-		SEL sel = NSSelectorFromString(@"sharedClient");
-		Method m = class_getClassMethod(cls, sel);
-		
-		if(m != NULL)
-		{
-			method_setImplementation(m, imp_implementationWithBlock(^id(id _self) {
-				return nil;
-			}));
-		}
-	}
-	
-	NSArray* flapperPlugins = @[@"FlipperKitLayoutPlugin", @"FKUserDefaultsPlugin", @"FlipperKitReactPlugin", @"FlipperKitNetworkPlugin", ];
-	[flapperPlugins enumerateObjectsUsingBlock:^(NSString*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		Class cls = objc_getMetaClass(obj.UTF8String);
-		if(cls != nil)
-		{
-			SEL sel = NSSelectorFromString(@"alloc");
-			class_addMethod(cls, @selector(alloc), imp_implementationWithBlock(^id(id _self) {
-				return nil;
-			}), "@@:");
-		}
-	}];
+//	//Disable broken RN Flopper until it is fixed:
+//	//	https://github.com/facebook/flipper/issues/1674
+//	cls = NSClassFromString(@"FlipperClient");
+//	if(cls != nil)
+//	{
+//		SEL sel = NSSelectorFromString(@"sharedClient");
+//		Method m = class_getClassMethod(cls, sel);
+//		
+//		if(m != NULL)
+//		{
+//			method_setImplementation(m, imp_implementationWithBlock(^id(id _self) {
+//				return nil;
+//			}));
+//		}
+//	}
+//	
+//	NSArray* flapperPlugins = @[@"FlipperKitLayoutPlugin", @"FKUserDefaultsPlugin", @"FlipperKitReactPlugin", @"FlipperKitNetworkPlugin", ];
+//	[flapperPlugins enumerateObjectsUsingBlock:^(NSString*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//		Class cls = objc_getMetaClass(obj.UTF8String);
+//		if(cls != nil)
+//		{
+//			SEL sel = NSSelectorFromString(@"alloc");
+//			class_addMethod(cls, @selector(alloc), imp_implementationWithBlock(^id(id _self) {
+//				return nil;
+//			}), "@@:");
+//		}
+//	}];
 }
