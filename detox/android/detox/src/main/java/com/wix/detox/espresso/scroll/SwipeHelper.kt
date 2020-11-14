@@ -1,7 +1,6 @@
 package com.wix.detox.espresso.scroll
 
 import android.view.View
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.espresso.common.annot.*
@@ -10,22 +9,20 @@ import kotlin.math.min
 import kotlin.math.max
 
 object SwipeHelper {
-    fun swipeFastInDirection(direction: Int) = when (direction) {
-        MOTION_DIR_LEFT -> ViewActions.swipeLeft()
-        MOTION_DIR_RIGHT -> ViewActions.swipeRight()
-        MOTION_DIR_UP -> ViewActions.swipeUp()
-        MOTION_DIR_DOWN -> ViewActions.swipeDown()
-        else -> throw DetoxErrors.DetoxIllegalArgumentException("Unsupported swipe direction: $direction")
-    }
-
-    fun swipeCustomInDirection(direction: Int, fast: Boolean, offset: Double, startPositionX: Double, startPositionY: Double): ViewAction? {
+    fun swipeInDirection(
+            direction: Int,
+            fast: Boolean = true,
+            offset: Double = Double.NaN,
+            startPositionX: Double = Double.NaN,
+            startPositionY: Double = Double.NaN
+    ): GeneralSwipeAction {
         val unsafeStartingPoint = AgnosticPoint2D.fromDoubles(startPositionX, startPositionY, direction)
         val startingPoint = getSafeStartingPoint(unsafeStartingPoint, direction)
         val start = translateFrom(startingPoint, direction)
         val end = translateTo(startingPoint, direction, offset)
         val swiper = if (fast) Swipe.FAST else Swipe.SLOW
-        val swipeAction = GeneralSwipeAction(swiper, start, end, Press.FINGER)
-        return ViewActions.actionWithAssertions(swipeAction)
+
+        return GeneralSwipeAction(swiper, start, end, Press.FINGER)
     }
 
     private fun getSafeStartingPoint(unsafeStartingPoint: AgnosticPoint2D, direction: Int): AgnosticPoint2D {
@@ -66,7 +63,7 @@ object SwipeHelper {
                 direction
         )
         val screenEdge = getScreenEdge(view, direction)
-        val offset = max(safeProportion(unsafeOffset, 1.0), 1.0 - EDGE_FUZZ_FACTOR)
+        val offset = safeProportion(unsafeOffset, 1.0)
         val end = AgnosticPoint2D(
                 absoluteStart.primary + (screenEdge - absoluteStart.primary) * offset,
                 absoluteStart.secondary

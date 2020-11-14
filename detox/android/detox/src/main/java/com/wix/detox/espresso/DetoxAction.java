@@ -2,6 +2,7 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.wix.detox.common.DetoxErrors;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.DetoxMultiTap;
@@ -21,13 +22,9 @@ import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.GeneralSwipeAction;
 import androidx.test.espresso.action.Press;
-import androidx.test.espresso.action.Swipe;
+import androidx.test.espresso.action.ViewActions;
 
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
-import static androidx.test.espresso.action.ViewActions.swipeDown;
-import static androidx.test.espresso.action.ViewActions.swipeLeft;
-import static androidx.test.espresso.action.ViewActions.swipeRight;
-import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_DOWN;
@@ -181,9 +178,23 @@ public class DetoxAction {
     public static ViewAction swipeInDirection(final int direction, boolean fast, double amount, double startOffsetPercentX, double startOffsetPercentY) {
         final boolean isInCompatibilityMode = fast && Double.isNaN(amount) && Double.isNaN(startOffsetPercentX) && Double.isNaN(startOffsetPercentY);
 
-        return (isInCompatibilityMode)
-            ? SwipeHelper.INSTANCE.swipeFastInDirection(direction)
-            : SwipeHelper.INSTANCE.swipeCustomInDirection(direction, fast, amount, startOffsetPercentX, startOffsetPercentY);
+        if (isInCompatibilityMode) {
+            switch (direction) {
+                case MOTION_DIR_LEFT:
+                    return ViewActions.swipeLeft();
+                case MOTION_DIR_RIGHT:
+                    return ViewActions.swipeRight();
+                case MOTION_DIR_UP:
+                    return ViewActions.swipeUp();
+                case MOTION_DIR_DOWN:
+                    return ViewActions.swipeDown();
+                default:
+                    throw new DetoxErrors.DetoxIllegalArgumentException("Unsupported swipe direction: $direction");
+            }
+        }
+
+        GeneralSwipeAction swipeAction = SwipeHelper.INSTANCE.swipeInDirection(direction, fast, amount, startOffsetPercentX, startOffsetPercentY);
+        return ViewActions.actionWithAssertions(swipeAction);
     }
 
     public static ViewAction takeViewScreenshot() {
