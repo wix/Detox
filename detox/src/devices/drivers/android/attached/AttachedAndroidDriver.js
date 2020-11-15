@@ -5,9 +5,9 @@ const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
 class AttachedAndroidDriver extends AndroidDriver {
   constructor(config) {
     super(config);
-    
-    this.freeDeviceFinder = new FreeDeviceFinder(this.adb, this.deviceRegistry);
     this._name = 'Unnamed Android Device';
+
+    this._freeDeviceFinder = new FreeDeviceFinder(this.adb, this.deviceRegistry);
   }
 
   get name() {
@@ -16,8 +16,7 @@ class AttachedAndroidDriver extends AndroidDriver {
 
   async acquireFreeDevice(deviceQuery) {
     const adbNamePattern = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
-
-    const adbName = await this.allocateDevice(adbNamePattern);
+    const adbName = await this.deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
     await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);
@@ -25,10 +24,6 @@ class AttachedAndroidDriver extends AndroidDriver {
 
     this._name = adbName;
     return adbName;
-  }
-
-  async doAllocateDevice(deviceQuery) {
-    return await this.freeDeviceFinder.findFreeDevice(deviceQuery);
   }
 }
 

@@ -3,11 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const ini = require('ini');
 const AndroidDriver = require('../AndroidDriver');
-const FreeEmulatorFinder = require('./FreeEmulatorFinder');
+const EmulatorDeviceAllocator = require('./EmulatorDeviceAllocator');
 const AVDValidator = require('./AVDValidator');
 const AVDsResolver = require('./AVDsResolver');
 const EmulatorLauncher = require('./EmulatorLauncher');
 const EmulatorVersionResolver = require('./EmulatorVersionResolver');
+const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const { EmulatorExec } = require('../exec/EmulatorExec');
 const EmulatorTelnet = require('../tools/EmulatorTelnet');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
@@ -15,11 +16,6 @@ const environment = require('../../../../utils/environment');
 const retry = require('../../../../utils/retry');
 const log = require('../../../../utils/logger').child({ __filename });
 const argparse = require('../../../../utils/argparse');
-
-const DetoxEmulatorsPortRange = {
-  min: 10000,
-  max: 20000
-};
 
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
@@ -33,9 +29,10 @@ class EmulatorDriver extends AndroidDriver {
 
     const avdsResolver = new AVDsResolver(emulatorExec);
     this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
-    this._freeDeviceFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry);
 
-    this.pendingBoots = {};
+    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry)
+    this._deviceAllocator = new EmulatorDeviceAllocator(this.deviceRegistry, freeEmulatorFinder);
+
     this._name = 'Unspecified Emulator';
   }
 
@@ -49,9 +46,12 @@ class EmulatorDriver extends AndroidDriver {
     await this._avdValidator.validate(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
-    const adbName = await this.allocateDevice(avdName);
+    const {
+      adbName,
+      placeholderPort,
+    } = await this._deviceAllocator.allocateDevice(avdName);
 
-    await this._boot(avdName, adbName);
+    await this._boot(avdName, adbName, placeholderPort);
 
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
@@ -59,11 +59,6 @@ class EmulatorDriver extends AndroidDriver {
 
     this._name = `${adbName} (${avdName})`;
     return adbName;
-  }
-
-  async doAllocateDevice(deviceQuery) {
-    const freeEmulatorAdbName = await this._freeDeviceFinder.findFreeDevice(deviceQuery);
-    return freeEmulatorAdbName || this._createDevice();
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
@@ -82,13 +77,10 @@ class EmulatorDriver extends AndroidDriver {
     return this._emuVersionResolver.resolve();
   }
 
-  async _boot(avdName, adbName) {
-    const coldBoot = !!this.pendingBoots[adbName];
-
+  async _boot(avdName, adbName, bootPort) {
+    const coldBoot = !!bootPort;
     if (coldBoot) {
-      const port = this.pendingBoots[adbName];
-      await this._emuLauncher.launch(avdName, { port });
-      delete this.pendingBoots[adbName];
+      await this._emuLauncher.launch(avdName, { port: bootPort });
     }
 
     await this._waitForBootToComplete(adbName);
@@ -146,16 +138,6 @@ class EmulatorDriver extends AndroidDriver {
       config['skin.name'] = `${width}x${height}`;
       fs.writeFileSync(configFile, ini.stringify(config));
     }
-  }
-
-  _createDevice() {
-    const {min, max} = DetoxEmulatorsPortRange;
-    let port = Math.random() * (max - min) + min;
-    port = port & 0xFFFFFFFE; // Should always be even
-
-    const adbName = `emulator-${port}`;
-    this.pendingBoots[adbName] = port;
-    return adbName;
   }
 }
 

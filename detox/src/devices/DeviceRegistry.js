@@ -44,8 +44,12 @@ class DeviceRegistry {
     });
   }
 
-  isDeviceBusy(deviceId) {
+  includes(deviceId) {
     return this._lockfile.read().includes(deviceId);
+  }
+
+  getRegisteredDevices() {
+    return this._lockfile.read();
   }
 
   /***
@@ -60,11 +64,9 @@ class DeviceRegistry {
    */
   _toggleDeviceStatus(deviceId, busy) {
     const state = this._lockfile.read();
-
     const newState = busy
       ? _.concat(state, deviceId)
       : _.without(state, deviceId);
-
     this._lockfile.write(newState);
   }
 

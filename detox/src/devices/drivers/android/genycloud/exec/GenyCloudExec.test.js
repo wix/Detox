@@ -46,12 +46,12 @@ describe('Genymotion-cloud executable', () => {
     {
       commandName: 'Get Instances',
       commandExecFn: () => uut.getInstances(),
-      expectedExec: `"gmsaas" --format compactjson instances list`,
+      expectedExec: `"gmsaas" --format compactjson instances list -q`,
     },
     {
       commandName: 'Start Instance',
       commandExecFn: () => uut.startInstance(recipeUUID, instanceName),
-      expectedExec: `"gmsaas" --format compactjson instances start --stop-when-inactive ${recipeUUID} "${instanceName}"`,
+      expectedExec: `"gmsaas" --format compactjson instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`,
     },
     {
       commandName: 'ADB Connect',

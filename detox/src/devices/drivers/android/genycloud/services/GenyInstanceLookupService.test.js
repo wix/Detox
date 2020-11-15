@@ -1,18 +1,4 @@
 describe('Genymotion-Cloud instances lookup service', () => {
-  const INSTANCE_STATE_ONLINE = 'ONLINE';
-  const INSTANCE_STATE_TERMINATED = 'RECYCLED';
-
-  const anInstance = () => ({
-    uuid: 'mock-instance-uuid',
-    name: 'mock-instance-name',
-    adb_serial: 'mock-serial:1111',
-    state: INSTANCE_STATE_ONLINE,
-    recipe: {
-      name: 'mock-recipe-name',
-      uuid: 'mock-recipe-uuid',
-    }
-  });
-
   let exec;
   let deviceRegistry;
   let instanceNaming;
@@ -24,16 +10,22 @@ describe('Genymotion-Cloud instances lookup service', () => {
     const GenyInstanceNaming = jest.genMockFromModule('./GenyInstanceNaming');
     instanceNaming = new GenyInstanceNaming();
 
-    const DeviceRegistry = jest.genMockFromModule('../../../../DeviceRegistry');
-    deviceRegistry = new DeviceRegistry();
+    const GenyDeviceRegistryWrapper = jest.genMockFromModule('../GenyDeviceRegistryWrapper');
+    deviceRegistry = new GenyDeviceRegistryWrapper();
 
     const GenyInstancesLookupService = require('./GenyInstanceLookupService');
     uut = new GenyInstancesLookupService(exec, instanceNaming, deviceRegistry);
   });
 
-  const aDisconnectedInstance = () => ({
-    ...anInstance(),
-    adb_serial: '0.0.0.0',
+  const anInstance = () => ({
+    uuid: 'mock-instance-uuid',
+    name: 'mock-instance-name',
+    adb_serial: 'mock-serial:1111',
+    state: 'ONLINE',
+    recipe: {
+      name: 'mock-recipe-name',
+      uuid: 'mock-recipe-uuid',
+    }
   });
   const anotherInstance = () => ({
     ...anInstance(),
@@ -47,90 +39,96 @@ describe('Genymotion-Cloud instances lookup service', () => {
     },
   });
 
-  const givenAllDevicesBusy = () => deviceRegistry.isDeviceBusy.mockReturnValue(true);
-  const givenAllDevicesFree = () => deviceRegistry.isDeviceBusy.mockReturnValue(false);
+  const givenRegisteredInstances = (...instances) => deviceRegistry.getRegisteredInstanceUUIDs.mockReturnValue([ ...instances.map((instance) => instance.uuid) ]);
+  const givenNoRegisteredInstances = () => deviceRegistry.getRegisteredInstanceUUIDs.mockReturnValue([]);
   const givenInstances = (...instances) => exec.getInstances.mockResolvedValue({ instances });
   const givenNoInstances = () => exec.getInstances.mockResolvedValue({ instances: [] });
   const givenAllDevicesFamilial = () => instanceNaming.isFamilial.mockReturnValue(true);
   const givenNoDevicesFamilial = () => instanceNaming.isFamilial.mockReturnValue(false);
 
-  it('should return null if there are no cloud-instances available', async () => {
-    givenNoInstances();
-    givenAllDevicesFree();
-    givenAllDevicesFamilial();
-    expect(await uut.findFreeInstance('mock-recipe-uuid')).toEqual(null);
+  describe('finding a free instance', () => {
+    it('should return null if there are no cloud-instances available', async () => {
+      givenNoInstances();
+      givenNoRegisteredInstances();
+      givenAllDevicesFamilial();
+      expect(await uut.findFreeInstance('mock-recipe-uuid')).toEqual(null);
+    });
+
+    it('should return a free online instance', async () => {
+      const instance = anInstance();
+      givenInstances(instance);
+      givenNoRegisteredInstances();
+      givenAllDevicesFamilial();
+
+      const result = await uut.findFreeInstance();
+      expect(result.uuid).toEqual(instance.uuid);
+      expect(result.constructor.name).toContain('Instance');
+    });
+
+    it('should not return an instance whose name isn\'t in the family', async () => {
+      const instance = anInstance();
+      givenInstances(instance);
+      givenNoRegisteredInstances();
+      givenNoDevicesFamilial();
+
+      expect(await uut.findFreeInstance()).toEqual(null);
+      expect(instanceNaming.isFamilial).toHaveBeenCalledWith(instance.name);
+    });
+
+    it('should not return an instance already taken by another worker', async () => {
+      const instance = anInstance();
+      givenInstances(instance);
+      givenRegisteredInstances(instance);
+      givenAllDevicesFamilial();
+
+      expect(await uut.findFreeInstance()).toEqual(null);
+    });
+
+    it('should not return an offline instance', async () => {
+      const instance = {
+        ...anInstance(),
+        state: 'OFFLINE',
+      };
+      givenInstances(instance);
+      givenNoRegisteredInstances();
+      givenAllDevicesFamilial();
+
+      expect(await uut.findFreeInstance()).toEqual(null);
+    });
+
+    it('should return a free initializing instance', async () => {
+      const instance = {
+        ...anInstance(),
+        state: 'BOOTING',
+      };
+      givenInstances(instance);
+      givenNoRegisteredInstances();
+      givenAllDevicesFamilial();
+
+      const result = await uut.findFreeInstance();
+      expect(result.uuid).toEqual(instance.uuid);
+      expect(result.constructor.name).toContain('Instance');
+    });
+
+    it('should filter multiple matches of multiple instances', async () => {
+      const instance = anInstance();
+      givenInstances(anInstanceOfOtherRecipe(), instance, anotherInstance());
+      givenNoRegisteredInstances();
+      givenAllDevicesFamilial();
+
+      const result = await uut.findFreeInstance();
+      expect(result.uuid).toEqual(instance.uuid);
+    });
   });
 
-  it('should return a free instance', async () => {
-    const instance = anInstance();
-    givenInstances(instance);
-    givenAllDevicesFree();
-    givenAllDevicesFamilial();
+  describe('finding a specific instance', () => {
+    it('should return an instance matching a UUID', async () => {
+      const instance1 = anInstance();
+      const instance2 = anotherInstance();
+      givenInstances(instance1, instance2);
 
-    const result = await uut.findFreeInstance(instance.recipe.uuid);
-    expect(result.uuid).toEqual(instance.uuid);
-    expect(result.constructor.name).toContain('Instance');
-  });
-
-  it('should not return an instance of a different recipe', async () => {
-    const instance = anInstance();
-    givenInstances(instance);
-    givenAllDevicesFree();
-    givenAllDevicesFamilial();
-
-    expect(await uut.findFreeInstance('different-recipe-uuid')).toEqual(null);
-  });
-
-  it('should not return an instance whose name isn\'t in the family', async () => {
-    const instance = anInstance();
-    givenInstances(instance);
-    givenAllDevicesFree();
-    givenNoDevicesFamilial();
-
-    expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
-    expect(instanceNaming.isFamilial).toHaveBeenCalledWith(instance.name);
-  });
-
-  it('should not return an instance marked "busy"', async () => {
-    const instance = anInstance();
-    givenInstances(instance);
-    givenAllDevicesBusy();
-    givenAllDevicesFamilial();
-
-    expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
-    expect(deviceRegistry.isDeviceBusy).toHaveBeenCalledWith(instance.adb_serial);
-  });
-
-  it('should not return a recycled (auto-shutdown) instance', async () => {
-    const instance = {
-      ...anInstance(),
-      state: INSTANCE_STATE_TERMINATED,
-    };
-    givenInstances(instance);
-    givenAllDevicesFree();
-    givenAllDevicesFamilial();
-
-    expect(await uut.findFreeInstance(instance.recipe.uuid)).toEqual(null);
-  });
-
-  it('should return a disconnected instance', async () => {
-    const instance = aDisconnectedInstance();
-    givenInstances(instance);
-    givenAllDevicesFree();
-    givenAllDevicesFamilial();
-
-    const result = await uut.findFreeInstance(instance.recipe.uuid);
-    expect(result.uuid).toEqual(instance.uuid);
-    expect(deviceRegistry.isDeviceBusy).not.toHaveBeenCalled();
-  });
-
-  it('should filter multiple matches of multiple instances', async () => {
-    const instance = anInstance();
-    givenInstances(anInstanceOfOtherRecipe(), instance, anotherInstance());
-    givenAllDevicesFree();
-    givenAllDevicesFamilial();
-
-    const result = await uut.findFreeInstance(instance.recipe.uuid);
-    expect(result.uuid).toEqual(instance.uuid);
+      const result = await uut.getInstance(instance2.uuid);
+      expect(result.uuid).toEqual(instance2.uuid);
+    });
   });
 });
