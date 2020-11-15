@@ -1,7 +1,7 @@
 describe('Genymotion-Cloud device allocator', () => {
   const recipeUUID = 'mock-recipe-uuid';
 
-  let log;
+  let logger;
   let retry;
   let deviceRegistry;
   let deviceCleanupRegistry;
@@ -11,7 +11,7 @@ describe('Genymotion-Cloud device allocator', () => {
   let uut;
   beforeEach(() => {
     jest.mock('../../../../utils/logger');
-    log = require('../../../../utils/logger');
+    logger = require('../../../../utils/logger');
 
     jest.mock('../../../../utils/retry');
     retry = require('../../../../utils/retry');
@@ -189,7 +189,7 @@ describe('Genymotion-Cloud device allocator', () => {
     await uut.allocateDevice(aRecipe());
   });
 
-  it('should return created=true if new device was allocated', async () => {
+  it('should return isNew=true if new device was allocated', async () => {
     const instance = aFullyConnectedInstance();
     givenNoFreeInstances();
     givenCreatedInstance(instance);
@@ -198,7 +198,7 @@ describe('Genymotion-Cloud device allocator', () => {
     expect(result.isNew).toEqual(true);
   });
 
-  it('should return created=false if a device was reused', async () => {
+  it('should return isNew=false if a device was reused', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
 
@@ -206,7 +206,7 @@ describe('Genymotion-Cloud device allocator', () => {
     expect(result.isNew).toEqual(false);
   });
 
-  it('should return the instance to device registry (potentially different than the final value returned by allocation)', async () => {
+  it('should allocate device based on the instance', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
 
@@ -223,14 +223,14 @@ describe('Genymotion-Cloud device allocator', () => {
   it('should log pre-allocate event', async () => {
     givenFreeInstance(aFullyConnectedInstance());
     await uut.allocateDevice(aRecipe());
-    expect(log.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining('Trying to allocate'));
-    expect(log.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining('mock-recipe-toString()'));
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining('Trying to allocate'));
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining('mock-recipe-toString()'));
   });
 
   it('should log post-allocate event', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
     await uut.allocateDevice(aRecipe());
-    expect(log.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(`Settled on GenyCloud:${instance.name} (${instance.uuid})`));
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(`Settled on GenyCloud:${instance.name} (${instance.uuid})`));
   });
 });

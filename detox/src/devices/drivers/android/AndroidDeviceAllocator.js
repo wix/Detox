@@ -1,45 +1,20 @@
-const log = require('../../../utils/logger').child({ __filename });
-
 const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 
 class AndroidDeviceAllocator {
-  constructor(deviceRegistry) {
+  constructor(deviceRegistry, logger) {
     this.deviceRegistry = deviceRegistry;
+    this.logger = logger;
   }
 
   async allocateDevice(deviceQuery) {
-    const cookie = {};
-    await this._preAllocateDevice(deviceQuery, cookie);
-    const deviceId = await this.deviceRegistry.allocateDevice(() => this._allocateDeviceSynchronized(deviceQuery, cookie));
-    const deviceInfo = await this._postAllocateDevice(deviceQuery, deviceId, cookie) || deviceId;
-    return deviceInfo;
+    this.logger.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on "${deviceQuery}"`);
+    const deviceId = await this._doAllocateDevice(deviceQuery);
+    this.logger.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${deviceId}`);
+    return deviceId;
   }
 
-  /**
-   * @protected
-   * @return {Promise}
-   */
-  async _preAllocateDevice(deviceQuery, cookie) {
-    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on "${deviceQuery}"`);
-  }
-
-  /**
-   * Allocate a device, returning a unique device name, on which inter-workers locking in device-registry
-   * would be based.
-   *
-   * @protected
-   * @return {Promise<string>} Unique device name (e.g. ADB-name) of a free matching device
-   */
-  async _allocateDeviceSynchronized(deviceQuery, cookie) {
+  async _doAllocateDevice(deviceQuery) {
     throw new Error('Not implemented!');
-  }
-
-  /**
-   * @protected
-   * @return {Promise}
-   */
-  async _postAllocateDevice(deviceQuery, deviceId, cookie) {
-    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${deviceId}`);
   }
 }
 

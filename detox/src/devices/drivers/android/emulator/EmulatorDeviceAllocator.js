@@ -1,4 +1,5 @@
 const AndroidDeviceAllocator = require('../AndroidDeviceAllocator');
+const logger = require('../../../../utils/logger').child({ __filename });
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
@@ -8,34 +9,31 @@ const DetoxEmulatorsPortRange = {
 // TODO unit test
 class EmulatorDeviceAllocator extends AndroidDeviceAllocator {
   constructor(deviceRegistry, freeDeviceFinder) {
-    super(deviceRegistry);
+    super(deviceRegistry, logger);
     this._freeDeviceFinder = freeDeviceFinder;
   }
 
-  async _preAllocateDevice(deviceQuery, cookie) {
-    await super._preAllocateDevice(deviceQuery);
-    cookie.placeholderPort = undefined;
-  }
+  async _doAllocateDevice(deviceQuery) {
+    let placeholderPort = null;
+    let adbName = null;
 
-  async _allocateDeviceSynchronized(deviceQuery, cookie) {
-    const freeEmulatorAdbName = await this._freeDeviceFinder.findFreeDevice(deviceQuery);
-    if (freeEmulatorAdbName) {
-      return freeEmulatorAdbName;
-    }
+    await this.deviceRegistry.allocateDevice(async () => {
+      adbName = await this._freeDeviceFinder.findFreeDevice(deviceQuery);
+      if (!adbName) {
+        placeholderPort = this._allocateEmulatorPlaceholderPort();
+        adbName = `emulator-${placeholderPort}`;
+      }
+      return adbName;
+    });
 
-    cookie.placeholderPort = this._allocateEmulatorPlaceholder();
-    return `emulator-${cookie.placeholderPort}`;
-  }
-
-  async _postAllocateDevice(deviceQuery, deviceId, cookie) {
-    await super._postAllocateDevice(deviceQuery, deviceId);
     return {
-      adbName: deviceId,
-      placeholderPort: cookie.placeholderPort,
+      adbName,
+      placeholderPort,
+      toString: () => adbName,
     }
   }
 
-  _allocateEmulatorPlaceholder() {
+  _allocateEmulatorPlaceholderPort() {
     const { min, max } = DetoxEmulatorsPortRange;
     let port = Math.random() * (max - min) + min;
     port = port & 0xFFFFFFFE; // Should always be even
