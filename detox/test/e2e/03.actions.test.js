@@ -202,12 +202,12 @@ describe('Actions', () => {
   });
 
   // directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
-  it(':ios: should swipe down until pull to reload is triggered', async () => {
+  it('should swipe down until pull to reload is triggered', async () => {
     await element(by.id('ScrollView799')).swipe('down', 'fast');
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
-  it.only('should swipe down at a specified position', async () => {
+  it('should swipe down at a specified position', async () => {
     await element(by.id('toggleScrollOverlays')).tap();
     await element(by.id('ScrollView161')).swipe('up', 'fast', 1, 0.9, 0.95);
   });

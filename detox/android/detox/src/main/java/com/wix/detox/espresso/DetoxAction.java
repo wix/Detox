@@ -176,25 +176,8 @@ public class DetoxAction {
      * @param startOffsetPercentY relative value from 0 to 1
      */
     public static ViewAction swipeInDirection(final int direction, boolean fast, double amount, double startOffsetPercentX, double startOffsetPercentY) {
-        final boolean isInCompatibilityMode = fast && Double.isNaN(amount) && Double.isNaN(startOffsetPercentX) && Double.isNaN(startOffsetPercentY);
-
-        if (isInCompatibilityMode) {
-            switch (direction) {
-                case MOTION_DIR_LEFT:
-                    return ViewActions.swipeLeft();
-                case MOTION_DIR_RIGHT:
-                    return ViewActions.swipeRight();
-                case MOTION_DIR_UP:
-                    return ViewActions.swipeUp();
-                case MOTION_DIR_DOWN:
-                    return ViewActions.swipeDown();
-                default:
-                    throw new DetoxErrors.DetoxIllegalArgumentException("Unsupported swipe direction: $direction");
-            }
-        }
-
-        GeneralSwipeAction swipeAction = SwipeHelper.INSTANCE.swipeInDirection(direction, fast, amount, startOffsetPercentX, startOffsetPercentY);
-        return ViewActions.actionWithAssertions(swipeAction);
+        SwipeHelper swipeHelper = SwipeHelper.Companion.getDefault();
+        return swipeHelper.swipeInDirection(direction, fast, amount, startOffsetPercentX, startOffsetPercentY);
     }
 
     public static ViewAction takeViewScreenshot() {

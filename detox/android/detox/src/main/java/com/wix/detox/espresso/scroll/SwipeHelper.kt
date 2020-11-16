@@ -1,6 +1,7 @@
 package com.wix.detox.espresso.scroll
 
 import android.view.View
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.espresso.common.annot.*
@@ -8,21 +9,31 @@ import com.wix.detox.espresso.utils.AgnosticPoint2D
 import kotlin.math.min
 import kotlin.math.max
 
-object SwipeHelper {
+private const val EDGE_FUZZ_FACTOR = 0.083f
+
+typealias CreateSwipeAction = (
+        swiper: Swiper,
+        startCoordinatesProvider: CoordinatesProvider,
+        endCoordinatesProvider: CoordinatesProvider,
+        precisionDescriber: PrecisionDescriber
+) -> ViewAction
+
+class SwipeHelper(private val createAction: CreateSwipeAction) {
+
     fun swipeInDirection(
             direction: Int,
             fast: Boolean = true,
             offset: Double = Double.NaN,
             startPositionX: Double = Double.NaN,
             startPositionY: Double = Double.NaN
-    ): GeneralSwipeAction {
+    ): ViewAction {
         val unsafeStartingPoint = AgnosticPoint2D.fromDoubles(startPositionX, startPositionY, direction)
         val startingPoint = getSafeStartingPoint(unsafeStartingPoint, direction)
         val start = translateFrom(startingPoint, direction)
         val end = translateTo(startingPoint, direction, offset)
         val swiper = if (fast) Swipe.FAST else Swipe.SLOW
 
-        return GeneralSwipeAction(swiper, start, end, Press.FINGER)
+        return this.createAction(swiper, start, end, Press.FINGER)
     }
 
     private fun getSafeStartingPoint(unsafeStartingPoint: AgnosticPoint2D, direction: Int): AgnosticPoint2D {
@@ -82,5 +93,21 @@ object SwipeHelper {
         else -> throw DetoxErrors.DetoxIllegalArgumentException("Unsupported swipe direction: $direction")
     }
 
-    private const val EDGE_FUZZ_FACTOR = 0.083f
+    companion object {
+        val default = SwipeHelper { swiper: Swiper,
+                                    startCoordinatesProvider: CoordinatesProvider,
+                                    endCoordinatesProvider: CoordinatesProvider,
+                                    precisionDescriber: PrecisionDescriber ->
+            ViewActions.actionWithAssertions(
+                    GeneralSwipeAction(
+                            swiper,
+                            startCoordinatesProvider,
+                            endCoordinatesProvider,
+                            precisionDescriber
+                    )
+            );
+        }
+
+        const val edgeFuzzFactor = EDGE_FUZZ_FACTOR
+    }
 }
