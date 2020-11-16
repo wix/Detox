@@ -60,6 +60,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 @implementation NSObject (DetoxUtils)
 
+@dynamic accessibilityIdentifier;
 @dynamic accessibilityContainer;
 
 - (CGPoint)dtx_convertRelativePointToViewCoordinateSpace:(CGPoint)relativePoint

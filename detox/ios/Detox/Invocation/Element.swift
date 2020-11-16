@@ -222,7 +222,7 @@ class Element : NSObject {
 	
 	@objc
 	var identifier: String? {
-		return (view as! UIAccessibilityIdentification).accessibilityIdentifier
+		return view.accessibilityIdentifier
 	}
 	
 	@objc

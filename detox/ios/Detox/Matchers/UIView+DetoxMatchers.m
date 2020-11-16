@@ -42,19 +42,28 @@ static NSArray* DTXChildElements(id element)
 	if ([element respondsToSelector:@selector(accessibilityElementCount)] &&
 		![element isKindOfClass:[UITableView class]] &&
 		![element isKindOfClass:NSClassFromString(@"UIPickerTableView")] &&
-		![element isKindOfClass:[UITableViewCell class]]) {
+		![element isKindOfClass:[UITableViewCell class]])
+	{
 		NSInteger elementCount = [element accessibilityElementCount];
-		if (elementCount != NSNotFound && elementCount > 0) {
+		if (elementCount != NSNotFound && elementCount > 0)
+		{
 			// Temp holder created by UIKit. What we really want is the underlying element.
 			Class accessibilityMockClass = NSClassFromString(@"UIAccessibilityElementMockView");
+			Class textFieldElementClass= NSClassFromString(@"UIAccessibilityTextFieldElement");
 			for (NSInteger i = elementCount - 1; i >= 0; i--) {
 				id item = [element accessibilityElementAtIndex:i];
-				if ([item isKindOfClass:accessibilityMockClass]) {
+				if([item isKindOfClass:accessibilityMockClass])
+				{
 					// Replace mock views with the views they encapsulate.
 					item = [item view];
 				}
+				else if([item isKindOfClass:textFieldElementClass])
+				{
+					item = [item textField];
+				}
 				
-				if (!item) {
+				if (item == nil)
+				{
 					continue;
 				}
 				
@@ -68,7 +77,7 @@ static NSArray* DTXChildElements(id element)
 					// (2) Item does not have a superview. If item does not have a superview, you can ensure
 					//     it's being added only once as an accessibility element of a container.
 					id superview = [item superview];
-					if (superview == element || !superview) {
+					if (superview == element || superview == nil) {
 						[immediateChildren addObject:item];
 					}
 				} else {

@@ -38,14 +38,16 @@
 	
 	NSParameterAssert(numberOfTaps >= 1);
 	
-	UIWindow* window = self.dtx_view.window;
 	UIView* view = self.dtx_view;
+	UIWindow* window = view.window;
 	CGPoint viewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:point];
 	
 	[view dtx_assertHittableAtPoint:viewPoint];
 	
+	CGPoint windowPoint = [window convertPoint:viewPoint fromView:view];
+	
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
-		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:window holdDurationOnLastTouch:0.0];
+		[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnLastTouch:0.0];
 	}
 }
 
@@ -62,14 +64,14 @@
 
 - (void)dtx_longPressAtPoint:(CGPoint)point duration:(NSTimeInterval)duration
 {
-	UIWindow* window = self.dtx_view.window;
 	UIView* view = self.dtx_view;
+	UIWindow* window = view.window;
 	CGPoint viewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:point];
 	
 	[view dtx_assertHittableAtPoint:viewPoint];
 
-	point = [window convertPoint:point fromView:self.dtx_view];
-	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:window holdDurationOnLastTouch:duration];
+	CGPoint windowPoint = [window convertPoint:viewPoint fromView:view];
+	[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnLastTouch:duration];
 }
 
 static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)

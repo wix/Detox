@@ -21,6 +21,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 
 @interface NSObject (DetoxUtils)
 
+@property (nonatomic, readonly, strong) NSString* accessibilityIdentifier;
 @property (nonatomic, readonly, nullable) id accessibilityContainer;
 
 @property (nonatomic, readonly) UIView* dtx_view;
