@@ -21,6 +21,8 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 
 @interface NSObject (DetoxUtils)
 
+@property (nonatomic, readonly, nullable) id accessibilityContainer;
+
 @property (nonatomic, readonly) UIView* dtx_view;
 
 - (CGPoint)dtx_convertRelativePointToViewCoordinateSpace:(CGPoint)relativePoint;

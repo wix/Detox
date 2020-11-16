@@ -60,6 +60,8 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 @implementation NSObject (DetoxUtils)
 
+@dynamic accessibilityContainer;
+
 - (CGPoint)dtx_convertRelativePointToViewCoordinateSpace:(CGPoint)relativePoint
 {
 	if([self isKindOfClass:UIView.class])

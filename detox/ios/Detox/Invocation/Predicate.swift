@@ -407,7 +407,7 @@ class AncestorPredicate : Predicate {
 				if let viewParent = parent as? UIView {
 					parent = viewParent.superview
 				} else {
-					parent = parent!.perform(Selector(("accessibilityContainer")))?.takeRetainedValue() as? NSObject
+					parent = parent!.accessibilityContainer as? NSObject
 				}
 				if parent != nil && predicate.evaluate(with: parent) == true {
 					return true
