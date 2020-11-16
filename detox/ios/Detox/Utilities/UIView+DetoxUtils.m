@@ -9,7 +9,6 @@
 #import "UIView+DetoxUtils.h"
 #import "DTXAppleInternals.h"
 #import "UIWindow+DetoxUtils.h"
-#import "UISlider+DetoxUtils.h"
 #import "UIImage+DetoxUtils.h"
 #import "UIView+Drawing.h"
 #import "DetoxPolicy.h"
@@ -23,55 +22,14 @@
 //#endif
 #define APPLY_PREFIX(...) [NSString stringWithFormat:@"%@ %@", prefix, __VA_ARGS__]
 
-DTX_ALWAYS_INLINE
-static id DTXJSONSafeNSNumberOrString(double d)
-{
-	return isnan(d) ? @"NaN" : @(d);
-}
-
-DTX_ALWAYS_INLINE
-static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
-{
-	return @{@"top": DTXJSONSafeNSNumberOrString(insets.top), @"bottom": DTXJSONSafeNSNumberOrString(insets.bottom), @"left": DTXJSONSafeNSNumberOrString(insets.left), @"right": DTXJSONSafeNSNumberOrString(insets.right)};
-}
-
-DTX_ALWAYS_INLINE
-static NSDictionary* DTXRectToDictionary(CGRect rect)
-{
-	return @{@"x": DTXJSONSafeNSNumberOrString(rect.origin.x), @"y": DTXJSONSafeNSNumberOrString(rect.origin.y), @"width": DTXJSONSafeNSNumberOrString(rect.size.width), @"height": DTXJSONSafeNSNumberOrString(rect.size.height)};
-}
-
-DTX_ALWAYS_INLINE
-static NSDictionary* DTXPointToDictionary(CGPoint point)
-{
-	return @{@"x": DTXJSONSafeNSNumberOrString(point.x), @"y": DTXJSONSafeNSNumberOrString(point.y)};
-}
-
-DTX_ALWAYS_INLINE
-static NSString* DTXPointToString(CGPoint point)
-{
-	return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:NULL] encoding:NSUTF8StringEncoding];
-}
-
 @import ObjectiveC;
-
-BOOL __DTXDoulbeEqualToDouble(double a, double b)
-{
-	double difference = fabs(a * .00001);
-	return fabs(a - b) <= difference;
-}
-
-BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
-{
-	return __DTXDoulbeEqualToDouble(floor(a.x), floor(b.x)) && __DTXDoulbeEqualToDouble(floor(a.y), floor(b.y));
-}
 
 DTX_DIRECT_MEMBERS
 @implementation UIView (DetoxUtils)
 
 - (void)dtx_assertVisible
 {
-	[self _dtx_assertVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace isAtActivationPoint:YES];
+	[self dtx_assertVisibleAtRect:self.bounds];
 }
 
 - (void)dtx_assertHittable
@@ -79,9 +37,12 @@ DTX_DIRECT_MEMBERS
 	[self _dtx_assertHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace isAtActivationPoint:YES];
 }
 
-- (void)dtx_assertVisibleAtPoint:(CGPoint)point
+- (void)dtx_assertVisibleAtRect:(CGRect)rect
 {
-	[self _dtx_assertVisibleAtPoint:point isAtActivationPoint:NO];
+	NSError* error;
+	BOOL assert = [self dtx_isVisibleAtRect:rect error:&error];
+	
+	DTXViewAssert(assert == YES, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
 }
 
 - (void)dtx_assertHittableAtPoint:(CGPoint)point
@@ -89,20 +50,12 @@ DTX_DIRECT_MEMBERS
 	[self _dtx_assertHittableAtPoint:point isAtActivationPoint:NO];
 }
 
-- (void)_dtx_assertVisibleAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
-{
-	NSError* error;
-	BOOL assert = [self dtx_isVisibleAtPoint:point error:&error];
-	
-	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"%@", error.localizedDescription);
-}
-
 - (void)_dtx_assertHittableAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
 {
 	NSError* error;
 	BOOL assert = [self dtx_isHittableAtPoint:point error:&error];
 	
-	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"%@", error.localizedDescription);
+	DTXViewAssert(assert == YES, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
 }
 
 - (NSString *)dtx_shortDescription
@@ -184,12 +137,12 @@ DTX_DIRECT_MEMBERS
 
 - (BOOL)dtx_isVisible
 {
-	return [self dtx_isVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:NULL];
+	return [self dtx_isVisibleAtRect:self.bounds error:NULL];
 }
 
-- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point
+- (BOOL)dtx_isVisibleAtRect:(CGRect)rect
 {
-	return [self dtx_isVisibleAtPoint:point error:NULL];
+	return [self dtx_isVisibleAtRect:rect error:NULL];
 }
 
 - (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView inRect:(CGRect)testedRect drawTestedRect:(BOOL)drawTestedRect
@@ -361,9 +314,9 @@ DTX_DIRECT_MEMBERS
 	return YES;
 }
 
-- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong *)error
+- (BOOL)dtx_isVisibleAtRect:(CGRect)rect error:(NSError* __strong *)error
 {
-	return [self _dtx_testVisibilityInRect:self.bounds error:error];
+	return [self _dtx_testVisibilityInRect:rect error:error];
 }
 
 - (BOOL)dtx_isHittable
@@ -398,105 +351,7 @@ DTX_DIRECT_MEMBERS
 
 - (void)dtx_assertEnabled
 {
-	DTXViewAssert(self.dtx_isEnabled == YES, self.dtx_viewDebugAttributes, @"View is not enabled.");
-}
-
-- (NSDictionary<NSString *,id> *)dtx_attributes
-{
-	NSMutableDictionary* rv = [NSMutableDictionary new];
-	
-	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]];
-	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-		if([obj isKindOfClass:NSNull.class])
-		{
-			return;
-		}
-		
-		if([key isEqualToString:@"accessibilityLabel"])
-		{
-			rv[@"label"] = obj;
-		}
-		else if([key isEqualToString:@"accessibilityValue"])
-		{
-			rv[@"value"] = obj;
-		}
-		else if([key isEqualToString:@"accessibilityIdentifier"])
-		{
-			rv[@"identifier"] = obj;
-		}
-		else
-		{
-			rv[key] = obj;
-		}
-	}];
-	
-	rv[@"enabled"] = @(self.dtx_isEnabled);
-	
-	rv[@"frame"] = DTXRectToDictionary(self.dtx_accessibilityFrame);
-	rv[@"elementFrame"] = DTXRectToDictionary(self.frame);
-	rv[@"elementBounds"] = DTXRectToDictionary(self.bounds);
-	rv[@"safeAreaInsets"] = DTXInsetsToDictionary(self.safeAreaInsets);
-	rv[@"elementSafeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
-	
-	CGPoint accessibilityActivationPointInViewCoordinateSpace = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
-	rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
-	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(CGRectGetWidth(self.bounds) == 0 ? 0 : accessibilityActivationPointInViewCoordinateSpace.x / CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds) == 0 ? 0 : accessibilityActivationPointInViewCoordinateSpace.y / CGRectGetHeight(self.bounds)));
-	
-	rv[@"hittable"] = @(self.dtx_isHittable);
-	rv[@"visible"] = @(self.dtx_isVisible);
-	
-	if([self isKindOfClass:UIScrollView.class])
-	{
-		rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
-		rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
-		rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
-	}
-	
-	if([self isKindOfClass:UISlider.class])
-	{
-		rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
-	}
-	
-	if([self isKindOfClass:UIDatePicker.class])
-	{
-		UIDatePicker* dp = (id)self;
-		rv[@"date"] = [NSISO8601DateFormatter stringFromDate:dp.date timeZone:dp.timeZone ?: NSTimeZone.systemTimeZone formatOptions:NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone];
-		NSDateComponents* dc = [dp.calendar componentsInTimeZone:dp.timeZone ?: NSTimeZone.systemTimeZone fromDate:dp.date];
-		
-		NSMutableDictionary* dateComponents = [NSMutableDictionary new];
-		dateComponents[@"era"] = @(dc.era);
-		dateComponents[@"year"] = @(dc.year);
-		dateComponents[@"month"] = @(dc.month);
-		dateComponents[@"day"] = @(dc.day);
-		dateComponents[@"hour"] = @(dc.hour);
-		dateComponents[@"minute"] = @(dc.minute);
-		dateComponents[@"second"] = @(dc.second);
-		dateComponents[@"weekday"] = @(dc.weekday);
-		dateComponents[@"weekdayOrdinal"] = @(dc.weekdayOrdinal);
-		dateComponents[@"quarter"] = @(dc.quarter);
-		dateComponents[@"weekOfMonth"] = @(dc.weekOfMonth);
-		dateComponents[@"weekOfYear"] = @(dc.weekOfYear);
-		dateComponents[@"leapMonth"] = @(dc.leapMonth);
-		
-		rv[@"dateComponents"] = dateComponents;
-	}
-	
-	return rv;
-}
-
-- (NSDictionary<NSString *,id> *)dtx_viewDebugAttributes
-{
-	NSMutableDictionary* rv = [NSMutableDictionary new];
-	
-	if(self.window != nil)
-	{
-		rv[@"viewHierarchy"] = self.window.recursiveDescription;
-	}
-	
-	rv[@"elementAttributes"] = [self dtx_attributes];
-	rv[@"viewDescription"] = self.description;
-	
-	return rv;
+	DTXViewAssert(self.dtx_isEnabled == YES, self.dtx_elementDebugAttributes, @"View is not enabled.");
 }
 
 - (UIViewController *)dtx_containingViewController

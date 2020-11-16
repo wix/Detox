@@ -1,21 +1,21 @@
 //
-//  UIView+Detox.m
-//  ExampleApp
+//  NSObject+DetoxActions.m
+//  Detox
 //
-//  Created by Leo Natan (Wix) on 4/16/20.
+//  Created by Leo Natan on 11/16/20.
+//  Copyright © 2020 Wix. All rights reserved.
 //
 
-#import "UIView+DetoxActions.h"
+#import "NSObject+DetoxActions.h"
+#import "NSObject+DetoxUtils.h"
 
 @import Darwin;
 @import AudioToolbox;
 
 #import "DTXAppleInternals.h"
 #import "DTXSyntheticEvents.h"
-#import "UIView+DetoxUtils.h"
 
-DTX_DIRECT_MEMBERS
-@implementation UIView (Detox)
+@implementation NSObject (DetoxActions)
 
 - (void)dtx_tapAtAccessibilityActivationPoint
 {
@@ -36,14 +36,19 @@ DTX_DIRECT_MEMBERS
 		return;
 	}
 	
-	[self dtx_assertHittableAtPoint:point];
-	
 	NSParameterAssert(numberOfTaps >= 1);
-	point = [self.window convertPoint:point fromView:self];
+	
+	UIWindow* window = self.dtx_view.window;
+	UIView* view = self.dtx_view;
+	CGPoint viewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:point];
+	
+	[view dtx_assertHittableAtPoint:viewPoint];
+	
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
-		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:0.0];
+		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:window holdDurationOnLastTouch:0.0];
 	}
 }
+
 
 - (void)dtx_longPressAtAccessibilityActivationPoint
 {
@@ -57,16 +62,20 @@ DTX_DIRECT_MEMBERS
 
 - (void)dtx_longPressAtPoint:(CGPoint)point duration:(NSTimeInterval)duration
 {
-	[self dtx_assertHittableAtPoint:point];
+	UIWindow* window = self.dtx_view.window;
+	UIView* view = self.dtx_view;
+	CGPoint viewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:point];
 	
-	point = [self.window convertPoint:point fromView:self];
-	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:duration];
+	[view dtx_assertHittableAtPoint:viewPoint];
+
+	point = [window convertPoint:point fromView:self.dtx_view];
+	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:window holdDurationOnLastTouch:duration];
 }
 
 static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
 {
 	NSCAssert(CGPointEqualToPoint(startPoint, endPoint) == NO, @"Start and end points for swipe cannot be equal");
-
+	
 	NSMutableArray<NSValue*>* points = [NSMutableArray new];
 	
 	for (CGFloat p = 0.0; p <= 1.0; p += 1.0 / (20.0 * velocity))
@@ -76,7 +85,7 @@ static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoin
 		
 		[points addObject:@(CGPointMake(x, y))];
 	}
-
+	
 	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
@@ -99,9 +108,12 @@ endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
 	CGPoint startPoint;
 	CGPoint endPoint;
 	
+	UIWindow* window = self.dtx_view.window;
+	UIView* view = self.dtx_view;
+	
 	CGRect safeBounds = self.dtx_safeAreaBounds;
-	CGRect safeBoundsInScreenSpace = [self.window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:self.coordinateSpace];
-	CGRect screenBounds = self.window.screen.bounds;
+	CGRect safeBoundsInScreenSpace = [window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:view.coordinateSpace];
+	CGRect screenBounds = window.screen.bounds;
 	
 	if(normalizedOffset.x != 0)
 	{
@@ -113,12 +125,12 @@ endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
 	}
 	
 	
-	[self dtx_assertHittableAtPoint:[self.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace]];
+	[view dtx_assertHittableAtPoint:[view.coordinateSpace convertPoint:startPoint fromCoordinateSpace:window.screen.coordinateSpace]];
 	
-	startPoint = [self.window.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
-	endPoint = [self.window.coordinateSpace convertPoint:endPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
+	startPoint = [window.coordinateSpace convertPoint:startPoint fromCoordinateSpace:window.screen.coordinateSpace];
+	endPoint = [window.coordinateSpace convertPoint:endPoint fromCoordinateSpace:window.screen.coordinateSpace];
 	
-	_DTXApplySwipe(self.window, startPoint, endPoint, 1.0 / velocity);
+	_DTXApplySwipe(window, startPoint, endPoint, 1.0 / velocity);
 }
 
 static void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoint1, CGPoint startPoint2, CGPoint endPoint2, CGFloat velocity)
@@ -138,7 +150,7 @@ static void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoi
 		
 		[points2 addObject:@(CGPointMake(x, y))];
 	}
-
+	
 	[DTXSyntheticEvents touchAlongMultiplePaths:@[points1, points2] relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
@@ -190,6 +202,8 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 		return;
 	}
 	
+	UIView* view = self.dtx_view;
+	UIWindow* window = view.window;
 	CGRect safeBounds = self.dtx_safeAreaBounds;
 	
 	CGPoint startPoint1;
@@ -218,12 +232,12 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 	[self dtx_assertHittableAtPoint:startPoint1];
 	[self dtx_assertHittableAtPoint:startPoint2];
 	
-	startPoint1 = [self.window convertPoint:startPoint1 fromView:self];
-	endPoint1 = [self.window convertPoint:endPoint1 fromView:self];
-	startPoint2 = [self.window convertPoint:startPoint2 fromView:self];
-	endPoint2 = [self.window convertPoint:endPoint2 fromView:self];
+	startPoint1 = [window convertPoint:startPoint1 fromView:view];
+	endPoint1 = [window convertPoint:endPoint1 fromView:view];
+	startPoint2 = [window convertPoint:startPoint2 fromView:view];
+	endPoint2 = [window convertPoint:endPoint2 fromView:view];
 	
-	_DTXApplyPinch(self.window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
+	_DTXApplyPinch(window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
 }
 
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
@@ -267,7 +281,7 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	
 	if(firstResponder == nil)
 	{
-		DTXCViewAssert(firstResponder == nil, firstResponder.dtx_viewDebugAttributes, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
+		DTXCViewAssert(firstResponder == nil, firstResponder.dtx_elementDebugAttributes, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
 	}
 	
 	return firstResponder;
@@ -280,7 +294,7 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 		return YES;
 	}
 	
-	DTXCViewAssert(NO, firstResponder.dtx_viewDebugAttributes, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
+	DTXCViewAssert(NO, firstResponder.dtx_elementDebugAttributes, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
 	
 	return NO;
 }
@@ -326,7 +340,7 @@ static void _DTXFixupKeyboard(void)
 	{
 		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
 	}
-
+	
 	[controller synchronizePreferences];
 }
 
@@ -343,7 +357,7 @@ static void _DTXTypeText(NSString* text)
 		
 		[UIKeyboardImpl.sharedInstance.taskQueue performTask:^(id ctx) {
 			[UIKeyboardImpl.sharedInstance handleKeyWithString:grapheme forKeyEvent:nil executionContext:ctx];
-					
+			
 			NSArray* sounds = @[@1104, @1155, @1156];
 			
 			AudioServicesPlaySystemSound([sounds[grapheme.hash % 3] unsignedIntValue]);
@@ -361,12 +375,13 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_clearText
 {
-	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
+	UIView* view = self.dtx_view;
+	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
 	UITextPosition* endOfDocument = firstResponder.endOfDocument;
-		
+	
 	UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
 	if(range.isEmpty == YES)
 	{
@@ -387,7 +402,8 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_typeText:(NSString*)text atTextRange:(UITextRange*)textRange
 {
-	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
+	UIView* view = self.dtx_view;
+	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	_ensureSelectionAtRange(firstResponder, textRange);
 	
@@ -396,7 +412,8 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_replaceText:(NSString*)text
 {
-	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
+	UIView* view = self.dtx_view;
+	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	BOOL isControl = [firstResponder isKindOfClass:UIControl.class];
@@ -424,7 +441,7 @@ static void _DTXTypeText(NSString* text)
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
 	UITextPosition* endOfDocument = firstResponder.endOfDocument;
-		
+	
 	UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
 	
 	[firstResponder replaceRange:range withText:text];
@@ -455,4 +472,3 @@ static void _DTXTypeText(NSString* text)
 }
 
 @end
-

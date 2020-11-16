@@ -7,46 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <NSObject+DetoxUtils.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-BOOL __DTXDoulbeEqualToDouble(double a, double b);
-BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b);
-
-inline __attribute__((__always_inline__))
-static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
-{
-	return from + p * (to - from);
-}
-
 @interface UIView (DetoxUtils)
-
-@property (nonatomic, readonly) CGRect dtx_contentBounds;
-@property (nonatomic, readonly) CGRect dtx_visibleBounds;
-
-@property (nonatomic, readonly) BOOL dtx_isVisible;
-- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point;
-- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error;
-- (void)dtx_assertVisible;
-- (void)dtx_assertVisibleAtPoint:(CGPoint)point;
-
-@property (nonatomic, readonly) BOOL dtx_isHittable;
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point;
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error;
-- (void)dtx_assertHittable;
-- (void)dtx_assertHittableAtPoint:(CGPoint)point;
-
-@property (nonatomic, readonly) BOOL dtx_isEnabled;
-- (void)dtx_assertEnabled;
-
-@property (nonatomic, readonly, copy) NSString* dtx_shortDescription;
-@property (nonatomic, readonly) CGRect dtx_accessibilityFrame;
-@property (nonatomic, readonly) CGRect dtx_safeAreaBounds;
-@property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
-@property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;
-
-@property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_attributes;
-@property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_viewDebugAttributes;
 
 @property (nonatomic, readonly, weak) UIViewController* dtx_containingViewController;
 

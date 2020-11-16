@@ -61,19 +61,19 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		case Kind.label:
 			let label = dictionaryRepresentation[Keys.value] as! String
 			if ReactNativeSupport.isReactNativeApp == false {
-				return ValuePredicate(kind: kind, modifiers: modifiers, value: label)
+				return ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true)
 			} else {
 				//Will crash if RN app and neither class exists
 				let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
 				
 				let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
 					try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
-					ValuePredicate(kind: kind, modifiers: modifiers, value: label)
+					ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true)
 				], modifiers: []), modifiers: [Modifier.not])
 				descendantPredicate.hidden = true
 				
 				return AndCompoundPredicate(predicates: [
-					ValuePredicate(kind: kind, modifiers: modifiers, value: label),
+					ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true),
 					descendantPredicate
 				], modifiers: [])
 			}
@@ -96,12 +96,15 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 			orCompoundPredicate.hidden = true
 			
 			return AndCompoundPredicate(predicates: [
-				ValuePredicate(kind: kind, modifiers: modifiers, value: text),
+				ValuePredicate(kind: kind, modifiers: modifiers, value: text, requiresAccessibilityElement: false),
 				orCompoundPredicate
 			], modifiers: [])
-		case Kind.id, Kind.value:
+		case Kind.id:
 			let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
-			return ValuePredicate(kind: kind, modifiers: modifiers, value: value)
+			return ValuePredicate(kind: kind, modifiers: modifiers, value: value, requiresAccessibilityElement: false)
+		case Kind.value:
+			let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
+			return ValuePredicate(kind: kind, modifiers: modifiers, value: value, requiresAccessibilityElement: true)
 		case Kind.ancestor:
 			let predicate = try Predicate.with(dictionaryRepresentation: dictionaryRepresentation[Keys.predicate] as! [String: Any])
 			return AncestorPredicate(predicate: predicate, modifiers: modifiers)
@@ -191,6 +194,7 @@ class KindOfPredicate : Predicate {
 
 class ValuePredicate : Predicate {
 	let value : CustomStringConvertible
+	let requiresAccessibilityElement: Bool
 	
 	static let mapping : [String: (String, (Any) -> Any)] = [
 		Kind.id: ("accessibilityIdentifier", { return $0 }),
@@ -206,8 +210,9 @@ class ValuePredicate : Predicate {
 		"accessibilityValue": "value"
 	]
 	
-	init(kind: String, modifiers: Set<String>, value: CustomStringConvertible) {
+	init(kind: String, modifiers: Set<String>, value: CustomStringConvertible, requiresAccessibilityElement: Bool) {
 		self.value = value
+		self.requiresAccessibilityElement = requiresAccessibilityElement
 		
 		super.init(kind: kind, modifiers: modifiers)
 	}
@@ -301,8 +306,8 @@ class TraitPredicate : Predicate {
 	
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSPredicate.init { viewOrElse, _ -> Bool in
-			let view = viewOrElse as! UIView
-			return (view.accessibilityTraits.rawValue & self.traits.rawValue) == self.traits.rawValue
+			let view = viewOrElse as! NSObject
+			return view.isAccessibilityElement == true && (view.accessibilityTraits.rawValue & self.traits.rawValue) == self.traits.rawValue
 		}
 	}
 	
@@ -365,7 +370,7 @@ class DescendantPredicate : Predicate {
 	
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSPredicate { evaluatedObject, bindings -> Bool in
-			let view = evaluatedObject as! UIView
+			let view = evaluatedObject as! NSObject
 			
 			return UIView.dtx_findViews(inHierarchy: view, includingRoot: false, passing: self.predicate.predicateForQuery()).count > 0
 		}
@@ -395,12 +400,15 @@ class AncestorPredicate : Predicate {
 	
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSPredicate { evaluatedObject, bindings -> Bool in
-			let view = evaluatedObject as! UIView
 			let predicate = self.predicate.predicateForQuery()
 			
-			var parent : UIView? = view
+			var parent : NSObject? = evaluatedObject as! NSObject?
 			while parent != nil {
-				parent = parent!.superview
+				if let viewParent = parent as? UIView {
+					parent = viewParent.superview
+				} else {
+					parent = parent!.perform(Selector(("accessibilityContainer")))?.takeRetainedValue() as? NSObject
+				}
 				if parent != nil && predicate.evaluate(with: parent) == true {
 					return true
 				}

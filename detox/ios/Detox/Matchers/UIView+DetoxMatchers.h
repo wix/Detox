@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSMutableArray<UIView*>*)dtx_findViewsInAllWindowsPassingPredicate:(NSPredicate*)predicate;
 + (NSMutableArray<UIView*>*)dtx_findViewsInKeySceneWindowsPassingPredicate:(NSPredicate*)predicate;
 + (NSMutableArray<UIView*>*)dtx_findViewsInWindows:(NSArray<UIWindow*>*)windows passingPredicate:(NSPredicate*)predicate;
-+ (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(UIView*)hierarchy passingPredicate:(NSPredicate*)predicate;
-+ (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(UIView*)hierarchy includingRoot:(BOOL)includingRoot passingPredicate:(NSPredicate*)predicate;
++ (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(id)hierarchy passingPredicate:(NSPredicate*)predicate;
++ (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(id)hierarchy includingRoot:(BOOL)includingRoot passingPredicate:(NSPredicate*)predicate;
 
 @end
 

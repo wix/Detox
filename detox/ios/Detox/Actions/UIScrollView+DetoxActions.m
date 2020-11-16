@@ -304,7 +304,7 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 		}
 	}
 	
-	DTXViewAssert(strict == NO || successfullyAppliedScrolls > 0, self.dtx_viewDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
+	DTXViewAssert(strict == NO || successfullyAppliedScrolls > 0, self.dtx_elementDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
 	
 	self.dtx_disableDecelerationForScroll = NO;
 //	self.bounces = oldBounces;

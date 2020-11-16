@@ -1,18 +1,16 @@
 //
-//  UIView+Detox.h
-//  ExampleApp
+//  NSObject+DetoxActions.h
+//  Detox
 //
-//  Created by Leo Natan (Wix) on 4/16/20.
+//  Created by Leo Natan on 11/16/20.
+//  Copyright © 2020 Wix. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-BOOL DTXClearText(void);
-BOOL DTXTypeText(NSString* text);
-
-@interface UIView (Detox)
+@interface NSObject (DetoxActions)
 
 - (void)dtx_tapAtAccessibilityActivationPoint;
 - (void)dtx_tapAtAccessibilityActivationPointWithNumberOfTaps:(NSUInteger)numberOfTaps;
