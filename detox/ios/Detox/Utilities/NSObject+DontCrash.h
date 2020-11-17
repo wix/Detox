@@ -1,5 +1,5 @@
 //
-//  UIView+DontCrash.h
+//  NSObject+DontCrash.h
 //  ExampleApp
 //
 //  Created by Leo Natan (Wix) on 4/16/20.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UIView (DontCrash)
+@interface NSObject (DontCrash)
 
 @end
 

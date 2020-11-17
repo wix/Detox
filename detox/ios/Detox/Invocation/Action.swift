@@ -163,7 +163,6 @@ class LongPressAction : Action {
 		if let param = params?.first as? Double {
 			duration = param.toSeconds()
 		} else {
-			//TODO: Check default value in Detox
 			duration = 1.0
 		}
 		

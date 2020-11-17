@@ -29,6 +29,8 @@
 		3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */; };
 		39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; };
+		3946CCCF256280A4000A3606 /* NSObject+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946CCCD256280A4000A3606 /* NSObject+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3946CCD0256280A4000A3606 /* NSObject+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946CCCE256280A4000A3606 /* NSObject+DetoxActions.m */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767B91DBF98A700D72256 /* EarlGreyExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C41DBF98D900D72256 /* ReactNativeHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -45,6 +47,8 @@
 		39477C2824D1C92700D87E1C /* LNViewHierarchyDumper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39477C2224D1C91B00D87E1C /* LNViewHierarchyDumper.framework */; };
 		39477C2924D1C92700D87E1C /* LNViewHierarchyDumper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 39477C2224D1C91B00D87E1C /* LNViewHierarchyDumper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
+		3955025C255DC5FA00EFFFE2 /* NSObject+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3955025A255DC5FA00EFFFE2 /* NSObject+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3955025D255DC5FA00EFFFE2 /* NSObject+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3955025B255DC5FA00EFFFE2 /* NSObject+DetoxUtils.m */; };
 		396EA67A22E0AE7D0087E4D4 /* ___DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		396EA67B22E0AE7D0087E4D4 /* ___DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 396EA67922E0AE7C0087E4D4 /* ___DTXAddressInfo.mm */; };
 		3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3976BF01246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift */; };
@@ -57,14 +61,12 @@
 		397CA7A324840449005E8A71 /* NSException+DetoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */; };
 		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
-		3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */; };
 		3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */; };
 		3980D1102448B52C004812DD /* DTXSyntheticEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FF2448B52A004812DD /* DTXSyntheticEvents.m */; };
-		3980D1112448B52C004812DD /* UIView+DontCrash.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1002448B52B004812DD /* UIView+DontCrash.m */; };
+		3980D1112448B52C004812DD /* NSObject+DontCrash.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1002448B52B004812DD /* NSObject+DontCrash.m */; };
 		3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */; };
-		3980D1132448B52C004812DD /* UIView+DontCrash.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1022448B52B004812DD /* UIView+DontCrash.h */; };
+		3980D1132448B52C004812DD /* NSObject+DontCrash.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1022448B52B004812DD /* NSObject+DontCrash.h */; };
 		3980D1142448B52C004812DD /* DTXTouchInjector.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1032448B52B004812DD /* DTXTouchInjector.h */; };
-		3980D1152448B52C004812DD /* UIView+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1042448B52B004812DD /* UIView+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1052448B52B004812DD /* DTXTouchInfo.m */; };
 		3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D1182448B52C004812DD /* UITouch+DTXAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */; };
@@ -271,6 +273,8 @@
 		3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_calendar_trigger.json; sourceTree = "<group>"; };
 		3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger.json; sourceTree = "<group>"; };
 		393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = COSTouchVisualizer.xcodeproj; path = COSTouchVisualizer/Classes/COSTouchVisualizer.xcodeproj; sourceTree = "<group>"; };
+		3946CCCD256280A4000A3606 /* NSObject+DetoxActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+DetoxActions.h"; sourceTree = "<group>"; };
+		3946CCCE256280A4000A3606 /* NSObject+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DetoxActions.m"; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -289,6 +293,8 @@
 		39477C1C24D1C91B00D87E1C /* LNViewHierarchyDumper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LNViewHierarchyDumper.xcodeproj; path = LNViewHierarchyDumper/LNViewHierarchyDumper/LNViewHierarchyDumper.xcodeproj; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
+		3955025A255DC5FA00EFFFE2 /* NSObject+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+DetoxUtils.h"; sourceTree = "<group>"; };
+		3955025B255DC5FA00EFFFE2 /* NSObject+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DetoxUtils.m"; sourceTree = "<group>"; };
 		396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "___DTXAddressInfo.h"; sourceTree = "<group>"; };
 		396EA67922E0AE7C0087E4D4 /* ___DTXAddressInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "___DTXAddressInfo.mm"; sourceTree = "<group>"; };
 		3975C78220272ED500C59ED8 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
@@ -302,14 +308,12 @@
 		397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSException+DetoxUtils.swift"; sourceTree = "<group>"; };
 		397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyStatistics.h; sourceTree = "<group>"; };
 		397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EarlGreyStatistics.m; sourceTree = "<group>"; };
-		3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxActions.m"; sourceTree = "<group>"; };
 		3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+DTXAdditions.h"; sourceTree = "<group>"; };
 		3980D0FF2448B52A004812DD /* DTXSyntheticEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXSyntheticEvents.m; sourceTree = "<group>"; };
-		3980D1002448B52B004812DD /* UIView+DontCrash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DontCrash.m"; sourceTree = "<group>"; };
+		3980D1002448B52B004812DD /* NSObject+DontCrash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DontCrash.m"; sourceTree = "<group>"; };
 		3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+DTXAdditions.m"; sourceTree = "<group>"; };
-		3980D1022448B52B004812DD /* UIView+DontCrash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DontCrash.h"; sourceTree = "<group>"; };
+		3980D1022448B52B004812DD /* NSObject+DontCrash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DontCrash.h"; sourceTree = "<group>"; };
 		3980D1032448B52B004812DD /* DTXTouchInjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXTouchInjector.h; sourceTree = "<group>"; };
-		3980D1042448B52B004812DD /* UIView+DetoxActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxActions.h"; sourceTree = "<group>"; };
 		3980D1052448B52B004812DD /* DTXTouchInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXTouchInfo.m; sourceTree = "<group>"; };
 		3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXRunLoopSpinner.h; sourceTree = "<group>"; };
 		3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITouch+DTXAdditions.h"; sourceTree = "<group>"; };
@@ -656,12 +660,14 @@
 				397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */,
 				39FA2BDC250E74210047F419 /* UIImage+DetoxUtils.h */,
 				39FA2BDD250E74210047F419 /* UIImage+DetoxUtils.m */,
+				3955025A255DC5FA00EFFFE2 /* NSObject+DetoxUtils.h */,
+				3955025B255DC5FA00EFFFE2 /* NSObject+DetoxUtils.m */,
 				3990BA132457248600B608C8 /* UIView+DetoxUtils.h */,
 				3990BA142457248600B608C8 /* UIView+DetoxUtils.m */,
 				39E23FF62513AF430035A162 /* UIView+Drawing.h */,
 				39E23FF72513AF430035A162 /* UIView+Drawing.m */,
-				3980D1022448B52B004812DD /* UIView+DontCrash.h */,
-				3980D1002448B52B004812DD /* UIView+DontCrash.m */,
+				3980D1022448B52B004812DD /* NSObject+DontCrash.h */,
+				3980D1002448B52B004812DD /* NSObject+DontCrash.m */,
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
 				390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */,
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
@@ -680,8 +686,8 @@
 				3980D164244DC8F0004812DD /* UIPickerView+DetoxActions.m */,
 				3980D16B244DDCD7004812DD /* UIScrollView+DetoxActions.h */,
 				3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */,
-				3980D1042448B52B004812DD /* UIView+DetoxActions.h */,
-				3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */,
+				3946CCCD256280A4000A3606 /* NSObject+DetoxActions.h */,
+				3946CCCE256280A4000A3606 /* NSObject+DetoxActions.m */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -746,13 +752,14 @@
 				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
 				3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */,
 				3980D165244DC8F0004812DD /* UIPickerView+DetoxActions.h in Headers */,
-				3980D1152448B52C004812DD /* UIView+DetoxActions.h in Headers */,
 				39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */,
+				3955025C255DC5FA00EFFFE2 /* NSObject+DetoxUtils.h in Headers */,
 				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
-				3980D1132448B52C004812DD /* UIView+DontCrash.h in Headers */,
+				3980D1132448B52C004812DD /* NSObject+DontCrash.h in Headers */,
 				390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */,
 				39E7AB3A24F40CDE0011CE29 /* fishhook.h in Headers */,
 				3902CAD7211342D000C49D04 /* WXRNLoadIdlingResource.h in Headers */,
+				3946CCCF256280A4000A3606 /* NSObject+DetoxActions.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
 				39E23FF82513AF430035A162 /* UIView+Drawing.h in Headers */,
 				39FA2BDE250E74210047F419 /* UIImage+DetoxUtils.h in Headers */,
@@ -970,7 +977,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				392324E324782AE500A3D119 /* DetoxInit.m in Sources */,
-				3980D1112448B52C004812DD /* UIView+DontCrash.m in Sources */,
+				3980D1112448B52C004812DD /* NSObject+DontCrash.m in Sources */,
 				39E7AB3F24F40DA10011CE29 /* DTXLogging.swift in Sources */,
 				3980D15C244C45EA004812DD /* Action.swift in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
@@ -980,12 +987,14 @@
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
 				39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */,
 				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
+				3955025D255DC5FA00EFFFE2 /* NSObject+DetoxUtils.m in Sources */,
 				39FA2BDF250E74210047F419 /* UIImage+DetoxUtils.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				3980D16A244DD837004812DD /* UIDatePicker+DetoxActions.m in Sources */,
 				396EA67B22E0AE7D0087E4D4 /* ___DTXAddressInfo.mm in Sources */,
 				3980D11B2448B52C004812DD /* DTXRunLoopSpinner.m in Sources */,
 				3980D166244DC8F0004812DD /* UIPickerView+DetoxActions.m in Sources */,
+				3946CCD0256280A4000A3606 /* NSObject+DetoxActions.m in Sources */,
 				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,
 				3990BA162457248600B608C8 /* UIView+DetoxUtils.m in Sources */,
 				397CA7A324840449005E8A71 /* NSException+DetoxUtils.swift in Sources */,
@@ -1009,7 +1018,6 @@
 				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,
 				39E7AB4024F40DA10011CE29 /* DTXLogging.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
-				3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
 				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
@@ -1237,9 +1245,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_UNREACHABLE_CODE = NO;
 				CODE_SIGN_IDENTITY = "";
 				DEAD_CODE_STRIPPING = NO;
@@ -1284,9 +1294,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "";
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;

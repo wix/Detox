@@ -1,13 +1,13 @@
 //
-//  UIView+DontCrash.m
+//  NSObject+DontCrash.m
 //  ExampleApp
 //
 //  Created by Leo Natan (Wix) on 4/16/20.
 //
 
-#import "UIView+DontCrash.h"
+#import "NSObject+DontCrash.h"
 
-@implementation UIView (DontCrash)
+@implementation NSObject (DontCrash)
 
 - (id)text
 {

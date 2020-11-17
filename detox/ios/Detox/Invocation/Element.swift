@@ -42,28 +42,21 @@ class Element : NSObject {
 		}
 	}
 	
-//	private var cachedViews : [UIView]?
-	private var views : [UIView] {
-//		if let cachedViews = cachedViews {
-//			return cachedViews
-//		}
-		
+	private var views : [NSObject] {
 		//TODO: Consider searching here in all windows from all scenes.
-		let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView])
+		let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [NSObject])
 		
 		guard array.count > 0 else {
 			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 		}
 		
-//		cachedViews = array
-		
 		return array
 	}
 	
-	private var view : UIView {
+	private var view : NSObject {
 		let array = self.views
 		
-		let element : UIView
+		let element : NSObject
 		if let index = index {
 			guard index < array.count else {
 				dtx_fatalError("Index \(index) beyond bounds \(array.count > 0 ? "[0 .. \(array.count - 1)] " : " ")for “\(self.description)”", viewDescription: failDebugAttributes)
@@ -111,7 +104,7 @@ class Element : NSObject {
 //			}
 			var rv: [String: Any]! = nil
 			try dtx_try {
-				rv = view.dtx_viewDebugAttributes
+				rv = view.dtx_elementDebugAttributes
 			}
 			return rv
 		} catch {
@@ -199,7 +192,7 @@ class Element : NSObject {
 	
 	func isVisible() throws -> Bool {
 		var error: NSError? = nil
-		let rv = view.dtx_isVisible(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)
+		let rv = view.dtx_isVisible(at: view.dtx_bounds, error: &error)
 		if let error = error {
 			throw error
 		}
