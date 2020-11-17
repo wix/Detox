@@ -1,6 +1,7 @@
 jest.mock('child_process');
 jest.mock('../src/utils/logger');
 jest.mock('../src/devices/DeviceRegistry');
+jest.mock('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('../src/utils/lastFailedTests');
 
 const _ = require('lodash');
@@ -14,6 +15,7 @@ describe('CLI', () => {
   let detoxConfig;
   let detoxConfigPath;
   let DeviceRegistry;
+  let GenyDeviceRegistryFactory;
   let _env;
 
   beforeEach(() => {
@@ -32,8 +34,11 @@ describe('CLI', () => {
     cp = require('child_process');
     logger = require('../src/utils/logger');
     temporaryFiles = [];
-    DeviceRegistry = require('../src/devices/DeviceRegistry')
-    DeviceRegistry.forAndroid = DeviceRegistry.forIOS = () => new DeviceRegistry();
+    DeviceRegistry = require('../src/devices/DeviceRegistry');
+    DeviceRegistry.forAndroid.mockImplementation(() => new DeviceRegistry());
+    DeviceRegistry.forIOS.mockImplementation(() => new DeviceRegistry());
+    GenyDeviceRegistryFactory = require('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
+    GenyDeviceRegistryFactory.forGlobalShutdown.mockImplementation(() => new DeviceRegistry());
   });
 
   afterEach(async () => {

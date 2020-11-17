@@ -2,10 +2,10 @@ const _ = require('lodash');
 const Instance = require('./dto/GenyInstance');
 
 class GenyInstanceLookupService {
-  constructor(genyCloudExec, instanceNaming, genycloudDeviceRegistry) {
+  constructor(genyCloudExec, instanceNaming, genyCloudDeviceRegistry) {
     this.genyCloudExec = genyCloudExec;
     this.instanceNaming = instanceNaming;
-    this.deviceRegistry = genycloudDeviceRegistry;
+    this.deviceRegistry = genyCloudDeviceRegistry;
   }
 
   async findFreeInstance() {

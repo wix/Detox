@@ -37,11 +37,19 @@ describe('DeviceRegistry', () => {
       });
     }
 
+    async function disposeDevice(deviceId) {
+      return registry.disposeDevice(() => deviceId);
+    }
+
     async function checkDeviceNotRegistered(deviceId) {
       return registry.allocateDevice(async () => {
         expect(registry.includes(deviceId)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
       }).catch((e) => { if (e.message !== 'ignored') throw e });
+    }
+
+    async function checkRegisteredDevicesEqual(...deviceIds) {
+      expect(await registry.readRegisteredDevices()).toEqual([ ...deviceIds ]);
     }
 
     const assertForbiddenOutOfContextRegistryQuery = () =>
@@ -85,6 +93,19 @@ describe('DeviceRegistry', () => {
 
       await allocateDevice(deviceId);
       assertForbiddenOutOfContextDeviceListQuery();
+    });
+
+    it('should be able to read a valid list of registered devices', async () => {
+      const deviceId = 'emulator-5554';
+      const anotherDeviceId = 'emulator-5556';
+
+      await allocateDevice(deviceId);
+      await allocateDevice(anotherDeviceId);
+      await checkRegisteredDevicesEqual(deviceId, anotherDeviceId);
+      await disposeDevice(deviceId);
+      await checkRegisteredDevicesEqual(anotherDeviceId);
+      await disposeDevice(anotherDeviceId);
+      await checkRegisteredDevicesEqual();
     });
 
     describe('.reset() method', () => {

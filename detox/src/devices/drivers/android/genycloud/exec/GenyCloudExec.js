@@ -18,20 +18,24 @@ class GenyCloudExec {
   }
 
   stopInstance(instanceUUID) {
-    return this._exec(`instances stop ${instanceUUID}`);
+    const options = {
+      retries: 3,
+    };
+    return this._exec(`instances stop ${instanceUUID}`, options);
   }
 
-  async _exec(args) {
+  async _exec(args, options) {
     try {
-      const rawResult = await this.__exec(args);
+      const rawResult = await this.__exec(args, options);
       return JSON.parse(rawResult);
     } catch (error) {
-      throw JSON.parse(error.stderr);
+      throw new Error(error.stderr);
     }
   }
 
-  async __exec(args) {
+  async __exec(args, _options) {
     const options = {
+      ..._options,
       statusLogs: {
         retrying: true,
       },
