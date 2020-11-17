@@ -16,7 +16,6 @@ const mockBaseClassesDependencies = () => {
 };
 
 const mockDirectDependencies = () => {
-  jest.mock('./GenyDeviceRegistryWrapper');
   jest.mock('./exec/GenyCloudExec');
   jest.mock('./services/GenyRecipesService');
   jest.mock('./services/GenyInstanceLookupService');

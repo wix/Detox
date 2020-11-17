@@ -204,13 +204,13 @@ describe('Genymotion-Cloud device allocator', () => {
     expect(result.isNew).toEqual(false);
   });
 
-  it('should allocate device based on the instance', async () => {
+  it('should allocate device based on the instance\'s UUID', async () => {
     const instance = aFullyConnectedInstance();
     givenFreeInstance(instance);
 
     deviceRegistry.allocateDevice.mockImplementation(async (func) => {
       const result = await func();
-      expect(result).toEqual(instance);
+      expect(result).toEqual(instance.uuid);
       return result;
     });
 

@@ -1,6 +1,6 @@
 const AndroidDriver = require('../AndroidDriver');
+const DeviceRegistry = require('../../../DeviceRegistry');
 const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
-const GenyDeviceRegistryWrapper = require('./GenyDeviceRegistryWrapper');
 const GenyCloudExec = require('./exec/GenyCloudExec');
 const RecipesService = require('./services/GenyRecipesService');
 const InstanceLookupService = require('./services/GenyInstanceLookupService');
@@ -17,13 +17,13 @@ class GenyCloudDriver extends AndroidDriver {
 
     const exec = new GenyCloudExec();
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
-    this.deviceRegistry = new GenyDeviceRegistryWrapper(this.deviceRegistry);
+    this._deviceRegistry = DeviceRegistry.forAndroid();
 
     const recipeService = new RecipesService(exec, logger);
-    const instanceLookupService = new InstanceLookupService(exec, instanceNaming, this.deviceRegistry);
+    const instanceLookupService = new InstanceLookupService(exec, instanceNaming, this._deviceRegistry);
     const instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
     this._deviceQueryHelper = new DeviceQueryHelper(recipeService);
-    this._deviceAllocator = new GenyCloudDeviceAllocator(this.deviceRegistry, instanceLookupService, instanceLifecycleService);
+    this._deviceAllocator = new GenyCloudDeviceAllocator(this._deviceRegistry, instanceLookupService, instanceLifecycleService);
   }
 
   get name() {
@@ -51,6 +51,11 @@ class GenyCloudDriver extends AndroidDriver {
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
     await this.appInstallHelper.install(adbName, binaryPath, testBinaryPath);
+  }
+
+  async cleanup(instance, bundleId) {
+    await this._deviceRegistry.disposeDevice(instance.uuid);
+    await super.cleanup(instance, bundleId);
   }
 
   _assertRecipe(deviceQuery, recipe) {

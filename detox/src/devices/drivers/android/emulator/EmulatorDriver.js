@@ -12,6 +12,7 @@ const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const { EmulatorExec } = require('../exec/EmulatorExec');
 const EmulatorTelnet = require('../tools/EmulatorTelnet');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const DeviceRegistry = require('../../../DeviceRegistry');
 const environment = require('../../../../utils/environment');
 const retry = require('../../../../utils/retry');
 const log = require('../../../../utils/logger').child({ __filename });
@@ -23,6 +24,8 @@ class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
+    this._deviceRegistry = DeviceRegistry.forAndroid();
+
     const emulatorExec = new EmulatorExec();
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
     this._emuLauncher = new EmulatorLauncher(emulatorExec);
@@ -30,8 +33,8 @@ class EmulatorDriver extends AndroidDriver {
     const avdsResolver = new AVDsResolver(emulatorExec);
     this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
 
-    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry)
-    this._deviceAllocator = new EmulatorDeviceAllocator(this.deviceRegistry, freeEmulatorFinder);
+    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this._deviceRegistry)
+    this._deviceAllocator = new EmulatorDeviceAllocator(this._deviceRegistry, freeEmulatorFinder);
 
     this._name = 'Unspecified Emulator';
   }
@@ -97,6 +100,11 @@ class EmulatorDriver extends AndroidDriver {
         });
       }
     });
+  }
+
+  async cleanup(deviceId, bundleId) {
+    await this._deviceRegistry.disposeDevice(deviceId);
+    await super.cleanup(deviceId, bundleId);
   }
 
   async shutdown(deviceId) {
