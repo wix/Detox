@@ -32,7 +32,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
         instance = await this.instanceLifecycleService.createInstance(recipe.uuid);
         isNew = true;
       }
-      return instance;
+      return instance.uuid;
     });
 
     return {

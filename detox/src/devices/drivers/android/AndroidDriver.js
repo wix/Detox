@@ -25,7 +25,6 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
-const DeviceRegistry = require('../../DeviceRegistry');
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
@@ -42,8 +41,6 @@ class AndroidDriver extends DeviceDriverBase {
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
     this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
-
-    this.deviceRegistry = DeviceRegistry.forAndroid();
   }
 
   declareArtifactPlugins() {
@@ -142,7 +139,6 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
-    await this.deviceRegistry.disposeDevice(deviceId);
     await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
   }

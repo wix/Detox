@@ -16,7 +16,6 @@ const mockBaseClassesDependencies = () => {
 };
 
 const mockDirectDependencies = () => {
-  jest.mock('./GenyDeviceRegistryWrapper');
   jest.mock('./exec/GenyCloudExec');
   jest.mock('./services/GenyRecipesService');
   jest.mock('./services/GenyInstanceLookupService');
@@ -209,6 +208,26 @@ describe('Genymotion-cloud driver', () => {
       const deviceId = anInstance();
       await uut.installApp(deviceId, 'bin-path', 'testbin-path');
       expect(appInstallHelperObj().install).toHaveBeenCalledWith(deviceId.adbName, 'bin-install-path', 'testbin-install-path');
+    });
+  });
+
+  describe('Cleanup', () => {
+    const instrumentationObj = () => latestInstanceOf(Instrumentation);
+
+    let Instrumentation;
+    beforeEach(() => {
+      Instrumentation = require('../tools/MonitoredInstrumentation');
+    });
+
+    it('should dispose an instance based on its UUID', async () => {
+      const instance = anInstance();
+      await uut.cleanup(instance, 'bundle-id');
+      expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
+    });
+
+    it('should kill instrumentation', async () => {
+      await uut.cleanup(anInstance(), 'bundle-id');
+      expect(instrumentationObj().terminate).toHaveBeenCalled();
     });
   });
 });

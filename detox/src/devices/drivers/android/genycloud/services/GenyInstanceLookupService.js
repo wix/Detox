@@ -19,11 +19,11 @@ class GenyInstanceLookupService {
   }
 
   async _getRelevantInstances() {
-    const takenDevices = this.deviceRegistry.getRegisteredInstanceUUIDs();
+    const takenInstanceUUIDs = this.deviceRegistry.getRegisteredDevices();
     const isRelevant = (instance) =>
       (instance.isOnline() || instance.isInitializing()) &&
       this.instanceNaming.isFamilial(instance.name) &&
-      !takenDevices.includes(instance.uuid);
+      !takenInstanceUUIDs.includes(instance.uuid);
 
     const instances = await this._getAllInstances();
     return instances.filter(isRelevant);

@@ -10,8 +10,8 @@ describe('Genymotion-Cloud instances lookup service', () => {
     const GenyInstanceNaming = jest.genMockFromModule('./GenyInstanceNaming');
     instanceNaming = new GenyInstanceNaming();
 
-    const GenyDeviceRegistryWrapper = jest.genMockFromModule('../GenyDeviceRegistryWrapper');
-    deviceRegistry = new GenyDeviceRegistryWrapper();
+    const DeviceRegistry = jest.genMockFromModule('../../../../DeviceRegistry');
+    deviceRegistry = new DeviceRegistry();
 
     const GenyInstancesLookupService = require('./GenyInstanceLookupService');
     uut = new GenyInstancesLookupService(exec, instanceNaming, deviceRegistry);
@@ -39,8 +39,8 @@ describe('Genymotion-Cloud instances lookup service', () => {
     },
   });
 
-  const givenRegisteredInstances = (...instances) => deviceRegistry.getRegisteredInstanceUUIDs.mockReturnValue([ ...instances.map((instance) => instance.uuid) ]);
-  const givenNoRegisteredInstances = () => deviceRegistry.getRegisteredInstanceUUIDs.mockReturnValue([]);
+  const givenRegisteredInstances = (...instances) => deviceRegistry.getRegisteredDevices.mockReturnValue([ ...instances.map((instance) => instance.uuid) ]);
+  const givenNoRegisteredInstances = () => deviceRegistry.getRegisteredDevices.mockReturnValue([]);
   const givenInstances = (...instances) => exec.getInstances.mockResolvedValue({ instances });
   const givenNoInstances = () => exec.getInstances.mockResolvedValue({ instances: [] });
   const givenAllDevicesFamilial = () => instanceNaming.isFamilial.mockReturnValue(true);
