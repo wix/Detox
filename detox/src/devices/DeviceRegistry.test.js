@@ -19,33 +19,72 @@ describe('DeviceRegistry', () => {
       await fs.remove(lockfilePath);
     });
 
-    it('should throw on attempt to checking if device is busy outside of allocation/disposal context', async () => {
+    async function allocateDevice(deviceId) {
+      return registry.allocateDevice(() => deviceId);
+    }
+
+    function expectRegisteredDevices(...deviceIds) {
+      return registry.allocateDevice(() => {
+        expect(registry.getRegisteredDevices()).toEqual([ ...deviceIds ]);
+        throw new Error('ignored'); // So it wouldn't really allocate anything
+      }).catch((e) => { if (e.message !== 'ignored') throw e });
+    }
+
+    async function checkDeviceRegisteredAndDispose(deviceId) {
+      return registry.disposeDevice(async () => {
+        expect(registry.includes(deviceId)).toBe(true);
+        return deviceId;
+      });
+    }
+
+    async function checkDeviceNotRegistered(deviceId) {
+      return registry.allocateDevice(async () => {
+        expect(registry.includes(deviceId)).toBe(false);
+        throw new Error('ignored'); // So it wouldn't really allocate anything
+      }).catch((e) => { if (e.message !== 'ignored') throw e });
+    }
+
+    const assertForbiddenOutOfContextRegistryQuery = () =>
+      expect(() => registry.includes('whatever')).toThrowError();
+
+    const assertForbiddenOutOfContextDeviceListQuery = () =>
+      expect(() => registry.getRegisteredDevices()).toThrowError();
+
+    it('should be able to tell whether a device is registered', async () => {
+      const deviceId = 'emulator-5554';
+      await allocateDevice(deviceId);
+      await checkDeviceRegisteredAndDispose(deviceId);
+      await checkDeviceNotRegistered(deviceId);
+    });
+
+    it('should throw on attempt of checking whether a device is registered outside of allocation/disposal context', async () => {
       const deviceId = 'emulator-5554';
 
-      const assertForbiddenOutOfContext = () =>
-        expect(() => registry.isDeviceBusy(deviceId)).toThrowError();
+      assertForbiddenOutOfContextRegistryQuery();
 
-      assertForbiddenOutOfContext();
-      const result = await registry.allocateDevice(() => {
-        expect(registry.isDeviceBusy(deviceId)).toBe(false);
-        return deviceId;
-      });
+      await allocateDevice(deviceId);
+      assertForbiddenOutOfContextRegistryQuery();
+    });
 
-      expect(result).toBe(deviceId);
+    it('should be able to fast-get a valid list of registered devices', async () => {
+      const deviceId = 'emulator-5554';
+      const anotherDeviceId = {
+        type: 'mocked-device-type',
+        adbName: 'emulator-5556',
+      };
 
-      assertForbiddenOutOfContext();
-      await registry.disposeDevice(() => {
-        expect(registry.isDeviceBusy(deviceId)).toBe(true);
-        return deviceId;
-      });
+      await allocateDevice(deviceId);
+      await allocateDevice(anotherDeviceId);
+      await expectRegisteredDevices(deviceId, anotherDeviceId);
+    });
 
-      assertForbiddenOutOfContext();
-      await registry.allocateDevice(() => {
-        expect(registry.isDeviceBusy(deviceId)).toBe(false);
-        throw new Error();
-      }).catch(() => {});
+    it('should throw on attempt of fast-getting registered devices list outside of allocation/disposal context', async () => {
+      const deviceId = 'emulator-5554';
 
-      assertForbiddenOutOfContext();
+      assertForbiddenOutOfContextDeviceListQuery();
+
+      await allocateDevice(deviceId);
+      assertForbiddenOutOfContextDeviceListQuery();
     });
 
     describe('.reset() method', () => {
@@ -63,7 +102,7 @@ describe('DeviceRegistry', () => {
     })
   });
 
-  describe('static methods', () => {
+  describe('instantiation methods', () => {
     let ExclusiveLockFile;
 
     beforeEach(() => {
@@ -72,7 +111,7 @@ describe('DeviceRegistry', () => {
       DeviceRegistry = require('./DeviceRegistry');
     });
 
-    it('should expose static convenience method DeviceRegistry.forIOS()', () => {
+    it('should expose method for iOS-lock-based method', () => {
       expect(DeviceRegistry.forIOS()).toBeInstanceOf(DeviceRegistry);
       expect(ExclusiveLockFile).toHaveBeenCalledWith(
         environment.getDeviceLockFilePathIOS(),
@@ -80,7 +119,7 @@ describe('DeviceRegistry', () => {
       );
     });
 
-    it('should expose static convenience method DeviceRegistry.forAndroid()', async () => {
+    it('should expose method for Android-lock-based method', () => {
       expect(DeviceRegistry.forAndroid()).toBeInstanceOf(DeviceRegistry);
       expect(ExclusiveLockFile).toHaveBeenCalledWith(
         environment.getDeviceLockFilePathAndroid(),

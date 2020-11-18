@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
 
 class GenyCloudExec {
@@ -7,12 +6,11 @@ class GenyCloudExec {
   }
 
   getInstances() {
-    return this._exec(`instances list`);
+    return this._exec(`instances list -q`);
   }
 
   startInstance(recipeUUID, instanceName) {
-    // TODO should we use --no-wait so as to release workers lock "mutex" asap and then wait-for-boot as we do with google emulators?
-    return this._exec(`instances start --stop-when-inactive ${recipeUUID} "${instanceName}"`);
+    return this._exec(`instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`);
   }
 
   adbConnect(instanceUUID) {
