@@ -1,4 +1,6 @@
 describe('Genymotion-Cloud instance unique-name strategy', () => {
+  let JEST_WORKER_ID = process.env.JEST_WORKER_ID;
+
   let now;
   let uut;
   beforeEach(() => {
@@ -13,12 +15,26 @@ describe('Genymotion-Cloud instance unique-name strategy', () => {
 
   afterAll(() => {
     delete process.env.DETOX_START_TIMESTAMP;
+    process.env.JEST_WORKER_ID = JEST_WORKER_ID;
   })
 
-  it('should generate a session-scope unique name', () =>
-    expect(uut.generateName()).toEqual('Detox-123456.78'));
+  it('should generate a session-scope unique name', () => {
+    expect(uut.generateName().startsWith('Detox-123456.')).toEqual(true);
+  });
+
+  it('should generate an instance-scope unique name based on jest-worker IDs', () => {
+    process.env.JEST_WORKER_ID = '777';
+    expect(uut.generateName()).toEqual('Detox-123456.777');
+  });
+
+  it('should generate an instance-scope unique name based on time delta, as a fallback', () => {
+    process.env.JEST_WORKER_ID = '';
+    expect(uut.generateName()).toEqual('Detox-123456.78');
+  });
 
   it('should generate an instance-scope unique name', () => {
+    process.env.JEST_WORKER_ID = '';
+
     const name1 = uut.generateName();
     now = now + 1;
     const name2 = uut.generateName();

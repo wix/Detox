@@ -5,7 +5,7 @@ class GenyInstanceNaming {
   }
 
   generateName() {
-    const uniqueDeviceId = this.nowProvider() - this.uniqueSessionId;
+    const uniqueDeviceId = process.env.JEST_WORKER_ID || (this.nowProvider() - this.uniqueSessionId);
     return `Detox-${this.uniqueSessionId}.${uniqueDeviceId}`;
   }
 
