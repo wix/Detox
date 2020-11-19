@@ -29,7 +29,6 @@ describe('Android driver', () => {
   const fileXferObj = () => latestInstanceOf(FileXferClass);
   const appInstallHelperObj = () => latestInstanceOf(AppInstallHelperClass);
   const instrumentationObj = () => latestInstanceOf(InstrumentationClass);
-  const deviceRegistryObj = () => latestInstanceOf(DeviceRegistryClass);
 
   let uut;
   beforeEach(() => {
@@ -133,10 +132,6 @@ describe('Android driver', () => {
 
     it('should turn off the events emitter', () =>
       expect(emitter.off).toHaveBeenCalled());
-
-    it('should dispose device', () => {
-      expect(deviceRegistryObj().disposeDevice).toHaveBeenCalledWith(deviceId);
-    });
   });
 
   describe('URL runtime delivery handling', () => {

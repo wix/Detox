@@ -42,8 +42,9 @@ class Element : NSObject {
 		}
 	}
 	
-	private var views : [UIView] {
-		let array = (UIView.dtx_findViewsInAllWindows(passing: predicate.predicateForQuery()) as! [UIView])
+	private var views : [NSObject] {
+		//TODO: Consider searching here in all windows from all scenes.
+		let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [NSObject])
 		
 		guard array.count > 0 else {
 			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: failDebugAttributes)
@@ -52,10 +53,10 @@ class Element : NSObject {
 		return array
 	}
 	
-	private var view : UIView {
+	private var view : NSObject {
 		let array = self.views
 		
-		let element : UIView
+		let element : NSObject
 		if let index = index {
 			guard index < array.count else {
 				dtx_fatalError("Index \(index) beyond bounds \(array.count > 0 ? "[0 .. \(array.count - 1)] " : " ")for “\(self.description)”", viewDescription: failDebugAttributes)
@@ -90,14 +91,14 @@ class Element : NSObject {
 	}
 	
 	fileprivate var failDebugAttributes: [String: Any] {
-		return UIView.dtx_genericViewDebugAttributes
+		return NSObject.dtx_genericElementDebugAttributes
 	}
 	
 	var debugAttributes: [String: Any] {
 		do {
 			var rv: [String: Any]! = nil
 			try dtx_try {
-				rv = view.dtx_viewDebugAttributes
+				rv = view.dtx_elementDebugAttributes
 			}
 			return rv
 		} catch {
@@ -111,7 +112,7 @@ class Element : NSObject {
 			return
 		}
 		
-		view.dtx_tap(atPoint: point, numberOfTaps: UInt(numberOfTaps))
+		view.dtx_tap(at: point, numberOfTaps: UInt(numberOfTaps))
 	}
 	
 	func longPress(at point: CGPoint? = nil, duration: TimeInterval = 1.0) {
@@ -120,11 +121,15 @@ class Element : NSObject {
 			return
 		}
 		
-		view.dtx_longPress(atPoint: point, duration: duration)
+		view.dtx_longPress(at: point, duration: duration)
 	}
 	
-	func swipe(normalizedOffset: CGPoint, velocity: CGFloat = 1.0) {
-		view.dtx_swipe(withNormalizedOffset: normalizedOffset, velocity: velocity)
+	func swipe(normalizedOffset: CGPoint, velocity: CGFloat = 1.0, normalizedStartingPoint: CGPoint? = nil) {
+		if let normalizedStartingPoint = normalizedStartingPoint {
+			view.dtx_swipe(withNormalizedOffset: normalizedOffset, velocity: velocity, normalizedStartingPoint: normalizedStartingPoint)
+		} else {
+			view.dtx_swipe(withNormalizedOffset: normalizedOffset, velocity: velocity)
+		}
 	}
 	
 	func pinch(withScale scale: CGFloat, velocity: CGFloat = 2.0, angle: CGFloat = 0.0) {
@@ -185,7 +190,7 @@ class Element : NSObject {
 	
 	func isVisible() throws -> Bool {
 		var error: NSError? = nil
-		let rv = view.dtx_isVisible(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)
+		let rv = view.dtx_isVisible(at: view.dtx_bounds, error: &error)
 		if let error = error {
 			throw error
 		}

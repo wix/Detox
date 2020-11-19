@@ -4,7 +4,6 @@ framework module Detox {
 
 	explicit module Private {
 		header "UIView+DetoxMatchers.h"
-		header "UIView+DetoxActions.h"
 		header "UIPickerView+DetoxActions.h"
 		header "UIDatePicker+DetoxActions.h"
 		header "UIScrollView+DetoxActions.h"
@@ -19,5 +18,7 @@ framework module Detox {
 		header "UIWindow+DetoxUtils.h"
 		header "DTXAppleInternals.h"
 		header "NSThread+DetoxUtils.h"
+		header "NSObject+DetoxUtils.h"
+		header "NSObject+DetoxActions.h"
 	}
 }

@@ -1,21 +1,21 @@
 //
-//  UIView+Detox.m
-//  ExampleApp
+//  NSObject+DetoxActions.m
+//  Detox
 //
-//  Created by Leo Natan (Wix) on 4/16/20.
+//  Created by Leo Natan on 11/16/20.
+//  Copyright © 2020 Wix. All rights reserved.
 //
 
-#import "UIView+DetoxActions.h"
+#import "NSObject+DetoxActions.h"
+#import "NSObject+DetoxUtils.h"
 
 @import Darwin;
 @import AudioToolbox;
 
 #import "DTXAppleInternals.h"
 #import "DTXSyntheticEvents.h"
-#import "UIView+DetoxUtils.h"
 
-DTX_DIRECT_MEMBERS
-@implementation UIView (Detox)
+@implementation NSObject (DetoxActions)
 
 - (void)dtx_tapAtAccessibilityActivationPoint
 {
@@ -36,14 +36,21 @@ DTX_DIRECT_MEMBERS
 		return;
 	}
 	
-	[self dtx_assertHittableAtPoint:point];
-	
 	NSParameterAssert(numberOfTaps >= 1);
-	point = [self.window convertPoint:point fromView:self];
+	
+	UIView* view = self.dtx_view;
+	UIWindow* window = view.window;
+	CGPoint viewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:point];
+	
+	[view dtx_assertHittableAtPoint:viewPoint];
+	
+	CGPoint windowPoint = [window convertPoint:viewPoint fromView:view];
+	
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
-		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:0.0];
+		[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnLastTouch:0.0];
 	}
 }
+
 
 - (void)dtx_longPressAtAccessibilityActivationPoint
 {
@@ -57,16 +64,20 @@ DTX_DIRECT_MEMBERS
 
 - (void)dtx_longPressAtPoint:(CGPoint)point duration:(NSTimeInterval)duration
 {
-	[self dtx_assertHittableAtPoint:point];
+	UIView* view = self.dtx_view;
+	UIWindow* window = view.window;
+	CGPoint viewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:point];
 	
-	point = [self.window convertPoint:point fromView:self];
-	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:duration];
+	[view dtx_assertHittableAtPoint:viewPoint];
+
+	CGPoint windowPoint = [window convertPoint:viewPoint fromView:view];
+	[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnLastTouch:duration];
 }
 
 static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
 {
 	NSCAssert(CGPointEqualToPoint(startPoint, endPoint) == NO, @"Start and end points for swipe cannot be equal");
-
+	
 	NSMutableArray<NSValue*>* points = [NSMutableArray new];
 	
 	for (CGFloat p = 0.0; p <= 1.0; p += 1.0 / (20.0 * velocity))
@@ -76,20 +87,32 @@ static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoin
 		
 		[points addObject:@(CGPointMake(x, y))];
 	}
-
+	
 	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
-#define DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, main, other, CGRectGetMinMain, CGRectGetMidMain, CGRectGetMidOther, CGRectGetMaxMain, CGRectGetMainSize) \
-CGFloat mainStart = MAX(MIN(CGRectGetMidMain(screenBounds) - 0.5 * normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMaxMain(safeBoundsInScreenSpace) - 1), CGRectGetMinMain(safeBoundsInScreenSpace) + 1); \
-startPoint.main = mainStart; \
-startPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace); \
-endPoint.main = MIN(MAX(mainStart + normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMinMain(screenBounds) + 1), CGRectGetMaxMain(screenBounds) - 1); \
-endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
-
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
 {
+	[self dtx_swipeWithNormalizedOffset:normalizedOffset velocity:velocity normalizedStartingPoint:CGPointMake(NAN, NAN)];
+}
+
+#define DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedStartingPoint) \
+if((isnan(normalizedStartingPoint.x) == NO && (normalizedStartingPoint.x < 0 || normalizedStartingPoint.x > 1)) || isnan(normalizedStartingPoint.y) == NO && (normalizedStartingPoint.y < 0 || normalizedStartingPoint.y > 1)) \
+{ \
+DTXAssert(NO, @"Bad normalized starting point provided."); \
+} \
+
+#define DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, main, other, CGRectGetMinMain, CGRectGetMinOther, CGRectGetMidMain, CGRectGetMidOther, CGRectGetMaxMain, CGRectGetMainSize, CGRectGetOtherSize) \
+CGFloat mainStart = !isnan(normalizedStartingPoint.main) ? CGRectGetMinMain(safeBoundsInScreenSpace) + CGRectGetMainSize(safeBoundsInScreenSpace) * normalizedStartingPoint.main : MAX(MIN(CGRectGetMidMain(screenBounds) - 0.5 * normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMaxMain(safeBoundsInScreenSpace) - 1), CGRectGetMinMain(safeBoundsInScreenSpace) + 1); \
+startPoint.main = mainStart; \
+startPoint.other = !isnan(normalizedStartingPoint.other) ? CGRectGetMinOther(safeBoundsInScreenSpace) + CGRectGetOtherSize(safeBoundsInScreenSpace) * normalizedStartingPoint.other : CGRectGetMidOther(safeBoundsInScreenSpace); \
+endPoint.main = MIN(MAX(mainStart + normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMinMain(screenBounds) + 1), CGRectGetMaxMain(screenBounds) - 1); \
+endPoint.other = !isnan(normalizedStartingPoint.other) ? CGRectGetMinOther(safeBoundsInScreenSpace) + CGRectGetOtherSize(safeBoundsInScreenSpace) * normalizedStartingPoint.other : CGRectGetMidOther(safeBoundsInScreenSpace);
+
+- (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity normalizedStartingPoint:(CGPoint)normalizedStartingPoint
+{
 	NSParameterAssert(velocity > 0.0);
+	DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedStartingPoint);
 	
 	if(normalizedOffset.x == 0 && normalizedOffset.y == 0)
 	{
@@ -99,26 +122,29 @@ endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
 	CGPoint startPoint;
 	CGPoint endPoint;
 	
+	UIWindow* window = self.dtx_view.window;
+	UIView* view = self.dtx_view;
+	
 	CGRect safeBounds = self.dtx_safeAreaBounds;
-	CGRect safeBoundsInScreenSpace = [self.window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:self.coordinateSpace];
-	CGRect screenBounds = self.window.screen.bounds;
+	CGRect safeBoundsInScreenSpace = [window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:view.coordinateSpace];
+	CGRect screenBounds = window.screen.bounds;
 	
 	if(normalizedOffset.x != 0)
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, x, y, CGRectGetMinX, CGRectGetMidX, CGRectGetMidY, CGRectGetMaxX, CGRectGetWidth);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, x, y, CGRectGetMinX, CGRectGetMinY, CGRectGetMidX, CGRectGetMidY, CGRectGetMaxX, CGRectGetWidth, CGRectGetHeight);
 	}
 	else
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, y, x, CGRectGetMinY, CGRectGetMidY, CGRectGetMidX, CGRectGetMaxY, CGRectGetHeight);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, y, x, CGRectGetMinY, CGRectGetMinX, CGRectGetMidY, CGRectGetMidX, CGRectGetMaxY, CGRectGetHeight, CGRectGetWidth);
 	}
 	
 	
-	[self dtx_assertHittableAtPoint:[self.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace]];
+	[view dtx_assertHittableAtPoint:[view.coordinateSpace convertPoint:startPoint fromCoordinateSpace:window.screen.coordinateSpace]];
 	
-	startPoint = [self.window.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
-	endPoint = [self.window.coordinateSpace convertPoint:endPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
+	startPoint = [window.coordinateSpace convertPoint:startPoint fromCoordinateSpace:window.screen.coordinateSpace];
+	endPoint = [window.coordinateSpace convertPoint:endPoint fromCoordinateSpace:window.screen.coordinateSpace];
 	
-	_DTXApplySwipe(self.window, startPoint, endPoint, 1.0 / velocity);
+	_DTXApplySwipe(window, startPoint, endPoint, 1.0 / velocity);
 }
 
 static void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoint1, CGPoint startPoint2, CGPoint endPoint2, CGFloat velocity)
@@ -138,7 +164,7 @@ static void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoi
 		
 		[points2 addObject:@(CGPointMake(x, y))];
 	}
-
+	
 	[DTXSyntheticEvents touchAlongMultiplePaths:@[points1, points2] relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
@@ -190,6 +216,8 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 		return;
 	}
 	
+	UIView* view = self.dtx_view;
+	UIWindow* window = view.window;
 	CGRect safeBounds = self.dtx_safeAreaBounds;
 	
 	CGPoint startPoint1;
@@ -218,12 +246,12 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 	[self dtx_assertHittableAtPoint:startPoint1];
 	[self dtx_assertHittableAtPoint:startPoint2];
 	
-	startPoint1 = [self.window convertPoint:startPoint1 fromView:self];
-	endPoint1 = [self.window convertPoint:endPoint1 fromView:self];
-	startPoint2 = [self.window convertPoint:startPoint2 fromView:self];
-	endPoint2 = [self.window convertPoint:endPoint2 fromView:self];
+	startPoint1 = [window convertPoint:startPoint1 fromView:view];
+	endPoint1 = [window convertPoint:endPoint1 fromView:view];
+	startPoint2 = [window convertPoint:startPoint2 fromView:view];
+	endPoint2 = [window convertPoint:endPoint2 fromView:view];
 	
-	_DTXApplyPinch(self.window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
+	_DTXApplyPinch(window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
 }
 
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
@@ -251,7 +279,6 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	}
 	
 	UIView* firstResponder = _isViewOrDescendantFirstResponder(view);
-	
 	if(firstResponder != nil)
 	{
 		return firstResponder;
@@ -268,7 +295,7 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	
 	if(firstResponder == nil)
 	{
-		DTXCViewAssert(firstResponder == nil, firstResponder.dtx_viewDebugAttributes, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
+		DTXCViewAssert(firstResponder == nil, firstResponder.dtx_elementDebugAttributes, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
 	}
 	
 	return firstResponder;
@@ -281,7 +308,7 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 		return YES;
 	}
 	
-	DTXCViewAssert(NO, firstResponder.dtx_viewDebugAttributes, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
+	DTXCViewAssert(NO, firstResponder.dtx_elementDebugAttributes, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
 	
 	return NO;
 }
@@ -327,7 +354,7 @@ static void _DTXFixupKeyboard(void)
 	{
 		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
 	}
-
+	
 	[controller synchronizePreferences];
 }
 
@@ -344,7 +371,7 @@ static void _DTXTypeText(NSString* text)
 		
 		[UIKeyboardImpl.sharedInstance.taskQueue performTask:^(id ctx) {
 			[UIKeyboardImpl.sharedInstance handleKeyWithString:grapheme forKeyEvent:nil executionContext:ctx];
-					
+			
 			NSArray* sounds = @[@1104, @1155, @1156];
 			
 			AudioServicesPlaySystemSound([sounds[grapheme.hash % 3] unsignedIntValue]);
@@ -362,12 +389,13 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_clearText
 {
-	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
+	UIView* view = self.dtx_view;
+	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
 	UITextPosition* endOfDocument = firstResponder.endOfDocument;
-		
+	
 	UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
 	if(range.isEmpty == YES)
 	{
@@ -388,7 +416,8 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_typeText:(NSString*)text atTextRange:(UITextRange*)textRange
 {
-	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
+	UIView* view = self.dtx_view;
+	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	_ensureSelectionAtRange(firstResponder, textRange);
 	
@@ -397,63 +426,63 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_replaceText:(NSString*)text
 {
-	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
+	UIView* view = self.dtx_view;
+	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
-	BOOL isControl = [self isKindOfClass:UIControl.class];
-	BOOL isTextField = [self isKindOfClass:UITextField.class];
-	BOOL isTextView = [self isKindOfClass:UITextView.class];
-	UITextView* textView = (UITextView*)self;
+	BOOL isControl = [firstResponder isKindOfClass:UIControl.class];
+	BOOL isTextField = [firstResponder isKindOfClass:UITextField.class];
+	BOOL isTextView = [firstResponder isKindOfClass:UITextView.class];
+	UITextView* textView = (UITextView*)firstResponder;
 	
 	if(isControl == YES)
 	{
-		[(UIControl*)self sendActionsForControlEvents:UIControlEventEditingDidBegin];
+		[(UIControl*)firstResponder sendActionsForControlEvents:UIControlEventEditingDidBegin];
 	}
 	
 	if(isTextField == YES)
 	{
-		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidBeginEditingNotification object:self];
+		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidBeginEditingNotification object:firstResponder];
 	}
 	
 	if(isTextView == YES)
 	{
 		if([textView.delegate respondsToSelector:@selector(textViewDidBeginEditing:)])
 		{
-			[textView.delegate textViewDidBeginEditing:(id)self];
+			[textView.delegate textViewDidBeginEditing:textView];
 		}
 	}
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
 	UITextPosition* endOfDocument = firstResponder.endOfDocument;
-		
+	
 	UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
 	
-	[(id<UITextInput>)self replaceRange:range withText:text];
+	[firstResponder replaceRange:range withText:text];
 	
 	if(isControl == YES)
 	{
-		[(UIControl*)self sendActionsForControlEvents:UIControlEventEditingChanged];
-		[(UIControl*)self sendActionsForControlEvents:UIControlEventEditingDidEnd];
+		[(UIControl*)firstResponder sendActionsForControlEvents:UIControlEventEditingChanged];
+		[(UIControl*)firstResponder sendActionsForControlEvents:UIControlEventEditingDidEnd];
 	}
 	
 	if(isTextField == YES)
 	{
-		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidChangeNotification object:self];
-		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidEndEditingNotification object:self];
+		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidChangeNotification object:firstResponder];
+		[NSNotificationCenter.defaultCenter postNotificationName:UITextFieldTextDidEndEditingNotification object:firstResponder];
 	}
 	
 	if(isTextView == YES)
 	{
 		if([textView.delegate respondsToSelector:@selector(textViewDidChange:)])
 		{
-			[textView.delegate textViewDidChange:(id)self];
+			[textView.delegate textViewDidChange:textView];
 		}
 		if([textView.delegate respondsToSelector:@selector(textViewDidEndEditing:)])
 		{
-			[textView.delegate textViewDidEndEditing:(id)self];
+			[textView.delegate textViewDidEndEditing:textView];
 		}
 	}
 }
 
 @end
-

@@ -135,6 +135,10 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).swipe('up', 'slow', 0.9);
       await e.element(e.by.id('someId')).swipe('left', 'fast', 0.9);
       await e.element(e.by.id('someId')).swipe('right', 'slow', 0.9);
+      await e.element(e.by.id('someId')).swipe('down', 'fast', undefined, 0.5);
+      await e.element(e.by.id('someId')).swipe('up', 'slow', 0.5, NaN, 1);
+      await e.element(e.by.id('someId')).swipe('left', 'fast', undefined, undefined, 0.5);
+      await e.element(e.by.id('someId')).swipe('right', 'slow', 0.9, 1, 0.5);
       await e.element(e.by.id('someId')).atIndex(1).tap();
       await e.element(e.by.id('someId')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
       await e.element(e.by.id('slider')).adjustSliderToPosition(0.5);
@@ -173,6 +177,8 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('noDirection', 'fast'));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('down', 'NotFastNorSlow'));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('down', 'NotFastNorSlow', 0.9));
+      await expectToThrow(() => e.element(e.by.id('someId')).swipe('down', 'fast', 0.9, 100, 0));
+      await expectToThrow(() => e.element(e.by.id('someId')).swipe('down', 'fast', 0.9, 0, 100));
 
       await expectToThrow(() => e.element(e.by.id('someId')).atIndex('NaN'));
 

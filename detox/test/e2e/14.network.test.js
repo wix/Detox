@@ -1,10 +1,11 @@
 const MockServer = require('../mock-server/mock-server');
 
 describe('Network Synchronization', () => {
-  let mockServer = new MockServer();
+  const mockServer = new MockServer();
 
-  beforeAll(() => {
+  beforeAll(async () => {
     mockServer.init();
+    await device.reverseTcpPort(mockServer.port);
   });
 
   afterAll(async () => {
@@ -33,14 +34,12 @@ describe('Network Synchronization', () => {
     await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
     await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
-
     await device.enableSynchronization();
   });
 
 
   it('setURLBlacklist() should disable synchronization for given endpoint', async () => {
-    const url = device.getPlatform() === 'ios' ? '.*localhost.*' : '.*10.0.2.2.*';
-    await device.setURLBlacklist([url]);
+    await device.setURLBlacklist(['.*localhost.*']);
 
     await element(by.id('LongNetworkRequest')).tap();
     await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();

@@ -198,6 +198,8 @@ describe('expect', () => {
       await e.element(e.by.id('ScrollView799')).swipe('up', 'slow', 0.9);
       await e.element(e.by.id('ScrollView799')).swipe('left', 'fast', 0.9);
       await e.element(e.by.id('ScrollView799')).swipe('right', 'slow', 0.9);
+      await e.element(e.by.id('ScrollView799')).swipe('down', 'fast', undefined, undefined, 0.25);
+      await e.element(e.by.id('ScrollView799')).swipe('up', 'slow', 0.9, 0.5, 0.5);
     });
 
     it('should not swipe given bad args', async () => {

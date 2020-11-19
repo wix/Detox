@@ -1,3 +1,5 @@
+// TODO Tweak such that if apk's already exist on the device (need to store uniquely), they will not be resent (would optimize cloud, for example)
+
 class AppInstallHelper {
   constructor(adb, fileXfer) {
     this._adb = adb;

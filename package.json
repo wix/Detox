@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "root",
   "private": true,
   "scripts": {
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",

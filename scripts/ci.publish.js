@@ -19,7 +19,7 @@ function validatePrerequisites() {
 function projectSetup() {
   logSection('Project setup');
   exec.execSync(`git checkout ${process.env.BRANCH}`);
-  exec.execSync(`lerna bootstrap --no-ci`);
+  // exec.execSync(`lerna bootstrap --no-ci --loglevel verebose`);
 }
 
 function publishToNpm(npmTag) {
@@ -35,7 +35,7 @@ function publishToNpm(npmTag) {
     log('SKIP NPM is set: Lerna-publishing without publishing to NPM');
   }
   const preid = npmTag === 'latest'? '': `--preid=${npmTag}`;
-  exec.execSync(`lerna publish ${versionType} --yes --dist-tag ${npmTag} ${preid} ${dryRun ? '--no-push': ''}  ${(dryRun || skipNpm) ? '--skip-npm' : ''} -m "Publish %v [ci skip]" --tag-version-prefix=''`);
+  exec.execSync(`lerna publish ${versionType} --yes --dist-tag ${npmTag} ${preid} ${dryRun ? '--no-push': ''}  ${(dryRun || skipNpm) ? '--skip-npm' : ''} -m "Publish %v [ci skip]" --tag-version-prefix='' --force-publish=detox`);
 }
 
 module.exports = publishNewVersion;

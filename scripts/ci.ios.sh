@@ -2,8 +2,6 @@
 
 source $(dirname "$0")/ci.sh
 
-run_f "$(dirname "$0")/unit.ios.sh"
-
 mkdir -p coverage
 
 pushd detox/test

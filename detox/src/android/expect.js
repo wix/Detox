@@ -20,6 +20,9 @@ const {
   ValueMatcher,
   ToggleMatcher,
 } = require('./matcher');
+const { assertEnum, assertNormalized, assertNumber } = require('../utils/assertArgument');
+const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
+const assertSpeed = assertEnum(['fast', 'slow']);
 
 function call(maybeAFunction) {
   return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;
@@ -107,16 +110,24 @@ class ScrollEdgeAction extends Action {
 }
 
 class SwipeAction extends Action {
-  // This implementation ignores the percentage parameter
-  constructor(direction, speed, percentage) {
+  constructor(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY) {
     super();
-    if (speed === 'fast') {
-      this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, true));
-    } else if (speed === 'slow') {
-      this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, false));
-    } else {
-      throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
-    }
+
+    assertDirection({ direction });
+    assertSpeed({ speed });
+    assertNormalized({ normalizedSwipeOffset });
+    assertNormalized({ normalizedStartingPointX });
+    assertNormalized({ normalizedStartingPointY });
+
+    this._call = invoke.callDirectly(
+      DetoxActionApi.swipeInDirection(
+        direction,
+        speed === 'fast',
+        normalizedSwipeOffset,
+        normalizedStartingPointX,
+        normalizedStartingPointY
+      )
+    );
   }
 }
 
@@ -277,10 +288,20 @@ class Element {
     return await new ActionInteraction(this._invocationManager, this, new ScrollEdgeAction(edge)).execute();
   }
 
-  async swipe(direction, speed = 'fast', percentage = 0) {
+  /**
+   * @param {'up' | 'right' | 'down' | 'left'} direction
+   * @param {'slow' | 'fast'} [speed]
+   * @param {number} [normalizedSwipeOffset] - swipe amount relative to the screen width/height
+   * @param {number} [normalizedStartingPointX] - X coordinate of swipe starting point, relative to the view width
+   * @param {number} [normalizedStartingPointY] - Y coordinate of swipe starting point, relative to the view height
+   */
+  async swipe(direction, speed = 'fast', normalizedSwipeOffset = NaN, normalizedStartingPointX = NaN, normalizedStartingPointY = NaN) {
+    normalizedSwipeOffset = Number.isNaN(normalizedSwipeOffset) ? 0.75 : normalizedSwipeOffset;
+
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
-    return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
+    const action = new SwipeAction(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY);
+    return await new ActionInteraction(this._invocationManager, this, action).execute();
   }
 
   async takeScreenshot(screenshotName) {
