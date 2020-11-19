@@ -317,6 +317,23 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`element(by.id('ScrollView100')).swipe('up', 'fast', undefined, undefined, 0.5)`, () => {
+    const testCall = e.element(e.by.id('ScrollView100')).swipe('up', 'fast', undefined, undefined, 0.5);
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'swipe',
+        params: ['up', 'fast', 0.75, null, 0.5],
+        predicate: {
+          type: 'id',
+          value: 'ScrollView100'
+        }
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
     const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
     const jsonOutput = {

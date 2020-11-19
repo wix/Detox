@@ -201,10 +201,39 @@ describe('Actions', () => {
     await expect(element(by.text('HText6'))).not.toBeVisible();
   });
 
-  // directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
-  it(':ios: should swipe down until pull to reload is triggered', async () => {
+  it('should swipe down until pull to reload is triggered', async () => {
     await element(by.id('ScrollView799')).swipe('down', 'fast');
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
+  });
+
+  it('should swipe vertically', async () => {
+    await expect(element(by.text('Text1'))).toBeVisible();
+    await element(by.id('ScrollView161')).swipe('up');
+
+    if (device.getPlatform() === 'ios') {
+      // TODO: investigate why this assertion fails on Android
+      await expect(element(by.text('Text1'))).not.toBeVisible();
+    }
+
+    await element(by.id('ScrollView161')).swipe('down');
+    await expect(element(by.text('Text1'))).toBeVisible();
+  });
+
+  it('should swipe horizontally', async () => {
+    await expect(element(by.text('HText1'))).toBeVisible();
+    await element(by.id('ScrollViewH')).swipe('left');
+    await expect(element(by.text('HText1'))).not.toBeVisible();
+    await element(by.id('ScrollViewH')).swipe('right');
+    await expect(element(by.text('HText1'))).toBeVisible();
+  });
+
+  it('should swipe by offset from specified positions', async () => {
+    await element(by.id('toggleScrollOverlays')).tap();
+
+    await element(by.id('ScrollView161')).swipe('up', 'slow', NaN, 0.9, 0.95);
+    await element(by.id('ScrollView161')).swipe('down', 'fast', NaN, 0.1, 0.05);
+    await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.25, 0.85, 0.75);
+    await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.25, 0.15, 0.25);
   });
 
   it('should not wait for long timeout (>1.5s)', async () => {

@@ -26,4 +26,10 @@ public interface DetoxErrors {
             super(message);
         }
     }
+
+    class DetoxIllegalArgumentException extends DetoxRuntimeException {
+        public DetoxIllegalArgumentException(String message) {
+            super(message);
+        }
+    }
 }

@@ -288,8 +288,8 @@ class ScrollAction : Action {
 			fatalError("Unknown scroll direction")
 			break;
 		}
-		let startPositionX : Double
 		
+		let startPositionX : Double
 		if params?.count ?? 0 > 2, let param2 = params?[2] as? Double, param2.isNaN == false {
 			startPositionX = param2
 		} else {
@@ -388,7 +388,21 @@ class SwipeAction : Action {
 		targetNormalizedOffset.x *= CGFloat(appliedPercentage)
 		targetNormalizedOffset.y *= CGFloat(appliedPercentage)
 		
-		element.swipe(normalizedOffset: targetNormalizedOffset, velocity: velocity)
+		let startPositionX : Double
+		if params?.count ?? 0 > 3, let param2 = params?[3] as? Double, param2.isNaN == false {
+			startPositionX = param2
+		} else {
+			startPositionX = Double.nan
+		}
+		let startPositionY : Double
+		if params?.count ?? 0 > 4, let param3 = params?[4] as? Double, param3.isNaN == false {
+			startPositionY = param3
+		} else {
+			startPositionY = Double.nan
+		}
+		let normalizedStartingPoint = CGPoint(x: startPositionX, y: startPositionY)
+		
+		element.swipe(normalizedOffset: targetNormalizedOffset, velocity: velocity, normalizedStartingPoint: normalizedStartingPoint)
 		
 		return nil
 	}
