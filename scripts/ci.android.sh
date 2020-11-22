@@ -24,7 +24,7 @@ cp extras/release.gradle node_modules/react-native/ReactAndroid/
 run_f "npm run build:android"
 cp ../coverage/lcov.info ../../coverage/unit.lcov
 
-run_f "npm run e2e:android-ci"
+run_f "npm run e2e:android-ci-genymotion"
 cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
 
 run_f "scripts/ci_unhappy.sh android"
