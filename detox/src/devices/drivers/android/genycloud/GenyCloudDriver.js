@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const AndroidDriver = require('../AndroidDriver');
 const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
@@ -78,22 +77,13 @@ class GenyCloudDriver extends AndroidDriver {
 
   static async globalCleanup(instanceLifecycleService) {
     if (!instanceLifecycleService) {
-      const exec = new GenyCloudExec();
-      instanceLifecycleService = new InstanceLifecycleService(exec, null);
+      instanceLifecycleService = new InstanceLifecycleService(new GenyCloudExec(), null);
     }
 
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
     const deviceUUIDs = await deviceCleanupRegistry.readRegisteredDevices();
     if (deviceUUIDs.length) {
-      logger.info(cleanupLogData, 'Initiating Genymotion cloud instances teardown...');
-
-      const deletionLeaks = [];
-      const killPromises = deviceUUIDs.map((uuid) =>
-        instanceLifecycleService.deleteInstance(uuid)
-          .catch((error) => deletionLeaks.push({ uuid, error })));
-
-      await Promise.all(killPromises);
-      reportGlobalCleanupSummary(deletionLeaks);
+      await doCleanup(instanceLifecycleService, deviceUUIDs)
     }
   }
 }
@@ -101,6 +91,18 @@ class GenyCloudDriver extends AndroidDriver {
 const cleanupLogData = {
   event: 'GENYCLOUD_TEARDOWN',
 };
+
+async function doCleanup(instanceLifecycleService, deviceUUIDs) {
+  logger.info(cleanupLogData, 'Initiating Genymotion cloud instances teardown...');
+
+  const deletionLeaks = [];
+  const killPromises = deviceUUIDs.map((uuid) =>
+    instanceLifecycleService.deleteInstance(uuid)
+      .catch((error) => deletionLeaks.push({ uuid, error })));
+
+  await Promise.all(killPromises);
+  reportGlobalCleanupSummary(deletionLeaks);
+}
 
 function reportGlobalCleanupSummary(deletionLeaks) {
   if (deletionLeaks.length) {

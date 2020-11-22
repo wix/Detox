@@ -104,8 +104,6 @@ describe('DeviceRegistry', () => {
       await checkRegisteredDevicesEqual(deviceId, anotherDeviceId);
       await disposeDevice(deviceId);
       await checkRegisteredDevicesEqual(anotherDeviceId);
-      await disposeDevice(anotherDeviceId);
-      await checkRegisteredDevicesEqual();
     });
 
     describe('.reset() method', () => {

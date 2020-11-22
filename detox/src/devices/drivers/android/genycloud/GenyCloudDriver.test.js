@@ -48,7 +48,7 @@ describe('Genymotion-cloud driver', () => {
   let adb;
   let deviceQueryHelper;
   let deviceRegistry;
-  let cleanupDeviceRegistry;
+  let deviceCleanupRegistry;
   let deviceAllocator;
   let InstanceLifecycleService;
   let GenyCloudDriver;
@@ -71,8 +71,8 @@ describe('Genymotion-cloud driver', () => {
     deviceRegistry.allocateDevice.mockImplementation((doAllocateFn) => doAllocateFn());
     GenyDeviceRegistryFactory.forRuntime.mockReturnValue(deviceRegistry);
 
-    cleanupDeviceRegistry = new DeviceRegistry();
-    GenyDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(cleanupDeviceRegistry);
+    deviceCleanupRegistry = new DeviceRegistry();
+    GenyDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(deviceCleanupRegistry);
 
     jest.mock('./helpers/GenyDeviceQueryHelper');
     const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
@@ -284,7 +284,7 @@ describe('Genymotion-cloud driver', () => {
     it('should remove instance from device-registry', async () => {
       const instance = anInstance();
       await uut.shutdown(instance);
-      expect(cleanupDeviceRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
+      expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
     });
   });
 
@@ -311,7 +311,7 @@ describe('Genymotion-cloud driver', () => {
         .mockReturnValueOnce(killPromise2);
 
       const deviceUUIDs = ['device1-uuid', 'device2-uuid'];
-      cleanupDeviceRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
+      deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
 
       await GenyCloudDriver.globalCleanup(instanceLifecycleService);
 
@@ -322,7 +322,7 @@ describe('Genymotion-cloud driver', () => {
     });
 
     it('should fallback to a default lifecycle-service', async () => {
-      cleanupDeviceRegistry.readRegisteredDevices.mockResolvedValue([]);
+      deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue([]);
       await GenyCloudDriver.globalCleanup();
     });
 
@@ -334,7 +334,7 @@ describe('Genymotion-cloud driver', () => {
         .mockRejectedValueOnce(new Error('mock-error2'));
 
       const deviceUUIDs = ['failing-uuid1', 'nonfailing-uuid', 'failing-uuid2'];
-      cleanupDeviceRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
+      deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
 
       await GenyCloudDriver.globalCleanup(instanceLifecycleService);
 
@@ -348,7 +348,7 @@ describe('Genymotion-cloud driver', () => {
       instanceLifecycleService.deleteInstance.mockResolvedValue(anInstance);
 
       const deviceUUIDs = ['device-uuid1'];
-      cleanupDeviceRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
+      deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
 
       await GenyCloudDriver.globalCleanup(instanceLifecycleService);
 
