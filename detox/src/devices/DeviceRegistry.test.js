@@ -41,7 +41,7 @@ describe('DeviceRegistry', () => {
       return registry.disposeDevice(() => deviceId);
     }
 
-    async function checkDeviceNotRegistered(deviceId) {
+    async function checkDeviceIsNotRegistered(deviceId) {
       return registry.allocateDevice(async () => {
         expect(registry.includes(deviceId)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
@@ -62,7 +62,22 @@ describe('DeviceRegistry', () => {
       const deviceId = 'emulator-5554';
       await allocateDevice(deviceId);
       await checkDeviceRegisteredAndDispose(deviceId);
-      await checkDeviceNotRegistered(deviceId);
+      await checkDeviceIsNotRegistered(deviceId);
+    });
+
+    it('should be able to tell whether a device is registered, given object-like IDs', async () => {
+      const rawDeviceId = {
+        type: 'mocked-device-type',
+        adbName: 'localhost:11111',
+      };
+      const deviceId = {
+        ...rawDeviceId,
+        mockFunc: () => 'mocked-func-result',
+      };
+
+      await allocateDevice(deviceId);
+      await checkDeviceRegisteredAndDispose(rawDeviceId);
+      await checkDeviceIsNotRegistered(deviceId);
     });
 
     it('should throw on attempt of checking whether a device is registered outside of allocation/disposal context', async () => {
@@ -104,6 +119,18 @@ describe('DeviceRegistry', () => {
       await checkRegisteredDevicesEqual(deviceId, anotherDeviceId);
       await disposeDevice(deviceId);
       await checkRegisteredDevicesEqual(anotherDeviceId);
+    });
+
+    it('should be able to dispose devices with object-like ID\'s', async () => {
+      const deviceId = {
+        type: 'mocked-device-type',
+        adbName: 'emulator-5554',
+      };
+
+      await allocateDevice(deviceId);
+      await checkRegisteredDevicesEqual(deviceId);
+      await disposeDevice(deviceId);
+      await checkRegisteredDevicesEqual();
     });
 
     describe('.reset() method', () => {

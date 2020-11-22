@@ -45,7 +45,7 @@ class DeviceRegistry {
   }
 
   includes(deviceId) {
-    return this._lockfile.read().includes(deviceId);
+    return !!_.find(this._lockfile.read(), (item) => _.isEqual(item, deviceId));
   }
 
   getRegisteredDevices() {
@@ -74,7 +74,7 @@ class DeviceRegistry {
     const state = this._lockfile.read();
     const newState = busy
       ? _.concat(state, deviceId)
-      : _.without(state, deviceId);
+      : _.filter(state, (item) => !_.isEqual(item, deviceId));
     this._lockfile.write(newState);
   }
 

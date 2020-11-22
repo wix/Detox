@@ -94,11 +94,11 @@ class GenyCloudDriver extends AndroidDriver {
 
   static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-    const deviceUUIDs = await deviceCleanupRegistry.readRegisteredDevices();
-    if (deviceUUIDs.length) {
+    const deviceHandles = await deviceCleanupRegistry.readRegisteredDevices();
+    if (deviceHandles.length) {
       const exec = new GenyCloudExec(environment.getGmsaasPath());
       const instanceLifecycleService = new InstanceLifecycleService(exec, null);
-      await doCleanup(instanceLifecycleService, deviceUUIDs);
+      await doCleanup(instanceLifecycleService, deviceHandles);
     }
   }
 }
@@ -107,13 +107,13 @@ const cleanupLogData = {
   event: 'GENYCLOUD_TEARDOWN',
 };
 
-async function doCleanup(instanceLifecycleService, deviceUUIDs) {
+async function doCleanup(instanceLifecycleService, deviceHandles) {
   logger.info(cleanupLogData, 'Initiating Genymotion cloud instances teardown...');
 
   const deletionLeaks = [];
-  const killPromises = deviceUUIDs.map((uuid) =>
+  const killPromises = deviceHandles.map(({ uuid, name }) =>
     instanceLifecycleService.deleteInstance(uuid)
-      .catch((error) => deletionLeaks.push({ uuid, error })));
+      .catch((error) => deletionLeaks.push({ uuid, name, error })));
 
   await Promise.all(killPromises);
   reportGlobalCleanupSummary(deletionLeaks);
@@ -123,8 +123,8 @@ function reportGlobalCleanupSummary(deletionLeaks) {
   if (deletionLeaks.length) {
     logger.warn(cleanupLogData, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
 
-    deletionLeaks.forEach(({ uuid, error }) =>
-      logger.warn(cleanupLogData, `Instance UUID ${uuid}: ${error}`));
+    deletionLeaks.forEach(({ uuid, name, error }) =>
+      logger.warn(cleanupLogData, `Instance ${name} (${uuid}): ${error}`));
 
     logger.info(cleanupLogData, 'Instances teardown completed with warnings');
   } else {

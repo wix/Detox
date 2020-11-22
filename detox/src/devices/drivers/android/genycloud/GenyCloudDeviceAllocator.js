@@ -13,8 +13,10 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
 
   async _doAllocateDevice(recipe) {
     let { instance, isNew } = await this._doSynchronizedAllocation(recipe);
+    const { uuid, name } = instance;
+
     if (isNew) {
-      await this.deviceCleanupRegistry.allocateDevice(instance.uuid);
+      await this.deviceCleanupRegistry.allocateDevice({ uuid, name });
     }
 
     instance = await this._waitForInstanceBoot(instance);
@@ -22,7 +24,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
     return {
       instance,
       isNew,
-      toString: () => `GenyCloud:${instance.name} (${instance.uuid})`,
+      toString: () => `GenyCloud:${name} (${uuid})`,
     }
   }
 
