@@ -9,6 +9,38 @@
 #import <Detox/Detox-Swift.h>
 #import "DetoxCrashHandler.h"
 
+#if DEBUG
+@import DetoxSync;
+
+@interface DetoxSyncDebugger : NSObject <DTXSyncManagerDelegate> @end
+
+@implementation DetoxSyncDebugger
+
+- (void)syncSystemDidBecomeIdle
+{
+	
+}
+
+- (void)syncSystemDidBecomeBusy
+{
+	
+}
+
+- (void)syncSystemDidStartTrackingEventWithIdentifier:(NSString*)identifier description:(NSString*)description objectDescription:(nullable NSString*)objectDescription additionalDescription:(nullable NSString*)additionalDescription
+{
+	NSLog(@"❗️ tracking %@ description: %@ object: %@ additional: %@", identifier, description, objectDescription, additionalDescription);
+}
+
+- (void)syncSystemDidEndTrackingEventWithIdentifier:(NSString*)identifier
+{
+	NSLog(@"❗️ finished tracking %@", identifier);
+}
+@end
+
+static DetoxSyncDebugger* _detoxSyncDebugger;
+
+#endif
+
 __attribute__((constructor))
 static void detoxConditionalInit()
 {
@@ -18,6 +50,14 @@ static void detoxConditionalInit()
 	[[[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"] setBool:YES forKey:@"ApplicationAccessibilityEnabled"];
 	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
+	
+#if DEBUG
+	if([options boolForKey:@"detoxEnableSyncDebug"])
+	{
+		_detoxSyncDebugger = [DetoxSyncDebugger new];
+		DTXSyncManager.delegate = _detoxSyncDebugger;
+	}
+#endif
 	
 	NSMutableDictionary* settings = [NSMutableDictionary new];
 	
