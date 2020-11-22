@@ -52,6 +52,14 @@ class DeviceRegistry {
     return this._lockfile.read();
   }
 
+  async readRegisteredDevices() {
+    let result;
+    await this._lockfile.exclusively(() => {
+      result = this.getRegisteredDevices();
+    })
+    return result;
+  }
+
   /***
    * @private
    */

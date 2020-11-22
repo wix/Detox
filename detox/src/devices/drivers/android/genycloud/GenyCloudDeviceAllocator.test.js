@@ -4,6 +4,7 @@ describe('Genymotion-Cloud device allocator', () => {
   let logger;
   let retry;
   let deviceRegistry;
+  let deviceCleanupRegistry;
   let instanceLookupService;
   let instanceLifecycleService;
   let GenyInstance;
@@ -19,6 +20,7 @@ describe('Genymotion-Cloud device allocator', () => {
     const DeviceRegistry = jest.genMockFromModule('../../../../devices/DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
+    deviceCleanupRegistry = new DeviceRegistry();
 
     const InstanceLookupService = jest.genMockFromModule('./services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
@@ -29,7 +31,7 @@ describe('Genymotion-Cloud device allocator', () => {
     GenyInstance = jest.genMockFromModule('./services/dto/GenyInstance');
 
     const DeviceAllocator = require('./GenyCloudDeviceAllocator');
-    uut = new DeviceAllocator(deviceRegistry, instanceLookupService, instanceLifecycleService);
+    uut = new DeviceAllocator(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService);
   });
 
   const aRecipe = () => ({

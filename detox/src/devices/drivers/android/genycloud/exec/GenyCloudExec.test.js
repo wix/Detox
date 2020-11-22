@@ -62,6 +62,7 @@ describe('Genymotion-cloud executable', () => {
       commandName: 'Stop Instance',
       commandExecFn: () => uut.stopInstance(instanceUUID),
       expectedExec: `"gmsaas" --format compactjson instances stop ${instanceUUID}`,
+      expectedExecOptions: { retries: 3 },
     },
   ].forEach((testCase) => {
     describe(`${testCase.commandName} command`, () => {
@@ -69,6 +70,7 @@ describe('Genymotion-cloud executable', () => {
         givenSuccessResult();
 
         const expectedOptions = {
+          ...testCase.expectedExecOptions,
           statusLogs: {
             retrying: true,
           }
@@ -95,7 +97,7 @@ describe('Genymotion-cloud executable', () => {
           await testCase.commandExecFn();
           fail('Expected an error');
         } catch (e) {
-          expect(e).toEqual(failResponse);
+          expect(e.message).toEqual(JSON.stringify(failResponse));
         }
       });
     });
