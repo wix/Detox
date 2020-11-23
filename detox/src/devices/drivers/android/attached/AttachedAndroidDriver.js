@@ -8,8 +8,8 @@ class AttachedAndroidDriver extends AndroidDriver {
     super(config);
     this._name = 'Unnamed Android Device';
 
-    this._freeDeviceFinder = new FreeDeviceFinder(this.adb, this.deviceRegistry);
     this._deviceRegistry = DeviceRegistry.forAndroid();
+    this._freeDeviceFinder = new FreeDeviceFinder(this.adb, this._deviceRegistry);
   }
 
   get name() {
@@ -28,9 +28,9 @@ class AttachedAndroidDriver extends AndroidDriver {
     return adbName;
   }
 
-  async cleanup(deviceId, bundleId) {
-    await this._deviceRegistry.disposeDevice(deviceId);
-    await super.cleanup(deviceId, bundleId);
+  async cleanup(adbName, bundleId) {
+    await this._deviceRegistry.disposeDevice(adbName);
+    await super.cleanup(adbName, bundleId);
   }
 }
 
