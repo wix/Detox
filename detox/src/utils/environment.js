@@ -119,6 +119,10 @@ function getAdbPath() {
   throwSdkIntegrityError(sdkRoot, 'platform-tools/adb');
 }
 
+function getGmsaasPath() {
+  return which('gmsaas') || throwMissingGmsaasError();
+}
+
 function throwMissingSdkError() {
   throw new Error(MISSING_SDK_ERROR);
 }
@@ -143,6 +147,10 @@ function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
     `There was no "${name}" executable file in directory: ${dir}.\n` +
     `Check integrity of your Android SDK.`
   );
+}
+
+function throwMissingGmsaasError() {
+  throw new Error(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`)
 }
 
 function getDetoxVersion() {
@@ -187,6 +195,7 @@ module.exports = {
   getAvdDir,
   getAvdManagerPath,
   getAndroidSdkManagerPath,
+  getGmsaasPath,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,

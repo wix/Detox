@@ -1,6 +1,14 @@
 const exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
 
 class GenyCloudExec {
+  constructor(binaryPath) {
+    this.binaryExec = `"${binaryPath}" --format compactjson`;
+  }
+
+  whoAmI() {
+    return this._exec(`auth whoami`);
+  }
+
   getRecipe(name) {
     return this._exec(`recipes list --name "${name}"`);
   }
@@ -40,7 +48,7 @@ class GenyCloudExec {
         retrying: true,
       },
     };
-    return (await exec(`"gmsaas" --format compactjson ${args}`, options )).stdout;
+    return (await exec(`${this.binaryExec} ${args}`, options )).stdout;
   }
 }
 

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
 
 const mockBaseClassesDependencies = () => {
@@ -15,11 +16,13 @@ const mockBaseClassesDependencies = () => {
 };
 
 const mockDirectDependencies = () => {
+  jest.mock('../../../../utils/environment');
   jest.mock('./exec/GenyCloudExec');
   jest.mock('./GenyDeviceRegistryFactory');
   jest.mock('./services/GenyRecipesService');
   jest.mock('./services/GenyInstanceLookupService');
   jest.mock('./services/GenyInstanceLifecycleService');
+  jest.mock('./services/GenyAuthService');
   jest.mock('./services/GenyInstanceNaming');
   jest.mock('../../../../utils/getAbsoluteBinaryPath');
 };
@@ -45,12 +48,15 @@ describe('Genymotion-cloud driver', () => {
 
   let logger;
   let emitter;
+  let environment;
   let adbObj;
+  let Exec;
   let deviceQueryHelper;
   let deviceRegistry;
   let deviceCleanupRegistry;
   let deviceAllocator;
   let InstanceLifecycleService;
+  let authServiceObj;
   let GenyCloudDriver;
   let uut;
   beforeEach(() => {
@@ -59,11 +65,16 @@ describe('Genymotion-cloud driver', () => {
     const Emitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
     emitter = new Emitter();
 
+    environment = require('../../../../utils/environment');
+    environment.getGmsaasPath.mockReturnValue('/path/to/gmsaas');
+
     const { InvocationManager } = jest.genMockFromModule('../../../../invoke');
     const invocationManager = new InvocationManager();
 
     const ADB = require('../exec/ADB');
     adbObj = () => latestInstanceOf(ADB);
+
+    Exec = require('./exec/GenyCloudExec');
 
     const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
@@ -84,6 +95,9 @@ describe('Genymotion-cloud driver', () => {
 
     InstanceLifecycleService = require('./services/GenyInstanceLifecycleService');
 
+    const AuthService = require('./services/GenyAuthService');
+    authServiceObj = () => latestInstanceOf(AuthService);
+
     GenyCloudDriver = require('./GenyCloudDriver');
     uut = new GenyCloudDriver({
       invocationManager,
@@ -94,6 +108,30 @@ describe('Genymotion-cloud driver', () => {
 
   it('should return a generic name at pre-init', () => {
     expect(uut.name).toEqual('Unspecified Genymotion Cloud Emulator');
+  });
+
+  it('should initialize the common executable using the path set by the environment', async () => {
+    expect(Exec).toHaveBeenCalledWith('/path/to/gmsaas');
+  });
+
+  describe('preparation', () => {
+    it('should throw error if not logged-in to gmsaas', async () => {
+      authServiceObj().getLoginEmail.mockResolvedValue(null);
+
+      try {
+        await uut.prepare();
+        fail('Expected an error');
+      } catch (e) {
+        expect(e.constructor.name).toEqual('DetoxRuntimeError');
+        expect(e.toString()).toContain('Cannot run tests using a Genymotion-cloud emulator, because Genymotion was not logged-in to!');
+        expect(e.toString()).toContain(`HINT: Log-in to Genymotion-cloud by running this command (and following instructions):\n/path/to/gmsaas auth login --help`);
+      }
+    });
+
+    it('should not throw an error if properly logged in to gmsaas', async () => {
+      authServiceObj().getLoginEmail.mockResolvedValue('detox@wix.com');
+      await uut.prepare();
+    });
   });
 
   describe('device (instance) allocation', () => {
@@ -322,8 +360,12 @@ describe('Genymotion-cloud driver', () => {
     });
 
     it('should fallback to a default lifecycle-service', async () => {
+      Exec.mockReset();
+
       deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue([]);
       await GenyCloudDriver.globalCleanup();
+
+      expect(Exec).toHaveBeenCalledWith('/path/to/gmsaas');
     });
 
     it('should warn of instances cleanup rejects', async () => {
@@ -345,7 +387,7 @@ describe('Genymotion-cloud driver', () => {
 
     it('should not warn of cleanup rejects if all went well', async () => {
       const instanceLifecycleService = anInstanceLifecycleService();
-      instanceLifecycleService.deleteInstance.mockResolvedValue(anInstance);
+      instanceLifecycleService.deleteInstance.mockResolvedValue(anInstance());
 
       const deviceUUIDs = ['device-uuid1'];
       deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
