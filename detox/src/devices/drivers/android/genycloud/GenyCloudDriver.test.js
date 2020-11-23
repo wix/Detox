@@ -45,7 +45,7 @@ describe('Genymotion-cloud driver', () => {
 
   let logger;
   let emitter;
-  let adb;
+  let adbObj;
   let deviceQueryHelper;
   let deviceRegistry;
   let deviceCleanupRegistry;
@@ -63,7 +63,7 @@ describe('Genymotion-cloud driver', () => {
     const invocationManager = new InvocationManager();
 
     const ADB = require('../exec/ADB');
-    adb = () => latestInstanceOf(ADB);
+    adbObj = () => latestInstanceOf(ADB);
 
     const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
@@ -187,7 +187,7 @@ describe('Genymotion-cloud driver', () => {
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
-      expect(adb().apiLevel).toHaveBeenCalledWith(instance.adbName);
+      expect(adbObj().apiLevel).toHaveBeenCalledWith(instance.adbName);
     });
 
     it('should disable native animations', async () => {
@@ -197,7 +197,7 @@ describe('Genymotion-cloud driver', () => {
 
       await uut.acquireFreeDevice(aDeviceQuery());
 
-      expect(adb().disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
+      expect(adbObj().disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
     });
   });
 
