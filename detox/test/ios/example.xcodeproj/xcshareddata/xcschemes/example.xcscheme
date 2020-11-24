@@ -140,6 +140,10 @@
             argument = "-detoxEnableSyncDebug YES"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxDisableTouchIndicators YES"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
          <AdditionalOption

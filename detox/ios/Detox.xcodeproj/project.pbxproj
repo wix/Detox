@@ -34,6 +34,8 @@
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
 		395AD81924B5EBEA002B382B /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 395AD81724B5EBEA002B382B /* fishhook.h */; };
 		395AD81A24B5EBEA002B382B /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 395AD81824B5EBEA002B382B /* fishhook.c */; };
+		395B06E4256D5A5600941716 /* UIView+DetoxSpeedup.h in Headers */ = {isa = PBXBuildFile; fileRef = 395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */; };
+		395B06E5256D5A5600941716 /* UIView+DetoxSpeedup.m in Sources */ = {isa = PBXBuildFile; fileRef = 395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */; };
 		396D454425238B780096E7FA /* DetoxPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 396D454225238B780096E7FA /* DetoxPolicy.m */; };
 		396D454525238B780096E7FA /* DetoxPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 396D454325238B780096E7FA /* DetoxPolicy.h */; };
 		396D455225238BB90096E7FA /* UIView+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 396D455025238BB90096E7FA /* UIView+Drawing.m */; };
@@ -265,6 +267,8 @@
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
 		395AD81724B5EBEA002B382B /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		395AD81824B5EBEA002B382B /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
+		395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxSpeedup.h"; sourceTree = "<group>"; };
+		395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxSpeedup.m"; sourceTree = "<group>"; };
 		396D454225238B780096E7FA /* DetoxPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxPolicy.m; sourceTree = "<group>"; };
 		396D454325238B780096E7FA /* DetoxPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxPolicy.h; sourceTree = "<group>"; };
 		396D455025238BB90096E7FA /* UIView+Drawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Drawing.m"; sourceTree = "<group>"; };
@@ -585,6 +589,8 @@
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
 				390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */,
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
+				395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */,
+				395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -700,6 +706,7 @@
 				39EECB8124C0A73F009C3364 /* NSArray+Utils.h in Headers */,
 				39DC985624BB904D00FFB224 /* ReactNativeHeaders.h in Headers */,
 				3980D11E2448B52C004812DD /* DTXTouchInfo.h in Headers */,
+				395B06E4256D5A5600941716 /* UIView+DetoxSpeedup.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -928,6 +935,7 @@
 				3980D15D244C45EA004812DD /* Expectation.swift in Sources */,
 				3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */,
 				3946CD3F2566EB9E000A3606 /* NSObject+DetoxActions.m in Sources */,
+				395B06E5256D5A5600941716 /* UIView+DetoxSpeedup.m in Sources */,
 				3980D15B244C45EA004812DD /* InvocationManager.swift in Sources */,
 				39DC984924BB8E8900FFB224 /* DTXLogging.swift in Sources */,
 				3946CD452566EBC2000A3606 /* NSObject+DontCrash.m in Sources */,
