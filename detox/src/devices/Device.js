@@ -13,10 +13,10 @@ class Device {
   }
 
   async prepare() {
+    await this.deviceDriver.prepare();
+
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
-
-    await this.deviceDriver.prepare();
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {

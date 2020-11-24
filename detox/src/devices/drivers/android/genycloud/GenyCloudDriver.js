@@ -6,16 +6,18 @@ const RecipesService = require('./services/GenyRecipesService');
 const InstanceLookupService = require('./services/GenyInstanceLookupService');
 const InstanceLifecycleService = require('./services/GenyInstanceLifecycleService');
 const InstanceNaming = require('./services/GenyInstanceNaming');
+const AuthService = require('./services/GenyAuthService');
 const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const logger = require('../../../../utils/logger').child({ __filename });
+const environment = require('../../../../utils/environment');
 
 class GenyCloudDriver extends AndroidDriver {
   constructor(config) {
     super(config);
     this._name = 'Unspecified Genymotion Cloud Emulator';
 
-    const exec = new GenyCloudExec();
+    const exec = new GenyCloudExec(environment.getGmsaasPath());
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
     this._deviceRegistry = GenyDeviceRegistryFactory.forRuntime();
     this._deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
@@ -25,10 +27,16 @@ class GenyCloudDriver extends AndroidDriver {
     this._instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
     this._deviceQueryHelper = new DeviceQueryHelper(recipeService);
     this._deviceAllocator = new GenyCloudDeviceAllocator(this._deviceRegistry, this._deviceCleanupRegistry, instanceLookupService, this._instanceLifecycleService);
+
+    this._authService = new AuthService(exec);
   }
 
   get name() {
     return this._name;
+  }
+
+  async prepare() {
+    return this._validateGmsaasAuth();
   }
 
   async acquireFreeDevice(deviceQuery) {
@@ -75,9 +83,19 @@ class GenyCloudDriver extends AndroidDriver {
     }
   }
 
+  async _validateGmsaasAuth() {
+    if (!await this._authService.getLoginEmail()) {
+      throw new DetoxRuntimeError({
+        message: 'Cannot run tests using a Genymotion-cloud emulator, because Genymotion was not logged-in to!',
+        hint: `Log-in to Genymotion-cloud by running this command (and following instructions):\n${environment.getGmsaasPath()} auth login --help`,
+      });
+    }
+  }
+
   static async globalCleanup(instanceLifecycleService) {
     if (!instanceLifecycleService) {
-      instanceLifecycleService = new InstanceLifecycleService(new GenyCloudExec(), null);
+      const exec = new GenyCloudExec(environment.getGmsaasPath());
+      instanceLifecycleService = new InstanceLifecycleService(exec, null);
     }
 
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();

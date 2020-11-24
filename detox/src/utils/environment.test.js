@@ -262,5 +262,20 @@ describe('Environment', () => {
         await expect(asyncGetter()).rejects.toThrow(/\$ANDROID_SDK_ROOT is not defined/);
       });
     }
+
+    describe('Genymotion SaaS executable - getGmsaasPath', () => {
+      it('should resolve based on $PATH', async () => {
+        const executable = 'gmsaas';
+        process.env.PATH = path.join(tempSdkPath, 'somewhere');
+        await genExec(`somewhere/${executable}`);
+        expect(Environment.getGmsaasPath()).toMatch(new RegExp(`${tempSdkPath}.+somewhere.${executable}`));
+      });
+
+      it('should throw error if gmsaas is not in $PATH', async () => {
+        const pathToNowhere = path.join('one', 'mock', 'directory');
+        process.env.PATH = pathToNowhere;
+        await expect(async () => Environment.getGmsaasPath()).rejects.toThrow(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${pathToNowhere}`);
+      });
+    });
   });
 });

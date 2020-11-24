@@ -30,38 +30,44 @@ describe('Genymotion-cloud executable', () => {
     exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
 
     const GenyCloudExec = require('./GenyCloudExec');
-    uut = new GenyCloudExec;
+    uut = new GenyCloudExec('mock/path/to/gmsaas');
   });
 
   const recipeName = 'mock-recipe-name';
   const recipeUUID = 'mock-recipe-uuid';
   const instanceUUID = 'mock-uuid';
   const instanceName = 'detox-instance1';
+
   [
+    {
+      commandName: 'whoami',
+      commandExecFn: () => uut.whoAmI(),
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson auth whoami`,
+    },
     {
       commandName: 'Get Recipe',
       commandExecFn: () => uut.getRecipe(recipeName),
-      expectedExec: `"gmsaas" --format compactjson recipes list --name "${recipeName}"`,
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson recipes list --name "${recipeName}"`,
     },
     {
       commandName: 'Get Instances',
       commandExecFn: () => uut.getInstances(),
-      expectedExec: `"gmsaas" --format compactjson instances list -q`,
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances list -q`,
     },
     {
       commandName: 'Start Instance',
       commandExecFn: () => uut.startInstance(recipeUUID, instanceName),
-      expectedExec: `"gmsaas" --format compactjson instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`,
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`,
     },
     {
       commandName: 'ADB Connect',
       commandExecFn: () => uut.adbConnect(instanceUUID),
-      expectedExec: `"gmsaas" --format compactjson instances adbconnect ${instanceUUID}`,
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances adbconnect ${instanceUUID}`,
     },
     {
       commandName: 'Stop Instance',
       commandExecFn: () => uut.stopInstance(instanceUUID),
-      expectedExec: `"gmsaas" --format compactjson instances stop ${instanceUUID}`,
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances stop ${instanceUUID}`,
       expectedExecOptions: { retries: 3 },
     },
   ].forEach((testCase) => {
