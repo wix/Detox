@@ -144,6 +144,10 @@
             argument = "-detoxDisableTouchIndicators YES"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxDisableAnimationSpeedup YES"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
          <AdditionalOption

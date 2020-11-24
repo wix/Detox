@@ -30,11 +30,15 @@
 		NSError* error;
 		if(@available(iOS 14.0, *))
 		{
+			//Under iOS 14, this is necessary.
 			DTXSwizzleMethod(NSClassFromString(@"UITextSelectionView"), @selector(_setCaretBlinkAnimationEnabled:), @selector(_dtx_setCaretBlinkAnimationEnabled:), &error);
 		}
 		else
 		{
-			DTXSwizzleMethod(NSClassFromString(@"UITextSelectionView"), @selector(setCaretBlinks:), @selector(_dtx_setCaretBlinks:), &error);
+			if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDisableAnimationSpeedup"] == NO)
+			{
+				DTXSwizzleMethod(NSClassFromString(@"UITextSelectionView"), @selector(setCaretBlinks:), @selector(_dtx_setCaretBlinks:), &error);
+			}
 		}
 	}
 }
@@ -57,9 +61,12 @@
 + (void)load
 {
 	@autoreleasepool {
-		NSError* error;
-		DTXSwizzleMethod(self, @selector(_hideScrollIndicators), @selector(_dtx_hideScrollIndicators), &error);
-		DTXSwizzleMethod(self, @selector(_hideScrollIndicator:afterDelay:animated:), @selector(_dtx_hideScrollIndicator:afterDelay:animated:), &error);
+		if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDisableAnimationSpeedup"] == NO)
+		{
+			NSError* error;
+			DTXSwizzleMethod(self, @selector(_hideScrollIndicators), @selector(_dtx_hideScrollIndicators), &error);
+			DTXSwizzleMethod(self, @selector(_hideScrollIndicator:afterDelay:animated:), @selector(_dtx_hideScrollIndicator:afterDelay:animated:), &error);
+		}
 	}
 }
 
