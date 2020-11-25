@@ -17,6 +17,7 @@ const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the
 Go to https://developer.android.com/studio/command-line/variables.html for more details`;
 const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
 const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
+const GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'genycloud-cleanup.lock');
 const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
 
 function getAndroidSDKPath() {
@@ -118,6 +119,10 @@ function getAdbPath() {
   throwSdkIntegrityError(sdkRoot, 'platform-tools/adb');
 }
 
+function getGmsaasPath() {
+  return which('gmsaas') || throwMissingGmsaasError();
+}
+
 function throwMissingSdkError() {
   throw new Error(MISSING_SDK_ERROR);
 }
@@ -144,6 +149,10 @@ function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
   );
 }
 
+function throwMissingGmsaasError() {
+  throw new Error(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`)
+}
+
 function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
 }
@@ -162,8 +171,13 @@ function getDeviceLockFilePathIOS() {
   return DEVICE_LOCK_FILE_PATH_IOS;
 }
 
+// TODO This can probably be merged with IOS' by now
 function getDeviceLockFilePathAndroid() {
   return DEVICE_LOCK_FILE_PATH_ANDROID;
+}
+
+function getGenyCloudGlobalCleanupFilePath() {
+  return GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH;
 }
 
 function getLastFailedTestsPath() {
@@ -181,6 +195,7 @@ module.exports = {
   getAvdDir,
   getAvdManagerPath,
   getAndroidSdkManagerPath,
+  getGmsaasPath,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
@@ -188,6 +203,7 @@ module.exports = {
   getDetoxLibraryRootPath,
   getDeviceLockFilePathIOS,
   getDeviceLockFilePathAndroid,
+  getGenyCloudGlobalCleanupFilePath,
   getLastFailedTestsPath,
   getHomeDir,
 };

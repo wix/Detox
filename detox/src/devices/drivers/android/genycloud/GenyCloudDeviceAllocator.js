@@ -3,15 +3,19 @@ const retry = require('../../../../utils/retry');
 const logger = require('../../../../utils/logger').child({ __filename });
 
 class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
-  constructor(deviceRegistry, instanceLookupService, instanceLifecycleService) {
+  constructor(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService) {
     super(deviceRegistry, logger);
 
+    this.deviceCleanupRegistry = deviceCleanupRegistry;
     this.instanceLookupService = instanceLookupService;
     this.instanceLifecycleService = instanceLifecycleService;
   }
 
   async _doAllocateDevice(recipe) {
     let { instance, isNew } = await this._doSynchronizedAllocation(recipe);
+    if (isNew) {
+      await this.deviceCleanupRegistry.allocateDevice(instance.uuid);
+    }
 
     instance = await this._waitForInstanceBoot(instance);
     instance = await this._adbConnectIfNeeded(instance);
@@ -47,7 +51,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
     }
 
     const options = {
-      backoff: 'none',
+      backoff: 'none', // TODO apply reverse-linear polling
       retries: 18,
       interval: 10000,
     };
