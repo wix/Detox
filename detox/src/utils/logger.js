@@ -83,7 +83,7 @@ function init() {
       jsonFileStreamPath = temporaryPath.for.log();
       fs.ensureFileSync(jsonFileStreamPath);
       bunyanStreams.push({
-        level,
+        level: 'trace',
         path: jsonFileStreamPath,
       });
     }
@@ -91,7 +91,7 @@ function init() {
       plainFileStreamPath = temporaryPath.for.log();
       fs.ensureFileSync(plainFileStreamPath);
       bunyanStreams.push(createPlainBunyanStream({
-        level,
+        level: 'trace',
         logPath: plainFileStreamPath,
       }));
     }
