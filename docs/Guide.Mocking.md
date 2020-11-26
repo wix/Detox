@@ -60,7 +60,7 @@ Whenever Metro runs with `RN_SRC_EXT` environment variable set, it will override
 #### Example of how to mock a module
 If you want to mock a module, here is an example of how to do it: 
 1. Follow the steps above on section [Configuration](#Configuration)
-2. Create a file that just imports the module, `YourNativeModule.js`, containing:
+2. Create a file that just imports the module, `YourNativeModuleProvider.js`, containing:
 ```
 
 import { NativeModules } from 'react-native';
@@ -68,7 +68,7 @@ import { NativeModules } from 'react-native';
 export const { YourNativeModule } = NativeModules;
 
 ```
-3. Create a file on the same directory - `YourNativeModule.e2e.js`, containing:
+3. Create a file on the same directory - `YourNativeModuleProvider.e2e.js`, containing:
 ```
 // You can add a console.log here so it shows on your react-native console:
 console.log('We are now using our mocked NativeModule')
