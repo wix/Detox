@@ -2,7 +2,7 @@ const {device, expect, element, by, waitFor} = require('detox');
 
 describe('Example (explicit)', () => {
   beforeAll(async () => {
-    await device.relaunchApp();
+    await device.launchApp({ newInstance: true });
   });
 
   beforeEach(async () => {

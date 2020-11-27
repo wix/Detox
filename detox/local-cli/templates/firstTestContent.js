@@ -1,6 +1,8 @@
 const firstTestContent = `describe('Example', () => {
   beforeAll(async () => {
-    await device.relaunchApp();
+    await device.launchApp({
+      newInstance: true,
+    });
   });
 
   beforeEach(async () => {
