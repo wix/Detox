@@ -1,0 +1,13 @@
+{
+  "test-runner": "jest",
+  "configurations": {
+    "plugin": {
+      "binaryPath": "my/random/path",
+      "device": {
+        "foo": "bar"
+      },
+      "name": "plugin-example",
+      "type": "./driver"
+    }
+  }
+}

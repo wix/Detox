@@ -1,5 +1,5 @@
 const {VerboseReporter: JestVerboseReporter} = require('@jest/reporters'); // eslint-disable-line node/no-extraneous-require
-const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const DetoxRuntimeError = require('../../../src/errors/DetoxRuntimeError');
 
 class DetoxStreamlineJestReporter extends JestVerboseReporter {
 
@@ -28,7 +28,7 @@ class DetoxStreamlineJestReporter extends JestVerboseReporter {
    *
    * 1. Jest suite-level lifecycle logging, typically done by the super-class' impl.
    *    Note: Jest does not notify spec-level events to reporters.
-   * 2. Jasmine real-time, spec-level lifecycle logging.
+   * 2. Jest Circus real-time, spec-level lifecycle logging.
    * 3. User in-test logging (e.g. for debugging).
    *
    * It's easy to see that this cannot be done while stderr and stdout are not of equal priority.
@@ -65,7 +65,7 @@ class DetoxStreamlineJestReporter extends JestVerboseReporter {
   _assertConfig() {
     if (!this._isVerboseEnabled()) {
       // Non-verbose mode makes Jest swizzle 'console' with a buffered output impl, which prevents
-      // user and detox' jasmine-lifecycle logs from showing in real time.
+      // from showing logs (from the user and Detox) in real time.
       throw new DetoxRuntimeError({
         message: 'Cannot run properly unless Jest is in verbose mode',
         hint: 'See https://jestjs.io/docs/en/configuration#verbose-boolean for more details',

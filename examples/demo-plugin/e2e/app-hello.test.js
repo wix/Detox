@@ -1,4 +1,8 @@
 describe('Example (hello)', () => {
+  beforeAll(() => {
+    await device.relaunchApp();
+  });
+
   it('should have welcome', async () => {
     await expect(element(by.id('welcome'))).toBeVisible();
   });

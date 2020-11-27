@@ -1,5 +1,5 @@
 const path = require('path');
-const { saveLastFailedTests } = require('../../src/utils/lastFailedTests');
+const { saveLastFailedTests } = require('../../../src/utils/lastFailedTests');
 
 class FailingTestsReporter {
   async onRunComplete(_contexts, { testResults }) {

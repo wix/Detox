@@ -8,18 +8,5 @@
   "devDependencies": {
     "detox": "^18.0.0-next.5",
     "jest": "^26.5.0"
-  },
-  "detox": {
-    "test-runner": "jest",
-    "configurations": {
-      "plugin": {
-        "binaryPath": "my/random/path",
-        "device": {
-          "foo": "bar"
-        },
-        "name": "plugin-example",
-        "type": "./driver"
-      }
-    }
   }
 }
