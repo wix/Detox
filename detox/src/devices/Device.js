@@ -19,14 +19,18 @@ class Device {
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
   }
 
-  async launchApp(params = {newInstance: false}, bundleId) {
+  async launchApp(params = {}, bundleId = this._bundleId) {
+    const deviceId = this._deviceId;
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
+    const newInstance = params.newInstance !== undefined
+      ? params.newInstance
+      : this._processes[bundleId] == null;
 
     if (params.delete) {
       await this._terminateApp();
       await this._reinstallApp();
-    } else if (params.newInstance) {
+    } else if (newInstance) {
       await this._terminateApp();
     }
 
@@ -47,28 +51,27 @@ class Device {
     }
 
     if (params.permissions) {
-      await this.deviceDriver.setPermissions(this._deviceId, this._bundleId, params.permissions);
+      await this.deviceDriver.setPermissions(deviceId, bundleId, params.permissions);
     }
 
     if (params.disableTouchIndicators) {
       baseLaunchArgs['detoxDisableTouchIndicators'] = true;
     }
 
-    const _bundleId = bundleId || this._bundleId;
-    if (this._isAppInBackground(params, _bundleId)) {
+    if (this._isAppInBackground(params, bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
 
-    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
-    this._processes[_bundleId] = processId;
+    const processId = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    this._processes[bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
     await this.deviceDriver.waitForActive();
     await this._emitter.emit('appReady', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
+      deviceId,
+      bundleId,
       pid: processId,
     });
 
@@ -113,8 +116,8 @@ class Device {
     params[launchKey] = payloadFilePath;
   }
 
-  _isAppInBackground(params, _bundleId) {
-    return !params.delete && !params.newInstance && this._processes[_bundleId];
+  _isAppInBackground(params, bundleId) {
+    return !params.delete && !params.newInstance && this._processes[bundleId];
   }
 
   _assertHasSingleParam(singleParams, params) {

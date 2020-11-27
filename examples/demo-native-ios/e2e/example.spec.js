@@ -1,6 +1,6 @@
 describe('Example', () => {
   beforeEach(async () => {
-    await device.launchApp({ newInstance: true });
+    await device.launchApp();
   });
 
   it('should have welcome screen', async () => {
