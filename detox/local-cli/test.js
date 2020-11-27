@@ -138,7 +138,10 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
 
       ...passthrough,
     },
-    env: _.pick(cliConfig, ['appLaunchArgs', 'deviceLaunchArgs']),
+    env: _.omitBy({
+      DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
+      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+    }, _.isUndefined),
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
   };
 }
@@ -158,32 +161,30 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     },
 
     env: _.omitBy({
-      ..._.pick(cliConfig, _.compact([
-        'configPath',
-        'configuration',
-        'loglevel',
-        'cleanup',
-        'reuse',
-        'debugSynchronization',
-        'gpu',
-        'headless',
-        'artifactsLocation',
-        'recordLogs',
-        'takeScreenshots',
-        'recordVideos',
-        'recordPerformance',
-        'recordTimeline',
-        'deviceName',
-        'deviceLaunchArgs',
-        'appLaunchArgs',
-        'useCustomLogger',
-        platform === 'android' && 'forceAdbInstall',
-      ])),
-      DETOX_START_TIMESTAMP: Date.now(),
-      readOnlyEmu: platform === 'android' ? hasMultipleWorkers(cliConfig) : undefined,
-      reportSpecs: _.isUndefined(cliConfig.jestReportSpecs)
+      DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
+      DETOX_ARTIFACTS_LOCATION: cliConfig.artifactsLocation,
+      DETOX_CLEANUP: cliConfig.cleanup,
+      DETOX_CONFIGURATION: cliConfig.configuration,
+      DETOX_CONFIG_PATH: cliConfig.configPath,
+      DETOX_DEBUG_SYNCHRONIZATION: cliConfig.debugSynchronization,
+      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_NAME: cliConfig.deviceName,
+      DETOX_FORCE_ADB_INSTALL: platform === 'android' ? cliConfig.forceAdbInstall : undefined,
+      DETOX_GPU: cliConfig.gpu,
+      DETOX_HEADLESS: cliConfig.headless,
+      DETOX_LOGLEVEL: cliConfig.loglevel,
+      DETOX_READ_ONLY_EMU: platform === 'android' ? hasMultipleWorkers(cliConfig) : undefined,
+      DETOX_RECORD_LOGS: cliConfig.recordLogs,
+      DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
+      DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,
+      DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
+      DETOX_REPORT_SPECS: _.isUndefined(cliConfig.jestReportSpecs)
         ? !hasMultipleWorkers(cliConfig)
         : `${cliConfig.jestReportSpecs}` === 'true',
+      DETOX_REUSE: cliConfig.reuse,
+      DETOX_START_TIMESTAMP: Date.now(),
+      DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
+      DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
     }, _.isUndefined),
 
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,

@@ -175,14 +175,14 @@ describe('CLI', () => {
     test('--device-launch-args should be passed as an environment variable', async () => {
       await run(`--device-launch-args "--verbose"`);
       expect(cliCall().env).toEqual({
-        deviceLaunchArgs: '--verbose',
+        DETOX_DEVICE_LAUNCH_ARGS: '--verbose',
       });
     });
 
     test('--app-launch-args should be passed as an environment variable', async () => {
       await run(`--app-launch-args "--debug yes"`);
       expect(cliCall().env).toEqual({
-        appLaunchArgs: '--debug yes',
+        DETOX_APP_LAUNCH_ARGS: '--debug yes',
       });
     });
 
@@ -271,9 +271,9 @@ describe('CLI', () => {
       test('should put default environment variables (integration test, ios)', () => {
         expect(cliCall().env).toEqual({
           DETOX_START_TIMESTAMP: expect.any(Number),
-          configPath: expect.any(String),
-          reportSpecs: true,
-          useCustomLogger: true,
+          DETOX_CONFIG_PATH: expect.any(String),
+          DETOX_REPORT_SPECS: true,
+          DETOX_USE_CUSTOM_LOGGER: true,
         });
       });
     });
@@ -292,11 +292,11 @@ describe('CLI', () => {
       test('should put default environment variables (integration test)', () => {
         expect(cliCall().env).toEqual({
           DETOX_START_TIMESTAMP: expect.any(Number),
-          configPath: expect.any(String),
-          reportSpecs: true,
-          useCustomLogger: true,
-          forceAdbInstall: false,
-          readOnlyEmu: false,
+          DETOX_CONFIG_PATH: expect.any(String),
+          DETOX_REPORT_SPECS: true,
+          DETOX_USE_CUSTOM_LOGGER: true,
+          DETOX_FORCE_ADB_INSTALL: false,
+          DETOX_READ_ONLY_EMU: false,
         });
       });
     });
@@ -311,11 +311,11 @@ describe('CLI', () => {
 
         await run(`${__configuration} androidTest`);
         expect(cliCall(0).command).toContain(`--testNamePattern ${quote('^((?!:ios:).)*$')}`);
-        expect(cliCall(0).env.configuration).toBe('androidTest');
+        expect(cliCall(0).env.DETOX_CONFIGURATION).toBe('androidTest');
 
         await run(`${__configuration} iosTest`);
         expect(cliCall(1).command).toContain(`--testNamePattern ${quote('^((?!:android:).)*$')}`);
-        expect(cliCall(1).env.configuration).toBe('iosTest');
+        expect(cliCall(1).env.DETOX_CONFIGURATION).toBe('iosTest');
       }
     );
 
@@ -326,7 +326,7 @@ describe('CLI', () => {
 
     test.each([['-l'], ['--loglevel']])('%s <value> should be passed as environment variable', async (__loglevel) => {
       await run(`${__loglevel} trace`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ loglevel: 'trace' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_LOGLEVEL: 'trace' }));
     });
 
     test('--no-color should be passed as CLI argument', async () => {
@@ -384,52 +384,52 @@ describe('CLI', () => {
 
     test.each([['-r'], ['--reuse']])('%s <value> should be passed as environment variable', async (__reuse) => {
       await run(`${__reuse}`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ reuse: true }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_REUSE: true }));
     });
 
     test.each([['-u'], ['--cleanup']])('%s <value> should be passed as environment variable', async (__cleanup) => {
       await run(`${__cleanup}`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ cleanup: true }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_CLEANUP: true }));
     });
 
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as environment variable', async (__debug_synchronization) => {
       await run(`${__debug_synchronization} 5000`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ debugSynchronization: 5000 }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEBUG_SYNCHRONIZATION: 5000 }));
     });
 
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should have default value = 3000', async (__debug_synchronization) => {
       await run(`${__debug_synchronization}`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ debugSynchronization: 3000 }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEBUG_SYNCHRONIZATION: 3000 }));
     });
 
     test.each([['-a'], ['--artifacts-location']])('%s <value> should be passed as environment variable', async (__artifacts_location) => {
       await run(`${__artifacts_location} /tmp`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ artifactsLocation: '/tmp' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_ARTIFACTS_LOCATION: '/tmp' }));
     });
 
     test('--record-logs <value> should be passed as environment variable', async () => {
       await run(`--record-logs all`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ recordLogs: 'all' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_RECORD_LOGS: 'all' }));
     });
 
     test('--take-screenshots <value> should be passed as environment variable', async () => {
       await run(`--take-screenshots failing`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ takeScreenshots: 'failing' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_TAKE_SCREENSHOTS: 'failing' }));
     });
 
     test('--record-videos <value> should be passed as environment variable', async () => {
       await run(`--record-videos failing`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ recordVideos: 'failing' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_RECORD_VIDEOS: 'failing' }));
     });
 
     test('--record-performance <value> should be passed as environment variable', async () => {
       await run(`--record-performance all`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ recordPerformance: 'all' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_RECORD_PERFORMANCE: 'all' }));
     });
 
     test('--record-timeline <value> should be passed as environment variable', async () => {
       await run(`--record-timeline all`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ recordTimeline: 'all' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_RECORD_TIMELINE: 'all' }));
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should be passed as CLI argument', async (__workers) => {
@@ -462,19 +462,19 @@ describe('CLI', () => {
     test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for iOS', async (__workers) => {
       singleConfig().type = 'ios.simulator';
       await run(`${__workers} 2`);
-      expect(cliCall().env).not.toHaveProperty('readOnlyEmu');
+      expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
       singleConfig().type = 'android.emulator';
       await run(`${__workers} 1`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ readOnlyEmu: false }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: false }));
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there are multiple workers', async (__workers) => {
       singleConfig().type = 'android.emulator';
       await run(`${__workers} 2`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ readOnlyEmu: true }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: true }));
     });
 
     test('should omit --testNamePattern for custom platforms', async () => {
@@ -495,73 +495,73 @@ describe('CLI', () => {
 
     test('--jest-report-specs, by default, should be true, as environment variable', async () => {
       await run();
-      expect(cliCall().env).toEqual(expect.objectContaining({ reportSpecs: true }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_REPORT_SPECS: true }));
     });
 
     test('--jest-report-specs, by default, should be false, if multiple workers are enabled', async () => {
       await run('--workers 2');
-      expect(cliCall().env).toEqual(expect.objectContaining({ reportSpecs: false }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_REPORT_SPECS: false }));
     });
 
     test('--jest-report-specs, set explicitly, should override single worker defaults', async () => {
       await run('--jest-report-specs false');
-      expect(cliCall().env).toEqual(expect.objectContaining({ reportSpecs: false }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_REPORT_SPECS: false }));
     });
 
     test('--jest-report-specs, set explicitly, should override multiple workers defaults', async () => {
       await run('--workers 2 --jest-report-specs');
-      expect(cliCall().env).toEqual(expect.objectContaining({ reportSpecs: true }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_REPORT_SPECS: true }));
     });
 
     test.each([['-H'], ['--headless']])('%s <value> should be passed as environment variable', async (__headless) => {
       await run(`${__headless}`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ headless: true }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_HEADLESS: true }));
     });
 
     test('--gpu <value> should be passed as environment variable', async () => {
       await run(`--gpu angle_indirect`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ gpu: 'angle_indirect' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_GPU: 'angle_indirect' }));
     });
 
     test('--device-launch-args should be passed as environment variable', async () => {
       await run(`--device-launch-args "--verbose"`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        deviceLaunchArgs: '--verbose'
+        DETOX_DEVICE_LAUNCH_ARGS: '--verbose'
       }));
     });
 
     test('--app-launch-args should be passed as an environment variable', async () => {
       await run(`--app-launch-args "--debug yes"`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        appLaunchArgs: '--debug yes',
+        DETOX_APP_LAUNCH_ARGS: '--debug yes',
       }));
     });
 
     test('--use-custom-logger false should be prevent passing environment variable', async () => {
       await run(`--use-custom-logger false`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        useCustomLogger: false
+        DETOX_USE_CUSTOM_LOGGER: false
       }));
     });
 
     test('--force-adb-install should be ignored for iOS', async () => {
       singleConfig().type = 'ios.simulator';
       await run(`--force-adb-install`);
-      expect(cliCall().env).not.toHaveProperty('forceAdbInstall');
+      expect(cliCall().env).not.toHaveProperty('DETOX_FORCE_ADB_INSTALL');
     });
 
     test('--force-adb-install should be passed as environment variable', async () => {
       singleConfig().type = 'android.emulator';
       await run(`--force-adb-install`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        forceAdbInstall: true,
+        DETOX_FORCE_ADB_INSTALL: true,
       }));
     });
 
     test.each([['-n'], ['--device-name']])('%s <value> should be passed as environment variable', async (__device_name) => {
       await run(`${__device_name} TheDevice`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        deviceName: 'TheDevice',
+        DETOX_DEVICE_NAME: 'TheDevice',
       }));
     });
 
@@ -574,18 +574,18 @@ describe('CLI', () => {
 
     test.each([
       ['--inspect-brk e2eFolder', /^node --inspect-brk jest .* e2eFolder$/, {}],
-      ['-d e2eFolder', / e2eFolder$/, { debugSynchronization: 3000 }],
-      ['--debug-synchronization e2eFolder', / e2eFolder$/, { debugSynchronization: 3000 }],
-      ['-r e2eFolder', / e2eFolder$/, { reuse: true }],
-      ['--reuse e2eFolder', / e2eFolder$/, { reuse: true }],
-      ['-u e2eFolder', / e2eFolder$/, { cleanup: true }],
-      ['--cleanup e2eFolder', / e2eFolder$/, { cleanup: true }],
-      ['--jest-report-specs e2eFolder', / e2eFolder$/, { reportSpecs: true }],
-      ['-H e2eFolder', / e2eFolder$/, { headless: true }],
-      ['--headless e2eFolder', / e2eFolder$/, { headless: true }],
+      ['-d e2eFolder', / e2eFolder$/, { DETOX_DEBUG_SYNCHRONIZATION: 3000 }],
+      ['--debug-synchronization e2eFolder', / e2eFolder$/, { DETOX_DEBUG_SYNCHRONIZATION: 3000 }],
+      ['-r e2eFolder', / e2eFolder$/, { DETOX_REUSE: true }],
+      ['--reuse e2eFolder', / e2eFolder$/, { DETOX_REUSE: true }],
+      ['-u e2eFolder', / e2eFolder$/, { DETOX_CLEANUP: true }],
+      ['--cleanup e2eFolder', / e2eFolder$/, { DETOX_CLEANUP: true }],
+      ['--jest-report-specs e2eFolder', / e2eFolder$/, { DETOX_REPORT_SPECS: true }],
+      ['-H e2eFolder', / e2eFolder$/, { DETOX_HEADLESS: true }],
+      ['--headless e2eFolder', / e2eFolder$/, { DETOX_HEADLESS: true }],
       ['--keepLockFile e2eFolder', / e2eFolder$/, {}],
-      ['--use-custom-logger e2eFolder', / e2eFolder$/, { useCustomLogger: true }],
-      ['--force-adb-install e2eFolder', / e2eFolder$/, { forceAdbInstall: true }],
+      ['--use-custom-logger e2eFolder', / e2eFolder$/, { DETOX_USE_CUSTOM_LOGGER: true }],
+      ['--force-adb-install e2eFolder', / e2eFolder$/, { DETOX_FORCE_ADB_INSTALL: true }],
     ])('"%s" should be disambigued correctly', async (command, commandMatcher, envMatcher) => {
       singleConfig().type = 'android.emulator';
       await run(command);
@@ -648,7 +648,7 @@ describe('CLI', () => {
     test('-- <...explicitPassthroughArgs> should be forwarded to the test runner CLI as-is', async () => {
       await run('--device-launch-args detoxArgs e2eFolder -- a -a --a --device-launch-args runnerArgs');
       expect(cliCall().command).toMatch(/a -a --a --device-launch-args runnerArgs .* e2eFolder$/);
-      expect(cliCall().env).toEqual(expect.objectContaining({ deviceLaunchArgs: 'detoxArgs' }));
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEVICE_LAUNCH_ARGS: 'detoxArgs' }));
     });
 
     test('-- <...explicitPassthroughArgs> should omit double-dash "--" itself, when forwarding args', async () => {

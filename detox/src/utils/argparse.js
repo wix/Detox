@@ -8,11 +8,11 @@ function getArgValue(key) {
   if (argv && argv[key]) {
     value = argv[key];
   } else {
-    value = getEnvVar([
-      `DETOX_${_.snakeCase(key)}`.toUpperCase(),
-      _.camelCase(key),
-    ]);
+    const envKey = _.findKey(process.env, matchesKey(
+      `DETOX_${_.snakeCase(key)}`.toUpperCase()
+    ));
 
+    value = process.env[envKey];
     if (value === 'undefined') {
       value = undefined;
     }
@@ -21,27 +21,11 @@ function getArgValue(key) {
   return value;
 }
 
-function getEnvVar(aliases) {
-  const env = getNormalizedEnv();
-
-  for (const key of getNormalizedAliases(aliases)) {
-    if (env[key] !== undefined) {
-      return env[key];
-    }
-  }
+function matchesKey(key) {
+  return /* istanbul ignore next */ process.platform === 'win32'
+    ? (value, envKey) => envKey.toUpperCase() === key
+    : (value, envKey) => envKey === key;
 }
-
-const getNormalizedEnv = _.once(() => {
-  return /* istanbul ignore next */ process.platform === 'win32'
-    ? _.mapKeys(process.env, (value, key) => key.toUpperCase())
-    : { ...process.env };
-});
-
-const getNormalizedAliases = (aliases) => {
-  return /* istanbul ignore next */ process.platform === 'win32'
-    ? aliases.map(key => key.toUpperCase())
-    : aliases;
-};
 
 function getFlag(key) {
   if (argv && argv[key]) {
