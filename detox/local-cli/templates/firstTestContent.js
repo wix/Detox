@@ -1,4 +1,8 @@
 const firstTestContent = `describe('Example', () => {
+  beforeAll(async () => {
+    await device.relaunchApp();
+  });
+
   beforeEach(async () => {
     await device.reloadReactNative();
   });

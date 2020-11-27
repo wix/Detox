@@ -131,7 +131,6 @@ class Device {
     return (paramsCounter === 1);
   }
 
-  /**deprecated */
   async relaunchApp(params = {}, bundleId) {
     if (params.newInstance === undefined) {
       params['newInstance'] = true;

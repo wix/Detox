@@ -1,4 +1,3 @@
-require('babel-polyfill');
 const detox = require('detox');
 
 before(async () => {
