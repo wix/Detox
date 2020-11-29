@@ -31,14 +31,14 @@ function buildFramework () {
   detoxSourcePath="${1}"
   echo "Building Detox.framework from ${detoxSourcePath} into ${detoxFrameworkDirPath}"
   mkdir -p "${detoxFrameworkDirPath}"
-	logPath="${detoxFrameworkDirPath}"/detox_ios.log
+  logPath="${detoxFrameworkDirPath}"/detox_ios.log
   echo "Build log: ${logPath}"
-	echo -n "" > "${logPath}"
+  echo -n "" > "${logPath}"
   "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}" || {
-		echo -e "#################################\nError building Detox.framework:\n----------------------------------\n"
-		cat "${logPath}"
-		echo "#################################"
-	  exit 1
+    echo -e "#################################\nError building Detox.framework:\n----------------------------------\n"
+    cat "${logPath}"
+    echo "#################################"
+    exit 1
   }
 }
 

@@ -8,7 +8,7 @@ if [ "${XCODEVERSION}" == "`echo -e "${XCODEVERSION}\n12.0" | sort --version-sor
   FRAMEWORK_SCRIPT="build_universal_framework_modern.sh"
 else
   echo "Xcode 11 and below; using legacy script for building"
-  FRAMEWORK_SCRIPT="build_universal_framework.sh"
+  FRAMEWORK_SCRIPT="build_universal_framework_legacy.sh"
 fi
 
 "${SCRIPTPATH}/${FRAMEWORK_SCRIPT}" "$@"
