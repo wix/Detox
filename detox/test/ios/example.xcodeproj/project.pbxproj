@@ -201,6 +201,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				39B0445B1DAED76400431EC5 /* Detox.xcodeproj */,
 				13B07FAE1A68108700A75B9A /* example */,
 				39FC9CFD202899D10033C11A /* JS */,
 				39B71FCA24643AEA00CC9A88 /* exampleUITests */,
@@ -226,7 +227,6 @@
 			isa = PBXGroup;
 			children = (
 				39ED920022916437005EDB56 /* JavaScriptCore.framework */,
-				39B0445B1DAED76400431EC5 /* Detox.xcodeproj */,
 				6151F84D0064B768E9F02CEB /* Pods_example.framework */,
 				F5E33BEF8B2BE1E1D8A7E8BD /* Pods_example_ci.framework */,
 			);
