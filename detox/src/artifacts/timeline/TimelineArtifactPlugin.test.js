@@ -14,9 +14,9 @@ describe('TimelineArtifactPlugin', () => {
     },
   });
 
-  class MockTraceClass {
+  class MockChromeTracingClass {
     constructor() {
-      Object.assign(this, traceMock);
+      Object.assign(this, chromeTracingMock);
       this.startProcess.mockReturnValue(this);
       this.startThread.mockReturnValue(this);
       this.beginEvent.mockReturnValue(this);
@@ -24,11 +24,11 @@ describe('TimelineArtifactPlugin', () => {
     }
   }
 
-  let traceMock;
+  let chromeTracingMock;
   beforeEach(() => {
-    const Trace = jest.genMockFromModule('./Trace');
-    traceMock = new Trace();
-    jest.mock('./Trace', () => MockTraceClass);
+    const ChromeTracing = jest.genMockFromModule('./ChromeTracing');
+    chromeTracingMock = new ChromeTracing();
+    jest.mock('./ChromeTracing', () => MockChromeTracingClass);
   });
 
   class MockFileArtifactClass {
@@ -61,7 +61,7 @@ describe('TimelineArtifactPlugin', () => {
     it('should start trace process', () => {
       const config = configMock({pid, processName});
       new TimelineArtifactPlugin(config);
-      expect(traceMock.startProcess).toHaveBeenCalledWith({id: pid, name: processName});
+      expect(chromeTracingMock.startProcess).toHaveBeenCalledWith({id: pid, name: processName});
     });
 
     it('should not fail if no timeline config specified', () => {
@@ -74,7 +74,7 @@ describe('TimelineArtifactPlugin', () => {
     it('should not start trace process if disabled', () => {
       const config = configMock({enabled: false, pid, processName});
       new TimelineArtifactPlugin(config);
-      expect(traceMock.startProcess).not.toHaveBeenCalled();
+      expect(chromeTracingMock.startProcess).not.toHaveBeenCalled();
     })
   });
 
@@ -88,7 +88,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onBootDevice({deviceId, type});
 
-      expect(traceMock.startThread).toHaveBeenCalledWith({id: deviceId, name: type});
+      expect(chromeTracingMock.startThread).toHaveBeenCalledWith({id: deviceId, name: type});
     });
 
     it('should not start thread if disabled', async () => {
@@ -97,7 +97,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onBootDevice({deviceId, type});
 
-      expect(traceMock.startThread).not.toHaveBeenCalled();
+      expect(chromeTracingMock.startThread).not.toHaveBeenCalled();
     })
   });
 
@@ -112,7 +112,7 @@ describe('TimelineArtifactPlugin', () => {
       await timelineArtifactPlugin.onBootDevice({deviceId});
       await timelineArtifactPlugin.onRunDescribeStart({name});
 
-      expect(traceMock.beginEvent).toHaveBeenCalledWith(name, {deviceId});
+      expect(chromeTracingMock.beginEvent).toHaveBeenCalledWith(name, {deviceId});
     });
 
     it('should not begin trace event if disabled', async () => {
@@ -122,7 +122,7 @@ describe('TimelineArtifactPlugin', () => {
       await timelineArtifactPlugin.onBootDevice({deviceId});
       await timelineArtifactPlugin.onRunDescribeStart({name});
 
-      expect(traceMock.beginEvent).not.toHaveBeenCalled();
+      expect(chromeTracingMock.beginEvent).not.toHaveBeenCalled();
     });
   });
 
@@ -134,7 +134,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onRunDescribeFinish({name});
 
-      expect(traceMock.finishEvent).toHaveBeenCalledWith(name);
+      expect(chromeTracingMock.finishEvent).toHaveBeenCalledWith(name);
     });
   });
 
@@ -146,7 +146,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onTestStart({title});
 
-      expect(traceMock.beginEvent).toHaveBeenCalledWith(title);
+      expect(chromeTracingMock.beginEvent).toHaveBeenCalledWith(title);
     });
   });
 
@@ -159,7 +159,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       timelineArtifactPlugin.onTestDone({title, status});
 
-      expect(traceMock.finishEvent).toHaveBeenCalledWith(title, {status});
+      expect(chromeTracingMock.finishEvent).toHaveBeenCalledWith(title, {status});
     });
   });
 
@@ -183,7 +183,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onBeforeCleanup();
 
-      expect(traceMock.traces).toHaveBeenCalledWith({prefix: '['});
+      expect(chromeTracingMock.traces).toHaveBeenCalledWith({prefix: '['});
       expect(fileArtifactMock.save).toHaveBeenCalledWith(expectedArtifactPath, {append: true});
     });
 
@@ -195,11 +195,11 @@ describe('TimelineArtifactPlugin', () => {
       const mockTracesResult = 'mockTracesResult';
 
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
-      traceMock.traces.mockReturnValue(mockTracesResult);
+      chromeTracingMock.traces.mockReturnValue(mockTracesResult);
 
       await timelineArtifactPlugin.onBeforeCleanup();
 
-      expect(traceMock.traces).toHaveBeenCalledWith({prefix: ','});
+      expect(chromeTracingMock.traces).toHaveBeenCalledWith({prefix: ','});
       expect(fileArtifactMock.ctor).toHaveBeenCalledWith({temporaryData: mockTracesResult});
       expect(fileArtifactMock.save).toHaveBeenCalledWith(expectedArtifactPath, {append: true});
     });
@@ -212,7 +212,7 @@ describe('TimelineArtifactPlugin', () => {
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onBeforeCleanup();
 
-      expect(traceMock.traces).not.toHaveBeenCalled();
+      expect(chromeTracingMock.traces).not.toHaveBeenCalled();
       expect(fileArtifactMock.save).not.toHaveBeenCalled();
       expect(fs.access).not.toHaveBeenCalled();
     });

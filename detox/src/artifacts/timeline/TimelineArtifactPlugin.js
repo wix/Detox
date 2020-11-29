@@ -2,7 +2,7 @@ const _noop = require('lodash/noop');
 const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
-const Trace = require('./Trace');
+const Trace = require('./ChromeTracing');
 
 const traceStub = {
   startProcess: (stubArgs) => _noop,
@@ -21,25 +21,27 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
       processName = 'detox',
     } = (config.timeline || {});
 
-    this._pid = pid;
+    this._globalId = pid;
+    this._flowId = process.pid;
     this._deviceId = null;
 
     this._trace = this.enabled ? new Trace() : traceStub;
-    this._trace.startProcess({id: this._pid, name: processName});
+    this._trace
+      .startProcess({id: this._globalId, name: processName})
+      .startThread({id: '', name: `Worker #${this._flowId}`});
   }
 
   async onBootDevice(event) {
-    super.onBootDevice(event);
+    await super.onBootDevice(event);
     const {deviceId, type} = event;
 
-    this._deviceId = deviceId;
-
-    this._trace.startThread({id: deviceId, name: type});
+    // this._deviceId = deviceId;
+    // this._trace.startThread({id: deviceId, name: type});
   }
 
   async onRunDescribeStart(suite) {
     await super.onRunDescribeStart(suite);
-    this._trace.beginEvent(suite.name, {deviceId: this._deviceId});
+    this._trace.beginEvent(suite.name);
   }
 
   async onRunDescribeFinish(suite) {
@@ -64,7 +66,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
       return;
     }
 
-    const traceLogPath = await this.api.preparePathForArtifact(`detox_pid_${this._pid}.trace.json`);
+    const traceLogPath = await this.api.preparePathForArtifact(`detox_pid_${this._globalId}.trace.json`);
     const prefix = await this._logFileExists(traceLogPath) ? ',' : '[';
 
     const fileArtifact = new FileArtifact({temporaryData: this._trace.traces({prefix})});

@@ -1,4 +1,4 @@
-class Trace {
+class ChromeTracing {
   constructor({
     getTimeStampFn = Date.now,
     stringifyFn = JSON.stringify} = {}
@@ -59,4 +59,4 @@ class Trace {
   }
 }
 
-module.exports = Trace;
+module.exports = ChromeTracing;
