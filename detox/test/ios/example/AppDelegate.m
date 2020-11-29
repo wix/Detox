@@ -25,16 +25,7 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 		
 		[self addSubview:_annoyingLabel];
 		
-		NSLayoutYAxisAnchor* topAnchor;
-		if (@available(iOS 11.0, *))
-		{
-			topAnchor = self.safeAreaLayoutGuide.topAnchor;
-		}
-		else
-		{
-			topAnchor = self.topAnchor;
-		}
-		
+		NSLayoutYAxisAnchor* topAnchor = self.safeAreaLayoutGuide.topAnchor;;
 		NSLayoutConstraint* topConstraint = [_annoyingLabel.topAnchor constraintEqualToAnchor:topAnchor constant:-14];
 		topConstraint.priority = UILayoutPriorityRequired - 1;
 		[NSLayoutConstraint activateConstraints:@[

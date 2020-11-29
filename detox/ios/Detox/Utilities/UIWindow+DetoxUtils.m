@@ -13,35 +13,21 @@
 
 + (UIWindow*)dtx_keyWindow
 {
-	if(@available(iOS 13, *))
-	{
-		return UIWindowScene._keyWindowScene._keyWindow;
-	}
-	else
-	{
-		return UIWindow.keyWindow;
-	}
+	return UIWindowScene._keyWindowScene._keyWindow;
 }
 
 + (NSArray<UIWindow *> *)dtx_allKeyWindowSceneWindows
 {
-	id scene = nil;
-	
-	if (@available(iOS 13.0, *))
-	{
-		scene = UIWindowScene._keyWindowScene;
-	}
-	
+	UIWindowScene* scene = UIWindowScene._keyWindowScene;
 	return [self dtx_allWindowsForScene:scene];
 }
 
-+ (NSArray<UIWindow*>*)dtx_allWindowsForScene:(id)scene
++ (NSArray<UIWindow*>*)dtx_allWindowsForScene:(UIWindowScene*)scene
 {
 	NSMutableArray<UIWindow*>* windows = [[self dtx_allWindows] mutableCopy];
-	
-	if (@available(iOS 13.0, *))
+	scene = scene ?: UIWindowScene._keyWindowScene;
+	if(scene != nil)
 	{
-		scene = scene ?: UIWindowScene._keyWindowScene;
 		NSPredicate* predicate = [NSPredicate predicateWithFormat:@"windowScene == %@", scene];
 		
 		UIScene* keyboardScene = [UIWindowScene _keyboardWindowSceneForScreen:[scene screen] create:NO];
@@ -82,17 +68,11 @@
 
 + (void)dtx_enumerateKeyWindowSceneWindowsUsingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
 {
-	id scene = nil;
-	
-	if (@available(iOS 13.0, *))
-	{
-		scene = UIWindowScene._keyWindowScene;
-	}
-	
+	UIWindowScene* scene = UIWindowScene._keyWindowScene;
 	[self dtx_enumerateWindowsInScene:scene usingBlock:block];
 }
 
-+ (void)dtx_enumerateWindowsInScene:(id)scene usingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
++ (void)dtx_enumerateWindowsInScene:(UIWindowScene*)scene usingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
 {
 	[self _dtx_enumerateWindows:[self dtx_allWindowsForScene:scene] usingBlock:block];
 }

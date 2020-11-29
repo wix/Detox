@@ -194,20 +194,16 @@ static void _dtx_map_renderInContext(CALayer* self, SEL _cmd, CGContextRef ctx)
 	CGContextSaveGState(ctx);
 	CGContextBeginTransparencyLayer(ctx, nil);
 	CGContextSetAlpha(ctx, self.opacity);
-	if (@available(iOS 13.0, *)) {
-		[[UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
-			if(traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
-			{
-				return [UIColor colorWithRed:44.0 / 255.0 green:45.0 / 255.0 blue:47.0 / 255.0 alpha:1.0];
-			}
-			else
-			{
-				return [UIColor colorWithRed:250.0 / 255.0 green:245.0 / 255.0 blue:237.0 / 255.0 alpha:1.0];
-			}
-		}] setFill];
-	} else {
-		[UIColor.whiteColor setFill];
-	}
+	[[UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+		if(traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
+		{
+			return [UIColor colorWithRed:44.0 / 255.0 green:45.0 / 255.0 blue:47.0 / 255.0 alpha:1.0];
+		}
+		else
+		{
+			return [UIColor colorWithRed:250.0 / 255.0 green:245.0 / 255.0 blue:237.0 / 255.0 alpha:1.0];
+		}
+	}] setFill];
 	CGContextFillRect(ctx, self.bounds);
 	CGContextEndTransparencyLayer(ctx);
 	CGContextRestoreGState(ctx);
@@ -218,11 +214,7 @@ static void _dtx_backdrop_renderInContext(CALayer* self, SEL _cmd, CGContextRef 
 	CGContextSaveGState(ctx);
 	CGContextBeginTransparencyLayer(ctx, nil);
 	CGContextSetAlpha(ctx, self.opacity);
-	if (@available(iOS 13.0, *)) {
-		[UIColor.systemBackgroundColor setFill];
-	} else {
-		[UIColor.whiteColor setFill];
-	}
+	[UIColor.systemBackgroundColor setFill];
 	CGContextFillRect(ctx, self.bounds);
 	CGContextEndTransparencyLayer(ctx);
 	CGContextRestoreGState(ctx);

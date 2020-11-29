@@ -27,11 +27,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}()
 	
 	override init() {
-		if #available(iOS 13, *) {
-			webSocket = WebSocketImpl()
-		} else {
-			webSocket = WebSocketLegacyImpl()
-		}
+		webSocket = WebSocket()
 		
 		super.init()
 		

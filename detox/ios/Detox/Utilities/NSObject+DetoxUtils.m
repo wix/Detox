@@ -325,12 +325,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	NSMutableArray* windowDescriptions = [NSMutableArray new];
 	
-	id scene = nil;
-	if(@available(iOS 13.0, *))
-	{
-		scene = UIWindow.dtx_keyWindow.windowScene;
-	}
-	
+	UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;	
 	auto windows = [UIWindow dtx_allWindowsForScene:scene];
 	[windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[windowDescriptions addObject:[obj dtx_shortDescription]];

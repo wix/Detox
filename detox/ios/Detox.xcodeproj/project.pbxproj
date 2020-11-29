@@ -30,7 +30,6 @@
 		3946CD492566EBCB000A3606 /* NSObject+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946CD472566EBCB000A3606 /* NSObject+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946CD482566EBCB000A3606 /* NSObject+DetoxUtils.m */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
 		395AD81924B5EBEA002B382B /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 395AD81724B5EBEA002B382B /* fishhook.h */; };
 		395AD81A24B5EBEA002B382B /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 395AD81824B5EBEA002B382B /* fishhook.c */; };
@@ -89,7 +88,6 @@
 		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */; };
 		39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */; };
-		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39CA978C245B13CB00A7FC43 /* UIDevice+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CA978B245B13CB00A7FC43 /* UIDevice+DetoxActions.m */; };
 		39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -140,55 +138,6 @@
 			remoteGlobalIDString = A71946A61C7EF890003B7C4A;
 			remoteInfo = COSTouchVisualizer;
 		};
-		394767E61DBF992400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 81D6478D1D2CA78800690609;
-			remoteInfo = "SocketRocket-iOS";
-		};
-		394767E81DBF992400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2D4227621BB4358C000C1A6C;
-			remoteInfo = "SocketRocket-iOS-Dynamic";
-		};
-		394767EA1DBF992400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F668C880153E91210044DBAC;
-			remoteInfo = "SocketRocket-macOS";
-		};
-		394767EC1DBF992400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3345DC901C52ACD70083CCB8;
-			remoteInfo = "SocketRocket-tvOS";
-		};
-		394767EE1DBF992400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F6BDA802145900D200FE3253;
-			remoteInfo = "SocketRocketTests-iOS";
-		};
-		394767F01DBF992400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F62417E314D52F3C003CE997;
-			remoteInfo = TestChat;
-		};
-		394767F21DBF993400D72256 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D4227611BB4358C000C1A6C;
-			remoteInfo = "SocketRocket-iOS-Dynamic";
-		};
 		39D7BF9424EAE510003E0694 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */;
@@ -229,7 +178,6 @@
 				39D7BF9E24EAE520003E0694 /* LNViewHierarchyDumper.framework in CopyFiles */,
 				39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */,
 				39DC985C24BB906A00FFB224 /* DetoxSync.framework in CopyFiles */,
-				39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +210,6 @@
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
 		395AD81724B5EBEA002B382B /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
@@ -371,7 +318,6 @@
 			files = (
 				39DC985B24BB906A00FFB224 /* DetoxSync.framework in Frameworks */,
 				393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */,
-				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
 				39D7BF9D24EAE520003E0694 /* LNViewHierarchyDumper.framework in Frameworks */,
 				3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */,
 			);
@@ -484,22 +430,8 @@
 			children = (
 				3980D12D244C41E1004812DD /* IOKit.framework */,
 				393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */,
-				394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		394767DE1DBF992400D72256 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				394767E71DBF992400D72256 /* SocketRocket.framework */,
-				394767E91DBF992400D72256 /* SocketRocket.framework */,
-				394767EB1DBF992400D72256 /* SocketRocket.framework */,
-				394767ED1DBF992400D72256 /* SocketRocket.framework */,
-				394767EF1DBF992400D72256 /* SocketRocketTests-iOS.xctest */,
-				394767F11DBF992400D72256 /* TestChat.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		396D453C25238B430096E7FA /* Policy */ = {
@@ -747,7 +679,6 @@
 				39D7BF9C24EAE51B003E0694 /* PBXTargetDependency */,
 				39DC985E24BB907200FFB224 /* PBXTargetDependency */,
 				393E67021FC728360092EE89 /* PBXTargetDependency */,
-				394767F31DBF993400D72256 /* PBXTargetDependency */,
 			);
 			name = Detox;
 			productName = Detox;
@@ -800,10 +731,6 @@
 					ProductGroup = 39D7BF9124EAE510003E0694 /* Products */;
 					ProjectRef = 39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */;
 				},
-				{
-					ProductGroup = 394767DE1DBF992400D72256 /* Products */;
-					ProjectRef = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -819,48 +746,6 @@
 			fileType = wrapper.framework;
 			path = COSTouchVisualizer.framework;
 			remoteRef = 393E66E51FC5F3E90092EE89 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		394767E71DBF992400D72256 /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 394767E61DBF992400D72256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		394767E91DBF992400D72256 /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 394767E81DBF992400D72256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		394767EB1DBF992400D72256 /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 394767EA1DBF992400D72256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		394767ED1DBF992400D72256 /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 394767EC1DBF992400D72256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		394767EF1DBF992400D72256 /* SocketRocketTests-iOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "SocketRocketTests-iOS.xctest";
-			remoteRef = 394767EE1DBF992400D72256 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		394767F11DBF992400D72256 /* TestChat.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = TestChat.app;
-			remoteRef = 394767F01DBF992400D72256 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */ = {
@@ -985,11 +870,6 @@
 			name = COSTouchVisualizer;
 			targetProxy = 393E67011FC728360092EE89 /* PBXContainerItemProxy */;
 		};
-		394767F31DBF993400D72256 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SocketRocket-iOS-Dynamic";
-			targetProxy = 394767F21DBF993400D72256 /* PBXContainerItemProxy */;
-		};
 		39D7BF9C24EAE51B003E0694 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = LNViewHierarchyDumper;
@@ -1094,7 +974,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -1158,7 +1038,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"-Wno-error=unused-command-line-argument",
