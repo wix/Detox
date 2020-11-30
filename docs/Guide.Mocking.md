@@ -59,7 +59,7 @@ Whenever Metro runs with `RN_SRC_EXT` environment variable set, it will override
 
 #### Example of how to mock a module
 If you want to mock a module, here is an example of how to do it: 
-1. Follow the steps above on section [Configuration](#Configuration)
+1. Follow the steps above in the [Configuration](#Configuration) section
 2. Create a file that just imports the module, `YourNativeModuleProvider.js`, containing:
 ```
 
@@ -78,5 +78,5 @@ const YourNativeModule = {
 }
 export { YourNativeModule };
 ```
-4. Run Metro using the information on [Triggering](#Triggering)
+4. Run Metro using the information in [Triggering](#Triggering)
 5. On your simulator, enable debug mode and you should see "We are now using our mocked NativeModule"
