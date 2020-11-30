@@ -84,7 +84,7 @@
         "build": "set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 11 Pro"
+          "type": "iPhone 12 Pro Max"
         }
       },
       "ios.sim.release": {
@@ -92,7 +92,7 @@
         "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 11 Pro"
+          "type": "iPhone 12 Pro Max"
         },
         "session": {
           "debugSynchronization": 3000

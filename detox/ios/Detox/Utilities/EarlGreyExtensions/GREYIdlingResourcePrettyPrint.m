@@ -156,7 +156,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 		if(URLs.count > 0)
 		{
 			rv[@"urls"] = URLs;
-			rv[@"prettyPrint"]  = [NSString stringWithFormat:@"%@: %@", stateString, URLs];
+			rv[@"prettyPrint"]  = [NSString stringWithFormat:@"%@\nWaiting for network requests to finish: %@", stateString, URLs];
 		}
 	});
 
