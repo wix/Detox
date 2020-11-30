@@ -13,21 +13,25 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
   constructor(config) {
     super(config);
 
-    const {
-      pid = process.env.DETOX_START_TIMESTAMP,
-    } = (config.timeline || {});
-
-    this._globalId = pid;
     this._trace = this.enabled ? systrace : systraceStub;
   }
 
+  async onBootDevice(event) {
+    this._deviceName = event.deviceId;
+    return super.onBootDevice(event);
+  }
+
   async onRunDescribeStart(suite) {
+    if (suite.name === 'ROOT_DESCRIBE_BLOCK') {
+      this._trace.startSection(this._deviceName);
+    }
     await super.onRunDescribeStart(suite);
-    this._trace.startSection(suite.name);
   }
 
   async onRunDescribeFinish(suite) {
-    this._trace.endSection(suite.name);
+    if (suite.name === 'ROOT_DESCRIBE_BLOCK' && this._deviceName) {
+      this._trace.endSection(this._deviceName);
+    }
     await super.onRunDescribeFinish(suite);
   }
 
@@ -42,13 +46,13 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
   }
 
   async onBeforeCleanup() {
-    this._deviceId = null;
+    this._deviceName = null;
 
     if (!this.enabled) {
       return;
     }
 
-    const traceLogPath = await this.api.preparePathForArtifact(`detox_pid_${this._globalId}.trace.json`);
+    const traceLogPath = await this.api.preparePathForArtifact(`detox.trace.json`);
     const append = await this._logFileExists(traceLogPath);
 
     const fileArtifact = new FileArtifact({ temporaryData: this._trace.toArtifactExport(append) });

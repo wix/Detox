@@ -18,6 +18,7 @@ describe('Device', () => {
   beforeEach(async () => {
     jest.mock('fs');
     jest.mock('../utils/logger');
+    jest.mock('../systrace');
 
     fs = require('fs');
 

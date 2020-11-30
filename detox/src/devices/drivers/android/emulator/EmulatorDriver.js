@@ -17,6 +17,7 @@ const environment = require('../../../../utils/environment');
 const retry = require('../../../../utils/retry');
 const log = require('../../../../utils/logger').child({ __filename });
 const argparse = require('../../../../utils/argparse');
+const { systrace, systraceCall } = require('../../../../systrace');
 
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
@@ -83,10 +84,12 @@ class EmulatorDriver extends AndroidDriver {
   async _boot(avdName, adbName, bootPort) {
     const coldBoot = !!bootPort;
     if (coldBoot) {
-      await this._emuLauncher.launch(avdName, { port: bootPort });
+      await systraceCall('emulatorLaunch', () =>
+        this._emuLauncher.launch(avdName, { port: bootPort }));
     }
 
-    await this._waitForBootToComplete(adbName);
+    await systraceCall('awaitBoot', () =>
+      this._waitForBootToComplete(adbName));
     await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: avdName });
   }
 
