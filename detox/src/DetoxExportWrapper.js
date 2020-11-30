@@ -4,6 +4,8 @@ const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
+const ChromeTracing = require('./utils/ChromeTracing');
+const { systrace, systraceCall } = require('./systrace');
 
 const _detox = Symbol('detox');
 const _shouldLogInitError = Symbol('shouldLogInitError');
@@ -34,6 +36,11 @@ class DetoxExportWrapper {
   async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
+    const chromeTracing = new ChromeTracing()
+      .startProcess({ id: 0, name: 'detox' })
+      .startThread({ id: process.pid, name: `Worker #${process.pid}` });
+    systrace.init(chromeTracing);
+
     logger.reinitialize(Detox.global);
 
     try {
@@ -58,7 +65,7 @@ class DetoxExportWrapper {
       }
 
       this[_detox] = new Detox(resolvedConfig);
-      await this[_detox].init();
+      await systraceCall('detoxInit', () => this[_detox].init());
       Detox.none.setError(null);
 
       return this[_detox];

@@ -14,7 +14,7 @@ class ArtifactsManager {
     this._pathBuilder = pathBuilder;
   }
 
-  _instantitateArtifactPlugin(pluginFactory, pluginUserConfig) {
+  _instantiateArtifactPlugin(pluginFactory, pluginUserConfig) {
     const artifactsApi = {
       plugin: null,
 
@@ -63,7 +63,7 @@ class ArtifactsManager {
   registerArtifactPlugins(artifactPluginFactoriesMap) {
     for (const [key, factory] of Object.entries(artifactPluginFactoriesMap)) {
       const config = this._pluginConfigs[key];
-      this._artifactPlugins[key] = this._instantitateArtifactPlugin(factory, config);
+      this._artifactPlugins[key] = this._instantiateArtifactPlugin(factory, config);
     }
   }
 

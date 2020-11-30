@@ -2,14 +2,11 @@ const _noop = require('lodash/noop');
 const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
-const Trace = require('./ChromeTracing');
+const { systrace } = require('../../systrace');
 
-const traceStub = {
-  startProcess: (stubArgs) => _noop,
-  startThread: _noop,
-  beginEvent: _noop,
-  finishEvent: _noop,
-  traces: _noop,
+const systraceStub = {
+  startSection: _noop,
+  endSection: _noop,
 };
 
 class TimelineArtifactPlugin extends ArtifactPlugin {
@@ -18,44 +15,29 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
     const {
       pid = process.env.DETOX_START_TIMESTAMP,
-      processName = 'detox',
     } = (config.timeline || {});
 
     this._globalId = pid;
-    this._flowId = process.pid;
-    this._deviceId = null;
-
-    this._trace = this.enabled ? new Trace() : traceStub;
-    this._trace
-      .startProcess({id: this._globalId, name: processName})
-      .startThread({id: '', name: `Worker #${this._flowId}`});
-  }
-
-  async onBootDevice(event) {
-    await super.onBootDevice(event);
-    const {deviceId, type} = event;
-
-    // this._deviceId = deviceId;
-    // this._trace.startThread({id: deviceId, name: type});
+    this._trace = this.enabled ? systrace : systraceStub;
   }
 
   async onRunDescribeStart(suite) {
     await super.onRunDescribeStart(suite);
-    this._trace.beginEvent(suite.name);
+    this._trace.startSection(suite.name);
   }
 
   async onRunDescribeFinish(suite) {
-    this._trace.finishEvent(suite.name);
+    this._trace.endSection(suite.name);
     await super.onRunDescribeFinish(suite);
   }
 
   async onTestStart(testSummary) {
     await super.onTestStart(testSummary);
-    this._trace.beginEvent(testSummary.title);
+    this._trace.startSection(testSummary.title);
   }
 
   async onTestDone(testSummary) {
-    this._trace.finishEvent(testSummary.title, {status: testSummary.status});
+    this._trace.endSection(testSummary.title, {status: testSummary.status});
     await super.onTestDone(testSummary);
   }
 
@@ -67,10 +49,10 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
     }
 
     const traceLogPath = await this.api.preparePathForArtifact(`detox_pid_${this._globalId}.trace.json`);
-    const prefix = await this._logFileExists(traceLogPath) ? ',' : '[';
+    const append = await this._logFileExists(traceLogPath);
 
-    const fileArtifact = new FileArtifact({temporaryData: this._trace.traces({prefix})});
-    await fileArtifact.save(traceLogPath, {append: true});
+    const fileArtifact = new FileArtifact({ temporaryData: this._trace.toArtifactExport(append) });
+    await fileArtifact.save(traceLogPath, { append });
   }
 
   async _logFileExists(traceLogPath) {
