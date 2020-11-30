@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
-const { systraceCall } = require('../systrace');
+const { traceCall } = require('../testtrace');
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
@@ -16,13 +16,13 @@ class Device {
   async prepare() {
     await this.deviceDriver.prepare();
 
-    this._deviceId = await systraceCall('acquireDevice', () =>
+    this._deviceId = await traceCall('acquireDevice', () =>
       this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name));
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-    return systraceCall('launchApp', () =>
+    return traceCall('launchApp', () =>
       this._doLaunchApp(params, bundleId));
   }
   async _doLaunchApp(params, bundleId) {
@@ -187,26 +187,26 @@ class Device {
   async installApp(binaryPath, testBinaryPath) {
     const _binaryPath = binaryPath || this._deviceConfig.binaryPath;
     const _testBinaryPath = testBinaryPath || this._deviceConfig.testBinaryPath;
-    await systraceCall('appInstall', () =>
+    await traceCall('appInstall', () =>
       this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath));
   }
 
   async uninstallApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
-    await systraceCall('appUninstall', () =>
+    await traceCall('appUninstall', () =>
       this.deviceDriver.uninstallApp(this._deviceId, _bundleId));
   }
 
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      await systraceCall('installUtilBinaries', () =>
+      await traceCall('installUtilBinaries', () =>
         this.deviceDriver.installUtilBinaries(this._deviceId, paths));
     }
   }
 
   async reloadReactNative() {
-    await systraceCall('reloadRN', () =>
+    await traceCall('reloadRN', () =>
       this.deviceDriver.reloadReactNative());
   }
 

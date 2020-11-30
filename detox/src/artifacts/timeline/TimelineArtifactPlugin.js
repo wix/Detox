@@ -2,9 +2,10 @@ const _noop = require('lodash/noop');
 const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
-const { systrace } = require('../../systrace');
+const { trace } = require('../../testtrace');
+const ChromeTracingParser = require('../../utils/ChromeTracingParser');
 
-const systraceStub = {
+const traceStub = {
   startSection: _noop,
   endSection: _noop,
 };
@@ -13,7 +14,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
   constructor(config) {
     super(config);
 
-    this._trace = this.enabled ? systrace : systraceStub;
+    this._trace = this.enabled ? trace : traceStub;
   }
 
   async onBootDevice(event) {
@@ -55,7 +56,13 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
     const traceLogPath = await this.api.preparePathForArtifact(`detox.trace.json`);
     const append = await this._logFileExists(traceLogPath);
 
-    const fileArtifact = new FileArtifact({ temporaryData: this._trace.toArtifactExport(append) });
+    const parser = new ChromeTracingParser({
+      process: { id: 0, name: 'detox' },
+      thread: { id: process.pid, name: `Worker #${process.pid}` },
+    });
+    const data = parser.parse(trace.events, append);
+
+    const fileArtifact = new FileArtifact({ temporaryData: data });
     await fileArtifact.save(traceLogPath, { append });
   }
 
