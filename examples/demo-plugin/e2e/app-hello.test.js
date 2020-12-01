@@ -1,5 +1,5 @@
 describe('Example (hello)', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     await device.launchApp();
   });
 
