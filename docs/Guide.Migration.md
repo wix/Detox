@@ -4,9 +4,13 @@ We are improving Detox API as we go along, sometimes these changes require us to
 
 ## 18.0
 
-Detox now uses a custom synchronization system on iOS, [developed in-house](https://github.com/wix/DetoxSync), instead of Earl Grey. We have tested this system extensively internally, and are confident that it should work as expected. There are no known limitations with the new system.
+Detox now uses a custom synchronization system on iOS, [developed in-house](https://github.com/wix/DetoxSync); this is the second step in phasing out our Earl Grey usage. We have tested this system extensively internally, and are confident that it should work as expected. There are no known limitations with the new system.
 
 If you are seeing issues with the new sync system, please open an issue.
+
+Detox 18 also drops support for legacy Jest adapters. See [this issue](https://github.com/wix/Detox/issues/2469) for more information.
+
+Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
 
 ## 17.5.2
 
