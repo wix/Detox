@@ -6,7 +6,7 @@ const log = require('../../../src/utils/logger').child();
 class WorkerAssignReporter {
   constructor({ detox, env }) {
     this._detox = detox;
-    this._env = env;
+    this._testPath = env.testPath;
   }
 
   run_start(event, state) {
@@ -23,11 +23,7 @@ class WorkerAssignReporter {
   }
 
   _formatTestName() {
-    // TODO: check if there is a less intrusive way?
-    const JEST_MATCHERS_OBJECT = Symbol.for('$$jest-matchers-object');
-    const { testPath } = this._env.global[JEST_MATCHERS_OBJECT].state;
-    const testName = path.basename(testPath);
-
+    const testName = path.basename(this._testPath);
     return chalk.whiteBright(testName);
   }
 }
