@@ -4,7 +4,7 @@ Installing and using Detox implies certain side effects: cloned devices, cache f
 
 This checklist might come in handy whenever you have to make a clean uninstall after using Detox.
 
-### iOS Framework Cache
+### Detox Framework Cache
 
 Every `npm install detox` also has a `postinstall` phase, which builds (or unpacks) `Detox.framework` into `~/Library/Detox`.
 
@@ -55,7 +55,7 @@ To delete a simulator, you can use:
 xcrun simctl delete <uuid>
 ```
 
-### Remnants of artifacts
+### Remnants of Artifacts
 
 Forced exits may result in leaving some temporary files behind.
 
@@ -88,7 +88,7 @@ You can try deleting them using a simple wildcard like below or use your own:
 adb -s <emulator-port> shell rm -rf /sdcard/*_*.* 
 ```
 
-### npm install -g detox-cli
+### Detox CLI
 
 If you have installed the official CLI wrapper for Detox, then make sure to uninstall it as well:
 

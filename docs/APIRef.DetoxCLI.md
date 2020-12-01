@@ -24,6 +24,10 @@ detox <command> [options]
 | [build](#build)            | **Convenience method.** Run the command defined in 'build' property of the specified configuration. |
 | [test](#test)              | Initiating your test suite |
 | [run-server](#run-server)  | Starts a standalone detox server |
+| [build-framework-cache](#cache) | Builds the Detox cache |
+| [clean-framework-cache](#cache) | Cleans the Detox cache |
+| [rebuild-framework-cache](#cache) | Rebuilds the Detox cache |
+| [recorder](#recorder) | Starts a [Detox Recorder](https://github.com/wix/DetoxRecorder) recording |
 | clean-framework-cache      | **MacOS only.** Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'
 | build-framework-cache      | **MacOS only.** Build Detox.framework to ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions
 
@@ -148,5 +152,10 @@ Start a standalone Detox server
 | --no-color             | Disable colorful logs |
 | --help                 | Show help |
 
+### recorder
 
+If you have installed [Detox Recorder](https://github.com/wix/DetoxRecorder) in your project, you can use this command to start a new recording.
 
+### Cache
+
+Detox stores a cached version of its framework in `~/Library/Detox`. A different cache folder is used for different Xcode and Detox versions. Use the various cache commands to clean or build this cache.

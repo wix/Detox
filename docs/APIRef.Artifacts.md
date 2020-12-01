@@ -2,7 +2,7 @@
 
 Artifacts are various recordings during tests including, but not limited to, device logs, device screenshots and screen recordings (videos).
 
-## Enabling artifacts
+## Enabling Artifacts
 
 Artifacts are disabled by default. Two things are required to enable them:
 
@@ -11,7 +11,7 @@ Artifacts are disabled by default. Two things are required to enable them:
 
 2. Specify via launch arguments or a configuration object what artifacts you want to record.
 
-### Launch arguments
+### Launch Arguments
 
 * To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
 * To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
@@ -27,7 +27,7 @@ detox test --artifacts-location /tmp/detox_artifacts  # will also append /androi
 detox test --artifacts-location /tmp/detox_artifacts/ # won't append anything, hereby treating it as a root
 ```
 
-### Configuration object
+### Configuration Object
 
 Detox artifacts can be configured in a more advanced way with the `artifacts` configuration in `package.json`:
 
@@ -122,7 +122,7 @@ For more technical details, search for `ArtifactPathBuilder.js` in Detox source 
 
 The further subsections describe the `plugins` object structure.
 
-#### Screenshot plugin
+#### Screenshot Plugin
 
 Below is a default screenshot plugin object configuration, which is loaded implicitly and corresponds to the `manual` preset:
 
@@ -179,19 +179,19 @@ Hence, for example, if you wish to enable only `testDone` screenshots and leave 
 }
 ```
 
-#### Video plugin
+#### Video Plugin
 
 To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
 
-#### Log plugin
+#### Log Plugin
 
 To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
 
-#### Instruments plugin
+#### Instruments Plugin
 
 To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
 
-## Artifacts structure
+## Artifacts Structure
 
 1. **Artifacts root folder** is created per detox test run. If, for instance,`--artifacts-location /tmp` is used with `--configuration ios.sim.release` configuration on 14th June 2018 at 11:02:11 GMT+02, then the folder `/tmp/ios.sim.release.2018-06-14 09:02:11Z` is created.
 
@@ -224,11 +224,11 @@ artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert 
 
 ## Troubleshooting
 
-### Screenshots and videos do not appear in the artifacts folder
+### Screenshots and Videos Do Not Appear in the Artifacts Folder
 
 Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` calls in your `./e2e/init.js`. Check out the recommendations on how to do that for [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js) using the out-of-the-box adapters.
 
-### Video recording issues on CI
+### Video Recording Issues on CI
 
 For iOS, you might be getting errors on CI similar to this:
 
@@ -240,23 +240,19 @@ Unfortunately, this error is beyond our reach. To fix it, you have to enable har
 
 There might be a similar issue on Android when the screenrecording process exits with an error on CI. While the solution might be identical to the one above, also you might try to experiment with other emulator devices and Android OS versions to see if it helps.
 
-### Detox Instruments is installed in a custom location
+### Detox Instruments is Installed in a Custom Location
 
-If you have to use [Detox Instruments](https://github.com/wix/DetoxInstruments)
-installed in a custom location (e.g., inside `node_modules`), you can point Detox
-to it with the `DETOX_INSTRUMENTS_PATH` environment variable, as shown below:
+If you have to use [Detox Instruments](https://github.com/wix/DetoxInstruments) installed in a custom location, you can point Detox to it with the `DETOX_INSTRUMENTS_PATH` environment variable, as shown below:
 
 ```bash
 DETOX_INSTRUMENTS_PATH="/path/to/Detox Instruments.app" detox test ...
 ```
 
-Please mind that if **Detox Instruments** had been [integrated into
-your app](https://github.com/wix/DetoxInstruments/blob/master/Documentation/XcodeIntegrationGuide.md) (usually, that is in development builds), then the built-in version of [Detox Profiler framework](https://github.com/wix/DetoxInstruments/tree/master/Profiler) will always take priority over any custom path to Detox Instruments installation.
+> **Note:** If **Detox Instruments** had been [integrated into your project](https://github.com/wix/DetoxInstruments/blob/master/Documentation/XcodeIntegrationGuide.md), then the integrated [Detox Profiler framework](https://github.com/wix/DetoxInstruments/tree/master/Profiler) will be used when profiling with Detox.
 
+### Ctrl+C Does Not Terminate Detox+Jest Tests Correctly
 
-### Ctrl+C does not terminate Detox+Jest tests correctly
-
-This is a known issue.
+This is a known issue. 🤷‍♂️
 Video or log recording process under Detox+Jest is apt to keep running even after you press Ctrl+C and stop the tests.
 Furthermore, some of temporary files won't get erased (e.g. `/sdcard/83541_0.mp4` on Android emulator, or `/private/var/folders/lm/thz8hdxs4v3fppjh0fjc2twhfl_3x2/T/f12a4fcb-0d1f-4d98-866c-e7cea4942ade.png` on your Mac).
 It cannot be solved on behalf of Detox itself, because the problem has to do with how Jest runner works with its puppet processes.

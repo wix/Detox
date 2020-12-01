@@ -10,25 +10,25 @@
 
 > NOTE: Apps should not be submitted to the App Store with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove **Detox.framework** from your project.
 
-### Add 'None' Configuration to Detox Section
+### Add an `ios.none` Configuration to Detox Section
 
-Edit the Detox section in `package.json` to add the following configuration:
+Edit your Detox configuration to add the following configuration:
 
 ```json
 "ios.none": {
   "binaryPath": "ios",
   "type": "ios.none",
   "device": {
-    "type": "iPhone 8 Plus"
+    "type": "iPhone 12 Pro Max"
   },
   "session": {
     "server": "ws://localhost:8099",
-    "sessionId": "<your app's bundle identifier>"
+    "sessionId": <your app's bundle identifier>
   }
 }
 ```
 
-> NOTE: This configuration will not handle simulator and application lifecycle, they will have to be performed manually (e.g. running your application from Xcode).
+> **Note:** This configuration will not handle simulator and application lifecycle, they will have to be performed manually (e.g. running your application from Xcode).
 
 ### Run Detox Server Manually
 
@@ -38,11 +38,11 @@ Run the following command in your project root directory:
 detox run-server
 ```
 
-### Run Your Application from Xcode
+### Run Your Application From Xcode
 
 Run your application from Xcode as you normally do.
 
-> NOTE: Before running, place breakpoints you wish to debug.
+> **Note:** Before running, place breakpoints in places where you wish to debug.
 
 ### Run Detox Tests
 
@@ -52,4 +52,4 @@ Run the following command in your project root directory:
 detox test --configuration ios.none
 ```
 
-> NOTE: Tests that call `device.launchApp()` may fail as this API is unavailable when using `ios.none` configuration types. Instead, use `it.only` to run specific tests and restart your app from Xcode.
+> **Note:** Calls to `device.launchApp()` may fail as this API is unavailable when using `ios.none` configuration types. Instead, use `it.only` to run specific tests and restart your app from Xcode.

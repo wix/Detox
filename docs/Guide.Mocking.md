@@ -42,7 +42,7 @@ This replacement mechanism provides a lot of flexibility to change implementatio
                            process.env.RN_SRC_EXT.split(',') : []
     };
 
-    ```
+     ```
 
 2. Create `anyfile.e2e.js` alongside `anyfile.js`
 
@@ -55,7 +55,7 @@ Whenever Metro runs with `RN_SRC_EXT` environment variable set, it will override
 > RN_SRC_EXT=e2e.js react-native start
 > RN_SRC_EXT=e2e.js xcodebuild <params>
 > RN_SRC_EXT=e2e.js ./gradlew assembleRelease
-``` 
+```
 
 #### Example of how to mock a module
 If you want to mock a module, here is an example of how to do it: 

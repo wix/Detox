@@ -1,4 +1,4 @@
-# Mocha setup guide
+# Mocha Setup Guide
 
 This guide describes how to install [Mocha](mochajs.org) as a test runner to be used by Detox for running the E2E tests.
 
@@ -11,7 +11,7 @@ Note that while Mocha is lightweight and easy to set up, we nevertheless encoura
 
 **Disclaimer:** Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
 
-### 1. Install Mocha :coffee:
+### 1. Install Mocha
 
 Before starting with Mocha setup, be sure to complete the preliminary sections of the [Getting Started](Introduction.GettingStarted.md) guide.
 
@@ -19,7 +19,7 @@ Before starting with Mocha setup, be sure to complete the preliminary sections o
 npm install mocha --save-dev --no-package-lock
 ```
 
-### 2. Set up test-code scaffolds :building_construction:
+### 2. Set up Test-code Scaffolds
 
 ```sh
 detox init -r mocha

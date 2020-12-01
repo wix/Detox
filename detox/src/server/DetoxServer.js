@@ -6,7 +6,7 @@ const WebSocketServer = WebSocket.Server;
 
 const CLOSE_TIMEOUT = 10000;
 const ROLE_TESTER = 'tester';
-const ROLE_TESTEE = 'testee';
+const ROLE_TESTEE = 'app';
 
 class DetoxServer {
   constructor({ port, standalone = false }) {

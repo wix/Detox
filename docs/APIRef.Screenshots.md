@@ -36,7 +36,7 @@ function expectBitmapsToBeEqual(imagePath, expectedImagePath) {
 
 **Important:** The recommended, more practical way of doing this, is by utilizing more advanced 3rd-party image snapshotting & comparison tools such as [applitools](https://applitools.com).
 
-## Device-Level Screenshots
+## Device-level Screenshots
 
 Taking a screenshot of the entire screen can be done using a device-level API:
 
@@ -65,7 +65,7 @@ Means of creation of the final image as an artifact is tightly connected to the 
 * In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Members area should greet the member with an announcement/opened general section.png`.
 * In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Members area should greet the member with an announcement/opened general section.png`.
 
-### Caveats of this approach
+### Caveats
 
 This API well-captures all elements, although alongside surrounding "visual noise" such as the navigation bar, as can be seen in the image below:
 
@@ -98,7 +98,7 @@ async function setDemoMode() {
 
 > Note: This script implicitly assumes only one device is used, as device ID isn't specified anywhere (e.g. with `adb -s <id>`).
 
-## Element-Level Screenshots (Android Only)
+## Element-level Screenshots (Android Only)
 
 Taking a screenshot of a specific element can be simply done using an API similar to other element-interaction Detox API's:
 
