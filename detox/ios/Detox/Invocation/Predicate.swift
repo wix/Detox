@@ -199,14 +199,14 @@ class ValuePredicate : Predicate {
 	static let mapping : [String: (String, (Any) -> Any)] = [
 		Kind.id: ("accessibilityIdentifier", { return $0 }),
 		Kind.label: ("accessibilityLabel", { return $0 }),
-		Kind.text: ("text", { return $0 }),
+		Kind.text: ("dtx_text", { return $0 }),
 		Kind.value: ("accessibilityValue", { return $0 })
 	]
 	
 	static let translator : [String: String] = [
 		"accessibilityIdentifier": "identifier:",
 		"accessibilityLabel": "label",
-		"text": "text",
+		"dtx_text": "text",
 		"accessibilityValue": "value"
 	]
 	
