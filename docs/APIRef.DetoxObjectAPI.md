@@ -2,7 +2,7 @@
 
 `detox` is globally available in every test file, though currently it is only used in the setup/init file.
 
->NOTE: detox is test runner independent, and we encourge you to choose your own test runner, but for the sake of demonstration we will use `mocha`'s syntax.
+>NOTE: detox is test runner independent, and we encourage you to choose your own test runner, but for the sake of demonstration we will use `mocha`'s syntax.
 
 ### Methods
 
@@ -25,7 +25,7 @@ before(async () => {
 ```
 
 ##### Explicit imports during initialization
-Detox exports `device`, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overriden by Detox when this option is used.
+Detox exports `device`, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overridden by Detox when this option is used.
 
 ```js
 const detox = require('detox');
@@ -44,7 +44,7 @@ const {device, expect, element, by, waitFor} = require('detox');
 Use [this example](../examples/demo-react-native/e2eExplicitRequire) for initial setup
 
 
-#### Controlling first app intialization
+#### Controlling first app initialization
 By default `await detox.init([configOverride, userParams]);` will launch the installed app. If you wish to control when your app is launched, add `{launchApp: false}` param to your init.
 
 ```js
