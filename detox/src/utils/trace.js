@@ -1,6 +1,13 @@
 class Trace {
-  constructor(timestampProviderFn = Date.now) {
-    this.reset(timestampProviderFn);
+  constructor() {
+    this.events = [];
+  }
+
+  init(timestampProviderFn = Date.now) {
+    this._timestampProviderFn = timestampProviderFn;
+    this.events = [
+      this._event('init'),
+    ];
   }
 
   startSection(name, args) {
@@ -11,8 +18,7 @@ class Trace {
     this.events.push(this._event('end', name, args));
   }
 
-  reset(timestampProviderFn = Date.now) {
-    this._timestampProviderFn = timestampProviderFn;
+  reset() {
     this.events = [
       this._event('init'),
     ];

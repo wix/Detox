@@ -1,5 +1,6 @@
 class FakeTrace {
   constructor() {
+    this.init = jest.fn();
     this.startSection = jest.fn();
     this.endSection = jest.fn();
     this.events = [];

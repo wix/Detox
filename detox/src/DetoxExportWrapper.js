@@ -35,6 +35,7 @@ class DetoxExportWrapper {
   async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
+    trace.init();
     logger.reinitialize(Detox.global);
 
     try {
@@ -56,12 +57,6 @@ class DetoxExportWrapper {
 
       if (configError) {
         throw configError;
-      }
-
-      // TODO Figure out a better way to do this
-      if (resolvedConfig.deviceConfig.type === 'stub') {
-        const StubDriver = require('./devices/drivers/stub/StubDriver');
-        trace.reset(StubDriver.getTraceTimestampFn());
       }
 
       this[_detox] = new Detox(resolvedConfig);

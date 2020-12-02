@@ -3,31 +3,13 @@ const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArti
 const tempfile = require('tempfile');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
-const { Trace } = require('../../../utils/trace');
 
 const sleepVeryLittle = () => sleep(10);
 const sleepALittle = () => sleep(100);
 const sleepSomeTime = () => sleep(1000);
 const sleepALot = () => sleep(2000);
 
-class TimestampStub {
-  constructor() {
-    this._now = 1000;
-  }
-
-  now() {
-    const now = this._now;
-    this._now += 100;
-    return now;
-  }
-}
-
 class StubDriver extends DeviceDriverBase {
-  static getTraceTimestampFn() {
-    const timestampStub = new TimestampStub();
-    return () => timestampStub.now();
-  }
-
   constructor(config) {
     super(config);
 
@@ -44,10 +26,8 @@ class StubDriver extends DeviceDriverBase {
   }
 
   declareArtifactPlugins() {
-    const timestampStub = new TimestampStub();
-    const trace = new Trace(() => timestampStub.now());
     return {
-      timeline: (api) => new TimelineArtifactPlugin({ api, trace }),
+      timeline: (api) => new TimelineArtifactPlugin({ api, useFakeTimestamps: true, }),
     };
   }
 

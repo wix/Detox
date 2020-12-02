@@ -4,8 +4,9 @@ const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const { trace } = require('../../utils/trace');
 const ChromeTracingExporter = require('../../utils/ChromeTracingExporter');
+const fakeTimestampsProvider = require('../../utils/fakeTimestampsProvider');
 
-const traceStub = {
+const traceNoop = {
   startSection: _noop,
   endSection: _noop,
 };
@@ -13,11 +14,13 @@ const traceStub = {
 class TimelineArtifactPlugin extends ArtifactPlugin {
   constructor(config) {
     super(config);
+    this._useFakeTimestamps = config.useFakeTimestamps;
 
-    this._trace = this.enabled ? trace : traceStub;
+    const threadId = process.env.JEST_WORKER_ID || process.pid;
+    this._trace = this.enabled ? trace : traceNoop;
     this._traceExporter = new ChromeTracingExporter({
       process: { id: 0, name: 'detox' },
-      thread: { id: process.pid, name: `Worker #${process.pid}` },
+      thread: { id: threadId, name: `Worker #${threadId}` },
     });
   }
 
@@ -57,7 +60,8 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
     const traceLogPath = await this.api.preparePathForArtifact(`detox.trace.json`);
     const append = await this._logFileExists(traceLogPath);
-    const data = this._traceExporter.export(trace.events, append);
+    const events = this._useFakeTimestamps ? this._transformEventTimestamps(trace.events) : trace.events;
+    const data = this._traceExporter.export(events, append);
 
     const fileArtifact = new FileArtifact({ temporaryData: data });
     await fileArtifact.save(traceLogPath, { append });
@@ -65,6 +69,13 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
   async _logFileExists(traceLogPath) {
     return fs.access(traceLogPath).then(() => true).catch(() => false);
+  }
+
+  _transformEventTimestamps(events) {
+    return events.map((event) => ({
+      ...event,
+      ts: fakeTimestampsProvider(),
+    }));
   }
 
   /** @param {string} config */

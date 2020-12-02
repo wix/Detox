@@ -5,6 +5,10 @@ yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
 source $(dirname "$0")/ci.sh
 
+pushd detox/test
+run_f "npm run integration"
+popd
+
 pushd detox/android
 run_f "./gradlew test"
 popd
