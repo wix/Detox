@@ -7,6 +7,7 @@
 //
 
 @import UIKit;
+#import "NSObject+DontCrash.h"
 #import "NSObject+DetoxUtils.h"
 #import "UISlider+DetoxUtils.h"
 #import "DTXAppleInternals.h"
@@ -190,6 +191,23 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 }
 
+- (NSString *)dtx_text
+{
+	id rv = [self text];
+	if(rv == nil || [rv isKindOfClass:NSString.class])
+	{
+		return rv;
+	}
+	
+	if([rv isKindOfClass:NSAttributedString.class])
+	{
+		return [(NSAttributedString*)rv string];
+	}
+	
+	//Unsupported
+	return nil;
+}
+
 - (BOOL)dtx_isEnabled
 {
 	return self.dtx_view.dtx_isEnabled;
@@ -230,14 +248,18 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	
-	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]];
+	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]];
 	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 		if([obj isKindOfClass:NSNull.class])
 		{
 			return;
 		}
 		
-		if([key isEqualToString:@"accessibilityLabel"])
+		if([key isEqualToString:@"dtx_text"])
+		{
+			rv[@"text"] = obj;
+		}
+		else if([key isEqualToString:@"accessibilityLabel"])
 		{
 			rv[@"label"] = obj;
 		}
