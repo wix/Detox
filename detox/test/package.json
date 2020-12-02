@@ -157,6 +157,14 @@
         "device": {
           "avdName": "Pixel_API_28"
         }
+      },
+      "integration.tests": {
+        "binaryPath": "",
+        "build" : "",
+        "type": "stub",
+        "device": {
+          "type": "stub"
+        }
       }
     }
   }

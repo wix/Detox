@@ -1,9 +1,6 @@
 class Trace {
   constructor(timestampProviderFn = Date.now) {
-    this._timestampProviderFn = timestampProviderFn;
-    this.events = [
-      this._event('init'),
-    ];
+    this.reset(timestampProviderFn);
   }
 
   startSection(name, args) {
@@ -14,7 +11,8 @@ class Trace {
     this.events.push(this._event('end', name, args));
   }
 
-  reset() {
+  reset(timestampProviderFn = Date.now) {
+    this._timestampProviderFn = timestampProviderFn;
     this.events = [
       this._event('init'),
     ];
@@ -30,7 +28,7 @@ class Trace {
   }
 }
 
-const trace = new Trace();
+let trace = new Trace();
 async function traceCall(sectionName, func) {
   trace.startSection(sectionName);
   try {

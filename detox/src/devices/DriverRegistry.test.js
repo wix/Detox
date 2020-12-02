@@ -2,6 +2,7 @@ jest.mock('./drivers/ios/IosDriver');
 jest.mock('./drivers/ios/SimulatorDriver');
 jest.mock('./drivers/android/emulator/EmulatorDriver');
 jest.mock('./drivers/android/attached/AttachedAndroidDriver');
+jest.mock('./drivers/stub/StubDriver');
 jest.mock('../utils/resolveModuleFromPath');
 
 describe('DriverRegistry', () => {
@@ -52,6 +53,14 @@ describe('DriverRegistry', () => {
 
       expect(driver).toBeInstanceOf(EmulatorDriver);
       expect(EmulatorDriver).toHaveBeenCalledWith(opts);
+    });
+
+    it('should resolve "stub" to StubDriver', () => {
+      const StubDriver = require('./drivers/stub/StubDriver');
+      const driver = registry.resolve('stub', opts);
+
+      expect(driver).toBeInstanceOf(StubDriver);
+      expect(StubDriver).toHaveBeenCalledWith(opts);
     });
 
     it('should try to resolve unknown driver as a node.js dependency', () => {

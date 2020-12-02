@@ -4,7 +4,7 @@ const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
-const { traceCall } = require('./utils/trace');
+const { trace, traceCall } = require('./utils/trace');
 
 const _detox = Symbol('detox');
 const _shouldLogInitError = Symbol('shouldLogInitError');
@@ -56,6 +56,12 @@ class DetoxExportWrapper {
 
       if (configError) {
         throw configError;
+      }
+
+      // TODO Figure out a better way to do this
+      if (resolvedConfig.deviceConfig.type === 'stub') {
+        const StubDriver = require('./devices/drivers/stub/StubDriver');
+        trace.reset(StubDriver.getTraceTimestampFn());
       }
 
       this[_detox] = new Detox(resolvedConfig);

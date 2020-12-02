@@ -101,6 +101,7 @@
       "EmulatorDriver.js",
       "IosDriver.js",
       "SimulatorDriver.js",
+      "StubDriver",
       "AndroidDeviceAllocator.js",
       "MissingDetox.js",
       "EmulatorTelnet.js",
@@ -124,7 +125,8 @@
       "src/ios/matchers.js",
       "appdatapath.js",
       ".mock.js",
-      "src/ios/expect.js"
+      "src/ios/expect.js",
+      "src/stub/expect.js"
     ],
     "resetMocks": true,
     "resetModules": true,

@@ -17,6 +17,7 @@ describe('TimelineArtifactPlugin', () => {
   let chromeTracingExporterObj;
   let FileArtifact;
   let fileArtifactObj;
+  let Trace;
   let trace;
   let TimelineArtifactPlugin;
   let uutEnabled;
@@ -35,11 +36,12 @@ describe('TimelineArtifactPlugin', () => {
     FileArtifact = require('../templates/artifact/FileArtifact');
     fileArtifactObj = () => latestInstanceOf(FileArtifact);
 
-    const { Trace } = jest.genMockFromModule('../../utils/trace');
-    const mockTrace = new Trace();
+    const { Trace: MockTrace } = jest.genMockFromModule('../../utils/trace');
+    const mockTrace = new MockTrace();
     jest.mock('../../utils/trace', () => ({
       trace: mockTrace,
     }));
+    Trace = MockTrace;
     trace = mockTrace;
 
     TimelineArtifactPlugin = require('./TimelineArtifactPlugin');
