@@ -2,8 +2,7 @@ class ChromeTracingParser {
   constructor({
     process,
     thread,
-    stringifyFn = JSON.stringify
-  } = {}) {
+  }) {
     this._process = {
       id: process.id,
       name: process.name,
@@ -12,34 +11,27 @@ class ChromeTracingParser {
       id: thread.id,
       name: thread.name,
     };
-    this._stringifyFn = stringifyFn;
   }
 
-  parse(events, append) {
-    const _events = events.flatMap(this._parseEvent.bind(this));
-    const json = this._stringifyFn(_events);
+  parse(traceEvents, append) {
+    const _events = traceEvents.flatMap(this._parseEvent.bind(this));
+    const json = JSON.stringify(_events);
     const prefix = (append ? ',' : '[');
     return `${prefix}${json.slice(1, -1)}`;
   }
 
   _parseEvent(event) {
     const { name, ts, args, type } = event;
-    if (type === 'start') {
-      return this._event(name, 'B', ts, args);
+    switch (type) {
+      case 'start': return this._event(name, 'B', ts, args);
+      case 'end': return this._event(name, 'E', ts, args);
+      case 'init': return [
+          this._event('process_name', 'M', ts, { name: this._process.name }),
+          this._event('thread_name', 'M', ts, { name: this._thread.name }),
+        ];
+      default:
+        throw new Error(`Invalid type '${type}' in event: ${event}`);
     }
-
-    if (type === 'end') {
-      return this._event(name, 'E', ts, args);
-    }
-
-    if (type === 'init') {
-      return [
-        this._event('process_name', 'M', {name: this._process.name}),
-        this._event('thread_name', 'M', {name: this._thread.name}),
-      ];
-    }
-
-    throw new Error(`Invalid event type '${type}' in event: ${event}`);
   }
 
   _event(name, phase, ts, args) {

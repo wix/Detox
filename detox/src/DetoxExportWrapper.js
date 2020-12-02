@@ -4,7 +4,7 @@ const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
-const { traceCall } = require('./testtrace');
+const { traceCall } = require('./utils/trace');
 
 const _detox = Symbol('detox');
 const _shouldLogInitError = Symbol('shouldLogInitError');

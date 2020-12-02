@@ -1,6 +1,6 @@
-// TODO unit test
-class TestTrace {
-  constructor() {
+class Trace {
+  constructor(timestampProviderFn = Date.now) {
+    this._timestampProviderFn = timestampProviderFn;
     this.events = [
       this._event('init'),
     ];
@@ -14,17 +14,23 @@ class TestTrace {
     this.events.push(this._event('end', name, args));
   }
 
+  reset() {
+    this.events = [
+      this._event('init'),
+    ];
+  }
+
   _event(type, name, args) {
     return {
       type,
-      ts: Date.now(),
+      ts: this._timestampProviderFn(),
       name,
       args,
     }
   }
 }
 
-const trace = new TestTrace();
+const trace = new Trace();
 async function traceCall(sectionName, func) {
   trace.startSection(sectionName);
   try {
@@ -38,6 +44,7 @@ async function traceCall(sectionName, func) {
 }
 
 module.exports = {
+  Trace,
   trace,
   traceCall,
 };

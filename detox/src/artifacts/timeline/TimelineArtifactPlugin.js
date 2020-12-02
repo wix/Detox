@@ -2,7 +2,7 @@ const _noop = require('lodash/noop');
 const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
-const { trace } = require('../../testtrace');
+const { trace } = require('../../utils/trace');
 const ChromeTracingParser = require('../../utils/ChromeTracingParser');
 
 const traceStub = {
@@ -15,6 +15,10 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
     super(config);
 
     this._trace = this.enabled ? trace : traceStub;
+    this._traceParser = new ChromeTracingParser({
+      process: { id: 0, name: 'detox' },
+      thread: { id: process.pid, name: `Worker #${process.pid}` },
+    });
   }
 
   async onBootDevice(event) {
@@ -23,22 +27,20 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
   }
 
   async onRunDescribeStart(suite) {
-    if (suite.name === 'ROOT_DESCRIBE_BLOCK') {
-      this._trace.startSection(this._deviceName);
-    }
+    const sectionName = (suite.name === 'ROOT_DESCRIBE_BLOCK' ? this._deviceName : suite.name);
+    this._trace.startSection(sectionName);
     await super.onRunDescribeStart(suite);
   }
 
   async onRunDescribeFinish(suite) {
-    if (suite.name === 'ROOT_DESCRIBE_BLOCK' && this._deviceName) {
-      this._trace.endSection(this._deviceName);
-    }
+    const sectionName = (suite.name === 'ROOT_DESCRIBE_BLOCK' ? this._deviceName : suite.name);
+    this._trace.endSection(sectionName);
     await super.onRunDescribeFinish(suite);
   }
 
   async onTestStart(testSummary) {
-    await super.onTestStart(testSummary);
     this._trace.startSection(testSummary.title);
+    await super.onTestStart(testSummary);
   }
 
   async onTestDone(testSummary) {
@@ -55,12 +57,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
     const traceLogPath = await this.api.preparePathForArtifact(`detox.trace.json`);
     const append = await this._logFileExists(traceLogPath);
-
-    const parser = new ChromeTracingParser({
-      process: { id: 0, name: 'detox' },
-      thread: { id: process.pid, name: `Worker #${process.pid}` },
-    });
-    const data = parser.parse(trace.events, append);
+    const data = this._traceParser.parse(trace.events, append);
 
     const fileArtifact = new FileArtifact({ temporaryData: data });
     await fileArtifact.save(traceLogPath, { append });

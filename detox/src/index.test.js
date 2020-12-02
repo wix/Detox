@@ -1,10 +1,10 @@
 const _ = require('lodash');
 
 jest.mock('./utils/logger');
+jest.mock('./utils/trace');
 jest.mock('./configuration');
 jest.mock('./utils/MissingDetox');
 jest.mock('./Detox');
-jest.mock('./systrace');
 
 const testUtils = {
   randomObject: () => ({ [Math.random()]: Math.random() }),

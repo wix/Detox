@@ -1,4 +1,4 @@
-class FakeTestTrace {
+class FakeTrace {
   constructor() {
     this.startSection = jest.fn();
     this.endSection = jest.fn();
@@ -8,6 +8,6 @@ class FakeTestTrace {
 const traceCall = jest.fn().mockImplementation((_, fn) => fn());
 
 module.exports = {
-  trace: new FakeTestTrace(),
+  trace: new FakeTrace(),
   traceCall,
 }

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
-const { traceCall } = require('../testtrace');
+const { traceCall } = require('../utils/trace');
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {

@@ -17,7 +17,7 @@ const environment = require('../../../../utils/environment');
 const retry = require('../../../../utils/retry');
 const log = require('../../../../utils/logger').child({ __filename });
 const argparse = require('../../../../utils/argparse');
-const { trace, traceCall } = require('../../../../testtrace');
+const { traceCall } = require('../../../../utils/trace');
 
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
