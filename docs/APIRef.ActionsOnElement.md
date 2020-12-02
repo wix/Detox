@@ -60,7 +60,7 @@ await element(by.id('tappable')).longPress(1500);
 
 Simulates a swipe on the element with the provided options.
 
-`direction` — the direction of the swipe (reuqired, valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
+`direction` — the direction of the swipe (required, valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
 `speed` — the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
 `normalizedOffset` — swipe amount relative to the screen width/height (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
 `normalizedStartingPointX` — X coordinate of swipe starting point, relative to the view width (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
