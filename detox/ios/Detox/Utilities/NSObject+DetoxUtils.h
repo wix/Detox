@@ -44,6 +44,8 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 - (void)dtx_assertHittable;
 - (void)dtx_assertHittableAtPoint:(CGPoint)point;
 
+@property (nonatomic, copy, readonly) NSString* dtx_text;
+
 @property (nonatomic, readonly) BOOL dtx_isEnabled;
 - (void)dtx_assertEnabled;
 
