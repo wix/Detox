@@ -38,10 +38,10 @@ class Expect {
   }
 }
 
-class LoginTestee {
+class LoginApp {
   constructor(sessionId) {
     this.type = 'login';
-    this.params = { sessionId, role: 'testee' };
+    this.params = { sessionId, role: 'app' };
     this.messageId;
   }
   async handle(response) {
@@ -49,7 +49,7 @@ class LoginTestee {
   }
 }
 
-class PluginTestee {
+class PluginApp {
   constructor(config) {
     this.configuration = config.client.configuration;
     this.client = new Client(this.configuration);
@@ -58,7 +58,7 @@ class PluginTestee {
   async connect() {
     await this.client.ws.open();
 
-    // NOTE: This is a sample way to handle events in a custom Testee client, but not needed
+    // NOTE: This is a sample way to handle events in a custom app client, but not needed
     // for the test suite
     // this.client.ws.ws.on('message', async (str) => {
     //   const sendResponse = async (response) => {
@@ -99,7 +99,7 @@ class PluginTestee {
     //   }
     // });
 
-    await this.client.sendAction(new LoginTestee(this.configuration.sessionId));
+    await this.client.sendAction(new LoginApp(this.configuration.sessionId));
   }
 }
 
@@ -107,7 +107,7 @@ class PluginDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
-    this.testee = new PluginTestee(config);
+    this.app = new PluginApp(config);
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
@@ -141,7 +141,7 @@ class PluginDriver extends DeviceDriverBase {
   }
 
   async waitUntilReady() {
-    await this.testee.connect();
+    await this.app.connect();
   }
 }
 

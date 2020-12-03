@@ -434,7 +434,7 @@ More specifically, when this happens:
 3. The last reported Detox-logs before time-out would indicate the device failing to connect to the Detox tester on the host. For example:
 
 ```sh
-detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=testee not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
+detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=app not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
 ```
 
 * The main step for getting this fixed is to **revisit [step 6](#6-enable-clear-text-unencrypted-traffic-for-detox) in this guide**, which discusses network-security.

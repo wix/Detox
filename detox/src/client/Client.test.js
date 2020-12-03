@@ -159,11 +159,11 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(3);
   });
 
-  it(`cleanup() - if connected should accept testeeDisconnected action too`, async () => {
+  it(`cleanup() - if connected should accept appDisconnected action too`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
     await client.waitUntilReady();
-    client.ws.send.mockReturnValueOnce(response("testeeDisconnected", {}, 2));
+    client.ws.send.mockReturnValueOnce(response("appDisconnected", {}, 2));
     await client.cleanup();
 
     expect(client.ws.send).toHaveBeenCalledTimes(3);

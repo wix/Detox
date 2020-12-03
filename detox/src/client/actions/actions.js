@@ -101,7 +101,7 @@ class Cleanup extends Action {
   }
 
   async handle(response) {
-    if (response.type !== 'testeeDisconnected') {
+    if (response.type !== 'appDisconnected') {
       this.expectResponseOfType('cleanupDone');
     }
   }
@@ -129,7 +129,7 @@ class Invoke extends Action {
       case 'error':
         throw new Error(response.params.error);
       default:
-        throw new Error(`tried to invoke an action on testee, got an unsupported response: ${JSON.stringify(response)}`);
+        throw new Error(`tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }

@@ -120,6 +120,6 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	}
 	
 	func onDidOpen() {
-		sendAction("login", params: ["sessionId": sessionId!, "role": "testee"], messageId: 0)
+		sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
 	}
 }
