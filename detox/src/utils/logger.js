@@ -117,6 +117,8 @@ function init() {
 
   tryOverrideConsole(logger, global);
 
+  logger.getDetoxLevel = () => level;
+
   logger.reinitialize = (global) => {
     if (jsonFileStreamPath) {
       fs.ensureFileSync(jsonFileStreamPath);

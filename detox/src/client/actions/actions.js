@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const log = require('../../utils/logger').child({ __filename });
+const logger = require('../../utils/logger');
+const log = logger.child({ __filename });
 const bunyan = require('bunyan');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
@@ -117,9 +118,9 @@ class Invoke extends Action {
         let message = 'Test Failed: ' + response.params.details;
         if (response.params.viewHierarchy) {
           /* istanbul ignore next */
-          message += (log.level() <= bunyan.DEBUG ?
-              '\nView Hierarchy:\n' + response.params.viewHierarchy :
-              '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.');
+          message += /^(debug|trace)$/.test(logger.getDetoxLevel())
+            ? '\nView Hierarchy:\n' + response.params.viewHierarchy
+            : '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
         }
 
         throw new Error(message);
