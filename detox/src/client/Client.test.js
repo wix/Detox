@@ -25,7 +25,7 @@ describe('Client', () => {
 
     Client = require('./Client');
     log = require('../utils/logger');
-    log.level.mockReturnValue(bunyan.DEBUG)
+    log.getDetoxLevel = () => 'debug';
   });
 
   it(`reloadReactNative() - should receive ready from device and resolve`, async () => {
@@ -298,7 +298,7 @@ describe('Client', () => {
   });
 
   it(`execute() - "testFailed" result should throw with view-hierarchy hint`, async () => {
-    log.level.mockReturnValue(bunyan.INFO);
+    log.getDetoxLevel = () => 'info';
 
     await connect();
     client.ws.send.mockReturnValueOnce(response("testFailed",  {details: "this is an error", viewHierarchy: 'mock-hierarchy'}, 1));
