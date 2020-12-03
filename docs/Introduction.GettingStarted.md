@@ -18,7 +18,7 @@ There's more than one way to install node.js:
 2. Use [homebrew](https://formulae.brew.sh/formula/node)
 3. Use `nvm` - if you need to allow for several versions to be installed on a single machine
 
-We recommened using homebrew:
+We recommend using homebrew:
 
  ```sh
 brew update && brew install node

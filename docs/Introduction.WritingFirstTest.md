@@ -47,7 +47,7 @@ await element(by.id('MyUniqueId123')).tap();
 
 ## Step 5: Set an expectation on the result
 
-After perfoming the action, the app will most likely do something. The process might also take a little time - for example if we're logging in, there would be a server request. The great thing about detox is that you're not supposed to worry about synchronization and how much time actions take. Detox will monitor the app and continue to the next line in your test only when the app completes pending operations and becomes idle.
+After performing the action, the app will most likely do something. The process might also take a little time - for example if we're logging in, there would be a server request. The great thing about detox is that you're not supposed to worry about synchronization and how much time actions take. Detox will monitor the app and continue to the next line in your test only when the app completes pending operations and becomes idle.
 
 The most natural expectation is to verify that some UI element has eventually appeared on screen as a result. Like before, we'll need to match this element first. We can keep using `testID` for this purpose with `element(by.id('AnotherUniqueId456'))`.
 

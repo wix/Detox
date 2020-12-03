@@ -14,7 +14,7 @@ We'll only concentrate on mocking by changing JavaScript files under React Nativ
 
 This replacement mechanism provides a lot of flexibility to change implementations for testing without affecting your production code. For more information and detailed usage instructions, [read the docs](https://github.com/wix/react-native-repackager/blob/master/README.md).
 
-**Note:** Repackager is available for RN 0.44 and 0.51. It is nativley supported in RN 0.55 an up.
+**Note:** Repackager is available for RN 0.44 and 0.51. It is natively supported in RN 0.55 an up.
 
 
 ### Usage
@@ -61,7 +61,7 @@ Whenever Metro runs with `RN_SRC_EXT` environment variable set, it will override
 If you want to mock a module, here is an example of how to do it: 
 1. Follow the steps above in the [Configuration](#Configuration) section
 2. Create a file that just imports the module, `YourNativeModuleProvider.js`, containing:
-```
+```js
 
 import { NativeModules } from 'react-native';
 
@@ -69,7 +69,7 @@ export const { YourNativeModule } = NativeModules;
 
 ```
 3. Create a file on the same directory - `YourNativeModuleProvider.e2e.js`, containing:
-```
+```js
 // You can add a console.log here so it shows on your react-native console:
 console.log('We are now using our mocked NativeModule')
 

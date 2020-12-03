@@ -30,7 +30,7 @@ describe('Launch with push notification', () => {
 
 Use the `sendUserNotification()` method to send notification to **running** app. Notifications can be sent to an active or a background app.
 
-> Note: while the name `sendUserNotification()` is not very idiodmatic on Android, as notification data is not "sent" to apps (rather, it is bundled into an Activity/Service launch Intent as Intent-extras), this unified API is used, for the time being, for both platforms equivalently. With [plans of a more extensive support](https://github.com/wix/Detox/issues/2141) for Android, we estimate it would be deprecated when the time comes.
+> Note: while the name `sendUserNotification()` is not very idiomatic on Android, as notification data is not "sent" to apps (rather, it is bundled into an Activity/Service launch Intent as Intent-extras), this unified API is used, for the time being, for both platforms equivalently. With [plans of a more extensive support](https://github.com/wix/Detox/issues/2141) for Android, we estimate it would be deprecated when the time comes.
 
 ```js
 await device.sendUserNotification(notification);
@@ -43,7 +43,7 @@ describe('Foreground user notifications', () => {
   it('should handle the local notification from inside the app', async () => {
     await device.launchApp();
     await device.sendUserNotification(localNotification);
-    await expect(element(by.text('from local notificaton'))).toBeVisible();
+    await expect(element(by.text('from local notification'))).toBeVisible();
    });
 });
 ```

@@ -8,4 +8,4 @@ There are multiple recommended ways to work with Detox and make it a part of you
 
 * [Running Tests on CI (like Travis)](Guide.RunningOnCI.md) — When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
-* [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md) — Advanced users might need to natively debug their app inside Xcode during a Detox test. This is mostly useful for invesigating weird crashes or when contributing to Detox itself.
+* [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md) — Advanced users might need to natively debug their app inside Xcode during a Detox test. This is mostly useful for investigating weird crashes or when contributing to Detox itself.

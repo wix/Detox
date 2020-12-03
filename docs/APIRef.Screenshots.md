@@ -108,7 +108,7 @@ const imagePath = await element(by.id('announcementsRoot')).takeScreenshot('welc
 
 > The API works in the exact same way as `device.takeScreenshot()` does in terms of return value, arguments, and artifacts management.
 
-In this example, the image-file specified by `imagePath` will hold the visual content of a native view whose test ID is `announcementsRoot`, alonside all of the views in the view-hierarchy formed by it as the root-view. Visually, this can be, for example:
+In this example, the image-file specified by `imagePath` will hold the visual content of a native view whose test ID is `announcementsRoot`, alongside all of the views in the view-hierarchy formed by it as the root-view. Visually, this can be, for example:
 
 ![Announcements view](img/element-screenshot-view.png)
 
@@ -126,7 +126,7 @@ Taking an element-screenshot of the announcement part alone, would yield a prope
 
 ![announcement element](img/element-screenshot-view.png)
 
-Only by taking the element-screenshot of a common ancsetor, will this bug be surfaced. However, in turn, that can affect stability, as the result is now sensitive to more details such as padding and background color.
+Only by taking the element-screenshot of a common ancestor, will this bug be surfaced. However, in turn, that can affect stability, as the result is now sensitive to more details such as padding and background color.
 
 **As a bottom line, this API is mostly suited for testing UI components rather than complete screens.**
 
