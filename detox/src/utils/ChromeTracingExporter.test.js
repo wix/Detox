@@ -1,4 +1,4 @@
-describe('Chrome-Tracing parser', () => {
+describe('Chrome-Tracing exporter', () => {
   const processId = 'mock-process-id';
   const processName = 'mock-process-name';
   const threadId = 'mock-thread-id';
@@ -16,19 +16,19 @@ describe('Chrome-Tracing parser', () => {
 
   let uut;
   beforeEach(() => {
-    const ChromeTracingParser = require('./ChromeTracingParser');
-    uut = new ChromeTracingParser({
+    const ChromeTracingExporter = require('./ChromeTracingExporter');
+    uut = new ChromeTracingExporter({
       process: { id: processId, name: processName },
       thread: { id: threadId, name: threadName },
     });
   });
 
-  it('should parse an empty set of events', () => {
-    const result = uut.parse([]);
+  it('should export an empty set of events', () => {
+    const result = uut.export([]);
     expect(result).toEqual('[');
   });
 
-  it('should parse a start-event with args', () => {
+  it('should export a start-event with args', () => {
     const startEvent = anEvent({ type: 'start' });
     const expectedObject = {
       name: startEvent.name,
@@ -38,11 +38,11 @@ describe('Chrome-Tracing parser', () => {
       ph: 'B',
       args: startEvent.args,
     };
-    const result = uut.parse([ startEvent ]);
+    const result = uut.export([ startEvent ]);
     expect(result).toEqual(`[${JSON.stringify(expectedObject)}`);
   });
 
-  it('should parse an end-event with args', () => {
+  it('should export an end-event with args', () => {
     const endEvent = anEvent({ type: 'end' });
     const expectedObject = {
       name: endEvent.name,
@@ -52,11 +52,11 @@ describe('Chrome-Tracing parser', () => {
       ph: 'E',
       args: endEvent.args,
     };
-    const result = uut.parse([ endEvent ]);
+    const result = uut.export([ endEvent ]);
     expect(result).toEqual(`[${JSON.stringify(expectedObject)}`);
   });
 
-  it('should parse an init-event onto a process-start & thread-start pair of events', () => {
+  it('should export an init-event onto a process-start & thread-start pair of events', () => {
     const initEvent = {
       type: 'init',
       ts: 1234,
@@ -76,7 +76,7 @@ describe('Chrome-Tracing parser', () => {
       ph: 'M',
       args: { name: threadName }
     }];
-    const result = uut.parse([ initEvent ]);
+    const result = uut.export([ initEvent ]);
     expect(result).toEqual(`[${JSON.stringify(expectedObjects).slice(1, -1)}`);
   });
 
@@ -86,19 +86,19 @@ describe('Chrome-Tracing parser', () => {
       ts: 666,
     };
 
-    expect(() => uut.parse([ bizarreEvent ])).toThrowError(/Invalid type 'bizarre'/);
+    expect(() => uut.export([ bizarreEvent ])).toThrowError(/Invalid type 'bizarre'/);
   });
 
-  it('should parse multiple events', () => {
+  it('should export multiple events', () => {
     const startEvent = anEvent({ type: 'start' });
     const endEvent = anEvent({ type: 'end' });
-    const result = uut.parse([ startEvent, endEvent ]);
+    const result = uut.export([ startEvent, endEvent ]);
     expect(result).toContain(`"ph":"B"`);
     expect(result).toContain(`"ph":"E"`);
   });
 
   it('should allow for appending content', () => {
-    const result = uut.parse([], true);
+    const result = uut.export([], true);
     expect(result).toEqual(',');
   });
 });

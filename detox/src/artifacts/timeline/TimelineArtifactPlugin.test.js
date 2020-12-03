@@ -13,8 +13,8 @@ describe('TimelineArtifactPlugin', () => {
   });
 
   let fs;
-  let ChromeTracingParser;
-  let chromeTracingParserObj;
+  let ChromeTracingExporter;
+  let chromeTracingExporterObj;
   let FileArtifact;
   let fileArtifactObj;
   let trace;
@@ -27,9 +27,9 @@ describe('TimelineArtifactPlugin', () => {
     }));
     fs = require('fs-extra');
 
-    jest.mock('../../utils/ChromeTracingParser');
-    ChromeTracingParser = require('../../utils/ChromeTracingParser');
-    chromeTracingParserObj = () => latestInstanceOf(ChromeTracingParser);
+    jest.mock('../../utils/ChromeTracingExporter');
+    ChromeTracingExporter = require('../../utils/ChromeTracingExporter');
+    chromeTracingExporterObj = () => latestInstanceOf(ChromeTracingExporter);
 
     jest.mock('../templates/artifact/FileArtifact');
     FileArtifact = require('../templates/artifact/FileArtifact');
@@ -167,25 +167,25 @@ describe('TimelineArtifactPlugin', () => {
       throw new Error('Make uutEnabled think the file doesnt already exist');
     });
     const givenArtifactFileAlreadyExists = () => fs.access.mockResolvedValue(undefined);
-    const givenParsedTraceDataResult = (result) => chromeTracingParserObj().parse.mockReturnValue(result);
+    const givenExportedTraceDataResult = (result) => chromeTracingExporterObj().export.mockReturnValue(result);
 
-    it('should create artifact with parsed trace data', async () => {
+    it('should create artifact with exported trace data', async () => {
       const uut = uutEnabled();
-      const parsedTraceData = JSON.stringify({ mocked: 'mocked data' });
+      const exportedData = JSON.stringify({ mocked: 'mocked data' });
       givenArtifactFileNotExists();
-      givenParsedTraceDataResult(parsedTraceData);
+      givenExportedTraceDataResult(exportedData);
 
       await uut.onBeforeCleanup();
 
-      expect(FileArtifact).toHaveBeenCalledWith({ temporaryData: parsedTraceData });
+      expect(FileArtifact).toHaveBeenCalledWith({ temporaryData: exportedData });
       expect(fileArtifactObj().save).toHaveBeenCalledWith(expectedArtifactPath, { append: false });
     });
 
-    it('should append parsed data if artifact file already exists', async () => {
+    it('should append exported data if artifact file already exists', async () => {
       const uut = uutEnabled();
-      const parsedTraceData = JSON.stringify({ mocked: 'mocked data' });
+      const exportedData = JSON.stringify({ mocked: 'mocked data' });
       givenArtifactFileAlreadyExists();
-      givenParsedTraceDataResult(parsedTraceData);
+      givenExportedTraceDataResult(exportedData);
 
       await uut.onBeforeCleanup();
 
@@ -194,29 +194,29 @@ describe('TimelineArtifactPlugin', () => {
 
     it('should not save artifact if disabled', async () => {
       const uut = uutDisabled();
-      const parsedTraceData = JSON.stringify({ mocked: 'mocked data' });
+      const exportedData = JSON.stringify({ mocked: 'mocked data' });
       givenArtifactFileNotExists();
-      givenParsedTraceDataResult(parsedTraceData);
+      givenExportedTraceDataResult(exportedData);
 
       await uut.onBeforeCleanup();
 
-      expect(chromeTracingParserObj().parse).not.toHaveBeenCalled();
+      expect(chromeTracingExporterObj().export).not.toHaveBeenCalled();
       expect(fileArtifactObj()).toBeUndefined();
       expect(fs.access).not.toHaveBeenCalled();
     });
 
-    it('should properly init the trace-events parser', async () => {
+    it('should properly init the trace-events exporter', async () => {
       const expectedThreadId = process.pid;
       const expectedThreadName = `Worker #${process.pid}`;
       const uut = uutEnabled();
 
-      const parsedTraceData = JSON.stringify({ mocked: 'mocked data' });
+      const exportedData = JSON.stringify({ mocked: 'mocked data' });
       givenArtifactFileNotExists();
-      givenParsedTraceDataResult(parsedTraceData);
+      givenExportedTraceDataResult(exportedData);
 
       await uut.onBeforeCleanup();
 
-      expect(ChromeTracingParser).toHaveBeenCalledWith({
+      expect(ChromeTracingExporter).toHaveBeenCalledWith({
         process: { id: 0, name: 'detox' },
         thread: { id: expectedThreadId, name: expectedThreadName },
       })

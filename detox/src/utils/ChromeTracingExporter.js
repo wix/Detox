@@ -1,4 +1,4 @@
-class ChromeTracingParser {
+class ChromeTracingExporter {
   constructor({
     process,
     thread,
@@ -13,7 +13,7 @@ class ChromeTracingParser {
     };
   }
 
-  parse(traceEvents, append) {
+  export(traceEvents, append) {
     const _events = traceEvents.flatMap(this._parseEvent.bind(this));
     const json = JSON.stringify(_events);
     const prefix = (append ? ',' : '[');
@@ -46,4 +46,4 @@ class ChromeTracingParser {
   }
 }
 
-module.exports = ChromeTracingParser;
+module.exports = ChromeTracingExporter;

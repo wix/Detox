@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const { trace } = require('../../utils/trace');
-const ChromeTracingParser = require('../../utils/ChromeTracingParser');
+const ChromeTracingExporter = require('../../utils/ChromeTracingExporter');
 
 const traceStub = {
   startSection: _noop,
@@ -15,7 +15,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
     super(config);
 
     this._trace = this.enabled ? trace : traceStub;
-    this._traceParser = new ChromeTracingParser({
+    this._traceExporter = new ChromeTracingExporter({
       process: { id: 0, name: 'detox' },
       thread: { id: process.pid, name: `Worker #${process.pid}` },
     });
@@ -57,7 +57,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
     const traceLogPath = await this.api.preparePathForArtifact(`detox.trace.json`);
     const append = await this._logFileExists(traceLogPath);
-    const data = this._traceParser.parse(trace.events, append);
+    const data = this._traceExporter.export(trace.events, append);
 
     const fileArtifact = new FileArtifact({ temporaryData: data });
     await fileArtifact.save(traceLogPath, { append });
