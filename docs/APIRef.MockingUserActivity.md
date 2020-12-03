@@ -6,7 +6,7 @@ The user activity API is used to mock an external user activity state. The app n
 
 ## Mocking App Launch with a User Activity
 
-Using `lauchApp()` with custom params will trigger the mocking mechanism.
+Using `launchApp()` with custom params will trigger the mocking mechanism.
 
 ```js
 await device.launchApp({userActivity: activity});
@@ -86,7 +86,7 @@ const userActivityBrowsingWeb = {
 Currently supported system-generated activity types:
 
 * DetoxConstants.userActivityTypes.browsingWeb - Used for associated domains (deep links)
-* DetoxConstants.userActivityTypes.searchableItem - Used for Spotlight search resutls 
+* DetoxConstants.userActivityTypes.searchableItem - Used for Spotlight search results 
 
 ### Spotlight Search Results
 
