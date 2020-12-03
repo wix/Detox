@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs');
+const log = require('../../src/utils/logger').child({ __filename });
 
 function getPlatformSpecificString(platform) {
   switch (platform) {
@@ -32,7 +34,30 @@ function prependNodeModulesBinToPATH(env) {
   return env[PATH];
 }
 
+function reportError(...args) {
+  log.error(...args);
+  exitCode = 1;
+}
+
+function createFile(filename, content) {
+  if (fs.existsSync(filename)) {
+    return reportError(
+      `Failed to create ${filename} file, ` +
+      `because it already exists at path: ${path.resolve(filename)}`
+    );
+  }
+
+  try {
+    fs.writeFileSync(filename, content);
+    log.info(`Created a file at path: ${filename}`);
+  } catch (err) {
+    reportError({ err }, `Failed to create a file at path: ${filename}`);
+  }
+}
+
 module.exports = {
+  reportError,
+  createFile,
   getPlatformSpecificString,
   printEnvironmentVariables,
   prependNodeModulesBinToPATH,

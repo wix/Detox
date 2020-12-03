@@ -1,9 +1,9 @@
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const mochaTemplates = require('./templates/mocha');
 const jestTemplates = require('./templates/jest');
-const log = require('../src/utils/logger').child({ __filename });
+const {reportError, createFile} = require('./utils/misc');
+const {experimentalAndroidInit} = require('./androidExperimental/init-experimental');
 
 let exitCode = 0;
 
@@ -15,11 +15,26 @@ module.exports.builder = {
     demandOption: true,
     describe: 'test runner name (supported values: mocha, jest)',
     group: 'Configuration:',
+  },
+  androidDir: {
+    alias: 'aDir',
+    demandOption: false,
+    describe: "The location of the project's build.gradle (defaults to <project>/android)",
+    group: 'Configuration:',
+  },
+  allowExperimental: {
+    demandOption: false,
+    boolean: true,
+    describe: "Allow experimental auto configuration for Android (this is flag)",
+    group: 'Configuration:',
   }
 };
 
 module.exports.handler = async function init(argv) {
-  const {runner} = argv;
+  const {runner, allowExperimental, androidDir = 'android'} = argv;
+  if (allowExperimental) {
+    experimentalAndroidInit(androidDir);
+  }
 
   switch (runner) {
     case 'mocha':
@@ -56,22 +71,6 @@ function createFolder(dir, files) {
   for (const entry of Object.entries(files)) {
     const [filename, content] = entry;
     createFile(path.join(dir, filename), content);
-  }
-}
-
-function createFile(filename, content) {
-  if (fs.existsSync(filename)) {
-    return reportError(
-      `Failed to create ${filename} file, ` +
-      `because it already exists at path: ${path.resolve(filename)}`
-    );
-  }
-
-  try {
-    fs.writeFileSync(filename, content);
-    log.info(`Created a file at path: ${filename}`);
-  } catch (err) {
-    reportError({ err }, `Failed to create a file at path: ${filename}`);
   }
 }
 
@@ -120,9 +119,4 @@ function createDefaultConfigurations() {
       },
     },
   };
-}
-
-function reportError(...args) {
-  log.error(...args);
-  exitCode = 1;
 }
