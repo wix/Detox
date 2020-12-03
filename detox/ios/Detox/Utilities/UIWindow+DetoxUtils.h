@@ -10,6 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface UIWindowScene (DetoxUtils)
+
+- (NSString*)dtx_recursiveDescription;
+
+@end
+
 @interface UIWindow (DetoxUtils)
 
 @property (nonatomic, strong, class, readonly, nullable) UIWindow* dtx_keyWindow NS_SWIFT_NAME(dtx_keyWindow);

@@ -7,7 +7,127 @@
 //
 
 #import "UIWindow+DetoxUtils.h"
+#import "NSObject+DetoxUtils.h"
 #import "DTXAppleInternals.h"
+
+extern NSArray* DTXChildElements(id element);
+
+static void _DTXElementDescription(NSObject<UIAccessibilityIdentification>* element, NSMutableString* storage)
+{
+	[storage appendFormat:@"<%@: %p", element.class, element];
+	
+	if([element __isKindOfUIView])
+	{
+		UIView* view = (id)element;
+		CGRect frame = view.frame;
+		[storage appendFormat:@"; frame = (%g %g; %g %g)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
+	}
+	
+	NSString* identifier = [element respondsToSelector:@selector(accessibilityIdentifier)] ? [element accessibilityIdentifier] : nil;
+	if(identifier.length > 0)
+	{
+		[storage appendFormat:@"; ax.id = \"%@\"", identifier];
+	}
+	
+	NSString* text = [[element dtx_text] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+	if(text.length > 0)
+	{
+		[storage appendFormat:@"; text = \"%@\"", text];
+	}
+	
+	NSString* label = [[element accessibilityLabel] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+	if(label.length > 0)
+	{
+		[storage appendFormat:@"; ax.label = \"%@\"", label];
+	}
+	
+	NSString* value = [[element accessibilityValue] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+	if(value.length > 0)
+	{
+		[storage appendFormat:@"; ax.value = \"%@\"", value];
+	}
+	
+	if([element __isKindOfUIView])
+	{
+		UIView* view = (id)element;
+		CALayer* layer = view.layer;
+		[storage appendFormat:@"; layer = <%@: %p>", layer.class, layer];
+	}
+
+	[storage appendString:@">"];
+	
+	//	+ <AnnoyingWindow: 0x7fa2f2c1d760; baseClass = UIWindow; frame = (0 0; 428 926); autoresize = W+H; gestureRecognizers = <NSArray: 0x600002ffb3c0>; layer = <UIWindowLayer: 0x600002781960>>
+	
+//	[storage appendString:view.description];
+}
+
+static void _DTXRecursiveDescribe(id element, NSMutableString* storage, NSUInteger level)
+{
+	if(level == 1)
+	{
+		[storage appendString:@"\t+ "];
+	}
+	else
+	{
+		for(NSUInteger idx = 0; idx < level; idx++)
+		{
+			[storage appendString:@"\t| "];
+		}
+	}
+	
+	_DTXElementDescription(element, storage);
+	[storage appendString:@"\n"];
+	
+	NSArray* children = DTXChildElements(element);
+	for(id child in children)
+	{
+		_DTXRecursiveDescribe(child, storage, level + 1);
+	}
+}
+
+static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState state)
+{
+	switch(state)
+	{
+		case UISceneActivationStateBackground:
+			return @"UISceneActivationStateBackground";
+		case UISceneActivationStateForegroundActive:
+			return @"UISceneActivationStateForegroundActive";
+		case UISceneActivationStateForegroundInactive:
+			return @"UISceneActivationStateForegroundInactive";
+		case UISceneActivationStateUnattached:
+			return @"UISceneActivationStateUnattached";
+	}
+}
+
+@implementation UIWindowScene (DetoxUtils)
+
+- (NSString*)dtx_recursiveDescription
+{
+	NSMutableString* rv;
+	@autoreleasepool {
+		id x = [self valueForKey:@"_FBSScene"];
+		id y = [x valueForKey:@"identifier"];
+		id z = [self valueForKeyPath:@"session.persistentIdentifier"];
+		
+		rv = [NSMutableString stringWithFormat:@"<%@: %p; scene = <%@: %p; identifier: %@>; persistentIdentifier = %@; activationState = %@>\n", self.class, self, [x class], x, y, z, _DTXNSStringFromUISceneActivationState(self.activationState)];
+		
+		NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:self];
+		for (UIWindow* window in windows)
+		{
+			//Ignore the touch visualizer window
+			if([NSStringFromClass(window.class) isEqualToString:@"DTXTouchVisualizerWindow"])
+			{
+				continue;
+			}
+			_DTXRecursiveDescribe(window, rv, 1);
+		}
+	}
+	
+	return rv;
+}
+
+@end
 
 @implementation UIWindow (DetoxUtils)
 

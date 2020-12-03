@@ -12,6 +12,8 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 #define __dtx_external_logger(log)
 #endif
 
+@implementation SomeMiddleman @end
+
 @implementation AnnoyingWindow
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -102,21 +104,7 @@ RCT_EXPORT_MODULE();
 
 @end
 
-@implementation DetoxApp
-
-- (UIWindow *)keyWindow
-{
-	UIWindow* rv = super.keyWindow;
-	
-	if(rv == nil)
-	{
-		rv = self.delegate.window;
-	}
-	
-	return rv;
-}
-
-@end
+@implementation DetoxApp @end
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 
