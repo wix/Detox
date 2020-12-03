@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class ChromeTracingExporter {
   constructor({
     process,
@@ -14,7 +16,7 @@ class ChromeTracingExporter {
   }
 
   export(traceEvents, append) {
-    const _events = traceEvents.flatMap(this._parseEvent.bind(this));
+    const _events = _.flatMap(traceEvents, this._parseEvent.bind(this));
     const json = JSON.stringify(_events);
     const prefix = (append ? ',' : '[');
     return `${prefix}${json.slice(1, -1)}`;
