@@ -28,7 +28,7 @@ androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
 
 ### Details
 
-Detox Android is a standard Android integration test with many twists. For example, it is completely asynchronous. The test cases are not compiled, they come through a websocket from the JS test runner via a json protocol. They are evaulated inside the app and the result along with a possible debug informations are sent back to the JS test runner.
+Detox Android is a standard Android integration test with many twists. For example, it is completely asynchronous. The test cases are not compiled, they come through a websocket from the JS test runner via a json protocol. They are evaluated inside the app and the result along with a possible debug informations are sent back to the JS test runner.
 
 It uses Espresso internally, therefore you must use an AndroidJUnitRunner as your test runner (or a subclass of it).
 
@@ -89,7 +89,7 @@ Detox is being developed on Macs, but there is no Mac specific command on any of
 ## Differences Between iOS and Android
 
 - Detox Android doesn't wait for Timers scheduled less than 1.5sec in the future. Its look ahead threshold is only 15ms.
-- Contrary to iOS, synchronization can not be completely turned off by [device.disablesynchronization()](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization). It turns off only the monitoring of the network operation at the moment. This feature will never be fully implemented as Espresso syncs can not be turned off completely. It is planned to tie the Animation syncronization too to it.
+- Contrary to iOS, synchronization can not be completely turned off by [device.disablesynchronization()](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization). It turns off only the monitoring of the network operation at the moment. This feature will never be fully implemented as Espresso syncs can not be turned off completely. It is planned to tie the Animation synchronization too to it.
 - Detox Android doesn't wait for delayed animations. (iOS waits for 1.5sec for delayed animations)
 - Please be aware that the order of the elements using the `atIndex()` API can be different between the two platforms. You can use the `getPlatform()` API to use different indexes in your tests. See below.
 

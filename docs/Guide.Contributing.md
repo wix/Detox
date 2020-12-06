@@ -48,7 +48,7 @@ lerna bootstrap
 `scripts/ci.ios.sh` and `scripts/ci.android.sh` are the scripts Detox runs in CI, they will run `lerna bootstrap`, unit tests, and E2E tests. Make sure these scripts pass before submitting a PR, this is exactly what Detox is going to run in CI. 
 
 ##### Manually
-Alternativley, you can run it manually
+Alternatively, you can run it manually
 
 #### 0. Fixing Compilation Issues in RN Sources
 
@@ -104,7 +104,7 @@ npm run e2e:android
 ```
 
 Android test project includes two flavors: 
-`fromBin` - uses the precompiled aar from `node_moudles` just like a standard RN project.
+`fromBin` - uses the precompiled aar from `node_modules` just like a standard RN project.
 `fromSource` - compiles the project with RN sources from `node_modules`, this is useful when developing and debugging Espresso idle resource. 
 [Here](https://facebook.github.io/react-native/docs/building-from-source.html#android) are the prerequisites to compiling React Native from source.
 

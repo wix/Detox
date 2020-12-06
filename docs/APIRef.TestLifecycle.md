@@ -13,7 +13,7 @@ before(async () => {
 });
 ```
 
-Of course, you can add any of your initilizations in this phase.
+Of course, you can add any of your initializations in this phase.
 
 ## Before and After Each Test
 
