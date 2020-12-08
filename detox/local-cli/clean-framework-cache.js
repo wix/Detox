@@ -4,7 +4,7 @@ const os = require('os');
 const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'clean-framework-cache';
-module.exports.desc = "Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'. (macOS only)";
+module.exports.desc = "Deletes all Detox cached frameworks from ~/Library/Detox. Cached framework can be rebuilt using the 'build-framework-cache' command. (macOS only)";
 
 module.exports.handler = async function cleanFrameworkCache() {
   if (os.platform() === 'darwin') {

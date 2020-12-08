@@ -1,12 +1,16 @@
 <p align="center">
-	<img alt="Detox" width=405 src="https://user-images.githubusercontent.com/1962469/89643713-0c018200-d8bf-11ea-8a7d-d21de37cf3ec.png"/>
+	<img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
 </p>
+<h1 align="center">
+  Detox
+</h1>
 <p align="center">
 <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
 <p align="center">
 <img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif"/>
 </p>
+
 
 ---
 

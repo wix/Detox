@@ -5,7 +5,7 @@ const os = require('os');
 const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'rebuild-framework-cache';
-module.exports.desc = 'Rebuilds Detox.framework into ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions. (macOS only)';
+module.exports.desc = 'Rebuilds a cached Detox framework for the current environment in ~/Library/Detox. The cached framework is unique for each combination of Xcode and Detox version. (macOS only)';
 
 module.exports.handler = async function buildFrameworkCache() {
   if (os.platform() === 'darwin') {
