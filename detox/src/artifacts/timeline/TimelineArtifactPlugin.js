@@ -2,73 +2,65 @@ const _noop = require('lodash/noop');
 const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
-const Trace = require('./Trace');
+const { trace } = require('../../utils/trace');
+const ChromeTracingExporter = require('../../utils/ChromeTracingExporter');
 
 const traceStub = {
-  startProcess: (stubArgs) => _noop,
-  startThread: _noop,
-  beginEvent: _noop,
-  finishEvent: _noop,
-  traces: _noop,
+  startSection: _noop,
+  endSection: _noop,
 };
 
 class TimelineArtifactPlugin extends ArtifactPlugin {
   constructor(config) {
     super(config);
 
-    const {
-      pid = process.env.DETOX_START_TIMESTAMP,
-      processName = 'detox',
-    } = (config.timeline || {});
-
-    this._pid = pid;
-    this._deviceId = null;
-
-    this._trace = this.enabled ? new Trace() : traceStub;
-    this._trace.startProcess({id: this._pid, name: processName});
+    this._trace = this.enabled ? trace : traceStub;
+    this._traceExporter = new ChromeTracingExporter({
+      process: { id: 0, name: 'detox' },
+      thread: { id: process.pid, name: `Worker #${process.pid}` },
+    });
   }
 
   async onBootDevice(event) {
-    super.onBootDevice(event);
-    const {deviceId, type} = event;
-
-    this._deviceId = deviceId;
-
-    this._trace.startThread({id: deviceId, name: type});
+    this._deviceName = event.deviceId;
+    return super.onBootDevice(event);
   }
 
   async onRunDescribeStart(suite) {
+    const sectionName = (suite.name === 'ROOT_DESCRIBE_BLOCK' ? this._deviceName : suite.name);
+    this._trace.startSection(sectionName);
     await super.onRunDescribeStart(suite);
-    this._trace.beginEvent(suite.name, {deviceId: this._deviceId});
   }
 
   async onRunDescribeFinish(suite) {
-    this._trace.finishEvent(suite.name);
+    const sectionName = (suite.name === 'ROOT_DESCRIBE_BLOCK' ? this._deviceName : suite.name);
+    this._trace.endSection(sectionName);
     await super.onRunDescribeFinish(suite);
   }
 
   async onTestStart(testSummary) {
+    this._trace.startSection(testSummary.title);
     await super.onTestStart(testSummary);
-    this._trace.beginEvent(testSummary.title);
   }
 
   async onTestDone(testSummary) {
-    this._trace.finishEvent(testSummary.title, {status: testSummary.status});
+    this._trace.endSection(testSummary.title, {status: testSummary.status});
     await super.onTestDone(testSummary);
   }
 
   async onBeforeCleanup() {
-    this._deviceId = null;
+    this._deviceName = null;
 
     if (!this.enabled) {
       return;
     }
 
-    const traceLogPath = await this.api.preparePathForArtifact(`detox_pid_${this._pid}.trace.json`);
-    const prefix = await this._logFileExists(traceLogPath) ? ',' : '[';
+    const traceLogPath = await this.api.preparePathForArtifact(`detox.trace.json`);
+    const append = await this._logFileExists(traceLogPath);
+    const data = this._traceExporter.export(trace.events, append);
 
-    const fileArtifact = new FileArtifact({temporaryData: this._trace.traces({prefix})});
-    await fileArtifact.save(traceLogPath, {append: true});
+    const fileArtifact = new FileArtifact({ temporaryData: data });
+    await fileArtifact.save(traceLogPath, { append });
   }
 
   async _logFileExists(traceLogPath) {
