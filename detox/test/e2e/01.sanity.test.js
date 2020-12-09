@@ -1,7 +1,7 @@
 describe('Sanity', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.text('Sanity')).tap();
+    await detox.traceCall('Navigate to sanity', () => element(by.text('Sanity')).tap());
   });
 
   it('should have welcome screen', async () => {
