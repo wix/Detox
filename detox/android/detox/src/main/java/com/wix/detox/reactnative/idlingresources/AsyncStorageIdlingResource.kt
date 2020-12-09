@@ -30,6 +30,9 @@ open class AsyncStorageIdlingResource
         sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn)
     : IdlingResource {
 
+    open val logTag: String
+        get() = LOG_TAG
+
     private val moduleReflected = ModuleReflected(module, sexecutorReflectedGenFn)
     private var callback: IdlingResource.ResourceCallback? = null
     private var idleCheckTask: Runnable? = null
@@ -50,7 +53,7 @@ open class AsyncStorageIdlingResource
     override fun isIdleNow(): Boolean =
         checkIdle().also { idle ->
             if (!idle) {
-                Log.d(LOG_TAG, "Async-storage is busy!")
+                Log.d(logTag, "Async-storage is busy!")
                 enqueueIdleCheckTask()
             }
         }
@@ -106,4 +109,7 @@ open class AsyncStorageIdlingResource
     }
 }
 
-class AsyncStorageIdlingResourceLegacy(module: NativeModule): AsyncStorageIdlingResource(module)
+class AsyncStorageIdlingResourceLegacy(module: NativeModule): AsyncStorageIdlingResource(module) {
+    override val logTag: String
+        get() = super.logTag + "Legacy"
+}
