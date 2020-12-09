@@ -64,6 +64,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# Custom runners
+.run/
 
 ############
 # iOS
