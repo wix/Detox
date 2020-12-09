@@ -3,8 +3,6 @@
 # the lean configuration file.
 ###
 
--dontobfuscate
-
 -dontnote android.net.**
 -dontnote org.apache.**
 
@@ -16,6 +14,7 @@
 -dontnote okio.**
 
 # Do not strip any method/class that is annotated with @DoNotStrip
+# This should really come from React Native itself. See here: https://github.com/react-native-community/upgrade-support/issues/31
 -keep @com.facebook.jni.annotations.DoNotStrip class *
 -keep class * {
     @com.facebook.proguard.annotations.DoNotStrip *;

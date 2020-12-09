@@ -69,6 +69,8 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
+    // noinspection GradleDynamicVersion
+    implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
 
     androidTestImplementation('com.wix:detox:+')
 }
