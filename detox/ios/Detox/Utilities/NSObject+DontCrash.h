@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (DontCrash)
 
-- (id)text;
+- (id)_dtx_text;
 
 @end
 

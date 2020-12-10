@@ -9,10 +9,19 @@
 
 @implementation NSObject (DontCrash)
 
-- (id)text
+- (id)_dtx_text
 {
-	Class cls = NSClassFromString(@"RCTTextView");
-	if(cls != nil && [self isKindOfClass:cls])
+	if([self respondsToSelector:@selector(text)])
+	{
+		return [(UITextView*)self text];
+	}
+	
+	static Class RCTTextView;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		RCTTextView = NSClassFromString(@"RCTTextView");
+	});
+	if(RCTTextView != nil && [self isKindOfClass:RCTTextView])
 	{
 		return [(NSTextStorage*)[self valueForKey:@"textStorage"] string];
 	}

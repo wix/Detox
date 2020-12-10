@@ -193,7 +193,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (NSString *)dtx_text
 {
-	id rv = [self text];
+	id rv = [self _dtx_text];
 	if(rv == nil || [rv isKindOfClass:NSString.class])
 	{
 		return rv;
