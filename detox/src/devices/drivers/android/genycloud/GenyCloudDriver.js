@@ -92,16 +92,13 @@ class GenyCloudDriver extends AndroidDriver {
     }
   }
 
-  static async globalCleanup(instanceLifecycleService) {
-    if (!instanceLifecycleService) {
-      const exec = new GenyCloudExec(environment.getGmsaasPath());
-      instanceLifecycleService = new InstanceLifecycleService(exec, null);
-    }
-
+  static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
     const deviceUUIDs = await deviceCleanupRegistry.readRegisteredDevices();
     if (deviceUUIDs.length) {
-      await doCleanup(instanceLifecycleService, deviceUUIDs)
+      const exec = new GenyCloudExec(environment.getGmsaasPath());
+      const instanceLifecycleService = new InstanceLifecycleService(exec, null);
+      await doCleanup(instanceLifecycleService, deviceUUIDs);
     }
   }
 }
