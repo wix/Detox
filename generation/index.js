@@ -26,7 +26,6 @@ function createAndroidFiles() {
         }, {}
       );
 
-<<<<<<< HEAD
   const downloadedAndroidFilesMap =
     Object
       .entries(externalFilesToDownload)
