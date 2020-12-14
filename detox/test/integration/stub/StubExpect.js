@@ -1,5 +1,5 @@
-const temporaryPath = require('../artifacts/utils/temporaryPath');
-const sleep = require('../utils/sleep');
+const temporaryPath = require('detox/src/artifacts/utils/temporaryPath');
+const sleep = require('detox/src/utils/sleep');
 
 class StubMatcher {
   constructor() {

@@ -1,8 +1,8 @@
-const DeviceDriverBase = require('../DeviceDriverBase');
-const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
+const DeviceDriverBase = require('detox/src/devices/drivers/DeviceDriverBase');
+const TimelineArtifactPlugin = require('detox/src/artifacts/timeline/TimelineArtifactPlugin');
 const tempfile = require('tempfile');
-const temporaryPath = require('../../../artifacts/utils/temporaryPath');
-const sleep = require('../../../utils/sleep');
+const temporaryPath = require('detox/src/artifacts/utils/temporaryPath');
+const sleep = require('detox/src/utils/sleep');
 
 const sleepVeryLittle = () => sleep(10);
 const sleepALittle = () => sleep(100);

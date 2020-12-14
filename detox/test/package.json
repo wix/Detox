@@ -161,9 +161,10 @@
         }
       },
       "stub": {
-        "type": "stub",
+        "type": "./integration/stub",
+        "name": "integration-stub",
         "device": {
-          "type": ""
+          "integ": "stub"
         }
       }
     }

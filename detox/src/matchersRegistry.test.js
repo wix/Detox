@@ -8,7 +8,6 @@ describe('Detox matchers registry', () => {
 
   let AndroidExpect;
   let IosExpect;
-  let StubExpect;
   let device;
   let resolveModuleFromPath;
   let uut;
@@ -18,9 +17,6 @@ describe('Detox matchers registry', () => {
 
     jest.mock('./ios/expectTwo');
     IosExpect = require('./ios/expectTwo');
-
-    jest.mock('./stub/expect');
-    StubExpect = require('./stub/expect');
 
     jest.mock('./utils/resolveModuleFromPath');
     resolveModuleFromPath = require('./utils/resolveModuleFromPath');
@@ -37,7 +33,6 @@ describe('Detox matchers registry', () => {
 
   const withAndroidDevice = () => device.getPlatform.mockReturnValue('android');
   const withIosDevice = () => device.getPlatform.mockReturnValue('ios');
-  const withStubDevice = () => device.getPlatform.mockReturnValue('stub');
   const withUnknownDevice = (deviceType) => {
     device.getPlatform.mockReturnValue(undefined);
     device.type = deviceType;
@@ -65,18 +60,6 @@ describe('Detox matchers registry', () => {
     withIosDevice();
     uut.resolve(device, opts);
     expect(IosExpect).toHaveBeenCalledWith(opts);
-  });
-
-  it('should resolve the stub matchers', () => {
-    withStubDevice();
-    const result = uut.resolve(device, opts);
-    expect(result).toBeInstanceOf(StubExpect);
-  });
-
-  it('should init the Stub matchers with opts', () => {
-    withStubDevice();
-    uut.resolve(device, opts);
-    expect(StubExpect).toHaveBeenCalledWith(opts);
   });
 
   it('should resort to type-as-path based resolution if platform is not recognized', () => {
