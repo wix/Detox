@@ -1,13 +1,19 @@
 describe('Trace util', () => {
   const timestampProviderFn = () => 1234;
 
+  let Trace;
   let uut;
   beforeEach(() => {
-    const { Trace } = require('./trace');
-    uut = new Trace(timestampProviderFn);
+    Trace = require('./trace').Trace;
+    uut = new Trace();
+    uut.init(timestampProviderFn);
   });
 
-  it('should produce an init event at creation time', () => {
+  it('should produce an empty events list upon creation', () => {
+    expect(new Trace().events).toEqual([]);
+  });
+
+  it('should produce an init event at init time', () => {
     expect(uut.events).toEqual([{
       type: 'init',
       ts: 1234,
@@ -60,6 +66,7 @@ describe('Trace util', () => {
 
   it('should export an instance', () => {
     const { trace } = require('./trace');
+    trace.init();
     trace.startSection('section1', {});
     trace.endSection('section1', {});
     trace.reset();
@@ -95,6 +102,7 @@ describe('Trace util', () => {
     it('should trace a successful function', async () => {
       const functionCall = () => Promise.resolve(42);
 
+      trace.init();
       const result = await traceCall(sectionName, functionCall);
       expect(trace.events).toEqual([
         expect.any(Object),
@@ -109,6 +117,7 @@ describe('Trace util', () => {
       const functionCall = () => Promise.reject(error);
 
       try {
+        trace.init();
         await traceCall(sectionName, functionCall);
         fail('Expected an error');
       } catch (e) {

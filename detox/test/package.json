@@ -16,6 +16,8 @@
     "e2e:android-debug": "detox test -c android.emu.debug",
     "e2e:ios-ci": "npm run e2e:ios -- --workers 3 --retries 1",
     "e2e:android-ci": "npm run e2e:android -- --workers 3 --retries 1 --headless --jest-report-specs --loglevel verbose",
+    "integration": "jest --clearCache && jest unit --config integration/config.js -w 1 .",
+    "integration-update-snapshots": "npm run integration -- -u",
     "build:ios": "detox build -c ios.sim.release",
     "build:android": "detox build -c android.emu.release",
     "build:android-debug": "detox build -c android.emu.debug",
@@ -156,6 +158,13 @@
         "type": "android.emulator",
         "device": {
           "avdName": "Pixel_API_28"
+        }
+      },
+      "stub": {
+        "type": "./integration/stub",
+        "name": "integration-stub",
+        "device": {
+          "integ": "stub"
         }
       }
     }

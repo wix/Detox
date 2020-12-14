@@ -46,7 +46,6 @@ describe('Detox matchers registry', () => {
 
   it('should init the Android-matchers with opts', () => {
     withAndroidDevice();
-
     uut.resolve(device, opts);
     expect(AndroidExpect).toHaveBeenCalledWith(opts);
   });
