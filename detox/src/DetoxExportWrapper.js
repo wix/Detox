@@ -30,6 +30,9 @@ class DetoxExportWrapper {
 
     this._defineProxy('by');
     this._defineProxy('device');
+
+    this.trace = trace;
+    this.traceCall = traceCall;
   }
 
   async init(configOverride, userParams) {
