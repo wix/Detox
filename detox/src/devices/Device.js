@@ -289,6 +289,10 @@ class Device {
     await this.deviceDriver.pressBack(this._deviceId);
   }
 
+  async typeText(text) {
+    await this.deviceDriver.typeText(this._deviceId, text);
+  }
+
   getUiDevice() {
     return this.deviceDriver.getUiDevice();
   }

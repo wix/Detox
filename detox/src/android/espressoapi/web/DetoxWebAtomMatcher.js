@@ -91,44 +91,6 @@ class DetoxWebAtomMatcher {
     };
   }
 
-  static matcherForActiveElement() {
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.web.DetoxWebAtomMatcher"
-      },
-      method: "matcherForActiveElement",
-      args: []
-    };
-  }
-
-  static matcherForFrameByIndex(index) {
-    if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.web.DetoxWebAtomMatcher"
-      },
-      method: "matcherForFrameByIndex",
-      args: [{
-        type: "Integer",
-        value: index
-      }]
-    };
-  }
-
-  static matcherForFrameByIdOrName(idOrName) {
-    if (typeof idOrName !== "string") throw new Error("idOrName should be a string, but got " + (idOrName + (" (" + (typeof idOrName + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.web.DetoxWebAtomMatcher"
-      },
-      method: "matcherForFrameByIdOrName",
-      args: [idOrName]
-    };
-  }
-
 }
 
 module.exports = DetoxWebAtomMatcher;

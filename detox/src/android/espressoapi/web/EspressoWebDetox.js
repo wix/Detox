@@ -5,38 +5,60 @@
 */
 
 
-
-class EspressoWebDetox {
-  static withElement(interaction, elementAtom) {
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.web.EspressoWebDetox"
-      },
-      method: "withElement",
-      args: [{
-        type: "Invocation",
-        value: interaction
-      }, {
-        type: "Invocation",
-        value: elementAtom
-      }]
-    };
+function sanitize_matcher(matcher) {
+  if (!matcher._call) {
+    return matcher;
   }
 
-  static perform(interaction, action) {
+  const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
+  return originalMatcher.type ? originalMatcher.value : originalMatcher;
+} 
+class EspressoWebDetox {
+  static getWebView() {
+    function getWebView0() {
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.web.EspressoWebDetox"
+        },
+        method: "getWebView",
+        args: []
+      };
+    }
+
+    function getWebView1(matcher) {
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.web.EspressoWebDetox"
+        },
+        method: "getWebView",
+        args: [{
+          type: "Invocation",
+          value: sanitize_matcher(matcher)
+        }]
+      };
+    }
+
+    if (arguments.length === 0) {
+      return getWebView0.apply(null, arguments);
+    }
+
+    if (arguments.length === 1) {
+      return getWebView1.apply(null, arguments);
+    }
+  }
+
+  static expect(webElement) {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.web.EspressoWebDetox"
       },
-      method: "perform",
+      method: "expect",
       args: [{
         type: "Invocation",
-        value: interaction
-      }, {
-        type: "Invocation",
-        value: action
+        value: webElement
       }]
     };
   }

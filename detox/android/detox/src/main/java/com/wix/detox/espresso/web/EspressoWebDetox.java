@@ -1,25 +1,28 @@
 package com.wix.detox.espresso.web;
 
-import androidx.test.espresso.web.model.Atom;
-import androidx.test.espresso.web.sugar.Web.WebInteraction;
-import androidx.test.espresso.web.assertion.WebAssertion;
+import android.view.View;
+
+import org.hamcrest.Matcher;
+
+import javax.annotation.Nullable;
 
 public class EspressoWebDetox {
+
+    private static final String TAG = "EspressoWebDetox";
 
     private EspressoWebDetox() {
         // static class
     }
 
-    public static WebInteraction withElement(WebInteraction interaction, Atom elementAtom) {
-        return interaction.withElement(elementAtom);
+    public static WebViewElement getWebView() {
+        return getWebView(null);
     }
 
-    public static WebInteraction perform(WebInteraction interaction, Atom action) {
-       return interaction.perform(action);
+    public static WebViewElement getWebView(@Nullable Matcher<View> matcher) {
+        return new WebViewElement(matcher);
     }
 
-    public static WebInteraction check(WebInteraction interaction, WebAssertion webAssertion) {
-        return interaction.check(webAssertion);
+    public static WebExpect expect(WebElement webElement) {
+        return new WebExpect(webElement);
     }
-
 }

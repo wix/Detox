@@ -12,9 +12,9 @@ const typeCheckInterfaces = {
   Integer: isNumber,
   String: isString,
   ViewAction: null, // there are optional view actions
-  ViewInteraction: null, // there are optional view actions
-  WebInteraction: null,
-  Atom: null
+  ViewInteraction: null,
+  WebElement: null,
+  'Atom<List<ElementReference>>': null
 };
 
 const contentSanitizersForFunction = {
@@ -73,15 +73,16 @@ module.exports = generator({
     'String',
     'ViewAction',
     'ViewInteraction',
-    'WebInteraction',
-    'Atom'
+    'WebElement',
+    'Atom<List<ElementReference>>'
   ],
   renameTypesMap: {
     int: 'Integer', // TODO: add test
     double: 'Double',
     ViewInteraction: 'Invocation',
     WebInteraction: 'Invocation',
-    Atom: 'Invocation'
+    WebElement: 'Invocation',
+    'Atom<List<ElementReference>>': 'Invocation'
   },
   classValue: ({ package: pkg, name }) => `${pkg}.${name}`
 });

@@ -77,4 +77,13 @@ class FrameByIdOrNameMatcher extends WebMatcher {
 
 module.exports = {
   IdMatcher,
+  ClassNameMatcher,
+  CssSelectorMatcher,
+  NameMatcher,
+  XPathMatcher,
+  LinkTextMatcher,
+  PartialLinkTextMatcher,
+  ActiveElementMatcher,
+  FrameByIndexMatcher,
+  FrameByIdOrNameMatcher
 };

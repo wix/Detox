@@ -17,7 +17,7 @@ function resolve(device, opts) {
   if (WebViewMatcherClass !== undefined) {
     return {
       matchers: new MatcherClass(opts),
-      webMatchers: new WebViewMatcherClass(opts)
+      webMatchers: new WebViewMatcherClass(device, opts)
     }
   }
   return {

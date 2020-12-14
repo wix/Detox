@@ -130,6 +130,10 @@ class AndroidDriver extends DeviceDriverBase {
     await this.uiDevice.pressHome();
   }
 
+  async typeText(deviceId, text) {
+    await this.adb.typeText(deviceId, text);
+  }
+
   async terminate(deviceId, bundleId) {
     const adbName = this._getAdbName(deviceId);
     await this.emitter.emit('beforeTerminateApp', { deviceId: adbName, bundleId });

@@ -60,6 +60,11 @@ class ADB {
     await this._sendKeyEvent(deviceId, 'KEYCODE_POWER');
   }
 
+  async typeText(deviceId, text) {
+    const actualText = text.replace(/ /g, '%s');
+    await this.shell(deviceId, `input text ${actualText}`);
+  }
+
   async _sendKeyEvent(deviceId, keyevent) {
     await this.shell(deviceId, `input keyevent ${keyevent}`);
   }

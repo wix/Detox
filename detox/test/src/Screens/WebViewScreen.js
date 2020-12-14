@@ -54,13 +54,15 @@ span.c {
 #cssSelector {
   background-color: yellow;
 }
-
+npm
 
 </style>
 <h1 id="testingh1">Testing Heading1</h1>
 
 <div id="spacer" style="height:600px;"></div>
 <a id="cssSelector" href="http://www.disney.com">disney.com</a>
+
+<div id="root" style="min-height:80px;"><div class="QiJxn LG3cc _2KPOx" dir="ltr" data-id="rce"><style id="dynamicStyles"></style><div class="Tux6h _2N_hG"><div class="DraftEditor-root"><div class="DraftEditor-editorContainer"><div aria-autocomplete="list" aria-describedby="placeholder-editor" aria-expanded="false" class="notranslate public-DraftEditor-content has-custom-focus" contenteditable="true" role="combobox" spellcheck="true" style="outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;"><div data-contents="true"><div class="jwLWP _2hXa7 public-DraftStyleDefault-block-depth0 public-DraftStyleDefault-text-ltr" data-block="true" data-editor="editor" data-offset-key="00000-0-0"><div data-offset-key="00000-0-0" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"><span data-offset-key="00000-0-0"><span data-text="true">Rich content viewer test</span></span></div></div></div></div></div></div></div></div><div><div id="EditorModal-1604407360799"><div class="ReactModalPortal"></div></div></div></div>
 
 <div id="testingDiv">
     <div id="testingDiv2">
