@@ -41,7 +41,7 @@ describe('Detox', () => {
           test: {
             type: 'fake.device',
             binaryPath: '/tmp/fake/path',
-            device: 'android',
+            device: 'a device',
           },
         },
       },
@@ -81,10 +81,6 @@ describe('Detox', () => {
 
     describe('', () => {
       beforeEach(init);
-
-      fit('should print debug', () => {
-        console.log('Detox: ', global);
-      });
 
       it('should create a DetoxServer automatically', () =>
         expect(DetoxServer).toHaveBeenCalledWith({

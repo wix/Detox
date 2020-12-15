@@ -2,7 +2,7 @@ const invoke = require('../invoke');
 const EspressoWebDetoxApi = require('./espressoapi/web/EspressoWebDetox');
 const WebViewElementApi = require('./espressoapi/web/WebViewElement');
 const WebElementApi = require('./espressoapi/web/WebElement');
-const WebExpectElementApi = require('./espressoapi/web/WebExpect');
+const WebExpectApi = require('./espressoapi/web/WebExpect');
 const {
   IdMatcher,
   ClassNameMatcher,
@@ -11,14 +11,11 @@ const {
   XPathMatcher,
   LinkTextMatcher,
   PartialLinkTextMatcher,
-  ActiveElementMatcher,
-  FrameByIndexMatcher,
-  FrameByIdOrNameMatcher
+  TagNameMatcher,
 } = require('./webMatcher');
 const {
   selectElementContents,
   moveCursorToEnd,
-  setCursorPosition,
   focus
  } = require ('./espressoapi/web/simpleAtoms');
 
@@ -53,6 +50,13 @@ class WebTapAction extends WebAction {
   constructor(element) {
     super();
     this._call = WebElementApi.tap(element._call);
+  }
+}
+
+class WebTypeTextAction extends WebAction {
+  constructor(element, text) {
+    super();
+    this._call = WebElementApi.typeText(element._call, text);
   }
 }
 
@@ -132,21 +136,6 @@ class WebMoveCursorEnd extends WebAction {
     this._call = WebElementApi.runScript(element._call, moveCursorToEnd);
   }
 }
-
-// class WebAssertionInteraction extends WebInteraction {
-//   constructor(invocationManager, element, assertion) {
-//     super(invocationManager);
-//     this._call = EspressoWebDetoxApi.check(call(element._call), !!assertion && assertion._call.value);
-//   }
-// }
-
-class WebExistsAssertion extends WebAction {
-  constructor(element) {
-    super();
-    this._call = element._call;
-  }
-}
-
 class WebViewElement {
   constructor(device, invocationManager, emitter, matcher) {
     this._invocationManager = invocationManager;
@@ -155,14 +144,15 @@ class WebViewElement {
     this._matcher = matcher;
     if (matcher !== undefined) {
       this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView(matcher._call));
+    } else {
+      this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView());
     }
-    this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView());
 
     this.element = this.element.bind(this);
   }
 
   element(webMatcher, index = 0) {
-    return new WebElement(this._device, this._invocationManager, this, webMatcher, index)
+    return new WebElement(this._device, this._invocationManager, this, webMatcher, index);
   }
 }
 
@@ -177,8 +167,11 @@ class WebElement {
     return await new ActionInteraction(this._invocationManager, new WebTapAction(this)).execute();
   }
 
-  async typeText(text) {
-    return await this._device.typeText(text);
+  async typeText(text, isContentEditable = false) {
+    if (isContentEditable) {
+      return await this._device.typeText(text);
+    }
+    return await await new ActionInteraction(this._invocationManager,  new WebTypeTextAction(this, text)).execute();
   }
 
   async replaceText(text) {
@@ -213,6 +206,10 @@ class WebElement {
     return await new ActionInteraction(this._invocationManager, new WebRunScriptAction(this, script)).execute();
   }
 
+  async runScriptWithArgs(script, args) {
+    return await new ActionInteraction(this._invocationManager, new WebRunScriptWithArgsAction(this, script, args)).execute();
+  }
+
   async getCurrentUrl() {
     return await new ActionInteraction(this._invocationManager, new WebGetCurrentUrlAction(this)).execute();
   }
@@ -222,9 +219,39 @@ class WebElement {
   }
 }
 
+class WebAssertionInteraction extends WebInteraction {
+  constructor(invocationManager, assertion) {
+    super(invocationManager);
+    this._call = assertion._call;
+  }
+}
+
+class WebExistsAssertion extends WebAction {
+  constructor(webExpect) {
+    super();
+    if (webExpect._notCondition) {
+      this._call = WebExpectApi.toNotExists(webExpect._call);
+    } else {
+      this._call = WebExpectApi.toExists(webExpect._call);
+    }
+  }
+}
+
+class WebHasTextAssertion extends WebAction {
+  constructor(webExpect, text) {
+    super();
+    if (webExpect._notCondition) {
+      this._call = WebExpectApi.toNotHaveText(webExpect._call, text);
+    } else {
+      this._call = WebExpectApi.toHaveText(webExpect._call, text);
+    }
+  }
+}
+
 class WebExpect {
   constructor(invocationManager) {
-    this._invocationManager = invocationManager;
+    this._invocationManager = invocationManager
+    this._notCondition = false;
   }
 
   get not() {
@@ -234,30 +261,27 @@ class WebExpect {
 }
 
 class WebExpectElement extends WebExpect {
-  constructor(invocationManager, element) {
-    super(invocationManager);
-    this._element = element;
+  constructor(invocationManager, webElement) {
+    super(invocationManager)
+    this._call = invoke.callDirectly(EspressoWebDetoxApi.expect(webElement._call.value));
   }
 
-  // async toHaveText(text) {
-  //   return await new WebAssertionInteraction(this._invocationManager, this._element, new WebHasTextAssertion(text)).execute();
-  // }
+  async toHaveText(text) {
+    return await new WebAssertionInteraction(this._invocationManager, new WebHasTextAssertion(this, text)).execute();
+  }
 
-  // async toExists() {
-  //   return await new WebAssertionInteraction(this._invocationManager, this._element, new WebExistsAssertion(this._element)).execute();
-  // }
+  async toNotHaveText(text) {
+    return this.not.toHaveText(text);
+  }
 
-  // async toNotExists() {
-  //   return this.not.toExists()
-  // }
-}
+  async toExists() {
+    return await new WebAssertionInteraction(this._invocationManager, new WebExistsAssertion(this)).execute();
+  }
 
-class WaitFor {
-  constructor(invocationManager) {
-    this._invocationManager = invocationManager;
+  async toNotExists() {
+    return this.not.toExists()
   }
 }
-
 class AndroidWebExpect {
   constructor(device, { invocationManager, emitter }) {
     this._invocationManager = invocationManager;
@@ -272,17 +296,14 @@ class AndroidWebExpect {
       xpath: value => new XPathMatcher(value),
       linkText: value => new LinkTextMatcher(value),
       partialLinkText: value => new PartialLinkTextMatcher(value),
-      activeElement: value => new ActiveElementMatcher(value),
-      frameIndex: value => new FrameByIndexMatcher(value),
-      frameIdOrName: value => new FrameByIdOrNameMatcher(value)
+      tag: value => new TagNameMatcher(value)
     };
 
     this.getWebView = this.getWebView.bind(this);
     this.expect = this.expect.bind(this);
-    // this.waitFor = this.waitFor.bind(this);
   }
 
-  async getWebView(webViewMatcher) {
+  getWebView(webViewMatcher) {
     return new WebViewElement(this._device, this._invocationManager, this._emitter, webViewMatcher);
   }
 

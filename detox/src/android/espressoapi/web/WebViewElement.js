@@ -7,7 +7,7 @@
 
 
 class WebViewElement {
-  static element(element, matcher, index) {
+  static element(element, matcher) {
     function element2(element, matcher) {
       return {
         target: element,

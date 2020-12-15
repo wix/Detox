@@ -19,7 +19,7 @@ public class WebExpect {
     }
 
     private Web.WebInteraction<Void> webViewInteraction() {
-        return webElement.webViewInteraction;
+        return webElement.getWebViewInteraction();
     }
 
     public void toNotExists() {
@@ -32,5 +32,9 @@ public class WebExpect {
 
     public void toHaveText(String text) {
         webViewInteraction().withElement(webElement.get()).check(webMatches(getText(), containsString(text)));
+    }
+
+    public void toNotHaveText(String text) {
+        webViewInteraction().withElement(webElement.get()).check(webMatches(getText(), not(containsString(text))));
     }
 }

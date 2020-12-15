@@ -1,5 +1,9 @@
 package com.wix.detox.espresso.web;
 
+import android.util.Log;
+import android.view.View;
+
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.Atoms;
 import androidx.test.espresso.web.model.ElementReference;
@@ -13,60 +17,68 @@ import java.util.List;
 
 public class WebElement {
 
-    final Web.WebInteraction<Void> webViewInteraction;
+    final WebViewElement webViewElement;
     final Atom<List<ElementReference>> matcherAtom;
     final int index;
 
-    WebElement(Web.WebInteraction<Void> webViewInteraction, Atom<List<ElementReference>> matcherAtom, int index) {
-        this.webViewInteraction = webViewInteraction;
+    WebElement(WebViewElement webViewElement, Atom<List<ElementReference>> matcherAtom, int index) {
+        this.webViewElement = webViewElement;
         this.matcherAtom = matcherAtom;
         this.index = index;
     }
 
+    Web.WebInteraction<Void> getWebViewInteraction() {
+        return webViewElement.webViewInteraction;
+    }
+
     ElementReference get() {
-        List<ElementReference> elements = webViewInteraction.perform(matcherAtom).get();
+        List<ElementReference> elements = getWebViewInteraction().perform(matcherAtom).get();
 
         if (elements == null || elements.size() == 0 || index >= elements.size()) {
-            throw new RuntimeException("element not found");
+            throw new RuntimeException(String.format("element was not found at index: %d", index));
         }
 
         return elements.get(index);
     }
 
     public void tap() {
-        webViewInteraction.withElement(get()).perform(DriverAtoms.webClick());
+        getWebViewInteraction().withElement(get()).perform(DriverAtoms.webClick());
+    }
+
+    public void typeText(String text) {
+        getWebViewInteraction().withElement(get()).perform(DriverAtoms.webKeys(text));
     }
 
     public void replaceText(String text) {
         clearText();
-        webViewInteraction.withElement(get()).perform(DriverAtoms.webKeys(text));
+        getWebViewInteraction().withElement(get()).perform(DriverAtoms.webKeys(text));
     }
 
     public void clearText() {
-        webViewInteraction.withElement(get()).perform(DriverAtoms.clearElement());
+        getWebViewInteraction().withElement(get()).perform(DriverAtoms.clearElement());
     }
 
     public boolean scrollToView() {
-        return webViewInteraction.withElement(get()).perform(DriverAtoms.webScrollIntoView()).get();
+        return getWebViewInteraction().withElement(get()).perform(DriverAtoms.webScrollIntoView()).get();
     }
 
     public String getText() {
-        return webViewInteraction.withElement(get()).perform(DriverAtoms.getText()).get();
+        return getWebViewInteraction().withElement(get()).perform(DriverAtoms.getText()).get();
     }
 
     public Evaluation runScript(String script) {
-        return webViewInteraction.withElement(get()).perform(new SimpleAtom(script)).get();
+        return getWebViewInteraction().withElement(get()).perform(new SimpleAtom(script)).get();
     }
 
     public Evaluation runScriptWithArgs(String script, final ArrayList<Object> args) {
-        return webViewInteraction.withElement(get()).perform(Atoms.scriptWithArgs(script, args)).get();
+        return getWebViewInteraction().withElement(get()).perform(Atoms.scriptWithArgs(script, args)).get();
     }
 
     public String getCurrentUrl() {
-        return webViewInteraction.withElement(get()).perform(Atoms.getCurrentUrl()).get();
+        return getWebViewInteraction().withElement(get()).perform(Atoms.getCurrentUrl()).get();
     }
 
     public String getTitle() {
-        return webViewInteraction.withElement(get()).perform(Atoms.getTitle()).get();
+        return getWebViewInteraction().withElement(get()).perform(Atoms.getTitle()).get();
     }
 }

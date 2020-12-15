@@ -64,13 +64,13 @@ public class JsonParserTest {
 
     @Test
     public void fromJsonTargetInvocationEspressoWebDetox() {
-//        EspressoWebDetox.perform(Web.onWebView().withElement(DetoxWebAtomMatcher.matcherForId("textInput")), DetoxWebAtomAction.click());
-        Invocation onWebView = new Invocation(new ClassTarget("androidx.test.espresso.web.sugar.Web"), "onWebView");
-        Invocation findElement = new Invocation(new ClassTarget("com.wix.detox.espresso.web.DetoxWebAtomMatcher"), "matcherForId", "textInput");
-        Invocation withElement = new Invocation(new ClassTarget("com.wix.detox.espresso.web.EspressoWebDetox"), "withElement", onWebView, findElement);
-        Invocation click = new Invocation(new ClassTarget("com.wix.detox.espresso.web.DetoxWebAtomAction"), "click");
-        Invocation perform = new Invocation(new ClassTarget("com.wix.detox.espresso.web.EspressoWebDetox"), "perform", withElement, click);
-        assertThat(parse("targetInvocationEspressoWebDetox.json")).isEqualToComparingFieldByFieldRecursively(perform);
+//        EspressoWebDetox.getWebView().element(DetoxWebAtomMatcher.matcherForId("textInput")).tap();
+
+        Invocation getWebView = new Invocation(new ClassTarget("com.wix.detox.espresso.web.EspressoWebDetox"), "getWebView");
+        Invocation matcher = new Invocation(new ClassTarget("com.wix.detox.espresso.web.DetoxWebAtomMatcher"), "matcherForId", "textInput");
+        Invocation element = new Invocation(new InvocationTarget(getWebView), "element", matcher, 0);
+        Invocation tap = new Invocation(new InvocationTarget(element), "tap");
+        assertThat(parse("targetInvocationEspressoWebDetox.json")).isEqualToComparingFieldByFieldRecursively(tap);
     }
 
     @Test

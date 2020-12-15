@@ -57,7 +57,7 @@ span.c {
 npm
 
 </style>
-<h1 id="testingh1">Testing Heading1</h1>
+<h1 id="testingh1">Testing <mark>Heading1</mark></h1>
 
 <div id="spacer" style="height:600px;"></div>
 <a id="cssSelector" href="http://www.disney.com">disney.com</a>
@@ -90,7 +90,7 @@ npm
 
 <div id="spacer2" style="height:2000px;"></div>
 
-<input type="text" id="textInput2" placeholder="Second Input"/><br>
+<input name="sec_input" type="text" id="textInput2" placeholder="Second Input"/><br>
 
 <div id="testingDiv9">
     <h2 id="testingh1-1">Xpath</h2>

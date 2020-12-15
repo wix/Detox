@@ -91,6 +91,18 @@ class DetoxWebAtomMatcher {
     };
   }
 
+  static matcherForTagName(tag) {
+    if (typeof tag !== "string") throw new Error("tag should be a string, but got " + (tag + (" (" + (typeof tag + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.web.DetoxWebAtomMatcher"
+      },
+      method: "matcherForTagName",
+      args: [tag]
+    };
+  }
+
 }
 
 module.exports = DetoxWebAtomMatcher;

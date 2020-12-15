@@ -42,4 +42,8 @@ public class DetoxWebAtomMatcher {
     public static Atom<List<ElementReference>> matcherForPartialLinkText(String partialLinkText) {
         return findMultipleElements(Locator.PARTIAL_LINK_TEXT, partialLinkText);
     }
+
+    public static Atom<List<ElementReference>> matcherForTagName(String tag) {
+        return findMultipleElements(Locator.TAG_NAME, tag);
+    }
 }

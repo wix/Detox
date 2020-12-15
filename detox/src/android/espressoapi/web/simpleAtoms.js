@@ -1,11 +1,15 @@
 const selectElementContents = `
 function selectElementContents(el) {
   el.focus();
-  var range = document.createRange();
-  range.selectNodeContents(el);
-  var sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
+  if (el.contentEditable) {
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else {
+    el.setSelectionRange(0, el.value.length);
+  }
 }`;
 
 const moveCursorToEnd = `
