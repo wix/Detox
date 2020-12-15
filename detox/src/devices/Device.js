@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
+const log = require('../utils/logger').child({ __filename });
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
@@ -22,9 +23,31 @@ class Device {
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-    return traceCall('launchApp', () =>
-      this._doLaunchApp(params, bundleId));
+    return traceCall('launchApp', async () => {
+      if (this._deviceConfig.launchManually) {
+        log.info({},
+          'Waiting for you to manually launch your app in debug mode.\n' +
+          'Press any key to continue...'
+        );
+
+        await this._pressAnyKey();
+      } else {
+        await this._doLaunchApp(params, bundleId);
+      }
+    });
   }
+
+
+  async _pressAnyKey() {
+    return new Promise((resolve) => {
+      process.stdin.setRawMode(true);
+      process.stdin.once('data', (e) => {
+        process.stdin.setRawMode(false);
+        resolve();
+      });
+    });
+  }
+
   async _doLaunchApp(params, bundleId) {
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
