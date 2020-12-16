@@ -1,7 +1,7 @@
-describe('Sanity', () => {
+describe('Stub2', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await detox.traceCall('Navigate to sanity', () => element(by.text('Sanity')).tap());
+    await element(by.text('Sanity')).tap();
   });
 
   it('should have welcome screen', async () => {
@@ -13,10 +13,5 @@ describe('Sanity', () => {
   it('should show hello screen after tap', async () => {
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
-  });
-
-  it('should show world screen after tap', async () => {
-    await element(by.text('Say World')).tap();
-    await expect(element(by.text('World!!!'))).toBeVisible();
   });
 });
