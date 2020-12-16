@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
+const { traceCall } = require('../utils/trace');
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
@@ -15,11 +16,16 @@ class Device {
   async prepare() {
     await this.deviceDriver.prepare();
 
-    this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name);
+    this._deviceId = await traceCall('acquireDevice', () =>
+      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name));
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
   }
 
   async launchApp(params = {}, bundleId = this._bundleId) {
+    return traceCall('launchApp', () =>
+      this._doLaunchApp(params, bundleId));
+  }
+  async _doLaunchApp(params, bundleId) {
     const deviceId = this._deviceId;
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
@@ -186,23 +192,27 @@ class Device {
   async installApp(binaryPath, testBinaryPath) {
     const _binaryPath = binaryPath || this._deviceConfig.binaryPath;
     const _testBinaryPath = testBinaryPath || this._deviceConfig.testBinaryPath;
-    await this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath);
+    await traceCall('appInstall', () =>
+      this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath));
   }
 
   async uninstallApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
-    await this.deviceDriver.uninstallApp(this._deviceId, _bundleId);
+    await traceCall('appUninstall', () =>
+      this.deviceDriver.uninstallApp(this._deviceId, _bundleId));
   }
 
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      await this.deviceDriver.installUtilBinaries(this._deviceId, paths);
+      await traceCall('installUtilBinaries', () =>
+        this.deviceDriver.installUtilBinaries(this._deviceId, paths));
     }
   }
 
   async reloadReactNative() {
-    await this.deviceDriver.reloadReactNative();
+    await traceCall('reloadRN', () =>
+      this.deviceDriver.reloadReactNative());
   }
 
   async openURL(params) {

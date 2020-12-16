@@ -210,7 +210,7 @@ class Element : NSObject {
 	
 	@objc
 	var text: String? {
-		return view.value(forKey: "text") as? String
+		return view.value(forKey: "dtx_text") as? String
 	}
 	
 	@objc

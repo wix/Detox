@@ -51,7 +51,7 @@ class AndroidDriver extends DeviceDriverBase {
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
-      timeline: (api) => new TimelineArtifactPlugin({api, adb, devicePathBuilder}),
+      timeline: (api) => new TimelineArtifactPlugin({ api }),
     };
   }
 
