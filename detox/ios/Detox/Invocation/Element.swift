@@ -215,7 +215,7 @@ class Element : NSObject {
 	
 	@objc
 	var placeholder: String? {
-		return view.value(forKey: "placeholder") as? String
+		return view.value(forKey: "dtx_placeholder") as? String
 	}
 	
 	@objc

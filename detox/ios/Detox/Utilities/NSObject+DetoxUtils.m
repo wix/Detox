@@ -202,6 +202,23 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return nil;
 }
 
+- (NSString *)dtx_placeholder
+{
+	id rv = [self _dtx_placeholder];
+	if(rv == nil || [rv isKindOfClass:NSString.class])
+	{
+		return rv;
+	}
+	
+	if([rv isKindOfClass:NSAttributedString.class])
+	{
+		return [(NSAttributedString*)rv string];
+	}
+	
+	//Unsupported
+	return nil;
+}
+
 - (BOOL)dtx_isEnabled
 {
 	return self.dtx_view.dtx_isEnabled;
@@ -244,7 +261,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	rv[@"className"] = NSStringFromClass(self.class);
 	
-	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]];
+	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"dtx_placeholder"]];
 	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 		if([obj isKindOfClass:NSNull.class])
 		{
@@ -254,6 +271,10 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		if([key isEqualToString:@"dtx_text"])
 		{
 			rv[@"text"] = obj;
+		}
+		else if([key isEqualToString:@"dtx_placeholder"])
+		{
+			rv[@"placeholder"] = obj;
 		}
 		else if([key isEqualToString:@"accessibilityLabel"])
 		{
