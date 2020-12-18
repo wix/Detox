@@ -121,6 +121,10 @@ class AndroidDriver extends DeviceDriverBase {
     }
 
     const pid = await this._waitForProcess(adbName, bundleId);
+    if (manually) {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+
     await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
     return pid;
   }
