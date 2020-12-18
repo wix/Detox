@@ -101,13 +101,21 @@
         }
       },
       "ios.none": {
-        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "build": "set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+        "binaryPath": "ios",
+        "type": "ios.none",
+        "device": {
+          "type": "iPhone 11 Pro"
+        },
+        "session": {
+          "server": "ws://localhost:8099",
+          "sessionId": "com.wix.detox-example"
+        }
+      },
+      "ios.manual": {
         "type": "ios.simulator",
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "artifacts": false,
         "behavior": {
-          "init": {
-            "reinstallApp": false
-          },
           "launchApp": "manual"
         },
         "device": {
