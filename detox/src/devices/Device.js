@@ -2,9 +2,17 @@ const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
 const log = require('../utils/logger').child({ __filename });
+const pressAnyKey = require('../utils/pressAnyKey');
 
 class Device {
-  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
+  constructor({
+    behaviorConfig,
+    deviceConfig,
+    deviceDriver,
+    emitter,
+    sessionConfig
+  }) {
+    this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
@@ -23,29 +31,7 @@ class Device {
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-    return traceCall('launchApp', async () => {
-      if (this._deviceConfig.launchManually) {
-        log.info({},
-          'Waiting for you to manually launch your app in debug mode.\n' +
-          'Press any key to continue...'
-        );
-
-        await this._pressAnyKey();
-      } else {
-        await this._doLaunchApp(params, bundleId);
-      }
-    });
-  }
-
-
-  async _pressAnyKey() {
-    return new Promise((resolve) => {
-      process.stdin.setRawMode(true);
-      process.stdin.once('data', (e) => {
-        process.stdin.setRawMode(false);
-        resolve();
-      });
-    });
+    return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
   }
 
   async _doLaunchApp(params, bundleId) {
@@ -90,7 +76,12 @@ class Device {
       }
     }
 
-    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    let processId;
+    if (this._behaviorConfig.launchApp === 'manual') {
+      processId = await this.deviceDriver.waitForAppLaunch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    } else {
+      processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    }
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();

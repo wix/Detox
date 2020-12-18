@@ -153,6 +153,7 @@ class Detox {
     });
 
     this.device = new Device({
+      behaviorConfig: this._behaviorConfig,
       deviceConfig: this._deviceConfig,
       emitter: this._eventEmitter,
       deviceDriver,

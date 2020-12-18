@@ -27,7 +27,11 @@ class DeviceDriverBase {
   }
 
   async launchApp() {
-    return await Promise.resolve('');
+    return await Promise.resolve(NaN);
+  }
+
+  async waitForAppLaunch() {
+    return await Promise.resolve(NaN);
   }
 
   async takeScreenshot(deviceId, screenshotName) {

@@ -10,6 +10,8 @@ const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
+const log = require('../../../utils/logger').child({ __filename });
+const pressAnyKey = require('../../../utils/pressAnyKey');
 
 class SimulatorDriver extends IosDriver {
 
@@ -87,6 +89,32 @@ class SimulatorDriver extends IosDriver {
     const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
 
+    return pid;
+  }
+
+  async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
+    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+
+    log.info({},
+      'Waiting for you to manually launch your app in Xcode.\n' +
+      'Make sure to pass the launch arguments listed below:\n' +
+      '  --args\n' +
+      _.flatMap(Object.entries(launchArgs)).map(arg => `  -${arg}`).join('\n') +
+      '\n\nPress any key to continue...'
+    );
+
+    await pressAnyKey();
+
+    const pid = await this.applesimutils.getPid(deviceId, bundleId);
+    if (Number.isNaN(pid)) {
+      throw new DetoxRuntimeError({
+        message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
+        hint: `Make sure that the app is running on the device (${deviceId}), visually or via CLI:\n` +
+              `xcrun simctl spawn ${deviceId} launchctl list | grep -F '${bundleId}'\n`,
+      });
+    }
+
+    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
     return pid;
   }
 

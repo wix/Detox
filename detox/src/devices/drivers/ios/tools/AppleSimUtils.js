@@ -369,6 +369,20 @@ class AppleSimUtils {
   async statusBarReset(udid) {
     await this._execSimctl({ cmd: `status_bar ${udid} clear` });
   }
+
+  async getPid(udid, bundleId) {
+    const result = await this._execSimctl({
+      cmd: `spawn ${udid} launchctl list | grep -F '${bundleId}' || true`,
+      retries: 0,
+    });
+
+    if (result && result.stdout) {
+      const [pid] = result.stdout.split(/\s/);
+      return Number(pid);
+    }
+
+    return Number.NaN;
+  }
 }
 
 module.exports = AppleSimUtils;
