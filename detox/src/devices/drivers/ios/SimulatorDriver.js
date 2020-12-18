@@ -99,8 +99,8 @@ class SimulatorDriver extends IosDriver {
       'Waiting for you to manually launch your app in Xcode.\n' +
       'Make sure to pass the launch arguments listed below:\n' +
       '  --args\n' +
-      _.flatMap(Object.entries(launchArgs)).map(arg => `  -${arg}`).join('\n') +
-      '\n\nPress any key to continue...'
+      _.flatMap(launchArgs, (v, k) => [`-${k}`, v]).map(arg => `  ${arg}\n`).join('') +
+      '\nPress any key to continue...'
     );
 
     await pressAnyKey();
