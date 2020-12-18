@@ -116,6 +116,15 @@ class AppleSimUtils {
     return this._parseLaunchId(result);
   }
 
+  printLaunchHint(udid, bundleId, launchArgs, languageAndLocale) {
+    log.info({},
+      'Waiting for you to manually launch your app in Xcode.\n' +
+      'Make sure to pass the launch arguments listed below:\n' +
+      this._mergeLaunchArgs(launchArgs, languageAndLocale).map(pair => `  ${pair}\n`).join(''),
+      '\nPress any key to continue...'
+    );
+  }
+
   async sendToHome(udid) {
     await this._execSimctl({ cmd: `launch ${udid} com.apple.springboard`, retries: 10 });
   }
@@ -296,36 +305,41 @@ class AppleSimUtils {
     return parsed;
   }
 
-  _joinLaunchArgs(launchArgs) {
-    return _.map(launchArgs, (v, k) => `-${k} "${v}"`).join(' ').trim();
+  _mergeLaunchArgs(launchArgs, languageAndLocale) {
+    const args = {
+      ...launchArgs,
+    };
+
+    if (languageAndLocale) {
+      if (languageAndLocale.language) {
+        args.AppleLanguages = `(${languageAndLocale.language})`;
+      }
+
+      if (languageAndLocale.locale) {
+        args.AppleLocale = languageAndLocale.locale;
+      }
+    }
+
+    return _.map(args, (v, k) => `-${k} "${v}"`); // TODO: replace naive quoting
   }
 
   async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
-    const args = this._joinLaunchArgs(launchArgs);
-
     let dylibs = `${frameworkPath}/Detox`;
     if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
     }
 
+    const cmdArgs = this._mergeLaunchArgs(launchArgs, languageAndLocale).join(' ');
     let launchBin = `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
-      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${args}`;
+      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} ${cmdArgs}`;
 
-      if (!!languageAndLocale && !!languageAndLocale.language) {
-        launchBin += ` -AppleLanguages "(${languageAndLocale.language})"`;
-      }
-
-      if (!!languageAndLocale && !!languageAndLocale.locale) {
-        launchBin += ` -AppleLocale ${languageAndLocale.locale}`;
-      }
-
-    const options = {
+    const result = await exec.execWithRetriesAndLogs(launchBin, {
       retries: 1,
       statusLogs: {
         trying: `Launching ${bundleId}...`,
       },
-    };
-    const result = await exec.execWithRetriesAndLogs(launchBin, options);
+    });
+
     return result;
   }
 

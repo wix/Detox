@@ -2,7 +2,6 @@ const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
 const log = require('../utils/logger').child({ __filename });
-const pressAnyKey = require('../utils/pressAnyKey');
 
 class Device {
   constructor({

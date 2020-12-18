@@ -70,10 +70,8 @@
       "plugins": {
         "log": "all",
         "screenshot": {
-          "shouldTakeAutomaticSnapshots": false,
-          "takeWhen": {
-            "testDone": true
-          }
+          "shouldTakeAutomaticSnapshots": true,
+          "takeWhen": {}
         },
         "timeline": "all",
         "uiHierarchy": "enabled"
@@ -124,6 +122,23 @@
           "autoStart": true,
           "server": "ws://localhost:8099",
           "sessionId": "com.wix.detox-example"
+        }
+      },
+      "android.manual": {
+        "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
+        "build": ":",
+        "type": "android.emulator",
+        "artifacts": false,
+        "device": {
+          "avdName": "Pixel_API_28"
+        },
+        "behavior": {
+          "launchApp": "manual"
+        },
+        "session": {
+          "autoStart": true,
+          "server": "ws://localhost:8099",
+          "sessionId": "test"
         }
       },
       "android.emu.debug": {

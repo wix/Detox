@@ -95,14 +95,7 @@ class SimulatorDriver extends IosDriver {
   async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
 
-    log.info({},
-      'Waiting for you to manually launch your app in Xcode.\n' +
-      'Make sure to pass the launch arguments listed below:\n' +
-      '  --args\n' +
-      _.map(launchArgs, (v, k) => `  -${k} "${v}"\n`).join('') + // TODO: replace naive quoting
-      '\nPress any key to continue...'
-    );
-
+    this.applesimutils.printLaunchHint(deviceId, bundleId, launchArgs, languageAndLocale);
     await pressAnyKey();
 
     const pid = await this.applesimutils.getPid(deviceId, bundleId);

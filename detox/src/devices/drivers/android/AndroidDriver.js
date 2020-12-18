@@ -24,6 +24,7 @@ const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArti
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
+const pressAnyKey = require('../../../utils/pressAnyKey');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 
 class AndroidDriver extends DeviceDriverBase {
@@ -87,15 +88,52 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
-    const adbName = this._getAdbName(deviceId);
+    return this._handleLaunchApp({
+      manually: false,
+      deviceId: this._getAdbName(deviceId),
+      bundleId,
+      launchArgs,
+      languageAndLocale,
+    });
+  }
 
-    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
+  async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
+    return this._handleLaunchApp({
+      manually: true,
+      deviceId: this._getAdbName(deviceId),
+      bundleId,
+      launchArgs,
+      languageAndLocale,
+    });
+  }
 
-    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
-    await this._launchApp(adbName, bundleId, launchArgs);
+  async _handleLaunchApp({ manually, deviceId, bundleId, launchArgs, languageAndLocale }) {
+    await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
 
-    const pid = await this._waitForProcess(adbName, bundleId);
-    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
+    launchArgs = await this._modifyArgsForNotificationHandling(deviceId, bundleId, launchArgs);
+
+    if (manually) {
+      log.info({},
+        'Waiting for you to manually launch your app in Android Studio.\n\n' +
+        `Package: ${bundleId}.\n` +
+        `Instrumentation class: ${bundleId}.???\n` +
+        'Instrumentation arguments:\n' +
+        '|-----------------------------------------------------------\n' +
+        '| Key                       | Value                         \n' +
+        '|-----------------------------------------------------------\n' +
+        `| ${_.map(launchArgs, (v, k) => `${k} ${v}`).join('\n')}\n` +
+        '|___________________________________________________________\n' +
+        '\n' +
+        'Press any key to continue...'
+      );
+
+      await pressAnyKey();
+    } else {
+      await this._launchApp(deviceId, bundleId, launchArgs);
+    }
+
+    const pid = await this._waitForProcess(deviceId, bundleId);
+    await this.emitter.emit('launchApp', { deviceId, bundleId, launchArgs, pid });
     return pid;
   }
 
