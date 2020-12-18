@@ -4,6 +4,7 @@ const {joinArgs} = require('../../../../utils/argparse');
 const exec = require('../../../../utils/exec');
 const log = require('../../../../utils/logger').child({ __filename });
 const environment = require('../../../../utils/environment');
+const { quote } = require('../../../../utils/shellQuote');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
@@ -297,7 +298,7 @@ class AppleSimUtils {
   }
 
   _joinLaunchArgs(launchArgs) {
-    return _.map(launchArgs, (v, k) => `-${k} "${v}"`).join(' ').trim();
+    return quote(_.flatMap(launchArgs, (v, k) => [`-${k}`, v])).trim();
   }
 
   async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
