@@ -38,7 +38,11 @@ module.exports.handler = async function test(argv) {
   });
 
   if (detoxArgs['inspect-brk']) {
-    forwardedArgs.argv.$0 = `node --inspect-brk ${require.resolve(whichSync(runner))}`;
+    const runnerBinary = whichSync(runner, {
+      path: prependNodeModulesBinToPATH({ ...process.env }),
+    });
+
+    forwardedArgs.argv.$0 = `node --inspect-brk ${require.resolve(runnerBinary)}`;
   } else {
     forwardedArgs.argv.$0 = runnerConfig.testRunner;
   }
