@@ -55,7 +55,6 @@
     "specs": "e2e/*.test.js",
     "behavior": {
       "init": {
-        "reinstallApp": true,
         "launchApp": true,
         "exposeGlobals": true
       },
