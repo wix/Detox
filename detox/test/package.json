@@ -159,6 +159,13 @@
         "device": {
           "avdName": "Pixel_API_28"
         }
+      },
+      "stub": {
+        "type": "./integration/stub",
+        "name": "integration-stub",
+        "device": {
+          "integ": "stub"
+        }
       }
     }
   }
