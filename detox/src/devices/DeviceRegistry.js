@@ -3,6 +3,9 @@ const environment = require('../utils/environment');
 const ExclusiveLockfile = require('../utils/ExclusiveLockfile');
 const safeAsync = require('../utils/safeAsync');
 
+const getDeviceEqualsFn = (deviceHandle) => (otherDeviceHandle) => _.isEqual(otherDeviceHandle, deviceHandle);
+const getDeviceDifferFn = (deviceHandle) => (otherDeviceHandle) => !_.isEqual(otherDeviceHandle, deviceHandle);
+
 class DeviceRegistry {
   constructor({ lockfilePath }) {
     /***
@@ -22,30 +25,31 @@ class DeviceRegistry {
   }
 
   /***
-   * @param {string|Function} getDeviceId
+   * @param {string|Function} getDeviceHandle
    * @returns {Promise<string>}
    */
-  async allocateDevice(getDeviceId) {
+  async allocateDevice(getDeviceHandle) {
     return this._lockfile.exclusively(async () => {
-      const deviceId = await safeAsync(getDeviceId);
-      this._toggleDeviceStatus(deviceId, true);
-      return deviceId;
+      const deviceHandle = await safeAsync(getDeviceHandle);
+      this._toggleDeviceStatus(deviceHandle, true);
+      return deviceHandle;
     });
   }
 
   /***
-   * @param {string|Function} getDeviceId
+   * @param {string|Function} getDeviceHandle
    * @returns {void}
    */
-  async disposeDevice(getDeviceId) {
+  async disposeDevice(getDeviceHandle) {
     await this._lockfile.exclusively(async () => {
-      const deviceId = await safeAsync(getDeviceId);
+      const deviceId = await safeAsync(getDeviceHandle);
       this._toggleDeviceStatus(deviceId, false);
     });
   }
 
-  includes(deviceId) {
-    return !!_.find(this._lockfile.read(), (item) => _.isEqual(item, deviceId));
+  includes(deviceHandle) {
+    const deviceEqualsFn = getDeviceEqualsFn(deviceHandle);
+    return !!_.find(this._lockfile.read(), deviceEqualsFn);
   }
 
   getRegisteredDevices() {
@@ -70,11 +74,12 @@ class DeviceRegistry {
   /***
    * @private
    */
-  _toggleDeviceStatus(deviceId, busy) {
+  _toggleDeviceStatus(deviceHandle, busy) {
+    const deviceDifferFn = getDeviceDifferFn(deviceHandle);
     const state = this._lockfile.read();
     const newState = busy
-      ? _.concat(state, deviceId)
-      : _.filter(state, (item) => !_.isEqual(item, deviceId));
+      ? _.concat(state, deviceHandle)
+      : _.filter(state, deviceDifferFn);
     this._lockfile.write(newState);
   }
 

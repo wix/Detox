@@ -19,37 +19,37 @@ describe('DeviceRegistry', () => {
       await fs.remove(lockfilePath);
     });
 
-    async function allocateDevice(deviceId) {
-      return registry.allocateDevice(() => deviceId);
+    async function allocateDevice(deviceHandle) {
+      return registry.allocateDevice(() => deviceHandle);
     }
 
-    function expectRegisteredDevices(...deviceIds) {
+    function expectRegisteredDevices(...deviceHandles) {
       return registry.allocateDevice(() => {
-        expect(registry.getRegisteredDevices()).toEqual([ ...deviceIds ]);
+        expect(registry.getRegisteredDevices()).toEqual([ ...deviceHandles ]);
         throw new Error('ignored'); // So it wouldn't really allocate anything
       }).catch((e) => { if (e.message !== 'ignored') throw e });
     }
 
-    async function checkDeviceRegisteredAndDispose(deviceId) {
+    async function checkDeviceRegisteredAndDispose(deviceHandle) {
       return registry.disposeDevice(async () => {
-        expect(registry.includes(deviceId)).toBe(true);
-        return deviceId;
+        expect(registry.includes(deviceHandle)).toBe(true);
+        return deviceHandle;
       });
     }
 
-    async function disposeDevice(deviceId) {
-      return registry.disposeDevice(() => deviceId);
+    async function disposeDevice(deviceHandle) {
+      return registry.disposeDevice(() => deviceHandle);
     }
 
-    async function checkDeviceIsNotRegistered(deviceId) {
+    async function checkDeviceIsNotRegistered(deviceHandle) {
       return registry.allocateDevice(async () => {
-        expect(registry.includes(deviceId)).toBe(false);
+        expect(registry.includes(deviceHandle)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
       }).catch((e) => { if (e.message !== 'ignored') throw e });
     }
 
-    async function checkRegisteredDevicesEqual(...deviceIds) {
-      expect(await registry.readRegisteredDevices()).toEqual([ ...deviceIds ]);
+    async function checkRegisteredDevicesEqual(...deviceHandles) {
+      expect(await registry.readRegisteredDevices()).toEqual([ ...deviceHandles ]);
     }
 
     const assertForbiddenOutOfContextRegistryQuery = () =>
@@ -59,69 +59,69 @@ describe('DeviceRegistry', () => {
       expect(() => registry.getRegisteredDevices()).toThrowError();
 
     it('should be able to tell whether a device is registered', async () => {
-      const deviceId = 'emulator-5554';
-      await allocateDevice(deviceId);
-      await checkDeviceRegisteredAndDispose(deviceId);
-      await checkDeviceIsNotRegistered(deviceId);
+      const deviceHandle = 'emulator-5554';
+      await allocateDevice(deviceHandle);
+      await checkDeviceRegisteredAndDispose(deviceHandle);
+      await checkDeviceIsNotRegistered(deviceHandle);
     });
 
-    it('should be able to tell whether a device is registered, given object-like IDs', async () => {
-      const rawDeviceId = {
+    it('should be able to tell whether a device is registered, given objects for handles', async () => {
+      const rawDeviceHandle = {
         type: 'mocked-device-type',
         adbName: 'localhost:11111',
       };
-      const deviceId = {
-        ...rawDeviceId,
+      const deviceHandle = {
+        ...rawDeviceHandle,
         mockFunc: () => 'mocked-func-result',
       };
 
-      await allocateDevice(deviceId);
-      await checkDeviceRegisteredAndDispose(rawDeviceId);
-      await checkDeviceIsNotRegistered(deviceId);
+      await allocateDevice(deviceHandle);
+      await checkDeviceRegisteredAndDispose(rawDeviceHandle);
+      await checkDeviceIsNotRegistered(deviceHandle);
     });
 
     it('should throw on attempt of checking whether a device is registered outside of allocation/disposal context', async () => {
-      const deviceId = 'emulator-5554';
+      const deviceHandle = 'emulator-5554';
 
       assertForbiddenOutOfContextRegistryQuery();
 
-      await allocateDevice(deviceId);
+      await allocateDevice(deviceHandle);
       assertForbiddenOutOfContextRegistryQuery();
     });
 
     it('should be able to fast-get a valid list of registered devices', async () => {
-      const deviceId = 'emulator-5554';
-      const anotherDeviceId = {
+      const deviceHandle = 'emulator-5554';
+      const anotherDeviceHandle = {
         type: 'mocked-device-type',
         adbName: 'emulator-5556',
       };
 
-      await allocateDevice(deviceId);
-      await allocateDevice(anotherDeviceId);
-      await expectRegisteredDevices(deviceId, anotherDeviceId);
+      await allocateDevice(deviceHandle);
+      await allocateDevice(anotherDeviceHandle);
+      await expectRegisteredDevices(deviceHandle, anotherDeviceHandle);
     });
 
     it('should throw on attempt of fast-getting registered devices list outside of allocation/disposal context', async () => {
-      const deviceId = 'emulator-5554';
+      const deviceHandle = 'emulator-5554';
 
       assertForbiddenOutOfContextDeviceListQuery();
 
-      await allocateDevice(deviceId);
+      await allocateDevice(deviceHandle);
       assertForbiddenOutOfContextDeviceListQuery();
     });
 
     it('should be able to read a valid list of registered devices', async () => {
-      const deviceId = 'emulator-5554';
-      const anotherDeviceId = 'emulator-5556';
+      const deviceHandle = 'emulator-5554';
+      const anotherDeviceHandle = 'emulator-5556';
 
-      await allocateDevice(deviceId);
-      await allocateDevice(anotherDeviceId);
-      await checkRegisteredDevicesEqual(deviceId, anotherDeviceId);
-      await disposeDevice(deviceId);
-      await checkRegisteredDevicesEqual(anotherDeviceId);
+      await allocateDevice(deviceHandle);
+      await allocateDevice(anotherDeviceHandle);
+      await checkRegisteredDevicesEqual(deviceHandle, anotherDeviceHandle);
+      await disposeDevice(deviceHandle);
+      await checkRegisteredDevicesEqual(anotherDeviceHandle);
     });
 
-    it('should be able to dispose devices with object-like ID\'s', async () => {
+    it('should be able to dispose devices with object-like handles', async () => {
       const deviceId = {
         type: 'mocked-device-type',
         adbName: 'emulator-5554',
