@@ -1,4 +1,3 @@
-
 const MOCK_TEXT = 'Mock Text';
 
 describe(':android: WebView', () => {
@@ -146,4 +145,49 @@ describe(':android: WebView', () => {
     //Verify para value is the latest changed text
     await web.expect(webview.element(web.by.id('testingPar'))).toHaveText(MOCK_TEXT);
   });
+
+  describe('ContentEditable', () => {
+
+    it('should replace text by selecting all text', async () => {
+        //detox web
+        webview = await getWebView();
+        const editable = await webview.element(web.by.className('public-DraftEditor-content'));
+        const text = await editable.getText();
+
+        await editable.scrollToView();
+        await editable.selectAllText();
+
+        //tapping, (at the moment not working on content-editable)
+        const uiDevice = device.getUiDevice();
+        await uiDevice.click(40, 150);
+
+        await editable.typeText(MOCK_TEXT, true);
+
+        await web.expect(editable).toNotHaveText(text);
+        await web.expect(editable).toHaveText(MOCK_TEXT);
+    });
+
+    it('move cursor to end and add text', async () => {
+      //detox web
+      webview = await getWebView();
+      const editable = await webview.element(web.by.className('public-DraftEditor-content'));
+      await editable.scrollToView();
+
+      //tapping, (at the moment not working on content-editable)
+      const uiDevice = device.getUiDevice();
+      await uiDevice.click(40, 150);
+
+      //Initial Text
+      await editable.selectAllText();
+      await editable.typeText(MOCK_TEXT, true);
+
+      //Addition Text
+      const ADDITION_TEXT = ' AdditionText';
+      await editable.moveCursorToEnd();
+      await editable.typeText(ADDITION_TEXT, true);
+
+      await web.expect(editable).toHaveText(MOCK_TEXT + ADDITION_TEXT);
+  });
+  });
+
 });

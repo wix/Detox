@@ -163,6 +163,7 @@ class WebElement {
     this._device = device;
   }
 
+  // At the moment not working on content-editable
   async tap() {
     return await new ActionInteraction(this._invocationManager, new WebTapAction(this)).execute();
   }
@@ -174,10 +175,12 @@ class WebElement {
     return await await new ActionInteraction(this._invocationManager,  new WebTypeTextAction(this, text)).execute();
   }
 
+  // At the moment not working on content-editable
   async replaceText(text) {
     return await new ActionInteraction(this._invocationManager,  new WebReplaceTextAction(this, text)).execute();
   }
 
+  // At the moment not working on content-editable
   async clearText() {
     return await new ActionInteraction(this._invocationManager,  new WebClearTextAction(this)).execute();
   }
