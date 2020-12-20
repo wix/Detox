@@ -16,6 +16,8 @@
     "e2e:android-debug": "detox test -c android.emu.debug",
     "e2e:ios-ci": "npm run e2e:ios -- --workers 3 --retries 1",
     "e2e:android-ci": "npm run e2e:android -- --workers 3 --retries 1 --headless --jest-report-specs --loglevel verbose",
+    "integration": "jest --clearCache && jest unit --config integration/config.js -w 1 .",
+    "integration-update-snapshots": "npm run integration -- -u",
     "build:ios": "detox build -c ios.sim.release",
     "build:android": "detox build -c android.emu.release",
     "build:android-debug": "detox build -c android.emu.debug",
@@ -84,7 +86,7 @@
         "build": "set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 11 Pro"
+          "type": "iPhone 12 Pro Max"
         }
       },
       "ios.sim.release": {
@@ -92,7 +94,7 @@
         "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 11 Pro"
+          "type": "iPhone 12 Pro Max"
         },
         "session": {
           "debugSynchronization": 3000
@@ -102,7 +104,7 @@
         "binaryPath": "ios",
         "type": "ios.none",
         "device": {
-          "type": "iPhone 11 Pro"
+          "type": "iPhone 12 Pro Max"
         },
         "session": {
           "server": "ws://localhost:8099",
