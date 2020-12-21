@@ -204,7 +204,7 @@ class ValuePredicate : Predicate {
 	]
 	
 	static let translator : [String: String] = [
-		"accessibilityIdentifier": "identifier:",
+		"accessibilityIdentifier": "identifier",
 		"accessibilityLabel": "label",
 		"dtx_text": "text",
 		"accessibilityValue": "value"
