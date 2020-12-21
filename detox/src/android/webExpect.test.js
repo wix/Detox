@@ -30,7 +30,14 @@ describe('webExpect', () => {
     });
   });
 
-  describe.only('getWebView', () => {
+  describe('General', () => {
+    it('should return undefined', async () => {
+      mockExecutor.executeResult = Promise.resolve(undefined);
+      await webExpect.getWebView(expect.by.id('webview_id')).element(webExpect.by.id('any')).tap();
+    });
+  })
+
+  describe('getWebView', () => {
 
     it('default', async () => {
       await webExpect.getWebView().element(webExpect.by.id('id')).tap();
@@ -40,7 +47,6 @@ describe('webExpect', () => {
       await webExpect.getWebView(expect.by.id('webview_id')).element(webExpect.by.id('id')).tap();
     });
   });
-
 
   describe('WebElement Actions', () => {
     it('tap', async () => {

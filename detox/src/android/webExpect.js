@@ -19,10 +19,6 @@ const {
   focus
  } = require ('./espressoapi/web/simpleAtoms');
 
-function call(maybeAFunction) {
-  return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;
-}
-
 class WebInteraction {
   constructor(invocationManager) {
     this._call = undefined;
@@ -159,7 +155,7 @@ class WebViewElement {
 class WebElement {
   constructor(device, invocationManager, webViewElement, matcher, index) {
     this._invocationManager = invocationManager;
-    this._call = invoke.callDirectly(WebViewElementApi.element(call(webViewElement._call), matcher._call.value, index));
+    this._call = invoke.callDirectly(WebViewElementApi.element(webViewElement._call, matcher._call.value, index));
     this._device = device;
   }
 
@@ -172,7 +168,7 @@ class WebElement {
     if (isContentEditable) {
       return await this._device.typeText(text);
     }
-    return await await new ActionInteraction(this._invocationManager,  new WebTypeTextAction(this, text)).execute();
+    return await new ActionInteraction(this._invocationManager,  new WebTypeTextAction(this, text)).execute();
   }
 
   // At the moment not working on content-editable

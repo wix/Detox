@@ -735,6 +735,15 @@ describe('Device', () => {
     expect(driverMock.driver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 
+  it(`typeText() should invoke driver's typeText() with the right text value`, async () => {
+    const device = validDevice();
+    const TEXT = 'text';
+
+    await device.typeText(TEXT);
+
+    expect(driverMock.driver.typeText).toHaveBeenCalledWith(device._deviceId, TEXT);
+  });
+
   it(`clearKeychain() should invoke driver's clearKeychain()`, async () => {
     const device = validDevice();
 
