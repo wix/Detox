@@ -62,16 +62,18 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ### React Native
 
-Detox is built from the ground up to support React Native projects as well as pure native ones.
+Detox is built from the ground up to support React Native projects as well as pure native<sup>*</sup> ones.
 
 The following React Native versions have been tested:
 
 | iOS    | Android                                                      |
 | ------ | ------------------------------------------------------------ |
 | <=0.63 | <=0.56 - Full support                                        |
-|        | >=0.57 <=0.63 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)* |
+|        | >=0.57 <=0.63 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
+
+> \* *Currently, support for **pure-native** Android projects is broken - see issue [#2543](https://github.com/wix/Detox/issues/2543). Note we would appreciate contributions in that area.*
 
 ## Get Started With Detox!
 
