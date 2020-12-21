@@ -1,5 +1,6 @@
 describe('webExpect', () => {
-  let e;
+  let webExpect;
+  let expect;
 
   let mockExecutor;
   let emitter;
@@ -16,229 +17,246 @@ describe('webExpect', () => {
     emitter = new Emitter();
     device = new FakeDevice();
 
-    const AndroidWebExpect = require('./webExpect');
-    e = new AndroidWebExpect(device, {
+    const AndroidExpect = require('./expect');
+    expect = new AndroidExpect({
       invocationManager: mockExecutor,
       emitter,
+    });
+
+    const AndroidWebExpect = require('./webExpect');
+    webExpect = new AndroidWebExpect(device, {
+      invocationManager: mockExecutor,
+      emitter,
+    });
+  });
+
+  describe.only('getWebView', () => {
+
+    it('default', async () => {
+      await webExpect.getWebView().element(webExpect.by.id('id')).tap();
+    });
+
+    it('with webview matcher', async () => {
+      await webExpect.getWebView(expect.by.id('webview_id')).element(webExpect.by.id('id')).tap();
     });
   });
 
 
   describe('WebElement Actions', () => {
     it('tap', async () => {
-      await e.getWebView().element(e.by.id('id')).tap();
-      await e.getWebView().element(e.by.className('className')).tap();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).tap();
-      await e.getWebView().element(e.by.name('name')).tap();
-      await e.getWebView().element(e.by.xpath('xpath')).tap();
-      await e.getWebView().element(e.by.linkText('linkText')).tap();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).tap();
-      await e.getWebView().element(e.by.tag('tag')).tap();
+      await webExpect.getWebView().element(webExpect.by.id('id')).tap();
+      await webExpect.getWebView().element(webExpect.by.className('className')).tap();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).tap();
+      await webExpect.getWebView().element(webExpect.by.name('name')).tap();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).tap();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).tap();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).tap();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).tap();
     });
 
     it('typeText', async () => {
-      await e.getWebView().element(e.by.id('textInput')).typeText('text', false);
-      await e.getWebView().element(e.by.id('id')).typeText('text', false);
-      await e.getWebView().element(e.by.className('className')).typeText('text', false);
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).typeText('text', false);
-      await e.getWebView().element(e.by.name('name')).typeText('text', false);
-      await e.getWebView().element(e.by.xpath('xpath')).typeText('text', false);
-      await e.getWebView().element(e.by.linkText('linkText')).typeText('text', false);
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).typeText('text', false);
-      await e.getWebView().element(e.by.tag('tag')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.id('textInput')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.name('name')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).typeText('text', false);
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).typeText('text', false);
     });
 
     it('typeText', async () => {
-      await e.getWebView().element(e.by.id('id')).typeText('text', true);
-      await e.getWebView().element(e.by.className('className')).typeText('text', true);
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).typeText('text', true);
-      await e.getWebView().element(e.by.name('name')).typeText('text', true);
-      await e.getWebView().element(e.by.xpath('xpath')).typeText('text', true);
-      await e.getWebView().element(e.by.linkText('linkText')).typeText('text', true);
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).typeText('text', true);
-      await e.getWebView().element(e.by.tag('tag')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.name('name')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).typeText('text', true);
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).typeText('text', true);
     });
 
     it('replaceText', async () => {
-      await e.getWebView().element(e.by.id('id')).replaceText('text');
-      await e.getWebView().element(e.by.className('className')).replaceText('text');
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).replaceText('text');
-      await e.getWebView().element(e.by.name('name')).replaceText('text');
-      await e.getWebView().element(e.by.xpath('xpath')).replaceText('text');
-      await e.getWebView().element(e.by.linkText('linkText')).replaceText('text');
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).replaceText('text');
-      await e.getWebView().element(e.by.tag('tag')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.id('id')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.className('className')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.name('name')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).replaceText('text');
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).replaceText('text');
     });
 
     it('clearText', async () => {
-      await e.getWebView().element(e.by.id('id')).clearText();
-      await e.getWebView().element(e.by.className('className')).clearText();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).clearText();
-      await e.getWebView().element(e.by.name('name')).clearText();
-      await e.getWebView().element(e.by.xpath('xpath')).clearText();
-      await e.getWebView().element(e.by.linkText('linkText')).clearText();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).clearText();
-      await e.getWebView().element(e.by.tag('tag')).clearText();
+      await webExpect.getWebView().element(webExpect.by.id('id')).clearText();
+      await webExpect.getWebView().element(webExpect.by.className('className')).clearText();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).clearText();
+      await webExpect.getWebView().element(webExpect.by.name('name')).clearText();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).clearText();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).clearText();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).clearText();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).clearText();
     });
 
     it('scrollToView', async () => {
-      await e.getWebView().element(e.by.id('id')).scrollToView();
-      await e.getWebView().element(e.by.className('className')).scrollToView();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).scrollToView();
-      await e.getWebView().element(e.by.name('name')).scrollToView();
-      await e.getWebView().element(e.by.xpath('xpath')).scrollToView();
-      await e.getWebView().element(e.by.linkText('linkText')).scrollToView();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).scrollToView();
-      await e.getWebView().element(e.by.tag('tag')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.id('id')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.className('className')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.name('name')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).scrollToView();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).scrollToView();
     });
 
     it('getText', async () => {
-      await e.getWebView().element(e.by.id('id')).getText();
-      await e.getWebView().element(e.by.className('className')).getText();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).getText();
-      await e.getWebView().element(e.by.name('name')).getText();
-      await e.getWebView().element(e.by.xpath('xpath')).getText();
-      await e.getWebView().element(e.by.linkText('linkText')).getText();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).getText();
-      await e.getWebView().element(e.by.tag('tag')).getText();
+      await webExpect.getWebView().element(webExpect.by.id('id')).getText();
+      await webExpect.getWebView().element(webExpect.by.className('className')).getText();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).getText();
+      await webExpect.getWebView().element(webExpect.by.name('name')).getText();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).getText();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).getText();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).getText();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).getText();
     });
 
     it('focus', async () => {
-      await e.getWebView().element(e.by.id('id')).focus();
-      await e.getWebView().element(e.by.className('className')).focus();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).focus();
-      await e.getWebView().element(e.by.name('name')).focus();
-      await e.getWebView().element(e.by.xpath('xpath')).focus();
-      await e.getWebView().element(e.by.linkText('linkText')).focus();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).focus();
-      await e.getWebView().element(e.by.tag('tag')).focus();
+      await webExpect.getWebView().element(webExpect.by.id('id')).focus();
+      await webExpect.getWebView().element(webExpect.by.className('className')).focus();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).focus();
+      await webExpect.getWebView().element(webExpect.by.name('name')).focus();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).focus();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).focus();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).focus();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).focus();
     });
 
     it('selectAllText', async () => {
-      await e.getWebView().element(e.by.id('id')).selectAllText();
-      await e.getWebView().element(e.by.className('className')).selectAllText();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).selectAllText();
-      await e.getWebView().element(e.by.name('name')).selectAllText();
-      await e.getWebView().element(e.by.xpath('xpath')).selectAllText();
-      await e.getWebView().element(e.by.linkText('linkText')).selectAllText();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).selectAllText();
-      await e.getWebView().element(e.by.tag('tag')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.id('id')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.className('className')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.name('name')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).selectAllText();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).selectAllText();
     });
 
     it('moveCursorToEnd', async () => {
-      await e.getWebView().element(e.by.id('id')).moveCursorToEnd();
-      await e.getWebView().element(e.by.className('className')).moveCursorToEnd();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).moveCursorToEnd();
-      await e.getWebView().element(e.by.name('name')).moveCursorToEnd();
-      await e.getWebView().element(e.by.xpath('xpath')).moveCursorToEnd();
-      await e.getWebView().element(e.by.linkText('linkText')).moveCursorToEnd();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).moveCursorToEnd();
-      await e.getWebView().element(e.by.tag('tag')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.id('id')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.className('className')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.name('name')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).moveCursorToEnd();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).moveCursorToEnd();
     });
 
     it('runScript', async () => {
       const script = 'function foo(el) {}';
-      await e.getWebView().element(e.by.id('id')).runScript(script);
-      await e.getWebView().element(e.by.className('className')).runScript(script);
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).runScript(script);
-      await e.getWebView().element(e.by.name('name')).runScript(script);
-      await e.getWebView().element(e.by.xpath('xpath')).runScript(script);
-      await e.getWebView().element(e.by.linkText('linkText')).runScript(script);
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).runScript(script);
-      await e.getWebView().element(e.by.tag('tag')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.id('id')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.className('className')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.name('name')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).runScript(script);
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).runScript(script);
     });
 
     it('runScriptWithArgs', async () => {
       const script = 'function bar(a,b) {}';
       const argsArr = ['fooA','barB'];
-      await e.getWebView().element(e.by.id('id')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.className('className')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.name('name')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.xpath('xpath')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.linkText('linkText')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).runScriptWithArgs(script, argsArr);
-      await e.getWebView().element(e.by.tag('tag')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.id('id')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.className('className')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.name('name')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).runScriptWithArgs(script, argsArr);
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).runScriptWithArgs(script, argsArr);
     });
 
     it('getCurrentUrl', async () => {
-      await e.getWebView().element(e.by.id('id')).getCurrentUrl();
-      await e.getWebView().element(e.by.className('className')).getCurrentUrl();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).getCurrentUrl();
-      await e.getWebView().element(e.by.name('name')).getCurrentUrl();
-      await e.getWebView().element(e.by.xpath('xpath')).getCurrentUrl();
-      await e.getWebView().element(e.by.linkText('linkText')).getCurrentUrl();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).getCurrentUrl();
-      await e.getWebView().element(e.by.tag('tag')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.id('id')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.className('className')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.name('name')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).getCurrentUrl();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).getCurrentUrl();
     });
 
     it('getTitle', async () => {
-      await e.getWebView().element(e.by.id('id')).getTitle();
-      await e.getWebView().element(e.by.className('className')).getTitle();
-      await e.getWebView().element(e.by.cssSelector('cssSelector')).getTitle();
-      await e.getWebView().element(e.by.name('name')).getTitle();
-      await e.getWebView().element(e.by.xpath('xpath')).getTitle();
-      await e.getWebView().element(e.by.linkText('linkText')).getTitle();
-      await e.getWebView().element(e.by.partialLinkText('partialLinkText')).getTitle();
-      await e.getWebView().element(e.by.tag('tag')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.id('id')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.className('className')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.name('name')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).getTitle();
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).getTitle();
     });
   })
 
   describe('Web Matchers',() => {
       it('by.id', async () => {
-        await e.expect(e.getWebView().element(e.by.id('id'))).toExists();
-        await e.expect(e.getWebView().element(e.by.id('id'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.id('id'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.id('id'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toNotHaveText('text');
       });
 
       it('by.className', async () => {
-        await e.expect(e.getWebView().element(e.by.className('className'))).toExists();
-        await e.expect(e.getWebView().element(e.by.className('className'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.className('className'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.className('className'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toNotHaveText('text');
       });
 
       it('by.cssSelector', async () => {
-        await e.expect(e.getWebView().element(e.by.cssSelector('cssSelector'))).toExists();
-        await e.expect(e.getWebView().element(e.by.cssSelector('cssSelector'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.cssSelector('cssSelector'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.cssSelector('cssSelector'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toNotHaveText('text');
       });
 
       it('by.name', async () => {
-        await e.expect(e.getWebView().element(e.by.name('name'))).toExists();
-        await e.expect(e.getWebView().element(e.by.name('name'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.name('name'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.name('name'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toNotHaveText('text');
       });
 
       it('by.xpath', async () => {
-        await e.expect(e.getWebView().element(e.by.xpath('xpath'))).toExists();
-        await e.expect(e.getWebView().element(e.by.xpath('xpath'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.xpath('xpath'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.xpath('xpath'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toNotHaveText('text');
       });
 
       it('by.linkText', async () => {
-        await e.expect(e.getWebView().element(e.by.linkText('link'))).toExists();
-        await e.expect(e.getWebView().element(e.by.linkText('link'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.linkText('link'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.linkText('link'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toNotHaveText('text');
       });
 
       it('by.partialLinkText', async () => {
-        await e.expect(e.getWebView().element(e.by.partialLinkText('lin'))).toExists();
-        await e.expect(e.getWebView().element(e.by.partialLinkText('lin'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.partialLinkText('lin'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.partialLinkText('lin'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toNotHaveText('text');
       });
 
       it('by.tag', async () => {
-        await e.expect(e.getWebView().element(e.by.tag('tag'))).toExists();
-        await e.expect(e.getWebView().element(e.by.tag('tag'))).toNotExists();
-        await e.expect(e.getWebView().element(e.by.tag('tag'))).toHaveText('text');
-        await e.expect(e.getWebView().element(e.by.tag('tag'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toNotHaveText('text');
       });
   });
 });

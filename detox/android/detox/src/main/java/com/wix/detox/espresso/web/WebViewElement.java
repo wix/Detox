@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.web.sugar.Web.onWebView;
 import static org.hamcrest.CoreMatchers.allOf;
 
@@ -23,12 +24,12 @@ public class WebViewElement {
     final Web.WebInteraction<Void> webViewInteraction;
 
     WebViewElement(@Nullable Matcher<View> matcher) {
-        this.matcher = matcher != null ? matcher : allOf(CoreMatchers.<View>instanceOf(WebView.class));
+        this.matcher = matcher != null ? matcher : allOf(CoreMatchers.<View>instanceOf(WebView.class), isDisplayed());
         this.webViewInteraction = matcher != null ? onWebView(matcher) : onWebView();
     }
 
-    public WebElement element(Atom<List<ElementReference>> matcher) {
-        return element(matcher, 0);
+    public WebElement element(Atom<List<ElementReference>> webMatcher) {
+        return element(webMatcher, 0);
     }
 
     public WebElement element(Atom<List<ElementReference>> matcher, int index) {

@@ -1,9 +1,5 @@
 package com.wix.detox.espresso.web;
 
-import android.util.Log;
-import android.view.View;
-
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.Atoms;
 import androidx.test.espresso.web.model.ElementReference;

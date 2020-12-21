@@ -143,7 +143,7 @@ class WebViewElement {
     this._device = device;
     this._matcher = matcher;
     if (matcher !== undefined) {
-      this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView(matcher._call));
+      this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView(matcher._call.value));
     } else {
       this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView());
     }
@@ -306,6 +306,7 @@ class AndroidWebExpect {
     this.expect = this.expect.bind(this);
   }
 
+  // Matcher can be null only if there is only one webview on the hierarchy tree.
   getWebView(webViewMatcher) {
     return new WebViewElement(this._device, this._invocationManager, this._emitter, webViewMatcher);
   }
