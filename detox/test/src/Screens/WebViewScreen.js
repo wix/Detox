@@ -9,12 +9,30 @@ export default class WebViewScreen extends Component {
     // const releaseSource = { uri: `${releaseSourcePrefix}/assets/html/test.html` };
     // const webViewSource = Image.resolveAssetSource(global.__DEV__ ? debugSource : releaseSource);
     return (
-      <View style={{flex: 1}}>
-        <WebView testID={'webview_1'} source={{html: webpageSource}}/>
-      </View>
+        <View style={{flex: 1,flexDirection: 'column' ,backgroundColor:'blue'}}>
+          <View style={{flex: 8}}>
+            <WebView testID={'webview_1'} source={{html: webpageSource}}/>
+          </View>
+          <View style={{flex: 1}}>
+            <WebView testID={'webview_2'} source={{html: webpageSource2}} scrollEnabled={false}/>
+          </View>
+        </View>
+
     );
   }
 }
+
+const webpageSource2 = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=320, user-scalable=no">
+</head>
+  <body>
+  <p>Second Webview</p>
+  </body>
+</html>
+`;
 
 const webpageSource = `
 <!DOCTYPE html>
