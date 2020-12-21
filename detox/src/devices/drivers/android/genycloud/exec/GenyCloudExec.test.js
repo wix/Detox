@@ -1,18 +1,23 @@
-describe('Genymotion-cloud executable', () => {
-  const aResponse = (exit_code = 0, exit_code_desc = 'NO_ERROR') => ({
-    exit_code,
-    exit_code_desc,
-  });
-  const anErrorResponse = (exit_code, exit_code_desc, error_desc) => ({
-    ...aResponse(exit_code, exit_code_desc),
-    error: {
-      message: `API return unexpected code: ${exit_code}. Error: {"code":"${error_desc}","message":"Oh no, mocked error has occurred!"}`,
-      details: '',
-    }
-  });
 
+const aResponse = (exit_code = 0, exit_code_desc = 'NO_ERROR') => ({
+  exit_code,
+  exit_code_desc,
+});
+const anErrorResponse = (exit_code, exit_code_desc, error_desc) => ({
+  ...aResponse(exit_code, exit_code_desc),
+  error: {
+    message: `API return unexpected code: ${exit_code}. Error: {"code":"${error_desc}","message":"Oh no, mocked error has occurred!"}`,
+    details: '',
+  }
+});
+
+describe('Genymotion-cloud executable', () => {
   const successResponse = aResponse();
   const failResponse = anErrorResponse(4, 'API_ERROR', 'TOO_MANY_RUNNING_VDS');
+  const recipeName = 'mock-recipe-name';
+  const recipeUUID = 'mock-recipe-uuid';
+  const instanceUUID = 'mock-uuid';
+  const instanceName = 'detox-instance1';
 
   const givenSuccessResult = () => exec.mockResolvedValue({
     stdout: JSON.stringify(successResponse),
@@ -33,12 +38,12 @@ describe('Genymotion-cloud executable', () => {
     uut = new GenyCloudExec('mock/path/to/gmsaas');
   });
 
-  const recipeName = 'mock-recipe-name';
-  const recipeUUID = 'mock-recipe-uuid';
-  const instanceUUID = 'mock-uuid';
-  const instanceName = 'detox-instance1';
-
   [
+    {
+      commandName: 'version',
+      commandExecFn: () => uut.getVersion(),
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson --version`,
+    },
     {
       commandName: 'whoami',
       commandExecFn: () => uut.whoAmI(),
@@ -48,6 +53,11 @@ describe('Genymotion-cloud executable', () => {
       commandName: 'Get Recipe',
       commandExecFn: () => uut.getRecipe(recipeName),
       expectedExec: `"mock/path/to/gmsaas" --format compactjson recipes list --name "${recipeName}"`,
+    },
+    {
+      commandName: 'Get Instance',
+      commandExecFn: () => uut.getInstance(instanceUUID),
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances get ${instanceUUID}`,
     },
     {
       commandName: 'Get Instances',
