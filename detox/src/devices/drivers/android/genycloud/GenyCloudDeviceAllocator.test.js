@@ -220,6 +220,26 @@ describe('Genymotion-Cloud device allocator', () => {
     expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
   });
 
+  it('should register a new device for cleanup', async () => {
+    const instance = aFullyConnectedInstance();
+    givenNoFreeInstances();
+    givenCreatedInstance(instance);
+
+    await uut.allocateDevice(aRecipe());
+    expect(deviceCleanupRegistry.allocateDevice).toHaveBeenCalledWith({
+      uuid: instance.uuid,
+      name: instance.name,
+    });
+  });
+
+  it('should not register an existing device for cleanup', async () => {
+    const instance = aFullyConnectedInstance();
+    givenFreeInstance(instance);
+
+    await uut.allocateDevice(aRecipe());
+    expect(deviceCleanupRegistry.allocateDevice).not.toHaveBeenCalled();
+  });
+
   it('should log pre-allocate event', async () => {
     givenFreeInstance(aFullyConnectedInstance());
     await uut.allocateDevice(aRecipe());

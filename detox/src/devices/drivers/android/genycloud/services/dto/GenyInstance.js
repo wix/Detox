@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Recipe = require('./GenyRecipe');
 
 const STATE_ONLINE = 'ONLINE';
@@ -13,7 +12,9 @@ const initStates = [
 
 class GenyInstance {
   constructor(rawInstance) {
-    Object.assign(this, _.pick(rawInstance, 'uuid', 'name', 'state'));
+    this.uuid = rawInstance.uuid;
+    this.name = rawInstance.name;
+    this.state = rawInstance.state;
     this.adb = {
       name: rawInstance.adb_serial,
       port: rawInstance.adb_serial_port,

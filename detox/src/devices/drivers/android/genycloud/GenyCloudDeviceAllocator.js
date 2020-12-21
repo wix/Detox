@@ -1,4 +1,5 @@
 const AndroidDeviceAllocator = require('../AndroidDeviceAllocator');
+const GenyCloudInstanceHandle = require('./GenyCloudInstanceHandle');
 const retry = require('../../../../utils/retry');
 const logger = require('../../../../utils/logger').child({ __filename });
 
@@ -13,8 +14,10 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
 
   async _doAllocateDevice(recipe) {
     let { instance, isNew } = await this._doSynchronizedAllocation(recipe);
+    const instanceHandle = new GenyCloudInstanceHandle(instance);
+
     if (isNew) {
-      await this.deviceCleanupRegistry.allocateDevice(instance.uuid);
+      await this.deviceCleanupRegistry.allocateDevice(instanceHandle);
     }
 
     instance = await this._waitForInstanceBoot(instance);
@@ -22,7 +25,7 @@ class GenyCloudDeviceAllocator extends AndroidDeviceAllocator {
     return {
       instance,
       isNew,
-      toString: () => `GenyCloud:${instance.name} (${instance.uuid})`,
+      toString: () => instanceHandle.toString(),
     }
   }
 
