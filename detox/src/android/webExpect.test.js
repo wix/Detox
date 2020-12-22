@@ -60,8 +60,18 @@ describe('webExpect', () => {
       await webExpect.getWebView().element(webExpect.by.tag('tag')).tap();
     });
 
+    it('typeText default isContentEditable is false', async () => {
+      await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.name('name')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).typeText('text');
+      await webExpect.getWebView().element(webExpect.by.tag('tag')).typeText('text');
+    });
+
     it('typeText', async () => {
-      await webExpect.getWebView().element(webExpect.by.id('textInput')).typeText('text', false);
       await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text', false);
       await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text', false);
       await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text', false);
