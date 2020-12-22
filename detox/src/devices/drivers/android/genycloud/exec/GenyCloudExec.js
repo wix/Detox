@@ -5,16 +5,24 @@ class GenyCloudExec {
     this.binaryExec = `"${binaryPath}" --format compactjson`;
   }
 
+  getVersion() {
+    return this._exec('--version');
+  }
+
   whoAmI() {
-    return this._exec(`auth whoami`);
+    return this._exec('auth whoami');
   }
 
   getRecipe(name) {
     return this._exec(`recipes list --name "${name}"`);
   }
 
+  getInstance(instanceUUID) {
+    return this._exec(`instances get ${instanceUUID}`);
+  }
+
   getInstances() {
-    return this._exec(`instances list -q`);
+    return this._exec('instances list -q');
   }
 
   startInstance(recipeUUID, instanceName) {

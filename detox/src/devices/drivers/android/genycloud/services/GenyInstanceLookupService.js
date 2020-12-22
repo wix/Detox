@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Instance = require('./dto/GenyInstance');
 
 class GenyInstanceLookupService {
@@ -14,8 +13,8 @@ class GenyInstanceLookupService {
   }
 
   async getInstance(instanceUUID) {
-    const instances = await this._getAllInstances();
-    return _.find(instances, (instance) => instance.uuid === instanceUUID);
+    const { instance } = await this.genyCloudExec.getInstance(instanceUUID);
+    return new Instance(instance);
   }
 
   async _getRelevantInstances() {
