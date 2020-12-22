@@ -35,9 +35,10 @@ If possible, please provide a small demo project that reproduces the issue, or a
 
 **Device and Verbose Detox Logs**
 <!--
+IMPORTANT: We will not be able to help out or provide proper analysis without these!
 Provide the device and verbose Detox logs so we can understand what happened.
-Detox logs can be obtained by passing the loglevel param: `detox test --loglevel trace`.
-Device logs can be retrieved from the device using `adb logcat`, or if recorded, Detox' artifacts.
+*Detox* logs can be obtained by passing the `loglevel` param: `detox test --loglevel trace`.
+*Device* logs can be retrieved from the device manually using `adb logcat`, or if recorded using the `--record-logs all` - the artifacts under the `<project>/artifacts/` folder.
 -->
 
 **Environment (please complete the following information):**
