@@ -1,7 +1,6 @@
 const chalk = require('chalk').default;
-const { traceln } = require('../utils/stdout');
-const argparse = require('../../../src/utils/argparse');
-const log = require('../../../src/utils/logger').child();
+const { traceln } = require('./utils/stdout');
+const log = require('../../src/utils/logger').child();
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
 const RESULT_FAILED = chalk.red('FAIL');
@@ -15,50 +14,12 @@ class SpecReporter {
     this._suitesDesc = '';
   }
 
-  run_describe_start(event) {
-    if (event.describeBlock.parent !== undefined) {
-      this._onSuiteStart({
-        description: event.describeBlock.name,
-      });
-    }
-  }
-
-  run_describe_finish(event) {
-    if (event.describeBlock.parent !== undefined) {
-      this._onSuiteEnd();
-    }
-  }
-
-  test_start(event) {
-    const { test } = event;
-    this._onTestStart({
-      description: test.name,
-      invocations: test.invocations,
-    });
-  }
-
-  test_done(event) {
-    const { test } = event;
-    const testInfo = {
-      description: test.name,
-      invocations: test.invocations,
-    };
-    this._onTestEnd(testInfo, test.errors.length ? 'failed' : 'success');
-  }
-
-  test_skip(event) {
-    const testInfo = {
-      description: event.test.name,
-    };
-    this._onTestEnd(testInfo, 'skipped');
-  }
-
-  _onSuiteStart({description}) {
+  onSuiteStart({description}) {
     this._suites.push({description});
     this._regenerateSuitesDesc();
   }
 
-  _onSuiteEnd() {
+  onSuiteEnd() {
     this._suites.pop();
     this._regenerateSuitesDesc();
 
@@ -67,11 +28,11 @@ class SpecReporter {
     }
   }
 
-  _onTestStart({description, invocations = 1}) {
+  onTestStart({description, invocations = 1}) {
     this._traceTest({description, invocations});
   }
 
-  _onTestEnd({description, invocations = 1}, result) {
+  onTestEnd({description, invocations = 1}, result) {
     let status;
     switch (result) {
       case 'skipped': status = RESULT_SKIPPED; break;
@@ -105,6 +66,4 @@ class SpecReporter {
   }
 }
 
-module.exports = process.env.reportSpecs === 'true'
-  ? SpecReporter
-  : class {};
+module.exports = SpecReporter;

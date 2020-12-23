@@ -7,7 +7,20 @@
   },
   "devDependencies": {
     "detox": "^18.0.0-next.8",
-    "jest": "^26.5.0",
-    "jest-circus": "^26.6.3"
+    "detox": "^17.14.6",
+    "jest": "^26.5.0"
+  },
+  "detox": {
+    "test-runner": "jest",
+    "configurations": {
+      "plugin": {
+        "binaryPath": "my/random/path",
+        "device": {
+          "foo": "bar"
+        },
+        "name": "plugin-example",
+        "type": "./driver"
+      }
+    }
   }
 }

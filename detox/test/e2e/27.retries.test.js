@@ -1,4 +1,4 @@
-jest.retryTimes(2);
+jest.retryTimes(3);
 
 const {
   assertArtifactExists,
