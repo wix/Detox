@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "18.0.0-next.8",
+  "version": "18.0.0-next.9",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -23,7 +23,7 @@
     "react-native": "0.62.x"
   },
   "devDependencies": {
-    "detox": "^18.0.0-next.8",
+    "detox": "^18.0.0-next.9",
     "mocha": "^6.1.3"
   }
 }
