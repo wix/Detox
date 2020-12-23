@@ -15,6 +15,7 @@ jasmine.getEnv().addReporter(assignReporter);
 
 beforeAll(async () => {
   await detox.init();
+  await device.launchApp();
 }, 30000);
 
 beforeEach(async () => {
