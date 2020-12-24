@@ -4,6 +4,11 @@ const path = require('path');
 const exec = require('child-process-promise').exec;
 const DeviceRegistry = require('../../DeviceRegistry');
 const IosDriver = require('./IosDriver');
+const AppleSimUtils = require('./tools/AppleSimUtils');
+const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
+const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
+const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const DetoxConfigError = require('../../../errors/DetoxConfigError');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
@@ -18,12 +23,27 @@ class SimulatorDriver extends IosDriver {
   constructor(config) {
     super(config);
 
+    this.applesimutils = new AppleSimUtils();
     this.deviceRegistry = DeviceRegistry.forIOS();
     this._name = 'Unspecified Simulator';
   }
 
   get name() {
     return this._name;
+  }
+
+  declareArtifactPlugins() {
+    const appleSimUtils = this.applesimutils;
+    const client = this.client;
+
+    return {
+      ...super.declareArtifactPlugins(),
+
+      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
+      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
+      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
+    };
   }
 
   async prepare() {
