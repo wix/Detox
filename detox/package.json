@@ -113,6 +113,7 @@
       "src/utils/logger.js",
       "src/utils/onTerminate.js",
       "src/utils/pipeCommands.js",
+      "src/utils/pressAnyKey.js",
       "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",
