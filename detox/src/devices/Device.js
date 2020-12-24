@@ -80,11 +80,11 @@ class Device {
       processId = await this.deviceDriver.waitForAppLaunch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
       processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      await this.deviceDriver.waitUntilReady();
+      await this.deviceDriver.waitForActive();
     }
     this._processes[_bundleId] = processId;
 
-    await this.deviceDriver.waitUntilReady();
-    await this.deviceDriver.waitForActive();
     await this._emitter.emit('appReady', {
       deviceId: this._deviceId,
       bundleId: _bundleId,

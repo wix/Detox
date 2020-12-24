@@ -343,9 +343,6 @@ class AndroidDriver extends DeviceDriverBase {
     this._printInstrumentationHint({ instrumentationClass, launchArgs });
     await pressAnyKey();
     await this._reverseServerPort(adbName);
-
-    // TODO: think about a more elegant way to bypass instrumentation
-    this.instrumentation.waitForCrash = async () => {};
   }
 
   _printInstrumentationHint({ instrumentationClass, launchArgs }) {
