@@ -63,6 +63,28 @@ describe('composeArtifactsConfig', () => {
     });
   });
 
+  it('should disable global artifacts config if deviceConfig.artifacts = false', () => {
+    expect(composeArtifactsConfig({
+      configurationName: 'abracadabra',
+      deviceConfig: {
+        artifacts: false,
+      },
+      detoxConfig: {
+        artifacts: {
+          ...schemes.allArtifactsConfiguration,
+          rootDir: 'otherPlace',
+          pathBuilder: _.noop,
+        }
+      },
+      cliConfig: {},
+    })).toMatchObject({
+      pathBuilder: expect.objectContaining({
+        rootDir: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
+      }),
+      plugins: schemes.pluginsDefaultsResolved,
+    });
+  });
+
   it('should use CLI config', () => {
     expect(composeArtifactsConfig({
       configurationName: 'abracadabra',

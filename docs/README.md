@@ -41,6 +41,7 @@
 - [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
 - [Running Tests on CI (like Travis)](Guide.RunningOnCI.md)
 - [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md)
+- [Debugging Apps in Android Studio During a Test](Guide.DebuggingInAndroidStudio.md)
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 - [Using Jest as Test Runner](Guide.Jest.md)

@@ -2,6 +2,7 @@ const _ = require('lodash');
 const cp = require('child_process');
 const path = require('path');
 const unparse = require('yargs-unparser');
+const whichSync = require('which').sync;
 const { parse, quote } = require('./utils/shellQuote');
 const splitArgv = require('./utils/splitArgv');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
@@ -37,7 +38,11 @@ module.exports.handler = async function test(argv) {
   });
 
   if (detoxArgs['inspect-brk']) {
-    forwardedArgs.argv.$0 = `node --inspect-brk ${runnerConfig.testRunner}`;
+    const runnerBinary = whichSync(runner, {
+      path: prependNodeModulesBinToPATH({ ...process.env }),
+    });
+
+    forwardedArgs.argv.$0 = `node --inspect-brk ${require.resolve(runnerBinary)}`;
   } else {
     forwardedArgs.argv.$0 = runnerConfig.testRunner;
   }

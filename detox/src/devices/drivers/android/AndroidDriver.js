@@ -24,6 +24,7 @@ const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArti
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
+const pressAnyKey = require('../../../utils/pressAnyKey');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 
 class AndroidDriver extends DeviceDriverBase {
@@ -87,14 +88,43 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
+    return await this._handleLaunchApp({
+      manually: false,
+      deviceId,
+      bundleId,
+      launchArgs,
+      languageAndLocale,
+    });
+  }
+
+  async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
+    return await this._handleLaunchApp({
+      manually: true,
+      deviceId,
+      bundleId,
+      launchArgs,
+      languageAndLocale,
+    });
+  }
+
+  async _handleLaunchApp({ manually, deviceId, bundleId, launchArgs, languageAndLocale }) {
     const adbName = this._getAdbName(deviceId);
 
     await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
 
     launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
-    await this._launchApp(adbName, bundleId, launchArgs);
+
+    if (manually) {
+      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
+    } else {
+      await this._launchApp(adbName, bundleId, launchArgs);
+    }
 
     const pid = await this._waitForProcess(adbName, bundleId);
+    if (manually) {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+
     await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
     return pid;
   }
@@ -246,14 +276,18 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _launchInstrumentationProcess(adbName, bundleId, userLaunchArgs) {
-    const serverPort = new URL(this.client.configuration.server).port;
-    await this.adb.reverse(adbName, serverPort);
-
+    const serverPort = await this._reverseServerPort(adbName);
     this.instrumentation.setTerminationFn(async () => {
       await this._terminateInstrumentation();
       await this.adb.reverseRemove(adbName, serverPort);
     });
     await this.instrumentation.launch(adbName, bundleId, userLaunchArgs);
+  }
+
+  async _reverseServerPort(adbName) {
+    const serverPort = new URL(this.client.configuration.server).port;
+    await this.adb.reverse(adbName, serverPort);
+    return serverPort;
   }
 
   async _terminateInstrumentation() {
@@ -302,6 +336,43 @@ class AndroidDriver extends DeviceDriverBase {
 
   _getAdbName(deviceId) {
     return _.isObjectLike(deviceId) ? deviceId.adbName : deviceId;
+  }
+
+  async _waitForAppLaunch(adbName, bundleId, launchArgs) {
+    const instrumentationClass = await this.adb.getInstrumentationRunner(adbName, bundleId);
+    this._printInstrumentationHint({ instrumentationClass, launchArgs });
+    await pressAnyKey();
+    await this._reverseServerPort(adbName);
+
+    // TODO: think about a more elegant way to bypass instrumentation
+    this.instrumentation.waitForCrash = async () => {};
+  }
+
+  _printInstrumentationHint({ instrumentationClass, launchArgs }) {
+    const keyMaxLength = Math.max(3, _(launchArgs).keys().maxBy('length').length);
+    const valueMaxLength = Math.max(5, _(launchArgs).values().map(String).maxBy('length').length);
+    const rows = _.map(launchArgs, (v, k) => {
+      const paddedKey = k.padEnd(keyMaxLength, ' ');
+      const paddedValue = `${v}`.padEnd(valueMaxLength, ' ');
+      return `${paddedKey} | ${paddedValue}`;
+    });
+
+    const keyHeader = 'Key'.padEnd(keyMaxLength, ' ')
+    const valueHeader = 'Value'.padEnd(valueMaxLength, ' ')
+    const header = `${keyHeader} | ${valueHeader}`;
+    const separator = '-'.repeat(header.length);
+
+    log.info({},
+      'Waiting for you to manually launch your app in Android Studio.\n\n' +
+      `Instrumentation class: ${instrumentationClass}\n` +
+      'Instrumentation arguments:\n' +
+      `${separator}\n` +
+      `${header}\n` +
+      `${separator}\n` +
+      `${rows.join('\n')}\n` +
+      `${separator}\n\n` +
+      'Press any key to continue...'
+    );
   }
 }
 
