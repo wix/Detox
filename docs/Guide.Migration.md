@@ -8,9 +8,9 @@ Detox now uses a custom synchronization system on iOS, [developed in-house](http
 
 If you are seeing issues with the new sync system, please open an issue.
 
-Detox 18 also drops support for legacy Jest adapters. See [this issue](https://github.com/wix/Detox/issues/2469) for more information.
-
-Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
+**Breaking:**
+* Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
+* `detox.init()` will not launch the app anymore (even if asked to do so in configuration). Launching the app with `device.launchApp()` is now mandatory.
 
 ## 17.5.2
 
