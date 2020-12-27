@@ -31,6 +31,7 @@ describe('Genymotion-cloud driver', () => {
   beforeEach(mockBaseClassesDependencies);
   beforeEach(mockDirectDependencies);
 
+  let signalExit;
   let logger;
   let emitter;
   let invocationManager;
@@ -44,6 +45,8 @@ describe('Genymotion-cloud driver', () => {
   let deviceAllocator;
   let authServiceObj;
   beforeEach(() => {
+    signalExit = require('signal-exit');
+
     logger = require('../../../../utils/logger');
 
     const Emitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
@@ -374,6 +377,8 @@ describe('Genymotion-cloud driver', () => {
       GenyCloudDriver = require('./GenyCloudDriver');
     });
 
+    const aPendingInstanceHandle = (name, uuid) => ({ name, uuid });
+
     describe('global clean-up', () => {
       const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(devicesHandles);
       const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);
@@ -387,8 +392,6 @@ describe('Genymotion-cloud driver', () => {
         return promise;
       };
 
-      const aPendingDevice = (name, uuid) => ({ name, uuid });
-
       it('should kill all deletion-pending device', async () => {
         const killPromise1 = anAssertablePendingPromise();
         const killPromise2 = anAssertablePendingPromise();
@@ -397,8 +400,8 @@ describe('Genymotion-cloud driver', () => {
           .mockReturnValueOnce(killPromise2);
 
         const deviceHandles = [
-          aPendingDevice('device1', 'uuid1'),
-          aPendingDevice('device2', 'uuid2'),
+          aPendingInstanceHandle('device1', 'uuid1'),
+          aPendingInstanceHandle('device2', 'uuid2'),
         ];
         givenDeletionPendingDevices(deviceHandles);
 
@@ -417,9 +420,9 @@ describe('Genymotion-cloud driver', () => {
           .mockRejectedValueOnce(new Error('mock-error2'));
 
         givenDeletionPendingDevices([
-          aPendingDevice('failing1', 'uuid1'),
-          aPendingDevice('nonfailing', 'uuid'),
-          aPendingDevice('failing2', 'uuid2'),
+          aPendingInstanceHandle('failing1', 'uuid1'),
+          aPendingInstanceHandle('nonfailing', 'uuid'),
+          aPendingInstanceHandle('failing2', 'uuid2'),
         ]);
 
         await GenyCloudDriver.globalCleanup();
@@ -427,6 +430,8 @@ describe('Genymotion-cloud driver', () => {
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing1 \(uuid1\): .*mock-error1/));
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing2 \(uuid2\): .*mock-error2/));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/Kill it .* https:\/\/cloud.geny.io\/app\/instance\/uuid1/));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/gmsaas instances stop uuid1/));
         expect(logger.warn).toHaveBeenCalledTimes(3);
       });
 
@@ -461,8 +466,42 @@ describe('Genymotion-cloud driver', () => {
         expect(instanceLifecycleService.ctor).not.toHaveBeenCalled();
       });
     });
-  });
 
+    describe('global *emergency* clean-up', () => {
+      const signalExitCallback = () => signalExit.mock.calls[0][0];
+      const invokeExitCallback = () => signalExitCallback()();
+      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue(devicesHandles);
+      const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
+
+      it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {
+        await GenyCloudDriver.globalInit();
+        expect(signalExit).toHaveBeenCalled();
+        expect(signalExitCallback()).toBeDefined();
+      });
+
+      it('should warn of leaking instances in signal-exit callback', async () => {
+        givenCleanupPendingDevices([
+          aPendingInstanceHandle('aDevice', 'uuid'),
+        ]);
+
+        await GenyCloudDriver.globalInit();
+        invokeExitCallback();
+
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/aDevice \(uuid\)\n/));
+      });
+
+      it('should not warn if no instances were registered', async () => {
+        givenNoCleanupPendingDevices();
+
+        await GenyCloudDriver.globalInit();
+        invokeExitCallback();
+
+        expect(logger.warn).not.toHaveBeenCalled();
+        expect(logger.info).not.toHaveBeenCalled();
+      });
+    });
+  });
 });
 
 function mockBaseClassesDependencies() {
@@ -487,4 +526,5 @@ function mockDirectDependencies() {
   jest.mock('./services/GenyAuthService');
   jest.mock('./services/GenyInstanceNaming');
   jest.mock('../../../../utils/getAbsoluteBinaryPath');
-};
+  jest.mock('signal-exit');
+}

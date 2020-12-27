@@ -1,19 +1,30 @@
 const _ = require('lodash');
 const environment = require('../utils/environment');
+const fs = require('fs-extra');
 const ExclusiveLockfile = require('../utils/ExclusiveLockfile');
 const safeAsync = require('../utils/safeAsync');
 
 const getDeviceEqualsFn = (deviceHandle) => (otherDeviceHandle) => _.isEqual(otherDeviceHandle, deviceHandle);
 const getDeviceDifferFn = (deviceHandle) => (otherDeviceHandle) => !_.isEqual(otherDeviceHandle, deviceHandle);
+const readOptions = {
+  encoding: 'utf8',
+};
 
 class DeviceRegistry {
   constructor({ lockfilePath }) {
+    /***
+     * @private
+     * @type {string}
+     */
+    this._lockfilePath = lockfilePath;
+
     /***
      * @protected
      * @type {ExclusiveLockfile}
      */
     this._lockfile = new ExclusiveLockfile(lockfilePath, {
       getInitialState: this._getInitialLockFileState.bind(this),
+      readOptions,
     });
   }
 
@@ -62,6 +73,11 @@ class DeviceRegistry {
       result = this.getRegisteredDevices();
     })
     return result;
+  }
+
+  readRegisteredDevicesUNSAFE() {
+    const contents = fs.readFileSync(this._lockfilePath, readOptions);
+    return JSON.parse(contents);
   }
 
   /***

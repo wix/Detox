@@ -1,4 +1,5 @@
 const semver = require('semver'); // eslint-disable-line node/no-extraneous-require
+const onSignalExit = require('signal-exit');
 const AndroidDriver = require('../AndroidDriver');
 const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
@@ -14,6 +15,9 @@ const logger = require('../../../../utils/logger').child({ __filename });
 const environment = require('../../../../utils/environment');
 
 const MIN_GMSAAS_VERSION = '1.6.0';
+const cleanupLogData = {
+  event: 'GENYCLOUD_TEARDOWN',
+};
 
 class GenyCloudDriver extends AndroidDriver {
   constructor(config) {
@@ -106,28 +110,34 @@ class GenyCloudDriver extends AndroidDriver {
     }
   }
 
+  static async globalInit() {
+    onSignalExit(() => {
+      const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
+      const instanceHandles = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+      if (instanceHandles.length) {
+        reportGlobalCleanupSummary(instanceHandles);
+      }
+    });
+  }
+
   static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
     const instanceHandles = await deviceCleanupRegistry.readRegisteredDevices();
     if (instanceHandles.length) {
       const exec = new GenyCloudExec(environment.getGmsaasPath());
       const instanceLifecycleService = new InstanceLifecycleService(exec, null);
-      await doCleanup(instanceLifecycleService, instanceHandles);
+      await doSafeCleanup(instanceLifecycleService, instanceHandles);
     }
   }
 }
 
-const cleanupLogData = {
-  event: 'GENYCLOUD_TEARDOWN',
-};
-
-async function doCleanup(instanceLifecycleService, instanceHandles) {
+async function doSafeCleanup(instanceLifecycleService, instanceHandles) {
   logger.info(cleanupLogData, 'Initiating Genymotion cloud instances teardown...');
 
   const deletionLeaks = [];
-  const killPromises = instanceHandles.map(({ uuid, name }) =>
-    instanceLifecycleService.deleteInstance(uuid)
-      .catch((error) => deletionLeaks.push({ uuid, name, error })));
+  const killPromises = instanceHandles.map((instanceHandle) =>
+    instanceLifecycleService.deleteInstance(instanceHandle.uuid)
+      .catch((error) => deletionLeaks.push({ ...instanceHandle, error })));
 
   await Promise.all(killPromises);
   reportGlobalCleanupSummary(deletionLeaks);
@@ -137,8 +147,13 @@ function reportGlobalCleanupSummary(deletionLeaks) {
   if (deletionLeaks.length) {
     logger.warn(cleanupLogData, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
 
-    deletionLeaks.forEach(({ uuid, name, error }) =>
-      logger.warn(cleanupLogData, `Instance ${name} (${uuid}): ${error}`));
+    deletionLeaks.forEach(({ uuid, name, error }) => {
+      logger.warn(cleanupLogData, [
+        `Instance ${name} (${uuid})${error ? `: ${error}` : ''}`,
+        `    Kill it by visiting https://cloud.geny.io/app/instance/${uuid}, or by running:`,
+        `    gmsaas instances stop ${uuid}`,
+      ].join('\n'));
+    });
 
     logger.info(cleanupLogData, 'Instances teardown completed with warnings');
   } else {

@@ -110,6 +110,14 @@ describe('DeviceRegistry', () => {
       assertForbiddenOutOfContextDeviceListQuery();
     });
 
+    it('should allow UNSAFE-getting of registered devices list, even outside of allocation/disposal context', async () => {
+      const deviceHandle = 'emulator-5554';
+
+      await allocateDevice(deviceHandle);
+      const result = registry.readRegisteredDevicesUNSAFE();
+      expect(result).toEqual([ deviceHandle ]);
+    });
+
     it('should be able to read a valid list of registered devices', async () => {
       const deviceHandle = 'emulator-5554';
       const anotherDeviceHandle = 'emulator-5556';
