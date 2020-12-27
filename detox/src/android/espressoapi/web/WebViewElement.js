@@ -7,14 +7,14 @@
 
 
 class WebViewElement {
-  static element(element, matcher) {
-    function element2(element, matcher) {
+  static element(element, webMatcher) {
+    function element2(element, webMatcher) {
       return {
         target: element,
         method: "element",
         args: [{
           type: "Invocation",
-          value: matcher
+          value: webMatcher
         }]
       };
     }
