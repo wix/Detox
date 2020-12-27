@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "17.14.6",
+  "version": "17.14.8",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
-    "detox": "^17.14.6",
+    "detox": "^17.14.8",
     "express": "^4.15.3",
     "jest": "^26.5.0",
     "jest-circus": "^26.5.2",
@@ -56,7 +56,6 @@
     "specs": "e2e/*.test.js",
     "behavior": {
       "init": {
-        "reinstallApp": true,
         "launchApp": true,
         "exposeGlobals": true
       },
@@ -72,10 +71,8 @@
       "plugins": {
         "log": "all",
         "screenshot": {
-          "shouldTakeAutomaticSnapshots": false,
-          "takeWhen": {
-            "testDone": true
-          }
+          "shouldTakeAutomaticSnapshots": true,
+          "takeWhen": {}
         },
         "timeline": "all",
         "uiHierarchy": "enabled"
@@ -110,6 +107,39 @@
         "session": {
           "server": "ws://localhost:8099",
           "sessionId": "com.wix.detox-example"
+        }
+      },
+      "ios.manual": {
+        "type": "ios.simulator",
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "artifacts": false,
+        "behavior": {
+          "launchApp": "manual"
+        },
+        "device": {
+          "type": "iPhone 11 Pro"
+        },
+        "session": {
+          "autoStart": true,
+          "server": "ws://localhost:8099",
+          "sessionId": "com.wix.detox-example"
+        }
+      },
+      "android.manual": {
+        "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
+        "build": ":",
+        "type": "android.emulator",
+        "artifacts": false,
+        "device": {
+          "avdName": "Pixel_API_28"
+        },
+        "behavior": {
+          "launchApp": "manual"
+        },
+        "session": {
+          "autoStart": true,
+          "server": "ws://localhost:8099",
+          "sessionId": "test"
         }
       },
       "android.emu.debug": {

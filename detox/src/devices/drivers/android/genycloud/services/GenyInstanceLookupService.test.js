@@ -43,6 +43,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
   const givenNoRegisteredInstances = () => deviceRegistry.getRegisteredDevices.mockReturnValue([]);
   const givenInstances = (...instances) => exec.getInstances.mockResolvedValue({ instances });
   const givenNoInstances = () => exec.getInstances.mockResolvedValue({ instances: [] });
+  const givenAnInstance = (instance) => exec.getInstance.mockResolvedValue({ instance });
   const givenAllDevicesFamilial = () => instanceNaming.isFamilial.mockReturnValue(true);
   const givenNoDevicesFamilial = () => instanceNaming.isFamilial.mockReturnValue(false);
 
@@ -123,12 +124,13 @@ describe('Genymotion-Cloud instances lookup service', () => {
 
   describe('finding a specific instance', () => {
     it('should return an instance matching a UUID', async () => {
-      const instance1 = anInstance();
-      const instance2 = anotherInstance();
-      givenInstances(instance1, instance2);
+      const instance = anInstance();
+      givenAnInstance(instance);
 
-      const result = await uut.getInstance(instance2.uuid);
-      expect(result.uuid).toEqual(instance2.uuid);
+      const result = await uut.getInstance(instance.uuid);
+      expect(result.uuid).toEqual(instance.uuid);
+      expect(result.constructor.name).toContain('Instance');
+      expect(exec.getInstance).toHaveBeenCalledWith(instance.uuid);
     });
   });
 });

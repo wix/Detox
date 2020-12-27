@@ -2,6 +2,24 @@ const _ = require('lodash');
 
 const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
 
+const MOCK_GMSAAS_PATH = '/path/to/gmsaas';
+
+const aRecipe = () => ({
+  uuid: 'mock-recipe-uuid',
+  name: 'mock-recipe-name',
+  toString: () => 'mock-recipe-toString()-result',
+});
+
+const anInstance = () => ({
+  uuid: 'mock-instance-uuid',
+  name: 'mock-instance-name',
+  adbName: 'mock-instance-adb-name',
+});
+
+const aDeviceQuery = () => ({
+  query: 'mock',
+});
+
 describe('Genymotion-cloud driver', () => {
   class MockInstanceLifecycleService {
     constructor(...args) {
@@ -9,23 +27,6 @@ describe('Genymotion-cloud driver', () => {
       this.ctor(...args);
     }
   }
-
-  const MOCK_GMSAAS_PATH = '/path/to/gmsaas';
-
-  const aRecipe = () => ({
-    uuid: 'mock-recipe-uuid',
-    name: 'mock-recipe-name',
-    toString: () => 'mock-recipe-toString()-result',
-  });
-
-  const anInstance = () => ({
-    uuid: 'mock-instance-uuid',
-    adbName: 'mock-instance-adb-name',
-  });
-
-  const aDeviceQuery = () => ({
-    query: 'mock',
-  });
 
   beforeEach(mockBaseClassesDependencies);
   beforeEach(mockDirectDependencies);
@@ -36,6 +37,7 @@ describe('Genymotion-cloud driver', () => {
   let environment;
   let adbObj;
   let Exec;
+  let execObj;
   let deviceQueryHelper;
   let deviceRegistry;
   let deviceCleanupRegistry;
@@ -57,6 +59,7 @@ describe('Genymotion-cloud driver', () => {
     adbObj = () => latestInstanceOf(ADB);
 
     Exec = require('./exec/GenyCloudExec');
+    execObj = () => latestInstanceOf(Exec);
 
     const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
@@ -108,21 +111,67 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('preparation', () => {
-      it('should throw error if not logged-in to gmsaas', async () => {
-        authServiceObj().getLoginEmail.mockResolvedValue(null);
+      const givenProperGmsaasLogin = () => authServiceObj().getLoginEmail.mockResolvedValue('detox@wix.com');
+      const givenGmsaasLoggedOut = () => authServiceObj().getLoginEmail.mockResolvedValue(null);
+      const givenGmsaasExecVersion = (version) => execObj().getVersion.mockResolvedValue({ version });
+      const givenProperGmsaasExecVersion = () => givenGmsaasExecVersion('1.6.0');
+
+      it('should throw an error if gmsaas exec is too old (minor version < 6)', async () => {
+        givenProperGmsaasLogin();
+        givenGmsaasExecVersion('1.5.9');
 
         try {
           await uut.prepare();
           fail('Expected an error');
         } catch (e) {
           expect(e.constructor.name).toEqual('DetoxRuntimeError');
-          expect(e.toString()).toContain('Cannot run tests using a Genymotion-cloud emulator, because Genymotion was not logged-in to!');
+          expect(e.toString()).toContain(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 1.5.9)`);
+          expect(e.toString()).toContain(`HINT: Detox requires version 1.6.0, or newer. To use 'android.genycloud' type devices, you must upgrade it, first.`);
+        }
+      });
+
+      it('should accept the gmsaas exec if version is sufficiently new', async () => {
+        givenProperGmsaasLogin();
+        givenGmsaasExecVersion('1.6.0');
+        await uut.prepare();
+      });
+
+      it('should accept the gmsaas exec if version is more than sufficiently new', async () => {
+        givenProperGmsaasLogin();
+        givenGmsaasExecVersion('1.7.2');
+        await uut.prepare();
+      });
+
+      it('should throw an error if gmsaas exec is too old (major version < 1)', async () => {
+        givenProperGmsaasLogin();
+        givenGmsaasExecVersion('0.6.0');
+
+        try {
+          await uut.prepare();
+          fail('Expected an error');
+        } catch (e) {
+          expect(e.toString()).toContain(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 0.6.0)`);
+        }
+      });
+
+      it('should throw an error if not logged-in to gmsaas', async () => {
+        givenProperGmsaasExecVersion();
+        givenGmsaasLoggedOut();
+
+        try {
+          await uut.prepare();
+          fail('Expected an error');
+        } catch (e) {
+          expect(e.constructor.name).toEqual('DetoxRuntimeError');
+          expect(e.toString()).toContain(`Cannot run tests using 'android.genycloud' type devices, because Genymotion was not logged-in to!`);
           expect(e.toString()).toContain(`HINT: Log-in to Genymotion-cloud by running this command (and following instructions):\n${MOCK_GMSAAS_PATH} auth login --help`);
         }
       });
 
       it('should not throw an error if properly logged in to gmsaas', async () => {
-        authServiceObj().getLoginEmail.mockResolvedValue('detox@wix.com');
+        givenProperGmsaasExecVersion();
+        givenProperGmsaasLogin();
+
         await uut.prepare();
       });
     });
@@ -141,10 +190,10 @@ describe('Genymotion-cloud driver', () => {
         const deviceQuery = aDeviceQuery();
         const result = await uut.acquireFreeDevice(deviceQuery);
 
-        expect(result).toEqual({
+        expect(result).toEqual(expect.objectContaining({
           adbName: instance.adbName,
           uuid: instance.uuid,
-        });
+        }));
         expect(deviceQueryHelper().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
         expect(deviceAllocator().allocateDevice).toHaveBeenCalledWith(recipe);
       });
@@ -326,34 +375,39 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('global clean-up', () => {
-      const givenDeletionPendingDevices = (deviceUUIDs) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(deviceUUIDs);
+      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(devicesHandles);
       const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);
-      const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices(_.map(instances, 'uuid'));
+      const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices( _.map(instances, ({ uuid, name }) => ({ uuid, name }) ));
       const givenDeletionResult = (deletedInstance) => instanceLifecycleService.deleteInstance.mockResolvedValue(deletedInstance);
 
-      const assertablePendingPromise = () => {
+      const anAssertablePendingPromise = () => {
         let promiseAck = jest.fn();
         const promise = new Promise(resolve => setTimeout(resolve, 1)).then(promiseAck);
         promise.assertResolved = () => expect(promiseAck).toHaveBeenCalled();
         return promise;
       };
 
+      const aPendingDevice = (name, uuid) => ({ name, uuid });
+
       it('should kill all deletion-pending device', async () => {
-        const killPromise1 = assertablePendingPromise();
-        const killPromise2 = assertablePendingPromise();
+        const killPromise1 = anAssertablePendingPromise();
+        const killPromise2 = anAssertablePendingPromise();
         instanceLifecycleService.deleteInstance
           .mockReturnValueOnce(killPromise1)
           .mockReturnValueOnce(killPromise2);
 
-        const deviceUUIDs = ['device1-uuid', 'device2-uuid'];
-        givenDeletionPendingDevices(deviceUUIDs);
+        const deviceHandles = [
+          aPendingDevice('device1', 'uuid1'),
+          aPendingDevice('device2', 'uuid2'),
+        ];
+        givenDeletionPendingDevices(deviceHandles);
 
         await GenyCloudDriver.globalCleanup();
 
         killPromise1.assertResolved();
         killPromise2.assertResolved();
-        expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(deviceUUIDs[0]);
-        expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(deviceUUIDs[1]);
+        expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith('uuid1');
+        expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith('uuid2');
       });
 
       it('should warn of instances deletion rejects', async () => {
@@ -362,13 +416,17 @@ describe('Genymotion-cloud driver', () => {
           .mockResolvedValueOnce(anInstance())
           .mockRejectedValueOnce(new Error('mock-error2'));
 
-        givenDeletionPendingDevices(['failing-uuid1', 'nonfailing-uuid', 'failing-uuid2']);
+        givenDeletionPendingDevices([
+          aPendingDevice('failing1', 'uuid1'),
+          aPendingDevice('nonfailing', 'uuid'),
+          aPendingDevice('failing2', 'uuid2'),
+        ]);
 
         await GenyCloudDriver.globalCleanup();
 
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
-        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing-uuid1:.*mock-error1/));
-        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing-uuid2:.*mock-error2/));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing1 \(uuid1\): .*mock-error1/));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing2 \(uuid2\): .*mock-error2/));
         expect(logger.warn).toHaveBeenCalledTimes(3);
       });
 

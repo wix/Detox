@@ -1,3 +1,4 @@
+const semver = require('semver'); // eslint-disable-line node/no-extraneous-require
 const AndroidDriver = require('../AndroidDriver');
 const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
@@ -12,23 +13,25 @@ const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const logger = require('../../../../utils/logger').child({ __filename });
 const environment = require('../../../../utils/environment');
 
+const MIN_GMSAAS_VERSION = '1.6.0';
+
 class GenyCloudDriver extends AndroidDriver {
   constructor(config) {
     super(config);
     this._name = 'Unspecified Genymotion Cloud Emulator';
 
-    const exec = new GenyCloudExec(environment.getGmsaasPath());
+    this._exec = new GenyCloudExec(environment.getGmsaasPath());
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
     this._deviceRegistry = GenyDeviceRegistryFactory.forRuntime();
     this._deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
 
-    const recipeService = new RecipesService(exec, logger);
-    const instanceLookupService = new InstanceLookupService(exec, instanceNaming, this._deviceRegistry);
-    this._instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
+    const recipeService = new RecipesService(this._exec, logger);
+    const instanceLookupService = new InstanceLookupService(this._exec, instanceNaming, this._deviceRegistry);
+    this._instanceLifecycleService = new InstanceLifecycleService(this._exec, instanceNaming);
     this._deviceQueryHelper = new DeviceQueryHelper(recipeService);
     this._deviceAllocator = new GenyCloudDeviceAllocator(this._deviceRegistry, this._deviceCleanupRegistry, instanceLookupService, this._instanceLifecycleService);
 
-    this._authService = new AuthService(exec);
+    this._authService = new AuthService(this._exec);
   }
 
   get name() {
@@ -36,7 +39,8 @@ class GenyCloudDriver extends AndroidDriver {
   }
 
   async prepare() {
-    return this._validateGmsaasAuth();
+    await this._validateGmsaasVersion();
+    await this._validateGmsaasAuth();
   }
 
   async acquireFreeDevice(deviceQuery) {
@@ -83,10 +87,20 @@ class GenyCloudDriver extends AndroidDriver {
     }
   }
 
+  async _validateGmsaasVersion() {
+    const { version } = await this._exec.getVersion();
+    if (semver.lt(version, MIN_GMSAAS_VERSION)) {
+      throw new DetoxRuntimeError({
+        message: `Your Genymotion-Cloud executable (found in ${environment.getGmsaasPath()}) is too old! (version ${version})`,
+        hint: `Detox requires version 1.6.0, or newer. To use 'android.genycloud' type devices, you must upgrade it, first.`,
+      });
+    }
+  }
+
   async _validateGmsaasAuth() {
     if (!await this._authService.getLoginEmail()) {
       throw new DetoxRuntimeError({
-        message: 'Cannot run tests using a Genymotion-cloud emulator, because Genymotion was not logged-in to!',
+        message: `Cannot run tests using 'android.genycloud' type devices, because Genymotion was not logged-in to!`,
         hint: `Log-in to Genymotion-cloud by running this command (and following instructions):\n${environment.getGmsaasPath()} auth login --help`,
       });
     }
@@ -94,11 +108,11 @@ class GenyCloudDriver extends AndroidDriver {
 
   static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-    const deviceUUIDs = await deviceCleanupRegistry.readRegisteredDevices();
-    if (deviceUUIDs.length) {
+    const instanceHandles = await deviceCleanupRegistry.readRegisteredDevices();
+    if (instanceHandles.length) {
       const exec = new GenyCloudExec(environment.getGmsaasPath());
       const instanceLifecycleService = new InstanceLifecycleService(exec, null);
-      await doCleanup(instanceLifecycleService, deviceUUIDs);
+      await doCleanup(instanceLifecycleService, instanceHandles);
     }
   }
 }
@@ -107,13 +121,13 @@ const cleanupLogData = {
   event: 'GENYCLOUD_TEARDOWN',
 };
 
-async function doCleanup(instanceLifecycleService, deviceUUIDs) {
+async function doCleanup(instanceLifecycleService, instanceHandles) {
   logger.info(cleanupLogData, 'Initiating Genymotion cloud instances teardown...');
 
   const deletionLeaks = [];
-  const killPromises = deviceUUIDs.map((uuid) =>
+  const killPromises = instanceHandles.map(({ uuid, name }) =>
     instanceLifecycleService.deleteInstance(uuid)
-      .catch((error) => deletionLeaks.push({ uuid, error })));
+      .catch((error) => deletionLeaks.push({ uuid, name, error })));
 
   await Promise.all(killPromises);
   reportGlobalCleanupSummary(deletionLeaks);
@@ -123,8 +137,8 @@ function reportGlobalCleanupSummary(deletionLeaks) {
   if (deletionLeaks.length) {
     logger.warn(cleanupLogData, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
 
-    deletionLeaks.forEach(({ uuid, error }) =>
-      logger.warn(cleanupLogData, `Instance UUID ${uuid}: ${error}`));
+    deletionLeaks.forEach(({ uuid, name, error }) =>
+      logger.warn(cleanupLogData, `Instance ${name} (${uuid}): ${error}`));
 
     logger.info(cleanupLogData, 'Instances teardown completed with warnings');
   } else {

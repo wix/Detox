@@ -61,6 +61,10 @@ describe('Device', () => {
       expect(this.driver.launchApp).toHaveBeenCalledWith(device._deviceId, device._bundleId, expectedArgs, languageAndLocale);
     }
 
+    expectWaitForLaunchCalled(device, expectedArgs, languageAndLocale) {
+      expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(device._deviceId, device._bundleId, expectedArgs, languageAndLocale);
+    }
+
     expectReinstallCalled() {
       expect(this.driver.uninstallApp).toHaveBeenCalled();
       expect(this.driver.installApp).toHaveBeenCalled();
@@ -90,6 +94,7 @@ describe('Device', () => {
 
   function schemeDevice(scheme, configuration, overrides) {
     const device = new Device(_.merge({
+      behaviorConfig: {},
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
       sessionConfig: scheme.session,
@@ -140,6 +145,17 @@ describe('Device', () => {
       await device.launchApp();
 
       driverMock.expectLaunchCalled(device, expectedArgs);
+    });
+
+    it(`given behaviorConfig.launchApp == 'manual' should wait for the app launch`, async () => {
+      const expectedArgs = expectedDriverArgs;
+      const device = validDevice({
+        behaviorConfig: { launchApp: 'manual' }
+      });
+      await device.launchApp();
+
+      expect(driverMock.driver.launchApp).not.toHaveBeenCalled();
+      driverMock.expectWaitForLaunchCalled(device, expectedArgs);
     });
 
     it(`args should launch app and emit appReady`, async () => {

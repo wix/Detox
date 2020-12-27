@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.14.6",
+  "version": "17.14.8",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -113,6 +113,7 @@
       "src/utils/logger.js",
       "src/utils/onTerminate.js",
       "src/utils/pipeCommands.js",
+      "src/utils/pressAnyKey.js",
       "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",

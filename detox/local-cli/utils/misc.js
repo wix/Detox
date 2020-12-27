@@ -28,6 +28,8 @@ function prependNodeModulesBinToPATH(env) {
   if (!env[PATH].startsWith(nodeBinariesPath)) {
     env[PATH] = nodeBinariesPath + env[PATH];
   }
+
+  return env[PATH];
 }
 
 module.exports = {

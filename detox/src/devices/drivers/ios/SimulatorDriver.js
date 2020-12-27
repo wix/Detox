@@ -4,24 +4,46 @@ const path = require('path');
 const exec = require('child-process-promise').exec;
 const DeviceRegistry = require('../../DeviceRegistry');
 const IosDriver = require('./IosDriver');
+const AppleSimUtils = require('./tools/AppleSimUtils');
+const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
+const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
+const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const DetoxConfigError = require('../../../errors/DetoxConfigError');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
+const log = require('../../../utils/logger').child({ __filename });
+const pressAnyKey = require('../../../utils/pressAnyKey');
 
 class SimulatorDriver extends IosDriver {
 
   constructor(config) {
     super(config);
 
+    this.applesimutils = new AppleSimUtils();
     this.deviceRegistry = DeviceRegistry.forIOS();
     this._name = 'Unspecified Simulator';
   }
 
   get name() {
     return this._name;
+  }
+
+  declareArtifactPlugins() {
+    const appleSimUtils = this.applesimutils;
+    const client = this.client;
+
+    return {
+      ...super.declareArtifactPlugins(),
+
+      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
+      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
+      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
+    };
   }
 
   async prepare() {
@@ -87,6 +109,27 @@ class SimulatorDriver extends IosDriver {
     const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
 
+    return pid;
+  }
+
+  async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
+    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+
+    this.applesimutils.printLaunchHint(deviceId, bundleId, launchArgs, languageAndLocale);
+    await pressAnyKey();
+
+    const pid = await this.applesimutils.getPid(deviceId, bundleId);
+    if (Number.isNaN(pid)) {
+      throw new DetoxRuntimeError({
+        message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
+        hint: `Make sure that the app is running on the device (${deviceId}), visually or via CLI:\n` +
+              `xcrun simctl spawn ${deviceId} launchctl list | grep -F '${bundleId}'\n`,
+      });
+    } else {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+
+    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
     return pid;
   }
 

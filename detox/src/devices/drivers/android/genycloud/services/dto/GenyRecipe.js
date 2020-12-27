@@ -1,8 +1,7 @@
-const _ = require('lodash');
-
-class Recipe {
+class GenyRecipe {
   constructor(rawRecipe) {
-    Object.assign(this, _.pick(rawRecipe, 'uuid', 'name'));
+    this.uuid = rawRecipe.uuid;
+    this.name = rawRecipe.name;
   }
 
   toString() {
@@ -10,4 +9,4 @@ class Recipe {
   }
 }
 
-module.exports = Recipe;
+module.exports = GenyRecipe;

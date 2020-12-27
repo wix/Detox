@@ -30,11 +30,12 @@ describe('Chrome-Tracing exporter', () => {
 
   it('should export a start-event with args', () => {
     const startEvent = anEvent({ type: 'start' });
+    const expectedTs = startEvent.ts * 1000;
     const expectedObject = {
       name: startEvent.name,
       pid: processId,
       tid: threadId,
-      ts: startEvent.ts,
+      ts: expectedTs,
       ph: 'B',
       args: startEvent.args,
     };
@@ -44,11 +45,12 @@ describe('Chrome-Tracing exporter', () => {
 
   it('should export an end-event with args', () => {
     const endEvent = anEvent({ type: 'end' });
+    const expectedTs = endEvent.ts * 1000;
     const expectedObject = {
       name: endEvent.name,
       pid: processId,
       tid: threadId,
-      ts: endEvent.ts,
+      ts: expectedTs,
       ph: 'E',
       args: endEvent.args,
     };
@@ -61,18 +63,19 @@ describe('Chrome-Tracing exporter', () => {
       type: 'init',
       ts: 1234,
     };
+    const expectedTs = initEvent.ts;
     const expectedObjects = [{
       name: 'process_name',
       pid: processId,
       tid: threadId,
-      ts: initEvent.ts,
+      ts: expectedTs,
       ph: 'M',
       args: { name: processName }
     }, {
       name: 'thread_name',
       pid: processId,
       tid: threadId,
-      ts: initEvent.ts,
+      ts: expectedTs,
       ph: 'M',
       args: { name: threadName }
     }];
