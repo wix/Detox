@@ -331,7 +331,7 @@ class AppleSimUtils {
 
     const cmdArgs = this._mergeLaunchArgs(launchArgs, languageAndLocale).join(' ');
     let launchBin = `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
-      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} ${cmdArgs}`;
+      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
 
     const result = await exec.execWithRetriesAndLogs(launchBin, {
       retries: 1,
