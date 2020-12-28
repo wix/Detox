@@ -1,9 +1,17 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
+const log = require('../utils/logger').child({ __filename });
 
 class Device {
-  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
+  constructor({
+    behaviorConfig,
+    deviceConfig,
+    deviceDriver,
+    emitter,
+    sessionConfig
+  }) {
+    this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
@@ -22,9 +30,9 @@ class Device {
   }
 
   async launchApp(params = {}, bundleId = this._bundleId) {
-    return traceCall('launchApp', () =>
-      this._doLaunchApp(params, bundleId));
+    return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
   }
+
   async _doLaunchApp(params, bundleId) {
     const deviceId = this._deviceId;
     const payloadParams = ['url', 'userNotification', 'userActivity'];
@@ -70,11 +78,16 @@ class Device {
       }
     }
 
-    const processId = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    let processId;
+    if (this._behaviorConfig.launchApp === 'manual') {
+      processId = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    } else {
+      processId = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      await this.deviceDriver.waitUntilReady();
+      await this.deviceDriver.waitForActive();
+    }
     this._processes[bundleId] = processId;
 
-    await this.deviceDriver.waitUntilReady();
-    await this.deviceDriver.waitForActive();
     await this._emitter.emit('appReady', {
       deviceId,
       bundleId,

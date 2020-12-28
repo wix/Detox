@@ -26,10 +26,26 @@ describe('composeBehaviorConfig', () => {
         exposeGlobals: true,
         reinstallApp: true,
       },
+      launchApp: 'auto',
       cleanup: {
         shutdownDevice: false,
       },
     })
+  });
+
+  describe('if a custom config has only .launchApp = "manual" override', () => {
+    beforeEach(() => {
+      detoxConfig = {
+        behavior: { launchApp: 'manual' }
+      };
+    });
+
+    it('should implicitly override behavior.init.reinstallApp = false', () => {
+      const expected = _.cloneDeep(detoxConfig.behavior);
+      const actual = composed();
+
+      expect(actual.init.reinstallApp).toBe(false);
+    });
   });
 
   describe('if detox config is set', () => {
@@ -40,6 +56,7 @@ describe('composeBehaviorConfig', () => {
             exposeGlobals: false,
             reinstallApp: false,
           },
+          launchApp: 'manual',
           cleanup: {
             shutdownDevice: true,
           },
@@ -62,6 +79,7 @@ describe('composeBehaviorConfig', () => {
               exposeGlobals: true,
               reinstallApp: true,
             },
+            launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
             },
@@ -90,6 +108,7 @@ describe('composeBehaviorConfig', () => {
               exposeGlobals: false,
               reinstallApp: true,
             },
+            launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
             }
@@ -108,6 +127,7 @@ describe('composeBehaviorConfig', () => {
                 exposeGlobals: false,
                 reinstallApp: false,
               },
+              launchApp: 'auto',
               cleanup: {
                 shutdownDevice: true,
               }
@@ -118,4 +138,3 @@ describe('composeBehaviorConfig', () => {
     });
   });
 });
-

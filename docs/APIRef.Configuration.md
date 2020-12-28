@@ -157,6 +157,7 @@ you have a few options to change. These are the default behavior values:
         "launchApp": true,
         "exposeGlobals": true
       },
+      "launchApp": "auto",
       "cleanup": {
         "shutdownDevice": false
       }
@@ -165,8 +166,8 @@ you have a few options to change. These are the default behavior values:
 }
 ```
 
-For example, if you want to launch your tested app manually, e.g. via `device.launchApp()`,
-you should specify in the Detox configuration:
+For example, if you want to launch your tested app explicitly, i.e. via `device.launchApp()`,
+and not as an implicit part of the Detox initialization, you should specify in the Detox configuration:
 
 ```json
 {
@@ -178,8 +179,15 @@ you should specify in the Detox configuration:
 }
 ```
 
+There is one more `launchApp` property in the root of `behavior` object configuration.
+
+That `launchApp: "auto"` setting can be changed to `"manual"` for cases when you want to debug the
+native codebase when running Detox tests. Usually **you never need that**, but if you do, follow the
+[Debugging Apps in Android Studio During a Test](Guide.DebuggingInAndroidStudio.md) guide to learn
+more about this. When set to `manual`, it changes the default value of `reinstallApp` to `false`.
+
 Setting `reinstallApp: false` will make the tests reuse the currently installed app on the device,
-provided you have installed it beforehand.
+provided you have installed it beforehand explicitly or manually.
 
 If you do not wish to leak Detox globals (`expect`, `device`, `by`, etc.) to the global
 scope, you can set `"exposeGlobals": false` and destructure them respectively from the
@@ -201,7 +209,22 @@ Detox can either initialize a server using a generated configuration, or can be 
   }
 ```
 
-Session can be set also per configuration — then it takes a higher priority over the global session config:
+When you define a session config, the Detox server won't start automatically anymore — it is assumed that
+you will be running it independently via `detox run-server` CLI command. Alternatively, you can set the
+`autoStart` property to be explicitly `true`:
+
+```diff
+   "session": {
++    "autoStart": true,
+     "server": "ws://localhost:8099",
+     "sessionId": "YourProjectSessionId"
+```
+
+Defining an explicit session config with `server` and `sessionId` also means you cannot use multiple workers,
+since the specified port will become busy for any test worker next to the first one to occupy it.
+
+Session can be set also per device configuration — then it takes a higher priority over the global
+session config:
 
 ```json
 {  
@@ -229,6 +252,8 @@ The status will be printed if the action takes more than _[N]_ ms to complete.
     }
 }
 ```
+
+To disable `debugSynchronization` explicitly, use `0`.
 
 ## `detox-cli`
 

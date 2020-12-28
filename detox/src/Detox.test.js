@@ -130,6 +130,7 @@ describe('Detox', () => {
 
       it('should instantiate Device', () =>
         expect(Device).toHaveBeenCalledWith({
+          behaviorConfig: detoxConfig.behaviorConfig,
           deviceConfig: detoxConfig.deviceConfig,
           emitter: expect.anything(),
           deviceDriver: expect.anything(),

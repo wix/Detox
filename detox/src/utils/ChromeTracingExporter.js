@@ -25,8 +25,8 @@ class ChromeTracingExporter {
   _parseEvent(event) {
     const { name, ts, args, type } = event;
     switch (type) {
-      case 'start': return this._event(name, 'B', ts, args);
-      case 'end': return this._event(name, 'E', ts, args);
+      case 'start': return this._event(name, 'B', ts * 1000, args);
+      case 'end': return this._event(name, 'E', ts * 1000, args);
       case 'init': return [
           this._event('process_name', 'M', ts, { name: this._process.name }),
           this._event('thread_name', 'M', ts, { name: this._thread.name }),

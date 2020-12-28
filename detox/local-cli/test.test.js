@@ -573,7 +573,7 @@ describe('CLI', () => {
     });
 
     test.each([
-      ['--inspect-brk e2eFolder', /^node --inspect-brk jest .* e2eFolder$/, {}],
+      ['--inspect-brk e2eFolder', /^node --inspect-brk .*jest\.js .* e2eFolder$/, {}],
       ['-d e2eFolder', / e2eFolder$/, { DETOX_DEBUG_SYNCHRONIZATION: 3000 }],
       ['--debug-synchronization e2eFolder', / e2eFolder$/, { DETOX_DEBUG_SYNCHRONIZATION: 3000 }],
       ['-r e2eFolder', / e2eFolder$/, { DETOX_REUSE: true }],
@@ -660,7 +660,8 @@ describe('CLI', () => {
 
     test('--inspect-brk should prepend "node --inspect-brk" to the command', async () => {
       await run('--inspect-brk');
-      expect(cliCall().command).toMatch(RegExp(`^node --inspect-brk ${testRunner}`));
+      const absolutePathToTestRunnerJs = require.resolve(`.bin/${testRunner}`);
+      expect(cliCall().command).toMatch(RegExp(`^node --inspect-brk ${absolutePathToTestRunnerJs}`));
     });
 
     test('should append $DETOX_ARGV_OVERRIDE to detox test ... command and print a warning', async () => {
