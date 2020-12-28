@@ -4,12 +4,7 @@ Artifacts are various recordings during tests including, but not limited to, dev
 
 ## Enabling Artifacts
 
-Artifacts are disabled by default. Two things are required to enable them:
-
-1. **Call `detox.beforeEach` and `detox.afterEach` before/after each test**:
-	In order for artifacts to work, you have to call `detox.beforeEach(testSummary)` / `detox.afterEach(testSummary)` before / after each test. Their respective signatures are described in [detox object](APIRef.DetoxObjectAPI.md) documentation. As the interface (typing) of `testSummary` may change over the time, and in cases with some test runners it is not trivial to implement test title and status extraction (like with Jest), you are encouraged to use Detox adapter functions like in these examples: [mocha](/examples/demo-react-native/e2e/init.js), [jest](/examples/demo-react-native-jest/e2e/init.js).
-
-2. Specify via launch arguments or a configuration object what artifacts you want to record.
+Artifacts are disabled by default. To enable them, specify via **launch arguments** or a **configuration** object what artifacts you want to record.
 
 ### Launch Arguments
 
@@ -29,22 +24,21 @@ detox test --artifacts-location /tmp/detox_artifacts/ # won't append anything, h
 
 ### Configuration Object
 
-Detox artifacts can be configured in a more advanced way with the `artifacts` configuration in `package.json`:
+Detox artifacts can be configured in a more advanced way with the `artifacts` configuration in `package.json` (or `.detoxrc`):
 
 ```json
 {
-  "detox": {
-    "artifacts": {},
-    "configurations": {
-      "some.device": {
-        "artifacts": {},
-      },
+  "artifacts": {},
+  "configurations": {
+    "some.device": {
+      "artifacts": {},
     },
-  }
+  },
 }
 ```
 
-**NOTE:** Detox merges artifact configurations from `package.json`, and the per-device artifacts configuration has a higher priority over the general one.
+**NOTE:** As you can see, there is a global and a local (per-configuration) configuration of the artifacts.
+Detox merges those configurations, and the per-device artifacts configuration has a higher priority over the general one.
 
 The `artifacts` object has the following properties:
 
@@ -278,11 +272,10 @@ DETOX_INSTRUMENTS_PATH="/path/to/Detox Instruments.app" detox test ...
 
 > **Note:** If **Detox Instruments** had been [integrated into your project](https://github.com/wix/DetoxInstruments/blob/master/Documentation/XcodeIntegrationGuide.md), then the integrated [Detox Profiler framework](https://github.com/wix/DetoxInstruments/tree/master/Profiler) will be used when profiling with Detox.
 
-### Ctrl+C Does Not Terminate Detox+Jest Tests Correctly
+### Ctrl+C Does Not Clean Up Temporary Files
 
 This is a known issue. 🤷‍♂️
-Video or log recording process under Detox+Jest is apt to keep running even after you press Ctrl+C and stop the tests.
-Furthermore, some of temporary files won't get erased (e.g. `/sdcard/83541_0.mp4` on Android emulator, or `/private/var/folders/lm/thz8hdxs4v3fppjh0fjc2twhfl_3x2/T/f12a4fcb-0d1f-4d98-866c-e7cea4942ade.png` on your Mac).
-It cannot be solved on behalf of Detox itself, because the problem has to do with how Jest runner works with its puppet processes.
+After you press Ctrl+C and stop the tests, some of temporary files won't get erased (e.g. `/sdcard/83541_0.mp4` on Android emulator, or `/private/var/folders/lm/thz8hdxs4v3fppjh0fjc2twhfl_3x2/T/f12a4fcb-0d1f-4d98-866c-e7cea4942ade.png` on your Mac).
+It cannot be solved on behalf of Detox itself, because the problem has to do with how Jest runner terminates its puppet processes.
 The issue is on our radar, but the ETA for the fix stays unknown.
 If you feel able to contribute the fix to [Jest](https://github.com/facebook/jest), you are very welcome.
