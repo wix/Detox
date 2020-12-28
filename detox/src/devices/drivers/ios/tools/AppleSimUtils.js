@@ -120,6 +120,7 @@ class AppleSimUtils {
     log.info({},
       'Waiting for you to manually launch your app in Xcode.\n' +
       'Make sure to pass the launch arguments listed below:\n' +
+      '  --args\n' +
       this._mergeLaunchArgs(launchArgs, languageAndLocale).map(pair => `  ${pair}\n`).join(''),
       '\nPress any key to continue...'
     );
