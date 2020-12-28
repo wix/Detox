@@ -7,6 +7,7 @@ function collectCliConfig({ argv }) {
 
   return _.omitBy({
     artifactsLocation: get('artifacts-location'),
+    captureViewHierarchy: get('capture-view-hierarchy'),
     recordLogs: get('record-logs'),
     takeScreenshots: get('take-screenshots'),
     recordVideos: get('record-videos'),

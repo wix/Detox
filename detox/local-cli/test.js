@@ -139,6 +139,7 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
       'record-performance': cliConfig.recordPerformance || undefined,
       'record-videos': cliConfig.recordVideos || undefined,
       'take-screenshots': cliConfig.takeScreenshots || undefined,
+      'capture-view-hierarchy': cliConfig.captureViewHierarchy || undefined,
       'use-custom-logger': cliConfig.useCustomLogger && 'true' || undefined,
 
       ...passthrough,
@@ -168,6 +169,7 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
       DETOX_ARTIFACTS_LOCATION: cliConfig.artifactsLocation,
+      DETOX_CAPTURE_VIEW_HIERARCHY: cliConfig.captureViewHierarchy,
       DETOX_CLEANUP: cliConfig.cleanup,
       DETOX_CONFIGURATION: cliConfig.configuration,
       DETOX_CONFIG_PATH: cliConfig.configPath,

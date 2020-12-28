@@ -147,6 +147,11 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--record-videos failing')
     });
 
+    test('--capture-view-hierarchy <value> should be passed as CLI argument', async () => {
+      await run(`--capture-view-hierarchy enabled`);
+      expect(cliCall().command).toContain('--capture-view-hierarchy enabled')
+    });
+
     test('--record-performance <value> should be passed as CLI argument', async () => {
       await run(`--record-performance all`);
       expect(cliCall().command).toContain('--record-performance all')
@@ -430,6 +435,11 @@ describe('CLI', () => {
     test('--record-timeline <value> should be passed as environment variable', async () => {
       await run(`--record-timeline all`);
       expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_RECORD_TIMELINE: 'all' }));
+    });
+
+    test('--capture-view-hierarchy <value> should be passed as environment variable', async () => {
+      await run(`--capture-view-hierarchy enabled`);
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_CAPTURE_VIEW_HIERARCHY: 'enabled' }));
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should be passed as CLI argument', async (__workers) => {

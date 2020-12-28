@@ -17,6 +17,7 @@ describe('collectCliConfig', () => {
 
   describe.each([
     ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',    'artifacts-location'],
+    ['captureViewHierarchy', 'DETOX_CAPTURE_VIEW_HIERARCHY','capture-view-hierarchy'],
     ['recordLogs',           'DETOX_RECORD_LOGS',           'record-logs'],
     ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',      'take-screenshots'],
     ['recordVideos',         'DETOX_RECORD_VIDEOS',         'record-videos'],
