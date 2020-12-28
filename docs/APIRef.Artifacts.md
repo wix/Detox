@@ -11,6 +11,7 @@ Artifacts are disabled by default. To enable them, specify via **launch argument
 * To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
 * To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
 * To record `.dtxrec` (Detox Instruments recordings) for each test, add `--record-performance all`. To open those recordings, you'll need [Detox Instruments](https://github.com/wix/DetoxInstruments). **NOTE:** only iOS is supported.
+* To capture `.uihierarchy` snapshots (**iOS only, Xcode 12.0+**) on view action failures, add `--capture-view-hierarchy enabled`.
 * To take `.png` screenshots before and after each test, add `--take-screenshots all` (or `--take-screenshots failing`, if you want to keep only screenshots of failing tests).  
 Alternatively, you might leverage the [device.takeScreenshot()](APIRef.DeviceObjectAPI.md#devicetakescreenshotname) API for manual control.
 
@@ -185,9 +186,14 @@ To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-conf
 
 To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
 
+#### UI hierarchy Plugin
+
+To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+
 #### Timeline Plugin
 
-When enabled using the `--record-timeline all` argument to Detox, the time-line of the entire testing session is recorded, based on trace calls made by Detox internally, and explicit calls made in user test-code, combined. The final outcome is a JSON-like file named `detox.trace.json`, which, if loaded into a Chrome-browser tab with the `chrome://tracing` URL, would look something like this:
+When enabled using the `--record-timeline all` argument to Detox, the time-line of the entire testing session is recorded, based on trace calls made by Detox internally, and explicit calls made in user test-code, combined.
+The final outcome is a JSON-like file named `detox.trace.json`, which, if loaded into a Chrome-browser tab with the `chrome://tracing` URL, would look something like this:
 
 ![Timeline artifact example](img/timeline-artifact.png)
 
