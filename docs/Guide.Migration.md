@@ -20,7 +20,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
 +  constructor(config, context) {
 +    super(config, context);
 ```
-* **JS (iOS).** If you were using `device.launchApp({ launchArgs: { ... })` with complex launch args such as regular expressions, make sure you remove previous hacks to bypass the old bug with naive escaping (previously Detox just was surrounding argument values with double quotes there in code), e.g.:
+* **JS (iOS).** `device.launchApp({ launchArgs: { ... })` argument escaping has been improved. If you use complex launch args such as regular expressions, make sure you remove manual escaping from now on to avoid erroneous double escaping, e.g.:
 ```diff
  await device.launchApp({
    launchArgs: {
