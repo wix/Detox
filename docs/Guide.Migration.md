@@ -9,8 +9,14 @@ Detox now uses a custom synchronization system on iOS, [developed in-house](http
 If you are seeing issues with the new sync system, please open an issue.
 
 **Breaking:**
-* Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
-* `detox.init()` will not launch the app anymore (even if asked to do so in configuration). Launching the app with `device.launchApp()` is now mandatory.
+
+* **iOS.** Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
+* **JS.** `detox.init()` will not launch the app anymore (even if asked to do so in configuration). Launching the app explicitly with `device.launchApp()` is now mandatory.
+* **JS (iOS).** If you were using `device.launchApp({ launchArgs: { ... })` with complex launch args such as regular expressions, make sure you remove previous hacks to bypass the old bug with naive escaping (previously Detox just was surrounding argument values with double quotes there in code), e.g.:
+  * `launchArgs: { detoxURLBlacklistRegex: '(\\".*example.com/some-url/.*\\")' }`  
+  becomes:  
+  `launchArgs: { detoxURLBlacklistRegex: '(".*example.com/some-url/.*")' }`. 
+* **JS (internal).** There is a breaking change for people writing custom Detox integrations. Environment variable naming schema has changed – now Detox uses prefix to distinguish its own environment variables (usually passed from `detox test` CLI), e.g.: `recordLogs=all` becomes `DETOX_RECORD_LOGS=all`, `loglevel=trace` becomes `DETOX_LOGLEVEL=trace`, and so on.
 
 ## 17.5.2
 
