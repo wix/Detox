@@ -1,6 +1,6 @@
 {
   "name": "demo-plugin",
-  "version": "18.0.0-next.9",
+  "version": "18.0.0",
   "private": true,
   "scripts": {
     "test:plugin": "detox test --configuration plugin -l verbose"
