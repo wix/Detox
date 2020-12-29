@@ -17,6 +17,7 @@ describe('collectCliConfig', () => {
 
   describe.each([
     ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',    'artifacts-location'],
+    ['captureViewHierarchy', 'DETOX_CAPTURE_VIEW_HIERARCHY','capture-view-hierarchy'],
     ['recordLogs',           'DETOX_RECORD_LOGS',           'record-logs'],
     ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',      'take-screenshots'],
     ['recordVideos',         'DETOX_RECORD_VIDEOS',         'record-videos'],
@@ -42,10 +43,7 @@ describe('collectCliConfig', () => {
     ['workers',              'DETOX_WORKERS',               'workers'],
     ['inspectBrk',           'DETOX_INSPECT_BRK',           'inspect-brk'],
   ])('.%s property' , (key, envName, argName) => {
-    const legacyEnvName = key;
-
     beforeEach(() => {
-      env[legacyEnvName] = Math.random();
       env[envName] = Math.random();
       argv[argName] = Math.random();
     });
@@ -55,15 +53,8 @@ describe('collectCliConfig', () => {
       expect(collectCliConfig({ argv })[key]).toBe(expected);
     });
 
-    it('should be extracted from environment otherwise, preferring DETOX_SNAKE_CASE', () => {
+    it('should be extracted from environment in DETOX_SNAKE_CASE otherwise', () => {
       const expected = env[envName];
-
-      expect(collectCliConfig({})[key]).toBe(expected);
-    });
-
-    it('should be extracted from environment otherwise, when there is no DETOX_SNAKE_CASE, only camelCase', () => {
-      delete env[envName];
-      const expected = env[legacyEnvName];
 
       expect(collectCliConfig({})[key]).toBe(expected);
     });

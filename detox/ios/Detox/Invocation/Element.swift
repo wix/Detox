@@ -49,7 +49,7 @@ class Element : NSObject {
 		guard array.count > 0 else {
 			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 		}
-		
+
 		return array
 	}
 	
@@ -91,17 +91,11 @@ class Element : NSObject {
 	}
 	
 	fileprivate var failDebugAttributes: [String: Any] {
-		guard let keyWindow = UIWindow.dtx_keyWindow else {
-			return [:]
-		}
-		return ["viewHierarchy": keyWindow.recursiveDescription!]
+		return NSObject.dtx_genericElementDebugAttributes
 	}
 	
 	var debugAttributes: [String: Any] {
 		do {
-//			guard failed == false else {
-//				throw "Nope"
-//			}
 			var rv: [String: Any]! = nil
 			try dtx_try {
 				rv = view.dtx_elementDebugAttributes
@@ -221,7 +215,7 @@ class Element : NSObject {
 	
 	@objc
 	var placeholder: String? {
-		return view.value(forKey: "placeholder") as? String
+		return view.value(forKey: "dtx_placeholder") as? String
 	}
 	
 	@objc

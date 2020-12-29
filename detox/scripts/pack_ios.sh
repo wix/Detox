@@ -4,7 +4,6 @@ rm -rf Detox-ios-src.tbz
 rm -rf Detox-ios.tbz
 rm -rf build_temp
 
-ios/EarlGrey/Scripts/setup-earlgrey.sh
 find ./ios -name Build -type d -exec rm -rf {} \;
 
 #Package sources

@@ -1,4 +1,4 @@
-# Jest setup guide
+# Jest Setup Guide
 
 > **NOTE: This article previously focused on deprecated `jest-jasmine2` runner setup, and if you nevertheless need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).**
 
@@ -33,7 +33,7 @@ npm install jest jest-circus --save-dev --no-package-lock
 If you are already using Jest in your project,
 make sure that `jest` and `jest-circus` package versions match (e.g., both are `26.0.1`).
 
-### 2. Set up test-code scaffolds :building_construction:
+### 2. Set up Test-code Scaffolds
 
 Run the automated init script:
 
@@ -117,8 +117,8 @@ const {
 } = require('detox/runners/jest-circus');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
-  constructor(config) {
-    super(config);
+  constructor(config, context) {
+    super(config, context);
 
     // Can be safely removed, if you are content with the default value (=300000ms)
     this.initTimeout = 300000;
@@ -170,7 +170,7 @@ If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.D
 detox test --configuration <yourConfigurationName> --workers 2 --jest-report-specs
 ```
 
-## How to run unit and E2E tests in the same project
+## How to Run Unit and E2E Tests in the Same Project
 
 - Create different Jest configs for unit and E2E tests, e.g. in `e2e/config.json` (for Detox) and `jest.config.js`
 (for unit tests). For example, in Jest's E2E config you can set `testRegex` to look for `\.e2e.js$` regexp,

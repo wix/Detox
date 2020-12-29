@@ -1,6 +1,6 @@
 # Getting Started
 
-**Welcome to Detox! :tada:**
+**Welcome to Detox!**
 
 In this guide, we will walk you through setting Detox up in your project, one step at a time.
 
@@ -10,15 +10,15 @@ You will find that some steps are longer than the others: some are just one-para
 
 ### Install [Node.js](https://nodejs.org/en/)
 
-`Node.js` is the JavaScript runtime Detox will run on. **Install Node `8.3.0` or above**.
+`Node.js` is the JavaScript runtime Detox will run on. **Install Node.js `10.0` or above**.
 
-There's more than one way to install node.js:
+There's more than one way to install Node.js:
 
-1. Download from the [official download page](https://nodejs.org/en/download/)
-2. Use [homebrew](https://formulae.brew.sh/formula/node)
-3. Use `nvm` - if you need to allow for several versions to be installed on a single machine
+- Download from the [official download page](https://nodejs.org/en/download/)
+- Use [Homebrew](https://formulae.brew.sh/formula/node)
+- Use `nvm` - if you need to allow for several versions to be installed on a single machine
 
-We recommend using homebrew:
+We recommend using Homebrew:
 
  ```sh
 brew update && brew install node
@@ -26,7 +26,7 @@ brew update && brew install node
 
 > Tip: Verify installation succeeded by typing in `node -v` in the terminal to output current node version. Should be `8.3.0` or higher.
 
-### Install Detox command line tools (`detox-cli`)
+### Install Detox Command Line Tools (`detox-cli`)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
@@ -34,16 +34,16 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
 npm install -g detox-cli
   ```
 
-### Install platform-specific dependencies, tools and dev-kits
+### Install Platform-specific Dependencies, Tools and Dev-kits
 
 Depending on the platform/s you're aiming at (iOS, Android), take the time to run through these environment setup guides:
 
 * [Android](Introduction.AndroidDevEnv.md)
 * [iOS](Introduction.IosDevEnv.md)
 
-## Step 2: Add Detox to your project
+## Step 2: Add Detox to Your Project
 
-### Install the Detox node-module
+### Install the Detox Node-module
 
 If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command:
 
@@ -68,13 +68,13 @@ npm install detox --save-dev --no-package-lock
 
 **You should now have Detox available in `node_modules/detox`**
 
-> Tip: Remember to add the `node_modules` folder to your git-ignore file (e.g. `.gitignore`).
+> **Tip:** Remember to add the `node_modules` folder to your git ignore file (e.g. `.gitignore`).
 
-### Set Up a Test Runner :running_man:
+### Set Up a Test Runner
 
 Detox delegates the actual Javascript test-code execution to a dedicated test-runner. It supports the popular `Jest` and `Mocha` out of the box. You need to choose and set up one of them now, but it *is* possible to switch later on, should you change your mind.
 
-* **[Jest](https://jestjs.io/) is the recommended choice**, since it provides parallel test execution and a complete lifecycle integration for Detox. To set up, follow [our comprehensive guide for Jest](Guide.Jest.md).
+* **[Jest](https://jestjs.io/) is the recommended test runner for use with Detox**, since it provides parallel test execution and a complete lifecycle integration with Detox. To set up, follow [our comprehensive guide for Jest](Guide.Jest.md).
 * [Mocha](https://mochajs.org/), albeit its integration is less complete, is still lightweight, and a bit easier to set up. To set up, follow [our guide for Mocha](Guide.Mocha.md).
 
 > **Note:** Detox is coupled to neither Mocha or Jest, nor with a specific directory structure. Both runners are just a recommendation — with some effort, they can be replaced without touching the internal implementation of Detox itself.
@@ -83,7 +83,7 @@ Detox delegates the actual Javascript test-code execution to a dedicated test-ru
 
 If you've completed the test-runner setup successfully using `detox init`, you should have a `.detoxrc.json` file containing a skeletal configuration for Detox to use. This configuration is only half-baked and needs to be set up properly. You now need to either create or edit that file, and apply the actual configuration suitable for your specific project.
 
-*Note that Detox scans for a configuration through multiple files. It starts from the current working directory, and runs over the following options, in this order:*
+Detox scans for a configuration through multiple files. It starts from the current working directory, and runs over the following options, in this order:
 
 1. `.detoxrc.js`
 1. `.detoxrc.json`
@@ -92,16 +92,16 @@ If you've completed the test-runner setup successfully using `detox init`, you s
 1. `detox.config.json`
 1. `package.json` (`"detox"` section)
 
-*If you prefer to use something other than `.detoxrc.json` - for example, would like to keep all project configs in one place, you can create a `detox` section in your`package.json`. If you otherwise prefer separating configs, all of the other options are valid.*
+If you prefer to use something other than `.detoxrc.json`—for example, would like to keep all project configs in one place—you can create a `detox` section in your `package.json`. If you otherwise prefer separating configs, all of the other options are valid.
 
-Depending on the platform/s you're aiming at (iOS, Android), for a complete, platform-specific configuration explanation (and a bunch of other platform-specific things, where applicable), refer to the dedicated guides:
+For specific configuration options for each supported platform, see:
 
 * [Android](Introduction.Android.md)
 * [iOS](Introduction.Ios.md)
 
-## Step 3: Build your app and run Detox tests
+## Step 3: Build Your App and Run Detox Tests
 
-#### 1. Build your app
+#### 1. Build Your App
 
 Use a convenience method in Detox command line tools to build your project easily:
 
@@ -109,11 +109,9 @@ Use a convenience method in Detox command line tools to build your project easil
 detox build
 ```
 
-> Tip: Notice that the actual build command was specified in the Detox configuration (e.g. in `.detoxrc.json` or `package.json` ).
->
-> See `"build": "xcodebuild -project ..."` inside `ios.sim.debug`, or `./gradlew assembleDebug assembleAndroidTest` in `android.emu.debug`.
+> **Note:** Detox executes the build command you specified in your Detox configuration. If your build fails, make sure to provide the correct build command.
 
-#### 2. Run the tests (finally!) :beers:
+#### 2. Run the Tests
 
 Use the Detox command line tools to test your project easily:
 

@@ -87,6 +87,11 @@ module.exports = {
     choices: ['all', 'none'],
     describe: '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.',
   },
+  'capture-view-hierarchy': {
+    group: 'Debugging:',
+    choices: ['enabled', 'disabled'],
+    describe: '[iOS Only] Capture *.uihierarchy snapshots on view action errors and device.captureViewHierarchy() calls.',
+  },
   'record-timeline': {
     group: 'Debugging:',
     choices: ['all', 'none'],

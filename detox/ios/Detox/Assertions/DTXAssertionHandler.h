@@ -46,7 +46,7 @@ extern BOOL dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __nu
 do {				\
 	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
 	if (__builtin_expect(!(condition), 0)) {		\
-			NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE__]; \
+			NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE_NAME__]; \
 			__assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
 		[DTXAssertionHandler handleFailureInMethod:_cmd \
 		object:self file:__assert_file__ \
@@ -61,7 +61,7 @@ do {				\
 	if (__builtin_expect(!(condition), 0)) {		\
 		NSString *__assert_fn__ = [NSString stringWithUTF8String:__PRETTY_FUNCTION__]; \
 		__assert_fn__ = __assert_fn__ ? __assert_fn__ : @"<Unknown Function>"; \
-		NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE__]; \
+		NSString *__assert_file__ = [NSString stringWithUTF8String:__FILE_NAME__]; \
 		__assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
 	[DTXAssertionHandler handleFailureInFunction:__assert_fn__ \
 	file:__assert_file__ \

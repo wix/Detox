@@ -1,6 +1,10 @@
 const {device, expect, element, by, waitFor} = require('detox');
 
 describe('Example (explicit)', () => {
+  before(async () => {
+    await device.launchApp();
+  });
+
   beforeEach(async () => {
     await device.reloadReactNative();
   });

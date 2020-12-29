@@ -1,6 +1,7 @@
-# Pure Native Android Demo Project
-Currently, support for **pure-native** Android projects is broken - see issue [#2543](https://github.com/wix/Detox/issues/2543).
+> detox
 
-Note we would appreciate contributions in that area.
+# Pure Native Android Demo Project
+Android is not supported in detox yet. 
+This project is here for development purposes and is not working at the moment.
 
 

@@ -12,6 +12,8 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 #define __dtx_external_logger(log)
 #endif
 
+@implementation SomeMiddleman @end
+
 @implementation AnnoyingWindow
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -25,16 +27,7 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 		
 		[self addSubview:_annoyingLabel];
 		
-		NSLayoutYAxisAnchor* topAnchor;
-		if (@available(iOS 11.0, *))
-		{
-			topAnchor = self.safeAreaLayoutGuide.topAnchor;
-		}
-		else
-		{
-			topAnchor = self.topAnchor;
-		}
-		
+		NSLayoutYAxisAnchor* topAnchor = self.safeAreaLayoutGuide.topAnchor;;
 		NSLayoutConstraint* topConstraint = [_annoyingLabel.topAnchor constraintEqualToAnchor:topAnchor constant:-14];
 		topConstraint.priority = UILayoutPriorityRequired - 1;
 		[NSLayoutConstraint activateConstraints:@[
@@ -111,21 +104,7 @@ RCT_EXPORT_MODULE();
 
 @end
 
-@implementation DetoxApp
-
-- (UIWindow *)keyWindow
-{
-	UIWindow* rv = super.keyWindow;
-	
-	if(rv == nil)
-	{
-		rv = self.delegate.window;
-	}
-	
-	return rv;
-}
-
-@end
+@implementation DetoxApp @end
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 
@@ -184,10 +163,10 @@ RCT_EXPORT_MODULE();
 {
 	__dtx_external_logger("Got openURL:");
 	
-    BOOL rv = [RCTLinkingManager application:application
-								  openURL:url
-                        sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                               annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+	BOOL rv = [RCTLinkingManager application:application
+									 openURL:url
+						   sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+								  annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
 	
 	__dtx_external_logger("Finished openURL:");
 	

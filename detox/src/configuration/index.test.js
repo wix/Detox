@@ -61,7 +61,6 @@ describe('composeDetoxConfig', () => {
         },
         userParams: {
           initGlobals: false,
-          launchApp: false,
         },
         override: {
           artifacts: {
@@ -107,7 +106,6 @@ describe('composeDetoxConfig', () => {
         behaviorConfig: {
           init: {
             exposeGlobals: false,
-            launchApp: false,
             reinstallApp: false,
           },
           cleanup: {

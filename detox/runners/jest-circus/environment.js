@@ -3,6 +3,7 @@ const NodeEnvironment = require('jest-environment-node');
 const DetoxCoreListener = require('./listeners/DetoxCoreListener');
 const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
 const assertJestCircus26 = require('./utils/assertJestCircus26');
+const assertExistingContext = require('./utils/assertExistingContext');
 const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
 const Timer = require('../../src/utils/Timer');
 
@@ -18,8 +19,8 @@ const SYNC_CIRCUS_EVENTS = new Set([
  * @see https://www.npmjs.com/package/jest-circus#overview
  */
 class DetoxCircusEnvironment extends NodeEnvironment {
-  constructor(config) {
-    super(assertJestCircus26(config));
+  constructor(config, context) {
+    super(assertJestCircus26(config), assertExistingContext(context));
 
     /** @private */
     this._timer = null;
@@ -28,6 +29,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       DetoxInitErrorListener,
       DetoxCoreListener,
     };
+    /** @protected */
+    this.testPath = context.testPath;
     /** @protected */
     this.testEventListeners = [];
     /** @protected */

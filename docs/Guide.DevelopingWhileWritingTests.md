@@ -4,7 +4,7 @@
 
 The main idea behind this workflow is to run your app in debug with Detox on a simulator. Once the app is up and running, it will still be connected to the React Native packager. This means that you'll be able to do JavaScript code modifications in your app codebase and press CMD+R to reload the bundle inside the Detox simulator.
 
-## Step 1: Build your app in debug
+## Step 1: Build Your App in Debug
 
 Detox is going to need the executable for your app. This means we need to build it first. Since we want a build that's connected to the live React Native packager (to update bundle changes), we're going to need a *debug* build.
 
@@ -27,7 +27,7 @@ There are multiple ways to build your app, let's find the alternative you like b
 
 > TIP: Running `react-native run-ios` will also start a simulator and install your app on it, running `detox test` later will possibly start a different simulator, so you'll find yourself with two open simulators. You can safely close the simulator started by `react-native`, everything will continue working as expected.
 
-## Step 2: Make sure your react-native packager is running
+## Step 2: Make Sure Your React-Native Packager is Running
 
 If you can't see a React Native packager instance running in a terminal, you can run it manually by typing:
 
@@ -37,7 +37,7 @@ react-native start
 
 The packager instance will reload the JavaScript bundle of your app when you press CMD+R in the simulator window. This will allow you to make modifications in your app codebase.
 
-## Step 3: Run Detox tests
+## Step 3: Run Detox Tests
 
 Type the following inside your project root:
 
@@ -47,11 +47,11 @@ detox test
 
 This will use Detox to find the app executable we've built in step 1, install it on a simulator and run Detox tests against it.
 
-## Step 4: Make changes to your app codebase as usual
+## Step 4: Make Changes to Your App's Codebase as Usual
 
 You can keep working on the JavaScript codebase of your app as usual. As long as you keep the simulator from step 3 running, you'll be able to press CMD+R inside and reload your app with the new changes.
 
-## Step 5: Re-run Detox tests without re-installing the app
+## Step 5: Re-run Detox Tests Without Re-installing the App
 
 You can make changes to your Detox tests as well. When you want to run your tests on the simulator, we recommed using the following command:
 

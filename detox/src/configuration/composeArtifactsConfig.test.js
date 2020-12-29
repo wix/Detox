@@ -97,6 +97,7 @@ describe('composeArtifactsConfig', () => {
         recordTimeline: 'all',
         recordVideos: 'all',
         takeScreenshots: 'all',
+        captureViewHierarchy: 'enabled',
       },
     })).toMatchObject({
       pathBuilder: expect.objectContaining({

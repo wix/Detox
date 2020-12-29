@@ -1,12 +1,12 @@
-# Running On CI
+# Running on CI
 
-> When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
+When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
-Running detox on CI is not that different from running it locally. There are two main differences:
-1. We will test a release build rather than a debug build
-2. We will tell Detox to shut down the simulator when test is over 
+Running Detox on CI is not that different from running it locally. There are two main differences:
+- You should test a release build rather than a debug build
+- Tell Detox to shut down the simulator when test is over 
 
-## Step 1: Prepare a release configuration for your app
+## Step 1: Prepare a Release Configuration for Your App
 
 We will need to create a [release device configuration for Detox](/docs/APIRef.Configuration.md#device-configuration) inside `package.json` under the `detox` section.
 
@@ -20,7 +20,7 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
       "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 11 Pro"
+        "type": "iPhone 12 Pro Max"
       }
     }
   }
@@ -29,7 +29,7 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
 
 > TIP: Notice that the name `example` above should be replaced with your actual project name.
 
-## Step 2: Add build and test commands to your CI script
+## Step 2: Add `build` and `test` Commands to Your CI Script
 
 Assuming your CI is executing some sort of shell script, add the following commands that should run inside the project root:
 
@@ -38,7 +38,7 @@ detox build --configuration ios.sim.release
 detox test --configuration ios.sim.release --cleanup
 ```
 
-> TIP: Adding `--cleanup` to the test command will make sure detox exits cleanly by shutting down the simulator when the test is over.
+> **Tip:** Adding `--cleanup` to the test command will make sure detox exits cleanly by shutting down the simulator when the test is over.
 
 ## Appendix
 

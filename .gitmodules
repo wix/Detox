@@ -1,11 +1,3 @@
-[submodule "detox/ios/SocketRocket"]
-	path = detox/ios/SocketRocket
-	url = https://github.com/wix-playground/SocketRocket.git
-	ignore = dirty
-[submodule "detox/ios/EarlGrey"]
-	path = detox/ios/EarlGrey
-	url = https://github.com/wix-playground/EarlGrey.git
-	ignore = dirty
 [submodule "detox/ios/COSTouchVisualizer"]
 	path = detox/ios/COSTouchVisualizer
 	url = https://github.com/conopsys/COSTouchVisualizer
@@ -15,9 +7,12 @@
 [submodule "detox/ios/DTXObjectiveCHelpers"]
 	path = detox/ios/DTXObjectiveCHelpers
 	url = https://github.com/wix/DTXObjectiveCHelpers.git
-[submodule "detox/ios/LNViewHierarchyDumper"]
-	path = detox/ios/LNViewHierarchyDumper
-	url = https://github.com/LeoNatan/LNViewHierarchyDumper.git
+[submodule "detox/ios/DetoxSync"]
+	path = detox/ios/DetoxSync
+	url = https://github.com/wix/DetoxSync.git
 [submodule "detox/ios/fishhook"]
 	path = detox/ios/fishhook
 	url = https://github.com/facebook/fishhook.git
+[submodule "detox/ios/LNViewHierarchyDumper"]
+	path = detox/ios/LNViewHierarchyDumper
+	url = https://github.com/LeoNatan/LNViewHierarchyDumper.git

@@ -11,6 +11,7 @@
 #import "NSObject+DetoxUtils.h"
 #import "UISlider+DetoxUtils.h"
 #import "DTXAppleInternals.h"
+#import "UIWindow+DetoxUtils.h"
 
 DTX_ALWAYS_INLINE
 static id DTXJSONSafeNSNumberOrString(double d)
@@ -93,14 +94,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	}
 	else if([self respondsToSelector:@selector(accessibilityContainer)])
 	{
-		id container = self.dtx_container;
-		
-		if([container isKindOfClass:UIView.class] == NO)
-		{
-			return [container dtx_viewContainer];
-		}
-		
-		return container;
+		return [self.dtx_container dtx_view];
 	}
 	
 	return nil;
@@ -208,6 +202,23 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return nil;
 }
 
+- (NSString *)dtx_placeholder
+{
+	id rv = [self _dtx_placeholder];
+	if(rv == nil || [rv isKindOfClass:NSString.class])
+	{
+		return rv;
+	}
+	
+	if([rv isKindOfClass:NSAttributedString.class])
+	{
+		return [(NSAttributedString*)rv string];
+	}
+	
+	//Unsupported
+	return nil;
+}
+
 - (BOOL)dtx_isEnabled
 {
 	return self.dtx_view.dtx_isEnabled;
@@ -248,7 +259,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	
-	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]];
+	rv[@"className"] = NSStringFromClass(self.class);
+	
+	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"dtx_placeholder"]];
 	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 		if([obj isKindOfClass:NSNull.class])
 		{
@@ -258,6 +271,10 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		if([key isEqualToString:@"dtx_text"])
 		{
 			rv[@"text"] = obj;
+		}
+		else if([key isEqualToString:@"dtx_placeholder"])
+		{
+			rv[@"placeholder"] = obj;
 		}
 		else if([key isEqualToString:@"accessibilityLabel"])
 		{
@@ -343,16 +360,29 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return rv;
 }
 
-- (NSDictionary<NSString *,id> *)dtx_elementDebugAttributes
++ (NSDictionary<NSString*, id> *)dtx_genericElementDebugAttributes
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	
-	UIWindow* window = self.dtx_view.window;
+	rv[@"viewHierarchy"] = [[UIWindowScene _keyWindowScene] dtx_recursiveDescription];
 	
-	if(window != nil)
-	{
-		rv[@"viewHierarchy"] = window.recursiveDescription;
-	}
+	NSMutableArray* windowDescriptions = [NSMutableArray new];
+	
+	UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;	
+	auto windows = [UIWindow dtx_allWindowsForScene:scene];
+	[windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[windowDescriptions addObject:[obj dtx_shortDescription]];
+	}];
+	
+	rv[@"windows"] = windowDescriptions;
+	
+	return rv;
+}
+
+- (NSDictionary<NSString *,id> *)dtx_elementDebugAttributes
+{
+	NSMutableDictionary* rv = [NSMutableDictionary new];
+	[rv addEntriesFromDictionary:NSObject.dtx_genericElementDebugAttributes];
 	
 	rv[@"elementAttributes"] = [self dtx_attributes];
 	rv[@"viewDescription"] = self.description;

@@ -6,18 +6,15 @@ This guide sums up the tools required for an environment for running automated U
 
 Running Detox (on iOS) requires the following:
 
-* Mac with macOS (at least macOS High Sierra 10.13.6)
-
-* Xcode 10.2+ with Xcode command line tools.
-  Xcode can be installed from the App Store, or the online [Apple developers page](https://developer.apple.com/download/more/) (requires a valid Apple ID to login).
-
-> Tip: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
+* macOS Catalina and above
+* Xcode 11.0 and above, with Xcode command line tools installed
+  * Xcode can be installed from the App Store, or downloaded [directly from Apple Developer](https://developer.apple.com/download/more/)
 
 ## Dependencies
 
-#### Install the latest version of [Homebrew](http://brew.sh)
+### Install the Latest Version of [Homebrew](http://brew.sh)
 
-Homebrew is a package manager for macOS, we'll need it to install other command line tools.
+Homebrew is a package manager for macOS, used to install other command line tools.
 
 To ensure everything needed for Homebrew tool installation is installed, run
 
@@ -25,16 +22,13 @@ To ensure everything needed for Homebrew tool installation is installed, run
 xcode-select --install
 ```
 
-> Tip: Verify it works by typing in `brew -h` in a terminal to output list of available commands
+### Install [`applesimutils`](https://github.com/wix/AppleSimulatorUtils)
 
-#### Install [applesimutils](https://github.com/wix/AppleSimulatorUtils)
-
-A collection of utils for Apple simulators, Detox uses it to communicate with the simulator.
+A collection of utils for Apple simulators, Detox uses it to query and communicate with the simulator.
 
 ```sh
 brew tap wix/brew
 brew install applesimutils
 ```
 
-> Tip: Verify it works by typing in `applesimutils` in a terminal to output the tool help screen
-
+> **Note:** Make sure to periodically update your version of `applesimutils` to the latest version.

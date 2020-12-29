@@ -2,6 +2,35 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 18.0
+
+Detox now uses a custom synchronization system on iOS, [developed in-house](https://github.com/wix/DetoxSync); this is the second step in phasing out our Earl Grey usage. We have tested this system extensively internally, and are confident that it should work as expected. There are no known limitations with the new system.
+
+If you are seeing issues with the new sync system, please open an issue.
+
+**Breaking:**
+
+* **iOS.** Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
+* **JS.** `detox.init()` will not launch the app anymore (even if asked to do so in configuration). Launching the app explicitly with `device.launchApp()` is now mandatory.
+* **JS (jest-circus).** The `DetoxCircusEnvironment` provided from `detox/runners/jest-circus` package now requires two arguments in its constructor, so you have to update your descendant class signature:
+```diff
+class CustomDetoxEnvironment extends DetoxCircusEnvironment {
+-  constructor(config) {
+-    super(config);
++  constructor(config, context) {
++    super(config, context);
+```
+* **JS (iOS).** `device.launchApp({ launchArgs: { ... })` argument escaping has been improved. If you use complex launch args such as regular expressions, make sure you remove manual escaping from now on to avoid erroneous double escaping, e.g.:
+```diff
+ await device.launchApp({
+   launchArgs: {
+-    detoxURLBlacklistRegex: '(\\".*example.com/some-url/.*\\")' }`,
++    detoxURLBlacklistRegex: '(".*example.com/some-url/.*")' }`,
+   },
+ });
+```
+* **JS (internal).** There is a breaking change for people writing custom Detox integrations. Environment variable naming schema has changed – now Detox uses prefix to distinguish its own environment variables (usually passed from `detox test` CLI), e.g.: `recordLogs=all` becomes `DETOX_RECORD_LOGS=all`, `loglevel=trace` becomes `DETOX_LOGLEVEL=trace`, and so on.
+
 ## 17.5.2
 
 Fixes the issue from **17.4.7** (see below) - now the migration guide for **17.4.7** can be safely ignored.

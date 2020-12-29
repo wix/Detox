@@ -9,7 +9,37 @@
 #import <Detox/Detox-Swift.h>
 #import "DetoxCrashHandler.h"
 
-@import EarlGrey.GREYConfiguration;
+#if DEBUG
+@import DetoxSync;
+
+@interface DetoxSyncDebugger : NSObject <DTXSyncManagerDelegate> @end
+
+@implementation DetoxSyncDebugger
+
+- (void)syncSystemDidBecomeIdle
+{
+	
+}
+
+- (void)syncSystemDidBecomeBusy
+{
+	
+}
+
+- (void)syncSystemDidStartTrackingEventWithIdentifier:(NSString*)identifier description:(NSString*)description objectDescription:(nullable NSString*)objectDescription additionalDescription:(nullable NSString*)additionalDescription
+{
+	NSLog(@"❗️ tracking %@ description: %@ object: %@ additional: %@", identifier, description, objectDescription, additionalDescription);
+}
+
+- (void)syncSystemDidEndTrackingEventWithIdentifier:(NSString*)identifier
+{
+	NSLog(@"❗️ finished tracking %@", identifier);
+}
+@end
+
+static DetoxSyncDebugger* _detoxSyncDebugger;
+
+#endif
 
 __attribute__((constructor))
 static void detoxConditionalInit()
@@ -19,10 +49,15 @@ static void detoxConditionalInit()
 	//This forces accessibility support in the application.
 	[[[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"] setBool:YES forKey:@"ApplicationAccessibilityEnabled"];
 	
-	//Timeout will be regulated by mochaJS. Perhaps it would be best to somehow pass the timeout value from JS to here. For now, this will do.
-	[[GREYConfiguration sharedInstance] setDefaultValue:@(DBL_MAX) forConfigKey:kGREYConfigKeyInteractionTimeoutDuration];
-	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
+	
+#if DEBUG
+	if([options boolForKey:@"detoxEnableSyncDebug"])
+	{
+		_detoxSyncDebugger = [DetoxSyncDebugger new];
+		DTXSyncManager.delegate = _detoxSyncDebugger;
+	}
+#endif
 	
 	NSMutableDictionary* settings = [NSMutableDictionary new];
 	
@@ -38,10 +73,13 @@ static void detoxConditionalInit()
 		settings[@"blacklistURLs"] = blacklistRegex;
 	}
 	
-	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
+	NSString* maxTimerWait = [options objectForKey:@"detoxMaxSynchronizedDelay"];
+	settings[@"maxTimerWait"] = @(maxTimerWait ? maxTimerWait.integerValue : 1500);
+	
+	NSString* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
-		settings[@"waitForDebugger"] = @((NSUInteger)[waitForDebugger integerValue]);
+		settings[@"waitForDebugger"] = @([waitForDebugger integerValue]);
 	}
 	
 	[DTXDetoxManager.sharedManager startWithSynchronizationSettings:settings];

@@ -45,16 +45,6 @@ const {device, expect, element, by, waitFor} = require('detox');
 
 Use [this example](../examples/demo-react-native/e2eExplicitRequire) for initial setup
 
-
-#### Controlling first app initialization
-By default `await detox.init([configOverride, userParams]);` will launch the installed app. If you wish to control when your app is launched, add `{launchApp: false}` param to your init.
-
-```js
-before(async () => {
-  await detox.init(undefined, { launchApp: false });
-});
-```
-
 #### Reusing existing app
 
 By default `await detox.init();` will uninstall and install the app. If you wish to reuse the existing app for a faster run, add `{reuse: true}` param to your init.

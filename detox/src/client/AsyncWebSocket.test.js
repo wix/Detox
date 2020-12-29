@@ -165,7 +165,7 @@ describe('AsyncWebSocket', () => {
     }
   });
 
-  it(`eventCallback should be triggered on a registered action.type when sent from testee`, async () => {
+  it(`eventCallback should be triggered on a registered action.type when sent from app`, async () => {
     const mockCallback = jest.fn();
     const mockedResponse = generateResponse('someEvent', -10000);
     await connect(client);

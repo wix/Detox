@@ -11,9 +11,7 @@ describe('argparse', () => {
 
         process.env = {
           ..._env,
-          fooBar: 'legacy env format',
-          DETOX_FOO_BAR: 'new env format',
-          testUndefinedProp: 'undefined',
+          DETOX_FOO_BAR: 'value',
         };
 
         argparse = require('./argparse');
@@ -27,17 +25,17 @@ describe('argparse', () => {
         expect(argparse.getArgValue('blah')).not.toBeDefined();
       });
 
-      it(`existing key should return DETOX_SNAKE_FORMAT value first`, () => {
-        expect(argparse.getArgValue('foo-bar')).toBe('new env format');
+      it(`existing DETOX_SNAKE_FORMAT key should return its value (kebab-case input)`, () => {
+        expect(argparse.getArgValue('foo-bar')).toBe('value');
       });
 
-      it(`existing key should return legacyCamelFormat value if there is no DETOX_SNAKE_FORMAT`, () => {
-        delete process.env.DETOX_FOO_BAR;
-        expect(argparse.getArgValue('foo-bar')).toBe('legacy env format');
+      it(`existing DETOX_SNAKE_FORMAT key should return its value (camelCase input)`, () => {
+        expect(argparse.getArgValue('fooBar')).toBe('value');
       });
 
       it('should return undefined if process.env contain something with a string of undefined' ,() => {
-        expect(argparse.getArgValue('testUndefinedProp')).toBe(undefined);
+        process.env.DETOX_FOO_BAR = 'undefined';
+        expect(argparse.getArgValue('fooBar')).toBe(undefined);
       });
     });
 

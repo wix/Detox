@@ -185,12 +185,6 @@ class Detox {
     }
     await this.device.installUtilBinaries();
 
-    if (behaviorConfig.launchApp) {
-      await this.device.launchApp({
-        newInstance: true
-      });
-    }
-
     return this;
   }
 

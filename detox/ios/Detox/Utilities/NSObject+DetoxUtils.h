@@ -45,6 +45,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 - (void)dtx_assertHittableAtPoint:(CGPoint)point;
 
 @property (nonatomic, copy, readonly) NSString* dtx_text;
+@property (nonatomic, copy, readonly) NSString* dtx_placeholder;
 
 @property (nonatomic, readonly) BOOL dtx_isEnabled;
 - (void)dtx_assertEnabled;
@@ -55,6 +56,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;
 
+@property (nonatomic, readonly, class, copy) NSDictionary<NSString*, id>* dtx_genericElementDebugAttributes;
 @property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_attributes;
 @property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_elementDebugAttributes;
 

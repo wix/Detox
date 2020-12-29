@@ -13,18 +13,21 @@
 
 @implementation UIView (DetoxMatchers)
 
-static NSArray* DTXChildElements(id element)
+NSArray* DTXChildElements(id element)
 {
 	NSCParameterAssert(element != nil);
 	
 	NSMutableOrderedSet<id> *immediateChildren = [[NSMutableOrderedSet alloc] init];
 	
-	if ([element isKindOfClass:[UIView class]]) {
+	if ([element isKindOfClass:[UIView class]])
+	{
 		// Grab all subviews so that we continue traversing the entire hierarchy.
 		// Add the objects in reverse order to make sure that objects on top get matched first.
 		NSArray<id> *subviews = [element subviews];
-		if ([subviews count] > 0) {
-			for (UIView *subview in [subviews reverseObjectEnumerator]) {
+		if ([subviews count] > 0)
+		{
+			for (UIView *subview in [subviews reverseObjectEnumerator])
+			{
 				[immediateChildren addObject:subview];
 			}
 		}
@@ -40,9 +43,9 @@ static NSArray* DTXChildElements(id element)
 	//    Worse yet, if the cell isn't visible, calling accessibilityElementAtIndex will create
 	//    and initialize them each time.
 	if ([element respondsToSelector:@selector(accessibilityElementCount)] &&
-		![element isKindOfClass:[UITableView class]] &&
-		![element isKindOfClass:NSClassFromString(@"UIPickerTableView")] &&
-		![element isKindOfClass:[UITableViewCell class]])
+		[element isKindOfClass:UITableView.class] == NO &&
+		[element isKindOfClass:NSClassFromString(@"UIPickerTableView")] == NO &&
+		[element isKindOfClass:UITableViewCell.class] == NO)
 	{
 		NSInteger elementCount = [element accessibilityElementCount];
 		if (elementCount != NSNotFound && elementCount > 0)
@@ -50,7 +53,8 @@ static NSArray* DTXChildElements(id element)
 			// Temp holder created by UIKit. What we really want is the underlying element.
 			Class accessibilityMockClass = NSClassFromString(@"UIAccessibilityElementMockView");
 			Class textFieldElementClass= NSClassFromString(@"UIAccessibilityTextFieldElement");
-			for (NSInteger i = elementCount - 1; i >= 0; i--) {
+			for (NSInteger i = elementCount - 1; i >= 0; i--)
+			{
 				id item = [element accessibilityElementAtIndex:i];
 				if([item isKindOfClass:accessibilityMockClass])
 				{
@@ -70,17 +74,21 @@ static NSArray* DTXChildElements(id element)
 				// If item is a UIView subclass, it could be both a subview of another view and an
 				// accssibility element of a different accessibility container (which is not necessarily its
 				// superview). This could introduce elements being duplicated in the view hierarchy.
-				if ([item isKindOfClass:[UIView class]]) {
+				if ([item isKindOfClass:[UIView class]])
+				{
 					// Only add the item as the element's immediate children if it meets these conditions:
 					// (1) Item's superview is the element. This ensures that other accessibility containers
 					//     don't add it as their immeditate children.
 					// (2) Item does not have a superview. If item does not have a superview, you can ensure
 					//     it's being added only once as an accessibility element of a container.
 					id superview = [item superview];
-					if (superview == element || superview == nil) {
+					if (superview == element || superview == nil)
+					{
 						[immediateChildren addObject:item];
 					}
-				} else {
+				}
+				else
+				{
 					// If the item not a UIView subclass, it's mostly safe to add it as immediate child
 					// since no two accessibility containers should add the same accessible element.
 					[immediateChildren addObject:item];
@@ -91,7 +99,6 @@ static NSArray* DTXChildElements(id element)
 	
 	return [immediateChildren array];
 }
-
 
 + (void)_dtx_appendViewsRecursivelyFromArray:(NSArray<UIView*>*)views passingPredicate:(NSPredicate*)predicate storage:(NSMutableArray<UIView*>*)storage
 {
