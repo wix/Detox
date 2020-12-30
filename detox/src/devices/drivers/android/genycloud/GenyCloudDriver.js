@@ -1,9 +1,8 @@
 const semver = require('semver'); // eslint-disable-line node/no-extraneous-require
 const onSignalExit = require('signal-exit');
 const AndroidDriver = require('../AndroidDriver');
-const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
+const GenyCloudInstanceAllocation = require('./GenyCloudInstanceAllocation');
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
-const GenyCloudInstanceHandle = require('./GenyCloudInstanceHandle');
 const GenyCloudExec = require('./exec/GenyCloudExec');
 const RecipesService = require('./services/GenyRecipesService');
 const InstanceLookupService = require('./services/GenyInstanceLookupService');
@@ -23,7 +22,7 @@ const cleanupLogData = {
 class GenyCloudDriver extends AndroidDriver {
   constructor(config) {
     super(config);
-    this._name = 'Unspecified Genymotion Cloud Emulator';
+    this._name = 'Unspecified GMSaaS Emulator';
 
     this._exec = new GenyCloudExec(environment.getGmsaasPath());
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
@@ -34,7 +33,7 @@ class GenyCloudDriver extends AndroidDriver {
     const instanceLookupService = new InstanceLookupService(this._exec, instanceNaming, this._deviceRegistry);
     this._instanceLifecycleService = new InstanceLifecycleService(this._exec, instanceNaming);
     this._deviceQueryHelper = new DeviceQueryHelper(recipeService);
-    this._deviceAllocator = new GenyCloudDeviceAllocator(this._deviceRegistry, this._deviceCleanupRegistry, instanceLookupService, this._instanceLifecycleService);
+    this._instanceAllocation = new GenyCloudInstanceAllocation(this._deviceRegistry, this._deviceCleanupRegistry, instanceLookupService, this._instanceLifecycleService, this.emitter);
 
     this._authService = new AuthService(this._exec);
   }
@@ -52,14 +51,12 @@ class GenyCloudDriver extends AndroidDriver {
     const recipe = await this._deviceQueryHelper.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
-    const { instance, isNew } = await this._deviceAllocator.allocateDevice(recipe);
-    const { adbName, uuid } = instance;
+    const instance = await this._instanceAllocation.allocateDevice(recipe);
 
-    await this.emitter.emit('bootDevice', { coldBoot: isNew, deviceId: adbName, type: recipe.name});
-    await this.adb.apiLevel(adbName);
-    await this.adb.disableAndroidAnimations(adbName);
+    await this.adb.apiLevel(instance.adbName);
+    await this.adb.disableAndroidAnimations(instance.adbName);
 
-    this._name = `GenyCloud:${instance.name} (${uuid} ${adbName})`;
+    this._name = instance.toString();
     return instance;
   }
 
@@ -77,12 +74,7 @@ class GenyCloudDriver extends AndroidDriver {
   }
 
   async shutdown(instance) {
-    const instanceHandle = new GenyCloudInstanceHandle(instance);
-
-    await this.emitter.emit('beforeShutdownDevice', { deviceId: instance.adbName });
-    await this._instanceLifecycleService.deleteInstance(instance.uuid);
-    await this._deviceCleanupRegistry.disposeDevice(instanceHandle);
-    await this.emitter.emit('shutdownDevice', { deviceId: instance.adbName });
+    await this._instanceAllocation.deallocateDevice(instance);
   }
 
   _assertRecipe(deviceQuery, recipe) {
