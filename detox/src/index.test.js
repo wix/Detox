@@ -169,12 +169,29 @@ describe('index (regular)', () => {
         GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
       });
 
+      it('should invoke genymotion-cloud\'s global init API', async () => {
+        await detox.globalInit();
+        expect(GenyCloudDriver.globalInit).toHaveBeenCalled();
+      });
+
+      it('should catch and warn errors from genymotion-cloud driver in global init', async () => {
+        const error = new Error('mocked-error');
+        GenyCloudDriver.globalInit.mockRejectedValue(error);
+
+        await detox.globalInit();
+        expect(logger.warn).toHaveBeenCalledWith(
+          { event: 'GLOBAL_INIT' },
+          'An error occurred trying to globally-init Genymotion-cloud emulator instances!',
+          error,
+        );
+      });
+
       it('should invoke genymotion-cloud\'s global cleanup API', async () => {
         await detox.globalCleanup();
         expect(GenyCloudDriver.globalCleanup).toHaveBeenCalled();
       });
 
-      it('should catch and warn errors from genymotion-cloud driver', async () => {
+      it('should catch and warn errors from genymotion-cloud driver int global cleanup', async () => {
         const error = new Error('mocked-error');
         GenyCloudDriver.globalCleanup.mockRejectedValue(error);
 

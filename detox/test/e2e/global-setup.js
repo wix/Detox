@@ -22,11 +22,14 @@ function downloadTestButlerAPKIfNeeded() {
   }
 }
 
-function globalSetup() {
+async function globalSetup() {
   const config = resolveSelectedConfiguration();
   if (config && config.type.includes('android')) {
     downloadTestButlerAPKIfNeeded();
   }
+
+  const detox = require('detox');
+  await detox.globalInit();
 }
 
 module.exports = globalSetup;
