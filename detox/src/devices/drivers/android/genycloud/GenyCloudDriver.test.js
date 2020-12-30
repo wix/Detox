@@ -365,7 +365,10 @@ describe('Genymotion-cloud driver', () => {
       it('should remove instance from device-registry', async () => {
         const instance = anInstance();
         await uut.shutdown(instance);
-        expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
+        expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith({
+          name: instance.name,
+          uuid: instance.uuid,
+        });
       });
     });
 
@@ -380,7 +383,7 @@ describe('Genymotion-cloud driver', () => {
     const aPendingInstanceHandle = (name, uuid) => ({ name, uuid });
 
     describe('global clean-up', () => {
-      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(devicesHandles);
+      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ sanitizedDevices: devicesHandles });
       const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);
       const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices( _.map(instances, ({ uuid, name }) => ({ uuid, name }) ));
       const givenDeletionResult = (deletedInstance) => instanceLifecycleService.deleteInstance.mockResolvedValue(deletedInstance);
@@ -469,8 +472,8 @@ describe('Genymotion-cloud driver', () => {
 
     describe('global *emergency* clean-up', () => {
       const signalExitCallback = () => signalExit.mock.calls[0][0];
-      const invokeExitCallback = () => signalExitCallback()();
-      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue(devicesHandles);
+      const invokeExitCallback = (signal = 'SIGINT') => signalExitCallback()(null, signal);
+      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ sanitizedDevices: devicesHandles });
       const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
 
       it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {
@@ -496,6 +499,18 @@ describe('Genymotion-cloud driver', () => {
 
         await GenyCloudDriver.globalInit();
         invokeExitCallback();
+
+        expect(logger.warn).not.toHaveBeenCalled();
+        expect(logger.info).not.toHaveBeenCalled();
+      });
+
+      it('should not warn if called with no signal', async () => {
+        givenCleanupPendingDevices([
+          aPendingInstanceHandle('aDevice', 'uuid'),
+        ]);
+
+        await GenyCloudDriver.globalInit();
+        invokeExitCallback(null);
 
         expect(logger.warn).not.toHaveBeenCalled();
         expect(logger.info).not.toHaveBeenCalled();

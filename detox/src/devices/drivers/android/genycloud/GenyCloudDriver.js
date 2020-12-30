@@ -3,6 +3,7 @@ const onSignalExit = require('signal-exit');
 const AndroidDriver = require('../AndroidDriver');
 const GenyCloudDeviceAllocator = require('./GenyCloudDeviceAllocator');
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
+const GenyCloudInstanceHandle = require('./GenyCloudInstanceHandle');
 const GenyCloudExec = require('./exec/GenyCloudExec');
 const RecipesService = require('./services/GenyRecipesService');
 const InstanceLookupService = require('./services/GenyInstanceLookupService');
@@ -76,9 +77,11 @@ class GenyCloudDriver extends AndroidDriver {
   }
 
   async shutdown(instance) {
+    const instanceHandle = new GenyCloudInstanceHandle(instance);
+
     await this.emitter.emit('beforeShutdownDevice', { deviceId: instance.adbName });
     await this._instanceLifecycleService.deleteInstance(instance.uuid);
-    await this._deviceCleanupRegistry.disposeDevice(instance.uuid);
+    await this._deviceCleanupRegistry.disposeDevice(instanceHandle);
     await this.emitter.emit('shutdownDevice', { deviceId: instance.adbName });
   }
 
@@ -111,18 +114,20 @@ class GenyCloudDriver extends AndroidDriver {
   }
 
   static async globalInit() {
-    onSignalExit(() => {
-      const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-      const instanceHandles = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
-      if (instanceHandles.length) {
-        reportGlobalCleanupSummary(instanceHandles);
+    onSignalExit((code, signal) => {
+      if (signal) {
+        const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
+        const { sanitizedDevices: instanceHandles } = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+        if (instanceHandles.length) {
+          reportGlobalCleanupSummary(instanceHandles);
+        }
       }
     });
   }
 
   static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-    const instanceHandles = await deviceCleanupRegistry.readRegisteredDevices();
+    const { sanitizedDevices: instanceHandles } = await deviceCleanupRegistry.readRegisteredDevices();
     if (instanceHandles.length) {
       const exec = new GenyCloudExec(environment.getGmsaasPath());
       const instanceLifecycleService = new InstanceLifecycleService(exec, null);

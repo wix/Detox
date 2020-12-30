@@ -123,8 +123,13 @@ describe('IOS simulator driver', () => {
     beforeEach(() => {
       const SimulatorDriver = require('./SimulatorDriver');
       uut = new SimulatorDriver({ client: {}, emitter });
+
       jest.spyOn(uut.deviceRegistry, 'includes').mockReturnValue(false);
-      jest.spyOn(uut.deviceRegistry, 'getRegisteredDevices').mockReturnValue([]);
+      jest.spyOn(uut.deviceRegistry, 'getRegisteredDevices').mockReturnValue({
+        sanitizedDevices: [],
+        includes: jest.fn().mockReturnValue(false),
+      });
+
       applesimutils = uut.applesimutils;
       applesimutils.list.mockImplementation(async () => require('./tools/applesimutils.mock')['--list']);
     });
