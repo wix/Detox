@@ -81,7 +81,7 @@ declare global {
              * // Mock opening the app from URL to test your app's deep link handling mechanism.
              * await device.launchApp({url: url});
              */
-            launchApp(config: DeviceLanchAppConfig): Promise<void>;
+            launchApp(config?: DeviceLanchAppConfig): Promise<void>;
             /**
              * Terminate the app
              *
