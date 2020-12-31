@@ -1,3 +1,5 @@
+import { expect } from 'detox';
+
 describe('Example (goodbye)', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
