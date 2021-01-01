@@ -345,12 +345,16 @@ class AppleSimUtils {
     return result;
   }
 
-  async _printLoggingHint(udid, bundleId) {
+  async _assembleLoggingHint(udid, bundleId) {
     const appContainer = await this.getAppContainer(udid, bundleId);
     const CFBundleExecutable = await exec.execAsync(`/usr/libexec/PlistBuddy -c "Print CFBundleExecutable" "${path.join(appContainer, 'Info.plist')}"`);
     const predicate = `process == "${CFBundleExecutable}"`;
-    const command = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
+    this.loggingHintCommand = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
+    return this.loggingHintCommand;
+  }
 
+  async _printLoggingHint(udid, bundleId) {
+    const command = this.loggingHintCommand || await this._assembleLoggingHint(udid, bundleId);
     log.info(`${bundleId} launched. To watch simulator logs, run:\n        ${command}`);
   }
 

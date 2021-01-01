@@ -4,6 +4,7 @@ const execLogger = require('./logger').child({ __filename });
 const retry = require('./retry');
 const { escape } = require('./pipeCommands');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const { traceCall } = require('../utils/trace');
 
 let _operationCounter = 0;
 
@@ -32,7 +33,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
       } else if (statusLogs.retrying) {
         _logRetrying(log, cmd, retryNumber, lastError);
       }
-      result = await exec(cmd, { timeout });
+      result = await traceCall(`cmd: ${cmd}`, () => exec(cmd, { timeout }));
     });
   } catch (err) {
     const _failReason = err.code == null && timeout > 0
