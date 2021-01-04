@@ -117,7 +117,7 @@ class GenyCloudDriver extends AndroidDriver {
     onSignalExit((code, signal) => {
       if (signal) {
         const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-        const { sanitizedDevices: instanceHandles } = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+        const { rawDevices: instanceHandles } = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
         if (instanceHandles.length) {
           reportGlobalCleanupSummary(instanceHandles);
         }
@@ -127,7 +127,7 @@ class GenyCloudDriver extends AndroidDriver {
 
   static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-    const { sanitizedDevices: instanceHandles } = await deviceCleanupRegistry.readRegisteredDevices();
+    const { rawDevices: instanceHandles } = await deviceCleanupRegistry.readRegisteredDevices();
     if (instanceHandles.length) {
       const exec = new GenyCloudExec(environment.getGmsaasPath());
       const instanceLifecycleService = new InstanceLifecycleService(exec, null);

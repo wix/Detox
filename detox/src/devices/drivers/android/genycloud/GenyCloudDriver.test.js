@@ -383,7 +383,7 @@ describe('Genymotion-cloud driver', () => {
     const aPendingInstanceHandle = (name, uuid) => ({ name, uuid });
 
     describe('global clean-up', () => {
-      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ sanitizedDevices: devicesHandles });
+      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ rawDevices: devicesHandles });
       const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);
       const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices( _.map(instances, ({ uuid, name }) => ({ uuid, name }) ));
       const givenDeletionResult = (deletedInstance) => instanceLifecycleService.deleteInstance.mockResolvedValue(deletedInstance);
@@ -473,7 +473,7 @@ describe('Genymotion-cloud driver', () => {
     describe('global *emergency* clean-up', () => {
       const signalExitCallback = () => signalExit.mock.calls[0][0];
       const invokeExitCallback = (signal = 'SIGINT') => signalExitCallback()(null, signal);
-      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ sanitizedDevices: devicesHandles });
+      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ rawDevices: devicesHandles });
       const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
 
       it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {

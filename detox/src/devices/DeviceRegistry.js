@@ -12,16 +12,16 @@ const readOptions = {
 
 class DeviceHandlesList {
   constructor(devices) {
-    this.sanitizedDevices = Object.freeze(devices);
+    this.rawDevices = Object.freeze(devices);
   }
 
   includes(deviceHandle) {
-    return DeviceHandlesList._includes(deviceHandle, this.sanitizedDevices);
+    return DeviceHandlesList._includes(deviceHandle, this.rawDevices);
   }
 
   static _includes(deviceHandle, devices) {
-    const _deviceHandle = sanitizeDeviceHandle(deviceHandle);
-    const deviceEqualsFn = getDeviceEqualsFn(_deviceHandle);
+    const rawDeviceHandle = getRawDeviceHandle(deviceHandle);
+    const deviceEqualsFn = getDeviceEqualsFn(rawDeviceHandle);
     return !!_.find(devices, deviceEqualsFn);
   }
 }
@@ -122,11 +122,11 @@ class DeviceRegistry {
    * @private
    */
   _toggleDeviceStatus(deviceHandle, busy) {
-    const _deviceHandle = sanitizeDeviceHandle(deviceHandle);
-    const deviceDifferFn = getDeviceDifferFn(_deviceHandle);
+    const rawDeviceHandle = getRawDeviceHandle(deviceHandle);
+    const deviceDifferFn = getDeviceDifferFn(rawDeviceHandle);
     const state = this._lockfile.read();
     const newState = busy
-      ? _.concat(state, _deviceHandle)
+      ? _.concat(state, rawDeviceHandle)
       : _.filter(state, deviceDifferFn);
     this._lockfile.write(newState);
   }
@@ -144,7 +144,7 @@ class DeviceRegistry {
   }
 }
 
-function sanitizeDeviceHandle(deviceHandle) {
+function getRawDeviceHandle(deviceHandle) {
   return JSON.parse(JSON.stringify(deviceHandle));
 }
 

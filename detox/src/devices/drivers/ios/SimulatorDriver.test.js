@@ -126,7 +126,7 @@ describe('IOS simulator driver', () => {
 
       jest.spyOn(uut.deviceRegistry, 'includes').mockReturnValue(false);
       jest.spyOn(uut.deviceRegistry, 'getRegisteredDevices').mockReturnValue({
-        sanitizedDevices: [],
+        rawDevices: [],
         includes: jest.fn().mockReturnValue(false),
       });
 

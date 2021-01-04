@@ -4,12 +4,12 @@ const environment = require('../utils/environment');
 
 const deviceHandle = 'emulator-5554';
 
-const deviceHandleAsObjSanitized = {
+const deviceHandleAsRawObj = {
   type: 'mocked-device-type',
   adbName: 'emulator-5556',
 };
 const deviceHandleAsObj = {
-  ...deviceHandleAsObjSanitized,
+  ...deviceHandleAsRawObj,
   mockFn: () => 'mock-fn-result',
 };
 
@@ -24,7 +24,7 @@ class DeviceHandle {
   }
 }
 const deviceHandleAsClassInstance = new DeviceHandle();
-const deviceHandleInstanceSanitized = {
+const deviceHandleInstanceRaw = {
   type: 'mocked-device-type',
   adbName: 'localhost:11111',
 }
@@ -77,10 +77,10 @@ describe('DeviceRegistry', () => {
       }).catch((e) => { if (e.message !== 'ignored') throw e });
     }
 
-    function expectDevicesListEquals(sanitizedDeviceHandles) {
+    function expectDevicesListEquals(rawDevicesHandles) {
       return registry.allocateDevice(() => {
         const registeredDevices = registry.getRegisteredDevices();
-        expect(registeredDevices.sanitizedDevices).toStrictEqual(sanitizedDeviceHandles);
+        expect(registeredDevices.rawDevices).toStrictEqual(rawDevicesHandles);
 
         throw new Error('ignored'); // So it wouldn't really allocate anything
       }).catch((e) => { if (e.message !== 'ignored') throw e });
@@ -96,9 +96,9 @@ describe('DeviceRegistry', () => {
       expect(registeredDevices.includes(deviceHandle)).not.toEqual(true);
     }
 
-    async function expectReadDevicesListEquals(sanitizedDeviceHandles) {
+    async function expectReadDevicesListEquals(rawDeviceHandles) {
       const registeredDevices = await registry.readRegisteredDevices();
-      expect(registeredDevices.sanitizedDevices).toEqual(sanitizedDeviceHandles);
+      expect(registeredDevices.rawDevices).toEqual(rawDeviceHandles);
     }
 
     async function expectIncludedInUnsafeDevicesList(deviceHandle) {
@@ -106,9 +106,9 @@ describe('DeviceRegistry', () => {
       expect(registeredDevices.includes(deviceHandle)).toEqual(true);
     }
 
-    async function expectedUnsafeDevicesListEquals(sanitizedDeviceHandles) {
+    async function expectedUnsafeDevicesListEquals(rawDeviceHandles) {
       const registeredDevices = await registry.readRegisteredDevicesUNSAFE();
-      expect(registeredDevices.sanitizedDevices).toEqual(sanitizedDeviceHandles);
+      expect(registeredDevices.rawDevices).toEqual(rawDeviceHandles);
     }
 
     const assertForbiddenOutOfContextRegistryQuery = () =>
@@ -151,17 +151,17 @@ describe('DeviceRegistry', () => {
       await expectIncludedInDevicesList(deviceHandleAsClassInstance);
     });
 
-    it('should be able to in-context get a valid list of registered devices as a (sanitized) array', async () => {
-      const expectedSanitizedDevicesList = [
+    it('should be able to in-context-get a valid list of (raw) registered devices as an array', async () => {
+      const expectedrawDevicesList = [
         deviceHandle,
-        deviceHandleAsObjSanitized,
-        deviceHandleInstanceSanitized,
+        deviceHandleAsRawObj,
+        deviceHandleInstanceRaw,
       ];
 
       await allocateDevice(deviceHandle);
       await allocateDevice(deviceHandleAsObj);
       await allocateDevice(deviceHandleAsClassInstance);
-      await expectDevicesListEquals(expectedSanitizedDevicesList);
+      await expectDevicesListEquals(expectedrawDevicesList);
     });
 
     it('should throw on an attempt of in-context getting registered devices list when outside of allocation/disposal context', async () => {
@@ -179,11 +179,11 @@ describe('DeviceRegistry', () => {
       await expectIncludedInReadDevicesList(deviceHandleAsObj);
     });
 
-    it('should be able to out-of-context read a valid list of registered devices as a (sanitized) array', async () => {
+    it('should be able to out-of-context-read a valid list of (raw) registered devices as an array', async () => {
       const expectedDevicesList = [
         deviceHandle,
-        deviceHandleAsObjSanitized,
-        deviceHandleInstanceSanitized,
+        deviceHandleAsRawObj,
+        deviceHandleInstanceRaw,
       ];
 
       await allocateDevice(deviceHandle);
@@ -195,8 +195,8 @@ describe('DeviceRegistry', () => {
     it('should allow for UNSAFE (non-concurrent) reading of registered devices list, even outside of allocation/disposal context', async () => {
       const expectedDevicesList = [
         deviceHandle,
-        deviceHandleAsObjSanitized,
-        deviceHandleInstanceSanitized,
+        deviceHandleAsRawObj,
+        deviceHandleInstanceRaw,
       ];
 
       await allocateDevice(deviceHandle);
