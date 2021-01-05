@@ -1,5 +1,5 @@
-const detox = require('detox');
-const adapter = require('detox/runners/mocha/adapter');
+import detox from 'detox';
+import adapter from 'detox/runners/mocha/adapter';
 
 before(async () => {
   await detox.init();

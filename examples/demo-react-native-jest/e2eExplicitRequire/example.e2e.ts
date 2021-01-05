@@ -1,4 +1,4 @@
-const {device, expect, element, by, waitFor} = require('detox');
+import {device, expect, element, by, waitFor} from 'detox';
 
 describe('Example (explicit)', () => {
   beforeAll(async () => {

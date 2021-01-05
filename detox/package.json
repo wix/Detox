@@ -15,6 +15,7 @@
   },
   "homepage": "https://github.com/wix/Detox#readme",
   "main": "./src/index.js",
+  "types": "./index.d.ts",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
