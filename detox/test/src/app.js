@@ -105,6 +105,7 @@ class example extends Component {
         {this.renderAnimationScreenButtons()}
         {this.renderScreenButton('Device', Screens.DeviceScreen)}
         {this.renderScreenButton('Location', Screens.LocationScreen)}
+        {this.renderScreenButton('Sync', Screens.SyncScreen)}
         {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
 
