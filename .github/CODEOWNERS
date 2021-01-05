@@ -1,8 +1,18 @@
-* @rotemmiz
-*.java @rotemmiz
+* @d4vidi
 
-#Trollolo:
-*.js @rotemmiz
+# Scripts
+
+*.js @d4vidi @noomorph
+*.ts @d4vidi @noomorph
+*.sh @d4vidi @noomorph
+
+# Android
+
+*.java @d4vidi
+*.kt @d4vidi
+*.gradle @d4vidi
+
+# iOS
 
 detox/ios/* @LeoNatan
 detox/test/ios/* @LeoNatan
@@ -13,5 +23,3 @@ detox/test/ios/* @LeoNatan
 *.swift @LeoNatan
 *.pch @LeoNatan
 *.plist @LeoNatan
-
-*.sh @rotemmiz

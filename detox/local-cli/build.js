@@ -25,7 +25,7 @@ module.exports.handler = async function build(argv) {
   const buildScript = deviceConfig.build;
 
   if (buildScript) {
-    log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for mainting this command.\n");
+    log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for maintaining this command.\n");
     log.info(buildScript);
     cp.execSync(buildScript, { stdio: 'inherit' });
   } else {

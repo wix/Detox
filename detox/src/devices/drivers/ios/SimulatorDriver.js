@@ -244,10 +244,10 @@ class SimulatorDriver extends IosDriver {
     let udid;
 
     const deviceQuery = this._adaptQuery(rawDeviceQuery);
-    const { free, busy } = await this._groupDevicesByStatus(deviceQuery);
+    const { free, taken } = await this._groupDevicesByStatus(deviceQuery);
 
     if (_.isEmpty(free)) {
-      const prototypeDevice = busy[0];
+      const prototypeDevice = taken[0];
       udid = this.applesimutils.create(prototypeDevice);
     } else {
       udid = free[0].udid;
@@ -258,14 +258,14 @@ class SimulatorDriver extends IosDriver {
 
   async _groupDevicesByStatus(deviceQuery) {
     const searchResults = await this._queryDevices(deviceQuery);
-    const takenDevices = this.deviceRegistry.getRegisteredDevices();
-    const { busy, free }  = _.groupBy(searchResults, ({ udid }) => takenDevices.includes(udid) ? 'busy' : 'free');
+    const { rawDevices: takenDevices } = this.deviceRegistry.getRegisteredDevices();
+    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => takenDevices.includes(udid) ? 'taken' : 'free');
 
-    const targetOS = _.get(busy, '0.os.identifier');
+    const targetOS = _.get(taken, '0.os.identifier');
     const isMatching = targetOS && { os: { identifier: targetOS } };
 
     return {
-      busy: _.filter(busy, isMatching),
+      taken: _.filter(taken, isMatching),
       free: _.filter(free, isMatching),
     }
   }
