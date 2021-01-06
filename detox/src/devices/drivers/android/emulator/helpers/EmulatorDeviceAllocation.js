@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const AndroidDeviceAllocation  = require('../AndroidDeviceAllocation');
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const EmulatorTelnet = require('../tools/EmulatorTelnet');
-const logger = require('../../../../utils/logger').child({ __filename });
-const retry = require('../../../../utils/retry');
-const { traceCall } = require('../../../../utils/trace');
+const AndroidDeviceAllocation  = require('../../AndroidDeviceAllocation');
+const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const EmulatorTelnet = require('../../tools/EmulatorTelnet');
+const logger = require('../../../../../utils/logger').child({ __filename });
+const retry = require('../../../../../utils/retry');
+const { traceCall } = require('../../../../../utils/trace');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,

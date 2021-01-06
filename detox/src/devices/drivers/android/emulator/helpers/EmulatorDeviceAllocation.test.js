@@ -13,37 +13,37 @@ describe('Android emulator device allocation', () => {
   let emulatorTelnet;
   let uut;
   beforeEach(() => {
-    jest.mock('../../../../utils/logger');
-    logger = require('../../../../utils/logger');
+    jest.mock('../../../../../utils/logger');
+    logger = require('../../../../../utils/logger');
 
-    jest.mock('../../../../utils/retry');
-    retry = require('../../../../utils/retry');
+    jest.mock('../../../../../utils/retry');
+    retry = require('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const EmulatorLauncher = jest.genMockFromModule('./EmulatorLauncher');
+    const EmulatorLauncher = jest.genMockFromModule('../EmulatorLauncher');
     emulatorLauncher = new EmulatorLauncher();
 
-    const AsyncEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
+    const AsyncEmitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter();
 
-    const DeviceRegistry = jest.genMockFromModule('../../../../devices/DeviceRegistry');
+    const DeviceRegistry = jest.genMockFromModule('../../../../../devices/DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
 
-    const FreeDeviceFinder = jest.genMockFromModule('./FreeEmulatorFinder');
+    const FreeDeviceFinder = jest.genMockFromModule('../FreeEmulatorFinder');
     freeDeviceFinder = new FreeDeviceFinder();
 
-    const ADB = jest.genMockFromModule('../exec/ADB');
+    const ADB = jest.genMockFromModule('../../exec/ADB');
     adb = new ADB();
     adb.isBootComplete.mockResolvedValue(true);
 
-    const EmulatorTelnet = jest.genMockFromModule('../tools/EmulatorTelnet');
+    const EmulatorTelnet = jest.genMockFromModule('../../tools/EmulatorTelnet');
     emulatorTelnet = new EmulatorTelnet();
-    jest.mock('../tools/EmulatorTelnet');
+    jest.mock('../../tools/EmulatorTelnet');
 
     randomFunc = jest.fn().mockReturnValue(1);
 
-    jest.mock('../../../../utils/trace', () => ({
+    jest.mock('../../../../../utils/trace', () => ({
       traceCall: jest.fn().mockImplementation((__, func) => func()),
     }));
 

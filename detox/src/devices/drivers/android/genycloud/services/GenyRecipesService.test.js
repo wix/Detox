@@ -66,7 +66,12 @@ describe('Genymotion-Cloud recipes service', () => {
 
       expect(logger.warn).toHaveBeenCalledWith(
         { event: 'GENYCLOUD_RECIPE_LOOKUP' },
-        `More than one Genymotion-Cloud recipe found for recipe name ${recipe.name}`,
+        [
+          `More than one Genymotion-Cloud recipe found for recipe name ${recipe.name}:`,
+          `  ${recipe.name} (${recipe.uuid})`,
+          `  ${recipe2.name} (${recipe2.uuid})`,
+          `Falling back to ${recipe.name}`,
+        ].join('\n'),
       );
     });
 

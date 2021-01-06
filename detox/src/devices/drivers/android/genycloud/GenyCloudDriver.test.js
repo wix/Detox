@@ -40,7 +40,7 @@ describe('Genymotion-cloud driver', () => {
   let adbObj;
   let Exec;
   let execObj;
-  let deviceQueryHelper;
+  let recipeQuerying;
   let deviceRegistry;
   let deviceCleanupRegistry;
   let instanceAllocation;
@@ -74,12 +74,12 @@ describe('Genymotion-cloud driver', () => {
     deviceCleanupRegistry = new DeviceRegistry();
     GenyDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(deviceCleanupRegistry);
 
-    jest.mock('./helpers/GenyDeviceQueryHelper');
-    const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
-    deviceQueryHelper = () => latestInstanceOf(DeviceQueryHelper);
+    jest.mock('./helpers/GenyRecipeQuerying');
+    const GenyRecipeQuerying = require('./helpers/GenyRecipeQuerying');
+    recipeQuerying = () => latestInstanceOf(GenyRecipeQuerying);
 
-    jest.mock('./GenyCloudInstanceAllocation');
-    const InstanceAllocation = require('./GenyCloudInstanceAllocation');
+    jest.mock('./helpers/GenyCloudInstanceAllocation');
+    const InstanceAllocation = require('./helpers/GenyCloudInstanceAllocation');
     instanceAllocation = () => latestInstanceOf(InstanceAllocation);
 
     const AuthService = require('./services/GenyAuthService');
@@ -181,8 +181,8 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('device (instance) allocation', () => {
-      const givenNoRecipes = () => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(null);
-      const givenResolvedRecipeForQuery = (recipe) => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(recipe);
+      const givenNoRecipes = () => recipeQuerying().getRecipeFromQuery.mockResolvedValue(null);
+      const givenResolvedRecipeForQuery = (recipe) => recipeQuerying().getRecipeFromQuery.mockResolvedValue(recipe);
       const givenDeviceAllocationResult = (instance) => instanceAllocation().allocateDevice.mockResolvedValue(instance);
 
       it('should get a recipe and allocate a device', async () => {
@@ -198,7 +198,7 @@ describe('Genymotion-cloud driver', () => {
           adbName: instance.adbName,
           uuid: instance.uuid,
         }));
-        expect(deviceQueryHelper().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
+        expect(recipeQuerying().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
         expect(instanceAllocation().allocateDevice).toHaveBeenCalledWith(recipe);
       });
 
@@ -211,8 +211,10 @@ describe('Genymotion-cloud driver', () => {
           await uut.acquireFreeDevice(deviceQuery);
           fail('Expected an error');
         } catch (e) {
-          expect(e.toString()).toContain('No Genycloud devices found for recipe!');
-          expect(e.toString()).toContain('HINT: Check that your Genycloud account has a template associated with your Detox device configuration: ' + JSON.stringify(deviceQuery));
+          expect(e.toString()).toContain('No Genymotion-Cloud template found to match the configured lookup query');
+          expect(e.toString()).toContain(JSON.stringify(deviceQuery));
+          expect(e.toString()).toContain('HINT: Revisit your detox configuration');
+          expect(e.toString()).toContain('https://cloud.geny.io/app/shared-devices');
         }
       });
 

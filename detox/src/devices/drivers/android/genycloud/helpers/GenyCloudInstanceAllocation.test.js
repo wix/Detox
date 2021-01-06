@@ -12,28 +12,28 @@ describe('Genymotion-Cloud instance allocation', () => {
   let GenyInstance;
   let uut;
   beforeEach(() => {
-    jest.mock('../../../../utils/logger');
-    logger = require('../../../../utils/logger');
+    jest.mock('../../../../../utils/logger');
+    logger = require('../../../../../utils/logger');
 
-    jest.mock('../../../../utils/retry');
-    retry = require('../../../../utils/retry');
+    jest.mock('../../../../../utils/retry');
+    retry = require('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const AsyncEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
+    const AsyncEmitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter();
 
-    const DeviceRegistry = jest.genMockFromModule('../../../../devices/DeviceRegistry');
+    const DeviceRegistry = jest.genMockFromModule('../../../../../devices/DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
     deviceCleanupRegistry = new DeviceRegistry();
 
-    const InstanceLookupService = jest.genMockFromModule('./services/GenyInstanceLookupService');
+    const InstanceLookupService = jest.genMockFromModule('../services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
 
-    const InstanceLifecycleService = jest.genMockFromModule('./services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.genMockFromModule('../services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    GenyInstance = jest.genMockFromModule('./services/dto/GenyInstance');
+    GenyInstance = jest.genMockFromModule('../services/dto/GenyInstance');
 
     const InstanceAllocation = require('./GenyCloudInstanceAllocation');
     uut = new InstanceAllocation(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService, eventEmitter);
@@ -247,10 +247,12 @@ describe('Genymotion-Cloud instance allocation', () => {
     });
 
     it('should log post-allocate message', async () => {
-      givenFreeInstance(aFullyConnectedInstance());
+      const instance = aFullyConnectedInstance();
+      givenFreeInstance(instance);
+
       await uut.allocateDevice(aRecipe());
-      expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(`Settled on mock-instance-toString()`));
-      expect(logger.debug).toHaveBeenCalledTimes(2);
+
+      expect(logger.info).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, `Allocating Genymotion-Cloud instance ${instance.name} for testing. To access it via a browser, go to: https://cloud.geny.io/app/instance/${instance.uuid}`);
     });
 
     it('should emit a boot-device event for an existing instance', async () => {
@@ -293,9 +295,10 @@ describe('Genymotion-Cloud instance allocation', () => {
       eventEmitter.emit.mockRejectedValue(new Error());
 
       try {
-        await uut.allocateDevice(aRecipe);
+        await uut.allocateDevice(aRecipe());
+        fail('Expected an error');
       } catch(e) {
-        expect(logger.debug).toHaveBeenCalledTimes(2);
+        expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
       }
     });
   });

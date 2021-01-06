@@ -1,4 +1,4 @@
-describe('Genymotion-cloud device-query helper', () => {
+describe('Genymotion-cloud recipe-query helper', () => {
 
   let recipesService;
   let uut;
@@ -6,7 +6,7 @@ describe('Genymotion-cloud device-query helper', () => {
     const RecipesService = jest.genMockFromModule('../services/GenyRecipesService');
     recipesService = new RecipesService();
 
-    const DeviceQueryHelper = require('./GenyDeviceQueryHelper');
+    const DeviceQueryHelper = require('./GenyRecipeQuerying');
     uut = new DeviceQueryHelper(recipesService);
   });
 
