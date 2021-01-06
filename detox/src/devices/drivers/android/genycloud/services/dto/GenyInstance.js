@@ -45,6 +45,10 @@ class GenyInstance {
   get adbName() {
     return this.adb.name;
   }
+
+  toString() {
+    return `GenyCloud:${this.name} (${this.uuid} ${this.adbName})`;
+  }
 }
 
 module.exports = GenyInstance;
