@@ -28,4 +28,6 @@ class AndroidDeviceAllocation {
   }
 }
 
+AndroidDeviceAllocation.ALLOCATE_DEVICE_LOG_EVT = ALLOCATE_DEVICE_LOG_EVT;
+
 module.exports = AndroidDeviceAllocation;

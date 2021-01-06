@@ -1,7 +1,9 @@
-const AndroidDeviceAllocation = require('../AndroidDeviceAllocation');
-const GenyCloudInstanceHandle = require('./GenyCloudInstanceHandle');
-const retry = require('../../../../utils/retry');
-const logger = require('../../../../utils/logger').child({ __filename });
+const AndroidDeviceAllocation = require('../../AndroidDeviceAllocation');
+const GenyCloudInstanceHandle = require('../GenyCloudInstanceHandle');
+const retry = require('../../../../../utils/retry');
+const logger = require('../../../../../utils/logger').child({ __filename });
+
+const { ALLOCATE_DEVICE_LOG_EVT } = AndroidDeviceAllocation;
 
 class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
   constructor(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService, eventEmitter) {
@@ -82,6 +84,10 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
       instance = await this._instanceLifecycleService.adbConnectInstance(instance.uuid);
     }
     return instance;
+  }
+
+  _logAllocationResult(deviceQuery, deviceHandle) {
+    logger.info({ event: ALLOCATE_DEVICE_LOG_EVT }, `Allocating Genymotion-Cloud instance ${deviceHandle.name} for testing. To access it via a browser, go to: https://cloud.geny.io/app/instance/${deviceHandle.uuid}`);
   }
 }
 
