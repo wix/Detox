@@ -14,6 +14,18 @@ class GenyInstance {
   constructor(rawInstance) {
     this.uuid = rawInstance.uuid;
     this.name = rawInstance.name;
+
+    /**
+     * According to Genymotion's API docs, state is an enum with these possible values (description is not official):
+     * - "CREATING": Handling instance creation request
+     * - "STARTING": Instance created but not yet available for usage
+     * - "BOOTING": Instance created & started; Android OS is not booting
+     * - "ONLINE": Instance is ready for action
+     * - "RECYCLED": Instance has been automatically shut down due an idle timeout
+     * - "STOPPING": Instance is being shut-down
+     *
+     * Additional states: "OFFLINE", "SAVING", "SAVED", "DELETING", "ERROR", "REVOKED", "EXPIRED".
+     */
     this.state = rawInstance.state;
     this.adb = {
       name: rawInstance.adb_serial,
