@@ -23,10 +23,7 @@ class GenyRecipesService {
   }
 
   async getRecipeByUUID(uuid) {
-    return new Recipe({
-      uuid,
-      name: `Recipe of ${uuid}`,
-    });
+    return new Recipe({ uuid });
   }
 }
 

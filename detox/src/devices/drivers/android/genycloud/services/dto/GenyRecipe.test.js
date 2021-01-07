@@ -1,26 +1,37 @@
 describe('Genymotion-Cloud Recipe DTO', () => {
-  it('should have a uuid', () => {
-    const rawRecipe = {
-      uuid: 'mock-uuid',
-      name: 'mock-name',
-    };
+  const rawRecipe = {
+    uuid: 'mock-uuid',
+    name: 'mock-name',
+  };
 
-    const Recipe = require('./GenyRecipe');
+  let Recipe;
+  beforeEach(() => {
+    Recipe = require('./GenyRecipe');
+  });
+
+  it('should have a uuid', () => {
     const recipe = new Recipe(rawRecipe);
 
     expect(recipe.uuid).toEqual('mock-uuid');
     expect(recipe.name).toEqual('mock-name');
   });
 
+  it('should allow for anonymous (name-less) recipes', () => {
+    const recipe = new Recipe({
+      uuid: rawRecipe.uuid,
+    });
+    expect(recipe.name).toEqual('Anonymous GMSaaS Recipe');
+  });
+
   it('should override toString()', () => {
-    const rawRecipe = {
-      uuid: 'mock-uuid',
-      name: 'mock-name',
-    };
-
-    const Recipe = require('./GenyRecipe');
     const recipe = new Recipe(rawRecipe);
+    expect(recipe.toString()).toEqual('mock-name (mock-uuid)');
+  });
 
-    expect(recipe.toString()).toEqual('mock-name');
+  it('should implement toString() for anonymous recipes', () => {
+    const recipe = new Recipe({
+      uuid: rawRecipe.uuid,
+    });
+    expect(recipe.toString()).toEqual('Recipe of mock-uuid');
   });
 });
