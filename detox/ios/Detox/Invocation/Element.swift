@@ -83,7 +83,7 @@ class Element : NSObject {
 			return (view.value(forKey: "scrollView") as! UIScrollView)
 		}
 		
-		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UISrollView”", viewDescription: debugAttributes)
+		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
 	}
 	
 	override var description: String {
