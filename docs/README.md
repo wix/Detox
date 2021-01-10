@@ -1,0 +1,55 @@
+# Overview
+
+# Detox Documentation
+
+## Introduction
+
+- [Getting Started](Introduction.GettingStarted.md)
+- [Setting Up an iOS Environment](Introduction.IosDevEnv.md)
+- [Setting Up an Android Development](Introduction.AndroidDevEnv.md)
+- [Detox for iOS](Introduction.Ios.md)
+- [Detox for Android](Introduction.Android.md)
+- [Writing Your First Test](Introduction.WritingFirstTest.md)
+- [How Detox Works](Introduction.HowDetoxWorks.md)
+- [Detox Design Principles](More.DesignPrinciples.md)
+- [Workflows](Introduction.Workflows.md)
+
+## API Reference
+
+- [Detox Command Line Tools](APIRef.DetoxCLI.md)
+- [Configuration](APIRef.Configuration.md)
+- [The `detox` Object](APIRef.DetoxObjectAPI.md)
+- [The `device` Object](APIRef.DeviceObjectAPI.md)
+- [Test Lifecycle](APIRef.TestLifecycle.md)
+- [Matchers](APIRef.Matchers.md)
+- [Actions](APIRef.ActionsOnElement.md)
+- [Expectations](APIRef.Expect.md)
+- [Mocking Open With URL](APIRef.MockingOpenWithURL.md)
+- [Mocking User Notifications](APIRef.MockingUserNotifications.md)
+- [Test Artifacts](APIRef.Artifacts.md)
+- [Taking Screenshots](APIRef.Screenshots.md)
+
+## Troubleshooting
+
+- [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
+- [Troubleshooting Failing Tests](Troubleshooting.RunningTests.md)
+- [Troubleshooting Synchronization](Troubleshooting.Synchronization.md)
+- [Dealing With Flakiness in Tests](Troubleshooting.Flakiness.md)
+
+## Guides
+
+- [Running Locally](Guide.RunningLocally.md)
+  - [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
+- [Running on CI](Guide.RunningOnCI.md)
+- [Debugging in Xcode](Guide.DebuggingInXcode.md)
+- [Mocking](Guide.Mocking.md)
+- [Migration Between Detox Versions](Guide.Migration.md)
+- [Jest Setup Guide](Guide.Jest.md)
+- [Mocha Setup Guide](Guide.Mocha.md)
+- [Parallel Test Execution](Guide.ParallelTestExecution.md)
+- [Uninstalling Detox](Guide.Uninstalling.md)
+
+## Contributing to Detox
+
+- [Detox Contribution Guide](Guide.Contributing.md)
+- [Android Support - Current Status](More.AndroidSupportStatus.md)
