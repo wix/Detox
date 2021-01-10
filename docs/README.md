@@ -1,20 +1,18 @@
-# Overview
-
 # Detox Documentation
 
-## Introduction
+### Introduction
 
 - [Getting Started](Introduction.GettingStarted.md)
-- [Setting Up an iOS Environment](Introduction.IosDevEnv.md)
+- [Setting Up an iOS Environment](Introduction.iOSDevEnv.md)
 - [Setting Up an Android Development](Introduction.AndroidDevEnv.md)
-- [Detox for iOS](Introduction.Ios.md)
+- [Detox for iOS](Introduction.iOS.md)
 - [Detox for Android](Introduction.Android.md)
 - [Writing Your First Test](Introduction.WritingFirstTest.md)
 - [How Detox Works](Introduction.HowDetoxWorks.md)
-- [Detox Design Principles](More.DesignPrinciples.md)
+- [Detox Design Principles](Introduction.DesignPrinciples.md)
 - [Workflows](Introduction.Workflows.md)
 
-## API Reference
+### API Reference
 
 - [Detox Command Line Tools](APIRef.DetoxCLI.md)
 - [Configuration](APIRef.Configuration.md)
@@ -26,30 +24,34 @@
 - [Expectations](APIRef.Expect.md)
 - [Mocking Open With URL](APIRef.MockingOpenWithURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
+- [Mocking User Activity](APIRef.MockingUserActivity.md)
 - [Test Artifacts](APIRef.Artifacts.md)
 - [Taking Screenshots](APIRef.Screenshots.md)
 
-## Troubleshooting
+### Troubleshooting
 
 - [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
 - [Troubleshooting Failing Tests](Troubleshooting.RunningTests.md)
 - [Troubleshooting Synchronization](Troubleshooting.Synchronization.md)
 - [Dealing With Flakiness in Tests](Troubleshooting.Flakiness.md)
 
-## Guides
+### Guides
 
 - [Running Locally](Guide.RunningLocally.md)
   - [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
 - [Running on CI](Guide.RunningOnCI.md)
 - [Debugging in Xcode](Guide.DebuggingInXcode.md)
+- [Debugging in Android Studio](Guide.DebuggingInAndroidStudio.md)
 - [Mocking](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 - [Jest Setup Guide](Guide.Jest.md)
 - [Mocha Setup Guide](Guide.Mocha.md)
 - [Parallel Test Execution](Guide.ParallelTestExecution.md)
+- [Third-party Drivers](Guide.ThirdPartyDrivers.md)
 - [Uninstalling Detox](Guide.Uninstalling.md)
+- [Detox & Expo](Guide.Expo.md)
 
-## Contributing to Detox
+### Contributing to Detox
 
 - [Detox Contribution Guide](Guide.Contributing.md)
 - [Android Support - Current Status](More.AndroidSupportStatus.md)
