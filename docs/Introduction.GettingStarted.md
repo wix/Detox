@@ -39,7 +39,7 @@ npm install -g detox-cli
 Depending on the platform/s you're aiming at (iOS, Android), take the time to run through these environment setup guides:
 
 * [Android](Introduction.AndroidDevEnv.md)
-* [iOS](Introduction.IosDevEnv.md)
+* [iOS](Introduction.iOSDevEnv.md)
 
 ## Step 2: Add Detox to Your Project
 
@@ -97,7 +97,7 @@ If you prefer to use something other than `.detoxrc.json`—for example, would l
 For specific configuration options for each supported platform, see:
 
 * [Android](Introduction.Android.md)
-* [iOS](Introduction.Ios.md)
+* [iOS](Introduction.iOS.md)
 
 ## Step 3: Build Your App and Run Detox Tests
 
