@@ -154,7 +154,6 @@ you have a few options to change. These are the default behavior values:
     "behavior": {
       "init": {
         "reinstallApp": true,
-        "launchApp": true,
         "exposeGlobals": true
       },
       "launchApp": "auto",
@@ -166,22 +165,7 @@ you have a few options to change. These are the default behavior values:
 }
 ```
 
-For example, if you want to launch your tested app explicitly, i.e. via `device.launchApp()`,
-and not as an implicit part of the Detox initialization, you should specify in the Detox configuration:
-
-```json
-{
-  "behavior": {
-    "init": {
-      "launchApp": false
-    }
-  }
-}
-```
-
-There is one more `launchApp` property in the root of `behavior` object configuration.
-
-That `launchApp: "auto"` setting can be changed to `"manual"` for cases when you want to debug the
+The `launchApp: "auto"` setting can be changed to `"manual"` for cases when you want to debug the
 native codebase when running Detox tests. Usually **you never need that**, but if you do, follow the
 [Debugging Apps in Android Studio During a Test](Guide.DebuggingInAndroidStudio.md) guide to learn
 more about this. When set to `manual`, it changes the default value of `reinstallApp` to `false`.
