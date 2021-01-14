@@ -16,7 +16,6 @@
   },
   "files": [
     "detox.config.js",
-    "types/detox-config-tests.ts",
     "types/detox-jest-circus-setup-tests.ts",
     "types/detox-global-tests.ts",
     "types/detox-module-tests.ts",

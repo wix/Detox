@@ -1,4 +1,4 @@
-/** @type {DetoxConfig} */
+/** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: "nyc jest",
   runnerConfig: "e2e/config.js",
