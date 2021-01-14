@@ -6,11 +6,14 @@ const WebSocketServer = WebSocket.Server;
 
 const CLOSE_TIMEOUT = 10000;
 const ROLE_TESTER = 'tester';
-const ROLE_TESTEE = 'testee';
+const ROLE_APP = 'app';
 
 class DetoxServer {
   constructor({ port, standalone = false }) {
-    this.wss = new WebSocketServer({ port });
+    this.wss = new WebSocketServer({ 
+      port,
+      perMessageDeflate: {}
+    });
     this.sessions = {};
     this.standalone = standalone;
     logger.info(`server listening on localhost:${this.wss.options.port}...`);
@@ -54,8 +57,8 @@ class DetoxServer {
         if (sessionId && role) {
           logger.debug({ event: 'DISCONNECT' }, `role=${role}, sessionId=${sessionId}`);
 
-          if (role === ROLE_TESTEE) {
-            this.sendToOtherRole(sessionId, role, { type: 'testeeDisconnected', messageId: -0xc1ea });
+          if (role === ROLE_APP) {
+            this.sendToOtherRole(sessionId, role, { type: 'appDisconnected', messageId: -0xc1ea });
           }
 
           if (this.standalone && role === ROLE_TESTER) {
@@ -73,7 +76,7 @@ class DetoxServer {
   }
 
   sendToOtherRole(sessionId, role, action) {
-    const otherRole = role === ROLE_TESTEE ? ROLE_TESTER : ROLE_TESTEE;
+    const otherRole = role === ROLE_APP ? ROLE_TESTER : ROLE_APP;
     const ws = _.get(this.sessions, [sessionId, otherRole]);
     if (ws && ws.readyState === WebSocket.OPEN) {
       this.sendAction(ws, action);
@@ -82,7 +85,7 @@ class DetoxServer {
 
       if (role === ROLE_TESTER && action.type === 'cleanup') {
         this.sendToOtherRole(sessionId, otherRole, {
-          type: 'testeeDisconnected',
+          type: 'appDisconnected',
           messageId: action.messageId,
         });
       }

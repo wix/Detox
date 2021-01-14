@@ -14,6 +14,7 @@ const anInstance = () => ({
   uuid: 'mock-instance-uuid',
   name: 'mock-instance-name',
   adbName: 'mock-instance-adb-name',
+  toString: () => 'mock-instance-toString()',
 });
 
 const aDeviceQuery = () => ({
@@ -31,6 +32,7 @@ describe('Genymotion-cloud driver', () => {
   beforeEach(mockBaseClassesDependencies);
   beforeEach(mockDirectDependencies);
 
+  let signalExit;
   let logger;
   let emitter;
   let invocationManager;
@@ -38,12 +40,14 @@ describe('Genymotion-cloud driver', () => {
   let adbObj;
   let Exec;
   let execObj;
-  let deviceQueryHelper;
+  let recipeQuerying;
   let deviceRegistry;
   let deviceCleanupRegistry;
-  let deviceAllocator;
+  let instanceAllocation;
   let authServiceObj;
   beforeEach(() => {
+    signalExit = require('signal-exit');
+
     logger = require('../../../../utils/logger');
 
     const Emitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
@@ -70,13 +74,13 @@ describe('Genymotion-cloud driver', () => {
     deviceCleanupRegistry = new DeviceRegistry();
     GenyDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(deviceCleanupRegistry);
 
-    jest.mock('./helpers/GenyDeviceQueryHelper');
-    const DeviceQueryHelper = require('./helpers/GenyDeviceQueryHelper');
-    deviceQueryHelper = () => latestInstanceOf(DeviceQueryHelper);
+    jest.mock('./helpers/GenyRecipeQuerying');
+    const GenyRecipeQuerying = require('./helpers/GenyRecipeQuerying');
+    recipeQuerying = () => latestInstanceOf(GenyRecipeQuerying);
 
-    jest.mock('./GenyCloudDeviceAllocator');
-    const DeviceAllocator = require('./GenyCloudDeviceAllocator');
-    deviceAllocator = () => latestInstanceOf(DeviceAllocator);
+    jest.mock('./helpers/GenyCloudInstanceAllocation');
+    const InstanceAllocation = require('./helpers/GenyCloudInstanceAllocation');
+    instanceAllocation = () => latestInstanceOf(InstanceAllocation);
 
     const AuthService = require('./services/GenyAuthService');
     authServiceObj = () => latestInstanceOf(AuthService);
@@ -103,7 +107,7 @@ describe('Genymotion-cloud driver', () => {
     });
 
     it('should return a generic name at pre-init', () => {
-      expect(uut.name).toEqual('Unspecified Genymotion Cloud Emulator');
+      expect(uut.name).toEqual('Unspecified GMSaaS Emulator');
     });
 
     it('should initialize the common executable using the path set by the environment', async () => {
@@ -177,15 +181,15 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('device (instance) allocation', () => {
-      const givenNoRecipes = () => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(null);
-      const givenResolvedRecipeForQuery = (recipe) => deviceQueryHelper().getRecipeFromQuery.mockResolvedValue(recipe);
-      const givenDeviceAllocationResult = ({ instance, isNew = false }) => deviceAllocator().allocateDevice.mockResolvedValue({ instance, isNew });
+      const givenNoRecipes = () => recipeQuerying().getRecipeFromQuery.mockResolvedValue(null);
+      const givenResolvedRecipeForQuery = (recipe) => recipeQuerying().getRecipeFromQuery.mockResolvedValue(recipe);
+      const givenDeviceAllocationResult = (instance) => instanceAllocation().allocateDevice.mockResolvedValue(instance);
 
       it('should get a recipe and allocate a device', async () => {
         const recipe = aRecipe();
         const instance = anInstance();
         givenResolvedRecipeForQuery(recipe);
-        givenDeviceAllocationResult({ instance });
+        givenDeviceAllocationResult(instance);
 
         const deviceQuery = aDeviceQuery();
         const result = await uut.acquireFreeDevice(deviceQuery);
@@ -194,76 +198,40 @@ describe('Genymotion-cloud driver', () => {
           adbName: instance.adbName,
           uuid: instance.uuid,
         }));
-        expect(deviceQueryHelper().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
-        expect(deviceAllocator().allocateDevice).toHaveBeenCalledWith(recipe);
+        expect(recipeQuerying().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
+        expect(instanceAllocation().allocateDevice).toHaveBeenCalledWith(recipe);
       });
 
       it('should throw a descriptive error recipe not found', async () => {
         const deviceQuery = aDeviceQuery();
         givenNoRecipes();
-        givenDeviceAllocationResult({ instance: anInstance() });
+        givenDeviceAllocationResult(anInstance());
 
         try {
           await uut.acquireFreeDevice(deviceQuery);
           fail('Expected an error');
         } catch (e) {
-          expect(e.toString()).toContain('No Genycloud devices found for recipe!');
-          expect(e.toString()).toContain('HINT: Check that your Genycloud account has a template associated with your Detox device configuration: ' + JSON.stringify(deviceQuery));
+          expect(e.toString()).toContain('No Genymotion-Cloud template found to match the configured lookup query');
+          expect(e.toString()).toContain(JSON.stringify(deviceQuery));
+          expect(e.toString()).toContain('HINT: Revisit your detox configuration');
+          expect(e.toString()).toContain('https://cloud.geny.io/app/shared-devices');
         }
-      });
-
-      it('should emit a bootDevice event', async () => {
-        const recipe = aRecipe();
-        const instance = anInstance();
-        givenResolvedRecipeForQuery(recipe);
-        givenDeviceAllocationResult({ instance });
-
-        await uut.acquireFreeDevice(aDeviceQuery());
-
-        expect(emitter.emit).toHaveBeenCalledWith('bootDevice', { coldBoot: false, deviceId: instance.adbName, type: recipe.name });
-      });
-
-      it('should fail if even emission fails', async () => {
-        const recipe = aRecipe();
-        const instance = anInstance();
-        givenResolvedRecipeForQuery(recipe);
-        givenDeviceAllocationResult({ instance });
-
-        const error = new Error('mocked error');
-        try {
-          emitter.emit.mockRejectedValue(error);
-          await uut.acquireFreeDevice(aDeviceQuery());
-          fail('Expected an error');
-        } catch (e) {
-          expect(e).toEqual(error);
-        }
-      });
-
-      it('should emit coldBoot=true in bootDevice event', async () => {
-        const recipe = aRecipe();
-        const instance = anInstance();
-        givenResolvedRecipeForQuery(recipe);
-        givenDeviceAllocationResult({ instance, isNew: true });
-
-        await uut.acquireFreeDevice(aDeviceQuery());
-
-        expect(emitter.emit).toHaveBeenCalledWith('bootDevice', { coldBoot: true, deviceId: instance.adbName, type: recipe.name });
       });
 
       it('should return a descriptive device name in post-allocation state', async () => {
         const instance = anInstance();
         givenResolvedRecipeForQuery(aRecipe());
-        givenDeviceAllocationResult({ instance });
+        givenDeviceAllocationResult(instance);
 
         await uut.acquireFreeDevice(aDeviceQuery());
 
-        expect(uut.name).toEqual(`GenyCloud:${instance.name} (${instance.uuid} ${instance.adbName})`);
+        expect(uut.name).toEqual('mock-instance-toString()');
       });
 
       it('should init ADB\'s API-level', async () => {
         const instance = anInstance();
         givenResolvedRecipeForQuery(aRecipe());
-        givenDeviceAllocationResult({ instance });
+        givenDeviceAllocationResult(instance);
 
         await uut.acquireFreeDevice(aDeviceQuery());
 
@@ -273,7 +241,7 @@ describe('Genymotion-cloud driver', () => {
       it('should disable native animations', async () => {
         const instance = anInstance();
         givenResolvedRecipeForQuery(aRecipe());
-        givenDeviceAllocationResult({ instance });
+        givenDeviceAllocationResult(instance);
 
         await uut.acquireFreeDevice(aDeviceQuery());
 
@@ -323,49 +291,12 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('shutdown', () => {
-      const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
-
-      it('should delete the instance', async () => {
+      it('should deallocate the instance', async () => {
         const instance = anInstance();
         await uut.shutdown(instance);
-        expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(instance.uuid);
-      });
-
-      it('should throw if deletion fails', async () => {
-        givenAnInstanceDeletionError();
-
-        try {
-          await uut.shutdown(anInstance());
-          fail('Expected an error');
-        } catch (e) {}
-      });
-
-      it('should emit associated events', async () => {
-        const instance = anInstance();
-        await uut.shutdown(instance);
-        expect(emitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: instance.adbName });
-        expect(emitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: instance.adbName });
-      });
-
-      it('should not emit shutdown even in case of failure', async () => {
-        givenAnInstanceDeletionError();
-
-        try {
-          await uut.shutdown(anInstance());
-          fail('Expected an error');
-        } catch (e) {
-          expect(emitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', expect.anything());
-          expect(emitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.anything());
-        }
-      });
-
-      it('should remove instance from device-registry', async () => {
-        const instance = anInstance();
-        await uut.shutdown(instance);
-        expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
+        expect(instanceAllocation().deallocateDevice).toHaveBeenCalledWith(instance);
       });
     });
-
   });
 
   describe('class scope', () => {
@@ -374,8 +305,10 @@ describe('Genymotion-cloud driver', () => {
       GenyCloudDriver = require('./GenyCloudDriver');
     });
 
+    const aPendingInstanceHandle = (name, uuid) => ({ name, uuid });
+
     describe('global clean-up', () => {
-      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue(devicesHandles);
+      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ rawDevices: devicesHandles });
       const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);
       const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices( _.map(instances, ({ uuid, name }) => ({ uuid, name }) ));
       const givenDeletionResult = (deletedInstance) => instanceLifecycleService.deleteInstance.mockResolvedValue(deletedInstance);
@@ -387,8 +320,6 @@ describe('Genymotion-cloud driver', () => {
         return promise;
       };
 
-      const aPendingDevice = (name, uuid) => ({ name, uuid });
-
       it('should kill all deletion-pending device', async () => {
         const killPromise1 = anAssertablePendingPromise();
         const killPromise2 = anAssertablePendingPromise();
@@ -397,8 +328,8 @@ describe('Genymotion-cloud driver', () => {
           .mockReturnValueOnce(killPromise2);
 
         const deviceHandles = [
-          aPendingDevice('device1', 'uuid1'),
-          aPendingDevice('device2', 'uuid2'),
+          aPendingInstanceHandle('device1', 'uuid1'),
+          aPendingInstanceHandle('device2', 'uuid2'),
         ];
         givenDeletionPendingDevices(deviceHandles);
 
@@ -417,9 +348,9 @@ describe('Genymotion-cloud driver', () => {
           .mockRejectedValueOnce(new Error('mock-error2'));
 
         givenDeletionPendingDevices([
-          aPendingDevice('failing1', 'uuid1'),
-          aPendingDevice('nonfailing', 'uuid'),
-          aPendingDevice('failing2', 'uuid2'),
+          aPendingInstanceHandle('failing1', 'uuid1'),
+          aPendingInstanceHandle('nonfailing', 'uuid'),
+          aPendingInstanceHandle('failing2', 'uuid2'),
         ]);
 
         await GenyCloudDriver.globalCleanup();
@@ -427,6 +358,8 @@ describe('Genymotion-cloud driver', () => {
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing1 \(uuid1\): .*mock-error1/));
         expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing2 \(uuid2\): .*mock-error2/));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/Kill it .* https:\/\/cloud.geny.io\/app\/instance\/uuid1/));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/gmsaas instances stop uuid1/));
         expect(logger.warn).toHaveBeenCalledTimes(3);
       });
 
@@ -461,8 +394,54 @@ describe('Genymotion-cloud driver', () => {
         expect(instanceLifecycleService.ctor).not.toHaveBeenCalled();
       });
     });
-  });
 
+    describe('global *emergency* clean-up', () => {
+      const signalExitCallback = () => signalExit.mock.calls[0][0];
+      const invokeExitCallback = (signal = 'SIGINT') => signalExitCallback()(null, signal);
+      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ rawDevices: devicesHandles });
+      const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
+
+      it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {
+        await GenyCloudDriver.globalInit();
+        expect(signalExit).toHaveBeenCalled();
+        expect(signalExitCallback()).toBeDefined();
+      });
+
+      it('should warn of leaking instances in signal-exit callback', async () => {
+        givenCleanupPendingDevices([
+          aPendingInstanceHandle('aDevice', 'uuid'),
+        ]);
+
+        await GenyCloudDriver.globalInit();
+        invokeExitCallback();
+
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/aDevice \(uuid\)\n/));
+      });
+
+      it('should not warn if no instances were registered', async () => {
+        givenNoCleanupPendingDevices();
+
+        await GenyCloudDriver.globalInit();
+        invokeExitCallback();
+
+        expect(logger.warn).not.toHaveBeenCalled();
+        expect(logger.info).not.toHaveBeenCalled();
+      });
+
+      it('should not warn if called with no signal', async () => {
+        givenCleanupPendingDevices([
+          aPendingInstanceHandle('aDevice', 'uuid'),
+        ]);
+
+        await GenyCloudDriver.globalInit();
+        invokeExitCallback(null);
+
+        expect(logger.warn).not.toHaveBeenCalled();
+        expect(logger.info).not.toHaveBeenCalled();
+      });
+    });
+  });
 });
 
 function mockBaseClassesDependencies() {
@@ -487,4 +466,5 @@ function mockDirectDependencies() {
   jest.mock('./services/GenyAuthService');
   jest.mock('./services/GenyInstanceNaming');
   jest.mock('../../../../utils/getAbsoluteBinaryPath');
-};
+  jest.mock('signal-exit');
+}

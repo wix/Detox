@@ -25,6 +25,7 @@ function composeArtifactsConfig({
         video: cliConfig.recordVideos,
         instruments: cliConfig.recordPerformance,
         timeline: cliConfig.recordTimeline,
+        uiHierarchy: cliConfig.captureViewHierarchy,
       },
     }),
     extendArtifactsConfig(deviceConfig.artifacts),
@@ -53,6 +54,7 @@ function extendArtifactsConfig(config) {
         video: 'none',
         instruments: 'none',
         timeline: 'none',
+        uiHierarchy: 'disabled',
       },
     });
   }

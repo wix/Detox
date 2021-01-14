@@ -149,12 +149,7 @@ DTX_DIRECT_MEMBERS
 {
 	UIGraphicsBeginImageContextWithOptions(windowToUse.bounds.size, NO, windowToUse.screen.scale);
 	
-	id scene = nil;
-	if(@available(iOS 13.0, *))
-	{
-		scene = windowToUse.windowScene;
-	}
-	
+	UIWindowScene* scene = windowToUse.windowScene;
 	NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:scene];
 	NSUInteger indexOfTestedWindow = [windows indexOfObject:windowToUse];
 	
@@ -175,16 +170,13 @@ DTX_DIRECT_MEMBERS
 	}
 	
 	//Overlay the keyboard scene windows on top
-	if(@available(iOS 13.0, *))
+	scene = [UIWindowScene _keyboardWindowSceneForScreen:windowToUse.screen create:NO];
+	if(scene != nil)
 	{
-		scene = [UIWindowScene _keyboardWindowSceneForScreen:windowToUse.screen create:NO];
-		if(scene != nil)
-		{
-			windows = [UIWindow dtx_allWindowsForScene:scene];
-			
-			for (UIWindow* keyboardSceneWindow in windows) {
-				[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
-			}
+		windows = [UIWindow dtx_allWindowsForScene:scene];
+		
+		for (UIWindow* keyboardSceneWindow in windows) {
+			[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
 		}
 	}
 	
@@ -254,13 +246,10 @@ DTX_DIRECT_MEMBERS
 		return NO;
 	}
 	
-	if(@available(iOS 13.0, *))
+	if(windowToUse.windowScene == nil)
 	{
-		if(windowToUse.windowScene == nil)
-		{
-			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"Window scene is nil")}]);
-			return NO;
-		}
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"Window scene is nil")}]);
+		return NO;
 	}
 	
 	if([self isHiddenOrHasHiddenAncestor] == YES)

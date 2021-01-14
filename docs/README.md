@@ -1,61 +1,57 @@
-# Overview
-
 # Detox Documentation
 
-## Introduction
+### Introduction
 
 - [Getting Started](Introduction.GettingStarted.md)
-- [iOS Environment Setup](Introduction.IosDevEnv.md)
-- [Android Environment Setup](Introduction.AndroidDevEnv.md)
-- [iOS Setup](Introduction.Ios.md)
-- [Android Setup](Introduction.Android.md)
-- [Writing Your First Passing Test](Introduction.WritingFirstTest.md)
+- [Setting Up an iOS Environment](Introduction.iOSDevEnv.md)
+- [Setting Up an Android Development](Introduction.AndroidDevEnv.md)
+- [Detox for iOS](Introduction.iOS.md)
+- [Detox for Android](Introduction.Android.md)
+- [Writing Your First Test](Introduction.WritingFirstTest.md)
 - [How Detox Works](Introduction.HowDetoxWorks.md)
-- [Recommended Workflows With Detox](Introduction.Workflows.md)
+- [Detox Design Principles](Introduction.DesignPrinciples.md)
+- [Workflows](Introduction.Workflows.md)
 
-## API Reference
+### API Reference
 
-- [Detox Configuration](APIRef.Configuration.md)
+- [Detox Command Line Tools](APIRef.DetoxCLI.md)
+- [Configuration](APIRef.Configuration.md)
 - [The `detox` Object](APIRef.DetoxObjectAPI.md)
 - [The `device` Object](APIRef.DeviceObjectAPI.md)
 - [Test Lifecycle](APIRef.TestLifecycle.md)
 - [Matchers](APIRef.Matchers.md)
 - [Actions](APIRef.ActionsOnElement.md)
 - [Expectations](APIRef.Expect.md)
-- [Mocking Deep Links (App Launch With URL)](APIRef.MockingOpenWithURL.md)
+- [Mocking Open With URL](APIRef.MockingOpenWithURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
-- [Detox Command Line Tools (detox-cli)](APIRef.DetoxCLI.md)
+- [Mocking User Activity](APIRef.MockingUserActivity.md)
 - [Test Artifacts](APIRef.Artifacts.md)
 - [Taking Screenshots](APIRef.Screenshots.md)
 
-## Troubleshooting
+### Troubleshooting
 
 - [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
-- [Troubleshooting a Test That Keeps Failing](Troubleshooting.RunningTests.md)
-- [Dealing With Synchronization Issues in Tests](Troubleshooting.Synchronization.md)
+- [Troubleshooting Failing Tests](Troubleshooting.RunningTests.md)
+- [Troubleshooting Synchronization](Troubleshooting.Synchronization.md)
 - [Dealing With Flakiness in Tests](Troubleshooting.Flakiness.md)
 
-## Guides
+### Guides
 
-- [Running Tests Locally on Your Machine](Guide.RunningLocally.md)
-- [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
-- [Running Tests on CI (like Travis)](Guide.RunningOnCI.md)
-- [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md)
-- [Debugging Apps in Android Studio During a Test](Guide.DebuggingInAndroidStudio.md)
-- [Advanced Mocking With Detox](Guide.Mocking.md)
+- [Running Locally](Guide.RunningLocally.md)
+  - [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
+- [Running on CI](Guide.RunningOnCI.md)
+- [Debugging in Xcode](Guide.DebuggingInXcode.md)
+- [Debugging in Android Studio](Guide.DebuggingInAndroidStudio.md)
+- [Mocking](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
-- [Using Jest as Test Runner](Guide.Jest.md)
-- [Using Mocha as a Test Runner](Guide.Mocha.md)
-- [Using Cucumber with Detox](https://github.com/mathanpec/react-native-detox-cucumber)
+- [Jest Setup Guide](Guide.Jest.md)
+- [Mocha Setup Guide](Guide.Mocha.md)
 - [Parallel Test Execution](Guide.ParallelTestExecution.md)
+- [Third-party Drivers](Guide.ThirdPartyDrivers.md)
 - [Uninstalling Detox](Guide.Uninstalling.md)
+- [Detox & Expo](Guide.Expo.md)
 
-## Under The Hood
-
-- [Detox Design Principles](More.DesignPrinciples.md)
-
-## Contributing to Detox
+### Contributing to Detox
 
 - [Detox Contribution Guide](Guide.Contributing.md)
-- [Detox Development Roadmap](More.Roadmap.md)
 - [Android Support - Current Status](More.AndroidSupportStatus.md)

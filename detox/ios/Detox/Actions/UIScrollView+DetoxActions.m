@@ -124,8 +124,8 @@ else \
 DTX_ALWAYS_INLINE
 static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)
 {
-
-//	return [NSString stringWithFormat:@"%@ for %@ points", offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up", @(MAX(fabs(offset.x), fabs(offset.y)))];
+	
+	//	return [NSString stringWithFormat:@"%@ for %@ points", offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up", @(MAX(fabs(offset.x), fabs(offset.y)))];
 	
 	return offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up";
 }

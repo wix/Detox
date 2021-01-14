@@ -107,7 +107,7 @@ public class WebSocketClient {
 
             Map<String, Object> params = new HashMap<>();
             params.put("sessionId", sessionId);
-            params.put("role", "testee");
+            params.put("role", "app");
             sendAction("login", params, 0L);
             actionHandler.onConnect();
         }

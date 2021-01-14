@@ -9,11 +9,12 @@ This page should give an updated status of what's working and what's not (yet)..
 ## Setup & Configuration
 Setup is not fully figured out yet. Our goal is to make it dead simple for pure React Native projects. We are not there yet.
 
-### Step by step guide
+### Step by Step Guide
 
 For a step by step guide, check out [Introduction.Android](Introduction.Android.md).
 
-### High level overview
+### High Level Overview
+
 - Update to the latest Detox.
 - Detox Android is shipped in source code in `node_modules/detox`.
 - Add the detox Android project as an androidTestCompile dependency.
@@ -81,16 +82,19 @@ Type 'android.attached' could be used to connect to any of already attached devi
 1. `--loglevel trace` can give you pretty good insight on what going on.
 2. `--debug-synchronization [ms]`, our tool to identify synchronization issues works on Android too.
 
-## Cross platform support
+## Cross Platform Support
+
 Detox is being developed on Macs, but there is no Mac specific command on any of the Android drivers, or anything related to Android. Detox should work on both Linux and Windows.
 
-## Differences between iOS and Android
+## Differences Between iOS and Android
+
 - Detox Android doesn't wait for Timers scheduled less than 1.5sec in the future. Its look ahead threshold is only 15ms.
 - Contrary to iOS, synchronization can not be completely turned off by [device.disablesynchronization()](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization). It turns off only the monitoring of the network operation at the moment. This feature will never be fully implemented as Espresso syncs can not be turned off completely. It is planned to tie the Animation synchronization too to it.
 - Detox Android doesn't wait for delayed animations. (iOS waits for 1.5sec for delayed animations)
 - Please be aware that the order of the elements using the `atIndex()` API can be different between the two platforms. You can use the `getPlatform()` API to use different indexes in your tests. See below.
 
-## General remarks
+## General Remarks
+
 - For a technical reason related to React Native, Detox can not synchronize with native driver animations prior to RN 45.
 - Infinite animations (looped animations) can make detox wait forever. Please consider turning looped animations off for testing. It's also a good practice to speed up all animations for testing.
 - With the addition of Android we introduced an API to be able to differentiate between the two platforms in your test cases.

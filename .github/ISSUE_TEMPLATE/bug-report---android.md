@@ -7,10 +7,11 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+### Describe the bug
 <!-- A clear and concise description of what the bug is. -->
 
-**To Reproduce**
+
+### Steps To Reproduce
 
 - [ ] I have tested this issue on the latest Detox release and it still reproduces
 
@@ -18,7 +19,6 @@ assignees: ''
 Provide the steps necessary to reproduce the issue. If you are seeing a regression, try to provide the last known version where the issue did not reproduce.
 -->
 
-Steps to reproduce:
 1. 
 2. 
 3. 
@@ -27,21 +27,31 @@ Steps to reproduce:
 If possible, please provide a small demo project that reproduces the issue, or attach a video with the reproduction - this would be very appreciated.
 -->
 
-**Expected behavior**
+
+### Expected behavior
 <!-- A clear and concise description of what you think should happen. -->
 
-**Screenshots**
-<!-- If applicable, add screenshots to help explain your problem. -->
 
-**Device and Verbose Detox Logs**
+### Detox Trace-Logs
 <!--
 IMPORTANT: We will not be able to help out or provide proper analysis without these!
-Provide the device and verbose Detox logs so we can understand what happened.
 *Detox* logs can be obtained by passing the `loglevel` param: `detox test --loglevel trace`.
-*Device* logs can be retrieved from the device manually using `adb logcat`, or if recorded using the `--record-logs all` - the artifacts under the `<project>/artifacts/` folder.
 -->
 
-**Environment (please complete the following information):**
+
+### Device logs (adb logcat)
+<!--
+IMPORTANT: We will not be able to help out or provide proper analysis without these!
+Paste here logs from the Android device/emulator.
+Device logs can be obtained using `adb` (e.g. by running `adb logcat`), or by running Detox with the `--record-logs all` argument, and then extracting them from the auto-generated `<project>/artifacts/` directory.
+-->
+
+
+### Screenshots
+<!-- If applicable, add screenshots to help explain your problem. -->
+
+
+### Environment (please complete the following information):
  - Detox:
  - React Native:
  - Node:

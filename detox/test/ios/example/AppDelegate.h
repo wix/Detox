@@ -1,6 +1,8 @@
 #import <UIKit/UIKit.h>
 
-@interface AnnoyingWindow : UIWindow
+@interface SomeMiddleman : UIWindow @end
+
+@interface AnnoyingWindow : SomeMiddleman
 
 @property (nonatomic, strong) UILabel* annoyingLabel;
 

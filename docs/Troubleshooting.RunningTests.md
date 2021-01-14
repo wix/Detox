@@ -1,18 +1,18 @@
 # Failing Tests
 
-* [Enable trace mode](#enable-trace-mode)
+* [Trace Mode](#trace-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
-* [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
-* [Test tries to find my component before it's created](#test-tries-to-find-my-component-before-its-created)
+* [Can't Find My Component Even Though I Added a `testID` to Its Props](#cant-find-my-component-even-though-i-added-a-testid-to-its-props)
+* [Test Tries to Find My Component Before It's Created](#test-tries-to-find-my-component-before-its-created)
 * [Can't synchronize the test with my app](#cant-synchronize-the-test-with-my-app)
-* [detox build or detox test are failing to run](#detox-build-or-detox-test-are-failing-to-run)
-* [Debug view hierarchy](#debug-view-hierarchy)
-* [Compare to a working setup](#compare-to-a-working-setup)
-* [Take a look at past issues](#take-a-look-at-past-issues)
-* [How to open a new issue](#how-to-open-a-new-issue)
-* [A component is not visible](#a-component-is-not-visible)
+* [`detox build` or `detox test` are Failing to Run](#detox-build-or-detox-test-are-failing-to-run)
+* [An Element is Not Visible](#an-element-is-not-visible)
+* [Debug View Hierarchy](#debug-view-hierarchy)
+* [Compare to a Working Setup](#compare-to-a-working-setup)
+* [Take a Look at Past Issues](#take-a-look-at-past-issues)
+* [How to Open a New Issue](#how-to-open-a-new-issue)
 
-### Enable trace mode
+### Trace Mode
 
 It's a good idea to get as much information as possible about what's going on. We can enable trace mode during tests by running our tests with:
 
@@ -46,7 +46,7 @@ child_process.js:531
 
 1. Update Node to a version **8.3.0 or higher**.
 
-### Can't find my component even though I added testID to its props
+### Can't Find My Component Even Though I Added a `testID` to Its Props
 
 **Issue:** Detox fails to match a component even though it has a `testID`. Detox will throw the following error:
 
@@ -94,7 +94,7 @@ render() {
 }
 ```
 
-### Test tries to find my component before it's created
+### Test Tries to Find My Component Before It's Created
 
 **Issue:** Due to a synchronization issue, the test tries to perform an expectation and fails because it runs the expectation too soon. Consider this example:
 
@@ -118,7 +118,7 @@ await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 
 If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](/docs/Troubleshooting.Synchronization.md).
 
-### detox build or detox test are failing to run
+### `detox build` or `detox test` are Failing to Run
 
 **Issue:** Trying to run `detox build` or `detox test` throws the following error:
 
@@ -180,9 +180,9 @@ in `package.json` (no deprecation warnings starting from `12.4.0`), as shown bel
 Please mind that if your e2e tests are located at the default path (`e2e`),
 then you don't need to add `"specs"` property explicitly to `package.json`.
 
-### A component is not visible
+### An Element is Not Visible
 
-On iOS, you may run in a situation, when one of the interactions (tap, scroll, etc.) with some element fails with an error like:
+On iOS, you may run in a situation, when one of the interactions (tap, scroll, etc.) on an element fails with an error like:
 
 ```
 Test Failed: View "<RCTScrollView: 0x7f8d32296d70>" is not visible: view does not pass visibility threshold (0% visible of 75% required)
@@ -204,7 +204,7 @@ If you are developing a React Native app, then the following applies. If, for in
 
 If you see that your issue cannot be solved via testID replacement or a simple hierarchy rearrangment, then there's a chance this is a bug in Detox. Make sure to provide your `ui.viewhierarchy` artifact, the pictures generated with `-detoxDebugVisiblity` option and a comprehensive description of the issue backed up with cold and strong arguments.
 
-### Debug view hierarchy
+### Debug View Hierarchy
 
 **Issue:** I added the `testID` prop but I still can't find the view by id in my tests.
 
@@ -238,7 +238,7 @@ This is the hierarchy viewer, pointing to the native view just mentioned:
 
 <img src="img/hierarchy-viewer.jpg">
 
-### Compare to a working setup
+### Compare to a Working Setup
 
 If you feel lost, try starting from a working example for sanity.
 
@@ -246,20 +246,15 @@ There are multiple working examples included in this repo, such as [demo-react-n
 
 First, install, build and make sure the tests are indeed passing. If they are, try comparing this setup with what you have.
 
-### Take a look at past issues
+### Take a Look at Past Issues
 
-Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93&q=is%3Aissue) on GitHub. There's a good chance somebody faced the same problem you are.
+Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93&q=is%3Aissue) on GitHub. There's a good chance somebody faced the same problem you are having.
 
-### How to open a new issue
+### How to Open a New Issue
 
 Before opening a new issue, please follow the entire troubleshooting guide and go over past issues.
 
-Include the following information in your issue to increase the chances of resolving it:
+General usage questions should be opened on Stack Overflow, where the core Detox team is active and responds to questions:
+https://stackoverflow.com/questions/tagged/detox
 
-1. Versions of all dependencies - iOS version you're working on, simulator model, React Native version, Detox version, etc
-
-2. The trace log of the test (see above)
-
-3. Source code of your test scenario
-
-4. If possible, try to extract a reproducable example of your issue in a git repo that you can share
+If you believe you are seeing a Detox issue, select the correct template from the options, and make sure to fill all requested information in the template. Omitting important information will likely result in a closed issue.

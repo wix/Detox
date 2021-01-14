@@ -12,6 +12,6 @@ module.exports.handler = async function cleanFrameworkCache() {
     log.info(`Removing framework binaries from ${frameworkPath}`);
     await fs.remove(frameworkPath);
   } else {
-    log.info(`The command is supported only on MacOS, skipping the execution.`);
+    log.info(`The command is supported only on macOS, skipping the execution.`);
   }
 };

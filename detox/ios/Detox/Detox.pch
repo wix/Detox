@@ -9,12 +9,16 @@
 #ifndef Detox_pch
 #define Detox_pch
 
+#define DTXAddressInfo detox_DTXAddressInfo
+
 #import "DTXLogging.h"
 
 #import "Swiftier.h"
 
 #ifdef __OBJC__
 #import "DTXAssertionHandler.h"
+#import "NSThread+DetoxUtils.h"
+#import "NSArray+Utils.h"
 #endif
 
 #endif /* Detox_pch */

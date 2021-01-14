@@ -12,6 +12,6 @@ import Foundation
 extension NSException {
 	@objc(dtx_demangledCallStackSymbols)
 	open var demangledCallStackSymbols : String {
-		return Thread.demangledCallStackSymbolsFor(returnAddresses: callStackReturnAddresses, startIndex: 0)
+		return Thread.demangledCallStackSymbols(forReturnAddresses: callStackReturnAddresses, startIndex: 0)
 	}
 }

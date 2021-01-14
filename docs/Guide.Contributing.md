@@ -2,13 +2,13 @@
 
 ## Prerequisites
 
-### Install `node` v8.3.0 or higher
+### Install `node` v10.0 or Higher
 
 ```
 brew install node
 ```
 
-### Install global node libraries `lerna` and `react-native-cli`
+### Install Global Node.js Libraries `lerna` and `react-native-cli`
 
 ```sh
 npm install -g lerna
@@ -27,7 +27,7 @@ Alternatively, run `scripts/install.ios.sh` / `scripts/install.android.sh` to in
 
 ## Detox
 
-### Clone Detox and submodules
+### Clone Detox and Submodules
 
 ```sh
 git clone git@github.com:wix/detox.git
@@ -36,26 +36,28 @@ git submodule update --init --recursive
 ```
 (this makes sure all git submodule dependencies are properly checked out)
 
-### Installing and linking internal projects
+### Installing and Linking Internal Projects
 
 ```sh
 lerna bootstrap
 ```
 
-### Building & Testing
+### Building and Testing
+
 ##### Automatically
 `scripts/ci.ios.sh` and `scripts/ci.android.sh` are the scripts Detox runs in CI, they will run `lerna bootstrap`, unit tests, and E2E tests. Make sure these scripts pass before submitting a PR, this is exactly what Detox is going to run in CI. 
 
 ##### Manually
 Alternatively, you can run it manually
 
-#### 0. Fixing compilation issues in RN sources
+#### 0. Fixing Compilation Issues in RN Sources
+
 Detox Android test project uses React Native sources instead of the precompiled AAR. The test project uses RN51 and RN53, both have issues with compilation ([Fixed in RN55](https://github.com/facebook/react-native/commit/d8bb990abc226e778e2f32c2de3c6661c0aa64e5#diff-f44163238d434a443b56bd27b3ba0578)). In order to fix this issue, from inside `detox/test` run:
 ```sh
 mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
-``` 
+```
 
-#### 1. Unit tests
+#### 1. Unit Tests
 
 ```sh
 lerna run test
@@ -71,7 +73,8 @@ npm run unit
 npm run unit:watch
 ```
 
-##### How to read the coverage report
+##### How to Read the Coverage Report
+
 After running the tests, jest will create a coverage report.
 
 ```sh
@@ -79,13 +82,14 @@ cd detox
 open coverage/lcov-report/index.html
 ```
 
-#### 2. Running Detox e2e coverage tests
+#### 2. Running Detox e2e Coverage Tests
 
 Detox has a suite of e2e tests to test its own API while developing (and for regression); We maintain a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
 
 To run the e2e tests, you must first build the native code and then run based on your target of choice (Android / iOS):
 
 ##### iOS
+
 ```sh
 cd detox/test
 npm run build:ios
@@ -114,7 +118,7 @@ on macOS environment variables can be exported to desktop applications by adding
 launchctl setenv PATH $PATH
 ```
 
-##### Changing Detox e2e test suite
+##### Changing the Detox e2e Test Suite
 
 If you add, rename, or delete a test in `detox/test/e2e` suite, you should follow these steps:
 
@@ -123,7 +127,7 @@ If you add, rename, or delete a test in `detox/test/e2e` suite, you should follo
 3. In `detox/test` project, build the android project with `npm run build:android`
 4. Run all end-to-end tests on Android with `npm run e2e:android`.
 
-#### 3. Android Native tests
+#### 3. Android Native Tests
 
 0. Install Java and Android SDK 25
 1. In `detox/android` run `./gradlew install` run
@@ -131,7 +135,8 @@ If you add, rename, or delete a test in `detox/test/e2e` suite, you should follo
 	```sh
 	./gradlew test
 	```
-#### 4. Running example projects on Android
+
+#### 4. Running Example Projects on Android
 
 Before you build one of `example/demo-react-*` projects for Android, you need to publish `detox-999.999.999.aar` locally:
 
@@ -139,23 +144,3 @@ Before you build one of `example/demo-react-*` projects for Android, you need to
 cd detox/android
 ./gradlew publish -Dversion=999.999.999 
 ```
-
-#### 5. Code Generation
-
-We are using a code generator based on `babel` and `objective-c-parser` to generate a Javascript Interface for `EarlGrey` (the testing library we use on iOS).
-This interface allows us to call Objective-C methods through the WebSocket connection directly on the testing device. 
-
-This approach is currently limited to `GREYActions`, but we plan on extending it to cover more functionality of `EarlGrey`.
-You may see the generated files under [`detox/src/ios/earlgreyapi/`](../detox/src/ios/earlgreyapi).
-
-What happens under the hood can be seen in [`generation/`](../generation); it boils down to these steps for each input file:
-
-1. Convert Objective-C header file in a JSON Representation
-2. Build an Abstract Syntax Tree: Create Class & for each method
-    1. Check if the type can be expressed simpler (`NSString *` => `NSString`)
-    2. Get the type checks for the arguments
-    2. Get the return value
-    4. Assemble type checks and return value to complete function
-3. Generate the code for the syntax tree & add helpers
-
-If you would like to extend the code generation, please make sure to read the [`generation/README.md`](../generation#generation)

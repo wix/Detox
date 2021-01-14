@@ -10,6 +10,6 @@ module.exports.handler = async function buildFrameworkCache() {
   if (os.platform() === 'darwin') {
     cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), {stdio: 'inherit'});
   } else {
-    log.info(`The command is supported only on MacOS, skipping the execution.`);
+    log.info(`The command is supported only on macOS, skipping the execution.`);
   }
 };

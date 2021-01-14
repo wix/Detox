@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.14.8",
+  "version": "18.1.1",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -15,6 +15,7 @@
   },
   "homepage": "https://github.com/wix/Detox#readme",
   "main": "./src/index.js",
+  "types": "./index.d.ts",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -98,10 +99,11 @@
       "src/server/DetoxServer.js",
       "DeviceDriverBase.js",
       "AndroidDriver.js",
+      "AttachedAndroidDriver.js",
       "EmulatorDriver.js",
       "IosDriver.js",
       "SimulatorDriver.js",
-      "AndroidDeviceAllocator.js",
+      "AndroidDeviceAllocation.js",
       "MissingDetox.js",
       "EmulatorTelnet.js",
       "EmulatorExec.js",

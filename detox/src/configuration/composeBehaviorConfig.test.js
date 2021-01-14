@@ -25,7 +25,6 @@ describe('composeBehaviorConfig', () => {
       init: {
         exposeGlobals: true,
         reinstallApp: true,
-        launchApp: true,
       },
       launchApp: 'auto',
       cleanup: {
@@ -56,7 +55,6 @@ describe('composeBehaviorConfig', () => {
           init: {
             exposeGlobals: false,
             reinstallApp: false,
-            launchApp: false,
           },
           launchApp: 'manual',
           cleanup: {
@@ -80,7 +78,6 @@ describe('composeBehaviorConfig', () => {
             init: {
               exposeGlobals: true,
               reinstallApp: true,
-              launchApp: true,
             },
             launchApp: 'auto',
             cleanup: {
@@ -101,7 +98,6 @@ describe('composeBehaviorConfig', () => {
         beforeEach(() => {
           userParams = {
             initGlobals: false,
-            launchApp: false,
             reuse: false,
           };
         });
@@ -111,7 +107,6 @@ describe('composeBehaviorConfig', () => {
             init: {
               exposeGlobals: false,
               reinstallApp: true,
-              launchApp: false,
             },
             launchApp: 'auto',
             cleanup: {
@@ -131,7 +126,6 @@ describe('composeBehaviorConfig', () => {
               init: {
                 exposeGlobals: false,
                 reinstallApp: false,
-                launchApp: false,
               },
               launchApp: 'auto',
               cleanup: {

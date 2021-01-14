@@ -3,8 +3,8 @@ const SpecReporterCircus = require('detox/runners/jest/SpecReporterCircus');
 const DetoxCircusEnvironment = require('detox/runners/jest-circus/environment');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
-  constructor(config) {
-    super(config);
+  constructor(config, context) {
+    super(config, context);
 
     this.initTimeout = 30000;
     this.registerListeners({

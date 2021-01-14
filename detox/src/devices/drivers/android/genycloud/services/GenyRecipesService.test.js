@@ -18,7 +18,7 @@ describe('Genymotion-Cloud recipes service', () => {
 
   const anotherRecipe = () => ({
     uuid: 'another-mock-recipe-uuid',
-    name: 'mock-recipe-name',
+    name: 'another-mock-recipe-name',
   });
 
   let logger;
@@ -46,7 +46,9 @@ describe('Genymotion-Cloud recipes service', () => {
       const recipe2 = anotherRecipe();
       givenRecipes(recipe, recipe2);
 
-      expect(await uut.getRecipeByName(recipe.name)).toEqual(recipe);
+      const result = await uut.getRecipeByName(recipe.name);
+
+      expect(result.uuid).toEqual(recipe.uuid);
     });
 
     it('should return a recipe DTO', async () => {
@@ -66,7 +68,12 @@ describe('Genymotion-Cloud recipes service', () => {
 
       expect(logger.warn).toHaveBeenCalledWith(
         { event: 'GENYCLOUD_RECIPE_LOOKUP' },
-        `More than one Genymotion-Cloud recipe found for recipe name ${recipe.name}`,
+        [
+          `More than one Genymotion-Cloud recipe found for recipe name ${recipe.name}:`,
+          `  ${recipe.name} (${recipe.uuid})`,
+          `  ${recipe2.name} (${recipe2.uuid})`,
+          `Falling back to ${recipe.name}`,
+        ].join('\n'),
       );
     });
 
@@ -87,7 +94,6 @@ describe('Genymotion-Cloud recipes service', () => {
       const result = await uut.getRecipeByUUID(recipe.uuid);
 
       expect(result.uuid).toEqual(recipe.uuid);
-      expect(result.name).toEqual(`Recipe of ${recipe.uuid}`);
       expect(result.constructor.name).toContain('Recipe');
     });
   });

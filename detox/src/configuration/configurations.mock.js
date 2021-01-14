@@ -3,6 +3,7 @@ const LogArtifactPlugin = require('../artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('../artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
 const TimelineArtifactPlugin = require('../artifacts/timeline/TimelineArtifactPlugin');
+const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 
 const defaultArtifactsConfiguration = {
   rootDir: 'artifacts',
@@ -13,6 +14,7 @@ const defaultArtifactsConfiguration = {
     video: 'none',
     instruments: 'none',
     timeline: 'none',
+    uiHierarchy: 'disabled',
   },
 };
 
@@ -25,6 +27,7 @@ const allArtifactsConfiguration = {
     video: 'all',
     instruments: 'all',
     timeline: 'all',
+    uiHierarchy: 'enabled',
   },
 };
 
@@ -34,6 +37,7 @@ const pluginsDefaultsResolved = {
   video: VideoArtifactPlugin.parseConfig('none'),
   instruments: InstrumentsArtifactPlugin.parseConfig('none'),
   timeline: TimelineArtifactPlugin.parseConfig('none'),
+  uiHierarchy: IosUIHierarchyPlugin.parseConfig('disabled'),
 };
 
 const pluginsFailingResolved = {
@@ -48,6 +52,7 @@ const pluginsAllResolved = {
   video: VideoArtifactPlugin.parseConfig('all'),
   instruments: InstrumentsArtifactPlugin.parseConfig('all'),
   timeline: TimelineArtifactPlugin.parseConfig('all'),
+  uiHierarchy: IosUIHierarchyPlugin.parseConfig('enabled'),
 };
 
 const invalidDeviceNoBinary = {

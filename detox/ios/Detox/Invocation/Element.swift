@@ -49,7 +49,7 @@ class Element : NSObject {
 		guard array.count > 0 else {
 			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 		}
-		
+
 		return array
 	}
 	
@@ -83,7 +83,7 @@ class Element : NSObject {
 			return (view.value(forKey: "scrollView") as! UIScrollView)
 		}
 		
-		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UISrollView”", viewDescription: debugAttributes)
+		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
 	}
 	
 	override var description: String {
@@ -91,17 +91,11 @@ class Element : NSObject {
 	}
 	
 	fileprivate var failDebugAttributes: [String: Any] {
-		guard let keyWindow = UIWindow.dtx_keyWindow else {
-			return [:]
-		}
-		return ["viewHierarchy": keyWindow.recursiveDescription!]
+		return NSObject.dtx_genericElementDebugAttributes
 	}
 	
 	var debugAttributes: [String: Any] {
 		do {
-//			guard failed == false else {
-//				throw "Nope"
-//			}
 			var rv: [String: Any]! = nil
 			try dtx_try {
 				rv = view.dtx_elementDebugAttributes
@@ -221,7 +215,7 @@ class Element : NSObject {
 	
 	@objc
 	var placeholder: String? {
-		return view.value(forKey: "placeholder") as? String
+		return view.value(forKey: "dtx_placeholder") as? String
 	}
 	
 	@objc

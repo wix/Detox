@@ -171,12 +171,6 @@ describe('Detox', () => {
         expect(device().installApp).toHaveBeenCalled();
       });
 
-      it('should launch the app', () => {
-        expect(device().launchApp).toHaveBeenCalledWith({
-          newInstance: true,
-        });
-      });
-
       it('should install util-binaries', () => {
         expect(device().installUtilBinaries).toHaveBeenCalled();
       });
@@ -239,30 +233,6 @@ describe('Detox', () => {
         expect(device().uninstallApp).not.toHaveBeenCalled();
         expect(device().installApp).not.toHaveBeenCalled();
       });
-
-      it('should launch the app', () =>
-        expect(device().launchApp).toHaveBeenCalledWith({
-          newInstance: true
-        }));
-    });
-
-    describe('with behaviorConfig.init.launchApp = false', () => {
-      beforeEach(() => {
-        detoxConfig.behaviorConfig.init.launchApp = false;
-      });
-
-      beforeEach(init);
-
-      it('should prepare the device', () =>
-        expect(device().prepare).toHaveBeenCalled());
-
-      it('should reinstall the app', () => {
-        expect(device().uninstallApp).toHaveBeenCalled();
-        expect(device().installApp).toHaveBeenCalled();
-      });
-
-      it('should not launch the app', () =>
-        expect(device().launchApp).not.toHaveBeenCalled());
     });
 
     describe('and it gets unresponsiveness', () => {
@@ -326,7 +296,6 @@ describe('Detox', () => {
     describe('after detox.init() is finished', () => {
       beforeEach(async () => {
         detox = await new Detox(detoxConfig).init();
-        device().launchApp.mockReset();
       });
 
       it('should validate test summary object', async () => {

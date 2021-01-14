@@ -1,35 +1,41 @@
 describe('Genymotion-Cloud Instance DTO', () => {
-  const connectedRawInstance = {
+  const rawInstance = {
     uuid: 'mock-uuid',
     name: 'mock-name',
-    state: 'ONLINE',
-    adb_serial: 'localhost:7777',
-    adb_serial_port: 7777,
+    state: undefined,
     recipe: {
       uuid: 'mock-recipe-uuid',
       name: 'mock-recipe-name',
     },
-  };
+  }
 
   const disconnectedRawInstance = {
-    ...connectedRawInstance,
+    ...rawInstance,
+    state: 'ONLINE',
     adb_serial: '0.0.0.0',
     adb_serial_port: 0,
   };
 
-  const onlineInstance = disconnectedRawInstance;
+  const connectedRawInstance = {
+    ...rawInstance,
+    state: 'ONLINE',
+    adb_serial: 'localhost:7777',
+    adb_serial_port: 7777,
+  };
+
   const bootingInstance = {
-    ...onlineInstance,
+    ...disconnectedRawInstance,
     state: 'BOOTING',
   };
   const startingInstance = {
-    ...onlineInstance,
+    ...disconnectedRawInstance,
     state: 'STARTING',
   };
   const creatingInstance = {
-    ...onlineInstance,
+    ...disconnectedRawInstance,
     state: 'CREATING',
   };
+  const onlineInstance = disconnectedRawInstance;
 
   let Instance;
   beforeEach(() => {
@@ -87,5 +93,10 @@ describe('Genymotion-Cloud Instance DTO', () => {
   it('should indicate a starting-up instance is initializing', () => {
     const instance = new Instance(startingInstance);
     expect(instance.isInitializing()).toEqual(true);
+  });
+
+  it('should override toString()', () => {
+    const instance = new Instance(connectedRawInstance);
+    expect(`${instance}`).toEqual(`GenyCloud:${instance.name} (${instance.uuid} ${instance.adbName})`);
   });
 });

@@ -22,6 +22,12 @@
 #import <UIKit/UIKit.h>
 @import UserNotifications;
 
+@interface NSObject ()
+
+- (BOOL)__isKindOfUIView;
+
+@end
+
 @interface UNNotificationResponse ()
 
 + (instancetype)responseWithNotification:(UNNotification*)arg1 actionIdentifier:(NSString*)arg2;

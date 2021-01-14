@@ -14,7 +14,6 @@ function composeBehaviorConfig({ cliConfig, detoxConfig, deviceConfig, userParam
       userParams && {
         init: {
           exposeGlobals: userParams.initGlobals,
-          launchApp: userParams.launchApp,
           reinstallApp: negateDefined(userParams.reuse),
         },
       },
@@ -24,7 +23,6 @@ function composeBehaviorConfig({ cliConfig, detoxConfig, deviceConfig, userParam
         init: {
           exposeGlobals: true,
           reinstallApp: undefined,
-          launchApp: true,
         },
         launchApp: 'auto',
         cleanup: {

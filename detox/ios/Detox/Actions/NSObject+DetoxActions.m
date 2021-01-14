@@ -378,7 +378,7 @@ static void _DTXTypeText(NSString* text)
 		}];
 		[UIKeyboardImpl.sharedInstance.taskQueue waitUntilAllTasksAreFinished];
 		
-		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 		
 		
 		[UIKeyboardImpl.sharedInstance removeCandidateList];
@@ -404,7 +404,7 @@ static void _DTXTypeText(NSString* text)
 	
 	//Select entire text range
 	firstResponder.selectedTextRange = range;
-	[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+	[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 	//Delete it
 	_DTXTypeText(@"\b");
 }

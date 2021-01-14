@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 describe('Genymotion-Cloud instances lookup service', () => {
   let exec;
   let deviceRegistry;
@@ -39,8 +41,14 @@ describe('Genymotion-Cloud instances lookup service', () => {
     },
   });
 
-  const givenRegisteredInstances = (...instances) => deviceRegistry.getRegisteredDevices.mockReturnValue([ ...instances.map((instance) => instance.uuid) ]);
-  const givenNoRegisteredInstances = () => deviceRegistry.getRegisteredDevices.mockReturnValue([]);
+  function givenRegisteredInstances(...instances) {
+    const instanceUUIDs = _.map(instances, 'uuid');
+    deviceRegistry.getRegisteredDevices.mockReturnValue({
+      rawDevices: instanceUUIDs,
+      includes: instanceUUIDs.includes,
+    });
+  }
+  const givenNoRegisteredInstances = () => givenRegisteredInstances([]);
   const givenInstances = (...instances) => exec.getInstances.mockResolvedValue({ instances });
   const givenNoInstances = () => exec.getInstances.mockResolvedValue({ instances: [] });
   const givenAnInstance = (instance) => exec.getInstance.mockResolvedValue({ instance });

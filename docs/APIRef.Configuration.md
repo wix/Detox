@@ -1,6 +1,6 @@
 # Configuration Options
 
-## Configuration file
+## Configuration File
 
 In order for Detox to know what device & app to use (and a lot more, actually), it needs some configuration to be statically available in a configuration file. It supports both standalone configuration files, and a configuration bundling inside the project's `package.json`.
 
@@ -29,7 +29,7 @@ Please find the [Detox example app](/examples/demo-react-native/detox.config.js)
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
 |`utilBinaryPaths`| (optional, Android only): An **array** of relative paths of _utility_ app (apk) binary-files to preinstall on the tested devices - once before the test execution begins.<br />Note: these are not effected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
 |`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator, `{ "avdName": "Pixel_2_API_29" }` for Android emulator or `{ "adbName": "<pattern>" }` for attached Android device with name matching the regex. |
-|`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
+|`build`| **[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience. |
 
 **Example:**
 
@@ -154,7 +154,6 @@ you have a few options to change. These are the default behavior values:
     "behavior": {
       "init": {
         "reinstallApp": true,
-        "launchApp": true,
         "exposeGlobals": true
       },
       "launchApp": "auto",
@@ -166,22 +165,7 @@ you have a few options to change. These are the default behavior values:
 }
 ```
 
-For example, if you want to launch your tested app explicitly, i.e. via `device.launchApp()`,
-and not as an implicit part of the Detox initialization, you should specify in the Detox configuration:
-
-```json
-{
-  "behavior": {
-    "init": {
-      "launchApp": false
-    }
-  }
-}
-```
-
-There is one more `launchApp` property in the root of `behavior` object configuration.
-
-That `launchApp: "auto"` setting can be changed to `"manual"` for cases when you want to debug the
+The `launchApp: "auto"` setting can be changed to `"manual"` for cases when you want to debug the
 native codebase when running Detox tests. Usually **you never need that**, but if you do, follow the
 [Debugging Apps in Android Studio During a Test](Guide.DebuggingInAndroidStudio.md) guide to learn
 more about this. When set to `manual`, it changes the default value of `reinstallApp` to `false`.
@@ -255,7 +239,7 @@ The status will be printed if the action takes more than _[N]_ ms to complete.
 
 To disable `debugSynchronization` explicitly, use `0`.
 
-## detox-cli
+## `detox-cli`
 
 ### Build Configuration
 
@@ -308,7 +292,7 @@ where `./e2e` is the path to your Detox tests folder.
   detox test ./e2e --configuration yourConfiguration
   ```
 
-### Faster test runs with app reuse
+### Faster Test Runs with App Reuse
 
 By default the app is removed, reinstalled and launched before each run.
 Starting fresh is critical in CI but in dev you might be able to save time between test runs and reuse the app that was previously installed in the simulator. To do so use the `reuse` flag and run your tests like this:

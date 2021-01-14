@@ -4,6 +4,7 @@ const {joinArgs} = require('../../../../utils/argparse');
 const exec = require('../../../../utils/exec');
 const log = require('../../../../utils/logger').child({ __filename });
 const environment = require('../../../../utils/environment');
+const { quote } = require('../../../../utils/shellQuote');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
@@ -120,7 +121,8 @@ class AppleSimUtils {
     log.info({},
       'Waiting for you to manually launch your app in Xcode.\n' +
       'Make sure to pass the launch arguments listed below:\n' +
-      this._mergeLaunchArgs(launchArgs, languageAndLocale).map(pair => `  ${pair}\n`).join(''),
+      '  --args\n' +
+      this._mergeLaunchArgs(launchArgs, languageAndLocale).map(keyValue => `  ${quote(keyValue)}\n`).join(''),
       '\nPress any key to continue...'
     );
   }
@@ -320,7 +322,7 @@ class AppleSimUtils {
       }
     }
 
-    return _.map(args, (v, k) => `-${k} "${v}"`); // TODO: replace naive quoting
+    return _.map(args, (v, k) => [`-${k}`, `${v}`]);
   }
 
   async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
@@ -329,9 +331,9 @@ class AppleSimUtils {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
     }
 
-    const cmdArgs = this._mergeLaunchArgs(launchArgs, languageAndLocale).join(' ');
+    const cmdArgs = quote(_.flatten(this._mergeLaunchArgs(launchArgs, languageAndLocale)));
     let launchBin = `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
-      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} ${cmdArgs}`;
+      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
 
     const result = await exec.execWithRetriesAndLogs(launchBin, {
       retries: 1,

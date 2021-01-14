@@ -239,7 +239,6 @@ class ScrollAction : Action {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
-	fileprivate var asyncScrollsPerformed = 0
 	fileprivate func perform_async(on element: Element, targetOffset: CGPoint, normalizedStartingPoint: CGPoint, expectation: Expectation, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		expectation.evaluate { expectationError in
 			guard expectationError != nil else {
@@ -250,7 +249,6 @@ class ScrollAction : Action {
 			do {
 				try dtx_try {
 					element.scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint)
-					self.asyncScrollsPerformed += 1
 				}
 			} catch {
 				let expectationError = expectationError!

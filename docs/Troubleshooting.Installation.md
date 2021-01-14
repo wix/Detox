@@ -1,8 +1,6 @@
 # Installation
 
-* [No simulators found](#no-simulators-found)
-
-### No simulators found
+### No Simulators Found
 
 In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by Xcode itself. You can list all available simulators using simctl by typing `xcrun simctl list` in terminal.
 

@@ -29,8 +29,13 @@
 	return nil;
 }
 
-- (id)placeholder
+- (id)_dtx_placeholder
 {
+	if([self respondsToSelector:@selector(placeholder)])
+	{
+		return [(UITextField*)self placeholder];
+	}
+	
 	return nil;
 }
 

@@ -3,41 +3,35 @@ const fs = require('fs');
 const path = require('path');
 const ini = require('ini');
 const AndroidDriver = require('../AndroidDriver');
-const EmulatorDeviceAllocator = require('./EmulatorDeviceAllocator');
+const EmulatorDeviceAllocation = require('./helpers/EmulatorDeviceAllocation');
 const AVDValidator = require('./AVDValidator');
 const AVDsResolver = require('./AVDsResolver');
 const EmulatorLauncher = require('./EmulatorLauncher');
 const EmulatorVersionResolver = require('./EmulatorVersionResolver');
 const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const { EmulatorExec } = require('../exec/EmulatorExec');
-const EmulatorTelnet = require('../tools/EmulatorTelnet');
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const DeviceRegistry = require('../../../DeviceRegistry');
 const environment = require('../../../../utils/environment');
-const retry = require('../../../../utils/retry');
 const log = require('../../../../utils/logger').child({ __filename });
 const argparse = require('../../../../utils/argparse');
-const { traceCall } = require('../../../../utils/trace');
 
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
-
+    this._name = 'Unspecified Emulator';
     this._deviceRegistry = DeviceRegistry.forAndroid();
 
     const emulatorExec = new EmulatorExec();
+    const emulatorLauncher = new EmulatorLauncher(emulatorExec);
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
-    this._emuLauncher = new EmulatorLauncher(emulatorExec);
 
     const avdsResolver = new AVDsResolver(emulatorExec);
     this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
 
     const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this._deviceRegistry)
-    this._deviceAllocator = new EmulatorDeviceAllocator(this._deviceRegistry, freeEmulatorFinder);
-
-    this._name = 'Unspecified Emulator';
+    this._deviceAllocation = new EmulatorDeviceAllocation(this._deviceRegistry, freeEmulatorFinder, emulatorLauncher, this.adb, this.emitter);
   }
 
   get name() {
@@ -48,15 +42,9 @@ class EmulatorDriver extends AndroidDriver {
     const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
 
     await this._avdValidator.validate(avdName);
-    await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
+    await this._fixAvdConfigIniSkinNameIfNeeded(avdName);
 
-    const {
-      adbName,
-      placeholderPort,
-    } = await this._deviceAllocator.allocateDevice(avdName);
-
-    await this._boot(avdName, adbName, placeholderPort);
-
+    const adbName = await this._deviceAllocation.allocateDevice(avdName);
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
@@ -81,45 +69,16 @@ class EmulatorDriver extends AndroidDriver {
     return this._emuVersionResolver.resolve();
   }
 
-  async _boot(avdName, adbName, bootPort) {
-    const coldBoot = !!bootPort;
-    if (coldBoot) {
-      await traceCall('emulatorLaunch', () =>
-        this._emuLauncher.launch(avdName, { port: bootPort }));
-    }
-
-    await traceCall('awaitBoot', () =>
-      this._waitForBootToComplete(adbName));
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: avdName });
-  }
-
-  async _waitForBootToComplete(deviceId) {
-    await retry({ retries: 240, interval: 2500 }, async () => {
-      const isBootComplete = await this.adb.isBootComplete(deviceId);
-
-      if (!isBootComplete) {
-        throw new DetoxRuntimeError({
-          message: `Android device ${deviceId} has not completed its boot yet.`,
-        });
-      }
-    });
-  }
-
   async cleanup(deviceId, bundleId) {
     await this._deviceRegistry.disposeDevice(deviceId);
     await super.cleanup(deviceId, bundleId);
   }
 
   async shutdown(deviceId) {
-    await this.emitter.emit('beforeShutdownDevice', { deviceId });
-    const port = _.split(deviceId, '-')[1];
-    const telnet = new EmulatorTelnet();
-    await telnet.connect(port);
-    await telnet.kill();
-    await this.emitter.emit('shutdownDevice', { deviceId });
+    await this._deviceAllocation.deallocateDevice(deviceId)
   }
 
-  async _fixEmulatorConfigIniSkinNameIfNeeded(avdName) {
+  async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
     const binaryVersion = _.get(await this.binaryVersion(), 'major');
     if (!binaryVersion) {
       log.warn({ event: 'EMU_SKIN_CFG_PATCH' }, [
