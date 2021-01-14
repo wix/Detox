@@ -1,5 +1,3 @@
-import { DetoxConfig } from 'detox';
-
 interface AnyOf {
     <A>(a: A): A;
     <A, B>(a: A, b: B): A | B;
@@ -9,7 +7,7 @@ interface AnyOf {
 
 declare const anyOf: AnyOf;
 
-const config: DetoxConfig = {
+const config: Detox.DetoxConfig = {
     testRunner: "nyc jest",
     runnerConfig: "e2e/config.js",
     specs: "e2e/*.test.js",

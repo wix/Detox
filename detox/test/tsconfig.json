@@ -8,9 +8,11 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["detox"]
+    "types": ["node", "detox"]
   },
   "files": [
     "detox.config.js",
