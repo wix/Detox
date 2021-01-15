@@ -24,7 +24,7 @@ describe('composeSessionConfig', () => {
   it('should generate a default config', async () => {
     expect(await compose()).toEqual({
       autoStart: true,
-      debugSynchronization: false,
+      debugSynchronization: 10000,
       server: expect.any(String),
       sessionId: expect.any(String),
     });
@@ -150,9 +150,9 @@ describe('composeSessionConfig', () => {
 
   describe('debugSynchronization', function () {
     describe('by default', () => {
-      it('should be false', async () => {
+      it('should be 10000ms', async () => {
         expect(await compose()).toMatchObject({
-          debugSynchronization: false,
+          debugSynchronization: 10000,
         });
       });
     });
@@ -167,12 +167,12 @@ describe('composeSessionConfig', () => {
 
     describe('when defined in global config', () => {
       beforeEach(() => {
-        detoxConfig.session = { debugSynchronization: 10000 };
+        detoxConfig.session = { debugSynchronization: 9999 };
       });
 
       it('should use that value', async () => {
         expect(await compose()).toMatchObject({
-          debugSynchronization: 10000,
+          debugSynchronization: 9999,
         });
       });
 
@@ -188,13 +188,24 @@ describe('composeSessionConfig', () => {
         });
 
         describe('and in CLI config', () => {
-          beforeEach(() => {
-            cliConfig.debugSynchronization = 3000;
+          it('should use that value if it is valid', async () => {
+            cliConfig.debugSynchronization = '0';
+            expect(await compose()).toMatchObject({
+              debugSynchronization: 0,
+            });
           });
 
-          it('should use that value', async () => {
+          it('should ignore that value if it is invalid', async () => {
+            cliConfig.debugSynchronization = 'true';
             expect(await compose()).toMatchObject({
-              debugSynchronization: 3000,
+              debugSynchronization: 20000,
+            });
+          });
+
+          it('should ignore that value if it is empty', async () => {
+            cliConfig.debugSynchronization = '';
+            expect(await compose()).toMatchObject({
+              debugSynchronization: 20000,
             });
           });
         });

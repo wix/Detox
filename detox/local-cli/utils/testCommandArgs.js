@@ -48,8 +48,12 @@ module.exports = {
     alias: 'debug-synchronization',
     group: 'Debugging:',
     coerce(value) {
-      if (value == null || value === false || value === 'false') {
+      if (value == null) {
         return undefined;
+      }
+
+      if (value === false || value === 'false') {
+        return 0;
       }
 
       if (value === true || value === 'true') {
@@ -59,8 +63,8 @@ module.exports = {
       return Number.isNaN(+value) ? value : +value;
     },
     describe:
-      'When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +
-      'The status will be printed if the action takes more than [value]ms to complete',
+      '[iOS Only] Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. ' +
+      'By default, the app status will be printed if the action takes more than 10s to complete.'
   },
   a: {
     alias: 'artifacts-location',
