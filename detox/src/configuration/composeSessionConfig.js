@@ -35,7 +35,7 @@ async function composeSessionConfig({ errorBuilder, cliConfig, detoxConfig, devi
     }
   }
 
-  if (cliConfig.debugSynchronization > 0) {
+  if (Number.parseInt(cliConfig.debugSynchronization, 10) >= 0) {
     session.debugSynchronization = +cliConfig.debugSynchronization;
   }
 
@@ -43,7 +43,7 @@ async function composeSessionConfig({ errorBuilder, cliConfig, detoxConfig, devi
     autoStart: !session.server,
     server: `ws://localhost:${await getPort()}`,
     sessionId: uuid.UUID(),
-    debugSynchronization: false,
+    debugSynchronization: 10000,
 
     ...session,
   };
