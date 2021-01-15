@@ -70,7 +70,9 @@ class DeviceRegistry {
   async disposeDevice(getDeviceHandle) {
     await this._lockfile.exclusively(async () => {
       const deviceId = await safeAsync(getDeviceHandle);
-      this._toggleDeviceStatus(deviceId, false);
+      if (deviceId) {
+        this._toggleDeviceStatus(deviceId, false);
+      }
     });
   }
 
