@@ -88,7 +88,7 @@ class Action : CustomStringConvertible {
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
 		
-		Kind.dragAndDrop: DragAndDrop.self,
+		Kind.dragAndDrop: DragAndDropAction.self,
 		
 		Kind.getAttributes: GetAttributesAction.self
 	]
@@ -542,25 +542,31 @@ class DragAndDropAction : Action {
 		case "toTheRight":
 			targetPositionOffset = CGPoint(x: 1, y: 0)
 			break;
-		case "toTheRight":
-			targetPositionOffset = CGPoint(x: 1, y: 0)
-			break;
 		case "center":
 			targetPositionOffset = CGPoint(x: 0, y: 0)
 			break;
 		default:
-			//Default to center
+			// Default to center
 			targetPositionOffset = CGPoint(x: 0, y: 0)
 			break;
 		}
 		
-		var speed = CGFloat(1.0)
-		if let speedDouble = params?[2] as? Double {
+		let initialHoldDuration : TimeInterval
+		if let duration = params?[2] as? Double {
+			initialHoldDuration = duration.toSeconds()
+		} else {
+			initialHoldDuration = 1.0
+		}
+		
+		var speed: CGFloat
+		if let speedDouble = params?[3] as? Double {
 			speed = CGFloat(speedDouble)
+		} else {
+			speed = CGFloat(1.0)
 		}
 		
 		
-		element.dragAndDrop(toTargetElement: targetElement, targetPositionOffset: targetPositionOffset, speed: speed)
+		element.dragAndDrop(toTargetElement: targetElement, targetPositionOffset: targetPositionOffset, initialHoldDuration: initialHoldDuration, speed: speed)
 		
 		return nil
 	}

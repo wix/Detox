@@ -42,6 +42,12 @@ typedef NS_ENUM(NSInteger, GREYSyntheticEventInjectionErrorCode) {
 + (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
 + (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration onTouchCallback:(nullable BOOL (^)(UITouchPhase))callback;
 
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration;
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration onTouchCallback:(nullable BOOL (^)(UITouchPhase))callback;
+
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration;
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration onTouchCallback:(nullable BOOL (^)(UITouchPhase))callback;
+
 /**
  *  Begins interaction with a new touch starting at a specified point within a specified
  *  window's coordinates.

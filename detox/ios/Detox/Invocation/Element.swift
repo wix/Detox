@@ -208,8 +208,8 @@ class Element : NSObject {
 		return rv
 	}
 	
-	func dragAndDrop(toTargetElement targetElement: Element, targetPositionOffset: CGPoint, speed: CGFloat) {
-		view.dtx_dragAndDrop(to: targetElement.view, targetPositionOffset: targetPositionOffset, speed: speed)
+	func dragAndDrop(toTargetElement targetElement: Element, targetPositionOffset: CGPoint, initialHoldDuration: TimeInterval, speed: CGFloat) {
+		view.dtx_dragAndDrop(to: targetElement.view, positionOffset: targetPositionOffset, duration: initialHoldDuration, speed: speed)
 	}
 	
 	@objc

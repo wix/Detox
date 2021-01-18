@@ -95,6 +95,54 @@
 	}
 }
 
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration
+{
+	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnFirstTouch:holdDuration onTouchCallback:nil];
+}
+
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration onTouchCallback:(BOOL (^)(UITouchPhase))callback
+{
+	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnFirstTouch:holdDuration onTouchCallback:callback];
+}
+
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration
+{
+	[self touchAlongMultiplePaths:touchPaths relativeToWindow:window holdDurationOnFirstTouch:holdDuration onTouchCallback:nil];
+}
+
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnFirstTouch:(NSTimeInterval)holdDuration onTouchCallback:(BOOL (^)(UITouchPhase))callback
+{
+	NSParameterAssert(touchPaths.count >= 1);
+	NSParameterAssert(holdDuration >= 0);
+	
+	NSUInteger firstTouchPathSize = [touchPaths[0] count];
+	DTXSyntheticEvents *eventGenerator = [[DTXSyntheticEvents alloc] initWithOnTouchCallback:callback];
+	
+	// Inject "begin" event for the first points of each path.
+	[eventGenerator dtx_beginTouchesAtPoints:[self dtx_objectsAtIndex:0 ofArrays:touchPaths] relativeToWindow:window immediateDelivery:NO];
+	
+	// If the paths have a single point, then just inject an "end" event with the delay being the
+	// provided duration
+	if(firstTouchPathSize == 1)
+	{
+		[eventGenerator dtx_endTouchesAtPoints:[self dtx_objectsAtIndex:firstTouchPathSize - 1 ofArrays:touchPaths] timeElapsedSinceLastTouchDelivery:holdDuration];
+	}
+	else
+	{
+		// Inject the first "continue touch" after holding duration at the same point the initial touch began
+		[eventGenerator dtx_continueTouchAtPoints:[self dtx_objectsAtIndex:0 ofArrays:touchPaths] afterTimeElapsedSinceLastTouchDelivery:holdDuration immediateDelivery:NO expendable:NO];
+		
+		// Inject "continue touch" events, starting from the second position on the touch
+		// path as it was already injected as a "begin touch" event.
+		for(NSUInteger i = 1; i < firstTouchPathSize; i++)
+		{
+			[eventGenerator dtx_continueTouchAtPoints:[self dtx_objectsAtIndex:i ofArrays:touchPaths] afterTimeElapsedSinceLastTouchDelivery:0 immediateDelivery:NO expendable:NO];
+		}
+		
+		[eventGenerator dtx_endTouchesAtPoints:[self dtx_objectsAtIndex:firstTouchPathSize - 1 ofArrays:touchPaths] timeElapsedSinceLastTouchDelivery:0];
+	}
+}
+
 - (void)beginTouchAtPoint:(CGPoint)point relativeToWindow:(UIWindow *)window immediateDelivery:(BOOL)immediate
 {
 	_lastInjectedTouchPoint = [NSValue valueWithCGPoint:point];

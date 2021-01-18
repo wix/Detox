@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity NS_SWIFT_NAME(dtx_swipe(withNormalizedOffset:velocity:));
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity normalizedStartingPoint:(CGPoint)normalizedStartingPoint NS_SWIFT_NAME(dtx_swipe(withNormalizedOffset:velocity:normalizedStartingPoint:));
 - (void)dtx_pinchWithScale:(CGFloat)scale velocity:(CGFloat)velocity angle:(CGFloat)angle;
-- (void)dtx_dragAndDrop:(NSObject *)targetElement targetPositionOffset:(CGPoint)positionOffset speed:(CGFloat)speed
-	NS_SWIFT_NAME(dtx_dragAndDrop(to:positionOffset:speed:));
+- (void)dtx_dragAndDrop:(NSObject *)targetElement targetPositionOffset:(CGPoint)positionOffset initialHoldDuration:(NSTimeInterval)initialHoldDuration speed:(CGFloat)speed
+	NS_SWIFT_NAME(dtx_dragAndDrop(to:positionOffset:duration:speed:));
 
 - (void)dtx_clearText;
 - (void)dtx_typeText:(NSString*)text;
