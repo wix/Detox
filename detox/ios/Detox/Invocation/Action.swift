@@ -51,6 +51,8 @@ class Action : CustomStringConvertible {
 		static let setColumnToValue = "setColumnToValue"
 		static let setDatePickerDate = "setDatePickerDate"
 		
+		static let dragAndDrop = "dragAndDrop"
+		
 		static let getAttributes = "getAttributes"
 	}
 	
@@ -85,6 +87,8 @@ class Action : CustomStringConvertible {
 		
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
+		
+		Kind.dragAndDrop: DragAndDrop.self,
 		
 		Kind.getAttributes: GetAttributesAction.self
 	]
@@ -516,6 +520,52 @@ class SetDatePickerAction : Action {
 		return nil
 	}
 }
+
+class DragAndDropAction : Action {
+	override func perform(on element: Element) -> [String: Any]? {
+		guard let targetElement = params?[0] as? Element else {
+			fatalError("Target element not provided")
+		}
+		
+		var targetPositionOffset : CGPoint
+		let positionFromTargetElementString = params![1] as! String
+		switch positionFromTargetElementString {
+		case "above":
+			targetPositionOffset = CGPoint(x: 0, y: -1)
+			break;
+		case "below":
+			targetPositionOffset = CGPoint(x: 0, y: 1)
+			break;
+		case "toTheLeft":
+			targetPositionOffset = CGPoint(x: -1, y: 0)
+			break;
+		case "toTheRight":
+			targetPositionOffset = CGPoint(x: 1, y: 0)
+			break;
+		case "toTheRight":
+			targetPositionOffset = CGPoint(x: 1, y: 0)
+			break;
+		case "center":
+			targetPositionOffset = CGPoint(x: 0, y: 0)
+			break;
+		default:
+			//Default to center
+			targetPositionOffset = CGPoint(x: 0, y: 0)
+			break;
+		}
+		
+		var speed = CGFloat(1.0)
+		if let speedDouble = params?[2] as? Double {
+			speed = CGFloat(speedDouble)
+		}
+		
+		
+		element.dragAndDrop(toTargetElement: targetElement, targetPositionOffset: targetPositionOffset, speed: speed)
+		
+		return nil
+	}
+}
+
 
 class GetAttributesAction : Action {
 	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {

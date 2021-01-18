@@ -254,6 +254,30 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 	_DTXApplyPinch(window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
 }
 
+- (void)dtx_dragAndDrop:(NSObject *)targetElement targetPositionOffset:(CGPoint)positionOffset speed:(CGFloat)speed
+{
+	NSParameterAssert(speed > 0.0);
+	
+	CGPoint startPoint = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
+	CGPoint targetPoint = targetElement.dtx_accessibilityActivationPointInViewCoordinateSpace;
+	CGPoint endPoint = CGPointMake(startPoint.x + positionOffset.x, targetPoint.y + positionOffset.y);
+	
+	UIView* dragView = self.dtx_view;
+	UIWindow* dragViewWindow = dragView.window;
+	CGPoint dragViewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:startPoint];
+	
+	UIView* targetView = targetElement.dtx_view;
+	UIWindow* targetViewWindow = targetView.window;
+	CGPoint targetViewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:endPoint];
+	
+	NSCAssert(dragViewWindow == targetViewWindow, @"The target view must be in the same window of the dragged view");
+	[dragView dtx_assertHittableAtPoint:dragViewPoint];
+	[targetView dtx_assertHittableAtPoint:targetViewPoint];
+	
+	CGPoint windowStartPoint = [dragViewWindow convertPoint:dragViewPoint fromView:dragView];
+	CGPoint windowEndPoint = [targetViewWindow convertPoint:targetViewPoint fromView:targetView];
+}
+
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
 {
 	id currentFirstResponder = view.window.firstResponder;

@@ -208,6 +208,10 @@ class Element : NSObject {
 		return rv
 	}
 	
+	func dragAndDrop(toTargetElement targetElement: Element, targetPositionOffset: CGPoint, speed: CGFloat) {
+		view.dtx_dragAndDrop(to: targetElement.view, targetPositionOffset: targetPositionOffset, speed: speed)
+	}
+	
 	@objc
 	var text: String? {
 		return view.value(forKey: "dtx_text") as? String
