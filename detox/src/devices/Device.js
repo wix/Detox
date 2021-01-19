@@ -5,17 +5,23 @@ const log = require('../utils/logger').child({ __filename });
 
 class Device {
   constructor({
+    appsConfig,
     behaviorConfig,
     deviceConfig,
     deviceDriver,
     emitter,
-    sessionConfig
+    sessionConfig,
   }) {
+    this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
+
+    this._currentApp = null;
+    this._deviceId = undefined;
     this._processes = {};
+
     this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
@@ -37,8 +43,27 @@ class Device {
     await this.deviceDriver.prepare();
 
     this._deviceId = await traceCall('acquireDevice', () =>
-      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name));
-    this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
+      this.deviceDriver.acquireFreeDevice(this._deviceConfig.matches));
+
+    const appAliases = Object.keys(this._appsConfig);
+    if (appAliases.length === 1) {
+      await this.selectApp(appAliases[0]);
+    }
+  }
+
+  async selectApp(appAliasOrConfig = '') {
+    const appConfig = typeof appAliasOrConfig === 'string'
+      ? this._appsConfig[appAliasOrConfig]
+      : appAliasOrConfig;
+
+    if (!appConfig) {
+      throw new Error('App not found');
+    }
+
+    this._currentApp = {
+      ...appConfig,
+      bundleId: appConfig.bundleId || await this.deviceDriver.getBundleIdFromBinary(appConfig.binaryPath),
+    };
   }
 
   async launchApp(params = {}, bundleId = this._bundleId) {
@@ -107,10 +132,15 @@ class Device {
   }
 
   async installApp(binaryPath, testBinaryPath) {
-    const _binaryPath = binaryPath || this._deviceConfig.binaryPath;
-    const _testBinaryPath = testBinaryPath || this._deviceConfig.testBinaryPath;
-    await traceCall('appInstall', () =>
-      this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath));
+    await traceCall('appInstall', () => {
+      const currentApp = this._getCurrentApp();
+
+      return this.deviceDriver.installApp(
+        this._deviceId,
+        binaryPath || currentApp.binaryPath,
+        testBinaryPath || currentApp.testBinaryPath
+      );
+    });
   }
 
   async uninstallApp(bundleId) {
@@ -120,7 +150,7 @@ class Device {
   }
 
   async installUtilBinaries() {
-    const paths = this._deviceConfig.utilBinaryPaths;
+    const paths = this._currentApp && this._currentApp.utilBinaryPaths;
     if (paths) {
       await traceCall('installUtilBinaries', () =>
         this.deviceDriver.installUtilBinaries(this._deviceId, paths));
@@ -214,6 +244,19 @@ class Device {
     await this.deviceDriver.resetStatusBar(this._deviceId);
   }
 
+  get _bundleId() {
+    return this._getCurrentApp().bundleId;
+  }
+
+  _getCurrentApp() {
+    if (!this._currentApp) {
+      // TODO: improve the error message
+      throw new Error('Please select the app!');
+    }
+
+    return this._currentApp;
+  }
+
   async _doLaunchApp(params, bundleId) {
     const deviceId = this._deviceId;
     const payloadParams = ['url', 'userNotification', 'userActivity'];
@@ -230,7 +273,7 @@ class Device {
     }
 
     const baseLaunchArgs = {
-      ...this._deviceConfig.launchArgs,
+      ...this._currentApp.launchArgs,
       ...params.launchArgs,
     };
 
@@ -313,9 +356,11 @@ class Device {
         paramsCounter += 1;
       }
     });
+
     if (paramsCounter > 1) {
       throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
     }
+
     return (paramsCounter === 1);
   }
 
@@ -337,8 +382,8 @@ class Device {
   }
 
   async _reinstallApp() {
-    await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-    await this.deviceDriver.installApp(this._deviceId, this._deviceConfig.binaryPath, this._deviceConfig.testBinaryPath);
+    await this.uninstallApp();
+    await this.installApp();
   }
 }
 

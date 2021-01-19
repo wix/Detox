@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const config = require('../configuration/configurations.mock').validOneDeviceAndSession.session;
+const config = require('../configuration/configurations.mock').validSession;
 
 describe('AsyncWebSocket', () => {
   let AsyncWebSocket;
