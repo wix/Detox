@@ -127,6 +127,7 @@ class example extends Component {
         </View>
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
+        {isIos && this.renderScreenButton('Drag And Drop', Screens.DragAndDropScreen)}
 
         {isAndroid && this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
