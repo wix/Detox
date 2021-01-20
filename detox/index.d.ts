@@ -1,4 +1,3 @@
-import { expect } from 'detox';
 // TypeScript definitions for Detox
 //
 // Original authors:
