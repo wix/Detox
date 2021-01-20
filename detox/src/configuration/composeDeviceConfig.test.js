@@ -2,7 +2,7 @@ const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 
 describe('composeDeviceConfig', () => {
   let composeDeviceConfig;
-  let configurationName, cliConfig, rawDeviceConfig;
+  let configurationName, cliConfig, localConfig;
   /** @type {DetoxConfigErrorBuilder} */
   let errorBuilder;
 
@@ -11,7 +11,7 @@ describe('composeDeviceConfig', () => {
     composeDeviceConfig = require('./composeDeviceConfig');
     cliConfig = {};
     configurationName = 'someConfig';
-    rawDeviceConfig = {
+    localConfig = {
       type: 'ios.simulator',
       device: {
         type: 'iPhone X'
@@ -22,51 +22,51 @@ describe('composeDeviceConfig', () => {
   const compose = () => composeDeviceConfig({
     configurationName,
     cliConfig,
-    rawDeviceConfig,
+    localConfig,
     errorBuilder,
   });
 
   describe('validation', () => {
     it('should throw if configuration is not defined', () => {
-      rawDeviceConfig = undefined;
+      localConfig = undefined;
       expect(compose).toThrowError(errorBuilder.missingConfigurationType());
     });
 
     it('should throw if configuration driver (type) is not defined', () => {
-      delete rawDeviceConfig.type;
+      delete localConfig.type;
       expect(compose).toThrowError(errorBuilder.missingConfigurationType());
     });
 
     it('should throw if device query is not defined', () => {
-      delete rawDeviceConfig.device;
+      delete localConfig.device;
       expect(compose).toThrowError(errorBuilder.missingDeviceProperty());
     });
 
     it('should throw if util-binary paths are malformed', () => {
-      rawDeviceConfig.utilBinaryPaths = 'valid/path/not/in/array';
+      localConfig.utilBinaryPaths = 'valid/path/not/in/array';
       expect(compose).toThrowError(errorBuilder.malformedUtilBinaryPaths());
     });
 
     it('should throw if app launch args is a string', () => {
-      rawDeviceConfig.launchArgs = '-detoxAppArgument NO';
+      localConfig.launchArgs = '-detoxAppArgument NO';
       expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgs());
     });
 
     it('should not throw if app launch args has an undefined property', () => {
-      rawDeviceConfig.launchArgs = { arg: undefined };
+      localConfig.launchArgs = { arg: undefined };
       expect(compose).not.toThrowError();
     });
 
     it('should throw if app launch args has a non-string property', () => {
-      rawDeviceConfig.launchArgs = { debugSomething: false };
+      localConfig.launchArgs = { debugSomething: false };
       expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgsProperty('debugSomething'));
     });
   });
 
   describe('if a device configuration has the old .name property', () => {
     beforeEach(() => {
-      rawDeviceConfig.name = rawDeviceConfig.device;
-      delete rawDeviceConfig.device;
+      localConfig.name = localConfig.device;
+      delete localConfig.device;
     });
 
     it('should rename it to .device', () => {
@@ -80,7 +80,7 @@ describe('composeDeviceConfig', () => {
 
   describe('if a device configuration has the new .device property', () => {
     beforeEach(() => {
-      rawDeviceConfig.device = 'iPhone SE';
+      localConfig.device = 'iPhone SE';
     });
 
     it('should be left intact', () => {
@@ -106,7 +106,7 @@ describe('composeDeviceConfig', () => {
 
   describe('if a device configuration has .launchArgs property', () => {
     beforeEach(() => {
-      rawDeviceConfig.launchArgs = {
+      localConfig.launchArgs = {
         arg1: 'value 1',
         arg2: 'value 2',
       };

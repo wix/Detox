@@ -1,30 +1,30 @@
 const _ = require('lodash');
 const parse = require('yargs/yargs').Parser;
 
-function validateType({ errorBuilder, rawDeviceConfig }) {
-  if (!rawDeviceConfig || !rawDeviceConfig.type) {
+function validateType({ errorBuilder, localConfig }) {
+  if (!localConfig || !localConfig.type) {
     throw errorBuilder.missingConfigurationType();
   }
 }
 
-function getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig }) {
-  const device = cliConfig.deviceName || rawDeviceConfig.device || rawDeviceConfig.name;
+function getValidatedDeviceName({ errorBuilder, localConfig, cliConfig }) {
+  const device = cliConfig.deviceName || localConfig.device || localConfig.name;
   if (_.isEmpty(device)) {
     throw errorBuilder.missingDeviceProperty();
   }
   return device;
 }
 
-function validateAppLaunchArgs({ errorBuilder, rawDeviceConfig }) {
-  if (!rawDeviceConfig.launchArgs) {
+function validateAppLaunchArgs({ errorBuilder, localConfig }) {
+  if (!localConfig.launchArgs) {
     return;
   }
 
-  if (!_.isObject(rawDeviceConfig.launchArgs)) {
+  if (!_.isObject(localConfig.launchArgs)) {
     throw errorBuilder.malformedAppLaunchArgs();
   }
 
-  const nonStringPropertyName = _.chain(rawDeviceConfig.launchArgs)
+  const nonStringPropertyName = _.chain(localConfig.launchArgs)
     .entries()
     .find(([key, value]) => value != null && !_.isString(value))
     .thru((entry) => entry ? entry[0] : null)
@@ -35,8 +35,8 @@ function validateAppLaunchArgs({ errorBuilder, rawDeviceConfig }) {
   }
 }
 
-function validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig }) {
-  if (rawDeviceConfig.utilBinaryPaths && !_.isArray(rawDeviceConfig.utilBinaryPaths)) {
+function validateUtilBinaryPaths({ errorBuilder, localConfig }) {
+  if (localConfig.utilBinaryPaths && !_.isArray(localConfig.utilBinaryPaths)) {
     throw errorBuilder.malformedUtilBinaryPaths();
   }
 }
@@ -59,23 +59,21 @@ function mergeAppLaunchArgsFromCLI(deviceConfig, cliConfig) {
 }
 
 /**
- *
  * @param {DetoxConfigErrorBuilder} errorBuilder
- * @param {*} rawDeviceConfig
+ * @param {Detox.DetoxConfiguration} localConfig
  * @param {*} cliConfig
- * @returns {*}
  */
-function composeDeviceConfig({ errorBuilder, rawDeviceConfig, cliConfig }) {
-  validateType({ errorBuilder, rawDeviceConfig });
-  validateAppLaunchArgs({ errorBuilder, rawDeviceConfig });
-  mergeAppLaunchArgsFromCLI(rawDeviceConfig, cliConfig);
+function composeDeviceConfig({ errorBuilder, localConfig, cliConfig }) {
+  validateType({ errorBuilder, localConfig });
+  validateAppLaunchArgs({ errorBuilder, localConfig });
+  mergeAppLaunchArgsFromCLI(localConfig, cliConfig);
 
-  rawDeviceConfig.device = getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig });
-  delete rawDeviceConfig.name;
+  localConfig.device = getValidatedDeviceName({ errorBuilder, localConfig, cliConfig });
+  delete localConfig.name;
 
 
-  validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig });
-  return rawDeviceConfig;
+  validateUtilBinaryPaths({ errorBuilder, localConfig });
+  return localConfig;
 }
 
 module.exports = composeDeviceConfig;

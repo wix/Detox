@@ -4,13 +4,13 @@ describe('selectConfiguration', () => {
   let selectConfiguration;
   /** @type {DetoxConfigErrorBuilder} */
   let errorBuilder;
-  let configLocation, detoxConfig, cliConfig;
+  let configLocation, globalConfig, cliConfig;
 
   beforeEach(() => {
     configLocation = '/etc/detox/config.js';
-    detoxConfig = {};
+    globalConfig = {};
     cliConfig = {};
-    errorBuilder = new DetoxConfigErrorBuilder().setDetoxConfig(detoxConfig);
+    errorBuilder = new DetoxConfigErrorBuilder().setDetoxConfig(globalConfig);
 
     selectConfiguration = require('./selectConfiguration');
   });
@@ -18,30 +18,30 @@ describe('selectConfiguration', () => {
   const select = () => selectConfiguration({
     configLocation,
     cliConfig,
-    detoxConfig,
+    globalConfig,
     errorBuilder,
   });
 
   it('should throw if there are no .configurations in Detox config', () => {
     configLocation = '';
-    delete detoxConfig.configurations;
+    delete globalConfig.configurations;
     expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
   });
 
   it('should throw if there is an empty .configurations object in Detox config and its location is unknown', () => {
     configLocation = '';
-    detoxConfig.configurations = {};
+    globalConfig.configurations = {};
     expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
   });
 
   it('should return the name of a single configuration', () => {
-    detoxConfig.configurations = { single: {} };
+    globalConfig.configurations = { single: {} };
     expect(select()).toBe('single');
   });
 
   it('should throw if a configuration with the specified name does not exist', () => {
-    detoxConfig.configurations = { single: {} };
-    detoxConfig.selectedConfiguration = 'double';
+    globalConfig.configurations = { single: {} };
+    globalConfig.selectedConfiguration = 'double';
 
     expect(select).toThrow(); // generating a correct error expectation in errorBuilder
 
@@ -52,27 +52,27 @@ describe('selectConfiguration', () => {
 
   it('should throw if there is more than 1 configuration, and no one is specified', () => {
     configLocation = '';
-    detoxConfig.configurations = { config1: {}, config2: {} };
+    globalConfig.configurations = { config1: {}, config2: {} };
     expect(select).toThrow(errorBuilder.cantChooseDeviceConfiguration());
   });
 
   describe('priority', () => {
     beforeEach(() => {
-      detoxConfig.configurations = {
+      globalConfig.configurations = {
         cli: {},
         config: {},
       };
     });
 
     it('should be given to CLI --configuration (first)', () => {
-      detoxConfig.selectedConfiguration = 'config';
+      globalConfig.selectedConfiguration = 'config';
       cliConfig.configuration = 'cli';
 
       expect(select()).toBe('cli');
     });
 
     it('should be given to config file value (second)', () => {
-      detoxConfig.selectedConfiguration = 'config';
+      globalConfig.selectedConfiguration = 'config';
 
       expect(select()).toBe('config');
     });
