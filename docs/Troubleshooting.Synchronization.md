@@ -42,11 +42,28 @@ When the automatic synchronization mechanism doesn't work, we have 2 potential p
 
 Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
 When an action/expectation takes a significant amount of time use this option to print device synchronization status.
-The status will be printed if the action takes more than [value] ms to complete
+The status will be printed if the action takes more than [value] (in ms) to complete
 
 ```
-detox test --debug-synchronization 200
+detox test --debug-synchronization 500
 ```
+Then, reproduce your issue, and you should see output similar to the following:
+
+```
+18:11:41 detox[15415] INFO:  [actions.js] The system is busy with the following tasks:
+18:11:41 
+18:11:41 Dispatch Queue
+18:11:41 ⏱ Queue: “Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)” with 1 work item
+18:11:41 
+18:11:41 Run Loop
+18:11:41 ⏱ “Main Run Loop”
+18:11:41 
+18:11:41 One-time Events
+18:11:41 ⏱ “Network Request” with object: “URL: “http://localhost:9001/delay/3000””
+```
+
+See [this document](https://github.com/wix/DetoxSync/blob/master/IdleStatusDocumentation.md) for documentation of the synchronization debut output.
+
 #### Lower-level Idling Resources Debug (iOS Only)
 
 If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:

@@ -8,30 +8,243 @@
 // * pera <https://github.com/santiagofm>
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
+// * Oren Zakay <https://github.com/OrenZak>
 
 declare global {
-    const device: Detox.Device;
-    const detox: Detox.Detox;
-    const element: Detox.Element;
-    const waitFor: Detox.WaitFor;
-    const expect: Detox.Expect<Detox.Expect<Promise<void>>>;
-    const by: Detox.Matchers;
+    const device: Detox.DetoxExportWrapper['device'];
+    const element: Detox.DetoxExportWrapper['element'];
+    const waitFor: Detox.DetoxExportWrapper['waitFor'];
+    const expect: Detox.DetoxExportWrapper['expect'];
+    const by: Detox.DetoxExportWrapper['by'];
+    const web: Detox.DetoxExportWrapper['web'];
     const detoxCircus: Detox.DetoxCircus;
-    const web: Detox.Web
+
+    namespace NodeJS {
+      interface Global {
+        device: Detox.DetoxExportWrapper['device'];
+        element: Detox.DetoxExportWrapper['element'];
+        waitFor: Detox.DetoxExportWrapper['waitFor'];
+        expect: Detox.DetoxExportWrapper['expect'];
+        by: Detox.DetoxExportWrapper['by'];
+        web: Detox.DetoxExportWrapper['web'];
+        detoxCircus: Detox.DetoxCircus;
+      }
+    }
 
     namespace Detox {
-        interface Detox {
+        // region DetoxConfig
+
+        interface DetoxConfig {
+            /**
+             * @example testRunner: 'jest'
+             * @example testRunner: 'mocha'
+             */
+            testRunner?: string;
+            /**
+             * @example runnerConfig: 'e2e/config.js'
+             */
+            runnerConfig?: string;
+            /**
+             * @example specs: 'detoxE2E'
+             */
+            specs?: string;
+            artifacts?: DetoxArtifactsConfig;
+            behavior?: DetoxBehaviorConfig;
+            session?: DetoxSessionConfig;
+            configurations: Record<string, DetoxConfiguration>;
+        }
+
+        interface DetoxArtifactsConfig {
+            rootDir?: string;
+            pathBuilder?: string;
+            plugins?: {
+                log?: 'none' | 'failing' | 'all' | DetoxLogArtifactsPluginConfig;
+                screenshot?: 'none' | 'manual' | 'failing' | 'all' | DetoxScreenshotArtifactsPluginConfig;
+                video?: 'none' | 'failing' | 'all' | DetoxVideoArtifactsPluginConfig;
+                instruments?: 'none' | 'all' | DetoxInstrumentsArtifactsPluginConfig;
+                timeline?: 'none' | 'all' | DetoxTimelineArtifactsPluginConfig;
+                uiHierarchy?: 'disabled' | 'enabled' | DetoxUIHierarchyArtifactsPluginConfig;
+
+                [pluginId: string]: unknown;
+            };
+        }
+
+        interface DetoxBehaviorConfig {
+            init?: {
+                /**
+                 * By default, Detox exports `device`, `expect`, `element`, `by` and `waitFor`
+                 * as global variables. If you want to control their initialization manually,
+                 * set this property to `false`.
+                 *
+                 * This is useful when during E2E tests you also need to run regular expectations
+                 * in Node.js. Jest's `expect` for instance, will not be overriden by Detox when
+                 * this option is used.
+                 */
+                exposeGlobals?: boolean;
+                /**
+                 * By default, `await detox.init()` will uninstall and install the app.
+                 * If you wish to reuse the existing app for a faster run, set the property to
+                 * `false`.
+                 */
+                reinstallApp?: boolean;
+            };
+            launchApp?: 'auto' | 'manual';
+            cleanup?: {
+                shutdownDevice?: boolean;
+            };
+        }
+
+        interface DetoxSessionConfig {
+            autoStart?: boolean;
+            debugSynchronization?: number;
+            server?: string;
+            sessionId?: string;
+        }
+
+        type DetoxDeviceConfig = DetoxBuiltInDeviceConfig | DetoxCustomDriverConfig;
+
+        type DetoxConfiguration = DetoxPlainConfiguration;
+
+        interface DetoxLogArtifactsPluginConfig {
+            enabled?: boolean;
+            keepOnlyFailedTestsArtifacts?: boolean;
+        }
+
+        interface DetoxScreenshotArtifactsPluginConfig {
+            enabled?: boolean;
+            keepOnlyFailedTestsArtifacts?: boolean;
+            shouldTakeAutomaticSnapshots?: boolean;
+            takeWhen?: {
+                testStart?: boolean;
+                testFailure?: boolean;
+                testDone?: boolean;
+                appNotReady?: boolean;
+            };
+        }
+
+        interface DetoxVideoArtifactsPluginConfig {
+            enabled?: boolean;
+            keepOnlyFailedTestsArtifacts?: boolean;
+            android?: Partial<{
+                size: [number, number];
+                bitRate: number;
+                timeLimit: number;
+                verbose: boolean;
+            }>;
+            simulator?: Partial<{
+                codec: string;
+            }>;
+        }
+
+        interface DetoxInstrumentsArtifactsPluginConfig {
+            enabled?: boolean;
+        }
+
+        interface DetoxUIHierarchyArtifactsPluginConfig {
+            enabled?: boolean;
+        }
+
+        interface DetoxTimelineArtifactsPluginConfig {
+            enabled?: boolean;
+        }
+
+        interface DetoxLooseIosAppConfig {
+            binaryPath: string;
+            build?: string;
+        }
+
+        interface DetoxLooseAndroidAppConfig {
+            binaryPath: string;
+            build?: string;
+            testBinaryPath?: string;
+            utilBinaryPaths?: string[];
+        }
+
+        type DetoxBuiltInDeviceConfig =
+          | DetoxIosSimulatorDriverConfig
+          | DetoxIosNoneDriverConfig
+          | DetoxAttachedAndroidDriverConfig
+          | DetoxAndroidEmulatorDriverConfig
+          | DetoxGenymotionCloudDriverConfig;
+
+        type DetoxPlainConfiguration = DetoxConfigurationOverrides & (
+          | (DetoxIosSimulatorDriverConfig & DetoxLooseIosAppConfig)
+          | (DetoxIosNoneDriverConfig & DetoxLooseIosAppConfig)
+          | (DetoxAttachedAndroidDriverConfig & DetoxLooseAndroidAppConfig)
+          | (DetoxAndroidEmulatorDriverConfig & DetoxLooseAndroidAppConfig)
+          | (DetoxGenymotionCloudDriverConfig & DetoxLooseAndroidAppConfig)
+          | (DetoxCustomDriverConfig)
+          );
+
+        interface DetoxIosSimulatorDriverConfig {
+            type: 'ios.simulator';
+            device: string | Partial<IosSimulatorQuery>;
+        }
+
+        interface DetoxIosNoneDriverConfig {
+            type: 'ios.none';
+            // TODO: check if we need it at all?
+            device?: string | Partial<IosSimulatorQuery>;
+        }
+
+        interface DetoxAttachedAndroidDriverConfig {
+            type: 'android.attached';
+            device: string | { adbName: string };
+        }
+
+        interface DetoxAndroidEmulatorDriverConfig {
+            type: 'android.emulator';
+            device: string | { avdName: string };
+        }
+
+        interface DetoxGenymotionCloudDriverConfig {
+            type: 'android.genycloud';
+            device: { recipeUUID: string; } | { recipeName: string; };
+        }
+
+        interface DetoxCustomDriverConfig {
+            type: string;
+            [prop: string]: unknown;
+        }
+
+        interface IosSimulatorQuery {
+            id: string;
+            type: string;
+            name: string;
+            os: string;
+        }
+
+        type DetoxKnownDeviceType = DetoxBuiltInDeviceConfig['type'];
+
+        type DetoxConfigurationOverrides = {
+            artifacts?: false | DetoxArtifactsConfig;
+            behavior?: DetoxBehaviorConfig;
+            session?: DetoxSessionConfig;
+        };
+
+        // endregion DetoxConfig
+
+        // Detox exports all methods from detox global and all of the global constants.
+        interface DetoxInstance {
+            device: Device;
+            element: Element;
+            waitFor: WaitFor;
+            expect: Expect<Expect<Promise<void>>>;
+            by: Matchers;
+            web: Web;
+        }
+
+        interface DetoxExportWrapper extends DetoxInstance {
             /**
              * The setup phase happens inside detox.init(). This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator
              *
              * @param configOverride - this object is deep-merged with the selected Detox configuration from .detoxrc
              * @example
-             * const config = require('../package.json').detox;
-             * before(async () => {
-             *      await detox.init(config);
+             * beforeAll(async () => {
+             *   await detox.init();
              * });
              */
-            init(configOverride?: any, options?: DetoxInitOptions): Promise<void>;
+            init(configOverride?: Partial<DetoxConfig>, options?: DetoxInitOptions): Promise<void>;
             beforeEach(...args: any[]): Promise<void>;
             afterEach(...args: any[]): Promise<void>;
             /**
@@ -46,14 +259,23 @@ declare global {
             cleanup(): Promise<void>;
         }
 
-        // Detox exports all methods from detox global and all of the global constants.
-        interface DetoxExport extends Detox {
-            device: Device;
-            element: Element;
-            waitFor: WaitFor;
-            expect: Expect<Expect<Promise<void>>>;
-            by: Matchers;
-            web: Web;
+        interface DetoxInitOptions {
+            /**
+             * By default, Detox exports `device`, `expect`, `element`, `by` and `waitFor`
+             * as global variables. If you want to control their initialization manually,
+             * set this property to `false`.
+             *
+             * This is useful when during E2E tests you also need to run regular expectations
+             * in Node.js. Jest's `expect` for instance, will not be overriden by Detox when
+             * this option is used.
+             */
+            initGlobals?: boolean;
+            /**
+             * By default, `await detox.init()` will uninstall and install the app.
+             * If you wish to reuse the existing app for a faster run, set the property to
+             * `false`.
+             */
+            reuse?: boolean;
         }
 
         interface Device {
@@ -83,7 +305,7 @@ declare global {
              * // Mock opening the app from URL to test your app's deep link handling mechanism.
              * await device.launchApp({url: url});
              */
-            launchApp(config?: DeviceLanchAppConfig): Promise<void>;
+            launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
             /**
              * Terminate the app
              *
@@ -291,6 +513,7 @@ declare global {
              */
             and(by: Matchers): Matchers;
         }
+
         interface Expect<R> {
             (element: Element): Expect<Promise<void>>;
             /**
@@ -342,6 +565,7 @@ declare global {
              */
             toHaveValue(value: any): R;
         }
+
         interface WaitFor {
             /**
              * This API polls using the given expectation continuously until the expectation is met. Use manual synchronization with waitFor only as a last resort.
@@ -360,6 +584,7 @@ declare global {
              */
             whileElement(by: Matchers): DetoxAny;
         }
+
         interface Actions<R> {
             /**
              * Simulate tap on an element
@@ -418,10 +643,10 @@ declare global {
              * @example await element(by.id('scrollView')).scroll(100, 'up');
              */
             scroll(
-                pixels: number,
-                direction: Direction,
-                startPositionX?: number,
-                startPositionY?: number,
+              pixels: number,
+              direction: Direction,
+              startPositionX?: number,
+              startPositionY?: number,
             ): Promise<Actions<R>>;
             /**
              * Scroll to edge.
@@ -475,26 +700,14 @@ declare global {
         }
 
         type Direction = 'left' | 'right' | 'top' | 'bottom' | 'up' | 'down';
+
         type Orientation = 'portrait' | 'landscape';
+
         type Speed = 'fast' | 'slow';
+
         interface LanguageAndLocale {
             language?: string;
             locale?: string;
-        }
-        interface DetoxInitOptions {
-            /**
-             * Detox exports device, expect, element, by and waitFor as globals by default, if you want to control their initialization manually, set init detox with initGlobals set to false.
-             * This is useful when during E2E tests you also need to run regular expectations in node. jest Expect for instance, will not be overriden by Detox when this option is used.
-             */
-            initGlobals?: boolean;
-            /**
-             * By default await detox.init(config); will launch the installed app. If you wish to control when your app is launched, add {launchApp: false} param to your init.
-             */
-            launchApp?: boolean;
-            /**
-             * By default await detox.init(config); will uninstall and install the app. If you wish to reuse the existing app for a faster run, add {reuse: true} param to your init.
-             */
-            reuse?: boolean;
         }
 
         /**
@@ -535,7 +748,7 @@ declare global {
         type NotificationsPermission = PermissionState;
         type FaceIDPermission = PermissionState;
 
-        interface DeviceLanchAppConfig {
+        interface DeviceLaunchAppConfig {
             /**
              * Restart the app
              * Terminate the app and launch it again. If set to false, the simulator will try to bring app from background, if the app isn't running, it will launch a new instance. default is false
@@ -653,56 +866,56 @@ declare global {
              * @param id
              * @example webview.element(web.by.id('testingh1'))
              */
-            id(id: string): void;
+            id(id: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's className
              * @param className
              * @example webview.element(web.by.className('a'))
              */
-            className(className: string): void;
+            className(className: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's css selector
              * @param cssSelector
              * @example webview.element(web.by.cssSelector('#cssSelector'))
              */
-            cssSelector(cssSelector: string): void;
+            cssSelector(cssSelector: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's name prop
              * @param name
              * @example webview.element(web.by.name('sec_input'))
              */
-            name(name: string): void;
+            name(name: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's xPath
              * @param xpath
              * @example webview.element(web.by.xpath('//*[@id="testingh1-1"]'))
              */
-            xpath(xpath: string): void;
+            xpath(xpath: string): WebMatchers;
 
             /**
              * Find an <a> element on the DOM tree by it's link text (href content)
              * @param linkText
              * @example webview.element(web.by.linkText('disney.com'))
              */
-            linkText(linkText: string): void;
+            linkText(linkText: string): WebMatchers;
 
             /**
              * Find an <a> element on the DOM tree by it's partial link text (href content)
              * @param partialLinkText
              * @example webview.element(web.by.partialLinkText('disney'))
              */
-            partialLinkText(partialLinkText: string): void;
+            partialLinkText(partialLinkText: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's tag
              * @param tag
              * @example webview.element(web.by.tag('mark'))
              */
-            tag(tag: string): void;
+            tag(tag: string): WebMatchers;
         }
 
         interface WebElement {
@@ -776,10 +989,7 @@ declare global {
             getTitle(): Promise<string>;
         }
     }
-
-
 }
 
-declare const detoxExport: Detox.DetoxExport;
-
-export = detoxExport;
+declare const detox: Detox.DetoxExportWrapper;
+export = detox;

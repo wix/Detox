@@ -1,5 +1,5 @@
 interface DetoxMochaAdapter {
-    detox: Detox.Detox;
+    detox: Detox.DetoxExportWrapper;
     beforeEach: (context: any) => Promise<void>;
     afterEach: (context: any) => Promise<void>;
 }

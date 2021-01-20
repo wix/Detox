@@ -224,6 +224,10 @@ describe('DeviceRegistry', () => {
       await expectNotIncludedInReadDevicesList(deviceHandleAsClassInstance);
     });
 
+    it('should not fail when there were no actual device to dispose', async () => {
+      await expect(disposeDevice(undefined)).resolves.not.toThrowError();
+    });
+
     describe('.reset() method', () => {
       it('should create a lock file with an empty array if it does not exist', async () => {
         expect(await fs.exists(lockfilePath)).toBe(false);

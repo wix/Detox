@@ -117,14 +117,14 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--cleanup')
     });
 
-    test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as CLI argument', async (__debug_synchronization) => {
-      await run(`${__debug_synchronization} 5000`);
-      expect(cliCall().command).toContain('--debug-synchronization 5000')
-    });
-
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should have default value = 3000', async (__debug_synchronization) => {
       await run(`${__debug_synchronization}`);
       expect(cliCall().command).toContain('--debug-synchronization 3000')
+    });
+
+    test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as 0 when given false', async (__debug_synchronization) => {
+      await run(`${__debug_synchronization} false`);
+      expect(cliCall().command).toContain('--debug-synchronization 0')
     });
 
     test.each([['-a'], ['--artifacts-location']])('%s <value> should be passed as CLI argument', async (__artifacts_location) => {
@@ -400,6 +400,11 @@ describe('CLI', () => {
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as environment variable', async (__debug_synchronization) => {
       await run(`${__debug_synchronization} 5000`);
       expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEBUG_SYNCHRONIZATION: 5000 }));
+    });
+
+    test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as 0 when given false', async (__debug_synchronization) => {
+      await run(`${__debug_synchronization} false`);
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEBUG_SYNCHRONIZATION: 0 }));
     });
 
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should have default value = 3000', async (__debug_synchronization) => {

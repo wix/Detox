@@ -37,5 +37,9 @@ describe("Test", () => {
             .toBeVisible()
             .whileElement(by.id("ScrollView630"))
             .scroll(50, "down");
+
+        await web.expect(
+            web.getWebView(by.id("webview")).element(web.by.cssSelector("#cssSel"), 2)
+            ).toExist();
     });
 });
