@@ -76,6 +76,10 @@ class DetoxConfigErrorBuilder {
     });
   }
 
+  missingDeviceType() {
+    return new Error('TODO - missingDeviceType');
+  }
+
   missingConfigurationType() {
     return new DetoxConfigError({
       message:
@@ -114,6 +118,18 @@ class DetoxConfigErrorBuilder {
     });
   }
 
+  cantFindConfiguration() {
+    return new Error('TODO - cantFindConfiguration');
+  }
+
+  cantFindDeviceConfig() {
+    return new Error('TODO - cantFindDeviceConfig');
+  }
+
+  cantFindAppConfig() {
+    return new Error('TODO - cantFindAppConfig');
+  }
+
   missingDeviceProperty() {
     return new DetoxConfigError({
       message: `Missing or empty "device" property inside detox.configurations["${this.configurationName}"].\n` +
@@ -122,6 +138,10 @@ class DetoxConfigErrorBuilder {
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 2 },
     });
+  }
+
+  missingDeviceMatcherProperties() {
+    return new Error('TODO - missingDeviceMatcherProperties');
   }
 
   invalidServerProperty() {

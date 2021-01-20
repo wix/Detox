@@ -51,6 +51,10 @@ async function composeDetoxConfig({
 
   const localConfig = configurations[configurationName];
 
+  if (_.isEmpty(localConfig)) {
+    throw errorBuilder.cantFindConfiguration();
+  }
+
   const deviceConfig = composeDeviceConfig({
     errorBuilder,
     globalConfig,

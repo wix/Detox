@@ -43,7 +43,7 @@ class Device {
     await this.deviceDriver.prepare();
 
     this._deviceId = await traceCall('acquireDevice', () =>
-      this.deviceDriver.acquireFreeDevice(this._deviceConfig.matches));
+      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device));
 
     const appAliases = Object.keys(this._appsConfig);
     if (appAliases.length === 1) {

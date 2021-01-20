@@ -215,7 +215,7 @@ declare global {
 
         interface DetoxGenymotionCloudDriverConfig {
             type: 'android.genycloud';
-            device: { recipeUUID: string; } | { recipeName: string; };
+            device: string | { recipeUUID: string; } | { recipeName: string; };
         }
 
         interface DetoxCustomDriverConfig {
