@@ -50,6 +50,7 @@ declare global {
             session?: DetoxSessionConfig;
             apps?: Record<string, DetoxAppConfig>;
             devices?: Record<string, DetoxDeviceConfig>;
+            selectedConfiguration?: string;
             configurations: Record<string, DetoxConfiguration>;
         }
 
@@ -156,6 +157,7 @@ declare global {
         interface DetoxLooseIosAppConfig {
             binaryPath: string;
             build?: string;
+            launchArgs?: Record<string, string | null | undefined>;
         }
 
         interface DetoxAndroidAppConfig extends DetoxLooseIosAppConfig {
@@ -167,6 +169,7 @@ declare global {
             build?: string;
             testBinaryPath?: string;
             utilBinaryPaths?: string[];
+            launchArgs?: Record<string, string | null | undefined>;
         }
 
         type DetoxBuiltInDeviceConfig =
