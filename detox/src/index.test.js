@@ -54,6 +54,7 @@ describe('index (regular)', () => {
       ['a',  'function', 'element'],
       ['a',  'function', 'expect'],
       ['a',  'function', 'waitFor'],
+      ['an',  'object',   'web'],
     ])('should export %s %s called .%s', (_1, type, name) => {
       expect(typeof detox[name]).toBe(type);
     });

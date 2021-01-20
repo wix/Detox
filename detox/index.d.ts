@@ -1,3 +1,4 @@
+import { expect } from 'detox';
 // TypeScript definitions for Detox
 //
 // Original authors:
@@ -17,6 +18,7 @@ declare global {
     const expect: Detox.Expect<Detox.Expect<Promise<void>>>;
     const by: Detox.Matchers;
     const detoxCircus: Detox.DetoxCircus;
+    const web: Detox.Web
 
     namespace Detox {
         interface Detox {
@@ -52,6 +54,7 @@ declare global {
             waitFor: WaitFor;
             expect: Expect<Expect<Promise<void>>>;
             by: Matchers;
+            web: Web;
         }
 
         interface Device {
@@ -591,7 +594,191 @@ declare global {
                 addEventsListener(listener: CircusTestEventListenerBase): void
             };
         }
+
+        interface Web {
+            /**
+             * Gets the webview element as a testing element.
+             * @param matcher a simple view matcher for the webview element in th UI hierarchy.
+             * If there is only ONE webview element in the UI hierarchy, its NOT a must to supply it.
+             * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
+             */
+            getWebView(matcher?: Matchers): WebViewElement;
+
+            expect: WebExpect<Promise<void>>;
+            by: WebMatchers;
+        }
+
+        interface WebViewElement {
+            element(webMatcher: WebMatchers, index?: number): WebElement;
+        }
+
+        interface WebExpect<R> {
+            (webElement: WebElement): WebExpect<R>;
+
+            /**
+             * Negate the expectation.
+             * @example await web.expect(webview.element(web.by.id('UniqueId205'))).not.toExist();
+             */
+            not: WebExpect<R>;
+
+            /**
+             * Expect the element content to have the `text` supplied
+             * @param text expected to be on the element content
+             * @example await web.expect(webview.element(web.by.id('UniqueId205'))).toHaveText('ExactText');
+             */
+            toHaveText(text: string): R
+
+            /**
+             * Expect the element content to not have the `text` supplied
+             * @param text not expected to be on the element content
+             * @example await web.expect(webview.element(web.by.id('UniqueId205'))).toNotHaveText('RandomFooText');
+             */
+            toNotHaveText(text: string): R
+
+            /**
+             * Expect the view to exist in the webview DOM tree.
+             * @example await web.expect(webview.element(web.by.id('UniqueId205'))).toExist();
+             */
+            toExist(): R;
+
+            /**
+             * Expect the view to not exist in the webview DOM tree.
+             * @example await web.expect(webview.element(web.by.id('RandomJunk959'))).toNotExist();
+             */
+            toNotExist(): R;
+        }
+
+        interface WebMatchers {
+            /**
+             * Find an element on the DOM tree by it's id
+             * @param id
+             * @example webview.element(web.by.id('testingh1'))
+             */
+            id(id: string): void;
+
+            /**
+             * Find an element on the DOM tree by it's className
+             * @param className
+             * @example webview.element(web.by.className('a'))
+             */
+            className(className: string): void;
+
+            /**
+             * Find an element on the DOM tree by it's css selector
+             * @param cssSelector
+             * @example webview.element(web.by.cssSelector('#cssSelector'))
+             */
+            cssSelector(cssSelector: string): void;
+
+            /**
+             * Find an element on the DOM tree by it's name prop
+             * @param name
+             * @example webview.element(web.by.name('sec_input'))
+             */
+            name(name: string): void;
+
+            /**
+             * Find an element on the DOM tree by it's xPath
+             * @param xpath
+             * @example webview.element(web.by.xpath('//*[@id="testingh1-1"]'))
+             */
+            xpath(xpath: string): void;
+
+            /**
+             * Find an <a> element on the DOM tree by it's link text (href content)
+             * @param linkText
+             * @example webview.element(web.by.linkText('disney.com'))
+             */
+            linkText(linkText: string): void;
+
+            /**
+             * Find an <a> element on the DOM tree by it's partial link text (href content)
+             * @param partialLinkText
+             * @example webview.element(web.by.partialLinkText('disney'))
+             */
+            partialLinkText(partialLinkText: string): void;
+
+            /**
+             * Find an element on the DOM tree by it's tag
+             * @param tag
+             * @example webview.element(web.by.tag('mark'))
+             */
+            tag(tag: string): void;
+        }
+
+        interface WebElement {
+            tap(): Promise<void>
+
+            /**
+             * @param text to type
+             * @param isContentEditable whether its a ContentEditable element, default is false.
+             */
+            typeText(text: string, isContentEditable: boolean): Promise<void>
+
+            /**
+             * At the moment not working on content-editable
+             * @param text to replace with the old content.
+             */
+            replaceText(text: string): Promise<void>
+
+            /**
+             * At the moment not working on content-editable
+             */
+            clearText(): Promise<void>
+
+            /**
+             * scrolling to the view, the element top position will be at the top of the screen.
+             */
+            scrollToView(): Promise<void>
+
+            /**
+             * Gets the input content
+             */
+            getText(): Promise<string>
+
+            /**
+             * Calls the focus function on the element
+             */
+            focus(): Promise<void>
+
+            /**
+             * Selects all the input content, works on ContentEditable at the moment.
+             */
+            selectAllText(): Promise<void>
+
+            /**
+             * Moves the input cursor / caret to the end of the content, works on ContentEditable at the moment.
+             */
+            moveCursorToEnd(): Promise<void>
+
+            /**
+             * Running a script on the element
+             * @param script a method that accept the element as its first arg
+             * @example function foo(element) { console.log(element); }
+             */
+            runScript(script: string): Promise<any>
+
+            /**
+             * Running a script on the element that accept args
+             * @param script a method that accept few args, and the element as the last arg.
+             * @param args a list of args to pass to the script
+             * @example function foo(a, b, c, element) { console.log(`${a}, ${b}, ${c}, ${element}`)}
+             */
+            runScriptWithArgs(script: string, args: any[]): Promise<any>;
+
+            /**
+             * Gets the current page url
+             */
+            getCurrentUrl(): Promise<string>;
+
+            /**
+             * Gets the current page title
+             */
+            getTitle(): Promise<string>;
+        }
     }
+
+
 }
 
 declare const detoxExport: Detox.DetoxExport;
