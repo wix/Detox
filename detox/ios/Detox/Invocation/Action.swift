@@ -50,9 +50,7 @@ class Action : CustomStringConvertible {
 		
 		static let setColumnToValue = "setColumnToValue"
 		static let setDatePickerDate = "setDatePickerDate"
-		
-		static let dragAndDrop = "dragAndDrop"
-		
+				
 		static let getAttributes = "getAttributes"
 	}
 	
@@ -87,9 +85,7 @@ class Action : CustomStringConvertible {
 		
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
-		
-		Kind.dragAndDrop: DragAndDropAction.self,
-		
+				
 		Kind.getAttributes: GetAttributesAction.self
 	]
 
@@ -170,7 +166,47 @@ class LongPressAction : Action {
 			duration = 1.0
 		}
 		
-		element.longPress(duration: duration)
+		if (params == nil || params!.count <= 1) {
+			// Regular long press
+			element.longPress(duration: duration)
+			return nil
+		}
+				
+		guard let normalizedPositionX = params?[1] as? Double, let normalizedPositionY = params?[2] as? Double else {
+			fatalError("Unknown normalized starting point")
+		}
+		let normalizedStartingPoint = CGPoint(x: normalizedPositionX, y: normalizedPositionY)
+		
+		guard let targetElement = params?[3] as? Element else {
+			fatalError("Unknown target element")
+		}
+		
+		guard let normalizedTargetPositionX = params?[4] as? Double, let normalizedTargetPositionY = params?[5] as? Double else {
+			fatalError("Unknown normalized target point")
+		}
+		let normalizedTargetingPoint = CGPoint(x: normalizedTargetPositionX, y: normalizedTargetPositionY)
+		
+		var speed = CGFloat(2.0)
+		if let speedString = params?[6] as? String {
+			switch speedString {
+			case "slow":
+				speed = 0.5
+				break;
+			case "fast":
+				break
+			default:
+				fatalError("Unknown speed")
+			}
+		}
+		
+		let endDuration : TimeInterval
+		if let param = params?.first as? Double {
+			endDuration = param.toSeconds()
+		} else {
+			endDuration = 1.0
+		}
+		
+		element.longPress(at: normalizedStartingPoint, duration: duration, dragToElement: targetElement, normalizedTargetPoint: normalizedTargetingPoint, speed: speed, holdForDuration: endDuration)
 		
 		return nil
 	}
@@ -520,58 +556,6 @@ class SetDatePickerAction : Action {
 		return nil
 	}
 }
-
-class DragAndDropAction : Action {
-	override func perform(on element: Element) -> [String: Any]? {
-		guard let targetElement = params?[0] as? Element else {
-			fatalError("Target element not provided")
-		}
-		
-		var targetPositionOffset : CGPoint
-		let positionFromTargetElementString = params![1] as! String
-		switch positionFromTargetElementString {
-		case "above":
-			targetPositionOffset = CGPoint(x: 0, y: -1)
-			break;
-		case "below":
-			targetPositionOffset = CGPoint(x: 0, y: 1)
-			break;
-		case "toTheLeft":
-			targetPositionOffset = CGPoint(x: -1, y: 0)
-			break;
-		case "toTheRight":
-			targetPositionOffset = CGPoint(x: 1, y: 0)
-			break;
-		case "center":
-			targetPositionOffset = CGPoint(x: 0, y: 0)
-			break;
-		default:
-			// Default to center
-			targetPositionOffset = CGPoint(x: 0, y: 0)
-			break;
-		}
-		
-		let initialHoldDuration : TimeInterval
-		if let duration = params?[2] as? Double {
-			initialHoldDuration = duration.toSeconds()
-		} else {
-			initialHoldDuration = 1.0
-		}
-		
-		var speed: CGFloat
-		if let speedDouble = params?[3] as? Double {
-			speed = CGFloat(speedDouble)
-		} else {
-			speed = CGFloat(1.0)
-		}
-		
-		
-		element.dragAndDrop(toTargetElement: targetElement, targetPositionOffset: targetPositionOffset, initialHoldDuration: initialHoldDuration, speed: speed)
-		
-		return nil
-	}
-}
-
 
 class GetAttributesAction : Action {
 	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {

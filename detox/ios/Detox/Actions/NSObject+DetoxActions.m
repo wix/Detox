@@ -47,7 +47,7 @@
 	CGPoint windowPoint = [window convertPoint:viewPoint fromView:view];
 	
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
-		[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnLastTouch:0.0];
+		[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:0.0];
 	}
 }
 
@@ -71,7 +71,62 @@
 	[view dtx_assertHittableAtPoint:viewPoint];
 
 	CGPoint windowPoint = [window convertPoint:viewPoint fromView:view];
-	[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnLastTouch:duration];
+	[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:duration];
+}
+
+- (void)dtx_longPressAtPoint:(CGPoint)normalizedPoint duration:(NSTimeInterval)duration thenDragToElement:(NSObject*)target normalizedTargetPoint:(CGPoint)normalizedTargetPoint withSpeed:(CGFloat)speed thenHoldForDuration:(NSTimeInterval)lastHoldDuration
+{
+	CGPoint calcNormalizedPoint = DTXCalcNormalizedPoint(normalizedPoint, self);
+	CGPoint calcNormalizedTargetPoint = DTXCalcNormalizedPoint(normalizedTargetPoint, self);
+	
+	[self.dtx_view dtx_assertHittableAtPoint:[self.dtx_view.coordinateSpace convertPoint:calcNormalizedPoint fromCoordinateSpace:self.dtx_view.window.screen.coordinateSpace]];
+	[target.dtx_view dtx_assertHittableAtPoint:[target.dtx_view.coordinateSpace convertPoint:calcNormalizedTargetPoint fromCoordinateSpace:target.dtx_view.window.screen.coordinateSpace]];
+	
+	// Converting end point to the window coordinate space of the view we are going to drag
+	// Setting the startPoint for better code readbility
+	CGPoint startPoint = calcNormalizedPoint;
+	CGPoint endPoint = [self.dtx_view.window.coordinateSpace convertPoint:calcNormalizedTargetPoint fromCoordinateSpace:target.dtx_view.window.screen.coordinateSpace];
+	
+	NSMutableArray<NSValue*>* points = [NSMutableArray new];
+	
+	// Add start point
+	[points addObject:@(startPoint)];
+	
+	// Find number of points appropriate for the speed
+	CGFloat xDiff = endPoint.x - startPoint.x;
+	CGFloat yDiff = endPoint.y - startPoint.y;
+	NSInteger numOfPoints = lround(fmax(fabs(xDiff) / speed, fabs(yDiff) / speed));
+	
+	// Generate points in between
+	CGFloat xDiffDelta = xDiff / numOfPoints;
+	CGFloat yDiffDelta = yDiff / numOfPoints;
+	for (NSUInteger idx = 1; idx < numOfPoints; idx++) {
+		CGPoint point = CGPointMake(startPoint.x + idx * xDiffDelta, startPoint.y + idx * yDiffDelta);
+		[points addObject:@(point)];
+	}
+	
+	// Add end point
+	[points addObject:@(endPoint)];
+	
+	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:self.dtx_view.window holdDurationOnFirstTouch:duration holdDurationOnLastTouch:lastHoldDuration];
+}
+
+static CGPoint DTXCalcNormalizedPoint(CGPoint normalizedPoint, NSObject* element)
+{
+	UIWindow* window = element.dtx_view.window;
+	UIView* view = element.dtx_view;
+	
+	CGRect safeBounds = element.dtx_safeAreaBounds;
+	CGRect safeBoundsInScreenSpace = [window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:view.coordinateSpace];
+	
+	CGPoint activationPoint = element.dtx_accessibilityActivationPointInViewCoordinateSpace;
+	CGPoint windowConvertedActivationPoint = [window.coordinateSpace convertPoint:activationPoint fromCoordinateSpace:view.coordinateSpace]
+	
+	CGFloat calcX = !isnan(normalizedPoint.x) ? CGRectGetMinX(safeBoundsInScreenSpace) + CGRectGetWidth(safeBoundsInScreenSpace) * normalizedPoint.x : windowConvertedActivationPoint.x;
+	
+	CGFloat calcY = !isnan(normalizedPoint.y) ? CGRectGetMinY(safeBoundsInScreenSpace) + CGRectGetHeight(safeBoundsInScreenSpace) * normalizedPoint.y : windowConvertedActivationPoint.y;
+	
+	return CGPointMake(calcX, calcY);
 }
 
 static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
@@ -88,7 +143,7 @@ static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoin
 		[points addObject:@(CGPointMake(x, y))];
 	}
 	
-	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
+	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:0.0];
 }
 
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
@@ -165,7 +220,7 @@ static void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoi
 		[points2 addObject:@(CGPointMake(x, y))];
 	}
 	
-	[DTXSyntheticEvents touchAlongMultiplePaths:@[points1, points2] relativeToWindow:window holdDurationOnLastTouch:0.0];
+	[DTXSyntheticEvents touchAlongMultiplePaths:@[points1, points2] relativeToWindow:window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:0.0];
 }
 
 static void DTXCalcPinchStartEndPoints(CGRect bounds, CGFloat pixelsScale, CGFloat angle, CGPoint* startPoint1, CGPoint* endPoint1, CGPoint* startPoint2, CGPoint* endPoint2)
@@ -304,7 +359,7 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 	// Add end point
 	[points addObject:@(endPoint)];
 	
-	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnFirstTouch:duration];
+	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnFirstTouch:duration holdDurationOnLastTouch:0.0];
 }
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
 {

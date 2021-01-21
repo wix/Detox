@@ -18,11 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dtx_longPressAtAccessibilityActivationPoint;
 - (void)dtx_longPressAtAccessibilityActivationPointForDuration:(NSTimeInterval)duration;
 - (void)dtx_longPressAtPoint:(CGPoint)point duration:(NSTimeInterval)duration NS_SWIFT_NAME(dtx_longPress(at:duration:));
+- (void)dtx_longPressAtPoint:(CGPoint)normalizedPoint duration:(NSTimeInterval)duration thenDragToElement:(NSObject*)target normalizedTargetPoint:(CGPoint)normalizedTargetPoint withSpeed:(CGFloat)speed thenHoldForDuration:(NSTimeInterval)lastHoldDuration
+	NS_SWIFT_NAME(dtx_longPress(at:duration:target:normalizedTargetPoint:speed:lastHoldDuration:));
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity NS_SWIFT_NAME(dtx_swipe(withNormalizedOffset:velocity:));
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity normalizedStartingPoint:(CGPoint)normalizedStartingPoint NS_SWIFT_NAME(dtx_swipe(withNormalizedOffset:velocity:normalizedStartingPoint:));
 - (void)dtx_pinchWithScale:(CGFloat)scale velocity:(CGFloat)velocity angle:(CGFloat)angle;
-- (void)dtx_dragAndDrop:(NSObject *)targetElement targetPositionOffset:(CGPoint)positionOffset initialHoldDuration:(NSTimeInterval)initialHoldDuration speed:(CGFloat)speed
-	NS_SWIFT_NAME(dtx_dragAndDrop(to:positionOffset:duration:speed:));
 
 - (void)dtx_clearText;
 - (void)dtx_typeText:(NSString*)text;
