@@ -120,7 +120,7 @@ static CGPoint DTXCalcNormalizedPoint(CGPoint normalizedPoint, NSObject* element
 	CGRect safeBoundsInScreenSpace = [window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:view.coordinateSpace];
 	
 	CGPoint activationPoint = element.dtx_accessibilityActivationPointInViewCoordinateSpace;
-	CGPoint windowConvertedActivationPoint = [window.coordinateSpace convertPoint:activationPoint fromCoordinateSpace:view.coordinateSpace]
+	CGPoint windowConvertedActivationPoint = [window.coordinateSpace convertPoint:activationPoint fromCoordinateSpace:view.coordinateSpace];
 	
 	CGFloat calcX = !isnan(normalizedPoint.x) ? CGRectGetMinX(safeBoundsInScreenSpace) + CGRectGetWidth(safeBoundsInScreenSpace) * normalizedPoint.x : windowConvertedActivationPoint.x;
 	
