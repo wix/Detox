@@ -21,7 +21,7 @@
     "build:ios": "detox build -c ios.sim.release",
     "build:android": "detox build -c android.emu.release",
     "build:android-debug": "detox build -c android.emu.debug",
-    "clean:android": "pushd android && ./gradlew clean && popd",
+    "clean:android": "pushd android && rm -fr ../android/detox/build/ && ./gradlew clean && popd",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
