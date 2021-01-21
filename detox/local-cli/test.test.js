@@ -27,6 +27,7 @@ describe('CLI', () => {
         single: {
           type: 'ios.simulator',
           device: 'iPhone X',
+          bundleId: 'com.example.app',
         },
       },
     };

@@ -78,6 +78,7 @@ describe('composeDetoxConfig', () => {
             another: {
               type: 'ios.simulator',
               device: 'iPhone X',
+              bundleId: 'com.example.app',
             },
           },
         }

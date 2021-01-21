@@ -156,6 +156,7 @@ declare global {
 
         interface DetoxLooseIosAppConfig {
             binaryPath: string;
+            bundleId?: string;
             build?: string;
             launchArgs?: Record<string, string | null | undefined>;
         }
@@ -166,6 +167,7 @@ declare global {
 
         interface DetoxLooseAndroidAppConfig {
             binaryPath: string;
+            bundleId?: string;
             build?: string;
             testBinaryPath?: string;
             utilBinaryPaths?: string[];
@@ -248,7 +250,7 @@ declare global {
         interface DetoxAliasedConfigurationMultiApps {
             type?: never;
             device: DetoxAliasedDevice;
-            apps: Record<string, DetoxAliasedApp>;
+            apps: string[];
         }
 
         type DetoxAliasedDevice = string | DetoxDeviceConfig;

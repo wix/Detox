@@ -130,6 +130,34 @@ class DetoxConfigErrorBuilder {
     return new Error('TODO - cantFindAppConfig');
   }
 
+  missingAppBinaryPath() {
+    return new Error('TODO - cantFindConfiguration');
+  }
+
+  invalidAppType() {
+    return new Error('TODO - invalidAppType');
+  }
+
+  duplicateAppConfig() {
+    return new Error('TODO - duplicateAppConfig');
+  }
+
+  ambiguousAppAndApps() {
+    return new Error('TODO - ambiguousAppAndApps');
+  }
+
+  multipleAppsConfigArrayTypo() {
+    return new Error('TODO - multipleAppsConfigArrayTypo');
+  }
+
+  multipleAppsConfigIsInvalid() {
+    return new Error('TODO - multipleAppsConfigIsInvalid');
+  }
+
+  missingBinaryPath() {
+    return new Error('TODO - missingBinaryPath');
+  }
+
   missingDeviceProperty() {
     return new DetoxConfigError({
       message: `Missing or empty "device" property inside detox.configurations["${this.configurationName}"].\n` +

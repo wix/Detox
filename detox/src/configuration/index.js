@@ -64,6 +64,8 @@ async function composeDetoxConfig({
 
   const appsConfig = composeAppsConfig({
     errorBuilder,
+    configurationName,
+    deviceConfig,
     globalConfig,
     localConfig,
     cliConfig,
