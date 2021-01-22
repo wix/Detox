@@ -133,12 +133,12 @@ class Device {
 
   async installApp(binaryPath, testBinaryPath) {
     await traceCall('appInstall', () => {
-      const currentApp = this._getCurrentApp();
+      const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
 
       return this.deviceDriver.installApp(
         this._deviceId,
-        binaryPath || currentApp.binaryPath,
-        testBinaryPath || currentApp.testBinaryPath
+        currentApp.binaryPath,
+        currentApp.testBinaryPath
       );
     });
   }
@@ -225,7 +225,8 @@ class Device {
   }
 
   async _cleanup() {
-    await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+    const bundleId = this._currentApp && this._currentApp.bundleId;
+    await this.deviceDriver.cleanup(this._deviceId, bundleId);
   }
 
   async pressBack() {
@@ -266,10 +267,11 @@ class Device {
       : this._processes[bundleId] == null;
 
     if (params.delete) {
-      await this._terminateApp();
-      await this._reinstallApp();
+      await this._terminateApp(bundleId);
+      await this.uninstallApp();
+      await this.installApp();
     } else if (newInstance) {
-      await this._terminateApp();
+      await this._terminateApp(bundleId);
     }
 
     const baseLaunchArgs = {
@@ -376,14 +378,24 @@ class Device {
     return launchArgs;
   }
 
-  async _terminateApp() {
-    await this.deviceDriver.terminate(this._deviceId, this._bundleId);
-    this._processes[this._bundleId] = undefined;
+  async _terminateApp(bundleId) {
+    await this.deviceDriver.terminate(this._deviceId, bundleId);
+    this._processes[bundleId] = undefined;
   }
 
-  async _reinstallApp() {
-    await this.uninstallApp();
-    await this.installApp();
+  async _reinstallApps() {
+    const appNames = Object.keys(this._appsConfig);
+
+    for (const appName of appNames) {
+      await this.selectApp(appName)
+      await this.uninstallApp();
+      await this.installApp();
+      await this.installUtilBinaries();
+    }
+
+    if (appNames.length !== 1) {
+      this._currentApp = null;
+    }
   }
 }
 

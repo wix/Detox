@@ -108,7 +108,9 @@ describe('Device', () => {
 
   function aValidUnpreparedDevice(overrides) {
     return aDevice(_.merge({
-      appsConfig: { '': configurationsMock.appWithRelativeBinaryPath },
+      appsConfig: {
+        '': configurationsMock.appWithRelativeBinaryPath,
+      },
       deviceConfig: configurationsMock.iosSimulatorWithShorthandQuery,
       sessionConfig: configurationsMock.validSession,
     }, overrides));
@@ -732,17 +734,6 @@ describe('Device', () => {
     await device._cleanup();
 
     expect(driverMock.driver.cleanup).toHaveBeenCalledTimes(1);
-  });
-
-  it(`new Device() with invalid device config (no binary) should throw`, () => {
-    // TODO: this is an invalid test, because it will pass only on SimulatorDriver
-    expect(() => new Device({
-      appsConfig: { '': configurationsMock.appWithNoBinary, },
-      deviceConfig: configurationsMock.iosSimulatorWithShorthandQuery,
-      deviceDriver: new SimulatorDriver(client),
-      sessionConfig: configurationsMock.validSession,
-      emitter,
-    })).toThrowError(/binaryPath.* is missing/);
   });
 
   it(`should accept absolute path for binary`, async () => {

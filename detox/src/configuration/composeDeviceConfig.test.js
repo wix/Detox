@@ -58,6 +58,22 @@ describe('composeDeviceConfig', () => {
       });
     });
 
+    describe('with unknown device type', () => {
+      const values = {
+        type: './customDriver',
+        device: 'firefox',
+        binaryPath: 'https://example.com',
+      };
+
+      beforeEach(() => {
+        Object.assign(localConfig, values);
+      });
+
+      it('should take it as is, for backward compatibility', () => {
+        expect(compose()).toEqual(values);
+      });
+    });
+
     describe('and there is a CLI override', () => {
       beforeEach(givenCLIOverride('iPad'));
 

@@ -187,16 +187,6 @@ class SimulatorDriver extends IosDriver {
     await this._boot(deviceId);
   }
 
-  validateDeviceConfig(deviceConfig) {
-    if (!deviceConfig.binaryPath) {
-      throw new DetoxConfigError({
-        message: `'binaryPath' property is missing, should hold the app binary path`,
-        hint: 'Check again your device config:',
-        debugInfo: deviceConfig,
-      });
-    }
-  }
-
   getLogsPaths(deviceId) {
     return this.applesimutils.getLogsPaths(deviceId);
   }

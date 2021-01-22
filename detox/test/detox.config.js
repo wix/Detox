@@ -70,28 +70,28 @@ module.exports = {
   devices: {
     "ios.simulator": {
       type: "ios.simulator",
-      matches: {
+      device: {
         type: "iPhone 12 Pro Max"
       },
     },
 
     "android.emulator": {
       type: "android.emulator",
-      matches: {
+      device: {
         avdName: "Pixel_API_28"
       }
     },
 
     "android.genycloud.uuid": {
       type: "android.genycloud",
-      matches: {
+      device: {
         recipeUUID: "a50a71d6-da90-4c67-bdfa-5b602b0bbd15",
       },
     },
 
     "android.genycloud.name": {
       type: "android.genycloud",
-      matches: {
+      device: {
         recipeName: "Detox_Pixel_API_29",
       },
     },

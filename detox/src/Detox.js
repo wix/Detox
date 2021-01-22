@@ -37,8 +37,9 @@ class Detox {
     this[lifecycleSymbols.onTestStart] = this.beforeEach;
     this[lifecycleSymbols.onTestDone] = this.afterEach;
 
-    const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
+    const {appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 
+    this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
@@ -153,6 +154,7 @@ class Detox {
     });
 
     this.device = new Device({
+      appsConfig: this._appsConfig,
       behaviorConfig: this._behaviorConfig,
       deviceConfig: this._deviceConfig,
       emitter: this._eventEmitter,
@@ -180,10 +182,8 @@ class Detox {
     }
 
     if (behaviorConfig.reinstallApp) {
-      await this.device.uninstallApp();
-      await this.device.installApp();
+      await this.device._reinstallApps();
     }
-    await this.device.installUtilBinaries();
 
     return this;
   }

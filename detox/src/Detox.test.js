@@ -130,6 +130,9 @@ describe('Detox', () => {
 
       it('should instantiate Device', () =>
         expect(Device).toHaveBeenCalledWith({
+          appsConfig: {
+            '': expect.objectContaining({ binaryPath: expect.any(String) })
+          },
           behaviorConfig: detoxConfig.behaviorConfig,
           deviceConfig: detoxConfig.deviceConfig,
           emitter: expect.anything(),
@@ -159,13 +162,8 @@ describe('Detox', () => {
       it('should prepare the device', () =>
         expect(device().prepare).toHaveBeenCalled());
 
-      it('should reinstall the app', () => {
-        expect(device().uninstallApp).toHaveBeenCalled();
-        expect(device().installApp).toHaveBeenCalled();
-      });
-
-      it('should install util-binaries', () => {
-        expect(device().installUtilBinaries).toHaveBeenCalled();
+      it('should reinstall the apps', () => {
+        expect(device()._reinstallApps).toHaveBeenCalled();
       });
 
       it('should return itself', async () =>

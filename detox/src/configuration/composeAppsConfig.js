@@ -59,10 +59,10 @@ function composeAppsConfigFromPlain(opts) {
         launchArgs: localConfig.launchArgs,
       };
       break;
-  }
-
-  if (!appConfig) {
-    return {};
+    default:
+      appConfig = {
+        ...localConfig,
+      };
   }
 
   validateAppConfig({
@@ -145,10 +145,8 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
     throw errorBuilder.invalidAppType({ deviceConfig, appPath });
   }
 
-  if (appConfig.type === 'ios.app' || appConfig.type === 'android.apk') {
-    if (!appConfig.binaryPath && !appConfig.bundleId) {
-      throw errorBuilder.missingBinaryPath({ appPath });
-    }
+  if (!appConfig.binaryPath) {
+    throw errorBuilder.missingBinaryPath({ appPath });
   }
 }
 

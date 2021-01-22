@@ -30,7 +30,6 @@ describe('composeAppsConfig', () => {
     deviceConfig = { device: 'someMatcher' };
     configurationName = 'someConfig';
 
-
     globalConfig = {
       configurations: {
         [configurationName]: localConfig,
@@ -73,6 +72,13 @@ describe('composeAppsConfig', () => {
           type: appType,
           device: undefined,
         },
+      });
+    });
+
+    it('should take it as-is for unknown device type', () => {
+      deviceConfig.type = './customDriver';
+      expect(compose()).toEqual({
+        '': localConfig
       });
     });
 

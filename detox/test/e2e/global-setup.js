@@ -20,7 +20,7 @@ function downloadTestButlerAPKIfNeeded() {
 
 async function globalSetup() {
   const config = resolveSelectedConfiguration();
-  if (config && config.type.includes('android')) {
+  if (config && config.type && config.type.includes('android')) {
     downloadTestButlerAPKIfNeeded();
   }
 

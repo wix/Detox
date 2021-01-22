@@ -33,7 +33,10 @@ function composeDeviceConfigFromPlain(opts) {
   const type = localConfig.type;
   const device = localConfig.device || localConfig.name;
 
-  const deviceConfig = { type, device };
+  const deviceConfig = type in EXPECTED_DEVICE_MATCHER_PROPS
+    ? { type, device }
+    : { ...localConfig };
+
   validateDeviceConfig({ deviceConfig, errorBuilder });
 
   return deviceConfig;
@@ -89,6 +92,7 @@ function validateDeviceConfig({ deviceConfig, errorBuilder }) {
 }
 
 const EXPECTED_DEVICE_MATCHER_PROPS = {
+  'ios.none': null,
   'ios.simulator': ['id', 'type', 'name', 'os'],
   'android.attached': ['adbName'],
   'android.emulator': ['avdName'],
