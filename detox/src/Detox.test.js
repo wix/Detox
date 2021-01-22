@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const configuration = require('./configuration');
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 
@@ -30,7 +31,7 @@ describe('Detox', () => {
   let lifecycleSymbols;
 
   const client = () => Client.mock.instances[0];
-  const device = () => Device.mock.instances[0];
+  const device = () => _.last(Device.mock.instances);
   const artifactsManager = () => ArtifactsManager.mock.instances[0];
   const invocationManager = () => invoke.InvocationManager.mock.instances[0];
 
@@ -49,6 +50,7 @@ describe('Detox', () => {
 
     logger = require('./utils/logger');
     Device = require('./devices/Device');
+    Device.useRealConstructor();
     FakeDriverRegistry = require('./devices/DriverRegistry');
     ArtifactsManager = require('./artifacts/ArtifactsManager');
     invoke = require('./invoke');
@@ -163,7 +165,8 @@ describe('Detox', () => {
         expect(device().prepare).toHaveBeenCalled());
 
       it('should reinstall the apps', () => {
-        expect(device()._reinstallApps).toHaveBeenCalled();
+        expect(device().uninstallApp).toHaveBeenCalled();
+        expect(device().installApp).toHaveBeenCalled();
       });
 
       it('should return itself', async () =>
