@@ -10,7 +10,7 @@ function selectConfiguration({ errorBuilder, globalConfig, cliConfig }) {
   const { configurations } = globalConfig;
 
   if (_.isEmpty(configurations)) {
-    throw errorBuilder.noDeviceConfigurationsInside();
+    throw errorBuilder.noConfigurationsInside();
   }
 
   let configurationName = cliConfig.configuration || globalConfig.selectedConfiguration;
@@ -19,13 +19,13 @@ function selectConfiguration({ errorBuilder, globalConfig, cliConfig }) {
   }
 
   if (!configurationName) {
-    throw errorBuilder.cantChooseDeviceConfiguration();
+    throw errorBuilder.cantChooseConfiguration();
   }
 
   errorBuilder.setConfigurationName(configurationName);
 
   if (!configurations.hasOwnProperty(configurationName)) {
-    throw errorBuilder.noDeviceConfigurationWithGivenName();
+    throw errorBuilder.noConfigurationWithGivenName();
   }
 
   return configurationName;

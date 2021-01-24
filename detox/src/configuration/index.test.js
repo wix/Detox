@@ -39,7 +39,7 @@ describe('composeDetoxConfig', () => {
         argv: {
           'config-path': path.join(__dirname, '__mocks__/configuration/priority/empty.js'),
         },
-      })).rejects.toThrowError(/no device configurations/);
+      })).rejects.toThrowError(/are no configurations in/);
     });
 
     it('should throw an error if no config is found at all', async () => {

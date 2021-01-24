@@ -52,9 +52,9 @@ class DetoxConfigErrorBuilder {
     });
   }
 
-  noDeviceConfigurationsInside() {
+  noConfigurationsInside() {
     return new DetoxConfigError({
-      message: `There are no device configurations in the given Detox config.`,
+      message: `There are no configurations in the given Detox config.`,
       hint: this.filepath && `Examine the config at: ${this.filepath}`,
       debugInfo: {
         configurations: undefined,
@@ -64,7 +64,7 @@ class DetoxConfigErrorBuilder {
     });
   }
 
-  cantChooseDeviceConfiguration() {
+  cantChooseConfiguration() {
     const configurations = this.contents.configurations;
 
     return new DetoxConfigError({
@@ -73,7 +73,7 @@ class DetoxConfigErrorBuilder {
     });
   }
 
-  noDeviceConfigurationWithGivenName() {
+  noConfigurationWithGivenName() {
     const configurations = this.contents.configurations;
 
     return new DetoxConfigError({

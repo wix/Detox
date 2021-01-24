@@ -156,8 +156,15 @@ describe('composeDeviceConfig', () => {
         expect(compose).toThrow(errorBuilder.cantFindDeviceConfig());
       });
 
-      it('should throw if device config is not found', () => {
+      it('should throw if device config is not found (alias)', () => {
         localConfig.device = 'someDevice';
+        globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
+
+        expect(compose).toThrow(errorBuilder.cantFindDeviceConfig());
+      });
+
+      it('should throw if device config is not found (inline)', () => {
+        delete localConfig.device;
         globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
 
         expect(compose).toThrow(errorBuilder.cantFindDeviceConfig());

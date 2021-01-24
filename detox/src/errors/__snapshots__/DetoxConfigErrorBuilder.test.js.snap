@@ -304,7 +304,7 @@ HINT: Below are the configurations Detox was able to find:
 `;
 
 exports[`DetoxConfigErrorBuilder .noDeviceConfigurationsInside should create a generic error if all is unknown 1`] = `
-[DetoxConfigError: There are no device configurations in the given Detox config.
+[DetoxConfigError: There are no configurations in the given Detox config.
 
 {
   configurations: undefined
@@ -312,7 +312,7 @@ exports[`DetoxConfigErrorBuilder .noDeviceConfigurationsInside should create a g
 `;
 
 exports[`DetoxConfigErrorBuilder .noDeviceConfigurationsInside should create an error with Detox config fragment, if the path is not known 1`] = `
-[DetoxConfigError: There are no device configurations in the given Detox config.
+[DetoxConfigError: There are no configurations in the given Detox config.
 
 {
   configurations: undefined,
@@ -324,7 +324,7 @@ exports[`DetoxConfigErrorBuilder .noDeviceConfigurationsInside should create an 
 `;
 
 exports[`DetoxConfigErrorBuilder .noDeviceConfigurationsInside should create an error with Detox config location hint, if it is known 1`] = `
-[DetoxConfigError: There are no device configurations in the given Detox config.
+[DetoxConfigError: There are no configurations in the given Detox config.
 
 HINT: Examine the config at: /home/detox/myproject/.detoxrc.json
 

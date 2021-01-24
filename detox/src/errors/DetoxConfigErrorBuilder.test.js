@@ -58,7 +58,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
   describe('.noDeviceConfigurationsInside', () => {
     beforeEach(() => {
-      build = () => builder.noDeviceConfigurationsInside();
+      build = () => builder.noConfigurationsInside();
     });
 
     it('should create a generic error if all is unknown', () => {
@@ -80,7 +80,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
   describe('.cantChooseDeviceConfiguration', () => {
     beforeEach(() => {
-      build = () => builder.cantChooseDeviceConfiguration();
+      build = () => builder.cantChooseConfiguration();
       builder.setDetoxConfig({
         configurations: {
           conf1: {},
@@ -101,7 +101,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
   describe('.noDeviceConfigurationWithGivenName', () => {
     beforeEach(() => {
-      build = () => builder.noDeviceConfigurationWithGivenName();
+      build = () => builder.noConfigurationWithGivenName();
       builder.setConfigurationName('otherConf')
       builder.setDetoxConfig({
         configurations: {

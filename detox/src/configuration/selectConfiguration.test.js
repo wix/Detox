@@ -25,13 +25,13 @@ describe('selectConfiguration', () => {
   it('should throw if there are no .configurations in Detox config', () => {
     configLocation = '';
     delete globalConfig.configurations;
-    expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
+    expect(select).toThrowError(errorBuilder.noConfigurationsInside());
   });
 
   it('should throw if there is an empty .configurations object in Detox config and its location is unknown', () => {
     configLocation = '';
     globalConfig.configurations = {};
-    expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
+    expect(select).toThrowError(errorBuilder.noConfigurationsInside());
   });
 
   it('should return the name of a single configuration', () => {
@@ -46,14 +46,14 @@ describe('selectConfiguration', () => {
     expect(select).toThrow(); // generating a correct error expectation in errorBuilder
 
     jest.spyOn(errorBuilder, 'setConfigurationName');
-    expect(select).toThrow(errorBuilder.noDeviceConfigurationWithGivenName());
+    expect(select).toThrow(errorBuilder.noConfigurationWithGivenName());
     expect(errorBuilder.setConfigurationName).toHaveBeenCalledWith('double');
   });
 
   it('should throw if there is more than 1 configuration, and no one is specified', () => {
     configLocation = '';
     globalConfig.configurations = { config1: {}, config2: {} };
-    expect(select).toThrow(errorBuilder.cantChooseDeviceConfiguration());
+    expect(select).toThrow(errorBuilder.cantChooseConfiguration());
   });
 
   describe('priority', () => {
