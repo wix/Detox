@@ -61,6 +61,14 @@ describe('Device', () => {
       expect(this.driver.launchApp).toHaveBeenCalledWith(device._deviceId, device._bundleId, expectedArgs, languageAndLocale);
     }
 
+    expectLaunchCalledContainingArgs(device, expectedArgs) {
+      expect(this.driver.launchApp).toHaveBeenCalledWith(
+        device._deviceId,
+        device._bundleId,
+        expect.objectContaining(expectedArgs),
+        undefined);
+    }
+
     expectWaitForLaunchCalled(device, expectedArgs, languageAndLocale) {
       expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(device._deviceId, device._bundleId, expectedArgs, languageAndLocale);
     }
@@ -300,25 +308,6 @@ describe('Device', () => {
       driverMock.expectLaunchCalled(device, expectedArgs);
     });
 
-    it(`with custom launchArgs should pass to native as launch args`, async () => {
-      const launchArgs = {
-        arg1: "1",
-        arg2: 2,
-      };
-      const expectedArgs = {
-        "detoxServer": "ws://localhost:8099",
-        "detoxSessionId": "test",
-        "arg1": "1",
-        "arg2": 2,
-      };
-
-      const device = validDevice();
-
-      await device.launchApp({launchArgs});
-
-      driverMock.expectLaunchCalled(device, expectedArgs);
-    });
-
     it(`with newInstance=false should check if process is in background and reopen it`, async () => {
       const processId = 1;
       const device = validDevice();
@@ -374,21 +363,6 @@ describe('Device', () => {
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, url: 'url://me'});
-    });
-
-    it(`should keep user params unmodified`, async () => {
-      const params = {
-        url: 'some.url',
-        launchArgs: {
-          some: 'userArg',
-        }
-      };
-      const paramsClone = _.cloneDeep(params);
-
-      const device = validDevice();
-      await device.launchApp(params);
-
-      expect(params).toEqual(paramsClone);
     });
 
     it('with userActivity should check if process is in background and if it is use deliverPayload', async () => {
@@ -457,6 +431,84 @@ describe('Device', () => {
       }
 
       expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
+    });
+
+    describe('with user launchArgs', () => {
+      it('should pass to device via driver\'s launch arguments', async () => {
+        const launchArgs = {
+          arg1: "1",
+          arg2: 2,
+        };
+        const expectedArgs = {
+          "detoxServer": "ws://localhost:8099",
+          "detoxSessionId": "test",
+          "arg1": "1",
+          "arg2": 2,
+        };
+
+        const device = validDevice();
+        await device.launchApp({launchArgs});
+
+        driverMock.expectLaunchCalled(device, expectedArgs);
+      });
+
+      it('should keep args unmodified', async () => {
+        const params = {
+          url: 'some.url',
+          launchArgs: {
+            some: 'userArg',
+          }
+        };
+        const paramsClone = _.cloneDeep(params);
+
+        const device = validDevice();
+        await device.launchApp(params);
+
+        expect(params).toEqual(paramsClone);
+      });
+
+      it('should allow for pre-baked launch-args setup using device.setLaunchArg()', async () => {
+        const params = {
+          launchArgs: {
+            some: 'immediateArg',
+          }
+        };
+        const prebakedArg = {
+          key: 'prebakedArgKey',
+          value: {
+            prebakedArg: 'value',
+          },
+        };
+        const expectedArgs = {
+          some: 'immediateArg',
+          [prebakedArg.key]: prebakedArg.value,
+        };
+
+        const device = validDevice();
+        device.setLaunchArg(prebakedArg.key, prebakedArg.value);
+        await device.launchApp(params);
+
+        driverMock.expectLaunchCalledContainingArgs(device, expectedArgs);
+      });
+
+      it('should give priority to on-site launch-args over pre-baked launch-args', async () => {
+        const params = {
+          launchArgs: {
+            aLaunchArg: 'aValue?',
+          }
+        };
+        const prebakedArg = {
+          key: 'aLaunchArg',
+          value: 'aValue!',
+        };
+        const expectedArgs = params.launchArgs;
+
+        const device = validDevice();
+        device.setLaunchArg(prebakedArg.key, prebakedArg.value);
+        await device.launchApp(params);
+
+        driverMock.expectLaunchCalledContainingArgs(device, expectedArgs);
+      });
     });
   });
 
