@@ -3,7 +3,6 @@ const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 const {
   appWithAbsoluteBinaryPath,
   appWithRelativeBinaryPath,
-  iosSimulatorWithShorthandQuery,
 } = require('./configurations.mock');
 
 describe('composeAppsConfig', () => {
@@ -54,7 +53,9 @@ describe('composeAppsConfig', () => {
         binaryPath: 'path/to/app',
         bundleId: 'com.example.app',
         build: 'echo OK',
-        launchArgs: { hello: 'world' }
+        launchArgs: {
+          hello: 'world',
+        }
       };
     });
 
@@ -113,6 +114,47 @@ describe('composeAppsConfig', () => {
       localConfig.testBinaryPath2 = 'somePath';
       expect(compose()[''].testBinaryPath2).toBe(undefined);
     });
+
+    describe('.launchArgs', () => {
+      it('when it it is a string, should throw', () => {
+        localConfig.launchArgs = '-detoxAppArgument NO';
+        expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgs(['configurations', configurationName]));
+      });
+
+      it('when it has a nullish property, should omit it', () => {
+        localConfig.launchArgs.nully = null;
+        localConfig.launchArgs.undefiny = undefined;
+        localConfig.launchArgs.nonNully = 'proveYourself';
+
+        expect(compose()[''].launchArgs).toEqual({
+          hello: 'world',
+          nonNully: 'proveYourself',
+        });
+      });
+
+      it('when it has a non-nullish and non-string property', () => {
+        localConfig.launchArgs = { debugSomething: false };
+        expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgsProperty([
+          'configurations', configurationName, 'launchArgs', 'debugSomething'
+        ]));
+      });
+    });
+
+    describe('.utilBinaryPaths', () => {
+      it('should throw if util-binary paths are malformed', () => {
+        localConfig.utilBinaryPaths = 'valid/path/not/in/array';
+        expect(compose).toThrowError(
+          errorBuilder.malformedUtilBinaryPaths(['configurations', configurationName])
+        );
+      });
+    });
+
+    describe('given an unknown device type', () => {
+      it('should transfer the config as-is, for backward compatibility', () => {
+        deviceConfig.type = './myDriver';
+        expect(compose()).toEqual({ '': localConfig });
+      });
+    });
   });
 
   describe('given a configuration with single app', () => {
@@ -169,6 +211,25 @@ describe('composeAppsConfig', () => {
           app2: globalConfig.apps.example2,
         });
       });
+
+      describe('and there is a CLI override', () => {
+        beforeEach(() => {
+          globalConfig.apps.example2.launchArgs = {
+            arg1: 'value1',
+            arg2: 'value2',
+            arg3: 'value3',
+          };
+
+          cliConfig.appLaunchArgs = '--no-arg2 -arg3=override';
+        });
+
+        it('should parse it and merge the values inside', () => {
+          const { app1, app2 } = compose();
+
+          expect(app1.launchArgs).toEqual({ arg3: 'override'});
+          expect(app2.launchArgs).toEqual({ arg1: 'value1', arg3: 'override' });
+        });
+      });
     });
 
     describe('when the apps are inlined', () => {
@@ -188,117 +249,97 @@ describe('composeAppsConfig', () => {
     });
   });
 
-  describe('given an unknown device type', () => {
-    it('should not attempt to extract app config', () => {
-      deviceConfig.type = './myDriver';
-      expect(_.isEmpty(compose())).toBe(true);
-    });
-  });
-
-  describe.skip('given an aliased configuration with inlined device', () => {
-    beforeEach(() => {
-      localConfig = {
-        device: {
-          type: 'ios.simulator',
-          device: { type: 'iPhone X' }
-        },
-        artifacts: false,
-      };
-    });
-
-    it('should extract type and device', () => {
-      expect(compose()).toEqual({
-        type: 'ios.simulator',
-        device: { type: 'iPhone X' }
-      });
-    });
-
-    describe('and there is a CLI override', () => {
-      beforeEach(givenCLIOverride('iPad'));
-
-      it('should be override .device property', assertCLIOverridesDevice({
-        type: 'ios.simulator',
-        device: 'iPad',
-      }));
-    });
-  });
-
-  function givenCLIOverride(deviceName) {
-    return function () {
-      cliConfig.deviceName = deviceName;
-    };
-  }
-
-  function assertCLIOverridesDevice(expected) {
-    return function () {
-      const { type, device } = compose();
-
-      expect(type).toBe(expected.type);
-      expect(device).toBe(expected.device);
-    };
-  }
-
-  describe.skip('unhappy scenarios:', () => {
-    describe('aliased configuration', () => {
-      it('should throw if devices are not declared', () => {
-        localConfig.device = 'someDevice';
-        expect(compose).toThrow(errorBuilder.cantFindDeviceConfig());
-      });
-
-      it('should throw if device config is not found', () => {
-        localConfig.device = 'someDevice';
-        globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
-
-        expect(compose).toThrow(errorBuilder.cantFindDeviceConfig());
-      });
-    });
-
-    describe('empty device object', () => {
-      it('should throw if the inline device config has no type', () => {
-        localConfig.device = {};
-        expect(compose).toThrow(errorBuilder.missingDeviceType());
-      });
-
-      it('should throw if the aliased device config has no type', () => {
-        localConfig.device = 'someDevice';
-        globalConfig.devices = { someDevice: { } };
-
-        expect(compose).toThrow(errorBuilder.missingDeviceType());
-      });
-
-      it('should throw if the inline device config is empty', () => {
-        localConfig.type = 'ios.simulator';
-        localConfig.device = {};
-
-        expect(compose).toThrow(errorBuilder.missingDeviceProperty());
-      });
-
-      it('should throw if the aliased device config is empty', () => {
-        localConfig.device = 'someDevice';
-        globalConfig.devices = { someDevice: { type: 'ios.simulator' } };
-
-        expect(compose).toThrow(errorBuilder.missingDeviceProperty());
-      });
-    });
-
-    describe('missing device matcher properties', () => {
-      it.each([
-        [['id', 'type', 'name', 'os'], 'ios.simulator'],
-        [['adbName'], 'android.attached'],
-        [['avdName'], 'android.emulator'],
-        [['recipeUUID', 'recipeName'], 'android.genycloud'],
-      ])('should throw for missing %j for "%s" type', (expectedProps, deviceType) => {
-        localConfig.device = {
-          type: deviceType,
-          device: {
-            misspelled: 'value'
-          }
+  describe('unhappy scenarios:', () => {
+    describe('aliased configuration:', () => {
+      beforeEach(() => {
+        globalConfig.apps = {
+          example1: appWithAbsoluteBinaryPath,
+          example2: appWithRelativeBinaryPath,
         };
 
-        expect(compose).toThrowError(errorBuilder.missingDeviceMatcherProperties(expectedProps));
+        delete localConfig.type;
+      });
 
-        localConfig.device.device[_.sample(expectedProps)] = 'someValue';
-        expect(compose).not.toThrowError();
+      test('no app/apps is defined', () => {
+        delete localConfig.app;
+        delete localConfig.apps;
+
+        expect(compose).toThrowError(errorBuilder.noAppIsDefined());
+      });
+
+      test('both app/apps are defined', () => {
+        localConfig.app = 'example1';
+        localConfig.apps = ['example1', 'example2'];
+
+        expect(compose).toThrowError(errorBuilder.ambiguousAppAndApps());
+      });
+
+      test('app is defined as an array', () => {
+        localConfig.app = ['example1', 'example2'];
+
+        expect(compose).toThrowError(errorBuilder.multipleAppsConfigArrayTypo());
+      });
+
+      test('apps are defined as a string', () => {
+        localConfig.apps = 'example1';
+
+        expect(compose).toThrowError(errorBuilder.multipleAppsConfigShouldBeArray());
+      });
+
+      test('apps have no name (collision)', () => {
+        localConfig.apps = ['example1', 'example2'];
+
+        expect(compose).toThrowError(errorBuilder.duplicateAppConfig({
+          appName: '',
+          appPath: ['apps', 'example2'],
+          preExistingAppPath: ['apps', 'example1'],
+        }));
+      });
+
+      test('apps have the same name (collision)', () => {
+        globalConfig.apps.example1.name = 'sameApp';
+        globalConfig.apps.example2.name = 'sameApp';
+        localConfig.apps = ['example1', 'example2'];
+
+        expect(compose).toThrowError(errorBuilder.duplicateAppConfig({
+          appName: 'sameApp',
+          appPath: ['apps', 'example2'],
+          preExistingAppPath: ['apps', 'example1'],
+        }));
+      });
+
+      test('app has no binaryPath', () => {
+        delete globalConfig.apps.example1.binaryPath;
+        localConfig.app = 'example1';
+
+        expect(compose).toThrowError(errorBuilder.missingAppBinaryPath(
+          ['apps', 'example1']
+        ));
+      });
+
+      test.each([
+        ['android.apk', 'ios.none'],
+        ['android.apk', 'ios.simulator'],
+        ['ios.app', 'android.attached'],
+        ['ios.app', 'android.emulator'],
+        ['ios.app', 'android.genycloud'],
+      ])('app type (%s) is incompatible with device (%s)', (appType, deviceType) => {
+        localConfig.app = 'example1';
+        globalConfig.apps.example1.type = appType;
+        deviceConfig.type = deviceType;
+
+        expect(compose).toThrowError(
+          errorBuilder.invalidAppType(['apps', 'example1'], deviceConfig)
+        );
+      });
+
+      test('app has no binaryPath', () => {
+        delete globalConfig.apps.example1.binaryPath;
+        localConfig.app = 'example1';
+
+        expect(compose).toThrowError(errorBuilder.missingAppBinaryPath(
+          ['apps', 'example1']
+        ));
       });
     });
   });

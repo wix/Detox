@@ -155,56 +155,18 @@ HINT: Check that in your Detox config at path:
 `;
 
 exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgs should create an error with specifying the config name 1`] = `
-[DetoxConfigError: Invalid type of "launchArgs" property in detox.configurations["android.release"]
-Expected an object.
-
-HINT: Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      type: 'android.emulator',
-      utilBinaryPaths: '/valid/path/outside/of/array',
-      device: 'Pixel 4',
-      launchArgs: 'do not use strings here please'
-    }
-  }
-}]
+[Error: TODO - malformedAppLaunchArgs
+{}]
 `;
 
 exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgsProperty should create an error with specifying the exact launch arg 1`] = `
-[DetoxConfigError: Invalid property "invalidFalseProperty" inside detox.configurations["android.release"].launchArgs
-Expected a string.
-
-HINT: Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      launchArgs: {
-        validFalseProperty: 'false',
-        invalidFalseProperty: false
-      }
-    }
-  }
-}]
+[Error: TODO - malformedAppLaunchArgsProperty
+{"0":"invalidFalseProperty"}]
 `;
 
 exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
-[DetoxConfigError: Invalid type of "utilBinaryPaths" property in detox.configurations["android.release"]
-Expected an array of strings of paths.
-
-HINT: Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      type: 'android.emulator',
-      utilBinaryPaths: '/valid/path/outside/of/array',
-      device: 'Pixel 4'
-    }
-  }
-}]
+[Error: TODO - malformedAppLaunchArgsProperty
+{}]
 `;
 
 exports[`DetoxConfigErrorBuilder .missingBuildScript should create a generic error, if the config location is not known 1`] = `

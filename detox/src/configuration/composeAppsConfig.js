@@ -1,6 +1,12 @@
 const _ = require('lodash');
 const parse = require('yargs/yargs').Parser;
 
+const CLI_PARSER_OPTIONS = {
+  configuration: {
+    'short-option-groups': false,
+  },
+};
+
 /**
  * @param {DetoxConfigErrorBuilder} opts.errorBuilder
  * @param {Detox.DetoxConfig} opts.globalConfig
@@ -16,9 +22,7 @@ function composeAppsConfig(opts) {
     ? composeAppsConfigFromPlain(opts)
     : composeAppsConfigFromAliased(opts);
 
-  if (opts.cliConfig.appLaunchArgs) {
-    overrideAppLaunchArgs(appsConfig, opts.cliConfig);
-  }
+  overrideAppLaunchArgs(appsConfig, opts.cliConfig);
 
   return appsConfig;
 }
@@ -92,7 +96,7 @@ function composeAppsConfigFromAliased(opts) {
   const { configurationName, errorBuilder, deviceConfig, globalConfig, localConfig } = opts;
 
   if (!localConfig.app && !localConfig.apps) {
-    return {};
+    throw errorBuilder.noAppIsDefined();
   }
 
   if (localConfig.app && localConfig.apps) {
@@ -104,7 +108,7 @@ function composeAppsConfigFromAliased(opts) {
   }
 
   if (localConfig.apps && !Array.isArray(localConfig.apps)) {
-    throw errorBuilder.multipleAppsConfigIsInvalid();
+    throw errorBuilder.multipleAppsConfigShouldBeArray();
   }
 
   const appPathsMap = new Map();
@@ -122,10 +126,15 @@ function composeAppsConfigFromAliased(opts) {
     const appName = appConfig.name || '';
     appPathsMap.set(appConfig, appPath);
 
-    validateAppConfig({ errorBuilder, deviceConfig, appConfig, appPath });
+    validateAppConfig({
+      errorBuilder,
+      deviceConfig,
+      appConfig,
+      appPath
+    });
 
     if (!result[appName]) {
-      result[appName] = { ...appConfig };
+      result[appName] = appConfig;
     } else {
       throw opts.errorBuilder.duplicateAppConfig({
         appName,
@@ -135,24 +144,24 @@ function composeAppsConfigFromAliased(opts) {
     }
   }
 
-  return result;
+  return _.mapValues(result, value => _.clone(value));
 }
 
 function overrideAppLaunchArgs(appsConfig, cliConfig) {
-  if (!cliConfig.appLaunchArgs) {
-    return;
-  }
+  const cliLaunchArgs = cliConfig.appLaunchArgs
+    ? _.omit(parse(cliConfig.appLaunchArgs, CLI_PARSER_OPTIONS), ['_', '--'])
+    : null;
 
-  appsConfig.launchArgs = _.chain({})
-    .thru(() => parse(cliConfig.appLaunchArgs, {
-      configuration: {
-        'short-option-groups': false,
-      },
-    }))
-    .omit(['_', '--'])
-    .defaults(appsConfig.launchArgs)
-    .omitBy(value => value === false)
-    .value();
+  for (const appConfig of _.values(appsConfig)) {
+    if (!appConfig.launchArgs && !cliLaunchArgs) {
+      continue;
+    }
+
+    appConfig.launchArgs = _.chain(cliLaunchArgs)
+      .defaults(appConfig.launchArgs)
+      .omitBy(value => value == null || value === false)
+      .value();
+  }
 }
 
 function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
@@ -160,16 +169,16 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
   const allowedAppsTypes = DEVICE_TYPE_TO_APP_TYPE[deviceType];
 
   if (allowedAppsTypes && !allowedAppsTypes.includes(appConfig.type)) {
-    throw errorBuilder.invalidAppType({ deviceConfig, appPath });
+    throw errorBuilder.invalidAppType(appPath, deviceConfig);
   }
 
   if (!appConfig.binaryPath) {
-    throw errorBuilder.missingBinaryPath({ appPath });
+    throw errorBuilder.missingAppBinaryPath(appPath);
   }
 
   if (appConfig.launchArgs) {
     if (!_.isObject(appConfig.launchArgs)) {
-      throw errorBuilder.malformedAppLaunchArgs({ appPath });
+      throw errorBuilder.malformedAppLaunchArgs(appPath);
     }
 
     const invalidLaunchArg = _.findKey(appConfig.launchArgs, (value) => {
@@ -177,14 +186,12 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
     });
 
     if (invalidLaunchArg) {
-      throw errorBuilder.malformedAppLaunchArgsProperty({
-        argPath: [...appPath, invalidLaunchArg],
-      });
+      throw errorBuilder.malformedAppLaunchArgsProperty([...appPath, 'launchArgs', invalidLaunchArg]);
     }
   }
 
   if (appConfig.utilBinaryPaths && !Array.isArray(appConfig.utilBinaryPaths)) {
-    throw errorBuilder.malformedUtilBinaryPaths();
+    throw errorBuilder.malformedUtilBinaryPaths(appPath);
   }
 }
 

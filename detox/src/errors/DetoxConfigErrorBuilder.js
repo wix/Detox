@@ -1,6 +1,12 @@
 const _ = require('lodash');
 const DetoxConfigError = require('./DetoxConfigError');
 
+class TodoError extends Error {
+  constructor(message, args) {
+    super(`TODO - ${message}\n` + JSON.stringify(args));
+  }
+}
+
 class DetoxConfigErrorBuilder {
   constructor() {
     this.setDetoxConfigPath();
@@ -77,7 +83,7 @@ class DetoxConfigErrorBuilder {
   }
 
   missingDeviceType() {
-    return new Error('TODO - missingDeviceType');
+    return new TodoError('missingDeviceType', arguments);
   }
 
   missingConfigurationType() {
@@ -92,70 +98,80 @@ class DetoxConfigErrorBuilder {
   }
 
   malformedAppLaunchArgs() {
-    return new DetoxConfigError({
-      message: `Invalid type of "launchArgs" property in detox.configurations["${this.configurationName}"]\nExpected an object.`,
-      hint: `Check that in your Detox config${_atPath(this.filepath)}`,
-      debugInfo: this._focusOnConfiguration(),
-      inspectOptions: { depth: 2 },
-    });
+    return new TodoError('malformedAppLaunchArgs', arguments);
+
+    // return new DetoxConfigError({
+    //   message: `Invalid type of "launchArgs" property in detox.configurations["${this.configurationName}"]\nExpected an object.`,
+    //   hint: `Check that in your Detox config${_atPath(this.filepath)}`,
+    //   debugInfo: this._focusOnConfiguration(),
+    //   inspectOptions: { depth: 2 },
+    // });
   }
 
   malformedAppLaunchArgsProperty(argKey) {
-    return new DetoxConfigError({
-      message: `Invalid property "${argKey}" inside detox.configurations["${this.configurationName}"].launchArgs\nExpected a string.`,
-      hint: `Check that in your Detox config${_atPath(this.filepath)}`,
-      debugInfo: this._focusOnConfiguration(c => _.pick(c, ['launchArgs'])),
-      inspectOptions: { depth: 3 },
-    });
+    return new TodoError('malformedAppLaunchArgsProperty', arguments);
+
+    // return new DetoxConfigError({
+    //   message: `Invalid property "${argKey}" inside detox.configurations["${this.configurationName}"].launchArgs\nExpected a string.`,
+    //   hint: `Check that in your Detox config${_atPath(this.filepath)}`,
+    //   debugInfo: this._focusOnConfiguration(c => _.pick(c, ['launchArgs'])),
+    //   inspectOptions: { depth: 3 },
+    // });
   }
 
   malformedUtilBinaryPaths() {
-    return new DetoxConfigError({
-      message: `Invalid type of "utilBinaryPaths" property in detox.configurations["${this.configurationName}"]\nExpected an array of strings of paths.`,
-      hint: `Check that in your Detox config${_atPath(this.filepath)}`,
-      debugInfo: this._focusOnConfiguration(),
-      inspectOptions: { depth: 2 },
-    });
+    return new TodoError('malformedAppLaunchArgsProperty', arguments);
+
+    // return new DetoxConfigError({
+    //   message: `Invalid type of "utilBinaryPaths" property in detox.configurations["${this.configurationName}"]\nExpected an array of strings of paths.`,
+    //   hint: `Check that in your Detox config${_atPath(this.filepath)}`,
+    //   debugInfo: this._focusOnConfiguration(),
+    //   inspectOptions: { depth: 2 },
+    // });
   }
 
   cantFindConfiguration() {
-    return new Error('TODO - cantFindConfiguration');
+    return new TodoError('cantFindConfiguration', arguments);
   }
 
   cantFindDeviceConfig() {
-    return new Error('TODO - cantFindDeviceConfig');
+    return new TodoError('cantFindDeviceConfig', arguments);
   }
 
   cantFindAppConfig() {
-    return new Error('TODO - cantFindAppConfig');
+    return new TodoError('cantFindAppConfig', arguments);
   }
 
   missingAppBinaryPath() {
-    return new Error('TODO - cantFindConfiguration');
+    return new TodoError('missingAppBinaryPath', arguments);
   }
 
   invalidAppType() {
-    return new Error('TODO - invalidAppType');
+    return new TodoError('invalidAppType', arguments);
   }
 
   duplicateAppConfig() {
-    return new Error('TODO - duplicateAppConfig');
+    return new TodoError('duplicateAppConfig', arguments);
+  }
+
+  noAppIsDefined() {
+    return new TodoError('noAppIsDefined', arguments);
   }
 
   ambiguousAppAndApps() {
-    return new Error('TODO - ambiguousAppAndApps');
+    return new TodoError('ambiguousAppAndApps', arguments);
   }
 
   multipleAppsConfigArrayTypo() {
-    return new Error('TODO - multipleAppsConfigArrayTypo');
+    return new TodoError('multipleAppsConfigArrayTypo', arguments);
   }
 
-  multipleAppsConfigIsInvalid() {
-    return new Error('TODO - multipleAppsConfigIsInvalid');
+  multipleAppsConfigShouldBeArray() {
+    return new TodoError('multipleAppsConfigShouldBeArray', arguments);
   }
 
   missingBinaryPath() {
-    return new Error('TODO - missingBinaryPath');
+    return new TodoError('missingBinaryPath', arguments);
   }
 
   missingDeviceProperty() {
@@ -169,7 +185,7 @@ class DetoxConfigErrorBuilder {
   }
 
   missingDeviceMatcherProperties() {
-    return new Error('TODO - missingDeviceMatcherProperties');
+    return new TodoError('missingDeviceMatcherProperties', arguments);
   }
 
   invalidServerProperty() {
