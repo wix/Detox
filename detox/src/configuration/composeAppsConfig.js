@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const parse = require('yargs/yargs').Parser;
 
 /**
  * @param {DetoxConfigErrorBuilder} opts.errorBuilder
@@ -137,6 +138,23 @@ function composeAppsConfigFromAliased(opts) {
   return result;
 }
 
+function overrideAppLaunchArgs(appsConfig, cliConfig) {
+  if (!cliConfig.appLaunchArgs) {
+    return;
+  }
+
+  appsConfig.launchArgs = _.chain({})
+    .thru(() => parse(cliConfig.appLaunchArgs, {
+      configuration: {
+        'short-option-groups': false,
+      },
+    }))
+    .omit(['_', '--'])
+    .defaults(appsConfig.launchArgs)
+    .omitBy(value => value === false)
+    .value();
+}
+
 function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
   const deviceType = deviceConfig.type;
   const allowedAppsTypes = DEVICE_TYPE_TO_APP_TYPE[deviceType];
@@ -148,10 +166,26 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
   if (!appConfig.binaryPath) {
     throw errorBuilder.missingBinaryPath({ appPath });
   }
-}
 
-function overrideAppLaunchArgs(appsConfig, cliConfig) {
-  // TODO: return the code back
+  if (appConfig.launchArgs) {
+    if (!_.isObject(appConfig.launchArgs)) {
+      throw errorBuilder.malformedAppLaunchArgs({ appPath });
+    }
+
+    const invalidLaunchArg = _.findKey(appConfig.launchArgs, (value) => {
+      return value != null && !_.isString(value);
+    });
+
+    if (invalidLaunchArg) {
+      throw errorBuilder.malformedAppLaunchArgsProperty({
+        argPath: [...appPath, invalidLaunchArg],
+      });
+    }
+  }
+
+  if (appConfig.utilBinaryPaths && !Array.isArray(appConfig.utilBinaryPaths)) {
+    throw errorBuilder.malformedUtilBinaryPaths();
+  }
 }
 
 const DEVICE_TYPE_TO_APP_TYPE = {
