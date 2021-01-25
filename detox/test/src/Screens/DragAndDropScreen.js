@@ -61,7 +61,7 @@ export default class DragAndDropScreen extends Component {
             }}
           />
         </ScrollView>
-        <Text style={styles.bottom_text}>
+        <Text style={styles.bottom_text} testID={'cellsOrderId'}>
           {this.cellsOrderToText()}
         </Text>
       </SafeAreaView>
@@ -79,7 +79,7 @@ export default class DragAndDropScreen extends Component {
   }
 
   cellsOrderToText = () => {
-    var text = `Cells order: `
+    let text = `Cells order: `
     for (let i = 0; i < cellsNum; i++) {
       if (i > 0) {
         text += ', '
