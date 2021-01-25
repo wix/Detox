@@ -126,6 +126,26 @@ class Element {
     return this.withAction('longPress', duration);
   }
 
+  longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
+            normalizedTargetPositionX, normalizedTargetPositionY, speed = 'fast', holdDuration = 1000) {
+    if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
+
+    if (typeof targetElement == null) {
+      throw new Error('target element was not provided');
+    }
+
+    if (typeof holdDuration !== 'number') throw new Error('duration should be a number, but got ' + (holdDuration + (' (' + (typeof holdDuration + ')'))));
+
+    assertSpeed({ speed });
+    assertNormalized({ normalizedPositionX });
+    assertNormalized({ normalizedPositionY });
+    assertNormalized({ normalizedTargetPositionX });
+    assertNormalized({ normalizedTargetPositionY });
+
+    return this.withAction('longPressAndDrag', duration, normalizedPositionX, normalizedPositionY, targetElement,
+      normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
+  }
+
   multiTap(times) {
     if (typeof times !== 'number') throw new Error('times should be a number, but got ' + (times + (' (' + (typeof times + ')'))));
     return this.withAction('multiTap', times);
@@ -438,6 +458,14 @@ class WaitFor {
   }
 
   longPress(duration) {
+    this.action = this.actionableElement.longPress(duration);
+    return this.waitForWithAction();
+  }
+
+  longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
+    normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
+    // this.action = this.actionableElement.longPress(duration, normalizedPositionX, normalizedPositionY,  targetElement,
+    //   normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
     this.action = this.actionableElement.longPress(duration);
     return this.waitForWithAction();
   }
