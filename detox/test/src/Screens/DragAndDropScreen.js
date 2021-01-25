@@ -1,15 +1,16 @@
 import React, {Component} from 'react'
-import {Dimensions, Image, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native'
+import {Dimensions, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native'
 import {DragSortableView} from 'react-native-drag-sort'
 const {width} = Dimensions.get('window')
 
-const parentWidth = width
-const childrenWidth = width
-const childrenHeight = 48
+const parentWidth = width;
+const childrenWidth = width;
+const childrenHeight = 48;
 
+const cellsNum = 10;
 let testData = []
-for (let i = 0; i < 10; i++) {
-  testData.push({txt: `Cell number ${i+1}`, testID: `cellId_${i}`},);
+for (let i = 0; i < cellsNum; i++) {
+  testData.push({txt: `Cell number ${i+1}`, testID: `cellId_${i}`, originalIndex: i});
 }
 
 export default class DragAndDropScreen extends Component {
@@ -47,11 +48,9 @@ export default class DragAndDropScreen extends Component {
               })
             }}
             onDataChange = {(data)=>{
-              if (data.length != this.state.data.length) {
-                this.setState({
-                  data: data
-                })
-              }
+              this.setState({
+                data: data
+              })
             }}
             keyExtractor={(item,index)=> item.testID}
             onClickItem={(data,item,index)=>{
@@ -62,6 +61,9 @@ export default class DragAndDropScreen extends Component {
             }}
           />
         </ScrollView>
+        <Text style={styles.bottom_text}>
+          {this.cellsOrderToText()}
+        </Text>
       </SafeAreaView>
     )
   }
@@ -75,11 +77,23 @@ export default class DragAndDropScreen extends Component {
       </View>
     )
   }
+
+  cellsOrderToText = () => {
+    var text = `Cells order: `
+    for (let i = 0; i < cellsNum; i++) {
+      if (i > 0) {
+        text += ', '
+      }
+      text += `${this.state.data[i].originalIndex + 1}`
+    }
+
+    return text;
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 3/4,
     backgroundColor: '#f0f0f0',
   },
   item: {
@@ -100,5 +114,12 @@ const styles = StyleSheet.create({
     color: '#344feb',
     marginLeft: 12,
     fontSize: 20
+  },
+  bottom_text: {
+    flex: 1/4,
+    color: '#1f2b36',
+    fontSize: 20,
+    marginTop: 12,
+    marginHorizontal: 12
   }
 })
