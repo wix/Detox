@@ -107,7 +107,7 @@ module.exports = {
     },
     "ios.sim.debug": {
       device: "ios.simulator",
-      apps: ["ios.debug"],
+      app: "ios.debug",
     },
     "ios.sim.release": {
       device: "ios.simulator",
@@ -143,22 +143,26 @@ module.exports = {
       }
     },
     "android.emu.debug": {
-      binaryPath: "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
-      utilBinaryPaths: [
-        "./cache/test-butler-app.apk"
-      ],
-      build: "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
+      device: "android.emulator",
+      app: {
+        type: "android.apk",
+        binaryPath: "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
+        utilBinaryPaths: [
+          "./cache/test-butler-app.apk"
+        ],
+        build: "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
+      },
     },
     "android.emu.release": {
+      type: "android.emulator",
+      device: {
+        avdName: "Pixel_API_28"
+      },
+      build: "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
       binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
       utilBinaryPaths: [
         "./cache/test-butler-app.apk"
       ],
-      build: "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
-      type: "android.emulator",
-      device: {
-        avdName: "Pixel_API_28"
-      }
     },
     "android.genycloud.release": {
       device: "android.genycloud.uuid",
