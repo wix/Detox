@@ -98,4 +98,3 @@ Dive into Detox core by reading the [Detox Contribution Guide](docs/Guide.Contri
 ## Non-English Resources (Community)
 
 - [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)
-
