@@ -309,58 +309,6 @@ static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 	_DTXApplyPinch(window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
 }
 
-- (void)dtx_dragAndDrop:(NSObject *)targetElement targetPositionOffset:(CGPoint)positionOffset initialHoldDuration:(NSTimeInterval)initialHoldDuration speed:(CGFloat)speed
-{
-	NSParameterAssert(speed > 0.0);
-	
-	CGPoint startPoint = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
-	CGPoint targetPoint = targetElement.dtx_accessibilityActivationPointInViewCoordinateSpace;
-	CGPoint endPoint = CGPointMake(startPoint.x + positionOffset.x, targetPoint.y + positionOffset.y);
-	
-	UIView* dragView = self.dtx_view;
-	UIWindow* dragViewWindow = dragView.window;
-	CGPoint dragViewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:startPoint];
-	
-	UIView* targetView = targetElement.dtx_view;
-	UIWindow* targetViewWindow = targetView.window;
-	CGPoint targetViewPoint = [self dtx_convertRelativePointToViewCoordinateSpace:endPoint];
-	
-	NSCAssert(dragViewWindow == targetViewWindow, @"The target view must be in the same window of the dragged view");
-	[dragView dtx_assertHittableAtPoint:dragViewPoint];
-	[targetView dtx_assertHittableAtPoint:targetViewPoint];
-	
-	CGPoint windowStartPoint = [dragViewWindow convertPoint:dragViewPoint fromView:dragView];
-	CGPoint windowEndPoint = [targetViewWindow convertPoint:targetViewPoint fromView:targetView];
-	
-	[self dtx_dragAndDrop:targetViewWindow startPoint:windowStartPoint endPoint:windowEndPoint duration:initialHoldDuration speed:speed];
-}
-	
-
-- (void)dtx_dragAndDrop:(UIWindow *)window startPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint duration:(NSTimeInterval)duration speed:(CGFloat)speed
-{
-	NSMutableArray<NSValue*>* points = [NSMutableArray new];
-	
-	// Add start point
-	[points addObject:@(startPoint)];
-	
-	// Find number of points appropriate for the speed
-	CGFloat xDiff = endPoint.x - startPoint.x;
-	CGFloat yDiff = endPoint.y - startPoint.y;
-	NSInteger numOfPoints = lround(fmax(fabs(xDiff) / speed, fabs(yDiff) / speed));
-	
-	// Generate points in between
-	CGFloat xDiffDelta = xDiff / numOfPoints;
-	CGFloat yDiffDelta = yDiff / numOfPoints;
-	for (NSUInteger idx = 1; idx < numOfPoints; idx++) {
-		CGPoint point = CGPointMake(startPoint.x + idx * xDiffDelta, startPoint.y + idx * yDiffDelta);
-		[points addObject:@(point)];
-	}
-	
-	// Add end point
-	[points addObject:@(endPoint)];
-	
-	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnFirstTouch:duration holdDurationOnLastTouch:0.0];
-}
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
 {
 	id currentFirstResponder = view.window.firstResponder;
