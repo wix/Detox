@@ -7,18 +7,18 @@
 
 
 class WebExpect {
-  static toNotExists(element) {
+  static toNotExist(element) {
     return {
       target: element,
-      method: "toNotExists",
+      method: "toNotExist",
       args: []
     };
   }
 
-  static toExists(element) {
+  static toExist(element) {
     return {
       target: element,
-      method: "toExists",
+      method: "toExist",
       args: []
     };
   }

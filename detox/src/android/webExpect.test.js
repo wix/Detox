@@ -220,59 +220,59 @@ describe('webExpect', () => {
 
   describe('Web Matchers',() => {
       it('by.id', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.id('id'))).not.toHaveText('text');
       });
 
       it('by.className', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.className('className'))).not.toHaveText('text');
       });
 
       it('by.cssSelector', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector'))).not.toHaveText('text');
       });
 
       it('by.name', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.name('name'))).not.toHaveText('text');
       });
 
       it('by.xpath', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.xpath('xpath'))).not.toHaveText('text');
       });
 
       it('by.linkText', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.linkText('link'))).not.toHaveText('text');
       });
 
       it('by.partialLinkText', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.partialLinkText('lin'))).not.toHaveText('text');
       });
 
       it('by.tag', async () => {
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toExists();
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toNotExists();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toExist();
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toHaveText('text');
-        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toNotHaveText('text');
+        await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).not.toHaveText('text');
       });
   });
 });

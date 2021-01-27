@@ -229,9 +229,9 @@ class WebExistsAssertion extends WebAction {
   constructor(webExpect) {
     super();
     if (webExpect._notCondition) {
-      this._call = WebExpectApi.toNotExists(webExpect._call);
+      this._call = WebExpectApi.toNotExist(webExpect._call);
     } else {
-      this._call = WebExpectApi.toExists(webExpect._call);
+      this._call = WebExpectApi.toExist(webExpect._call);
     }
   }
 }
@@ -269,16 +269,8 @@ class WebExpectElement extends WebExpect {
     return await new WebAssertionInteraction(this._invocationManager, new WebHasTextAssertion(this, text)).execute();
   }
 
-  async toNotHaveText(text) {
-    return this.not.toHaveText(text);
-  }
-
-  async toExists() {
+  async toExist() {
     return await new WebAssertionInteraction(this._invocationManager, new WebExistsAssertion(this)).execute();
-  }
-
-  async toNotExists() {
-    return this.not.toExists()
   }
 }
 class AndroidWebExpect {

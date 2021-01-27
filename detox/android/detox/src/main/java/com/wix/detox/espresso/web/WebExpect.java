@@ -22,11 +22,11 @@ public class WebExpect {
         return webElement.getWebViewInteraction();
     }
 
-    public void toNotExists() {
+    public void toNotExist() {
         webViewInteraction().check(webMatches(webElement.matcherAtom, equalTo(Collections.<ElementReference>emptyList())));
     }
 
-    public void toExists() {
+    public void toExist() {
         webViewInteraction().check(webMatches(webElement.matcherAtom, not(equalTo(Collections.<ElementReference>emptyList()))));
     }
 

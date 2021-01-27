@@ -841,84 +841,80 @@ declare global {
             /**
              * Expect the element content to have the `text` supplied
              * @param text expected to be on the element content
-             * @example await web.expect(webview.element(web.by.id('UniqueId205'))).toHaveText('ExactText');
+             * @example
+             * await web.expect(webview.element(web.by.id('UniqueId205'))).toHaveText('ExactText');
              */
             toHaveText(text: string): R
-
-            /**
-             * Expect the element content to not have the `text` supplied
-             * @param text not expected to be on the element content
-             * @example await web.expect(webview.element(web.by.id('UniqueId205'))).toNotHaveText('RandomFooText');
-             */
-            toNotHaveText(text: string): R
 
             /**
              * Expect the view to exist in the webview DOM tree.
              * @example await web.expect(webview.element(web.by.id('UniqueId205'))).toExist();
              */
             toExist(): R;
-
-            /**
-             * Expect the view to not exist in the webview DOM tree.
-             * @example await web.expect(webview.element(web.by.id('RandomJunk959'))).toNotExist();
-             */
-            toNotExist(): R;
         }
 
         interface WebMatchers {
             /**
              * Find an element on the DOM tree by it's id
              * @param id
-             * @example webview.element(web.by.id('testingh1'))
+             * @example
+             * webview.element(web.by.id('testingh1'))
              */
             id(id: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's className
              * @param className
-             * @example webview.element(web.by.className('a'))
+             * @example
+             * webview.element(web.by.className('a'))
              */
             className(className: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's css selector
              * @param cssSelector
-             * @example webview.element(web.by.cssSelector('#cssSelector'))
+             * @example
+             * webview.element(web.by.cssSelector('#cssSelector'))
              */
             cssSelector(cssSelector: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's name prop
              * @param name
-             * @example webview.element(web.by.name('sec_input'))
+             * @example
+             * webview.element(web.by.name('sec_input'))
              */
             name(name: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's xPath
              * @param xpath
-             * @example webview.element(web.by.xpath('//*[@id="testingh1-1"]'))
+             * @example
+             * webview.element(web.by.xpath('//*[@id="testingh1-1"]'))
              */
             xpath(xpath: string): WebMatchers;
 
             /**
              * Find an <a> element on the DOM tree by it's link text (href content)
              * @param linkText
-             * @example webview.element(web.by.linkText('disney.com'))
+             * @example
+             * webview.element(web.by.linkText('disney.com'))
              */
             linkText(linkText: string): WebMatchers;
 
             /**
              * Find an <a> element on the DOM tree by it's partial link text (href content)
              * @param partialLinkText
-             * @example webview.element(web.by.partialLinkText('disney'))
+             * @example
+             * webview.element(web.by.partialLinkText('disney'))
              */
             partialLinkText(partialLinkText: string): WebMatchers;
 
             /**
              * Find an element on the DOM tree by it's tag
              * @param tag
-             * @example webview.element(web.by.tag('mark'))
+             * @example
+             * webview.element(web.by.tag('mark'))
              */
             tag(tag: string): WebMatchers;
         }

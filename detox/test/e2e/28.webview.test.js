@@ -17,14 +17,14 @@ describe(':android: WebView', () => {
       //detox web
       webview = await getWebView();
 
-      await web.expect(webview.element(web.by.id('testingPar'))).toExists();
+      await web.expect(webview.element(web.by.id('testingPar'))).toExist();
     });
 
     it('expect element to NOT exists', async () => {
       //detox web
       webview = await getWebView();
 
-      await web.expect(webview.element(web.by.id('not_found'))).toNotExists();
+      await web.expect(webview.element(web.by.id('not_found'))).not.toExist();
     });
 
     it('expect element to have text', async () => {
@@ -39,7 +39,7 @@ describe(':android: WebView', () => {
       //detox web
       webview = await getWebView();
 
-      await web.expect(webview.element(web.by.id('testingPar'))).toNotHaveText(MOCK_TEXT);
+      await web.expect(webview.element(web.by.id('testingPar'))).not.toHaveText(MOCK_TEXT);
     });
   });
 
@@ -47,49 +47,49 @@ describe(':android: WebView', () => {
     it('expect to find element by id', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.id('testingh1'))).toExists();
+      await web.expect(webview.element(web.by.id('testingh1'))).toExist();
     });
 
     it('expect to find element by className', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.className('a'))).toExists();
+      await web.expect(webview.element(web.by.className('a'))).toExist();
     });
 
     it('expect to find element by cssSelector', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.cssSelector('#cssSelector'))).toExists();
+      await web.expect(webview.element(web.by.cssSelector('#cssSelector'))).toExist();
     });
 
     it('expect to find element by name', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.name('sec_input'))).toExists();
+      await web.expect(webview.element(web.by.name('sec_input'))).toExist();
     });
 
     it('expect to find element by xpath', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.xpath('//*[@id="testingh1-1"]'))).toExists();
+      await web.expect(webview.element(web.by.xpath('//*[@id="testingh1-1"]'))).toExist();
     });
 
     it('expect to find element by linkText', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.linkText('disney.com'))).toExists();
+      await web.expect(webview.element(web.by.linkText('disney.com'))).toExist();
     });
 
     it('expect to find element by partialLinkText', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.partialLinkText('disney'))).toExists();
+      await web.expect(webview.element(web.by.partialLinkText('disney'))).toExist();
     });
 
     it('expect to find element by tag', async () => {
       //detox web
       webview = await getWebView();
-      await web.expect(webview.element(web.by.tag('mark'))).toExists();
+      await web.expect(webview.element(web.by.tag('mark'))).toExist();
     });
   });
 
@@ -110,7 +110,7 @@ describe(':android: WebView', () => {
 
         await editable.typeText(MOCK_TEXT, true);
 
-        await web.expect(editable).toNotHaveText(text);
+        await web.expect(editable).not.toHaveText(text);
         await web.expect(editable).toHaveText(MOCK_TEXT);
     });
 
