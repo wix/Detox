@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "18.2.1",
+  "version": "18.2.2",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -21,7 +21,7 @@
     "build:ios": "detox build -c ios.sim.release",
     "build:android": "detox build -c android.emu.release",
     "build:android-debug": "detox build -c android.emu.debug",
-    "clean:android": "pushd android && ./gradlew clean && popd",
+    "clean:android": "pushd android && rm -fr ../android/detox/build/ && ./gradlew clean && popd",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@types/node": "^14.14.20",
-    "detox": "^18.2.1",
+    "detox": "^18.2.2",
     "dtslint": "^4.0.6",
     "express": "^4.15.3",
     "jest": "^26.5.0",

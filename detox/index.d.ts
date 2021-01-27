@@ -400,14 +400,19 @@ declare global {
              */
             getPlatform(): 'ios' | 'android';
             /**
-             * Takes a screenshot on the device and schedules putting it to the artifacts folder upon completion of the current test.
-             * • If the test passes, the screenshot will be put to <artifacts-location>/✓ Menu items should have Logout/tap on menu.png.
-             * • If the test fails, the screenshot will be put to <artifacts-location>/✗ Menu items should have Logout/tap on menu.png.
-             * NOTE: At the moment, taking screenshots on-demand in --take-screenshots failing mode is not yet implemented.
-             *
-             * @example await device.takeScreenshot('tap on menu');
+             * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
+             * @param {string} name for the screenshot artifact
+             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   const tempPath = await device.takeScreenshot('tap on menu');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the screenshot will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/tap on menu.png
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
+             * });
              */
-            takeScreenshot(name: string): Promise<void>;
+            takeScreenshot(name: string): Promise<string>;
             /**
              * Simulate shake (iOS Only)
              */
