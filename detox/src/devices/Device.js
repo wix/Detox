@@ -106,7 +106,15 @@ class Device {
   }
 
   setLaunchArg(key, value) {
-    this._launchArgs[key] = value;
+    if (value === undefined) {
+      this.clearLaunchArg(key);
+    } else {
+      this._launchArgs[key] = value;
+    }
+  }
+
+  clearLaunchArg(key) {
+    delete this._launchArgs[key];
   }
 
   get id() {

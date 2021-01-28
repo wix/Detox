@@ -69,6 +69,16 @@ describe('Device', () => {
         undefined);
     }
 
+    expectLaunchCalledWithLaunchArg(key, value) {
+      const launchArgs = this.driver.launchApp.mock.calls[0][2];
+      expect(launchArgs[key]).toEqual(value);
+    }
+
+    expectLaunchCalledWithoutLaunchArg(argKey) {
+      const launchArgs = this.driver.launchApp.mock.calls[0][2];
+      expect(launchArgs).not.toHaveProperty(argKey);
+    }
+
     expectWaitForLaunchCalled(device, expectedArgs, languageAndLocale) {
       expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(device._deviceId, device._bundleId, expectedArgs, languageAndLocale);
     }
@@ -434,7 +444,7 @@ describe('Device', () => {
     });
 
     describe('with user launchArgs', () => {
-      it('should pass to device via driver\'s launch arguments', async () => {
+      it('should pass on-site launch-args to device via driver', async () => {
         const launchArgs = {
           arg1: "1",
           arg2: 2,
@@ -470,7 +480,7 @@ describe('Device', () => {
       it('should allow for pre-baked launch-args setup using device.setLaunchArg()', async () => {
         const params = {
           launchArgs: {
-            some: 'immediateArg',
+            some: 'onsiteArg',
           }
         };
         const prebakedArg = {
@@ -480,7 +490,7 @@ describe('Device', () => {
           },
         };
         const expectedArgs = {
-          some: 'immediateArg',
+          some: 'onsiteArg',
           [prebakedArg.key]: prebakedArg.value,
         };
 
@@ -509,6 +519,46 @@ describe('Device', () => {
 
         driverMock.expectLaunchCalledContainingArgs(device, expectedArgs);
       });
+    });
+
+    it('should allow for explicit clearing of prebaked launch-args', async () => {
+      const prebakedArg1 = {
+        key: 'arg1',
+        value: 'value1',
+      };
+      const prebakedArg2 = {
+        key: 'arg2',
+        value: 'value2',
+      };
+
+      const device = validDevice();
+      device.setLaunchArg(prebakedArg1.key, prebakedArg1.value);
+      device.setLaunchArg(prebakedArg2.key, prebakedArg2.value);
+      device.clearLaunchArg(prebakedArg1.key);
+      await device.launchApp();
+
+      driverMock.expectLaunchCalledWithLaunchArg(prebakedArg2.key, prebakedArg2.value);
+      driverMock.expectLaunchCalledWithoutLaunchArg(prebakedArg1.key);
+    });
+
+    it('should allow for implicit clearing of prebaked launch-args', async () => {
+      const prebakedArg1 = {
+        key: 'arg1',
+        value: 'value1',
+      };
+      const prebakedArg2 = {
+        key: 'arg2',
+        value: 'value2',
+      };
+
+      const device = validDevice();
+      device.setLaunchArg(prebakedArg1.key, prebakedArg1.value);
+      device.setLaunchArg(prebakedArg2.key, prebakedArg2.value);
+      device.setLaunchArg(prebakedArg1.key, undefined);
+      await device.launchApp();
+
+      driverMock.expectLaunchCalledWithLaunchArg(prebakedArg2.key, prebakedArg2.value);
+      driverMock.expectLaunchCalledWithoutLaunchArg(prebakedArg1.key);
     });
   });
 

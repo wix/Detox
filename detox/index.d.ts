@@ -287,7 +287,7 @@ declare global {
              * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
-            /***
+            /**
              * Set a launch-argument (name & value) to bundle alongside launch-arguments specified in any future call to {@link launchApp}.
              *
              * Equivalent to {@link DeviceLaunchAppConfig#launchArgs}, but is set ahead-of-time rather than on-site - thus allowing for
@@ -306,11 +306,17 @@ declare global {
              * await device.launchApp({ launchArgs: {'arg1': '222'} }};
              *
              * @param name Name of argument to provide.
-             * @param value Argument's value.
+             * @param value Argument's value. `Undefined` can be used for clearing the argument completely.
              *
              * @see DeviceLaunchAppConfig#launchArgs
              */
             setLaunchArg(name: string, value: any): void;
+            /**
+             * Clear a launch-argument previously set using {@link setLaunchArg};
+             *
+             * @param name Name of the argument to clear.
+             */
+            clearLaunchArg(name: string): void;
             /**
              * Launch the app
              *

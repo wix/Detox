@@ -53,12 +53,15 @@ describe(':android: Launch arguments', () => {
     device.setLaunchArg('prebakedArg2', {
       tofu: 'with gravy',
     });
+    device.setLaunchArg('prebakedArg3', 'spoiled milk');
+    device.clearLaunchArg('prebakedArg3');
     await device.launchApp({newInstance: true, launchArgs});
     await element(by.text('Launch Args')).tap();
 
     await assertLaunchArg('userArg', 'value');
     await assertLaunchArg('prebakedArg1', 'pie');
     await assertLaunchArg('prebakedArg2', JSON.stringify({ tofu: 'with gravy' }));
+    await assertNoLaunchArg('prebakedArg3');
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
