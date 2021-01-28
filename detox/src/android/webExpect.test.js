@@ -216,6 +216,11 @@ describe('webExpect', () => {
       await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).getTitle();
       await webExpect.getWebView().element(webExpect.by.tag('tag')).getTitle();
     });
+
+    it('should allow for access to by via element', async () => {
+      const webview = await webExpect.getWebView();
+      await webview.element(webview.by.id('id')).tap();
+    });
   })
 
   describe('Web Matchers',() => {
@@ -273,6 +278,11 @@ describe('webExpect', () => {
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).not.toExist();
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).toHaveText('text');
         await webExpect.expect(webExpect.getWebView().element(webExpect.by.tag('tag'))).not.toHaveText('text');
+      });
+
+      it('should allow for access to except via element', async () => {
+        const webview = await webExpect.getWebView();
+        await webview.expect(webview.element(webview.by.id('id'))).toExist();
       });
   });
 });

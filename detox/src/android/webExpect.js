@@ -280,23 +280,25 @@ class AndroidWebExpect {
     this._device = device;
 
     this.by = {
-      id: value => new IdMatcher(value),
-      className: value => new ClassNameMatcher(value),
-      cssSelector: value => new CssSelectorMatcher(value),
-      name: value => new NameMatcher(value),
-      xpath: value => new XPathMatcher(value),
-      linkText: value => new LinkTextMatcher(value),
-      partialLinkText: value => new PartialLinkTextMatcher(value),
-      tag: value => new TagNameMatcher(value)
+      id: (value) => new IdMatcher(value),
+      className: (value) => new ClassNameMatcher(value),
+      cssSelector: (value) => new CssSelectorMatcher(value),
+      name: (value) => new NameMatcher(value),
+      xpath: (value) => new XPathMatcher(value),
+      linkText: (value) => new LinkTextMatcher(value),
+      partialLinkText: (value) => new PartialLinkTextMatcher(value),
+      tag: (value) => new TagNameMatcher(value)
     };
-
     this.getWebView = this.getWebView.bind(this);
     this.expect = this.expect.bind(this);
   }
 
   // Matcher can be null only if there is only one webview on the hierarchy tree.
   getWebView(webViewMatcher) {
-    return new WebViewElement(this._device, this._invocationManager, this._emitter, webViewMatcher);
+    const webview = new WebViewElement(this._device, this._invocationManager, this._emitter, webViewMatcher);
+    webview.by = this.by;
+    webview.expect = this.expect;
+    return webview;
   }
 
   expect(webElement) {
