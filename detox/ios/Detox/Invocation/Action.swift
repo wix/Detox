@@ -51,7 +51,6 @@ class Action : CustomStringConvertible {
 		
 		static let setColumnToValue = "setColumnToValue"
 		static let setDatePickerDate = "setDatePickerDate"
-				
 		static let getAttributes = "getAttributes"
 	}
 	
@@ -86,7 +85,6 @@ class Action : CustomStringConvertible {
 		
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
-				
 		Kind.getAttributes: GetAttributesAction.self
 	]
 
