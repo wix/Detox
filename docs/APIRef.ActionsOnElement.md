@@ -9,6 +9,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
+- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration)
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
 - [`.scroll()`](#scrolloffset-direction-startpositionx-startpositiony)
@@ -54,6 +55,24 @@ Simulates a long press on the element at its activation point.
 ```js
 await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
+```
+
+### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`
+
+Simulates a long press on the element and then drag it to a position of another element.
+
+`duration` —the duration to press for, in ms (required) <br/>
+`normalizedPositionX` — X coordinate of starting point, relative to the view width (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`normalizedPositionY` — Y coordinate of starting point, relative to the view height (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`targetElement`— the duration to press for, in ms (required) <br/>
+`normalizedTargetPositionX` — X coordinate of ending point in the target element, relative to the view width (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`normalizedTargetPositionY` — Y coordinate of ending point in the target element, relative to the view height (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`speed` — the speed of the drag (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
+`holdDuration` — the duration before releasing at the end, in ms (optional, default is 1000)
+
+```js
+await element(by.id('elementToDrag')).longPressAndDrag(2000, NaN, NaN, by.id('targetElement'), NaN, NaN);
+await element(by.id('cellId_1')).longPressAndDrag(2000, 0.9, NaN, by.id('cellId_6'), 0.9, NaN, 'slow', 0);
 ```
 
 ### `swipe(direction, speed, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY)`
