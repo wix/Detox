@@ -26,6 +26,7 @@ class Action : CustomStringConvertible {
 		static let kind = "action"
 		static let params = "params"
 		static let `while` = "while"
+		static let targetElement = "targetElement"
 	}
 	
 	enum Kind {
@@ -96,6 +97,8 @@ class Action : CustomStringConvertible {
 		switch kind {
 		case Kind.scroll:
 			return try ScrollAction.with(dictionaryRepresentation: dictionaryRepresentation)
+		case Kind.longPress:
+			return try LongPressAction.with(dictionaryRepresentation: dictionaryRepresentation)
 		case Kind.tapBackspaceKey:
 			params = ["\u{8}"]
 		case Kind.tapReturnKey:
@@ -158,6 +161,30 @@ class TapAction : Action {
 }
 
 class LongPressAction : Action {
+	let targetElement: Element?
+	
+	dynamic override class func with(dictionaryRepresentation: [String: Any]) throws -> Action {
+		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible & CustomDebugStringConvertible]?
+		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
+		let targetElement : Element?
+		if let targetElementDic = dictionaryRepresentation[Keys.targetElement] as? [String: Any]{
+			targetElement = try Element.with(dictionaryRepresentation: targetElementDic)
+		} else {
+			targetElement = nil
+		}
+		
+		return LongPressAction(kind: Kind.longPress, params: params, element: element, targetElement: targetElement)
+	}
+	
+	required init(kind: String, params: [CustomStringConvertible & CustomDebugStringConvertible]?, element: Element, targetElement: Element?) {
+		self.targetElement = targetElement
+		super.init(kind: kind, params: params, element: element)
+	}
+	
+	required init(kind: String, params: [CustomStringConvertible & CustomDebugStringConvertible]?, element: Element) {
+		fatalError("Call the other initializer")
+	}
+	
 	override func perform(on element: Element) -> [String: Any]? {
 		let duration : TimeInterval
 		if let param = params?.first as? Double {
@@ -166,31 +193,33 @@ class LongPressAction : Action {
 			duration = 1.0
 		}
 		
-		if (params == nil || params!.count <= 1) {
+		guard let parameters = params, parameters.count > 1 else {
 			// Regular long press
 			element.longPress(duration: duration)
 			return nil
 		}
-				
-		guard let normalizedPositionX = params?[1] as? Double, let normalizedPositionY = params?[2] as? Double else {
+		
+		guard let targetElement = self.targetElement else {
+			fatalError("Target element is missing")
+		}
+		
+		guard parameters.count > 2 else {
 			fatalError("Unknown normalized starting point")
 		}
-		let normalizedStartingPoint = CGPoint(x: normalizedPositionX, y: normalizedPositionY)
 		
-		guard let targetElement = params?[3] as? Element else {
-			fatalError("Unknown target element")
-		}
+		let normalizedStartingPoint = getNormalizedPoint(xPosition: parameters[1], yPosition: parameters[2])
 		
-		guard let normalizedTargetPositionX = params?[4] as? Double, let normalizedTargetPositionY = params?[5] as? Double else {
+		guard parameters.count > 4 else {
 			fatalError("Unknown normalized target point")
 		}
-		let normalizedTargetingPoint = CGPoint(x: normalizedTargetPositionX, y: normalizedTargetPositionY)
 		
-		var speed = CGFloat(2.0)
-		if let speedString = params?[6] as? String {
+		let normalizedTargetingPoint = getNormalizedPoint(xPosition: parameters[3], yPosition: parameters[4])
+		
+		var speed = CGFloat(6.0)
+		if let speedString = parameters[5] as? String {
 			switch speedString {
 			case "slow":
-				speed = 0.5
+				speed = 2.0
 				break;
 			case "fast":
 				break
@@ -200,7 +229,7 @@ class LongPressAction : Action {
 		}
 		
 		let endDuration : TimeInterval
-		if let param = params?.first as? Double {
+		if let param = parameters[6] as? Double {
 			endDuration = param.toSeconds()
 		} else {
 			endDuration = 1.0
@@ -209,6 +238,24 @@ class LongPressAction : Action {
 		element.longPress(at: normalizedStartingPoint, duration: duration, dragToElement: targetElement, normalizedTargetPoint: normalizedTargetingPoint, speed: speed, holdForDuration: endDuration)
 		
 		return nil
+	}
+	
+	func getNormalizedPoint(xPosition: Any, yPosition: Any) -> CGPoint {
+		let xPos, yPos: Double
+		
+		if let pos = xPosition as? Double, pos.isNaN == false {
+			xPos = pos
+		} else {
+			xPos = Double.nan
+		}
+
+		if let pos = yPosition as? Double, pos.isNaN == false {
+			yPos = pos
+		} else {
+			yPos = Double.nan
+		}
+
+		return CGPoint(x: xPos, y: yPos)
 	}
 }
 

@@ -77,7 +77,7 @@
 - (void)dtx_longPressAtPoint:(CGPoint)normalizedPoint duration:(NSTimeInterval)duration thenDragToElement:(NSObject*)target normalizedTargetPoint:(CGPoint)normalizedTargetPoint withSpeed:(CGFloat)speed thenHoldForDuration:(NSTimeInterval)lastHoldDuration
 {
 	CGPoint calcNormalizedPoint = DTXCalcNormalizedPoint(normalizedPoint, self);
-	CGPoint calcNormalizedTargetPoint = DTXCalcNormalizedPoint(normalizedTargetPoint, self);
+	CGPoint calcNormalizedTargetPoint = DTXCalcNormalizedPoint(normalizedTargetPoint, target);
 	
 	[self.dtx_view dtx_assertHittableAtPoint:[self.dtx_view.coordinateSpace convertPoint:calcNormalizedPoint fromCoordinateSpace:self.dtx_view.window.screen.coordinateSpace]];
 	[target.dtx_view dtx_assertHittableAtPoint:[target.dtx_view.coordinateSpace convertPoint:calcNormalizedTargetPoint fromCoordinateSpace:target.dtx_view.window.screen.coordinateSpace]];
