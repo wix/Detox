@@ -130,9 +130,7 @@ class Element {
             normalizedTargetPositionX, normalizedTargetPositionY, speed = 'fast', holdDuration = 1000) {
     if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
 
-    if (typeof targetElement == null) {
-      throw new Error('target element was not provided');
-    }
+    if (!(targetElement instanceof Matcher)) throwMatcherError(targetElement);
 
     if (typeof holdDuration !== 'number') throw new Error('duration should be a number, but got ' + (holdDuration + (' (' + (typeof holdDuration + ')'))));
 
@@ -142,7 +140,7 @@ class Element {
     assertNormalized({ normalizedTargetPositionX });
     assertNormalized({ normalizedTargetPositionY });
 
-    return this.withAction('longPressAndDrag', duration, normalizedPositionX, normalizedPositionY, targetElement,
+    return this.withActionAndTargetElement('longPress', targetElement, duration, normalizedPositionX, normalizedPositionY,
       normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
   }
 
@@ -236,19 +234,32 @@ class Element {
     throw new DetoxRuntimeError({message: 'Element screenshots are not supported on iOS, at the moment!'});
   }
 
-  createInvocation(action, ...params) {
+  createInvocation(action, targetElementMatcher, ...params) {
     params = _.map(params, (param) => _.isNaN(param) ? null : param);
-    return ({
+    const invocation = {
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
       ...(_.without(params, undefined).length !== 0 && { params: _.without(params, undefined) }),
       predicate: this.matcher.predicate
-    });
+    };
+
+    if (targetElementMatcher) {
+      invocation.targetElement = {
+        predicate: targetElementMatcher.predicate
+      }
+    }
+
+    return invocation;
   }
 
   withAction(action, ...params) {
-    const invocation = this.createInvocation(action, ...params);
+    const invocation = this.createInvocation(action, null, ...params);
+    return this._invocationManager.execute(invocation);
+  }
+
+  withActionAndTargetElement(action, targetElement, ...params) {
+    const invocation = this.createInvocation(action, targetElement, ...params);
     return this._invocationManager.execute(invocation);
   }
 }
@@ -458,14 +469,6 @@ class WaitFor {
   }
 
   longPress(duration) {
-    this.action = this.actionableElement.longPress(duration);
-    return this.waitForWithAction();
-  }
-
-  longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
-    normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
-    // this.action = this.actionableElement.longPress(duration, normalizedPositionX, normalizedPositionY,  targetElement,
-    //   normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
     this.action = this.actionableElement.longPress(duration);
     return this.waitForWithAction();
   }
