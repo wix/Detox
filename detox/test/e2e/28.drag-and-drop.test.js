@@ -6,13 +6,13 @@ describe('Drag And Drop', () => {
 
   it('should drag the first cell and drop at the seven cell position', async () => {
     await assertCellsOrder([1, 2 ,3 ,4 ,5 ,6 ,7 ,8 ,9, 10])
-    await element(by.id('cellId_0')).longPressAndDrag(2000, 0.9, NaN, by.id('cellId_6'), 0.9, NaN, 'fast', 0);
+    await element(by.id('cellId_0')).longPressAndDrag(2000, 0.9, NaN, element(by.id('cellId_6')), 0.9, NaN, 'fast', 0);
     await assertCellsOrder([2 ,3 ,4 ,5 ,6 ,7 ,1, 8 ,9, 10])
   });
 
   it('should drag the second cell and drop before the seven cell position', async () => {
     await assertCellsOrder([1, 2 ,3 ,4 ,5 ,6 ,7 ,8 ,9, 10])
-    await element(by.id('cellId_1')).longPressAndDrag(2000, NaN, NaN, by.id('cellId_6'), NaN, 0.01, 'slow', 0);
+    await element(by.id('cellId_1')).longPressAndDrag(2000, NaN, NaN, element(by.id('cellId_6')), NaN, 0.01, 'slow', 0);
     await assertCellsOrder([1 ,3 ,4 ,5 ,6 ,2, 7, 8 ,9, 10])
   });
 

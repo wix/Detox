@@ -130,7 +130,7 @@ class Element {
             normalizedTargetPositionX, normalizedTargetPositionY, speed = 'fast', holdDuration = 1000) {
     if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
 
-    if (!(targetElement instanceof Matcher)) throwMatcherError(targetElement);
+    if (!(targetElement instanceof Element)) throwElementError(targetElement);
 
     if (typeof holdDuration !== 'number') throw new Error('duration should be a number, but got ' + (holdDuration + (' (' + (typeof holdDuration + ')'))));
 
@@ -246,7 +246,7 @@ class Element {
 
     if (targetElementMatcher) {
       invocation.targetElement = {
-        predicate: targetElementMatcher.predicate
+        predicate: targetElementMatcher.matcher.predicate
       }
     }
 
@@ -613,6 +613,10 @@ class IosExpect {
 
 function throwMatcherError(param) {
   throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+}
+
+function throwElementError(param) {
+  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
 }
 
 module.exports = IosExpect;
