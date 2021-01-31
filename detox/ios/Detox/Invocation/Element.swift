@@ -124,8 +124,8 @@ class Element : NSObject {
 		view.dtx_longPress(at: point, duration: duration)
 	}
 	
-	func longPress(at normalizedPoint: CGPoint, duration: TimeInterval, dragToElement targetElement: Element, normalizedTargetPoint: CGPoint, speed: CGFloat, holdForDuration lastHoldDuration: TimeInterval) {
-		view.dtx_longPress(at:normalizedPoint, duration:duration, target:targetElement.view, normalizedTargetPoint:normalizedTargetPoint, speed:speed, lastHoldDuration:lastHoldDuration)
+	func longPress(at normalizedPoint: CGPoint, duration: TimeInterval, dragToElement targetElement: Element, normalizedTargetPoint: CGPoint, velocity: CGFloat, holdForDuration lastHoldDuration: TimeInterval) {
+		view.dtx_longPress(at:normalizedPoint, duration:duration, target:targetElement.view, normalizedTargetPoint:normalizedTargetPoint, velocity:velocity, lastHoldDuration:lastHoldDuration)
 	}
 	
 	func swipe(normalizedOffset: CGPoint, velocity: CGFloat = 1.0, normalizedStartingPoint: CGPoint? = nil) {

@@ -3,27 +3,32 @@ describe('Drag And Drop', () => {
     await device.reloadReactNative();
     await element(by.text('Drag And Drop')).tap();
   });
+  
+  afterEach(async () => {
+    await element(by.id('closeButton')).tap();
+  });
 
-  it('should drag the first cell and drop at the seven cell position', async () => {
-    await assertCellsOrder([1, 2 ,3 ,4 ,5 ,6 ,7 ,8 ,9, 10])
-    await element(by.id('cellId_0')).longPressAndDrag(2000, 0.9, NaN, element(by.id('cellId_6')), 0.9, NaN, 'fast', 0);
-    await assertCellsOrder([2 ,3 ,4 ,5 ,6 ,7 ,1, 8 ,9, 10])
+  it('should drag the first icon and drop at the drop container', async () => {
+    await assertCellText(2, '2');
+    await element(by.id('cell10')).longPressAndDrag(750, 0.9, NaN, element(by.id('cell2')), 0.9, NaN, 'fast', 0);
+    await assertCellText(2, '10');
   });
 
   it('should drag the second cell and drop before the seven cell position', async () => {
-    await assertCellsOrder([1, 2 ,3 ,4 ,5 ,6 ,7 ,8 ,9, 10])
-    await element(by.id('cellId_1')).longPressAndDrag(2000, NaN, NaN, element(by.id('cellId_6')), NaN, 0.01, 'slow', 0);
-    await assertCellsOrder([1 ,3 ,4 ,5 ,6 ,2, 7, 8 ,9, 10])
+    await assertCellText(9, '9');
+    await element(by.id('cell2')).longPressAndDrag(750, 0.9, NaN, element(by.id('cell10')), 0.9, 0.01, 'slow', 0);
+    await assertCellText(10, '10');
+    //Because we used 0.001 as the drop Y point, the `cell2` actually landed at cell9, not cell10.
+    await assertCellText(9, '2');
   });
-
-  async function assertCellsOrder(order) {
-    let text = `Cells order: `
-    for (let i = 0; i < order.length; i++) {
-      if (i > 0) {
-        text += ', '
-      }
-      text += `${order[i]}`
+  
+  async function assertCellText(idx, value) {
+    const attribs = await element(by.id('cellTextLabel')).getAttributes();
+    const cellStrings = attribs.elements.map(x => x.text);
+    
+    if(cellStrings[idx - 1] !== value) {
+      throw new Error("Failed!");
     }
-    await expect(element(by.id('cellsOrderId'))).toHaveText(text);
+    // expect(cellStrings[idx]).toBe(value);
   }
 });

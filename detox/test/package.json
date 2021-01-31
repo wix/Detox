@@ -29,8 +29,7 @@
     "@react-native-community/async-storage": "^1.12.0",
     "moment": "^2.24.0",
     "react": "16.11.x",
-    "react-native": "0.62.x",
-    "react-native-drag-sort": "^2.3.7"
+    "react-native": "0.62.x"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",

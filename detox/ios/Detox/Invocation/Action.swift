@@ -213,13 +213,14 @@ class LongPressAction : Action {
 		
 		let normalizedTargetingPoint = getNormalizedPoint(xPosition: parameters[3], yPosition: parameters[4])
 		
-		var speed = CGFloat(6.0)
+		var speed = CGFloat(1.0)
 		if let speedString = parameters[5] as? String {
 			switch speedString {
 			case "slow":
-				speed = 2.0
+				speed = 0.5
 				break;
 			case "fast":
+				speed = 1.0
 				break
 			default:
 				fatalError("Unknown speed")
@@ -233,7 +234,7 @@ class LongPressAction : Action {
 			endDuration = 1.0
 		}
 		
-		element.longPress(at: normalizedStartingPoint, duration: duration, dragToElement: targetElement, normalizedTargetPoint: normalizedTargetingPoint, speed: speed, holdForDuration: endDuration)
+		element.longPress(at: normalizedStartingPoint, duration: duration, dragToElement: targetElement, normalizedTargetPoint: normalizedTargetingPoint, velocity: speed, holdForDuration: endDuration)
 		
 		return nil
 	}

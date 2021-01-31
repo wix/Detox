@@ -1,6 +1,8 @@
 #import "AppDelegate.h"
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+//#import "DragDropViewController.h"
+#import "DragDropTableViewController.h"
 @import CoreSpotlight;
 
 @import UserNotifications;
@@ -155,6 +157,17 @@ RCT_EXPORT_MODULE();
 	self.window.annoyingLabel.textColor = UIColor.whiteColor;
 	self.window.annoyingLabel.font = [UIFont systemFontOfSize:30];
 	[self.window.annoyingLabel sizeToFit];
+	
+	[NSNotificationCenter.defaultCenter addObserverForName:@"ChangeScreen" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+		NSString* name = note.userInfo[@"name"];
+		
+		if([name isEqualToString:@"dragAndDrop"])
+		{
+//			DragDropViewController* vc = [DragDropViewController new];
+			DragDropTableViewController* vc = [[DragDropTableViewController alloc] initWithStyle:UITableViewStyleInsetGrouped];
+			[self.window.rootViewController presentViewController:vc animated:YES completion:nil];
+		}
+	}];
 	
 	return YES;
 }

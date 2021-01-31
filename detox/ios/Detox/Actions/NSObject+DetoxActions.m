@@ -8,6 +8,7 @@
 
 #import "NSObject+DetoxActions.h"
 #import "NSObject+DetoxUtils.h"
+#import "UIApplication+DTXAdditions.h"
 
 @import Darwin;
 @import AudioToolbox;
@@ -74,8 +75,18 @@
 	[DTXSyntheticEvents touchAlongPath:@[@(windowPoint)] relativeToWindow:window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:duration];
 }
 
-- (void)dtx_longPressAtPoint:(CGPoint)normalizedPoint duration:(NSTimeInterval)duration thenDragToElement:(NSObject*)target normalizedTargetPoint:(CGPoint)normalizedTargetPoint withSpeed:(CGFloat)speed thenHoldForDuration:(NSTimeInterval)lastHoldDuration
+#define DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedStartingPoint) \
+if((isnan(normalizedStartingPoint.x) == NO && (normalizedStartingPoint.x < 0 || normalizedStartingPoint.x > 1)) || isnan(normalizedStartingPoint.y) == NO && (normalizedStartingPoint.y < 0 || normalizedStartingPoint.y > 1)) \
+{ \
+DTXAssert(NO, @"Bad normalized starting point provided."); \
+}
+
+- (void)dtx_longPressAtPoint:(CGPoint)normalizedPoint duration:(NSTimeInterval)duration thenDragToElement:(NSObject*)target normalizedTargetPoint:(CGPoint)normalizedTargetPoint velocity:(CGFloat)velocity thenHoldForDuration:(NSTimeInterval)lastHoldDuration
 {
+	NSParameterAssert(velocity > 0.0);
+	DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedPoint);
+	DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedTargetPoint);
+	
 	CGPoint calcNormalizedPoint = DTXCalcNormalizedPoint(normalizedPoint, self);
 	CGPoint calcNormalizedTargetPoint = DTXCalcNormalizedPoint(normalizedTargetPoint, target);
 	
@@ -92,10 +103,11 @@
 	// Add start point
 	[points addObject:@(startPoint)];
 	
+	velocity = (UIApplication.dtx_panVelocity * velocity);
 	// Find number of points appropriate for the speed
 	CGFloat xDiff = endPoint.x - startPoint.x;
 	CGFloat yDiff = endPoint.y - startPoint.y;
-	NSInteger numOfPoints = lround(fmax(fabs(xDiff) / speed, fabs(yDiff) / speed));
+	NSInteger numOfPoints = lround(fmax(fabs(xDiff) / velocity, fabs(yDiff) / velocity));
 	
 	// Generate points in between
 	CGFloat xDiffDelta = xDiff / numOfPoints;
@@ -150,12 +162,6 @@ static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoin
 {
 	[self dtx_swipeWithNormalizedOffset:normalizedOffset velocity:velocity normalizedStartingPoint:CGPointMake(NAN, NAN)];
 }
-
-#define DTX_ENFORCE_NORMALIZED_STARTING_POINT(normalizedStartingPoint) \
-if((isnan(normalizedStartingPoint.x) == NO && (normalizedStartingPoint.x < 0 || normalizedStartingPoint.x > 1)) || isnan(normalizedStartingPoint.y) == NO && (normalizedStartingPoint.y < 0 || normalizedStartingPoint.y > 1)) \
-{ \
-DTXAssert(NO, @"Bad normalized starting point provided."); \
-} \
 
 #define DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedStartingPoint, normalizedOffset, main, other, CGRectGetMinMain, CGRectGetMinOther, CGRectGetMidMain, CGRectGetMidOther, CGRectGetMaxMain, CGRectGetMainSize, CGRectGetOtherSize) \
 CGFloat mainStart = !isnan(normalizedStartingPoint.main) ? CGRectGetMinMain(safeBoundsInScreenSpace) + CGRectGetMainSize(safeBoundsInScreenSpace) * normalizedStartingPoint.main : MAX(MIN(CGRectGetMidMain(screenBounds) - 0.5 * normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMaxMain(safeBoundsInScreenSpace) - 1), CGRectGetMinMain(safeBoundsInScreenSpace) + 1); \
