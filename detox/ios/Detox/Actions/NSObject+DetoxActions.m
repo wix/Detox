@@ -96,7 +96,7 @@ DTXAssert(NO, @"Bad normalized starting point provided."); \
 	// Converting end point to the window coordinate space of the view we are going to drag
 	// Setting the startPoint for better code readbility
 	CGPoint startPoint = calcNormalizedPoint;
-	CGPoint endPoint = [self.dtx_view.window.coordinateSpace convertPoint:calcNormalizedTargetPoint fromCoordinateSpace:target.dtx_view.window.screen.coordinateSpace];
+	CGPoint endPoint = [self.dtx_view.window.coordinateSpace convertPoint:calcNormalizedTargetPoint fromCoordinateSpace:target.dtx_view.window.coordinateSpace];
 	
 	NSMutableArray<NSValue*>* points = [NSMutableArray new];
 	
