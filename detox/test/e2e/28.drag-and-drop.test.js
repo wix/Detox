@@ -8,15 +8,15 @@ describe('Drag And Drop', () => {
     await element(by.id('closeButton')).tap();
   });
 
-  it('should drag the first icon and drop at the drop container', async () => {
+  it('should drag the ten cell and drop "on" the second cell position', async () => {
     await assertCellText(2, '2');
-    await element(by.id('cell10')).longPressAndDrag(750, 0.9, NaN, element(by.id('cell2')), 0.9, NaN, 'fast', 0);
+    await element(by.id('cell10')).longPressAndDrag(1000, 0.9, NaN, element(by.id('cell2')), 0.9, NaN, 'fast', 0);
     await assertCellText(2, '10');
   });
 
-  it('should drag the second cell and drop before the seven cell position', async () => {
+  it('should drag the second cell and drop before the ten cell position', async () => {
     await assertCellText(9, '9');
-    await element(by.id('cell2')).longPressAndDrag(750, 0.9, NaN, element(by.id('cell10')), 0.9, 0.01, 'slow', 0);
+    await element(by.id('cell2')).longPressAndDrag(1000, 0.9, NaN, element(by.id('cell10')), 0.9, 0.01, 'slow', 0);
     await assertCellText(10, '10');
     //Because we used 0.001 as the drop Y point, the `cell2` actually landed at cell9, not cell10.
     await assertCellText(9, '2');
@@ -29,6 +29,5 @@ describe('Drag And Drop', () => {
     if(cellStrings[idx - 1] !== value) {
       throw new Error("Failed!");
     }
-    // expect(cellStrings[idx]).toBe(value);
   }
 });
