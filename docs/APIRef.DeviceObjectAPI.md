@@ -22,6 +22,8 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 ## Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
+- [`device.setLaunchArg(name, value)`](#devicesetlaunchargname-value)
+- [`device.clearLaunchArg(name, value)`](#deviceclearlaunchargname)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -213,6 +215,16 @@ await device.launchApp({
 ### `device.relaunchApp(params)`
 
 **Deprecated:** Use `device.launchApp(params)` instead. The method calls `launchApp({newInstance: true})` for backwards compatibility.
+
+### `device.setLaunchArg(name, value)`
+
+Set a launch-argument (name & value) to bundle alongside launch-arguments specified in any future call to `device.launchApp()`. 
+
+Equivalent to specifying on-site `launchArgs` to `device.launchApp()`, but is set ahead-of-time rather than on-site - thus allowing for a gradual, multi-phased setup of a test environment, typically suitable for complex apps.
+
+### `device.clearLaunchArg(name)`
+
+Clear a launch-argument previous set using `device.setLaunchArg()`.
 
 ### `device.terminateApp()`
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).

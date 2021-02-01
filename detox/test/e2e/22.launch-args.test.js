@@ -34,15 +34,34 @@ describe(':android: Launch arguments', () => {
           then: 'so, me',
         }
       },
-      complexlist: ['arguments', 'https://haxorhost:666'],
+      complexlist: ['arguments', 'https://haxorhost:1337'],
     };
 
     await device.launchApp({newInstance: true, launchArgs});
-
     await element(by.text('Launch Args')).tap();
 
     await assertLaunchArg('complex', JSON.stringify(launchArgs.complex));
     await assertLaunchArg('complexlist', JSON.stringify(launchArgs.complexlist));
+  });
+
+  it('should allow for pre-baked arguments setup', async () => {
+    const launchArgs = {
+      userArg: 'value',
+    };
+
+    device.setLaunchArg('prebakedArg1', 'pie');
+    device.setLaunchArg('prebakedArg2', {
+      tofu: 'with gravy',
+    });
+    device.setLaunchArg('prebakedArg3', 'spoiled milk');
+    device.clearLaunchArg('prebakedArg3');
+    await device.launchApp({newInstance: true, launchArgs});
+    await element(by.text('Launch Args')).tap();
+
+    await assertLaunchArg('userArg', 'value');
+    await assertLaunchArg('prebakedArg1', 'pie');
+    await assertLaunchArg('prebakedArg2', JSON.stringify({ tofu: 'with gravy' }));
+    await assertNoLaunchArg('prebakedArg3');
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
