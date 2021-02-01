@@ -23,7 +23,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 
 - [`device.launchApp()`](#devicelaunchappparams)
 - [`device.setLaunchArg(name, value)`](#devicesetlaunchargname-value)
-- [`device.clearLaunchArg(name, value)`](#deviceclearlaunchargname)
+- [`device.clearLaunchArg(name)`](#deviceclearlaunchargname)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
