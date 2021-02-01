@@ -244,7 +244,7 @@ class Element {
       predicate: this.matcher.predicate
     };
 
-    if (targetElementMatcher) {
+    if (targetElementMatcher && targetElementMatcher.matcher && targetElementMatcher.matcher.predicate) {
       invocation.targetElement = {
         predicate: targetElementMatcher.matcher.predicate
       }
