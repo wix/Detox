@@ -1,7 +1,6 @@
 #import "AppDelegate.h"
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
-//#import "DragDropViewController.h"
 #import "DragDropTableViewController.h"
 @import CoreSpotlight;
 
@@ -163,7 +162,6 @@ RCT_EXPORT_MODULE();
 		
 		if([name isEqualToString:@"dragAndDrop"])
 		{
-//			DragDropViewController* vc = [DragDropViewController new];
 			DragDropTableViewController* vc = [[DragDropTableViewController alloc] initWithStyle:UITableViewStyleInsetGrouped];
 			[self.window.rootViewController presentViewController:vc animated:YES completion:nil];
 		}

@@ -61,11 +61,9 @@
 	
 	UIView* iconContainer = [UIView new];
 	iconContainer.translatesAutoresizingMaskIntoConstraints = NO;
-//	iconContainer.backgroundColor = UIColor.systemGreenColor;
 	
 	UIView* dropContainer = [UIView new];
 	dropContainer.translatesAutoresizingMaskIntoConstraints = NO;
-//	dropContainer.backgroundColor = UIColor.systemBlueColor;
 	dropContainer.layer.borderColor = UIColor.grayColor.CGColor;
 	dropContainer.layer.borderWidth = 10;
 	dropContainer.accessibilityIdentifier = @"dropContainer";

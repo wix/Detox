@@ -160,14 +160,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				CC17D3301D60A24300267B0C /* NativeModule.h */,
-				CC17D3311D60A24300267B0C /* NativeModule.m */,
-				E088C8F21F01585500CC48E9 /* CalendarManager.h */,
-				E088C8F31F01585500CC48E9 /* CalendarManager.m */,
-				39F5268425C725BF00BA644D /* DragDropViewController.h */,
-				39F5268525C725BF00BA644D /* DragDropViewController.m */,
-				39F5268B25C7429E00BA644D /* DragDropTableViewController.h */,
-				39F5268C25C7429E00BA644D /* DragDropTableViewController.m */,
+				ADB9A7A225C82082005236EE /* ReactModules */,
+				ADB9A79F25C81FF7005236EE /* UI */,
 			);
 			name = example;
 			sourceTree = "<group>";
@@ -233,6 +227,36 @@
 				39B71FC924643AEA00CC9A88 /* exampleUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		ADB9A79F25C81FF7005236EE /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				ADB9A7A125C82033005236EE /* ViewControllers */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		ADB9A7A125C82033005236EE /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				39F5268425C725BF00BA644D /* DragDropViewController.h */,
+				39F5268525C725BF00BA644D /* DragDropViewController.m */,
+				39F5268B25C7429E00BA644D /* DragDropTableViewController.h */,
+				39F5268C25C7429E00BA644D /* DragDropTableViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		ADB9A7A225C82082005236EE /* ReactModules */ = {
+			isa = PBXGroup;
+			children = (
+				CC17D3301D60A24300267B0C /* NativeModule.h */,
+				CC17D3311D60A24300267B0C /* NativeModule.m */,
+				E088C8F21F01585500CC48E9 /* CalendarManager.h */,
+				E088C8F31F01585500CC48E9 /* CalendarManager.m */,
+			);
+			name = ReactModules;
 			sourceTree = "<group>";
 		};
 		CCFA7DE41D11D22600E15EDF /* Frameworks */ = {
