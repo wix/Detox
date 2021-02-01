@@ -46,22 +46,22 @@ describe(':android: Launch arguments', () => {
 
   it('should allow for pre-baked arguments setup', async () => {
     const launchArgs = {
-      userArg: 'value',
+      onsiteArg: 'on-site',
     };
 
-    device.setLaunchArg('prebakedArg1', 'pie');
-    device.setLaunchArg('prebakedArg2', {
-      tofu: 'with gravy',
+    device.setLaunchArgs({
+      prebakedIngredient: 'spoiled milk',
+      prebakedDesert: 'pie',
     });
-    device.setLaunchArg('prebakedArg3', 'spoiled milk');
-    device.clearLaunchArg('prebakedArg3');
-    await device.launchApp({newInstance: true, launchArgs});
+    device.setLaunchArg('prebakedDish', { tofu: 'with gravy' });
+    device.clearLaunchArg('prebakedIngredient');
+    await device.launchApp({ newInstance: true, launchArgs });
     await element(by.text('Launch Args')).tap();
 
-    await assertLaunchArg('userArg', 'value');
-    await assertLaunchArg('prebakedArg1', 'pie');
-    await assertLaunchArg('prebakedArg2', JSON.stringify({ tofu: 'with gravy' }));
-    await assertNoLaunchArg('prebakedArg3');
+    await assertLaunchArg('onsiteArg', 'on-site');
+    await assertLaunchArg('prebakedDesert', 'pie');
+    await assertLaunchArg('prebakedDish', JSON.stringify({ tofu: 'with gravy' }));
+    await assertNoLaunchArg('prebakedIngredient');
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax

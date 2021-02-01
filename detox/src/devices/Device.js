@@ -105,16 +105,27 @@ class Device {
     }
   }
 
-  setLaunchArg(key, value) {
+  setLaunchArg(name, value) {
     if (value === undefined) {
-      this.clearLaunchArg(key);
+      this.clearLaunchArg(name);
     } else {
-      this._launchArgs[key] = value;
+      this._launchArgs[name] = value;
     }
   }
 
-  clearLaunchArg(key) {
-    delete this._launchArgs[key];
+  setLaunchArgs(launchArgs) {
+    Object
+      .keys(launchArgs)
+      .forEach((name) =>
+        this.setLaunchArg(name, launchArgs[name]));
+  }
+
+  clearLaunchArg(name) {
+    delete this._launchArgs[name];
+  }
+
+  clearAllLaunchArgs() {
+    this._launchArgs = {};
   }
 
   get id() {

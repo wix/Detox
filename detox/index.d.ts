@@ -312,11 +312,35 @@ declare global {
              */
             setLaunchArg(name: string, value: any): void;
             /**
+             * Set multiple launch-arguments in one go. See {@link setLaunchArg}.
+             * @param launchArgs A **plain** object containing the argument to set. Specifying `undefined` will result
+             * in the clearing of the associated launch-argument.
+             *
+             * @example
+             * device.setLaunchArgs({
+             *   mockServerPort: 1234,
+             *   mockServerCredentials: 'user@test.com:12345678',
+             * });
+             * await device.launchApp();
+             * @example
+             * // Set one arg (mockServerPort) and clear another (mockServerToken) in one go:
+             * device.setLaunchArgs({
+             *   mockServerPort: 1234,
+             *   mockServerToken: undefined,
+             * });
+             * await device.launchApp();
+             */
+            setLaunchArgs(launchArgs: object): void;
+            /**
              * Clear a launch-argument previously set using {@link setLaunchArg};
              *
              * @param name Name of the argument to clear.
              */
             clearLaunchArg(name: string): void;
+            /**
+             * Completely reset any previously set launch-arguments.
+             */
+            clearAllLaunchArgs(): void;
             /**
              * Launch the app
              *

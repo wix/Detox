@@ -23,6 +23,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 
 - [`device.launchApp()`](#devicelaunchappparams)
 - [`device.setLaunchArg(name, value)`](#devicesetlaunchargname-value)
+- [`device.setLaunchArgs(args)`](#devicesetlaunchargsargs)
 - [`device.clearLaunchArg(name)`](#deviceclearlaunchargname)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
@@ -222,9 +223,19 @@ Set a launch-argument (name & value) to bundle alongside launch-arguments specif
 
 Equivalent to specifying on-site `launchArgs` to `device.launchApp()`, but is set ahead-of-time rather than on-site - thus allowing for a gradual, multi-phased setup of a test environment, typically suitable for complex apps.
 
+> Note: Setting `value` to `undefined` will result in the clearing of the associated launch-argument.
+
+### `device.setLaunchArgs(args)`
+
+Same as `setLaunchArg(name, value)`, but allows for the setting (or clearing) of multiple arguments (names & values) in one go.
+
 ### `device.clearLaunchArg(name)`
 
-Clear a launch-argument previous set using `device.setLaunchArg()`.
+Clear a launch-argument previously set using `device.setLaunchArg()`, `device.setLaunchArgs()`.
+
+### `device.clearAllLaunchArgs()`
+
+Clear **all** launch-arguments previously set using `device.setLaunchArg()`, `device.setLaunchArgs()`.
 
 ### `device.terminateApp()`
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).
