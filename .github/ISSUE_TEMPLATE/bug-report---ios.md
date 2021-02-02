@@ -39,10 +39,13 @@ If applicable, add screenshots to help explain your problem.
 ### Logs
 
 #### If you are experiencing a timeout in your test
-- [ ] I have followed the instructions under [Lower-level Idling Resources Debug](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.Synchronization.md#lower-level-idling-resources-debug-ios-only) and am providing the log below:
 
-#### If you are seeing a build problem (e.g. during `npm install`)
+- [ ] I have followed the instructions under [Identifying which synchronization mechanism causes us to wait too much](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much), I have read [synchronization debug documentation](https://github.com/wix/DetoxSync/blob/master/IdleStatusDocumentation.md) and am providing the relevant synchronization debug output below:
+
+#### If you are seeing a Detox build problem (e.g. during `npm install`, not `detox build`)
+
 - [ ] I am providing the `npm install` log below:
 
 #### Device and verbose Detox logs
+
 - [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
