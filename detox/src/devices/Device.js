@@ -1,7 +1,7 @@
 const _ = require('lodash');
+const LaunchArgs = require('./LaunchArgs');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
-const log = require('../utils/logger').child({ __filename });
 
 class Device {
   constructor({
@@ -16,6 +16,7 @@ class Device {
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
     this._processes = {};
+    this._launchArgs = new LaunchArgs(deviceConfig.launchArgs);
     this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
@@ -49,7 +50,7 @@ class Device {
     }
 
     const baseLaunchArgs = {
-      ...this._deviceConfig.launchArgs,
+      ...this._launchArgs.get(),
       ...params.launchArgs,
     };
 
@@ -101,6 +102,10 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
+  }
+
+  appLaunchArgs() {
+    return this._launchArgs;
   }
 
   get id() {

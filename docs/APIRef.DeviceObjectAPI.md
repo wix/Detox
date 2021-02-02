@@ -22,6 +22,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 ## Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
+- [`device.appLaunchArgs()`](#deviceapplaunchargs)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -125,17 +126,18 @@ await device.launchApp({delete: true});
 
 ##### 7. `launchArgs`—Additional Process Launch Arguments
 
-Starts the app's process with the specified launch arguments.
+Launches the app on the device with on-site, user-specified launch arguments:
 
 ```js
-await device.launchApp({launchArgs: {arg1: 1, arg2: "2"}});
+await device.launchApp({
+  launchArgs: {
+    arg1: 1,
+    arg2: "2",
+  }
+});
 ```
 
-On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means.
-
-On Android, the launch arguments are set as bundle-extra into the activity's intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
-
-Further handling of these launch arguments is up to the user's responsibility and is out of scope for Detox.
+This is the most explicit and straightforward way of setting launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
 
 ##### 8. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)
 
@@ -213,6 +215,23 @@ await device.launchApp({
 ### `device.relaunchApp(params)`
 
 **Deprecated:** Use `device.launchApp(params)` instead. The method calls `launchApp({newInstance: true})` for backwards compatibility.
+
+### `device.appLaunchArgs()`
+
+Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](APIRef.Configuration.md) and [command-line arguments](APIRef.DetoxCLI.md). This access allows, through dedicated methods, for both value-querying and modification:
+
+```js
+// Modify some of the predefined arguments:
+device.appLaunchArgs().modify({
+  mockServerPort: 1234,
+});
+// Retrieve the arguments:
+device.appLaunchArgs().get(); // ==> { mockServerPort: 1234 }
+// Reset (i.e. remove all arguments):
+device.appLaunchArgs().reset();
+```
+
+This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
 
 ### `device.terminateApp()`
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).

@@ -274,6 +274,55 @@ declare global {
             reuse?: boolean;
         }
 
+        /**
+         * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
+         *
+         * @see AppLaunchArgs#modify
+         * @see AppLaunchArgs#reset
+         * @see AppLaunchArgs#get
+         */
+        interface AppLaunchArgs {
+            /**
+             * Modify the launch-arguments via a modifier object, according to the following logic:
+             *  - Concrete modifier properties would either set anew or override the value of existing properties with the same name, with
+             *    the specific value.
+             *  - Modifier properties set to either `undefined` or `null` would have the equivalent property cleared.
+             *
+             * @param modifier The modifier object.
+             *
+             * @example
+             * // With current launch arguments set to:
+             * // {
+             * //   mockServerPort: 1234,
+             * //   mockServerCredentials: 'user@test.com:12345678',
+             * // }
+             * device.modify({
+             *   mockServerPort: 4321,
+             *   mockServerCredentials: null,
+             *   mockServerToken: 'abcdef',
+             * };
+             * await device.launchApp();
+             * // => launch-arguments become:
+             * // {
+             * //   mockServerPort: 4321,
+             * //   mockServerToken: 'abcdef',
+             * // }
+             */
+            modify(modifier: object): void;
+
+            /**
+             * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
+             */
+            reset(): void;
+
+            /**
+             * Get all currently set launch-arguments.
+             * @returns An object containing all launch-arguments. Note: Changes on the returned object will not be reflected on the
+             * launch-arguments associated with the device.
+             */
+            get(): object;
+        }
+
         interface Device {
             /**
              * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
@@ -283,12 +332,14 @@ declare global {
              */
             id: string;
             /**
-             * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_26)
+             * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_29)
              * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
             /**
-             * Launch the app
+             * Launch the app.
+             *
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -300,10 +351,40 @@ declare global {
              * @example
              * // Mock opening the app from URL to test your app's deep link handling mechanism.
              * await device.launchApp({url: url});
+             * @example
+             * // Start the app with some custom arguments.
+             * await device.launchApp({
+             *   launchArgs: {arg1: 1, arg2: "2"},
+             * });
              */
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
             /**
-             * Terminate the app
+             * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
+             * command-line arguments. This access allows - through dedicated methods, for both value-querying and
+             * modification (see {@link AppLaunchArgs}).
+             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             *
+             * @example
+             * // With Detox being preconfigured statically to use these arguments in app launch:
+             * // {
+             * //   mockServerPort: 1234,
+             * // }
+             * // The following code would result in these arguments eventually passed into the launched app:
+             * // {
+             * //   mockServerPort: 4321,
+             * //   mockServerToken: 'uvwxyz',
+             * // }
+             * device.appLaunchArgs().modify({
+             *   mockServerPort: 4321,
+             *   mockServerToken: 'abcdef',
+             * });
+             * await device.launchApp({ launchArgs: { mockServerToken: 'uvwxyz' } }};
+             *
+             * @see AppLaunchArgs
+             */
+            appLaunchArgs(): AppLaunchArgs;
+            /**
+             * Terminate the app.
              *
              * @example
              * // By default, terminateApp() with no params will terminate the app
@@ -791,8 +872,8 @@ declare global {
              */
             delete?: boolean;
             /**
-             * Detox can start the app with additional launch arguments
-             * The added launchArgs will be passed through the launch command to the device and be accessible via [[NSProcessInfo processInfo] arguments]
+             * Arguments to pass-through into the app.
+             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
              */
             launchArgs?: any;
             /**

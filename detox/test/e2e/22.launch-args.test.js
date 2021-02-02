@@ -11,7 +11,7 @@ describe(':android: Launch arguments', () => {
     await expect(element(by.id(`launchArg-${launchArgKey}.name`))).not.toBeVisible();
   }
 
-  it('should handle primitive args', async () => {
+  it('should handle primitive args when used on-site', async () => {
     const launchArgs = {
       hello: 'world',
       seekthe: true,
@@ -26,7 +26,7 @@ describe(':android: Launch arguments', () => {
     await assertLaunchArg('heisthe', '1');
   });
 
-  it('should handle complex args', async () => {
+  it('should handle complex args when used on-site', async () => {
     const launchArgs = {
       complex: {
         bull: ['s', 'h', 1, 't'],
@@ -34,15 +34,45 @@ describe(':android: Launch arguments', () => {
           then: 'so, me',
         }
       },
-      complexlist: ['arguments', 'https://haxorhost:666'],
+      complexlist: ['arguments', 'https://haxorhost:1337'],
     };
 
     await device.launchApp({newInstance: true, launchArgs});
-
     await element(by.text('Launch Args')).tap();
 
     await assertLaunchArg('complex', JSON.stringify(launchArgs.complex));
     await assertLaunchArg('complexlist', JSON.stringify(launchArgs.complexlist));
+  });
+
+  it('should allow for arguments modification', async () => {
+    device.appLaunchArgs().modify({
+      app: undefined, // delete
+      goo: 'gle!', // modify
+      ama: 'zon', // add
+    });
+
+    await device.launchApp({ newInstance: true });
+    await element(by.text('Launch Args')).tap();
+
+    await assertLaunchArg('goo', 'gle!');
+    await assertLaunchArg('ama', 'zon');
+    await assertLaunchArg('micro', 'soft');
+    await assertNoLaunchArg('app');
+  });
+
+  it('should allow for on-site arguments to take precedence', async () => {
+    const launchArgs = {
+      anArg: 'aValue!',
+    };
+
+    device.appLaunchArgs().reset();
+    device.appLaunchArgs().modify({
+      anArg: 'aValue?',
+    });
+
+    await device.launchApp({ newInstance: true, launchArgs });
+    await element(by.text('Launch Args')).tap();
+    await assertLaunchArg('anArg', 'aValue!');
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax

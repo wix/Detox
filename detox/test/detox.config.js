@@ -99,7 +99,12 @@ module.exports = {
       type: "android.emulator",
       device: {
         avdName: "Pixel_API_28"
-      }
+      },
+      launchArgs: {
+        app: 'pl',
+        goo: 'gle?',
+        micro: 'soft',
+      },
     },
     "android.emu.release": {
       binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
@@ -110,7 +115,12 @@ module.exports = {
       type: "android.emulator",
       device: {
         avdName: "Pixel_API_28"
-      }
+      },
+      launchArgs: {
+        app: 'pl',
+        goo: 'gle?',
+        micro: 'soft',
+      },
     },
     "android.genycloud.release": {
       binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",

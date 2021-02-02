@@ -90,7 +90,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
 | --device-launch-args | A list of passthrough-arguments to use when (if) devices (Android emulator / iOS simulator) are launched by Detox.<br />**Note: the value must be specified after an equal sign (`=`) and inside quotes.** Usage example:<br />`--device-launch-args="-http-proxy http://1.1.1.1:8000 -no-snapshot-load"` |
-| --app-launch-args | Custom arguments to pass (through) onto the app every time it is launched. The same **note** applies as for **--device-launch-args**. |
+| --app-launch-args | Custom arguments to pass (through) onto the app every time it is launched. The same **note** applies here, as for **--device-launch-args**.<br />See [launch arguments guide](APIRef.LaunchArgs.md) for complete info. |
 | --no-color                                    | Disable colors in log output |
 | --use-custom-logger | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).<br />*Default: true* |
 | --force-adb-install | Due to problems with the `adb install` command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of `adb install`, instead.<br/>This flag is temporary until the Detox way proves stable.<br/>*Default: false* |
