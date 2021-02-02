@@ -127,7 +127,7 @@ class Element {
   }
 
   longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
-            normalizedTargetPositionX, normalizedTargetPositionY, speed = 'fast', holdDuration = 1000) {
+            normalizedTargetPositionX = NaN, normalizedTargetPositionY = NaN, speed = 'fast', holdDuration = 1000) {
     if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
 
     if (!(targetElement instanceof Element)) throwElementError(targetElement);

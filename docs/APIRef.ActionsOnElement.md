@@ -9,7 +9,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
-- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration)
+- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration--ios-only) **iOS only**
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
 - [`.scroll()`](#scrolloffset-direction-startpositionx-startpositiony)
@@ -57,16 +57,16 @@ await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
 ```
 
-### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`
+### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`  iOS only
 
 Simulates a long press on the element and then drag it to a position of another element.
 
 `duration` —the duration to press for, in ms (required) <br/>
-`normalizedPositionX` — X coordinate of starting point, relative to the view width (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
-`normalizedPositionY` — Y coordinate of starting point, relative to the view height (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
-`targetElement`— the target element to drag to, (required) <br/>
-`normalizedTargetPositionX` — X coordinate of ending point in the target element, relative to the view width (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
-`normalizedTargetPositionY` — Y coordinate of ending point in the target element, relative to the view height (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`normalizedPositionX` — X coordinate of the starting point, relative to the element width (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`normalizedPositionY` — Y coordinate of the starting point, relative to the element height (required, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`targetElement`— the target element to drag to (required) <br/>
+`normalizedTargetPositionX` — X coordinate of the ending point, relative to the target element width (optional, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
+`normalizedTargetPositionY` — Y coordinate of the ending point, relative to the target element height (optional, a number between 0.0 and 1.0, `NaN` — choose an optimal value automatically) <br/>
 `speed` — the speed of the drag (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
 `holdDuration` — the duration before releasing at the end, in ms (optional, default is 1000)
 
@@ -82,8 +82,8 @@ Simulates a swipe on the element with the provided options.
 `direction` — the direction of the swipe (required, valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
 `speed` — the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
 `normalizedOffset` — swipe amount relative to the screen width/height (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
-`normalizedStartingPointX` — X coordinate of swipe starting point, relative to the view width (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
-`normalizedStartingPointY` — Y coordinate of swipe starting point, relative to the view height (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically)
+`normalizedStartingPointX` — X coordinate of the swipe starting point, relative to the element width (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically) <br/>
+`normalizedStartingPointY` — Y coordinate of the swipe starting point, relative to the element height (optional, a number between 0.0 and 1.0, default is `NaN` — choose an optimal value automatically)
 
 ```js
 await element(by.id('scrollView')).swipe('down');
