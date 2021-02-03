@@ -189,6 +189,10 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(2));
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(-1));
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(NaN));
+
+      await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.by.id('matcherNotElement')));
+      await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag('notANumber', 0.5, 0.5, e.element(e.by.id('targetElement'))));
+      await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, "slow", 'notANumber'));
     });
 
   });

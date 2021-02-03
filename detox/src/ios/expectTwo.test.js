@@ -215,6 +215,28 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`element(by.id('elementToDrag')longPressAndDrag(1000, 0.5, 0.5, element(by.id('targetElement')`, () => {
+    const testCall = e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')));
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'longPress',
+        params: [1000, 0.5, 0.5, null, null, 'fast', 1000],
+        predicate: {
+          type: 'id',
+          value: 'elementToDrag'
+        },
+        targetElement: {
+          predicate: {
+            type: 'id',
+            value: 'targetElement'
+          }
+        }
+      }
+    };
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`expect(element(by.text('Tap Working!!!'))).toBeVisible()`, () => {
     const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeVisible();
     const jsonOutput = {
