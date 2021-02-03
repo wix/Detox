@@ -267,7 +267,7 @@ class Element {
 class InternalElement extends Element {
 
   withAction(action, ...params) {
-    const invocation = this.createInvocation(action, ...params);
+    const invocation = this.createInvocation(action, null, ...params);
     return invocation;
   }
 }
