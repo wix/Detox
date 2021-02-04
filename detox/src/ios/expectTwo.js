@@ -126,6 +126,24 @@ class Element {
     return this.withAction('longPress', duration);
   }
 
+  longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
+            normalizedTargetPositionX = NaN, normalizedTargetPositionY = NaN, speed = 'fast', holdDuration = 1000) {
+    if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
+
+    if (!(targetElement instanceof Element)) throwElementError(targetElement);
+
+    if (typeof holdDuration !== 'number') throw new Error('duration should be a number, but got ' + (holdDuration + (' (' + (typeof holdDuration + ')'))));
+
+    assertSpeed({ speed });
+    assertNormalized({ normalizedPositionX });
+    assertNormalized({ normalizedPositionY });
+    assertNormalized({ normalizedTargetPositionX });
+    assertNormalized({ normalizedTargetPositionY });
+
+    return this.withActionAndTargetElement('longPress', targetElement, duration, normalizedPositionX, normalizedPositionY,
+      normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
+  }
+
   multiTap(times) {
     if (typeof times !== 'number') throw new Error('times should be a number, but got ' + (times + (' (' + (typeof times + ')'))));
     return this.withAction('multiTap', times);
@@ -216,19 +234,32 @@ class Element {
     throw new DetoxRuntimeError({message: 'Element screenshots are not supported on iOS, at the moment!'});
   }
 
-  createInvocation(action, ...params) {
+  createInvocation(action, targetElementMatcher, ...params) {
     params = _.map(params, (param) => _.isNaN(param) ? null : param);
-    return ({
+    const invocation = {
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
       ...(_.without(params, undefined).length !== 0 && { params: _.without(params, undefined) }),
       predicate: this.matcher.predicate
-    });
+    };
+
+    if (targetElementMatcher && targetElementMatcher.matcher && targetElementMatcher.matcher.predicate) {
+      invocation.targetElement = {
+        predicate: targetElementMatcher.matcher.predicate
+      }
+    }
+
+    return invocation;
   }
 
   withAction(action, ...params) {
-    const invocation = this.createInvocation(action, ...params);
+    const invocation = this.createInvocation(action, null, ...params);
+    return this._invocationManager.execute(invocation);
+  }
+
+  withActionAndTargetElement(action, targetElement, ...params) {
+    const invocation = this.createInvocation(action, targetElement, ...params);
     return this._invocationManager.execute(invocation);
   }
 }
@@ -236,7 +267,7 @@ class Element {
 class InternalElement extends Element {
 
   withAction(action, ...params) {
-    const invocation = this.createInvocation(action, ...params);
+    const invocation = this.createInvocation(action, null, ...params);
     return invocation;
   }
 }
@@ -582,6 +613,10 @@ class IosExpect {
 
 function throwMatcherError(param) {
   throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+}
+
+function throwElementError(param) {
+  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
 }
 
 module.exports = IosExpect;
