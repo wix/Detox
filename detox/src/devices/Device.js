@@ -104,7 +104,7 @@ class Device {
     }
   }
 
-  appLaunchArgs() {
+  get appLaunchArgs() {
     return this._launchArgs;
   }
 

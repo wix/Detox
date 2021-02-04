@@ -19,10 +19,27 @@ Holds a descriptive name of the device. Example: `emulator-5554 (Pixel_API_26)`
 
 The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
 
+### `device.appLaunchArgs`
+
+Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](APIRef.Configuration.md) and [command-line arguments](APIRef.DetoxCLI.md). This access allows, through dedicated methods, for both value-querying and modification:
+
+```js
+// Modify some of the predefined arguments:
+device.appLaunchArgs.modify({
+  mockServerPort: 1234,
+});
+// Retrieve the arguments:
+device.appLaunchArgs.get(); // ==> { mockServerPort: 1234 }
+// Reset (i.e. remove all arguments):
+device.appLaunchArgs.reset();
+```
+
+This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
+
 ## Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
-- [`device.appLaunchArgs()`](#deviceapplaunchargs)
+- [`device.appLaunchArgs`](#deviceapplaunchargs)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -137,7 +154,7 @@ await device.launchApp({
 });
 ```
 
-This is the most explicit and straightforward way of setting launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
+This is the most explicit and straightforward way of setting launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for a complete overview on app launch arguments.
 
 ##### 8. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)
 
@@ -215,23 +232,6 @@ await device.launchApp({
 ### `device.relaunchApp(params)`
 
 **Deprecated:** Use `device.launchApp(params)` instead. The method calls `launchApp({newInstance: true})` for backwards compatibility.
-
-### `device.appLaunchArgs()`
-
-Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](APIRef.Configuration.md) and [command-line arguments](APIRef.DetoxCLI.md). This access allows, through dedicated methods, for both value-querying and modification:
-
-```js
-// Modify some of the predefined arguments:
-device.appLaunchArgs().modify({
-  mockServerPort: 1234,
-});
-// Retrieve the arguments:
-device.appLaunchArgs().get(); // ==> { mockServerPort: 1234 }
-// Reset (i.e. remove all arguments):
-device.appLaunchArgs().reset();
-```
-
-This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
 
 ### `device.terminateApp()`
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).

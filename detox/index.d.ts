@@ -286,7 +286,7 @@ declare global {
              * Modify the launch-arguments via a modifier object, according to the following logic:
              *  - Concrete modifier properties would either set anew or override the value of existing properties with the same name, with
              *    the specific value.
-             *  - Modifier properties set to either `undefined` or `null` would have the equivalent property cleared.
+             *  - Modifier properties set to either `undefined` or `null` would have the equivalent property deleted.
              *
              * @param modifier The modifier object.
              *
@@ -296,13 +296,13 @@ declare global {
              * //   mockServerPort: 1234,
              * //   mockServerCredentials: 'user@test.com:12345678',
              * // }
-             * device.modify({
+             * device.appLaunchArgs.modify({
              *   mockServerPort: 4321,
              *   mockServerCredentials: null,
              *   mockServerToken: 'abcdef',
              * };
              * await device.launchApp();
-             * // => launch-arguments become:
+             * // ==> launch-arguments become:
              * // {
              * //   mockServerPort: 4321,
              * //   mockServerToken: 'abcdef',
@@ -374,7 +374,7 @@ declare global {
              * //   mockServerPort: 4321,
              * //   mockServerToken: 'uvwxyz',
              * // }
-             * device.appLaunchArgs().modify({
+             * device.appLaunchArgs.modify({
              *   mockServerPort: 4321,
              *   mockServerToken: 'abcdef',
              * });
@@ -382,7 +382,7 @@ declare global {
              *
              * @see AppLaunchArgs
              */
-            appLaunchArgs(): AppLaunchArgs;
+            appLaunchArgs: AppLaunchArgs;
             /**
              * Terminate the app.
              *

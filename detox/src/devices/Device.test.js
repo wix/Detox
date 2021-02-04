@@ -501,7 +501,7 @@ describe('Device', () => {
         };
 
         const device = validDeviceWithLaunchArgs(launchArgs);
-        device.appLaunchArgs().modify(argsModifier);
+        device.appLaunchArgs.modify(argsModifier);
         await device.launchApp();
 
         driverMock.expectLaunchCalledContainingArgs(expectedArgs);
@@ -513,7 +513,7 @@ describe('Device', () => {
         };
 
         const device = validDeviceWithLaunchArgs();
-        device.appLaunchArgs().modify(launchArgs);
+        device.appLaunchArgs.modify(launchArgs);
         await device.launchApp({
           launchArgs: {
             aLaunchArg: 'aValue!',
@@ -528,8 +528,8 @@ describe('Device', () => {
         const expectedArgs = { ...baseArgs };
 
         const device = validDeviceWithLaunchArgs(launchArgs);
-        device.appLaunchArgs().modify({ argZ: 'valZ' });
-        device.appLaunchArgs().reset();
+        device.appLaunchArgs.modify({ argZ: 'valZ' });
+        device.appLaunchArgs.reset();
         await device.launchApp();
 
         driverMock.expectLaunchCalledWithArgs(device, expectedArgs);
