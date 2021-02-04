@@ -45,7 +45,7 @@ describe(':android: Launch arguments', () => {
   });
 
   it('should allow for arguments modification', async () => {
-    device.appLaunchArgs().modify({
+    device.appLaunchArgs.modify({
       app: undefined, // delete
       goo: 'gle!', // modify
       ama: 'zon', // add
@@ -65,8 +65,8 @@ describe(':android: Launch arguments', () => {
       anArg: 'aValue!',
     };
 
-    device.appLaunchArgs().reset();
-    device.appLaunchArgs().modify({
+    device.appLaunchArgs.reset();
+    device.appLaunchArgs.modify({
       anArg: 'aValue?',
     });
 
