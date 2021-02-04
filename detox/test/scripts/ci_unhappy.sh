@@ -23,5 +23,6 @@ then
     cp coverage/lcov.info "../../coverage/e2e-$platform-error-stack-mangling.lcov"
 else
     echo "Stack trace mangling test has failed"
+    echo "$runnerOutput"
     exit 1
 fi
