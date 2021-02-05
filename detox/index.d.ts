@@ -561,6 +561,12 @@ declare global {
              */
             toHaveId(id: string): R;
             /**
+             * Expects a toggle-able element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked. 
+             * As a reference, in react-native, this is the equivalent switch component.
+             * @example await expect(element(by.id('switch'))).toHaveToggleValue(true);
+             */
+            toHaveToggleValue(value: boolean): R;
+            /**
              * Expect components like a Switch to have a value ('0' for off, '1' for on).
              * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
              */
