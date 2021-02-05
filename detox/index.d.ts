@@ -74,7 +74,7 @@ declare global {
                  * set this property to `false`.
                  *
                  * This is useful when during E2E tests you also need to run regular expectations
-                 * in Node.js. Jest's `expect` for instance, will not be overriden by Detox when
+                 * in Node.js. Jest's `expect` for instance, will not be overridden by Detox when
                  * this option is used.
                  */
                 exposeGlobals?: boolean;
@@ -262,7 +262,7 @@ declare global {
              * set this property to `false`.
              *
              * This is useful when during E2E tests you also need to run regular expectations
-             * in Node.js. Jest's `expect` for instance, will not be overriden by Detox when
+             * in Node.js. Jest's `expect` for instance, will not be overridden by Detox when
              * this option is used.
              */
             initGlobals?: boolean;
@@ -363,7 +363,7 @@ declare global {
              */
             setLocation(lat: number, lon: number): Promise<void>;
             /**
-             * Disable EarlGrey's network synchronization mechanism on preffered endpoints. Usful if you want to on skip over synchronizing on certain URLs.
+             * Disable EarlGrey's network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
              */
@@ -556,7 +556,7 @@ declare global {
             toHaveLabel(label: string): R;
             /**
              * In React Native apps, expect UI component to have testID with that id.
-             * In native iOS apps, expect UI element to have accesibilityIdentifier with that id.
+             * In native iOS apps, expect UI element to have accessibilityIdentifier with that id.
              * @example await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
              */
             toHaveId(id: string): R;
@@ -680,7 +680,7 @@ declare global {
              * See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
-             * @param value string value in setted column (must be correct)
+             * @param value string value in set column (must be correct)
              * @example
              * await expect(element(by.type('UIPickerView'))).toBeVisible();
              * await element(by.type('UIPickerView')).setColumnToValue(1,"6");
