@@ -467,11 +467,11 @@ describe('Android driver', () => {
   });
 
   const setUpModuleDepMocks = () => {
-    jest.mock('fs', () => ({
+    jest.mock('fs-extra', () => ({
       existsSync: jest.fn(),
       realpathSync: jest.fn(),
     }));
-    fs = require('fs');
+    fs = require('fs-extra');
 
     jest.mock('../../../utils/encoding', () => ({
       encodeBase64: (x) => `base64(${x})`,
