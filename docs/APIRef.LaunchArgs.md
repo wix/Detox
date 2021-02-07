@@ -1,8 +1,12 @@
 # Launch Arguments
 
-Detox allows in its [`device` API](APIRef.DeviceObjectAPI.md) for the launching the app under test in the test device via an explicit call to `device.launchApp()`. Through various means, Detox enables specifying a set of user-defined arguments (key-value pairs) to be passed on to the app when launched, so as to make them available inside the app itself at runtime (both on the native side, and - if applicable, on the Javascript side).
+In Detox, the app under test is launched via an explicit call to [`device.launchApp()`](APIRef.DeviceObjectAPI.md). Through various means, Detox enables specifying a set of user-defined arguments (key-value pairs) to be passed on to the app when launched, so as to make them available inside the launched app itself at runtime (both on the native side, and - if applicable, on the Javascript side).
 
-This can be useful, in particular, for the sake of [mocking](Guide.Mocking.md) external entities such as servers - replacing them with equivalent _mock servers_, sporting equivalent (yet fake) API-endpoints that run alongside the testing host (i.e. the one running Detox). These mock servers can typically be configured during the test, to return deterministic reponses to network requests coming from the app.
+### Motivation
+
+> If this is clear to you first hand, you can skip right to the section about arguments setup.
+
+In particular, the common use case of using launch argument (although not distinctly), is for [mocking](Guide.Mocking.md) external entities such as servers - replacing them with equivalent _mock servers_, sporting equivalent (yet fake) API-endpoints that run alongside the testing host (i.e. the one running Detox). These mock servers can typically be configured during the test, to return deterministic reponses to network requests coming from the app.
 
 Typically, the process of setting up such servers - especially in a parallel test-execution environment, involves three major steps (within the context of a test set-up):
 

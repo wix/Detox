@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 // Note: Android-only as, according to Leo, on iOS there's no added value here compared to
 // existing tests that check deep-link URLs. Combined with the fact that we do not yet
 // support complex args on iOS -- no point in testing it out.
@@ -9,6 +11,13 @@ describe(':android: Launch arguments', () => {
 
   async function assertNoLaunchArg(launchArgKey) {
     await expect(element(by.id(`launchArg-${launchArgKey}.name`))).not.toBeVisible();
+  }
+
+  function assertPreconfiguredValue(expectedInitArgs) {
+    const initArgs = device.appLaunchArgs.get();
+    if (!_.isEqual(initArgs, expectedInitArgs)) {
+      throw new Error(`Precondition failure: Preconfigured launch arguments (in detox.config.js) do not match the expected value.\nExpected: ${JSON.stringify(expectedInitArgs)}\nReceived: ${JSON.stringify(initArgs)}`);
+    }
   }
 
   it('should handle primitive args when used on-site', async () => {
@@ -45,6 +54,9 @@ describe(':android: Launch arguments', () => {
   });
 
   it('should allow for arguments modification', async () => {
+    const expectedInitArgs = { app: 'le', goo: 'gle?', micro: 'soft' };
+    assertPreconfiguredValue(expectedInitArgs);
+
     device.appLaunchArgs.modify({
       app: undefined, // delete
       goo: 'gle!', // modify
