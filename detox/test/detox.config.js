@@ -1,5 +1,11 @@
+const launchArgs = {
+  app: 'le',
+  goo: 'gle?',
+  micro: 'soft',
+};
+
 /** @type {Detox.DetoxConfig} */
-module.exports = {
+const config = {
   testRunner: "nyc jest",
   runnerConfig: "e2e/config.js",
   specs: "e2e/*.test.js",
@@ -99,7 +105,8 @@ module.exports = {
       type: "android.emulator",
       device: {
         avdName: "Pixel_API_28"
-      }
+      },
+      launchArgs,
     },
     "android.emu.release": {
       binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
@@ -110,7 +117,8 @@ module.exports = {
       type: "android.emulator",
       device: {
         avdName: "Pixel_API_28"
-      }
+      },
+      launchArgs,
     },
     "android.genycloud.release": {
       binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
@@ -148,3 +156,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = config;
