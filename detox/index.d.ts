@@ -610,7 +610,7 @@ declare global {
             longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: Element,
                              normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<Actions<R>>;
             /**
-             * Simulate multiple taps on an element.
+             * Simulate multiple taps on an element. (iOS Only)
              * @param times number of times to tap
              * @example await element(by.id('tappable')).multiTap(3);
              */
