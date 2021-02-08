@@ -56,9 +56,9 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.noDeviceConfigurationsInside', () => {
+  describe('.noConfigurationsInside', () => {
     beforeEach(() => {
-      build = () => builder.noDeviceConfigurationsInside();
+      build = () => builder.noConfigurationsInside();
     });
 
     it('should create a generic error if all is unknown', () => {
@@ -78,9 +78,9 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.cantChooseDeviceConfiguration', () => {
+  describe('.cantChooseConfiguration', () => {
     beforeEach(() => {
-      build = () => builder.cantChooseDeviceConfiguration();
+      build = () => builder.cantChooseConfiguration();
       builder.setDetoxConfig({
         configurations: {
           conf1: {},
@@ -99,9 +99,9 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.noDeviceConfigurationWithGivenName', () => {
+  describe('.noConfigurationWithGivenName', () => {
     beforeEach(() => {
-      build = () => builder.noDeviceConfigurationWithGivenName();
+      build = () => builder.noConfigurationWithGivenName();
       builder.setConfigurationName('otherConf')
       builder.setDetoxConfig({
         configurations: {
@@ -120,15 +120,14 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.missingConfigurationType', () => {
+  describe('.configurationShouldNotBeEmpty', () => {
     beforeEach(() => {
-      build = () => builder.missingConfigurationType();
-      builder.setConfigurationName('android.release');
+      build = () => builder.configurationShouldNotBeEmpty();
+      builder.setConfigurationName('empty')
       builder.setDetoxConfig({
         configurations: {
-          'android.release': {
-            device: 'Nexus 5',
-          },
+          nonEmpty: { launchArgs: { key: 'value' } },
+          empty: {},
         },
       });
     });
@@ -138,8 +137,95 @@ describe('DetoxConfigErrorBuilder', () => {
     });
 
     it('should create an error with a hint, if the config location is known', () => {
+      builder.setDetoxConfigPath('/etc/detox/config.js');
+      expect(build()).toMatchSnapshot();
+    });
+  });
+
+  describe('.thereAreNoDeviceConfigs', () => {
+    beforeEach(() => {
+      build = () => builder.thereAreNoDeviceConfigs('simulator');
+      builder.setConfigurationName('conf1')
+      builder.setDetoxConfig({
+        configurations: {
+          conf1: {
+            device: 'simulator',
+          },
+        },
+      });
+    });
+
+    it('should create an error with a hint', () => {
+      expect(build()).toMatchSnapshot('without config path');
+
+      builder.setDetoxConfigPath('/etc/detox/config.js');
+      expect(build()).toMatchSnapshot('with config path');
+    });
+  });
+
+  describe('.missingDeviceMatcherProperties', () => {
+    beforeEach(() => {
+      build = (alias) => builder.missingDeviceMatcherProperties(alias, ['foo', 'bar']);
+      builder.setConfigurationName('android.release');
+      builder.setDetoxConfig({
+        devices: {
+          'emulator': {
+            type: 'android.emulator',
+          },
+        },
+        configurations: {
+          'android.release': {
+            type: 'android.emulator',
+          },
+        },
+      });
+    });
+
+    it('should work with plain configurations', () => {
+      expect(build()).toMatchSnapshot();
+    });
+
+    it('should work with aliased configurations', () => {
+      delete builder.selectedConfiguration.type;
+      builder.selectedConfiguration.device = 'emulator';
+
+      expect(build('emulator')).toMatchSnapshot();
+    });
+
+    it('should include the config location into a hint message if it is known', () => {
       builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
       expect(build()).toMatchSnapshot();
+    });
+  });
+
+  describe('.noAppIsDefined', () => {
+    beforeEach(() => {
+      build = (deviceType) => builder.noAppIsDefined(deviceType);
+      builder.setConfigurationName('android.release');
+    });
+
+    it('should create same versions for device subtypes', () => {
+      expect(build('ios.simulator')).toEqual(build('ios.none'));
+      expect(build('android.emulator')).toEqual(build('android.attached'));
+      expect(build('android.emulator')).toEqual(build('android.genycloud'));
+    });
+
+    it('should create different versions depending on device type', () => {
+      expect(build('ios.simulator')).not.toEqual(build('android.emulator'));
+      expect(build('ios.simulator')).not.toEqual(build('./stub/driver'));
+      expect(build('android.emulator')).not.toEqual(build('./stub/driver'));
+    });
+
+    it('should produce iOS-specific error message', () => {
+      expect(build('ios.simulator')).toMatchSnapshot();
+    });
+
+    it('should produce Android-specific error message', () => {
+      expect(build('android.genycloud')).toMatchSnapshot();
+    });
+
+    it('should produce a custom error message for unknown device type', () => {
+      expect(build('unknown')).toMatchSnapshot();
     });
   });
 
@@ -164,30 +250,6 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
-  describe('.malformedAppLaunchArgsProperty', () => {
-    beforeEach(() => {
-      build = () => builder.malformedAppLaunchArgsProperty('invalidFalseProperty');
-      builder.setConfigurationName('android.release');
-      builder.setDetoxConfig({
-        configurations: {
-          'android.release': {
-            type: 'android.emulator',
-            utilBinaryPaths: '/valid/path/outside/of/array',
-            device: 'Pixel 4',
-            launchArgs: {
-              validFalseProperty: 'false',
-              invalidFalseProperty: false,
-            },
-          },
-        },
-      });
-    });
-
-    it('should create an error with specifying the exact launch arg', () => {
-      expect(build()).toMatchSnapshot();
-    });
-  });
-
   describe('.malformedUtilBinaryPaths', () => {
     beforeEach(() => {
       build = () => builder.malformedUtilBinaryPaths()
@@ -204,29 +266,6 @@ describe('DetoxConfigErrorBuilder', () => {
     });
 
     it('should create an error with specifying the config name', () => {
-      expect(build()).toMatchSnapshot();
-    });
-  });
-
-  describe('.missingDeviceProperty', () => {
-    beforeEach(() => {
-      build = () => builder.missingDeviceProperty();
-      builder.setConfigurationName('android.release');
-      builder.setDetoxConfig({
-        configurations: {
-          'android.release': {
-            type: 'android.emulator',
-          },
-        },
-      });
-    });
-
-    it('should create a generic error, if the config location is not known', () => {
-      expect(build()).toMatchSnapshot();
-    });
-
-    it('should create an error with a hint, if the config location is known', () => {
-      builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
       expect(build()).toMatchSnapshot();
     });
   });

@@ -4,7 +4,7 @@ const {URL} = require('url');
 const logger = require('./utils/logger');
 const Deferred = require('./utils/Deferred');
 const Device = require('./devices/Device');
-const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
+const DetoxRuntimeErrorBuilder = require('./errors/DetoxRuntimeErrorBuilder');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const Client = require('./client/Client');
@@ -37,12 +37,14 @@ class Detox {
     this[lifecycleSymbols.onTestStart] = this.beforeEach;
     this[lifecycleSymbols.onTestDone] = this.afterEach;
 
-    const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
+    const {appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 
+    this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
+    this._runtimeErrorBuilder = new DetoxRuntimeErrorBuilder({ appsConfig });
 
     this._client = null;
     this._server = null;
@@ -110,7 +112,7 @@ class Detox {
   async beforeEach(testSummary) {
     await this[_assertNoPendingInit]();
 
-    this._validateTestSummary(testSummary);
+    this._validateTestSummary('beforeEach', testSummary);
     this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
     await this._dumpUnhandledErrorsIfAny({
       pendingRequests: false,
@@ -122,7 +124,7 @@ class Detox {
   async afterEach(testSummary) {
     await this[_assertNoPendingInit]();
 
-    this._validateTestSummary(testSummary);
+    this._validateTestSummary('afterEach', testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
     await this._artifactsManager.onTestDone(testSummary);
     await this._dumpUnhandledErrorsIfAny({
@@ -153,6 +155,7 @@ class Detox {
     });
 
     this.device = new Device({
+      appsConfig: this._appsConfig,
       behaviorConfig: this._behaviorConfig,
       deviceConfig: this._deviceConfig,
       emitter: this._eventEmitter,
@@ -180,10 +183,8 @@ class Detox {
     }
 
     if (behaviorConfig.reinstallApp) {
-      await this.device.uninstallApp();
-      await this.device.installApp();
+      await this._reinstallAppsOnDevice();
     }
-    await this.device.installUtilBinaries();
 
     return this;
   }
@@ -195,31 +196,34 @@ class Detox {
     }
 
     if (handle.status === Deferred.PENDING) {
-      handle.reject(
-        new DetoxRuntimeError({
-          message: 'Aborted detox.init() execution, and now running detox.cleanup()',
-          hint: 'Most likely, your test runner is tearing down the suite due to the timeout error'
-        })
-      );
+      handle.reject(this._runtimeErrorBuilder.abortedDetoxInit());
     }
 
     return handle.promise;
+  }
+
+  async _reinstallAppsOnDevice() {
+    const appNames = Object.keys(this._appsConfig);
+
+    for (const appName of appNames) {
+      await this.device.selectApp(appName)
+      await this.device.uninstallApp();
+      await this.device.installApp();
+      await this.device.installUtilBinaries();
+    }
+
+    if (appNames.length !== 1) {
+      await this.device.selectApp(null);
+    }
   }
 
   _logTestRunCheckpoint(event, { status, fullName }) {
     log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }
 
-  _validateTestSummary(testSummary) {
+  _validateTestSummary(methodName, testSummary) {
     if (!_.isPlainObject(testSummary)) {
-      throw new DetoxRuntimeError({
-        message: `Invalid test summary was passed to detox.beforeEach(testSummary)` +
-          '\nExpected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }',
-        hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
-          '\nSee the article for the guidance: ' +
-          'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
-        debugInfo: `testSummary was: ${util.inspect(testSummary)}`,
-      });
+      throw this._runtimeErrorBuilder.invalidTestSummary(methodName, testSummary);
     }
 
     switch (testSummary.status) {
@@ -228,11 +232,7 @@ class Detox {
       case 'failed':
         break;
       default:
-        throw new DetoxRuntimeError({
-          message: `Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: "running", "passed", "failed"`,
-          hint: "It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.",
-          debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
-        });
+        throw this._runtimeErrorBuilder.invalidTestSummaryStatus(methodName, testSummary);
     }
   }
 

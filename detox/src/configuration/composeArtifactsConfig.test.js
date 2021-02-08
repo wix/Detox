@@ -12,8 +12,8 @@ describe('composeArtifactsConfig', () => {
   it('should produce a default config', () => {
     expect(composeArtifactsConfig({
       configurationName: 'abracadabra',
-      deviceConfig: {},
-      detoxConfig: {},
+      localConfig: {},
+      globalConfig: {},
       cliConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
@@ -23,17 +23,17 @@ describe('composeArtifactsConfig', () => {
     });
   });
 
-  it('should use artifacts config from the selected configuration', () => {
+  it('should use artifacts configuration from the local config', () => {
     expect(composeArtifactsConfig({
       configurationName: 'abracadabra',
-      deviceConfig: {
+      localConfig: {
         artifacts: {
           ...schemes.allArtifactsConfiguration,
           rootDir: 'otherPlace',
           pathBuilder: _.noop,
         }
       },
-      detoxConfig: {},
+      globalConfig: {},
       cliConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
@@ -43,11 +43,11 @@ describe('composeArtifactsConfig', () => {
     });
   });
 
-  it('should use global artifacts config', () => {
+  it('should use artifacts configuration from the global config', () => {
     expect(composeArtifactsConfig({
       configurationName: 'abracadabra',
-      deviceConfig: {},
-      detoxConfig: {
+      localConfig: {},
+      globalConfig: {
         artifacts: {
           ...schemes.allArtifactsConfiguration,
           rootDir: 'otherPlace',
@@ -63,13 +63,13 @@ describe('composeArtifactsConfig', () => {
     });
   });
 
-  it('should disable global artifacts config if deviceConfig.artifacts = false', () => {
+  it('should disable global artifacts config if local config has artifacts = false', () => {
     expect(composeArtifactsConfig({
       configurationName: 'abracadabra',
-      deviceConfig: {
+      localConfig: {
         artifacts: false,
       },
-      detoxConfig: {
+      globalConfig: {
         artifacts: {
           ...schemes.allArtifactsConfiguration,
           rootDir: 'otherPlace',
@@ -85,11 +85,11 @@ describe('composeArtifactsConfig', () => {
     });
   });
 
-  it('should use CLI config', () => {
+  it('should also use CLI config', () => {
     expect(composeArtifactsConfig({
       configurationName: 'abracadabra',
-      deviceConfig: {},
-      detoxConfig: {},
+      localConfig: {},
+      globalConfig: {},
       cliConfig: {
         artifactsLocation: 'otherPlace',
         recordLogs: 'all',
@@ -107,13 +107,13 @@ describe('composeArtifactsConfig', () => {
     });
   });
 
-  it('should prefer CLI config over selected configuration over global config', () => {
+  it('should prefer CLI config over the local config and over the global config', () => {
     expect(composeArtifactsConfig({
       configurationName: 'priority',
       cliConfig: {
         artifactsLocation: 'cli',
       },
-      deviceConfig: {
+      localConfig: {
         artifacts: {
           rootDir: 'configuration',
           pathBuilder: _.identity,
@@ -122,7 +122,7 @@ describe('composeArtifactsConfig', () => {
           },
         },
       },
-      detoxConfig: {
+      globalConfig: {
         artifacts: {
           rootDir: 'global',
           pathBuilder: _.noop,
@@ -149,12 +149,12 @@ describe('composeArtifactsConfig', () => {
     const FakePathBuilder = require('../artifacts/__mocks__/FakePathBuilder');
     expect(composeArtifactsConfig({
       configurationName: 'customization',
-      deviceConfig: {
+      localConfig: {
         artifacts: {
           pathBuilder: path.join(__dirname, '../artifacts/__mocks__/FakePathBuilder')
         },
       },
-      detoxConfig: {},
+      globalConfig: {},
       cliConfig: {},
     }).pathBuilder).toBeInstanceOf(FakePathBuilder);
   });
@@ -163,12 +163,12 @@ describe('composeArtifactsConfig', () => {
     expect(composeArtifactsConfig({
       configurationName: 'customization',
       cliConfig: {},
-      deviceConfig: {
+      localConfig: {
         artifacts: {
           pathBuilder: './package.json',
         },
       },
-      detoxConfig: {},
+      globalConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
         "name": expect.any(String),
@@ -180,12 +180,12 @@ describe('composeArtifactsConfig', () => {
   it('should not append configuration with timestamp if rootDir ends with slash', () => {
     expect(composeArtifactsConfig({
       configurationName: 'customization',
-      deviceConfig: {
+      localConfig: {
         artifacts: {
           rootDir: '.artifacts/'
         },
       },
-      detoxConfig: {},
+      globalConfig: {},
       cliConfig: {},
     })).toMatchObject({
       rootDir: '.artifacts/',
@@ -198,7 +198,7 @@ describe('composeArtifactsConfig', () => {
       cliConfig: {
         takeScreenshots: 'all',
       },
-      detoxConfig: {
+      globalConfig: {
         artifacts: {
           rootDir: 'configuration',
           pathBuilder: _.identity,
@@ -215,7 +215,7 @@ describe('composeArtifactsConfig', () => {
           },
         },
       },
-      deviceConfig: {},
+      localConfig: {},
     })).toMatchObject({
       plugins: expect.objectContaining({
         screenshot: {

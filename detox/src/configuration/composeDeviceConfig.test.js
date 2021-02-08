@@ -1,138 +1,236 @@
+const _ = require('lodash');
 const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const { appWithRelativeBinaryPath, iosSimulatorWithShorthandQuery } = require('./configurations.mock');
 
 describe('composeDeviceConfig', () => {
   let composeDeviceConfig;
-  let configurationName, cliConfig, rawDeviceConfig;
+  /** @type {*} */
+  let cliConfig;
+  /** @type {Detox.DetoxConfiguration} */
+  let localConfig;
+  /** @type {Detox.DetoxConfig} */
+  let globalConfig;
   /** @type {DetoxConfigErrorBuilder} */
   let errorBuilder;
 
   beforeEach(() => {
-    errorBuilder = new DetoxConfigErrorBuilder();
     composeDeviceConfig = require('./composeDeviceConfig');
     cliConfig = {};
-    configurationName = 'someConfig';
-    rawDeviceConfig = {
-      type: 'ios.simulator',
-      device: {
-        type: 'iPhone X'
+    localConfig = {};
+
+    globalConfig = {
+      configurations: {
+        someConfig: localConfig,
       },
-    };
+    }
+
+    errorBuilder = new DetoxConfigErrorBuilder()
+      .setDetoxConfig(globalConfig)
+      .setConfigurationName('someConfig');
   });
 
   const compose = () => composeDeviceConfig({
-    configurationName,
-    cliConfig,
-    rawDeviceConfig,
     errorBuilder,
+    globalConfig,
+    localConfig,
+    cliConfig,
   });
 
-  describe('validation', () => {
-    it('should throw if configuration is not defined', () => {
-      rawDeviceConfig = undefined;
-      expect(compose).toThrowError(errorBuilder.missingConfigurationType());
-    });
-
-    it('should throw if configuration driver (type) is not defined', () => {
-      delete rawDeviceConfig.type;
-      expect(compose).toThrowError(errorBuilder.missingConfigurationType());
-    });
-
-    it('should throw if device query is not defined', () => {
-      delete rawDeviceConfig.device;
-      expect(compose).toThrowError(errorBuilder.missingDeviceProperty());
-    });
-
-    it('should throw if util-binary paths are malformed', () => {
-      rawDeviceConfig.utilBinaryPaths = 'valid/path/not/in/array';
-      expect(compose).toThrowError(errorBuilder.malformedUtilBinaryPaths());
-    });
-
-    it('should throw if app launch args is a string', () => {
-      rawDeviceConfig.launchArgs = '-detoxAppArgument NO';
-      expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgs());
-    });
-
-    it('should not throw if app launch args has an undefined property', () => {
-      rawDeviceConfig.launchArgs = { arg: undefined };
-      expect(compose).not.toThrowError();
-    });
-
-    it('should throw if app launch args has a non-string property', () => {
-      rawDeviceConfig.launchArgs = { debugSomething: false };
-      expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgsProperty('debugSomething'));
-    });
-  });
-
-  describe('if a device configuration has the old .name property', () => {
+  describe('given a plain configuration', () => {
     beforeEach(() => {
-      rawDeviceConfig.name = rawDeviceConfig.device;
-      delete rawDeviceConfig.device;
-    });
-
-    it('should rename it to .device', () => {
-      const { type, device, name } = compose();
-
-      expect(type).toBe('ios.simulator');
-      expect(name).toBe(undefined);
-      expect(device).toEqual({ type: 'iPhone X' });
-    });
-  });
-
-  describe('if a device configuration has the new .device property', () => {
-    beforeEach(() => {
-      rawDeviceConfig.device = 'iPhone SE';
-    });
-
-    it('should be left intact', () => {
-      const { type, device } = compose();
-
-      expect(type).toBe('ios.simulator');
-      expect(device).toBe('iPhone SE');
-    });
-
-    describe('and there is a CLI override', () => {
-      beforeEach(() => {
-        cliConfig.deviceName = 'iPad Air';
-      });
-
-      it('should be override .device property', () => {
-        const { type, device } = compose();
-
-        expect(type).toBe('ios.simulator');
-        expect(device).toBe('iPad Air');
-      });
-    });
-  });
-
-  describe('if a device configuration has .launchArgs property', () => {
-    beforeEach(() => {
-      rawDeviceConfig.launchArgs = {
-        arg1: 'value 1',
-        arg2: 'value 2',
+      localConfig = {
+        ...appWithRelativeBinaryPath,
+        ...iosSimulatorWithShorthandQuery,
       };
     });
 
-    it('should be left intact', () => {
-      const { launchArgs } = compose();
+    it('should extract type and device', () => {
+      expect(compose()).toEqual({
+        type: localConfig.type,
+        device: localConfig.device,
+      });
+    });
 
-      expect(launchArgs).toEqual({
-        arg1: 'value 1',
-        arg2: 'value 2',
+    it('should extract type and device <- name', () => {
+      localConfig.name = localConfig.device;
+      delete localConfig.device;
+
+      expect(compose()).toEqual({
+        type: localConfig.type,
+        device: localConfig.name,
+      });
+    });
+
+    describe('with unknown device type', () => {
+      const values = {
+        type: './customDriver',
+        device: 'firefox',
+        binaryPath: 'https://example.com',
+      };
+
+      beforeEach(() => {
+        Object.assign(localConfig, values);
+      });
+
+      it('should take it as is, for backward compatibility', () => {
+        expect(compose()).toEqual(values);
       });
     });
 
     describe('and there is a CLI override', () => {
-      beforeEach(() => {
-        cliConfig.appLaunchArgs = '-arg3="value 3" --no-arg2';
+      beforeEach(givenCLIOverride('iPad'));
+
+      it('should be override .device property', assertCLIOverridesDevice({
+        type: 'ios.simulator',
+        device: 'iPad',
+      }));
+    });
+  });
+
+  describe('given an aliased configuration', () => {
+    beforeEach(() => {
+      localConfig = { device: 'iphone' };
+      globalConfig = { devices: { iphone: { type: 'ios.none' } } };
+    });
+
+    it('should extract type and device', () => {
+      expect(compose()).toEqual({
+        type: 'ios.none',
+      });
+    });
+
+    describe('and there is a CLI override', () => {
+      beforeEach(givenCLIOverride('iPad'));
+
+      it('should be override .device property', assertCLIOverridesDevice({
+        type: 'ios.none',
+        device: 'iPad',
+      }));
+    });
+  });
+
+  describe('given an aliased configuration with inlined device', () => {
+    beforeEach(() => {
+      localConfig = {
+        device: {
+          type: 'ios.simulator',
+          device: { type: 'iPhone X' }
+        },
+        artifacts: false,
+      };
+    });
+
+    it('should extract type and device', () => {
+      expect(compose()).toEqual({
+        type: 'ios.simulator',
+        device: { type: 'iPhone X' }
+      });
+    });
+
+    describe('and there is a CLI override', () => {
+      beforeEach(givenCLIOverride('iPad'));
+
+      it('should be override .device property', assertCLIOverridesDevice({
+        type: 'ios.simulator',
+        device: 'iPad',
+      }));
+    });
+  });
+
+  function givenCLIOverride(deviceName) {
+    return function () {
+      cliConfig.deviceName = deviceName;
+    };
+  }
+
+  function assertCLIOverridesDevice(expected) {
+    return function () {
+      const { type, device } = compose();
+
+      expect(type).toBe(expected.type);
+      expect(device).toBe(expected.device);
+    };
+  }
+
+  describe('unhappy scenarios:', () => {
+    describe('aliased configuration', () => {
+      it('should throw if devices are not declared', () => {
+        localConfig.device = 'someDevice';
+        expect(compose).toThrow(errorBuilder.thereAreNoDeviceConfigs('someDevice'));
       });
 
-      it('should parse it and merge the values inside', () => {
-        const { launchArgs } = compose();
+      it('should throw if device config is not found (alias)', () => {
+        localConfig.device = 'someDevice';
+        globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
 
-        expect(launchArgs).toEqual({
-          arg1: 'value 1',
-          arg3: 'value 3',
-        });
+        expect(compose).toThrow(errorBuilder.cantResolveDeviceAlias('someDevice'));
+      });
+
+      it('should throw if device config is not found (inline)', () => {
+        delete localConfig.device;
+        globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
+
+        expect(compose).toThrow(errorBuilder.deviceConfigIsUndefined());
+      });
+    });
+
+    describe('empty device object', () => {
+      it('should throw if the inline device config has no type', () => {
+        localConfig.device = {};
+        expect(compose).toThrow(errorBuilder.missingDeviceType());
+      });
+
+      it('should throw if the aliased device config has no type', () => {
+        localConfig.device = 'someDevice';
+        globalConfig.devices = { someDevice: { } };
+
+        expect(compose).toThrow(errorBuilder.missingDeviceType('someDevice'));
+      });
+
+      it('should throw if the inline device config is empty', () => {
+        localConfig.type = 'android.emulator';
+        localConfig.device = {};
+
+        expect(compose).toThrow(errorBuilder.missingDeviceMatcherProperties(undefined, [
+          'avdName'
+        ]));
+      });
+
+      it('should throw if the aliased device config is missing properties', () => {
+        localConfig.device = 'someDevice';
+        globalConfig.devices = {
+          someDevice: {
+            type: 'ios.simulator',
+            device: { os: 'iOS 9.3.5' }
+          },
+        };
+
+        expect(compose).toThrow(errorBuilder.missingDeviceMatcherProperties('someDevice', [
+          'type',
+          'name',
+          'id',
+        ]));
+      });
+    });
+
+    describe('missing device matcher properties', () => {
+      it.each([
+        [['type', 'name', 'id'], 'ios.simulator'],
+        [['adbName'], 'android.attached'],
+        [['avdName'], 'android.emulator'],
+        [['recipeUUID', 'recipeName'], 'android.genycloud'],
+      ])('should throw for missing %j for "%s" type', (expectedProps, deviceType) => {
+        localConfig.device = {
+          type: deviceType,
+          device: {
+            misspelled: 'value'
+          }
+        };
+
+        expect(compose).toThrowError(errorBuilder.missingDeviceMatcherProperties(undefined, expectedProps));
+
+        localConfig.device.device[_.sample(expectedProps)] = 'someValue';
+        expect(compose).not.toThrowError();
       });
     });
   });

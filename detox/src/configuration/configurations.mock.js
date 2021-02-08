@@ -55,60 +55,48 @@ const pluginsAllResolved = {
   uiHierarchy: IosUIHierarchyPlugin.parseConfig('enabled'),
 };
 
-const invalidDeviceNoBinary = {
-  "configurations": {
-    "ios.sim.release": {
-      "type": "ios.simulator",
-      "name": "iPhone 7 Plus, iOS 10.2"
-    }
-  }
+const appWithNoBinary = {
+  type: "ios.app",
+  bundleId: "com.detox.example",
 };
 
-const validOneDeviceAndSession = {
-  "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "test"
-  },
-  "configurations": {
-    "ios.sim.release": {
-      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "testBinaryPath": "some/test/path",
-      "type": "ios.simulator",
-      "name": "iPhone 7 Plus, iOS 10.2"
-    }
-  }
+const appWithRelativeBinaryPath = {
+  type: "ios.app",
+  binaryPath: "ios/build/Build/Products/Release-iphonesimulator/example.app",
 };
 
-const validOneAndroidDevice = {
-  "configurations": {
-    "android.emu.release": {
-      "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-      "testBinaryPath": "android/app/build/outputs/apk/release/app-release-androidTest.apk",
-      "utilBinaryPaths": ["android/util-app1.apk", "android/util-app2.apk"],
-      "type": "android.emulator",
-      "device": {
-        "avdName": "Pixel_API_28",
-      }
-    }
-  }
+const appWithAbsoluteBinaryPath = {
+  type: "ios.app",
+  binaryPath: process.platform === "win32" ? "C:\\Temp\\abcdef\\123" : "/tmp/abcdef/123",
 };
 
-const pathsTests = {
-  "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "test"
-  },
-  "configurations": {
-    "absolutePath": {
-      "binaryPath": process.platform === "win32" ? "C:\\Temp\\abcdef\\123" : "/tmp/abcdef/123",
-      "type": "ios.simulator",
-      "name": "iPhone 7 Plus, iOS 10.2"
-    },
-    "relativePath": {
-      "binaryPath": "abcdef/123",
-      "type": "ios.simulator",
-      "name": "iPhone 7 Plus, iOS 10.2"
-    }
+const appWithBinaryAndBundleId = {
+  type: "ios.app",
+  binaryPath: "ios/build/Build/Products/Release-iphonesimulator/example.app",
+  bundleId: "com.detox.example",
+};
+
+const apkWithBinary = {
+  type: "android.apk",
+  binaryPath: "android/app/build/outputs/apk/release/app-release.apk",
+  testBinaryPath: "android/app/build/outputs/apk/release/app-release-androidTest.apk",
+  utilBinaryPaths: ["android/util-app1.apk", "android/util-app2.apk"],
+};
+
+const iosSimulatorWithShorthandQuery = {
+  type: "ios.simulator",
+  device: "iPhone 7 Plus, iOS 10.2"
+};
+
+const validSession = {
+  server: "ws://localhost:8099",
+  sessionId: "test"
+};
+
+const androidEmulator = {
+  "type": "android.emulator",
+  "device": {
+    "avdName": "Pixel_API_28",
   }
 };
 
@@ -118,8 +106,15 @@ module.exports = {
   pluginsAllResolved,
   pluginsDefaultsResolved,
   pluginsFailingResolved,
-  invalidDeviceNoBinary,
-  validOneDeviceAndSession,
-  validOneAndroidDevice,
-  pathsTests,
+
+  validSession,
+
+  appWithNoBinary,
+  appWithRelativeBinaryPath,
+  appWithAbsoluteBinaryPath,
+  appWithBinaryAndBundleId,
+  apkWithBinary,
+
+  iosSimulatorWithShorthandQuery,
+  androidEmulator,
 };

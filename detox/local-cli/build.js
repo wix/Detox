@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const fs = require('fs');
 const cp = require('child_process');
 const log = require('../src/utils/logger').child({ __filename });
 const {composeDetoxConfig} = require('../src/configuration');
@@ -17,18 +18,35 @@ module.exports.builder = {
     describe:
       "Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it",
   },
+  s: {
+    alias: 'silent',
+    group: 'Configuration:',
+    boolean: true,
+    describe:
+      "Do not fail with error if an app config has no build command.",
+  },
 };
 
 module.exports.handler = async function build(argv) {
-  const { errorBuilder, deviceConfig } = await composeDetoxConfig({ argv });
+  const { errorBuilder, appsConfig } = await composeDetoxConfig({ argv });
 
-  const buildScript = deviceConfig.build;
+  for (const app of Object.values(appsConfig)) {
+    const buildScript = app.build;
 
-  if (buildScript) {
-    log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for maintaining this command.\n");
-    log.info(buildScript);
-    cp.execSync(buildScript, { stdio: 'inherit' });
-  } else {
-    throw errorBuilder.missingBuildScript();
+    if (buildScript) {
+      try {
+        log.info(buildScript);
+        cp.execSync(buildScript, { stdio: 'inherit' });
+      } catch (e) {
+        log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for maintaining this command.\n");
+        throw e;
+      }
+    } else if (!argv.silent) {
+      throw errorBuilder.missingBuildScript();
+    }
+
+    if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
+      log.warn("\nImportant: after running the build command, Detox could not find your app at the given binary path:\n\t" + app.binaryPath + "\nMake sure it is correct, otherwise you'll get an error on an attempt to install your app.\n");
+    }
   }
 };

@@ -3,15 +3,14 @@ const uuid = require('../utils/uuid');
 const isValidWebsocketURL = require('../utils/isValidWebsocketURL');
 
 /**
- *
- * @param {DetoxConfigErrorBuilder} errorBuilder
- * @param {*} detoxConfig
- * @param {*} deviceConfig
+ * @param {require('../errors/DetoxConfigErrorBuilder')} errorBuilder
+ * @param {Detox.DetoxConfig} globalConfig
+ * @param {Detox.DetoxConfigurationOverrides} localConfig
  */
-async function composeSessionConfig({ errorBuilder, cliConfig, detoxConfig, deviceConfig }) {
+async function composeSessionConfig({ errorBuilder, cliConfig, globalConfig, localConfig }) {
   const session = {
-    ...detoxConfig.session,
-    ...deviceConfig.session,
+    ...globalConfig.session,
+    ...localConfig.session,
   };
 
   if (session.server != null) {

@@ -2,7 +2,7 @@ const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 
 describe('composeSessionConfig', () => {
   let composeSessionConfig;
-  let cliConfig, detoxConfig, deviceConfig;
+  let cliConfig, globalConfig, localConfig;
   /** @type {DetoxConfigErrorBuilder} */
   let errorBuilder;
 
@@ -10,14 +10,14 @@ describe('composeSessionConfig', () => {
     composeSessionConfig = require('./composeSessionConfig');
     errorBuilder = new DetoxConfigErrorBuilder();
     cliConfig = {};
-    detoxConfig = {};
-    deviceConfig = {};
+    globalConfig = {};
+    localConfig = {};
   });
 
   const compose = () => composeSessionConfig({
     cliConfig,
-    detoxConfig,
-    deviceConfig,
+    globalConfig,
+    localConfig,
     errorBuilder,
   });
 
@@ -40,25 +40,25 @@ describe('composeSessionConfig', () => {
     });
 
     it('should pass validations', async () => {
-      detoxConfig.session = { sessionId: 1234 };
+      globalConfig.session = { sessionId: 1234 };
       await expect(compose()).rejects.toThrowError(errorBuilder.invalidSessionIdProperty());
 
-      detoxConfig.session = { sessionId: '' };
+      globalConfig.session = { sessionId: '' };
       await expect(compose()).rejects.toThrowError(errorBuilder.invalidSessionIdProperty());
     });
 
     describe('when defined in global config', () => {
       beforeEach(() => {
-        detoxConfig.session = { sessionId: 'someSessionId' };
+        globalConfig.session = { sessionId: 'someSessionId' };
       });
 
       it('should use the specified value', async () => {
         expect((await compose()).sessionId).toBe('someSessionId');
       });
 
-      describe('and in device config', () => {
+      describe('and in local config', () => {
         beforeEach(() => {
-          deviceConfig.session = { sessionId: 'otherSessionId' };
+          localConfig.session = { sessionId: 'otherSessionId' };
         });
 
         it('should use the specified value', async () => {
@@ -78,16 +78,16 @@ describe('composeSessionConfig', () => {
     });
 
     it('should pass validations', async () => {
-      detoxConfig.session = { server: 1234 };
+      globalConfig.session = { server: 1234 };
       await expect(compose()).rejects.toThrowError(errorBuilder.invalidServerProperty());
 
-      detoxConfig.session = { server: 'http://invalid-protocol.com' };
+      globalConfig.session = { server: 'http://invalid-protocol.com' };
       await expect(compose()).rejects.toThrowError(errorBuilder.invalidServerProperty());
     });
 
     describe('when defined in global config', () => {
       beforeEach(() => {
-        detoxConfig.session = { server: 'ws://myserver:1100' };
+        globalConfig.session = { server: 'ws://myserver:1100' };
       });
 
       it('should use the specified value', async () => {
@@ -96,9 +96,9 @@ describe('composeSessionConfig', () => {
         });
       });
 
-      describe('and in device config', () => {
+      describe('and in local config', () => {
         beforeEach(() => {
-          deviceConfig.session = { server: 'ws://otherserver:1100' };
+          localConfig.session = { server: 'ws://otherserver:1100' };
         });
 
         it('should use the specified value', async () => {
@@ -119,7 +119,7 @@ describe('composeSessionConfig', () => {
 
     describe('when autoStart is explicitly false', function() {
       beforeEach(() => {
-        detoxConfig.session = { autoStart: false };
+        globalConfig.session = { autoStart: false };
       });
 
       it('should override the value', async () => {
@@ -129,7 +129,7 @@ describe('composeSessionConfig', () => {
 
     describe('when server is defined', () => {
       beforeEach(() => {
-        detoxConfig.session = { server: 'ws://localhost:1100' };
+        globalConfig.session = { server: 'ws://localhost:1100' };
       });
 
       it('should be false', async () => {
@@ -138,7 +138,7 @@ describe('composeSessionConfig', () => {
 
       describe('when autoStart is explicitly true', function() {
         beforeEach(() => {
-          detoxConfig.session.autoStart = true;
+          globalConfig.session.autoStart = true;
         });
 
         it('should override the value', async () => {
@@ -158,16 +158,16 @@ describe('composeSessionConfig', () => {
     });
 
     it('should pass validations', async () => {
-      detoxConfig.session = { debugSynchronization: -1 };
+      globalConfig.session = { debugSynchronization: -1 };
       await expect(compose()).rejects.toThrowError(errorBuilder.invalidDebugSynchronizationProperty());
 
-      detoxConfig.session = { debugSynchronization: '3000' };
+      globalConfig.session = { debugSynchronization: '3000' };
       await expect(compose()).rejects.toThrowError(errorBuilder.invalidDebugSynchronizationProperty());
     });
 
     describe('when defined in global config', () => {
       beforeEach(() => {
-        detoxConfig.session = { debugSynchronization: 9999 };
+        globalConfig.session = { debugSynchronization: 9999 };
       });
 
       it('should use that value', async () => {
@@ -176,9 +176,9 @@ describe('composeSessionConfig', () => {
         });
       });
 
-      describe('and in device config', () => {
+      describe('and in local config', () => {
         beforeEach(() => {
-          deviceConfig.session = { debugSynchronization: 20000 };
+          localConfig.session = { debugSynchronization: 20000 };
         });
 
         it('should use that value', async () => {

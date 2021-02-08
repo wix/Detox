@@ -18,14 +18,14 @@ declare global {
     const detoxCircus: Detox.DetoxCircus;
 
     namespace NodeJS {
-      interface Global {
-        device: Detox.DetoxExportWrapper['device'];
-        element: Detox.DetoxExportWrapper['element'];
-        waitFor: Detox.DetoxExportWrapper['waitFor'];
-        expect: Detox.DetoxExportWrapper['expect'];
-        by: Detox.DetoxExportWrapper['by'];
-        detoxCircus: Detox.DetoxCircus;
-      }
+        interface Global {
+            device: Detox.DetoxExportWrapper['device'];
+            element: Detox.DetoxExportWrapper['element'];
+            waitFor: Detox.DetoxExportWrapper['waitFor'];
+            expect: Detox.DetoxExportWrapper['expect'];
+            by: Detox.DetoxExportWrapper['by'];
+            detoxCircus: Detox.DetoxCircus;
+        }
     }
 
     namespace Detox {
@@ -48,6 +48,9 @@ declare global {
             artifacts?: DetoxArtifactsConfig;
             behavior?: DetoxBehaviorConfig;
             session?: DetoxSessionConfig;
+            apps?: Record<string, DetoxAppConfig>;
+            devices?: Record<string, DetoxDeviceConfig>;
+            selectedConfiguration?: string;
             configurations: Record<string, DetoxConfiguration>;
         }
 
@@ -98,9 +101,19 @@ declare global {
             sessionId?: string;
         }
 
+        type DetoxAppConfig = (DetoxIosAppConfig | DetoxAndroidAppConfig) & {
+            /**
+             * App name to use with device.selectApp(appName) calls.
+             * Can be omitted if you have a single app under the test.
+             *
+             * @see Device#selectApp
+             */
+            name?: string;
+        };
+
         type DetoxDeviceConfig = DetoxBuiltInDeviceConfig | DetoxCustomDriverConfig;
 
-        type DetoxConfiguration = DetoxPlainConfiguration;
+        type DetoxConfiguration = DetoxPlainConfiguration | DetoxAliasedConfiguration;
 
         interface DetoxLogArtifactsPluginConfig {
             enabled?: boolean;
@@ -145,16 +158,28 @@ declare global {
             enabled?: boolean;
         }
 
+        interface DetoxIosAppConfig extends DetoxLooseIosAppConfig {
+            type: 'ios.app';
+        }
+
         interface DetoxLooseIosAppConfig {
             binaryPath: string;
+            bundleId?: string;
             build?: string;
+            launchArgs?: Record<string, string | null | undefined>;
+        }
+
+        interface DetoxAndroidAppConfig extends DetoxLooseAndroidAppConfig {
+            type: 'android.apk';
         }
 
         interface DetoxLooseAndroidAppConfig {
             binaryPath: string;
+            bundleId?: string;
             build?: string;
             testBinaryPath?: string;
             utilBinaryPaths?: string[];
+            launchArgs?: Record<string, string | null | undefined>;
         }
 
         type DetoxBuiltInDeviceConfig =
@@ -172,6 +197,10 @@ declare global {
           | (DetoxGenymotionCloudDriverConfig & DetoxLooseAndroidAppConfig)
           | (DetoxCustomDriverConfig)
           );
+
+        type DetoxAliasedConfiguration =
+          | DetoxAliasedConfigurationSingleApp
+          | DetoxAliasedConfigurationMultiApps;
 
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
@@ -196,11 +225,12 @@ declare global {
 
         interface DetoxGenymotionCloudDriverConfig {
             type: 'android.genycloud';
-            device: { recipeUUID: string; } | { recipeName: string; };
+            device: string | { recipeUUID: string; } | { recipeName: string; };
         }
 
         interface DetoxCustomDriverConfig {
             type: string;
+
             [prop: string]: unknown;
         }
 
@@ -218,6 +248,20 @@ declare global {
             behavior?: DetoxBehaviorConfig;
             session?: DetoxSessionConfig;
         };
+
+        interface DetoxAliasedConfigurationSingleApp {
+            type?: never;
+            device: DetoxAliasedDevice;
+            app: string | DetoxAppConfig;
+        }
+
+        interface DetoxAliasedConfigurationMultiApps {
+            type?: never;
+            device: DetoxAliasedDevice;
+            apps: string[];
+        }
+
+        type DetoxAliasedDevice = string | DetoxDeviceConfig;
 
         // endregion DetoxConfig
 
@@ -241,8 +285,11 @@ declare global {
              * });
              */
             init(configOverride?: Partial<DetoxConfig>, options?: DetoxInitOptions): Promise<void>;
+
             beforeEach(...args: any[]): Promise<void>;
+
             afterEach(...args: any[]): Promise<void>;
+
             /**
              * The cleanup phase should happen after all the tests have finished.
              * This is the phase where the Detox server shuts down.
@@ -336,6 +383,35 @@ declare global {
              * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
+
+            /**
+             * Select the current app (relevant only to multi-app configs) by its name.
+             * After execution, all app-specific device methods will target the selected app.
+             *
+             * @see DetoxAppConfig#name
+             * @example
+             * await device.selectApp('passenger');
+             * await device.launchApp(); // passenger
+             * // ... run tests for the passenger app
+             * await device.uninstallApp(); // passenger
+             * await device.selectApp('driver');
+             * await device.installApp(); // driver
+             * await device.launchApp(); // driver
+             * // ... run tests for the driver app
+             * await device.terminateApp(); // driver
+             */
+            selectApp(app: string): Promise<void>;
+
+            /**
+             * @protected
+             * Unselect the current app.
+             * After execution, all app-specific device methods will be throwing an error.
+             *
+             * @example
+             * await device.selectApp(null); // explicitly unselects any app
+             */
+             selectApp(app: null): Promise<void>;
+
             /**
              * Launch the app.
              *
@@ -358,6 +434,7 @@ declare global {
              * });
              */
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
+
             /**
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
@@ -394,6 +471,7 @@ declare global {
              * await device.terminateApp('other.bundle.id');
              */
             terminateApp(bundle?: string): Promise<void>;
+
             /**
              * Send application to background by bringing com.apple.springboard to the foreground.
              * Combining sendToHome() with launchApp({newInstance: false}) will simulate app coming back from background.
@@ -402,12 +480,14 @@ declare global {
              * await device.launchApp({newInstance: false});
              */
             sendToHome(): Promise<void>;
+
             /**
              * If this is a React Native app, reload the React Native JS bundle. This action is much faster than device.launchApp(), and can be used if you just need to reset your React Native logic.
              *
              * @example await device.reloadReactNative()
              */
             reloadReactNative(): Promise<void>;
+
             /**
              * By default, installApp() with no params will install the app file defined in the current configuration.
              * To install another app, specify its path
@@ -415,58 +495,69 @@ declare global {
              * @example await device.installApp('path/to/other/app');
              */
             installApp(path?: any): Promise<void>;
+
             /**
              * By default, uninstallApp() with no params will uninstall the app defined in the current configuration.
              * To uninstall another app, specify its bundle id
              * @example await device.installApp('other.bundle.id');
              */
             uninstallApp(bundle?: string): Promise<void>;
+
             /**
              * Mock opening the app from URL. sourceApp is an optional parameter to specify source application bundle id.
              */
             openURL(url: { url: string; sourceApp?: string }): Promise<void>;
+
             /**
              * Mock handling of received user notification when app is in foreground.
              */
             sendUserNotification(...params: any[]): Promise<void>;
+
             /**
              * Mock handling of received user activity when app is in foreground.
              */
             sendUserActivity(...params: any[]): Promise<void>;
+
             /**
              * Takes "portrait" or "landscape" and rotates the device to the given orientation. Currently only available in the iOS Simulator.
              */
             setOrientation(orientation: Orientation): Promise<void>;
+
             /**
              * Note: setLocation is dependent on fbsimctl. if fbsimctl is not installed, the command will fail, it must be installed. Sets the simulator location to the given latitude and longitude.
              *
              * @example await device.setLocation(32.0853, 34.7818);
              */
             setLocation(lat: number, lon: number): Promise<void>;
+
             /**
              * Disable EarlGrey's network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
              */
             setURLBlacklist(urls: string[]): Promise<void>;
+
             /**
              * Enable EarlGrey's synchronization mechanism (enabled by default). This is being reset on every new instance of the app.
              *
              * @example await device.enableSynchronization();
              */
             enableSynchronization(): Promise<void>;
+
             /**
              * Disable EarlGrey's synchronization mechanism (enabled by default) This is being reset on every new instance of the app.
              *
              * @example await device.disableSynchronization();
              */
             disableSynchronization(): Promise<void>;
+
             /**
              * Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing previously set permissions.
              *
              * @example await device.resetContentAndSettings();
              */
             resetContentAndSettings(): Promise<void>;
+
             /**
              * Returns the current device, ios or android.
              *
@@ -476,6 +567,7 @@ declare global {
              * }
              */
             getPlatform(): 'ios' | 'android';
+
             /**
              * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
              * @param {string} name for the screenshot artifact
@@ -490,41 +582,50 @@ declare global {
              * });
              */
             takeScreenshot(name: string): Promise<string>;
+
             /**
              * Simulate shake (iOS Only)
              */
             shake(): Promise<void>;
+
             /**
              * Toggles device enrollment in biometric auth (TouchID or FaceID) (iOS Only)
              * @example await device.setBiometricEnrollment(true);
              * @example await device.setBiometricEnrollment(false);
              */
             setBiometricEnrollment(enabled: boolean): Promise<void>;
+
             /**
              * Simulates the success of a face match via FaceID (iOS Only)
              */
             matchFace(): Promise<void>;
+
             /**
              * Simulates the failure of a face match via FaceID (iOS Only)
              */
             unmatchFace(): Promise<void>;
+
             /**
              * Simulates the success of a finger match via TouchID (iOS Only)
              */
             matchFinger(): Promise<void>;
+
             /**
              * Simulates the failure of a finger match via TouchID (iOS Only)
              */
             unmatchFinger(): Promise<void>;
+
             /**
              * Clears the simulator keychain (iOS Only)
              */
             clearKeychain(): Promise<void>;
+
             /**
              * Simulate press back button (Android Only)
              * @example await device.pressBack();
              */
             pressBack(): Promise<void>;
+
             /**
              * (Android Only)
              * Exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice).
@@ -559,36 +660,43 @@ declare global {
              * await element(by.id('tap_me'));
              */
             id(id: string): Matchers;
+
             /**
              * Find an element by text, useful for text fields, buttons.
              * @example await element(by.text('Tap Me'));
              */
             text(text: string): Matchers;
+
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
              * @example await element(by.label('Welcome'));
              */
             label(label: string): Matchers;
+
             /**
              * Find an element by native view type.
              * @example await element(by.type('RCTImageView'));
              */
             type(nativeViewType: string): Matchers;
+
             /**
              * Find an element with an accessibility trait. (iOS only)
              * @example await element(by.traits(['button']));
              */
             traits(traits: string[]): Matchers;
+
             /**
              * Find an element by a matcher with a parent matcher
              * @example await element(by.id('Grandson883').withAncestor(by.id('Son883')));
              */
             withAncestor(parentBy: Matchers): Matchers;
+
             /**
              * Find an element by a matcher with a child matcher
              * @example await element(by.id('Son883').withDescendant(by.id('Grandson883')));
              */
             withDescendant(childBy: Matchers): Matchers;
+
             /**
              * Find an element by multiple matchers
              * @example await element(by.text('Product').and(by.id('product_name'));
@@ -598,49 +706,58 @@ declare global {
 
         interface Expect<R> {
             (element: Element): Expect<Promise<void>>;
+
             /**
              * Expect the view to be at least 75% visible.
              * @example await expect(element(by.id('UniqueId204'))).toBeVisible();
              */
             toBeVisible(): R;
+
             /**
              * Negate the expectation.
              * @example await expect(element(by.id('UniqueId205'))).not.toBeVisible();
              */
             not: Expect<Promise<void>>;
+
             /**
              * Expect the view to not be visible.
              * @example await expect(element(by.id('UniqueId205'))).toBeNotVisible();
              */
             toBeNotVisible(): R;
+
             /**
              * Expect the view to exist in the UI hierarchy.
              * @example await expect(element(by.id('UniqueId205'))).toExist();
              */
             toExist(): R;
+
             /**
              * Expect the view to not exist in the UI hierarchy.
              * @example await expect(element(by.id('RandomJunk959'))).toNotExist();
              */
             toNotExist(): R;
+
             /**
              * In React Native apps, expect UI component of type <Text> to have text.
              * In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
              * @example await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
              */
             toHaveText(text: string): R;
+
             /**
              * It searches by accessibilityLabel on iOS, or by contentDescription on Android.
              * In React Native it can be set for both platforms by defining an accessibilityLabel on the view.
              * @example await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
              */
             toHaveLabel(label: string): R;
+
             /**
              * In React Native apps, expect UI component to have testID with that id.
              * In native iOS apps, expect UI element to have accessibilityIdentifier with that id.
              * @example await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
              */
             toHaveId(id: string): R;
+
             /**
              * Expects a toggle-able element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked. 
              * As a reference, in react-native, this is the equivalent switch component.
@@ -661,11 +778,13 @@ declare global {
              * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
              */
             (element: Element): Expect<WaitFor>;
+
             /**
              * Waits for the condition to be met until the specified time (millis) have elapsed.
              * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
              */
             withTimeout(millis: number): Promise<void>;
+
             /**
              * Performs the action repeatedly on the element until an expectation is met
              * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
@@ -679,11 +798,13 @@ declare global {
              * @example await element(by.id('tappable')).tap();
              */
             tap(): Promise<Actions<R>>;
+
             /**
              * Simulate long press on an element
              * @example await element(by.id('tappable')).longPress();
              */
             longPress(): Promise<Actions<R>>;
+
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)
              * @example await element(by.id('draggable')).longPressAndDrag(2000, NaN, NaN, element(by.id('target')), NaN, NaN, 'fast', 0);
@@ -696,37 +817,44 @@ declare global {
              * @example await element(by.id('tappable')).multiTap(3);
              */
             multiTap(times: number): Promise<Actions<R>>;
+
             /**
              * Simulate tap at a specific point on an element.
              * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
              */
             tapAtPoint(point: { x: number; y: number }): Promise<Actions<R>>;
+
             /**
              * Use the builtin keyboard to type text into a text field.
              * @example await element(by.id('textField')).typeText('passcode');
              */
             typeText(text: string): Promise<Actions<R>>;
+
             /**
              * Paste text into a text field.
              * @example await element(by.id('textField')).replaceText('passcode again');
              */
             replaceText(text: string): Promise<Actions<R>>;
+
             /**
              * Clear text from a text field.
              * @example await element(by.id('textField')).clearText();
              */
             clearText(): Promise<Actions<R>>;
+
             /**
              * Taps the backspace key on the built-in keyboard.
              * @example await element(by.id('textField')).tapBackspaceKey();
              */
             tapBackspaceKey(): Promise<Actions<R>>;
+
             /**
              * Taps the return key on the built-in keyboard.
              * @example await element(by.id('textField')).tapReturnKey();
              */
             tapReturnKey(): Promise<Actions<R>>;
+
             /**
              * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
              * @param pixels - independent device pixels
@@ -742,12 +870,14 @@ declare global {
               startPositionX?: number,
               startPositionY?: number,
             ): Promise<Actions<R>>;
+
             /**
              * Scroll to edge.
              * @example await element(by.id('scrollView')).scrollTo('bottom');
              * @example await element(by.id('scrollView')).scrollTo('top');
              */
             scrollTo(edge: Direction): Promise<Actions<R>>;
+
             /**
              * Swipes in the provided direction at the provided speed, started from percentage.
              * @param speed default: `fast`
@@ -761,6 +891,7 @@ declare global {
              * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
              */
             swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<Actions<R>>;
+
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
@@ -774,6 +905,7 @@ declare global {
              * await element(by.type('UIPickerView')).setColumnToValue(2,"34");
              */
             setColumnToValue(column: number, value: string): Promise<Actions<R>>;
+
             /**
              * Sets the date of a date picker to a date generated from the provided string and date format. (iOS only)
              * @param dateString string representing a date in the supplied `dateFormat`
@@ -783,6 +915,7 @@ declare global {
              * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
              */
             setDatePickerDate(dateString: string, dateFormat: string): Promise<Actions<R>>;
+
             /**
              * Pinches in the given direction with speed and angle. (iOS only)
              * @param angle value in radiant, default is `0`
