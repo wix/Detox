@@ -17,6 +17,49 @@ class DetoxConfigErrorBuilder {
     this.setConfigurationName();
   }
 
+  _atPath() {
+    return this.filepath ? ` at path:\n${this.filepath}` : '.';
+  }
+
+  _getSelectedConfiguration() {
+    return _.get(this.contents, ['configurations', this.configurationName]);
+  }
+
+  _focusOnConfiguration(postProcess = _.identity) {
+    const configuration = _.get(this.contents, ['configurations', this.configurationName]);
+    if (configuration === undefined) {
+      return;
+    }
+
+    return {
+      configurations: {
+        [this.configurationName]: postProcess(configuration)
+      },
+    };
+  }
+
+  _focusOnDeviceConfig(deviceAlias) {
+    if (!deviceAlias) {
+      return this._focusOnConfiguration();
+    }
+
+    const { device } = this._getSelectedConfiguration();
+
+    return {
+      devices: {
+        [device]: this.contents.devices[device],
+      },
+    };
+  }
+
+  _resolveSelectedDeviceConfig(alias) {
+    if (alias) {
+      return this.contents.devices[alias];
+    } else {
+      return this._getSelectedConfiguration();
+    }
+  }
+
   setDetoxConfigPath(filepath) {
     this.filepath = filepath || '';
     return this;
@@ -32,22 +75,12 @@ class DetoxConfigErrorBuilder {
     return this;
   }
 
-  get selectedConfiguration() {
-    return _.get(this.contents, ['configurations', this.configurationName]);
-  }
-
-  getSelectedDeviceConfig(alias) {
-    if (alias) {
-      return this.contents.devices[alias];
-    } else {
-      return this.selectedConfiguration;
-    }
-  }
+  // region configuration/index
 
   noConfigurationSpecified() {
     return new DetoxConfigError({
-      message: 'Cannot run Detox without a configuration.',
-      hint: this.filepath.endsWith('package.json')
+      message: 'Cannot run Detox without a configuration file.',
+      hint: _.endsWith(this.filepath, 'package.json')
         ? `Create an external .detoxrc.json configuration, or add "detox" configuration section to your package.json at:\n${this.filepath}`
         : 'Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.'
     });
@@ -69,8 +102,8 @@ class DetoxConfigErrorBuilder {
 
   noConfigurationsInside() {
     return new DetoxConfigError({
-      message: `There are no configurations in the given Detox config.`,
-      hint: this.filepath && `Examine the config${this._atPath()}`,
+      message: `There are no configurations in the given Detox config${this._atPath()}`,
+      hint: `Examine the config:`,
       debugInfo: {
         configurations: undefined,
         ...this.contents,
@@ -135,8 +168,14 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  // endregion
+
+  // region composeDeviceConfig
+
   thereAreNoDeviceConfigs(deviceAlias) {
-    const hint = `\
+    return new DetoxConfigError({
+      message: `Cannot use device alias ${J(deviceAlias)} since there is no "devices" config in Detox config${this._atPath()}`,
+      hint: `\
 You should create a dictionary of device configurations in Detox config, e.g.:
 {
   "devices": {
@@ -151,20 +190,74 @@ You should create a dictionary of device configurations in Detox config, e.g.:
       ...
     }
   }
-}\n`;
-
-    return new DetoxConfigError({
-      message: `Cannot use device alias ${J(deviceAlias)} since there is no "devices" config in Detox config${this._atPath()}`,
-      hint,
+}\n`,
     });
   }
 
   cantResolveDeviceAlias(alias) {
     return new DetoxConfigError({
       message: `Failed to find a device config ${J(alias)} in the "devices" dictionary of Detox config${this._atPath()}`,
-      hint: 'Below are the device configurations Detox was able to find:\n' + hintConfigurations(this.contents.devices)
+      hint: 'Below are the device configurations Detox was able to find:\n'
+        + hintConfigurations(this.contents.devices) + '\n\n'
+        + `Check your configuration ${J(this.configurationName)}:`,
+      debugInfo: this._getSelectedConfiguration(),
+      inspectOptions: { depth: 0 },
     });
   }
+
+  deviceConfigIsUndefined() {
+    return new DetoxConfigError({
+      message: `Missing "device" property in the selected configuration ${J(this.configurationName)}:`,
+      hint: `It should be an alias to the device config, or the device config itself, e.g.:
+{
+  ...
+  "devices": {
+*-> "myDevice": {
+|     "type": "ios.simulator", // or "android.emulator", or etc...
+|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
+|   }
+| },
+| "configurations": {
+|   ${J(this.configurationName)}: {
+*---- "device": "myDevice", // or { type: 'ios.simulator', ... }
+      ...
+    },
+    ...
+  }
+}
+
+Examine your Detox config${this._atPath()}`,
+    });
+  }
+
+  missingDeviceType(deviceAlias) {
+    return new DetoxConfigError({
+      message: `Missing "type" inside the device configuration.`,
+      hint: `Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").\n` +
+        `Check that in your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
+  missingDeviceMatcherProperties(deviceAlias, expectedProperties) {
+    const { type } = this._resolveSelectedDeviceConfig(deviceAlias);
+    return new DetoxConfigError({
+      message: `Invalid or empty "device" matcher inside the device config.`,
+      hint: `It should have the device query to run on, e.g.:\n
+{
+  "type": ${J(type)},
+  "device": ${expectedProperties.map(p => `{ ${J(p)}: ... }`).join('\n      // or ')}
+}
+Check that in your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
+  // endregion
+
+  // region composeAppConfig
 
   thereAreNoAppConfigs(appAlias) {
     return new DetoxConfigError({
@@ -192,32 +285,18 @@ You should create a dictionary of app configurations in Detox config, e.g.:
     return new DetoxConfigError({
       message: `Failed to find an app config ${J(appAlias)} in the "apps" dictionary of Detox config${this._atPath()}`,
       hint: 'Below are the app configurations Detox was able to find:\n' + hintConfigurations(this.contents.apps) +
-      `\n\nCheck your configuration ${J(this.configurationName)}:`,
-      debugInfo: this.selectedConfiguration,
+        `\n\nCheck your configuration ${J(this.configurationName)}:`,
+      debugInfo: this._getSelectedConfiguration(),
       inspectOptions: { depth: 1 },
     });
   }
 
-  deviceConfigIsUndefined() {
+  appConfigIsUndefined(appPath) {
     return new DetoxConfigError({
-      message: `Failed to find a "device" config in the selected ${J(this.configurationName)} configuration:`,
-      hint: `There should be an inlined object or an alias to the device config.\nExamine your Detox config${this._atPath()}`,
+      message: `Failed to find a "app" config in the selected ${J(this.configurationName)} configuration:`,
+      hint: `It should be an inlined object or an alias to the app config.\nExamine your Detox config${this._atPath()}`,
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 2 }
-    });
-  }
-
-  appConfigIsUndefined(appPath) {
-    return new TodoError('appConfigIsUndefined', appPath);
-  }
-
-  missingDeviceType(deviceAlias) {
-    return new DetoxConfigError({
-      message: `Missing "type" inside the device configuration.`,
-      hint: `Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").\n` +
-            `Check that in your Detox config${this._atPath()}`,
-      debugInfo: this._focusOnDeviceConfig(deviceAlias),
-      inspectOptions: { depth: 3 },
     });
   }
 
@@ -253,21 +332,6 @@ You should create a dictionary of app configurations in Detox config, e.g.:
 
   duplicateAppConfig() {
     return new TodoError('duplicateAppConfig', arguments);
-  }
-
-  missingDeviceMatcherProperties(deviceAlias, expectedProperties) {
-    const { type } = this.getSelectedDeviceConfig(deviceAlias);
-    return new DetoxConfigError({
-      message: `Invalid or empty "device" matcher inside the device config.`,
-      hint: `It should have the device query to run on, e.g.:\n
-{
-  "type": ${J(type)},
-  "device": ${expectedProperties.map(p => `{ ${J(p)}: ... }`).join('\n      // or ')}
-}
-Check that in your Detox config${this._atPath()}`,
-      debugInfo: this._focusOnDeviceConfig(deviceAlias),
-      inspectOptions: { depth: 3 },
-    });
   }
 
   noAppIsDefined(deviceType) {
@@ -312,6 +376,10 @@ Examine your Detox config${this._atPath()}`,
     return new TodoError('multipleAppsConfigShouldBeArray', arguments);
   }
 
+  // endregion
+
+  // region composeSessionConfig
+
   invalidServerProperty() {
     return new DetoxConfigError({
       message: `session.server property is not a valid WebSocket URL`,
@@ -348,6 +416,8 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  // endregion
+
   missingBuildScript() {
     return new DetoxConfigError({
       message: `Could not find a build script inside "${this.configurationName}" configuration.`,
@@ -357,36 +427,6 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
-  _focusOnConfiguration(postProcess = _.identity) {
-    const configuration = _.get(this.contents, ['configurations', this.configurationName]);
-    if (configuration === undefined) {
-      return;
-    }
-
-    return {
-      configurations: {
-        [this.configurationName]: postProcess(configuration)
-      },
-    };
-  }
-
-  _focusOnDeviceConfig(deviceAlias) {
-    if (!deviceAlias) {
-      return this._focusOnConfiguration();
-    }
-
-    const { device } = this.selectedConfiguration;
-
-    return {
-      devices: {
-        [device]: this.contents.devices[device],
-      },
-    };
-  }
-
-  _atPath() {
-    return this.filepath ? ` at path:\n${this.filepath}` : '.';
-  }
 }
 
 function hintConfigurations(configurations) {

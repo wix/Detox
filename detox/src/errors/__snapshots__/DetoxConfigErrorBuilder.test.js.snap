@@ -407,19 +407,19 @@ HINT: Make sure the specified path is correct.]
 `;
 
 exports[`DetoxConfigErrorBuilder .noConfigurationSpecified should create a generic error, if the configuration file is not a package.json 1`] = `
-[DetoxConfigError: Cannot run Detox without a configuration.
+[DetoxConfigError: Cannot run Detox without a configuration file.
 
 HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
 `;
 
 exports[`DetoxConfigErrorBuilder .noConfigurationSpecified should create a generic error, if the configuration file is unknown 1`] = `
-[DetoxConfigError: Cannot run Detox without a configuration.
+[DetoxConfigError: Cannot run Detox without a configuration file.
 
 HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
 `;
 
 exports[`DetoxConfigErrorBuilder .noConfigurationSpecified should create an error with a package.json hint, if THAT is the configuration file 1`] = `
-[DetoxConfigError: Cannot run Detox without a configuration.
+[DetoxConfigError: Cannot run Detox without a configuration file.
 
 HINT: Create an external .detoxrc.json configuration, or add "detox" configuration section to your package.json at:
 /home/detox/myproject/package.json]
@@ -443,6 +443,8 @@ HINT: Below are the configurations Detox was able to find:
 exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create a generic error if all is unknown 1`] = `
 [DetoxConfigError: There are no configurations in the given Detox config.
 
+HINT: Examine the config:
+
 {
   configurations: undefined
 }]
@@ -450,6 +452,8 @@ exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create a generic
 
 exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create an error with Detox config fragment, if the path is not known 1`] = `
 [DetoxConfigError: There are no configurations in the given Detox config.
+
+HINT: Examine the config:
 
 {
   configurations: undefined,
@@ -461,10 +465,10 @@ exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create an error 
 `;
 
 exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create an error with Detox config location hint, if it is known 1`] = `
-[DetoxConfigError: There are no configurations in the given Detox config.
-
-HINT: Examine the config at path:
+[DetoxConfigError: There are no configurations in the given Detox config at path:
 /home/detox/myproject/.detoxrc.json
+
+HINT: Examine the config:
 
 {
   configurations: undefined

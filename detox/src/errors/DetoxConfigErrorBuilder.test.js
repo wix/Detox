@@ -164,10 +164,12 @@ describe('DetoxConfigErrorBuilder', () => {
   });
 
   describe('.missingDeviceMatcherProperties', () => {
+    let detoxConfig;
+
     beforeEach(() => {
       build = (alias) => builder.missingDeviceMatcherProperties(alias, ['foo', 'bar']);
       builder.setConfigurationName('android.release');
-      builder.setDetoxConfig({
+      builder.setDetoxConfig(detoxConfig = {
         devices: {
           'emulator': {
             type: 'android.emulator',
@@ -186,8 +188,8 @@ describe('DetoxConfigErrorBuilder', () => {
     });
 
     it('should work with aliased configurations', () => {
-      delete builder.selectedConfiguration.type;
-      builder.selectedConfiguration.device = 'emulator';
+      delete detoxConfig.configurations['android.release'].type;
+      detoxConfig.configurations['android.release'].device = 'emulator';
 
       expect(build('emulator')).toMatchSnapshot();
     });
