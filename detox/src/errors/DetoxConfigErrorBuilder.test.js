@@ -248,7 +248,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
   describe('.malformedAppLaunchArgs', () => {
     beforeEach(() => {
-      build = () => builder.malformedAppLaunchArgs();
+      build = () => builder.malformedAppLaunchArgs(['configurations', 'android.release']);
       builder.setConfigurationName('android.release');
       builder.setDetoxConfig({
         configurations: {

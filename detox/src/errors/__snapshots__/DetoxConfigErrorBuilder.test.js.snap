@@ -268,8 +268,19 @@ HINT: Check that in your Detox config at path:
 `;
 
 exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgs should create an error with specifying the config name 1`] = `
-[Error: TODO - malformedAppLaunchArgs
-{}]
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator',
+      utilBinaryPaths: '/valid/path/outside/of/array',
+      device: 'Pixel 4',
+      launchArgs: 'do not use strings here please'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `

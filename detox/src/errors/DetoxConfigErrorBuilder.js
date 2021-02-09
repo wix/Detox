@@ -52,6 +52,11 @@ class DetoxConfigErrorBuilder {
     };
   }
 
+  _focusOnAppConfig(appPath) {
+    const value = _.get(this.contents, appPath);
+    return _.set({}, appPath, value);
+  }
+
   _resolveSelectedDeviceConfig(alias) {
     if (alias) {
       return this.contents.devices[alias];
@@ -320,15 +325,12 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
-  malformedAppLaunchArgs() {
-    return new TodoError('malformedAppLaunchArgs', arguments);
-
-    // return new DetoxConfigError({
-    //   message: `Invalid type of "launchArgs" property in detox.configurations["${this.configurationName}"]\nExpected an object.`,
-    //   hint: `Check that in your Detox config${this._atPath()}`,
-    //   debugInfo: this._focusOnConfiguration(),
-    //   inspectOptions: { depth: 2 },
-    // });
+  malformedAppLaunchArgs(appPath) {
+    return new DetoxConfigError({
+      message: `Invalid type of "launchArgs" property in the app config.\nExpected an object:`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 3 },
+    });
   }
 
   malformedUtilBinaryPaths() {
