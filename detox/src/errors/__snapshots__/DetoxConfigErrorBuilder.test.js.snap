@@ -1,5 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DetoxConfigErrorBuilder .appConfigIsUndefined should take into account if it is "app" missing 1`] = `
+[DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
+
+HINT: It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
+
+{
+  "apps": {
+*-> "myApp": {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp"
+      ...
+    }
+  }
+Examine your Detox config.]
+`;
+
+exports[`DetoxConfigErrorBuilder .appConfigIsUndefined should take into account if it is "apps" array has an empty element 1`] = `
+[DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
+
+HINT: It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
+
+{
+  "apps": {
+*-> "myApp": {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   "android.release": {
+*---- "apps": [..., "myApp", ...]
+      ...
+    }
+  }
+Examine your Detox config.]
+`;
+
 exports[`DetoxConfigErrorBuilder .cantChooseConfiguration should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: Cannot determine which configuration to use from Detox config.
 

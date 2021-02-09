@@ -231,6 +231,21 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
+  describe('.appConfigIsUndefined', () => {
+    beforeEach(() => {
+      build = (appPath) => builder.appConfigIsUndefined(appPath);
+      builder.setConfigurationName('android.release');
+    });
+
+    it('should take into account if it is "app" missing', () => {
+      expect(build(['configurations', 'android.release', 'app'])).toMatchSnapshot();
+    });
+
+    it('should take into account if it is "apps" array has an empty element', () => {
+      expect(build(['configurations', 'android.release', 'apps', 0])).toMatchSnapshot();
+    });
+  });
+
   describe('.malformedAppLaunchArgs', () => {
     beforeEach(() => {
       build = () => builder.malformedAppLaunchArgs();

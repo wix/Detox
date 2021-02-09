@@ -292,9 +292,29 @@ You should create a dictionary of app configurations in Detox config, e.g.:
   }
 
   appConfigIsUndefined(appPath) {
+    const appProperty = appPath[2] === 'apps'
+      ? `"apps": [..., "myApp", ...]`
+      : `"app": "myApp"`;
+
     return new DetoxConfigError({
-      message: `Failed to find a "app" config in the selected ${J(this.configurationName)} configuration:`,
-      hint: `It should be an inlined object or an alias to the app config.\nExamine your Detox config${this._atPath()}`,
+      message: `Undefined or empty app config in the selected ${J(this.configurationName)} configuration:`,
+      hint: `\
+It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
+
+{
+  "apps": {
+*-> "myApp": {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   ${J(this.configurationName)}: {
+*---- ${appProperty}
+      ...
+    }
+  }
+Examine your Detox config${this._atPath()}`,
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 2 }
     });
