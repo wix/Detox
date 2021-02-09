@@ -22,18 +22,20 @@ describe('composeAppsConfig', () => {
   let errorBuilder;
 
   beforeEach(() => {
-    errorBuilder = new DetoxConfigErrorBuilder();
     composeAppsConfig = require('./composeAppsConfig');
     cliConfig = {};
     localConfig = {};
     deviceConfig = { device: 'someMatcher' };
     configurationName = 'someConfig';
-
     globalConfig = {
       configurations: {
         [configurationName]: localConfig,
       },
     }
+
+    errorBuilder = new DetoxConfigErrorBuilder()
+      .setDetoxConfig(globalConfig)
+      .setConfigurationName(configurationName);
   });
 
   const compose = () => composeAppsConfig({
@@ -291,6 +293,27 @@ describe('composeAppsConfig', () => {
         localConfig.apps = 'example1';
 
         expect(compose).toThrowError(errorBuilder.multipleAppsConfigShouldBeArray());
+      });
+
+      test('"apps" dictionary is undefined', () => {
+        delete globalConfig.apps;
+        localConfig.app = 'example1';
+
+        expect(compose).toThrowError(errorBuilder.thereAreNoAppConfigs('example1'));
+      });
+
+      test('non-existent app, cannot resolve alias', () => {
+        localConfig.app = 'elbereth';
+
+        expect(compose).toThrowError(errorBuilder.cantResolveAppAlias('elbereth'));
+      });
+
+      test('undefined inline app', () => {
+        localConfig.apps = ['example1', null];
+
+        expect(compose).toThrowError(
+          errorBuilder.appConfigIsUndefined(['configurations', configurationName, 'apps', 1])
+        );
       });
 
       test('apps have no name (collision)', () => {

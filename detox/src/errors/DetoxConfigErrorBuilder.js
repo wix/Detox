@@ -154,7 +154,7 @@ You should create a dictionary of device configurations in Detox config, e.g.:
 }\n`;
 
     return new DetoxConfigError({
-      message: `Cannot use aliases since there is no "devices" config in Detox config${this._atPath()}`,
+      message: `Cannot use device alias ${J(deviceAlias)} since there is no "devices" config in Detox config${this._atPath()}`,
       hint,
     });
   }
@@ -166,6 +166,38 @@ You should create a dictionary of device configurations in Detox config, e.g.:
     });
   }
 
+  thereAreNoAppConfigs(appAlias) {
+    return new DetoxConfigError({
+      message: `Cannot use app alias ${J(appAlias)} since there is no "apps" config in Detox config${this._atPath()}`,
+      hint: `\
+You should create a dictionary of app configurations in Detox config, e.g.:
+{
+  "apps": {
+*-> ${J(appAlias)}: {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   ${J(this.configurationName)}: {
+*---- "app": ${J(appAlias)},
+      ...
+    }
+  }
+}\n`,
+    });
+  }
+
+  cantResolveAppAlias(appAlias) {
+    return new DetoxConfigError({
+      message: `Failed to find an app config ${J(appAlias)} in the "apps" dictionary of Detox config${this._atPath()}`,
+      hint: 'Below are the app configurations Detox was able to find:\n' + hintConfigurations(this.contents.apps) +
+      `\n\nCheck your configuration ${J(this.configurationName)}:`,
+      debugInfo: this.selectedConfiguration,
+      inspectOptions: { depth: 1 },
+    });
+  }
+
   deviceConfigIsUndefined() {
     return new DetoxConfigError({
       message: `Failed to find a "device" config in the selected ${J(this.configurationName)} configuration:`,
@@ -173,6 +205,10 @@ You should create a dictionary of device configurations in Detox config, e.g.:
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 2 }
     });
+  }
+
+  appConfigIsUndefined(appPath) {
+    return new TodoError('appConfigIsUndefined', appPath);
   }
 
   missingDeviceType(deviceAlias) {

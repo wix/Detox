@@ -96,11 +96,11 @@ function composeAppsConfigFromAliased(opts) {
   const result = {};
   const { configurationName, errorBuilder, deviceConfig, globalConfig, localConfig } = opts;
 
-  if (!localConfig.app && !localConfig.apps) {
+  if (localConfig.app == null && localConfig.apps == null) {
     throw errorBuilder.noAppIsDefined(deviceConfig.type);
   }
 
-  if (localConfig.app && localConfig.apps) {
+  if (localConfig.app != null && localConfig.apps != null) {
     throw errorBuilder.ambiguousAppAndApps();
   }
 
@@ -119,11 +119,24 @@ function composeAppsConfigFromAliased(opts) {
 
   for (const maybeAppPath of preliminaryAppPaths) {
     const maybeAlias = _.get(globalConfig, maybeAppPath);
-    const appPath = _.isString(maybeAlias)
+    const isAlias = _.isString(maybeAlias);
+    const appPath = isAlias
       ? ['apps', maybeAlias]
       : maybeAppPath;
 
     const appConfig = _.get(globalConfig, appPath);
+    if (_.isEmpty(appConfig)) {
+      if (isAlias) {
+        if (_.size(globalConfig.apps) > 0) {
+          throw errorBuilder.cantResolveAppAlias(maybeAlias);
+        } else {
+          throw errorBuilder.thereAreNoAppConfigs(maybeAlias);
+        }
+      } else {
+        throw errorBuilder.appConfigIsUndefined(appPath);
+      }
+    }
+
     const appName = appConfig.name || 'default';
     appPathsMap.set(appConfig, appPath);
 

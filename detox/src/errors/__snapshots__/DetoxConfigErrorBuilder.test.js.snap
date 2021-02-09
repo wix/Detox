@@ -472,7 +472,7 @@ HINT: Examine the config at path:
 `;
 
 exports[`DetoxConfigErrorBuilder .thereAreNoDeviceConfigs should create an error with a hint: with config path 1`] = `
-[DetoxConfigError: Cannot use aliases since there is no "devices" config in Detox config at path:
+[DetoxConfigError: Cannot use device alias "simulator" since there is no "devices" config in Detox config at path:
 /etc/detox/config.js
 
 HINT: You should create a dictionary of device configurations in Detox config, e.g.:
@@ -494,7 +494,7 @@ HINT: You should create a dictionary of device configurations in Detox config, e
 `;
 
 exports[`DetoxConfigErrorBuilder .thereAreNoDeviceConfigs should create an error with a hint: without config path 1`] = `
-[DetoxConfigError: Cannot use aliases since there is no "devices" config in Detox config.
+[DetoxConfigError: Cannot use device alias "simulator" since there is no "devices" config in Detox config.
 
 HINT: You should create a dictionary of device configurations in Detox config, e.g.:
 {
