@@ -89,21 +89,17 @@ describe('composeAppsConfig', () => {
     it('should ignore mistyped Android properties for iOS app', () => {
       deviceConfig.type = 'ios.simulator';
       localConfig.testBinaryPath = 'somePath';
-      localConfig.utilBinaryPaths = ['someOther'];
 
       const appConfig = compose().default;
       expect(appConfig.testBinaryPath).toBe(undefined);
-      expect(appConfig.utilBinaryPaths).toBe(undefined);
     });
 
     it('should include Android properties for Android app', () => {
       deviceConfig.type = 'android.emulator';
       localConfig.testBinaryPath = 'somePath';
-      localConfig.utilBinaryPaths = ['someOther'];
 
       const appConfig = compose().default;
       expect(appConfig.testBinaryPath).toBe('somePath');
-      expect(appConfig.utilBinaryPaths).toEqual(['someOther']);
     });
 
     it.each([
@@ -137,19 +133,6 @@ describe('composeAppsConfig', () => {
           anInteger: 2,
           anObject: { a: 1 },
         });
-      });
-    });
-
-    describe('.utilBinaryPaths', () => {
-      beforeEach(() => {
-        deviceConfig.type = 'android.emulator';
-      });
-
-      it('should throw if util-binary paths are malformed', () => {
-        localConfig.utilBinaryPaths = 'valid/path/not/in/array';
-        expect(compose).toThrowError(
-          errorBuilder.malformedUtilBinaryPaths(['configurations', configurationName])
-        );
       });
     });
 

@@ -32,9 +32,10 @@ function composeDeviceConfigFromPlain(opts) {
 
   const type = localConfig.type;
   const device = localConfig.device || localConfig.name;
+  const utilBinaryPaths = localConfig.utilBinaryPaths;
 
   const deviceConfig = type in EXPECTED_DEVICE_MATCHER_PROPS
-    ? { type, device }
+    ? { type, device, utilBinaryPaths }
     : { ...localConfig };
 
   validateDeviceConfig({ deviceConfig, errorBuilder });
@@ -91,6 +92,16 @@ function composeDeviceConfigFromAliased(opts) {
 function validateDeviceConfig({ deviceConfig, errorBuilder, deviceAlias }) {
   if (!deviceConfig.type) {
     throw errorBuilder.missingDeviceType(deviceAlias);
+  }
+
+  if (deviceConfig.utilBinaryPaths) {
+    if (!Array.isArray(deviceConfig.utilBinaryPaths)) {
+      throw errorBuilder.malformedUtilBinaryPaths(deviceAlias);
+    }
+
+    if (deviceConfig.utilBinaryPaths.some(s => !_.isString(s))) {
+      throw errorBuilder.malformedUtilBinaryPaths(deviceAlias);
+    }
   }
 
   if (_.isString(deviceConfig.device)) {

@@ -333,7 +333,7 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
-  malformedUtilBinaryPaths() {
+  malformedUtilBinaryPaths(deviceAlias) {
     return new TodoError('malformedUtilBinaryPaths', arguments);
 
     // return new DetoxConfigError({

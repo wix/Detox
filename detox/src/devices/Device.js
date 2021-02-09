@@ -166,7 +166,7 @@ class Device {
   }
 
   async installUtilBinaries() {
-    const paths = this._currentApp && this._currentApp.utilBinaryPaths;
+    const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
       await traceCall('installUtilBinaries', () =>
         this.deviceDriver.installUtilBinaries(this._deviceId, paths));

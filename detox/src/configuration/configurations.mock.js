@@ -80,7 +80,6 @@ const apkWithBinary = {
   type: "android.apk",
   binaryPath: "android/app/build/outputs/apk/release/app-release.apk",
   testBinaryPath: "android/app/build/outputs/apk/release/app-release-androidTest.apk",
-  utilBinaryPaths: ["android/util-app1.apk", "android/util-app2.apk"],
 };
 
 const iosSimulatorWithShorthandQuery = {
@@ -97,7 +96,7 @@ const androidEmulator = {
   "type": "android.emulator",
   "device": {
     "avdName": "Pixel_API_28",
-  }
+  },
 };
 
 module.exports = {

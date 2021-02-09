@@ -60,9 +60,6 @@ const config = {
     "android.fromSource": {
       type: "android.apk",
       binaryPath: "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
-      utilBinaryPaths: [
-        "./cache/test-butler-app.apk"
-      ],
       build: "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
     },
 
@@ -85,7 +82,10 @@ const config = {
       type: "android.emulator",
       device: {
         avdName: "Pixel_API_28"
-      }
+      },
+      utilBinaryPaths: [
+        "./cache/test-butler-app.apk"
+      ],
     },
 
     "android.genycloud.uuid": {
@@ -153,9 +153,6 @@ const config = {
       app: {
         type: "android.apk",
         binaryPath: "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
-        utilBinaryPaths: [
-          "./cache/test-butler-app.apk"
-        ],
         build: "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
       },
     },

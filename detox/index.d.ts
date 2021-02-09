@@ -166,7 +166,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
-            launchArgs?: Record<string, string | null | undefined>;
+            launchArgs?: Record<string, any>;
         }
 
         interface DetoxAndroidAppConfig extends DetoxLooseAndroidAppConfig {
@@ -178,8 +178,7 @@ declare global {
             bundleId?: string;
             build?: string;
             testBinaryPath?: string;
-            utilBinaryPaths?: string[];
-            launchArgs?: Record<string, string | null | undefined>;
+            launchArgs?: Record<string, any>;
         }
 
         type DetoxBuiltInDeviceConfig =
@@ -216,16 +215,19 @@ declare global {
         interface DetoxAttachedAndroidDriverConfig {
             type: 'android.attached';
             device: string | { adbName: string };
+            utilBinaryPaths?: string[];
         }
 
         interface DetoxAndroidEmulatorDriverConfig {
             type: 'android.emulator';
             device: string | { avdName: string };
+            utilBinaryPaths?: string[];
         }
 
         interface DetoxGenymotionCloudDriverConfig {
             type: 'android.genycloud';
             device: string | { recipeUUID: string; } | { recipeName: string; };
+            utilBinaryPaths?: string[];
         }
 
         interface DetoxCustomDriverConfig {
@@ -759,7 +761,7 @@ declare global {
             toHaveId(id: string): R;
 
             /**
-             * Expects a toggle-able element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked. 
+             * Expects a toggle-able element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked.
              * As a reference, in react-native, this is the equivalent switch component.
              * @example await expect(element(by.id('switch'))).toHaveToggleValue(true);
              */
@@ -1008,7 +1010,7 @@ declare global {
              * Arguments to pass-through into the app.
              * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
              */
-            launchArgs?: any;
+            launchArgs?: Record<string, any>;
             /**
              * Launch config for specifying the native language and locale
              */

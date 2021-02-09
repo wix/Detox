@@ -52,7 +52,6 @@ function composeAppsConfigFromPlain(opts) {
         bundleId: localConfig.bundleId,
         build: localConfig.build,
         testBinaryPath: localConfig.testBinaryPath,
-        utilBinaryPaths: localConfig.utilBinaryPaths,
         launchArgs: localConfig.launchArgs,
       }; break;
     case 'ios.none':
@@ -192,10 +191,6 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
 
   if (appConfig.launchArgs && !_.isObject(appConfig.launchArgs)) {
     throw errorBuilder.malformedAppLaunchArgs(appPath);
-  }
-
-  if (appConfig.utilBinaryPaths && !Array.isArray(appConfig.utilBinaryPaths)) {
-    throw errorBuilder.malformedUtilBinaryPaths(appPath);
   }
 }
 

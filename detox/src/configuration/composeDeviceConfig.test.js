@@ -44,10 +44,12 @@ describe('composeDeviceConfig', () => {
       };
     });
 
-    it('should extract type and device', () => {
+    it('should extract type, device and utilBinaryPaths', () => {
+      localConfig.utilBinaryPaths = ['someApp'];
       expect(compose()).toEqual({
         type: localConfig.type,
         device: localConfig.device,
+        utilBinaryPaths: localConfig.utilBinaryPaths,
       });
     });
 
@@ -172,6 +174,21 @@ describe('composeDeviceConfig', () => {
 
         expect(compose).toThrow(errorBuilder.deviceConfigIsUndefined());
       });
+
+      it('should throw if device.utilBinaryPaths are malformed (string)', () => {
+        localConfig.device = 'someDevice';
+        globalConfig.devices = {
+          [localConfig.device]: {
+            type: 'android.emulator',
+            device: { avdName: 'Pixel' },
+            utilBinaryPaths: 'valid/path/not/in/array',
+          },
+        }
+
+        expect(compose).toThrowError(
+          errorBuilder.malformedUtilBinaryPaths(localConfig.device)
+        );
+      });
     });
 
     describe('empty device object', () => {
@@ -232,6 +249,18 @@ describe('composeDeviceConfig', () => {
         localConfig.device.device[_.sample(expectedProps)] = 'someValue';
         expect(compose).not.toThrowError();
       });
+    });
+
+    it('should throw if .utilBinaryPaths are malformed (array of non-strings)', () => {
+      Object.assign(localConfig, {
+        type: 'android.emulator',
+        device: { avdName: 'Pixel' },
+        utilBinaryPaths: [{ path: 'valid/path/not/in/array' }],
+      });
+
+      expect(compose).toThrowError(
+        errorBuilder.malformedUtilBinaryPaths(undefined)
+      );
     });
   });
 });

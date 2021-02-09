@@ -123,13 +123,15 @@ describe('Device', () => {
   }
 
   function aValidUnpreparedDevice(overrides) {
-    return aDevice(_.merge({
+    const configs = _.merge(_.cloneDeep({
       appsConfig: {
         default: configurationsMock.appWithRelativeBinaryPath,
       },
       deviceConfig: configurationsMock.iosSimulatorWithShorthandQuery,
       sessionConfig: configurationsMock.validSession,
-    }, overrides));
+    }), overrides);
+
+    return aDevice(configs);
   }
 
   async function aValidDevice(overrides) {
@@ -662,13 +664,15 @@ describe('Device', () => {
   describe('installBinary()', () => {
     it('should install the set of util binaries', async () => {
       const device = await aValidDevice({
-        appsConfig: { default: configurationsMock.apkWithBinary },
+        deviceConfig: {
+          utilBinaryPaths: ['path/to/util/binary']
+        },
       });
 
       await device.installUtilBinaries();
       expect(driverMock.driver.installUtilBinaries).toHaveBeenCalledWith(
         device.id,
-        configurationsMock.apkWithBinary.utilBinaryPaths,
+        ['path/to/util/binary'],
       );
     });
 
@@ -676,16 +680,16 @@ describe('Device', () => {
       driverMock.driver.installUtilBinaries.mockRejectedValue(new Error());
 
       const device = await aValidDevice({
-        appsConfig: { default: configurationsMock.apkWithBinary },
+        deviceConfig: {
+          utilBinaryPaths: ['path/to/util/binary']
+        },
       });
 
       await expect(device.installUtilBinaries()).rejects.toThrowError();
     });
 
     it('should not install anything if util-binaries havent been configured', async () => {
-      const device = await aValidDevice({
-        appsConfig: configurationsMock.appWithNoBinary,
-      });
+      const device = await aValidDevice({});
 
       await device.installUtilBinaries();
       expect(driverMock.driver.installUtilBinaries).not.toHaveBeenCalled();

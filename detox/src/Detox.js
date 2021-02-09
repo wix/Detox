@@ -182,6 +182,7 @@ class Detox {
       });
     }
 
+    await this.device.installUtilBinaries();
     if (behaviorConfig.reinstallApp) {
       await this._reinstallAppsOnDevice();
     }
@@ -209,7 +210,6 @@ class Detox {
       await this.device.selectApp(appName)
       await this.device.uninstallApp();
       await this.device.installApp();
-      await this.device.installUtilBinaries();
     }
 
     if (appNames.length !== 1) {
