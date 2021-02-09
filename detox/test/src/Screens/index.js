@@ -49,5 +49,5 @@ export {
   LaunchNotificationScreen,
   DeviceScreen,
   ElementScreenshotScreen,
-  WebViewScreen
+  WebViewScreen,
 };

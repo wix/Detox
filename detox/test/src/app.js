@@ -46,6 +46,16 @@ class example extends Component {
     );
   }
 
+  renderScreenNotifyingButton_iOS(title, notificationName) {
+    if(notificationName == null) {
+      throw new Error("Got no notification name for " + title);
+    }
+    
+    return this.renderButton(title, () => {
+      NativeModule.sendNotification("ChangeScreen", notificationName);
+    }); 
+  }
+
   renderScreenButton(title, component) {
     if(component == null) {
       throw new Error("Got no component for " + title);
@@ -128,6 +138,7 @@ class example extends Component {
         </View>
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
+        {isIos && this.renderScreenNotifyingButton_iOS('Drag And Drop', 'dragAndDrop')}
 
         {isAndroid && this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 

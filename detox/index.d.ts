@@ -77,7 +77,7 @@ declare global {
                  * set this property to `false`.
                  *
                  * This is useful when during E2E tests you also need to run regular expectations
-                 * in Node.js. Jest's `expect` for instance, will not be overriden by Detox when
+                 * in Node.js. Jest's `expect` for instance, will not be overridden by Detox when
                  * this option is used.
                  */
                 exposeGlobals?: boolean;
@@ -266,7 +266,7 @@ declare global {
              * set this property to `false`.
              *
              * This is useful when during E2E tests you also need to run regular expectations
-             * in Node.js. Jest's `expect` for instance, will not be overriden by Detox when
+             * in Node.js. Jest's `expect` for instance, will not be overridden by Detox when
              * this option is used.
              */
             initGlobals?: boolean;
@@ -278,6 +278,55 @@ declare global {
             reuse?: boolean;
         }
 
+        /**
+         * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
+         *
+         * @see AppLaunchArgs#modify
+         * @see AppLaunchArgs#reset
+         * @see AppLaunchArgs#get
+         */
+        interface AppLaunchArgs {
+            /**
+             * Modify the launch-arguments via a modifier object, according to the following logic:
+             *  - Concrete modifier properties would either set anew or override the value of existing properties with the same name, with
+             *    the specific value.
+             *  - Modifier properties set to either `undefined` or `null` would have the equivalent property deleted.
+             *
+             * @param modifier The modifier object.
+             *
+             * @example
+             * // With current launch arguments set to:
+             * // {
+             * //   mockServerPort: 1234,
+             * //   mockServerCredentials: 'user@test.com:12345678',
+             * // }
+             * device.appLaunchArgs.modify({
+             *   mockServerPort: 4321,
+             *   mockServerCredentials: null,
+             *   mockServerToken: 'abcdef',
+             * };
+             * await device.launchApp();
+             * // ==> launch-arguments become:
+             * // {
+             * //   mockServerPort: 4321,
+             * //   mockServerToken: 'abcdef',
+             * // }
+             */
+            modify(modifier: object): void;
+
+            /**
+             * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
+             */
+            reset(): void;
+
+            /**
+             * Get all currently set launch-arguments.
+             * @returns An object containing all launch-arguments. Note: Changes on the returned object will not be reflected on the
+             * launch-arguments associated with the device.
+             */
+            get(): object;
+        }
+
         interface Device {
             /**
              * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
@@ -287,12 +336,14 @@ declare global {
              */
             id: string;
             /**
-             * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_26)
+             * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_29)
              * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
             /**
-             * Launch the app
+             * Launch the app.
+             *
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -304,10 +355,40 @@ declare global {
              * @example
              * // Mock opening the app from URL to test your app's deep link handling mechanism.
              * await device.launchApp({url: url});
+             * @example
+             * // Start the app with some custom arguments.
+             * await device.launchApp({
+             *   launchArgs: {arg1: 1, arg2: "2"},
+             * });
              */
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
             /**
-             * Terminate the app
+             * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
+             * command-line arguments. This access allows - through dedicated methods, for both value-querying and
+             * modification (see {@link AppLaunchArgs}).
+             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             *
+             * @example
+             * // With Detox being preconfigured statically to use these arguments in app launch:
+             * // {
+             * //   mockServerPort: 1234,
+             * // }
+             * // The following code would result in these arguments eventually passed into the launched app:
+             * // {
+             * //   mockServerPort: 4321,
+             * //   mockServerToken: 'uvwxyz',
+             * // }
+             * device.appLaunchArgs.modify({
+             *   mockServerPort: 4321,
+             *   mockServerToken: 'abcdef',
+             * });
+             * await device.launchApp({ launchArgs: { mockServerToken: 'uvwxyz' } }};
+             *
+             * @see AppLaunchArgs
+             */
+            appLaunchArgs: AppLaunchArgs;
+            /**
+             * Terminate the app.
              *
              * @example
              * // By default, terminateApp() with no params will terminate the app
@@ -367,7 +448,7 @@ declare global {
              */
             setLocation(lat: number, lon: number): Promise<void>;
             /**
-             * Disable EarlGrey's network synchronization mechanism on preffered endpoints. Usful if you want to on skip over synchronizing on certain URLs.
+             * Disable EarlGrey's network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
              */
@@ -560,10 +641,16 @@ declare global {
             toHaveLabel(label: string): R;
             /**
              * In React Native apps, expect UI component to have testID with that id.
-             * In native iOS apps, expect UI element to have accesibilityIdentifier with that id.
+             * In native iOS apps, expect UI element to have accessibilityIdentifier with that id.
              * @example await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
              */
             toHaveId(id: string): R;
+            /**
+             * Expects a toggle-able element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked. 
+             * As a reference, in react-native, this is the equivalent switch component.
+             * @example await expect(element(by.id('switch'))).toHaveToggleValue(true);
+             */
+            toHaveToggleValue(value: boolean): R;
             /**
              * Expect components like a Switch to have a value ('0' for off, '1' for on).
              * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
@@ -601,6 +688,12 @@ declare global {
              * @example await element(by.id('tappable')).longPress();
              */
             longPress(): Promise<Actions<R>>;
+            /**
+             * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)
+             * @example await element(by.id('draggable')).longPressAndDrag(2000, NaN, NaN, element(by.id('target')), NaN, NaN, 'fast', 0);
+             */
+            longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: Element,
+                             normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<Actions<R>>;
             /**
              * Simulate multiple taps on an element.
              * @param times number of times to tap
@@ -678,7 +771,7 @@ declare global {
              * See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
-             * @param value string value in setted column (must be correct)
+             * @param value string value in set column (must be correct)
              * @example
              * await expect(element(by.type('UIPickerView'))).toBeVisible();
              * await element(by.type('UIPickerView')).setColumnToValue(1,"6");
@@ -783,8 +876,8 @@ declare global {
              */
             delete?: boolean;
             /**
-             * Detox can start the app with additional launch arguments
-             * The added launchArgs will be passed through the launch command to the device and be accessible via [[NSProcessInfo processInfo] arguments]
+             * Arguments to pass-through into the app.
+             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
              */
             launchArgs?: any;
             /**

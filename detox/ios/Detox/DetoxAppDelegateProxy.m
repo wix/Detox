@@ -87,11 +87,23 @@ static NSURL* _launchUserActivityDataURL()
 	});
 }
 
+static NSTimeInterval fromLast = 0;
+
 - (void)__dtx_sendEvent:(UIEvent *)event
 {
 	if([self isKindOfClass:[COSTouchVisualizerWindow class]])
 	{
 		return;
+	}
+	
+	if(event.type == UIEventTypeTouches)
+	{
+		if(event.allTouches.anyObject.phase == UITouchPhaseBegan)
+		{
+			fromLast = 0;
+		}
+		NSLog(@"🤦‍♂️ elapsed: %@ touch: %@", @(event.timestamp - fromLast), event.allTouches.anyObject);
+		fromLast = event.timestamp;
 	}
 	
 	[_touchVisualizerWindow sendEvent:event];
