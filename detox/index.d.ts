@@ -405,16 +405,6 @@ declare global {
             selectApp(app: string): Promise<void>;
 
             /**
-             * @protected
-             * Unselect the current app.
-             * After execution, all app-specific device methods will be throwing an error.
-             *
-             * @example
-             * await device.selectApp(null); // explicitly unselects any app
-             */
-             selectApp(app: null): Promise<void>;
-
-            /**
              * Launch the app.
              *
              * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
