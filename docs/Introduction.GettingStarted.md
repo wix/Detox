@@ -105,9 +105,16 @@ For specific configuration options for each supported platform, see:
 
 Use a convenience method in Detox command line tools to build your project easily:
 
+Android: 
 ```sh
-detox build
+detox build --configuration android
 ```
+
+Ios:
+```sh
+detox build --configuration ios
+```
+
 
 > **Note:** Detox executes the build command you specified in your Detox configuration. If your build fails, make sure to provide the correct build command.
 
