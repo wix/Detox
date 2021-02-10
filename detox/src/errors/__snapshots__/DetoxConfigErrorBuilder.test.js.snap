@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .ambiguousAppAndApps should create an error for aliased configuration 1`] = `
+[Error: TODO - ambiguousAppAndApps
+{}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .ambiguousAppAndApps should create an error for inlined configuration 1`] = `
+[Error: TODO - ambiguousAppAndApps
+{}]
+`;
+
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .appConfigIsUndefined should take into account if it is "app" missing 1`] = `
 [DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
 
@@ -45,25 +55,41 @@ Examine your Detox config at path:
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .cantResolveAppAlias should create an error for aliased configuration 1`] = `
-[DetoxConfigError: Failed to find a device config "anotherApp" in the "devices" dictionary of Detox config at path:
+[DetoxConfigError: Failed to find an app config "anotherApp" in the "apps" dictionary of Detox config at path:
 /home/detox/myproject/.detoxrc.json
 
-HINT: Below are the device configurations Detox was able to find:
-* aDevice
+HINT: Below are the app configurations Detox was able to find:
+* someApp
 
 Check your configuration "aliased":
 
 {
   device: 'aDevice',
-  apps: [Array]
+  apps: [
+    'someApp'
+  ]
 }]
 `;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should create an error for aliased configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with aliased named apps 1`] = `
+[Error: TODO - duplicateAppConfig
+{"0":{"appName":"TheApp","appPath":["apps","otherApp"],"preExistingAppPath":["apps","someApp"]}}]
+`;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should create an error for inlined configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with aliased non-named apps 1`] = `
+[Error: TODO - duplicateAppConfig
+{"0":{"appPath":["apps","otherApp"],"preExistingAppPath":["apps","someApp"]}}]
+`;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should create an error for plain configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with inlined named apps 1`] = `
+[Error: TODO - duplicateAppConfig
+{"0":{"appName":"TheApp","appPath":["configurations","inlinedMulti","apps",1],"preExistingAppPath":["configurations","inlinedMulti","apps",0]}}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with inlined non-named apps 1`] = `
+[Error: TODO - duplicateAppConfig
+{"0":{"appPath":["configurations","inlinedMulti","apps",1],"preExistingAppPath":["configurations","inlinedMulti","apps",0]}}]
+`;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for aliased configuration 1`] = `
 [Error: TODO - invalidAppType
@@ -73,6 +99,56 @@ exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for inlined configuration 1`] = `
 [Error: TODO - invalidAppType
 {"0":["configurations","inlined","apps",0]}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .malformedAppLaunchArgs should work with aliased configurations 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: 'path/to/app',
+      launchArgs: 'invalid'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .malformedAppLaunchArgs should work with inlined configurations 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          launchArgs: 'invalid'
+        }
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .malformedAppLaunchArgs should work with plain configurations 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  configurations: {
+    plain: {
+      type: 'android.emulator',
+      device: 'Pixel_3a_API_30_x86',
+      binaryPath: 'path/to/apk',
+      launchArgs: 'invalid'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for aliased configuration 1`] = `
@@ -95,17 +171,25 @@ exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath 
 {"0":["configurations","plain"]}]
 `;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for aliased configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for aliased configuration 1`] = `
+[Error: TODO - multipleAppsConfigArrayTypo
+{}]
+`;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for inlined configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for inlined configuration 1`] = `
+[Error: TODO - multipleAppsConfigArrayTypo
+{}]
+`;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for plain configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for aliased configuration 1`] = `
+[Error: TODO - multipleAppsConfigShouldBeArray
+{}]
+`;
 
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for aliased configuration 1`] = `"TODO"`;
-
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for inlined configuration 1`] = `"TODO"`;
-
-exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for plain configuration 1`] = `"TODO"`;
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for inlined configuration 1`] = `
+[Error: TODO - multipleAppsConfigShouldBeArray
+{}]
+`;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .noAppIsDefined should produce Android-specific error message 1`] = `
 [DetoxConfigError: The "android.release" configuration has no defined "app" config.

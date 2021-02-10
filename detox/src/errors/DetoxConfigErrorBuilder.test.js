@@ -9,10 +9,6 @@ describe('DetoxConfigErrorBuilder', () => {
   let build;
   let config;
 
-  let stubBuild = () => {
-    build = () => 'TODO';
-  };
-
   beforeEach(() => {
     /** @type Detox.DetoxConfig */
     config = {
@@ -261,7 +257,7 @@ describe('DetoxConfigErrorBuilder', () => {
     describe('.cantResolveAppAlias', () => {
       it('should create an error for aliased configuration', () => {
         builder.setConfigurationName('aliased')
-        expect(builder.cantResolveDeviceAlias('anotherApp')).toMatchSnapshot();
+        expect(builder.cantResolveAppAlias('anotherApp')).toMatchSnapshot();
       });
     });
 
@@ -277,6 +273,30 @@ describe('DetoxConfigErrorBuilder', () => {
 
       it('should take into account if it is "apps" array has an empty element', () => {
         expect(build(['configurations', 'android.release', 'apps', 0])).toMatchSnapshot();
+      });
+    });
+
+    describe('.malformedAppLaunchArgs', () => {
+      beforeEach(() => {
+        build = (appPath) => builder.malformedAppLaunchArgs(appPath);
+      });
+
+      it('should work with plain configurations', () => {
+        config.configurations.plain.launchArgs = 'invalid';
+        builder.setConfigurationName('plain');
+        expect(build(['configurations', 'plain'])).toMatchSnapshot();
+      });
+
+      it('should work with inlined configurations', () => {
+        config.configurations.inlinedMulti.apps[0].launchArgs = 'invalid';
+        builder.setConfigurationName('inlinedMulti');
+        expect(build(['configurations', 'inlinedMulti', 'apps', 0])).toMatchSnapshot();
+      });
+
+      it('should work with aliased configurations', () => {
+        config.apps.someApp.launchArgs = 'invalid';
+        builder.setConfigurationName('aliased');
+        expect(build(['apps', 'someApp'])).toMatchSnapshot();
       });
     });
 
@@ -329,18 +349,59 @@ describe('DetoxConfigErrorBuilder', () => {
     });
 
     describe('.duplicateAppConfig', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
+      beforeEach(() => {
+        build = (appPath) => builder.duplicateAppConfig(appPath);
+        config.apps.otherApp = { ...config.apps.someApp };
       });
 
-      it('should create an error for aliased configuration', () => {
-        expect(build()).toMatchSnapshot();
+      it('should help with aliased non-named apps', () => {
+        builder.setConfigurationName('aliased');
+        config.configurations.aliased.apps.push('otherApp');
+        expect(build({
+          appName: undefined,
+          appPath: ['apps', 'otherApp'],
+          preExistingAppPath: ['apps', 'someApp'],
+        })).toMatchSnapshot();
       });
 
-      it('should create an error for inlined configuration', () => {
-        expect(build()).toMatchSnapshot();
+      it('should help with aliased named apps', () => {
+        builder.setConfigurationName('aliased');
+        config.configurations.aliased.apps.push('otherApp');
+        config.apps.someApp.name = config.apps.otherApp.name = 'TheApp';
+        expect(build({
+          appName: 'TheApp',
+          appPath: ['apps', 'otherApp'],
+          preExistingAppPath: ['apps', 'someApp'],
+        })).toMatchSnapshot();
+      });
+
+      it('should help with inlined non-named apps', () => {
+        builder.setConfigurationName('inlinedMulti');
+        config.configurations.inlinedMulti.apps.push({
+          ...config.apps.otherApp,
+        });
+
+        expect(build({
+          appName: undefined,
+          appPath: ['configurations', 'inlinedMulti', 'apps', 1],
+          preExistingAppPath: ['configurations', 'inlinedMulti', 'apps', 0],
+        })).toMatchSnapshot();
+      });
+
+      it('should help with inlined named apps', () => {
+        builder.setConfigurationName('inlinedMulti');
+        config.configurations.inlinedMulti.apps.push({
+          ...config.apps.otherApp,
+        });
+        config.configurations.inlinedMulti.apps.forEach(a => {
+          a.name = 'TheApp';
+        });
+
+        expect(build({
+          appName: 'TheApp',
+          appPath: ['configurations', 'inlinedMulti', 'apps', 1],
+          preExistingAppPath: ['configurations', 'inlinedMulti', 'apps', 0],
+        })).toMatchSnapshot();
       });
     });
 
@@ -375,34 +436,66 @@ describe('DetoxConfigErrorBuilder', () => {
       });
     });
 
-    describe('.multipleAppsConfigArrayTypo', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
+    describe('.ambiguousAppAndApps', () => {
+      beforeEach(() => {
+        build = () => builder.ambiguousAppAndApps();
       });
 
       it('should create an error for aliased configuration', () => {
+        builder.setConfigurationName('aliased');
+        config.configurations.aliased.app = config.configurations.aliased.apps[0];
+
         expect(build()).toMatchSnapshot();
       });
 
       it('should create an error for inlined configuration', () => {
+        builder.setConfigurationName('inlinedMulti');
+        config.configurations.aliased.app = {
+          ...config.configurations.aliased.apps[0]
+        };
+
+        expect(build()).toMatchSnapshot();
+      });
+    });
+
+    describe('.multipleAppsConfigArrayTypo', () => {
+      beforeEach(() => {
+        build = () => builder.multipleAppsConfigArrayTypo();
+      });
+
+      it('should create an error for aliased configuration', () => {
+        builder.setConfigurationName('aliased');
+        config.configurations.aliased.app = config.configurations.aliased.apps;
+        delete config.configurations.aliased.apps;
+
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error for inlined configuration', () => {
+        builder.setConfigurationName('inlinedMulti');
+        config.configurations.aliased.app = config.configurations.aliased.apps;
+        delete config.configurations.aliased.apps;
+
         expect(build()).toMatchSnapshot();
       });
     });
 
     describe('.multipleAppsConfigShouldBeArray', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
+      beforeEach(() => {
+        build = () => builder.multipleAppsConfigShouldBeArray();
       });
 
       it('should create an error for aliased configuration', () => {
+        builder.setConfigurationName('aliased');
+        config.configurations.aliased.apps = config.configurations.aliased.apps[0];
+
         expect(build()).toMatchSnapshot();
       });
 
       it('should create an error for inlined configuration', () => {
+        builder.setConfigurationName('inlinedMulti');
+        config.configurations.aliased.apps = config.configurations.aliased.apps[0];
+
         expect(build()).toMatchSnapshot();
       });
     });

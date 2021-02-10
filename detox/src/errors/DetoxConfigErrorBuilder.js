@@ -348,11 +348,11 @@ Examine your Detox config${this._atPath()}`,
     return new DetoxConfigError({
       message: `Invalid type of "launchArgs" property in the app config.\nExpected an object:`,
       debugInfo: this._focusOnAppConfig(appPath),
-      inspectOptions: { depth: 3 },
+      inspectOptions: { depth: 4 },
     });
   }
 
-  missingAppBinaryPath(appPath) {
+  missingAppBinaryPath({ appName, appPath, preExistingAppPath }) {
     return new TodoError('missingAppBinaryPath', arguments);
   }
 
