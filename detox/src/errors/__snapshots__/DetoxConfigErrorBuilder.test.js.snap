@@ -696,33 +696,13 @@ HINT: Examine the config:
 `;
 
 exports[`DetoxConfigErrorBuilder (from local-cli/build) should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: Could not find a build script inside "android.release" configuration.
-
-HINT: Check contents of your Detox config at path:
+[DetoxConfigError: Failed to build the app for the configuration "aliased", because there was no "build" script inside.
+Check contents of your Detox config at path:
 /home/detox/myproject/.detoxrc.json
 
 {
-  configurations: {
-    'android.release': {
-      type: 'android.emulator',
-      device: [Object]
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder (from local-cli/build) should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: Could not find a build script inside "android.release" configuration.
-
-HINT: Check contents of your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    'android.release': {
-      type: 'android.emulator',
-      device: [Object]
-    }
-  }
+  build: undefined,
+  type: 'ios.app',
+  binaryPath: 'path/to/app'
 }]
 `;

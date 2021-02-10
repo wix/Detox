@@ -42,7 +42,7 @@ module.exports.handler = async function build(argv) {
         throw e;
       }
     } else if (!argv.silent) {
-      throw errorBuilder.missingBuildScript();
+      throw errorBuilder.missingBuildScript(app);
     }
 
     if (app.binaryPath && !fs.existsSync(app.binaryPath)) {

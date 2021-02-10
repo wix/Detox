@@ -522,28 +522,10 @@ describe('DetoxConfigErrorBuilder', () => {
   });
 
   describe('(from local-cli/build)', () => {
-    beforeEach(() => {
-      build = () => builder.missingBuildScript();
-      builder.setConfigurationName('android.release');
-      builder.setDetoxConfig({
-        configurations: {
-          'android.release': {
-            type: 'android.emulator',
-            device: {
-              avdName: 'Pixel_2_API_29'
-            }
-          }
-        }
-      });
-    });
-
     it('should create a generic error, if the config location is not known', () => {
-      expect(build()).toMatchSnapshot();
-    });
-
-    it('should create an error with a hint, if the config location is known', () => {
-      builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
-      expect(build()).toMatchSnapshot();
+      delete config.apps.someApp.build;
+      builder.setConfigurationName('aliased');
+      expect(builder.missingBuildScript(config.apps.someApp)).toMatchSnapshot();
     });
   });
 });

@@ -448,12 +448,14 @@ Examine your Detox config${this._atPath()}`,
 
   // endregion
 
-  missingBuildScript() {
+  missingBuildScript(appConfig) {
     return new DetoxConfigError({
-      message: `Could not find a build script inside "${this.configurationName}" configuration.`,
-      hint: `Check contents of your Detox config${this._atPath()}`,
-      debugInfo: this._focusOnConfiguration(),
-      inspectOptions: { depth: 2 },
+      message: `\
+Failed to build the app for the configuration ${J(this.configurationName)}, because \
+there was no "build" script inside.
+Check contents of your Detox config${this._atPath()}`,
+      debugInfo: { build: undefined, ...appConfig },
+      inspectOptions: { depth: 0 },
     });
   }
 }
