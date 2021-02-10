@@ -106,7 +106,7 @@ For specific configuration options for each supported platform, see:
 Use a convenience method in Detox command line tools to build your project easily:
 
 ```sh
-detox build
+detox build --configuration <your configuration name>
 ```
 
 > **Note:** Detox executes the build command you specified in your Detox configuration. If your build fails, make sure to provide the correct build command.
@@ -116,7 +116,7 @@ detox build
 Use the Detox command line tools to test your project easily:
 
 ```sh
-detox test
+detox test --configuration <your configuration name>
 ```
 
 That's it. Your first failing Detox test is running!

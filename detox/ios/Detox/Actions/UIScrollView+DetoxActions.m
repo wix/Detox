@@ -200,7 +200,7 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 		const NSUInteger consecutiveTouchPointsWithSameContentOffsetThreshold = (10 + DetoxPolicy.activePolicy.consecutiveTouchPointsWithSameContentOffsetThreshold);
 		
 		__block BOOL didFailTouches = NO;
-		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnLastTouch:0.0 onTouchCallback:^ BOOL (UITouchPhase phase) {
+		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:0.0 onTouchCallback:^ BOOL (UITouchPhase phase) {
 			if(phase != UITouchPhaseMoved)
 			{
 				return YES;

@@ -47,5 +47,5 @@ export {
   LaunchArgsScreen,
   LaunchNotificationScreen,
   DeviceScreen,
-  ElementScreenshotScreen,
+  ElementScreenshotScreen
 };

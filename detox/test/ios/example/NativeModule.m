@@ -80,4 +80,11 @@ RCT_EXPORT_METHOD(switchToMultipleReactRoots)
   });
 }
 
+RCT_EXPORT_METHOD(sendNotification:(NSString*)notification name:(NSString*)name)
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[NSNotificationCenter.defaultCenter postNotificationName:notification object:nil userInfo:@{@"name": name}];
+	});
+}
+
 @end

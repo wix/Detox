@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const URL = require('url').URL;
 const DeviceDriverBase = require('../DeviceDriverBase');
 const logger = require('../../../utils/logger');
