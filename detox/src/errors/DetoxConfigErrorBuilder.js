@@ -38,16 +38,22 @@ class DetoxConfigErrorBuilder {
     };
   }
 
-  _focusOnDeviceConfig(deviceAlias) {
+  _focusOnDeviceConfig(deviceAlias, postProcess = _.identity) {
+    const { type, device } = this._getSelectedConfiguration();
     if (!deviceAlias) {
-      return this._focusOnConfiguration();
+      if (type) {
+        return this._focusOnConfiguration(postProcess);
+      } else {
+        return this._focusOnConfiguration(c => {
+          postProcess(c.device);
+          return _.pick(c, 'device');
+        });
+      }
     }
-
-    const { device } = this._getSelectedConfiguration();
 
     return {
       devices: {
-        [device]: this.contents.devices[device],
+        [device]: postProcess(this.contents.devices[device]),
       },
     };
   }
@@ -61,7 +67,8 @@ class DetoxConfigErrorBuilder {
     if (alias) {
       return this.contents.devices[alias];
     } else {
-      return this._getSelectedConfiguration();
+      const config = this._getSelectedConfiguration();
+      return config.type ? config : config.device;
     }
   }
 
@@ -109,10 +116,10 @@ class DetoxConfigErrorBuilder {
     return new DetoxConfigError({
       message: `There are no configurations in the given Detox config${this._atPath()}`,
       hint: `Examine the config:`,
-      debugInfo: {
+      debugInfo: this.contents ? {
         configurations: undefined,
         ...this.contents,
-      },
+      } : {},
       inspectOptions: { depth: 1 },
     });
   }
@@ -240,7 +247,9 @@ Examine your Detox config${this._atPath()}`,
       message: `Missing "type" inside the device configuration.`,
       hint: `Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").\n` +
         `Check that in your Detox config${this._atPath()}`,
-      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      debugInfo: this._focusOnDeviceConfig(deviceAlias, d => {
+        return _.set(d, 'type', _.get(d, 'type'))
+      }),
       inspectOptions: { depth: 3 },
     });
   }
@@ -257,16 +266,17 @@ Examine your Detox config${this._atPath()}`,
 
   missingDeviceMatcherProperties(deviceAlias, expectedProperties) {
     const { type } = this._resolveSelectedDeviceConfig(deviceAlias);
+    const typeProperty = type ? `\n  "type": ${J(type)},` : '';
+
     return new DetoxConfigError({
       message: `Invalid or empty "device" matcher inside the device config.`,
       hint: `It should have the device query to run on, e.g.:\n
-{
-  "type": ${J(type)},
+{${typeProperty}
   "device": ${expectedProperties.map(p => `{ ${J(p)}: ... }`).join('\n      // or ')}
 }
 Check that in your Detox config${this._atPath()}`,
       debugInfo: this._focusOnDeviceConfig(deviceAlias),
-      inspectOptions: { depth: 3 },
+      inspectOptions: { depth: 4 },
     });
   }
 
@@ -343,7 +353,7 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
-  missingAppBinaryPath() {
+  missingAppBinaryPath(appPath) {
     return new TodoError('missingAppBinaryPath', arguments);
   }
 
@@ -447,7 +457,6 @@ Examine your Detox config${this._atPath()}`,
       inspectOptions: { depth: 2 },
     });
   }
-
 }
 
 function hintConfigurations(configurations) {

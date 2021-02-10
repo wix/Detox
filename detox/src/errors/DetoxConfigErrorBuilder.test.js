@@ -7,13 +7,58 @@ describe('DetoxConfigErrorBuilder', () => {
   /** @type DetoxConfigErrorBuilder */
   let builder;
   let build;
+  let config;
 
   let stubBuild = () => {
     build = () => 'TODO';
   };
 
   beforeEach(() => {
-    builder = new DetoxConfigErrorBuilder();
+    /** @type Detox.DetoxConfig */
+    config = {
+      devices: {
+        aDevice: {
+          type: 'ios.simulator',
+          device: {
+            type: 'iPhone 12',
+          },
+        }
+      },
+      apps: {
+        someApp: {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+        },
+      },
+      configurations: {
+        plain: {
+          type: 'android.emulator',
+          device: 'Pixel_3a_API_30_x86',
+          binaryPath: 'path/to/apk',
+        },
+        aliased: {
+          device: 'aDevice',
+          apps: ['someApp'],
+        },
+        inlined: {
+          device: null,
+          app: null,
+        },
+        inlinedMulti: {
+          device: null,
+          apps: [],
+        },
+      },
+    };
+
+    config.configurations.inlined.device = { ...config.devices.aDevice };
+    config.configurations.inlined.app = { ...config.apps.someApp };
+    config.configurations.inlinedMulti.device = { ...config.devices.aDevice };
+    config.configurations.inlinedMulti.apps = [{ ...config.apps.someApp }];
+
+    builder = new DetoxConfigErrorBuilder()
+      .setDetoxConfigPath('/home/detox/myproject/.detoxrc.json')
+      .setDetoxConfig(config);
   });
 
   describe('(from configuration/index)', () => {
@@ -22,63 +67,53 @@ describe('DetoxConfigErrorBuilder', () => {
         build = () => builder.noConfigurationSpecified();
       });
 
-      it('should create a generic error, if the configuration file is unknown', () => {
+      it('should create error 1, if the configuration file is not package.json', () => {
+        builder.setDetoxConfigPath('somethingElse');
         expect(build()).toMatchSnapshot();
       });
 
-      it('should create a generic error, if the configuration file is not a package.json', () => {
-        builder.setDetoxConfigPath('detox.config.json');
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error with a package.json hint, if THAT is the configuration file', () => {
+      it('should create error 2, if the configuration file is package.json', () => {
         builder.setDetoxConfigPath('/home/detox/myproject/package.json');
         expect(build()).toMatchSnapshot();
       });
     });
 
     describe('.noConfigurationAtGivenPath', () => {
-      beforeEach(() => {
-        build = () => builder.noConfigurationAtGivenPath();
-        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
-      });
-
       it('should create an error with the attempted config path', () => {
-        expect(build()).toMatchSnapshot();
+        expect(builder.noConfigurationAtGivenPath()).toMatchSnapshot();
       });
     });
 
     describe('.failedToReadConfiguration', () => {
       it('should create a generic error, if I/O error is unknown', () => {
-        builder.setDetoxConfigPath('/etc/detox/config.js');
         expect(builder.failedToReadConfiguration()).toMatchSnapshot();
       });
 
       it('should create a simple error, but with the original intercepted IO error', () => {
         const ioError = _.attempt(() => fs.readFileSync(os.homedir()));
-        builder.setDetoxConfigPath('/home/detox');
         expect(builder.failedToReadConfiguration(ioError)).toMatchSnapshot();
       });
     });
 
     describe('.noConfigurationsInside', () => {
       beforeEach(() => {
+        config.configurations = {};
         build = () => builder.noConfigurationsInside();
       });
 
       it('should create a generic error if all is unknown', () => {
+        builder.setDetoxConfig(null);
+        builder.setDetoxConfigPath('');
+
         expect(build()).toMatchSnapshot();
       });
 
       it('should create an error with Detox config fragment, if the path is not known', () => {
-        builder.setDetoxConfig({ config: { ios: {}, android: {} } });
+        builder.setDetoxConfigPath('');
         expect(build()).toMatchSnapshot();
       });
 
       it('should create an error with Detox config location hint, if it is known', () => {
-        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
-        builder.setDetoxConfig({});
-
         expect(build()).toMatchSnapshot();
       });
     });
@@ -86,19 +121,9 @@ describe('DetoxConfigErrorBuilder', () => {
     describe('.cantChooseConfiguration', () => {
       beforeEach(() => {
         build = () => builder.cantChooseConfiguration();
-        builder.setDetoxConfig({
-          configurations: {
-            conf1: {},
-            conf2: {},
-          },
-        });
       });
 
-      it('should create a generic error, if the config location is not known', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error with a hint, if the config location is known', () => {
+      it('should create an error with --configuration suggestions', () => {
         builder.setDetoxConfigPath('/etc/detox/config.js');
         expect(build()).toMatchSnapshot();
       });
@@ -108,19 +133,9 @@ describe('DetoxConfigErrorBuilder', () => {
       beforeEach(() => {
         build = () => builder.noConfigurationWithGivenName();
         builder.setConfigurationName('otherConf')
-        builder.setDetoxConfig({
-          configurations: {
-            conf1: {},
-          },
-        });
       });
 
-      it('should create a generic error, if the config location is not known', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error with a hint, if the config location is known', () => {
-        builder.setDetoxConfigPath('/etc/detox/config.js');
+      it('should create an error with configuration suggestions', () => {
         expect(build()).toMatchSnapshot();
       });
     });
@@ -129,20 +144,10 @@ describe('DetoxConfigErrorBuilder', () => {
       beforeEach(() => {
         build = () => builder.configurationShouldNotBeEmpty();
         builder.setConfigurationName('empty')
-        builder.setDetoxConfig({
-          configurations: {
-            nonEmpty: { launchArgs: { key: 'value' } },
-            empty: {},
-          },
-        });
+        config.configurations.empty = {};
       });
 
-      it('should create a generic error, if the config location is not known', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error with a hint, if the config location is known', () => {
-        builder.setDetoxConfigPath('/etc/detox/config.js');
+      it('should create a helpful error', () => {
         expect(build()).toMatchSnapshot();
       });
     });
@@ -151,129 +156,112 @@ describe('DetoxConfigErrorBuilder', () => {
   describe('(from composeDeviceConfig)', () => {
     describe('.thereAreNoDeviceConfigs', () => {
       beforeEach(() => {
-        build = () => builder.thereAreNoDeviceConfigs('simulator');
-        builder.setConfigurationName('conf1')
-        builder.setDetoxConfig({
-          configurations: {
-            conf1: {
-              device: 'simulator',
-            },
-          },
-        });
+        build = () => builder.thereAreNoDeviceConfigs('aDevice');
+        config.devices = {};
+        builder.setConfigurationName('aliased')
       });
 
       it('should create an error with a hint', () => {
-        expect(build()).toMatchSnapshot('without config path');
-
-        builder.setDetoxConfigPath('/etc/detox/config.js');
-        expect(build()).toMatchSnapshot('with config path');
+        expect(build()).toMatchSnapshot();
       });
     });
 
     describe('.cantResolveDeviceAlias', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error for aliased configuration', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error for inlined configuration', () => {
-        expect(build()).toMatchSnapshot();
+      it('should create a helpful error', () => {
+        builder.setConfigurationName('aliased');
+        expect(builder.cantResolveDeviceAlias('otherDevice')).toMatchSnapshot();
       });
     });
 
     describe('.malformedUtilBinaryPaths', () => {
       beforeEach(() => {
-        build = () => builder.malformedUtilBinaryPaths()
-        builder.setConfigurationName('android.release');
-        builder.setDetoxConfig({
-          configurations: {
-            'android.release': {
-              type: 'android.emulator',
-              utilBinaryPaths: '/valid/path/outside/of/array',
-              device: 'Pixel 4',
-            },
-          },
-        });
+        build = (alias) => builder.malformedUtilBinaryPaths(alias);
       });
 
-      it('should create an error with specifying the config name', () => {
+      it('should create an error for plain configuration', () => {
+        builder.setConfigurationName('plain');
+        config.configurations.plain.utilBinaryPaths = 'invalid';
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error for inlined configuration', () => {
+        builder.setConfigurationName('inlined');
+        config.configurations.inlined.device.utilBinaryPaths = 'invalid';
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error for aliased configuration', () => {
+        builder.setConfigurationName('aliased');
+        config.devices.aDevice.utilBinaryPaths = 'invalid';
+        expect(build('aDevice')).toMatchSnapshot();
+      });
+    });
+
+    describe('.deviceConfigIsUndefined', () => {
+      beforeEach(() => {
+        build = () => builder.deviceConfigIsUndefined();
+      });
+
+      it('should produce a helpful error', () => {
+        builder.setConfigurationName('plain');
         expect(build()).toMatchSnapshot();
       });
     });
 
-    describe('.missingDeviceMatcherProperties', () => {
-      let detoxConfig;
+    describe('.missingDeviceType', () => {
+      beforeEach(() => {
+        build = (alias) => builder.missingDeviceType(alias);
+      });
 
+      it('should create an error for inlined configuration', () => {
+        delete config.configurations.inlined.device.type;
+        builder.setConfigurationName('inlined');
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error for aliased configuration', () => {
+        delete config.devices.aDevice.type;
+        builder.setConfigurationName('aliased');
+        expect(build('aDevice')).toMatchSnapshot();
+      });
+    });
+
+    describe('.missingDeviceMatcherProperties', () => {
       beforeEach(() => {
         build = (alias) => builder.missingDeviceMatcherProperties(alias, ['foo', 'bar']);
-        builder.setConfigurationName('android.release');
-        builder.setDetoxConfig(detoxConfig = {
-          devices: {
-            'emulator': {
-              type: 'android.emulator',
-            },
-          },
-          configurations: {
-            'android.release': {
-              type: 'android.emulator',
-            },
-          },
-        });
       });
 
       it('should work with plain configurations', () => {
+        builder.setConfigurationName('plain');
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should work with inlined configurations', () => {
+        builder.setConfigurationName('inlined');
         expect(build()).toMatchSnapshot();
       });
 
       it('should work with aliased configurations', () => {
-        delete detoxConfig.configurations['android.release'].type;
-        detoxConfig.configurations['android.release'].device = 'emulator';
-
-        expect(build('emulator')).toMatchSnapshot();
-      });
-
-      it('should include the config location into a hint message if it is known', () => {
-        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('aliased');
+        expect(build('aDevice')).toMatchSnapshot();
       });
     });
   });
 
   describe('(from composeAppsConfig)', () => {
     describe('.thereAreNoAppConfigs', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
       it('should create an error for aliased configuration', () => {
-        expect(build()).toMatchSnapshot();
-      });
+        delete config.apps.someApp;
+        builder.setConfigurationName('aliased')
 
-      it('should create an error for inlined configuration', () => {
-        expect(build()).toMatchSnapshot();
+        expect(builder.thereAreNoAppConfigs('someApp')).toMatchSnapshot();
       });
     });
 
     describe('.cantResolveAppAlias', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
       it('should create an error for aliased configuration', () => {
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error for inlined configuration', () => {
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('aliased')
+        expect(builder.cantResolveDeviceAlias('anotherApp')).toMatchSnapshot();
       });
     });
 
@@ -292,56 +280,51 @@ describe('DetoxConfigErrorBuilder', () => {
       });
     });
 
-    describe('.malformedAppLaunchArgs', () => {
-      beforeEach(() => {
-        build = () => builder.malformedAppLaunchArgs(['configurations', 'android.release']);
-        builder.setConfigurationName('android.release');
-        builder.setDetoxConfig({
-          configurations: {
-            'android.release': {
-              type: 'android.emulator',
-              utilBinaryPaths: '/valid/path/outside/of/array',
-              device: 'Pixel 4',
-              launchArgs: 'do not use strings here please',
-            },
-          },
-        });
-      });
-
-      it('should create an error with specifying the config name', () => {
-        expect(build()).toMatchSnapshot();
-      });
-    });
-
     describe('.missingAppBinaryPath', () => {
-      beforeEach(stubBuild);
+      beforeEach(() => {
+        build = (appPath) => builder.missingAppBinaryPath(appPath);
+      });
 
       it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('plain');
+        delete config.configurations.plain.binaryPath;
+        expect(build(['configurations', 'plain'])).toMatchSnapshot();
       });
 
       it('should create an error for aliased configuration', () => {
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('aliased');
+        delete config.apps.someApp.binaryPath;
+        expect(build(['apps', 'someApp'])).toMatchSnapshot();
       });
 
       it('should create an error for inlined configuration', () => {
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('inlined');
+        delete config.configurations.inlined.app.binaryPath;
+        expect(build(['configurations', 'inlined', 'app'])).toMatchSnapshot();
+      });
+
+      it('should create an error for inlined multi-app configuration', () => {
+        builder.setConfigurationName('inlinedMulti');
+        delete config.configurations.inlinedMulti.apps[0].binaryPath;
+        expect(build(['configurations', 'inlined', 'apps', 0])).toMatchSnapshot();
       });
     });
 
     describe('.invalidAppType', () => {
-      beforeEach(stubBuild);
-
-      it('should create an error for plain configuration', () => {
-        expect(build()).toMatchSnapshot();
+      beforeEach(() => {
+        build = (appPath) => builder.invalidAppType(appPath);
       });
 
       it('should create an error for aliased configuration', () => {
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('aliased');
+        config.apps.someApp.type = 'invalid.app';
+        expect(build(['apps', 'someApp'])).toMatchSnapshot();
       });
 
       it('should create an error for inlined configuration', () => {
-        expect(build()).toMatchSnapshot();
+        builder.setConfigurationName('inlined');
+        config.configurations.inlined.app.type = 'invalid.app';
+        expect(build(['configurations', 'inlined', 'apps', 0])).toMatchSnapshot();
       });
     });
 
