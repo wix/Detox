@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DetoxConfigErrorBuilder .appConfigIsUndefined should take into account if it is "app" missing 1`] = `
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .appConfigIsUndefined should take into account if it is "app" missing 1`] = `
 [DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
 
 HINT: It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
@@ -21,7 +21,7 @@ HINT: It should be an alias to an existing app config in "apps" dictionary, or t
 Examine your Detox config.]
 `;
 
-exports[`DetoxConfigErrorBuilder .appConfigIsUndefined should take into account if it is "apps" array has an empty element 1`] = `
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .appConfigIsUndefined should take into account if it is "apps" array has an empty element 1`] = `
 [DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
 
 HINT: It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
@@ -42,7 +42,388 @@ HINT: It should be an alias to an existing app config in "apps" dictionary, or t
 Examine your Detox config.]
 `;
 
-exports[`DetoxConfigErrorBuilder .cantChooseConfiguration should create a generic error, if the config location is not known 1`] = `
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .cantResolveAppAlias should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .cantResolveAppAlias should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .cantResolveAppAlias should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .malformedAppLaunchArgs should create an error with specifying the config name 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator',
+      utilBinaryPaths: '/valid/path/outside/of/array',
+      device: 'Pixel 4',
+      launchArgs: 'do not use strings here please'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .noAppIsDefined should produce Android-specific error message 1`] = `
+[DetoxConfigError: The "android.release" configuration has no defined "app" config.
+
+HINT: There should be an inlined object or an alias to the app config, e.g.:
+
+{
+  "apps": {
+*-->"myApp.android": {
+|     "type": "android.apk",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp.android"
+      ...
+    }
+  }
+}
+
+Examine your Detox config.]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .noAppIsDefined should produce a custom error message for unknown device type 1`] = `
+[DetoxConfigError: The "android.release" configuration has no defined "app" config.
+
+HINT: There should be an inlined object or an alias to the app config, e.g.:
+
+{
+  "apps": {
+*-->"myApp": {
+|     "type": "someAppType",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp"
+      ...
+    }
+  }
+}
+
+Examine your Detox config.]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .noAppIsDefined should produce iOS-specific error message 1`] = `
+[DetoxConfigError: The "android.release" configuration has no defined "app" config.
+
+HINT: There should be an inlined object or an alias to the app config, e.g.:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp.ios"
+      ...
+    }
+  }
+}
+
+Examine your Detox config.]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .thereAreNoAppConfigs should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .thereAreNoAppConfigs should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .thereAreNoAppConfigs should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .cantResolveDeviceAlias should create an error for aliased configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .cantResolveDeviceAlias should create an error for inlined configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .cantResolveDeviceAlias should create an error for plain configuration 1`] = `"TODO"`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
+[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration. Expected an array of strings.
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator',
+      utilBinaryPaths: '/valid/path/outside/of/array',
+      device: 'Pixel 4'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .missingDeviceMatcherProperties should include the config location into a hint message if it is known 1`] = `
+[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
+
+HINT: It should have the device query to run on, e.g.:
+
+{
+  "type": "android.emulator",
+  "device": { "foo": ... }
+      // or { "bar": ... }
+}
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .missingDeviceMatcherProperties should work with aliased configurations 1`] = `
+[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
+
+HINT: It should have the device query to run on, e.g.:
+
+{
+  "type": "android.emulator",
+  "device": { "foo": ... }
+      // or { "bar": ... }
+}
+Check that in your Detox config.
+
+{
+  devices: {
+    emulator: {
+      type: 'android.emulator'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .missingDeviceMatcherProperties should work with plain configurations 1`] = `
+[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
+
+HINT: It should have the device query to run on, e.g.:
+
+{
+  "type": "android.emulator",
+  "device": { "foo": ... }
+      // or { "bar": ... }
+}
+Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .thereAreNoDeviceConfigs should create an error with a hint: with config path 1`] = `
+[DetoxConfigError: Cannot use device alias "simulator" since there is no "devices" config in Detox config at path:
+/etc/detox/config.js
+
+HINT: You should create a dictionary of device configurations in Detox config, e.g.:
+{
+  "devices": {
+*-> "simulator": {
+|     "type": "ios.simulator", // or "android.emulator", or etc...
+|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
+|   }
+| },
+| "configurations": {
+|   "conf1": {
+*---- "device": "simulator",
+      ...
+    }
+  }
+}
+]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeDeviceConfig) .thereAreNoDeviceConfigs should create an error with a hint: without config path 1`] = `
+[DetoxConfigError: Cannot use device alias "simulator" since there is no "devices" config in Detox config.
+
+HINT: You should create a dictionary of device configurations in Detox config, e.g.:
+{
+  "devices": {
+*-> "simulator": {
+|     "type": "ios.simulator", // or "android.emulator", or etc...
+|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
+|   }
+| },
+| "configurations": {
+|   "conf1": {
+*---- "device": "simulator",
+      ...
+    }
+  }
+}
+]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        debugSynchronization: '3000'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidDebugSynchronizationProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        debugSynchronization: '3000'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidDebugSynchronizationProperty should point to global session if there is one 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidServerProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.server property is not a valid WebSocket URL
+
+HINT: Expected something like "ws://localhost:8099".
+Check that in your Detox config.
+
+{
+  session: {
+    server: 'localhost'
+  },
+  configurations: {
+    'android.release': {}
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidServerProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.server property is not a valid WebSocket URL
+
+HINT: Expected something like "ws://localhost:8099".
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'localhost'
+  },
+  configurations: {
+    'android.release': {}
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidSessionId should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        sessionId: 234589798234
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidSessionId should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        sessionId: 234589798234
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from composeSessionConfig) .invalidSessionId should point to global session if there is one 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .cantChooseConfiguration should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: Cannot determine which configuration to use from Detox config.
 
 HINT: Use --configuration to choose one of the following:
@@ -50,7 +431,7 @@ HINT: Use --configuration to choose one of the following:
 * conf2]
 `;
 
-exports[`DetoxConfigErrorBuilder .cantChooseConfiguration should create an error with a hint, if the config location is known 1`] = `
+exports[`DetoxConfigErrorBuilder (from configuration/index) .cantChooseConfiguration should create an error with a hint, if the config location is known 1`] = `
 [DetoxConfigError: Cannot determine which configuration to use from Detox config at path:
 /etc/detox/config.js
 
@@ -59,7 +440,7 @@ HINT: Use --configuration to choose one of the following:
 * conf2]
 `;
 
-exports[`DetoxConfigErrorBuilder .configurationShouldNotBeEmpty should create a generic error, if the config location is not known 1`] = `
+exports[`DetoxConfigErrorBuilder (from configuration/index) .configurationShouldNotBeEmpty should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: Cannot use an empty configuration "empty".
 
 HINT: A valid configuration should have "device" and "app" properties defined, e.g.:
@@ -94,7 +475,7 @@ Examine your Detox config.
 }]
 `;
 
-exports[`DetoxConfigErrorBuilder .configurationShouldNotBeEmpty should create an error with a hint, if the config location is known 1`] = `
+exports[`DetoxConfigErrorBuilder (from configuration/index) .configurationShouldNotBeEmpty should create an error with a hint, if the config location is known 1`] = `
 [DetoxConfigError: Cannot use an empty configuration "empty".
 
 HINT: A valid configuration should have "device" and "app" properties defined, e.g.:
@@ -130,165 +511,95 @@ Examine your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorBuilder .failedToReadConfiguration should create a generic error, if I/O error is unknown 1`] = `
+exports[`DetoxConfigErrorBuilder (from configuration/index) .failedToReadConfiguration should create a generic error, if I/O error is unknown 1`] = `
 [DetoxConfigError: An error occurred while trying to load Detox config from:
 /etc/detox/config.js]
 `;
 
-exports[`DetoxConfigErrorBuilder .failedToReadConfiguration should create a simple error, but with the original intercepted IO error 1`] = `
+exports[`DetoxConfigErrorBuilder (from configuration/index) .failedToReadConfiguration should create a simple error, but with the original intercepted IO error 1`] = `
 [DetoxConfigError: An error occurred while trying to load Detox config from:
 /home/detox
 
 EISDIR: illegal operation on a directory, read]
 `;
 
-exports[`DetoxConfigErrorBuilder .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: session.debugSynchronization should be a positive number
-
-HINT: Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      session: {
-        debugSynchronization: '3000'
-      }
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .invalidDebugSynchronizationProperty should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: session.debugSynchronization should be a positive number
-
-HINT: Check that in your Detox config at path:
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted config path 1`] = `
+[DetoxConfigError: Failed to find Detox config at:
 /home/detox/myproject/.detoxrc.json
 
+HINT: Make sure the specified path is correct.]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationSpecified should create a generic error, if the configuration file is not a package.json 1`] = `
+[DetoxConfigError: Cannot run Detox without a configuration file.
+
+HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationSpecified should create a generic error, if the configuration file is unknown 1`] = `
+[DetoxConfigError: Cannot run Detox without a configuration file.
+
+HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationSpecified should create an error with a package.json hint, if THAT is the configuration file 1`] = `
+[DetoxConfigError: Cannot run Detox without a configuration file.
+
+HINT: Create an external .detoxrc.json configuration, or add "detox" configuration section to your package.json at:
+/home/detox/myproject/package.json]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationWithGivenName should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: Failed to find a configuration named "otherConf" in Detox config.
+
+HINT: Below are the configurations Detox was able to find:
+* conf1]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationWithGivenName should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: Failed to find a configuration named "otherConf" in Detox config at path:
+/etc/detox/config.js
+
+HINT: Below are the configurations Detox was able to find:
+* conf1]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationsInside should create a generic error if all is unknown 1`] = `
+[DetoxConfigError: There are no configurations in the given Detox config.
+
+HINT: Examine the config:
+
 {
-  configurations: {
-    'android.release': {
-      session: {
-        debugSynchronization: '3000'
-      }
-    }
+  configurations: undefined
+}]
+`;
+
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationsInside should create an error with Detox config fragment, if the path is not known 1`] = `
+[DetoxConfigError: There are no configurations in the given Detox config.
+
+HINT: Examine the config:
+
+{
+  configurations: undefined,
+  config: {
+    ios: {},
+    android: {}
   }
 }]
 `;
 
-exports[`DetoxConfigErrorBuilder .invalidDebugSynchronizationProperty should point to global session if there is one 1`] = `
-[DetoxConfigError: session.debugSynchronization should be a positive number
-
-HINT: Check that in your Detox config at path:
+exports[`DetoxConfigErrorBuilder (from configuration/index) .noConfigurationsInside should create an error with Detox config location hint, if it is known 1`] = `
+[DetoxConfigError: There are no configurations in the given Detox config at path:
 /home/detox/myproject/.detoxrc.json
 
+HINT: Examine the config:
+
 {
-  session: {
-    server: 'ws://localhost:12837'
-  }
+  configurations: undefined
 }]
 `;
 
-exports[`DetoxConfigErrorBuilder .invalidServerProperty should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: session.server property is not a valid WebSocket URL
-
-HINT: Expected something like "ws://localhost:8099".
-Check that in your Detox config.
-
-{
-  session: {
-    server: 'localhost'
-  },
-  configurations: {
-    'android.release': {}
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .invalidServerProperty should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: session.server property is not a valid WebSocket URL
-
-HINT: Expected something like "ws://localhost:8099".
-Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  session: {
-    server: 'localhost'
-  },
-  configurations: {
-    'android.release': {}
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .invalidSessionId should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: session.sessionId property should be a non-empty string
-
-HINT: Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      session: {
-        sessionId: 234589798234
-      }
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .invalidSessionId should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: session.sessionId property should be a non-empty string
-
-HINT: Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    'android.release': {
-      session: {
-        sessionId: 234589798234
-      }
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .invalidSessionId should point to global session if there is one 1`] = `
-[DetoxConfigError: session.sessionId property should be a non-empty string
-
-HINT: Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  session: {
-    server: 'ws://localhost:12837'
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .malformedAppLaunchArgs should create an error with specifying the config name 1`] = `
-[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
-Expected an object:
-
-{
-  configurations: {
-    'android.release': {
-      type: 'android.emulator',
-      utilBinaryPaths: '/valid/path/outside/of/array',
-      device: 'Pixel 4',
-      launchArgs: 'do not use strings here please'
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
-[Error: TODO - malformedUtilBinaryPaths
-{}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingBuildScript should create a generic error, if the config location is not known 1`] = `
+exports[`DetoxConfigErrorBuilder (from local-cli/build) should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: Could not find a build script inside "android.release" configuration.
 
 HINT: Check contents of your Detox config.
@@ -303,7 +614,7 @@ HINT: Check contents of your Detox config.
 }]
 `;
 
-exports[`DetoxConfigErrorBuilder .missingBuildScript should create an error with a hint, if the config location is known 1`] = `
+exports[`DetoxConfigErrorBuilder (from local-cli/build) should create an error with a hint, if the config location is known 1`] = `
 [DetoxConfigError: Could not find a build script inside "android.release" configuration.
 
 HINT: Check contents of your Detox config at path:
@@ -317,256 +628,4 @@ HINT: Check contents of your Detox config at path:
     }
   }
 }]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingDeviceMatcherProperties should include the config location into a hint message if it is known 1`] = `
-[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
-
-HINT: It should have the device query to run on, e.g.:
-
-{
-  "type": "android.emulator",
-  "device": { "foo": ... }
-      // or { "bar": ... }
-}
-Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    'android.release': {
-      type: 'android.emulator'
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingDeviceMatcherProperties should work with aliased configurations 1`] = `
-[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
-
-HINT: It should have the device query to run on, e.g.:
-
-{
-  "type": "android.emulator",
-  "device": { "foo": ... }
-      // or { "bar": ... }
-}
-Check that in your Detox config.
-
-{
-  devices: {
-    emulator: {
-      type: 'android.emulator'
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .missingDeviceMatcherProperties should work with plain configurations 1`] = `
-[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
-
-HINT: It should have the device query to run on, e.g.:
-
-{
-  "type": "android.emulator",
-  "device": { "foo": ... }
-      // or { "bar": ... }
-}
-Check that in your Detox config.
-
-{
-  configurations: {
-    'android.release': {
-      type: 'android.emulator'
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .noAppIsDefined should produce Android-specific error message 1`] = `
-[DetoxConfigError: The "android.release" configuration has no defined "app" config.
-
-HINT: There should be an inlined object or an alias to the app config, e.g.:
-
-{
-  "apps": {
-*-->"myApp.android": {
-|     "type": "android.apk",
-|     "binaryPath": "path/to/app"
-|   },
-| },
-| "configurations": {
-|   "android.release": {
-*---- "app": "myApp.android"
-      ...
-    }
-  }
-}
-
-Examine your Detox config.]
-`;
-
-exports[`DetoxConfigErrorBuilder .noAppIsDefined should produce a custom error message for unknown device type 1`] = `
-[DetoxConfigError: The "android.release" configuration has no defined "app" config.
-
-HINT: There should be an inlined object or an alias to the app config, e.g.:
-
-{
-  "apps": {
-*-->"myApp": {
-|     "type": "someAppType",
-|     "binaryPath": "path/to/app"
-|   },
-| },
-| "configurations": {
-|   "android.release": {
-*---- "app": "myApp"
-      ...
-    }
-  }
-}
-
-Examine your Detox config.]
-`;
-
-exports[`DetoxConfigErrorBuilder .noAppIsDefined should produce iOS-specific error message 1`] = `
-[DetoxConfigError: The "android.release" configuration has no defined "app" config.
-
-HINT: There should be an inlined object or an alias to the app config, e.g.:
-
-{
-  "apps": {
-*-->"myApp.ios": {
-|     "type": "ios.app",
-|     "binaryPath": "path/to/app"
-|   },
-| },
-| "configurations": {
-|   "android.release": {
-*---- "app": "myApp.ios"
-      ...
-    }
-  }
-}
-
-Examine your Detox config.]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationAtGivenPath should create an error with the attempted config path 1`] = `
-[DetoxConfigError: Failed to find Detox config at:
-/home/detox/myproject/.detoxrc.json
-
-HINT: Make sure the specified path is correct.]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationSpecified should create a generic error, if the configuration file is not a package.json 1`] = `
-[DetoxConfigError: Cannot run Detox without a configuration file.
-
-HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationSpecified should create a generic error, if the configuration file is unknown 1`] = `
-[DetoxConfigError: Cannot run Detox without a configuration file.
-
-HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationSpecified should create an error with a package.json hint, if THAT is the configuration file 1`] = `
-[DetoxConfigError: Cannot run Detox without a configuration file.
-
-HINT: Create an external .detoxrc.json configuration, or add "detox" configuration section to your package.json at:
-/home/detox/myproject/package.json]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationWithGivenName should create a generic error, if the config location is not known 1`] = `
-[DetoxConfigError: Failed to find a configuration named "otherConf" in Detox config.
-
-HINT: Below are the configurations Detox was able to find:
-* conf1]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationWithGivenName should create an error with a hint, if the config location is known 1`] = `
-[DetoxConfigError: Failed to find a configuration named "otherConf" in Detox config at path:
-/etc/detox/config.js
-
-HINT: Below are the configurations Detox was able to find:
-* conf1]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create a generic error if all is unknown 1`] = `
-[DetoxConfigError: There are no configurations in the given Detox config.
-
-HINT: Examine the config:
-
-{
-  configurations: undefined
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create an error with Detox config fragment, if the path is not known 1`] = `
-[DetoxConfigError: There are no configurations in the given Detox config.
-
-HINT: Examine the config:
-
-{
-  configurations: undefined,
-  config: {
-    ios: {},
-    android: {}
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .noConfigurationsInside should create an error with Detox config location hint, if it is known 1`] = `
-[DetoxConfigError: There are no configurations in the given Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-HINT: Examine the config:
-
-{
-  configurations: undefined
-}]
-`;
-
-exports[`DetoxConfigErrorBuilder .thereAreNoDeviceConfigs should create an error with a hint: with config path 1`] = `
-[DetoxConfigError: Cannot use device alias "simulator" since there is no "devices" config in Detox config at path:
-/etc/detox/config.js
-
-HINT: You should create a dictionary of device configurations in Detox config, e.g.:
-{
-  "devices": {
-*-> "simulator": {
-|     "type": "ios.simulator", // or "android.emulator", or etc...
-|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
-|   }
-| },
-| "configurations": {
-|   "conf1": {
-*---- "device": "simulator",
-      ...
-    }
-  }
-}
-]
-`;
-
-exports[`DetoxConfigErrorBuilder .thereAreNoDeviceConfigs should create an error with a hint: without config path 1`] = `
-[DetoxConfigError: Cannot use device alias "simulator" since there is no "devices" config in Detox config.
-
-HINT: You should create a dictionary of device configurations in Detox config, e.g.:
-{
-  "devices": {
-*-> "simulator": {
-|     "type": "ios.simulator", // or "android.emulator", or etc...
-|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
-|   }
-| },
-| "configurations": {
-|   "conf1": {
-*---- "device": "simulator",
-      ...
-    }
-  }
-}
-]
 `;

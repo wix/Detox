@@ -245,6 +245,16 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  malformedUtilBinaryPaths(deviceAlias) {
+    return new DetoxConfigError({
+      message: `Invalid type of "utilBinaryPaths" inside the device configuration.`
+            + ` Expected an array of strings.`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
   missingDeviceMatcherProperties(deviceAlias, expectedProperties) {
     const { type } = this._resolveSelectedDeviceConfig(deviceAlias);
     return new DetoxConfigError({
@@ -262,7 +272,7 @@ Check that in your Detox config${this._atPath()}`,
 
   // endregion
 
-  // region composeAppConfig
+  // region composeAppsConfig
 
   thereAreNoAppConfigs(appAlias) {
     return new DetoxConfigError({
@@ -331,17 +341,6 @@ Examine your Detox config${this._atPath()}`,
       debugInfo: this._focusOnAppConfig(appPath),
       inspectOptions: { depth: 3 },
     });
-  }
-
-  malformedUtilBinaryPaths(deviceAlias) {
-    return new TodoError('malformedUtilBinaryPaths', arguments);
-
-    // return new DetoxConfigError({
-    //   message: `Invalid type of "utilBinaryPaths" property in detox.configurations["${this.configurationName}"]\nExpected an array of strings of paths.`,
-    //   hint: `Check that in your Detox config${this._atPath()}`,
-    //   debugInfo: this._focusOnConfiguration(),
-    //   inspectOptions: { depth: 2 },
-    // });
   }
 
   missingAppBinaryPath() {
