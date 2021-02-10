@@ -338,13 +338,21 @@ describe('DetoxConfigErrorBuilder', () => {
       it('should create an error for aliased configuration', () => {
         builder.setConfigurationName('aliased');
         config.apps.someApp.type = 'invalid.app';
-        expect(build(['apps', 'someApp'])).toMatchSnapshot();
+        expect(build({
+          appPath: ['apps', 'someApp'],
+          allowedAppTypes: ['ios.app'],
+          deviceType: 'ios.simulator',
+        })).toMatchSnapshot();
       });
 
       it('should create an error for inlined configuration', () => {
-        builder.setConfigurationName('inlined');
-        config.configurations.inlined.app.type = 'invalid.app';
-        expect(build(['configurations', 'inlined', 'apps', 0])).toMatchSnapshot();
+        builder.setConfigurationName('inlinedMulti');
+        config.configurations.inlinedMulti.apps[0].type = 'invalid.app';
+        expect(build({
+          appPath: ['configurations', 'inlinedMulti', 'apps', 0],
+          allowedAppTypes: ['ios.app'],
+          deviceType: 'ios.simulator',
+        })).toMatchSnapshot();
       });
     });
 

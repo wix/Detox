@@ -350,7 +350,11 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = deviceType;
 
         expect(compose).toThrowError(
-          errorBuilder.invalidAppType(['apps', 'example1'], deviceConfig)
+          errorBuilder.invalidAppType({
+            appPath: ['apps', 'example1'],
+            allowedAppTypes: [appType === 'android.apk' ? 'ios.app' : 'android.apk'],
+            deviceType,
+          })
         );
       });
     });

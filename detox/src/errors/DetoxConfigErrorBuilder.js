@@ -58,9 +58,9 @@ class DetoxConfigErrorBuilder {
     };
   }
 
-  _focusOnAppConfig(appPath) {
+  _focusOnAppConfig(appPath, postProcess = _.identity) {
     const value = _.get(this.contents, appPath);
-    return _.set({}, appPath, value);
+    return _.set({}, appPath, postProcess(value));
   }
 
   _resolveSelectedDeviceConfig(alias) {
@@ -70,6 +70,10 @@ class DetoxConfigErrorBuilder {
       const config = this._getSelectedConfiguration();
       return config.type ? config : config.device;
     }
+  }
+
+  _ensureProperty(name) {
+    return obj => _.set(obj, name, _.get(obj, name));
   }
 
   setDetoxConfigPath(filepath) {
@@ -247,9 +251,7 @@ Examine your Detox config${this._atPath()}`,
       message: `Missing "type" inside the device configuration.`,
       hint: `Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").\n` +
         `Check that in your Detox config${this._atPath()}`,
-      debugInfo: this._focusOnDeviceConfig(deviceAlias, d => {
-        return _.set(d, 'type', _.get(d, 'type'))
-      }),
+      debugInfo: this._focusOnDeviceConfig(deviceAlias, this._ensureProperty('type')),
       inspectOptions: { depth: 3 },
     });
   }
@@ -352,15 +354,27 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
-  missingAppBinaryPath({ appName, appPath, preExistingAppPath }) {
-    return new TodoError('missingAppBinaryPath', arguments);
+  missingAppBinaryPath(appPath) {
+    return new DetoxConfigError({
+      message: `Missing "binaryPath" property in the app config.\nExpected a string:`,
+      debugInfo: this._focusOnAppConfig(appPath, this._ensureProperty('binaryPath')),
+      inspectOptions: { depth: 4 },
+    });
   }
 
-  invalidAppType() {
-    return new TodoError('invalidAppType', arguments);
+  invalidAppType({ appPath, allowedAppTypes, deviceType }) {
+    return new DetoxConfigError({
+      message: `Invalid app "type" property in the app config.\nExpected ${allowedAppTypes.map(J).join(' or ')}.`,
+      hint: `\
+You have a few options:
+1. Replace the value with the suggestion.
+2. Use a correct device type with this app config. Currently you have ${J(deviceType)}.`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 4 },
+    });
   }
 
-  duplicateAppConfig() {
+  duplicateAppConfig({ appName, appPath, preExistingAppPath }) {
     return new TodoError('duplicateAppConfig', arguments);
   }
 

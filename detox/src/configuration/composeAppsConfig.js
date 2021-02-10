@@ -179,13 +179,17 @@ function overrideAppLaunchArgs(appsConfig, cliConfig) {
 
 function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
   const deviceType = deviceConfig.type;
-  const allowedAppsTypes = deviceAppTypes[deviceType];
+  const allowedAppTypes = deviceAppTypes[deviceType];
 
-  if (allowedAppsTypes && !allowedAppsTypes.includes(appConfig.type)) {
-    throw errorBuilder.invalidAppType(appPath, deviceConfig);
+  if (allowedAppTypes && !allowedAppTypes.includes(appConfig.type)) {
+    throw errorBuilder.invalidAppType({
+      appPath,
+      allowedAppTypes,
+      deviceType,
+    });
   }
 
-  if (allowedAppsTypes && !appConfig.binaryPath) {
+  if (allowedAppTypes && !appConfig.binaryPath) {
     throw errorBuilder.missingAppBinaryPath(appPath);
   }
 

@@ -92,13 +92,43 @@ exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig sh
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for aliased configuration 1`] = `
-[Error: TODO - invalidAppType
-{"0":["apps","someApp"]}]
+[DetoxConfigError: Invalid app "type" property in the app config.
+Expected "ios.app".
+
+HINT: You have a few options:
+1. Replace the value with the suggestion.
+2. Use a correct device type with this app config. Currently you have "ios.simulator".
+
+{
+  apps: {
+    someApp: {
+      type: 'invalid.app',
+      binaryPath: 'path/to/app'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for inlined configuration 1`] = `
-[Error: TODO - invalidAppType
-{"0":["configurations","inlined","apps",0]}]
+[DetoxConfigError: Invalid app "type" property in the app config.
+Expected "ios.app".
+
+HINT: You have a few options:
+1. Replace the value with the suggestion.
+2. Use a correct device type with this app config. Currently you have "ios.simulator".
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'invalid.app',
+          binaryPath: 'path/to/app'
+        }
+      ]
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .malformedAppLaunchArgs should work with aliased configurations 1`] = `
@@ -152,23 +182,63 @@ Expected an object:
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for aliased configuration 1`] = `
-[Error: TODO - missingAppBinaryPath
-{"0":["apps","someApp"]}]
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: undefined
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for inlined configuration 1`] = `
-[Error: TODO - missingAppBinaryPath
-{"0":["configurations","inlined","app"]}]
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  configurations: {
+    inlined: {
+      app: {
+        type: 'ios.app',
+        binaryPath: undefined
+      }
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for inlined multi-app configuration 1`] = `
-[Error: TODO - missingAppBinaryPath
-{"0":["configurations","inlined","apps",0]}]
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  configurations: {
+    inlined: {
+      apps: [
+        undefined
+      ]
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .missingAppBinaryPath should create an error for plain configuration 1`] = `
-[Error: TODO - missingAppBinaryPath
-{"0":["configurations","plain"]}]
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  configurations: {
+    plain: {
+      type: 'android.emulator',
+      device: 'Pixel_3a_API_30_x86',
+      binaryPath: undefined
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for aliased configuration 1`] = `
