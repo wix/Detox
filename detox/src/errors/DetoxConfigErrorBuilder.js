@@ -266,12 +266,11 @@ Examine your Detox config${this._atPath()}`,
 
   missingDeviceMatcherProperties(deviceAlias, expectedProperties) {
     const { type } = this._resolveSelectedDeviceConfig(deviceAlias);
-    const typeProperty = type ? `\n  "type": ${J(type)},` : '';
-
     return new DetoxConfigError({
       message: `Invalid or empty "device" matcher inside the device config.`,
       hint: `It should have the device query to run on, e.g.:\n
-{${typeProperty}
+{
+  "type": ${J(type)},
   "device": ${expectedProperties.map(p => `{ ${J(p)}: ... }`).join('\n      // or ')}
 }
 Check that in your Detox config${this._atPath()}`,
