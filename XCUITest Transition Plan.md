@@ -97,7 +97,7 @@ await elementToScroll.scrollUntil(elementToReach.visible, 50, "down");
 
 #### XCUITest Matcher/Action Phase
 
-XCUITest’s matchers and actions have both advantages and disadvantages to Detox’ internal matchers and actions. Since XCUITest elements are accessibility proxies, they have access to elements system-wide, and elements such as permission alerts and security dialogs, which are rendered by Apple daemons, rather than the user process, can be accessed and interacted with. On the other hand, due to only having access to a very small set of attributes for these proxies, and no real access the actual objects, this matching/interaction system is very limited in nature.
+XCUITest’s matchers and actions have both advantages and disadvantages to Detox’ internal matchers and actions. Since XCUITest elements are accessibility proxies, they have access to elements system-wide, and elements such as permission alerts and security dialogs, which are rendered by Apple daemons, rather than the user process, can be accessed and interacted with. On the other hand, due to only having access to a very small set of attributes for these proxies, and no real access the actual objects, this matching/interaction system is very limited in nature. Accessibility proxies also allow matching and interaction with web elements in Safari and app web views.
 
 A mechanism can be devised, where Detox’ user decides which matcher/action system to use, so that advantage can be taken of both systems’ strengths. Internally, Detox iOS will decide which system to route these actions to.
 
