@@ -102,23 +102,95 @@ Check your configuration "aliased":
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with aliased named apps 1`] = `
-[Error: TODO - duplicateAppConfig
-{"0":{"appName":"TheApp","appPath":["apps","otherApp"],"preExistingAppPath":["apps","someApp"]}}]
+[DetoxConfigError: App collision detected in the selected configuration "aliased".
+
+HINT: Both apps use the same name "TheApp" — try giving each app a unique name.
+
+detox → apps → someApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: 'TheApp'
+}
+
+detox → apps → otherApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with aliased non-named apps 1`] = `
-[Error: TODO - duplicateAppConfig
-{"0":{"appPath":["apps","otherApp"],"preExistingAppPath":["apps","someApp"]}}]
+[DetoxConfigError: App collision detected in the selected configuration "aliased".
+
+HINT: The app configs are missing "name" property that serves to distinct them.
+
+detox → apps → someApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT A NAME>'
+}
+
+detox → apps → otherApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with inlined named apps 1`] = `
-[Error: TODO - duplicateAppConfig
-{"0":{"appName":"TheApp","appPath":["configurations","inlinedMulti","apps",1],"preExistingAppPath":["configurations","inlinedMulti","apps",0]}}]
+[DetoxConfigError: App collision detected in the selected configuration "inlinedMulti".
+
+HINT: Both apps use the same name "TheApp" — try giving each app a unique name.
+
+detox → configurations → inlinedMulti → apps → 0:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: 'TheApp'
+}
+
+detox → configurations → inlinedMulti → apps → 1:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .duplicateAppConfig should help with inlined non-named apps 1`] = `
-[Error: TODO - duplicateAppConfig
-{"0":{"appPath":["configurations","inlinedMulti","apps",1],"preExistingAppPath":["configurations","inlinedMulti","apps",0]}}]
+[DetoxConfigError: App collision detected in the selected configuration "inlinedMulti".
+
+HINT: The app configs are missing "name" property that serves to distinct them.
+
+detox → configurations → inlinedMulti → apps → 0:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT A NAME>'
+}
+
+detox → configurations → inlinedMulti → apps → 1:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .invalidAppType should create an error for aliased configuration 1`] = `

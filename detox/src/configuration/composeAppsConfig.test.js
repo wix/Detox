@@ -303,7 +303,7 @@ describe('composeAppsConfig', () => {
         localConfig.apps = ['example1', 'example2'];
 
         expect(compose).toThrowError(errorBuilder.duplicateAppConfig({
-          appName: 'default',
+          appName: undefined,
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
         }));

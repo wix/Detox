@@ -358,7 +358,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
     describe('.duplicateAppConfig', () => {
       beforeEach(() => {
-        build = (appPath) => builder.duplicateAppConfig(appPath);
+        build = (args) => builder.duplicateAppConfig(args);
         config.apps.otherApp = { ...config.apps.someApp };
       });
 

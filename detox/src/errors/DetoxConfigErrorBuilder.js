@@ -1,13 +1,6 @@
 const _ = require('lodash');
 const DetoxConfigError = require('./DetoxConfigError');
 const deviceAppTypes = require('../configuration/utils/deviceAppTypes');
-
-class TodoError extends Error {
-  constructor(message, args) {
-    super(`TODO - ${message}\n` + JSON.stringify(args));
-  }
-}
-
 const J = s => JSON.stringify(s);
 
 class DetoxConfigErrorBuilder {
@@ -379,7 +372,29 @@ You have a few options:
   }
 
   duplicateAppConfig({ appName, appPath, preExistingAppPath }) {
-    return new TodoError('duplicateAppConfig', arguments);
+    const config1 = { ..._.get(this.contents, preExistingAppPath) };
+    config1.name = config1.name || '<GIVE IT A NAME>';
+    const config2 = { ..._.get(this.contents, appPath) };
+    config2.name = '<GIVE IT ANOTHER NAME>';
+
+    const name = this.configurationName;
+    const hintMessage = appName
+      ? `Both apps use the same name ${J(appName)} — try giving each app a unique name.`
+      : `The app configs are missing "name" property that serves to distinct them.`;
+
+    return new DetoxConfigError({
+      message: `App collision detected in the selected configuration ${J(name)}.`,
+      hint: `\
+${hintMessage}
+
+detox → ${preExistingAppPath.join(' → ')}:
+${DetoxConfigError.inspectObj(config1, { depth: 0 })}
+
+detox → ${appPath.join(' → ')}:
+${DetoxConfigError.inspectObj(config2, { depth: 0 })}
+
+Examine your Detox config${this._atPath()}`,
+    });
   }
 
   noAppIsDefined(deviceType) {

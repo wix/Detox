@@ -150,8 +150,8 @@ function composeAppsConfigFromAliased(opts) {
       result[appName] = appConfig;
     } else {
       throw opts.errorBuilder.duplicateAppConfig({
-        appName,
         appPath,
+        appName: appConfig.name,
         preExistingAppPath: appPathsMap.get(result[appName]),
       });
     }
