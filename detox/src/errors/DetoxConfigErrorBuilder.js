@@ -72,8 +72,12 @@ class DetoxConfigErrorBuilder {
     }
   }
 
-  _ensureProperty(name) {
-    return obj => _.set(obj, name, _.get(obj, name));
+  _ensureProperty(...names) {
+    return obj => {
+      for (const name of names) {
+        return _.set(obj, name, _.get(obj, name));
+      }
+    };
   }
 
   setDetoxConfigPath(filepath) {
@@ -409,15 +413,35 @@ Examine your Detox config${this._atPath()}`,
   }
 
   ambiguousAppAndApps() {
-    return new TodoError('ambiguousAppAndApps', arguments);
+    return new DetoxConfigError({
+      message: `You can't have both "app" and "apps" defined in the ${J(this.configurationName)} configuration.`,
+      hint: 'Use "app" if you have a single app to test.' +
+        '\nUse "apps" if you have multiple apps to test.' +
+        `\n\nCheck your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnConfiguration(this._ensureProperty('app', 'apps')),
+      inspectOptions: { depth: 2 },
+    });
   }
 
   multipleAppsConfigArrayTypo() {
-    return new TodoError('multipleAppsConfigArrayTypo', arguments);
+    return new DetoxConfigError({
+      message: `Invalid type of the "app" property in the selected configuration ${J(this.configurationName)}.`,
+      hint: 'Rename "app" to "apps" if you plan to work with multiple apps.' +
+        `\n\nCheck your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnConfiguration(this._ensureProperty('app')),
+      inspectOptions: { depth: 2 },
+    });
   }
 
   multipleAppsConfigShouldBeArray() {
-    return new TodoError('multipleAppsConfigShouldBeArray', arguments);
+    return new DetoxConfigError({
+      message: `Expected an array in "apps" property in the selected configuration ${J(this.configurationName)}.`,
+      hint: 'Rename "apps" to "app" if you plan to work with a single app.' +
+        '\nOtherwise, make sure "apps" contains a valid array of app aliases or inlined app configs.' +
+        `\n\nCheck your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnConfiguration(this._ensureProperty('apps')),
+      inspectOptions: { depth: 3 },
+    });
   }
 
   // endregion

@@ -1,13 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .ambiguousAppAndApps should create an error for aliased configuration 1`] = `
-[Error: TODO - ambiguousAppAndApps
-{}]
+[DetoxConfigError: You can't have both "app" and "apps" defined in the "aliased" configuration.
+
+HINT: Use "app" if you have a single app to test.
+Use "apps" if you have multiple apps to test.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    aliased: {
+      device: 'aDevice',
+      apps: [Array],
+      app: 'someApp'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .ambiguousAppAndApps should create an error for inlined configuration 1`] = `
-[Error: TODO - ambiguousAppAndApps
-{}]
+[DetoxConfigError: You can't have both "app" and "apps" defined in the "inlinedMulti" configuration.
+
+HINT: Use "app" if you have a single app to test.
+Use "apps" if you have multiple apps to test.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlinedMulti: {
+      device: [Object],
+      apps: [Array],
+      app: [Object]
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .appConfigIsUndefined should take into account if it is "app" missing 1`] = `
@@ -242,23 +272,83 @@ Expected a string:
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for aliased configuration 1`] = `
-[Error: TODO - multipleAppsConfigArrayTypo
-{}]
+[DetoxConfigError: Invalid type of the "app" property in the selected configuration "aliased".
+
+HINT: Rename "app" to "apps" if you plan to work with multiple apps.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    aliased: {
+      device: 'aDevice',
+      app: [Array]
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for inlined configuration 1`] = `
-[Error: TODO - multipleAppsConfigArrayTypo
-{}]
+[DetoxConfigError: Invalid type of the "app" property in the selected configuration "inlinedMulti".
+
+HINT: Rename "app" to "apps" if you plan to work with multiple apps.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlinedMulti: {
+      device: [Object],
+      app: [Array]
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for aliased configuration 1`] = `
-[Error: TODO - multipleAppsConfigShouldBeArray
-{}]
+[DetoxConfigError: Expected an array in "apps" property in the selected configuration "aliased".
+
+HINT: Rename "apps" to "app" if you plan to work with a single app.
+Otherwise, make sure "apps" contains a valid array of app aliases or inlined app configs.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    aliased: {
+      device: 'aDevice',
+      apps: 'someApp'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for inlined configuration 1`] = `
-[Error: TODO - multipleAppsConfigShouldBeArray
-{}]
+[DetoxConfigError: Expected an array in "apps" property in the selected configuration "inlinedMulti".
+
+HINT: Rename "apps" to "app" if you plan to work with a single app.
+Otherwise, make sure "apps" contains a valid array of app aliases or inlined app configs.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlinedMulti: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object]
+      },
+      apps: {
+        type: 'ios.app',
+        binaryPath: 'path/to/app'
+      }
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder (from composeAppsConfig) .noAppIsDefined should produce Android-specific error message 1`] = `

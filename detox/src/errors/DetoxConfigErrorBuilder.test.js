@@ -458,8 +458,8 @@ describe('DetoxConfigErrorBuilder', () => {
 
       it('should create an error for inlined configuration', () => {
         builder.setConfigurationName('inlinedMulti');
-        config.configurations.aliased.app = {
-          ...config.configurations.aliased.apps[0]
+        config.configurations.inlinedMulti.app = {
+          ...config.configurations.inlinedMulti.apps[0]
         };
 
         expect(build()).toMatchSnapshot();
@@ -481,8 +481,8 @@ describe('DetoxConfigErrorBuilder', () => {
 
       it('should create an error for inlined configuration', () => {
         builder.setConfigurationName('inlinedMulti');
-        config.configurations.aliased.app = config.configurations.aliased.apps;
-        delete config.configurations.aliased.apps;
+        config.configurations.inlinedMulti.app = config.configurations.inlinedMulti.apps;
+        delete config.configurations.inlinedMulti.apps;
 
         expect(build()).toMatchSnapshot();
       });
@@ -502,7 +502,7 @@ describe('DetoxConfigErrorBuilder', () => {
 
       it('should create an error for inlined configuration', () => {
         builder.setConfigurationName('inlinedMulti');
-        config.configurations.aliased.apps = config.configurations.aliased.apps[0];
+        config.configurations.inlinedMulti.apps = config.configurations.inlinedMulti.apps[0];
 
         expect(build()).toMatchSnapshot();
       });
