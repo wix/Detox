@@ -67,6 +67,10 @@ class Device {
       throw this._errorBuilder.cantSelectEmptyApp();
     }
 
+    if (this._currentApp) {
+      await this.terminateApp();
+    }
+
     if (name === null) { // Internal use to unselect the app
       this._currentApp = null;
       return;
@@ -145,6 +149,7 @@ class Device {
   async terminateApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.terminate(this._deviceId, _bundleId);
+    this._processes[_bundleId] = undefined;
   }
 
   async installApp(binaryPath, testBinaryPath) {
@@ -282,11 +287,11 @@ class Device {
       : this._processes[bundleId] == null;
 
     if (params.delete) {
-      await this._terminateApp(bundleId);
+      await this.terminateApp(bundleId);
       await this.uninstallApp();
       await this.installApp();
     } else if (newInstance) {
-      await this._terminateApp(bundleId);
+      await this.terminateApp(bundleId);
     }
 
     const baseLaunchArgs = {
@@ -313,10 +318,8 @@ class Device {
       baseLaunchArgs['detoxDisableTouchIndicators'] = true;
     }
 
-    if (this._isAppInBackground(params, bundleId)) {
-      if (hasPayload) {
-        await this.deviceDriver.deliverPayload({...params, delayPayload: true});
-      }
+    if (this._isAppRunning(bundleId) && hasPayload) {
+      await this.deviceDriver.deliverPayload({...params, delayPayload: true});
     }
 
     let processId;
@@ -361,8 +364,8 @@ class Device {
     params[launchKey] = payloadFilePath;
   }
 
-  _isAppInBackground(params, bundleId) {
-    return !params.delete && !params.newInstance && this._processes[bundleId];
+  _isAppRunning(bundleId) {
+    return this._processes[bundleId] != null;
   }
 
   _assertHasSingleParam(singleParams, params) {
@@ -399,11 +402,6 @@ class Device {
     if (!bundleId) {
       this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
     }
-  }
-
-  async _terminateApp(bundleId) {
-    await this.deviceDriver.terminate(this._deviceId, bundleId);
-    this._processes[bundleId] = undefined;
   }
 }
 

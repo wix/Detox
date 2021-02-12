@@ -235,6 +235,16 @@ describe('Device', () => {
         expect(driverMock.driver.getBundleIdFromBinary).toHaveBeenCalledWith('path/to/app')
       });
 
+      it(`upon select, it should terminate the previous app`, async () => {
+        jest.spyOn(device, 'terminateApp');
+
+        await device.selectApp('withBinaryPath');
+        expect(device.terminateApp).not.toHaveBeenCalled(); // because no app was running before
+
+        await device.selectApp('withBundleId');
+        expect(device.terminateApp).toHaveBeenCalled(); // because there is a running app
+      });
+
       it(`upon select, it should not infer bundleId if it is specified`, async () => {
         await device.selectApp('withBundleId');
         expect(driverMock.driver.getBundleIdFromBinary).not.toHaveBeenCalled();
