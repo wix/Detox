@@ -65,4 +65,20 @@ describe('build', () => {
     await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
     expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('could not find your app at the given binary path'));
   });
+
+  it('should print extra message with the app name before building (in a multi-app configuration)', async () => {
+    detoxConfig.appsConfig.app1 = { binaryPath: tempfile(), build: ':' };
+    detoxConfig.appsConfig.app2 = { binaryPath: tempfile(), build: ':' };
+
+    await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('app1'));
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining('app2'));
+  });
+
+  it('should not print that extra message when the app is single', async () => {
+    detoxConfig.appsConfig.default = { binaryPath: tempfile(), build: ':' };
+
+    await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
+    expect(log.info).not.toHaveBeenCalledWith(expect.stringContaining('default'));
+  });
 });

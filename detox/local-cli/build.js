@@ -29,12 +29,17 @@ module.exports.builder = {
 
 module.exports.handler = async function build(argv) {
   const { errorBuilder, appsConfig } = await composeDetoxConfig({ argv });
+  const apps = _.entries(appsConfig);
 
-  for (const app of Object.values(appsConfig)) {
+  for (const [appName, app] of apps) {
     const buildScript = app.build;
 
     if (buildScript) {
       try {
+        if (apps.length > 1) {
+          log.info(`Building "${appName}" app...`);
+        }
+
         log.info(buildScript);
         cp.execSync(buildScript, { stdio: 'inherit' });
       } catch (e) {
