@@ -119,6 +119,7 @@ describe('Detox', () => {
         const { emitter } = Device.mock.calls[0][0];
         expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
           invocationManager: invocationManager(),
+          deviceDriver: expect.any(Object),
           emitter,
         });
       });
@@ -137,7 +138,7 @@ describe('Detox', () => {
           behaviorConfig: detoxConfig.behaviorConfig,
           deviceConfig: detoxConfig.deviceConfig,
           emitter: expect.anything(),
-          deviceDriver: expect.anything(),
+          deviceDriver: expect.any(Object),
           sessionConfig: expect.anything(),
         }));
 

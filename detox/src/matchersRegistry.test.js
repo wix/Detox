@@ -10,6 +10,7 @@ describe('Detox matchers registry', () => {
   let AndroidWebExpect;
   let IosExpect;
   let device;
+  let deviceDriver;
   let resolveModuleFromPath;
   let uut;
   beforeEach(() => {
@@ -32,6 +33,8 @@ describe('Detox matchers registry', () => {
       getPlatform: jest.fn(),
     };
 
+    deviceDriver = {};
+
     uut = require('./matchersRegistry');
   });
 
@@ -42,9 +45,13 @@ describe('Detox matchers registry', () => {
     device.type = deviceType;
   }
 
-  it('should resolve the Android matchers', () => {
+  it('should resolve Android matchers (native, web)', () => {
+    const opts = {
+      deviceDriver,
+    };
+
     withAndroidDevice();
-    const {matchers, webMatchers} = uut.resolve(device);
+    const { matchers, webMatchers } = uut.resolve(device, opts);
     expect(matchers).toBeInstanceOf(AndroidExpect);
     expect(webMatchers).toBeInstanceOf(AndroidWebExpect);
   });

@@ -166,8 +166,9 @@ class Detox {
 
     await this.device.prepare();
 
-    const {matchers, webMatchers} = matchersRegistry.resolve(this.device, {
+    const { matchers, webMatchers } = matchersRegistry.resolve(this.device, {
       invocationManager,
+      deviceDriver,
       emitter: this._eventEmitter,
     });
     Object.assign(this, matchers);

@@ -8,20 +8,19 @@ function resolve(device, opts) {
       MatcherClass = require('./android/expect');
       WebViewMatcherClass = require('./android/webExpect');
       break;
-    case 'ios': MatcherClass = require('./ios/expectTwo'); break;
+
+    case 'ios':
+      MatcherClass = require('./ios/expectTwo');
+      break;
+
     default:
       MatcherClass = resolveModuleFromPath(device.type).ExpectClass;
       break;
   }
 
-  if (WebViewMatcherClass !== undefined) {
-    return {
-      matchers: new MatcherClass(opts),
-      webMatchers: new WebViewMatcherClass(device, opts)
-    }
-  }
   return {
-    matchers: new MatcherClass(opts)
+    matchers: new MatcherClass(opts),
+    webMatchers: WebViewMatcherClass && new WebViewMatcherClass(opts),
   };
 }
 

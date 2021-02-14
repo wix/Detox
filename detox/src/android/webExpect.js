@@ -39,7 +39,6 @@ class ActionInteraction extends WebInteraction {
 }
 
 class WebAction {
-
 }
 
 class WebTapAction extends WebAction {
@@ -133,11 +132,12 @@ class WebMoveCursorEnd extends WebAction {
   }
 }
 class WebViewElement {
-  constructor(device, invocationManager, emitter, matcher) {
+  constructor(invocationManager, deviceDriver, emitter, matcher) {
     this._invocationManager = invocationManager;
+    this._deviceDriver = deviceDriver;
     this._emitter = emitter;
-    this._device = device;
     this._matcher = matcher;
+
     if (matcher !== undefined) {
       this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView(matcher._call.value));
     } else {
@@ -148,15 +148,15 @@ class WebViewElement {
   }
 
   element(webMatcher, index = 0) {
-    return new WebElement(this._device, this._invocationManager, this, webMatcher, index);
+    return new WebElement(this._invocationManager, this._deviceDriver, this, webMatcher, index);
   }
 }
 
 class WebElement {
-  constructor(device, invocationManager, webViewElement, matcher, index) {
+  constructor(invocationManager, deviceDriver, webViewElement, matcher, index) {
     this._invocationManager = invocationManager;
+    this._deviceDriver = deviceDriver;
     this._call = invoke.callDirectly(WebViewElementApi.element(webViewElement._call, matcher._call.value, index));
-    this._device = device;
   }
 
   // At the moment not working on content-editable
@@ -166,7 +166,7 @@ class WebElement {
 
   async typeText(text, isContentEditable = false) {
     if (isContentEditable) {
-      return await this._device.typeText(text);
+      return await this._deviceDriver.typeText(text);
     }
     return await new ActionInteraction(this._invocationManager,  new WebTypeTextAction(this, text)).execute();
   }
@@ -274,10 +274,10 @@ class WebExpectElement extends WebExpect {
   }
 }
 class AndroidWebExpect {
-  constructor(device, { invocationManager, emitter }) {
+  constructor({ invocationManager, deviceDriver, emitter }) {
     this._invocationManager = invocationManager;
+    this._deviceDriver = deviceDriver;
     this._emitter = emitter;
-    this._device = device;
 
     this.by = {
       id: (value) => new IdMatcher(value),
@@ -295,7 +295,7 @@ class AndroidWebExpect {
 
   // Matcher can be null only if there is only one webview on the hierarchy tree.
   getWebView(webViewMatcher) {
-    const webview = new WebViewElement(this._device, this._invocationManager, this._emitter, webViewMatcher);
+    const webview = new WebViewElement(this._invocationManager, this._deviceDriver, this._emitter, webViewMatcher);
     webview.by = this.by;
     webview.expect = this.expect;
     return webview;

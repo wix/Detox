@@ -4,18 +4,19 @@ describe('webExpect', () => {
 
   let mockExecutor;
   let emitter;
-  let device;
+  let deviceDriver;
   beforeEach(() => {
     jest.mock('tempfile');
     jest.mock('fs-extra');
-    jest.mock('../devices/Device.js')
 
     mockExecutor = new MockExecutor();
 
-    const FakeDevice = jest.genMockFromModule('../devices/__mocks__/Device.js');
     const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
     emitter = new Emitter();
-    device = new FakeDevice();
+
+    deviceDriver = {
+      typeText: jest.fn(),
+    };
 
     const AndroidExpect = require('./expect');
     expect = new AndroidExpect({
@@ -24,8 +25,9 @@ describe('webExpect', () => {
     });
 
     const AndroidWebExpect = require('./webExpect');
-    webExpect = new AndroidWebExpect(device, {
+    webExpect = new AndroidWebExpect({
       invocationManager: mockExecutor,
+      deviceDriver,
       emitter,
     });
   });
@@ -60,7 +62,7 @@ describe('webExpect', () => {
       await webExpect.getWebView().element(webExpect.by.tag('tag')).tap();
     });
 
-    it('typeText default isContentEditable is false', async () => {
+    it('typeText', async () => {
       await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text');
       await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text');
       await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text');
@@ -71,26 +73,19 @@ describe('webExpect', () => {
       await webExpect.getWebView().element(webExpect.by.tag('tag')).typeText('text');
     });
 
-    it('typeText', async () => {
+    it('typeText with isContentEditable=false', async () => {
       await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.name('name')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).typeText('text', false);
-      await webExpect.getWebView().element(webExpect.by.tag('tag')).typeText('text', false);
+      global.expect(deviceDriver.typeText).not.toHaveBeenCalled();
     });
 
-    it('typeText', async () => {
+    it('typeText with isContentEditable=true', async () => {
       await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.className('className')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.cssSelector('cssSelector')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.name('name')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.xpath('xpath')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.linkText('linkText')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.partialLinkText('partialLinkText')).typeText('text', true);
-      await webExpect.getWebView().element(webExpect.by.tag('tag')).typeText('text', true);
+      global.expect(deviceDriver.typeText).toHaveBeenCalled();
+    });
+
+    it('typeText default isContentEditable is false', async () => {
+      await webExpect.getWebView().element(webExpect.by.id('id')).typeText('text');
+      global.expect(deviceDriver.typeText).not.toHaveBeenCalled();
     });
 
     it('replaceText', async () => {
