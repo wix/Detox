@@ -53,20 +53,47 @@ const config = {
 
     "android.debug": {
       type: "android.apk",
+      name: "example",
+      binaryPath: "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
+      build: "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
+    },
+
+    "android.debug.withArgs": {
+      type: "android.apk",
+      name: "exampleWithArgs",
       binaryPath: "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
       build: ":",
+      launchArgs,
     },
 
     "android.fromSource": {
       type: "android.apk",
+      name: "example",
       binaryPath: "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
       build: "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
     },
 
+    "android.fromSource.withArgs": {
+      type: "android.apk",
+      name: "example",
+      binaryPath: "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
+      build: ":",
+      launchArgs,
+    },
+
     "android.release": {
       type: "android.apk",
+      name: "example",
       binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
       build: "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
+    },
+
+    "android.release.withArgs": {
+      type: "android.apk",
+      name: 'exampleWithArgs',
+      binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
+      build: ":",
+      launchArgs,
     },
   },
 
@@ -117,7 +144,7 @@ const config = {
     },
     "ios.sim.release": {
       device: "ios.simulator",
-      apps: ["ios.release"],
+      app: "ios.release",
       session: {
         debugSynchronization: 3000,
       },
@@ -137,7 +164,7 @@ const config = {
     },
     "android.manual": {
       device: "android.emulator",
-      app: "android.debug",
+      apps: ["android.debug", "android.debug.withArgs"],
       artifacts: false,
       behavior: {
         launchApp: "manual"
@@ -150,35 +177,23 @@ const config = {
     },
     "android.emu.debug": {
       device: "android.emulator",
-      app: {
-        type: "android.apk",
-        binaryPath: "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
-        build: "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
-      },
-    },
-    "android.emu.release": {
-      type: "android.emulator",
-      device: {
-        avdName: "Pixel_API_28"
-      },
-      build: "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
-      binaryPath: "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
-      launchArgs,
-      utilBinaryPaths: [
-        "./cache/test-butler-app.apk"
-      ],
-    },
-    "android.genycloud.release": {
-      device: "android.genycloud.uuid",
-      app: "android.release",
-    },
-    "android.genycloud.release2": {
-      device: "android.genycloud.name",
-      app: "android.release",
+      apps: ["android.debug", "android.debug.withArgs"],
     },
     "android.emu.debug.fromSource": {
       device: "android.emulator",
-      app: "android.fromSource",
+      apps: ["android.fromSource", "android.fromSource.withArgs"],
+    },
+    "android.emu.release": {
+      device: "android.emulator",
+      apps: ["android.release", "android.release.withArgs"],
+    },
+    "android.genycloud.release": {
+      device: "android.genycloud.uuid",
+      apps: ["android.release", "android.release.withArgs"],
+    },
+    "android.genycloud.release2": {
+      device: "android.genycloud.name",
+      apps: ["android.release", "android.release.withArgs"],
     },
     "stub": {
       type: "./integration/stub",
