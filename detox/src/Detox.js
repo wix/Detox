@@ -159,6 +159,7 @@ class Detox {
       behaviorConfig: this._behaviorConfig,
       deviceConfig: this._deviceConfig,
       emitter: this._eventEmitter,
+      runtimeErrorComposer: this._runtimeErrorComposer,
       deviceDriver,
       sessionConfig,
     });

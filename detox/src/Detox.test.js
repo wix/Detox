@@ -135,9 +135,10 @@ describe('Detox', () => {
           appsConfig: detoxConfig.appsConfig,
           behaviorConfig: detoxConfig.behaviorConfig,
           deviceConfig: detoxConfig.deviceConfig,
-          emitter: expect.anything(),
-          deviceDriver: expect.anything(),
-          sessionConfig: expect.anything(),
+          emitter: expect.any(Object),
+          runtimeErrorComposer: expect.any(Object),
+          deviceDriver: expect.any(Object),
+          sessionConfig: expect.any(Object),
         }));
 
       it('should expose device to global', () =>
