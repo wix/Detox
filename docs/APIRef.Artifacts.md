@@ -130,8 +130,8 @@ Below is a default screenshot plugin object configuration, which is loaded impli
       "keepOnlyFailedTestsArtifacts": false,
       "takeWhen": {
         "testStart": true,
-	"testDone": true,
-	"appNotReady": true,
+        "testDone": true,
+        "appNotReady": true,
       },
     }
   }

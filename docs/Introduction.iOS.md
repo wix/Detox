@@ -10,14 +10,25 @@ Whether you've selected to apply the configuration in a  `.detoxrc.json` or bund
 
 ```json
 {
-  "configurations": {
-    "ios.sim.release": {
-      "binaryPath": <path to .app bundle>,
-      "build": <xcodebuild command>,
-      "type": "ios.simulator",
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator"
       "device": {
         "type": "iPhone 12 Pro Max"
       }
+    }
+  },
+  "apps": {
+    "ios.release": {
+      "type": "ios.app",
+      "binaryPath": <path to .app bundle>,
+      "build": <xcodebuild command>
+    }
+  },
+  "configurations": {
+    "ios.sim.release": {
+      "device": "simulator",
+      "app": "ios.release"
     }
   }
 }
