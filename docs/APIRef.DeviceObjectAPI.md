@@ -38,6 +38,7 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 
 ## Methods
 
+- [`device.selectApp(name)`](#deviceselectappname)
 - [`device.launchApp()`](#devicelaunchappparams)
 - [`device.appLaunchArgs`](#deviceapplaunchargs)
 - [`device.terminateApp()`](#deviceterminateapp)
@@ -70,9 +71,22 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
+### `device.selectApp(name)`
+
+Use **only for advanced multi-app configs** when you need to switch between your apps
+within the same test scenario. Refer to the [APIRef.Configuration.md](APIRef.Configuration.md#apps-configuration)
+to discover how to define multiple apps with different `name`s.
+
+```js
+await device.selectApp('myAppName');
+```
+
+As a side effect (due to the current architectural limitation) running `device.selectApp` terminates the previous
+app that had been running before.
+
 ### `device.launchApp(params)`
 
-Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
+Launch the app defined in the current [`configuration`](APIRef.Configuration.md#apps-configuration).
 
 `params`—object, containing one of more of the following keys and values:
 
