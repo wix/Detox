@@ -10,7 +10,7 @@ import Foundation
 
 fileprivate let log = DetoxLog(category: "WebSocket")
 
-protocol WebSocketDelegate: class {
+protocol WebSocketDelegate: AnyObject {
 	func webSocketDidConnect(_ webSocket: WebSocket)
 	func webSocket(_ webSocket: WebSocket, didFailWith error: Error)
 	func webSocket(_ webSocket: WebSocket, didReceiveAction type : String, params: [String: Any], messageId: NSNumber)
@@ -20,7 +20,7 @@ protocol WebSocketDelegate: class {
 class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	var sessionId: String?
 	private var urlSession: URLSession!
-	private var webSocketSessionTask: URLSessionWebSocketTask!
+	private var webSocketSessionTask: URLSessionWebSocketTask?
 	weak var delegate: WebSocketDelegate?
 	
 	override init() {
@@ -32,11 +32,11 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 		self.sessionId = sessionId
 		
 		webSocketSessionTask = urlSession.webSocketTask(with: server)
-		webSocketSessionTask.resume()
+		webSocketSessionTask?.resume()
 	}
 	
 	func close() {
-		webSocketSessionTask.cancel(with: .normalClosure, reason: nil)
+		webSocketSessionTask?.cancel(with: .normalClosure, reason: nil)
 		webSocketSessionTask = nil
 	}
 	
@@ -45,7 +45,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 		do {
 			let data = try JSONSerialization.data(withJSONObject: data, options: [])
 			let message = URLSessionWebSocketTask.Message.data(data)
-			webSocketSessionTask.send(message) { error in
+			webSocketSessionTask?.send(message) { error in
 				if let error = error {
 					log.error("Error sending message: \(error.localizedDescription)")
 				}
@@ -56,7 +56,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	}
 	
 	private func receive() {
-		webSocketSessionTask.receive { [weak self] result in
+		webSocketSessionTask?.receive { [weak self] result in
 			switch result {
 			case .failure(let error as NSError):
 				log.error("Error receiving message: \(error.localizedDescription)")
