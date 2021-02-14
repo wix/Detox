@@ -158,22 +158,24 @@ declare global {
             enabled?: boolean;
         }
 
-        interface DetoxIosAppConfig extends DetoxLooseIosAppConfig {
+        interface DetoxIosAppConfig {
             type: 'ios.app';
-        }
-
-        interface DetoxLooseIosAppConfig {
             binaryPath: string;
             bundleId?: string;
             build?: string;
             launchArgs?: Record<string, any>;
         }
 
-        interface DetoxAndroidAppConfig extends DetoxLooseAndroidAppConfig {
+        interface DetoxAndroidAppConfig {
             type: 'android.apk';
+            binaryPath: string;
+            bundleId?: string;
+            build?: string;
+            testBinaryPath?: string;
+            launchArgs?: Record<string, any>;
         }
 
-        interface DetoxLooseAndroidAppConfig {
+        interface _DetoxAppConfigFragment {
             binaryPath: string;
             bundleId?: string;
             build?: string;
@@ -189,17 +191,13 @@ declare global {
           | DetoxGenymotionCloudDriverConfig;
 
         type DetoxPlainConfiguration = DetoxConfigurationOverrides & (
-          | (DetoxIosSimulatorDriverConfig & DetoxLooseIosAppConfig)
-          | (DetoxIosNoneDriverConfig & DetoxLooseIosAppConfig)
-          | (DetoxAttachedAndroidDriverConfig & DetoxLooseAndroidAppConfig)
-          | (DetoxAndroidEmulatorDriverConfig & DetoxLooseAndroidAppConfig)
-          | (DetoxGenymotionCloudDriverConfig & DetoxLooseAndroidAppConfig)
+          | (DetoxIosSimulatorDriverConfig & _DetoxAppConfigFragment)
+          | (DetoxIosNoneDriverConfig & _DetoxAppConfigFragment)
+          | (DetoxAttachedAndroidDriverConfig & _DetoxAppConfigFragment)
+          | (DetoxAndroidEmulatorDriverConfig & _DetoxAppConfigFragment)
+          | (DetoxGenymotionCloudDriverConfig & _DetoxAppConfigFragment)
           | (DetoxCustomDriverConfig)
           );
-
-        type DetoxAliasedConfiguration =
-          | DetoxAliasedConfigurationSingleApp
-          | DetoxAliasedConfigurationMultiApps;
 
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
@@ -250,6 +248,10 @@ declare global {
             behavior?: DetoxBehaviorConfig;
             session?: DetoxSessionConfig;
         };
+
+        type DetoxAliasedConfiguration =
+          | DetoxAliasedConfigurationSingleApp
+          | DetoxAliasedConfigurationMultiApps;
 
         interface DetoxAliasedConfigurationSingleApp {
             type?: never;
