@@ -1,12 +1,12 @@
-const DetoxRuntimeErrorBuilder = require('./DetoxRuntimeErrorBuilder');
+const DetoxRuntimeErrorComposer = require('./DetoxRuntimeErrorComposer');
 
-describe('DetoxRuntimeErrorBuilder', () => {
-  /** @type () => DetoxRuntimeErrorBuilder */
+describe('DetoxRuntimeErrorComposer', () => {
+  /** @type () => DetoxRuntimeErrorComposer */
   let builder;
   let appsConfig;
 
   beforeEach(() => {
-    builder = () => new DetoxRuntimeErrorBuilder({ appsConfig });
+    builder = () => new DetoxRuntimeErrorComposer({ appsConfig });
   });
 
   test('abortedDetoxInit', () => {

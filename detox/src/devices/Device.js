@@ -11,14 +11,14 @@ class Device {
     deviceDriver,
     emitter,
     sessionConfig,
-    runtimeErrorBuilder,
+    runtimeErrorComposer,
   }) {
     this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
-    this._errorBuilder = runtimeErrorBuilder;
+    this._errorComposer = runtimeErrorComposer;
 
     this._currentApp = null;
     this._cachedAppLaunchArgs = null;
@@ -64,7 +64,7 @@ class Device {
 
   async selectApp(name) {
     if (name === undefined) {
-      throw this._errorBuilder.cantSelectEmptyApp();
+      throw this._errorComposer.cantSelectEmptyApp();
     }
 
     if (this._currentApp) {
@@ -78,7 +78,7 @@ class Device {
 
     const appConfig = this._appsConfig[name];
     if (!appConfig) {
-      throw this._errorBuilder.cantFindApp(name);
+      throw this._errorComposer.cantFindApp(name);
     }
 
     this._currentApp = appConfig;
@@ -272,7 +272,7 @@ class Device {
 
   _getCurrentApp() {
     if (!this._currentApp) {
-      throw this._errorBuilder.appNotSelected();
+      throw this._errorComposer.appNotSelected();
     }
 
     return this._currentApp;

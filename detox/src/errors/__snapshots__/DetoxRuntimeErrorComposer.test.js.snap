@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DetoxRuntimeErrorBuilder abortedDetoxInit 1`] = `
+exports[`DetoxRuntimeErrorComposer abortedDetoxInit 1`] = `
 [DetoxRuntimeError: Aborted detox.init() execution, and now running detox.cleanup()
 
 HINT: Most likely, your test runner is tearing down the suite due to the timeout error]
 `;
 
-exports[`DetoxRuntimeErrorBuilder cantFindApp - multiple apps 1`] = `
+exports[`DetoxRuntimeErrorComposer cantFindApp - multiple apps 1`] = `
 [DetoxRuntimeError: Can't find an app config with name "steak".
 
 HINT: Maybe you meant one of these app names?
@@ -16,7 +16,7 @@ HINT: Maybe you meant one of these app names?
 * beer]
 `;
 
-exports[`DetoxRuntimeErrorBuilder cantFindApp - single app 1`] = `
+exports[`DetoxRuntimeErrorComposer cantFindApp - single app 1`] = `
 [DetoxRuntimeError: Can't find an app config with name "unicorn".
 
 HINT: Actually, you don't have multiple apps defined in your config.
@@ -31,7 +31,7 @@ or, your apps config is missing that app. See the actual contents:
 }]
 `;
 
-exports[`DetoxRuntimeErrorBuilder invalidTestSummary - afterEach 1`] = `
+exports[`DetoxRuntimeErrorComposer invalidTestSummary - afterEach 1`] = `
 [DetoxRuntimeError: Invalid test summary was passed to detox.afterEach(testSummary)
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 
@@ -44,7 +44,7 @@ testSummary was:
 }]
 `;
 
-exports[`DetoxRuntimeErrorBuilder invalidTestSummary - beforeEach 1`] = `
+exports[`DetoxRuntimeErrorComposer invalidTestSummary - beforeEach 1`] = `
 [DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 
@@ -55,7 +55,7 @@ testSummary was:
 deviceName]
 `;
 
-exports[`DetoxRuntimeErrorBuilder invalidTestSummaryStatus - afterEach 1`] = `
+exports[`DetoxRuntimeErrorComposer invalidTestSummaryStatus - afterEach 1`] = `
 [DetoxRuntimeError: Invalid test summary was passed to detox.afterEach(testSummary)
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 

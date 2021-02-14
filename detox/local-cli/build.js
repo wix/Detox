@@ -28,7 +28,7 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function build(argv) {
-  const { errorBuilder, appsConfig } = await composeDetoxConfig({ argv });
+  const { errorComposer, appsConfig } = await composeDetoxConfig({ argv });
   const apps = _.entries(appsConfig);
 
   for (const [appName, app] of apps) {
@@ -47,7 +47,7 @@ module.exports.handler = async function build(argv) {
         throw e;
       }
     } else if (!argv.silent) {
-      throw errorBuilder.missingBuildScript(app);
+      throw errorComposer.missingBuildScript(app);
     }
 
     if (app.binaryPath && !fs.existsSync(app.binaryPath)) {

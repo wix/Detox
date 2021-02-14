@@ -4,7 +4,7 @@ const {URL} = require('url');
 const logger = require('./utils/logger');
 const Deferred = require('./utils/Deferred');
 const Device = require('./devices/Device');
-const DetoxRuntimeErrorBuilder = require('./errors/DetoxRuntimeErrorBuilder');
+const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const Client = require('./client/Client');
@@ -44,7 +44,7 @@ class Detox {
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
-    this._runtimeErrorBuilder = new DetoxRuntimeErrorBuilder({ appsConfig });
+    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer({ appsConfig });
 
     this._client = null;
     this._server = null;
@@ -197,7 +197,7 @@ class Detox {
     }
 
     if (handle.status === Deferred.PENDING) {
-      handle.reject(this._runtimeErrorBuilder.abortedDetoxInit());
+      handle.reject(this._runtimeErrorComposer.abortedDetoxInit());
     }
 
     return handle.promise;
@@ -223,7 +223,7 @@ class Detox {
 
   _validateTestSummary(methodName, testSummary) {
     if (!_.isPlainObject(testSummary)) {
-      throw this._runtimeErrorBuilder.invalidTestSummary(methodName, testSummary);
+      throw this._runtimeErrorComposer.invalidTestSummary(methodName, testSummary);
     }
 
     switch (testSummary.status) {
@@ -232,7 +232,7 @@ class Detox {
       case 'failed':
         break;
       default:
-        throw this._runtimeErrorBuilder.invalidTestSummaryStatus(methodName, testSummary);
+        throw this._runtimeErrorComposer.invalidTestSummaryStatus(methodName, testSummary);
     }
   }
 

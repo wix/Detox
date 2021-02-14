@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const fs = require('fs');
 const os = require('os');
-const DetoxConfigErrorBuilder = require('./DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('./DetoxConfigErrorComposer');
 
-describe('DetoxConfigErrorBuilder', () => {
-  /** @type DetoxConfigErrorBuilder */
+describe('DetoxConfigErrorComposer', () => {
+  /** @type DetoxConfigErrorComposer */
   let builder;
   let build;
   let config;
@@ -52,7 +52,7 @@ describe('DetoxConfigErrorBuilder', () => {
     config.configurations.inlinedMulti.device = { ...config.devices.aDevice };
     config.configurations.inlinedMulti.apps = [{ ...config.apps.someApp }];
 
-    builder = new DetoxConfigErrorBuilder()
+    builder = new DetoxConfigErrorComposer()
       .setDetoxConfigPath('/home/detox/myproject/.detoxrc.json')
       .setDetoxConfig(config);
   });

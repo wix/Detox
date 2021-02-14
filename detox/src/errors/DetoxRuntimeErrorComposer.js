@@ -3,7 +3,7 @@ const DetoxRuntimeError = require('./DetoxRuntimeError');
 
 const J = s => JSON.stringify(s);
 
-class DetoxRuntimeErrorBuilder {
+class DetoxRuntimeErrorComposer {
   constructor({ appsConfig }) {
     this.appsConfig = appsConfig;
   }
@@ -72,4 +72,4 @@ function toStarlist(dictionary) {
   return _.keys(dictionary).map(c => `* ${c}`).join('\n')
 }
 
-module.exports = DetoxRuntimeErrorBuilder;
+module.exports = DetoxRuntimeErrorComposer;

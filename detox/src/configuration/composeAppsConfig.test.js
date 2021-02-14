@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 const {
   appWithAbsoluteBinaryPath,
   appWithRelativeBinaryPath,
@@ -18,8 +18,8 @@ describe('composeAppsConfig', () => {
   let localConfig;
   /** @type {Detox.DetoxConfig} */
   let globalConfig;
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
 
   beforeEach(() => {
     composeAppsConfig = require('./composeAppsConfig');
@@ -33,13 +33,13 @@ describe('composeAppsConfig', () => {
       },
     }
 
-    errorBuilder = new DetoxConfigErrorBuilder()
+    errorComposer = new DetoxConfigErrorComposer()
       .setDetoxConfig(globalConfig)
       .setConfigurationName(configurationName);
   });
 
   const compose = () => composeAppsConfig({
-    errorBuilder,
+    errorComposer,
     configurationName,
     globalConfig,
     localConfig,
@@ -117,7 +117,7 @@ describe('composeAppsConfig', () => {
     describe('.launchArgs', () => {
       it('when it it is a string, should throw', () => {
         localConfig.launchArgs = '-detoxAppArgument NO';
-        expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgs(['configurations', configurationName]));
+        expect(compose).toThrowError(errorComposer.malformedAppLaunchArgs(['configurations', configurationName]));
       });
 
       it('when it is an object with nullish properties, it should omit them', () => {
@@ -256,53 +256,53 @@ describe('composeAppsConfig', () => {
         delete localConfig.apps;
         deviceConfig.type = deviceType;
 
-        expect(compose).toThrowError(errorBuilder.noAppIsDefined(deviceType));
+        expect(compose).toThrowError(errorComposer.noAppIsDefined(deviceType));
       });
 
       test('both app/apps are defined', () => {
         localConfig.app = 'example1';
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorBuilder.ambiguousAppAndApps());
+        expect(compose).toThrowError(errorComposer.ambiguousAppAndApps());
       });
 
       test('app is defined as an array', () => {
         localConfig.app = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorBuilder.multipleAppsConfigArrayTypo());
+        expect(compose).toThrowError(errorComposer.multipleAppsConfigArrayTypo());
       });
 
       test('apps are defined as a string', () => {
         localConfig.apps = 'example1';
 
-        expect(compose).toThrowError(errorBuilder.multipleAppsConfigShouldBeArray());
+        expect(compose).toThrowError(errorComposer.multipleAppsConfigShouldBeArray());
       });
 
       test('"apps" dictionary is undefined', () => {
         delete globalConfig.apps;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorBuilder.thereAreNoAppConfigs('example1'));
+        expect(compose).toThrowError(errorComposer.thereAreNoAppConfigs('example1'));
       });
 
       test('non-existent app, cannot resolve alias', () => {
         localConfig.app = 'elbereth';
 
-        expect(compose).toThrowError(errorBuilder.cantResolveAppAlias('elbereth'));
+        expect(compose).toThrowError(errorComposer.cantResolveAppAlias('elbereth'));
       });
 
       test('undefined inline app', () => {
         localConfig.apps = ['example1', null];
 
         expect(compose).toThrowError(
-          errorBuilder.appConfigIsUndefined(['configurations', configurationName, 'apps', 1])
+          errorComposer.appConfigIsUndefined(['configurations', configurationName, 'apps', 1])
         );
       });
 
       test('apps have no name (collision)', () => {
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorBuilder.duplicateAppConfig({
+        expect(compose).toThrowError(errorComposer.duplicateAppConfig({
           appName: undefined,
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
@@ -314,7 +314,7 @@ describe('composeAppsConfig', () => {
         globalConfig.apps.example2.name = 'sameApp';
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorBuilder.duplicateAppConfig({
+        expect(compose).toThrowError(errorComposer.duplicateAppConfig({
           appName: 'sameApp',
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
@@ -333,7 +333,7 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorBuilder.missingAppBinaryPath(
+        expect(compose).toThrowError(errorComposer.missingAppBinaryPath(
           ['apps', 'example1']
         ));
       });
@@ -350,7 +350,7 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = deviceType;
 
         expect(compose).toThrowError(
-          errorBuilder.invalidAppType({
+          errorComposer.invalidAppType({
             appPath: ['apps', 'example1'],
             allowedAppTypes: [appType === 'android.apk' ? 'ios.app' : 'android.apk'],
             deviceType,

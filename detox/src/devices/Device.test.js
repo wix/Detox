@@ -5,8 +5,8 @@ describe('Device', () => {
   let fs;
   let DeviceDriverBase;
   let SimulatorDriver;
-  let DetoxRuntimeErrorBuilder;
-  let errorBuilder;
+  let DetoxRuntimeErrorComposer;
+  let errorComposer;
   let emitter;
   let Device;
   let argparse;
@@ -35,7 +35,7 @@ describe('Device', () => {
     jest.mock('../utils/AsyncEmitter');
     const AsyncEmitter = require('../utils/AsyncEmitter');
     emitter = new AsyncEmitter({});
-    DetoxRuntimeErrorBuilder = require('../errors/DetoxRuntimeErrorBuilder');
+    DetoxRuntimeErrorComposer = require('../errors/DetoxRuntimeErrorComposer');
 
     Device = require('./Device');
   });
@@ -102,7 +102,7 @@ describe('Device', () => {
 
   function aDevice(overrides) {
     const appsConfig = overrides.appsConfig || {};
-    errorBuilder = new DetoxRuntimeErrorBuilder({ appsConfig });
+    errorComposer = new DetoxRuntimeErrorComposer({ appsConfig });
 
     const device = new Device({
       appsConfig,
@@ -110,7 +110,7 @@ describe('Device', () => {
       deviceConfig: {},
       sessionConfig: {},
       deviceDriver: driverMock.driver,
-      runtimeErrorBuilder: errorBuilder,
+      runtimeErrorComposer: errorComposer,
       emitter,
 
       ...overrides,
@@ -193,12 +193,12 @@ describe('Device', () => {
       });
 
       it(`should throw on call without args`, async () => {
-        await expect(device.selectApp()).rejects.toThrowError(errorBuilder.cantSelectEmptyApp());
+        await expect(device.selectApp()).rejects.toThrowError(errorComposer.cantSelectEmptyApp());
       });
 
       it(`should throw on app interactions with no selected app`, async () => {
         await device.selectApp(null);
-        await expect(device.launchApp()).rejects.toThrowError(errorBuilder.appNotSelected());
+        await expect(device.launchApp()).rejects.toThrowError(errorComposer.appNotSelected());
       });
 
       it(`should throw on attempt to select a non-existent app`, async () => {

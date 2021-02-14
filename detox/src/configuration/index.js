@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 const collectCliConfig = require('./collectCliConfig');
 const loadExternalConfig = require('./loadExternalConfig');
 const composeArtifactsConfig = require('./composeArtifactsConfig');
@@ -16,25 +16,25 @@ async function composeDetoxConfig({
   override,
   userParams,
 }) {
-  const errorBuilder = new DetoxConfigErrorBuilder();
+  const errorComposer = new DetoxConfigErrorComposer();
   const cliConfig = collectCliConfig({ argv });
   const findupResult = await loadExternalConfig({
-    errorBuilder,
+    errorComposer,
     configPath: cliConfig.configPath,
     cwd,
   });
 
   const externalConfig = findupResult && findupResult.config;
-  errorBuilder.setDetoxConfigPath(findupResult && findupResult.filepath);
-  errorBuilder.setDetoxConfig(externalConfig);
+  errorComposer.setDetoxConfigPath(findupResult && findupResult.filepath);
+  errorComposer.setDetoxConfig(externalConfig);
 
   /** @type {Detox.DetoxConfig} */
   const globalConfig = _.merge({}, externalConfig, override);
   if (_.isEmpty(globalConfig) && !externalConfig) {
     // Advise to create .detoxrc somewhere
-    throw errorBuilder.noConfigurationSpecified();
+    throw errorComposer.noConfigurationSpecified();
   }
-  errorBuilder.setDetoxConfig(globalConfig);
+  errorComposer.setDetoxConfig(globalConfig);
 
   const { configurations } = globalConfig;
 
@@ -44,7 +44,7 @@ async function composeDetoxConfig({
   });
 
   const configurationName = selectConfiguration({
-    errorBuilder,
+    errorComposer,
     globalConfig,
     cliConfig,
   });
@@ -52,14 +52,14 @@ async function composeDetoxConfig({
   const localConfig = configurations[configurationName];
 
   const deviceConfig = composeDeviceConfig({
-    errorBuilder,
+    errorComposer,
     globalConfig,
     localConfig,
     cliConfig,
   });
 
   const appsConfig = composeAppsConfig({
-    errorBuilder,
+    errorComposer,
     configurationName,
     deviceConfig,
     globalConfig,
@@ -82,7 +82,7 @@ async function composeDetoxConfig({
   });
 
   const sessionConfig = await composeSessionConfig({
-    errorBuilder,
+    errorComposer,
     globalConfig,
     localConfig,
     cliConfig,
@@ -96,7 +96,7 @@ async function composeDetoxConfig({
     deviceConfig,
     runnerConfig,
     sessionConfig,
-    errorBuilder,
+    errorComposer,
   };
 }
 

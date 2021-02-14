@@ -1,14 +1,14 @@
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 describe('composeSessionConfig', () => {
   let composeSessionConfig;
   let cliConfig, globalConfig, localConfig;
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
 
   beforeEach(() => {
     composeSessionConfig = require('./composeSessionConfig');
-    errorBuilder = new DetoxConfigErrorBuilder();
+    errorComposer = new DetoxConfigErrorComposer();
     cliConfig = {};
     globalConfig = {};
     localConfig = {};
@@ -18,7 +18,7 @@ describe('composeSessionConfig', () => {
     cliConfig,
     globalConfig,
     localConfig,
-    errorBuilder,
+    errorComposer,
   });
 
   it('should generate a default config', async () => {
@@ -41,10 +41,10 @@ describe('composeSessionConfig', () => {
 
     it('should pass validations', async () => {
       globalConfig.session = { sessionId: 1234 };
-      await expect(compose()).rejects.toThrowError(errorBuilder.invalidSessionIdProperty());
+      await expect(compose()).rejects.toThrowError(errorComposer.invalidSessionIdProperty());
 
       globalConfig.session = { sessionId: '' };
-      await expect(compose()).rejects.toThrowError(errorBuilder.invalidSessionIdProperty());
+      await expect(compose()).rejects.toThrowError(errorComposer.invalidSessionIdProperty());
     });
 
     describe('when defined in global config', () => {
@@ -79,10 +79,10 @@ describe('composeSessionConfig', () => {
 
     it('should pass validations', async () => {
       globalConfig.session = { server: 1234 };
-      await expect(compose()).rejects.toThrowError(errorBuilder.invalidServerProperty());
+      await expect(compose()).rejects.toThrowError(errorComposer.invalidServerProperty());
 
       globalConfig.session = { server: 'http://invalid-protocol.com' };
-      await expect(compose()).rejects.toThrowError(errorBuilder.invalidServerProperty());
+      await expect(compose()).rejects.toThrowError(errorComposer.invalidServerProperty());
     });
 
     describe('when defined in global config', () => {
@@ -159,10 +159,10 @@ describe('composeSessionConfig', () => {
 
     it('should pass validations', async () => {
       globalConfig.session = { debugSynchronization: -1 };
-      await expect(compose()).rejects.toThrowError(errorBuilder.invalidDebugSynchronizationProperty());
+      await expect(compose()).rejects.toThrowError(errorComposer.invalidDebugSynchronizationProperty());
 
       globalConfig.session = { debugSynchronization: '3000' };
-      await expect(compose()).rejects.toThrowError(errorBuilder.invalidDebugSynchronizationProperty());
+      await expect(compose()).rejects.toThrowError(errorComposer.invalidDebugSynchronizationProperty());
     });
 
     describe('when defined in global config', () => {

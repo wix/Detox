@@ -3,7 +3,7 @@ const DetoxConfigError = require('./DetoxConfigError');
 const deviceAppTypes = require('../configuration/utils/deviceAppTypes');
 const J = s => JSON.stringify(s);
 
-class DetoxConfigErrorBuilder {
+class DetoxConfigErrorComposer {
   constructor() {
     this.setDetoxConfigPath();
     this.setDetoxConfig();
@@ -517,4 +517,4 @@ function hintConfigurations(configurations) {
   return _.keys(configurations).map(c => `* ${c}`).join('\n')
 }
 
-module.exports = DetoxConfigErrorBuilder;
+module.exports = DetoxConfigErrorComposer;

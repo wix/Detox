@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 const { appWithRelativeBinaryPath, iosSimulatorWithShorthandQuery } = require('./configurations.mock');
 
 describe('composeDeviceConfig', () => {
@@ -10,8 +10,8 @@ describe('composeDeviceConfig', () => {
   let localConfig;
   /** @type {Detox.DetoxConfig} */
   let globalConfig;
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
 
   beforeEach(() => {
     composeDeviceConfig = require('./composeDeviceConfig');
@@ -24,13 +24,13 @@ describe('composeDeviceConfig', () => {
       },
     }
 
-    errorBuilder = new DetoxConfigErrorBuilder()
+    errorComposer = new DetoxConfigErrorComposer()
       .setDetoxConfig(globalConfig)
       .setConfigurationName('someConfig');
   });
 
   const compose = () => composeDeviceConfig({
-    errorBuilder,
+    errorComposer,
     globalConfig,
     localConfig,
     cliConfig,
@@ -158,21 +158,21 @@ describe('composeDeviceConfig', () => {
     describe('aliased configuration', () => {
       it('should throw if devices are not declared', () => {
         localConfig.device = 'someDevice';
-        expect(compose).toThrow(errorBuilder.thereAreNoDeviceConfigs('someDevice'));
+        expect(compose).toThrow(errorComposer.thereAreNoDeviceConfigs('someDevice'));
       });
 
       it('should throw if device config is not found (alias)', () => {
         localConfig.device = 'someDevice';
         globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
 
-        expect(compose).toThrow(errorBuilder.cantResolveDeviceAlias('someDevice'));
+        expect(compose).toThrow(errorComposer.cantResolveDeviceAlias('someDevice'));
       });
 
       it('should throw if device config is not found (inline)', () => {
         delete localConfig.device;
         globalConfig.devices = { otherDevice: iosSimulatorWithShorthandQuery };
 
-        expect(compose).toThrow(errorBuilder.deviceConfigIsUndefined());
+        expect(compose).toThrow(errorComposer.deviceConfigIsUndefined());
       });
 
       it('should throw if device.utilBinaryPaths are malformed (string)', () => {
@@ -186,7 +186,7 @@ describe('composeDeviceConfig', () => {
         }
 
         expect(compose).toThrowError(
-          errorBuilder.malformedUtilBinaryPaths(localConfig.device)
+          errorComposer.malformedUtilBinaryPaths(localConfig.device)
         );
       });
     });
@@ -194,21 +194,21 @@ describe('composeDeviceConfig', () => {
     describe('empty device object', () => {
       it('should throw if the inline device config has no type', () => {
         localConfig.device = {};
-        expect(compose).toThrow(errorBuilder.missingDeviceType());
+        expect(compose).toThrow(errorComposer.missingDeviceType());
       });
 
       it('should throw if the aliased device config has no type', () => {
         localConfig.device = 'someDevice';
         globalConfig.devices = { someDevice: { } };
 
-        expect(compose).toThrow(errorBuilder.missingDeviceType('someDevice'));
+        expect(compose).toThrow(errorComposer.missingDeviceType('someDevice'));
       });
 
       it('should throw if the inline device config is empty', () => {
         localConfig.type = 'android.emulator';
         localConfig.device = {};
 
-        expect(compose).toThrow(errorBuilder.missingDeviceMatcherProperties(undefined, [
+        expect(compose).toThrow(errorComposer.missingDeviceMatcherProperties(undefined, [
           'avdName'
         ]));
       });
@@ -222,7 +222,7 @@ describe('composeDeviceConfig', () => {
           },
         };
 
-        expect(compose).toThrow(errorBuilder.missingDeviceMatcherProperties('someDevice', [
+        expect(compose).toThrow(errorComposer.missingDeviceMatcherProperties('someDevice', [
           'type',
           'name',
           'id',
@@ -244,7 +244,7 @@ describe('composeDeviceConfig', () => {
           }
         };
 
-        expect(compose).toThrowError(errorBuilder.missingDeviceMatcherProperties(undefined, expectedProps));
+        expect(compose).toThrowError(errorComposer.missingDeviceMatcherProperties(undefined, expectedProps));
 
         localConfig.device.device[_.sample(expectedProps)] = 'someValue';
         expect(compose).not.toThrowError();
@@ -259,7 +259,7 @@ describe('composeDeviceConfig', () => {
       });
 
       expect(compose).toThrowError(
-        errorBuilder.malformedUtilBinaryPaths(undefined)
+        errorComposer.malformedUtilBinaryPaths(undefined)
       );
     });
   });

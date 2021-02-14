@@ -1,16 +1,16 @@
 const _ = require('lodash');
 
 /**
- * @param {require('../errors/DetoxConfigErrorBuilder')} errorBuilder
+ * @param {require('../errors/DetoxConfigErrorComposer')} errorComposer
  * @param {Detox.DetoxConfig} detoxConfig
  * @param {*} cliConfig
  * @returns {string}
  */
-function selectConfiguration({ errorBuilder, globalConfig, cliConfig }) {
+function selectConfiguration({ errorComposer, globalConfig, cliConfig }) {
   const { configurations } = globalConfig;
 
   if (_.isEmpty(configurations)) {
-    throw errorBuilder.noConfigurationsInside();
+    throw errorComposer.noConfigurationsInside();
   }
 
   let configurationName = cliConfig.configuration || globalConfig.selectedConfiguration;
@@ -19,17 +19,17 @@ function selectConfiguration({ errorBuilder, globalConfig, cliConfig }) {
   }
 
   if (!configurationName) {
-    throw errorBuilder.cantChooseConfiguration();
+    throw errorComposer.cantChooseConfiguration();
   }
 
-  errorBuilder.setConfigurationName(configurationName);
+  errorComposer.setConfigurationName(configurationName);
 
   if (!configurations.hasOwnProperty(configurationName)) {
-    throw errorBuilder.noConfigurationWithGivenName();
+    throw errorComposer.noConfigurationWithGivenName();
   }
 
   if (_.isEmpty(configurations[configurationName])) {
-    throw errorBuilder.configurationShouldNotBeEmpty();
+    throw errorComposer.configurationShouldNotBeEmpty();
   }
 
   return configurationName;

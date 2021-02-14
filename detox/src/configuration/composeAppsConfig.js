@@ -9,7 +9,7 @@ const CLI_PARSER_OPTIONS = {
 };
 
 /**
- * @param {DetoxConfigErrorBuilder} opts.errorBuilder
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
@@ -29,7 +29,7 @@ function composeAppsConfig(opts) {
 }
 
 /**
- * @param {DetoxConfigErrorBuilder} opts.errorBuilder
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {string} opts.configurationName
  * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
  * @param {Detox.DetoxConfig} opts.globalConfig
@@ -37,7 +37,7 @@ function composeAppsConfig(opts) {
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
 function composeAppsConfigFromPlain(opts) {
-  const { errorBuilder, localConfig } = opts;
+  const { errorComposer, localConfig } = opts;
 
   /** @type {Detox.DetoxAppConfig} */
   let appConfig;
@@ -71,7 +71,7 @@ function composeAppsConfigFromPlain(opts) {
   }
 
   validateAppConfig({
-    errorBuilder,
+    errorComposer,
     appConfig,
     deviceConfig: opts.deviceConfig,
     appPath: ['configurations', opts.configurationName],
@@ -83,7 +83,7 @@ function composeAppsConfigFromPlain(opts) {
 }
 
 /**
- * @param {DetoxConfigErrorBuilder} opts.errorBuilder
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {string} opts.configurationName
  * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
  * @param {Detox.DetoxConfig} opts.globalConfig
@@ -93,22 +93,22 @@ function composeAppsConfigFromPlain(opts) {
 function composeAppsConfigFromAliased(opts) {
   /* @type {Record<string, Detox.DetoxAppConfig>} */
   const result = {};
-  const { configurationName, errorBuilder, deviceConfig, globalConfig, localConfig } = opts;
+  const { configurationName, errorComposer, deviceConfig, globalConfig, localConfig } = opts;
 
   if (localConfig.app == null && localConfig.apps == null) {
-    throw errorBuilder.noAppIsDefined(deviceConfig.type);
+    throw errorComposer.noAppIsDefined(deviceConfig.type);
   }
 
   if (localConfig.app != null && localConfig.apps != null) {
-    throw errorBuilder.ambiguousAppAndApps();
+    throw errorComposer.ambiguousAppAndApps();
   }
 
   if (localConfig.app && Array.isArray(localConfig.app)) {
-    throw errorBuilder.multipleAppsConfigArrayTypo();
+    throw errorComposer.multipleAppsConfigArrayTypo();
   }
 
   if (localConfig.apps && !Array.isArray(localConfig.apps)) {
-    throw errorBuilder.multipleAppsConfigShouldBeArray();
+    throw errorComposer.multipleAppsConfigShouldBeArray();
   }
 
   const appPathsMap = new Map();
@@ -127,12 +127,12 @@ function composeAppsConfigFromAliased(opts) {
     if (_.isEmpty(appConfig)) {
       if (isAlias) {
         if (_.size(globalConfig.apps) > 0) {
-          throw errorBuilder.cantResolveAppAlias(maybeAlias);
+          throw errorComposer.cantResolveAppAlias(maybeAlias);
         } else {
-          throw errorBuilder.thereAreNoAppConfigs(maybeAlias);
+          throw errorComposer.thereAreNoAppConfigs(maybeAlias);
         }
       } else {
-        throw errorBuilder.appConfigIsUndefined(appPath);
+        throw errorComposer.appConfigIsUndefined(appPath);
       }
     }
 
@@ -140,7 +140,7 @@ function composeAppsConfigFromAliased(opts) {
     appPathsMap.set(appConfig, appPath);
 
     validateAppConfig({
-      errorBuilder,
+      errorComposer,
       deviceConfig,
       appConfig,
       appPath
@@ -149,7 +149,7 @@ function composeAppsConfigFromAliased(opts) {
     if (!result[appName]) {
       result[appName] = appConfig;
     } else {
-      throw opts.errorBuilder.duplicateAppConfig({
+      throw opts.errorComposer.duplicateAppConfig({
         appPath,
         appName: appConfig.name,
         preExistingAppPath: appPathsMap.get(result[appName]),
@@ -177,12 +177,12 @@ function overrideAppLaunchArgs(appsConfig, cliConfig) {
   }
 }
 
-function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
+function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer }) {
   const deviceType = deviceConfig.type;
   const allowedAppTypes = deviceAppTypes[deviceType];
 
   if (allowedAppTypes && !allowedAppTypes.includes(appConfig.type)) {
-    throw errorBuilder.invalidAppType({
+    throw errorComposer.invalidAppType({
       appPath,
       allowedAppTypes,
       deviceType,
@@ -190,11 +190,11 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorBuilder }) {
   }
 
   if (allowedAppTypes && !appConfig.binaryPath) {
-    throw errorBuilder.missingAppBinaryPath(appPath);
+    throw errorComposer.missingAppBinaryPath(appPath);
   }
 
   if (appConfig.launchArgs && !_.isObject(appConfig.launchArgs)) {
-    throw errorBuilder.malformedAppLaunchArgs(appPath);
+    throw errorComposer.malformedAppLaunchArgs(appPath);
   }
 }
 

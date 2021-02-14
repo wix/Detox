@@ -1,17 +1,17 @@
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 const { apkWithBinary, androidEmulator } = require('./configurations.mock');
 
 describe('selectConfiguration', () => {
   let selectConfiguration;
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
   let configLocation, globalConfig, cliConfig;
 
   beforeEach(() => {
     configLocation = '/etc/detox/config.js';
     globalConfig = {};
     cliConfig = {};
-    errorBuilder = new DetoxConfigErrorBuilder().setDetoxConfig(globalConfig);
+    errorComposer = new DetoxConfigErrorComposer().setDetoxConfig(globalConfig);
 
     selectConfiguration = require('./selectConfiguration');
   });
@@ -20,19 +20,19 @@ describe('selectConfiguration', () => {
     configLocation,
     cliConfig,
     globalConfig,
-    errorBuilder,
+    errorComposer,
   });
 
   it('should throw if there are no .configurations in Detox config', () => {
     configLocation = '';
     delete globalConfig.configurations;
-    expect(select).toThrowError(errorBuilder.noConfigurationsInside());
+    expect(select).toThrowError(errorComposer.noConfigurationsInside());
   });
 
   it('should throw if there is an empty .configurations object in Detox config and its location is unknown', () => {
     configLocation = '';
     globalConfig.configurations = {};
-    expect(select).toThrowError(errorBuilder.noConfigurationsInside());
+    expect(select).toThrowError(errorComposer.noConfigurationsInside());
   });
 
   it('should return the name of a single configuration', () => {
@@ -44,22 +44,22 @@ describe('selectConfiguration', () => {
     globalConfig.configurations = { single: { ...apkWithBinary, ...androidEmulator } };
     globalConfig.selectedConfiguration = 'double';
 
-    expect(select).toThrow(); // generating a correct error expectation in errorBuilder
+    expect(select).toThrow(); // generating a correct error expectation in errorComposer
 
-    jest.spyOn(errorBuilder, 'setConfigurationName');
-    expect(select).toThrow(errorBuilder.noConfigurationWithGivenName());
-    expect(errorBuilder.setConfigurationName).toHaveBeenCalledWith('double');
+    jest.spyOn(errorComposer, 'setConfigurationName');
+    expect(select).toThrow(errorComposer.noConfigurationWithGivenName());
+    expect(errorComposer.setConfigurationName).toHaveBeenCalledWith('double');
   });
 
   it('should throw if a configuration with the specified name is empty ', () => {
     globalConfig.configurations = { single: {} };
     globalConfig.selectedConfiguration = 'single';
 
-    expect(select).toThrow(); // generating a correct error expectation in errorBuilder
+    expect(select).toThrow(); // generating a correct error expectation in errorComposer
 
-    jest.spyOn(errorBuilder, 'setConfigurationName');
-    expect(select).toThrow(errorBuilder.configurationShouldNotBeEmpty());
-    expect(errorBuilder.setConfigurationName).toHaveBeenCalledWith('single');
+    jest.spyOn(errorComposer, 'setConfigurationName');
+    expect(select).toThrow(errorComposer.configurationShouldNotBeEmpty());
+    expect(errorComposer.setConfigurationName).toHaveBeenCalledWith('single');
   });
 
   it('should throw if there is more than 1 configuration, and no one is specified', () => {
@@ -68,7 +68,7 @@ describe('selectConfiguration', () => {
       config1: { ...apkWithBinary, ...androidEmulator },
       config2: { ...apkWithBinary, ...androidEmulator }
     };
-    expect(select).toThrow(errorBuilder.cantChooseConfiguration());
+    expect(select).toThrow(errorComposer.cantChooseConfiguration());
   });
 
   describe('priority', () => {

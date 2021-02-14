@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 /**
- * @param {DetoxConfigErrorBuilder} opts.errorBuilder
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
  * @param {*} opts.cliConfig
@@ -22,13 +22,13 @@ function composeDeviceConfig(opts) {
 }
 
 /**
- * @param {DetoxConfigErrorBuilder} opts.errorBuilder
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxPlainConfiguration} opts.localConfig
  * @returns {Detox.DetoxDeviceConfig}
  */
 function composeDeviceConfigFromPlain(opts) {
-  const { errorBuilder, localConfig } = opts;
+  const { errorComposer, localConfig } = opts;
 
   const type = localConfig.type;
   const device = localConfig.device || localConfig.name;
@@ -38,19 +38,19 @@ function composeDeviceConfigFromPlain(opts) {
     ? { type, device, utilBinaryPaths }
     : { ...localConfig };
 
-  validateDeviceConfig({ deviceConfig, errorBuilder });
+  validateDeviceConfig({ deviceConfig, errorComposer });
 
   return deviceConfig;
 }
 
 /**
- * @param {DetoxConfigErrorBuilder} opts.errorBuilder
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxAliasedConfiguration} opts.localConfig
  * @returns {Detox.DetoxDeviceConfig}
  */
 function composeDeviceConfigFromAliased(opts) {
-  const { errorBuilder, globalConfig, localConfig } = opts;
+  const { errorComposer, globalConfig, localConfig } = opts;
 
   /** @type {Detox.DetoxDeviceConfig} */
   let deviceConfig;
@@ -59,17 +59,17 @@ function composeDeviceConfigFromAliased(opts) {
 
   if (isAliased) {
     if (_.isEmpty(globalConfig.devices)) {
-      throw errorBuilder.thereAreNoDeviceConfigs(localConfig.device);
+      throw errorComposer.thereAreNoDeviceConfigs(localConfig.device);
     } else {
       deviceConfig = globalConfig.devices[localConfig.device];
     }
 
     if (!deviceConfig) {
-      throw errorBuilder.cantResolveDeviceAlias(localConfig.device);
+      throw errorComposer.cantResolveDeviceAlias(localConfig.device);
     }
   } else {
     if (!localConfig.device) {
-      throw errorBuilder.deviceConfigIsUndefined();
+      throw errorComposer.deviceConfigIsUndefined();
     }
 
     deviceConfig = localConfig.device;
@@ -77,7 +77,7 @@ function composeDeviceConfigFromAliased(opts) {
 
   validateDeviceConfig({
     deviceConfig,
-    errorBuilder,
+    errorComposer,
     deviceAlias: isAliased ? localConfig.device : undefined
   });
 
@@ -85,22 +85,22 @@ function composeDeviceConfigFromAliased(opts) {
 }
 
 /**
- * @param {DetoxConfigErrorBuilder} errorBuilder
+ * @param {DetoxConfigErrorComposer} errorComposer
  * @param {Detox.DetoxDeviceConfig} deviceConfig
  * @param {String | undefined} deviceAlias
  */
-function validateDeviceConfig({ deviceConfig, errorBuilder, deviceAlias }) {
+function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
   if (!deviceConfig.type) {
-    throw errorBuilder.missingDeviceType(deviceAlias);
+    throw errorComposer.missingDeviceType(deviceAlias);
   }
 
   if (deviceConfig.utilBinaryPaths) {
     if (!Array.isArray(deviceConfig.utilBinaryPaths)) {
-      throw errorBuilder.malformedUtilBinaryPaths(deviceAlias);
+      throw errorComposer.malformedUtilBinaryPaths(deviceAlias);
     }
 
     if (deviceConfig.utilBinaryPaths.some(s => !_.isString(s))) {
-      throw errorBuilder.malformedUtilBinaryPaths(deviceAlias);
+      throw errorComposer.malformedUtilBinaryPaths(deviceAlias);
     }
   }
 
@@ -114,7 +114,7 @@ function validateDeviceConfig({ deviceConfig, errorBuilder, deviceAlias }) {
   }
 
   if (_.isEmpty(_.pick(deviceConfig.device, expectedProperties))) {
-    throw errorBuilder.missingDeviceMatcherProperties(deviceAlias, expectedProperties);
+    throw errorComposer.missingDeviceMatcherProperties(deviceAlias, expectedProperties);
   }
 }
 

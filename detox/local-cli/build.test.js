@@ -3,7 +3,7 @@ jest.mock('../src/utils/logger');
 jest.mock('../src/configuration');
 
 const tempfile = require('tempfile');
-const DetoxConfigErrorBuilder = require('../src/errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../src/errors/DetoxConfigErrorComposer');
 
 describe('build', () => {
   let log, execSync, composeDetoxConfig, detoxConfig;
@@ -15,7 +15,7 @@ describe('build', () => {
       behaviorConfig: {},
       deviceConfig: {},
       sessionConfig: {},
-      errorBuilder: new DetoxConfigErrorBuilder(),
+      errorComposer: new DetoxConfigErrorComposer(),
     };
 
     log = require('../src/utils/logger');
