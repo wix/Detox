@@ -2,7 +2,7 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
-## 18.4.0
+## 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
 Please refer to the [APIRef.Configuration.md](https://github.com/wix/Detox/blob/18.4.0/docs/APIRef.Configuration.md) to obtain more details.
