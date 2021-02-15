@@ -351,7 +351,7 @@ class AppleSimUtils {
     const predicate = `process == "${CFBundleExecutable}"`;
     const command = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
 
-    log.info(`${bundleId} launched. To watch simulator logs, run:\n        ${command}`);
+    log.debug(`${bundleId} launched. To watch simulator logs, run:\n        ${command}`);
   }
 
   _parseLaunchId(result) {

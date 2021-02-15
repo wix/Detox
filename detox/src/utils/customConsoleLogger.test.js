@@ -47,9 +47,9 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
       overrideConsoleMethods(fakeConsole, bunyanLogger);
     });
 
-    it('should connect: console.log -> logger.info', () => {
+    it('should connect: console.log -> logger.debug', () => {
       fakeConsole.log('OK %d', 200);
-      expect(bunyanLogger.info).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'OK 200');
+      expect(bunyanLogger.debug).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'OK 200');
     });
 
     it('should connect: console.warn -> logger.warn', () => {
@@ -57,9 +57,9 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
       expect(bunyanLogger.warn).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'Warning 301');
     });
 
-    it('should connect: console.trace -> logger.info', () => {
+    it('should connect: console.trace -> logger.trace', () => {
       fakeConsole.trace('TraceMe %d', 100500);
-      expect(bunyanLogger.info).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n  Trace:', 'TraceMe 100500', expectedStackDump);
+      expect(bunyanLogger.trace).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n  Trace:', 'TraceMe 100500', expectedStackDump);
     });
 
     it('should connect: console.error -> logger.error', () => {
