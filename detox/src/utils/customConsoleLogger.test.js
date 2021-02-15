@@ -47,9 +47,9 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
       overrideConsoleMethods(fakeConsole, bunyanLogger);
     });
 
-    it('should connect: console.log -> logger.debug', () => {
+    it('should connect: console.log -> logger.info', () => {
       fakeConsole.log('OK %d', 200);
-      expect(bunyanLogger.debug).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'OK 200');
+      expect(bunyanLogger.info).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'OK 200');
     });
 
     it('should connect: console.warn -> logger.warn', () => {
