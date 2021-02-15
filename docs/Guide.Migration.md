@@ -5,7 +5,7 @@ We are improving Detox API as we go along, sometimes these changes require us to
 ## 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
-Please refer to the [APIRef.Configuration.md](https://github.com/wix/Detox/blob/18.4.0/docs/APIRef.Configuration.md) to obtain more details.
+Please refer to the [APIRef.Configuration.md](https://github.com/wix/Detox/blob/18.6.0/docs/APIRef.Configuration.md) to obtain more details.
 This change is backward-compatible, although the new format is now the recommended option.
 
 ## 18.0
