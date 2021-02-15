@@ -4,7 +4,7 @@ const execLogger = require('./logger').child({ __filename });
 const retry = require('./retry');
 const { escape } = require('./pipeCommands');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const { traceCall } = require('../utils/trace');
+const { traceCall } = require('./trace');
 
 let _operationCounter = 0;
 

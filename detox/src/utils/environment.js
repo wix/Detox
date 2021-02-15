@@ -19,7 +19,6 @@ const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.reg
 const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
 const GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'genycloud-cleanup.lock');
 const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
-const IOS_FRAMEWORK_PATH = setFrameworkPath();
 
 function getAndroidSDKPath() {
   return process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME || '';
@@ -158,14 +157,19 @@ function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
 }
 
-async function setFrameworkPath() {
+let _iosFrameworkPath;
+async function getFrameworkPath() {
+  if (!_iosFrameworkPath) {
+    _iosFrameworkPath = _doGetFrameworkPath();
+  }
+
+  return _iosFrameworkPath;
+}
+
+async function _doGetFrameworkPath() {
   const detoxVersion = getDetoxVersion();
   const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
   return `${DETOX_LIBRARY_ROOT_PATH}/ios/${sha1}/Detox.framework`;
-}
-
-function getFrameworkPath() {
-  return IOS_FRAMEWORK_PATH;
 }
 
 function getDetoxLibraryRootPath() {
