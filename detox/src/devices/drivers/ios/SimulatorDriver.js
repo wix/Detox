@@ -126,7 +126,7 @@ class SimulatorDriver extends IosDriver {
               `xcrun simctl spawn ${deviceId} launchctl list | grep -F '${bundleId}'\n`,
       });
     } else {
-      log.debug({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
     }
 
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});

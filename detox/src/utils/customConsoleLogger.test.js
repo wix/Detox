@@ -17,11 +17,10 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
     };
 
     bunyanLogger = {
-      error: jest.fn(),
+      debug: jest.fn(),
       warn: jest.fn(),
       info: jest.fn(),
-      debug: jest.fn(),
-      trace: jest.fn(),
+      error: jest.fn(),
     };
   });
 
@@ -58,9 +57,9 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
       expect(bunyanLogger.warn).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'Warning 301');
     });
 
-    it('should connect: console.trace -> logger.trace', () => {
+    it('should connect: console.trace -> logger.info', () => {
       fakeConsole.trace('TraceMe %d', 100500);
-      expect(bunyanLogger.trace).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n  Trace:', 'TraceMe 100500', expectedStackDump);
+      expect(bunyanLogger.info).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n  Trace:', 'TraceMe 100500', expectedStackDump);
     });
 
     it('should connect: console.error -> logger.error', () => {
