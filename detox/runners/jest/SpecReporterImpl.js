@@ -1,6 +1,7 @@
 const chalk = require('chalk').default;
 const { traceln } = require('./utils/stdout');
-const log = require('../../src/utils/logger').child();
+const logger = require('../../src/utils/logger');
+const log = logger.child();
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
 const RESULT_FAILED = chalk.red('FAIL');
@@ -29,7 +30,9 @@ class SpecReporter {
   }
 
   onTestStart({description, invocations = 1}) {
-    this._traceTest({description, invocations});
+    if(/^(debug|trace)$/.test(logger.getDetoxLevel())) {
+      this._traceTest({description, invocations});
+    }
   }
 
   onTestEnd({description, invocations = 1}, result) {
@@ -58,11 +61,17 @@ class SpecReporter {
   }
 
   _traceTest({description, invocations}, _status = undefined) {
+    if(_status === RESULT_SKIPPED && !/^(debug|trace)$/.test(logger.getDetoxLevel())) {
+      return;
+    }
+    
     const testDescription = chalk.gray(description);
     const retriesDescription = (invocations > 1) ? chalk.gray(` [Retry #${invocations - 1}]`) : '';
     const status = chalk.gray(_status ? ` [${_status}]` : '');
     const desc = this._suitesDesc + testDescription + retriesDescription + status;
-    log.info({event: 'SPEC_STATE_CHANGE'}, desc);
+    
+    const loggingFunc = _status === RESULT_FAILED ? log.error.bind(log) : log.info.bind(log);
+    loggingFunc({event: 'SPEC_STATE_CHANGE'}, desc);
   }
 }
 
