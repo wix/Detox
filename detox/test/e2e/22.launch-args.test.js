@@ -4,6 +4,11 @@ const _ = require('lodash');
 // existing tests that check deep-link URLs. Combined with the fact that we do not yet
 // support complex args on iOS -- no point in testing it out.
 describe(':android: Launch arguments', () => {
+  beforeAll(async () => {
+    await device.selectApp('exampleWithArgs');
+    await device.launchApp();
+  });
+
   async function assertLaunchArg(key, expectedValue) {
     await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
     await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);

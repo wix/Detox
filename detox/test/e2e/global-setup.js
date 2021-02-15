@@ -19,8 +19,8 @@ function downloadTestButlerAPKIfNeeded() {
 }
 
 async function globalSetup() {
-  const config = resolveSelectedConfiguration();
-  if (config && config.type.includes('android')) {
+  const config = resolveSelectedConfiguration() || {};
+  if ([config.type, process.env.DETOX_CONFIGURATION, config.device].some(s => `${s}`.includes('android'))) {
     downloadTestButlerAPKIfNeeded();
   }
 

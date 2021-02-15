@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const configuration = require('./configuration');
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 
@@ -30,7 +31,7 @@ describe('Detox', () => {
   let lifecycleSymbols;
 
   const client = () => Client.mock.instances[0];
-  const device = () => Device.mock.instances[0];
+  const device = () => _.last(Device.mock.instances);
   const artifactsManager = () => ArtifactsManager.mock.instances[0];
   const invocationManager = () => invoke.InvocationManager.mock.instances[0];
 
@@ -49,6 +50,7 @@ describe('Detox', () => {
 
     logger = require('./utils/logger');
     Device = require('./devices/Device');
+    Device.useRealConstructor();
     FakeDriverRegistry = require('./devices/DriverRegistry');
     ArtifactsManager = require('./artifacts/ArtifactsManager');
     invoke = require('./invoke');
@@ -130,11 +132,13 @@ describe('Detox', () => {
 
       it('should instantiate Device', () =>
         expect(Device).toHaveBeenCalledWith({
+          appsConfig: detoxConfig.appsConfig,
           behaviorConfig: detoxConfig.behaviorConfig,
           deviceConfig: detoxConfig.deviceConfig,
-          emitter: expect.anything(),
-          deviceDriver: expect.anything(),
-          sessionConfig: expect.anything(),
+          emitter: expect.any(Object),
+          runtimeErrorComposer: expect.any(Object),
+          deviceDriver: expect.any(Object),
+          sessionConfig: expect.any(Object),
         }));
 
       it('should expose device to global', () =>
@@ -159,13 +163,14 @@ describe('Detox', () => {
       it('should prepare the device', () =>
         expect(device().prepare).toHaveBeenCalled());
 
-      it('should reinstall the app', () => {
+      it('should select and reinstall the app', () => {
+        expect(device().selectApp).toHaveBeenCalledWith('default');
         expect(device().uninstallApp).toHaveBeenCalled();
         expect(device().installApp).toHaveBeenCalled();
       });
 
-      it('should install util-binaries', () => {
-        expect(device().installUtilBinaries).toHaveBeenCalled();
+      it('should not unselect the app if it is the only one', () => {
+        expect(device().selectApp).not.toHaveBeenCalledWith(null);
       });
 
       it('should return itself', async () =>
@@ -179,6 +184,26 @@ describe('Detox', () => {
       const initPromise2 = detox.init();
 
       expect(initPromise1).toBe(initPromise2);
+    });
+
+    describe('with multiple apps', () => {
+      beforeEach(() => {
+        detoxConfig.appsConfig['extraApp'] = {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+        };
+      });
+
+      beforeEach(init);
+
+      it('should unselect the selected device app', () => {
+        expect(detox.device.installApp).toHaveBeenCalledTimes(2);
+        expect(detox.device.selectApp).toHaveBeenCalledTimes(3);
+
+        expect(detox.device.selectApp.mock.calls[0]).toEqual(['default']);
+        expect(detox.device.selectApp.mock.calls[1]).toEqual(['extraApp']);
+        expect(detox.device.selectApp.mock.calls[2]).toEqual([null]);
+      });
     });
 
     describe('with sessionConfig.autoStart undefined', () => {

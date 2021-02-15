@@ -27,6 +27,7 @@ describe('CLI', () => {
         single: {
           type: 'ios.simulator',
           device: 'iPhone X',
+          binaryPath: 'path/to/app',
         },
       },
     };

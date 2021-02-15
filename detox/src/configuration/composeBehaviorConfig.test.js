@@ -2,12 +2,12 @@ const _ = require('lodash');
 
 describe('composeBehaviorConfig', () => {
   let composeBehaviorConfig;
-  let cliConfig, deviceConfig, detoxConfig, userParams;
+  let cliConfig, localConfig, globalConfig, userParams;
 
   beforeEach(() => {
     cliConfig = {};
-    deviceConfig = {};
-    detoxConfig = {};
+    localConfig = {};
+    globalConfig = {};
     userParams = {};
 
     composeBehaviorConfig = require('./composeBehaviorConfig');
@@ -15,8 +15,8 @@ describe('composeBehaviorConfig', () => {
 
   let composed = () => composeBehaviorConfig({
     cliConfig,
-    deviceConfig,
-    detoxConfig,
+    localConfig,
+    globalConfig,
     userParams,
   });
 
@@ -35,22 +35,22 @@ describe('composeBehaviorConfig', () => {
 
   describe('if a custom config has only .launchApp = "manual" override', () => {
     beforeEach(() => {
-      detoxConfig = {
+      globalConfig = {
         behavior: { launchApp: 'manual' }
       };
     });
 
     it('should implicitly override behavior.init.reinstallApp = false', () => {
-      const expected = _.cloneDeep(detoxConfig.behavior);
+      const expected = _.cloneDeep(globalConfig.behavior);
       const actual = composed();
 
       expect(actual.init.reinstallApp).toBe(false);
     });
   });
 
-  describe('if detox config is set', () => {
+  describe('if global config is set', () => {
     beforeEach(() => {
-      detoxConfig = {
+      globalConfig = {
         behavior: {
           init: {
             exposeGlobals: false,
@@ -65,15 +65,15 @@ describe('composeBehaviorConfig', () => {
     });
 
     it('should override the defaults', () => {
-      const expected = _.cloneDeep(detoxConfig.behavior);
+      const expected = _.cloneDeep(globalConfig.behavior);
       const actual = composed();
 
       expect(actual).toEqual(expected);
     });
 
-    describe('if device config is set', () => {
+    describe('if local config is set', () => {
       beforeEach(() => {
-        deviceConfig = {
+        localConfig = {
           behavior: {
             init: {
               exposeGlobals: true,
@@ -87,8 +87,8 @@ describe('composeBehaviorConfig', () => {
         };
       });
 
-      it('should override the defaults from detox config', () => {
-        const expected = _.cloneDeep(deviceConfig.behavior);
+      it('should override the defaults from global config', () => {
+        const expected = _.cloneDeep(localConfig.behavior);
         const actual = composed();
 
         expect(actual).toEqual(expected);
@@ -102,7 +102,7 @@ describe('composeBehaviorConfig', () => {
           };
         });
 
-        it('should override the defaults from device config', () => {
+        it('should override the defaults from local config', () => {
           expect(composed()).toEqual({
             init: {
               exposeGlobals: false,

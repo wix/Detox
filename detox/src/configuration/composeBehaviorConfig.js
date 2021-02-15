@@ -1,6 +1,17 @@
 const _ = require('lodash');
 
-function composeBehaviorConfig({ cliConfig, detoxConfig, deviceConfig, userParams }) {
+/**
+ * @param {*} cliConfig
+ * @param {Detox.DetoxConfig} globalConfig
+ * @param {Detox.DetoxConfigurationOverrides} localConfig
+ * @param {Detox.DetoxInitOptions} userParams
+ */
+function composeBehaviorConfig({
+  cliConfig,
+  globalConfig,
+  localConfig,
+  userParams
+}) {
   return _.chain({})
     .defaultsDeep(
       {
@@ -17,8 +28,8 @@ function composeBehaviorConfig({ cliConfig, detoxConfig, deviceConfig, userParam
           reinstallApp: negateDefined(userParams.reuse),
         },
       },
-      deviceConfig.behavior,
-      detoxConfig.behavior,
+      localConfig.behavior,
+      globalConfig.behavior,
       {
         init: {
           exposeGlobals: true,

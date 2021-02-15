@@ -1,21 +1,21 @@
 const path = require('path');
 const os = require('os');
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 describe('loadExternalConfig', () => {
   const DIR_PACKAGEJSON = path.join(__dirname, '__mocks__/configuration/packagejson');
   const DIR_PRIORITY = path.join(__dirname, '__mocks__/configuration/priority');
 
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
   let loadExternalConfig;
 
   beforeEach(() => {
-    errorBuilder = new DetoxConfigErrorBuilder();
+    errorComposer = new DetoxConfigErrorComposer();
 
     loadExternalConfig = (opts) => require('./loadExternalConfig')({
       ...opts,
-      errorBuilder,
+      errorComposer,
     });
   });
 
@@ -50,7 +50,7 @@ describe('loadExternalConfig', () => {
     const configPath = path.join(DIR_PRIORITY, 'non-existent.json');
 
     await expect(loadExternalConfig({ configPath })).rejects.toThrowError(
-      errorBuilder.noConfigurationAtGivenPath()
+      errorComposer.noConfigurationAtGivenPath()
     );
   });
 

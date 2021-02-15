@@ -2,7 +2,7 @@ const tempfile = require('tempfile');
 const actions = require('./actions/actions');
 const invoke = require('../invoke');
 const sleep = require('../utils/sleep');
-const { validOneDeviceAndSession } = require('../configuration/configurations.mock');
+const { validSession } = require('../configuration/configurations.mock');
 
 describe('Client', () => {
   let WebSocket;
@@ -13,9 +13,7 @@ describe('Client', () => {
   let sessionConfig;
 
   beforeEach(() => {
-    sessionConfig = {
-      ...validOneDeviceAndSession.session,
-    };
+    sessionConfig = { ...validSession };
 
     jest.mock('../utils/logger');
     WebSocket = jest.mock('./AsyncWebSocket');

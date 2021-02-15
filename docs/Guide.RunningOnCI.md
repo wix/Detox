@@ -14,14 +14,25 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
 
 ```json
 "detox": {
-  "configurations": {
-    "ios.sim.release": {
-      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
-      "type": "ios.simulator",
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator"
       "device": {
         "type": "iPhone 12 Pro Max"
       }
+    }
+  },
+  "apps": {
+    "ios.release": {
+      "type": "ios.app",
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+    }
+  },
+  "configurations": {
+    "ios.sim.release": {
+      "device": "simulator",
+      "app": "ios.release"
     }
   }
 }

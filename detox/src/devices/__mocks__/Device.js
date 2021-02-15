@@ -1,5 +1,14 @@
 const Deferred = require('../../utils/Deferred');
+const Device = jest.requireActual('../Device');
 const FakeDevice = jest.genMockFromModule('../Device');
+
+FakeDevice.useRealConstructor = () => {
+  FakeDevice.mockImplementationOnce((...args) => {
+    const device = new FakeDevice();
+    Object.assign(device, new Device(...args));
+    return device;
+  });
+};
 
 FakeDevice.setInfiniteMethod = (methodName) => {
   FakeDevice.mockImplementationOnce(() => {

@@ -3,7 +3,7 @@ jest.mock('../utils/argparse');
 const _ = require('lodash');
 const os = require('os');
 const path = require('path');
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 describe('composeDetoxConfig', () => {
   let args;
@@ -12,11 +12,11 @@ describe('composeDetoxConfig', () => {
   let deviceConfig;
   let userParams;
 
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
 
   beforeEach(() => {
-    errorBuilder = new DetoxConfigErrorBuilder();
+    errorComposer = new DetoxConfigErrorComposer();
 
     args = {};
     detoxConfig = {};
@@ -39,13 +39,13 @@ describe('composeDetoxConfig', () => {
         argv: {
           'config-path': path.join(__dirname, '__mocks__/configuration/priority/empty.js'),
         },
-      })).rejects.toThrowError(/no device configurations/);
+      })).rejects.toThrowError(/are no configurations in/);
     });
 
     it('should throw an error if no config is found at all', async () => {
       await expect(configuration.composeDetoxConfig({
         cwd: os.homedir(),
-      })).rejects.toThrowError(errorBuilder.noConfigurationSpecified());
+      })).rejects.toThrowError(errorComposer.noConfigurationSpecified());
     });
 
     it('should return a complete Detox config merged with the file configuration', async () => {
@@ -78,13 +78,14 @@ describe('composeDetoxConfig', () => {
             another: {
               type: 'ios.simulator',
               device: 'iPhone X',
+              binaryPath: 'path/to/app',
             },
           },
         }
       });
 
       expect(config).toMatchObject({
-        errorBuilder: {
+        errorComposer: {
           configurationName: 'another',
           filepath: path.join(__dirname, '__mocks__/configuration/packagejson/package.json'),
         },

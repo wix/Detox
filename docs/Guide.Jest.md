@@ -66,14 +66,25 @@ A typical Detox configuration in `.detoxrc.json` file looks like:
 {
   "testRunner": "jest",
   "runnerConfig": "e2e/config.json",
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator"
+      "device": {
+        "type": "iPhone 12 Pro Max"
+      }
+    }
+  },
+  "apps": {
+    "ios.release": {
+      "type": "ios.app",
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "build": "<...xcodebuild command...>",
+    }
+  },
   "configurations": {
     "ios.sim.release": {
-      "type": "ios.simulator",
-      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "build": "...",
-      "device": {
-        "type": "iPhone 11 Pro"
-      }
+      "device": "simulator",
+      "app": "ios.release"
     }
   }
 }

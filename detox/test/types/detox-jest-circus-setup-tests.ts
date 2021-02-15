@@ -67,6 +67,49 @@ beforeAll(async () => {
         },
       },
     },
+    devices: {
+      ios: {
+        type: 'ios.simulator',
+        device: {
+          name: 'iPhone 12-Detox',
+          os: 'iOS 100.500',
+        },
+      },
+      android: {
+        type: 'android.emulator',
+        device: {
+          avdName: 'Pixel_200',
+        },
+        utilBinaryPaths: [
+          'testButler.apk'
+        ],
+      },
+    },
+    apps: {
+      ios: {
+        type: 'ios.app',
+        bundleId: 'com.example',
+        binaryPath: 'path/to/app',
+        build: 'echo IOS',
+        launchArgs: {
+          some: 1,
+          arg: '2',
+          obj: {},
+        },
+      },
+      android: {
+        type: 'android.apk',
+        bundleId: 'com.example',
+        binaryPath: 'path/to/app',
+        testBinaryPath: 'path/to/test-app',
+        build: 'echo IOS',
+        launchArgs: {
+          some: 1,
+          arg: '2',
+          obj: {},
+        },
+      },
+    },
     configurations: {
       "ios.none": {
         type: "ios.none",
@@ -147,7 +190,23 @@ beforeAll(async () => {
         device: {
           integ: "stub"
         }
-      }
+      },
+      "aliased.ios": {
+        device: "ios",
+        app: "ios",
+        session: {
+          debugSynchronization: 0,
+        },
+      },
+      "aliased.android": {
+        device: "android",
+        app: "android",
+        artifacts: {
+          plugins: {
+            log: 'all'
+          }
+        },
+      },
     }
   }, {
     initGlobals: false,
