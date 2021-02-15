@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
+	<img alt="Detox" width=380 src="docs/img/DetoxLogo.png"/>
 </p>
 <h1 align="center">
   Detox
@@ -8,8 +8,9 @@
 <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
 <p align="center">
-<img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif"/>
+<img alt="Demo" src="docs/img/Detox.gif"/>
 </p>
+
 
 
 ---
