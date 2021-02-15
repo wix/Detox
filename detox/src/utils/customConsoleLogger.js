@@ -46,7 +46,7 @@ function overrideConsoleMethods(console, bunyanLogger) {
   if (!console.__detox_log__) {
     const log = bunyanLogger;
 
-    override(console, 'log', log.debug.bind(log));
+    override(console, 'log', log.info.bind(log));
     override(console, 'warn', log.warn.bind(log));
     override(console, 'trace', log.trace.bind(log));
     override(console, 'error', log.error.bind(log));
