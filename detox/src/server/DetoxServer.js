@@ -16,7 +16,7 @@ class DetoxServer {
     });
     this.sessions = {};
     this.standalone = standalone;
-    logger.info(`server listening on localhost:${this.wss.options.port}...`);
+    logger.debug(`server listening on localhost:${this.wss.options.port}...`);
     this._setup();
   }
 

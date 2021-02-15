@@ -6,6 +6,7 @@ const bunyanDebugStream = require('bunyan-debug-stream');
 const argparse = require('./argparse');
 const temporaryPath = require('../artifacts/utils/temporaryPath');
 const customConsoleLogger = require('./customConsoleLogger');
+const isRunningInBand = !!global.DETOX_CLI || argparse.getArgValue('maxWorkers') == '1';
 
 function adaptLogLevelName(level) {
   switch (level) {
@@ -35,8 +36,8 @@ function tryOverrideConsole(logger, global) {
 function createPlainBunyanStream({ logPath, level }) {
   const options = {
     showDate: false,
-    showLoggerName: true,
-    showPid: true,
+    showLoggerName: !isRunningInBand,
+    showPid: !isRunningInBand,
     showMetadata: false,
     basepath: __dirname,
     out: process.stderr,
