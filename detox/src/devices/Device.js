@@ -5,107 +5,29 @@ const { traceCall } = require('../utils/trace');
 
 class Device {
   constructor({
+    appsConfig,
     behaviorConfig,
     deviceConfig,
     deviceDriver,
     emitter,
-    sessionConfig
+    sessionConfig,
+    runtimeErrorComposer,
   }) {
+    this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
+    this._errorComposer = runtimeErrorComposer;
+
+    this._currentApp = null;
+    this._cachedAppLaunchArgs = null;
+    this._deviceId = undefined;
     this._processes = {};
-    this._launchArgs = new LaunchArgs(deviceConfig.launchArgs);
+
     this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
-  }
-
-  async prepare() {
-    await this.deviceDriver.prepare();
-
-    this._deviceId = await traceCall('acquireDevice', () =>
-      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name));
-    this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
-  }
-
-  async launchApp(params = {}, bundleId = this._bundleId) {
-    return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
-  }
-
-  async _doLaunchApp(params, bundleId) {
-    const deviceId = this._deviceId;
-    const payloadParams = ['url', 'userNotification', 'userActivity'];
-    const hasPayload = this._assertHasSingleParam(payloadParams, params);
-    const newInstance = params.newInstance !== undefined
-      ? params.newInstance
-      : this._processes[bundleId] == null;
-
-    if (params.delete) {
-      await this._terminateApp();
-      await this._reinstallApp();
-    } else if (newInstance) {
-      await this._terminateApp();
-    }
-
-    const baseLaunchArgs = {
-      ...this._launchArgs.get(),
-      ...params.launchArgs,
-    };
-
-    if (params.url) {
-      baseLaunchArgs['detoxURLOverride'] = params.url;
-      if (params.sourceApp) {
-        baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
-      }
-    } else if (params.userNotification) {
-      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
-    } else if (params.userActivity) {
-      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
-    }
-
-    if (params.permissions) {
-      await this.deviceDriver.setPermissions(deviceId, bundleId, params.permissions);
-    }
-
-    if (params.disableTouchIndicators) {
-      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
-    }
-
-    if (this._isAppInBackground(params, bundleId)) {
-      if (hasPayload) {
-        await this.deviceDriver.deliverPayload({...params, delayPayload: true});
-      }
-    }
-
-    let processId;
-    if (this._behaviorConfig.launchApp === 'manual') {
-      processId = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
-    } else {
-      processId = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
-      await this.deviceDriver.waitUntilReady();
-      await this.deviceDriver.waitForActive();
-    }
-    this._processes[bundleId] = processId;
-
-    await this._emitter.emit('appReady', {
-      deviceId,
-      bundleId,
-      pid: processId,
-    });
-
-    if(params.detoxUserNotificationDataURL) {
-      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
-    }
-
-    if(params.detoxUserActivityDataURL) {
-      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
-    }
-  }
-
-  get appLaunchArgs() {
-    return this._launchArgs;
   }
 
   get id() {
@@ -120,42 +42,52 @@ class Device {
     return this._deviceConfig.type;
   }
 
-  async takeScreenshot(name) {
-    if (!name) {
-      throw new Error('Cannot take a screenshot with an empty name.');
+  get appLaunchArgs() {
+    if (!this._cachedAppLaunchArgs) {
+      this._cachedAppLaunchArgs = new LaunchArgs(this._getCurrentApp().launchArgs);
     }
 
-    return this.deviceDriver.takeScreenshot(this._deviceId, name);
+    return this._cachedAppLaunchArgs;
   }
 
-  async captureViewHierarchy(name = 'capture') {
-    return this.deviceDriver.captureViewHierarchy(this._deviceId, name);
-  }
+  async prepare() {
+    await this.deviceDriver.prepare();
 
-  _createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
-    const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
-    baseLaunchArgs[launchKey] = payloadFilePath;
-    //`params` will be used later for `predeliverPayload`, so remove the actual notification and add the file URL
-    delete params[key];
-    params[launchKey] = payloadFilePath;
-  }
+    this._deviceId = await traceCall('acquireDevice', () =>
+      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device));
 
-  _isAppInBackground(params, bundleId) {
-    return !params.delete && !params.newInstance && this._processes[bundleId];
-  }
-
-  _assertHasSingleParam(singleParams, params) {
-    let paramsCounter = 0;
-
-    singleParams.forEach((item) => {
-      if(params[item]) {
-        paramsCounter += 1;
-      }
-    });
-    if (paramsCounter > 1) {
-      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
+    const appAliases = Object.keys(this._appsConfig);
+    if (appAliases.length === 1) {
+      await this.selectApp(appAliases[0]);
     }
-    return (paramsCounter === 1);
+  }
+
+  async selectApp(name) {
+    if (name === undefined) {
+      throw this._errorComposer.cantSelectEmptyApp();
+    }
+
+    if (this._currentApp) {
+      await this.terminateApp();
+    }
+
+    if (name === null) { // Internal use to unselect the app
+      this._currentApp = null;
+      return;
+    }
+
+    const appConfig = this._appsConfig[name];
+    if (!appConfig) {
+      throw this._errorComposer.cantFindApp(name);
+    }
+
+    this._currentApp = appConfig;
+    this._cachedAppLaunchArgs = null;
+    await this._inferBundleIdFromBinary();
+  }
+
+  async launchApp(params = {}, bundleId = this._bundleId) {
+    return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
   }
 
   /**
@@ -166,6 +98,18 @@ class Device {
       params['newInstance'] = true;
     }
     await this.launchApp(params, bundleId);
+  }
+
+  async takeScreenshot(name) {
+    if (!name) {
+      throw new Error('Cannot take a screenshot with an empty name.');
+    }
+
+    return this.deviceDriver.takeScreenshot(this._deviceId, name);
+  }
+
+  async captureViewHierarchy(name = 'capture') {
+    return this.deviceDriver.captureViewHierarchy(this._deviceId, name);
   }
 
   async sendToHome() {
@@ -205,13 +149,19 @@ class Device {
   async terminateApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.terminate(this._deviceId, _bundleId);
+    this._processes[_bundleId] = undefined;
   }
 
   async installApp(binaryPath, testBinaryPath) {
-    const _binaryPath = binaryPath || this._deviceConfig.binaryPath;
-    const _testBinaryPath = testBinaryPath || this._deviceConfig.testBinaryPath;
-    await traceCall('appInstall', () =>
-      this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath));
+    await traceCall('appInstall', () => {
+      const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
+
+      return this.deviceDriver.installApp(
+        this._deviceId,
+        currentApp.binaryPath,
+        currentApp.testBinaryPath
+      );
+    });
   }
 
   async uninstallApp(bundleId) {
@@ -267,15 +217,6 @@ class Device {
     await this.deviceDriver.clearKeychain(this._deviceId);
   }
 
-  async _sendPayload(key, params) {
-    const payloadFilePath = this.deviceDriver.createPayloadFile(params);
-    const payload = {
-      [key]: payloadFilePath,
-    };
-    await this.deviceDriver.deliverPayload(payload, this._deviceId);
-    this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
-  }
-
   async sendUserActivity(params) {
     await this._sendPayload('detoxUserActivityDataURL', params);
   }
@@ -305,7 +246,8 @@ class Device {
   }
 
   async _cleanup() {
-    await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+    const bundleId = this._currentApp && this._currentApp.bundleId;
+    await this.deviceDriver.cleanup(this._deviceId, bundleId);
   }
 
   async pressBack() {
@@ -324,6 +266,124 @@ class Device {
     await this.deviceDriver.resetStatusBar(this._deviceId);
   }
 
+  get _bundleId() {
+    return this._getCurrentApp().bundleId;
+  }
+
+  _getCurrentApp() {
+    if (!this._currentApp) {
+      throw this._errorComposer.appNotSelected();
+    }
+
+    return this._currentApp;
+  }
+
+  async _doLaunchApp(params, bundleId) {
+    const deviceId = this._deviceId;
+    const payloadParams = ['url', 'userNotification', 'userActivity'];
+    const hasPayload = this._assertHasSingleParam(payloadParams, params);
+    const newInstance = params.newInstance !== undefined
+      ? params.newInstance
+      : this._processes[bundleId] == null;
+
+    if (params.delete) {
+      await this.terminateApp(bundleId);
+      await this.uninstallApp();
+      await this.installApp();
+    } else if (newInstance) {
+      await this.terminateApp(bundleId);
+    }
+
+    const baseLaunchArgs = {
+      ...this._currentApp.launchArgs,
+      ...params.launchArgs,
+    };
+
+    if (params.url) {
+      baseLaunchArgs['detoxURLOverride'] = params.url;
+      if (params.sourceApp) {
+        baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
+      }
+    } else if (params.userNotification) {
+      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
+    } else if (params.userActivity) {
+      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
+    }
+
+    if (params.permissions) {
+      await this.deviceDriver.setPermissions(deviceId, bundleId, params.permissions);
+    }
+
+    if (params.disableTouchIndicators) {
+      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+    }
+
+    if (this._isAppRunning(bundleId) && hasPayload) {
+      await this.deviceDriver.deliverPayload({...params, delayPayload: true});
+    }
+
+    let processId;
+    if (this._behaviorConfig.launchApp === 'manual') {
+      processId = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    } else {
+      processId = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      await this.deviceDriver.waitUntilReady();
+      await this.deviceDriver.waitForActive();
+    }
+    this._processes[bundleId] = processId;
+
+    await this._emitter.emit('appReady', {
+      deviceId,
+      bundleId,
+      pid: processId,
+    });
+
+    if(params.detoxUserNotificationDataURL) {
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
+    }
+
+    if(params.detoxUserActivityDataURL) {
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
+    }
+  }
+
+  async _sendPayload(key, params) {
+    const payloadFilePath = this.deviceDriver.createPayloadFile(params);
+    const payload = {
+      [key]: payloadFilePath,
+    };
+    await this.deviceDriver.deliverPayload(payload, this._deviceId);
+    this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
+  }
+
+  _createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
+    const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
+    baseLaunchArgs[launchKey] = payloadFilePath;
+    //`params` will be used later for `predeliverPayload`, so remove the actual notification and add the file URL
+    delete params[key];
+    params[launchKey] = payloadFilePath;
+  }
+
+  _isAppRunning(bundleId) {
+    return this._processes[bundleId] != null;
+  }
+
+  _assertHasSingleParam(singleParams, params) {
+    let paramsCounter = 0;
+
+    singleParams.forEach((item) => {
+      if(params[item]) {
+        paramsCounter += 1;
+      }
+    });
+
+    if (paramsCounter > 1) {
+      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
+    }
+
+    return (paramsCounter === 1);
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,
@@ -336,14 +396,12 @@ class Device {
     return launchArgs;
   }
 
-  async _terminateApp() {
-    await this.deviceDriver.terminate(this._deviceId, this._bundleId);
-    this._processes[this._bundleId] = undefined;
-  }
+  async _inferBundleIdFromBinary() {
+    const { binaryPath, bundleId } = this._currentApp;
 
-  async _reinstallApp() {
-    await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-    await this.deviceDriver.installApp(this._deviceId, this._deviceConfig.binaryPath, this._deviceConfig.testBinaryPath);
+    if (!bundleId) {
+      this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
+    }
   }
 }
 

@@ -10,11 +10,17 @@ const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
 const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 const ArtifactPathBuilder = require('../artifacts/utils/ArtifactPathBuilder');
 
+/**
+ * @param {*} cliConfig
+ * @param {string} configurationName
+ * @param {Detox.DetoxConfig} globalConfig
+ * @param {Detox.DetoxConfigurationOverrides} localConfig
+ */
 function composeArtifactsConfig({
   cliConfig,
   configurationName,
-  deviceConfig,
-  detoxConfig,
+  localConfig,
+  globalConfig,
 }) {
   const artifactsConfig = _.defaultsDeep(
     extendArtifactsConfig({
@@ -28,8 +34,8 @@ function composeArtifactsConfig({
         uiHierarchy: cliConfig.captureViewHierarchy,
       },
     }),
-    extendArtifactsConfig(deviceConfig.artifacts),
-    extendArtifactsConfig(detoxConfig.artifacts),
+    extendArtifactsConfig(localConfig.artifacts),
+    extendArtifactsConfig(globalConfig.artifacts),
     extendArtifactsConfig(false),
   );
 

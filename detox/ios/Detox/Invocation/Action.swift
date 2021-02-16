@@ -260,7 +260,8 @@ class LongPressAction : Action {
 
 class MultiTapAction : Action {
 	override func perform(on element: Element) -> [String: Any]? {
-		let taps = params!.first as! Int
+		let some = params!.first as Any
+		let taps = some as! Int
 		
 		element.tap(numberOfTaps: taps)
 		
@@ -570,7 +571,8 @@ class AdjustSliderAction : Action {
 
 class SetPickerAction : Action {
 	override func perform(on element: Element) -> [String: Any]? {
-		let column = params![0] as! Int
+		let some = params![0] as Any
+		let column = some as! Int
 		let value = params![1] as! String
 		
 		element.setComponent(column, toValue: value)

@@ -42,10 +42,6 @@ class IosDriver extends DeviceDriverBase {
     return await this.client.setOrientation({orientation});
   }
 
-  validateDeviceConfig(config) {
-    //no validation
-  }
-
   getPlatform() {
     return 'ios';
   }

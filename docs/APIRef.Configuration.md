@@ -18,20 +18,22 @@ Option 6 means the configuration is available in `json` format inside the projec
 
 Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a working reference.
 
-### Device Configuration
+### Individual Configurations
+
+> NOTE: The configuration format has been significantly updated since [18.3.1](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) in a backward-compatible way.
+Click [here](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) to the reference on the former configuration format.
 
 `configurations` holds all the device/app-oriented configurations. To select a specific configuration when running Detox in command-line (i.e. `detox build`, `detox test`), use the `--configuration` argument.
 Note: If there is only one configuration in `configurations`, Detox will default to it.
 
 |Configuration Params|Details|
 |---|---|
-|`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
-|`binaryPath`| Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path) |
-|`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
-|`utilBinaryPaths`| (optional, Android only): An **array** of relative paths of _utility_ app (apk) binary-files to preinstall on the tested devices - once before the test execution begins.<br />Note: these are not effected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
-|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator, `{ "avdName": "Pixel_2_API_29" }` for Android emulator or `{ "adbName": "<pattern>" }` for attached Android device with name matching the regex. |
-|`build`| **[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience. |
-|`launchArgs`| **[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](APIRef.LaunchArgs.md). |
+|`device`| Device config (object) or an alias pointing to an already defined device in `"devices"` dictionary (see below). |
+|`app`| App config (object) or an alias pointing to an already defined application in `"apps"` dictionary (see below). |
+|`apps`| Same as the `app`, but that is an array form used for multi-app testing. Mutually exclusive with the `app` property. |
+|`artifacts`| Overrides to the artifacts config. See [Artifacts guide](#artifacts-configuration). |
+|`behavior`| Overrides to the behavior config. See [Behavior guide](#behavior-configuration). |
+|`session`| Overrides to the session config. See [Session guide](#server-configuration). |
 
 **Example:**
 
@@ -40,53 +42,207 @@ Note: If there is only one configuration in `configurations`, Detox will default
   // ...
   "detox": {
     // ...
+    "devices" {
+      // ... see below ...
+    },
+    "apps": {
+      // ... see below ...
+    },
     "session": {
-      "debugSynchronization": 20000
+      // ... see below ...
     },
     "configurations": {
       "ios.sim.debug": {
-        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-        "type": "ios.simulator",
-        "device": { /* one of these or a combination of them */
-          "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
-          "type": "iPhone 11 Pro",
-          "name": "MySim",
-          "os": "iOS 13.0",
-        }
+        "device": "simulator",
+        "app": "ios.debug"
       },
       "android.emu.release": {
-        "binaryPath": "...",
-        "build": "...",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "Pixel_2_API_29",
-        }
+        "device": "emulator",
+        "app": "android.release"
       },
       "android.att.release": {
-        "binaryPath": "...",
-        "build": "...",
-        "type": "android.attached",
-        "device": {
-          "adbName": "YOGAA1BBB412",
-        }
+        "device": "android.attached",
+        "app": "android.release"
       },
       "android.genymotion.release": {
-        "binaryPath": "...",
-        "build": "...",
-        "type": "android.attached",
+        "device": "android.genycloud",
+        "app": "android.release"
+      }
+    }
+  }
+}
+```
+
+### Device configurations
+
+The format of Detox config allows you to define inside it multiple device configs in a key-value manner, i.e.:
+
+```js
+{
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator"
+      "device": { /* one of these or a combination of them */
+        "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
+        "type": "iPhone 11 Pro",
+        "name": "MySim",
+        "os": "iOS 13.0",
+      }
+    },
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_2_API_29",
+      },
+      "utilBinaryPaths": ["optional-property-with/path/to/test-butler-or-anything-else.apk"]
+    },
+    "android.attached": {
+      "type": "android.attached",
+      "device": {
+        "adbName": "YOGAA1BBB412",
+      }
+    },
+    "android.genycloud": {
+      type: "android.genycloud",
+      device: {
+        recipeUUID: "11111111-2222-3333-4444-555555555555",
+        // or recipeName: "MyRecipeName",
+      }
+    }
+  },
+  "apps": {
+    // ... see below ...
+  },
+  "configurations": {
+    // ... see above ...
+  },
+}
+```
+
+A device config can have the following params:
+
+|Configuration Params|Details|
+|---|---|
+|`type`| Mandatory property to discern device types: `ios.simulator`, `android.emulator`, `android.attached`, `android.genycloud`, `ios.none`, etc. |
+|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator, `{ "avdName": "Pixel_2_API_29" }` for Android emulator or `{ "adbName": "<pattern>" }` for attached Android device with name matching the regex. |
+|`utilBinaryPaths`| (optional, Android only): An **array** of relative paths of _utility_ app (apk) binary-files to preinstall on the tested devices - once before the test execution begins.<br />Note: these are not effected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
+
+Also, in the Detox `configurations` you can use the device configs as-is, without aliasing:
+
+```js
+{
+  "configurations": {
+    "ios.sim.debug": {
+      "device": {
+        "type": "ios.simulator"
         "device": {
-          "adbName": "^((1?\\d?\\d|25[0-5]|2[0-4]\\d)(\\.|:)){4}[0-9]{4}",
+          "type": "iPhone 12 Pro",
         }
       },
-    }
+      "app": 'alias-to-app',
+      // ...
+    },
+  }
+}
+```
+
+### Apps configurations
+
+The format of Detox config allows you to define inside it multiple app configs in a key-value manner, i.e.:
+
+```js
+{
+  "devices": {
+    // ... see above ...
+  },
+  "apps": {
+    "ios.debug": {
+      "type": "ios.app",
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
+    },
+    "android.release": {
+      "type": "android.apk",
+      "binaryPath": "path/to/myApp.apk",
+      "build": "..."
+    },
+  },
+  "configurations": {
+    // ... see above ...
+  },
+}
+```
+
+An app config can have the following params:
+
+|Configuration Params|Details|
+|---|---|
+|`type`| Mandatory property to discern app types: `ios.app`, `android.apk`. |
+|`name`| Use only when working with multiple apps within the same configuration. See an example below. |
+|`binaryPath`| Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path) |
+|`build`| **[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience. |
+|`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
+|`launchArgs`| **[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](APIRef.LaunchArgs.md). |
+
+To work with multiple apps within the same configuration you should be giving each app its name, e.g.:
+
+```js
+{
+  apps: {
+    'driver.ios.release': {
+      type: 'ios.app',
+      name: 'driver',
+      binaryPath: 'path/to/driver.app',
+    },
+    'passenger.ios.release': {
+      type: 'ios.app',
+      name: 'passenger',
+      binaryPath: 'path/to/passenger.app',
+    },
+  },
+  configurations: {
+    'ios.release': {
+      device: 'simulator',
+      apps: ['driver', 'passenger'],
+    },
+  },
+}
+```
+
+After that, you can change the current app in your tests via [device API](APIRef.DeviceObjectAPI.md):
+
+```js
+await device.selectApp('driver');
+await device.launchApp();
+// ... run tests ...
+await device.selectApp('passenger');
+await device.launchApp();
+// ... run tests ...
+```
+
+Similar to device configs, any app config can be inlined as well:
+
+```js
+{
+  "configurations": {
+    "ios.sim.debug": {
+      "device": "simulator",
+      "app": {
+        "type": "ios.app",
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
+      },
+    },
   }
 }
 ```
 
 ### Artifacts Configuration
 
-Detox can store artifacts such as transient screenshots and device logs. You can control artifacts collection via Detox configuration:
+See more details in [APIRef.Artifacts.md](APIRef.Artifacts.md).
+
+Detox can store artifacts such as transient screenshots and device logs.
+You can control artifacts collection via Detox configuration:
 
 ```js
 {
@@ -117,8 +273,7 @@ Detox can store artifacts such as transient screenshots and device logs. You can
   },
   "configurations": {
     "ios.sim.release": {
-      "binaryPath": "/path/to/app",
-      "device": { /* ... */ },
+      // ...
       "artifacts": {
         "rootDir": ".artifacts/ios",
         "plugins": {
@@ -144,6 +299,19 @@ Below you can see mappings between the string presets and the corresponding obje
 | all     | `{ "enabled": true }                                       ` |
 | failing | `{ "enabled": true, "keepOnlyFailedTestsArtifacts": true } ` |
 | manual  | `{ "enabled": true, "shouldTakeAutomaticSnapshots": false }` |
+
+There is also a shortcut to disable artifacts for a specific configuration:
+
+```js
+{
+  "configurations": {
+    "ios.no-artifacts": {
+      // ...
+      "artifacts": false
+    }
+  }
+}
+```
 
 ### Behavior Configuration
 
@@ -181,6 +349,25 @@ exported Detox interface:
 
 ```js
 const { by, device, expect, element } = require('detox');
+```
+
+Also, you can override the behavior in specific Detox configurations:
+
+```js
+{
+  "behavior": {
+    // ... global behavior ...
+  },
+  "configurations": {
+    "ios.manual": {
+      "behavior": {
+        // ... overrides ...
+        "launchApp": "manual"
+        // ... overrides ...
+      }
+    }
+  }
+}
 ```
 
 ### Server Configuration

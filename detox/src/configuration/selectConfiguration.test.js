@@ -1,16 +1,17 @@
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
+const { apkWithBinary, androidEmulator } = require('./configurations.mock');
 
 describe('selectConfiguration', () => {
   let selectConfiguration;
-  /** @type {DetoxConfigErrorBuilder} */
-  let errorBuilder;
-  let configLocation, detoxConfig, cliConfig;
+  /** @type {DetoxConfigErrorComposer} */
+  let errorComposer;
+  let configLocation, globalConfig, cliConfig;
 
   beforeEach(() => {
     configLocation = '/etc/detox/config.js';
-    detoxConfig = {};
+    globalConfig = {};
     cliConfig = {};
-    errorBuilder = new DetoxConfigErrorBuilder().setDetoxConfig(detoxConfig);
+    errorComposer = new DetoxConfigErrorComposer().setDetoxConfig(globalConfig);
 
     selectConfiguration = require('./selectConfiguration');
   });
@@ -18,61 +19,75 @@ describe('selectConfiguration', () => {
   const select = () => selectConfiguration({
     configLocation,
     cliConfig,
-    detoxConfig,
-    errorBuilder,
+    globalConfig,
+    errorComposer,
   });
 
   it('should throw if there are no .configurations in Detox config', () => {
     configLocation = '';
-    delete detoxConfig.configurations;
-    expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
+    delete globalConfig.configurations;
+    expect(select).toThrowError(errorComposer.noConfigurationsInside());
   });
 
   it('should throw if there is an empty .configurations object in Detox config and its location is unknown', () => {
     configLocation = '';
-    detoxConfig.configurations = {};
-    expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
+    globalConfig.configurations = {};
+    expect(select).toThrowError(errorComposer.noConfigurationsInside());
   });
 
   it('should return the name of a single configuration', () => {
-    detoxConfig.configurations = { single: {} };
+    globalConfig.configurations = { single: { ...apkWithBinary, ...androidEmulator } };
     expect(select()).toBe('single');
   });
 
   it('should throw if a configuration with the specified name does not exist', () => {
-    detoxConfig.configurations = { single: {} };
-    detoxConfig.selectedConfiguration = 'double';
+    globalConfig.configurations = { single: { ...apkWithBinary, ...androidEmulator } };
+    globalConfig.selectedConfiguration = 'double';
 
-    expect(select).toThrow(); // generating a correct error expectation in errorBuilder
+    expect(select).toThrow(); // generating a correct error expectation in errorComposer
 
-    jest.spyOn(errorBuilder, 'setConfigurationName');
-    expect(select).toThrow(errorBuilder.noDeviceConfigurationWithGivenName());
-    expect(errorBuilder.setConfigurationName).toHaveBeenCalledWith('double');
+    jest.spyOn(errorComposer, 'setConfigurationName');
+    expect(select).toThrow(errorComposer.noConfigurationWithGivenName());
+    expect(errorComposer.setConfigurationName).toHaveBeenCalledWith('double');
+  });
+
+  it('should throw if a configuration with the specified name is empty ', () => {
+    globalConfig.configurations = { single: {} };
+    globalConfig.selectedConfiguration = 'single';
+
+    expect(select).toThrow(); // generating a correct error expectation in errorComposer
+
+    jest.spyOn(errorComposer, 'setConfigurationName');
+    expect(select).toThrow(errorComposer.configurationShouldNotBeEmpty());
+    expect(errorComposer.setConfigurationName).toHaveBeenCalledWith('single');
   });
 
   it('should throw if there is more than 1 configuration, and no one is specified', () => {
     configLocation = '';
-    detoxConfig.configurations = { config1: {}, config2: {} };
-    expect(select).toThrow(errorBuilder.cantChooseDeviceConfiguration());
+    globalConfig.configurations = {
+      config1: { ...apkWithBinary, ...androidEmulator },
+      config2: { ...apkWithBinary, ...androidEmulator }
+    };
+    expect(select).toThrow(errorComposer.cantChooseConfiguration());
   });
 
   describe('priority', () => {
     beforeEach(() => {
-      detoxConfig.configurations = {
-        cli: {},
-        config: {},
+      globalConfig.configurations = {
+        cli: { type: 'ios.simulator' },
+        config: { type: 'android.emulator' },
       };
     });
 
     it('should be given to CLI --configuration (first)', () => {
-      detoxConfig.selectedConfiguration = 'config';
+      globalConfig.selectedConfiguration = 'config';
       cliConfig.configuration = 'cli';
 
       expect(select()).toBe('cli');
     });
 
     it('should be given to config file value (second)', () => {
-      detoxConfig.selectedConfiguration = 'config';
+      globalConfig.selectedConfiguration = 'config';
 
       expect(select()).toBe('config');
     });

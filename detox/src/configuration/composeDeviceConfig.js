@@ -1,81 +1,129 @@
 const _ = require('lodash');
-const parse = require('yargs/yargs').Parser;
 
-function validateType({ errorBuilder, rawDeviceConfig }) {
-  if (!rawDeviceConfig || !rawDeviceConfig.type) {
-    throw errorBuilder.missingConfigurationType();
-  }
-}
+/**
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
+ * @param {Detox.DetoxConfig} opts.globalConfig
+ * @param {Detox.DetoxConfiguration} opts.localConfig
+ * @param {*} opts.cliConfig
+ * @returns {Detox.DetoxDeviceConfig}
+ */
+function composeDeviceConfig(opts) {
+  const { localConfig, cliConfig } = opts;
 
-function getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig }) {
-  const device = cliConfig.deviceName || rawDeviceConfig.device || rawDeviceConfig.name;
-  if (_.isEmpty(device)) {
-    throw errorBuilder.missingDeviceProperty();
-  }
-  return device;
-}
+  const deviceConfig = localConfig.type
+    ? composeDeviceConfigFromPlain(opts)
+    : composeDeviceConfigFromAliased(opts);
 
-function validateAppLaunchArgs({ errorBuilder, rawDeviceConfig }) {
-  if (!rawDeviceConfig.launchArgs) {
-    return;
+  if (cliConfig.deviceName) {
+    deviceConfig.device = cliConfig.deviceName;
   }
 
-  if (!_.isObject(rawDeviceConfig.launchArgs)) {
-    throw errorBuilder.malformedAppLaunchArgs();
-  }
-
-  const nonStringPropertyName = _.chain(rawDeviceConfig.launchArgs)
-    .entries()
-    .find(([key, value]) => value != null && !_.isString(value))
-    .thru((entry) => entry ? entry[0] : null)
-    .value()
-
-  if (nonStringPropertyName) {
-    throw errorBuilder.malformedAppLaunchArgsProperty(nonStringPropertyName);
-  }
-}
-
-function validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig }) {
-  if (rawDeviceConfig.utilBinaryPaths && !_.isArray(rawDeviceConfig.utilBinaryPaths)) {
-    throw errorBuilder.malformedUtilBinaryPaths();
-  }
-}
-
-function mergeAppLaunchArgsFromCLI(deviceConfig, cliConfig) {
-  if (!cliConfig.appLaunchArgs) {
-    return;
-  }
-
-  deviceConfig.launchArgs = _.chain({})
-    .thru(() => parse(cliConfig.appLaunchArgs, {
-      configuration: {
-        'short-option-groups': false,
-      },
-    }))
-    .omit(['_', '--'])
-    .defaults(deviceConfig.launchArgs)
-    .omitBy(value => value === false)
-    .value();
+  return deviceConfig;
 }
 
 /**
- *
- * @param {DetoxConfigErrorBuilder} errorBuilder
- * @param {*} rawDeviceConfig
- * @param {*} cliConfig
- * @returns {*}
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
+ * @param {Detox.DetoxConfig} opts.globalConfig
+ * @param {Detox.DetoxPlainConfiguration} opts.localConfig
+ * @returns {Detox.DetoxDeviceConfig}
  */
-function composeDeviceConfig({ errorBuilder, rawDeviceConfig, cliConfig }) {
-  validateType({ errorBuilder, rawDeviceConfig });
-  validateAppLaunchArgs({ errorBuilder, rawDeviceConfig });
-  mergeAppLaunchArgsFromCLI(rawDeviceConfig, cliConfig);
+function composeDeviceConfigFromPlain(opts) {
+  const { errorComposer, localConfig } = opts;
 
-  rawDeviceConfig.device = getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig });
-  delete rawDeviceConfig.name;
+  const type = localConfig.type;
+  const device = localConfig.device || localConfig.name;
+  const utilBinaryPaths = localConfig.utilBinaryPaths;
 
+  const deviceConfig = type in EXPECTED_DEVICE_MATCHER_PROPS
+    ? { type, device, utilBinaryPaths }
+    : { ...localConfig };
 
-  validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig });
-  return rawDeviceConfig;
+  validateDeviceConfig({ deviceConfig, errorComposer });
+
+  return deviceConfig;
 }
+
+/**
+ * @param {DetoxConfigErrorComposer} opts.errorComposer
+ * @param {Detox.DetoxConfig} opts.globalConfig
+ * @param {Detox.DetoxAliasedConfiguration} opts.localConfig
+ * @returns {Detox.DetoxDeviceConfig}
+ */
+function composeDeviceConfigFromAliased(opts) {
+  const { errorComposer, globalConfig, localConfig } = opts;
+
+  /** @type {Detox.DetoxDeviceConfig} */
+  let deviceConfig;
+
+  const isAliased = typeof localConfig.device === 'string';
+
+  if (isAliased) {
+    if (_.isEmpty(globalConfig.devices)) {
+      throw errorComposer.thereAreNoDeviceConfigs(localConfig.device);
+    } else {
+      deviceConfig = globalConfig.devices[localConfig.device];
+    }
+
+    if (!deviceConfig) {
+      throw errorComposer.cantResolveDeviceAlias(localConfig.device);
+    }
+  } else {
+    if (!localConfig.device) {
+      throw errorComposer.deviceConfigIsUndefined();
+    }
+
+    deviceConfig = localConfig.device;
+  }
+
+  validateDeviceConfig({
+    deviceConfig,
+    errorComposer,
+    deviceAlias: isAliased ? localConfig.device : undefined
+  });
+
+  return { ...deviceConfig };
+}
+
+/**
+ * @param {DetoxConfigErrorComposer} errorComposer
+ * @param {Detox.DetoxDeviceConfig} deviceConfig
+ * @param {String | undefined} deviceAlias
+ */
+function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
+  if (!deviceConfig.type) {
+    throw errorComposer.missingDeviceType(deviceAlias);
+  }
+
+  if (deviceConfig.utilBinaryPaths) {
+    if (!Array.isArray(deviceConfig.utilBinaryPaths)) {
+      throw errorComposer.malformedUtilBinaryPaths(deviceAlias);
+    }
+
+    if (deviceConfig.utilBinaryPaths.some(s => !_.isString(s))) {
+      throw errorComposer.malformedUtilBinaryPaths(deviceAlias);
+    }
+  }
+
+  if (_.isString(deviceConfig.device)) {
+    return;
+  }
+
+  const expectedProperties = EXPECTED_DEVICE_MATCHER_PROPS[deviceConfig.type];
+  if (!expectedProperties) {
+    return;
+  }
+
+  if (_.isEmpty(_.pick(deviceConfig.device, expectedProperties))) {
+    throw errorComposer.missingDeviceMatcherProperties(deviceAlias, expectedProperties);
+  }
+}
+
+const EXPECTED_DEVICE_MATCHER_PROPS = {
+  'ios.none': null,
+  'ios.simulator': ['type', 'name', 'id'],
+  'android.attached': ['adbName'],
+  'android.emulator': ['avdName'],
+  'android.genycloud': ['recipeUUID', 'recipeName'],
+};
 
 module.exports = composeDeviceConfig;

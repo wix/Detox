@@ -1,8 +1,9 @@
 const _ = require('lodash');
-const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 const collectCliConfig = require('./collectCliConfig');
 const loadExternalConfig = require('./loadExternalConfig');
 const composeArtifactsConfig = require('./composeArtifactsConfig');
+const composeAppsConfig = require('./composeAppsConfig');
 const composeBehaviorConfig = require('./composeBehaviorConfig');
 const composeDeviceConfig = require('./composeDeviceConfig');
 const composeRunnerConfig = require('./composeRunnerConfig');
@@ -15,72 +16,87 @@ async function composeDetoxConfig({
   override,
   userParams,
 }) {
-  const errorBuilder = new DetoxConfigErrorBuilder();
+  const errorComposer = new DetoxConfigErrorComposer();
   const cliConfig = collectCliConfig({ argv });
   const findupResult = await loadExternalConfig({
-    errorBuilder,
+    errorComposer,
     configPath: cliConfig.configPath,
     cwd,
   });
 
   const externalConfig = findupResult && findupResult.config;
-  errorBuilder.setDetoxConfigPath(findupResult && findupResult.filepath);
-  errorBuilder.setDetoxConfig(externalConfig);
+  errorComposer.setDetoxConfigPath(findupResult && findupResult.filepath);
+  errorComposer.setDetoxConfig(externalConfig);
 
-  const detoxConfig = _.merge({}, externalConfig, override);
-  if (_.isEmpty(detoxConfig) && !externalConfig) {
+  /** @type {Detox.DetoxConfig} */
+  const globalConfig = _.merge({}, externalConfig, override);
+  if (_.isEmpty(globalConfig) && !externalConfig) {
     // Advise to create .detoxrc somewhere
-    throw errorBuilder.noConfigurationSpecified();
+    throw errorComposer.noConfigurationSpecified();
   }
+  errorComposer.setDetoxConfig(globalConfig);
 
-  errorBuilder.setDetoxConfig(detoxConfig);
-  const configName = selectConfiguration({
-    errorBuilder,
-    detoxConfig,
-    cliConfig,
-  });
+  const { configurations } = globalConfig;
 
   const runnerConfig = composeRunnerConfig({
+    globalConfig,
     cliConfig,
-    detoxConfig,
   });
 
-  const deviceConfig = composeDeviceConfig({
+  const configurationName = selectConfiguration({
+    errorComposer,
+    globalConfig,
     cliConfig,
-    errorBuilder,
-    rawDeviceConfig: detoxConfig.configurations[configName],
-    configurationName: configName,
+  });
+
+  const localConfig = configurations[configurationName];
+
+  const deviceConfig = composeDeviceConfig({
+    errorComposer,
+    globalConfig,
+    localConfig,
+    cliConfig,
+  });
+
+  const appsConfig = composeAppsConfig({
+    errorComposer,
+    configurationName,
+    deviceConfig,
+    globalConfig,
+    localConfig,
+    cliConfig,
   });
 
   const artifactsConfig = composeArtifactsConfig({
+    configurationName,
+    globalConfig,
+    localConfig,
     cliConfig,
-    configurationName: configName,
-    detoxConfig,
-    deviceConfig,
   });
 
   const behaviorConfig = composeBehaviorConfig({
+    globalConfig,
+    localConfig,
+    userParams,
     cliConfig,
-    detoxConfig,
-    deviceConfig,
-    userParams
   });
 
   const sessionConfig = await composeSessionConfig({
+    errorComposer,
+    globalConfig,
+    localConfig,
     cliConfig,
-    detoxConfig,
-    deviceConfig,
-    errorBuilder,
   });
 
   return {
     artifactsConfig,
+    appsConfig,
     behaviorConfig,
     cliConfig,
     deviceConfig,
     runnerConfig,
     sessionConfig,
-    errorBuilder,
+    errorComposer,
   };
 }
 

@@ -17,17 +17,28 @@ and add a configuration similar to this one:
 
 ```json
 {
-  "configurations": {
-    "android.manual": {
+  "devices": {
+    "emulator": {
       "type": "android.emulator",
-      "binaryPath": "<path to your app binary built before>",
       "device": {
         "avdName": "<e.g., Pixel_API_28>"
-      },
+      }
+    }
+  },
+  "apps": {
+    "android.debug": {
+      "type": "android.apk",
+      "binaryPath": "<path to your app binary built before>"
+    }
+  },
+  "configurations": {
+    "android.manual": {
+      "device": "emulator",
+      "app": "android.debug",
       "behavior": {
         "launchApp": "manual"
       }
-    },
+    }
   }
 }
 ```

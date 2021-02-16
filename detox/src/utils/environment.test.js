@@ -268,7 +268,7 @@ describe('Environment', () => {
         const executable = 'gmsaas';
         process.env.PATH = path.join(tempSdkPath, 'somewhere');
         await genExec(`somewhere/${executable}`);
-        expect(Environment.getGmsaasPath()).toMatch(new RegExp(`${tempSdkPath}.+somewhere.${executable}`));
+        expect(Environment.getGmsaasPath()).toMatch(path.join(tempSdkPath, `somewhere/${executable}`));
       });
 
       it('should throw error if gmsaas is not in $PATH', async () => {

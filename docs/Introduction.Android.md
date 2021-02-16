@@ -31,24 +31,35 @@ Whether you've selected to apply the configuration in a  `.detoxrc.json` or bund
 
 ```json
 {
-  "configurations": {
-      "android.emu.debug": {
-          "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-          "build":
-            "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
-          "type": "android.emulator",
-          "device": {
-            "avdName": "Pixel_API_28"
-          }
-      },
-      "android.emu.release": {
-          "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-          "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
-          "type": "android.emulator",
-          "device": {
-            "avdName": "Pixel_API_28"
-          }
+  "devices": {
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_API_28"
       }
+    }
+  },
+  "apps": {
+    "android.debug": {
+      "type": "android.apk",
+      "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+      "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd .."
+    },
+    "android.release": {
+      "type": "android.apk",
+      "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+      "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
+    }
+  },
+  "configurations": {
+    "android.emu.debug": {
+      "device": "emulator",
+      "app": "android.debug"
+    },
+    "android.emu.release": {
+      "device": "emulator",
+      "app": "android.release"
+    }
   }
 }
 ```
@@ -74,24 +85,36 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
 
 ```json
 "detox" : {
-    "configurations": {
-      "android.emu.beta.debug": {
-        "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
-        "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "Pixel_API_28"
-        }
-      },
-      "android.emu.beta.release": {
-        "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
-        "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "Pixel_API_28"
-        }
+  "devices": {
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_API_28"
       }
     }
+  },
+  "apps": {
+    "android.beta.debug": {
+      "type": "android.apk",
+      "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
+      "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd .."
+    },
+    "android.beta.release": {
+      "type": "android.apk",
+      "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
+      "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd .."
+    }
+  },
+  "configurations": {
+    "android.emu.beta.debug": {
+      "device": "emulator",
+      "app": "android.beta.debug"
+    },
+    "android.emu.beta.release": {
+      "device": "emulator",
+      "app": "android.beta.release"
+    }
+  }
 }
 ```
 
@@ -164,11 +187,9 @@ _Note: most guides advise of defining a global `kotlinVersion` constant - as in 
 ***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
 
 
-
 ### 5. Create a Detox-Test Class
 
 Add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill as in [the detox example app for RN](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java). **Don't forget to change the package name to your project's**.
-
 
 
 ### 6. Enable clear-text (unencrypted) traffic for Detox
@@ -280,13 +301,11 @@ Assuming you have the APK available in the system, you can dynamically have Deto
 
 ```json
 {
-  "configuration": {
-    "android.emu.release": {
-      "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
-      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.1.0.apk"],
-      "build": "...",
+  "devices": {
+    "emulator.oss": {
       "type": "android.emulator",
-      ...
+      "device": "...",
+      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.1.0.apk"],
     }
   }
 }
@@ -471,4 +490,16 @@ detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=app not connected, cann
 
 You may see an error message like this: `detox[53027] ERROR: Error: 'android/app/build/outputs/androidTest/x86_64/debug/app-x86_64-debug-androidTest.apk' could not be found, did you run './gradlew assembleAndroidTest'?`
 
-You can use `testBinaryPath` in your configuration to override `binaryPath` and point directly at your test APK.
+You can use `testBinaryPath` in your app configuration to override `binaryPath` and point directly at your test APK, e.g.:
+
+```json
+{
+  "apps": {
+    "android.app.withCustomTestBinaryPath": {
+      "type": "android.apk",
+      "binaryPath": "path/to/app.apk",
+      "testBinaryPath": "path/to/app-androidTest.apk",
+    }
+  }
+}
+```

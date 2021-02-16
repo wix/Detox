@@ -11,23 +11,25 @@ class DetoxRuntimeError extends Error {
     const formattedMessage = _.compact([
       message,
       hint && `HINT: ${hint}`,
-      _.isObject(debugInfo) ? inspectObj(debugInfo, inspectOptions) : debugInfo,
+      _.isObject(debugInfo)
+        ? DetoxRuntimeError.inspectObj(debugInfo, inspectOptions)
+        : debugInfo,
     ]).join('\n\n');
 
     super(formattedMessage);
     this.name = 'DetoxRuntimeError';
   }
-}
 
-function inspectObj(obj, options) {
-  return util.inspect(obj, {
-    colors: false,
-    compact: false,
-    depth: 0,
-    showHidden: false,
+  static inspectObj(obj, options) {
+    return util.inspect(obj, {
+      colors: false,
+      compact: false,
+      depth: 0,
+      showHidden: false,
 
-    ...options,
-  });
+      ...options,
+    });
+  }
 }
 
 module.exports = DetoxRuntimeError;

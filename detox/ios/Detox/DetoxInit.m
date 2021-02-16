@@ -18,12 +18,12 @@
 
 - (void)syncSystemDidBecomeIdle
 {
-	
+	NSLog(@"🟢 System idle");
 }
 
 - (void)syncSystemDidBecomeBusy
 {
-	
+	NSLog(@"🔴 System busy");
 }
 
 - (void)syncSystemDidStartTrackingEventWithIdentifier:(NSString*)identifier description:(NSString*)description objectDescription:(nullable NSString*)objectDescription additionalDescription:(nullable NSString*)additionalDescription

@@ -15,6 +15,7 @@ module.exports.builder = {
     demandOption: true,
     describe: 'test runner name (supported values: mocha, jest)',
     group: 'Configuration:',
+    default: 'jest',
   }
 };
 
@@ -85,7 +86,7 @@ function createMochaFolderE2E() {
   createFile('.detoxrc.json', JSON.stringify({
     testRunner: 'mocha',
     runnerConfig: 'e2e/.mocharc.json',
-    configurations: createDefaultConfigurations(),
+    ...createDefaultConfigurations(),
   }, null, 2))
 }
 
@@ -99,24 +100,44 @@ function createJestFolderE2E() {
   createFile('.detoxrc.json', JSON.stringify({
     testRunner: 'jest',
     runnerConfig: 'e2e/config.json',
-    configurations: createDefaultConfigurations(),
+    ...createDefaultConfigurations(),
   }, null, 2))
 }
 
 function createDefaultConfigurations() {
   return {
-    ios: {
-      type: 'ios.simulator',
-      binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
-      device: {
-        type: 'iPhone 11',
+    apps: {
+      ios: {
+        type: 'ios.app',
+        binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
+      },
+      android: {
+        type: 'android.apk',
+        binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
       },
     },
-    android: {
-      type: 'android.emulator',
-      binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
-      device: {
-        avdName: 'Pixel_2_API_29',
+    devices: {
+      simulator: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 11',
+        },
+      },
+      emulator: {
+        type: 'android.emulator',
+        device: {
+          avdName: 'Pixel_3a_API_30_x86',
+        },
+      },
+    },
+    configurations: {
+      ios: {
+        device: 'simulator',
+        app: 'ios',
+      },
+      android: {
+        device: 'emulator',
+        app: 'android',
       },
     },
   };
