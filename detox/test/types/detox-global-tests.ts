@@ -38,8 +38,9 @@ describe("Test", () => {
             .whileElement(by.id("ScrollView630"))
             .scroll(50, "down");
 
-        await web.expect(
-            web.getWebView(by.id("webview")).element(web.by.cssSelector("#cssSel"), 2)
-            ).toExist();
+        await web.element(by.htmlId("btnSave")).tap();
+        await expect(
+            web(by.id("webview")).element(by.cssSelector("#cssSel"), 2)
+        ).toExist();
     });
 });
