@@ -18,13 +18,13 @@ describe('webExpect', () => {
       typeText: jest.fn(),
     };
 
-    const AndroidExpect = require('./expect');
+    const AndroidExpect = require('./AndroidExpect');
     expect = new AndroidExpect({
       invocationManager: mockExecutor,
       emitter,
     });
 
-    const AndroidWebExpect = require('./webExpect');
+    const AndroidWebExpect = require('./AndroidWebExpect');
     webExpect = new AndroidWebExpect({
       invocationManager: mockExecutor,
       deviceDriver,

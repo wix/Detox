@@ -1,5 +1,5 @@
-const invoke = require('../invoke');
-const DetoxWebMatcherApi = require('./espressoapi/web/DetoxWebAtomMatcher');
+const invoke = require('../../invoke');
+const DetoxWebMatcherApi = require('../espressoapi/web/DetoxWebAtomMatcher');
 
 class WebMatcher {
 

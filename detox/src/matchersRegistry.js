@@ -5,8 +5,8 @@ function resolve(device, opts) {
   let WebViewMatcherClass;
   switch (device.getPlatform()) {
     case 'android':
-      MatcherClass = require('./android/expect');
-      WebViewMatcherClass = require('./android/webExpect');
+      MatcherClass = require('./android/AndroidExpect');
+      WebViewMatcherClass = require('./android/AndroidWebExpect');
       break;
 
     case 'ios':

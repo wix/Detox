@@ -1,5 +1,5 @@
-const invoke = require('../invoke');
-const DetoxMatcherApi = require('./espressoapi/DetoxMatcher');
+const invoke = require('../../invoke');
+const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 
 class Matcher {
   withAncestor(matcher) {

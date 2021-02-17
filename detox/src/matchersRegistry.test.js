@@ -14,11 +14,11 @@ describe('Detox matchers registry', () => {
   let resolveModuleFromPath;
   let uut;
   beforeEach(() => {
-    jest.mock('./android/expect');
-    AndroidExpect = require('./android/expect');
+    jest.mock('./android/AndroidExpect');
+    AndroidExpect = require('./android/AndroidExpect');
 
-    jest.mock('./android/webExpect');
-    AndroidWebExpect = require('./android/webExpect');
+    jest.mock('./android/AndroidWebExpect');
+    AndroidWebExpect = require('./android/AndroidWebExpect');
 
     jest.mock('./ios/expectTwo');
     IosExpect = require('./ios/expectTwo');

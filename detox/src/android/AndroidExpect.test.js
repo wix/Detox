@@ -12,7 +12,7 @@ describe('expect', () => {
     const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
     emitter = new Emitter();
 
-    const AndroidExpect = require('./expect');
+    const AndroidExpect = require('./AndroidExpect');
     e = new AndroidExpect({
       invocationManager: mockExecutor,
       emitter,
