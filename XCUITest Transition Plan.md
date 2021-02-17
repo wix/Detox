@@ -123,3 +123,5 @@ await permissionElement.tap();
 Challenges with running Detox tests on hardware devices has been documented on the [GitHub issue](https://github.com/wix/Detox/issues/95), specifically in [this comment](https://github.com/wix/Detox/issues/95#issuecomment-448365050). Moving to the XCUITest architecture alleviates many of the issues Detox had before. Since `xcodebuild` is now responsible for launching the test-runner process, it can target hardware devices in addition to simulators. Since the test-runner process is responsible for launching the use process, it can provide the appropriate environment variables that Detox needs in order to inject the Detox framework into the user process.
 
 Not all challenges are solved by XCUITest, however. For simulators, there is [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils), which provide a lot of functionality that is not possible on hardware devices. Some can be alleviated by implementing XCUITest Matchers/Actions, allowing interaction with system prompts, such as permission alerts. But still, many limitations remain.
+
+A tool that might assist is https://github.com/datatheorem/strongarm
