@@ -197,7 +197,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async typeText(text) {
+  async typeText(deviceId, text) {
     return await Promise.resolve('');
   }
 

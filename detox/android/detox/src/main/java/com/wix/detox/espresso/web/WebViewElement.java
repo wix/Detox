@@ -32,7 +32,7 @@ public class WebViewElement {
         return element(webMatcher, 0);
     }
 
-    public WebElement element(Atom<List<ElementReference>> matcher, int index) {
-        return new WebElement(this, matcher, index);
+    public WebElement element(Atom<List<ElementReference>> webMatcher, int index) {
+        return new WebElement(this, webMatcher, index);
     }
 }

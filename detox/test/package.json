@@ -29,7 +29,8 @@
     "@react-native-community/async-storage": "^1.12.0",
     "moment": "^2.24.0",
     "react": "16.11.x",
-    "react-native": "0.62.x"
+    "react-native": "0.62.x",
+    "react-native-webview": "7.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
@@ -43,7 +44,6 @@
     "lodash": "^4.14.1",
     "nyc": "^15.1.0",
     "pngjs": "^3.4.0",
-    "react-native-webview": "7.0.1",
     "typescript": "^4.1.3"
   },
   "jest-junit": {

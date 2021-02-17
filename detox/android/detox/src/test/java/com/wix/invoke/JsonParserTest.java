@@ -70,7 +70,7 @@ public class JsonParserTest {
         Invocation matcher = new Invocation(new ClassTarget("com.wix.detox.espresso.web.DetoxWebAtomMatcher"), "matcherForId", "textInput");
         Invocation element = new Invocation(new InvocationTarget(getWebView), "element", matcher, 0);
         Invocation tap = new Invocation(new InvocationTarget(element), "tap");
-        assertThat(parse("targetInvocationEspressoWebDetox.json")).isEqualToComparingFieldByFieldRecursively(tap);
+        assertThat(parse("targetInvocationEspressoWebDetox.json")).usingRecursiveComparison().isEqualTo(tap);
     }
 
     @Test
