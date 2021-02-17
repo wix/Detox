@@ -1,7 +1,11 @@
 const _ = require('lodash');
 
-class LaunchArgs {
-  constructor(launchArgs = {}) {
+class LaunchArgsEditor {
+  constructor(launchArgs) {
+    if (!launchArgs) {
+      throw new Error('Cannot instantiate a launch-arguments editor with no reference arguments-object!');
+    }
+
     this._args = launchArgs;
   }
 
@@ -30,4 +34,4 @@ class LaunchArgs {
   }
 }
 
-module.exports = LaunchArgs;
+module.exports = LaunchArgsEditor;
