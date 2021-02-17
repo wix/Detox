@@ -1,12 +1,6 @@
+const simpleAtoms = require('../espressoapi/web/simpleAtoms');
 const WebElementApi = require('../espressoapi/web/WebElement');
 const WebExpectApi = require('../espressoapi/web/WebExpect');
-const { WebViewElement } = require('../core/web');
-
-const {
-  selectElementContents,
-  moveCursorToEnd,
-  focus
-} = require('../espressoapi/web/simpleAtoms');
 
 class WebAction {
 }
@@ -84,21 +78,21 @@ class WebGetTitleAction extends WebAction {
 class WebFocusAction extends WebAction {
   constructor(element) {
     super();
-    this._call = WebElementApi.runScript(element._call, focus);
+    this._call = WebElementApi.runScript(element._call, simpleAtoms.focus);
   }
 }
 
 class WebSelectAllText extends WebAction {
   constructor(element) {
     super();
-    this._call = WebElementApi.runScript(element._call, selectElementContents);
+    this._call = WebElementApi.runScript(element._call, simpleAtoms.selectElementContents);
   }
 }
 
 class WebMoveCursorEnd extends WebAction {
   constructor(element) {
     super();
-    this._call = WebElementApi.runScript(element._call, moveCursorToEnd);
+    this._call = WebElementApi.runScript(element._call, simpleAtoms.moveCursorToEnd);
   }
 }
 
@@ -139,7 +133,6 @@ module.exports = {
   WebFocusAction,
   WebSelectAllText,
   WebMoveCursorEnd,
-  WebViewElement,
   WebExistsAssertion,
   WebHasTextAssertion,
 };

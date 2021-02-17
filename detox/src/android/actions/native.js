@@ -2,6 +2,7 @@ const invoke = require('../../invoke');
 const DetoxActionApi = require('../espressoapi/DetoxAction');
 const ViewActionsApi = require('../espressoapi/ViewActions');
 const DetoxViewActionsApi = require('../espressoapi/DetoxViewActions');
+
 const { assertEnum, assertNormalized } = require('../../utils/assertArgument');
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
