@@ -1,7 +1,7 @@
-const invoke = require('../../../invoke');
-const EspressoWebDetoxApi = require('../../espressoapi/web/EspressoWebDetox');
-const { WebExistsAssertion, WebHasTextAssertion } = require('../../actions/web');
-const { WebAssertionInteraction } = require('../../interactions/web');
+const invoke = require('../../invoke');
+const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
+const { WebExistsAssertion, WebHasTextAssertion } = require('../actions/web');
+const { WebAssertionInteraction } = require('../interactions/web');
 
 class WebExpect {
   constructor(invocationManager) {

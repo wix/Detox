@@ -1,6 +1,6 @@
 const DetoxAssertionApi = require('../espressoapi/DetoxAssertion');
 const EspressoDetoxApi = require('../espressoapi/EspressoDetox');
-const { Matcher } = require('../matchers/native');
+const { NativeMatcher } = require('../core/NativeMatcher');
 const { ScrollAmountStopAtEdgeAction } = require('../actions/native');
 
 function call(maybeAFunction) {
@@ -59,10 +59,10 @@ class WaitForInteraction extends Interaction {
 class WaitForActionInteractionBase extends Interaction {
   constructor(invocationManager, element, matcher, searchMatcher) {
     super(invocationManager);
-    //if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    //if (!(matcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    if (!(searchMatcher instanceof Matcher))
-      throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
+    //if (!(element instanceof NativeElement)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid NativeElement, got ${typeof element}`);
+    //if (!(matcher instanceof NativeMatcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid NativeMatcher, got ${typeof matcher}`);
+    if (!(searchMatcher instanceof NativeMatcher))
+      throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid NativeMatcher, got ${typeof searchMatcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;

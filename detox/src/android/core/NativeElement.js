@@ -1,12 +1,12 @@
 const fs = require('fs-extra');
 const path = require('path');
 const tempfile = require('tempfile');
-const invoke = require('../../../invoke');
-const DetoxMatcherApi = require('../../espressoapi/DetoxMatcher');
-const { ActionInteraction } = require('../../interactions/native')
-const actions = require('../../actions/native')
+const invoke = require('../../invoke');
+const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
+const { ActionInteraction } = require('../interactions/native')
+const actions = require('../actions/native')
 
-class Element {
+class NativeElement {
   constructor(invocationManager, emitter, matcher) {
     this._invocationManager = invocationManager;
     this._emitter = emitter;
@@ -15,7 +15,7 @@ class Element {
   }
 
   _selectElementWithMatcher(matcher) {
-    // if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
+    // if (!(matcher instanceof NativeMatcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid NativeMatcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
   }
 
@@ -108,5 +108,5 @@ class Element {
 }
 
 module.exports = {
-  Element,
+  NativeElement,
 };

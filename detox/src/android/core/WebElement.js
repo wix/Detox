@@ -1,8 +1,9 @@
-const invoke = require('../../../invoke');
-const EspressoWebDetoxApi = require('../../espressoapi/web/EspressoWebDetox');
-const WebViewElementApi = require('../../espressoapi/web/WebViewElement');
-const { ActionInteraction } = require('../../interactions/web');
-const actions = require('../../actions/web');
+const invoke = require('../../invoke');
+const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
+const WebViewElementApi = require('../espressoapi/web/WebViewElement');
+const { ActionInteraction } = require('../interactions/web');
+const actions = require('../actions/web');
+const { WebMatcher } = require('./WebMatcher');
 
 class WebElement {
   constructor(invocationManager, deviceDriver, webViewElement, matcher, index) {
@@ -87,7 +88,11 @@ class WebViewElement {
   }
 
   element(webMatcher, index = 0) {
-    return new WebElement(this._invocationManager, this._deviceDriver, this, webMatcher, index);
+    if (webMatcher instanceof WebMatcher) {
+      return new WebElement(this._invocationManager, this._deviceDriver, this, webMatcher, index);
+    }
+
+    throw new Error(`element() argument is invalid, expected a web matcher, but got ${typeof element}`);
   }
 }
 

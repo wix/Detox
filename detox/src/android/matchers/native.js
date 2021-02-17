@@ -1,98 +1,57 @@
 const invoke = require('../../invoke');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
+const { NativeMatcher } = require('../core/NativeMatcher');
 
-class Matcher {
-  withAncestor(matcher) {
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithAncestor(this, matcher));
-    return this;
-  }
-
-  withDescendant(matcher) {
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithDescendant(this, matcher));
-    return this;
-  }
-
-  and(matcher) {
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnd(this, matcher));
-    return this;
-  }
-
-  or(matcher) {
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForOr(this, matcher));
-    return this;
-  }
-
-  get not() {
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNot(this));
-    return this;
-  }
-
-  _avoidProblematicReactNativeElements() {
-    /*
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherAvoidingProblematicReactNativeElements:', _originalMatcherCall);
-    */
-    return this;
-  }
-  _extendToDescendantScrollViews() {
-    /*
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
-    */
-    return this;
-  }
-}
-
-class LabelMatcher extends Matcher {
+class LabelMatcher extends NativeMatcher {
   constructor(value) {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
   }
 }
 
-class IdMatcher extends Matcher {
+class IdMatcher extends NativeMatcher {
   constructor(value) {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(value));
   }
 }
 
-class TypeMatcher extends Matcher {
+class TypeMatcher extends NativeMatcher {
   constructor(value) {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(value));
   }
 }
 
-class VisibleMatcher extends Matcher {
+class VisibleMatcher extends NativeMatcher {
   constructor() {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible());
   }
 }
 
-class ExistsMatcher extends Matcher {
+class ExistsMatcher extends NativeMatcher {
   constructor() {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotNull());
   }
 }
 
-class TextMatcher extends Matcher {
+class TextMatcher extends NativeMatcher {
   constructor(value) {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
   }
 }
 
-class ValueMatcher extends Matcher {
+class ValueMatcher extends NativeMatcher {
   constructor(value) {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
   }
 }
 
-class ToggleMatcher extends Matcher {
+class ToggleMatcher extends NativeMatcher {
   constructor(toggleState) {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForToggleable(toggleState));
@@ -101,7 +60,7 @@ class ToggleMatcher extends Matcher {
 
 // TODO
 // Please be aware, that this is just a dummy matcher
-class TraitsMatcher extends Matcher {
+class TraitsMatcher extends NativeMatcher {
   constructor(value) {
     super();
     if ((typeof value !== 'object') || (!value instanceof Array)) throw new Error(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
@@ -111,7 +70,6 @@ class TraitsMatcher extends Matcher {
 }
 
 module.exports = {
-  Matcher,
   LabelMatcher,
   IdMatcher,
   TypeMatcher,

@@ -7,7 +7,6 @@ describe('Detox matchers registry', () => {
   };
 
   let AndroidExpect;
-  let AndroidWebExpect;
   let IosExpect;
   let device;
   let deviceDriver;
@@ -16,9 +15,6 @@ describe('Detox matchers registry', () => {
   beforeEach(() => {
     jest.mock('./android/AndroidExpect');
     AndroidExpect = require('./android/AndroidExpect');
-
-    jest.mock('./android/AndroidWebExpect');
-    AndroidWebExpect = require('./android/AndroidWebExpect');
 
     jest.mock('./ios/expectTwo');
     IosExpect = require('./ios/expectTwo');
@@ -51,9 +47,8 @@ describe('Detox matchers registry', () => {
     };
 
     withAndroidDevice();
-    const { matchers, webMatchers } = uut.resolve(device, opts);
+    const { matchers } = uut.resolve(device, opts);
     expect(matchers).toBeInstanceOf(AndroidExpect);
-    expect(webMatchers).toBeInstanceOf(AndroidWebExpect);
   });
 
   it('should init the Android-matchers with opts', () => {

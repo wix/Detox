@@ -1,13 +1,13 @@
-const { WaitForInteraction } = require('../../interactions/native')
-const matchers = require('../../matchers/native')
+const { WaitForInteraction } = require('../interactions/native')
+const matchers = require('../matchers/native')
 
-class WaitFor {
+class NativeWaitFor {
   constructor(invocationManager) {
     this._invocationManager = invocationManager;
   }
 }
 
-class WaitForElement extends WaitFor {
+class NativeWaitForElement extends NativeWaitFor {
   constructor(invocationManager, element) {
     super(invocationManager);
     this._element = element;
@@ -68,6 +68,6 @@ class WaitForElement extends WaitFor {
 }
 
 module.exports = {
-  WaitFor,
-  WaitForElement,
+  NativeWaitFor,
+  NativeWaitForElement,
 };

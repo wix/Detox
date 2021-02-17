@@ -1,7 +1,7 @@
-const { MatcherAssertionInteraction } = require('../../interactions/native')
-const matchers = require('../../matchers/native')
+const { MatcherAssertionInteraction } = require('../interactions/native')
+const matchers = require('../matchers/native')
 
-class Expect {
+class NativeExpect {
   constructor(invocationManager) {
     this._invocationManager = invocationManager;
   }
@@ -12,7 +12,7 @@ class Expect {
   }
 }
 
-class ExpectElement extends Expect {
+class NativeExpectElement extends NativeExpect {
   constructor(invocationManager, element) {
     super(invocationManager);
     this._element = element;
@@ -72,6 +72,6 @@ class ExpectElement extends Expect {
 }
 
 module.exports = {
-  Expect,
-  ExpectElement,
+  NativeExpect,
+  NativeExpectElement,
 };
