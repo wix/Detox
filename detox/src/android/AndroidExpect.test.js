@@ -3,7 +3,7 @@ describe('expect', () => {
 
   let mockExecutor;
   let emitter;
-  let deviceDriver;
+  let device;
 
   beforeEach(() => {
     jest.mock('tempfile');
@@ -14,14 +14,14 @@ describe('expect', () => {
     const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
     emitter = new Emitter();
 
-    deviceDriver = {
+    device = {
       typeText: jest.fn(),
     };
 
     const AndroidExpect = require('./AndroidExpect');
     e = new AndroidExpect({
       invocationManager: mockExecutor,
-      deviceDriver,
+      device,
       emitter,
     });
   });
@@ -345,17 +345,17 @@ describe('expect', () => {
 
       it('typeText with isContentEditable=false', async () => {
         await e.web.element(e.by.htmlId('id')).typeText('text', false);
-        global.expect(deviceDriver.typeText).not.toHaveBeenCalled();
+        global.expect(device.typeText).not.toHaveBeenCalled();
       });
 
       it('typeText with isContentEditable=true', async () => {
         await e.web.element(e.by.htmlId('id')).typeText('text', true);
-        global.expect(deviceDriver.typeText).toHaveBeenCalled();
+        global.expect(device.typeText).toHaveBeenCalled();
       });
 
       it('typeText default isContentEditable is false', async () => {
         await e.web.element(e.by.htmlId('id')).typeText('text');
-        global.expect(deviceDriver.typeText).not.toHaveBeenCalled();
+        global.expect(device.typeText).not.toHaveBeenCalled();
       });
 
       it('replaceText', async () => {

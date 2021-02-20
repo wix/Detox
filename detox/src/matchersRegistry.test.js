@@ -9,7 +9,6 @@ describe('Detox matchers registry', () => {
   let AndroidExpect;
   let IosExpect;
   let device;
-  let deviceDriver;
   let resolveModuleFromPath;
   let uut;
   beforeEach(() => {
@@ -29,8 +28,6 @@ describe('Detox matchers registry', () => {
       getPlatform: jest.fn(),
     };
 
-    deviceDriver = {};
-
     uut = require('./matchersRegistry');
   });
 
@@ -41,14 +38,10 @@ describe('Detox matchers registry', () => {
     device.type = deviceType;
   }
 
-  it('should resolve Android matchers (native, web)', () => {
-    const opts = {
-      deviceDriver,
-    };
-
+  it('should resolve the Android matchers', () => {
     withAndroidDevice();
-    const { matchers } = uut.resolve(device, opts);
-    expect(matchers).toBeInstanceOf(AndroidExpect);
+    const result = uut.resolve(device);
+    expect(result).toBeInstanceOf(AndroidExpect);
   });
 
   it('should init the Android-matchers with opts', () => {
@@ -59,9 +52,8 @@ describe('Detox matchers registry', () => {
 
   it('should resolve the iOS matchers', () => {
     withIosDevice();
-    const {matchers, webMatchers} = uut.resolve(device);
-    expect(matchers).toBeInstanceOf(IosExpect);
-    expect(webMatchers).toBeUndefined();
+    const result = uut.resolve(device);
+    expect(result).toBeInstanceOf(IosExpect);
   });
 
   it('should init the ios-matchers with opts', () => {
@@ -74,9 +66,8 @@ describe('Detox matchers registry', () => {
     const deviceType = './path/to/external/module/index.js';
     withUnknownDevice(deviceType);
 
-    const {matchers, webMatchers} = uut.resolve(device, opts);
-    expect(matchers).toBeInstanceOf(MockExternalModuleExpect);
-    expect(webMatchers).toBeUndefined();
+    const result = uut.resolve(device, opts);
+    expect(result).toBeInstanceOf(MockExternalModuleExpect);
     expect(resolveModuleFromPath).toHaveBeenCalledWith(deviceType);
   });
 });

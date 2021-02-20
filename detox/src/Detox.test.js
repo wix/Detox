@@ -29,8 +29,6 @@ describe('Detox', () => {
   let Detox;
   let detox;
   let lifecycleSymbols;
-  let mockGlobalMatcher;
-  let mockGlobalWebMatcher;
 
   const client = () => Client.mock.instances[0];
   const device = () => _.last(Device.mock.instances);
@@ -61,26 +59,27 @@ describe('Detox', () => {
     matchersRegistry = require('./matchersRegistry');
     Detox = require('./Detox');
     lifecycleSymbols = require('../runners/integration').lifecycle;
-
-    mockGlobalMatcher = jest.fn();
-    mockGlobalWebMatcher = jest.fn();
-    matchersRegistry.resolve.mockReturnValue({
-      matchers: { globalMatcher: mockGlobalMatcher },
-      webMatchers: mockGlobalWebMatcher
-    });
-  });
-
-  afterEach(() => {
-    // cleanup spilled globals after detox.init()
-    delete global.device;
-    delete global.globalMatcher;
-    delete global.web;
   });
 
   describe('when detox.init() is called', () => {
+    let mockGlobalMatcher;
+
     const init = async () => {
       detox = await new Detox(detoxConfig).init();
     };
+
+    beforeEach(() => {
+      mockGlobalMatcher = jest.fn();
+      matchersRegistry.resolve.mockReturnValue({
+        globalMatcher: mockGlobalMatcher,
+      });
+    });
+
+    afterEach(() => {
+      // cleanup spilled globals after detox.init()
+      delete global.device;
+      delete global.globalMatcher;
+    });
 
     describe('', () => {
       beforeEach(init);
@@ -121,16 +120,13 @@ describe('Detox', () => {
         const { emitter } = Device.mock.calls[0][0];
         expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
           invocationManager: invocationManager(),
-          deviceDriver: expect.any(Object),
+          device: device(),
           emitter,
         });
       });
 
       it('should take the matchers from the matchers-registry to Detox', () =>
         expect(detox.globalMatcher).toBe(mockGlobalMatcher));
-
-      it('should take the web matchers from the matchers-registry to Detox.web', () =>
-        expect(detox.web).toBe(mockGlobalWebMatcher));
 
       it('should take device to Detox', () =>
         expect(detox.device).toBe(device()));
@@ -151,9 +147,6 @@ describe('Detox', () => {
 
       it('should expose matchers to global', () =>
         expect(global.globalMatcher).toBe(mockGlobalMatcher));
-
-      it('should expose webMatchers to global', () =>
-        expect(global.web).toBe(mockGlobalWebMatcher));
 
       it('should create artifacts manager', () =>
         expect(ArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig));
@@ -240,9 +233,6 @@ describe('Detox', () => {
 
       it('should not expose matchers to globals', () =>
         expect(global.globalMatcher).toBe(undefined));
-
-      it('should not expose webMatchers to globals', () =>
-        expect(global.web).toBe(undefined));
     });
 
     describe('with behaviorConfig.init.reinstallApp = false', () => {
