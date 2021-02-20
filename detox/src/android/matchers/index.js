@@ -10,12 +10,14 @@ module.exports = {
   type: (value) => new native.TypeMatcher(value),
   value: (value) => new native.ValueMatcher(value),
 
-  className: (value) => new web.ClassNameMatcher(value),
-  cssSelector: (value) => new web.CssSelectorMatcher(value),
-  htmlId: (value) => new web.IdMatcher(value),
-  linkText: (value) => new web.LinkTextMatcher(value),
-  name: (value) => new web.NameMatcher(value),
-  partialLinkText: (value) => new web.PartialLinkTextMatcher(value),
-  tag: (value) => new web.TagNameMatcher(value),
-  xpath: (value) => new web.XPathMatcher(value),
+  html: {
+    id: (value) => new web.IdMatcher(value),
+    className: (value) => new web.ClassNameMatcher(value),
+    selector: (value) => new web.CssSelectorMatcher(value),
+    name: (value) => new web.NameMatcher(value),
+    tag: (value) => new web.TagNameMatcher(value),
+    xpath: (value) => new web.XPathMatcher(value),
+    href: (value) => new web.LinkTextMatcher(value),
+    hrefContains: (value) => new web.PartialLinkTextMatcher(value),
+  },
 };

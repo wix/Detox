@@ -691,68 +691,75 @@ declare global {
             traits(traits: string[]): NativeMatcher;
 
             /**
-             * Find an element on the DOM tree by it's id
+             * Collection of web matchers
+             */
+            readonly html: ByHtmlFacade;
+        }
+
+        interface ByHtmlFacade {
+            /**
+             * Find an element on the DOM tree by its id
              * @param id
              * @example
-             * web.element(by.htmlId('testingh1'))
+             * web.element(by.html.id('testingh1'))
              */
-            htmlId(id: string): WebMatcher;
+            id(id: string): WebMatcher;
 
             /**
-             * Find an element on the DOM tree by it's className
+             * Find an element on the DOM tree by its CSS class
              * @param className
              * @example
-             * web.element(by.className('a'))
+             * web.element(by.html.className('a'))
              */
             className(className: string): WebMatcher;
 
             /**
-             * Find an element on the DOM tree by it's css selector
+             * Find an element on the DOM tree matching the given CSS selector
              * @param cssSelector
              * @example
-             * web.element(by.cssSelector('#cssSelector'))
+             * web.element(by.html.selector('#cssSelector'))
              */
-            cssSelector(cssSelector: string): WebMatcher;
+            selector(cssSelector: string): WebMatcher;
 
             /**
-             * Find an element on the DOM tree by it's name prop
+             * Find an element on the DOM tree by its "name" attribute
              * @param name
              * @example
-             * web.element(by.name('sec_input'))
+             * web.element(by.html.name('sec_input'))
              */
             name(name: string): WebMatcher;
 
             /**
-             * Find an element on the DOM tree by it's xPath
+             * Find an element on the DOM tree by its XPath
              * @param xpath
              * @example
-             * web.element(by.xpath('//*[@id="testingh1-1"]'))
+             * web.element(by.html.xpath('//*[@id="testingh1-1"]'))
              */
             xpath(xpath: string): WebMatcher;
 
             /**
-             * Find an <a> element on the DOM tree by it's link text (href content)
+             * Find an <a> element on the DOM tree by its link text (href content)
              * @param linkText
              * @example
-             * web.element(by.linkText('disney.com'))
+             * web.element(by.html.href('disney.com'))
              */
-            linkText(linkText: string): WebMatcher;
+            href(linkText: string): WebMatcher;
 
             /**
-             * Find an <a> element on the DOM tree by it's partial link text (href content)
-             * @param partialLinkText
+             * Find an <a> element on the DOM tree by its partial link text (href content)
+             * @param linkTextFragment
              * @example
-             * web.element(by.partialLinkText('disney'))
+             * web.element(by.html.hrefContains('disney'))
              */
-            partialLinkText(partialLinkText: string): WebMatcher;
+            hrefContains(linkTextFragment: string): WebMatcher;
 
             /**
-             * Find an element on the DOM tree by it's tag
+             * Find an element on the DOM tree by its tag name
              * @param tag
              * @example
-             * web.element(by.tag('mark'))
+             * web.element(by.html.tag('mark'))
              */
-            tag(tag: string): WebMatcher;
+            tag(tagName: string): WebMatcher;
         }
 
         interface NativeMatcher {
