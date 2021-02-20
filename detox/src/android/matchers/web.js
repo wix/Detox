@@ -1,9 +1,6 @@
-const invoke = require('../invoke');
-const DetoxWebMatcherApi = require('./espressoapi/web/DetoxWebAtomMatcher');
-
-class WebMatcher {
-
-}
+const invoke = require('../../invoke');
+const DetoxWebMatcherApi = require('../espressoapi/web/DetoxWebAtomMatcher');
+const { WebMatcher } = require('../core/WebMatcher');
 
 class IdMatcher extends WebMatcher {
   constructor(id) {
@@ -60,7 +57,6 @@ class TagNameMatcher extends WebMatcher {
     this._call = invoke.callDirectly(DetoxWebMatcherApi.matcherForTagName(tag));
   }
 }
-
 
 module.exports = {
   IdMatcher,
