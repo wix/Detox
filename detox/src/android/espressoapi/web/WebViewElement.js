@@ -19,14 +19,14 @@ class WebViewElement {
       };
     }
 
-    function element3(element, matcher, index) {
+    function element3(element, webMatcher, index) {
       if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
       return {
         target: element,
         method: "element",
         args: [{
           type: "Invocation",
-          value: matcher
+          value: webMatcher
         }, {
           type: "Integer",
           value: index
