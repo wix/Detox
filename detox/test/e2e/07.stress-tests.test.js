@@ -4,6 +4,18 @@ describe('StressTests', () => {
     await element(by.text('Stress')).tap();
   });
 
+  it.only('should handle busy render', async () => {
+    await element(by.text('VirtualizedList Stress')).tap();
+    try {
+      await element(by.id('stressContainer')).tap();
+    } catch (e) {
+      console.log('Hopa');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await element(by.id('stressContainer')).tap();
+      console.log('Now it works');
+    }
+  });
+
   it('should handle tap during busy bridge (one way)', async () => {
     await element(by.text('Bridge OneWay Stress')).tap();
     await element(by.text('Next')).tap();

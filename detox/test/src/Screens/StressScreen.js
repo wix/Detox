@@ -50,6 +50,7 @@ export default class StressScreen extends Component {
         {this.renderTestButton('EventLoop Stress', this.eventLoopStressButtonPressed.bind(this))}
         {this.renderTestButton(`Consecutive Stress ${this.state.counter}`, this.consecutiveStressButtonPressed.bind(this))}
         {this.renderTestButton('Storage Stress', this.storageStressButtonPressed.bind(this))}
+        {this.renderTestButton('VirtualizedList Stress', this.virtualizedListStressPressed.bind(this))}
       </View>
     );
   }
@@ -152,5 +153,9 @@ export default class StressScreen extends Component {
     this.setState({
       phase2: 'StorageStress'
     });
+  }
+
+  async virtualizedListStressPressed() {
+    this.props.setScreen('VirtualizedListStressScreen');
   }
 }
