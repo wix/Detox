@@ -5,6 +5,7 @@ const logger = require('./utils/logger');
 const Deferred = require('./utils/Deferred');
 const Device = require('./devices/Device');
 const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
+const InternalDeviceAPI = require('./devices/InternalDeviceAPI');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const Client = require('./client/Client');
@@ -164,6 +165,11 @@ class Detox {
       sessionConfig,
     });
 
+    const internalDeviceAPI = new InternalDeviceAPI({
+      deviceDriver,
+      getDeviceId: () => this.device && this.device.id,
+    });
+
     this._artifactsManager = new ArtifactsManager(this._artifactsConfig);
     this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
@@ -172,7 +178,7 @@ class Detox {
 
     const matchers = matchersRegistry.resolve(this.device, {
       invocationManager,
-      device: this.device,
+      internalDeviceAPI,
       emitter: this._eventEmitter,
     });
     Object.assign(this, matchers);

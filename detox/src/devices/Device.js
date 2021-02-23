@@ -266,10 +266,6 @@ class Device {
     await this.deviceDriver.resetStatusBar(this._deviceId);
   }
 
-  async typeText(text) {
-    await this.deviceDriver.typeText(this._deviceId, text);
-  }
-
   get _bundleId() {
     return this._getCurrentApp().bundleId;
   }

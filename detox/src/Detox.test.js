@@ -25,6 +25,7 @@ describe('Detox', () => {
   let DetoxServer;
   let matchersRegistry;
   let ArtifactsManager;
+  let InternalDeviceAPI;
   let invoke;
   let Detox;
   let detox;
@@ -59,6 +60,7 @@ describe('Detox', () => {
     matchersRegistry = require('./matchersRegistry');
     Detox = require('./Detox');
     lifecycleSymbols = require('../runners/integration').lifecycle;
+    InternalDeviceAPI = require('./devices/InternalDeviceAPI');
   });
 
   describe('when detox.init() is called', () => {
@@ -120,7 +122,7 @@ describe('Detox', () => {
         const { emitter } = Device.mock.calls[0][0];
         expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
           invocationManager: invocationManager(),
-          device: device(),
+          internalDeviceAPI: expect.any(InternalDeviceAPI),
           emitter,
         });
       });

@@ -7,8 +7,8 @@ const { WebExpectElement } = require('./core/WebExpect');
 const matchers = require('./matchers');
 
 class AndroidExpect {
-  constructor({ invocationManager, device, emitter }) {
-    this._device = device;
+  constructor({ invocationManager, internalDeviceAPI, emitter }) {
+    this._internalDeviceAPI = internalDeviceAPI;
     this._emitter = emitter;
     this._invocationManager = invocationManager;
 
@@ -31,7 +31,7 @@ class AndroidExpect {
   // Matcher can be null only if there is only one webview on the hierarchy tree.
   web(matcher) {
     if (matcher == null || matcher instanceof NativeMatcher) {
-      return new WebViewElement(this._invocationManager, this._device, this._emitter, matcher);
+      return new WebViewElement(this._invocationManager, this._internalDeviceAPI, this._emitter, matcher);
     }
 
     throw new Error(`web() argument is invalid, expected a native matcher, but got ${typeof element}`);

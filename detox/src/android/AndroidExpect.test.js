@@ -3,25 +3,25 @@ describe('AndroidExpect', () => {
 
   let mockExecutor;
   let emitter;
-  let device;
+  let internalDeviceAPI;
 
   beforeEach(() => {
     jest.mock('tempfile');
     jest.mock('fs-extra');
+    jest.mock('../devices/InternalDeviceAPI');
 
     mockExecutor = new MockExecutor();
 
     const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
     emitter = new Emitter();
 
-    device = {
-      typeText: jest.fn(),
-    };
+    const InternalDeviceAPI = require('../devices/InternalDeviceAPI');
+    internalDeviceAPI = new InternalDeviceAPI();
 
     const AndroidExpect = require('./AndroidExpect');
     e = new AndroidExpect({
       invocationManager: mockExecutor,
-      device,
+      internalDeviceAPI,
       emitter,
     });
   });
@@ -345,17 +345,17 @@ describe('AndroidExpect', () => {
 
       it('typeText with isContentEditable=false', async () => {
         await e.web.element(e.by.html.id('id')).typeText('text', false);
-        global.expect(device.typeText).not.toHaveBeenCalled();
+        global.expect(internalDeviceAPI.typeText).not.toHaveBeenCalled();
       });
 
       it('typeText with isContentEditable=true', async () => {
         await e.web.element(e.by.html.id('id')).typeText('text', true);
-        global.expect(device.typeText).toHaveBeenCalled();
+        global.expect(internalDeviceAPI.typeText).toHaveBeenCalled();
       });
 
       it('typeText default isContentEditable is false', async () => {
         await e.web.element(e.by.html.id('id')).typeText('text');
-        global.expect(device.typeText).not.toHaveBeenCalled();
+        global.expect(internalDeviceAPI.typeText).not.toHaveBeenCalled();
       });
 
       it('replaceText', async () => {

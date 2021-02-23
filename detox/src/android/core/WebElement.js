@@ -6,9 +6,9 @@ const { ActionInteraction } = require('../interactions/web');
 const { WebMatcher } = require('./WebMatcher');
 
 class WebElement {
-  constructor(invocationManager, device, webViewElement, matcher, index) {
+  constructor(invocationManager, internalDeviceAPI, webViewElement, matcher, index) {
     this._invocationManager = invocationManager;
-    this._device = device;
+    this._internalDeviceAPI = internalDeviceAPI;
     this._call = invoke.callDirectly(WebViewElementApi.element(webViewElement._call, matcher._call.value, index));
   }
 
@@ -19,7 +19,7 @@ class WebElement {
 
   async typeText(text, isContentEditable = false) {
     if (isContentEditable) {
-      return await this._device.typeText(text);
+      return await this._internalDeviceAPI.typeText(text);
     }
     return await new ActionInteraction(this._invocationManager,  new actions.WebTypeTextAction(this, text)).execute();
   }
@@ -72,9 +72,9 @@ class WebElement {
 }
 
 class WebViewElement {
-  constructor(invocationManager, device, emitter, matcher) {
+  constructor(invocationManager, internalDeviceAPI, emitter, matcher) {
     this._invocationManager = invocationManager;
-    this._device = device;
+    this._internalDeviceAPI = internalDeviceAPI;
     this._emitter = emitter;
     this._matcher = matcher;
 
@@ -89,7 +89,7 @@ class WebViewElement {
 
   element(webMatcher, index = 0) {
     if (webMatcher instanceof WebMatcher) {
-      return new WebElement(this._invocationManager, this._device, this, webMatcher, index);
+      return new WebElement(this._invocationManager, this._internalDeviceAPI, this, webMatcher, index);
     }
 
     throw new Error(`element() argument is invalid, expected a web matcher, but got ${typeof element}`);
