@@ -12,7 +12,7 @@
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test -c ios.sim.release",
-    "e2e:ios-ci": "npm run e2e:ios -- --workers 3 --retries 1",
+    "e2e:ios-ci": "npm run e2e:ios -- --workers 4 --retries 1 -l verbose",
     "e2e:android": "detox test -c android.emu.release",
     "e2e:android-ci-genycloud": "detox test -c android.genycloud.release --workers 5 --retries 1 --jest-report-specs --loglevel verbose",
     "e2e:android-ci-google": "detox test -c android.emu.release --workers 3 --retries 1 --jest-report-specs --loglevel verbose --headless",
