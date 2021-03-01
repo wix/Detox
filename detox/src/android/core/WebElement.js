@@ -19,7 +19,7 @@ class WebElement {
 
   async typeText(text, isContentEditable = false) {
     if (isContentEditable) {
-      return await this._device.typeText(text);
+      return await this._device._typeText(text);
     }
     return await new ActionInteraction(this._invocationManager,  new actions.WebTypeTextAction(this, text)).execute();
   }

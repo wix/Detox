@@ -15,7 +15,7 @@ describe('AndroidExpect', () => {
     emitter = new Emitter();
 
     device = {
-      typeText: jest.fn(),
+      _typeText: jest.fn(),
     };
 
     const AndroidExpect = require('./AndroidExpect');
@@ -345,17 +345,17 @@ describe('AndroidExpect', () => {
 
       it('typeText with isContentEditable=false', async () => {
         await e.web.element(e.by.html.id('id')).typeText('text', false);
-        global.expect(device.typeText).not.toHaveBeenCalled();
+        global.expect(device._typeText).not.toHaveBeenCalled();
       });
 
       it('typeText with isContentEditable=true', async () => {
         await e.web.element(e.by.html.id('id')).typeText('text', true);
-        global.expect(device.typeText).toHaveBeenCalled();
+        global.expect(device._typeText).toHaveBeenCalled();
       });
 
       it('typeText default isContentEditable is false', async () => {
         await e.web.element(e.by.html.id('id')).typeText('text');
-        global.expect(device.typeText).not.toHaveBeenCalled();
+        global.expect(device._typeText).not.toHaveBeenCalled();
       });
 
       it('replaceText', async () => {

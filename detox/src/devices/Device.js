@@ -266,7 +266,10 @@ class Device {
     await this.deviceDriver.resetStatusBar(this._deviceId);
   }
 
-  async typeText(text) {
+  /**
+   * @internal
+   */
+  async _typeText(text) {
     await this.deviceDriver.typeText(this._deviceId, text);
   }
 
