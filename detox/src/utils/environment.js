@@ -157,8 +157,17 @@ function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
 }
 
+let _iosFrameworkPath;
 async function getFrameworkPath() {
-  const detoxVersion = this.getDetoxVersion();
+  if (!_iosFrameworkPath) {
+    _iosFrameworkPath = _doGetFrameworkPath();
+  }
+
+  return _iosFrameworkPath;
+}
+
+async function _doGetFrameworkPath() {
+  const detoxVersion = getDetoxVersion();
   const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
   return `${DETOX_LIBRARY_ROOT_PATH}/ios/${sha1}/Detox.framework`;
 }
