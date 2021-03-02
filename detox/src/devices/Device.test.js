@@ -772,6 +772,13 @@ describe('Device', () => {
     expect(driverMock.driver.resetStatusBar).toHaveBeenCalledWith(device.id);
   });
 
+  it(`_typeText() should pass to device driver`, async () => {
+    const device = await aValidDevice();
+    await device._typeText('Text');
+
+    expect(driverMock.driver.typeText).toHaveBeenCalledWith(device.id, 'Text');
+  });
+
   it(`shake() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.shake();

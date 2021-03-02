@@ -120,6 +120,7 @@ describe('Detox', () => {
         const { emitter } = Device.mock.calls[0][0];
         expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
           invocationManager: invocationManager(),
+          device: device(),
           emitter,
         });
       });

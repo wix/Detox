@@ -29,7 +29,8 @@
     "@react-native-community/async-storage": "^1.12.0",
     "moment": "^2.24.0",
     "react": "16.11.x",
-    "react-native": "0.62.x"
+    "react-native": "0.62.x",
+    "react-native-webview": "7.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",

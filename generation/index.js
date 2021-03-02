@@ -44,7 +44,12 @@ function createAndroidFiles() {
     '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxMatcher.java': '../detox/src/android/espressoapi/DetoxMatcher.js',
     '../detox/android/detox/src/main/java/com/wix/detox/Detox.java': '../detox/src/android/espressoapi/Detox.js',
     '../detox/android/detox/src/main/java/com/wix/detox/espresso/EspressoDetox.java': '../detox/src/android/espressoapi/EspressoDetox.js',
-    '../detox/android/detox/src/main/java/com/wix/detox/uiautomator/UiAutomator.java': '../detox/src/android/espressoapi/UIAutomator.js'
+    '../detox/android/detox/src/main/java/com/wix/detox/uiautomator/UiAutomator.java': '../detox/src/android/espressoapi/UIAutomator.js',
+    '../detox/android/detox/src/main/java/com/wix/detox/espresso/web/EspressoWebDetox.java': '../detox/src/android/espressoapi/web/EspressoWebDetox.js',
+    '../detox/android/detox/src/main/java/com/wix/detox/espresso/web/DetoxWebAtomMatcher.java': '../detox/src/android/espressoapi/web/DetoxWebAtomMatcher.js',
+    '../detox/android/detox/src/main/java/com/wix/detox/espresso/web/WebViewElement.java': '../detox/src/android/espressoapi/web/WebViewElement.js',
+    '../detox/android/detox/src/main/java/com/wix/detox/espresso/web/WebElement.java': '../detox/src/android/espressoapi/web/WebElement.js',
+    '../detox/android/detox/src/main/java/com/wix/detox/espresso/web/WebExpect.java': '../detox/src/android/espressoapi/web/WebExpect.js'
   };
 }
 

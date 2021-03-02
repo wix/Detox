@@ -30,6 +30,7 @@ class DetoxExportWrapper {
 
     this._defineProxy('by');
     this._defineProxy('device');
+    this._defineProxy('web');
 
     this.trace = trace;
     this.traceCall = traceCall;

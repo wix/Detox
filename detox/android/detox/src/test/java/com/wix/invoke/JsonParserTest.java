@@ -63,6 +63,17 @@ public class JsonParserTest {
     }
 
     @Test
+    public void fromJsonTargetInvocationEspressoWebDetox() {
+//        EspressoWebDetox.getWebView().element(DetoxWebAtomMatcher.matcherForId("textInput")).tap();
+
+        Invocation getWebView = new Invocation(new ClassTarget("com.wix.detox.espresso.web.EspressoWebDetox"), "getWebView");
+        Invocation matcher = new Invocation(new ClassTarget("com.wix.detox.espresso.web.DetoxWebAtomMatcher"), "matcherForId", "textInput");
+        Invocation element = new Invocation(new InvocationTarget(getWebView), "element", matcher, 0);
+        Invocation tap = new Invocation(new InvocationTarget(element), "tap");
+        assertThat(parse("targetInvocationEspressoWebDetox.json")).usingRecursiveComparison().isEqualTo(tap);
+    }
+
+    @Test
     public void fromJsonTargetInvocationWithListParams() {
         ArrayList<String> params = new ArrayList<>();
         params.add(".*10.0.2.2.*");

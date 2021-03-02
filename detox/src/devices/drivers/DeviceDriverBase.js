@@ -197,6 +197,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async typeText(deviceId, text) {
+    return await Promise.resolve('');
+  }
+
   async setStatusBar(deviceId, flags) {
   }
 

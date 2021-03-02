@@ -1,5 +1,4 @@
 // TypeScript definitions for Detox
-//
 // Original authors:
 // * Jane Smith <jsmith@example.com>
 // * Tareq El-Masri <https://github.com/TareqElMasri>
@@ -8,6 +7,9 @@
 // * pera <https://github.com/santiagofm>
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
+// Current contributors:
+// * Yaroslav Serhieiev <https://github.com/noomorph>
+// * Oren Zakay <https://github.com/OrenZak>
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -15,6 +17,7 @@ declare global {
     const waitFor: Detox.DetoxExportWrapper['waitFor'];
     const expect: Detox.DetoxExportWrapper['expect'];
     const by: Detox.DetoxExportWrapper['by'];
+    const web: Detox.DetoxExportWrapper['web'];
     const detoxCircus: Detox.DetoxCircus;
 
     namespace NodeJS {
@@ -24,6 +27,7 @@ declare global {
             waitFor: Detox.DetoxExportWrapper['waitFor'];
             expect: Detox.DetoxExportWrapper['expect'];
             by: Detox.DetoxExportWrapper['by'];
+            web: Detox.DetoxExportWrapper['web'];
             detoxCircus: Detox.DetoxCircus;
         }
     }
@@ -272,10 +276,11 @@ declare global {
         // Detox exports all methods from detox global and all of the global constants.
         interface DetoxInstance {
             device: Device;
-            element: Element;
-            waitFor: WaitFor;
-            expect: Expect<Expect<Promise<void>>>;
-            by: Matchers;
+            element: ElementFacade;
+            waitFor: WaitForFacade;
+            expect: ExpectFacade;
+            by: ByFacade;
+            web: WebFacade;
         }
 
         interface DetoxExportWrapper extends DetoxInstance {
@@ -630,21 +635,27 @@ declare global {
             getUiDevice(): Promise<void>;
         }
 
-        type DetoxAny = Element & Actions<any> & WaitFor;
+        /**
+         * @deprecated
+         */
+        type DetoxAny = NativeElement & WaitFor;
 
-        interface Element {
-            (by: Matchers): DetoxAny;
-
-            /**
-             * Choose from multiple elements matching the same matcher using index
-             * @example await element(by.text('Product')).atIndex(2);
-             */
-            atIndex(index: number): DetoxAny;
+        interface ElementFacade {
+            (by: NativeMatcher): IndexableNativeElement;
         }
 
-        interface Matchers {
-            (by: Matchers): Matchers;
+        interface IndexableNativeElement extends NativeElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @example await element(by.text('Product')).atIndex(2).tap();
+             */
+            atIndex(index: number): NativeElement;
+        }
 
+        interface NativeElement extends NativeElementActions {
+        }
+
+        interface ByFacade {
             /**
              * by.id will match an id that is given to the view via testID prop.
              * @example
@@ -653,53 +664,146 @@ declare global {
              * // Then match with by.id:
              * await element(by.id('tap_me'));
              */
-            id(id: string): Matchers;
+            id(id: string): NativeMatcher;
 
             /**
              * Find an element by text, useful for text fields, buttons.
              * @example await element(by.text('Tap Me'));
              */
-            text(text: string): Matchers;
+            text(text: string): NativeMatcher;
 
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
              * @example await element(by.label('Welcome'));
              */
-            label(label: string): Matchers;
+            label(label: string): NativeMatcher;
 
             /**
              * Find an element by native view type.
              * @example await element(by.type('RCTImageView'));
              */
-            type(nativeViewType: string): Matchers;
+            type(nativeViewType: string): NativeMatcher;
 
             /**
              * Find an element with an accessibility trait. (iOS only)
              * @example await element(by.traits(['button']));
              */
-            traits(traits: string[]): Matchers;
+            traits(traits: string[]): NativeMatcher;
 
+            /**
+             * Collection of web matchers
+             */
+            readonly html: ByHtmlFacade;
+        }
+
+        interface ByHtmlFacade {
+            /**
+             * Find an element on the DOM tree by its id
+             * @param id
+             * @example
+             * web.element(by.html.id('testingh1'))
+             */
+            id(id: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its CSS class
+             * @param className
+             * @example
+             * web.element(by.html.className('a'))
+             */
+            className(className: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree matching the given CSS selector
+             * @param cssSelector
+             * @example
+             * web.element(by.html.selector('#cssSelector'))
+             */
+            selector(cssSelector: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its "name" attribute
+             * @param name
+             * @example
+             * web.element(by.html.name('sec_input'))
+             */
+            name(name: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its XPath
+             * @param xpath
+             * @example
+             * web.element(by.html.xpath('//*[@id="testingh1-1"]'))
+             */
+            xpath(xpath: string): WebMatcher;
+
+            /**
+             * Find an <a> element on the DOM tree by its link text (href content)
+             * @param linkText
+             * @example
+             * web.element(by.html.href('disney.com'))
+             */
+            href(linkText: string): WebMatcher;
+
+            /**
+             * Find an <a> element on the DOM tree by its partial link text (href content)
+             * @param linkTextFragment
+             * @example
+             * web.element(by.html.hrefContains('disney'))
+             */
+            hrefContains(linkTextFragment: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its tag name
+             * @param tag
+             * @example
+             * web.element(by.html.tag('mark'))
+             */
+            tag(tagName: string): WebMatcher;
+        }
+
+        interface NativeMatcher {
+            /**
+             * Find an element satisfying all the matchers
+             * @example await element(by.text('Product').and(by.id('product_name'));
+             */
+            and(by: NativeMatcher): NativeMatcher;
             /**
              * Find an element by a matcher with a parent matcher
              * @example await element(by.id('Grandson883').withAncestor(by.id('Son883')));
              */
-            withAncestor(parentBy: Matchers): Matchers;
-
+            withAncestor(parentBy: NativeMatcher): NativeMatcher;
             /**
              * Find an element by a matcher with a child matcher
              * @example await element(by.id('Son883').withDescendant(by.id('Grandson883')));
              */
-            withDescendant(childBy: Matchers): Matchers;
-
-            /**
-             * Find an element by multiple matchers
-             * @example await element(by.text('Product').and(by.id('product_name'));
-             */
-            and(by: Matchers): Matchers;
+            withDescendant(childBy: NativeMatcher): NativeMatcher;
         }
 
-        interface Expect<R> {
-            (element: Element): Expect<Promise<void>>;
+        interface WebMatcher {
+            __web__: any; // prevent type coersion
+        }
+
+        interface ExpectFacade {
+            (element: NativeElement): Expect;
+            (webElement: WebElement): WebExpect;
+        }
+
+        interface WebViewElement {
+            element(webMatcher: WebMatcher): IndexableWebElement;
+        }
+
+        interface WebFacade extends WebViewElement {
+            /**
+             * Gets the webview element as a testing element.
+             * @param matcher a simple view matcher for the webview element in th UI hierarchy.
+             * If there is only ONE webview element in the UI hierarchy, its NOT a must to supply it.
+             * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
+             */
+            (matcher?: NativeMatcher): WebViewElement;
+        }
+
+        interface Expect<R = Promise<void>> {
 
             /**
              * Expect the view to be at least 75% visible.
@@ -711,7 +815,7 @@ declare global {
              * Negate the expectation.
              * @example await expect(element(by.id('UniqueId205'))).not.toBeVisible();
              */
-            not: Expect<Promise<void>>;
+            not: this;
 
             /**
              * Expect the view to not be visible.
@@ -765,14 +869,16 @@ declare global {
             toHaveValue(value: any): R;
         }
 
-        interface WaitFor {
+        interface WaitForFacade {
             /**
              * This API polls using the given expectation continuously until the expectation is met. Use manual synchronization with waitFor only as a last resort.
              * NOTE: Every waitFor call must set a timeout using withTimeout(). Calling waitFor without setting a timeout will do nothing.
              * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
              */
-            (element: Element): Expect<WaitFor>;
+            (element: NativeElement): Expect<WaitFor>;
+        }
 
+        interface WaitFor {
             /**
              * Waits for the condition to be met until the specified time (millis) have elapsed.
              * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
@@ -783,71 +889,72 @@ declare global {
              * Performs the action repeatedly on the element until an expectation is met
              * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
              */
-            whileElement(by: Matchers): DetoxAny;
+            whileElement(by: NativeMatcher): NativeElement & WaitFor;
+            // TODO: not sure about & WaitFor - check if we can chain whileElement multiple times
         }
 
-        interface Actions<R> {
+        interface NativeElementActions {
             /**
              * Simulate tap on an element
              * @example await element(by.id('tappable')).tap();
              */
-            tap(): Promise<Actions<R>>;
+            tap(): Promise<void>;
 
             /**
              * Simulate long press on an element
              * @example await element(by.id('tappable')).longPress();
              */
-            longPress(): Promise<Actions<R>>;
+            longPress(): Promise<void>;
 
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)
              * @example await element(by.id('draggable')).longPressAndDrag(2000, NaN, NaN, element(by.id('target')), NaN, NaN, 'fast', 0);
              */
-            longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: Element,
-                             normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<Actions<R>>;
+            longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: NativeElement,
+                             normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<void>;
             /**
              * Simulate multiple taps on an element.
              * @param times number of times to tap
              * @example await element(by.id('tappable')).multiTap(3);
              */
-            multiTap(times: number): Promise<Actions<R>>;
+            multiTap(times: number): Promise<void>;
 
             /**
              * Simulate tap at a specific point on an element.
              * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
              */
-            tapAtPoint(point: { x: number; y: number }): Promise<Actions<R>>;
+            tapAtPoint(point: { x: number; y: number }): Promise<void>;
 
             /**
              * Use the builtin keyboard to type text into a text field.
              * @example await element(by.id('textField')).typeText('passcode');
              */
-            typeText(text: string): Promise<Actions<R>>;
+            typeText(text: string): Promise<void>;
 
             /**
              * Paste text into a text field.
              * @example await element(by.id('textField')).replaceText('passcode again');
              */
-            replaceText(text: string): Promise<Actions<R>>;
+            replaceText(text: string): Promise<void>;
 
             /**
              * Clear text from a text field.
              * @example await element(by.id('textField')).clearText();
              */
-            clearText(): Promise<Actions<R>>;
+            clearText(): Promise<void>;
 
             /**
              * Taps the backspace key on the built-in keyboard.
              * @example await element(by.id('textField')).tapBackspaceKey();
              */
-            tapBackspaceKey(): Promise<Actions<R>>;
+            tapBackspaceKey(): Promise<void>;
 
             /**
              * Taps the return key on the built-in keyboard.
              * @example await element(by.id('textField')).tapReturnKey();
              */
-            tapReturnKey(): Promise<Actions<R>>;
+            tapReturnKey(): Promise<void>;
 
             /**
              * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
@@ -863,14 +970,14 @@ declare global {
               direction: Direction,
               startPositionX?: number,
               startPositionY?: number,
-            ): Promise<Actions<R>>;
+            ): Promise<void>;
 
             /**
              * Scroll to edge.
              * @example await element(by.id('scrollView')).scrollTo('bottom');
              * @example await element(by.id('scrollView')).scrollTo('top');
              */
-            scrollTo(edge: Direction): Promise<Actions<R>>;
+            scrollTo(edge: Direction): Promise<void>;
 
             /**
              * Swipes in the provided direction at the provided speed, started from percentage.
@@ -884,7 +991,7 @@ declare global {
              * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2);
              * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
              */
-            swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<Actions<R>>;
+            swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<void>;
 
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
@@ -898,7 +1005,7 @@ declare global {
              * await element(by.type('UIPickerView')).setColumnToValue(1,"6");
              * await element(by.type('UIPickerView')).setColumnToValue(2,"34");
              */
-            setColumnToValue(column: number, value: string): Promise<Actions<R>>;
+            setColumnToValue(column: number, value: string): Promise<void>;
 
             /**
              * Sets the date of a date picker to a date generated from the provided string and date format. (iOS only)
@@ -908,7 +1015,7 @@ declare global {
              * await expect(element(by.id('datePicker'))).toBeVisible();
              * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
              */
-            setDatePickerDate(dateString: string, dateFormat: string): Promise<Actions<R>>;
+            setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
             /**
              * Pinches in the given direction with speed and angle. (iOS only)
@@ -917,7 +1024,111 @@ declare global {
              * await expect(element(by.id('PinchableScrollView'))).toBeVisible();
              * await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
              */
-            pinchWithAngle(direction: Direction, speed: Speed, angle: number): Promise<Actions<R>>;
+            pinchWithAngle(direction: Direction, speed: Speed, angle: number): Promise<void>;
+        }
+
+        interface WebExpect<R = Promise<void>> {
+            /**
+             * Negate the expectation.
+             * @example await expect(webview.element(by.htmlId('UniqueId205'))).not.toExist();
+             */
+            not: this;
+
+            /**
+             * Expect the element content to have the `text` supplied
+             * @param text expected to be on the element content
+             * @example
+             * await expect(webview.element(by.htmlId('UniqueId205'))).toHaveText('ExactText');
+             */
+            toHaveText(text: string): R
+
+            /**
+             * Expect the view to exist in the webview DOM tree.
+             * @example await expect(webview.element(by.htmlId('UniqueId205'))).toExist();
+             */
+            toExist(): R;
+        }
+
+        interface IndexableWebElement extends WebElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @example await web.element(by.text('Product')).atIndex(2).tap();
+             */
+            atIndex(index: number): WebElement;
+        }
+
+        interface WebElement extends WebElementActions {
+        }
+
+        interface WebElementActions {
+            tap(): Promise<void>
+
+            /**
+             * @param text to type
+             * @param isContentEditable whether its a ContentEditable element, default is false.
+             */
+            typeText(text: string, isContentEditable: boolean): Promise<void>
+
+            /**
+             * At the moment not working on content-editable
+             * @param text to replace with the old content.
+             */
+            replaceText(text: string): Promise<void>
+
+            /**
+             * At the moment not working on content-editable
+             */
+            clearText(): Promise<void>
+
+            /**
+             * scrolling to the view, the element top position will be at the top of the screen.
+             */
+            scrollToView(): Promise<void>
+
+            /**
+             * Gets the input content
+             */
+            getText(): Promise<string>
+
+            /**
+             * Calls the focus function on the element
+             */
+            focus(): Promise<void>
+
+            /**
+             * Selects all the input content, works on ContentEditable at the moment.
+             */
+            selectAllText(): Promise<void>
+
+            /**
+             * Moves the input cursor / caret to the end of the content, works on ContentEditable at the moment.
+             */
+            moveCursorToEnd(): Promise<void>
+
+            /**
+             * Running a script on the element
+             * @param script a method that accept the element as its first arg
+             * @example function foo(element) { console.log(element); }
+             */
+            runScript(script: string): Promise<any>
+
+            /**
+             * Running a script on the element that accept args
+             * @param script a method that accept few args, and the element as the last arg.
+             * @param args a list of args to pass to the script
+             * @example function foo(a, b, c, element) { console.log(`${a}, ${b}, ${c}, ${element}`)}
+             */
+            runScriptWithArgs(script: string, args: any[]): Promise<any>;
+
+            /**
+             * Gets the current page url
+             */
+            getCurrentUrl(): Promise<string>;
+
+            /**
+             * Gets the current page title
+             */
+            getTitle(): Promise<string>;
         }
 
         type Direction = 'left' | 'right' | 'top' | 'bottom' | 'up' | 'down';
@@ -1027,6 +1238,7 @@ declare global {
                 addEventsListener(listener: CircusTestEventListenerBase): void
             };
         }
+
     }
 }
 

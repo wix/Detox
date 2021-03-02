@@ -426,6 +426,18 @@ describe('expectTwo', () => {
       expect(e.message).toContain('not supported on iOS');
     }
   });
+
+  it('by.html should throw', () => {
+    expect(() => e.by.html).toThrowError(/not support/);
+  });
+
+  it('web() should throw', () => {
+    expect(() => e.web(e.by.id('someId'))).toThrowError(/not support/);
+  });
+
+  it('web.element() should throw', () => {
+    expect(() => e.web.element(e.by.id('someId'))).toThrowError(/not support/);
+  });
 });
 
 expect.extend({
