@@ -116,12 +116,21 @@ You can skip over synchronizing on certain URLs (for long polling tasks, or webs
 await device.setURLBlacklist(['.*127.0.0.1.*']);
 ```
 
-In order to gain sync back on an endpoint, just remove it from the blacklist
+In order to gain sync back on an endpoint, just remove it from the blacklist:
 
 ```js
 await device.setURLBlacklist([]);
 ```
 
+Alternatively, you can launch your app already with the URL blacklist defined — that can help with a network sync issue at the very beginning:
+
+```js
+await device.launchApp({
+  launchArgs: {
+    detoxURLBlacklistRegex: '(".*example.com/some-url/.*")' }`,
+  },
+});
+```
 
 #### How do we wait manually?
 
