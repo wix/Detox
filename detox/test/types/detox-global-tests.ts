@@ -39,8 +39,10 @@ describe("Test", () => {
             .scroll(50, "down");
 
         await web.element(by.html.id("btnSave")).tap();
-        await expect(
-            web(by.id("webview")).element(by.html.selector("#cssSel"), 2)
-        ).toExist();
+        await web.element(by.html.className("scroll-end")).atIndex(0).scrollToView();
+
+        const webview = web(by.id("webview"));
+        await expect(webview.element(by.html.selector(".button"))).toExist();
+        await expect(webview.element(by.html.selector(".button")).atIndex(1)).toExist();
     });
 });
