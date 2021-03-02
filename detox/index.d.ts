@@ -647,7 +647,7 @@ declare global {
         interface IndexableNativeElement extends NativeElement {
             /**
              * Choose from multiple elements matching the same matcher using index
-             * @example await element(by.text('Product')).atIndex(2);
+             * @example await element(by.text('Product')).atIndex(2).tap();
              */
             atIndex(index: number): NativeElement;
         }
@@ -790,7 +790,7 @@ declare global {
         }
 
         interface WebViewElement {
-            element(webMatcher: WebMatcher, index?: number): WebElement;
+            element(webMatcher: WebMatcher): IndexableWebElement;
         }
 
         interface WebFacade extends WebViewElement {
@@ -1049,8 +1049,15 @@ declare global {
             toExist(): R;
         }
 
-        interface WebElement extends WebElementActions {
+        interface IndexableWebElement extends WebElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @example await web.element(by.text('Product')).atIndex(2).tap();
+             */
+            atIndex(index: number): WebElement;
+        }
 
+        interface WebElement extends WebElementActions {
         }
 
         interface WebElementActions {

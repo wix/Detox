@@ -31,7 +31,12 @@ class AndroidExpect {
   // Matcher can be null only if there is only one webview on the hierarchy tree.
   web(matcher) {
     if (matcher == null || matcher instanceof NativeMatcher) {
-      return new WebViewElement(this._invocationManager, this._device, this._emitter, matcher);
+      return new WebViewElement({
+        device: this._device,
+        emitter: this._emitter,
+        invocationManager: this._invocationManager,
+        matcher,
+      });
     }
 
     throw new Error(`web() argument is invalid, expected a native matcher, but got ${typeof element}`);
