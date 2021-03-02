@@ -127,7 +127,7 @@ Alternatively, you can launch your app already with the URL blacklist defined â€
 ```js
 await device.launchApp({
   launchArgs: {
-    detoxURLBlacklistRegex: '(".*example.com/some-url/.*")' }`,
+    detoxURLBlacklistRegex: '(".*example.com/some-url/.*")',
   },
 });
 ```
