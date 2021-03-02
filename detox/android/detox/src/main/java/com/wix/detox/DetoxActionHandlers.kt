@@ -99,35 +99,22 @@ class QueryStatusActionHandler(
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
-        val busyResources = testEngineFacade.getBusyIdlingResources()
         val data = mutableMapOf<String, Any>()
+        val busyResources = testEngineFacade.getBusyIdlingResources()
+        var status = ""
 
         if (busyResources.isEmpty()) {
-            data["state"] = "idle"
+            status = "The app is idle."
         } else {
-            val resources = JSONArray()
-            busyResources.forEach {
-                try {
-                    resources.put(getIdleResourceInfo(it))
-                } catch (je: JSONException) {
-                    Log.d(LOG_TAG, "Couldn't collect busy resource '${it.name}'", je)
-                }
+            status = "Busy idling resources:\n"
+            for (res in busyResources) {
+                status += "\t- ${res.name}\n"
             }
-
-            data["resources"] = resources
-            data["state"] = "busy"
         }
 
+        data["status"] = status
         wsClient.sendAction("currentStatusResult", data, messageId)
     }
-
-    private fun getIdleResourceInfo(resource: IdlingResource) =
-        JSONObject().apply {
-            put("name", resource.javaClass.simpleName)
-            put("info", JSONObject().apply {
-                put("prettyPrint", resource.name)
-            })
-        }
 }
 
 class InstrumentsRecordingStateActionHandler(
