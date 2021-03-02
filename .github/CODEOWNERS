@@ -4,7 +4,7 @@
 
 *.js @d4vidi @noomorph
 *.ts @d4vidi @noomorph
-*.sh @d4vidi @noomorph @LeoNatan
+*.sh @d4vidi @noomorph @alon-ha
 
 # Android
 
@@ -14,12 +14,12 @@
 
 # iOS
 
-detox/ios/* @LeoNatan
-detox/test/ios/* @LeoNatan
-*.h @LeoNatan
-*.m @LeoNatan
-*.mm @LeoNatan
-*.cpp @LeoNatan
-*.swift @LeoNatan
-*.pch @LeoNatan
-*.plist @LeoNatan
+detox/ios/* @alon-ha
+detox/test/ios/* @alon-ha
+*.h @alon-ha
+*.m @alon-ha
+*.mm @alon-ha
+*.cpp @alon-ha
+*.swift @alon-ha
+*.pch @alon-ha
+*.plist @alon-ha

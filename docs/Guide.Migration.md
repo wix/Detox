@@ -17,7 +17,12 @@ If you are seeing issues with the new sync system, please open an issue.
 **Breaking:**
 
 * **iOS.** Detox now requires iOS 13.0 and above iOS simulator runtimers, and iOS 12.x and below are no longer supported. This does not require that you drop support for iOS 12.x in your apps, just that tests will no longer work on iOS 12 and below. Please make sure your tests are running on iOS 13 or above
-* **JS.** `detox.init()` will not launch the app anymore (even if asked to do so in configuration). Launching the app explicitly with `device.launchApp()` is now mandatory.
+* **JS.** :warning: Detox no longer launches the app automatically (even if asked to do so in configuration) — you have to launch your app explicitly:
+```diff
++  beforeAll(async () => {
++    await device.launchApp();
++  });
+```
 * **JS (jest-circus).** The `DetoxCircusEnvironment` provided from `detox/runners/jest-circus` package now requires two arguments in its constructor, so you have to update your descendant class signature:
 ```diff
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {

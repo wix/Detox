@@ -42,7 +42,7 @@ detox init -r jest
 ```
 > **Note:** errors occurring in the process may appear in red.
 
-If things go well, you should to have this set up:
+If things go well, the following will be created:
 
 - An `e2e/` folder in your project root
 - An `e2e/config.json` file; [example](/examples/demo-react-native-jest/e2e/config.json)

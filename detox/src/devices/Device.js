@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const LaunchArgs = require('./LaunchArgs');
+const LaunchArgsEditor = require('./LaunchArgsEditor');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
 
@@ -21,7 +21,7 @@ class Device {
     this._errorComposer = runtimeErrorComposer;
 
     this._currentApp = null;
-    this._cachedAppLaunchArgs = null;
+    this._currentAppLaunchArgs = null;
     this._deviceId = undefined;
     this._processes = {};
 
@@ -43,11 +43,10 @@ class Device {
   }
 
   get appLaunchArgs() {
-    if (!this._cachedAppLaunchArgs) {
-      this._cachedAppLaunchArgs = new LaunchArgs(this._getCurrentApp().launchArgs);
+    if (!this._currentAppLaunchArgs) {
+      this._currentAppLaunchArgs = this._getCurrentAppsLaunchArgs();
     }
-
-    return this._cachedAppLaunchArgs;
+    return this._currentAppLaunchArgs;
   }
 
   async prepare() {
@@ -82,7 +81,7 @@ class Device {
     }
 
     this._currentApp = appConfig;
-    this._cachedAppLaunchArgs = null;
+    this._currentAppLaunchArgs = null;
     await this._inferBundleIdFromBinary();
   }
 
@@ -281,7 +280,6 @@ class Device {
     if (!this._currentApp) {
       throw this._errorComposer.appNotSelected();
     }
-
     return this._currentApp;
   }
 
@@ -409,6 +407,12 @@ class Device {
     if (!bundleId) {
       this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
     }
+  }
+
+  _getCurrentAppsLaunchArgs() {
+    const currentApp = this._getCurrentApp();
+    currentApp.launchArgs = currentApp.launchArgs || {};
+    return new LaunchArgsEditor(currentApp.launchArgs);
   }
 }
 
