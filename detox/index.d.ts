@@ -1030,7 +1030,7 @@ declare global {
         interface WebExpect<R = Promise<void>> {
             /**
              * Negate the expectation.
-             * @example await expect(webview.element(by.web.id('UniqueId205'))).not.toExist();
+             * @example await expect(web.element(by.web.id('UniqueId205'))).not.toExist();
              */
             not: this;
 
@@ -1038,13 +1038,13 @@ declare global {
              * Expect the element content to have the `text` supplied
              * @param text expected to be on the element content
              * @example
-             * await expect(webview.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
+             * await expect(web.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
              */
             toHaveText(text: string): R
 
             /**
              * Expect the view to exist in the webview DOM tree.
-             * @example await expect(webview.element(by.web.id('UniqueId205'))).toExist();
+             * @example await expect(web.element(by.web.id('UniqueId205'))).toExist();
              */
             toExist(): R;
         }
