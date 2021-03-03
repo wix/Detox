@@ -693,15 +693,15 @@ declare global {
             /**
              * Collection of web matchers
              */
-            readonly html: ByHtmlFacade;
+            readonly web: ByWebFacade;
         }
 
-        interface ByHtmlFacade {
+        interface ByWebFacade {
             /**
              * Find an element on the DOM tree by its id
              * @param id
              * @example
-             * web.element(by.html.id('testingh1'))
+             * web.element(by.web.id('testingh1'))
              */
             id(id: string): WebMatcher;
 
@@ -709,7 +709,7 @@ declare global {
              * Find an element on the DOM tree by its CSS class
              * @param className
              * @example
-             * web.element(by.html.className('a'))
+             * web.element(by.web.className('a'))
              */
             className(className: string): WebMatcher;
 
@@ -717,15 +717,15 @@ declare global {
              * Find an element on the DOM tree matching the given CSS selector
              * @param cssSelector
              * @example
-             * web.element(by.html.selector('#cssSelector'))
+             * web.element(by.web.cssSelector('#cssSelector'))
              */
-            selector(cssSelector: string): WebMatcher;
+            cssSelector(cssSelector: string): WebMatcher;
 
             /**
              * Find an element on the DOM tree by its "name" attribute
              * @param name
              * @example
-             * web.element(by.html.name('sec_input'))
+             * web.element(by.web.name('sec_input'))
              */
             name(name: string): WebMatcher;
 
@@ -733,7 +733,7 @@ declare global {
              * Find an element on the DOM tree by its XPath
              * @param xpath
              * @example
-             * web.element(by.html.xpath('//*[@id="testingh1-1"]'))
+             * web.element(by.web.xpath('//*[@id="testingh1-1"]'))
              */
             xpath(xpath: string): WebMatcher;
 
@@ -741,7 +741,7 @@ declare global {
              * Find an <a> element on the DOM tree by its link text (href content)
              * @param linkText
              * @example
-             * web.element(by.html.href('disney.com'))
+             * web.element(by.web.href('disney.com'))
              */
             href(linkText: string): WebMatcher;
 
@@ -749,7 +749,7 @@ declare global {
              * Find an <a> element on the DOM tree by its partial link text (href content)
              * @param linkTextFragment
              * @example
-             * web.element(by.html.hrefContains('disney'))
+             * web.element(by.web.hrefContains('disney'))
              */
             hrefContains(linkTextFragment: string): WebMatcher;
 
@@ -757,7 +757,7 @@ declare global {
              * Find an element on the DOM tree by its tag name
              * @param tag
              * @example
-             * web.element(by.html.tag('mark'))
+             * web.element(by.web.tag('mark'))
              */
             tag(tagName: string): WebMatcher;
         }
@@ -1030,7 +1030,7 @@ declare global {
         interface WebExpect<R = Promise<void>> {
             /**
              * Negate the expectation.
-             * @example await expect(webview.element(by.htmlId('UniqueId205'))).not.toExist();
+             * @example await expect(webview.element(by.web.id('UniqueId205'))).not.toExist();
              */
             not: this;
 
@@ -1038,13 +1038,13 @@ declare global {
              * Expect the element content to have the `text` supplied
              * @param text expected to be on the element content
              * @example
-             * await expect(webview.element(by.htmlId('UniqueId205'))).toHaveText('ExactText');
+             * await expect(webview.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
              */
             toHaveText(text: string): R
 
             /**
              * Expect the view to exist in the webview DOM tree.
-             * @example await expect(webview.element(by.htmlId('UniqueId205'))).toExist();
+             * @example await expect(webview.element(by.web.id('UniqueId205'))).toExist();
              */
             toExist(): R;
         }
@@ -1052,7 +1052,7 @@ declare global {
         interface IndexableWebElement extends WebElement {
             /**
              * Choose from multiple elements matching the same matcher using index
-             * @example await web.element(by.text('Product')).atIndex(2).tap();
+             * @example await web.element(by.web.hrefContains('Details')).atIndex(2).tap();
              */
             atIndex(index: number): WebElement;
         }

@@ -281,33 +281,33 @@ describe('AndroidExpect', () => {
     describe('General', () => {
       it('should return undefined', async () => {
         mockExecutor.executeResult = Promise.resolve(undefined);
-        await e.web(e.by.id('webview_id')).element(e.by.html.id('any')).tap();
+        await e.web(e.by.id('webview_id')).element(e.by.web.id('any')).tap();
       });
     })
 
     describe('web', () => {
 
       it('default', async () => {
-        await e.web.element(e.by.html.id('id')).tap();
+        await e.web.element(e.by.web.id('id')).tap();
       });
 
       it('default explicit', async () => {
-        await e.web().element(e.by.html.id('id')).tap();
+        await e.web().element(e.by.web.id('id')).tap();
       });
 
       it('with webview matcher', async () => {
-        await e.web(e.by.id('webview_id')).element(e.by.html.id('id')).tap();
+        await e.web(e.by.id('webview_id')).element(e.by.web.id('id')).tap();
       });
 
       it(`with wrong matcher should throw`, async () => {
-        await expectToThrow(() => e.web(e.by.html.className('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.selector('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.id('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.href('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.name('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.hrefContains('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.tag('webMatcher')));
-        await expectToThrow(() => e.web(e.by.html.xpath('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.className('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.cssSelector('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.id('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.href('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.name('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.hrefContains('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.tag('webMatcher')));
+        await expectToThrow(() => e.web(e.by.web.xpath('webMatcher')));
       });
 
       it(`inner element with wrong matcher should throw`, async () => {
@@ -322,232 +322,232 @@ describe('AndroidExpect', () => {
 
     describe('WebElement Actions', () => {
       it('tap', async () => {
-        await e.web.element(e.by.html.id('id')).tap();
-        await e.web.element(e.by.html.className('className')).tap();
-        await e.web.element(e.by.html.selector('cssSelector')).tap();
-        await e.web.element(e.by.html.name('name')).tap();
-        await e.web.element(e.by.html.xpath('xpath')).tap();
-        await e.web.element(e.by.html.href('linkText')).tap();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).tap();
-        await e.web.element(e.by.html.tag('tag')).tap();
+        await e.web.element(e.by.web.id('id')).tap();
+        await e.web.element(e.by.web.className('className')).tap();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).tap();
+        await e.web.element(e.by.web.name('name')).tap();
+        await e.web.element(e.by.web.xpath('xpath')).tap();
+        await e.web.element(e.by.web.href('linkText')).tap();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).tap();
+        await e.web.element(e.by.web.tag('tag')).tap();
       });
 
       it('typeText', async () => {
-        await e.web.element(e.by.html.id('id')).typeText('text');
-        await e.web.element(e.by.html.className('className')).typeText('text');
-        await e.web.element(e.by.html.selector('cssSelector')).typeText('text');
-        await e.web.element(e.by.html.name('name')).typeText('text');
-        await e.web.element(e.by.html.xpath('xpath')).typeText('text');
-        await e.web.element(e.by.html.href('linkText')).typeText('text');
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).typeText('text');
-        await e.web.element(e.by.html.tag('tag')).typeText('text');
+        await e.web.element(e.by.web.id('id')).typeText('text');
+        await e.web.element(e.by.web.className('className')).typeText('text');
+        await e.web.element(e.by.web.cssSelector('cssSelector')).typeText('text');
+        await e.web.element(e.by.web.name('name')).typeText('text');
+        await e.web.element(e.by.web.xpath('xpath')).typeText('text');
+        await e.web.element(e.by.web.href('linkText')).typeText('text');
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).typeText('text');
+        await e.web.element(e.by.web.tag('tag')).typeText('text');
       });
 
       it('typeText with isContentEditable=false', async () => {
-        await e.web.element(e.by.html.id('id')).typeText('text', false);
+        await e.web.element(e.by.web.id('id')).typeText('text', false);
         global.expect(device._typeText).not.toHaveBeenCalled();
       });
 
       it('typeText with isContentEditable=true', async () => {
-        await e.web.element(e.by.html.id('id')).typeText('text', true);
+        await e.web.element(e.by.web.id('id')).typeText('text', true);
         global.expect(device._typeText).toHaveBeenCalled();
       });
 
       it('typeText default isContentEditable is false', async () => {
-        await e.web.element(e.by.html.id('id')).typeText('text');
+        await e.web.element(e.by.web.id('id')).typeText('text');
         global.expect(device._typeText).not.toHaveBeenCalled();
       });
 
       it('replaceText', async () => {
-        await e.web.element(e.by.html.id('id')).replaceText('text');
-        await e.web.element(e.by.html.className('className')).replaceText('text');
-        await e.web.element(e.by.html.selector('cssSelector')).replaceText('text');
-        await e.web.element(e.by.html.name('name')).replaceText('text');
-        await e.web.element(e.by.html.xpath('xpath')).replaceText('text');
-        await e.web.element(e.by.html.href('linkText')).replaceText('text');
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).replaceText('text');
-        await e.web.element(e.by.html.tag('tag')).replaceText('text');
+        await e.web.element(e.by.web.id('id')).replaceText('text');
+        await e.web.element(e.by.web.className('className')).replaceText('text');
+        await e.web.element(e.by.web.cssSelector('cssSelector')).replaceText('text');
+        await e.web.element(e.by.web.name('name')).replaceText('text');
+        await e.web.element(e.by.web.xpath('xpath')).replaceText('text');
+        await e.web.element(e.by.web.href('linkText')).replaceText('text');
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).replaceText('text');
+        await e.web.element(e.by.web.tag('tag')).replaceText('text');
       });
 
       it('clearText', async () => {
-        await e.web.element(e.by.html.id('id')).clearText();
-        await e.web.element(e.by.html.className('className')).clearText();
-        await e.web.element(e.by.html.selector('cssSelector')).clearText();
-        await e.web.element(e.by.html.name('name')).clearText();
-        await e.web.element(e.by.html.xpath('xpath')).clearText();
-        await e.web.element(e.by.html.href('linkText')).clearText();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).clearText();
-        await e.web.element(e.by.html.tag('tag')).clearText();
+        await e.web.element(e.by.web.id('id')).clearText();
+        await e.web.element(e.by.web.className('className')).clearText();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).clearText();
+        await e.web.element(e.by.web.name('name')).clearText();
+        await e.web.element(e.by.web.xpath('xpath')).clearText();
+        await e.web.element(e.by.web.href('linkText')).clearText();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).clearText();
+        await e.web.element(e.by.web.tag('tag')).clearText();
       });
 
       it('scrollToView', async () => {
-        await e.web.element(e.by.html.id('id')).scrollToView();
-        await e.web.element(e.by.html.className('className')).scrollToView();
-        await e.web.element(e.by.html.selector('cssSelector')).scrollToView();
-        await e.web.element(e.by.html.name('name')).scrollToView();
-        await e.web.element(e.by.html.xpath('xpath')).scrollToView();
-        await e.web.element(e.by.html.href('linkText')).scrollToView();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).scrollToView();
-        await e.web.element(e.by.html.tag('tag')).scrollToView();
+        await e.web.element(e.by.web.id('id')).scrollToView();
+        await e.web.element(e.by.web.className('className')).scrollToView();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).scrollToView();
+        await e.web.element(e.by.web.name('name')).scrollToView();
+        await e.web.element(e.by.web.xpath('xpath')).scrollToView();
+        await e.web.element(e.by.web.href('linkText')).scrollToView();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).scrollToView();
+        await e.web.element(e.by.web.tag('tag')).scrollToView();
       });
 
       it('getText', async () => {
-        await e.web.element(e.by.html.id('id')).getText();
-        await e.web.element(e.by.html.className('className')).getText();
-        await e.web.element(e.by.html.selector('cssSelector')).getText();
-        await e.web.element(e.by.html.name('name')).getText();
-        await e.web.element(e.by.html.xpath('xpath')).getText();
-        await e.web.element(e.by.html.href('linkText')).getText();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).getText();
-        await e.web.element(e.by.html.tag('tag')).getText();
+        await e.web.element(e.by.web.id('id')).getText();
+        await e.web.element(e.by.web.className('className')).getText();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).getText();
+        await e.web.element(e.by.web.name('name')).getText();
+        await e.web.element(e.by.web.xpath('xpath')).getText();
+        await e.web.element(e.by.web.href('linkText')).getText();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).getText();
+        await e.web.element(e.by.web.tag('tag')).getText();
       });
 
       it('focus', async () => {
-        await e.web.element(e.by.html.id('id')).focus();
-        await e.web.element(e.by.html.className('className')).focus();
-        await e.web.element(e.by.html.selector('cssSelector')).focus();
-        await e.web.element(e.by.html.name('name')).focus();
-        await e.web.element(e.by.html.xpath('xpath')).focus();
-        await e.web.element(e.by.html.href('linkText')).focus();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).focus();
-        await e.web.element(e.by.html.tag('tag')).focus();
+        await e.web.element(e.by.web.id('id')).focus();
+        await e.web.element(e.by.web.className('className')).focus();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).focus();
+        await e.web.element(e.by.web.name('name')).focus();
+        await e.web.element(e.by.web.xpath('xpath')).focus();
+        await e.web.element(e.by.web.href('linkText')).focus();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).focus();
+        await e.web.element(e.by.web.tag('tag')).focus();
       });
 
       it('selectAllText', async () => {
-        await e.web.element(e.by.html.id('id')).selectAllText();
-        await e.web.element(e.by.html.className('className')).selectAllText();
-        await e.web.element(e.by.html.selector('cssSelector')).selectAllText();
-        await e.web.element(e.by.html.name('name')).selectAllText();
-        await e.web.element(e.by.html.xpath('xpath')).selectAllText();
-        await e.web.element(e.by.html.href('linkText')).selectAllText();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).selectAllText();
-        await e.web.element(e.by.html.tag('tag')).selectAllText();
+        await e.web.element(e.by.web.id('id')).selectAllText();
+        await e.web.element(e.by.web.className('className')).selectAllText();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).selectAllText();
+        await e.web.element(e.by.web.name('name')).selectAllText();
+        await e.web.element(e.by.web.xpath('xpath')).selectAllText();
+        await e.web.element(e.by.web.href('linkText')).selectAllText();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).selectAllText();
+        await e.web.element(e.by.web.tag('tag')).selectAllText();
       });
 
       it('moveCursorToEnd', async () => {
-        await e.web.element(e.by.html.id('id')).moveCursorToEnd();
-        await e.web.element(e.by.html.className('className')).moveCursorToEnd();
-        await e.web.element(e.by.html.selector('cssSelector')).moveCursorToEnd();
-        await e.web.element(e.by.html.name('name')).moveCursorToEnd();
-        await e.web.element(e.by.html.xpath('xpath')).moveCursorToEnd();
-        await e.web.element(e.by.html.href('linkText')).moveCursorToEnd();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).moveCursorToEnd();
-        await e.web.element(e.by.html.tag('tag')).moveCursorToEnd();
+        await e.web.element(e.by.web.id('id')).moveCursorToEnd();
+        await e.web.element(e.by.web.className('className')).moveCursorToEnd();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).moveCursorToEnd();
+        await e.web.element(e.by.web.name('name')).moveCursorToEnd();
+        await e.web.element(e.by.web.xpath('xpath')).moveCursorToEnd();
+        await e.web.element(e.by.web.href('linkText')).moveCursorToEnd();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).moveCursorToEnd();
+        await e.web.element(e.by.web.tag('tag')).moveCursorToEnd();
       });
 
       it('runScript', async () => {
         const script = 'function foo(el) {}';
-        await e.web.element(e.by.html.id('id')).runScript(script);
-        await e.web.element(e.by.html.className('className')).runScript(script);
-        await e.web.element(e.by.html.selector('cssSelector')).runScript(script);
-        await e.web.element(e.by.html.name('name')).runScript(script);
-        await e.web.element(e.by.html.xpath('xpath')).runScript(script);
-        await e.web.element(e.by.html.href('linkText')).runScript(script);
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).runScript(script);
-        await e.web.element(e.by.html.tag('tag')).runScript(script);
+        await e.web.element(e.by.web.id('id')).runScript(script);
+        await e.web.element(e.by.web.className('className')).runScript(script);
+        await e.web.element(e.by.web.cssSelector('cssSelector')).runScript(script);
+        await e.web.element(e.by.web.name('name')).runScript(script);
+        await e.web.element(e.by.web.xpath('xpath')).runScript(script);
+        await e.web.element(e.by.web.href('linkText')).runScript(script);
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).runScript(script);
+        await e.web.element(e.by.web.tag('tag')).runScript(script);
       });
 
       it('runScriptWithArgs', async () => {
         const script = 'function bar(a,b) {}';
         const argsArr = ['fooA','barB'];
-        await e.web.element(e.by.html.id('id')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.className('className')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.selector('cssSelector')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.name('name')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.xpath('xpath')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.href('linkText')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.html.tag('tag')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.id('id')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.className('className')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.cssSelector('cssSelector')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.name('name')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.xpath('xpath')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.href('linkText')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).runScriptWithArgs(script, argsArr);
+        await e.web.element(e.by.web.tag('tag')).runScriptWithArgs(script, argsArr);
       });
 
       it('getCurrentUrl', async () => {
-        await e.web.element(e.by.html.id('id')).getCurrentUrl();
-        await e.web.element(e.by.html.className('className')).getCurrentUrl();
-        await e.web.element(e.by.html.selector('cssSelector')).getCurrentUrl();
-        await e.web.element(e.by.html.name('name')).getCurrentUrl();
-        await e.web.element(e.by.html.xpath('xpath')).getCurrentUrl();
-        await e.web.element(e.by.html.href('linkText')).getCurrentUrl();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).getCurrentUrl();
-        await e.web.element(e.by.html.tag('tag')).getCurrentUrl();
+        await e.web.element(e.by.web.id('id')).getCurrentUrl();
+        await e.web.element(e.by.web.className('className')).getCurrentUrl();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).getCurrentUrl();
+        await e.web.element(e.by.web.name('name')).getCurrentUrl();
+        await e.web.element(e.by.web.xpath('xpath')).getCurrentUrl();
+        await e.web.element(e.by.web.href('linkText')).getCurrentUrl();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).getCurrentUrl();
+        await e.web.element(e.by.web.tag('tag')).getCurrentUrl();
       });
 
       it('getTitle', async () => {
-        await e.web.element(e.by.html.id('id')).getTitle();
-        await e.web.element(e.by.html.className('className')).getTitle();
-        await e.web.element(e.by.html.selector('cssSelector')).getTitle();
-        await e.web.element(e.by.html.name('name')).getTitle();
-        await e.web.element(e.by.html.xpath('xpath')).getTitle();
-        await e.web.element(e.by.html.href('linkText')).getTitle();
-        await e.web.element(e.by.html.hrefContains('partialLinkText')).getTitle();
-        await e.web.element(e.by.html.tag('tag')).getTitle();
+        await e.web.element(e.by.web.id('id')).getTitle();
+        await e.web.element(e.by.web.className('className')).getTitle();
+        await e.web.element(e.by.web.cssSelector('cssSelector')).getTitle();
+        await e.web.element(e.by.web.name('name')).getTitle();
+        await e.web.element(e.by.web.xpath('xpath')).getTitle();
+        await e.web.element(e.by.web.href('linkText')).getTitle();
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).getTitle();
+        await e.web.element(e.by.web.tag('tag')).getTitle();
       });
 
       it('should allow for access to by via element', async () => {
         const webview = await e.web;
-        await webview.element(e.by.html.id('id')).tap();
+        await webview.element(e.by.web.id('id')).tap();
       });
     })
 
     describe('Web Matchers',() => {
-      it('by.html.id', async () => {
-        await e.expect(e.web.element(e.by.html.id('id'))).toExist();
-        await e.expect(e.web.element(e.by.html.id('id'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.id('id'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.id('id'))).not.toHaveText('text');
+      it('by.web.id', async () => {
+        await e.expect(e.web.element(e.by.web.id('id'))).toExist();
+        await e.expect(e.web.element(e.by.web.id('id'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.id('id'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.id('id'))).not.toHaveText('text');
       });
 
-      it('by.html.className', async () => {
-        await e.expect(e.web.element(e.by.html.className('className'))).toExist();
-        await e.expect(e.web.element(e.by.html.className('className'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.className('className'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.className('className'))).not.toHaveText('text');
+      it('by.web.className', async () => {
+        await e.expect(e.web.element(e.by.web.className('className'))).toExist();
+        await e.expect(e.web.element(e.by.web.className('className'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.className('className'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.className('className'))).not.toHaveText('text');
       });
 
-      it('by.html.selector', async () => {
-        await e.expect(e.web.element(e.by.html.selector('cssSelector'))).toExist();
-        await e.expect(e.web.element(e.by.html.selector('cssSelector'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.selector('cssSelector'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.selector('cssSelector'))).not.toHaveText('text');
+      it('by.web.cssSelector', async () => {
+        await e.expect(e.web.element(e.by.web.cssSelector('cssSelector'))).toExist();
+        await e.expect(e.web.element(e.by.web.cssSelector('cssSelector'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.cssSelector('cssSelector'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.cssSelector('cssSelector'))).not.toHaveText('text');
       });
 
-      it('by.html.name', async () => {
-        await e.expect(e.web.element(e.by.html.name('name'))).toExist();
-        await e.expect(e.web.element(e.by.html.name('name'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.name('name'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.name('name'))).not.toHaveText('text');
+      it('by.web.name', async () => {
+        await e.expect(e.web.element(e.by.web.name('name'))).toExist();
+        await e.expect(e.web.element(e.by.web.name('name'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.name('name'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.name('name'))).not.toHaveText('text');
       });
 
-      it('by.html.xpath', async () => {
-        await e.expect(e.web.element(e.by.html.xpath('xpath'))).toExist();
-        await e.expect(e.web.element(e.by.html.xpath('xpath'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.xpath('xpath'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.xpath('xpath'))).not.toHaveText('text');
+      it('by.web.xpath', async () => {
+        await e.expect(e.web.element(e.by.web.xpath('xpath'))).toExist();
+        await e.expect(e.web.element(e.by.web.xpath('xpath'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.xpath('xpath'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.xpath('xpath'))).not.toHaveText('text');
       });
 
-      it('by.html.href', async () => {
-        await e.expect(e.web.element(e.by.html.href('link'))).toExist();
-        await e.expect(e.web.element(e.by.html.href('link'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.href('link'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.href('link'))).not.toHaveText('text');
+      it('by.web.href', async () => {
+        await e.expect(e.web.element(e.by.web.href('link'))).toExist();
+        await e.expect(e.web.element(e.by.web.href('link'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.href('link'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.href('link'))).not.toHaveText('text');
       });
 
-      it('by.html.hrefContains', async () => {
-        await e.expect(e.web.element(e.by.html.hrefContains('lin'))).toExist();
-        await e.expect(e.web.element(e.by.html.hrefContains('lin'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.hrefContains('lin'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.hrefContains('lin'))).not.toHaveText('text');
+      it('by.web.hrefContains', async () => {
+        await e.expect(e.web.element(e.by.web.hrefContains('lin'))).toExist();
+        await e.expect(e.web.element(e.by.web.hrefContains('lin'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.hrefContains('lin'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.hrefContains('lin'))).not.toHaveText('text');
       });
 
-      it('by.html.tag', async () => {
-        await e.expect(e.web.element(e.by.html.tag('tag'))).toExist();
-        await e.expect(e.web.element(e.by.html.tag('tag'))).not.toExist();
-        await e.expect(e.web.element(e.by.html.tag('tag'))).toHaveText('text');
-        await e.expect(e.web.element(e.by.html.tag('tag'))).not.toHaveText('text');
+      it('by.web.tag', async () => {
+        await e.expect(e.web.element(e.by.web.tag('tag'))).toExist();
+        await e.expect(e.web.element(e.by.web.tag('tag'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.tag('tag'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.tag('tag'))).not.toHaveText('text');
       });
 
       it('should allow for access to except via element', async () => {
         const webview = e.web();
-        await e.expect(webview.element(e.by.html.id('id'))).toExist();
+        await e.expect(webview.element(e.by.web.id('id'))).toExist();
       });
     });
   });
