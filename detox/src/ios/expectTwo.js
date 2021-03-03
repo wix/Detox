@@ -301,8 +301,8 @@ class By {
     return new Matcher().value(value);
   }
 
-  get html() {
-    throw new Error('Detox does not support by.html matchers on iOS.');
+  get web() {
+    throw new Error('Detox does not support by.web matchers on iOS.');
   }
 }
 

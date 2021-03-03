@@ -11,60 +11,60 @@ describe(':android: WebView', () => {
 
   describe('Expectations',() => {
     it('expect element to exists', async () => {
-      await expect(webview_1.element(by.html.id('testingPar'))).toExist();
+      await expect(webview_1.element(by.web.id('testingPar'))).toExist();
     });
 
     it('expect element to NOT exists', async () => {
-      await expect(webview_1.element(by.html.id('not_found'))).not.toExist();
+      await expect(webview_1.element(by.web.id('not_found'))).not.toExist();
     });
 
     it('expect element to have text', async () => {
-      await expect(webview_1.element(by.html.id('testingPar'))).toHaveText('Message');
+      await expect(webview_1.element(by.web.id('testingPar'))).toHaveText('Message');
     });
 
     it('expect element to NOT have text', async () => {
-      await expect(webview_1.element(by.html.id('testingPar'))).not.toHaveText(MOCK_TEXT);
+      await expect(webview_1.element(by.web.id('testingPar'))).not.toHaveText(MOCK_TEXT);
     });
   });
 
   describe('Element Matchers',() => {
     it('expect to find element by id', async () => {
-      await expect(webview_1.element(by.html.id('testingh1'))).toExist();
+      await expect(webview_1.element(by.web.id('testingh1'))).toExist();
     });
 
     it('expect to find element by class name', async () => {
-      await expect(webview_1.element(by.html.className('a'))).toExist();
+      await expect(webview_1.element(by.web.className('a'))).toExist();
     });
 
     it('expect to find element by css selector', async () => {
-      await expect(webview_1.element(by.html.selector('#cssSelector'))).toExist();
+      await expect(webview_1.element(by.web.cssSelector('#cssSelector'))).toExist();
     });
 
     it('expect to find element by name', async () => {
-      await expect(webview_1.element(by.html.name('sec_input'))).toExist();
+      await expect(webview_1.element(by.web.name('sec_input'))).toExist();
     });
 
     it('expect to find element by xpath', async () => {
-      await expect(webview_1.element(by.html.xpath('//*[@id="testingh1-1"]'))).toExist();
+      await expect(webview_1.element(by.web.xpath('//*[@id="testingh1-1"]'))).toExist();
     });
 
     it('expect to find element by href', async () => {
-      await expect(webview_1.element(by.html.href('disney.com'))).toExist();
+      await expect(webview_1.element(by.web.href('disney.com'))).toExist();
     });
 
     it('expect to find element by hrefContains', async () => {
-      await expect(webview_1.element(by.html.hrefContains('disney'))).toExist();
+      await expect(webview_1.element(by.web.hrefContains('disney'))).toExist();
     });
 
     it('expect to find element by tag name', async () => {
-      await expect(webview_1.element(by.html.tag('mark'))).toExist();
+      await expect(webview_1.element(by.web.tag('mark'))).toExist();
     });
   });
 
   describe('ContentEditable', () => {
 
     it('should replace text by selecting all text', async () => {
-        const editable = await webview_1.element(by.html.className('public-DraftEditor-content'));
+        const editable = await webview_1.element(by.web.className('public-DraftEditor-content'));
         const text = await editable.getText();
 
         await editable.scrollToView();
@@ -81,7 +81,7 @@ describe(':android: WebView', () => {
     });
 
     it('move cursor to end and add text', async () => {
-      const editable = await webview_1.element(by.html.className('public-DraftEditor-content'));
+      const editable = await webview_1.element(by.web.className('public-DraftEditor-content'));
       await editable.scrollToView();
 
       //tapping, (at the moment not working on content-editable)
@@ -103,53 +103,53 @@ describe(':android: WebView', () => {
 
   it('should set input and change text', async () => {
     // Verify initial value
-    const para = webview_1.element(by.html.id('testingPar'));
+    const para = webview_1.element(by.web.id('testingPar'));
     await expect(para).toHaveText('Message');
 
-    const textInput = await webview_1.element(by.html.id('textInput'));
+    const textInput = await webview_1.element(by.web.id('textInput'));
     await textInput.scrollToView();
     await textInput.tap();
     await textInput.typeText(MOCK_TEXT);
 
-    await webview_1.element(by.html.id('changeTextBtn')).tap();
+    await webview_1.element(by.web.id('changeTextBtn')).tap();
     // Verify text updated
     await expect(para).toHaveText(MOCK_TEXT);
   });
 
   it('should header get text and verify its value', async () => {
-    const text = await webview_1.element(by.html.id('testingh1')).getText();
+    const text = await webview_1.element(by.web.id('testingh1')).getText();
 
-    const textInput = await webview_1.element(by.html.id('textInput'));
+    const textInput = await webview_1.element(by.web.id('textInput'));
     await textInput.scrollToView();
     await textInput.tap();
     await textInput.typeText(text);
 
-    await webview_1.element(by.html.id('changeTextBtn')).tap();
+    await webview_1.element(by.web.id('changeTextBtn')).tap();
 
     // Verify text is the title text
-    await expect(webview_1.element(by.html.id('testingPar'))).toHaveText(text);
+    await expect(webview_1.element(by.web.id('testingPar'))).toHaveText(text);
 
   });
 
   it('should replace text', async () => {
-    const textInput = await webview_1.element(by.html.id('textInput'));
+    const textInput = await webview_1.element(by.web.id('textInput'));
     await textInput.scrollToView();
     await textInput.tap();
     await textInput.typeText('first text');
 
-    await webview_1.element(by.html.id('changeTextBtn')).tap();
-    await expect(webview_1.element(by.html.id('testingPar'))).toHaveText('first text');
+    await webview_1.element(by.web.id('changeTextBtn')).tap();
+    await expect(webview_1.element(by.web.id('testingPar'))).toHaveText('first text');
 
     await textInput.replaceText(MOCK_TEXT);
-    await webview_1.element(by.html.id('changeTextBtn')).tap();
+    await webview_1.element(by.web.id('changeTextBtn')).tap();
 
     // Verify param value is the latest changed text
-    await expect(webview_1.element(by.html.id('testingPar'))).toHaveText(MOCK_TEXT);
+    await expect(webview_1.element(by.web.id('testingPar'))).toHaveText(MOCK_TEXT);
   });
 
   it('getWebView with matcher id', async () => {
     const webview_2 = await web(by.id('webview_2'));
-    await expect(webview_2.element(by.html.tag('p'))).toHaveText('Second Webview');
+    await expect(webview_2.element(by.web.tag('p'))).toHaveText('Second Webview');
   });
 
 });
