@@ -427,8 +427,8 @@ describe('expectTwo', () => {
     }
   });
 
-  it('by.html should throw', () => {
-    expect(() => e.by.html).toThrowError(/not support/);
+  it('by.web should throw', () => {
+    expect(() => e.by.web).toThrowError(/not support/);
   });
 
   it('web() should throw', () => {
