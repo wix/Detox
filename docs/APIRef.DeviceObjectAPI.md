@@ -319,7 +319,7 @@ Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test
 
 ### `device.setLocation(lat, lon)` **iOS Only**
 
-> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/master/fbsimctl). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/master/fbsimctl) which is now deprecated. If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
 
 Sets the simulator location to the given latitude and longitude.
 
