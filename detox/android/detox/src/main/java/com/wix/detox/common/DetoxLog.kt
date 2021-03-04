@@ -1,8 +1,11 @@
+@file:JvmName("DetoxLog")
+
 package com.wix.detox.common
 
 import android.util.Log
 
-class DetoxLog {
+class DetoxLog private constructor() {
+
     fun verbose(tag: String, log: String) = Log.v(tag, log)
     fun verbose(tag: String, log: String, error: Throwable) = Log.v(tag, log, error)
 
@@ -19,7 +22,8 @@ class DetoxLog {
     fun error(tag: String, log: String) = Log.e(tag, log)
     fun error(tag: String, log: String, error: Throwable) = Log.e(tag, log, error)
 
-    companion object {
-        val instance = DetoxLog()
+    internal companion object {
+        internal val instance = DetoxLog()
+        internal const val LOG_TAG = "Detox"
     }
 }

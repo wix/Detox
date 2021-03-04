@@ -13,6 +13,7 @@ def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'ko
 android {
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
+
     defaultConfig {
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
@@ -22,10 +23,19 @@ android {
         consumerProguardFiles 'proguard-rules.pro'
     }
 
+    flavorDimensions 'detox'
+    productFlavors {
+        full {
+            dimension 'detox'
+        }
+        coreNative {
+            dimension 'detox'
+        }
+    }
+
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true
-
         unitTests.all { t ->
             reports {
                 html.enabled true
@@ -137,5 +147,5 @@ if (rootProject.hasProperty('isOfficialDetoxLib') ||
 
 // Enable publishing
 if (rootProject.hasProperty('isOfficialDetoxLib')) {
-    apply from: './detox-publishing.gradle'
+    apply from: './publishing.gradle'
 }

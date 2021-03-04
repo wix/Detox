@@ -33,6 +33,8 @@ android {
                 'detoxSessionId': 'test'
         ]
         */
+
+        missingDimensionStrategy 'detox', 'full'
     }
     splits {
         abi {

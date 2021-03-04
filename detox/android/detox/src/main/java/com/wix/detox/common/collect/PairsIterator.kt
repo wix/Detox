@@ -2,7 +2,7 @@ package com.wix.detox.common.collect
 
 import java.lang.IllegalStateException
 
-class PairsIterator<T>(private val delegate: Iterator<T>): Iterator<Pair<T, T>> {
+internal class PairsIterator<T>(private val delegate: Iterator<T>): Iterator<Pair<T, T>> {
     constructor(iterable: Iterable<T>): this(iterable.iterator())
 
     override fun hasNext(): Boolean = delegate.hasNext()
