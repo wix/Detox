@@ -1,6 +1,6 @@
 {
 	"name": "generation",
-	"version": "18.7.1-smoke.0",
+	"version": "18.7.1",
 	"description": "Generate wrapper code for native dependencies",
 	"main": "index.js",
 	"private": true,
