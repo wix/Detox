@@ -6,15 +6,10 @@ jest.mock('../utils/resolveModuleFromPath');
 
 describe('DriverRegistry', () => {
   let DriverRegistry;
-  let registry, opts;
+  let registry;
 
   beforeEach(() => {
     DriverRegistry = require('./DriverRegistry');
-
-    opts = {
-      client: { whatever: Math.random() },
-      emitter: { anything: Math.random() },
-    };
   });
 
   describe('by default', () => {
@@ -24,34 +19,30 @@ describe('DriverRegistry', () => {
 
     it('should resolve "ios.none" to IosDriver', () => {
       const IosDriver = require('./drivers/ios/IosDriver');
-      const driver = registry.resolve('ios.none', opts);
+      const ResolvedDriver = registry.resolve('ios.none');
 
-      expect(driver).toBeInstanceOf(IosDriver);
-      expect(IosDriver).toHaveBeenCalledWith(opts);
+      expect(ResolvedDriver).toBe(IosDriver);
     });
 
     it('should resolve "ios.simulator" to SimulatorDriver', () => {
       const SimulatorDriver = require('./drivers/ios/SimulatorDriver');
-      const driver = registry.resolve('ios.simulator', opts);
+      const ResolvedDriver = registry.resolve('ios.simulator');
 
-      expect(driver).toBeInstanceOf(SimulatorDriver);
-      expect(SimulatorDriver).toHaveBeenCalledWith(opts);
+      expect(ResolvedDriver).toBe(SimulatorDriver);
     });
 
     it('should resolve "android.attached" to AttachedAndroidDriver', () => {
       const AttachedAndroidDriver = require('./drivers/android/attached/AttachedAndroidDriver');
-      const driver = registry.resolve('android.attached', opts);
+      const ResolvedDriver = registry.resolve('android.attached');
 
-      expect(driver).toBeInstanceOf(AttachedAndroidDriver);
-      expect(AttachedAndroidDriver).toHaveBeenCalledWith(opts);
+      expect(ResolvedDriver).toBe(AttachedAndroidDriver);
     });
 
     it('should resolve "android.emulator" to EmulatorDriver', () => {
       const EmulatorDriver = require('./drivers/android/emulator/EmulatorDriver');
-      const driver = registry.resolve('android.emulator', opts);
+      const ResolvedDriver = registry.resolve('android.emulator');
 
-      expect(driver).toBeInstanceOf(EmulatorDriver);
-      expect(EmulatorDriver).toHaveBeenCalledWith(opts);
+      expect(ResolvedDriver).toBe(EmulatorDriver);
     });
 
     it('should try to resolve unknown driver as a node.js dependency', () => {
@@ -62,15 +53,22 @@ describe('DriverRegistry', () => {
       });
 
       const FakeDriver = require('./drivers/__mocks__/FakeDriver');
-      const driver = registry.resolve('fake-driver', opts);
+      const ResolvedDriver = registry.resolve('fake-driver');
 
-      expect(driver).toBeInstanceOf(FakeDriver);
-      expect(driver.constructorArgs).toEqual([opts]);
+      expect(ResolvedDriver).toBe(FakeDriver);
+    });
+
+    it('should throw an error if a custom driver does not export DriverClass property', () => {
+      require('../utils/resolveModuleFromPath').mockImplementation(() => {
+        return require('./drivers/__mocks__/FakeDriver');
+      });
+
+      expect(() => registry.resolve('fake-driver')).toThrowError(/does not export DriverClass/);
     });
 
     it('should throw errors if it cannot resolve a driver', () => {
-      expect(() => registry.resolve('imaginary.driver', opts))
-        .toThrowError(/imaginary.driver.*not supported/);
+      require('../utils/resolveModuleFromPath').mockImplementation(() => { throw new Error('BAD IDEA'); });
+      expect(() => registry.resolve('imaginary.driver')).toThrowError('BAD IDEA');
     });
   });
 
@@ -78,10 +76,9 @@ describe('DriverRegistry', () => {
     it('should be extensible', () => {
       const FakeDriver101 = require('./drivers/__mocks__/FakeDriver');
       const registry = new DriverRegistry({ FakeDriver101 });
-      const driver = registry.resolve('FakeDriver101', opts);
+      const driver = registry.resolve('FakeDriver101');
 
-      expect(driver).toBeInstanceOf(FakeDriver101);
-      expect(driver.constructorArgs).toEqual([opts]);
+      expect(driver).toBe(FakeDriver101);
     });
   });
 });

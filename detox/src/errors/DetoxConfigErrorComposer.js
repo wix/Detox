@@ -253,6 +253,22 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  invalidDeviceType(deviceAlias, deviceConfig, innerError) {
+    return new DetoxConfigError({
+      message: `Invalid device type ${J(deviceConfig.type)} inside your configuration.`,
+      hint: `Did you mean to use one of these?
+${hintConfigurations(deviceAppTypes)}
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+${innerError.message}
+
+Please check your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias, this._ensureProperty('type')),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
   malformedUtilBinaryPaths(deviceAlias) {
     return new DetoxConfigError({
       message: `Invalid type of "utilBinaryPaths" inside the device configuration.`

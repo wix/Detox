@@ -217,8 +217,7 @@ describe('CLI', () => {
     });
 
     test('should omit --grep --invert for custom platforms', async () => {
-      const customDriver = `module.exports = class CustomDriver {};`
-      singleConfig().type = tempfile('.js', customDriver);
+      singleConfig().type = tempfile('.js', aCustomDriverModule());
 
       await run();
       expect(cliCall().command).not.toContain(' --invert ');
@@ -494,8 +493,7 @@ describe('CLI', () => {
     });
 
     test('should omit --testNamePattern for custom platforms', async () => {
-      const customDriver = `module.exports = class CustomDriver {};`
-      singleConfig().type = tempfile('.js', customDriver);
+      singleConfig().type = tempfile('.js', aCustomDriverModule());
 
       await run();
       expect(cliCall().command).not.toContain('--testNamePattern');
@@ -780,5 +778,9 @@ describe('CLI', () => {
 
   function quote(s, q = isInCMD() ? `"` : `'`) {
     return q + s + q;
+  }
+
+  function aCustomDriverModule() {
+    return `class DriverClass {}; module.exports = { DriverClass }`;
   }
 });

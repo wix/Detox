@@ -222,6 +222,30 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.invalidDeviceType', () => {
+      beforeEach(() => {
+        build = (deviceConfig, alias) => {
+          // eslint-disable-next-line node/no-missing-require
+          const err = _.attempt(() => require('android.apk'));
+          return builder.invalidDeviceType(alias, deviceConfig, err);
+        };
+      });
+
+      it('should create an error for inlined configuration', () => {
+        const deviceConfig = config.configurations.inlined.device;
+        deviceConfig.type = 'android.apk';
+        builder.setConfigurationName('inlined');
+        expect(build(deviceConfig)).toMatchSnapshot();
+      });
+
+      it('should create an error for aliased configuration', () => {
+        const deviceConfig = config.devices.aDevice;
+        deviceConfig.type = 'android.apk';
+        builder.setConfigurationName('aliased');
+        expect(build(deviceConfig, 'aDevice')).toMatchSnapshot();
+      });
+    });
+
     describe('.missingDeviceMatcherProperties', () => {
       beforeEach(() => {
         build = (alias) => builder.missingDeviceMatcherProperties(alias, ['foo', 'bar']);
