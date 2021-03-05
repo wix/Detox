@@ -107,14 +107,7 @@ describe('Detox', () => {
         expect(client().connect).toHaveBeenCalled());
 
       it('should resolve a device driver from the registry', () =>
-        expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(
-          detoxConfig.deviceConfig.type,
-          {
-            client: client(),
-            invocationManager: invocationManager(),
-            emitter: expect.anything(),
-          }
-        ));
+        expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(detoxConfig.deviceConfig.type));
 
       it('should resolve matchers implementation', () => {
         const { emitter } = Device.mock.calls[0][0];

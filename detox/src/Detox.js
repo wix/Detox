@@ -148,7 +148,8 @@ class Detox {
     await this._client.connect();
 
     const invocationManager = new InvocationManager(this._client);
-    const deviceDriver = driverRegistry.resolve(this._deviceConfig.type, {
+    const DeviceDriverImpl = driverRegistry.resolve(this._deviceConfig.type);
+    const deviceDriver = new DeviceDriverImpl({
       client: this._client,
       invocationManager,
       emitter: this._eventEmitter,
