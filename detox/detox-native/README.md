@@ -7,20 +7,19 @@
 <p align="center">
   <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
-
-**Detox-native** is a subsidiary of the [Detox](../../README.md) project. It is a work-in-progress initiative to bring all of Detox' under-the-hood magic for  app developers, typically writing UI tests using Google and Apple's native go-to frameworks (e.g. Espresso, EarlGrey, XCTest).
+**Detox-Native** is a subsidiary of the [Detox](../../README.md) project. It is a work-in-progress, experimental initiative to bring all of Detox' under-the-hood magic for mobile app developers, typically writing UI tests using Google and Apple's native go-to frameworks (e.g. Espresso, EarlGrey, XCTest).
 
 **At the moment, the focus of the project is strictly on the Android platform.**
 
 ## Android
 
-On Android, the project mostly aims to be an improvement over what we've found as `Espresso`'s shortcomings in producing stable and reliable UI tests. However, it also aims to offering additional interesting features.
+On Android, the project mostly aims to be an improvement over what we've found to be shortcomings in `Espresso`'s ability to produce stable and reliable UI tests. However, it also aims at offering additional interesting features.
 
-**If you find Espresso unstable / unreliable, or are looking for some additional features, give `Detox` a try.**
+**If you find Espresso unstable / unreliable, or are looking for some additional features, give `Detox-Native` a try!**
 
 ### Features Set
 
-Below are a few examples of what Detox offers for Android:
+Below are a few examples of what Detox offers for Android, at the moment (more to come, we hope!).
 
 #### Tap-Action Improvement
 
@@ -54,13 +53,13 @@ onView(withId(R.id.easterEgg)).perform(DetoxViewActions.multiTap(5))
 
 #### Take View Screenshots!
 
-Detox can take screenshots of views, including all child-views in the view-hierarchy. Example:
+Detox can take screenshots of views, including all child-views in the view-hierarchy. Example of a resulted bitmap:
 
 ![Announcement View](../../docs/img/element-screenshot-view.png)
 
 This can be very useful for screenshot-based snapshot tests, using external tools such as `applitools eyes`. It is a better approach than doing so with screenshots of the entire screen, as those include varying elements such as battery level, and time. Read more about it in our [Screenshots guide](../../docs/APIRef.Screenshots.md#element-level-screenshots-android-only).
 
-The resulted screenshot can be provided as a bitmap, a byte-array, or a Base64-Encoded string (based on the raw byte-array). The byte-array approach is especially useful when using external services such as `applitools`, because this is normally the way the image can be uploaded.
+Detox can provide the result screenshot as a bitmap, a byte-array, or a Base64-Encoded string (based on the raw byte-array). The byte-array approach is especially useful when using external services such as `applitools`, because this is normally the way the image can be uploaded there.
 
 Usage example:
 
@@ -76,6 +75,8 @@ onView(withId(R.id.announcement)).perform(DetoxViewActions.takeScreenshot().also
 	}
 })
 ```
+
+> To-do: add info about saving the image to a file.
 
 ### Installation
 
