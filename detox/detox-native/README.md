@@ -7,7 +7,7 @@
 <p align="center">
   <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
-**Detox-Native** is a subsidiary of the [Detox](../../README.md) project. It is a work-in-progress, experimental initiative to bring all of Detox' under-the-hood magic for mobile app developers, typically writing UI tests using Google and Apple's native go-to frameworks (e.g. Espresso, EarlGrey, XCTest).
+**Detox-Native** is a subsidiary of the [Detox](https://github.com/wix/Detox) project. It is a work-in-progress, experimental initiative to bring all of Detox' under-the-hood magic for mobile app developers, typically writing UI tests using Google and Apple's native go-to frameworks (e.g. Espresso, EarlGrey, XCTest).
 
 **At the moment, the focus of the project is strictly on the Android platform.**
 
