@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 global.DETOX_CLI = true;
 const yargs = require('yargs');
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const logger = require('../src/utils/logger').child({ __filename });
 
 yargs
@@ -24,7 +25,7 @@ yargs
   .wrap(yargs.terminalWidth() * 0.9)
   .fail(function(msg, err, program) {
     if (err) {
-      const lines = err.toString().split("\n");
+      const lines = DetoxRuntimeError.format(err).split("\n");
       for (const line of lines) {
         logger.error(line);
       }
