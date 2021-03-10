@@ -6,7 +6,7 @@ class DetoxRuntimeError extends Error {
     message = '',
     hint = '',
     debugInfo = '',
-    inspectOptions,
+    inspectOptions = null,
   } = {}) {
     const formattedMessage = _.compact([
       message,
@@ -29,6 +29,25 @@ class DetoxRuntimeError extends Error {
 
       ...options,
     });
+  }
+
+  /**
+   * @param {*} err
+   */
+  static format(err) {
+    if (err instanceof DetoxRuntimeError) {
+      return err.message;
+    }
+
+    if (_.isError(err) && /^Command failed:/.test(err.message)) {
+      return err.message;
+    }
+
+    if (_.isError(err) && (err.stack || err.message)) {
+      return String(err.stack || err.message);
+    }
+
+    return this.inspectObj(err, { depth: 1 })
   }
 }
 

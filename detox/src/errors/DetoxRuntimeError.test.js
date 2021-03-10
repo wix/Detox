@@ -9,6 +9,29 @@ describe(DetoxRuntimeError, () => {
     });
   });
 
+  it('should format any object to an error message', () => {
+    expect(DetoxRuntimeError.format({})).toBe("{}");
+
+    const err = new Error('Command failed: echo Hello world');
+    expect(DetoxRuntimeError.format(err)).toBe(err.message);
+
+    err.message = 'Other error message';
+    expect(DetoxRuntimeError.format(err)).toBe(err.stack);
+
+    delete err.stack;
+    expect(DetoxRuntimeError.format(err)).toBe(err.message);
+
+    delete err.message;
+    expect(DetoxRuntimeError.format(err)).toBe('[Error]');
+
+    const runtimeError = new DetoxRuntimeError({
+      message: 'msg',
+      hint: 'hint',
+    });
+
+    expect(DetoxRuntimeError.format(runtimeError)).toBe(runtimeError.message);
+  });
+
   function varietiesOfInstantiation() {
     return {
       'no args': new DetoxRuntimeError(),
