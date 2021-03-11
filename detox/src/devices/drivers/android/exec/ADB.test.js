@@ -1,4 +1,5 @@
 describe('ADB', () => {
+  const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
   let ADB;
@@ -113,7 +114,6 @@ describe('ADB', () => {
   });
 
   it('push', async () => {
-    const deviceId = 'mockEmulator';
     const sourceFile = '/mock-source/file.xyz';
     const destFile = '/sdcard/file.abc';
     await adb.push(deviceId, sourceFile, destFile);
@@ -124,7 +124,6 @@ describe('ADB', () => {
   });
 
   it('remote-install', async () => {
-    const deviceId = 'mockEmulator';
     const binaryPath = '/mock-path/filename.mock';
     await adb.remoteInstall(deviceId, binaryPath);
 
@@ -133,9 +132,16 @@ describe('ADB', () => {
       expect.anything());
   });
 
-  describe('unlockScreen', () => {
-    const deviceId = 'mockEmulator';
+  it('global text-typing', async () => {
+    const text = 'some-text-with spaces';
+    const expectedText = 'some-text-with%sspaces';
+    await adb.typeText(deviceId, text);
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell "input text ${expectedText}"`),
+      expect.anything());
+  });
 
+  describe('unlockScreen', () => {
     async function unlockScreenWithPowerStatus(mWakefulness, mUserActivityTimeoutOverrideFromWindowManager) {
       jest.spyOn(adb, 'shell').mockImplementation(async () => `
         mWakefulness=${mWakefulness}
@@ -193,7 +199,6 @@ describe('ADB', () => {
   });
 
   describe('spawnInstrumentation', () => {
-    const deviceId = 'aDeviceId';
     const testRunner = 'aTestRunner';
 
     it('should spawn instrumentation', async () => {

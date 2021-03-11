@@ -161,7 +161,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async typeText(deviceId, text) {
-    await this.adb.typeText(deviceId, text);
+    const adbName = this._getAdbName(deviceId);
+    await this.adb.typeText(adbName, text);
   }
 
   async terminate(deviceId, bundleId) {
