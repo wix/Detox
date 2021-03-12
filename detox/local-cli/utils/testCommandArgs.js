@@ -109,6 +109,12 @@ module.exports = {
     number: true,
     default: 1,
   },
+  t: {
+    alias: 'testNamePattern',
+    group: 'Execution:',
+    describe:
+      '[Jest Only] Run only tests with a name that matches the regex.',
+  },
   'jest-report-specs': {
     group: 'Execution:',
     describe: '[Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.',
