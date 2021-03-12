@@ -41,7 +41,7 @@ module.exports = {
   u: {
     alias: 'cleanup',
     group: 'Execution:',
-    describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue',
+    describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exits cleanly with no residue',
     boolean: true,
   },
   d: {
