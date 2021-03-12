@@ -1,7 +1,0 @@
-include ':app'
-
-include ':detox'
-project(':detox').projectDir = new File(rootProject.projectDir, '../detox/android/detox/')
-
-include ':invoke'
-project(':invoke').projectDir = new File(rootProject.projectDir, '../detox/node_modules/react-native-invoke/android/invoke')

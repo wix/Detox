@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">Detox Example</string>
-    <string name="welcome">Welcome</string>
-    <string name="say_hello">Say Hello</string>
-    <string name="say_world">Say World</string>
-    <string name="hello">Hello!!!</string>
-    <string name="world">World!!!</string>
-</resources>
