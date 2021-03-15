@@ -6,6 +6,7 @@
 
 * [`device.id`](#deviceid)
 * [`device.name`](#devicename)
+* [`device.appLaunchArgs`](#deviceapplaunchargs)
 
 ### `device.id`
 
@@ -40,7 +41,6 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 
 - [`device.selectApp(name)`](#deviceselectappname)
 - [`device.launchApp()`](#devicelaunchappparams)
-- [`device.appLaunchArgs`](#deviceapplaunchargs)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -329,29 +329,23 @@ await device.setLocation(32.0853, 34.7818);
 
 ### `device.setURLBlacklist([urls])`
 
-Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs. To disable endpoints at initialization, pass in the blacklist at [device launch](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch).
+Exclude syncrhonization with respect to network activity (i.e. don't wait for network to go idle before moving forward in the test execution) according to **specific** endpoints, denoted as URL reg-exp's. To disable endpoints at initialization, pass in the black-list as an [app-launch argument](APIRef.LaunchArgs.md) named `detoxURLBlacklistRegex`.
 
 
 ```js
-await device.setURLBlacklist(['.*127.0.0.1.*']);
-```
-
-```js
-await device.setURLBlacklist(['.*my.ignored.endpoint.*']);
+await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
 ```
 
 ### `device.enableSynchronization()`
 
-Enable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
-) (enabled by default). **This is being reset on every new instance of the app.**
+Enable (restore) synchronization (idle/busy monitoring) with the app - namely, resume waiting for the app to go idle before moving forward in the test execution. Enabled by default. **This gets reset on every new instance of the app.**
 ```js
 await device.enableSynchronization();
 ```
 
 
 ### `device.disableSynchronization()`
-Disable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
-) (enabled by default) **This is being reset on every new instance of the app.**
+Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution (rather, resort to applying unrecommended `sleep()`'s in your test code...). **This gets reset on every new instance of the app.**
 
 ```js
 await device.disableSynchronization();
