@@ -19,10 +19,6 @@ run_f "scripts/ci.genycloud-login.sh"
 
 pushd detox/test
 
-# Workaround until react android issue will be fixed - react-native: 0.55
-mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
-cp extras/release.gradle node_modules/react-native/ReactAndroid/
-
 run_f "npm run build:android"
 cp ../coverage/lcov.info ../../coverage/unit.lcov
 
