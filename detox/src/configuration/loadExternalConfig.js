@@ -1,6 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const findUp = require('find-up');
+const resolveFrom = require('resolve-from');
+const log = require('../utils/logger').child({ __filename });
 
 async function locateExternalConfig(cwd) {
   return findUp([
@@ -28,6 +30,28 @@ async function loadConfig(configPath) {
   };
 }
 
+async function resolveConfigPath(configPath, cwd) {
+  if (!configPath) {
+    return locateExternalConfig(cwd);
+  }
+
+  const viaNodeResolution = resolveFrom.silent(cwd, configPath);
+  if (viaNodeResolution) {
+    return viaNodeResolution;
+  }
+
+  if (fs.existsSync(configPath)) {
+    log.warn('Cannot resolve Detox config path by using Node.js require() mechanism:\n' +
+      `require(${JSON.stringify(configPath)})\n\n` +
+      'Detox now will resort to legacy filesystem-based path resolution.\n' +
+      'Please fix your config path, so it conforms to `require(modulePath)` resolution.');
+
+    return path.resolve(configPath);
+  }
+
+  return null;
+}
+
 /**
  * @param {DetoxConfigErrorComposer} errorComposer
  * @param {string} configPath
@@ -35,9 +59,7 @@ async function loadConfig(configPath) {
  * @returns {Promise<null|{filepath: *, config: any}>}
  */
 async function loadExternalConfig({ errorComposer, configPath, cwd }) {
-  const resolvedConfigPath = configPath
-    ? path.resolve(configPath)
-    : await locateExternalConfig(cwd);
+  const resolvedConfigPath = await resolveConfigPath(configPath, cwd);
 
   if (resolvedConfigPath) {
     errorComposer.setDetoxConfigPath(resolvedConfigPath);
@@ -45,12 +67,12 @@ async function loadExternalConfig({ errorComposer, configPath, cwd }) {
     try {
       return await loadConfig(resolvedConfigPath);
     } catch (e) {
-      if (/Cannot find module|ENOENT/.test(`${e}`)) {
-        throw errorComposer.noConfigurationAtGivenPath();
-      } else {
-        throw errorComposer.failedToReadConfiguration(e);
-      }
+      throw errorComposer.failedToReadConfiguration(e);
     }
+  } else if (configPath) {
+    throw errorComposer
+      .setDetoxConfigPath(configPath)
+      .noConfigurationAtGivenPath();
   }
 
   return null;
