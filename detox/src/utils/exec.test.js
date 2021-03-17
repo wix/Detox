@@ -24,12 +24,6 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
   });
 
-  it(`exec command with no arguments successfully`, async () => {
-    mockCppSuccessful(cpp);
-    await exec.execWithRetriesAndLogs('bin');
-    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
-  });
-
   it(`exec command with arguments successfully`, async () => {
     mockCppSuccessful(cpp);
 
@@ -37,6 +31,14 @@ describe('exec', () => {
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
+  });
+
+  it(`exec command with env-vars pass-through (i.e. no custom env-vars specification`, async () => {
+    mockCppSuccessful(cpp);
+    await exec.execWithRetriesAndLogs('bin');
+    const usedOptions = cpp.exec.mock.calls[0][1];
+    expect(usedOptions).not.toHaveProperty('env');
+    expect(cpp.exec).toHaveBeenCalledTimes(1);
   });
 
   it(`exec command with arguments and prefix successfully`, async () => {
