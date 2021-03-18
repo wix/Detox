@@ -11,7 +11,7 @@ const composeSessionConfig = require('./composeSessionConfig');
 const selectConfiguration = require('./selectConfiguration');
 
 async function composeDetoxConfig({
-  cwd,
+  cwd = process.cwd(),
   argv,
   override,
   userParams,
