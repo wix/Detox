@@ -87,6 +87,7 @@ describe('Detox', () => {
       it('should create a DetoxServer automatically', () =>
         expect(DetoxServer).toHaveBeenCalledWith({
           port: expect.anything(),
+          standalone: false,
         }));
 
       it('should create a new Client', () =>
@@ -97,11 +98,6 @@ describe('Detox', () => {
 
       it('should create an invocation manager', () =>
         expect(invoke.InvocationManager).toHaveBeenCalledWith(client()));
-
-      it('should add a non-responsiveness listener to client ', () =>
-        expect(client().setNonresponsivenessListener).toHaveBeenCalledWith(
-          expect.any(Function)
-        ));
 
       it('should connect a client to the server', () =>
         expect(client().connect).toHaveBeenCalled());
@@ -242,23 +238,6 @@ describe('Detox', () => {
         expect(device().uninstallApp).not.toHaveBeenCalled();
         expect(device().installApp).not.toHaveBeenCalled();
       });
-    });
-
-    describe('and it gets unresponsiveness', () => {
-      let THREAD_DUMP = 'Simulated non-responsiveness';
-
-      beforeEach(init);
-
-      beforeEach(() => {
-        const listener = client().setNonresponsivenessListener.mock.calls[0][0];
-        listener({ threadDump: THREAD_DUMP });
-      });
-
-      it('should log a warning', () =>
-        expect(logger.warn).toHaveBeenCalledWith(
-          { event: 'APP_NONRESPONSIVE' },
-          expect.stringContaining(THREAD_DUMP)
-        ));
     });
 
     describe('and it gets emitter error', () => {

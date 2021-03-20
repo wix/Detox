@@ -9,12 +9,8 @@ describe('InstrumentsArtifactRecording', () => {
       untrackArtifact: jest.fn()
     };
     mockedClient = {
-      pandingAppCrash: false,
       startInstrumentsRecording: jest.fn(),
       stopInstrumentsRecording: jest.fn()
-    };
-    mockedPluginContext = {
-      bundleId: 'some.bundle.id'
     };
   });
 
@@ -34,26 +30,6 @@ describe('InstrumentsArtifactRecording', () => {
         client: mockedClient,
       });
       mockedClient.isConnected = false;
-      expect(recording._isClientConnected()).toBe(false);
-    });
-
-    it('should be disconnected with real connection and pending app crash', () => {
-      const recording = new InstrumentsArtifactRecording({
-        pluginContext: mockedPluginContext,
-        client: mockedClient,
-      });
-      mockedClient.isConnected = true;
-      mockedClient.pandingAppCrash = true;
-      expect(recording._isClientConnected()).toBe(false);
-    });
-
-    it('should be disconnected with real connection and without app running', () => {
-      const recording = new InstrumentsArtifactRecording({
-        pluginContext: mockedPluginContext,
-        client: mockedClient,
-      });
-      mockedClient.isConnected = true;
-      mockedPluginContext.bundleId = undefined;
       expect(recording._isClientConnected()).toBe(false);
     });
   });

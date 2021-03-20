@@ -1,14 +1,12 @@
 const _ = require('lodash');
-const logger = require('../../utils/logger');
-const log = logger.child({ __filename });
-const bunyan = require('bunyan');
+const { getDetoxLevel } = require('../../utils/logger');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
 class Action {
   constructor(type, params = {}) {
     this.type = type;
     this.params = params;
-    this.messageId;
+    this.messageId = undefined;
   }
 
   expectResponseOfType(response, type) {
@@ -29,12 +27,24 @@ class Login extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'loginSuccess');
+    return response.params;
   }
 }
 
 class Ready extends Action {
   constructor() {
     super('isReady');
+    this.messageId = -1000;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'ready');
+  }
+}
+
+class ReloadReactNative extends Action {
+  constructor() {
+    super('reactNativeReload');
     this.messageId = -1000;
   }
 
@@ -83,17 +93,6 @@ class SetOrientation extends Action {
   }
 }
 
-class ReloadReactNative extends Action {
-  constructor() {
-    super('reactNativeReload');
-    this.messageId = -1000;
-  }
-
-  async handle(response) {
-    this.expectResponseOfType(response, 'ready');
-  }
-}
-
 class Cleanup extends Action {
   constructor(stopRunner) {
     super('cleanup', { stopRunner });
@@ -101,9 +100,7 @@ class Cleanup extends Action {
   }
 
   async handle(response) {
-    if (response.type !== 'appDisconnected') {
-      this.expectResponseOfType('cleanupDone');
-    }
+    this.expectResponseOfType(response, 'cleanupDone');
   }
 }
 
@@ -118,7 +115,7 @@ class Invoke extends Action {
         let message = 'Test Failed: ' + response.params.details;
         if (response.params.viewHierarchy) {
           /* istanbul ignore next */
-          message += /^(debug|trace)$/.test(logger.getDetoxLevel())
+          message += /^(debug|trace)$/.test(getDetoxLevel())
             ? '\nView Hierarchy:\n' + response.params.viewHierarchy
             : '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
         }
@@ -161,8 +158,7 @@ class CurrentStatus extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'currentStatusResult');
-    log.info({ class: 'CurrentStatus' }, response.params.status);
-    return response;
+    return response.params.status;
   }
 }
 
@@ -173,29 +169,6 @@ class SetInstrumentsRecordingState extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'setRecordingStateDone');
-  }
-}
-
-class AppWillTerminateWithError extends Action {
-  constructor() {
-    super('AppWillTerminateWithError');
-    this.messageId = -10000;
-  }
-
-  handle(response) {
-    this.expectResponseOfType(response, 'AppWillTerminateWithError');
-    return response.params.errorDetails;
-  }
-}
-
-class AppNonresponsive extends Action {
-  constructor() {
-    super('AppNonresponsiveDetected');
-    this.messageId = -10001;
-  }
-
-  handle(response) {
-    this.expectResponseOfType(response, 'AppNonresponsiveDetected');
   }
 }
 
@@ -233,7 +206,5 @@ module.exports = {
   Shake,
   SetOrientation,
   SetInstrumentsRecordingState,
-  AppWillTerminateWithError,
-  AppNonresponsive,
   CaptureViewHierarchy,
 };

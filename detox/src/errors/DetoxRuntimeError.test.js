@@ -1,12 +1,9 @@
 const _ = require('lodash');
 const DetoxRuntimeError = require('./DetoxRuntimeError');
 
-describe(DetoxRuntimeError, () => {
-  it('should format all fields to a single message', () => {
-    _.forEach(varietiesOfInstantiation(), (error, description) => {
-      expect(error.toString()).toBeDefined();
-      expect(() => { throw error; }).toThrowError();
-    });
+describe('DetoxRuntimeError', () => {
+  it.each(varietiesOfInstantiation())('should be created with %s', (description, error) => {
+    expect(error).toMatchSnapshot();
   });
 
   it('should format any object to an error message', () => {
@@ -33,11 +30,15 @@ describe(DetoxRuntimeError, () => {
   });
 
   function varietiesOfInstantiation() {
-    return {
+    return Object.entries({
       'no args': new DetoxRuntimeError(),
       'empty object': new DetoxRuntimeError({}),
       'only message': new DetoxRuntimeError({
         message: `The video is not being recorded on device (${'emulator-5554'}) at path: ${'/sdcard/712398.mp4'}`,
+      }),
+      'message with no stack': new DetoxRuntimeError({
+        message: 'Test message without a stack',
+        noStack: true,
       }),
       'message with hint': new DetoxRuntimeError({
         message: 'Detox adapter to Jest is malfunctioning.',
@@ -69,6 +70,6 @@ describe(DetoxRuntimeError, () => {
         'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
         debugInfo: `testSummary was: ${JSON.stringify('test name')}`,
       }),
-    };
+    });
   }
 });

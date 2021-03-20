@@ -1,234 +1,313 @@
 const _ = require('lodash');
+const permaproxy = require('funpermaproxy');
 const config = require('../configuration/configurations.mock').validSession;
 
 describe('AsyncWebSocket', () => {
   let AsyncWebSocket;
   let WebSocket;
-  let client;
+  let aws;
+  let log;
+
+  const socket = permaproxy(() => _.last(WebSocket.mock.instances));
 
   beforeEach(() => {
     jest.mock('../utils/logger');
-    WebSocket = jest.mock('ws');
+    jest.mock('ws');
+    WebSocket = require('ws');
+    WebSocket.CONNECTING = 0;
     WebSocket.OPEN = 1;
+    WebSocket.CLOSING = 2;
     WebSocket.CLOSED = 3;
 
+    WebSocket.prototype.readyState = WebSocket.CONNECTING;
+    WebSocket.prototype.mockOpen = function () {
+      this.readyState = WebSocket.OPEN;
+      this.onopen && this.onopen({ target: this });
+    };
+    WebSocket.prototype.mockError = function (error) {
+      this.onerror && this.onerror({ error });
+    };
+    WebSocket.prototype.mockMessage = function (data) {
+      this.onmessage && this.onmessage({ data: JSON.stringify(data) });
+    };
+    WebSocket.prototype.mockClose = function () {
+      this.onclose && this.onclose(null);
+    };
+    WebSocket.prototype.mockCloseError = function (error) {
+      this.close.mockImplementation(() => { throw error });
+    };
+
     AsyncWebSocket = require('./AsyncWebSocket');
-    client = new AsyncWebSocket(config.server);
+    aws = new AsyncWebSocket(config.server);
+    log = require('../utils/logger');
   });
 
-  it(`new AsyncWebSocket - websocket onOpen should resolve`, async () => {
-    const response = generateResponse('onmessage', 0);
-    const promise = client.open();
-    client.ws.onopen(response);
-    expect(await promise).toEqual(response);
+  describe('.open()', () => {
+    it(`should normally resolve`, async () => {
+      await expect(connect()).resolves.not.toThrowError();
+    });
+
+    it(`should reject if called twice simultaneously`, async () => {
+      const [, connectTwice] = [aws.open(), connect()];
+      await expect(connectTwice).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it(`should reject if called twice sequentially`, async () => {
+      await connect();
+      await expect(connect()).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it(`should reject on a constructor error`, async () => {
+      WebSocket.mockImplementation(() => { throw anError(); });
+      await expect(connect()).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it(`should reject on an error event`, async () => {
+      const promise = aws.open();
+      socket.mockError(anError());
+      await expect(promise).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it(`should allow to open a connection after an error`, async () => {
+      const promise1 = aws.open();
+      socket.mockError(anError());
+      await expect(promise1).rejects.toThrowError();
+
+      const promise2 = aws.open();
+      socket.mockOpen();
+      await expect(promise2).resolves.not.toThrowError();
+    });
   });
 
-  it(`new AsyncWebSocket - websocket onError should reject`, async () => {
-    const error = new Error();
-    const promise = client.open();
+  describe('.send()', () => {
+    it(`should throw for a closed connection`, async () => {
+      await expect(aws.send(generateRequest())).rejects.toThrowErrorMatchingSnapshot();
+    });
 
-    try {
-      client.ws.onerror(error);
-      await promise;
-    } catch (ex) {
-      expect(ex).toEqual(error);
-    }
+    describe('when opened', () => {
+      beforeEach(() => connect());
+
+      it(`should mutate messages without .messageId by auto-incrementing it`, async () => {
+        const expected1 = generateResponse('onmessage', 0);
+        const request1 = generateRequest();
+        const response1 = aws.send(request1);
+        socket.mockMessage(expected1);
+        expect(await response1).toEqual(expected1);
+        expect(request1.messageId).toEqual(0);
+
+        const expected2 = generateResponse('onmessage', 1);
+        const request2 = generateRequest();
+        const response2 = aws.send(request2);
+        socket.mockMessage(expected2);
+        expect(await response2).toEqual(expected2);
+        expect(request2.messageId).toEqual(1);
+      });
+
+      it(`should not mutate an existing messageId in a message`, async () => {
+        const expected1 = generateResponse('cleanupDone', -0xc1ea);
+
+        const request1 = generateRequest(-0xc1ea);
+        const response1 = aws.send(request1);
+        socket.mockMessage(expected1);
+        expect(await response1).toEqual(expected1);
+      });
+
+      it(`should reject all messages in the flight if there's an error`, async () => {
+        const sendPromise1 = aws.send(generateRequest());
+        const sendPromise2 = aws.send(generateRequest());
+        socket.mockError(anError())
+
+        await expect(sendPromise1).rejects.toThrowErrorMatchingSnapshot();
+        await expect(sendPromise2).rejects.toThrowErrorMatchingSnapshot();
+      });
+
+      it(`should call an event handler when there are no matching messages in the flight`, async () => {
+        const onErrorCallback = jest.fn();
+        const someResponse = generateResponse('error message', 100);
+        someResponse.type = 'error';
+
+        aws.setEventCallback('error', onErrorCallback);
+        const sendPromise1 = aws.send(generateRequest(100));
+
+        // we have one matching in-flight promise with messageId=100
+        socket.mockMessage(someResponse);
+        await expect(sendPromise1).resolves.toEqual(someResponse);
+        expect(onErrorCallback).not.toHaveBeenCalled();
+
+        // now there are no matching in-flight promises
+        socket.mockMessage(someResponse);
+        expect(onErrorCallback).toHaveBeenCalledWith(someResponse);
+      });
+
+      it(`should log an error if the incoming message was completely unexpected`, async () => {
+        const onErrorCallback = jest.fn();
+        aws.setEventCallback('error', onErrorCallback);
+        socket.mockMessage({ type: 'somethingElse' });
+
+        expect(onErrorCallback).not.toHaveBeenCalled();
+        expect(log.error).toHaveBeenCalledWith(
+          { event: 'ERROR' },
+          '%s',
+          expect.any(Error), // `Unexpected message received over the web socket: onmessage`
+        );
+      });
+    });
   });
 
-  it(`send message on a closed connection should throw`, async () => {
-    try {
-      await client.send(generateRequest());
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
+  describe('.close()', () => {
+    it('should silently exit if the socket is not open', async () => {
+      await expect(aws.close()).resolves.not.toThrowError();
+    });
+
+    it('should close the socket when onclose is called', async () => {
+      await connect();
+      const closePromise = aws.close();
+      socket.mockClose();
+      await expect(closePromise).resolves.not.toThrowError();
+    });
+
+    it('should throw on a consequent attempt to close the socket', async () => {
+      await connect();
+      const closePromise1 = aws.close();
+      const closePromise2 = aws.close();
+      socket.mockClose();
+      await expect(closePromise1).resolves.not.toThrowError();
+      await expect(closePromise2).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it('should throw on a sync socket.close() error', async () => {
+      await connect();
+      socket.mockCloseError(anError());
+      await expect(aws.close()).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it('should throw on an emitted socket.close() error', async () => {
+      await connect();
+      const closePromise = aws.close();
+      socket.mockError(anError());
+      await expect(closePromise).rejects.toThrowErrorMatchingSnapshot();
+    });
   });
 
-  it(`message should have subsequent messageIds`, async () => {
-    await connect(client);
+  describe('.isOpen', () => {
+    it(`should return false when closed`, async () => {
+      expect(aws.isOpen).toBe(false);
+    });
 
-    const request = generateRequest();
-    const firstResponse = generateResponse('onmessage', 0);
-    const secondResponse = generateResponse('onmessage', 1);
-
-    const first = client.send(request);
-    expect(request.messageId).toEqual(0);
-    client.ws.onmessage(firstResponse);
-    expect(await first).toEqual(firstResponse.data);
-
-    const second = client.send(request);
-    expect(request.messageId).toEqual(1);
-    client.ws.onmessage(secondResponse);
-    expect(await second).toEqual(secondResponse.data);
-});
-
-  it(`message response should resolve the calling request`, async () => {
-    await connect(client);
-
-    const request = generateRequest();
-    const firstResponse = generateResponse('onmessage', 0);
-    const secondResponse = generateResponse('onmessage', 1);
-
-    const first = client.send(request);
-    expect(request.messageId).toEqual(0);
-
-    const second = client.send(request);
-    expect(request.messageId).toEqual(1);
-
-    client.ws.onmessage(secondResponse);
-    client.ws.onmessage(firstResponse);
-
-    expect(await second).toEqual(secondResponse.data);
-    expect(await first).toEqual(firstResponse.data);
+    it(`should return true when opened`, async () => {
+      await connect();
+      expect(aws.isOpen).toBe(true);
+    });
   });
 
-  it(`message should be ignored if has no pending request`, async () => {
-    await connect(client);
+  describe('.status', () => {
+    it(`should return "non-initialized" at the beginning`, async () => {
+      expect(aws.status).toBe('non-initialized');
+    });
 
-    const initialInflightPromisesSize = _.size(client.inFlightPromises);
-    const response = generateResponse('onmessage', 123);
-    client.ws.onmessage(response);
+    it(`should return "opening" when connecting`, async () => {
+      aws.open();
+      socket.readyState = WebSocket.CONNECTING;
+      expect(aws.status).toBe('opening');
+    });
 
-    const finalInflightPromisesSize = _.size(client.inFlightPromises);
-    expect(initialInflightPromisesSize).toEqual(finalInflightPromisesSize);
+    it(`should return "open" when opened`, async () => {
+      await connect();
+      expect(aws.status).toBe('open');
+    });
+
+    it(`should return "closing" when closing`, async () => {
+      aws.open();
+      socket.readyState = WebSocket.CLOSING;
+      expect(aws.status).toBe('closing');
+    });
+
+    it(`should return "closed" when closed`, async () => {
+      aws.open();
+      socket.readyState = WebSocket.CLOSED;
+      expect(aws.status).toBe('closed');
+    });
   });
 
-  it(`send message should resolve upon returning message`, async () => {
-    await connect(client);
-    const response = generateResponse('onmessage', 0);
+  describe('.setEventCallback(type, event)', () => {
+    it('should set as many callbacks as you want', async () => {
+      const f1 = jest.fn();
+      const f2 = jest.fn();
+      aws.setEventCallback('foo', f1);
+      aws.setEventCallback('foo', f2);
 
-    const promise = client.send(generateRequest());
-    client.ws.onmessage(response);
-    expect(await promise).toEqual(response.data);
+      await connect();
+      const someMessage = { type: 'foo' };
+      socket.mockMessage(someMessage)
+
+      expect(f1).toHaveBeenCalledWith(someMessage);
+      expect(f2).toHaveBeenCalledWith(someMessage);
+    });
   });
 
-  it(`send message should reject upon error if there's only one message in flight`, async () => {
-    await connect(client);
-    const error = new Error();
-    const message = client.send(generateRequest());
-    client.ws.onerror(error);
-    try {
-      await message;
-    } catch (ex) {
-      expect(ex).toEqual(error);
-    }
+  describe('.rejectAll()', () => {
+    it(`should throw error to all pending promises`, async () => {
+      await connect();
+      const message1 = aws.send(generateRequest());
+      const message2 = aws.send(generateRequest());
+
+      aws.rejectAll(anError());
+      await expect(message1).rejects.toEqual(anError());
+      await expect(message2).rejects.toEqual(anError());
+    });
   });
 
-  it(`send message should throw upon error if there's more than one message in flight`, async () => {
-    await connect(client);
-    const error = new Error();
-    const message1 = client.send(generateRequest());
-    const message2 = client.send(generateRequest());
+  describe('.resetInFlightPromises', () => {
+    it(`should erase all pending promises`, async () => {
+      await connect();
+      aws.send(generateRequest());
+      aws.send(generateRequest());
 
-    try {
-      client.ws.onerror(error);
-    } catch (ex) {
-      expect(ex).toEqual(error);
-    }
+      expect(_.size(aws.inFlightPromises)).toBe(2);
+      aws.resetInFlightPromises();
+      expect(_.size(aws.inFlightPromises)).toBe(0);
+    });
   });
 
-  it(`close a connected websocket should close and resolve`, async () => {
-    await connect(client);
-    const promise = client.close();
-    client.ws.onclose({});
-    expect(await promise).toEqual({});
+  describe('edge cases', () => {
+    it('should close normally even when "close" comes from the event, not our intent', async () => {
+      await connect();
+      expect(aws.isOpen).toBe(true);
+      await socket.mockClose();
+      expect(aws.isOpen).toBe(false);
+    });
+
+    it('should react gracefully to null-like messages', async () => {
+      await connect();
+
+      const response = aws.send(generateRequest());
+      socket.onmessage(null);
+      await expect(response).rejects.toThrowErrorMatchingSnapshot();
+    });
   });
 
-  it(`close a connected websocket should close and resolve`, async () => {
-    const result = {};
-    await connect(client);
-    client.ws.readyState = WebSocket.OPEN;
-    const promise = client.close();
-    client.ws.onclose(result);
-    expect(await promise).toEqual(result);
-  });
-
-  it(`close a disconnected websocket should resolve`, async () => {
-    await connect(client);
-    client.ws.readyState = WebSocket.CLOSED;
-    await client.close();
-    expect(client.ws).toBeNull();
-  });
-
-  it(`client.isOpen() should return false when closed, open when opened`, async () => {
-    expect(client.isOpen()).toBe(false);
-    await connect(client);
-    client.ws.readyState = WebSocket.OPEN;
-    expect(client.isOpen()).toBe(true);
-  });
-
-  it(`closing a non-initialized websocket should throw`, async () => {
-    const promise = client.close();
-    try {
-      await promise;
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
-  });
-
-  it(`eventCallback should be triggered on a registered action.type when sent from app`, async () => {
-    const mockCallback = jest.fn();
-    const mockedResponse = generateResponse('someEvent', -10000);
-    await connect(client);
-    client.setEventCallback('someEvent', mockCallback);
-
-    client.ws.onmessage(mockedResponse);
-    expect(mockCallback).toHaveBeenCalledWith(JSON.parse(mockedResponse.data));
-  });
-
-  it(`multiple eventCallbacks can be triggered on the same action.type`, async () => {
-    const mockCallbacks = [0, 1].map(i => jest.fn());
-    const mockedResponse = generateResponse('someEvent', -10000);
-    const mockResponseData = JSON.parse(mockedResponse.data);
-
-    await connect(client);
-    client.setEventCallback('someEvent', mockCallbacks[0]);
-    client.setEventCallback('someEvent', mockCallbacks[1]);
-
-    client.ws.onmessage(mockedResponse);
-
-    expect(mockCallbacks[0]).toHaveBeenCalledWith(mockResponseData);
-    expect(mockCallbacks[1]).toHaveBeenCalledWith(mockResponseData);
-  });
-
-  it(`rejectAll should throw error to all pending promises`, async () => {
-    const error = new Error('error');
-    await connect(client);
-    const message1 = client.send(generateRequest());
-    const message2 = client.send(generateRequest());
-
-    client.rejectAll(error);
-    await expect(message1).rejects.toEqual(error);
-    await expect(message2).rejects.toEqual(error);
-  });
-
-  it(`resetInFlightPromises should erase all pending promises`, async () => {
-    await connect(client);
-    client.send(generateRequest());
-    client.send(generateRequest());
-
-    expect(_.size(client.inFlightPromises)).toBe(2);
-    client.resetInFlightPromises();
-    expect(_.size(client.inFlightPromises)).toBe(0);
-  });
-
-  async function connect(client) {
-    const result = {};
-    const promise = client.open();
-    client.ws.onopen(result);
-    await promise;
+  function connect() {
+    return Promise.race([
+      aws.open(),
+      new Promise(() => { socket.mockOpen() }),
+    ]);
   }
 
-  function generateRequest(message) {
-    return {message: 'a message'};
+  function generateRequest(messageId) {
+    return {message: 'a message', messageId};
   }
 
   function generateResponse(message, messageId) {
     return {
-      data: JSON.stringify({
-        type: message,
-        response: message,
-        messageId: messageId
-      })
+      type: message,
+      response: message,
+      messageId: messageId
     };
+  }
+
+  function anError() {
+    const err = new Error('TestError');
+    delete err.stack;
+    return err;
   }
 });
