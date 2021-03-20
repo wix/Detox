@@ -1,6 +1,11 @@
+const _ = require('lodash');
 const WebSocket = require('ws');
 const DetoxSessionManager = require('./DetoxSessionManager');
+const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
+const sleep = require('../utils/sleep');
+const Deferred = require('../utils/Deferred');
 
 class DetoxServer {
   /**
@@ -9,32 +14,54 @@ class DetoxServer {
    */
   constructor(options) {
     this._onConnection = this._onConnection.bind(this);
+    this._onError = this._onError.bind(this);
 
-    this._options = options;
+    this._options = _.defaults(options, {
+      Server: WebSocket.Server,
+    });
+
     this._sessionManager = new DetoxSessionManager();
+
     this._wss = null;
+    this._opening = null;
+    this._closing = null;
   }
 
   async open() {
     await this._startListening();
 
     const level = this._options.standalone ? 'info' : 'debug';
-    log[level](`Detox server listening on localhost:${this._wss.options.port}...`);
+    log[level](`Detox server listening on localhost:${this._options.port}...`);
   }
 
   async close() {
-    await this._closeWithTimeout(10000);
+    try {
+      await this._closeWithTimeout(10000);
+      log.debug({ event: 'CLOSE' }, 'Detox server has been closed gracefully');
+    } catch (e) {
+      log.warn({ event: 'CLOSE_ERROR' },
+        `Detox server has been closed abruptly! See the error details below:\n`
+        + DetoxRuntimeError.format(e) + '\n'
+        + DetoxInvariantError.reportIssue
+      );
+    }
   }
 
   async _startListening() {
-    return new Promise((resolve) => {
-      this._wss = new WebSocket.Server({
-        port: this._options.port,
-        perMessageDeflate: {}
-      }, () => resolve());
+    const opening = this._opening = new Deferred();
 
-      this._wss.on('connection', this._onConnection);
+    this._wss = new this._options.Server({
+      port: this._options.port,
+      perMessageDeflate: {}
+    }, () => {
+      this._opening.resolve();
+      this._opening = null;
     });
+
+    this._wss.on('connection', this._onConnection);
+    this._wss.on('error', this._onError);
+
+    return opening.promise;
   }
 
   /**
@@ -45,19 +72,52 @@ class DetoxServer {
     this._sessionManager.registerConnection(ws, req.socket);
   }
 
-  _closeWithTimeout(timeoutValue) {
-    return new Promise((resolve) => {
-      const handle = setTimeout(() => {
-        log.warn({ event: 'TIMEOUT' }, 'Detox server closed ungracefully on a timeout!!!');
-        resolve();
-      }, timeoutValue);
+  /**
+   * @param {Error} err
+   */
+  _onError(err) {
+    if (this._opening) {
+      this._opening.reject(err);
+    } else if (this._closing) {
+      this._closing.reject(err);
+    } else {
+      const formattedError = DetoxRuntimeError.format(err);
+      log.error('Detox server has got an unhandled error:\n' + formattedError);
+    }
+  }
 
+  _closeWithTimeout(timeoutValue) {
+    if (!this._wss) {
+      return;
+    }
+
+    const closing = this._closing = new Deferred();
+
+    const handle = setTimeout(() => {
+      this._closing.reject(new DetoxRuntimeError({
+        message: `Detox server close callback was not invoked within the ${timeoutValue} ms timeout`,
+      }));
+      this._unlinkServer();
+    }, timeoutValue);
+
+    try {
       this._wss.close(() => {
-        log.debug({ event: 'WS_CLOSE' }, 'Detox server connections terminated gracefully');
         clearTimeout(handle);
-        resolve();
+        this._closing.resolve();
+        this._unlinkServer();
       });
-    });
+    } catch (e) {
+      this._closing.reject(e);
+      this._unlinkServer();
+    }
+
+    return closing.promise;
+  }
+
+  _unlinkServer() {
+    this._wss = null;
+    this._opening = null;
+    this._closing = null;
   }
 }
 
