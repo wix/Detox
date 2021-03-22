@@ -1,16 +1,27 @@
-<!---
-Thank you for contributing!
-Before submitting a pull request that implements a new functionality or fixing a major bug,
-please open an issue first and propose your solution. This way we can discuss before time is 
-spent on a solution that may not work for us.
+## Description
 
-Please check the correct option in the below list and delete the irrelevant one.
-For the second option, please fill the issue where the solution has been discussed.
+<!--
+Thank you for contributing!
+
+Step 1: Before submitting a pull request that introduces a new functionality or fixes a bug,
+please open an issue where we could discuss the suggestion, problem - and potential ways to fix.
 -->
 
-- [ ] This is a small change 
-- [ ] This change has been discussed in issue #<?> and the solution has been agreed upon with maintainers.
+- This pull request addresses the issue described here: #<?>
 
----
+<!--
+Step 2: Provide an overview of how your fix / enhancement works.
+If possible, provide screenshots of the before and after states (even for simple command line options - show the terminal).
+-->
 
-**Description:**
+In this pull request, I have …
+
+<!--
+Step 3: Please review the checklist below.
+-->
+
+_For features/enhancements:_
+ - [ ] I have added/updated the relevant references in the [documentation](https://github.com/wix/Detox/tree/master/docs) files.
+
+_For API changes:_
+ - [ ] I have made the necessary changes in the [types index](https://github.com/wix/Detox/blob/master/detox/index.d.ts) file.
