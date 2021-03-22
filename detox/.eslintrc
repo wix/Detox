@@ -1,6 +1,13 @@
 {
+  "env": {
+    "node": true,
+    "jest": true
+  },
   "plugins": ["node"],
   "extends": ["plugin:node/recommended"],
+  "globals": {
+    "fail": true,
+  },
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
@@ -10,6 +17,7 @@
   },
   "rules": {
     "no-debugger": "error",
+    "no-undef": "warn",
     "no-mixed-spaces-and-tabs": "error",
     "node/no-unpublished-require": "warn"
   }

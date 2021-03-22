@@ -50,7 +50,7 @@ class SimulatorDriver extends IosDriver {
     const detoxFrameworkPath = await environment.getFrameworkPath();
 
     if (!fs.existsSync(detoxFrameworkPath)) {
-      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.
+      throw new DetoxRuntimeError(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.
       To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
     }
   }
@@ -67,7 +67,7 @@ class SimulatorDriver extends IosDriver {
 
     const deviceComment = this._commentDevice(deviceQuery);
     if (!udid) {
-      throw new Error(`Failed to find device matching ${deviceComment}`);
+      throw new DetoxRuntimeError(`Failed to find device matching ${deviceComment}`);
     }
 
     await this._boot(udid, deviceQuery.type || deviceQuery);
@@ -85,7 +85,7 @@ class SimulatorDriver extends IosDriver {
       }
       return bundleId;
     } catch (ex) {
-      throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
+      throw new DetoxRuntimeError(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
     }
   }
 

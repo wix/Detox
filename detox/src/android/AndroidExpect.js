@@ -1,3 +1,4 @@
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const { NativeElement } = require('./core/NativeElement');
 const { NativeMatcher } = require('./core/NativeMatcher');
 const { NativeExpectElement } = require('./core/NativeExpect');
@@ -25,7 +26,7 @@ class AndroidExpect {
       return new NativeElement(this._invocationManager, this._emitter, matcher);
     }
 
-    throw new Error(`element() argument is invalid, expected a native matcher, but got ${typeof element}`);
+    throw new DetoxRuntimeError(`element() argument is invalid, expected a native matcher, but got ${typeof element}`);
   }
 
   // Matcher can be null only if there is only one webview on the hierarchy tree.
@@ -39,18 +40,18 @@ class AndroidExpect {
       });
     }
 
-    throw new Error(`web() argument is invalid, expected a native matcher, but got ${typeof element}`);
+    throw new DetoxRuntimeError(`web() argument is invalid, expected a native matcher, but got ${typeof element}`);
   }
 
   expect(element) {
     if (element instanceof WebElement) return new WebExpectElement(this._invocationManager, element);
     if (element instanceof NativeElement) return new NativeExpectElement(this._invocationManager, element);
-    throw new Error(`expect() argument is invalid, expected a native or web matcher, but got ${typeof element}`);
+    throw new DetoxRuntimeError(`expect() argument is invalid, expected a native or web matcher, but got ${typeof element}`);
   }
 
   waitFor(element) {
     if (element instanceof NativeElement) return new NativeWaitForElement(this._invocationManager, element);
-    throw new Error(`waitFor() argument is invalid, got ${typeof element}`);
+    throw new DetoxRuntimeError(`waitFor() argument is invalid, got ${typeof element}`);
   }
 }
 

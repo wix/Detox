@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const mochaTemplates = require('./templates/mocha');
 const jestTemplates = require('./templates/jest');
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const log = require('../src/utils/logger').child({ __filename });
 
 let exitCode = 0;
@@ -30,7 +31,7 @@ module.exports.handler = async function init(argv) {
       createJestFolderE2E();
       break;
     default:
-      throw new Error([
+      throw new DetoxRuntimeError([
         `Convenience scaffolding for \`${runner}\` test runner is not supported currently.\n`,
         'Supported runners at the moment are: `mocha` and `jest`:',
         '* detox init -r mocha',

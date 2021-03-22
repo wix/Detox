@@ -1,3 +1,4 @@
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
 
 class DriverRegistry {
@@ -12,7 +13,7 @@ class DriverRegistry {
       DeviceDriverClass = resolveModuleFromPath(deviceType).DriverClass;
 
       if (!DeviceDriverClass) {
-        throw new Error(`The custom driver '${deviceType}' does not export DriverClass property`);
+        throw new DetoxRuntimeError(`The custom driver '${deviceType}' does not export DriverClass property`);
       }
     }
 

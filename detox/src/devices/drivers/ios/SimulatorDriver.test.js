@@ -79,6 +79,8 @@ describe('IOS simulator driver', () => {
   });
 
   describe('biometrics', () => {
+    let languageAndLocale;
+
     beforeEach(() => {
       languageAndLocale = '';
 

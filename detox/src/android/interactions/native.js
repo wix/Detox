@@ -1,3 +1,4 @@
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const DetoxAssertionApi = require('../espressoapi/DetoxAssertion');
 const EspressoDetoxApi = require('../espressoapi/EspressoDetox');
 const { NativeMatcher } = require('../core/NativeMatcher');
@@ -44,8 +45,8 @@ class WaitForInteraction extends Interaction {
   }
 
   async withTimeout(timeout) {
-    if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
-    if (timeout < 0) throw new Error('timeout must be larger than 0');
+    if (typeof timeout !== 'number') throw new DetoxRuntimeError(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
+    if (timeout < 0) throw new DetoxRuntimeError('timeout must be larger than 0');
 
     this._call = DetoxAssertionApi.waitForAssertMatcher(call(this._element._call), this._assertionMatcher._call.value, timeout / 1000);
     await this.execute();
@@ -59,17 +60,17 @@ class WaitForInteraction extends Interaction {
 class WaitForActionInteractionBase extends Interaction {
   constructor(invocationManager, element, matcher, searchMatcher) {
     super(invocationManager);
-    //if (!(element instanceof NativeElement)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid NativeElement, got ${typeof element}`);
-    //if (!(matcher instanceof NativeMatcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid NativeMatcher, got ${typeof matcher}`);
+    //if (!(element instanceof NativeElement)) throw new DetoxRuntimeError(`WaitForActionInteraction ctor 1st argument must be a valid NativeElement, got ${typeof element}`);
+    //if (!(matcher instanceof NativeMatcher)) throw new DetoxRuntimeError(`WaitForActionInteraction ctor 2nd argument must be a valid NativeMatcher, got ${typeof matcher}`);
     if (!(searchMatcher instanceof NativeMatcher))
-      throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid NativeMatcher, got ${typeof searchMatcher}`);
+      throw new DetoxRuntimeError(`WaitForActionInteraction ctor 3rd argument must be a valid NativeMatcher, got ${typeof searchMatcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
   }
 
   _prepare(searchAction) {
-    //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
+    //if (!searchAction instanceof Action) throw new DetoxRuntimeError(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
 
     this._call = DetoxAssertionApi.waitForAssertMatcherWithSearchAction(
       call(this._element._call),
