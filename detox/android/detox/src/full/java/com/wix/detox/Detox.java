@@ -11,6 +11,7 @@ import android.util.Log;
 import com.wix.detox.config.DetoxConfig;
 import com.wix.detox.espresso.UiControllerSpy;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -200,24 +201,10 @@ public final class Detox {
         Intent intent = extractInitialIntent();
         sActivityTestRule.launchActivity(intent);
 
-        // Kicks off another thread and attaches a Looper to that.
-        // The goal is to keep the test thread intact,
-        // as Loopers can't run on a thread twice.
-        final Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Thread thread = Thread.currentThread();
-                Log.i(LOG_TAG, "Detox thread starting (" + thread.getName() + ")");
-
-                Looper.prepare();
-                new DetoxManager(context).start();
-                Looper.loop();
-            }
-        }, "com.wix.detox.manager");
-        t.start();
-
         try {
-            t.join();
+            final DetoxManager detoxManager = new DetoxManager(context);
+            detoxManager.start();
+            detoxManager.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Detox got interrupted prematurely", e);

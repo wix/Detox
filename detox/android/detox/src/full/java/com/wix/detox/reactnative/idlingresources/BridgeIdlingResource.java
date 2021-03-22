@@ -64,6 +64,7 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
         // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
     }
 
+    @Override
     public void onBridgeDestroyed() {
     }
 

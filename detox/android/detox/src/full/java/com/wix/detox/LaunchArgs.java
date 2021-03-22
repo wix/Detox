@@ -9,6 +9,8 @@ import java.util.List;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 class LaunchArgs {
+    private static final String DETOX_SERVER_URL_ARG = "detoxServer";
+    private static final String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
     private static final String DETOX_NOTIFICATION_PATH_ARG = "detoxUserNotificationDataURL";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
@@ -27,6 +29,14 @@ class LaunchArgs {
 
     String getUrlOverride() {
         return InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
+    }
+
+    String getDetoxServerUrl() {
+        return InstrumentationRegistry.getArguments().getString(DETOX_SERVER_URL_ARG);
+    }
+
+    String getDetoxSessionId() {
+        return InstrumentationRegistry.getArguments().getString(DETOX_SESSION_ID_ARG_KEY);
     }
 
     Bundle asIntentBundle() {
