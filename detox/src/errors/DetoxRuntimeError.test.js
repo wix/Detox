@@ -5,8 +5,14 @@ describe(DetoxRuntimeError, () => {
   it('should format all fields to a single message', () => {
     _.forEach(varietiesOfInstantiation(), (error, description) => {
       expect(error.toString()).toBeDefined();
-      expect(() => { throw error; }).toThrowError();
+      expect(() => { throw error; }).toThrowErrorMatchingSnapshot(description);
     });
+  });
+
+  it('should format string as well, similar to Error', () => {
+    expect(new DetoxRuntimeError('Test')).toEqual(new DetoxRuntimeError({
+      message: 'Test'
+    }));
   });
 
   it('should format any object to an error message', () => {
@@ -35,6 +41,7 @@ describe(DetoxRuntimeError, () => {
   function varietiesOfInstantiation() {
     return {
       'no args': new DetoxRuntimeError(),
+      'plain string': new DetoxRuntimeError('A plain message'),
       'empty object': new DetoxRuntimeError({}),
       'only message': new DetoxRuntimeError({
         message: `The video is not being recorded on device (${'emulator-5554'}) at path: ${'/sdcard/712398.mp4'}`,

@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Client = require('../../client/Client');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const setUniqueProperty = require('../../utils/setUniqueProperty');
 
 class IosUIHierarchyPlugin extends ArtifactPlugin {
@@ -31,7 +32,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
 
   async onCreateExternalArtifact(e) {
     if (!e.artifact) {
-      throw new Error('Internal error: expected Artifact instance in the event');
+      throw new DetoxRuntimeError('Internal error: expected Artifact instance in the event');
     }
 
     this._registerSnapshot(e.name, e.artifact);

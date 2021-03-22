@@ -22,6 +22,7 @@ const ADBScreenrecorderPlugin = require('../../../artifacts/video/ADBScreenrecor
 const AndroidDevicePathBuilder = require('../../../artifacts/utils/AndroidDevicePathBuilder');
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const pressAnyKey = require('../../../utils/pressAnyKey');
@@ -250,7 +251,7 @@ class AndroidDriver extends DeviceDriverBase {
     const testApkPath = APKPath.getTestApkPath(originalApkPath);
 
     if (!fs.existsSync(testApkPath)) {
-      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
+      throw new DetoxRuntimeError(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
     }
     return testApkPath;
   }
@@ -334,7 +335,7 @@ class AndroidDriver extends DeviceDriverBase {
   async _queryPID(adbName, bundleId) {
     const pid = await this.adb.pidof(adbName, bundleId);
     if (!pid) {
-      throw new Error('PID still not available');
+      throw new DetoxRuntimeError('PID still not available');
     }
     return pid;
   }

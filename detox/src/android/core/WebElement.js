@@ -1,3 +1,4 @@
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
 const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
 const WebViewElementApi = require('../espressoapi/web/WebViewElement');
@@ -114,7 +115,7 @@ class WebViewElement {
       });
     }
 
-    throw new Error(`element() argument is invalid, expected a web matcher, but got ${typeof element}`);
+    throw new DetoxRuntimeError(`element() argument is invalid, expected a web matcher, but got ${typeof element}`);
   }
 }
 

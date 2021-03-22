@@ -11,6 +11,7 @@ const EmulatorVersionResolver = require('./EmulatorVersionResolver');
 const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const { EmulatorExec } = require('../exec/EmulatorExec');
 const DeviceRegistry = require('../../../DeviceRegistry');
+const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const environment = require('../../../../utils/environment');
 const log = require('../../../../utils/logger').child({ __filename });
 const argparse = require('../../../../utils/argparse');
@@ -102,7 +103,7 @@ class EmulatorDriver extends AndroidDriver {
       const height = config['hw.lcd.height'];
 
       if (width === undefined || height === undefined) {
-        throw new Error(`Emulator with name ${avdName} has a corrupt config.ini file (${configFile}), try fixing it by recreating an emulator.`);
+        throw new DetoxRuntimeError(`Emulator with name ${avdName} has a corrupt config.ini file (${configFile}), try fixing it by recreating an emulator.`);
       }
 
       config['skin.name'] = `${width}x${height}`;

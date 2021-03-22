@@ -1,6 +1,8 @@
 const _ = require('lodash');
 
 describe('expectTwo', () => {
+  let e;
+
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
     e = new IosExpect({

@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const tempfile = require('tempfile');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 const { ActionInteraction } = require('../interactions/native')
@@ -15,12 +16,12 @@ class NativeElement {
   }
 
   _selectElementWithMatcher(matcher) {
-    // if (!(matcher instanceof NativeMatcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid NativeMatcher, got ${typeof matcher}`);
+    // if (!(matcher instanceof NativeMatcher)) throw new DetoxRuntimeError(`Element _selectElementWithMatcher argument must be a valid NativeMatcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
   }
 
   atIndex(index) {
-    if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
+    if (typeof index !== 'number') throw new DetoxRuntimeError(`Element atIndex argument must be a number, got ${typeof index}`);
     const matcher = this._originalMatcher;
     this._originalMatcher._call = invoke.callDirectly(DetoxMatcherApi.matcherForAtIndex(index, matcher._call.value));
 

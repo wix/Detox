@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const util = require('util');
-const log = require('../utils/logger').child({ __filename, class: 'AsyncWebSocket' });
 const WebSocket = require('ws');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const log = require('../utils/logger').child({ __filename, class: 'AsyncWebSocket' });
 
 class AsyncWebSocket {
 
@@ -57,7 +58,7 @@ class AsyncWebSocket {
 
   async send(message, messageId) {
     if (!this.ws) {
-      throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'. Message:  ${JSON.stringify(message)}`);
+      throw new DetoxRuntimeError(`Can't send a message on a closed websocket, init the by calling 'open()'. Message:  ${JSON.stringify(message)}`);
     }
 
     return new Promise(async(resolve, reject) => {
@@ -91,7 +92,7 @@ class AsyncWebSocket {
           this.ws.onclose();
         }
       } else {
-        reject(new Error(`websocket is closed, init the by calling 'open()'`));
+        reject(new DetoxRuntimeError(`websocket is closed, init the by calling 'open()'`));
       }
     });
   }

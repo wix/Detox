@@ -1,4 +1,5 @@
 const { filterErrorStack } = require('../../../src/utils/errorUtils');
+const { DetoxRuntimeError } = require('../../../src/errors/DetoxRuntimeError');
 
 function findUserConstructor() {
   let wasInBaseClass = false;
@@ -23,7 +24,7 @@ function findUserConstructor() {
 
 function assertExistingContext(context) {
   if (!context) {
-    const error = new Error(`Please add both arguments to super() call in your environment constructor, e.g.:
+    const error = new DetoxRuntimeError(`Please add both arguments to super() call in your environment constructor, e.g.:
 
  class CustomDetoxEnvironment extends DetoxCircusEnvironment {
 -  constructor(config) {
