@@ -1,6 +1,6 @@
 {
   "name": "demo-react-native-jest",
-  "version": "18.7.1",
+  "version": "18.8.0",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.19",
-    "detox": "^18.7.1",
+    "detox": "^18.8.0",
     "jest": "^26.5.0",
     "jest-circus": "^26.5.2",
     "sanitize-filename": "^1.6.1",
