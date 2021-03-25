@@ -81,13 +81,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    initReactNativeIfNeeded();
+                    initWSClient();
                     initCrashHandler();
                     initANRListener();
-                    initActionHandlers();
+                    initReactNativeIfNeeded();
 
-                    // Keep this last - for when we're in fact ready for new jobs.
-                    initWSClient();
+                    // Keep this last - we're not really ready to do anything until everything's properly initialized
+                    initActionHandlers();
                 }
             });
         }
