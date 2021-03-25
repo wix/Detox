@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.test.espresso.IdlingResource;
 
-public abstract class DetoxBaseIdlingResource implements IdlingResource {
+public abstract class DetoxBaseIdlingResource implements IdlingResource, DescriptiveIdlingResource {
     AtomicBoolean paused = new AtomicBoolean(false);
 
     public void pause() {

@@ -5,6 +5,7 @@ import android.view.Choreographer;
 
 import com.wix.detox.reactnative.ReactNativeInfo;
 
+import org.jetbrains.annotations.NotNull;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
@@ -29,7 +30,7 @@ import androidx.test.espresso.IdlingResource;
  *
  * @see <a href="https://github.com/facebook/react-native/blob/259eac8c30b536abddab7925f4c51f0bf7ced58d/ReactAndroid/src/main/java/com/facebook/react/animated/NativeAnimatedModule.java#L143">AnimatedModule</a>
  */
-public class AnimatedModuleIdlingResource implements IdlingResource, Choreographer.FrameCallback {
+public class AnimatedModuleIdlingResource implements IdlingResource, DescriptiveIdlingResource, Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_ANIMATED_MODULE = "com.facebook.react.animated.NativeAnimatedModule";
@@ -61,6 +62,12 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
     @Override
     public String getName() {
         return AnimatedModuleIdlingResource.class.getName();
+    }
+
+    @NotNull
+    @Override
+    public String getDescription() {
+        return "Animations running on screen";
     }
 
     @Override

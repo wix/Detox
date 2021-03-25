@@ -2,9 +2,11 @@ package com.wix.detox
 
 import android.content.Context
 import android.util.Log
+import androidx.test.espresso.IdlingResource
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
+import com.wix.detox.reactnative.idlingresources.DescriptiveIdlingResource
 import com.wix.invoke.MethodInvocation
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
@@ -99,18 +101,26 @@ class QueryStatusActionHandler(
         val data = mutableMapOf<String, Any>()
         val busyResources = testEngineFacade.getBusyIdlingResources()
 
-        data["status"] =
+        data["status"] = "App synchronization debug: " +
             if (busyResources.isEmpty()) {
-                "The app is idle."
+                "The app appears to be idle!"
             } else {
-                var summary = ""
-                for (res in busyResources) {
-                    summary += "\t- ${res.name}\n"
-                }
-                "Busy idling resources:\n$summary"
+                val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
+                "The app is busy, due to: \n$summary"
         }
         wsClient.sendAction("currentStatusResult", data, messageId)
     }
+
+    private fun formatResource(resource: IdlingResource): String =
+        if (resource is DescriptiveIdlingResource) {
+            resource.getDescription()
+        } else if (resource.javaClass.name.contains("LooperIdlingResource") && resource.name.contains("mqt_js")) {
+            "Javascript code execution"
+        } else if (resource.javaClass.name.contains("LooperIdlingResource") && resource.name.contains("mqt_native")) {
+            "Javascript code execution (native)"
+        } else {
+            "Resource ${resource.name} being busy"
+        }
 }
 
 class InstrumentsRecordingStateActionHandler(
