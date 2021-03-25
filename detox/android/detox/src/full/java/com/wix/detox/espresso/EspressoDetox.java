@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +12,9 @@ import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
 
 import org.hamcrest.Matcher;
-import org.joor.Reflect;
-import org.joor.ReflectException;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
