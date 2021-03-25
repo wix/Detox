@@ -166,7 +166,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         actionHandlers.put("isReady", readyActionHandler);
         actionHandlers.put("reactNativeReload", new ReactNativeReloadActionHandler(reactNativeHostHolder, wsClient, testEngineFacade));
         actionHandlers.put("currentStatus", new QueryStatusActionHandler(wsClient, testEngineFacade));
-        actionHandlers.put("invoke", new InvokeActionHandler(new MethodInvocation(), wsClient, errorParseFn));
+        actionHandlers.put("invoke", new InvokeActionHandler(new MethodInvocation(), wsClient));
         actionHandlers.put("cleanup", new CleanupActionHandler(wsClient, testEngineFacade, new Function0<Unit>() {
             @Override
             public Unit invoke() {

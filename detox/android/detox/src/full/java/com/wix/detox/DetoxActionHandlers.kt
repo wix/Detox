@@ -41,10 +41,11 @@ class ReactNativeReloadActionHandler(
     }
 }
 
-class InvokeActionHandler(
+
+class InvokeActionHandler @JvmOverloads constructor(
         private val methodInvocation: MethodInvocation,
         private val wsClient: WebSocketClient,
-        private val errorParse: (e: Throwable?) -> String)
+        private val errorParse: (e: Throwable?) -> String = Log::getStackTraceString)
     : DetoxActionHandler {
 
     private val VIEW_HIERARCHY_TEXT = "View Hierarchy:"
