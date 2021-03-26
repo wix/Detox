@@ -28,8 +28,6 @@ detox <command> [options]
 | [clean-framework-cache](#cache) | Cleans the Detox cache |
 | [rebuild-framework-cache](#cache) | Rebuilds the Detox cache |
 | [recorder](#recorder) | Starts a [Detox Recorder](https://github.com/wix/DetoxRecorder) recording |
-| clean-framework-cache      | **MacOS only.** Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'
-| build-framework-cache      | **MacOS only.** Build Detox.framework to ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions
 
 ### Options:
 
