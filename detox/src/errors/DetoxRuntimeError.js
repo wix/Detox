@@ -21,7 +21,7 @@ class DetoxRuntimeError extends Error {
   /**
    * @param {*} err
    */
-  static format(err) {
+  static format(err, inspectOptions = { depth: 1 }) {
     if (err instanceof DetoxRuntimeError) {
       return err.message;
     }
@@ -34,7 +34,7 @@ class DetoxRuntimeError extends Error {
       return String(err.stack || err.message);
     }
 
-    return this.inspectObj(err, { depth: 1 })
+    return this.inspectObj(err, inspectOptions)
   }
 }
 
@@ -50,9 +50,9 @@ function formatOptions(options) {
     return _.compact([
       message,
       hint && `HINT: ${hint}`,
-      _.isObject(debugInfo)
-        ? DetoxRuntimeError.inspectObj(debugInfo, inspectOptions)
-        : debugInfo,
+      _.isString(debugInfo)
+        ? debugInfo
+        : DetoxRuntimeError.format(debugInfo, inspectOptions),
     ]).join('\n\n');
   }
 

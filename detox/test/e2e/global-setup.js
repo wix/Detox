@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const { execSync } = require('child_process');
 
 function resolveSelectedConfiguration() {
-  const { configurations } = require('../detox.config.js');
+  const { configurations } = require('./detox.config.js');
   const configName = process.env.DETOX_CONFIGURATION;
   return configurations[configName];
 }

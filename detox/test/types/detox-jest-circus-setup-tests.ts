@@ -20,6 +20,7 @@ detoxCircus.getEnv().addEventsListener(assignReporter);
 
 beforeAll(async () => {
   await detox.init({
+    extends: "@my-org/detox-preset/prod-e2e",
     testRunner: "nyc jest",
     runnerConfig: "e2e/config.js",
     specs: "e2e/*.test.js",

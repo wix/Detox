@@ -37,6 +37,11 @@ declare global {
 
         interface DetoxConfig {
             /**
+             * @example extends: './relative/detox.config'
+             * @example extends: '@my-org/detox-preset'
+             */
+            extends?: string;
+            /**
              * @example testRunner: 'jest'
              * @example testRunner: 'mocha'
              */

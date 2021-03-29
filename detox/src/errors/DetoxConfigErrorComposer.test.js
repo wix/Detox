@@ -76,7 +76,16 @@ describe('DetoxConfigErrorComposer', () => {
 
     describe('.noConfigurationAtGivenPath', () => {
       it('should create an error with the attempted config path', () => {
-        expect(builder.noConfigurationAtGivenPath()).toMatchSnapshot();
+        expect(builder.noConfigurationAtGivenPath('./some/detox-config.js')).toMatchSnapshot();
+      });
+
+      it('should create an error with the attempted "extends" path', () => {
+        expect(
+          builder
+            .setExtends(true)
+            .setDetoxConfigPath('package.json')
+            .noConfigurationAtGivenPath("some-detox-preset")
+        ).toMatchSnapshot();
       });
     });
 
@@ -87,6 +96,7 @@ describe('DetoxConfigErrorComposer', () => {
 
       it('should create a simple error, but with the original intercepted IO error', () => {
         const ioError = _.attempt(() => fs.readFileSync(os.homedir()));
+        delete ioError.stack;
         expect(builder.failedToReadConfiguration(ioError)).toMatchSnapshot();
       });
     });

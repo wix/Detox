@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
 const findUp = require('find-up');
@@ -52,6 +53,20 @@ async function resolveConfigPath(configPath, cwd) {
   return null;
 }
 
+async function tryExtendConfig({ config, errorComposer, cwd }) {
+  if (!config || !config.extends) {
+    return config;
+  }
+
+  const { config: baseConfig } = await loadExternalConfig({
+    configPath: config.extends,
+    errorComposer: errorComposer.clone().setExtends(true),
+    cwd,
+  });
+
+  return _.merge({}, baseConfig, config);
+}
+
 /**
  * @param {DetoxConfigErrorComposer} errorComposer
  * @param {string} configPath
@@ -64,15 +79,22 @@ async function loadExternalConfig({ errorComposer, configPath, cwd }) {
   if (resolvedConfigPath) {
     errorComposer.setDetoxConfigPath(resolvedConfigPath);
 
+    let result;
     try {
-      return await loadConfig(resolvedConfigPath);
+      result = await loadConfig(resolvedConfigPath);
     } catch (e) {
       throw errorComposer.failedToReadConfiguration(e);
     }
+
+    result.config = await tryExtendConfig({
+      config: result.config,
+      cwd,
+      errorComposer,
+    });
+
+    return result;
   } else if (configPath) {
-    throw errorComposer
-      .setDetoxConfigPath(configPath)
-      .noConfigurationAtGivenPath();
+    throw errorComposer.noConfigurationAtGivenPath(configPath);
   }
 
   return null;

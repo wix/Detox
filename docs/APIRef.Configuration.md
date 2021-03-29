@@ -18,6 +18,20 @@ Option 6 means the configuration is available in `json` format inside the projec
 
 Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a working reference.
 
+### Extending configurations
+
+Since Detox [18.9.0](https://github.com/wix/Detox/releases/tag/18.9.0), you can also define base Detox configurations,
+distribute them as `npm` modules for reuse across multiple projects, e.g.:
+
+```js
+{
+  "extends": "@my-org/detox-preset",
+  "runnerConfig": "e2e/jest.config.some-override.js"
+}
+```
+
+Please note that `extends` has to be a valid Node module path.
+
 ### Individual Configurations
 
 > NOTE: The configuration format has been significantly updated since [18.3.1](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) in a backward-compatible way.
