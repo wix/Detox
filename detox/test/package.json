@@ -53,5 +53,8 @@
     "ancestorSeparator": " > ",
     "classNameTemplate": "E2E Results.{classname}",
     "titleTemplate": "{classname} > {title}"
+  },
+  "detox": {
+    "extends": "./e2e/detox.config"
   }
 }

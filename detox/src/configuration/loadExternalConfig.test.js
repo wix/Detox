@@ -4,6 +4,7 @@ const os = require('os');
 describe('loadExternalConfig', () => {
   const DIR_PACKAGEJSON = path.join(__dirname, '__mocks__/configuration/packagejson');
   const DIR_PRIORITY = path.join(__dirname, '__mocks__/configuration/priority');
+  const DIR_EXTENDS = path.join(__dirname, '__mocks__/configuration/extends');
   const DIR_BADCONFIG = path.join(__dirname, '__mocks__/configuration/badconfig');
 
   let DetoxConfigErrorComposer;
@@ -56,11 +57,39 @@ describe('loadExternalConfig', () => {
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
+  it('should merge in the base config from "extends" property', async () => {
+    const { filepath, config } = await loadExternalConfig({ cwd: DIR_EXTENDS });
+
+    expect(filepath).toBe(path.join(DIR_EXTENDS, '.detoxrc.js'))
+    expect(config).toEqual({
+      extends: path.join(DIR_EXTENDS, 'middle.js'),
+      artifacts: {
+        rootDir: 'someRootDir',
+        plugins: {
+          log: "all",
+          screenshot: "all",
+          video: "all",
+        },
+      },
+    });
+  });
+
   it('should throw noConfigurationAtGivenPath error if the explicitly given config is not found', async () => {
     const configPath = path.join(DIR_PRIORITY, 'non-existent.json');
 
     await expect(loadExternalConfig({ configPath })).rejects.toThrowError(
-      errorComposer.setDetoxConfigPath(configPath).noConfigurationAtGivenPath()
+      errorComposer.noConfigurationAtGivenPath(configPath)
+    );
+  });
+
+  it('should throw noConfigurationAtGivenPath error if the "extends" base config is not found', async () => {
+    const configPath = path.join(DIR_EXTENDS, 'badPointer.json');
+
+    await expect(loadExternalConfig({ configPath })).rejects.toThrowError(
+      errorComposer
+        .setDetoxConfigPath(configPath)
+        .setExtends(true)
+        .noConfigurationAtGivenPath(require(configPath).extends)
     );
   });
 

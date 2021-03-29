@@ -5,9 +5,18 @@ const J = s => JSON.stringify(s);
 
 class DetoxConfigErrorComposer {
   constructor() {
+    this.setConfigurationName();
     this.setDetoxConfigPath();
     this.setDetoxConfig();
-    this.setConfigurationName();
+    this.setExtends();
+  }
+
+  clone() {
+    return new DetoxConfigErrorComposer()
+      .setConfigurationName(this.configurationName)
+      .setDetoxConfigPath(this.filepath)
+      .setDetoxConfig(this.contents)
+      .setExtends(this._extends);
   }
 
   _atPath() {
@@ -73,6 +82,11 @@ class DetoxConfigErrorComposer {
     };
   }
 
+  setConfigurationName(configurationName) {
+    this.configurationName = configurationName || '';
+    return this;
+  }
+
   setDetoxConfigPath(filepath) {
     this.filepath = filepath || '';
     return this;
@@ -83,8 +97,8 @@ class DetoxConfigErrorComposer {
     return this;
   }
 
-  setConfigurationName(configurationName) {
-    this.configurationName = configurationName || '';
+  setExtends(value) {
+    this._extends = !!value;
     return this;
   }
 
@@ -99,17 +113,22 @@ class DetoxConfigErrorComposer {
     });
   }
 
-  noConfigurationAtGivenPath() {
-    return new DetoxConfigError({
-      message: 'Failed to find Detox config at:\n' + this.filepath,
-      hint: 'Make sure the specified path is correct.',
-    });
+  noConfigurationAtGivenPath(givenPath) {
+    const message = this._extends
+      ? `Failed to find the base Detox config specified in:\n{\n  "extends": ${J(givenPath)}\n}`
+      : `Failed to find Detox config at ${J(givenPath)}`;
+
+    const hint = this._extends
+      ? `Check your Detox config${this._atPath()}`
+      : 'Make sure the specified path is correct.';
+
+    return new DetoxConfigError({ message, hint });
   }
 
   failedToReadConfiguration(unknownError) {
     return new DetoxConfigError({
       message: 'An error occurred while trying to load Detox config from:\n' + this.filepath,
-      debugInfo: unknownError && unknownError.message,
+      debugInfo: unknownError,
     });
   }
 
