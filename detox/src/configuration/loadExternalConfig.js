@@ -60,7 +60,7 @@ async function tryExtendConfig({ config, errorComposer, cwd }) {
 
   const { config: baseConfig } = await loadExternalConfig({
     configPath: config.extends,
-    errorComposer,
+    errorComposer: errorComposer.clone().setExtends(true),
     cwd,
   });
 
@@ -89,7 +89,7 @@ async function loadExternalConfig({ errorComposer, configPath, cwd }) {
     result.config = await tryExtendConfig({
       config: result.config,
       cwd,
-      errorComposer: errorComposer.clone().setExtends(true),
+      errorComposer,
     });
 
     return result;
