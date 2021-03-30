@@ -997,9 +997,18 @@ exports[`DetoxConfigErrorComposer (from configuration/index) .failedToReadConfig
 EISDIR: illegal operation on a directory, read]
 `;
 
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted "extends" path 1`] = `
+[DetoxConfigError: Failed to find the base Detox config specified in:
+{
+  "extends": "some-detox-preset"
+}
+
+HINT: Check your Detox config at path:
+package.json]
+`;
+
 exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted config path 1`] = `
-[DetoxConfigError: Failed to find Detox config at:
-/home/detox/myproject/.detoxrc.json
+[DetoxConfigError: Failed to find Detox config at "./some/detox-config.js"
 
 HINT: Make sure the specified path is correct.]
 `;

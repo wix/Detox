@@ -7,6 +7,7 @@ const _which = require('which');
 const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
 const fsext = require('./fsext');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 function which(executable, path) {
   return _which.sync(executable, {path, nothrow: true});
@@ -124,15 +125,15 @@ function getGmsaasPath() {
 }
 
 function throwMissingSdkError() {
-  throw new Error(MISSING_SDK_ERROR);
+  throw new DetoxRuntimeError(MISSING_SDK_ERROR);
 }
 
 function throwMissingAvdINIError(avdName, avdIniPath) {
-  throw new Error(`Failed to find INI file for ${avdName} at path: ${avdIniPath}`);
+  throw new DetoxRuntimeError(`Failed to find INI file for ${avdName} at path: ${avdIniPath}`);
 }
 
 function throwMissingAvdError(avdName, avdPath, avdIniPath) {
-  throw new Error(
+  throw new DetoxRuntimeError(
     `Failed to find AVD ${avdName} directory at path: ${avdPath}\n` +
     `Please verify "path" property in the INI file: ${avdIniPath}`
   );
@@ -143,14 +144,14 @@ function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
   const name = path.basename(executablePath);
   const dir = path.dirname(executablePath);
 
-  throw new Error(
+  throw new DetoxRuntimeError(
     `There was no "${name}" executable file in directory: ${dir}.\n` +
     `Check integrity of your Android SDK.`
   );
 }
 
 function throwMissingGmsaasError() {
-  throw new Error(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`)
+  throw new DetoxRuntimeError(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`)
 }
 
 function getDetoxVersion() {

@@ -15,7 +15,7 @@
     "types": ["node", "detox"]
   },
   "files": [
-    "detox.config.js",
+    "e2e/detox.config.js",
     "types/detox-jest-circus-setup-tests.ts",
     "types/detox-global-tests.ts",
     "types/detox-module-tests.ts",

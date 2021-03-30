@@ -1,4 +1,5 @@
 const DetoxServer = require('../src/server/DetoxServer');
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 
 module.exports.command = 'run-server';
 module.exports.desc = 'Start a standalone Detox server';
@@ -24,7 +25,7 @@ module.exports.builder = {
 
 module.exports.handler = async function runServer(argv) {
   if (isNaN(argv.port) || argv.port < 1 || argv.port > 65535) {
-    throw new Error(`The port should be between 1 and 65535, got ${argv.port}`)
+    throw new DetoxRuntimeError(`The port should be between 1 and 65535, got ${argv.port}`)
   }
 
   await new DetoxServer({

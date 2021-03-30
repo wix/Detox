@@ -1,3 +1,4 @@
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const ArtifactPlugin = require('./ArtifactPlugin');
 
 /***
@@ -72,7 +73,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
   async onCreateExternalArtifact(e) {
     if (!e.artifact) {
-      throw new Error('Internal error: expected Artifact instance in the event');
+      throw new DetoxRuntimeError('Internal error: expected Artifact instance in the event');
     }
 
     this._registerSnapshot(e.name, e.artifact);

@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
+const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const {joinArgs} = require('../../../../utils/argparse');
 const exec = require('../../../../utils/exec');
 const log = require('../../../../utils/logger').child({ __filename });
@@ -62,7 +63,7 @@ class AppleSimUtils {
   async _findDeviceByUDID(udid) {
     const [device] = await this.list({ byId: udid, maxResults: 1 });
     if (!device) {
-      throw new Error(`Can't find device with UDID = "${udid}"`);
+      throw new DetoxRuntimeError(`Can't find device with UDID = "${udid}"`);
     }
 
     return device;
@@ -79,7 +80,7 @@ class AppleSimUtils {
 
     if (!deviceTypeIdentifier || !deviceRuntimeIdentifier) {
       const deviceInfoStr = JSON.stringify(deviceInfo, null, 4);
-      throw new Error(`Unable to create device from: ${deviceInfoStr}`);
+      throw new DetoxRuntimeError(`Unable to create device from: ${deviceInfoStr}`);
     }
 
     const { stdout: udid } = await this._execSimctl({
@@ -247,7 +248,7 @@ class AppleSimUtils {
     if (_.get(result, 'stdout')) {
       await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, { retries: 1 });
     } else {
-      throw new Error(`setLocation currently supported only through fbsimctl.
+      throw new DetoxRuntimeError(`setLocation currently supported only through fbsimctl.
       Install fbsimctl using:
       "brew tap facebook/fb && export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl"`);
     }
@@ -301,7 +302,7 @@ class AppleSimUtils {
       parsed = JSON.parse(out);
 
     } catch (ex) {
-      throw new Error(`Could not parse response from applesimutils, please update applesimutils and try again.
+      throw new DetoxRuntimeError(`Could not parse response from applesimutils, please update applesimutils and try again.
       'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
     }
     return parsed;

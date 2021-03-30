@@ -1,5 +1,6 @@
 const os = require('os');
 const path = require('path');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 function darwin() {
   return path.join(os.homedir(), 'Library');
@@ -30,7 +31,7 @@ function appDataPath() {
     case 'win32':
       return win32();
     default:
-      throw new Error(`${os.platform()} is not supported`);
+      throw new DetoxRuntimeError(`${os.platform()} is not supported`);
   }
 }
 

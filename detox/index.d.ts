@@ -37,6 +37,11 @@ declare global {
 
         interface DetoxConfig {
             /**
+             * @example extends: './relative/detox.config'
+             * @example extends: '@my-org/detox-preset'
+             */
+            extends?: string;
+            /**
              * @example testRunner: 'jest'
              * @example testRunner: 'mocha'
              */
@@ -1161,6 +1166,7 @@ declare global {
             siri?: SiriPermission;
             speech?: SpeechPermission;
             faceid?: FaceIDPermission;
+            userTracking?: UserTrackingPermission;
         }
 
         type LocationPermission = 'always' | 'inuse' | 'never' | 'unset';
@@ -1179,6 +1185,7 @@ declare global {
         type SpeechPermission = PermissionState;
         type NotificationsPermission = PermissionState;
         type FaceIDPermission = PermissionState;
+        type UserTrackingPermission = PermissionState;
 
         interface DeviceLaunchAppConfig {
             /**

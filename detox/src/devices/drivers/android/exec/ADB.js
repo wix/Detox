@@ -252,7 +252,7 @@ class ADB {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
     const instrumentationRunner = this._instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
     if (instrumentationRunner === 'undefined') {
-      throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+      throw new DetoxRuntimeError(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
     }
 
     return instrumentationRunner;

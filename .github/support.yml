@@ -11,19 +11,11 @@ supportComment: >
   
   
   
-  Feel free to post your Stack Overflow question here for more visibility. We'll take a look at it.
+  **Feel free to post your Stack Overflow question here for more visibility!** We'll take a look at it.
   
   
-  
-  For issues with `detox build` commands, please note that you are responsible for maintaining this command in your Detox configuration. If the command fails for you, the issue lies with your command.
-  
-  
-  
-  For issues with Expo apps, it is most likely not an issue with Detox itself, but with the Expo runtime or with incorrect Detox setup. For support on how to use Detox with Expo, you should contact the Expo team or the Expo community.
-
-  
-  
-  For more information on bots in this repository, read [this discussion](https://github.com/wix/Detox/issues/1305).
+    
+  Refer to [this discussion](https://github.com/wix/Detox/issues/1305) for more information about our policy on issues.
 # Whether to close issues marked as support requests
 close: true
 # Whether to lock issues marked as support requests

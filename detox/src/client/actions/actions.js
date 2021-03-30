@@ -11,7 +11,7 @@ class Action {
 
   expectResponseOfType(response, type) {
     if (response.type !== type) {
-      throw new Error(`was expecting '${type}' , got ${JSON.stringify(response)}`);
+      throw new DetoxRuntimeError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
   }
 }
@@ -120,13 +120,13 @@ class Invoke extends Action {
             : '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
         }
 
-        throw new Error(message);
+        throw new DetoxRuntimeError(message);
       case 'invokeResult':
         return response.params;
       case 'error':
-        throw new Error(response.params.error);
+        throw new DetoxRuntimeError(response.params.error);
       default:
-        throw new Error(`tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
+        throw new DetoxRuntimeError(`tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }

@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
 const FileArtifact = require('./templates/artifact/FileArtifact');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
 
 class ArtifactsManager {
@@ -211,7 +212,7 @@ class ArtifactsManager {
         return pluginsByPriority;
       /* istanbul ignore next */
       default: // is
-        throw new Error(`Unknown plugins grouping strategy: ${strategy}`);
+        throw new DetoxRuntimeError(`Unknown plugins grouping strategy: ${strategy}`);
     }
   }
 
