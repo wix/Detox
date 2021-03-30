@@ -81,6 +81,7 @@
       "<rootDir>/__tests__/setupJest.js"
     ],
     "testEnvironment": "node",
+    "testRunner": "jest-circus/runner",
     "roots": [
       "node_modules",
       "src",

@@ -35,7 +35,7 @@ class DetoxRuntimeError extends Error {
     }
 
     if (_.isError(err) && (err.stack || err.message)) {
-      return String(err.stack || err.message);
+      return String(err.stack || err);
     }
 
     return this.inspectObj(err, inspectOptions)

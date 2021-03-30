@@ -150,6 +150,9 @@ describe('AsyncWebSocket', () => {
           '%s',
           expect.any(Error), // `Unexpected message received over the web socket: onmessage`
         );
+
+        const error = log.error.mock.calls[0][2];
+        expect(error).toMatchSnapshot();
       });
     });
   });
@@ -277,12 +280,17 @@ describe('AsyncWebSocket', () => {
       expect(aws.isOpen).toBe(false);
     });
 
-    it('should react gracefully to null-like messages', async () => {
+    it('should elaborate about null-like messages', async () => {
       await connect();
 
       const response = aws.send(generateRequest());
-      socket.onmessage(null);
-      await expect(response).rejects.toThrowErrorMatchingSnapshot();
+      socket.onmessage({ data: null });
+
+      const error = await response.then(() => {
+        throw new Error('Assertion: the call should have failed');
+      }, _.identity);
+      delete error.stack;
+      expect(error).toMatchSnapshot();
     });
   });
 

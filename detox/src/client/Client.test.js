@@ -9,6 +9,7 @@ const { validSession } = require('../configuration/configurations.mock');
 describe('Client', () => {
   let log;
   let sessionConfig;
+  let Client;
   /** @type {Client} */
   let client;
   /** @type {AsyncWebSocket} */

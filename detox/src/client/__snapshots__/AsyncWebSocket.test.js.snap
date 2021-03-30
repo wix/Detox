@@ -9,13 +9,13 @@ https://github.com/wix/Detox/issues"
 exports[`AsyncWebSocket .close() should throw on a sync socket.close() error 1`] = `
 "Failed to close a connection to the Detox server.
 
-[Error: TestError]"
+Error: TestError"
 `;
 
 exports[`AsyncWebSocket .close() should throw on an emitted socket.close() error 1`] = `
 "Failed to close a connection to the Detox server.
 
-[Error: TestError]"
+Error: TestError"
 `;
 
 exports[`AsyncWebSocket .open() should reject if called twice sequentially 1`] = `
@@ -31,19 +31,19 @@ https://github.com/wix/Detox/issues"
 `;
 
 exports[`AsyncWebSocket .open() should reject on a constructor error 1`] = `
-"Unexpected error occured when opening a web socket connection.
+"Unexpected error occurred when opening a web socket connection.
 See the error details below.
 
 HINT: Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues
 
-[Error: TestError]"
+Error: TestError"
 `;
 
 exports[`AsyncWebSocket .open() should reject on an error event 1`] = `
 "Failed to open a connection to the Detox server.
 
-[Error: TestError]"
+Error: TestError"
 `;
 
 exports[`AsyncWebSocket .send() should throw for a closed connection 1`] = `
@@ -58,22 +58,38 @@ https://github.com/wix/Detox/issues
 }"
 `;
 
+exports[`AsyncWebSocket .send() when opened should log an error if the incoming message was completely unexpected 1`] = `
+[DetoxRuntimeError: Unexpected error on an attempt to handle a message over the web socket.
+
+HINT: Examine the inner error:
+
+Unexpected message received over the web socket: somethingElse
+
+The payload was:
+
+{"type":"somethingElse"}]
+`;
+
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 1`] = `
 "Failed to deliver the message to the Detox server:
 
-[Error: TestError]"
+Error: TestError"
 `;
 
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 2`] = `
 "Failed to deliver the message to the Detox server:
 
-[Error: TestError]"
+Error: TestError"
 `;
 
-exports[`AsyncWebSocket edge cases should react gracefully to null-like messages 1`] = `
-"Unexpected error on an attempt to handle a message over the web socket.
+exports[`AsyncWebSocket edge cases should elaborate about null-like messages 1`] = `
+[DetoxRuntimeError: Unexpected error on an attempt to handle a message over the web socket.
 
 HINT: Examine the inner error:
-SyntaxError: Unexpected token u in JSON at position 0
-The payload was:"
+
+Empty or non-typed message received over the web socket.
+
+The payload was:
+
+null]
 `;

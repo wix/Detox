@@ -477,16 +477,6 @@ describe('Detox', () => {
       });
     });
 
-    describe('before app has been launched', () => {
-      beforeEach(() => Device.setInfiniteMethod('launchApp'));
-      beforeEach(startInit);
-
-      it(`should not throw, but should reject detox.init() promise`, async () => {
-        await expect(detox.cleanup()).resolves.not.toThrowError();
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
-      });
-    });
-
     describe('after detox.init()', () => {
       beforeEach(async () => {
         detox = new Detox(detoxConfig);

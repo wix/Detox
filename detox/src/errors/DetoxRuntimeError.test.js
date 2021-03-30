@@ -22,7 +22,7 @@ describe('DetoxRuntimeError', () => {
     expect(DetoxRuntimeError.format(err)).toBe(err.stack);
 
     delete err.stack;
-    expect(DetoxRuntimeError.format(err)).toBe(err.message);
+    expect(DetoxRuntimeError.format(err)).toBe(err.toString());
 
     delete err.message;
     expect(DetoxRuntimeError.format(err)).toBe('[Error]');
@@ -46,6 +46,10 @@ describe('DetoxRuntimeError', () => {
       'message with no stack': new DetoxRuntimeError({
         message: 'Test message without a stack',
         noStack: true,
+      }),
+      'message with "Command failed" error': new DetoxRuntimeError({
+        message: 'Cannot run Detox due to an internal error',
+        debugInfo: new Error('Command failed: jest runMyTests'),
       }),
       'message with hint': new DetoxRuntimeError({
         message: 'Detox adapter to Jest is malfunctioning.',

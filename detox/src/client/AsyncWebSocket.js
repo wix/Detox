@@ -42,7 +42,7 @@ class AsyncWebSocket {
       this._unlinkSocket();
 
       throw new DetoxRuntimeError({
-        message: 'Unexpected error occured when opening a web socket connection.\nSee the error details below.',
+        message: 'Unexpected error occurred when opening a web socket connection.\nSee the error details below.',
         hint: DetoxInvariantError.reportIssue,
         debugInfo: e,
       });
@@ -189,16 +189,19 @@ class AsyncWebSocket {
 
   /**
    *
-   * @param {WebSocket.MessageEvent} response
+   * @param {WebSocket.MessageEvent} event
    * @private
    */
-  _onMessage(response) {
-    const data = response ? response.data : undefined;
+  _onMessage(event) {
+    const data = event && event.data || null;
 
     try {
       this._log.trace(EVENTS.MESSAGE, data);
 
       const json = JSON.parse(data);
+      if (!json || !json.type) {
+        throw new DetoxRuntimeError('Empty or non-typed message received over the web socket.');
+      }
 
       if (this.inFlightPromises.hasOwnProperty(json.messageId)) {
         this.inFlightPromises[json.messageId].resolve(json);
@@ -206,12 +209,12 @@ class AsyncWebSocket {
       } else if (this._eventCallbacks.hasOwnProperty(json.type)) {
         for (const callback of this._eventCallbacks[json.type]) callback(json);
       } else {
-        throw new DetoxInvariantError('Unexpected message received over the web socket: ' + type)
+        throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type)
       }
     } catch (error) {
       this._handleError(new DetoxRuntimeError({
         message: 'Unexpected error on an attempt to handle a message over the web socket.',
-        hint: 'Examine the inner error:\n' + error + '\nThe payload was:', // TODO: DetoxRuntimeError.format()
+        hint: 'Examine the inner error:\n\n' + DetoxRuntimeError.format(error) + '\n\nThe payload was:',
         debugInfo: data,
       }));
     }
