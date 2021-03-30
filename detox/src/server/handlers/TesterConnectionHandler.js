@@ -7,6 +7,7 @@ class TesterConnectionHandler extends RegisteredConnectionHandler {
   }
 
   handle(action) {
+    /* istanbul ignore next */
     if (super.handle(action)) {
       return true;
     }

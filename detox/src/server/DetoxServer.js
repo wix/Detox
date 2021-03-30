@@ -4,7 +4,6 @@ const DetoxSessionManager = require('./DetoxSessionManager');
 const DetoxInvariantError = require('../errors/DetoxInvariantError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
-const sleep = require('../utils/sleep');
 const Deferred = require('../utils/Deferred');
 
 class DetoxServer {

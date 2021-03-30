@@ -33,6 +33,7 @@ class AnonymousConnectionHandler {
         message: `Invalid login action received, it has invalid .role`,
         hint: DetoxInvariantError.reportIssue,
         debugInfo: action,
+        inspectOptions: { depth: 2 },
       });
     }
 
@@ -41,6 +42,7 @@ class AnonymousConnectionHandler {
         message: `Invalid login action received, it has no .sessionId`,
         hint: DetoxInvariantError.reportIssue,
         debugInfo: action,
+        inspectOptions: { depth: 2 },
       });
     }
 
@@ -49,6 +51,7 @@ class AnonymousConnectionHandler {
         message: `Invalid login action received, it has a non-string .sessionId`,
         hint: DetoxInvariantError.reportIssue,
         debugInfo: action,
+        inspectOptions: { depth: 3 },
       });
     }
 

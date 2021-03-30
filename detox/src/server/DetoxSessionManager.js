@@ -38,9 +38,14 @@ class DetoxSessionManager {
    * @returns {DetoxSession}
    */
   registerSession(connection, { role, sessionId }) {
-    this._assertConnectionIsNotInSession(connection);
+    let session;
 
-    let session = this._sessionsById.get(sessionId);
+    if (this._assertConnectionIsNotInSession(connection)) {
+      session = this._sessionsById.get(sessionId);
+    } else {
+      session = this._sessionsByConnection.get(connection);
+    }
+
     if (!session) {
       session = new DetoxSession(sessionId);
       this._sessionsById.set(sessionId, session);
@@ -56,7 +61,8 @@ class DetoxSessionManager {
    * @returns {DetoxSession|null}
    */
   getSession(connection) {
-    return this._sessionsByConnection.get(connection) || null;
+    const result = this._sessionsByConnection.get(connection) || null;
+    return result;
   }
 
   /**

@@ -1,4 +1,5 @@
 const DetoxInvariantError = require('../../errors/DetoxInvariantError');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { serializeError } = require('serialize-error');
 
 class RegisteredConnectionHandler {
@@ -18,7 +19,7 @@ class RegisteredConnectionHandler {
   handle(action) {
     switch (action.type) {
       case 'login':
-        throw new DetoxInvariantError(`Cannot log in twice into the same session (${this._session.id}) as ${this._role}`);
+        throw new DetoxInvariantError(`Cannot log in twice into the same session (${this._session.id}) being "${this._role}" already`);
       default:
         return false;
     }
@@ -38,7 +39,7 @@ class RegisteredConnectionHandler {
         messageId: action && action.messageId,
       });
     } catch (err) {
-      this._api.log.error('Cannot forward the error details to the tester, printing it here:\n')
+      this._api.log.error('Cannot forward the error details to the tester, printing it here:\n' + DetoxRuntimeError.format(err))
       throw err;
     }
   }

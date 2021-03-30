@@ -83,7 +83,7 @@ class DetoxConnection {
   }
 
   _onError(e) {
-    this._log.warn(EVENTS.SOCKET_ERROR, e && e.message || `${e}`);
+    this._log.warn(EVENTS.SOCKET_ERROR, DetoxRuntimeError.format(e));
   }
 
   _onClose() {
