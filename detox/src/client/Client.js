@@ -27,10 +27,12 @@ class Client {
     this._slowInvocationStatusHandle = null;
     this._whenAppIsConnected = new Deferred();
     this._whenAppIsReady = new Deferred();
+    this._isCleaningUp = false;
 
     this._successfulTestRun = true; // flag for cleanup
     this._pendingAppCrash = undefined;
     this._asyncWebSocket = new AsyncWebSocket(server);
+    this._serverUrl = server;
 
     this.setEventCallback('appConnected', this._onAppConnected);
     this.setEventCallback('ready', this._onAppReady);
@@ -50,6 +52,10 @@ class Client {
     return this._asyncWebSocket.isOpen && this._whenAppIsConnected.isResolved();
   }
 
+  get serverUrl() {
+    return this._serverUrl;
+  }
+
   async connect() {
     await this._asyncWebSocket.open();
     const sessionStatus = await this.sendAction(new actions.Login(this._sessionId));
@@ -59,7 +65,8 @@ class Client {
   }
 
   async cleanup() {
-    clearTimeout(this._slowInvocationStatusHandle);
+    this._isCleaningUp = true;
+    this._unscheduleSlowInvocationQuery();
 
     try {
       if (this.isConnected && !this._pendingAppCrash) {
@@ -87,7 +94,7 @@ class Client {
   dumpPendingRequests({testName} = {}) {
     const messages = _.values(this._asyncWebSocket.inFlightPromises)
       .map(p => p.message)
-      .filter(m => m.type !== 'currentStatus');
+      .filter(m => m && m.type !== 'currentStatus');
 
     if (_.isEmpty(messages)) {
       return;
@@ -143,13 +150,10 @@ class Client {
 
   async _sendMonitoredAction(action) {
     try {
-      if (this._slowInvocationTimeout > 0) {
-        this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
-      }
-
+      this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
       return await this._doSendAction(action);
     } finally {
-      clearTimeout(this._slowInvocationStatusHandle);
+      this._unscheduleSlowInvocationQuery();
     }
   }
 
@@ -232,13 +236,22 @@ class Client {
   }
 
   _scheduleSlowInvocationQuery() {
-    return setTimeout(async () => {
-      if (this.isConnected) {
-        const status = await this.currentStatus();
-        log.info({ event: 'CurrentStatus' }, status);
-        this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
-      }
-    }, this._slowInvocationTimeout);
+    if (this._slowInvocationTimeout > 0 && !this._isCleaningUp) {
+      return setTimeout(async () => {
+        if (this.isConnected) {
+          const status = await this.currentStatus();
+          log.info({ event: 'CurrentStatus' }, status);
+          this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
+        }
+      }, this._slowInvocationTimeout);
+    }
+
+    return null;
+  }
+
+  _unscheduleSlowInvocationQuery() {
+    clearTimeout(this._slowInvocationStatusHandle);
+    this._slowInvocationStatusHandle = null;
   }
 
   _onAppConnected() {

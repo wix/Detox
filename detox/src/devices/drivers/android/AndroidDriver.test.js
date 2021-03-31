@@ -523,9 +523,7 @@ describe('Android driver', () => {
     exec = require('../../../utils/exec');
 
     client = {
-      configuration: {
-        server: `ws://localhost:${detoxServerPort}`
-      },
+      serverUrl: `ws://localhost:${detoxServerPort}`,
       waitUntilReady: jest.fn(),
     };
 

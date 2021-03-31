@@ -105,15 +105,16 @@ class AsyncWebSocket {
 
   resetInFlightPromises() {
     for (const messageId of _.keys(this.inFlightPromises)) {
-      delete this.inFlightPromises[messageId];
+      this.inFlightPromises[messageId] = Deferred.resolved();
     }
   }
 
   rejectAll(error) {
-    for (const messageId of _.keys(this.inFlightPromises)) {
-      const deferred = this.inFlightPromises[messageId];
+    const inFlightPromises = _.values(this.inFlightPromises);
+
+    this.resetInFlightPromises();
+    for (const deferred of inFlightPromises) {
       deferred.reject(error);
-      delete this.inFlightPromises[messageId];
     }
   }
 

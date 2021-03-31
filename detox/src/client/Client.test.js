@@ -112,6 +112,12 @@ describe('Client', () => {
     });
   });
 
+  describe('.serverUrl', () => {
+    it('should return sessionConfig.server', () => {
+      expect(client.serverUrl).toBe(sessionConfig.server);
+    });
+  });
+
   describe('.connect()', () => {
     it('should open the web socket', async () => {
       mockAws.mockResponse('loginSuccess', {});

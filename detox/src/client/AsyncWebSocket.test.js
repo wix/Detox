@@ -261,14 +261,18 @@ describe('AsyncWebSocket', () => {
   });
 
   describe('.resetInFlightPromises', () => {
-    it(`should erase all pending promises`, async () => {
+    it(`should reset all pending promises (.message) and resolve them`, async () => {
       await connect();
       aws.send(generateRequest());
       aws.send(generateRequest());
 
-      expect(_.size(aws.inFlightPromises)).toBe(2);
+      expect(_(aws.inFlightPromises).pickBy('message').size()).toBe(2);
+      expect(_(aws.inFlightPromises).pickBy(p => p.isPending()).size()).toBe(2);
+
       aws.resetInFlightPromises();
-      expect(_.size(aws.inFlightPromises)).toBe(0);
+
+      expect(_(aws.inFlightPromises).pickBy('message').size()).toBe(0);
+      expect(_(aws.inFlightPromises).pickBy(p => p.isPending()).size()).toBe(0);
     });
   });
 
