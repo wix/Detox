@@ -17,7 +17,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
     console.log('Making problems with server');
 
     const instance = await this.detox.init(undefined, { launchApp: false });
-    const detoxConnection = [...instance._server._sessionManager._connectionsByWs.values()][0];
+    const [detoxConnection] = [...instance._server._sessionManager._connectionsByWs.values()];
     const sendActionOriginal = detoxConnection.sendAction;
     detoxConnection.sendAction = function(action) {
       if (action.type !== 'ready') {

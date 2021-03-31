@@ -34,11 +34,10 @@ afterAll(async () => {
 
 // simulate app-is-never-ready state
 
-const DetoxServer = require('detox/src/server/DetoxServer');
-
-const originalFn = DetoxServer.prototype.sendAction;
-DetoxServer.prototype.sendAction = function (ws, action) {
+const DetoxConnection = require('detox/src/server/DetoxConnection');
+const originalFn = DetoxConnection.prototype.sendAction;
+DetoxConnection.prototype.sendAction = function (action) {
   if (action.type !== 'ready') {
-    originalFn.call(this, ws, action);
+    originalFn.call(this, action);
   }
 };
