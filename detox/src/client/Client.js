@@ -5,7 +5,9 @@ const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const Deferred = require('../utils/Deferred');
 const DetoxInvariantError = require('../errors/DetoxInvariantError');
-const log = require('../utils/logger').child({ __filename });
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
+const log = require('../utils/logger');
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
 
 class Client {
@@ -28,9 +30,9 @@ class Client {
     this._whenAppIsConnected = new Deferred();
     this._whenAppIsReady = new Deferred();
     this._isCleaningUp = false;
+    this._isWaitingForAppConnect = false;
 
     this._successfulTestRun = true; // flag for cleanup
-    this._pendingAppCrash = undefined;
     this._asyncWebSocket = new AsyncWebSocket(server);
     this._serverUrl = server;
 
@@ -69,7 +71,7 @@ class Client {
     this._unscheduleSlowInvocationQuery();
 
     try {
-      if (this.isConnected && !this._pendingAppCrash) {
+      if (this.isConnected) {
         await this.sendAction(new actions.Cleanup(this._successfulTestRun));
 
         this._whenAppIsConnected = new Deferred();
@@ -84,14 +86,12 @@ class Client {
     this._asyncWebSocket.setEventCallback(event, callback);
   }
 
-  getPendingCrashAndReset() {
-    const crash = this._pendingAppCrash;
-    this._pendingAppCrash = undefined;
-
-    return crash;
-  }
-
   dumpPendingRequests({testName} = {}) {
+    if (this._isWaitingForAppConnect) {
+      const unreachableError = failedToReachTheApp.evenThoughAppWasLaunched();
+      log.error({ event: 'APP_UNREACHABLE' }, DetoxRuntimeError.format(unreachableError) + '\n\n');
+    }
+
     const messages = _.values(this._asyncWebSocket.inFlightPromises)
       .map(p => p.message)
       .filter(m => m && m.type !== 'currentStatus');
@@ -100,7 +100,7 @@ class Client {
       return;
     }
 
-    let dump = 'App has not responded to the network requests below:';
+    let dump = 'The app has not responded to the network requests below:';
     for (const msg of messages) {
       dump += `\n  (id = ${msg.messageId}) ${msg.type}: ${JSON.stringify(msg.params)}`;
     }
@@ -179,7 +179,13 @@ class Client {
   }
 
   async waitUntilReady() {
-    await this._whenAppIsConnected.promise;
+    this._isWaitingForAppConnect = true;
+
+    try {
+      await this._whenAppIsConnected.promise;
+    } finally {
+      this._isWaitingForAppConnect = false;
+    }
 
     // TODO: optimize traffic (!) - we can just listen for 'ready' event
     // if app always sends it upon load completion. Then this will suffice:
@@ -236,17 +242,24 @@ class Client {
   }
 
   _scheduleSlowInvocationQuery() {
-    if (this._slowInvocationTimeout > 0 && !this._isCleaningUp) {
-      return setTimeout(async () => {
-        if (this.isConnected) {
-          const status = await this.currentStatus();
-          log.info({ event: 'CurrentStatus' }, status);
-          this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
-        }
-      }, this._slowInvocationTimeout);
+    if ((this._slowInvocationTimeout <= 0) || (this._isCleaningUp)) {
+      return null;
     }
 
-    return null;
+    return setTimeout(async () => {
+      let status;
+
+      try {
+        status = await this.sendAction(new actions.CurrentStatus());
+        log.info({ event: 'APP_STATUS' }, status);
+      } catch (_e) {
+        log.debug({ event: 'APP_STATUS' }, 'Failed to execute the current status query.');
+      }
+
+      if (status) {
+        this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
+      }
+    }, this._slowInvocationTimeout);
   }
 
   _unscheduleSlowInvocationQuery() {
@@ -275,25 +288,29 @@ class Client {
   }
 
   _onBeforeAppCrash({ params }) {
-    this._pendingAppCrash = params.errorDetails;
-    this._asyncWebSocket.rejectAll(this._pendingAppCrash);
+    this._unscheduleSlowInvocationQuery();
     this._whenAppIsConnected = new Deferred();
     this._whenAppIsReady = new Deferred();
+    this._asyncWebSocket.rejectAll(new DetoxRuntimeError({
+      message: 'The app has crashed, see the details below:',
+      debugInfo: params.errorDetails,
+    }));
   }
 
   _onAppDisconnected() {
+    this._unscheduleSlowInvocationQuery();
     this._whenAppIsConnected = new Deferred();
     this._whenAppIsReady = new Deferred();
-    this._asyncWebSocket.rejectAll(new Error('The app has unexpectedly disconnected from Detox server'));
+    this._asyncWebSocket.rejectAll(new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
   }
 
   _onUnhandledServerError(message) {
     const { params } = message;
     if (!params || !params.error) {
       const err = new DetoxInvariantError('Received an empty error message from Detox Server:\n' + util.inspect(message));
-      log.error({ event: 'ERROR' }, err.toString());
+      log.error({ __filename, event: 'ERROR' }, err.toString());
     } else {
-      log.error({ event: 'ERROR' }, deserializeError(params.error).message);
+      log.error({ __filename, event: 'ERROR' }, deserializeError(params.error).message);
     }
   }
 }

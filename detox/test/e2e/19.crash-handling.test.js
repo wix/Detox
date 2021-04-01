@@ -1,3 +1,5 @@
+const { expectToThrow } = require('./utils/custom-expects');
+
 describe('Crash Handling', () => {
   afterAll(async () => {
     await device.launchApp({
@@ -8,14 +10,8 @@ describe('Crash Handling', () => {
 
   it('Should throw error upon internal app crash', async () => {
     await device.reloadReactNative();
-
-    try {
-      await element(by.text('Crash')).tap();
-      await element(by.text('Crash')).tap();
-      fail('Test should have thrown an error, but did not');
-    } catch (_ex) {
-      // Note: exception will be logged as an APP_CRASH event
-    }
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'Failed to reach the app');
   });
 
   it('Should recover from app crash', async () => {
@@ -25,22 +21,14 @@ describe('Crash Handling', () => {
 
   it(':android: should throw error upon invoke crash', async () => {
     await device.reloadReactNative();
-
-    try {
-      await element(by.text('UI Crash')).tap();
-      fail('Test should have thrown an error, but did not');
-    } catch (ex) {
-      console.error(ex); // Log explicitly or it wouldn't show
-    }
+    await expectToThrow(() => element(by.text('UI Crash')).tap(), 'The app has crashed');
   });
 
   it(':android: Should throw error upon app bootstrap crash', async () => {
-    try {
-      await device.launchApp({ newInstance: true, launchArgs: { detoxAndroidCrashingActivity: true }});
-      fail('Test should have thrown an error, but did not');
-    } catch (ex) {
-      console.error(ex); // Log explicitly or it wouldn't show
-    }
+    await expectToThrow(() => device.launchApp({
+      newInstance: true,
+      launchArgs: { detoxAndroidCrashingActivity: true }
+    }), 'The app has crashed');
 
     // This is not effectively needed, as if crash handling doesn't go right launchApp would typically
     // just hang forever (and thus a timeout will fail the test - not this assertion).

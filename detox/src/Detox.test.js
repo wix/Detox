@@ -328,21 +328,6 @@ describe('Detox', () => {
           expect(client().dumpPendingRequests).not.toHaveBeenCalled();
         });
       });
-
-      describe('if app has crashed', () => {
-        beforeEach(async () => {
-          client().getPendingCrashAndReset.mockReturnValueOnce('Simulated crash');
-          await detox.beforeEach(testSummaries.running());
-        });
-
-        it('should print log message', () =>
-          expect(logger.error).toHaveBeenCalledWith(
-            { event: 'APP_CRASH' }, expect.any(String)
-          ));
-
-        it('should also relaunch app', () =>
-          expect(device().launchApp).toHaveBeenCalledWith({ newInstance: true }));
-      });
     });
   });
 
@@ -398,21 +383,6 @@ describe('Detox', () => {
 
         it('should not dump pending network requests', () =>
           expect(client().dumpPendingRequests).not.toHaveBeenCalled());
-      });
-
-      describe('with a failed test summary (due to app crash)', () => {
-        beforeEach(async () => {
-          client().getPendingCrashAndReset.mockReturnValueOnce('Simulated crash');
-          await detox.afterEach(testSummaries.failed());
-        });
-
-        it('should print log message', () =>
-          expect(logger.error).toHaveBeenCalledWith(
-            { event: 'APP_CRASH' }, expect.any(String)
-          ));
-
-        it('should also relaunch app', () =>
-          expect(device().launchApp).toHaveBeenCalledWith({ newInstance: true }));
       });
 
       describe('with a failed test summary (due to a timeout)', () => {

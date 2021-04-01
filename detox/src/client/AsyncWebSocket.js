@@ -113,11 +113,22 @@ class AsyncWebSocket {
   }
 
   rejectAll(error) {
+    let hasPendingActions = false;
+
     const inFlightPromises = _.values(this.inFlightPromises);
     this.resetInFlightPromises();
 
     for (const deferred of inFlightPromises) {
+      // TODO: handle this leaked abstraction
+      if (deferred.message.type !== 'currentStatus') {
+        hasPendingActions = true;
+      }
+
       deferred.reject(error);
+    }
+
+    if (!hasPendingActions) {
+      log.error(EVENTS.ERROR, DetoxRuntimeError.format(error));
     }
   }
 
@@ -175,19 +186,11 @@ class AsyncWebSocket {
       return this._unlinkSocket();
     }
 
-    this._handleError(new DetoxRuntimeError({
+    this.rejectAll(new DetoxRuntimeError({
       message: 'Failed to deliver the message to the Detox server:',
       debugInfo: error,
       noStack: true,
     }));
-  }
-
-  _handleError(error) {
-    if (_.size(this.inFlightPromises) > 0) {
-      return this.rejectAll(error);
-    }
-
-    log.error(EVENTS.ERROR, DetoxRuntimeError.format(error));
   }
 
   /**
@@ -217,7 +220,7 @@ class AsyncWebSocket {
         throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type)
       }
     } catch (error) {
-      this._handleError(new DetoxRuntimeError({
+      this.rejectAll(new DetoxRuntimeError({
         message: 'Unexpected error on an attempt to handle a message over the web socket.',
         hint: 'Examine the inner error:\n\n' + DetoxRuntimeError.format(error) + '\n\nThe payload was:',
         debugInfo: data,

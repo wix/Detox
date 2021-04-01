@@ -437,22 +437,6 @@ describe('Client', () => {
     });
   });
 
-  describe('.getPendingCrashAndReset()', () => {
-    it('should return undefined if there was no crash', () => {
-      expect(client.getPendingCrashAndReset()).toBe(undefined);
-    });
-
-    it('should return crash details and reset them for consequent calls', () => {
-      const errorDetails = 'Chief, it is all gone!';
-      mockAws.mockEventCallback('AppWillTerminateWithError', {
-        params: { errorDetails },
-      });
-
-      expect(client.getPendingCrashAndReset()).toBe(errorDetails);
-      expect(client.getPendingCrashAndReset()).toBe(undefined);
-    });
-  });
-
   describe('.dumpPendingRequests()', () => {
     beforeEach(async () => {
       await client.connect();
