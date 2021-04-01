@@ -83,8 +83,14 @@ https://github.com/wix/Detox/issues"
 `;
 
 exports[`Detox server integration edge cases login twice (as tester) + socket send error 1`] = `
-"Cannot forward the error details to the tester, printing it here:
+"Cannot forward the error details to the tester due to the error:
 Error: TestError"
+`;
+
+exports[`Detox server integration edge cases login twice (as tester) + socket send error 2`] = `
+"DetoxInvariantError: Cannot log in twice into the same session (aSession) being \\"tester\\" already
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
 `;
 
 exports[`Detox server integration edge cases on(message) - malformed data 1`] = `

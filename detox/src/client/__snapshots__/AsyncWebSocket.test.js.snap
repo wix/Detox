@@ -59,7 +59,7 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`AsyncWebSocket .send() when opened should log an error if the incoming message was completely unexpected 1`] = `
-[DetoxRuntimeError: Unexpected error on an attempt to handle a message over the web socket.
+"Unexpected error on an attempt to handle a message over the web socket.
 
 HINT: Examine the inner error:
 
@@ -67,7 +67,7 @@ Unexpected message received over the web socket: somethingElse
 
 The payload was:
 
-{"type":"somethingElse"}]
+{\\"type\\":\\"somethingElse\\"}"
 `;
 
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 1`] = `

@@ -147,11 +147,10 @@ describe('AsyncWebSocket', () => {
         expect(onErrorCallback).not.toHaveBeenCalled();
         expect(log.error).toHaveBeenCalledWith(
           { event: 'ERROR' },
-          '%s',
-          expect.any(Error), // `Unexpected message received over the web socket: onmessage`
+          expect.stringMatching('Unexpected error')
         );
 
-        const error = log.error.mock.calls[0][2];
+        const error = log.error.mock.calls[0][1];
         expect(error).toMatchSnapshot();
       });
     });
@@ -261,18 +260,25 @@ describe('AsyncWebSocket', () => {
   });
 
   describe('.resetInFlightPromises', () => {
-    it(`should reset all pending promises (.message) and resolve them`, async () => {
+    it(`should reset all pending promises`, async () => {
       await connect();
       aws.send(generateRequest());
       aws.send(generateRequest());
 
-      expect(_(aws.inFlightPromises).pickBy('message').size()).toBe(2);
-      expect(_(aws.inFlightPromises).pickBy(p => p.isPending()).size()).toBe(2);
+      expect(_.size(aws.inFlightPromises)).toBe(2);
 
       aws.resetInFlightPromises();
 
-      expect(_(aws.inFlightPromises).pickBy('message').size()).toBe(0);
-      expect(_(aws.inFlightPromises).pickBy(p => p.isPending()).size()).toBe(0);
+      expect(_.size(aws.inFlightPromises)).toBe(0);
+    });
+
+    it(`should handle late responses to aborted in-flight requests`, async () => {
+      await connect();
+      aws.send(generateRequest(1));
+      aws.resetInFlightPromises();
+
+      socket.mockMessage({ type: 'someReply', messageId: 1 });
+      expect(log.debug).toHaveBeenCalledWith({ event: 'LATE_RESPONSE' }, expect.stringContaining('messageId=1'));
     });
   });
 

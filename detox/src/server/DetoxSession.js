@@ -116,6 +116,7 @@ class DetoxSession {
 
     this._app.sendAction({
       type: 'testerDisconnected',
+      messageId: -1,
     });
   }
 

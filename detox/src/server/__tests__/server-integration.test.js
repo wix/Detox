@@ -144,7 +144,7 @@ describe('Detox server integration', () => {
 
     // tester disconnects
     testerSocket.mockClose();
-    expect(appSocket.send).toHaveBeenCalledWith(aMessage({ type: 'testerDisconnected' }));
+    expect(appSocket.send).toHaveBeenCalledWith(aMessage({ type: 'testerDisconnected', messageId: -1 }));
     expect(sessionManager.getSession(testerConnection)).toBe(null);
 
     appSocket.mockMessage({
@@ -250,7 +250,8 @@ describe('Detox server integration', () => {
       webSocket.mockLogin({ role: 'tester' });
       expect(webSocket.send).toHaveBeenCalledWith(expect.stringContaining('"type":"serverError"'));
 
-      expect(getLoggerMsg('error')).toMatchSnapshot();
+      expect(getLoggerMsg('error', 0)).toMatchSnapshot();
+      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
     });
 
     test('login twice (as app)', () => {

@@ -39,8 +39,8 @@ class RegisteredConnectionHandler {
         messageId: action && action.messageId,
       });
     } catch (err) {
-      this._api.log.error('Cannot forward the error details to the tester, printing it here:\n' + DetoxRuntimeError.format(err))
-      throw err;
+      this._api.log.error('Cannot forward the error details to the tester due to the error:\n' + DetoxRuntimeError.format(err))
+      throw error;
     }
   }
 }

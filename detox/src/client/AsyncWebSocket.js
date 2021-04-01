@@ -10,6 +10,7 @@ const EVENTS = {
   ERROR: Object.freeze({ event: 'ERROR' }),
   MESSAGE: Object.freeze({ event: 'MESSAGE' }),
   SEND: Object.freeze({ event: 'SEND' }),
+  LATE_RESPONSE: Object.freeze({ event: 'LATE_RESPONSE' }),
 };
 
 class AsyncWebSocket {
@@ -21,6 +22,7 @@ class AsyncWebSocket {
     this._messageIdCounter = 0;
     this._opening = null;
     this._closing = null;
+    this._abortedMessageIds = new Set();
 
     this.inFlightPromises = {};
   }
@@ -105,14 +107,15 @@ class AsyncWebSocket {
 
   resetInFlightPromises() {
     for (const messageId of _.keys(this.inFlightPromises)) {
-      this.inFlightPromises[messageId] = Deferred.resolved();
+      delete this.inFlightPromises[messageId];
+      this._abortedMessageIds.add(+messageId);
     }
   }
 
   rejectAll(error) {
     const inFlightPromises = _.values(this.inFlightPromises);
-
     this.resetInFlightPromises();
+
     for (const deferred of inFlightPromises) {
       deferred.reject(error);
     }
@@ -184,8 +187,7 @@ class AsyncWebSocket {
       return this.rejectAll(error);
     }
 
-    // TODO: DetoxRuntimeError.format(error)
-    log.error(EVENTS.ERROR, '%s', error);
+    log.error(EVENTS.ERROR, DetoxRuntimeError.format(error));
   }
 
   /**
@@ -209,6 +211,8 @@ class AsyncWebSocket {
         delete this.inFlightPromises[json.messageId];
       } else if (this._eventCallbacks.hasOwnProperty(json.type)) {
         for (const callback of this._eventCallbacks[json.type]) callback(json);
+      } else if (this._abortedMessageIds.has(json.messageId)) {
+        log.debug(EVENTS.LATE_RESPONSE, `Received late response for messageId=${json.messageId}`);
       } else {
         throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type)
       }

@@ -54,25 +54,27 @@ class DetoxConnection {
     this._log.trace(EVENTS.GET, data);
 
     try {
-      const action = _.attempt(() => JSON.parse(data));
-
-      if (_.isError(action)) {
-        throw new DetoxRuntimeError({
-          message: 'The payload received is not a valid JSON.',
-          hint: DetoxInvariantError.reportIssue,
-          debugInfo: data,
-        });
-      }
-
-      if (!action.type) {
-        throw new DetoxRuntimeError({
-          message: 'Cannot process an action without a type.',
-          hint: DetoxInvariantError.reportIssue,
-          debugInfo: action,
-        });
-      }
+      let action;
 
       try {
+        action = _.attempt(() => JSON.parse(data));
+
+        if (_.isError(action)) {
+          throw new DetoxRuntimeError({
+            message: 'The payload received is not a valid JSON.',
+            hint: DetoxInvariantError.reportIssue,
+            debugInfo: data,
+          });
+        }
+
+        if (!action.type) {
+          throw new DetoxRuntimeError({
+            message: 'Cannot process an action without a type.',
+            hint: DetoxInvariantError.reportIssue,
+            debugInfo: action,
+          });
+        }
+
         this._handler.handle(action);
       } catch (handlerError) {
         this._handler.onError(handlerError, action);
