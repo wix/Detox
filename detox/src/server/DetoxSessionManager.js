@@ -78,6 +78,7 @@ class DetoxSessionManager {
 
     if (session) {
       session.disconnect(connection);
+      session.notify();
 
       this._sessionsByConnection.delete(connection);
       if (session.isEmpty) {

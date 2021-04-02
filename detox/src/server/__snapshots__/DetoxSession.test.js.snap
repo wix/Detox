@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DetoxSession edge cases should warn on (already) empty app deassignment 1`] = `
+"DetoxInternalError: no app is connected to the session aSession
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`DetoxSession edge cases should warn on (already) empty tester deassignment 1`] = `
+"DetoxInternalError: no tester is connected to the session aSession
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
 exports[`DetoxSession edge cases should warn on .disconnect(<unknown connection>) 1`] = `
 "DetoxInternalError: cannot disconnect an unknown connection from the session aSession
 Please report this issue on our GitHub tracker:

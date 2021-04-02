@@ -70,6 +70,8 @@ class AnonymousConnectionHandler {
         appConnected: !!session.app,
       },
     });
+
+    session.notify();
   }
 
   _handleUnknownAction(action) {

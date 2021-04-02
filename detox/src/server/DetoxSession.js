@@ -11,6 +11,10 @@ class DetoxSession {
     this._tester = null;
     /** @type {DetoxConnection} */
     this._app = null;
+    /** @type {boolean | null} */
+    this._pendingAppStatus = null;
+    /** @type {boolean | null} */
+    this._pendingTesterStatus = null;
 
     log.trace({ event: 'SESSION_CREATED' }, `created session ${id}`);
   }
@@ -27,10 +31,11 @@ class DetoxSession {
     if (value) {
       this._assertAppIsNotConnected();
       this._app = value;
-      this._notifyAboutAppConnect();
+      this._pendingAppStatus = true;
     } else {
+      this._assertAppIsConnected();
       this._app = null;
-      this._notifyAboutAppDisconnect();
+      this._pendingAppStatus = false;
     }
   }
 
@@ -42,15 +47,37 @@ class DetoxSession {
     if (value) {
       this._assertTesterIsNotConnected();
       this._tester = value;
-      this._notifyAboutTesterConnect();
+      this._pendingTesterStatus = true;
     } else {
+      this._assertTesterIsConnected();
       this._tester = null;
-      this._notifyAboutTesterDisconnect();
+      this._pendingTesterStatus = false;
     }
   }
 
   get isEmpty() {
     return !this._tester && !this._app;
+  }
+
+  notify() {
+    if (this._pendingTesterStatus === true) {
+      this._notifyAboutTesterConnect();
+    }
+
+    if (this._pendingTesterStatus === false) {
+      this._notifyAboutTesterDisconnect();
+    }
+
+    if (this._pendingAppStatus === true) {
+      this._notifyAboutAppConnect();
+    }
+
+    if (this._pendingAppStatus === false) {
+      this._notifyAboutAppDisconnect();
+    }
+
+    this._pendingTesterStatus = null;
+    this._pendingAppStatus = null;
   }
 
   disconnect(connection) {
@@ -73,9 +100,21 @@ class DetoxSession {
     }
   }
 
+  _assertAppIsConnected() {
+    if (!this._app) {
+      this._invariant(`no app is connected to the session ${this.id}`);
+    }
+  }
+
   _assertTesterIsNotConnected() {
     if (this._tester) {
       this._invariant(`the tester is already connected to the session ${this.id}`);
+    }
+  }
+
+  _assertTesterIsConnected() {
+    if (!this._tester) {
+      this._invariant(`no tester is connected to the session ${this.id}`);
     }
   }
 
