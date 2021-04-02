@@ -11,6 +11,7 @@ class AnonymousConnectionHandler {
   handle(action) {
     switch (action.type) {
       case 'login': return this._handleLoginAction(action);
+      case 'ready': return this._handleEarlyReadyAction(action);
       default: return this._handleUnknownAction(action);
     }
   }
@@ -80,6 +81,10 @@ class AnonymousConnectionHandler {
       hint: DetoxInternalError.reportIssue,
       debugInfo: action,
     });
+  }
+
+  _handleEarlyReadyAction() {
+    this._api.log.debug('The app has dispatched "ready" action too early.');
   }
 }
 

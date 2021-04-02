@@ -6,6 +6,8 @@ Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
+exports[`Detox server integration edge cases app dispatches "ready" action before login 1`] = `"The app has dispatched \\"ready\\" action too early."`;
+
 exports[`Detox server integration edge cases attempt to register the same connection twice 1`] = `
 "DetoxInternalError: Cannot register the same WebSocket instance twice.
 Please report this issue on our GitHub tracker:
@@ -118,7 +120,7 @@ HINT: Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues
 
 {
-  type: 'isReady',
+  type: 'reloadReactNative',
   messageId: -1000
 }"
 `;

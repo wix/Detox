@@ -275,9 +275,15 @@ describe('Detox server integration', () => {
 
     test('receiving an action before we login', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
-      webSocket.mockMessage({ type: 'isReady', messageId: -1000 });
+      webSocket.mockMessage({ type: 'reloadReactNative', messageId: -1000 });
       expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
       expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+    });
+
+    test('app dispatches "ready" action before login', async () => {
+      sessionManager.registerConnection(webSocket, webSocket.socket);
+      webSocket.mockMessage({ type: 'ready', messageId: -1000 });
+      expect(getLoggerMsg('debug')).toMatchSnapshot();
     });
 
     test('socket error', () => {
@@ -290,7 +296,6 @@ describe('Detox server integration', () => {
       expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'SOCKET_ERROR' });
       expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
     });
-
   });
 
   function getLoggerMsg(level, callIndex = 0, argIndex = 0) {
