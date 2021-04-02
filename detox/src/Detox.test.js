@@ -102,6 +102,16 @@ describe('Detox', () => {
       it('should connect a client to the server', () =>
         expect(client().connect).toHaveBeenCalled());
 
+      it('should inject terminateApp method into client', async () => {
+        await client().terminateApp();
+        expect(device()._isAppRunning).toHaveBeenCalled();
+        expect(device().terminateApp).not.toHaveBeenCalled();
+
+        device()._isAppRunning.mockReturnValue(true);
+        await client().terminateApp();
+        expect(device().terminateApp).toHaveBeenCalled();
+      });
+
       it('should resolve a device driver from the registry', () =>
         expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(detoxConfig.deviceConfig.type));
 

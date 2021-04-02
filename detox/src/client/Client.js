@@ -250,7 +250,7 @@ class Client {
         let status;
 
         try {
-          status = await this.sendAction(new actions.CurrentStatus());
+          status = await this.currentStatus();
           log.info({ event: 'APP_STATUS' }, status);
         } catch (_e) {
           log.debug({ event: 'APP_STATUS' }, 'Failed to execute the current status query.');

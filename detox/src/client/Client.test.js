@@ -236,6 +236,17 @@ describe('Client', () => {
       expect(jest.getTimerCount()).toBe(0);
     });
 
+    it('should stop querying the "currentStatus" if the request completes badly', async () => {
+      const testError = new Error('GenericServerError');
+      await simulateInFlightAction();
+      mockAws.mockResponse('serverError', { error: serializeError(testError) }); // for currentStatus
+      jest.advanceTimersByTime(validSession.debugSynchronization);
+      await fastForwardAllPromises();
+
+      expect(log.debug).toHaveBeenCalledWith({ event: "APP_STATUS" }, 'Failed to execute the current status query.');
+      expect(jest.getTimerCount()).toBe(0);
+    });
+
     it('should rethrow generic "serverError" message from the server', async () => {
       const testError = new Error('GenericServerError');
       mockAws.mockResponse('serverError', { error: serializeError(testError) });
@@ -285,6 +296,7 @@ describe('Client', () => {
       ['waitForBackground', 'waitForBackgroundDone', actions.WaitForBackground],
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
+      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: 'App is idle' }],
       ['cleanup', 'cleanupDone', actions.Cleanup, true],
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
@@ -375,6 +387,12 @@ describe('Client', () => {
       await expect(client.cleanup()).rejects.toThrowError('UnexpectedError');
       expect(mockAws.close).toHaveBeenCalled();
     });
+
+    it('should delete the injected .terminateApp method', async () => {
+      const injected = client.terminateApp = jest.fn();
+      await client.cleanup();
+      expect(client.terminateApp).not.toBe(injected);
+    });
   });
 
   describe('.execute()', () => {
@@ -440,6 +458,19 @@ describe('Client', () => {
   describe('.dumpPendingRequests()', () => {
     beforeEach(async () => {
       await client.connect();
+    });
+
+    describe('if there was a prior unsuccessful attempt to launch the app launch', () => {
+      beforeEach(async () => {
+        mockAws.mockEventCallback('appDisconnected');
+        client.waitUntilReady();
+      });
+
+      it(`should log an error about the app being unreachable over web sockets`, async () => {
+        await client.dumpPendingRequests();
+        expect(log.error.mock.calls[0][0]).toEqual({ event: "APP_UNREACHABLE" });
+        expect(log.error.mock.calls[0][1]).toMatch(/Failed to reach the app over the web socket connection./);
+      });
     });
 
     it(`should not dump if there are no pending requests`, async () => {
@@ -530,6 +561,67 @@ describe('Client', () => {
       expect(mockAws.send).not.toHaveBeenCalledWith(new actions.Ready());
     });
   })
+
+  describe('on AppWillTerminateWithError', () => {
+    it('should schedule the app termination in 5 seconds, and reject pending', async () => {
+      jest.spyOn(client, 'terminateApp');
+
+      await client.connect();
+
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'SIGSEGV whatever' },
+      });
+      expect(client.terminateApp).not.toHaveBeenCalled();
+      expect(mockAws.rejectAll).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(5000);
+      await fastForwardAllPromises();
+      expect(client.terminateApp).toHaveBeenCalled();
+      expect(mockAws.rejectAll).not.toHaveBeenCalled();
+
+      mockAws.mockEventCallback('appDisconnected');
+      expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
+      expect(log.error).not.toHaveBeenCalled();
+    });
+
+    it('should log errors if the app termination does not go well', async () => {
+      jest.spyOn(client, 'terminateApp');
+      client.terminateApp.mockImplementation(() => {
+        throw new Error('TestError');
+      });
+
+      await client.connect();
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'SIGSEGV whatever' },
+      });
+
+      jest.advanceTimersByTime(5000);
+      await fastForwardAllPromises();
+
+      expect(client.terminateApp).toHaveBeenCalled();
+      expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('TestError'));
+    });
+
+    it('should unschedule the app termination if it disconnects earlier', async () => {
+      jest.spyOn(client, 'terminateApp');
+
+      await client.connect();
+
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'SIGSEGV whatever' },
+      });
+      mockAws.mockEventCallback('appDisconnected');
+
+      expect(client.terminateApp).not.toHaveBeenCalled();
+      expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
+
+      jest.advanceTimersByTime(5000);
+      await fastForwardAllPromises();
+
+      expect(client.terminateApp).not.toHaveBeenCalled();
+    });
+
+  });
 
   describe('on appDisconnected', () => {
     it('should reject pending actions', async () => {

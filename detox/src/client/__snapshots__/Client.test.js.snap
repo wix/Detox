@@ -47,6 +47,18 @@ THREAD_DUMP
 Refer to https://developer.android.com/training/articles/perf-anr for further details."
 `;
 
+exports[`Client on AppWillTerminateWithError should schedule the app termination in 5 seconds, and reject pending 1`] = `
+[DetoxRuntimeError: The app has crashed, see the details below:
+
+SIGSEGV whatever]
+`;
+
+exports[`Client on AppWillTerminateWithError should unschedule the app termination if it disconnects earlier 1`] = `
+[DetoxRuntimeError: The app has crashed, see the details below:
+
+SIGSEGV whatever]
+`;
+
 exports[`Client on unhandled serverError should log a fallback error if the details were empty 1`] = `
 "DetoxInternalError: Received an empty error message from Detox Server:
 { somethingElse: 0 }
