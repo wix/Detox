@@ -7,7 +7,7 @@ const Deferred = require('../utils/Deferred');
 const DetoxInvariantError = require('../errors/DetoxInvariantError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
-const log = require('../utils/logger');
+const log = require('../utils/logger').child({ __filename });
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
 
 class Client {
@@ -278,7 +278,7 @@ class Client {
       try {
         await this.terminateApp();
       } catch (e) {
-        log.error({ __filename, event: 'ERROR' }, DetoxRuntimeError.format(e));
+        log.error({ event: 'ERROR' }, DetoxRuntimeError.format(e));
       }
     }, 5000);
   }
@@ -344,9 +344,9 @@ class Client {
     const { params } = message;
     if (!params || !params.error) {
       const err = new DetoxInvariantError('Received an empty error message from Detox Server:\n' + util.inspect(message));
-      log.error({ __filename, event: 'ERROR' }, err.toString());
+      log.error({ event: 'ERROR' }, err.toString());
     } else {
-      log.error({ __filename, event: 'ERROR' }, deserializeError(params.error).message);
+      log.error({ event: 'ERROR' }, deserializeError(params.error).message);
     }
   }
 

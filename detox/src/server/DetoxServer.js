@@ -36,9 +36,9 @@ class DetoxServer {
   async close() {
     try {
       await this._closeWithTimeout(10000);
-      log.debug({ event: 'CLOSE' }, 'Detox server has been closed gracefully');
+      log.debug({ event: 'SERVER_CLOSE' }, 'Detox server has been closed gracefully');
     } catch (e) {
-      log.warn({ event: 'CLOSE_ERROR' },
+      log.warn({ event: 'ERROR' },
         `Detox server has been closed abruptly! See the error details below:\n`
         + DetoxRuntimeError.format(e) + '\n'
         + DetoxInvariantError.reportIssue

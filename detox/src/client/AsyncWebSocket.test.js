@@ -146,7 +146,7 @@ describe('AsyncWebSocket', () => {
 
         expect(onErrorCallback).not.toHaveBeenCalled();
         expect(log.error).toHaveBeenCalledWith(
-          { event: 'ERROR' },
+          { event: 'WS_ERROR' },
           expect.stringMatching('Unexpected error')
         );
 
@@ -278,7 +278,7 @@ describe('AsyncWebSocket', () => {
       aws.resetInFlightPromises();
 
       socket.mockMessage({ type: 'someReply', messageId: 1 });
-      expect(log.debug).toHaveBeenCalledWith({ event: 'LATE_RESPONSE' }, expect.stringContaining('messageId=1'));
+      expect(log.debug).toHaveBeenCalledWith({ event: 'WS_LATE_RESPONSE' }, expect.stringContaining('messageId=1'));
     });
   });
 

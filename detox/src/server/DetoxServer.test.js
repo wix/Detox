@@ -74,7 +74,7 @@ describe('DetoxServer', () => {
       await server.close();
 
       const expectedString = expect.stringContaining(`has been closed gracefully`);
-      expect(log.debug).toHaveBeenCalledWith({ event: 'CLOSE' }, expectedString);
+      expect(log.debug).toHaveBeenCalledWith({ event: 'SERVER_CLOSE' }, expectedString);
     });
 
     it('should WARN log a message upon unsuccessful server closing (timeout case)', async () => {
@@ -92,7 +92,7 @@ describe('DetoxServer', () => {
       await closePromise;
 
       const expectedString = expect.stringContaining(`closed abruptly`);
-      expect(log.warn).toHaveBeenCalledWith({ event: 'CLOSE_ERROR' }, expectedString);
+      expect(log.warn).toHaveBeenCalledWith({ event: 'ERROR' }, expectedString);
       expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
     });
 
@@ -108,7 +108,7 @@ describe('DetoxServer', () => {
       await server.close();
 
       const expectedString = expect.stringContaining(`TEST_ERROR`);
-      expect(log.warn).toHaveBeenCalledWith({ event: 'CLOSE_ERROR' }, expectedString);
+      expect(log.warn).toHaveBeenCalledWith({ event: 'ERROR' }, expectedString);
       expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
     });
 
@@ -132,7 +132,7 @@ describe('DetoxServer', () => {
       await server.close();
 
       const expectedString = expect.stringContaining(`TEST_ERROR`);
-      expect(log.warn).toHaveBeenCalledWith({ event: 'CLOSE_ERROR' }, expectedString);
+      expect(log.warn).toHaveBeenCalledWith({ event: 'ERROR' }, expectedString);
       expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
     });
   });

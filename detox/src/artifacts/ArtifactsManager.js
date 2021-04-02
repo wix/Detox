@@ -167,7 +167,7 @@ class ArtifactsManager {
 
   async _callSinglePlugin(pluginId, methodName, ...args) {
     const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
-    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
+    log.trace(Object.assign({ event: 'ARTIFACTS_LIFECYCLE', fn: methodName }, ...args), callSignature);
 
     const plugin = this._artifactPlugins[pluginId];
     try {
@@ -179,7 +179,7 @@ class ArtifactsManager {
 
   async _callPlugins(strategy, methodName, ...args) {
     const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
-    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
+    log.trace(Object.assign({ event: 'ARTIFACTS_LIFECYCLE', fn: methodName }, ...args), callSignature);
 
     for (const pluginGroup of this._groupPlugins(strategy)) {
       await Promise.all(pluginGroup.map(async (plugin) => {
@@ -223,7 +223,7 @@ class ArtifactsManager {
 
   _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
     const logObject = {
-      event: 'SUPPRESS_PLUGIN_ERROR',
+      event: 'ERROR',
       plugin: plugin.name,
       err,
       methodName,

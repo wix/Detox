@@ -6,11 +6,11 @@ const DetoxInvariantError = require('../errors/DetoxInvariantError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 const EVENTS = {
-  OPEN: Object.freeze({ event: 'OPEN' }),
-  ERROR: Object.freeze({ event: 'ERROR' }),
-  MESSAGE: Object.freeze({ event: 'MESSAGE' }),
-  SEND: Object.freeze({ event: 'SEND' }),
-  LATE_RESPONSE: Object.freeze({ event: 'LATE_RESPONSE' }),
+  OPEN: Object.freeze({ event: 'WS_OPEN' }),
+  ERROR: Object.freeze({ event: 'WS_ERROR' }),
+  MESSAGE: Object.freeze({ event: 'WS_MESSAGE' }),
+  SEND: Object.freeze({ event: 'WS_SEND' }),
+  LATE_RESPONSE: Object.freeze({ event: 'WS_LATE_RESPONSE' }),
 };
 
 class AsyncWebSocket {

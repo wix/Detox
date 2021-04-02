@@ -214,7 +214,7 @@ describe('ArtifactsManager', () => {
             expect(proxy.logger.warn.mock.calls).toEqual([[
               {
                 err: expect.any(Error),
-                event: 'SUPPRESS_PLUGIN_ERROR',
+                event: 'ERROR',
                 methodName: hookName,
                 plugin: 'testPlugin',
               },
