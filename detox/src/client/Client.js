@@ -27,10 +27,9 @@ class Client {
     this._sessionId = sessionId;
     this._slowInvocationTimeout = debugSynchronization;
     this._slowInvocationStatusHandle = null;
-    this._whenAppIsConnected = new Deferred();
-    this._whenAppIsReady = new Deferred();
+    this._whenAppIsConnected = this._invalidState('before connecting to the app');
+    this._whenAppIsReady = this._whenAppIsConnected;
     this._isCleaningUp = false;
-    this._isWaitingForAppConnect = false;
     this._pendingAppCrash = null;
     this._appTerminationHandle = null;
 
@@ -64,7 +63,7 @@ class Client {
     await this._asyncWebSocket.open();
     const sessionStatus = await this.sendAction(new actions.Login(this._sessionId));
     if (sessionStatus.appConnected) {
-      this._whenAppIsConnected.resolve();
+      this._onAppConnected();
     }
   }
 
@@ -76,8 +75,8 @@ class Client {
       if (this.isConnected) {
         await this.sendAction(new actions.Cleanup(this._successfulTestRun));
 
-        this._whenAppIsConnected = new Deferred();
-        this._whenAppIsReady = new Deferred();
+        this._whenAppIsConnected = this._invalidState('while cleaning up')
+        this._whenAppIsReady = this._whenAppIsConnected;
       }
     } finally {
       await this._asyncWebSocket.close();
@@ -91,31 +90,26 @@ class Client {
   }
 
   dumpPendingRequests({testName} = {}) {
-    if (this._isWaitingForAppConnect) {
+    if (this._whenAppIsConnected.isPending()) {
       const unreachableError = failedToReachTheApp.evenThoughAppWasLaunched();
       log.error({ event: 'APP_UNREACHABLE' }, DetoxRuntimeError.format(unreachableError) + '\n\n');
     }
 
-    const messages = _.values(this._asyncWebSocket.inFlightPromises)
-      .map(p => p.message)
-      .filter(m => m && m.type !== 'currentStatus');
+    if (this._asyncWebSocket.hasPendingActions()) {
+      const messages = _.values(this._asyncWebSocket.inFlightPromises).map(p => p.message);
+      let dump = 'The app has not responded to the network requests below:';
+      for (const msg of messages) {
+        dump += `\n  (id = ${msg.messageId}) ${msg.type}: ${JSON.stringify(msg.params)}`;
+      }
 
-    if (_.isEmpty(messages)) {
-      return;
+      const notice = testName
+        ? `That might be the reason why the test "${testName}" has timed out.`
+        : `Unresponded network requests might result in timeout errors in Detox tests.`;
+
+      dump += `\n\n${notice}\n`;
+      log.warn({ event: 'PENDING_REQUESTS'}, dump);
     }
 
-    let dump = 'The app has not responded to the network requests below:';
-    for (const msg of messages) {
-      dump += `\n  (id = ${msg.messageId}) ${msg.type}: ${JSON.stringify(msg.params)}`;
-    }
-
-    const notice = testName
-      ? `That might be the reason why the test "${testName}" has timed out.`
-      : `Unresponded network requests might result in timeout errors in Detox tests.`;
-
-    dump += `\n\n${notice}\n`;
-
-    log.warn({ event: 'PENDING_REQUESTS'}, dump);
     this._asyncWebSocket.resetInFlightPromises();
   }
 
@@ -141,11 +135,10 @@ class Client {
   }
 
   _inferSendOptions(action) {
-    if (action instanceof actions.CurrentStatus) {
-      return { queryStatus: false };
-    }
-
-    if (action instanceof actions.Login) {
+    if ( action instanceof actions.CurrentStatus
+      || action instanceof actions.Login
+      || action instanceof actions.Cleanup
+    ) {
       return { queryStatus: false };
     }
 
@@ -183,19 +176,21 @@ class Client {
   }
 
   async waitUntilReady() {
-    this._isWaitingForAppConnect = true;
+    if (!this._whenAppIsConnected.isResolved()) {
+      this._whenAppIsConnected = new Deferred();
+      this._whenAppIsReady = new Deferred();
 
-    try {
       await this._whenAppIsConnected.promise;
-    } finally {
-      this._isWaitingForAppConnect = false;
+      // TODO: optimize traffic (!) - we can just listen for 'ready' event
+      // if app always sends it upon load completion. On iOS it works,
+      // but not on Android. Afterwards, this will suffice:
+      //
+      // await this._whenAppIsReady.promise;
     }
 
-    // TODO: optimize traffic (!) - we can just listen for 'ready' event
-    // if app always sends it upon load completion. Then this will suffice:
-    // await this._whenAppIsReady.promise;
-
+    // TODO: move to else branch after the optimization
     if (!this._whenAppIsReady.isResolved()) {
+      this._whenAppIsReady = new Deferred();
       await this.sendAction(new actions.Ready());
       this._whenAppIsReady.resolve();
     }
@@ -296,7 +291,11 @@ class Client {
   }
 
   _onAppConnected() {
-    this._whenAppIsConnected.resolve();
+    if (this._whenAppIsConnected.isPending()) {
+      this._whenAppIsConnected.resolve();
+    } else {
+      this._whenAppIsConnected = Deferred.resolved();
+    }
   }
 
   _onAppReady() {
@@ -322,21 +321,21 @@ class Client {
     });
 
     this._unscheduleSlowInvocationQuery();
-    this._whenAppIsConnected = new Deferred();
-    this._whenAppIsReady = new Deferred();
+    this._whenAppIsConnected = this._invalidState('while the app is crashing');
+    this._whenAppIsReady = this._whenAppIsConnected;
     this._scheduleAppTermination();
   }
 
   _onAppDisconnected() {
     this._unscheduleSlowInvocationQuery();
     this._unscheduleAppTermination();
-    this._whenAppIsConnected = new Deferred();
-    this._whenAppIsReady = new Deferred();
+    this._whenAppIsConnected = this._invalidState('after the app has disconnected')
+    this._whenAppIsReady = this._whenAppIsConnected;
 
     if (this._pendingAppCrash) {
       this._asyncWebSocket.rejectAll(this._pendingAppCrash);
       this._pendingAppCrash = null;
-    } else {
+    } else if (this._asyncWebSocket.hasPendingActions()) {
       this._asyncWebSocket.rejectAll(new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
     }
   }
@@ -349,6 +348,12 @@ class Client {
     } else {
       log.error({ __filename, event: 'ERROR' }, deserializeError(params.error).message);
     }
+  }
+
+  _invalidState(state) {
+    return Deferred.rejected(
+      new DetoxInvariantError(`Detected an attempt to interact with Detox Client ${state}.`)
+    );
   }
 }
 

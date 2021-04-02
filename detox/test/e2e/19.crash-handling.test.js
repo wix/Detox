@@ -21,14 +21,14 @@ describe('Crash Handling', () => {
 
   it(':android: should throw error upon invoke crash', async () => {
     await device.reloadReactNative();
-    await expectToThrow(() => element(by.text('UI Crash')).tap(), 'The app has crashed');
+    await expectToThrow(() => element(by.text('UI Crash')).tap(), 'Test Failed: Simulated crash (native)');
   });
 
   it(':android: Should throw error upon app bootstrap crash', async () => {
     await expectToThrow(() => device.launchApp({
       newInstance: true,
       launchArgs: { detoxAndroidCrashingActivity: true }
-    }), 'The app has crashed');
+    }), 'Failed to run application on the device');
 
     // This is not effectively needed, as if crash handling doesn't go right launchApp would typically
     // just hang forever (and thus a timeout will fail the test - not this assertion).

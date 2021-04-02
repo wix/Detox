@@ -112,18 +112,17 @@ class AsyncWebSocket {
     }
   }
 
+  // TODO: handle this leaked abstraction some day
+  hasPendingActions() {
+    return _.some(this.inFlightPromises, p => p.message.type !== 'currentStatus');
+  }
+
   rejectAll(error) {
-    let hasPendingActions = false;
-
+    const hasPendingActions = this.hasPendingActions();
     const inFlightPromises = _.values(this.inFlightPromises);
+
     this.resetInFlightPromises();
-
     for (const deferred of inFlightPromises) {
-      // TODO: handle this leaked abstraction
-      if (deferred.message.type !== 'currentStatus') {
-        hasPendingActions = true;
-      }
-
       deferred.reject(error);
     }
 

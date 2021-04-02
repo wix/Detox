@@ -458,11 +458,12 @@ describe('Client', () => {
 
     describe('if there are pending requests -', () => {
       beforeEach(async () => {
-        const cleanup = new Deferred();
-        cleanup.message = new actions.Cleanup();
+        const stuckRequest = new Deferred();
+        stuckRequest.message = new actions.ReloadReactNative();
 
+        mockAws.hasPendingActions.mockReturnValue(true);
         mockAws.inFlightPromises = {
-          [cleanup.message.messageId]: cleanup
+          [stuckRequest.message.messageId]: stuckRequest
         };
       });
 
@@ -587,6 +588,7 @@ describe('Client', () => {
 
   async function simulateInFlightAction(action = anAction()) {
     const deferred = mockAws.mockBusy();
+    mockAws.hasPendingActions.mockReturnValue(true);
 
     const sendPromise = client.sendAction(action);
     await Promise.resolve();
