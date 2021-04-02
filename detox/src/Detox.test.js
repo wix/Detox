@@ -87,6 +87,7 @@ describe('Detox', () => {
       it('should create a DetoxServer automatically', () =>
         expect(DetoxServer).toHaveBeenCalledWith({
           port: expect.anything(),
+          standalone: false,
         }));
 
       it('should create a new Client', () =>
@@ -98,13 +99,18 @@ describe('Detox', () => {
       it('should create an invocation manager', () =>
         expect(invoke.InvocationManager).toHaveBeenCalledWith(client()));
 
-      it('should add a non-responsiveness listener to client ', () =>
-        expect(client().setNonresponsivenessListener).toHaveBeenCalledWith(
-          expect.any(Function)
-        ));
-
       it('should connect a client to the server', () =>
         expect(client().connect).toHaveBeenCalled());
+
+      it('should inject terminateApp method into client', async () => {
+        await client().terminateApp();
+        expect(device()._isAppRunning).toHaveBeenCalled();
+        expect(device().terminateApp).not.toHaveBeenCalled();
+
+        device()._isAppRunning.mockReturnValue(true);
+        await client().terminateApp();
+        expect(device().terminateApp).toHaveBeenCalled();
+      });
 
       it('should resolve a device driver from the registry', () =>
         expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(detoxConfig.deviceConfig.type));
@@ -244,23 +250,6 @@ describe('Detox', () => {
       });
     });
 
-    describe('and it gets unresponsiveness', () => {
-      let THREAD_DUMP = 'Simulated non-responsiveness';
-
-      beforeEach(init);
-
-      beforeEach(() => {
-        const listener = client().setNonresponsivenessListener.mock.calls[0][0];
-        listener({ threadDump: THREAD_DUMP });
-      });
-
-      it('should log a warning', () =>
-        expect(logger.warn).toHaveBeenCalledWith(
-          { event: 'APP_NONRESPONSIVE' },
-          expect.stringContaining(THREAD_DUMP)
-        ));
-    });
-
     describe('and it gets emitter error', () => {
       beforeEach(init);
 
@@ -349,21 +338,6 @@ describe('Detox', () => {
           expect(client().dumpPendingRequests).not.toHaveBeenCalled();
         });
       });
-
-      describe('if app has crashed', () => {
-        beforeEach(async () => {
-          client().getPendingCrashAndReset.mockReturnValueOnce('Simulated crash');
-          await detox.beforeEach(testSummaries.running());
-        });
-
-        it('should print log message', () =>
-          expect(logger.error).toHaveBeenCalledWith(
-            { event: 'APP_CRASH' }, expect.any(String)
-          ));
-
-        it('should also relaunch app', () =>
-          expect(device().launchApp).toHaveBeenCalledWith({ newInstance: true }));
-      });
     });
   });
 
@@ -421,21 +395,6 @@ describe('Detox', () => {
           expect(client().dumpPendingRequests).not.toHaveBeenCalled());
       });
 
-      describe('with a failed test summary (due to app crash)', () => {
-        beforeEach(async () => {
-          client().getPendingCrashAndReset.mockReturnValueOnce('Simulated crash');
-          await detox.afterEach(testSummaries.failed());
-        });
-
-        it('should print log message', () =>
-          expect(logger.error).toHaveBeenCalledWith(
-            { event: 'APP_CRASH' }, expect.any(String)
-          ));
-
-        it('should also relaunch app', () =>
-          expect(device().launchApp).toHaveBeenCalledWith({ newInstance: true }));
-      });
-
       describe('with a failed test summary (due to a timeout)', () => {
         beforeEach(() => detox.afterEach(testSummaries.timedOut()));
 
@@ -490,16 +449,6 @@ describe('Detox', () => {
 
     describe('before app has been installed', () => {
       beforeEach(() => Device.setInfiniteMethod('installApp'));
-      beforeEach(startInit);
-
-      it(`should not throw, but should reject detox.init() promise`, async () => {
-        await expect(detox.cleanup()).resolves.not.toThrowError();
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
-      });
-    });
-
-    describe('before app has been launched', () => {
-      beforeEach(() => Device.setInfiniteMethod('launchApp'));
       beforeEach(startInit);
 
       it(`should not throw, but should reject detox.init() promise`, async () => {

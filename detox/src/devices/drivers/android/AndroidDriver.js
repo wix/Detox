@@ -291,7 +291,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _reverseServerPort(adbName) {
-    const serverPort = new URL(this.client.configuration.server).port;
+    const serverPort = new URL(this.client.serverUrl).port;
     await this.adb.reverse(adbName, serverPort);
     return serverPort;
   }

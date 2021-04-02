@@ -28,8 +28,8 @@ module.exports.handler = async function runServer(argv) {
     throw new DetoxRuntimeError(`The port should be between 1 and 65535, got ${argv.port}`)
   }
 
-  new DetoxServer({
+  await new DetoxServer({
     port: +argv.port,
     standalone: true,
-  });
+  }).open();
 };

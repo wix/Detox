@@ -1,10 +1,9 @@
 const Artifact = require('../templates/artifact/Artifact');
 
 class InstrumentsArtifactRecording extends Artifact {
-  constructor({ pluginContext, client, userConfig, temporaryRecordingPath }) {
+  constructor({ client, userConfig, temporaryRecordingPath }) {
     super();
 
-    this._pluginContext = pluginContext;
     this._client = client;
     this._userConfig = userConfig;
     this.temporaryRecordingPath = temporaryRecordingPath;
@@ -36,10 +35,7 @@ class InstrumentsArtifactRecording extends Artifact {
   }
 
   _isClientConnected() {
-    const isConnectedToDetoxServer = this._client.isConnected && !this._client.pandingAppCrash;
-    const isAppRunning = this._pluginContext.bundleId;
-
-    return Boolean(isConnectedToDetoxServer && isAppRunning);
+    return this._client.isConnected;
   }
 }
 

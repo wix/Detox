@@ -984,6 +984,25 @@ describe('Device', () => {
     expect(device.deviceDriver.captureViewHierarchy).toHaveBeenCalledWith(device.id, 'capture');
   });
 
+  describe('_isAppRunning (internal method)', () => {
+    let device;
+
+    beforeEach(async () => {
+      device = await aValidDevice();
+      driverMock.driver.launchApp = async () => 42;
+      await device.launchApp();
+    });
+
+    it('should return the value for the current app if called with no args', async () => {
+      expect(device._isAppRunning()).toBe(true);
+    });
+
+    it('should return the value for the given bundleId', async () => {
+      expect(device._isAppRunning('test.bundle')).toBe(true);
+      expect(device._isAppRunning('somethingElse')).toBe(false);
+    });
+  });
+
   async function launchAndTestBinaryPath(absoluteOrRelative) {
     const appConfig = absoluteOrRelative === 'absolute'
       ? configurationsMock.appWithAbsoluteBinaryPath

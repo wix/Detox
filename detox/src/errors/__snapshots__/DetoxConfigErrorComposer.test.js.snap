@@ -994,7 +994,7 @@ exports[`DetoxConfigErrorComposer (from configuration/index) .failedToReadConfig
 [DetoxConfigError: An error occurred while trying to load Detox config from:
 /home/detox/myproject/.detoxrc.json
 
-EISDIR: illegal operation on a directory, read]
+Error: EISDIR: illegal operation on a directory, read]
 `;
 
 exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted "extends" path 1`] = `

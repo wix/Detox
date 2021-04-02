@@ -46,8 +46,11 @@ function createPlainBunyanStream({ logPath, level }) {
           return '';
         }
 
-        const suffix = entry.event ? `/${entry.event}` : '';
-        return path.basename(filename) + suffix;
+        if (entry.event === 'ERROR') {
+          return `${filename}/${entry.event}`;
+        }
+
+        return entry.event ? entry.event : filename;
       },
       'trackingId': id => ` #${id}`,
     },
@@ -72,6 +75,9 @@ function createPlainBunyanStream({ logPath, level }) {
   };
 }
 
+/**
+ * @returns {Logger}
+ */
 function init() {
   const levelFromArg = argparse.getArgValue('loglevel', 'l');
   const level = adaptLogLevelName(levelFromArg);
@@ -129,6 +135,19 @@ function init() {
     }
 
     tryOverrideConsole(logger, global);
+  };
+
+  const originalChild = logger.child.bind(logger);
+
+  logger.child = (options) => {
+    if (options && options.__filename) {
+      return originalChild({
+        ...options,
+        __filename: path.basename(options.__filename)
+      });
+    }
+
+    return originalChild(options);
   };
 
   return logger;

@@ -171,7 +171,7 @@ async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
   const pid = childProcess.pid;
   const spawnargs = childProcess.spawnargs.join(' ');
 
-  log.debug({ event: 'KILL', signal, process_pid: pid }, `sending ${signal} to [pid = ${pid}]: ${spawnargs}`);
+  log.debug({ event: 'EXEC_KILL', signal, process_pid: pid }, `sending ${signal} to [pid = ${pid}]: ${spawnargs}`);
 
   childProcess.kill(signal);
   await childProcessPromise.catch(e => {

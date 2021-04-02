@@ -1,40 +1,14 @@
 const _ = require('lodash');
-const util = require('util');
+const DetoxError = require('./DetoxError');
 
-class DetoxRuntimeError extends Error {
+class DetoxRuntimeError extends DetoxError {
   constructor(options) {
     super(formatOptions(options));
     this.name = 'DetoxRuntimeError';
-  }
 
-  static inspectObj(obj, options) {
-    return util.inspect(obj, {
-      colors: false,
-      compact: false,
-      depth: 0,
-      showHidden: false,
-
-      ...options,
-    });
-  }
-
-  /**
-   * @param {*} err
-   */
-  static format(err, inspectOptions = { depth: 1 }) {
-    if (err instanceof DetoxRuntimeError) {
-      return err.message;
+    if (options && options.noStack) {
+      delete this.stack;
     }
-
-    if (_.isError(err) && /^Command failed:/.test(err.message)) {
-      return err.message;
-    }
-
-    if (_.isError(err) && (err.stack || err.message)) {
-      return String(err.stack || err.message);
-    }
-
-    return this.inspectObj(err, inspectOptions)
   }
 }
 
@@ -52,7 +26,7 @@ function formatOptions(options) {
       hint && `HINT: ${hint}`,
       _.isString(debugInfo)
         ? debugInfo
-        : DetoxRuntimeError.format(debugInfo, inspectOptions),
+        : DetoxError.format(debugInfo, inspectOptions),
     ]).join('\n\n');
   }
 
