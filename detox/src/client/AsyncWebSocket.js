@@ -45,7 +45,7 @@ class AsyncWebSocket {
 
       throw new DetoxRuntimeError({
         message: 'Unexpected error occurred when opening a web socket connection.\nSee the error details below.',
-        hint: DetoxInternalError.reportIssue,
+        hint: DetoxRuntimeError.reportIssue,
         debugInfo: e,
       });
     }
@@ -77,7 +77,7 @@ class AsyncWebSocket {
     if (!this.isOpen) {
       throw new DetoxRuntimeError({
         message: 'Cannot send a message over the closed web socket. See the payload below:',
-        hint: DetoxInternalError.reportIssue,
+        hint: DetoxRuntimeError.reportIssue,
         debugInfo: message,
       });
     }
