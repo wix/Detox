@@ -370,7 +370,7 @@ class Device {
     params[launchKey] = payloadFilePath;
   }
 
-  _isAppRunning(bundleId) {
+  _isAppRunning(bundleId = this._bundleId) {
     return this._processes[bundleId] != null;
   }
 

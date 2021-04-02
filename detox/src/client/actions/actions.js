@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { getDetoxLevel } = require('../../utils/logger');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const DetoxInvariantError = require('../../errors/DetoxInvariantError');
 
 class Action {
   constructor(type, params = {}) {
@@ -11,7 +12,7 @@ class Action {
 
   expectResponseOfType(response, type) {
     if (response.type !== type) {
-      throw new DetoxRuntimeError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
+      throw new DetoxInvariantError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
   }
 }
@@ -120,13 +121,13 @@ class Invoke extends Action {
             : '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
         }
 
-        throw new DetoxRuntimeError(message);
+        throw new Error(message);
       case 'invokeResult':
         return response.params;
       case 'error':
-        throw new DetoxRuntimeError(response.params.error);
+        throw new Error(response.params.error);
       default:
-        throw new DetoxRuntimeError(`tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
+        throw new DetoxInvariantError(`Tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }

@@ -31,6 +31,8 @@ class Client {
     this._whenAppIsReady = new Deferred();
     this._isCleaningUp = false;
     this._isWaitingForAppConnect = false;
+    this._pendingAppCrash = null;
+    this._appTerminationHandle = null;
 
     this._successfulTestRun = true; // flag for cleanup
     this._asyncWebSocket = new AsyncWebSocket(server);
@@ -80,6 +82,8 @@ class Client {
     } finally {
       await this._asyncWebSocket.close();
     }
+
+    delete this.terminateApp; // property injection
   }
 
   setEventCallback(event, callback) {
@@ -150,7 +154,7 @@ class Client {
 
   async _sendMonitoredAction(action) {
     try {
-      this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
+      this._scheduleSlowInvocationQuery();
       return await this._doSendAction(action);
     } finally {
       this._unscheduleSlowInvocationQuery();
@@ -241,30 +245,54 @@ class Client {
     await this.sendAction(new actions.DeliverPayload(params));
   }
 
+  async terminateApp() {
+    /* see the property injection from Detox.js */
+  }
+
   _scheduleSlowInvocationQuery() {
-    if ((this._slowInvocationTimeout <= 0) || (this._isCleaningUp)) {
-      return null;
+    if (this._slowInvocationTimeout > 0 && !this._isCleaningUp) {
+      this._slowInvocationStatusHandle = setTimeout(async () => {
+        let status;
+
+        try {
+          status = await this.sendAction(new actions.CurrentStatus());
+          log.info({ event: 'APP_STATUS' }, status);
+        } catch (_e) {
+          log.debug({ event: 'APP_STATUS' }, 'Failed to execute the current status query.');
+          this._slowInvocationStatusHandle = null;
+        }
+
+        if (status) {
+          this._scheduleSlowInvocationQuery();
+        }
+      }, this._slowInvocationTimeout);
+    } else {
+      this._slowInvocationStatusHandle = null;
     }
-
-    return setTimeout(async () => {
-      let status;
-
-      try {
-        status = await this.sendAction(new actions.CurrentStatus());
-        log.info({ event: 'APP_STATUS' }, status);
-      } catch (_e) {
-        log.debug({ event: 'APP_STATUS' }, 'Failed to execute the current status query.');
-      }
-
-      if (status) {
-        this._slowInvocationStatusHandle = this._scheduleSlowInvocationQuery();
-      }
-    }, this._slowInvocationTimeout);
   }
 
   _unscheduleSlowInvocationQuery() {
-    clearTimeout(this._slowInvocationStatusHandle);
-    this._slowInvocationStatusHandle = null;
+    if (this._slowInvocationStatusHandle) {
+      clearTimeout(this._slowInvocationStatusHandle);
+      this._slowInvocationStatusHandle = null;
+    }
+  }
+
+  _scheduleAppTermination() {
+    this._appTerminationHandle = setTimeout(async () => {
+      try {
+        await this.terminateApp();
+      } catch (e) {
+        log.error({ __filename, event: 'ERROR' }, DetoxRuntimeError.format(e));
+      }
+    }, 5000);
+  }
+
+  _unscheduleAppTermination() {
+    if (this._appTerminationHandle) {
+      clearTimeout(this._appTerminationHandle);
+      this._appTerminationHandle = null;
+    }
   }
 
   _onAppConnected() {
@@ -288,20 +316,29 @@ class Client {
   }
 
   _onBeforeAppCrash({ params }) {
+    this._pendingAppCrash = new DetoxRuntimeError({
+      message: 'The app has crashed, see the details below:',
+      debugInfo: params.errorDetails,
+    });
+
     this._unscheduleSlowInvocationQuery();
     this._whenAppIsConnected = new Deferred();
     this._whenAppIsReady = new Deferred();
-    this._asyncWebSocket.rejectAll(new DetoxRuntimeError({
-      message: 'The app has crashed, see the details below:',
-      debugInfo: params.errorDetails,
-    }));
+    this._scheduleAppTermination();
   }
 
   _onAppDisconnected() {
     this._unscheduleSlowInvocationQuery();
+    this._unscheduleAppTermination();
     this._whenAppIsConnected = new Deferred();
     this._whenAppIsReady = new Deferred();
-    this._asyncWebSocket.rejectAll(new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
+
+    if (this._pendingAppCrash) {
+      this._asyncWebSocket.rejectAll(this._pendingAppCrash);
+      this._pendingAppCrash = null;
+    } else {
+      this._asyncWebSocket.rejectAll(new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
+    }
   }
 
   _onUnhandledServerError(message) {
