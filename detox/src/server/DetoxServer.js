@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const WebSocket = require('ws');
 const DetoxSessionManager = require('./DetoxSessionManager');
-const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
 const Deferred = require('../utils/Deferred');
@@ -41,7 +41,7 @@ class DetoxServer {
       log.warn({ event: 'ERROR' },
         `Detox server has been closed abruptly! See the error details below:\n`
         + DetoxRuntimeError.format(e) + '\n'
-        + DetoxInvariantError.reportIssue
+        + DetoxInternalError.reportIssue
       );
     }
   }

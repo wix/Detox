@@ -1,5 +1,5 @@
 const log = require('../utils/logger').child({ __filename });
-const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxConnection = require('./DetoxConnection');
 const DetoxSession = require('./DetoxSession');
 
@@ -113,7 +113,7 @@ class DetoxSessionManager {
   }
 
   _invariant(errorMessage) {
-    log.error(DetoxInvariantError.from(errorMessage));
+    log.error(DetoxInternalError.from(errorMessage));
   }
 }
 

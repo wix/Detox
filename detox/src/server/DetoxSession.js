@@ -1,4 +1,4 @@
-const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxInternalError = require('../errors/DetoxInternalError');
 const log = require('../utils/logger').child({ __filename });
 
 class DetoxSession {
@@ -121,7 +121,7 @@ class DetoxSession {
   }
 
   _invariant(errorMessage) {
-    log.error(DetoxInvariantError.from(errorMessage));
+    log.error(DetoxInternalError.from(errorMessage));
   }
 }
 

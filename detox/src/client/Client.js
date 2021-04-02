@@ -4,7 +4,7 @@ const { deserializeError } = require('serialize-error');
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const Deferred = require('../utils/Deferred');
-const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
 const log = require('../utils/logger').child({ __filename });
@@ -343,7 +343,7 @@ class Client {
   _onUnhandledServerError(message) {
     const { params } = message;
     if (!params || !params.error) {
-      const err = new DetoxInvariantError('Received an empty error message from Detox Server:\n' + util.inspect(message));
+      const err = new DetoxInternalError('Received an empty error message from Detox Server:\n' + util.inspect(message));
       log.error({ event: 'ERROR' }, err.toString());
     } else {
       log.error({ event: 'ERROR' }, deserializeError(params.error).message);
@@ -352,7 +352,7 @@ class Client {
 
   _invalidState(state) {
     return Deferred.rejected(
-      new DetoxInvariantError(`Detected an attempt to interact with Detox Client ${state}.`)
+      new DetoxInternalError(`Detected an attempt to interact with Detox Client ${state}.`)
     );
   }
 }

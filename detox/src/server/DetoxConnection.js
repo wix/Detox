@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { WebSocket } = require('ws');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxInternalError = require('../errors/DetoxInternalError');
 const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandler');
 const logger = require('../utils/logger').child({ __filename });
 
@@ -62,7 +62,7 @@ class DetoxConnection {
         if (_.isError(action)) {
           throw new DetoxRuntimeError({
             message: 'The payload received is not a valid JSON.',
-            hint: DetoxInvariantError.reportIssue,
+            hint: DetoxInternalError.reportIssue,
             debugInfo: data,
           });
         }
@@ -70,7 +70,7 @@ class DetoxConnection {
         if (!action.type) {
           throw new DetoxRuntimeError({
             message: 'Cannot process an action without a type.',
-            hint: DetoxInvariantError.reportIssue,
+            hint: DetoxInternalError.reportIssue,
             debugInfo: action,
           });
         }

@@ -1,19 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Detox server integration edge cases .registerSession - calling twice 1`] = `
-"DetoxInvariantError: Cannot login the same WebSocket instance twice into the same session.
+"DetoxInternalError: Cannot login the same WebSocket instance twice into the same session.
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Detox server integration edge cases attempt to register the same connection twice 1`] = `
-"DetoxInvariantError: Cannot register the same WebSocket instance twice.
+"DetoxInternalError: Cannot register the same WebSocket instance twice.
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Detox server integration edge cases attempt to unregister an unknown connection 1`] = `
-"DetoxInvariantError: Cannot unregister an unknown WebSocket instance.
+"DetoxInternalError: Cannot unregister an unknown WebSocket instance.
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
@@ -77,7 +77,7 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases login twice (as app) 1`] = `
-"DetoxInvariantError: Cannot log in twice into the same session (aSession) being \\"app\\" already
+"DetoxInternalError: Cannot log in twice into the same session (aSession) being \\"app\\" already
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
@@ -88,7 +88,7 @@ Error: TestError"
 `;
 
 exports[`Detox server integration edge cases login twice (as tester) + socket send error 2`] = `
-"DetoxInvariantError: Cannot log in twice into the same session (aSession) being \\"tester\\" already
+"DetoxInternalError: Cannot log in twice into the same session (aSession) being \\"tester\\" already
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;

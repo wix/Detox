@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { getDetoxLevel } = require('../../utils/logger');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const DetoxInvariantError = require('../../errors/DetoxInvariantError');
+const DetoxInternalError = require('../../errors/DetoxInternalError');
 
 class Action {
   constructor(type, params = {}) {
@@ -12,7 +12,7 @@ class Action {
 
   expectResponseOfType(response, type) {
     if (response.type !== type) {
-      throw new DetoxInvariantError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
+      throw new DetoxInternalError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
   }
 }
@@ -127,7 +127,7 @@ class Invoke extends Action {
       case 'error':
         throw new Error(response.params.error);
       default:
-        throw new DetoxInvariantError(`Tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
+        throw new DetoxInternalError(`Tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }

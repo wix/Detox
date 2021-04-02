@@ -48,14 +48,14 @@ Refer to https://developer.android.com/training/articles/perf-anr for further de
 `;
 
 exports[`Client on unhandled serverError should log a fallback error if the details were empty 1`] = `
-"DetoxInvariantError: Received an empty error message from Detox Server:
+"DetoxInternalError: Received an empty error message from Detox Server:
 { somethingElse: 0 }
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Client on unhandled serverError should log a fallback error if the details were empty 2`] = `
-"DetoxInvariantError: Received an empty error message from Detox Server:
+"DetoxInternalError: Received an empty error message from Detox Server:
 { somethingElse: 0, params: {} }
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const WebSocket = require('ws');
 const log = require('../utils/logger').child({ __filename });
 const Deferred = require('../utils/Deferred');
-const DetoxInvariantError = require('../errors/DetoxInvariantError');
+const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 const EVENTS = {
@@ -29,7 +29,7 @@ class AsyncWebSocket {
 
   async open() {
     if (this._ws) {
-      throw new DetoxInvariantError(`Cannot open an already ${this.status} web socket.`);
+      throw new DetoxInternalError(`Cannot open an already ${this.status} web socket.`);
     }
 
     this._opening = new Deferred();
@@ -45,7 +45,7 @@ class AsyncWebSocket {
 
       throw new DetoxRuntimeError({
         message: 'Unexpected error occurred when opening a web socket connection.\nSee the error details below.',
-        hint: DetoxInvariantError.reportIssue,
+        hint: DetoxInternalError.reportIssue,
         debugInfo: e,
       });
     }
@@ -59,7 +59,7 @@ class AsyncWebSocket {
     }
 
     if (this._closing) {
-      throw new DetoxInvariantError('Detected an attempt to close an already closing or closed web socket.');
+      throw new DetoxInternalError('Detected an attempt to close an already closing or closed web socket.');
     }
 
     const closing = this._closing = new Deferred();
@@ -77,7 +77,7 @@ class AsyncWebSocket {
     if (!this.isOpen) {
       throw new DetoxRuntimeError({
         message: 'Cannot send a message over the closed web socket. See the payload below:',
-        hint: DetoxInvariantError.reportIssue,
+        hint: DetoxInternalError.reportIssue,
         debugInfo: message,
       });
     }

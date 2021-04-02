@@ -1,4 +1,4 @@
-const DetoxInvariantError = require('../../errors/DetoxInvariantError');
+const DetoxInternalError = require('../../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { serializeError } = require('serialize-error');
 
@@ -19,7 +19,7 @@ class RegisteredConnectionHandler {
   handle(action) {
     switch (action.type) {
       case 'login':
-        throw new DetoxInvariantError(`Cannot log in twice into the same session (${this._session.id}) being "${this._role}" already`);
+        throw new DetoxInternalError(`Cannot log in twice into the same session (${this._session.id}) being "${this._role}" already`);
       default:
         return false;
     }

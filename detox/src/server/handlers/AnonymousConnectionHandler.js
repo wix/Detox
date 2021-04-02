@@ -1,5 +1,5 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const DetoxInvariantError = require('../../errors/DetoxInvariantError');
+const DetoxInternalError = require('../../errors/DetoxInternalError');
 const AppConnectionHandler = require('./AppConnectionHandler');
 const TesterConnectionHandler = require('./TesterConnectionHandler');
 
@@ -23,7 +23,7 @@ class AnonymousConnectionHandler {
     if (!action.params) {
       throw new DetoxRuntimeError({
         message: `Invalid login action received, it has no .params`,
-        hint: DetoxInvariantError.reportIssue,
+        hint: DetoxInternalError.reportIssue,
         debugInfo: action,
       });
     }
@@ -31,7 +31,7 @@ class AnonymousConnectionHandler {
     if (action.params.role !== 'app' && action.params.role !== 'tester') {
       throw new DetoxRuntimeError({
         message: `Invalid login action received, it has invalid .role`,
-        hint: DetoxInvariantError.reportIssue,
+        hint: DetoxInternalError.reportIssue,
         debugInfo: action,
         inspectOptions: { depth: 2 },
       });
@@ -40,7 +40,7 @@ class AnonymousConnectionHandler {
     if (!action.params.sessionId) {
       throw new DetoxRuntimeError({
         message: `Invalid login action received, it has no .sessionId`,
-        hint: DetoxInvariantError.reportIssue,
+        hint: DetoxInternalError.reportIssue,
         debugInfo: action,
         inspectOptions: { depth: 2 },
       });
@@ -49,7 +49,7 @@ class AnonymousConnectionHandler {
     if (typeof action.params.sessionId !== 'string') {
       throw new DetoxRuntimeError({
         message: `Invalid login action received, it has a non-string .sessionId`,
-        hint: DetoxInvariantError.reportIssue,
+        hint: DetoxInternalError.reportIssue,
         debugInfo: action,
         inspectOptions: { depth: 3 },
       });
@@ -75,7 +75,7 @@ class AnonymousConnectionHandler {
   _handleUnknownAction(action) {
     throw new DetoxRuntimeError({
       message: `Action dispatched too early, there is no session to use:`,
-      hint: DetoxInvariantError.reportIssue,
+      hint: DetoxInternalError.reportIssue,
       debugInfo: action,
     });
   }
