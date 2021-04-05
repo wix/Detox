@@ -22,10 +22,10 @@ pushd detox/test
 run_f "npm run build:android"
 cp ../coverage/lcov.info ../../coverage/unit.lcov
 
-run_f "npm run e2e:android-ci-google"
+run_f "npm run e2e:android-ci-genycloud"
 cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
 
-# run_f "npm run e2e:android-ci-google -- e2e/01* e2e/02* e2e/03*"
+run_f "npm run e2e:android-ci-google -- e2e/01* e2e/02* e2e/03*"
 
 run_f "scripts/ci_unhappy.sh android"
 
