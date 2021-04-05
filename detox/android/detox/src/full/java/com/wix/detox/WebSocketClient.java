@@ -18,6 +18,8 @@ import okio.ByteString;
 
 public class WebSocketClient {
 
+    private static final String LOG_TAG = "DetoxWSClient";
+
     private volatile boolean closing = false;
 
     public void close() {
@@ -25,8 +27,6 @@ public class WebSocketClient {
         closing = true;
         websocket.close(NORMAL_CLOSURE_STATUS, null);
     }
-
-    private static final String LOG_TAG = "WebSocketClient";
 
     private String url;
     private String sessionId;
@@ -60,7 +60,7 @@ public class WebSocketClient {
     }
 
     public void sendAction(String type, Map params, Long messageId) {
-        Log.i(LOG_TAG, "At sendAction");
+        Log.i(LOG_TAG, "Sending out action '" + type + "'");
 
         final Map<String, Object> data = new HashMap<>();
         data.put("type", type);
@@ -69,18 +69,16 @@ public class WebSocketClient {
 
         final JSONObject json = new JSONObject(data);
         websocket.send(json.toString());
-        Log.d(LOG_TAG, "Detox Action Sent: " + type);
     }
 
     private void receiveAction(String json) {
-        Log.i(LOG_TAG, "At receiveAction");
         try {
             final JSONObject object = new JSONObject(json);
             final String type = (String) object.get("type");
             final Object params = object.get("params");
             final long messageId = object.getLong("messageId");
 
-            Log.d(LOG_TAG, "Detox Action Received: " + type);
+            Log.d(LOG_TAG, "Received action '" + type + "' (params=" + params + ")");
 
             if (actionHandler != null) {
                 actionHandler.onAction(type, params.toString(), messageId);
@@ -103,7 +101,7 @@ public class WebSocketClient {
     private class WebSocketEventsHandler extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.i(LOG_TAG, "At onOpen");
+            Log.d(LOG_TAG, "At onOpen");
 
             Map<String, Object> params = new HashMap<>();
             params.put("sessionId", sessionId);
@@ -123,13 +121,13 @@ public class WebSocketClient {
             } catch (InterruptedException e2) {
                 Log.d(LOG_TAG, "interrupted", e2);
             }
+
             Log.d(LOG_TAG, "Retrying...");
             connectToServer(url, sessionId);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.i(LOG_TAG, "At onMessage");
             receiveAction(text);
         }
 
@@ -140,14 +138,12 @@ public class WebSocketClient {
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.d(LOG_TAG, "Detox WS Closed: " + code + " " + reason);
             closing = true;
             actionHandler.onClosed();
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.i(LOG_TAG, "At onClosing");
             closing = true;
             websocket.close(NORMAL_CLOSURE_STATUS, null);
         }

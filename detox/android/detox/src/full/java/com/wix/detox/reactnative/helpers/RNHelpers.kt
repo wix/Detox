@@ -14,11 +14,11 @@ object RNHelpers {
             if (reactContext.hasNativeModule(moduleClass)) {
                 reactContext.getNativeModule(moduleClass)
             } else {
-                Log.d(LOG_TAG, "Native module not resolved: no registered module")
+                Log.d(LOG_TAG, "Native RN module resolution (class $className): no registered module found")
                 null
             }
-        } catch (ex: Exception) {
-            Log.d(LOG_TAG, "Native module not resolved: no such class")
+        } catch (ex: ClassNotFoundException) {
+            Log.d(LOG_TAG, "Native RN module resolution (class $className): no such class")
             null
         }
 }

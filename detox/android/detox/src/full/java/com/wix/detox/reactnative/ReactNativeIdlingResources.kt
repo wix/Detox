@@ -46,6 +46,7 @@ private class MQThreadReflected(private val queue: Any?, private val queueName: 
 class ReactNativeIdlingResources constructor(
         private val reactContext: ReactContext,
         internal var networkSyncEnabled: Boolean = true)
+
     {
 
     companion object {
@@ -63,7 +64,7 @@ class ReactNativeIdlingResources constructor(
     private var networkIdlingResource: NetworkIdlingResource? = null
 
     fun registerAll() {
-        Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native.")
+        Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native")
 
         unregisterAll()
 

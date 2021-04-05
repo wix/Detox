@@ -9,6 +9,7 @@ import com.wix.invoke.MethodInvocation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -19,7 +20,6 @@ import javax.annotation.Nonnull;
 import androidx.annotation.NonNull;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 
 /**
  * Created by rotemm on 04/01/2017.
@@ -27,13 +27,6 @@ import kotlin.jvm.functions.Function1;
 class DetoxManager implements WebSocketClient.ActionHandler {
 
     private static final String LOG_TAG =  "DetoxManager";
-
-    private static final Function1<Throwable, String> errorParseFn = new Function1<Throwable, String>() {
-        @Override
-        public String invoke(Throwable t) {
-            return Log.getStackTraceString(t);
-        }
-    };
 
     private static final ThreadFactory threadFactory = new ThreadFactory() {
         private int threadCount = 0;
@@ -48,6 +41,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private static final LaunchArgs launchArgs = new LaunchArgs();
 
     private ExecutorService executor;
+    private CountDownLatch initLatch;
     private WebSocketClient wsClient;
 
     private final TestEngineFacade testEngineFacade = new TestEngineFacade();
@@ -77,17 +71,18 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     void start() {
         if (detoxServerUrl != null && detoxSessionId != null) {
             wsClient = new WebSocketClient(this);
+            initLatch = new CountDownLatch(1);
             executor = Executors.newFixedThreadPool(MAX_CONCURRENT_JOBS, threadFactory);
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    initWSClient();
+                    connectToServer(); // This must go first, so consequent crashes / errors would be transmitted back
                     initCrashHandler();
                     initANRListener();
                     initReactNativeIfNeeded();
-
-                    // Keep this last - we're not really ready to do anything until everything's properly initialized
                     initActionHandlers();
+
+                    initLatch.countDown();
                 }
             });
         }
@@ -101,7 +96,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             @Override
             public void run() {
                 if (stopping) return;
-                stopping = true; // TODO is this needed?
+                stopping = true;
 
                 testEngineFacade.resetReactNative();
 
@@ -117,18 +112,23 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     void join() throws InterruptedException {
-        executor.awaitTermination(3, TimeUnit.DAYS);
+        executor.awaitTermination(1, TimeUnit.DAYS);
     }
 
     @Override
     public void onAction(final String type, final String params, final long messageId) {
-        Log.i(LOG_TAG, "onAction: type: " + type + " params: " + params);
+        Log.i(LOG_TAG, "Handling action '" + type + "'...");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                awaitInit();
+
                 final DetoxActionHandler actionHandler = actionHandlers.get(type);
                 if (actionHandler != null) {
                     actionHandler.handle(params, messageId);
+                } else {
+                    Log.w(LOG_TAG, "No handler found for action '" + type + "'");
                 }
             }
         });
@@ -136,11 +136,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onConnect() {
+        Log.i(LOG_TAG, "Connected to server");
         readyActionHandler.handle("", -1000L);
     }
 
     @Override
     public void onClosed() {
+        Log.i(LOG_TAG, "Disconnected from server");
         stop();
     }
 
@@ -148,7 +150,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         ReactNativeExtension.waitForRNBootstrap(reactNativeHostHolder);
     }
 
-    private void initWSClient() {
+    private void connectToServer() {
         wsClient.connectToServer(detoxServerUrl, detoxSessionId);
     }
 
@@ -179,6 +181,14 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             final DetoxInstrumentsManager instrumentsManager = new DetoxInstrumentsManager(reactNativeHostHolder);
             actionHandlers.put("setRecordingState", new InstrumentsRecordingStateActionHandler(instrumentsManager, wsClient));
             actionHandlers.put("event", new InstrumentsEventsActionsHandler(instrumentsManager, wsClient));
+        }
+    }
+
+    private void awaitInit() {
+        try {
+            initLatch.await();
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
         }
     }
 }

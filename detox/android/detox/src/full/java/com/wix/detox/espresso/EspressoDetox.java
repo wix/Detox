@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wix.detox.common.UIThread;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
 
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -108,7 +108,7 @@ public class EspressoDetox {
     }
 
     public static void setURLBlacklist(final ArrayList<String> urls) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        UIThread.postSync(new Runnable() {
             @Override
             public void run() {
                 NetworkIdlingResource.setURLBlacklist(urls);
