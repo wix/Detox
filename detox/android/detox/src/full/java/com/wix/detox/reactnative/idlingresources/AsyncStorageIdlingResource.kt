@@ -28,7 +28,7 @@ open class AsyncStorageIdlingResource
     @JvmOverloads constructor(
         module: NativeModule,
         sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn)
-    : IdlingResource, DescriptiveIdlingResource {
+    : DescriptiveIdlingResource {
 
     open val logTag: String
         get() = LOG_TAG
