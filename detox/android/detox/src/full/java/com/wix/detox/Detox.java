@@ -197,10 +197,8 @@ public final class Detox {
         sActivityTestRule.launchActivity(intent);
 
         try {
-            final DetoxManager detoxManager = new DetoxManager(context);
-            detoxManager.start();
-            detoxManager.join();
-        } catch (InterruptedException e) {
+            DetoxMain.INSTANCE.run(context);
+        } catch (Exception e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Detox got interrupted prematurely", e);
         }

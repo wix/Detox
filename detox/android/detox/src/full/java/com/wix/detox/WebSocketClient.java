@@ -32,13 +32,13 @@ public class WebSocketClient {
     private String sessionId;
     private WebSocket websocket = null;
 
-    private final ActionHandler actionHandler;
+    private final WSEventsHandler mWSEventsHandler;
     private final WebSocketEventsHandler wsEventsHandler = new WebSocketEventsHandler();
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
-    public WebSocketClient(ActionHandler actionHandler) {
-        this.actionHandler = actionHandler;
+    public WebSocketClient(WSEventsHandler WSEventsHandler) {
+        this.mWSEventsHandler = WSEventsHandler;
     }
 
     public void connectToServer(String url, String sessionId) {
@@ -80,8 +80,8 @@ public class WebSocketClient {
 
             Log.d(LOG_TAG, "Received action '" + type + "' (params=" + params + ")");
 
-            if (actionHandler != null) {
-                actionHandler.onAction(type, params.toString(), messageId);
+            if (mWSEventsHandler != null) {
+                mWSEventsHandler.onAction(type, params.toString(), messageId);
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());
@@ -92,7 +92,7 @@ public class WebSocketClient {
      * These methods are called on an inner worker thread.
      * @see <a href="https://medium.com/@jakewharton/listener-messages-are-called-on-a-background-thread-since-okhttp-is-agnostic-with-respect-to-5fdc5182e240">OkHTTP</a>
      */
-    public interface ActionHandler {
+    public interface WSEventsHandler {
         void onAction(String type, String params, long messageId);
         void onConnect();
         void onClosed();
@@ -107,7 +107,7 @@ public class WebSocketClient {
             params.put("sessionId", sessionId);
             params.put("role", "app");
             sendAction("login", params, 0L);
-            actionHandler.onConnect();
+            mWSEventsHandler.onConnect();
         }
 
         @Override
@@ -139,7 +139,7 @@ public class WebSocketClient {
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
             closing = true;
-            actionHandler.onClosed();
+            mWSEventsHandler.onClosed();
         }
 
         @Override
