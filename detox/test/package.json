@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "18.10.0-smoke.0",
+  "version": "18.10.0",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@types/node": "^14.14.20",
-    "detox": "^18.10.0-smoke.0",
+    "detox": "^18.10.0",
     "dtslint": "^4.0.6",
     "express": "^4.15.3",
     "jest": "^26.5.0",
