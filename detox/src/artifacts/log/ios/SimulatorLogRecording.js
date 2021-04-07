@@ -55,14 +55,9 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async _tryInterruptProcessGracefully(process) {
-    const graceful = await Promise.race([
-      sleep(this._config.delayBeforeSigterm).then(() => false),
-      exec.interruptProcess(process, 'SIGINT').then(() => true),
-    ]);
-
-    if (!graceful) {
-      await exec.interruptProcess(process, 'SIGTERM');
-    }
+    await exec.interruptProcess(process, {
+      SIGTERM: this._config.delayBeforeSigterm,
+    });
   }
 
   async doSave(artifactPath) {
