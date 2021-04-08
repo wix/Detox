@@ -56,6 +56,7 @@ class SimulatorLogRecording extends Artifact {
 
   async _tryInterruptProcessGracefully(process) {
     await exec.interruptProcess(process, {
+      SIGINT: 0,
       SIGTERM: this._config.delayBeforeSigterm,
     });
   }
