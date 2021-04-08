@@ -25,7 +25,11 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
       },
       stop: async () => {
         if (processPromise) {
-          await interruptProcess(processPromise);
+          await interruptProcess(processPromise, {
+            SIGINT: 0,
+            SIGTERM: 5000,
+            SIGKILL: 6000,
+          });
         }
       },
       save: async (artifactPath) => {

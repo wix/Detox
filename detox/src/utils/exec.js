@@ -124,15 +124,14 @@ function _composeCommand(bin, prefix, args) {
 }
 
 function spawnAndLog(command, flags, options) {
-  const trackingId = _operationCounter++;
   const cmd = _joinCommandAndFlags(command, flags);
-  const log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
 
   const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], ...options});
   const { childProcess } = result;
   const { exitCode, stdout, stderr } = childProcess;
 
-  log.debug({ event: 'SPAWN_CMD' }, `[pid=${childProcess.pid}] ${cmd}`);
+  const log = execLogger.child({ cmd, trackingId: childProcess.pid });
+  log.debug({ event: 'SPAWN_CMD' }, `${cmd}`);
 
   if (exitCode != null && exitCode !== 0) {
     log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${exitCode}`);
@@ -147,7 +146,7 @@ function spawnAndLog(command, flags, options) {
     const signal = e.childProcess.signalCode || '';
     const action = signal ? `terminated with ${signal}` : `finished with code = ${e.code}`;
 
-    log.trace({ event: 'SPAWN_END' }, `${cmd} ${action}`);
+    log.debug({ event: 'SPAWN_END' }, `${cmd} ${action}`);
   }
 
   result.then(onEnd, onEnd);
@@ -164,22 +163,33 @@ function _joinCommandAndFlags(command, flags) {
   return result;
 }
 
-async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
-  const log = execLogger.child({ fn: 'interruptProcess' });
+const DEFAULT_KILL_SCHEDULE = {
+  SIGINT: 0,
+};
 
+async function interruptProcess(childProcessPromise, schedule) {
   const childProcess = childProcessPromise.childProcess;
   const pid = childProcess.pid;
   const spawnargs = childProcess.spawnargs.join(' ');
+  const log = execLogger.child({ event: 'SPAWN_KILL', trackingId: pid });
 
-  log.debug({ event: 'EXEC_KILL', signal, process_pid: pid }, `sending ${signal} to [pid = ${pid}]: ${spawnargs}`);
-
-  childProcess.kill(signal);
-  await childProcessPromise.catch(e => {
-    /* istanbul ignore if */
-    if (e.exitCode != null) {
-      throw e;
-    }
+  const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
+    return setTimeout(() => {
+      log.trace({ signal }, `sending ${signal} to: ${spawnargs}`);
+      childProcess.kill(signal);
+    }, ms);
   });
+
+  try {
+    await childProcessPromise.catch(e => {
+      /* istanbul ignore if */
+      if (e.exitCode != null) {
+        throw e;
+      }
+    });
+  } finally {
+    _.forEach(handles, handle => clearTimeout(handle));
+  }
 }
 
 async function execAsync(command) {
