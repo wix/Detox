@@ -132,7 +132,8 @@ const config = {
 
   configurations: {
     "ios.none": {
-      type: "ios.none",
+      device: { type: "ios.none" },
+      app: "ios.debug",
       session: {
         server: "ws://localhost:8099",
         sessionId: "com.wix.detox-example"
