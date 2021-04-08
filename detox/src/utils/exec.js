@@ -171,7 +171,7 @@ async function interruptProcess(childProcessPromise, schedule) {
   const childProcess = childProcessPromise.childProcess;
   const pid = childProcess.pid;
   const spawnargs = childProcess.spawnargs.join(' ');
-  const log = execLogger.child({ event: 'EXEC_KILL', trackingId: pid });
+  const log = execLogger.child({ event: 'SPAWN_KILL', trackingId: pid });
 
   const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
     return setTimeout(() => {
