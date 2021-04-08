@@ -1,9 +1,10 @@
 const _ = require('lodash');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class LaunchArgsEditor {
   constructor(launchArgs) {
     if (!launchArgs) {
-      throw new Error('Cannot instantiate a launch-arguments editor with no reference arguments-object!');
+      throw new DetoxRuntimeError('Cannot instantiate a launch-arguments editor with no reference arguments-object!');
     }
 
     this._args = launchArgs;

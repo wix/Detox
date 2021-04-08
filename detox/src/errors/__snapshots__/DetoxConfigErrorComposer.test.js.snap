@@ -557,6 +557,64 @@ Examine your Detox config at path:
 /home/detox/myproject/.detoxrc.json]
 `;
 
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .invalidDeviceType should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid device type "android.apk" inside your configuration.
+
+HINT: Did you mean to use one of these?
+* ios.simulator
+* ios.none
+* android.attached
+* android.emulator
+* android.genycloud
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+Cannot find module 'android.apk' from 'src/errors/DetoxConfigErrorComposer.test.js'
+
+Please check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'android.apk',
+      device: {
+        type: 'iPhone 12'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .invalidDeviceType should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid device type "android.apk" inside your configuration.
+
+HINT: Did you mean to use one of these?
+* ios.simulator
+* ios.none
+* android.attached
+* android.emulator
+* android.genycloud
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+Cannot find module 'android.apk' from 'src/errors/DetoxConfigErrorComposer.test.js'
+
+Please check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'android.apk',
+        device: [Object]
+      }
+    }
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedUtilBinaryPaths should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration. Expected an array of strings.
 
@@ -936,12 +994,21 @@ exports[`DetoxConfigErrorComposer (from configuration/index) .failedToReadConfig
 [DetoxConfigError: An error occurred while trying to load Detox config from:
 /home/detox/myproject/.detoxrc.json
 
-EISDIR: illegal operation on a directory, read]
+Error: EISDIR: illegal operation on a directory, read]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted "extends" path 1`] = `
+[DetoxConfigError: Failed to find the base Detox config specified in:
+{
+  "extends": "some-detox-preset"
+}
+
+HINT: Check your Detox config at path:
+package.json]
 `;
 
 exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted config path 1`] = `
-[DetoxConfigError: Failed to find Detox config at:
-/home/detox/myproject/.detoxrc.json
+[DetoxConfigError: Failed to find Detox config at "./some/detox-config.js"
 
 HINT: Make sure the specified path is correct.]
 `;

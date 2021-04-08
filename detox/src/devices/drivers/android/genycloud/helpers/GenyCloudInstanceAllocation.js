@@ -1,5 +1,6 @@
 const AndroidDeviceAllocation = require('../../AndroidDeviceAllocation');
 const GenyCloudInstanceHandle = require('../GenyCloudInstanceHandle');
+const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const retry = require('../../../../../utils/retry');
 const logger = require('../../../../../utils/logger').child({ __filename });
 
@@ -73,7 +74,7 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
     return await retry(options, async () => {
       const _instance = await this._instanceLookupService.getInstance(instance.uuid);
       if (!_instance.isOnline()) {
-        throw new Error(`Timeout waiting for instance ${instance.uuid} to be ready`);
+        throw new DetoxRuntimeError(`Timeout waiting for instance ${instance.uuid} to be ready`);
       }
       return _instance;
     });

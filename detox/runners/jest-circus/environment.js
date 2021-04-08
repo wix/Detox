@@ -5,6 +5,7 @@ const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
 const assertJestCircus26 = require('./utils/assertJestCircus26');
 const assertExistingContext = require('./utils/assertExistingContext');
 const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
+const DetoxError = require('../../src/errors/DetoxError');
 const Timer = require('../../src/utils/Timer');
 
 const SYNC_CIRCUS_EVENTS = new Set([
@@ -71,7 +72,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
           try {
             await this._timer.run(() => listener[name](event, state));
           } catch (listenerError) {
-            this._logger.error(`${listenerError}`);
+            this._logError(listenerError);
           }
         }
       }
@@ -104,7 +105,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
           return await this.initDetox();
         } catch (actualError) {
           state.unhandledErrors.push(actualError);
-          this._logger.error(`${actualError}`);
+          this._logError(actualError);
           throw actualError;
         }
       });
@@ -112,7 +113,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       if (!state.unhandledErrors.includes(maybeActualError)) {
         const timeoutError = maybeActualError;
         state.unhandledErrors.push(timeoutError);
-        this._logger.error(`${timeoutError}`);
+        this._logError(timeoutError);
       }
 
       detox = wrapErrorWithNoopLifecycle(maybeActualError);
@@ -137,13 +138,18 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       await this._timer.run(() => this.cleanupDetox());
     } catch (cleanupError) {
       state.unhandledErrors.push(cleanupError);
-      this._logger.error(`${cleanupError}`);
+      this._logError(cleanupError);
     }
   }
 
   /** @private */
   get _logger() {
     return require('../../src/utils/logger');
+  }
+
+  /** @private */
+  _logError(e) {
+    this._logger.error(DetoxError.format(e));
   }
 
   /** @protected */

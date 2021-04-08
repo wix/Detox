@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const LaunchArgsEditor = require('./LaunchArgsEditor');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
 
@@ -101,7 +102,7 @@ class Device {
 
   async takeScreenshot(name) {
     if (!name) {
-      throw new Error('Cannot take a screenshot with an empty name.');
+      throw new DetoxRuntimeError('Cannot take a screenshot with an empty name.');
     }
 
     return this.deviceDriver.takeScreenshot(this._deviceId, name);
@@ -184,7 +185,7 @@ class Device {
 
   async openURL(params) {
     if (typeof params !== 'object' || !params.url) {
-      throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
+      throw new DetoxRuntimeError(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
     }
 
     await this.deviceDriver.deliverPayload(params, this._deviceId);
@@ -263,6 +264,13 @@ class Device {
 
   async resetStatusBar() {
     await this.deviceDriver.resetStatusBar(this._deviceId);
+  }
+
+  /**
+   * @internal
+   */
+  async _typeText(text) {
+    await this.deviceDriver.typeText(this._deviceId, text);
   }
 
   get _bundleId() {
@@ -362,7 +370,7 @@ class Device {
     params[launchKey] = payloadFilePath;
   }
 
-  _isAppRunning(bundleId) {
+  _isAppRunning(bundleId = this._bundleId) {
     return this._processes[bundleId] != null;
   }
 
@@ -376,7 +384,7 @@ class Device {
     });
 
     if (paramsCounter > 1) {
-      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
+      throw new DetoxRuntimeError(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
     }
 
     return (paramsCounter === 1);

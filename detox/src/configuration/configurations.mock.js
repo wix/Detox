@@ -89,7 +89,8 @@ const iosSimulatorWithShorthandQuery = {
 
 const validSession = {
   server: "ws://localhost:8099",
-  sessionId: "test"
+  sessionId: "test",
+  debugSynchronization: 10000,
 };
 
 const androidEmulator = {

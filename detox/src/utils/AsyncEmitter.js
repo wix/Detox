@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class AsyncEmitter {
   constructor({ events, onError }) {
@@ -35,7 +36,7 @@ class AsyncEmitter {
     if (this._listeners.hasOwnProperty(eventName)) {
       _.pull(this._listeners[eventName], callback);
     } else {
-      throw new Error('AsyncEmitter.off() failed to unsubscribe from a non-existent event: ' + eventName);
+      throw new DetoxRuntimeError('AsyncEmitter.off() failed to unsubscribe from a non-existent event: ' + eventName);
     }
   }
 
@@ -43,7 +44,7 @@ class AsyncEmitter {
     if (this._listeners.hasOwnProperty(eventName)) {
       this._listeners[eventName].push(callback);
     } else {
-      throw new Error('AsyncEmitter.on() failed to subscribe to a non-existent event: ' + eventName);
+      throw new DetoxRuntimeError('AsyncEmitter.on() failed to subscribe to a non-existent event: ' + eventName);
     }
   }
 }

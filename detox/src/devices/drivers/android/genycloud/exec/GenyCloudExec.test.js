@@ -38,6 +38,10 @@ describe('Genymotion-cloud executable', () => {
     uut = new GenyCloudExec('mock/path/to/gmsaas');
   });
 
+  afterEach(() => {
+    delete process.env.GMSAAS_USER_AGENT_EXTRA_DATA;
+  });
+
   [
     {
       commandName: 'version',
@@ -116,6 +120,27 @@ describe('Genymotion-cloud executable', () => {
           expect(e.message).toEqual(JSON.stringify(failResponse));
         }
       });
+    });
+  });
+
+  describe('User-agent bundling into gmsaas requests', () => {
+    it('should set up \'detox\' as the default user-agent', () => {
+      delete process.env.GMSAAS_USER_AGENT_EXTRA_DATA;
+
+      const GenyCloudExec = require('./GenyCloudExec');
+      new GenyCloudExec('mock/path/to/gmsaas');
+
+      expect(process.env.GMSAAS_USER_AGENT_EXTRA_DATA).toEqual('detox');
+    });
+
+    it('should retain any value prespecified for user-agent', () => {
+      delete process.env.GMSAAS_USER_AGENT_EXTRA_DATA;
+      process.env.GMSAAS_USER_AGENT_EXTRA_DATA = 'mockUserAgent';
+
+      const GenyCloudExec = require('./GenyCloudExec');
+      new GenyCloudExec('mock/path/to/gmsaas');
+
+      expect(process.env.GMSAAS_USER_AGENT_EXTRA_DATA).toEqual('mockUserAgent');
     });
   });
 });

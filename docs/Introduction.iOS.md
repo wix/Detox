@@ -12,7 +12,7 @@ Whether you've selected to apply the configuration in a  `.detoxrc.json` or bund
 {
   "devices": {
     "simulator": {
-      "type": "ios.simulator"
+      "type": "ios.simulator",
       "device": {
         "type": "iPhone 12 Pro Max"
       }

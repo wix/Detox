@@ -17,6 +17,7 @@ class MissingDetox {
     this._defineRequiredProperty(context, 'element', this.throwError, readonly);
     this._defineRequiredProperty(context, 'expect', this.throwError, readonly);
     this._defineRequiredProperty(context, 'waitFor', this.throwError, readonly);
+    this._defineRequiredProperty(context, 'web', undefined, readonly);
   }
 
   cleanupContext(context) {

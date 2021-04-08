@@ -33,6 +33,8 @@ android {
                 'detoxSessionId': 'test'
         ]
         */
+
+        missingDimensionStrategy 'detox', 'full'
     }
     splits {
         abi {
@@ -91,6 +93,8 @@ dependencies {
     fromBinImplementation 'com.facebook.react:react-native:+'
     // noinspection GradleDynamicVersion
     implementation(project(path: ':AsyncStorage'))
+
+    implementation project(':react-native-webview')
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'

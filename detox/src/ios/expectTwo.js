@@ -300,6 +300,10 @@ class By {
   value(value) {
     return new Matcher().value(value);
   }
+
+  get web() {
+    throw new Error('Detox does not support by.web matchers on iOS.');
+  }
 }
 
 class Matcher {
@@ -596,6 +600,7 @@ class IosExpect {
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
     this.by = new By();
+    this.web.element = this.web;
   }
 
   element(matcher) {
@@ -608,6 +613,10 @@ class IosExpect {
 
   waitFor(element) {
     return waitFor(this._invocationManager, element);
+  }
+
+  web(_matcher) {
+    throw new Error('Detox does not support web(), web.element() API on iOS.');
   }
 }
 

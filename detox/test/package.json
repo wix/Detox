@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "18.6.2",
+  "version": "18.10.0",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -12,10 +12,11 @@
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test -c ios.sim.release",
-    "e2e:android": "detox test -c android.emu.release",
-    "e2e:android-debug": "detox test -c android.emu.debug",
     "e2e:ios-ci": "npm run e2e:ios -- --workers 3 --retries 1",
-    "e2e:android-ci": "npm run e2e:android -- --workers 3 --retries 1 --headless --jest-report-specs --loglevel verbose",
+    "e2e:android": "detox test -c android.emu.release",
+    "e2e:android-ci-genycloud": "detox test -c android.genycloud.release --workers 5 --retries 1 --jest-report-specs --loglevel verbose",
+    "e2e:android-ci-google": "detox test -c android.emu.release --workers 3 --retries 1 --jest-report-specs --loglevel verbose --headless",
+    "e2e:android-debug": "detox test -c android.emu.debug",
     "integration": "jest --clearCache && jest unit --config integration/config.js -w 1 .",
     "integration-update-snapshots": "npm run integration -- -u",
     "build:ios": "detox build -c ios.sim.release",
@@ -29,12 +30,13 @@
     "@react-native-community/async-storage": "^1.12.0",
     "moment": "^2.24.0",
     "react": "16.11.x",
-    "react-native": "0.62.x"
+    "react-native": "0.62.x",
+    "react-native-webview": "^11.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@types/node": "^14.14.20",
-    "detox": "^18.6.2",
+    "detox": "^18.10.0",
     "dtslint": "^4.0.6",
     "express": "^4.15.3",
     "jest": "^26.5.0",
@@ -51,5 +53,8 @@
     "ancestorSeparator": " > ",
     "classNameTemplate": "E2E Results.{classname}",
     "titleTemplate": "{classname} > {title}"
+  },
+  "detox": {
+    "extends": "./e2e/detox.config"
   }
 }

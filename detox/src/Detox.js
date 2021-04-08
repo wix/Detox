@@ -140,15 +140,24 @@ class Detox {
     if (this._sessionConfig.autoStart) {
       this._server = new DetoxServer({
         port: new URL(sessionConfig.server).port,
+        standalone: false,
       });
+
+      await this._server.open();
     }
 
     this._client = new Client(sessionConfig);
-    this._client.setNonresponsivenessListener(this._onNonresnponsivenessEvent.bind(this));
+    this._client.terminateApp = async () => {
+      if (this.device && this.device._isAppRunning()) {
+        await this.device.terminateApp();
+      }
+    };
+
     await this._client.connect();
 
     const invocationManager = new InvocationManager(this._client);
-    const deviceDriver = driverRegistry.resolve(this._deviceConfig.type, {
+    const DeviceDriverImpl = driverRegistry.resolve(this._deviceConfig.type);
+    const deviceDriver = new DeviceDriverImpl({
       client: this._client,
       invocationManager,
       emitter: this._eventEmitter,
@@ -172,6 +181,7 @@ class Detox {
 
     const matchers = matchersRegistry.resolve(this.device, {
       invocationManager,
+      device: this.device,
       emitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
@@ -237,28 +247,9 @@ class Detox {
     }
   }
 
-  _onNonresnponsivenessEvent(params) {
-    const message = [
-      'Application nonresponsiveness detected!',
-      'On Android, this could imply an ANR alert, which evidently causes tests to fail.',
-      'Here\'s the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):',
-      params.threadDump,
-      'Refer to https://developer.android.com/training/articles/perf-anr for further details.'
-    ].join('\n');
-
-    log.warn({ event: 'APP_NONRESPONSIVE' }, message);
-  }
-
   async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
     if (pendingRequests) {
       this._client.dumpPendingRequests({testName});
-    }
-
-    const pendingAppCrash = this._client.getPendingCrashAndReset();
-
-    if (pendingAppCrash) {
-      log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here are the crash details: \n${pendingAppCrash}`);
-      await this.device.launchApp({ newInstance: true });
     }
   }
 

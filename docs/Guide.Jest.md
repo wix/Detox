@@ -68,7 +68,7 @@ A typical Detox configuration in `.detoxrc.json` file looks like:
   "runnerConfig": "e2e/config.json",
   "devices": {
     "simulator": {
-      "type": "ios.simulator"
+      "type": "ios.simulator",
       "device": {
         "type": "iPhone 12 Pro Max"
       }

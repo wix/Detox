@@ -37,5 +37,12 @@ describe("Test", () => {
             .toBeVisible()
             .whileElement(by.id("ScrollView630"))
             .scroll(50, "down");
+
+        await web.element(by.web.id("btnSave")).tap();
+        await web.element(by.web.className("scroll-end")).atIndex(0).scrollToView();
+
+        const webview = web(by.id("webview"));
+        await expect(webview.element(by.web.cssSelector(".button"))).toExist();
+        await expect(webview.element(by.web.cssSelector(".button")).atIndex(1)).toExist();
     });
 });

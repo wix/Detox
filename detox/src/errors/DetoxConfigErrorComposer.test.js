@@ -76,7 +76,16 @@ describe('DetoxConfigErrorComposer', () => {
 
     describe('.noConfigurationAtGivenPath', () => {
       it('should create an error with the attempted config path', () => {
-        expect(builder.noConfigurationAtGivenPath()).toMatchSnapshot();
+        expect(builder.noConfigurationAtGivenPath('./some/detox-config.js')).toMatchSnapshot();
+      });
+
+      it('should create an error with the attempted "extends" path', () => {
+        expect(
+          builder
+            .setExtends(true)
+            .setDetoxConfigPath('package.json')
+            .noConfigurationAtGivenPath("some-detox-preset")
+        ).toMatchSnapshot();
       });
     });
 
@@ -87,6 +96,7 @@ describe('DetoxConfigErrorComposer', () => {
 
       it('should create a simple error, but with the original intercepted IO error', () => {
         const ioError = _.attempt(() => fs.readFileSync(os.homedir()));
+        delete ioError.stack;
         expect(builder.failedToReadConfiguration(ioError)).toMatchSnapshot();
       });
     });
@@ -219,6 +229,30 @@ describe('DetoxConfigErrorComposer', () => {
         delete config.devices.aDevice.type;
         builder.setConfigurationName('aliased');
         expect(build('aDevice')).toMatchSnapshot();
+      });
+    });
+
+    describe('.invalidDeviceType', () => {
+      beforeEach(() => {
+        build = (deviceConfig, alias) => {
+          // eslint-disable-next-line node/no-missing-require
+          const err = _.attempt(() => require('android.apk'));
+          return builder.invalidDeviceType(alias, deviceConfig, err);
+        };
+      });
+
+      it('should create an error for inlined configuration', () => {
+        const deviceConfig = config.configurations.inlined.device;
+        deviceConfig.type = 'android.apk';
+        builder.setConfigurationName('inlined');
+        expect(build(deviceConfig)).toMatchSnapshot();
+      });
+
+      it('should create an error for aliased configuration', () => {
+        const deviceConfig = config.devices.aDevice;
+        deviceConfig.type = 'android.apk';
+        builder.setConfigurationName('aliased');
+        expect(build(deviceConfig, 'aDevice')).toMatchSnapshot();
       });
     });
 

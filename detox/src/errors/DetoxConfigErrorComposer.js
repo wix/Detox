@@ -5,9 +5,18 @@ const J = s => JSON.stringify(s);
 
 class DetoxConfigErrorComposer {
   constructor() {
+    this.setConfigurationName();
     this.setDetoxConfigPath();
     this.setDetoxConfig();
-    this.setConfigurationName();
+    this.setExtends();
+  }
+
+  clone() {
+    return new DetoxConfigErrorComposer()
+      .setConfigurationName(this.configurationName)
+      .setDetoxConfigPath(this.filepath)
+      .setDetoxConfig(this.contents)
+      .setExtends(this._extends);
   }
 
   _atPath() {
@@ -73,6 +82,11 @@ class DetoxConfigErrorComposer {
     };
   }
 
+  setConfigurationName(configurationName) {
+    this.configurationName = configurationName || '';
+    return this;
+  }
+
   setDetoxConfigPath(filepath) {
     this.filepath = filepath || '';
     return this;
@@ -83,8 +97,8 @@ class DetoxConfigErrorComposer {
     return this;
   }
 
-  setConfigurationName(configurationName) {
-    this.configurationName = configurationName || '';
+  setExtends(value) {
+    this._extends = !!value;
     return this;
   }
 
@@ -99,17 +113,22 @@ class DetoxConfigErrorComposer {
     });
   }
 
-  noConfigurationAtGivenPath() {
-    return new DetoxConfigError({
-      message: 'Failed to find Detox config at:\n' + this.filepath,
-      hint: 'Make sure the specified path is correct.',
-    });
+  noConfigurationAtGivenPath(givenPath) {
+    const message = this._extends
+      ? `Failed to find the base Detox config specified in:\n{\n  "extends": ${J(givenPath)}\n}`
+      : `Failed to find Detox config at ${J(givenPath)}`;
+
+    const hint = this._extends
+      ? `Check your Detox config${this._atPath()}`
+      : 'Make sure the specified path is correct.';
+
+    return new DetoxConfigError({ message, hint });
   }
 
   failedToReadConfiguration(unknownError) {
     return new DetoxConfigError({
       message: 'An error occurred while trying to load Detox config from:\n' + this.filepath,
-      debugInfo: unknownError && unknownError.message,
+      debugInfo: unknownError,
     });
   }
 
@@ -248,6 +267,22 @@ Examine your Detox config${this._atPath()}`,
       message: `Missing "type" inside the device configuration.`,
       hint: `Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").\n` +
         `Check that in your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias, this._ensureProperty('type')),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
+  invalidDeviceType(deviceAlias, deviceConfig, innerError) {
+    return new DetoxConfigError({
+      message: `Invalid device type ${J(deviceConfig.type)} inside your configuration.`,
+      hint: `Did you mean to use one of these?
+${hintConfigurations(deviceAppTypes)}
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+${innerError.message}
+
+Please check your Detox config${this._atPath()}`,
       debugInfo: this._focusOnDeviceConfig(deviceAlias, this._ensureProperty('type')),
       inspectOptions: { depth: 3 },
     });

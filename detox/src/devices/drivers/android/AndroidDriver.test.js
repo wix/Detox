@@ -4,6 +4,8 @@ const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
 
 describe('Android driver', () => {
   const deviceId = 'device-id-mock';
+  const adbName = 'device-adb-name';
+  const deviceHandle = { adbName };
   const bundleId = 'bundle-id-mock';
   const detoxServerPort = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
@@ -452,7 +454,6 @@ describe('Android driver', () => {
   });
 
   describe('net-port reversing', () => {
-    const deviceId = 1010;
     const port = 1337;
 
     it(`should invoke ADB's reverse`, async () => {
@@ -460,9 +461,33 @@ describe('Android driver', () => {
       expect(adbObj().reverse).toHaveBeenCalledWith(deviceId, port);
     });
 
+    it(`should invoke ADB's reverse, given a device handle`, async () => {
+      await uut.reverseTcpPort(deviceHandle, port);
+      expect(adbObj().reverse).toHaveBeenCalledWith(adbName, port);
+    });
+
     it(`should invoke ADB's reverse-remove`, async () => {
       await uut.unreverseTcpPort(deviceId, port);
       expect(adbObj().reverseRemove).toHaveBeenCalledWith(deviceId, port);
+    });
+
+    it(`should invoke ADB's reverse-remove, given a device handle`, async () => {
+      await uut.unreverseTcpPort(deviceHandle, port);
+      expect(adbObj().reverseRemove).toHaveBeenCalledWith(adbName, port);
+    });
+  });
+
+  describe('text-typing (global)', () => {
+    const text = 'text to type';
+
+    it(`should invoke ADB's text typing`, async () => {
+      await uut.typeText(deviceId, text);
+      expect(adbObj().typeText).toHaveBeenCalledWith(deviceId, text);
+    });
+
+    it(`should invoke ADB's text typing, given a device handle`, async () => {
+      await uut.typeText(deviceHandle, text);
+      expect(adbObj().typeText).toHaveBeenCalledWith(adbName, text);
     });
   });
 
@@ -498,9 +523,7 @@ describe('Android driver', () => {
     exec = require('../../../utils/exec');
 
     client = {
-      configuration: {
-        server: `ws://localhost:${detoxServerPort}`
-      },
+      serverUrl: `ws://localhost:${detoxServerPort}`,
       waitUntilReady: jest.fn(),
     };
 

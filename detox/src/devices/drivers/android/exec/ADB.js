@@ -60,6 +60,11 @@ class ADB {
     await this._sendKeyEvent(deviceId, 'KEYCODE_POWER');
   }
 
+  async typeText(deviceId, text) {
+    const actualText = text.replace(/ /g, '%s');
+    await this.shell(deviceId, `input text ${actualText}`);
+  }
+
   async _sendKeyEvent(deviceId, keyevent) {
     await this.shell(deviceId, `input keyevent ${keyevent}`);
   }
@@ -247,7 +252,7 @@ class ADB {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
     const instrumentationRunner = this._instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
     if (instrumentationRunner === 'undefined') {
-      throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+      throw new DetoxRuntimeError(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
     }
 
     return instrumentationRunner;

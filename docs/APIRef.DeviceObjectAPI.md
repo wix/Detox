@@ -6,6 +6,7 @@
 
 * [`device.id`](#deviceid)
 * [`device.name`](#devicename)
+* [`device.appLaunchArgs`](#deviceapplaunchargs)
 
 ### `device.id`
 
@@ -40,7 +41,6 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 
 - [`device.selectApp(name)`](#deviceselectappname)
 - [`device.launchApp()`](#devicelaunchappparams)
-- [`device.appLaunchArgs`](#deviceapplaunchargs)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -51,9 +51,9 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 - [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)` **iOS Only**](#devicesetlocationlat-lon-ios-only)
-- [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
+- [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
 - [`device.getPlatform()`](#devicegetplatform)
 - [`device.takeScreenshot([name])`](#devicetakescreenshotname)
@@ -319,7 +319,7 @@ Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test
 
 ### `device.setLocation(lat, lon)` **iOS Only**
 
-> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/master/fbsimctl). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl) which [is now deprecated](https://github.com/wix/Detox/issues/1371). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
 
 Sets the simulator location to the given latitude and longitude.
 
@@ -327,38 +327,32 @@ Sets the simulator location to the given latitude and longitude.
 await device.setLocation(32.0853, 34.7818);
 ```
 
-### `device.setURLBlacklist([urls])`
-
-Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs. To disable endpoints at initialization, pass in the blacklist at [device launch](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch).
-
-
-```js
-await device.setURLBlacklist(['.*127.0.0.1.*']);
-```
-
-```js
-await device.setURLBlacklist(['.*my.ignored.endpoint.*']);
-```
-
 ### `device.enableSynchronization()`
 
-Enable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
-) (enabled by default). **This is being reset on every new instance of the app.**
+Enable (restore) synchronization (idle/busy monitoring) with the app - namely, resume waiting for the app to go idle before moving forward in the test execution. Enabled by default. **This gets reset on every new instance of the app.**
 ```js
 await device.enableSynchronization();
 ```
 
 
 ### `device.disableSynchronization()`
-Disable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
-) (enabled by default) **This is being reset on every new instance of the app.**
+Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution (rather, resort to applying unrecommended `sleep()`'s in your test code...). **This gets reset on every new instance of the app.**
 
 ```js
 await device.disableSynchronization();
 ```
 
+### `device.setURLBlacklist([urls])`
+
+Exclude syncrhonization with respect to network activity (i.e. don't wait for network to go idle before moving forward in the test execution) according to **specific** endpoints, denoted as URL reg-exp's. To disable endpoints at initialization, pass in the black-list as an [app-launch argument](APIRef.LaunchArgs.md) named `detoxURLBlacklistRegex` (as explained [here](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch)).
+
+
+```js
+await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
+```
 
 ### `device.resetContentAndSettings()` **iOS Only**
+
 Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing
 previously set permissions.
 
@@ -450,7 +444,8 @@ await device.pressBack();
 ```
 
 ### `device.getUiDevice()` **Android Only**
-Exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice)
+Exposes [UiAutomator's UiDevice API](https://developer.android.com/reference/androidx/test/uiautomator/UiDevice).
 **This is not a part of the official Detox API**, it may break and change whenever an update to UiDevice or UiAutomator gradle dependencies ('androidx.test.uiautomator:uiautomator') is introduced.
 
 [UiDevice's autogenerated code](../detox/src/android/espressoapi/UIDevice.js)
+

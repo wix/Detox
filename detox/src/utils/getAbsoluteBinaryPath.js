@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 function getAbsoluteBinaryPath(appPath) {
   if (path.isAbsolute(appPath)) {
@@ -10,7 +11,7 @@ function getAbsoluteBinaryPath(appPath) {
   if (fs.existsSync(absPath)) {
     return absPath;
   } else {
-    throw new Error(`app binary not found at '${absPath}', did you build it?`);
+    throw new DetoxRuntimeError(`app binary not found at '${absPath}', did you build it?`);
   }
 }
 

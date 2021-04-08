@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
 const FileArtifact = require('./templates/artifact/FileArtifact');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
 
 class ArtifactsManager {
@@ -166,7 +167,7 @@ class ArtifactsManager {
 
   async _callSinglePlugin(pluginId, methodName, ...args) {
     const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
-    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
+    log.trace(Object.assign({ event: 'ARTIFACTS_LIFECYCLE', fn: methodName }, ...args), callSignature);
 
     const plugin = this._artifactPlugins[pluginId];
     try {
@@ -178,7 +179,7 @@ class ArtifactsManager {
 
   async _callPlugins(strategy, methodName, ...args) {
     const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
-    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
+    log.trace(Object.assign({ event: 'ARTIFACTS_LIFECYCLE', fn: methodName }, ...args), callSignature);
 
     for (const pluginGroup of this._groupPlugins(strategy)) {
       await Promise.all(pluginGroup.map(async (plugin) => {
@@ -211,7 +212,7 @@ class ArtifactsManager {
         return pluginsByPriority;
       /* istanbul ignore next */
       default: // is
-        throw new Error(`Unknown plugins grouping strategy: ${strategy}`);
+        throw new DetoxRuntimeError(`Unknown plugins grouping strategy: ${strategy}`);
     }
   }
 
@@ -222,7 +223,7 @@ class ArtifactsManager {
 
   _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
     const logObject = {
-      event: 'SUPPRESS_PLUGIN_ERROR',
+      event: 'ERROR',
       plugin: plugin.name,
       err,
       methodName,

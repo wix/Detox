@@ -23,6 +23,7 @@ import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
+import WebViewScreen from './WebViewScreen';
 
 export {
   SanityScreen,
@@ -49,5 +50,6 @@ export {
   LaunchNotificationScreen,
   DeviceScreen,
   ElementScreenshotScreen,
-  VirtualizedListStressScreen,
+  WebViewScreen,
+  VirtualizedListStressScreen,  
 };

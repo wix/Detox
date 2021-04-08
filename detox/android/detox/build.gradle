@@ -13,6 +13,7 @@ def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'ko
 android {
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
+
     defaultConfig {
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
@@ -22,10 +23,19 @@ android {
         consumerProguardFiles 'proguard-rules.pro'
     }
 
+    flavorDimensions 'detox'
+    productFlavors {
+        full {
+            dimension 'detox'
+        }
+        coreNative {
+            dimension 'detox'
+        }
+    }
+
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true
-
         unitTests.all { t ->
             reports {
                 html.enabled true
@@ -87,6 +97,9 @@ dependencies {
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
     // packaging version of associated classes is simply not there...
     api 'androidx.test.uiautomator:uiautomator:2.2.0' // Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.
+
+    // WebView Testing
+    api 'androidx.test.espresso:espresso-web:3.2.0'
 }
 
 // Third-party deps.
@@ -134,5 +147,5 @@ if (rootProject.hasProperty('isOfficialDetoxLib') ||
 
 // Enable publishing
 if (rootProject.hasProperty('isOfficialDetoxLib')) {
-    apply from: './detox-publishing.gradle'
+    apply from: './publishing.gradle'
 }

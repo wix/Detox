@@ -10,22 +10,22 @@ run_f "npm run integration"
 popd
 
 pushd detox/android
-run_f "./gradlew test"
+run_f "./gradlew testFullRelease"
 popd
 
 mkdir -p coverage
 
-pushd detox/test
+run_f "scripts/ci.genycloud-login.sh"
 
-# Workaround until react android issue will be fixed - react-native: 0.55
-mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
-cp extras/release.gradle node_modules/react-native/ReactAndroid/
+pushd detox/test
 
 run_f "npm run build:android"
 cp ../coverage/lcov.info ../../coverage/unit.lcov
 
-run_f "npm run e2e:android-ci"
+run_f "npm run e2e:android-ci-genycloud"
 cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
+
+run_f "npm run e2e:android-ci-google -- e2e/01* e2e/02* e2e/03*"
 
 run_f "scripts/ci_unhappy.sh android"
 

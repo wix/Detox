@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxInternalError .from(message) should wrap the error message  1`] = `
+"DetoxInternalError: Should do better
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`DetoxInternalError should append a Report-Issue hint 1`] = `
+"Should do better
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;

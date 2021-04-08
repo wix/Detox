@@ -1,3 +1,4 @@
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
 
 class DriverRegistry {
@@ -5,22 +6,18 @@ class DriverRegistry {
     this.deviceClasses = deviceClasses;
   }
 
-  resolve(deviceType, opts) {
+  resolve(deviceType) {
     let DeviceDriverClass = this.deviceClasses[deviceType];
 
     if (!DeviceDriverClass) {
-      try {
-        DeviceDriverClass = resolveModuleFromPath(deviceType).DriverClass;
-      } catch (e) {
-        // noop, if we don't find a module to require, we'll hit the unsupported error below
+      DeviceDriverClass = resolveModuleFromPath(deviceType).DriverClass;
+
+      if (!DeviceDriverClass) {
+        throw new DetoxRuntimeError(`The custom driver '${deviceType}' does not export DriverClass property`);
       }
     }
 
-    if (!DeviceDriverClass) {
-      throw new Error(`'${deviceType}' is not supported`);
-    }
-
-    return new DeviceDriverClass(opts);
+    return DeviceDriverClass;
   }
 }
 

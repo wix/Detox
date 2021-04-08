@@ -3,6 +3,7 @@ const exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
 class GenyCloudExec {
   constructor(binaryPath) {
     this.binaryExec = `"${binaryPath}" --format compactjson`;
+    process.env.GMSAAS_USER_AGENT_EXTRA_DATA = process.env.GMSAAS_USER_AGENT_EXTRA_DATA || 'detox';
   }
 
   getVersion() {

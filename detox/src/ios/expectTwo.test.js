@@ -1,6 +1,8 @@
 const _ = require('lodash');
 
 describe('expectTwo', () => {
+  let e;
+
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
     e = new IosExpect({
@@ -425,6 +427,18 @@ describe('expectTwo', () => {
     } catch (e) {
       expect(e.message).toContain('not supported on iOS');
     }
+  });
+
+  it('by.web should throw', () => {
+    expect(() => e.by.web).toThrowError(/not support/);
+  });
+
+  it('web() should throw', () => {
+    expect(() => e.web(e.by.id('someId'))).toThrowError(/not support/);
+  });
+
+  it('web.element() should throw', () => {
+    expect(() => e.web.element(e.by.id('someId'))).toThrowError(/not support/);
   });
 });
 
