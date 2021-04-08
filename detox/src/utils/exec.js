@@ -146,7 +146,7 @@ function spawnAndLog(command, flags, options) {
     const signal = e.childProcess.signalCode || '';
     const action = signal ? `terminated with ${signal}` : `finished with code = ${e.code}`;
 
-    log.trace({ event: 'SPAWN_END' }, `${cmd} ${action}`);
+    log.debug({ event: 'SPAWN_END' }, `${cmd} ${action}`);
   }
 
   result.then(onEnd, onEnd);
@@ -175,7 +175,7 @@ async function interruptProcess(childProcessPromise, schedule) {
 
   const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
     return setTimeout(() => {
-      log.debug({ signal }, `sending ${signal} to: ${spawnargs}`);
+      log.trace({ signal }, `sending ${signal} to: ${spawnargs}`);
       childProcess.kill(signal);
     }, ms);
   });

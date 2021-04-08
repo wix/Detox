@@ -260,7 +260,7 @@ describe('spawn', () => {
 
     expect(log.child).toHaveBeenCalledWith(expect.objectContaining({ trackingId: 2018 }));
     expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.trace).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
+    expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
     expect(log.trace).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT' }), 'hello');
     expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
   });
@@ -270,7 +270,7 @@ describe('spawn', () => {
     await nextCycle();
 
     expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
     expect(log.trace).not.toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), expect.any(String));
     expect(log.error).not.toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), expect.any(String));
   });
@@ -290,7 +290,7 @@ describe('spawn', () => {
     await nextCycle();
 
     expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = -2');
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = -2');
     expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
   });
 
