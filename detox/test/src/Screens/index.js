@@ -22,6 +22,7 @@ import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
+import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
 
 export {
@@ -50,4 +51,5 @@ export {
   DeviceScreen,
   ElementScreenshotScreen,
   WebViewScreen,
+  VirtualizedListStressScreen,  
 };

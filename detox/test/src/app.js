@@ -26,6 +26,8 @@ class example extends Component {
     };
 
     Linking.addEventListener('url', (params) => this._handleOpenURL(params));
+
+    this.setScreen = this.setScreen.bind(this);
   }
 
   async componentDidMount() {
@@ -50,10 +52,10 @@ class example extends Component {
     if(notificationName == null) {
       throw new Error("Got no notification name for " + title);
     }
-    
+
     return this.renderButton(title, () => {
       NativeModule.sendNotification("ChangeScreen", notificationName);
-    }); 
+    });
   }
 
   renderScreenButton(title, component) {
@@ -89,7 +91,7 @@ class example extends Component {
     if (this.state.screen) {
       console.log("App@render: JS rendering screen");
       const Screen = this.state.screen;
-      return <Screen/>;
+      return <Screen setScreen={this.setScreen}/>;
     }
 
     console.log("App@render: JS rendering main screen");
@@ -150,6 +152,12 @@ class example extends Component {
       </View>
     );
 }
+
+  setScreen(name) {
+    this.setState({
+      screen: Screens[name],
+    });
+  }
 
   _onNotification(notification) {
     console.log('App@onNotification:', notification);
