@@ -19,7 +19,7 @@ class example extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      screen: undefined, // Screens.VirtualizedListStressScreen,
+      screen: undefined,
       screenProps: {},
       url: undefined,
       notification: undefined
