@@ -73,16 +73,23 @@ class Client {
 
     try {
       if (this.isConnected) {
-        await this.sendAction(new actions.Cleanup(this._successfulTestRun));
+        this._scheduleAppTermination();
+
+        try {
+          await this.sendAction(new actions.Cleanup(this._successfulTestRun));
+        } catch (e) {
+          log.error({ event: 'ERROR' }, DetoxRuntimeError.format(e));
+        }
 
         this._whenAppIsConnected = this._invalidState('while cleaning up')
         this._whenAppIsReady = this._whenAppIsConnected;
       }
     } finally {
+      this._unscheduleAppTermination();
+      delete this.terminateApp; // property injection
+
       await this._asyncWebSocket.close();
     }
-
-    delete this.terminateApp; // property injection
   }
 
   setEventCallback(event, callback) {
@@ -327,6 +334,8 @@ class Client {
   }
 
   _onAppDisconnected() {
+    const wasAppTerminatedByUs = !!this._appTerminationHandle;
+
     this._unscheduleSlowInvocationQuery();
     this._unscheduleAppTermination();
     this._whenAppIsConnected = this._invalidState('after the app has disconnected')
@@ -336,7 +345,9 @@ class Client {
       this._asyncWebSocket.rejectAll(this._pendingAppCrash);
       this._pendingAppCrash = null;
     } else if (this._asyncWebSocket.hasPendingActions()) {
-      this._asyncWebSocket.rejectAll(new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
+      this._asyncWebSocket.rejectAll(wasAppTerminatedByUs
+        ? new DetoxRuntimeError('The app has been unresponsive and Detox had to terminate it forcibly.')
+        : new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
     }
   }
 
