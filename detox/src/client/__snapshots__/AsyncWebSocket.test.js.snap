@@ -53,13 +53,26 @@ HINT: Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues
 
 {
+  type: 'invoke',
   message: 'a message',
   messageId: undefined
 }"
 `;
 
+exports[`AsyncWebSocket .send() when opened should fail if the message timeout has expired 1`] = `
+"The pending request #0 (\\"invoke\\") has been rejected due to the following error:
+
+The tester has not received a response within 5000ms timeout to the message:
+
+{
+  type: 'invoke',
+  message: 'a message',
+  messageId: 0
+}"
+`;
+
 exports[`AsyncWebSocket .send() when opened should log an error if the incoming message was completely unexpected 1`] = `
-"Unexpected error on an attempt to handle a message over the web socket.
+"Unexpected error on an attempt to handle the response received over the web socket.
 
 HINT: Examine the inner error:
 
@@ -71,19 +84,25 @@ The payload was:
 `;
 
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 1`] = `
-"Failed to deliver the message to the Detox server:
+"The pending request #0 (\\"invoke\\") has been rejected due to the following error:
+
+Failed to deliver the message to the Detox server:
 
 Error: TestError"
 `;
 
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 2`] = `
-"Failed to deliver the message to the Detox server:
+"The pending request #1 (\\"invoke\\") has been rejected due to the following error:
+
+Failed to deliver the message to the Detox server:
 
 Error: TestError"
 `;
 
 exports[`AsyncWebSocket edge cases should elaborate about null-like messages 1`] = `
-[DetoxRuntimeError: Unexpected error on an attempt to handle a message over the web socket.
+[DetoxRuntimeError: The pending request #0 ("invoke") has been rejected due to the following error:
+
+Unexpected error on an attempt to handle the response received over the web socket.
 
 HINT: Examine the inner error:
 
