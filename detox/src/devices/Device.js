@@ -328,20 +328,18 @@ class Device {
       await this.deviceDriver.deliverPayload({...params, delayPayload: true});
     }
 
-    let processId;
     if (this._behaviorConfig.launchApp === 'manual') {
-      processId = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
-      processId = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      this._processes[bundleId] = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
       await this.deviceDriver.waitUntilReady();
       await this.deviceDriver.waitForActive();
     }
-    this._processes[bundleId] = processId;
 
     await this._emitter.emit('appReady', {
       deviceId,
       bundleId,
-      pid: processId,
+      pid: this._processes[bundleId],
     });
 
     if(params.detoxUserNotificationDataURL) {

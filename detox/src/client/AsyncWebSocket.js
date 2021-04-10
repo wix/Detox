@@ -4,6 +4,7 @@ const log = require('../utils/logger').child({ __filename });
 const Deferred = require('../utils/Deferred');
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const InflightRequest = require('./InflightRequest');
 
 const EVENTS = {
   OPEN: Object.freeze({ event: 'WS_OPEN' }),
@@ -11,6 +12,10 @@ const EVENTS = {
   MESSAGE: Object.freeze({ event: 'WS_MESSAGE' }),
   SEND: Object.freeze({ event: 'WS_SEND' }),
   LATE_RESPONSE: Object.freeze({ event: 'WS_LATE_RESPONSE' }),
+};
+
+const DEFAULT_SEND_OPTIONS = {
+  timeout: 0,
 };
 
 class AsyncWebSocket {
@@ -73,7 +78,7 @@ class AsyncWebSocket {
     return closing.promise;
   }
 
-  async send(message) {
+  async send(message, options = DEFAULT_SEND_OPTIONS) {
     if (!this.isOpen) {
       throw new DetoxRuntimeError({
         message: 'Cannot send a message over the closed web socket. See the payload below:',
@@ -87,9 +92,7 @@ class AsyncWebSocket {
     }
 
     const messageId = message.messageId;
-    const inFlight = this.inFlightPromises[messageId] = new Deferred();
-    inFlight.message = message;
-
+    const inFlight = this.inFlightPromises[messageId] = new InflightRequest(message).withTimeout(options.timeout);
     const messageAsString = JSON.stringify(message);
     this._log.trace(EVENTS.SEND, messageAsString);
     this._ws.send(messageAsString);
@@ -107,6 +110,8 @@ class AsyncWebSocket {
 
   resetInFlightPromises() {
     for (const messageId of _.keys(this.inFlightPromises)) {
+      const inFlight = this.inFlightPromises[messageId];
+      inFlight.clearTimeout();
       delete this.inFlightPromises[messageId];
       this._abortedMessageIds.add(+messageId);
     }
@@ -122,8 +127,8 @@ class AsyncWebSocket {
     const inFlightPromises = _.values(this.inFlightPromises);
 
     this.resetInFlightPromises();
-    for (const deferred of inFlightPromises) {
-      deferred.reject(error);
+    for (const inflight of inFlightPromises) {
+      inflight.reject(error);
     }
 
     if (!hasPendingActions) {
@@ -220,7 +225,7 @@ class AsyncWebSocket {
       }
     } catch (error) {
       this.rejectAll(new DetoxRuntimeError({
-        message: 'Unexpected error on an attempt to handle a message over the web socket.',
+        message: 'Unexpected error on an attempt to handle the response received over the web socket.',
         hint: 'Examine the inner error:\n\n' + DetoxRuntimeError.format(error) + '\n\nThe payload was:',
         debugInfo: data,
       }));

@@ -23,6 +23,7 @@ class Client {
     this._onBeforeAppCrash = this._onBeforeAppCrash.bind(this);
     this._onAppDisconnected = this._onAppDisconnected.bind(this);
     this._onUnhandledServerError = this._onUnhandledServerError.bind(this);
+    this._logError = this._logError.bind(this);
 
     this._sessionId = sessionId;
     this._slowInvocationTimeout = debugSynchronization;
@@ -73,13 +74,13 @@ class Client {
 
     try {
       if (this.isConnected) {
-        await this.sendAction(new actions.Cleanup(this._successfulTestRun));
+        await this.sendAction(new actions.Cleanup(this._successfulTestRun)).catch(this._logError);
 
         this._whenAppIsConnected = this._invalidState('while cleaning up')
         this._whenAppIsReady = this._whenAppIsConnected;
       }
     } finally {
-      await this._asyncWebSocket.close();
+      await this._asyncWebSocket.close().catch(this._logError);
     }
 
     delete this.terminateApp; // property injection
@@ -127,11 +128,11 @@ class Client {
   }
 
   async sendAction(action) {
-    const options = this._inferSendOptions(action);
+    const { queryStatus, ...options } = this._inferSendOptions(action);
 
-    return await ((options.queryStatus)
-      ? this._sendMonitoredAction(action)
-      : this._doSendAction(action))
+    return await (queryStatus
+      ? this._sendMonitoredAction(action, options)
+      : this._doSendAction(action, options))
   }
 
   _inferSendOptions(action) {
@@ -139,26 +140,26 @@ class Client {
       || action instanceof actions.Login
       || action instanceof actions.Cleanup
     ) {
-      return { queryStatus: false };
+      return { queryStatus: false, timeout: 5000 };
     }
 
-    return { queryStatus: true };
+    return { queryStatus: true, timeout: 0 };
   }
 
-  async _sendMonitoredAction(action) {
+  async _sendMonitoredAction(action, options) {
     try {
       this._scheduleSlowInvocationQuery();
-      return await this._doSendAction(action);
+      return await this._doSendAction(action, options);
     } finally {
       this._unscheduleSlowInvocationQuery();
     }
   }
 
-  async _doSendAction(action) {
+  async _doSendAction(action, options) {
     const errorWithUserStack = createErrorWithUserStack();
 
     try {
-      const parsedResponse = await this._asyncWebSocket.send(action);
+      const parsedResponse = await this._asyncWebSocket.send(action, options);
       if (parsedResponse && parsedResponse.type === 'serverError') {
         throw deserializeError(parsedResponse.params.error);
       }
@@ -354,6 +355,10 @@ class Client {
     return Deferred.rejected(
       new DetoxInternalError(`Detected an attempt to interact with Detox Client ${state}.`)
     );
+  }
+
+  _logError(e) {
+    log.error({ event: 'ERROR' }, DetoxRuntimeError.format(e));
   }
 }
 

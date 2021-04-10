@@ -39,6 +39,10 @@ describe('Client', () => {
       });
     });
 
+    mockAws.close.mockImplementation(async () => {
+
+    });
+
     mockAws.mockBusy = () => {
       const deferred = new Deferred();
       mockAws.send.mockImplementationOnce(() => deferred.promise);
@@ -130,7 +134,7 @@ describe('Client', () => {
       mockAws.mockResponse('loginSuccess', {});
       expect(mockAws.send).not.toHaveBeenCalled();
       await client.connect();
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId));
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId), SEND_OPTIONS.TIMED);
     });
 
     it('should not consider itself connected to the app if "loginSuccess" params.appConnected = false', async () => {
@@ -160,14 +164,14 @@ describe('Client', () => {
 
     it('should schedule "currentStatus" query when it takes too long', async () => {
       const { action } = await simulateInFlightAction();
-      expect(mockAws.send).toHaveBeenCalledWith(action);
+      expect(mockAws.send).toHaveBeenCalledWith(action, SEND_OPTIONS.DEFAULT);
       expect(mockAws.send).toHaveBeenCalledTimes(2); // action + login
 
       mockAws.mockBusy(); // for the current status query
       jest.advanceTimersByTime(validSession.debugSynchronization);
       await fastForwardAllPromises();
 
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.CurrentStatus());
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.CurrentStatus(), SEND_OPTIONS.TIMED);
       expect(jest.getTimerCount()).toBe(0); // should not spam with "currentStatus" queries
     });
 
@@ -258,7 +262,7 @@ describe('Client', () => {
       mockAws.mockResponse('whateverDone');
       const action = anAction();
       await client.sendAction(action);
-      expect(mockAws.send).toHaveBeenCalledWith(action);
+      expect(mockAws.send).toHaveBeenCalledWith(action, SEND_OPTIONS.DEFAULT);
     });
 
     it('should pass the parsed response to action.handle()', async () => {
@@ -297,7 +301,6 @@ describe('Client', () => {
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
       ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: 'App is idle' }],
-      ['cleanup', 'cleanupDone', actions.Cleanup, true],
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
         await client.connect();
@@ -308,7 +311,7 @@ describe('Client', () => {
         await client[methodName](params);
 
         const action = new Action(params);
-        expect(mockAws.send).toHaveBeenCalledWith(action);
+        expect(mockAws.send).toHaveBeenCalledWith(action, { timeout: expect.any(Number) });
       });
 
       it(`should throw on a wrong response from device`, async () => {
@@ -362,7 +365,7 @@ describe('Client', () => {
       await client.connect();
       mockAws.mockResponse('cleanupDone');
       await client.cleanup();
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(true));
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(true), SEND_OPTIONS.TIMED);
     });
 
     it('should send cleanup action (stopRunner=false) to the app if there were failed invocations', async () => {
@@ -371,7 +374,7 @@ describe('Client', () => {
       await expect(client.execute(anInvocation)).rejects.toThrowError(/Test Failed.*SomeDetails/);
       mockAws.mockResponse('cleanupDone');
       await client.cleanup();
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(false));
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(false), SEND_OPTIONS.TIMED);
     });
 
     it('should close the websocket upon "cleanupDone" from the app', async () => {
@@ -381,11 +384,32 @@ describe('Client', () => {
       expect(mockAws.close).toHaveBeenCalled();
     });
 
-    it('should close the websocket even on error', async () => {
+    it('should close the websocket even if getting "cleanupDone" fails', async () => {
       await client.connect();
-      mockAws.mockSyncError('UnexpectedError');
-      await expect(client.cleanup()).rejects.toThrowError('UnexpectedError');
+      mockAws.mockResponse('serverError');
+      await client.cleanup();
       expect(mockAws.close).toHaveBeenCalled();
+    });
+
+    it('should close the websocket even on an inner error', async () => {
+      await client.connect();
+      mockAws.mockSyncError('MyError');
+      await client.cleanup();
+      expect(mockAws.close).toHaveBeenCalled();
+      expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('MyError'));
+    });
+
+    it('should not bail even if the world is crashing, instead it should log errors and exit calmly', async () => {
+      await client.connect();
+
+      mockAws.send.mockRejectedValue('MyError1');
+      mockAws.close.mockRejectedValue('MyError2');
+
+      await client.cleanup();
+
+      expect(mockAws.close).toHaveBeenCalled();
+      expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('MyError1'));
+      expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('MyError2'));
     });
 
     it('should delete the injected .terminateApp method', async () => {
@@ -543,7 +567,7 @@ describe('Client', () => {
       mockAws.mockEventCallback('appConnected');
       mockAws.mockResponse('ready');
       await fastForwardAllPromises();
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.Ready());
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.Ready(), SEND_OPTIONS.DEFAULT);
       expect(isReady).toBe(true);
     });
 
@@ -558,7 +582,7 @@ describe('Client', () => {
       await client.connect();
       await fastForwardAllPromises();
       expect(isReady).toBe(true);
-      expect(mockAws.send).not.toHaveBeenCalledWith(new actions.Ready());
+      expect(mockAws.send).not.toHaveBeenCalledWith(new actions.Ready(), expect.anything());
     });
   })
 
@@ -692,4 +716,9 @@ describe('Client', () => {
       await Promise.resolve();
     }
   }
+
+  const SEND_OPTIONS = {
+    DEFAULT: { timeout: 0 },
+    TIMED: { timeout: 5000 },
+  };
 });

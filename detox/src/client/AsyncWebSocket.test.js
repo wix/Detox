@@ -1,3 +1,5 @@
+jest.useFakeTimers('modern');
+
 const _ = require('lodash');
 const permaproxy = require('funpermaproxy');
 const config = require('../configuration/configurations.mock').validSession;
@@ -40,6 +42,10 @@ describe('AsyncWebSocket', () => {
     AsyncWebSocket = require('./AsyncWebSocket');
     aws = new AsyncWebSocket(config.server);
     log = require('../utils/logger');
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
   });
 
   describe('.open()', () => {
@@ -112,6 +118,16 @@ describe('AsyncWebSocket', () => {
         expect(await response1).toEqual(expected1);
       });
 
+      it(`should not set expiration timers by default`, async () => {
+        aws.send(generateRequest());
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it(`should set an expiration timer if sent with timeout > 0`, async () => {
+        aws.send(generateRequest(), { timeout: 100 });
+        expect(jest.getTimerCount()).toBe(1);
+      });
+
       it(`should reject all messages in the flight if there's an error`, async () => {
         const sendPromise1 = aws.send(generateRequest());
         const sendPromise2 = aws.send(generateRequest());
@@ -152,6 +168,34 @@ describe('AsyncWebSocket', () => {
 
         const error = log.error.mock.calls[0][1];
         expect(error).toMatchSnapshot();
+      });
+
+      it(`should fail if the message timeout has expired`, async () => {
+        const sendPromise = aws.send(generateRequest(), { timeout: 5000 });
+        expect(jest.getTimerCount()).toBe(1);
+        jest.advanceTimersByTime(5000);
+        await expect(sendPromise).rejects.toThrowErrorMatchingSnapshot();
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it(`should cancel the expiration timer if the request has been answered`, async () => {
+        aws.send(generateRequest(100), { timeout: 5000 });
+        expect(jest.getTimerCount()).toBe(1);
+        socket.mockMessage({ messageId: 100, type: 'response' });
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it(`should cancel the expiration timer if all in-flights have been reset`, async () => {
+        aws.send(generateRequest(100), { timeout: 5000 });
+        await aws.resetInFlightPromises();
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it(`should cancel the expiration timer if all in-flights have been rejected`, async () => {
+        const promise = aws.send(generateRequest(100), { timeout: 5000 });
+        await aws.rejectAll(new Error('Just because'));
+        expect(jest.getTimerCount()).toBe(0);
+        await expect(promise).rejects.toThrow('Just because');
       });
     });
   });
@@ -253,9 +297,9 @@ describe('AsyncWebSocket', () => {
       const message1 = aws.send(generateRequest());
       const message2 = aws.send(generateRequest());
 
-      aws.rejectAll(anError());
-      await expect(message1).rejects.toEqual(anError());
-      await expect(message2).rejects.toEqual(anError());
+      aws.rejectAll(anError('TestError'));
+      await expect(message1).rejects.toThrow(/TestError/);
+      await expect(message2).rejects.toThrow(/TestError/);
     });
   });
 
@@ -312,7 +356,7 @@ describe('AsyncWebSocket', () => {
   }
 
   function generateRequest(messageId) {
-    return {message: 'a message', messageId};
+    return {type: 'invoke', message: 'a message', messageId};
   }
 
   function generateResponse(message, messageId) {
@@ -323,8 +367,8 @@ describe('AsyncWebSocket', () => {
     };
   }
 
-  function anError() {
-    const err = new Error('TestError');
+  function anError(msg = 'TestError') {
+    const err = new Error(msg);
     delete err.stack;
     return err;
   }
