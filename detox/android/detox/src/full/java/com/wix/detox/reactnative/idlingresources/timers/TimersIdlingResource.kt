@@ -12,6 +12,7 @@ class TimersIdlingResource @JvmOverloads constructor(
     private var callback: IdlingResource.ResourceCallback? = null
 
     override fun getName(): String = this.javaClass.name
+    override fun getDescription(): String = "Enqueued timers"
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         this.callback = callback

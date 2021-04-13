@@ -5,6 +5,8 @@ import android.util.Log;
 import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener;
 import com.facebook.react.bridge.ReactContext;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -38,6 +40,12 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
         return BridgeIdlingResource.class.getName();
     }
 
+    @NotNull
+    @Override
+    public String getDescription() {
+        return "Activity on the React-Native bridge";
+    }
+
     @Override
     protected boolean checkIdle() {
         boolean ret = idleNow.get();
@@ -64,6 +72,7 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
         // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
     }
 
+    @Override
     public void onBridgeDestroyed() {
     }
 

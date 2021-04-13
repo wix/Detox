@@ -3,6 +3,7 @@ package com.wix.detox.reactnative.idlingresources;
 import android.util.Log;
 import android.view.Choreographer;
 
+import org.jetbrains.annotations.NotNull;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
@@ -48,6 +49,12 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
     @Override
     public String getName() {
         return UIModuleIdlingResource.class.getName();
+    }
+
+    @NotNull
+    @Override
+    public String getDescription() {
+        return "UI rendering activity";
     }
 
     @Override

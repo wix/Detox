@@ -5,6 +5,8 @@ import android.view.Choreographer;
 
 import com.facebook.react.bridge.ReactContext;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -62,6 +64,12 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
     @Override
     public String getName() {
         return NetworkIdlingResource.class.getName();
+    }
+
+    @NotNull
+    @Override
+    public String getDescription() {
+        return "In-flight network activity";
     }
 
     @Override
