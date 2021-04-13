@@ -29,13 +29,13 @@ class DetoxServer {
     await this._startListening();
 
     const level = this._options.standalone ? 'info' : 'debug';
-    log[level](`Detox server listening on localhost:${this._options.port}...`);
+    log[level]({ event: 'WSS_CREATE' }, `Detox server listening on localhost:${this._options.port}...`);
   }
 
   async close() {
     try {
       await this._closeWithTimeout(10000);
-      log.debug({ event: 'SERVER_CLOSE' }, 'Detox server has been closed gracefully');
+      log.debug({ event: 'WSS_CLOSE' }, 'Detox server has been closed gracefully');
     } catch (e) {
       log.warn({ event: 'ERROR' },
         `Detox server has been closed abruptly! See the error details below:\n`
