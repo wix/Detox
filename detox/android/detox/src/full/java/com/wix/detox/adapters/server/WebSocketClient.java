@@ -1,4 +1,4 @@
-package com.wix.detox;
+package com.wix.detox.adapters.server;
 
 import android.util.Log;
 
@@ -18,6 +18,8 @@ import okio.ByteString;
 
 public class WebSocketClient {
 
+    private static final String LOG_TAG = "DetoxWSClient";
+
     private volatile boolean closing = false;
 
     public void close() {
@@ -26,19 +28,17 @@ public class WebSocketClient {
         websocket.close(NORMAL_CLOSURE_STATUS, null);
     }
 
-    private static final String LOG_TAG = "WebSocketClient";
-
     private String url;
     private String sessionId;
     private WebSocket websocket = null;
 
-    private final ActionHandler actionHandler;
-    private final WebSocketEventsHandler wsEventsHandler = new WebSocketEventsHandler();
+    private final WSEventsHandler wsEventsHandler;
+    private final WebSocketEventsListener wsEventListener = new WebSocketEventsListener();
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
-    public WebSocketClient(ActionHandler actionHandler) {
-        this.actionHandler = actionHandler;
+    public WebSocketClient(WSEventsHandler wsEventsHandler) {
+        this.wsEventsHandler = wsEventsHandler;
     }
 
     public void connectToServer(String url, String sessionId) {
@@ -54,13 +54,13 @@ public class WebSocketClient {
                 .build();
 
         final Request request = new Request.Builder().url(url).build();
-        this.websocket = client.newWebSocket(request, wsEventsHandler);
+        this.websocket = client.newWebSocket(request, wsEventListener);
 
         client.dispatcher().executorService().shutdown();
     }
 
     public void sendAction(String type, Map params, Long messageId) {
-        Log.i(LOG_TAG, "At sendAction");
+        Log.i(LOG_TAG, "Sending out action '" + type + "' (ID #" + messageId + ")");
 
         final Map<String, Object> data = new HashMap<>();
         data.put("type", type);
@@ -69,21 +69,19 @@ public class WebSocketClient {
 
         final JSONObject json = new JSONObject(data);
         websocket.send(json.toString());
-        Log.d(LOG_TAG, "Detox Action Sent: " + type);
     }
 
     private void receiveAction(String json) {
-        Log.i(LOG_TAG, "At receiveAction");
         try {
             final JSONObject object = new JSONObject(json);
             final String type = (String) object.get("type");
             final Object params = object.get("params");
             final long messageId = object.getLong("messageId");
 
-            Log.d(LOG_TAG, "Detox Action Received: " + type);
+            Log.d(LOG_TAG, "Received action '" + type + "' (ID #" + messageId + ", params=" + params + ")");
 
-            if (actionHandler != null) {
-                actionHandler.onAction(type, params.toString(), messageId);
+            if (wsEventsHandler != null) {
+                wsEventsHandler.onAction(type, params.toString(), messageId);
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());
@@ -94,22 +92,22 @@ public class WebSocketClient {
      * These methods are called on an inner worker thread.
      * @see <a href="https://medium.com/@jakewharton/listener-messages-are-called-on-a-background-thread-since-okhttp-is-agnostic-with-respect-to-5fdc5182e240">OkHTTP</a>
      */
-    public interface ActionHandler {
+    public interface WSEventsHandler {
         void onAction(String type, String params, long messageId);
         void onConnect();
         void onClosed();
     }
 
-    private class WebSocketEventsHandler extends WebSocketListener {
+    private class WebSocketEventsListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.i(LOG_TAG, "At onOpen");
+            Log.d(LOG_TAG, "At onOpen");
 
             Map<String, Object> params = new HashMap<>();
             params.put("sessionId", sessionId);
             params.put("role", "app");
             sendAction("login", params, 0L);
-            actionHandler.onConnect();
+            wsEventsHandler.onConnect();
         }
 
         @Override
@@ -123,13 +121,13 @@ public class WebSocketClient {
             } catch (InterruptedException e2) {
                 Log.d(LOG_TAG, "interrupted", e2);
             }
+
             Log.d(LOG_TAG, "Retrying...");
             connectToServer(url, sessionId);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.i(LOG_TAG, "At onMessage");
             receiveAction(text);
         }
 
@@ -140,14 +138,12 @@ public class WebSocketClient {
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.d(LOG_TAG, "Detox WS Closed: " + code + " " + reason);
             closing = true;
-            actionHandler.onClosed();
+            wsEventsHandler.onClosed();
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.i(LOG_TAG, "At onClosing");
             closing = true;
             websocket.close(NORMAL_CLOSURE_STATUS, null);
         }

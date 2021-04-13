@@ -63,7 +63,7 @@ module.exports = {
       return Number.isNaN(+value) ? value : +value;
     },
     describe:
-      '[iOS Only] Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. ' +
+      'Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. ' +
       'By default, the app status will be printed if the action takes more than 10s to complete.'
   },
   a: {
