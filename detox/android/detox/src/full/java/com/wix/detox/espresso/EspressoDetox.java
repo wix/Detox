@@ -4,26 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wix.detox.common.UIThread;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
 
 import org.hamcrest.Matcher;
-import org.joor.Reflect;
-import org.joor.ReflectException;
 
 import java.util.ArrayList;
 
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -113,71 +108,12 @@ public class EspressoDetox {
     }
 
     public static void setURLBlacklist(final ArrayList<String> urls) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        UIThread.postSync(new Runnable() {
             @Override
             public void run() {
                 NetworkIdlingResource.setURLBlacklist(urls);
             }
         });
-    }
-
-    public static ArrayList<IdlingResource> getBusyEspressoResources() {
-        // We do this in this complicated way for two reasons
-        // 1. we want to use postAtFrontOfQueue()
-        // 2. we want it to be synchronous
-        final ArrayList<IdlingResource> busyResources = new ArrayList<>();
-        final Handler handler = new Handler(InstrumentationRegistry.getInstrumentation().getTargetContext().getMainLooper());
-        final SyncRunnable sr = new SyncRunnable(new Runnable() {
-            @Override
-            public void run() {
-                // The following snippet works only in Espresso 3.0
-                try {
-                    ArrayList<Object> idlingStates = Reflect.on(Espresso.class)
-                            .field("baseRegistry")
-                            .field("idlingStates")
-                            .get();
-                    for (int i = 0; i < idlingStates.size(); ++i) {
-                        if (!(boolean)Reflect.on(idlingStates.get(i)).field("idle").get()) {
-                            busyResources.add((IdlingResource)Reflect.on(idlingStates.get(i)).field("resource").get());
-                        }
-                    }
-                } catch (ReflectException e) {
-                    Log.d(LOG_TAG, "Couldn't get busy resources", e);
-                }
-            }
-        });
-        handler.postAtFrontOfQueue(sr);
-        sr.waitForComplete();
-        return busyResources;
-    }
-
-
-    private static final class SyncRunnable implements Runnable {
-        private final Runnable mTarget;
-        private boolean mComplete;
-
-        public SyncRunnable(Runnable target) {
-            mTarget = target;
-        }
-
-        public void run() {
-            mTarget.run();
-            synchronized (this) {
-                mComplete = true;
-                notifyAll();
-            }
-        }
-
-        public void waitForComplete() {
-            synchronized (this) {
-                while (!mComplete) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-        }
     }
 }
 

@@ -2,9 +2,7 @@ package com.wix.detox.reactnative.idlingresources;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.test.espresso.IdlingResource;
-
-public abstract class DetoxBaseIdlingResource implements IdlingResource {
+public abstract class DetoxBaseIdlingResource implements DescriptiveIdlingResource {
     AtomicBoolean paused = new AtomicBoolean(false);
 
     public void pause() {

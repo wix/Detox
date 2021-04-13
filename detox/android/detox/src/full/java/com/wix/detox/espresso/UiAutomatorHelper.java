@@ -6,6 +6,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
 
+import com.wix.detox.common.UIThread;
 import com.wix.detox.espresso.common.utils.UiControllerUtils;
 
 import org.joor.Reflect;
@@ -33,7 +34,7 @@ public class UiAutomatorHelper {
         // I want to invoke Espresso's sync mechanism manually.
         // This turned out to be amazingly difficult. This below is the
         // nicest solution I could come up with.
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        UIThread.runSync(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -54,7 +55,7 @@ public class UiAutomatorHelper {
         // I want to invoke Espresso's sync mechanism manually.
         // This turned out to be amazingly difficult. This below is the
         // nicest solution I could come up with.
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+        UIThread.runSync(new Runnable() {
             @Override
             public void run() {
                 try {

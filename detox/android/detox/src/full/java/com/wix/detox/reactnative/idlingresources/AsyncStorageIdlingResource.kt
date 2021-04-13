@@ -28,7 +28,7 @@ open class AsyncStorageIdlingResource
     @JvmOverloads constructor(
         module: NativeModule,
         sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn)
-    : IdlingResource {
+    : DescriptiveIdlingResource {
 
     open val logTag: String
         get() = LOG_TAG
@@ -50,6 +50,7 @@ open class AsyncStorageIdlingResource
     }
 
     override fun getName(): String = javaClass.name
+    override fun getDescription() = "Disk I/O activity"
     override fun isIdleNow(): Boolean =
         checkIdle().also { idle ->
             if (!idle) {
