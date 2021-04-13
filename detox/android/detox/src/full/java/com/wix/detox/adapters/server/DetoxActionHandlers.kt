@@ -1,8 +1,9 @@
-package com.wix.detox
+package com.wix.detox.adapters.server
 
 import android.content.Context
 import android.util.Log
 import androidx.test.espresso.IdlingResource
+import com.wix.detox.TestEngineFacade
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
@@ -18,33 +19,34 @@ interface DetoxActionHandler {
 }
 
 class ReadyActionHandler(
-        private val wsClient: WebSocketClient,
+        private val outboundServerAdapter: OutboundServerAdapter,
         private val testEngineFacade: TestEngineFacade)
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
         testEngineFacade.awaitIdle()
-        wsClient.sendAction("ready", emptyMap<Any, Any>(), messageId)
+        outboundServerAdapter.sendMessage("ready", emptyMap(), messageId)
     }
 }
 
-class ReactNativeReloadActionHandler(
+open class ReactNativeReloadActionHandler(
         private val appContext: Context,
-        private val wsClient: WebSocketClient,
+        private val outboundServerAdapter: OutboundServerAdapter,
         private val testEngineFacade: TestEngineFacade)
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
         testEngineFacade.syncIdle()
         testEngineFacade.reloadReactNative(appContext)
-        wsClient.sendAction("ready", emptyMap<Any, Any>(), messageId)
+        outboundServerAdapter.sendMessage("ready", emptyMap(), messageId)
     }
 }
 
-class InvokeActionHandler(
+
+class InvokeActionHandler @JvmOverloads constructor(
         private val methodInvocation: MethodInvocation,
-        private val wsClient: WebSocketClient,
-        private val errorParse: (e: Throwable?) -> String)
+        private val outboundServerAdapter: OutboundServerAdapter,
+        private val errorParse: (e: Throwable?) -> String = Log::getStackTraceString)
     : DetoxActionHandler {
 
     private val VIEW_HIERARCHY_TEXT = "View Hierarchy:"
@@ -52,14 +54,14 @@ class InvokeActionHandler(
     override fun handle(params: String, messageId: Long) {
         try {
             val invocationResult = methodInvocation.invoke(params)
-            wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
+            outboundServerAdapter.sendMessage("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
             Log.i(LOG_TAG, "Test exception", e)
             val payload = extractFailurePayload(e)
-            wsClient.sendAction("testFailed", payload, messageId)
+            outboundServerAdapter.sendMessage("testFailed", payload, messageId)
         }  catch (e: Exception) {
             Log.e(LOG_TAG, "Exception", e)
-            wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
+            outboundServerAdapter.sendMessage("error", mapOf<String, Any?>("error" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
         }
     }
 
@@ -77,7 +79,7 @@ class InvokeActionHandler(
 }
 
 class CleanupActionHandler(
-        private val wsClient: WebSocketClient,
+        private val outboundServerAdapter: OutboundServerAdapter,
         private val testEngineFacade: TestEngineFacade,
         private val doStopDetox: () -> Unit)
     : DetoxActionHandler {
@@ -88,12 +90,12 @@ class CleanupActionHandler(
         } else {
             testEngineFacade.resetReactNative()
         }
-        wsClient.sendAction("cleanupDone", emptyMap<Any, Any>(), messageId)
+        outboundServerAdapter.sendMessage("cleanupDone", emptyMap(), messageId)
     }
 }
 
 class QueryStatusActionHandler(
-        private val wsClient: WebSocketClient,
+        private val outboundServerAdapter: OutboundServerAdapter,
         private val testEngineFacade: TestEngineFacade)
     : DetoxActionHandler {
 
@@ -102,13 +104,13 @@ class QueryStatusActionHandler(
         val busyResources = testEngineFacade.getBusyIdlingResources()
 
         data["status"] = "App synchronization debug: " +
-                if (busyResources.isEmpty()) {
-                    "The app appears to be idle!"
-                } else {
-                    val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
-                    "The app is busy, due to: \n$summary"
-                }
-        wsClient.sendAction("currentStatusResult", data, messageId)
+            if (busyResources.isEmpty()) {
+                "The app appears to be idle!"
+            } else {
+                val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
+                "\nThe app is busy, due to: \n$summary"
+            }
+        outboundServerAdapter.sendMessage("currentStatusResult", data, messageId)
     }
 
     private fun formatResource(resource: IdlingResource): String =
@@ -125,7 +127,7 @@ class QueryStatusActionHandler(
 
 class InstrumentsRecordingStateActionHandler(
         private val instrumentsManager: DetoxInstrumentsManager,
-        private val wsClient: WebSocketClient
+        private val outboundServerAdapter: OutboundServerAdapter
 ) : DetoxActionHandler {
     companion object {
         const val DEFAULT_SAMPLING_INTERVAL = 250L
@@ -141,13 +143,13 @@ class InstrumentsRecordingStateActionHandler(
             instrumentsManager.stopRecording()
         }
 
-        wsClient.sendAction("setRecordingStateDone", emptyMap<String, Any>(), messageId)
+        outboundServerAdapter.sendMessage("setRecordingStateDone", emptyMap<String, Any>(), messageId)
     }
 }
 
 class InstrumentsEventsActionsHandler(
         private val instrumentsManager: DetoxInstrumentsManager,
-        private val wsClient: WebSocketClient
+        private val outboundServerAdapter: OutboundServerAdapter
 ) : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
@@ -180,8 +182,10 @@ class InstrumentsEventsActionsHandler(
                 else -> throw DetoxInstrumentsException("Invalid action")
             }
         }
-
-        wsClient.sendAction("eventDone", emptyMap<String, Any>(), messageId)
+        outboundServerAdapter.sendMessage("eventDone", emptyMap<String, Any>(), messageId)
     }
+}
 
+class ScarceActionHandler: DetoxActionHandler {
+    override fun handle(params: String, messageId: Long) {}
 }

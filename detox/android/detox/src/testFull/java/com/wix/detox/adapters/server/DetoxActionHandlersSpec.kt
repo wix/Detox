@@ -1,7 +1,8 @@
-package com.wix.detox
+package com.wix.detox.adapters.server
 
 import android.content.Context
 import com.nhaarman.mockitokotlin2.*
+import com.wix.detox.TestEngineFacade
 import com.wix.detox.UTHelpers.yieldToOtherThreads
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
@@ -22,12 +23,12 @@ object DetoxActionHandlersSpec : Spek({
         val messageId = 666L
 
         lateinit var appContext: Context
-        lateinit var wsClient: WebSocketClient
+        lateinit var outboundServerAdapter: OutboundServerAdapter
         lateinit var testEngineFacade: TestEngineFacade
 
         beforeEachTest {
             appContext = mock()
-            wsClient = mock()
+            outboundServerAdapter = mock()
 
             testEngineFacade = mock()
             whenever(testEngineFacade.awaitIdle()).then {
@@ -39,11 +40,11 @@ object DetoxActionHandlersSpec : Spek({
         }
 
         describe("Ready action") {
-            fun uut() = ReadyActionHandler(wsClient, testEngineFacade)
+            fun uut() = ReadyActionHandler(outboundServerAdapter, testEngineFacade)
 
             it("should reply with a 'ready' ACK if ready") {
                 uut().handle(params, messageId)
-                verify(wsClient).sendAction(eq("ready"), eq(Collections.emptyMap<Any, Any>()), eq(messageId))
+                verify(outboundServerAdapter).sendMessage(eq("ready"), eq(Collections.emptyMap<String, Any>()), eq(messageId))
             }
 
             it("should block waiting for idle before ACK-ing") {
@@ -55,15 +56,15 @@ object DetoxActionHandlersSpec : Spek({
                     }
                     yieldToOtherThreads(executor)
                     verify(testEngineFacade).awaitIdle()
-                    verify(wsClient, never()).sendAction(any(), any(), any())
+                    verify(outboundServerAdapter, never()).sendMessage(any(), any(), any())
                 }
                 yieldToOtherThreads(executor)
-                verify(wsClient, times(1)).sendAction(any(), any(), any())
+                verify(outboundServerAdapter, times(1)).sendMessage(any(), any(), any())
             }
         }
 
         describe("React-native reload action") {
-            fun uut() = ReactNativeReloadActionHandler(appContext, wsClient, testEngineFacade)
+            fun uut() = ReactNativeReloadActionHandler(appContext, outboundServerAdapter, testEngineFacade)
 
             it("should reload the app") {
                 uut().handle(params, messageId)
@@ -72,7 +73,7 @@ object DetoxActionHandlersSpec : Spek({
 
             it("should reply with a 'ready' ACK when ready") {
                 uut().handle(params, messageId)
-                verify(wsClient).sendAction(eq("ready"), eq(emptyMap<Any, Any>()), eq(messageId))
+                verify(outboundServerAdapter).sendMessage(eq("ready"), eq(emptyMap<String, Any>()), eq(messageId))
             }
 
             it("should sync before ACK-ing") {
@@ -85,18 +86,18 @@ object DetoxActionHandlersSpec : Spek({
                     yieldToOtherThreads(executor)
                     verify(testEngineFacade).syncIdle()
                     verify(testEngineFacade, never()).reloadReactNative(any())
-                    verify(wsClient, never()).sendAction(any(), any(), any())
+                    verify(outboundServerAdapter, never()).sendMessage(any(), any(), any())
                 }
                 yieldToOtherThreads(executor)
                 verify(testEngineFacade, times(1)).reloadReactNative(eq(appContext))
-                verify(wsClient, times(1)).sendAction(any(), any(), any())
+                verify(outboundServerAdapter, times(1)).sendMessage(any(), any(), any())
             }
         }
 
         describe("Invoke actions") {
             lateinit var methodInvocationMock: MethodInvocation
 
-            fun uut() = InvokeActionHandler(methodInvocationMock, wsClient, mockErrorParser)
+            fun uut() = InvokeActionHandler(methodInvocationMock, outboundServerAdapter, mockErrorParser)
 
             beforeEachTest {
                 methodInvocationMock = mock()
@@ -109,13 +110,13 @@ object DetoxActionHandlersSpec : Spek({
 
             it("should reply with an 'invokeResult' ACK") {
                 uut().handle(params, messageId)
-                verify(wsClient).sendAction(eq("invokeResult"), any(), eq(messageId))
+                verify(outboundServerAdapter).sendMessage(eq("invokeResult"), any(), eq(messageId))
             }
 
             it("should reply with empty result data") {
                 uut().handle(params, messageId)
 
-                verify(wsClient).sendAction(any(), argThat { size == 1 && this["result"] == null }, any())
+                verify(outboundServerAdapter).sendMessage(any(), argThat { size == 1 && this["result"] == null }, any())
             }
 
             it("should reply with actual result data") {
@@ -123,7 +124,7 @@ object DetoxActionHandlersSpec : Spek({
                 whenever(methodInvocationMock.invoke(isA<String>())).thenReturn(someResult)
                 uut().handle(params, messageId)
 
-                verify(wsClient).sendAction(any(), argThat { size == 1 && this["result"] == someResult }, any())
+                verify(outboundServerAdapter).sendMessage(any(), argThat { size == 1 && this["result"] == someResult }, any())
             }
 
             it("should handle runtime errors") {
@@ -132,7 +133,7 @@ object DetoxActionHandlersSpec : Spek({
 
                 uut().handle(params, messageId)
 
-                verify(wsClient).sendAction(
+                verify(outboundServerAdapter).sendMessage(
                         eq("error"),
                         argThat { size == 1 && this["error"] == "mockErrorParser(${exception})\nCheck device logs for full details!\n" },
                         eq(messageId))
@@ -145,7 +146,7 @@ object DetoxActionHandlersSpec : Spek({
 
                 uut().handle(params, messageId)
 
-                verify(wsClient).sendAction(
+                verify(outboundServerAdapter).sendMessage(
                         eq("testFailed"),
                         argThat {
                             this["details"] == "before\n" &&
@@ -163,7 +164,7 @@ object DetoxActionHandlersSpec : Spek({
 
                 uut().handle(params, messageId)
 
-                verify(wsClient).sendAction(
+                verify(outboundServerAdapter).sendMessage(
                         eq("testFailed"),
                         argThat {
                             this["details"] == "root-exception-mock" &&
@@ -177,7 +178,7 @@ object DetoxActionHandlersSpec : Spek({
         describe("InstrumentsRecording recording state actions") {
             lateinit var instrumentsManager: DetoxInstrumentsManager
 
-            fun uut() = InstrumentsRecordingStateActionHandler(instrumentsManager, wsClient)
+            fun uut() = InstrumentsRecordingStateActionHandler(instrumentsManager, outboundServerAdapter)
 
             beforeEachTest {
                 instrumentsManager = mock()
@@ -204,7 +205,7 @@ object DetoxActionHandlersSpec : Spek({
 
             it("should reply with a 'done' ACK on set state finish") {
                 uut().handle(params, messageId)
-                verify(wsClient).sendAction(eq("setRecordingStateDone"), any(), eq(messageId))
+                verify(outboundServerAdapter).sendMessage(eq("setRecordingStateDone"), any(), eq(messageId))
             }
         }
 
@@ -216,7 +217,7 @@ object DetoxActionHandlersSpec : Spek({
             val mockAdditionalInfo = "MockAdditionalInfo"
             val mockStatus = "MockStatus"
 
-            fun uut() = InstrumentsEventsActionsHandler(instrumentsManager, wsClient)
+            fun uut() = InstrumentsEventsActionsHandler(instrumentsManager, outboundServerAdapter)
 
             beforeEachTest {
                 instrumentsManager = mock()
@@ -243,7 +244,7 @@ object DetoxActionHandlersSpec : Spek({
 
                 it("should reply with a 'done' ACK") {
                     uut().handle(json, messageId)
-                    verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
+                    verify(outboundServerAdapter).sendMessage(eq("eventDone"), any(), eq(messageId))
                 }
             }
 
@@ -266,7 +267,7 @@ object DetoxActionHandlersSpec : Spek({
 
                 it("should reply with a 'done' ACK") {
                     uut().handle(json, messageId)
-                    verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
+                    verify(outboundServerAdapter).sendMessage(eq("eventDone"), any(), eq(messageId))
                 }
             }
 
@@ -293,7 +294,7 @@ object DetoxActionHandlersSpec : Spek({
 
                 it("should reply with a 'done' ACK") {
                     uut().handle(json, messageId)
-                    verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
+                    verify(outboundServerAdapter).sendMessage(eq("eventDone"), any(), eq(messageId))
                 }
             }
 

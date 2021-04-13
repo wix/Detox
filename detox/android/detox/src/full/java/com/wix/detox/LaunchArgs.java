@@ -8,28 +8,38 @@ import java.util.List;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
-class LaunchArgs {
+public class LaunchArgs {
+    private static final String DETOX_SERVER_URL_ARG = "detoxServer";
+    private static final String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
     private static final String DETOX_NOTIFICATION_PATH_ARG = "detoxUserNotificationDataURL";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
 
-    boolean hasNotificationPath() {
+    public boolean hasNotificationPath() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_NOTIFICATION_PATH_ARG);
     }
 
-    String getNotificationPath() {
+    public String getNotificationPath() {
         return InstrumentationRegistry.getArguments().getString(DETOX_NOTIFICATION_PATH_ARG);
     }
 
-    boolean hasUrlOverride() {
+    public boolean hasUrlOverride() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_URL_OVERRIDE_ARG);
     }
 
-    String getUrlOverride() {
+    public String getUrlOverride() {
         return InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
     }
 
-    Bundle asIntentBundle() {
+    public String getDetoxServerUrl() {
+        return InstrumentationRegistry.getArguments().getString(DETOX_SERVER_URL_ARG);
+    }
+
+    public String getDetoxSessionId() {
+        return InstrumentationRegistry.getArguments().getString(DETOX_SESSION_ID_ARG_KEY);
+    }
+
+    public Bundle asIntentBundle() {
         final Bundle instrumentationArgs = InstrumentationRegistry.getArguments();
         final Bundle launchArgs = new Bundle();
 

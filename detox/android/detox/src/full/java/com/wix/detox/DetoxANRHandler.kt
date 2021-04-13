@@ -2,12 +2,13 @@ package com.wix.detox
 
 import android.util.Log
 import com.github.anrwatchdog.ANRWatchDog
+import com.wix.detox.adapters.server.OutboundServerAdapter
 
-class DetoxANRHandler(private val wsClient: WebSocketClient) {
+class DetoxANRHandler(private val outboundServerAdapter: OutboundServerAdapter) {
     fun attach() {
         ANRWatchDog().setReportMainThreadOnly().setANRListener {
             val info = mapOf("threadDump" to Log.getStackTraceString(it))
-            wsClient.sendAction(ACTION_NAME, info, MESSAGE_ID)
+            outboundServerAdapter.sendMessage(ACTION_NAME, info, MESSAGE_ID)
         }.start()
 
         ANRWatchDog().setANRListener {
