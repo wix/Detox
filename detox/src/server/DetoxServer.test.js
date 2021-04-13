@@ -47,8 +47,8 @@ describe('DetoxServer', () => {
         await server.open();
 
         const expectedString = expect.stringContaining(`localhost:${options.port}`);
-        expect(log.info).toHaveBeenCalledWith(expectedString);
-        expect(log.debug).not.toHaveBeenCalled();
+        expect(log.info).toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
+        expect(log.debug).not.toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
       } finally {
         await server.close();
       }
@@ -61,8 +61,8 @@ describe('DetoxServer', () => {
         await server.open();
 
         const expectedString = expect.stringContaining(`localhost:${options.port}`);
-        expect(log.debug).toHaveBeenCalledWith(expectedString);
-        expect(log.info).not.toHaveBeenCalled();
+        expect(log.debug).toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
+        expect(log.info).not.toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
       } finally {
         await server.close();
       }
@@ -74,7 +74,7 @@ describe('DetoxServer', () => {
       await server.close();
 
       const expectedString = expect.stringContaining(`has been closed gracefully`);
-      expect(log.debug).toHaveBeenCalledWith({ event: 'SERVER_CLOSE' }, expectedString);
+      expect(log.debug).toHaveBeenCalledWith({ event: 'WSS_CLOSE' }, expectedString);
     });
 
     it('should WARN log a message upon unsuccessful server closing (timeout case)', async () => {

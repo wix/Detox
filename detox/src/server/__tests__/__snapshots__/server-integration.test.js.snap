@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Detox server integration "app" connects first, and then disconnects 1`] = `"registered a new connection."`;
+
+exports[`Detox server integration "tester" connects first, and then disconnects 1`] = `"registered a new connection."`;
+
 exports[`Detox server integration edge cases .registerSession - calling twice 1`] = `
 "DetoxInternalError: Cannot login the same WebSocket instance twice into the same session.
 Please report this issue on our GitHub tracker:

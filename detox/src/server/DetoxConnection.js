@@ -5,10 +5,11 @@ const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandle
 const logger = require('../utils/logger').child({ __filename });
 
 const EVENTS = {
-  GET: { event: 'GET_FROM' },
-  SEND: { event: 'SEND_TO' },
+  NEW: { event: 'WSS_CONNECTION' },
+  GET: { event: 'WSS_GET_FROM' },
+  SEND: { event: 'WSS_SEND_TO' },
   ERROR: { event: 'ERROR' },
-  SOCKET_ERROR: { event: 'SOCKET_ERROR' },
+  SOCKET_ERROR: { event: 'WSS_SOCKET_ERROR' },
 };
 
 class DetoxConnection {
@@ -28,6 +29,7 @@ class DetoxConnection {
     this._webSocket.on('message', this._onMessage);
     this._webSocket.on('error', this._onError);
     this._webSocket.on('close', this._onClose);
+    this._log.debug(EVENTS.NEW, 'registered a new connection.');
 
     const log = this._log;
     this._handler = new AnonymousConnectionHandler({

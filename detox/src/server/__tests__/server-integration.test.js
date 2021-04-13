@@ -37,6 +37,7 @@ describe('Detox server integration', () => {
     const webSocket = new FakeWebSocket({ remotePort: 8081 });
     sessionManager.registerConnection(webSocket, webSocket.socket);
 
+    expect(getLoggerMsg('debug', 0, 1)).toMatchSnapshot();
     expect(sessionManager.getSession(webSocket)).toBe(null);
 
     webSocket.mockLogin({ messageId: 100500, role });
@@ -283,7 +284,7 @@ describe('Detox server integration', () => {
     test('app dispatches "ready" action before login', async () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ type: 'ready', messageId: -1000 });
-      expect(getLoggerMsg('debug')).toMatchSnapshot();
+      expect(getLoggerMsg('debug', 1)).toMatchSnapshot();
     });
 
     test('socket error', () => {
@@ -293,7 +294,7 @@ describe('Detox server integration', () => {
       delete err.stack;
       webSocket.mockError(err);
 
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'SOCKET_ERROR' });
+      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'WSS_SOCKET_ERROR' });
       expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
     });
   });
