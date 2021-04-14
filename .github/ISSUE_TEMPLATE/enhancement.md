@@ -4,6 +4,7 @@ about: Suggest an idea for this project
 title: ''
 labels: 'type: triage/enhancement'
 assignees: ''
+projects: 'wix/5'
 
 ---
 
