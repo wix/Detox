@@ -104,8 +104,7 @@ module.exports = {
   w: {
     alias: 'workers',
     group: 'Execution:',
-    describe:
-      '[iOS Only] Specifies the number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
+    describe: 'Specifies the number of workers the test runner should spawn. Requires a test runner with parallel execution support (e.g. Jest)',
     number: true,
     default: 1,
   },
