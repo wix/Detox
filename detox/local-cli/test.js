@@ -73,7 +73,7 @@ module.exports.middlewares = [
 function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
     if (hasMultipleWorkers(cliConfig)) {
-      log.warn('Cannot use -w, --workers. Parallel test execution is only supported with iOS and Jest');
+      log.warn('Cannot use -w, --workers. Parallel test execution is only supported with Jest');
     }
 
     if (detoxArgs.retries > 0) {
