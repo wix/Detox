@@ -94,7 +94,7 @@ dependencies {
      BINTRAY_SUNSET_HACK start
      (Section shouldn't be needed at all)
      */
-    fromBinImplementation('com.facebook.fbjni:fbjni-java-only:0.0.4')
+    implementation 'com.facebook.fbjni:fbjni-java-only:0.0.4'
     // noinspection GradleDynamicVersion
     fromBinImplementation('com.facebook.react:react-native:+') {
         exclude group: 'com.facebook.fbjni'
