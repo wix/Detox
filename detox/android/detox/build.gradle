@@ -78,7 +78,22 @@ dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
 
     // noinspection GradleDynamicVersion
-    compileOnly 'com.facebook.react:react-native:+'
+
+    /*
+     BINTRAY_SUNSET_HACK start
+
+     Should be:
+     compileOnly 'com.facebook.react:react-native:+'
+     */
+    compileOnly 'com.facebook.fbjni:fbjni-java-only:0.0.4'
+    // noinspection GradleDynamicVersion
+    compileOnly('com.facebook.react:react-native:+') {
+        exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
+        exclude group: 'com.facebook.yoga', module: 'proguard-annotations'
+    }
+    /*
+     BINTRAY_SUNSET_HACK end
+     */
 }
 
 // androidx.test deps.

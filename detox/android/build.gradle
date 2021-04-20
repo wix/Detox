@@ -11,7 +11,7 @@ buildscript {
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
     dependencies {
@@ -20,14 +20,14 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
         // Needed by Spek (https://spekframework.org/setup-android)
-        classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.4.2.1'
+        classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
     }
 }
 
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         google()
         maven {
             url "$projectDir/../../node_modules/react-native/android"
