@@ -127,9 +127,9 @@ dependencies {
      BINTRAY_SUNSET_HACK start
 
      Should be:
-     compileOnly 'com.facebook.react:react-native:+'
+     testImplementation 'com.facebook.react:react-native:+'
      */
-    compileOnly 'com.facebook.fbjni:fbjni-java-only:0.0.4'
+    testImplementation 'com.facebook.fbjni:fbjni-java-only:0.0.4'
     // noinspection GradleDynamicVersion
     testImplementation('com.facebook.react:react-native:+') {
         exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'

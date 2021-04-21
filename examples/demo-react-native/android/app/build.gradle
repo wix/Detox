@@ -85,6 +85,8 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
+
+    // noinspection GradleDynamicVersion
     androidTestImplementation('com.wix:detox:+')
 }
 
