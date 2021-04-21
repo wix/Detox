@@ -94,10 +94,12 @@ dependencies {
      BINTRAY_SUNSET_HACK start
      (Section shouldn't be needed at all)
      */
-    implementation 'com.facebook.fbjni:fbjni-java-only:0.0.4'
+    if (rnInfo.isRN60OrHigher) { // Comes from elsewhere, otherwise
+        implementation 'com.facebook.fbjni:fbjni-java-only:0.0.4'
+    }
     // noinspection GradleDynamicVersion
     fromBinImplementation('com.facebook.react:react-native:+') {
-        exclude group: 'com.facebook.fbjni'
+        exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
         exclude group: 'com.facebook.yoga', module: 'proguard-annotations'
     }
     /*
