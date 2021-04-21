@@ -25,9 +25,13 @@ buildscript {
         classpath 'de.undercouch:gradle-download-task:4.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        // Needed by Spek (https://spekframework.org/setup-android)
-        // Here in order to enable unit-tests run from Android Studio when working on the test app.
-        classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
+        if (rnInfo.isRN62OrHigher) {
+            // Needed by Spek (https://spekframework.org/setup-android)
+            // Here in order to enable unit-tests run from Android Studio when working on the test app.
+            classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
+        } else {
+            ext.forbidUnitTests = true
+        }
     }
 }
 

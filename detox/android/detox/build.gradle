@@ -153,8 +153,9 @@ dependencies {
 }
 
 // Spek (https://spekframework.org/setup-android)
-if (rootProject.hasProperty('isOfficialDetoxLib') ||
-    rootProject.hasProperty('isOfficialDetoxApp')) {
+if (!rootProject.hasProperty('forbidUnitTests') &&
+    (rootProject.hasProperty('isOfficialDetoxLib') ||
+     rootProject.hasProperty('isOfficialDetoxApp'))) {
     apply plugin: 'de.mannodermaus.android-junit5'
 
     android {

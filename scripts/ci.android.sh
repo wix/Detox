@@ -9,9 +9,13 @@ pushd detox/test
 run_f "npm run integration"
 popd
 
-pushd detox/android
-run_f "./gradlew testFullRelease"
-popd
+if [[ -z ${SKIP_UNIT_TESTS} ]]; then
+  pushd detox/android
+  run_f "./gradlew testFullRelease"
+  popd
+else
+  echo "SKIP_UNIT_TESTS is set: Skipping Android unit tests"
+fi
 
 mkdir -p coverage
 
