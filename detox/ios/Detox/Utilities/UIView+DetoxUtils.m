@@ -176,7 +176,9 @@ DTX_DIRECT_MEMBERS
 		windows = [UIWindow dtx_allWindowsForScene:scene];
 		
 		for (UIWindow* keyboardSceneWindow in windows) {
-			[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
+			if (![keyboardSceneWindow isEqual: windowToUse]) {
+				[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
+			}
 		}
 	}
 	
