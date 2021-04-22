@@ -1028,8 +1028,19 @@ declare global {
              * @example
              * await expect(element(by.id('PinchableScrollView'))).toBeVisible();
              * await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+             * @deprecated Should use pinch instead
              */
-            pinchWithAngle(direction: Direction, speed: Speed, angle: number): Promise<void>;
+            pinchWithAngle(direction: PinchDirection, speed: Speed, angle: number): Promise<void>;
+
+            /**
+             * Pinches with the given scale, speed, and angle. (iOS only)
+             * @param angle value in radiant, default is `0`
+             * @example
+             * await element(by.id('PinchableScrollView')).pinch(1.1);
+             * await element(by.id('PinchableScrollView')).pinch(2.0);
+             * await element(by.id('PinchableScrollView')).pinch(0.001);
+             */
+            pinch(scale: number, speed: Speed, angle: number): Promise<void>;
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1137,6 +1148,8 @@ declare global {
         }
 
         type Direction = 'left' | 'right' | 'top' | 'bottom' | 'up' | 'down';
+
+        type PinchDirection = 'outward' | 'inward'
 
         type Orientation = 'portrait' | 'landscape';
 
