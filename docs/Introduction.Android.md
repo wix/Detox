@@ -280,7 +280,7 @@ A special thanks to [GEllickson-Hover](https://github.com/GEllickson-Hover) for 
 
 ### 8. Test Butler Support (Optional)
 
-If, when [setting up your work environment](Introduction.AndroidDevEnv.md), you've selected Google emulators with an AOSP image as the test target - as recommended, **we strongly encourage** you would also integrate [Test Butler](https://github.com/linkedin/test-butler): in the very least - in order to supress crash & ANR's dialogs. They are a soft spot in UI testing on Android, all around, as - when displayed, they make the UI entirely inaccessible (and thus cause tests to fail in bulks).
+If, when [setting up your work environment](Introduction.AndroidDevEnv.md), you've selected Google emulators with an AOSP image as the test target - as recommended, **we strongly encourage** you would also integrate [Test Butler](https://github.com/linkedin/test-butler): in the very least - in order to suppress crash & ANR's dialogs. They are a soft spot in UI testing on Android, all around, as - when displayed, they make the UI entirely inaccessible (and thus cause tests to fail in bulks).
 
 Setting Test Butler up for working with Detox is a bit different than explained in their guides. The process, as a whole, is twofold:
 

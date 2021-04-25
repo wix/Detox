@@ -88,7 +88,7 @@ If you are using Jest as a test runner, you might want to increase the test time
 
 Also, if there is something you want to do step by step in JS code while debugging native, append
 `--inspect-brk` flag. To learn more about debugging with `--inspect-brk`, refer to
-[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/) on the offical Node.js website.
+[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/) on the official Node.js website.
 
 Afterwards, you should see your test suite starting as usual until it reaches the app launch, where
 Detox stops instead and prompts you to launch the app from the IDE:

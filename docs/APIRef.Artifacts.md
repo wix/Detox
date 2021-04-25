@@ -89,7 +89,7 @@ interface TestSummary {
      */
     title: string;
     /**
-     * Full name of the current test, usually preceeded by a suite name, e.g.:
+     * Full name of the current test, usually preceded by a suite name, e.g.:
      * describe('that screen', () =>
      *   it('should have a menu', () =>
      * The expected string would be: "that screen should have a menu".
