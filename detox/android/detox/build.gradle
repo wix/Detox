@@ -125,7 +125,6 @@ dependencies {
 dependencies {
     /*
      BINTRAY_SUNSET_HACK start
-
      Should be:
      testImplementation 'com.facebook.react:react-native:+'
      */
@@ -153,7 +152,7 @@ dependencies {
 }
 
 // Spek (https://spekframework.org/setup-android)
-if (!rootProject.hasProperty('forbidUnitTests') &&
+if (!rootProject.hasProperty('suppressUnitTests') &&
     (rootProject.hasProperty('isOfficialDetoxLib') ||
      rootProject.hasProperty('isOfficialDetoxApp'))) {
     apply plugin: 'de.mannodermaus.android-junit5'

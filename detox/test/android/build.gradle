@@ -11,6 +11,10 @@ buildscript {
         compileSdkVersion = 29
         targetSdkVersion = 29
         minSdkVersion = 18
+
+        if (!rnInfo.isRN62OrHigher) {
+            suppressUnitTests = true
+        }
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
@@ -25,12 +29,10 @@ buildscript {
         classpath 'de.undercouch:gradle-download-task:4.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        if (rnInfo.isRN62OrHigher) {
+        if (!rootProject.hasProperty('suppressUnitTests')) {
             // Needed by Spek (https://spekframework.org/setup-android)
             // Here in order to enable unit-tests run from Android Studio when working on the test app.
             classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
-        } else {
-            ext.forbidUnitTests = true
         }
     }
 }
