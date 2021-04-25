@@ -148,7 +148,7 @@ You can also modify your app, for the sake of tests only, by using mocking. Read
 
 #### setTimeout and setInterval
 
-By default, Detox is designed to ignore `setInterval` and will only wait for `setTimeout` of up to 1.5 seconds. If you have an endless polling loop with short intervals implemented with `setTimeout`, switch the implementation to `setInterval`. If possible, avoid agressive polling in your app altogether, the poor single JavaScript thread we have doesn't like it.
+By default, Detox is designed to ignore `setInterval` and will only wait for `setTimeout` of up to 1.5 seconds. If you have an endless polling loop with short intervals implemented with `setTimeout`, switch the implementation to `setInterval`. If possible, avoid aggressive polling in your app altogether, the poor single JavaScript thread we have doesn't like it.
 
 #### Endless looping animations
 
