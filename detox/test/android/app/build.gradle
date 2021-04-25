@@ -89,8 +89,23 @@ dependencies {
     }
 
     fromSourceImplementation(project(path: ':ReactAndroid'))
+
+    /*
+     BINTRAY_SUNSET_HACK start
+     (Section shouldn't be needed at all)
+     */
+    if (rnInfo.isRN60OrHigher) { // Comes from elsewhere, otherwise
+        implementation 'com.facebook.fbjni:fbjni-java-only:0.0.4'
+    }
     // noinspection GradleDynamicVersion
-    fromBinImplementation 'com.facebook.react:react-native:+'
+    fromBinImplementation('com.facebook.react:react-native:+') {
+        exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
+        exclude group: 'com.facebook.yoga', module: 'proguard-annotations'
+    }
+    /*
+     BINTRAY_SUNSET_HACK end
+     */
+
     // noinspection GradleDynamicVersion
     implementation(project(path: ':AsyncStorage'))
 
