@@ -29,7 +29,7 @@
 		3946CD452566EBC2000A3606 /* NSObject+DontCrash.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946CD432566EBC2000A3606 /* NSObject+DontCrash.m */; };
 		3946CD492566EBCB000A3606 /* NSObject+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946CD472566EBCB000A3606 /* NSObject+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946CD482566EBCB000A3606 /* NSObject+DetoxUtils.m */; };
-          3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
 		395AD81924B5EBEA002B382B /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 395AD81724B5EBEA002B382B /* fishhook.h */; };
 		395AD81A24B5EBEA002B382B /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 395AD81824B5EBEA002B382B /* fishhook.c */; };
@@ -114,7 +114,7 @@
 		39EECB8024C0A73F009C3364 /* NSArray+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB7E24C0A73E009C3364 /* NSArray+Utils.m */; };
 		39EECB8124C0A73F009C3364 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EECB7F24C0A73E009C3364 /* NSArray+Utils.h */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
-		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; };
+		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
 /* End PBXBuildFile section */
 
@@ -210,7 +210,7 @@
 		3946CD472566EBCB000A3606 /* NSObject+DetoxUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DetoxUtils.h"; sourceTree = "<group>"; };
 		3946CD482566EBCB000A3606 /* NSObject+DetoxUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DetoxUtils.m"; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-          3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
+		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
@@ -420,7 +420,7 @@
 				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
 				392324D62477D87D00A3D119 /* DetoxManager.swift */,
-                3947679A1DBF985400D72256 /* Detox.h */,
+				3947679A1DBF985400D72256 /* Detox.h */,
 				39F6422A1FDD5EEC00468FED /* Detox.pch */,
 				3947679B1DBF985400D72256 /* Info.plist */,
 				390D1C981E3A2893007F5F46 /* Detox.xcconfig */,
@@ -607,7 +607,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-                3947679C1DBF985400D72256 /* Detox.h in Headers */,
+				3947679C1DBF985400D72256 /* Detox.h in Headers */,
 				39CA978C245B13CB00A7FC43 /* UIDevice+DetoxActions.h in Headers */,
 				3980D11C2448B52C004812DD /* DTXSyntheticEvents.h in Headers */,
 				3980D169244DD837004812DD /* UIDatePicker+DetoxActions.h in Headers */,
@@ -627,6 +627,7 @@
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
 				39DC985824BB904D00FFB224 /* ReactNativeSupportNoARC.h in Headers */,
 				3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */,
+				AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */,
 				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
 				3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */,
 				3946CD3E2566EB9E000A3606 /* NSObject+DetoxActions.h in Headers */,
@@ -638,7 +639,6 @@
 				395AD81924B5EBEA002B382B /* fishhook.h in Headers */,
 				390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
-				AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */,
 				3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */,
 				3946CD442566EBC2000A3606 /* NSObject+DontCrash.h in Headers */,
 				39EECB7824C0A4D3009C3364 /* DTXAddressInfo.h in Headers */,
