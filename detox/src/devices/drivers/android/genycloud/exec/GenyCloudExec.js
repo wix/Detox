@@ -27,7 +27,7 @@ class GenyCloudExec {
   }
 
   startInstance(recipeUUID, instanceName) {
-    return this._exec(`instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`);
+    return this._exec(`instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`, { retries: 0 });
   }
 
   adbConnect(instanceUUID) {
