@@ -92,17 +92,9 @@
 	return visible;
 }
 
-- (void)dtx_saveToDesktopWithName:(NSString*)name
+- (void)dtx_saveToPath:(NSURL*)path fileName:(NSString*)name
 {
-	static NSURL* desktopURL;
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		NSString* somePath = NSHomeDirectory();
-		NSString* userPath = [somePath substringToIndex:[somePath rangeOfString:@"/Library"].location];
-		desktopURL = [[NSURL fileURLWithPath:userPath] URLByAppendingPathComponent:@"Desktop"];
-	});
-	
-	[UIImagePNGRepresentation(self) writeToURL:[desktopURL URLByAppendingPathComponent:name] atomically:YES];
+	[UIImagePNGRepresentation(self) writeToURL:[path URLByAppendingPathComponent:name] atomically:YES];
 }
 
 @end
