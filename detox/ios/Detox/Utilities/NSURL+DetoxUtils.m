@@ -18,7 +18,17 @@
 		temporaryURL = [NSURL URLWithString:NSTemporaryDirectory()];
 	});
 	
-	return [temporaryURL URLByAppendingPathComponent:subFolder isDirectory:true];
+	NSURL* directoryPath = [temporaryURL URLByAppendingPathComponent:subFolder isDirectory:true];
+	NSError * error = nil;
+	[[NSFileManager defaultManager] createDirectoryAtPath:directoryPath.path
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:&error];
+	if (error != nil) {
+		NSLog(@"Error creating %@ directory under tmp directory: %@", subFolder, error);
+	}
+	
+	return directoryPath;
 }
 
 + (NSURL *)visibilityFailingScreenshotsPath

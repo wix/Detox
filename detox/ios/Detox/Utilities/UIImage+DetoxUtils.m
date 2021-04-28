@@ -94,7 +94,8 @@
 
 - (void)dtx_saveToPath:(NSURL*)path fileName:(NSString*)name
 {
-	[UIImagePNGRepresentation(self) writeToURL:[path URLByAppendingPathComponent:name] atomically:YES];
+	NSURL *combinedPath = [path URLByAppendingPathComponent:name];
+	[UIImagePNGRepresentation(self) writeToURL:[NSURL fileURLWithPath:combinedPath.path] atomically:YES];
 }
 
 @end
