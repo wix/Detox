@@ -19,6 +19,14 @@ class Expect {
     return this.not.toBeVisible();
   }
 
+  toBeFocused() {
+    return this.expect('toBeFocused');
+  }
+
+  toBeNotFocused() {
+    return this.not.toBeFocused();
+  }
+
   toExist() {
     return this.expect('toExist');
   }
