@@ -272,6 +272,39 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`expect(element(by.text('Tap Working!!!'))).toBeFocused()`, () => {
+    const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeFocused();
+    const jsonOutput = {
+      invocation: {
+        type: 'expectation',
+        predicate: {
+          type: 'text',
+          value: 'Tap Working!!!'
+        },
+        expectation: 'toBeFocused'
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
+  it(`expect(element(by.text('Tap Working!!!'))).toBeNotFocused()`, () => {
+    const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeNotFocused();
+    const jsonOutput = {
+      invocation: {
+        type: 'expectation',
+        predicate: {
+          type: 'text',
+          value: 'Tap Working!!!'
+        },
+        modifiers: ['not'],
+        expectation: 'toBeFocused'
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`expect(element(by.id('UniqueId204'))).toHaveText('I contain some text')`, () => {
     const testCall = e.expect(e.element(e.by.id('UniqueId204'))).toHaveText('I contain some text');
     const jsonOutput = {
