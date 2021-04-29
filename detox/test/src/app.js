@@ -103,7 +103,7 @@ class example extends Component {
         {this.renderScreenButton('Language', Screens.LanguageScreen)}
         {this.renderScreenButton('Sanity', Screens.SanityScreen)}
         {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
-        {this.renderScreenButton('Expectations', Screens.ExpectationsScreen)}
+        {!isAndroid && this.renderScreenButton('Expectations', Screens.ExpectationsScreen)}
         {this.renderScreenButton('Actions', Screens.ActionsScreen)}
         {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
         {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
