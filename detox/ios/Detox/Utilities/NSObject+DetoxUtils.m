@@ -162,7 +162,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (BOOL)dtx_isFocused
 {
-	return [self.dtx_view isFocused];
+	BOOL isFocused = [self.dtx_view isFocused];
+	BOOL isFirstResponder = [self.dtx_view isFirstResponder];
+	return isFocused || isFirstResponder;
 }
 
 - (BOOL)dtx_isHittable

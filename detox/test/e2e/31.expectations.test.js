@@ -8,6 +8,12 @@ describe('Expectations', () => {
     await element(by.label('Text Fields')).tap();
     await expect(element(by.id('TextField_Id1'))).toBeVisible();
     await expect(element(by.id('TextField_Id1'))).toBeNotFocused();
+    await expect(element(by.id('TextField_Id2'))).toBeNotFocused();
+    await element(by.id('TextField_Id1')).tap();
     await expect(element(by.id('TextField_Id1'))).toBeFocused();
+    await expect(element(by.id('TextField_Id2'))).toBeNotFocused();
+    await element(by.id('TextField_Id2')).tap();
+    await expect(element(by.id('TextField_Id2'))).toBeFocused();
+    await expect(element(by.id('TextField_Id1'))).toBeNotFocused();
   });
 });

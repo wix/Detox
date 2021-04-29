@@ -203,7 +203,7 @@ class Element : NSObject {
 	}
 	
 	func isFocused() -> Bool {
-		return view.dtx_isFocused();
+		return view.dtx_isFocused()
 	}
 	
 	func isHittable() throws -> Bool {
