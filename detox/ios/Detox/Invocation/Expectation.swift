@@ -207,7 +207,6 @@ class ToBeVisibleExpectation : Expectation {
 }
 
 class ToBeFocusedExpectation : Expectation {
-	//This override is to support the special case where non-existent elements are also non-visible.
 	override func _evaluate() {
 		dtx_assert(applyModifiers(self.element.isFocused(), modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: self.element.debugAttributes)
 	}
