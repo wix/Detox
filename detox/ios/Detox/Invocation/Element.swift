@@ -202,6 +202,10 @@ class Element : NSObject {
 		return rv
 	}
 	
+	func isFocused() -> Bool {
+		return view.dtx_isFocused();
+	}
+	
 	func isHittable() throws -> Bool {
 		var error: NSError? = nil
 		let rv = view.dtx_isHittable(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)

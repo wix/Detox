@@ -49,6 +49,7 @@ class Expectation : CustomStringConvertible {
 	
 	struct Kind {
 		static let toBeVisible = "toBeVisible"
+		static let toBeFocused = "toBeFocused"
 		static let toExist = "toExist"
 		static let toHaveText = "toHaveText"
 		static let toHaveLabel = "toHaveLabel"
@@ -72,6 +73,7 @@ class Expectation : CustomStringConvertible {
 	
 	static let mapping : [String: Expectation.Type] = [
 		Kind.toBeVisible: ToBeVisibleExpectation.self,
+		Kind.toBeFocused: ToBeFocusedExpectation.self,
 		Kind.toExist: ToExistExpectation.self,
 		
 		Kind.toHaveText: ValueExpectation.self,
@@ -201,6 +203,13 @@ class ToBeVisibleExpectation : Expectation {
 	
 	override func evaluate(with element: Element) throws -> Bool {
 		return try element.isVisible()
+	}
+}
+
+class ToBeFocusedExpectation : Expectation {
+	//This override is to support the special case where non-existent elements are also non-visible.
+	override func _evaluate() {
+		dtx_assert(applyModifiers(self.element.isFocused(), modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: self.element.debugAttributes)
 	}
 }
 
