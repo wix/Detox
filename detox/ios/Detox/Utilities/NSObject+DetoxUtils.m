@@ -160,6 +160,13 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	[self.dtx_view dtx_assertVisibleVisibleAtRect:self.dtx_bounds];
 }
 
+- (BOOL)dtx_isFocused
+{
+	BOOL isFocused = [self.dtx_view isFocused];
+	BOOL isFirstResponder = [self.dtx_view isFirstResponder];
+	return isFocused || isFirstResponder;
+}
+
 - (BOOL)dtx_isHittable
 {
 	return YES;

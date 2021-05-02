@@ -24,6 +24,7 @@ import DeviceScreen from './DeviceScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
+import ExpectationsScreen from './ExpectationsScreen';
 
 export {
   SanityScreen,
@@ -51,5 +52,6 @@ export {
   DeviceScreen,
   ElementScreenshotScreen,
   WebViewScreen,
-  VirtualizedListStressScreen,  
+  VirtualizedListStressScreen,
+  ExpectationsScreen
 };
