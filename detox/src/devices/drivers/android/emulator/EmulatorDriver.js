@@ -6,7 +6,7 @@ const AndroidDriver = require('../AndroidDriver');
 const EmulatorDeviceAllocation = require('./helpers/EmulatorDeviceAllocation');
 const AVDValidator = require('./AVDValidator');
 const AVDsResolver = require('./AVDsResolver');
-const EmulatorLauncher = require('./EmulatorLauncher');
+const EmulatorLauncher = require('./helpers/EmulatorLauncher');
 const EmulatorVersionResolver = require('./EmulatorVersionResolver');
 const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const { EmulatorExec } = require('../exec/EmulatorExec');
@@ -25,14 +25,14 @@ class EmulatorDriver extends AndroidDriver {
     this._deviceRegistry = DeviceRegistry.forAndroid();
 
     const emulatorExec = new EmulatorExec();
-    const emulatorLauncher = new EmulatorLauncher(emulatorExec);
+    this._emulatorLauncher = new EmulatorLauncher(emulatorExec, this.emitter);
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
 
     const avdsResolver = new AVDsResolver(emulatorExec);
     this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
 
     const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this._deviceRegistry)
-    this._deviceAllocation = new EmulatorDeviceAllocation(this._deviceRegistry, freeEmulatorFinder, emulatorLauncher, this.adb, this.emitter);
+    this._deviceAllocation = new EmulatorDeviceAllocation(this._deviceRegistry, freeEmulatorFinder, this._emulatorLauncher, this.adb, this.emitter);
   }
 
   get name() {
@@ -71,12 +71,15 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async cleanup(deviceId, bundleId) {
-    await this._deviceRegistry.disposeDevice(deviceId);
-    await super.cleanup(deviceId, bundleId);
+    try {
+      await super.cleanup(deviceId, bundleId);
+    } finally {
+      await this._deviceAllocation.deallocateDevice(deviceId)
+    }
   }
 
   async shutdown(deviceId) {
-    await this._deviceAllocation.deallocateDevice(deviceId)
+    await this._emulatorLauncher.shutdown(deviceId);
   }
 
   async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
