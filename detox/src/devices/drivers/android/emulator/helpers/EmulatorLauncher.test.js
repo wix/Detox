@@ -1,7 +1,9 @@
-const adbName = 'mock_adb_name-1117';
-const avdName = 'mock-AVD-name';
+const EmulatorDeviceId = require('../EmulatorDeviceId');
 
 describe('Emulator launcher', () => {
+  const adbName = 'mock_adb_name-1117';
+  const avdName = 'mock-AVD-name';
+  const deviceId = new EmulatorDeviceId(avdName, adbName);
 
   let logger;
   let retry;
@@ -41,14 +43,14 @@ describe('Emulator launcher', () => {
 
   describe('shutdown', () => {
     it('should kill device via telnet', async () => {
-      await uut.shutdown(adbName);
+      await uut.shutdown(deviceId);
 
       expect(emulatorTelnet.connect).toHaveBeenCalledWith('1117');
       expect(emulatorTelnet.kill).toHaveBeenCalled();
     });
 
     it('should emit associated events', async () => {
-      await uut.shutdown(adbName);
+      await uut.shutdown(deviceId);
 
       expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: adbName });
       expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: adbName });
@@ -57,7 +59,7 @@ describe('Emulator launcher', () => {
     it('should not emit shutdownDevice prematurely', async () => {
       emulatorTelnet.kill.mockRejectedValue(new Error());
 
-      await expect(uut.shutdown(adbName)).rejects.toThrowError();
+      await expect(uut.shutdown(deviceId)).rejects.toThrowError();
       expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
       expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
     });
@@ -66,7 +68,7 @@ describe('Emulator launcher', () => {
       const EmulatorLauncher = require('./EmulatorLauncher');
       uut = new EmulatorLauncher(emulatorExec, eventEmitter);
 
-      await uut.shutdown(adbName);
+      await uut.shutdown(deviceId);
     });
   });
 });

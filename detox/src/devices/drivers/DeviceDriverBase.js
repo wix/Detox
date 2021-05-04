@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
@@ -10,68 +9,64 @@ class DeviceDriverBase {
     this.emitter = emitter;
   }
 
-  get name() {
-    return 'UNSPECIFIED_DEVICE';
-  }
-
   declareArtifactPlugins() {
     return {};
   }
 
   async acquireFreeDevice(deviceQuery) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async prepare() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async launchApp() {
-    return await Promise.resolve(NaN);
+    return NaN;
   }
 
   async waitForAppLaunch() {
-    return await Promise.resolve(NaN);
+    return NaN;
   }
 
   async takeScreenshot(deviceId, screenshotName) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async sendToHome() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setBiometricEnrollment() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async matchFace() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async unmatchFace() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async matchFinger() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async unmatchFinger() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async shake() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async installApp(deviceId, binaryPath, testBinaryPath) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async uninstallApp() {
-    return await Promise.resolve('');
+    return '';
   }
 
   installUtilBinaries() {
@@ -83,19 +78,19 @@ class DeviceDriverBase {
   }
 
   async setLocation(lat, lon) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async reverseTcpPort() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async unreverseTcpPort() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async clearKeychain(_udid) {
-    return await Promise.resolve('')
+    return '';
   }
 
   async waitUntilReady() {
@@ -103,11 +98,11 @@ class DeviceDriverBase {
   }
 
   async waitForActive() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async waitForBackground() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async reloadReactNative() {
@@ -121,35 +116,35 @@ class DeviceDriverBase {
   }
 
   async setPermissions(deviceId, bundleId, permissions) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async terminate(deviceId, bundleId) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async shutdown() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setOrientation(deviceId, orientation) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setURLBlacklist(urlList) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async enableSynchronization() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async disableSynchronization() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async resetContentAndSettings() {
-    return await Promise.resolve('');
+    return '';
   }
 
   createRandomDirectory() {
@@ -159,26 +154,23 @@ class DeviceDriverBase {
   }
 
   cleanupRandomDirectory(fileOrDir) {
-    if(path.basename(fileOrDir).startsWith('detoxrand-')) {
+    if (path.basename(fileOrDir).startsWith('detoxrand-')) {
       fs.removeSync(fileOrDir);
     }
   }
 
   getBundleIdFromBinary(appPath) {
-
   }
 
   validateDeviceConfig(deviceConfig) {
-
   }
 
   getPlatform() {
-
   }
 
   async getUiDevice() {
     log.warn(`getUiDevice() is an android specific function, it exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice) make sure you create an android specific test for this scenario`);
-    return await Promise.resolve('');
+    return '';
   }
 
   async cleanup(deviceId, bundleId) {
@@ -194,11 +186,11 @@ class DeviceDriverBase {
 
   async pressBack() {
     log.warn('pressBack() is an android specific function, make sure you create an android specific test for this scenario');
-    return await Promise.resolve('');
+    return '';
   }
 
   async typeText(deviceId, text) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setStatusBar(deviceId, flags) {

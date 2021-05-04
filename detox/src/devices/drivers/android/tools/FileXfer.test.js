@@ -1,4 +1,4 @@
-const deviceId = 'mock-device-id';
+const adbName = 'mock-ADB-name';
 const deviceDestinationDir = '/mock-tmp-dir';
 
 describe('File-transfer util', () => {
@@ -14,26 +14,26 @@ describe('File-transfer util', () => {
   });
 
   it('should create the destination directory on the device', async () => {
-    await uut.prepareDestinationDir(deviceId);
+    await uut.prepareDestinationDir(adbName);
 
-    expect(adb.shell).toHaveBeenCalledWith(deviceId, `rm -fr ${deviceDestinationDir}`);
-    expect(adb.shell).toHaveBeenCalledWith(deviceId, `mkdir -p ${deviceDestinationDir}`);
+    expect(adb.shell).toHaveBeenCalledWith(adbName, `rm -fr ${deviceDestinationDir}`);
+    expect(adb.shell).toHaveBeenCalledWith(adbName, `mkdir -p ${deviceDestinationDir}`);
   });
 
   it('should send a file by path', async () => {
     const sourcePath = '/source/path/source-file.src';
     const destFilename = 'dest-file.dst';
 
-    await uut.send(deviceId, sourcePath, destFilename);
+    await uut.send(adbName, sourcePath, destFilename);
 
-    expect(adb.push).toHaveBeenCalledWith(deviceId, sourcePath, '/mock-tmp-dir/dest-file.dst');
+    expect(adb.push).toHaveBeenCalledWith(adbName, sourcePath, '/mock-tmp-dir/dest-file.dst');
   });
 
   it('should return final destination path', async () => {
     const sourcePath = '/source/path/source-file.src';
     const destFilename = 'dest-file.dst';
 
-    const destPath = await uut.send(deviceId, sourcePath, destFilename);
+    const destPath = await uut.send(adbName, sourcePath, destFilename);
 
     expect(destPath).toEqual(`${deviceDestinationDir}/${destFilename}`);
   });

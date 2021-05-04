@@ -189,7 +189,7 @@ describe('Actions', () => {
     await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
   });
 
-  it(':ios: should get element attributes', async () => {
+  it.only(':ios: should get element attributes', async () => {
     const jestExpect = require('expect');
     const attributes = await element(by.text('Tap Me')).getAttributes();
     jestExpect(attributes.text).toBe('Tap Me');

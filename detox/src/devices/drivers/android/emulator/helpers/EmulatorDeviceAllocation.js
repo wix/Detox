@@ -1,3 +1,5 @@
+const _ = require('lodash');
+const EmulatorDeviceId = require('../EmulatorDeviceId');
 const AndroidDeviceAllocation  = require('../../AndroidDeviceAllocation');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const logger = require('../../../../../utils/logger').child({ __filename });
@@ -19,6 +21,10 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
     this._rand = rand;
   }
 
+  /**
+   * @param avdName
+   * @returns {Promise<EmulatorDeviceId>}
+   */
   async allocateDevice(avdName) {
     this._logAllocationAttempt(avdName);
     const {
@@ -33,11 +39,15 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
     }
     await this._awaitEmulatorBoot(adbName);
     await this._notifyAllocation(adbName, avdName, coldBoot);
-    return adbName;
+    return new EmulatorDeviceId(avdName, adbName);
   }
 
-  async deallocateDevice(adbName) {
-    await this._deviceRegistry.disposeDevice(adbName);
+  /**
+   * @param deviceId {EmulatorDeviceId}
+   * @returns {Promise<void>}
+   */
+  async deallocateDevice(deviceId) {
+    await this._deviceRegistry.disposeDevice(deviceId.adbName);
   }
 
   async _doSynchronizedAllocation(avdName) {

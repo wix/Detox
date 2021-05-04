@@ -57,13 +57,26 @@ class AndroidDriver extends DeviceDriverBase {
     };
   }
 
+  /**
+   * @param deviceQuery {Object | String}
+   * @returns {Promise<AndroidDeviceId>}
+   */
+  async acquireFreeDevice(deviceQuery) {
+  }
+
   async getBundleIdFromBinary(apkPath) {
     const binaryPath = getAbsoluteBinaryPath(apkPath);
     return await this.aapt.getPackageName(binaryPath);
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param _binaryPath {string?}
+   * @param _testBinaryPath {string?}
+   * @returns {Promise<void>}
+   */
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
-    const adbName = this._getAdbName(deviceId);
+    const { adbName } = deviceId;
     const {
       binaryPath,
       testBinaryPath,
@@ -72,14 +85,24 @@ class AndroidDriver extends DeviceDriverBase {
     await this.adb.install(adbName, testBinaryPath);
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async uninstallApp(deviceId, bundleId) {
-    const adbName = this._getAdbName(deviceId);
+    const { adbName } = deviceId;
     await this.emitter.emit('beforeUninstallApp', { deviceId: adbName, bundleId });
     await this.appUninstallHelper.uninstall(adbName, bundleId);
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param paths {Array<String>}
+   * @returns {Promise<void>}
+   */
   async installUtilBinaries(deviceId, paths) {
-    const adbName = this._getAdbName(deviceId);
+    const { adbName } = deviceId;
     for (const path of paths) {
       const packageId = await this.getBundleIdFromBinary(path);
       if (!await this.adb.isPackageInstalled(adbName, packageId)) {
@@ -88,28 +111,38 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param bundleId {String}
+   * @param launchArgs {Object}
+   * @returns {Promise<number>} The app's PID
+   */
+  async launchApp(deviceId, bundleId, launchArgs) {
     return await this._handleLaunchApp({
       manually: false,
       deviceId,
       bundleId,
       launchArgs,
-      languageAndLocale,
     });
   }
 
-  async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param bundleId {String}
+   * @param launchArgs {Object}
+   * @returns {Promise<number>} The app's PID
+   */
+  async waitForAppLaunch(deviceId, bundleId, launchArgs) {
     return await this._handleLaunchApp({
       manually: true,
       deviceId,
       bundleId,
       launchArgs,
-      languageAndLocale,
     });
   }
 
-  async _handleLaunchApp({ manually, deviceId, bundleId, launchArgs, languageAndLocale }) {
-    const adbName = this._getAdbName(deviceId);
+  async _handleLaunchApp({ manually, deviceId, bundleId, launchArgs }) {
+    const { adbName } = deviceId;
 
     await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
 
@@ -130,12 +163,17 @@ class AndroidDriver extends DeviceDriverBase {
     return pid;
   }
 
+  /**
+   * @param params {Object}
+   * @param deviceId {AndroidDeviceId}
+   * @returns {Promise<void>}
+   */
   async deliverPayload(params, deviceId) {
     if (params.delayPayload) {
       return;
     }
 
-    const adbName = this._getAdbName(deviceId);
+    const { adbName } = deviceId;
     const { url, detoxUserNotificationDataURL } = params;
     if (url) {
       await this._startActivityWithUrl(url);
@@ -153,27 +191,41 @@ class AndroidDriver extends DeviceDriverBase {
       }
   }
 
-  async pressBack(deviceId) {
+  async pressBack() {
     await this.uiDevice.pressBack();
   }
 
-  async sendToHome(deviceId, params) {
+  async sendToHome() {
     await this.uiDevice.pressHome();
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param text {String}
+   * @returns {Promise<void>}
+   */
   async typeText(deviceId, text) {
-    const adbName = this._getAdbName(deviceId);
-    await this.adb.typeText(adbName, text);
+    await this.adb.typeText(deviceId.adbName, text);
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async terminate(deviceId, bundleId) {
-    const adbName = this._getAdbName(deviceId);
+    const { adbName } = deviceId;
     await this.emitter.emit('beforeTerminateApp', { deviceId: adbName, bundleId });
     await this._terminateInstrumentation();
     await this.adb.terminate(adbName, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: adbName, bundleId });
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async cleanup(deviceId, bundleId) {
     await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
@@ -187,14 +239,22 @@ class AndroidDriver extends DeviceDriverBase {
     return this.uiDevice;
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param port {Number}
+   * @returns {Promise<void>}
+   */
   async reverseTcpPort(deviceId, port) {
-    const adbName = this._getAdbName(deviceId);
-    await this.adb.reverse(adbName, port);
+    await this.adb.reverse(deviceId.adbName, port);
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param port {Number}
+   * @returns {Promise<void>}
+   */
   async unreverseTcpPort(deviceId, port) {
-    const adbName = this._getAdbName(deviceId);
-    await this.adb.reverseRemove(adbName, port);
+    await this.adb.reverseRemove(deviceId.adbName, port);
   }
 
   async setURLBlacklist(urlList) {
@@ -209,8 +269,13 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(EspressoDetoxApi.setSynchronization(false));
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param screenshotName {String}
+   * @returns {Promise<string>}
+   */
   async takeScreenshot(deviceId, screenshotName) {
-    const adbName = this._getAdbName(deviceId);
+    const { adbName } = deviceId;
 
     const pathOnDevice = this.devicePathBuilder.buildTemporaryArtifactPath('.png');
     await this.adb.screencap(adbName, pathOnDevice);
@@ -228,6 +293,11 @@ class AndroidDriver extends DeviceDriverBase {
     return tempPath;
   }
 
+  /**
+   * @param deviceId {AndroidDeviceId}
+   * @param orientation {'landscape' | 'portrait'}
+   * @returns {Promise<void>}
+   */
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
@@ -338,10 +408,6 @@ class AndroidDriver extends DeviceDriverBase {
       throw new DetoxRuntimeError('PID still not available');
     }
     return pid;
-  }
-
-  _getAdbName(deviceId) {
-    return _.isObjectLike(deviceId) ? deviceId.adbName : deviceId;
   }
 
   async _waitForAppLaunch(adbName, bundleId, launchArgs) {

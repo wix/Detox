@@ -21,7 +21,6 @@ const EMU_BIN_STABLE_SKIN_VER = 28;
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
-    this._name = 'Unspecified Emulator';
     this._deviceRegistry = DeviceRegistry.forAndroid();
 
     const emulatorExec = new EmulatorExec();
@@ -35,41 +34,52 @@ class EmulatorDriver extends AndroidDriver {
     this._deviceAllocation = new EmulatorDeviceAllocation(this._deviceRegistry, freeEmulatorFinder, this._emulatorLauncher, this.adb, this.emitter);
   }
 
-  get name() {
-    return this._name;
-  }
-
+  /**
+   * @param deviceQuery
+   * @returns {Promise<EmulatorDeviceId>}
+   */
   async acquireFreeDevice(deviceQuery) {
     const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
 
     await this._avdValidator.validate(avdName);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName);
 
-    const adbName = await this._deviceAllocation.allocateDevice(avdName);
+    const deviceId = await this._deviceAllocation.allocateDevice(avdName);
+    const { adbName } = deviceId;
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
-
-    this._name = `${adbName} (${avdName})`;
-    return adbName;
+    return deviceId;
   }
 
+  /**
+   * @param deviceId {EmulatorDeviceId}
+   * @param _binaryPath {String}
+   * @param _testBinaryPath {String}
+   * @returns {Promise<void>}
+   */
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
     if (argparse.getArgValue('force-adb-install') === 'true') {
       return await super.installApp(deviceId, _binaryPath, _testBinaryPath);
     }
 
+    const { adbName } = deviceId;
     const {
       binaryPath,
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-    await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
+    await this.appInstallHelper.install(adbName, binaryPath, testBinaryPath);
   }
 
   /*async*/ binaryVersion() {
     return this._emuVersionResolver.resolve();
   }
 
+  /**
+   * @param deviceId {EmulatorDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async cleanup(deviceId, bundleId) {
     try {
       await super.cleanup(deviceId, bundleId);
@@ -78,6 +88,10 @@ class EmulatorDriver extends AndroidDriver {
     }
   }
 
+  /**
+   * @param deviceId {EmulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async shutdown(deviceId) {
     await this._emulatorLauncher.shutdown(deviceId);
   }

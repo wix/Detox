@@ -26,7 +26,8 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
     }, () => this._launchEmulator(emulatorName, launchCommand));
   }
 
-  async shutdown(adbName) {
+  async shutdown(deviceId) {
+    const { adbName } = deviceId;
     await this._notifyPreShutdown(adbName);
     const port = _.split(adbName, '-')[1];
     const telnet = this._telnetGeneratorFn();

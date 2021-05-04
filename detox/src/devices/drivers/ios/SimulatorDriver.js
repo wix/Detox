@@ -2,15 +2,15 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const exec = require('child-process-promise').exec;
-const DeviceRegistry = require('../../DeviceRegistry');
 const IosDriver = require('./IosDriver');
+const SimulatorDeviceId = require('./SimulatorDeviceId');
+const DeviceRegistry = require('../../DeviceRegistry');
 const AppleSimUtils = require('./tools/AppleSimUtils');
 const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
 const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
 const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
-const DetoxConfigError = require('../../../errors/DetoxConfigError');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
@@ -25,11 +25,6 @@ class SimulatorDriver extends IosDriver {
 
     this.applesimutils = new AppleSimUtils();
     this.deviceRegistry = DeviceRegistry.forIOS();
-    this._name = 'Unspecified Simulator';
-  }
-
-  get name() {
-    return this._name;
   }
 
   declareArtifactPlugins() {
@@ -55,11 +50,20 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async cleanup(deviceId, bundleId) {
     await this.deviceRegistry.disposeDevice(deviceId);
     await super.cleanup(deviceId, bundleId);
   }
 
+  /**
+   * @param deviceQuery {Object | String}
+   * @returns {Promise<SimulatorDeviceId>}
+   */
   async acquireFreeDevice(deviceQuery) {
     const udid = await this.deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
@@ -71,8 +75,7 @@ class SimulatorDriver extends IosDriver {
     }
 
     await this._boot(udid, deviceQuery.type || deviceQuery);
-    this._name = `${udid} ${deviceComment}`;
-    return udid;
+    return new SimulatorDeviceId(udid, deviceComment);
   }
 
   async getBundleIdFromBinary(appPath) {
@@ -89,106 +92,186 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async _boot(deviceId, type) {
+  async _boot(udid, type) {
     const deviceLaunchArgs = argparse.getArgValue('deviceLaunchArgs');
-    const coldBoot = await this.applesimutils.boot(deviceId, deviceLaunchArgs);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId, type });
+    const coldBoot = await this.applesimutils.boot(udid, deviceLaunchArgs);
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId: udid, type });
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param binaryPath {String}
+   * @returns {Promise<void>}
+   */
   async installApp(deviceId, binaryPath) {
-    await this.applesimutils.install(deviceId, getAbsoluteBinaryPath(binaryPath));
+    await this.applesimutils.install(deviceId.udid, getAbsoluteBinaryPath(binaryPath));
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async uninstallApp(deviceId, bundleId) {
-    await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
-    await this.applesimutils.uninstall(deviceId, bundleId);
+    const { udid } = deviceId;
+    await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
+    await this.applesimutils.uninstall(udid, bundleId);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param bundleId {String}
+   * @param launchArgs {Object}
+   * @param languageAndLocale {String}
+   * @returns {Promise<number>} The app's PID
+   */
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
-    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
-    const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
-    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
+    const { udid } = deviceId;
+    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId: udid, launchArgs});
+    const pid = await this.applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
+    await this.emitter.emit('launchApp', {bundleId, deviceId: udid, launchArgs, pid});
 
     return pid;
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param bundleId {String}
+   * @param launchArgs {Object}
+   * @param languageAndLocale {String}
+   * @returns {Promise<*|number>}
+   */
   async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
-    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+    const { udid } = deviceId;
 
-    this.applesimutils.printLaunchHint(deviceId, bundleId, launchArgs, languageAndLocale);
+    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId: udid, launchArgs});
+
+    this.applesimutils.printLaunchHint(udid, bundleId, launchArgs, languageAndLocale);
     await pressAnyKey();
 
-    const pid = await this.applesimutils.getPid(deviceId, bundleId);
+    const pid = await this.applesimutils.getPid(udid, bundleId);
     if (Number.isNaN(pid)) {
       throw new DetoxRuntimeError({
         message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
-        hint: `Make sure that the app is running on the device (${deviceId}), visually or via CLI:\n` +
-              `xcrun simctl spawn ${deviceId} launchctl list | grep -F '${bundleId}'\n`,
+        hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
+              `xcrun simctl spawn ${udid} launchctl list | grep -F '${bundleId}'\n`,
       });
     } else {
       log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
     }
 
-    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
+    await this.emitter.emit('launchApp', {bundleId, deviceId: udid, launchArgs, pid});
     return pid;
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
   async terminate(deviceId, bundleId) {
-    await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
-    await this.applesimutils.terminate(deviceId, bundleId);
-    await this.emitter.emit('terminateApp', { deviceId, bundleId });
+    const { udid } = deviceId;
+    await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
+    await this.applesimutils.terminate(udid, bundleId);
+    await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param yesOrNo {Boolean}
+   * @returns {Promise<void>}
+   */
   async setBiometricEnrollment(deviceId, yesOrNo) {
-    await this.applesimutils.setBiometricEnrollment(deviceId, yesOrNo);
+    await this.applesimutils.setBiometricEnrollment(deviceId.udid, yesOrNo);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async matchFace(deviceId) {
-    await this.applesimutils.matchBiometric(deviceId, 'Face');
+    await this.applesimutils.matchBiometric(deviceId.udid, 'Face');
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async unmatchFace(deviceId) {
-    await this.applesimutils.unmatchBiometric(deviceId, 'Face');
+    await this.applesimutils.unmatchBiometric(deviceId.udid, 'Face');
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async matchFinger(deviceId) {
-    await this.applesimutils.matchBiometric(deviceId, 'Finger');
+    await this.applesimutils.matchBiometric(deviceId.udid, 'Finger');
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async unmatchFinger(deviceId) {
-    await this.applesimutils.unmatchBiometric(deviceId, 'Finger');
+    await this.applesimutils.unmatchBiometric(deviceId.udid, 'Finger');
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async sendToHome(deviceId) {
-    await this.applesimutils.sendToHome(deviceId);
+    await this.applesimutils.sendToHome(deviceId.udid);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async shutdown(deviceId) {
-    await this.emitter.emit('beforeShutdownDevice', { deviceId });
+    const { udid } = deviceId;
+
+    await this.emitter.emit('beforeShutdownDevice', { deviceId: udid });
     await this.applesimutils.shutdown(deviceId);
-    await this.emitter.emit('shutdownDevice', { deviceId });
+    await this.emitter.emit('shutdownDevice', { deviceId: udid });
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async setLocation(deviceId, lat, lon) {
-    await this.applesimutils.setLocation(deviceId, lat, lon);
+    await this.applesimutils.setLocation(deviceId.udid, lat, lon);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param bundleId {String}
+   * @param permissions {Object}
+   * @returns {Promise<void>}
+   */
   async setPermissions(deviceId, bundleId, permissions) {
-    await this.applesimutils.setPermissions(deviceId, bundleId, permissions);
+    await this.applesimutils.setPermissions(deviceId.udid, bundleId, permissions);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async clearKeychain(deviceId) {
-    await this.applesimutils.clearKeychain(deviceId)
+    await this.applesimutils.clearKeychain(deviceId.udid);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async resetContentAndSettings(deviceId) {
+    const { udid } = deviceId;
     await this.shutdown(deviceId);
-    await this.applesimutils.resetContentAndSettings(deviceId);
-    await this._boot(deviceId);
-  }
-
-  getLogsPaths(deviceId) {
-    return this.applesimutils.getLogsPaths(deviceId);
+    await this.applesimutils.resetContentAndSettings(udid);
+    await this._boot(udid);
   }
 
   async waitForActive() {
@@ -199,7 +282,13 @@ class SimulatorDriver extends IosDriver {
     return await this.client.waitForBackground();
   }
 
-  async takeScreenshot(udid, screenshotName) {
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param screenshotName {String}
+   * @returns {Promise<String>}
+   */
+  async takeScreenshot(deviceId, screenshotName) {
+    const { udid } = deviceId;
     const tempPath = await temporaryPath.for.png();
     await this.applesimutils.takeScreenshot(udid, tempPath);
 
@@ -212,7 +301,12 @@ class SimulatorDriver extends IosDriver {
     return tempPath;
   }
 
-  async captureViewHierarchy(_udid, artifactName) {
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param artifactName {String}
+   * @returns {Promise<String>}
+   */
+  async captureViewHierarchy(deviceId, artifactName) {
     const viewHierarchyURL = temporaryPath.for.viewhierarchy();
     await this.client.captureViewHierarchy({ viewHierarchyURL });
 
@@ -225,9 +319,9 @@ class SimulatorDriver extends IosDriver {
     return viewHierarchyURL;
   }
 
-  /***
+  /**
    * @private
-   * @param {String | Object} rawDeviceQuery
+   * @param rawDeviceQuery {String | Object}
    * @returns {Promise<String>}
    */
   async _findOrCreateDevice(rawDeviceQuery) {
@@ -316,10 +410,19 @@ class SimulatorDriver extends IosDriver {
       : `(${rawDeviceQuery})`;
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @param flags {Object}
+   * @returns {Promise<void>}
+   */
   async setStatusBar(deviceId, flags) {
     await this.applesimutils.statusBarOverride(deviceId, flags);
   }
 
+  /**
+   * @param deviceId {SimulatorDeviceId}
+   * @returns {Promise<void>}
+   */
   async resetStatusBar(deviceId) {
     await this.applesimutils.statusBarReset(deviceId);
   }

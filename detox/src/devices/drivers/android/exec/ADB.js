@@ -6,6 +6,8 @@ const {getAdbPath} = require('../../../../utils/environment');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
+// TODO rename deviceId => adbName
+
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();

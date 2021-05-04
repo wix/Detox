@@ -58,7 +58,7 @@ class GenyInstance {
     return this.adb.name;
   }
 
-  toString() {
+  toString() { // TODO can this be removed?
     return `GenyCloud:${this.name} (${this.uuid} ${this.adbName})`;
   }
 }

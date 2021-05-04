@@ -1,10 +1,12 @@
 const AsyncEmitter = require('../../../utils/AsyncEmitter');
+const SimulatorDeviceId = require('./SimulatorDeviceId');
 
 describe('IOS simulator driver', () => {
   let MockClient;
   let uut, sim, emitter;
 
-  const deviceId = 'device-id-mock';
+  const UDID = 'sim-udid-mock';
+  const deviceId = new SimulatorDeviceId(UDID, '');
   const bundleId = 'bundle-id-mock';
 
   beforeEach(() => {
@@ -35,7 +37,7 @@ describe('IOS simulator driver', () => {
 
     it('should be passed to AppleSimUtils', async () => {
       await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
-      expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, launchArgs, languageAndLocale);
+      expect(uut.applesimutils.launch).toHaveBeenCalledWith(UDID, bundleId, launchArgs, languageAndLocale);
     });
 
     it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
@@ -44,7 +46,7 @@ describe('IOS simulator driver', () => {
       });
 
       await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
-      expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, {
+      expect(uut.applesimutils.launch).toHaveBeenCalledWith(UDID, bundleId, {
         ...launchArgs,
         dog3: 'Chika, from plugin',
       }, '');
@@ -90,32 +92,32 @@ describe('IOS simulator driver', () => {
 
     it('enrolls in biometrics by passing to AppleSimUtils', async () => {
       await sim.setBiometricEnrollment(deviceId, 'YES');
-      expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'YES');
+      expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(UDID, 'YES');
     });
 
     it('disenrolls in biometrics by passing to AppleSimUtils', async () => {
       await sim.setBiometricEnrollment(deviceId, 'NO');
-      expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'NO');
+      expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(UDID, 'NO');
     });
 
     it('matches a face by passing to AppleSimUtils', async () => {
       await sim.matchFace(deviceId);
-      expect(sim.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
+      expect(sim.applesimutils.matchBiometric).toHaveBeenCalledWith(UDID, 'Face');
     });
 
     it('fails to match a face by passing to AppleSimUtils', async () => {
       await sim.unmatchFace(deviceId);
-      expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
+      expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(UDID, 'Face');
     });
 
     it('matches a face by passing to AppleSimUtils', async () => {
       await sim.matchFinger(deviceId);
-      expect(sim.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
+      expect(sim.applesimutils.matchBiometric).toHaveBeenCalledWith(UDID, 'Finger');
     });
 
     it('fails to match a face by passing to AppleSimUtils', async () => {
       await sim.unmatchFinger(deviceId);
-      expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
+      expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(UDID, 'Finger');
     })
   });
 
@@ -188,6 +190,15 @@ describe('IOS simulator driver', () => {
         { byType: 'iPad 2', byOS: 'iOS 9.3.6' },
         'Searching for device by type = "iPad 2" and by OS = "iOS 9.3.6" ...'
       );
+    });
+
+    it('should return an encapsulated device ID', async () => {
+      jest.spyOn(uut.deviceRegistry, 'allocateDevice').mockReturnValue(UDID);
+
+      const deviceId = await uut.acquireFreeDevice({ type: 'iPod 32gb' });
+      expect(deviceId.constructor.name).toEqual('SimulatorDeviceId');
+      expect(deviceId.udid).toEqual(UDID);
+      expect(deviceId.id).toEqual(UDID);
     });
   });
 });

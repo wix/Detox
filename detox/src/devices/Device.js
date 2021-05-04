@@ -36,7 +36,7 @@ class Device {
   }
 
   get name() {
-    return this.deviceDriver.name;
+    return (this._deviceId ? this._deviceId.description : 'UNSPECIFIED_DEVICE');
   }
 
   get type() {

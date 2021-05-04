@@ -1,6 +1,7 @@
 const semver = require('semver');
 const onSignalExit = require('signal-exit');
 const AndroidDriver = require('../AndroidDriver');
+const GenyCloudDeviceId = require('./GenycloudDeviceId');
 const InstanceLauncher = require('./helpers/GenyCloudInstanceLauncher');
 const GenyCloudInstanceAllocation = require('./helpers/GenyCloudInstanceAllocation');
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
@@ -23,7 +24,6 @@ const cleanupLogData = {
 class GenyCloudDriver extends AndroidDriver {
   constructor(config) {
     super(config);
-    this._name = 'Unspecified GMSaaS Emulator';
 
     this._exec = new GenyCloudExec(environment.getGmsaasPath());
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
@@ -42,15 +42,15 @@ class GenyCloudDriver extends AndroidDriver {
     this._authService = new AuthService(this._exec);
   }
 
-  get name() {
-    return this._name;
-  }
-
   async prepare() {
     await this._validateGmsaasVersion();
     await this._validateGmsaasAuth();
   }
 
+  /**
+   * @param deviceQuery {String}
+   * @returns {Promise<GenyCloudDeviceId>}
+   */
   async acquireFreeDevice(deviceQuery) {
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
@@ -60,11 +60,17 @@ class GenyCloudDriver extends AndroidDriver {
     await this.adb.apiLevel(instance.adbName);
     await this.adb.disableAndroidAnimations(instance.adbName);
 
-    this._name = instance.toString();
-    return instance;
+    return GenyCloudDeviceId.create(instance);
   }
 
-  async installApp({ adbName }, _binaryPath, _testBinaryPath) {
+  /**
+   * @param deviceId {GenyCloudDeviceId}
+   * @param _binaryPath {String}
+   * @param _testBinaryPath {String}
+   * @returns {Promise<void>}
+   */
+  async installApp(deviceId, _binaryPath, _testBinaryPath) {
+    const { adbName } = deviceId;
     const {
       binaryPath,
       testBinaryPath,
@@ -72,16 +78,25 @@ class GenyCloudDriver extends AndroidDriver {
     await this.appInstallHelper.install(adbName, binaryPath, testBinaryPath);
   }
 
-  async cleanup(instance, bundleId) {
+  /**
+   * @param deviceId {GenyCloudDeviceId}
+   * @param bundleId {String}
+   * @returns {Promise<void>}
+   */
+  async cleanup(deviceId, bundleId) {
       try {
-        await super.cleanup(instance, bundleId);
+        await super.cleanup(deviceId, bundleId);
       } finally {
-        await this._instanceAllocation.deallocateDevice(instance.uuid);
+        await this._instanceAllocation.deallocateDevice(deviceId.instanceUUID);
       }
   }
 
-  async shutdown(instance) {
-    await this._instanceLauncher.shutdown(instance);
+  /**
+   * @param deviceId {GenyCloudDeviceId}
+   * @returns {Promise<void>}
+   */
+  async shutdown(deviceId) {
+    await this._instanceLauncher.shutdown(deviceId);
   }
 
   _assertRecipe(deviceQuery, recipe) {
