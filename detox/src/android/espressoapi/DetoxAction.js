@@ -179,6 +179,17 @@ class DetoxAction {
     };
   }
 
+  static getAttributes() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "getAttributes",
+      args: []
+    };
+  }
+
 }
 
 module.exports = DetoxAction;

@@ -106,6 +106,11 @@ class NativeElement {
     });
     return filePath;
   }
+
+  async getAttributes() {
+    const result = await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
+    return JSON.parse(result);
+  }
 }
 
 module.exports = {

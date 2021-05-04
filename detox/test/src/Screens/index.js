@@ -26,6 +26,7 @@ import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
 import VisibilityScreen from './VisibilityScreen';
 import ExpectationsScreen from './ExpectationsScreen';
+import AttributesScreen from './AttributesScreen';
 
 export {
   SanityScreen,
@@ -56,4 +57,5 @@ export {
   VirtualizedListStressScreen,
   VisibilityScreen,
   ExpectationsScreen,
+  AttributesScreen,
 };
