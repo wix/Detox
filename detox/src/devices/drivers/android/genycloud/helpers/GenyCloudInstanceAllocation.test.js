@@ -6,9 +6,9 @@ describe('Genymotion-Cloud instance allocation', () => {
   let retry;
   let eventEmitter;
   let deviceRegistry;
-  let deviceCleanupRegistry;
   let instanceLookupService;
   let instanceLifecycleService;
+  let instanceLauncher;
   let GenyInstance;
   let uut;
   beforeEach(() => {
@@ -25,7 +25,6 @@ describe('Genymotion-Cloud instance allocation', () => {
     const DeviceRegistry = jest.genMockFromModule('../../../../../devices/DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
-    deviceCleanupRegistry = new DeviceRegistry();
 
     const InstanceLookupService = jest.genMockFromModule('../services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
@@ -33,10 +32,13 @@ describe('Genymotion-Cloud instance allocation', () => {
     const InstanceLifecycleService = jest.genMockFromModule('../services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
+    const InstanceLauncher = jest.genMockFromModule('./GenyCloudInstanceLauncher');
+    instanceLauncher = new InstanceLauncher();
+
     GenyInstance = jest.genMockFromModule('../services/dto/GenyInstance');
 
     const InstanceAllocation = require('./GenyCloudInstanceAllocation');
-    uut = new InstanceAllocation(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService, eventEmitter);
+    uut = new InstanceAllocation(deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter);
   });
 
   const aRecipe = () => ({
@@ -219,16 +221,13 @@ describe('Genymotion-Cloud instance allocation', () => {
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
-    it('should register a new instance for cleanup', async () => {
+    it('should "launch" a new instance', async () => {
       const instance = aFullyConnectedInstance();
       givenNoFreeInstances();
       givenCreatedInstance(instance);
 
       await uut.allocateDevice(aRecipe());
-      expect(deviceCleanupRegistry.allocateDevice).toHaveBeenCalledWith({
-        uuid: instance.uuid,
-        name: instance.name,
-      });
+      expect(instanceLauncher.launch).toHaveBeenCalledWith(instance);
     });
 
     it('should not register an existing instance for cleanup', async () => {
@@ -236,7 +235,7 @@ describe('Genymotion-Cloud instance allocation', () => {
       givenFreeInstance(instance);
 
       await uut.allocateDevice(aRecipe());
-      expect(deviceCleanupRegistry.allocateDevice).not.toHaveBeenCalled();
+      expect(instanceLauncher.launch).not.toHaveBeenCalled();
     });
 
     it('should log pre-allocate message', async () => {
@@ -304,51 +303,22 @@ describe('Genymotion-Cloud instance allocation', () => {
   });
 
   describe('Deallocation', () => {
-    const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
-
-    it('should delete the associated instance', async () => {
-      const instance = aFullyConnectedInstance();
-      await uut.deallocateDevice(instance);
-      expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(instance.uuid);
+    it('should dispose the instance from the standard device registry', async () => {
+      const instance = anOnlineInstance();
+      await uut.deallocateDevice(instance.uuid)
+      expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
     });
 
-    it('should fail if deletion fails', async () => {
-      givenAnInstanceDeletionError();
+    it('should fail if registry fails', async () => {
+      const instance = anOnlineInstance();
+      deviceRegistry.disposeDevice.mockRejectedValue(new Error());
 
       try {
-        const instance = aFullyConnectedInstance();
-        await uut.deallocateDevice(instance);
-        fail('Expected an error');
-      } catch (e) {}
-    });
-
-    it('should remove the instance from the cleanup registry', async () => {
-      const instance = aFullyConnectedInstance();
-      await uut.deallocateDevice(instance);
-      expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(expect.objectContaining({
-        uuid: instance.uuid,
-      }));
-    });
-
-    it('should emit associated events', async () => {
-      const instance = aFullyConnectedInstance();
-      await uut.deallocateDevice(instance);
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: instance.adbName });
-      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: instance.adbName });
-    });
-
-    it('should not emit shutdownDevice prematurely', async () => {
-      givenAnInstanceDeletionError();
-
-      try {
-        const instance = aFullyConnectedInstance();
-        await uut.deallocateDevice(instance);
-        fail('Expected an error');
-      } catch (e) {}
-
-      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-      expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
+        await uut.deallocateDevice(instance.uuid);
+      } catch (e) {
+        return;
+      }
+      throw new Error('Expected an error');
     });
   });
 });

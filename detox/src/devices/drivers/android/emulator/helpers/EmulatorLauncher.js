@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const Tail = require('tail').Tail;
+const AndroidDeviceLauncher = require('../../AndroidDeviceLauncher');
 const EmulatorTelnet = require('../../tools/EmulatorTelnet');
 const { LaunchCommand } = require('../../exec/EmulatorExec');
 const unitLogger = require('../../../../../utils/logger').child({ __filename });
@@ -8,10 +9,10 @@ const retry = require('../../../../../utils/retry');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
-class EmulatorLauncher {
+class EmulatorLauncher extends AndroidDeviceLauncher {
   constructor(emulatorExec, eventEmitter, telnetGeneratorFn = () => new EmulatorTelnet()) {
+    super(eventEmitter);
     this._emulatorExec = emulatorExec;
-    this._eventEmitter = eventEmitter;
     this._telnetGeneratorFn = telnetGeneratorFn;
   }
 
@@ -87,14 +88,6 @@ class EmulatorLauncher {
       log.debug({ event: 'SPAWN_SUCCESS', stdout: true }, childProcessOutput);
       return coldBoot;
     });
-  }
-
-  async _notifyPreShutdown(deviceId) {
-    return this._eventEmitter.emit('beforeShutdownDevice', { deviceId });
-  }
-
-  async _notifyShutdownCompleted(deviceId) {
-    return this._eventEmitter.emit('shutdownDevice', { deviceId });
   }
 }
 

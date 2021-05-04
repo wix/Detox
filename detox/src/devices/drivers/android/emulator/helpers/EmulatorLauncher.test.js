@@ -39,7 +39,7 @@ describe('Emulator launcher', () => {
     // TODO
   });
 
-  describe('teardown', () => {
+  describe('shutdown', () => {
     it('should kill device via telnet', async () => {
       await uut.shutdown(adbName);
 
