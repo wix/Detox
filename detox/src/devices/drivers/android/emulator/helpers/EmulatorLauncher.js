@@ -1,15 +1,19 @@
 const _ = require('lodash');
 const fs = require('fs');
 const Tail = require('tail').Tail;
-const { LaunchCommand } = require('../exec/EmulatorExec');
-const unitLogger = require('../../../../utils/logger').child({ __filename });
-const retry = require('../../../../utils/retry');
+const AndroidDeviceLauncher = require('../../AndroidDeviceLauncher');
+const EmulatorTelnet = require('../../tools/EmulatorTelnet');
+const { LaunchCommand } = require('../../exec/EmulatorExec');
+const unitLogger = require('../../../../../utils/logger').child({ __filename });
+const retry = require('../../../../../utils/retry');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
-class EmulatorLauncher {
-  constructor(emulatorExec) {
+class EmulatorLauncher extends AndroidDeviceLauncher {
+  constructor(emulatorExec, eventEmitter, telnetGeneratorFn = () => new EmulatorTelnet()) {
+    super(eventEmitter);
     this._emulatorExec = emulatorExec;
+    this._telnetGeneratorFn = telnetGeneratorFn;
   }
 
   async launch(emulatorName, options = {port: undefined}) {
@@ -20,6 +24,15 @@ class EmulatorLauncher {
       interval: 100,
       conditionFn: isUnknownEmulatorError,
     }, () => this._launchEmulator(emulatorName, launchCommand));
+  }
+
+  async shutdown(adbName) {
+    await this._notifyPreShutdown(adbName);
+    const port = _.split(adbName, '-')[1];
+    const telnet = this._telnetGeneratorFn();
+    await telnet.connect(port);
+    await telnet.kill();
+    await this._notifyShutdownCompleted(adbName);
   }
 
   _launchEmulator(emulatorName, launchCommand) {

@@ -18,14 +18,6 @@ class AndroidDeviceAllocation {
   async _notifyAllocation(deviceId, type, isNew) {
     return this._eventEmitter.emit('bootDevice', { coldBoot: isNew, deviceId, type, });
   }
-
-  async _notifyPreDeallocation(deviceId) {
-    return this._eventEmitter.emit('beforeShutdownDevice', { deviceId });
-  }
-
-  async _notifyDeallocationCompleted(deviceId) {
-    return this._eventEmitter.emit('shutdownDevice', { deviceId });
-  }
 }
 
 AndroidDeviceAllocation.ALLOCATE_DEVICE_LOG_EVT = ALLOCATE_DEVICE_LOG_EVT;

@@ -1,5 +1,4 @@
 const AndroidDeviceAllocation = require('../../AndroidDeviceAllocation');
-const GenyCloudInstanceHandle = require('../GenyCloudInstanceHandle');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const retry = require('../../../../../utils/retry');
 const logger = require('../../../../../utils/logger').child({ __filename });
@@ -7,12 +6,12 @@ const logger = require('../../../../../utils/logger').child({ __filename });
 const { ALLOCATE_DEVICE_LOG_EVT } = AndroidDeviceAllocation;
 
 class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
-  constructor(deviceRegistry, deviceCleanupRegistry, instanceLookupService, instanceLifecycleService, eventEmitter) {
+  constructor(deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter) {
     super(deviceRegistry, eventEmitter, logger);
 
-    this._deviceCleanupRegistry = deviceCleanupRegistry;
     this._instanceLookupService = instanceLookupService;
     this._instanceLifecycleService = instanceLifecycleService;
+    this._instanceLauncher = instanceLauncher;
   }
 
   async allocateDevice(recipe) {
@@ -21,8 +20,7 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
     this._logAllocationResult(recipe, instance);
 
     if (isNew) {
-      const instanceHandle = new GenyCloudInstanceHandle(instance);
-      await this._deviceCleanupRegistry.allocateDevice(instanceHandle);
+      await this._instanceLauncher.launch(instance);
     }
 
     instance = await this._waitForInstanceBoot(instance);
@@ -32,13 +30,8 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
     return instance;
   }
 
-  async deallocateDevice(instance) {
-    const instanceHandle = new GenyCloudInstanceHandle(instance);
-
-    await this._notifyPreDeallocation(instance.adbName);
-    await this._instanceLifecycleService.deleteInstance(instance.uuid);
-    await this._deviceCleanupRegistry.disposeDevice(instanceHandle);
-    await this._notifyDeallocationCompleted(instance.adbName);
+  async deallocateDevice(instanceUUID) {
+    await this._deviceRegistry.disposeDevice(instanceUUID);
   }
 
   async _doSynchronizedAllocation(recipe) {

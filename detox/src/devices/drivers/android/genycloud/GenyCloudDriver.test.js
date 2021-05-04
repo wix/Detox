@@ -43,6 +43,7 @@ describe('Genymotion-cloud driver', () => {
   let recipeQuerying;
   let deviceRegistry;
   let deviceCleanupRegistry;
+  let instanceLauncher;
   let instanceAllocation;
   let authServiceObj;
   beforeEach(() => {
@@ -77,6 +78,10 @@ describe('Genymotion-cloud driver', () => {
     jest.mock('./helpers/GenyRecipeQuerying');
     const GenyRecipeQuerying = require('./helpers/GenyRecipeQuerying');
     recipeQuerying = () => latestInstanceOf(GenyRecipeQuerying);
+
+    jest.mock('./helpers/GenyCloudInstanceLauncher');
+    const InstanceLauncher = require('./helpers/GenyCloudInstanceLauncher');
+    instanceLauncher = () => latestInstanceOf(InstanceLauncher);
 
     jest.mock('./helpers/GenyCloudInstanceAllocation');
     const InstanceAllocation = require('./helpers/GenyCloudInstanceAllocation');
@@ -278,15 +283,26 @@ describe('Genymotion-cloud driver', () => {
         Instrumentation = require('../tools/MonitoredInstrumentation');
       });
 
-      it('should dispose an instance based on its UUID', async () => {
+      it('should deallocate an instance based on its UUID', async () => {
         const instance = anInstance();
         await uut.cleanup(instance, 'bundle-id');
-        expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
+        expect(instanceAllocation().deallocateDevice).toHaveBeenCalledWith(instance.uuid);
       });
 
       it('should kill instrumentation', async () => {
         await uut.cleanup(anInstance(), 'bundle-id');
         expect(instrumentationObj().terminate).toHaveBeenCalled();
+      });
+
+      it('should deallocate the instance even if instrumentation termination fails', async () => {
+        const instance = anInstance();
+
+        instrumentationObj().terminate.mockRejectedValue(new Error());
+
+        try {
+          await uut.cleanup(instance, 'bundle-id');
+        } catch (e) {}
+        expect(instanceAllocation().deallocateDevice).toHaveBeenCalledWith(instance.uuid);
       });
     });
 
@@ -294,7 +310,7 @@ describe('Genymotion-cloud driver', () => {
       it('should deallocate the instance', async () => {
         const instance = anInstance();
         await uut.shutdown(instance);
-        expect(instanceAllocation().deallocateDevice).toHaveBeenCalledWith(instance);
+        expect(instanceLauncher().shutdown).toHaveBeenCalledWith(instance);
       });
     });
   });

@@ -1,7 +1,5 @@
-const _ = require('lodash');
 const AndroidDeviceAllocation  = require('../../AndroidDeviceAllocation');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
-const EmulatorTelnet = require('../../tools/EmulatorTelnet');
 const logger = require('../../../../../utils/logger').child({ __filename });
 const retry = require('../../../../../utils/retry');
 const { traceCall } = require('../../../../../utils/trace');
@@ -12,13 +10,13 @@ const DetoxEmulatorsPortRange = {
 };
 
 class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
-  constructor(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, telnetGeneratorFn = () => new EmulatorTelnet(), rand = Math.random) {
+
+  constructor(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, rand = Math.random) {
     super(deviceRegistry, eventEmitter, logger);
     this._freeDeviceFinder = freeDeviceFinder;
     this._emulatorLauncher = emulatorLauncher;
     this._adb = adb;
     this._rand = rand;
-    this._telnetGeneratorFn = telnetGeneratorFn;
   }
 
   async allocateDevice(avdName) {
@@ -39,12 +37,7 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
   }
 
   async deallocateDevice(adbName) {
-    await this._notifyPreDeallocation(adbName);
-    const port = _.split(adbName, '-')[1];
-    const telnet = this._telnetGeneratorFn();
-    await telnet.connect(port);
-    await telnet.kill();
-    await this._notifyDeallocationCompleted(adbName);
+    await this._deviceRegistry.disposeDevice(adbName);
   }
 
   async _doSynchronizedAllocation(avdName) {

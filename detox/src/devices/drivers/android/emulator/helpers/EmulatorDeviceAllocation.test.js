@@ -10,7 +10,6 @@ describe('Android emulator device allocation', () => {
   let emulatorLauncher;
   let adb;
   let randomFunc;
-  let emulatorTelnet;
   let uut;
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
@@ -20,7 +19,11 @@ describe('Android emulator device allocation', () => {
     retry = require('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const EmulatorLauncher = jest.genMockFromModule('../EmulatorLauncher');
+    jest.mock('../../../../../utils/trace', () => ({
+      traceCall: jest.fn().mockImplementation((__, func) => func()),
+    }));
+
+    const EmulatorLauncher = jest.genMockFromModule('./EmulatorLauncher');
     emulatorLauncher = new EmulatorLauncher();
 
     const AsyncEmitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
@@ -37,18 +40,10 @@ describe('Android emulator device allocation', () => {
     adb = new ADB();
     adb.isBootComplete.mockResolvedValue(true);
 
-    const EmulatorTelnet = jest.genMockFromModule('../../tools/EmulatorTelnet');
-    emulatorTelnet = new EmulatorTelnet();
-    jest.mock('../../tools/EmulatorTelnet');
-
     randomFunc = jest.fn().mockReturnValue(1);
 
-    jest.mock('../../../../../utils/trace', () => ({
-      traceCall: jest.fn().mockImplementation((__, func) => func()),
-    }));
-
     const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-    uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, () => emulatorTelnet, randomFunc);
+    uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, randomFunc);
   });
 
   const givenFreeDevice = (adbName) => freeDeviceFinder.findFreeDevice.mockResolvedValue(adbName);
@@ -119,8 +114,10 @@ describe('Android emulator device allocation', () => {
 
       try {
         await uut.allocateDevice(avdName);
-        fail('Expected an error');
-      } catch (e) {}
+      } catch (e) {
+        return;
+      }
+      throw new Error('Expected an error');
     });
 
     it('should randomize a custom port for a newly launched emulator, in the 10000-20000 range', async () => {
@@ -176,11 +173,12 @@ describe('Android emulator device allocation', () => {
 
       try {
         await uut.allocateDevice(avdName);
-        fail('Expected an error');
       } catch (e) {
         expect(e.constructor.name).toEqual('DetoxRuntimeError');
         expect(e.toString()).toContain(`Waited for ${adbName} to complete booting for too long!`);
+        return;
       }
+      throw new Error('Expected an error');
     });
 
     it('should call retry with decent options', async () => {
@@ -241,44 +239,27 @@ describe('Android emulator device allocation', () => {
       givenDeviceBootCompleted();
 
       const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-      uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, () => emulatorTelnet, undefined);
+      uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, undefined);
 
       await uut.allocateDevice(avdName);
     });
   });
 
   describe('deallocation', () => {
-    it('should kill device via telnet', async () => {
+    it('should dispose the device from the registry', async () => {
       await uut.deallocateDevice(adbName);
-
-      expect(emulatorTelnet.connect).toHaveBeenCalledWith('1117');
-      expect(emulatorTelnet.kill).toHaveBeenCalled();
+      expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(adbName);
     });
 
-    it('should emit associated events', async () => {
-      await uut.deallocateDevice(adbName);
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: adbName });
-      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: adbName });
-    });
-
-    it('should not emit shutdownDevice prematurely', async () => {
-      emulatorTelnet.kill.mockRejectedValue(new Error());
+    it('should fail if registry fails', async () => {
+      deviceRegistry.disposeDevice.mockRejectedValue(new Error());
 
       try {
         await uut.deallocateDevice(adbName);
-        fail('Expected an error');
-      } catch (e) {}
-
-      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-      expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
-    });
-
-    it('should resort to a default telnet generator func', async () => {
-      const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-      uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, undefined, randomFunc);
-
-      await uut.deallocateDevice(adbName);
+      } catch (e) {
+        return;
+      }
+      throw new Error('Expected an error');
     });
   });
 });

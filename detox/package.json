@@ -105,7 +105,7 @@
       "src/devices/drivers/DeviceDriverBase.js",
       "src/devices/drivers/android/AndroidDriver.js",
       "src/devices/drivers/android/emulator/EmulatorDriver.js",
-      "src/devices/drivers/android/emulator/EmulatorLauncher.js",
+      "src/devices/drivers/android/emulator/helpers/EmulatorLauncher.js",
       "src/devices/drivers/android/exec/AAPT.js",
       "src/devices/drivers/android/exec/ADB.js",
       "src/devices/drivers/android/exec/EmulatorExec.js",
