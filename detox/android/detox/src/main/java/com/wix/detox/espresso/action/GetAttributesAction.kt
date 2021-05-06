@@ -61,13 +61,16 @@ open class GetAttributesAction()
     // VIEW
     fun getId(rootObject: JSONObject, view: View) {
         val viewId = view.getId()
-        if (viewId != View.NO_ID) rootObject.put("id", viewId)
+        if (viewId != View.NO_ID) rootObject.put("identifier", viewId)
     }
 
     fun getVisibility(rootObject: JSONObject, view: View) {
         val visibilityMap = mapOf(View.VISIBLE to "visible", View.INVISIBLE to "invisible", View.GONE to "gone")
         val visibility = visibilityMap.get(view.getVisibility())
-        if (visibility != null) rootObject.put("visibility", visibility)
+        if (visibility != null) {
+            rootObject.put("visible", view.getVisibility() == View.VISIBLE)
+            rootObject.put("visibility", visibility)
+        }
     }
 
     fun getContentDescription(rootObject: JSONObject, view: View) {
@@ -102,7 +105,7 @@ open class GetAttributesAction()
 
     fun getIsEnabled(rootObject: JSONObject, view: View) {
         val isEnabled = view.isEnabled()
-        rootObject.put("isEnabled", isEnabled)
+        rootObject.put("enabled", isEnabled)
     }
 
     // CHECKBOX

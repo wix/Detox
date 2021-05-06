@@ -231,22 +231,24 @@ Manipulates the UI to change the displayed value of the slider element to a new 
 await element(by.id('slider')).adjustSliderToPosition(0.75);
 ```
 
-### `getAttributes()`  iOS only
+### `getAttributes()`
 
 Returns an object, representing the attributes of the element.
 
 Retrieved attributes are:
 
 - `text`—the text value of the element <br/>
-- `label`—the label of the element (matches `accessibilityLabel`) <br/>
-- `value`—the value of the element (matches `accessibilityValue`) <br/>
-- `placeholder`—the placeholder text value of the element <br/>
-- `identifier`—the identifier of the element (matches `accessibilityIdentifier`) <br/>
+- `label`—the label of the element (matches `accessibilityLabel` for ios, and `contentDescription` for android) <br/>
+- `placeholder`—the placeholder text value of the element (matches `hint` for android) <br/>
 - `enabled`—whether or not the element is enabled for user interaction <br/>
+- `identifier`—the identifier of the element (matches `accessibilityIdentifier` for ios) <br/>
+- `visible`—whether the element is visible at the activation point <br/>
+
+###### iOS only
+- `value`—the value of the element (matches `accessibilityValue`) <br/>
 - `activationPoint`—the activation point of the element, in element coordinate space <br/>
 - `normalizedActivationPoint`—the activation point of the element, in normalized percentage ([0.0, 1.0]) <br/>
 - `hittable`—whether the element is hittable at the activation point <br/>
-- `visible`—whether the element is visible at the activation point <br/>
 - `frame`—the frame of the element, in screen coordinate space <br/>
 - `elementFrame`—the frame of the element, in container coordinate space <br/>
 - `elementBounds`—the bounds of the element, in element coordinate space <br/>
@@ -257,6 +259,18 @@ Retrieved attributes are:
 - `contentOffset`—the content offset (in case the element is a scroll view) <br/>
 - `contentInset`—the content inset (in case the element is a scroll view) <br/>
 - `adjustedContentInset`—the adjusted content inset (in case the element is a scroll view) <br/>
+
+###### Android only
+- `visibility`—the visibility of the element - visible, invisible or gone <br/>
+- `width`—width of the element <br/>
+- `height`—height of the element <br/>
+- `elevation`—elevation of the element <br/>
+- `alpha`—alpha value for the element <br/>
+- `hasFocus`—does the element have focus <br/>
+- `textSize`—the text size for the text element <br/>
+- `length`—the length of the text element <br/>
+- `lineHeight`—the line height for text element <br/>
+- `isChecked`—the checked state for the element (in case the element is a checkbox) <br/>
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 
