@@ -1,8 +1,8 @@
 {
   "name": "detox-cli",
   "version": "18.0.0",
-  "description": "detox CLI tool wrapper",
-  "main": "index.js",
+  "description": "Optional wrapper for Detox CLI, meant to be installed globally",
+  "main": "cli.js",
   "scripts": {
     "test": ":"
   },
@@ -17,20 +17,14 @@
     "detox",
     "cli"
   ],
-  "author": "Rotem Mizrachi Meidan <rotemm@wix.com>",
+  "author": "Yaroslav Serhieiev <yaroslavs@wix.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wix/detox/issues"
+    "url": "https://github.com/wix/Detox/issues"
   },
   "dependencies": {
-    "commander": "^2.9.0",
-    "minimist": "^1.2.0"
+    "chalk": "^4.0.0",
+    "is-installed-globally": "^0.4.0"
   },
-  "devDependencies": {
-    "jest": "*"
-  },
-  "homepage": "https://github.com/wix/detox#readme",
-  "jest": {
-    "verbose": true
-  }
+  "homepage": "https://github.com/wix/Detox"
 }
