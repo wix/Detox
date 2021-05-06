@@ -118,7 +118,7 @@ open class GetAttributesAction()
     // CHECKBOX
     fun getCheckboxChecked(rootObject: JSONObject, view: CheckBox) {
         val isChecked = view.isChecked()
-        rootObject.put("isChecked", isChecked.toString())
+        rootObject.put("isChecked", isChecked)
     }
 
     //TEXTVIEW

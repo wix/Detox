@@ -1,57 +1,40 @@
 import React, { Component } from 'react';
 import {
-  BackHandler,
-  Platform,
   Text,
   View
 } from 'react-native';
-
-const isIos = Platform.OS === 'ios';
-const isAndroid = Platform.OS === 'android';
+import CheckBox from '@react-native-community/checkbox';
 
 export default class AttributesScreen extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      backPressed: false,
+      checked: false
     }
   }
 
-  componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+  changeCheckboxState() {
+    this.setState({
+      checked: !this.state.checked
+    })
   }
 
   render() {
-    if (this.state.backPressed) return this.renderPopupBackPressedDetected();
-
     return (
-      <View>
+      <>
         <View
           testID={'viewId'}
           width={100}
           height={100}
-          />
+        />
         <Text
           testID={'textViewId'}
         >TextView</Text>
-      </View>
+        <CheckBox
+          testID={'checkboxId'}
+        />
+      </>
     );
   }
-
-  renderPopupBackPressedDetected() {
-    return (
-      <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 25 }}>
-          Back pressed !
-        </Text>
-      </View>
-    );
-  }
-
-  backHandler() {
-    this.setState({
-      backPressed: true
-    });
-    return true;
-  };
 }

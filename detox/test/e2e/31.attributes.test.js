@@ -22,17 +22,17 @@ describe(':android: Attributes', () => {
     const attrJson = await element(by.id('textViewId')).getAttributes();
     const expectedText = 'TextView';
 
-    jestExpect(attrJson.alpha).toBe(1);
-    jestExpect(attrJson.visibility).toBe("visible");
-    jestExpect(attrJson.elevation).toBe(0);
-    jestExpect(attrJson.height).toBe(51);
-    jestExpect(attrJson.width).toBe(1080);
-    jestExpect(attrJson.hasFocus).toBeTruthy();
-    jestExpect(attrJson.isEnabled).toBeTruthy();
-
     jestExpect(attrJson.text).toBe(expectedText);
     jestExpect(attrJson.length).toBe(expectedText.length);
     jestExpect(attrJson.textSize).toBe(37.0);
     jestExpect(attrJson.lineHeight).toBe(43);
+  });
+
+  it('should get attributes for checkbox', async () => {
+    let attrJson = await element(by.id('checkboxId')).getAttributes();
+    jestExpect(attrJson.isChecked).toBe(false);
+    await element(by.id('checkboxId')).tap();
+    attrJson = await element(by.id('checkboxId')).getAttributes();
+    jestExpect(attrJson.isChecked).toBe(true);
   });
 });
