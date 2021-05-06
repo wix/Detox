@@ -2,9 +2,27 @@
 const cp = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
+const isInstalledGlobally = require('is-installed-globally');
+
+/**
+ * @param {string} msg
+ */
+function log(msg) {
+  console.error(chalk.red(msg));
+}
 
 function main([_$0, _detox, ...cliArgs]) {
   const [command] = cliArgs;
+
+  if (!isInstalledGlobally) {
+    log('Error: "detox-cli" package is not meant to be installed locally, exiting...');
+    log('HINT: Remove the local installation and reinstall it globally:');
+    log('  npm uninstall detox-cli');
+    log('  npm install -g detox-cli\n');
+
+    return 1;
+  }
 
   if (command === 'recorder' && process.platform === 'darwin') {
     return spawnRecorder(cliArgs);
@@ -19,11 +37,11 @@ function spawnDetoxBinary(cliArgs) {
   const binaryPath = path.join(nodeBinariesPath, `detox${isWin32 ? '.cmd' : ''}`);
 
   if (!fs.existsSync(binaryPath)) {
-    console.log(`Failed to find Detox executable at path: ${binaryPath}`);
-    console.log(`\nPossible solutions:`);
-    console.log(`1. Make sure your current working directory is correct.`);
-    console.log(`2. Run "npm install" to ensure your "node_modules" directory is up-to-date.`);
-    console.log(`3. Run "npm install detox --save-dev" for the fresh Detox installation in your project.\n`);
+    log(`Failed to find Detox executable at path: ${binaryPath}`);
+    log(`\nPossible solutions:`);
+    log(`1. Make sure your current working directory is correct.`);
+    log(`2. Run "npm install" to ensure your "node_modules" directory is up-to-date.`);
+    log(`3. Run "npm install detox --save-dev" for the fresh Detox installation in your project.\n`);
 
     return 1;
   }
@@ -49,13 +67,13 @@ function spawnRecorder([_recorder, ...recorderArgs]) {
   const detoxRecorderPath = path.join(process.cwd(), 'node_modules/detox-recorder');
   const detoxRecorderCLIPath = path.join(detoxRecorderPath, 'DetoxRecorderCLI');
 
-  if (fs.existsSync(detoxRecorderCLIPath)) {
-    const result = cp.spawnSync(detoxRecorderCLIPath, recorderArgs, { stdio: 'inherit' });
-    return result.status;
-  } else {
-    console.log(`Detox Recorder is not installed in this directory: ${detoxRecorderPath}`);
+  if (!fs.existsSync(detoxRecorderCLIPath)) {
+    log(`Detox Recorder is not installed in this directory: ${detoxRecorderPath}`);
     return 1;
   }
+
+  const result = cp.spawnSync(detoxRecorderCLIPath, recorderArgs, { stdio: 'inherit' });
+  return result.status;
 }
 
 function findPathKey() {

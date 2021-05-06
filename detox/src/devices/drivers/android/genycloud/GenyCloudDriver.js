@@ -1,4 +1,4 @@
-const semver = require('semver'); // eslint-disable-line node/no-extraneous-require
+const semver = require('semver');
 const onSignalExit = require('signal-exit');
 const AndroidDriver = require('../AndroidDriver');
 const InstanceLauncher = require('./helpers/GenyCloudInstanceLauncher');
