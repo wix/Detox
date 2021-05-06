@@ -3,14 +3,11 @@ package com.wix.detox.espresso.action
 import android.view.View
 import android.widget.TextView
 import android.widget.CheckBox
-import android.widget.DatePicker
 import androidx.test.espresso.UiController
 import com.wix.detox.espresso.ViewActionWithResult
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.json.JSONObject
-import java.util.Calendar
-import java.util.Date
 
 open class GetAttributesAction()
     : ViewActionWithResult<String?> {
@@ -24,7 +21,6 @@ open class GetAttributesAction()
             getViewAttributes(rootObject, view)
             getTextViewAttributes(rootObject, view)
             getCheckboxAttributes(rootObject, view)
-            getDatePickerAttributes(rootObject, view)
         }
 
         result = rootObject.toString()
@@ -59,12 +55,6 @@ open class GetAttributesAction()
     fun getCheckboxAttributes(rootObject: JSONObject, view: View) {
         if (view is CheckBox) {
             getCheckboxChecked(rootObject, view)
-        }
-    }
-
-    fun getDatePickerAttributes(rootObject: JSONObject, view: View) {
-        if (view is DatePicker) {
-            getDatePickerDate(rootObject, view)
         }
     }
 
@@ -145,19 +135,6 @@ open class GetAttributesAction()
     fun getHint(rootObject: JSONObject, view: TextView) {
         val hint = view.getHint()
         if (hint != null) rootObject.put("placeholder", hint.toString())
-    }
-
-    // DATEPICKER
-    fun getDatePickerDate(rootObject: JSONObject, view: DatePicker) {
-        val datePickerDate = view.getDate()
-        rootObject.put("date", datePickerDate.toString())
-
-    }
-
-    fun DatePicker.getDate(): Date {
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month, dayOfMonth)
-        return calendar.time
     }
 }
 
