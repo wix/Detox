@@ -841,13 +841,13 @@ declare global {
             toNotExist(): R;
 
             /**
-             * Expect the view to be focused.
+             * Expect the view to be focused. (iOS only)
              * @example await expect(element(by.id('loginInput'))).toBeFocused();
              */
             toBeFocused(): R;
 
             /**
-             * Expect the view not to be focused.
+             * Expect the view not to be focused. (iOS only)
              * @example await expect(element(by.id('passwordInput'))).toBeNotFocused();
              */
             toBeNotFocused(): R;
