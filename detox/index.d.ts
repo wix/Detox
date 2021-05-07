@@ -841,6 +841,18 @@ declare global {
             toNotExist(): R;
 
             /**
+             * Expect the view to be focused.
+             * @example await expect(element(by.id('loginInput'))).toBeFocused();
+             */
+            toBeFocused(): R;
+
+            /**
+             * Expect the view not to be focused.
+             * @example await expect(element(by.id('passwordInput'))).toBeNotFocused();
+             */
+            toBeNotFocused(): R;
+
+            /**
              * In React Native apps, expect UI component of type <Text> to have text.
              * In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
              * @example await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');

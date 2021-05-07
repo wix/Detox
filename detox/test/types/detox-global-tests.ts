@@ -29,10 +29,21 @@ describe("Test", () => {
             element(by.id("element").withDescendant(by.id("child_element")))
         ).toNotExist();
 
-        await waitFor(element(by.id("element")))
-            .toBeVisible()
-            .withTimeout(2000);
+        const expectElement = expect(element(by.id('TextField_Id1')));
+
+        await expectElement.toBeVisible();
+        await expectElement.not.toBeVisible();
+        await expectElement.toBeNotVisible();
+
+        await expectElement.toBeFocused();
+        await expectElement.not.toBeFocused();
+        await expectElement.toBeNotFocused();
+
+        const waitForElement = waitFor(element(by.id("element")));
+        await waitForElement.toBeVisible().withTimeout(2000);
+
         await device.pressBack();
+
         await waitFor(element(by.text("Text5")))
             .toBeVisible()
             .whileElement(by.id("ScrollView630"))
