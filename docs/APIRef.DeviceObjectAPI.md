@@ -327,20 +327,29 @@ Sets the simulator location to the given latitude and longitude.
 await device.setLocation(32.0853, 34.7818);
 ```
 
-### `device.enableSynchronization()`
-
-Enable (restore) synchronization (idle/busy monitoring) with the app - namely, resume waiting for the app to go idle before moving forward in the test execution. Enabled by default. **This gets reset on every new instance of the app.**
-```js
-await device.enableSynchronization();
-```
-
 
 ### `device.disableSynchronization()`
-Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution (rather, resort to applying unrecommended `sleep()`'s in your test code...). **This gets reset on every new instance of the app.**
+Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution.
+
+This API is useful for cases where test assertions must be made in an area of your application where it is okay for it to ever remain partly *busy* (e.g. due to an endlessly repeating on-screen animation).
+However, using it inherently suggests that you are likely to resort to applying `sleep()`'s in your test code - testing that area, **which is not recommended and can never be 100% stable.** Therefore, as a rule of thumb, test code running "inside" a sync-disabled mode must be reduced to the bare minimum.
+
+Note: Synchronization is enabled by default, and it gets **re-enabled on every launch of a new instance of the app.**
 
 ```js
 await device.disableSynchronization();
 ```
+
+### `device.enableSynchronization()`
+
+Re-enable synchronization (idle/busy monitoring) with the app - namely, resume waiting for the app to go idle before moving forward in the test execution, after a previous disabling of it through a call to `device.disableSynchronization()`.
+
+:warning: Note: Making this call would resume synchronization **instantly**, having its returned promise only resolve when the app becomes idle again. In other words, this **must only be called after you navigate back to "the safe zone", where the app should be able to eventually become idle again**, or it would remain suspended "forever" (i.e. until a safeguard time-out expires).
+
+```js
+await device.enableSynchronization();
+```
+
 
 ### `device.setURLBlacklist([urls])`
 

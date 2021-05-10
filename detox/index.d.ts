@@ -542,18 +542,30 @@ declare global {
             setURLBlacklist(urls: string[]): Promise<void>;
 
             /**
-             * Enable EarlGrey's synchronization mechanism (enabled by default). This is being reset on every new instance of the app.
+             * Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution.
              *
-             * @example await device.enableSynchronization();
-             */
-            enableSynchronization(): Promise<void>;
-
-            /**
-             * Disable EarlGrey's synchronization mechanism (enabled by default) This is being reset on every new instance of the app.
+             * <p/>This API is useful for cases where test assertions must be made in an area of your application where it is okay for it to ever remain partly *busy* (e.g. due to an
+             * endlessly repeating on-screen animation). However, using it inherently suggests that you are likely to resort to applying `sleep()`'s in your test code - testing
+             * that area, **which is not recommended and can never be 100% stable.
+             * **Therefore, as a rule of thumb, test code running "inside" a sync-disabled mode must be reduced to the bare minimum.
+             *
+             * <p/>Note: Synchronization is enabled by default, and it gets **reenabled on every launch of a new instance of the app.**
              *
              * @example await device.disableSynchronization();
              */
             disableSynchronization(): Promise<void>;
+
+            /**
+             * Reenable synchronization (idle/busy monitoring) with the app - namely, resume waiting for the app to go idle before moving forward in the test execution, after a
+             * previous disabling of it through a call to `device.disableSynchronization()`.
+             *
+             * <p/>Warning: Making this call would resume synchronization **instantly**, having its returned promise only resolve when the app becomes idle again.
+             * In other words, this **must only be called after you navigate back to "the safe zone", where the app should be able to eventually become idle again**, or it would
+             * remain suspended "forever" (i.e. until a safeguard time-out expires).
+             *
+             * @example await device.enableSynchronization();
+             */
+            enableSynchronization(): Promise<void>;
 
             /**
              * Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing previously set permissions.
