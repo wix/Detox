@@ -188,11 +188,4 @@ describe('Actions', () => {
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
   });
-
-  it(':ios: should get element attributes', async () => {
-    const jestExpect = require('expect');
-    const attributes = await element(by.text('Tap Me')).getAttributes();
-    jestExpect(attributes.text).toBe('Tap Me');
-    jestExpect(attributes.label).toBe('Tap Me');
-  });
 });

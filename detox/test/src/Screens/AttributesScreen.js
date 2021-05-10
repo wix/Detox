@@ -30,6 +30,7 @@ export default class AttributesScreen extends Component {
         />
         <Text
           testID={'textViewId'}
+          accessibilityLabel={'TextView'}
         >TextView</Text>
         <CheckBox
           testID={'checkboxId'}

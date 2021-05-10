@@ -1,27 +1,38 @@
 const jestExpect = require('expect');
 
-describe(':android: Attributes', () => {
+describe('Attributes', () => {
+  const expectedText = 'TextView';
+
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('Attributes')).tap();
   });
 
-  it('should get attributes for view', async () => {
+  it('should get common attributes for view', async () => {
+    const attrJson = await element(by.id('viewId')).getAttributes();
+    jestExpect(attrJson.visible).toBe(true);
+    jestExpect(attrJson.enabled).toBe(true);
+  });
+
+  it(':android: should get attributes for view', async () => {
     const attrJson = await element(by.id('viewId')).getAttributes();
 
     jestExpect(attrJson.alpha).toBe(1);
-    jestExpect(attrJson.visible).toBe(true);
     jestExpect(attrJson.visibility).toBe("visible");
     jestExpect(attrJson.elevation).toBe(0);
     jestExpect(attrJson.height).toBe(263);
     jestExpect(attrJson.width).toBe(263);
     jestExpect(attrJson.hasFocus).toBe(true);
-    jestExpect(attrJson.enabled).toBe(true);
   });
 
-  it('should get attributes for textview', async () => {
+  it('should get common attributes for textview', async () => {
     const attrJson = await element(by.id('textViewId')).getAttributes();
-    const expectedText = 'TextView';
+    jestExpect(attrJson.text).toBe(expectedText);
+    jestExpect(attrJson.label).toBe(expectedText);
+  });
+
+  it(':android: should get attributes for textview', async () => {
+    const attrJson = await element(by.id('textViewId')).getAttributes();
 
     jestExpect(attrJson.text).toBe(expectedText);
     jestExpect(attrJson.length).toBe(expectedText.length);
@@ -29,7 +40,7 @@ describe(':android: Attributes', () => {
     jestExpect(attrJson.lineHeight).toBe(43);
   });
 
-  it('should get attributes for checkbox', async () => {
+  it(':android: should get attributes for checkbox', async () => {
     let attrJson = await element(by.id('checkboxId')).getAttributes();
     jestExpect(attrJson.isChecked).toBe(false);
     await element(by.id('checkboxId')).tap();
