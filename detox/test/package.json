@@ -20,6 +20,7 @@
     "integration": "jest --clearCache && jest unit --config integration/config.js -w 1 .",
     "integration-update-snapshots": "npm run integration -- -u",
     "build:ios": "detox build -c ios.sim.release",
+    "build:ios-debug": "detox build -c ios.sim.debug",
     "build:android": "detox build -c android.emu.release",
     "build:android-debug": "detox build -c android.emu.debug",
     "clean:android": "pushd android && rm -fr ../android/detox/build/ && ./gradlew clean && popd",
