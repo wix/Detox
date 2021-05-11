@@ -172,12 +172,9 @@ describe('Genymotion-Cloud instance allocation', () => {
       givenCreatedInstance(instance);
       givenRefreshedInstance(instance);
 
-      try {
-        await uut.allocateDevice(aRecipe());
-        fail('Expected an error');
-      } catch (e) {
-        expect(e.toString()).toContain(`Timeout waiting for instance ${instance.uuid} to be ready`);
-      }
+      await expect(uut.allocateDevice(aRecipe()))
+        .rejects
+        .toThrowError(`Timeout waiting for instance ${instance.uuid} to be ready`);
     });
 
     it('should not wait for created instance to become online if already online', async () => {
@@ -281,10 +278,7 @@ describe('Genymotion-Cloud instance allocation', () => {
 
       eventEmitter.emit.mockRejectedValue(new Error());
 
-      try {
-        await uut.allocateDevice(aRecipe);
-        fail('Expected an error');
-      } catch(e) {}
+      await expect(uut.allocateDevice(aRecipe())).rejects.toThrowError();
     });
 
     it('should emit boot-device event *after* post-allocate log', async () => {
@@ -293,12 +287,8 @@ describe('Genymotion-Cloud instance allocation', () => {
 
       eventEmitter.emit.mockRejectedValue(new Error());
 
-      try {
-        await uut.allocateDevice(aRecipe());
-        fail('Expected an error');
-      } catch(e) {
-        expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-      }
+      await expect(uut.allocateDevice(aRecipe())).rejects.toThrowError();
+      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -313,12 +303,7 @@ describe('Genymotion-Cloud instance allocation', () => {
       const instance = anOnlineInstance();
       deviceRegistry.disposeDevice.mockRejectedValue(new Error());
 
-      try {
-        await uut.deallocateDevice(instance.uuid);
-      } catch (e) {
-        return;
-      }
-      throw new Error('Expected an error');
+      await expect(uut.deallocateDevice(instance.uuid)).rejects.toThrowError();
     });
   });
 });

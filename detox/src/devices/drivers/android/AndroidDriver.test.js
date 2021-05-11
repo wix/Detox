@@ -239,11 +239,7 @@ describe('Android driver', () => {
 
       it('should not send the data if device prep fails', async () => {
         fileXferObj().prepareDestinationDir.mockRejectedValue(new Error())
-        try {
-          await uut.launchApp(deviceId, bundleId, notificationArgs, '');
-          fail('Expected an error');
-        } catch (e) {
-        }
+        await expect(uut.launchApp(deviceId, bundleId, notificationArgs, '')).rejects.toThrowError();
       });
 
       it('should launch instrumentation with a modified notification data URL arg', async () => {
@@ -332,12 +328,10 @@ describe('Android driver', () => {
       setTimeout(() => waitForCrashReject(crashError), 1);
 
       try {
-        await promise;
-        fail('Expected an error and none was thrown');
-      } catch (e) {
-        expect(e).toEqual(crashError);
+        await expect(promise).rejects.toThrowError(crashError);
       } finally {
         clientWaitResolve();
+
       }
     }, 2000);
 
@@ -401,12 +395,9 @@ describe('Android driver', () => {
 
       fs.existsSync.mockReturnValue(false);
 
-      try {
-        await uut.installApp(deviceId, binaryPath, undefined);
-        fail('Expected an error');
-      } catch (err) {
-        expect(err.message).toContain(`'${expectedTestBinPath}'`);
-      }
+      await expect(uut.installApp(deviceId, binaryPath, undefined))
+        .rejects
+        .toThrowError(`'${expectedTestBinPath}'`);
     });
   });
 

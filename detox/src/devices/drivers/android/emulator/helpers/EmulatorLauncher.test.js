@@ -57,14 +57,9 @@ describe('Emulator launcher', () => {
     it('should not emit shutdownDevice prematurely', async () => {
       emulatorTelnet.kill.mockRejectedValue(new Error());
 
-      try {
-        await uut.shutdown(adbName);
-      } catch (e) {
-        expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-        expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
-        return;
-      }
-      throw new Error('Expected an error');
+      await expect(uut.shutdown(adbName)).rejects.toThrowError();
+      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
+      expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
     });
 
     it('should resort to a default telnet generator func', async () => {

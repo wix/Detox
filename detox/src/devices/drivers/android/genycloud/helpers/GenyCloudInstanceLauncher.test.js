@@ -51,13 +51,8 @@ describe('Genymotion-Cloud instance launcher', () => {
     it('should fail if deletion fails', async () => {
       givenAnInstanceDeletionError();
 
-      try {
-        const instance = anInstance();
-        await uut.shutdown(instance);
-      } catch (e) {
-        return;
-      }
-      throw new Error('Expected an error!');
+      const instance = anInstance();
+      await expect(uut.shutdown(instance)).rejects.toThrowError();
     });
 
     it('should remove the instance from the cleanup registry', async () => {
@@ -79,15 +74,10 @@ describe('Genymotion-Cloud instance launcher', () => {
     it('should not emit shutdownDevice prematurely', async () => {
       givenAnInstanceDeletionError();
 
-      try {
-        const instance = anInstance();
-        await uut.shutdown(instance);
-      } catch (e) {
-        expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-        expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
-        return;
-      }
-      throw new Error('Expected an error!');
+      const instance = anInstance();
+      await expect(uut.shutdown(instance)).rejects.toThrowError();
+      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
+      expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
     });
   });
 });

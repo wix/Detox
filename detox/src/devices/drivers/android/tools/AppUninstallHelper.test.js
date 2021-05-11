@@ -23,10 +23,7 @@ describe('Android app uninstall helper', () => {
 
   it('should fail if app uninstall fails', async () => {
     adb.uninstall.mockRejectedValue(new Error('mocked error in adb.uninstall'));
-    try {
-      await uut.uninstall(deviceId, bundleId);
-      fail('expected an error');
-    } catch (err) {}
+    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrowError();
   });
 
   it('should avoid uninstalling app if not already installed', async () => {
@@ -48,10 +45,7 @@ describe('Android app uninstall helper', () => {
       .mockResolvedValueOnce(true)
       .mockRejectedValueOnce(new Error('mocked error in adb.uninstall'));
 
-    try {
-      await uut.uninstall(deviceId, bundleId);
-      fail('expected an error');
-    } catch (err) {}
+    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrowError();
   });
 
   it('should avoid uninstalling test binary if not already installed', async () => {
