@@ -141,7 +141,7 @@ await expect(element(by.id('RandomJunk959'))).toNotExist();
 
 **Deprecated:** Use `.not.toBeFocused()` instead.
 
-Expects the element to not be the focused element.
+Expects the element not to be the focused element.
 
 ```js
 await expect(element(by.id('textFieldId'))).toBeFocused();
