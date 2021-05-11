@@ -38,7 +38,7 @@ describe('Genymotion-Cloud instance allocation', () => {
     GenyInstance = jest.genMockFromModule('../services/dto/GenyInstance');
 
     const InstanceAllocation = require('./GenyCloudInstanceAllocation');
-    uut = new InstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter });
+    uut = new InstanceAllocation(deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter);
   });
 
   const aRecipe = () => ({

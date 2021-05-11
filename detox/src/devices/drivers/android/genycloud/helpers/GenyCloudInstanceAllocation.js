@@ -6,7 +6,7 @@ const logger = require('../../../../../utils/logger').child({ __filename });
 const { ALLOCATE_DEVICE_LOG_EVT } = AndroidDeviceAllocation;
 
 class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
-  constructor({ deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter }) {
+  constructor(deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter) {
     super(deviceRegistry, eventEmitter, logger);
 
     this._instanceLookupService = instanceLookupService;
