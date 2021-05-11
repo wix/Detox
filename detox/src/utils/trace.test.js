@@ -116,18 +116,13 @@ describe('Trace util', () => {
       const error = new Error('error mock');
       const functionCall = () => Promise.reject(error);
 
-      try {
-        trace.init();
-        await traceCall(sectionName, functionCall);
-        fail('Expected an error');
-      } catch (e) {
-        expect(e).toEqual(error);
-        expect(trace.events).toEqual([
-          expect.any(Object),
-          expect.objectContaining(startEventTraits),
-          expect.objectContaining(aFailEndEventTraits(error)),
-        ]);
-      }
+      trace.init();
+      await expect(traceCall(sectionName, functionCall)).rejects.toThrowError(error);
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(startEventTraits),
+        expect.objectContaining(aFailEndEventTraits(error)),
+      ]);
     });
   });
 });

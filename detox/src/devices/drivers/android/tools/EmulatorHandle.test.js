@@ -36,10 +36,7 @@ describe('Emulator handle', () => {
 
     it('should fail if telnet-connect fails', async () => {
       telnet.connect.mockRejectedValue(new Error('mock telnet error'));
-      try {
-        await uut.queryName();
-        fail('Expected an error');
-      } catch (e) {}
+      await expect(uut.queryName()).rejects.toThrowError();
     });
 
     it('should return name from telnet command', async () => {
@@ -57,10 +54,8 @@ describe('Emulator handle', () => {
 
     it('should close telnet even if name resolution fails', async () => {
       telnet.avdName.mockRejectedValue(new Error('mock name resolution error'));
-      try {
-        await uut.queryName();
-        fail('Expected an error');
-      } catch (e) {}
+
+      await expect(uut.queryName()).rejects.toThrowError();
       expect(telnet.quit).toHaveBeenCalled();
     });
 

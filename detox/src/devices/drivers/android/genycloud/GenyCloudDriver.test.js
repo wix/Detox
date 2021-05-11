@@ -131,12 +131,13 @@ describe('Genymotion-cloud driver', () => {
 
         try {
           await uut.prepare();
-          fail('Expected an error');
         } catch (e) {
           expect(e.constructor.name).toEqual('DetoxRuntimeError');
           expect(e.toString()).toContain(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 1.5.9)`);
           expect(e.toString()).toContain(`HINT: Detox requires version 1.6.0, or newer. To use 'android.genycloud' type devices, you must upgrade it, first.`);
+          return;
         }
+        throw new Error('Expected an error');
       });
 
       it('should accept the gmsaas exec if version is sufficiently new', async () => {
@@ -155,12 +156,9 @@ describe('Genymotion-cloud driver', () => {
         givenProperGmsaasLogin();
         givenGmsaasExecVersion('0.6.0');
 
-        try {
-          await uut.prepare();
-          fail('Expected an error');
-        } catch (e) {
-          expect(e.toString()).toContain(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 0.6.0)`);
-        }
+        await expect(uut.prepare())
+          .rejects
+          .toThrowError(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 0.6.0)`);
       });
 
       it('should throw an error if not logged-in to gmsaas', async () => {
@@ -169,12 +167,13 @@ describe('Genymotion-cloud driver', () => {
 
         try {
           await uut.prepare();
-          fail('Expected an error');
         } catch (e) {
           expect(e.constructor.name).toEqual('DetoxRuntimeError');
           expect(e.toString()).toContain(`Cannot run tests using 'android.genycloud' type devices, because Genymotion was not logged-in to!`);
           expect(e.toString()).toContain(`HINT: Log-in to Genymotion-cloud by running this command (and following instructions):\n${MOCK_GMSAAS_PATH} auth login --help`);
+          return;
         }
+        throw new Error('Expected an error');
       });
 
       it('should not throw an error if properly logged in to gmsaas', async () => {
@@ -214,13 +213,14 @@ describe('Genymotion-cloud driver', () => {
 
         try {
           await uut.acquireFreeDevice(deviceQuery);
-          fail('Expected an error');
         } catch (e) {
           expect(e.toString()).toContain('No Genymotion-Cloud template found to match the configured lookup query');
           expect(e.toString()).toContain(JSON.stringify(deviceQuery));
           expect(e.toString()).toContain('HINT: Revisit your detox configuration');
           expect(e.toString()).toContain('https://cloud.geny.io/app/shared-devices');
+          return;
         }
+        throw new Error('Expected an error');
       });
 
       it('should return a descriptive device name in post-allocation state', async () => {

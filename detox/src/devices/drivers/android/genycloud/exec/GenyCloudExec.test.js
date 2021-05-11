@@ -114,12 +114,7 @@ describe('Genymotion-cloud executable', () => {
       it('should fail upon an error result', async () => {
         givenErrorResult();
 
-        try {
-          await testCase.commandExecFn();
-          fail('Expected an error');
-        } catch (e) {
-          expect(e.message).toEqual(JSON.stringify(failResponse));
-        }
+        await expect(testCase.commandExecFn()).rejects.toThrowError(JSON.stringify(failResponse));
       });
     });
   });

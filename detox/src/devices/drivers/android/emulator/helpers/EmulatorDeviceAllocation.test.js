@@ -48,6 +48,7 @@ describe('Android emulator device allocation', () => {
 
   const givenFreeDevice = (adbName) => freeDeviceFinder.findFreeDevice.mockResolvedValue(adbName);
   const givenNoFreeDevices = () => freeDeviceFinder.findFreeDevice.mockResolvedValue(null);
+  const givenEmulatorLaunchError = () => emulatorLauncher.launch.mockRejectedValue(new Error());
   const givenRandomFuncResult = (result) => randomFunc.mockReturnValue(result);
   const givenDeviceBootCompleted = () => adb.isBootComplete.mockResolvedValue(true);
   const givenDeviceBootIncomplete = () => adb.isBootComplete.mockResolvedValue(false);
@@ -110,14 +111,9 @@ describe('Android emulator device allocation', () => {
 
     it('should fail if emulator launch fails', async () => {
       givenNoFreeDevices();
-      emulatorLauncher.launch.mockRejectedValue(new Error());
+      givenEmulatorLaunchError();
 
-      try {
-        await uut.allocateDevice(avdName);
-      } catch (e) {
-        return;
-      }
-      throw new Error('Expected an error');
+      await expect(uut.allocateDevice(avdName)).rejects.toThrowError();
     });
 
     it('should randomize a custom port for a newly launched emulator, in the 10000-20000 range', async () => {
@@ -253,13 +249,7 @@ describe('Android emulator device allocation', () => {
 
     it('should fail if registry fails', async () => {
       deviceRegistry.disposeDevice.mockRejectedValue(new Error());
-
-      try {
-        await uut.deallocateDevice(adbName);
-      } catch (e) {
-        return;
-      }
-      throw new Error('Expected an error');
+      await expect(uut.deallocateDevice(adbName)).rejects.toThrowError();
     });
   });
 });
