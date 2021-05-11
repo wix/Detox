@@ -8,6 +8,7 @@ Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with eleme
 
 - [`.toBeVisible()`](#tobevisible)
 - [`.toExist()`](#toexist)
+- [`.toBeFocused()`](#tobefocused) **iOS only**
 - [`.toHaveText()`](#tohavetexttext)
 - [`.toHaveLabel()`](#tohavelabellabel)
 - [`.toHaveId()`](#tohaveidid)
@@ -32,6 +33,15 @@ Expects the element to exist within the app’s current UI hierarchy.
 
 ```js
 await expect(element(by.id('UniqueId205'))).toExist();
+```
+
+### `toBeFocused()`  **iOS only**
+Expects the element to be the focused element.
+
+Added in version 18.13.0
+
+```js
+await expect(element(by.id('textFieldId'))).toBeFocused();
 ```
 
 ### `toHaveText(text)`
@@ -105,6 +115,7 @@ await waitFor(element(by.id('UniqueId204'))).toBeVisible().withTimeout(2000);
 
 - [`.toBeNotVisible()`](#tobenotvisible)
 - [`.toNotExist()`](#tonotexist)
+- [`.toBeNotFocused()`](#tobenotfocused) **iOS only**
 
 ### `toBeNotVisible()`
 
@@ -124,4 +135,14 @@ Expects the element to not exist within the app’s current UI hierarchy.
 
 ```js
 await expect(element(by.id('RandomJunk959'))).toNotExist();
+```
+
+### `toBeNotFocused()`  **iOS only**
+
+**Deprecated:** Use `.not.toBeFocused()` instead.
+
+Expects the element to not be the focused element.
+
+```js
+await expect(element(by.id('textFieldId'))).toBeFocused();
 ```
