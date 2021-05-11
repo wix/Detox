@@ -32,10 +32,12 @@ class GenyCloudDriver extends AndroidDriver {
 
     const recipeService = new RecipesService(this._exec, logger);
     const instanceLookupService = new InstanceLookupService(this._exec, instanceNaming, deviceRegistry);
-    this._instanceLifecycleService = new InstanceLifecycleService(this._exec, instanceNaming);
-    this._instanceLauncher = new InstanceLauncher(this._instanceLifecycleService, deviceCleanupRegistry, this.emitter);
+    const instanceLifecycleService = new InstanceLifecycleService(this._exec, instanceNaming);
+    const instanceLauncher = new InstanceLauncher(this._instanceLifecycleService, deviceCleanupRegistry, this.emitter);
     this._recipeQuerying = new RecipeQuerying(recipeService);
-    this._instanceAllocation = new GenyCloudInstanceAllocation(deviceRegistry, instanceLookupService, this._instanceLifecycleService, this._instanceLauncher, this.emitter);
+    this._instanceAllocation = new GenyCloudInstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService, instanceLauncher, eventEmitter: this.emitter });
+    this._instanceLifecycleService = instanceLifecycleService;
+    this._instanceLauncher = instanceLauncher;
 
     this._authService = new AuthService(this._exec);
   }
