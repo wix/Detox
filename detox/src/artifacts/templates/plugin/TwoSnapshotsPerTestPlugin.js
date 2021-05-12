@@ -21,7 +21,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
       : {
         testStart: true,
         testFailure: true,
-        testDone: true
+        testDone: true,
       };
 
     this.snapshots = {

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const fs = require('fs-extra');
 const log = require('../../utils/logger').child({ __filename });
 const temporaryPath = require('../utils/temporaryPath');
 const FileArtifact = require('../templates/artifact/FileArtifact');
@@ -39,17 +40,13 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
   _onInvokeFailure({ params }) {
     const { visibilityFailingScreenshotsURL, visibilityFailingRectsURL } = params;
 
-    if (visibilityFailingScreenshotsURL) {
-      this._registerSnapshot('visibilityFailingScreenshots', new FileArtifact({
-        temporaryPath: visibilityFailingScreenshotsURL,
-      }));
-    }
+    this._registerSnapshot('visibilityFailingScreenshots/', new FileArtifact({
+      temporaryPath: visibilityFailingScreenshotsURL
+    }));
 
-    if (visibilityFailingRectsURL) {
-      this._registerSnapshot('visibilityFailingRects', new FileArtifact({
-        temporaryPath: visibilityFailingRectsURL,
-      }));
-    }
+    this._registerSnapshot('visibilityFailingRects/', new FileArtifact({
+      temporaryPath: visibilityFailingRectsURL
+    }));
   }
 
   createTestArtifact() {

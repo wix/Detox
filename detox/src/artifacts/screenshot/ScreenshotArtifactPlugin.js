@@ -14,7 +14,11 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
   }
 
   async preparePathForSnapshot(testSummary, name) {
-    return this.api.preparePathForArtifact(`${name}.png`, testSummary);
+    const artifactName = name.endsWith('/')
+      ? name.slice(0, -1)
+      : `${name}.png`;
+
+    return this.api.preparePathForArtifact(artifactName, testSummary);
   }
 
   async onBeforeCleanup(e) {

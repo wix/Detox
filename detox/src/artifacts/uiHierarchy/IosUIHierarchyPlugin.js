@@ -44,18 +44,6 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
         temporaryPath: viewHierarchyURL,
       }));
     }
-
-    if (visibilityFailingScreenshotsURL) {
-      this._registerSnapshot('visibilityFailingScreenshots', new FileArtifact({
-        temporaryPath: visibilityFailingScreenshotsURL,
-      }));
-    }
-
-    if (visibilityFailingRectsURL) {
-      this._registerSnapshot('visibilityFailingRects', new FileArtifact({
-        temporaryPath: visibilityFailingRectsURL,
-      }));
-    }
   }
 
   _registerSnapshot(name, artifact) {
