@@ -4,25 +4,35 @@ const fs = require('fs-extra');
 const ExclusiveLockfile = require('../utils/ExclusiveLockfile');
 const safeAsync = require('../utils/safeAsync');
 
-const getDeviceEqualsFn = (deviceHandle) => (otherDeviceHandle) => _.isEqual(otherDeviceHandle, deviceHandle);
-const getDeviceDifferFn = (deviceHandle) => (otherDeviceHandle) => !_.isEqual(otherDeviceHandle, deviceHandle);
 const readOptions = {
   encoding: 'utf8',
 };
 
-class DeviceHandlesList {
+const FIELD_NAME_ID = 'id';
+const FIELD_NAME_DATA = 'data';
+
+class DevicesList {
   constructor(devices) {
-    this.rawDevices = Object.freeze(devices);
+    this._devices = Object.freeze(devices);
   }
 
-  includes(deviceHandle) {
-    return DeviceHandlesList._includes(deviceHandle, this.rawDevices);
+  /**
+   * @returns {{id: string, data: *?}[]}
+   */
+  get rawDevices() {
+    return this._devices;
   }
 
-  static _includes(deviceHandle, devices) {
-    const rawDeviceHandle = getRawDeviceHandle(deviceHandle);
-    const deviceEqualsFn = getDeviceEqualsFn(rawDeviceHandle);
-    return !!_.find(devices, deviceEqualsFn);
+  /**
+   * @param {string} deviceId
+   * @returns {boolean}
+   */
+  includes(deviceId) {
+    return DevicesList._includes(deviceId, this._devices);
+  }
+
+  static _includes(deviceId, devices) {
+    return _.some(devices, [FIELD_NAME_ID, deviceId]);
   }
 }
 
@@ -52,65 +62,66 @@ class DeviceRegistry {
   }
 
   /***
-   * @param {string|Object|Function} getDeviceHandle
+   * @param {string|Function} getDeviceId
+   * @param {*?} data
    * @returns {Promise<string>}
    */
-  async allocateDevice(getDeviceHandle) {
+  async allocateDevice(getDeviceId, data) {
     return this._lockfile.exclusively(async () => {
-      const deviceHandle = await safeAsync(getDeviceHandle);
-      this._toggleDeviceStatus(deviceHandle, true);
-      return deviceHandle;
+      const deviceId = await safeAsync(getDeviceId);
+      this._registerDevice(deviceId, data);
+      return deviceId;
     });
   }
 
   /***
-   * @param {string|Object|Function} getDeviceHandle
-   * @returns {void}
+   * @param {string|Function} getDeviceId
+   * @returns {Promise<void>}
    */
-  async disposeDevice(getDeviceHandle) {
+  async disposeDevice(getDeviceId) {
     await this._lockfile.exclusively(async () => {
-      const deviceId = await safeAsync(getDeviceHandle);
+      const deviceId = await safeAsync(getDeviceId);
       if (deviceId) {
-        this._toggleDeviceStatus(deviceId, false);
+        this._unregisterDevice(deviceId);
       }
     });
   }
 
   /***
-   * @param {Object} deviceHandle
+   * @param {string} deviceId
    * @returns {boolean}
    */
-  includes(deviceHandle) {
+  includes(deviceId) {
     const devices = this._lockfile.read();
-    return DeviceHandlesList._includes(deviceHandle, devices);
+    return DevicesList._includes(deviceId, devices);
   }
 
   /***
-   * @returns {DeviceHandlesList}
+   * @returns {DevicesList}
+   */
+  getRegisteredDevices() {
+    const devices = this._lockfile.read();
+    return new DevicesList(devices);
+  }
+
+  /***
+   * @returns {DevicesList}
    */
   async readRegisteredDevices() {
     let result = null;
     await this._lockfile.exclusively(() => {
-      result = new DeviceHandlesList(this._lockfile.read());
+      result = this.getRegisteredDevices();
     })
     return result;
   }
 
   /***
-   * @returns {DeviceHandlesList}
-   */
-  getRegisteredDevices() {
-    const deviceHandles = this._lockfile.read();
-    return new DeviceHandlesList(deviceHandles);
-  }
-
-  /***
-   * @returns {DeviceHandlesList}
+   * @returns {DevicesList}
    */
   readRegisteredDevicesUNSAFE() {
     const contents = fs.readFileSync(this._lockfilePath, readOptions);
     const devices = JSON.parse(contents);
-    return new DeviceHandlesList(devices);
+    return new DevicesList(devices);
   }
 
   /***
@@ -120,16 +131,30 @@ class DeviceRegistry {
     return [];
   }
 
-  /***
+  /**
    * @private
    */
-  _toggleDeviceStatus(deviceHandle, busy) {
-    const rawDeviceHandle = getRawDeviceHandle(deviceHandle);
-    const deviceDifferFn = getDeviceDifferFn(rawDeviceHandle);
+  _registerDevice(deviceId, data) {
     const state = this._lockfile.read();
-    const newState = busy
-      ? _.concat(state, rawDeviceHandle)
-      : _.filter(state, deviceDifferFn);
+    let newState = _.reject(state, [FIELD_NAME_ID, deviceId]);
+
+    const device = {};
+    device[FIELD_NAME_ID] = deviceId;
+
+    if (data) {
+      device[FIELD_NAME_DATA] = data;
+    }
+
+    newState = _.concat(newState, device);
+    this._lockfile.write(newState);
+  }
+
+  /**
+   * @private
+   */
+  _unregisterDevice(deviceId) {
+    const state = this._lockfile.read();
+    const newState = _.reject(state, [FIELD_NAME_ID, deviceId]);
     this._lockfile.write(newState);
   }
 
@@ -144,10 +169,6 @@ class DeviceRegistry {
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
   }
-}
-
-function getRawDeviceHandle(deviceHandle) {
-  return JSON.parse(JSON.stringify(deviceHandle));
 }
 
 module.exports = DeviceRegistry;

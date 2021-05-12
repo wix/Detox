@@ -44,8 +44,7 @@ describe('Genymotion-Cloud instances lookup service', () => {
   function givenRegisteredInstances(...instances) {
     const instanceUUIDs = _.map(instances, 'uuid');
     deviceRegistry.getRegisteredDevices.mockReturnValue({
-      rawDevices: instanceUUIDs,
-      includes: instanceUUIDs.includes,
+      includes: instanceUUIDs.includes.bind(instanceUUIDs),
     });
   }
   const givenNoRegisteredInstances = () => givenRegisteredInstances([]);

@@ -10,7 +10,6 @@ const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugi
 const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
-const DetoxConfigError = require('../../../errors/DetoxConfigError');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
@@ -249,7 +248,8 @@ class SimulatorDriver extends IosDriver {
   async _groupDevicesByStatus(deviceQuery) {
     const searchResults = await this._queryDevices(deviceQuery);
     const { rawDevices: takenDevices } = this.deviceRegistry.getRegisteredDevices();
-    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => takenDevices.includes(udid) ? 'taken' : 'free');
+    const takenUDIDs = _.map(takenDevices, 'id');
+    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => takenUDIDs.includes(udid) ? 'taken' : 'free');
 
     const targetOS = _.get(taken, '0.os.identifier');
     const isMatching = targetOS && { os: { identifier: targetOS } };
@@ -273,7 +273,6 @@ class SimulatorDriver extends IosDriver {
               `It is advised only to specify a device type, e.g., "iPhone Xʀ" and avoid explicit search by OS version.`
       });
     }
-
     return result;
   }
 
