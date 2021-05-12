@@ -40,7 +40,7 @@ describe('Visibility Cases', () => {
   afterAll(async () => {
     await waitUntilArtifactsManagerIsIdle();
 
-    assertArtifactExists('✗ Visibility Cases should not be able to tap an overlayed button/visibilityFailed.png');
-    assertArtifactExists('✗ Visibility Cases should not be able to tap an overlayed button/visibilityRect.png');
+    assertArtifactExists('✓ Visibility Cases should not be able to tap an overlayed button/visibilityFailed.png');
+    assertArtifactExists('✓ Visibility Cases should not be able to tap an overlayed button/visibilityRect.png');
   });
 });

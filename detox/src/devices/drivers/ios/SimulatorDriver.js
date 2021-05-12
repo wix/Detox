@@ -40,7 +40,7 @@ class SimulatorDriver extends IosDriver {
       ...super.declareArtifactPlugins(),
 
       log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
-      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
+      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils, client }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
       instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
     };

@@ -4,11 +4,19 @@ const temporaryPath = require('../utils/temporaryPath');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 
-class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
+class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
   constructor(config) {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
+    this.client = config.client;
+    this.client.setEventCallback('testFailed', this._onInvokeFailure.bind(this));
+  }
+
+  async onBeforeLaunchApp({ launchArgs }) {
+    if (this.enabled && this.shouldTakeAutomaticSnapshots && this.takeAutomaticSnapshots.testFailure) {
+      launchArgs.detoxDebugVisibility = 'YES';
+    }
   }
 
   async onBootDevice(event) {
@@ -28,6 +36,22 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     }
   }
 
+  _onInvokeFailure({ params }) {
+    const { visibilityFailingScreenshotsURL, visibilityFailingRectsURL } = params;
+
+    if (visibilityFailingScreenshotsURL) {
+      this._registerSnapshot('visibilityFailingScreenshots', new FileArtifact({
+        temporaryPath: visibilityFailingScreenshotsURL,
+      }));
+    }
+
+    if (visibilityFailingRectsURL) {
+      this._registerSnapshot('visibilityFailingRects', new FileArtifact({
+        temporaryPath: visibilityFailingRectsURL,
+      }));
+    }
+  }
+
   createTestArtifact() {
     const { context, appleSimUtils } = this;
 
@@ -42,4 +66,4 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
   }
 }
 
-module.exports = SimulatorScreenshotter;
+module.exports = SimulatorScreenshotPlugin;
