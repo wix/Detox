@@ -105,7 +105,7 @@ class example extends Component {
         {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
         {!isAndroid && this.renderScreenButton('Expectations', Screens.ExpectationsScreen)}
         {this.renderScreenButton('Actions', Screens.ActionsScreen)}
-        {this.renderScreenButton('Visibility Cases', Screens.VisibilityScreen)}
+        {!isAndroid && this.renderScreenButton('Visibility Cases', Screens.VisibilityScreen)}
         {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
         {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
         {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
