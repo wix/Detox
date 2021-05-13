@@ -12,6 +12,7 @@
 #import "UIImage+DetoxUtils.h"
 #import "UIView+Drawing.h"
 #import "DetoxPolicy.h"
+#import "NSURL+DetoxUtils.h"
 
 @interface DTXTouchVisualizerWindow : UIWindow @end
 
@@ -295,8 +296,8 @@ DTX_DIRECT_MEMBERS
 		
 		if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDebugVisibility"])
 		{
-			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:nil inRect:testedRegionInWindowCoords drawTestedRect:NO] dtx_saveToDesktopWithName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_SCREEN.png", NSStringFromClass(self.class), self]];
-			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self inRect:testedRegionInWindowCoords drawTestedRect:YES] dtx_saveToDesktopWithName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_TEST.png", NSStringFromClass(self.class), self]];
+			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:nil inRect:testedRegionInWindowCoords drawTestedRect:NO] dtx_saveToPath:NSURL.visibilityFailingScreenshotsPath fileName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_SCREEN.png", NSStringFromClass(self.class), self]];
+			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self inRect:testedRegionInWindowCoords drawTestedRect:YES] dtx_saveToPath:NSURL.visibilityFailingRectsPath fileName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_TEST.png", NSStringFromClass(self.class), self]];
 		}
 		
 		return NO;

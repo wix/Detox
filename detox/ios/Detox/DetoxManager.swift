@@ -269,6 +269,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 							} catch {}
 						}
 						
+						if UserDefaults.standard.bool(forKey: "detoxDebugVisibility") {
+							params["visibilityFailingScreenshotsURL"] = NSURL.visibilityFailingScreenshotsPath().path
+							params["visibilityFailingRectsURL"] = NSURL.visibilityFailingRectsPath().path
+						}
+						
 						self.safeSend(action: "testFailed", params: params as! [String : Any], messageId: messageId)
 					} else {
 						self.safeSend(action: "invokeResult", params: result ?? [:], messageId: messageId)

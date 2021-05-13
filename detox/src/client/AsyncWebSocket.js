@@ -213,15 +213,28 @@ class AsyncWebSocket {
         throw new DetoxRuntimeError('Empty or non-typed message received over the web socket.');
       }
 
+      let handled = false;
+
       if (this.inFlightPromises.hasOwnProperty(json.messageId)) {
         this.inFlightPromises[json.messageId].resolve(json);
         delete this.inFlightPromises[json.messageId];
-      } else if (this._eventCallbacks.hasOwnProperty(json.type)) {
-        for (const callback of this._eventCallbacks[json.type]) callback(json);
-      } else if (this._abortedMessageIds.has(json.messageId)) {
-        log.debug(EVENTS.LATE_RESPONSE, `Received late response for messageId=${json.messageId}`);
-      } else {
-        throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type)
+        handled = true;
+      }
+
+      if (this._eventCallbacks.hasOwnProperty(json.type)) {
+        for (const callback of this._eventCallbacks[json.type]) {
+          callback(json);
+        }
+
+        handled = true;
+      }
+
+      if (!handled) {
+        if (this._abortedMessageIds.has(json.messageId)) {
+          log.debug(EVENTS.LATE_RESPONSE, `Received late response for messageId=${json.messageId}`);
+        } else {
+          throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type)
+        }
       }
     } catch (error) {
       this.rejectAll(new DetoxRuntimeError({

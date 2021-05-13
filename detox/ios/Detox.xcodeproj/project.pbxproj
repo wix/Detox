@@ -114,6 +114,8 @@
 		39EECB8024C0A73F009C3364 /* NSArray+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB7E24C0A73E009C3364 /* NSArray+Utils.m */; };
 		39EECB8124C0A73F009C3364 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EECB7F24C0A73E009C3364 /* NSArray+Utils.h */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
+		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -301,6 +303,8 @@
 		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
 		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DetoxCrashHandler.mm; sourceTree = "<group>"; };
+		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
+		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -523,6 +527,8 @@
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
 				395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */,
 				395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */,
+				AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */,
+				AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -621,6 +627,7 @@
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
 				39DC985824BB904D00FFB224 /* ReactNativeSupportNoARC.h in Headers */,
 				3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */,
+				AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */,
 				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
 				3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */,
 				3946CD3E2566EB9E000A3606 /* NSObject+DetoxActions.h in Headers */,
@@ -805,6 +812,7 @@
 				392324E324782AE500A3D119 /* DetoxInit.m in Sources */,
 				39DC985724BB904D00FFB224 /* ReactNativeSupport.m in Sources */,
 				3980D15C244C45EA004812DD /* Action.swift in Sources */,
+				AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
 				39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,

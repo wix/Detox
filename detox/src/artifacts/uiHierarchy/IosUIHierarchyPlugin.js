@@ -38,14 +38,12 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
     this._registerSnapshot(e.name, e.artifact);
   }
 
-  _onInvokeFailure({ params: { viewHierarchyURL } }) {
-    if (!viewHierarchyURL) {
-      return;
+  _onInvokeFailure({ params: { viewHierarchyURL, visibilityFailingScreenshotsURL, visibilityFailingRectsURL } }) {
+    if (viewHierarchyURL) {
+      this._registerSnapshot('ui', new FileArtifact({
+        temporaryPath: viewHierarchyURL,
+      }));
     }
-
-    this._registerSnapshot('ui', new FileArtifact({
-      temporaryPath: viewHierarchyURL,
-    }));
   }
 
   _registerSnapshot(name, artifact) {

@@ -137,7 +137,7 @@ describe('AsyncWebSocket', () => {
         await expect(sendPromise2).rejects.toThrowErrorMatchingSnapshot();
       });
 
-      it(`should call an event handler when there are no matching messages in the flight`, async () => {
+      it(`should call an event handler when it matches the message type in the flight`, async () => {
         const onErrorCallback = jest.fn();
         const someResponse = generateResponse('error message', 100);
         someResponse.type = 'error';
@@ -148,11 +148,12 @@ describe('AsyncWebSocket', () => {
         // we have one matching in-flight promise with messageId=100
         socket.mockMessage(someResponse);
         await expect(sendPromise1).resolves.toEqual(someResponse);
-        expect(onErrorCallback).not.toHaveBeenCalled();
+        expect(onErrorCallback).toHaveBeenCalledWith(someResponse);
+        expect(onErrorCallback).toHaveBeenCalledTimes(1);
 
         // now there are no matching in-flight promises
         socket.mockMessage(someResponse);
-        expect(onErrorCallback).toHaveBeenCalledWith(someResponse);
+        expect(onErrorCallback).toHaveBeenCalledTimes(2);
       });
 
       it(`should log an error if the incoming message was completely unexpected`, async () => {
