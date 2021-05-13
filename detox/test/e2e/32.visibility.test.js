@@ -4,7 +4,7 @@ const {
   waitUntilArtifactsManagerIsIdle,
 } = require('./utils/artifactUtils');
 
-describe('Visibility Cases', () => {
+describe(':ios: Visibility Cases', () => {
   beforeEach(async() => {
     await device.reloadReactNative();
     await element(by.text('Visibility Cases')).tap();
@@ -30,7 +30,7 @@ describe('Visibility Cases', () => {
     await expect(element(by.id('badgeButtonExample.badge'))).not.toBeVisible();
   });
 
-  it('should not be able to tap an overlayed button', async () => {
+  it.only('should not be able to tap an overlayed button', async () => {
     await expectToThrow(
       () => element(by.text('Button 1')).tap(),
       `view does not pass visibility threshold`,
