@@ -30,6 +30,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       DetoxInitErrorListener,
       DetoxCoreListener,
     };
+    /** @private */
+    this._calledDetoxInit = false;
+    /** @private */
+    this._calledDetoxCleanup = false;
     /** @protected */
     this.testPath = context.testPath;
     /** @protected */
@@ -44,6 +48,16 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     this.global.detox = require('../../src')
       ._setGlobal(this.global)
       ._suppressLoggingInitErrors();
+  }
+
+  async teardown() {
+    try {
+      if (this._calledDetoxInit && !this._calledDetoxCleanup) {
+        await this._runEmergencyTeardown();
+      }
+    } finally {
+      await super.teardown();
+    }
   }
 
   get detox() {
@@ -102,6 +116,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     try {
       detox = await this._timer.run(async () => {
         try {
+          this._calledDetoxInit = true;
           return await this.initDetox();
         } catch (actualError) {
           state.unhandledErrors.push(actualError);
@@ -135,10 +150,27 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   async _onTeardown(state) {
     try {
+      this._calledDetoxCleanup = true;
       await this._timer.run(() => this.cleanupDetox());
     } catch (cleanupError) {
       state.unhandledErrors.push(cleanupError);
       this._logError(cleanupError);
+    }
+  }
+
+  async _runEmergencyTeardown() {
+    this._timer = new Timer({
+      description: `handling environment teardown`,
+      timeout: this.initTimeout,
+    });
+
+    try {
+      await this._timer.run(() => this.cleanupDetox());
+    } catch (cleanupError) {
+      this._logError(cleanupError);
+    } finally {
+      this._timer.dispose();
+      this._timer = null;
     }
   }
 
