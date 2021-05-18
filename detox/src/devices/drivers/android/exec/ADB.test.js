@@ -83,11 +83,11 @@ describe('ADB', () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 shell "getprop ro.build.version.sdk"'),
+      expect.stringContaining('adb" -s "emulator-5556" shell "getprop ro.build.version.sdk"'),
       { retries: 5 });
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
+      expect.stringContaining('adb" -s "emulator-5556" install -rg "path inside \\"quotes\\" to/app"'),
       { retries: 1 });
   });
 
@@ -131,7 +131,7 @@ describe('ADB', () => {
     await adb.push(deviceId, sourceFile, destFile);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
+      expect.stringContaining(`-s "mockEmulator" push "${sourceFile}" "${destFile}"`),
       expect.anything());
   });
 
@@ -140,7 +140,7 @@ describe('ADB', () => {
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
+      expect.stringContaining(`-s "mockEmulator" shell "pm install -r -g -t ${binaryPath}"`),
       expect.anything());
   });
 
@@ -149,7 +149,7 @@ describe('ADB', () => {
     const expectedText = 'some-text-with%sspaces';
     await adb.typeText(deviceId, text);
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "input text ${expectedText}"`),
+      expect.stringContaining(`-s "mockEmulator" shell "input text ${expectedText}"`),
       expect.anything());
   });
 

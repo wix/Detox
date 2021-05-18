@@ -304,7 +304,7 @@ class ADB {
 
   // TODO refactor the whole thing so as to make usage of BinaryExec -- similar to EmulatorExec
   async adbCmd(deviceId, params, options = {}) {
-    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
+    const serial = `${deviceId ? `-s "${deviceId}"` : ''}`;
     const cmd = `"${this.adbBin}" ${serial} ${params}`;
     const _options = {
       retries: 1,
