@@ -39,37 +39,55 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 
 ## Methods
 
-- [`device.selectApp(name)`](#deviceselectappname)
-- [`device.launchApp()`](#devicelaunchappparams)
-- [`device.terminateApp()`](#deviceterminateapp)
-- [`device.sendToHome()`](#devicesendtohome)
-- [`device.reloadReactNative()`](#devicereloadreactnative)
-- [`device.installApp()`](#deviceinstallapp)
-- [`device.uninstallApp()`](#deviceuninstallapp)
-- [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
-- [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
-- [`device.setOrientation(orientation)`](#devicesetorientationorientation)
-- [`device.setLocation(lat, lon)` **iOS Only**](#devicesetlocationlat-lon-ios-only)
-- [`device.enableSynchronization()`](#deviceenablesynchronization)
-- [`device.disableSynchronization()`](#devicedisablesynchronization)
-- [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
-- [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
-- [`device.getPlatform()`](#devicegetplatform)
-- [`device.takeScreenshot([name])`](#devicetakescreenshotname)
-- [`device.shake()` **iOS Only**](#deviceshake-ios-only)
-- [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrollmentbool-ios-only)
-- [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
-- [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
-- [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
-- [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
-- [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
-- [`device.setStatusBar()` **iOS Only**](#devicesetstatusbar-ios-only)
-- [`device.resetStatusBar()` **iOS Only**](#deviceresetstatusbar-ios-only)
-- [`device.reverseTcpPort()` **Android Only**](#devicereversetcpport-android-only)
-- [`device.unreverseTcpPort()` **Android Only**](#deviceunreversetcpport-android-only)
-- [`device.pressBack()` **Android Only**](#devicepressback-android-only)
-- [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
+- [The `device` Object](#the-device-object)
+  - [Public Properties](#public-properties)
+    - [`device.id`](#deviceid)
+    - [`device.name`](#devicename)
+    - [`device.appLaunchArgs`](#deviceapplaunchargs)
+  - [Methods](#methods)
+    - [`device.selectApp(name)`](#deviceselectappname)
+    - [`device.launchApp(params)`](#devicelaunchappparams)
+        - [1. `newInstance`—Launching a New Instance of the App](#1-newinstancelaunching-a-new-instance-of-the-app)
+        - [2. `permissions`—Set Runtime Permissions (iOS Only)](#2-permissionsset-runtime-permissions-ios-only)
+        - [3. `url`—Launching with URL](#3-urllaunching-with-url)
+        - [4. `userNotification`—Launching with User Notifications](#4-usernotificationlaunching-with-user-notifications)
+        - [5. `userActivity`—Launch with User Activity (iOS Only)](#5-useractivitylaunch-with-user-activity-ios-only)
+        - [6. `delete`—Delete and Reinstall Application Before Launching](#6-deletedelete-and-reinstall-application-before-launching)
+        - [7. `launchArgs`—Additional Process Launch Arguments](#7-launchargsadditional-process-launch-arguments)
+        - [8. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)](#8-disabletouchindicatorsdisable-touch-indicators-ios-only)
+        - [9. `languageAndLocale`—Launch with a Specific Language and/or Local (iOS Only)](#9-languageandlocalelaunch-with-a-specific-language-andor-local-ios-only)
+        - [10. `detoxEnableSynchronization`—Initialize Detox with synchronization enabled or disabled at app launch](#10-detoxenablesynchronizationinitialize-detox-with-synchronization-enabled-or-disabled-at-app-launch)
+        - [11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch)
+    - [`device.relaunchApp(params)`](#devicerelaunchappparams)
+    - [`device.terminateApp()`](#deviceterminateapp)
+    - [`device.sendToHome()`](#devicesendtohome)
+    - [`device.reloadReactNative()`](#devicereloadreactnative)
+    - [`device.installApp()`](#deviceinstallapp)
+    - [`device.uninstallApp()`](#deviceuninstallapp)
+    - [`device.openURL({url, sourceApp[optional]})`](#deviceopenurlurl-sourceappoptional)
+    - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
+    - [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
+    - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
+    - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
+    - [`device.disableSynchronization()`](#devicedisablesynchronization)
+    - [`device.enableSynchronization()`](#deviceenablesynchronization)
+    - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
+    - [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
+    - [`device.getPlatform()`](#devicegetplatform)
+    - [`device.takeScreenshot([name])`](#devicetakescreenshotname)
+    - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
+    - [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrollmentbool-ios-only)
+    - [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
+    - [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
+    - [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
+    - [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
+    - [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
+    - [`device.setStatusBar()` **iOS Only**](#devicesetstatusbar-ios-only)
+    - [`device.resetStatusBar()` **iOS Only**](#deviceresetstatusbar-ios-only)
+    - [`device.reverseTcpPort()` **Android Only**](#devicereversetcpport-android-only)
+    - [`device.unreverseTcpPort()` **Android Only**](#deviceunreversetcpport-android-only)
+    - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
+    - [`device.getUiDevice()` **Android Only**](#devicegetuidevice-android-only)
 
 ### `device.selectApp(name)`
 
@@ -317,11 +335,14 @@ Takes `"portrait"` or `"landscape"` and rotates the device to the given orientat
 
 Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test.js)
 
-### `device.setLocation(lat, lon)` **iOS Only**
+### `device.setLocation(lat, lon)`
 
-> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl) which [is now deprecated](https://github.com/wix/Detox/issues/1371). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+> Note: 
+> On iOS `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl) which [is now deprecated](https://github.com/wix/Detox/issues/1371). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+> 
+> On Android `setLocation` currently will only work with Android Emulator bundled with Android development tools (as long as you've set the correct permissions set in your app manifest).
 
-Sets the simulator location to the given latitude and longitude.
+Sets the simulator/emulator location to the given latitude and longitude.
 
 ```js
 await device.setLocation(32.0853, 34.7818);
