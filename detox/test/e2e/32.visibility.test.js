@@ -30,7 +30,7 @@ describe(':ios: Visibility Cases', () => {
     await expect(element(by.id('badgeButtonExample.badge'))).not.toBeVisible();
   });
 
-  it.only('should not be able to tap an overlayed button', async () => {
+  it('should not be able to tap an overlayed button', async () => {
     await expectToThrow(
       () => element(by.text('Button 1')).tap(),
       `view does not pass visibility threshold`,
@@ -40,7 +40,7 @@ describe(':ios: Visibility Cases', () => {
   afterAll(async () => {
     await waitUntilArtifactsManagerIsIdle();
 
-    assertArtifactExists('✓ Visibility Cases should not be able to tap an overlayed button/visibilityFailingRects');
-    assertArtifactExists('✓ Visibility Cases should not be able to tap an overlayed button/visibilityFailingScreenshots');
+    assertArtifactExists('✓ _ios_ Visibility Cases should not be able to tap an overlayed button/visibilityFailingRects');
+    assertArtifactExists('✓ _ios_ Visibility Cases should not be able to tap an overlayed button/visibilityFailingScreenshots');
   });
 });
