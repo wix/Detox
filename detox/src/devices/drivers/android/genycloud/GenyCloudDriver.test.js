@@ -310,6 +310,14 @@ describe('Genymotion-cloud driver', () => {
         expect(instanceLauncher().shutdown).toHaveBeenCalledWith(instance);
       });
     });
+
+    describe('setLocation', () => {
+      it('should call `adb.setLocation` with adb name and provided coordinates', async () => {
+        const instance = anInstance();
+        await uut.setLocation(instance, 40.5, 55.5);
+        expect(adbObj().setLocation).toHaveBeenCalledWith(instance.adbName, 40.5, 55.5);
+      });
+    });
   });
 
   describe('class scope', () => {
