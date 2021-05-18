@@ -85,10 +85,6 @@ class EmulatorDriver extends AndroidDriver {
     await this._emulatorLauncher.shutdown(deviceId);
   }
 
-  async setLocation(deviceId, lat, lon) {
-    await this.adb.setLocation(deviceId, lat, lon);
-  }
-
   async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
     const binaryVersion = _.get(await this.binaryVersion(), 'major');
     if (!binaryVersion) {
