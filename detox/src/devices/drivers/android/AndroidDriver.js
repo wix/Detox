@@ -242,10 +242,6 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
-  async setLocation(deviceId, lat, lon) {
-    await this.adb.setLocation(deviceId, lat, lon);
-  }
-
   _getInstallPaths(_binaryPath, _testBinaryPath) {
     const binaryPath = getAbsoluteBinaryPath(_binaryPath);
     const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(binaryPath);

@@ -86,6 +86,10 @@ class GenyCloudDriver extends AndroidDriver {
     await this._instanceLauncher.shutdown(instance);
   }
 
+  async setLocation({ adbName }, lat, lon) {
+    await this.adb.setLocation(adbName, lat, lon);
+  }
+
   _assertRecipe(deviceQuery, recipe) {
     if (!recipe) {
       throw new DetoxRuntimeError({
