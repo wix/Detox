@@ -31,12 +31,14 @@ describe('location', () => {
     await expect(element(by.id('error'))).toBeVisible();
   });
 
-  it('Should receive location set location', async () => {
+  it('Should receive randomly set location', async () => {
     const isIOS = device.getPlatform() === 'ios';
+    
     if (isIOS && !await isFbsimctlInstalled()) {
       return;
     }
-    if (isIOS) {
+
+    if (isIOS) { // There is no need to relaunch app on Android because it does not support permissions
       await device.relaunchApp({ permissions: { location: 'always' } });
     }
 
