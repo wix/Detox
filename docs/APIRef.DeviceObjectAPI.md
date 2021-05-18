@@ -40,7 +40,6 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 ## Methods
 - [`device.selectApp(name)`](#deviceselectappname)
 - [`device.launchApp(params)`](#devicelaunchappparams)
-- [`device.relaunchApp(params)`](#devicerelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -51,8 +50,8 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 - [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
-- [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
+- [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
 - [`device.getPlatform()`](#devicegetplatform)
