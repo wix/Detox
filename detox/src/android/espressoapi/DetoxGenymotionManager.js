@@ -26,6 +26,17 @@ class DetoxGenymotionManager {
     };
   }
 
+  static getGenymotionManager() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.genymotion.DetoxGenymotionManager"
+      },
+      method: "getGenymotionManager",
+      args: []
+    };
+  }
+
 }
 
 module.exports = DetoxGenymotionManager;
