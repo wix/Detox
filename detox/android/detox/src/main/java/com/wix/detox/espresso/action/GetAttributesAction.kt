@@ -1,143 +1,150 @@
 package com.wix.detox.espresso.action
 
+import android.graphics.Rect
+import android.os.Build
 import android.view.View
-import android.widget.TextView
 import android.widget.CheckBox
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.test.espresso.UiController
+import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.notNullValue
 import org.json.JSONObject
 
-open class GetAttributesAction()
-    : ViewActionWithResult<String?> {
-
-    private var result: String? = ""
+class GetAttributesAction() : ViewActionWithResult<String?> {
+    private val commonAttributes = CommonAttributes()
+    private val textViewAttributes = TextViewAttributes()
+    private val checkBoxAttributes = CheckBoxAttributes()
+    private val progressBarAttributes = ProgressBarAttributes()
+    private val sliderAttributes = SliderAttributes()
+    private var result: String = ""
 
     override fun perform(uiController: UiController?, view: View?) {
-        val rootObject = JSONObject()
+        view!!
 
-        if (view != null) {
-            getViewAttributes(rootObject, view)
-            getTextViewAttributes(rootObject, view)
-            getCheckboxAttributes(rootObject, view)
-        }
+        val json = JSONObject()
 
-        result = rootObject.toString()
+        commonAttributes.get(json, view)
+        textViewAttributes.get(json, view)
+        checkBoxAttributes.get(json, view)
+        progressBarAttributes.get(json, view)
+        sliderAttributes.get(json, view)
+
+        result = json.toString()
     }
 
     override fun getResult() = result
-    override fun getDescription() = "Get attributes"
-    override fun getConstraints(): Matcher<View> = Matchers.notNullValue(View::class.java)
+    override fun getDescription() = "Get view attributes"
+    override fun getConstraints(): Matcher<View> = allOf(notNullValue(), Matchers.isA(View::class.java))
+}
 
-    fun getViewAttributes(rootObject: JSONObject, view: View) {
-        getId(rootObject, view)
-        getVisibility(rootObject, view)
-        getContentDescription(rootObject, view)
-        getAlpha(rootObject, view)
-        getElevation(rootObject, view)
-        getHeight(rootObject, view)
-        getWidth(rootObject, view)
-        getHasFocus(rootObject, view)
-        getIsEnabled(rootObject, view)
+private class CommonAttributes {
+    fun get(json: JSONObject, view: View) {
+        getId(json, view)
+        getVisibility(json, view)
+        getContentDescription(json, view)
+        getAlpha(json, view)
+        getElevation(json, view)
+        getHeight(json, view)
+        getWidth(json, view)
+        getHasFocus(json, view)
+        getIsEnabled(json, view)
     }
 
-    fun getTextViewAttributes(rootObject: JSONObject, view: View) {
-        if (view is TextView) {
-            getText(rootObject, view)
-            getLength(rootObject, view)
-            getTextSize(rootObject, view)
-            getLineHeight(rootObject, view)
-            getHint(rootObject, view)
+    private fun getId(json: JSONObject, view: View) =
+            view.tag?.let {
+                json.put("identifier", it.toString())
+            }
+
+    private fun getVisibility(json: JSONObject, view: View) {
+        json.put("visibility", visibilityMap[view.visibility])
+        json.put("visible", view.getLocalVisibleRect(Rect()))
+    }
+
+    private fun getContentDescription(json: JSONObject, view: View) =
+            view.contentDescription?.let {
+                json.put("label", it)
+            }
+
+    private fun getElevation(json: JSONObject, view: View) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            json.put("elevation", view.elevation)
         }
     }
 
-    fun getCheckboxAttributes(rootObject: JSONObject, view: View) {
-        if (view is CheckBox) {
-            getCheckboxChecked(rootObject, view)
-        }
-    }
+    private fun getAlpha(json: JSONObject, view: View) = json.put("alpha", view.alpha)
+    private fun getHeight(json: JSONObject, view: View) = json.put("height", view.height)
+    private fun getWidth(json: JSONObject, view: View) = json.put("width", view.width)
+    private fun getIsEnabled(json: JSONObject, view: View) = json.put("enabled", view.isEnabled)
+    private fun getHasFocus(json: JSONObject, view: View) = json.put("focused", view.isFocused)
 
-    // VIEW
-    fun getId(rootObject: JSONObject, view: View) {
-        val viewId = view.getId()
-        if (viewId != View.NO_ID) rootObject.put("identifier", viewId)
-    }
-
-    fun getVisibility(rootObject: JSONObject, view: View) {
-        val visibilityMap = mapOf(View.VISIBLE to "visible", View.INVISIBLE to "invisible", View.GONE to "gone")
-        val visibility = visibilityMap.get(view.getVisibility())
-        if (visibility != null) {
-            rootObject.put("visible", view.getVisibility() == View.VISIBLE)
-            rootObject.put("visibility", visibility)
-        }
-    }
-
-    fun getContentDescription(rootObject: JSONObject, view: View) {
-        val contentDescription = view.getContentDescription()
-        if (contentDescription != null) rootObject.put("label", contentDescription)
-    }
-
-    fun getAlpha(rootObject: JSONObject, view: View) {
-        val alpha = view.getAlpha()
-        rootObject.put("alpha", alpha)
-    }
-
-    fun getElevation(rootObject: JSONObject, view: View) {
-        val elevation = view.getElevation()
-        rootObject.put("elevation", elevation)
-    }
-
-    fun getHeight(rootObject: JSONObject, view: View) {
-        val height = view.getHeight()
-        rootObject.put("height", height)
-    }
-
-    fun getWidth(rootObject: JSONObject, view: View) {
-        val width = view.getWidth()
-        rootObject.put("width", width)
-    }
-
-    fun getHasFocus(rootObject: JSONObject, view: View) {
-        val hasFocus = view.hasWindowFocus()
-        rootObject.put("hasFocus", hasFocus)
-    }
-
-    fun getIsEnabled(rootObject: JSONObject, view: View) {
-        val isEnabled = view.isEnabled()
-        rootObject.put("enabled", isEnabled)
-    }
-
-    // CHECKBOX
-    fun getCheckboxChecked(rootObject: JSONObject, view: CheckBox) {
-        val isChecked = view.isChecked()
-        rootObject.put("isChecked", isChecked)
-    }
-
-    //TEXTVIEW
-    fun getText(rootObject: JSONObject, view: TextView) {
-        val textValue = view.getText()
-        if (textValue != null) rootObject.put("text", textValue.toString())
-    }
-
-    fun getLength(rootObject: JSONObject, view: TextView) {
-        val lengthValue = view.length()
-        rootObject.put("length", lengthValue)
-    }
-
-    fun getTextSize(rootObject: JSONObject, view: TextView) {
-        val textSize = view.getTextSize()
-        rootObject.put("textSize", textSize)
-    }
-
-    fun getLineHeight(rootObject: JSONObject, view: TextView) {
-        val lineHeight = view.getLineHeight()
-        rootObject.put("lineHeight", lineHeight)
-    }
-
-    fun getHint(rootObject: JSONObject, view: TextView) {
-        val hint = view.getHint()
-        if (hint != null) rootObject.put("placeholder", hint.toString())
+    companion object {
+        private val visibilityMap = mapOf(View.VISIBLE to "visible", View.INVISIBLE to "invisible", View.GONE to "gone")
     }
 }
 
+private class TextViewAttributes {
+    fun get(json: JSONObject, view: View) {
+        if (view is TextView) {
+            getText(json, view)
+            getLength(json, view)
+            getTextSize(json, view)
+            getHint(json, view)
+        }
+    }
+
+    private fun getText(rootObject: JSONObject, view: TextView) =
+            view.text?.let {
+                rootObject.put("text", it.toString())
+            }
+
+    private fun getTextSize(rootObject: JSONObject, view: TextView) =
+            rootObject.put("textSize", view.textSize)
+
+    private fun getLength(rootObject: JSONObject, view: TextView) =
+            view.text?.let {
+                rootObject.put("length", view.length())
+            }
+
+    private fun getHint(rootObject: JSONObject, view: TextView) =
+            view.hint?.let {
+                rootObject.put("placeholder", it.toString())
+            }
+}
+
+private class CheckBoxAttributes {
+    fun get(json: JSONObject, view: View) {
+        if (view is CheckBox) {
+            getCheckboxValue(json, view)
+        }
+    }
+
+    private fun getCheckboxValue(rootObject: JSONObject, view: CheckBox) =
+            rootObject.put("value", view.isChecked)
+}
+
+private class ProgressBarAttributes {
+    fun get(json: JSONObject, view: View) {
+        if (view is ProgressBar) {
+            getProgressBarValue(json, view)
+        }
+    }
+
+    private fun getProgressBarValue(rootObject: JSONObject, view: ProgressBar) =
+            rootObject.put("value", view.progress)
+}
+
+private class SliderAttributes {
+    fun get(json: JSONObject, view: View) {
+        if (view is Slider) {
+            getSliderValue(json, view)
+        }
+    }
+
+    private fun getSliderValue(rootObject: JSONObject, view: Slider) =
+        rootObject.put("value", view.value)
+}

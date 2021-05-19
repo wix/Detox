@@ -225,6 +225,16 @@ describe('AndroidExpect', () => {
       it('should fail to find index-based element given invalid args', async () => {
         await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
       });
+
+      it('should retrieve attributes', async () => {
+        const execResult = {
+          text: 'hello',
+          value: 1,
+        }
+        mockExecutor.executeResult = Promise.resolve(JSON.stringify(execResult));
+        const result = await e.element(e.by.id('UniqueId005')).getAttributes();
+        expect(result).toEqual(execResult);
+      });
     });
 
     describe('element screenshots', () => {

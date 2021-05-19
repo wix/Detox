@@ -168,17 +168,6 @@ class DetoxAction {
     };
   }
 
-  static takeViewScreenshot() {
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxAction"
-      },
-      method: "takeViewScreenshot",
-      args: []
-    };
-  }
-
   static getAttributes() {
     return {
       target: {
@@ -186,6 +175,17 @@ class DetoxAction {
         value: "com.wix.detox.espresso.DetoxAction"
       },
       method: "getAttributes",
+      args: []
+    };
+  }
+
+  static takeViewScreenshot() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "takeViewScreenshot",
       args: []
     };
   }

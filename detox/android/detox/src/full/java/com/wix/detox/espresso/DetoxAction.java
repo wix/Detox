@@ -175,9 +175,13 @@ public class DetoxAction {
         return swipeHelper.swipeInDirection(direction, fast, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY);
     }
 
+    public static ViewAction getAttributes() {
+        return new GetAttributesAction();
+    }
+
     public static ViewAction takeViewScreenshot() {
         return new ViewActionWithResult<String>() {
-            private TakeViewScreenshotAction action = new TakeViewScreenshotAction();
+            private final TakeViewScreenshotAction action = new TakeViewScreenshotAction();
 
             @Override
             public Matcher<View> getConstraints() {
@@ -201,31 +205,4 @@ public class DetoxAction {
             }
         };
     }
-
-        public static ViewAction getAttributes() {
-            return new ViewActionWithResult<String>() {
-                private GetAttributesAction action = new GetAttributesAction();
-
-                @Override
-                public Matcher<View> getConstraints() {
-                    return action.getConstraints();
-                }
-
-                @Override
-                public String getDescription() {
-                    return action.getDescription();
-                }
-
-                @Override
-                public void perform(UiController uiController, View view) {
-                    action.perform(uiController, view);
-                }
-
-                @Override
-                public String getResult() {
-                    String result = action.getResult();
-                    return (result == null ? null : result);
-                }
-            };
-        }
 }

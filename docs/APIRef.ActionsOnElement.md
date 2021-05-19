@@ -233,44 +233,42 @@ await element(by.id('slider')).adjustSliderToPosition(0.75);
 
 ### `getAttributes()`
 
-Returns an object, representing the attributes of the element.
+Returns an object, representing various attributes of the element.
 
 Retrieved attributes are:
 
-- `text`—the text value of the element <br/>
-- `label`—the label of the element (matches `accessibilityLabel` for ios, and `contentDescription` for android) <br/>
-- `placeholder`—the placeholder text value of the element (matches `hint` for android) <br/>
-- `enabled`—whether or not the element is enabled for user interaction <br/>
-- `identifier`—the identifier of the element (matches `accessibilityIdentifier` for ios) <br/>
-- `visible`—whether the element is visible at the activation point <br/>
+- `text`: The text value of any textual element.
+- `label`: The label of the element. Matches `accessibilityLabel` for ios, and `contentDescription` for android.
+- `placeholder`: The placeholder text value of the element. Matches `hint` on android.
+- `enabled`: Whether or not the element is enabled for user interaction.
+- `identifier`: The identifier of the element. Matches `accessibilityIdentifier` on iOS, and the main view tag, on Android - both commonly **holding the component's test ID in React Native apps**.
+- `visible`: whether the element is visible. On iOS, visibility is calculated for the [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint). On Android, the attribute directly holds the value returned by [View.getLocalVisibleRect()](https://developer.android.com/reference/kotlin/android/view/View#getglobalvisiblerect)).
+- `value`: the value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches `accessibilityValue`, on iOS.
 
 ###### iOS only
-- `value`—the value of the element (matches `accessibilityValue`) <br/>
-- `activationPoint`—the activation point of the element, in element coordinate space <br/>
-- `normalizedActivationPoint`—the activation point of the element, in normalized percentage ([0.0, 1.0]) <br/>
-- `hittable`—whether the element is hittable at the activation point <br/>
-- `frame`—the frame of the element, in screen coordinate space <br/>
-- `elementFrame`—the frame of the element, in container coordinate space <br/>
-- `elementBounds`—the bounds of the element, in element coordinate space <br/>
-- `safeAreaInsets`—the safe area insets of the element, in element coordinate space <br/>
-- `elementSafeBounds`—the safe area bounds of the element, in element coordinate space <br/>
-- `date`—the date of the element (in case the element is a date picker) <br/>
-- `normalizedSliderPosition`—the normalized slider position (in case the element is a slider) <br/>
-- `contentOffset`—the content offset (in case the element is a scroll view) <br/>
-- `contentInset`—the content inset (in case the element is a scroll view) <br/>
-- `adjustedContentInset`—the adjusted content inset (in case the element is a scroll view) <br/>
+- `activationPoint`: The [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint) of the element, in element coordinate space.
+- `normalizedActivationPoint`: The activation point of the element, in normalized percentage ([0.0, 1.0]).
+- `hittable`: Whether the element is hittable at the activation point.
+- `frame`: The frame of the element, in screen coordinate space.
+- `elementFrame`: The frame of the element, in container coordinate space.
+- `elementBounds`: The bounds of the element, in element coordinate space.
+- `safeAreaInsets`: The safe area insets of the element, in element coordinate space.
+- `elementSafeBounds`: The safe area bounds of the element, in element coordinate space.
+- `date`: The date of the element (in case the element is a date picker).
+- `normalizedSliderPosition`: The normalized slider position (in case the element is a slider).
+- `contentOffset`: The content offset (in case the element is a scroll view).
+- `contentInset`: The content inset (in case the element is a scroll view).
+- `adjustedContentInset`: The adjusted content inset (in case the element is a scroll view).
 
 ###### Android only
-- `visibility`—the visibility of the element - visible, invisible or gone <br/>
-- `width`—width of the element <br/>
-- `height`—height of the element <br/>
-- `elevation`—elevation of the element <br/>
-- `alpha`—alpha value for the element <br/>
-- `hasFocus`—does the element have focus <br/>
-- `textSize`—the text size for the text element <br/>
-- `length`—the length of the text element <br/>
-- `lineHeight`—the line height for text element <br/>
-- `isChecked`—the checked state for the element (in case the element is a checkbox) <br/>
+- `visibility`: The OS visibility type associated with the element: `visible`, `invisible` or `gone`.
+- `width`: Width of the element, in pixels.
+- `height`: Height of the element, in pixels.
+- `elevation`: Elevation of the element.
+- `alpha`: Alpha value for the element.
+- `focused`: Whether the element is the one currently in focus.
+- `textSize`: The text size for the text element.
+- `length`: The length of the text element (character count).
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 

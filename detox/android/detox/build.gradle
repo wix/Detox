@@ -115,8 +115,9 @@ dependencies {
     api 'androidx.test.espresso:espresso-web:3.2.0'
 }
 
-// Third-party deps.
+// Third-party/extension deps.
 dependencies {
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'org.apache.commons:commons-lang3:3.7' // Needed by invoke. Warning: Upgrading to newer versions is not seamless.
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
 }
