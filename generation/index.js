@@ -49,7 +49,8 @@ function createAndroidFiles() {
     '../detox/android/detox/src/full/java/com/wix/detox/espresso/web/DetoxWebAtomMatcher.java': '../detox/src/android/espressoapi/web/DetoxWebAtomMatcher.js',
     '../detox/android/detox/src/full/java/com/wix/detox/espresso/web/WebViewElement.java': '../detox/src/android/espressoapi/web/WebViewElement.js',
     '../detox/android/detox/src/full/java/com/wix/detox/espresso/web/WebElement.java': '../detox/src/android/espressoapi/web/WebElement.js',
-    '../detox/android/detox/src/full/java/com/wix/detox/espresso/web/WebExpect.java': '../detox/src/android/espressoapi/web/WebExpect.js'
+    '../detox/android/detox/src/full/java/com/wix/detox/espresso/web/WebExpect.java': '../detox/src/android/espressoapi/web/WebExpect.js',
+    '../detox/android/detox/src/full/java/com/wix/detox/genymotion/DetoxGenymotionManager.java': '../detox/src/android/espressoapi/DetoxGenymotionManager.js'
   };
 }
 

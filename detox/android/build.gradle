@@ -34,6 +34,9 @@ allprojects {
         maven {
             url "$projectDir/../../node_modules/react-native/android"
         }
+         maven {
+            url "http://api.genymotion.com/repositories/releases/"
+        }
     }
 }
 
