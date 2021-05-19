@@ -324,7 +324,7 @@ describe('Genymotion-cloud driver', () => {
         detoxGenymotionManager.setLocation.mockReturnValue(invocation);
 
         const instance = anInstance();
-        await uut.setLocation(instance, 40.5, 55.5);
+        await uut.setLocation(instance, '40.5', '55.5');
         expect(invocationManager.execute).toHaveBeenCalledWith(invocation);
         expect(detoxGenymotionManager.setLocation).toHaveBeenCalledWith(40.5, 55.5);
       });
