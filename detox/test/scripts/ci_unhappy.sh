@@ -17,6 +17,10 @@ cp coverage/lcov.info "../../coverage/e2e-legacy-jasmine-$platform-timeout-ci.lc
 echo "Running e2e stack trace mangling test..."
 runnerOutput="$(npm run "e2e:$platform" -- -H e2e-unhappy/failing-matcher.test.js 2>&1 | tee /dev/stdout)"
 
+echo "Running early syntax error test..."
+node scripts/assert_timeout.js npm run "e2e:$platform" -- -H e2e-unhappy/early-syntax-error.test.js
+cp coverage/lcov.info "../../coverage/e2e-early-syntax-error-$platform-ci.lcov"
+
 if grep -q "await.*element.*supercalifragilisticexpialidocious" <<< "$runnerOutput" ;
 then
     echo "Stack trace mangling has passed OK."
