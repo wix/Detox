@@ -38,10 +38,7 @@ describe('location', () => {
       return;
     }
 
-    if (isIOS) { // There is no need to relaunch app on Android because it does not support permissions
-      await device.relaunchApp({ permissions: { location: 'always' } });
-    }
-
+    await device.relaunchApp({ permissions: { location: 'always' } });
     await device.setLocation(lat, long);
     await element(by.text('Location')).tap();
     await element(by.id('getLocationButton')).tap();

@@ -317,7 +317,7 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('setLocation', () => {
-      it('should call `adb.setLocation` with adb name and provided coordinates', async () => {
+      it('should invoke `DetoxGenymotionManager.setLocation` with specified coordinates', async () => {
         const invocation = {
           method: 'setLocation'
         };
