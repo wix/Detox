@@ -23,7 +23,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
-- [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
+- [`.getAttributes()`](#getAttributes)
 - [`.takeScreenshot(name)`](#takescreenshotname-android-only) **Android only**
 
 ### `tap(point)`
@@ -245,7 +245,7 @@ Retrieved attributes are:
 - `visible`: whether the element is visible. On iOS, visibility is calculated for the [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint). On Android, the attribute directly holds the value returned by [View.getLocalVisibleRect()](https://developer.android.com/reference/kotlin/android/view/View#getglobalvisiblerect)).
 - `value`: the value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches `accessibilityValue`, on iOS.
 
-###### iOS only
+###### iOS-Only
 - `activationPoint`: The [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint) of the element, in element coordinate space.
 - `normalizedActivationPoint`: The activation point of the element, in normalized percentage ([0.0, 1.0]).
 - `hittable`: Whether the element is hittable at the activation point.
@@ -260,7 +260,7 @@ Retrieved attributes are:
 - `contentInset`: The content inset (in case the element is a scroll view).
 - `adjustedContentInset`: The adjusted content inset (in case the element is a scroll view).
 
-###### Android only
+###### Android-Only
 - `visibility`: The OS visibility type associated with the element: `visible`, `invisible` or `gone`.
 - `width`: Width of the element, in pixels.
 - `height`: Height of the element, in pixels.
