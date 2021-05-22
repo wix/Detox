@@ -110,6 +110,13 @@ class SwipeAction extends Action {
   }
 }
 
+class GetAttributes extends Action {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.getAttributes());
+  }
+}
+
 class TakeElementScreenshot extends Action {
   constructor() {
     super();
@@ -127,6 +134,7 @@ module.exports = {
   TypeTextAction,
   ReplaceTextAction,
   ClearTextAction,
+  GetAttributes,
   ScrollAmountAction,
   ScrollAmountStopAtEdgeAction,
   ScrollEdgeAction,

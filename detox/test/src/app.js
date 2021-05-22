@@ -43,7 +43,7 @@ class example extends Component {
       <TouchableOpacity onPress={() => {
         onPressCallback();
       }}>
-        <Text style={{color: 'blue', marginBottom: 10}}>{title}</Text>
+        <Text style={{color: 'blue', marginBottom: 8}}>{title}</Text>
       </TouchableOpacity>
     );
   }
@@ -97,7 +97,7 @@ class example extends Component {
     console.log("App@render: JS rendering main screen");
     return (
       <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 20, marginBottom: 10}}>
+        <Text style={{fontSize: 18, marginBottom: 10}}>
           Choose a test
         </Text>
         {this.renderScreenButton('Language', Screens.LanguageScreen)}
@@ -122,6 +122,7 @@ class example extends Component {
         {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
         {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
+        {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
 
         { /* TODO: Push this into a dedicated screen */ }
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>

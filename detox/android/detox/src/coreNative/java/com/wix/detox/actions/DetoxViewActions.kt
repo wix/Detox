@@ -10,6 +10,7 @@ import androidx.test.espresso.action.ViewActions
 import com.wix.detox.espresso.action.DetoxSingleTap
 import com.wix.detox.espresso.action.DetoxMultiTap
 import com.wix.detox.espresso.action.TakeViewScreenshotAction
+import com.wix.detox.espresso.action.GetAttributesAction
 import com.wix.detox.espresso.action.ScreenshotResult
 import com.wix.detox.espresso.ViewActionWithResult
 
@@ -24,4 +25,7 @@ public object DetoxViewActions {
 
     public fun takeScreenshot(): ViewActionWithResult<ScreenshotResult?> =
         TakeViewScreenshotAction()
+
+    public fun getAttributes(): ViewActionWithResult<String?> =
+            GetAttributesAction()
 }

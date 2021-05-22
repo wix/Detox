@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
+    "@react-native-community/checkbox": "^0.5.7",
     "moment": "^2.24.0",
     "react": "16.11.x",
     "react-native": "0.62.x",

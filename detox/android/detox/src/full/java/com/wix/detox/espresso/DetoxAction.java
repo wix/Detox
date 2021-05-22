@@ -8,6 +8,7 @@ import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
+import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
 import com.wix.detox.espresso.scroll.ScrollHelper;
@@ -174,9 +175,13 @@ public class DetoxAction {
         return swipeHelper.swipeInDirection(direction, fast, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY);
     }
 
+    public static ViewAction getAttributes() {
+        return new GetAttributesAction();
+    }
+
     public static ViewAction takeViewScreenshot() {
         return new ViewActionWithResult<String>() {
-            private TakeViewScreenshotAction action = new TakeViewScreenshotAction();
+            private final TakeViewScreenshotAction action = new TakeViewScreenshotAction();
 
             @Override
             public Matcher<View> getConstraints() {
