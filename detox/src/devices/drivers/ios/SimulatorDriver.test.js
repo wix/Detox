@@ -120,17 +120,29 @@ describe('IOS simulator driver', () => {
   });
 
   describe('acquireFreeDevice', () => {
+    const givenUsedSimulators = (...UDIDs) => {
+      jest.spyOn(uut.deviceRegistry, 'getRegisteredDevices').mockReturnValue({
+        rawDevices: UDIDs.map((UDID) => ({ id: UDID })), // as typically returned by getRegisteredDevices()
+        includes: UDIDs.includes.bind(UDIDs),
+      });
+    }
+    const givenNoUsedSimulators = () => givenUsedSimulators();
+    const givenSystemDevices = (...deviceSpecs) => uut.applesimutils.list.mockResolvedValue([ ...deviceSpecs ]);
+    const givenCreatedDeviceUDID = (udid) => uut.applesimutils.create.mockReturnValue(udid);
+    const aDeviceSpec = (udid) => ({
+      udid,
+      os: {
+        identifier: 'mock-OS',
+      },
+    });
+
     let applesimutils;
 
     beforeEach(() => {
       const SimulatorDriver = require('./SimulatorDriver');
       uut = new SimulatorDriver({ client: {}, emitter });
 
-      jest.spyOn(uut.deviceRegistry, 'includes').mockReturnValue(false);
-      jest.spyOn(uut.deviceRegistry, 'getRegisteredDevices').mockReturnValue({
-        rawDevices: [],
-        includes: jest.fn().mockReturnValue(false),
-      });
+      givenNoUsedSimulators();
 
       applesimutils = uut.applesimutils;
       applesimutils.list.mockImplementation(async () => require('./tools/applesimutils.mock')['--list']);
@@ -189,12 +201,41 @@ describe('IOS simulator driver', () => {
         'Searching for device by type = "iPad 2" and by OS = "iOS 9.3.6" ...'
       );
     });
+
+    it('should create a device', async () => {
+      const udidUsed = 'mock-used-udid';
+      const udidNew = 'mock-new-udid';
+      const specUsed = aDeviceSpec(udidUsed);
+
+      givenSystemDevices(specUsed);
+      givenCreatedDeviceUDID(udidNew);
+      givenUsedSimulators(udidUsed);
+
+      const result = await uut.acquireFreeDevice('iPhone Mock');
+
+      expect(uut.applesimutils.create).toHaveBeenCalledWith(specUsed);
+      expect(result).toEqual(udidNew);
+    });
+
+    it('should reuse a matching device', async () => {
+      const udid = 'mock-device-udid';
+      const specUsed = aDeviceSpec(udid);
+
+      givenSystemDevices(specUsed);
+      givenNoUsedSimulators();
+
+      const result = await uut.acquireFreeDevice('iPhone Mock');
+
+      expect(result).toEqual(udid);
+      expect(uut.applesimutils.create).not.toHaveBeenCalled();
+    });
   });
 });
 
 class mockAppleSimUtils {
   constructor() {
     this.launch = jest.fn();
+    this.create = jest.fn();
     this.setBiometricEnrollment = jest.fn();
     this.matchBiometric = jest.fn();
     this.unmatchBiometric = jest.fn();

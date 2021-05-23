@@ -34,10 +34,7 @@ describe('Genymotion-Cloud instance launcher', () => {
       const instance = anInstance();
 
       await uut.launch(instance);
-      expect(deviceCleanupRegistry.allocateDevice).toHaveBeenCalledWith({
-        uuid: instance.uuid,
-        name: instance.name,
-      })
+      expect(deviceCleanupRegistry.allocateDevice).toHaveBeenCalledWith(instance.uuid, { name: instance.name });
     });
   });
 
@@ -58,17 +55,15 @@ describe('Genymotion-Cloud instance launcher', () => {
     it('should remove the instance from the cleanup registry', async () => {
       const instance = anInstance();
       await uut.shutdown(instance);
-      expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(expect.objectContaining({
-        uuid: instance.uuid,
-      }));
+      expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
     });
 
     it('should emit associated events', async () => {
       const instance = anInstance();
       await uut.shutdown(instance);
 
-      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: instance.adbName });
-      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: instance.adbName });
+      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: instance.uuid });
+      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: instance.uuid });
     });
 
     it('should not emit shutdownDevice prematurely', async () => {

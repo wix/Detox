@@ -1,5 +1,4 @@
 const AndroidDeviceLauncher = require('../../AndroidDeviceLauncher');
-const GenyCloudInstanceHandle = require('../GenyCloudInstanceHandle');
 
 class GenyCloudInstanceLauncher extends AndroidDeviceLauncher {
   constructor(instanceLifecycleService, deviceCleanupRegistry, eventEmitter) {
@@ -19,17 +18,16 @@ class GenyCloudInstanceLauncher extends AndroidDeviceLauncher {
    * @returns {Promise<void>}
    */
   async launch(instance) {
-    const instanceHandle = new GenyCloudInstanceHandle(instance);
-    await this._deviceCleanupRegistry.allocateDevice(instanceHandle);
+    await this._deviceCleanupRegistry.allocateDevice(instance.uuid, { name: instance.name });
   }
 
   async shutdown(instance) {
-    const instanceHandle = new GenyCloudInstanceHandle(instance);
+    const { uuid } = instance;
 
-    await this._notifyPreShutdown(instance.adbName);
-    await this._instanceLifecycleService.deleteInstance(instance.uuid);
-    await this._deviceCleanupRegistry.disposeDevice(instanceHandle);
-    await this._notifyShutdownCompleted(instance.adbName);
+    await this._notifyPreShutdown(uuid);
+    await this._instanceLifecycleService.deleteInstance(uuid);
+    await this._deviceCleanupRegistry.disposeDevice(uuid);
+    await this._notifyShutdownCompleted(uuid);
   }
 }
 

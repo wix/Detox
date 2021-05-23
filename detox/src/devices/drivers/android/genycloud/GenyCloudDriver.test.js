@@ -198,10 +198,7 @@ describe('Genymotion-cloud driver', () => {
         const deviceQuery = aDeviceQuery();
         const result = await uut.acquireFreeDevice(deviceQuery);
 
-        expect(result).toEqual(expect.objectContaining({
-          adbName: instance.adbName,
-          uuid: instance.uuid,
-        }));
+        expect(result).toEqual(instance);
         expect(recipeQuerying().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
         expect(instanceAllocation().allocateDevice).toHaveBeenCalledWith(recipe);
       });
@@ -321,12 +318,16 @@ describe('Genymotion-cloud driver', () => {
       GenyCloudDriver = require('./GenyCloudDriver');
     });
 
-    const aPendingInstanceHandle = (name, uuid) => ({ name, uuid });
+    // As typically returned by the DeviceRegistry
+    const aPendingRawDevice = (name, uuid) => ({
+      id: uuid,
+      data: { name },
+    });
 
     describe('global clean-up', () => {
-      const givenDeletionPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ rawDevices: devicesHandles });
+      const givenDeletionPendingDevices = (rawDevices) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ rawDevices });
       const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);
-      const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices( _.map(instances, ({ uuid, name }) => ({ uuid, name }) ));
+      const givenDeletionPendingInstances = (instances) => givenDeletionPendingDevices( _.map(instances, ({ uuid, name }) => aPendingRawDevice(name, uuid)) );
       const givenDeletionResult = (deletedInstance) => instanceLifecycleService.deleteInstance.mockResolvedValue(deletedInstance);
 
       const anAssertablePendingPromise = () => {
@@ -343,11 +344,10 @@ describe('Genymotion-cloud driver', () => {
           .mockReturnValueOnce(killPromise1)
           .mockReturnValueOnce(killPromise2);
 
-        const deviceHandles = [
-          aPendingInstanceHandle('device1', 'uuid1'),
-          aPendingInstanceHandle('device2', 'uuid2'),
-        ];
-        givenDeletionPendingDevices(deviceHandles);
+        givenDeletionPendingDevices([
+          aPendingRawDevice('device1', 'uuid1'),
+          aPendingRawDevice('device2', 'uuid2'),
+        ]);
 
         await GenyCloudDriver.globalCleanup();
 
@@ -364,9 +364,9 @@ describe('Genymotion-cloud driver', () => {
           .mockRejectedValueOnce(new Error('mock-error2'));
 
         givenDeletionPendingDevices([
-          aPendingInstanceHandle('failing1', 'uuid1'),
-          aPendingInstanceHandle('nonfailing', 'uuid'),
-          aPendingInstanceHandle('failing2', 'uuid2'),
+          aPendingRawDevice('failing1', 'uuid1'),
+          aPendingRawDevice('nonfailing', 'uuid'),
+          aPendingRawDevice('failing2', 'uuid2'),
         ]);
 
         await GenyCloudDriver.globalCleanup();
@@ -414,7 +414,7 @@ describe('Genymotion-cloud driver', () => {
     describe('global *emergency* clean-up', () => {
       const signalExitCallback = () => signalExit.mock.calls[0][0];
       const invokeExitCallback = (signal = 'SIGINT') => signalExitCallback()(null, signal);
-      const givenCleanupPendingDevices = (devicesHandles) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ rawDevices: devicesHandles });
+      const givenCleanupPendingDevices = (rawDevices) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ rawDevices });
       const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
 
       it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {
@@ -425,7 +425,7 @@ describe('Genymotion-cloud driver', () => {
 
       it('should warn of leaking instances in signal-exit callback', async () => {
         givenCleanupPendingDevices([
-          aPendingInstanceHandle('aDevice', 'uuid'),
+          aPendingRawDevice('aDevice', 'uuid'),
         ]);
 
         await GenyCloudDriver.globalInit();
@@ -447,7 +447,7 @@ describe('Genymotion-cloud driver', () => {
 
       it('should not warn if called with no signal', async () => {
         givenCleanupPendingDevices([
-          aPendingInstanceHandle('aDevice', 'uuid'),
+          aPendingRawDevice('aDevice', 'uuid'),
         ]);
 
         await GenyCloudDriver.globalInit();

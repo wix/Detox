@@ -116,7 +116,8 @@ class GenyCloudDriver extends AndroidDriver {
     onSignalExit((code, signal) => {
       if (signal) {
         const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-        const { rawDevices: instanceHandles } = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+        const { rawDevices  } = deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+        const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
         if (instanceHandles.length) {
           reportGlobalCleanupSummary(instanceHandles);
         }
@@ -126,7 +127,8 @@ class GenyCloudDriver extends AndroidDriver {
 
   static async globalCleanup() {
     const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-    const { rawDevices: instanceHandles } = await deviceCleanupRegistry.readRegisteredDevices();
+    const { rawDevices } = await deviceCleanupRegistry.readRegisteredDevices();
+    const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
     if (instanceHandles.length) {
       const exec = new GenyCloudExec(environment.getGmsaasPath());
       const instanceLifecycleService = new InstanceLifecycleService(exec, null);
@@ -165,4 +167,10 @@ function reportGlobalCleanupSummary(deletionLeaks) {
   }
 }
 
+function rawDevicesToInstanceHandles(rawDevices) {
+  return rawDevices.map((rawDevice) => ({
+    uuid: rawDevice.id,
+    name: rawDevice.data.name,
+  }));
+}
 module.exports = GenyCloudDriver;
