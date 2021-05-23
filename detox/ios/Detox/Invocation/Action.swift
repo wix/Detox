@@ -617,7 +617,7 @@ class GetAttributesAction : Action {
 
 class TakeScreenshotAction : Action {
 	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {
-		let fileName = params![0] as! String
+		let fileName = params?[0] as? String ?? nil
 		async_action_dtx_try(completionHandler: completionHandler) {
 			completionHandler(element.takeScreenshot(fileName: fileName), nil)
 		}

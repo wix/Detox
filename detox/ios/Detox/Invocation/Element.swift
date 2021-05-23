@@ -217,9 +217,9 @@ class Element : NSObject {
 	}
 	
 	func takeScreenshot(fileName: String?) -> [String : Any] {
-		let path = view.dtx_takeScreenshot(fileName)
+		let path: URL = view.dtx_takeScreenshot(fileName)
 		
-		return ["screenshotPath": path]
+		return ["screenshotPath": path.path]
 	}
 	
 	@objc

@@ -239,8 +239,8 @@ class Element {
     return this.withAction('adjustSliderToPosition', position);
   }
 
-  takeScreenshot() {
-    return this.withAction('takeScreenshot');
+  takeScreenshot(fileName) {
+    return this.withAction('takeScreenshot', fileName);
   }
 
   createInvocation(action, targetElementMatcher, ...params) {
