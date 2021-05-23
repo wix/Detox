@@ -15,6 +15,9 @@
 
 #import "DTXAppleInternals.h"
 #import "DTXSyntheticEvents.h"
+#import "NSURL+DetoxUtils.h"
+#import "UIView+DetoxUtils.h"
+#import "UIImage+DetoxUtils.h"
 
 @implementation NSObject (DetoxActions)
 
@@ -544,6 +547,16 @@ static void _DTXTypeText(NSString* text)
 			[textView.delegate textViewDidEndEditing:textView];
 		}
 	}
+}
+
+- (NSURL *)dtx_takeScreenshot:(nullable NSString*)name
+{
+	UIImage *image = [self.dtx_view dtx_imageFromView];
+	NSURL *path = [NSURL elementsScreenshotPath];
+	NSString *fileName = name != nil ? name : [NSString stringWithFormat:@"ImageScreenshot_%@", self];
+	[image dtx_saveToPath:path fileName:fileName];
+	
+	return path;
 }
 
 @end

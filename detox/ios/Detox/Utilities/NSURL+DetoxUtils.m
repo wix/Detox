@@ -41,4 +41,9 @@
 	return [self temporaryPath:@"visibilityFailingRects"];
 }
 
++ (NSURL *)elementsScreenshotPath
+{
+	return [self temporaryPath:@"elementsScreenshot"];
+}
+
 @end

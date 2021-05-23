@@ -52,6 +52,7 @@ class Action : CustomStringConvertible {
 		static let setColumnToValue = "setColumnToValue"
 		static let setDatePickerDate = "setDatePickerDate"
 		static let getAttributes = "getAttributes"
+		static let takeScreenshot = "takeScreenshot"
 	}
 	
 	let element : Element
@@ -85,7 +86,8 @@ class Action : CustomStringConvertible {
 		
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
-		Kind.getAttributes: GetAttributesAction.self
+		Kind.getAttributes: GetAttributesAction.self,
+		Kind.takeScreenshot: TakeScreenshotAction.self
 	]
 
 	dynamic class func with(dictionaryRepresentation: [String: Any]) throws -> Action {
@@ -609,6 +611,15 @@ class GetAttributesAction : Action {
 	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {
 		async_action_dtx_try(completionHandler: completionHandler) {
 			completionHandler(element.attributes, nil)
+		}
+	}
+}
+
+class TakeScreenshotAction : Action {
+	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {
+		let fileName = params![0] as! String
+		async_action_dtx_try(completionHandler: completionHandler) {
+			completionHandler(element.takeScreenshot(fileName: fileName), nil)
 		}
 	}
 }

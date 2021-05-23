@@ -240,7 +240,7 @@ class Element {
   }
 
   takeScreenshot() {
-    throw new DetoxRuntimeError({ message: 'Element screenshots are not supported on iOS, at the moment!' });
+    return this.withAction('takeScreenshot');
   }
 
   createInvocation(action, targetElementMatcher, ...params) {
