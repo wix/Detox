@@ -2,11 +2,17 @@ const _ = require('lodash');
 
 describe('expectTwo', () => {
   let e;
+  let invocationManager;
 
   beforeEach(() => {
+    jest.mock('fs-extra')
+    jest.mock('tempfile')
     const IosExpect = require('./expectTwo');
+    const AsyncEmitter = jest.genMockFromModule('../utils/AsyncEmitter');
+    invocationManager = new MockExecutor();
     e = new IosExpect({
-      invocationManager: new MockExecutor(),
+      invocationManager,
+      emitter: new AsyncEmitter()
     });
   });
 
@@ -453,13 +459,47 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`element().takeScreenshot`, () => {
-    try {
-      e.element(e.by.id('uniqueId')).takeScreenshot();
-      fail();
-    } catch (e) {
-      expect(e.message).toContain('not supported on iOS');
-    }
+  it(`element().takeScreenshot check for path`, async () => {
+    const tmpFilePath = 'pathToSomeFile.jpg'
+    require('tempfile').mockReturnValue(tmpFilePath);
+    const testCall = await e.element(e.by.id('uniqueId')).takeScreenshot('imageName');
+
+    expect(testCall).toBe(tmpFilePath);
+  });
+
+  it(`element().takeScreenshot without a name`, async () => {
+    const tmpFilePath = 'pathToSomeFile.jpg'
+    require('tempfile').mockReturnValue(tmpFilePath);
+    await e.element(e.by.id('uniqueId')).takeScreenshot();
+
+    const jsonOutput = {
+      type: 'action',
+      action: 'takeScreenshot',
+      predicate: {
+        type: 'id',
+        value: 'uniqueId'
+      }
+    };
+
+    expect(invocationManager.execute).toHaveBeenCalledWith(jsonOutput);
+  });
+
+  it(`element().takeScreenshot with name`, async () => {
+    await e.element(e.by.id('uniqueId')).takeScreenshot('imageName');
+
+    const jsonOutput = {
+      type: 'action',
+      action: 'takeScreenshot',
+      params: [
+        'imageName'
+      ],
+      predicate: {
+        type: 'id',
+        value: 'uniqueId'
+      }
+    };
+
+    expect(invocationManager.execute).toHaveBeenCalledWith(jsonOutput);
   });
 
   it('by.web should throw', () => {
@@ -487,6 +527,9 @@ expect.extend({
 });
 
 class MockExecutor {
+  constructor() {
+    jest.spyOn(this, 'execute');
+  }
   execute(invocation) {
     return { invocation };
   }
