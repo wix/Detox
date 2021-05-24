@@ -1,6 +1,6 @@
 {
   "name": "detox-cli",
-  "version": "18.13.0",
+  "version": "18.14.1",
   "description": "Optional wrapper for Detox CLI, meant to be installed globally",
   "main": "cli.js",
   "scripts": {
