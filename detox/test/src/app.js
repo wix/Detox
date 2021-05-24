@@ -146,7 +146,7 @@ class example extends Component {
         {isIos && this.renderScreenNotifyingButton_iOS('Drag And Drop', 'dragAndDrop')}
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
-        {isAndroid && this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
+        {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
