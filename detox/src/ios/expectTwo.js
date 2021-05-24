@@ -109,7 +109,7 @@ class InternalExpect extends Expect {
 }
 
 class Element {
-  constructor(invocationManager, matcher, emitter) {
+  constructor(invocationManager, emitter, matcher) {
     this._invocationManager = invocationManager;
     this._emitter = emitter;
     this.matcher = matcher;
@@ -406,9 +406,9 @@ class Matcher {
 }
 
 class WaitFor {
-  constructor(invocationManager, element, emitter) {
+  constructor(invocationManager, emitter, element) {
     this._invocationManager = invocationManager;
-    this.element = new InternalElement(invocationManager, element.matcher, emitter);
+    this.element = new InternalElement(invocationManager, emitter, element.matcher);
     this.expectation = new InternalExpect(invocationManager, this.element);
     this._emitter = emitter
   }
@@ -487,7 +487,7 @@ class WaitFor {
 
   whileElement(matcher) {
     if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
-    this.actionableElement = new InternalElement(this._invocationManager, matcher, this._emitter);
+    this.actionableElement = new InternalElement(this._invocationManager, this._emitter, matcher,);
     return this;
   }
 
@@ -596,11 +596,11 @@ class WaitFor {
   }
 }
 
-function element(invocationManager, matcher, emitter) {
+function element(invocationManager, emitter, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
-  return new Element(invocationManager, matcher, emitter);
+  return new Element(invocationManager, emitter, matcher);
 }
 
 function expect(invocationManager, element) {
@@ -610,11 +610,11 @@ function expect(invocationManager, element) {
   return new Expect(invocationManager, element);
 }
 
-function waitFor(invocationManager, element, emitter) {
+function waitFor(invocationManager, emitter, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new WaitFor(invocationManager, element, emitter);
+  return new WaitFor(invocationManager, emitter, element);
 }
 
 class IosExpect {
@@ -629,7 +629,7 @@ class IosExpect {
   }
 
   element(matcher) {
-    return element(this._invocationManager, matcher, this._emitter);
+    return element(this._invocationManager, this._emitter, matcher);
   }
 
   expect(element) {
@@ -637,7 +637,7 @@ class IosExpect {
   }
 
   waitFor(element) {
-    return waitFor(this._invocationManager, element, this._emitter);
+    return waitFor(this._invocationManager, this._emitter, element);
   }
 
   web(_matcher) {
