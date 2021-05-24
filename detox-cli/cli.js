@@ -15,7 +15,7 @@ function log(msg) {
 function main([_$0, _detox, ...cliArgs]) {
   const [command] = cliArgs;
 
-  if (!isInstalledGlobally) {
+  if (process.platform !== 'win32' && !isInstalledGlobally) {
     log('Error: "detox-cli" package is not meant to be installed locally, exiting...');
     log('HINT: Remove the local installation and reinstall it globally:');
     log('  npm uninstall detox-cli');
