@@ -1,9 +1,10 @@
 const _ = require('lodash');
+
 const Client = require('../../client/Client');
-const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
-const FileArtifact = require('../templates/artifact/FileArtifact');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const setUniqueProperty = require('../../utils/setUniqueProperty');
+const FileArtifact = require('../templates/artifact/FileArtifact');
+const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 
 class IosUIHierarchyPlugin extends ArtifactPlugin {
   /**
@@ -89,7 +90,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
     const pendingDeletions = this._pendingDeletions.splice(0);
     this._artifacts[scope] = _.mapValues(artifacts, _.constant(null));
 
-    await Promise.all([...pendingSaves, ...pendingDeletions ]);
+    await Promise.all([...pendingSaves, ...pendingDeletions]);
   }
 
   /** @param {string} config */

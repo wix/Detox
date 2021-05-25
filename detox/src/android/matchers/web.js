@@ -1,6 +1,6 @@
 const invoke = require('../../invoke');
-const DetoxWebMatcherApi = require('../espressoapi/web/DetoxWebAtomMatcher');
 const { WebMatcher } = require('../core/WebMatcher');
+const DetoxWebMatcherApi = require('../espressoapi/web/DetoxWebAtomMatcher');
 
 class IdMatcher extends WebMatcher {
   constructor(id) {

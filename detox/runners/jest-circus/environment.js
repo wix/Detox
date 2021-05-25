@@ -1,12 +1,14 @@
-const _ = require('lodash');
 const NodeEnvironment = require('jest-environment-node');
-const DetoxCoreListener = require('./listeners/DetoxCoreListener');
-const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
-const assertJestCircus26 = require('./utils/assertJestCircus26');
-const assertExistingContext = require('./utils/assertExistingContext');
-const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
+const _ = require('lodash');
+
 const DetoxError = require('../../src/errors/DetoxError');
 const Timer = require('../../src/utils/Timer');
+
+const DetoxCoreListener = require('./listeners/DetoxCoreListener');
+const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
+const assertExistingContext = require('./utils/assertExistingContext');
+const assertJestCircus26 = require('./utils/assertJestCircus26');
+const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
 
 const SYNC_CIRCUS_EVENTS = new Set([
   'start_describe_definition',

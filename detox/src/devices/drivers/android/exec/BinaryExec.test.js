@@ -1,5 +1,5 @@
 describe('BinaryExec', () => {
-  const binaryPath = "/binary/mock";
+  const binaryPath = '/binary/mock';
 
   let exec;
   let spawn;
@@ -17,7 +17,7 @@ describe('BinaryExec', () => {
     }));
     spawn = require('child-process-promise').spawn;
 
-    const {BinaryExec} = require('./BinaryExec');
+    const { BinaryExec } = require('./BinaryExec');
     binaryExec = new BinaryExec(binaryPath);
   });
 
@@ -27,7 +27,7 @@ describe('BinaryExec', () => {
 
   describe('exec-command', () => {
     it('exec-command should return args as toString()', () => {
-      const {ExecCommand} = require('./BinaryExec');
+      const { ExecCommand } = require('./BinaryExec');
       class MockExecCommand extends ExecCommand {
         _getArgsString() {
           return 'test args';
@@ -61,7 +61,7 @@ describe('BinaryExec', () => {
       };
       exec.mockResolvedValue(execResult);
 
-      const {ExecCommand} = require('./BinaryExec');
+      const { ExecCommand } = require('./BinaryExec');
       const command = new ExecCommand();
       const result = await binaryExec.exec(command);
 
@@ -100,19 +100,19 @@ describe('BinaryExec', () => {
 });
 
 const anEmptyCommand = () => {
-  const {ExecCommand} = require('./BinaryExec');
+  const { ExecCommand } = require('./BinaryExec');
   return new ExecCommand();
 };
 
 const aCommandMockWithArgsString = (argsString) => {
-  const {ExecCommand} = jest.genMockFromModule('./BinaryExec');
+  const { ExecCommand } = jest.genMockFromModule('./BinaryExec');
   const command = new ExecCommand();
   command._getArgsString.mockReturnValue(argsString);
   return command;
 };
 
 const aCommandMockWithArgs = (commandArgs) => {
-  const {ExecCommand} = jest.genMockFromModule('./BinaryExec');
+  const { ExecCommand } = jest.genMockFromModule('./BinaryExec');
   const command = new ExecCommand();
   command._getArgs.mockReturnValue(commandArgs);
   return command;

@@ -1,6 +1,7 @@
 const _ = require('lodash');
-const configuration = require('./configuration');
+
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
+const configuration = require('./configuration');
 
 jest.mock('./utils/logger');
 jest.mock('./devices/DriverRegistry');
@@ -257,7 +258,7 @@ describe('Detox', () => {
         const { emitter } = Device.mock.calls[0][0];
 
         const testError = new Error();
-        emitter.on('bootDevice', async () => { throw testError; })
+        emitter.on('bootDevice', async () => { throw testError; });
         await emitter.emit('bootDevice', {});
 
         expect(logger.error).toHaveBeenCalledWith(
@@ -288,7 +289,7 @@ describe('Detox', () => {
         const initPromise = detox.init();
         await expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
         await expect(initPromise).rejects.toThrowError(/Aborted detox.init/);
-      })
+      });
     });
 
     describe('after detox.init() is finished', () => {
@@ -360,7 +361,7 @@ describe('Detox', () => {
         const initPromise = detox.init();
         await expect(detox.afterEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
         await expect(initPromise).rejects.toThrowError(/Aborted detox.init/);
-      })
+      });
     });
 
     describe('after detox.init() is finished', () => {
@@ -425,7 +426,7 @@ describe('Detox', () => {
         await expect(detox.cleanup()).resolves.not.toThrowError();
         await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
       });
-    })
+    });
 
     describe('before device has been prepared', () => {
       beforeEach(() => Device.setInfiniteMethod('prepare'));

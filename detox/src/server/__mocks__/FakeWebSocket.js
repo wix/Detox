@@ -33,7 +33,7 @@ class FakeWebSocket {
         role,
         sessionId,
       },
-    })
+    });
   }
 
   mockClose() {

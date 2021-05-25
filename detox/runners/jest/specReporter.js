@@ -1,4 +1,5 @@
 const argparse = require('../../src/utils/argparse');
+
 const runnerInfo = require('./runnerInfo');
 
 if (argparse.getArgValue('reportSpecs') === 'true') {

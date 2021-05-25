@@ -1,8 +1,10 @@
 const _ = require('lodash');
 const { WebSocket } = require('ws');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandler');
 const logger = require('../utils/logger').child({ __filename });
+
+const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandler');
 
 const EVENTS = {
   NEW: { event: 'WSS_CONNECTION' },

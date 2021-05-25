@@ -1,9 +1,11 @@
+const { exec, spawn } = require('child-process-promise');
 const _ = require('lodash');
-const {exec, spawn} = require('child-process-promise');
-const execLogger = require('./logger').child({ __filename });
-const retry = require('./retry');
-const { escape } = require('./pipeCommands');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
+const execLogger = require('./logger').child({ __filename });
+const { escape } = require('./pipeCommands');
+const retry = require('./retry');
 
 let _operationCounter = 0;
 
@@ -26,7 +28,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
   try {
     log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
-    await retry({retries, interval}, async (retryNumber, lastError) => {
+    await retry({ retries, interval }, async (retryNumber, lastError) => {
       if (statusLogs.trying) {
         _logTrying(log, statusLogs.trying, retryNumber, lastError);
       } else if (statusLogs.retrying) {
@@ -126,7 +128,7 @@ function _composeCommand(bin, prefix, args) {
 function spawnAndLog(command, flags, options) {
   const cmd = _joinCommandAndFlags(command, flags);
 
-  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], ...options});
+  const result = spawn(command, flags, { stdio: ['ignore', 'pipe', 'pipe'], ...options });
   const { childProcess } = result;
   const { exitCode, stdout, stderr } = childProcess;
 

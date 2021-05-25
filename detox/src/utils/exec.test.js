@@ -27,7 +27,7 @@ describe('exec', () => {
   it(`exec command with arguments successfully`, async () => {
     mockCppSuccessful(cpp);
 
-    const options = {args: `--argument 123`};
+    const options = { args: `--argument 123` };
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
@@ -56,7 +56,7 @@ describe('exec', () => {
   it(`exec command with prefix (no args) successfully`, async () => {
     mockCppSuccessful(cpp);
 
-    const options = {prefix: `export MY_PREFIX`};
+    const options = { prefix: `export MY_PREFIX` };
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin`, { timeout: 0 });
@@ -77,8 +77,8 @@ describe('exec', () => {
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 1}, options.statusLogs.trying);
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 2}, options.statusLogs.trying);
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 1 }, options.statusLogs.trying);
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 2 }, options.statusLogs.trying);
     expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
   });
 
@@ -96,8 +96,8 @@ describe('exec', () => {
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 2}, '(Retry #1)', 'bin --argument 123');
-    expect(logger.debug).not.toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 1}, expect.any(String), expect.any(String));
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 2 }, '(Retry #1)', 'bin --argument 123');
+    expect(logger.debug).not.toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 1 }, expect.any(String), expect.any(String));
     expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
   });
 
@@ -129,7 +129,7 @@ describe('exec', () => {
 
     expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stdout: true }, '"successful result"');
     expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stderr: true }, 'err');
-    expect(logger.trace).not.toHaveBeenCalledWith(expect.objectContaining({event: 'EXEC_SUCCESS'}), expect.anything());
+    expect(logger.trace).not.toHaveBeenCalledWith(expect.objectContaining({ event: 'EXEC_SUCCESS' }), expect.anything());
   });
 
   it(`exec command with undefined return should throw`, async () => {
@@ -151,7 +151,7 @@ describe('exec', () => {
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
       expect(logger.error.mock.calls).toHaveLength(3);
-      expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({event: 'EXEC_FAIL'}), expect.anything());
+      expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'EXEC_FAIL' }), expect.anything());
     }
   });
 
@@ -326,7 +326,7 @@ function nextCycle() {
 }
 
 function toStream(string) {
-  const {Readable} = require('stream');
+  const { Readable } = require('stream');
   const stream = new Readable();
   stream._read = () => {};
   stream.push(string);
@@ -336,14 +336,14 @@ function toStream(string) {
 
 const returnSuccessfulWithValue = (value) => ({
     stdout: JSON.stringify(value),
-    stderr: "err",
+    stderr: 'err',
     childProcess: {
       exitCode: 0
     }
   });
 
 const returnErrorWithValue = (value) => ({
-    stdout: "out",
+    stdout: 'out',
     stderr: value,
     childProcess: {
       exitCode: 1

@@ -1,6 +1,7 @@
 const getPort = require('get-port');
-const uuid = require('../utils/uuid');
+
 const isValidWebsocketURL = require('../utils/isValidWebsocketURL');
+const uuid = require('../utils/uuid');
 
 /**
  * @param {require('../errors/DetoxConfigErrorComposer')} errorComposer

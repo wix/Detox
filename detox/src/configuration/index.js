@@ -1,13 +1,15 @@
 const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
+
 const collectCliConfig = require('./collectCliConfig');
-const loadExternalConfig = require('./loadExternalConfig');
-const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeAppsConfig = require('./composeAppsConfig');
+const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeBehaviorConfig = require('./composeBehaviorConfig');
 const composeDeviceConfig = require('./composeDeviceConfig');
 const composeRunnerConfig = require('./composeRunnerConfig');
 const composeSessionConfig = require('./composeSessionConfig');
+const loadExternalConfig = require('./loadExternalConfig');
 const selectConfiguration = require('./selectConfiguration');
 
 async function composeDetoxConfig({

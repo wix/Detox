@@ -1,4 +1,5 @@
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
 const Deferred = require('./Deferred');
 
 class Timer {

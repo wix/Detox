@@ -1,7 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
-const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 const { NativeMatcher } = require('../core/NativeMatcher');
+const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
@@ -64,7 +64,7 @@ class ToggleMatcher extends NativeMatcher {
 class TraitsMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    if ((typeof value !== 'object') || (!value instanceof Array)) throw new DetoxRuntimeError(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
+    if (!Array.isArray(value)) throw new DetoxRuntimeError(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
 
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnything());
   }

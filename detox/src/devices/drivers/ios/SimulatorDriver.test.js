@@ -12,7 +12,7 @@ describe('IOS simulator driver', () => {
 
     emitter = new AsyncEmitter({
       events: ['beforeLaunchApp'],
-      onError: (e) => { throw e },
+      onError: (e) => { throw e; },
     });
 
     MockClient = jest.requireMock('../../../client/Client');
@@ -116,7 +116,7 @@ describe('IOS simulator driver', () => {
     it('fails to match a face by passing to AppleSimUtils', async () => {
       await sim.unmatchFinger(deviceId);
       expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
-    })
+    });
   });
 
   describe('acquireFreeDevice', () => {
@@ -125,9 +125,9 @@ describe('IOS simulator driver', () => {
         rawDevices: UDIDs.map((UDID) => ({ id: UDID })), // as typically returned by getRegisteredDevices()
         includes: UDIDs.includes.bind(UDIDs),
       });
-    }
+    };
     const givenNoUsedSimulators = () => givenUsedSimulators();
-    const givenSystemDevices = (...deviceSpecs) => uut.applesimutils.list.mockResolvedValue([ ...deviceSpecs ]);
+    const givenSystemDevices = (...deviceSpecs) => uut.applesimutils.list.mockResolvedValue([...deviceSpecs]);
     const givenCreatedDeviceUDID = (udid) => uut.applesimutils.create.mockReturnValue(udid);
     const aDeviceSpec = (udid) => ({
       udid,

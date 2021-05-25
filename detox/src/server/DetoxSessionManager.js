@@ -1,5 +1,6 @@
-const log = require('../utils/logger').child({ __filename });
 const DetoxInternalError = require('../errors/DetoxInternalError');
+const log = require('../utils/logger').child({ __filename });
+
 const DetoxConnection = require('./DetoxConnection');
 const DetoxSession = require('./DetoxSession');
 

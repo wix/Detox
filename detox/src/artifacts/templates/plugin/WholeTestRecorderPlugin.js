@@ -27,7 +27,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
       await testRecording.stop();
 
       if (this.shouldKeepArtifactOfTest(testSummary)) {
-        this._startSavingTestRecording(testRecording, testSummary)
+        this._startSavingTestRecording(testRecording, testSummary);
       } else {
         this._startDiscardingTestRecording(testRecording);
       }

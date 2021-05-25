@@ -1,24 +1,77 @@
 {
   "env": {
-    "node": true,
-    "jest": true
+    "jest": true,
+    "node": true
   },
-  "plugins": ["node"],
-  "extends": ["plugin:node/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:node/recommended"
+  ],
   "globals": {
-    "fail": true,
+    "fail": true
   },
   "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true
-    }
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
   },
+  "plugins": [
+    "import",
+    "node",
+    "no-only-tests"
+  ],
   "rules": {
+    "array-bracket-spacing": [
+      "error",
+      "never"
+    ],
+    "computed-property-spacing": [
+      "error",
+      "never"
+    ],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "newlines-between": "always"
+      }
+    ],
+    "no-case-declarations": "off",
     "no-debugger": "error",
-    "no-undef": "warn",
+    "no-empty": "off",
     "no-mixed-spaces-and-tabs": "error",
-    "node/no-unpublished-require": "warn"
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 2,
+        "maxBOF": 1
+      }
+    ],
+    "no-only-tests/no-only-tests": "error",
+    "no-undef": "warn",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "node/no-unpublished-require": "warn",
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": ["error", "single", {
+      "avoidEscape": true,
+      "allowTemplateLiterals": true
+    }]
   }
 }

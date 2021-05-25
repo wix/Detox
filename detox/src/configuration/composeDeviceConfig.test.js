@@ -1,5 +1,7 @@
 const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
+
 const { appWithRelativeBinaryPath, iosSimulatorWithShorthandQuery } = require('./configurations.mock');
 
 describe('composeDeviceConfig', () => {
@@ -28,7 +30,7 @@ describe('composeDeviceConfig', () => {
       configurations: {
         someConfig: localConfig,
       },
-    }
+    };
 
     errorComposer = new DetoxConfigErrorComposer()
       .setDetoxConfig(globalConfig)
@@ -192,7 +194,7 @@ describe('composeDeviceConfig', () => {
             device: { avdName: 'Pixel' },
             utilBinaryPaths: 'valid/path/not/in/array',
           },
-        }
+        };
 
         expect(compose).toThrowError(
           errorComposer.malformedUtilBinaryPaths(localConfig.device)
@@ -241,7 +243,7 @@ describe('composeDeviceConfig', () => {
 
     it('should throw if the device config has invalid type', () => {
       const someError = new Error('Some error');
-      driverRegistry.resolve = () => { throw someError };
+      driverRegistry.resolve = () => { throw someError; };
 
       localConfig.device = { type: 'android.apk' };
       expect(compose).toThrow(errorComposer.invalidDeviceType(

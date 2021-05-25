@@ -1,9 +1,11 @@
 const _ = require('lodash');
 const WebSocket = require('ws');
-const log = require('../utils/logger').child({ __filename });
-const Deferred = require('../utils/Deferred');
+
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const Deferred = require('../utils/Deferred');
+const log = require('../utils/logger').child({ __filename });
+
 const InflightRequest = require('./InflightRequest');
 
 const EVENTS = {
@@ -233,7 +235,7 @@ class AsyncWebSocket {
         if (this._abortedMessageIds.has(json.messageId)) {
           log.debug(EVENTS.LATE_RESPONSE, `Received late response for messageId=${json.messageId}`);
         } else {
-          throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type)
+          throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
         }
       }
     } catch (error) {

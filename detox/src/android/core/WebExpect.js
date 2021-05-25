@@ -1,11 +1,11 @@
 const invoke = require('../../invoke');
-const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
 const { WebExistsAssertion, WebHasTextAssertion } = require('../actions/web');
+const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
 const { WebAssertionInteraction } = require('../interactions/web');
 
 class WebExpect {
   constructor(invocationManager) {
-    this._invocationManager = invocationManager
+    this._invocationManager = invocationManager;
     this._notCondition = false;
   }
 
@@ -17,7 +17,7 @@ class WebExpect {
 
 class WebExpectElement extends WebExpect {
   constructor(invocationManager, webElement) {
-    super(invocationManager)
+    super(invocationManager);
     this._call = invoke.callDirectly(EspressoWebDetoxApi.expect(webElement._call.value));
   }
 

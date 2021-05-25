@@ -7,9 +7,9 @@ describe('Genymotion-Cloud recipes service', () => {
 
   const givenRecipes = (...recipes) => {
     exec.getRecipe.mockResolvedValue({
-      recipes: [ ...recipes ],
+      recipes: [...recipes],
     });
-  }
+  };
 
   const aRecipe = () => ({
     uuid: 'mock-recipe-uuid',

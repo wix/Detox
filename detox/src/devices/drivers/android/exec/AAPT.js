@@ -1,4 +1,4 @@
-const {getAaptPath} = require('../../../../utils/environment');
+const { getAaptPath } = require('../../../../utils/environment');
 const exec = require('../../../../utils/exec').execWithRetriesAndLogs;
 const escape = require('../../../../utils/pipeCommands').escape.inQuotedString;
 const egrep = require('../../../../utils/pipeCommands').search.fragment;
@@ -15,7 +15,7 @@ class AAPT {
   async getPackageName(apkPath) {
     await this._prepare();
     const process = await exec(
-      `${this.aaptBin} dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
+      `${this.aaptBin} dump badging "${escape(apkPath)}" | ${egrep('package: name=')}`,
       { retries: 1 }
     );
 

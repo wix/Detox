@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
+const _ = require('lodash');
 const tempfile = require('tempfile');
 
 describe('FileArtifact', () => {
@@ -48,7 +48,7 @@ describe('FileArtifact', () => {
 
       describe('when called with { append: true }', () => {
         beforeEach(async () => {
-          await fileArtifact.save(destinationPath, {append: true});
+          await fileArtifact.save(destinationPath, { append: true });
         });
 
         it('should call FileArtifact.moveTemporaryFile with extra param', async () => {
@@ -111,7 +111,7 @@ describe('FileArtifact', () => {
 
       describe('when called with { append: true }', () => {
         beforeEach(async () => {
-          await fileArtifact.save(destinationPath, {append: true});
+          await fileArtifact.save(destinationPath, { append: true });
         });
 
         it('should call FileArtifact.moveTemporaryFile with extra param', async () => {
@@ -226,7 +226,7 @@ describe('FileArtifact', () => {
 
           expect(result).toBe(false);
           expect(await fs.readFile(destinationPath, 'utf8')).toBe('Hello');
-          expect(logger.warn).toHaveBeenCalledWith({event: 'FILE_WRITE_EMPTY_DATA'}, expect.any(String));
+          expect(logger.warn).toHaveBeenCalledWith({ event: 'FILE_WRITE_EMPTY_DATA' }, expect.any(String));
         });
       });
 
@@ -240,7 +240,7 @@ describe('FileArtifact', () => {
             const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
 
             expect(result).toBe(true);
-            expect(logger.debug).toHaveBeenCalledWith({event: 'FILE_WRITE_CREATE'}, expect.any(String));
+            expect(logger.debug).toHaveBeenCalledWith({ event: 'FILE_WRITE_CREATE' }, expect.any(String));
           });
 
           it('should create the file', async () => {
@@ -263,7 +263,7 @@ describe('FileArtifact', () => {
               const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
 
               expect(result).toBe(false);
-              expect(logger.warn).toHaveBeenCalledWith({event: 'FILE_WRITE_EXISTS'}, expect.any(String));
+              expect(logger.warn).toHaveBeenCalledWith({ event: 'FILE_WRITE_EXISTS' }, expect.any(String));
             });
           });
 
@@ -273,7 +273,7 @@ describe('FileArtifact', () => {
 
               expect(result).toBe(true);
               expect(await fs.readFile(destinationPath, 'utf8')).toBe(fileContent + temporaryData);
-              expect(logger.debug).toHaveBeenCalledWith({event: 'FILE_WRITE'}, expect.any(String));
+              expect(logger.debug).toHaveBeenCalledWith({ event: 'FILE_WRITE' }, expect.any(String));
             });
           });
         });

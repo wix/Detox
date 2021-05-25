@@ -1,4 +1,5 @@
 const funpermaproxy = require('funpermaproxy');
+
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
@@ -118,7 +119,7 @@ DetoxExportWrapper.prototype.globalInit = async function() {
   } catch (error) {
     log.warn({ event: 'GLOBAL_INIT' }, 'An error occurred trying to globally-init Genymotion-cloud emulator instances!', error);
   }
-}
+};
 
 DetoxExportWrapper.prototype.globalCleanup = async function() {
   try {
@@ -128,6 +129,6 @@ DetoxExportWrapper.prototype.globalCleanup = async function() {
   } catch (error) {
     log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred trying to shut down Genymotion-cloud emulator instances!', error);
   }
-}
+};
 
 module.exports = DetoxExportWrapper;

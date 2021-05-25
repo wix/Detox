@@ -36,7 +36,7 @@ describe('Detox matchers registry', () => {
   const withUnknownDevice = (deviceType) => {
     device.getPlatform.mockReturnValue(undefined);
     device.type = deviceType;
-  }
+  };
 
   it('should resolve the Android matchers', () => {
     withAndroidDevice();

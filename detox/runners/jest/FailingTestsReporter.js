@@ -1,4 +1,5 @@
 const path = require('path');
+
 const { saveLastFailedTests } = require('../../src/utils/lastFailedTests');
 
 class FailingTestsReporter {

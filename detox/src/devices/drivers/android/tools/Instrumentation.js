@@ -1,5 +1,7 @@
 const _ = require('lodash');
+
 const { interruptProcess } = require('../../../../utils/exec');
+
 const { prepareInstrumentationArgs } = require('./instrumentationArgs');
 
 class Instrumentation {

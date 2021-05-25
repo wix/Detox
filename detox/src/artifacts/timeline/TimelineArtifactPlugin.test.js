@@ -2,7 +2,7 @@ const _ = require('lodash');
 const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
 
 describe('TimelineArtifactPlugin', () => {
-  const configMock = ({enabled = true} = {}) => ({
+  const configMock = ({ enabled = true } = {}) => ({
     api: {
       userConfig: {
         enabled,
@@ -243,8 +243,8 @@ describe('TimelineArtifactPlugin', () => {
 
     it('should use trace events as inpute to data exporter', async () => {
       trace.events = [
-        { name: 'mock-event', type: 'start', ts: 1234},
-        { name: 'mock-event', type: 'end', ts: 1235},
+        { name: 'mock-event', type: 'start', ts: 1234 },
+        { name: 'mock-event', type: 'end', ts: 1235 },
       ];
       const uut = uutEnabled();
 
@@ -279,14 +279,14 @@ describe('TimelineArtifactPlugin', () => {
 
       it('should rewrite the timeline events with fake (deterministic) timestamps', async () => {
         const events = [
-          { type: 'init', ts: 1233},
-          { name: 'mock-event', type: 'start', ts: 1234},
-          { name: 'mock-event', type: 'end', ts: 1235},
+          { type: 'init', ts: 1233 },
+          { name: 'mock-event', type: 'start', ts: 1234 },
+          { name: 'mock-event', type: 'end', ts: 1235 },
         ];
         const expectedEvents = [
-          { type: 'init', ts: 1000},
-          { name: 'mock-event', type: 'start', ts: 1100},
-          { name: 'mock-event', type: 'end', ts: 1200},
+          { type: 'init', ts: 1000 },
+          { name: 'mock-event', type: 'start', ts: 1100 },
+          { name: 'mock-event', type: 'end', ts: 1200 },
         ];
         trace.events = events;
 

@@ -25,6 +25,7 @@ async function retry(optionsOrFunc, func) {
 
   const backoffFn = backoffModes[backoff]();
 
+  // eslint-disable-next-line no-constant-condition
   for (let totalTries = 1, lastError = null; true; totalTries++) {
     try {
       return await func(totalTries, lastError);

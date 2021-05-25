@@ -1,10 +1,13 @@
-const _ = require('lodash');
-const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
-const FileArtifact = require('./templates/artifact/FileArtifact');
+
+const fs = require('fs-extra');
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
+
+const FileArtifact = require('./templates/artifact/FileArtifact');
 
 class ArtifactsManager {
   constructor({ pathBuilder, plugins }) {
@@ -238,7 +241,7 @@ class ArtifactsManager {
       plugin: caller,
       methodName: 'onIdleCallback',
       args: []
-    })
+    });
   }
 }
 

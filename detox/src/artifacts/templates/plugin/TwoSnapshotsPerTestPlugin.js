@@ -1,4 +1,5 @@
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+
 const ArtifactPlugin = require('./ArtifactPlugin');
 
 /***
@@ -85,7 +86,6 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    */
   async preparePathForSnapshot(testSummary, snapshotName) {}
 
-
   /***
    * Creates a handle for a test artifact (video recording, log, etc.)
    *
@@ -121,7 +121,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
   }
 
   _startSavingSnapshots(where) {
-    const {testSummary} = this.context;
+    const { testSummary } = this.context;
     const snapshots = this.snapshots[where];
 
     for (const [name, snapshot] of Object.entries(snapshots)) {

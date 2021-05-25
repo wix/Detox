@@ -22,7 +22,7 @@ describe('retry', () => {
     const mockFn = mockFailingOnceUserFn();
 
     try {
-      await retry({retries: 999, interval: 0}, mockFn);
+      await retry({ retries: 999, interval: 0 }, mockFn);
     } catch (e) {
       fail('expected retry not to fail');
     }
@@ -32,13 +32,13 @@ describe('retry', () => {
 
   it('should retry multiple times', async () => {
     const mockFn = mockFailingTwiceUserFn();
-    await retry({retries: 999, interval: 0}, mockFn);
+    await retry({ retries: 999, interval: 0 }, mockFn);
     expect(mockFn).toHaveBeenCalledTimes(3);
   });
 
   it('should provide error info in each failure', async () => {
     const mockFn = mockFailingTwiceUserFn();
-    await retry({retries: 999, interval: 0}, mockFn);
+    await retry({ retries: 999, interval: 0 }, mockFn);
     expect(mockFn).toHaveBeenCalledWith(1, null);
     expect(mockFn).toHaveBeenCalledWith(2, new Error('once'));
     expect(mockFn).toHaveBeenCalledWith(3, new Error('twice'));
@@ -47,7 +47,7 @@ describe('retry', () => {
   it('should adhere to retries parameter', async () => {
     const mockFn = mockFailingUserFn();
     try {
-      await retry({retries: 2, interval: 1}, mockFn);
+      await retry({ retries: 2, interval: 1 }, mockFn);
       fail('expected retry to fail and throw');
     } catch (error) {
       expect(mockFn).toHaveBeenCalledTimes(3);
@@ -60,7 +60,7 @@ describe('retry', () => {
     const baseInterval = 111;
 
     try {
-      await retry({retries: 2, interval: baseInterval}, mockFn);
+      await retry({ retries: 2, interval: baseInterval }, mockFn);
       fail('expected retry to fail and throw');
     } catch (error) {}
 
@@ -114,7 +114,7 @@ describe('retry', () => {
                             .mockReturnValueOnce(false);
 
     try {
-      await retry({retries: 999, interval: 1, conditionFn}, mockFn);
+      await retry({ retries: 999, interval: 1, conditionFn }, mockFn);
       fail('expected retry to fail and throw');
     } catch (error) {}
 

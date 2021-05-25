@@ -62,7 +62,7 @@ describe('Device launch-args editor', () => {
       };
       const expectedArgs = {
         argZ: 'valZ',
-      }
+      };
 
       const launchArgsEditor = new LaunchArgsEditor(launchArgs);
       launchArgsEditor.modify(argsModifier);

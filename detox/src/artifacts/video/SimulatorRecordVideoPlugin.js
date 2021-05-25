@@ -1,10 +1,12 @@
 const fs = require('fs-extra');
+
+const { interruptProcess } = require('../../utils/exec');
 const log = require('../../utils/logger').child({ __filename });
-const temporaryPath = require('../utils/temporaryPath');
-const VideoArtifactPlugin = require('./VideoArtifactPlugin');
 const Artifact = require('../templates/artifact/Artifact');
 const FileArtifact = require('../templates/artifact/FileArtifact');
-const { interruptProcess } = require('../../utils/exec');
+const temporaryPath = require('../utils/temporaryPath');
+
+const VideoArtifactPlugin = require('./VideoArtifactPlugin');
 
 class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
   constructor(config) {

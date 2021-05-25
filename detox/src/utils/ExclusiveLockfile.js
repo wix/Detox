@@ -1,11 +1,13 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
+const _ = require('lodash');
 const plockfile = require('proper-lockfile');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
 const retry = require('./retry');
 
 const DEFAULT_OPTIONS = {
-  retry: {retries: 10000, interval: 5},
+  retry: { retries: 10000, interval: 5 },
   read: { encoding: 'utf8' },
   getInitialState: _.constant(null),
 };

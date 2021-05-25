@@ -77,7 +77,7 @@ describe('Genymotion-Cloud instance allocation', () => {
     return instance;
   };
 
-  const givenFreeInstance = (instance) => instanceLookupService.findFreeInstance.mockResolvedValueOnce(instance)
+  const givenFreeInstance = (instance) => instanceLookupService.findFreeInstance.mockResolvedValueOnce(instance);
   const givenNoFreeInstances = () => instanceLookupService.findFreeInstance.mockResolvedValue(undefined);
   const givenCreatedInstance = (instance) => instanceLifecycleService.createInstance.mockResolvedValueOnce(instance);
   const givenConnectionInstance = (instance) => instanceLifecycleService.adbConnectInstance.mockResolvedValue(instance);
@@ -295,7 +295,7 @@ describe('Genymotion-Cloud instance allocation', () => {
   describe('Deallocation', () => {
     it('should dispose the instance from the standard device registry', async () => {
       const instance = anOnlineInstance();
-      await uut.deallocateDevice(instance.uuid)
+      await uut.deallocateDevice(instance.uuid);
       expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
     });
 

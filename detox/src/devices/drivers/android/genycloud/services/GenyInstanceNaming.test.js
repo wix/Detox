@@ -16,7 +16,7 @@ describe('Genymotion-Cloud instance unique-name strategy', () => {
   afterAll(() => {
     delete process.env.DETOX_START_TIMESTAMP;
     process.env.JEST_WORKER_ID = JEST_WORKER_ID;
-  })
+  });
 
   it('should generate a session-scope unique name', () => {
     expect(uut.generateName().startsWith('Detox-123456.')).toEqual(true);

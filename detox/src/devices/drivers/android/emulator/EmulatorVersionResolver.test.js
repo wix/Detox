@@ -1,15 +1,15 @@
 describe('Emulator binary version', () => {
   const versionResult = [
     'Android emulator version 30.1.2.3 (build_id 6306047) (CL:N/A)',
-    "Copyright (C) 2006-2017 The Android Open Source Project and many others.",
-    "This program is a derivative of the QEMU CPU emulator (www.qemu.org).",
-    "  This software is licensed under the terms of the GNU General Public",
-    "  License version 2, as published by the Free Software Foundation, and",
-    "  may be copied, distributed, and modified under those terms.",
-    "  This program is distributed in the hope that it will be useful,",
-    "  but WITHOUT ANY WARRANTY; without even the implied warranty of",
-    "  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-    "  GNU General Public License for more details.",
+    'Copyright (C) 2006-2017 The Android Open Source Project and many others.',
+    'This program is a derivative of the QEMU CPU emulator (www.qemu.org).',
+    '  This software is licensed under the terms of the GNU General Public',
+    '  License version 2, as published by the Free Software Foundation, and',
+    '  may be copied, distributed, and modified under those terms.',
+    '  This program is distributed in the hope that it will be useful,',
+    '  but WITHOUT ANY WARRANTY; without even the implied warranty of',
+    '  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the',
+    '  GNU General Public License for more details.',
   ].join('\n');
   const expectedVersion = {
     major: 30,
@@ -63,7 +63,7 @@ describe('Emulator binary version', () => {
   });
 
   it('should return null for a query result that has an invalid syntax', async () => {
-    emulatorExec.exec.mockResolvedValue('Android emulator version \<invalid\> (build_id 6306047) (CL:N/A)');
+    emulatorExec.exec.mockResolvedValue('Android emulator version <invalid> (build_id 6306047) (CL:N/A)');
     const version = await uut.resolve();
     expect(version).toEqual(null);
   });
@@ -71,7 +71,7 @@ describe('Emulator binary version', () => {
   it('should log in case of a parsing error', async () => {
     emulatorExec.exec.mockResolvedValue('non-parsable result');
     await uut.resolve();
-    expect(log.warn).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false}, expect.any(String), 'non-parsable result');
+    expect(log.warn).toHaveBeenCalledWith({ event: 'EMU_BIN_VERSION_DETECT', success: false }, expect.any(String), 'non-parsable result');
   });
 
   it('should return null in case of a version-query failure', async () => {
@@ -84,7 +84,7 @@ describe('Emulator binary version', () => {
     const error = new Error('some error');
     emulatorExec.exec.mockRejectedValue(error);
     await uut.resolve();
-    expect(log.error).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false, error}, expect.any(String), error);
+    expect(log.error).toHaveBeenCalledWith({ event: 'EMU_BIN_VERSION_DETECT', success: false, error }, expect.any(String), error);
   });
 
   it('should cache the version', async () => {
@@ -97,6 +97,6 @@ describe('Emulator binary version', () => {
 
   it('should log the version', async () => {
     await uut.resolve();
-    expect(log.debug).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: true}, expect.any(String), expect.objectContaining(expectedVersion));
+    expect(log.debug).toHaveBeenCalledWith({ event: 'EMU_BIN_VERSION_DETECT', success: true }, expect.any(String), expect.objectContaining(expectedVersion));
   });
 });

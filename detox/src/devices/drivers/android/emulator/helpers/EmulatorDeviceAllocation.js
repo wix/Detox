@@ -1,8 +1,8 @@
-const AndroidDeviceAllocation  = require('../../AndroidDeviceAllocation');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const logger = require('../../../../../utils/logger').child({ __filename });
 const retry = require('../../../../../utils/retry');
 const { traceCall } = require('../../../../../utils/trace');
+const AndroidDeviceAllocation  = require('../../AndroidDeviceAllocation');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,

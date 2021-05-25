@@ -1,6 +1,8 @@
 const chalk = require('chalk').default;
-const { traceln } = require('./utils/stdout');
+
 const log = require('../../src/utils/logger').child();
+
+const { traceln } = require('./utils/stdout');
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
 const RESULT_FAILED = chalk.red('FAIL');
@@ -14,8 +16,8 @@ class SpecReporter {
     this._suitesDesc = '';
   }
 
-  onSuiteStart({description}) {
-    this._suites.push({description});
+  onSuiteStart({ description }) {
+    this._suites.push({ description });
     this._regenerateSuitesDesc();
   }
 
@@ -28,11 +30,11 @@ class SpecReporter {
     }
   }
 
-  onTestStart({description, invocations = 1}) {
-    this._traceTest({description, invocations});
+  onTestStart({ description, invocations = 1 }) {
+    this._traceTest({ description, invocations });
   }
 
-  onTestEnd({description, invocations = 1}, result) {
+  onTestEnd({ description, invocations = 1 }, result) {
     let status;
     switch (result) {
       case 'skipped': status = RESULT_SKIPPED; break;
@@ -41,7 +43,7 @@ class SpecReporter {
       case 'success': status = RESULT_SUCCESS; break;
       default: status = RESULT_OTHER; break;
     }
-    this._traceTest({description, invocations}, status);
+    this._traceTest({ description, invocations }, status);
   }
 
   _regenerateSuitesDesc() {
@@ -57,12 +59,12 @@ class SpecReporter {
     this._suitesDesc = chalk.bold.white(this._suitesDesc);
   }
 
-  _traceTest({description, invocations}, _status = undefined) {
+  _traceTest({ description, invocations }, _status = undefined) {
     const testDescription = chalk.gray(description);
     const retriesDescription = (invocations > 1) ? chalk.gray(` [Retry #${invocations - 1}]`) : '';
     const status = chalk.gray(_status ? ` [${_status}]` : '');
     const desc = this._suitesDesc + testDescription + retriesDescription + status;
-    log.info({event: 'SPEC_STATE_CHANGE'}, desc);
+    log.info({ event: 'SPEC_STATE_CHANGE' }, desc);
   }
 }
 

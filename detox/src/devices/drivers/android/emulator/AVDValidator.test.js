@@ -37,7 +37,7 @@ describe('AVD validator', () => {
     minor: 0,
     patch: 0,
     toString: () => '29.x.y',
-  })
+  });
   const givenUnknownEmulatorVersion = () => versionResolver.resolve.mockResolvedValue(null);
 
   const givenMockedAvdManagerPath = () => environment.getAvdManagerPath.mockReturnValue('mock/path/avdmng');

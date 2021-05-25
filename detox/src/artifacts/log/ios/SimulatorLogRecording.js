@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
+
+const exec = require('../../../utils/exec');
 const log = require('../../../utils/logger').child({ __filename });
 const sleep = require('../../../utils/sleep');
-const exec = require('../../../utils/exec');
 const Artifact = require('../../templates/artifact/Artifact');
 const FileArtifact = require('../../templates/artifact/FileArtifact');
 

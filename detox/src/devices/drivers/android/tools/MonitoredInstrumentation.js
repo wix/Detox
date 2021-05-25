@@ -1,8 +1,10 @@
 const _ = require('lodash');
+
+const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const Deferred = require('../../../../utils/Deferred');
+
 const Instrumentation = require('./Instrumentation');
 const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
-const Deferred = require('../../../../utils/Deferred');
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 
 class MonitoredInstrumentation {
   constructor(adb, logger) {

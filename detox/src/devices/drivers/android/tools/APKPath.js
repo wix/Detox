@@ -1,5 +1,7 @@
 const path = require('path');
+
 const _ = require('lodash');
+
 const string = require('../../../../utils/string');
 
 class APKPath {

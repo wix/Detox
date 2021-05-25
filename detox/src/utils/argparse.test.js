@@ -51,7 +51,7 @@ describe('argparse', () => {
       let argparse;
 
       beforeEach(() => {
-        minimist.mockReturnValue({'kebab-case-key': 'a value', 'b': 'shortened'});
+        minimist.mockReturnValue({ 'kebab-case-key': 'a value', 'b': 'shortened' });
         argparse = require('./argparse');
       });
 
@@ -73,7 +73,7 @@ describe('argparse', () => {
     let argparse;
 
     beforeEach(() => {
-      minimist.mockReturnValue({'flag-true': 1, 'flag-false': 0});
+      minimist.mockReturnValue({ 'flag-true': 1, 'flag-false': 0 });
       argparse = require('./argparse');
     });
 
@@ -117,5 +117,5 @@ describe('argparse', () => {
 
       expect(argparse.joinArgs(argsObject, options)).toBe('-version=100 --help');
     });
-  })
+  });
 });

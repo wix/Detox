@@ -1,4 +1,5 @@
 const argparse = require('../../src/utils/argparse');
+
 const SpecReporter = require('./SpecReporterImpl');
 
 class SpecReporterCircus {

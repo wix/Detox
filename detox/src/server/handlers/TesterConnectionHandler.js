@@ -1,5 +1,6 @@
-const RegisteredConnectionHandler = require('./RegisteredConnectionHandler');
 const failedToReachTheApp = require('../../errors/longreads/failedToReachTheApp');
+
+const RegisteredConnectionHandler = require('./RegisteredConnectionHandler');
 
 class TesterConnectionHandler extends RegisteredConnectionHandler {
   constructor({ api, session }) {

@@ -1,5 +1,7 @@
 const path = require('path');
+
 const sleep = require('../utils/sleep');
+
 const testSummaries = require('./__mocks__/testSummaries.mock');
 const testSuite = require('./templates/plugin/__mocks__/testSuite.mock');
 const testHookError = () => ({ hook: 'beforeEach', error: new Error() });

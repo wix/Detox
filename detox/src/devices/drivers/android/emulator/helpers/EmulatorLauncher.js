@@ -1,11 +1,13 @@
-const _ = require('lodash');
 const fs = require('fs');
+
+const _ = require('lodash');
 const Tail = require('tail').Tail;
-const AndroidDeviceLauncher = require('../../AndroidDeviceLauncher');
-const EmulatorTelnet = require('../../tools/EmulatorTelnet');
-const { LaunchCommand } = require('../../exec/EmulatorExec');
+
 const unitLogger = require('../../../../../utils/logger').child({ __filename });
 const retry = require('../../../../../utils/retry');
+const AndroidDeviceLauncher = require('../../AndroidDeviceLauncher');
+const { LaunchCommand } = require('../../exec/EmulatorExec');
+const EmulatorTelnet = require('../../tools/EmulatorTelnet');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
@@ -16,7 +18,7 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
     this._telnetGeneratorFn = telnetGeneratorFn;
   }
 
-  async launch(emulatorName, options = {port: undefined}) {
+  async launch(emulatorName, options = { port: undefined }) {
     const launchCommand = new LaunchCommand(emulatorName, options);
 
     return await retry({
@@ -48,7 +50,7 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
       },
     };
     const tail = new Tail(tempLog, tailOptions)
-      .on("line", (line) => {
+      .on('line', (line) => {
         if (line.includes('Adb connected, start proxing data')) {
           childProcessPromise._cpResolve();
         }

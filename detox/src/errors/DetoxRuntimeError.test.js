@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxRuntimeError = require('./DetoxRuntimeError');
 
 describe('DetoxRuntimeError', () => {
@@ -13,7 +14,7 @@ describe('DetoxRuntimeError', () => {
   });
 
   it('should format any object to an error message', () => {
-    expect(DetoxRuntimeError.format({})).toBe("{}");
+    expect(DetoxRuntimeError.format({})).toBe('{}');
 
     const err = new Error('Command failed: echo Hello world');
     expect(DetoxRuntimeError.format(err)).toBe(err.message);

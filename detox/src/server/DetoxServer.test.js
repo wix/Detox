@@ -20,7 +20,7 @@ describe('DetoxServer', () => {
     if (server) {
       await server.close();
     }
-  })
+  });
 
   describe('.open() / .close()', () => {
     beforeEach(async () => {

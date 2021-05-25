@@ -1,6 +1,8 @@
-const _ = require('lodash');
 const fs = require('fs');
 const os = require('os');
+
+const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('./DetoxConfigErrorComposer');
 
 describe('DetoxConfigErrorComposer', () => {
@@ -84,7 +86,7 @@ describe('DetoxConfigErrorComposer', () => {
           builder
             .setExtends(true)
             .setDetoxConfigPath('package.json')
-            .noConfigurationAtGivenPath("some-detox-preset")
+            .noConfigurationAtGivenPath('some-detox-preset')
         ).toMatchSnapshot();
       });
     });
@@ -138,7 +140,7 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.noConfigurationWithGivenName', () => {
       beforeEach(() => {
         build = () => builder.noConfigurationWithGivenName();
-        builder.setConfigurationName('otherConf')
+        builder.setConfigurationName('otherConf');
       });
 
       it('should create an error with configuration suggestions', () => {
@@ -149,7 +151,7 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.configurationShouldNotBeEmpty', () => {
       beforeEach(() => {
         build = () => builder.configurationShouldNotBeEmpty();
-        builder.setConfigurationName('empty')
+        builder.setConfigurationName('empty');
         config.configurations.empty = {};
       });
 
@@ -164,7 +166,7 @@ describe('DetoxConfigErrorComposer', () => {
       beforeEach(() => {
         build = () => builder.thereAreNoDeviceConfigs('aDevice');
         config.devices = {};
-        builder.setConfigurationName('aliased')
+        builder.setConfigurationName('aliased');
       });
 
       it('should create an error with a hint', () => {
@@ -282,7 +284,7 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.thereAreNoAppConfigs', () => {
       it('should create an error for aliased configuration', () => {
         delete config.apps.someApp;
-        builder.setConfigurationName('aliased')
+        builder.setConfigurationName('aliased');
 
         expect(builder.thereAreNoAppConfigs('someApp')).toMatchSnapshot();
       });
@@ -290,7 +292,7 @@ describe('DetoxConfigErrorComposer', () => {
 
     describe('.cantResolveAppAlias', () => {
       it('should create an error for aliased configuration', () => {
-        builder.setConfigurationName('aliased')
+        builder.setConfigurationName('aliased');
         expect(builder.cantResolveAppAlias('anotherApp')).toMatchSnapshot();
       });
     });
@@ -607,7 +609,7 @@ describe('DetoxConfigErrorComposer', () => {
             server: 'ws://localhost:12837',
           },
           configurations: {},
-        })
+        });
 
         builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
         expect(build()).toMatchSnapshot();
@@ -648,7 +650,7 @@ describe('DetoxConfigErrorComposer', () => {
             server: 'ws://localhost:12837',
           },
           configurations: {},
-        })
+        });
 
         builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
         expect(build()).toMatchSnapshot();

@@ -1,10 +1,10 @@
-const path = require('path');
 const fs = require('fs');
-const DeviceDriverBase = require('../DeviceDriverBase');
+const path = require('path');
 
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
 const IosUIHierarchyPlugin = require('../../../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const DeviceDriverBase = require('../DeviceDriverBase');
 
 class IosDriver extends DeviceDriverBase {
   declareArtifactPlugins() {
@@ -23,15 +23,15 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setURLBlacklist(blacklistURLs) {
-    return await this.client.setSyncSettings({blacklistURLs: blacklistURLs});
+    return await this.client.setSyncSettings({ blacklistURLs: blacklistURLs });
   }
 
   async enableSynchronization() {
-    return await this.client.setSyncSettings({enabled: true});
+    return await this.client.setSyncSettings({ enabled: true });
   }
 
   async disableSynchronization() {
-    return await this.client.setSyncSettings({enabled: false});
+    return await this.client.setSyncSettings({ enabled: false });
   }
 
   async shake(deviceId) {
@@ -39,8 +39,8 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setOrientation(deviceId, orientation) {
-    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ")"));
-    return await this.client.setOrientation({orientation});
+    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ')'));
+    return await this.client.setOrientation({ orientation });
   }
 
   getPlatform() {

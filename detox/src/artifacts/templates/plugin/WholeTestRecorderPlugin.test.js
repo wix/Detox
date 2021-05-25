@@ -1,7 +1,8 @@
 jest.mock('../../../utils/logger.js');
+const testSummaries = require('../../__mocks__/testSummaries.mock');
+
 const WholeTestRecorderPlugin = require('./WholeTestRecorderPlugin');
 const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
-const testSummaries = require('../../__mocks__/testSummaries.mock');
 
 describe('WholeTestRecorderPlugin', () => {
   let api;
@@ -86,7 +87,7 @@ describe('WholeTestRecorderPlugin', () => {
 
         expect(plugin.createdArtifacts[0].save).toBeCalledWith('/tmp/test/fakeArtifact');
         expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
-      })
+      });
     });
   });
 
@@ -118,7 +119,7 @@ describe('WholeTestRecorderPlugin', () => {
 
         expect(plugin.createdArtifacts[0].discard).toBeCalled();
         expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
-      })
+      });
     });
   });
 });

@@ -1,14 +1,17 @@
-const _ = require('lodash');
 const util = require('util');
+
+const _ = require('lodash');
 const { deserializeError } = require('serialize-error');
-const AsyncWebSocket = require('./AsyncWebSocket');
-const actions = require('./actions/actions');
-const Deferred = require('../utils/Deferred');
+
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
-const log = require('../utils/logger').child({ __filename });
+const Deferred = require('../utils/Deferred');
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
+const log = require('../utils/logger').child({ __filename });
+
+const AsyncWebSocket = require('./AsyncWebSocket');
+const actions = require('./actions/actions');
 
 class Client {
   /**
@@ -76,7 +79,7 @@ class Client {
       if (this.isConnected) {
         await this.sendAction(new actions.Cleanup(this._successfulTestRun)).catch(this._logError);
 
-        this._whenAppIsConnected = this._invalidState('while cleaning up')
+        this._whenAppIsConnected = this._invalidState('while cleaning up');
         this._whenAppIsReady = this._whenAppIsConnected;
       }
     } finally {
@@ -90,7 +93,7 @@ class Client {
     this._asyncWebSocket.setEventCallback(event, callback);
   }
 
-  dumpPendingRequests({testName} = {}) {
+  dumpPendingRequests({ testName } = {}) {
     if (this._whenAppIsConnected.isPending()) {
       const unreachableError = failedToReachTheApp.evenThoughAppWasLaunched();
       log.error({ event: 'APP_UNREACHABLE' }, DetoxRuntimeError.format(unreachableError) + '\n\n');
@@ -108,7 +111,7 @@ class Client {
         : `Unresponded network requests might result in timeout errors in Detox tests.`;
 
       dump += `\n\n${notice}\n`;
-      log.warn({ event: 'PENDING_REQUESTS'}, dump);
+      log.warn({ event: 'PENDING_REQUESTS' }, dump);
     }
 
     this._asyncWebSocket.resetInFlightPromises();
@@ -132,7 +135,7 @@ class Client {
 
     return await (queryStatus
       ? this._sendMonitoredAction(action, options)
-      : this._doSendAction(action, options))
+      : this._doSendAction(action, options));
   }
 
   _inferSendOptions(action) {
@@ -330,7 +333,7 @@ class Client {
   _onAppDisconnected() {
     this._unscheduleSlowInvocationQuery();
     this._unscheduleAppTermination();
-    this._whenAppIsConnected = this._invalidState('after the app has disconnected')
+    this._whenAppIsConnected = this._invalidState('after the app has disconnected');
     this._whenAppIsReady = this._whenAppIsConnected;
 
     if (this._pendingAppCrash) {

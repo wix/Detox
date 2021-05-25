@@ -1,3 +1,3 @@
-const mock = () => ({name: 'testSuiteName'});
+const mock = () => ({ name: 'testSuiteName' });
 
-module.exports = {mock};
+module.exports = { mock };

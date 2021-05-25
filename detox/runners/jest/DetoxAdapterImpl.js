@@ -32,15 +32,15 @@ class DetoxAdapterImpl {
     await this._flush();
   }
 
-  async suiteStart({name}) {
-    this._enqueue(() => this.detox.suiteStart({name}));
+  async suiteStart({ name }) {
+    this._enqueue(() => this.detox.suiteStart({ name }));
   }
 
-  async suiteEnd({name}) {
-    this._enqueue(() => this.detox.suiteEnd({name}));
+  async suiteEnd({ name }) {
+    this._enqueue(() => this.detox.suiteEnd({ name }));
   }
 
-  testStart({title, fullName, status}) {
+  testStart({ title, fullName, status }) {
     this._currentTest = {
       title,
       fullName,
@@ -48,7 +48,7 @@ class DetoxAdapterImpl {
     };
   }
 
-  testComplete({status, timedOut}) {
+  testComplete({ status, timedOut }) {
     if (this._currentTest) {
       const _test = {
         ...this._currentTest,

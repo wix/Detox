@@ -1,9 +1,10 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
+const actions = require('../actions/web');
 const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
 const WebViewElementApi = require('../espressoapi/web/WebViewElement');
-const actions = require('../actions/web');
 const { ActionInteraction } = require('../interactions/web');
+
 const { WebMatcher } = require('./WebMatcher');
 
 const _device = Symbol('device');

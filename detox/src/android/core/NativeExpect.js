@@ -1,5 +1,5 @@
-const { MatcherAssertionInteraction } = require('../interactions/native')
-const matchers = require('../matchers/native')
+const { MatcherAssertionInteraction } = require('../interactions/native');
+const matchers = require('../matchers/native');
 
 class NativeExpect {
   constructor(invocationManager) {

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 const getAbsoluteBinaryPath = require('./getAbsoluteBinaryPath');
 
 describe('getAbsoluteBinaryPath', () => {

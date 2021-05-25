@@ -1,6 +1,8 @@
 const _ = require('lodash');
-const DetoxConfigError = require('./DetoxConfigError');
+
 const deviceAppTypes = require('../configuration/utils/deviceAppTypes');
+
+const DetoxConfigError = require('./DetoxConfigError');
 const J = s => JSON.stringify(s);
 
 class DetoxConfigErrorComposer {
@@ -549,7 +551,7 @@ Check contents of your Detox config${this._atPath()}`,
 }
 
 function hintConfigurations(configurations) {
-  return _.keys(configurations).map(c => `* ${c}`).join('\n')
+  return _.keys(configurations).map(c => `* ${c}`).join('\n');
 }
 
 module.exports = DetoxConfigErrorComposer;

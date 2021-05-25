@@ -134,12 +134,12 @@ describe('Detox server integration', () => {
     expect(testerSocket.send).toHaveBeenCalledWith(aMessage({ type: 'appConnected' }));
 
     // tester sends to app
-    const reloadAction = { type: 'reactNativeReload', messageId: 1000 }
+    const reloadAction = { type: 'reactNativeReload', messageId: 1000 };
     testerSocket.mockMessage(reloadAction);
     expect(appSocket.send).toHaveBeenCalledWith(aMessage(reloadAction));
 
     // app sends back to tester
-    const readyAction = { type: 'ready', messageId: 1000 }
+    const readyAction = { type: 'ready', messageId: 1000 };
     appSocket.mockMessage(readyAction);
     expect(testerSocket.send).toHaveBeenCalledWith(aMessage(readyAction));
 
@@ -268,7 +268,7 @@ describe('Detox server integration', () => {
       webSocket.mockLogin({ role: 'app' });
       const [[detoxConnection]] = sessionManager.registerSession.mock.calls;
       const priorDetoxSession = sessionManager.getSession(detoxConnection);
-      const newDetoxSession = sessionManager.registerSession(detoxConnection, { role: 'app', sessionId: '10101'});
+      const newDetoxSession = sessionManager.registerSession(detoxConnection, { role: 'app', sessionId: '10101' });
 
       expect(priorDetoxSession === newDetoxSession).toBe(true); // assert no new sessions were created
       expect(getLoggerMsg('error', 0)).toMatchSnapshot();

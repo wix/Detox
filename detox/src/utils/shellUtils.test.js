@@ -1,11 +1,11 @@
 const {
-  escapeInDoubleQuotedString,
-  escapeInDoubleQuotedRegexp,
-  escapeWithSingleQuotedString,
-  escapeWithDoubleQuotedString,
-  isRunningInCMDEXE,
-  hasUnsafeChars,
   autoEscape,
+  escapeInDoubleQuotedRegexp,
+  escapeInDoubleQuotedString,
+  escapeWithDoubleQuotedString,
+  escapeWithSingleQuotedString,
+  hasUnsafeChars,
+  isRunningInCMDEXE,
 } = require('./shellUtils');
 
 describe('shellUtils', function() {
@@ -74,7 +74,7 @@ describe('shellUtils', function() {
       [true,  true,  '>',  'shell syntax'],
       [true,  true,  '?',  'a sh wildcard'],
       [true,  true,  '[',  'a sh wildcard'],
-      [false, true,  "\\", 'shell syntax'],
+      [false, true,  '\\', 'shell syntax'],
       [true,  true,  ']',  'a sh wildcard'],
       [true,  true,  '^',  'a history expansion, zsh wildcard'],
       [true,  true,  '`',  'shell syntax'],
@@ -121,7 +121,7 @@ describe('shellUtils', function() {
   describe('autoEscape.shell', () => {
     test.each([
       ['test', 'test'],
-      ["test string", "'test string'"],
+      ['test string', "'test string'"],
       ["test 'this' string", `'test '"'"'this'"'"' string'`],
     ])('should transform [ %s ] to [ %s ]', (input, expected) => {
       expect(autoEscape.shell(input)).toBe(expected);

@@ -1,4 +1,5 @@
 const path = require('path');
+
 const WorkerAssignReporter = require('./WorkerAssignReporterImpl');
 
 class WorkerAssignReporterJasmine {

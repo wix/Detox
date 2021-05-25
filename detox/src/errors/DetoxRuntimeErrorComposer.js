@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxRuntimeError = require('./DetoxRuntimeError');
 
 const J = s => JSON.stringify(s);
@@ -69,7 +70,7 @@ class DetoxRuntimeErrorComposer {
 }
 
 function toStarlist(dictionary) {
-  return _.keys(dictionary).map(c => `* ${c}`).join('\n')
+  return _.keys(dictionary).map(c => `* ${c}`).join('\n');
 }
 
 module.exports = DetoxRuntimeErrorComposer;
