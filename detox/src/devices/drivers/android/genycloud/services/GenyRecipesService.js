@@ -15,7 +15,7 @@ class GenyRecipesService {
     if (recipes.length > 1) {
       const recipesInfoList = recipes.map((recipe) => `  ${recipe.name} (${recipe.uuid})`).join('\n');
       this.logger.warn(
-        { event: 'GENYCLOUD_RECIPE_LOOKUP'},
+        { event: 'GENYCLOUD_RECIPE_LOOKUP' },
         `More than one Genymotion-Cloud recipe found for recipe name ${recipeName}:\n${recipesInfoList}\nFalling back to ${recipes[0].name}`
       );
     }

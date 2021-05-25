@@ -1,5 +1,7 @@
-const _ = require('lodash');
 const path = require('path');
+
+const _ = require('lodash');
+
 const schemes = require('./configurations.mock');
 
 describe('composeArtifactsConfig', () => {
@@ -17,7 +19,7 @@ describe('composeArtifactsConfig', () => {
       cliConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
+        rootDir: expect.stringMatching(/^artifacts[\\/]abracadabra\.\d{4}/),
       }),
       plugins: schemes.pluginsDefaultsResolved,
     });
@@ -37,7 +39,7 @@ describe('composeArtifactsConfig', () => {
       cliConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
       }),
       plugins: schemes.pluginsAllResolved,
     });
@@ -57,7 +59,7 @@ describe('composeArtifactsConfig', () => {
       cliConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
       }),
       plugins: schemes.pluginsAllResolved,
     });
@@ -79,7 +81,7 @@ describe('composeArtifactsConfig', () => {
       cliConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
+        rootDir: expect.stringMatching(/^artifacts[\\/]abracadabra\.\d{4}/),
       }),
       plugins: schemes.pluginsDefaultsResolved,
     });
@@ -101,7 +103,7 @@ describe('composeArtifactsConfig', () => {
       },
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
       }),
       plugins: schemes.pluginsAllResolved,
     });
@@ -133,7 +135,7 @@ describe('composeArtifactsConfig', () => {
       },
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^cli[\\\/]priority\.\d{4}/),
+        rootDir: expect.stringMatching(/^cli[\\/]priority\.\d{4}/),
       }),
       plugins: {
         log: schemes.pluginsFailingResolved.log,

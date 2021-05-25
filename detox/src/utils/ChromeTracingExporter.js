@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class ChromeTracingExporter {
@@ -44,8 +45,8 @@ class ChromeTracingExporter {
       tid: this._thread.id,
       ts,
       ph: phase,
-      args: {...args},
-    }
+      args: { ...args },
+    };
   }
 }
 

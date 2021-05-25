@@ -1,4 +1,5 @@
 const _ = require("lodash");
+
 const errorUtils = require("./errorUtils");
 
 describe('sliceErrorStack(error, fromIndex)', () => {
@@ -21,7 +22,7 @@ describe('sliceErrorStack(error, fromIndex)', () => {
     const err = new Error();
     delete err.stack;
 
-    errorUtils.filterErrorStack(err, () => true)
+    errorUtils.filterErrorStack(err, () => true);
     expect(err.stack).toBe('');
   });
 });
@@ -54,7 +55,7 @@ describe('replaceErrorStack(source, target)', () => {
 
 describe('createErrorWithUserStack()', () => {
   it('should not have /detox/src/ lines in stack', () => {
-    expect(new Error().stack).toMatch(/[\\\/]detox[\\\/]src[\\\/]/m); // sanity assertion
+    expect(new Error().stack).toMatch(/[\\/]detox[\\/]src[\\/]/m); // sanity assertion
 
     expect(errorUtils.createErrorWithUserStack()).not.toContain('/detox/src/'); // POSIX
     expect(errorUtils.createErrorWithUserStack()).not.toContain('\\detox\\src\\'); // WIN32
@@ -68,7 +69,7 @@ describe('asError(err)', () => {
   });
 
   it('should wrap non-Error with Error', () => {
-    const err = 'non-Error'
+    const err = 'non-Error';
     expect(errorUtils.asError(err)).toBeInstanceOf(Error);
     expect(errorUtils.asError(err).message).toBe(err);
   });

@@ -1,11 +1,11 @@
 const {
-  escapeInDoubleQuotedString,
-  escapeInDoubleQuotedRegexp,
-  escapeWithSingleQuotedString,
-  escapeWithDoubleQuotedString,
-  isRunningInCMDEXE,
-  hasUnsafeChars,
   autoEscape,
+  escapeInDoubleQuotedRegexp,
+  escapeInDoubleQuotedString,
+  escapeWithDoubleQuotedString,
+  escapeWithSingleQuotedString,
+  hasUnsafeChars,
+  isRunningInCMDEXE,
 } = require('./shellUtils');
 
 describe('shellUtils', function() {

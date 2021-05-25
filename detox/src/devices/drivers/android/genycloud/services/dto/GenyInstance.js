@@ -30,7 +30,7 @@ class GenyInstance {
     this.adb = {
       name: rawInstance.adb_serial,
       port: rawInstance.adb_serial_port,
-    }
+    };
     this.recipe = new Recipe(rawInstance.recipe);
   }
 

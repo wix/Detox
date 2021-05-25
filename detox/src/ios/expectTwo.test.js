@@ -486,7 +486,6 @@ expect.extend({
   }
 });
 
-
 class MockExecutor {
   execute(invocation) {
     return { invocation };

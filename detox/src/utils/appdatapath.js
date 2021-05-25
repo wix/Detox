@@ -1,5 +1,6 @@
 const os = require('os');
 const path = require('path');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 function darwin() {

@@ -104,7 +104,7 @@ describe('Android driver', () => {
     const invokeTerminationCallbackFn = async () => {
       const fn = extractTerminationCallbackFn();
       await fn();
-    }
+    };
   });
 
   describe('App termination', () => {
@@ -146,7 +146,7 @@ describe('Android driver', () => {
     const assertActivityStartInvoked = () => {
       expect(invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
       expect(detoxApi.startActivityFromUrl).toHaveBeenCalledWith(detoxURLOverride);
-    }
+    };
     const assertActivityStartNotInvoked = () => expect(detoxApi.startActivityFromUrl).not.toHaveBeenCalled();
 
     const assertInstrumentationLaunchedWith = (args) => expect(instrumentationObj().launch).toHaveBeenCalledWith(deviceId, bundleId, args);
@@ -183,12 +183,12 @@ describe('Android driver', () => {
       const argsDelayed = {
         ...args,
         delayPayload: true,
-      }
+      };
 
       it('should start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
-        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.launchApp(deviceId, bundleId, {}, '');
         await uut.deliverPayload(args, deviceId);
 
         assertActivityStartInvoked();
@@ -197,7 +197,7 @@ describe('Android driver', () => {
       it('should not start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
-        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.launchApp(deviceId, bundleId, {}, '');
         await uut.deliverPayload(argsDelayed, deviceId);
 
         assertActivityStartNotInvoked();
@@ -218,10 +218,10 @@ describe('Android driver', () => {
     const assertActivityStartInvoked = () => {
       expect(invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
       expect(detoxApi.startActivityFromNotification).toHaveBeenCalledWith(mockNotificationDataTargetPath);
-    }
+    };
     const assertActivityStartNotInvoked = () => {
       expect(detoxApi.startActivityFromNotification).not.toHaveBeenCalled();
-    }
+    };
 
     const assertInstrumentationLaunchedWith = (args) => expect(instrumentationObj().launch).toHaveBeenCalledWith(deviceId, bundleId, args);
     const assertInstrumentationNotSpawned = () => expect(instrumentationObj().launch).not.toHaveBeenCalled();
@@ -238,7 +238,7 @@ describe('Android driver', () => {
       });
 
       it('should not send the data if device prep fails', async () => {
-        fileXferObj().prepareDestinationDir.mockRejectedValue(new Error())
+        fileXferObj().prepareDestinationDir.mockRejectedValue(new Error());
         await expect(uut.launchApp(deviceId, bundleId, notificationArgs, '')).rejects.toThrowError();
       });
 
@@ -287,17 +287,17 @@ describe('Android driver', () => {
       const notificationArgsDelayed = {
         ...notificationArgs,
         delayPayload: true,
-      }
+      };
 
       it('should not send notification data is payload send-out is set as delayed', async () => {
-        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.launchApp(deviceId, bundleId, {}, '');
         await uut.deliverPayload(notificationArgsDelayed, deviceId);
 
         expect(fileXferObj().send).not.toHaveBeenCalled();
       });
 
       it('should not start the app using invocation-manager', async () => {
-        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.launchApp(deviceId, bundleId, {}, '');
         await uut.deliverPayload(notificationArgsDelayed, deviceId);
 
         assertActivityStartNotInvoked();
@@ -439,7 +439,7 @@ describe('Android driver', () => {
       aaptObj().getPackageName.mockResolvedValue(packageId);
 
       await uut.installUtilBinaries(deviceId, [binaryPath]);
-      expect(adbObj().isPackageInstalled).toHaveBeenCalledWith(deviceId, packageId)
+      expect(adbObj().isPackageInstalled).toHaveBeenCalledWith(deviceId, packageId);
       expect(aaptObj().getPackageName).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
   });
@@ -535,7 +535,7 @@ describe('Android driver', () => {
     InstrumentationClass = require('./tools/MonitoredInstrumentation');
     InstrumentationClass.mockImplementation(() => {
       mockInstrumentationDead();
-    })
+    });
 
     jest.mock('./exec/ADB');
     ADBClass = require('./exec/ADB');
@@ -560,7 +560,7 @@ describe('Android driver', () => {
     FileXferClass = require('./tools/TempFileXfer');
     FileXferClass.mockImplementation(() => {
       const _this = latestInstanceOf(FileXferClass);
-      _this.send.mockResolvedValue(mockNotificationDataTargetPath)
+      _this.send.mockResolvedValue(mockNotificationDataTargetPath);
     });
 
     jest.mock('./tools/AppInstallHelper');

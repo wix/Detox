@@ -1,24 +1,26 @@
-const _ = require('lodash');
+const { URL } = require('url');
 const util = require('util');
-const {URL} = require('url');
-const logger = require('./utils/logger');
-const Deferred = require('./utils/Deferred');
-const Device = require('./devices/Device');
-const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
-const AsyncEmitter = require('./utils/AsyncEmitter');
-const MissingDetox = require('./utils/MissingDetox');
-const Client = require('./client/Client');
-const { InvocationManager } = require('./invoke');
-const DetoxServer = require('./server/DetoxServer');
+
+const _ = require('lodash');
+
+const lifecycleSymbols = require('../runners/integration').lifecycle;
+
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
-const log = logger.child({ __filename });
+const Client = require('./client/Client');
+const Device = require('./devices/Device');
 const driverRegistry = require('./devices/DriverRegistry').default;
+const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
+const { InvocationManager } = require('./invoke');
 const matchersRegistry = require('./matchersRegistry');
+const DetoxServer = require('./server/DetoxServer');
+const AsyncEmitter = require('./utils/AsyncEmitter');
+const Deferred = require('./utils/Deferred');
+const MissingDetox = require('./utils/MissingDetox');
+const logger = require('./utils/logger');
+const log = logger.child({ __filename });
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
-
-const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 class Detox {
   constructor(config) {
@@ -37,7 +39,7 @@ class Detox {
     this[lifecycleSymbols.onTestStart] = this.beforeEach;
     this[lifecycleSymbols.onTestDone] = this.afterEach;
 
-    const {appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
+    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = config;
 
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
@@ -218,7 +220,7 @@ class Detox {
     const appNames = Object.keys(this._appsConfig);
 
     for (const appName of appNames) {
-      await this.device.selectApp(appName)
+      await this.device.selectApp(appName);
       await this.device.uninstallApp();
       await this.device.installApp();
     }
@@ -249,7 +251,7 @@ class Detox {
 
   async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
     if (pendingRequests) {
-      this._client.dumpPendingRequests({testName});
+      this._client.dumpPendingRequests({ testName });
     }
   }
 

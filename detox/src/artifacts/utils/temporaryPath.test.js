@@ -1,5 +1,7 @@
 const path = require('path');
+
 const tempfile = require('tempfile');
+
 const temporaryPath = require('./temporaryPath');
 
 describe('temporaryPath', () => {

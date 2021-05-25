@@ -24,7 +24,7 @@ describe('Monitored instrumentation', () => {
       const instances = InstrumentationLogsParserClass.mock.instances;
       const _this = instances[instances.length - 1];
       _this.getStackTrace.mockReturnValue(INSTRUMENTATION_STACKTRACE_MOCK);
-    })
+    });
   });
 
   const instrumentationObj = () => InstrumentationClass.mock.instances[0];
@@ -199,12 +199,12 @@ describe('Monitored instrumentation', () => {
   const invokeUnderlyingTerminationCallback = async () => {
     const fn = extractUnderlyingTerminationCallback();
     await fn();
-  }
+  };
   const extractUnderlyingLogListenerCallback = () => InstrumentationClass.mock.calls[0][3];
   const invokeUnderlyingLogListenerCallbackWith = async (data) => {
     const fn = extractUnderlyingLogListenerCallback();
     await fn(data);
-  }
+  };
 
   const mockUnderlyingInstrumentationRunning = () => instrumentationObj().isRunning.mockReturnValue(true);
   const mockUnderlyingInstrumentationDead = () => instrumentationObj().isRunning.mockReturnValue(false);

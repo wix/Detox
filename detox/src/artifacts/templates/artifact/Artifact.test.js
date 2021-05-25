@@ -1,7 +1,9 @@
 jest.mock('../../../utils/logger');
 
-const _ = require('lodash');
 const util = require('util');
+
+const _ = require('lodash');
+
 const Artifact = require('./Artifact');
 
 describe('Artifact', () => {

@@ -74,7 +74,7 @@ describe('ADB', () => {
         stdout: 'List of devices attached\n'
       });
 
-      const {devices} = await adb.devices();
+      const { devices } = await adb.devices();
       expect(devices.length).toEqual(0);
     });
   });

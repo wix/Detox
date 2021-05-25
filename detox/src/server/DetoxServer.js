@@ -1,9 +1,11 @@
 const _ = require('lodash');
 const WebSocket = require('ws');
-const DetoxSessionManager = require('./DetoxSessionManager');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const log = require('../utils/logger').child({ __filename });
 const Deferred = require('../utils/Deferred');
+const log = require('../utils/logger').child({ __filename });
+
+const DetoxSessionManager = require('./DetoxSessionManager');
 
 class DetoxServer {
   /**

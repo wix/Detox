@@ -1,5 +1,6 @@
-const cpp = require('child-process-promise');
 const fs = require('fs');
+
+const cpp = require('child-process-promise');
 
 const sh = new Proxy({}, {
   get: function(target, prop) {

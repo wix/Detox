@@ -11,4 +11,4 @@ const traceCall = jest.fn().mockImplementation((_, fn) => fn());
 module.exports = {
   trace: new FakeTrace(),
   traceCall,
-}
+};

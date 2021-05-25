@@ -1,4 +1,5 @@
 const LogArtifactPlugin = require('../LogArtifactPlugin');
+
 const ADBLogcatRecording = require('./ADBLogcatRecording');
 
 class ADBLogcatPlugin extends LogArtifactPlugin {

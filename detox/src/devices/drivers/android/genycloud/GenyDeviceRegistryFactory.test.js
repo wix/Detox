@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const environment = require('../../../../utils/environment');
 
 const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);

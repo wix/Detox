@@ -1,5 +1,6 @@
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const DetoxInternalError = require('../../errors/DetoxInternalError');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+
 const AppConnectionHandler = require('./AppConnectionHandler');
 const TesterConnectionHandler = require('./TesterConnectionHandler');
 

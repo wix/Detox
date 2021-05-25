@@ -1,8 +1,10 @@
 const _ = require('lodash');
-const LaunchArgsEditor = require('./LaunchArgsEditor');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
+
+const LaunchArgsEditor = require('./LaunchArgsEditor');
 
 class Device {
   constructor({
@@ -325,7 +327,7 @@ class Device {
     }
 
     if (this._isAppRunning(bundleId) && hasPayload) {
-      await this.deviceDriver.deliverPayload({...params, delayPayload: true});
+      await this.deviceDriver.deliverPayload({ ...params, delayPayload: true });
     }
 
     if (this._behaviorConfig.launchApp === 'manual') {

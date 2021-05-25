@@ -1,5 +1,5 @@
-const {QueryVersionCommand} = require('../exec/EmulatorExec');
 const log = require('../../../../utils/logger').child({ __filename });
+const { QueryVersionCommand } = require('../exec/EmulatorExec');
 
 const EMU_BIN_VERSION_DETECT_EV = 'EMU_BIN_VERSION_DETECT';
 
@@ -37,7 +37,7 @@ class EmulatorVersionResolver {
   }
 
   _parseVersionString(versionRaw) {
-    const [major, minor, patch] = versionRaw.split('\.');
+    const [major, minor, patch] = versionRaw.split('.');
     return {
       major: Number(major),
       minor: Number(minor),

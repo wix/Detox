@@ -30,7 +30,7 @@ describe('composeBehaviorConfig', () => {
       cleanup: {
         shutdownDevice: false,
       },
-    })
+    });
   });
 
   describe('if a custom config has only .launchApp = "manual" override', () => {

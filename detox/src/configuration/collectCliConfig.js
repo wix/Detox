@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const argparse = require('../utils/argparse');
 
 function collectCliConfig({ argv }) {

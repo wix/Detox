@@ -18,7 +18,6 @@ describe('sh', () => {
     expect(cpp.exec).toHaveBeenCalledWith('cp -r path/to/src pat/to/dest');
   });
 
-
   it(`Require an undefined param from sh and then initiate it as function should generate a full command string`, async () => {
     const npm = require('./sh').npm;
     await npm('-v');

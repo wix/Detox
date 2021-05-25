@@ -7,7 +7,7 @@ describe('Genymotion-Cloud Instance DTO', () => {
       uuid: 'mock-recipe-uuid',
       name: 'mock-recipe-name',
     },
-  }
+  };
 
   const disconnectedRawInstance = {
     ...rawInstance,

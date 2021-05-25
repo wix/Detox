@@ -1,8 +1,9 @@
+const os = require('os');
+const path = require('path');
+
+const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
 
 describe('Environment', () => {
   let Environment;
@@ -76,12 +77,12 @@ describe('Environment', () => {
       });
 
       it('should throw error if path specified in INI file does not exist', () => {
-        fs.writeFileSync(path.join(avdHome, 'MyAVD.ini'), `path=randomPath${Math.random()}`)
+        fs.writeFileSync(path.join(avdHome, 'MyAVD.ini'), `path=randomPath${Math.random()}`);
         expect(() => Environment.getAvdDir('MyAVD')).toThrow(/Failed to find.*randomPath0\./);
       });
 
       it('should return path specified in INI file if it exists', () => {
-        fs.writeFileSync(path.join(avdHome, 'MyAVD.ini'), `path=${avdHome}`)
+        fs.writeFileSync(path.join(avdHome, 'MyAVD.ini'), `path=${avdHome}`);
         expect(Environment.getAvdDir('MyAVD')).toBe(avdHome);
       });
     });
@@ -274,7 +275,7 @@ describe('Environment', () => {
       it('should throw error if gmsaas is not in $PATH', async () => {
         const pathToNowhere = path.join('one', 'mock', 'directory');
         process.env.PATH = pathToNowhere;
-        await expect(async () => Environment.getGmsaasPath()).rejects.toThrow(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${pathToNowhere}`);
+        await expect(async () => Environment.getGmsaasPath()).rejects.toThrow(`Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${pathToNowhere}`);
       });
     });
   });

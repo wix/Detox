@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const lifecycleSymbols = require('../../integration').lifecycle;
 
 function wrapErrorWithNoopLifecycle(error) {

@@ -1,5 +1,5 @@
-const { WaitForInteraction } = require('../interactions/native')
-const matchers = require('../matchers/native')
+const { WaitForInteraction } = require('../interactions/native');
+const matchers = require('../matchers/native');
 
 class NativeWaitFor {
   constructor(invocationManager) {

@@ -1,4 +1,5 @@
 const sanitize = require("sanitize-filename");
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const MAX_FILE_LENGTH = 255;
 

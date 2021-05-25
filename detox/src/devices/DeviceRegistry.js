@@ -1,7 +1,8 @@
-const _ = require('lodash');
-const environment = require('../utils/environment');
 const fs = require('fs-extra');
+const _ = require('lodash');
+
 const ExclusiveLockfile = require('../utils/ExclusiveLockfile');
+const environment = require('../utils/environment');
 const safeAsync = require('../utils/safeAsync');
 
 const readOptions = {
@@ -111,7 +112,7 @@ class DeviceRegistry {
     let result = null;
     await this._lockfile.exclusively(() => {
       result = this.getRegisteredDevices();
-    })
+    });
     return result;
   }
 

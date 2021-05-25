@@ -1,5 +1,6 @@
-const SimulatorInstrumentsPlugin = require('./SimulatorInstrumentsPlugin');
 const temporaryPath = require('../../utils/temporaryPath');
+
+const SimulatorInstrumentsPlugin = require('./SimulatorInstrumentsPlugin');
 
 jest.mock('../../utils/temporaryPath');
 
@@ -36,7 +37,7 @@ describe('SimulatorInstrumentsPlugin', () => {
       launchArgs: {}
     };
     await plugin.onBeforeLaunchApp(event);
-    expect(event.launchArgs.recordingPath).toBeUndefined()
+    expect(event.launchArgs.recordingPath).toBeUndefined();
   });
 
   it('should build launchArgs with empty config', async () => {

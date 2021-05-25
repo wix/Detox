@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxError = require('./DetoxError');
 
 class DetoxRuntimeError extends DetoxError {

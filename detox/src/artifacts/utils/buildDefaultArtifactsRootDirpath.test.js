@@ -1,4 +1,5 @@
 const path = require('path');
+
 const buildDefaultArtifactsRootDirpath = require('./buildDefaultArtifactsRootDirpath');
 
 describe('buildDefaultArtifactsRootDirpath', () => {
@@ -16,7 +17,7 @@ describe('buildDefaultArtifactsRootDirpath', () => {
 
   it('should fall back to Date.now if environment variable DETOX_START_TIMESTAMP is unset', () => {
     delete process.env.DETOX_START_TIMESTAMP;
-    expect(buildDefaultArtifactsRootDirpath('iphone8', 'artifacts')).toMatch(/^artifacts[\\\/]iphone8\.\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}Z$/);
+    expect(buildDefaultArtifactsRootDirpath('iphone8', 'artifacts')).toMatch(/^artifacts[\\/]iphone8\.\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}Z$/);
     expect(buildDefaultArtifactsRootDirpath('iphone8', 'artifacts')).not.toBe(path.join('artifacts', 'iphone8.2019-11-05 11-00-41Z'));
   });
 

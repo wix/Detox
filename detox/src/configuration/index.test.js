@@ -1,8 +1,10 @@
 jest.mock('../utils/argparse');
 
-const _ = require('lodash');
 const os = require('os');
 const path = require('path');
+
+const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 describe('composeDetoxConfig', () => {

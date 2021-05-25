@@ -1,7 +1,8 @@
 const _ = require('lodash');
+
+const DeviceRegistry = require('../../../DeviceRegistry');
 const AndroidDriver = require('../AndroidDriver');
 const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
-const DeviceRegistry = require('../../../DeviceRegistry');
 
 class AttachedAndroidDriver extends AndroidDriver {
   constructor(config) {

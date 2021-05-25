@@ -1,7 +1,9 @@
-const Telnet = require('telnet-client');
-const path = require('path');
 const os = require('os');
+const path = require('path');
+
 const fs = require('fs-extra');
+const Telnet = require('telnet-client');
+
 const log = require('../../../../utils/logger').child({ __filename });
 
 class EmulatorTelnet {

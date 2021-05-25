@@ -1,8 +1,9 @@
 const _ = require('lodash');
-const {execWithRetriesAndLogs, spawnAndLog} = require('../../../../utils/exec');
-const {escape} = require('../../../../utils/pipeCommands');
+
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const {getAdbPath} = require('../../../../utils/environment');
+const { getAdbPath } = require('../../../../utils/environment');
+const { execWithRetriesAndLogs, spawnAndLog } = require('../../../../utils/exec');
+const { escape } = require('../../../../utils/pipeCommands');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
@@ -13,7 +14,7 @@ class ADB {
   }
 
   async devices() {
-    const {stdout} = await this.adbCmd('', 'devices', { verbosity: 'high' });
+    const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high' });
     const devices = _.chain(stdout)
       .trim()
       .split('\n')
@@ -117,7 +118,7 @@ class ADB {
   async pidof(deviceId, bundleId) {
     const bundleIdRegex = escape.inQuotedRegexp(bundleId) + '$';
 
-    const processes = await this.shell(deviceId, `ps | grep "${bundleIdRegex}"`, {silent: true}).catch(() => '');
+    const processes = await this.shell(deviceId, `ps | grep "${bundleIdRegex}"`, { silent: true }).catch(() => '');
     if (!processes) {
       return NaN;
     }
@@ -169,7 +170,7 @@ class ADB {
    * @returns ChildProcessPromise
    */
   screenrecord(deviceId, { path, size, bitRate, timeLimit, verbose }) {
-    const [ width = 0, height = 0 ] = size || [];
+    const [width = 0, height = 0] = size || [];
 
     const _size = (width > 0) && (height > 0)
       ? ['--size', `${width}x${height}`]
@@ -282,7 +283,7 @@ class ADB {
     const _options = {
       retries: 1,
       ...options,
-    }
+    };
     return execWithRetriesAndLogs(cmd, _options);
   }
 

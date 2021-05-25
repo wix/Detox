@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+
 const environment = require('./environment');
 
 async function resetLastFailedTests() {

@@ -1,4 +1,5 @@
 const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
+
 const AndroidInstrumentsRecording = require('./AndroidInstrumentsRecording');
 
 class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {

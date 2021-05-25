@@ -11,4 +11,4 @@ describe('failedToReachTheApp', () => {
       messageId: -1000
     })).toMatchSnapshot();
   });
-})
+});

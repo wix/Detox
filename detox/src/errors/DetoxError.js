@@ -1,5 +1,6 @@
-const _ = require('lodash');
 const util = require('util');
+
+const _ = require('lodash');
 
 class DetoxError extends Error {
   constructor(message) {
@@ -38,7 +39,7 @@ class DetoxError extends Error {
       return String(err.stack || err);
     }
 
-    return this.inspectObj(err, inspectOptions)
+    return this.inspectObj(err, inspectOptions);
   }
 }
 

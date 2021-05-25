@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 function getAbsoluteBinaryPath(appPath) {

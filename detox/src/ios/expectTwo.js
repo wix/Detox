@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const { assertEnum, assertNormalized, assertNumber } = require('../utils/assertArgument');
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
@@ -85,7 +86,7 @@ class Expect {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
       ...(this.element.index !== undefined && { atIndex: this.element.index }),
-      ...(this.modifiers.length !== 0 && {modifiers: this.modifiers}),
+      ...(this.modifiers.length !== 0 && { modifiers: this.modifiers }),
       expectation,
       ...(params.length !== 0 && { params: _.without(params, undefined) })
     };
@@ -239,7 +240,7 @@ class Element {
   }
 
   takeScreenshot() {
-    throw new DetoxRuntimeError({message: 'Element screenshots are not supported on iOS, at the moment!'});
+    throw new DetoxRuntimeError({ message: 'Element screenshots are not supported on iOS, at the moment!' });
   }
 
   createInvocation(action, targetElementMatcher, ...params) {
@@ -255,7 +256,7 @@ class Element {
     if (targetElementMatcher && targetElementMatcher.matcher && targetElementMatcher.matcher.predicate) {
       invocation.targetElement = {
         predicate: targetElementMatcher.matcher.predicate
-      }
+      };
     }
 
     return invocation;

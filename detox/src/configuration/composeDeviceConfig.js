@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const driverRegistry = require('../devices/DriverRegistry').default;
 
 /**

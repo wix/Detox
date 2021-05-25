@@ -15,11 +15,11 @@ describe('Instrumentation', () => {
 
     jest.mock('./instrumentationArgs');
     instrumentationArgs = require('./instrumentationArgs');
-    instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
+    instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({ args: [], usedReservedArgs: [] });
 
     logger = {
       warn: jest.fn(),
-    }
+    };
   });
 
   let childProcess;
@@ -63,7 +63,7 @@ describe('Instrumentation', () => {
 
   describe('spawning launch-arguments processing', () => {
     it('should prepare user launch-arguments', async () => {
-      instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
+      instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({ args: [], usedReservedArgs: [] });
       const userArgs = {
         arg1: 'value1',
       };
@@ -73,7 +73,7 @@ describe('Instrumentation', () => {
     });
 
     it('should prepare forced debug=false launch argument', async () => {
-      instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
+      instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({ args: [], usedReservedArgs: [] });
       await uut.launch(deviceId, bundleId, { });
       expect(instrumentationArgs.prepareInstrumentationArgs).toHaveBeenCalledWith({ debug: false });
     });
@@ -222,11 +222,11 @@ describe('Instrumentation', () => {
   const invokeDataCallbackWith = async (data) => {
     const fn = extractDataCallback();
     await fn(data);
-  }
+  };
 
   const extractTerminationCallback = () => childProcess.on.mock.calls[0][1];
   const invokeTerminationCallback = async () => {
     const terminationFn = extractTerminationCallback();
     await terminationFn();
-  }
+  };
 });

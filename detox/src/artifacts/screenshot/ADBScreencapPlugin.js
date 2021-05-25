@@ -1,5 +1,6 @@
-const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 const Artifact = require('../templates/artifact/Artifact');
+
+const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 
 class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
   constructor(config) {

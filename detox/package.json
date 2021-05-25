@@ -33,6 +33,8 @@
     "@types/child-process-promise": "^2.2.1",
     "@types/ws": "^7.4.0",
     "eslint": "^4.11.0",
+    "eslint-plugin-import": "^2.23.3",
+    "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-node": "^6.0.1",
     "jest": "^26.5.0",
     "jest-circus": "^26.5.2",

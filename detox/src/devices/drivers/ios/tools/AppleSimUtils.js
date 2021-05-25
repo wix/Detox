@@ -1,10 +1,12 @@
-const _ = require('lodash');
 const path = require('path');
+
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const {joinArgs} = require('../../../../utils/argparse');
+const { joinArgs } = require('../../../../utils/argparse');
+const environment = require('../../../../utils/environment');
 const exec = require('../../../../utils/exec');
 const log = require('../../../../utils/logger').child({ __filename });
-const environment = require('../../../../utils/environment');
 const { quote } = require('../../../../utils/shellQuote');
 
 class AppleSimUtils {
@@ -21,7 +23,7 @@ class AppleSimUtils {
         successful: 'Permissions are set'
       },
       retries: 1,
-    }
+    };
     await this._execAppleSimUtils(options);
   }
 
@@ -160,7 +162,7 @@ class AppleSimUtils {
         trying: `Trying to unmatch ${matchType}...`,
         successful: `Unmatched ${matchType}!`
       },
-    }
+    };
     await this._execAppleSimUtils(options);
   }
 
@@ -177,7 +179,7 @@ class AppleSimUtils {
         trying: `Turning ${toggle ? 'on' : 'off'} biometric enrollment...`,
         successful: toggle ? 'Activated!' : 'Deactivated!'
       },
-    }
+    };
     await this._execAppleSimUtils(options);
   }
 
@@ -189,7 +191,7 @@ class AppleSimUtils {
         trying: `Clearing Keychain...`,
         successful: 'Cleared Keychain!'
       },
-    }
+    };
     await this._execAppleSimUtils(options);
   }
 
@@ -284,7 +286,7 @@ class AppleSimUtils {
       verbosity: silent ? 'low' : 'normal',
       statusLogs,
       retries,
-    }
+    };
     return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, options);
   }
 
@@ -363,21 +365,21 @@ class AppleSimUtils {
     if (udid && flags) {
       let overrides = [];
       if (flags.time)
-        overrides.push(`--time "${flags.time}"`)
+        overrides.push(`--time "${flags.time}"`);
       if (flags.dataNetwork)
-        overrides.push(`--dataNetwork "${flags.dataNetwork}"`)
+        overrides.push(`--dataNetwork "${flags.dataNetwork}"`);
       if (flags.wifiMode)
-        overrides.push(`--wifiMode "${flags.wifiMode}"`)
+        overrides.push(`--wifiMode "${flags.wifiMode}"`);
       if (flags.wifiBars)
-        overrides.push(`--wifiBars "${flags.wifiBars}"`)
+        overrides.push(`--wifiBars "${flags.wifiBars}"`);
       if (flags.cellularMode)
-        overrides.push(`--cellularMode "${flags.cellularMode}"`)
+        overrides.push(`--cellularMode "${flags.cellularMode}"`);
       if (flags.cellularBars)
-        overrides.push(`--cellularBars "${flags.cellularBars}"`)
+        overrides.push(`--cellularBars "${flags.cellularBars}"`);
       if (flags.batteryState)
-        overrides.push(`--batteryState "${flags.batteryState}"`)
+        overrides.push(`--batteryState "${flags.batteryState}"`);
       if (flags.batteryLevel)
-        overrides.push(`--batteryLevel "${flags.batteryLevel}"`)
+        overrides.push(`--batteryLevel "${flags.batteryLevel}"`);
 
       await this._execSimctl({ cmd: `status_bar ${udid} override ${overrides.join(' ')}` });
     }

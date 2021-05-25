@@ -16,7 +16,7 @@ function escapeWithDoubleQuotedString(fragment) {
   return DOUBLE_QUOTE + escapeInDoubleQuotedString(fragment) + DOUBLE_QUOTE;
 }
 
-const SPECIAL_CHARS = /([\^\$\[\]\*\.\\])/g;
+const SPECIAL_CHARS = /([\^$[\]*.\\])/g;
 function escapeInDoubleQuotedRegexp(fragment) {
   return fragment.replace(SPECIAL_CHARS, '\\$1');
 }
@@ -26,8 +26,8 @@ function isRunningInCMDEXE() {
          /* istanbul ignore next */ !process.env['SHELL'];
 }
 
-const UNSAFE_SHELL = /[\s!"#$&'()*;<=>^?`{,}|~\[\\\]]/m;
-const UNSAFE_CMD = /[\s!"#$&'()*;<=>^?`{,}|~\[\]]/m;
+const UNSAFE_SHELL = /[\s!"#$&'()*;<=>^?`{,}|~[\\\]]/m;
+const UNSAFE_CMD = /[\s!"#$&'()*;<=>^?`{,}|~[\]]/m;
 
 /* @see https://unix.stackexchange.com/a/357932 */
 function hasUnsafeShellChars(str) {

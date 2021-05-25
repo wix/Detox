@@ -1,20 +1,23 @@
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+
 const ini = require('ini');
-const AndroidDriver = require('../AndroidDriver');
-const EmulatorDeviceAllocation = require('./helpers/EmulatorDeviceAllocation');
-const AVDValidator = require('./AVDValidator');
-const AVDsResolver = require('./AVDsResolver');
-const EmulatorLauncher = require('./helpers/EmulatorLauncher');
-const EmulatorVersionResolver = require('./EmulatorVersionResolver');
-const FreeEmulatorFinder = require('./FreeEmulatorFinder');
-const { EmulatorExec } = require('../exec/EmulatorExec');
-const DeviceRegistry = require('../../../DeviceRegistry');
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const argparse = require('../../../../utils/argparse');
 const environment = require('../../../../utils/environment');
 const log = require('../../../../utils/logger').child({ __filename });
-const argparse = require('../../../../utils/argparse');
+const DeviceRegistry = require('../../../DeviceRegistry');
+const AndroidDriver = require('../AndroidDriver');
+const { EmulatorExec } = require('../exec/EmulatorExec');
+
+const AVDValidator = require('./AVDValidator');
+const AVDsResolver = require('./AVDsResolver');
+const EmulatorVersionResolver = require('./EmulatorVersionResolver');
+const FreeEmulatorFinder = require('./FreeEmulatorFinder');
+const EmulatorDeviceAllocation = require('./helpers/EmulatorDeviceAllocation');
+const EmulatorLauncher = require('./helpers/EmulatorLauncher');
 
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
@@ -31,7 +34,7 @@ class EmulatorDriver extends AndroidDriver {
     const avdsResolver = new AVDsResolver(emulatorExec);
     this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
 
-    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this._deviceRegistry)
+    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this._deviceRegistry);
     this._deviceAllocation = new EmulatorDeviceAllocation(this._deviceRegistry, freeEmulatorFinder, this._emulatorLauncher, this.adb, this.emitter);
   }
 
@@ -74,7 +77,7 @@ class EmulatorDriver extends AndroidDriver {
     try {
       await super.cleanup(deviceId, bundleId);
     } finally {
-      await this._deviceAllocation.deallocateDevice(deviceId)
+      await this._deviceAllocation.deallocateDevice(deviceId);
     }
   }
 

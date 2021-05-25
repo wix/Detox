@@ -1,11 +1,13 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
 const tempfile = require('tempfile');
+
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
+const actions = require('../actions/native');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
-const { ActionInteraction } = require('../interactions/native')
-const actions = require('../actions/native')
+const { ActionInteraction } = require('../interactions/native');
 
 class NativeElement {
   constructor(invocationManager, emitter, matcher) {

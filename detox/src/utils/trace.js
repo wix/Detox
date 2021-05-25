@@ -30,7 +30,7 @@ class Trace {
       ts: this._timestampProviderFn(),
       name,
       args,
-    }
+    };
   }
 }
 

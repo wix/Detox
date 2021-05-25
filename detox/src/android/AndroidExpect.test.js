@@ -151,7 +151,7 @@ describe('AndroidExpect', () => {
       it('should tap and long-press', async () => {
         await e.element(e.by.label('Tap Me')).tap();
         await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
-        await e.element(e.by.label('Tap Me')).tapAtPoint({x: 100, y: 200});
+        await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 100, y: 200 });
         await e.element(e.by.label('Tap Me')).longPress();
         await e.element(e.by.id('UniqueId819')).multiTap(3);
       });
@@ -230,7 +230,7 @@ describe('AndroidExpect', () => {
         const execResult = {
           text: 'hello',
           value: 1,
-        }
+        };
         mockExecutor.executeResult = Promise.resolve(JSON.stringify(execResult));
         const result = await e.element(e.by.id('UniqueId005')).getAttributes();
         expect(result).toEqual(execResult);
@@ -293,7 +293,7 @@ describe('AndroidExpect', () => {
         mockExecutor.executeResult = Promise.resolve(undefined);
         await e.web(e.by.id('webview_id')).element(e.by.web.id('any')).tap();
       });
-    })
+    });
 
     describe('web', () => {
 
@@ -496,7 +496,7 @@ describe('AndroidExpect', () => {
         const webview = await e.web;
         await webview.element(e.by.web.id('id')).tap();
       });
-    })
+    });
 
     describe('Web Matchers',() => {
       it('by.web.id', async () => {

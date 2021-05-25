@@ -1,7 +1,7 @@
-const AndroidDeviceAllocation = require('../../AndroidDeviceAllocation');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
-const retry = require('../../../../../utils/retry');
 const logger = require('../../../../../utils/logger').child({ __filename });
+const retry = require('../../../../../utils/retry');
+const AndroidDeviceAllocation = require('../../AndroidDeviceAllocation');
 
 const { ALLOCATE_DEVICE_LOG_EVT } = AndroidDeviceAllocation;
 
@@ -50,7 +50,7 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
     return {
       instance,
       isNew,
-    }
+    };
   }
 
   async _waitForInstanceBoot(instance) {

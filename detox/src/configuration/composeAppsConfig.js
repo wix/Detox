@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const parse = require('yargs/yargs').Parser;
+
 const deviceAppTypes = require('./utils/deviceAppTypes');
 
 const CLI_PARSER_OPTIONS = {

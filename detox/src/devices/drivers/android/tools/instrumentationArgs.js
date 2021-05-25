@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { encodeBase64 } = require('../../../../utils/encoding');
 
 const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
@@ -13,7 +14,7 @@ function prepareInstrumentationArgs(args) {
     if (isReservedInstrumentationArg(key)) {
       usedReservedArgs.push(key);
     } else if (!key.startsWith('detox')) {
-      valueEncoded = encodeBase64(valueAsString)
+      valueEncoded = encodeBase64(valueAsString);
     }
 
     result.push('-e', key, valueEncoded);

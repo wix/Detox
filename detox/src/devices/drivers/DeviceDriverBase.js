@@ -1,7 +1,9 @@
-const _ = require('lodash');
-const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
+
+const fs = require('fs-extra');
+const _ = require('lodash');
+
 const log = require('../../utils/logger').child({ __filename });
 
 class DeviceDriverBase {
@@ -95,7 +97,7 @@ class DeviceDriverBase {
   }
 
   async clearKeychain(_udid) {
-    return await Promise.resolve('')
+    return await Promise.resolve('');
   }
 
   async waitUntilReady() {

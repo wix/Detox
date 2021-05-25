@@ -24,7 +24,7 @@ describe('Trace util', () => {
     const section = {
       name: 'section-name',
       args: { arg1: 'val1' },
-    }
+    };
 
     uut.startSection(section.name, section.args);
     expect(uut.events[1]).toEqual({
@@ -38,7 +38,7 @@ describe('Trace util', () => {
     const section = {
       name: 'section-name',
       args: { arg1: 'val1' },
-    }
+    };
 
     uut.startSection(section.name, section.args);
     uut.endSection(section.name, section.args);
@@ -53,7 +53,7 @@ describe('Trace util', () => {
     const section = {
       name: 'section-name',
       args: { arg1: 'val1' },
-    }
+    };
 
     uut.startSection(section.name, section.args);
     uut.endSection(section.name, section.args);

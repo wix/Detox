@@ -1,6 +1,6 @@
-const simpleAtoms = require('../espressoapi/web/simpleAtoms');
 const WebElementApi = require('../espressoapi/web/WebElement');
 const WebExpectApi = require('../espressoapi/web/WebExpect');
+const simpleAtoms = require('../espressoapi/web/simpleAtoms');
 
 class WebAction {
 }

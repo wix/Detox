@@ -1,16 +1,19 @@
-const _ = require('lodash');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const ini = require('ini');
-const _which = require('which');
+
 const exec = require('child-process-promise').exec;
-const appdatapath = require('./appdatapath');
-const fsext = require('./fsext');
+const ini = require('ini');
+const _ = require('lodash');
+const _which = require('which');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
+const appdatapath = require('./appdatapath');
+const fsext = require('./fsext');
+
 function which(executable, path) {
-  return _which.sync(executable, {path, nothrow: true});
+  return _which.sync(executable, { path, nothrow: true });
 }
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
@@ -40,12 +43,12 @@ function getAvdHome() {
 function getAvdDir(avdName) {
   const avdIniPath = path.join(getAvdHome(), `${avdName}.ini`);
   if (!fs.existsSync(avdIniPath)) {
-    throwMissingAvdINIError(avdName, avdIniPath)
+    throwMissingAvdINIError(avdName, avdIniPath);
   }
 
   const avdIni = ini.parse(fs.readFileSync(avdIniPath, 'utf-8'));
   if (!fs.existsSync(avdIni.path)) {
-    throwMissingAvdError(avdName, avdIni.path, avdIniPath)
+    throwMissingAvdError(avdName, avdIni.path, avdIniPath);
   }
 
   return avdIni.path;
@@ -151,7 +154,7 @@ function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
 }
 
 function throwMissingGmsaasError() {
-  throw new DetoxRuntimeError(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`)
+  throw new DetoxRuntimeError(`Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`);
 }
 
 function getDetoxVersion() {

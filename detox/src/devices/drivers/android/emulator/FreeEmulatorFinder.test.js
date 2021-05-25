@@ -1,4 +1,4 @@
-const { mockAvdName, emulator5556, localhost5555 } = require('../tools/__mocks__/handles');
+const { emulator5556, localhost5555, mockAvdName } = require('../tools/__mocks__/handles');
 
 describe('FreeEmulatorFinder', () => {
   const mockAdb = { devices: jest.fn() };

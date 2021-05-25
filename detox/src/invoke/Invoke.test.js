@@ -1,4 +1,4 @@
-const {call} = require('./Invoke');
+const { call } = require('./Invoke');
 
 describe('call', () => {
   it('handles target as thunk', () => {

@@ -1,8 +1,8 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const { ScrollAmountStopAtEdgeAction } = require('../actions/native');
+const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxAssertionApi = require('../espressoapi/DetoxAssertion');
 const EspressoDetoxApi = require('../espressoapi/EspressoDetox');
-const { NativeMatcher } = require('../core/NativeMatcher');
-const { ScrollAmountStopAtEdgeAction } = require('../actions/native');
 
 function call(maybeAFunction) {
   return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;

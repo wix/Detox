@@ -1,32 +1,36 @@
-const _ = require('lodash');
 const path = require('path');
-const fs = require('fs-extra');
 const URL = require('url').URL;
-const DeviceDriverBase = require('../DeviceDriverBase');
-const logger = require('../../../utils/logger');
-const log = logger.child({ __filename });
-const ADB = require('./exec/ADB');
-const AAPT = require('./exec/AAPT');
-const APKPath = require('./tools/APKPath');
-const TempFileXfer = require('./tools/TempFileXfer');
-const AppInstallHelper = require('./tools/AppInstallHelper');
-const AppUninstallHelper = require('./tools/AppUninstallHelper');
-const MonitoredInstrumentation = require('./tools/MonitoredInstrumentation');
+
+const fs = require('fs-extra');
+const _ = require('lodash');
+
 const DetoxApi = require('../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
 const AndroidInstrumentsPlugin = require('../../../artifacts/instruments/android/AndroidInstrumentsPlugin');
 const ADBLogcatPlugin = require('../../../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../../../artifacts/screenshot/ADBScreencapPlugin');
-const ADBScreenrecorderPlugin = require('../../../artifacts/video/ADBScreenrecorderPlugin');
-const AndroidDevicePathBuilder = require('../../../artifacts/utils/AndroidDevicePathBuilder');
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
+const AndroidDevicePathBuilder = require('../../../artifacts/utils/AndroidDevicePathBuilder');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
+const ADBScreenrecorderPlugin = require('../../../artifacts/video/ADBScreenrecorderPlugin');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const sleep = require('../../../utils/sleep');
-const retry = require('../../../utils/retry');
-const pressAnyKey = require('../../../utils/pressAnyKey');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
+const logger = require('../../../utils/logger');
+const pressAnyKey = require('../../../utils/pressAnyKey');
+const retry = require('../../../utils/retry');
+const sleep = require('../../../utils/sleep');
+const DeviceDriverBase = require('../DeviceDriverBase');
+
+const AAPT = require('./exec/AAPT');
+const ADB = require('./exec/ADB');
+const APKPath = require('./tools/APKPath');
+const AppInstallHelper = require('./tools/AppInstallHelper');
+const AppUninstallHelper = require('./tools/AppUninstallHelper');
+const MonitoredInstrumentation = require('./tools/MonitoredInstrumentation');
+const TempFileXfer = require('./tools/TempFileXfer');
+
+const log = logger.child({ __filename });
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
@@ -263,7 +267,7 @@ class AndroidDriver extends DeviceDriverBase {
       _launchArgs = {
         ...launchArgs,
         detoxUserNotificationDataURL: notificationPayloadTargetPath,
-      }
+      };
     }
     return _launchArgs;
   }
@@ -360,8 +364,8 @@ class AndroidDriver extends DeviceDriverBase {
       return `${paddedKey} | ${paddedValue}`;
     });
 
-    const keyHeader = 'Key'.padEnd(keyMaxLength, ' ')
-    const valueHeader = 'Value'.padEnd(valueMaxLength, ' ')
+    const keyHeader = 'Key'.padEnd(keyMaxLength, ' ');
+    const valueHeader = 'Value'.padEnd(valueMaxLength, ' ');
     const header = `${keyHeader} | ${valueHeader}`;
     const separator = '-'.repeat(header.length);
 

@@ -4,7 +4,7 @@ describe('Genymotion-Cloud instance launcher', () => {
     instance.uuid = 'mock-instance-uuid';
     instance.name = 'mock-instance-name';
     return instance;
-  }
+  };
 
   const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
 

@@ -1,10 +1,13 @@
-const fs = require('fs-extra');
-const onExit = require('signal-exit');
 const path = require('path');
+
 const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
-const argparse = require('./argparse');
+const fs = require('fs-extra');
+const onExit = require('signal-exit');
+
 const temporaryPath = require('../artifacts/utils/temporaryPath');
+
+const argparse = require('./argparse');
 const customConsoleLogger = require('./customConsoleLogger');
 
 function adaptLogLevelName(level) {

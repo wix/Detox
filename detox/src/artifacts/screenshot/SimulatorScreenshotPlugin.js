@@ -1,8 +1,10 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
+const _ = require('lodash');
+
 const log = require('../../utils/logger').child({ __filename });
-const temporaryPath = require('../utils/temporaryPath');
 const FileArtifact = require('../templates/artifact/FileArtifact');
+const temporaryPath = require('../utils/temporaryPath');
+
 const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 
 class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {

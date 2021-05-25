@@ -1,4 +1,5 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+
 const RegisteredConnectionHandler = require('./RegisteredConnectionHandler');
 
 class AppConnectionHandler extends RegisteredConnectionHandler {

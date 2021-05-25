@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
-const {sh} = require('./utils');
+
+const { sh } = require('./utils');
 
 //No need to pack iOS artifacts here. The build_framework.ios.sh script will be called during the post-install phase.
 

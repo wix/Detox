@@ -1,7 +1,8 @@
 jest.useFakeTimers('modern');
 
-const _ = require('lodash');
 const permaproxy = require('funpermaproxy');
+const _ = require('lodash');
+
 const config = require('../configuration/configurations.mock').validSession;
 
 describe('AsyncWebSocket', () => {
@@ -36,7 +37,7 @@ describe('AsyncWebSocket', () => {
       this.onclose && this.onclose(null);
     };
     WebSocket.prototype.mockCloseError = function (error) {
-      this.close.mockImplementation(() => { throw error });
+      this.close.mockImplementation(() => { throw error; });
     };
 
     AsyncWebSocket = require('./AsyncWebSocket');
@@ -131,7 +132,7 @@ describe('AsyncWebSocket', () => {
       it(`should reject all messages in the flight if there's an error`, async () => {
         const sendPromise1 = aws.send(generateRequest());
         const sendPromise2 = aws.send(generateRequest());
-        socket.mockError(anError())
+        socket.mockError(anError());
 
         await expect(sendPromise1).rejects.toThrowErrorMatchingSnapshot();
         await expect(sendPromise2).rejects.toThrowErrorMatchingSnapshot();
@@ -285,7 +286,7 @@ describe('AsyncWebSocket', () => {
 
       await connect();
       const someMessage = { type: 'foo' };
-      socket.mockMessage(someMessage)
+      socket.mockMessage(someMessage);
 
       expect(f1).toHaveBeenCalledWith(someMessage);
       expect(f2).toHaveBeenCalledWith(someMessage);
@@ -352,12 +353,12 @@ describe('AsyncWebSocket', () => {
   function connect() {
     return Promise.race([
       aws.open(),
-      new Promise(() => { socket.mockOpen() }),
+      new Promise(() => { socket.mockOpen(); }),
     ]);
   }
 
   function generateRequest(messageId) {
-    return {type: 'invoke', message: 'a message', messageId};
+    return { type: 'invoke', message: 'a message', messageId };
   }
 
   function generateResponse(message, messageId) {

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const argv = require('minimist')(process.argv.slice(2));
-const {escape} = require('./pipeCommands');
+
+const { escape } = require('./pipeCommands');
 
 function getArgValue(key, alias) {
   let value = _getArgvValue(key, alias);
@@ -50,7 +51,7 @@ const DEFAULT_JOIN_ARGUMENTS_OPTIONS = {
 };
 
 function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
-  const {prefix, joiner} = options === DEFAULT_JOIN_ARGUMENTS_OPTIONS
+  const { prefix, joiner } = options === DEFAULT_JOIN_ARGUMENTS_OPTIONS
     ? options
     : { ...DEFAULT_JOIN_ARGUMENTS_OPTIONS, ...options };
 
@@ -73,7 +74,7 @@ function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
       }
     }
 
-    argArray.push(arg)
+    argArray.push(arg);
   }
 
   return argArray.join(' ');

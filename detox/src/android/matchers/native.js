@@ -1,7 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
-const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 const { NativeMatcher } = require('../core/NativeMatcher');
+const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 
 class LabelMatcher extends NativeMatcher {
   constructor(value) {

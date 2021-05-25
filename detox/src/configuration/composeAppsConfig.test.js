@@ -1,5 +1,7 @@
 const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
+
 const {
   appWithAbsoluteBinaryPath,
   appWithRelativeBinaryPath,
@@ -31,7 +33,7 @@ describe('composeAppsConfig', () => {
       configurations: {
         [configurationName]: localConfig,
       },
-    }
+    };
 
     errorComposer = new DetoxConfigErrorComposer()
       .setDetoxConfig(globalConfig)
@@ -213,7 +215,7 @@ describe('composeAppsConfig', () => {
         it('should parse it and merge the values inside', () => {
           const { app1, app2 } = compose();
 
-          expect(app1.launchArgs).toEqual({ arg3: 'override'});
+          expect(app1.launchArgs).toEqual({ arg3: 'override' });
           expect(app2.launchArgs).toEqual({ arg1: 'value1', arg3: 'override' });
         });
       });

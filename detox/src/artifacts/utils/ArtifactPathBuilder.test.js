@@ -1,5 +1,7 @@
-const _ = require('lodash');
 const path = require('path');
+
+const _ = require('lodash');
+
 const ArtifactPathBuilder = require('./ArtifactPathBuilder');
 
 describe(ArtifactPathBuilder, () => {
@@ -13,7 +15,7 @@ describe(ArtifactPathBuilder, () => {
     });
 
     it('should give paths inside a timestamp-based subdirectory inside artifacts root', () => {
-      expect(pathBuilder.rootDir).toBe('/tmp')
+      expect(pathBuilder.rootDir).toBe('/tmp');
     });
 
     it('should provide path for unique (per test runner run) artifacts', () => {
@@ -24,7 +26,7 @@ describe(ArtifactPathBuilder, () => {
     });
 
     it('should provide nested path for test artifact', () => {
-      const test1 = {title: 'test 1', fullName: 'some test 1', status: 'running' };
+      const test1 = { title: 'test 1', fullName: 'some test 1', status: 'running' };
       const artifactPath1 = pathBuilder.buildPathForTestArtifact('1.log', test1);
       const expectedPath1 = path.join(pathBuilder.rootDir, test1.fullName, '1.log');
 
@@ -61,28 +63,28 @@ describe(ArtifactPathBuilder, () => {
     });
 
     it('should prepend checkmark to an artifact of a passed test', () => {
-      const testSummary = {title: '', fullName: 'test', status: 'passed' };
+      const testSummary = { title: '', fullName: 'test', status: 'passed' };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
       expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✓ test/1.log');
     });
 
     it('should prepend x sign to an artifact of a failed test', () => {
-      const testSummary = {title: '', fullName: 'test', status: 'failed' };
+      const testSummary = { title: '', fullName: 'test', status: 'failed' };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
       expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✗ test/1.log');
     });
 
     it('should append (2) invocations count for a test that fails for the second time', () => {
-      const testSummary = {title: '', fullName: 'test', status: 'failed', invocations: 2 };
+      const testSummary = { title: '', fullName: 'test', status: 'failed', invocations: 2 };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
       expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✗ test (2)/1.log');
     });
 
     it('should append (3) invocations count for a test that passes for the third time', () => {
-      const testSummary = {title: '', fullName: 'test', status: 'passed', invocations: 3 };
+      const testSummary = { title: '', fullName: 'test', status: 'passed', invocations: 3 };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
       expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✓ test (3)/1.log');

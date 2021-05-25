@@ -14,13 +14,13 @@ xdescribe('AAPT', () => {
   });
 
   it(`Parse 'aapt dump badging' output`, async () => {
-    exec.mockReturnValueOnce(Promise.resolve({stdout: AAPTOutputMock}));
+    exec.mockReturnValueOnce(Promise.resolve({ stdout: AAPTOutputMock }));
     const pacakageName = await aapt.getPackageName('path/to/file.apk');
     expect(pacakageName).toEqual('com.wix.detox.test');
   });
 
   it(`Configure aaptBin only once`, async () => {
-    exec.mockReturnValue(Promise.resolve({stdout: AAPTOutputMock}));
+    exec.mockReturnValue(Promise.resolve({ stdout: AAPTOutputMock }));
     await aapt.getPackageName('path/to/file.apk');
     await aapt.getPackageName('path/to/file.apk');
   });

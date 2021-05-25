@@ -1,5 +1,5 @@
-const path = require('path');
 const os = require('os');
+const path = require('path');
 
 describe('loadExternalConfig', () => {
   const DIR_PACKAGEJSON = path.join(__dirname, '__mocks__/configuration/packagejson');
@@ -30,7 +30,7 @@ describe('loadExternalConfig', () => {
   it('should implicitly use .detoxrc.js, even if there is package.json', async () => {
     const { filepath, config } = await loadExternalConfig({ cwd: DIR_PRIORITY });
 
-    expect(filepath).toBe(path.join(DIR_PRIORITY, '.detoxrc.js'))
+    expect(filepath).toBe(path.join(DIR_PRIORITY, '.detoxrc.js'));
     expect(config).toMatchObject({ configurations: expect.anything() });
     expect(logger.warn).not.toHaveBeenCalled();
   });
@@ -38,7 +38,7 @@ describe('loadExternalConfig', () => {
   it('should implicitly use package.json, even if there is no .detoxrc', async () => {
     const { filepath, config } = await loadExternalConfig({ cwd: DIR_PACKAGEJSON });
 
-    expect(filepath).toBe(path.join(DIR_PACKAGEJSON, 'package.json'))
+    expect(filepath).toBe(path.join(DIR_PACKAGEJSON, 'package.json'));
     expect(config).toMatchObject({ configurations: expect.anything() });
     expect(logger.warn).not.toHaveBeenCalled();
   });
@@ -52,7 +52,7 @@ describe('loadExternalConfig', () => {
     const configPath = path.join(DIR_PRIORITY, 'detox-config.json');
     const { filepath, config } = await loadExternalConfig({ configPath });
 
-    expect(filepath).toBe(configPath)
+    expect(filepath).toBe(configPath);
     expect(config).toMatchObject({ configurations: expect.anything() });
     expect(logger.warn).not.toHaveBeenCalled();
   });
@@ -60,7 +60,7 @@ describe('loadExternalConfig', () => {
   it('should merge in the base config from "extends" property', async () => {
     const { filepath, config } = await loadExternalConfig({ cwd: DIR_EXTENDS });
 
-    expect(filepath).toBe(path.join(DIR_EXTENDS, '.detoxrc.js'))
+    expect(filepath).toBe(path.join(DIR_EXTENDS, '.detoxrc.js'));
     expect(config).toEqual({
       extends: path.join(DIR_EXTENDS, 'middle.js'),
       artifacts: {

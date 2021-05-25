@@ -15,7 +15,7 @@ function lowerCamelCaseJoin(array) {
   let retVal = first;
   _.forEach(rest, (str) => {
     retVal += capitalizeFirstLetter(str);
-  })
+  });
   return retVal;
 }
 module.exports = {

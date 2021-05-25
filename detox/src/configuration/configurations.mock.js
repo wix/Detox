@@ -1,9 +1,9 @@
 const InstrumentsArtifactPlugin = require('../artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('../artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('../artifacts/screenshot/ScreenshotArtifactPlugin');
-const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
 const TimelineArtifactPlugin = require('../artifacts/timeline/TimelineArtifactPlugin');
 const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
+const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
 
 const defaultArtifactsConfiguration = {
   rootDir: 'artifacts',

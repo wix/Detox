@@ -8,7 +8,6 @@ describe('expectTwo API Coverage', () => {
     });
   });
 
-
   describe('Matchers', () => {
     it(`by.accessibilityLabel`, async () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
@@ -64,7 +63,6 @@ describe('expectTwo API Coverage', () => {
       await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
     });
 
-
     it(`matchers with wrong parameters should throw`, async () => {
       await expectToThrow(() => e.element(e.by.label(5)));
       await expectToThrow(() => e.element(e.by.id(5)));
@@ -89,7 +87,6 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
     });
   });
-
 
   describe('Actions', () => {
 

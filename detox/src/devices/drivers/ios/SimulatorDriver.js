@@ -1,21 +1,24 @@
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+
 const exec = require('child-process-promise').exec;
-const DeviceRegistry = require('../../DeviceRegistry');
-const IosDriver = require('./IosDriver');
-const AppleSimUtils = require('./tools/AppleSimUtils');
+const _ = require('lodash');
+
 const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
 const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
-const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
+const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
+const environment = require('../../../utils/environment');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../utils/logger').child({ __filename });
 const pressAnyKey = require('../../../utils/pressAnyKey');
+const DeviceRegistry = require('../../DeviceRegistry');
+
+const IosDriver = require('./IosDriver');
+const AppleSimUtils = require('./tools/AppleSimUtils');
 
 class SimulatorDriver extends IosDriver {
 
@@ -104,15 +107,15 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
-    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId, launchArgs });
     const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
-    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
+    await this.emitter.emit('launchApp', { bundleId, deviceId, launchArgs, pid });
 
     return pid;
   }
 
   async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
-    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId, launchArgs });
 
     this.applesimutils.printLaunchHint(deviceId, bundleId, launchArgs, languageAndLocale);
     await pressAnyKey();
@@ -128,7 +131,7 @@ class SimulatorDriver extends IosDriver {
       log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
     }
 
-    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
+    await this.emitter.emit('launchApp', { bundleId, deviceId, launchArgs, pid });
     return pid;
   }
 
@@ -177,7 +180,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async clearKeychain(deviceId) {
-    await this.applesimutils.clearKeychain(deviceId)
+    await this.applesimutils.clearKeychain(deviceId);
   }
 
   async resetContentAndSettings(deviceId) {
@@ -257,7 +260,7 @@ class SimulatorDriver extends IosDriver {
     return {
       taken: _.filter(taken, isMatching),
       free: _.filter(free, isMatching),
-    }
+    };
   }
 
   async _queryDevices(deviceQuery) {

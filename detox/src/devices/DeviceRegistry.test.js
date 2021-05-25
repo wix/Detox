@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const tempfile = require('tempfile');
+
 const environment = require('../utils/environment');
 
 const deviceId = 'emulator-5554';
@@ -42,7 +43,7 @@ describe('DeviceRegistry', () => {
       return registry.allocateDevice(async () => {
         expect(registry.includes(deviceId)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+      }).catch((e) => { if (e.message !== 'ignored') throw e; });
     }
 
     function expectIncludedInDevicesList(deviceId) {
@@ -51,7 +52,7 @@ describe('DeviceRegistry', () => {
         expect(registeredDevices.includes(deviceId)).toEqual(true);
 
         throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+      }).catch((e) => { if (e.message !== 'ignored') throw e; });
     }
 
     function expectDevicesListEquals(rawDevices) {
@@ -60,7 +61,7 @@ describe('DeviceRegistry', () => {
         expect(registeredDevices.rawDevices).toStrictEqual(rawDevices);
 
         throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+      }).catch((e) => { if (e.message !== 'ignored') throw e; });
     }
 
     async function expectIncludedInReadDevicesList(deviceId) {
@@ -186,7 +187,7 @@ describe('DeviceRegistry', () => {
         await registry.reset();
         expect(await fs.readFile(lockfilePath, 'utf8')).toBe('[]');
       });
-    })
+    });
   });
 
   describe('instantiation methods', () => {
