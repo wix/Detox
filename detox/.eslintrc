@@ -4,9 +4,12 @@
     "jest": true
   },
   "plugins": ["node"],
-  "extends": ["plugin:node/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
   "globals": {
-    "fail": true,
+    "fail": true
   },
   "parserOptions": {
     "ecmaVersion": 2018,
@@ -16,8 +19,14 @@
     }
   },
   "rules": {
+    "no-case-declarations": "off",
+    "no-constant-condition": "warn",
+    "no-unsafe-negation": "warn",
+    "no-useless-escape": "warn",
     "no-debugger": "error",
+    "no-empty": "off",
     "no-undef": "warn",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "no-mixed-spaces-and-tabs": "error",
     "node/no-unpublished-require": "warn"
   }

@@ -339,7 +339,7 @@ class Matcher {
   }
 
   traits(traits) {
-    if (typeof traits !== 'object' || !traits instanceof Array) throw new Error('traits must be an array, got ' + typeof traits);
+    if (typeof traits !== 'object' || !(traits instanceof Array)) throw new Error('traits must be an array, got ' + typeof traits);
     this.predicate = { type: 'traits', value: traits };
     return this;
   }

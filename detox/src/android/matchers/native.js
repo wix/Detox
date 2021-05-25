@@ -64,7 +64,7 @@ class ToggleMatcher extends NativeMatcher {
 class TraitsMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    if ((typeof value !== 'object') || (!value instanceof Array)) throw new DetoxRuntimeError(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
+    if ((typeof value !== 'object') || (!(value instanceof Array))) throw new DetoxRuntimeError(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
 
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnything());
   }
