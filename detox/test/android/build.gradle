@@ -1,7 +1,7 @@
 buildscript {
     apply from: './rninfo.gradle'
 
-    def androidGradlePluginVersion = rnInfo.isRN62OrHigher ? '3.5.3' : '3.4.2'
+    def androidGradlePluginVersion = rnInfo.isRN62OrHigher ? '4.1.0' : '3.4.2'
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
@@ -10,7 +10,7 @@ buildscript {
         buildToolsVersion = '29.0.3'
         compileSdkVersion = 29
         targetSdkVersion = 29
-        minSdkVersion = 18
+        minSdkVersion = 21
 
         if (!rnInfo.isRN62OrHigher) {
             suppressUnitTests = true
@@ -42,6 +42,7 @@ allprojects {
         google()
         mavenLocal()
         mavenCentral()
+        jcenter()
         maven {
             url "$projectDir/../../node_modules/react-native/android"
         }
