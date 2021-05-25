@@ -268,7 +268,7 @@ Expected an object:
 `;
 
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppLaunchArgs should work with plain configurations 1`] = `
-[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+[DetoxConfigError: Invalid type of "launchArgs" property in configuration "plain".
 Expected an object:
 
 {
@@ -329,7 +329,7 @@ Expected a string:
 `;
 
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .missingAppBinaryPath should create an error for plain configuration 1`] = `
-[DetoxConfigError: Missing "binaryPath" property in the app config.
+[DetoxConfigError: Missing "binaryPath" property in configuration "plain".
 Expected a string:
 
 {
@@ -493,6 +493,28 @@ HINT: There should be an inlined object or an alias to the app config, e.g.:
 
 Examine your Detox config at path:
 /home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .oldSchemaHasAppAndApps should create an error for ambigous old/new configuration if it has .apps 1`] = `
+[DetoxConfigError: Your configuration "plain" appears to be in a legacy format, which can’t contain "app" or "apps".
+
+HINT: Remove "type" property from configuration and use "device" property instead:
+a) "device": { "type": "android.emulator", ... }
+b) "device": "<alias-to-device>" // you should add that device configuration to "devices" with the same key
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    plain: {
+      type: 'android.emulator',
+      device: 'Pixel_3a_API_30_x86',
+      binaryPath: 'path/to/apk',
+      app: 'my-app'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .thereAreNoAppConfigs should create an error for aliased configuration 1`] = `

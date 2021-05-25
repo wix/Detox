@@ -190,6 +190,8 @@ declare global {
             build?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
+            app?: never;
+            apps?: never;
         }
 
         type DetoxBuiltInDeviceConfig =

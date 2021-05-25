@@ -23,6 +23,15 @@ class DetoxConfigErrorComposer {
     return this.filepath ? ` at path:\n${this.filepath}` : '.';
   }
 
+  _inTheAppConfig() {
+    const { type } = this._getSelectedConfiguration();
+    if (type) {
+      return `in configuration ${J(this.configurationName)}`;
+    }
+
+    return `in the app config`;
+  }
+
   _getSelectedConfiguration() {
     return _.get(this.contents, ['configurations', this.configurationName]);
   }
@@ -380,7 +389,7 @@ Examine your Detox config${this._atPath()}`,
 
   malformedAppLaunchArgs(appPath) {
     return new DetoxConfigError({
-      message: `Invalid type of "launchArgs" property in the app config.\nExpected an object:`,
+      message: `Invalid type of "launchArgs" property ${this._inTheAppConfig()}.\nExpected an object:`,
       debugInfo: this._focusOnAppConfig(appPath),
       inspectOptions: { depth: 4 },
     });
@@ -388,7 +397,7 @@ Examine your Detox config${this._atPath()}`,
 
   missingAppBinaryPath(appPath) {
     return new DetoxConfigError({
-      message: `Missing "binaryPath" property in the app config.\nExpected a string:`,
+      message: `Missing "binaryPath" property ${this._inTheAppConfig()}.\nExpected a string:`,
       debugInfo: this._focusOnAppConfig(appPath, this._ensureProperty('binaryPath')),
       inspectOptions: { depth: 4 },
     });
@@ -459,6 +468,18 @@ Examine your Detox config${this._atPath()}`,
 Examine your Detox config${this._atPath()}`,
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 0 }
+    });
+  }
+
+  oldSchemaHasAppAndApps() {
+    return new DetoxConfigError({
+      message: `Your configuration ${J(this.configurationName)} appears to be in a legacy format, which can’t contain "app" or "apps".`,
+      hint: `Remove "type" property from configuration and use "device" property instead:\n` +
+        `a) "device": { "type": ${J(this._getSelectedConfiguration().type)}, ... }\n` +
+        `b) "device": "<alias-to-device>" // you should add that device configuration to "devices" with the same key` +
+        `\n\nCheck your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnConfiguration(this._ensureProperty('type', 'device')),
+      inspectOptions: { depth: 2 },
     });
   }
 
