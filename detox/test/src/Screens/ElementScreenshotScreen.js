@@ -31,10 +31,10 @@ export default class ElementScreenshotScreen extends Component {
   static orientations = {
     'vertical': {
       borderSizeH: 12,
-      borderSizeV: screenHeight * 1.5 / 8,
+      borderSizeV: screenHeight * 0.9 / 8,
     },
     'horizontal': {
-      borderSizeH: screenWidth * 1.5 / 8,
+      borderSizeH: screenWidth * 0.9 / 8,
       borderSizeV: 12,
     }
   };
@@ -56,10 +56,6 @@ export default class ElementScreenshotScreen extends Component {
         <TouchableHighlight testID='switchOrientation' onPress={this.switchOrientation}>
           <ArtisticRectangle testID='fancyElement' borderSizeH={borderSizeH} borderSizeV={borderSizeV} />
         </TouchableHighlight>
-
-        <View style={{position: 'absolute', left: -100, top: -100}}>
-          <ArtisticRectangle testID='offscreenElement' />
-        </View>
       </View>
     );
   }

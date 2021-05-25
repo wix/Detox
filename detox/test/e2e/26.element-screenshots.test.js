@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { expectToThrow } = require('./utils/custom-expects');
 
 describe('Element screenshots', () => {
 
