@@ -487,7 +487,7 @@ class WaitFor {
 
   whileElement(matcher) {
     if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
-    this.actionableElement = new InternalElement(this._invocationManager, this._emitter, matcher,);
+    this.actionableElement = new InternalElement(this._invocationManager, this._emitter, matcher);
     return this;
   }
 
