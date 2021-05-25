@@ -24,13 +24,6 @@ describe('Element screenshots', () => {
     expectBitmapsToBeEqual(bitmapPath, screenshotAssetPath);
   });
 
-  it(':android: should fail to take a screenshot of an off-screen element', async () => {
-    await expectToThrow(
-      () => element(by.id('offscreenElement')).takeScreenshot(),
-      `Cannot take screenshot of a view that's out of screen's bounds`,
-    );
-  });
-
   function expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath) {
     const bitmapBuffer = fs.readFileSync(bitmapPath);
     const expectedBitmapBuffer = fs.readFileSync(expectedBitmapPath);
