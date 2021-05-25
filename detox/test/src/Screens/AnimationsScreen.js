@@ -112,7 +112,7 @@ export default class AnimationsScreen extends Component {
           disabled={this.state.useNativeDriver === undefined}
           onPress={() => this.setState({ testStarted: true })}
         />
-        <View>
+        <View style={{paddingTop: 20}}>
           <Text>Driver:</Text>
           <SegmentedControl
             testID="UniqueId_AnimationsScreen_useNativeDriver"
