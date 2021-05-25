@@ -245,13 +245,13 @@ describe('ADB', () => {
   });
 
   it(`getInstrumentationRunner parses the correct runner for the package`, async () => {
-    const expectedRunner = "com.example.android.apis/.app.LocalSampleInstrumentation";
-    const expectedPackage = "com.example.android.apis";
+    const expectedRunner = 'com.example.android.apis/.app.LocalSampleInstrumentation';
+    const expectedPackage = 'com.example.android.apis';
     const instrumentationRunnersShellOutput =
-      "instrumentation:com.android.emulator.smoketests/android.support.test.runner.AndroidJUnitRunner (target=com.android.emulator.smoketests)\n" +
-      "instrumentation:com.android.smoketest.tests/com.android.smoketest.SmokeTestRunner (target=com.android.smoketest)\n" +
+      'instrumentation:com.android.emulator.smoketests/android.support.test.runner.AndroidJUnitRunner (target=com.android.emulator.smoketests)\n' +
+      'instrumentation:com.android.smoketest.tests/com.android.smoketest.SmokeTestRunner (target=com.android.smoketest)\n' +
       `instrumentation:${expectedRunner} (target=${expectedPackage})\n` +
-      "instrumentation:org.chromium.webview_shell/.WebViewLayoutTestRunner (target=org.chromium.webview_shell)\n";
+      'instrumentation:org.chromium.webview_shell/.WebViewLayoutTestRunner (target=org.chromium.webview_shell)\n';
 
     jest.spyOn(adb, 'shell').mockImplementation(async () => instrumentationRunnersShellOutput);
 

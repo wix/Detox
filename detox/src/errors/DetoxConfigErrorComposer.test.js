@@ -86,7 +86,7 @@ describe('DetoxConfigErrorComposer', () => {
           builder
             .setExtends(true)
             .setDetoxConfigPath('package.json')
-            .noConfigurationAtGivenPath("some-detox-preset")
+            .noConfigurationAtGivenPath('some-detox-preset')
         ).toMatchSnapshot();
       });
     });

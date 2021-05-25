@@ -260,7 +260,7 @@ class ADB {
   }
 
   _instrumentationRunnerForBundleId(instrumentationRunners, bundleId) {
-    const runnerForBundleRegEx = new RegExp(`^instrumentation:(.*) \\(target=${bundleId.replace(new RegExp('\\.', 'g'), "\\.")}\\)$`, 'gm');
+    const runnerForBundleRegEx = new RegExp(`^instrumentation:(.*) \\(target=${bundleId.replace(new RegExp('\\.', 'g'), '\\.')}\\)$`, 'gm');
     return _.get(runnerForBundleRegEx.exec(instrumentationRunners), [1], 'undefined');
   }
 

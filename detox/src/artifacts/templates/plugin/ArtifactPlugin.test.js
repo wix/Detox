@@ -270,7 +270,7 @@ describe('ArtifactPlugin', () => {
       it('should disable plugin with a reason', async () => {
         plugin.disable = jest.fn();
         await expect(plugin.onTerminate()).resolves.toBe(void 0);
-        expect(plugin.disable.mock.calls).toEqual([["it was terminated by SIGINT or SIGTERM"]]);
+        expect(plugin.disable.mock.calls).toEqual([['it was terminated by SIGINT or SIGTERM']]);
       });
 
       it('should replace the other lifecycle hooks with the same noop function', async () => {

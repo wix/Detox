@@ -39,7 +39,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setOrientation(deviceId, orientation) {
-    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ")"));
+    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ')'));
     return await this.client.setOrientation({ orientation });
   }
 

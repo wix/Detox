@@ -10,13 +10,13 @@ describe('invoke', () => {
   });
 
   it(`execute() should trigger executionHandler.execute()`, () => {
-    const invocationManager = new invoke.InvocationManager(new Client(""));
+    const invocationManager = new invoke.InvocationManager(new Client(''));
     invocationManager.execute();
     expect(invocationManager.executionHandler.execute).toHaveBeenCalled();
   });
 
   it(`execute should return execution result`, async () => {
-    const client = new Client("");
+    const client = new Client('');
     const someResult = 'some_result';
     client.execute.mockReturnValue(someResult);
     const invocationManager = new invoke.InvocationManager(client);

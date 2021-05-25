@@ -66,9 +66,9 @@ describe('loadExternalConfig', () => {
       artifacts: {
         rootDir: 'someRootDir',
         plugins: {
-          log: "all",
-          screenshot: "all",
-          video: "all",
+          log: 'all',
+          screenshot: 'all',
+          video: 'all',
         },
       },
     });

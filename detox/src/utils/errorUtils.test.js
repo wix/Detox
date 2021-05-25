@@ -1,6 +1,6 @@
-const _ = require("lodash");
+const _ = require('lodash');
 
-const errorUtils = require("./errorUtils");
+const errorUtils = require('./errorUtils');
 
 describe('sliceErrorStack(error, fromIndex)', () => {
   it('should clean up error stack by N first lines containing at:', () => {

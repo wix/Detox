@@ -173,8 +173,8 @@ describe('composeArtifactsConfig', () => {
       globalConfig: {},
     })).toMatchObject({
       pathBuilder: expect.objectContaining({
-        "name": expect.any(String),
-        "version": expect.any(String),
+        'name': expect.any(String),
+        'version': expect.any(String),
       }),
     });
   });
@@ -212,7 +212,7 @@ describe('composeArtifactsConfig', () => {
             },
             video: {
               android: { bitRate: 4000000 },
-              simulator: { codec: "hevc" },
+              simulator: { codec: 'hevc' },
             }
           },
         },
@@ -229,7 +229,7 @@ describe('composeArtifactsConfig', () => {
         video: {
           ...schemes.pluginsDefaultsResolved.video,
           android: { bitRate: 4000000 },
-          simulator: { codec: "hevc" },
+          simulator: { codec: 'hevc' },
         },
       }),
     });

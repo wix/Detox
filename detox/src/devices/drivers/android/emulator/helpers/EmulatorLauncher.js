@@ -50,7 +50,7 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
       },
     };
     const tail = new Tail(tempLog, tailOptions)
-      .on("line", (line) => {
+      .on('line', (line) => {
         if (line.includes('Adb connected, start proxing data')) {
           childProcessPromise._cpResolve();
         }

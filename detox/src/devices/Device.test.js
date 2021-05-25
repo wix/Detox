@@ -262,8 +262,8 @@ describe('Device', () => {
 
   describe('re/launchApp()', () => {
     const expectedDriverArgs = {
-      "detoxServer": "ws://localhost:8099",
-      "detoxSessionId": "test",
+      'detoxServer': 'ws://localhost:8099',
+      'detoxSessionId': 'test',
     };
 
     it(`with no args should launch app with defaults`, async () => {
@@ -353,7 +353,7 @@ describe('Device', () => {
     });
 
     it(`(relaunch) with url should send the url as a param in launchParams`, async () => {
-      const expectedArgs = { ...expectedDriverArgs, "detoxURLOverride": "scheme://some.url" };
+      const expectedArgs = { ...expectedDriverArgs, 'detoxURLOverride': 'scheme://some.url' };
       const device = await aValidDevice();
 
       await device.relaunchApp({ url: `scheme://some.url` });
@@ -364,8 +364,8 @@ describe('Device', () => {
     it(`(relaunch) with url should send the url as a param in launchParams`, async () => {
       const expectedArgs = {
         ...expectedDriverArgs,
-        "detoxURLOverride": "scheme://some.url",
-        "detoxSourceAppOverride": "sourceAppBundleId",
+        'detoxURLOverride': 'scheme://some.url',
+        'detoxSourceAppOverride': 'sourceAppBundleId',
       };
       const device = await aValidDevice();
       await device.relaunchApp({ url: `scheme://some.url`, sourceApp: 'sourceAppBundleId' });
@@ -376,7 +376,7 @@ describe('Device', () => {
     it(`(relaunch) with userNofitication should send the userNotification as a param in launchParams`, async () => {
       const expectedArgs = {
         ...expectedDriverArgs,
-        "detoxUserNotificationDataURL": "url",
+        'detoxUserNotificationDataURL': 'url',
       };
       const device = await aValidDevice();
 
@@ -390,7 +390,7 @@ describe('Device', () => {
     it(`(relaunch) with url and userNofitication should throw`, async () => {
       const device = await aValidDevice();
       try {
-        await device.relaunchApp({ url: "scheme://some.url", userNotification: 'notif' });
+        await device.relaunchApp({ url: 'scheme://some.url', userNotification: 'notif' });
         fail('should fail');
       } catch (ex) {
         expect(ex).toBeDefined();
@@ -399,9 +399,9 @@ describe('Device', () => {
 
     it(`(relaunch) with permissions should send trigger setpermissions before app starts`, async () => {
       const device = await aValidDevice();
-      await device.relaunchApp({ permissions: { calendar: "YES" } });
+      await device.relaunchApp({ permissions: { calendar: 'YES' } });
 
-      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(device.id, device._bundleId, { calendar: "YES" });
+      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(device.id, device._bundleId, { calendar: 'YES' });
     });
 
     it('with languageAndLocale should launch app with a specific language/locale', async () => {
@@ -419,7 +419,7 @@ describe('Device', () => {
     });
 
     it(`with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {
-      const expectedArgs = { ...expectedDriverArgs, "detoxDisableTouchIndicators": true };
+      const expectedArgs = { ...expectedDriverArgs, 'detoxDisableTouchIndicators': true };
       const device = await aValidDevice();
 
       await device.launchApp({ disableTouchIndicators: true });

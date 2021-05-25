@@ -31,7 +31,7 @@ describe('ExclusiveLockFile', () => {
       expect(lockfile.read()).toBe(84);
 
       expect(plock.unlockSync).not.toHaveBeenCalled();
-      return "result";
+      return 'result';
     });
 
     expect(plock.unlockSync).toHaveBeenCalled();

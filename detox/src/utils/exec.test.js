@@ -336,14 +336,14 @@ function toStream(string) {
 
 const returnSuccessfulWithValue = (value) => ({
     stdout: JSON.stringify(value),
-    stderr: "err",
+    stderr: 'err',
     childProcess: {
       exitCode: 0
     }
   });
 
 const returnErrorWithValue = (value) => ({
-    stdout: "out",
+    stdout: 'out',
     stderr: value,
     childProcess: {
       exitCode: 1
