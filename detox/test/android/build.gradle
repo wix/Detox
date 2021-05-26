@@ -44,7 +44,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "$projectDir/../../node_modules/react-native/android"
+            url "$rootDir/../../node_modules/react-native/android"
         }
         maven {
             // Android JSC is installed from npm
