@@ -8,20 +8,6 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 
 export default class AttributesScreen extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      checked: false
-    }
-  }
-
-  changeCheckboxState() {
-    this.setState({
-      checked: !this.state.checked
-    })
-  }
-
   render() {
     return (
       <View style={{flex: 1, justifyContent: 'center'}}>

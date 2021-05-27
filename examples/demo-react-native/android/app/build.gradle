@@ -3,7 +3,7 @@ apply from: '../rninfo.gradle'
 
 //project.ext.react = [:]
 project.ext.react = [
-    enableHermes: rnInfo.isRN60OrHigher
+    enableHermes: true
 ]
 apply from: '../../node_modules/react-native/react.gradle'
 
