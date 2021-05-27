@@ -7,8 +7,8 @@ describe('expectTwo', () => {
   let fs;
 
   beforeEach(() => {
-    jest.mock('fs-extra')
-    jest.mock('tempfile')
+    jest.mock('fs-extra');
+    jest.mock('tempfile');
 
     fs = require('fs-extra');
     const IosExpect = require('./expectTwo');
@@ -476,8 +476,8 @@ describe('expectTwo', () => {
 
     beforeEach(async () => {
       tmpFileName = '2317894723984';
-      tmpFilePath = `/tmp/somewhere/${tmpFileName}.png`
-      deviceTmpFilePath = '/tmp/path/to/device/file.png'
+      tmpFilePath = `/tmp/somewhere/${tmpFileName}.png`;
+      deviceTmpFilePath = '/tmp/path/to/device/file.png';
 
       invocationManager.execute.mockResolvedValueOnce({
         screenshotPath: deviceTmpFilePath,

@@ -1,12 +1,13 @@
-const _ = require('lodash');
+const path = require('path');
 
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const { assertEnum, assertNormalized, assertNumber } = require('../utils/assertArgument');
+const fs = require('fs-extra');
+const _ = require('lodash');
+const tempfile = require('tempfile');
+
+const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
-const tempfile = require('tempfile');
-const fs = require('fs-extra');
-const path = require('path');
 
 class Expect {
   constructor(invocationManager, element) {
@@ -244,7 +245,7 @@ class Element {
   }
 
   async takeScreenshot(fileName) {
-    const {screenshotPath} = await this.withAction('takeScreenshot', fileName);
+    const { screenshotPath } = await this.withAction('takeScreenshot', fileName);
 
     const filePath = tempfile('.detox.element-screenshot.png');
     await fs.move(screenshotPath, filePath);
@@ -410,7 +411,7 @@ class WaitFor {
     this._invocationManager = invocationManager;
     this.element = new InternalElement(invocationManager, emitter, element.matcher);
     this.expectation = new InternalExpect(invocationManager, this.element);
-    this._emitter = emitter
+    this._emitter = emitter;
   }
 
   toBeVisible() {
@@ -618,9 +619,9 @@ function waitFor(invocationManager, emitter, element) {
 }
 
 class IosExpect {
-  constructor({ invocationManager, emitter}) {
+  constructor({ invocationManager, emitter }) {
     this._invocationManager = invocationManager;
-    this._emitter = emitter
+    this._emitter = emitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
