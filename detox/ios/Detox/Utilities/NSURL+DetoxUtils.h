@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSURL*)temporaryPath:(NSString *)subFolder;
 + (NSURL*)visibilityFailingScreenshotsPath;
 + (NSURL*)visibilityFailingRectsPath;
++ (NSURL*)elementsScreenshotPath;
 
 @end
 

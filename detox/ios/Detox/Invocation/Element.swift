@@ -216,6 +216,12 @@ class Element : NSObject {
 		return rv
 	}
 	
+	func takeScreenshot(fileName: String?) -> [String : Any] {
+		let path: URL = view.dtx_takeScreenshot(fileName)
+		
+		return ["screenshotPath": path.path]
+	}
+	
 	@objc
 	var text: String? {
 		return view.value(forKey: "dtx_text") as? String

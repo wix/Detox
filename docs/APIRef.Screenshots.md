@@ -98,7 +98,7 @@ async function setDemoMode() {
 
 > Note: This script implicitly assumes only one device is used, as device ID isn't specified anywhere (e.g. with `adb -s <id>`).
 
-## Element-level Screenshots (Android Only)
+## Element-level Screenshots
 
 Taking a screenshot of a specific element can be simply done using an API similar to other element-interaction Detox API's:
 

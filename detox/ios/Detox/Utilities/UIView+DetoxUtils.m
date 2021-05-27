@@ -146,6 +146,20 @@ DTX_DIRECT_MEMBERS
 	return [self dtx_isVisibleAtRect:rect error:NULL];
 }
 
+- (UIImage*)dtx_imageFromView
+{
+	UIWindow* window = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
+	CGFloat scale = window != nil ? window.screen.scale : 0.0;
+	UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, scale);
+
+	[self.layer renderInContext:UIGraphicsGetCurrentContext()];
+
+	UIImage *image= UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+
+	return image;
+}
+
 - (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView inRect:(CGRect)testedRect drawTestedRect:(BOOL)drawTestedRect
 {
 	UIGraphicsBeginImageContextWithOptions(windowToUse.bounds.size, NO, windowToUse.screen.scale);

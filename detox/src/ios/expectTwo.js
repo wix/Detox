@@ -1,7 +1,11 @@
-const _ = require('lodash');
+const path = require('path');
 
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const { assertEnum, assertNormalized, assertNumber } = require('../utils/assertArgument');
+const fs = require('fs-extra');
+const _ = require('lodash');
+const tempfile = require('tempfile');
+
+const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
 
@@ -106,8 +110,9 @@ class InternalExpect extends Expect {
 }
 
 class Element {
-  constructor(invocationManager, matcher) {
+  constructor(invocationManager, emitter, matcher) {
     this._invocationManager = invocationManager;
+    this._emitter = emitter;
     this.matcher = matcher;
   }
 
@@ -239,8 +244,18 @@ class Element {
     return this.withAction('adjustSliderToPosition', position);
   }
 
-  takeScreenshot() {
-    throw new DetoxRuntimeError({ message: 'Element screenshots are not supported on iOS, at the moment!' });
+  async takeScreenshot(fileName) {
+    const { screenshotPath } = await this.withAction('takeScreenshot', fileName);
+
+    const filePath = tempfile('.detox.element-screenshot.png');
+    await fs.move(screenshotPath, filePath);
+    await this._emitter.emit('createExternalArtifact', {
+      pluginId: 'screenshot',
+      artifactName: fileName || path.basename(filePath, '.png'),
+      artifactPath: filePath,
+    });
+
+    return filePath;
   }
 
   createInvocation(action, targetElementMatcher, ...params) {
@@ -392,10 +407,11 @@ class Matcher {
 }
 
 class WaitFor {
-  constructor(invocationManager, element) {
+  constructor(invocationManager, emitter, element) {
     this._invocationManager = invocationManager;
-    this.element = new InternalElement(invocationManager, element.matcher);
+    this.element = new InternalElement(invocationManager, emitter, element.matcher);
     this.expectation = new InternalExpect(invocationManager, this.element);
+    this._emitter = emitter;
   }
 
   toBeVisible() {
@@ -472,7 +488,7 @@ class WaitFor {
 
   whileElement(matcher) {
     if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
-    this.actionableElement = new InternalElement(this._invocationManager, matcher);
+    this.actionableElement = new InternalElement(this._invocationManager, this._emitter, matcher);
     return this;
   }
 
@@ -581,11 +597,11 @@ class WaitFor {
   }
 }
 
-function element(invocationManager, matcher) {
+function element(invocationManager, emitter, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
-  return new Element(invocationManager, matcher);
+  return new Element(invocationManager, emitter, matcher);
 }
 
 function expect(invocationManager, element) {
@@ -595,16 +611,17 @@ function expect(invocationManager, element) {
   return new Expect(invocationManager, element);
 }
 
-function waitFor(invocationManager, element) {
+function waitFor(invocationManager, emitter, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new WaitFor(invocationManager, element);
+  return new WaitFor(invocationManager, emitter, element);
 }
 
 class IosExpect {
-  constructor({ invocationManager }) {
+  constructor({ invocationManager, emitter }) {
     this._invocationManager = invocationManager;
+    this._emitter = emitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
@@ -613,7 +630,7 @@ class IosExpect {
   }
 
   element(matcher) {
-    return element(this._invocationManager, matcher);
+    return element(this._invocationManager, this._emitter, matcher);
   }
 
   expect(element) {
@@ -621,7 +638,7 @@ class IosExpect {
   }
 
   waitFor(element) {
-    return waitFor(this._invocationManager, element);
+    return waitFor(this._invocationManager, this._emitter, element);
   }
 
   web(_matcher) {

@@ -2,11 +2,23 @@ const _ = require('lodash');
 
 describe('expectTwo', () => {
   let e;
+  let emitter;
+  let invocationManager;
+  let fs;
 
   beforeEach(() => {
+    jest.mock('fs-extra');
+    jest.mock('tempfile');
+
+    fs = require('fs-extra');
     const IosExpect = require('./expectTwo');
+    const AsyncEmitter = jest.genMockFromModule('../utils/AsyncEmitter');
+    invocationManager = new MockExecutor();
+    emitter = new AsyncEmitter();
+
     e = new IosExpect({
-      invocationManager: new MockExecutor(),
+      invocationManager,
+      emitter,
     });
   });
 
@@ -453,13 +465,55 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`element().takeScreenshot`, () => {
-    try {
-      e.element(e.by.id('uniqueId')).takeScreenshot();
-      fail();
-    } catch (e) {
-      expect(e.message).toContain('not supported on iOS');
-    }
+  describe.each([
+    [''],
+    ["'imageName'", 'imageName']
+  ])(`e.element(e.by.id('uniqueId')).takeScreenshot(%s)`, (_comment, imageName) => {
+    let deviceTmpFilePath;
+    let tmpFileName;
+    let tmpFilePath;
+    let result;
+
+    beforeEach(async () => {
+      tmpFileName = '2317894723984';
+      tmpFilePath = `/tmp/somewhere/${tmpFileName}.png`;
+      deviceTmpFilePath = '/tmp/path/to/device/file.png';
+
+      invocationManager.execute.mockResolvedValueOnce({
+        screenshotPath: deviceTmpFilePath,
+      });
+
+      require('tempfile').mockReturnValue(tmpFilePath);
+      result = await e.element(e.by.id('uniqueId')).takeScreenshot(imageName);
+    });
+
+    it(`should send a JSON request via invocation manager`, async () => {
+      expect(invocationManager.execute).toHaveBeenCalledWith({
+        type: 'action',
+        action: 'takeScreenshot',
+        ...(imageName && { params: [imageName] }),
+        predicate: {
+          type: 'id',
+          value: 'uniqueId'
+        }
+      });
+    });
+
+    it(`should move the temporary file for the device to a local temp location`, async () => {
+      expect(fs.move).toHaveBeenCalledWith(deviceTmpFilePath, tmpFilePath);
+    });
+
+    it(`should emit (for the artifact manager plugin) an event about an external artifact created`, async () => {
+      expect(emitter.emit).toHaveBeenCalledWith('createExternalArtifact', {
+        pluginId: 'screenshot',
+        artifactName: imageName || tmpFileName,
+        artifactPath: tmpFilePath,
+      });
+    });
+
+    it(`should return a temporary path to the screenshot`, async () => {
+      expect(result).toBe(tmpFilePath);
+    });
   });
 
   it('by.web should throw', () => {
@@ -487,6 +541,9 @@ expect.extend({
 });
 
 class MockExecutor {
+  constructor() {
+    jest.spyOn(this, 'execute');
+  }
   execute(invocation) {
     return { invocation };
   }

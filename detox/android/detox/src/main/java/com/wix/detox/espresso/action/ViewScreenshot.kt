@@ -21,15 +21,9 @@ class ScreenshotResult(private val bitmap: Bitmap) {
 
 class ViewScreenshot() {
     fun takeOf(view: View): ScreenshotResult {
-        val visibleRect = Rect()
-        if (!view.getLocalVisibleRect(visibleRect)) {
-            throw IllegalStateException("Cannot take screenshot of a view that's out of screen's bounds")
-        }
-
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         view.draw(Canvas(bitmap))
 
-        val clippedBitmap = Bitmap.createBitmap(bitmap, visibleRect.left, visibleRect.top, visibleRect.width(), visibleRect.height())
-        return ScreenshotResult(clippedBitmap)
+        return ScreenshotResult(bitmap)
     }
 }

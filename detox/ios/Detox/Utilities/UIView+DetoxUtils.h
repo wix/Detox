@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIView (DetoxUtils)
 
 @property (nonatomic, readonly, weak) UIViewController* dtx_containingViewController;
+- (UIImage*)dtx_imageFromView;
 
 @end
 
