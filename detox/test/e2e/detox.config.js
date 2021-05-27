@@ -118,14 +118,14 @@ const config = {
     "android.genycloud.uuid": {
       type: "android.genycloud",
       device: {
-        recipeUUID: "a50a71d6-da90-4c67-bdfa-5b602b0bbd15",
+        recipeUUID: "90450ce0-cdd8-4229-8618-18a1fc195b62",
       },
     },
 
     "android.genycloud.name": {
       type: "android.genycloud",
       device: {
-        recipeName: "Detox_Pixel_API_29",
+        recipeName: "Detox_Pixel_3A_API_29",
       },
     },
   },
