@@ -43,6 +43,8 @@ describe("Test", () => {
         await waitForElement.toBeVisible().withTimeout(2000);
 
         await device.pressBack();
+        await device.reverseTcpPort(32167);
+        await device.unreverseTcpPort(32167);
 
         await waitFor(element(by.text("Text5")))
             .toBeVisible()
