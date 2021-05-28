@@ -480,6 +480,19 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.oldSchemaHasAppAndApps', () => {
+      beforeEach(() => {
+        build = () => builder.oldSchemaHasAppAndApps();
+      });
+
+      it('should create an error for ambigous old/new configuration if it has .apps', () => {
+        builder.setConfigurationName('plain');
+        config.configurations.plain.app = 'my-app';
+
+        expect(build()).toMatchSnapshot();
+      });
+    });
+
     describe('.ambiguousAppAndApps', () => {
       beforeEach(() => {
         build = () => builder.ambiguousAppAndApps();

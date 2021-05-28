@@ -40,6 +40,10 @@ function composeAppsConfig(opts) {
 function composeAppsConfigFromPlain(opts) {
   const { errorComposer, localConfig } = opts;
 
+  if (localConfig.app || localConfig.apps) {
+    throw errorComposer.oldSchemaHasAppAndApps();
+  }
+
   /** @type {Detox.DetoxAppConfig} */
   let appConfig;
 

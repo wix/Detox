@@ -239,6 +239,31 @@ describe('composeAppsConfig', () => {
   });
 
   describe('unhappy scenarios:', () => {
+    describe('plain configuration:', () => {
+      beforeEach(() => {
+        localConfig = {
+          type: 'ios.simulator',
+          device: 'Phone',
+          binaryPath: 'path/to/app',
+          bundleId: 'com.example.app',
+          build: 'echo OK',
+          launchArgs: {
+            hello: 'world',
+          }
+        };
+      });
+
+      it('should throw if the config has .app property defined', () => {
+        localConfig.app = 'myapp';
+        expect(compose).toThrowError(errorComposer.oldSchemaHasAppAndApps());
+      });
+
+      it('should throw if the config has .apps property defined', () => {
+        localConfig.apps = ['myapp'];
+        expect(compose).toThrowError(errorComposer.oldSchemaHasAppAndApps());
+      });
+    });
+
     describe('aliased configuration:', () => {
       beforeEach(() => {
         globalConfig.apps = {
