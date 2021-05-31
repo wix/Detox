@@ -116,7 +116,7 @@ Meaning, assuming `announcementsRoot` has been specified over some ancestor view
 
 ### Caveats of this approach
 
-Focusing on specific elements, this approach is key to more stable comparisons, and hence more stable tests, over time. However, inspecting less content evidently means protecting against less bugs. For example, In a screen where the element in question is partly obstructed by other elements drawn on the screen, the image created by `takeScreenshot()` will successfully hold all of it's content, nonetheless.<sup>*</sup>
+Focusing on specific elements, this approach is key to more stable comparisons, and hence more stable tests, over time. However, inspecting less content evidently means protecting against less bugs. For example, In a screen where the element in question is partly obstructed by other elements drawn on the screen, the image created by `takeScreenshot()` will successfully hold all of it's content, nonetheless.
 
 Consider this situation in one of the app's screens, where the upcoming schedule overlaps the top-hand announcement card:
 
