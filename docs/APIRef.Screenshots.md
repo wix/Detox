@@ -130,7 +130,3 @@ Only by taking the element-screenshot of a common ancestor, will this bug be sur
 
 **As a bottom line, this API is mostly suited for testing UI components rather than complete screens.**
 
----
-
-*\*  Nevertheless, `takeScreenshot()` does crop away any parts of the element that are out of screen bounds.*
-
