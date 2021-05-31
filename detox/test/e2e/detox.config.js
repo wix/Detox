@@ -108,7 +108,7 @@ const config = {
     "android.emulator": {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_API_28"
+        avdName: "Pixel_3A_API_29"
       },
       utilBinaryPaths: [
         "./cache/test-butler-app.apk"
