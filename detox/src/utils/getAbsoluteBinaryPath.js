@@ -12,7 +12,13 @@ function getAbsoluteBinaryPath(appPath) {
   if (fs.existsSync(absPath)) {
     return absPath;
   } else {
-    throw new DetoxRuntimeError(`app binary not found at '${absPath}', did you build it?`);
+    throw new DetoxRuntimeError({
+      message: `Failed to find the app binary at:\n${absPath}`,
+      hint: `Make sure that:
+1. You built the app before running tests:
+  detox build -c <your-configuration-name>
+2. The app binary can be found at the given path.`,
+    });
   }
 }
 
