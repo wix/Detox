@@ -93,7 +93,18 @@ function resolveJestCliArgs() {
     });
   }
 
-  return require(resolveFrom(jestLocation, 'jest-cli/build/cli/args'));
+  try {
+    const jestCliManifest = resolveFrom(jestLocation, 'jest-cli/package.json');
+    const argsJsFile = path.join(path.dirname(jestCliManifest), 'build/cli/args.js');
+
+    return require(argsJsFile);
+  } catch (e) {
+    throw new DetoxRuntimeError({
+      message: 'Could not parse CLI arguments supported by "jest-cli" package, see the error below.',
+      hint: 'Consider reporting this as an issue at: https://github.com/wix/Detox/issues',
+      debugInfo: e,
+    });
+  }
 }
 
 function splitDetoxArgv(argv) {
