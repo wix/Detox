@@ -45,7 +45,7 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
   }
 
   async preparePathForTestArtifact(testSummary) {
-    return this.api.preparePathForArtifact('process.log', testSummary);
+    return this.api.preparePathForArtifact('device.log', testSummary);
   }
 
   /** @param {string} config */
