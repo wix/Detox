@@ -1,4 +1,3 @@
-const { RETRY_TIMES } = require('jest-circus/build/types');
 const _ = require('lodash');
 
 const {
@@ -10,6 +9,8 @@ const {
   onRunDescribeFinish,
 } = require('../../integration').lifecycle;
 const { getFullTestName, hasTimedOut } = require('../../jest/utils');
+
+const RETRY_TIMES = Symbol.for('RETRY_TIMES');
 
 class DetoxCoreListener {
   constructor({ detox, env }) {
