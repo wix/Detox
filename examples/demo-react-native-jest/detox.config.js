@@ -28,7 +28,10 @@ module.exports = {
       "type": "android.emulator",
       "device": {
         "avdName": "Pixel_API_28"
-      }
+      },
+      utilBinaryPaths: [
+        "./cache/test-butler-app.apk"
+      ],
     }
   },
   "configurations": {

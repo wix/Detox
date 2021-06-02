@@ -110,9 +110,6 @@ const config = {
       device: {
         avdName: "Pixel_3A_API_29"
       },
-      utilBinaryPaths: [
-        "./cache/test-butler-app.apk"
-      ],
     },
 
     "android.genycloud.uuid": {

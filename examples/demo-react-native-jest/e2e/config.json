@@ -1,4 +1,5 @@
 {
+    "globalSetup": "./global-setup.js",
     "setupFilesAfterEnv": ["./setup.ts"],
     "testEnvironment": "./environment",
     "testRunner": "jest-circus/runner",

@@ -22,7 +22,7 @@ android {
         }
 
         testBuildType System.getProperty('testBuildType', 'debug')
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
     }
     splits {
         abi {
@@ -88,6 +88,7 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     androidTestImplementation('com.wix:detox:+')
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
 if (rnInfo.isRN60OrHigher) {
