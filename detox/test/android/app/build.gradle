@@ -109,7 +109,6 @@ dependencies {
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
-    androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.2.1'
 }
 
 if (rnInfo.isRN60OrHigher) {

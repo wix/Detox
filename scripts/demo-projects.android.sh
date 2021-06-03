@@ -14,7 +14,8 @@ run_f "npm run build:android-release"
 popd
 
 # this needs to go first because it preloads all the emulators we need,
-# as it runs tests in parallel.
+# as it runs tests in parallel. Also, it installs test-butler on them -
+# even for forward usage.
 pushd examples/demo-react-native-jest
 run_f "npm run test:android-release-ci"
 DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
