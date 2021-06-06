@@ -69,6 +69,14 @@ class NativeExpectElement extends NativeExpect {
   async toHaveToggleValue(value) {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ToggleMatcher(value).not : new matchers.ToggleMatcher(value)).execute();
   }
+
+  async toBeFocused() {
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.FocusMatcher().not : new matchers.FocusMatcher()).execute();
+  }
+
+  async toBeNotFocused() {
+    return await this.not.toBeFocused();
+  }
 }
 
 module.exports = {

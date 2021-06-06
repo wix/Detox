@@ -70,6 +70,13 @@ class TraitsMatcher extends NativeMatcher {
   }
 }
 
+class FocusMatcher extends NativeMatcher {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForFocus());
+  }
+}
+
 module.exports = {
   LabelMatcher,
   IdMatcher,
@@ -80,4 +87,5 @@ module.exports = {
   TextMatcher,
   ValueMatcher,
   ToggleMatcher,
+  FocusMatcher,
 };
