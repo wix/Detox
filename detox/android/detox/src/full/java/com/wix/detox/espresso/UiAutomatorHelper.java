@@ -1,8 +1,6 @@
 package com.wix.detox.espresso;
 
-import android.content.Context;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -65,25 +63,6 @@ public class UiAutomatorHelper {
                 }
             }
         });
-    }
-
-    public static float getDensity() {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
-        return context.getResources().getDisplayMetrics().density;
-    }
-
-    public static int convertDiptoPix(double dip) {
-        return (int) (dip * getDensity() + 0.5f);
-    }
-
-    public static int convertPixtoDip(int pixel) {
-        return (int) ((pixel - 0.5f) / getDensity());
-    }
-
-    public static float[] getScreenSizeInPX() {
-        DisplayMetrics metrics = InstrumentationRegistry.getInstrumentation().getTargetContext()
-                .getApplicationContext().getResources().getDisplayMetrics();
-        return new float[]{metrics.widthPixels, metrics.heightPixels};
     }
 
     /**
