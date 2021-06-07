@@ -49,12 +49,12 @@ describe('Actions - Scroll', () => {
   it('should scroll from a custom start-position ratio', async () => {
     await expect(element(by.text('Text12'))).not.toBeVisible();
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
+    await element(by.id('ScrollView161')).scroll(550, 'down', 0.8, 0.6);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text12'))).toBeVisible();
 
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
+    await element(by.id('ScrollView161')).scroll(550, 'up', 0.2, 0.4);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text12'))).not.toBeVisible();
   });
