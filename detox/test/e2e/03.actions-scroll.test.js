@@ -54,7 +54,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('Text12'))).toBeVisible();
 
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
+    await element(by.id('ScrollView161')).scroll(550, 'up', 0.2, 0.4);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text12'))).not.toBeVisible();
   });
