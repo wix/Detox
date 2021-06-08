@@ -16,7 +16,8 @@ def DEVELOPERS = [
 ]
 
 String _versionName = System.getProperty('version')
-String _flavour = System.getProperty('detoxFlavour', PUB_FLAVOUR_FULL_DETOX)
+String _flavour = System.getProperty('buildFlavour', PUB_FLAVOUR_FULL_DETOX)
+Boolean _forceLocal = System.getProperty('forceLocal', 'false').toBoolean()
 
 String _mavenRepoUrl
 Map _mavenCredentials
@@ -24,22 +25,34 @@ def _shouldSignArtifacts = false
 
 def _selectedVariant
 
+def initLocalPublishing = {
+    _mavenRepoUrl = TARGET_LOCAL_DIR
+    _mavenCredentials = null
+    _shouldSignArtifacts = false
+}
+
+def initMavenPublishing = {
+    _mavenRepoUrl = TARGET_MAVEN_CENTRAL_URL
+    _mavenCredentials = [
+            // This should come from ~/.gradle.properties
+            username: sonatypeUsername,
+            password: sonatypePassword,
+    ]
+    _shouldSignArtifacts = true
+}
+
 def initPublishing = {
     switch (_flavour) {
         case PUB_FLAVOUR_FULL_DETOX:
-            _mavenRepoUrl = TARGET_LOCAL_DIR
-            _mavenCredentials = null
-            _shouldSignArtifacts = false
+            initLocalPublishing()
             break
 
         case PUB_FLAVOUR_DETOX_NATIVE:
-            _mavenRepoUrl = TARGET_MAVEN_CENTRAL_URL
-            _mavenCredentials = [
-                    // This should come from ~/.gradle.properties
-                    username: sonatypeUsername,
-                    password: sonatypePassword,
-            ]
-            _shouldSignArtifacts = true
+            if (_forceLocal) {
+                initLocalPublishing()
+            } else {
+                initMavenPublishing()
+            }
             break
 
         default:

@@ -10,6 +10,8 @@ import com.wix.detox.espresso.action.ScreenshotResult;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.action.common.MotionDir;
+import com.wix.detox.espresso.scroll.DetoxScrollAction;
+import com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
 import com.wix.detox.espresso.scroll.ScrollHelper;
 import com.wix.detox.espresso.scroll.SwipeHelper;
@@ -45,8 +47,8 @@ public class DetoxAction {
     }
 
     public static ViewAction tapAtLocation(final int x, final int y) {
-        final int px = UiAutomatorHelper.convertDiptoPix(x);
-        final int py = UiAutomatorHelper.convertDiptoPix(y);
+        final int px = DeviceDisplay.convertDpiToPx(x);
+        final int py = DeviceDisplay.convertDpiToPx(y);
         CoordinatesProvider c = new CoordinatesProvider() {
             @Override
             public float[] calculateCoordinates(View view) {
@@ -103,26 +105,7 @@ public class DetoxAction {
     public static ViewAction scrollInDirection(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
         final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
-        return actionWithAssertions(new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return allOf(isAssignableFrom(View.class), isDisplayed());
-            }
-
-            @Override
-            public String getDescription() {
-                return "scrollInDirection";
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                try {
-                    ScrollHelper.perform(uiController, view, direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY);
-                } catch (Exception e) {
-                    throw new DetoxRuntimeException(e);
-                }
-            }
-        });
+        return actionWithAssertions(new DetoxScrollAction(direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY));
     }
 
     /**
@@ -139,26 +122,7 @@ public class DetoxAction {
     public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
         final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
-        return actionWithAssertions(new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return allOf(isAssignableFrom(View.class), isDisplayed());
-            }
-
-            @Override
-            public String getDescription() {
-                return "scrollInDirectionStaleAtEdge";
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                try {
-                    ScrollHelper.perform(uiController, view, direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY);
-                } catch (ScrollEdgeException exScrollAtEdge) {
-                    throw new StaleActionException(exScrollAtEdge);
-                }
-            }
-        });
+        return actionWithAssertions(new DetoxScrollActionStaleAtEdge(direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY));
     }
 
     /**
