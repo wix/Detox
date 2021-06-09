@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const cutStackTraces = require('../utils/cutStackTraces');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
 
@@ -16,6 +17,41 @@ class Device {
     sessionConfig,
     runtimeErrorComposer,
   }) {
+    cutStackTraces(this, [
+      'captureViewHierarchy',
+      'clearKeychain',
+      'disableSynchronization',
+      'enableSynchronization',
+      'installApp',
+      'launchApp',
+      'matchFace',
+      'matchFinger',
+      'openURL',
+      'pressBack',
+      'relaunchApp',
+      'reloadReactNative',
+      'resetContentAndSettings',
+      'resetStatusBar',
+      'reverseTcpPort',
+      'selectApp',
+      'sendToHome',
+      'sendUserActivity',
+      'sendUserNotification',
+      'setBiometricEnrollment',
+      'setLocation',
+      'setOrientation',
+      'setStatusBar',
+      'setURLBlacklist',
+      'shake',
+      'shutdown',
+      'takeScreenshot',
+      'terminateApp',
+      'uninstallApp',
+      'unmatchFace',
+      'unmatchFinger',
+      'unreverseTcpPort',
+    ]);
+
     this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
