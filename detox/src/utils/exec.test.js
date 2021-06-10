@@ -265,6 +265,21 @@ describe('spawn', () => {
     expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
   });
 
+  it('should override log levels if configured', async () => {
+    jest.spyOn(log, 'child');
+    await exec.spawnAndLog('command', [], {
+      logLevelPatterns: {
+        debug: [/hello/],
+        warn: [/world/],
+      },
+    });
+
+    await nextCycle();
+
+    expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT' }), 'hello');
+    expect(log.warn).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
+  });
+
   it('should not log output if silent: true', async () => {
     await exec.spawnAndLog('command', [], { silent: true });
     await nextCycle();
