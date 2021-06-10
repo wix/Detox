@@ -128,7 +128,8 @@ function _composeCommand(bin, prefix, args) {
 function spawnAndLog(command, flags, options) {
   const cmd = _joinCommandAndFlags(command, flags);
 
-  const result = spawn(command, flags, { stdio: ['ignore', 'pipe', 'pipe'], ...options });
+  const { logLevelPatterns, silent, ...spawnOptions } = { stdio: ['ignore', 'pipe', 'pipe'], ...options };
+  const result = spawn(command, flags, spawnOptions);
   const { childProcess } = result;
   const { exitCode, stdout, stderr } = childProcess;
 
@@ -139,9 +140,18 @@ function spawnAndLog(command, flags, options) {
     log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${exitCode}`);
   }
 
-  if (!options || !options.silent) {
-    stdout && stdout.on('data', (chunk) => log.trace({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
-    stderr && stderr.on('data', (chunk) => log.error({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
+  if (!silent) {
+    stdout && stdout.on('data', (chunk) => {
+      const line = chunk.toString();
+      const loglevel = inferLogLevel(line, logLevelPatterns) || 'trace';
+      log[loglevel]({ stdout: true, event: 'SPAWN_STDOUT' }, line);
+    });
+
+    stderr && stderr.on('data', (chunk) => {
+      const line = chunk.toString();
+      const loglevel = inferLogLevel(line, logLevelPatterns) || 'error';
+      log[loglevel]({ stderr: true, event: 'SPAWN_STDERR' }, line);
+    });
   }
 
   function onEnd(e) {
@@ -153,6 +163,18 @@ function spawnAndLog(command, flags, options) {
 
   result.then(onEnd, onEnd);
   return result;
+}
+
+function inferLogLevel(msg, patterns) {
+  if (_.isEmpty(patterns)) {
+    return;
+  }
+
+  const matchesRegex = r => r.test(msg);
+
+  return _.findKey(patterns, (regexps) => {
+    return regexps.some(matchesRegex);
+  });
 }
 
 function _joinCommandAndFlags(command, flags) {

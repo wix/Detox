@@ -273,7 +273,15 @@ class AppleSimUtils {
       args.push('--codec');
       args.push(options.codec);
     }
-    return exec.spawnAndLog('/usr/bin/xcrun', args);
+
+    return exec.spawnAndLog('/usr/bin/xcrun', args, {
+      logLevelPatterns: {
+        trace: [
+          /^Recording started/,
+          /^Wrote video to/,
+        ],
+      },
+    });
   }
 
   async _execAppleSimUtils(options) {
