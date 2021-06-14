@@ -305,7 +305,7 @@ Assuming you have the APK available in the system, you can dynamically have Deto
     "emulator.oss": {
       "type": "android.emulator",
       "device": "...",
-      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.1.0.apk"],
+      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"],
     }
   }
 }
@@ -318,7 +318,7 @@ As per _making_ the APK available - for that, we have no really good solution, f
 a. In a custom script, have it predownloaded from Bintray directly, as suggest in the Test Butler guide. For example (on a Mac / Linux):
 
 ```sh
-curl -f -o ./temp/test-butler-app.apk https://linkedin.bintray.com/maven/com/linkedin/testbutler/test-butler-app/2.1.0/test-butler-app-2.1.0.apk`
+curl -f -o ./temp/test-butler-app.apk https://repo1.maven.org/maven2/com/linkedin/testbutler/test-butler-app/2.2.1/test-butler-app-2.2.1.apk
 ```
 
 *Jests' [global-setup](https://jestjs.io/docs/en/configuration#globalsetup-string) is a recommend place for those kind of things.*
