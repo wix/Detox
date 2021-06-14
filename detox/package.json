@@ -19,7 +19,9 @@
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "node scripts/build.js",
+    "build": ":",
+    "build:android": "cd android && ./gradlew publish -Dversion=999.999.999 && cd ..",
+    "build:android-native": "cd android && ./gradlew publish -Dversion=999.999.999 -DbuildFlavour=coreNative -DforceLocal=true && cd ..",
     "lint": "eslint runners src scripts",
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
