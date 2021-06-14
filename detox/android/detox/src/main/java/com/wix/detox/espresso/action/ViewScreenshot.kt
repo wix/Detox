@@ -2,7 +2,6 @@ package com.wix.detox.espresso.action
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.util.Base64
 import android.view.View
 import com.wix.detox.common.SDKSupports

@@ -9,10 +9,7 @@ import com.wix.detox.action.common.MOTION_DIR_DOWN
 import com.wix.detox.action.common.MOTION_DIR_LEFT
 import com.wix.detox.action.common.MOTION_DIR_RIGHT
 import com.wix.detox.action.common.MOTION_DIR_UP
-import com.wix.detox.espresso.ViewActionWithResult
 import com.wix.detox.espresso.action.DetoxMultiTap
-import com.wix.detox.espresso.action.ScreenshotResult
-import com.wix.detox.espresso.action.TakeViewScreenshotAction
 import com.wix.detox.espresso.scroll.DetoxScrollAction
 
 public object DetoxViewActions {
@@ -32,7 +29,4 @@ public object DetoxViewActions {
 
     public fun scrollRightBy(amountInDp: Double, startOffsetPercentX: Float? = null, startOffsetPercentY: Float? = null): ViewAction =
         actionWithAssertions(DetoxScrollAction(MOTION_DIR_RIGHT, amountInDp, startOffsetPercentX, startOffsetPercentY))
-
-    public fun takeScreenshot(): ViewActionWithResult<ScreenshotResult?> =
-        TakeViewScreenshotAction()
 }
