@@ -21,7 +21,6 @@ Below is the set of actions Detox offers.
 
 * [**Tap Gestures**](#tap-gestures): `tap()`, `doubleTap()`, `multiTap()`
 * [**Gray-Box Scrolling:**](#gray-box-scrolling) `scrollDownBy()`, `scrollUpBy()`, `scrollLeftBy()`, `scrollRightBy()`
-* [**View Screenshots:**](#view-screenshots) `takeScreenshot()`
 
 ### Tap Gestures
 
@@ -68,33 +67,6 @@ onView(withId(R.id.feedMe)).perform(DetoxViewActions.scrollUpBy(200.0))
 onView(withId(R.id.avatars)).perform(DetoxViewActions.scrollRightBy(300.0))
 onView(withId(R.id.avatars)).perform(DetoxViewActions.scrollLeftBy(400.0))
 ```
-
-#### View Screenshots
-
-Detox can take **screenshots of views** (!), including all child-views in the view-hierarchy. Example of a resulted bitmap:
-
-![Announcement View](../../docs/img/element-screenshot-view.png)
-
-This can be very useful for screenshot-based snapshot tests, using external tools such as `applitools eyes`. It is a better approach than doing so with screenshots of the entire screen, as those include varying elements such as battery level, and time. Read more about it in our [Screenshots guide](../../docs/APIRef.Screenshots.md#element-level-screenshots-android-only).
-
-Detox can provide the result screenshot as a bitmap, a byte-array, or a Base64-Encoded string (based on the raw byte-array). The byte-array approach is especially useful when using external services such as `applitools`, because this is normally the way the image can be uploaded there.
-
-Usage example:
-
-```kotlin
-var bitmap: Bitmap?
-var raw: ByteArray?
-var base64: String?
-onView(withId(R.id.announcement)).perform(DetoxViewActions.takeScreenshot().also { action ->
-	action.getResult()?.let {
-		bitmap = it.asBitmap()
-		raw = it.asRawBytes()
-		base64 = it.asBase64String()
-	}
-})
-```
-
-> To-do: add info about saving the image to a file.
 
 ### Installation
 

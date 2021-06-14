@@ -5,8 +5,8 @@ yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
 source $(dirname "$0")/demo-projects.sh
 
-pushd detox/android
-run_f "./gradlew publish -Dversion=999.999.999"
+pushd detox
+run_f "npm run build:android"
 popd
 
 pushd examples/demo-react-native
@@ -28,4 +28,16 @@ popd
 
 pushd examples/demo-plugin
 run_f "npm run test:plugin"
+popd
+
+# Detox Native
+##
+
+pushd detox
+run_f "npm run build:android-native"
+popd
+
+pushd examples/demo-pure-native-android
+export ANDROID_SERIAL=`adb devices | grep emulator | head -1 | awk '{print $1}'`
+run_f "./gradlew connectAndroidTest"
 popd
