@@ -55,6 +55,20 @@ describe('React-Native Animations', () => {
       await _startTest(driver, {delay: 500});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
+
+    it(`should not wait for animation text because of disable synchronization`, async () => {
+      await device.disableSynchronization();
+      await _startTest(driver, {duration: 5000});
+      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
+    });
+
+    it(`should wait for animation text because of reenabled synchronization`, async () => {
+      await device.disableSynchronization();
+      await device.enableSynchronization();
+      await _startTest(driver, {duration: 5000});
+      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
+
+    });
   });
 });
 

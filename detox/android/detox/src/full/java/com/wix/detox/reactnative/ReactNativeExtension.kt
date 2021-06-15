@@ -63,6 +63,15 @@ object ReactNativeExtension {
     }
 
     @JvmStatic
+    fun enableAllSynchronization(applicationContext: ReactApplication) {
+        val reactContext = getCurrentReactContextSafe(applicationContext)
+
+        if (reactContext != null) {
+            setupIdlingResources(reactContext)
+        }
+    }
+
+    @JvmStatic
     fun clearAllSynchronization() = clearIdlingResources()
 
     @JvmStatic
