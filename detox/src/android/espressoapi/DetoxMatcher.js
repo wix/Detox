@@ -232,6 +232,17 @@ class DetoxMatcher {
     };
   }
 
+  static matcherForFocus() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForFocus",
+      args: []
+    };
+  }
+
 }
 
 module.exports = DetoxMatcher;

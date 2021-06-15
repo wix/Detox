@@ -20,7 +20,7 @@ export default class ExpectationsScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={this.onTextFieldsPress.bind(this)} accessible={true} accessibilityRole={'button'}>
-          <Text style={{color: 'blue', marginBottom: 20}}>Text Fields</Text>
+          <Text testID={'TextFields'} style={{color: 'blue', marginBottom: 20}}>Text Fields</Text>
         </TouchableOpacity>
       </View>
     );
