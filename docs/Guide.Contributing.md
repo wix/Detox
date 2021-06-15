@@ -143,9 +143,11 @@ If you add, rename, or delete a test in `detox/test/e2e` suite, you should follo
 
 #### 4. Running Example Projects on Android
 
-Before you build one of `example/demo-react-*` projects for Android, you need to publish `detox-999.999.999.aar` locally:
+Before you build one of `example/demo-react-*` projects for Android, you need to build Detox as an Android archive (a `.aar` file), locally:
 
 ```bash
-cd detox/android
-./gradlew publish -Dversion=999.999.999 
+cd detox
+npm run build:android
 ```
+
+> On success, the result is a set of maven artifacts published in subdirectories under `detox/Detox-android/`. That includes `detox-999.999.999.aar` (i.e. Detox' native code packaged with the fake version `999.999.999`).
