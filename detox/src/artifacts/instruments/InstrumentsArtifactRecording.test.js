@@ -1,13 +1,9 @@
 const InstrumentsArtifactRecording = require('./InstrumentsArtifactRecording');
 
 describe('InstrumentsArtifactRecording', () => {
-  let mockedApi, mockedClient, mockedPluginContext;
+  let mockedClient, mockedPluginContext;
 
   beforeEach(() => {
-    mockedApi = {
-      trackArtifact: jest.fn(),
-      untrackArtifact: jest.fn()
-    };
     mockedClient = {
       startInstrumentsRecording: jest.fn(),
       stopInstrumentsRecording: jest.fn()

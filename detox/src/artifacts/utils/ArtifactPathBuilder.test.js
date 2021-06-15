@@ -1,7 +1,5 @@
 const path = require('path');
 
-const _ = require('lodash');
-
 const ArtifactPathBuilder = require('./ArtifactPathBuilder');
 
 describe(ArtifactPathBuilder, () => {

@@ -34,7 +34,7 @@ class IosDriver extends DeviceDriverBase {
     return await this.client.setSyncSettings({ enabled: false });
   }
 
-  async shake(deviceId) {
+  async shake(deviceId) { // eslint-disable-line no-unused-vars
     return await this.client.shake();
   }
 

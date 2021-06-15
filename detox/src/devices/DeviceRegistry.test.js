@@ -69,11 +69,6 @@ describe('DeviceRegistry', () => {
       expect(registeredDevices.includes(deviceId)).toEqual(true);
     }
 
-    async function expectNotIncludedInReadDevicesList(deviceHandle) {
-      const registeredDevices = await registry.readRegisteredDevices();
-      expect(registeredDevices.includes(deviceHandle)).not.toEqual(true);
-    }
-
     async function expectReadDevicesListEquals(rawDeviceHandles) {
       const registeredDevices = await registry.readRegisteredDevices();
       expect(registeredDevices.rawDevices).toEqual(rawDeviceHandles);

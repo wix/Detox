@@ -41,7 +41,6 @@ describe('composeBehaviorConfig', () => {
     });
 
     it('should implicitly override behavior.init.reinstallApp = false', () => {
-      const expected = _.cloneDeep(globalConfig.behavior);
       const actual = composed();
 
       expect(actual.init.reinstallApp).toBe(false);

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const temporaryPath = require('../../utils/temporaryPath');
 const LogArtifactPlugin = require('../LogArtifactPlugin');
 

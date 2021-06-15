@@ -5,7 +5,6 @@ const configurationsMock = require('../configuration/configurations.mock');
 describe('Device', () => {
   let fs;
   let DeviceDriverBase;
-  let SimulatorDriver;
   let DetoxRuntimeErrorComposer;
   let errorComposer;
   let emitter;
@@ -27,8 +26,6 @@ describe('Device', () => {
 
     jest.mock('./drivers/DeviceDriverBase');
     DeviceDriverBase = require('./drivers/DeviceDriverBase');
-
-    SimulatorDriver = require('./drivers/ios/SimulatorDriver');
 
     jest.mock('../client/Client');
     Client = require('../client/Client');

@@ -365,12 +365,6 @@ const returnErrorWithValue = (value) => ({
     }
   });
 
-const returnSuccessfulNoValue = () => ({
-    childProcess: {
-      exitCode: 0
-    }
-  });
-
 function mockCppSuccessful(cpp) {
   const successfulResult = returnSuccessfulWithValue('successful result');
   cpp.exec.mockResolvedValueOnce(successfulResult);

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const DetoxInternalError = require('../../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { getDetoxLevel } = require('../../utils/logger');

@@ -19,15 +19,14 @@ describe('IOS simulator driver', () => {
   });
 
   describe('launch args', () => {
-    let launchArgs, languageAndLocale;
+    const languageAndLocale = '';
+    let launchArgs;
 
     beforeEach(() => {
       launchArgs = {
         'dog1': 'dharma',
         'dog2': 'karma',
       };
-
-      languageAndLocale = '';
 
       const SimulatorDriver = require('./SimulatorDriver');
       uut = new SimulatorDriver({ client: {}, emitter });
@@ -79,11 +78,7 @@ describe('IOS simulator driver', () => {
   });
 
   describe('biometrics', () => {
-    let languageAndLocale;
-
     beforeEach(() => {
-      languageAndLocale = '';
-
       const SimulatorDriver = require('./SimulatorDriver');
       sim = new SimulatorDriver({ client: {}, emitter });
     });

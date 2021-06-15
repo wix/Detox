@@ -14,7 +14,6 @@ describe('Android driver', () => {
   let client;
   let getAbsoluteBinaryPath;
   let fs;
-  let exec;
   let emitter;
   let detoxApi;
   let invocationManager;
@@ -511,7 +510,6 @@ describe('Android driver', () => {
     jest.mock('../../../utils/exec', () => ({
       interruptProcess: jest.fn(),
     }));
-    exec = require('../../../utils/exec');
 
     client = {
       serverUrl: `ws://localhost:${detoxServerPort}`,

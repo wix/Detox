@@ -159,7 +159,7 @@ class AsyncWebSocket {
    * @param {WebSocket.OpenEvent} event
    * @private
    */
-  _onOpen(event) {
+  _onOpen(event) { // eslint-disable-line no-unused-vars
     this._log.trace(EVENTS.OPEN, `opened web socket to: ${this._url}`);
     this._opening.resolve();
     this._opening = null;
@@ -251,7 +251,7 @@ class AsyncWebSocket {
    * @param {WebSocket.CloseEvent | null} event
    * @private
    */
-  _onClose(event) {
+  _onClose(event) { // eslint-disable-line no-unused-vars
     if (this._closing) {
       this._closing.resolve();
     }

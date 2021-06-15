@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
+
 const os = require('os');
 const path = require('path');
 
 const fs = require('fs-extra');
-const _ = require('lodash');
 
 const log = require('../../utils/logger').child({ __filename });
 
@@ -167,15 +168,12 @@ class DeviceDriverBase {
   }
 
   getBundleIdFromBinary(appPath) {
-
   }
 
   validateDeviceConfig(deviceConfig) {
-
   }
 
   getPlatform() {
-
   }
 
   async getUiDevice() {

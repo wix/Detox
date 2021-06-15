@@ -38,7 +38,7 @@ class EmulatorTelnet {
   }
 
   async shell(command) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.connection.shell((error, stream) => {
         stream.write(`${command}\n`);
         stream.on('data', (data) => {

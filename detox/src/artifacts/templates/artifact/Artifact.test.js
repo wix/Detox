@@ -1,5 +1,3 @@
-jest.mock('../../../utils/logger');
-
 const util = require('util');
 
 const _ = require('lodash');
@@ -7,10 +5,8 @@ const _ = require('lodash');
 const Artifact = require('./Artifact');
 
 describe('Artifact', () => {
-  let logger;
-
   beforeEach(() => {
-    logger = require('../../../utils/logger');
+    jest.mock('../../../utils/logger');
   });
 
   describe('extends Artifact', () => {

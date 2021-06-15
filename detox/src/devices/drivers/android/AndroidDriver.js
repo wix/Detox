@@ -112,7 +112,7 @@ class AndroidDriver extends DeviceDriverBase {
     });
   }
 
-  async _handleLaunchApp({ manually, deviceId, bundleId, launchArgs, languageAndLocale }) {
+  async _handleLaunchApp({ manually, deviceId, bundleId, launchArgs }) {
     const adbName = this._getAdbName(deviceId);
 
     await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
@@ -157,11 +157,11 @@ class AndroidDriver extends DeviceDriverBase {
       }
   }
 
-  async pressBack(deviceId) {
+  async pressBack(deviceId) { // eslint-disable-line no-unused-vars
     await this.uiDevice.pressBack();
   }
 
-  async sendToHome(deviceId, params) {
+  async sendToHome(deviceId, params) { // eslint-disable-line no-unused-vars
     await this.uiDevice.pressHome();
   }
 

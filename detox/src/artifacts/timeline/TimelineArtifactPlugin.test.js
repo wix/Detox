@@ -16,7 +16,6 @@ describe('TimelineArtifactPlugin', () => {
   let chromeTracingExporterObj;
   let FileArtifact;
   let fileArtifactObj;
-  let Trace;
   let trace;
   let TimelineArtifactPlugin;
   let uutEnabled;
@@ -40,7 +39,6 @@ describe('TimelineArtifactPlugin', () => {
     jest.mock('../../utils/trace', () => ({
       trace: mockTrace,
     }));
-    Trace = MockTrace;
     trace = mockTrace;
 
     TimelineArtifactPlugin = require('./TimelineArtifactPlugin');

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 const {
