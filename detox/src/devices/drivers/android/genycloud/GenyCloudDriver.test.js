@@ -46,6 +46,8 @@ describe('Genymotion-cloud driver', () => {
   let instanceLauncher;
   let instanceAllocation;
   let authServiceObj;
+  let detoxGenymotionManager;
+
   beforeEach(() => {
     signalExit = require('signal-exit');
 
@@ -89,6 +91,9 @@ describe('Genymotion-cloud driver', () => {
 
     const AuthService = require('./services/GenyAuthService');
     authServiceObj = () => latestInstanceOf(AuthService);
+
+    jest.mock('../../../../android/espressoapi/DetoxGenymotionManager');
+    detoxGenymotionManager = require('../../../../android/espressoapi/DetoxGenymotionManager');
   });
 
   let instanceLifecycleService;
@@ -308,6 +313,20 @@ describe('Genymotion-cloud driver', () => {
         const instance = anInstance();
         await uut.shutdown(instance);
         expect(instanceLauncher().shutdown).toHaveBeenCalledWith(instance);
+      });
+    });
+
+    describe('setLocation', () => {
+      it('should invoke `DetoxGenymotionManager.setLocation` with specified coordinates', async () => {
+        const invocation = {
+          method: 'setLocation'
+        };
+        detoxGenymotionManager.setLocation.mockReturnValue(invocation);
+
+        const instance = anInstance();
+        await uut.setLocation(instance, '40.5', '55.5');
+        expect(invocationManager.execute).toHaveBeenCalledWith(invocation);
+        expect(detoxGenymotionManager.setLocation).toHaveBeenCalledWith(40.5, 55.5);
       });
     });
   });

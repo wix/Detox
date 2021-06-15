@@ -15,3 +15,6 @@ project(':react-native-webview').projectDir = new File(rootProject.projectDir, '
 
 include ':react-native-community-checkbox'
 project(':react-native-community-checkbox').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/checkbox/android')
+
+include ':react-native-community-geolocation'
+project(':react-native-community-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/geolocation/android')

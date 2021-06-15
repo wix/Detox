@@ -38,19 +38,18 @@ device.appLaunchArgs.reset();
 This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
 
 ## Methods
-
 - [`device.selectApp(name)`](#deviceselectappname)
-- [`device.launchApp()`](#devicelaunchappparams)
+- [`device.launchApp(params)`](#devicelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
 - [`device.installApp()`](#deviceinstallapp)
 - [`device.uninstallApp()`](#deviceuninstallapp)
-- [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
+- [`device.openURL({url, sourceApp[optional]})`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
 - [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
-- [`device.setLocation(lat, lon)` **iOS Only**](#devicesetlocationlat-lon-ios-only)
+- [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
@@ -69,7 +68,7 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 - [`device.reverseTcpPort()` **Android Only**](#devicereversetcpport-android-only)
 - [`device.unreverseTcpPort()` **Android Only**](#deviceunreversetcpport-android-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
-- [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
+- [`device.getUiDevice()` **Android Only**](#devicegetuidevice-android-only)
 
 ### `device.selectApp(name)`
 
@@ -317,11 +316,13 @@ Takes `"portrait"` or `"landscape"` and rotates the device to the given orientat
 
 Check out Detox's [own test suite.](../detox/test/e2e/06.device-orientation.test.js)
 
-### `device.setLocation(lat, lon)` **iOS Only**
+### `device.setLocation(lat, lon)`
 
-> Note: `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl) which [is now deprecated](https://github.com/wix/Detox/issues/1371). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+Sets the simulator/emulator location to the given latitude and longitude.
 
-Sets the simulator location to the given latitude and longitude.
+> On iOS `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl) which [is now deprecated](https://github.com/wix/Detox/issues/1371). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+> 
+> On Android `setLocation` will work with both Android Emulator (bundled with Android development tools) and Genymotion. The correct permissions must be set in your app manifest.
 
 ```js
 await device.setLocation(32.0853, 34.7818);

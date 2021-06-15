@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.asList(
                     new MainReactPackage(),
+                    new GeolocationPackage(),
                     new RNCWebViewPackage(),
                     new NativeModulePackage(),
                     new AsyncStoragePackage(),

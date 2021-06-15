@@ -1,6 +1,7 @@
 const semver = require('semver');
 const onSignalExit = require('signal-exit');
 
+const DetoxGenymotionManager = require('../../../../android/espressoapi/DetoxGenymotionManager');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const environment = require('../../../../utils/environment');
 const logger = require('../../../../utils/logger').child({ __filename });
@@ -84,6 +85,10 @@ class GenyCloudDriver extends AndroidDriver {
 
   async shutdown(instance) {
     await this._instanceLauncher.shutdown(instance);
+  }
+
+  async setLocation(instance, lat, lon) {
+    await this.invocationManager.execute(DetoxGenymotionManager.setLocation(parseFloat(lat), parseFloat(lon)));
   }
 
   _assertRecipe(deviceQuery, recipe) {
