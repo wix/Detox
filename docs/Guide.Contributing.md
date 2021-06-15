@@ -8,10 +8,15 @@
 brew install node
 ```
 
+### Install `npm`
+
+Either install `npm` or check that you have it installed, using their [official guide](https://www.npmjs.com/get-npm).
+> NOTE: For Detox, please use the latest `npm` version `6.x.x` (i.e not version 7.0.0 or newer).
+
 ### Install Global Node.js Libraries `lerna` and `react-native-cli`
 
 ```sh
-npm install -g lerna
+npm install -g lerna@3.x.x
 npm install -g react-native-cli
 ```
 
