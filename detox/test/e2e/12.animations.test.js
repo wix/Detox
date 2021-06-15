@@ -1,5 +1,3 @@
-let _ = require('lodash');
-
 describe('React-Native Animations', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -30,44 +28,39 @@ describe('React-Native Animations', () => {
     await element(by.id('UniqueId_AnimationsScreen_startButton')).tap();
   }
 
-  _.forEach(['JS', 'Native'], (driver) => {
-    it(`should find element (driver: ${driver})`, async () => {
+  describe.each(['JS', 'Native'])('(driver: %s)', (driver) => {
+    it(`should find element`, async () => {
       await _startTest(driver);
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
-    it(`should detect loops with final number of iterations (driver: ${driver})`, async () => {
+    it(`should detect loops with final number of iterations`, async () => {
       await _startTest(driver, {loops: 4});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
-    it.skip(`should not wait for infinite animations (driver: ${driver})`, async() => {
+    it.skip(`should not wait for infinite animations`, async() => {
       await _startTest(driver, {loops: -1});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
-    it(`should not wait during delays longer than 1.5s (driver: ${driver})`, async () => {
+    it(`should not wait during delays longer than 1.5s`, async () => {
       await _startTest(driver, {delay: 1600});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
     });
 
-    it(`should wait during delays shorter than 1.5s (driver: ${driver})`, async () => {
+    it(`should wait during delays shorter than 1.5s`, async () => {
       await _startTest(driver, {delay: 500});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
 
-    it(`should not wait for animation text because of disable synchronization`, async () => {
+    it(`should not wait for an animation to complete while the synchronization is disabled`, async () => {
       await device.disableSynchronization();
       await _startTest(driver, {duration: 5000});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
-    });
 
-    it(`should wait for animation text because of reenabled synchronization`, async () => {
-      await device.disableSynchronization();
       await device.enableSynchronization();
-      await _startTest(driver, {duration: 5000});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
-
     });
   });
 });
