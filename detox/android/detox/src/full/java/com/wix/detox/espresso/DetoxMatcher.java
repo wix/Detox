@@ -17,7 +17,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
+import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static org.hamcrest.Matchers.allOf;
@@ -103,7 +103,7 @@ public class DetoxMatcher {
     }
 
     public static Matcher<View> matcherForFocus() {
-        return hasFocus();
+        return isFocused();
     }
 
 }
