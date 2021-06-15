@@ -65,8 +65,6 @@ describe('IosUIHierarchyPlugin', () => {
 
   describe('behavior for externally created artifacts', () => {
     it('should validate event.artifact', async () => {
-      const artifacts = [0, 1, 2, 3].map(() => new FileArtifact());
-
       await expect(plugin.onCreateExternalArtifact({ name: 'invalid' }))
         .rejects
         .toThrowError(/Internal error/);

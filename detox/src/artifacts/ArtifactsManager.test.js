@@ -42,9 +42,10 @@ describe('ArtifactsManager', () => {
     let artifactsManager, factory, plugin;
 
     beforeEach(() => {
-      factory = jest.fn().mockReturnValue(plugin = {
+      plugin = {
         onBeforeLaunchApp: jest.fn(),
-      });
+      };
+      factory = jest.fn().mockReturnValue(plugin);
 
       artifactsManager = new proxy.ArtifactsManager({
         pathBuilder: new proxy.ArtifactPathBuilder({
@@ -121,10 +122,9 @@ describe('ArtifactsManager', () => {
     });
 
     describe('.preparePathForArtifact()', () => {
-      let argparse, fs;
+      let fs;
 
       beforeEach(() => {
-        argparse = require('../utils/argparse');
         fs = require('fs-extra');
       });
 

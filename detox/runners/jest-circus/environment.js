@@ -1,5 +1,4 @@
 const NodeEnvironment = require('jest-environment-node');
-const _ = require('lodash');
 
 const DetoxError = require('../../src/errors/DetoxError');
 const Timer = require('../../src/utils/Timer');

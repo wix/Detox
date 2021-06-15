@@ -55,7 +55,7 @@
     "no-only-tests/no-only-tests": "error",
     "no-undef": "warn",
     "no-unused-vars": [
-      "warn",
+      "error",
       {
         "argsIgnorePattern": "^_"
       }

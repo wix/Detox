@@ -1,4 +1,3 @@
-const log = require('../../../utils/logger').child({ __filename });
 const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
 
 class AndroidInstrumentsRecording extends InstrumentsArtifactRecording {

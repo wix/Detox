@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { WebSocket } = require('ws');
+const { WebSocket } = require('ws'); // eslint-disable-line no-unused-vars
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const logger = require('../utils/logger').child({ __filename });

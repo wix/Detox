@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-const Client = require('../../client/Client');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const setUniqueProperty = require('../../utils/setUniqueProperty');
 const FileArtifact = require('../templates/artifact/FileArtifact');
@@ -39,7 +38,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
     this._registerSnapshot(e.name, e.artifact);
   }
 
-  _onInvokeFailure({ params: { viewHierarchyURL, visibilityFailingScreenshotsURL, visibilityFailingRectsURL } }) {
+  _onInvokeFailure({ params: { viewHierarchyURL } }) {
     if (viewHierarchyURL) {
       this._registerSnapshot('ui', new FileArtifact({
         temporaryPath: viewHierarchyURL,

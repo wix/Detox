@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 const _ = require('lodash');
 
 const log = require('../../../utils/logger').child({ __filename });

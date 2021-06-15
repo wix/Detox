@@ -1,9 +1,6 @@
 const adbName = 'mock_adb_name-1117';
-const avdName = 'mock-AVD-name';
 
 describe('Emulator launcher', () => {
-
-  let logger;
   let retry;
   let eventEmitter;
   let emulatorTelnet;
@@ -11,7 +8,6 @@ describe('Emulator launcher', () => {
   let uut;
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
-    logger = require('../../../../../utils/logger');
 
     jest.mock('../../../../../utils/retry');
     retry = require('../../../../../utils/retry');

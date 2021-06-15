@@ -55,7 +55,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
   /***
    * @abstract
    */
-  async preparePathForTestArtifact(testSummary) {}
+  async preparePathForTestArtifact(testSummary) {} // eslint-disable-line no-unused-vars
 
   _startSavingTestRecording(testRecording, testSummary) {
     this.api.requestIdleCallback(async () => {

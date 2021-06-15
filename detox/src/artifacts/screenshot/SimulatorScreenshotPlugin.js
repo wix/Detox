@@ -1,6 +1,3 @@
-const fs = require('fs-extra');
-const _ = require('lodash');
-
 const log = require('../../utils/logger').child({ __filename });
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const temporaryPath = require('../utils/temporaryPath');

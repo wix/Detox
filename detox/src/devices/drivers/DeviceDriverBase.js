@@ -2,7 +2,6 @@ const os = require('os');
 const path = require('path');
 
 const fs = require('fs-extra');
-const _ = require('lodash');
 
 const log = require('../../utils/logger').child({ __filename });
 
@@ -20,7 +19,7 @@ class DeviceDriverBase {
     return {};
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  async acquireFreeDevice(_deviceQuery) {
     return await Promise.resolve('');
   }
 
@@ -36,7 +35,7 @@ class DeviceDriverBase {
     return await Promise.resolve(NaN);
   }
 
-  async takeScreenshot(deviceId, screenshotName) {
+  async takeScreenshot(_deviceId, _screenshotName) {
     return await Promise.resolve('');
   }
 
@@ -68,7 +67,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async installApp(deviceId, binaryPath, testBinaryPath) {
+  async installApp(_deviceId, _binaryPath, _testBinaryPath) {
     return await Promise.resolve('');
   }
 
@@ -84,7 +83,7 @@ class DeviceDriverBase {
     return await this.client.deliverPayload(params);
   }
 
-  async setLocation(lat, lon) {
+  async setLocation(_lat, _lon) {
     return await Promise.resolve('');
   }
 
@@ -122,11 +121,11 @@ class DeviceDriverBase {
     return notificationFilePath;
   }
 
-  async setPermissions(deviceId, bundleId, permissions) {
+  async setPermissions(_deviceId, _bundleId, _permissions) {
     return await Promise.resolve('');
   }
 
-  async terminate(deviceId, bundleId) {
+  async terminate(_deviceId, _bundleId) {
     return await Promise.resolve('');
   }
 
@@ -134,11 +133,11 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async setOrientation(deviceId, orientation) {
+  async setOrientation(_deviceId, _orientation) {
     return await Promise.resolve('');
   }
 
-  async setURLBlacklist(urlList) {
+  async setURLBlacklist(_urlList) {
     return await Promise.resolve('');
   }
 
@@ -166,16 +165,13 @@ class DeviceDriverBase {
     }
   }
 
-  getBundleIdFromBinary(appPath) {
-
+  getBundleIdFromBinary(_appPath) {
   }
 
-  validateDeviceConfig(deviceConfig) {
-
+  validateDeviceConfig(_deviceConfig) {
   }
 
   getPlatform() {
-
   }
 
   async getUiDevice() {
@@ -183,11 +179,11 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async cleanup(deviceId, bundleId) {
+  async cleanup(_deviceId, _bundleId) {
     this.emitter.off(); // clean all listeners
   }
 
-  getLogsPaths(deviceId) {
+  getLogsPaths(_deviceId) {
     return {
       stdout: undefined,
       stderr: undefined
@@ -199,14 +195,14 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async typeText(deviceId, text) {
+  async typeText(_deviceId, _text) {
     return await Promise.resolve('');
   }
 
-  async setStatusBar(deviceId, flags) {
+  async setStatusBar(_deviceId, _flags) {
   }
 
-  async resetStatusBar(deviceId) {
+  async resetStatusBar(_deviceId) {
   }
 
   async captureViewHierarchy() {

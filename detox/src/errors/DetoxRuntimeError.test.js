@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const DetoxRuntimeError = require('./DetoxRuntimeError');
 
 describe('DetoxRuntimeError', () => {

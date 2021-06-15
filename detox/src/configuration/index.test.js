@@ -3,16 +3,11 @@ jest.mock('../utils/argparse');
 const os = require('os');
 const path = require('path');
 
-const _ = require('lodash');
-
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 describe('composeDetoxConfig', () => {
   let args;
   let configuration;
-  let detoxConfig;
-  let deviceConfig;
-  let userParams;
 
   /** @type {DetoxConfigErrorComposer} */
   let errorComposer;
@@ -21,9 +16,6 @@ describe('composeDetoxConfig', () => {
     errorComposer = new DetoxConfigErrorComposer();
 
     args = {};
-    detoxConfig = {};
-    deviceConfig = {};
-    userParams = undefined;
 
     require('../utils/argparse').getArgValue.mockImplementation(key => args[key]);
     configuration = require('./index');

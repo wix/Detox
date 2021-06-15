@@ -94,7 +94,7 @@ describe('shellUtils', function() {
     describe('.cmd', () => {
       const CMD_CASES = CASES.map(([expected, _shell, input, comment]) => [expected, input, comment]);
 
-      test.each(CMD_CASES)('should return %j for %j because it is %s', (expected, str, comment) => {
+      test.each(CMD_CASES)('should return %j for %j because it is %s', (expected, str, __) => {
         expect(hasUnsafeChars.cmd(str)).toBe(expected);
       });
     });
@@ -102,7 +102,7 @@ describe('shellUtils', function() {
     describe('.shell', () => {
       const SHELL_CASES = CASES.map(([_cmd, expected, input, comment]) => [expected, input, comment]);
 
-      test.each(SHELL_CASES)('should return %j for %j because it is %s', (expected, str, comment) => {
+      test.each(SHELL_CASES)('should return %j for %j because it is %s', (expected, str, __) => {
         expect(hasUnsafeChars.shell(str)).toBe(expected);
       });
     });
