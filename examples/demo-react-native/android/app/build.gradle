@@ -83,11 +83,10 @@ dependencies {
      BINTRAY_SUNSET_HACK end
      */
 
-    // noinspection GradleDynamicVersion
     implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
 
     // noinspection GradleDynamicVersion
-    androidTestImplementation('com.wix:detox:+')
+    androidTestImplementation 'com.wix:detox:+'
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 

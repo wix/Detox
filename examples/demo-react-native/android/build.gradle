@@ -39,10 +39,6 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
-        /* Must be removed before merging */
-        maven {
-            url "http://api.genymotion.com/repositories/releases/"
-        }
         /*
          BINTRAY_SUNSET_HACK start
          (Section shouldn't be needed at all)

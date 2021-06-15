@@ -120,7 +120,8 @@ dependencies {
     }
     implementation 'org.apache.commons:commons-lang3:3.7' // Needed by invoke. Warning: Upgrading to newer versions is not seamless.
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
-    implementation 'com.genymotion.api:genymotion-api:1.2.0'
+
+    implementation fileTree(dir: '../libs', includes: ['*.jar']) // Includes: Genymotion SDK
 }
 
 // Unit-testing deps.
