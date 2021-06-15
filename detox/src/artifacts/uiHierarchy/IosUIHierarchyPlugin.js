@@ -38,8 +38,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
     this._registerSnapshot(e.name, e.artifact);
   }
 
-  // TODO revisit why the event includes all of this unused information
-  _onInvokeFailure({ params: { viewHierarchyURL, visibilityFailingScreenshotsURL, visibilityFailingRectsURL } }) { // eslint-disable-line no-unused-vars
+  _onInvokeFailure({ params: { viewHierarchyURL } }) {
     if (viewHierarchyURL) {
       this._registerSnapshot('ui', new FileArtifact({
         temporaryPath: viewHierarchyURL,
