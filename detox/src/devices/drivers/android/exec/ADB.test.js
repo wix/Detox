@@ -102,16 +102,19 @@ describe('ADB', () => {
   });
 
   it(`sets location both with commas and dots due to the locale issue`, async () => {
-    const deviceId = 'aDeviceId';
     const lat = 30.5;
     const lon = -70.5;
-    jest.spyOn(adb, 'emu');
 
     await adb.setLocation(deviceId, lat, lon);
 
-    expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70.5 30.5');
-    expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70,5 30,5');
-  })
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator emu "geo fix -70.5 30.5"`),
+      expect.anything());
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator emu "geo fix -70,5 30,5"`),
+      expect.anything());
+  });
 
   it(`pidof (success)`, async () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () =>
