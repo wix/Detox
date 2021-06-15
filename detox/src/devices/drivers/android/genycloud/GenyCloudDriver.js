@@ -1,6 +1,7 @@
 const semver = require('semver');
 const onSignalExit = require('signal-exit');
 
+const DetoxGenymotionManager = require('../../../../android/espressoapi/DetoxGenymotionManager');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const environment = require('../../../../utils/environment');
 const logger = require('../../../../utils/logger').child({ __filename });
@@ -16,7 +17,6 @@ const InstanceLifecycleService = require('./services/GenyInstanceLifecycleServic
 const InstanceLookupService = require('./services/GenyInstanceLookupService');
 const InstanceNaming = require('./services/GenyInstanceNaming');
 const RecipesService = require('./services/GenyRecipesService');
-const DetoxGenymotionManager = require('../../../../android/espressoapi/DetoxGenymotionManager');
 
 const MIN_GMSAAS_VERSION = '1.6.0';
 const cleanupLogData = {
