@@ -8,7 +8,7 @@ const testProcess = cp.spawn(command, args, { stdio: 'inherit' });
 let handle = setTimeout(() => {
   handle = null;
   testProcess.kill('SIGTERM');
-}, 60000);
+}, 90000);
 
 testProcess.on('exit', (code) => {
   if (code === 0 || !handle) {
