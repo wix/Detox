@@ -83,4 +83,9 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
             callback.onTransitionToIdle();
         }
     }
+
+    @Override
+    public String getActiveResourceDetails() {
+        return ""; //todo: add busy resource details
+    }
 }

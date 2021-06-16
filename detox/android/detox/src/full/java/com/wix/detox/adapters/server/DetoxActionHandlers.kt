@@ -8,6 +8,7 @@ import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.idlingresources.DescriptiveIdlingResource
+import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
 import com.wix.invoke.MethodInvocation
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
@@ -104,14 +105,23 @@ class QueryStatusActionHandler(
         val busyResources = testEngineFacade.getBusyIdlingResources()
 
         data["status"] = "App synchronization debug: " +
-            if (busyResources.isEmpty()) {
-                "The app appears to be idle!"
-            } else {
-                val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
-                "\nThe app is busy, due to: \n$summary"
-            }
+                if (busyResources.isEmpty()) {
+                    "The app appears to be idle!"
+                } else {
+                    val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
+                    val detailedSummary =
+                        busyResources.joinToString("\n") { "\t - ${formatBusyResourceDetails(it)}" }
+
+                    "\nThe app is busy, due to: \n$summary" +
+
+                    if (detailedSummary.replace('-', ' ').trim().isNotEmpty())
+                        "\nDetails: \n$detailedSummary" else ""
+                }
         outboundServerAdapter.sendMessage("currentStatusResult", data, messageId)
     }
+
+    private fun formatBusyResourceDetails(resource: IdlingResource): String =
+        if (resource is DetoxBaseIdlingResource) resource.activeResourceDetails else ""
 
     private fun formatResource(resource: IdlingResource): String =
             if (resource is DescriptiveIdlingResource) {

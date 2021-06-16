@@ -24,4 +24,5 @@ public abstract class DetoxBaseIdlingResource implements DescriptiveIdlingResour
 
     protected abstract boolean checkIdle();
     protected abstract void notifyIdle();
+    public abstract String getActiveResourceDetails();
 }
