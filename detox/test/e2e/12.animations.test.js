@@ -55,7 +55,7 @@ describe('React-Native Animations', () => {
     });
 
     it(`should not wait for an animation to complete while the synchronization is disabled`, async () => {
-      await device.disableSynchronization();
+      await device.disableSynchronization(); 
       await _startTest(driver, {duration: 5000});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
 
