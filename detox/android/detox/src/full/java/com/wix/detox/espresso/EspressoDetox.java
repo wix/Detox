@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.react.ReactApplication;
 import com.wix.detox.common.UIThread;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -70,7 +72,7 @@ public class EspressoDetox {
                 if (activity == null) {
                     activity = getActivity(view.getContext());
                     if (activity == null && view instanceof ViewGroup) {
-                        ViewGroup v = (ViewGroup)view;
+                        ViewGroup v = (ViewGroup) view;
                         int c = v.getChildCount();
                         for (int i = 0; i < c && activity == null; ++i) {
                             activity = getActivity(v.getChildAt(i).getContext());
@@ -104,7 +106,12 @@ public class EspressoDetox {
     }
 
     public static void setSynchronization(boolean enabled) {
-        ReactNativeExtension.setNetworkSynchronization(enabled);
+        if (enabled) {
+            Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+            ReactNativeExtension.enableAllSynchronization((ReactApplication) context.getApplicationContext());
+        } else {
+            ReactNativeExtension.clearAllSynchronization();
+        }
     }
 
     public static void setURLBlacklist(final ArrayList<String> urls) {
