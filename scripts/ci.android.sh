@@ -5,17 +5,17 @@ yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
 source $(dirname "$0")/ci.sh
 
-pushd detox/test
-run_f "npm run integration"
-popd
+#pushd detox/test
+#run_f "npm run integration"
+#popd
 
-if [[ -z ${SKIP_UNIT_TESTS} ]]; then
-  pushd detox/android
-  run_f "./gradlew testFullRelease"
-  popd
-else
-  echo "SKIP_UNIT_TESTS is set: Skipping Android unit tests"
-fi
+#if [[ -z ${SKIP_UNIT_TESTS} ]]; then
+#  pushd detox/android
+#  run_f "./gradlew testFullRelease"
+#  popd
+#else
+#  echo "SKIP_UNIT_TESTS is set: Skipping Android unit tests"
+#fi
 
 mkdir -p coverage
 
@@ -26,8 +26,8 @@ pushd detox/test
 run_f "npm run build:android"
 cp ../coverage/lcov.info ../../coverage/unit.lcov
 
-run_f "npm run e2e:android-ci-genycloud"
-cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
+#run_f "npm run e2e:android-ci-genycloud"
+#cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
 
 run_f "npm run e2e:android-ci-google -- e2e/01* e2e/02* e2e/03.actions*"
 
