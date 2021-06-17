@@ -47,12 +47,12 @@ module.exports.handler = async function test(argv) {
     forwardedArgs.argv.$0 = runnerConfig.testRunner;
   }
 
-  if (!cliConfig.keepLockFile) {
-    await resetLockFile({ platform });
-  }
-
   const retries = runner === 'jest' ? detoxArgs.retries : 0;
-  await runTestRunnerWithRetries(forwardedArgs, retries);
+  await runTestRunnerWithRetries(forwardedArgs, {
+    keepLockFile: cliConfig.keepLockFile,
+    platform,
+    retries,
+  });
 };
 
 module.exports.middlewares = [
@@ -234,7 +234,7 @@ function hasMultipleWorkers(cliConfig) {
   return cliConfig.workers != 1;
 }
 
-async function runTestRunnerWithRetries(forwardedArgs, retries) {
+async function runTestRunnerWithRetries(forwardedArgs, { keepLockFile, platform, retries }) {
   let runsLeft = 1 + retries;
   let launchError;
 
@@ -246,6 +246,10 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
           `There were failing tests in the following files:\n${list}\n\n` +
           'Detox CLI is going to restart the test runner with those files...\n'
         );
+      }
+
+      if (!keepLockFile) {
+        await resetLockFile({ platform });
       }
 
       await resetLastFailedTests();
