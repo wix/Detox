@@ -285,6 +285,11 @@ describe('Genymotion-cloud driver', () => {
         Instrumentation = require('../tools/MonitoredInstrumentation');
       });
 
+      it('should no-op if there is no instance given', async () => {
+        await uut.cleanup(undefined, 'bundle-id');
+        expect(instanceAllocation().deallocateDevice).not.toHaveBeenCalled();
+      });
+
       it('should deallocate an instance based on its UUID', async () => {
         const instance = anInstance();
         await uut.cleanup(instance, 'bundle-id');
