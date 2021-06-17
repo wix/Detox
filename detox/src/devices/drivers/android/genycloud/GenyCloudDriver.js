@@ -79,7 +79,9 @@ class GenyCloudDriver extends AndroidDriver {
       try {
         await super.cleanup(instance, bundleId);
       } finally {
-        await this._instanceAllocation.deallocateDevice(instance.uuid);
+        if (instance) {
+          await this._instanceAllocation.deallocateDevice(instance.uuid);
+        }
       }
   }
 
