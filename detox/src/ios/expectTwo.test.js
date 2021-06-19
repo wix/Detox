@@ -35,7 +35,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.text('tapMe')).tap({x:1, y:2})`, () => {
@@ -57,7 +57,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('uniqueId').and(by.text('some text'))).tap()`, () => {
@@ -82,7 +82,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('child').withAncestor(by.id('parent'))).tap()`, () => {
@@ -110,7 +110,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('child').withAncestor(by.id('parent'))).atIndex(0).tap()`, () => {
@@ -138,7 +138,7 @@ describe('expectTwo', () => {
         }
       }
     };
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('child').withAncestor(by.id('parent').and(by.text('text')))).tap()`, () => {
@@ -175,7 +175,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('child').and(by.text('text').and(by.value('value')))).tap()`, () => {
@@ -204,7 +204,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('tappable')).tapAtPoint({x:5, y:10})`, () => {
@@ -226,7 +226,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('elementToDrag')longPressAndDrag(1000, 0.5, 0.5, element(by.id('targetElement')`, () => {
@@ -248,7 +248,7 @@ describe('expectTwo', () => {
         }
       }
     };
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.text('Tap Working!!!'))).toBeVisible()`, () => {
@@ -264,7 +264,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.text('Tap Working!!!'))).toBeNotVisible()`, () => {
@@ -281,7 +281,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.text('Tap Working!!!'))).toBeFocused()`, () => {
@@ -297,7 +297,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.text('Tap Working!!!'))).toBeNotFocused()`, () => {
@@ -314,7 +314,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.id('UniqueId204'))).toHaveText('I contain some text')`, () => {
@@ -331,7 +331,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002')`, () => {
@@ -349,7 +349,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.id('slider'))).toHaveSliderPosition(position, tolerance)`, () => {
@@ -366,7 +366,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`expect(element(by.id('switch'))).toHaveToggleValue(value)`, () => {
@@ -383,7 +383,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`element(by.id('ScrollView100')).swipe('up', 'fast', undefined, undefined, 0.5)`, () => {
@@ -400,7 +400,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
@@ -426,7 +426,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(` waitFor(element(by.id('createdAndVisibleText'))).toExist().withTimeout(20000)`, async () => {
@@ -444,7 +444,26 @@ describe('expectTwo', () => {
         }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`waitFor(element(by.text('Item')).atIndex(1)).toExist().withTimeout(20000)`, async () => {
+    const testCall = await e.waitFor(e.element(e.by.text('Item')).atIndex(1)).toExist().withTimeout(2000);
+    const jsonOutput = {
+      invocation:
+        {
+          type: 'expectation',
+          atIndex: 1,
+          predicate: {
+            type: 'text',
+            value: 'Item'
+          },
+          expectation: 'toExist',
+          timeout: 2000
+        }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   it(`waitFor(element(by.id('uniqueId'))).not.toHaveValue('Some value').withTimeout(2000)`, () => {
@@ -462,7 +481,7 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
   describe.each([
@@ -530,10 +549,13 @@ describe('expectTwo', () => {
 });
 
 expect.extend({
-  deepEquals(a, b) {
+  toDeepEqual(a, b) {
     const pass = _.isEqual(a, b);
+
     return {
       pass,
+      actual: a,
+      expected: b,
       message: () => `${JSON.stringify(a)} does not match 
        ${JSON.stringify(b)}`
     };

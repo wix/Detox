@@ -110,10 +110,11 @@ class InternalExpect extends Expect {
 }
 
 class Element {
-  constructor(invocationManager, emitter, matcher) {
+  constructor(invocationManager, emitter, matcher, index) {
     this._invocationManager = invocationManager;
     this._emitter = emitter;
     this.matcher = matcher;
+    this.index = index;
   }
 
   atIndex(index) {
@@ -409,7 +410,7 @@ class Matcher {
 class WaitFor {
   constructor(invocationManager, emitter, element) {
     this._invocationManager = invocationManager;
-    this.element = new InternalElement(invocationManager, emitter, element.matcher);
+    this.element = new InternalElement(invocationManager, emitter, element.matcher, element.index);
     this.expectation = new InternalExpect(invocationManager, this.element);
     this._emitter = emitter;
   }
