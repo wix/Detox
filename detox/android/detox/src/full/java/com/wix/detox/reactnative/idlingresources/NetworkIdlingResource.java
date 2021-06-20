@@ -91,7 +91,6 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
             }
             if (!idle) {
                 busyResources.add(call.request().url().toString());
-                break;
             }
         }
         if (!idle) {
