@@ -72,7 +72,13 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
     @NotNull
     @Override
     public String getDescription() {
-        return "In-flight network activity";
+        String description = "In-flight network activity";
+
+        if (!busyResources.isEmpty()) {
+            description += "\nDetails:\n\t - " + busyResources.toString();
+        }
+
+        return description;
     }
 
     @Override
@@ -120,10 +126,5 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
         if (callback != null) {
             callback.onTransitionToIdle();
         }
-    }
-
-    @Override
-    public String getActiveResourceDetails() {
-        return busyResources.toString();
     }
 }

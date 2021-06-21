@@ -139,9 +139,4 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
             callback.onTransitionToIdle();
         }
     }
-
-    @Override
-    public String getActiveResourceDetails() {
-        return ""; //todo: add busy resource details
-    }
 }

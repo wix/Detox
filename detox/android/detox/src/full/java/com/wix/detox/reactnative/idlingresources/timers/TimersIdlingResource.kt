@@ -39,10 +39,6 @@ class TimersIdlingResource @JvmOverloads constructor(
         callback?.onTransitionToIdle()
     }
 
-    override fun getActiveResourceDetails(): String {
-        return "" //todo: add busy resource details
-    }
-
     companion object {
         internal const val LOG_TAG = "TimersIdlingResource"
     }

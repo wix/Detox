@@ -8,7 +8,6 @@ import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.idlingresources.DescriptiveIdlingResource
-import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
 import com.wix.invoke.MethodInvocation
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
@@ -109,19 +108,11 @@ class QueryStatusActionHandler(
                     "The app appears to be idle!"
                 } else {
                     val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
-                    val detailedSummary =
-                        busyResources.joinToString("\n") { "\t - ${formatBusyResourceDetails(it)}" }
 
-                    "\nThe app is busy, due to: \n$summary" +
-
-                    if (detailedSummary.replace('-', ' ').trim().isNotEmpty())
-                        "\nDetails: \n$detailedSummary" else ""
+                    "\nThe app is busy, due to: \n$summary"
                 }
         outboundServerAdapter.sendMessage("currentStatusResult", data, messageId)
     }
-
-    private fun formatBusyResourceDetails(resource: IdlingResource): String =
-        if (resource is DetoxBaseIdlingResource) resource.activeResourceDetails else ""
 
     private fun formatResource(resource: IdlingResource): String =
             if (resource is DescriptiveIdlingResource) {
