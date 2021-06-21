@@ -7,3 +7,7 @@
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
 -keep class com.reactnativecommunity.asyncstorage.** { *; }
+
+-keep class kotlin.jvm.internal.FunctionReference { *; }
+-keep class kotlin.jvm.internal.FunctionReferenceImpl { *; }
+-keep class kotlin.jvm.functions.* { *; }
