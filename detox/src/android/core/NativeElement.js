@@ -79,6 +79,11 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this, new actions.ScrollEdgeAction(edge)).execute();
   }
 
+  async scrollToIndex(index) {
+    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    return await new ActionInteraction(this._invocationManager, this, new actions.ScrollToIndex(index)).execute();
+  }
+
   /**
    * @param {'up' | 'right' | 'down' | 'left'} direction
    * @param {'slow' | 'fast'} [speed]

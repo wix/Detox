@@ -1032,6 +1032,10 @@ declare global {
               startPositionY?: number,
             ): Promise<void>;
 
+            scrollToIndex(
+              index: Number
+            ): Promise<void>;
+
             /**
              * Scroll to edge.
              * @example await element(by.id('scrollView')).scrollTo('bottom');

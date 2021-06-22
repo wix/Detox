@@ -88,6 +88,14 @@ class ScrollEdgeAction extends Action {
   }
 }
 
+class ScrollToIndexAction extends Action {
+  constructor(index) {
+    super();
+
+    this._call = invoke.callDirectly(DetoxActionApi.scrollToIndex(index));
+  }
+}
+
 class SwipeAction extends Action {
   constructor(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY) {
     super();
@@ -117,6 +125,13 @@ class GetAttributes extends Action {
   }
 }
 
+class ScrollToIndex extends Action {
+  constructor(index) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.scrollToIndex(index));
+  }
+}
+
 class TakeElementScreenshot extends Action {
   constructor() {
     super();
@@ -140,4 +155,5 @@ module.exports = {
   ScrollEdgeAction,
   SwipeAction,
   TakeElementScreenshot,
+  ScrollToIndex,
 };

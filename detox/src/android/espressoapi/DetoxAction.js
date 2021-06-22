@@ -179,6 +179,21 @@ class DetoxAction {
     };
   }
 
+  static scrollToIndex(index) {
+    if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "scrollToIndex",
+      args: [{
+        type: "Integer",
+        value: index
+      }]
+    };
+  }
+
   static takeViewScreenshot() {
     return {
       target: {
