@@ -109,7 +109,7 @@ await element(by.id('PinchableScrollView')).pinch(0.001); //Zooms out a lot
 ```
 ### `scrollToIndex(index)`  Android only
 
-Scrolls until it reaches the element with the provided index.
+Scrolls until it reaches the element with the provided index. This works for ReactScrollView and ReactHorizontalScrollView.
 
 `index`—the index of the target element <br/>
 
