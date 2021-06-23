@@ -88,14 +88,6 @@ class ScrollEdgeAction extends Action {
   }
 }
 
-class ScrollToIndexAction extends Action {
-  constructor(index) {
-    super();
-
-    this._call = invoke.callDirectly(DetoxActionApi.scrollToIndex(index));
-  }
-}
-
 class SwipeAction extends Action {
   constructor(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY) {
     super();
