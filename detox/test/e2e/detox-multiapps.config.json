@@ -1,0 +1,23 @@
+{
+  "extends": "./detox.config",
+  "configurations": {
+    "android.manual": {
+      "apps": ["android.debug", "android.debug.withArgs"]
+    },
+    "android.emu.debug": {
+      "apps": ["android.debug", "android.debug.withArgs"]
+    },
+    "android.emu.debug.fromSource": {
+      "apps": ["android.fromSource", "android.fromSource.withArgs"]
+    },
+    "android.emu.release": {
+      "apps": ["android.release", "android.release.withArgs"]
+    },
+    "android.genycloud.release": {
+      "apps": ["android.release", "android.release.withArgs"]
+    },
+    "android.genycloud.release2": {
+      "apps": ["android.release", "android.release.withArgs"]
+    }
+  }
+}

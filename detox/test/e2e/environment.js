@@ -6,6 +6,10 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {
     super(config, context);
 
+    if (context.docblockPragmas['detox-config-path']) {
+      process.env.DETOX_CONFIG_PATH = context.docblockPragmas['detox-config-path'];
+    }
+
     this.registerListeners({
       SpecReporterCircus,
       WorkerAssignReporterCircus,

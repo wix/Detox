@@ -90,7 +90,7 @@ async function loadExternalConfig({ errorComposer, configPath, cwd }) {
 
     result.config = await tryExtendConfig({
       config: result.config,
-      cwd,
+      cwd: path.dirname(resolvedConfigPath),
       errorComposer,
     });
 
