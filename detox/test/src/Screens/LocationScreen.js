@@ -52,7 +52,7 @@ export default class LocationScreen extends Component {
 
     await Geolocation.getCurrentPosition(this.onLocationReceived, this.onLocationError, {
       enableHighAccuracy: true,
-      timeout: 4500,
+      timeout: 10000,
       maximumAge: 0,
     });
   }
