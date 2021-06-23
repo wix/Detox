@@ -1,5 +1,6 @@
 {
     "globalSetup": "./global-setup.js",
+    "globalTeardown": "./global-teardown.js",
     "setupFilesAfterEnv": ["./setup.ts"],
     "testEnvironment": "./environment",
     "testRunner": "jest-circus/runner",
