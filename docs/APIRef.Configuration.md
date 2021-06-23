@@ -30,7 +30,17 @@ distribute them as `npm` modules for reuse across multiple projects, e.g.:
 }
 ```
 
-Please note that `extends` has to be a valid Node module path.
+Please note that `extends` has to be a valid Node module path. Relative module paths will be resolved relatively
+to the Detox config file which contains that specific `extends` property, e.g.:
+
+```js
+// given: ~/Projects/my-project/.detoxrc.json
+{ extends: "./e2e/detox-base-config" }
+// goes to: ~/Projects/my-project/e2e/detox-base-config.js
+{ extends: "./configs/base" }
+// then goes to: ~/Projects/my-project/e2e/configs/base/index.js
+// and so on...
+```
 
 ### Individual Configurations
 
