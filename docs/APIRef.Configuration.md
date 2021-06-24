@@ -56,7 +56,7 @@ Note: If there is only one configuration in `configurations`, Detox will default
   // ...
   "detox": {
     // ...
-    "devices" {
+    "devices": {
       // ... see below ...
     },
     "apps": {
@@ -95,31 +95,34 @@ The format of Detox config allows you to define inside it multiple device config
 {
   "devices": {
     "simulator": {
-      "type": "ios.simulator"
-      "device": { /* one of these or a combination of them */
+      "type": "ios.simulator",
+      "device": {
+        // one of these or a combination of them
         "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
         "type": "iPhone 11 Pro",
         "name": "MySim",
-        "os": "iOS 13.0",
+        "os": "iOS 13.0"
       }
     },
     "emulator": {
       "type": "android.emulator",
       "device": {
-        "avdName": "Pixel_2_API_29",
+        "avdName": "Pixel_2_API_29"
       },
-      "utilBinaryPaths": ["optional-property-with/path/to/test-butler-or-anything-else.apk"]
+      "utilBinaryPaths": [
+        "optional-property-with/path/to/test-butler-or-anything-else.apk"
+      ]
     },
     "android.attached": {
       "type": "android.attached",
       "device": {
-        "adbName": "YOGAA1BBB412",
+        "adbName": "YOGAA1BBB412"
       }
     },
     "android.genycloud": {
-      type: "android.genycloud",
-      device: {
-        recipeUUID: "11111111-2222-3333-4444-555555555555",
+      "type": "android.genycloud",
+      "device": {
+        "recipeUUID": "11111111-2222-3333-4444-555555555555"
         // or recipeName: "MyRecipeName",
       }
     }
@@ -129,7 +132,7 @@ The format of Detox config allows you to define inside it multiple device config
   },
   "configurations": {
     // ... see above ...
-  },
+  }
 }
 ```
 
@@ -148,14 +151,14 @@ Also, in the Detox `configurations` you can use the device configs as-is, withou
   "configurations": {
     "ios.sim.debug": {
       "device": {
-        "type": "ios.simulator"
+        "type": "ios.simulator",
         "device": {
-          "type": "iPhone 12 Pro",
+          "type": "iPhone 12 Pro"
         }
       },
-      "app": 'alias-to-app',
+      "app": "alias-to-app"
       // ...
-    },
+    }
   }
 }
 ```
@@ -179,11 +182,11 @@ The format of Detox config allows you to define inside it multiple app configs i
       "type": "android.apk",
       "binaryPath": "path/to/myApp.apk",
       "build": "..."
-    },
+    }
   },
   "configurations": {
     // ... see above ...
-  },
+  }
 }
 ```
 
@@ -202,24 +205,24 @@ To work with multiple apps within the same configuration you should be giving ea
 
 ```js
 {
-  apps: {
-    'driver.ios.release': {
-      type: 'ios.app',
-      name: 'driver',
-      binaryPath: 'path/to/driver.app',
+  "apps": {
+    "driver.ios.release": {
+      "type": "ios.app",
+      "name": "driver",
+      "binaryPath": "path/to/driver.app"
     },
-    'passenger.ios.release': {
-      type: 'ios.app',
-      name: 'passenger',
-      binaryPath: 'path/to/passenger.app',
-    },
+    "passenger.ios.release": {
+      "type": "ios.app",
+      "name": "passenger",
+      "binaryPath": "path/to/passenger.app"
+    }
   },
-  configurations: {
-    'ios.release': {
-      device: 'simulator',
-      apps: ['driver', 'passenger'],
-    },
-  },
+  "configurations": {
+    "ios.release": {
+      "device": "simulator",
+      "apps": ["driver", "passenger"]
+    }
+  }
 }
 ```
 
@@ -245,8 +248,8 @@ Similar to device configs, any app config can be inlined as well:
         "type": "ios.app",
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
         "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
-      },
-    },
+      }
+    }
   }
 }
 ```
@@ -264,16 +267,16 @@ You can control artifacts collection via Detox configuration:
     "rootDir": ".artifacts",
     "pathBuilder": "./config/pathbuilder.js",
     "plugins": {
-      "instruments": { "enabled": false },
-      "log": { "enabled": true },
+      "instruments": {"enabled": false},
+      "log": {"enabled": true},
       "uiHierarchy": "enabled",
       "screenshot": {
         "shouldTakeAutomaticSnapshots": true,
         "keepOnlyFailedTestsArtifacts": true,
         "takeWhen": {
           "testStart": false,
-          "testDone": true,
-        },
+          "testDone": true
+        }
       },
       "video": {
         "android": {
@@ -394,6 +397,7 @@ Detox can either initialize a server using a generated configuration, or can be 
     "server": "ws://localhost:8099",
     "sessionId": "YourProjectSessionId"
   }
+}
 ```
 
 When you define a session config, the Detox server won't start automatically anymore — it is assumed that
@@ -414,13 +418,13 @@ Session can be set also per device configuration — then it takes a higher prio
 session config:
 
 ```json
-{  
+{
   "configurations": {
     "ios.sim.debug": {
-      ...
+      // ...
       "session": {
         "server": "ws://localhost:8099",
-        "sessionId": "YourProjectSessionId",
+        "sessionId": "YourProjectSessionId"
       }
     }
   }
@@ -434,9 +438,9 @@ The status will be printed if the action takes more than _[N]_ ms to complete.
 
 ```json
 {
-    "session": {
-      "debugSynchronization": 20000
-    }
+  "session": {
+    "debugSynchronization": 20000
+  }
 }
 ```
 
