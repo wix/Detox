@@ -66,10 +66,10 @@ object FlinglessSwiperSpec: Spek({
         }
 
         describe("move") {
-            val SWIPER_VELOCITY = 85f
+            val SWIPER_VELOCITY = 99f
 
             beforeEachTest {
-                whenever(viewConfig.scaledMinimumFlingVelocity).doReturn(100) // i.e. we expect the swiper to apply a safety margin of 85%, hence actual velocity = 85 px/sec
+                whenever(viewConfig.scaledMinimumFlingVelocity).doReturn(100) // i.e. we expect the swiper to apply a safety margin of 99%, hence actual velocity = 99 px/sec
             }
 
             it("should obtain a move event") {
@@ -121,7 +121,7 @@ object FlinglessSwiperSpec: Spek({
 
                     with(uut()) {
                         startAt(0f, 0f)
-                        moveTo(0f, 42.5f)
+                        moveTo(0f, SWIPER_VELOCITY/2)
                     }
 
                     verify(motionEvents).obtainMoveEvent(any(), eq(expectedEventTime), any(), any())
@@ -151,17 +151,17 @@ object FlinglessSwiperSpec: Spek({
                 }
 
                 it("should optimize by applying fling-speed limitation only in last 25% of events") {
-                    whenever(moveEvent.y).doReturn(255f)
+                    whenever(moveEvent.y).doReturn(SWIPER_VELOCITY * 99)
 
-                    with(uut(expectedMotions = 4)) {
+                    with(uut(expectedMotions = 100)) {
                         startAt(0f, 0f)
-                        moveTo(0f, 85f)
-                        moveTo(0f, 170f)
-                        moveTo(0f, 255f)
-                        moveTo(0f, 340f)
+
+                        for (i in 1..100) {
+                        moveTo(0f, SWIPER_VELOCITY * i)
+                        }
                     }
 
-                    verify(motionEvents, times(3)).obtainMoveEvent(any(), eq(swipeStartTime + 10L), any(), any())
+                    verify(motionEvents, times(99)).obtainMoveEvent(any(), eq(swipeStartTime + 10L), any(), any())
                     verify(motionEvents, times(1)).obtainMoveEvent(any(), eq(swipeStartTime + 1000L), any(), any())
                 }
             }
@@ -190,9 +190,9 @@ object FlinglessSwiperSpec: Spek({
 
                 with(uut()) {
                     startAt(666f, 999f)
-                    finishAt(666f + 85f, 999f + 85f)
+                    finishAt(666f + 99f, 999f + 99f)
                 }
-                verify(motionEvents).obtainUpEvent(downEvent, expectedEventTime, 666f + 85f, 999f + 85f)
+                verify(motionEvents).obtainUpEvent(downEvent, expectedEventTime, 666f + 99f, 999f + 99f)
             }
 
             it("should finish by flushing all events to ui controller") {
