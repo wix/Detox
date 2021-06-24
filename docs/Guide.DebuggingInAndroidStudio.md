@@ -59,7 +59,7 @@ parameters to disable various side effects and make life easier when debugging:
 +  "artifacts": false
 ```
 
-* Using a preconfigured `session` with an autostarting server removes the legwork of copying and
+* Using a pre-configured `session` with an autostarting server removes the legwork of copying and
 pasting values to the instrumentation runner launch arguments dialog every time before any launch
 from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
 are randomly generated for every new test session.
@@ -69,7 +69,7 @@ with `debugSynchronization` set to a positive integer value. Otherwise, it is no
 is to disable regular app polling requests during debugging, since that only can hinder the debugging.
 
 * Setting `artifacts: false` override also matters only if you have a global `artifacts` config.
-The motivation is to disable unrelevant taxing activities on the device such as capturing logs
+The motivation is to disable irrelevant taxing activities on the device such as capturing logs
 screenshots, videos and so on.
     * If your investigation addresses a specific artifact plugin glitch on the native side, then just
     disable all the other plugins. See [Detox Configuration](APIRef.Configuration.md) document

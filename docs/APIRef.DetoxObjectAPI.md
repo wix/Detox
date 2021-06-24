@@ -14,7 +14,7 @@
 - [`detox.trace.startSection(), detox.trace.endSection()`](#detoxtracestartsection,-detoxtraceendsection)
 
 ### `detox.init()`
-The setup phase happens inside `detox.init()`. This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator.
+The setup phase happens inside `detox.init()`. This is the phase where detox reads its configuration, starts a server, loads its expectation library and starts a simulator.
 
 ##### (if you're using mocha) In your `init.js` add:
 

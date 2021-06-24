@@ -1,7 +1,7 @@
 # Failing Tests
 
 * [Trace Mode](#trace-mode)
-* [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
+* [Syntax Error: Unexpected Token](#syntax-error-unexpected-token)
 * [Can't Find My Component Even Though I Added a `testID` to Its Props](#cant-find-my-component-even-though-i-added-a-testid-to-its-props)
 * [Test Tries to Find My Component Before It's Created](#test-tries-to-find-my-component-before-its-created)
 * [Can't synchronize the test with my app](#cant-synchronize-the-test-with-my-app)
@@ -188,7 +188,7 @@ On iOS, you may run in a situation, when one of the interactions (tap, scroll, e
 Test Failed: View "<RCTScrollView: 0x7f8d32296d70>" is not visible: view does not pass visibility threshold (0% visible of 75% required)
 ```
 
-1. Try retriving `ui.viewhierarchy` artifact — sometimes examining the hierarchy visually can give you insights.
+1. Try retrieving `ui.viewhierarchy` artifact — sometimes examining the hierarchy visually can give you insights.
 Add a line `"uiHierarchy": "enabled"` to your artifacts configuration in `.detoxrc.js`, like in an example here: [Artifacts Configuration](https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration). After a rerun, you should find
 a `ui.viewhierarchy` in a folder of your failing test. Please mind that you need Xcode 12 at least to open `*.viewhierarchy` files.
 
@@ -202,7 +202,7 @@ The first is supposed to show what is seen on screen. The second shows the inter
 
 If you are developing a React Native app, then the following applies. If, for instance, you see that tapping fails due to a view with `pointerEvents="none"` obscuring your target — well, the only solutions are: either to make the obscurer a descendant of your target (instead of being a sibling), or to tap on the parent container.
 
-If you see that your issue cannot be solved via testID replacement or a simple hierarchy rearrangment, then there's a chance this is a bug in Detox. Make sure to provide your `ui.viewhierarchy` artifact, the pictures generated with `-detoxDebugVisiblity` option and a comprehensive description of the issue backed up with cold and strong arguments.
+If you see that your issue cannot be solved via testID replacement or a simple hierarchy rearrangement, then there's a chance this is a bug in Detox. Make sure to provide your `ui.viewhierarchy` artifact, the pictures generated with `-detoxDebugVisibility` option and a comprehensive description of the issue backed up with cold and strong arguments.
 
 ### Debug View Hierarchy
 
@@ -224,7 +224,7 @@ Do the following:
 
 5. This will open the hierarchy viewer, and will show a breakdown of your app's native view hierarchy. Here you can browse through the views
 
-6. React Native testIDs are manifested as *accessibility indentifiers* in the native view hierarchy 
+6. React Native testIDs are manifested as *accessibility identifiers* in the native view hierarchy 
 
 Let's see an example. We will find the following view in the native hierarchy:
 

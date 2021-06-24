@@ -358,7 +358,7 @@ Setting `reinstallApp: false` will make the tests reuse the currently installed 
 provided you have installed it beforehand explicitly or manually.
 
 If you do not wish to leak Detox globals (`expect`, `device`, `by`, etc.) to the global
-scope, you can set `"exposeGlobals": false` and destructure them respectively from the
+scope, you can set `"exposeGlobals": false` and de-structure them respectively from the
 exported Detox interface:
 
 ```js
@@ -386,7 +386,7 @@ Also, you can override the behavior in specific Detox configurations:
 
 ### Server Configuration
 
-Detox can either initialize a server using a generated configuration, or can be overriden with a manual configuration:
+Detox can either initialize a server using a generated configuration, or can be overridden with a manual configuration:
 
 ```json
 {

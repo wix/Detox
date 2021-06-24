@@ -53,7 +53,7 @@ You can keep working on the JavaScript codebase of your app as usual. As long as
 
 ## Step 5: Re-run Detox Tests Without Re-installing the App
 
-You can make changes to your Detox tests as well. When you want to run your tests on the simulator, we recommed using the following command:
+You can make changes to your Detox tests as well. When you want to run your tests on the simulator, we recommend using the following command:
 
 ```sh
 detox test --reuse

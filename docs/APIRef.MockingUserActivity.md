@@ -65,7 +65,7 @@ The JSON object passed to Detox needs to provide some required data, but can als
 
 ### Activity Types
 
-Activities can be both developer-generated user activity state, such as actions from another system—another iOS device, macOS, Safari, etc., and system-generated user activities, such as user browed an associated domain, Spotlight search tapped, Siri intent activity, etc.,  where the app should handle such an activity.
+Activities can be both developer-generated user activity state, such as actions from another system—another iOS device, macOS, Safari, etc., and system-generated user activities, such as user browsed an associated domain, Spotlight search tapped, Siri intent activity, etc.,  where the app should handle such an activity.
 
 Detox supports mocking both types.
 

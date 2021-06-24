@@ -31,7 +31,7 @@ On MacOS, in particular, java comes from both the OS _and_ possibly other instal
 
 ---
 
-If `java` isn't in your path or not even installed (i.e. the command failed altogher), try [this guide](https://www.java.com/en/download/help/path.xml).
+If `java` isn't in your path or not even installed (i.e. the command failed altogether), try [this guide](https://www.java.com/en/download/help/path.xml).
 
 If otherwise the version is simply wrong, try these refs for Macs; consider employing the `JAVA_HOME` variable to get things to work right:
 
@@ -100,9 +100,9 @@ $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --pa
 
 5. Launch the emulator:
 
-This isn't mandatory, of course, but it's always good to launch the emulator at least once before running automated tests. The section below will discuss optimizing emulators bootstraping.
+This isn't mandatory, of course, but it's always good to launch the emulator at least once before running automated tests. The section below will discuss optimizing emulators bootstrapping.
 
-At this point, you should be able to launch the emulator from Android Studio, but that can also be done from a command line console, as explained in the [cheetsheet below](#locating-the-avds-home-directory).
+At this point, you should be able to launch the emulator from Android Studio, but that can also be done from a command line console, as explained in the [cheatsheet below](#locating-the-avds-home-directory).
 
 > See [this guide](https://developer.android.com/studio/run/emulator-commandline) for full details on the `emulator` executable.
 
