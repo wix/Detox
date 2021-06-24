@@ -150,7 +150,7 @@ object FlinglessSwiperSpec: Spek({
                     verify(motionEvents).obtainMoveEvent(any(), eq(expectedEventTime), any(), any())
                 }
 
-                it("should optimize by applying fling-speed limitation only in last 25% of events") {
+                it("should optimize by applying fling-speed limitation only in last 1% of events") {
                     whenever(moveEvent.y).doReturn(SWIPER_VELOCITY * 99)
 
                     with(uut(expectedMotions = 100)) {
