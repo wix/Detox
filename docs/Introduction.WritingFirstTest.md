@@ -58,7 +58,7 @@ The various available expectations are documented [here](APIRef.Expect.md). If w
 await expect(element(by.id('AnotherUniqueId456'))).toBeVisible();
 ```
 
-Note that the visibilty matcher makes sure the element is actually visible on screen (at least 75% of it to be exact). If it appears under the fold (eg. the user has to scroll to see it), this specific matcher will fail.
+Note that the visibility matcher makes sure the element is actually visible on screen (at least 75% of it to be exact). If it appears under the fold (eg. the user has to scroll to see it), this specific matcher will fail.
 
 ## Step 6: Rinse and Repeat
 

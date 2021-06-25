@@ -2,7 +2,7 @@
 
 > What is a flaky test?
 
-A flaky test is a test that passes most of the time, and sometimes without any appearant reason and without any changes to your app - it fails. This can even happen only on certain machines. For example, on your own machine it always passes, but on a different slower machine, like the CI, it fails.
+A flaky test is a test that passes most of the time, and sometimes without any apparent reason and without any changes to your app - it fails. This can even happen only on certain machines. For example, on your own machine it always passes, but on a different slower machine, like the CI, it fails.
 
 ### 1. We Feel Your Pain
 

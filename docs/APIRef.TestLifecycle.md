@@ -5,7 +5,7 @@ Detox is test runner independent, and we encourage you to choose your own test r
 ## Initial Setup
 
 The setup phase happens inside `detox.init()`.
-This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator.
+This is the phase where detox reads its configuration, starts a server, loads its expectation library and starts a simulator.
 
 ```js
 before(async () => {

@@ -386,7 +386,7 @@ Also, you can override the behavior in specific Detox configurations:
 
 ### Server Configuration
 
-Detox can either initialize a server using a generated configuration, or can be overriden with a manual configuration:
+Detox can either initialize a server using a generated configuration, or can be overridden with a manual configuration:
 
 ```json
 {

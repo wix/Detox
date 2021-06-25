@@ -12,7 +12,7 @@ For example, the following configuration uses the "ios.simulator" driver.
 ```
 
 While React Native officially supports Android and iOS, other platforms such as [Web](https://github.com/necolas/react-native-web) and [Windows](https://github.com/microsoft/react-native-windows) can be targeted.
-If your app targets a third-party platform, you may swich to use a [third-party driver](#how-to-use-a-third-party-driver) to run your tests on said platform.
+If your app targets a third-party platform, you may switch to use a [third-party driver](#how-to-use-a-third-party-driver) to run your tests on said platform.
 If one doesn't already exist, you can [write your own](#Writing-a-new-third-party-driver).
 
 ## How to Use a Third-party Driver

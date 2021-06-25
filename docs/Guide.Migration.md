@@ -86,7 +86,7 @@ detox[43764] ERROR: [cli.js] Error: Command failed: jest --config e2e/config.jso
 
 ## 17.3.0
 
-In the context of introducting the element screenshots feature ([#2012](https://github.com/wix/Detox/issues/2012)), we decided to slightly change the contract between Detox and externally-implemented _drivers_. These should be modified according to the follow diff-snippet:
+In the context of introducing the element screenshots feature ([#2012](https://github.com/wix/Detox/issues/2012)), we decided to slightly change the contract between Detox and externally-implemented _drivers_. These should be modified according to the follow diff-snippet:
 
 ```diff
 class Expect {
@@ -223,7 +223,7 @@ In `12.7.0` we've greatly improved our support in Jest - trying to tackle these 
 
 1. Jest file-level summary logs take precedence over 'plain' output, which makes them and all other logs (e.g. user in-test logging) seem cluttered.
 2. Plain logs output is batched, and thus often does not show in real-time as the test is run. This is particularly annoying when running tests on the local computer.
-3. Jest offeres no spec-level logging => no way to tell what's running "right now" and which test created what log-outputs.
+3. Jest offers no spec-level logging => no way to tell what's running "right now" and which test created what log-outputs.
 
 _Put in simple words, Jest is optimized for running tests concurrently using multiple workers. This isn't the case when writing/debugging tests on a local machine._
 
@@ -383,7 +383,7 @@ in `package.json`, then please add it temporarily like this:~
 
 ## Migrating from Detox 11.0.1 to 12.0.0
 
-The new version explicity requires **Xcode 10.1 or higher** in order to run tests on iOS ([#1229](https://github.com/wix/Detox/issues/1229)).
+The new version explicitly requires **Xcode 10.1 or higher** in order to run tests on iOS ([#1229](https://github.com/wix/Detox/issues/1229)).
 
 ## Migrating from Detox 11.0.0 to 11.0.1 (nonbreaking)
 
@@ -528,7 +528,7 @@ after(async () => {
 ```
 
 >*NOTICE:*
-Make sure you use ES5 functions in `beforeEach` and `afterEach`. `this` referes to mocha's test object, using arrow functions will result with failure to to acquire a correct **`this`** inside the adapter.
+Make sure you use ES5 functions in `beforeEach` and `afterEach`. `this` refers to mocha's test object, using arrow functions will result with failure to to acquire a correct **`this`** inside the adapter.
 
 ```js
 // ✗ INCORRECT
@@ -590,7 +590,7 @@ Previously, to enable log recording you just had to specify `--artifact-location
 
 Notice that `--artifact-location` became sensitive to whether you end your directory path with a slash or not. It has the next convention:
 
-* If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent reruns), specify a path to directory that *does not end* with a slash.
+* If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consequent reruns), specify a path to directory that *does not end* with a slash.
 * Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), *add a slash* to the end.
 
 For more information see [CLI documentation](APIRef.DetoxCLI.md).

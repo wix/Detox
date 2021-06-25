@@ -28,7 +28,7 @@ androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
 
 ### Details
 
-Detox Android is a standard Android integration test with many twists. For example, it is completely asynchronous. The test cases are not compiled, they come through a websocket from the JS test runner via a json protocol. They are evaluated inside the app and the result along with a possible debug informations are sent back to the JS test runner.
+Detox Android is a standard Android integration test with many twists. For example, it is completely asynchronous. The test cases are not compiled, they come through a websocket from the JS test runner via a json protocol. They are evaluated inside the app and the result along with a possible debug information are sent back to the JS test runner.
 
 It uses Espresso internally, therefore you must use an AndroidJUnitRunner as your test runner (or a subclass of it).
 
