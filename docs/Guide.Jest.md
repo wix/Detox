@@ -178,6 +178,21 @@ If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.D
 detox test --configuration <yourConfigurationName> --workers 2 --jest-report-specs
 ```
 
+## runInBand + maxWorkers
+
+Jest sets `maxWorkers = 1` when you use its `--runInBand` option. However, Jest does not allow explicitly specifying `--maxWorkers=1` in that case. The error message from Jest looks like this:
+
+```
+Both --runInBand and --maxWorkers were specified, but these two options do not make sense together. Which is it?
+Command failed: jest --config e2e/config.json --testNamePattern '^((?!:android:).)*$' --maxWorkers 1 --runInBand e2e
+```
+
+To prevent Detox from adding its own default `--maxWorkers=1`, instead pass `--workers=0`, e.g.:
+
+```bash
+detox test --configuration <yourConfigurationName> --workers 0
+```
+
 ## How to Run Unit and E2E Tests in the Same Project
 
 - Create different Jest configs for unit and E2E tests, e.g. in `e2e/config.json` (for Detox) and `jest.config.js`
