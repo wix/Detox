@@ -59,7 +59,7 @@ parameters to disable various side effects and make life easier when debugging:
 +  "artifacts": false
 ```
 
-* Using a pre-configured `session` with an autostarting server removes the legwork of copying and
+* Using a preconfigured `session` with an autostarting server removes the legwork of copying and
 pasting values to the instrumentation runner launch arguments dialog every time before any launch
 from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
 are randomly generated for every new test session.
