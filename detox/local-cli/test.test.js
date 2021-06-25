@@ -452,6 +452,11 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--maxWorkers 2');
     });
 
+    test.each([['-w'], ['--workers']])('%s 0 should not pass --maxWorkers at all', async (__workers) => {
+      await run(`${__workers} 0`);
+      expect(cliCall().command).not.toContain('--maxWorkers 1');
+    });
+
     test.each([['-w'], ['--workers']])('%s <value> should be replaced with --maxWorkers <value>', async (__workers) => {
       await run(`${__workers} 2 --maxWorkers 3`);
 

@@ -155,16 +155,20 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
 function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
+  const argv = {
+    color: !cliConfig.noColor && undefined,
+    config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
+    testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
+    ...passthrough,
+  };
+
+  // Pass --workers=0 to NOT send --maxWorkers to Jest at all.
+  if (cliConfig.workers) {
+    argv.maxWorkers = cliConfig.workers;
+  }
 
   return {
-    argv: {
-      color: !cliConfig.noColor && undefined,
-      config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
-      testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
-      maxWorkers: cliConfig.workers,
-
-      ...passthrough,
-    },
+    argv,
 
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
