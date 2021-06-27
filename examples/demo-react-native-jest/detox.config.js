@@ -36,7 +36,7 @@ module.exports = {
     "genymotion.emulator.uuid": {
       "type": "android.genycloud",
       "device": {
-        "recipeUUID": "107d757e-463a-4a18-8667-b8dec6e4c87e"
+        "recipeUUID": "a50a71d6-da90-4c67-bdfa-5b602b0bbd15"
       },
       utilBinaryPaths: [
         "./cache/test-butler-app.apk"
@@ -45,7 +45,7 @@ module.exports = {
     "genymotion.emulator.name": {
       "type": "android.genycloud",
       "device": {
-        "recipeName": "Google Pixel 3"
+        "recipeName": "Detox_Pixel_API_29"
       },
       utilBinaryPaths: [
         "./cache/test-butler-app.apk"
@@ -60,7 +60,6 @@ module.exports = {
         // Do not use in your projects unless you really need custom paths.
         // This section serves just as an example that you can locally override
         // some artifacts, behavior and session settings
-
         "pathBuilder": "./e2e/detox.pathbuilder.ios.js"
       }
     },
@@ -71,7 +70,6 @@ module.exports = {
         // Do not use in your projects unless you really need custom paths.
         // This section serves just as an example that you can locally override
         // some artifacts, behavior and session settings
-
         "pathBuilder": "./e2e/detox.pathbuilder.android.js"
       }
     },
@@ -82,10 +80,8 @@ module.exports = {
         // Do not use in your projects unless you really need custom paths.
         // This section serves just as an example that you can locally override
         // some artifacts, behavior and session settings
-
         "pathBuilder": "./e2e/detox.pathbuilder.android.js"
       }
     }
-
   }
 };
