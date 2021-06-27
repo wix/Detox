@@ -72,7 +72,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('HText6'))).not.toBeVisible();
   });
 
-  it('should be able to scrollToIndex on horizontal scrollviews', async () => {
+  it(':android: should be able to scrollToIndex on horizontal scrollviews', async () => {
     // should ignore out of bounds children
     await element(by.id('ScrollViewH')).scrollToIndex(3000);
     await element(by.id('ScrollViewH')).scrollToIndex(-1);
@@ -88,7 +88,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('HText8'))).not.toBeVisible();
   });
 
-  it('should be able to scrollToIndex on vertical scrollviews', async () => {
+  it(':android: should be able to scrollToIndex on vertical scrollviews', async () => {
     // should ignore out of bounds children
     await element(by.id('ScrollView161')).scrollToIndex(3000);
     await element(by.id('ScrollView161')).scrollToIndex(-1);
