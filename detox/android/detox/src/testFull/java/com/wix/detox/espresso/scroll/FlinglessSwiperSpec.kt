@@ -150,19 +150,19 @@ object FlinglessSwiperSpec: Spek({
                     verify(motionEvents).obtainMoveEvent(any(), eq(expectedEventTime), any(), any())
                 }
 
-                it("should optimize by applying fling-speed limitation only in last 1% of events") {
-                    whenever(moveEvent.y).doReturn(SWIPER_VELOCITY * 99)
+                it("should optimize by applying fling-speed limitation only in last 25% of events") {
+                    whenever(moveEvent.y).doReturn(255f)
 
-                    with(uut(expectedMotions = 100)) {
+                    with(uut(expectedMotions = 4)) {
                         startAt(0f, 0f)
-
-                        for (i in 1..100) {
-                        moveTo(0f, SWIPER_VELOCITY * i)
-                        }
+                        moveTo(0f, 85f)
+                        moveTo(0f, 170f)
+                        moveTo(0f, 255f)
+                        moveTo(0f, 340f)
                     }
 
-                    verify(motionEvents, times(99)).obtainMoveEvent(any(), eq(swipeStartTime + 10L), any(), any())
-                    verify(motionEvents, times(1)).obtainMoveEvent(any(), eq(swipeStartTime + 1000L), any(), any())
+                    verify(motionEvents, times(3)).obtainMoveEvent(any(), eq(swipeStartTime + 10L), any(), any())
+                    verify(motionEvents, times(1)).obtainMoveEvent(any(), eq(swipeStartTime + 858), any(), any())
                 }
             }
         }

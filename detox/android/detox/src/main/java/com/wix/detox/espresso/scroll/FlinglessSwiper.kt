@@ -93,6 +93,6 @@ class FlinglessSwiper @JvmOverloads constructor(
     companion object {
 //        private const val LOG_TAG = "DetoxBatchedSwiper"
         private const val VELOCITY_SAFETY_RATIO = .99f
-        private const val FAST_EVENTS_RATIO = .99f
+        private const val FAST_EVENTS_RATIO = .75f
     }
 }
