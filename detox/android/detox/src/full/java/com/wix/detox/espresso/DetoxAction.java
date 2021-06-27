@@ -7,7 +7,7 @@ import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
-import com.wix.detox.espresso.action.ScrollToIndex;
+import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.action.common.MotionDir;
@@ -145,7 +145,7 @@ public class DetoxAction {
     }
 
     public static ViewAction scrollToIndex(int index) {
-        return new ScrollToIndex(index);
+        return new ScrollToIndexAction(index);
     }
 
     public static ViewAction takeViewScreenshot() {

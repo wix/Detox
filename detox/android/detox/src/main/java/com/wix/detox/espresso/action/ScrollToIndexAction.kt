@@ -16,7 +16,7 @@ import com.wix.detox.espresso.scroll.ScrollHelper
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class ScrollToIndex(private val index: Int) : ViewAction {
+class ScrollToIndexAction(private val index: Int) : ViewAction {
     override fun getConstraints(): Matcher<View> {
         return Matchers.anyOf(
             Matchers.allOf(
