@@ -96,11 +96,9 @@ describe('Actions - Scroll', () => {
 
     await element(by.id('ScrollView161')).scrollToIndex(11);
     await expect(element(by.text('Text12'))).toBeVisible();
-    await expect(element(by.text('Text1'))).not.toBeVisible();
 
     await element(by.id('ScrollView161')).scrollToIndex(0);
     await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text12'))).not.toBeVisible();
 
     await element(by.id('ScrollView161')).scrollToIndex(7);
     await expect(element(by.text('Text8'))).toBeVisible();
