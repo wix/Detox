@@ -1,5 +1,5 @@
 module.exports = {
-  extends: require.resolve('./base.json'),
+  extends: '../base.json',
   artifacts: {
     rootDir: 'someRootDir',
     plugins: {
