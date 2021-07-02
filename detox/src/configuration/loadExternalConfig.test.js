@@ -60,9 +60,9 @@ describe('loadExternalConfig', () => {
   it('should merge in the base config from "extends" property', async () => {
     const { filepath, config } = await loadExternalConfig({ cwd: DIR_EXTENDS });
 
-    expect(filepath).toBe(path.join(DIR_EXTENDS, '.detoxrc.js'));
+    expect(filepath).toBe(path.join(DIR_EXTENDS, '.detoxrc.json'));
     expect(config).toEqual({
-      extends: path.join(DIR_EXTENDS, 'middle.js'),
+      extends: './middle',
       artifacts: {
         rootDir: 'someRootDir',
         plugins: {
