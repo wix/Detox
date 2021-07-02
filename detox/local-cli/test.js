@@ -1,18 +1,21 @@
-const _ = require('lodash');
 const cp = require('child_process');
 const path = require('path');
-const unparse = require('yargs-unparser');
+
+const _ = require('lodash');
 const whichSync = require('which').sync;
-const splitArgv = require('./utils/splitArgv');
-const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
+const unparse = require('yargs-unparser');
+
+const { composeDetoxConfig } = require('../src/configuration');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
 const GenyDeviceRegistryFactory = require('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
-const { parse, quote } = require('../src/utils/shellQuote');
-const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
+const { parse, quote } = require('../src/utils/shellQuote');
+
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
+const splitArgv = require('./utils/splitArgv');
 const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./utils/warnings');
 
 module.exports.command = 'test';
@@ -21,7 +24,7 @@ module.exports.builder = require('./utils/testCommandArgs');
 module.exports.handler = async function test(argv) {
   const { detoxArgs, runnerArgs } = splitArgv.detox(argv);
   const { cliConfig, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: detoxArgs });
-  const [ platform ] = deviceConfig.type.split('.');
+  const [platform] = deviceConfig.type.split('.');
   const runner = deduceTestRunner(runnerConfig.testRunner);
 
   const prepareArgs = choosePrepareArgs({

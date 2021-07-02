@@ -9,6 +9,7 @@
     "plugin:node/recommended"
   ],
   "globals": {
+    "callCli": true,
     "fail": true
   },
   "parserOptions": {
@@ -53,7 +54,6 @@
       }
     ],
     "no-only-tests/no-only-tests": "error",
-    "no-undef": "warn",
     "no-unused-vars": [
       "error",
       {

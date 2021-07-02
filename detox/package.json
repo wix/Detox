@@ -22,7 +22,7 @@
     "build": ":",
     "build:android": "cd android && ./gradlew publish -Dversion=999.999.999 && cd ..",
     "build:android-native": "cd android && ./gradlew publish -Dversion=999.999.999 -DbuildFlavour=coreNative -DforceLocal=true && cd ..",
-    "lint": "eslint runners src scripts",
+    "lint": "eslint local-cli runners src scripts",
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",

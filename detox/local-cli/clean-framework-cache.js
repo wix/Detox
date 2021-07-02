@@ -1,6 +1,8 @@
-const fs = require('fs-extra');
-const path = require('path');
 const os = require('os');
+const path = require('path');
+
+const fs = require('fs-extra');
+
 const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'clean-framework-cache';
