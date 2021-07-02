@@ -1,3 +1,7 @@
+/**
+ * @detox-config-path ./detox-multiapps.config.json
+ */
+
 const _ = require('lodash');
 
 // Note: Android-only as, according to Leo, on iOS there's no added value here compared to

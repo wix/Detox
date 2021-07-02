@@ -162,7 +162,7 @@ const config = {
     },
     'android.manual': {
       device: 'android.emulator',
-      apps: ['android.debug', 'android.debug.withArgs'],
+      apps: ['android.debug'],
       artifacts: false,
       behavior: {
         launchApp: 'manual'
@@ -175,23 +175,23 @@ const config = {
     },
     'android.emu.debug': {
       device: 'android.emulator',
-      apps: ['android.debug', 'android.debug.withArgs'],
+      apps: ['android.debug'],
     },
     'android.emu.debug.fromSource': {
       device: 'android.emulator',
-      apps: ['android.fromSource', 'android.fromSource.withArgs'],
+      apps: ['android.fromSource'],
     },
     'android.emu.release': {
       device: 'android.emulator',
-      apps: ['android.release', 'android.release.withArgs'],
+      apps: ['android.release'],
     },
     'android.genycloud.release': {
       device: 'android.genycloud.uuid',
-      apps: ['android.release', 'android.release.withArgs'],
+      apps: ['android.release'],
     },
     'android.genycloud.release2': {
       device: 'android.genycloud.name',
-      apps: ['android.release', 'android.release.withArgs'],
+      apps: ['android.release'],
     },
     'stub': {
       type: './integration/stub',
