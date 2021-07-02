@@ -1,10 +1,11 @@
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const mochaTemplates = require('./templates/mocha');
-const jestTemplates = require('./templates/jest');
+
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const log = require('../src/utils/logger').child({ __filename });
+
+const jestTemplates = require('./templates/jest');
+const mochaTemplates = require('./templates/mocha');
 
 let exitCode = 0;
 
@@ -21,7 +22,7 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function init(argv) {
-  const {runner} = argv;
+  const { runner } = argv;
 
   switch (runner) {
     case 'mocha':
@@ -88,7 +89,7 @@ function createMochaFolderE2E() {
     testRunner: 'mocha',
     runnerConfig: 'e2e/.mocharc.json',
     ...createDefaultConfigurations(),
-  }, null, 2))
+  }, null, 2));
 }
 
 function createJestFolderE2E() {
@@ -102,7 +103,7 @@ function createJestFolderE2E() {
     testRunner: 'jest',
     runnerConfig: 'e2e/config.json',
     ...createDefaultConfigurations(),
-  }, null, 2))
+  }, null, 2));
 }
 
 function createDefaultConfigurations() {

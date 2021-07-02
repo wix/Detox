@@ -1,9 +1,12 @@
-const _ = require('lodash');
-const path = require('path');
 const Module = require('module');
+const path = require('path');
+
+const _ = require('lodash');
 const resolveFrom = require('resolve-from');
-const testCommandArgs = require('./testCommandArgs');
+
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+
+const testCommandArgs = require('./testCommandArgs');
 
 function extractKnownKeys(yargsBuilder) {
   return Object.entries(yargsBuilder).reduce(

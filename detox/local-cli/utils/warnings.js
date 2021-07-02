@@ -1,4 +1,3 @@
-const chalk = require('chalk');
 const log = require('../../src/utils/logger').child({ __filename });
 
 function coerceDeprecation(option) {

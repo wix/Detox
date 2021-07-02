@@ -3,6 +3,7 @@ jest.mock('../src/utils/logger');
 jest.mock('../src/configuration');
 
 const tempfile = require('tempfile');
+
 const DetoxConfigErrorComposer = require('../src/errors/DetoxConfigErrorComposer');
 
 describe('build', () => {

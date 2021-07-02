@@ -4,8 +4,8 @@ jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('../src/utils/lastFailedTests');
 
-const _ = require('lodash');
 const fs = require('fs-extra');
+const _ = require('lodash');
 const yargs = require('yargs');
 
 describe('CLI', () => {
@@ -101,61 +101,61 @@ describe('CLI', () => {
     });
 
     test.each([['-R'], ['--retries']])('%s <value> should be ignored', async (__retries) => {
-      cp.execSync.mockImplementation(() => { throw new Error });
+      cp.execSync.mockImplementation(() => { throw new Error; });
       await run(`${__retries} 1`).catch(_.noop);
 
-      expect(cliCall(0)).toBeDefined()
+      expect(cliCall(0)).toBeDefined();
       expect(cliCall(1)).toBe(null);
     });
 
     test.each([['-r'], ['--reuse']])('%s <value> should be passed as CLI argument', async (__reuse) => {
       await run(`${__reuse}`);
-      expect(cliCall().command).toContain('--reuse')
+      expect(cliCall().command).toContain('--reuse');
     });
 
     test.each([['-u'], ['--cleanup']])('%s <value> should be passed as CLI argument', async (__cleanup) => {
       await run(`${__cleanup}`);
-      expect(cliCall().command).toContain('--cleanup')
+      expect(cliCall().command).toContain('--cleanup');
     });
 
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should have default value = 3000', async (__debug_synchronization) => {
       await run(`${__debug_synchronization}`);
-      expect(cliCall().command).toContain('--debug-synchronization 3000')
+      expect(cliCall().command).toContain('--debug-synchronization 3000');
     });
 
     test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as 0 when given false', async (__debug_synchronization) => {
       await run(`${__debug_synchronization} false`);
-      expect(cliCall().command).toContain('--debug-synchronization 0')
+      expect(cliCall().command).toContain('--debug-synchronization 0');
     });
 
     test.each([['-a'], ['--artifacts-location']])('%s <value> should be passed as CLI argument', async (__artifacts_location) => {
       await run(`${__artifacts_location} someLocation`);
-      expect(cliCall().command).toContain('--artifacts-location someLocation')
+      expect(cliCall().command).toContain('--artifacts-location someLocation');
     });
 
     test('--record-logs <value> should be passed as CLI argument', async () => {
       await run(`--record-logs all`);
-      expect(cliCall().command).toContain('--record-logs all')
+      expect(cliCall().command).toContain('--record-logs all');
     });
 
     test('--take-screenshots <value> should be passed as CLI argument', async () => {
       await run(`--take-screenshots failing`);
-      expect(cliCall().command).toContain('--take-screenshots failing')
+      expect(cliCall().command).toContain('--take-screenshots failing');
     });
 
     test('--record-videos <value> should be passed as CLI argument', async () => {
       await run(`--record-videos failing`);
-      expect(cliCall().command).toContain('--record-videos failing')
+      expect(cliCall().command).toContain('--record-videos failing');
     });
 
     test('--capture-view-hierarchy <value> should be passed as CLI argument', async () => {
       await run(`--capture-view-hierarchy enabled`);
-      expect(cliCall().command).toContain('--capture-view-hierarchy enabled')
+      expect(cliCall().command).toContain('--capture-view-hierarchy enabled');
     });
 
     test('--record-performance <value> should be passed as CLI argument', async () => {
       await run(`--record-performance all`);
-      expect(cliCall().command).toContain('--record-performance all')
+      expect(cliCall().command).toContain('--record-performance all');
     });
 
     test('--record-timeline <value> should print "unsupported" warning', async () => {

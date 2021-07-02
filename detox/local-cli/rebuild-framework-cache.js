@@ -1,7 +1,9 @@
-const fs = require('fs-extra');
-const path = require('path');
 const cp = require('child_process');
 const os = require('os');
+const path = require('path');
+
+const fs = require('fs-extra');
+
 const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'rebuild-framework-cache';
@@ -12,7 +14,7 @@ module.exports.handler = async function buildFrameworkCache() {
     const frameworkPath = path.join(os.homedir(), '/Library/Detox');
     log.info(`Removing framework binaries from ${frameworkPath}`);
     await fs.remove(frameworkPath);
-    cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), {stdio: 'inherit'});
+    cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), { stdio: 'inherit' });
   } else {
     log.info(`The command is supported only on macOS, skipping the execution.`);
   }
