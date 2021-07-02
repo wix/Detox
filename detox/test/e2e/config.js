@@ -11,6 +11,7 @@ module.exports = {
     : ['<rootDir>/runners/jest/streamlineReporter', '<rootDir>/test/node_modules/jest-junit'],
   'verbose': true,
   'bail': false,
+  'maxWorkers': 1,
   'collectCoverageFrom': [
     'src/**/*.js',
     '!**/__test/**',
