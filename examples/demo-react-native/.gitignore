@@ -21,6 +21,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+Gemfile.lock
+/Pods
 
 # Android/IJ
 #

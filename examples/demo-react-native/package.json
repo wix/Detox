@@ -15,12 +15,13 @@
     "e2e:ios": "npm run build:ios && npm run test:ios",
     "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
     "e2e:android-release": "npm run build:android-release && npm run test:android-release",
-    "clean:android": "pushd android && ./gradlew clean && popd"
+    "clean:android": "pushd android && ./gradlew clean && popd",
+    "podInstall:ios": "cd ios && bundle exec pod install"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.12.0",
-    "react": "16.11.x",
-    "react-native": "0.62.x",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "react": "17.0.1",
+    "react-native": "0.64.1",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
