@@ -19,7 +19,7 @@
     "podInstall:ios": "cd ios && bundle exec pod install"
   },
   "dependencies": {
-    "@react-native-community/eslint-config": "^2.0.0",
+    "@react-native-community/async-storage": "^1.12.0",
     "react": "17.0.1",
     "react-native": "0.64.1",
     "tslib": "^2.0.3"
