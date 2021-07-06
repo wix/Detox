@@ -15,8 +15,8 @@
     "e2e:ios": "npm run build:ios && npm run test:ios",
     "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
     "e2e:android-release": "npm run build:android-release && npm run test:android-release",
-    "clean:android": "pushd android && ./gradlew clean && popd",
-    "podInstall:ios": "cd ios && bundle exec pod install"
+    "podInstall:ios": "cd ios && bundle exec pod install",
+    "clean:android": "pushd android && ./gradlew clean && popd"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
