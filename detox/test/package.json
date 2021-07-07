@@ -32,8 +32,8 @@
     "@react-native-community/checkbox": "^0.5.7",
     "@react-native-community/geolocation": "^2.0.2",
     "moment": "^2.24.0",
-    "react": "16.11.x",
-    "react-native": "0.62.x",
+    "react": "17.0.1",
+    "react-native": "0.64.1",
     "react-native-webview": "11.4.4"
   },
   "devDependencies": {
