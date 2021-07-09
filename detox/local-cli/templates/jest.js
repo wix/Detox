@@ -1,6 +1,7 @@
 const firstTestContent = require('./firstTestContent');
 
 const runnerConfig = `{
+    "maxWorkers": 1,
     "testEnvironment": "./environment",
     "testRunner": "jest-circus/runner",
     "testTimeout": 120000,

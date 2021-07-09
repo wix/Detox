@@ -56,6 +56,7 @@ Even if `detox init` passes well, and everything is green, we still recommend go
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
 | `testRunner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
 | `runnerConfig ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
+| `skipLegacyWorkersInjection ` | `false` or `true`            | *Optional.* This field tells `detox test` to stop appending `--maxWorkers 1` argument to `jest ...` command by default. Since `detox@18.19.0`, the control over `maxWorkers` count has been transfered to Jest config files, and that allows you to set any other value as a default `maxWorkers` count. |
 
 A typical Detox configuration in `.detoxrc.json` file looks like:
 
@@ -63,6 +64,7 @@ A typical Detox configuration in `.detoxrc.json` file looks like:
 {
   "testRunner": "jest",
   "runnerConfig": "e2e/config.json",
+  "skipLegacyWorkersInjection": true,
   "devices": {
     "simulator": {
       "type": "ios.simulator",
@@ -91,6 +93,7 @@ A typical Detox configuration in `.detoxrc.json` file looks like:
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
+| `maxWorkers `          | `1`                | *Recommended.* When being used with `skipLegacyWorkersInjection: true` in Detox config, it prevents overallocation of mobile devices in the light of Jest's default logic (`= cpusCount — 1`), when you do not pass any specific worker count. To override it, [use CLI arguments](APIRef.DetoxCLI.md#test), or see [Jest documentation](https://jestjs.io/docs/configuration#maxworkers-number--string) if you plan to change the default value in the config. |
 | `testEnvironment `     | `"./environment"`               | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testenvironment-string) for more details. |
 | `testRunner `          | `"jest-circus/runner"`                           | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testrunner-string) for more details.  |
 | `testTimeout `          | `120000`                           | *Required*. Overrides the default timeout (5 seconds), which is usually too short to complete a single end-to-end test. |
