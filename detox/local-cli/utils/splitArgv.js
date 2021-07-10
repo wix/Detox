@@ -1,11 +1,6 @@
-const Module = require('module');
-const path = require('path');
-
 const _ = require('lodash');
-const resolveFrom = require('resolve-from');
 
-const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
-
+const { resolveJestCliArgs } = require('./jestInternals');
 const testCommandArgs = require('./testCommandArgs');
 
 function extractKnownKeys(yargsBuilder) {
@@ -70,44 +65,6 @@ function getMochaBooleanArgs() {
     .flatMap(key => [key, ...(metadata.aliases[key] || [])])
     .thru(keys => new Set(keys))
     .value();
-}
-
-function resolveJestCliArgs() {
-  const cwd = process.cwd();
-  const getNodeModulePaths = (dir) => Module._nodeModulePaths(dir);
-
-  if (!resolveFrom.silent(cwd, 'jest')) {
-    throw new DetoxRuntimeError({
-      message: 'Could not resolve "jest" package from the current working directory.\n\n' +
-        'This means that Detox could not find it in any of the following locations:\n' +
-        getNodeModulePaths(cwd).map(p => `* ${p}`).join('\n'),
-      hint: `Try installing "jest": npm install jest --save-dev`,
-    });
-  }
-
-  const jestLocation = path.dirname(resolveFrom(cwd, 'jest/package.json'));
-
-  if (!resolveFrom.silent(jestLocation, 'jest-cli')) {
-    throw new DetoxRuntimeError({
-      message: 'Could not resolve "jest-cli" package from the "jest" npm package directory.\n\n' +
-        'This means that Detox could not find it in any of the following locations:\n' +
-        getNodeModulePaths(jestLocation).map(p => `* ${p}`).join('\n'),
-      hint: 'Consider reporting this as an issue at: https://github.com/wix/Detox/issues'
-    });
-  }
-
-  try {
-    const jestCliManifest = resolveFrom(jestLocation, 'jest-cli/package.json');
-    const argsJsFile = path.join(path.dirname(jestCliManifest), 'build/cli/args.js');
-
-    return require(argsJsFile);
-  } catch (e) {
-    throw new DetoxRuntimeError({
-      message: 'Could not parse CLI arguments supported by "jest-cli" package, see the error below.',
-      hint: 'Consider reporting this as an issue at: https://github.com/wix/Detox/issues',
-      debugInfo: e,
-    });
-  }
 }
 
 function splitDetoxArgv(argv) {

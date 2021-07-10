@@ -106,7 +106,6 @@ module.exports = {
     group: 'Execution:',
     describe: 'Specifies the number of workers the test runner should spawn. Requires a test runner with parallel execution support (e.g. Jest)',
     number: true,
-    default: 1,
   },
   'jest-report-specs': {
     group: 'Execution:',

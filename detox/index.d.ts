@@ -47,6 +47,12 @@ declare global {
              */
             testRunner?: string;
             /**
+             * Stops passing default `--maxWorkers 1` to the test runner,
+             * presuming that from now on you have that already configured
+             * in your test runner config as a default.
+             */
+            skipLegacyWorkersInjection?: boolean;
+            /**
              * @example runnerConfig: 'e2e/config.js'
              */
             runnerConfig?: string;
