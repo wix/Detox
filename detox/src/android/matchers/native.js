@@ -77,6 +77,13 @@ class FocusMatcher extends NativeMatcher {
   }
 }
 
+class SliderPositionMatcher extends NativeMatcher {
+  constructor(value) {
+    super();
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSliderPosition(value));
+  }
+}
+
 module.exports = {
   LabelMatcher,
   IdMatcher,
@@ -88,4 +95,5 @@ module.exports = {
   ValueMatcher,
   ToggleMatcher,
   FocusMatcher,
+  SliderPositionMatcher,
 };

@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
@@ -141,6 +142,10 @@ public class DetoxAction {
 
     public static ViewAction getAttributes() {
         return new GetAttributesAction();
+    }
+
+    public static ViewAction adjustSliderToPosition(final double newPosition) {
+        return new AdjustSliderToPositionAction(newPosition);
     }
 
     public static ViewAction takeViewScreenshot() {

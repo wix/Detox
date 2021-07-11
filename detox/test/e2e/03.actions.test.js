@@ -182,10 +182,14 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  it(':ios: should adjust slider and assert its value', async () => {
+  it('should adjust slider and assert its value', async () => {
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
     await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
-    await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
+
+    // on ios the accessibilityLabel is set to the value, but not on android
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
+    }
   });
 });
