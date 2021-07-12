@@ -150,6 +150,13 @@ describe('AndroidExpect', () => {
       await expectToThrow(() => e.waitFor('notAnElement').toBeVisible());
     });
 
+    it('toHaveSliderPosition', async () => {
+      await e.expect(e.element(e.by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
+      await e.expect(e.element(e.by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25, 0.1);
+      await e.expect(e.element(e.by.id('sliderWithASimpleID'))).not.toHaveSliderPosition(0.25);
+      await e.expect(e.element(e.by.id('sliderWithASimpleID'))).not.toHaveSliderPosition(0.25, 0.1);
+    });
+
     describe('element interactions', () => {
       it('should tap and long-press', async () => {
         await e.element(e.by.label('Tap Me')).tap();
@@ -237,6 +244,10 @@ describe('AndroidExpect', () => {
         mockExecutor.executeResult = Promise.resolve(JSON.stringify(execResult));
         const result = await e.element(e.by.id('UniqueId005')).getAttributes();
         expect(result).toEqual(execResult);
+      });
+
+      it('should adjust slider to position', async () => {
+        await e.element(e.by.id('sliderWithASimpleID')).adjustSliderToPosition(75);
       });
     });
 
