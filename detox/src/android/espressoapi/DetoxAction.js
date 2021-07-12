@@ -18,7 +18,7 @@ function sanitize_android_edge(edge) {
     default:
       throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
   }
-}
+} 
 function sanitize_android_direction(direction) {
   switch (direction) {
     case 'left':
@@ -32,7 +32,7 @@ function sanitize_android_direction(direction) {
     default:
       throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
   }
-}
+} 
 class DetoxAction {
   static multiClick(times) {
     if (typeof times !== "number") throw new Error("times should be a number, but got " + (times + (" (" + (typeof times + ")"))));

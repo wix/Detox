@@ -13,7 +13,7 @@ Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with eleme
 - [`.toHaveLabel()`](#tohavelabellabel)
 - [`.toHaveId()`](#tohaveidid)
 - [`.toHaveValue()`](#tohavevaluevalue)
-- [`.toHaveSliderPosition()`](#tohavesliderpositionnormalizedposition-tolerance--ios-only) **iOS only**
+- [`.toHaveSliderPosition()`](#tohavesliderpositionnormalizedposition-tolerance) 
 - [`.toHaveToggleValue()`](#tohavetogglevaluevalue)
 - [`.not`](#not)
 - [`.withTimeout()`](#withtimeouttimeout)
@@ -73,7 +73,7 @@ Expects the element to have the specified accessibility value. In React Native, 
 await expect(element(by.id('UniqueId533'))).toHaveValue('0');
 ```
 
-### `toHaveSliderPosition(normalizedPosition, tolerance)`  iOS only
+### `toHaveSliderPosition(normalizedPosition, tolerance)`
 
 Expects the slider element to have the specified normalized position ([0, 1]), within the provided tolerance (optional).
 

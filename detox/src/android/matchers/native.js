@@ -78,9 +78,9 @@ class FocusMatcher extends NativeMatcher {
 }
 
 class SliderPositionMatcher extends NativeMatcher {
-  constructor(value) {
+  constructor(value, tolerance) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSliderPosition(value));
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSliderPosition(value, tolerance));
   }
 }
 

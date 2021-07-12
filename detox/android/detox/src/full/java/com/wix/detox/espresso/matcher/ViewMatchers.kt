@@ -52,7 +52,7 @@ private class IsAssignableFromMatcher(private val clazz: Class<*>) : TypeSafeMat
     }
 }
 
-fun toHaveSliderPosition(expectedValue: Double): Matcher<View?> {
+fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> {
     return object : BoundedMatcher<View?, ReactSlider>(ReactSlider::class.java) {
         override fun describeTo(description: Description) {
             description.appendText("expected: $expectedValue")
@@ -65,7 +65,13 @@ fun toHaveSliderPosition(expectedValue: Double): Matcher<View?> {
                 val realProgress = slider.toRealProgress(currentProgress)
                 val currentPctFactor = slider.max/currentProgress.toDouble()
                 val realTotal = realProgress * currentPctFactor
-                return realProgress/ realTotal == expectedValue
+                val actualValue = realProgress/ realTotal
+
+                if (tolerance > 0) {
+                    return Math.abs(actualValue - expectedValue) < tolerance
+                }
+
+                return actualValue == expectedValue
             }
 
             return false

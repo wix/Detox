@@ -930,9 +930,11 @@ declare global {
 
             /**
              * Expect Slider to have a position (0 - 1).
+             * Can have an optional tolerance to take into account rounding issues on ios
              * @example await expect(element(by.id('SliderId'))).toHavePosition(0.75);
+             * @example await expect(element(by.id('SliderId'))).toHavePosition(0.74, 0.1);
              */
-            toHaveSliderPosition(position: number): Promise<void>;
+            toHaveSliderPosition(position: number, tolerance?: number): Promise<void>;
         }
 
         interface WaitForFacade {

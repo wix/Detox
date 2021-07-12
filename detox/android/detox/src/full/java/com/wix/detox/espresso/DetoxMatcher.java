@@ -107,7 +107,7 @@ public class DetoxMatcher {
         return isFocused();
     }
 
-    public static Matcher<View> matcherForSliderPosition(double position) {
-        return toHaveSliderPosition(position);
+    public static Matcher<View> matcherForSliderPosition(double position, double tolerance) {
+        return toHaveSliderPosition(position, tolerance);
     }
 }
