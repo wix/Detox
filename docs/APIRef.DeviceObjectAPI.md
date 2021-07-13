@@ -358,8 +358,8 @@ Check out Detox’s [own test suite.](../detox/test/e2e/06.device-orientation.te
 
 Sets the simulator/emulator location to the given latitude and longitude.
 
-> On iOS `setLocation` is dependent on [`fbsimctl`](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl) which [is now deprecated](https://github.com/wix/Detox/issues/1371). If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
->
+> On iOS `setLocation` is dependent on [applesimutils@546785](https://github.com/wix/AppleSimulatorUtils/commit/5467857407da4653305af119b2486051664a4f97) or more recent, that has `--setLocation` support.
+> 
 > On Android `setLocation` will work with both Android Emulator (bundled with Android development tools) and Genymotion. The correct permissions must be set in your app manifest.
 
 ```js
