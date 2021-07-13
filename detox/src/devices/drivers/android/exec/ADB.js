@@ -27,6 +27,23 @@ class ADB {
     return { devices, stdout };
   }
 
+  async getState(deviceId) {
+    try {
+      const output = await this.adbCmd(deviceId, `get-state`, {
+        verbosity: 'low'
+      });
+
+      return output.stdout.trim();
+    } catch (e) {
+      const stderr = e.stderr || '';
+      if (stderr.includes('not found')) {
+        return 'none';
+      } else {
+        throw e;
+      }
+    }
+  }
+
   async unlockScreen(deviceId) {
     const {
       mWakefulness,
@@ -300,6 +317,10 @@ class ADB {
 
   async reverseRemove(deviceId, port) {
     return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+  }
+
+  async emuKill(deviceId) {
+    return this.adbCmd(deviceId, `emu kill`);
   }
 
   // TODO refactor the whole thing so as to make usage of BinaryExec -- similar to EmulatorExec
