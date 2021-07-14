@@ -19,5 +19,5 @@
     "semver": "5.x.x",
     "shell-utils": "1.x.x"
   },
-  "version": "18.18.2-smoke.0"
+  "version": "18.19.0"
 }

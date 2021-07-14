@@ -1,6 +1,6 @@
 {
   "name": "demo-react-native-jest",
-  "version": "18.18.2-smoke.0",
+  "version": "18.19.0",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
@@ -11,12 +11,11 @@
     "test:android-genycloud-release-ci": "detox test --configuration android.genycloud.release -l verbose --workers 2 --record-logs all --take-screenshots all"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.19",
-    "detox": "^18.18.2-smoke.0",
-    "jest": "^26.5.0",
-    "jest-circus": "^26.5.2",
+    "@types/jest": "^26.0.24",
+    "detox": "^18.19.0",
+    "jest": "^27.0.0",
     "sanitize-filename": "^1.6.1",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^27.0.0",
     "typescript": "^4.1.3"
   },
   "dependencies": {

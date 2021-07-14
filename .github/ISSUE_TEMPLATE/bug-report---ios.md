@@ -49,3 +49,7 @@ If applicable, add screenshots to help explain your problem.
 #### Device and verbose Detox logs
 
 - [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
+
+### Reproducible Demo
+In case of a bug or a crash please add an example forking from the [DetoxTemplate](https://github.com/wix-incubator/DetoxTemplate) (follow the guidelines there) which reproduce the issue and ready to clone.
+Add to the DetoxTemplate (After you fork it), the minimal things which required to reproduce the issue (3rd party libraries / e2e tests).

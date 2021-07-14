@@ -13,6 +13,7 @@ const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/last
 const log = require('../src/utils/logger').child({ __filename });
 const { parse, quote } = require('../src/utils/shellQuote');
 
+const { readJestConfig } = require('./utils/jestInternals');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
 const splitArgv = require('./utils/splitArgv');
@@ -33,7 +34,7 @@ module.exports.handler = async function test(argv) {
     detoxArgs,
   });
 
-  const forwardedArgs = prepareArgs({
+  const forwardedArgs = await prepareArgs({
     cliConfig,
     runnerConfig,
     runnerArgs,
@@ -75,7 +76,7 @@ module.exports.middlewares = [
 
 function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
-    if (hasMultipleWorkers(cliConfig)) {
+    if (cliConfig.workers) {
       log.warn('Cannot use -w, --workers. Parallel test execution is only supported with Jest');
     }
 
@@ -155,19 +156,25 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   };
 }
 
-function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
+async function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
 
-  return {
-    argv: {
-      color: !cliConfig.noColor && undefined,
-      config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
-      testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
-      maxWorkers: cliConfig.workers,
+  const argv = _.omitBy({
+    color: !cliConfig.noColor && undefined,
+    config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
+    testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
+    maxWorkers: cliConfig.workers || (runnerConfig.skipLegacyWorkersInjection ? undefined : 1),
 
-      ...passthrough,
-    },
+    ...passthrough,
+  }, _.isUndefined);
+
+  const hasMultipleWorkers = runnerConfig.skipLegacyWorkersInjection
+    ? (await readJestConfig(argv)).globalConfig.maxWorkers > 1
+    : cliConfig.workers > 1;
+
+  return {
+    argv,
 
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
@@ -183,13 +190,13 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
       DETOX_GPU: cliConfig.gpu,
       DETOX_HEADLESS: cliConfig.headless,
       DETOX_LOGLEVEL: cliConfig.loglevel,
-      DETOX_READ_ONLY_EMU: platform === 'android' ? hasMultipleWorkers(cliConfig) : undefined,
+      DETOX_READ_ONLY_EMU: platform === 'android' ? hasMultipleWorkers : undefined,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
       DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,
       DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
       DETOX_REPORT_SPECS: _.isUndefined(cliConfig.jestReportSpecs)
-        ? !hasMultipleWorkers(cliConfig)
+        ? !hasMultipleWorkers
         : `${cliConfig.jestReportSpecs}` === 'true',
       DETOX_REUSE: cliConfig.reuse,
       DETOX_START_TIMESTAMP: Date.now(),
@@ -231,10 +238,6 @@ function launchTestRunner({ argv, env, specs }) {
       .tap(prependNodeModulesBinToPATH)
       .value()
   });
-}
-
-function hasMultipleWorkers(cliConfig) {
-  return cliConfig.workers != 1;
 }
 
 async function runTestRunnerWithRetries(forwardedArgs, { keepLockFile, platform, retries }) {

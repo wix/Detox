@@ -306,6 +306,23 @@ describe('CLI', () => {
       });
     });
 
+    describe('given skipLegacyWorkersInjection: true', () => {
+      describe.each([
+        ['ios.simulator'],
+        ['android.emulator'],
+      ])('for %s', (configurationType) => {
+        it('should omit --maxWorkers CLI arg', async () => {
+          singleConfig().type = configurationType;
+          detoxConfig.skipLegacyWorkersInjection = true;
+          detoxConfig.runnerConfig = 'package.json';
+
+          await run();
+
+          expect(cliCall().command).not.toMatch(/--maxWorkers/);
+        });
+      });
+    });
+
     test.each([['-c'], ['--configuration']])(
       '%s <configuration> should provide inverted --testNamePattern that configuration (jest)',
       async (__configuration) => {
@@ -447,49 +464,63 @@ describe('CLI', () => {
       expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_CAPTURE_VIEW_HIERARCHY: 'enabled' }));
     });
 
-    test.each([['-w'], ['--workers']])('%s <value> should be passed as CLI argument', async (__workers) => {
-      await run(`${__workers} 2`);
-      expect(cliCall().command).toContain('--maxWorkers 2');
-    });
+    describe.each([
+      [false],
+      [true],
+    ])('when skipLegacyWorkersInjection is %j', (skipLegacyWorkersInjection) => {
+      beforeEach(() => {
+        Object.assign(detoxConfig, {
+          skipLegacyWorkersInjection,
+          runnerConfig: tempfile('.json', JSON.stringify({
+            maxWorkers: 1,
+          })),
+        });
+      });
 
-    test.each([['-w'], ['--workers']])('%s <value> should be replaced with --maxWorkers <value>', async (__workers) => {
-      await run(`${__workers} 2 --maxWorkers 3`);
+      test.each([['-w'], ['--workers']])('%s <value> should be passed as CLI argument', async (__workers) => {
+        await run(`${__workers} 2`);
+        expect(cliCall().command).toContain('--maxWorkers 2');
+      });
 
-      const { command } = cliCall();
-      expect(command).toContain('--maxWorkers 3');
-      expect(command).not.toContain('--maxWorkers 2');
-    });
+      test.each([['-w'], ['--workers']])('%s <value> should be replaced with --maxWorkers <value>', async (__workers) => {
+        await run(`${__workers} 2 --maxWorkers 3`);
 
-    test.each([['-w'], ['--workers']])('%s <value> can be overriden by a later value', async (__workers) => {
-      await run(`${__workers} 2 ${__workers} 3`);
+        const { command } = cliCall();
+        expect(command).toContain('--maxWorkers 3');
+        expect(command).not.toContain('--maxWorkers 2');
+      });
 
-      const { command } = cliCall();
-      expect(command).toContain('--maxWorkers 3');
-      expect(command).not.toContain('--maxWorkers 2');
-    });
+      test.each([['-w'], ['--workers']])('%s <value> can be overriden by a later value', async (__workers) => {
+        await run(`${__workers} 2 ${__workers} 3`);
 
-    test.each([['-w'], ['--workers']])('%s <value> should not warn anything for iOS', async (__workers) => {
-      singleConfig().type = 'ios.simulator';
-      await run(`${__workers} 2`);
-      expect(logger.warn).not.toHaveBeenCalled();
-    });
+        const { command } = cliCall();
+        expect(command).toContain('--maxWorkers 3');
+        expect(command).not.toContain('--maxWorkers 2');
+      });
 
-    test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for iOS', async (__workers) => {
-      singleConfig().type = 'ios.simulator';
-      await run(`${__workers} 2`);
-      expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
-    });
+      test.each([['-w'], ['--workers']])('%s <value> should not warn anything for iOS', async (__workers) => {
+        singleConfig().type = 'ios.simulator';
+        await run(`${__workers} 2`);
+        expect(logger.warn).not.toHaveBeenCalled();
+      });
 
-    test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
-      singleConfig().type = 'android.emulator';
-      await run(`${__workers} 1`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: false }));
-    });
+      test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for iOS', async (__workers) => {
+        singleConfig().type = 'ios.simulator';
+        await run(`${__workers} 2`);
+        expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
+      });
 
-    test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there are multiple workers', async (__workers) => {
-      singleConfig().type = 'android.emulator';
-      await run(`${__workers} 2`);
-      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: true }));
+      test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
+        singleConfig().type = 'android.emulator';
+        await run(`${__workers} 1`);
+        expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: false }));
+      });
+
+      test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there are multiple workers', async (__workers) => {
+        singleConfig().type = 'android.emulator';
+        await run(`${__workers} 2`);
+        expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: true }));
+      });
     });
 
     test('should omit --testNamePattern for custom platforms', async () => {
