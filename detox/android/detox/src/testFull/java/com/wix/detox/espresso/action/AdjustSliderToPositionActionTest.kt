@@ -55,12 +55,4 @@ class AdjustSliderToPositionActionTest {
         verify(mockReactSliderManager, times(1)).updateProperties(any(), any())
         assertThat(mockReactSlider.progress).isEqualTo(750)
     }
-
-    @Test
-    fun `should ignore illegal values`() {
-        uut = AdjustSliderToPositionAction(Double.NaN)
-        uut.perform(null, mockReactSlider)
-        uut = AdjustSliderToPositionAction(-100.0)
-        uut.perform(null, mockReactSlider)
-    }
 }
