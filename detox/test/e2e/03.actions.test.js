@@ -183,7 +183,12 @@ describe('Actions', () => {
   });
 
   it('should adjust slider and assert its value', async () => {
+    // ignore illegal values
+    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(NaN);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
+    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(-0.5);
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
+
     await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.74, 0.1);

@@ -1,7 +1,5 @@
 package com.wix.detox.espresso.action
 
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
@@ -18,36 +16,35 @@ class AdjustSliderToPositionAction(private val newPosition: Double) : ViewAction
         return Matchers.allOf(
             ViewMatchers.isAssignableFrom(
                 ReactSlider::class.java
-            ), ViewMatchers.isDisplayed()
+            ),
+            getIsDisplayed()
         )
     }
 
-    override fun getDescription(): String? {
+    override fun getDescription(): String {
         return "adjustSliderToPosition"
     }
 
-    fun buildStyles(vararg keysAndValues: Any): ReactStylesDiffMap? {
+    private fun buildStyles(vararg keysAndValues: Any): ReactStylesDiffMap {
         return ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
     }
 
     override fun perform(uiController: UiController?, view: View) {
-        if (view is ReactSlider) {
-            val mManager = ReactSliderManager()
+        if (view is ReactSlider && newPosition > 0) {
             val realProgress = view.toRealProgress(view.progress)
             val currentPctFactor = view.max/view.progress.toDouble()
             val realTotal = realProgress * currentPctFactor
             val newProgressValue = newPosition * realTotal
-            val newContentDescription = (newPosition * 100).toString() +"%"
+            val mManager = getReactSliderManager()
             mManager.updateProperties(view, buildStyles("value", newProgressValue))
-
-            val mHandler = Handler(Looper.getMainLooper())
-            val runnable = {
-                view.setContentDescription(newContentDescription)
-            }
-
-            mHandler.post (
-                runnable
-            )
         }
+    }
+
+    fun getReactSliderManager(): ReactSliderManager {
+        return ReactSliderManager()
+    }
+
+    fun getIsDisplayed(): Matcher<View?> {
+        return ViewMatchers.isDisplayed()
     }
 }
