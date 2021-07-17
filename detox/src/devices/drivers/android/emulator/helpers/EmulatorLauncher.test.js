@@ -84,7 +84,7 @@ describe('Emulator launcher', () => {
       });
 
       it('should keep polling the emulator status until it is "none"', async () => {
-        expect(adb.getState).toHaveBeenCalledTimes(6);
+        expect(adb.getState).toHaveBeenCalledTimes(5);
       });
 
       it('should not emit shutdownDevice prematurely', async () => {

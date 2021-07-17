@@ -36,9 +36,9 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
     await this._notifyPreShutdown(adbName);
     await this._adb.emuKill(adbName);
     await retry({
-      retries: 6,
-      interval: 500,
-      backoff: 'none',
+      retries: 5,
+      interval: 1000,
+      initialSleep: 2000,
     }, async () => {
       if (await this._adb.getState(adbName) !== 'none') {
         throw new DetoxRuntimeError({
