@@ -1,7 +1,5 @@
 const adbName = 'mock_adb_name-1117';
 
-jest.setTimeout(15000);
-
 describe('Emulator launcher', () => {
   let retry;
   let eventEmitter;
