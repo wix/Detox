@@ -246,9 +246,23 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    await this._execAppleSimUtils({
-      args: `--byId ${udid} --setLocation "[${lat}, ${lon}]"`,
-    });
+    try {
+      await this._execAppleSimUtils({
+        args: `--byId ${udid} --setLocation "[${lat}, ${lon}]"`,
+      });
+    } catch (e) {
+      const stderr = e && e.stderr || '';
+
+      if (stderr.match(/Unknown command line option.*--setLocation/)) {
+        throw new DetoxRuntimeError({
+          message: `Failed to set the location (${lat}, ${lon}) on the device ${udid}.`
+          + '\nYour current "applesimutils" version needs to be upgraded to 0.9.3 or higher.',
+          hint: 'Try running:\n  brew update && brew upgrade applesimutils',
+        });
+      }
+
+      throw e;
+    }
   }
 
   async resetContentAndSettings(udid) {
@@ -281,7 +295,26 @@ class AppleSimUtils {
 
   async _execAppleSimUtils(options) {
     const bin = `applesimutils`;
-    return await exec.execWithRetriesAndLogs(bin, options);
+    try {
+      return await exec.execWithRetriesAndLogs(bin, options);
+    } catch (e) {
+      const stderr = e && e.stderr || '';
+
+      if (stderr.match(/applesimutils: command not found/m)) {
+        throw new DetoxRuntimeError({
+          message: `Detox failed to find "applesimutils" installed on the computer.\n`
+          + 'It is impossible to run tests on iOS simulators without this utility.',
+          hint: [
+            'To install "applesimutils", run:',
+            '  brew tap wix/brew',
+            '  brew install applesimutils',
+          ].join('\n'),
+        });
+      }
+
+      throw e;
+
+    }
   }
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
