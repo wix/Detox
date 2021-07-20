@@ -94,7 +94,7 @@ class Detox {
       this._client = null;
     }
 
-    if (this.device) {
+    if (this.device && this.device.id) {
       await this.device._cleanup();
 
       if (this._behaviorConfig.cleanup.shutdownDevice) {

@@ -28,7 +28,11 @@ class EmulatorDriver extends AndroidDriver {
     this._deviceRegistry = DeviceRegistry.forAndroid();
 
     const emulatorExec = new EmulatorExec();
-    this._emulatorLauncher = new EmulatorLauncher(emulatorExec, this.emitter);
+    this._emulatorLauncher = new EmulatorLauncher({
+      adb: this.adb,
+      emulatorExec,
+      eventEmitter: this.emitter,
+    });
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
 
     const avdsResolver = new AVDsResolver(emulatorExec);
@@ -82,6 +86,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async shutdown(deviceId) {
+    await this.instrumentation.setTerminationFn(null);
     await this._emulatorLauncher.shutdown(deviceId);
   }
 
