@@ -8,7 +8,9 @@ import com.facebook.react.bridge.ReactContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -32,6 +34,7 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
 
     private ResourceCallback callback;
     private Dispatcher dispatcher;
+    private final Set<String> busyResources = new HashSet<>();
 
     private static final ArrayList<Pattern> blacklist = new ArrayList<>();
 
@@ -69,12 +72,19 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
     @NotNull
     @Override
     public String getDescription() {
-        return "In-flight network activity";
+        String description = "In-flight network activity";
+
+        if (!busyResources.isEmpty()) {
+            description += "\nDetails:\n\t - " + busyResources.toString();
+        }
+
+        return description;
     }
 
     @Override
     protected boolean checkIdle() {
         boolean idle = true;
+        busyResources.clear();
         List<Call> calls = dispatcher.runningCalls();
         for (Call call : calls) {
             idle = false;
@@ -86,7 +96,7 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
                 }
             }
             if (!idle) {
-                break;
+                busyResources.add(call.request().url().toString());
             }
         }
         if (!idle) {
