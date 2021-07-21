@@ -122,7 +122,8 @@
       "src/utils/environment.js",
       "src/utils/logger.js",
       "src/utils/pipeCommands.js",
-      "src/utils/pressAnyKey.js"
+      "src/utils/pressAnyKey.js",
+      "src/utils/shellUtils.js"
     ],
     "resetMocks": true,
     "resetModules": true,
