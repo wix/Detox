@@ -233,12 +233,16 @@ public class Reflect {
         try {
             Field field = field0(name);
             if ((field.getModifiers() & Modifier.FINAL) == Modifier.FINAL) {
+                try {
 // Note (d4vidi): this is an important change, compared to the original implementation!!!
 // See here: https://stackoverflow.com/a/64378131/453052
 //                Field modifiersField = Field.class.getDeclaredField("modifiers");
-                Field modifiersField = Field.class.getDeclaredField("accessFlags");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                    Field modifiersField = Field.class.getDeclaredField("accessFlags");
+                    modifiersField.setAccessible(true);
+                    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                }
+                // Android < 23 doesn't have the accessFlags field
+                catch (NoSuchFieldException ignore) {}
             }
             field.set(object, unwrap(value));
             return this;
