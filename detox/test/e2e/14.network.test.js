@@ -6,6 +6,11 @@ describe('Network Synchronization', () => {
   beforeAll(async () => {
     mockServer.init();
     await device.reverseTcpPort(mockServer.port);
+
+    await device.launchApp({
+      newInstance: true,
+      launchArgs: { detoxURLBlacklistRegex: ' http://192.168.1.253:19001/onchange, https://e.crashlytics.com/spi/v2/events, .*localhost.* ' },
+    });
   });
 
   afterAll(async () => {
