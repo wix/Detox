@@ -198,14 +198,23 @@ describe('Detox', () => {
           type: 'ios.app',
           binaryPath: 'path/to/app',
         };
+
+        detoxConfig.appsConfig['extraAppWithAnotherArguments'] = {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          launchArgs: {
+            overrideArg: 2,
+          },
+        };
       });
 
       beforeEach(init);
 
-      it('should unselect the selected device app', () => {
+      it('should install only apps with unique binary paths, and deselect app on device', () => {
+        expect(detox.device.uninstallApp).toHaveBeenCalledTimes(2);
         expect(detox.device.installApp).toHaveBeenCalledTimes(2);
-        expect(detox.device.selectApp).toHaveBeenCalledTimes(3);
 
+        expect(detox.device.selectApp).toHaveBeenCalledTimes(3);
         expect(detox.device.selectApp.mock.calls[0]).toEqual(['default']);
         expect(detox.device.selectApp.mock.calls[1]).toEqual(['extraApp']);
         expect(detox.device.selectApp.mock.calls[2]).toEqual([null]);
