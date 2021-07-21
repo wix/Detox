@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/helpers.sh"
+
+if [ -z "$DETOX_UNHAPPY_GMSAAS" ]; then
+  printf "\$DETOX_UNHAPPY_GMSAAS is not set, exiting...\n"
+  exit 2
+fi
+
+if has_arg "start" "$@"
+then
+  simulate_error
+else
+  $DETOX_UNHAPPY_GMSAAS $@
+fi
+
