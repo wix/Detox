@@ -1,11 +1,17 @@
-# Failing Tests
+# Dealing With Problems With Running Tests
+
+This page is about issues related to executing your Detox tests, typically triggerred when running `detox test` (and not `detox build`, for example).
+
+## Table of Content
 
 * [Trace Mode](#trace-mode)
+* [Tests execution hangs](#tests-execution-hangs)
+* [No Simulators Found (iOS)](#no-simulators-found-ios)
 * [Syntax Error: Unexpected Token](#syntax-error-unexpected-token)
 * [Can't Find My Component Even Though I Added a `testID` to Its Props](#cant-find-my-component-even-though-i-added-a-testid-to-its-props)
 * [Test Tries to Find My Component Before It's Created](#test-tries-to-find-my-component-before-its-created)
 * [Can't synchronize the test with my app](#cant-synchronize-the-test-with-my-app)
-* [`detox build` or `detox test` are Failing to Run](#detox-build-or-detox-test-are-failing-to-run)
+* [Unknown option "configuration" (Mocha.js)](#unknown-option-configuration-mocha.js)
 * [An Element is Not Visible](#an-element-is-not-visible)
 * [Debug View Hierarchy](#debug-view-hierarchy)
 * [Compare to a Working Setup](#compare-to-a-working-setup)
@@ -24,6 +30,40 @@ detox test --loglevel trace
 ### Enable debugging of synchronization issues
 
 See [here](https://github.com/wix/detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
+
+### No simulators found (iOS)
+
+In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by Xcode itself. You can list all available simulators using simctl by typing `xcrun simctl list` in terminal.
+
+If you're missing a simulator, make sure Xcode is installed and use it to download the simulator. Take a look at the Preferences screen, some screenshots can be seen [here](http://stackoverflow.com/questions/33738113/how-to-install-ios-9-1-simulator-in-xcode-version-7-1-1-7b1005).
+
+Once the desired simulator is installed and returned by `xcrun simctl list`, double check its name in the list and make sure this name is found in the `detox` configuration entry in `package.json`. The reference for the configuration options is available [here](APIRef.Configuration.md).
+
+### Tests execution hangs
+
+**Issue:** A while after running Detox, you get a message about failure to connect to the running app, in the logs:
+
+```
+Detox can't seem to connect to the test app(s)!
+```
+
+This can be a result of various reasons. It is generally up to you to debug and find the root cause. In any case, below are the common ones.
+
+#### If you do not see your app running on the device:
+
+* You might have forgotten to run `device.launchApp()` in the beginning of your test.
+* The app might have crashed before Detox has had a chance to connect to it. To get the crash details, you can run Detox tests with `--record-logs all` CLI option and then inspect the device logs in the artifacts folder.
+* **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](#Introduction.Android.md#5-create-a-detox-test-class) in the setup guide.
+
+#### If you _do_ see your app running on the device:
+
+* **On Android with SDK≥28**, the app's connection to the Detox test server is blocked due to clear-traffic blockage (as reported in issue [#1450](https://github.com/wix/Detox/issues/1450)).
+  The main step for getting this fixed is to revisit the [associated section](Introduction.Android.md#6-enable-clear-text-unencrypted-traffic-for-detox) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
+* If you've applied the above suggestion but the app fails to connect to the Detox test server, nonetheless: Refer to the device's logs, which should contain messages about failed connection attempts (get them using the `--record-logs all` argument)
+* The app could be running without Detox native code injected. In this case, first, make sure you're not trying to run in manual launch mode (where this behavior is valid). If so, examine the logs from the device (get them using the `--record-logs all` argument). If you see a crash related to Detox's native code, you are welcome to report it on our GitHub tracker.
+* If you are in fact debugging your native code integration with Detox, these guides may prove helpful:
+     * https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInAndroidStudio.md
+     * https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInXcode.md
 
 ### Syntax Error: Unexpected Token
 
@@ -118,28 +158,10 @@ await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 
 If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](/docs/Troubleshooting.Synchronization.md).
 
-### `detox build` or `detox test` are Failing to Run
+### Unknown option "configuration" (Mocha.js)
 
-**Issue:** Trying to run `detox build` or `detox test` throws the following error:
 
-```
-Error: Cannot determine which configuration to use. use --configuration to choose one of the following:
-                  ios.sim.release,ios.sim.debug
-  at Detox.initConfiguration (/Users/rotemm/git/github/detox/detox/src/Detox.js:73:13)
-  at Detox.init (/Users/rotemm/git/github/detox/detox/src/Detox.js:49:16)
-  at process._tickCallback (internal/process/next_tick.js:103:7)
-```
-
-**Solution:** You have configured more than one configuration in your package.json and detox cannot understand which one of them you want to run. The error will print a list of available configurations, choose one by using `--configuration` option.
-
-Run your commands with one of these configurations, for example:
-
-* `detox build --configuration ios.sim.debug`
-* `detox test --configuration ios.sim.debug`
-
-<hr>
-
-**Issue:** In an attempt to run `detox test` the following error is thrown:
+In an attempt to run `detox test`, the following error is thrown:
 
 ```
 detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --configuration ios.sim.release --grep :android: --invert
@@ -147,26 +169,16 @@ detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --con
   error: unknown option `--configuration'
 ```
 
-**Solution:** Upgrade to `detox@^12.4.0` and `mocha@^6.1.3`.
-That weird error has been spotted in older versions of `mocha` (including 5.2.0)
-and fixed since 6.0.0. In fact, it conceals the genuine error:
+**Solution:** Upgrade to `detox@^12.4.0` or newer (latest, recommended), and `mocha@^6.1.3`.
+That weird error has been spotted in older versions of `mocha` (including `v5.2.0`) and was fixed in `v6.0.0`. In fact, it conceals the genuine error:
 
 ```
 Error: No test files found
 ```
 
-If the error appeared after running a short command like `detox test`,
-please try out `detox test e2e` (in other words, append the path to your
-end-to-end tests folder) - and if that fixes the error, then you deal the
-bug in the question and upgrading `detox` and `mocha` should help.
+If the error appeared after running a short command like `detox test`, please try out `detox test e2e/` (in other words, append the path to your end-to-end tests folder) - and if that fixes the error, then you deal the bug in the question and upgrading `detox` and `mocha` should help.
 
-Here's why you need to upgrade to `detox@12.4.0`.  In `12.1.0` there was a
-premature deprecation of `"specs"` property in detox section of `package.json`.
-The deprecation was revoked in `detox@12.4.0`, and since then `"specs"` property
-acts as a fallback if a test folder has not been specified explicitly.
-
-After you upgrade, you can configure the default path to your end-to-end tests folder
-in `package.json` (no deprecation warnings starting from `12.4.0`), as shown below:
+After you upgrade, you can configure the default path to your end-to-end tests folder in `package.json`:
 
 ```diff
  {
@@ -177,12 +189,11 @@ in `package.json` (no deprecation warnings starting from `12.4.0`), as shown bel
  }
 ```
 
-Please mind that if your e2e tests are located at the default path (`e2e`),
-then you don't need to add `"specs"` property explicitly to `package.json`.
+Please mind that if your e2e tests are located at the default path (`e2e`), then you don't need to add `"specs"` property explicitly to `package.json`.
 
 ### An Element is Not Visible
 
-On iOS, you may run in a situation, when one of the interactions (tap, scroll, etc.) on an element fails with an error like:
+**On iOS**, you may run in a situation, when one of the interactions (tap, scroll, etc.) on an element fails with an error like:
 
 ```
 Test Failed: View "<RCTScrollView: 0x7f8d32296d70>" is not visible: view does not pass visibility threshold (0% visible of 75% required)

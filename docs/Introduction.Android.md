@@ -186,10 +186,12 @@ _Note: most guides advise of defining a global `kotlinVersion` constant - as in 
 
 ***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
 
-
 ### 5. Create a Detox-Test Class
 
-Add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill as in [the detox example app for RN](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java). **Don't forget to change the package name to your project's**.
+Detox requires a dummy implementation of a single Android-native test.
+
+1. Add a new file to your project, under this path and name: `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java`. **Double-check check that the path is correct!**
+2. Copy & paste the content of the equivalent file from [the detox example app for RN](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java), into it. **Don't forget to change the package name to your project's package name!**
 
 
 ### 6. Enable clear-text (unencrypted) traffic for Detox
@@ -388,119 +390,5 @@ Please be aware that the `minSdkVersion` needs to be at least 18.
 
 ## Troubleshooting
 
-### Problem: `Duplicate files copied in ...`
+Please refer to our index of [troubleshooting guides](Troubleshooting.md).
 
-If you get an error like this:
-
-```sh
-Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
-> com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK META-INF/LICENSE
-```
-
-You need to add this to the `android` section of your `android/app/build.gradle`:
-
-```groovy
-packagingOptions {
-    exclude 'META-INF/LICENSE'
-}
-```
-
-
-
-### Problem: Kotlin stdlib version conflicts
-
-The problems and resolutions here are different if you're using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is the default, or compiling it yourself.
-
-#### Resolving for a precompiled dependency (`.aar`)
-
-Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies), Detox assumes the most recent one, namely `kotlin-stdlib-jdk8`. If your Android build fails due to conflicts with implementations coming from other dependencies or even your own app, consider adding an exclusion to either the "other" dependencies or detox itself, for example:
-
-```diff
-dependencies {
--    androidTestImplementation('com.wix:detox:+')
-+    androidTestImplementation('com.wix:detox:+') { 
-+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-+    }
-}
-```
-
-Detox should work with `kotlin-stdlib-jdk7`, as well.
-
-A typical error output formed by `Gradle` in this case is as provided, for example, in [#1380](https://github.com/wix/Detox/issues/1380):
-
-```
-Could not determine the dependencies of task ':detox:compileDebugAidl'.
-> Could not resolve all task dependencies for configuration ':detox:debugCompileClasspath'.
-   > Could not resolve org.jetbrains.kotlin:kotlin-stdlib:1.3.0.
-     Required by:
-         project :detox
-      > Cannot find a version of 'org.jetbrains.kotlin:kotlin-stdlib' that satisfies the version constraints:
-           Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30'
-           Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okio:okio:2.2.2' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.2.60'
-           Dependency path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.0'
-           Dependency path 'OurApp:detox:unspecified' --> 'com.facebook.react:react-native:0.59.5' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30'
-           Dependency path 'OurApp:detox:unspecified' --> 'com.facebook.react:react-native:0.59.5' --> 'com.squareup.okio:okio:2.2.2' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.2.60'
-           Dependency path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0' --> 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.0'
-           Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
-           Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
-
-   > Could not resolve org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0.
-     Required by:
-         project :detox
-      > Cannot find a version of 'org.jetbrains.kotlin:kotlin-stdlib-common' that satisfies the version constraints:
-           Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30' --> 'org.jetbrains.kotlin:kotlin-stdlib-common:1.3.30'
-           Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-common' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
-```
-(i.e. the project indirectly depends on different versions of `kotlin-stdlib`, such as `1.3.0`, `1.3.30`, `1.2.60`)
-
-#### Resolving for a compiling subproject
-
-Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
-
-For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
-
-```groovy
-buildscript {
-    // ...
-    ext.detoxKotlinVersion = '1.3.0' // Detox' default is 1.2.0
-    ext.detoxKotlinStdlib = 'kotlin-stdlib-jdk7' // Detox' default is kotlin-stdlib-jdk8
-}
-```
-
-
-
-### Problem: The app loads but tests fail to start in SDK >= 28
-
-As reported in issue [#1450](https://github.com/wix/Detox/issues/1450), sometimes the application under test would properly launch on an emulator/device when running Detox, but the test runner will hang and will not start running the actual tests.
-
-More specifically, when this happens:
-
-1. Detox and the tests runner launch successfully, alongside the app being run (unless `launchApp: false` has been passed to `detox.init()`), but the first test simply hangs forever (as explained).
-2. Eventually, the test runner would time-out.
-3. The last reported Detox-logs before time-out would indicate the device failing to connect to the Detox tester on the host. For example:
-
-```sh
-detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=app not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
-```
-
-* The main step for getting this fixed is to **revisit [step 6](#6-enable-clear-text-unencrypted-traffic-for-detox) in this guide**, which discusses network-security.
-
-* Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
-
-### Problem: Detox can't find the test APK
-
-You may see an error message like this: `detox[53027] ERROR: Error: 'android/app/build/outputs/androidTest/x86_64/debug/app-x86_64-debug-androidTest.apk' could not be found, did you run './gradlew assembleAndroidTest'?`
-
-You can use `testBinaryPath` in your app configuration to override `binaryPath` and point directly at your test APK, e.g.:
-
-```json
-{
-  "apps": {
-    "android.app.withCustomTestBinaryPath": {
-      "type": "android.apk",
-      "binaryPath": "path/to/app.apk",
-      "testBinaryPath": "path/to/app-androidTest.apk",
-    }
-  }
-}
-```

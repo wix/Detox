@@ -30,10 +30,7 @@
 
 ### Troubleshooting
 
-- [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
-- [Troubleshooting Failing Tests](Troubleshooting.RunningTests.md)
-- [Troubleshooting Synchronization](Troubleshooting.Synchronization.md)
-- [Dealing With Flakiness in Tests](Troubleshooting.Flakiness.md)
+- [Troubleshooting ToC](Troubleshooting.md)
 
 ### Guides
 
@@ -54,4 +51,3 @@
 ### Contributing to Detox
 
 - [Detox Contribution Guide](Guide.Contributing.md)
-- [Android Support - Current Status](More.AndroidSupportStatus.md)
