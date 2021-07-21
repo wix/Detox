@@ -109,11 +109,13 @@ describe('Android emulator device allocation', () => {
       expect(emulatorLauncher.launch).not.toHaveBeenCalled();
     });
 
-    it('should fail if emulator launch fails', async () => {
+    it('should fail and deallocate the device if emulator launch fails', async () => {
       givenNoFreeDevices();
       givenEmulatorLaunchError();
+      jest.spyOn(uut, 'deallocateDevice');
 
       await expect(uut.allocateDevice(avdName)).rejects.toThrowError();
+      await expect(uut.deallocateDevice).toHaveBeenCalledWith(expect.stringMatching(/emulator-\d+/));
     });
 
     it('should randomize a custom port for a newly launched emulator, in the 10000-20000 range', async () => {

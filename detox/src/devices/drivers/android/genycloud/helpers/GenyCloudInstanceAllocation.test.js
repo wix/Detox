@@ -80,6 +80,7 @@ describe('Genymotion-Cloud instance allocation', () => {
   const givenFreeInstance = (instance) => instanceLookupService.findFreeInstance.mockResolvedValueOnce(instance);
   const givenNoFreeInstances = () => instanceLookupService.findFreeInstance.mockResolvedValue(undefined);
   const givenCreatedInstance = (instance) => instanceLifecycleService.createInstance.mockResolvedValueOnce(instance);
+  const givenFailingInstanceLaunch = (error) => instanceLauncher.launch.mockRejectedValueOnce(error);
   const givenConnectionInstance = (instance) => instanceLifecycleService.adbConnectInstance.mockResolvedValue(instance);
   const givenRefreshedInstance = (instance) => instanceLookupService.getInstance.mockReturnValueOnce(instance);
 
@@ -145,6 +146,18 @@ describe('Genymotion-Cloud instance allocation', () => {
       const result = await uut.allocateDevice(aRecipe());
       expect(result).toEqual(instance);
       expect(instanceLifecycleService.createInstance).toHaveBeenCalledWith(recipeUUID);
+    });
+
+    it('should deallocate an instance if its creation fails', async () => {
+      const instance = anOnlineInstance();
+      const error = new Error();
+      givenNoFreeInstances();
+      givenCreatedInstance(instance);
+      givenFailingInstanceLaunch(error);
+      jest.spyOn(uut, 'deallocateDevice');
+
+      await expect(uut.allocateDevice(aRecipe())).rejects.toThrow(error);
+      expect(uut.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
     });
 
     it('should wait for a created instance to become online', async () => {

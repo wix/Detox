@@ -29,7 +29,12 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
 
     const coldBoot = !!placeholderPort;
     if (coldBoot) {
-      await this._launchEmulator(avdName, placeholderPort);
+      try {
+        await this._launchEmulator(avdName, placeholderPort);
+      } catch (e) {
+        await this.deallocateDevice(adbName);
+        throw e;
+      }
     }
     await this._awaitEmulatorBoot(adbName);
     await this._notifyAllocation(adbName, avdName, coldBoot);

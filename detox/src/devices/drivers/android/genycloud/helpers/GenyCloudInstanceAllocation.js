@@ -20,7 +20,12 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
     this._logAllocationResult(recipe, instance);
 
     if (isNew) {
-      await this._instanceLauncher.launch(instance);
+      try {
+        await this._instanceLauncher.launch(instance);
+      } catch (e) {
+        await this.deallocateDevice(instance.uuid);
+        throw e;
+      }
     }
 
     instance = await this._waitForInstanceBoot(instance);
