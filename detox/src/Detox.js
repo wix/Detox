@@ -216,7 +216,11 @@ class Detox {
   }
 
   async _reinstallAppsOnDevice() {
-    const appNames = Object.keys(this._appsConfig);
+    const appNames = _(this._appsConfig)
+      .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
+      .uniqBy(1)
+      .map(0)
+      .value();
 
     for (const appName of appNames) {
       await this.device.selectApp(appName);
