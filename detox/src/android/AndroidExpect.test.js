@@ -189,6 +189,7 @@ describe('AndroidExpect', () => {
         await e.element(e.by.id('ScrollView161')).scrollTo('top');
         await e.element(e.by.id('ScrollView161')).scrollTo('left');
         await e.element(e.by.id('ScrollView161')).scrollTo('right');
+        await e.element(e.by.id('ScrollView161')).scrollToIndex(0);
       });
 
       it('should not scroll given bad args', async () => {

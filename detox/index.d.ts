@@ -1033,6 +1033,14 @@ declare global {
             ): Promise<void>;
 
             /**
+             * Scroll to index.
+             * @example await element(by.id('scrollView')).scrollToIndex(10);
+             */
+            scrollToIndex(
+              index: Number
+            ): Promise<void>;
+
+            /**
              * Scroll to edge.
              * @example await element(by.id('scrollView')).scrollTo('bottom');
              * @example await element(by.id('scrollView')).scrollTo('top');
