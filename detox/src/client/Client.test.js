@@ -495,7 +495,7 @@ describe('Client', () => {
       it(`should log an error about the app being unreachable over web sockets`, async () => {
         await client.dumpPendingRequests();
         expect(log.error.mock.calls[0][0]).toEqual({ event: 'APP_UNREACHABLE' });
-        expect(log.error.mock.calls[0][1]).toMatch(/Failed to reach the app over the web socket connection./);
+        expect(log.error.mock.calls[0][1]).toMatch(/Detox can't seem to connect to the test app./);
       });
     });
 
