@@ -26,9 +26,6 @@ import androidx.test.espresso.action.CoordinatesProvider;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
-import androidx.test.espresso.matcher.ViewMatchers;
-
-import kotlin.jvm.functions.Function0;
 
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
