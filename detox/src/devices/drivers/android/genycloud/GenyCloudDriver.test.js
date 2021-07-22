@@ -120,8 +120,13 @@ describe('Genymotion-cloud driver', () => {
       expect(uut.name).toEqual('Unspecified GMSaaS Emulator');
     });
 
-    it('should initialize the common executable using the path set by the environment', async () => {
+    it('should initialize the common executable using the path set by the environment', () => {
       expect(Exec).toHaveBeenCalledWith(MOCK_GMSAAS_PATH);
+    });
+
+    it('should return the adb-name as the external ID', () => {
+      const instance = anInstance();
+      expect(uut.getExternalId(instance)).toEqual(instance.adbName);
     });
 
     describe('preparation', () => {

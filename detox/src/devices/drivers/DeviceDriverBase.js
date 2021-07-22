@@ -15,6 +15,10 @@ class DeviceDriverBase {
     return 'UNSPECIFIED_DEVICE';
   }
 
+  getExternalId(deviceId) {
+    return deviceId;
+  }
+
   declareArtifactPlugins() {
     return {};
   }
