@@ -1,4 +1,5 @@
 const { URL } = require('url');
+const util = require('util');
 
 const _ = require('lodash');
 
@@ -25,8 +26,15 @@ class Detox {
   constructor(config) {
     log.trace(
       { event: 'DETOX_CREATE', config },
-      'created a Detox instance with config:\n%j',
-      config
+      'created a Detox instance with config:\n%s',
+      util.inspect(_.omit(config, ['errorComposer']), {
+        getters: false,
+        depth: Infinity,
+        maxArrayLength: Infinity,
+        maxStringLength: Infinity,
+        breakLength: false,
+        compact: false,
+      })
     );
 
     this[_initHandle] = null;
