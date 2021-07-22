@@ -11,7 +11,8 @@ import org.junit.Test
 
 @Suppress("IllegalIdentifier")
 class AdjustSliderToPositionActionTest {
-    var uut: AdjustSliderToPositionAction = spy(AdjustSliderToPositionAction(0.25))
+    val mockReactSliderManager: ReactSliderManager = mock()
+    var uut: AdjustSliderToPositionAction = spy(AdjustSliderToPositionAction(0.25, mockReactSliderManager))
     private lateinit var mockReactSlider: ReactSlider
 
     @Before
@@ -35,10 +36,11 @@ class AdjustSliderToPositionActionTest {
         }
         doReturn(mockIsDisplayed).whenever(uut).getIsDisplayed()
 
-        uut.constraints?.let { assertThat(it.matches(null)).isFalse() }
-        uut.constraints?.let { assertThat(it.matches(1)).isFalse() }
-        uut.constraints?.let { assertThat(it.matches(mockReactSlider)).isTrue() }
-        uut.constraints?.let { assertThat(it.matches(mockView)).isFalse() }
+        assertThat(uut.constraints).isNotNull
+        assertThat(uut.constraints!!.matches(null)).isFalse()
+        assertThat(uut.constraints!!.matches(1)).isFalse()
+        assertThat(uut.constraints!!.matches(mockReactSlider)).isTrue()
+        assertThat(uut.constraints!!.matches(mockView)).isFalse()
     }
 
     @Test
@@ -48,8 +50,7 @@ class AdjustSliderToPositionActionTest {
                 doReturn(750).whenever(mockReactSlider).progress
             }
         }
-        uut = spy(AdjustSliderToPositionAction(0.75))
-        doReturn(mockReactSliderManager).whenever(uut).getReactSliderManager()
+        uut = spy(AdjustSliderToPositionAction(0.75, mockReactSliderManager))
         uut.perform(null, mockReactSlider)
 
         verify(mockReactSliderManager, times(1)).updateProperties(any(), any())

@@ -12,7 +12,6 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
-import kotlin.math.exp
 
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
@@ -21,10 +20,7 @@ import kotlin.math.exp
 fun isOfClassName(className: String): Matcher<View> {
     try {
         val cls = Class.forName(className)
-        return allOf(
-            IsAssignableFromMatcher(cls),
-            withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
-        )
+        return allOf(IsAssignableFromMatcher(cls), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
     } catch (e: ClassNotFoundException) {
         // empty
     }
@@ -63,15 +59,10 @@ fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View
 
             if (currentProgress != null) {
                 val realProgress = slider.toRealProgress(currentProgress)
-                val currentPctFactor = slider.max/currentProgress.toDouble()
+                val currentPctFactor = slider.max / currentProgress.toDouble()
                 val realTotal = realProgress * currentPctFactor
-                val actualValue = realProgress/ realTotal
-
-                if (tolerance > 0) {
-                    return Math.abs(actualValue - expectedValue) < tolerance
-                }
-
-                return actualValue == expectedValue
+                val actualValue = realProgress / realTotal
+                return Math.abs(actualValue - expectedValue) <= tolerance
             }
 
             return false

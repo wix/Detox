@@ -11,40 +11,26 @@ import com.facebook.react.views.slider.ReactSliderManager
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class AdjustSliderToPositionAction(private val newPosition: Double) : ViewAction {
-    override fun getConstraints(): Matcher<View?>? {
-        return Matchers.allOf(
-            ViewMatchers.isAssignableFrom(
-                ReactSlider::class.java
-            ),
-            getIsDisplayed()
-        )
-    }
+class AdjustSliderToPositionAction(private val desiredPosition: Double, private val mManager: ReactSliderManager) : ViewAction {
+    override fun getConstraints(): Matcher<View?>? = Matchers.allOf(
+            ViewMatchers.isAssignableFrom(ReactSlider::class.java),
+            getIsDisplayed())
 
-    override fun getDescription(): String {
-        return "adjustSliderToPosition"
-    }
+    override fun getDescription() = "adjustSliderToPosition"
 
-    private fun buildStyles(vararg keysAndValues: Any): ReactStylesDiffMap {
-        return ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
+    fun getIsDisplayed(): Matcher<View?> = ViewMatchers.isDisplayed()
+
+    private fun buildStyles(vararg keysAndValues: Any) = ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
+
+    private fun calculateProgressTarget(view: ReactSlider): Double {
+        val sliderProgress = view.toRealProgress(view.progress)
+        val sliderScrollFactor = view.max / view.progress.toDouble()
+        val sliderMaxValue = sliderProgress * sliderScrollFactor
+        return desiredPosition * sliderMaxValue
     }
 
     override fun perform(uiController: UiController?, view: View) {
-        if (view is ReactSlider && newPosition > 0) {
-            val realProgress = view.toRealProgress(view.progress)
-            val currentPctFactor = view.max/view.progress.toDouble()
-            val realTotal = realProgress * currentPctFactor
-            val newProgressValue = newPosition * realTotal
-            val mManager = getReactSliderManager()
-            mManager.updateProperties(view, buildStyles("value", newProgressValue))
-        }
-    }
-
-    fun getReactSliderManager(): ReactSliderManager {
-        return ReactSliderManager()
-    }
-
-    fun getIsDisplayed(): Matcher<View?> {
-        return ViewMatchers.isDisplayed()
+        val progressNewValue = calculateProgressTarget(view as ReactSlider)
+        mManager.updateProperties(view, buildStyles("value", progressNewValue))
     }
 }

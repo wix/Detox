@@ -2,6 +2,7 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.facebook.react.views.slider.ReactSliderManager;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
@@ -25,6 +26,9 @@ import androidx.test.espresso.action.CoordinatesProvider;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
+import androidx.test.espresso.matcher.ViewMatchers;
+
+import kotlin.jvm.functions.Function0;
 
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
@@ -145,7 +149,8 @@ public class DetoxAction {
     }
 
     public static ViewAction adjustSliderToPosition(final double newPosition) {
-        return new AdjustSliderToPositionAction(newPosition);
+        ReactSliderManager reactSliderManager = new ReactSliderManager();
+        return new AdjustSliderToPositionAction(newPosition, reactSliderManager);
     }
 
     public static ViewAction takeViewScreenshot() {
