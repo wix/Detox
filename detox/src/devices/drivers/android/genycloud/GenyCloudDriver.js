@@ -45,6 +45,10 @@ class GenyCloudDriver extends AndroidDriver {
     this._authService = new AuthService(this._exec);
   }
 
+  getExternalId(instance) {
+    return instance.adbName;
+  }
+
   get name() {
     return this._name;
   }

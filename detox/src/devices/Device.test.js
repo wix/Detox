@@ -55,6 +55,10 @@ describe('Device', () => {
       });
     }
 
+    expectExternalIdCalled(deviceId) {
+      expect(this.driver.getExternalId).toHaveBeenCalledWith(deviceId);
+    }
+
     expectLaunchCalledWithArgs(device, expectedArgs, languageAndLocale) {
       expect(this.driver.launchApp).toHaveBeenCalledWith(device.id, device._bundleId, expectedArgs, languageAndLocale);
     }
@@ -114,9 +118,9 @@ describe('Device', () => {
       ...overrides,
     });
 
+    device.deviceDriver.getExternalId.mockImplementation((deviceId) => deviceId);
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-
     return device;
   }
 
@@ -168,7 +172,11 @@ describe('Device', () => {
   it('should return the device ID, as provided by acquireFreeDevice', async () => {
     const device = await aValidUnpreparedDevice();
     await device.prepare();
-    expect(device.id).toEqual('mockDeviceId');
+
+    driverMock.driver.getExternalId.mockReturnValue('mockExternalId');
+    expect(device.id).toEqual('mockExternalId');
+
+    driverMock.expectExternalIdCalled('mockDeviceId');
   });
 
   describe('selectApp()', () => {

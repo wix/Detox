@@ -1,8 +1,9 @@
 const AsyncEmitter = require('../../../utils/AsyncEmitter');
 
 describe('IOS simulator driver', () => {
-  let MockClient;
-  let uut, sim, emitter;
+  let client;
+  let emitter;
+  let uut;
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
@@ -15,7 +16,16 @@ describe('IOS simulator driver', () => {
       onError: (e) => { throw e; },
     });
 
-    MockClient = jest.requireMock('../../../client/Client');
+    const ClientMock = jest.requireMock('../../../client/Client');
+    client = new ClientMock();
+
+    const SimulatorDriver = require('./SimulatorDriver');
+    uut = new SimulatorDriver({ client, emitter });
+  });
+
+  it('should return the UDID as the external ID', () => {
+    const deviceId = 'u-d-id';
+    expect(uut.getExternalId(deviceId)).toEqual(deviceId);
   });
 
   describe('launch args', () => {
@@ -27,9 +37,6 @@ describe('IOS simulator driver', () => {
         'dog1': 'dharma',
         'dog2': 'karma',
       };
-
-      const SimulatorDriver = require('./SimulatorDriver');
-      uut = new SimulatorDriver({ client: {}, emitter });
     });
 
     it('should be passed to AppleSimUtils', async () => {
@@ -51,14 +58,10 @@ describe('IOS simulator driver', () => {
   });
 
   describe('.captureViewHierarchy', () => {
-    let client;
 
     beforeEach(async () => {
-      const SimulatorDriver = require('./SimulatorDriver');
-      client = new MockClient();
       jest.spyOn(emitter, 'emit');
 
-      uut = new SimulatorDriver({ client, emitter });
       await uut.captureViewHierarchy('', 'named hierarchy');
     });
 
@@ -78,39 +81,34 @@ describe('IOS simulator driver', () => {
   });
 
   describe('biometrics', () => {
-    beforeEach(() => {
-      const SimulatorDriver = require('./SimulatorDriver');
-      sim = new SimulatorDriver({ client: {}, emitter });
-    });
-
     it('enrolls in biometrics by passing to AppleSimUtils', async () => {
-      await sim.setBiometricEnrollment(deviceId, 'YES');
-      expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'YES');
+      await uut.setBiometricEnrollment(deviceId, 'YES');
+      expect(uut.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'YES');
     });
 
     it('disenrolls in biometrics by passing to AppleSimUtils', async () => {
-      await sim.setBiometricEnrollment(deviceId, 'NO');
-      expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'NO');
+      await uut.setBiometricEnrollment(deviceId, 'NO');
+      expect(uut.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'NO');
     });
 
     it('matches a face by passing to AppleSimUtils', async () => {
-      await sim.matchFace(deviceId);
-      expect(sim.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
+      await uut.matchFace(deviceId);
+      expect(uut.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
     });
 
     it('fails to match a face by passing to AppleSimUtils', async () => {
-      await sim.unmatchFace(deviceId);
-      expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
+      await uut.unmatchFace(deviceId);
+      expect(uut.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
     });
 
     it('matches a face by passing to AppleSimUtils', async () => {
-      await sim.matchFinger(deviceId);
-      expect(sim.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
+      await uut.matchFinger(deviceId);
+      expect(uut.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
     });
 
     it('fails to match a face by passing to AppleSimUtils', async () => {
-      await sim.unmatchFinger(deviceId);
-      expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
+      await uut.unmatchFinger(deviceId);
+      expect(uut.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
     });
   });
 
@@ -121,7 +119,7 @@ describe('IOS simulator driver', () => {
         includes: UDIDs.includes.bind(UDIDs),
       });
     };
-    const givenNoUsedSimulators = () => givenUsedSimulators();
+    const givenNoUsedSimulators = () => givenUsedSimulators([]);
     const givenSystemDevices = (...deviceSpecs) => uut.applesimutils.list.mockResolvedValue([...deviceSpecs]);
     const givenCreatedDeviceUDID = (udid) => uut.applesimutils.create.mockReturnValue(udid);
     const aDeviceSpec = (udid) => ({
@@ -134,9 +132,6 @@ describe('IOS simulator driver', () => {
     let applesimutils;
 
     beforeEach(() => {
-      const SimulatorDriver = require('./SimulatorDriver');
-      uut = new SimulatorDriver({ client: {}, emitter });
-
       givenNoUsedSimulators();
 
       applesimutils = uut.applesimutils;
