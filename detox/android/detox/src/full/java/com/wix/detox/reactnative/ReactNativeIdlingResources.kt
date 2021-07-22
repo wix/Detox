@@ -200,4 +200,16 @@ class ReactNativeIdlingResources constructor(
             networkIdlingResource = null
         }
     }
+
+    private fun toFormattedUrlArray(urlList: String): List<String> {
+        var formattedUrls = urlList
+        formattedUrls = formattedUrls.replace(Regex("""[()"]"""), "");
+        formattedUrls = formattedUrls.trim();
+        return formattedUrls.split(',');
+    }
+
+    fun setBlacklistUrls(urlList: String) {
+        val urlArray = toFormattedUrlArray(urlList)
+        NetworkIdlingResource.setURLBlacklist(urlArray);
+    }
 }

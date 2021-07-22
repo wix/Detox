@@ -63,6 +63,11 @@ object ReactNativeExtension {
     }
 
     @JvmStatic
+    fun setBlacklistUrls(blacklistUrls: String) {
+        rnIdlingResources?.setBlacklistUrls(blacklistUrls)
+    }
+
+    @JvmStatic
     fun enableAllSynchronization(applicationContext: ReactApplication) {
         val reactContext = getCurrentReactContextSafe(applicationContext)
 
