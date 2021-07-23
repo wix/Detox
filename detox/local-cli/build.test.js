@@ -43,6 +43,18 @@ describe('build', () => {
     expect(execSync).toHaveBeenCalledWith('yet another command', expect.anything());
   });
 
+  it('skips building the app if the binary exists and --if-missing flag is set', async () => {
+    detoxConfig.appsConfig.default = { build: 'yet another command', binaryPath: __filename };
+
+    await callCli('./build', 'build -i');
+    expect(execSync).not.toHaveBeenCalled();
+
+    await callCli('./build', 'build --if-missing');
+    expect(execSync).not.toHaveBeenCalled();
+
+    expect(log.info).toHaveBeenCalledWith('Skipping build for "default" app...');
+  });
+
   it('fails with an error if a build script has not been found', async () => {
     detoxConfig.appsConfig.default = {};
     await expect(callCli('./build', 'build')).rejects.toThrowError(/Failed to build/);
