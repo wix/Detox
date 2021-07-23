@@ -20,6 +20,13 @@ module.exports.builder = {
     describe:
       "Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it",
   },
+  i: {
+    alias: 'if-missing',
+    group: 'Configuration:',
+    boolean: true,
+    describe:
+      'Execute the build command only if the app binary is missing.',
+  },
   s: {
     alias: 'silent',
     group: 'Configuration:',
@@ -35,6 +42,11 @@ module.exports.handler = async function build(argv) {
 
   for (const [appName, app] of apps) {
     const buildScript = app.build;
+
+    if (argv['if-missing'] && app.binaryPath && fs.existsSync(app.binaryPath)) {
+      log.info(`Skipping build for "${appName}" app...`);
+      continue;
+    }
 
     if (buildScript) {
       try {
