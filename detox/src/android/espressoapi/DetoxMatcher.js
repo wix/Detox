@@ -243,6 +243,25 @@ class DetoxMatcher {
     };
   }
 
+  static matcherForSliderPosition(position, tolerance) {
+    if (typeof position !== "number") throw new Error("position should be a number, but got " + (position + (" (" + (typeof position + ")"))));
+    if (typeof tolerance !== "number") throw new Error("tolerance should be a number, but got " + (tolerance + (" (" + (typeof tolerance + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForSliderPosition",
+      args: [{
+        type: "Double",
+        value: position
+      }, {
+        type: "Double",
+        value: tolerance
+      }]
+    };
+  }
+
 }
 
 module.exports = DetoxMatcher;

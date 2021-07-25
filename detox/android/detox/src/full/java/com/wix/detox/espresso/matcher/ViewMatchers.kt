@@ -3,8 +3,10 @@
 package com.wix.detox.espresso.matcher
 
 import android.view.View
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import com.facebook.react.views.slider.ReactSlider
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -23,7 +25,7 @@ fun isOfClassName(className: String): Matcher<View> {
         // empty
     }
 
-    return object: BaseMatcher<View>() {
+    return object : BaseMatcher<View>() {
         override fun matches(item: Any) = false
         override fun describeTo(description: Description) {
             description.appendText("Class $className not found on classpath. Are you using full class name?")
@@ -31,7 +33,8 @@ fun isOfClassName(className: String): Matcher<View> {
     }
 }
 
-fun isMatchingAtIndex(index: Int, innerMatcher: Matcher<View>): Matcher<View> = ViewAtIndexMatcher(index, innerMatcher)
+fun isMatchingAtIndex(index: Int, innerMatcher: Matcher<View>): Matcher<View> =
+    ViewAtIndexMatcher(index, innerMatcher)
 
 /**
  * Same as [androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom], but accepts any class. Needed
@@ -42,5 +45,27 @@ private class IsAssignableFromMatcher(private val clazz: Class<*>) : TypeSafeMat
     public override fun matchesSafely(view: View) = clazz.isAssignableFrom(view.javaClass)
     override fun describeTo(description: Description) {
         description.appendText("is assignable from class: $clazz")
+    }
+}
+
+fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> {
+    return object : BoundedMatcher<View?, ReactSlider>(ReactSlider::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("expected: $expectedValue")
+        }
+
+        override fun matchesSafely(slider: ReactSlider?): Boolean {
+            val currentProgress = slider?.progress
+
+            if (currentProgress != null) {
+                val realProgress = slider.toRealProgress(currentProgress)
+                val currentPctFactor = slider.max / currentProgress.toDouble()
+                val realTotal = realProgress * currentPctFactor
+                val actualValue = realProgress / realTotal
+                return Math.abs(actualValue - expectedValue) <= tolerance
+            }
+
+            return false
+        }
     }
 }

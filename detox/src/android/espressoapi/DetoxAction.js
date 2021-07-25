@@ -194,6 +194,21 @@ class DetoxAction {
     };
   }
 
+  static adjustSliderToPosition(newPosition) {
+    if (typeof newPosition !== "number") throw new Error("newPosition should be a number, but got " + (newPosition + (" (" + (typeof newPosition + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "adjustSliderToPosition",
+      args: [{
+        type: "Double",
+        value: newPosition
+      }]
+    };
+  }
+
   static takeViewScreenshot() {
     return {
       target: {

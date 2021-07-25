@@ -2,8 +2,10 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.facebook.react.views.slider.ReactSliderManager;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
@@ -146,6 +148,11 @@ public class DetoxAction {
 
     public static ViewAction scrollToIndex(int index) {
         return new ScrollToIndexAction(index);
+    }
+
+    public static ViewAction adjustSliderToPosition(final double newPosition) {
+        ReactSliderManager reactSliderManager = new ReactSliderManager();
+        return new AdjustSliderToPositionAction(newPosition, reactSliderManager);
     }
 
     public static ViewAction takeViewScreenshot() {

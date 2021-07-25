@@ -70,6 +70,10 @@ class NativeExpectElement extends NativeExpect {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ToggleMatcher(value).not : new matchers.ToggleMatcher(value)).execute();
   }
 
+  async toHaveSliderPosition(value, tolerance = 0) {
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.SliderPositionMatcher(value, tolerance).not : new matchers.SliderPositionMatcher(value, tolerance)).execute();
+  }
+
   async toBeFocused() {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.FocusMatcher().not : new matchers.FocusMatcher()).execute();
   }

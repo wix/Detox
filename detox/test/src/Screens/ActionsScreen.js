@@ -163,7 +163,7 @@ export default class ActionsScreen extends Component {
         </View>
 
         <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>
-          <Slider testID='sliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0} />
+          <Slider testID='sliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0}/>
         </View>
 
         <View>

@@ -124,6 +124,13 @@ class ScrollToIndex extends Action {
   }
 }
 
+class AdjustSliderToPosition extends Action {
+  constructor(newPosition) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.adjustSliderToPosition(newPosition));
+  }
+}
+
 class TakeElementScreenshot extends Action {
   constructor() {
     super();
@@ -148,4 +155,5 @@ module.exports = {
   SwipeAction,
   TakeElementScreenshot,
   ScrollToIndex,
+  AdjustSliderToPosition,
 };

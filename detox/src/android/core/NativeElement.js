@@ -118,6 +118,10 @@ class NativeElement {
     const result = await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
     return JSON.parse(result);
   }
+
+  async adjustSliderToPosition(newPosition) {
+    return await new ActionInteraction(this._invocationManager, this, new actions.AdjustSliderToPosition(newPosition)).execute();
+  }
 }
 
 module.exports = {

@@ -23,7 +23,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tapBackspaceKey()`](#tapbackspacekey)
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
-- [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
+- [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
 - [`.getAttributes()`](#getAttributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
 
@@ -231,7 +231,7 @@ await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00'
 await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
 ```
 
-### `adjustSliderToPosition(normalizedPosition)`  iOS only
+### `adjustSliderToPosition(normalizedPosition)`
 
 Manipulates the UI to change the displayed value of the slider element to a new value, based on a normalized position.
 
