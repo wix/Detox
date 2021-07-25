@@ -2,6 +2,8 @@
 
 This page is about issues related to executing your Detox tests, typically triggerred when running `detox test` (and not `detox build`, for example).
 
+For troubleshooting of other issue, refer to our [troubleshooting index](Troubleshooting.md).
+
 ## Table of Content
 
 * [Trace Mode](#trace-mode)

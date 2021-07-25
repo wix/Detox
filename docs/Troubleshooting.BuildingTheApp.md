@@ -2,6 +2,8 @@
 
 This page is about issues related to building the app, typically triggerred when running `detox build` (and not `detox test`, for example).
 
+For troubleshooting of other issue, refer to our [troubleshooting index](Troubleshooting.md).
+
 ## Android
 
 ### Problem: Kotlin stdlib version conflicts

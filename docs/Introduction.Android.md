@@ -16,7 +16,6 @@
 
   For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).
 
-
 **Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
 
 ## Setup :gear:
@@ -390,5 +389,5 @@ Please be aware that the `minSdkVersion` needs to be at least 18.
 
 ## Troubleshooting
 
-Please refer to our index of [troubleshooting guides](Troubleshooting.md).
+Please refer to [troubleshooting guide about build issues](Troubleshooting.BuildingTheApp.md#android) for assistance.
 
