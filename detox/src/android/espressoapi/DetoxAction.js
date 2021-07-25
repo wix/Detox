@@ -18,7 +18,7 @@ function sanitize_android_edge(edge) {
     default:
       throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
   }
-} 
+}
 function sanitize_android_direction(direction) {
   switch (direction) {
     case 'left':
@@ -32,7 +32,7 @@ function sanitize_android_direction(direction) {
     default:
       throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
   }
-} 
+}
 class DetoxAction {
   static multiClick(times) {
     if (typeof times !== "number") throw new Error("times should be a number, but got " + (times + (" (" + (typeof times + ")"))));
@@ -176,6 +176,21 @@ class DetoxAction {
       },
       method: "getAttributes",
       args: []
+    };
+  }
+
+  static scrollToIndex(index) {
+    if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "scrollToIndex",
+      args: [{
+        type: "Integer",
+        value: index
+      }]
     };
   }
 

@@ -12,6 +12,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration--ios-only) **iOS only**
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
+- [`.scrollToIndex()`](#scrolltoindexindex--android-only) **Android only**  
 - [`.scroll()`](#scrolloffset-direction-startpositionx-startpositiony)
   - [`whileElement()`](#whileelementelement)
 - [`.scrollTo()`](#scrolltoedge)
@@ -105,6 +106,15 @@ Simulates a pinch on the element with the provided options.
 await element(by.id('PinchableScrollView')).pinch(1.1); //Zooms in a little bit
 await element(by.id('PinchableScrollView')).pinch(2.0); //Zooms in a lot
 await element(by.id('PinchableScrollView')).pinch(0.001); //Zooms out a lot
+```
+### `scrollToIndex(index)`  Android only
+
+Scrolls until it reaches the element with the provided index. This works for ReactScrollView and ReactHorizontalScrollView.
+
+`index`—the index of the target element <br/>
+
+```js
+await element(by.id('scrollView')).scrollToIndex(0);
 ```
 ### `scroll(offset, direction, startPositionX, startPositionY)`
 
