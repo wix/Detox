@@ -42,7 +42,7 @@ function overrideReactAndroidGradleForRn64Android() {
   try {
     fs.renameSync(REACT_ANDROID_GRADLE_SCRIPT_PATH, REACT_ANDROID_GRADLE_BAK_SCRIPT_PATH);
   } catch (e) {
-    console.warn('  Couldn\'t create a backup to original script (skipping)');
+    console.warn('  Couldn\'t create a backup to original script (skipping)', e);
   }
   fs.copySync(PATCH_SCRIPT_PATH, REACT_ANDROID_GRADLE_SCRIPT_PATH);
 }
@@ -55,7 +55,7 @@ function cleanFindNodeScriptFileForRn64IOS() {
   try {
     fs.writeFileSync(REACT_FIND_NODE_SCRIPT_PATH, '');
   } catch (e) {
-    console.warn('  Couldn\'t clean content find-node.sh file');
+    console.warn('  Couldn\'t clean content find-node.sh file', e);
   }
 }
 
