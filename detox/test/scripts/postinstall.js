@@ -47,15 +47,15 @@ function overrideReactAndroidGradleForRn64Android() {
   fs.copySync(PATCH_SCRIPT_PATH, REACT_ANDROID_GRADLE_SCRIPT_PATH);
 }
 
-function removeFindNodeScriptFileForRn64IOS() {
+function cleanFindNodeScriptFileForRn64IOS() {
   const REACT_SCRIPTS_PATH = path.join('node_modules', 'react-native', 'scripts');
   const REACT_FIND_NODE_SCRIPT_PATH = path.join(REACT_SCRIPTS_PATH, 'find-node.sh');
 
-  console.log('  Removing find-node.sh file..');
+  console.log('  Clean content of find-node.sh file..');
   try {
-    fs.removeSync(REACT_FIND_NODE_SCRIPT_PATH);
+    fs.writeFileSync(REACT_FIND_NODE_SCRIPT_PATH, '');
   } catch (e) {
-    console.warn('  Couldn\'t remove find-node.sh file');
+    console.warn('  Couldn\'t clean content find-node.sh file');
   }
 }
 
@@ -70,7 +70,7 @@ function run() {
   if (semver.minor(rnVersion) === 64) {
     console.log('  Detected RN version .64! Applying necessary patches...');
     overrideReactAndroidGradleForRn64Android();
-    removeFindNodeScriptFileForRn64IOS();
+    cleanFindNodeScriptFileForRn64IOS();
   }
 
   console.log('Detox test-app post-install script completed!');
