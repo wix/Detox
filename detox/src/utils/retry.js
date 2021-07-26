@@ -1,5 +1,6 @@
 const sleep = require('./sleep');
 
+const DEFAULT_INITIAL_SLEEP = 0;
 const DEFAULT_RETRIES = 9;
 const DEFAULT_INTERVAL = 500;
 const DEFAULT_CONDITION_FN = () => true;
@@ -21,9 +22,14 @@ async function retry(optionsOrFunc, func) {
     interval = DEFAULT_INTERVAL,
     backoff = DEFAULT_BACKOFF_MODE,
     conditionFn = DEFAULT_CONDITION_FN,
+    initialSleep = DEFAULT_INITIAL_SLEEP,
   } = options;
 
   const backoffFn = backoffModes[backoff]();
+
+  if (initialSleep) {
+    await sleep(initialSleep);
+  }
 
   // eslint-disable-next-line no-constant-condition
   for (let totalTries = 1, lastError = null; true; totalTries++) {

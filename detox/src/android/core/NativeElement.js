@@ -79,6 +79,11 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this, new actions.ScrollEdgeAction(edge)).execute();
   }
 
+  async scrollToIndex(index) {
+    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    return await new ActionInteraction(this._invocationManager, this, new actions.ScrollToIndex(index)).execute();
+  }
+
   /**
    * @param {'up' | 'right' | 'down' | 'left'} direction
    * @param {'slow' | 'fast'} [speed]
@@ -112,6 +117,10 @@ class NativeElement {
   async getAttributes() {
     const result = await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
     return JSON.parse(result);
+  }
+
+  async adjustSliderToPosition(newPosition) {
+    return await new ActionInteraction(this._invocationManager, this, new actions.AdjustSliderToPosition(newPosition)).execute();
   }
 }
 

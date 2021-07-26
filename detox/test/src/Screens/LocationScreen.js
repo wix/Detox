@@ -33,9 +33,9 @@ export default class LocationScreen extends Component {
     }
   }
 
-  onLocationReceived = (pos) => {
+  onLocationReceived = (position) => {
     this.setState({
-      coordinates: pos.coords,
+      coordinates: position.coords,
       error: '',
     });
   };
@@ -48,13 +48,14 @@ export default class LocationScreen extends Component {
   };
 
   requestLocation = async () => {
-    this.setState({ locationRequested: true });
-
-    await Geolocation.getCurrentPosition(this.onLocationReceived, this.onLocationError, {
+    const options = {
       enableHighAccuracy: true,
-      timeout: 10000,
+      timeout: 5000,
       maximumAge: 0,
-    });
+    };
+
+    this.setState({ locationRequested: true }, () =>
+      Geolocation.watchPosition(this.onLocationReceived, this.onLocationError, options));
   }
 
   render() {

@@ -20,6 +20,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
+import static com.wix.detox.espresso.matcher.ViewMatchers.toHaveSliderPosition;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -106,4 +107,7 @@ public class DetoxMatcher {
         return isFocused();
     }
 
+    public static Matcher<View> matcherForSliderPosition(double position, double tolerance) {
+        return toHaveSliderPosition(position, tolerance);
+    }
 }

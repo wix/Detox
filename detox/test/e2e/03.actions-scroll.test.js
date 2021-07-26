@@ -71,4 +71,36 @@ describe('Actions - Scroll', () => {
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('HText6'))).not.toBeVisible();
   });
+
+  it(':android: should be able to scrollToIndex on horizontal scrollviews', async () => {
+    // should ignore out of bounds children
+    await element(by.id('ScrollViewH')).scrollToIndex(3000);
+    await element(by.id('ScrollViewH')).scrollToIndex(-1);
+    await expect(element(by.text('HText1'))).toBeVisible();
+
+    await expect(element(by.text('HText8'))).not.toBeVisible();
+    await element(by.id('ScrollViewH')).scrollToIndex(7);
+    await expect(element(by.text('HText8'))).toBeVisible();
+    await expect(element(by.text('HText1'))).not.toBeVisible();
+
+    await element(by.id('ScrollViewH')).scrollToIndex(0);
+    await expect(element(by.text('HText1'))).toBeVisible();
+    await expect(element(by.text('HText8'))).not.toBeVisible();
+  });
+
+  it(':android: should be able to scrollToIndex on vertical scrollviews', async () => {
+    // should ignore out of bounds children
+    await element(by.id('ScrollView161')).scrollToIndex(3000);
+    await element(by.id('ScrollView161')).scrollToIndex(-1);
+    await expect(element(by.text('Text1'))).toBeVisible();
+
+    await element(by.id('ScrollView161')).scrollToIndex(11);
+    await expect(element(by.text('Text12'))).toBeVisible();
+
+    await element(by.id('ScrollView161')).scrollToIndex(0);
+    await expect(element(by.text('Text1'))).toBeVisible();
+
+    await element(by.id('ScrollView161')).scrollToIndex(7);
+    await expect(element(by.text('Text8'))).toBeVisible();
+  });
 });

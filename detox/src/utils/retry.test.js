@@ -30,6 +30,20 @@ describe('retry', () => {
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
+  it('should sleep before calling a function if initialSleep is set', async () => {
+    const mockFn = jest.fn();
+
+    try {
+      await retry({ initialSleep: 1234, retries: 999, interval: 0 }, mockFn);
+    } catch (e) {
+      fail('expected retry not to fail');
+    }
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+    expect(sleep).toHaveBeenCalledTimes(1);
+    expect(sleep).toHaveBeenCalledWith(1234);
+  });
+
   it('should retry multiple times', async () => {
     const mockFn = mockFailingTwiceUserFn();
     await retry({ retries: 999, interval: 0 }, mockFn);

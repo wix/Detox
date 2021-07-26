@@ -2,11 +2,14 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.facebook.react.views.slider.ReactSliderManager;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
+import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.action.common.MotionDir;
@@ -97,8 +100,8 @@ public class DetoxAction {
     /**
      * Scrolls the View in a direction by the Density Independent Pixel amount.
      *
-     * @param direction Direction to scroll (see {@link MotionDir})
-     * @param amountInDP Density Independent Pixels
+     * @param direction           Direction to scroll (see {@link MotionDir})
+     * @param amountInDP          Density Independent Pixels
      * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
      * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
      */
@@ -114,8 +117,8 @@ public class DetoxAction {
      * where the scrolling-edge is reached, by throwing the {@link StaleActionException} exception (i.e.
      * so as to make this use case manageable by the user).
      *
-     * @param direction Direction to scroll (see {@link MotionDir})
-     * @param amountInDP Density Independent Pixels
+     * @param direction           Direction to scroll (see {@link MotionDir})
+     * @param amountInDP          Density Independent Pixels
      * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
      * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
      */
@@ -128,9 +131,9 @@ public class DetoxAction {
     /**
      * Swipes the View in a direction.
      *
-     * @param direction Direction to swipe (see {@link MotionDir})
-     * @param fast true if fast, false if slow
-     * @param normalizedOffset or "swipe amount" between 0.0 and 1.0, relative to the screen width/height
+     * @param direction                Direction to swipe (see {@link MotionDir})
+     * @param fast                     true if fast, false if slow
+     * @param normalizedOffset         or "swipe amount" between 0.0 and 1.0, relative to the screen width/height
      * @param normalizedStartingPointX X coordinate of swipe starting point (between 0.0 and 1.0), relative to the view width
      * @param normalizedStartingPointY Y coordinate of swipe starting point (between 0.0 and 1.0), relative to the view height
      */
@@ -141,6 +144,15 @@ public class DetoxAction {
 
     public static ViewAction getAttributes() {
         return new GetAttributesAction();
+    }
+
+    public static ViewAction scrollToIndex(int index) {
+        return new ScrollToIndexAction(index);
+    }
+
+    public static ViewAction adjustSliderToPosition(final double newPosition) {
+        ReactSliderManager reactSliderManager = new ReactSliderManager();
+        return new AdjustSliderToPositionAction(newPosition, reactSliderManager);
     }
 
     public static ViewAction takeViewScreenshot() {

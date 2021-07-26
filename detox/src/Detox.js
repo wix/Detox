@@ -1,4 +1,5 @@
 const { URL } = require('url');
+const util = require('util');
 
 const _ = require('lodash');
 
@@ -25,8 +26,15 @@ class Detox {
   constructor(config) {
     log.trace(
       { event: 'DETOX_CREATE', config },
-      'created a Detox instance with config:\n%j',
-      config
+      'created a Detox instance with config:\n%s',
+      util.inspect(_.omit(config, ['errorComposer']), {
+        getters: false,
+        depth: Infinity,
+        maxArrayLength: Infinity,
+        maxStringLength: Infinity,
+        breakLength: false,
+        compact: false,
+      })
     );
 
     this[_initHandle] = null;
@@ -94,7 +102,7 @@ class Detox {
       this._client = null;
     }
 
-    if (this.device) {
+    if (this.device && this.device.id) {
       await this.device._cleanup();
 
       if (this._behaviorConfig.cleanup.shutdownDevice) {
@@ -216,7 +224,11 @@ class Detox {
   }
 
   async _reinstallAppsOnDevice() {
-    const appNames = Object.keys(this._appsConfig);
+    const appNames = _(this._appsConfig)
+      .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
+      .uniqBy(1)
+      .map(0)
+      .value();
 
     for (const appName of appNames) {
       await this.device.selectApp(appName);

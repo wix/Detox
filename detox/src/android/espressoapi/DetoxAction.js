@@ -179,6 +179,36 @@ class DetoxAction {
     };
   }
 
+  static scrollToIndex(index) {
+    if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "scrollToIndex",
+      args: [{
+        type: "Integer",
+        value: index
+      }]
+    };
+  }
+
+  static adjustSliderToPosition(newPosition) {
+    if (typeof newPosition !== "number") throw new Error("newPosition should be a number, but got " + (newPosition + (" (" + (typeof newPosition + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "adjustSliderToPosition",
+      args: [{
+        type: "Double",
+        value: newPosition
+      }]
+    };
+  }
+
   static takeViewScreenshot() {
     return {
       target: {

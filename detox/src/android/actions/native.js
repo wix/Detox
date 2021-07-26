@@ -117,6 +117,20 @@ class GetAttributes extends Action {
   }
 }
 
+class ScrollToIndex extends Action {
+  constructor(index) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.scrollToIndex(index));
+  }
+}
+
+class AdjustSliderToPosition extends Action {
+  constructor(newPosition) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.adjustSliderToPosition(newPosition));
+  }
+}
+
 class TakeElementScreenshot extends Action {
   constructor() {
     super();
@@ -140,4 +154,6 @@ module.exports = {
   ScrollEdgeAction,
   SwipeAction,
   TakeElementScreenshot,
+  ScrollToIndex,
+  AdjustSliderToPosition,
 };

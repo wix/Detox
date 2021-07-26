@@ -3,19 +3,23 @@ const fs = require('fs');
 const _ = require('lodash');
 const Tail = require('tail').Tail;
 
+const { DetoxRuntimeError } = require('../../../../../errors');
 const unitLogger = require('../../../../../utils/logger').child({ __filename });
 const retry = require('../../../../../utils/retry');
 const AndroidDeviceLauncher = require('../../AndroidDeviceLauncher');
 const { LaunchCommand } = require('../../exec/EmulatorExec');
-const EmulatorTelnet = require('../../tools/EmulatorTelnet');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
 class EmulatorLauncher extends AndroidDeviceLauncher {
-  constructor(emulatorExec, eventEmitter, telnetGeneratorFn = () => new EmulatorTelnet()) {
+  constructor({
+    adb,
+    emulatorExec,
+    eventEmitter,
+  }) {
     super(eventEmitter);
+    this._adb = adb;
     this._emulatorExec = emulatorExec;
-    this._telnetGeneratorFn = telnetGeneratorFn;
   }
 
   async launch(emulatorName, options = { port: undefined }) {
@@ -30,10 +34,19 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
 
   async shutdown(adbName) {
     await this._notifyPreShutdown(adbName);
-    const port = _.split(adbName, '-')[1];
-    const telnet = this._telnetGeneratorFn();
-    await telnet.connect(port);
-    await telnet.kill();
+    await this._adb.emuKill(adbName);
+    await retry({
+      retries: 5,
+      interval: 1000,
+      initialSleep: 2000,
+    }, async () => {
+      if (await this._adb.getState(adbName) !== 'none') {
+        throw new DetoxRuntimeError({
+          message: `Failed to shut down the emulator ${adbName}`,
+          hint: `Try terminating manually all processes named "qemu-system-x86_64"`,
+        });
+      }
+    });
     await this._notifyShutdownCompleted(adbName);
   }
 

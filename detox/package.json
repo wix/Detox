@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "18.19.0",
+  "version": "18.20.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -122,7 +122,8 @@
       "src/utils/environment.js",
       "src/utils/logger.js",
       "src/utils/pipeCommands.js",
-      "src/utils/pressAnyKey.js"
+      "src/utils/pressAnyKey.js",
+      "src/utils/shellUtils.js"
     ],
     "resetMocks": true,
     "resetModules": true,

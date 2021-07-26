@@ -927,6 +927,14 @@ declare global {
              * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
              */
             toHaveValue(value: any): R;
+
+            /**
+             * Expect Slider to have a position (0 - 1).
+             * Can have an optional tolerance to take into account rounding issues on ios
+             * @example await expect(element(by.id('SliderId'))).toHavePosition(0.75);
+             * @example await expect(element(by.id('SliderId'))).toHavePosition(0.74, 0.1);
+             */
+            toHaveSliderPosition(position: number, tolerance?: number): Promise<void>;
         }
 
         interface WaitForFacade {
@@ -1033,11 +1041,25 @@ declare global {
             ): Promise<void>;
 
             /**
+             * Scroll to index.
+             * @example await element(by.id('scrollView')).scrollToIndex(10);
+             */
+            scrollToIndex(
+              index: Number
+            ): Promise<void>;
+
+            /**
              * Scroll to edge.
              * @example await element(by.id('scrollView')).scrollTo('bottom');
              * @example await element(by.id('scrollView')).scrollTo('top');
              */
             scrollTo(edge: Direction): Promise<void>;
+
+            /**
+             * Adjust slider to position.
+             * @example await element(by.id('slider')).adjustSliderToPosition(0.75);
+             */
+            adjustSliderToPosition(newPosition: number): Promise<void>;
 
             /**
              * Swipes in the provided direction at the provided speed, started from percentage.

@@ -53,6 +53,10 @@ describe('Detox', () => {
     logger = require('./utils/logger');
     Device = require('./devices/Device');
     Device.useRealConstructor();
+    Device.prototype.prepare.mockImplementation(function() {
+      this.id = 'deviceId';
+    });
+
     FakeDriverRegistry = require('./devices/DriverRegistry');
     ArtifactsManager = require('./artifacts/ArtifactsManager');
     invoke = require('./invoke');
@@ -194,14 +198,23 @@ describe('Detox', () => {
           type: 'ios.app',
           binaryPath: 'path/to/app',
         };
+
+        detoxConfig.appsConfig['extraAppWithAnotherArguments'] = {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          launchArgs: {
+            overrideArg: 2,
+          },
+        };
       });
 
       beforeEach(init);
 
-      it('should unselect the selected device app', () => {
+      it('should install only apps with unique binary paths, and deselect app on device', () => {
+        expect(detox.device.uninstallApp).toHaveBeenCalledTimes(2);
         expect(detox.device.installApp).toHaveBeenCalledTimes(2);
-        expect(detox.device.selectApp).toHaveBeenCalledTimes(3);
 
+        expect(detox.device.selectApp).toHaveBeenCalledTimes(3);
         expect(detox.device.selectApp.mock.calls[0]).toEqual(['default']);
         expect(detox.device.selectApp.mock.calls[1]).toEqual(['extraApp']);
         expect(detox.device.selectApp.mock.calls[2]).toEqual([null]);
@@ -463,17 +476,37 @@ describe('Detox', () => {
       beforeEach(async () => {
         detox = new Detox(detoxConfig);
         await detox.init();
-        await detox.cleanup();
       });
 
-      it(`should not shutdown the device`, () =>
-        expect(device().shutdown).not.toHaveBeenCalled());
+      describe('if the device has not been allocated', () => {
+        beforeEach(async () => {
+          delete device().id;
+          await detox.cleanup();
+        });
 
-      it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
-        expect(artifactsManager().onBeforeCleanup).toHaveBeenCalled());
+        it(`should omit calling device._cleanup()`, async () => {
+          await detox.cleanup();
+          expect(device()._cleanup).not.toHaveBeenCalled();
+        });
+      });
 
-      it(`should dump pending network requests`, () =>
-        expect(client().dumpPendingRequests).toHaveBeenCalled());
+      describe('if the device has been allocated', function() {
+        beforeEach(async () => {
+          await detox.cleanup();
+        });
+
+        it(`should call device._cleanup()`, () =>
+          expect(device()._cleanup).toHaveBeenCalled());
+
+        it(`should not shutdown the device`, () =>
+          expect(device().shutdown).not.toHaveBeenCalled());
+
+        it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
+          expect(artifactsManager().onBeforeCleanup).toHaveBeenCalled());
+
+        it(`should dump pending network requests`, () =>
+          expect(client().dumpPendingRequests).toHaveBeenCalled());
+      });
     });
 
     describe('when behaviorConfig.cleanup.shutdownDevice = true', () => {
@@ -485,6 +518,15 @@ describe('Detox', () => {
       it(`should shutdown the device on detox.cleanup()`, async () => {
         await detox.cleanup();
         expect(device().shutdown).toHaveBeenCalled();
+      });
+
+      describe('if the device has not been allocated', () => {
+        beforeEach(() => { delete device().id; });
+
+        it(`should omit the shutdown`, async () => {
+          await detox.cleanup();
+          expect(device().shutdown).not.toHaveBeenCalled();
+        });
       });
     });
   });

@@ -104,12 +104,13 @@ class QueryStatusActionHandler(
         val busyResources = testEngineFacade.getBusyIdlingResources()
 
         data["status"] = "App synchronization debug: " +
-            if (busyResources.isEmpty()) {
-                "The app appears to be idle!"
-            } else {
-                val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
-                "\nThe app is busy, due to: \n$summary"
-            }
+                if (busyResources.isEmpty()) {
+                    "The app appears to be idle!"
+                } else {
+                    val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
+
+                    "\nThe app is busy, due to: \n$summary"
+                }
         outboundServerAdapter.sendMessage("currentStatusResult", data, messageId)
     }
 

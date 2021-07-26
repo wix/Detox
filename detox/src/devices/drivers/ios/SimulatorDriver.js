@@ -72,8 +72,15 @@ class SimulatorDriver extends IosDriver {
       throw new DetoxRuntimeError(`Failed to find device matching ${deviceComment}`);
     }
 
-    await this._boot(udid, deviceQuery.type || deviceQuery);
     this._name = `${udid} ${deviceComment}`;
+
+    try {
+      await this._boot(udid, deviceQuery.type || deviceQuery);
+    } catch (e) {
+      await this.deviceRegistry.disposeDevice(udid);
+      throw e;
+    }
+
     return udid;
   }
 
