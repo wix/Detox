@@ -42,7 +42,7 @@ function overrideReactAndroidGradleForRn64Android() {
   try {
     fs.renameSync(REACT_ANDROID_GRADLE_SCRIPT_PATH, REACT_ANDROID_GRADLE_BAK_SCRIPT_PATH);
   } catch (e) {
-    console.warn(  'Couldn\'t create a backup to original script (skipping)');
+    console.warn('  Couldn\'t create a backup to original script (skipping)');
   }
   fs.copySync(PATCH_SCRIPT_PATH, REACT_ANDROID_GRADLE_SCRIPT_PATH);
 }
@@ -51,11 +51,11 @@ function removeFindNodeScriptFileForRn64IOS() {
   const REACT_SCRIPTS_PATH = path.join('node_modules', 'react-native', 'scripts');
   const REACT_FIND_NODE_SCRIPT_PATH = path.join(REACT_SCRIPTS_PATH, 'find-node.sh');
 
-  console.log('Removing find-node.sh file..');
+  console.log('  Removing find-node.sh file..');
   try {
     fs.removeSync(REACT_FIND_NODE_SCRIPT_PATH);
   } catch (e) {
-    console.warn('Couldn\'t remove find-node.sh file');
+    console.warn('  Couldn\'t remove find-node.sh file');
   }
 }
 
