@@ -42,22 +42,35 @@ function overrideReactAndroidGradleForRn64Android() {
   try {
     fs.renameSync(REACT_ANDROID_GRADLE_SCRIPT_PATH, REACT_ANDROID_GRADLE_BAK_SCRIPT_PATH);
   } catch (e) {
-    console.warn(  'Couldn\'t create a backup to original script (skipping)');
+    console.warn('  Couldn\'t create a backup to original script (skipping)', e);
   }
   fs.copySync(PATCH_SCRIPT_PATH, REACT_ANDROID_GRADLE_SCRIPT_PATH);
+}
+
+function cleanFindNodeScriptFileForRn64IOS() {
+  const REACT_SCRIPTS_PATH = path.join('node_modules', 'react-native', 'scripts');
+  const REACT_FIND_NODE_SCRIPT_PATH = path.join(REACT_SCRIPTS_PATH, 'find-node.sh');
+
+  console.log('  Clean content of find-node.sh file..');
+  try {
+    fs.writeFileSync(REACT_FIND_NODE_SCRIPT_PATH, '');
+  } catch (e) {
+    console.warn('  Couldn\'t clean content find-node.sh file', e);
+  }
 }
 
 function run() {
   console.log('Running Detox test-app post-install script...');
 
   if (semver.minor(rnVersion) === 60) {
-    console.log('  Detected RN version .60! Applying necessary patches...')
+    console.log('  Detected RN version .60! Applying necessary patches...');
     patchHermesLocationForRN60Android();
   }
 
   if (semver.minor(rnVersion) === 64) {
-    console.log('  Detected RN version .64! Applying necessary patches...')
+    console.log('  Detected RN version .64! Applying necessary patches...');
     overrideReactAndroidGradleForRn64Android();
+    cleanFindNodeScriptFileForRn64IOS();
   }
 
   console.log('Detox test-app post-install script completed!');
