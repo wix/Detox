@@ -70,7 +70,13 @@ class EmulatorDriver extends AndroidDriver {
       binaryPath,
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-    await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
+    
+    const apiLevel = this.adb.apiLevel(deviceId);
+    if (apiLevel > 22) {
+      await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
+    } else {
+      await super.installApp(deviceId, binaryPath, testBinaryPath);
+    }
   }
 
   /*async*/ binaryVersion() {
