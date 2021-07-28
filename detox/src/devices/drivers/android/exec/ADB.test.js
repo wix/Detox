@@ -92,7 +92,7 @@ describe('ADB', () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
+      expect.stringContaining('adb" -s emulator-5556 install -r -g "path inside \\"quotes\\" to/app"'),
       { retries: 1 });
   });
 
@@ -101,7 +101,7 @@ describe('ADB', () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 install -rgt "path inside \\"quotes\\" to/app"'),
+      expect.stringContaining('adb" -s emulator-5556 install -r -g -t "path inside \\"quotes\\" to/app"'),
       { retries: 1 });
   });
 
@@ -158,7 +158,7 @@ describe('ADB', () => {
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install -rg ${binaryPath}"`),
+      expect.stringContaining(`-s mockEmulator shell "pm install -r -g ${binaryPath}"`),
       expect.anything());
   });
 
@@ -168,7 +168,7 @@ describe('ADB', () => {
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install -rgt ${binaryPath}"`),
+      expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
       expect.anything());
   });
 

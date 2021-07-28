@@ -106,9 +106,9 @@ class ADB {
 
     let childProcess;
     if (apiLvl >= 23) {
-      childProcess = await this.adbCmd(deviceId, `install -rgt ${apkPath}`);
+      childProcess = await this.adbCmd(deviceId, `install -r -g -t ${apkPath}`);
     } else {
-      childProcess = await this.adbCmd(deviceId, `install -rg ${apkPath}`);
+      childProcess = await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
     }
 
     const [failure] = (childProcess.stdout || '').match(/^Failure \[.*\]$/m) || [];
@@ -124,9 +124,9 @@ class ADB {
     const apiLvl = await this.apiLevel(deviceId);
 
     if (apiLvl >= 23) {
-      return this.shell(deviceId, `pm install -rgt ${path}`);
+      return this.shell(deviceId, `pm install -r -g -t ${path}`);
     } else {
-      return this.shell(deviceId, `pm install -rg ${path}`);
+      return this.shell(deviceId, `pm install -r -g ${path}`);
     }
   }
 
