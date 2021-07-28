@@ -105,8 +105,8 @@ class ADB {
     const apiLvl = await this.apiLevel(deviceId);
 
     let childProcess;
-    if (apiLvl >= 24) {
-      childProcess = await this.adbCmd(deviceId, `install -r -g -t ${apkPath}`);
+    if (apiLvl >= 23) {
+      childProcess = await this.adbCmd(deviceId, `install -rgt ${apkPath}`);
     } else {
       childProcess = await this.adbCmd(deviceId, `install -rg ${apkPath}`);
     }
@@ -120,8 +120,14 @@ class ADB {
     }
   }
 
-  /*async*/ remoteInstall(deviceId, path) {
-    return this.shell(deviceId, `pm install -r -g -t ${path}`);
+  async remoteInstall(deviceId, path) {
+    const apiLvl = await this.apiLevel(deviceId);
+
+    if (apiLvl >= 23) {
+      return this.shell(deviceId, `pm install -rgt ${path}`);
+    } else {
+      return this.shell(deviceId, `pm install -rg ${path}`);
+    }
   }
 
   async uninstall(deviceId, appId) {

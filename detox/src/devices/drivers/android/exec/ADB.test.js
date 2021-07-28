@@ -85,9 +85,23 @@ describe('ADB', () => {
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "getprop ro.build.version.sdk"'),
       { retries: 5 });
+  });
+
+  it(`install api 22`, async () => {
+    jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 22);
+    await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
+      { retries: 1 });
+  });
+
+  it(`install api 23`, async () => {
+    jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 23);
+    await adb.install('emulator-5556', 'path inside "quotes" to/app');
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 install -rgt "path inside \\"quotes\\" to/app"'),
       { retries: 1 });
   });
 
@@ -138,12 +152,23 @@ describe('ADB', () => {
       expect.anything());
   });
 
-  it('remote-install', async () => {
+  it('remote-install api 22', async () => {
+    jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 22);
     const binaryPath = '/mock-path/filename.mock';
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
+      expect.stringContaining(`-s mockEmulator shell "pm install -rg ${binaryPath}"`),
+      expect.anything());
+  });
+
+  it('remote-install api 23', async () => {
+    jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 23);
+    const binaryPath = '/mock-path/filename.mock';
+    await adb.remoteInstall(deviceId, binaryPath);
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell "pm install -rgt ${binaryPath}"`),
       expect.anything());
   });
 
