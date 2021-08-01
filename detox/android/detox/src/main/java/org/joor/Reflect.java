@@ -13,6 +13,8 @@
  */
 package org.joor;
 
+import android.os.Build;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -236,9 +238,11 @@ public class Reflect {
 // Note (d4vidi): this is an important change, compared to the original implementation!!!
 // See here: https://stackoverflow.com/a/64378131/453052
 //                Field modifiersField = Field.class.getDeclaredField("modifiers");
-                Field modifiersField = Field.class.getDeclaredField("accessFlags");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Field modifiersField = Field.class.getDeclaredField("accessFlags");
+                    modifiersField.setAccessible(true);
+                    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                }
             }
             field.set(object, unwrap(value));
             return this;

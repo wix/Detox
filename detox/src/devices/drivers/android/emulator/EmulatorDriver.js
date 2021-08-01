@@ -70,6 +70,7 @@ class EmulatorDriver extends AndroidDriver {
       binaryPath,
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
+
     await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
