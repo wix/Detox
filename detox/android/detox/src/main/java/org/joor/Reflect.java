@@ -238,9 +238,7 @@ public class Reflect {
 // Note (d4vidi): this is an important change, compared to the original implementation!!!
 // See here: https://stackoverflow.com/a/64378131/453052
 //                Field modifiersField = Field.class.getDeclaredField("modifiers");
-
-                boolean needsFieldAccess = android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1;
-                if (needsFieldAccess) {
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Field modifiersField = Field.class.getDeclaredField("accessFlags");
                     modifiersField.setAccessible(true);
                     modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
