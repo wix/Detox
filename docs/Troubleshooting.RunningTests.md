@@ -55,7 +55,7 @@ This can be a result of various reasons. It is generally up to you to debug and 
 
 * You might have forgotten to run `device.launchApp()` in the beginning of your test.
 * The app might have crashed before Detox has had a chance to connect to it. To get the crash details, you can run Detox tests with `--record-logs all` CLI option and then inspect the device logs in the artifacts folder.
-* **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](#Introduction.Android.md#5-create-a-detox-test-class) in the setup guide.
+* **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](Introduction.Android.md#5-create-a-detox-test-class) in the setup guide.
 
 #### If you _do_ see your app running on the device:
 
