@@ -1,46 +1,27 @@
 const DetoxRuntimeError = require('../DetoxRuntimeError');
 
-const message = 'Failed to reach the app over the web socket connection.';
+const message = 'Detox can\'t seem to connect to the test app(s)!';
+const troubleshootingRefMessage = 'Refer to our troubleshooting guide, for full details: https://github.com/wix/Detox/blob/master/docs/Troubleshooting.RunningTests.md#tests-execution-hangs';
 
-const hint1_B = `\
-1. If you don't see your app running on the device, there's a chance
-   that your app has crashed prematurely. To get the crash details,
-   you can run Detox tests with "--record-logs all" CLI option
-   and then inspect the device logs in the artifacts folder.\
+const hintMaybeNotLaunched = `\
+Have you forgotten to call 'device.launchApp()' in the beginning of your test?
+${troubleshootingRefMessage}\
 `;
 
-const hint1_A = `\
-Have you forgotten to write 'device.launchApp()' at the beginning
-of your test? If that's not the case, see the other options.
-
-${hint1_B}
+const hintAppWasLaunched = `The test app might have crashed prematurely, or has had trouble setting up the connection.
+${troubleshootingRefMessage} 
 `;
 
-const hint2 = `\
-2. If your app IS running on the device, yet you see this message:
-a) The native part of Detox failed to connect to the Detox server over
-   web sockets. If this is the case, the device's logs should contain
-   messages about those failed connection attempts.
-
-b) The app is running without Detox native code injected.
-   Make sure you don't launch it manually. If you don't, examine the logs
-   from the device. If you see a crash related to Detox native code, you
-   are welcome to report it on our GitHub tracker.
-   In case if you are debugging your native code integration with Detox,
-   these guides may prove helpful:
-
-   * https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInAndroidStudio.md
-   * https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInXcode.md\
-`;
-
-const payloadAppendix = `\
+const payloadAppendix = `---
 The following package could not be delivered:\
 `;
+
+const reformatSection = (s) => '\n\n' + s;
 
 function maybeAppWasNotLaunched(action) {
   return new DetoxRuntimeError({
     message,
-    hint: [hint1_A, hint2, payloadAppendix].map(s => '\n\n' + s).join(''),
+    hint: [hintMaybeNotLaunched, payloadAppendix].map(reformatSection).join(''),
     debugInfo: action,
   });
 }
@@ -48,7 +29,7 @@ function maybeAppWasNotLaunched(action) {
 function evenThoughAppWasLaunched() {
   return new DetoxRuntimeError({
     message,
-    hint: [hint1_B, hint2].map(s => '\n\n' + s).join(''),
+    hint: reformatSection(hintAppWasLaunched),
   });
 }
 

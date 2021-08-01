@@ -123,7 +123,7 @@ describe('Detox server integration', () => {
 
     // assert tester get a serverError explaining the app is unreachable
     expect(testerSocket.send).toHaveBeenCalledWith(expect.stringContaining('"type":"serverError"'));
-    expect(testerSocket.send).toHaveBeenCalledWith(expect.stringContaining('Failed to reach the app over the web socket connection'));
+    expect(testerSocket.send).toHaveBeenCalledWith(expect.stringContaining('Detox can\'t seem to connect to the test app'));
 
     testerSocket.send.mockReset();
 

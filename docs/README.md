@@ -30,10 +30,12 @@
 
 ### Troubleshooting
 
-- [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
-- [Troubleshooting Failing Tests](Troubleshooting.RunningTests.md)
-- [Troubleshooting Synchronization](Troubleshooting.Synchronization.md)
-- [Dealing With Flakiness in Tests](Troubleshooting.Flakiness.md)
+- [Table of contents](Troubleshooting.md)
+  - [Building the App](Troubleshooting.BuildingTheApp.md)
+
+  - [Running tests](Troubleshooting.RunningTests.md)
+  - [Synchronization issues](Troubleshooting.Synchronization.md)
+  - [General tests stability issues](Troubleshooting.Flakiness.md)
 
 ### Guides
 
@@ -54,4 +56,3 @@
 ### Contributing to Detox
 
 - [Detox Contribution Guide](Guide.Contributing.md)
-- [Android Support - Current Status](More.AndroidSupportStatus.md)

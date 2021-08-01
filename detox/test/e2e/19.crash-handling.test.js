@@ -11,7 +11,7 @@ describe('Crash Handling', () => {
   it('Should throw error upon internal app crash', async () => {
     await device.reloadReactNative();
     await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
-    await expectToThrow(() => element(by.text('Crash')).tap(), 'Failed to reach the app');
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
   it('Should recover from app crash', async () => {
