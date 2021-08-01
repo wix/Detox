@@ -70,7 +70,7 @@ class Device {
   }
 
   get id() {
-    return this._deviceId;
+    return this.deviceDriver.getExternalId(this._deviceId);
   }
 
   get name() {
