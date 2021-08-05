@@ -17,6 +17,7 @@ class TestEngineFacade {
     fun getBusyIdlingResources() = IRStatusInquirer.INSTANCE.getAllBusyResources()
 
     // TODO Refactor RN related stuff away
+    fun awaitReactNativeLoad(appContext: Context) = ReactNativeExtension.waitForRNBootstrap(appContext)
     fun reloadReactNative(appContext: Context) = ReactNativeExtension.reloadReactNative(appContext)
     fun resetReactNative() = ReactNativeExtension.clearAllSynchronization()
 }

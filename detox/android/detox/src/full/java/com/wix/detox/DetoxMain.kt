@@ -1,7 +1,10 @@
 package com.wix.detox
 
+import android.app.Instrumentation
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.test.platform.app.InstrumentationRegistry
 import com.wix.detox.adapters.server.*
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import com.wix.detox.instruments.DetoxInstrumentsManager
@@ -12,28 +15,50 @@ private const val INIT_ACTION = "_init"
 private const val IS_READY_ACTION = "isReady"
 private const val TERMINATION_ACTION = "_terminate"
 
+private fun launchActivitySync(activityClass: Class<*>) {
+    val instrumentation = InstrumentationRegistry.getInstrumentation()
+    val appContext = instrumentation.targetContext
+
+    val intent = Intent(appContext, activityClass)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    appContext.startActivity(intent)
+
+    val activityMonitor = Instrumentation.ActivityMonitor(activityClass.name, null, true)
+    instrumentation.addMonitor(activityMonitor)
+    instrumentation.waitForMonitorWithTimeout(activityMonitor, 10000L)
+}
+
 object DetoxMain {
+    val actionsDispatcher = DetoxActionsDispatcher()
+    private val testEngineFacade = TestEngineFacade()
+
     @JvmStatic
     fun run(rnHostHolder: Context) {
         val detoxServerInfo = DetoxServerInfo()
         Log.i(LOG_TAG, "Detox server connection details: $detoxServerInfo")
 
-        val testEngineFacade = TestEngineFacade()
-        val actionsDispatcher = DetoxActionsDispatcher()
         val externalAdapter = DetoxServerAdapter(actionsDispatcher, detoxServerInfo, IS_READY_ACTION, TERMINATION_ACTION)
         initActionHandlers(actionsDispatcher, externalAdapter, testEngineFacade, rnHostHolder)
         actionsDispatcher.dispatchAction(INIT_ACTION, "", 0)
         actionsDispatcher.join()
     }
 
+    // TODO [redesign1] This should not be available as a method
+    @JvmStatic
+    fun launchActivity(activityClass: Class<*>) {
+        launchActivitySync(activityClass)
+    }
+
+    @Synchronized
     private fun doInit(externalAdapter: DetoxServerAdapter, rnHostHolder: Context) {
         externalAdapter.connect()
 
         initCrashHandler(externalAdapter)
         initANRListener(externalAdapter)
-        initReactNativeIfNeeded(rnHostHolder)
+//        initReactNativeIfNeeded(rnHostHolder)
     }
 
+    @Synchronized
     private fun doTeardown(serverAdapter: DetoxServerAdapter, actionsDispatcher: DetoxActionsDispatcher, testEngineFacade: TestEngineFacade) {
         testEngineFacade.resetReactNative()
 
@@ -47,10 +72,8 @@ object DetoxMain {
             val rnReloadHandler = ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade)
 
             associateActionHandler(INIT_ACTION, object : DetoxActionHandler {
-                override fun handle(params: String, messageId: Long) =
-                    synchronized(this@DetoxMain) {
-                        this@DetoxMain.doInit(serverAdapter, rnHostHolder)
-                    }
+                override fun handle(params: String, messageId: Long)
+                        = this@DetoxMain.doInit(serverAdapter, rnHostHolder)
             })
             associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
 

@@ -167,6 +167,7 @@ class Detox {
     const invocationManager = new InvocationManager(this._client);
     const DeviceDriverImpl = driverRegistry.resolve(this._deviceConfig.type);
     const deviceDriver = new DeviceDriverImpl({
+      apps: this._appsConfig,
       client: this._client,
       invocationManager,
       emitter: this._eventEmitter,
@@ -206,6 +207,8 @@ class Detox {
     if (behaviorConfig.reinstallApp) {
       await this._reinstallAppsOnDevice();
     }
+
+    await this.device.init();
 
     return this;
   }

@@ -27,13 +27,13 @@ public class DetoxTest {
     /** Similar concept to that of {@link #USE_SINGLE_INSTANCE_ACTIVITY_ARG}. */
     private static final String USE_CRASHING_ACTIVITY_ARG = "detoxAndroidCrashingActivity";
 
-    @Rule
+//    @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class, false, false);
 
-    @Rule
+//    @Rule
     public ActivityTestRule<SingleInstanceActivity> mSingleInstanceActivityRule = new ActivityTestRule<>(SingleInstanceActivity.class, false, false);
 
-    @Rule
+//    @Rule
     public ActivityTestRule<CrashingActivity> mCrashingActivityTestRule = new ActivityTestRule<>(CrashingActivity.class, false, false);
 
     @Test

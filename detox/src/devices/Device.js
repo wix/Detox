@@ -100,6 +100,10 @@ class Device {
     }
   }
 
+  async init() {
+    await this.deviceDriver.init(this._deviceId, this._prepareLaunchArgs({}));
+  }
+
   async selectApp(name) {
     if (name === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();

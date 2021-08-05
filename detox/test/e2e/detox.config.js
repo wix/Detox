@@ -97,6 +97,14 @@ const config = {
       build: ':',
       launchArgs,
     },
+
+    'android.release.demo': {
+      type: 'android.apk',
+      name: 'example-demo',
+      binaryPath: '../../examples/demo-react-native/android/app/build/outputs/apk/release/app-release.apk',
+      testBinaryPath: '../../examples/demo-react-native/android/app/build/outputs/apk/androidTest/release/app-release-androidTest.apk',
+      build: 'Not yet, buddy',
+    },
   },
 
   devices: {
@@ -186,6 +194,10 @@ const config = {
     'android.emu.release': {
       device: 'android.emulator',
       apps: ['android.release', 'android.release.withArgs'],
+    },
+    'android.emu.multiapptest.release': {
+      device: 'android.emulator',
+      apps: ['android.release', 'android.release.demo'],
     },
     'android.genycloud.release': {
       device: 'android.genycloud.uuid',

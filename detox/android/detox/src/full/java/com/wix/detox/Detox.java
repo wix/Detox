@@ -8,6 +8,9 @@ import android.os.Bundle;
 
 import com.wix.detox.config.DetoxConfig;
 import com.wix.detox.espresso.UiControllerSpy;
+import com.wix.detox.reactnative.ReactNativeExtension;
+
+import org.joor.Reflect;
 
 import java.util.concurrent.TimeUnit;
 
@@ -186,15 +189,15 @@ public final class Detox {
      * @param detoxConfig The configurations to apply.
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
+        sActivityTestRule = activityTestRule;
+
         DetoxConfig.CONFIG = detoxConfig;
         DetoxConfig.CONFIG.apply();
 
-        sActivityTestRule = activityTestRule;
-
         UiControllerSpy.attachThroughProxy();
 
-        Intent intent = extractInitialIntent();
-        sActivityTestRule.launchActivity(intent);
+//        Intent intent = extractInitialIntent();
+//        sActivityTestRule.launchActivity(intent);
 
         try {
             DetoxMain.run(context);
@@ -204,9 +207,10 @@ public final class Detox {
         }
     }
 
+    // TODO [redesign1] The endpoint for this should be more inner, probably somewhere under DetoxMain
     public static void launchMainActivity() {
-        final Activity activity = sActivityTestRule.getActivity();
-        launchActivitySync(sIntentsFactory.activityLaunchIntent(activity));
+        Class<?> activityClass = Reflect.on(sActivityTestRule).get("activityClass");
+        DetoxMain.launchActivity(activityClass);
     }
 
     public static void startActivityFromUrl(String url) {
@@ -253,6 +257,32 @@ public final class Detox {
         final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
 
         activity.startActivity(intent);
+        instrumentation.addMonitor(activityMonitor);
+        instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
+    }
+
+    private static void launchActivitySync(Class<?> activityClass) {
+        // Ideally, we would just call sActivityTestRule.launchActivity(intent) and get it over with.
+        // BUT!!! as it turns out, Espresso has an issue where doing this for an activity running in the background
+        // would have Espresso set up an ActivityMonitor which will spend its time waiting for the activity to load, *without
+        // ever being released*. It will finally fail after a 45 seconds timeout.
+        // Without going into full details, it seems that activity test rules were not meant to be used this way. However,
+        // the all-new ActivityScenario implementation introduced in androidx could probably support this (e.g. by using
+        // dedicated methods such as moveToState(), which give better control over the lifecycle).
+        // In any case, this is the core reason for this issue: https://github.com/wix/Detox/issues/1125
+        // What it forces us to do, then, is this -
+        // 1. Launch the activity by "ourselves" from the OS (i.e. using context.startActivity()).
+        // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
+        // ^ Hence the code below.
+
+        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        final Context appContext = instrumentation.getContext();
+        final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activityClass.getName(), null, true);
+
+        final Intent intent = new Intent(appContext, activityClass);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        appContext.startActivity(intent);
+
         instrumentation.addMonitor(activityMonitor);
         instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
     }
