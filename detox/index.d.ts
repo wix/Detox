@@ -1118,6 +1118,21 @@ declare global {
              * await element(by.id('PinchableScrollView')).pinch(0.001);
              */
             pinch(scale: number, speed?: Speed, angle?: number): Promise<void>;
+
+            /**
+             * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
+             * @param {string} name for the screenshot artifact
+             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   const imagePath = await element(by.id('menuRoot')).takeScreenshot('tap on menu');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the screenshot will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/tap on menu.png
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
+             * });
+             */
+             takeScreenshot(name: string): Promise<string>;
         }
 
         interface WebExpect<R = Promise<void>> {
