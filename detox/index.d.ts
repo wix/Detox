@@ -1111,6 +1111,7 @@ declare global {
 
             /**
              * Pinches with the given scale, speed, and angle. (iOS only)
+             * @param speed default is `fast`
              * @param angle value in radiant, default is `0`
              * @example
              * await element(by.id('PinchableScrollView')).pinch(1.1);
