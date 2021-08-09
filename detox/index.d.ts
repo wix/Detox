@@ -1117,7 +1117,7 @@ declare global {
              * await element(by.id('PinchableScrollView')).pinch(2.0);
              * await element(by.id('PinchableScrollView')).pinch(0.001);
              */
-            pinch(scale: number, speed: Speed, angle: number): Promise<void>;
+            pinch(scale: number, speed?: Speed, angle?: number): Promise<void>;
         }
 
         interface WebExpect<R = Promise<void>> {
