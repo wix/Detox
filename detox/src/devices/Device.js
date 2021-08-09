@@ -93,15 +93,10 @@ class Device {
 
     this._deviceId = await traceCall('acquireDevice', () =>
       this.deviceDriver.acquireFreeDevice(this._deviceConfig.device));
-
-    const appAliases = Object.keys(this._appsConfig);
-    if (appAliases.length === 1) {
-      await this.selectApp(appAliases[0]);
-    }
   }
 
-  async init() {
-    await this.deviceDriver.init(this._deviceId, this._prepareLaunchArgs({}));
+  async initApp(appAlias) {
+    await this.deviceDriver.initApp(this._deviceId, appAlias, this._prepareInitArgs(appAlias));
   }
 
   async selectApp(name) {
@@ -109,9 +104,11 @@ class Device {
       throw this._errorComposer.cantSelectEmptyApp();
     }
 
-    if (this._currentApp) {
-      await this.terminateApp();
-    }
+// With real support for multiple apps, this is no longer needed (was designed
+// to protect the user from mistakes, I think)
+//    if (this._currentApp) {
+//       await this.terminateApp();
+//     }
 
     if (name === null) { // Internal use to unselect the app
       this._currentApp = null;
@@ -122,6 +119,7 @@ class Device {
     if (!appConfig) {
       throw this._errorComposer.cantFindApp(name);
     }
+    appConfig.alias = name; // TODO *** replace with apps object
 
     this._currentApp = appConfig;
     this._currentAppLaunchArgs = null;
@@ -222,7 +220,7 @@ class Device {
 
   async reloadReactNative() {
     await traceCall('reloadRN', () =>
-      this.deviceDriver.reloadReactNative());
+      this.deviceDriver.reloadReactNative(this._currentApp.alias)); // TODO *** replace with apps object
   }
 
   async openURL(params) {
@@ -342,20 +340,20 @@ class Device {
       await this.terminateApp(bundleId);
     }
 
-    const baseLaunchArgs = {
+    const launchArgs = {
       ...this._currentApp.launchArgs,
       ...params.launchArgs,
     };
 
     if (params.url) {
-      baseLaunchArgs['detoxURLOverride'] = params.url;
+      launchArgs['detoxURLOverride'] = params.url;
       if (params.sourceApp) {
-        baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
+        launchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
+      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, launchArgs);
     } else if (params.userActivity) {
-      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
+      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, launchArgs);
     }
 
     if (params.permissions) {
@@ -363,7 +361,7 @@ class Device {
     }
 
     if (params.disableTouchIndicators) {
-      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+      launchArgs['detoxDisableTouchIndicators'] = true;
     }
 
     if (this._isAppRunning(bundleId) && hasPayload) {
@@ -371,10 +369,10 @@ class Device {
     }
 
     if (this._behaviorConfig.launchApp === 'manual') {
-      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, launchArgs, params.languageAndLocale);
     } else {
-      this._processes[bundleId] = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
-      await this.deviceDriver.waitUntilReady();
+      this._processes[bundleId] = await this.deviceDriver.launchApp(deviceId, bundleId, launchArgs, params.languageAndLocale);
+      await this.deviceDriver.waitUntilReady(this._currentApp.alias);
       await this.deviceDriver.waitForActive();
     }
 
@@ -430,16 +428,11 @@ class Device {
     return (paramsCounter === 1);
   }
 
-  _defaultLaunchArgs() {
+  _prepareInitArgs(appAlias) {
     return {
-      'detoxServer': this._sessionConfig.server,
-      'detoxSessionId': this._sessionConfig.sessionId
+      detoxServer: this._sessionConfig.server,
+      detoxSessionId: this._sessionConfig.sessionId + (appAlias ? `.${appAlias}` : ''), // TODO take this from apps.sessionId (this layer is currently oblivious to the apps dictionary object)
     };
-  }
-
-  _prepareLaunchArgs(additionalLaunchArgs) {
-    const launchArgs = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
-    return launchArgs;
   }
 
   async _inferBundleIdFromBinary() {

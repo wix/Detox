@@ -17,10 +17,23 @@ const AsyncEmitter = require('./utils/AsyncEmitter');
 const Deferred = require('./utils/Deferred');
 const MissingDetox = require('./utils/MissingDetox');
 const logger = require('./utils/logger');
+const { forEachSeriesObj } = require('./utils/p-iteration');
 const log = logger.child({ __filename });
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
+
+// TODO is multiple-apps wrong in this layer? Should it strictly reside lower - under Device (and Driver)?
+
+// TODO revisit: is this not a superset of more esoteric concerns?
+class DetoxTestedApp {
+  constructor({ config, session, client, invocationManager }) {
+    this.config = config;
+    this.session = session;
+    this.client = client;
+    this.invocationManager = invocationManager;
+  }
+}
 
 class Detox {
   constructor(config) {
@@ -55,7 +68,7 @@ class Detox {
     this._sessionConfig = sessionConfig;
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer({ appsConfig });
 
-    this._client = null;
+    this._apps = {};
     this._server = null;
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
@@ -96,11 +109,10 @@ class Detox {
       this._artifactsManager = null;
     }
 
-    if (this._client) {
-      this._client.dumpPendingRequests();
-      await this._client.cleanup();
-      this._client = null;
-    }
+    await forEachSeriesObj(this._apps, async (app) => {
+      app.client.dumpPendingRequests();
+      await app.client.cleanup();
+    }, this);
 
     if (this.device && this.device.id) {
       await this.device._cleanup();
@@ -155,21 +167,12 @@ class Detox {
       await this._server.open();
     }
 
-    this._client = new Client(sessionConfig);
-    this._client.terminateApp = async () => {
-      if (this.device && this.device._isAppRunning()) {
-        await this.device.terminateApp();
-      }
-    };
+    this._apps = this._createApps();
+    await this._connectAllApps();
 
-    await this._client.connect();
-
-    const invocationManager = new InvocationManager(this._client);
     const DeviceDriverImpl = driverRegistry.resolve(this._deviceConfig.type);
     const deviceDriver = new DeviceDriverImpl({
-      apps: this._appsConfig,
-      client: this._client,
-      invocationManager,
+      apps: this._apps,
       emitter: this._eventEmitter,
     });
 
@@ -188,12 +191,14 @@ class Detox {
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
     await this.device.prepare();
+    this.device.selectApp(Object.keys(this._apps)[0]);
 
     const matchers = matchersRegistry.resolve(this.device, {
-      invocationManager,
+      apps: this._apps,
       device: this.device,
       emitter: this._eventEmitter,
     });
+    matchers.selectApp(Object.keys(this._apps)[0]);
     Object.assign(this, matchers);
 
     if (behaviorConfig.exposeGlobals) {
@@ -208,9 +213,37 @@ class Detox {
       await this._reinstallAppsOnDevice();
     }
 
-    await this.device.init();
+    await this._initAllApps();
 
     return this;
+  }
+
+  _createApps() {
+    return _.mapValues(this._appsConfig, (config, appAlias) => {
+      const appSessionConfig = {
+        ...this._sessionConfig,
+        sessionId: this._sessionConfig.sessionId + '.' + appAlias,
+      };
+
+      const client = new Client(appSessionConfig);
+      client.terminateApp = async () => {
+        if (this.device && this.device._isAppRunning()) { // TODO use app alias here
+          await this.device.terminateApp(); // TODO use app alias here
+        }
+      };
+
+      const invocationManager = new InvocationManager(client);
+
+      return new DetoxTestedApp({ config, session: appSessionConfig, client, invocationManager });
+    });
+  }
+
+  async _connectAllApps() {
+    await forEachSeriesObj(this._apps, (app) => app.client.connect(), this);
+  }
+
+  async _initAllApps() {
+    await forEachSeriesObj(this._apps, (__, appAlias) => this.device.initApp(appAlias), this);
   }
 
   [_assertNoPendingInit]() {
@@ -265,7 +298,7 @@ class Detox {
 
   async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
     if (pendingRequests) {
-      this._client.dumpPendingRequests({ testName });
+      this._clients.forEach((c) => c.dumpPendingRequests({ testName }));
     }
   }
 

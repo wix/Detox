@@ -1,6 +1,6 @@
 const { device } = require('detox');
 
 beforeAll(async () => {
-  await device.selectApp('example');
-  await device.launchApp({ newInstance: false });
+  // await selectApp('example');
+  // await device.launchApp({ newInstance: false });
 });

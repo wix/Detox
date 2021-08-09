@@ -38,6 +38,7 @@ open class ReactNativeReloadActionHandler(
     override fun handle(params: String, messageId: Long) {
         testEngineFacade.syncIdle()
         testEngineFacade.reloadReactNative(appContext)
+        testEngineFacade.awaitIdle() // Revisit: Added this because ready seemed to have been sent back too early on occasions. Not sure if a reload bug side-effect or an actual issue, TBH.
         outboundServerAdapter.sendMessage("ready", emptyMap(), messageId)
     }
 }

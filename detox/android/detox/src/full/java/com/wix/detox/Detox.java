@@ -207,7 +207,7 @@ public final class Detox {
         }
     }
 
-    // TODO [redesign1] The endpoint for this should be more inner, probably somewhere under DetoxMain
+    // TODO [multiapps] The endpoint for this should be more inner, probably somewhere under DetoxMain
     public static void launchMainActivity() {
         Class<?> activityClass = Reflect.on(sActivityTestRule).get("activityClass");
         DetoxMain.launchActivity(activityClass);

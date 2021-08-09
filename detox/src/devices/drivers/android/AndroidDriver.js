@@ -46,8 +46,11 @@ class AndroidDriver extends DeviceDriverBase {
     this.appUninstallHelper = new AppUninstallHelper(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
-    this._apps = _.mapValues(config.apps, (app) => ({
-      config: app,
+    this._apps = _.mapValues(config.apps, (app, appAlias) => ({
+      alias: appAlias,
+      config: app.config,
+      client: app.client,
+      invocationManager: app.invocationManager,
       instrumentation: new MonitoredInstrumentation(this.adb, logger),
     }));
   }
@@ -55,23 +58,23 @@ class AndroidDriver extends DeviceDriverBase {
   async prepare() {
   }
 
-  async init(deviceId, detoxArgs) {
-    // Pre-launch all instrumentations (without launching any activities)
-    for (let appName in this._apps) {
-      const app = this._apps[appName];
-      app.name = appName;
+  async initApp(deviceId, appAlias, detoxArgs) {
+    // Pre-launch all instrumentations! (without launching any activities)
 
-      const packageId = await this.getBundleIdFromBinary(app.config.binaryPath);
-      app.packageId = packageId; // Todo use this as cache for getBundleIdFromBinary?
+    const app = this._apps[appAlias];
+    app.packageId = await this.getBundleIdFromBinary(app.config.binaryPath); // Todo use 'packageId' as cache for getBundleIdFromBinary?
 
-      await this._launchInstrumentationProcess(deviceId, appName, detoxArgs);
-      await this._awaitInstrumentation(appName);
-      await this.client.waitUntilReady();
-    }
+    await this._launchInstrumentationProcess(deviceId, app.alias, detoxArgs);
+    await this._awaitInstrumentation(app.alias);
+    // await app.client.waitUntilReady();
   }
 
-  async _awaitInstrumentation(appName) {
-    const instrumentation = this._apps[appName].instrumentation;
+  async reloadReactNative(appAlias) {
+    return await this._apps[appAlias].client.reloadReactNative();
+  }
+
+  async _awaitInstrumentation(appAlias) {
+    const instrumentation = this._apps[appAlias].instrumentation;
     try {
       await Promise.race([sleep(1500), instrumentation.waitForCrash()]); // TODO replace sleep() with an actual synchronous wait for instrumentation (based on logs)
     } finally {
@@ -179,13 +182,20 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async waitUntilReady() {
-    // TODO revisit
-      // try {
-      //   await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
-      // } finally {
-      //   this.instrumentation.abortWaitForCrash();
-      // }
+  async waitUntilReady(appAlias) {
+    const app = this._apps[appAlias];
+
+    try {
+      console.log(`ASDASD Waiting for ${appAlias} to be READY...`)
+      await Promise.race([
+        app.client.waitUntilReady(),
+        app.instrumentation.waitForCrash(),
+        sleep(10000),
+      ]);
+    } finally {
+      console.log(`ASDASD ${appAlias} is READY!`)
+      app.instrumentation.abortWaitForCrash();
+    }
   }
 
   async pressBack(deviceId) { // eslint-disable-line no-unused-vars
@@ -219,8 +229,10 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, packageId) {
-    const app = this._getAppByPackageId(packageId);
-    await this._terminateInstrumentation(app.packageId);
+    if (packageId) {
+      const app = this._getAppByPackageId(packageId);
+      await this._terminateInstrumentation(app.alias);
+    }
     await super.cleanup(deviceId, packageId);
   }
 
@@ -313,14 +325,16 @@ class AndroidDriver extends DeviceDriverBase {
     return _launchArgs;
   }
 
-  async _launchApp(adbName, bundleId, launchArgs) {
+  async _launchApp(adbName, packageId, launchArgs) {
+    const app = this._getAppByPackageId(packageId);
+
     if (launchArgs.detoxURLOverride) {
       await this._startActivityWithUrl(launchArgs.detoxURLOverride);
     } else if (launchArgs.detoxUserNotificationDataURL) {
       await this._startActivityFromNotification(launchArgs.detoxUserNotificationDataURL);
     } else {
       // TODO sort out means to provide launch-args here (i.e. directly to activity rather than via instrumentation)
-      await this._resumeMainActivity();
+      await this._resumeMainActivity(app);
     }
   }
 
@@ -328,14 +342,16 @@ class AndroidDriver extends DeviceDriverBase {
     const app = this._apps[appName];
     const serverPort = await this._reverseServerPort(adbName);
     app.instrumentation.setTerminationFn(async () => {
-      await this._terminateInstrumentation(appName);
-      await this.adb.reverseRemove(adbName, serverPort);
+      await this._terminateInstrumentation(appName); // TODO is this really needed (regardless of multiapps)?...
+      try {
+        await this.adb.reverseRemove(adbName, serverPort);
+      } catch(e) {}
     });
     await app.instrumentation.launch(adbName, app.packageId, userLaunchArgs);
   }
 
   async _reverseServerPort(adbName) {
-    const serverPort = new URL(this.client.serverUrl).port;
+    const serverPort = new URL(this._apps[Object.keys(this._apps)[0]].client.serverUrl).port;
     await this.adb.reverse(adbName, serverPort);
     return serverPort;
   }
@@ -352,15 +368,15 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   _startActivityWithUrl(url) {
-    return this.invocationManager.execute(DetoxApi.startActivityFromUrl(url));
+    return this.invocationManager.execute(DetoxApi.startActivityFromUrl(url)); // TODO this.invocationManager => app.invocationManaager
   }
 
   _startActivityFromNotification(dataFilePath) {
-    return this.invocationManager.execute(DetoxApi.startActivityFromNotification(dataFilePath));
+    return this.invocationManager.execute(DetoxApi.startActivityFromNotification(dataFilePath)); // TODO this.invocationManager => app.invocationManaager
   }
 
-  _resumeMainActivity() {
-    return this.invocationManager.execute(DetoxApi.launchMainActivity());
+  _resumeMainActivity(app) {
+    return app.invocationManager.execute(DetoxApi.launchMainActivity());
   }
 
   async _waitForProcess(adbName, bundleId) {

@@ -175,8 +175,11 @@ class Client {
 
   async reloadReactNative() {
     this._whenAppIsReady = new Deferred();
+    console.log('ASDASD About to reloadReactNative')
     await this.sendAction(new actions.ReloadReactNative());
+    console.log('ASDASD Sent reloadReactNative, waiting for a \'ready\'')
     this._whenAppIsReady.resolve();
+    console.log('ASDASD reloadReactNative got a \'ready\'')
   }
 
   async waitUntilReady() {

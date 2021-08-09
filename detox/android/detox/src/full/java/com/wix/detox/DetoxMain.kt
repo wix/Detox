@@ -31,9 +31,12 @@ private fun launchActivitySync(activityClass: Class<*>) {
 object DetoxMain {
     val actionsDispatcher = DetoxActionsDispatcher()
     private val testEngineFacade = TestEngineFacade()
+    private lateinit var rnHostHolder: Context
 
     @JvmStatic
     fun run(rnHostHolder: Context) {
+        this.rnHostHolder = rnHostHolder;
+
         val detoxServerInfo = DetoxServerInfo()
         Log.i(LOG_TAG, "Detox server connection details: $detoxServerInfo")
 
@@ -43,10 +46,15 @@ object DetoxMain {
         actionsDispatcher.join()
     }
 
-    // TODO [redesign1] This should not be available as a method
+    // TODO [multiapps] This should not be available as a method
     @JvmStatic
     fun launchActivity(activityClass: Class<*>) {
         launchActivitySync(activityClass)
+
+        // [multiapps.1] Moved here from doInit()...
+        synchronized(this) {
+            initReactNativeIfNeeded(this.rnHostHolder)
+        }
     }
 
     @Synchronized
@@ -55,6 +63,7 @@ object DetoxMain {
 
         initCrashHandler(externalAdapter)
         initANRListener(externalAdapter)
+// [multiapps.1] Not inherent anymore, because the activity is not launched in this flow anymore!
 //        initReactNativeIfNeeded(rnHostHolder)
     }
 
