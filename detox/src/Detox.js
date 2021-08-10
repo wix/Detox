@@ -24,10 +24,14 @@ const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
 
 // TODO is multiple-apps wrong in this layer? Should it strictly reside lower - under Device (and Driver)?
+//   On that note: Is client management right in this layer, regardless of multi-apps? I'm inclined to say it isn't.
+//   I believe that would best surface when we decide to separate external API's from actual implementations. This
+//   file would be rendered a slim 'Main'.
 
 // TODO revisit: is this not a superset of more esoteric concerns?
 class DetoxTestedApp {
-  constructor({ config, session, client, invocationManager }) {
+  constructor({ alias, config, session, client, invocationManager }) {
+    this.alias = alias;
     this.config = config;
     this.session = session;
     this.client = client;
@@ -177,7 +181,7 @@ class Detox {
     });
 
     this.device = new Device({
-      appsConfig: this._appsConfig,
+      apps: this._apps,
       behaviorConfig: this._behaviorConfig,
       deviceConfig: this._deviceConfig,
       emitter: this._eventEmitter,
@@ -213,8 +217,6 @@ class Detox {
       await this._reinstallAppsOnDevice();
     }
 
-    await this._initAllApps();
-
     return this;
   }
 
@@ -234,16 +236,12 @@ class Detox {
 
       const invocationManager = new InvocationManager(client);
 
-      return new DetoxTestedApp({ config, session: appSessionConfig, client, invocationManager });
+      return new DetoxTestedApp({ alias: appAlias, config, session: appSessionConfig, client, invocationManager });
     });
   }
 
   async _connectAllApps() {
     await forEachSeriesObj(this._apps, (app) => app.client.connect(), this);
-  }
-
-  async _initAllApps() {
-    await forEachSeriesObj(this._apps, (__, appAlias) => this.device.initApp(appAlias), this);
   }
 
   [_assertNoPendingInit]() {

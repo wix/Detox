@@ -3,13 +3,14 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const cutStackTraces = require('../utils/cutStackTraces');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
+const { forEachSeriesObj } = require('../utils/p-iteration');
 const { traceCall } = require('../utils/trace');
 
 const LaunchArgsEditor = require('./LaunchArgsEditor');
 
 class Device {
   constructor({
-    appsConfig,
+    apps,
     behaviorConfig,
     deviceConfig,
     deviceDriver,
@@ -52,14 +53,14 @@ class Device {
       'unreverseTcpPort',
     ]);
 
-    this._appsConfig = appsConfig;
+    this._apps = apps;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
     this._errorComposer = runtimeErrorComposer;
 
-    this._currentApp = null;
+    this._currentAppAlias = null;
     this._currentAppLaunchArgs = null;
     this._deviceId = undefined;
     this._processes = {};
@@ -95,12 +96,8 @@ class Device {
       this.deviceDriver.acquireFreeDevice(this._deviceConfig.device));
   }
 
-  async initApp(appAlias) {
-    await this.deviceDriver.initApp(this._deviceId, appAlias, this._prepareInitArgs(appAlias));
-  }
-
-  async selectApp(name) {
-    if (name === undefined) {
+  async selectApp(alias) {
+    if (alias === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();
     }
 
@@ -110,18 +107,17 @@ class Device {
 //       await this.terminateApp();
 //     }
 
-    if (name === null) { // Internal use to unselect the app
-      this._currentApp = null;
+    if (alias === null) { // Internal use to unselect the app
+      this._currentAppAlias = null;
       return;
     }
 
-    const appConfig = this._appsConfig[name];
-    if (!appConfig) {
-      throw this._errorComposer.cantFindApp(name);
+    const app = this._apps[alias];
+    if (!app) {
+      throw this._errorComposer.cantFindApp(alias);
     }
-    appConfig.alias = name; // TODO *** replace with apps object
 
-    this._currentApp = appConfig;
+    this._currentAppAlias = alias;
     this._currentAppLaunchArgs = null;
     await this._inferBundleIdFromBinary();
   }
@@ -194,7 +190,7 @@ class Device {
 
   async installApp(binaryPath, testBinaryPath) {
     await traceCall('appInstall', () => {
-      const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
+      const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp().config;
 
       return this.deviceDriver.installApp(
         this._deviceId,
@@ -220,7 +216,7 @@ class Device {
 
   async reloadReactNative() {
     await traceCall('reloadRN', () =>
-      this.deviceDriver.reloadReactNative(this._currentApp.alias)); // TODO *** replace with apps object
+      this.deviceDriver.reloadReactNative(this._currentAppAlias));
   }
 
   async openURL(params) {
@@ -286,7 +282,7 @@ class Device {
   }
 
   async _cleanup() {
-    const bundleId = this._currentApp && this._currentApp.bundleId;
+    const bundleId = this._currentAppAlias && this._getCurrentApp().config.bundleId;
     await this.deviceDriver.cleanup(this._deviceId, bundleId);
   }
 
@@ -314,14 +310,14 @@ class Device {
   }
 
   get _bundleId() {
-    return this._getCurrentApp().bundleId;
+    return this._getCurrentApp().config.bundleId;
   }
 
   _getCurrentApp() {
-    if (!this._currentApp) {
+    if (!this._currentAppAlias) {
       throw this._errorComposer.appNotSelected();
     }
-    return this._currentApp;
+    return this._apps[this._currentAppAlias];
   }
 
   async _doLaunchApp(params, bundleId) {
@@ -340,8 +336,10 @@ class Device {
       await this.terminateApp(bundleId);
     }
 
+    await this._lazyPrepareAllApps();
+
     const launchArgs = {
-      ...this._currentApp.launchArgs,
+      ...this._getCurrentApp().config.launchArgs,
       ...params.launchArgs,
     };
 
@@ -372,7 +370,7 @@ class Device {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, launchArgs, params.languageAndLocale);
     } else {
       this._processes[bundleId] = await this.deviceDriver.launchApp(deviceId, bundleId, launchArgs, params.languageAndLocale);
-      await this.deviceDriver.waitUntilReady(this._currentApp.alias);
+      await this.deviceDriver.waitUntilReady(this._currentAppAlias);
       await this.deviceDriver.waitForActive();
     }
 
@@ -389,6 +387,12 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
+  }
+
+  async _lazyPrepareAllApps() {
+    await forEachSeriesObj(this._apps, async (app, appAlias) => {
+      await this.deviceDriver.prepareApp(this._deviceId, appAlias, this._getAppPrepareArgs(appAlias));
+    }, this);
   }
 
   async _sendPayload(key, params) {
@@ -428,7 +432,7 @@ class Device {
     return (paramsCounter === 1);
   }
 
-  _prepareInitArgs(appAlias) {
+  _getAppPrepareArgs(appAlias) {
     return {
       detoxServer: this._sessionConfig.server,
       detoxSessionId: this._sessionConfig.sessionId + (appAlias ? `.${appAlias}` : ''), // TODO take this from apps.sessionId (this layer is currently oblivious to the apps dictionary object)
@@ -436,17 +440,18 @@ class Device {
   }
 
   async _inferBundleIdFromBinary() {
-    const { binaryPath, bundleId } = this._currentApp;
+    const app = this._getCurrentApp();
+    const { binaryPath, bundleId } = app.config;
 
     if (!bundleId) {
-      this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
+      app.config.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
     }
   }
 
   _getCurrentAppsLaunchArgs() {
-    const currentApp = this._getCurrentApp();
-    currentApp.launchArgs = currentApp.launchArgs || {};
-    return new LaunchArgsEditor(currentApp.launchArgs);
+    const currentAppConfig = this._getCurrentApp().config;
+    currentAppConfig.launchArgs = currentAppConfig.launchArgs || {};
+    return new LaunchArgsEditor(currentAppConfig.launchArgs);
   }
 }
 

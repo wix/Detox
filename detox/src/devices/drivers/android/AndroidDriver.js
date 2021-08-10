@@ -58,15 +58,17 @@ class AndroidDriver extends DeviceDriverBase {
   async prepare() {
   }
 
-  async initApp(deviceId, appAlias, detoxArgs) {
-    // Pre-launch all instrumentations! (without launching any activities)
-
+  async prepareApp(deviceId, appAlias, detoxArgs) {
+    // Pre-launch all instrumentations! (without launching any activities...)
     const app = this._apps[appAlias];
-    app.packageId = await this.getBundleIdFromBinary(app.config.binaryPath); // Todo use 'packageId' as cache for getBundleIdFromBinary?
 
-    await this._launchInstrumentationProcess(deviceId, app.alias, detoxArgs);
-    await this._awaitInstrumentation(app.alias);
-    // await app.client.waitUntilReady();
+    if (!app.instrumentation.isRunning()) {
+      app.packageId = await this.getBundleIdFromBinary(app.config.binaryPath); // Todo use 'packageId' as cache for getBundleIdFromBinary?
+
+      await this._launchInstrumentationProcess(deviceId, app.alias, detoxArgs);
+      await this._awaitInstrumentation(app.alias);
+      // await app.client.waitUntilReady();
+    }
   }
 
   async reloadReactNative(appAlias) {
@@ -215,11 +217,10 @@ class AndroidDriver extends DeviceDriverBase {
     const adbName = this._getAdbName(deviceId);
     await this.emitter.emit('beforeTerminateApp', { deviceId: adbName, bundleId });
 
-    // This is a big change: Keep instrumentation alive
-    // const app = this._getAppByPackageId(bundleId);
-    // if (app && app.instrumentation && app.instrumentation.isRunning()) {
-    //   await this._terminateInstrumentation(app.name);
-    // }
+    const app = this._getAppByPackageId(bundleId);
+    if (app && app.instrumentation && app.instrumentation.isRunning()) {
+      await this._terminateInstrumentation(app.alias);
+    }
     await this.adb.terminate(adbName, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: adbName, bundleId });
   }
@@ -356,8 +357,8 @@ class AndroidDriver extends DeviceDriverBase {
     return serverPort;
   }
 
-  async _terminateInstrumentation(appName) {
-    const app = this._apps[appName];
+  async _terminateInstrumentation(appAlias) {
+    const app = this._apps[appAlias];
     await app.instrumentation.terminate();
     await app.instrumentation.setTerminationFn(null);
   }
