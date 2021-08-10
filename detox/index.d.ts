@@ -1122,6 +1122,7 @@ declare global {
 
             /**
              * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
+             * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md#element-level-screenshots}
              * @param {string} name for the screenshot artifact
              * @returns {Promise<string>} a temporary path to the screenshot.
              * @example
