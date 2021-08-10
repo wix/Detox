@@ -1111,13 +1111,30 @@ declare global {
 
             /**
              * Pinches with the given scale, speed, and angle. (iOS only)
+             * @param speed default is `fast`
              * @param angle value in radiant, default is `0`
              * @example
              * await element(by.id('PinchableScrollView')).pinch(1.1);
              * await element(by.id('PinchableScrollView')).pinch(2.0);
              * await element(by.id('PinchableScrollView')).pinch(0.001);
              */
-            pinch(scale: number, speed: Speed, angle: number): Promise<void>;
+            pinch(scale: number, speed?: Speed, angle?: number): Promise<void>;
+
+            /**
+             * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
+             * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md#element-level-screenshots}
+             * @param {string} name for the screenshot artifact
+             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   const imagePath = await element(by.id('menuRoot')).takeScreenshot('tap on menu');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the screenshot will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/tap on menu.png
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
+             * });
+             */
+             takeScreenshot(name: string): Promise<string>;
         }
 
         interface WebExpect<R = Promise<void>> {
