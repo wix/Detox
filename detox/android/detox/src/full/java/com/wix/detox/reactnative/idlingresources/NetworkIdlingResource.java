@@ -43,7 +43,7 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
      *
      * @param urls list of regexes of blacklisted urls
      */
-    public static void setURLBlacklist(ArrayList<String> urls) {
+    public static void setURLBlacklist(List<String> urls) {
         blacklist.clear();
         if (urls == null) return;
 
