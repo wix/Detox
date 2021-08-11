@@ -22,13 +22,16 @@ To ensure everything needed for Homebrew tool installation is installed, run
 xcode-select --install
 ```
 
-### Install [`applesimutils`](https://github.com/wix/AppleSimulatorUtils)
+### Install `applesimutils`
 
-A collection of utils for Apple simulators, Detox uses it to query and communicate with the simulator.
+[`apple-sim-utils`](https://github.com/wix/AppleSimulatorUtils) is a collection of utils for Apple simulators. Detox uses it to query and communicate with the simulator.
+
+Note that starting Detox `v18.20.2`, `apple-sim-utils` ≥ `v0.9.4` is required.
 
 ```sh
 brew tap wix/brew
 brew install applesimutils
 ```
 
-> **Note:** Make sure to periodically update your version of `applesimutils` to the latest version.
+> *Note: Make sure to periodically update your `applesimutils` to the latest version.*
+
