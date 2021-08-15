@@ -1,5 +1,5 @@
 const log = require('../../../../utils/logger').child({ __filename });
-const { QueryVersionCommand } = require('../exec/EmulatorExec');
+const { QueryVersionCommand } = require('../../../drivers/android/exec/EmulatorExec');
 
 const EMU_BIN_VERSION_DETECT_EV = 'EMU_BIN_VERSION_DETECT';
 

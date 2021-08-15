@@ -15,6 +15,7 @@ class AndroidDeviceAllocation {
     this._logger.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${deviceHandle}`);
   }
 
+  // TODO ASDASD remove after all drivers are migrated
   async _notifyAllocation(deviceId, type, isNew) {
     return this._eventEmitter.emit('bootDevice', { coldBoot: isNew, deviceId, type, });
   }
