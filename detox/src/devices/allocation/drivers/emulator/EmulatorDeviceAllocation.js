@@ -21,7 +21,7 @@ class AllocationResult {
 class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
 
   constructor(deviceRegistry, freeDeviceFinder, rand = Math.random) {
-    super(deviceRegistry, undefined, logger); // TODO ASDASD remove 'undefined'
+    super(deviceRegistry, logger);
     this._freeDeviceFinder = freeDeviceFinder;
     this._rand = rand;
   }

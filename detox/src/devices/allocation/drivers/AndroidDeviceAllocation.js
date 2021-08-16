@@ -1,9 +1,8 @@
 const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 
 class AndroidDeviceAllocation {
-  constructor(deviceRegistry, eventEmitter, logger) {
+  constructor(deviceRegistry, logger) {
     this._deviceRegistry = deviceRegistry;
-    this._eventEmitter = eventEmitter;
     this._logger = logger;
   }
 
@@ -13,11 +12,6 @@ class AndroidDeviceAllocation {
 
   _logAllocationResult(deviceQuery, deviceHandle) {
     this._logger.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${deviceHandle}`);
-  }
-
-  // TODO ASDASD remove after all drivers are migrated
-  async _notifyAllocation(deviceId, type, isNew) {
-    return this._eventEmitter.emit('bootDevice', { coldBoot: isNew, deviceId, type, });
   }
 }
 

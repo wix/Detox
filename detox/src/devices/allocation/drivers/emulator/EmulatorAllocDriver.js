@@ -50,7 +50,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     if (!allocResult.isRunning) {
       await this._launchEmulator(avdName, adbName, placeholderPort)
     }
-    await this._notifyBootEvent(adbName, avdName, allocResult.isRunning);
+    await this._notifyBootEvent(adbName, avdName, !allocResult.isRunning);
     await this._prepareEmulator(adbName);
 
     return new AndroidEmulatorCookie(adbName, avdName);
@@ -83,11 +83,6 @@ class EmulatorAllocDriver extends AllocationDriverBase {
       await this._deviceAllocation.deallocateDevice(adbName);
       throw e;
     }
-  }
-
-  // TODO ASDASD Do this in EmulatorLauncher?
-  async _notifyBootEvent(deviceId, type, isRunning) {
-    return this._eventEmitter.emit('bootDevice', { coldBoot: !isRunning, deviceId, type });
   }
 
   async _prepareEmulator(adbName) {

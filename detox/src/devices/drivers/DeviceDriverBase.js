@@ -23,6 +23,7 @@ class DeviceDriverBase {
     return {};
   }
 
+  // TODO ASDASD delete this eventually
   async acquireFreeDevice(_deviceQuery) {
     return await Promise.resolve('');
   }

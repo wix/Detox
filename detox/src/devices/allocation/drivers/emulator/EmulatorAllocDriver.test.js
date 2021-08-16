@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const AndroidEmulatorCookie = require('../../AndroidEmulatorCookie');
 const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
 
 const avdName = 'mock-avd-name';
@@ -193,17 +192,18 @@ describe('Allocation driver for Google emulators', () => {
     });
 
     it('should return an Android emulator handle', async () => {
-      const AndroidEmulatorHandle = require('../../AndroidEmulatorCookie');
+      const AndroidEmulatorCookie = require('../../AndroidEmulatorCookie');
 
       const handle = await uut.allocate(avdName);
       expect(handle.constructor.name).toEqual('AndroidEmulatorCookie');
-      expect(AndroidEmulatorHandle).toHaveBeenCalledWith(adbName, avdName);
+      expect(AndroidEmulatorCookie).toHaveBeenCalledWith(adbName, avdName);
     });
   });
 
   describe('Deallocation', () => {
     let deviceCookie;
     beforeEach(() => {
+      const AndroidEmulatorCookie = require('../../AndroidEmulatorCookie');
       deviceCookie = new AndroidEmulatorCookie();
       deviceCookie.adbName = adbName;
     });
