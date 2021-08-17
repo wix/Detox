@@ -11,10 +11,7 @@ class DeviceDriverBase {
     this.emitter = emitter;
   }
 
-  get name() {
-    return 'UNSPECIFIED_DEVICE';
-  }
-
+  // TODO ASDASD revisit impls across the board: post-refactor, it should stem from the cookie
   getExternalId(deviceId) {
     return deviceId;
   }
@@ -134,6 +131,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  // TODO ASDASD I think this won't be necessary after refactor is complete
   async shutdown() {
     return await Promise.resolve('');
   }

@@ -1,9 +1,10 @@
 const Recipe = require('./dto/GenyRecipe');
 
+const logger = require('../../../../../utils/logger').child({ __filename });;
+
 class GenyRecipesService {
-  constructor(genyCloudExec, logger) {
+  constructor(genyCloudExec) {
     this.genyCloudExec = genyCloudExec;
-    this.logger = logger;
   }
 
   async getRecipeByName(recipeName) {
@@ -14,7 +15,7 @@ class GenyRecipesService {
 
     if (recipes.length > 1) {
       const recipesInfoList = recipes.map((recipe) => `  ${recipe.name} (${recipe.uuid})`).join('\n');
-      this.logger.warn(
+      logger.warn(
         { event: 'GENYCLOUD_RECIPE_LOOKUP' },
         `More than one Genymotion-Cloud recipe found for recipe name ${recipeName}:\n${recipesInfoList}\nFalling back to ${recipes[0].name}`
       );

@@ -2,7 +2,7 @@ const AndroidDeviceLauncher = require('../../../drivers/android/AndroidDeviceLau
 const retry = require('../../../../utils/retry');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 
-class GenyCloudInstanceLauncher extends AndroidDeviceLauncher {
+class GenyInstanceLauncher extends AndroidDeviceLauncher {
   constructor(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter) {
     super(eventEmitter);
 
@@ -68,4 +68,4 @@ class GenyCloudInstanceLauncher extends AndroidDeviceLauncher {
   }
 }
 
-module.exports = GenyCloudInstanceLauncher;
+module.exports = GenyInstanceLauncher;

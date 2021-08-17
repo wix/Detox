@@ -1,13 +1,13 @@
-const adbName = 'mock_adb_name-1117';
-
 describe('Emulator launcher', () => {
+  const avdName = 'Pixel_Mock';
+  const adbName = 'mock-emulator:1234';
+
   let retry;
   let eventEmitter;
   let emulatorExec;
   let adb;
   let launchEmulatorProcess;
   let uut;
-
   beforeEach(() => {
     jest.mock('../../../../utils/logger');
 
@@ -46,13 +46,13 @@ describe('Emulator launcher', () => {
     const givenDeviceBootIncomplete = () => adb.isBootComplete.mockResolvedValue(false);
 
     it('should launch the specified emulator in a separate process', async () => {
-      await uut.launch(adbName);
-      expect(launchEmulatorProcess).toHaveBeenCalledWith(adbName, emulatorExec, expect.anything());
+      await uut.launch(avdName, adbName);
+      expect(launchEmulatorProcess).toHaveBeenCalledWith(avdName, emulatorExec, expect.anything());
     });
 
     it('should launch using a specific emulator port, if provided', async () => {
       const port = 1234;
-      await uut.launch(adbName, { port });
+      await uut.launch(avdName, adbName, { port });
 
       const mockedCall = launchEmulatorProcess.mock.calls[0];
       const commandArg = mockedCall[2];
@@ -65,7 +65,7 @@ describe('Emulator launcher', () => {
         interval: 100,
       };
 
-      await uut.launch(adbName);
+      await uut.launch(avdName, adbName);
 
       expect(retry).toHaveBeenCalledWith(
         expect.objectContaining(expectedRetryOptions),
@@ -76,7 +76,7 @@ describe('Emulator launcher', () => {
     it('should retry emulator process launching with a conditional to check whether error was specified through binary as unknown', async () => {
       const messageUnknownError = 'failed with code null';
 
-      await uut.launch(adbName);
+      await uut.launch(avdName, adbName);
 
       const mockedCallToRetry = retry.mock.calls[0];
       const callOptions = mockedCallToRetry[0];
@@ -98,7 +98,7 @@ describe('Emulator launcher', () => {
         expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
       });
 
-      await uut.launch(adbName);
+      await uut.launch(avdName, adbName);
       expect(retry).toHaveBeenCalledTimes(2);
     });
 
@@ -106,7 +106,7 @@ describe('Emulator launcher', () => {
       givenDeviceBootIncomplete();
 
       try {
-        await uut.launch(adbName);
+        await uut.launch(avdName, adbName);
       } catch (e) {
         expect(e.constructor.name).toEqual('DetoxRuntimeError');
         expect(e.toString()).toContain(`Waited for ${adbName} to complete booting for too long!`);
@@ -123,7 +123,7 @@ describe('Emulator launcher', () => {
 
       givenDeviceBootCompleted();
 
-      await uut.launch(adbName);
+      await uut.launch(avdName, adbName);
 
       expect(retry).toHaveBeenCalledWith(
         expect.objectContaining(expectedRetryOptions),
@@ -151,11 +151,11 @@ describe('Emulator launcher', () => {
         adb.getState.mockResolvedValueOnce('offline');
         adb.getState.mockResolvedValueOnce('none');
 
-        await uut.shutdown(adbName);
+        await uut.shutdown(avdName);
       });
 
       it('should kill device via adb', async () => {
-        expect(adb.emuKill).toHaveBeenCalledWith(adbName);
+        expect(adb.emuKill).toHaveBeenCalledWith(avdName);
       });
 
       it('should wait until the device cannot be found', async () => {
@@ -163,15 +163,15 @@ describe('Emulator launcher', () => {
       });
 
       it('should emit associated events', async () => {
-        expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: adbName });
-        expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: adbName });
+        expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: avdName });
+        expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: avdName });
       });
     });
 
     describe('if shutdown does not go well', () => {
       beforeEach(async () => {
         adb.getState.mockResolvedValue('offline');
-        await expect(uut.shutdown(adbName)).rejects.toThrowError(new RegExp(`Failed to shut down.*${adbName}`));
+        await expect(uut.shutdown(avdName)).rejects.toThrowError(new RegExp(`Failed to shut down.*${avdName}`));
       });
 
       it('should keep polling the emulator status until it is "none"', async () => {

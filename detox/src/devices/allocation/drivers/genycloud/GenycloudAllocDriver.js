@@ -3,44 +3,24 @@ const semver = require('semver');
 const AllocationDriverBase = require('../AllocationDriverBase');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const GenycloudEmulatorCookie = require('../../GenycloudEmulatorCookie');
-const RecipesService = require('../../../drivers/android/genycloud/services/GenyRecipesService');
-const RecipeQuerying = require('./GenyRecipeQuerying');
-const InstanceLauncher = require('./GenyCloudInstanceLauncher');
-const GenyCloudInstanceAllocation = require('./GenyCloudInstanceAllocation');
-const InstanceLookupService = require('../../../drivers/android/genycloud/services/GenyInstanceLookupService');
-const InstanceLifecycleService = require('../../../drivers/android/genycloud/services/GenyInstanceLifecycleService');
-const AuthService = require('../../../drivers/android/genycloud/services/GenyAuthService');
-const InstanceNaming = require('../../../drivers/android/genycloud/services/GenyInstanceNaming');
-const GenyDeviceRegistryFactory = require('../../../drivers/android/genycloud/GenyDeviceRegistryFactory');
-
-const logger = require('../../../../utils/logger').child({ __filename });
 
 const MIN_GMSAAS_VERSION = '1.6.0';
 
 class GenycloudAllocDriver extends AllocationDriverBase {
+
   /**
-   * @param genycloudExec { GenyCloudExec }
+   * @param adb { ADB }
    * @param eventEmitter { AsyncEmitter }
+   * @param recipeQuerying { GenyRecipeQuerying }
+   * @param instanceAllocation { GenyInstanceAllocation }
+   * @param instanceLauncher { GenyInstanceLauncher }
    */
-  constructor({ genycloudExec, eventEmitter }) {
-    super();
-
-    // TODO ASDASD DI this (i.e. via factory)
-    this._exec = genycloudExec; // TODO ASDASD should not be needed as a class member
-    this._eventEmitter = eventEmitter; // TODO ASDASD should not be needed as a class member
-
-    const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
-    const deviceRegistry = GenyDeviceRegistryFactory.forRuntime();
-    const deviceCleanupRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
-
-    const recipeService = new RecipesService(genycloudExec, logger);
-    const instanceLookupService = new InstanceLookupService(genycloudExec, instanceNaming, deviceRegistry);
-    const instanceLifecycleService = new InstanceLifecycleService(genycloudExec, instanceNaming);
-    this._recipeQuerying = new RecipeQuerying(recipeService);
-    this._instanceAllocation = new GenyCloudInstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService });
-    this._instanceLauncher = new InstanceLauncher(this._instanceLifecycleService, deviceCleanupRegistry, eventEmitter);
-
-    // this._authService = new AuthService(this._exec);
+  constructor({ adb, eventEmitter, recipeQuerying, instanceAllocation, instanceLauncher }) {
+    super(eventEmitter);
+    this._adb = adb;
+    this._recipeQuerying = recipeQuerying
+    this._instanceAllocation = instanceAllocation;
+    this._instanceLauncher = instanceLauncher;
   }
 
   /**
@@ -64,8 +44,13 @@ class GenycloudAllocDriver extends AllocationDriverBase {
       await this._instanceAllocation.deallocateDevice(instance.uuid);
       throw e;
     }
+    const { adbName } = instance;
 
-    await this._notifyBootEvent(instance.adbName, recipe.name, isNew);
+    await this._notifyBootEvent(adbName, recipe.name, isNew);
+
+    await this._adb.disableAndroidAnimations(adbName);
+    await this._adb.apiLevel(adbName);
+
     return new GenycloudEmulatorCookie(instance, recipe);
   }
 

@@ -1,6 +1,6 @@
 class AllocationDriverBase {
-  constructor(eventEmtiter) {
-    this._eventEmitter = eventEmtiter;
+  constructor(eventEmmiter) {
+    this._eventEmitter = eventEmmiter;
   }
 
   /**

@@ -16,15 +16,15 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
     this._emulatorExec = emulatorExec;
   }
 
-  async launch(emulatorName, options = { port: undefined }) {
-    const launchCommand = new LaunchCommand(emulatorName, options);
+  async launch(avdName, adbName, options = { port: undefined }) {
+    const launchCommand = new LaunchCommand(avdName, options);
 
     await retry({
       retries: 2,
       interval: 100,
       conditionFn: isUnknownEmulatorError,
-    }, () => this._launchEmulator(emulatorName, launchCommand));
-    await this._awaitEmulatorBoot(emulatorName);
+    }, () => this._launchEmulator(avdName, launchCommand));
+    await this._awaitEmulatorBoot(adbName);
   }
 
   async shutdown(adbName) {
@@ -49,18 +49,18 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
     return launchEmulatorProcess(emulatorName, this._emulatorExec, launchCommand);
   }
 
-  async _awaitEmulatorBoot(emulatorName) {
+  async _awaitEmulatorBoot(adbName) {
     await traceCall('awaitBoot', () =>
-      this._waitForBootToComplete(emulatorName));
+      this._waitForBootToComplete(adbName));
   }
 
-  async _waitForBootToComplete(emulatorName) {
+  async _waitForBootToComplete(adbName) {
     await retry({ retries: 240, interval: 2500 }, async () => {
-      const isBootComplete = await this._adb.isBootComplete(emulatorName);
+      const isBootComplete = await this._adb.isBootComplete(adbName);
 
       if (!isBootComplete) {
         throw new DetoxRuntimeError({
-          message: `Waited for ${emulatorName} to complete booting for too long!`,
+          message: `Waited for ${adbName} to complete booting for too long!`,
         });
       }
     });

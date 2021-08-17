@@ -1,11 +1,8 @@
-const _ = require('lodash');
-const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
-
-const avdName = 'mock-avd-name';
-const adbName = 'mocked-emulator:5554';
-const placeholderPort = 5554;
-
 describe('Allocation driver for Google emulators', () => {
+
+  const avdName = 'mock-avd-name';
+  const adbName = 'mocked-emulator:5554';
+  const placeholderPort = 5554;
 
   const givenAllocationError = (message = 'mocked rejection') => deviceAllocation.allocateDevice.mockRejectedValue(new Error(message));
   const givenAllocationResult = ({ adbName, placeholderPort, isRunning }) => deviceAllocation.allocateDevice.mockResolvedValue({ adbName, placeholderPort, isRunning });
@@ -25,10 +22,9 @@ describe('Allocation driver for Google emulators', () => {
   let eventEmitter;
   let patchAvdSkinConfig;
   let avdValidator;
-  let versionResolver;
+  let emulatorVersionResolver;
   let emulatorLauncher;
   let deviceAllocation;
-
   let uut;
   beforeEach(() => {
     jest.mock('../../../../utils/trace', () => ({
@@ -36,9 +32,6 @@ describe('Allocation driver for Google emulators', () => {
     }));
 
     jest.mock('../../AndroidEmulatorCookie');
-
-    jest.mock('../../../drivers/android/exec/EmulatorExec');
-    const emulatorExec = require('../../../drivers/android/exec/EmulatorExec');
 
     jest.mock('../../../drivers/android/exec/ADB');
     const ADB = require('../../../drivers/android/exec/ADB');
@@ -48,33 +41,34 @@ describe('Allocation driver for Google emulators', () => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter();
 
-    jest.mock('../../../DeviceRegistry');
-    const deviceRegistry = require('../../../DeviceRegistry');
-
     jest.mock('./patchAvdSkinConfig');
     patchAvdSkinConfig = require('./patchAvdSkinConfig').patchAvdSkinConfig;
 
     jest.mock('./AVDValidator');
     const AVDValidator = require('./AVDValidator');
+    avdValidator = new AVDValidator();
 
     jest.mock('./EmulatorVersionResolver');
     const EmulatorVersionResolver = require('./EmulatorVersionResolver');
+    emulatorVersionResolver = new EmulatorVersionResolver();
 
     jest.mock('./EmulatorLauncher');
     const EmulatorLauncher = require('./EmulatorLauncher');
+    emulatorLauncher = new EmulatorLauncher();
 
     jest.mock('./EmulatorDeviceAllocation');
     const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
+    deviceAllocation = new EmulatorDeviceAllocation();
 
     const EmulatorAllocDriver = require('./EmulatorAllocDriver');
     uut = new EmulatorAllocDriver({
-      emulatorExec, adb, eventEmitter, deviceRegistry,
+      adb,
+      eventEmitter,
+      avdValidator,
+      emulatorVersionResolver,
+      emulatorLauncher,
+      deviceAllocation,
     });
-
-    avdValidator = latestInstanceOf(AVDValidator);
-    versionResolver = latestInstanceOf(EmulatorVersionResolver);
-    emulatorLauncher = latestInstanceOf(EmulatorLauncher);
-    deviceAllocation = latestInstanceOf(EmulatorDeviceAllocation);
   });
 
   describe('allocation', () => {
@@ -109,7 +103,7 @@ describe('Allocation driver for Google emulators', () => {
 
       it('should launch it', async () => {
         await uut.allocate(avdName);
-        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, { port: placeholderPort });
+        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, { port: placeholderPort });
       });
 
       it('should deallocate it, if launching fails', async () => {
@@ -165,7 +159,7 @@ describe('Allocation driver for Google emulators', () => {
 
     it('should pre-patch AVD skin configuration', async () => {
       const majorVersion = 33;
-      versionResolver.resolve.mockResolvedValue({
+      emulatorVersionResolver.resolve.mockResolvedValue({
         major: majorVersion,
       });
 

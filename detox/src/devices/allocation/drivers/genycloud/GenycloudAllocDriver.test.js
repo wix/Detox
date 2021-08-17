@@ -1,6 +1,3 @@
-const _ = require('lodash');
-const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
-
 describe('Allocation driver for Genymotion cloud emulators', () => {
 
   let logger;
@@ -9,41 +6,40 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
   let instanceAllocation;
   let instanceLauncher;
   let GenyInstance;
+  let adb;
   let uut;
   beforeEach(() => {
     jest.mock('../../../../utils/logger');
     logger = require('../../../../utils/logger');
 
-    const AsyncEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
+    jest.mock('../../../../utils/AsyncEmitter');
+    const AsyncEmitter = require('../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter();
-
-    const GenycloudExec = jest.genMockFromModule('../../../drivers/android/genycloud/exec/GenyCloudExec');
-    let genycloudExec = new GenycloudExec();
 
     // TODO ASDASD Relocate all genycloud services?
     jest.mock('../../../drivers/android/genycloud/services/GenyInstanceLookupService');
     jest.mock('../../../drivers/android/genycloud/services//GenyInstanceLifecycleService');
 
-    jest.mock('./GenyRecipeQuerying');
-    const GenyRecipeQuerying = require('./GenyRecipeQuerying');
+    const RecipeQuerying = jest.genMockFromModule('./GenyRecipeQuerying');
+    recipeQuerying = new RecipeQuerying();
 
-    jest.mock('./GenyCloudInstanceAllocation');
-    const InstanceAllocation = require('./GenyCloudInstanceAllocation');
+    const InstanceAllocation = jest.genMockFromModule('./GenyInstanceAllocation');
+    instanceAllocation = new InstanceAllocation();
 
-    jest.mock('./GenyCloudInstanceLauncher');
-    const InstanceLauncher = require('./GenyCloudInstanceLauncher');
+    const InstanceLauncher = jest.genMockFromModule('./GenyInstanceLauncher');
+    instanceLauncher = new InstanceLauncher();
+    instanceLauncher.launch.mockImplementation((instance, __) => instance);
 
     GenyInstance = jest.genMockFromModule('../../../drivers/android/genycloud/services//dto/GenyInstance');
+
+    jest.mock('../../../drivers/android/exec/ADB');
+    const ADB = require('../../../drivers/android/exec/ADB');
+    adb = new ADB();
 
     jest.mock('../../GenycloudEmulatorCookie');
 
     const GenycloudAllocDriver = require('./GenycloudAllocDriver');
-    uut = new GenycloudAllocDriver({ genycloudExec, eventEmitter });
-
-    recipeQuerying = latestInstanceOf(GenyRecipeQuerying);
-    instanceAllocation = latestInstanceOf(InstanceAllocation);
-    instanceLauncher = latestInstanceOf(InstanceLauncher);
-    instanceLauncher.launch.mockImplementation((instance, __) => instance);
+    uut = new GenycloudAllocDriver({ recipeQuerying, instanceAllocation, instanceLauncher, eventEmitter, adb });
   });
 
   const aDeviceQuery = () => ({
@@ -205,6 +201,26 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       expect(result.constructor.name).toEqual('GenycloudEmulatorCookie');
       expect(GenycloudEmulatorCookie).toHaveBeenCalledWith(launchedInstance, recipe);
     });
+
+    it('should prepare the emulators itself', async () => {
+      const instance = anInstance();
+      givenRecipe(aRecipe());
+      givenReallocationResult(instance);
+
+      await uut.allocate(deviceQuery);
+
+      expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
+    });
+
+    it('should inquire the API level', async () => {
+      const instance = anInstance();
+      givenRecipe(aRecipe());
+      givenReallocationResult(instance);
+
+      await uut.allocate(deviceQuery);
+
+      expect(adb.apiLevel).toHaveBeenCalledWith(instance.adbName);
+    });
   });
 
   describe('deallocation', () => {
@@ -244,3 +260,68 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     });
   });
 });
+
+// describe('preparation', () => {
+//   const givenProperGmsaasLogin = () => authServiceObj().getLoginEmail.mockResolvedValue('detox@wix.com');
+//   const givenGmsaasLoggedOut = () => authServiceObj().getLoginEmail.mockResolvedValue(null);
+//   const givenGmsaasExecVersion = (version) => execObj().getVersion.mockResolvedValue({ version });
+//   const givenProperGmsaasExecVersion = () => givenGmsaasExecVersion('1.6.0');
+//
+//   it('should throw an error if gmsaas exec is too old (minor version < 6)', async () => {
+//     givenProperGmsaasLogin();
+//     givenGmsaasExecVersion('1.5.9');
+//
+//     try {
+//       await uut.prepare();
+//     } catch (e) {
+//       expect(e.constructor.name).toEqual('DetoxRuntimeError');
+//       expect(e.toString()).toContain(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 1.5.9)`);
+//       expect(e.toString()).toContain(`HINT: Detox requires version 1.6.0, or newer. To use 'android.genycloud' type devices, you must upgrade it, first.`);
+//       return;
+//     }
+//     throw new Error('Expected an error');
+//   });
+//
+//   it('should accept the gmsaas exec if version is sufficiently new', async () => {
+//     givenProperGmsaasLogin();
+//     givenGmsaasExecVersion('1.6.0');
+//     await uut.prepare();
+//   });
+//
+//   it('should accept the gmsaas exec if version is more than sufficiently new', async () => {
+//     givenProperGmsaasLogin();
+//     givenGmsaasExecVersion('1.7.2');
+//     await uut.prepare();
+//   });
+//
+//   it('should throw an error if gmsaas exec is too old (major version < 1)', async () => {
+//     givenProperGmsaasLogin();
+//     givenGmsaasExecVersion('0.6.0');
+//
+//     await expect(uut.prepare())
+//       .rejects
+//       .toThrowError(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 0.6.0)`);
+//   });
+//
+//   it('should throw an error if not logged-in to gmsaas', async () => {
+//     givenProperGmsaasExecVersion();
+//     givenGmsaasLoggedOut();
+//
+//     try {
+//       await uut.prepare();
+//     } catch (e) {
+//       expect(e.constructor.name).toEqual('DetoxRuntimeError');
+//       expect(e.toString()).toContain(`Cannot run tests using 'android.genycloud' type devices, because Genymotion was not logged-in to!`);
+//       expect(e.toString()).toContain(`HINT: Log-in to Genymotion-cloud by running this command (and following instructions):\n${MOCK_GMSAAS_PATH} auth login --help`);
+//       return;
+//     }
+//     throw new Error('Expected an error');
+//   });
+//
+//   it('should not throw an error if properly logged in to gmsaas', async () => {
+//     givenProperGmsaasExecVersion();
+//     givenProperGmsaasLogin();
+//
+//     await uut.prepare();
+//   });
+// });

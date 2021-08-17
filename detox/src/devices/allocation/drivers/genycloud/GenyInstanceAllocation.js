@@ -1,4 +1,5 @@
 const AndroidDeviceAllocation = require('../AndroidDeviceAllocation');
+
 const logger = require('../../../../utils/logger').child({ __filename });
 
 const { ALLOCATE_DEVICE_LOG_EVT } = AndroidDeviceAllocation;
@@ -10,7 +11,7 @@ class AllocationResult {
   }
 }
 
-class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
+class GenyInstanceAllocation extends AndroidDeviceAllocation {
   constructor({ deviceRegistry, instanceLookupService, instanceLifecycleService }) {
     super(deviceRegistry, logger);
 
@@ -61,4 +62,4 @@ class GenyCloudInstanceAllocation extends AndroidDeviceAllocation {
   }
 }
 
-module.exports = GenyCloudInstanceAllocation;
+module.exports = GenyInstanceAllocation;

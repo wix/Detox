@@ -1,37 +1,27 @@
 const _ = require('lodash');
 
-const AVDValidator = require('./AVDValidator');
-const AVDsResolver = require('./AVDsResolver');
-const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-const EmulatorVersionResolver = require('./EmulatorVersionResolver');
-const FreeEmulatorFinder = require('./FreeEmulatorFinder');
-const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 const AllocationDriverBase = require('../AllocationDriverBase');
-const EmulatorLauncher = require('./EmulatorLauncher');
+const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 const { traceCall } = require('../../../../utils/trace');
 const AndroidEmulatorCookie = require('../../AndroidEmulatorCookie');
 
 class EmulatorAllocDriver extends AllocationDriverBase {
+
   /**
-   * @param emulatorExec { EmulatorExec }
    * @param adb { ADB }
    * @param eventEmitter { AsyncEmitter }
-   * @param deviceRegistry { DeviceRegistry }
+   * @param avdValidator { AVDValidator }
+   * @param emulatorVersionResolver { EmulatorVersionResolver }
+   * @param emulatorLauncher { EmulatorLauncher }
+   * @param deviceAllocation { EmulatorDeviceAllocation }
    */
-  constructor({ emulatorExec, adb, eventEmitter, deviceRegistry }) {
-    super();
-
+  constructor({ adb, eventEmitter, avdValidator, emulatorVersionResolver, emulatorLauncher, deviceAllocation }) {
+    super(eventEmitter);
     this._adb = adb;
-    this._eventEmitter = eventEmitter;
-
-    // TODO ASDASD DI this (i.e. via factory)
-    const avdsResolver = new AVDsResolver(emulatorExec);
-    this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
-    this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
-
-    const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
-    this._emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, eventEmitter });
-    this._deviceAllocation = new EmulatorDeviceAllocation(deviceRegistry, freeEmulatorFinder, adb, eventEmitter);
+    this._avdValidator = avdValidator;
+    this._emulatorVersionResolver = emulatorVersionResolver;
+    this._emulatorLauncher = emulatorLauncher;
+    this._deviceAllocation = deviceAllocation;
   }
 
   /**
@@ -70,7 +60,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   }
 
   async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
-    const rawBinaryVersion = await this._emuVersionResolver.resolve();
+    const rawBinaryVersion = await this._emulatorVersionResolver.resolve();
     const binaryVersion = _.get(rawBinaryVersion, 'major');
     return await patchAvdSkinConfig(avdName, binaryVersion);
   }
@@ -78,7 +68,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   async _launchEmulator(avdName, adbName, port) {
     try {
       await traceCall('emulatorLaunch', () =>
-        this._emulatorLauncher.launch(avdName, { port }));
+        this._emulatorLauncher.launch(avdName, adbName, { port }));
     } catch (e) {
       await this._deviceAllocation.deallocateDevice(adbName);
       throw e;

@@ -32,7 +32,7 @@ describe('Genymotion-Cloud recipes service', () => {
     exec = new GenyCloudExec();
 
     const GenyRecipesService = require('./GenyRecipesService');
-    uut = new GenyRecipesService(exec, logger);
+    uut = new GenyRecipesService(exec);
   });
 
   describe('getting a recipe by name', () => {

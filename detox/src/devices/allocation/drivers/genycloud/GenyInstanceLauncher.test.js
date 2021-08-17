@@ -59,8 +59,8 @@ describe('Genymotion-Cloud instance launcher', () => {
 
     GenyInstance = jest.genMockFromModule('../../../drivers/android/genycloud/services/dto/GenyInstance');
 
-    const GenyCloudInstanceLauncher = require('./GenyCloudInstanceLauncher');
-    uut = new GenyCloudInstanceLauncher(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter);
+    const GenyInstanceLauncher = require('./GenyInstanceLauncher');
+    uut = new GenyInstanceLauncher(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter);
   });
 
   describe('Launch', () => {
