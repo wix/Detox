@@ -31,10 +31,10 @@ describe('Allocation driver for Google emulators', () => {
       traceCall: (name, fn) => fn(),
     }));
 
-    jest.mock('../../AndroidEmulatorCookie');
+    jest.mock('../../../cookies/AndroidEmulatorCookie');
 
-    jest.mock('../../../drivers/android/exec/ADB');
-    const ADB = require('../../../drivers/android/exec/ADB');
+    jest.mock('../../../runtime/drivers/android/exec/ADB');
+    const ADB = require('../../../runtime/drivers/android/exec/ADB');
     adb = new ADB();
 
     jest.mock('../../../../utils/AsyncEmitter');
@@ -186,7 +186,7 @@ describe('Allocation driver for Google emulators', () => {
     });
 
     it('should return an Android emulator handle', async () => {
-      const AndroidEmulatorCookie = require('../../AndroidEmulatorCookie');
+      const AndroidEmulatorCookie = require('../../../cookies/AndroidEmulatorCookie');
 
       const handle = await uut.allocate(avdName);
       expect(handle.constructor.name).toEqual('AndroidEmulatorCookie');
@@ -197,7 +197,7 @@ describe('Allocation driver for Google emulators', () => {
   describe('Deallocation', () => {
     let deviceCookie;
     beforeEach(() => {
-      const AndroidEmulatorCookie = require('../../AndroidEmulatorCookie');
+      const AndroidEmulatorCookie = require('../../../cookies/AndroidEmulatorCookie');
       deviceCookie = new AndroidEmulatorCookie();
       deviceCookie.adbName = adbName;
     });

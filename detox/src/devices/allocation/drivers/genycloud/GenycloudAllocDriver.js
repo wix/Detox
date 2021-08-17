@@ -2,7 +2,7 @@ const semver = require('semver');
 
 const AllocationDriverBase = require('../AllocationDriverBase');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const GenycloudEmulatorCookie = require('../../GenycloudEmulatorCookie');
+const GenycloudEmulatorCookie = require('../../../cookies/GenycloudEmulatorCookie');
 
 const MIN_GMSAAS_VERSION = '1.6.0';
 
@@ -56,7 +56,7 @@ class GenycloudAllocDriver extends AllocationDriverBase {
 
   /**
    * @param deviceCookie { GenycloudEmulatorCookie }
-   * @param options { { shutdown: boolean} }
+   * @param options { { shutdown: boolean } }
    * @return {Promise<void>}
    */
   async free(deviceCookie, options = {}) {

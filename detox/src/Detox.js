@@ -7,8 +7,6 @@ const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
 const Client = require('./client/Client');
-const Device = require('./devices/Device');
-const driverRegistry = require('./devices/DriverRegistry').default;
 const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
 const { InvocationManager } = require('./invoke');
 const matchersRegistry = require('./matchersRegistry');
@@ -18,6 +16,9 @@ const Deferred = require('./utils/Deferred');
 const MissingDetox = require('./utils/MissingDetox');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
+
+const allocationDeviceFactory = require('./devices/allocation/AllocationDeviceFactory');
+const runtimeDeviceFactory = require('./devices/runtime/RuntimeDeviceFactory');
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
@@ -102,7 +103,7 @@ class Detox {
       this._client = null;
     }
 
-    if (this.device && this.device.id) {
+    if (this.device) {
       await this.device._cleanup();
 
       if (this._behaviorConfig.cleanup.shutdownDevice) {
@@ -164,29 +165,30 @@ class Detox {
 
     await this._client.connect();
 
-    const invocationManager = new InvocationManager(this._client);
-    const DeviceDriverImpl = driverRegistry.resolve(this._deviceConfig.type);
-    const deviceDriver = new DeviceDriverImpl({
-      client: this._client,
-      invocationManager,
-      emitter: this._eventEmitter,
-    });
+    const allocationDevice = allocationDeviceFactory.createAllocationDevice(this._deviceConfig, this._eventEmitter);
+    const deviceCookie = await allocationDevice.allocate(this._deviceConfig.device);
 
-    this.device = new Device({
-      appsConfig: this._appsConfig,
-      behaviorConfig: this._behaviorConfig,
-      deviceConfig: this._deviceConfig,
-      emitter: this._eventEmitter,
-      runtimeErrorComposer: this._runtimeErrorComposer,
-      deviceDriver,
-      sessionConfig,
-    });
+    const invocationManager = new InvocationManager(this._client);
+
+    this.device = runtimeDeviceFactory.createRuntimeDevice(
+      deviceCookie, {
+        client: this._client,
+        invocationManager,
+        emitter: this._eventEmitter,
+      }, {
+        appsConfig: this._appsConfig,
+        behaviorConfig: this._behaviorConfig,
+        deviceConfig: this._deviceConfig,
+        emitter: this._eventEmitter,
+        runtimeErrorComposer: this._runtimeErrorComposer,
+        sessionConfig,
+      });
 
     this._artifactsManager = new ArtifactsManager(this._artifactsConfig);
     this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
-    this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
+    this._artifactsManager.registerArtifactPlugins(this.device._declareArtifactPlugins());
 
-    await this.device.prepare();
+    await this.device.prepare(); // TODO ASDASD This will probably have to to go away
 
     const matchers = matchersRegistry.resolve(this.device, {
       invocationManager,

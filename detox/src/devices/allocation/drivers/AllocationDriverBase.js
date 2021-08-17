@@ -11,9 +11,10 @@ class AllocationDriverBase {
 
   /**
    * @param cookie { DeviceCookie }
+   * @param options { {shutdown: boolean} }
    * @return {Promise<void>}
    */
-  async free(cookie) {}
+  async free(cookie, options) {}
 
   // TODO ASDASD possibly relocate to device/instance launcher classes
   async _notifyBootEvent(deviceId, type, coldBoot) {

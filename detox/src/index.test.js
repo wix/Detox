@@ -166,8 +166,8 @@ describe('index (regular)', () => {
 
       let GenyCloudDriver;
       beforeEach(() => {
-        jest.mock('./devices/drivers/android/genycloud/GenyCloudDriver');
-        GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
+        jest.mock('./devices/runtime/drivers/android/genycloud/GenyCloudDriver');
+        GenyCloudDriver = require('./devices/runtime/drivers/android/genycloud/GenyCloudDriver');
       });
 
       it('should invoke genymotion-cloud\'s global init API', async () => {

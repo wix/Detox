@@ -48,16 +48,16 @@ describe('Genymotion-Cloud instance launcher', () => {
     const AsyncEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter();
 
-    const InstanceLifecycleService = jest.genMockFromModule('../../../drivers/android/genycloud/services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    const InstanceLookupService = jest.genMockFromModule('../../../drivers/android/genycloud/services/GenyInstanceLookupService');
+    const InstanceLookupService = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
 
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     deviceCleanupRegistry = new DeviceRegistry();
 
-    GenyInstance = jest.genMockFromModule('../../../drivers/android/genycloud/services/dto/GenyInstance');
+    GenyInstance = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services/dto/GenyInstance');
 
     const GenyInstanceLauncher = require('./GenyInstanceLauncher');
     uut = new GenyInstanceLauncher(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter);

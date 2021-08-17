@@ -1,7 +1,7 @@
 jest.mock('child_process');
 jest.mock('../src/utils/logger');
 jest.mock('../src/devices/DeviceRegistry');
-jest.mock('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
+jest.mock('../src/devices/runtime/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('../src/utils/lastFailedTests');
 
 const fs = require('fs-extra');
@@ -38,7 +38,7 @@ describe('CLI', () => {
     DeviceRegistry = require('../src/devices/DeviceRegistry');
     DeviceRegistry.forAndroid.mockImplementation(() => new DeviceRegistry());
     DeviceRegistry.forIOS.mockImplementation(() => new DeviceRegistry());
-    GenyDeviceRegistryFactory = require('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
+    GenyDeviceRegistryFactory = require('../src/devices/runtime/drivers/android/genycloud/GenyDeviceRegistryFactory');
     GenyDeviceRegistryFactory.forGlobalShutdown.mockImplementation(() => new DeviceRegistry());
   });
 

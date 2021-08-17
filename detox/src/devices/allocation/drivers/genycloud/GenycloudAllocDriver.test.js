@@ -17,8 +17,8 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     eventEmitter = new AsyncEmitter();
 
     // TODO ASDASD Relocate all genycloud services?
-    jest.mock('../../../drivers/android/genycloud/services/GenyInstanceLookupService');
-    jest.mock('../../../drivers/android/genycloud/services//GenyInstanceLifecycleService');
+    jest.mock('../../../runtime/drivers/android/genycloud/services/GenyInstanceLookupService');
+    jest.mock('../../../runtime/drivers/android/genycloud/services//GenyInstanceLifecycleService');
 
     const RecipeQuerying = jest.genMockFromModule('./GenyRecipeQuerying');
     recipeQuerying = new RecipeQuerying();
@@ -30,13 +30,13 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     instanceLauncher = new InstanceLauncher();
     instanceLauncher.launch.mockImplementation((instance, __) => instance);
 
-    GenyInstance = jest.genMockFromModule('../../../drivers/android/genycloud/services//dto/GenyInstance');
+    GenyInstance = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services//dto/GenyInstance');
 
-    jest.mock('../../../drivers/android/exec/ADB');
-    const ADB = require('../../../drivers/android/exec/ADB');
+    jest.mock('../../../runtime/drivers/android/exec/ADB');
+    const ADB = require('../../../runtime/drivers/android/exec/ADB');
     adb = new ADB();
 
-    jest.mock('../../GenycloudEmulatorCookie');
+    jest.mock('../../../cookies/GenycloudEmulatorCookie');
 
     const GenycloudAllocDriver = require('./GenycloudAllocDriver');
     uut = new GenycloudAllocDriver({ recipeQuerying, instanceAllocation, instanceLauncher, eventEmitter, adb });
@@ -189,7 +189,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     });
 
     it('should return a cookie based on the launched instance and recipe', async () => {
-      const GenycloudEmulatorCookie = require('../../GenycloudEmulatorCookie');
+      const GenycloudEmulatorCookie = require('../../../cookies/GenycloudEmulatorCookie');
       const instance = anInstance();
       const launchedInstance = aLaunchedInstance();
       const recipe = aRecipe();
@@ -226,7 +226,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
   describe('deallocation', () => {
     let deviceCookie;
     beforeEach(() => {
-      const GenycloudEmulatorCookie = require('../../GenycloudEmulatorCookie');
+      const GenycloudEmulatorCookie = require('../../../cookies/GenycloudEmulatorCookie');
       deviceCookie = new GenycloudEmulatorCookie();
     });
 

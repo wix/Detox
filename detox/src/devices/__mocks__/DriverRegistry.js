@@ -1,5 +1,5 @@
 const DriverRegistry = jest.requireActual('../DriverRegistry');
-const FakeDriver = jest.requireActual('../drivers/__mocks__/FakeDriver');
+const FakeDriver = jest.requireActual('../runtime/drivers/__mocks__/FakeDriver');
 
 class FakeDriverRegistry extends DriverRegistry {
   constructor(...args) {

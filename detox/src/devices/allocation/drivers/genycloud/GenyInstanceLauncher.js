@@ -1,4 +1,4 @@
-const AndroidDeviceLauncher = require('../../../drivers/android/AndroidDeviceLauncher');
+const AndroidDeviceLauncher = require('../../../runtime/drivers/android/AndroidDeviceLauncher');
 const retry = require('../../../../utils/retry');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 

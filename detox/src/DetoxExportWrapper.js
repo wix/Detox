@@ -114,7 +114,7 @@ class DetoxExportWrapper {
 DetoxExportWrapper.prototype.globalInit = async function() {
   try {
     // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of init-callbacks.
-    const GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
+    const GenyCloudDriver = require('./devices/runtime/drivers/android/genycloud/GenyCloudDriver');
     await GenyCloudDriver.globalInit();
   } catch (error) {
     log.warn({ event: 'GLOBAL_INIT' }, 'An error occurred trying to globally-init Genymotion-cloud emulator instances!', error);
@@ -124,7 +124,7 @@ DetoxExportWrapper.prototype.globalInit = async function() {
 DetoxExportWrapper.prototype.globalCleanup = async function() {
   try {
     // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of cleanup-callbacks.
-    const GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
+    const GenyCloudDriver = require('./devices/runtime/drivers/android/genycloud/GenyCloudDriver');
     await GenyCloudDriver.globalCleanup();
   } catch (error) {
     log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred trying to shut down Genymotion-cloud emulator instances!', error);

@@ -7,7 +7,7 @@ jest.mock('./utils/logger');
 jest.mock('./devices/DriverRegistry');
 jest.mock('./artifacts/ArtifactsManager');
 jest.mock('./client/Client');
-jest.mock('./devices/Device');
+jest.mock('./Device');
 jest.mock('./matchersRegistry');
 jest.mock('./invoke');
 jest.mock('./utils/cutStackTraces');
@@ -17,7 +17,7 @@ jest.mock('./server/DetoxServer', () => {
   return jest.fn().mockImplementation(() => new FakeServer());
 });
 
-describe('Detox', () => {
+describe.skip('Detox', () => { // TODO ASDASD
   let detoxConfig;
 
   let logger;

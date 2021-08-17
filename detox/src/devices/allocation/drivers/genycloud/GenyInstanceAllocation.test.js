@@ -17,13 +17,13 @@ describe('Genymotion-Cloud instance allocation', () => {
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
 
     // TODO ASDASD Relocate all genycloud services?
-    const InstanceLookupService = jest.genMockFromModule('../../../drivers/android/genycloud/services/GenyInstanceLookupService');
+    const InstanceLookupService = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
 
-    const InstanceLifecycleService = jest.genMockFromModule('../../../drivers/android/genycloud/services//GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services//GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    GenyInstance = jest.genMockFromModule('../../../drivers/android/genycloud/services//dto/GenyInstance');
+    GenyInstance = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services//dto/GenyInstance');
 
     const InstanceAllocation = require('./GenyInstanceAllocation');
     uut = new InstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService });

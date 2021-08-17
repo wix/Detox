@@ -19,15 +19,15 @@ describe('Emulator launcher', () => {
       traceCall: jest.fn().mockImplementation((__, func) => func()),
     }));
 
-    require('../../../drivers/android/exec/ADB')
-    const ADB = jest.genMockFromModule('../../../drivers/android/exec/ADB');
+    require('../../../runtime/drivers/android/exec/ADB')
+    const ADB = jest.genMockFromModule('../../../runtime/drivers/android/exec/ADB');
     adb = new ADB();
     adb.isBootComplete.mockReturnValue(true);
 
     const AsyncEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter();
 
-    const { EmulatorExec } = jest.genMockFromModule('../../../drivers/android/exec/EmulatorExec');
+    const { EmulatorExec } = jest.genMockFromModule('../../../runtime/drivers/android/exec/EmulatorExec');
     emulatorExec = new EmulatorExec();
 
     jest.mock('./launchEmulatorProcess');

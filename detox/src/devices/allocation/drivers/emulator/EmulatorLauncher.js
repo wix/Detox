@@ -2,8 +2,8 @@ const _ = require('lodash');
 
 const { DetoxRuntimeError } = require('../../../../errors');
 const retry = require('../../../../utils/retry');
-const AndroidDeviceLauncher = require('../../../drivers/android/AndroidDeviceLauncher');
-const { LaunchCommand } = require('../../../drivers/android/exec/EmulatorExec');
+const AndroidDeviceLauncher = require('../../../runtime/drivers/android/AndroidDeviceLauncher');
+const { LaunchCommand } = require('../../../runtime/drivers/android/exec/EmulatorExec');
 const { traceCall } = require('../../../../utils/trace');
 const { launchEmulatorProcess } = require('./launchEmulatorProcess');
 
