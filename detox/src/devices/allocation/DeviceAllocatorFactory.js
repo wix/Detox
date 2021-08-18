@@ -1,14 +1,21 @@
 const environment = require('../../utils/environment');
-const AllocationDevice = require('./AllocationDevice');
+const { DeviceAllocator, DeviceDeallocator } = require('./DeviceAllocator');
 
 /**
- * @param deviceConfig
- * @param eventEmitter
- * @returns { AllocationDevice }
+ * @param deviceConfig { Object}
+ * @param eventEmitter { AsyncEmitter }
+ * @returns { { allocDriver: DeviceAllocator, deallocDriver: (deviceCookie: DeviceCookie) => DeviceDeallocator} }
  */
-function createAllocationDevice(deviceConfig, eventEmitter) {
-  const driver = _createAllocationDriver(deviceConfig, eventEmitter);
-  return new AllocationDevice(driver);
+function createDeviceAllocator(deviceConfig, eventEmitter) {
+  const {
+    allocDriver,
+    createDeallocDriver,
+  } = _createAllocationDriver(deviceConfig, eventEmitter);
+
+  return {
+    allocator: new DeviceAllocator(allocDriver),
+    createDeallocator: (deviceCookie) => new DeviceDeallocator(createDeallocDriver(deviceCookie)),
+  };
 }
 
 function _createAllocationDriver(deviceConfig, eventEmitter) {
@@ -16,7 +23,7 @@ function _createAllocationDriver(deviceConfig, eventEmitter) {
     case 'android.emulator':
       return _createEmulatorAllocationDriver(eventEmitter);
     case 'android.genycloud':
-      return _createGenycloudAllocationDriver(eventEmitter);
+      return _createGenyAllocationDriver(eventEmitter);
     default:
       break; // TODO ASDASD
   }
@@ -32,7 +39,10 @@ function _createEmulatorAllocationDriver(eventEmitter) {
   const EmulatorLauncher = require('./drivers/emulator/EmulatorLauncher');
   const EmulatorDeviceAllocation = require('./drivers/emulator/EmulatorDeviceAllocation');
   const DeviceRegistryFactory = require('../runtime/drivers/android/genycloud/GenyDeviceRegistryFactory');
-  const AllocationDriver = require('./drivers/emulator/EmulatorAllocDriver');
+  const {
+    EmulatorAllocDriver,
+    EmulatorDeallocDriver,
+  } = require('./drivers/emulator/EmulatorAllocDriver');
 
   const adb = new ADB();
   const emulatorExec = new EmulatorExec();
@@ -45,7 +55,7 @@ function _createEmulatorAllocationDriver(eventEmitter) {
   const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
   const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, eventEmitter });
   const deviceAllocation = new EmulatorDeviceAllocation(deviceRegistry, freeEmulatorFinder);
-  return new AllocationDriver({
+  const allocDriver = new EmulatorAllocDriver({
     adb,
     eventEmitter,
     avdValidator,
@@ -53,9 +63,17 @@ function _createEmulatorAllocationDriver(eventEmitter) {
     emulatorLauncher,
     deviceAllocation,
   });
+  const createDeallocDriver = (deviceCookie) => new EmulatorDeallocDriver(deviceCookie, {
+    emulatorLauncher,
+    deviceAllocation,
+  });
+  return {
+    allocDriver,
+    createDeallocDriver,
+  }
 }
 
-function _createGenycloudAllocationDriver(eventEmitter) {
+function _createGenyAllocationDriver(eventEmitter) {
   const ADB = require('../runtime/drivers/android/exec/ADB');
   const Exec = require('../runtime/drivers/android/genycloud/exec/GenyCloudExec')
   const InstanceNaming = require('../runtime/drivers/android/genycloud/services/GenyInstanceNaming');
@@ -67,7 +85,10 @@ function _createGenycloudAllocationDriver(eventEmitter) {
   const RecipeQuerying = require('./drivers/genycloud/GenyRecipeQuerying');
   const InstanceAllocation = require('./drivers/genycloud/GenyInstanceAllocation');
   const InstanceLauncher = require('./drivers/genycloud/GenyInstanceLauncher');
-  const AllocationDriver = require('./drivers/genycloud/GenycloudAllocDriver');
+  const {
+    GenyAllocDriver,
+    GenyDeallocDriver,
+  } = require('./drivers/genycloud/GenyAllocDriver');
 
   const adb = new ADB();
   const genycloudExec = new Exec(environment.getGmsaasPath());
@@ -81,15 +102,20 @@ function _createGenycloudAllocationDriver(eventEmitter) {
   const recipeQuerying = new RecipeQuerying(recipeService);
   const instanceAllocation = new InstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService });
   const instanceLauncher = new InstanceLauncher(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter);
-  return new AllocationDriver({
+  const allocDriver = new GenyAllocDriver({
     adb,
     eventEmitter,
     recipeQuerying,
     instanceAllocation,
     instanceLauncher,
   });
+  const createDeallocDriver = (deviceCookie) => new GenyDeallocDriver(deviceCookie, { instanceAllocation, instanceLauncher });
+  return {
+    allocDriver,
+    createDeallocDriver,
+  }
 }
 
 module.exports = {
-  createAllocationDevice,
+  createDeviceAllocator,
 };

@@ -1,6 +1,6 @@
 const { traceCall } = require('../../utils/trace');
 
-class AllocationDevice {
+class DeviceAllocator {
   constructor(allocationDriver) {
     this._driver = allocationDriver;
   }
@@ -13,7 +13,12 @@ class AllocationDevice {
     return traceCall('allocateDevice', () =>
       this._driver.allocate(deviceQuery));
   }
+}
 
+class DeviceDeallocator {
+  constructor(deallocationDriver) {
+    this._driver = deallocationDriver;
+  }
   /**
    * @param options { {shutdown: boolean} }
    * @return {Promise<void>}
@@ -23,4 +28,7 @@ class AllocationDevice {
   }
 }
 
-module.exports = AllocationDevice;
+module.exports = {
+  DeviceAllocator,
+  DeviceDeallocator,
+};

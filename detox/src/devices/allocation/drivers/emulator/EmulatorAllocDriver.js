@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const AllocationDriverBase = require('../AllocationDriverBase');
+const { AllocationDriverBase, DeallocationDriverBase } = require('../AllocationDriverBase');
 const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 const { traceCall } = require('../../../../utils/trace');
 const AndroidEmulatorCookie = require('../../../cookies/AndroidEmulatorCookie');
@@ -46,19 +46,6 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     return new AndroidEmulatorCookie(adbName, avdName);
   }
 
-  /**
-   * @param deviceCookie { AndroidEmulatorCookie }
-   * @param options { {shutdown: boolean} }
-   * @return {Promise<void>}
-   */
-  async free(deviceCookie, options = {}) {
-    await this._deviceAllocation.deallocateDevice(deviceCookie.adbName);
-
-    if (options.shutdown) {
-      await this._emulatorLauncher.shutdown(deviceCookie.adbName);
-    }
-  }
-
   async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
     const rawBinaryVersion = await this._emulatorVersionResolver.resolve();
     const binaryVersion = _.get(rawBinaryVersion, 'major');
@@ -82,4 +69,27 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   }
 }
 
-module.exports = EmulatorAllocDriver;
+class EmulatorDeallocDriver extends DeallocationDriverBase {
+  constructor(deviceCookie, { emulatorLauncher, deviceAllocation }) {
+    super(deviceCookie);
+    this._emulatorLauncher = emulatorLauncher;
+    this._deviceAllocation = deviceAllocation;
+  }
+
+  /**
+   * @param options { {shutdown: boolean} }
+   * @return {Promise<void>}
+   */
+  async free(options = {}) {
+    await this._deviceAllocation.deallocateDevice(this.cookie.adbName);
+
+    if (options.shutdown) {
+      await this._emulatorLauncher.shutdown(this.cookie.adbName);
+    }
+  }
+}
+
+module.exports = {
+  EmulatorAllocDriver,
+  EmulatorDeallocDriver,
+};

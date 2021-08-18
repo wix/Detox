@@ -17,7 +17,7 @@ const MissingDetox = require('./utils/MissingDetox');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
 
-const allocationDeviceFactory = require('./devices/allocation/AllocationDeviceFactory');
+const deviceAllocatorFactory = require('./devices/allocation/DeviceAllocatorFactory');
 const runtimeDeviceFactory = require('./devices/runtime/RuntimeDeviceFactory');
 
 const _initHandle = Symbol('_initHandle');
@@ -75,6 +75,7 @@ class Detox {
       onError: this._onEmitError.bind(this),
     });
 
+    this._deallocator = null;
     this.device = null;
   }
 
@@ -104,11 +105,14 @@ class Detox {
     }
 
     if (this.device) {
+      let shutdown = false;
       await this.device._cleanup();
 
       if (this._behaviorConfig.cleanup.shutdownDevice) {
+        shutdown = true;
         await this.device.shutdown();
       }
+      await this._deallocator.free({ shutdown });
     }
 
     if (this._server) {
@@ -116,6 +120,7 @@ class Detox {
       this._server = null;
     }
 
+    this._deallocator = null;
     this.device = null;
   }
 
@@ -165,11 +170,15 @@ class Detox {
 
     await this._client.connect();
 
-    const allocationDevice = allocationDeviceFactory.createAllocationDevice(this._deviceConfig, this._eventEmitter);
-    const deviceCookie = await allocationDevice.allocate(this._deviceConfig.device);
-
     const invocationManager = new InvocationManager(this._client);
 
+    const {
+      allocator,
+      createDeallocator,
+    } = deviceAllocatorFactory.createDeviceAllocator(this._deviceConfig, this._eventEmitter);
+    const deviceCookie = await allocator.allocate(this._deviceConfig.device);
+
+    this._deallocator = createDeallocator(deviceCookie);
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       deviceCookie, {
         client: this._client,

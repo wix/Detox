@@ -1,12 +1,12 @@
 const semver = require('semver');
 
-const AllocationDriverBase = require('../AllocationDriverBase');
+const { AllocationDriverBase, DeallocationDriverBase } = require('../AllocationDriverBase');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const GenycloudEmulatorCookie = require('../../../cookies/GenycloudEmulatorCookie');
 
 const MIN_GMSAAS_VERSION = '1.6.0';
 
-class GenycloudAllocDriver extends AllocationDriverBase {
+class GenyAllocDriver extends AllocationDriverBase {
 
   /**
    * @param adb { ADB }
@@ -54,22 +54,6 @@ class GenycloudAllocDriver extends AllocationDriverBase {
     return new GenycloudEmulatorCookie(instance);
   }
 
-  /**
-   * @param deviceCookie { GenycloudEmulatorCookie }
-   * @param options { { shutdown: boolean } }
-   * @return {Promise<void>}
-   */
-  async free(deviceCookie, options = {}) {
-    const { instance } = deviceCookie;
-    if (instance) {
-      await this._instanceAllocation.deallocateDevice(instance.uuid);
-
-      if (options.shutdown) {
-        await this._instanceLauncher.shutdown(instance);
-      }
-    }
-  }
-
   _assertRecipe(deviceQuery, recipe) {
     if (!recipe) {
       throw new DetoxRuntimeError({
@@ -99,4 +83,30 @@ class GenycloudAllocDriver extends AllocationDriverBase {
   }
 }
 
-module.exports = GenycloudAllocDriver;
+class GenyDeallocDriver extends DeallocationDriverBase {
+  constructor(deviceCookie, { instanceAllocation, instanceLauncher, }) {
+    super(deviceCookie);
+    this._instanceAllocation = instanceAllocation;
+    this._instanceLauncher = instanceLauncher;
+  }
+
+  /**
+   * @param options { { shutdown: boolean } }
+   * @return {Promise<void>}
+   */
+  async free(options = {}) {
+    const { instance } = this.cookie;
+    if (instance) {
+      await this._instanceAllocation.deallocateDevice(instance.uuid);
+
+      if (options.shutdown) {
+        await this._instanceLauncher.shutdown(instance);
+      }
+    }
+  }
+}
+
+module.exports = {
+  GenyAllocDriver,
+  GenyDeallocDriver,
+};

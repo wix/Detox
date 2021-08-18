@@ -1,6 +1,6 @@
 class AllocationDriverBase {
-  constructor(eventEmmiter) {
-    this._eventEmitter = eventEmmiter;
+  constructor(eventEmitter) {
+    this._eventEmitter = eventEmitter;
   }
 
   /**
@@ -9,17 +9,25 @@ class AllocationDriverBase {
    */
   async allocate(deviceQuery) {}
 
-  /**
-   * @param cookie { DeviceCookie }
-   * @param options { {shutdown: boolean} }
-   * @return {Promise<void>}
-   */
-  async free(cookie, options) {}
-
   // TODO ASDASD possibly relocate to device/instance launcher classes
   async _notifyBootEvent(deviceId, type, coldBoot) {
     return this._eventEmitter.emit('bootDevice', { deviceId, type, coldBoot });
   }
 }
 
-module.exports = AllocationDriverBase;
+class DeallocationDriverBase {
+  constructor(deviceCookie) {
+    this.cookie = deviceCookie;
+  }
+
+  /**
+   * @param options { {shutdown: boolean} }
+   * @return {Promise<void>}
+   */
+  async free(options) {}
+}
+
+module.exports = {
+  AllocationDriverBase,
+  DeallocationDriverBase,
+};
