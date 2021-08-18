@@ -192,14 +192,13 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       const GenycloudEmulatorCookie = require('../../../cookies/GenycloudEmulatorCookie');
       const instance = anInstance();
       const launchedInstance = aLaunchedInstance();
-      const recipe = aRecipe();
-      givenRecipe(recipe);
+      givenRecipe(aRecipe());
       givenReallocationResult(instance);
       givenLaunchResult(launchedInstance);
 
       const result = await uut.allocate(deviceQuery);
       expect(result.constructor.name).toEqual('GenycloudEmulatorCookie');
-      expect(GenycloudEmulatorCookie).toHaveBeenCalledWith(launchedInstance, recipe);
+      expect(GenycloudEmulatorCookie).toHaveBeenCalledWith(launchedInstance);
     });
 
     it('should prepare the emulators itself', async () => {

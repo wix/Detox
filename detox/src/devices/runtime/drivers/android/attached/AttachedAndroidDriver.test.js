@@ -23,9 +23,9 @@ describe('Attached android device driver', () => {
   beforeEach(mockBaseClassesDependencies);
   beforeEach(mockDirectDependencies);
 
-  const adbNamePattern = '9A291FFAZ005S9';
+  const adbName = '9A291FFAZ005S9';
   const deviceConfig = {
-    adbName: adbNamePattern,
+    adbName,
   };
 
   let emitter;
@@ -33,6 +33,7 @@ describe('Attached android device driver', () => {
   let deviceRegistry;
   let FreeDeviceFinder;
   let freeDeviceFinderObj;
+  let deviceCookie;
   let uut;
   beforeEach(() => {
     const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
@@ -52,12 +53,23 @@ describe('Attached android device driver', () => {
     FreeDeviceFinder = require('../tools/FreeDeviceFinder');
     freeDeviceFinderObj = () => latestInstanceOf(FreeDeviceFinder);
 
+    deviceCookie = {
+      adbName,
+    };
     const AttachedAndroidDriver = require('./AttachedAndroidDriver');
-    uut = new AttachedAndroidDriver({
+    uut = new AttachedAndroidDriver(deviceCookie, {
       invocationManager,
       emitter,
       client: {},
     });
+  });
+
+  it('should return the adb-name as the external ID', () => {
+    expect(uut.getExternalId()).toEqual(adbName);
+  });
+
+  it('should return the instance description as the external ID', () => {
+    expect(uut.getDeviceName()).toEqual(`AttachedDevice:${adbName}`);
   });
 
   describe('device acquiring', () => {
@@ -66,11 +78,11 @@ describe('Attached android device driver', () => {
         try {
           return await userFn();
         } finally {
-          expect(freeDeviceFinderObj().findFreeDevice).toHaveBeenCalledWith(adbNamePattern);
+          expect(freeDeviceFinderObj().findFreeDevice).toHaveBeenCalledWith(adbName);
         }
       });
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(adbName);
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
@@ -79,7 +91,7 @@ describe('Attached android device driver', () => {
         try {
           return await userFn();
         } finally {
-          expect(freeDeviceFinderObj().findFreeDevice).toHaveBeenCalledWith(adbNamePattern);
+          expect(freeDeviceFinderObj().findFreeDevice).toHaveBeenCalledWith(adbName);
         }
       });
 
@@ -92,37 +104,25 @@ describe('Attached android device driver', () => {
     });
 
     it('should emit a bootDevice event', async () => {
-      const adbName = `${adbNamePattern}_allocated`;
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(adbName);
 
       expect(emitter.emit).toHaveBeenCalledWith('bootDevice', { coldBoot: false, deviceId: adbName, type: 'device' });
     });
 
     it('should init ADB\'s API-level', async () => {
-      const adbName = `${adbNamePattern}_allocated`;
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(adbName);
       expect(adbObj().apiLevel).toHaveBeenCalledWith(adbName);
     });
 
     it('should unlock the screen using ADB', async () => {
-      const adbName = `${adbNamePattern}_allocated`;
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(adbName);
       expect(adbObj().unlockScreen).toHaveBeenCalledWith(adbName);
-    });
-
-    it('should initialize the name', async () => {
-      const adbName = `${adbNamePattern}_allocated`;
-      deviceRegistry.allocateDevice.mockReturnValue(adbName);
-
-      expect(uut.name).toEqual('Unnamed Android Device');
-      await uut.acquireFreeDevice(adbNamePattern);
-      expect(uut.name).toEqual(adbName);
     });
   });
 

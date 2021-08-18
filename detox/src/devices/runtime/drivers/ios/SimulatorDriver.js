@@ -21,17 +21,25 @@ const IosDriver = require('./IosDriver');
 const AppleSimUtils = require('./tools/AppleSimUtils');
 
 class SimulatorDriver extends IosDriver {
+  /**
+   * @param deviceCookie { IosSimulatorCookie }
+   * @param config { Object }
+   */
+  constructor(deviceCookie, config) {
+    super(deviceCookie, config);
 
-  constructor(config) {
-    super(config);
-
+    // TODO Can pass the UDID into apple-sim-utils via c'tor, now that it is available through the cookie
     this.applesimutils = new AppleSimUtils();
     this.deviceRegistry = DeviceRegistry.forIOS();
-    this._name = 'Unspecified Simulator';
   }
 
-  get name() {
-    return this._name;
+  getExternalId() {
+    return this.cookie.udid;
+  }
+
+  getDeviceName() {
+    const { udid, type } = this.cookie;
+    return `${udid} ${type}`;
   }
 
   declareArtifactPlugins() {
@@ -57,9 +65,10 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async cleanup(deviceId, bundleId) {
-    await this.deviceRegistry.disposeDevice(deviceId);
-    await super.cleanup(deviceId, bundleId);
+  async cleanup(bundleId) {
+    const { udid } = this.cookie;
+    await this.deviceRegistry.disposeDevice(udid);
+    await super.cleanup(bundleId);
   }
 
   async acquireFreeDevice(deviceQuery) {
@@ -71,8 +80,6 @@ class SimulatorDriver extends IosDriver {
     if (!udid) {
       throw new DetoxRuntimeError(`Failed to find device matching ${deviceComment}`);
     }
-
-    this._name = `${udid} ${deviceComment}`;
 
     try {
       await this._boot(udid, deviceQuery.type || deviceQuery);
@@ -104,100 +111,118 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('bootDevice', { coldBoot, deviceId, type });
   }
 
-  async installApp(deviceId, binaryPath) {
-    await this.applesimutils.install(deviceId, getAbsoluteBinaryPath(binaryPath));
+  async installApp(binaryPath) {
+    const { udid } = this.cookie;
+    await this.applesimutils.install(udid, getAbsoluteBinaryPath(binaryPath));
   }
 
-  async uninstallApp(deviceId, bundleId) {
-    await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
-    await this.applesimutils.uninstall(deviceId, bundleId);
+  async uninstallApp(bundleId) {
+    const { udid } = this.cookie;
+    await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
+    await this.applesimutils.uninstall(udid, bundleId);
   }
 
-  async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
-    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId, launchArgs });
-    const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
-    await this.emitter.emit('launchApp', { bundleId, deviceId, launchArgs, pid });
+  async launchApp(bundleId, launchArgs, languageAndLocale) {
+    const { udid } = this.cookie;
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+    const pid = await this.applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
+    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
 
     return pid;
   }
 
-  async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
-    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId, launchArgs });
+  async waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
+    const { udid } = this.cookie;
 
-    this.applesimutils.printLaunchHint(deviceId, bundleId, launchArgs, languageAndLocale);
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+
+    this.applesimutils.printLaunchHint(udid, bundleId, launchArgs, languageAndLocale);
     await pressAnyKey();
 
-    const pid = await this.applesimutils.getPid(deviceId, bundleId);
+    const pid = await this.applesimutils.getPid(udid, bundleId);
     if (Number.isNaN(pid)) {
       throw new DetoxRuntimeError({
         message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
-        hint: `Make sure that the app is running on the device (${deviceId}), visually or via CLI:\n` +
+        hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
               `xcrun simctl spawn ${deviceId} launchctl list | grep -F '${bundleId}'\n`,
       });
     } else {
       log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
     }
 
-    await this.emitter.emit('launchApp', { bundleId, deviceId, launchArgs, pid });
+    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
     return pid;
   }
 
-  async terminate(deviceId, bundleId) {
-    await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
-    await this.applesimutils.terminate(deviceId, bundleId);
-    await this.emitter.emit('terminateApp', { deviceId, bundleId });
+  async terminate(bundleId) {
+    const { udid } = this.cookie;
+    await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
+    await this.applesimutils.terminate(udid, bundleId);
+    await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
   }
 
-  async setBiometricEnrollment(deviceId, yesOrNo) {
-    await this.applesimutils.setBiometricEnrollment(deviceId, yesOrNo);
+  async setBiometricEnrollment(yesOrNo) {
+    const { udid } = this.cookie;
+    await this.applesimutils.setBiometricEnrollment(udid, yesOrNo);
   }
 
-  async matchFace(deviceId) {
-    await this.applesimutils.matchBiometric(deviceId, 'Face');
+  async matchFace() {
+    const { udid } = this.cookie;
+    await this.applesimutils.matchBiometric(udid, 'Face');
   }
 
-  async unmatchFace(deviceId) {
-    await this.applesimutils.unmatchBiometric(deviceId, 'Face');
+  async unmatchFace() {
+    const { udid } = this.cookie;
+    await this.applesimutils.unmatchBiometric(udid, 'Face');
   }
 
-  async matchFinger(deviceId) {
-    await this.applesimutils.matchBiometric(deviceId, 'Finger');
+  async matchFinger() {
+    const { udid } = this.cookie;
+    await this.applesimutils.matchBiometric(udid, 'Finger');
   }
 
-  async unmatchFinger(deviceId) {
-    await this.applesimutils.unmatchBiometric(deviceId, 'Finger');
+  async unmatchFinger() {
+    const { udid } = this.cookie;
+    await this.applesimutils.unmatchBiometric(udid, 'Finger');
   }
 
-  async sendToHome(deviceId) {
-    await this.applesimutils.sendToHome(deviceId);
+  async sendToHome() {
+    const { udid } = this.cookie;
+    await this.applesimutils.sendToHome(udid);
   }
 
-  async shutdown(deviceId) {
-    await this.emitter.emit('beforeShutdownDevice', { deviceId });
-    await this.applesimutils.shutdown(deviceId);
-    await this.emitter.emit('shutdownDevice', { deviceId });
+  async shutdown() {
+    const { udid } = this.cookie;
+    await this.emitter.emit('beforeShutdownDevice', { deviceId: udid });
+    await this.applesimutils.shutdown(udid);
+    await this.emitter.emit('shutdownDevice', { deviceId: udid });
   }
 
-  async setLocation(deviceId, lat, lon) {
-    await this.applesimutils.setLocation(deviceId, lat, lon);
+  async setLocation(lat, lon) {
+    const { udid } = this.cookie;
+    await this.applesimutils.setLocation(udid, lat, lon);
   }
 
-  async setPermissions(deviceId, bundleId, permissions) {
-    await this.applesimutils.setPermissions(deviceId, bundleId, permissions);
+  async setPermissions(bundleId, permissions) {
+    const { udid } = this.cookie;
+    await this.applesimutils.setPermissions(udid, bundleId, permissions);
   }
 
-  async clearKeychain(deviceId) {
-    await this.applesimutils.clearKeychain(deviceId);
+  async clearKeychain() {
+    const { udid } = this.cookie;
+    await this.applesimutils.clearKeychain(udid);
   }
 
-  async resetContentAndSettings(deviceId) {
-    await this.shutdown(deviceId);
-    await this.applesimutils.resetContentAndSettings(deviceId);
-    await this._boot(deviceId);
+  async resetContentAndSettings() {
+    const { udid } = this.cookie;
+    await this.shutdown();
+    await this.applesimutils.resetContentAndSettings(udid);
+    await this._boot(udid);
   }
 
-  getLogsPaths(deviceId) {
-    return this.applesimutils.getLogsPaths(deviceId);
+  getLogsPaths() {
+    const { udid } = this.cookie;
+    return this.applesimutils.getLogsPaths(udid);
   }
 
   async waitForActive() {
@@ -208,7 +233,8 @@ class SimulatorDriver extends IosDriver {
     return await this.client.waitForBackground();
   }
 
-  async takeScreenshot(udid, screenshotName) {
+  async takeScreenshot(screenshotName) {
+    const { udid } = this.cookie;
     const tempPath = await temporaryPath.for.png();
     await this.applesimutils.takeScreenshot(udid, tempPath);
 
@@ -221,7 +247,7 @@ class SimulatorDriver extends IosDriver {
     return tempPath;
   }
 
-  async captureViewHierarchy(_udid, artifactName) {
+  async captureViewHierarchy(artifactName) {
     const viewHierarchyURL = temporaryPath.for.viewhierarchy();
     await this.client.captureViewHierarchy({ viewHierarchyURL });
 
@@ -325,12 +351,14 @@ class SimulatorDriver extends IosDriver {
       : `(${rawDeviceQuery})`;
   }
 
-  async setStatusBar(deviceId, flags) {
-    await this.applesimutils.statusBarOverride(deviceId, flags);
+  async setStatusBar(flags) {
+    const { udid } = this.cookie;
+    await this.applesimutils.statusBarOverride(udid, flags);
   }
 
-  async resetStatusBar(deviceId) {
-    await this.applesimutils.statusBarReset(deviceId);
+  async resetStatusBar() {
+    const { udid } = this.cookie;
+    await this.applesimutils.statusBarReset(udid);
   }
 }
 

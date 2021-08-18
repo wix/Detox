@@ -13,11 +13,11 @@ const _driverClasses = {
 
 /**
  * @param deviceCookie { DeviceCookie }
- * @param deviceArgs { Object } // TODO ASDASD Own the creation of invocation manager, etc?
  * @param driverArgs { Object }
+ * @param deviceArgs { Object } // TODO ASDASD Own the creation of invocation manager, etc?
  * @returns { RuntimeDevice }
  */
-function createRuntimeDevice(deviceCookie, deviceArgs, driverArgs) {
+function createRuntimeDevice(deviceCookie, driverArgs, deviceArgs) {
   const runtimeDriver = _createDriver(deviceCookie, driverArgs);
   return new RuntimeDevice(deviceArgs, runtimeDriver);
 }

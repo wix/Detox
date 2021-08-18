@@ -48,11 +48,17 @@ describe('Genymotion-cloud driver', () => {
   });
 
   describe('instance scope', () => {
+    let instance;
+    let deviceCookie;
     let GenyCloudDriver;
     let uut;
     beforeEach(() => {
+      instance = anInstance();
+      deviceCookie = {
+        instance,
+      };
       GenyCloudDriver = require('./GenyCloudDriver');
-      uut = new GenyCloudDriver({
+      uut = new GenyCloudDriver(deviceCookie, {
         invocationManager,
         emitter,
         client: {},
@@ -60,8 +66,11 @@ describe('Genymotion-cloud driver', () => {
     });
 
     it('should return the adb-name as the external ID', () => {
-      const instance = anInstance();
-      expect(uut.getExternalId(instance)).toEqual(instance.adbName);
+      expect(uut.getExternalId()).toEqual(instance.adbName);
+    });
+
+    it('should return the instance description as the external ID', () => {
+      expect(uut.getDeviceName()).toEqual(instance.toString());
     });
 
     describe('app installation', () => {
@@ -79,9 +88,8 @@ describe('Genymotion-cloud driver', () => {
           .mockReturnValueOnce('bin-install-path')
           .mockReturnValueOnce('testbin-install-path');
 
-        const deviceId = anInstance();
-        await uut.installApp(deviceId, 'bin-path', 'testbin-path');
-        expect(appInstallHelperObj().install).toHaveBeenCalledWith(deviceId.adbName, 'bin-install-path', 'testbin-install-path');
+        await uut.installApp('bin-path', 'testbin-path');
+        expect(appInstallHelperObj().install).toHaveBeenCalledWith(instance.adbName, 'bin-install-path', 'testbin-install-path');
       });
     });
 
@@ -93,7 +101,7 @@ describe('Genymotion-cloud driver', () => {
         Instrumentation = require('../tools/MonitoredInstrumentation');
       });
       it('should kill instrumentation', async () => {
-        await uut.cleanup(anInstance(), 'bundle-id');
+        await uut.cleanup('bundle-id');
         expect(instrumentationObj().terminate).toHaveBeenCalled();
       });
     });
@@ -105,8 +113,7 @@ describe('Genymotion-cloud driver', () => {
         };
         detoxGenymotionManager.setLocation.mockReturnValue(invocation);
 
-        const instance = anInstance();
-        await uut.setLocation(instance, '40.5', '55.5');
+        await uut.setLocation('40.5', '55.5');
         expect(invocationManager.execute).toHaveBeenCalledWith(invocation);
         expect(detoxGenymotionManager.setLocation).toHaveBeenCalledWith(40.5, 55.5);
       });

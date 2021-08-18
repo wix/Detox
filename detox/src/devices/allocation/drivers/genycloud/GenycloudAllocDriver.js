@@ -51,7 +51,7 @@ class GenycloudAllocDriver extends AllocationDriverBase {
     await this._adb.disableAndroidAnimations(adbName);
     await this._adb.apiLevel(adbName);
 
-    return new GenycloudEmulatorCookie(instance, recipe);
+    return new GenycloudEmulatorCookie(instance);
   }
 
   /**

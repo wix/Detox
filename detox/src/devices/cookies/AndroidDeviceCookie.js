@@ -5,10 +5,6 @@ class AndroidDeviceCookie extends DeviceCookie {
     super();
     this.adbName = adbName;
   }
-
-  get name() {
-    return this.adbName;
-  }
 }
 
 module.exports = AndroidDeviceCookie;

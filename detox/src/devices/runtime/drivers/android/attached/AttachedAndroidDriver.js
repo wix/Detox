@@ -5,16 +5,18 @@ const AndroidDriver = require('../AndroidDriver');
 const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
 
 class AttachedAndroidDriver extends AndroidDriver {
-  constructor(config) {
-    super(config);
-    this._name = 'Unnamed Android Device';
-
+  /**
+   * @param deviceCookie { AndroidDeviceCookie }
+   * @param config { Object }
+   */
+  constructor(deviceCookie, config) {
+    super(deviceCookie, config);
     this._deviceRegistry = DeviceRegistry.forAndroid();
     this._freeDeviceFinder = new FreeDeviceFinder(this.adb, this._deviceRegistry);
   }
 
-  get name() {
-    return this._name;
+  getDeviceName() {
+    return `AttachedDevice:${this.cookie.adbName}`;
   }
 
   async acquireFreeDevice(deviceQuery) {
@@ -25,7 +27,6 @@ class AttachedAndroidDriver extends AndroidDriver {
     await this.adb.unlockScreen(adbName);
     await this.emitter.emit('bootDevice', { coldBoot: false, deviceId: adbName, type: 'device' });
 
-    this._name = adbName;
     return adbName;
   }
 

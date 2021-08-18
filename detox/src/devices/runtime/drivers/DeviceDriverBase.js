@@ -6,23 +6,22 @@ const fs = require('fs-extra');
 const log = require('../../../utils/logger').child({ __filename });
 
 class DeviceDriverBase {
-  constructor({ client, emitter }) {
+  constructor(deviceCookie, { client, emitter }) {
+    this.cookie = deviceCookie;
     this.client = client;
     this.emitter = emitter;
   }
 
-  // TODO ASDASD revisit impls across the board: post-refactor, it should stem from the cookie
-  getExternalId(deviceId) {
-    return deviceId;
+  getExternalId() {
+    return undefined;
+  }
+
+  getDeviceName() {
+    return undefined;
   }
 
   declareArtifactPlugins() {
     return {};
-  }
-
-  // TODO ASDASD delete this eventually
-  async acquireFreeDevice(_deviceQuery) {
-    return await Promise.resolve('');
   }
 
   async prepare() {
@@ -37,7 +36,7 @@ class DeviceDriverBase {
     return await Promise.resolve(NaN);
   }
 
-  async takeScreenshot(_deviceId, _screenshotName) {
+  async takeScreenshot(_screenshotName) {
     return await Promise.resolve('');
   }
 
@@ -69,7 +68,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async installApp(_deviceId, _binaryPath, _testBinaryPath) {
+  async installApp(_binaryPath, _testBinaryPath) {
     return await Promise.resolve('');
   }
 
@@ -123,11 +122,11 @@ class DeviceDriverBase {
     return notificationFilePath;
   }
 
-  async setPermissions(_deviceId, _bundleId, _permissions) {
+  async setPermissions(_bundleId, _permissions) {
     return await Promise.resolve('');
   }
 
-  async terminate(_deviceId, _bundleId) {
+  async terminate(_bundleId) {
     return await Promise.resolve('');
   }
 
@@ -136,7 +135,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async setOrientation(_deviceId, _orientation) {
+  async setOrientation(_orientation) {
     return await Promise.resolve('');
   }
 
@@ -182,11 +181,11 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async cleanup(_deviceId, _bundleId) {
+  async cleanup(_bundleId) {
     this.emitter.off(); // clean all listeners
   }
 
-  getLogsPaths(_deviceId) {
+  getLogsPaths() {
     return {
       stdout: undefined,
       stderr: undefined
@@ -198,14 +197,14 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async typeText(_deviceId, _text) {
+  async typeText(_text) {
     return await Promise.resolve('');
   }
 
-  async setStatusBar(_deviceId, _flags) {
+  async setStatusBar(_flags) {
   }
 
-  async resetStatusBar(_deviceId) {
+  async resetStatusBar() {
   }
 
   async captureViewHierarchy() {

@@ -12,11 +12,10 @@ class RuntimeDevice {
     appsConfig,
     behaviorConfig,
     deviceConfig,
-    deviceDriver,
     emitter,
     sessionConfig,
     runtimeErrorComposer,
-  }) {
+  }, deviceDriver) {
     cutStackTraces(this, [
       'captureViewHierarchy',
       'clearKeychain',
@@ -61,7 +60,6 @@ class RuntimeDevice {
 
     this._currentApp = null;
     this._currentAppLaunchArgs = null;
-    this._deviceId = undefined;
     this._processes = {};
 
     this.deviceDriver = deviceDriver;
@@ -70,11 +68,11 @@ class RuntimeDevice {
   }
 
   get id() {
-    return this.deviceDriver.getExternalId(this._deviceId);
+    return this.deviceDriver.getExternalId();
   }
 
   get name() {
-    return this.deviceDriver.name;
+    return this.deviceDriver.getDeviceName();
   }
 
   get type() {
@@ -90,9 +88,6 @@ class RuntimeDevice {
 
   async prepare() {
     await this.deviceDriver.prepare();
-
-    this._deviceId = await traceCall('acquireDevice', () =>
-      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device));
 
     const appAliases = Object.keys(this._appsConfig);
     if (appAliases.length === 1) {
@@ -128,6 +123,9 @@ class RuntimeDevice {
     return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
   }
 
+  /**
+   * @deprecated
+   */
   async relaunchApp(params = {}, bundleId) {
     if (params.newInstance === undefined) {
       params['newInstance'] = true;
@@ -140,50 +138,50 @@ class RuntimeDevice {
       throw new DetoxRuntimeError('Cannot take a screenshot with an empty name.');
     }
 
-    return this.deviceDriver.takeScreenshot(this._deviceId, name);
+    return this.deviceDriver.takeScreenshot(name);
   }
 
   async captureViewHierarchy(name = 'capture') {
-    return this.deviceDriver.captureViewHierarchy(this._deviceId, name);
+    return this.deviceDriver.captureViewHierarchy(name);
   }
 
   async sendToHome() {
-    await this.deviceDriver.sendToHome(this._deviceId);
+    await this.deviceDriver.sendToHome();
     await this.deviceDriver.waitForBackground();
   }
 
   async setBiometricEnrollment(toggle) {
     const yesOrNo = toggle ? 'YES' : 'NO';
-    await this.deviceDriver.setBiometricEnrollment(this._deviceId, yesOrNo);
+    await this.deviceDriver.setBiometricEnrollment(yesOrNo);
   }
 
   async matchFace() {
-    await this.deviceDriver.matchFace(this._deviceId);
+    await this.deviceDriver.matchFace();
     await this.deviceDriver.waitForActive();
   }
 
   async unmatchFace() {
-    await this.deviceDriver.unmatchFace(this._deviceId);
+    await this.deviceDriver.unmatchFace();
     await this.deviceDriver.waitForActive();
   }
 
   async matchFinger() {
-    await this.deviceDriver.matchFinger(this._deviceId);
+    await this.deviceDriver.matchFinger();
     await this.deviceDriver.waitForActive();
   }
 
   async unmatchFinger() {
-    await this.deviceDriver.unmatchFinger(this._deviceId);
+    await this.deviceDriver.unmatchFinger();
     await this.deviceDriver.waitForActive();
   }
 
   async shake() {
-    await this.deviceDriver.shake(this._deviceId);
+    await this.deviceDriver.shake();
   }
 
   async terminateApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
-    await this.deviceDriver.terminate(this._deviceId, _bundleId);
+    await this.deviceDriver.terminate(_bundleId);
     this._processes[_bundleId] = undefined;
   }
 
@@ -192,7 +190,6 @@ class RuntimeDevice {
       const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
 
       return this.deviceDriver.installApp(
-        this._deviceId,
         currentApp.binaryPath,
         currentApp.testBinaryPath
       );
@@ -202,14 +199,14 @@ class RuntimeDevice {
   async uninstallApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
     await traceCall('appUninstall', () =>
-      this.deviceDriver.uninstallApp(this._deviceId, _bundleId));
+      this.deviceDriver.uninstallApp(_bundleId));
   }
 
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
       await traceCall('installUtilBinaries', () =>
-        this.deviceDriver.installUtilBinaries(this._deviceId, paths));
+        this.deviceDriver.installUtilBinaries(paths));
     }
   }
 
@@ -223,33 +220,33 @@ class RuntimeDevice {
       throw new DetoxRuntimeError(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
     }
 
-    await this.deviceDriver.deliverPayload(params, this._deviceId);
+    await this.deviceDriver.deliverPayload(params);
   }
 
   async shutdown() {
-    await this.deviceDriver.shutdown(this._deviceId);
+    await this.deviceDriver.shutdown();
   }
 
   async setOrientation(orientation) {
-    await this.deviceDriver.setOrientation(this._deviceId, orientation);
+    await this.deviceDriver.setOrientation(orientation);
   }
 
   async setLocation(lat, lon) {
     lat = String(lat);
     lon = String(lon);
-    await this.deviceDriver.setLocation(this._deviceId, lat, lon);
+    await this.deviceDriver.setLocation(lat, lon);
   }
 
   async reverseTcpPort(port) {
-    await this.deviceDriver.reverseTcpPort(this._deviceId, port);
+    await this.deviceDriver.reverseTcpPort(port);
   }
 
   async unreverseTcpPort(port) {
-    await this.deviceDriver.unreverseTcpPort(this._deviceId, port);
+    await this.deviceDriver.unreverseTcpPort(port);
   }
 
   async clearKeychain() {
-    await this.deviceDriver.clearKeychain(this._deviceId);
+    await this.deviceDriver.clearKeychain();
   }
 
   async sendUserActivity(params) {
@@ -273,20 +270,24 @@ class RuntimeDevice {
   }
 
   async resetContentAndSettings() {
-    await this.deviceDriver.resetContentAndSettings(this._deviceId);
+    await this.deviceDriver.resetContentAndSettings();
   }
 
   getPlatform() {
-    return this.deviceDriver.getPlatform(this._deviceId);
+    return this.deviceDriver.getPlatform();
   }
 
-  async cleanup() {
+  _declareArtifactPlugins() {
+    return this.deviceDriver.declareArtifactPlugins();
+  }
+
+  async _cleanup() {
     const bundleId = this._currentApp && this._currentApp.bundleId;
-    await this.deviceDriver.cleanup(this._deviceId, bundleId);
+    await this.deviceDriver.cleanup(bundleId);
   }
 
   async pressBack() {
-    await this.deviceDriver.pressBack(this._deviceId);
+    await this.deviceDriver.pressBack();
   }
 
   getUiDevice() {
@@ -294,15 +295,18 @@ class RuntimeDevice {
   }
 
   async setStatusBar(params) {
-    await this.deviceDriver.setStatusBar(this._deviceId, params);
+    await this.deviceDriver.setStatusBar(params);
   }
 
   async resetStatusBar() {
-    await this.deviceDriver.resetStatusBar(this._deviceId);
+    await this.deviceDriver.resetStatusBar();
   }
 
-  async typeText(text) {
-    await this.deviceDriver.typeText(this._deviceId, text);
+  /**
+   * @internal
+   */
+  async _typeText(text) {
+    await this.deviceDriver.typeText(text);
   }
 
   get _bundleId() {
@@ -317,7 +321,6 @@ class RuntimeDevice {
   }
 
   async _doLaunchApp(params, bundleId) {
-    const deviceId = this._deviceId;
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
     const newInstance = params.newInstance !== undefined
@@ -349,27 +352,27 @@ class RuntimeDevice {
     }
 
     if (params.permissions) {
-      await this.deviceDriver.setPermissions(deviceId, bundleId, params.permissions);
+      await this.deviceDriver.setPermissions(bundleId, params.permissions);
     }
 
     if (params.disableTouchIndicators) {
       baseLaunchArgs['detoxDisableTouchIndicators'] = true;
     }
 
-    if (this.isAppRunning(bundleId) && hasPayload) {
+    if (this._isAppRunning(bundleId) && hasPayload) {
       await this.deviceDriver.deliverPayload({ ...params, delayPayload: true });
     }
 
     if (this._behaviorConfig.launchApp === 'manual') {
-      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
-      this._processes[bundleId] = await this.deviceDriver.launchApp(deviceId, bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      this._processes[bundleId] = await this.deviceDriver.launchApp(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
       await this.deviceDriver.waitUntilReady();
       await this.deviceDriver.waitForActive();
     }
 
     await this._emitter.emit('appReady', {
-      deviceId,
+      deviceId: this.deviceDriver.getExternalId(), // TODO ASDASD most likely, this event should come from within the driver
       bundleId,
       pid: this._processes[bundleId],
     });
@@ -388,7 +391,7 @@ class RuntimeDevice {
     const payload = {
       [key]: payloadFilePath,
     };
-    await this.deviceDriver.deliverPayload(payload, this._deviceId);
+    await this.deviceDriver.deliverPayload(payload);
     this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
   }
 
@@ -400,7 +403,7 @@ class RuntimeDevice {
     params[launchKey] = payloadFilePath;
   }
 
-  isAppRunning(bundleId = this._bundleId) {
+  _isAppRunning(bundleId = this._bundleId) {
     return this._processes[bundleId] != null;
   }
 

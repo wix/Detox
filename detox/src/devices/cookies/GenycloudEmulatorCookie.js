@@ -1,18 +1,12 @@
 const DeviceCookie = require('./DeviceCookie');
 
 class GenycloudEmulatorCookie extends DeviceCookie {
-
   /**
    * @param instance { GenyInstance }
-   * @param recipe { GenyRecipe }
    */
-  constructor(instance, recipe) {
+  constructor(instance) {
     super();
     this.instance = instance;
-  }
-
-  get name() {
-    return this.instance.name();
   }
 }
 

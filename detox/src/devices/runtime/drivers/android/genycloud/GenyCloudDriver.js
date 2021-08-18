@@ -14,11 +14,25 @@ const cleanupLogData = {
 };
 
 class GenyCloudDriver extends AndroidDriver {
-  getExternalId(instance) {
-    return instance.adbName;
+  /**
+   * @param deviceCookie { GenycloudEmulatorCookie }
+   * @param config { Object }
+   */
+  constructor(deviceCookie, config) {
+    super(deviceCookie, config);
   }
 
-  async installApp({ adbName }, _binaryPath, _testBinaryPath) {
+  getExternalId() {
+    const { adbName } = this.cookie.instance;
+    return adbName;
+  }
+
+  getDeviceName() {
+    return this.cookie.instance.toString();
+  }
+
+  async installApp(_binaryPath, _testBinaryPath) {
+    const { adbName } = this.cookie.instance;
     const {
       binaryPath,
       testBinaryPath,
@@ -26,7 +40,7 @@ class GenyCloudDriver extends AndroidDriver {
     await this.appInstallHelper.install(adbName, binaryPath, testBinaryPath);
   }
 
-  async setLocation(instance, lat, lon) {
+  async setLocation(lat, lon) {
     await this.invocationManager.execute(DetoxGenymotionManager.setLocation(parseFloat(lat), parseFloat(lon)));
   }
 

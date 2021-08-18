@@ -49,8 +49,8 @@ describe('Device', () => {
       });
     }
 
-    expectExternalIdCalled(deviceId) {
-      expect(this.driver.getExternalId).toHaveBeenCalledWith(deviceId);
+    expectExternalIdCalled() {
+      expect(this.driver.getExternalId).toHaveBeenCalled();
     }
 
     expectLaunchCalledWithArgs(device, expectedArgs, languageAndLocale) {
@@ -105,12 +105,11 @@ describe('Device', () => {
       behaviorConfig: {},
       deviceConfig: {},
       sessionConfig: {},
-      deviceDriver: driverMock.driver,
       runtimeErrorComposer: errorComposer,
       emitter,
 
       ...overrides,
-    });
+    }, driverMock.driver);
 
     device.deviceDriver.getExternalId.mockImplementation((deviceId) => deviceId);
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
@@ -170,7 +169,7 @@ describe('Device', () => {
     driverMock.driver.getExternalId.mockReturnValue('mockExternalId');
     expect(device.id).toEqual('mockExternalId');
 
-    driverMock.expectExternalIdCalled('mockDeviceId');
+    driverMock.expectExternalIdCalled();
   });
 
   describe('selectApp()', () => {

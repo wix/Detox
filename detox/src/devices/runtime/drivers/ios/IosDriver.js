@@ -34,11 +34,11 @@ class IosDriver extends DeviceDriverBase {
     return await this.client.setSyncSettings({ enabled: false });
   }
 
-  async shake(deviceId) { // eslint-disable-line no-unused-vars
+  async shake() {
     return await this.client.shake();
   }
 
-  async setOrientation(deviceId, orientation) {
+  async setOrientation(orientation) {
     if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ')'));
     return await this.client.setOrientation({ orientation });
   }

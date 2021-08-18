@@ -1,3 +1,5 @@
+const { traceCall } = require('../../utils/trace');
+
 class AllocationDevice {
   constructor(allocationDriver) {
     this._driver = allocationDriver;
@@ -8,7 +10,8 @@ class AllocationDevice {
    * @return {Promise<DeviceCookie>}
    */
   allocate(deviceQuery) {
-    return this._driver.allocate(deviceQuery);
+    return traceCall('allocateDevice', () =>
+      this._driver.allocate(deviceQuery));
   }
 
   /**

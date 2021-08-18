@@ -1,13 +1,10 @@
 const DeviceCookie = require('./DeviceCookie');
 
 class IosSimulatorCookie extends DeviceCookie {
-  constructor(udid) {
+  constructor(udid, type) {
     super();
     this.udid = udid;
-  }
-
-  get name() {
-    return this.udid;
+    this.type = type;
   }
 }
 

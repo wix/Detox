@@ -1,13 +1,13 @@
 const AsyncEmitter = require('../../../../utils/AsyncEmitter');
 
 describe('IOS simulator driver', () => {
-  let client;
-  let emitter;
-  let uut;
-
-  const deviceId = 'device-id-mock';
+  const udid = 'UD-1D-MOCK';
   const bundleId = 'bundle-id-mock';
 
+  let client;
+  let emitter;
+  let deviceCookie;
+  let uut;
   beforeEach(() => {
     jest.mock('./tools/AppleSimUtils', () => mockAppleSimUtils);
 
@@ -19,13 +19,16 @@ describe('IOS simulator driver', () => {
     const ClientMock = jest.requireMock('../../../../client/Client');
     client = new ClientMock();
 
+    deviceCookie = {
+      udid,
+    };
+
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver({ client, emitter });
+    uut = new SimulatorDriver(deviceCookie, { client, emitter });
   });
 
   it('should return the UDID as the external ID', () => {
-    const deviceId = 'u-d-id';
-    expect(uut.getExternalId(deviceId)).toEqual(deviceId);
+    expect(uut.getExternalId()).toEqual(udid);
   });
 
   describe('launch args', () => {
@@ -40,8 +43,8 @@ describe('IOS simulator driver', () => {
     });
 
     it('should be passed to AppleSimUtils', async () => {
-      await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
-      expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, launchArgs, languageAndLocale);
+      await uut.launchApp(bundleId, launchArgs, languageAndLocale);
+      expect(uut.applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, launchArgs, languageAndLocale);
     });
 
     it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
@@ -49,8 +52,8 @@ describe('IOS simulator driver', () => {
         launchArgs.dog3 = 'Chika, from plugin';
       });
 
-      await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
-      expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, {
+      await uut.launchApp(bundleId, launchArgs, languageAndLocale);
+      expect(uut.applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, {
         ...launchArgs,
         dog3: 'Chika, from plugin',
       }, '');
@@ -58,11 +61,10 @@ describe('IOS simulator driver', () => {
   });
 
   describe('.captureViewHierarchy', () => {
-
     beforeEach(async () => {
       jest.spyOn(emitter, 'emit');
 
-      await uut.captureViewHierarchy('', 'named hierarchy');
+      await uut.captureViewHierarchy('named hierarchy');
     });
 
     it('should call client.captureViewHierarchy', async () => {
@@ -82,33 +84,33 @@ describe('IOS simulator driver', () => {
 
   describe('biometrics', () => {
     it('enrolls in biometrics by passing to AppleSimUtils', async () => {
-      await uut.setBiometricEnrollment(deviceId, 'YES');
-      expect(uut.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'YES');
+      await uut.setBiometricEnrollment('YES');
+      expect(uut.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(udid, 'YES');
     });
 
     it('disenrolls in biometrics by passing to AppleSimUtils', async () => {
-      await uut.setBiometricEnrollment(deviceId, 'NO');
-      expect(uut.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'NO');
+      await uut.setBiometricEnrollment('NO');
+      expect(uut.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(udid, 'NO');
     });
 
     it('matches a face by passing to AppleSimUtils', async () => {
-      await uut.matchFace(deviceId);
-      expect(uut.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
+      await uut.matchFace();
+      expect(uut.applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Face');
     });
 
     it('fails to match a face by passing to AppleSimUtils', async () => {
-      await uut.unmatchFace(deviceId);
-      expect(uut.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Face');
+      await uut.unmatchFace();
+      expect(uut.applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Face');
     });
 
     it('matches a face by passing to AppleSimUtils', async () => {
-      await uut.matchFinger(deviceId);
-      expect(uut.applesimutils.matchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
+      await uut.matchFinger();
+      expect(uut.applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
 
     it('fails to match a face by passing to AppleSimUtils', async () => {
-      await uut.unmatchFinger(deviceId);
-      expect(uut.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
+      await uut.unmatchFinger();
+      expect(uut.applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
   });
 
