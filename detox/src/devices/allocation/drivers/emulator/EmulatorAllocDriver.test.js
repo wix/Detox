@@ -196,15 +196,10 @@ describe('Allocation driver for Google emulators', () => {
   });
 
   describe('Deallocation', () => {
-    let deviceCookie;
     let deallocDriver;
     beforeEach(() => {
-      const AndroidEmulatorCookie = require('../../../cookies/AndroidEmulatorCookie');
-      deviceCookie = new AndroidEmulatorCookie();
-      deviceCookie.adbName = adbName;
-
       const { EmulatorDeallocDriver } = require('./EmulatorAllocDriver');
-      deallocDriver = new EmulatorDeallocDriver(deviceCookie, {
+      deallocDriver = new EmulatorDeallocDriver(adbName, {
         emulatorLauncher,
         deviceAllocation,
       });
@@ -217,7 +212,7 @@ describe('Allocation driver for Google emulators', () => {
 
     it('should shut the emulator down', async () => {
       await deallocDriver.free({ shutdown: true });
-      expect(emulatorLauncher.shutdown).toHaveBeenCalledWith(deviceCookie.adbName);
+      expect(emulatorLauncher.shutdown).toHaveBeenCalledWith(adbName);
     });
 
     it('should not shut the emulator down, by default', async () => {

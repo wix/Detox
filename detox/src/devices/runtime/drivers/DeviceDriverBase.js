@@ -6,16 +6,21 @@ const fs = require('fs-extra');
 const log = require('../../../utils/logger').child({ __filename });
 
 class DeviceDriverBase {
-  constructor(deviceCookie, { client, emitter }) {
-    this.cookie = deviceCookie;
+  constructor({ client, emitter }) {
     this.client = client;
     this.emitter = emitter;
   }
 
+  /**
+   * @returns { String | undefined }
+   */
   getExternalId() {
     return undefined;
   }
 
+  /**
+   * @returns { String | undefined }
+   */
   getDeviceName() {
     return undefined;
   }

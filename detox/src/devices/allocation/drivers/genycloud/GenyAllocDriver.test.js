@@ -224,16 +224,11 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
 
   describe('deallocation', () => {
     let instance;
-    let deviceCookie;
     let deallocDriver;
     beforeEach(() => {
       instance = anInstance();
-
-      deviceCookie = {
-        instance,
-      };
       const { GenyDeallocDriver } = require('./GenyAllocDriver');
-      deallocDriver = new GenyDeallocDriver(deviceCookie, { instanceAllocation, instanceLauncher });
+      deallocDriver = new GenyDeallocDriver(instance, { instanceAllocation, instanceLauncher });
     });
 
     it('should deallocate the cloud instance', async () => {
@@ -243,8 +238,9 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
 
     // TODO ASDASD revisit why this is needed
     it('should not deallocate if instance isnt available', async () => {
-      delete deviceCookie.instance;
-      await deallocDriver.free();
+      const { GenyDeallocDriver } = require('./GenyAllocDriver');
+      const driver = new GenyDeallocDriver(undefined, { instanceAllocation, instanceLauncher });
+      await driver.free();
       expect(instanceAllocation.deallocateDevice).not.toHaveBeenCalled();
     });
 

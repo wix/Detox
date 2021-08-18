@@ -180,11 +180,13 @@ class Detox {
 
     this._deallocator = createDeallocator(deviceCookie);
     this.device = runtimeDeviceFactory.createRuntimeDevice(
-      deviceCookie, {
+      deviceCookie,
+      {
         client: this._client,
         invocationManager,
         emitter: this._eventEmitter,
-      }, {
+      },
+      {
         appsConfig: this._appsConfig,
         behaviorConfig: this._behaviorConfig,
         deviceConfig: this._deviceConfig,

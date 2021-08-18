@@ -70,8 +70,9 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 }
 
 class EmulatorDeallocDriver extends DeallocationDriverBase {
-  constructor(deviceCookie, { emulatorLauncher, deviceAllocation }) {
-    super(deviceCookie);
+  constructor(adbName, { emulatorLauncher, deviceAllocation }) {
+    super();
+    this._adbName = adbName;
     this._emulatorLauncher = emulatorLauncher;
     this._deviceAllocation = deviceAllocation;
   }
@@ -81,10 +82,10 @@ class EmulatorDeallocDriver extends DeallocationDriverBase {
    * @return {Promise<void>}
    */
   async free(options = {}) {
-    await this._deviceAllocation.deallocateDevice(this.cookie.adbName);
+    await this._deviceAllocation.deallocateDevice(this._adbName);
 
     if (options.shutdown) {
-      await this._emulatorLauncher.shutdown(this.cookie.adbName);
+      await this._emulatorLauncher.shutdown(this._adbName);
     }
   }
 }

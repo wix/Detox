@@ -22,24 +22,26 @@ const AppleSimUtils = require('./tools/AppleSimUtils');
 
 class SimulatorDriver extends IosDriver {
   /**
-   * @param deviceCookie { IosSimulatorCookie }
+   * @param udid { String } The unique cross-OS identifier of the simulator
+   * @param type { String }
    * @param config { Object }
    */
-  constructor(deviceCookie, config) {
-    super(deviceCookie, config);
+  constructor(udid, type, config) {
+    super(config);
 
+    this.udid = udid;
+    this._deviceName = `${udid} (${type})`;
     // TODO Can pass the UDID into apple-sim-utils via c'tor, now that it is available through the cookie
     this.applesimutils = new AppleSimUtils();
     this.deviceRegistry = DeviceRegistry.forIOS();
   }
 
   getExternalId() {
-    return this.cookie.udid;
+    return this.udid;
   }
 
   getDeviceName() {
-    const { udid, type } = this.cookie;
-    return `${udid} ${type}`;
+    return this._deviceName;
   }
 
   declareArtifactPlugins() {
@@ -66,8 +68,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async cleanup(bundleId) {
-    const { udid } = this.cookie;
-    await this.deviceRegistry.disposeDevice(udid);
+    await this.deviceRegistry.disposeDevice(this.udid);
     await super.cleanup(bundleId);
   }
 
@@ -112,18 +113,17 @@ class SimulatorDriver extends IosDriver {
   }
 
   async installApp(binaryPath) {
-    const { udid } = this.cookie;
-    await this.applesimutils.install(udid, getAbsoluteBinaryPath(binaryPath));
+    await this.applesimutils.install(this.udid, getAbsoluteBinaryPath(binaryPath));
   }
 
   async uninstallApp(bundleId) {
-    const { udid } = this.cookie;
+    const { udid } = this;
     await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
     await this.applesimutils.uninstall(udid, bundleId);
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
-    const { udid } = this.cookie;
+    const { udid } = this;
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
     const pid = await this.applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
@@ -132,7 +132,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
-    const { udid } = this.cookie;
+    const { udid } = this;
 
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
 
@@ -155,74 +155,63 @@ class SimulatorDriver extends IosDriver {
   }
 
   async terminate(bundleId) {
-    const { udid } = this.cookie;
+    const { udid } = this;
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
     await this.applesimutils.terminate(udid, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
   }
 
   async setBiometricEnrollment(yesOrNo) {
-    const { udid } = this.cookie;
-    await this.applesimutils.setBiometricEnrollment(udid, yesOrNo);
+    await this.applesimutils.setBiometricEnrollment(this.udid, yesOrNo);
   }
 
   async matchFace() {
-    const { udid } = this.cookie;
-    await this.applesimutils.matchBiometric(udid, 'Face');
+    await this.applesimutils.matchBiometric(this.udid, 'Face');
   }
 
   async unmatchFace() {
-    const { udid } = this.cookie;
-    await this.applesimutils.unmatchBiometric(udid, 'Face');
+    await this.applesimutils.unmatchBiometric(this.udid, 'Face');
   }
 
   async matchFinger() {
-    const { udid } = this.cookie;
-    await this.applesimutils.matchBiometric(udid, 'Finger');
+    await this.applesimutils.matchBiometric(this.udid, 'Finger');
   }
 
   async unmatchFinger() {
-    const { udid } = this.cookie;
-    await this.applesimutils.unmatchBiometric(udid, 'Finger');
+    await this.applesimutils.unmatchBiometric(this.udid, 'Finger');
   }
 
   async sendToHome() {
-    const { udid } = this.cookie;
-    await this.applesimutils.sendToHome(udid);
+    await this.applesimutils.sendToHome(this.udid);
   }
 
   async shutdown() {
-    const { udid } = this.cookie;
+    const { udid } = this;
     await this.emitter.emit('beforeShutdownDevice', { deviceId: udid });
     await this.applesimutils.shutdown(udid);
     await this.emitter.emit('shutdownDevice', { deviceId: udid });
   }
 
   async setLocation(lat, lon) {
-    const { udid } = this.cookie;
-    await this.applesimutils.setLocation(udid, lat, lon);
+    await this.applesimutils.setLocation(this.udid, lat, lon);
   }
 
   async setPermissions(bundleId, permissions) {
-    const { udid } = this.cookie;
-    await this.applesimutils.setPermissions(udid, bundleId, permissions);
+    await this.applesimutils.setPermissions(this.udid, bundleId, permissions);
   }
 
   async clearKeychain() {
-    const { udid } = this.cookie;
-    await this.applesimutils.clearKeychain(udid);
+    await this.applesimutils.clearKeychain(this.udid);
   }
 
   async resetContentAndSettings() {
-    const { udid } = this.cookie;
     await this.shutdown();
-    await this.applesimutils.resetContentAndSettings(udid);
-    await this._boot(udid);
+    await this.applesimutils.resetContentAndSettings(this.udid);
+    await this._boot(this.udid);
   }
 
   getLogsPaths() {
-    const { udid } = this.cookie;
-    return this.applesimutils.getLogsPaths(udid);
+    return this.applesimutils.getLogsPaths(this.udid);
   }
 
   async waitForActive() {
@@ -234,9 +223,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async takeScreenshot(screenshotName) {
-    const { udid } = this.cookie;
     const tempPath = await temporaryPath.for.png();
-    await this.applesimutils.takeScreenshot(udid, tempPath);
+    await this.applesimutils.takeScreenshot(this.udid, tempPath);
 
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
@@ -352,13 +340,11 @@ class SimulatorDriver extends IosDriver {
   }
 
   async setStatusBar(flags) {
-    const { udid } = this.cookie;
-    await this.applesimutils.statusBarOverride(udid, flags);
+    await this.applesimutils.statusBarOverride(this.udid, flags);
   }
 
   async resetStatusBar() {
-    const { udid } = this.cookie;
-    await this.applesimutils.statusBarReset(udid);
+    await this.applesimutils.statusBarReset(this.udid);
   }
 }
 

@@ -34,11 +34,13 @@ const log = logger.child({ __filename });
 
 class AndroidDriver extends DeviceDriverBase {
   /**
-   * @param deviceCookie { AndroidDeviceCookie }
+   * @param adbName { String }
    * @param config { Object }
    */
-  constructor(deviceCookie, config) {
-    super(deviceCookie, config);
+  constructor(adbName, config) {
+    super(config);
+
+    this.adbName = adbName;
 
     this.invocationManager = config.invocationManager;
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
@@ -54,7 +56,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   getExternalId() {
-    return this.cookie.adbName;
+    return this.adbName;
   }
 
   declareArtifactPlugins() {
@@ -75,27 +77,24 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async installApp(_binaryPath, _testBinaryPath) {
-    const { adbName } = this.cookie;
     const {
       binaryPath,
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-    await this.adb.install(adbName, binaryPath);
-    await this.adb.install(adbName, testBinaryPath);
+    await this.adb.install(this.adbName, binaryPath);
+    await this.adb.install(this.adbName, testBinaryPath);
   }
 
   async uninstallApp(bundleId) {
-    const { adbName } = this.cookie;
-    await this.emitter.emit('beforeUninstallApp', { deviceId: adbName, bundleId });
-    await this.appUninstallHelper.uninstall(adbName, bundleId);
+    await this.emitter.emit('beforeUninstallApp', { deviceId: this.adbName, bundleId });
+    await this.appUninstallHelper.uninstall(this.adbName, bundleId);
   }
 
   async installUtilBinaries(paths) {
-    const { adbName } = this.cookie;
     for (const path of paths) {
       const packageId = await this.getBundleIdFromBinary(path);
-      if (!await this.adb.isPackageInstalled(adbName, packageId)) {
-        await this.appInstallHelper.install(adbName, path);
+      if (!await this.adb.isPackageInstalled(this.adbName, packageId)) {
+        await this.appInstallHelper.install(this.adbName, path);
       }
     }
   }
@@ -119,7 +118,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _handleLaunchApp({ manually, bundleId, launchArgs }) {
-    const { adbName } = this.cookie;
+    const { adbName } = this;
 
     await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
 
@@ -145,12 +144,11 @@ class AndroidDriver extends DeviceDriverBase {
       return;
     }
 
-    const { adbName } = this.cookie;
     const { url, detoxUserNotificationDataURL } = params;
     if (url) {
       await this._startActivityWithUrl(url);
     } else if (detoxUserNotificationDataURL) {
-      const payloadPathOnDevice = await this._sendNotificationDataToDevice(detoxUserNotificationDataURL, adbName);
+      const payloadPathOnDevice = await this._sendNotificationDataToDevice(detoxUserNotificationDataURL, this.adbName);
       await this._startActivityFromNotification(payloadPathOnDevice);
     }
   }
@@ -172,12 +170,11 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async typeText(text) {
-    const { adbName } = this.cookie;
-    await this.adb.typeText(adbName, text);
+    await this.adb.typeText(this.adbName, text);
   }
 
   async terminate(bundleId) {
-    const { adbName } = this.cookie;
+    const { adbName } = this;
     await this.emitter.emit('beforeTerminateApp', { deviceId: adbName, bundleId });
     await this._terminateInstrumentation();
     await this.adb.terminate(adbName, bundleId);
@@ -198,13 +195,11 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async reverseTcpPort(port) {
-    const { adbName } = this.cookie;
-    await this.adb.reverse(adbName, port);
+    await this.adb.reverse(this.adbName, port);
   }
 
   async unreverseTcpPort(port) {
-    const { adbName } = this.cookie;
-    await this.adb.reverseRemove(adbName, port);
+    await this.adb.reverseRemove(this.adbName, port);
   }
 
   async setURLBlacklist(urlList) {
@@ -220,7 +215,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async takeScreenshot(screenshotName) {
-    const { adbName } = this.cookie;
+    const { adbName } = this;
 
     const pathOnDevice = this.devicePathBuilder.buildTemporaryArtifactPath('.png');
     await this.adb.screencap(adbName, pathOnDevice);

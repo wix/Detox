@@ -63,7 +63,7 @@ function _createEmulatorAllocationDriver(eventEmitter) {
     emulatorLauncher,
     deviceAllocation,
   });
-  const createDeallocDriver = (deviceCookie) => new EmulatorDeallocDriver(deviceCookie, {
+  const createDeallocDriver = (deviceCookie) => new EmulatorDeallocDriver(deviceCookie.adbName, {
     emulatorLauncher,
     deviceAllocation,
   });
@@ -109,7 +109,9 @@ function _createGenyAllocationDriver(eventEmitter) {
     instanceAllocation,
     instanceLauncher,
   });
-  const createDeallocDriver = (deviceCookie) => new GenyDeallocDriver(deviceCookie, { instanceAllocation, instanceLauncher });
+  const createDeallocDriver = (deviceCookie) =>
+    new GenyDeallocDriver(deviceCookie.instance, { instanceAllocation, instanceLauncher });
+
   return {
     allocDriver,
     createDeallocDriver,

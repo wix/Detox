@@ -3,31 +3,34 @@ const {
   GenycloudRuntimeDriver,
   IosSimulatorDriver,
 } = require('./drivers');
+const {
+  IosSimulatorCookie,
+  AndroidDeviceCookie,
+  AndroidEmulatorCookie,
+  GenycloudEmulatorCookie,
+} = require('../cookies');
 const RuntimeDevice = require('./RuntimeDevice');
-
-const _driverClasses = {
-  'AndroidEmulatorCookie': AndroidEmulatorRuntimeDriver,
-  'GenycloudEmulatorCookie': GenycloudRuntimeDriver,
-  'IosSimulatorCookie': IosSimulatorDriver,
-};
 
 /**
  * @param deviceCookie { DeviceCookie }
- * @param driverArgs { Object }
+ * @param driverConfig { Object }
  * @param deviceArgs { Object } // TODO ASDASD Own the creation of invocation manager, etc?
  * @returns { RuntimeDevice }
  */
-function createRuntimeDevice(deviceCookie, driverArgs, deviceArgs) {
-  const runtimeDriver = _createDriver(deviceCookie, driverArgs);
+function createRuntimeDevice(deviceCookie, driverConfig, deviceArgs) {
+  const runtimeDriver = _createDriver(deviceCookie, driverConfig);
   return new RuntimeDevice(deviceArgs, runtimeDriver);
 }
 
-function _createDriver(deviceCookie, driverArgs) {
-  const RuntimeDriverClass = _driverClasses[deviceCookie.constructor.name];
-  if (!RuntimeDriverClass) {
-    throw new Error('todo'); // TODO ASDASD
+function _createDriver(deviceCookie, driverConfig) {
+  if (deviceCookie instanceof AndroidEmulatorCookie) {
+    const { adbName, avdName } = deviceCookie;
+    return new AndroidEmulatorRuntimeDriver(deviceCookie.adbName, deviceCookie.avdName, driverConfig);
   }
-  return new RuntimeDriverClass(deviceCookie, driverArgs);
+  if (deviceCookie instanceof GenycloudEmulatorCookie) {
+    return new GenycloudRuntimeDriver(deviceCookie.instance, driverConfig);
+  }
+  throw new Error('wuttt'); // TODO ASDASD
 }
 
 module.exports = {

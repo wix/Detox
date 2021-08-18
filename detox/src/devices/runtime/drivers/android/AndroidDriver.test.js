@@ -28,18 +28,13 @@ describe('Android driver', () => {
   const appInstallHelperObj = () => latestInstanceOf(AppInstallHelperClass);
   const instrumentationObj = () => latestInstanceOf(InstrumentationClass);
 
-  let deviceCookie;
   let uut;
   beforeEach(() => {
     setUpModuleDepMocks();
     setUpClassDepMocks();
 
-    deviceCookie = {
-      adbName,
-    };
-
     const AndroidDriver = require('./AndroidDriver');
-    uut = new AndroidDriver(deviceCookie, {
+    uut = new AndroidDriver(adbName, {
       client,
       invocationManager,
       emitter,

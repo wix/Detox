@@ -84,8 +84,9 @@ class GenyAllocDriver extends AllocationDriverBase {
 }
 
 class GenyDeallocDriver extends DeallocationDriverBase {
-  constructor(deviceCookie, { instanceAllocation, instanceLauncher, }) {
-    super(deviceCookie);
+  constructor(instance, { instanceAllocation, instanceLauncher, }) {
+    super();
+    this._instance = instance;
     this._instanceAllocation = instanceAllocation;
     this._instanceLauncher = instanceLauncher;
   }
@@ -95,12 +96,11 @@ class GenyDeallocDriver extends DeallocationDriverBase {
    * @return {Promise<void>}
    */
   async free(options = {}) {
-    const { instance } = this.cookie;
-    if (instance) {
-      await this._instanceAllocation.deallocateDevice(instance.uuid);
+    if (this._instance) {
+      await this._instanceAllocation.deallocateDevice(this._instance.uuid);
 
       if (options.shutdown) {
-        await this._instanceLauncher.shutdown(instance);
+        await this._instanceLauncher.shutdown(this._instance);
       }
     }
   }

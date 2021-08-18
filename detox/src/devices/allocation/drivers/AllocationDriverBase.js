@@ -16,10 +16,6 @@ class AllocationDriverBase {
 }
 
 class DeallocationDriverBase {
-  constructor(deviceCookie) {
-    this.cookie = deviceCookie;
-  }
-
   /**
    * @param options { {shutdown: boolean} }
    * @return {Promise<void>}

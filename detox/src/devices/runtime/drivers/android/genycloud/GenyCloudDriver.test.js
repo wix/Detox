@@ -49,16 +49,12 @@ describe('Genymotion-cloud driver', () => {
 
   describe('instance scope', () => {
     let instance;
-    let deviceCookie;
     let GenyCloudDriver;
     let uut;
     beforeEach(() => {
       instance = anInstance();
-      deviceCookie = {
-        instance,
-      };
       GenyCloudDriver = require('./GenyCloudDriver');
-      uut = new GenyCloudDriver(deviceCookie, {
+      uut = new GenyCloudDriver(instance, {
         invocationManager,
         emitter,
         client: {},

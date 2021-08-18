@@ -6,7 +6,6 @@ describe('IOS simulator driver', () => {
 
   let client;
   let emitter;
-  let deviceCookie;
   let uut;
   beforeEach(() => {
     jest.mock('./tools/AppleSimUtils', () => mockAppleSimUtils);
@@ -19,17 +18,17 @@ describe('IOS simulator driver', () => {
     const ClientMock = jest.requireMock('../../../../client/Client');
     client = new ClientMock();
 
-    deviceCookie = {
-      udid,
-    };
-
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver(deviceCookie, { client, emitter });
+    uut = new SimulatorDriver(udid, 'Chika', { client, emitter });
   });
 
   it('should return the UDID as the external ID', () => {
     expect(uut.getExternalId()).toEqual(udid);
   });
+
+  it('should return the device name', () => {
+    expect(uut.getDeviceName()).toEqual(`${udid} (Chika)`);
+  })
 
   describe('launch args', () => {
     const languageAndLocale = '';

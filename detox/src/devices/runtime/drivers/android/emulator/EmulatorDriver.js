@@ -2,18 +2,22 @@ const argparse = require('../../../../../utils/argparse');
 const AndroidDriver = require('../AndroidDriver');
 
 class EmulatorDriver extends AndroidDriver {
-  constructor(deviceCookie, config) {
-    super(deviceCookie, config);
+  /**
+   * @param adbName { String } The identifier associated with ADB
+   * @param avdName { String } The name of the AVD (Android Virtual Device)
+   * @param config { Object }
+   */
+  constructor(adbName, avdName, config) {
+    super(adbName, config);
+    this.adbName = adbName;
+    this._deviceName = `${adbName} (${avdName})`;
   }
 
   getDeviceName() {
-    const { adbName, avdName } = this.cookie;
-    return `${adbName} (${avdName})`;
+    return this._deviceName;
   }
 
   async installApp(_binaryPath, _testBinaryPath) {
-    const { adbName } = this.cookie;
-
     if (argparse.getArgValue('force-adb-install') === 'true') {
       return await super.installApp(_binaryPath, _testBinaryPath);
     }
@@ -23,7 +27,7 @@ class EmulatorDriver extends AndroidDriver {
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
 
-    await this.appInstallHelper.install(adbName, binaryPath, testBinaryPath);
+    await this.appInstallHelper.install(this.adbName, binaryPath, testBinaryPath);
   }
 
   async shutdown() {
@@ -32,8 +36,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async setLocation(lat, lon) {
-    const { adbName } = this.cookie;
-    await this.adb.setLocation(adbName, lat, lon);
+    await this.adb.setLocation(this.adbName, lat, lon);
   }
 }
 
