@@ -24,6 +24,10 @@ function _createAllocationDriver(deviceConfig, eventEmitter) {
       return _createEmulatorAllocationDriver(eventEmitter);
     case 'android.genycloud':
       return _createGenyAllocationDriver(eventEmitter);
+    case 'android.attached':
+      return _createAttachedAndroidAllocationDriver(eventEmitter);
+    case 'ios.simulator':
+      return _createIosSimulatorAllocationDriver(eventEmitter);
     default:
       break; // TODO ASDASD
   }
@@ -116,6 +120,51 @@ function _createGenyAllocationDriver(eventEmitter) {
     allocDriver,
     createDeallocDriver,
   }
+}
+
+function _createAttachedAndroidAllocationDriver(eventEmitter) {
+  const ADB = require('../runtime/drivers/android/exec/ADB');
+  const DeviceRegistry = require('../DeviceRegistry');
+  const FreeDeviceFinder = require('../runtime/drivers/android/tools/FreeDeviceFinder');
+  const AttachedAndroidLauncher = require('./drivers/attached/AttachedAndroidLauncher');
+  const {
+    AttachedAndroidAllocDriver,
+    AttachedAndroidDeallocDriver,
+  } = require('./drivers/attached/AttachedAndroidAllocDriver');
+
+  const adb = new ADB();
+  const deviceRegistry = DeviceRegistry.forAndroid();
+  const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);
+  const attachedAndroidLauncher = new AttachedAndroidLauncher(eventEmitter);
+
+  const allocDriver = new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder, attachedAndroidLauncher });
+  const createDeallocDriver = (deviceCookie) =>
+    new AttachedAndroidDeallocDriver(deviceCookie.adbName, { deviceRegistry });
+
+  return {
+    allocDriver,
+    createDeallocDriver,
+  }
+}
+
+function _createIosSimulatorAllocationDriver(eventEmitter) {
+  const DeviceRegistry = require('../DeviceRegistry');
+  const AppleSimUtils = require('../runtime/drivers/ios/tools/AppleSimUtils');
+  const SimulatorLauncher = require('./drivers/ios/SimulatorLauncher');
+  const { SimulatorAllocDriver, SimulatorDeallocDriver } = require('./drivers/ios/SimulatorAllocDriver');
+
+  const applesimutils = new AppleSimUtils();
+  const simulatorLauncher = new SimulatorLauncher({ applesimutils, eventEmitter });
+  const deviceRegistry = DeviceRegistry.forIOS();
+
+  const allocDriver = new SimulatorAllocDriver({ eventEmitter, deviceRegistry, applesimutils, simulatorLauncher });
+  const createDeallocDriver = (deviceCookie) =>
+    new SimulatorDeallocDriver(deviceCookie.udid, { deviceRegistry, simulatorLauncher });
+
+  return {
+    allocDriver,
+    createDeallocDriver,
+  };
 }
 
 module.exports = {

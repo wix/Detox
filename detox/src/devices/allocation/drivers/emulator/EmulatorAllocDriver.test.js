@@ -25,7 +25,6 @@ describe('Allocation driver for Google emulators', () => {
   let emulatorVersionResolver;
   let emulatorLauncher;
   let deviceAllocation;
-  let deallocDriver;
   beforeEach(() => {
     jest.mock('../../../../utils/trace', () => ({
       traceCall: (name, fn) => fn(),

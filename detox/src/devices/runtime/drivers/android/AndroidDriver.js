@@ -45,6 +45,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.invocationManager = config.invocationManager;
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
 
+    // TODO ASDASD Move this to factory
     this.adb = new ADB();
     this.aapt = new AAPT();
     this.fileXfer = new TempFileXfer(this.adb);

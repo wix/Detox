@@ -223,6 +223,7 @@ class RuntimeDevice {
     await this.deviceDriver.deliverPayload(params);
   }
 
+  // TODO ASDASD
   async shutdown() {
     await this.deviceDriver.shutdown();
   }

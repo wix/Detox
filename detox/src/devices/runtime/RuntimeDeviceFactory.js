@@ -10,6 +10,8 @@ const {
   GenycloudEmulatorCookie,
 } = require('../cookies');
 const RuntimeDevice = require('./RuntimeDevice');
+const AppleSimUtils = require('./drivers/ios/tools/AppleSimUtils');
+const SimulatorLauncher = require('../allocation/drivers/ios/SimulatorLauncher');
 
 /**
  * @param deviceCookie { DeviceCookie }
@@ -25,11 +27,25 @@ function createRuntimeDevice(deviceCookie, driverConfig, deviceArgs) {
 function _createDriver(deviceCookie, driverConfig) {
   if (deviceCookie instanceof AndroidEmulatorCookie) {
     const { adbName, avdName } = deviceCookie;
-    return new AndroidEmulatorRuntimeDriver(deviceCookie.adbName, deviceCookie.avdName, driverConfig);
+    return new AndroidEmulatorRuntimeDriver(adbName, avdName, driverConfig);
   }
+
   if (deviceCookie instanceof GenycloudEmulatorCookie) {
     return new GenycloudRuntimeDriver(deviceCookie.instance, driverConfig);
   }
+
+  if (deviceCookie instanceof IosSimulatorCookie) {
+    const eventEmitter = driverConfig.emitter;
+    const applesimutils = new AppleSimUtils();
+    const iosDriverConfig = {
+      ...driverConfig,
+      applesimutils,
+      simulatorLauncher: new SimulatorLauncher({ applesimutils, eventEmitter }),
+    };
+    const { udid, type } = deviceCookie;
+    return new IosSimulatorDriver(udid, type, iosDriverConfig);
+  }
+
   throw new Error('wuttt'); // TODO ASDASD
 }
 

@@ -26,7 +26,7 @@ DriverRegistry.default = new DriverRegistry({
   'ios.none': require('./runtime/drivers/ios/IosDriver'), // TODO ASDASD
   'ios.simulator': require('./runtime/drivers/ios/SimulatorDriver'),
   'android.emulator': require('./runtime/drivers/android/emulator/EmulatorDriver'),
-  'android.attached': require('./runtime/drivers/android/attached/AttachedAndroidDriver'), // TODO ASDASD
+  'android.attached': require('./runtime/drivers/android/attached/AttachedAndroidDriver'),
   'android.genycloud': require('./runtime/drivers/android/genycloud/GenyCloudDriver'),
 });
 

@@ -1,4 +1,5 @@
-class AndroidDeviceLauncher {
+// TODO ASDASD Move this one directory higher
+class DeviceLauncher {
   constructor(eventEmitter) {
     this._eventEmitter = eventEmitter;
   }
@@ -10,6 +11,10 @@ class AndroidDeviceLauncher {
   async _notifyShutdownCompleted(deviceId) {
     return this._eventEmitter.emit('shutdownDevice', { deviceId });
   }
+
+  async _notifyBootEvent(deviceId, type, coldBoot) {
+    return this._eventEmitter.emit('bootDevice', { deviceId, type, coldBoot });
+  }
 }
 
-module.exports = AndroidDeviceLauncher;
+module.exports = DeviceLauncher;

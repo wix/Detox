@@ -9,7 +9,7 @@ class AllocationDriverBase {
    */
   async allocate(deviceQuery) {}
 
-  // TODO ASDASD possibly relocate to device/instance launcher classes
+  // TODO ASDASD This was rendered a dup of DeviceLauncher._notifyBootEvent. Need to remove it from this area.
   async _notifyBootEvent(deviceId, type, coldBoot) {
     return this._eventEmitter.emit('bootDevice', { deviceId, type, coldBoot });
   }

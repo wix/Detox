@@ -2,14 +2,14 @@ const _ = require('lodash');
 
 const { DetoxRuntimeError } = require('../../../../errors');
 const retry = require('../../../../utils/retry');
-const AndroidDeviceLauncher = require('../../../runtime/drivers/android/AndroidDeviceLauncher');
+const DeviceLauncher = require('../DeviceLauncher');
 const { LaunchCommand } = require('../../../runtime/drivers/android/exec/EmulatorExec');
 const { traceCall } = require('../../../../utils/trace');
 const { launchEmulatorProcess } = require('./launchEmulatorProcess');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
-class EmulatorLauncher extends AndroidDeviceLauncher {
+class EmulatorLauncher extends DeviceLauncher {
   constructor({ adb, emulatorExec, eventEmitter }) {
     super(eventEmitter);
     this._adb = adb;
