@@ -10,13 +10,12 @@ class GenyAllocDriver extends AllocationDriverBase {
 
   /**
    * @param adb { ADB }
-   * @param eventEmitter { AsyncEmitter }
    * @param recipeQuerying { GenyRecipeQuerying }
    * @param instanceAllocation { GenyInstanceAllocation }
    * @param instanceLauncher { GenyInstanceLauncher }
    */
-  constructor({ adb, eventEmitter, recipeQuerying, instanceAllocation, instanceLauncher }) {
-    super(eventEmitter);
+  constructor({ adb, recipeQuerying, instanceAllocation, instanceLauncher }) {
+    super();
     this._adb = adb;
     this._recipeQuerying = recipeQuerying
     this._instanceAllocation = instanceAllocation;
@@ -46,11 +45,8 @@ class GenyAllocDriver extends AllocationDriverBase {
     }
     const { adbName } = instance;
 
-    await this._notifyBootEvent(adbName, recipe.name, isNew);
-
     await this._adb.disableAndroidAnimations(adbName);
     await this._adb.apiLevel(adbName);
-
     return new GenycloudEmulatorCookie(instance);
   }
 

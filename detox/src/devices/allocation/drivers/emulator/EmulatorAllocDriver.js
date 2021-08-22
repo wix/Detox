@@ -9,14 +9,13 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 
   /**
    * @param adb { ADB }
-   * @param eventEmitter { AsyncEmitter }
    * @param avdValidator { AVDValidator }
    * @param emulatorVersionResolver { EmulatorVersionResolver }
    * @param emulatorLauncher { EmulatorLauncher }
    * @param deviceAllocation { EmulatorDeviceAllocation }
    */
-  constructor({ adb, eventEmitter, avdValidator, emulatorVersionResolver, emulatorLauncher, deviceAllocation }) {
-    super(eventEmitter);
+  constructor({ adb, avdValidator, emulatorVersionResolver, emulatorLauncher, deviceAllocation }) {
+    super();
     this._adb = adb;
     this._avdValidator = avdValidator;
     this._emulatorVersionResolver = emulatorVersionResolver;
@@ -37,10 +36,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     const allocResult = await this._deviceAllocation.allocateDevice(avdName);
     const { adbName, placeholderPort } = allocResult;
 
-    if (!allocResult.isRunning) {
-      await this._launchEmulator(avdName, adbName, placeholderPort)
-    }
-    await this._notifyBootEvent(adbName, avdName, !allocResult.isRunning);
+    await this._launchEmulator(avdName, adbName, allocResult.isRunning, placeholderPort);
     await this._prepareEmulator(adbName);
 
     return new AndroidEmulatorCookie(adbName, avdName);
@@ -52,10 +48,10 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     return await patchAvdSkinConfig(avdName, binaryVersion);
   }
 
-  async _launchEmulator(avdName, adbName, port) {
+  async _launchEmulator(avdName, adbName, isRunning, port) {
     try {
       await traceCall('emulatorLaunch', () =>
-        this._emulatorLauncher.launch(avdName, adbName, { port }));
+        this._emulatorLauncher.launch(avdName, adbName, isRunning, { port }));
     } catch (e) {
       await this._deviceAllocation.deallocateDevice(adbName);
       throw e;

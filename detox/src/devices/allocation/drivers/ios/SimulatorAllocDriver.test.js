@@ -19,15 +19,12 @@ describe('Allocation driver for iOS simulators', () => {
 
   describe('allocation', () => {
     beforeEach(() => {
-      const EventEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
-      const eventEmitter = new EventEmitter();
-
       jest.mock('../../../cookies/IosSimulatorCookie');
 
       givenNoUsedSimulators();
 
       const { SimulatorAllocDriver } = require('./SimulatorAllocDriver');
-      allocDriver = new SimulatorAllocDriver({ deviceRegistry, eventEmitter, applesimutils, simulatorLauncher });
+      allocDriver = new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
     });
 
     const aDeviceSpec = (udid) => ({

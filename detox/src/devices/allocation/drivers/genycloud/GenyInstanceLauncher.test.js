@@ -1,8 +1,11 @@
 describe('Genymotion-Cloud instance launcher', () => {
+  const recipeName = 'mock-recipe-name';
+
   const anInstance = () => {
     const instance = new GenyInstance();
     instance.uuid = 'mock-instance-uuid';
     instance.name = 'mock-instance-name';
+    instance.recipeName = recipeName;
     instance.toString = () => 'mock-instance-toString()';
     return instance;
   };
@@ -32,6 +35,15 @@ describe('Genymotion-Cloud instance launcher', () => {
   const givenInstanceQueryResult = (instance) => instanceLookupService.getInstance.mockResolvedValue(instance);
   const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
   const givenInstanceConnectResult = (instance) => instanceLifecycleService.adbConnectInstance.mockResolvedValue(instance);
+  const givenInstanceConnectError = () => instanceLifecycleService.adbConnectInstance.mockRejectedValue(new Error());
+
+  const expectDeviceBootEvent = (instance, coldBoot) =>
+    expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', {
+      coldBoot,
+      deviceId: instance.adbName,
+      type: recipeName,
+    });
+  const expectNoDeviceBootEvent = () => expect(eventEmitter.emit).not.toHaveBeenCalled();
 
   let retry;
   let eventEmitter;
@@ -60,7 +72,12 @@ describe('Genymotion-Cloud instance launcher', () => {
     GenyInstance = jest.genMockFromModule('../../../runtime/drivers/android/genycloud/services/dto/GenyInstance');
 
     const GenyInstanceLauncher = require('./GenyInstanceLauncher');
-    uut = new GenyInstanceLauncher(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter);
+    uut = new GenyInstanceLauncher({
+      instanceLifecycleService,
+      instanceLookupService,
+      deviceCleanupRegistry,
+      eventEmitter
+    });
   });
 
   describe('Launch', () => {
@@ -164,6 +181,39 @@ describe('Genymotion-Cloud instance launcher', () => {
       await uut.launch(connectedInstance);
 
       expect(instanceLifecycleService.adbConnectInstance).not.toHaveBeenCalled();
+    });
+
+    it('should emit boot event for a reused instance', async () => {
+      const isNew = true;
+      const instance = aFullyConnectedInstance();
+      givenInstanceQueryResult(instance);
+      givenInstanceConnectResult(instance);
+
+      await uut.launch(instance, isNew);
+
+      expectDeviceBootEvent(instance, true);
+    });
+
+    it('should emit boot event for a newly allocated instance', async () => {
+      const isNew = false;
+      const instance = aFullyConnectedInstance();
+      givenInstanceQueryResult(instance);
+      givenInstanceConnectResult(instance);
+
+      await uut.launch(instance, isNew);
+
+      expectDeviceBootEvent(instance, false);
+    });
+
+    it('should not emit boot event if adb-connect fails (implicit call-order check)', async () => {
+      const instance = aDisconnectedInstance();
+      givenInstanceQueryResult(instance);
+      givenInstanceConnectError();
+
+      try {
+        await uut.launch(instance, false);
+      } catch (e) {}
+      expectNoDeviceBootEvent();
     });
   });
 

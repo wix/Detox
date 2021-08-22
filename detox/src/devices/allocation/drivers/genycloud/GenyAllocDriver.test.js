@@ -1,7 +1,5 @@
 describe('Allocation driver for Genymotion cloud emulators', () => {
-
   let logger;
-  let eventEmitter;
   let recipeQuerying;
   let instanceAllocation;
   let instanceLauncher;
@@ -10,10 +8,6 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
   beforeEach(() => {
     jest.mock('../../../../utils/logger');
     logger = require('../../../../utils/logger');
-
-    jest.mock('../../../../utils/AsyncEmitter');
-    const AsyncEmitter = require('../../../../utils/AsyncEmitter');
-    eventEmitter = new AsyncEmitter();
 
     // TODO ASDASD Relocate all genycloud services?
     jest.mock('../../../runtime/drivers/android/genycloud/services/GenyInstanceLookupService');
@@ -71,13 +65,6 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
   const givenLaunchError = (message) => instanceLauncher.launch.mockRejectedValue(new Error(message));
   const givenLaunchResult = (instance) => instanceLauncher.launch.mockResolvedValue(instance);
 
-  const expectDeviceBootEvent = (instance, recipe, coldBoot) =>
-    expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', {
-      coldBoot,
-      deviceId: instance.adbName,
-      type: recipe.name,
-    });
-
   describe('allocation', () => {
     let deviceQuery;
     let allocDriver;
@@ -85,7 +72,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       deviceQuery = aDeviceQuery();
 
       const { GenyAllocDriver } = require('./GenyAllocDriver');
-      allocDriver = new GenyAllocDriver({ recipeQuerying, instanceAllocation, instanceLauncher, eventEmitter, adb });
+      allocDriver = new GenyAllocDriver({ recipeQuerying, instanceAllocation, instanceLauncher, adb });
     });
 
     it('should obtain recipe from recipes service', async () => {
@@ -153,16 +140,6 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         } catch (e) {}
         expect(instanceAllocation.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
       });
-
-      it('should emit a boot event with coldBoot=true', async () => {
-        const instance = anInstance();
-        const recipe = aRecipe();
-        givenRecipe(recipe);
-        givenFreshAllocationResult(instance);
-
-        await allocDriver.allocate(deviceQuery);
-        expectDeviceBootEvent(instance, recipe, true);
-      });
     });
 
     describe('given an allocation of an existing cloud instance (reused)', () => {
@@ -175,16 +152,6 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         await allocDriver.allocate(deviceQuery);
 
         expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
-      });
-
-      it('should emit a boot event with coldBoot=true', async () => {
-        const instance = anInstance();
-        const recipe = aRecipe();
-        givenRecipe(recipe);
-        givenReallocationResult(instance);
-
-        await allocDriver.allocate(deviceQuery);
-        expectDeviceBootEvent(instance, recipe, false);
       });
     });
 

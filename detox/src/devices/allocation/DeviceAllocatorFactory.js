@@ -61,7 +61,6 @@ function _createEmulatorAllocationDriver(eventEmitter) {
   const deviceAllocation = new EmulatorDeviceAllocation(deviceRegistry, freeEmulatorFinder);
   const allocDriver = new EmulatorAllocDriver({
     adb,
-    eventEmitter,
     avdValidator,
     emulatorVersionResolver,
     emulatorLauncher,
@@ -105,10 +104,9 @@ function _createGenyAllocationDriver(eventEmitter) {
   const instanceLifecycleService = new InstanceLifecycleService(genycloudExec, instanceNaming);
   const recipeQuerying = new RecipeQuerying(recipeService);
   const instanceAllocation = new InstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService });
-  const instanceLauncher = new InstanceLauncher(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter);
+  const instanceLauncher = new InstanceLauncher({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter });
   const allocDriver = new GenyAllocDriver({
     adb,
-    eventEmitter,
     recipeQuerying,
     instanceAllocation,
     instanceLauncher,

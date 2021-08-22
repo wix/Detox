@@ -8,12 +8,11 @@ const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 class SimulatorAllocDriver extends AllocationDriverBase {
   /**
    * @param deviceRegistry { DeviceRegistry }
-   * @param eventEmitter { AsyncEmitter }
    * @param applesimutils { AppleSimUtils }
    * @param simulatorLauncher { SimulatorLauncher }
    */
-  constructor({ deviceRegistry, eventEmitter, applesimutils, simulatorLauncher }) {
-    super(eventEmitter);
+  constructor({ deviceRegistry, applesimutils, simulatorLauncher }) {
+    super();
     this._deviceRegistry = deviceRegistry;
     this._applesimutils = applesimutils;
     this._simulatorLauncher = simulatorLauncher;

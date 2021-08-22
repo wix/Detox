@@ -3,7 +3,7 @@ const retry = require('../../../../utils/retry');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 
 class GenyInstanceLauncher extends DeviceLauncher {
-  constructor(instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter) {
+  constructor({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter }) {
     super(eventEmitter);
 
     this._instanceLifecycleService = instanceLifecycleService;
@@ -27,6 +27,7 @@ class GenyInstanceLauncher extends DeviceLauncher {
     }
     instance = await this._waitForInstanceBoot(instance);
     instance = await this._adbConnectIfNeeded(instance);
+    await this._notifyBootEvent(instance.adbName, instance.recipeName, isNew);
     return instance;
   }
 

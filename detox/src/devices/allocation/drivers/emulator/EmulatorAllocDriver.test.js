@@ -11,15 +11,8 @@ describe('Allocation driver for Google emulators', () => {
   const givenEmulatorLaunchError = () => emulatorLauncher.launch.mockRejectedValue(new Error());
   const givenValidAVD = () => avdValidator.validate.mockResolvedValue(null);
   const givenInvalidAVD = (message) => avdValidator.validate.mockRejectedValue(new Error(message));
-  const expectDeviceBootEvent = (adbName, avdName, coldBoot) =>
-    expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', {
-      coldBoot,
-      deviceId: adbName,
-      type: avdName,
-    });
 
   let adb;
-  let eventEmitter;
   let patchAvdSkinConfig;
   let avdValidator;
   let emulatorVersionResolver;
@@ -35,10 +28,6 @@ describe('Allocation driver for Google emulators', () => {
     jest.mock('../../../runtime/drivers/android/exec/ADB');
     const ADB = require('../../../runtime/drivers/android/exec/ADB');
     adb = new ADB();
-
-    jest.mock('../../../../utils/AsyncEmitter');
-    const AsyncEmitter = require('../../../../utils/AsyncEmitter');
-    eventEmitter = new AsyncEmitter();
 
     jest.mock('./patchAvdSkinConfig');
     patchAvdSkinConfig = require('./patchAvdSkinConfig').patchAvdSkinConfig;
@@ -68,7 +57,6 @@ describe('Allocation driver for Google emulators', () => {
       const { EmulatorAllocDriver } = require('./EmulatorAllocDriver');
       allocDriver = new EmulatorAllocDriver({
         adb,
-        eventEmitter,
         avdValidator,
         emulatorVersionResolver,
         emulatorLauncher,
@@ -103,7 +91,7 @@ describe('Allocation driver for Google emulators', () => {
 
       it('should launch it', async () => {
         await allocDriver.allocate(avdName);
-        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, { port: placeholderPort });
+        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, false, { port: placeholderPort });
       });
 
       it('should deallocate it, if launching fails', async () => {
@@ -119,12 +107,6 @@ describe('Allocation driver for Google emulators', () => {
         givenEmulatorLaunchError();
         await expect(allocDriver.allocate(avdName)).rejects.toThrowError();
       });
-
-      it('should emit a boot event with coldBoot=true', async () => {
-        givenAllocationOfPlaceholderEmulator();
-        await allocDriver.allocate(avdName);
-        expectDeviceBootEvent(adbName, avdName, true);
-      });
     });
 
     describe('given an allocated emulator that is already running', () => {
@@ -132,15 +114,9 @@ describe('Allocation driver for Google emulators', () => {
         givenAllocationOfRunningEmulator();
       });
 
-      it('should not launch it', async () => {
+      it('should launch it with isRunning=true', async () => {
         await allocDriver.allocate(avdName);
-        expect(emulatorLauncher.launch).not.toHaveBeenCalled();
-      });
-
-      it('should emit a boot event with coldBoot=false', async () => {
-        givenAllocationOfRunningEmulator();
-        await allocDriver.allocate(avdName);
-        expectDeviceBootEvent(adbName, avdName, false);
+        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, true, { port: placeholderPort });
       });
     });
 

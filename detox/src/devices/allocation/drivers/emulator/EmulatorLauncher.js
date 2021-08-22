@@ -16,15 +16,17 @@ class EmulatorLauncher extends DeviceLauncher {
     this._emulatorExec = emulatorExec;
   }
 
-  async launch(avdName, adbName, options = { port: undefined }) {
-    const launchCommand = new LaunchCommand(avdName, options);
-
-    await retry({
-      retries: 2,
-      interval: 100,
-      conditionFn: isUnknownEmulatorError,
-    }, () => this._launchEmulator(avdName, launchCommand));
+  async launch(avdName, adbName, isRunning, options = { port: undefined }) {
+    if (!isRunning) {
+      const launchCommand = new LaunchCommand(avdName, options);
+      await retry({
+        retries: 2,
+        interval: 100,
+        conditionFn: isUnknownEmulatorError,
+      }, () => this._launchEmulator(avdName, launchCommand));
+    }
     await this._awaitEmulatorBoot(adbName);
+    await this._notifyBootEvent(adbName, avdName, !isRunning);
   }
 
   async shutdown(adbName) {

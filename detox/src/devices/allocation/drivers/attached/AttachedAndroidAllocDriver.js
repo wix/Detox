@@ -26,7 +26,7 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
     const adbNamePattern = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
     const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
-    await this._adb.apiLevel(adbName);
+    await this._adb.apiLevel(adbName); // TODO ASDASD move this to the launcher?
     await this._adb.unlockScreen(adbName);
     await this._attachedAndroidLauncher.notifyLaunchCompleted(adbName);
     return new AndroidDeviceCookie(adbName);
