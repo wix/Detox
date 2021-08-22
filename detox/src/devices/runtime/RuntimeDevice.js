@@ -373,7 +373,7 @@ class RuntimeDevice {
     }
 
     await this._emitter.emit('appReady', {
-      deviceId: this.deviceDriver.getExternalId(), // TODO ASDASD most likely, this event should come from within the driver
+      deviceId: this.deviceDriver.getExternalId(), // TODO ASDASD most likely, this event should come from within the driver (in which case, emitter here becomes scarce)
       bundleId,
       pid: this._processes[bundleId],
     });

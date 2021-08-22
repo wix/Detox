@@ -34,19 +34,19 @@ function _createAllocationDriver(deviceConfig, eventEmitter) {
 }
 
 function _createEmulatorAllocationDriver(eventEmitter) {
-  const ADB = require('../runtime/drivers/android/exec/ADB');
-  const { EmulatorExec } = require('../runtime/drivers/android/exec/EmulatorExec');
-  const AVDsResolver = require('./drivers/emulator/AVDsResolver');
-  const EmulatorVersionResolver = require('./drivers/emulator/EmulatorVersionResolver');
-  const AVDValidator = require('./drivers/emulator/AVDValidator');
-  const FreeEmulatorFinder = require('./drivers/emulator/FreeEmulatorFinder');
-  const EmulatorLauncher = require('./drivers/emulator/EmulatorLauncher');
-  const EmulatorDeviceAllocation = require('./drivers/emulator/EmulatorDeviceAllocation');
+  const ADB = require('../common/drivers/android/exec/ADB');
+  const { EmulatorExec } = require('../common/drivers/android/emulator/exec/EmulatorExec');
+  const AVDsResolver = require('./drivers/android/emulator/AVDsResolver');
+  const EmulatorVersionResolver = require('./drivers/android/emulator/EmulatorVersionResolver');
+  const AVDValidator = require('./drivers/android/emulator/AVDValidator');
+  const FreeEmulatorFinder = require('./drivers/android/emulator/FreeEmulatorFinder');
+  const EmulatorLauncher = require('./drivers/android/emulator/EmulatorLauncher');
+  const EmulatorDeviceAllocation = require('./drivers/android/emulator/EmulatorDeviceAllocation');
   const DeviceRegistryFactory = require('../runtime/drivers/android/genycloud/GenyDeviceRegistryFactory');
   const {
     EmulatorAllocDriver,
     EmulatorDeallocDriver,
-  } = require('./drivers/emulator/EmulatorAllocDriver');
+  } = require('./drivers/android/emulator/EmulatorAllocDriver');
 
   const adb = new ADB();
   const emulatorExec = new EmulatorExec();
@@ -77,21 +77,21 @@ function _createEmulatorAllocationDriver(eventEmitter) {
 }
 
 function _createGenyAllocationDriver(eventEmitter) {
-  const ADB = require('../runtime/drivers/android/exec/ADB');
-  const Exec = require('../runtime/drivers/android/genycloud/exec/GenyCloudExec')
-  const InstanceNaming = require('../runtime/drivers/android/genycloud/services/GenyInstanceNaming');
-  const RecipesService = require('../runtime/drivers/android/genycloud/services/GenyRecipesService');
-  const InstanceLookupService = require('../runtime/drivers/android/genycloud/services/GenyInstanceLookupService');
-  const InstanceLifecycleService = require('../runtime/drivers/android/genycloud/services/GenyInstanceLifecycleService');
+  const ADB = require('../common/drivers/android/exec/ADB');
+  const Exec = require('../common/drivers/android/genycloud/exec/GenyCloudExec')
+  const InstanceNaming = require('../common/drivers/android/genycloud/services/GenyInstanceNaming');
+  const RecipesService = require('../common/drivers/android/genycloud/services/GenyRecipesService');
+  const InstanceLookupService = require('../common/drivers/android/genycloud/services/GenyInstanceLookupService');
+  const InstanceLifecycleService = require('../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
   const DeviceRegistryFactory = require('../runtime/drivers/android/genycloud/GenyDeviceRegistryFactory');
 
-  const RecipeQuerying = require('./drivers/genycloud/GenyRecipeQuerying');
-  const InstanceAllocation = require('./drivers/genycloud/GenyInstanceAllocation');
-  const InstanceLauncher = require('./drivers/genycloud/GenyInstanceLauncher');
+  const RecipeQuerying = require('./drivers/android/genycloud/GenyRecipeQuerying');
+  const InstanceAllocation = require('./drivers/android/genycloud/GenyInstanceAllocation');
+  const InstanceLauncher = require('./drivers/android/genycloud/GenyInstanceLauncher');
   const {
     GenyAllocDriver,
     GenyDeallocDriver,
-  } = require('./drivers/genycloud/GenyAllocDriver');
+  } = require('./drivers/android/genycloud/GenyAllocDriver');
 
   const adb = new ADB();
   const genycloudExec = new Exec(environment.getGmsaasPath());
@@ -121,14 +121,14 @@ function _createGenyAllocationDriver(eventEmitter) {
 }
 
 function _createAttachedAndroidAllocationDriver(eventEmitter) {
-  const ADB = require('../runtime/drivers/android/exec/ADB');
+  const ADB = require('../common/drivers/android/exec/ADB');
   const DeviceRegistry = require('../DeviceRegistry');
-  const FreeDeviceFinder = require('../runtime/drivers/android/tools/FreeDeviceFinder');
-  const AttachedAndroidLauncher = require('./drivers/attached/AttachedAndroidLauncher');
+  const FreeDeviceFinder = require('../common/drivers/android/tools/FreeDeviceFinder');
+  const AttachedAndroidLauncher = require('./drivers/android/attached/AttachedAndroidLauncher');
   const {
     AttachedAndroidAllocDriver,
     AttachedAndroidDeallocDriver,
-  } = require('./drivers/attached/AttachedAndroidAllocDriver');
+  } = require('./drivers/android/attached/AttachedAndroidAllocDriver');
 
   const adb = new ADB();
   const deviceRegistry = DeviceRegistry.forAndroid();
@@ -147,7 +147,7 @@ function _createAttachedAndroidAllocationDriver(eventEmitter) {
 
 function _createIosSimulatorAllocationDriver(eventEmitter) {
   const DeviceRegistry = require('../DeviceRegistry');
-  const AppleSimUtils = require('../runtime/drivers/ios/tools/AppleSimUtils');
+  const AppleSimUtils = require('../common/drivers/ios/tools/AppleSimUtils');
   const SimulatorLauncher = require('./drivers/ios/SimulatorLauncher');
   const { SimulatorAllocDriver, SimulatorDeallocDriver } = require('./drivers/ios/SimulatorAllocDriver');
 

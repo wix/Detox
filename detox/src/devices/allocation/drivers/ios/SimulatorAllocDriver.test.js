@@ -5,9 +5,9 @@ describe('Allocation driver for iOS simulators', () => {
   let simulatorLauncher;
   let allocDriver;
   beforeEach(() => {
-    const AppleSimUtils = jest.genMockFromModule('../../../runtime/drivers/ios/tools/AppleSimUtils');
+    const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
-    applesimutils.list.mockImplementation(async () => require('../../../runtime/drivers/ios/tools/applesimutils.mock')['--list']);
+    applesimutils.list.mockImplementation(async () => require('../../../common/drivers/ios/tools/applesimutils.mock')['--list']);
 
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     deviceRegistry = new DeviceRegistry();

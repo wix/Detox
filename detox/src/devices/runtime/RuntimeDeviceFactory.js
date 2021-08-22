@@ -5,12 +5,12 @@ const {
 } = require('./drivers');
 const {
   IosSimulatorCookie,
-  AndroidDeviceCookie,
+  AndroidDeviceCookie, // TODO ASDASD
   AndroidEmulatorCookie,
   GenycloudEmulatorCookie,
 } = require('../cookies');
 const RuntimeDevice = require('./RuntimeDevice');
-const AppleSimUtils = require('./drivers/ios/tools/AppleSimUtils');
+const AppleSimUtils = require('../common/drivers/ios/tools/AppleSimUtils');
 const SimulatorLauncher = require('../allocation/drivers/ios/SimulatorLauncher');
 
 /**

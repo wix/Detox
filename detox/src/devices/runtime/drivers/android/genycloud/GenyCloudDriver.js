@@ -6,8 +6,8 @@ const logger = require('../../../../../utils/logger').child({ __filename });
 const AndroidDriver = require('../AndroidDriver');
 
 const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
-const GenyCloudExec = require('./exec/GenyCloudExec');
-const InstanceLifecycleService = require('./services/GenyInstanceLifecycleService');
+const GenyCloudExec = require('../../../../common/drivers/android/genycloud/exec/GenyCloudExec');
+const InstanceLifecycleService = require('../../../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
 
 const cleanupLogData = {
   event: 'GENYCLOUD_TEARDOWN',

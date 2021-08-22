@@ -1,11 +1,11 @@
 const mockBaseClassesDependencies = () => {
-  jest.mock('../exec/ADB');
-  jest.mock('../exec/AAPT');
-  jest.mock('../tools/APKPath');
-  jest.mock('../tools/TempFileXfer');
-  jest.mock('../tools/AppInstallHelper');
-  jest.mock('../tools/AppUninstallHelper');
-  jest.mock('../tools/MonitoredInstrumentation');
+  jest.mock('../../../../common/drivers/android/exec/ADB');
+  jest.mock('../../../../common/drivers/android/exec/AAPT');
+  jest.mock('../../../../common/drivers/android/tools/APKPath');
+  jest.mock('../../../../common/drivers/android/tools/TempFileXfer');
+  jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
+  jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
+  jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
   jest.mock('../../../../../artifacts/utils/AndroidDevicePathBuilder');
   jest.mock('../../../../../android/espressoapi/UiDeviceProxy');
   jest.mock('../../../../../utils/logger');

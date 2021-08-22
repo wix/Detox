@@ -497,7 +497,7 @@ describe('Android driver', () => {
     );
     getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 
-    jest.mock('./tools/APKPath', () => ({
+    jest.mock('../../../common/drivers/android/tools/APKPath', () => ({
       getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 
@@ -526,14 +526,14 @@ describe('Android driver', () => {
   };
 
   const setUpClassDepMocks = () => {
-    jest.mock('./tools/MonitoredInstrumentation');
-    InstrumentationClass = require('./tools/MonitoredInstrumentation');
+    jest.mock('../../../common/drivers/android/tools/MonitoredInstrumentation');
+    InstrumentationClass = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
     InstrumentationClass.mockImplementation(() => {
       mockInstrumentationDead();
     });
 
-    jest.mock('./exec/ADB');
-    ADBClass = require('./exec/ADB');
+    jest.mock('../../../common/drivers/android/exec/ADB');
+    ADBClass = require('../../../common/drivers/android/exec/ADB');
     ADBClass.mockImplementation(() => {
       const _this = latestInstanceOf(ADBClass);
       _this.adbBin = 'ADB binary mock';
@@ -548,18 +548,18 @@ describe('Android driver', () => {
       });
     });
 
-    jest.mock('./exec/AAPT');
-    AAPTClass = require('./exec/AAPT');
+    jest.mock('../../../common/drivers/android/exec/AAPT');
+    AAPTClass = require('../../../common/drivers/android/exec/AAPT');
 
-    jest.mock('./tools/TempFileXfer');
-    FileXferClass = require('./tools/TempFileXfer');
+    jest.mock('../../../common/drivers/android/tools/TempFileXfer');
+    FileXferClass = require('../../../common/drivers/android/tools/TempFileXfer');
     FileXferClass.mockImplementation(() => {
       const _this = latestInstanceOf(FileXferClass);
       _this.send.mockResolvedValue(mockNotificationDataTargetPath);
     });
 
-    jest.mock('./tools/AppInstallHelper');
-    AppInstallHelperClass = require('./tools/AppInstallHelper');
+    jest.mock('../../../common/drivers/android/tools/AppInstallHelper');
+    AppInstallHelperClass = require('../../../common/drivers/android/tools/AppInstallHelper');
 
     jest.mock('../../../DeviceRegistry');
     DeviceRegistryClass = require('../../../DeviceRegistry');

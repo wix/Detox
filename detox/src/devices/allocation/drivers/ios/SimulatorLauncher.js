@@ -1,4 +1,4 @@
-const DeviceLauncher = require('../DeviceLauncher');
+const DeviceLauncher = require('../../../common/drivers/DeviceLauncher');
 
 const argparse = require('../../../../utils/argparse');
 

@@ -1,5 +1,3 @@
-const AsyncEmitter = require('../../../../utils/AsyncEmitter');
-
 describe('IOS simulator driver', () => {
   const udid = 'UD-1D-MOCK';
   const bundleId = 'bundle-id-mock';
@@ -9,6 +7,7 @@ describe('IOS simulator driver', () => {
   let applesimutils;
   let uut;
   beforeEach(() => {
+    const AsyncEmitter = require('../../../../utils/AsyncEmitter');
     emitter = new AsyncEmitter({
       events: ['beforeLaunchApp'],
       onError: (e) => { throw e; },
@@ -17,7 +16,7 @@ describe('IOS simulator driver', () => {
     const ClientMock = jest.requireMock('../../../../client/Client');
     client = new ClientMock();
 
-    const AppleSimUtils = jest.genMockFromModule('./tools/AppleSimUtils');
+    const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
 
     const SimulatorLauncher = jest.genMockFromModule('../../../allocation/drivers/ios/SimulatorLauncher');

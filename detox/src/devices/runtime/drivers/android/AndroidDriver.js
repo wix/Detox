@@ -22,13 +22,13 @@ const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
-const AAPT = require('./exec/AAPT');
-const ADB = require('./exec/ADB');
-const APKPath = require('./tools/APKPath');
-const AppInstallHelper = require('./tools/AppInstallHelper');
-const AppUninstallHelper = require('./tools/AppUninstallHelper');
-const MonitoredInstrumentation = require('./tools/MonitoredInstrumentation');
-const TempFileXfer = require('./tools/TempFileXfer');
+const AAPT = require('../../../common/drivers/android/exec/AAPT');
+const ADB = require('../../../common/drivers/android/exec/ADB');
+const APKPath = require('../../../common/drivers/android/tools/APKPath');
+const AppInstallHelper = require('../../../common/drivers/android/tools/AppInstallHelper');
+const AppUninstallHelper = require('../../../common/drivers/android/tools/AppUninstallHelper');
+const MonitoredInstrumentation = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
+const TempFileXfer = require('../../../common/drivers/android/tools/TempFileXfer');
 
 const log = logger.child({ __filename });
 
