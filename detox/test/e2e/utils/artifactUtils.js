@@ -16,6 +16,12 @@ function getLatestArtifactsDir() {
     .maxBy((dir) => stats[dir].mtime);
 }
 
+function assertDirExists(dirPath) {
+  if (!fs.statSync(dirPath).isDirectory()) {
+    throw new Error('Expected to find a directory at path: ' + dirPath);
+  }
+}
+
 function assertArtifactExists(name) {
   const artifactsRootDir = getLatestArtifactsDir();
   const artifactPath = path.join(artifactsRootDir, name);
@@ -33,5 +39,6 @@ async function waitUntilArtifactsManagerIsIdle() {
 module.exports = {
   getLatestArtifactsDir,
   assertArtifactExists,
+  assertDirExists,
   waitUntilArtifactsManagerIsIdle,
 };
