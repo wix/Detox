@@ -1,21 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const TimelineArtifactPlugin = require('../../../../artifacts/timeline/TimelineArtifactPlugin');
-const IosUIHierarchyPlugin = require('../../../../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
 class IosDriver extends DeviceDriverBase {
-  declareArtifactPlugins() {
-    const client = this.client;
-
-    return {
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
-      uiHierarchy: (api) => new IosUIHierarchyPlugin({ api, client }),
-    };
-  }
-
   createPayloadFile(notification) {
     const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));

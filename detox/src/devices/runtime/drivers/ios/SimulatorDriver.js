@@ -4,11 +4,7 @@ const path = require('path');
 const exec = require('child-process-promise').exec;
 const _ = require('lodash');
 
-const SimulatorInstrumentsPlugin = require('../../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
-const SimulatorLogPlugin = require('../../../../artifacts/log/ios/SimulatorLogPlugin');
-const SimulatorScreenshotPlugin = require('../../../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
-const SimulatorRecordVideoPlugin = require('../../../../artifacts/video/SimulatorRecordVideoPlugin');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const environment = require('../../../../utils/environment');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
@@ -40,20 +36,6 @@ class SimulatorDriver extends IosDriver {
 
   getDeviceName() {
     return this._deviceName;
-  }
-
-  declareArtifactPlugins() {
-    const appleSimUtils = this._applesimutils;
-    const client = this.client;
-
-    return {
-      ...super.declareArtifactPlugins(),
-
-      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
-      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils, client }),
-      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
-    };
   }
 
   async prepare() {

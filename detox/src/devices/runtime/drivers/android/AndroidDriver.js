@@ -7,13 +7,8 @@ const _ = require('lodash');
 const DetoxApi = require('../../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../../android/espressoapi/UiDeviceProxy');
-const AndroidInstrumentsPlugin = require('../../../../artifacts/instruments/android/AndroidInstrumentsPlugin');
-const ADBLogcatPlugin = require('../../../../artifacts/log/android/ADBLogcatPlugin');
-const ADBScreencapPlugin = require('../../../../artifacts/screenshot/ADBScreencapPlugin');
-const TimelineArtifactPlugin = require('../../../../artifacts/timeline/TimelineArtifactPlugin');
 const AndroidDevicePathBuilder = require('../../../../artifacts/utils/AndroidDevicePathBuilder');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
-const ADBScreenrecorderPlugin = require('../../../../artifacts/video/ADBScreenrecorderPlugin');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const logger = require('../../../../utils/logger');
@@ -58,18 +53,6 @@ class AndroidDriver extends DeviceDriverBase {
 
   getExternalId() {
     return this.adbName;
-  }
-
-  declareArtifactPlugins() {
-    const { adb, client, devicePathBuilder } = this;
-
-    return {
-      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
-      log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
-      screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
-      video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
-    };
   }
 
   async getBundleIdFromBinary(apkPath) {

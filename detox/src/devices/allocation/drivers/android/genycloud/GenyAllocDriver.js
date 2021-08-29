@@ -1,10 +1,7 @@
-const semver = require('semver');
-
 const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
+
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
-
-const MIN_GMSAAS_VERSION = '1.6.0';
 
 class GenyAllocDriver extends AllocationDriverBase {
 
@@ -27,10 +24,6 @@ class GenyAllocDriver extends AllocationDriverBase {
    * @return {Promise<GenycloudEmulatorCookie>}
    */
   async allocate(deviceQuery) {
-    // TODO ASDASD Find a more suitable place for this (factory?)
-    // await this._validateGmsaasVersion();
-    // await this._validateGmsaasAuth();
-
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
@@ -55,25 +48,6 @@ class GenyAllocDriver extends AllocationDriverBase {
       throw new DetoxRuntimeError({
         message: `No Genymotion-Cloud template found to match the configured lookup query: ${JSON.stringify(deviceQuery)}`,
         hint: `Revisit your detox configuration. Genymotion templates list is available at: https://cloud.geny.io/app/shared-devices`,
-      });
-    }
-  }
-
-  async _validateGmsaasVersion() {
-    const { version } = await this._exec.getVersion();
-    if (semver.lt(version, MIN_GMSAAS_VERSION)) {
-      throw new DetoxRuntimeError({
-        message: `Your Genymotion-Cloud executable (found in ${environment.getGmsaasPath()}) is too old! (version ${version})`,
-        hint: `Detox requires version 1.6.0, or newer. To use 'android.genycloud' type devices, you must upgrade it, first.`,
-      });
-    }
-  }
-
-  async _validateGmsaasAuth() {
-    if (!await this._authService.getLoginEmail()) {
-      throw new DetoxRuntimeError({
-        message: `Cannot run tests using 'android.genycloud' type devices, because Genymotion was not logged-in to!`,
-        hint: `Log-in to Genymotion-cloud by running this command (and following instructions):\n${environment.getGmsaasPath()} auth login --help`,
       });
     }
   }

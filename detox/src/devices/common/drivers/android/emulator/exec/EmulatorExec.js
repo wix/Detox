@@ -1,5 +1,3 @@
-// TODO ASDASD Relocate onto a common android place
-
 const os = require('os');
 
 const _ = require('lodash');

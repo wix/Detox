@@ -5,11 +5,9 @@ const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
 
-const ArtifactsManager = require('./artifacts/ArtifactsManager');
 const Client = require('./client/Client');
 const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
 const { InvocationManager } = require('./invoke');
-const matchersRegistry = require('./matchersRegistry');
 const DetoxServer = require('./server/DetoxServer');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const Deferred = require('./utils/Deferred');
@@ -17,8 +15,7 @@ const MissingDetox = require('./utils/MissingDetox');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
 
-const deviceAllocatorFactory = require('./devices/allocation/DeviceAllocatorFactory');
-const runtimeDeviceFactory = require('./devices/runtime/RuntimeDeviceFactory');
+const environmentFactory = require('./environmentFactory');
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
@@ -75,7 +72,7 @@ class Detox {
       onError: this._onEmitError.bind(this),
     });
 
-    this._deallocator = null;
+    this.deviceDeallocator = null;
     this.device = null;
   }
 
@@ -112,7 +109,7 @@ class Detox {
         shutdown = true;
         await this.device.shutdown();
       }
-      await this._deallocator.free({ shutdown });
+      await this.deviceDeallocator.free({ shutdown });
     }
 
     if (this._server) {
@@ -120,7 +117,7 @@ class Detox {
       this._server = null;
     }
 
-    this._deallocator = null;
+    this.deviceDeallocator = null;
     this.device = null;
   }
 
@@ -173,12 +170,29 @@ class Detox {
     const invocationManager = new InvocationManager(this._client);
 
     const {
+      envValidatorFactory,
+      artifactsManagerFactory,
+      deviceAllocatorFactory,
+      runtimeDeviceFactory,
+      matchersFactory,
+    } = environmentFactory.createFactories(this._deviceConfig);
+
+    const envValidator = await envValidatorFactory.createValidator();
+    envValidator.validate();
+
+    const {
       allocator,
       createDeallocator,
-    } = deviceAllocatorFactory.createDeviceAllocator(this._deviceConfig, this._eventEmitter);
+    } = deviceAllocatorFactory.createDeviceAllocator(this._eventEmitter);
+
+    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, {
+      eventEmitter: this._eventEmitter,
+      client: this._client,
+    });
+
     const deviceCookie = await allocator.allocate(this._deviceConfig.device);
 
-    this._deallocator = createDeallocator(deviceCookie);
+    this.deviceDeallocator = createDeallocator(deviceCookie);
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       deviceCookie,
       {
@@ -195,16 +209,10 @@ class Detox {
         sessionConfig,
       });
 
-    this._artifactsManager = new ArtifactsManager(this._artifactsConfig);
-    this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
-    this._artifactsManager.registerArtifactPlugins(this.device._declareArtifactPlugins());
-
-    await this.device.prepare(); // TODO ASDASD This will probably have to to go away
-
-    const matchers = matchersRegistry.resolve(this.device, {
+    const matchers = matchersFactory.createMatchers({
       invocationManager,
-      device: this.device,
-      emitter: this._eventEmitter,
+      runtimeDevice: this.device,
+      eventEmitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
 

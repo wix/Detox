@@ -29,10 +29,6 @@ class DeviceDriverBase {
     return {};
   }
 
-  async prepare() {
-    return await Promise.resolve('');
-  }
-
   async launchApp() {
     return await Promise.resolve(NaN);
   }
