@@ -1,5 +1,6 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
 const tempfile = require('tempfile');
 
 const appendFile = require('../../../utils/appendFile');

@@ -4,7 +4,6 @@ const tempfile = require('tempfile');
 
 module.exports = {
   for: {
-    directory: () => tempfile(),
     png: () => tempfile('.detox.png'),
     log: () => tempfile('.detox.log'),
     mp4: () => tempfile('.detox.mp4'),

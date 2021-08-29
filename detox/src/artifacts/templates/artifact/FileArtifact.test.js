@@ -162,13 +162,35 @@ describe('FileArtifact', () => {
         });
       });
 
-      describe('when called', () => {
+      describe('and the file exists', () => {
         beforeEach(async () => {
-          await fileArtifact.relocate();
+          await fs.ensureFile(temporaryPath);
         });
 
-        it('should call FileArtifact.moveTemporaryFile', async () => {
-          expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, expect.stringMatching(/\.artifact$/));
+        describe('when called', () => {
+          beforeEach(async () => {
+            await fileArtifact.relocate();
+          });
+
+          it('should call FileArtifact.moveTemporaryFile', async () => {
+            expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, expect.stringMatching(/\.artifact$/));
+          });
+        });
+      });
+
+      describe('and the file does not exist', () => {
+        beforeEach(async () => {
+          await fs.remove(temporaryPath);
+        });
+
+        describe('when called', () => {
+          beforeEach(async () => {
+            await fileArtifact.relocate();
+          });
+
+          it('should call FileArtifact.moveTemporaryFile', async () => {
+            expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+          });
         });
       });
     });
