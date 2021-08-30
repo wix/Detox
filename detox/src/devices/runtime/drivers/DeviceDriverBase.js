@@ -6,6 +6,10 @@ const fs = require('fs-extra');
 const log = require('../../../utils/logger').child({ __filename });
 
 class DeviceDriverBase {
+  /**
+   * @param client { Client }
+   * @param emitter { AsyncEmitter }
+   */
   constructor({ client, emitter }) {
     this.client = client;
     this.emitter = emitter;

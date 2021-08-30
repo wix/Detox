@@ -15,11 +15,11 @@ const cleanupLogData = {
 
 class GenyCloudDriver extends AndroidDriver {
   /**
-   * @param instance { GenyInstance }
-   * @param config { Object }
+   * @param instance { GenyInstance } The DTO associated with the cloud instance
+   * @param deps { Object }
    */
-  constructor(instance, config) {
-    super(instance.adbName, config);
+  constructor(instance, deps) {
+    super(instance.adbName, deps);
     this.instance = instance;
   }
 

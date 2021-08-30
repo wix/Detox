@@ -1,12 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-
-const exec = require('child-process-promise').exec;
 const _ = require('lodash');
+const path = require('path');
+const exec = require('child-process-promise').exec;
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const environment = require('../../../../utils/environment');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../../utils/logger').child({ __filename });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
@@ -16,18 +13,18 @@ const IosDriver = require('./IosDriver');
 class SimulatorDriver extends IosDriver {
   /**
    * @param udid { String } The unique cross-OS identifier of the simulator
-   * @param type { String }
-   * @param config { Object }
-   * @param config.simulatorLauncher { SimulatorLauncher }
-   * @param config.applesimutils { AppleSimUtils }
+   * @param type { String } The simulator's semantic type (e.g. 'iPhone 12 Pro').
+   * @param deps { Object }
+   * @param deps.simulatorLauncher { SimulatorLauncher }
+   * @param deps.applesimutils { AppleSimUtils }
    */
-  constructor(udid, type, config) {
-    super(config);
+  constructor(udid, type, deps) {
+    super(deps);
 
     this.udid = udid;
     this._deviceName = `${udid} (${type})`;
-    this._simulatorLauncher = config.simulatorLauncher;
-    this._applesimutils = config.applesimutils;
+    this._simulatorLauncher = deps.simulatorLauncher;
+    this._applesimutils = deps.applesimutils;
   }
 
   getExternalId() {
@@ -36,15 +33,6 @@ class SimulatorDriver extends IosDriver {
 
   getDeviceName() {
     return this._deviceName;
-  }
-
-  async prepare() {
-    const detoxFrameworkPath = await environment.getFrameworkPath();
-
-    if (!fs.existsSync(detoxFrameworkPath)) {
-      throw new DetoxRuntimeError(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.
-      To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
-    }
   }
 
   async getBundleIdFromBinary(appPath) {

@@ -1,6 +1,6 @@
 module.exports = {
   IosSimulatorCookie: require('./IosSimulatorCookie'),
-  AndroidDeviceCookie: require('./AndroidDeviceCookie'),
+  AttachedAndroidDeviceCookie: require('./AttachedAndroidDeviceCookie'),
   AndroidEmulatorCookie: require('./AndroidEmulatorCookie'),
   GenycloudEmulatorCookie: require('./GenycloudEmulatorCookie'),
 };

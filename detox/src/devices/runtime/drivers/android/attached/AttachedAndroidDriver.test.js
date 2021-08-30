@@ -1,16 +1,3 @@
-const mockBaseClassesDependencies = () => {
-  jest.mock('../../../../common/drivers/android/exec/ADB');
-  jest.mock('../../../../common/drivers/android/exec/AAPT');
-  jest.mock('../../../../common/drivers/android/tools/APKPath');
-  jest.mock('../../../../common/drivers/android/tools/TempFileXfer');
-  jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
-  jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
-  jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
-  jest.mock('../../../../../artifacts/utils/AndroidDevicePathBuilder');
-  jest.mock('../../../../../android/espressoapi/UiDeviceProxy');
-  jest.mock('../../../../../utils/logger');
-};
-
 describe('Attached android device driver', () => {
   beforeEach(mockBaseClassesDependencies);
 
@@ -41,3 +28,16 @@ describe('Attached android device driver', () => {
     expect(uut.getDeviceName()).toEqual(`AttachedDevice:${adbName}`);
   });
 });
+
+function mockBaseClassesDependencies() {
+  jest.mock('../../../../common/drivers/android/exec/ADB');
+  jest.mock('../../../../common/drivers/android/exec/AAPT');
+  jest.mock('../../../../common/drivers/android/tools/APKPath');
+  jest.mock('../../../../common/drivers/android/tools/TempFileXfer');
+  jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
+  jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
+  jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
+  jest.mock('../../../../../artifacts/utils/AndroidDevicePathBuilder');
+  jest.mock('../../../../../android/espressoapi/UiDeviceProxy');
+  jest.mock('../../../../../utils/logger');
+};

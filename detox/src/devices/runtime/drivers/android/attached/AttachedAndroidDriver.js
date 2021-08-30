@@ -4,11 +4,11 @@ const AndroidDriver = require('../AndroidDriver');
 
 class AttachedAndroidDriver extends AndroidDriver {
   /**
-   * @param adbName { String }
-   * @param config { Object }
+   * @param adbName { String } The unique identifier associated with ADB
+   * @param deps { Object }
    */
-  constructor(adbName, config) {
-    super(adbName, config);
+  constructor(adbName, deps) {
+    super(adbName, deps);
   }
 
   getDeviceName() {

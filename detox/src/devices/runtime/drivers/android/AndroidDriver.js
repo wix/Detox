@@ -7,7 +7,6 @@ const _ = require('lodash');
 const DetoxApi = require('../../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../../android/espressoapi/UiDeviceProxy');
-const AndroidDevicePathBuilder = require('../../../../artifacts/utils/AndroidDevicePathBuilder');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
@@ -17,38 +16,39 @@ const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
-const AAPT = require('../../../common/drivers/android/exec/AAPT');
-const ADB = require('../../../common/drivers/android/exec/ADB');
 const APKPath = require('../../../common/drivers/android/tools/APKPath');
-const AppInstallHelper = require('../../../common/drivers/android/tools/AppInstallHelper');
-const AppUninstallHelper = require('../../../common/drivers/android/tools/AppUninstallHelper');
-const MonitoredInstrumentation = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
-const TempFileXfer = require('../../../common/drivers/android/tools/TempFileXfer');
 
 const log = logger.child({ __filename });
 
 class AndroidDriver extends DeviceDriverBase {
   /**
-   * @param adbName { String }
-   * @param config { Object }
+   * @param adbName { String } The unique identifier associated with ADB
+   * @param deps { Object }
+   * @param deps.invocationManager { InvocationManager }
+   * @param deps.client { Client }
+   * @param deps.emitter { AsyncEmitter }
+   * @param deps.adb { ADB }
+   * @param deps.aapt { AAPT }
+   * @param deps.fileXfer { FileXfer }
+   * @param deps.appInstallHelper { AppInstallHelper }
+   * @param deps.appUninstallHelper { AppUninstallHelper }
+   * @param deps.devicePathBuilder { AndroidDevicePathBuilder }
+   * @param deps.instrumentation { MonitoredInstrumentation }
    */
-  constructor(adbName, config) {
-    super(config);
+  constructor(adbName, deps) {
+    super(deps);
 
     this.adbName = adbName;
+    this.adb = deps.adb;
+    this.aapt = deps.aapt;
+    this.invocationManager = deps.invocationManager;
+    this.fileXfer = deps.fileXfer;
+    this.appInstallHelper = deps.appInstallHelper;
+    this.appUninstallHelper = deps.appUninstallHelper;
+    this.devicePathBuilder = deps.devicePathBuilder;
+    this.instrumentation = deps.instrumentation;
 
-    this.invocationManager = config.invocationManager;
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
-
-    // TODO ASDASD Move this to factory
-    this.adb = new ADB();
-    this.aapt = new AAPT();
-    this.fileXfer = new TempFileXfer(this.adb);
-    this.appInstallHelper = new AppInstallHelper(this.adb, this.fileXfer);
-    this.appUninstallHelper = new AppUninstallHelper(this.adb);
-    this.devicePathBuilder = new AndroidDevicePathBuilder();
-
-    this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
   }
 
   getExternalId() {

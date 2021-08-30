@@ -1,6 +1,6 @@
-const DeviceCookie = require('./DeviceCookie');
+const IosCookie = require('./IosCookie');
 
-class IosSimulatorCookie extends DeviceCookie {
+class IosSimulatorCookie extends IosCookie {
   constructor(udid, type) {
     super();
     this.udid = udid;

@@ -1,5 +1,6 @@
 module.exports = {
   AndroidEmulatorRuntimeDriver: require('./android/emulator/EmulatorDriver'),
+  AttachedAndroidRuntimeDriver: require('./android/attached/AttachedAndroidDriver'),
   GenycloudRuntimeDriver: require('./android/genycloud/GenyCloudDriver'),
-  IosSimulatorDriver: require('./ios/SimulatorDriver'),
+  IosSimulatorRuntimeDriver: require('./ios/SimulatorDriver'),
 };

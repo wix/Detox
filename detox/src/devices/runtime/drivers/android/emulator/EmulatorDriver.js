@@ -3,13 +3,12 @@ const AndroidDriver = require('../AndroidDriver');
 
 class EmulatorDriver extends AndroidDriver {
   /**
-   * @param adbName { String } The identifier associated with ADB
+   * @param adbName { String } The unique identifier associated with ADB
    * @param avdName { String } The name of the AVD (Android Virtual Device)
-   * @param config { Object }
+   * @param deps { Object }
    */
-  constructor(adbName, avdName, config) {
-    super(adbName, config);
-    this.adbName = adbName;
+  constructor(adbName, avdName, deps) {
+    super(adbName, deps);
     this._deviceName = `${adbName} (${avdName})`;
   }
 

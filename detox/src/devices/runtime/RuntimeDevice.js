@@ -278,10 +278,6 @@ class RuntimeDevice {
     return this.deviceDriver.getPlatform();
   }
 
-  _declareArtifactPlugins() {
-    return this.deviceDriver.declareArtifactPlugins();
-  }
-
   async _cleanup() {
     const bundleId = this._currentApp && this._currentApp.bundleId;
     await this.deviceDriver.cleanup(bundleId);

@@ -1,6 +1,6 @@
-const DeviceCookie = require('./DeviceCookie');
+const AndroidDeviceCookie = require('./AndroidDeviceCookie');
 
-class GenycloudEmulatorCookie extends DeviceCookie {
+class GenycloudEmulatorCookie extends AndroidDeviceCookie {
   /**
    * @param instance { GenyInstance }
    */

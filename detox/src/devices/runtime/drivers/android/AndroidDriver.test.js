@@ -1,32 +1,23 @@
-const _ = require('lodash');
-const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
-
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
   const bundleId = 'bundle-id-mock';
   const detoxServerPort = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
+  let fs; // TODO don't mock
   let logger;
   let client;
   let getAbsoluteBinaryPath;
-  let fs;
   let emitter;
   let detoxApi;
   let invocationManager;
-
-  let InstrumentationClass;
-  let ADBClass;
-  let AAPTClass;
-  let FileXferClass;
-  let AppInstallHelperClass;
+  let adb;
+  let aapt;
+  let fileXfer;
+  let appInstallHelper;
+  let appUninstallHelper;
+  let instrumentation;
   let DeviceRegistryClass;
-
-  const adbObj = () => latestInstanceOf(ADBClass);
-  const aaptObj = () => latestInstanceOf(AAPTClass);
-  const fileXferObj = () => latestInstanceOf(FileXferClass);
-  const appInstallHelperObj = () => latestInstanceOf(AppInstallHelperClass);
-  const instrumentationObj = () => latestInstanceOf(InstrumentationClass);
 
   let uut;
   beforeEach(() => {
@@ -38,34 +29,26 @@ describe('Android driver', () => {
       client,
       invocationManager,
       emitter,
-    });
-  });
-
-  describe('Initialization', () => {
-    it('should properly create a FileXfer object', async () => {
-      expect(FileXferClass).toHaveBeenCalledWith(adbObj());
-    });
-
-    it('should properly create an app-install helper', async () => {
-      expect(AppInstallHelperClass).toHaveBeenCalledWith(adbObj(), fileXferObj());
+      adb,
+      aapt,
+      fileXfer,
+      appInstallHelper,
+      appUninstallHelper,
+      instrumentation,
     });
   });
 
   describe('Instrumentation bootstrap', () => {
-    it('should init an instrumentation manager', async () => {
-      expect(InstrumentationClass).toHaveBeenCalledWith(adbObj(), logger);
-    });
-
     it('should launch instrumentation upon app launch', async () => {
       const userArgs = {
         anArg: 'aValue',
       };
       await uut.launchApp(bundleId, userArgs, '');
-      expect(instrumentationObj().launch).toHaveBeenCalledWith(adbName, bundleId, userArgs);
+      expect(instrumentation.launch).toHaveBeenCalledWith(adbName, bundleId, userArgs);
     });
 
     it('should break if instrumentation launch fails', async () => {
-      instrumentationObj().launch.mockRejectedValue(new Error());
+      instrumentation.launch.mockRejectedValue(new Error());
 
       try {
         await uut.launchApp(bundleId, {}, '');
@@ -75,12 +58,12 @@ describe('Android driver', () => {
 
     it('should set a termination callback function', async () => {
       await uut.launchApp(bundleId, {}, '');
-      expect(instrumentationObj().setTerminationFn).toHaveBeenCalledWith(expect.any(Function));
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(expect.any(Function));
     });
 
     it('should adb-reverse the detox server port', async () => {
       await uut.launchApp(bundleId, {}, '');
-      await expect(adbObj().reverse).toHaveBeenCalledWith(adbName, detoxServerPort.toString());
+      await expect(adb.reverse).toHaveBeenCalledWith(adbName, detoxServerPort.toString());
     });
   });
 
@@ -91,12 +74,12 @@ describe('Android driver', () => {
     });
 
     it('should clear out the termination callback function', () =>
-      expect(instrumentationObj().setTerminationFn).toHaveBeenCalledWith(null));
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
 
     it('should adb-unreverse the detox server port', () =>
-      expect(adbObj().reverseRemove).toHaveBeenCalledWith(adbName, detoxServerPort.toString()));
+      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, detoxServerPort.toString()));
 
-    const extractTerminationCallbackFn = () => instrumentationObj().setTerminationFn.mock.calls[0][0];
+    const extractTerminationCallbackFn = () => instrumentation.setTerminationFn.mock.calls[0][0];
     const invokeTerminationCallbackFn = async () => {
       const fn = extractTerminationCallbackFn();
       await fn();
@@ -110,23 +93,23 @@ describe('Android driver', () => {
     });
 
     it('should terminate instrumentation', () =>
-      expect(instrumentationObj().terminate).toHaveBeenCalled());
+      expect(instrumentation.terminate).toHaveBeenCalled());
 
     it('should clear out the termination callback function', () =>
-      expect(instrumentationObj().setTerminationFn).toHaveBeenCalledWith(null));
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
 
     it('should terminate ADB altogether', () =>
-      expect(adbObj().terminate).toHaveBeenCalled());
+      expect(adb.terminate).toHaveBeenCalled());
   });
 
   describe('Cleanup', () => {
     beforeEach(async () => await uut.cleanup());
 
     it('should terminate instrumentation', () =>
-      expect(instrumentationObj().terminate).toHaveBeenCalled());
+      expect(instrumentation.terminate).toHaveBeenCalled());
 
     it('should clear out the termination callback function', () =>
-      expect(instrumentationObj().setTerminationFn).toHaveBeenCalledWith(null));
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
 
     it('should turn off the events emitter', () =>
       expect(emitter.off).toHaveBeenCalled());
@@ -145,8 +128,8 @@ describe('Android driver', () => {
     };
     const assertActivityStartNotInvoked = () => expect(detoxApi.startActivityFromUrl).not.toHaveBeenCalled();
 
-    const assertInstrumentationLaunchedWith = (args) => expect(instrumentationObj().launch).toHaveBeenCalledWith(adbName, bundleId, args);
-    const assertInstrumentationNotLaunched = () => expect(instrumentationObj().launch).not.toHaveBeenCalled();
+    const assertInstrumentationLaunchedWith = (args) => expect(instrumentation.launch).toHaveBeenCalledWith(adbName, bundleId, args);
+    const assertInstrumentationNotLaunched = () => expect(instrumentation.launch).not.toHaveBeenCalled();
 
     describe('in app launch (with dedicated arg)', () => {
       const args = {
@@ -154,7 +137,7 @@ describe('Android driver', () => {
       };
 
       it('should launch instrumentation with the URL in a clean launch', async () => {
-        adbObj().getInstrumentationRunner.mockResolvedValue('mock test-runner');
+        adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
 
         await uut.launchApp(bundleId, args, '');
 
@@ -219,27 +202,27 @@ describe('Android driver', () => {
       expect(detoxApi.startActivityFromNotification).not.toHaveBeenCalled();
     };
 
-    const assertInstrumentationLaunchedWith = (args) => expect(instrumentationObj().launch).toHaveBeenCalledWith(adbName, bundleId, args);
-    const assertInstrumentationNotSpawned = () => expect(instrumentationObj().launch).not.toHaveBeenCalled();
+    const assertInstrumentationLaunchedWith = (args) => expect(instrumentation.launch).toHaveBeenCalledWith(adbName, bundleId, args);
+    const assertInstrumentationNotSpawned = () => expect(instrumentation.launch).not.toHaveBeenCalled();
 
     describe('in app launch (with dedicated arg)', () => {
       it('should prepare the device for receiving notification data file', async () => {
         await uut.launchApp(bundleId, notificationArgs, '');
-        expect(fileXferObj().prepareDestinationDir).toHaveBeenCalledWith(adbName);
+        expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
       });
 
       it('should transfer the notification data file to the device', async () => {
         await uut.launchApp(bundleId, notificationArgs, '');
-        expect(fileXferObj().send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+        expect(fileXfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
       });
 
       it('should not send the data if device prep fails', async () => {
-        fileXferObj().prepareDestinationDir.mockRejectedValue(new Error());
+        fileXfer.prepareDestinationDir.mockRejectedValue(new Error());
         await expect(uut.launchApp(bundleId, notificationArgs, '')).rejects.toThrowError();
       });
 
       it('should launch instrumentation with a modified notification data URL arg', async () => {
-        fileXferObj().send.mockReturnValue(mockNotificationDataTargetPath);
+        fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
 
         await uut.launchApp(bundleId, notificationArgs, '');
 
@@ -264,8 +247,8 @@ describe('Android driver', () => {
         it('should pre-transfer notification data to device', async () => {
           await spec.applyFn();
 
-          expect(fileXferObj().prepareDestinationDir).toHaveBeenCalledWith(adbName);
-          expect(fileXferObj().send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+          expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
+          expect(fileXfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
         });
 
         it('should start the app with notification data using invocation-manager', async () => {
@@ -289,7 +272,7 @@ describe('Android driver', () => {
         await uut.launchApp(bundleId, {}, '');
         await uut.deliverPayload(notificationArgsDelayed);
 
-        expect(fileXferObj().send).not.toHaveBeenCalled();
+        expect(fileXfer.send).not.toHaveBeenCalled();
       });
 
       it('should not start the app using invocation-manager', async () => {
@@ -311,7 +294,7 @@ describe('Android driver', () => {
     it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
       const crashError = new Error('mock instrumentation crash error');
       let waitForCrashReject = () => {};
-      instrumentationObj().waitForCrash.mockImplementation(() => {
+      instrumentation.waitForCrash.mockImplementation(() => {
         return new Promise((__, reject) => {
           waitForCrashReject = reject;
         });
@@ -334,19 +317,19 @@ describe('Android driver', () => {
     it('should abort crash-wait if instrumentation doesnt crash', async () => {
       client.waitUntilReady.mockResolvedValue('mocked');
       await uut.waitUntilReady();
-      expect(instrumentationObj().abortWaitForCrash).toHaveBeenCalled();
+      expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
     });
 
     it('should abort crash-wait if instrumentation crashes', async () => {
       client.waitUntilReady.mockResolvedValue('mocked');
-      instrumentationObj().waitForCrash.mockRejectedValue(new Error());
+      instrumentation.waitForCrash.mockRejectedValue(new Error());
 
       await uut.launchApp(bundleId, {}, '');
       try {
         await uut.waitUntilReady();
         fail();
       } catch (e) {
-        expect(instrumentationObj().abortWaitForCrash).toHaveBeenCalled();
+        expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
       }
     });
 
@@ -365,14 +348,14 @@ describe('Android driver', () => {
       await uut.installApp(binaryPath, testBinaryPath);
 
       expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
-      expect(adbObj().install).toHaveBeenCalledWith(adbName, mockGetAbsoluteBinaryPathImpl(binaryPath));
+      expect(adb.install).toHaveBeenCalledWith(adbName, mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
 
     it('should adb-install the test binary', async () => {
       await uut.installApp(binaryPath, testBinaryPath);
 
       expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
-      expect(adbObj().install).toHaveBeenCalledWith(adbName, mockGetAbsoluteBinaryPathImpl(testBinaryPath));
+      expect(adb.install).toHaveBeenCalledWith(adbName, mockGetAbsoluteBinaryPathImpl(testBinaryPath));
     });
 
     it('should resort to auto test-binary path resolution, if not specific', async () => {
@@ -383,7 +366,7 @@ describe('Android driver', () => {
       await uut.installApp(binaryPath, undefined);
 
       expect(fs.existsSync).toHaveBeenCalledWith(expectedTestBinPath);
-      expect(adbObj().install).toHaveBeenCalledWith(adbName, expectedTestBinPath);
+      expect(adb.install).toHaveBeenCalledWith(adbName, expectedTestBinPath);
     });
 
     it('should throw if auto test-binary path resolves an invalid file', async () => {
@@ -402,12 +385,12 @@ describe('Android driver', () => {
 
     it('should install using an app-install helper', async () => {
       await uut.installUtilBinaries(binaryPaths);
-      expect(appInstallHelperObj().install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-      expect(appInstallHelperObj().install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
     });
 
     it('should break if one installation fails', async () => {
-      appInstallHelperObj().install
+      appInstallHelper.install
         .mockResolvedValueOnce()
         .mockRejectedValueOnce(new Error())
         .mockResolvedValueOnce();
@@ -416,27 +399,27 @@ describe('Android driver', () => {
         await uut.installUtilBinaries(binaryPaths);
         fail();
       } catch (e) {
-        expect(appInstallHelperObj().install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-        expect(appInstallHelperObj().install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
-        expect(appInstallHelperObj().install).toHaveBeenCalledTimes(2);
+        expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
+        expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
+        expect(appInstallHelper.install).toHaveBeenCalledTimes(2);
       }
     });
 
     it('should not install if already installed', async () => {
-      adbObj().isPackageInstalled.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+      adb.isPackageInstalled.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
       await uut.installUtilBinaries(binaryPaths);
-      expect(appInstallHelperObj().install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-      expect(appInstallHelperObj().install).not.toHaveBeenCalledWith(adbName, binaryPaths[1]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
+      expect(appInstallHelper.install).not.toHaveBeenCalledWith(adbName, binaryPaths[1]);
     });
 
     it('should properly check for preinstallation', async () => {
       const packageId = 'mockPackageId';
       const binaryPath = 'some/path/file.apk';
-      aaptObj().getPackageName.mockResolvedValue(packageId);
+      aapt.getPackageName.mockResolvedValue(packageId);
 
       await uut.installUtilBinaries([binaryPath]);
-      expect(adbObj().isPackageInstalled).toHaveBeenCalledWith(adbName, packageId);
-      expect(aaptObj().getPackageName).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
+      expect(adb.isPackageInstalled).toHaveBeenCalledWith(adbName, packageId);
+      expect(aapt.getPackageName).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
   });
 
@@ -445,22 +428,22 @@ describe('Android driver', () => {
 
     it(`should invoke ADB's reverse`, async () => {
       await uut.reverseTcpPort(port);
-      expect(adbObj().reverse).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverse).toHaveBeenCalledWith(adbName, port);
     });
 
     it(`should invoke ADB's reverse, given a device handle`, async () => {
       await uut.reverseTcpPort(port);
-      expect(adbObj().reverse).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverse).toHaveBeenCalledWith(adbName, port);
     });
 
     it(`should invoke ADB's reverse-remove`, async () => {
       await uut.unreverseTcpPort(port);
-      expect(adbObj().reverseRemove).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, port);
     });
 
     it(`should invoke ADB's reverse-remove, given a device handle`, async () => {
       await uut.unreverseTcpPort(port);
-      expect(adbObj().reverseRemove).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, port);
     });
   });
 
@@ -469,12 +452,12 @@ describe('Android driver', () => {
 
     it(`should invoke ADB's text typing`, async () => {
       await uut.typeText( text);
-      expect(adbObj().typeText).toHaveBeenCalledWith(adbName, text);
+      expect(adb.typeText).toHaveBeenCalledWith(adbName, text);
     });
 
     it(`should invoke ADB's text typing, given a device handle`, async () => {
       await uut.typeText(text);
-      expect(adbObj().typeText).toHaveBeenCalledWith(adbName, text);
+      expect(adb.typeText).toHaveBeenCalledWith(adbName, text);
     });
   });
 
@@ -527,39 +510,41 @@ describe('Android driver', () => {
 
   const setUpClassDepMocks = () => {
     jest.mock('../../../common/drivers/android/tools/MonitoredInstrumentation');
-    InstrumentationClass = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
-    InstrumentationClass.mockImplementation(() => {
-      mockInstrumentationDead();
-    });
+    const MonitoredInstrumentation = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
+    instrumentation = new MonitoredInstrumentation();
+    mockInstrumentationDead();
 
     jest.mock('../../../common/drivers/android/exec/ADB');
-    ADBClass = require('../../../common/drivers/android/exec/ADB');
-    ADBClass.mockImplementation(() => {
-      const _this = latestInstanceOf(ADBClass);
-      _this.adbBin = 'ADB binary mock';
-      _this.spawnInstrumentation.mockReturnValue({
-        childProcess: {
+    const ADB = require('../../../common/drivers/android/exec/ADB');
+    adb = new ADB();
+    adb.adbBin = 'ADB binary mock';
+    adb.spawnInstrumentation.mockReturnValue({
+      childProcess: {
+        on: jest.fn(),
+        stdout: {
+          setEncoding: jest.fn(),
           on: jest.fn(),
-          stdout: {
-            setEncoding: jest.fn(),
-            on: jest.fn(),
-          }
         }
-      });
+      }
     });
 
     jest.mock('../../../common/drivers/android/exec/AAPT');
-    AAPTClass = require('../../../common/drivers/android/exec/AAPT');
+    const AAPT = require('../../../common/drivers/android/exec/AAPT');
+    aapt = new AAPT()
 
     jest.mock('../../../common/drivers/android/tools/TempFileXfer');
-    FileXferClass = require('../../../common/drivers/android/tools/TempFileXfer');
-    FileXferClass.mockImplementation(() => {
-      const _this = latestInstanceOf(FileXferClass);
-      _this.send.mockResolvedValue(mockNotificationDataTargetPath);
-    });
+    const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');
+    fileXfer = new FileXfer();
+    fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath);
 
     jest.mock('../../../common/drivers/android/tools/AppInstallHelper');
-    AppInstallHelperClass = require('../../../common/drivers/android/tools/AppInstallHelper');
+    const AppInstallHelper = require('../../../common/drivers/android/tools/AppInstallHelper');
+    appInstallHelper = new AppInstallHelper();
+
+    jest.mock('../../../common/drivers/android/tools/AppUninstallHelper');
+    const AppUninstallHelper = require('../../../common/drivers/android/tools/AppUninstallHelper');
+    appUninstallHelper = new AppUninstallHelper();
+
 
     jest.mock('../../../DeviceRegistry');
     DeviceRegistryClass = require('../../../DeviceRegistry');
@@ -570,6 +555,6 @@ describe('Android driver', () => {
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
   const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
 
-  const mockInstrumentationRunning = () => instrumentationObj().isRunning.mockReturnValue(true);
-  const mockInstrumentationDead = () => instrumentationObj().isRunning.mockReturnValue(false);
+  const mockInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
+  const mockInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
 });

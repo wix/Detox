@@ -23,6 +23,8 @@ describe('Genymotion-cloud driver', () => {
   let logger;
   let emitter;
   let invocationManager;
+  let appInstallHelper;
+  let instrumentation;
   let detoxGenymotionManager;
   beforeEach(() => {
     logger = require('../../../../../utils/logger');
@@ -34,6 +36,13 @@ describe('Genymotion-cloud driver', () => {
 
     const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
     invocationManager = new InvocationManager();
+
+    const AppInstallHelper = require('../../../../common/drivers/android/tools/AppInstallHelper');
+    appInstallHelper = new AppInstallHelper();
+
+    jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
+    const Instrumentation = require('../../../../common/drivers/android/tools/MonitoredInstrumentation');
+    instrumentation = new Instrumentation();
 
     jest.mock('../../../../../android/espressoapi/DetoxGenymotionManager');
     detoxGenymotionManager = require('../../../../../android/espressoapi/DetoxGenymotionManager');
@@ -58,6 +67,8 @@ describe('Genymotion-cloud driver', () => {
         invocationManager,
         emitter,
         client: {},
+        appInstallHelper,
+        instrumentation,
       });
     });
 
@@ -90,15 +101,9 @@ describe('Genymotion-cloud driver', () => {
     });
 
     describe('clean-up', () => {
-      const instrumentationObj = () => latestInstanceOf(Instrumentation);
-
-      let Instrumentation;
-      beforeEach(() => {
-        Instrumentation = require('../../../../common/drivers/android/tools/MonitoredInstrumentation');
-      });
       it('should kill instrumentation', async () => {
         await uut.cleanup('bundle-id');
-        expect(instrumentationObj().terminate).toHaveBeenCalled();
+        expect(instrumentation.terminate).toHaveBeenCalled();
       });
     });
 

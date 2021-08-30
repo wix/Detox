@@ -1,13 +1,14 @@
 const _ = require('lodash');
 
-const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
-const Deferred = require('../../../../../utils/Deferred');
-
 const Instrumentation = require('./Instrumentation');
 const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
 
+const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const Deferred = require('../../../../../utils/Deferred');
+const _logger = require('../../../../../utils/logger');
+
 class MonitoredInstrumentation {
-  constructor(adb, logger) {
+  constructor(adb, logger = _logger) {
     this.instrumentationLogsParser = null;
     this.instrumentationStackTrace = '';
     this.instrumentation = new Instrumentation(adb, logger, this._onInstrumentationTerminated.bind(this), this._onInstrumentationLogData.bind(this));
