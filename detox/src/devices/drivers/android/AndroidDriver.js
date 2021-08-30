@@ -35,17 +35,14 @@ const log = logger.child({ __filename });
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
-
     this.invocationManager = config.invocationManager;
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
-
     this.adb = new ADB();
     this.aapt = new AAPT();
     this.fileXfer = new TempFileXfer(this.adb);
     this.appInstallHelper = new AppInstallHelper(this.adb, this.fileXfer);
     this.appUninstallHelper = new AppUninstallHelper(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
-
     this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
   }
 
