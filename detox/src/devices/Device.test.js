@@ -133,6 +133,10 @@ describe('Device', () => {
       sessionConfig: configurationsMock.validSession,
     }), overrides);
 
+    if (overrides && overrides.appsConfig === null) {
+      configs.appsConfig = {};
+    }
+
     return aDevice(configs);
   }
 
@@ -261,6 +265,41 @@ describe('Device', () => {
         await device.selectApp('withBundleId');
         await device.selectApp('withBinaryPath');
         expect(driverMock.driver.getBundleIdFromBinary).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('when there are no apps', () => {
+      beforeEach(async () => {
+        device = await aValidUnpreparedDevice({
+          appsConfig: null
+        });
+
+        jest.spyOn(device, 'selectApp');
+        await device.prepare();
+      });
+
+      it(`should not select the app at all`, async () => {
+        expect(device.selectApp).not.toHaveBeenCalled();
+      });
+
+      it(`should be able to execute actions with an explicit bundleId`, async () => {
+        const bundleId = 'com.example.app';
+        jest.spyOn(device, 'terminateApp');
+
+        await device.uninstallApp(bundleId);
+        expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device.id, bundleId);
+
+        await device.installApp('/tmp/app', '/tmp/app-test');
+        expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, '/tmp/app', '/tmp/app-test');
+
+        await device.launchApp({}, bundleId);
+        expect(driverMock.driver.launchApp).toHaveBeenCalledWith(device.id, bundleId, expect.anything(), undefined);
+
+        await device.terminateApp(bundleId);
+        expect(driverMock.driver.terminate).toHaveBeenCalledWith(device.id, bundleId);
+
+        await device.uninstallApp(bundleId);
+        expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device.id, bundleId);
       });
     });
   });
