@@ -16,8 +16,9 @@ class ArtifactsManagerFactory {
 
 class AndroidArtifactsManagerFactory extends ArtifactsManagerFactory {
   _declareArtifactPlugins({ client }) {
-    const ADB = require('../../devices/common/drivers/android/exec/ADB');
-    const AndroidDevicePathBuilder = require('../utils/AndroidDevicePathBuilder');
+    const serviceLocator = require('../../servicelocator/android');
+    const adb = serviceLocator.adb();
+    const devicePathBuilder = serviceLocator.devicePathBuilder();
 
     const AndroidInstrumentsPlugin = require('../instruments/android/AndroidInstrumentsPlugin');
     const ADBLogcatPlugin = require('../log/android/ADBLogcatPlugin');
@@ -25,8 +26,6 @@ class AndroidArtifactsManagerFactory extends ArtifactsManagerFactory {
     const ADBScreenrecorderPlugin = require('../video/ADBScreenrecorderPlugin');
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
 
-    const adb = new ADB();
-    const devicePathBuilder = new AndroidDevicePathBuilder();
     return {
       instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
@@ -51,13 +50,14 @@ class IosArtifactsManagerFactory extends ArtifactsManagerFactory {
 
 class IosSimulatorArtifactsManagerFactory extends IosArtifactsManagerFactory {
   _declareArtifactPlugins({ client }) {
-    const AppleSimUtils = require('../../devices/common/drivers/ios/tools/AppleSimUtils');
+    const serviceLocator = require('../../servicelocator/ios');
+    const appleSimUtils = serviceLocator.appleSimUtils();
+
     const SimulatorInstrumentsPlugin = require('../instruments/ios/SimulatorInstrumentsPlugin');
     const SimulatorLogPlugin = require('../log/ios/SimulatorLogPlugin');
     const SimulatorScreenshotPlugin = require('../screenshot/SimulatorScreenshotPlugin');
     const SimulatorRecordVideoPlugin = require('../video/SimulatorRecordVideoPlugin');
 
-    const appleSimUtils = new AppleSimUtils();
     return {
       ...super._declareArtifactPlugins({ client }),
 

@@ -14,7 +14,7 @@ const {
 
 /**
  * @param deviceCookie { DeviceCookie }
- * @param commonDeps { Object } // TODO ASDASD Own the creation of invocation manager, etc?
+ * @param commonDeps { Object }
  * @param configs { Object }
  * @returns { RuntimeDevice }
  */
@@ -38,21 +38,20 @@ function _createDriver(deviceCookie, commonDeps) {
 }
 
 function _createAndroidDriver(deviceCookie, commonDeps) {
-  const ADB = require('../common/drivers/android/exec/ADB');
-  const AAPT = require('../common/drivers/android/exec/AAPT');
-  const TempFileXfer = require('../common/drivers/android/tools/TempFileXfer');
+  const serviceLocator = require('../../servicelocator/android');
+  const adb = serviceLocator.adb();
+  const aapt = serviceLocator.aapt();
+  const fileXfer = serviceLocator.fileXfer();
+
   const AppInstallHelper = require('../common/drivers/android/tools/AppInstallHelper');
   const AppUninstallHelper = require('../common/drivers/android/tools/AppUninstallHelper');
   const MonitoredInstrumentation = require('../common/drivers/android/tools/MonitoredInstrumentation');
   const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
-
-  const adb = new ADB();
-  const fileXfer = new TempFileXfer(adb);
   const deps = {
     ...commonDeps,
     adb,
+    aapt,
     fileXfer,
-    aapt: new AAPT(),
     appInstallHelper: new AppInstallHelper(adb, fileXfer),
     appUninstallHelper: new AppUninstallHelper(adb),
     instrumentation: new MonitoredInstrumentation(adb),
@@ -65,21 +64,23 @@ function _createAndroidDriver(deviceCookie, commonDeps) {
   }
 
   if (deviceCookie instanceof GenycloudEmulatorCookie) {
-    return new GenycloudRuntimeDriver(deviceCookie.instance, deps);
+    const { instance } = deviceCookie;
+    return new GenycloudRuntimeDriver(instance, deps);
   }
 
   if (deviceCookie instanceof AttachedAndroidDeviceCookie) {
-    return new AttachedAndroidRuntimeDriver(deviceCookie.adbName, deps);
+    const { adbName } = deviceCookie;
+    return new AttachedAndroidRuntimeDriver(adbName, deps);
   }
   return null;
 }
 
 function _createIosDriver(deviceCookie, commonDeps) {
-  if (deviceCookie instanceof IosSimulatorCookie) {
-    const AppleSimUtils = require('../common/drivers/ios/tools/AppleSimUtils');
-    const SimulatorLauncher = require('../allocation/drivers/ios/SimulatorLauncher');
+  const serviceLocator = require('../../servicelocator/ios');
+  const applesimutils = serviceLocator.appleSimUtils();
 
-    const applesimutils = new AppleSimUtils();
+  if (deviceCookie instanceof IosSimulatorCookie) {
+    const SimulatorLauncher = require('../allocation/drivers/ios/SimulatorLauncher');
     const deps = {
       ...commonDeps,
       applesimutils,
