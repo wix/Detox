@@ -338,8 +338,12 @@ class Device {
       await this.terminateApp(bundleId);
     }
 
+    const currentAppLaunchArgs = this._currentApp
+      ? this._currentApp.launchArgs
+      : null;
+
     const baseLaunchArgs = {
-      ...this._currentApp.launchArgs,
+      ...currentAppLaunchArgs,
       ...params.launchArgs,
     };
 
