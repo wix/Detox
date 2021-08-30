@@ -28,7 +28,7 @@ element(by.id('tap_me'));
 
 #### `by.label(label)`
 
-Match elements with the specified accessibility label (iOS) or content description (Android). In React Native, this corresponds to the value in the [`accessibilityLabel`](https://facebook.github.io/react-native/docs/view.html#accessibilitylabel) prop.
+Match elements with the specified accessibility label (iOS) or content description (Android). In React Native, this corresponds to the value in the [`accessibilityLabel`](https://reactnative.dev/docs/accessibility#accessibilitylabel) prop.
 
 ```js
 element(by.label('Welcome'));
