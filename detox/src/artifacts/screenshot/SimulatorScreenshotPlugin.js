@@ -1,3 +1,4 @@
+const fs = require('../../utils/fsext');
 const log = require('../../utils/logger').child({ __filename });
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const temporaryPath = require('../utils/temporaryPath');
@@ -36,16 +37,31 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
     }
   }
 
-  _onInvokeFailure({ params }) {
-    const { visibilityFailingScreenshotsURL, visibilityFailingRectsURL } = params;
+  async onBeforeUninstallApp(event) {
+    const snapshots = [
+      ...Object.values(this.snapshots.fromTest),
+      ...Object.values(this.snapshots.fromSession)
+    ];
 
-    this._registerSnapshot('visibilityFailingScreenshots/', new FileArtifact({
-      temporaryPath: visibilityFailingScreenshotsURL
-    }));
+    await Promise.all(snapshots.map(s => s && s.relocate()));
+    await super.onBeforeUninstallApp(event);
+  }
 
-    this._registerSnapshot('visibilityFailingRects/', new FileArtifact({
-      temporaryPath: visibilityFailingRectsURL
-    }));
+  async _onInvokeFailure({ params }) {
+    const artifacts = {
+      visibilityFailingScreenshots: params.visibilityFailingScreenshotsURL,
+      visibilityFailingRects: params.visibilityFailingRectsURL,
+    };
+
+    for (const [key, artifactPath] of Object.entries(artifacts)) {
+      if (!artifactPath || await fs.isDirEmpty(artifactPath)) {
+        continue;
+      }
+
+      this._registerSnapshot(`${key}/`, new FileArtifact({
+        temporaryPath: artifactPath,
+      }));
+    }
   }
 
   createTestArtifact() {

@@ -61,13 +61,27 @@ describe('IosUIHierarchyPlugin', () => {
       expect(session2.save).toHaveBeenCalledWith('artifacts/ui2.viewhierarchy');
       expect(test1.save).toHaveBeenCalledWith('artifacts/test/ui.viewhierarchy');
       expect(test2.save).toHaveBeenCalledWith('artifacts/test/ui2.viewhierarchy');
-    }); });
+    });
+
+    it('should relocate existing artifacts before the app gets uninstalled', async () => {
+      await plugin.onTestStart(testSummaries.running());
+      onTestFailed(aTestFailedPayload(1));
+      onTestFailed(aTestFailedPayload(2));
+
+      await plugin.onBeforeUninstallApp({ deviceId: 'deviceId', bundleId: 'bundleId' });
+
+      const [test1, test2] = FileArtifact.mock.instances;
+
+      expect(test1.relocate).toHaveBeenCalled();
+      expect(test2.relocate).toHaveBeenCalled();
+    });
+  });
 
   describe('behavior for externally created artifacts', () => {
     it('should validate event.artifact', async () => {
       await expect(plugin.onCreateExternalArtifact({ name: 'invalid' }))
         .rejects
-        .toThrowError(/Internal error/);
+        .toThrowError(/Expected Artifact instance/);
     });
 
     it('should register snapshots inside and outside of running test', async () => {

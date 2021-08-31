@@ -148,6 +148,106 @@ describe('FileArtifact', () => {
     });
   });
 
+  describe('relocate', () => {
+    beforeEach(() => {
+      jest.spyOn(FileArtifact, 'moveTemporaryFile').mockImplementation(_.noop);
+      jest.spyOn(FileArtifact, 'writeFile').mockImplementation(_.noop);
+    });
+
+    describe('if temporary file is passed to constructor', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          temporaryPath,
+        });
+      });
+
+      describe('and the file exists', () => {
+        beforeEach(async () => {
+          await fs.ensureFile(temporaryPath);
+        });
+
+        describe('when called', () => {
+          beforeEach(async () => {
+            await fileArtifact.relocate();
+          });
+
+          it('should call FileArtifact.moveTemporaryFile', async () => {
+            expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, expect.stringMatching(/\.artifact$/));
+          });
+        });
+      });
+
+      describe('and the file does not exist', () => {
+        beforeEach(async () => {
+          await fs.remove(temporaryPath);
+        });
+
+        describe('when called', () => {
+          beforeEach(async () => {
+            await fileArtifact.relocate();
+          });
+
+          it('should call FileArtifact.moveTemporaryFile', async () => {
+            expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
+    describe('if temporary file is created in start()', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          async start() {
+            await fs.ensureFile(temporaryPath);
+            this.temporaryPath = temporaryPath;
+          }
+        });
+      });
+
+      describe('when relocate() is called without start()', () => {
+        beforeEach(async () => {
+          await fileArtifact.relocate();
+        });
+
+        it('should not call FileArtifact.moveTemporaryFile', async () => {
+          expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('and start() was called', () => {
+        beforeEach(async () => {
+          await fileArtifact.start();
+          await fileArtifact.relocate();
+        });
+
+        it('should call FileArtifact.moveTemporaryFile', async () => {
+          expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, expect.stringMatching(/\.artifact$/));
+        });
+      });
+    });
+
+    describe('if temporary data is passed to constructor', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          temporaryData,
+        });
+      });
+
+      describe('when called', () => {
+        beforeEach(async () => {
+          await fileArtifact.relocate();
+        });
+
+        it('should not do anything', async () => {
+          expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+        });
+      });
+    });
+  });
+
   describe('static helper methods', () => {
     describe('.moveTemporaryFile', () => {
       describe('if temporary file does not exist', () => {
