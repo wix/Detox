@@ -38,23 +38,26 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
   }
 
   async onBeforeUninstallApp(event) {
-    const snapshots = [
-      ...Object.values(this.snapshots.fromTest),
-      ...Object.values(this.snapshots.fromSession)
-    ];
+    await this.api.requestIdleCallback(async () => {
+      const snapshots = [
+        ...Object.values(this.snapshots.fromTest),
+        ...Object.values(this.snapshots.fromSession)
+      ];
 
-    await Promise.all(snapshots.map(s => s && s.relocate()));
+      await Promise.all(snapshots.map(s => s && s.relocate()));
+    });
+
     await super.onBeforeUninstallApp(event);
   }
 
-  async _onInvokeFailure({ params }) {
+  _onInvokeFailure({ params }) {
     const artifacts = {
       visibilityFailingScreenshots: params.visibilityFailingScreenshotsURL,
       visibilityFailingRects: params.visibilityFailingRectsURL,
     };
 
     for (const [key, artifactPath] of Object.entries(artifacts)) {
-      if (!artifactPath || await fs.isDirEmpty(artifactPath)) {
+      if (!artifactPath || fs.isDirEmptySync(artifactPath)) {
         continue;
       }
 

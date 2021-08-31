@@ -28,6 +28,9 @@ describe('IosUIHierarchyPlugin', () => {
           return 'artifacts/' + name;
         }
       }),
+      requestIdleCallback: jest.fn(async (callback) => {
+        await callback();
+      }),
       userConfig: {
         enabled: true,
         keepOnlyFailedTestsArtifacts: false,

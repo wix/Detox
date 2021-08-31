@@ -2,8 +2,8 @@ const path = require('path');
 
 const fs = require('fs-extra');
 
-async function isDirEmpty(dirPath) {
-  const files = await fs.readdir(dirPath);
+function isDirEmptySync(dirPath) {
+  const files = fs.readdirSync(dirPath);
   return files.length === 0;
 }
 
@@ -21,5 +21,5 @@ async function getDirectories (rootPath) {
 
 module.exports = {
   getDirectories,
-  isDirEmpty,
+  isDirEmptySync,
 };

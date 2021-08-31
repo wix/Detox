@@ -70,12 +70,15 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
   }
 
   async onBeforeUninstallApp(event) {
-    const artifacts = [
-      ...Object.values(this._artifacts.perTest),
-      ...Object.values(this._artifacts.perSession)
-    ];
+    await this.api.requestIdleCallback(async () => {
+      const artifacts = [
+        ...Object.values(this._artifacts.perTest),
+        ...Object.values(this._artifacts.perSession)
+      ];
 
-    await Promise.all(artifacts.map(s => s && s.relocate()));
+      await Promise.all(artifacts.map(s => s && s.relocate()));
+    });
+
     await super.onBeforeUninstallApp(event);
   }
 

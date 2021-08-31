@@ -5,16 +5,16 @@ const tempfile = require('tempfile');
 
 const fsext = require('./fsext');
 
-test('isDirEmpty', async () => {
+test('isDirEmptySync', async () => {
   const tempDir = tempfile();
   try {
-    await expect(fsext.isDirEmpty(tempDir)).rejects.toThrowError(/ENOENT/);
+    expect(() => fsext.isDirEmptySync(tempDir)).toThrowError(/ENOENT/);
 
     await fs.ensureDir(tempDir);
-    await expect(fsext.isDirEmpty(tempDir)).resolves.toBe(true);
+    expect(fsext.isDirEmptySync(tempDir)).toBe(true);
 
     await fs.ensureFile(path.join(tempDir, '1'));
-    await expect(fsext.isDirEmpty(tempDir)).resolves.toBe(false);
+    expect(fsext.isDirEmptySync(tempDir)).toBe(false);
   } finally {
     await fs.remove(tempDir);
   }
