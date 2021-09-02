@@ -31,6 +31,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
         google()
+        jcenter()
         maven {
             url "$projectDir/../../node_modules/react-native/android"
         }
