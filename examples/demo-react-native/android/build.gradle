@@ -39,30 +39,6 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
-        /*
-         BINTRAY_SUNSET_HACK start
-         (Section shouldn't be needed at all)
-         */
-        flatDir {
-            dirs "$rootProject.projectDir/libs"
-        }
-        /*
-         BINTRAY_SUNSET_HACK end
-         */
+        jcenter()
     }
 }
-
-/*
- BINTRAY_SUNSET_HACK start
- (Shouldn't be here)
- */
-subprojects {
-    configurations.all {
-        resolutionStrategy {
-            force 'com.facebook.fbjni:fbjni-java-only:0.0.4'
-        }
-    }
-}
-/*
- BINTRAY_SUNSET_HACK end
- */
