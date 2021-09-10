@@ -994,6 +994,7 @@ declare global {
              * Simulate tap at a specific point on an element.
              * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
+             * @deprecated Use `.tap()` instead.
              */
             tapAtPoint(point: { x: number; y: number }): Promise<void>;
 
@@ -1108,7 +1109,7 @@ declare global {
              * @example
              * await expect(element(by.id('PinchableScrollView'))).toBeVisible();
              * await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
-             * @deprecated Should use pinch instead
+             * @deprecated Use `.pinch()` instead.
              */
             pinchWithAngle(direction: PinchDirection, speed: Speed, angle: number): Promise<void>;
 
