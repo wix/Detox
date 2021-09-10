@@ -868,6 +868,7 @@ declare global {
             /**
              * Expect the view to not be visible.
              * @example await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+             * @deprecated Use `.not.toBeVisible()` instead.
              */
             toBeNotVisible(): R;
 
@@ -880,6 +881,7 @@ declare global {
             /**
              * Expect the view to not exist in the UI hierarchy.
              * @example await expect(element(by.id('RandomJunk959'))).toNotExist();
+             * @deprecated Use `.not.toExist()` instead.
              */
             toNotExist(): R;
 
@@ -892,6 +894,7 @@ declare global {
             /**
              * Expect the view not to be focused.
              * @example await expect(element(by.id('passwordInput'))).toBeNotFocused();
+             * @deprecated Use `.not.toBeFocused()` instead.
              */
             toBeNotFocused(): R;
 
