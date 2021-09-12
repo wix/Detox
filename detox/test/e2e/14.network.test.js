@@ -49,7 +49,7 @@ describe('Network Synchronization', () => {
     await device.setURLBlacklist([]);
   });
 
-  it('launchArgs with detoxURLBlacklistRegex should set the blacklist', async () => {
+  it(':android: launchArgs with detoxURLBlacklistRegex should set the blacklist', async () => {
     await device.launchApp({
       newInstance: true,
       launchArgs: { detoxURLBlacklistRegex: ' \\("^http:\/\/localhost:\\d{4}?\/[a-z]+\/\\d{4}?$"\\)' },
