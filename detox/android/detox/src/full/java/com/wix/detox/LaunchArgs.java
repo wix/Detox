@@ -12,6 +12,7 @@ public class LaunchArgs {
     private static final String DETOX_SERVER_URL_ARG = "detoxServer";
     private static final String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
     private static final String DETOX_NOTIFICATION_PATH_ARG = "detoxUserNotificationDataURL";
+    private static final String DETOX_BLACKLIST_URLS_ARG = "detoxURLBlacklistRegex";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
 
@@ -25,6 +26,14 @@ public class LaunchArgs {
 
     public boolean hasUrlOverride() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_URL_OVERRIDE_ARG);
+    }
+
+    public String getURLBlacklist() {
+        return InstrumentationRegistry.getArguments().getString(DETOX_BLACKLIST_URLS_ARG);
+    }
+
+    public boolean hasURLBlacklist() {
+        return InstrumentationRegistry.getArguments().containsKey(DETOX_BLACKLIST_URLS_ARG);
     }
 
     public String getUrlOverride() {

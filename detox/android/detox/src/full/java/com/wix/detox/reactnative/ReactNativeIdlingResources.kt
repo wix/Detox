@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.LaunchArgs
 import com.wix.detox.reactnative.idlingresources.*
 import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
@@ -45,7 +46,9 @@ private class MQThreadReflected(private val queue: Any?, private val queueName: 
 
 class ReactNativeIdlingResources constructor(
         private val reactContext: ReactContext,
-        internal var networkSyncEnabled: Boolean = true)
+        private var launchArgs: LaunchArgs,
+        internal var networkSyncEnabled: Boolean = true
+        )
 
     {
 
@@ -67,6 +70,11 @@ class ReactNativeIdlingResources constructor(
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native")
 
         unregisterAll()
+
+        if (launchArgs.hasURLBlacklist()) {
+            val blacklistUrls = launchArgs.getURLBlacklist()
+            setBlacklistUrls(blacklistUrls)
+        }
 
         setupMQThreadsInterrogators()
         syncIdlingResources()
@@ -199,5 +207,17 @@ class ReactNativeIdlingResources constructor(
             IdlingRegistry.getInstance().unregister(it)
             networkIdlingResource = null
         }
+    }
+
+    private fun toFormattedUrlArray(urlList: String): List<String> {
+        var formattedUrls = urlList
+        formattedUrls = formattedUrls.replace(Regex("""[()"]"""), "");
+        formattedUrls = formattedUrls.trim();
+        return formattedUrls.split(',');
+    }
+
+    fun setBlacklistUrls(urlList: String) {
+        val urlArray = toFormattedUrlArray(urlList)
+        NetworkIdlingResource.setURLBlacklist(urlArray);
     }
 }

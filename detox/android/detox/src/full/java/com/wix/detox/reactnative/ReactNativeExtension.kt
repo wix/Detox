@@ -7,6 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.LaunchArgs
 
 private const val LOG_TAG = "DetoxRNExt"
 
@@ -60,6 +61,11 @@ object ReactNativeExtension {
             setupIdlingResources(reactContext)
             hackRN50OrHigherWaitForReady()
         }
+    }
+
+    @JvmStatic
+    fun setBlacklistUrls(blacklistUrls: String) {
+        rnIdlingResources?.setBlacklistUrls(blacklistUrls)
     }
 
     @JvmStatic
@@ -119,7 +125,9 @@ object ReactNativeExtension {
     }
 
     private fun setupIdlingResources(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {
-        rnIdlingResources = ReactNativeIdlingResources(reactContext, networkSyncEnabled).apply {
+        val launchArgs = LaunchArgs()
+
+        rnIdlingResources = ReactNativeIdlingResources(reactContext, launchArgs, networkSyncEnabled).apply {
             registerAll()
         }
     }
