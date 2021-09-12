@@ -1,34 +1,34 @@
-const DeviceAllocatorFactory = require('./DeviceAllocatorFactory');
+const AllocationDriverFactory = require('./AllocationDriverFactory');
 
-class AndroidEmulatorAllocatorFactory extends DeviceAllocatorFactory {
-  _createAllocationDriver(eventEmitter) {
-    const serviceLocator = require('../../../servicelocator/android');
+class AndroidEmulatorAllocDriverFactory extends AllocationDriverFactory {
+  createAllocationDriver({ eventEmitter }) {
+    const serviceLocator = require('../../../../servicelocator/android');
     const adb = serviceLocator.adb();
     const emulatorExec = serviceLocator.emulator.exec();
     const deviceRegistry = serviceLocator.deviceRegistry();
 
-    const AVDsResolver = require('../drivers/android/emulator/AVDsResolver');
+    const AVDsResolver = require('../../drivers/android/emulator/AVDsResolver');
     const avdsResolver = new AVDsResolver(emulatorExec);
 
-    const EmulatorVersionResolver = require('../drivers/android/emulator/EmulatorVersionResolver');
+    const EmulatorVersionResolver = require('../../drivers/android/emulator/EmulatorVersionResolver');
     const emulatorVersionResolver = new EmulatorVersionResolver(emulatorExec);
 
-    const AVDValidator = require('../drivers/android/emulator/AVDValidator');
+    const AVDValidator = require('../../drivers/android/emulator/AVDValidator');
     const avdValidator = new AVDValidator(avdsResolver, emulatorVersionResolver);
 
-    const FreeEmulatorFinder = require('../drivers/android/emulator/FreeEmulatorFinder');
+    const FreeEmulatorFinder = require('../../drivers/android/emulator/FreeEmulatorFinder');
     const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
 
-    const EmulatorLauncher = require('../drivers/android/emulator/EmulatorLauncher');
+    const EmulatorLauncher = require('../../drivers/android/emulator/EmulatorLauncher');
     const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, eventEmitter });
 
-    const EmulatorDeviceAllocation = require('../drivers/android/emulator/EmulatorDeviceAllocation');
+    const EmulatorDeviceAllocation = require('../../drivers/android/emulator/EmulatorDeviceAllocation');
     const deviceAllocation = new EmulatorDeviceAllocation(deviceRegistry, freeEmulatorFinder);
 
     const {
       EmulatorAllocDriver,
       EmulatorDeallocDriver,
-    } = require('../drivers/android/emulator/EmulatorAllocDriver');
+    } = require('../../drivers/android/emulator/EmulatorAllocDriver');
     const allocDriver = new EmulatorAllocDriver({
       adb,
       avdValidator,
@@ -45,4 +45,4 @@ class AndroidEmulatorAllocatorFactory extends DeviceAllocatorFactory {
   }
 }
 
-module.exports = AndroidEmulatorAllocatorFactory;
+module.exports = AndroidEmulatorAllocDriverFactory;

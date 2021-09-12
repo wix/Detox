@@ -4,11 +4,11 @@ const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 
 jest.mock('./utils/logger');
-jest.mock('./devices/DriverRegistry');
+// jest.mock('./devices/DriverRegistry');
 jest.mock('./artifacts/ArtifactsManager');
 jest.mock('./client/Client');
 jest.mock('./Device');
-jest.mock('./matchersRegistry');
+// jest.mock('./matchersRegistry');
 jest.mock('./invoke');
 jest.mock('./utils/cutStackTraces');
 

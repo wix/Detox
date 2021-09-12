@@ -15,7 +15,7 @@ class EmulatorServiceLocator {
 class GenycloudServiceLocator {
   static _genycloudExec = new LazyRef(() => {
     const Exec = require('../devices/common/drivers/android/genycloud/exec/GenyCloudExec')
-    return new Exec(environment.getGmsaasPath())
+    return new Exec(environment.getGmsaasPath());
   });
 
   static _runtimedeviceRegistry = new LazyRef(() => {

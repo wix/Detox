@@ -1,7 +1,6 @@
+const _ = require('lodash');
 const { URL } = require('url');
 const util = require('util');
-
-const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
 
@@ -169,12 +168,13 @@ class Detox {
 
     const {
       envValidatorFactory,
-      artifactsManagerFactory,
       deviceAllocatorFactory,
-      runtimeDeviceFactory,
+      artifactsManagerFactory,
       matchersFactory,
+      runtimeDeviceFactory,
     } = environmentFactory.createFactories(this._deviceConfig);
 
+    // TODO ASDASD make validate() async, create sync
     const envValidator = await envValidatorFactory.createValidator();
     envValidator.validate();
 

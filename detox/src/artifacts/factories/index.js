@@ -1,76 +1,54 @@
 const ArtifactsManager = require('../ArtifactsManager');
+const {
+  AndroidArtifactPluginsProvider,
+  IosArtifactPluginsProvider,
+  IosSimulatorArtifactPluginsProvider,
+  EmptyProvider,
+} = require('./providers');
 
-class ArtifactsManagerFactory {
+class ArtifactsManagerFactoryBase {
+  /**
+   * @param provider { ArtifactPluginsProvider }
+   */
+  constructor(provider) {
+    this._provider = provider;
+  }
+
   createArtifactsManager(artifactsConfig, { eventEmitter, client }) {
     const artifactsManager = new ArtifactsManager(artifactsConfig);
     artifactsManager.subscribeToDeviceEvents(eventEmitter);
-    artifactsManager.registerArtifactPlugins(this._declareArtifactPlugins({ client }));
+    artifactsManager.registerArtifactPlugins(this._provider.declareArtifactPlugins({ client }));
     return artifactsManager;
   }
-
-  /**
-   * @private
-   */
-  _declareArtifactPlugins() {}
 }
 
-class AndroidArtifactsManagerFactory extends ArtifactsManagerFactory {
-  _declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/android');
-    const adb = serviceLocator.adb();
-    const devicePathBuilder = serviceLocator.devicePathBuilder();
-
-    const AndroidInstrumentsPlugin = require('../instruments/android/AndroidInstrumentsPlugin');
-    const ADBLogcatPlugin = require('../log/android/ADBLogcatPlugin');
-    const ADBScreencapPlugin = require('../screenshot/ADBScreencapPlugin');
-    const ADBScreenrecorderPlugin = require('../video/ADBScreenrecorderPlugin');
-    const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
-
-    return {
-      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
-      log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
-      screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
-      video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
-    };
+class AndroidFactory extends ArtifactsManagerFactoryBase {
+  constructor() {
+    super(new AndroidArtifactPluginsProvider());
   }
 }
 
-class IosArtifactsManagerFactory extends ArtifactsManagerFactory {
-  _declareArtifactPlugins({ client }) {
-    const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
-    const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
-
-    return {
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
-      uiHierarchy: (api) => new IosUIHierarchyPlugin({ api, client }),
-    };
+class IosFactory extends ArtifactsManagerFactoryBase {
+  constructor() {
+    super(new IosArtifactPluginsProvider());
   }
 }
 
-class IosSimulatorArtifactsManagerFactory extends IosArtifactsManagerFactory {
-  _declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/ios');
-    const appleSimUtils = serviceLocator.appleSimUtils();
+class IosSimulatorFactory extends ArtifactsManagerFactoryBase {
+  constructor() {
+    super(new IosSimulatorArtifactPluginsProvider());
+  }
+}
 
-    const SimulatorInstrumentsPlugin = require('../instruments/ios/SimulatorInstrumentsPlugin');
-    const SimulatorLogPlugin = require('../log/ios/SimulatorLogPlugin');
-    const SimulatorScreenshotPlugin = require('../screenshot/SimulatorScreenshotPlugin');
-    const SimulatorRecordVideoPlugin = require('../video/SimulatorRecordVideoPlugin');
-
-    return {
-      ...super._declareArtifactPlugins({ client }),
-
-      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
-      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils, client }),
-      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
-    };
+class ExternalFactory extends ArtifactsManagerFactoryBase {
+  constructor(module) {
+    super(new (module.ArtifactPluginsProviderClass || EmptyProvider)());
   }
 }
 
 module.exports = {
-  AndroidArtifactsManagerFactory,
-  IosArtifactsManagerFactory,
-  IosSimulatorArtifactsManagerFactory,
+  AndroidFactory,
+  IosFactory,
+  IosSimulatorFactory,
+  ExternalFactory,
 };

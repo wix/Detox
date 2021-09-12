@@ -1,6 +1,9 @@
 const { traceCall } = require('../../utils/trace');
 
 class DeviceAllocator {
+  /**
+   * @param allocationDriver { AllocationDriverBase }
+   */
   constructor(allocationDriver) {
     this._driver = allocationDriver;
   }
@@ -16,6 +19,9 @@ class DeviceAllocator {
 }
 
 class DeviceDeallocator {
+  /**
+   * @param deallocationDriver { DeallocationDriverBase }
+   */
   constructor(deallocationDriver) {
     this._driver = deallocationDriver;
   }

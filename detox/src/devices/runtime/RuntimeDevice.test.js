@@ -148,7 +148,6 @@ describe('Device', () => {
     driverMock.driver.getDeviceName.mockReturnValue('mock-device-name-from-driver');
 
     const device = await aValidDevice();
-    const result = device.name;
     expect(device.name).toEqual('mock-device-name-from-driver');
   });
 

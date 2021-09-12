@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const driverRegistry = require('../devices/DriverRegistry').default;
+const environmentFactory = require('../environmentFactory');
 
 /**
  * @param {DetoxConfigErrorComposer} opts.errorComposer
@@ -96,9 +96,9 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
     throw errorComposer.missingDeviceType(deviceAlias);
   }
 
-  const DriverClass = _.attempt(() => driverRegistry.resolve(deviceConfig.type));
-  if (_.isError(DriverClass)) {
-    throw errorComposer.invalidDeviceType(deviceAlias, deviceConfig, DriverClass);
+  const maybeError = _.attempt(() => environmentFactory.validateConfig(deviceConfig));
+  if (_.isError(maybeError)) {
+      throw errorComposer.invalidDeviceType(deviceAlias, deviceConfig, maybeError);
   }
 
   if (deviceConfig.utilBinaryPaths) {

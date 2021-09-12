@@ -14,15 +14,12 @@ describe('composeDeviceConfig', () => {
   let globalConfig;
   /** @type {DetoxConfigErrorComposer} */
   let errorComposer;
-  /** @type {DriverRegistry} */
-  let driverRegistry;
+  /** @type { { validateConfig: Function } */
+  let environmentFactory;
 
   beforeEach(() => {
-    jest.mock('../devices/DriverRegistry', () => {
-      const DriverRegistry = jest.requireActual('../devices/DriverRegistry');
-      driverRegistry = DriverRegistry.default;
-      return DriverRegistry;
-    });
+    jest.mock('../environmentFactory');
+    environmentFactory = require('../environmentFactory');
 
     cliConfig = {};
     localConfig = {};
@@ -82,7 +79,6 @@ describe('composeDeviceConfig', () => {
 
       beforeEach(() => {
         Object.assign(localConfig, values);
-        driverRegistry.resolve = () => (class SomeDriver {});
       });
 
       it('should take it as is, for backward compatibility', () => {
@@ -243,7 +239,7 @@ describe('composeDeviceConfig', () => {
 
     it('should throw if the device config has invalid type', () => {
       const someError = new Error('Some error');
-      driverRegistry.resolve = () => { throw someError; };
+      environmentFactory.validateConfig.mockImplementation(() => { throw someError });
 
       localConfig.device = { type: 'android.apk' };
       expect(compose).toThrow(errorComposer.invalidDeviceType(

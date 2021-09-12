@@ -5,11 +5,6 @@ const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 const { traceCall } = require('../../../../../utils/trace');
 
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
-const AndroidInstrumentsPlugin = require('../../../../../artifacts/instruments/android/AndroidInstrumentsPlugin');
-const ADBLogcatPlugin = require('../../../../../artifacts/log/android/ADBLogcatPlugin');
-const ADBScreencapPlugin = require('../../../../../artifacts/screenshot/ADBScreencapPlugin');
-const ADBScreenrecorderPlugin = require('../../../../../artifacts/video/ADBScreenrecorderPlugin');
-const TimelineArtifactPlugin = require('../../../../../artifacts/timeline/TimelineArtifactPlugin');
 
 class EmulatorAllocDriver extends AllocationDriverBase {
 
@@ -46,18 +41,6 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     await this._prepareEmulator(adbName);
 
     return new AndroidEmulatorCookie(adbName, avdName);
-  }
-
-  declareArtifactPlugins() {
-    const { adb, client, devicePathBuilder } = this;
-
-    return {
-      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
-      log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
-      screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
-      video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
-    };
   }
 
   async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
