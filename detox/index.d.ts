@@ -970,9 +970,10 @@ declare global {
 
             /**
              * Simulate long press on an element
+             * @param duration (iOS only) press duration time, in milliseconds. Optional (default is 1000ms).
              * @example await element(by.id('tappable')).longPress();
              */
-            longPress(): Promise<void>;
+            longPress(duration: number): Promise<void>;
 
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)
