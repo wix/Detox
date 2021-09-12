@@ -28,11 +28,11 @@ public class LaunchArgs {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_URL_OVERRIDE_ARG);
     }
 
-    public String getBlacklist() {
+    public String getURLBlacklist() {
         return InstrumentationRegistry.getArguments().getString(DETOX_BLACKLIST_URLS_ARG);
     }
 
-    public boolean hasBlacklist() {
+    public boolean hasURLBlacklist() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_BLACKLIST_URLS_ARG);
     }
 

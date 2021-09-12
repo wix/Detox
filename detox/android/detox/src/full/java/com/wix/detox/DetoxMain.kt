@@ -32,7 +32,6 @@ object DetoxMain {
         initCrashHandler(externalAdapter)
         initANRListener(externalAdapter)
         initReactNativeIfNeeded(rnHostHolder)
-        initBlacklistIfNeeded()
     }
 
     private fun doTeardown(serverAdapter: DetoxServerAdapter, actionsDispatcher: DetoxActionsDispatcher, testEngineFacade: TestEngineFacade) {
@@ -101,13 +100,5 @@ object DetoxMain {
 
     private fun initReactNativeIfNeeded(rnHostHolder: Context) {
         ReactNativeExtension.waitForRNBootstrap(rnHostHolder)
-    }
-
-    private fun initBlacklistIfNeeded() {
-        val launchArgs = LaunchArgs()
-        if (launchArgs.hasBlacklist()) {
-            val blacklistUrls = launchArgs.getBlacklist()
-            ReactNativeExtension.setBlacklistUrls(blacklistUrls)
-        }
     }
 }
