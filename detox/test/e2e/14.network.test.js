@@ -52,12 +52,10 @@ describe('Network Synchronization', () => {
   it('launchArgs with detoxURLBlacklistRegex should set the blacklist', async () => {
     await device.launchApp({
       newInstance: true,
-      launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events",".*localhost.*"\\)' },
+      launchArgs: { detoxURLBlacklistRegex: ' \\("^http://localhost:\\d{4}?/[a-z]+/\\d{4}?$"\\)' },
     });
 
-    await device.reloadReactNative();
     await element(by.text('Network')).tap();
-
     await element(by.id('LongNetworkRequest')).tap();
     await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
