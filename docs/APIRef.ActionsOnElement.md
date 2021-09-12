@@ -51,7 +51,7 @@ await element(by.id('tappable')).multiTap(3);
 
 Simulates a long press on the element at its activation point.
 
-`duration`—the duration to press for, in ms (optional, default is 1000)
+`duration` (iOS only) — press during time, in milliseconds. Optional (default is 1000ms).
 
 ```js
 await element(by.id('tappable')).longPress();
