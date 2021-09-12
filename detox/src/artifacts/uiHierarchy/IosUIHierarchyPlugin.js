@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const DetoxInternalError = require('../../errors/DetoxInternalError');
 const setUniqueProperty = require('../../utils/setUniqueProperty');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
@@ -32,7 +32,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
 
   async onCreateExternalArtifact(e) {
     if (!e.artifact) {
-      throw new DetoxRuntimeError('Internal error: expected Artifact instance in the event');
+      throw new DetoxInternalError('Expected Artifact instance in the event');
     }
 
     this._registerSnapshot(e.name, e.artifact);
@@ -67,6 +67,19 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
 
     this.context.testSummary = null;
     await this._flushArtifacts();
+  }
+
+  async onBeforeUninstallApp(event) {
+    await this.api.requestIdleCallback(async () => {
+      const artifacts = [
+        ...Object.values(this._artifacts.perTest),
+        ...Object.values(this._artifacts.perSession)
+      ];
+
+      await Promise.all(artifacts.map(s => s && s.relocate()));
+    });
+
+    await super.onBeforeUninstallApp(event);
   }
 
   async onBeforeCleanup() {

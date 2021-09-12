@@ -76,22 +76,7 @@ android {
 // Fundamental deps.
 dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
-
-    /*
-     BINTRAY_SUNSET_HACK start
-
-     Should be:
-     compileOnly 'com.facebook.react:react-native:+'
-     */
-    compileOnly 'com.facebook.fbjni:fbjni-java-only:0.0.4'
-    // noinspection GradleDynamicVersion
-    compileOnly('com.facebook.react:react-native:+') {
-        exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
-        exclude group: 'com.facebook.yoga', module: 'proguard-annotations'
-    }
-    /*
-     BINTRAY_SUNSET_HACK end
-     */
+    compileOnly 'com.facebook.react:react-native:+'
 }
 
 // androidx.test deps.
@@ -126,21 +111,7 @@ dependencies {
 
 // Unit-testing deps.
 dependencies {
-    /*
-     BINTRAY_SUNSET_HACK start
-     Should be:
-     testImplementation 'com.facebook.react:react-native:+'
-     */
-    testImplementation 'com.facebook.fbjni:fbjni-java-only:0.0.4'
-    // noinspection GradleDynamicVersion
-    testImplementation('com.facebook.react:react-native:+') {
-        exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
-        exclude group: 'com.facebook.yoga', module: 'proguard-annotations'
-    }
-    /*
-     BINTRAY_SUNSET_HACK end
-     */
-
+    testImplementation 'com.facebook.react:react-native:+'
     testImplementation 'org.json:json:20140107'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158

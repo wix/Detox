@@ -49,6 +49,8 @@ class ArtifactsManager {
             return this._executeIdleCallbackRequest(nextCallbackRequest);
           }
         });
+
+        return this._idlePromise;
       },
     };
 

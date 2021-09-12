@@ -1,4 +1,7 @@
+const path = require('path');
+
 const fs = require('fs-extra');
+const tempfile = require('tempfile');
 
 const appendFile = require('../../../utils/appendFile');
 
@@ -12,6 +15,16 @@ class FileArtifact extends Artifact {
       this.start();
       this.stop();
     }
+  }
+
+  async relocate() {
+    if (!this.temporaryPath || !(await fs.exists(this.temporaryPath))) {
+      return;
+    }
+
+    const newTemporaryPath = tempfile(path.extname(this.temporaryPath));
+    await FileArtifact.moveTemporaryFile(this.logger, this.temporaryPath, newTemporaryPath);
+    this.temporaryPath = newTemporaryPath;
   }
 
   async doSave(artifactPath, options = {}) {
