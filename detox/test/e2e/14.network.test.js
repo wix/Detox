@@ -55,6 +55,8 @@ describe('Network Synchronization', () => {
       launchArgs: { detoxURLBlacklistRegex: ' \\("^http:\/\/localhost:\\d{4}?\/[a-z]+\/\\d{4}?$"\\)' },
     });
 
+    await device.reloadReactNative();
+
     await element(by.text('Network')).tap();
     await element(by.id('LongNetworkRequest')).tap();
     await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
