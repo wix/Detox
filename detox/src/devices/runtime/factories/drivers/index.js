@@ -31,7 +31,7 @@ class AttachedAndroidRuntimeDriverFactory extends AndroidRuntimeDriverFactoryBas
 class IosRuntimeDriverFactory extends RuntimeDriverFactoryBase {
   _createDependencies(commonDeps) {
     const serviceLocator = require('../../../../servicelocator/ios');
-    const applesimutils = serviceLocator.appleSimUtils();
+    const applesimutils = serviceLocator.appleSimUtils;
 
     const SimulatorLauncher = require('../../../allocation/drivers/ios/SimulatorLauncher');
     return {

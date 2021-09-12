@@ -1,12 +1,12 @@
-class ArtifactPluginsProvider {
+class ArtifactPluginsProviderBase {
   declareArtifactPlugins({ client }) {}
 }
 
-class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
+class AndroidArtifactPluginsProvider extends ArtifactPluginsProviderBase {
   declareArtifactPlugins({ client }) {
     const serviceLocator = require('../../servicelocator/android');
-    const adb = serviceLocator.adb();
-    const devicePathBuilder = serviceLocator.devicePathBuilder();
+    const adb = serviceLocator.adb;
+    const devicePathBuilder = serviceLocator.devicePathBuilder;
 
     const AndroidInstrumentsPlugin = require('../instruments/android/AndroidInstrumentsPlugin');
     const ADBLogcatPlugin = require('../log/android/ADBLogcatPlugin');
@@ -24,7 +24,7 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
   }
 }
 
-class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
+class IosArtifactPluginsProvider extends ArtifactPluginsProviderBase {
   declareArtifactPlugins({ client }) {
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
     const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
@@ -39,7 +39,7 @@ class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
 class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
     const serviceLocator = require('../../servicelocator/ios');
-    const appleSimUtils = serviceLocator.appleSimUtils();
+    const appleSimUtils = serviceLocator.appleSimUtils;
 
     const SimulatorInstrumentsPlugin = require('../instruments/ios/SimulatorInstrumentsPlugin');
     const SimulatorLogPlugin = require('../log/ios/SimulatorLogPlugin');
@@ -57,7 +57,7 @@ class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
   }
 }
 
-class EmptyProvider extends ArtifactPluginsProvider {
+class EmptyProvider extends ArtifactPluginsProviderBase {
   constructor() {
     super();
     this.declareArtifactPlugins = () => ({});

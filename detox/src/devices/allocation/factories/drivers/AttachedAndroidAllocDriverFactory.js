@@ -3,8 +3,8 @@ const AllocationDriverFactory = require('./AllocationDriverFactory');
 class AttachedAndroidAllocDriverFactory extends AllocationDriverFactory {
   createAllocationDriver({ eventEmitter }) {
     const serviceLocator = require('../../../../servicelocator/android');
-    const adb = serviceLocator.adb();
-    const deviceRegistry = serviceLocator.deviceRegistry();
+    const adb = serviceLocator.adb;
+    const deviceRegistry = serviceLocator.deviceRegistry;
 
     const FreeDeviceFinder = require('../../../common/drivers/android/tools/FreeDeviceFinder');
     const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);

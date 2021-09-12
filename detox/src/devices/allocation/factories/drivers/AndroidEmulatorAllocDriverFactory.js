@@ -3,9 +3,9 @@ const AllocationDriverFactory = require('./AllocationDriverFactory');
 class AndroidEmulatorAllocDriverFactory extends AllocationDriverFactory {
   createAllocationDriver({ eventEmitter }) {
     const serviceLocator = require('../../../../servicelocator/android');
-    const adb = serviceLocator.adb();
-    const emulatorExec = serviceLocator.emulator.exec();
-    const deviceRegistry = serviceLocator.deviceRegistry();
+    const adb = serviceLocator.adb;
+    const emulatorExec = serviceLocator.emulator.exec;
+    const deviceRegistry = serviceLocator.deviceRegistry;
 
     const AVDsResolver = require('../../drivers/android/emulator/AVDsResolver');
     const avdsResolver = new AVDsResolver(emulatorExec);

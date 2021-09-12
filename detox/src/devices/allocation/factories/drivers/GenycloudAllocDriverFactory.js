@@ -3,10 +3,10 @@ const AllocationDriverFactory = require('./AllocationDriverFactory');
 class GenycloudAllocDriverFactory extends AllocationDriverFactory {
   createAllocationDriver({ eventEmitter }) {
     const serviceLocator = require('../../../../servicelocator/android');
-    const adb = serviceLocator.adb();
-    const exec = serviceLocator.genycloud.exec();
-    const deviceRegistry = serviceLocator.genycloud.runtimeDeviceRegistry();
-    const deviceCleanupRegistry = serviceLocator.genycloud.cleanupDeviceRegistry();
+    const adb = serviceLocator.adb;
+    const exec = serviceLocator.genycloud.exec;
+    const deviceRegistry = serviceLocator.genycloud.runtimeDeviceRegistry;
+    const deviceCleanupRegistry = serviceLocator.genycloud.cleanupDeviceRegistry;
 
     const InstanceNaming = require('../../../common/drivers/android/genycloud/services/GenyInstanceNaming');
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)

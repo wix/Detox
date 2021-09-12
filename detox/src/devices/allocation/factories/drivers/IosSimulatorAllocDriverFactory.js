@@ -3,8 +3,8 @@ const AllocationDriverFactory = require('./AllocationDriverFactory');
 class IosSimulatorAllocDriverFactory extends AllocationDriverFactory {
   createAllocationDriver({ eventEmitter }) {
     const serviceLocator = require('../../../../servicelocator/ios');
-    const applesimutils = serviceLocator.appleSimUtils();
-    const deviceRegistry = serviceLocator.deviceRegistry();
+    const applesimutils = serviceLocator.appleSimUtils;
+    const deviceRegistry = serviceLocator.deviceRegistry;
 
     const SimulatorLauncher = require('../../drivers/ios/SimulatorLauncher');
     const simulatorLauncher = new SimulatorLauncher({ applesimutils, eventEmitter });
