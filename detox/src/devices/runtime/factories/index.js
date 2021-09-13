@@ -53,8 +53,8 @@ class IosSimulatorFactory extends RuntimeDeviceFactoryBase {
 }
 
 class ExternalFactory extends RuntimeDeviceFactoryBase {
-  static validateConfig(module, path) {
-    ExternalRuntimeDriverFactory.validateConfig(module, path);
+  static validateModule(module, path) {
+    ExternalRuntimeDriverFactory.validateModule(module, path);
   }
 
   constructor(module, path) {

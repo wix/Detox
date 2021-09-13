@@ -17,8 +17,8 @@ describe('Runtime device factories', () => {
       const path = 'fake/path';
 
       it('should delegate to driver\'s validation', () => {
-        factories.ExternalFactory.validateConfig(module, path);
-        expect(drivers.ExternalRuntimeDriverFactory.validateConfig).toHaveBeenCalledWith(module, path);
+        factories.ExternalFactory.validateModule(module, path);
+        expect(drivers.ExternalRuntimeDriverFactory.validateModule).toHaveBeenCalledWith(module, path);
       });
     });
   });

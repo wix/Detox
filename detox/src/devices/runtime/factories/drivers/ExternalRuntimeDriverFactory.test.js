@@ -13,7 +13,7 @@ describe('External runtime-driver factory', () => {
         const module = {
           RuntimeDriverClass: undefined,
         };
-        expect(() => factoryClass.validateConfig(module, path)).toThrowErrorMatchingSnapshot();
+        expect(() => factoryClass.validateModule(module, path)).toThrowErrorMatchingSnapshot();
       });
     });
 
@@ -22,7 +22,7 @@ describe('External runtime-driver factory', () => {
         const module = {
           RuntimeDriverClass: class {},
         };
-        factoryClass.validateConfig(module, path);
+        factoryClass.validateModule(module, path);
       });
     });
   });

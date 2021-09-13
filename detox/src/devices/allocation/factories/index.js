@@ -32,7 +32,7 @@ class IosSimulatorFactory extends DeviceAllocatorFactoryBase {
 }
 
 class ExternalFactory extends DeviceAllocatorFactoryBase {
-  static validateConfig(module, path) {
+  static validateModule(module, path) {
     ExternalAllocDriverFactory.validateModule(module, path);
   }
 

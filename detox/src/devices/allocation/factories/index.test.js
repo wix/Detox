@@ -18,7 +18,7 @@ describe('Allocation driver factories', () => {
       const path = 'fake/path';
 
       it('should delegate to driver\'s validation', () => {
-        factories.ExternalFactory.validateConfig(module, path);
+        factories.ExternalFactory.validateModule(module, path);
         expect(drivers.ExternalAllocDriverFactory.validateModule).toHaveBeenCalledWith(module, path);
       });
     });

@@ -10,7 +10,7 @@ describe('Matchers factories', () => {
         const module = {
           ExpectClass: undefined,
         };
-        expect(() => factories.ExternalFactory.validateConfig(module, 'fake/path')).toThrowErrorMatchingSnapshot();
+        expect(() => factories.ExternalFactory.validateModule(module, 'fake/path')).toThrowErrorMatchingSnapshot();
       });
     });
 
@@ -19,7 +19,7 @@ describe('Matchers factories', () => {
         const module = {
           ExpectClass: class {},
         };
-        factories.ExternalFactory.validateConfig(module, 'fake/path');
+        factories.ExternalFactory.validateModule(module, 'fake/path');
       });
     });
   });

@@ -19,7 +19,7 @@ class IosFactory extends MatchersFactoryBase {
 }
 
 class ExternalFactory extends MatchersFactoryBase {
-  static validateConfig(module, path) {
+  static validateModule(module, path) {
     if (!module.ExpectClass) {
       throw new DetoxRuntimeError(`The custom driver at '${path}' does not export the ExpectClass property`);
     }
@@ -27,7 +27,7 @@ class ExternalFactory extends MatchersFactoryBase {
 
   constructor(module, path) {
     super();
-    ExternalFactory.validateConfig(module, path);
+    ExternalFactory.validateModule(module, path);
 
     this._module = module;
   }
