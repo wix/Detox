@@ -1,6 +1,7 @@
 const argparse = require('../../../../../utils/argparse');
 const AndroidDriver = require('../AndroidDriver');
 
+// TODO Unit test coverage
 class EmulatorDriver extends AndroidDriver {
   /**
    * @param adbName { String } The unique identifier associated with ADB

@@ -18,8 +18,6 @@ describe('Genymotion-cloud driver', () => {
     }
   }
 
-  beforeEach(mockBaseClassesDependencies);
-
   let logger;
   let emitter;
   let invocationManager;
@@ -27,6 +25,7 @@ describe('Genymotion-cloud driver', () => {
   let instrumentation;
   let detoxGenymotionManager;
   beforeEach(() => {
+    jest.mock('../../../../../utils/logger');
     logger = require('../../../../../utils/logger');
 
     jest.mock('../../../../../utils/getAbsoluteBinaryPath');
@@ -37,6 +36,8 @@ describe('Genymotion-cloud driver', () => {
     const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
     invocationManager = new InvocationManager();
 
+    jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
+    jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
     const AppInstallHelper = require('../../../../common/drivers/android/tools/AppInstallHelper');
     appInstallHelper = new AppInstallHelper();
 
@@ -291,16 +292,3 @@ describe('Genymotion-cloud driver', () => {
     });
   });
 });
-
-function mockBaseClassesDependencies() {
-  jest.mock('../../../../common/drivers/android/exec/ADB');
-  jest.mock('../../../../common/drivers/android/exec/AAPT');
-  jest.mock('../../../../common/drivers/android/tools/APKPath');
-  jest.mock('../../../../common/drivers/android/tools/TempFileXfer');
-  jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
-  jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
-  jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
-  jest.mock('../../../../../artifacts/utils/AndroidDevicePathBuilder');
-  jest.mock('../../../../../android/espressoapi/UiDeviceProxy');
-  jest.mock('../../../../../utils/logger');
-}
