@@ -1,40 +1,72 @@
-const _ = require('lodash');
-
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 
 jest.mock('./utils/logger');
-jest.mock('./environmentFactory');
-jest.mock('./artifacts/ArtifactsManager');
 jest.mock('./client/Client');
+jest.mock('./utils/AsyncEmitter');
 jest.mock('./Device');
 jest.mock('./invoke');
 jest.mock('./utils/cutStackTraces');
+jest.mock('./environmentFactory');
 
 jest.mock('./server/DetoxServer', () => {
   const FakeServer = jest.genMockFromModule('./server/DetoxServer');
   return jest.fn().mockImplementation(() => new FakeServer());
 });
 
-describe.skip('Detox', () => { // TODO ASDASD
+describe('Detox', () => {
+  const fakeCookie = {
+    chocolate: 'yum',
+  };
+
+  const client = () => Client.mock.instances[0];
+  const invocationManager = () => invoke.InvocationManager.mock.instances[0];
+  const eventEmitter = () => AsyncEmitter.mock.instances[0];
+  eventEmitter.errorCallback = () => AsyncEmitter.mock.calls[0][0].onError;
+
+  const suspendMethod = (obj, methodName) => {
+    let releaseFn;
+    const promise = new Promise((resolve) => { releaseFn = resolve; });
+    obj[methodName].mockReturnValue(promise);
+    return releaseFn;
+  };
+  const suspendAllocation = () => suspendMethod(deviceAllocator, 'allocate');
+  const suspendAppUninstall = () => suspendMethod(runtimeDevice, 'uninstallApp');
+  const suspendAppInstall = () => suspendMethod(runtimeDevice, 'installApp');
+
   let detoxConfig;
 
+  let envValidatorFactory;
+  let artifactsManagerFactory;
+  let deviceAllocatorFactory;
+  let matchersFactory;
+  let runtimeDeviceFactory;
+  let artifactsManager;
+
   let logger;
-  let FakeDriverRegistry;
-  let Device;
   let Client;
+  let AsyncEmitter;
   let DetoxServer;
-  let matchersRegistry;
-  let ArtifactsManager;
   let invoke;
+  let envValidator;
+  let deviceAllocator;
+  let runtimeDevice;
   let Detox;
   let detox;
   let lifecycleSymbols;
 
-  const client = () => Client.mock.instances[0];
-  const device = () => _.last(Device.mock.instances);
-  const artifactsManager = () => ArtifactsManager.mock.instances[0];
-  const invocationManager = () => invoke.InvocationManager.mock.instances[0];
+  beforeEach(() => {
+    mockEnvironmentFactories();
+
+    const environmentFactory = require('./environmentFactory');
+    environmentFactory.createFactories.mockReturnValue({
+      envValidatorFactory,
+      deviceAllocatorFactory,
+      artifactsManagerFactory,
+      matchersFactory,
+      runtimeDeviceFactory,
+    });
+  });
 
   beforeEach(async () => {
     detoxConfig = await configuration.composeDetoxConfig({
@@ -50,20 +82,13 @@ describe.skip('Detox', () => { // TODO ASDASD
     });
 
     logger = require('./utils/logger');
-    Device = require('./devices/Device');
-    Device.useRealConstructor();
-    Device.prototype.prepare.mockImplementation(function() {
-      this.id = 'deviceId';
-    });
-
-    FakeDriverRegistry = require('./devices/DriverRegistry');
-    ArtifactsManager = require('./artifacts/ArtifactsManager');
     invoke = require('./invoke');
     Client = require('./client/Client');
+    AsyncEmitter = require('./utils/AsyncEmitter');
     DetoxServer = require('./server/DetoxServer');
-    matchersRegistry = require('./matchersRegistry');
-    Detox = require('./Detox');
     lifecycleSymbols = require('../runners/integration').lifecycle;
+
+    Detox = require('./Detox');
   });
 
   describe('when detox.init() is called', () => {
@@ -75,7 +100,7 @@ describe.skip('Detox', () => { // TODO ASDASD
 
     beforeEach(() => {
       mockGlobalMatcher = jest.fn();
-      matchersRegistry.resolve.mockReturnValue({
+      matchersFactory.createMatchers.mockReturnValue({
         globalMatcher: mockGlobalMatcher,
       });
     });
@@ -109,23 +134,43 @@ describe.skip('Detox', () => { // TODO ASDASD
 
       it('should inject terminateApp method into client', async () => {
         await client().terminateApp();
-        expect(device()._isAppRunning).toHaveBeenCalled();
-        expect(device().terminateApp).not.toHaveBeenCalled();
+        expect(runtimeDevice._isAppRunning).toHaveBeenCalled();
+        expect(runtimeDevice.terminateApp).not.toHaveBeenCalled();
 
-        device()._isAppRunning.mockReturnValue(true);
+        runtimeDevice._isAppRunning.mockReturnValue(true);
         await client().terminateApp();
-        expect(device().terminateApp).toHaveBeenCalled();
+        expect(runtimeDevice.terminateApp).toHaveBeenCalled();
       });
 
-      it('should resolve a device driver from the registry', () =>
-        expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(detoxConfig.deviceConfig.type));
+      it('should pre-validate the using the environment validator', () =>
+        expect(envValidator.validate).toHaveBeenCalled());
 
-      it('should resolve matchers implementation', () => {
-        const { emitter } = Device.mock.calls[0][0];
-        expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
+      it('should allocate a device', () => {
+        expect(deviceAllocator.allocate).toHaveBeenCalledWith(detoxConfig.deviceConfig.device);
+      });
+
+      it('should create a runtime-device based on the allocation result (cookie)', () =>
+        expect(runtimeDeviceFactory.createRuntimeDevice).toHaveBeenCalledWith(
+          fakeCookie,
+          {
+            invocationManager: invocationManager(),
+            emitter: eventEmitter(),
+            client: client(),
+            runtimeErrorComposer: expect.any(Object),
+          },
+          {
+            appsConfig: detoxConfig.appsConfig,
+            behaviorConfig: detoxConfig.behaviorConfig,
+            deviceConfig: detoxConfig.deviceConfig,
+            sessionConfig: expect.any(Object),
+          },
+        ));
+
+      it('should create matchers', () => {
+        expect(matchersFactory.createMatchers).toHaveBeenCalledWith({
           invocationManager: invocationManager(),
-          device: device(),
-          emitter,
+          eventEmitter: eventEmitter(),
+          runtimeDevice,
         });
       });
 
@@ -133,49 +178,31 @@ describe.skip('Detox', () => { // TODO ASDASD
         expect(detox.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should take device to Detox', () =>
-        expect(detox.device).toBe(device()));
-
-      it('should instantiate Device', () =>
-        expect(Device).toHaveBeenCalledWith({
-          appsConfig: detoxConfig.appsConfig,
-          behaviorConfig: detoxConfig.behaviorConfig,
-          deviceConfig: detoxConfig.deviceConfig,
-          emitter: expect.any(Object),
-          runtimeErrorComposer: expect.any(Object),
-          deviceDriver: expect.any(Object),
-          sessionConfig: expect.any(Object),
-        }));
+        expect(detox.device).toBe(runtimeDevice));
 
       it('should expose device to global', () =>
-        expect(global.device).toBe(device()));
+        expect(global.device).toBe(runtimeDevice));
 
       it('should expose matchers to global', () =>
         expect(global.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should create artifacts manager', () =>
-        expect(ArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig));
-
-      it('should subscribe artifacts manager to device events', () =>
-        expect(artifactsManager().subscribeToDeviceEvents).toHaveBeenCalledWith(
-          expect.objectContaining({ on: expect.any(Function) })
-        ));
-
-      it('should register plugins in the artifacts manager', () =>
-        expect(artifactsManager().registerArtifactPlugins).toHaveBeenCalledWith(
-          FakeDriverRegistry.FakeDriver.artifactsPlugins
-        ));
+        expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig, {
+          client: client(),
+          eventEmitter: eventEmitter(),
+        }));
 
       it('should prepare the device', () =>
-        expect(device().prepare).toHaveBeenCalled());
+        expect(runtimeDevice.prepare).toHaveBeenCalled());
 
       it('should select and reinstall the app', () => {
-        expect(device().selectApp).toHaveBeenCalledWith('default');
-        expect(device().uninstallApp).toHaveBeenCalled();
-        expect(device().installApp).toHaveBeenCalled();
+        expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
+        expect(runtimeDevice.installApp).toHaveBeenCalled();
       });
 
       it('should not unselect the app if it is the only one', () => {
-        expect(device().selectApp).not.toHaveBeenCalledWith(null);
+        expect(runtimeDevice.selectApp).not.toHaveBeenCalledWith(null);
       });
 
       it('should return itself', async () =>
@@ -210,13 +237,13 @@ describe.skip('Detox', () => { // TODO ASDASD
       beforeEach(init);
 
       it('should install only apps with unique binary paths, and deselect app on device', () => {
-        expect(detox.device.uninstallApp).toHaveBeenCalledTimes(2);
-        expect(detox.device.installApp).toHaveBeenCalledTimes(2);
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
+        expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
 
-        expect(detox.device.selectApp).toHaveBeenCalledTimes(3);
-        expect(detox.device.selectApp.mock.calls[0]).toEqual(['default']);
-        expect(detox.device.selectApp.mock.calls[1]).toEqual(['extraApp']);
-        expect(detox.device.selectApp.mock.calls[2]).toEqual([null]);
+        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(3);
+        expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
+        expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
+        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
       });
     });
 
@@ -238,8 +265,9 @@ describe.skip('Detox', () => { // TODO ASDASD
       it('should take the matchers from the matchers-registry to Detox', () =>
         expect(detox.globalMatcher).toBe(mockGlobalMatcher));
 
-      it('should take device to Detox', () =>
-        expect(detox.device).toBe(device()));
+      it('should take device to Detox', () => {
+        expect(detox.device).toBe(runtimeDevice);
+      });
 
       it('should not expose device to globals', () =>
         expect(global.device).toBe(undefined));
@@ -256,28 +284,27 @@ describe.skip('Detox', () => { // TODO ASDASD
       beforeEach(init);
 
       it('should prepare the device', () =>
-        expect(device().prepare).toHaveBeenCalled());
+        expect(runtimeDevice.prepare).toHaveBeenCalled());
 
       it('should not reinstall the app', () => {
-        expect(device().uninstallApp).not.toHaveBeenCalled();
-        expect(device().installApp).not.toHaveBeenCalled();
+        expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
+        expect(runtimeDevice.installApp).not.toHaveBeenCalled();
       });
     });
 
-    describe('and it gets emitter error', () => {
+    describe('and it gets an error allocating a device', () => {
       beforeEach(init);
 
       it(`should log EMIT_ERROR if the internal emitter throws an error`, async () => {
-        const { emitter } = Device.mock.calls[0][0];
+        const emitterErrorCallback = eventEmitter.errorCallback();
 
-        const testError = new Error();
-        emitter.on('bootDevice', async () => { throw testError; });
-        await emitter.emit('bootDevice', {});
+        const error = new Error();
+        emitterErrorCallback({ error, eventName: 'mockEvent' });
 
         expect(logger.error).toHaveBeenCalledWith(
-          { event: 'EMIT_ERROR', fn: 'bootDevice' },
-          expect.stringMatching(/^Caught an exception.*bootDevice/),
-          testError
+          { event: 'EMIT_ERROR', fn: 'mockEvent' },
+          expect.stringMatching(/^Caught an exception.*mockEvent/),
+          error
         );
       });
     });
@@ -340,11 +367,11 @@ describe.skip('Detox', () => { // TODO ASDASD
           ));
 
         it('should notify artifacts manager about "testStart', () =>
-          expect(artifactsManager().onTestStart).toHaveBeenCalledWith(testSummaries.running()));
+          expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
         it('should not relaunch app', async () => {
           await detox.beforeEach(testSummaries.running());
-          expect(device().launchApp).not.toHaveBeenCalled();
+          expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
         });
 
         it('should not dump pending network requests', async () => {
@@ -399,7 +426,7 @@ describe.skip('Detox', () => { // TODO ASDASD
           ));
 
         it('should notify artifacts manager about "testDone"', () =>
-          expect(artifactsManager().onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
+          expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
       });
 
       describe('with a failed test summary (due to failed asseration)', () => {
@@ -441,9 +468,11 @@ describe.skip('Detox', () => { // TODO ASDASD
       });
     });
 
-    describe('before device has been prepared', () => {
-      beforeEach(() => Device.setInfiniteMethod('prepare'));
+    describe('before device has been allocated', () => {
+      let releaseFn;
+      beforeEach(() => { releaseFn = suspendAllocation(); });
       beforeEach(startInit);
+      afterEach(() => releaseFn());
 
       it(`should not throw, but should reject detox.init() promise`, async () => {
         await expect(detox.cleanup()).resolves.not.toThrowError();
@@ -452,8 +481,10 @@ describe.skip('Detox', () => { // TODO ASDASD
     });
 
     describe('before app has been uninstalled', () => {
-      beforeEach(() => Device.setInfiniteMethod('uninstallApp'));
+      let releaseFn;
+      beforeEach(() => { releaseFn = suspendAppUninstall(); });
       beforeEach(startInit);
+      afterEach(() => releaseFn());
 
       it(`should not throw, but should reject detox.init() promise`, async () => {
         await expect(detox.cleanup()).resolves.not.toThrowError();
@@ -462,8 +493,10 @@ describe.skip('Detox', () => { // TODO ASDASD
     });
 
     describe('before app has been installed', () => {
-      beforeEach(() => Device.setInfiniteMethod('installApp'));
+      let releaseFn;
+      beforeEach(() => { releaseFn = suspendAppInstall(); });
       beforeEach(startInit);
+      afterEach(() => releaseFn());
 
       it(`should not throw, but should reject detox.init() promise`, async () => {
         await expect(detox.cleanup()).resolves.not.toThrowError();
@@ -479,13 +512,12 @@ describe.skip('Detox', () => { // TODO ASDASD
 
       describe('if the device has not been allocated', () => {
         beforeEach(async () => {
-          delete device().id;
           await detox.cleanup();
         });
 
-        it(`should omit calling device._cleanup()`, async () => {
+        it(`should omit calling runtimeDevice._cleanup()`, async () => {
           await detox.cleanup();
-          expect(device()._cleanup).not.toHaveBeenCalled();
+          expect(runtimeDevice._cleanup).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -494,14 +526,14 @@ describe.skip('Detox', () => { // TODO ASDASD
           await detox.cleanup();
         });
 
-        it(`should call device._cleanup()`, () =>
-          expect(device()._cleanup).toHaveBeenCalled());
+        it(`should call runtimeDevice._cleanup()`, () =>
+          expect(runtimeDevice._cleanup).toHaveBeenCalled());
 
         it(`should not shutdown the device`, () =>
-          expect(device().shutdown).not.toHaveBeenCalled());
+          expect(runtimeDevice.shutdown).not.toHaveBeenCalled());
 
         it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
-          expect(artifactsManager().onBeforeCleanup).toHaveBeenCalled());
+          expect(artifactsManager.onBeforeCleanup).toHaveBeenCalled());
 
         it(`should dump pending network requests`, () =>
           expect(client().dumpPendingRequests).toHaveBeenCalled());
@@ -516,15 +548,15 @@ describe.skip('Detox', () => { // TODO ASDASD
 
       it(`should shutdown the device on detox.cleanup()`, async () => {
         await detox.cleanup();
-        expect(device().shutdown).toHaveBeenCalled();
+        expect(runtimeDevice.shutdown).toHaveBeenCalled();
       });
 
       describe('if the device has not been allocated', () => {
-        beforeEach(() => { delete device().id; });
+        beforeEach(() => detox.cleanup());
 
         it(`should omit the shutdown`, async () => {
           await detox.cleanup();
-          expect(device().shutdown).not.toHaveBeenCalled();
+          expect(runtimeDevice.shutdown).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -550,7 +582,40 @@ describe.skip('Detox', () => { // TODO ASDASD
 
     it(`should pass it through to artifactsManager.${method}()`, async () => {
       await detox[lifecycleSymbols[method]](arg);
-      expect(artifactsManager()[method]).toHaveBeenCalledWith(arg);
+      expect(artifactsManager[method]).toHaveBeenCalledWith(arg);
     });
   });
+
+  function mockEnvironmentFactories() {
+    const EnvValidator = jest.genMockFromModule('./validation/EnvironmentValidatorBase');
+    const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').ExternalFactory;
+    envValidator = new EnvValidator();
+    envValidatorFactory = new EnvValidatorFactory();
+    envValidatorFactory.createValidator.mockResolvedValue(envValidator);
+
+    const ArtifactsManager = jest.genMockFromModule('./artifacts/ArtifactsManager');
+    const ArtifactsManagerFactory = jest.genMockFromModule('./artifacts/factories').ExternalFactory;
+    artifactsManager = new ArtifactsManager();
+    artifactsManagerFactory = new ArtifactsManagerFactory();
+    artifactsManagerFactory.createArtifactsManager.mockReturnValue(artifactsManager);
+
+    const MatchersFactory = jest.genMockFromModule('./matchers/factories/index').ExternalFactory;
+    matchersFactory = new MatchersFactory();
+
+    const { DeviceAllocator, DeviceDeallocator } = jest.genMockFromModule('./devices/allocation/DeviceAllocator');
+    const DeviceAllocatorFactory = jest.genMockFromModule('./devices/allocation/factories').ExternalFactory;
+    deviceAllocator = new DeviceAllocator();
+    deviceAllocatorFactory = new DeviceAllocatorFactory();
+    deviceAllocatorFactory.createDeviceAllocator.mockReturnValue({
+      allocator: deviceAllocator,
+      createDeallocator: () => new DeviceDeallocator(),
+    });
+    deviceAllocator.allocate.mockResolvedValue(fakeCookie);
+
+    const RuntimeDevice = jest.genMockFromModule('./devices/runtime/RuntimeDevice');
+    const RuntimeDeviceFactory = jest.genMockFromModule('./devices/runtime/factories').ExternalFactory;
+    runtimeDevice = new RuntimeDevice();
+    runtimeDeviceFactory = new RuntimeDeviceFactory();
+    runtimeDeviceFactory.createRuntimeDevice.mockReturnValue(runtimeDevice);
+  }
 });

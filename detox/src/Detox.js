@@ -206,6 +206,7 @@ class Detox {
         deviceConfig: this._deviceConfig,
         sessionConfig,
       });
+    await this.device.prepare();
 
     const matchers = matchersFactory.createMatchers({
       invocationManager,
