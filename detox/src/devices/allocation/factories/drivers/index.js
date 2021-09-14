@@ -4,4 +4,5 @@ module.exports = {
   GenycloudAllocDriverFactory: require('./GenycloudAllocDriverFactory'),
   IosSimulatorAllocDriverFactory: require('./IosSimulatorAllocDriverFactory'),
   ExternalAllocDriverFactory: require('./ExternalAllocDriverFactory'),
+  NoneAllocDriverFactory: require('./NoneAllocDriverFactory'),
 };

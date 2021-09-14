@@ -5,6 +5,7 @@ const {
   GenycloudAllocDriverFactory,
   IosSimulatorAllocDriverFactory,
   ExternalAllocDriverFactory,
+  NoneAllocDriverFactory,
 } = require('./drivers');
 
 class AndroidEmulatorFactory extends DeviceAllocatorFactoryBase {
@@ -41,10 +42,17 @@ class ExternalFactory extends DeviceAllocatorFactoryBase {
   }
 }
 
+class NoneDeviceFactory extends DeviceAllocatorFactoryBase {
+  constructor() {
+    super(new NoneAllocDriverFactory());
+  }
+}
+
 module.exports = {
   AndroidEmulatorFactory,
   AttachedAndroidFactory,
   GenycloudFactory,
   IosSimulatorFactory,
   ExternalFactory,
+  NoneDeviceFactory,
 };

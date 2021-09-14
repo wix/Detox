@@ -76,9 +76,9 @@ function _getFactoryClasses(deviceConfig) {
       break;
 
     case 'ios.none':
-      // TODO ASDASD
       envValidatorFactoryClass = envValidationFactories.NoopFactory;
       artifactsManagerFactoryClass = artifactsManagerFactories.IosFactory;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.NoneDeviceFactory;
       matchersFactoryClass = matchersFactories.IosFactory;
       runtimeDeviceFactoryClass = runtimeDeviceFactories.IosFactory;
       break;
