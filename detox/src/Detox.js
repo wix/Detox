@@ -174,9 +174,8 @@ class Detox {
       runtimeDeviceFactory,
     } = environmentFactory.createFactories(this._deviceConfig);
 
-    // TODO ASDASD make validate() async, create sync
-    const envValidator = await envValidatorFactory.createValidator();
-    envValidator.validate();
+    const envValidator = envValidatorFactory.createValidator();
+    await envValidator.validate();
 
     const {
       allocator,

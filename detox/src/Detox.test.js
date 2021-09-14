@@ -292,7 +292,7 @@ describe('Detox', () => {
       });
     });
 
-    describe('and it gets an error allocating a device', () => {
+    describe('and it gets an error event', () => {
       beforeEach(init);
 
       it(`should log EMIT_ERROR if the internal emitter throws an error`, async () => {
@@ -306,6 +306,20 @@ describe('Detox', () => {
           expect.stringMatching(/^Caught an exception.*mockEvent/),
           error
         );
+      });
+    });
+
+    describe('and environment validation fails', () => {
+      it('should fail with an error', async () => {
+        envValidator.validate.mockRejectedValue(new Error('Mock validation failure'))
+        await expect(init).rejects.toThrowError('Mock validation failure');
+      });
+    });
+
+    describe('and allocation fails', () => {
+      it('should fail with an error', async () => {
+        deviceAllocator.allocate.mockRejectedValue(new Error('Mock validation failure'))
+        await expect(init).rejects.toThrowError('Mock validation failure');
       });
     });
   });
@@ -591,7 +605,7 @@ describe('Detox', () => {
     const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').ExternalFactory;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
-    envValidatorFactory.createValidator.mockResolvedValue(envValidator);
+    envValidatorFactory.createValidator.mockReturnValue(envValidator);
 
     const ArtifactsManager = jest.genMockFromModule('./artifacts/ArtifactsManager');
     const ArtifactsManagerFactory = jest.genMockFromModule('./artifacts/factories').ExternalFactory;
