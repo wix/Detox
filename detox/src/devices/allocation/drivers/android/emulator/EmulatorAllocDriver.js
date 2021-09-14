@@ -13,15 +13,15 @@ class EmulatorAllocDriver extends AllocationDriverBase {
    * @param avdValidator { AVDValidator }
    * @param emulatorVersionResolver { EmulatorVersionResolver }
    * @param emulatorLauncher { EmulatorLauncher }
-   * @param deviceAllocation { EmulatorDeviceAllocation }
+   * @param allocationHelper { EmulatorAllocationHelper }
    */
-  constructor({ adb, avdValidator, emulatorVersionResolver, emulatorLauncher, deviceAllocation }) {
+  constructor({ adb, avdValidator, emulatorVersionResolver, emulatorLauncher, allocationHelper }) {
     super();
     this._adb = adb;
     this._avdValidator = avdValidator;
     this._emulatorVersionResolver = emulatorVersionResolver;
     this._emulatorLauncher = emulatorLauncher;
-    this._deviceAllocation = deviceAllocation;
+    this._allocationHelper = allocationHelper;
   }
 
   /**
@@ -34,10 +34,10 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     await this._avdValidator.validate(avdName);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName);
 
-    const allocResult = await this._deviceAllocation.allocateDevice(avdName);
-    const { adbName, placeholderPort } = allocResult;
+    const allocResult = await this._allocationHelper.allocateDevice(avdName);
+    const { adbName, placeholderPort, isRunning } = allocResult;
 
-    await this._launchEmulator(avdName, adbName, allocResult.isRunning, placeholderPort);
+    await this._launchEmulator(avdName, adbName, isRunning, placeholderPort);
     await this._prepareEmulator(adbName);
 
     return new AndroidEmulatorCookie(adbName, avdName);
@@ -54,7 +54,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
       await traceCall('emulatorLaunch', () =>
         this._emulatorLauncher.launch(avdName, adbName, isRunning, { port }));
     } catch (e) {
-      await this._deviceAllocation.deallocateDevice(adbName);
+      await this._allocationHelper.deallocateDevice(adbName);
       throw e;
     }
   }
@@ -67,11 +67,11 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 }
 
 class EmulatorDeallocDriver extends DeallocationDriverBase {
-  constructor(adbName, { emulatorLauncher, deviceAllocation }) {
+  constructor(adbName, { emulatorLauncher, allocationHelper }) {
     super();
     this._adbName = adbName;
     this._emulatorLauncher = emulatorLauncher;
-    this._deviceAllocation = deviceAllocation;
+    this._allocationHelper = allocationHelper;
   }
 
   /**
@@ -79,7 +79,7 @@ class EmulatorDeallocDriver extends DeallocationDriverBase {
    * @return {Promise<void>}
    */
   async free(options = {}) {
-    await this._deviceAllocation.deallocateDevice(this._adbName);
+    await this._allocationHelper.deallocateDevice(this._adbName);
 
     if (options.shutdown) {
       await this._emulatorLauncher.shutdown(this._adbName);

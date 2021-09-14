@@ -8,15 +8,15 @@ class GenyAllocDriver extends AllocationDriverBase {
   /**
    * @param adb { ADB }
    * @param recipeQuerying { GenyRecipeQuerying }
-   * @param instanceAllocation { GenyInstanceAllocation }
+   * @param allocationHelper { GenyInstanceAllocationHelper }
    * @param instanceLauncher { GenyInstanceLauncher }
    */
-  constructor({ adb, recipeQuerying, instanceAllocation, instanceLauncher }) {
+  constructor({ adb, recipeQuerying, allocationHelper, instanceLauncher }) {
     super();
     this._adb = adb;
     this._recipeQuerying = recipeQuerying
-    this._instanceAllocation = instanceAllocation;
     this._instanceLauncher = instanceLauncher;
+    this._instanceAllocationHelper = allocationHelper;
   }
 
   /**
@@ -27,13 +27,13 @@ class GenyAllocDriver extends AllocationDriverBase {
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
-    const allocResult = await this._instanceAllocation.allocateDevice(recipe);
+    const allocResult = await this._instanceAllocationHelper.allocateDevice(recipe);
     let { instance, isNew } = allocResult;
 
     try {
       instance = await this._instanceLauncher.launch(instance, isNew);
     } catch (e) {
-      await this._instanceAllocation.deallocateDevice(instance.uuid);
+      await this._instanceAllocationHelper.deallocateDevice(instance.uuid);
       throw e;
     }
     const { adbName } = instance;
@@ -54,10 +54,10 @@ class GenyAllocDriver extends AllocationDriverBase {
 }
 
 class GenyDeallocDriver extends DeallocationDriverBase {
-  constructor(instance, { instanceAllocation, instanceLauncher, }) {
+  constructor(instance, { allocationHelper, instanceLauncher }) {
     super();
     this._instance = instance;
-    this._instanceAllocation = instanceAllocation;
+    this._instanceAllocationHelper = allocationHelper;
     this._instanceLauncher = instanceLauncher;
   }
 
@@ -66,12 +66,10 @@ class GenyDeallocDriver extends DeallocationDriverBase {
    * @return {Promise<void>}
    */
   async free(options = {}) {
-    if (this._instance) {
-      await this._instanceAllocation.deallocateDevice(this._instance.uuid);
+    await this._instanceAllocationHelper.deallocateDevice(this._instance.uuid);
 
-      if (options.shutdown) {
-        await this._instanceLauncher.shutdown(this._instance);
-      }
+    if (options.shutdown) {
+      await this._instanceLauncher.shutdown(this._instance);
     }
   }
 }

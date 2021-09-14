@@ -1,4 +1,4 @@
-describe('Android emulator device allocation', () => {
+describe('Android emulator allocation helper', () => {
   const adbName = 'mock_adb_name-1117';
   const avdName = 'mock-AVD-name';
 
@@ -20,8 +20,8 @@ describe('Android emulator device allocation', () => {
 
     randomFunc = jest.fn().mockReturnValue(1);
 
-    const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-    uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, randomFunc);
+    const EmulatorAllocationHelper = require('./EmulatorAllocationHelper');
+    uut = new EmulatorAllocationHelper(deviceRegistry, freeDeviceFinder, randomFunc);
   });
 
   const givenFreeDevice = (adbName) => freeDeviceFinder.findFreeDevice.mockResolvedValue(adbName);
@@ -128,8 +128,8 @@ describe('Android emulator device allocation', () => {
     it('should resort to a default random func', async () => {
       givenNoFreeDevices();
 
-      const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-      uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, undefined);
+      const EmulatorAllocationHelper = require('./EmulatorAllocationHelper');
+      uut = new EmulatorAllocationHelper(deviceRegistry, freeDeviceFinder, undefined);
 
       await uut.allocateDevice(avdName);
     });

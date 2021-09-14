@@ -23,8 +23,8 @@ class GenycloudAllocDriverFactory extends AllocationDriverFactory {
     const RecipeQuerying = require('../../drivers/android/genycloud/GenyRecipeQuerying');
     const recipeQuerying = new RecipeQuerying(recipeService);
 
-    const InstanceAllocation = require('../../drivers/android/genycloud/GenyInstanceAllocation');
-    const instanceAllocation = new InstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService });
+    const InstanceAllocationHelper = require('../../drivers/android/genycloud/GenyInstanceAllocationHelper');
+    const allocationHelper = new InstanceAllocationHelper({ deviceRegistry, instanceLookupService, instanceLifecycleService });
 
     const InstanceLauncher = require('../../drivers/android/genycloud/GenyInstanceLauncher');
     const {
@@ -36,10 +36,11 @@ class GenycloudAllocDriverFactory extends AllocationDriverFactory {
     const allocDriver = new GenyAllocDriver({
       adb,
       recipeQuerying,
-      instanceAllocation,
+      allocationHelper,
       instanceLauncher,
     });
-    const createDeallocDriver = (deviceCookie) => new GenyDeallocDriver(deviceCookie.instance, { instanceAllocation, instanceLauncher });
+    const createDeallocDriver = (deviceCookie) =>
+      new GenyDeallocDriver(deviceCookie.instance, { allocationHelper, instanceLauncher });
 
     return {
       allocDriver,

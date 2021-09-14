@@ -1,6 +1,6 @@
 const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
-// TODO ASDASD Turn this into a "DeviceAllocation" (used by iOS, as well?)
-class AndroidDeviceAllocation {
+
+class DeviceAllocationHelper {
   constructor(deviceRegistry, logger) {
     this._deviceRegistry = deviceRegistry;
     this._logger = logger;
@@ -15,6 +15,6 @@ class AndroidDeviceAllocation {
   }
 }
 
-AndroidDeviceAllocation.ALLOCATE_DEVICE_LOG_EVT = ALLOCATE_DEVICE_LOG_EVT;
+DeviceAllocationHelper.ALLOCATE_DEVICE_LOG_EVT = ALLOCATE_DEVICE_LOG_EVT;
 
-module.exports = AndroidDeviceAllocation;
+module.exports = DeviceAllocationHelper;

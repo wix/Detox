@@ -22,8 +22,8 @@ class AndroidEmulatorAllocDriverFactory extends AllocationDriverFactory {
     const EmulatorLauncher = require('../../drivers/android/emulator/EmulatorLauncher');
     const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, eventEmitter });
 
-    const EmulatorDeviceAllocation = require('../../drivers/android/emulator/EmulatorDeviceAllocation');
-    const deviceAllocation = new EmulatorDeviceAllocation(deviceRegistry, freeEmulatorFinder);
+    const EmulatorAllocationHelper = require('../../drivers/android/emulator/EmulatorAllocationHelper');
+    const allocationHelper = new EmulatorAllocationHelper(deviceRegistry, freeEmulatorFinder);
 
     const {
       EmulatorAllocDriver,
@@ -34,9 +34,9 @@ class AndroidEmulatorAllocDriverFactory extends AllocationDriverFactory {
       avdValidator,
       emulatorVersionResolver,
       emulatorLauncher,
-      deviceAllocation,
+      allocationHelper,
     });
-    const createDeallocDriver = (deviceCookie) => new EmulatorDeallocDriver(deviceCookie.adbName, { emulatorLauncher, deviceAllocation });
+    const createDeallocDriver = (deviceCookie) => new EmulatorDeallocDriver(deviceCookie.adbName, { emulatorLauncher, allocationHelper });
 
     return {
       allocDriver,

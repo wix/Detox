@@ -4,8 +4,8 @@ describe('Allocation driver for Google emulators', () => {
   const adbName = 'mocked-emulator:5554';
   const placeholderPort = 5554;
 
-  const givenAllocationError = (message = 'mocked rejection') => deviceAllocation.allocateDevice.mockRejectedValue(new Error(message));
-  const givenAllocationResult = ({ adbName, placeholderPort, isRunning }) => deviceAllocation.allocateDevice.mockResolvedValue({ adbName, placeholderPort, isRunning });
+  const givenAllocationError = (message = 'mocked rejection') => allocationHelper.allocateDevice.mockRejectedValue(new Error(message));
+  const givenAllocationResult = ({ adbName, placeholderPort, isRunning }) => allocationHelper.allocateDevice.mockResolvedValue({ adbName, placeholderPort, isRunning });
   const givenAllocationOfRunningEmulator = () => givenAllocationResult({ adbName, placeholderPort, isRunning: true });
   const givenAllocationOfPlaceholderEmulator = () => givenAllocationResult({ adbName, placeholderPort, isRunning: false });
   const givenEmulatorLaunchError = () => emulatorLauncher.launch.mockRejectedValue(new Error());
@@ -17,7 +17,7 @@ describe('Allocation driver for Google emulators', () => {
   let avdValidator;
   let emulatorVersionResolver;
   let emulatorLauncher;
-  let deviceAllocation;
+  let allocationHelper;
   beforeEach(() => {
     jest.mock('../../../../../utils/trace', () => ({
       traceCall: (name, fn) => fn(),
@@ -44,9 +44,9 @@ describe('Allocation driver for Google emulators', () => {
     const EmulatorLauncher = require('./EmulatorLauncher');
     emulatorLauncher = new EmulatorLauncher();
 
-    jest.mock('./EmulatorDeviceAllocation');
-    const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
-    deviceAllocation = new EmulatorDeviceAllocation();
+    jest.mock('./EmulatorAllocationHelper');
+    const EmulatorAllocationHelper = require('./EmulatorAllocationHelper');
+    allocationHelper = new EmulatorAllocationHelper();
   });
 
   describe('allocation', () => {
@@ -60,13 +60,13 @@ describe('Allocation driver for Google emulators', () => {
         avdValidator,
         emulatorVersionResolver,
         emulatorLauncher,
-        deviceAllocation,
+        allocationHelper,
       });
     });
 
     it('should allocate based on an AVD\'s name', async () => {
       await allocDriver.allocate(avdName);
-      expect(deviceAllocation.allocateDevice).toHaveBeenCalledWith(avdName);
+      expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(avdName);
     });
 
     it('should allocated based on an AVD specification object', async () => {
@@ -75,7 +75,7 @@ describe('Allocation driver for Google emulators', () => {
       };
 
       await allocDriver.allocate(deviceQuery);
-      expect(deviceAllocation.allocateDevice).toHaveBeenCalledWith(avdName);
+      expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(avdName);
     });
 
     it('should fail to allocate if allocation fails', async () => {
@@ -100,7 +100,7 @@ describe('Allocation driver for Google emulators', () => {
         try {
           await allocDriver.allocate(avdName);
         } catch (e) {}
-        expect(deviceAllocation.deallocateDevice).toHaveBeenCalledWith(adbName);
+        expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(adbName);
       });
 
       it('should rethrow the error, if launching fails', async () => {
@@ -130,7 +130,7 @@ describe('Allocation driver for Google emulators', () => {
       givenInvalidAVD('mock invalid AVD');
 
       await expect(allocDriver.allocate(avdName)).rejects.toThrow(new Error('mock invalid AVD'));
-      expect(deviceAllocation.allocateDevice).not.toHaveBeenCalled();
+      expect(allocationHelper.allocateDevice).not.toHaveBeenCalled();
     });
 
     it('should pre-patch AVD skin configuration', async () => {
@@ -176,13 +176,13 @@ describe('Allocation driver for Google emulators', () => {
       const { EmulatorDeallocDriver } = require('./EmulatorAllocDriver');
       deallocDriver = new EmulatorDeallocDriver(adbName, {
         emulatorLauncher,
-        deviceAllocation,
+        allocationHelper,
       });
     });
 
     it('should free the emulator instance', async () => {
       await deallocDriver.free();
-      expect(deviceAllocation.deallocateDevice).toHaveBeenCalledWith(adbName);
+      expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(adbName);
     });
 
     it('should shut the emulator down', async () => {

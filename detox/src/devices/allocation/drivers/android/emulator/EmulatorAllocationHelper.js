@@ -1,5 +1,6 @@
+const DeviceAllocationHelper  = require('../../../../common/drivers/DeviceAllocationHelper');
+
 const logger = require('../../../../../utils/logger').child({ __filename });
-const AndroidDeviceAllocation  = require('../../AndroidDeviceAllocation');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
@@ -17,9 +18,7 @@ class AllocationResult {
   }
 }
 
-// TODO ASDASD rename
-class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
-
+class EmulatorAllocationHelper extends DeviceAllocationHelper {
   constructor(deviceRegistry, freeDeviceFinder, rand = Math.random) {
     super(deviceRegistry, logger);
     this._freeDeviceFinder = freeDeviceFinder;
@@ -71,4 +70,4 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
   }
 }
 
-module.exports = EmulatorDeviceAllocation;
+module.exports = EmulatorAllocationHelper;

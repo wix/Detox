@@ -23,6 +23,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
    * @return {Promise<IosSimulatorCookie>}
    */
   async allocate(deviceQuery) {
+    // TODO Delegate this onto a well tested allocator class
     const udid = await this._deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });

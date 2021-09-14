@@ -1,7 +1,7 @@
 describe('Allocation driver for Genymotion cloud emulators', () => {
   let logger;
   let recipeQuerying;
-  let instanceAllocation;
+  let allocationHelper;
   let instanceLauncher;
   let GenyInstance;
   let adb;
@@ -15,8 +15,8 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     const RecipeQuerying = jest.genMockFromModule('./GenyRecipeQuerying');
     recipeQuerying = new RecipeQuerying();
 
-    const InstanceAllocation = jest.genMockFromModule('./GenyInstanceAllocation');
-    instanceAllocation = new InstanceAllocation();
+    const InstanceAllocationHelper = jest.genMockFromModule('./GenyInstanceAllocationHelper');
+    allocationHelper = new InstanceAllocationHelper();
 
     const InstanceLauncher = jest.genMockFromModule('./GenyInstanceLauncher');
     instanceLauncher = new InstanceLauncher();
@@ -58,7 +58,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
 
   const givenRecipe = (recipe) => recipeQuerying.getRecipeFromQuery.mockResolvedValue(recipe);
   const givenNoRecipe = () => givenRecipe(undefined);
-  const givenAllocationResult = ({ instance, isNew }) => instanceAllocation.allocateDevice.mockResolvedValue({ instance, isNew });
+  const givenAllocationResult = ({ instance, isNew }) => allocationHelper.allocateDevice.mockResolvedValue({ instance, isNew });
   const givenReallocationResult = (instance) => givenAllocationResult({ instance, isNew: false });
   const givenFreshAllocationResult = (instance) => givenAllocationResult({ instance, isNew: true });
   const givenLaunchError = (message) => instanceLauncher.launch.mockRejectedValue(new Error(message));
@@ -71,7 +71,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       deviceQuery = aDeviceQuery();
 
       const { GenyAllocDriver } = require('./GenyAllocDriver');
-      allocDriver = new GenyAllocDriver({ recipeQuerying, instanceAllocation, instanceLauncher, adb });
+      allocDriver = new GenyAllocDriver({ recipeQuerying, allocationHelper, instanceLauncher, adb });
     });
 
     it('should obtain recipe from recipes service', async () => {
@@ -104,7 +104,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenReallocationResult(anInstance());
 
       await allocDriver.allocate(deviceQuery);
-      expect(instanceAllocation.allocateDevice).toHaveBeenCalledWith(recipe);
+      expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(recipe);
     });
 
     describe('given an allocation of a fresh cloud instance', () => {
@@ -137,7 +137,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         try {
           await allocDriver.allocate(deviceQuery);
         } catch (e) {}
-        expect(instanceAllocation.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
+        expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
       });
     });
 
@@ -194,20 +194,12 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     beforeEach(() => {
       instance = anInstance();
       const { GenyDeallocDriver } = require('./GenyAllocDriver');
-      deallocDriver = new GenyDeallocDriver(instance, { instanceAllocation, instanceLauncher });
+      deallocDriver = new GenyDeallocDriver(instance, { allocationHelper, instanceLauncher });
     });
 
     it('should deallocate the cloud instance', async () => {
       await deallocDriver.free();
-      expect(instanceAllocation.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
-    });
-
-    // TODO ASDASD revisit why this is needed
-    it('should not deallocate if instance isnt available', async () => {
-      const { GenyDeallocDriver } = require('./GenyAllocDriver');
-      const driver = new GenyDeallocDriver(undefined, { instanceAllocation, instanceLauncher });
-      await driver.free();
-      expect(instanceAllocation.deallocateDevice).not.toHaveBeenCalled();
+      expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
     });
 
     it('should shut the instance down if specified', async () => {

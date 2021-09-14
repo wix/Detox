@@ -1,4 +1,4 @@
-describe('Genymotion-Cloud instance allocation', () => {
+describe('Genymotion-Cloud instance allocation helper', () => {
   const recipeUUID = 'mock-recipe-uuid';
   const recipeName = 'mock-recipe-name';
 
@@ -16,7 +16,6 @@ describe('Genymotion-Cloud instance allocation', () => {
     deviceRegistry = new DeviceRegistry();
     deviceRegistry.allocateDevice.mockImplementation((func) => func());
 
-    // TODO ASDASD Relocate all genycloud services?
     const InstanceLookupService = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/GenyInstanceLookupService');
     instanceLookupService = new InstanceLookupService();
 
@@ -25,8 +24,8 @@ describe('Genymotion-Cloud instance allocation', () => {
 
     GenyInstance = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services//dto/GenyInstance');
 
-    const InstanceAllocation = require('./GenyInstanceAllocation');
-    uut = new InstanceAllocation({ deviceRegistry, instanceLookupService, instanceLifecycleService });
+    const InstanceAllocationHelper = require('./GenyInstanceAllocationHelper');
+    uut = new InstanceAllocationHelper({ deviceRegistry, instanceLookupService, instanceLifecycleService });
   });
 
   const aRecipe = () => ({
