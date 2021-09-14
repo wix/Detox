@@ -1,7 +1,7 @@
 const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
 
-const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
+const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 
 class GenyAllocDriver extends AllocationDriverBase {
 
