@@ -812,6 +812,12 @@ describe('CLI', () => {
   }
 
   function aCustomDriverModule() {
-    return `class DriverClass {}; module.exports = { DriverClass }`;
+    return `
+      class RuntimeDriverClass {};
+      class DeviceAllocationDriverClass {};
+      class DeviceDeallocationDriverClass {};
+      class ExpectClass {};
+      module.exports = { RuntimeDriverClass, DeviceAllocationDriverClass, DeviceDeallocationDriverClass, ExpectClass }
+      `;
   }
 });
