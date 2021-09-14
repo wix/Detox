@@ -50,6 +50,7 @@ describe('Detox', () => {
   let invoke;
   let envValidator;
   let deviceAllocator;
+  let deviceDeallocator;
   let runtimeDevice;
   let Detox;
   let detox;
@@ -544,7 +545,7 @@ describe('Detox', () => {
           expect(runtimeDevice._cleanup).toHaveBeenCalled());
 
         it(`should not shutdown the device`, () =>
-          expect(runtimeDevice.shutdown).not.toHaveBeenCalled());
+          expect(deviceDeallocator.free).toHaveBeenCalledWith({ shutdown: false }));
 
         it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
           expect(artifactsManager.onBeforeCleanup).toHaveBeenCalled());
@@ -560,9 +561,9 @@ describe('Detox', () => {
         detox = await new Detox(detoxConfig).init();
       });
 
-      it(`should shutdown the device on detox.cleanup()`, async () => {
+      it(`should shut the device down on detox.cleanup()`, async () => {
         await detox.cleanup();
-        expect(runtimeDevice.shutdown).toHaveBeenCalled();
+        expect(deviceDeallocator.free).toHaveBeenCalledWith({ shutdown: true });
       });
 
       describe('if the device has not been allocated', () => {
@@ -570,7 +571,7 @@ describe('Detox', () => {
 
         it(`should omit the shutdown`, async () => {
           await detox.cleanup();
-          expect(runtimeDevice.shutdown).toHaveBeenCalledTimes(1);
+          expect(deviceDeallocator.free).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -619,10 +620,11 @@ describe('Detox', () => {
     const { DeviceAllocator, DeviceDeallocator } = jest.genMockFromModule('./devices/allocation/DeviceAllocator');
     const DeviceAllocatorFactory = jest.genMockFromModule('./devices/allocation/factories').ExternalFactory;
     deviceAllocator = new DeviceAllocator();
+    deviceDeallocator = new DeviceDeallocator();
     deviceAllocatorFactory = new DeviceAllocatorFactory();
     deviceAllocatorFactory.createDeviceAllocator.mockReturnValue({
       allocator: deviceAllocator,
-      createDeallocator: () => new DeviceDeallocator(),
+      createDeallocator: () => deviceDeallocator,
     });
     deviceAllocator.allocate.mockResolvedValue(fakeCookie);
 

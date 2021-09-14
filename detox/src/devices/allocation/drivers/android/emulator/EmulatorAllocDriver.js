@@ -67,6 +67,11 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 }
 
 class EmulatorDeallocDriver extends DeallocationDriverBase {
+  /**
+   * @param adbName { String }
+   * @param emulatorLauncher { EmulatorLauncher }
+   * @param allocationHelper { EmulatorAllocationHelper }
+   */
   constructor(adbName, { emulatorLauncher, allocationHelper }) {
     super();
     this._adbName = adbName;

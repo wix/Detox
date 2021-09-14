@@ -8,10 +8,6 @@ class AndroidDeviceCookie extends DeviceCookie {
     super();
     this.adbName = adbName;
   }
-
-  get platform() {
-    return 'android';
-  }
 }
 
 module.exports = AndroidDeviceCookie;

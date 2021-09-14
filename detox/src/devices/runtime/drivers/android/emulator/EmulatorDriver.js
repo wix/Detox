@@ -30,11 +30,6 @@ class EmulatorDriver extends AndroidDriver {
     await this.appInstallHelper.install(this.adbName, binaryPath, testBinaryPath);
   }
 
-  async shutdown() {
-    // TODO ASDASD move to parent?
-    await this.instrumentation.setTerminationFn(null);
-  }
-
   async setLocation(lat, lon) {
     await this.adb.setLocation(this.adbName, lat, lon);
   }

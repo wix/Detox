@@ -101,13 +101,8 @@ class Detox {
     }
 
     if (this.device) {
-      let shutdown = false;
+      const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
       await this.device._cleanup();
-
-      if (this._behaviorConfig.cleanup.shutdownDevice) {
-        shutdown = true;
-        await this.device.shutdown();
-      }
       await this.deviceDeallocator.free({ shutdown });
     }
 

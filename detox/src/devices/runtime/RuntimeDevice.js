@@ -42,7 +42,6 @@ class RuntimeDevice {
       'setStatusBar',
       'setURLBlacklist',
       'shake',
-      'shutdown',
       'takeScreenshot',
       'terminateApp',
       'uninstallApp',
@@ -222,11 +221,6 @@ class RuntimeDevice {
     await this.deviceDriver.deliverPayload(params);
   }
 
-  // TODO ASDASD
-  async shutdown() {
-    await this.deviceDriver.shutdown();
-  }
-
   async setOrientation(orientation) {
     await this.deviceDriver.setOrientation(orientation);
   }
@@ -372,7 +366,7 @@ class RuntimeDevice {
     }
 
     await this._emitter.emit('appReady', {
-      deviceId: this.deviceDriver.getExternalId(), // TODO ASDASD most likely, this event should come from within the driver (in which case, emitter here becomes scarce)
+      deviceId: this.deviceDriver.getExternalId(),
       bundleId,
       pid: this._processes[bundleId],
     });

@@ -826,13 +826,6 @@ describe('Device', () => {
     expect(driverMock.driver.terminate).toHaveBeenCalledTimes(1);
   });
 
-  it(`shutdown() should pass to device driver`, async () => {
-    const device = await aValidDevice();
-    await device.shutdown();
-
-    expect(driverMock.driver.shutdown).toHaveBeenCalledTimes(1);
-  });
-
   it(`openURL({url:url}) should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.openURL({ url: 'url' });

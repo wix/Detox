@@ -135,11 +135,6 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  // TODO ASDASD I think this won't be necessary after refactor is complete
-  async shutdown() {
-    return await Promise.resolve('');
-  }
-
   async setOrientation(_orientation) {
     return await Promise.resolve('');
   }
