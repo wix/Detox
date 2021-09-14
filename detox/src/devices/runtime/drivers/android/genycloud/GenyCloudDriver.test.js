@@ -1,21 +1,17 @@
-const anInstance = () => ({
-  uuid: 'mock-instance-uuid',
-  name: 'mock-instance-name',
-  adbName: 'mock-instance-adb-name',
-  toString: () => 'mock-instance-toString()',
-});
-
 describe('Genymotion-cloud driver', () => {
-  let logger;
+  const anInstance = () => ({
+    uuid: 'mock-instance-uuid',
+    name: 'mock-instance-name',
+    adbName: 'mock-instance-adb-name',
+    toString: () => 'mock-instance-toString()',
+  });
+
   let emitter;
   let invocationManager;
   let appInstallHelper;
   let instrumentation;
   let detoxGenymotionManager;
   beforeEach(() => {
-    jest.mock('../../../../../utils/logger');
-    logger = require('../../../../../utils/logger');
-
     jest.mock('../../../../../utils/getAbsoluteBinaryPath');
 
     const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');

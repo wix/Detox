@@ -1,10 +1,10 @@
 const _ = require('lodash');
 
-const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
-const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 const { traceCall } = require('../../../../../utils/trace');
-
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
+const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
+
+const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 
 class EmulatorAllocDriver extends AllocationDriverBase {
 

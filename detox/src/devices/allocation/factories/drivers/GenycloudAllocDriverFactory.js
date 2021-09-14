@@ -45,7 +45,7 @@ class GenycloudAllocDriverFactory extends AllocationDriverFactory {
     return {
       allocDriver,
       createDeallocDriver,
-    }
+    };
   }
 }
 

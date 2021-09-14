@@ -1,4 +1,5 @@
 const ArtifactsManager = require('../ArtifactsManager');
+
 const {
   AndroidArtifactPluginsProvider,
   IosArtifactPluginsProvider,

@@ -4,7 +4,6 @@ const _ = require('lodash');
 
 const argparse = require('../../../../../../utils/argparse');
 const { getAndroidEmulatorPath } = require('../../../../../../utils/environment');
-
 const {
   BinaryExec,
   ExecCommand,

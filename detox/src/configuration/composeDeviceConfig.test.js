@@ -239,7 +239,7 @@ describe('composeDeviceConfig', () => {
 
     it('should throw if the device config has invalid type', () => {
       const someError = new Error('Some error');
-      environmentFactory.validateConfig.mockImplementation(() => { throw someError });
+      environmentFactory.validateConfig.mockImplementation(() => { throw someError; });
 
       localConfig.device = { type: 'android.apk' };
       expect(compose).toThrow(errorComposer.invalidDeviceType(

@@ -5,7 +5,6 @@ describe('Android driver', () => {
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
   let fs; // TODO don't mock
-  let logger;
   let client;
   let getAbsoluteBinaryPath;
   let emitter;
@@ -484,9 +483,6 @@ describe('Android driver', () => {
       getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 
-    jest.mock('../../../../utils/logger');
-    logger = require('../../../../utils/logger');
-
     jest.mock('../../../../utils/exec', () => ({
       interruptProcess: jest.fn(),
     }));
@@ -530,7 +526,7 @@ describe('Android driver', () => {
 
     jest.mock('../../../common/drivers/android/exec/AAPT');
     const AAPT = require('../../../common/drivers/android/exec/AAPT');
-    aapt = new AAPT()
+    aapt = new AAPT();
 
     jest.mock('../../../common/drivers/android/tools/TempFileXfer');
     const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');

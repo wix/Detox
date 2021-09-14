@@ -312,14 +312,14 @@ describe('Detox', () => {
 
     describe('and environment validation fails', () => {
       it('should fail with an error', async () => {
-        envValidator.validate.mockRejectedValue(new Error('Mock validation failure'))
+        envValidator.validate.mockRejectedValue(new Error('Mock validation failure'));
         await expect(init).rejects.toThrowError('Mock validation failure');
       });
     });
 
     describe('and allocation fails', () => {
       it('should fail with an error', async () => {
-        deviceAllocator.allocate.mockRejectedValue(new Error('Mock validation failure'))
+        deviceAllocator.allocate.mockRejectedValue(new Error('Mock validation failure'));
         await expect(init).rejects.toThrowError('Mock validation failure');
       });
     });

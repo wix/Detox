@@ -1,11 +1,12 @@
-const RuntimeDriverFactoryBase = require('./RuntimeDriverFactoryBase');
-const AndroidRuntimeDriverFactoryBase = require('./AndroidRuntimeDriverFactoryBase');
 const {
   AndroidEmulatorRuntimeDriver,
   GenycloudRuntimeDriver,
   AttachedAndroidRuntimeDriver,
   IosSimulatorRuntimeDriver,
 } = require('../../drivers');
+
+const AndroidRuntimeDriverFactoryBase = require('./AndroidRuntimeDriverFactoryBase');
+const RuntimeDriverFactoryBase = require('./RuntimeDriverFactoryBase');
 
 class AndroidEmulatorRuntimeDriverFactory extends AndroidRuntimeDriverFactoryBase {
   _createDriver(deviceCookie, deps) {

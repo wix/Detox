@@ -1,7 +1,6 @@
-const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
-
-const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
+const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
 
 class GenyAllocDriver extends AllocationDriverBase {
 
@@ -14,7 +13,7 @@ class GenyAllocDriver extends AllocationDriverBase {
   constructor({ adb, recipeQuerying, allocationHelper, instanceLauncher }) {
     super();
     this._adb = adb;
-    this._recipeQuerying = recipeQuerying
+    this._recipeQuerying = recipeQuerying;
     this._instanceLauncher = instanceLauncher;
     this._instanceAllocationHelper = allocationHelper;
   }

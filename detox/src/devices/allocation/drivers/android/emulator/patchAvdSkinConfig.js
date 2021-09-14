@@ -1,9 +1,11 @@
-const path = require('path');
-const ini = require('ini');
 const fs = require('fs');
+const path = require('path');
 
-const environment = require('../../../../../utils/environment');
+const ini = require('ini');
+
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const environment = require('../../../../../utils/environment');
+const log = require('../../../../../utils/logger');
 
 const EMU_BIN_STABLE_SKIN_VER = 28;
 

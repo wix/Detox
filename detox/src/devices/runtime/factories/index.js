@@ -1,4 +1,5 @@
 const RuntimeDevice = require('../RuntimeDevice');
+
 const {
   AndroidEmulatorRuntimeDriverFactory,
   AttachedAndroidRuntimeDriverFactory,
@@ -10,7 +11,7 @@ const {
 
 class RuntimeDeviceFactoryBase {
   /**
-   * @param driverFactory { RuntimeDriverFactory }
+   * @param driverFactory { RuntimeDriverFactoryBase }
    */
   constructor(driverFactory) {
     this._driverFactory = driverFactory;

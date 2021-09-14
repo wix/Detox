@@ -1,10 +1,12 @@
-const _ = require('lodash');
 const { URL } = require('url');
 const util = require('util');
+
+const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 const Client = require('./client/Client');
+const environmentFactory = require('./environmentFactory');
 const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
 const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
@@ -13,8 +15,6 @@ const Deferred = require('./utils/Deferred');
 const MissingDetox = require('./utils/MissingDetox');
 const logger = require('./utils/logger');
 const log = logger.child({ __filename });
-
-const environmentFactory = require('./environmentFactory');
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');

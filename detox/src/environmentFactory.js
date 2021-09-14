@@ -1,9 +1,9 @@
-const envValidationFactories = require('./validation/factories');
 const artifactsManagerFactories = require('./artifacts/factories');
 const deviceAllocationFactories = require('./devices/allocation/factories');
-const matchersFactories = require('./matchers/factories');
 const runtimeDeviceFactories = require('./devices/runtime/factories');
+const matchersFactories = require('./matchers/factories');
 const resolveModuleFromPath = require('./utils/resolveModuleFromPath');
+const envValidationFactories = require('./validation/factories');
 
 function validateConfig(deviceConfig) {
   const classes = _getFactoryClasses(deviceConfig);
@@ -30,7 +30,7 @@ function createFactories(deviceConfig) {
       deviceAllocatorFactory: new classes.deviceAllocatorFactoryClass(),
       matchersFactory: new classes.matchersFactoryClass(),
       runtimeDeviceFactory: new classes.runtimeDeviceFactoryClass(),
-    }
+    };
   }
   return _getExternalModuleFactories(deviceConfig);
 }
@@ -94,7 +94,7 @@ function _getFactoryClasses(deviceConfig) {
     deviceAllocatorFactoryClass,
     matchersFactoryClass,
     runtimeDeviceFactoryClass,
-  }
+  };
 }
 
 function _getExternalModuleFactories(deviceConfig) {
@@ -107,7 +107,7 @@ function _getExternalModuleFactories(deviceConfig) {
     artifactsManagerFactory: new artifactsManagerFactories.ExternalFactory(module),
     matchersFactory: new matchersFactories.ExternalFactory(module, modulePath),
     runtimeDeviceFactory: new runtimeDeviceFactories.ExternalFactory(module, modulePath),
-  }
+  };
 }
 
 module.exports = {

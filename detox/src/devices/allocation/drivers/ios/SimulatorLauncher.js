@@ -1,6 +1,5 @@
-const DeviceLauncher = require('../../../common/drivers/DeviceLauncher');
-
 const argparse = require('../../../../utils/argparse');
+const DeviceLauncher = require('../../../common/drivers/DeviceLauncher');
 
 class SimulatorLauncher extends DeviceLauncher {
   constructor({ applesimutils, eventEmitter }) {

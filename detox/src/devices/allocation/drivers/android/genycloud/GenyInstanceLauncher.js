@@ -1,6 +1,6 @@
-const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
-const retry = require('../../../../../utils/retry');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const retry = require('../../../../../utils/retry');
+const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
 
 class GenyInstanceLauncher extends DeviceLauncher {
   constructor({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter }) {

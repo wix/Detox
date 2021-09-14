@@ -1,6 +1,7 @@
-const _ = require('lodash');
 const path = require('path');
+
 const exec = require('child-process-promise').exec;
+const _ = require('lodash');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
@@ -81,7 +82,7 @@ class SimulatorDriver extends IosDriver {
       throw new DetoxRuntimeError({
         message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
         hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
-              `xcrun simctl spawn ${deviceId} launchctl list | grep -F '${bundleId}'\n`,
+              `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`,
       });
     } else {
       log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);

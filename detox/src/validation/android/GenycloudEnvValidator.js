@@ -1,8 +1,8 @@
 const semver = require('semver');
 
-const EnvironmentValidatorBase = require('../EnvironmentValidatorBase');
-const environment = require('../../utils/environment');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const environment = require('../../utils/environment');
+const EnvironmentValidatorBase = require('../EnvironmentValidatorBase');
 
 const MIN_GMSAAS_VERSION = '1.6.0';
 

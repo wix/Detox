@@ -1,9 +1,8 @@
 const _ = require('lodash');
 
-const { AllocationDriverBase, DeallocationDriverBase } = require('../AllocationDriverBase');
-const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
-
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
+const { AllocationDriverBase, DeallocationDriverBase } = require('../AllocationDriverBase');
 
 class SimulatorAllocDriver extends AllocationDriverBase {
   /**

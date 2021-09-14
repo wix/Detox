@@ -7,7 +7,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
     instance.name = 'mock-instance-name';
     instance.toString = () => 'mock-instance-toString()';
     return instance;
-  }
+  };
 
   let GenyInstance;
   let signalExit;
@@ -165,4 +165,4 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
       expect(logger.info).not.toHaveBeenCalled();
     });
   });
-})
+});

@@ -40,7 +40,7 @@ describe('Genymotion-Cloud instance allocation helper', () => {
     instance.name = 'mock-instance-name';
     instance.toString = () => 'mock-instance-toString()';
     return instance;
-  }
+  };
 
   const givenFreeInstance = (instance) => instanceLookupService.findFreeInstance.mockResolvedValueOnce(instance);
   const givenNoFreeInstances = () => instanceLookupService.findFreeInstance.mockResolvedValue(undefined);

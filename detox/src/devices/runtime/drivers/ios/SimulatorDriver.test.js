@@ -32,7 +32,7 @@ describe('IOS simulator driver', () => {
 
   it('should return the device name', () => {
     expect(uut.getDeviceName()).toEqual(`${udid} (Chika)`);
-  })
+  });
 
   describe('launch args', () => {
     const languageAndLocale = '';

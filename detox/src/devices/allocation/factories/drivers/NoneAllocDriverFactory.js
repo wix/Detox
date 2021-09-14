@@ -1,15 +1,16 @@
-const AllocationDriverFactory = require('./AllocationDriverFactory');
 const {
   NoneAllocDriver,
   NoneDeallocDriver,
 } = require('../../drivers/NoneAllocDriver');
 
+const AllocationDriverFactory = require('./AllocationDriverFactory');
+
 class NoneAllocDriverFactory extends AllocationDriverFactory {
-  createAllocationDriver(deps) {
+  createAllocationDriver() {
     return {
       allocDriver: new NoneAllocDriver(),
       createDeallocDriver: () => new NoneDeallocDriver(),
-    }
+    };
   }
 }
 

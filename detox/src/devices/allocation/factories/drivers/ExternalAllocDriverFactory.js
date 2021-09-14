@@ -1,5 +1,6 @@
-const AllocationDriverFactory = require('./AllocationDriverFactory');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+
+const AllocationDriverFactory = require('./AllocationDriverFactory');
 
 class ExternalAllocDriverFactory extends AllocationDriverFactory {
   static validateModule(module, path) {
@@ -23,7 +24,7 @@ class ExternalAllocDriverFactory extends AllocationDriverFactory {
     return {
       allocDriver: new this._module.DeviceAllocationDriverClass(deps),
       createDeallocDriver: (deviceCookie) => new this._module.DeviceDeallocationDriverClass(deviceCookie, deps),
-    }
+    };
   }
 }
 

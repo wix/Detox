@@ -41,7 +41,7 @@ class AndroidEmulatorAllocDriverFactory extends AllocationDriverFactory {
     return {
       allocDriver,
       createDeallocDriver,
-    }
+    };
   }
 }
 

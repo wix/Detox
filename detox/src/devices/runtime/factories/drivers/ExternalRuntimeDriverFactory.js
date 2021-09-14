@@ -1,5 +1,6 @@
-const RuntimeDriverFactoryBase = require('./RuntimeDriverFactoryBase');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+
+const RuntimeDriverFactoryBase = require('./RuntimeDriverFactoryBase');
 
 class ExternalRuntimeDriverFactory extends RuntimeDriverFactoryBase {
   static validateModule(module, path) {

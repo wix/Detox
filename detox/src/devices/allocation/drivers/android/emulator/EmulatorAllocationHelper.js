@@ -1,6 +1,5 @@
-const DeviceAllocationHelper  = require('../../../../common/drivers/DeviceAllocationHelper');
-
 const logger = require('../../../../../utils/logger').child({ __filename });
+const DeviceAllocationHelper  = require('../../../../common/drivers/DeviceAllocationHelper');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,

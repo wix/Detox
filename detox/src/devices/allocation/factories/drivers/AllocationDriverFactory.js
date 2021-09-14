@@ -1,5 +1,5 @@
 class AllocationDriverFactory {
-  createAllocationDriver({ eventEmitter }) {}
+  createAllocationDriver({ eventEmitter }) {} // eslint-disable-line no-unused-vars
 }
 
 module.exports = AllocationDriverFactory;

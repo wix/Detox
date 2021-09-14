@@ -1,14 +1,10 @@
 describe('Allocation driver for Genymotion cloud emulators', () => {
-  let logger;
   let recipeQuerying;
   let allocationHelper;
   let instanceLauncher;
   let GenyInstance;
   let adb;
   beforeEach(() => {
-    jest.mock('../../../../../utils/logger');
-    logger = require('../../../../../utils/logger');
-
     jest.mock('../../../../common/drivers/android/genycloud/services/GenyInstanceLookupService');
     jest.mock('../../../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
 
@@ -47,7 +43,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     instance.name = 'mock-instance-name';
     instance.toString = () => 'mock-instance-toString()';
     return instance;
-  }
+  };
 
   const aLaunchedInstance = () => {
     const instance = anInstance();

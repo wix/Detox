@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
 const AndroidDeviceCookie = require('../../../../cookies/AndroidDeviceCookie');
+const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
 
 class AttachedAndroidAllocDriver extends AllocationDriverBase {
   /**

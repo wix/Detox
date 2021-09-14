@@ -23,7 +23,7 @@ class AttachedAndroidAllocDriverFactory extends AllocationDriverFactory {
     return {
       allocDriver,
       createDeallocDriver,
-    }
+    };
   }
 }
 

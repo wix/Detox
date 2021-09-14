@@ -4,8 +4,8 @@ class RuntimeDriverFactoryBase {
     return this._createDriver(deviceCookie, deps);
   }
 
-  _createDependencies(commonDeps) { }
-  _createDriver(deviceCookie, deps) {}
+  _createDependencies(commonDeps) { } // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps) {} // eslint-disable-line no-unused-vars
 }
 
 module.exports = RuntimeDriverFactoryBase;

@@ -14,9 +14,8 @@ const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
-const DeviceDriverBase = require('../DeviceDriverBase');
-
 const APKPath = require('../../../common/drivers/android/tools/APKPath');
+const DeviceDriverBase = require('../DeviceDriverBase');
 
 const log = logger.child({ __filename });
 

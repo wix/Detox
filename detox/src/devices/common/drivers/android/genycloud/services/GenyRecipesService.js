@@ -1,6 +1,6 @@
-const Recipe = require('./dto/GenyRecipe');
+const logger = require('../../../../../../utils/logger').child({ __filename });
 
-const logger = require('../../../../../../utils/logger').child({ __filename });;
+  const Recipe = require('./dto/GenyRecipe');
 
 class GenyRecipesService {
   constructor(genyCloudExec) {

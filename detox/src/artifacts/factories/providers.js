@@ -1,5 +1,5 @@
 class ArtifactPluginsProviderBase {
-  declareArtifactPlugins({ client }) {}
+  declareArtifactPlugins({ client }) {} // eslint-disable-line no-unused-vars
 }
 
 class AndroidArtifactPluginsProvider extends ArtifactPluginsProviderBase {

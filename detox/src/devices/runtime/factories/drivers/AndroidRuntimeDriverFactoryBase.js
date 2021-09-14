@@ -21,7 +21,7 @@ class AndroidRuntimeDriverFactoryBase extends RuntimeDriverFactoryBase {
       appInstallHelper: new AppInstallHelper(adb, fileXfer),
       appUninstallHelper: new AppUninstallHelper(adb),
       instrumentation: new MonitoredInstrumentation(adb),
-    }
+    };
   }
 }
 
