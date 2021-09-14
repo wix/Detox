@@ -44,6 +44,21 @@ testSummary was:
 }]
 `;
 
+exports[`DetoxRuntimeErrorComposer invalidTestSummary - afterEach 2`] = `
+[DetoxRuntimeError: Invalid test summary was passed to detox.afterEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md
+testSummary was: 
+
+{
+  title: 'foo test',
+  fullName: 'suite foo test',
+  status: 'uncertain'
+}]
+`;
+
 exports[`DetoxRuntimeErrorComposer invalidTestSummary - beforeEach 1`] = `
 [DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
@@ -56,16 +71,12 @@ deviceName]
 `;
 
 exports[`DetoxRuntimeErrorComposer invalidTestSummaryStatus - afterEach 1`] = `
-[DetoxRuntimeError: Invalid test summary was passed to detox.afterEach(testSummary)
-Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
+[DetoxRuntimeError: Invalid test summary status was passed to detox.afterEach(testSummary). Valid values are: "running", "passed", "failed"
 
-HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
-See the article for the guidance: https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md
+HINT: It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.
 testSummary was: 
 
 {
-  title: 'foo test',
-  fullName: 'suite foo test',
-  status: 'uncertain'
+  summary: 'invalid stuff'
 }]
 `;

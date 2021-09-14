@@ -4,7 +4,6 @@ const configuration = require('./configuration');
 jest.mock('./utils/logger');
 jest.mock('./client/Client');
 jest.mock('./utils/AsyncEmitter');
-jest.mock('./Device');
 jest.mock('./invoke');
 jest.mock('./utils/cutStackTraces');
 jest.mock('./environmentFactory');
