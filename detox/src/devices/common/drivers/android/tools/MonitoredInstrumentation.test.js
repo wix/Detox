@@ -6,10 +6,11 @@ describe('Monitored instrumentation', () => {
   let adb;
   let logger;
   beforeEach(() => {
+    jest.mock('../../../../../utils/logger');
+    logger = require('../../../../../utils/logger');
+
     const ADB = jest.genMockFromModule('../exec/ADB');
     adb = new ADB();
-
-    logger = {};
   });
 
   let InstrumentationClass;
@@ -33,7 +34,7 @@ describe('Monitored instrumentation', () => {
   let uut;
   beforeEach(() => {
     const MonitoredInstrumentation = require('./MonitoredInstrumentation');
-    uut = new MonitoredInstrumentation(adb, logger);
+    uut = new MonitoredInstrumentation(adb);
   });
 
   it('should properly init the underlying instrumentation', () => {
