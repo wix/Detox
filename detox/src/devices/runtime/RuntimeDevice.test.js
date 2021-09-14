@@ -134,7 +134,7 @@ describe('Device', () => {
 
   async function aValidDevice(overrides) {
     const device = aValidUnpreparedDevice(overrides);
-    await device.prepare();
+    await device._prepare();
     return device;
   }
 
@@ -160,14 +160,9 @@ describe('Device', () => {
     expect(device.type).toEqual('ios.simulator');
   });
 
-  it('should return an undefined ID for an unprepared device', async() => {
-    const device = await aValidUnpreparedDevice();
-    expect(device.id).toBeUndefined();
-  });
-
   it('should return the device ID, as provided by acquireFreeDevice', async () => {
     const device = await aValidUnpreparedDevice();
-    await device.prepare();
+    await device._prepare();
 
     driverMock.driver.getExternalId.mockReturnValue('mockExternalId');
     expect(device.id).toEqual('mockExternalId');
@@ -182,7 +177,7 @@ describe('Device', () => {
       beforeEach(async () => {
         device = await aValidUnpreparedDevice();
         jest.spyOn(device, 'selectApp');
-        await device.prepare();
+        await device._prepare();
       });
 
       it(`should select the default app upon prepare()`, async () => {
@@ -225,7 +220,7 @@ describe('Device', () => {
         jest.spyOn(device, 'selectApp');
         driverMock.driver.getBundleIdFromBinary.mockReturnValue('com.app1');
 
-        await device.prepare();
+        await device._prepare();
       });
 
       it(`should not select the app at all`, async () => {
@@ -267,7 +262,7 @@ describe('Device', () => {
         });
 
         jest.spyOn(device, 'selectApp');
-        await device.prepare();
+        await device._prepare();
       });
 
       it(`should not select the app at all`, async () => {
@@ -469,7 +464,7 @@ describe('Device', () => {
 
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp({ newInstance: false });
 
@@ -481,7 +476,7 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp({ url: 'url://me' });
 
@@ -496,7 +491,7 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
@@ -509,7 +504,7 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp(launchParams);
 
@@ -524,7 +519,7 @@ describe('Device', () => {
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp(launchParams);
 
@@ -539,7 +534,7 @@ describe('Device', () => {
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp(launchParams);
 
@@ -554,7 +549,7 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
 
-      await device.prepare();
+      await device._prepare();
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
@@ -567,7 +562,7 @@ describe('Device', () => {
 
       const device = await aValidDevice();
 
-      await device.prepare();
+      await device._prepare();
 
       try {
         await device.launchApp(launchParams);

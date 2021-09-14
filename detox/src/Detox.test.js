@@ -194,7 +194,7 @@ describe('Detox', () => {
         }));
 
       it('should prepare the device', () =>
-        expect(runtimeDevice.prepare).toHaveBeenCalled());
+        expect(runtimeDevice._prepare).toHaveBeenCalled());
 
       it('should select and reinstall the app', () => {
         expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
@@ -285,7 +285,7 @@ describe('Detox', () => {
       beforeEach(init);
 
       it('should prepare the device', () =>
-        expect(runtimeDevice.prepare).toHaveBeenCalled());
+        expect(runtimeDevice._prepare).toHaveBeenCalled());
 
       it('should not reinstall the app', () => {
         expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();

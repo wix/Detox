@@ -85,8 +85,7 @@ class RuntimeDevice {
     return this._currentAppLaunchArgs;
   }
 
-  // TODO ASDASD revisit - is this needed? Call to driver.prepare() is 99% unnecessary, but what about the implicit selectApp()?
-  async prepare() {
+  async _prepare() {
     const appAliases = Object.keys(this._appsConfig);
     if (appAliases.length === 1) {
       await this.selectApp(appAliases[0]);
