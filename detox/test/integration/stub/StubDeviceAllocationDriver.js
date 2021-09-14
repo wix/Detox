@@ -6,7 +6,7 @@ class StubDeviceAllocationDriver {
     this._emitter = eventEmitter;
   }
 
-  async allocate(deviceQuery) {
+  async allocate() {
     const deviceId = `StubDevice#${process.env.JEST_WORKER_ID}`;
 
     await sleepSomeTime();

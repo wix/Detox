@@ -1,6 +1,8 @@
-const DeviceDriverBase = require('detox/src/devices/runtime/drivers/DeviceDriverBase')
-const tempfile = require('tempfile');
 const temporaryPath = require('detox/src/artifacts/utils/temporaryPath');
+const DeviceDriverBase = require('detox/src/devices/runtime/drivers/DeviceDriverBase');
+// eslint-disable-next-line node/no-extraneous-require
+const tempfile = require('tempfile');
+
 const {
   sleepSomeTime,
   sleepVeryLittle,
@@ -30,7 +32,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
     return 'stub';
   }
 
-  async installApp(binaryPath, testBinaryPath) {
+  async installApp() {
     await sleepALot();
   }
 
@@ -58,7 +60,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
     await sleepALittle();
   }
 
-  createPayloadFile(notification) {
+  createPayloadFile() {
     return tempfile('fake_payload');
   }
 
@@ -70,7 +72,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
     await sleepALittle();
   }
 
-  async takeScreenshot(screenshotName) {
+  async takeScreenshot() {
     await sleepALittle();
     return temporaryPath.for.png();
   }
@@ -83,12 +85,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
     await sleepSomeTime();
   }
 
-  async terminate(bundleId) {
-    await sleepSomeTime();
-  }
-
-  // TODO ASDASD Most likely, this won't be necessary across the board, and should be deleted here as well
-  async shutdown() {
+  async terminate() {
     await sleepSomeTime();
   }
 
