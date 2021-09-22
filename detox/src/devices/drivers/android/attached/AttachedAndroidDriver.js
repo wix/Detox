@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const DeviceRegistry = require('../../../DeviceRegistry');
 const AndroidDriver = require('../AndroidDriver');
 const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
@@ -17,9 +15,11 @@ class AttachedAndroidDriver extends AndroidDriver {
     return this._name;
   }
 
-  async acquireFreeDevice(deviceQuery) {
-    const adbNamePattern = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
-    const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
+  async acquireFreeDevice(_deviceQuery, deviceConfig) {
+    const adbNamePattern = deviceConfig.device.adbName;
+    const adbName = await this._deviceRegistry.allocateDevice(() => {
+      return this._freeDeviceFinder.findFreeDevice(adbNamePattern);
+    });
 
     await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);

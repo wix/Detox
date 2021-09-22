@@ -22,16 +22,6 @@ describe('Genymotion-cloud recipe-query helper', () => {
   const givenRecipeByNameResult = (recipe) => recipesService.getRecipeByName.mockResolvedValue(recipe);
   const givenRecipeByUUIDResult = (recipe) => recipesService.getRecipeByUUID.mockResolvedValue(recipe);
 
-  it('should query using an explicit recipe name', async () => {
-    const deviceQuery = 'recipe-mock-name';
-    const recipe = aRecipe();
-    givenRecipeByNameResult(recipe);
-
-    const result = await uut.getRecipeFromQuery(deviceQuery);
-    expect(result).toEqual(recipe);
-    expect(recipesService.getRecipeByName).toHaveBeenCalledWith(deviceQuery);
-  });
-
   it('should query based on an object containing recipe name', async () => {
     const deviceQuery = {
       recipeName: 'recipe-mock-name',

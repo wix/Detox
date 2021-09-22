@@ -23,64 +23,64 @@ class DeviceDriverBase {
     return {};
   }
 
-  async acquireFreeDevice(_deviceQuery) {
-    return await Promise.resolve('');
+  async acquireFreeDevice(_deviceQuery, _deviceConfig) {
+    return '';
   }
 
   async prepare() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async launchApp() {
-    return await Promise.resolve(NaN);
+    return NaN;
   }
 
   async waitForAppLaunch() {
-    return await Promise.resolve(NaN);
+    return NaN;
   }
 
   async takeScreenshot(_deviceId, _screenshotName) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async sendToHome() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setBiometricEnrollment() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async matchFace() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async unmatchFace() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async matchFinger() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async unmatchFinger() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async shake() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async installApp(_deviceId, _binaryPath, _testBinaryPath) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async uninstallApp() {
-    return await Promise.resolve('');
+    return '';
   }
 
   installUtilBinaries() {
-    return Promise.resolve('');
+    return '';
   }
 
   async deliverPayload(params) {
@@ -88,19 +88,19 @@ class DeviceDriverBase {
   }
 
   async setLocation(_lat, _lon) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async reverseTcpPort() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async unreverseTcpPort() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async clearKeychain(_udid) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async waitUntilReady() {
@@ -108,11 +108,11 @@ class DeviceDriverBase {
   }
 
   async waitForActive() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async waitForBackground() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async reloadReactNative() {
@@ -126,35 +126,35 @@ class DeviceDriverBase {
   }
 
   async setPermissions(_deviceId, _bundleId, _permissions) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async terminate(_deviceId, _bundleId) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async shutdown() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setOrientation(_deviceId, _orientation) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async setURLBlacklist(_urlList) {
-    return await Promise.resolve('');
+    return '';
   }
 
   async enableSynchronization() {
-    return await Promise.resolve('');
+    return '';
   }
 
   async disableSynchronization() {
-    return await Promise.resolve('');
+    return '';
   }
 
-  async resetContentAndSettings() {
-    return await Promise.resolve('');
+  async resetContentAndSettings(_deviceId, _deviceConfig) {
+    return '';
   }
 
   createRandomDirectory() {
@@ -170,16 +170,20 @@ class DeviceDriverBase {
   }
 
   getBundleIdFromBinary(_appPath) {
+    return '';
   }
 
   validateDeviceConfig(_deviceConfig) {
   }
 
   getPlatform() {
+    return '';
   }
 
   async getUiDevice() {
-    log.warn(`getUiDevice() is an android specific function, it exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice) make sure you create an android specific test for this scenario`);
+    log.warn(`getUiDevice() is an Android-specific function, it exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice).`);
+    log.warn(`Make sure you create an Android-specific test for this scenario.`);
+    
     return await Promise.resolve('');
   }
 
@@ -195,7 +199,9 @@ class DeviceDriverBase {
   }
 
   async pressBack() {
-    log.warn('pressBack() is an android specific function, make sure you create an android specific test for this scenario');
+    log.warn('pressBack() is an Android-specific function.');
+    log.warn(`Make sure you create an Android-specific test for this scenario.`);
+
     return await Promise.resolve('');
   }
 

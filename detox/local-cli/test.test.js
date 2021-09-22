@@ -8,6 +8,8 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const yargs = require('yargs');
 
+const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./utils/warnings');
+
 describe('CLI', () => {
   let cp;
   let logger;
@@ -178,11 +180,20 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--gpu angle_indirect');
     });
 
-    test('--device-launch-args should be passed as an environment variable', async () => {
+    test('--device-boot-args should be passed as an environment variable (without deprecation warnings)', async () => {
+      await run(`--device-boot-args "--verbose"`);
+      expect(cliCall().env).toEqual({
+        DETOX_DEVICE_BOOT_ARGS: '--verbose',
+      });
+      expect(logger.warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
+    });
+
+    test('--device-launch-args should serve as a deprecated alias to --device-boot-args', async () => {
       await run(`--device-launch-args "--verbose"`);
       expect(cliCall().env).toEqual({
-        DETOX_DEVICE_LAUNCH_ARGS: '--verbose',
+        DETOX_DEVICE_BOOT_ARGS: '--verbose',
       });
+      expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
     });
 
     test('--app-launch-args should be passed as an environment variable', async () => {
@@ -300,7 +311,6 @@ describe('CLI', () => {
           DETOX_CONFIG_PATH: expect.any(String),
           DETOX_REPORT_SPECS: true,
           DETOX_USE_CUSTOM_LOGGER: true,
-          DETOX_FORCE_ADB_INSTALL: false,
           DETOX_READ_ONLY_EMU: false,
         });
       });
@@ -568,11 +578,18 @@ describe('CLI', () => {
       expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_GPU: 'angle_indirect' }));
     });
 
-    test('--device-launch-args should be passed as environment variable', async () => {
-      await run(`--device-launch-args "--verbose"`);
+    test('--device-boot-args should be passed as an environment variable (without deprecation warnings)', async () => {
+      await run(`--device-boot-args "--verbose"`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        DETOX_DEVICE_LAUNCH_ARGS: '--verbose'
+        DETOX_DEVICE_BOOT_ARGS: '--verbose'
       }));
+      expect(logger.warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
+    });
+
+    test('--device-launch-args should serve as a deprecated alias to --device-boot-args', async () => {
+      await run(`--device-launch-args "--verbose"`);
+      expect(cliCall().env.DETOX_DEVICE_BOOT_ARGS).toBe('--verbose');
+      expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
     });
 
     test('--app-launch-args should be passed as an environment variable', async () => {
@@ -691,9 +708,9 @@ describe('CLI', () => {
     });
 
     test('-- <...explicitPassthroughArgs> should be forwarded to the test runner CLI as-is', async () => {
-      await run('--device-launch-args detoxArgs e2eFolder -- a -a --a --device-launch-args runnerArgs');
-      expect(cliCall().command).toMatch(/a -a --a --device-launch-args runnerArgs .* e2eFolder$/);
-      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEVICE_LAUNCH_ARGS: 'detoxArgs' }));
+      await run('--device-boot-args detoxArgs e2eFolder -- a -a --a --device-boot-args runnerArgs');
+      expect(cliCall().command).toMatch(/a -a --a --device-boot-args runnerArgs .* e2eFolder$/);
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEVICE_BOOT_ARGS: 'detoxArgs' }));
     });
 
     test('-- <...explicitPassthroughArgs> should omit double-dash "--" itself, when forwarding args', async () => {

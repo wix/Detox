@@ -31,7 +31,7 @@ class StubDriver extends DeviceDriverBase {
     };
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  async acquireFreeDevice(_deviceQuery, _deviceConfig) {
     await sleepSomeTime();
     await this.emitter.emit('bootDevice', { coldBoot: false, deviceId: this._deviceId, type: 'stub' });
     return this._deviceId;

@@ -17,8 +17,10 @@ const anInstance = () => ({
   toString: () => 'mock-instance-toString()',
 });
 
-const aDeviceQuery = () => ({
-  query: 'mock',
+const aDeviceConfig = () => ({
+  device: {
+    query: 'mock',
+  },
 });
 
 describe('Genymotion-cloud driver', () => {
@@ -205,24 +207,24 @@ describe('Genymotion-cloud driver', () => {
         givenResolvedRecipeForQuery(recipe);
         givenDeviceAllocationResult(instance);
 
-        const deviceQuery = aDeviceQuery();
-        const result = await uut.acquireFreeDevice(deviceQuery);
+        const deviceConfig = aDeviceConfig();
+        const result = await uut.acquireFreeDevice(void 0, deviceConfig);
 
         expect(result).toEqual(instance);
-        expect(recipeQuerying().getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
+        expect(recipeQuerying().getRecipeFromQuery).toHaveBeenCalledWith(deviceConfig.device);
         expect(instanceAllocation().allocateDevice).toHaveBeenCalledWith(recipe);
       });
 
       it('should throw a descriptive error recipe not found', async () => {
-        const deviceQuery = aDeviceQuery();
+        const deviceConfig = aDeviceConfig();
         givenNoRecipes();
         givenDeviceAllocationResult(anInstance());
 
         try {
-          await uut.acquireFreeDevice(deviceQuery);
+          await uut.acquireFreeDevice(void 0, deviceConfig);
         } catch (e) {
           expect(e.toString()).toContain('No Genymotion-Cloud template found to match the configured lookup query');
-          expect(e.toString()).toContain(JSON.stringify(deviceQuery));
+          expect(e.toString()).toContain(JSON.stringify(deviceConfig.device));
           expect(e.toString()).toContain('HINT: Revisit your detox configuration');
           expect(e.toString()).toContain('https://cloud.geny.io/app/shared-devices');
           return;
@@ -235,7 +237,7 @@ describe('Genymotion-cloud driver', () => {
         givenResolvedRecipeForQuery(aRecipe());
         givenDeviceAllocationResult(instance);
 
-        await uut.acquireFreeDevice(aDeviceQuery());
+        await uut.acquireFreeDevice(void 0, aDeviceConfig());
 
         expect(uut.name).toEqual('mock-instance-toString()');
       });
@@ -245,7 +247,7 @@ describe('Genymotion-cloud driver', () => {
         givenResolvedRecipeForQuery(aRecipe());
         givenDeviceAllocationResult(instance);
 
-        await uut.acquireFreeDevice(aDeviceQuery());
+        await uut.acquireFreeDevice(void 0, aDeviceConfig());
 
         expect(adbObj().apiLevel).toHaveBeenCalledWith(instance.adbName);
       });
@@ -255,7 +257,7 @@ describe('Genymotion-cloud driver', () => {
         givenResolvedRecipeForQuery(aRecipe());
         givenDeviceAllocationResult(instance);
 
-        await uut.acquireFreeDevice(aDeviceQuery());
+        await uut.acquireFreeDevice(void 0, aDeviceConfig());
 
         expect(adbObj().disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
       });

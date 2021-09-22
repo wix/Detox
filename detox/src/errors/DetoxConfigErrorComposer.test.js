@@ -181,27 +181,69 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
-    describe('.malformedUtilBinaryPaths', () => {
-      beforeEach(() => {
-        build = (alias) => builder.malformedUtilBinaryPaths(alias);
+    describe('.malformedDeviceProperty', () => {
+      test.each([
+        ['bootArgs', 'inlined', ['--arg']],
+        ['bootArgs', 'aliased', ['--arg']],
+        ['forceAdbInstall', 'inlined', 'true'],
+        ['forceAdbInstall', 'aliased', 'false'],
+        ['gpuMode', 'inlined', 'something_odd'],
+        ['gpuMode', 'aliased', true],
+        ['headless', 'inlined', 'non-boolean'],
+        ['headless', 'aliased', 'non-boolean'],
+        ['readonly', 'inlined', 'non-boolean'],
+        ['readonly', 'aliased', 'non-boolean'],
+        ['utilBinaryPaths', 'plain', 'invalid'],
+        ['utilBinaryPaths', 'inlined', [NaN, 'valid']],
+        ['utilBinaryPaths', 'aliased', [NaN, 'valid']],
+      ])('(%j) should create an error for %s configuration', (propertyName, configurationType, invalidValue) => {
+        builder.setConfigurationName(configurationType);
+        const deviceAlias = configurationType === 'aliased' ? 'aDevice' : undefined;
+        const deviceConfig = configurationType === 'plain'
+          ? config.configurations[configurationType]
+          : configurationType === 'inlined'
+            ? config.configurations[configurationType].device
+            : config.devices.aDevice;
+
+        deviceConfig[propertyName] = invalidValue;
+        expect(builder.malformedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
       });
 
-      it('should create an error for plain configuration', () => {
-        builder.setConfigurationName('plain');
-        config.configurations.plain.utilBinaryPaths = 'invalid';
-        expect(build()).toMatchSnapshot();
+      it('should throw on an unknown argument', () => {
+        expect(() => builder.malformedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
+      });
+    });
+
+    describe('.unsupportedDeviceProperty', () => {
+      test.each([
+        ['bootArgs', 'inlined', '--no-window'],
+        ['bootArgs', 'aliased', '--no-window'],
+        ['forceAdbInstall', 'inlined', true],
+        ['forceAdbInstall', 'aliased', false],
+        ['gpuMode', 'inlined', 'auto'],
+        ['gpuMode', 'aliased', 'auto'],
+        ['headless', 'inlined', true],
+        ['headless', 'aliased', true],
+        ['readonly', 'inlined', false],
+        ['readonly', 'aliased', false],
+        ['utilBinaryPaths', 'plain', []],
+        ['utilBinaryPaths', 'inlined', []],
+        ['utilBinaryPaths', 'aliased', []],
+      ])('(%j) should create an error for %s configuration', (propertyName, configurationType, invalidValue) => {
+        builder.setConfigurationName(configurationType);
+        const deviceAlias = configurationType === 'aliased' ? 'aDevice' : undefined;
+        const deviceConfig = configurationType === 'plain'
+          ? config.configurations[configurationType]
+          : configurationType === 'inlined'
+            ? config.configurations[configurationType].device
+            : config.devices.aDevice;
+
+        deviceConfig[propertyName] = invalidValue;
+        expect(builder.unsupportedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
       });
 
-      it('should create an error for inlined configuration', () => {
-        builder.setConfigurationName('inlined');
-        config.configurations.inlined.device.utilBinaryPaths = 'invalid';
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error for aliased configuration', () => {
-        builder.setConfigurationName('aliased');
-        config.devices.aDevice.utilBinaryPaths = 'invalid';
-        expect(build('aDevice')).toMatchSnapshot();
+      it('should throw on an unknown argument', () => {
+        expect(() => builder.unsupportedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
       });
     });
 

@@ -22,7 +22,15 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
     this._emulatorExec = emulatorExec;
   }
 
-  async launch(emulatorName, options = { port: undefined }) {
+  /**
+   * @param {string} emulatorName
+   * @param {string | undefined} options.bootArgs
+   * @param {string | undefined} options.gpuMode
+   * @param {boolean} options.headless
+   * @param {number | undefined} options.port
+   * @param {boolean} options.readonly
+   */
+  async launch(emulatorName, options = {}) {
     const launchCommand = new LaunchCommand(emulatorName, options);
 
     return await retry({

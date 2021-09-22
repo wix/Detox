@@ -87,6 +87,14 @@ const iosSimulatorWithShorthandQuery = {
   device: 'iPhone 7 Plus, iOS 10.2'
 };
 
+const iosSimulatorWithDetailedQuery = {
+  type: 'ios.simulator',
+  device: {
+    type: 'iPhone 7 Plus',
+    os: 'iOS 10.2',
+  },
+};
+
 const validSession = {
   server: 'ws://localhost:8099',
   sessionId: 'test',
@@ -98,6 +106,11 @@ const androidEmulator = {
   'device': {
     'avdName': 'Pixel_API_28',
   },
+};
+
+const androidEmulatorWithShorthandQuery = {
+  'type': 'android.emulator',
+  'device': 'Pixel_API_28',
 };
 
 module.exports = {
@@ -116,5 +129,7 @@ module.exports = {
   apkWithBinary,
 
   iosSimulatorWithShorthandQuery,
+  iosSimulatorWithDetailedQuery,
   androidEmulator,
+  androidEmulatorWithShorthandQuery,
 };

@@ -19,7 +19,13 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
     this._rand = rand;
   }
 
-  async allocateDevice(avdName) {
+  /**
+   * @param {Detox.DetoxAndroidEmulatorDriverConfig} deviceConfig
+   * @returns {Promise<null>}
+   */
+  async allocateDevice(deviceConfig) {
+    const { avdName } = deviceConfig.device;
+
     this._logAllocationAttempt(avdName);
     const {
       adbName,
@@ -30,7 +36,13 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
     const coldBoot = !!placeholderPort;
     if (coldBoot) {
       try {
-        await this._launchEmulator(avdName, placeholderPort);
+        await this._launchEmulator(avdName, {
+          bootArgs: deviceConfig.bootArgs,
+          gpuMode: deviceConfig.gpuMode,
+          headless: deviceConfig.headless,
+          readonly: deviceConfig.readonly,
+          port: placeholderPort,
+        });
       } catch (e) {
         await this.deallocateDevice(adbName);
         throw e;
@@ -64,9 +76,9 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
     };
   }
 
-  async _launchEmulator(avdName, bootPort) {
+  async _launchEmulator(avdName, options) {
     await traceCall('emulatorLaunch', () =>
-      this._emulatorLauncher.launch(avdName, { port: bootPort }));
+      this._emulatorLauncher.launch(avdName, options));
   }
 
   async _awaitEmulatorBoot(adbName) {
