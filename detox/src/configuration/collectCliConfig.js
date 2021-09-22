@@ -58,6 +58,7 @@ function collectCliConfig({ argv }) {
     forceAdbInstall: asBoolean(get('force-adb-install')),
     gpu: get('gpu'),
     headless: asBoolean(get('headless')),
+    readonlyEmu: asBoolean(env('readOnlyEmu')),
     jestReportSpecs: asBoolean(get('jest-report-specs')),
     keepLockFile: asBoolean(get('keepLockFile')),
     loglevel: get('loglevel'),

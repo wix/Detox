@@ -89,32 +89,45 @@ describe('collectCliConfig', () => {
     ...asString( ['loglevel',             'DETOX_LOGLEVEL',               'loglevel']),
     ...asBoolean(['noColor',              'DETOX_NO_COLOR',               'no-color']),
     ...asBoolean(['reuse',                'DETOX_REUSE',                  'reuse']),
+    ...asBoolean(['readonlyEmu',          'DETOX_READ_ONLY_EMU',          null]),
     ...asString( ['runnerConfig',          'DETOX_RUNNER_CONFIG',          'runner-config']),
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
     ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {
-      env[envName] = input;
-      argv[argName] = input;
+      if (envName) env[envName] = input;
+      if (argName) argv[argName] = input;
     });
 
-    it(`should be extracted from argv if it is provided (${J(input)} -> ${J(expected)})`, () => {
-      expect(collectCliConfig({ argv })[key]).toBe(expected);
-    });
+    describe('when provided inside argv', () => {
+      if (!argName) return;
 
-    it(`should be extracted from environment in DETOX_SNAKE_CASE otherwise (${J(input)} -> ${J(expected)})`, () => {
-      expect(collectCliConfig({})[key]).toBe(expected);
-    });
-
-    if (key === 'deviceLaunchArgs') {
-      it(`should print a warning`, () => {
-        expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION);
+      it(`should be extracted from there (${J(input)} -> ${J(expected)})`, () => {
+        expect(collectCliConfig({ argv })[key]).toBe(expected);
       });
-    } else {
-      it(`should not print warnings`, () => {
-        expect(logger.warn).not.toHaveBeenCalled();
+    });
+
+    describe('when not provided inside argv', () => {
+      if (!envName) return;
+
+      it(`should be extracted from $DETOX_SNAKE_CASE-named var (${J(input)} -> ${J(expected)})`, () => {
+        expect(collectCliConfig({})[key]).toBe(expected);
       });
-    }
+    });
+
+    describe('as a regular CLI override', () => {
+      if (key === 'deviceLaunchArgs') return;
+
+      it(`should not print a warning`, () =>
+        expect(logger.warn).not.toHaveBeenCalled());
+    });
+
+    describe('as a deprecated CLI override', () => {
+      if (key !== 'deviceLaunchArgs') return;
+
+      it(`should print a warning`, () =>
+        expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION));
+    });
   });
 });
