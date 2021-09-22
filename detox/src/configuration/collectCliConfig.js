@@ -52,7 +52,7 @@ function collectCliConfig({ argv }) {
     configPath: get('config-path'),
     configuration: get('configuration'),
     debugSynchronization: asNumber(get('debug-synchronization')),
-    deviceBootArgs: get('device-boot-args', deprecateDeviceLaunchArgs(get('device-launch-args'))),
+    deviceBootArgs: get('device-boot-args', deprecateDeviceLaunchArgs(argparse.getEnvValue('device-launch-args'))),
     appLaunchArgs: get('app-launch-args'),
     deviceName: get('device-name'),
     forceAdbInstall: asBoolean(get('force-adb-install')),
