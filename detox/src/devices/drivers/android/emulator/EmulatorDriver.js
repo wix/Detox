@@ -5,7 +5,6 @@ const ini = require('ini');
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const argparse = require('../../../../utils/argparse');
 const environment = require('../../../../utils/environment');
 const log = require('../../../../utils/logger').child({ __filename });
 const DeviceRegistry = require('../../../DeviceRegistry');
@@ -63,17 +62,13 @@ class EmulatorDriver extends AndroidDriver {
     return adbName;
   }
 
-  async installApp(deviceId, _binaryPath, _testBinaryPath) {
-    if (argparse.getArgValue('force-adb-install') === 'true') {
-      return await super.installApp(deviceId, _binaryPath, _testBinaryPath);
+  async installApp(deviceId, binaryPath, testBinaryPath, forceAdbInstall) {
+    if (forceAdbInstall) {
+      await super.installApp(deviceId, binaryPath, testBinaryPath);
+    } else {
+      const installPaths = this._getInstallPaths(binaryPath, testBinaryPath);
+      await this.appInstallHelper.install(deviceId, installPaths.binaryPath, installPaths.testBinaryPath);
     }
-
-    const {
-      binaryPath,
-      testBinaryPath,
-    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-
-    await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
   /**

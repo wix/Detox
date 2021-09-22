@@ -197,7 +197,8 @@ class Device {
       return this.deviceDriver.installApp(
         this._deviceId,
         currentApp.binaryPath,
-        currentApp.testBinaryPath
+        currentApp.testBinaryPath,
+        this._deviceConfig.forceAdbInstall
       );
     });
   }
