@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const cutStackTraces = require('../utils/cutStackTraces');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../utils/trace');
+const wrapWithStackTraceCutter = require('../utils/wrapWithStackTraceCutter');
 
 const LaunchArgsEditor = require('./LaunchArgsEditor');
 
@@ -17,7 +17,7 @@ class Device {
     sessionConfig,
     runtimeErrorComposer,
   }) {
-    cutStackTraces(this, [
+    wrapWithStackTraceCutter(this, [
       'captureViewHierarchy',
       'clearKeychain',
       'disableSynchronization',
