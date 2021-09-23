@@ -2,28 +2,31 @@ const util = require('util');
 
 const _ = require('lodash');
 
-const Artifact = require('./Artifact');
-
 describe('Artifact', () => {
+  let Artifact;
+
   beforeEach(() => {
     jest.mock('../../../utils/logger');
+    Artifact = require('./Artifact');
   });
 
   describe('extends Artifact', () => {
     let artifact;
+    let ArifactExtensionTest;
 
-    class ArifactExtensionTest extends Artifact {
-      constructor() {
-        super();
-
-        this.doStart = jest.fn().mockImplementation(() => super.doStart());
-        this.doStop = jest.fn().mockImplementation(() => super.doStop());
-        this.doSave = jest.fn().mockImplementation(() => super.doSave());
-        this.doDiscard = jest.fn().mockImplementation(() => super.doDiscard());
-      }
-    }
 
     beforeEach(() => {
+      ArifactExtensionTest = class extends Artifact {
+        constructor() {
+          super();
+
+          this.doStart = jest.fn().mockImplementation(() => super.doStart());
+          this.doStop = jest.fn().mockImplementation(() => super.doStop());
+          this.doSave = jest.fn().mockImplementation(() => super.doSave());
+          this.doDiscard = jest.fn().mockImplementation(() => super.doDiscard());
+        }
+      };
+
       artifact = new ArifactExtensionTest();
     });
 

@@ -637,8 +637,9 @@ Please check your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedUtilBinaryPaths should create an error for aliased configuration 1`] = `
-[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration. Expected an array of strings.
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("bootArgs") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "bootArgs" inside the device configuration.
+Expected a string.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -650,14 +651,17 @@ HINT: Check that in your Detox config at path:
       device: {
         type: 'iPhone 12'
       },
-      utilBinaryPaths: 'invalid'
+      bootArgs: [
+        '--arg'
+      ]
     }
   }
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedUtilBinaryPaths should create an error for inlined configuration 1`] = `
-[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration. Expected an array of strings.
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("bootArgs") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "bootArgs" inside the device configuration.
+Expected a string.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -668,15 +672,219 @@ HINT: Check that in your Detox config at path:
       device: {
         type: 'ios.simulator',
         device: [Object],
-        utilBinaryPaths: 'invalid'
+        bootArgs: [Array]
       }
     }
   }
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedUtilBinaryPaths should create an error for plain configuration 1`] = `
-[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration. Expected an array of strings.
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("forceAdbInstall") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "forceAdbInstall" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      forceAdbInstall: 'false'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("forceAdbInstall") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "forceAdbInstall" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        forceAdbInstall: 'true'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      gpuMode: true
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        gpuMode: 'something_odd'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("headless") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "headless" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      headless: 'non-boolean'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("headless") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "headless" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        headless: 'non-boolean'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("readonly") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "readonly" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      readonly: 'non-boolean'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("readonly") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "readonly" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        readonly: 'non-boolean'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
+Expected an array of strings.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      utilBinaryPaths: [
+        NaN,
+        'valid'
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
+Expected an array of strings.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        utilBinaryPaths: [Array]
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for plain configuration 1`] = `
+[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
+Expected an array of strings.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -691,6 +899,12 @@ HINT: Check that in your Detox config at path:
     }
   }
 }]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty should throw on an unknown argument 1`] = `
+"Composing .malformedDeviceProperty(unknown) is not implemented
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
 `;
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceMatcherProperties should work with aliased configurations 1`] = `
@@ -827,6 +1041,321 @@ HINT: You should create a dictionary of device configurations in Detox config, e
   }
 }
 ]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("bootArgs") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "bootArgs" property.
+
+HINT: You can use this property only with the following device types:
+* ios.simulator
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      bootArgs: '--no-window'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("bootArgs") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "bootArgs" property.
+
+HINT: You can use this property only with the following device types:
+* ios.simulator
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        bootArgs: '--no-window'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("forceAdbInstall") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "forceAdbInstall" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      forceAdbInstall: false
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("forceAdbInstall") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "forceAdbInstall" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        forceAdbInstall: true
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "gpuMode" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      gpuMode: 'auto'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "gpuMode" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        gpuMode: 'auto'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("headless") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "headless" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      headless: true
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("headless") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "headless" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        headless: true
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("readonly") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "readonly" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      readonly: false
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("readonly") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "readonly" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        readonly: false
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("utilBinaryPaths") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "utilBinaryPaths" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      utilBinaryPaths: []
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("utilBinaryPaths") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "utilBinaryPaths" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        utilBinaryPaths: []
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("utilBinaryPaths") should create an error for plain configuration 1`] = `
+[DetoxConfigError: The current device type "android.emulator" does not support "utilBinaryPaths" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    plain: {
+      type: 'android.emulator',
+      device: 'Pixel_3a_API_30_x86',
+      binaryPath: 'path/to/apk',
+      utilBinaryPaths: []
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty should throw on an unknown argument 1`] = `
+"Composing .unsupportedDeviceProperty(unknown) is not implemented
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
 `;
 
 exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `

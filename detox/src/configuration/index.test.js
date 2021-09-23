@@ -117,7 +117,9 @@ describe('composeDetoxConfig', () => {
         },
         deviceConfig: expect.objectContaining({
           type: 'ios.simulator',
-          device: 'iPhone XS',
+          device: {
+            type: 'iPhone XS',
+          },
         }),
         runnerConfig: {
           testRunner: 'mocha',

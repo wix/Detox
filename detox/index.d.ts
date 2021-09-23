@@ -217,6 +217,7 @@ declare global {
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
             device: string | Partial<IosSimulatorQuery>;
+            bootArgs?: string;
         }
 
         interface DetoxIosNoneDriverConfig {
@@ -225,22 +226,28 @@ declare global {
             device?: string | Partial<IosSimulatorQuery>;
         }
 
-        interface DetoxAttachedAndroidDriverConfig {
+        interface DetoxSharedAndroidDriverConfig {
+            forceAdbInstall?: boolean;
+            utilBinaryPaths?: string[];
+        }
+
+        interface DetoxAttachedAndroidDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.attached';
             device: string | { adbName: string };
-            utilBinaryPaths?: string[];
         }
 
-        interface DetoxAndroidEmulatorDriverConfig {
+        interface DetoxAndroidEmulatorDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.emulator';
             device: string | { avdName: string };
-            utilBinaryPaths?: string[];
+            bootArgs?: string;
+            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
+            headless?: boolean;
+            readonly?: boolean;
         }
 
-        interface DetoxGenymotionCloudDriverConfig {
+        interface DetoxGenymotionCloudDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.genycloud';
             device: string | { recipeUUID: string; } | { recipeName: string; };
-            utilBinaryPaths?: string[];
         }
 
         interface DetoxCustomDriverConfig {

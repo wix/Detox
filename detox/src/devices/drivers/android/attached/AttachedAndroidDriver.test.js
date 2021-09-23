@@ -23,9 +23,17 @@ describe('Attached android device driver', () => {
   beforeEach(mockBaseClassesDependencies);
   beforeEach(mockDirectDependencies);
 
-  const adbNamePattern = '9A291FFAZ005S9';
-  const deviceConfig = {
-    adbName: adbNamePattern,
+  const adbNamePattern =  '9A291FFAZ005S9';
+  const deviceConfigWithObject = {
+    device: {
+      adbName: adbNamePattern,
+    },
+  };
+
+  const deviceConfigWithString = {
+    device: {
+      adbName: adbNamePattern,
+    },
   };
 
   let emitter;
@@ -34,6 +42,7 @@ describe('Attached android device driver', () => {
   let FreeDeviceFinder;
   let freeDeviceFinderObj;
   let uut;
+
   beforeEach(() => {
     const Emitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
     emitter = new Emitter();
@@ -70,7 +79,7 @@ describe('Attached android device driver', () => {
         }
       });
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(void 0, deviceConfigWithString);
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
@@ -83,7 +92,7 @@ describe('Attached android device driver', () => {
         }
       });
 
-      await uut.acquireFreeDevice(deviceConfig);
+      await uut.acquireFreeDevice(deviceConfigWithObject.device, deviceConfigWithObject);
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
@@ -95,7 +104,7 @@ describe('Attached android device driver', () => {
       const adbName = `${adbNamePattern}_allocated`;
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(void 0, deviceConfigWithString);
 
       expect(emitter.emit).toHaveBeenCalledWith('bootDevice', { coldBoot: false, deviceId: adbName, type: 'device' });
     });
@@ -104,7 +113,7 @@ describe('Attached android device driver', () => {
       const adbName = `${adbNamePattern}_allocated`;
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(void 0, deviceConfigWithString);
       expect(adbObj().apiLevel).toHaveBeenCalledWith(adbName);
     });
 
@@ -112,7 +121,7 @@ describe('Attached android device driver', () => {
       const adbName = `${adbNamePattern}_allocated`;
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(void 0, deviceConfigWithString);
       expect(adbObj().unlockScreen).toHaveBeenCalledWith(adbName);
     });
 
@@ -121,7 +130,7 @@ describe('Attached android device driver', () => {
       deviceRegistry.allocateDevice.mockReturnValue(adbName);
 
       expect(uut.name).toEqual('Unnamed Android Device');
-      await uut.acquireFreeDevice(adbNamePattern);
+      await uut.acquireFreeDevice(void 0, deviceConfigWithString);
       expect(uut.name).toEqual(adbName);
     });
   });

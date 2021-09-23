@@ -5,7 +5,6 @@ const ini = require('ini');
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const argparse = require('../../../../utils/argparse');
 const environment = require('../../../../utils/environment');
 const log = require('../../../../utils/logger').child({ __filename });
 const DeviceRegistry = require('../../../DeviceRegistry');
@@ -46,36 +45,38 @@ class EmulatorDriver extends AndroidDriver {
     return this._name;
   }
 
-  async acquireFreeDevice(deviceQuery) {
-    const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
+  async acquireFreeDevice(_deviceQuery, deviceConfig) {
+    const avdName = deviceConfig.device.avdName;
 
     await this._avdValidator.validate(avdName);
-    await this._fixAvdConfigIniSkinNameIfNeeded(avdName);
+    await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
-    const adbName = await this._deviceAllocation.allocateDevice(avdName);
+    const adbName = await this._deviceAllocation.allocateDevice(deviceConfig);
+
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
 
     this._name = `${adbName} (${avdName})`;
+
     return adbName;
   }
 
-  async installApp(deviceId, _binaryPath, _testBinaryPath) {
-    if (argparse.getArgValue('force-adb-install') === 'true') {
-      return await super.installApp(deviceId, _binaryPath, _testBinaryPath);
+  async installApp(deviceId, binaryPath, testBinaryPath, forceAdbInstall) {
+    if (forceAdbInstall) {
+      await super.installApp(deviceId, binaryPath, testBinaryPath);
+    } else {
+      const installPaths = this._getInstallPaths(binaryPath, testBinaryPath);
+      await this.appInstallHelper.install(deviceId, installPaths.binaryPath, installPaths.testBinaryPath);
     }
-
-    const {
-      binaryPath,
-      testBinaryPath,
-    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-
-    await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
-  /*async*/ binaryVersion() {
-    return this._emuVersionResolver.resolve();
+  /**
+   * @param {boolean} headless
+   * @async
+   */
+  binaryVersion(headless) {
+    return this._emuVersionResolver.resolve(headless);
   }
 
   async cleanup(deviceId, bundleId) {
@@ -95,8 +96,8 @@ class EmulatorDriver extends AndroidDriver {
     await this.adb.setLocation(deviceId, lat, lon);
   }
 
-  async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
-    const binaryVersion = _.get(await this.binaryVersion(), 'major');
+  async _fixAvdConfigIniSkinNameIfNeeded(avdName, headless) {
+    const binaryVersion = _.get(await this.binaryVersion(headless), 'major');
     if (!binaryVersion) {
       log.warn({ event: 'EMU_SKIN_CFG_PATCH' }, [
         'Failed to detect emulator version! (see previous logs)',

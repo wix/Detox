@@ -1,6 +1,9 @@
 describe('Android emulator device allocation', () => {
   const adbName = 'mock_adb_name-1117';
   const avdName = 'mock-AVD-name';
+  const avdConfig = {
+    device: { avdName },
+  };
 
   let logger;
   let retry;
@@ -68,7 +71,7 @@ describe('Android emulator device allocation', () => {
     it('should return a free device', async () => {
       givenFreeDevice(adbName);
 
-      const result = await uut.allocateDevice(avdName);
+      const result = await uut.allocateDevice(avdConfig);
       expect(result).toEqual(adbName);
     });
 
@@ -80,7 +83,7 @@ describe('Android emulator device allocation', () => {
         return result;
       });
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
@@ -91,21 +94,21 @@ describe('Android emulator device allocation', () => {
         return await func();
       });
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
     it('should launch an emulator if no free devices are available', async () => {
       givenNoFreeDevices();
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
       expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, expect.any(Object));
     });
 
     it('should not launch an emulator if a free device is available', async () => {
       givenFreeDevice(adbName);
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
       expect(emulatorLauncher.launch).not.toHaveBeenCalled();
     });
 
@@ -114,7 +117,7 @@ describe('Android emulator device allocation', () => {
       givenEmulatorLaunchError();
       jest.spyOn(uut, 'deallocateDevice');
 
-      await expect(uut.allocateDevice(avdName)).rejects.toThrowError();
+      await expect(uut.allocateDevice(avdConfig)).rejects.toThrowError();
       await expect(uut.deallocateDevice).toHaveBeenCalledWith(expect.stringMatching(/emulator-\d+/));
     });
 
@@ -123,7 +126,7 @@ describe('Android emulator device allocation', () => {
       givenRandomFuncResult(0.5);
       const expectedPort = 15000;
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, { port: expectedPort });
     });
@@ -133,7 +136,7 @@ describe('Android emulator device allocation', () => {
       givenRandomFuncResult(0.0001);
       const expectedPort = 10000; // i.e. and not 10001
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, { port: expectedPort });
     });
@@ -148,7 +151,7 @@ describe('Android emulator device allocation', () => {
         return result;
       });
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
     });
 
     it('should poll for boot completion', async () => {
@@ -161,7 +164,7 @@ describe('Android emulator device allocation', () => {
         expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
       });
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
       expect(retry).toHaveBeenCalled();
     });
 
@@ -170,7 +173,7 @@ describe('Android emulator device allocation', () => {
       givenDeviceBootIncomplete();
 
       try {
-        await uut.allocateDevice(avdName);
+        await uut.allocateDevice(avdConfig);
       } catch (e) {
         expect(e.constructor.name).toEqual('DetoxRuntimeError');
         expect(e.toString()).toContain(`Waited for ${adbName} to complete booting for too long!`);
@@ -188,7 +191,7 @@ describe('Android emulator device allocation', () => {
       givenNoFreeDevices();
       givenDeviceBootCompleted();
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expect(retry).toHaveBeenCalledWith(
         expect.objectContaining(expectedRetryOptions),
@@ -200,7 +203,7 @@ describe('Android emulator device allocation', () => {
       givenFreeDevice(adbName);
       givenDeviceBootCompleted();
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expectDeviceBootEvent(adbName, avdName, false);
     });
@@ -209,7 +212,7 @@ describe('Android emulator device allocation', () => {
       givenNoFreeDevices();
       givenDeviceBootCompleted();
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expectDeviceBootEventAnonymous(avdName, true);
     });
@@ -217,7 +220,7 @@ describe('Android emulator device allocation', () => {
     it('should log pre-allocate message', async () => {
       givenFreeDevice(adbName);
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining('Trying to allocate'));
       expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(avdName));
@@ -226,7 +229,7 @@ describe('Android emulator device allocation', () => {
     it('should log post-allocate message', async () => {
       givenFreeDevice(adbName);
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
 
       expect(logger.debug).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, expect.stringContaining(`Settled on ${adbName}`));
       expect(logger.debug).toHaveBeenCalledTimes(2);
@@ -239,7 +242,7 @@ describe('Android emulator device allocation', () => {
       const EmulatorDeviceAllocation = require('./EmulatorDeviceAllocation');
       uut = new EmulatorDeviceAllocation(deviceRegistry, freeDeviceFinder, emulatorLauncher, adb, eventEmitter, undefined);
 
-      await uut.allocateDevice(avdName);
+      await uut.allocateDevice(avdConfig);
     });
   });
 

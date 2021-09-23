@@ -290,7 +290,7 @@ describe('Device', () => {
         expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device.id, bundleId);
 
         await device.installApp('/tmp/app', '/tmp/app-test');
-        expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, '/tmp/app', '/tmp/app-test');
+        expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, '/tmp/app', '/tmp/app-test', undefined);
 
         await device.launchApp({}, bundleId);
         expect(driverMock.driver.launchApp).toHaveBeenCalledWith(device.id, bundleId, expect.anything(), undefined);
@@ -683,21 +683,26 @@ describe('Device', () => {
 
   describe('installApp()', () => {
     it(`with a custom app path should use custom app path`, async () => {
-      const device = await aValidDevice();
+      const device = await aValidDevice({
+        deviceConfig: { forceAdbInstall: true },
+      });
+
       await device.installApp('newAppPath');
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, 'newAppPath', device._deviceConfig.testBinaryPath);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, 'newAppPath', device._deviceConfig.testBinaryPath, true);
     });
 
     it(`with a custom test app path should use custom test app path`, async () => {
-      const device = await aValidDevice();
+      const device = await aValidDevice({
+        deviceConfig: { forceAdbInstall: false },
+      });
       await device.installApp('newAppPath', 'newTestAppPath');
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, 'newAppPath', 'newTestAppPath');
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, 'newAppPath', 'newTestAppPath', false);
     });
 
     it(`with no args should use the default path given in configuration`, async () => {
       const device = await aValidDevice();
       await device.installApp();
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, device._currentApp.binaryPath, device._currentApp.testBinaryPath);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device.id, device._currentApp.binaryPath, device._currentApp.testBinaryPath, undefined);
     });
   });
 

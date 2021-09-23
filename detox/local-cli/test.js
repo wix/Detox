@@ -17,7 +17,7 @@ const { readJestConfig } = require('./utils/jestInternals');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
 const splitArgv = require('./utils/splitArgv');
-const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./utils/warnings');
+const { DETOX_ARGV_OVERRIDE_NOTICE, DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./utils/warnings');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
@@ -36,6 +36,7 @@ module.exports.handler = async function test(argv) {
 
   const forwardedArgs = await prepareArgs({
     cliConfig,
+    deviceConfig,
     runnerConfig,
     runnerArgs,
     platform,
@@ -68,6 +69,14 @@ module.exports.middlewares = [
         ...process.argv.slice(2),
         ...parse(process.env.DETOX_ARGV_OVERRIDE),
       ]);
+    }
+
+    return argv;
+  },
+
+  function warnDeviceAppLaunchArgsDeprecation(argv) {
+    if (argv['device-boot-args'] && process.argv.some(a => a.startsWith('--device-launch-args'))) {
+      log.warn(DEVICE_LAUNCH_ARGS_DEPRECATION);
     }
 
     return argv;
@@ -150,13 +159,13 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     },
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
-      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
     }, _.isUndefined),
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
   };
 }
 
-async function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
+async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
 
@@ -184,13 +193,13 @@ async function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }
       DETOX_CONFIGURATION: cliConfig.configuration,
       DETOX_CONFIG_PATH: cliConfig.configPath,
       DETOX_DEBUG_SYNCHRONIZATION: cliConfig.debugSynchronization,
-      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
       DETOX_DEVICE_NAME: cliConfig.deviceName,
       DETOX_FORCE_ADB_INSTALL: platform === 'android' ? cliConfig.forceAdbInstall : undefined,
       DETOX_GPU: cliConfig.gpu,
       DETOX_HEADLESS: cliConfig.headless,
       DETOX_LOGLEVEL: cliConfig.loglevel,
-      DETOX_READ_ONLY_EMU: platform === 'android' ? hasMultipleWorkers : undefined,
+      DETOX_READ_ONLY_EMU: deviceConfig.type === 'android.emulator' && hasMultipleWorkers ? true : undefined,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
       DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,

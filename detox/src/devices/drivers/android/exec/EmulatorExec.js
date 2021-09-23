@@ -2,7 +2,6 @@ const os = require('os');
 
 const _ = require('lodash');
 
-const argparse = require('../../../../utils/argparse');
 const { getAndroidEmulatorPath } = require('../../../../utils/environment');
 
 const {
@@ -23,15 +22,21 @@ class ListAVDsCommand extends ExecCommand {
 }
 
 class QueryVersionCommand extends ExecCommand {
+  constructor({ headless }) {
+    super();
+    this._headless = headless;
+  }
+
   _getArgs() {
-    return ['-version', `${argparse.getArgValue('headless')}` === 'true' ? '-no-window' : ''];
+    return ['-version', this._headless ? '-no-window' : ''];
   }
 }
 
 class LaunchCommand extends ExecCommand {
   constructor(emulatorName, options) {
     super();
-    this._args = this._getEmulatorArgs(emulatorName, options);
+    this._options = options;
+    this._args = this._getEmulatorArgs(emulatorName);
     this.port = options.port;
   }
 
@@ -39,36 +44,35 @@ class LaunchCommand extends ExecCommand {
     return this._args;
   }
 
-  _getEmulatorArgs(emulatorName, options) {
-    const deviceLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '').split(/\s+/);
+  _getEmulatorArgs(emulatorName) {
+    const {
+      bootArgs,
+      gpuMode = this._getDefaultGPUMode(),
+      headless,
+      readonly,
+      port,
+    } = this._options;
+
+    const deviceBootArgs = (bootArgs || '').split(/\s+/);
     const emulatorArgs = _.compact([
       '-verbose',
       '-no-audio',
       '-no-boot-anim',
-      `${argparse.getArgValue('headless')}` === 'true' ? '-no-window' : '',
-      `${argparse.getArgValue('readOnlyEmu')}` === 'true' ? '-read-only' : '',
-      options.port ? `-port` : '',
-      options.port ? `${options.port}` : '',
-      ...deviceLaunchArgs,
+      headless ? '-no-window' : '',
+      readonly ? '-read-only' : '',
+      gpuMode !== undefined ? '-gpu' : '',
+      gpuMode !== undefined ? `${gpuMode}` : '',
+      port ? '-port' : '',
+      port ? `${port}` : '',
+      ...deviceBootArgs,
       `@${emulatorName}`
     ]);
-
-    const gpuMethod = this._gpuMethod();
-    if (gpuMethod) {
-      emulatorArgs.push('-gpu', gpuMethod);
-    }
 
     return emulatorArgs;
   }
 
-  _gpuMethod() {
-    const gpuArgument = argparse.getArgValue('gpu');
-    if (gpuArgument) {
-      return gpuArgument;
-    }
-
-    const headless = `${argparse.getArgValue('headless')}` === 'true';
-    if (headless) {
+  _getDefaultGPUMode() {
+    if (this._options.headless) {
       switch (os.platform()) {
         case 'darwin':
           return 'host';

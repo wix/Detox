@@ -58,7 +58,8 @@ class GenyCloudDriver extends AndroidDriver {
     await this._validateGmsaasAuth();
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  async acquireFreeDevice(_deviceQuery, deviceConfig) {
+    const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 

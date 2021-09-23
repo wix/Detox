@@ -92,7 +92,7 @@ class Device {
     await this.deviceDriver.prepare();
 
     this._deviceId = await traceCall('acquireDevice', () =>
-      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device));
+      this.deviceDriver.acquireFreeDevice(this._deviceConfig.device, this._deviceConfig));
 
     const appAliases = Object.keys(this._appsConfig);
     if (appAliases.length === 1) {
@@ -197,7 +197,8 @@ class Device {
       return this.deviceDriver.installApp(
         this._deviceId,
         currentApp.binaryPath,
-        currentApp.testBinaryPath
+        currentApp.testBinaryPath,
+        this._deviceConfig.forceAdbInstall
       );
     });
   }
@@ -276,7 +277,7 @@ class Device {
   }
 
   async resetContentAndSettings() {
-    await this.deviceDriver.resetContentAndSettings(this._deviceId);
+    await this.deviceDriver.resetContentAndSettings(this._deviceId, this._deviceConfig);
   }
 
   getPlatform() {
