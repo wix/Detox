@@ -36,6 +36,7 @@ module.exports.handler = async function test(argv) {
 
   const forwardedArgs = await prepareArgs({
     cliConfig,
+    deviceConfig,
     runnerConfig,
     runnerArgs,
     platform,
@@ -164,7 +165,7 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   };
 }
 
-async function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
+async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
 
@@ -198,7 +199,7 @@ async function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }
       DETOX_GPU: cliConfig.gpu,
       DETOX_HEADLESS: cliConfig.headless,
       DETOX_LOGLEVEL: cliConfig.loglevel,
-      DETOX_READ_ONLY_EMU: platform === 'android' ? hasMultipleWorkers : undefined,
+      DETOX_READ_ONLY_EMU: deviceConfig.type === 'android.emulator' ? hasMultipleWorkers : undefined,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
       DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,

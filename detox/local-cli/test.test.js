@@ -520,6 +520,12 @@ describe('CLI', () => {
         expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
       });
 
+      test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for android.attached', async (__workers) => {
+        singleConfig().type = 'android.attached';
+        await run(`${__workers} 2`);
+        expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
+      });
+
       test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
         singleConfig().type = 'android.emulator';
         await run(`${__workers} 1`);
