@@ -199,7 +199,7 @@ async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConf
       DETOX_GPU: cliConfig.gpu,
       DETOX_HEADLESS: cliConfig.headless,
       DETOX_LOGLEVEL: cliConfig.loglevel,
-      DETOX_READ_ONLY_EMU: deviceConfig.type === 'android.emulator' ? hasMultipleWorkers : undefined,
+      DETOX_READ_ONLY_EMU: deviceConfig.type === 'android.emulator' && hasMultipleWorkers ? true : undefined,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
       DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,

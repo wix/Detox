@@ -311,7 +311,6 @@ describe('CLI', () => {
           DETOX_CONFIG_PATH: expect.any(String),
           DETOX_REPORT_SPECS: true,
           DETOX_USE_CUSTOM_LOGGER: true,
-          DETOX_READ_ONLY_EMU: false,
         });
       });
     });
@@ -526,10 +525,10 @@ describe('CLI', () => {
         expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
       });
 
-      test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
+      test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for android.emulator if there is a single worker', async (__workers) => {
         singleConfig().type = 'android.emulator';
         await run(`${__workers} 1`);
-        expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: false }));
+        expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
       });
 
       test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there are multiple workers', async (__workers) => {

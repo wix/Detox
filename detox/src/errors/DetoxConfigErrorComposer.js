@@ -316,7 +316,7 @@ Please check your Detox config${this._atPath()}`,
   _invalidPropertyType(propertyName, expectedType, deviceAlias) {
     return new DetoxConfigError({
       message: `Invalid type of ${J(propertyName)} inside the device configuration.\n`
-        + ` Expected ${expectedType}.`,
+        + `Expected ${expectedType}.`,
       hint: `Check that in your Detox config${this._atPath()}`,
       debugInfo: this._focusOnDeviceConfig(deviceAlias),
       inspectOptions: { depth: 3 },

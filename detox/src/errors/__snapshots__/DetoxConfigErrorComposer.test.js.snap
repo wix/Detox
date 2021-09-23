@@ -639,7 +639,7 @@ Please check your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("bootArgs") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "bootArgs" inside the device configuration.
- Expected a string.
+Expected a string.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -661,7 +661,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("bootArgs") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "bootArgs" inside the device configuration.
- Expected a string.
+Expected a string.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -681,7 +681,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("forceAdbInstall") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "forceAdbInstall" inside the device configuration.
- Expected a boolean value.
+Expected a boolean value.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -701,7 +701,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("forceAdbInstall") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "forceAdbInstall" inside the device configuration.
- Expected a boolean value.
+Expected a boolean value.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -721,7 +721,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
- Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -741,7 +741,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
- Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -761,7 +761,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("headless") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "headless" inside the device configuration.
- Expected a boolean value.
+Expected a boolean value.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -781,7 +781,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("headless") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "headless" inside the device configuration.
- Expected a boolean value.
+Expected a boolean value.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -801,7 +801,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("readonly") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "readonly" inside the device configuration.
- Expected a boolean value.
+Expected a boolean value.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -821,7 +821,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("readonly") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "readonly" inside the device configuration.
- Expected a boolean value.
+Expected a boolean value.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -841,7 +841,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
- Expected an array of strings.
+Expected an array of strings.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -864,7 +864,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
- Expected an array of strings.
+Expected an array of strings.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -884,7 +884,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for plain configuration 1`] = `
 [DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
- Expected an array of strings.
+Expected an array of strings.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
