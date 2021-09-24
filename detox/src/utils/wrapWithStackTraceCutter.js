@@ -1,7 +1,7 @@
 const DetoxError = require('../errors/DetoxError');
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
 
-function cutStackTraces(obj, methodNames) {
+function wrapWithStackTraceCutter(obj, methodNames) {
   for (const methodName of methodNames) {
     const originalMethod = obj[methodName];
 
@@ -21,4 +21,4 @@ function cutStackTraces(obj, methodNames) {
   }
 }
 
-module.exports = cutStackTraces;
+module.exports = wrapWithStackTraceCutter;

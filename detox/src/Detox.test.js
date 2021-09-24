@@ -10,7 +10,7 @@ jest.mock('./client/Client');
 jest.mock('./devices/Device');
 jest.mock('./matchersRegistry');
 jest.mock('./invoke');
-jest.mock('./utils/cutStackTraces');
+jest.mock('./utils/wrapWithStackTraceCutter');
 
 jest.mock('./server/DetoxServer', () => {
   const FakeServer = jest.genMockFromModule('./server/DetoxServer');
