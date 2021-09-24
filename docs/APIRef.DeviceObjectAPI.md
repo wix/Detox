@@ -35,6 +35,26 @@ device.appLaunchArgs.get(); // ==> { mockServerPort: 1234 }
 device.appLaunchArgs.reset();
 ```
 
+In multi-app environments, you might want to persist your values between `device.selectApp(name)` calls:
+
+```js
+device.appLaunchArgs.modify({ transientArg: 'value' });
+device.appLaunchArgs.modify({
+  permanentMockServerPort: 1234,
+}, { permanent: true });
+
+device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234, transientArg: 'value' }
+device.appLaunchArgs.get({ permanent: false }); // ==> { transientArg: 'value' }
+device.appLaunchArgs.get({ permanent: true }); // ==> { permanentMockServerPort: 1234 }
+
+await device.selectApp('anotherApp');
+device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234 }
+device.appLaunchArgs.reset();
+device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234 }
+device.appLaunchArgs.reset({ permanent: true });
+device.appLaunchArgs.get(); // ==> {}
+```
+
 This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](APIRef.LaunchArgs.md) for complete details.
 
 ## Methods
