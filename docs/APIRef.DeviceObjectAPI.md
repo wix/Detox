@@ -42,9 +42,15 @@ device.appLaunchArgs.modify({ transientArg: 'value' });
 device.appLaunchArgs.modify({
   permanentMockServerPort: 1234,
 }, { permanent: true });
+
+device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234, transientArg: 'value' }
+device.appLaunchArgs.get({ permanent: false }); // ==> { transientArg: 'value' }
+device.appLaunchArgs.get({ permanent: true }); // ==> { permanentMockServerPort: 1234 }
+
 await device.selectApp('anotherApp');
 device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234 }
-// Reset (i.e. remove all arguments):
+device.appLaunchArgs.reset();
+device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234 }
 device.appLaunchArgs.reset({ permanent: true });
 device.appLaunchArgs.get(); // ==> {}
 ```

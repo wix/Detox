@@ -45,6 +45,12 @@ describe('Device launch-args editor', () => {
       .modify({ b: 2 }, { permanent: true })
       .get({ permanent: true })).toEqual({ b: 2 }));
 
+  it('should not return permanent values if transient values were requested', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent: false })
+      .modify({ b: 2 }, { permanent: true })
+      .get({ permanent: false })).toEqual({ a: 1 }));
+
   it('should reset only transient values by default', () =>
     expect(launchArgsEditor
       .modify({ a: 1 }, { permanent: false })

@@ -349,7 +349,8 @@ declare global {
         }
 
         type AppLaunchArgsOperationOptions = Partial<{
-          permanent: boolean;
+            /** Changes the scope of the operation: transient or permanent app launch args */
+            permanent: boolean;
         }>;
 
         /**
@@ -392,18 +393,19 @@ declare global {
              * //   mockServerToken: 'abcdef',
              * // }
              */
-            modify(modifier: object, options?: AppLaunchArgsOperationOptions): void;
+            modify(modifier: object, options?: AppLaunchArgsOperationOptions): this;
 
             /**
              * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
              * Note: by default, permanent app launch args are not reset.
              * @param options.permanent - when set to true, the function will also reset permanent app launch args.
              */
-            reset(options?: AppLaunchArgsOperationOptions): void;
+            reset(options?: AppLaunchArgsOperationOptions): this;
 
             /**
              * Get all currently set launch-arguments.
              * @param options.permanent - when set to true, the function will return only permanent app launch args.
+             * when set to false, the function will return only transient app launch args.
              * @returns An object containing all launch-arguments.
              * Note: Changes on the returned object will not be reflected on the launch-arguments associated with the device.
              */

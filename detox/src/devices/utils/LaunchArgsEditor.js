@@ -39,13 +39,17 @@ class LaunchArgsEditor {
 
   /** @param {LaunchArgsEditorOptions} [options] */
   get(options) {
-    const value = this._permanent.get();
+    const permanent = options && options.permanent;
 
-    if (options && options.permanent) {
-      return value;
-    } else {
-      return _.merge(value, this._transient.get());
+    if (permanent === true) {
+      return this._permanent.get();
     }
+
+    if (permanent === false) {
+      return this._transient.get();
+    }
+
+    return _.merge(this._permanent.get(), this._transient.get());
   }
 }
 
