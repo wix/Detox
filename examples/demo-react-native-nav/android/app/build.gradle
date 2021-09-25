@@ -1,0 +1,101 @@
+apply plugin: 'com.android.application'
+apply from: '../rninfo.gradle'
+
+//project.ext.react = [:]
+project.ext.react = [
+    enableHermes: true
+]
+apply from: '../../node_modules/react-native/react.gradle'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId 'com.detox.rn.example'
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName '1.0'
+        ndk {
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64'
+        }
+
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
+    }
+    splits {
+        abi {
+            reset()
+            enable false
+            universalApk false  // If true, also generate a universal APK
+            include 'armeabi-v7a', 'x86', 'x86_64'
+        }
+    }
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "12345678"
+            keyAlias "key0"
+            keyPassword "12345678"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    if (rnInfo.isRN60OrHigher) {
+        implementation 'androidx.appcompat:appcompat:1.1.0'
+        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    } else {
+        implementation 'com.android.support:appcompat-v7:28.0.0'
+    }
+
+    // noinspection GradleDynamicVersion
+    implementation 'com.facebook.react:react-native:+'
+
+    implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
+
+    // noinspection GradleDynamicVersion
+    androidTestImplementation 'com.wix:detox:+'
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+}
+
+if (rnInfo.isRN60OrHigher) {
+    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
+    dependencies {
+        def enableHermes = project.ext.react.get('enableHermes', false)
+        if (enableHermes) {
+            def hermesModuleName = rnInfo.isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
+            def hermesPath = "../../node_modules/$hermesModuleName/android/"
+            debugImplementation files(hermesPath + 'hermes-debug.aar')
+            releaseImplementation files(hermesPath + 'hermes-release.aar')
+        } else {
+            implementation 'org.webkit:android-jsc:+'
+        }
+    }
+}
+
+// Run this once to be able to run the application with BUCK
+// puts all compile dependencies into folder libs for BUCK to use
+task copyDownloadableDepsToLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
+}
