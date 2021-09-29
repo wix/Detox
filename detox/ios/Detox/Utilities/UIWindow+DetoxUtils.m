@@ -138,19 +138,34 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 + (UIWindow*)dtx_keyWindow
 {
-	return UIWindowScene._keyWindowScene._keyWindow;
+    UIWindow *foundWindow = nil;
+    NSArray *windows = [[UIApplication sharedApplication]windows];
+    for (UIWindow *window in windows) {
+        if (window.isKeyWindow) {
+            foundWindow = window;
+            break;
+        }
+    }
+    return foundWindow;
+}
+
++ (id)dtx_keyWindowScene
+{
+	UIWindow* keyWindow = [self dtx_keyWindow];
+	UIWindowScene* scene = keyWindow ? keyWindow.windowScene :  nil;
+	return scene;
 }
 
 + (NSArray<UIWindow *> *)dtx_allKeyWindowSceneWindows
 {
-	UIWindowScene* scene = UIWindowScene._keyWindowScene;
+	UIWindowScene* scene = [self dtx_keyWindowScene];
 	return [self dtx_allWindowsForScene:scene];
 }
 
 + (NSArray<UIWindow*>*)dtx_allWindowsForScene:(UIWindowScene*)scene
 {
 	NSMutableArray<UIWindow*>* windows = [[self dtx_allWindows] mutableCopy];
-	scene = scene ?: UIWindowScene._keyWindowScene;
+	scene = scene ?: [self dtx_keyWindowScene];
 	if(scene != nil)
 	{
 		NSPredicate* predicate = [NSPredicate predicateWithFormat:@"windowScene == %@", scene];
@@ -193,7 +208,7 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 + (void)dtx_enumerateKeyWindowSceneWindowsUsingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
 {
-	UIWindowScene* scene = UIWindowScene._keyWindowScene;
+	UIWindowScene* scene = [self dtx_keyWindowScene];
 	[self dtx_enumerateWindowsInScene:scene usingBlock:block];
 }
 
