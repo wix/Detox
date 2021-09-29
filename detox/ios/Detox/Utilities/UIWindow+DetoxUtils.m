@@ -138,9 +138,9 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 + (UIWindow*)dtx_keyWindow
 {
-    UIWindow        *foundWindow = nil;
-    NSArray         *windows = [[UIApplication sharedApplication]windows];
-    for (UIWindow   *window in windows) {
+    UIWindow *foundWindow = nil;
+    NSArray *windows = [[UIApplication sharedApplication]windows];
+    for (UIWindow *window in windows) {
         if (window.isKeyWindow) {
             foundWindow = window;
             break;
