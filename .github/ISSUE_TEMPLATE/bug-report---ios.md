@@ -32,7 +32,7 @@ IMPORTANT! In case of a vague bug or a crash, please create an example project t
 
 #### Screenshots / Video
 
-<!-- If applicable, add screenshots and videos to help explain your problem. -->
+<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md -->
 
 
 #### Environment
