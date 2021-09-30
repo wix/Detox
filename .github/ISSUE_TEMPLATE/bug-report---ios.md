@@ -19,7 +19,6 @@ Provide the steps necessary to reproduce the issue. If you are seeing a regressi
 1. 
 2. 
 3. 
-4. 
 
 #### Expected behavior
 A clear and concise description of what you expected to happen.
@@ -27,7 +26,9 @@ A clear and concise description of what you expected to happen.
 #### Screenshots
 If applicable, add screenshots to help explain your problem.
 
-#### Environment (please complete the following information):
+
+#### Environment
+<!-- Please provide the following information -->
  - Detox:
  - React Native:
  - Node:
@@ -35,6 +36,9 @@ If applicable, add screenshots to help explain your problem.
  - Xcode:
  - iOS:
  - macOS: 
+ - Test-runner (select one): `jest-circus` | `jest-jasmine2` (deprecated) | `mocha`
+
+<!-- Note: Test-runner is set in your detox configuration file (e.g. package.json, detox.config) -->
 
 ### Logs
 
@@ -51,5 +55,5 @@ If applicable, add screenshots to help explain your problem.
 - [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
 
 ### Reproducible Demo
-In case of a bug or a crash please add an example forking from the [DetoxTemplate](https://github.com/wix-incubator/DetoxTemplate) (follow the guidelines there) which reproduce the issue and ready to clone.
-Add to the DetoxTemplate (After you fork it), the minimal things which required to reproduce the issue (3rd party libraries / e2e tests).
+
+<!-- In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go DetoxTemplate project (https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / e2e tests). For complete information, review the guidelines there. -->
