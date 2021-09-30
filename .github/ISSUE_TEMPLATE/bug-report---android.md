@@ -51,7 +51,8 @@ Device logs can be obtained using `adb` (e.g. by running `adb logcat`), or by ru
 <!-- If applicable, add screenshots to help explain your problem. -->
 
 
-### Environment (please complete the following information):
+### Environment
+<!-- Please provide the following information -->
  - Detox:
  - React Native:
  - Node:
@@ -59,4 +60,4 @@ Device logs can be obtained using `adb` (e.g. by running `adb logcat`), or by ru
  - OS: 
  - Test-runner (select one): `jest-circus` | `jest-jasmine2` (deprecated) | `mocha`
 
-<!-- Note: Test-runner is set in Detox.test-runner in your package.json -->
+<!-- Note: Test-runner is set in your detox configuration file (e.g. package.json, detox.config) -->
