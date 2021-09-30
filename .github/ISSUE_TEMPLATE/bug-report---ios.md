@@ -58,6 +58,40 @@ IMPORTANT! In case of a vague bug or a crash, please create an example project t
 
 - [ ] I am providing the `npm install` log below:
 
+<details>
+ <summary>Npm logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
+
 #### Device and verbose Detox logs
 
 - [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
+
+<!--
+Place *Detox* logs under the "details" tag below. They can be obtained by passing the `loglevel` param: `detox test --loglevel trace`.
+
+IMPORTANT: We will not be able to help out or provide proper analysis without these!
+-->
+
+<details>
+ <summary>Detox logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
+
+<!--
+Paste *device* logs from the test device - associated with the failing tests, under the "details" tag below.
+Device logs can be obtained by having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md) for more info).
+
+IMPORTANT: We will not be able to help out or provide proper analysis without these!
+-->
+
+<details>
+ <summary>Device logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
