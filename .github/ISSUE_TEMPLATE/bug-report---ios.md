@@ -20,11 +20,19 @@ Provide the steps necessary to reproduce the issue. If you are seeing a regressi
 2. 
 3. 
 
-#### Expected behavior
-A clear and concise description of what you expected to happen.
+<!--
+IMPORTANT! In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go DetoxTemplate project (https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / e2e tests). For complete information, review the guidelines there.
+-->
 
-#### Screenshots
-If applicable, add screenshots to help explain your problem.
+
+#### Expected behavior
+
+<!-- A clear and concise description of what you expected to happen. -->
+
+
+#### Screenshots / Video
+
+<!-- If applicable, add screenshots and videos to help explain your problem. -->
 
 
 #### Environment
@@ -53,7 +61,3 @@ If applicable, add screenshots to help explain your problem.
 #### Device and verbose Detox logs
 
 - [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
-
-### Reproducible Demo
-
-<!-- In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go DetoxTemplate project (https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / e2e tests). For complete information, review the guidelines there. -->
