@@ -131,11 +131,23 @@ describe('AsyncWebSocket', () => {
 
       it(`should reject all messages in the flight if there's an error`, async () => {
         const sendPromise1 = aws.send(generateRequest());
-        const sendPromise2 = aws.send(generateRequest());
         socket.mockError(anError());
 
         await expect(sendPromise1).rejects.toThrowErrorMatchingSnapshot();
-        await expect(sendPromise2).rejects.toThrowErrorMatchingSnapshot();
+      });
+
+      it('should throw for pending in-flight invokes', async () => {
+        aws.send(generateRequest(1, 'invoke'));
+        const response = aws.send(generateRequest(2, 'invoke'));
+        socket.mockMessage({ messageId: 2, type: 'response' });
+        await expect(response).rejects.toThrow('Attempting to send a new interaction without responding to the previous one. Previous interaction may be missing await');
+      });
+
+      it('should not throw for pending sync requests', async () => {
+        aws.send(generateRequest(1, 'currentStatus'));
+        const res2 = aws.send(generateRequest(2, 'currentStatus'));
+        socket.mockMessage({ messageId: 2, type: 'response' });
+        await expect(res2).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
       });
 
       it(`should call an event handler when it matches the message type in the flight`, async () => {
@@ -296,8 +308,8 @@ describe('AsyncWebSocket', () => {
   describe('.rejectAll()', () => {
     it(`should throw error to all pending promises`, async () => {
       await connect();
-      const message1 = aws.send(generateRequest());
-      const message2 = aws.send(generateRequest());
+      const message1 = aws.send(generateRequest(0, 'invoke'));
+      const message2 = aws.send(generateRequest(1, 'currentStatus'));
 
       aws.rejectAll(anError('TestError'));
       await expect(message1).rejects.toThrow(/TestError/);
@@ -357,8 +369,8 @@ describe('AsyncWebSocket', () => {
     ]);
   }
 
-  function generateRequest(messageId) {
-    return { type: 'invoke', message: 'a message', messageId };
+  function generateRequest(messageId, type = 'invoke') {
+    return { type, message: 'a message', messageId };
   }
 
   function generateResponse(message, messageId) {

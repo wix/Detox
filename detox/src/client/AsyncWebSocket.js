@@ -95,6 +95,11 @@ class AsyncWebSocket {
 
     const messageId = message.messageId;
     const inFlight = this.inFlightPromises[messageId] = new InflightRequest(message).withTimeout(options.timeout);
+
+    if (this.hasMultiplePendingActions()) {
+      throw  new DetoxRuntimeError('Attempting to send a new interaction without responding to the previous one. Previous interaction may be missing await');
+    }
+
     const messageAsString = JSON.stringify(message);
     this._log.trace(EVENTS.SEND, messageAsString);
     this._ws.send(messageAsString);
@@ -122,6 +127,14 @@ class AsyncWebSocket {
   // TODO: handle this leaked abstraction some day
   hasPendingActions() {
     return _.some(this.inFlightPromises, p => p.message.type !== 'currentStatus');
+  }
+
+  hasMultiplePendingActions() {
+    const remainingAfterRemovingCheckIdleMessages = _.filter(this.inFlightPromises, p =>
+      p.message.type !== 'currentStatus'
+    );
+
+    return remainingAfterRemovingCheckIdleMessages.length > 1;
   }
 
   rejectAll(error) {
