@@ -91,14 +91,6 @@ Failed to deliver the message to the Detox server:
 Error: TestError"
 `;
 
-exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 2`] = `
-"The pending request #1 (\\"invoke\\") has been rejected due to the following error:
-
-Failed to deliver the message to the Detox server:
-
-Error: TestError"
-`;
-
 exports[`AsyncWebSocket edge cases should elaborate about null-like messages 1`] = `
 [DetoxRuntimeError: The pending request #0 ("invoke") has been rejected due to the following error:
 
