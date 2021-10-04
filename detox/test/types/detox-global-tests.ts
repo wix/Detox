@@ -32,6 +32,8 @@ describe("Test", () => {
     test("Test", async () => {
         await element(by.id("element")).replaceText("text");
         await element(by.id("element")).tap();
+        await element(by.id("element")).longPress();
+        await element(by.id("element")).longPress(1000);
         await element(by.id("element")).scroll(50, "down");
         await element(by.id("scrollView")).scrollTo("bottom");
         await expect(element(by.id("element")).atIndex(0)).toNotExist();
