@@ -334,8 +334,8 @@ describe('AsyncWebSocket', () => {
   describe('.resetInFlightPromises', () => {
     it(`should reset all pending promises`, async () => {
       await connect();
-      aws.send(generateRequest());
-      aws.send(generateRequest());
+      aws.send(generateRequest(1, 'currentStatus'));
+      aws.send(generateRequest(2, 'currentStatus'));
 
       expect(_.size(aws.inFlightPromises)).toBe(2);
 
