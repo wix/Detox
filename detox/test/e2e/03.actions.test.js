@@ -119,6 +119,24 @@ describe('Actions', () => {
     await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
+  it('should throw an exception when attempting to send an interaction while another is pending', async () => {
+    let failed = false;
+    await element(by.id('UniqueId937')).typeText('one ');
+    element(by.id('UniqueId937')).typeText(' two ');
+
+    try {
+      await element(by.id('UniqueId937')).typeText(' three');
+    } catch(e) {
+      if (e.toString().includes('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?')) {
+        failed = true;
+      }
+    }
+
+    if (failed === false) {
+      throw new Error('Test should have thrown an error, but did not');
+    }
+  });
+
   it('should clear text in an element', async () => {
     if(device.getPlatform() === 'ios') {
       //Add a complex string on iOS to ensure clear works as expected.

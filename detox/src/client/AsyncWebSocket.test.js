@@ -140,14 +140,28 @@ describe('AsyncWebSocket', () => {
         aws.send(generateRequest(1, 'invoke'));
         const response = aws.send(generateRequest(2, 'invoke'));
         socket.mockMessage({ messageId: 2, type: 'response' });
-        await expect(response).rejects.toThrow('Attempting to send a new interaction without responding to the previous one. Previous interaction may be missing await');
+        await expect(response).rejects.toThrow('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?');
       });
 
-      it('should not throw for pending sync requests', async () => {
+      it('should not throw for pending allowable requests', async () => {
         aws.send(generateRequest(1, 'currentStatus'));
-        const res2 = aws.send(generateRequest(2, 'currentStatus'));
+        aws.send(generateRequest(2, 'currentStatus'));
+        aws.send(generateRequest(3, 'takeScreenshot'));
+        aws.send(generateRequest(4, 'takeScreenshot'));
+        aws.send(generateRequest(5, 'setRecordingState'));
+        aws.send(generateRequest(6, 'setRecordingState'));
+        aws.send(generateRequest(7, 'captureViewHierarchy'));
+        aws.send(generateRequest(8, 'captureViewHierarchy'));
+        aws.send(generateRequest(9, 'cleanup'));
+        aws.send(generateRequest(10, 'cleanup'));
+        aws.send(generateRequest(11, 'invoke'));
+        const res = aws.send(generateRequest(2, 'currentStatus'));
         socket.mockMessage({ messageId: 2, type: 'response' });
-        await expect(res2).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
+        await expect(res).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
+
+        const res2 = aws.send(generateRequest(12, 'any other request type'));
+        socket.mockMessage({ messageId: 12, type: 'response' });
+        await expect(res2).rejects.toThrow('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?');
       });
 
       it(`should call an event handler when it matches the message type in the flight`, async () => {

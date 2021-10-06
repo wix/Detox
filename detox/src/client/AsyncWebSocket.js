@@ -97,7 +97,9 @@ class AsyncWebSocket {
     const inFlight = this.inFlightPromises[messageId] = new InflightRequest(message).withTimeout(options.timeout);
 
     if (this.hasMultiplePendingActions()) {
-      throw  new DetoxRuntimeError('Attempting to send a new interaction without responding to the previous one. Previous interaction may be missing await');
+      this.rejectAll(new DetoxRuntimeError({
+        message: 'Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?',
+      }));
     }
 
     const messageAsString = JSON.stringify(message);
@@ -130,11 +132,11 @@ class AsyncWebSocket {
   }
 
   hasMultiplePendingActions() {
-    const remainingAfterRemovingCheckIdleMessages = _.filter(this.inFlightPromises, p =>
-      p.message.type !== 'currentStatus'
+    const remainingMessages = _.filter(this.inFlightPromises, p =>
+      !(['currentStatus', 'takeScreenshot', 'setRecordingState', 'captureViewHierarchy', 'cleanup'].includes(p.message.type))
     );
 
-    return remainingAfterRemovingCheckIdleMessages.length > 1;
+    return remainingMessages.length > 1;
   }
 
   rejectAll(error) {
