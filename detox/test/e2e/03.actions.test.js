@@ -120,21 +120,18 @@ describe('Actions', () => {
   });
 
   it('should throw an exception when attempting to send an interaction while another is pending', async () => {
-    let failed = false;
-    await element(by.id('UniqueId937')).typeText('one ');
-    element(by.id('UniqueId937')).typeText(' two ');
-
-    try {
-      await element(by.id('UniqueId937')).typeText(' three');
-    } catch(e) {
-      if (e.toString().includes('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?')) {
-        failed = true;
-      }
-    }
-
-    if (failed === false) {
-      throw new Error('Test should have thrown an error, but did not');
-    }
+      element(by.id('UniqueId937')).typeText('one ')
+        .catch(e => {
+          if (!e.toString().includes('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?')) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+      await element(by.id('UniqueId937')).typeText(' two')
+        .catch(e => {
+          if (!e.toString().includes('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?')) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
   });
 
   it('should clear text in an element', async () => {

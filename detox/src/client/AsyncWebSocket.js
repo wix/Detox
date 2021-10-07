@@ -97,9 +97,14 @@ class AsyncWebSocket {
     const inFlight = this.inFlightPromises[messageId] = new InflightRequest(message).withTimeout(options.timeout);
 
     if (this.hasMultiplePendingActions()) {
-      this.rejectAll(new DetoxRuntimeError({
-        message: 'Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?',
-      }));
+        for (const inflight of _.values(this.inFlightPromises)) {
+          if (!this.isAllowedPendingMessageType(inflight.message)) {
+            inflight.reject(new DetoxRuntimeError({
+              message: 'Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?',
+              noStack: true,
+            }));
+          }
+        }
     }
 
     const messageAsString = JSON.stringify(message);
@@ -131,9 +136,13 @@ class AsyncWebSocket {
     return _.some(this.inFlightPromises, p => p.message.type !== 'currentStatus');
   }
 
+  isAllowedPendingMessageType(message) {
+    return (['currentStatus', 'takeScreenshot', 'setRecordingState', 'captureViewHierarchy', 'cleanup', 'reactNativeReload'].includes(message.type));
+  }
+
   hasMultiplePendingActions() {
     const remainingMessages = _.filter(this.inFlightPromises, p =>
-      !(['currentStatus', 'takeScreenshot', 'setRecordingState', 'captureViewHierarchy', 'cleanup'].includes(p.message.type))
+      !(this.isAllowedPendingMessageType(p.message))
     );
 
     return remainingMessages.length > 1;
