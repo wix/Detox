@@ -119,21 +119,6 @@ describe('Actions', () => {
     await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
-  it('should throw an exception when attempting to send an interaction while another is pending', async () => {
-      element(by.id('UniqueId937')).typeText('one ')
-        .catch(e => {
-          if (!e.toString().includes('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?')) {
-            throw new Error('Test should have thrown a multiple interactions error, but did not');
-          }
-        });
-      await element(by.id('UniqueId937')).typeText(' two')
-        .catch(e => {
-          if (!e.toString().includes('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?')) {
-            throw new Error('Test should have thrown a multiple interactions error, but did not');
-          }
-        });
-  });
-
   it('should clear text in an element', async () => {
     if(device.getPlatform() === 'ios') {
       //Add a complex string on iOS to ensure clear works as expected.
@@ -208,5 +193,26 @@ describe('Actions', () => {
     if (device.getPlatform() === 'ios') {
       await expect(element(by.id(reactSliderId))).toHaveValue('75%');
     }
+  });
+
+  describe('pending interactions', () => {
+
+    const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
+      'Have you forgotten to apply an await over one of the Detox actions in your test code?';
+
+    it.only('should throw an exception when attempting to send an interaction while another is pending', async () => {
+      element(by.id('UniqueId937')).typeText('one ')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+      await element(by.id('UniqueId937')).typeText(' two')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+    });
   });
 });

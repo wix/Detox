@@ -136,34 +136,6 @@ describe('AsyncWebSocket', () => {
         await expect(sendPromise1).rejects.toThrowErrorMatchingSnapshot();
       });
 
-      it('should throw for pending in-flight invokes', async () => {
-        aws.send(generateRequest(1, 'invoke'));
-        const response = aws.send(generateRequest(2, 'invoke'));
-        socket.mockMessage({ messageId: 2, type: 'response' });
-        await expect(response).rejects.toThrow('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?');
-      });
-
-      it('should not throw for pending allowable requests', async () => {
-        aws.send(generateRequest(1, 'currentStatus'));
-        aws.send(generateRequest(2, 'currentStatus'));
-        aws.send(generateRequest(3, 'takeScreenshot'));
-        aws.send(generateRequest(4, 'takeScreenshot'));
-        aws.send(generateRequest(5, 'setRecordingState'));
-        aws.send(generateRequest(6, 'setRecordingState'));
-        aws.send(generateRequest(7, 'captureViewHierarchy'));
-        aws.send(generateRequest(8, 'captureViewHierarchy'));
-        aws.send(generateRequest(9, 'cleanup'));
-        aws.send(generateRequest(10, 'cleanup'));
-        aws.send(generateRequest(11, 'invoke'));
-        const res = aws.send(generateRequest(2, 'currentStatus'));
-        socket.mockMessage({ messageId: 2, type: 'response' });
-        await expect(res).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
-
-        const res2 = aws.send(generateRequest(12, 'any other request type'));
-        socket.mockMessage({ messageId: 12, type: 'response' });
-        await expect(res2).rejects.toThrow('Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?');
-      });
-
       it(`should call an event handler when it matches the message type in the flight`, async () => {
         const onErrorCallback = jest.fn();
         const someResponse = generateResponse('error message', 100);
@@ -351,6 +323,40 @@ describe('AsyncWebSocket', () => {
 
       socket.mockMessage({ type: 'someReply', messageId: 1 });
       expect(log.debug).toHaveBeenCalledWith({ event: 'WS_LATE_RESPONSE' }, expect.stringContaining('messageId=1'));
+    });
+  });
+
+  describe('pending interactions', () => {
+    beforeEach(async () => {
+      await connect();
+    });
+
+    const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
+      'Have you forgotten to apply an await over one of the Detox actions in your test code?';
+
+    it('should throw for pending in-flight invokes', async () => {
+      aws.send(generateRequest(1, 'invoke'));
+      const response = aws.send(generateRequest(2, 'invoke'));
+      socket.mockMessage({ messageId: 2, type: 'response' });
+      await expect(response).rejects.toThrow(multipleInteractionsWarning);
+    });
+
+    it('should not throw for pending allowable requests', async () => {
+      const allowedRequests = ['currentStatus', 'takeScreenshot', 'setRecordingState', 'captureViewHierarchy', 'cleanup', 'reactNativeReload'];
+      let messageId = 1;
+
+      for (const req in allowedRequests) {
+        aws.send(generateRequest(messageId, req));
+        messageId++;
+      }
+
+      const res = aws.send(generateRequest(2, 'currentStatus'));
+      socket.mockMessage({ messageId: 2, type: 'response' });
+      await expect(res).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
+
+      const res2 = aws.send(generateRequest(12, 'any other request type'));
+      socket.mockMessage({ messageId: 12, type: 'response' });
+      await expect(res2).rejects.toThrow(multipleInteractionsWarning);
     });
   });
 
