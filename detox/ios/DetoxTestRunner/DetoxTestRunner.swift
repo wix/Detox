@@ -8,7 +8,22 @@
 
 import XCTest
 
-class DetoxTestRunner: XCTestCase, WebSocketDelegate {
+class DetoxTestRunner: XCTestCase, WebSocketDelegate, DTXDetoxApplicationDelegate {
+	
+	var webSocket: WebSocket
+	var _testedApplication: DTXDetoxApplication
+	var _testedApplicationInvocationManager: InvocationManager
+	
+	var pendingActions: NSMutableArray
+	var _pendingActionsMutex: pthread_mutex_t
+//	var _pendingActionsAvailable: dispatch_semaphore_t
+	
+	class func defaultTestSuite() -> XCTestSuite {
+		let rv = XCTestSuite.init(name: "Detox Test Suite")
+		rv.addTest(DetoxTestRunner.init(selector: Selector(testDetoxSuite)))
+		return rv
+	}
+	
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -40,4 +55,37 @@ class DetoxTestRunner: XCTestCase, WebSocketDelegate {
             }
         }
     }
+	
+	func testDetoxSuite() {
+		NSLog("*********************************************************\nArguments: %@\n*********************************************************", ProcessInfo.processInfo.arguments);
+		
+	//	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
+	//	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.ExampleApp"];
+		//TODO: Obtain application bundle identifier from environment variables or launch arguments.
+		_testedApplication = DTXDetoxApplication()
+		_testedApplication.delegate = self;
+		_testedApplicationInvocationManager = InvocationManager(application: _testedApplication)
+		
+	//	[self webSocket:nil didReceiveAction:@"launch" withParams:nil withMessageId:@10];
+	//	[self webSocket:nil didReceiveAction:@"invoke" withParams:[NSDictionary dictionaryWithContentsOfURL:[[NSBundle bundleForClass:DetoxTestRunner.class] URLForResource:@"tap-bad" withExtension:@"plist"]] withMessageId:@1];
+	//	[self webSocket:nil didReceiveAction:@"launch" withParams:nil withMessageId:@10];
+	//	[self webSocket:nil didReceiveAction:@"invoke" withParams:[NSDictionary dictionaryWithContentsOfURL:[[NSBundle bundleForClass:DetoxTestRunner.class] URLForResource:@"tap" withExtension:@"plist"]] withMessageId:@2];
+		
+		repeat {
+			let action = self._dequeueAction();
+			action();
+		}
+		while (true);
+	}
+	
+	func _dequeueAction() -> (() -> Void) {
+//	 dispatch_semaphore_wait(_pendingActionsAvailable, DISPATCH_TIME_FOREVER);
+//	 pthread_mutex_lock(&_pendingActionsMutex);
+//	 dispatch_block_t action = _pendingActions.firstObject;
+//	 [_pendingActions removeObjectAtIndex:0];
+//	 pthread_mutex_unlock(&_pendingActionsMutex);
+//
+//	 return action;
+ }
 }
+
