@@ -40,6 +40,7 @@
     "eslint-plugin-node": "^6.0.1",
     "jest": "^27.0.0",
     "jest-environment-node": "^27.0.0",
+    "react-native-codegen": "^0.0.8",
     "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
