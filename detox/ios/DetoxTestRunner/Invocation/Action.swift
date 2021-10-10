@@ -295,14 +295,15 @@ class SetPickerAction : Action {
 
 class SetDatePickerAction : Action {
 	override func perform(on element: XCUIElement) -> [String: Any]? {
-		let dateString = params![0] as! String
-		let formatString = params![1] as! String
-		
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = formatString
-		let date = dateFormatter.date(from: dateString)!
-		
-		element.dtx_adjust(toDatePickerDate: date)
+//		let dateString = params![0] as! String
+//		let formatString = params![1] as! String
+//
+//		let dateFormatter = DateFormatter()
+//		dateFormatter.dateFormat = formatString
+//		let date = dateFormatter.date(from: dateString)!
+//
+//		//TODO: Complete the XCUIElement extension for it
+////		element.dtx_adjust(toDatePickerDate: date)
 		
 		return nil
 	}

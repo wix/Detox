@@ -11,7 +11,6 @@
 		390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */; };
 		390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */; };
 		392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324D62477D87D00A3D119 /* DetoxManager.swift */; };
-		392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324DE24781CBD00A3D119 /* WebSocket.swift */; };
 		392324E324782AE500A3D119 /* DetoxInit.m in Sources */ = {isa = PBXBuildFile; fileRef = 392324E124782AE500A3D119 /* DetoxInit.m */; };
 		3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */; };
 		3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767971DBF985400D72256 /* Detox.framework */; };
@@ -127,6 +126,12 @@
 		ADA8807F2713079E003A6317 /* InvocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA8807E2713079E003A6317 /* InvocationManager.swift */; };
 		ADA880802713091F003A6317 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA8807027130690003A6317 /* Element.swift */; };
 		ADA8808727130AEC003A6317 /* DTXDetoxApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = ADA8808627130AEC003A6317 /* DTXDetoxApplication.m */; };
+		ADA88094271319C6003A6317 /* XCUIElement+Visibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA88093271319C6003A6317 /* XCUIElement+Visibility.swift */; };
+		ADA8809727131A9D003A6317 /* XCUIElement+ExtendedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA8809627131A9D003A6317 /* XCUIElement+ExtendedText.swift */; };
+		ADA8809A2713204E003A6317 /* XCUIElement+ExtendedTouches.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880992713204E003A6317 /* XCUIElement+ExtendedTouches.swift */; };
+		ADA8809B271323E3003A6317 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324DE24781CBD00A3D119 /* WebSocket.swift */; };
+		ADA880A2271324A7003A6317 /* DTXLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DC984624BB8E8900FFB224 /* DTXLogging.swift */; };
+		ADA880A3271324AA003A6317 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DC984524BB8E8900FFB224 /* DTXLogging.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -178,6 +183,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 39DE8F5122F707DD00780546;
 			remoteInfo = DetoxSync;
+		};
+		ADA880912713190B003A6317 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ADA8808D2713190B003A6317 /* DetoxIPC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 397D3E2A233A293D00E69D28;
+			remoteInfo = DetoxIPC;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -332,6 +344,11 @@
 		ADA8808527130AEC003A6317 /* DTXDetoxApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXDetoxApplication.h; sourceTree = "<group>"; };
 		ADA8808627130AEC003A6317 /* DTXDetoxApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXDetoxApplication.m; sourceTree = "<group>"; };
 		ADA8808927130B7E003A6317 /* DetoxIPCAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxIPCAPI.h; sourceTree = "<group>"; };
+		ADA8808D2713190B003A6317 /* DetoxIPC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxIPC.xcodeproj; path = DetoxIPC/DetoxIPC.xcodeproj; sourceTree = "<group>"; };
+		ADA88093271319C6003A6317 /* XCUIElement+Visibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Visibility.swift"; sourceTree = "<group>"; };
+		ADA8809627131A9D003A6317 /* XCUIElement+ExtendedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+ExtendedText.swift"; sourceTree = "<group>"; };
+		ADA8809827131B23003A6317 /* DTXTestCaseAssertions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTestCaseAssertions.h; sourceTree = "<group>"; };
+		ADA880992713204E003A6317 /* XCUIElement+ExtendedTouches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+ExtendedTouches.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -421,6 +438,7 @@
 		3947678D1DBF985400D72256 = {
 			isa = PBXGroup;
 			children = (
+				ADA8808D2713190B003A6317 /* DetoxIPC.xcodeproj */,
 				394767991DBF985400D72256 /* Detox */,
 				39408DEE1FE6368100C20BD5 /* JS */,
 				3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */,
@@ -650,7 +668,9 @@
 		ADA8806C271305A2003A6317 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				ADA8809527131A7F003A6317 /* XCUIElementExtensions */,
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
+				ADA8809827131B23003A6317 /* DTXTestCaseAssertions.h */,
 				ADA8808127130AA8003A6317 /* DetoxTestRunner-Bridging-Header.h */,
 				ADA8808527130AEC003A6317 /* DTXDetoxApplication.h */,
 				ADA8808627130AEC003A6317 /* DTXDetoxApplication.m */,
@@ -680,6 +700,24 @@
 				ADA8808927130B7E003A6317 /* DetoxIPCAPI.h */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		ADA8808E2713190B003A6317 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ADA880922713190B003A6317 /* DetoxIPC.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ADA8809527131A7F003A6317 /* XCUIElementExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				ADA88093271319C6003A6317 /* XCUIElement+Visibility.swift */,
+				ADA8809627131A9D003A6317 /* XCUIElement+ExtendedText.swift */,
+				ADA880992713204E003A6317 /* XCUIElement+ExtendedTouches.swift */,
+			);
+			path = XCUIElementExtensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -834,6 +872,10 @@
 					ProjectRef = 393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */;
 				},
 				{
+					ProductGroup = ADA8808E2713190B003A6317 /* Products */;
+					ProjectRef = ADA8808D2713190B003A6317 /* DetoxIPC.xcodeproj */;
+				},
+				{
 					ProductGroup = 39DC984B24BB8FCD00FFB224 /* Products */;
 					ProjectRef = 39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */;
 				},
@@ -871,6 +913,13 @@
 			fileType = wrapper.framework;
 			path = DetoxSync.framework;
 			remoteRef = 39DC984E24BB8FCD00FFB224 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ADA880922713190B003A6317 /* DetoxIPC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DetoxIPC.framework;
+			remoteRef = ADA880912713190B003A6317 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -961,7 +1010,6 @@
 				395AD81A24B5EBEA002B382B /* fishhook.c in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
-				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
 				390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */,
 				3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */,
 				3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */,
@@ -984,12 +1032,18 @@
 			files = (
 				ADA8808727130AEC003A6317 /* DTXDetoxApplication.m in Sources */,
 				ADA88073271306B9003A6317 /* Expectation.swift in Sources */,
+				ADA880A3271324AA003A6317 /* DTXLogging.m in Sources */,
 				ADA8807B27130733003A6317 /* Predicate.swift in Sources */,
 				ADA880802713091F003A6317 /* Element.swift in Sources */,
 				ADA880672713057C003A6317 /* DetoxTestRunner.swift in Sources */,
+				ADA8809727131A9D003A6317 /* XCUIElement+ExtendedText.swift in Sources */,
+				ADA8809A2713204E003A6317 /* XCUIElement+ExtendedTouches.swift in Sources */,
+				ADA88094271319C6003A6317 /* XCUIElement+Visibility.swift in Sources */,
 				ADA8806F27130661003A6317 /* Action.swift in Sources */,
+				ADA8809B271323E3003A6317 /* WebSocket.swift in Sources */,
 				ADA8807927130719003A6317 /* ElementTypeHelper.swift in Sources */,
 				ADA8807D27130785003A6317 /* Modifier.swift in Sources */,
+				ADA880A2271324A7003A6317 /* DTXLogging.swift in Sources */,
 				ADA8807F2713079E003A6317 /* InvocationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
