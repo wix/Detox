@@ -196,11 +196,10 @@ describe('Actions', () => {
   });
 
   describe('pending interactions', () => {
-
     const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
       'Have you forgotten to apply an await over one of the Detox actions in your test code?';
 
-    it.only('should throw an exception when attempting to send an interaction while another is pending', async () => {
+    it('should throw an exception when attempting to send an interaction while another is pending', async () => {
       element(by.id('UniqueId937')).typeText('one ')
         .catch(e => {
           if (!e.toString().includes(multipleInteractionsWarning)) {

@@ -292,7 +292,7 @@ describe('AsyncWebSocket', () => {
   });
 
   describe('.rejectAll()', () => {
-    it(`should throw error to all pending promises`, async () => {
+    it(`should throw error for all pending promises`, async () => {
       await connect();
       const message1 = aws.send(generateRequest(0, 'invoke'));
       const message2 = aws.send(generateRequest(1, 'currentStatus'));
@@ -335,10 +335,10 @@ describe('AsyncWebSocket', () => {
       'Have you forgotten to apply an await over one of the Detox actions in your test code?';
 
     it('should throw for pending in-flight invokes', async () => {
-      aws.send(generateRequest(1, 'invoke'));
-      const response = aws.send(generateRequest(2, 'invoke'));
-      socket.mockMessage({ messageId: 2, type: 'response' });
-      await expect(response).rejects.toThrow(multipleInteractionsWarning);
+      const response1 = aws.send(generateRequest(1, 'invoke'));
+      const response2 = aws.send(generateRequest(2, 'invoke'));
+      await expect(response1).rejects.toThrow(multipleInteractionsWarning);
+      await expect(response2).rejects.toThrow(multipleInteractionsWarning);
     });
 
     it('should not throw for pending allowable requests', async () => {
