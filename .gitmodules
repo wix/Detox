@@ -7,6 +7,9 @@
 [submodule "detox/ios/DTXObjectiveCHelpers"]
 	path = detox/ios/DTXObjectiveCHelpers
 	url = https://github.com/wix/DTXObjectiveCHelpers.git
+[submodule "detox/ios/DetoxIPC"]
+	path = detox/ios/DetoxIPC
+	url = https://github.com/wix/DetoxIPC.git
 [submodule "detox/ios/DetoxSync"]
 	path = detox/ios/DetoxSync
 	url = https://github.com/wix/DetoxSync.git
