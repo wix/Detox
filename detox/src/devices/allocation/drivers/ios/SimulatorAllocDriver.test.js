@@ -42,27 +42,10 @@ describe('Allocation driver for iOS simulators', () => {
     const givenNoUsedSimulators = () => givenUsedSimulators([]);
     const givenSystemDevices = (...deviceSpecs) => applesimutils.list.mockResolvedValue([...deviceSpecs]);
     const givenCreatedDeviceUDID = (udid) => applesimutils.create.mockReturnValue(udid);
+    const asConfig = (device) => ({ type: 'ios.simulator', device });
 
-    it('should accept string as device type', async () => {
-      await allocDriver.allocate('iPhone X');
-
-      expect(applesimutils.list).toHaveBeenCalledWith(
-        { byType: 'iPhone X' },
-        'Searching for device by type = "iPhone X" ...'
-      );
-    });
-
-    it('should accept string with comma as device type and OS version', async () => {
-      await allocDriver.allocate('iPhone X, iOS 12.0');
-
-      expect(applesimutils.list).toHaveBeenCalledWith(
-        { byType: 'iPhone X', byOS: 'iOS 12.0' },
-        'Searching for device by type = "iPhone X" and by OS = "iOS 12.0" ...'
-      );
-    });
-
-    it('should accept { byId } as matcher', async () => {
-      await allocDriver.allocate({ id: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' });
+    it('should accept { id } as matcher', async () => {
+      await allocDriver.allocate(asConfig({ id: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byId: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' },
@@ -70,8 +53,8 @@ describe('Allocation driver for iOS simulators', () => {
       );
     });
 
-    it('should accept { byName } as matcher', async () => {
-      await allocDriver.allocate({ name: 'Chika' });
+    it('should accept { name } as matcher', async () => {
+      await allocDriver.allocate(asConfig({ name: 'Chika' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byName: 'Chika' },
@@ -79,8 +62,8 @@ describe('Allocation driver for iOS simulators', () => {
       );
     });
 
-    it('should accept { byType } as matcher', async () => {
-      await allocDriver.allocate({ type: 'iPad Air' });
+    it('should accept { type } as matcher', async () => {
+      await allocDriver.allocate(asConfig({ type: 'iPad Air' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byType: 'iPad Air' },
@@ -88,8 +71,8 @@ describe('Allocation driver for iOS simulators', () => {
       );
     });
 
-    it('should accept { byType, byOS } as matcher', async () => {
-      await allocDriver.allocate({ type: 'iPad 2', os: 'iOS 9.3.6' });
+    it('should accept { type, os } as matcher', async () => {
+      await allocDriver.allocate(asConfig({ type: 'iPad 2', os: 'iOS 9.3.6' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byType: 'iPad 2', byOS: 'iOS 9.3.6' },
@@ -107,11 +90,11 @@ describe('Allocation driver for iOS simulators', () => {
       givenCreatedDeviceUDID(udidNew);
       givenUsedSimulators(udidUsed);
 
-      const result = await allocDriver.allocate('iPhone Mock');
+      const result = await allocDriver.allocate(asConfig('iPhone Mock'));
 
       expect(applesimutils.create).toHaveBeenCalledWith(specUsed);
       expect(result.constructor.name).toEqual('IosSimulatorCookie');
-      expect(IosSimulatorCookie).toHaveBeenCalledWith(udidNew, 'iPhone Mock');
+      expect(IosSimulatorCookie).toHaveBeenCalledWith(udidNew);
     });
 
     it('should reuse a matching device', async () => {
@@ -122,11 +105,11 @@ describe('Allocation driver for iOS simulators', () => {
       givenSystemDevices(specUsed);
       givenNoUsedSimulators();
 
-      const result = await allocDriver.allocate('iPhone Mock');
+      const result = await allocDriver.allocate(asConfig('iPhone Mock'));
 
       expect(applesimutils.create).not.toHaveBeenCalled();
       expect(result.constructor.name).toEqual('IosSimulatorCookie');
-      expect(IosSimulatorCookie).toHaveBeenCalledWith(udid, 'iPhone Mock');
+      expect(IosSimulatorCookie).toHaveBeenCalledWith(udid);
     });
   });
 

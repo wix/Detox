@@ -1,4 +1,10 @@
 describe('Allocation driver for Genymotion cloud emulators', () => {
+  const deviceConfig = {
+    device: {
+      query: 'mock',
+    },
+  };
+
   let recipeQuerying;
   let allocationHelper;
   let instanceLauncher;
@@ -25,10 +31,6 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     adb = new ADB();
 
     jest.mock('../../../../cookies/GenycloudEmulatorCookie');
-  });
-
-  const aDeviceQuery = () => ({
-    query: 'mock',
   });
 
   const aRecipe = () => ({
@@ -61,11 +63,8 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
   const givenLaunchResult = (instance) => instanceLauncher.launch.mockResolvedValue(instance);
 
   describe('allocation', () => {
-    let deviceQuery;
     let allocDriver;
     beforeEach(() => {
-      deviceQuery = aDeviceQuery();
-
       const { GenyAllocDriver } = require('./GenyAllocDriver');
       allocDriver = new GenyAllocDriver({ recipeQuerying, allocationHelper, instanceLauncher, adb });
     });
@@ -74,8 +73,8 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenRecipe(aRecipe());
       givenReallocationResult(anInstance());
 
-      await allocDriver.allocate(deviceQuery);
-      expect(recipeQuerying.getRecipeFromQuery).toHaveBeenCalledWith(deviceQuery);
+      await allocDriver.allocate(deviceConfig);
+      expect(recipeQuerying.getRecipeFromQuery).toHaveBeenCalledWith(deviceConfig.device);
     });
 
     it('should throw a descriptive error if recipe not found', async () => {
@@ -83,10 +82,10 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenReallocationResult(anInstance());
 
       try {
-        await allocDriver.allocate(deviceQuery);
+        await allocDriver.allocate(deviceConfig);
       } catch (e) {
         expect(e.toString()).toContain('No Genymotion-Cloud template found to match the configured lookup query');
-        expect(e.toString()).toContain(JSON.stringify(deviceQuery));
+        expect(e.toString()).toContain(JSON.stringify(deviceConfig.device));
         expect(e.toString()).toContain('HINT: Revisit your detox configuration');
         expect(e.toString()).toContain('https://cloud.geny.io/app/shared-devices');
         return;
@@ -99,7 +98,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenRecipe(recipe);
       givenReallocationResult(anInstance());
 
-      await allocDriver.allocate(deviceQuery);
+      await allocDriver.allocate(deviceConfig);
       expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(recipe);
     });
 
@@ -110,7 +109,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         givenRecipe(aRecipe());
         givenReallocationResult(instance);
 
-        await allocDriver.allocate(deviceQuery);
+        await allocDriver.allocate(deviceConfig);
 
         expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
       });
@@ -120,7 +119,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         givenFreshAllocationResult(anInstance());
         givenLaunchError('alloc error mock');
 
-        await expect(allocDriver.allocate(deviceQuery)).rejects.toThrowError('alloc error mock');
+        await expect(allocDriver.allocate(deviceConfig)).rejects.toThrowError('alloc error mock');
       });
 
       it('should deallocate the instance if launch fails', async () => {
@@ -131,7 +130,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         givenLaunchError('alloc error mock');
 
         try {
-          await allocDriver.allocate(deviceQuery);
+          await allocDriver.allocate(deviceConfig);
         } catch (e) {}
         expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
       });
@@ -144,7 +143,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         givenRecipe(aRecipe());
         givenFreshAllocationResult(instance);
 
-        await allocDriver.allocate(deviceQuery);
+        await allocDriver.allocate(deviceConfig);
 
         expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
       });
@@ -158,7 +157,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenReallocationResult(instance);
       givenLaunchResult(launchedInstance);
 
-      const result = await allocDriver.allocate(deviceQuery);
+      const result = await allocDriver.allocate(deviceConfig);
       expect(result.constructor.name).toEqual('GenycloudEmulatorCookie');
       expect(GenycloudEmulatorCookie).toHaveBeenCalledWith(launchedInstance);
     });
@@ -168,7 +167,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenRecipe(aRecipe());
       givenReallocationResult(instance);
 
-      await allocDriver.allocate(deviceQuery);
+      await allocDriver.allocate(deviceConfig);
 
       expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
     });
@@ -178,7 +177,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       givenRecipe(aRecipe());
       givenReallocationResult(instance);
 
-      await allocDriver.allocate(deviceQuery);
+      await allocDriver.allocate(deviceConfig);
 
       expect(adb.apiLevel).toHaveBeenCalledWith(instance.adbName);
     });

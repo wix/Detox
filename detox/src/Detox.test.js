@@ -5,7 +5,7 @@ jest.mock('./utils/logger');
 jest.mock('./client/Client');
 jest.mock('./utils/AsyncEmitter');
 jest.mock('./invoke');
-jest.mock('./utils/cutStackTraces');
+jest.mock('./utils/wrapWithStackTraceCutter');
 jest.mock('./environmentFactory');
 
 jest.mock('./server/DetoxServer', () => {

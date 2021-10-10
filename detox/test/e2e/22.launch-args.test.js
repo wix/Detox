@@ -1,29 +1,37 @@
+/* global by, device, element */
 const _ = require('lodash');
 
 // Note: Android-only as, according to Leo, on iOS there's no added value here compared to
 // existing tests that check deep-link URLs. Combined with the fact that we do not yet
 // support complex args on iOS -- no point in testing it out.
 describe(':android: Launch arguments', () => {
-  beforeAll(async () => {
-    await device.selectApp('exampleWithArgs');
-    await device.launchApp();
+  const defaultArgs = Object.freeze({
+    app: 'le',
+    goo: 'gle?',
+    micro: 'soft'
   });
 
-  async function assertLaunchArg(key, expectedValue) {
-    await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
-    await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);
-  }
+  beforeEach(async () => {
+    await device.selectApp('exampleWithArgs');
+    assertPreconfiguredValues(device.appLaunchArgs.get(), defaultArgs);
+  });
 
-  async function assertNoLaunchArg(launchArgKey) {
-    await expect(element(by.id(`launchArg-${launchArgKey}.name`))).not.toBeVisible();
-  }
+  it('should have permanent arg in spite of .selectApp()', async () => {
+    try {
+      assertPreconfiguredValues(device.appLaunchArgs.get({ permanent: true }), {});
+      device.appLaunchArgs.modify({ ama: 'zed' }, { permanent: true });
+      assertPreconfiguredValues(device.appLaunchArgs.get({ permanent: true }), { ama: 'zed' });
 
-  function assertPreconfiguredValue(expectedInitArgs) {
-    const initArgs = device.appLaunchArgs.get();
-    if (!_.isEqual(initArgs, expectedInitArgs)) {
-      throw new Error(`Precondition failure: Preconfigured launch arguments (in detox.config.js) do not match the expected value.\nExpected: ${JSON.stringify(expectedInitArgs)}\nReceived: ${JSON.stringify(initArgs)}`);
+      await device.selectApp('example');
+      assertPreconfiguredValues(device.appLaunchArgs.get(), { ama: 'zed' });
+      assertPreconfiguredValues(device.appLaunchArgs.get({ permanent: false }), {});
+
+      await device.launchApp({ newInstance: true });
+      await assertLaunchArgs({ ama: 'zed' });
+    } finally {
+      device.appLaunchArgs.reset({ permanent: true });
     }
-  }
+  });
 
   it('should handle primitive args when used on-site', async () => {
     const launchArgs = {
@@ -32,12 +40,8 @@ describe(':android: Launch arguments', () => {
       heisthe: 1,
     };
 
-    await device.launchApp({newInstance: true, launchArgs});
-
-    await element(by.text('Launch Args')).tap();
-    await assertLaunchArg('hello', 'world');
-    await assertLaunchArg('seekthe', 'true');
-    await assertLaunchArg('heisthe', '1');
+    await device.launchApp({ newInstance: true, launchArgs });
+    await assertLaunchArgs(launchArgs);
   });
 
   it('should handle complex args when used on-site', async () => {
@@ -51,17 +55,14 @@ describe(':android: Launch arguments', () => {
       complexlist: ['arguments', 'https://haxorhost:1337'],
     };
 
-    await device.launchApp({newInstance: true, launchArgs});
-    await element(by.text('Launch Args')).tap();
-
-    await assertLaunchArg('complex', JSON.stringify(launchArgs.complex));
-    await assertLaunchArg('complexlist', JSON.stringify(launchArgs.complexlist));
+    await device.launchApp({ newInstance: true, launchArgs });
+    await assertLaunchArgs({
+      complex: JSON.stringify(launchArgs.complex),
+      complexlist: JSON.stringify(launchArgs.complexlist),
+    });
   });
 
   it('should allow for arguments modification', async () => {
-    const expectedInitArgs = { app: 'le', goo: 'gle?', micro: 'soft' };
-    assertPreconfiguredValue(expectedInitArgs);
-
     device.appLaunchArgs.modify({
       app: undefined, // delete
       goo: 'gle!', // modify
@@ -69,12 +70,11 @@ describe(':android: Launch arguments', () => {
     });
 
     await device.launchApp({ newInstance: true });
-    await element(by.text('Launch Args')).tap();
-
-    await assertLaunchArg('goo', 'gle!');
-    await assertLaunchArg('ama', 'zon');
-    await assertLaunchArg('micro', 'soft');
-    await assertNoLaunchArg('app');
+    await assertLaunchArgs({
+      'goo': 'gle!',
+      'ama': 'zon',
+      'micro': 'soft',
+    }, ['app']);
   });
 
   it('should allow for on-site arguments to take precedence', async () => {
@@ -88,8 +88,7 @@ describe(':android: Launch arguments', () => {
     });
 
     await device.launchApp({ newInstance: true, launchArgs });
-    await element(by.text('Launch Args')).tap();
-    await assertLaunchArg('anArg', 'aValue!');
+    await assertLaunchArgs({ anArg: 'aValue!' });
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
@@ -101,12 +100,34 @@ describe(':android: Launch arguments', () => {
       size: 'large',
     };
 
-    await device.launchApp({newInstance: true, launchArgs});
-
-    await element(by.text('Launch Args')).tap();
-    await assertLaunchArg('hello', 'world');
-    await assertNoLaunchArg('debug');
-    await assertNoLaunchArg('log');
-    await assertNoLaunchArg('size');
+    await device.launchApp({ newInstance: true, launchArgs });
+    await assertLaunchArgs({ hello: 'world' }, ['debug', 'log', 'size']);
   });
+
+  async function assertLaunchArgs(expected, notExpected) {
+    await element(by.text('Launch Args')).tap();
+
+    if (expected) {
+      for (const [key, value] of Object.entries(expected)) {
+        await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
+        await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(`${value}`);
+      }
+    }
+
+    if (notExpected) {
+      for (const key of notExpected) {
+        await expect(element(by.id(`launchArg-${key}.name`))).not.toBeVisible();
+      }
+    }
+  }
+
+  function assertPreconfiguredValues(initArgs, expectedInitArgs) {
+    if (!_.isEqual(initArgs, expectedInitArgs)) {
+      throw new Error(
+        `Precondition failure: Preconfigured launch arguments (in detox.config.js) do not match the expected value.\n` +
+        `Expected: ${JSON.stringify(expectedInitArgs)}\n` +
+        `Received: ${JSON.stringify(initArgs)}`
+      );
+    }
+  }
 });

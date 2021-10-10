@@ -44,12 +44,12 @@ class AppleSimUtils {
    * @param {String} udid - device id
    * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state
    */
-  async boot(udid, deviceLaunchArgs = '') {
+  async boot(udid, deviceBootArgs = '') {
     const isBooted = await this.isBooted(udid);
 
     if (!isBooted) {
       const statusLogs = { trying: `Booting device ${udid}...` };
-      await this._execSimctl({ cmd: `boot ${udid} ${deviceLaunchArgs}`, statusLogs, retries: 10 });
+      await this._execSimctl({ cmd: `boot ${udid} ${deviceBootArgs}`, statusLogs, retries: 10 });
       await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
       return true;
     }

@@ -132,9 +132,10 @@ module.exports = {
     group: 'Configuration:',
     describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.',
   },
-  'device-launch-args': {
+  'device-boot-args': {
+    alias: 'device-launch-args',
     group: 'Execution:',
-    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.',
+    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when booted.',
   },
   'app-launch-args': {
     group: 'Execution:',
@@ -148,7 +149,6 @@ module.exports = {
   },
   'force-adb-install': {
     boolean: true,
-    default: false,
     group: 'Execution:',
     describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },

@@ -48,6 +48,12 @@ describe('Emulator binary version', () => {
   it('should query the emulator', async () => {
     await uut.resolve();
     expect(emulatorExec.exec).toHaveBeenCalledWith(expect.any(MockQueryVersionCommand));
+    expect(MockQueryVersionCommand).toHaveBeenCalledWith({ headless: false });
+  });
+
+  it('should apply headless arg', async () => {
+    await uut.resolve(true);
+    expect(MockQueryVersionCommand).toHaveBeenCalledWith({ headless: true });
   });
 
   it('should extract version from common log', async () => {

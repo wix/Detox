@@ -25,34 +25,41 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   }
 
   /**
-   * @param deviceQuery
+   * @param deviceConfig
    * @returns {Promise<AndroidEmulatorCookie>}
    */
-  async allocate(deviceQuery) {
-    const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
+  async allocate(deviceConfig) {
+    const avdName = deviceConfig.device.avdName;
 
     await this._avdValidator.validate(avdName);
-    await this._fixAvdConfigIniSkinNameIfNeeded(avdName);
+    await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
     const allocResult = await this._allocationHelper.allocateDevice(avdName);
     const { adbName, placeholderPort, isRunning } = allocResult;
+    const launchOptions = {
+      bootArgs: deviceConfig.bootArgs,
+      gpuMode: deviceConfig.gpuMode,
+      headless: deviceConfig.headless,
+      readonly: deviceConfig.readonly,
+      port: placeholderPort,
+    };
 
-    await this._launchEmulator(avdName, adbName, isRunning, placeholderPort);
+    await this._launchEmulator(avdName, adbName, isRunning, launchOptions);
     await this._prepareEmulator(adbName);
 
     return new AndroidEmulatorCookie(adbName, avdName);
   }
 
-  async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
-    const rawBinaryVersion = await this._emulatorVersionResolver.resolve();
+  async _fixAvdConfigIniSkinNameIfNeeded(avdName, isHeadless) {
+    const rawBinaryVersion = await this._emulatorVersionResolver.resolve(isHeadless);
     const binaryVersion = _.get(rawBinaryVersion, 'major');
     return await patchAvdSkinConfig(avdName, binaryVersion);
   }
 
-  async _launchEmulator(avdName, adbName, isRunning, port) {
+  async _launchEmulator(avdName, adbName, isRunning, options) {
     try {
       await traceCall('emulatorLaunch', () =>
-        this._emulatorLauncher.launch(avdName, adbName, isRunning, { port }));
+        this._emulatorLauncher.launch(avdName, adbName, isRunning, options));
     } catch (e) {
       await this._allocationHelper.deallocateDevice(adbName);
       throw e;

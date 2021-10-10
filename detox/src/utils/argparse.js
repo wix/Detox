@@ -4,17 +4,18 @@ const argv = require('minimist')(process.argv.slice(2));
 const { escape } = require('./pipeCommands');
 
 function getArgValue(key, alias) {
-  let value = _getArgvValue(key, alias);
+  const value = _getArgvValue(key, alias);
+  return value === undefined ? getEnvValue(key) : value;
+}
 
-  if (value === undefined) {
-    const envKey = _.findKey(process.env, matchesKey(
-      `DETOX_${_.snakeCase(key)}`.toUpperCase()
-    ));
+function getEnvValue(key) {
+  const envKey = _.findKey(process.env, matchesKey(
+    `DETOX_${_.snakeCase(key)}`.toUpperCase()
+  ));
 
-    value = process.env[envKey];
-    if (value === 'undefined') {
-      value = undefined;
-    }
+  let value = process.env[envKey];
+  if (value === 'undefined') {
+    value = undefined;
   }
 
   return value;
@@ -82,6 +83,7 @@ function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
 
 module.exports = {
   getArgValue,
+  getEnvValue,
   getFlag,
   joinArgs,
 };

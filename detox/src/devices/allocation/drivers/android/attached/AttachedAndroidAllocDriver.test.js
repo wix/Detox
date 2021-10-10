@@ -2,7 +2,9 @@ describe('Allocation driver for attached Android devices', () => {
   const adbPattern = '9A291FFAZ005S9';
   const adbName = 'mock-adb-name';
   const deviceConfig = {
-    adbName: adbPattern,
+    device: {
+      adbName: adbPattern,
+    },
   };
 
   let adb;
@@ -48,45 +50,33 @@ describe('Allocation driver for attached Android devices', () => {
         }
       });
 
-      await allocDriver.allocate(adbPattern);
+      await allocDriver.allocate(deviceConfig);
       expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
     });
 
     it('should fail if allocation fails', async () => {
       deviceRegistry.allocateDevice.mockRejectedValue(new Error('mock error'));
-      await expect(allocDriver.allocate(adbPattern)).rejects.toThrowError('mock error');
-    });
-
-    it('should allocate a device based on an object-like configuration', async () => {
-      deviceRegistry.allocateDevice.mockImplementation((userFn) => {
-        try {
-          return userFn();
-        } finally {
-          expect(freeDeviceFinder.findFreeDevice).toHaveBeenCalledWith(adbPattern);
-        }
-      });
-      await allocDriver.allocate(deviceConfig);
-      expect(deviceRegistry.allocateDevice).toHaveBeenCalled();
+      await expect(allocDriver.allocate(deviceConfig)).rejects.toThrowError('mock error');
     });
 
     it('should init ADB\'s API-level', async () => {
       givenDeviceAllocationResult(adbName);
 
-      await allocDriver.allocate(adbPattern);
+      await allocDriver.allocate(deviceConfig);
       expect(adb.apiLevel).toHaveBeenCalledWith(adbName);
     });
 
     it('should unlock the screen using ADB', async () => {
       givenDeviceAllocationResult(adbName);
 
-      await allocDriver.allocate(adbPattern);
+      await allocDriver.allocate(deviceConfig);
       expect(adb.unlockScreen).toHaveBeenCalledWith(adbName);
     });
 
     it('should report boot-event via launcher', async () => {
       givenDeviceAllocationResult(adbName);
 
-      await allocDriver.allocate(adbPattern);
+      await allocDriver.allocate(deviceConfig);
       expect(attachedAndroidLauncher.notifyLaunchCompleted).toHaveBeenCalledWith(adbName);
     });
 
@@ -95,7 +85,7 @@ describe('Allocation driver for attached Android devices', () => {
 
       givenDeviceAllocationResult(adbName);
 
-      const result = await allocDriver.allocate(adbPattern);
+      const result = await allocDriver.allocate(deviceConfig);
       expect(result.constructor.name).toEqual('AndroidDeviceCookie');
       expect(AndroidDeviceCookie).toHaveBeenCalledWith(adbName);
     });

@@ -1,7 +1,5 @@
-const _ = require('lodash');
-
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const cutStackTraces = require('../../utils/cutStackTraces');
+const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../../utils/trace');
 
@@ -16,7 +14,7 @@ class RuntimeDevice {
     sessionConfig,
     runtimeErrorComposer,
   }, deviceDriver) {
-    cutStackTraces(this, [
+    wrapWithStackTraceCutter(this, [
       'captureViewHierarchy',
       'clearKeychain',
       'disableSynchronization',
@@ -58,7 +56,7 @@ class RuntimeDevice {
     this._errorComposer = runtimeErrorComposer;
 
     this._currentApp = null;
-    this._currentAppLaunchArgs = null;
+    this._currentAppLaunchArgs = new LaunchArgsEditor();
     this._processes = {};
 
     this.deviceDriver = deviceDriver;
@@ -79,9 +77,6 @@ class RuntimeDevice {
   }
 
   get appLaunchArgs() {
-    if (!this._currentAppLaunchArgs) {
-      this._currentAppLaunchArgs = this._getCurrentAppsLaunchArgs();
-    }
     return this._currentAppLaunchArgs;
   }
 
@@ -112,7 +107,8 @@ class RuntimeDevice {
     }
 
     this._currentApp = appConfig;
-    this._currentAppLaunchArgs = null;
+    this._currentAppLaunchArgs.reset();
+    this._currentAppLaunchArgs.modify(this._currentApp.launchArgs);
     await this._inferBundleIdFromBinary();
   }
 
@@ -185,11 +181,7 @@ class RuntimeDevice {
   async installApp(binaryPath, testBinaryPath) {
     await traceCall('appInstall', () => {
       const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
-
-      return this.deviceDriver.installApp(
-        currentApp.binaryPath,
-        currentApp.testBinaryPath
-      );
+      return this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
     });
   }
 
@@ -324,12 +316,8 @@ class RuntimeDevice {
       await this.terminateApp(bundleId);
     }
 
-    const currentAppLaunchArgs = this._currentApp
-      ? this._currentApp.launchArgs
-      : null;
-
     const baseLaunchArgs = {
-      ...currentAppLaunchArgs,
+      ...this._currentAppLaunchArgs.get(),
       ...params.launchArgs,
     };
 
@@ -416,16 +404,12 @@ class RuntimeDevice {
     return (paramsCounter === 1);
   }
 
-  _defaultLaunchArgs() {
-    return {
-      'detoxServer': this._sessionConfig.server,
-      'detoxSessionId': this._sessionConfig.sessionId
-    };
-  }
-
   _prepareLaunchArgs(additionalLaunchArgs) {
-    const launchArgs = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
-    return launchArgs;
+    return {
+      detoxServer: this._sessionConfig.server,
+      detoxSessionId: this._sessionConfig.sessionId,
+      ...additionalLaunchArgs
+    };
   }
 
   async _inferBundleIdFromBinary() {
@@ -434,12 +418,6 @@ class RuntimeDevice {
     if (!bundleId) {
       this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
     }
-  }
-
-  _getCurrentAppsLaunchArgs() {
-    const currentApp = this._getCurrentApp();
-    currentApp.launchArgs = currentApp.launchArgs || {};
-    return new LaunchArgsEditor(currentApp.launchArgs);
   }
 }
 

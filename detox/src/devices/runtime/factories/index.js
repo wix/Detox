@@ -18,7 +18,7 @@ class RuntimeDeviceFactoryBase {
   }
 
   createRuntimeDevice(deviceCookie, commonDeps, configs) {
-    const runtimeDriver = this._driverFactory.createDriver(deviceCookie, commonDeps);
+    const runtimeDriver = this._driverFactory.createDriver(deviceCookie, commonDeps, configs);
     return new RuntimeDevice({ ...commonDeps, ...configs }, runtimeDriver);
   }
 }

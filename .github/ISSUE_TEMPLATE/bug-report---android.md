@@ -34,24 +34,41 @@ If possible, please provide a small demo project that reproduces the issue, or a
 
 ### Detox Trace-Logs
 <!--
+Place *Detox* logs under the "details" tag below. They can be obtained by passing the `loglevel` param: `detox test --loglevel trace`.
+
 IMPORTANT: We will not be able to help out or provide proper analysis without these!
-*Detox* logs can be obtained by passing the `loglevel` param: `detox test --loglevel trace`.
 -->
 
+<details>
+ <summary>Detox logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
 
 ### Device logs (adb logcat)
 <!--
+Paste *device* logs from the Android device/emulator - associated with the failing tests, under the "details" tag below.
+Device logs can be obtained either by using `adb` (e.g. by running `adb logcat` while the test is running), or by running having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md) for more info).
+
 IMPORTANT: We will not be able to help out or provide proper analysis without these!
-Paste here logs from the Android device/emulator.
-Device logs can be obtained using `adb` (e.g. by running `adb logcat`), or by running Detox with the `--record-logs all` argument, and then extracting them from the auto-generated `<project>/artifacts/` directory.
 -->
 
+<details>
+ <summary>Device logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
 
-### Screenshots
-<!-- If applicable, add screenshots to help explain your problem. -->
+
+### Screenshots / Video
+
+<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md -->
 
 
-### Environment (please complete the following information):
+### Environment
+<!-- Please provide the following information -->
  - Detox:
  - React Native:
  - Node:
@@ -59,4 +76,4 @@ Device logs can be obtained using `adb` (e.g. by running `adb logcat`), or by ru
  - OS: 
  - Test-runner (select one): `jest-circus` | `jest-jasmine2` (deprecated) | `mocha`
 
-<!-- Note: Test-runner is set in Detox.test-runner in your package.json -->
+<!-- Note: Test-runner is set in your detox configuration file (e.g. package.json, detox.config) -->

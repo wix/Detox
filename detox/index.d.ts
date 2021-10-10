@@ -217,6 +217,7 @@ declare global {
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
             device: string | Partial<IosSimulatorQuery>;
+            bootArgs?: string;
         }
 
         interface DetoxIosNoneDriverConfig {
@@ -225,22 +226,28 @@ declare global {
             device?: string | Partial<IosSimulatorQuery>;
         }
 
-        interface DetoxAttachedAndroidDriverConfig {
+        interface DetoxSharedAndroidDriverConfig {
+            forceAdbInstall?: boolean;
+            utilBinaryPaths?: string[];
+        }
+
+        interface DetoxAttachedAndroidDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.attached';
             device: string | { adbName: string };
-            utilBinaryPaths?: string[];
         }
 
-        interface DetoxAndroidEmulatorDriverConfig {
+        interface DetoxAndroidEmulatorDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.emulator';
             device: string | { avdName: string };
-            utilBinaryPaths?: string[];
+            bootArgs?: string;
+            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
+            headless?: boolean;
+            readonly?: boolean;
         }
 
-        interface DetoxGenymotionCloudDriverConfig {
+        interface DetoxGenymotionCloudDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.genycloud';
             device: string | { recipeUUID: string; } | { recipeName: string; };
-            utilBinaryPaths?: string[];
         }
 
         interface DetoxCustomDriverConfig {
@@ -341,6 +348,11 @@ declare global {
             reuse?: boolean;
         }
 
+        type AppLaunchArgsOperationOptions = Partial<{
+            /** Changes the scope of the operation: transient or permanent app launch args */
+            permanent: boolean;
+        }>;
+
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
          *
@@ -351,12 +363,18 @@ declare global {
         interface AppLaunchArgs {
             /**
              * Modify the launch-arguments via a modifier object, according to the following logic:
-             *  - Concrete modifier properties would either set anew or override the value of existing properties with the same name, with
-             *    the specific value.
-             *  - Modifier properties set to either `undefined` or `null` would have the equivalent property deleted.
+             * - Non-nullish modifier properties would set a new value or override the previous value of
+             *   existing properties with the same name.
+             * - Modifier properties set to either `undefined` or `null` would delete the corresponding property
+             *   if it existed.
+             * These custom app launch arguments are transient by default, and will get erased as soon as
+             * you select another app. If you wish to keep them between the apps, use { permanent: true }
+             * option.
+             * Note: transient (default) values override the permanent ones if the corresponding properties
+             * have the same name.
              *
              * @param modifier The modifier object.
-             *
+             * @param options.permanent - when set to true, the function will set permanent app launch args.
              * @example
              * // With current launch arguments set to:
              * // {
@@ -367,7 +385,7 @@ declare global {
              *   mockServerPort: 4321,
              *   mockServerCredentials: null,
              *   mockServerToken: 'abcdef',
-             * };
+             * });
              * await device.launchApp();
              * // ==> launch-arguments become:
              * // {
@@ -375,19 +393,23 @@ declare global {
              * //   mockServerToken: 'abcdef',
              * // }
              */
-            modify(modifier: object): void;
+            modify(modifier: object, options?: AppLaunchArgsOperationOptions): this;
 
             /**
              * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
+             * Note: by default, permanent app launch args are not reset.
+             * @param options.permanent - when set to true, the function will also reset permanent app launch args.
              */
-            reset(): void;
+            reset(options?: AppLaunchArgsOperationOptions): this;
 
             /**
              * Get all currently set launch-arguments.
-             * @returns An object containing all launch-arguments. Note: Changes on the returned object will not be reflected on the
-             * launch-arguments associated with the device.
+             * @param options.permanent - when set to true, the function will return only permanent app launch args.
+             * when set to false, the function will return only transient app launch args.
+             * @returns An object containing all launch-arguments.
+             * Note: Changes on the returned object will not be reflected on the launch-arguments associated with the device.
              */
-            get(): object;
+            get(options?: AppLaunchArgsOperationOptions): object;
         }
 
         interface Device {
@@ -970,10 +992,10 @@ declare global {
 
             /**
              * Simulate long press on an element
-             * @param duration (iOS only) press duration time, in milliseconds. Optional (default is 1000ms).
+             * @param duration (iOS only) custom press duration time, in milliseconds. Optional (default is 1000ms).
              * @example await element(by.id('tappable')).longPress();
              */
-            longPress(duration: number): Promise<void>;
+            longPress(duration?: number): Promise<void>;
 
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)

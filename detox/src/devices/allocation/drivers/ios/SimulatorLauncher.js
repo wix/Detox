@@ -1,15 +1,14 @@
-const argparse = require('../../../../utils/argparse');
 const DeviceLauncher = require('../../../common/drivers/DeviceLauncher');
 
+// TODO ASDASD Unit-tests
 class SimulatorLauncher extends DeviceLauncher {
   constructor({ applesimutils, eventEmitter }) {
     super(eventEmitter);
     this._applesimutils = applesimutils;
   }
 
-  async launch(udid, type) {
-    const deviceLaunchArgs = argparse.getArgValue('deviceLaunchArgs');
-    const coldBoot = await this._applesimutils.boot(udid, deviceLaunchArgs);
+  async launch(udid, type, bootArgs) {
+    const coldBoot = await this._applesimutils.boot(udid, bootArgs);
     await this._notifyBootEvent(udid, type, coldBoot);
   }
 

@@ -1,10 +1,19 @@
 describe('IOS simulator driver', () => {
   const udid = 'UD-1D-MOCK';
+  const type = 'Chika';
   const bundleId = 'bundle-id-mock';
+  const bootArgs = { boot: 'args' };
+  const deviceConfig = {
+    device: {
+      type,
+    },
+    bootArgs,
+  };
 
   let client;
   let emitter;
   let applesimutils;
+  let simulatorLauncher;
   let uut;
   beforeEach(() => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
@@ -20,10 +29,10 @@ describe('IOS simulator driver', () => {
     applesimutils = new AppleSimUtils();
 
     const SimulatorLauncher = jest.genMockFromModule('../../../allocation/drivers/ios/SimulatorLauncher');
-    const simulatorLauncher = new SimulatorLauncher();
+    simulatorLauncher = new SimulatorLauncher();
 
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver(udid, 'Chika', { simulatorLauncher, applesimutils, client, emitter });
+    uut = new SimulatorDriver(udid, { simulatorLauncher, applesimutils, client, emitter }, { deviceConfig });
   });
 
   it('should return the UDID as the external ID', () => {
@@ -60,6 +69,23 @@ describe('IOS simulator driver', () => {
         ...launchArgs,
         dog3: 'Chika, from plugin',
       }, '');
+    });
+  });
+
+  describe('.resetContentAndSettings', () => {
+    it('should shut the device down', async () => {
+      await uut.resetContentAndSettings();
+      expect(simulatorLauncher.shutdown).toHaveBeenCalledWith(udid);
+    });
+
+    it('should reset via apple-sim-utils', async () => {
+      await uut.resetContentAndSettings();
+      expect(applesimutils.resetContentAndSettings).toHaveBeenCalledWith(udid);
+    });
+
+    it('should relaunch the simulator', async () => {
+      await uut.resetContentAndSettings();
+      expect(simulatorLauncher.launch).toHaveBeenCalledWith(udid, type, bootArgs);
     });
   });
 

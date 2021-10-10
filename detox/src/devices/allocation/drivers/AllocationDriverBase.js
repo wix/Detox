@@ -1,9 +1,9 @@
 class AllocationDriverBase {
   /**
-   * @param deviceQuery { Object | String }
+   * @param deviceConfig { Object }
    * @return {Promise<DeviceCookie>}
    */
-  async allocate(deviceQuery) {} // eslint-disable-line no-unused-vars
+  async allocate(deviceConfig) {} // eslint-disable-line no-unused-vars
 }
 
 class DeallocationDriverBase {

@@ -8,6 +8,10 @@ class GenycloudEmulatorCookie extends AndroidDeviceCookie {
     super();
     this.instance = instance;
   }
+
+  get adbName() {
+    return this.instance.adbName;
+  }
 }
 
 module.exports = GenycloudEmulatorCookie;

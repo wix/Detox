@@ -5,8 +5,24 @@ declare var test: (test: string, callback: () => void) => void;
 
 describe("Test", () => {
     beforeAll(async () => {
+        await device.appLaunchArgs.modify({ ourMockServerPort: 9999 }, { permanent: true });
+        await device.selectApp('app1');
+        await device.appLaunchArgs.modify({ appMockServerPort: 4000 });
+        await device.appLaunchArgs.get({ permanent: true }); // {  ourMockServerPort: 9999 }
+
+        await device.selectApp('app2');
+        await device.appLaunchArgs.modify({ appMockServerPort: 4001 });
+        await device.appLaunchArgs.get(); // { appMockServerPort: 4001, ourMockServerPort: 9999 }
+    });
+
+    beforeAll(async () => {
         await device.reloadReactNative();
         await device.takeScreenshot("test screenshot");
+    });
+
+    afterAll(async () => {
+        await device.appLaunchArgs.reset();
+        await device.appLaunchArgs.reset({ permanent: true });
     });
 
     afterAll(async () => {
@@ -16,6 +32,8 @@ describe("Test", () => {
     test("Test", async () => {
         await element(by.id("element")).replaceText("text");
         await element(by.id("element")).tap();
+        await element(by.id("element")).longPress();
+        await element(by.id("element")).longPress(1000);
         await element(by.id("element")).scroll(50, "down");
         await element(by.id("scrollView")).scrollTo("bottom");
         await expect(element(by.id("element")).atIndex(0)).toNotExist();

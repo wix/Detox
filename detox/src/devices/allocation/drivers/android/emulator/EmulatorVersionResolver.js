@@ -9,17 +9,17 @@ class EmulatorVersionResolver {
     this.version = undefined;
   }
 
-  async resolve() {
+  async resolve(isHeadless = false) { // TODO Make isHeadless a config arg (i.e. through c'tor)?
     if (!this.version) {
-      this.version = await this._resolve();
+      this.version = await this._resolve(isHeadless);
     }
     return this.version;
   }
 
-  async _resolve() {
+  async _resolve(headless) {
     let rawOutput;
     try {
-      rawOutput = await this._emulatorExec.exec(new QueryVersionCommand()) || '';
+      rawOutput = await this._emulatorExec.exec(new QueryVersionCommand({ headless })) || '';
     } catch (error) {
       log.error({ event: EMU_BIN_VERSION_DETECT_EV, success: false, error }, 'Could not detect emulator binary version', error);
       return null;

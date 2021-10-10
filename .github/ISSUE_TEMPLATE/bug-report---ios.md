@@ -19,15 +19,24 @@ Provide the steps necessary to reproduce the issue. If you are seeing a regressi
 1. 
 2. 
 3. 
-4. 
+
+<!--
+IMPORTANT! In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go DetoxTemplate project (https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / e2e tests). For complete information, review the guidelines there.
+-->
+
 
 #### Expected behavior
-A clear and concise description of what you expected to happen.
 
-#### Screenshots
-If applicable, add screenshots to help explain your problem.
+<!-- A clear and concise description of what you expected to happen. -->
 
-#### Environment (please complete the following information):
+
+#### Screenshots / Video
+
+<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md -->
+
+
+#### Environment
+<!-- Please provide the following information -->
  - Detox:
  - React Native:
  - Node:
@@ -35,6 +44,9 @@ If applicable, add screenshots to help explain your problem.
  - Xcode:
  - iOS:
  - macOS: 
+ - Test-runner (select one): `jest-circus` | `jest-jasmine2` (deprecated) | `mocha`
+
+<!-- Note: Test-runner is set in your detox configuration file (e.g. package.json, detox.config) -->
 
 ### Logs
 
@@ -46,10 +58,40 @@ If applicable, add screenshots to help explain your problem.
 
 - [ ] I am providing the `npm install` log below:
 
+<details>
+ <summary>Npm logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
+
 #### Device and verbose Detox logs
 
 - [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
 
-### Reproducible Demo
-In case of a bug or a crash please add an example forking from the [DetoxTemplate](https://github.com/wix-incubator/DetoxTemplate) (follow the guidelines there) which reproduce the issue and ready to clone.
-Add to the DetoxTemplate (After you fork it), the minimal things which required to reproduce the issue (3rd party libraries / e2e tests).
+<!--
+Place *Detox* logs under the "details" tag below. They can be obtained by passing the `loglevel` param: `detox test --loglevel trace`.
+
+IMPORTANT: We will not be able to help out or provide proper analysis without these!
+-->
+
+<details>
+ <summary>Detox logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>
+
+<!--
+Paste *device* logs from the test device - associated with the failing tests, under the "details" tag below.
+Device logs can be obtained by having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md) for more info).
+
+IMPORTANT: We will not be able to help out or provide proper analysis without these!
+-->
+
+<details>
+ <summary>Device logs</summary>
+ <code>
+ (paste logs here)
+ </code>
+</details>

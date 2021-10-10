@@ -9,21 +9,21 @@ const AndroidRuntimeDriverFactoryBase = require('./AndroidRuntimeDriverFactoryBa
 const RuntimeDriverFactoryBase = require('./RuntimeDriverFactoryBase');
 
 class AndroidEmulatorRuntimeDriverFactory extends AndroidRuntimeDriverFactoryBase {
-  _createDriver(deviceCookie, deps) {
+  _createDriver(deviceCookie, deps, configs) {
     const { adbName, avdName } = deviceCookie;
-    return new AndroidEmulatorRuntimeDriver(adbName, avdName, deps);
+    return new AndroidEmulatorRuntimeDriver(adbName, avdName, deps, configs);
   }
 }
 
 class GenycloudRuntimeDriverFactory extends AndroidRuntimeDriverFactoryBase {
-  _createDriver(deviceCookie, deps) {
+  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
     const { instance } = deviceCookie;
     return new GenycloudRuntimeDriver(instance, deps);
   }
 }
 
 class AttachedAndroidRuntimeDriverFactory extends AndroidRuntimeDriverFactoryBase {
-  _createDriver(deviceCookie, deps) {
+  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
     const { adbName } = deviceCookie;
     return new AttachedAndroidRuntimeDriver(adbName, deps);
   }
@@ -44,9 +44,9 @@ class IosRuntimeDriverFactory extends RuntimeDriverFactoryBase {
 }
 
 class IosSimulatorRuntimeDriverFactory extends RuntimeDriverFactoryBase {
-  _createDriver(deviceCookie, deps) {
-    const { udid, type } = deviceCookie;
-    return new IosSimulatorRuntimeDriver(udid, type, deps);
+  _createDriver(deviceCookie, deps, configs) {
+    const { udid } = deviceCookie;
+    return new IosSimulatorRuntimeDriver(udid, deps, configs);
   }
 }
 

@@ -671,14 +671,9 @@ describe('Device', () => {
   describe('installApp()', () => {
     it(`with a custom app path should use custom app path`, async () => {
       const device = await aValidDevice();
+
       await device.installApp('newAppPath');
       expect(driverMock.driver.installApp).toHaveBeenCalledWith('newAppPath', device._deviceConfig.testBinaryPath);
-    });
-
-    it(`with a custom test app path should use custom test app path`, async () => {
-      const device = await aValidDevice();
-      await device.installApp('newAppPath', 'newTestAppPath');
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith('newAppPath', 'newTestAppPath');
     });
 
     it(`with no args should use the default path given in configuration`, async () => {

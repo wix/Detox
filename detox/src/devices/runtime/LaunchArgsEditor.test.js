@@ -1,83 +1,85 @@
 describe('Device launch-args editor', () => {
-
-  let launchArgs;
+  /** @type {typeof import('./LaunchArgsEditor')} */
   let LaunchArgsEditor;
+  /** @type {LaunchArgsEditor} */
+  let launchArgsEditor;
+
   beforeEach(() => {
-    launchArgs = {
-      argX: 'valX',
-      argY: { value: 'Y' },
-    };
     LaunchArgsEditor = require('./LaunchArgsEditor');
+    launchArgsEditor = new LaunchArgsEditor();
   });
 
-  it('should require a reference plain-object', () => {
-      expect(() => new LaunchArgsEditor(undefined)).toThrow();
+  it('should have empty value at first', () => {
+    expect(launchArgsEditor.get()).toEqual({});
   });
 
-  it('should allow for getting the referenced args-object', () => {
-    const launchArgsEditor = new LaunchArgsEditor(launchArgs);
-    expect(launchArgsEditor.get()).toEqual(launchArgs);
+  it('should not throw if modify() is called with undefined', () => {
+    expect(launchArgsEditor.modify().get()).toEqual({});
   });
 
-  it('should allow for arguments setting', () => {
-    const someArgs = {
-      argZ: 'valZ',
-    };
-
-    const launchArgsEditor = new LaunchArgsEditor({});
-    launchArgsEditor.modify(someArgs);
-    expect(launchArgsEditor.get()).toEqual(someArgs);
+  test.each([
+    ['transient', false],
+    ['permanent', true],
+  ])('should merge %s values', (_name, permanent) => {
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent })
+      .modify({ b: 2 }, { permanent })
+      .get()).toEqual({ a: 1, b: 2 });
   });
 
-  it('should return a non-reflecting representation of the launch-arguments via get()', () => {
-    const launchArgsEditor = new LaunchArgsEditor(launchArgs);
-    launchArgsEditor.modify({
-      aLaunchArg: { value: 'aValue?' },
-    });
+  it('should merge both transient and permanent values', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent: false })
+      .modify({ b: 2 }, { permanent: true })
+      .get()).toEqual({ a: 1, b: 2 }));
 
-    launchArgsEditor.get().aLaunchArg.value = 'aValue!';
-    expect(launchArgsEditor.get().aLaunchArg.value).toEqual('aValue?');
+  it('should merge transient values by default', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 })
+      .modify({ b: 2 }, { permanent: true })
+      .get({ permanent: true })).toEqual({ b: 2 }));
+
+  it('should not return transient values if permanent values were requested', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent: false })
+      .modify({ b: 2 }, { permanent: true })
+      .get({ permanent: true })).toEqual({ b: 2 }));
+
+  it('should not return permanent values if transient values were requested', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent: false })
+      .modify({ b: 2 }, { permanent: true })
+      .get({ permanent: false })).toEqual({ a: 1 }));
+
+  it('should reset only transient values by default', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent: false })
+      .modify({ b: 2 }, { permanent: true })
+      .reset()
+      .get()).toEqual({ b: 2 }));
+
+  it('should reset both permanent and transient values if requested', () =>
+    expect(launchArgsEditor
+      .modify({ a: 1 }, { permanent: false })
+      .modify({ b: 2 }, { permanent: true })
+      .reset({ permanent: true })
+      .get()).toEqual({}));
+
+  describe.each([[false], [true]])('for options.permanent=%j', (permanent) => {
+    it.each([[null], [undefined]])('should delete property if the new value is %j', (value) =>
+      expect(launchArgsEditor
+        .modify({ value: 1 }, { permanent })
+        .modify({ value }, { permanent })
+        .get()).toEqual({}));
   });
 
-  describe('with custom initial args', () => {
-    it('should merge set arguments into the initial ones', () => {
-      const someArgs = {
-        argZ: 'valZ',
-      };
-      const expectedArgs = {
-        ...launchArgs,
-        argZ: 'valZ',
-      };
+  it('should return every time a copy of values', () => {
+    expect(launchArgsEditor.get()).not.toBe(launchArgsEditor.get());
+  });
 
-      const launchArgsEditor = new LaunchArgsEditor(launchArgs);
-      launchArgsEditor.modify(someArgs);
-      expect(launchArgsEditor.get()).toEqual(expectedArgs);
-    });
-
-    it('should allow for implicit arguments clearing using undefined as values', () => {
-      const argsModifier = {
-        argX: undefined,
-        argY: null,
-        argZ: 'valZ',
-      };
-      const expectedArgs = {
-        argZ: 'valZ',
-      };
-
-      const launchArgsEditor = new LaunchArgsEditor(launchArgs);
-      launchArgsEditor.modify(argsModifier);
-      expect(launchArgsEditor.get()).toStrictEqual(expectedArgs);
-   });
-
-    it('should allow for a complete arguments reset', () => {
-      const someArgs = {
-        argZ: 'valZ',
-      };
-
-      const launchArgsEditor = new LaunchArgsEditor(launchArgs);
-      launchArgsEditor.modify(someArgs);
-      launchArgsEditor.reset();
-      expect(launchArgsEditor.get()).toStrictEqual({});
-    });
+  it('should return every time a deep copy of values', () => {
+    launchArgsEditor.modify({ a: { b: 'c' } });
+    launchArgsEditor.get().a.b = 'd';
+    expect(launchArgsEditor.get()).toEqual({ a: { b: 'c' } });
   });
 });

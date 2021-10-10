@@ -14,16 +14,19 @@ const IosDriver = require('./IosDriver');
 class SimulatorDriver extends IosDriver {
   /**
    * @param udid { String } The unique cross-OS identifier of the simulator
-   * @param type { String } The simulator's semantic type (e.g. 'iPhone 12 Pro').
    * @param deps { Object }
    * @param deps.simulatorLauncher { SimulatorLauncher }
    * @param deps.applesimutils { AppleSimUtils }
+   * @param configs { Object }
+   * @param configs.deviceConfig { Object }
    */
-  constructor(udid, type, deps) {
+  constructor(udid, deps, { deviceConfig }) {
     super(deps);
 
     this.udid = udid;
-    this._deviceName = `${udid} (${type})`;
+    this._type = deviceConfig.device.type;
+    this._bootArgs = deviceConfig.bootArgs;
+    this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
   }
@@ -138,7 +141,7 @@ class SimulatorDriver extends IosDriver {
   async resetContentAndSettings() {
     await this._simulatorLauncher.shutdown(this.udid);
     await this._applesimutils.resetContentAndSettings(this.udid);
-    await this._simulatorLauncher.launch(this.udid);
+    await this._simulatorLauncher.launch(this.udid, this._type, this._bootArgs);
   }
 
   getLogsPaths() {

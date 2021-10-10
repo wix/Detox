@@ -19,10 +19,11 @@ class GenyAllocDriver extends AllocationDriverBase {
   }
 
   /**
-   * @param deviceQuery { Object | String }
+   * @param deviceConfig { Object }
    * @return {Promise<GenycloudEmulatorCookie>}
    */
-  async allocate(deviceQuery) {
+  async allocate(deviceConfig) {
+    const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 

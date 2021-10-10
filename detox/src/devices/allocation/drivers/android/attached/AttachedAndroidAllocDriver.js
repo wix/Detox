@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const AndroidDeviceCookie = require('../../../../cookies/AndroidDeviceCookie');
 const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
 
@@ -19,11 +17,11 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
   }
 
   /**
-   * @param deviceQuery { Object | String }
+   * @param deviceConfig
    * @return {Promise<AndroidDeviceCookie>}
    */
-  async allocate(deviceQuery) {
-    const adbNamePattern = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
+  async allocate(deviceConfig) {
+    const adbNamePattern = deviceConfig.device.adbName;
     const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
     // TODO Also disable native animations?

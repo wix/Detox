@@ -18,10 +18,12 @@ class SimulatorAllocDriver extends AllocationDriverBase {
   }
 
   /**
-   * @param deviceQuery { Object | String }
+   * @param deviceConfig { Object }
    * @return {Promise<IosSimulatorCookie>}
    */
-  async allocate(deviceQuery) {
+  async allocate(deviceConfig) {
+    const deviceQuery = this._adaptQuery(deviceConfig.device);
+
     // TODO Delegate this onto a well tested allocator class
     const udid = await this._deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
@@ -32,26 +34,29 @@ class SimulatorAllocDriver extends AllocationDriverBase {
       throw new DetoxRuntimeError(`Failed to find device matching ${deviceComment}`);
     }
 
-    const type = (deviceQuery.type || deviceQuery);
     try {
-      await this._simulatorLauncher.launch(udid, type);
+      await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs);
     } catch (e) {
       await this._deviceRegistry.disposeDevice(udid);
       throw e;
     }
 
-    return new IosSimulatorCookie(udid, type);
+    return new IosSimulatorCookie(udid);
   }
 
   /***
    * @private
-   * @param {String | Object} rawDeviceQuery
+   * @param deviceQuery {{
+   *   byId?: string;
+   *   byName?: string;
+   *   byType?: string;
+   *   byOS?: string;
+   * }}
    * @returns {Promise<String>}
    */
-  async _findOrCreateDevice(rawDeviceQuery) {
+  async _findOrCreateDevice(deviceQuery) {
     let udid;
 
-    const deviceQuery = this._adaptQuery(rawDeviceQuery);
     const { free, taken } = await this._groupDevicesByStatus(deviceQuery);
 
     if (_.isEmpty(free)) {
@@ -95,27 +100,12 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     return result;
   }
 
-  _adaptQuery(rawDeviceQuery) {
-    let byId, byName, byOS, byType;
-
-    if (_.isPlainObject(rawDeviceQuery)) {
-      byId = rawDeviceQuery.id;
-      byName = rawDeviceQuery.name;
-      byOS = rawDeviceQuery.os;
-      byType = rawDeviceQuery.type;
-    } else {
-      if (_.includes(rawDeviceQuery, ',')) {
-        [byType, byOS] = _.split(rawDeviceQuery, /\s*,\s*/);
-      } else {
-        byType = rawDeviceQuery;
-      }
-    }
-
+  _adaptQuery({ id, name, os, type }) {
     return _.omitBy({
-      byId,
-      byName,
-      byOS,
-      byType,
+      byId: id,
+      byName: name,
+      byOS: os,
+      byType: type,
     }, _.isUndefined);
   }
 
@@ -128,10 +118,8 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     ]).join(' and ');
   }
 
-  _commentDevice(rawDeviceQuery) {
-    return _.isPlainObject(rawDeviceQuery)
-      ? JSON.stringify(rawDeviceQuery)
-      : `(${rawDeviceQuery})`;
+  _commentDevice({ byId, byName, byOS, byType }) {
+    return byId || _.compact([byName, byType, byOS]).join(', ');
   }
 }
 

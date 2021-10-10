@@ -1,10 +1,9 @@
 const IosCookie = require('./IosCookie');
 
 class IosSimulatorCookie extends IosCookie {
-  constructor(udid, type) {
+  constructor(udid) {
     super();
     this.udid = udid;
-    this.type = type;
   }
 }
 

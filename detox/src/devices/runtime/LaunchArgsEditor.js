@@ -1,38 +1,55 @@
 const _ = require('lodash');
 
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const Storage = require('../../utils/Storage');
+
+/**
+ * @typedef {Object} LaunchArgsEditorOptions
+ * @property {boolean} [permanent=false] - Indicates whether the operation should affect the permanent app launch args.
+ */
 
 class LaunchArgsEditor {
-  constructor(launchArgs) {
-    if (!launchArgs) {
-      throw new DetoxRuntimeError('Cannot instantiate a launch-arguments editor with no reference arguments-object!');
-    }
-
-    this._args = launchArgs;
+  constructor() {
+    this._permanent = new Storage();
+    this._transient = new Storage();
   }
 
-  modify(launchArgs) {
-    for (const name of Object.keys(launchArgs)) {
-      this._setLaunchArg(name, launchArgs[name]);
+  /** @param {LaunchArgsEditorOptions} [options] */
+  modify(launchArgs, options) {
+    if (!_.isEmpty(launchArgs)) {
+      if (options && options.permanent) {
+        this._permanent.assign(launchArgs);
+      } else {
+        this._transient.assign(launchArgs);
+      }
     }
+
+    return this;
   }
 
-  reset() {
-    for (const name of Object.keys(this._args)) {
-      this._setLaunchArg(name, undefined);
+  /** @param {LaunchArgsEditorOptions} [options] */
+  reset(options) {
+    this._transient.reset();
+
+    if (options && options.permanent) {
+      this._permanent.reset();
     }
+
+    return this;
   }
 
-  get() {
-    return _.cloneDeep(this._args);
-  }
+  /** @param {LaunchArgsEditorOptions} [options] */
+  get(options) {
+    const permanent = options && options.permanent;
 
-  _setLaunchArg(name, value) {
-    if (value === undefined || value === null) {
-      delete this._args[name];
-    } else {
-      this._args[name] = value;
+    if (permanent === true) {
+      return this._permanent.get();
     }
+
+    if (permanent === false) {
+      return this._transient.get();
+    }
+
+    return _.merge(this._permanent.get(), this._transient.get());
   }
 }
 
