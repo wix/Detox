@@ -1,5 +1,3 @@
-const environment = require('../../utils/environment');
-
 class EnvironmentValidatorFactoryBase {
   createValidator() {}
 }
@@ -18,9 +16,9 @@ class GenycloudFactory extends EnvironmentValidatorFactoryBase {
 }
 
 class IosSimulatorFactory extends EnvironmentValidatorFactoryBase {
-  async createValidator() {
+  createValidator() {
     const IosSimulatorEnvValidator = require('../ios/IosSimulatorEnvValidator');
-    return new IosSimulatorEnvValidator(await environment.getFrameworkPath());
+    return new IosSimulatorEnvValidator();
   }
 }
 

@@ -182,7 +182,7 @@ class Detox {
       client: this._client,
     });
 
-    const deviceCookie = await allocator.allocate(this._deviceConfig.device);
+    const deviceCookie = await allocator.allocate(this._deviceConfig);
 
     const invocationManager = new InvocationManager(this._client);
     this.deviceDeallocator = createDeallocator(deviceCookie);

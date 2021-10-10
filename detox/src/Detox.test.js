@@ -146,7 +146,7 @@ describe('Detox', () => {
         expect(envValidator.validate).toHaveBeenCalled());
 
       it('should allocate a device', () => {
-        expect(deviceAllocator.allocate).toHaveBeenCalledWith(detoxConfig.deviceConfig.device);
+        expect(deviceAllocator.allocate).toHaveBeenCalledWith(detoxConfig.deviceConfig);
       });
 
       it('should create a runtime-device based on the allocation result (cookie)', () =>

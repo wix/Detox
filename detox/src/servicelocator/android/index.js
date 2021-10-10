@@ -1,3 +1,5 @@
+// TODO ASDASD Revisit whether LazyRef could be deleted altogether, relying on node's lazy loading
+
 const LazyRef = require('../../utils/LazyRef');
 
 const adb = new LazyRef(() => {
@@ -12,7 +14,7 @@ const aapt = new LazyRef(() => {
 
 const fileXfer = new LazyRef(() => {
   const TempFileXfer = require('../../devices/common/drivers/android/tools/TempFileXfer');
-  return new TempFileXfer(adb);
+  return new TempFileXfer(adb.ref);
 });
 
 const deviceRegistry = new LazyRef(() => {

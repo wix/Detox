@@ -124,6 +124,11 @@ class SimulatorAllocDriver extends AllocationDriverBase {
 }
 
 class SimulatorDeallocDriver extends DeallocationDriverBase {
+  /**
+   * @param udid { String } The unique cross-OS identifier of the simulator
+   * @param deviceRegistry { DeviceRegistry }
+   * @param simulatorLauncher { SimulatorLauncher }
+   */
   constructor(udid, { deviceRegistry, simulatorLauncher }) {
     super();
     this.udid = udid;

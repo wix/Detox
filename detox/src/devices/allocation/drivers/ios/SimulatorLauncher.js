@@ -14,7 +14,7 @@ class SimulatorLauncher extends DeviceLauncher {
 
   async shutdown(udid) {
     await this._notifyPreShutdown(udid);
-    await this.applesimutils.shutdown(udid);
+    await this._applesimutils.shutdown(udid);
     await this._notifyShutdownCompleted(udid);
   }
 }

@@ -11,11 +11,11 @@ const deviceRegistry = new LazyRef(() => {
 });
 
 class IosServiceLocator {
-  get appleSimUtils() {
+  static get appleSimUtils() {
     return appleSimUtils.ref;
   }
 
-  get deviceRegistry() {
+  static get deviceRegistry() {
     return deviceRegistry.ref;
   }
 }

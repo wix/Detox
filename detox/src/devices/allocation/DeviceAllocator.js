@@ -9,12 +9,12 @@ class DeviceAllocator {
   }
 
   /**
-   * @param deviceQuery { Object | String }
+   * @param deviceConfig { Object }
    * @return {Promise<DeviceCookie>}
    */
-  allocate(deviceQuery) {
+  allocate(deviceConfig) {
     return traceCall('allocateDevice', () =>
-      this._driver.allocate(deviceQuery));
+      this._driver.allocate(deviceConfig));
   }
 }
 

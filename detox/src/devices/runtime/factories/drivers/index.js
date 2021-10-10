@@ -43,7 +43,7 @@ class IosRuntimeDriverFactory extends RuntimeDriverFactoryBase {
   }
 }
 
-class IosSimulatorRuntimeDriverFactory extends RuntimeDriverFactoryBase {
+class IosSimulatorRuntimeDriverFactory extends IosRuntimeDriverFactory {
   _createDriver(deviceCookie, deps, configs) {
     const { udid } = deviceCookie;
     return new IosSimulatorRuntimeDriver(udid, deps, configs);
