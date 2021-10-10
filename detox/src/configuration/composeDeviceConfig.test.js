@@ -28,7 +28,7 @@ describe('composeDeviceConfig', () => {
     cliConfig,
   });
 
-  const givenConfigValidationSuccess = (error) => environmentFactory.validateConfig.mockReturnValue(undefined);
+  const givenConfigValidationSuccess = () => environmentFactory.validateConfig.mockReturnValue(undefined);
   const givenConfigValidationError = (error) => environmentFactory.validateConfig.mockImplementation(() => { throw error; });
 
   const KNOWN_CONFIGURATIONS = [['plain'], ['inline'], ['aliased']];

@@ -3,7 +3,6 @@ const os = require('os');
 const _ = require('lodash');
 
 const { getAndroidEmulatorPath } = require('../../../../../../utils/environment');
-
 const {
   BinaryExec,
   ExecCommand,
