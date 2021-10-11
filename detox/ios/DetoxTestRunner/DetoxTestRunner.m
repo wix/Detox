@@ -239,13 +239,18 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	[_webSocket connectToServer:[NSURL URLWithString:detoxServer] withSessionId:detoxSessionId];
 }
 
-- (void)webSocketDidConnect:(WebSocket*)webSocket
-{
+- (void)webSocketDidConnect:(WebSocket * _Nonnull)webSocket {
 	[self _sendGeneralReadyMessage];
 }
 
-- (void)webSocket:(WebSocket*)webSocket didFailWithError:(NSError*)error
-{
+- (void)webSocket:(WebSocket * _Nonnull)webSocket didCloseWith:(NSString * _Nullable)reason {
+	dtx_log_error(@"Web socket closed with reason: %@", reason);
+	
+	[self _cleanupActionsQueueAndTerminateIfNeeded];
+}
+
+
+- (void)webSocket:(WebSocket * _Nonnull)webSocket didFailWith:(NSError * _Nonnull)error {
 	dtx_log_error(@"Web socket failed to connect with error: %@", error);
 	
 	//Retry server connection
@@ -254,8 +259,9 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	});
 }
 
-- (void)webSocket:(WebSocket*)webSocket didReceiveAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
-{
+
+- (void)webSocket:(WebSocket * _Nonnull)webSocket didReceiveAction:(NSString * _Nonnull)type params:(NSDictionary<NSString *,id> * _Nonnull)params messageId:(NSNumber * _Nonnull)messageId {
+	
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
 	if([type isEqualToString:@"testerDisconnected"])
@@ -388,13 +394,6 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	{
 		[self _cleanupActionsQueueAndTerminateIfNeeded];
 	}
-}
-
-- (void)webSocket:(WebSocket*)webSocket didCloseWithReason:(NSString*)reason
-{
-	dtx_log_error(@"Web socket closed with reason: %@", reason);
-	
-	[self _cleanupActionsQueueAndTerminateIfNeeded];
 }
 
 #pragma mark DTXDetoxApplicationDelegate
