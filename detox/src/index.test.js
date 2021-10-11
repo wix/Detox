@@ -163,52 +163,60 @@ describe('index (regular)', () => {
     });
 
     describe('global API', () => {
+      const configs = {
+        deviceConfig: {
+          mock: 'config',
+        },
+      };
 
-      let driver;
+      const givenConfigResolveError = (error = new Error()) => configuration.composeDetoxConfig.mockRejectedValue(error);
+
       beforeEach(() => {
-        const Driver = jest.genMockFromModule('./devices/allocation/drivers/android/genycloud/GenyGlobalAllocDriver');
-        driver = new Driver();
+        configuration.composeDetoxConfig.mockResolvedValue(configs);
 
-        const MockFactory = jest.genMockFromModule('./devices/allocation/factories/drivers/GenycloudGlobalAllocDriverFactory');
-        const factory = new MockFactory();
-        MockFactory.mockReturnValue(factory);
-        jest.mock('./devices/allocation/factories/drivers/GenycloudGlobalAllocDriverFactory', () => MockFactory);
-
-        factory.createGlobalAllocationDriver.mockReturnValue(driver);
+        Detox.globalInit = jest.fn();
+        Detox.globalCleanup = jest.fn();
       });
 
-      it('should invoke genymotion-cloud\'s global init API', async () => {
+      it('should global-init the actual Detox', async () => {
         await detox.globalInit();
-        expect(driver.globalInit).toHaveBeenCalled();
+        expect(Detox.globalInit).toHaveBeenCalledWith(configs);
       });
 
-      it('should catch and warn errors from genymotion-cloud driver in global init', async () => {
-        const error = new Error('mocked-error');
-        driver.globalInit.mockRejectedValue(error);
-
-        await detox.globalInit();
-        expect(logger.warn).toHaveBeenCalledWith(
-          { event: 'GLOBAL_INIT' },
-          'An error occurred trying to globally-init Genymotion-cloud emulator instances!',
-          error,
-        );
+      it('should throw if global init fails', async () => {
+        const error = new Error('config error');
+        givenConfigResolveError(error);
+        await expect(detox.globalInit()).rejects.toThrowError(error);
       });
 
-      it('should invoke genymotion-cloud\'s global cleanup API', async () => {
+      it('should custom-log init failures', async () => {
+        givenConfigResolveError();
+
+        try {
+          await detox.globalInit();
+        } catch(e) {}
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GLOBAL_INIT' }, expect.any(String));
+      });
+
+      it('should global-cleanup the actual Detox', async () => {
         await detox.globalCleanup();
-        expect(driver.globalCleanup).toHaveBeenCalled();
+        expect(Detox.globalCleanup).toHaveBeenCalledWith(configs);
       });
 
-      it('should catch and warn errors from genymotion-cloud driver int global cleanup', async () => {
-        const error = new Error('mocked-error');
-        driver.globalCleanup.mockRejectedValue(error);
-
+      it('should NOT throw if global cleanup fails', async () => {
+        const error = new Error('config error');
+        givenConfigResolveError(error);
         await detox.globalCleanup();
-        expect(logger.warn).toHaveBeenCalledWith(
-          { event: 'GLOBAL_CLEANUP' },
-          'An error occurred trying to shut down Genymotion-cloud emulator instances!',
-          error,
-        );
+      });
+
+      it('should custom-log cleanup failures', async () => {
+        const error = new Error('mock error');
+        givenConfigResolveError(error);
+
+        try {
+          await detox.globalCleanup();
+        } catch(e) {}
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'GLOBAL_CLEANUP' }, expect.any(String), error);
       });
     });
   });

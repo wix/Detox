@@ -1,15 +1,15 @@
 const onSignalExit = require('signal-exit');
 
-const logger = require('../../../../../utils/logger').child({ __filename });
+const logger = require('../../utils/logger').child({ __filename });
 
 const cleanupLogData = {
   event: 'GENYCLOUD_TEARDOWN',
 };
 
-class GenyGlobalAllocDriver {
-  constructor({ deviceCleanupRegistry }, getRuntimeDeps) {
+class GenyGlobalLifecycleHandler {
+  constructor({ deviceCleanupRegistry, instanceLifecycleService }) {
     this._deviceCleanupRegistry = deviceCleanupRegistry;
-    this._getRuntimeDeps = getRuntimeDeps;
+    this._instanceLifecycleService = instanceLifecycleService;
   }
 
   async globalInit() {
@@ -28,10 +28,7 @@ class GenyGlobalAllocDriver {
     const { rawDevices } = await this._deviceCleanupRegistry.readRegisteredDevices();
     const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
     if (instanceHandles.length) {
-      const {
-        instanceLifecycleService,
-      } = this._getRuntimeDeps();
-      await doSafeCleanup(instanceLifecycleService, instanceHandles);
+      await doSafeCleanup(this._instanceLifecycleService, instanceHandles);
     }
   }
 }
@@ -73,4 +70,4 @@ function rawDevicesToInstanceHandles(rawDevices) {
   }));
 }
 
-module.exports = GenyGlobalAllocDriver;
+module.exports = GenyGlobalLifecycleHandler;

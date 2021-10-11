@@ -1,6 +1,5 @@
 const DeviceLauncher = require('../../../common/drivers/DeviceLauncher');
 
-// TODO ASDASD Unit-tests
 class SimulatorLauncher extends DeviceLauncher {
   constructor({ applesimutils, eventEmitter }) {
     super(eventEmitter);

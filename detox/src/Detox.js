@@ -287,6 +287,20 @@ class Detox {
       error
     );
   }
+
+  static async globalInit(configs) {
+    const handler = await environmentFactory.createGlobalLifecycleHandler(configs.deviceConfig);
+    if (handler) {
+      await handler.globalInit();
+    }
+  }
+
+  static async globalCleanup(configs) {
+    const handler = await environmentFactory.createGlobalLifecycleHandler(configs.deviceConfig);
+    if (handler) {
+      await handler.globalCleanup();
+    }
+  }
 }
 
 Detox.none = new MissingDetox();

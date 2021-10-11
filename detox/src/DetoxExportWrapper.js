@@ -113,27 +113,20 @@ class DetoxExportWrapper {
 
 DetoxExportWrapper.prototype.globalInit = async function() {
   try {
-    // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of init-callbacks.
-
-    const GenyGlobalAllocDriverFactory = require('./devices/allocation/factories/drivers/GenycloudGlobalAllocDriverFactory');
-    const factory = new GenyGlobalAllocDriverFactory();
-    const driver = factory.createGlobalAllocationDriver();
-    await driver.globalInit();
+    const configs = await configuration.composeDetoxConfig({});
+    await Detox.globalInit(configs);
   } catch (error) {
-    log.warn({ event: 'GLOBAL_INIT' }, 'An error occurred trying to globally-init Genymotion-cloud emulator instances!', error);
+    log.warn({ event: 'GLOBAL_INIT' }, 'An error occurred!');
+    throw error;
   }
 };
 
 DetoxExportWrapper.prototype.globalCleanup = async function() {
   try {
-    // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of cleanup-callbacks.
-
-    const GenyGlobalAllocDriverFactory = require('./devices/allocation/factories/drivers/GenycloudGlobalAllocDriverFactory');
-    const factory = new GenyGlobalAllocDriverFactory();
-    const driver = factory.createGlobalAllocationDriver();
-    await driver.globalCleanup();
+    const configs = await configuration.composeDetoxConfig({});
+    await Detox.globalCleanup(configs);
   } catch (error) {
-    log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred trying to shut down Genymotion-cloud emulator instances!', error);
+    log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred!', error);
   }
 };
 

@@ -600,6 +600,54 @@ describe('Detox', () => {
     });
   });
 
+  describe('global context', () => {
+    const configs = {
+      deviceConfig: {
+        mock: 'config',
+      },
+    };
+
+    let environmentFactory;
+    let lifecycleHandler;
+    beforeEach(() => {
+      environmentFactory = require('./environmentFactory');
+
+      lifecycleHandler = {
+        globalInit: jest.fn(),
+        globalCleanup: jest.fn(),
+      };
+    });
+
+    const givenGlobalLifecycleHandler = () => environmentFactory.createGlobalLifecycleHandler.mockReturnValue(lifecycleHandler);
+    const givenNoGlobalLifecycleHandler = () => environmentFactory.createGlobalLifecycleHandler.mockReturnValue(undefined);
+
+    it(`should invoke the handler's init`, async () => {
+      givenGlobalLifecycleHandler();
+
+      await Detox.globalInit(configs);
+      expect(lifecycleHandler.globalInit).toHaveBeenCalled();
+      expect(environmentFactory.createGlobalLifecycleHandler).toHaveBeenCalledWith(configs.deviceConfig);
+    });
+
+    it(`should not invoke init if no handler was resolved`, async () => {
+      givenNoGlobalLifecycleHandler();
+      await Detox.globalInit(configs);
+    });
+
+    it(`should invoke the handler's cleanup`, async () => {
+      givenGlobalLifecycleHandler();
+
+      await Detox.globalCleanup(configs);
+      expect(lifecycleHandler.globalCleanup).toHaveBeenCalled();
+      expect(environmentFactory.createGlobalLifecycleHandler).toHaveBeenCalledWith(configs.deviceConfig);
+    });
+
+    it(`should not invoke cleanup if no handler was resolved`, async () => {
+      givenNoGlobalLifecycleHandler();
+      await Detox.globalCleanup(configs);
+    });
+  });
+
   function mockEnvironmentFactories() {
     const EnvValidator = jest.genMockFromModule('./validation/EnvironmentValidatorBase');
     const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').ExternalFactory;

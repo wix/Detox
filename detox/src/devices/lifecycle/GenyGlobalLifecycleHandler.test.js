@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-describe('Global-context allocation driver for Genymotion cloud emulators', () => {
+describe('Global-context lifecycle handler for Genymotion cloud emulators', () => {
   const anInstance = () => {
     const instance = new GenyInstance();
     instance.uuid = 'mock-instance-uuid';
@@ -14,29 +14,24 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
   let logger;
   let deviceCleanupRegistry;
   let instanceLifecycleService;
-  let getRuntimeDeps;
-  let driver;
+  let lifecycleHandler;
   beforeEach(() => {
     jest.mock('signal-exit');
     signalExit = require('signal-exit');
 
-    jest.mock('../../../../../utils/logger');
-    logger = require('../../../../../utils/logger');
+    jest.mock('../../utils/logger');
+    logger = require('../../utils/logger');
 
-    GenyInstance = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/dto/GenyInstance');
+    GenyInstance = jest.genMockFromModule('../common/drivers/android/genycloud/services/dto/GenyInstance');
 
-    const DeviceRegistry = jest.genMockFromModule('../../../../DeviceRegistry');
+    const DeviceRegistry = jest.genMockFromModule('../DeviceRegistry');
     deviceCleanupRegistry = new DeviceRegistry();
 
-    const InstanceLifecycleService = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.genMockFromModule('../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    getRuntimeDeps = jest.fn().mockReturnValue({
-      instanceLifecycleService,
-    });
-
-    const GenyStaticAllocDriver = require('./GenyGlobalAllocDriver');
-    driver = new GenyStaticAllocDriver({ deviceCleanupRegistry }, getRuntimeDeps);
+    const GenyGlobalLifecycleHandler = require('./GenyGlobalLifecycleHandler');
+    lifecycleHandler = new GenyGlobalLifecycleHandler({ deviceCleanupRegistry, instanceLifecycleService });
   });
 
   // As typically returned by the DeviceRegistry
@@ -70,7 +65,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
         aPendingRawDevice('device2', 'uuid2'),
       ]);
 
-      await driver.globalCleanup();
+      await lifecycleHandler.globalCleanup();
 
       killPromise1.assertResolved();
       killPromise2.assertResolved();
@@ -90,7 +85,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
         aPendingRawDevice('failing2', 'uuid2'),
       ]);
 
-      await driver.globalCleanup();
+      await lifecycleHandler.globalCleanup();
 
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing1 \(uuid1\): .*mock-error1/));
@@ -105,17 +100,18 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
       givenDeletionPendingInstances([instance]);
       givenDeletionResult(instance);
 
-      await driver.globalCleanup();
+      await lifecycleHandler.globalCleanup();
 
       expect(logger.warn).not.toHaveBeenCalled();
     });
 
-    it('should not init the instances service and its delegates if there are no deletion-pending devices', async () => {
+    it('should not warn or report anything if there are no devices to kill', async () => {
       givenNoDeletionPendingDevices();
 
-      await driver.globalCleanup();
+      await lifecycleHandler.globalCleanup();
 
-      expect(getRuntimeDeps).not.toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
+      expect(logger.warn).not.toHaveBeenCalled();
     });
   });
 
@@ -126,7 +122,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
     const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
 
     it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {
-      await driver.globalInit();
+      await lifecycleHandler.globalInit();
       expect(signalExit).toHaveBeenCalled();
       expect(signalExitCallback()).toBeDefined();
     });
@@ -136,7 +132,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
         aPendingRawDevice('aDevice', 'uuid'),
       ]);
 
-      await driver.globalInit();
+      await lifecycleHandler.globalInit();
       invokeExitCallback();
 
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
@@ -146,7 +142,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
     it('should not warn if no instances were registered', async () => {
       givenNoCleanupPendingDevices();
 
-      await driver.globalInit();
+      await lifecycleHandler.globalInit();
       invokeExitCallback();
 
       expect(logger.warn).not.toHaveBeenCalled();
@@ -158,7 +154,7 @@ describe('Global-context allocation driver for Genymotion cloud emulators', () =
         aPendingRawDevice('aDevice', 'uuid'),
       ]);
 
-      await driver.globalInit();
+      await lifecycleHandler.globalInit();
       invokeExitCallback(null);
 
       expect(logger.warn).not.toHaveBeenCalled();
