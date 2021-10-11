@@ -33,6 +33,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	NSMutableArray<dispatch_block_t>* _pendingActions;
 	pthread_mutex_t _pendingActionsMutex;
 	dispatch_semaphore_t _pendingActionsAvailable;
+	dispatch_queue_t _webSocketQueue;
 }
 
 + (XCTestSuite *)defaultTestSuite
@@ -53,6 +54,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 		_pendingActions = [NSMutableArray new];
 		pthread_mutex_init(&_pendingActionsMutex, NULL);
 		_pendingActionsAvailable = dispatch_semaphore_create(0);
+		_webSocketQueue = dispatch_queue_create("com.wix.detoxTestRunner.webSocket", NULL);
 		
 		_webSocket = [WebSocket new];
 		[_webSocket setDelegate:self];
@@ -119,9 +121,9 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	NSLog(@"*********************************************************\nArguments: %@\n*********************************************************", NSProcessInfo.processInfo.arguments);
 	
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
-//	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.ExampleApp"];
+	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.detox-example"];
 	//TODO: Obtain application bundle identifier from environment variables or launch arguments.
-	_testedApplication = [[DTXDetoxApplication alloc] init];
+//	_testedApplication = [[DTXDetoxApplication alloc] init];
 	_testedApplication.delegate = self;
 	_testedApplicationInvocationManager = [[DTXInvocationManager alloc] initWithApplication:_testedApplication];
 	
@@ -217,6 +219,10 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	NSString *detoxServer = [options stringForKey:@"detoxServer"];
 	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
 	
+	// TODO: For debug the sessionId is currently constant.
+	// Later on we will retrive it from detox server which will send with the launch command the app bundle ID (we can use the app bundle for the detox session as well)
+	detoxSessionId = @"com.wix.detox-example";
+	
 	if(detoxServer == nil)
 	{
 		detoxServer = @"ws://localhost:8099";
@@ -254,7 +260,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	dtx_log_error(@"Web socket failed to connect with error: %@", error);
 	
 	//Retry server connection
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), _webSocketQueue, ^{
 		[self _reconnectWebSocket];
 	});
 }
