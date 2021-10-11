@@ -115,7 +115,6 @@
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
 		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
-		ADA880672713057C003A6317 /* DetoxTestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880662713057C003A6317 /* DetoxTestRunner.swift */; };
 		ADA8806F27130661003A6317 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA8806E27130661003A6317 /* Action.swift */; };
 		ADA88073271306B9003A6317 /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA88072271306B9003A6317 /* Expectation.swift */; };
 		ADA88076271306F7003A6317 /* tap-bad.plist in Resources */ = {isa = PBXBuildFile; fileRef = ADA88074271306F7003A6317 /* tap-bad.plist */; };
@@ -338,7 +337,6 @@
 		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
 		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
 		ADA880642713057C003A6317 /* DetoxTestRunner.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTestRunner.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ADA880662713057C003A6317 /* DetoxTestRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTestRunner.swift; sourceTree = "<group>"; };
 		ADA880682713057C003A6317 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADA8806E27130661003A6317 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		ADA8807027130690003A6317 /* Element.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
@@ -676,7 +674,6 @@
 				ADA8806D2713064F003A6317 /* Invocation */,
 				ADA8806C271305A2003A6317 /* Utilities */,
 				ADA880D22714A4D6003A6317 /* DetoxTestRunner.m */,
-				ADA880662713057C003A6317 /* DetoxTestRunner.swift */,
 				ADA880682713057C003A6317 /* Info.plist */,
 			);
 			path = DetoxTestRunner;
@@ -1062,7 +1059,6 @@
 				ADA880A3271324AA003A6317 /* DTXLogging.m in Sources */,
 				ADA8807B27130733003A6317 /* Predicate.swift in Sources */,
 				ADA880802713091F003A6317 /* Element.swift in Sources */,
-				ADA880672713057C003A6317 /* DetoxTestRunner.swift in Sources */,
 				ADA8809727131A9D003A6317 /* XCUIElement+ExtendedText.swift in Sources */,
 				ADA8809A2713204E003A6317 /* XCUIElement+ExtendedTouches.swift in Sources */,
 				ADA88094271319C6003A6317 /* XCUIElement+Visibility.swift in Sources */,
