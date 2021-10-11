@@ -132,11 +132,14 @@
 		ADA8809B271323E3003A6317 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324DE24781CBD00A3D119 /* WebSocket.swift */; };
 		ADA880A2271324A7003A6317 /* DTXLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DC984624BB8E8900FFB224 /* DTXLogging.swift */; };
 		ADA880A3271324AA003A6317 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DC984524BB8E8900FFB224 /* DTXLogging.m */; };
-		ADA880A627138C84003A6317 /* DetoxTestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = ADA880A527138C84003A6317 /* DetoxTestRunner.m */; };
 		ADA880AD27138D87003A6317 /* DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = ADA880AB27138D87003A6317 /* DetoxUtils.h */; };
 		ADA880AE27138D87003A6317 /* DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = ADA880AC27138D87003A6317 /* DetoxUtils.m */; };
 		ADA880AF27138D87003A6317 /* DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = ADA880AC27138D87003A6317 /* DetoxUtils.m */; };
 		ADA880B027138E88003A6317 /* DetoxIPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADA880922713190B003A6317 /* DetoxIPC.framework */; };
+		ADA880B2271431DC003A6317 /* DetoxUserNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B1271431DC003A6317 /* DetoxUserNotificationParser.swift */; };
+		ADA880B3271431DC003A6317 /* DetoxUserNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B1271431DC003A6317 /* DetoxUserNotificationParser.swift */; };
+		ADA880B527143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */; };
+		ADA880B627143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -354,10 +357,11 @@
 		ADA8809627131A9D003A6317 /* XCUIElement+ExtendedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+ExtendedText.swift"; sourceTree = "<group>"; };
 		ADA8809827131B23003A6317 /* DTXTestCaseAssertions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTestCaseAssertions.h; sourceTree = "<group>"; };
 		ADA880992713204E003A6317 /* XCUIElement+ExtendedTouches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+ExtendedTouches.swift"; sourceTree = "<group>"; };
-		ADA880A527138C84003A6317 /* DetoxTestRunner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxTestRunner.m; sourceTree = "<group>"; };
 		ADA880A727138CE6003A6317 /* XCTestConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCTestConfiguration.h; sourceTree = "<group>"; };
 		ADA880AB27138D87003A6317 /* DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxUtils.h; sourceTree = "<group>"; };
 		ADA880AC27138D87003A6317 /* DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxUtils.m; sourceTree = "<group>"; };
+		ADA880B1271431DC003A6317 /* DetoxUserNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationParser.swift; sourceTree = "<group>"; };
+		ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationsShared.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -671,7 +675,6 @@
 				ADA8806C271305A2003A6317 /* Utilities */,
 				ADA880662713057C003A6317 /* DetoxTestRunner.swift */,
 				ADA880682713057C003A6317 /* Info.plist */,
-				ADA880A527138C84003A6317 /* DetoxTestRunner.m */,
 			);
 			path = DetoxTestRunner;
 			sourceTree = "<group>";
@@ -686,6 +689,7 @@
 				ADA8808527130AEC003A6317 /* DTXDetoxApplication.h */,
 				ADA8808627130AEC003A6317 /* DTXDetoxApplication.m */,
 				ADA880A727138CE6003A6317 /* XCTestConfiguration.h */,
+				ADA880B1271431DC003A6317 /* DetoxUserNotificationParser.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -712,6 +716,7 @@
 				ADA8808927130B7E003A6317 /* DetoxIPCAPI.h */,
 				ADA880AB27138D87003A6317 /* DetoxUtils.h */,
 				ADA880AC27138D87003A6317 /* DetoxUtils.m */,
+				ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1003,6 +1008,7 @@
 				39DC985A24BB904D00FFB224 /* ReactNativeSupportNoARC.m in Sources */,
 				397CA78D248010B5005E8A71 /* UISlider+DetoxUtils.m in Sources */,
 				3980D15D244C45EA004812DD /* Expectation.swift in Sources */,
+				ADA880B2271431DC003A6317 /* DetoxUserNotificationParser.swift in Sources */,
 				3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */,
 				3946CD3F2566EB9E000A3606 /* NSObject+DetoxActions.m in Sources */,
 				395B06E5256D5A5600941716 /* UIView+DetoxSpeedup.m in Sources */,
@@ -1029,6 +1035,7 @@
 				390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */,
 				3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */,
 				3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */,
+				ADA880B527143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */,
 				39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */,
 				396D455225238BB90096E7FA /* UIView+Drawing.m in Sources */,
 				39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */,
@@ -1046,7 +1053,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ADA880A627138C84003A6317 /* DetoxTestRunner.m in Sources */,
 				ADA8808727130AEC003A6317 /* DTXDetoxApplication.m in Sources */,
 				ADA880AF27138D87003A6317 /* DetoxUtils.m in Sources */,
 				ADA88073271306B9003A6317 /* Expectation.swift in Sources */,
@@ -1060,9 +1066,11 @@
 				ADA8806F27130661003A6317 /* Action.swift in Sources */,
 				ADA8809B271323E3003A6317 /* WebSocket.swift in Sources */,
 				ADA8807927130719003A6317 /* ElementTypeHelper.swift in Sources */,
+				ADA880B627143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */,
 				ADA8807D27130785003A6317 /* Modifier.swift in Sources */,
 				ADA880A2271324A7003A6317 /* DTXLogging.swift in Sources */,
 				ADA8807F2713079E003A6317 /* InvocationManager.swift in Sources */,
+				ADA880B3271431DC003A6317 /* DetoxUserNotificationParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
