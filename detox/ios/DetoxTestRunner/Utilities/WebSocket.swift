@@ -22,7 +22,11 @@ fileprivate let log = DetoxLog(category: "WebSocket")
 	private var urlSession: URLSession!
 	private var webSocketSessionTask: URLSessionWebSocketTask?
 	weak var delegate: WebSocketDelegate?
-	private let delegateQueue = OperationQueue.main
+	private var delegateQueue: OperationQueue = {
+		let queue = OperationQueue()
+		queue.name = "com.wix.detoxTestRunner.webSocket"
+		return queue
+	}()
 	
 	override init() {
 		super.init()
