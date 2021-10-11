@@ -11,11 +11,11 @@ import XCTest
 class DetoxTestRunner: XCTestCase, WebSocketDelegate, DTXDetoxApplicationDelegate {
 	
 	var webSocket = WebSocket()
-	var testedApplication: DTXDetoxApplication
-	var testedApplicationInvocationManager: InvocationManager
+	var testedApplication: DTXDetoxApplication!
+	var testedApplicationInvocationManager: InvocationManager!
 	
 	var pendingActions = Array<() -> Void>()
-	var pendingActionsMutex: pthread_mutex_t
+	var pendingActionsMutex = pthread_mutex_t()
 	var pendingActionsAvailable: DispatchSemaphore
 	
 	static let _defaultTestSuite: XCTestSuite = initDefaultTestSuite();
@@ -26,18 +26,17 @@ class DetoxTestRunner: XCTestCase, WebSocketDelegate, DTXDetoxApplicationDelegat
 	}
 	
 	override init(selector: Selector) {
-		super.init(selector: selector)
 		
 		pthread_mutex_init(&pendingActionsMutex, nil);
 		pendingActionsAvailable = DispatchSemaphore(value: 0)
 		
+		super.init(selector: selector)
+		
+		
 		webSocket.delegate = self
-//		self.reconnectWebSocket()
+		self.reconnectWebSocket()
 		self.continueAfterFailure = true
 	}
-	
-	
-	
 	
 	// MARK: XCTest methods
 
@@ -145,8 +144,10 @@ class DetoxTestRunner: XCTestCase, WebSocketDelegate, DTXDetoxApplicationDelegat
 	private func launchApplication(parameters: Dictionary<String, Any>? ,completionHandler: (() -> Void)?) {
 		
 		guard let params = parameters, let userActivity = params["userActivity"] as? Dictionary<String, Any>?, let userNotification = params["userNotification"] as? Dictionary<String, Any>? else {
+			
 			NSLog("Failed to parse parameters when lunching app")
 			completionHandler?()
+			return;
 		}
 		
 		
@@ -205,5 +206,83 @@ class DetoxTestRunner: XCTestCase, WebSocketDelegate, DTXDetoxApplicationDelegat
 //			exit(0);
 //		}
 	}
-}
+	
+	
+	func safeSend(action: String, parameters: Dictionary<String, Any>, messageId: NSNumber) {
+		webSocket.sendAction(action, params: parameters, messageId: messageId)
+	}
 
+	func sendGeneralReadyMessage()
+	{
+		self.safeSend(action: "ready", parameters: [:], messageId: NSNumber(value: -1000))
+	}
+	
+	func reconnectWebSocket() {
+		let options = UserDefaults.standard
+		let detoxServer: String = options.value(forKey: "detoxServer") as? String ?? "ws://localhost:8099"
+		let detoxSessionId: String? = options.value(forKey: "detoxSessionId") as? String
+		
+		if(detoxSessionId == nil)
+		{
+//			detoxSessionId = XCTestConfiguration.activeTestConfiguration.targetApplicationBundleID;
+	//		dtx_log_info(@"Using default 'detoxSessionId': %@", detoxSessionId);
+		}
+		
+		if(detoxSessionId == nil)
+		{
+			NSLog("No detoxSessionId provided and no targetApplicationBundleID available");
+		}
+
+		assert(detoxSessionId != nil, "No detoxSessionId provided and no targetApplicationBundleID available");
+		
+		guard let serverURL = URL(string: detoxServer), let sessionId = detoxSessionId else {
+			NSLog("Couldn't parse server URL or the sessionId");
+			return;
+		}
+		
+		webSocket.connect(toServer: serverURL, withSessionId: sessionId)
+	}
+	
+	// MARK: WebSocketDelegate methods
+
+	func webSocketDidConnect(_ webSocket: WebSocket) {
+		NSLog("Web socket connected!")
+		self.sendGeneralReadyMessage()
+	}
+	
+	func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
+		NSLog("Web socket failed to connect with error: " + error.localizedDescription)
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + .nanoseconds(1)) { [weak self] in
+			self?.reconnectWebSocket()
+		}
+	}
+	
+	func webSocket(_ webSocket: WebSocket, didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
+		NSLog("WebSocket didReceiveAction type:" + type)
+		
+		if type == "isReady" {
+			
+			self.sendGeneralReadyMessage()
+		}
+	}
+	
+	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
+		NSLog("Web socket closed with reason: %@", reason ?? "");
+		
+		self.cleanupActionsQueueAndTerminateIfNeeded()
+	}
+	
+	
+	// MARK: DTXDetoxApplicationDelegate methods
+	
+	func application(_ application: DTXDetoxApplication, didCrashWithDetails details: [AnyHashable : Any]) {
+		
+		guard let param = details as? Dictionary<String, Any> else {
+			NSLog("Details of the crash are not in a dictionary format");
+			return;
+		}
+		
+		self.safeSend(action: "AppWillTerminateWithError", parameters: param, messageId: NSNumber(value: -1000))
+	}
+}
