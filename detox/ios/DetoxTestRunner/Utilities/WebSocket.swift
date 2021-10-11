@@ -10,37 +10,46 @@ import Foundation
 
 fileprivate let log = DetoxLog(category: "WebSocket")
 
-protocol WebSocketDelegate: AnyObject {
+@objc protocol WebSocketDelegate: AnyObject {
 	func webSocketDidConnect(_ webSocket: WebSocket)
 	func webSocket(_ webSocket: WebSocket, didFailWith error: Error)
 	func webSocket(_ webSocket: WebSocket, didReceiveAction type : String, params: [String: Any], messageId: NSNumber)
 	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?)
 }
 
-class WebSocket : NSObject, URLSessionWebSocketDelegate {
+@objc class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	var sessionId: String?
 	private var urlSession: URLSession!
 	private var webSocketSessionTask: URLSessionWebSocketTask?
 	weak var delegate: WebSocketDelegate?
+	private let delegateQueue = OperationQueue.main
 	
 	override init() {
 		super.init()
-		urlSession = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue.main)
+		urlSession = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
 	}
 	
-	func connect(toServer server: URL, withSessionId sessionId: String) {
+	@objc func setDelegate(_ delegate: WebSocketDelegate) {
+		self.delegate = delegate
+	}
+	
+	@objc func getDelegateQueue() -> OperationQueue {
+		return delegateQueue
+	}
+	
+	@objc func connect(toServer server: URL, withSessionId sessionId: String) {
 		self.sessionId = sessionId
 		
 		webSocketSessionTask = urlSession.webSocketTask(with: server)
 		webSocketSessionTask?.resume()
 	}
 	
-	func close() {
+	@objc func close() {
 		webSocketSessionTask?.cancel(with: .normalClosure, reason: nil)
 		webSocketSessionTask = nil
 	}
 	
-	func sendAction(_ type: String, params: [String : Any], messageId: NSNumber) {
+	@objc func sendAction(_ type: String, params: [String : Any], messageId: NSNumber) {
 		let data : [String: Any] = ["type": type, "params": params, "messageId": messageId]
 		do {
 			let data = try JSONSerialization.data(withJSONObject: data, options: [])

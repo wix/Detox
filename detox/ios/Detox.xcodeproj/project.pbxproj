@@ -140,6 +140,7 @@
 		ADA880B3271431DC003A6317 /* DetoxUserNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B1271431DC003A6317 /* DetoxUserNotificationParser.swift */; };
 		ADA880B527143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */; };
 		ADA880B627143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */; };
+		ADA880D32714A4D6003A6317 /* DetoxTestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = ADA880D22714A4D6003A6317 /* DetoxTestRunner.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -362,6 +363,7 @@
 		ADA880AC27138D87003A6317 /* DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxUtils.m; sourceTree = "<group>"; };
 		ADA880B1271431DC003A6317 /* DetoxUserNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationParser.swift; sourceTree = "<group>"; };
 		ADA880B427143220003A6317 /* DetoxUserNotificationsShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationsShared.swift; sourceTree = "<group>"; };
+		ADA880D22714A4D6003A6317 /* DetoxTestRunner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxTestRunner.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -673,6 +675,7 @@
 			children = (
 				ADA8806D2713064F003A6317 /* Invocation */,
 				ADA8806C271305A2003A6317 /* Utilities */,
+				ADA880D22714A4D6003A6317 /* DetoxTestRunner.m */,
 				ADA880662713057C003A6317 /* DetoxTestRunner.swift */,
 				ADA880682713057C003A6317 /* Info.plist */,
 			);
@@ -1069,6 +1072,7 @@
 				ADA880B627143220003A6317 /* DetoxUserNotificationsShared.swift in Sources */,
 				ADA8807D27130785003A6317 /* Modifier.swift in Sources */,
 				ADA880A2271324A7003A6317 /* DTXLogging.swift in Sources */,
+				ADA880D32714A4D6003A6317 /* DetoxTestRunner.m in Sources */,
 				ADA8807F2713079E003A6317 /* InvocationManager.swift in Sources */,
 				ADA880B3271431DC003A6317 /* DetoxUserNotificationParser.swift in Sources */,
 			);
