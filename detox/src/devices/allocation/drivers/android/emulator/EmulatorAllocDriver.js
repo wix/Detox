@@ -47,7 +47,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     await this._launchEmulator(avdName, adbName, isRunning, launchOptions);
     await this._prepareEmulator(adbName);
 
-    return new AndroidEmulatorCookie(adbName, avdName);
+    return new AndroidEmulatorCookie(adbName);
   }
 
   async _fixAvdConfigIniSkinNameIfNeeded(avdName, isHeadless) {

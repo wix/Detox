@@ -199,7 +199,7 @@ describe('Allocation driver for Google emulators', () => {
 
       const handle = await allocDriver.allocate(deviceConfig);
       expect(handle.constructor.name).toEqual('AndroidEmulatorCookie');
-      expect(AndroidEmulatorCookie).toHaveBeenCalledWith(adbName, avdName);
+      expect(AndroidEmulatorCookie).toHaveBeenCalledWith(adbName);
     });
   });
 

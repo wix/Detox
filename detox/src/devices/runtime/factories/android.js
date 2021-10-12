@@ -29,8 +29,8 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
   _createDriver(deviceCookie, deps, configs) {
     const { AndroidEmulatorRuntimeDriver } = require('../drivers');
 
-    const { adbName, avdName } = deviceCookie;
-    return new AndroidEmulatorRuntimeDriver(adbName, avdName, deps, configs);
+    const { adbName } = deviceCookie;
+    return new AndroidEmulatorRuntimeDriver(adbName, deps, configs);
   }
 }
 
