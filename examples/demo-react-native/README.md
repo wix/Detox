@@ -10,10 +10,13 @@
    * react-native-cli is installed (`npm install -g react-native-cli`)
    * watchman is installed (`brew install watchman`)
 
-### Step 1: Npm install
+### Step 1: Install The App
 
 * Make sure you're in folder `examples/demo-react-native`.
 * Run `npm install`.
+* Run `cd ios`
+* Run `pod install`
+* Run `cd ..`
 
 ## To test Release build of your app
 ### Step 2: Build 
@@ -43,7 +46,7 @@
 
  * start react-native packager
  
-  ```sh
+```sh
  npm run start
  ```
  * Run tests on the demo project
