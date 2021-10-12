@@ -44,9 +44,9 @@ describe('Main environment factory', () => {
         type: fakeType,
       };
       environmentFactory.validateConfig(deviceConfig);
-      expect(deviceAllocationFactories.ExternalFactory.validateModule).toHaveBeenCalledWith(mockFakeModule, 'fake.type');
-      expect(matchersFactories.ExternalFactory.validateModule).toHaveBeenCalledWith(mockFakeModule, 'fake.type');
-      expect(runtimeDeviceFactories.ExternalFactory.validateModule).toHaveBeenCalledWith(mockFakeModule, 'fake.type');
+      expect(deviceAllocationFactories.External.validateModule).toHaveBeenCalledWith(mockFakeModule, 'fake.type');
+      expect(matchersFactories.External.validateModule).toHaveBeenCalledWith(mockFakeModule, 'fake.type');
+      expect(runtimeDeviceFactories.External.validateModule).toHaveBeenCalledWith(mockFakeModule, 'fake.type');
     });
   });
 });

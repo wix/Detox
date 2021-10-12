@@ -106,7 +106,7 @@
       "src/environmentFactory",
       "src/android/espressoapi",
       "src/artifacts/factories/index.js",
-      "src/artifacts/factories/providers.js",
+      "src/artifacts/providers/index.js",
       "src/artifacts/log",
       "src/artifacts/screenshot",
       "src/artifacts/video",

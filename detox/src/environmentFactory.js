@@ -11,15 +11,15 @@ function validateConfig(deviceConfig) {
     const modulePath = deviceConfig.type;
     const module = resolveModuleFromPath(modulePath);
 
-    deviceAllocationFactories.ExternalFactory.validateModule(module, modulePath);
-    matchersFactories.ExternalFactory.validateModule(module, modulePath);
-    runtimeDeviceFactories.ExternalFactory.validateModule(module, modulePath);
+    deviceAllocationFactories.External.validateModule(module, modulePath);
+    matchersFactories.External.validateModule(module, modulePath);
+    runtimeDeviceFactories.External.validateModule(module, modulePath);
   }
 }
 
 /**
  * @param deviceConfig
- * @returns {{ deviceAllocatorFactory: DeviceAllocatorFactoryBase }}
+ * @returns {{ deviceAllocatorFactory: DeviceAllocatorFactory }}
  */
 function createFactories(deviceConfig) {
   const classes = _getFactoryClasses(deviceConfig);
@@ -53,43 +53,43 @@ function _getFactoryClasses(deviceConfig) {
 
   switch (deviceConfig.type) {
     case 'android.emulator':
-      envValidatorFactoryClass = envValidationFactories.NoopFactory;
-      deviceAllocatorFactoryClass = deviceAllocationFactories.AndroidEmulatorFactory;
-      artifactsManagerFactoryClass = artifactsManagerFactories.AndroidFactory;
-      matchersFactoryClass = matchersFactories.AndroidFactory;
-      runtimeDeviceFactoryClass = runtimeDeviceFactories.AndroidEmulatorFactory;
+      envValidatorFactoryClass = envValidationFactories.Noop;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.AndroidEmulator;
+      artifactsManagerFactoryClass = artifactsManagerFactories.Android;
+      matchersFactoryClass = matchersFactories.Android;
+      runtimeDeviceFactoryClass = runtimeDeviceFactories.AndroidEmulator;
       break;
 
     case 'android.attached':
-      envValidatorFactoryClass = envValidationFactories.NoopFactory;
-      deviceAllocatorFactoryClass = deviceAllocationFactories.AttachedAndroidFactory;
-      artifactsManagerFactoryClass = artifactsManagerFactories.AndroidFactory;
-      matchersFactoryClass = matchersFactories.AndroidFactory;
-      runtimeDeviceFactoryClass = runtimeDeviceFactories.AttachedAndroidFactory;
+      envValidatorFactoryClass = envValidationFactories.Noop;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.AndroidAttached;
+      artifactsManagerFactoryClass = artifactsManagerFactories.Android;
+      matchersFactoryClass = matchersFactories.Android;
+      runtimeDeviceFactoryClass = runtimeDeviceFactories.AndroidAttached;
       break;
 
     case 'android.genycloud':
-      envValidatorFactoryClass = envValidationFactories.GenycloudFactory;
-      deviceAllocatorFactoryClass = deviceAllocationFactories.GenycloudFactory;
-      artifactsManagerFactoryClass = artifactsManagerFactories.AndroidFactory;
-      matchersFactoryClass = matchersFactories.AndroidFactory;
-      runtimeDeviceFactoryClass = runtimeDeviceFactories.GenycloudFactory;
+      envValidatorFactoryClass = envValidationFactories.Genycloud;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.Genycloud;
+      artifactsManagerFactoryClass = artifactsManagerFactories.Android;
+      matchersFactoryClass = matchersFactories.Android;
+      runtimeDeviceFactoryClass = runtimeDeviceFactories.Genycloud;
       break;
 
     case 'ios.simulator':
-      envValidatorFactoryClass = envValidationFactories.IosSimulatorFactory;
-      deviceAllocatorFactoryClass = deviceAllocationFactories.IosSimulatorFactory;
-      artifactsManagerFactoryClass = artifactsManagerFactories.IosSimulatorFactory;
-      matchersFactoryClass = matchersFactories.IosFactory;
-      runtimeDeviceFactoryClass = runtimeDeviceFactories.IosSimulatorFactory;
+      envValidatorFactoryClass = envValidationFactories.IosSimulator;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.IosSimulator;
+      artifactsManagerFactoryClass = artifactsManagerFactories.IosSimulator;
+      matchersFactoryClass = matchersFactories.Ios;
+      runtimeDeviceFactoryClass = runtimeDeviceFactories.IosSimulator;
       break;
 
     case 'ios.none':
-      envValidatorFactoryClass = envValidationFactories.NoopFactory;
-      deviceAllocatorFactoryClass = deviceAllocationFactories.NoneDeviceFactory;
-      artifactsManagerFactoryClass = artifactsManagerFactories.IosFactory;
-      matchersFactoryClass = matchersFactories.IosFactory;
-      runtimeDeviceFactoryClass = runtimeDeviceFactories.IosFactory;
+      envValidatorFactoryClass = envValidationFactories.Noop;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.None;
+      artifactsManagerFactoryClass = artifactsManagerFactories.Ios;
+      matchersFactoryClass = matchersFactories.Ios;
+      runtimeDeviceFactoryClass = runtimeDeviceFactories.Ios;
       break;
 
     default: {
@@ -111,11 +111,11 @@ function _getExternalModuleFactories(deviceConfig) {
   const module = resolveModuleFromPath(modulePath);
 
   return {
-    envValidatorFactory: new envValidationFactories.ExternalFactory(module),
-    deviceAllocatorFactory: new deviceAllocationFactories.ExternalFactory(module),
-    artifactsManagerFactory: new artifactsManagerFactories.ExternalFactory(module),
-    matchersFactory: new matchersFactories.ExternalFactory(module, modulePath),
-    runtimeDeviceFactory: new runtimeDeviceFactories.ExternalFactory(module, modulePath),
+    envValidatorFactory: new envValidationFactories.External(module),
+    deviceAllocatorFactory: new deviceAllocationFactories.External(module),
+    artifactsManagerFactory: new artifactsManagerFactories.External(module),
+    matchersFactory: new matchersFactories.External(module, modulePath),
+    runtimeDeviceFactory: new runtimeDeviceFactories.External(module, modulePath),
   };
 }
 

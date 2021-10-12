@@ -1,8 +1,8 @@
-class EnvironmentValidatorFactoryBase {
+class EnvValidatorFactory {
   createValidator() {}
 }
 
-class GenycloudFactory extends EnvironmentValidatorFactoryBase {
+class Genycloud extends EnvValidatorFactory {
   createValidator() {
     const serviceLocator = require('../../servicelocator/android');
     const exec = serviceLocator.genycloud.exec;
@@ -15,21 +15,21 @@ class GenycloudFactory extends EnvironmentValidatorFactoryBase {
   }
 }
 
-class IosSimulatorFactory extends EnvironmentValidatorFactoryBase {
+class IosSimulator extends EnvValidatorFactory {
   createValidator() {
     const IosSimulatorEnvValidator = require('../ios/IosSimulatorEnvValidator');
     return new IosSimulatorEnvValidator();
   }
 }
 
-class NoopFactory extends EnvironmentValidatorFactoryBase {
+class Noop extends EnvValidatorFactory {
   createValidator() {
     const EnvironmentValidatorBase = require('../EnvironmentValidatorBase');
     return new EnvironmentValidatorBase();
   }
 }
 
-class ExternalFactory extends EnvironmentValidatorFactoryBase {
+class External extends EnvValidatorFactory {
   constructor(module) {
     super();
     this._module = module;
@@ -39,13 +39,13 @@ class ExternalFactory extends EnvironmentValidatorFactoryBase {
     if (this._module.EnvironmentValidatorClass) {
       return new this._module.EnvironmentValidatorClass();
     }
-    return new NoopFactory().createValidator();
+    return new Noop().createValidator();
   }
 }
 
 module.exports = {
-  GenycloudFactory,
-  IosSimulatorFactory,
-  NoopFactory,
-  ExternalFactory,
+  Genycloud,
+  IosSimulator,
+  Noop,
+  External,
 };

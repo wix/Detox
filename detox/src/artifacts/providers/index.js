@@ -1,8 +1,8 @@
-class ArtifactPluginsProviderBase {
+class ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {} // eslint-disable-line no-unused-vars
 }
 
-class AndroidArtifactPluginsProvider extends ArtifactPluginsProviderBase {
+class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
@@ -24,7 +24,7 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProviderBase {
   }
 }
 
-class IosArtifactPluginsProvider extends ArtifactPluginsProviderBase {
+class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
     const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
@@ -57,7 +57,7 @@ class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
   }
 }
 
-class EmptyProvider extends ArtifactPluginsProviderBase {
+class EmptyProvider extends ArtifactPluginsProvider {
   constructor() {
     super();
     this.declareArtifactPlugins = () => ({});

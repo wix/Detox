@@ -1,15 +1,14 @@
 const ArtifactsManager = require('../ArtifactsManager');
-
 const {
   AndroidArtifactPluginsProvider,
   IosArtifactPluginsProvider,
   IosSimulatorArtifactPluginsProvider,
   EmptyProvider,
-} = require('./providers');
+} = require('../providers');
 
 class ArtifactsManagerFactory {
   /**
-   * @param provider { ArtifactPluginsProviderBase }
+   * @param provider { ArtifactPluginsProvider }
    */
   constructor(provider) {
     this._provider = provider;
@@ -23,25 +22,25 @@ class ArtifactsManagerFactory {
   }
 }
 
-class AndroidFactory extends ArtifactsManagerFactory {
+class Android extends ArtifactsManagerFactory {
   constructor() {
     super(new AndroidArtifactPluginsProvider());
   }
 }
 
-class IosFactory extends ArtifactsManagerFactory {
+class Ios extends ArtifactsManagerFactory {
   constructor() {
     super(new IosArtifactPluginsProvider());
   }
 }
 
-class IosSimulatorFactory extends ArtifactsManagerFactory {
+class IosSimulator extends ArtifactsManagerFactory {
   constructor() {
     super(new IosSimulatorArtifactPluginsProvider());
   }
 }
 
-class ExternalFactory extends ArtifactsManagerFactory {
+class External extends ArtifactsManagerFactory {
   constructor(module) {
     super(new (module.ArtifactPluginsProviderClass || EmptyProvider)());
   }
@@ -49,8 +48,8 @@ class ExternalFactory extends ArtifactsManagerFactory {
 
 module.exports = {
   ArtifactsManagerFactory,
-  AndroidFactory,
-  IosFactory,
-  IosSimulatorFactory,
-  ExternalFactory,
+  Android,
+  Ios,
+  IosSimulator,
+  External,
 };

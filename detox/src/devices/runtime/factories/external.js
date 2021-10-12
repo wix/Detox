@@ -1,9 +1,9 @@
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const RuntimeDeviceFactory = require('./base');
 
-const RuntimeDriverFactoryBase = require('./RuntimeDriverFactoryBase');
-
-class ExternalRuntimeDriverFactory extends RuntimeDriverFactoryBase {
+class External extends RuntimeDeviceFactory {
   static validateModule(module, path) {
+    const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+
     if (!module.RuntimeDriverClass) {
       throw new DetoxRuntimeError(`The custom driver at '${path}' does not export the RuntimeDriverClass property`);
     }
@@ -11,12 +11,12 @@ class ExternalRuntimeDriverFactory extends RuntimeDriverFactoryBase {
 
   constructor(module, path) {
     super();
-    ExternalRuntimeDriverFactory.validateModule(module, path);
+    External.validateModule(module, path);
 
     this._module = module;
   }
 
-  _createDependencies(commonDeps) {
+  _createDriverDependencies(commonDeps) {
     return { ...commonDeps };
   }
 
@@ -25,4 +25,6 @@ class ExternalRuntimeDriverFactory extends RuntimeDriverFactoryBase {
   }
 }
 
-module.exports = ExternalRuntimeDriverFactory;
+module.exports = {
+  External,
+};

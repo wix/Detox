@@ -18,7 +18,7 @@ describe('Artifacts manager factory', () => {
     jest.mock('../ArtifactsManager');
     ArtifactsManager = require('../ArtifactsManager');
 
-    const PluginsProvider = jest.genMockFromModule('./providers').EmptyProvider;
+    const PluginsProvider = jest.genMockFromModule('../providers').EmptyProvider;
     pluginsProvider = new PluginsProvider();
 
     const { ArtifactsManagerFactory } = require('./index');

@@ -1,8 +1,8 @@
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
-const AllocationDriverFactory = require('./AllocationDriverFactory');
+const DeviceAllocatorFactory = require('./base');
 
-class ExternalAllocDriverFactory extends AllocationDriverFactory {
+class External extends DeviceAllocatorFactory {
   static validateModule(module, path) {
     if (!module.DeviceAllocationDriverClass) {
       throw new DetoxRuntimeError(`The custom driver at '${path}' does not export the DeviceAllocationDriverClass property`);
@@ -15,12 +15,12 @@ class ExternalAllocDriverFactory extends AllocationDriverFactory {
 
   constructor(module, path) {
     super();
-    ExternalAllocDriverFactory.validateModule(module, path);
+    External.validateModule(module, path);
 
     this._module = module;
   }
 
-  createAllocationDriver(deps) {
+  _createDriver(deps) {
     return {
       allocDriver: new this._module.DeviceAllocationDriverClass(deps),
       createDeallocDriver: (deviceCookie) => new this._module.DeviceDeallocationDriverClass(deviceCookie, deps),
@@ -28,4 +28,4 @@ class ExternalAllocDriverFactory extends AllocationDriverFactory {
   }
 }
 
-module.exports = ExternalAllocDriverFactory;
+module.exports = { External };

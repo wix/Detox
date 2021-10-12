@@ -1,11 +1,10 @@
-describe('External runtime-driver factory', () => {
+describe('External runtime-device factory', () => {
   describe('validation', () => {
     const path = '../fake/path';
 
     let factoryClass;
     beforeEach(() => {
-      jest.mock('./RuntimeDriverFactoryBase');
-      factoryClass = require('./ExternalRuntimeDriverFactory');
+      factoryClass = require('./external').External;
     });
 
     describe('given module with no runtime-driver class', () => {

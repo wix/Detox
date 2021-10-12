@@ -1,15 +1,15 @@
-const AllocationDriverFactory = require('./AllocationDriverFactory');
+const DeviceAllocatorFactory = require('./base');
 
-class IosSimulatorAllocDriverFactory extends AllocationDriverFactory {
-  createAllocationDriver({ eventEmitter }) {
-    const serviceLocator = require('../../../../servicelocator/ios');
+class IosSimulator extends DeviceAllocatorFactory {
+  _createDriver({ eventEmitter }) {
+    const serviceLocator = require('../../../servicelocator/ios');
     const applesimutils = serviceLocator.appleSimUtils;
     const deviceRegistry = serviceLocator.deviceRegistry;
 
-    const SimulatorLauncher = require('../../drivers/ios/SimulatorLauncher');
+    const SimulatorLauncher = require('../drivers/ios/SimulatorLauncher');
     const simulatorLauncher = new SimulatorLauncher({ applesimutils, eventEmitter });
 
-    const { SimulatorAllocDriver, SimulatorDeallocDriver } = require('../../drivers/ios/SimulatorAllocDriver');
+    const { SimulatorAllocDriver, SimulatorDeallocDriver } = require('../drivers/ios/SimulatorAllocDriver');
     const allocDriver = new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
     const createDeallocDriver = (deviceCookie) =>
       new SimulatorDeallocDriver(deviceCookie.udid, { deviceRegistry, simulatorLauncher });
@@ -21,4 +21,4 @@ class IosSimulatorAllocDriverFactory extends AllocationDriverFactory {
   }
 }
 
-module.exports = IosSimulatorAllocDriverFactory;
+module.exports = { IosSimulator };

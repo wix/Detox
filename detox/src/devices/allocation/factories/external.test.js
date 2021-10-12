@@ -1,10 +1,10 @@
-describe('External allocation driver factory', () => {
+describe('External allocator factory', () => {
   describe('validation', () => {
     const path = '../fake/module/path';
 
     let factoryClass;
     beforeEach(() => {
-      factoryClass = require('./ExternalAllocDriverFactory');
+      factoryClass = require('./external').External;
     });
 
     describe('given no allocation-driver class', () => {

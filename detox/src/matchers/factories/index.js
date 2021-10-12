@@ -1,24 +1,24 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
-class MatchersFactoryBase {
+class MatchersFactory {
   createMatchers() {}
 }
 
-class AndroidFactory extends MatchersFactoryBase {
+class Android extends MatchersFactory {
   createMatchers({ invocationManager, runtimeDevice, eventEmitter }) {
     const AndroidExpect = require('../../android/AndroidExpect');
     return new AndroidExpect({ invocationManager, device: runtimeDevice, emitter: eventEmitter });
   }
 }
 
-class IosFactory extends MatchersFactoryBase {
+class Ios extends MatchersFactory {
   createMatchers({ invocationManager, eventEmitter }) {
     const IosExpect = require('../../ios/expectTwo');
     return new IosExpect({ invocationManager, emitter: eventEmitter });
   }
 }
 
-class ExternalFactory extends MatchersFactoryBase {
+class External extends MatchersFactory {
   static validateModule(module, path) {
     if (!module.ExpectClass) {
       throw new DetoxRuntimeError(`The custom driver at '${path}' does not export the ExpectClass property`);
@@ -27,7 +27,7 @@ class ExternalFactory extends MatchersFactoryBase {
 
   constructor(module, path) {
     super();
-    ExternalFactory.validateModule(module, path);
+    External.validateModule(module, path);
 
     this._module = module;
   }
@@ -38,7 +38,7 @@ class ExternalFactory extends MatchersFactoryBase {
 }
 
 module.exports = {
-  AndroidFactory,
-  IosFactory,
-  ExternalFactory,
+  Android,
+  Ios,
+  External,
 };
