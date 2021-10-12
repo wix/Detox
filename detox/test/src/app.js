@@ -43,7 +43,7 @@ class example extends Component {
       <TouchableOpacity onPress={() => {
         onPressCallback();
       }}>
-        <Text style={{color: 'blue', marginBottom: 8}}>{title}</Text>
+        <Text style={{color: 'blue', marginBottom: 8}} testID={title}>{title}</Text>
       </TouchableOpacity>
     );
   }

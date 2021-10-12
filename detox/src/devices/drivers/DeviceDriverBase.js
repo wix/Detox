@@ -119,8 +119,9 @@ class DeviceDriverBase {
     return await this.client.reloadReactNative();
   }
 
-  async launchXCTestApp(_appBundleID) {
-    return ''
+  // TODO: Move this to the simulator driver. For some reason the simulator driver does not override
+  async launchXCTestApp(appBundleID) {
+    return await this.client.launchXCTestApp(appBundleID);
   }
 
   createPayloadFile(notification) {

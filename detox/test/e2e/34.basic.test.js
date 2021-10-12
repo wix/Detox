@@ -5,10 +5,12 @@ describe('Basic', () => {
   });
 
   it('Basic launch action', async () => {
-    // await device.launchApp();
-    // await device.launchApp({newInstance: true});
     await device.launchXCTestApp("bundle.id.try");
-    await device.reloadReactNative();
+  });
+
+  it('Basic tap action', async () => {
+    await device.launchXCTestApp("bundle.id.try");
+    await element(by.id('Sanity')).tap();
   });
 
 });
