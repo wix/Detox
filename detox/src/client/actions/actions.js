@@ -192,6 +192,16 @@ class CaptureViewHierarchy extends Action {
   }
 }
 
+class LaunchXCTestApp extends Action {
+  constructor(params) {
+    super('launchXCTestApp', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'launchDone');
+  }
+}
+
 module.exports = {
   Login,
   WaitForBackground,
@@ -207,4 +217,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
+  LaunchXCTestApp
 };

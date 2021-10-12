@@ -340,7 +340,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 		[self _safeSendAction:@"cleanupDone" params:@{} messageId:messageId];
 		return;
 	}
-	else if([type isEqualToString:@"launch"])
+	else if([type isEqualToString:@"launchXCTestApp"])
 	{
 		[self _enqueueAction:^{
 			[self _launchApplicationWithParameters:params completionHandler:^{

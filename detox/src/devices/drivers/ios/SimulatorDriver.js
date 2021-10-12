@@ -120,6 +120,10 @@ class SimulatorDriver extends IosDriver {
     return pid;
   }
 
+  async launchXCTestApp(appBundleID) {
+    return await this.client.launchXCTestApp(appBundleID);
+  }
+
   async waitForAppLaunch(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId, launchArgs });
 

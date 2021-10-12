@@ -179,6 +179,10 @@ class Client {
     this._whenAppIsReady.resolve();
   }
 
+  async launchXCTestApp(appBundleID) {
+    await this.sendAction(new actions.LaunchXCTestApp(appBundleID));
+  }
+
   async waitUntilReady() {
     if (!this._whenAppIsConnected.isResolved()) {
       this._whenAppIsConnected = new Deferred();

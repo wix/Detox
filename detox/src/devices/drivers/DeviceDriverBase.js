@@ -119,6 +119,10 @@ class DeviceDriverBase {
     return await this.client.reloadReactNative();
   }
 
+  async launchXCTestApp(_appBundleID) {
+    return ''
+  }
+
   createPayloadFile(notification) {
     const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
