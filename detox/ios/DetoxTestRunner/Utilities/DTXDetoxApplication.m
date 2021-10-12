@@ -65,8 +65,8 @@
 
 - (void)_commonInit
 {
-	NSString* bundleIdentifier = [self valueForKey:@"bundleID"];
-	_connection = [[DTXIPCConnection alloc] initWithServiceName:[NSString stringWithFormat:@"DetoxTestrunner-%@", bundleIdentifier]];
+	self.bundleIdentifier = [self valueForKey:@"bundleID"];
+	_connection = [[DTXIPCConnection alloc] initWithServiceName:[NSString stringWithFormat:@"DetoxTestrunner-%@", self.bundleIdentifier]];
 	_connection.exportedInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxTestRunner)];
 	_connection.exportedObject = self;
 	_connection.remoteObjectInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxHelper)];

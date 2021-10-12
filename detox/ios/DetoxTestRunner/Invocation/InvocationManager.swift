@@ -10,7 +10,7 @@ import UIKit
 import XCTest
 
 @objc(DTXInvocationManager) public class InvocationManager: NSObject {
-	private let application : DTXDetoxApplication
+	private var application : DTXDetoxApplication
 	
 	internal struct Keys {
 		static let type = "type"
@@ -23,6 +23,11 @@ import XCTest
 	
 	@objc(initWithApplication:)
 	public init(application: DTXDetoxApplication) {
+		self.application = application
+	}
+	
+	@objc(switchTargetApplication:)
+	public func switchTarget(application: DTXDetoxApplication) {
 		self.application = application
 	}
 	

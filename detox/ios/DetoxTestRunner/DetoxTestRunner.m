@@ -202,6 +202,19 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	}]];
 }
 
+-(void)_switchTestedApplication:(NSString*)bundleIdentifier {
+	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:bundleIdentifier];
+	_testedApplication.delegate = self;
+	[_testedApplicationInvocationManager switchTargetApplication:_testedApplication];
+}
+
+-(void)_switchTestedApplicationIfNeeded:(NSString*)bundleIdentifier {
+	if (![_testedApplication.bundleIdentifier isEqual:bundleIdentifier]) {
+		[self _switchTestedApplication:bundleIdentifier];
+	}
+}
+
+
 #pragma mark WebSocket
 
 - (void)_safeSendAction:(NSString*)action params:(NSDictionary*)params messageId:(NSNumber*)messageId
@@ -347,6 +360,16 @@ DTX_CREATE_LOG(DetoxTestRunner);
 			[self _launchApplicationWithParameters:params completionHandler:^{
 				[self _safeSendAction:@"launchDone" params:@{} messageId:messageId];
 			}];
+		}];
+		return;
+	}
+	else if([type isEqualToString:@"switchTargetApp"])
+	{
+		[self _enqueueAction:^{
+			// TODO: Get bundleIdentifier from params
+			NSString* bundleIdentifier = @"";
+			[self _switchTestedApplication:bundleIdentifier];
+			[self _safeSendAction:@"switchTargetDone" params:@{} messageId:messageId];
 		}];
 		return;
 	}

@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSDictionary* launchUserActivity;
 @property (nonatomic, strong, nullable) NSURL* launchOpenURL;
 @property (nonatomic, strong, nullable) NSString* launchSourceApp;
+@property (nonatomic, strong, nullable) NSString* bundleIdentifier;
 
 - (BOOL)waitForIdleWithTimeout:(NSTimeInterval)timeout;
 
