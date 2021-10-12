@@ -121,7 +121,8 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	NSLog(@"*********************************************************\nArguments: %@\n*********************************************************", NSProcessInfo.processInfo.arguments);
 	
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
-	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.detox-example"];
+//	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.detox-example"];
+	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.alon.FirstApp"];
 	//TODO: Obtain application bundle identifier from environment variables or launch arguments.
 //	_testedApplication = [[DTXDetoxApplication alloc] init];
 	_testedApplication.delegate = self;
