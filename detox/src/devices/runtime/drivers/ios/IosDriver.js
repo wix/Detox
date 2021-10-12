@@ -12,24 +12,24 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setURLBlacklist(blacklistURLs) {
-    return await this.client.setSyncSettings({ blacklistURLs: blacklistURLs });
+    await this.client.setSyncSettings({ blacklistURLs: blacklistURLs });
   }
 
   async enableSynchronization() {
-    return await this.client.setSyncSettings({ enabled: true });
+    await this.client.setSyncSettings({ enabled: true });
   }
 
   async disableSynchronization() {
-    return await this.client.setSyncSettings({ enabled: false });
+    await this.client.setSyncSettings({ enabled: false });
   }
 
   async shake() {
-    return await this.client.shake();
+    await this.client.shake();
   }
 
   async setOrientation(orientation) {
     if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ')'));
-    return await this.client.setOrientation({ orientation });
+    await this.client.setOrientation({ orientation });
   }
 
   getPlatform() {
