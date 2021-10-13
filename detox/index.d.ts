@@ -10,6 +10,7 @@
 // Current contributors:
 // * Yaroslav Serhieiev <https://github.com/noomorph>
 // * Oren Zakay <https://github.com/OrenZak>
+// * Jonathan Moskovich <https://github.com/jonathanmos>
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -876,10 +877,10 @@ declare global {
         interface Expect<R = Promise<void>> {
 
             /**
-             * Expect the view to be at least 75% visible.
-             * @example await expect(element(by.id('UniqueId204'))).toBeVisible();
+             * Expect the view to be at least X% visible. If no number is provided then defaults to 75%.
+             * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
              */
-            toBeVisible(): R;
+            toBeVisible(pct: number): R;
 
             /**
              * Negate the expectation.

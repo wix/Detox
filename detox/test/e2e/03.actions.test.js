@@ -194,4 +194,13 @@ describe('Actions', () => {
       await expect(element(by.id(reactSliderId))).toHaveValue('75%');
     }
   });
+
+  describe('toBeVisible with pct', () => {
+    it.only('test visibility', async () => {
+      await expect(element(by.text('Tap Me'))).toBeVisible();
+      await expect(element(by.text('Tap Me'))).toBeVisible(0);
+      await expect(element(by.text('Tap Me'))).toBeVisible(35);
+      await expect(element(by.text('Tap Me'))).toBeVisible(120);
+    });
+  });
 });

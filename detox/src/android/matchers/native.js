@@ -25,9 +25,10 @@ class TypeMatcher extends NativeMatcher {
 }
 
 class VisibleMatcher extends NativeMatcher {
-  constructor() {
+  constructor(pct) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible());
+    pct = (pct === undefined || pct < 1 || pct > 100) ? 75 : pct;
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible(pct));
   }
 }
 

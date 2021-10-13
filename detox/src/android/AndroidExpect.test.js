@@ -29,6 +29,9 @@ describe('AndroidExpect', () => {
   describe('native', () => {
     it(`element by accessibilityLabel`, async () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0);
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120);
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(35);
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
@@ -54,6 +57,9 @@ describe('AndroidExpect', () => {
 
     it(`element by label (for backwards compat)`, async () => {
       await e.expect(e.element(e.by.label('test'))).toBeVisible();
+      await e.expect(e.element(e.by.label('test'))).toBeVisible(0);
+      await e.expect(e.element(e.by.label('test'))).toBeVisible(120);
+      await e.expect(e.element(e.by.label('test'))).toBeVisible(35);
       await e.expect(e.element(e.by.label('test'))).toBeNotVisible();
       await e.expect(e.element(e.by.label('test'))).toExist();
       await e.expect(e.element(e.by.label('test'))).toNotExist();

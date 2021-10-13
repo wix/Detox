@@ -20,12 +20,13 @@ Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with eleme
 
 ### `toBeVisible()`
 
-Expects the element to be visible on screen.
+Expects the element to be visible on screen. Accepts an optional parameter to determine the percentage visibility of the element, otherwise defaults to 75%.
 
 On iOS, visibility is defined by having the view, or one of its subviews, be topmost at the view's activation point on screen.
 
 ```js
-await expect(element(by.id('UniqueId204'))).toBeVisible();
+await expect(element(by.id('UniqueId203'))).toBeVisible();
+await expect(element(by.id('UniqueId204'))).toBeVisible(35);
 ```
 
 ### `toExist()`
