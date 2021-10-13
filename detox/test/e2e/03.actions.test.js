@@ -196,7 +196,7 @@ describe('Actions', () => {
   });
 
   describe('toBeVisible with pct', () => {
-    it.only('test visibility', async () => {
+    it('test visibility', async () => {
       await expect(element(by.text('Tap Me'))).toBeVisible();
       await expect(element(by.text('Tap Me'))).toBeVisible(0);
       await expect(element(by.text('Tap Me'))).toBeVisible(35);
