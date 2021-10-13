@@ -27,7 +27,12 @@ class TypeMatcher extends NativeMatcher {
 class VisibleMatcher extends NativeMatcher {
   constructor(pct) {
     super();
-    pct = (pct === undefined || pct < 1 || pct > 100) ? 75 : pct;
+    pct = pct === undefined ? 75 : pct;
+
+    if (pct < 1 || pct > 100) {
+      throw new DetoxRuntimeError(`Visibility must be between 1 and 100. Got ${pct}`);
+    }
+
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible(pct));
   }
 }
