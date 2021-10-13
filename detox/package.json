@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "18.22.1",
+  "version": "18.22.2-smoke.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -40,11 +40,11 @@
     "eslint-plugin-node": "^6.0.1",
     "jest": "^27.0.0",
     "jest-environment-node": "^27.0.0",
-    "react-native-codegen": "^0.0.8",
     "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.64.1",
+    "react-native-codegen": "^0.0.8",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {
