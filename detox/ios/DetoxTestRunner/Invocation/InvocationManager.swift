@@ -35,7 +35,7 @@ import XCTest
 	public func invoke(dictionaryRepresentation: [String: Any]) -> [String: Any]? {
 		let type = dictionaryRepresentation[Keys.type] as! String
 		
-		application.buttons["btnSomeScreen"].tap()
+//		application.buttons["btnSomeScreen"].tap()
 //		application.otherElements["Sanity"].tap()
 		
 		switch type {
