@@ -11,13 +11,13 @@ describe('IOS simulator driver', () => {
   };
 
   let client;
-  let emitter;
+  let eventEmitter;
   let applesimutils;
   let simulatorLauncher;
   let uut;
   beforeEach(() => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
-    emitter = new AsyncEmitter({
+    eventEmitter = new AsyncEmitter({
       events: ['beforeLaunchApp'],
       onError: (e) => { throw e; },
     });
@@ -32,7 +32,7 @@ describe('IOS simulator driver', () => {
     simulatorLauncher = new SimulatorLauncher();
 
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver(udid, { simulatorLauncher, applesimutils, client, emitter }, { deviceConfig });
+    uut = new SimulatorDriver(udid, { simulatorLauncher, applesimutils, client, eventEmitter }, { deviceConfig });
   });
 
   it('should return the UDID as the external ID', () => {
@@ -60,7 +60,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
-      emitter.on('beforeLaunchApp', ({ launchArgs }) => {
+      eventEmitter.on('beforeLaunchApp', ({ launchArgs }) => {
         launchArgs.dog3 = 'Chika, from plugin';
       });
 
@@ -91,7 +91,7 @@ describe('IOS simulator driver', () => {
 
   describe('.captureViewHierarchy', () => {
     beforeEach(async () => {
-      jest.spyOn(emitter, 'emit');
+      jest.spyOn(eventEmitter, 'emit');
 
       await uut.captureViewHierarchy('named hierarchy');
     });
@@ -103,7 +103,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should emit "createExternalArtifact" event for uiHierarchy plugin', async () => {
-      expect(emitter.emit).toHaveBeenCalledWith('createExternalArtifact', {
+      expect(eventEmitter.emit).toHaveBeenCalledWith('createExternalArtifact', {
         pluginId: 'uiHierarchy',
         artifactName: 'named hierarchy',
         artifactPath: expect.any(String),

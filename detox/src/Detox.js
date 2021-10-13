@@ -161,6 +161,8 @@ class Detox {
 
     await this._client.connect();
 
+    const invocationManager = new InvocationManager(this._client);
+
     const {
       envValidatorFactory,
       deviceAllocatorFactory,
@@ -172,28 +174,26 @@ class Detox {
     const envValidator = envValidatorFactory.createValidator();
     await envValidator.validate();
 
+    const commonDeps = {
+      invocationManager,
+      client: this._client,
+      eventEmitter: this._eventEmitter,
+      runtimeErrorComposer: this._runtimeErrorComposer,
+    };
+
     const {
       allocator,
       createDeallocator,
-    } = deviceAllocatorFactory.createDeviceAllocator(this._eventEmitter);
+    } = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
 
-    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, {
-      eventEmitter: this._eventEmitter,
-      client: this._client,
-    });
+    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
 
     const deviceCookie = await allocator.allocate(this._deviceConfig);
 
-    const invocationManager = new InvocationManager(this._client);
     this.deviceDeallocator = createDeallocator(deviceCookie);
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       deviceCookie,
-      {
-        invocationManager,
-        client: this._client,
-        emitter: this._eventEmitter,
-        runtimeErrorComposer: this._runtimeErrorComposer,
-      },
+      commonDeps,
       {
         appsConfig: this._appsConfig,
         behaviorConfig: this._behaviorConfig,

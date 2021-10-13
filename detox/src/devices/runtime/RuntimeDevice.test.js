@@ -107,7 +107,7 @@ describe('Device', () => {
       deviceConfig: {},
       sessionConfig: {},
       runtimeErrorComposer: errorComposer,
-      emitter,
+      eventEmitter: emitter,
 
       ...overrides,
     }, driverMock.driver);

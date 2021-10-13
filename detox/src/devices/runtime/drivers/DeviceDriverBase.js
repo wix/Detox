@@ -8,11 +8,11 @@ const log = require('../../../utils/logger').child({ __filename });
 class DeviceDriverBase {
   /**
    * @param client { Client }
-   * @param emitter { AsyncEmitter }
+   * @param eventEmitter { AsyncEmitter }
    */
-  constructor({ client, emitter }) {
+  constructor({ client, eventEmitter }) {
     this.client = client;
-    this.emitter = emitter;
+    this.emitter = eventEmitter;
   }
 
   /**

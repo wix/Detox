@@ -2,14 +2,14 @@ const { DeviceAllocator, DeviceDeallocator } = require('../DeviceAllocator');
 
 class DeviceAllocatorFactory {
   /**
-   * @param eventEmitter { AsyncEmitter }
+   * @param deps { Object }
    * @returns { { allocator: DeviceAllocator, createDeallocator: (deviceCookie: DeviceCookie) => DeviceDeallocator} }
    */
-  createDeviceAllocator(eventEmitter) {
+  createDeviceAllocator(deps) {
     const {
       allocDriver,
       createDeallocDriver,
-    } = this._createDriver({ eventEmitter });
+    } = this._createDriver(deps);
 
     return {
       allocator: new DeviceAllocator(allocDriver),

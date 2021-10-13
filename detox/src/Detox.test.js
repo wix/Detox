@@ -154,7 +154,7 @@ describe('Detox', () => {
           fakeCookie,
           {
             invocationManager: invocationManager(),
-            emitter: eventEmitter(),
+            eventEmitter: eventEmitter(),
             client: client(),
             runtimeErrorComposer: expect.any(Object),
           },
@@ -187,10 +187,10 @@ describe('Detox', () => {
         expect(global.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should create artifacts manager', () =>
-        expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig, {
+        expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig, expect.objectContaining({
           client: client(),
           eventEmitter: eventEmitter(),
-        }));
+        })));
 
       it('should prepare the device', () =>
         expect(runtimeDevice._prepare).toHaveBeenCalled());

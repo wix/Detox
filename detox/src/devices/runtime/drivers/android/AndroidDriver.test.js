@@ -7,7 +7,7 @@ describe('Android driver', () => {
   let fs; // TODO don't mock
   let client;
   let getAbsoluteBinaryPath;
-  let emitter;
+  let eventEmitter;
   let detoxApi;
   let invocationManager;
   let adb;
@@ -27,7 +27,7 @@ describe('Android driver', () => {
     uut = new AndroidDriver(adbName, {
       client,
       invocationManager,
-      emitter,
+      eventEmitter,
       adb,
       aapt,
       fileXfer,
@@ -111,7 +111,7 @@ describe('Android driver', () => {
       expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
 
     it('should turn off the events emitter', () =>
-      expect(emitter.off).toHaveBeenCalled());
+      expect(eventEmitter.off).toHaveBeenCalled());
   });
 
   describe('URL runtime delivery handling', () => {
@@ -492,7 +492,7 @@ describe('Android driver', () => {
       waitUntilReady: jest.fn(),
     };
 
-    emitter = {
+    eventEmitter = {
       emit: jest.fn(),
       off: jest.fn(),
     };

@@ -6,7 +6,7 @@ describe('Genymotion-cloud driver', () => {
     toString: () => 'mock-instance-toString()',
   });
 
-  let emitter;
+  let eventEmitter;
   let invocationManager;
   let appInstallHelper;
   let instrumentation;
@@ -15,7 +15,7 @@ describe('Genymotion-cloud driver', () => {
     jest.mock('../../../../../utils/getAbsoluteBinaryPath');
 
     const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
-    emitter = new Emitter();
+    eventEmitter = new Emitter();
 
     const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
     invocationManager = new InvocationManager();
@@ -42,7 +42,7 @@ describe('Genymotion-cloud driver', () => {
       GenyCloudDriver = require('./GenyCloudDriver');
       uut = new GenyCloudDriver(instance, {
         invocationManager,
-        emitter,
+        eventEmitter,
         client: {},
         appInstallHelper,
         instrumentation,

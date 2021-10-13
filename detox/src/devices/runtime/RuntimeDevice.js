@@ -10,7 +10,7 @@ class RuntimeDevice {
     appsConfig,
     behaviorConfig,
     deviceConfig,
-    emitter,
+    eventEmitter,
     sessionConfig,
     runtimeErrorComposer,
   }, deviceDriver) {
@@ -52,7 +52,7 @@ class RuntimeDevice {
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
-    this._emitter = emitter;
+    this._emitter = eventEmitter;
     this._errorComposer = runtimeErrorComposer;
 
     this._currentApp = null;
