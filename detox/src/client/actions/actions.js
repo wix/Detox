@@ -212,6 +212,17 @@ class SwitchTargetApp extends Action {
   }
 }
 
+class TerminateXCTestApp extends Action {
+  constructor(params) {
+    super('terminateXCTestApp', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'terminateDone');
+  }
+}
+
+
 module.exports = {
   Login,
   WaitForBackground,
@@ -228,5 +239,6 @@ module.exports = {
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
   LaunchXCTestApp,
-  SwitchTargetApp
+  SwitchTargetApp,
+  TerminateXCTestApp
 };

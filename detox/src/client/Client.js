@@ -191,6 +191,12 @@ class Client {
     }));
   }
 
+  async terminateXCTestApp(appBundleIdentifier) {
+    await this.sendAction(new actions.TerminateXCTestApp({
+      appBundleIdentifier
+    }));
+  }
+
   async waitUntilReady() {
     if (!this._whenAppIsConnected.isResolved()) {
       this._whenAppIsConnected = new Deferred();

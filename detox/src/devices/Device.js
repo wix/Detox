@@ -228,6 +228,11 @@ class Device {
       this.deviceDriver.switchTargetApp(appBundleIdentifier));
   }
 
+  async terminateXCTestApp(appBundleIdentifier) {
+    await traceCall('terminateXCTestApp', () =>
+      this.deviceDriver.terminateXCTestApp(appBundleIdentifier));
+  }
+
   async openURL(params) {
     if (typeof params !== 'object' || !params.url) {
       throw new DetoxRuntimeError(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);

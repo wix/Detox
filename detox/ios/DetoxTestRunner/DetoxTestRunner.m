@@ -195,6 +195,8 @@ DTX_CREATE_LOG(DetoxTestRunner);
 
 - (void)_terminateApplicationWithParameters:(NSDictionary*)params completionHandler:(dispatch_block_t)completionHandler
 {
+	NSString* bundleIdentifier = params[@"appBundleIdentifier"];
+	[self _switchTestedApplicationIfNeeded:bundleIdentifier];
 	[_currentTestedApplication terminate];
 	
 	if(completionHandler)
@@ -413,7 +415,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 		}];
 		return;
 	}
-	else if([type isEqualToString:@"terminate"])
+	else if([type isEqualToString:@"terminateXCTestApp"])
 	{
 		[self _enqueueAction:^{
 			[self _terminateApplicationWithParameters:params completionHandler:^{
