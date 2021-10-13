@@ -27,8 +27,9 @@ DTX_CREATE_LOG(DetoxTestRunner);
 @implementation DetoxTestRunner
 {
 	WebSocket *_webSocket;
-	DTXDetoxApplication* _testedApplication;
+	DTXDetoxApplication* _currentTestedApplication;
 	DTXInvocationManager* _testedApplicationInvocationManager;
+	NSMutableArray <DTXDetoxApplication *> * _testedApp;
 	
 	NSMutableArray<dispatch_block_t>* _pendingActions;
 	pthread_mutex_t _pendingActionsMutex;
@@ -52,6 +53,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	if(self)
 	{
 		_pendingActions = [NSMutableArray new];
+		_testedApp = [NSMutableArray new];
 		pthread_mutex_init(&_pendingActionsMutex, NULL);
 		_pendingActionsAvailable = dispatch_semaphore_create(0);
 		_webSocketQueue = dispatch_queue_create("com.wix.detoxTestRunner.webSocket", NULL);
@@ -122,11 +124,14 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.detox-example"];
-	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.alon.SomeAppWhichDoesNotExist"];
+//	_currentTestedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.alon.SomeAppWhichDoesNotExist"];
 	//TODO: Obtain application bundle identifier from environment variables or launch arguments.
 //	_testedApplication = [[DTXDetoxApplication alloc] init];
-	_testedApplication.delegate = self;
-	_testedApplicationInvocationManager = [[DTXInvocationManager alloc] initWithApplication:_testedApplication];
+//	[_testedApp addObject:_currentTestedApplication];
+//	_currentTestedApplication.delegate = self;
+//	_testedApplicationInvocationManager = [[DTXInvocationManager alloc] initWithApplication:_currentTestedApplication];
+	
+	[self _createTestedApplication:@"com.wix.alon.SomeAppWhichDoesNotExist"];
 	
 //	[self webSocket:nil didReceiveAction:@"launch" withParams:nil withMessageId:@10];
 //	[self webSocket:nil didReceiveAction:@"invoke" withParams:[NSDictionary dictionaryWithContentsOfURL:[[NSBundle bundleForClass:DetoxTestRunner.class] URLForResource:@"tap-bad" withExtension:@"plist"]] withMessageId:@1];
@@ -142,9 +147,9 @@ DTX_CREATE_LOG(DetoxTestRunner);
 - (void)_cleanUpAndTerminateIfNeeded
 {
 	//The web socket connection closed, so terminate all tested applications and finally exist the process.
-	[_testedApplication.detoxHelper stopAndCleanupRecordingWithCompletionHandler:^ {}];
+	[_currentTestedApplication.detoxHelper stopAndCleanupRecordingWithCompletionHandler:^ {}];
 	//Only terminated tested app if debugger is not attached.
-	[_testedApplication.detoxHelper isDebuggerAttachedWithCompletionHandler:^(BOOL isDebuggerAttached) {
+	[_currentTestedApplication.detoxHelper isDebuggerAttachedWithCompletionHandler:^(BOOL isDebuggerAttached) {
 		if(isDebuggerAttached == NO)
 		{
 			[self _terminateApplicationWithParameters:nil completionHandler:nil];
@@ -166,20 +171,20 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	NSString* bundleIdentifier = params[@"appBundleIdentifier"];
 	[self _switchTestedApplicationIfNeeded:bundleIdentifier];
 	
-	_testedApplication.launchUserActivity = userActivity;
-	_testedApplication.launchUserNotification = userNotification;
-	_testedApplication.launchOpenURL = [NSURL URLWithString:params[@"url"]];
-	_testedApplication.launchSourceApp = params[@"sourceApp"];
+	_currentTestedApplication.launchUserActivity = userActivity;
+	_currentTestedApplication.launchUserNotification = userNotification;
+	_currentTestedApplication.launchOpenURL = [NSURL URLWithString:params[@"url"]];
+	_currentTestedApplication.launchSourceApp = params[@"sourceApp"];
 	
-	_testedApplication.launchArguments = params[@"launchArgs"];
+	_currentTestedApplication.launchArguments = params[@"launchArgs"];
 	
 	if([params[@"newInstance"] boolValue])
 	{
-		[_testedApplication launch];
+		[_currentTestedApplication launch];
 	}
 	else
 	{
-		[_testedApplication activate];
+		[_currentTestedApplication activate];
 	}
 	
 	if(completionHandler)
@@ -190,7 +195,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 
 - (void)_terminateApplicationWithParameters:(NSDictionary*)params completionHandler:(dispatch_block_t)completionHandler
 {
-	[_testedApplication terminate];
+	[_currentTestedApplication terminate];
 	
 	if(completionHandler)
 	{
@@ -205,14 +210,47 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	}]];
 }
 
+// Return nil if not exist
+-(DTXDetoxApplication *)_findExsitingApplication:(NSString*)bundleIdentifier {
+	for (DTXDetoxApplication* app in _testedApp){
+		if([app.bundleIdentifier isEqualToString: bundleIdentifier]) {
+			return app;
+		}
+	}
+	
+	return nil;
+}
+
+-(void)_createTestedApplication:(NSString*)bundleIdentifier {
+	_currentTestedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:bundleIdentifier];
+	_currentTestedApplication.delegate = self;
+	[_testedApp addObject:_currentTestedApplication];
+	
+	if (_testedApplicationInvocationManager) {
+		[_testedApplicationInvocationManager switchTargetApplication:_currentTestedApplication];
+	} else {
+		_testedApplicationInvocationManager = [[DTXInvocationManager alloc] initWithApplication:_currentTestedApplication];
+	}
+}
+
+-(void)_changeCurrentTestedApplication:(DTXDetoxApplication*)application {
+	_currentTestedApplication = application;
+	_currentTestedApplication.delegate = self;
+	[_testedApplicationInvocationManager switchTargetApplication:_currentTestedApplication];
+}
+
 -(void)_switchTestedApplication:(NSString*)bundleIdentifier {
-	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:bundleIdentifier];
-	_testedApplication.delegate = self;
-	[_testedApplicationInvocationManager switchTargetApplication:_testedApplication];
+	DTXDetoxApplication* application = [self _findExsitingApplication:bundleIdentifier];
+	
+	if (application) {
+		[self _changeCurrentTestedApplication:application];
+	} else {
+		[self _createTestedApplication:bundleIdentifier];
+	}
 }
 
 -(void)_switchTestedApplicationIfNeeded:(NSString*)bundleIdentifier {
-	if (![_testedApplication.bundleIdentifier isEqual:bundleIdentifier]) {
+	if (![_currentTestedApplication.bundleIdentifier isEqual:bundleIdentifier]) {
 		[self _switchTestedApplication:bundleIdentifier];
 	}
 }
@@ -295,7 +333,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"setRecordingState"])
 	{
 		[self _enqueueAction:^{
-			[self->_testedApplication.detoxHelper handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
+			[self->_currentTestedApplication.detoxHelper handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
 				[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];
 			}];
 		}];
@@ -304,7 +342,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"waitForActive"])
 	{
 		[self _enqueueAction:^{
-			[self->_testedApplication.detoxHelper waitForApplicationState:UIApplicationStateActive completionHandler:^{
+			[self->_currentTestedApplication.detoxHelper waitForApplicationState:UIApplicationStateActive completionHandler:^{
 				[self _safeSendAction:@"waitForActiveDone" params:@{} messageId:messageId];
 			}];
 		}];
@@ -313,7 +351,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"waitForBackground"])
 	{
 		[self _enqueueAction:^{
-			[self->_testedApplication.detoxHelper waitForApplicationState:UIApplicationStateBackground completionHandler:^{
+			[self->_currentTestedApplication.detoxHelper waitForApplicationState:UIApplicationStateBackground completionHandler:^{
 				[self _safeSendAction:@"waitForBackgroundDone" params:@{} messageId:messageId];
 			}];
 		}];
@@ -322,7 +360,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"invoke"])
 	{
 		[self _enqueueAction:^{
-			[self->_testedApplication waitForIdleWithTimeout:0];
+			[self->_currentTestedApplication waitForIdleWithTimeout:0];
 			@try
 			{
 				NSDictionary* rv = [self->_testedApplicationInvocationManager invokeWithDictionaryRepresentation:params];
@@ -387,7 +425,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"deliverPayload"])
 	{
 		[self _enqueueAction:^{
-			[self->_testedApplication.detoxHelper deliverPayload:params completionHandler:^{
+			[self->_currentTestedApplication.detoxHelper deliverPayload:params completionHandler:^{
 				[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId:messageId];
 			}];
 		}];
@@ -408,7 +446,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		[self _enqueueAction:^{
-			[self->_testedApplication.detoxHelper reloadReactNativeWithCompletionHandler:^{
+			[self->_currentTestedApplication.detoxHelper reloadReactNativeWithCompletionHandler:^{
 				[self _safeSendAction:@"reactNativeReloadDone" params:@{} messageId:messageId];
 			}];
 		}];
@@ -417,7 +455,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"currentStatus"])
 	{
 		//TODO: Format changed!
-		[_testedApplication.detoxHelper syncStatusWithCompletionHandler:^(NSString * _Nonnull information) {
+		[_currentTestedApplication.detoxHelper syncStatusWithCompletionHandler:^(NSString * _Nonnull information) {
 			[self _safeSendAction:@"currentStatusResult" params:@{@"messageId": messageId, @"syncStatus": information} messageId:messageId];
 		}];
 		return;
