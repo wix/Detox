@@ -5,12 +5,13 @@ describe('Basic', () => {
   });
 
   it('Basic launch action', async () => {
-    await device.launchXCTestApp("bundle.id.try");
+    await device.launchXCTestApp("com.wix.alon.FirstApp");
+    await device.switchTargetApp("bundle.id.try");
   });
 
-  it('Basic tap action', async () => {
-    await device.launchXCTestApp("bundle.id.try");
-    await element(by.id('Sanity')).tap();
-  });
+  // it('Basic tap action', async () => {
+  //   await device.launchXCTestApp("com.wix.alon.FirstApp");
+  //   await element(by.id('Sanity')).tap();
+  // });
 
 });

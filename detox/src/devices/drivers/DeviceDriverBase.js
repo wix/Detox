@@ -120,8 +120,12 @@ class DeviceDriverBase {
   }
 
   // TODO: Move this to the simulator driver. For some reason the simulator driver does not override
-  async launchXCTestApp(appBundleID) {
-    return await this.client.launchXCTestApp(appBundleID);
+  async launchXCTestApp(appBundleIdentifier) {
+    return await this.client.launchXCTestApp(appBundleIdentifier);
+  }
+
+  async switchTargetApp(appBundleIdentifier) {
+    return await this.client.switchTargetApp(appBundleIdentifier);
   }
 
   createPayloadFile(notification) {

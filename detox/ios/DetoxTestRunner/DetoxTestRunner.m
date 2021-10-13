@@ -122,7 +122,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.detox-example"];
-	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.alon.FirstApp"];
+	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.alon.SomeAppWhichDoesNotExist"];
 	//TODO: Obtain application bundle identifier from environment variables or launch arguments.
 //	_testedApplication = [[DTXDetoxApplication alloc] init];
 	_testedApplication.delegate = self;
@@ -162,6 +162,9 @@ DTX_CREATE_LOG(DetoxTestRunner);
 {
 	NSDictionary* userActivity = params[@"userActivity"];
 	NSDictionary* userNotification = [DetoxUserNotificationParser parseUserNotificationWithDictionary:params[@"userNotification"]];
+	
+	NSString* bundleIdentifier = params[@"appBundleIdentifier"];
+	[self _switchTestedApplicationIfNeeded:bundleIdentifier];
 	
 	_testedApplication.launchUserActivity = userActivity;
 	_testedApplication.launchUserNotification = userNotification;
@@ -366,9 +369,8 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	else if([type isEqualToString:@"switchTargetApp"])
 	{
 		[self _enqueueAction:^{
-			// TODO: Get bundleIdentifier from params
-			NSString* bundleIdentifier = @"";
-			[self _switchTestedApplication:bundleIdentifier];
+			NSString* bundleIdentifier = params[@"appBundleIdentifier"];
+			[self _switchTestedApplicationIfNeeded:bundleIdentifier];
 			[self _safeSendAction:@"switchTargetDone" params:@{} messageId:messageId];
 		}];
 		return;

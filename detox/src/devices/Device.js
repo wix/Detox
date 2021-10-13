@@ -218,9 +218,14 @@ class Device {
       this.deviceDriver.reloadReactNative());
   }
 
-  async launchXCTestApp(appBundleID) {
+  async launchXCTestApp(appBundleIdentifier) {
     await traceCall('lanuchXCTest', () =>
-      this.deviceDriver.launchXCTestApp(appBundleID));
+      this.deviceDriver.launchXCTestApp(appBundleIdentifier));
+  }
+
+  async switchTargetApp(appBundleIdentifier) {
+    await traceCall('switchTargetApp', () =>
+      this.deviceDriver.switchTargetApp(appBundleIdentifier));
   }
 
   async openURL(params) {

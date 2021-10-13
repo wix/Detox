@@ -179,8 +179,16 @@ class Client {
     this._whenAppIsReady.resolve();
   }
 
-  async launchXCTestApp(appBundleID) {
-    await this.sendAction(new actions.LaunchXCTestApp(appBundleID));
+  async launchXCTestApp(appBundleIdentifier) {
+    await this.sendAction(new actions.LaunchXCTestApp({
+      appBundleIdentifier
+    }));
+  }
+
+  async switchTargetApp(appBundleIdentifier) {
+    await this.sendAction(new actions.SwitchTargetApp({
+      appBundleIdentifier
+    }));
   }
 
   async waitUntilReady() {

@@ -202,6 +202,16 @@ class LaunchXCTestApp extends Action {
   }
 }
 
+class SwitchTargetApp extends Action {
+  constructor(params) {
+    super('switchTargetApp', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'switchTargetDone');
+  }
+}
+
 module.exports = {
   Login,
   WaitForBackground,
@@ -217,5 +227,6 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
-  LaunchXCTestApp
+  LaunchXCTestApp,
+  SwitchTargetApp
 };
