@@ -968,8 +968,9 @@ declare global {
             /**
              * Simulate tap on an element
              * @example await element(by.id('tappable')).tap();
+             * @example await element(by.id('tappable')).tap({ x:5, y:10 });
              */
-            tap(): Promise<void>;
+            tap(point?: { x: number; y: number }): Promise<void>;
 
             /**
              * Simulate long press on an element
