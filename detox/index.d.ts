@@ -967,6 +967,7 @@ declare global {
         interface NativeElementActions {
             /**
              * Simulate tap on an element
+             * @param point relative coordinates to the matched element (the element size could changes on different devices or even when changing the device font size)
              * @example await element(by.id('tappable')).tap();
              * @example await element(by.id('tappable')).tap({ x:5, y:10 });
              */
