@@ -6,10 +6,10 @@
 	url = https://github.com/wix/DTXLoggingInfra.git
 [submodule "detox/ios/DTXObjectiveCHelpers"]
 	path = detox/ios/DTXObjectiveCHelpers
-	url = https://github.com/wix/DTXObjectiveCHelpers.git
+	url = https://github.com/calebmackdavenport/DTXObjectiveCHelpers.git
 [submodule "detox/ios/DetoxSync"]
 	path = detox/ios/DetoxSync
-	url = https://github.com/wix/DetoxSync.git
+	url = https://github.com/calebmackdavenport/DetoxSync.git
 [submodule "detox/ios/fishhook"]
 	path = detox/ios/fishhook
 	url = https://github.com/facebook/fishhook.git
