@@ -18,7 +18,7 @@ class NativeExpectElement extends NativeExpect {
     this._element = element;
   }
 
-  async toBeVisible(pct) {
+  async toBeVisible(pct = 75) {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct)).execute();
   }
 

@@ -18,8 +18,8 @@ class NativeWaitForElement extends NativeWaitFor {
     return this;
   }
 
-  toBeVisible() {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.VisibleMatcher().not : new matchers.VisibleMatcher());
+  toBeVisible(pct = 75) {
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct));
   }
 
   toBeNotVisible() {

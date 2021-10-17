@@ -880,7 +880,7 @@ declare global {
              * Expect the view to be at least X% visible. If no number is provided then defaults to 75%.
              * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
              */
-            toBeVisible(pct: number): R;
+            toBeVisible(pct?: number): R;
 
             /**
              * Negate the expectation.
