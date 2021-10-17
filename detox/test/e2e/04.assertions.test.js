@@ -48,4 +48,23 @@ describe('Assertions', () => {
     await expect(element(by.id('UniqueId146'))).toHaveToggleValue(true);
     await expect(element(by.id('UniqueId146'))).not.toHaveToggleValue(false);
   });
+
+  it('should match elements for visiblity with default threshold', async () => {
+    await expect(element(by.text('UniqueId204'))).toBeVisible();
+  });
+
+  it('should match elements for visibility with custom threshold', async () => {
+    await expect(element(by.text('UniqueId204'))).toBeVisible(35);
+  });
+
+  it('should throw exception for visibility threshold out of range', async () => {
+    try {
+      await expect(element(by.text('UniqueId204'))).toBeVisible(0);
+      await expect(element(by.text('UniqueId204'))).toBeVisible(120);
+    } catch (e) {
+      if (!e.toString().includes('Visibility must be between 1 and 100. Got')) {
+        throw new Exception('should throw exception for visibility out of range');
+      }
+    }
+  });
 });
