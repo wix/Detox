@@ -10,7 +10,7 @@ You will find that some steps are longer than the others: some are just one-para
 
 ### Install [Node.js](https://nodejs.org/en/)
 
-`Node.js` is the JavaScript runtime Detox will run on. **Install Node.js `10.0` or above**.
+`Node.js` is the JavaScript runtime Detox will run on. **Install Node.js `v12.0` or above**.
 
 There's more than one way to install Node.js:
 
@@ -18,21 +18,21 @@ There's more than one way to install Node.js:
 - Use [Homebrew](https://formulae.brew.sh/formula/node)
 - Use `nvm` - if you need to allow for several versions to be installed on a single machine
 
-We recommend using Homebrew:
+The simplest way is to use Homebrew:
 
- ```sh
-brew update && brew install node
- ```
+```sh
+brew install node
+```
 
-> Tip: Verify installation succeeded by typing in `node -v` in the terminal to output current node version. Should be `8.3.0` or higher.
+> Tip: Verify installation succeeded by typing in `node -v` in the terminal to output current node version.
 
 ### Install Detox Command Line Tools (`detox-cli`)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
-  ```sh
+```sh
 npm install -g detox-cli
-  ```
+```
 
 ### Install Platform-specific Dependencies, Tools and Dev-kits
 
