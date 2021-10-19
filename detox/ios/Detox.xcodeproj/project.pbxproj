@@ -31,8 +31,6 @@
 		3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946CD482566EBCB000A3606 /* NSObject+DetoxUtils.m */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
-		395AD81924B5EBEA002B382B /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 395AD81724B5EBEA002B382B /* fishhook.h */; };
-		395AD81A24B5EBEA002B382B /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 395AD81824B5EBEA002B382B /* fishhook.c */; };
 		395B06E4256D5A5600941716 /* UIView+DetoxSpeedup.h in Headers */ = {isa = PBXBuildFile; fileRef = 395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */; };
 		395B06E5256D5A5600941716 /* UIView+DetoxSpeedup.m in Sources */ = {isa = PBXBuildFile; fileRef = 395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */; };
 		396D454425238B780096E7FA /* DetoxPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 396D454225238B780096E7FA /* DetoxPolicy.m */; };
@@ -112,6 +110,8 @@
 		39EECB8024C0A73F009C3364 /* NSArray+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB7E24C0A73E009C3364 /* NSArray+Utils.m */; };
 		39EECB8124C0A73F009C3364 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EECB7F24C0A73E009C3364 /* NSArray+Utils.h */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
+		60C1961A271F11C4000172DD /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C19618271F11C4000172DD /* fishhook.h */; };
+		60C1961B271F11C4000172DD /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 60C19619271F11C4000172DD /* fishhook.c */; };
 		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
 /* End PBXBuildFile section */
@@ -212,8 +212,6 @@
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
-		395AD81724B5EBEA002B382B /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
-		395AD81824B5EBEA002B382B /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxSpeedup.h"; sourceTree = "<group>"; };
 		395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxSpeedup.m"; sourceTree = "<group>"; };
 		396D454225238B780096E7FA /* DetoxPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxPolicy.m; sourceTree = "<group>"; };
@@ -299,6 +297,8 @@
 		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
 		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DetoxCrashHandler.mm; sourceTree = "<group>"; };
+		60C19618271F11C4000172DD /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = DetoxSync/DetoxSync/fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
+		60C19619271F11C4000172DD /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = DetoxSync/DetoxSync/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
 		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -492,8 +492,8 @@
 				3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */,
 				399BF36621933F0C00F96D50 /* ExternalLogging.h */,
 				399BF36721933F0C00F96D50 /* ExternalLogging.m */,
-				395AD81824B5EBEA002B382B /* fishhook.c */,
-				395AD81724B5EBEA002B382B /* fishhook.h */,
+				60C19619271F11C4000172DD /* fishhook.c */,
+				60C19618271F11C4000172DD /* fishhook.h */,
 				39EECB7F24C0A73E009C3364 /* NSArray+Utils.h */,
 				39EECB7E24C0A73E009C3364 /* NSArray+Utils.m */,
 				397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */,
@@ -616,6 +616,7 @@
 				3946CD492566EBCB000A3606 /* NSObject+DetoxUtils.h in Headers */,
 				3980D1182448B52C004812DD /* UITouch+DTXAdditions.h in Headers */,
 				3990BA152457248600B608C8 /* UIView+DetoxUtils.h in Headers */,
+				60C1961A271F11C4000172DD /* fishhook.h in Headers */,
 				39DC985924BB904D00FFB224 /* ReactNativeSupport.h in Headers */,
 				396D455825238BCE0096E7FA /* UIImage+DetoxUtils.h in Headers */,
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
@@ -629,7 +630,6 @@
 				3980D165244DC8F0004812DD /* UIPickerView+DetoxActions.h in Headers */,
 				39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */,
 				396D455325238BB90096E7FA /* UIView+Drawing.h in Headers */,
-				395AD81924B5EBEA002B382B /* fishhook.h in Headers */,
 				390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
 				3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */,
@@ -837,10 +837,10 @@
 				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
 				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
-				395AD81A24B5EBEA002B382B /* fishhook.c in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
 				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
+				60C1961B271F11C4000172DD /* fishhook.c in Sources */,
 				390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */,
 				3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */,
 				3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */,
