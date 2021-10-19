@@ -101,9 +101,7 @@
 		39DC984924BB8E8900FFB224 /* DTXLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DC984624BB8E8900FFB224 /* DTXLogging.swift */; };
 		39DC985624BB904D00FFB224 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DC985124BB904D00FFB224 /* ReactNativeHeaders.h */; };
 		39DC985724BB904D00FFB224 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DC985224BB904D00FFB224 /* ReactNativeSupport.m */; };
-		39DC985824BB904D00FFB224 /* ReactNativeSupportNoARC.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DC985324BB904D00FFB224 /* ReactNativeSupportNoARC.h */; };
 		39DC985924BB904D00FFB224 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DC985424BB904D00FFB224 /* ReactNativeSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		39DC985A24BB904D00FFB224 /* ReactNativeSupportNoARC.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DC985524BB904D00FFB224 /* ReactNativeSupportNoARC.m */; };
 		39DC985B24BB906A00FFB224 /* DetoxSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */; };
 		39DC985C24BB906A00FFB224 /* DetoxSync.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */; };
@@ -289,9 +287,7 @@
 		39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxSync.xcodeproj; path = DetoxSync/DetoxSync/DetoxSync.xcodeproj; sourceTree = SOURCE_ROOT; };
 		39DC985124BB904D00FFB224 /* ReactNativeHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
 		39DC985224BB904D00FFB224 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
-		39DC985324BB904D00FFB224 /* ReactNativeSupportNoARC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupportNoARC.h; sourceTree = "<group>"; };
 		39DC985424BB904D00FFB224 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
-		39DC985524BB904D00FFB224 /* ReactNativeSupportNoARC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupportNoARC.m; sourceTree = "<group>"; };
 		39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxCrashHandler.h; sourceTree = "<group>"; };
 		39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
 		39EECB7624C0A4D3009C3364 /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXAddressInfo.h; path = DTXObjectiveCHelpers/DTXAddressInfo.h; sourceTree = SOURCE_ROOT; };
@@ -594,8 +590,6 @@
 				39DC985124BB904D00FFB224 /* ReactNativeHeaders.h */,
 				39DC985424BB904D00FFB224 /* ReactNativeSupport.h */,
 				39DC985224BB904D00FFB224 /* ReactNativeSupport.m */,
-				39DC985324BB904D00FFB224 /* ReactNativeSupportNoARC.h */,
-				39DC985524BB904D00FFB224 /* ReactNativeSupportNoARC.m */,
 			);
 			path = ReactNativeSupport;
 			sourceTree = "<group>";
@@ -625,7 +619,6 @@
 				39DC985924BB904D00FFB224 /* ReactNativeSupport.h in Headers */,
 				396D455825238BCE0096E7FA /* UIImage+DetoxUtils.h in Headers */,
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
-				39DC985824BB904D00FFB224 /* ReactNativeSupportNoARC.h in Headers */,
 				3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */,
 				AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */,
 				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
@@ -823,7 +816,6 @@
 				397CA7A324840449005E8A71 /* NSException+DetoxUtils.swift in Sources */,
 				39DC984824BB8E8900FFB224 /* DTXLogging.m in Sources */,
 				39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */,
-				39DC985A24BB904D00FFB224 /* ReactNativeSupportNoARC.m in Sources */,
 				397CA78D248010B5005E8A71 /* UISlider+DetoxUtils.m in Sources */,
 				3980D15D244C45EA004812DD /* Expectation.swift in Sources */,
 				3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */,
