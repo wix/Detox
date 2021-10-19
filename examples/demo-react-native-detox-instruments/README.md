@@ -2,28 +2,21 @@
 
 # React Native Demo Project
 
-## Requirements
+## Environment
 
-* Make sure you have Xcode installed (tested with Xcode 8.1-8.2).
-* make sure you have node installed (`brew install node`, node 8.3.0 and up is required for native async-await support, otherwise you'll have to babel the tests).
-* Make sure you have react-native dependencies installed:
-   * react-native-cli is installed (`npm install -g react-native-cli`)
-   * watchman is installed (`brew install watchman`)
+### Fundamentals
 
-### Step 1: Npm install
-
-* Make sure you're in folder `examples/demo-react-native`.
-* Run `npm install`.
+**IMPORTANT:** Get your environment properly set up, as explained in our [contribution guide](../../docs/Guide.Contributing.md).
 
 ## To test Release build of your app
-### Step 2: Build 
+### Step 1: Build 
 * Build the demo project
  
  ```sh
  detox build --configuration ios.sim.release
  ```
  
-### Step 3: Test 
+### Step 2: Test 
 * Run tests on the demo project
  
  ```sh
@@ -32,14 +25,14 @@
  This action will open a new simulator and run the tests on it.
 
 ## To test Debug build of your app
-### Step 2: Build 
+### Step 1: Build 
 * Build the demo project
  
  ```sh
  detox build --configuration ios.sim.debug
  ```
  
-### Step 3: Test 
+### Step 2: Test 
 
  * start react-native packager
  
