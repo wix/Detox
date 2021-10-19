@@ -333,7 +333,7 @@ declare global {
              * or detox.init(). Use it only if you don't have another option.
              * @internal
              */
-            hook(event: 'unsafe_configReady', listener: (config: unknown) => void): void;
+            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
         }
 
         interface DetoxInitOptions {
