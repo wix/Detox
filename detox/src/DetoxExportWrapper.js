@@ -111,6 +111,8 @@ class DetoxExportWrapper {
   }
 }
 
+DetoxExportWrapper.prototype.hook = configuration.hook;
+
 DetoxExportWrapper.prototype.globalInit = async function() {
   try {
     // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of init-callbacks.

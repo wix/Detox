@@ -327,6 +327,13 @@ declare global {
              * });
              */
             cleanup(): Promise<void>;
+
+            /**
+             * Unstable. API to access an assembled detox config before it gets passed to testRunner
+             * or detox.init(). Use it only if you don't have another option.
+             * @internal
+             */
+            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
         }
 
         interface DetoxInitOptions {
