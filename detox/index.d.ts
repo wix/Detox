@@ -360,6 +360,11 @@ declare global {
             permanent: boolean;
         }>;
 
+        type Point2D = {
+            x: number,
+            y: number,
+        }
+
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
          *
@@ -1000,7 +1005,7 @@ declare global {
              * @example await element(by.id('tappable')).tap();
              * @example await element(by.id('tappable')).tap({ x:5, y:10 });
              */
-            tap(point?: { x: number; y: number }): Promise<void>;
+            tap(point?: Point2D): Promise<void>;
 
             /**
              * Simulate long press on an element
@@ -1028,7 +1033,7 @@ declare global {
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
              * @deprecated Use `.tap()` instead.
              */
-            tapAtPoint(point: { x: number; y: number }): Promise<void>;
+            tapAtPoint(point: Point2D): Promise<void>;
 
             /**
              * Use the builtin keyboard to type text into a text field.
