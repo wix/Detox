@@ -32,6 +32,7 @@ describe("Test", () => {
     test("Test", async () => {
         await element(by.id("element")).replaceText("text");
         await element(by.id("element")).tap();
+        await element(by.id("element")).tap({ x: 20, y: 30 });
         await element(by.id("element")).longPress();
         await element(by.id("element")).longPress(1000);
         await element(by.id("element")).scroll(50, "down");
