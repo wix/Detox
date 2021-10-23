@@ -1163,19 +1163,20 @@ declare global {
             /**
              * Returns an object, representing various attributes of the element. Note that only a handful of attributes are available on both iOS and Android. Many others are OS specific.
              * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.ActionsOnElement.md#getAttributes}
-             * @returns {Promise<IOSAttributes | AndroidAttributes>}
+             * @returns {Promise<IosElementAttributes | AndroidElementAttributes>}
              * @example
              * test('Get the attributes for my text element', async () => {
              *    const attributes = await element(by.id('myText')).getAttributes()
-             *    // iOS and Android
-             *    console.log(attributes.visible)
-             *    // iOS only
-             *    console.log(attributes.activationPoint)
-             *    // Android only
-             *    console.log(attributes.width)
+             *    const jestExpect = require('expect');
+             *    // 'visible' attribute available on both iOS and Android
+             *    jestExpect(attributes.visible).toBe(true);
+             *    // 'activationPoint' attribute available on iOS only
+             *    jestExpect(attributes.activationPoint.x).toHaveValue(50);
+             *    // 'width' attribute available on Android only
+             *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-             getAttributes(): Promise<IOSAttributes | AndroidAttributes>
+             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes> | Array<Promise<IosElementAttributes | AndroidElementAttributes>>
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1394,146 +1395,146 @@ declare global {
             };
         }
 
-        // Shared iOS and Android Attributes
-        interface SharedAttributes {
+        // Element Attributes Shared Among iOS and Android
+        interface ElementAttributes {
             /**
-             * the text value of the element
+             * The text value of any textual element.
              */
             text: string;
             /**
-             * the label of the element (matches `accessibilityLabel`)
+             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
              */
             label: string;
             /**
-             * the placeholder text value of the element
+             * The placeholder text value of the element. Matches hint on android.
              */
             placeholder: string;
             /**
-             * whether or not the element is enabled for user interaction
+             * Whether or not the element is enabled for user interaction.
              */
             enabled: boolean;
             /**
-             * the identifier of the element (matches `accessibilityIdentifier`)
+             * The identifier of the element. Matches accessibilityIdentifier on iOS, and the main view tag, on Android - both commonly holding the component's test ID in React Native apps.
              */
             identifier: string;
             /**
-             * whether the element is visible at the activation point
+             * Whether the element is visible. On iOS, visibility is calculated for the activation point. On Android, the attribute directly holds the value returned by View.getLocalVisibleRect()).
              */
             visible: boolean;
             /**
-             * the value of the element (matches `accessibilityValue`)
+             * The value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches accessibilityValue, on iOS.
              */
             value: string;
         }
 
-        interface AttributeIOSFrame {
+        interface IosElementAttributeFrame {
             y: number;
             x: number;
             width: number;
             height: number;
         }
 
-        interface AttributeIOSInsets {
+        interface IosElementAttributeInsets {
             right: number;
             top: number;
             left: number;
             bottom: number;
         }
 
-        interface Point {
+        interface Point2D {
             x: number;
             y: number;
         }
 
         // iOS Specific Attributes
-        interface IOSAttributes extends SharedAttributes {
+        interface IosElementAttributes extends ElementAttributes {
             /**
-             * the activation point of the element, in element coordinate space (iOS Only)
+             * The activation point of the element, in element coordinate space.
              */
-            activationPoint: Point;
+            activationPoint: Point2D;
             /**
-             * the activation point of the element, in normalized percentage ([0.0, 1.0]) (iOS Only)
+             * The activation point of the element, in normalized percentage ([0.0, 1.0]).
              */
-            normalizedActivationPoint: Point;
+            normalizedActivationPoint: Point2D;
             /**
-             * whether the element is hittable at the activation point (iOS Only)
+             * Whether the element is hittable at the activation point.
              */
             hittable: boolean;
             /**
-             * the frame of the element, in screen coordinate space (iOS Only)
+             * The frame of the element, in screen coordinate space.
              */
-            frame: AttributeIOSFrame;
+            frame: IosElementAttributeFrame;
             /**
-             * the frame of the element, in container coordinate space (iOS Only)
+             * The frame of the element, in container coordinate space.
              */
-            elementFrame: AttributeIOSFrame;
+            elementFrame: IosElementAttributeFrame;
             /**
-             * the bounds of the element, in element coordinate space (iOS Only)
+             * The bounds of the element, in element coordinate space.
              */
-            elementBounds: AttributeIOSFrame;
+            elementBounds: IosElementAttributeFrame;
             /**
-             * the safe area insets of the element, in element coordinate space (iOS Only)
+             * The safe area insets of the element, in element coordinate space.
              */
-            safeAreaInsets: AttributeIOSInsets;
+            safeAreaInsets: IosElementAttributeInsets;
             /**
-             * the safe area bounds of the element, in element coordinate space (iOS Only)
+             * The safe area bounds of the element, in element coordinate space.
              */
-            elementSafeBounds: AttributeIOSFrame;
+            elementSafeBounds: IosElementAttributeFrame;
             /**
-             * the date of the element (in case the element is a date picker) (iOS Only)
+             * the date of the element (in case the element is a date picker).
              */
             date: string;
             /**
-             * the normalized slider position (in case the element is a slider) (iOS Only)
+             * The normalized slider position (in case the element is a slider).
              */
             normalizedSliderPosition: number;
             /**
-             * the content offset (in case the element is a scroll view) (iOS Only)
+             * The content offset (in case the element is a scroll view).
              */
             contentOffset: number;
             /**
-             * the content inset (in case the element is a scroll view) (iOS Only)
+             * The content inset (in case the element is a scroll view).
              */
-            contentInset: number;
+            contentInset: IosElementAttributeInsets;
             /**
-             * the adjusted content inset (in case the element is a scroll view) (iOS Only)
+             * The adjusted content inset (in case the element is a scroll view).
              */
-            adjustedContentInset: number;
+            adjustedContentInset: IosElementAttributeInsets;
             layer: string;
         }
 
         // Android Specific Attributes
-        interface AndroidAttributes extends SharedAttributes {
+        interface AndroidElementAttributes extends ElementAttributes {
             /**
-             * The OS visibility type associated with the element: visible, invisible or gone. (Android Only)
+             * The OS visibility type associated with the element: visible, invisible or gone.
              */
             visibility: 'visible' | 'invisible' | 'gone';
             /**
-             * width: Width of the element, in pixels. (Android Only)
+             * Width of the element, in pixels.
              */
             width: number;
             /**
-             * height: Height of the element, in pixels. (Android Only)
+             * Height of the element, in pixels.
              */
             height: number;
             /**
-             * elevation: Elevation of the element. (Android Only)
+             * Elevation of the element.
              */
             elevation: number;
             /**
-             * alpha: Alpha value for the element. (Android Only)
+             * Alpha value for the element.
              */
             alpha: number;
             /**
-             * focused: Whether the element is the one currently in focus. (Android Only)
+             * Whether the element is the one currently in focus.
              */
-            focused: number;
+            focused: boolean;
             /**
-             * textSize: The text size for the text element. (Android Only)
+             * The text size for the text element.
              */
             textSize: number;
             /**
-             * length: The length of the text element (character count). (Android Only)
+             * The length of the text element (character count).
              */
             length: number;
         }
