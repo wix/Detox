@@ -327,6 +327,13 @@ declare global {
              * });
              */
             cleanup(): Promise<void>;
+
+            /**
+             * Unstable. API to access an assembled detox config before it gets passed to testRunner
+             * or detox.init(). Use it only if you don't have another option.
+             * @internal
+             */
+            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
         }
 
         interface DetoxInitOptions {
@@ -352,6 +359,11 @@ declare global {
             /** Changes the scope of the operation: transient or permanent app launch args */
             permanent: boolean;
         }>;
+
+        type Point2D = {
+            x: number,
+            y: number,
+        }
 
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
@@ -890,6 +902,7 @@ declare global {
             /**
              * Expect the view to not be visible.
              * @example await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+             * @deprecated Use `.not.toBeVisible()` instead.
              */
             toBeNotVisible(): R;
 
@@ -902,6 +915,7 @@ declare global {
             /**
              * Expect the view to not exist in the UI hierarchy.
              * @example await expect(element(by.id('RandomJunk959'))).toNotExist();
+             * @deprecated Use `.not.toExist()` instead.
              */
             toNotExist(): R;
 
@@ -914,6 +928,7 @@ declare global {
             /**
              * Expect the view not to be focused.
              * @example await expect(element(by.id('passwordInput'))).toBeNotFocused();
+             * @deprecated Use `.not.toBeFocused()` instead.
              */
             toBeNotFocused(): R;
 
@@ -986,9 +1001,11 @@ declare global {
         interface NativeElementActions {
             /**
              * Simulate tap on an element
+             * @param point relative coordinates to the matched element (the element size could changes on different devices or even when changing the device font size)
              * @example await element(by.id('tappable')).tap();
+             * @example await element(by.id('tappable')).tap({ x:5, y:10 });
              */
-            tap(): Promise<void>;
+            tap(point?: Point2D): Promise<void>;
 
             /**
              * Simulate long press on an element
@@ -1014,8 +1031,9 @@ declare global {
              * Simulate tap at a specific point on an element.
              * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
+             * @deprecated Use `.tap()` instead.
              */
-            tapAtPoint(point: { x: number; y: number }): Promise<void>;
+            tapAtPoint(point: Point2D): Promise<void>;
 
             /**
              * Use the builtin keyboard to type text into a text field.
@@ -1128,7 +1146,7 @@ declare global {
              * @example
              * await expect(element(by.id('PinchableScrollView'))).toBeVisible();
              * await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
-             * @deprecated Should use pinch instead
+             * @deprecated Use `.pinch()` instead.
              */
             pinchWithAngle(direction: PinchDirection, speed: Speed, angle: number): Promise<void>;
 

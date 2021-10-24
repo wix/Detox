@@ -111,6 +111,8 @@ class DetoxExportWrapper {
   }
 }
 
+DetoxExportWrapper.prototype.hook = configuration.hook;
+
 DetoxExportWrapper.prototype.globalInit = async function() {
   try {
     const configs = await configuration.composeDetoxConfig({});

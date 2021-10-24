@@ -6,9 +6,9 @@
 //  Copyright © 2017 Wix. All rights reserved.
 //
 
-#include "fishhook.h"
 #import <Detox/Detox-Swift.h>
 #import "DTXAssertionHandler.h"
+#import "fishhook.h"
 
 #import <dlfcn.h>
 #import <Foundation/Foundation.h>

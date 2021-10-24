@@ -1,14 +1,18 @@
 {
   "name": "example",
-  "version": "18.22.2-smoke.0",
+  "version": "18.23.1",
   "private": true,
   "scripts": {
     "start": "react-native start",
     "postinstall": "node scripts/postinstall.js",
     "build:ios": "detox build --configuration ios.sim.debug",
+    "build:ios-debug": "detox build --configuration ios.sim.debug",
+    "build:ios-release": "detox build --configuration ios.sim.release",
     "build:android-debug": "detox build --configuration android.emu.debug",
     "build:android-release": "detox build --configuration android.emu.release",
     "test:ios": "detox test --configuration ios.sim.debug",
+    "test:ios-debug": "detox test --configuration ios.sim.debug",
+    "test:ios-release": "detox test --configuration ios.sim.release",
     "test:android-debug": "detox test --configuration android.emu.debug",
     "test:android-release": "detox test --configuration android.emu.release",
     "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --headless --record-logs all --take-screenshots all",
@@ -26,7 +30,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^8.2.0",
-    "detox": "^18.22.2-smoke.0",
+    "detox": "^18.23.1",
     "mocha": "^6.1.3",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
