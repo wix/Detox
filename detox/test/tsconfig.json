@@ -6,6 +6,7 @@
     "allowJs": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "skipLibCheck": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "moduleResolution": "node",
