@@ -1,0 +1,7 @@
+{
+  "busy-with-reasons": "App status: busy, due to:{reasons}",
+  "idle": "App status: idle.",
+  "busy-reasons": {
+    "main-thread-running-with-tid": "\nMain-thread ({tid}) is running."
+  }
+}
