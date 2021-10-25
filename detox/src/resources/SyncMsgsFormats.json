@@ -5,7 +5,7 @@
   "busy-reasons": {
     "javascript-code": "\nJavascript code execution",
     "javascript-code-native": "\nJavascript code execution (native)",
-    "busy-resource": "\nResource ${resource.name} being busy",
+    "busy-resource": "\nResource {resource} being busy",
     "animations": "\nAnimations running on screen",
     "io-activity": "\nDisk I/O activity",
     "in-flight-network": "\nIn-flight network activity"
