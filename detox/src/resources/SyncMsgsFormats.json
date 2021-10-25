@@ -1,7 +1,13 @@
 {
   "busy-with-reasons": "App status: busy, due to:{reasons}",
   "idle": "App status: idle.",
+  "details": "\n\t- {reason-details}",
   "busy-reasons": {
-    "main-thread-running-with-tid": "\nMain-thread ({tid}) is running."
+    "javascript-code": "\nJavascript code execution",
+    "javascript-code-native": "\nJavascript code execution (native)",
+    "busy-resource": "\nResource ${resource.name} being busy",
+    "animations": "\nAnimations running on screen",
+    "io-activity": "\nDisk I/O activity",
+    "in-flight-network": "\nIn-flight network activity"
   }
 }
