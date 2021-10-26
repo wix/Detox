@@ -136,7 +136,7 @@ describe('Client', () => {
       mockAws.mockResponse('loginSuccess', {});
       expect(mockAws.send).not.toHaveBeenCalled();
       await client.connect();
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId), SEND_OPTIONS.TIMED);
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId), SEND_OPTIONS.TIMED_SHORT);
     });
 
     it('should not consider itself connected to the app if "loginSuccess" params.appConnected = false', async () => {
@@ -160,8 +160,46 @@ describe('Client', () => {
   });
 
   describe('.sendAction()', () => {
+
+    class ActionWithoutParams extends actions.Action {
+      constructor() {
+        super('ActionWithoutParams');
+      }
+
+      async handle(response) {
+        this.expectResponseOfType(response, 'ActionWithoutParams');
+      }
+    }
+
     beforeEach(async () => {
       await client.connect();
+    });
+
+    it('should throw error for actions without canBeConcurrent', async () => {
+      const withoutConcurrent = new actions.ReloadReactNative();
+      withoutConcurrent.canBeConcurrent = undefined;
+      await expect(() => withoutConcurrent.getCanBeConcurrent()).toThrowError();
+    });
+
+    it('should throw error for actions without timeout', async () => {
+      const withoutTimeout = new actions.ReloadReactNative();
+      withoutTimeout.sendTimeout = undefined;
+      await expect(() => withoutTimeout.getTimeout()).toThrowError();
+    });
+
+    it('should return value for canBeConcurrent', async () => {
+      const withoutConcurrent = new actions.ReloadReactNative();
+      await expect(withoutConcurrent.getCanBeConcurrent()).toBe(true);
+    });
+
+    it('should return value for timeout', async () => {
+      const withoutTimeout = new actions.Login(123);
+      await expect(withoutTimeout.getTimeout()).toEqual(1000);
+    });
+
+    it('should throw error trying to create action with no params', async () => {
+      const noParams = new ActionWithoutParams();
+      await expect(() => noParams.getTimeout()).toThrowError();
     });
 
     it('should schedule "currentStatus" query when it takes too long', async () => {
@@ -695,6 +733,8 @@ describe('Client', () => {
       params: {},
       handle: jest.fn(),
       ...overrides,
+      getTimeout: () => 0,
+      getCanBeConcurrent: () => false,
     };
   }
 
@@ -722,5 +762,6 @@ describe('Client', () => {
   const SEND_OPTIONS = {
     DEFAULT: { timeout: 0 },
     TIMED: { timeout: 5000 },
+    TIMED_SHORT: { timeout: 1000 }
   };
 });

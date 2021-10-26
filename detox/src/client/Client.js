@@ -139,14 +139,10 @@ class Client {
   }
 
   _inferSendOptions(action) {
-    if ( action instanceof actions.CurrentStatus
-      || action instanceof actions.Login
-      || action instanceof actions.Cleanup
-    ) {
-      return { queryStatus: false, timeout: 5000 };
-    }
+    const timeout = action.getTimeout();
+    const shouldQueryStatus = timeout === 0;
 
-    return { queryStatus: true, timeout: 0 };
+    return { queryStatus: shouldQueryStatus, timeout };
   }
 
   async _sendMonitoredAction(action, options) {

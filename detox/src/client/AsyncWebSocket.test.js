@@ -295,7 +295,7 @@ describe('AsyncWebSocket', () => {
     it(`should throw error for all pending promises`, async () => {
       await connect();
       const message1 = aws.send(generateRequest(0, 'invoke'));
-      const message2 = aws.send(generateRequest(1, 'currentStatus'));
+      const message2 = aws.send(generateRequest(1, 'currentStatus', true));
 
       aws.rejectAll(anError('TestError'));
       await expect(message1).rejects.toThrow(/TestError/);
@@ -306,8 +306,8 @@ describe('AsyncWebSocket', () => {
   describe('.resetInFlightPromises', () => {
     it(`should reset all pending promises`, async () => {
       await connect();
-      aws.send(generateRequest(1, 'currentStatus'));
-      aws.send(generateRequest(2, 'currentStatus'));
+      aws.send(generateRequest(1, 'currentStatus', true));
+      aws.send(generateRequest(2, 'currentStatus', true));
 
       expect(_.size(aws.inFlightPromises)).toBe(2);
 
@@ -350,7 +350,7 @@ describe('AsyncWebSocket', () => {
         messageId++;
       }
 
-      const res = aws.send(generateRequest(2, 'currentStatus'));
+      const res = aws.send(generateRequest(2, 'currentStatus', true));
       socket.mockMessage({ messageId: 2, type: 'response' });
       await expect(res).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
 
@@ -389,8 +389,15 @@ describe('AsyncWebSocket', () => {
     ]);
   }
 
-  function generateRequest(messageId, type = 'invoke') {
-    return { type, message: 'a message', messageId };
+
+  function generateRequest(messageId, type = 'invoke', canBeConcurrent = false) {
+    return {
+      type,
+      message: 'a message',
+      messageId,
+      getTimeout: () => 0,
+      getCanBeConcurrent: () => canBeConcurrent,
+    };
   }
 
   function generateResponse(message, messageId) {

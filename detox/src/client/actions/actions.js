@@ -5,6 +5,8 @@ const { getDetoxLevel } = require('../../utils/logger');
 class Action {
   constructor(type, params = {}) {
     this.type = type;
+    this.sendTimeout = params.sendTimeout;
+    this.canBeConcurrent = params.canBeConcurrent;
     this.params = params;
     this.messageId = undefined;
   }
@@ -14,6 +16,22 @@ class Action {
       throw new DetoxInternalError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
   }
+
+  getCanBeConcurrent() {
+    if (this.canBeConcurrent === undefined) {
+      throw new DetoxInternalError(`canBeConcurrent must be defined for ${this.type}`);
+    }
+
+    return this.canBeConcurrent;
+  }
+
+  getTimeout() {
+    if (this.sendTimeout === undefined) {
+      throw new DetoxInternalError(`sendTimeout must be defined for ${this.type}`);
+    }
+
+    return this.sendTimeout;
+  }
 }
 
 class Login extends Action {
@@ -22,7 +40,7 @@ class Login extends Action {
       sessionId: sessionId,
       role: 'tester'
     };
-    super('login', params);
+      super('login', { sendTimeout: 1000, canBeConcurrent: false, ...params });
   }
 
   async handle(response) {
@@ -33,7 +51,7 @@ class Login extends Action {
 
 class Ready extends Action {
   constructor() {
-    super('isReady');
+    super('isReady', { sendTimeout: 0, canBeConcurrent: false });
     this.messageId = -1000;
   }
 
@@ -44,7 +62,7 @@ class Ready extends Action {
 
 class ReloadReactNative extends Action {
   constructor() {
-    super('reactNativeReload');
+    super('reactNativeReload', { sendTimeout: 0, canBeConcurrent: true });
     this.messageId = -1000;
   }
 
@@ -55,7 +73,7 @@ class ReloadReactNative extends Action {
 
 class WaitForBackground extends Action {
   constructor() {
-    super('waitForBackground');
+    super('waitForBackground', { sendTimeout: 0, canBeConcurrent: false });
   }
 
   async handle(response) {
@@ -65,7 +83,7 @@ class WaitForBackground extends Action {
 
 class WaitForActive extends Action {
   constructor() {
-    super('waitForActive');
+    super('waitForActive', { sendTimeout: 0, canBeConcurrent: false });
   }
 
   async handle(response) {
@@ -75,7 +93,7 @@ class WaitForActive extends Action {
 
 class Shake extends Action {
   constructor() {
-    super('shakeDevice');
+    super('shakeDevice', { sendTimeout: 0, canBeConcurrent: false });
   }
 
   async handle(response) {
@@ -85,7 +103,7 @@ class Shake extends Action {
 
 class SetOrientation extends Action {
   constructor(params) {
-    super('setOrientation', params);
+    super('setOrientation', { sendTimeout: 0, canBeConcurrent: false, ...params });
   }
 
   async handle(response) {
@@ -95,7 +113,7 @@ class SetOrientation extends Action {
 
 class Cleanup extends Action {
   constructor(stopRunner) {
-    super('cleanup', { stopRunner });
+    super('cleanup', { sendTimeout: 5000, canBeConcurrent: true, stopRunner });
     this.messageId = -0xc1ea;
   }
 
@@ -106,7 +124,7 @@ class Cleanup extends Action {
 
 class Invoke extends Action {
   constructor(params) {
-    super('invoke', params);
+    super('invoke', { sendTimeout: 0, canBeConcurrent: false, ...params });
   }
 
   async handle(response) {
@@ -133,7 +151,7 @@ class Invoke extends Action {
 
 class DeliverPayload extends Action {
   constructor(params) {
-    super('deliverPayload', params);
+    super('deliverPayload', { sendTimeout: 0, canBeConcurrent: false, ...params });
   }
 
   async handle(response) {
@@ -143,7 +161,7 @@ class DeliverPayload extends Action {
 
 class SetSyncSettings extends Action {
   constructor(params) {
-    super('setSyncSettings', params);
+    super('setSyncSettings', { sendTimeout: 0, canBeConcurrent: false, ...params });
   }
 
   async handle(response) {
@@ -153,7 +171,7 @@ class SetSyncSettings extends Action {
 
 class CurrentStatus extends Action {
   constructor(params) {
-    super('currentStatus', params);
+    super('currentStatus', { sendTimeout: 5000, canBeConcurrent: true, ...params });
   }
 
   async handle(response) {
@@ -164,7 +182,7 @@ class CurrentStatus extends Action {
 
 class SetInstrumentsRecordingState extends Action {
   constructor(params) {
-    super('setRecordingState', params);
+    super('setRecordingState', { sendTimeout: 0, canBeConcurrent: true, ...params });
   }
 
   async handle(response) {
@@ -174,7 +192,7 @@ class SetInstrumentsRecordingState extends Action {
 
 class CaptureViewHierarchy extends Action {
   constructor(params) {
-    super('captureViewHierarchy', params);
+    super('captureViewHierarchy', { sendTimeout: 0, canBeConcurrent: true, ...params });
   }
 
   async handle(response) {
@@ -193,6 +211,7 @@ class CaptureViewHierarchy extends Action {
 }
 
 module.exports = {
+  Action,
   Login,
   WaitForBackground,
   WaitForActive,

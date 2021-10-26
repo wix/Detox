@@ -136,7 +136,7 @@ class AsyncWebSocket {
   }
 
   isAllowedPendingMessageType(message) {
-    return (['currentStatus', 'takeScreenshot', 'setRecordingState', 'captureViewHierarchy', 'cleanup', 'reactNativeReload'].includes(message.type));
+    return message.getCanBeConcurrent();
   }
 
   hasMultiplePendingActions() {
