@@ -12,5 +12,42 @@
     "enqueued-timers": "\nEnqueued timers",
     "bridge-activity": "\nActivity on the React-Native bridge",
     "rendering-activity": "\nUI rendering activity"
+  },
+  "busy-reasons-ios": {
+    "dispatch-queue-events": {
+      "title": "Dispatch Queue\n",
+      "queue-description": "⏱ Queue: “{queue-name} ({queue-id})” with {busy-count} work items\n"
+    },
+    "run-loop-events": {
+      "run-loop-title": "Run Loop\n",
+      "run-loop-description": "⏱{description}\n",
+      "JS-run-loop": "JS Run Loop",
+      "main-run-loop": "Main Run Loop"
+    },
+    "one-time-events": {
+      "title": "One-time Events\n",
+      "bundle-load": "⏱React Native (bundle load)\n",
+      "perform-block": "⏱“Runloop Perform Block” with object: “{run-loop-name}”\n"
+    },
+    "timer": {
+      "title": "Timer\n",
+      "fire-date": "⏱ Fire date: {date} (fire interval: {delta-since-now}) repeats: {should-repeat} repeat interval: {interval-value}>\n"
+    },
+    "ui-elements": {
+      "title": "UI Elements",
+      "view-needs-layout": "⏱ {count} views awaiting layout\n",
+      "view-needs-display": "⏱ {count} views awaiting display\n",
+      "layer-needs-layout": "⏱ {count} layers awaiting layout\n",
+      "layer-needs-display": "⏱ {count} layers awaiting display\n",
+      "layer-pending-animation": "⏱ {count} layers pending animation\n",
+      "layer-animations-pending": "⏱ {count} CA animations pending\n",
+      "view-animations-pending": "⏱ {count} view animations pending\n",
+      "view-will-appear": "⏱ {count} view controllers awaiting appearance\n",
+      "view-will-disappear": "⏱ {count} view controllers awaiting disappearance\n"
+    },
+    "delayed-perform-selector": {
+      "title": "Delayed Perform Selector",
+      "pending": "{count} 9 pending selectors"
+    }
   }
 }
