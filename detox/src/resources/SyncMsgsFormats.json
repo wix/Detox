@@ -1,8 +1,19 @@
 {
-  "busy-with-reasons": "App status: busy, due to:{reasons}",
+  "busy-with-reasons": "App status: busy, due to: {reasons}\n",
+  "busy-reason": "[{type}] {description}\n",
   "idle": "App status: idle.",
-  "details": "\n\t- {reason-details}",
-  "busy-reasons": {
+
+  "busy-reason-types": {
+    "ui": "UI Elements",
+    "timers": "Enqueued Timers",
+    "bridge": "RN Bridge",
+    "storage": "Storage",
+    "code-exec": "Code Execution",
+    "network": "Network",
+    "queue": "Dispatch Queue???"
+  },
+
+  "busy-reason": {
     "javascript-code": "\nJavascript code execution",
     "javascript-code-native": "\nJavascript code execution (native)",
     "busy-resource": "\nResource {resource} being busy",
@@ -19,7 +30,7 @@
       "queue-description": "⏱ Queue: “{queue-name} ({queue-id})” with {busy-count} work items\n"
     },
     "run-loop-events": {
-      "run-loop-title": "Run Loop\n",
+      "title": "Run Loop\n",
       "run-loop-description": "⏱{description}\n",
       "JS-run-loop": "JS Run Loop",
       "main-run-loop": "Main Run Loop"
