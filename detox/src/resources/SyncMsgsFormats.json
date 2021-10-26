@@ -8,6 +8,9 @@
     "busy-resource": "\nResource {resource} being busy",
     "animations": "\nAnimations running on screen",
     "io-activity": "\nDisk I/O activity",
-    "in-flight-network": "\nIn-flight network activity"
+    "in-flight-network": "\nIn-flight network activity",
+    "enqueued-timers": "\nEnqueued timers",
+    "bridge-activity": "\nActivity on the React-Native bridge",
+    "rendering-activity": "\nUI rendering activity"
   }
 }
