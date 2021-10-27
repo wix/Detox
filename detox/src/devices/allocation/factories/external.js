@@ -7,10 +7,6 @@ class External extends DeviceAllocatorFactory {
     if (!module.DeviceAllocationDriverClass) {
       throw new DetoxRuntimeError(`The custom driver at '${path}' does not export the DeviceAllocationDriverClass property`);
     }
-
-    if (!module.DeviceDeallocationDriverClass) {
-      throw new DetoxRuntimeError(`The custom driver at '${path}' does not export the DeviceDeallocationDriverClass property`);
-    }
   }
 
   constructor(module, path) {
@@ -21,10 +17,7 @@ class External extends DeviceAllocatorFactory {
   }
 
   _createDriver(deps) {
-    return {
-      allocDriver: new this._module.DeviceAllocationDriverClass(deps),
-      createDeallocDriver: (deviceCookie) => new this._module.DeviceDeallocationDriverClass(deviceCookie, deps),
-    };
+    return new this._module.DeviceAllocationDriverClass(deps);
   }
 }
 

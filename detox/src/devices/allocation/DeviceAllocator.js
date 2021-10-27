@@ -16,25 +16,15 @@ class DeviceAllocator {
     return traceCall('allocateDevice', () =>
       this._driver.allocate(deviceConfig));
   }
-}
 
-class DeviceDeallocator {
   /**
-   * @param deallocationDriver { DeallocationDriverBase }
-   */
-  constructor(deallocationDriver) {
-    this._driver = deallocationDriver;
-  }
-  /**
-   * @param options { {shutdown: boolean} }
+   * @param cookie { DeviceCookie }
+   * @param options { DeallocOptions }
    * @return {Promise<void>}
    */
-  free(options) {
-    return this._driver.free(options);
+  free(cookie, options) {
+    return this._driver.free(cookie, options);
   }
 }
 
-module.exports = {
-  DeviceAllocator,
-  DeviceDeallocator,
-};
+module.exports = DeviceAllocator;

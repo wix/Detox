@@ -11,28 +11,15 @@ describe('External allocator factory', () => {
       it('should throw an error', () => {
         const module = {
           DeviceAllocationDriverClass: undefined,
-          DeviceDeallocationDriverClass: undefined,
         };
         expect(() => factoryClass.validateModule(module, path)).toThrowErrorMatchingSnapshot();
       });
     });
 
-    describe('given no deallocation-driver class', () => {
-      it('should throw an error', () => {
-        const module = {
-          DeviceAllocationDriverClass: class {},
-          DeviceDeallocationDriverClass: undefined,
-        };
-
-        expect(() => factoryClass.validateModule(module, path)).toThrowErrorMatchingSnapshot();
-      });
-    });
-
-    describe('given all allocation driver classes', () => {
+    describe('given allocation driver class', () => {
       it('should not throw an error', () => {
         const module = {
           DeviceAllocationDriverClass: class {},
-          DeviceDeallocationDriverClass: class {},
         };
         factoryClass.validateModule(module, path);
       });

@@ -1,6 +1,6 @@
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
-const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
+const AllocationDriverBase = require('../../AllocationDriverBase');
 
 class GenyAllocDriver extends AllocationDriverBase {
 
@@ -43,6 +43,21 @@ class GenyAllocDriver extends AllocationDriverBase {
     return new GenycloudEmulatorCookie(instance);
   }
 
+  /**
+   * @param cookie { GenycloudEmulatorCookie }
+   * @param options { DeallocOptions }
+   * @return {Promise<void>}
+   */
+  async free(cookie, options = {}) {
+    const { instance } = cookie;
+
+    await this._instanceAllocationHelper.deallocateDevice(instance.uuid);
+
+    if (options.shutdown) {
+      await this._instanceLauncher.shutdown(instance);
+    }
+  }
+
   _assertRecipe(deviceQuery, recipe) {
     if (!recipe) {
       throw new DetoxRuntimeError({
@@ -53,28 +68,4 @@ class GenyAllocDriver extends AllocationDriverBase {
   }
 }
 
-class GenyDeallocDriver extends DeallocationDriverBase {
-  constructor(instance, { allocationHelper, instanceLauncher }) {
-    super();
-    this._instance = instance;
-    this._instanceAllocationHelper = allocationHelper;
-    this._instanceLauncher = instanceLauncher;
-  }
-
-  /**
-   * @param options { { shutdown: boolean } }
-   * @return {Promise<void>}
-   */
-  async free(options = {}) {
-    await this._instanceAllocationHelper.deallocateDevice(this._instance.uuid);
-
-    if (options.shutdown) {
-      await this._instanceLauncher.shutdown(this._instance);
-    }
-  }
-}
-
-module.exports = {
-  GenyAllocDriver,
-  GenyDeallocDriver,
-};
+module.exports = GenyAllocDriver;

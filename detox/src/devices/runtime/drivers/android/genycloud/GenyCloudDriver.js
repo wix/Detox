@@ -3,11 +3,11 @@ const AndroidDriver = require('../AndroidDriver');
 
 class GenyCloudDriver extends AndroidDriver {
   /**
-   * @param instance { GenyInstance } The DTO associated with the cloud instance
    * @param deps { Object }
+   * @param instance { GenyInstance } The DTO associated with the cloud instance
    */
-  constructor(instance, deps) {
-    super(instance.adbName, deps);
+  constructor(deps, instance) {
+    super(deps, instance.adbName);
     this.instance = instance;
   }
 

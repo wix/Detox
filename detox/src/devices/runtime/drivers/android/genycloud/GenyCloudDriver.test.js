@@ -40,13 +40,13 @@ describe('Genymotion-cloud driver', () => {
     beforeEach(() => {
       instance = anInstance();
       GenyCloudDriver = require('./GenyCloudDriver');
-      uut = new GenyCloudDriver(instance, {
+      uut = new GenyCloudDriver({
         invocationManager,
         eventEmitter,
         client: {},
         appInstallHelper,
         instrumentation,
-      });
+      }, instance);
     });
 
     it('should return the adb-name as the external ID', () => {

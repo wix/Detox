@@ -25,23 +25,14 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const EmulatorAllocationHelper = require('../drivers/android/emulator/EmulatorAllocationHelper');
     const allocationHelper = new EmulatorAllocationHelper(deviceRegistry, freeEmulatorFinder);
 
-    const {
-      EmulatorAllocDriver,
-      EmulatorDeallocDriver,
-    } = require('../drivers/android/emulator/EmulatorAllocDriver');
-    const allocDriver = new EmulatorAllocDriver({
+    const EmulatorAllocDriver = require('../drivers/android/emulator/EmulatorAllocDriver');
+    return new EmulatorAllocDriver({
       adb,
       avdValidator,
       emulatorVersionResolver,
       emulatorLauncher,
       allocationHelper,
     });
-    const createDeallocDriver = (deviceCookie) => new EmulatorDeallocDriver(deviceCookie.adbName, { emulatorLauncher, allocationHelper });
-
-    return {
-      allocDriver,
-      createDeallocDriver,
-    };
   }
 }
 
@@ -57,18 +48,8 @@ class AndroidAttached extends DeviceAllocatorFactory {
     const AttachedAndroidLauncher = require('../drivers/android/attached/AttachedAndroidLauncher');
     const attachedAndroidLauncher = new AttachedAndroidLauncher(eventEmitter);
 
-    const {
-      AttachedAndroidAllocDriver,
-      AttachedAndroidDeallocDriver,
-    } = require('../drivers/android/attached/AttachedAndroidAllocDriver');
-    const allocDriver = new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder, attachedAndroidLauncher });
-    const createDeallocDriver = (deviceCookie) =>
-      new AttachedAndroidDeallocDriver(deviceCookie.adbName, { deviceRegistry });
-
-    return {
-      allocDriver,
-      createDeallocDriver,
-    };
+    const AttachedAndroidAllocDriver = require('../drivers/android/attached/AttachedAndroidAllocDriver');
+    return new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder, attachedAndroidLauncher });
   }
 }
 
@@ -99,25 +80,14 @@ class Genycloud extends DeviceAllocatorFactory {
     const allocationHelper = new InstanceAllocationHelper({ deviceRegistry, instanceLookupService, instanceLifecycleService });
 
     const InstanceLauncher = require('../drivers/android/genycloud/GenyInstanceLauncher');
-    const {
-      GenyAllocDriver,
-      GenyDeallocDriver,
-    } = require('../drivers/android/genycloud/GenyAllocDriver');
+    const GenyAllocDriver = require('../drivers/android/genycloud/GenyAllocDriver');
     const instanceLauncher = new InstanceLauncher({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter });
-
-    const allocDriver = new GenyAllocDriver({
+    return new GenyAllocDriver({
       adb,
       recipeQuerying,
       allocationHelper,
       instanceLauncher,
     });
-    const createDeallocDriver = (deviceCookie) =>
-      new GenyDeallocDriver(deviceCookie.instance, { allocationHelper, instanceLauncher });
-
-    return {
-      allocDriver,
-      createDeallocDriver,
-    };
   }
 }
 

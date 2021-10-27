@@ -30,7 +30,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
     const { adbName } = deviceCookie;
 
     const { AndroidEmulatorRuntimeDriver } = require('../drivers');
-    return new AndroidEmulatorRuntimeDriver(adbName, deps, configs);
+    return new AndroidEmulatorRuntimeDriver(deps, configs, adbName);
   }
 }
 
@@ -39,7 +39,7 @@ class AndroidAttached extends RuntimeDriverFactoryAndroid {
     const { adbName } = deviceCookie;
 
     const { AttachedAndroidRuntimeDriver } = require('../drivers');
-    return new AttachedAndroidRuntimeDriver(adbName, deps);
+    return new AttachedAndroidRuntimeDriver(deps, adbName);
   }
 }
 
@@ -48,7 +48,7 @@ class Genycloud extends RuntimeDriverFactoryAndroid {
     const { instance } = deviceCookie;
 
     const { GenycloudRuntimeDriver } = require('../drivers');
-    return new GenycloudRuntimeDriver(instance, deps);
+    return new GenycloudRuntimeDriver(deps, instance);
   }
 }
 

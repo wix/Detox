@@ -12,8 +12,6 @@ describe('Allocation driver for attached Android devices', () => {
   let freeDeviceFinder;
   let attachedAndroidLauncher;
   beforeEach(() => {
-    jest.mock('../../../../cookies/AndroidDeviceCookie');
-
     const ADB = jest.genMockFromModule('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
 
@@ -27,19 +25,24 @@ describe('Allocation driver for attached Android devices', () => {
     attachedAndroidLauncher = new AttachedAndroidLauncher();
   });
 
-  const givenDeviceAllocationResult = (result) => deviceRegistry.allocateDevice.mockResolvedValue(result);
+  let allocDriver;
+  beforeEach(() => {
+    const AttachedAndroidAllocDriver = require('./AttachedAndroidAllocDriver');
+    allocDriver = new AttachedAndroidAllocDriver({
+      adb,
+      deviceRegistry,
+      freeDeviceFinder,
+      attachedAndroidLauncher,
+    });
+  });
+
 
   describe('allocation', () => {
-    let allocDriver;
     beforeEach(() => {
-      const { AttachedAndroidAllocDriver } = require('./AttachedAndroidAllocDriver');
-      allocDriver = new AttachedAndroidAllocDriver({
-        adb,
-        deviceRegistry,
-        freeDeviceFinder,
-        attachedAndroidLauncher,
-      });
+      jest.mock('../../../../cookies/AttachedAndroidDeviceCookie');
     });
+
+    const givenDeviceAllocationResult = (result) => deviceRegistry.allocateDevice.mockResolvedValue(result);
 
     it('should allocate a device', async () => {
       deviceRegistry.allocateDevice.mockImplementation((userFn) => {
@@ -81,27 +84,27 @@ describe('Allocation driver for attached Android devices', () => {
     });
 
     it('should return a valid cookie', async () => {
-      const AndroidDeviceCookie = require('../../../../cookies/AndroidDeviceCookie');
+      const Cookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
 
       givenDeviceAllocationResult(adbName);
 
       const result = await allocDriver.allocate(deviceConfig);
-      expect(result.constructor.name).toEqual('AndroidDeviceCookie');
-      expect(AndroidDeviceCookie).toHaveBeenCalledWith(adbName);
+      expect(result.constructor.name).toEqual('AttachedAndroidDeviceCookie');
+      expect(Cookie).toHaveBeenCalledWith(adbName);
     });
   });
 
   describe('deallocation', () => {
-    let deallocDriver;
+    let cookie;
     beforeEach(() => {
-      const { AttachedAndroidDeallocDriver } = require('./AttachedAndroidAllocDriver');
-      deallocDriver = new AttachedAndroidDeallocDriver(adbName, {
-        deviceRegistry,
-      });
+      jest.unmock('../../../../cookies/AttachedAndroidDeviceCookie');
+
+      const Cookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
+      cookie = new Cookie(adbName);
     });
 
     it('should dispose the device', async () => {
-      await deallocDriver.free();
+      await allocDriver.free(cookie);
       expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(adbName);
     });
   });

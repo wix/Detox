@@ -24,7 +24,7 @@ describe('Android driver', () => {
     setUpClassDepMocks();
 
     const AndroidDriver = require('./AndroidDriver');
-    uut = new AndroidDriver(adbName, {
+    uut = new AndroidDriver({
       client,
       invocationManager,
       eventEmitter,
@@ -34,7 +34,7 @@ describe('Android driver', () => {
       appInstallHelper,
       appUninstallHelper,
       instrumentation,
-    });
+    }, adbName);
   });
 
   describe('Instrumentation bootstrap', () => {

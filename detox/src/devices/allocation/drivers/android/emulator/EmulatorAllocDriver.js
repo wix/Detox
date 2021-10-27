@@ -2,12 +2,11 @@ const _ = require('lodash');
 
 const { traceCall } = require('../../../../../utils/trace');
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
-const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
+const AllocationDriverBase = require('../../AllocationDriverBase');
 
 const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 
 class EmulatorAllocDriver extends AllocationDriverBase {
-
   /**
    * @param adb { ADB }
    * @param avdValidator { AVDValidator }
@@ -50,6 +49,21 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     return new AndroidEmulatorCookie(adbName);
   }
 
+  /**
+   * @param cookie { AndroidEmulatorCookie }
+   * @param options { DeallocOptions }
+   * @return { Promise<void> }
+   */
+  async free(cookie, options = {}) {
+    const { adbName } = cookie;
+
+    await this._allocationHelper.deallocateDevice(adbName);
+
+    if (options.shutdown) {
+      await this._emulatorLauncher.shutdown(adbName);
+    }
+  }
+
   async _fixAvdConfigIniSkinNameIfNeeded(avdName, isHeadless) {
     const rawBinaryVersion = await this._emulatorVersionResolver.resolve(isHeadless);
     const binaryVersion = _.get(rawBinaryVersion, 'major');
@@ -73,33 +87,4 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   }
 }
 
-class EmulatorDeallocDriver extends DeallocationDriverBase {
-  /**
-   * @param adbName { String }
-   * @param emulatorLauncher { EmulatorLauncher }
-   * @param allocationHelper { EmulatorAllocationHelper }
-   */
-  constructor(adbName, { emulatorLauncher, allocationHelper }) {
-    super();
-    this._adbName = adbName;
-    this._emulatorLauncher = emulatorLauncher;
-    this._allocationHelper = allocationHelper;
-  }
-
-  /**
-   * @param options { {shutdown: boolean} }
-   * @return {Promise<void>}
-   */
-  async free(options = {}) {
-    await this._allocationHelper.deallocateDevice(this._adbName);
-
-    if (options.shutdown) {
-      await this._emulatorLauncher.shutdown(this._adbName);
-    }
-  }
-}
-
-module.exports = {
-  EmulatorAllocDriver,
-  EmulatorDeallocDriver,
-};
+module.exports = EmulatorAllocDriver;

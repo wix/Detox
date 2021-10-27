@@ -1,11 +1,8 @@
 describe('Device allocator', () => {
 
   let allocDriver;
-  let deallocDriver;
   /** @type DeviceAllocator */
   let deviceAllocator;
-  /** @type DeviceDeallocator */
-  let deviceDeallocator;
   beforeEach(() => {
     jest.mock('../../utils/trace');
     const { traceCall } = require('../../utils/trace');
@@ -13,15 +10,11 @@ describe('Device allocator', () => {
 
     allocDriver = {
       allocate: jest.fn(),
-    };
-
-    deallocDriver = {
       free: jest.fn(),
     };
 
-    const { DeviceAllocator, DeviceDeallocator } = require('./DeviceAllocator');
+    const DeviceAllocator = require('./DeviceAllocator');
     deviceAllocator = new DeviceAllocator(allocDriver);
-    deviceDeallocator = new DeviceDeallocator(deallocDriver);
   });
 
   it('should allocate via driver', async () => {
@@ -38,14 +31,15 @@ describe('Device allocator', () => {
   });
 
   it('should deallocate via driver', async () => {
+    const cookie = { cookie: 'mock' };
     const options = { shutdown: true };
     const device = {
       mock: 'device',
     };
 
-    deallocDriver.free.mockResolvedValue(device);
+    allocDriver.free.mockResolvedValue(device);
 
-    await deviceDeallocator.free(options);
-    expect(deallocDriver.free).toHaveBeenCalledWith(options);
+    await deviceAllocator.free(cookie, options);
+    expect(allocDriver.free).toHaveBeenCalledWith(cookie, options);
   });
 });

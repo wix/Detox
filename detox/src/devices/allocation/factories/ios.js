@@ -9,15 +9,8 @@ class IosSimulator extends DeviceAllocatorFactory {
     const SimulatorLauncher = require('../drivers/ios/SimulatorLauncher');
     const simulatorLauncher = new SimulatorLauncher({ applesimutils, eventEmitter });
 
-    const { SimulatorAllocDriver, SimulatorDeallocDriver } = require('../drivers/ios/SimulatorAllocDriver');
-    const allocDriver = new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
-    const createDeallocDriver = (deviceCookie) =>
-      new SimulatorDeallocDriver(deviceCookie.udid, { deviceRegistry, simulatorLauncher });
-
-    return {
-      allocDriver,
-      createDeallocDriver,
-    };
+    const SimulatorAllocDriver = require('../drivers/ios/SimulatorAllocDriver');
+    return new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
   }
 }
 

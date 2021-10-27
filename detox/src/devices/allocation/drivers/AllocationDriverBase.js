@@ -1,20 +1,21 @@
+/**
+ * @typedef DeallocOptions
+ * @property shutdown { Boolean }
+ */
+
 class AllocationDriverBase {
   /**
    * @param deviceConfig { Object }
    * @return {Promise<DeviceCookie>}
    */
   async allocate(deviceConfig) {} // eslint-disable-line no-unused-vars
-}
 
-class DeallocationDriverBase {
   /**
-   * @param options { {shutdown: boolean} }
+   * @param cookie { DeviceCookie }
+   * @param options { DeallocOptions }
    * @return {Promise<void>}
    */
-  async free(options) {} // eslint-disable-line no-unused-vars
+  async free(cookie, options) {} // eslint-disable-line no-unused-vars
 }
 
-module.exports = {
-  AllocationDriverBase,
-  DeallocationDriverBase,
-};
+module.exports = AllocationDriverBase;

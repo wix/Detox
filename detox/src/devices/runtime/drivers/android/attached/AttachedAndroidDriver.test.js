@@ -13,11 +13,11 @@ describe('Attached android device driver', () => {
     const invocationManager = new InvocationManager();
 
     const AttachedAndroidDriver = require('./AttachedAndroidDriver');
-    uut = new AttachedAndroidDriver(adbName, {
+    uut = new AttachedAndroidDriver({
       invocationManager,
       emitter,
       client: {},
-    });
+    }, adbName);
   });
 
   it('should return the adb-name as the external ID', () => {

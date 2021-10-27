@@ -13,10 +13,8 @@ class StubDeviceAllocationDriver {
     await this._emitter.emit('bootDevice', { coldBoot: false, deviceId, type: 'stub' });
     return new StubCookie(deviceId);
   }
-}
 
-class StubDeviceDeallocationDriver {
-  async free({ shutdown }) {
+  async free(cookie, { shutdown }) {
     await sleepALittle();
 
     if (shutdown) {
@@ -25,7 +23,4 @@ class StubDeviceDeallocationDriver {
   }
 }
 
-module.exports = {
-  StubDeviceAllocationDriver,
-  StubDeviceDeallocationDriver,
-};
+module.exports = StubDeviceAllocationDriver;

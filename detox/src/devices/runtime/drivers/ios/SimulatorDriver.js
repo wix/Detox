@@ -13,14 +13,14 @@ const IosDriver = require('./IosDriver');
 
 class SimulatorDriver extends IosDriver {
   /**
-   * @param udid { String } The unique cross-OS identifier of the simulator
    * @param deps { Object }
    * @param deps.simulatorLauncher { SimulatorLauncher }
    * @param deps.applesimutils { AppleSimUtils }
    * @param configs { Object }
    * @param configs.deviceConfig { Object }
+   * @param udid { String } The unique cross-OS identifier of the simulator
    */
-  constructor(udid, deps, { deviceConfig }) {
+  constructor(deps, { deviceConfig }, udid) {
     super(deps);
 
     this.udid = udid;

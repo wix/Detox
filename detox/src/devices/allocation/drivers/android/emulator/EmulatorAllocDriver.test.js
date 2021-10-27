@@ -38,8 +38,6 @@ describe('Allocation driver for Google emulators', () => {
       traceCall: (name, fn) => fn(),
     }));
 
-    jest.mock('../../../../cookies/AndroidEmulatorCookie');
-
     jest.mock('../../../../common/drivers/android/exec/ADB');
     const ADB = require('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
@@ -64,19 +62,23 @@ describe('Allocation driver for Google emulators', () => {
     allocationHelper = new EmulatorAllocationHelper();
   });
 
-  describe('allocation', () => {
-    let allocDriver;
-    beforeEach(() => {
-      givenAllocationOfRunningEmulator();
+  let allocDriver;
+  beforeEach(() => {
+    const EmulatorAllocDriver = require('./EmulatorAllocDriver');
+    allocDriver = new EmulatorAllocDriver({
+      adb,
+      avdValidator,
+      emulatorVersionResolver,
+      emulatorLauncher,
+      allocationHelper,
+    });
+  });
 
-      const { EmulatorAllocDriver } = require('./EmulatorAllocDriver');
-      allocDriver = new EmulatorAllocDriver({
-        adb,
-        avdValidator,
-        emulatorVersionResolver,
-        emulatorLauncher,
-        allocationHelper,
-      });
+  describe('allocation', () => {
+    beforeEach(() => {
+      jest.mock('../../../../cookies/AndroidEmulatorCookie');
+
+      givenAllocationOfRunningEmulator();
     });
 
     it('should allocate a device based on the AVD\'s name', async () => {
@@ -204,27 +206,26 @@ describe('Allocation driver for Google emulators', () => {
   });
 
   describe('Deallocation', () => {
-    let deallocDriver;
+    let cookie;
     beforeEach(() => {
-      const { EmulatorDeallocDriver } = require('./EmulatorAllocDriver');
-      deallocDriver = new EmulatorDeallocDriver(adbName, {
-        emulatorLauncher,
-        allocationHelper,
-      });
+      jest.unmock('../../../../cookies/AndroidEmulatorCookie');
+
+      const Cookie = require('../../../../cookies/AndroidEmulatorCookie');
+      cookie = new Cookie(adbName);
     });
 
     it('should free the emulator instance', async () => {
-      await deallocDriver.free();
+      await allocDriver.free(cookie);
       expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(adbName);
     });
 
     it('should shut the emulator down', async () => {
-      await deallocDriver.free({ shutdown: true });
+      await allocDriver.free(cookie, { shutdown: true });
       expect(emulatorLauncher.shutdown).toHaveBeenCalledWith(adbName);
     });
 
     it('should not shut the emulator down, by default', async () => {
-      await deallocDriver.free(undefined);
+      await allocDriver.free(cookie, undefined);
       expect(emulatorLauncher.shutdown).not.toHaveBeenCalled();
     });
   });

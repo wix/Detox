@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
-const { AllocationDriverBase, DeallocationDriverBase } = require('../AllocationDriverBase');
+const AllocationDriverBase = require('../AllocationDriverBase');
 
 class SimulatorAllocDriver extends AllocationDriverBase {
   /**
@@ -42,6 +42,21 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     }
 
     return new IosSimulatorCookie(udid);
+  }
+
+  /**
+   * @param cookie { IosSimulatorCookie }
+   * @param options { DeallocOptions }
+   * @return {Promise<void>}
+   */
+  async free(cookie, options = {}) {
+    const { udid } = cookie;
+
+    await this._deviceRegistry.disposeDevice(udid);
+
+    if (options.shutdown) {
+      await this._simulatorLauncher.shutdown(udid);
+    }
   }
 
   /***
@@ -123,35 +138,4 @@ class SimulatorAllocDriver extends AllocationDriverBase {
   }
 }
 
-class SimulatorDeallocDriver extends DeallocationDriverBase {
-  /**
-   * @param udid { String } The unique cross-OS identifier of the simulator
-   * @param deviceRegistry { DeviceRegistry }
-   * @param simulatorLauncher { SimulatorLauncher }
-   */
-  constructor(udid, { deviceRegistry, simulatorLauncher }) {
-    super();
-    this.udid = udid;
-    this._deviceRegistry = deviceRegistry;
-    this._simulatorLauncher = simulatorLauncher;
-  }
-
-  /**
-   * @param options { {shutdown: boolean} }
-   * @return {Promise<void>}
-   */
-  async free(options = {}) {
-    const { udid } = this;
-
-    await this._deviceRegistry.disposeDevice(udid);
-
-    if (options.shutdown) {
-      await this._simulatorLauncher.shutdown(udid);
-    }
-  }
-}
-
-module.exports = {
-  SimulatorAllocDriver,
-  SimulatorDeallocDriver,
-};
+module.exports = SimulatorAllocDriver;

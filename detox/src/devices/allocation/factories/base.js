@@ -1,22 +1,20 @@
-const { DeviceAllocator, DeviceDeallocator } = require('../DeviceAllocator');
+const DeviceAllocator = require('../DeviceAllocator');
 
 class DeviceAllocatorFactory {
   /**
    * @param deps { Object }
-   * @returns { { allocator: DeviceAllocator, createDeallocator: (deviceCookie: DeviceCookie) => DeviceDeallocator} }
+   * @returns { DeviceAllocator }
    */
   createDeviceAllocator(deps) {
-    const {
-      allocDriver,
-      createDeallocDriver,
-    } = this._createDriver(deps);
-
-    return {
-      allocator: new DeviceAllocator(allocDriver),
-      createDeallocator: (deviceCookie) => new DeviceDeallocator(createDeallocDriver(deviceCookie)),
-    };
+    const allocDriver = this._createDriver(deps);
+    return new DeviceAllocator(allocDriver);
   }
 
+  /**
+   * @param deps
+   * @returns { AllocationDriverBase }
+   * @private
+   */
   _createDriver(deps) {} // eslint-disable-line no-unused-vars
 }
 

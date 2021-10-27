@@ -71,8 +71,9 @@ class Detox {
       onError: this._onEmitError.bind(this),
     });
 
-    this.deviceDeallocator = null;
     this.device = null;
+    this._deviceAllocator = null;
+    this._deviceCookie = null;
   }
 
   init() {
@@ -103,7 +104,7 @@ class Detox {
     if (this.device) {
       const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
       await this.device._cleanup();
-      await this.deviceDeallocator.free({ shutdown });
+      await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
 
     if (this._server) {
@@ -111,7 +112,8 @@ class Detox {
       this._server = null;
     }
 
-    this.deviceDeallocator = null;
+    this._deviceAllocator = null;
+    this._deviceCookie = null;
     this.device = null;
   }
 
@@ -181,18 +183,13 @@ class Detox {
       runtimeErrorComposer: this._runtimeErrorComposer,
     };
 
-    const {
-      allocator,
-      createDeallocator,
-    } = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
-
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
 
-    const deviceCookie = await allocator.allocate(this._deviceConfig);
+    this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
+    this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
 
-    this.deviceDeallocator = createDeallocator(deviceCookie);
     this.device = runtimeDeviceFactory.createRuntimeDevice(
-      deviceCookie,
+      this._deviceCookie,
       commonDeps,
       {
         appsConfig: this._appsConfig,

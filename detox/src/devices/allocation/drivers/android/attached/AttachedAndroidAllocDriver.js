@@ -1,5 +1,5 @@
-const AndroidDeviceCookie = require('../../../../cookies/AndroidDeviceCookie');
-const { AllocationDriverBase, DeallocationDriverBase } = require('../../AllocationDriverBase');
+const AttachedAndroidDeviceCookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
+const AllocationDriverBase = require('../../AllocationDriverBase');
 
 class AttachedAndroidAllocDriver extends AllocationDriverBase {
   /**
@@ -28,30 +28,17 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
     await this._attachedAndroidLauncher.notifyLaunchCompleted(adbName);
-    return new AndroidDeviceCookie(adbName);
-  }
-}
-
-class AttachedAndroidDeallocDriver extends DeallocationDriverBase {
-  /**
-   * @param adbName { String }
-   * @param deviceRegistry { DeviceRegistry }
-   */
-  constructor(adbName, { deviceRegistry }) {
-    super();
-    this._adbName = adbName;
-    this._deviceRegistry = deviceRegistry;
+    return new AttachedAndroidDeviceCookie(adbName);
   }
 
   /**
+   * @param cookie { AttachedAndroidDeviceCookie }
    * @return {Promise<void>}
    */
-  async free() {
-    await this._deviceRegistry.disposeDevice(this._adbName);
+  async free(cookie) {
+    const { adbName } = cookie;
+    await this._deviceRegistry.disposeDevice(adbName);
   }
 }
 
-module.exports = {
-  AttachedAndroidAllocDriver,
-  AttachedAndroidDeallocDriver,
-};
+module.exports = AttachedAndroidAllocDriver;

@@ -21,7 +21,6 @@ const log = logger.child({ __filename });
 
 class AndroidDriver extends DeviceDriverBase {
   /**
-   * @param adbName { String } The unique identifier associated with ADB
    * @param deps { Object }
    * @param deps.invocationManager { InvocationManager }
    * @param deps.client { Client }
@@ -33,8 +32,9 @@ class AndroidDriver extends DeviceDriverBase {
    * @param deps.appUninstallHelper { AppUninstallHelper }
    * @param deps.devicePathBuilder { AndroidDevicePathBuilder }
    * @param deps.instrumentation { MonitoredInstrumentation }
+   * @param adbName { String } The unique identifier associated with ADB
    */
-  constructor(adbName, deps) {
+  constructor(deps, adbName) {
     super(deps);
 
     this.adbName = adbName;

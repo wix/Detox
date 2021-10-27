@@ -29,8 +29,14 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
     jest.mock('../../../../common/drivers/android/exec/ADB');
     const ADB = require('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
+  });
 
+  let allocDriver;
+  beforeEach(() => {
     jest.mock('../../../../cookies/GenycloudEmulatorCookie');
+
+    const GenyAllocDriver = require('./GenyAllocDriver');
+    allocDriver = new GenyAllocDriver({ recipeQuerying, allocationHelper, instanceLauncher, adb });
   });
 
   const aRecipe = () => ({
@@ -63,11 +69,6 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
   const givenLaunchResult = (instance) => instanceLauncher.launch.mockResolvedValue(instance);
 
   describe('allocation', () => {
-    let allocDriver;
-    beforeEach(() => {
-      const { GenyAllocDriver } = require('./GenyAllocDriver');
-      allocDriver = new GenyAllocDriver({ recipeQuerying, allocationHelper, instanceLauncher, adb });
-    });
 
     it('should obtain recipe from recipes service', async () => {
       givenRecipe(aRecipe());
@@ -185,26 +186,29 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
 
   describe('deallocation', () => {
     let instance;
-    let deallocDriver;
+    let cookie;
     beforeEach(() => {
+      jest.unmock('../../../../cookies/GenycloudEmulatorCookie');
+
       instance = anInstance();
-      const { GenyDeallocDriver } = require('./GenyAllocDriver');
-      deallocDriver = new GenyDeallocDriver(instance, { allocationHelper, instanceLauncher });
+
+      const Cookie = require('../../../../cookies/GenycloudEmulatorCookie');
+      cookie = new Cookie(instance);
     });
 
     it('should deallocate the cloud instance', async () => {
-      await deallocDriver.free();
+      await allocDriver.free(cookie);
       expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
     });
 
     it('should shut the instance down if specified', async () => {
-      await deallocDriver.free({ shutdown: true });
+      await allocDriver.free(cookie, { shutdown: true });
 
       expect(instanceLauncher.shutdown).toHaveBeenCalledWith(instance);
     });
 
     it('should not shut the instance down, by default', async () => {
-      await deallocDriver.free(undefined);
+      await allocDriver.free(cookie, undefined);
       expect(instanceLauncher.shutdown).not.toHaveBeenCalled();
     });
   });

@@ -2,11 +2,8 @@ const DeviceAllocatorFactory = require('./base');
 
 class None extends DeviceAllocatorFactory {
   _createDriver() {
-    const { NoneAllocDriver, NoneDeallocDriver } = require('../drivers/NoneAllocDriver');
-    return {
-      allocDriver: new NoneAllocDriver(),
-      createDeallocDriver: () => new NoneDeallocDriver(),
-    };
+    const NoneAllocDriver = require('../drivers/NoneAllocDriver');
+    return new NoneAllocDriver();
   }
 }
 

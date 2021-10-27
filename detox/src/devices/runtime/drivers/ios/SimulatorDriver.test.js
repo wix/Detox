@@ -32,7 +32,7 @@ describe('IOS simulator driver', () => {
     simulatorLauncher = new SimulatorLauncher();
 
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver(udid, { simulatorLauncher, applesimutils, client, eventEmitter }, { deviceConfig });
+    uut = new SimulatorDriver({ simulatorLauncher, applesimutils, client, eventEmitter }, { deviceConfig }, udid);
   });
 
   it('should return the UDID as the external ID', () => {

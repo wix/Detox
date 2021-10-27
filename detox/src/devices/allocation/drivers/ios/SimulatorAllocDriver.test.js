@@ -3,7 +3,6 @@ describe('Allocation driver for iOS simulators', () => {
   let applesimutils;
   let deviceRegistry;
   let simulatorLauncher;
-  let allocDriver;
   beforeEach(() => {
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
@@ -17,14 +16,17 @@ describe('Allocation driver for iOS simulators', () => {
     simulatorLauncher = new SimulatorLauncher();
   });
 
+  let allocDriver;
+  beforeEach(() => {
+    const SimulatorAllocDriver = require('./SimulatorAllocDriver');
+    allocDriver = new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
+  });
+
   describe('allocation', () => {
     beforeEach(() => {
       jest.mock('../../../cookies/IosSimulatorCookie');
 
       givenNoUsedSimulators();
-
-      const { SimulatorAllocDriver } = require('./SimulatorAllocDriver');
-      allocDriver = new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
     });
 
     const aDeviceSpec = (udid) => ({
@@ -115,24 +117,27 @@ describe('Allocation driver for iOS simulators', () => {
 
   describe('deallocation', () => {
     const udid = 'ud-1d-m0ck';
-    let deallocDriver;
+
+    let cookie;
     beforeEach(() => {
-      const { SimulatorDeallocDriver } = require('./SimulatorAllocDriver');
-      deallocDriver = new SimulatorDeallocDriver(udid, { deviceRegistry, simulatorLauncher });
+      jest.unmock('../../../cookies/IosSimulatorCookie');
+
+      const Cookie = require('../../../cookies/IosSimulatorCookie');
+      cookie = new Cookie(udid);
     });
 
     it('should dispose the device from the registry', async () => {
-      await deallocDriver.free();
+      await allocDriver.free(cookie);
       expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(udid);
     });
 
     it('should shut the device down, if specified', async () => {
-      await deallocDriver.free({ shutdown: true });
+      await allocDriver.free(cookie, { shutdown: true });
       expect(simulatorLauncher.shutdown).toHaveBeenCalledWith(udid);
     });
 
     it('should not shut the device down, by default', async () => {
-      await deallocDriver.free();
+      await allocDriver.free(cookie);
       expect(simulatorLauncher.shutdown).not.toHaveBeenCalled();
     });
   });

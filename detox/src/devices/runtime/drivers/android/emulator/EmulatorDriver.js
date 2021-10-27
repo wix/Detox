@@ -3,13 +3,13 @@ const AndroidDriver = require('../AndroidDriver');
 // TODO Unit test coverage
 class EmulatorDriver extends AndroidDriver {
   /**
-   * @param adbName { String } The unique identifier associated with ADB
    * @param deps { Object }
    * @param configs { Object }
    * @param configs.deviceConfig { Object }
+   * @param adbName { String } The unique identifier associated with ADB
    */
-  constructor(adbName, deps, { deviceConfig }) {
-    super(adbName, deps);
+  constructor(deps, { deviceConfig }, adbName) {
+    super(deps, adbName);
 
     const { avdName } = deviceConfig.device;
 
