@@ -7,10 +7,7 @@
 // * pera <https://github.com/santiagofm>
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
-// * Oren Zakay <https://github.com/OrenZak>
-// Current contributors:
-// * Yaroslav Serhieiev <https://github.com/noomorph>
-// * Jonathan Moskovich <https://github.com/jonathanmos>
+
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
