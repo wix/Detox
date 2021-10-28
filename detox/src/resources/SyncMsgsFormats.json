@@ -1,8 +1,7 @@
 {
   "busy-with-reasons": "App status: busy, due to: {reasons}\n",
-  "busy-reason": "[{type}] {description}\n",
+  "busy-reason": "{type}: {description}\n",
   "idle": "App status: idle.",
-
   "busy-reason-types": {
     "ui": "UI Elements",
     "timers": "Enqueued Timers",
@@ -10,10 +9,9 @@
     "storage": "Storage",
     "code-exec": "Code Execution",
     "network": "Network",
-    "queue": "Dispatch Queue???"
+    "queue": "Dispatch Queue"
   },
-
-  "busy-reason": {
+  "busy-reasons-android": {
     "javascript-code": "\nJavascript code execution",
     "javascript-code-native": "\nJavascript code execution (native)",
     "busy-resource": "\nResource {resource} being busy",
