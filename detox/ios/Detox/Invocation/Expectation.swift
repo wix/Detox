@@ -110,6 +110,17 @@ class Expectation : CustomStringConvertible {
 			return SliderPositionExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, value: params!.first! as! Double, tolerance: params!.count > 1 ? (params![1] as! Double) : nil)
 		} else if expectationClass == ValueExpectation.self {
 			return ValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: keyMapping[kind]!, value: params!.first!)
+		} else if expectationClass == ToBeVisibleExpectation.self {
+			let percentDouble = params != nil && params!.count > 0 ? params!.first as? Double : nil
+			let percent = percentDouble != nil ? UInt(exactly: percentDouble!) : nil
+
+			return ToBeVisibleExpectation(
+				kind: kind,
+				modifiers: modifiers,
+				element: element,
+				timeout: timeout,
+				percent: percent
+			)
 		} else {
 			return expectationClass.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout)
 		}
@@ -182,10 +193,23 @@ class Expectation : CustomStringConvertible {
 }
 
 class ToBeVisibleExpectation : Expectation {
-	//This override is to support the special case where non-existent elements are also non-visible.
+	let percent: UInt?
+	
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval,
+				  percent: UInt?) {
+		self.percent = percent
+
+		super.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout)
+	}
+	
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval) {
+		fatalError("Call the other initializer")
+	}
+
+	/// - NOTE This override is to support the special case where non-existent elements are also non-visible.
 	override func _evaluate() {
 		if self.modifiers.contains(Modifier.not) && element.exists == false {
-			//Don't fail if view doesn't exist
+			// Don't fail if view doesn't exist.
 			return
 		}
 		
@@ -202,7 +226,7 @@ class ToBeVisibleExpectation : Expectation {
 	}
 	
 	override func evaluate(with element: Element) throws -> Bool {
-		return try element.isVisible()
+		return try element.isVisible(with: percent)
 	}
 }
 

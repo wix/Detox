@@ -25,9 +25,14 @@ class TypeMatcher extends NativeMatcher {
 }
 
 class VisibleMatcher extends NativeMatcher {
-  constructor() {
+  constructor(pct = 75) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible());
+
+    if (pct !== undefined && (!Number.isSafeInteger(pct) || pct < 1 || pct > 100)) {
+      throw new DetoxRuntimeError('VisibleMatcher argument must be an integer between 1 and 100');
+    }
+
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible(pct));
   }
 }
 

@@ -196,9 +196,6 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 		__block BOOL didSomeScroll = NO;
 		__block CGPoint prevOffset = scrollView.contentOffset;
 		
-		//10 points for UIPanGestureRecognizer to recognizer the pan, plus policy (2) for leeway.
-		const NSUInteger consecutiveTouchPointsWithSameContentOffsetThreshold = (10 + DetoxPolicy.activePolicy.consecutiveTouchPointsWithSameContentOffsetThreshold);
-		
 		__block BOOL didFailTouches = NO;
 		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:0.0 onTouchCallback:^ BOOL (UITouchPhase phase) {
 			if(phase != UITouchPhaseMoved)
@@ -226,7 +223,8 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 				return NO;
 			}
 			
-			if(consecutiveTouchPointsWithSameContentOffset > consecutiveTouchPointsWithSameContentOffsetThreshold)
+			if(consecutiveTouchPointsWithSameContentOffset >
+			   DetoxPolicy.consecutiveTouchPointsWithSameContentOffsetThreshold)
 			{
 				if(didSomeScroll == NO)
 				{
