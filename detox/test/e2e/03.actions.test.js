@@ -194,4 +194,24 @@ describe('Actions', () => {
       await expect(element(by.id(reactSliderId))).toHaveValue('75%');
     }
   });
+
+  it('should expect text fields to be focused after tap but not before', async () => {
+    const textField1 = element(by.id('UniqueId005'));
+    const textField2 = element(by.id('UniqueId006'));
+
+    await expect(textField1).toBeNotFocused();
+    await expect(textField2).toBeNotFocused();
+    await expect(textField1).not.toBeFocused();
+    await expect(textField2).not.toBeFocused();
+
+    await textField1.tap();
+    await expect(textField1).toBeFocused();
+    await expect(textField2).toBeNotFocused();
+    await expect(textField2).not.toBeFocused();
+
+    await textField2.tap();
+    await expect(textField1).toBeNotFocused();
+    await expect(textField1).not.toBeFocused();
+    await expect(textField2).toBeFocused();
+  });
 });

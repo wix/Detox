@@ -79,8 +79,8 @@ public class DetoxMatcher {
         return isOfClassName(className);
     }
 
-    public static Matcher<View> matcherForSufficientlyVisible() {
-        return isDisplayingAtLeast(75);
+    public static Matcher<View> matcherForSufficientlyVisible(int pct) {
+        return isDisplayingAtLeast(pct);
     }
 
     public static Matcher<View> matcherForNotVisible() {

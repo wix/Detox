@@ -7,10 +7,11 @@
 //
 
 @import UIKit;
-#import "NSObject+DontCrash.h"
-#import "NSObject+DetoxUtils.h"
-#import "UISlider+DetoxUtils.h"
+#import "DetoxPolicy.h"
 #import "DTXAppleInternals.h"
+#import "NSObject+DetoxUtils.h"
+#import "NSObject+DontCrash.h"
+#import "UISlider+DetoxUtils.h"
 #import "UIWindow+DetoxUtils.h"
 
 DTX_ALWAYS_INLINE
@@ -135,29 +136,21 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return self.dtx_bounds;
 }
 
-- (BOOL)dtx_isVisible
-{
-	return [self.dtx_view dtx_isVisibleAtRect:self.dtx_bounds];
+- (BOOL)dtx_isVisible {
+	return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:NULL];
 }
 
-- (BOOL)dtx_isVisibleAtRect:(CGRect)rect
-{
-	return [self.dtx_view dtx_isVisibleAtRect:self.dtx_bounds];
+- (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
+					  error:(NSError *__strong  _Nullable *)error {
+	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
-- (BOOL)dtx_isVisibleAtRect:(CGRect)rect error:(NSError *__strong  _Nullable *)error
-{
-	return [self.dtx_view dtx_isVisibleAtRect:self.dtx_bounds error:error];
+- (void)dtx_assertVisible {
+	[self dtx_assertVisibleAtRect:self.dtx_bounds percent:nil];
 }
 
-- (void)dtx_assertVisible
-{
-	[self.dtx_view dtx_assertVisibleVisibleAtRect:self.dtx_bounds];
-}
-
-- (void)dtx_assertVisibleVisibleAtRect:(CGRect)rect
-{
-	[self.dtx_view dtx_assertVisibleVisibleAtRect:self.dtx_bounds];
+- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(NSNumber *)percent {
+	[self.dtx_view dtx_assertVisibleAtRect:rect percent:percent];
 }
 
 - (BOOL)dtx_isFocused
