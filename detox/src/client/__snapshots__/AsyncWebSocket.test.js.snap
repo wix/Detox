@@ -56,8 +56,8 @@ https://github.com/wix/Detox/issues
   type: 'invoke',
   message: 'a message',
   messageId: undefined,
-  getTimeout: [Function: getTimeout],
-  getCanBeConcurrent: [Function: getCanBeConcurrent]
+  timeout: 0,
+  canBeConcurrent: false
 }"
 `;
 
@@ -70,8 +70,8 @@ The tester has not received a response within 5000ms timeout to the message:
   type: 'invoke',
   message: 'a message',
   messageId: 0,
-  getTimeout: [Function: getTimeout],
-  getCanBeConcurrent: [Function: getCanBeConcurrent]
+  timeout: 0,
+  canBeConcurrent: false
 }"
 `;
 

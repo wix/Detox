@@ -176,30 +176,39 @@ describe('Client', () => {
     });
 
     it('should throw error for actions without canBeConcurrent', async () => {
-      const withoutConcurrent = new actions.ReloadReactNative();
-      withoutConcurrent.canBeConcurrent = undefined;
-      await expect(() => withoutConcurrent.getCanBeConcurrent()).toThrowError();
+      const withoutConcurrent = new ActionWithoutParams();
+      await expect(() => withoutConcurrent.canBeConcurrent).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error for actions without timeout', async () => {
-      const withoutTimeout = new actions.ReloadReactNative();
-      withoutTimeout.sendTimeout = undefined;
-      await expect(() => withoutTimeout.getTimeout()).toThrowError();
+      const withoutTimeout = new ActionWithoutParams();
+      await expect(() => withoutTimeout.timeout).toThrowErrorMatchingSnapshot();
+    });
+
+    it('should not throw .canBeConcurrent getter errors for exported actions', () => {
+      for (const ActionClass of Object.values(actions)) {
+        if (ActionClass !== actions.Action && ActionClass.prototype instanceof actions.Action) {
+          expect(() => ActionClass.prototype.canBeConcurrent).not.toThrow();
+        }
+      }
+    });
+
+    it('should not throw .timeout getter errors for exported actions', () => {
+      for (const ActionClass of Object.values(actions)) {
+        if (ActionClass !== actions.Action && ActionClass.prototype instanceof actions.Action) {
+          expect(() => ActionClass.prototype.timeout).not.toThrow();
+        }
+      }
     });
 
     it('should return value for canBeConcurrent', async () => {
       const withoutConcurrent = new actions.ReloadReactNative();
-      await expect(withoutConcurrent.getCanBeConcurrent()).toBe(true);
+      await expect(withoutConcurrent.canBeConcurrent).toBe(true);
     });
 
     it('should return value for timeout', async () => {
       const withoutTimeout = new actions.Login(123);
-      await expect(withoutTimeout.getTimeout()).toEqual(1000);
-    });
-
-    it('should throw error trying to create action with no params', async () => {
-      const noParams = new ActionWithoutParams();
-      await expect(() => noParams.getTimeout()).toThrowError();
+      await expect(withoutTimeout.timeout).toEqual(1000);
     });
 
     it('should schedule "currentStatus" query when it takes too long', async () => {
@@ -732,9 +741,9 @@ describe('Client', () => {
       type: 'whatever',
       params: {},
       handle: jest.fn(),
+      get timeout() { return 0; },
+      get canBeConcurrent() { return false; },
       ...overrides,
-      getTimeout: () => 0,
-      getCanBeConcurrent: () => false,
     };
   }
 

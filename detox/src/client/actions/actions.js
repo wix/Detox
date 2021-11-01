@@ -5,8 +5,6 @@ const { getDetoxLevel } = require('../../utils/logger');
 class Action {
   constructor(type, params = {}) {
     this.type = type;
-    this.sendTimeout = params.sendTimeout;
-    this.canBeConcurrent = params.canBeConcurrent;
     this.params = params;
     this.messageId = undefined;
   }
@@ -17,20 +15,14 @@ class Action {
     }
   }
 
-  getCanBeConcurrent() {
-    if (this.canBeConcurrent === undefined) {
-      throw new DetoxInternalError(`canBeConcurrent must be defined for ${this.type}`);
-    }
-
-    return this.canBeConcurrent;
+  /** @returns {boolean} */
+  get canBeConcurrent() {
+    throw new DetoxInternalError(`Action.prototype.canBeConcurrent must be defined for ${this.type}`);
   }
 
-  getTimeout() {
-    if (this.sendTimeout === undefined) {
-      throw new DetoxInternalError(`sendTimeout must be defined for ${this.type}`);
-    }
-
-    return this.sendTimeout;
+  /** @returns {number} */
+  get timeout() {
+    throw new DetoxInternalError(`Action.prototype.timeout getter must be defined for ${this.type}`);
   }
 }
 
@@ -40,7 +32,15 @@ class Login extends Action {
       sessionId: sessionId,
       role: 'tester'
     };
-      super('login', { sendTimeout: 1000, canBeConcurrent: false, ...params });
+    super('login', params);
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 1000;
   }
 
   async handle(response) {
@@ -51,8 +51,16 @@ class Login extends Action {
 
 class Ready extends Action {
   constructor() {
-    super('isReady', { sendTimeout: 0, canBeConcurrent: false });
+    super('isReady');
     this.messageId = -1000;
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -62,8 +70,16 @@ class Ready extends Action {
 
 class ReloadReactNative extends Action {
   constructor() {
-    super('reactNativeReload', { sendTimeout: 0, canBeConcurrent: true });
+    super('reactNativeReload');
     this.messageId = -1000;
+  }
+
+  get canBeConcurrent() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -73,7 +89,15 @@ class ReloadReactNative extends Action {
 
 class WaitForBackground extends Action {
   constructor() {
-    super('waitForBackground', { sendTimeout: 0, canBeConcurrent: false });
+    super('waitForBackground');
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -83,7 +107,15 @@ class WaitForBackground extends Action {
 
 class WaitForActive extends Action {
   constructor() {
-    super('waitForActive', { sendTimeout: 0, canBeConcurrent: false });
+    super('waitForActive');
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -93,7 +125,15 @@ class WaitForActive extends Action {
 
 class Shake extends Action {
   constructor() {
-    super('shakeDevice', { sendTimeout: 0, canBeConcurrent: false });
+    super('shakeDevice');
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -103,7 +143,15 @@ class Shake extends Action {
 
 class SetOrientation extends Action {
   constructor(params) {
-    super('setOrientation', { sendTimeout: 0, canBeConcurrent: false, ...params });
+    super('setOrientation', params);
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -113,8 +161,16 @@ class SetOrientation extends Action {
 
 class Cleanup extends Action {
   constructor(stopRunner) {
-    super('cleanup', { sendTimeout: 5000, canBeConcurrent: true, stopRunner });
+    super('cleanup', { stopRunner });
     this.messageId = -0xc1ea;
+  }
+
+  get canBeConcurrent() {
+    return true;
+  }
+
+  get timeout() {
+    return 5000;
   }
 
   async handle(response) {
@@ -124,7 +180,15 @@ class Cleanup extends Action {
 
 class Invoke extends Action {
   constructor(params) {
-    super('invoke', { sendTimeout: 0, canBeConcurrent: false, ...params });
+    super('invoke', params);
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -151,7 +215,15 @@ class Invoke extends Action {
 
 class DeliverPayload extends Action {
   constructor(params) {
-    super('deliverPayload', { sendTimeout: 0, canBeConcurrent: false, ...params });
+    super('deliverPayload', params);
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -161,7 +233,15 @@ class DeliverPayload extends Action {
 
 class SetSyncSettings extends Action {
   constructor(params) {
-    super('setSyncSettings', { sendTimeout: 0, canBeConcurrent: false, ...params });
+    super('setSyncSettings', params);
+  }
+
+  get canBeConcurrent() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -171,7 +251,15 @@ class SetSyncSettings extends Action {
 
 class CurrentStatus extends Action {
   constructor(params) {
-    super('currentStatus', { sendTimeout: 5000, canBeConcurrent: true, ...params });
+    super('currentStatus', params);
+  }
+
+  get canBeConcurrent() {
+    return true;
+  }
+
+  get timeout() {
+    return 5000;
   }
 
   async handle(response) {
@@ -182,7 +270,15 @@ class CurrentStatus extends Action {
 
 class SetInstrumentsRecordingState extends Action {
   constructor(params) {
-    super('setRecordingState', { sendTimeout: 0, canBeConcurrent: true, ...params });
+    super('setRecordingState', params);
+  }
+
+  get canBeConcurrent() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -192,7 +288,15 @@ class SetInstrumentsRecordingState extends Action {
 
 class CaptureViewHierarchy extends Action {
   constructor(params) {
-    super('captureViewHierarchy', { sendTimeout: 0, canBeConcurrent: true, ...params });
+    super('captureViewHierarchy', params);
+  }
+
+  get canBeConcurrent() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {

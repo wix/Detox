@@ -98,7 +98,7 @@ class AsyncWebSocket {
 
     if (this.hasMultiplePendingActions()) {
         for (const inflight of _.values(this.inFlightPromises)) {
-          if (!this.isAllowedPendingMessageType(inflight.message)) {
+          if (!inflight.message.canBeConcurrent) {
             inflight.reject(new DetoxRuntimeError({
               message: 'Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?',
             }));
@@ -135,15 +135,8 @@ class AsyncWebSocket {
     return _.some(this.inFlightPromises, p => p.message.type !== 'currentStatus');
   }
 
-  isAllowedPendingMessageType(message) {
-    return message.getCanBeConcurrent();
-  }
-
   hasMultiplePendingActions() {
-    const remainingMessages = _.filter(this.inFlightPromises, p =>
-      !(this.isAllowedPendingMessageType(p.message))
-    );
-
+    const remainingMessages = _.filter(this.inFlightPromises, p => !p.message.canBeConcurrent);
     return remainingMessages.length > 1;
   }
 

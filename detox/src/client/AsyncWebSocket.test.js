@@ -8,6 +8,9 @@ const config = require('../configuration/configurations.mock').validSession;
 describe('AsyncWebSocket', () => {
   let AsyncWebSocket;
   let WebSocket;
+  /**
+   * @type {import('./AsyncWebSocket')}
+   */
   let aws;
   let log;
 
@@ -334,29 +337,32 @@ describe('AsyncWebSocket', () => {
     const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
       'Have you forgotten to apply an await over one of the Detox actions in your test code?';
 
-    it('should throw for pending in-flight invokes', async () => {
+    it('should throw on multiple pending requests that cannot be concurrent', async () => {
       const response1 = aws.send(generateRequest(1, 'invoke'));
-      const response2 = aws.send(generateRequest(2, 'invoke'));
+      const response2 = aws.send(generateRequest(2, 'currentStatus', true));
+      const response3 = aws.send(generateRequest(3, 'invoke'));
+
+      socket.mockMessage(generateResponse('invokeDone', 1));
+      socket.mockMessage(generateResponse('currentStatusDone', 2));
+      socket.mockMessage(generateResponse('invokeDone', 3));
+
       await expect(response1).rejects.toThrow(multipleInteractionsWarning);
-      await expect(response2).rejects.toThrow(multipleInteractionsWarning);
+      await expect(response2).resolves.not.toThrow();
+      await expect(response3).rejects.toThrow(multipleInteractionsWarning);
     });
 
-    it('should not throw for pending allowable requests', async () => {
-      const allowedRequests = ['currentStatus', 'takeScreenshot', 'setRecordingState', 'captureViewHierarchy', 'cleanup', 'reactNativeReload'];
-      let messageId = 1;
+    it('should not throw on multiple pending requests that be concurrent', async () => {
+      const response1 = aws.send(generateRequest(1, 'invoke'));
+      const response2 = aws.send(generateRequest(2, 'currentStatus', true));
+      const response3 = aws.send(generateRequest(3, 'currentStatus', true));
 
-      for (const req in allowedRequests) {
-        aws.send(generateRequest(messageId, req));
-        messageId++;
-      }
+      socket.mockMessage(generateResponse('invokeDone', 1));
+      socket.mockMessage(generateResponse('currentStatusDone', 2));
+      socket.mockMessage(generateResponse('currentStatusDone', 3));
 
-      const res = aws.send(generateRequest(2, 'currentStatus', true));
-      socket.mockMessage({ messageId: 2, type: 'response' });
-      await expect(res).resolves.toEqual({ 'messageId': 2, 'type': 'response' });
-
-      const res2 = aws.send(generateRequest(12, 'any other request type'));
-      socket.mockMessage({ messageId: 12, type: 'response' });
-      await expect(res2).rejects.toThrow(multipleInteractionsWarning);
+      await expect(response1).resolves.not.toThrowError();
+      await expect(response2).resolves.not.toThrowError();
+      await expect(response3).resolves.not.toThrowError();
     });
   });
 
@@ -395,8 +401,8 @@ describe('AsyncWebSocket', () => {
       type,
       message: 'a message',
       messageId,
-      getTimeout: () => 0,
-      getCanBeConcurrent: () => canBeConcurrent,
+      timeout: 0,
+      canBeConcurrent,
     };
   }
 
