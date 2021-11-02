@@ -1,20 +1,26 @@
 const AndroidDriver = require('../AndroidDriver');
 
+/**
+ * @typedef { AndroidDriverDeps } EmulatorDriverDeps
+ */
+
+/**
+ * @typedef { AndroidDriverProps } EmulatorDriverProps
+ * @property avdName { String }
+ * @property forceAdbInstall { Boolean }
+ */
+
 // TODO Unit test coverage
 class EmulatorDriver extends AndroidDriver {
   /**
-   * @param deps { Object }
-   * @param configs { Object }
-   * @param configs.deviceConfig { Object }
-   * @param adbName { String } The unique identifier associated with ADB
+   * @param deps { EmulatorDriverDeps }
+   * @param props { EmulatorDriverProps }
    */
-  constructor(deps, { deviceConfig }, adbName) {
-    super(deps, adbName);
-
-    const { avdName } = deviceConfig.device;
+  constructor(deps, { adbName, avdName, forceAdbInstall }) {
+    super(deps, { adbName });
 
     this._deviceName = `${adbName} (${avdName})`;
-    this._forceAdbInstall = deviceConfig.forceAdbInstall;
+    this._forceAdbInstall = forceAdbInstall;
   }
 
   getDeviceName() {

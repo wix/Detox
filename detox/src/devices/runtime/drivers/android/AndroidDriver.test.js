@@ -34,7 +34,7 @@ describe('Android driver', () => {
       appInstallHelper,
       appUninstallHelper,
       instrumentation,
-    }, adbName);
+    }, { adbName });
   });
 
   describe('Instrumentation bootstrap', () => {

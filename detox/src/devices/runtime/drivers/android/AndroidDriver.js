@@ -19,22 +19,29 @@ const DeviceDriverBase = require('../DeviceDriverBase');
 
 const log = logger.child({ __filename });
 
+/**
+ * @typedef AndroidDriverProps
+ * @property adbName { String } The unique identifier associated with ADB
+ */
+
+/**
+ * @typedef { DeviceDriverDeps } AndroidDriverDeps
+ * @property invocationManager { InvocationManager }
+ * @property adb { ADB }
+ * @property aapt { AAPT }
+ * @property fileXfer { FileXfer }
+ * @property appInstallHelper { AppInstallHelper }
+ * @property appUninstallHelper { AppUninstallHelper }
+ * @property devicePathBuilder { AndroidDevicePathBuilder }
+ * @property instrumentation { MonitoredInstrumentation }
+ */
+
 class AndroidDriver extends DeviceDriverBase {
   /**
-   * @param deps { Object }
-   * @param deps.invocationManager { InvocationManager }
-   * @param deps.client { Client }
-   * @param deps.emitter { AsyncEmitter }
-   * @param deps.adb { ADB }
-   * @param deps.aapt { AAPT }
-   * @param deps.fileXfer { FileXfer }
-   * @param deps.appInstallHelper { AppInstallHelper }
-   * @param deps.appUninstallHelper { AppUninstallHelper }
-   * @param deps.devicePathBuilder { AndroidDevicePathBuilder }
-   * @param deps.instrumentation { MonitoredInstrumentation }
-   * @param adbName { String } The unique identifier associated with ADB
+   * @param deps { AndroidDriverDeps }
+   * @param props { AndroidDriverProps }
    */
-  constructor(deps, adbName) {
+  constructor(deps, { adbName }) {
     super(deps);
 
     this.adbName = adbName;

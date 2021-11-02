@@ -11,21 +11,30 @@ const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
 
+/**
+ * @typedef SimulatorDriverDeps { DeviceDriverDeps }
+ * @property simulatorLauncher { SimulatorLauncher }
+ * @property applesimutils { AppleSimUtils }
+ */
+
+/**
+ * @typedef SimulatorDriverProps
+ * @property udid { String } The unique cross-OS identifier of the simulator
+ * @property type { String }
+ * @property bootArgs { Object }
+ */
+
 class SimulatorDriver extends IosDriver {
   /**
-   * @param deps { Object }
-   * @param deps.simulatorLauncher { SimulatorLauncher }
-   * @param deps.applesimutils { AppleSimUtils }
-   * @param configs { Object }
-   * @param configs.deviceConfig { Object }
-   * @param udid { String } The unique cross-OS identifier of the simulator
+   * @param deps { SimulatorDriverDeps }
+   * @param props { SimulatorDriverProps }
    */
-  constructor(deps, { deviceConfig }, udid) {
+  constructor(deps, { udid, type, bootArgs }) {
     super(deps);
 
     this.udid = udid;
-    this._type = deviceConfig.device.type;
-    this._bootArgs = deviceConfig.bootArgs;
+    this._type = type;
+    this._bootArgs = bootArgs;
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;

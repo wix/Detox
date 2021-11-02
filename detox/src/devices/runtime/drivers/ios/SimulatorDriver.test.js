@@ -3,12 +3,6 @@ describe('IOS simulator driver', () => {
   const type = 'Chika';
   const bundleId = 'bundle-id-mock';
   const bootArgs = { boot: 'args' };
-  const deviceConfig = {
-    device: {
-      type,
-    },
-    bootArgs,
-  };
 
   let client;
   let eventEmitter;
@@ -32,7 +26,7 @@ describe('IOS simulator driver', () => {
     simulatorLauncher = new SimulatorLauncher();
 
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver({ simulatorLauncher, applesimutils, client, eventEmitter }, { deviceConfig }, udid);
+    uut = new SimulatorDriver({ simulatorLauncher, applesimutils, client, eventEmitter }, { udid, type, bootArgs });
   });
 
   it('should return the UDID as the external ID', () => {

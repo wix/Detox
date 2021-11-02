@@ -23,11 +23,15 @@ class Ios extends RuntimeDriverFactoryIos {
 }
 
 class IosSimulator extends RuntimeDriverFactoryIos {
-  _createDriver(deviceCookie, deps, configs) {
-    const { udid } = deviceCookie;
+  _createDriver(deviceCookie, deps, { deviceConfig }) {
+    const props = {
+      udid: deviceCookie.udid,
+      type: deviceConfig.device.type,
+      bootArgs: deviceConfig.bootArgs,
+    };
 
     const { IosSimulatorRuntimeDriver } = require('../drivers');
-    return new IosSimulatorRuntimeDriver(deps, configs, udid);
+    return new IosSimulatorRuntimeDriver(deps, props);
   }
 }
 

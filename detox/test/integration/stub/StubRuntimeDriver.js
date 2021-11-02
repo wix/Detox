@@ -12,10 +12,10 @@ const {
 
 class StubRuntimeDriver extends DeviceDriverBase {
   /**
-   * @param deviceCookie { StubCookie }
    * @param deps { Object }
+   * @param deviceCookie { StubCookie }
    */
-  constructor(deviceCookie, deps) {
+  constructor(deps, deviceCookie) {
     super(deps);
     this._deviceId = deviceCookie.id;
   }

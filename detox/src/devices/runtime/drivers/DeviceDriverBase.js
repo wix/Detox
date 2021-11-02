@@ -5,10 +5,15 @@ const fs = require('fs-extra');
 
 const log = require('../../../utils/logger').child({ __filename });
 
+/**
+ * @typedef DeviceDriverDeps
+ * @property client { Client }
+ * @property eventEmitter { AsyncEmitter }
+ */
+
 class DeviceDriverBase {
   /**
-   * @param client { Client }
-   * @param eventEmitter { AsyncEmitter }
+   * @param deps { DeviceDriverDeps }
    */
   constructor({ client, eventEmitter }) {
     this.client = client;

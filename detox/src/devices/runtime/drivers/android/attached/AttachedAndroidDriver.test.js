@@ -17,7 +17,7 @@ describe('Attached android device driver', () => {
       invocationManager,
       emitter,
       client: {},
-    }, adbName);
+    }, { adbName });
   });
 
   it('should return the adb-name as the external ID', () => {

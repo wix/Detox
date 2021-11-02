@@ -1,13 +1,22 @@
 const DetoxGenymotionManager = require('../../../../../android/espressoapi/DetoxGenymotionManager');
 const AndroidDriver = require('../AndroidDriver');
 
+/**
+ * @typedef { AndroidDriverDeps } GenycloudDriverDeps
+ */
+
+/**
+ * @typedef GenycloudDriverProps
+ * @property instance { GenyInstance } The DTO associated with the cloud instance
+ */
+
 class GenyCloudDriver extends AndroidDriver {
   /**
-   * @param deps { Object }
-   * @param instance { GenyInstance } The DTO associated with the cloud instance
+   * @param deps { GenycloudDriverDeps }
+   * @param props { GenycloudDriverProps }
    */
-  constructor(deps, instance) {
-    super(deps, instance.adbName);
+  constructor(deps, { instance }) {
+    super(deps, { adbName: instance.adbName });
     this.instance = instance;
   }
 

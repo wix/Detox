@@ -21,7 +21,7 @@ class External extends RuntimeDeviceFactory {
   }
 
   _createDriver(deviceCookie, deps) {
-    return new this._module.RuntimeDriverClass(deviceCookie, deps);
+    return new this._module.RuntimeDriverClass(deps, deviceCookie);
   }
 }
 

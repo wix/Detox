@@ -46,7 +46,7 @@ describe('Genymotion-cloud driver', () => {
         client: {},
         appInstallHelper,
         instrumentation,
-      }, instance);
+      }, { instance });
     });
 
     it('should return the adb-name as the external ID', () => {

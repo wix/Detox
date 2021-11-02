@@ -26,29 +26,37 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
 }
 
 class AndroidEmulator extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) {
-    const { adbName } = deviceCookie;
+  _createDriver(deviceCookie, deps, { deviceConfig }) {
+    const props = {
+      adbName: deviceCookie.adbName,
+      avdName: deviceConfig.device.avdName,
+      forceAdbInstall: deviceConfig.forceAdbInstall,
+    };
 
     const { AndroidEmulatorRuntimeDriver } = require('../drivers');
-    return new AndroidEmulatorRuntimeDriver(deps, configs, adbName);
+    return new AndroidEmulatorRuntimeDriver(deps, props);
   }
 }
 
 class AndroidAttached extends RuntimeDriverFactoryAndroid {
   _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
-    const { adbName } = deviceCookie;
+    const props = {
+      adbName: deviceCookie.adbName,
+    };
 
     const { AttachedAndroidRuntimeDriver } = require('../drivers');
-    return new AttachedAndroidRuntimeDriver(deps, adbName);
+    return new AttachedAndroidRuntimeDriver(deps, props);
   }
 }
 
 class Genycloud extends RuntimeDriverFactoryAndroid {
   _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
-    const { instance } = deviceCookie;
+    const props = {
+      instance: deviceCookie.instance,
+    };
 
     const { GenycloudRuntimeDriver } = require('../drivers');
-    return new GenycloudRuntimeDriver(deps, instance);
+    return new GenycloudRuntimeDriver(deps, props);
   }
 }
 
