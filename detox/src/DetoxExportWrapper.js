@@ -115,6 +115,10 @@ DetoxExportWrapper.prototype.hook = configuration.hook;
 
 DetoxExportWrapper.prototype.globalInit = async function() {
   try {
+    // TODO This can only work in Jest, where config info etc. is available globally through env vars rather
+    //   than argv (e.g. in Mocha) -- which we don't have available here.
+    //   We will resolve this, ultimately, in https://github.com/wix/Detox/issues/2894 (DAS project), where
+    //   this whole hack would be removed altogether.
     const configs = await configuration.composeDetoxConfig({});
     await Detox.globalInit(configs);
   } catch (error) {
