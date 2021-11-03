@@ -1,12 +1,12 @@
 buildscript {
     apply from: './rninfo.gradle'
 
-    def androidGradlePluginVersion = rnInfo.isRN64OrHigher ? '4.1.0' : '3.5.3'
+    def androidGradlePluginVersion = rninfo.isRN66OrHigher ? '4.2.2' : rnInfo.isRN64OrHigher ? '4.1.0' : '3.5.3'
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
         kotlinVersion = '1.4.21'
-        buildToolsVersion = '30.0.0'
+        buildToolsVersion = '30.0.2'
         compileSdkVersion = 31
         targetSdkVersion = 31
         minSdkVersion = 21

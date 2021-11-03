@@ -27,3 +27,4 @@
     @com.facebook.jni.annotations.DoNotStrip *;
 }
 -keep class kotlin.** { *; }
+-keep class okhttp3.** { *; }

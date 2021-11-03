@@ -10,4 +10,5 @@ class exampleAndroid extends example {
 
 }
 
+console.disableYellowBox = true;
 AppRegistry.registerComponent('example', () => exampleAndroid);

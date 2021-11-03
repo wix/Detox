@@ -43,7 +43,7 @@
     "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.64.1",
+    "react-native": "0.66.1",
     "react-native-codegen": "^0.0.8",
     "wtfnode": "^0.8.0"
   },
