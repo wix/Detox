@@ -4,22 +4,26 @@
 
 *.js @d4vidi @noomorph
 *.ts @d4vidi @noomorph
-*.sh @d4vidi @noomorph @alon-ha
+*.sh @d4vidi @noomorph
 
 # Android
 
-*.java @d4vidi
-*.kt @d4vidi
-*.gradle @d4vidi
+detox/android/* @d4vidi @jonathanmos
+detox/test/android/* @d4vidi @jonathanmos
+*.java @d4vidi @jonathanmos
+*.kt @d4vidi @jonathanmos
+*.gradle @d4vidi @jonathanmos
 
 # iOS
 
-detox/ios/* @alon-ha
-detox/test/ios/* @alon-ha
-*.h @alon-ha
-*.m @alon-ha
-*.mm @alon-ha
-*.cpp @alon-ha
-*.swift @alon-ha
-*.pch @alon-ha
-*.plist @alon-ha
+detox/ios/* @asafkorem
+detox/test/ios/* @asafkorem
+*.h @asafkorem
+*.m @asafkorem
+*.mm @asafkorem
+*.cpp @asafkorem
+*.swift @asafkorem
+*.pch @asafkorem
+*.plist @asafkorem
+*.xcodeproj @asafkorem
+*.xcworkspace @asafkorem
