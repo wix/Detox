@@ -2,6 +2,74 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 19.0
+
+**Version 19 is not really a breaking change!**
+
+We decided to bump Detox into a major version release, nonetheless, because it is breaking for projects that sport [custom Detox drivers](Guide.ThirdPartyDrivers.md), such as [`detox-puppeteer`](https://github.com/ouihealth/detox-puppeteer).
+
+If you are a maintainer of such a project and you wish to upgrade your Detox dependency to 19 (kudos! :clap:),  follow this step-by-step migration guide; You can refer to [this pull-request](https://github.com/ouihealth/detox-puppeteer/pull/13), which does that for the  `detox-puppeteer` project.
+
+### Migrating Custom Drivers
+
+The core of the change is that Detox' drivers framework is **no longer a single monolith**, responsible for everything platform-specific. Rather, it's been broken down to these sub-responsibilies:
+
+- Allocation: The process of launching / selecting a device over which the tests would run in the current execution.
+- Validation: Execution environment checkups.
+- Artifacts: Platform-based selection of build-artifacts implementation (e.g. screenshots).
+- Runtime
+
+> You can find a visual explanation, [here](https://github.com/wix/Detox/files/7338121/pre-multiapps-rfc.pdf).
+
+In addition, the runtime driver is no longer state-less -- basically, allowing implementation to hold any state that is required in identifying and managing the associated device.
+
+#### How to migrate
+
+Everything here will be based on the changes made in the [`detox-puppeteer` example](https://github.com/ouihealth/detox-puppeteer) - names included (please don't use them as-is in your own implementation!).
+
+**Allocation:**
+
+- Create a new class, called `PuppeteerDeviceAllocation` (change name to something that would make sense in your project).
+- Move everything currently in `PuppeteerDriver.acquireFreeDevice()` and `.shutdown()` onto `PuppeteerDeviceAllocation.allocate()` and `.free()`, respectively.
+- Create a pojo class called `PuppeteerAllocCookie`. This class should hold anything that would later be required in order to specify the specifically associated device (example: `UDID` for iOS simulators, `adb` names for Android devices).
+- Make `.allocate()` return an instance of your cookie class. Puppeteer example: [here](https://github.com/ouihealth/detox-puppeteer/pull/13/files#diff-818f6c5309fffe5c710e542216ffdb55f468fd2f8035feb0b0c917785489aca7R841).
+- **Delete `PuppeteerDriver.acquireFreeDevice()` and `PuppeteerDriver.shutdown()`.**
+
+> For a precise class c'tor and method signatures, see [here](https://github.com/ouihealth/detox-puppeteer/pull/13/files#diff-818f6c5309fffe5c710e542216ffdb55f468fd2f8035feb0b0c917785489aca7R830).
+
+Add the new allocation class to the `module.exports` list, under the name: `DeviceAllocationDriverClass`.
+
+**Validation:**
+
+* If you have any validations implemented in `PuppeteerDriver.prepare()`, create a class called `PuppeteerEnvironmentValidator`.
+* Move anything inside `PuppeteerDriver.prepare()` to `PuppeteerEnvironmentValidator.validate()`.
+* **Delete `PupeteerDriver.prepare()`.**
+
+> For a precise class c'tor and method signatures, see [here](https://github.com/ouihealth/detox-puppeteer/pull/13/files#diff-818f6c5309fffe5c710e542216ffdb55f468fd2f8035feb0b0c917785489aca7R798).
+
+Add the new (optional) class to the `module.exports` list, under the name: `EnvironmentValidatorClass`.
+
+**Artifacts:**
+
+* Move your implementation of `PuppeteerDriver.declareArtifactPlugins()` to the same method in a new class, called `PuppeteerArtifactPluginsProvider.declareArtifactPlugins()` (change name to something that would make sense in your project).
+
+>  There are no changes in method signature in this case.
+
+Add the new class to the `module.exports` list, under the name: `ArtifactPluginsProviderClass`.
+
+**Runtime:**
+
+* Optionally rename your class from `PuppeteerDriver` to `PuppeteerRuntimeDriver`.
+* In the methods remaining in the class accepting the `deviceId` arg: **remove the deviceId arg entirely**. This might break your implementation - don't worry, continue reading.
+* If applicable, change the signature of the class' c'tor to accept the cookie as it's 2nd argument (instance previously allocated in `PuppeteerAllocationDriver.allocate()`). Save data from the cookie as part of the driver's state, in order to unbreak your implementation, following the previous step.
+* Add two methods: `getExternalId()` and `getDeviceName()`. Implement them such that they would comply with the `device.id` and `device.name` [API contracts](APIRef.DeviceObjectAPI.md), respectively.
+
+Export the runtime driver class in the `module.exports` list as `RuntimeDriverClass`, **instead of `DriverClass`.**
+
+#### Troubleshooting
+
+For issue related to these migrations, approach us by [submitting an issue on Github](https://github.com/wix/Detox/issues/new/choose). Please apply the `Detox19` label.
+
 ## 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
@@ -741,5 +809,4 @@ If you have integrated with Detox in version 3.x.x, you will need to clean your 
 
 * The script will delete previously configured project targets `*_Detox`. The targets are not used by detox anymore since the framework is now injected at runtime and doesn't need to be linked in a different target.
 * Make sure to add changes performed by running this script to version control.
-
 
