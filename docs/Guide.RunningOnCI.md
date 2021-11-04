@@ -16,7 +16,7 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
 "detox": {
   "devices": {
     "simulator": {
-      "type": "ios.simulator"
+      "type": "ios.simulator",
       "device": {
         "type": "iPhone 12 Pro Max"
       }
