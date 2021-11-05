@@ -115,21 +115,24 @@ DetoxExportWrapper.prototype.hook = configuration.hook;
 
 DetoxExportWrapper.prototype.globalInit = async function() {
   try {
-    // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of init-callbacks.
-    const GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
-    await GenyCloudDriver.globalInit();
+    // TODO This can only work in Jest, where config info etc. is available globally through env vars rather
+    //   than argv (e.g. in Mocha) -- which we don't have available here.
+    //   We will resolve this, ultimately, in https://github.com/wix/Detox/issues/2894 (DAS project), where
+    //   this whole hack would be removed altogether.
+    const configs = await configuration.composeDetoxConfig({});
+    await Detox.globalInit(configs);
   } catch (error) {
-    log.warn({ event: 'GLOBAL_INIT' }, 'An error occurred trying to globally-init Genymotion-cloud emulator instances!', error);
+    log.warn({ event: 'GLOBAL_INIT' }, 'An error occurred!');
+    throw error;
   }
 };
 
 DetoxExportWrapper.prototype.globalCleanup = async function() {
   try {
-    // TODO For the next consumer, need to come up with some kind of infra-code to allow for dynamic registration of cleanup-callbacks.
-    const GenyCloudDriver = require('./devices/drivers/android/genycloud/GenyCloudDriver');
-    await GenyCloudDriver.globalCleanup();
+    const configs = await configuration.composeDetoxConfig({});
+    await Detox.globalCleanup(configs);
   } catch (error) {
-    log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred trying to shut down Genymotion-cloud emulator instances!', error);
+    log.warn({ event: 'GLOBAL_CLEANUP' }, 'An error occurred!', error);
   }
 };
 
