@@ -31,6 +31,7 @@ Detox tries to eliminate flakiness by automatically synchronizing your tests wit
 
 Detox is comprised of the following components:
 
-- [**Tester**](https://github.com/wix/Detox/tree/master/detox/src): the tested component, running in a Node.js process, executing the test logic. The tester is also responsible for device management and artifact collection.
-- **Detox client ([iOS](https://github.com/wix/Detox/tree/master/detox/ios) & [Android](https://github.com/wix/Detox/tree/master/detox/android)):** a framework, embedded in the tested app, which synchronizes with the app, matches user queries, executes user commands and validates expectations.
-- **[Detox server](https://github.com/wix/Detox/tree/master/detox/src/server)**: A small web socket server, running in a Node.js process, used to connect between the tester and the client. Normally, the tester starts a server on a randomized session id and an available port, and sends the session and port to the client app as a launch argument.
+- [**Tester**](https://github.com/wix/Detox/tree/master/detox/src): The testing component, running in a Node.js process on the host computer, executing the test logic. The tester is also responsible for device management and artifact collection.
+- **Detox native client ([iOS](https://github.com/wix/Detox/tree/master/detox/ios) & [Android](https://github.com/wix/Detox/tree/master/detox/android)):** A component that gets seamlessly integrated into the tested app on the tested device, right as Detox starts executing. It synchronizes with the app, matches user queries, executes user commands (e.g. taps, scrolls) and validates expectations.
+- **[Detox mediator server](https://github.com/wix/Detox/tree/master/detox/src/server)**: A small web socket server, running in a Node.js process on the host computer, used to connect between the tester and the client. Normally, the tester starts a server on a randomized session id and an available port, and sends the session and port to the client app as a launch argument.
+
