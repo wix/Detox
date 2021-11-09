@@ -39,7 +39,7 @@ const config = {
         title: 'Detox',
         logo: {
           alt: 'Detox Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
           {
