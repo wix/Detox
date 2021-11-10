@@ -75,18 +75,6 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
 
     @NotNull
     @Override
-    public String getDescription() {
-        String description = "In-flight network activity";
-
-        if (!busyResources.isEmpty()) {
-            description += "\nDetails:\n\t - " + busyResources.toString();
-        }
-
-        return description;
-    }
-
-    @NotNull
-    @Override
     public Map<String, Object> getJSONDescription() {
         final Map<String, Object> jsonDescription = new HashMap<>();
         jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "network");

@@ -46,12 +46,6 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
 
     @NotNull
     @Override
-    public String getDescription() {
-        return "Activity on the React-Native bridge";
-    }
-
-    @NotNull
-    @Override
     public Map<String, Object> getJSONDescription() {
         final Map<String, Object> jsonDescription = new HashMap<>();
         jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "one_time_event");

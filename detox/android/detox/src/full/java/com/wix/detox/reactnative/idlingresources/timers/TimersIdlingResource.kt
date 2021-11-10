@@ -14,7 +14,6 @@ class TimersIdlingResource @JvmOverloads constructor(
     private var callback: IdlingResource.ResourceCallback? = null
 
     override fun getName(): String = this.javaClass.name
-    override fun getDescription(): String = "Enqueued timers"
 
     override fun getJSONDescription(): Map<String, Any> {
         return mapOf<String, Any>( IdlingResourceConstants.RESOURCE_NAME_KEY to "timers")

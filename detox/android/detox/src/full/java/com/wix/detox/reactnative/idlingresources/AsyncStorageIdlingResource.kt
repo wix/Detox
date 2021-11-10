@@ -52,7 +52,6 @@ open class AsyncStorageIdlingResource
     }
 
     override fun getName(): String = javaClass.name
-    override fun getDescription() = "Disk I/O activity"
 
     override fun getJSONDescription(): Map<String, Any> {
         return mapOf<String, Any>( IdlingResourceConstants.RESOURCE_NAME_KEY to "io")

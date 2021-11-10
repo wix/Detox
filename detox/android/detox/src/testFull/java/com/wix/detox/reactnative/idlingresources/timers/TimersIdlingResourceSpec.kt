@@ -48,6 +48,7 @@ object TimersIdlingResourceSpec : Spek({
         it("should be busy if strategy says so") {
             givenBusyStrategy()
             Assertions.assertThat(uut().isIdleNow).isFalse()
+            Assertions.assertThat(uut().getJSONDescription()).isEqualTo(mapOf("name" to "timers"))
         }
 
         it("should transition to idle if found idle by strategy") {

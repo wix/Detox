@@ -70,6 +70,7 @@ class AsyncStorageIdlingResourceSpec: Spek({
                 givenAnActiveTask()
                 givenNoPendingTasks()
                 assertThat(uut.isIdleNow).isFalse()
+                assertThat(uut.getJSONDescription()).isEqualTo(mapOf("name" to "io"))
             }
 
             it("should be busy if executor has pending tasks") {

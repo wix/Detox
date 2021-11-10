@@ -57,12 +57,6 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
 
     @NotNull
     @Override
-    public String getDescription() {
-        return "UI rendering activity";
-    }
-
-    @NotNull
-    @Override
     public Map<String, Object> getJSONDescription() {
         final Map<String, Object> jsonDescription = new HashMap<>();
         jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "ui");
