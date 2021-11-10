@@ -2,6 +2,8 @@ package com.wix.detox.reactnative.idlingresources.timers
 
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
+
+import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants
 import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
 
 class TimersIdlingResource @JvmOverloads constructor(
@@ -13,6 +15,10 @@ class TimersIdlingResource @JvmOverloads constructor(
 
     override fun getName(): String = this.javaClass.name
     override fun getDescription(): String = "Enqueued timers"
+
+    override fun getJSONDescription(): Map<String, Any> {
+        return mapOf<String, Any>( IdlingResourceConstants.RESOURCE_NAME_KEY to "timers")
+    }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         this.callback = callback

@@ -1,5 +1,7 @@
 package com.wix.detox.reactnative.idlingresources;
 
+import java.util.HashMap;
+import java.util.Map;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -8,6 +10,8 @@ import org.joor.Reflect;
 import org.joor.ReflectException;
 
 import androidx.annotation.NonNull;
+
+import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants;
 
 /**
  * Created by simonracz on 26/07/2017.
@@ -55,6 +59,19 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
     @Override
     public String getDescription() {
         return "UI rendering activity";
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> getJSONDescription() {
+        final Map<String, Object> jsonDescription = new HashMap<>();
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "ui");
+
+        final Map<String, Object> description = new HashMap<>();
+        description.put("reason", "UI rendering activity");
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_DESCRIPTION_KEY, description);
+
+        return jsonDescription;
     }
 
     @Override

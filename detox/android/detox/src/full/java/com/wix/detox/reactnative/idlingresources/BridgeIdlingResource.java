@@ -7,7 +7,11 @@ import com.facebook.react.bridge.ReactContext;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants;
 
 /**
  * Created by simonracz on 01/06/2017.
@@ -44,6 +48,19 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
     @Override
     public String getDescription() {
         return "Activity on the React-Native bridge";
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> getJSONDescription() {
+        final Map<String, Object> jsonDescription = new HashMap<>();
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "one_time_event");
+
+        final Map<String, Object> description = new HashMap<>();
+        description.put("event", "Activity on the React-Native bridge");
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_DESCRIPTION_KEY, description);
+
+        return jsonDescription;
     }
 
     @Override
