@@ -1,9 +1,12 @@
 package com.wix.detox.reactnative.idlingresources;
 
+import java.util.HashMap;
+import java.util.Map;
 import android.util.Log;
 import android.view.Choreographer;
 
 import com.wix.detox.reactnative.ReactNativeInfo;
+import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants;
 
 import org.jetbrains.annotations.NotNull;
 import org.joor.Reflect;
@@ -65,8 +68,15 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
 
     @NotNull
     @Override
-    public String getDescription() {
-        return "Animations running on screen";
+    public Map<String, Object> getJSONDescription() {
+        final Map<String, Object> jsonDescription = new HashMap<>();
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "ui");
+
+        final Map<String, Object> description = new HashMap<>();
+        description.put("reason", "Animations running on screen");
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_DESCRIPTION_KEY, description);
+
+        return jsonDescription;
     }
 
     @Override
