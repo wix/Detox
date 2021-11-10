@@ -242,7 +242,7 @@ describe('Client', () => {
     it('should consistently run "currentStatus" queries when it takes too long', async () => {
       await simulateInFlightAction();
 
-      mockAws.mockResponse('currentStatusResult', { status: 'zug-zug!' });
+      mockAws.mockResponse('currentStatusResult', { status: { app_status: 'idle' } });
       jest.advanceTimersByTime(validSession.debugSynchronization);
 
       expect(jest.getTimerCount()).toBe(0);
@@ -352,7 +352,7 @@ describe('Client', () => {
       ['waitForBackground', 'waitForBackgroundDone', actions.WaitForBackground],
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
-      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: 'App is idle' }],
+      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }],
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
         await client.connect();
