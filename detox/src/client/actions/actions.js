@@ -1,3 +1,4 @@
+const SyncStatusFormatter = require('../../client/actions/SyncStatusFormatter');
 const DetoxInternalError = require('../../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { getDetoxLevel } = require('../../utils/logger');
@@ -158,7 +159,7 @@ class CurrentStatus extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'currentStatusResult');
-    return response.params.status;
+    return SyncStatusFormatter.formatJSONStatus(response.params.status);
   }
 }
 
