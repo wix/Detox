@@ -100,30 +100,102 @@ class QueryStatusActionHandler(
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
-        val data = mutableMapOf<String, Any>()
-        val busyResources = testEngineFacade.getBusyIdlingResources()
+        val data = mutableMapOf<String, Any?>()
+        data["status"] = formatStatus(testEngineFacade.getBusyIdlingResources())
 
-        data["status"] = "App synchronization debug: " +
-                if (busyResources.isEmpty()) {
-                    "The app appears to be idle!"
-                } else {
-                    val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
-
-                    "\nThe app is busy, due to: \n$summary"
-                }
         outboundServerAdapter.sendMessage("currentStatusResult", data, messageId)
     }
 
-    private fun formatResource(resource: IdlingResource): String =
-            if (resource is DescriptiveIdlingResource) {
-                resource.getDescription()
-            } else if (resource.javaClass.name.contains("LooperIdlingResource") && resource.name.contains("mqt_js")) {
-                "Javascript code execution"
-            } else if (resource.javaClass.name.contains("LooperIdlingResource") && resource.name.contains("mqt_native")) {
-                "Javascript code execution (native)"
-            } else {
-                "Resource ${resource.name} being busy"
-            }
+    private fun formatStatus(busyResources: List<IdlingResource>): Map<String, Any> {
+        if (busyResources.isEmpty()) {
+            return mapOf("app_status" to "idle")
+        }
+
+        val status = mutableMapOf<String, Any>()
+        status["app_status"] = "busy"
+        status["busy_resources"] = busyResources.map{ formatResource(it) }
+
+        return status
+    }
+
+    private fun formatResource(resource: IdlingResource): Map<String, Any> {
+        if (resource is DescriptiveIdlingResource) {
+            return resource.getJSONDescription()
+        }
+
+        if (resource.javaClass.name.contains("LooperIdlingResource")) {
+            return formatLooperResourceFromName(resource.name)
+        }
+
+        return mapOf<String, Any>(
+                "name" to "unknown",
+                "description" to mapOf<String, Any>(
+                        "identifier" to resource.name
+                )
+        )
+    }
+
+    private fun formatLooperResourceFromName(resourceName: String): Map<String, Any> {
+        if (isJSCodeExecution(resourceName)) {
+            return formatLooperResource(
+                    "\"${resourceName}\" (JS Thread)",
+                    "JavaScript code"
+            )
+        } else if (isNativeCodeExecution(resourceName)) {
+            return formatLooperResource(
+                    "\"${resourceName}\" (Native Modules Thread)",
+                    "native module calls"
+            )
+        } else {
+            return formatLooperResource(
+                    "\"${resourceName}\""
+            )
+        }
+    }
+
+    /**
+     * @see URL https://reactnative.dev/docs/profiling
+     */
+    private fun isJSCodeExecution(looperName: String): Boolean {
+        val options = arrayOf(
+                "mqt_js",
+                "JSCall",
+                "Bridge.executeJSCall"
+        )
+
+        return options.any { looperName.contains(it) }
+    }
+
+    private fun formatLooperResource(thread: String, executionType: String? = null): Map<String, Any> {
+        return mapOf<String, Any>(
+                "name" to "looper",
+                "description" to
+                        if (executionType != null) {
+                            mapOf<String, Any>(
+                                    "thread" to thread,
+                                    "execution_type" to executionType
+                            )
+                        } else {
+                            mapOf<String, Any>(
+                                    "thread" to thread
+                            )
+                        }
+        )
+    }
+
+    /**
+     * @see URL https://reactnative.dev/docs/profiling
+     */
+    private fun isNativeCodeExecution(looperName: String): Boolean {
+        val options = arrayOf(
+                "mqt_native",
+                "NativeCall",
+                "callJavaModuleMethod",
+                "onBatchComplete"
+        )
+
+        return options.any { looperName.contains(it) }
+    }
 }
 
 class InstrumentsRecordingStateActionHandler(
