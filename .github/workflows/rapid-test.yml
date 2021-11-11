@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Bootstrap Lerna
-        run: DETOX_DISABLE_POSTINSTALL=1 npx lerna bootstrap --no-ci
+        run: DETOX_DISABLE_POD_INSTALL=1 npx lerna bootstrap --no-ci
       - name: Lint
         run: npm run lint
         working-directory: detox
