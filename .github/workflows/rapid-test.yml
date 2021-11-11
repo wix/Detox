@@ -10,6 +10,8 @@ jobs:
 
   js:
     name: JS & TS
+    env:
+      DETOX_DISABLE_POD_INSTALL: true
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -21,7 +23,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Bootstrap Lerna
-        run: DETOX_DISABLE_POD_INSTALL=1 npx lerna bootstrap --no-ci
+        run: npx lerna bootstrap --no-ci
       - name: Lint
         run: npm run lint
         working-directory: detox
