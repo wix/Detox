@@ -12,6 +12,7 @@ jobs:
     name: JS & TS
     env:
       DETOX_DISABLE_POD_INSTALL: true
+      DETOX_DISABLE_POSTINSTALL: true
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
