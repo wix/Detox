@@ -9,7 +9,7 @@ on:
 jobs:
 
   js:
-    name: JavaScript & Co.
+    name: JS & TS
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Bootstrap Lerna
-        run: npx lerna bootstrap
+        run: npx lerna bootstrap --no-ci
       - name: Lint
         run: npm run lint
         working-directory: detox
