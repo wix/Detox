@@ -7,7 +7,7 @@
     "release": "node scripts/ci.release.js",
     "package:android": "node scripts/ci.android-release.js",
     "package:ios": "scripts/ci.ios-release.sh",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "bash scripts/postinstall.sh"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
