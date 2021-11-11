@@ -1,0 +1,33 @@
+name: Rapid Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  js:
+    name: JavaScript & Co.
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [12]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Bootstrap Lerna
+        run: npx lerna bootstrap
+      - name: Lint
+        run: npm run lint
+        working-directory: detox
+      - name: Typings
+        run: npm test
+        working-directory: detox/test
+      - name: Unit tests
+        run: npm run unit
+        working-directory: detox
