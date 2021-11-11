@@ -1,3 +1,7 @@
+if (process.platform === 'win32') {
+  jest.retryTimes(1); // TODO: investigate why it gets stuck for the 1st time on Windows
+}
+
 jest.mock('child_process');
 jest.mock('../src/utils/logger');
 jest.mock('../src/devices/DeviceRegistry');
@@ -51,9 +55,6 @@ describe('CLI', () => {
   });
 
   describe('by default', () => {
-    // TODO: investigate why it gets stuck on Windows OS
-    if (process.platform === 'win32') return;
-
     test('by default, should attempt to load config from package.json or .detoxrc', async () => {
       const expectedError = /^Cannot run Detox without a configuration/;
       await expect(runRaw('test')).rejects.toThrowError(expectedError);
