@@ -142,7 +142,7 @@ In your app's buildscript (i.e. `android/app/build.gradle`) add this in `depende
 
 ```groovy
 dependencies {
-   // ...
+    // ...
     androidTestImplementation('com.wix:detox:+')
 }
 ```
