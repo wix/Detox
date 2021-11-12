@@ -1,4 +1,4 @@
-# Design Principles
+## Design Principles
 
 Traditionally, end-to-end tests on mobile are riddled with inherent issues, making the testing process difficult and lowering ROI for developers. We believe that the only way to solve these issues at the core is by changing some of the basic principles of our approach.
 
@@ -11,4 +11,3 @@ Traditionally, end-to-end tests on mobile are riddled with inherent issues, maki
 * **Built from the ground up for mobile apps, has first-class React Native support** — Detox is built from the ground up for native mobile and has a first-class support for React Native apps
 
 * **Expectations run on the app, not the tester process** — Traditionally, test frameworks evaluate expectations in the test script, running on Node.js. Detox evaluates expectations directly in the tested app, running on device; this enables operations that were impossible before due to performance reasons
-

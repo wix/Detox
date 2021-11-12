@@ -1,4 +1,4 @@
-# Matchers
+## Matchers
 
 Detox uses [matchers](APIRef.Matchers.md) to match UI elements in your app.
 
@@ -6,7 +6,7 @@ Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with eleme
 
 **Note:** For best results, it is recommended to match elements by unique identifiers. Matching by text or labels can introduce test flakiness when your app's text change or when changing your app's localization.
 
-## Methods
+### Methods
 
 - [`by.id()`](#byidid)
 - [`by.label()`](#bylabellabel)
@@ -89,6 +89,7 @@ Matches elements with an ancestor that matches the specified matcher.
 ```js
 element(by.id('child').withAncestor(by.id('parent')));
 ```
+
 #### `withDescendant(matcher)`
 
 Matches elements with at least one descendant that matches the specified matcher.

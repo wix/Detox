@@ -1,4 +1,4 @@
-# Detox Documentation
+## Detox Documentation
 
 ### Introduction
 
@@ -32,7 +32,6 @@
 
 - [Table of contents](Troubleshooting.md)
   - [Building the App](Troubleshooting.BuildingTheApp.md)
-
   - [Running tests](Troubleshooting.RunningTests.md)
   - [Synchronization issues](Troubleshooting.Synchronization.md)
   - [General tests stability issues](Troubleshooting.Flakiness.md)

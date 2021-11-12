@@ -1,10 +1,10 @@
-# Actions
+## Actions
 
 Detox uses [matchers](APIRef.Matchers.md) to find UI elements in your app and actions to simulate user interaction with those elements.
 
 Use [expectations](APIRef.Expect.md) to verify element states.
 
-## Methods
+### Methods
 
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
@@ -27,7 +27,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.getAttributes()`](#getAttributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
 
-### `tap(point)`
+#### `tap(point)`
 
 Simulates a tap on the element at the specified point, or at element's activation point if no point is specified.
 
@@ -39,7 +39,9 @@ Simulates a tap on the element at the specified point, or at element's activatio
 await element(by.id('tappable')).tap();
 await element(by.id('tappable')).tap({x:5, y:10});
 ```
-### `multiTap(times)`
+
+#### `multiTap(times)`
+
 Simulates multiple taps on the element at its activation point. All taps are applied as a part of the same gesture and there is no synchronization attempt between taps.
 
 `times`—the number of taps to simulate (number, 1 and above)
@@ -47,7 +49,8 @@ Simulates multiple taps on the element at its activation point. All taps are app
 ```js
 await element(by.id('tappable')).multiTap(3);
 ```
-### `longPress(duration)`
+
+#### `longPress(duration)`
 
 Simulates a long press on the element at its activation point.
 
@@ -58,7 +61,7 @@ await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
 ```
 
-### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`  iOS only
+#### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`  iOS only
 
 Simulates a long press on the element and then drag it to a position of another element.
 
@@ -76,7 +79,7 @@ await element(by.id('elementToDrag')).longPressAndDrag(2000, NaN, NaN, element(b
 await element(by.id('cellId_1')).longPressAndDrag(2000, 0.9, NaN, element(by.id('cellId_6')), 0.9, NaN, 'slow', 0);
 ```
 
-### `swipe(direction, speed, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY)`
+#### `swipe(direction, speed, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY)`
 
 Simulates a swipe on the element with the provided options.
 
@@ -94,7 +97,7 @@ await element(by.id('scrollView')).swipe('down', 'fast', NaN, 0.8); // set start
 await element(by.id('scrollView')).swipe('down', 'fast', NaN, NaN, 0.25); // set starting point Y
 ```
 
-### `pinch(scale, speed, angle)`  iOS only
+#### `pinch(scale, speed, angle)`  iOS only
 
 Simulates a pinch on the element with the provided options.
 
@@ -107,7 +110,8 @@ await element(by.id('PinchableScrollView')).pinch(1.1); //Zooms in a little bit
 await element(by.id('PinchableScrollView')).pinch(2.0); //Zooms in a lot
 await element(by.id('PinchableScrollView')).pinch(0.001); //Zooms out a lot
 ```
-### `scrollToIndex(index)`  Android only
+
+#### `scrollToIndex(index)`  Android only
 
 Scrolls until it reaches the element with the provided index. This works for ReactScrollView and ReactHorizontalScrollView.
 
@@ -116,7 +120,8 @@ Scrolls until it reaches the element with the provided index. This works for Rea
 ```js
 await element(by.id('scrollView')).scrollToIndex(0);
 ```
-### `scroll(offset, direction, startPositionX, startPositionY)`
+
+#### `scroll(offset, direction, startPositionX, startPositionY)`
 
 Simulates a scroll on the element with the provided options.
 
@@ -130,7 +135,7 @@ await element(by.id('scrollView')).scroll(100, 'up');
 await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);
 ```
 
-### `whileElement(element)`
+#### `whileElement(element)`
 
 Continuously scrolls the scroll element until the specified expectation is resolved. If the edge of the scroll element is reached while the expectation is not resolved, the operation is failed.
 
@@ -138,7 +143,7 @@ Continuously scrolls the scroll element until the specified expectation is resol
 await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
 ```
 
-### `scrollTo(edge)`
+#### `scrollTo(edge)`
 
 Simulates a scroll to the specified edge.
 
@@ -148,7 +153,8 @@ Simulates a scroll to the specified edge.
 await element(by.id('scrollView')).scrollTo('bottom');
 await element(by.id('scrollView')).scrollTo('top');
 ```
-### `typeText(text)`
+
+#### `typeText(text)`
 
 Simulates typing of the specified text into the element, using the system's builtin keyboard and typing behavior.
 
@@ -160,7 +166,7 @@ On iOS, any element can be typed into, as long as it can become first responder 
 await element(by.id('textField')).typeText('passcode');
 ```
 
-### `replaceText(text)`
+#### `replaceText(text)`
 
 Replaces the element's text with the specified text, without using the system's builtin keyboard or typing behavior. **Note**, that using this method is faster than using [`.typeText()`](#typetexttext), but may not trigger all text input callbacks, causing an undefined state in your app.
 
@@ -172,7 +178,8 @@ On iOS, any element's text can be replaced, as long as it can become first respo
 await element(by.id('textField')).replaceText('passcode again');
 ```
 
-### `clearText()`
+#### `clearText()`
+
 Simulates clearing the text of the element, using the system's builtin keyboard and typing behavior.
 
 On iOS, any element's text can be cleared, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before clearing the text, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
@@ -181,7 +188,8 @@ On iOS, any element's text can be cleared, as long as it can become first respon
 await element(by.id('textField')).clearText();
 ```
 
-### `tapReturnKey()`
+#### `tapReturnKey()`
+
 Simulates tapping on the return key into the element, using the system's builtin keyboard and typing behavior.
 
 On iOS, any element can be sent return key input, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol. Before tapping on the return key, Detox attempts making the element the first responder, if it isn't already. If the element’s window is not key window, Detox attempts making it the key window.
@@ -190,7 +198,7 @@ On iOS, any element can be sent return key input, as long as it can become first
 await element(by.id('textField')).tapReturnKey();
 ```
 
-### `tapBackspaceKey()`
+#### `tapBackspaceKey()`
 
 Simulates tapping of the backspace key into the element, using the system's builtin keyboard and typing behavior.
 
@@ -199,7 +207,8 @@ On iOS, any element can be sent backspace key input, as long as it can become fi
 ```js
 await element(by.id('textField')).tapBackspaceKey();
 ```
-### `setColumnToValue(column, value)`  iOS only
+
+#### `setColumnToValue(column, value)`  iOS only
 
 Sets the element's specified column to the specified value, using the system's picker view APIs.
 
@@ -215,9 +224,9 @@ await element(by.id('pickerView')).setColumnToValue(1, "6");
 await element(by.id('pickerView')).setColumnToValue(2, "Hello World");
 ```
 
->  **Note:** When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles. See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
+> **Note:** When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles. See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
 
-### `setDatePickerDate(dateString, dateFormat)`  iOS only
+#### `setDatePickerDate(dateString, dateFormat)`  iOS only
 
 Sets the element's date to the specified date string, parsed using the specified date format.
 
@@ -231,7 +240,7 @@ await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00'
 await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
 ```
 
-### `adjustSliderToPosition(normalizedPosition)`
+#### `adjustSliderToPosition(normalizedPosition)`
 
 Manipulates the UI to change the displayed value of the slider element to a new value, based on a normalized position.
 
@@ -241,7 +250,7 @@ Manipulates the UI to change the displayed value of the slider element to a new 
 await element(by.id('slider')).adjustSliderToPosition(0.75);
 ```
 
-### `getAttributes()`
+#### `getAttributes()`
 
 Returns an object, representing various attributes of the element.
 
@@ -255,7 +264,8 @@ Retrieved attributes are:
 - `visible`: whether the element is visible. On iOS, visibility is calculated for the [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint). On Android, the attribute directly holds the value returned by [View.getLocalVisibleRect()](https://developer.android.com/reference/kotlin/android/view/View#getglobalvisiblerect)).
 - `value`: the value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches `accessibilityValue`, on iOS.
 
-###### iOS-Only
+##### iOS-Only
+
 - `activationPoint`: The [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint) of the element, in element coordinate space.
 - `normalizedActivationPoint`: The activation point of the element, in normalized percentage ([0.0, 1.0]).
 - `hittable`: Whether the element is hittable at the activation point.
@@ -270,7 +280,8 @@ Retrieved attributes are:
 - `contentInset`: The content inset (in case the element is a scroll view).
 - `adjustedContentInset`: The adjusted content inset (in case the element is a scroll view).
 
-###### Android-Only
+##### Android-Only
+
 - `visibility`: The OS visibility type associated with the element: `visible`, `invisible` or `gone`.
 - `width`: Width of the element, in pixels.
 - `height`: Height of the element, in pixels.
@@ -293,18 +304,18 @@ jestExpect(multipleMatchedElements.elements.length).toBe(5);
 jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 ```
 
-### `takeScreenshot(name)`
+#### `takeScreenshot(name)`
 
 Takes a screenshot of the matched element. For full details on taking screenshots with Detox, refer to the [screenshots guide](APIRef.Screenshots.md).
 
 `name`—the name of the screenshot
 
-## Deprecated Methods
+### Deprecated Methods
 
 - [`.tapAtPoint()`](#tapatpointpoint)
 - [`.pinchWithAngle()`](#pinchwithangledirection-speed-angle--ios-only) **iOS only**
 
-### `tapAtPoint(point)`
+#### `tapAtPoint(point)`
 
 **Deprecated:** Use [`.tap()`](#tappoint) instead.
 
@@ -316,7 +327,7 @@ Simulates a tap at on the element at the specified point.
 await element(by.id('tappable')).tapAtPoint({x:5, y:10});
 ```
 
-### `pinchWithAngle(direction, speed, angle)`  iOS only
+#### `pinchWithAngle(direction, speed, angle)`  iOS only
 
 **Deprecated:** Use [`.pinch()`](#pinchscale-speed-angle--ios-only) instead.
 

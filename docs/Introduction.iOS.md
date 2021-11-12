@@ -1,4 +1,4 @@
-# Detox for iOS
+## Detox for iOS
 
 ### 1. Preliminary
 

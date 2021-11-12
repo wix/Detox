@@ -1,5 +1,6 @@
+<!-- markdownlint-configure-file { "first-line-heading": 0 } -->
 <p align="center">
-	<img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
+ <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
 </p>
 <h1 align="center">
   Detox (Native)
@@ -91,12 +92,9 @@ buildscript {
 }
 ```
 
-
-
 > Note: Detox indirectly specifies Espresso and related dependencies - so best if you remove your own specification of them:
 >
 > ```diff
 > -  androidTestImplementation 'androidx.test.ext:junit:1.1.2'
 > -  androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0
 > ```
-
