@@ -3,11 +3,22 @@ name: Docs
 on:
   push:
     branches: [ master ]
+    paths:
+      - '.github/**'
+      - '.*'
+      - '**.md'
+      - 'docs/**'
+      - 'package.json'
   pull_request:
     branches: [ master ]
+    paths:
+      - '.github/**'
+      - '.*'
+      - '**.md'
+      - 'docs/**'
+      - 'package.json'
 
 jobs:
-
   markdownlint:
     name: markdownlint
     runs-on: ubuntu-latest

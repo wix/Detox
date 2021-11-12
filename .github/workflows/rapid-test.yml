@@ -3,8 +3,22 @@ name: Rapid Test
 on:
   push:
     branches: [ master ]
+    paths:
+      - '.github/**'
+      - '**/.*'
+      - 'detox/**.js'
+      - 'detox/**.json'
+      - 'detox/**.ts'
+      - 'detox/**.snap'
   pull_request:
     branches: [ master ]
+    paths:
+      - '.github/**'
+      - '**/.*'
+      - 'detox/**.js'
+      - 'detox/**.json'
+      - 'detox/**.ts'
+      - 'detox/**.snap'
 
 jobs:
 
