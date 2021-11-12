@@ -18,9 +18,9 @@ Simulators/emulators run on a different process, outside of node, and require so
 >* detox-cli makes sure `device.registry.state.lock` is cleaned whenever it executes.
 >* If you use Detox without detox-cli make sure you delete or reset the lock file before running tests.
 >
-> ```sh
-> echo "[]" > ~/Library/Detox/device.registry.state.lock
-> ```
+>    ```sh
+>    echo "[]" > ~/Library/Detox/device.registry.state.lock
+>    ```
 >
 
 The lock file location is determined by the OS, and [defined here](https://github.com/wix/detox/blob/master/detox/src/utils/appdatapath.js).
