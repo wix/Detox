@@ -1,10 +1,10 @@
-# Dealing With Problems With Running Tests
+## Dealing With Problems With Running Tests
 
 This page is about issues related to executing your Detox tests, typically triggerred when running `detox test` (and not `detox build`, for example).
 
 For troubleshooting of other issue, refer to our [troubleshooting index](Troubleshooting.md).
 
-## Table of Content
+### Table of Contents
 
 * [Trace Mode](#trace-mode)
 * [Tests execution hangs](#tests-execution-hangs)
@@ -20,20 +20,19 @@ For troubleshooting of other issue, refer to our [troubleshooting index](Trouble
 * [Take a Look at Past Issues](#take-a-look-at-past-issues)
 * [How to Open a New Issue](#how-to-open-a-new-issue)
 
-### Trace Mode
+#### Trace Mode
 
 It's a good idea to get as much information as possible about what's going on. We can enable trace mode during tests by running our tests with:
 
-```
+```sh
 detox test --loglevel trace
 ```
 
-
-### Enable debugging of synchronization issues
+#### Enable debugging of synchronization issues
 
 See [here](https://github.com/wix/detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
 
-### No simulators found (iOS)
+#### No simulators found (iOS)
 
 In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by Xcode itself. You can list all available simulators using simctl by typing `xcrun simctl list` in terminal.
 
@@ -41,33 +40,33 @@ If you're missing a simulator, make sure Xcode is installed and use it to downlo
 
 Once the desired simulator is installed and returned by `xcrun simctl list`, double check its name in the list and make sure this name is found in the `detox` configuration entry in `package.json`. The reference for the configuration options is available [here](APIRef.Configuration.md).
 
-### Tests execution hangs
+#### Tests execution hangs
 
 **Issue:** A while after running Detox, you get a message about failure to connect to the running app, in the logs:
 
-```
+```plain text
 Detox can't seem to connect to the test app(s)!
 ```
 
 This can be a result of various reasons. It is generally up to you to debug and find the root cause. In any case, below are the common ones.
 
-#### If you do not see your app running on the device:
+##### If you do not see your app running on the device
 
 * You might have forgotten to run `device.launchApp()` in the beginning of your test.
 * The app might have crashed before Detox has had a chance to connect to it. To get the crash details, you can run Detox tests with `--record-logs all` CLI option and then inspect the device logs in the artifacts folder.
 * **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](Introduction.Android.md#5-create-a-detox-test-class) in the setup guide.
 
-#### If you _do_ see your app running on the device:
+##### If you _do_ see your app running on the device
 
 * **On Android with SDK≥28**, the app's connection to the Detox test server is blocked due to clear-traffic blockage (as reported in issue [#1450](https://github.com/wix/Detox/issues/1450)).
   The main step for getting this fixed is to revisit the [associated section](Introduction.Android.md#6-enable-clear-text-unencrypted-traffic-for-detox) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
 * If you've applied the above suggestion but the app fails to connect to the Detox test server, nonetheless: Refer to the device's logs, which should contain messages about failed connection attempts (get them using the `--record-logs all` argument)
 * The app could be running without Detox native code injected. In this case, first, make sure you're not trying to run in manual launch mode (where this behavior is valid). If so, examine the logs from the device (get them using the `--record-logs all` argument). If you see a crash related to Detox's native code, you are welcome to report it on our GitHub tracker.
 * If you are in fact debugging your native code integration with Detox, these guides may prove helpful:
-     * https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInAndroidStudio.md
-     * https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInXcode.md
+  * <https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInAndroidStudio.md>
+  * <https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInXcode.md>
 
-### Syntax Error: Unexpected Token
+#### Syntax Error: Unexpected Token
 
 **Issue:** Running tests immediately throws the following error:
 
@@ -88,11 +87,11 @@ child_process.js:531
 
 1. Update Node to a version **8.3.0 or higher**.
 
-### Can't Find My Component Even Though I Added a `testID` to Its Props
+#### Can't Find My Component Even Though I Added a `testID` to Its Props
 
 **Issue:** Detox fails to match a component even though it has a `testID`. Detox will throw the following error:
 
-```
+```plain text
 Error: Cannot find UI Element.
 Exception with Assertion: {
   "Assertion Criteria" : "assertWithMatcher: matcherForSufficientlyVisible(>=0.750000)",
@@ -136,7 +135,7 @@ render() {
 }
 ```
 
-### Test Tries to Find My Component Before It's Created
+#### Test Tries to Find My Component Before It's Created
 
 **Issue:** Due to a synchronization issue, the test tries to perform an expectation and fails because it runs the expectation too soon. Consider this example:
 
@@ -156,16 +155,15 @@ await element(by.text('Login')).tap();
 await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 ```
 
-### Can't synchronize the test with my app
+#### Can't synchronize the test with my app
 
 If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](/docs/Troubleshooting.Synchronization.md).
 
-### Unknown option "configuration" (Mocha.js)
-
+#### Unknown option "configuration" (Mocha.js)
 
 In an attempt to run `detox test`, the following error is thrown:
 
-```
+```plain text
 detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --configuration ios.sim.release --grep :android: --invert
 
   error: unknown option `--configuration'
@@ -174,7 +172,7 @@ detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --con
 **Solution:** Upgrade to `detox@^12.4.0` or newer (latest, recommended), and `mocha@^6.1.3`.
 That weird error has been spotted in older versions of `mocha` (including `v5.2.0`) and was fixed in `v6.0.0`. In fact, it conceals the genuine error:
 
-```
+```plain text
 Error: No test files found
 ```
 
@@ -193,11 +191,11 @@ After you upgrade, you can configure the default path to your end-to-end tests f
 
 Please mind that if your e2e tests are located at the default path (`e2e`), then you don't need to add `"specs"` property explicitly to `package.json`.
 
-### An Element is Not Visible
+#### An Element is Not Visible
 
 **On iOS**, you may run in a situation, when one of the interactions (tap, scroll, etc.) on an element fails with an error like:
 
-```
+```plain text
 Test Failed: View "<RCTScrollView: 0x7f8d32296d70>" is not visible: view does not pass visibility threshold (0% visible of 75% required)
 ```
 
@@ -217,13 +215,13 @@ If you are developing a React Native app, then the following applies. If, for in
 
 If you see that your issue cannot be solved via testID replacement or a simple hierarchy rearrangement, then there's a chance this is a bug in Detox. Make sure to provide your `ui.viewhierarchy` artifact, the pictures generated under `visibilityFailingRects` and `visibilityFailingScreenshots` folders and a comprehensive description of the issue backed up with sound arguments.
 
-### Debug View Hierarchy
+#### Debug View Hierarchy
 
 **Issue:** I added the `testID` prop but I still can't find the view by id in my tests.
 
 **Solution:** You can investigate the app's native view hierarchy, this might shed some light on how the app's view hierarchy is laid out.
 
-Do the following: 
+Do the following:
 
 1. Start a debuggable app (not a release build) in your simulator
 
@@ -237,7 +235,7 @@ Do the following:
 
 5. This will open the hierarchy viewer, and will show a breakdown of your app's native view hierarchy. Here you can browse through the views
 
-6. React Native testIDs are manifested as *accessibility identifiers* in the native view hierarchy 
+6. React Native testIDs are manifested as *accessibility identifiers* in the native view hierarchy
 
 Let's see an example. We will find the following view in the native hierarchy:
 
@@ -251,7 +249,7 @@ This is the hierarchy viewer, pointing to the native view just mentioned:
 
 <img src="img/hierarchy-viewer.jpg">
 
-### Compare to a Working Setup
+#### Compare to a Working Setup
 
 If you feel lost, try starting from a working example for sanity.
 
@@ -259,15 +257,15 @@ There are multiple working examples included in this repo, such as [demo-react-n
 
 First, install, build and make sure the tests are indeed passing. If they are, try comparing this setup with what you have.
 
-### Take a Look at Past Issues
+#### Take a Look at Past Issues
 
 Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93&q=is%3Aissue) on GitHub. There's a good chance somebody faced the same problem you are having.
 
-### How to Open a New Issue
+#### How to Open a New Issue
 
 Before opening a new issue, please follow the entire troubleshooting guide and go over past issues.
 
 General usage questions should be opened on Stack Overflow, where the core Detox team is active and responds to questions:
-https://stackoverflow.com/questions/tagged/detox
+<https://stackoverflow.com/questions/tagged/detox>
 
 If you believe you are seeing a Detox issue, select the correct template from the options, and make sure to fill all requested information in the template. Omitting important information will likely result in a closed issue.

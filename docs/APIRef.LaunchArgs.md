@@ -1,4 +1,4 @@
-# Launch Arguments
+## Launch Arguments
 
 In Detox, the app under test is launched via an explicit call to [`device.launchApp()`](APIRef.DeviceObjectAPI.md). Through various means, Detox enables specifying a set of user-defined arguments (key-value pairs) to be passed on to the app when launched, so as to make them available inside the launched app itself at runtime (both on the native side, and - if applicable, on the Javascript side).
 
@@ -35,8 +35,6 @@ Examples:
 1. In an environment where `mockServerPort` is statically pre-set to `1001` in Detox configuration, and then set to to `1003` using `device.appLaunchArgs` inside a test, the app would eventually be launched with `1003` as its value, in calls to `device.launchApp()` in that test.
 2. (Scenario continues) In subsequent calls to `device.launchApp()` with this parameter: `device.launchApp({ launchArgs: {mockServerPort: 1004} })`, the app will be (re-)launched with `1004` as the value for `mockServerPort`.
 
-
-
 ### In-App Arguments Access
 
 On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means.
@@ -44,4 +42,3 @@ On iOS, the specified launch arguments are passed as the process launch argument
 On Android, the launch arguments are set as bundle-extra's into the activity's intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
 
 Further handling of these launch arguments is up to the user's responsibility and is out of scope for Detox.
-

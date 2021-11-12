@@ -1,4 +1,4 @@
-# Dealing With Problems With Building the App & Detox
+## Dealing With Problems With Building the App & Detox
 
 This page is about issues related to building the app, typically triggerred when running `detox build` (and not `detox test`, for example).
 
@@ -27,7 +27,7 @@ Detox should work with `kotlin-stdlib-jdk7`, as well.
 
 A typical error output formed by `Gradle` in this case is as provided, for example, in [#1380](https://github.com/wix/Detox/issues/1380):
 
-```
+```plain text
 Could not determine the dependencies of task ':detox:compileDebugAidl'.
 > Could not resolve all task dependencies for configuration ':detox:debugCompileClasspath'.
    > Could not resolve org.jetbrains.kotlin:kotlin-stdlib:1.3.0.
@@ -67,8 +67,6 @@ buildscript {
 }
 ```
 
-
-
 ### Problem: `Duplicate files copied in ...`
 
 If you get an error like this:
@@ -85,4 +83,3 @@ packagingOptions {
     exclude 'META-INF/LICENSE'
 }
 ```
-
