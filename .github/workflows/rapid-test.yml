@@ -4,11 +4,17 @@ on:
   push:
     branches: [ master ]
     paths-ignore:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
       - 'docs/**'
       - '**.md'
   pull_request:
     branches: [ master ]
     paths-ignore:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
       - 'docs/**'
       - '**.md'
 

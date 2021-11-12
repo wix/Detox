@@ -4,19 +4,21 @@ on:
   push:
     branches: [ master ]
     paths:
-      - '.github/**'
-      - '.*'
-      - '**.md'
-      - 'docs/**'
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
       - 'package.json'
+      - 'docs/**'
+      - '**.md'
   pull_request:
     branches: [ master ]
     paths:
-      - '.github/**'
-      - '.*'
-      - '**.md'
-      - 'docs/**'
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
       - 'package.json'
+      - 'docs/**'
+      - '**.md'
 
 jobs:
   markdownlint:
