@@ -94,10 +94,10 @@ For convenience, these trigger types are provided as constants in `DetoxConstant
 const DetoxConstants = require('detox').DetoxConstants;
 
 const userNotification = {
- "trigger": {
-  "type": DetoxConstants.userNotificationTriggers.push
- },
- ...
+  "trigger": {
+    "type": DetoxConstants.userNotificationTriggers.push
+  },
+  // ...
 }
 ```
 
@@ -139,18 +139,17 @@ const userNotification = {
 On Android, the content will be available via the activity's [`getIntent()`](https://developer.android.com/reference/android/app/Activity#getIntent()) API, inside the intent's _extra_ bundle. Under some limitations, that includes data-cascading so as to provide comprehensive support for Javascript's advanced object-hierarchy capabilities as much as possible. As an example, consider this payload:
 
 ```javascript
-  const userNotification = {
-    payload: {
-      userData: 'userDataValue',
-      userDataNum: 111.2,
-      userDataFlag: true,
-      userDataArray: ['rock', 'paper', 'scissors'],
-      userDataObj: {
-        cascadedKey: 'cascadedValue'
-      },
+const userNotification = {
+  payload: {
+    userData: 'userDataValue',
+    userDataNum: 111.2,
+    userDataFlag: true,
+    userDataArray: ['rock', 'paper', 'scissors'],
+    userDataObj: {
+      cascadedKey: 'cascadedValue'
     },
-  };
-
+  },
+};
 ```
 
 The outcome on the native side will be such that all of these conditions evaluate to _true_:
