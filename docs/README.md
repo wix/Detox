@@ -1,4 +1,4 @@
-# Detox Documentation
+## Detox Documentation
 
 ### Introduction
 

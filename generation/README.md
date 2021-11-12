@@ -1,4 +1,4 @@
-# Generation
+## Generation
 
 This part of the repository aims to automate the adaption of the underlying testing frameworks.
 For now, it only covers `EarlGrey`'s `GREYActions`.
@@ -7,13 +7,13 @@ We chose to check the generated files into version control to have them availabl
 
 To correlate changes to the generation with changes in the generated code, please make sure to run the build before every commit.
 
-## Development
+### Development
 
 - `npm install`
 - `npm run build` builds every file specified in the `index.js`
 - `npm test`
 
-## Testing
+### Testing
 
 - We test with integration level tests by having a fixture Objective-C file which we generate and import before the tests.
 - We only add unit tests for code that is used in production, e.g. helper functions.
@@ -21,7 +21,7 @@ To correlate changes to the generation with changes in the generated code, pleas
 - We decided to base our tests around snapshot tests with the goal to spot mistakes in the return values of the functions without over-specification.
 - If you add functionality that affects the API surface of detox, please also make sure to include [End to End tests for it](../detox/test/e2e).
 
-## Resources
+### Resources
 
 Parsing, ASTs, and code generation are hard topics but don't worry; we got your back.
 Here are some resources that might come in handy:

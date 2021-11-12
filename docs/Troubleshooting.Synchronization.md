@@ -1,4 +1,4 @@
-# Dealing With Synchronization Issues in Tests
+## Dealing With Synchronization Issues in Tests
 
 Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take variable amount of time to complete. We can't continue the test until they've completed. How can we synchronize the test with these operations?
 
@@ -40,16 +40,17 @@ When the automatic synchronization mechanism doesn't work, we have 2 potential p
 
 ### Identifying which synchronization mechanism causes us to wait too much
 
-Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
+Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang.
 When an action/expectation takes a significant amount of time use this option to print device synchronization status.
 The status will be printed if the action takes more than [value] (in ms) to complete
 
-```
+```sh
 detox test --debug-synchronization 500
 ```
+
 Then, reproduce your issue, and you should see output similar to the following:
 
-```
+```plain text
 18:11:41 detox[15415] INFO:  [actions.js] The system is busy with the following tasks:
 18:11:41 
 18:11:41 Dispatch Queue
@@ -94,9 +95,10 @@ We always have the fail-safe of turning off automatic synchronization and waitin
 
 #### How do we turn off automatic synchronization?
 
-This makes sense only if we're waiting too much. 
+This makes sense only if we're waiting too much.
 
 ##### [Controlling the entire synchronization mechanism](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization)
+
 The synchronization mechanism can be shut down using
 
 ```js
@@ -109,7 +111,8 @@ to turn it on again use
 await device.enableSynchronization();
 ```
 
-##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls) 
+##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls)
+
 You can skip over synchronizing on certain URLs (for long polling tasks, or websocket connections)
 
 ```js
