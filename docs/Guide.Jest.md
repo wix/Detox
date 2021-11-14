@@ -1,11 +1,10 @@
-# Jest Setup Guide
+## Jest Setup Guide
 
 > **NOTE: This article previously focused on deprecated `jest-jasmine2` runner setup, and if you nevertheless need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).**
 
-
 This guide describes how to install [Jest](https://jestjs.io) as a test runner to be used by Detox for running the E2E tests.
 
-## Introduction
+### Introduction
 
 As already mentioned in the [Getting Started](Introduction.GettingStarted.md#step-3-create-your-first-test) guide, Detox itself does not effectively run tests logic, but rather delegates that responsibility onto a test runner. At the moment, Jest is the only recommended choice, for many reasons, including - but not limited to, parallel test suite execution capability, and complete integration with Detox API.
 
@@ -13,14 +12,14 @@ By the way, Jest itself — much like Detox, also does not effectively run any t
 
 For its part, Detox supports only one Jest's concrete runner, which is [`jest-circus`](https://www.npmjs.com/package/jest-circus) ([ships by default with Jest since 27.0.0](https://jestjs.io/blog/2021/05/25/jest-27)). The former runner, `jest-jasmine2`, is deprecated due to specific bugs in the past, and architectural limitations at present.
 
-## Installation
+### Installation
 
 **Disclaimer:**
 
 1. Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
 1. These instructions are relevant for `jest@^27.0.0` (and `jest@^26.0.1 + jest-circus@^26.0.1`). They should likely work for the newer `jest` versions too, but for **the older ones** (25.x, 24.x) &mdash; **they will not, due to blocking issues.**
 
-### 1. Install Jest
+#### 1. Install Jest
 
 Before starting with Jest setup, be sure to complete the preliminary sections of the [Getting Started](Introduction.GettingStarted.md) guide.
 
@@ -30,13 +29,14 @@ Afterward, install the respective npm packages:
 npm install -D jest
 ```
 
-### 2. Set up Test-code Scaffolds
+#### 2. Set up Test-code Scaffolds
 
 Run the automated init script:
 
 ```sh
 detox init -r jest
 ```
+
 > **Note:** errors occurring in the process may appear in red.
 
 If things go well, the following will be created:
@@ -46,17 +46,17 @@ If things go well, the following will be created:
 - An `e2e/environment.js` file; [example](/examples/demo-react-native-jest/e2e/environment.js)
 - An `e2e/firstTest.e2e.js` file with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.e2e.ts).
 
-### 3. Fix / Verify
+#### 3. Fix / Verify
 
 Even if `detox init` passes well, and everything is green, we still recommend going over the checklist below. You can also use our example project, [`demo-react-native-jest`](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest), as a reference in case of ambiguities.
 
-#### .detoxrc.json
+##### .detoxrc.json
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
 | `testRunner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
-| `runnerConfig ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
-| `skipLegacyWorkersInjection ` | `false` or `true`            | *Optional.* This field tells `detox test` to stop appending `--maxWorkers 1` argument to `jest ...` command by default. Since `detox@18.19.0`, the control over `maxWorkers` count has been transfered to Jest config files, and that allows you to set any other value as a default `maxWorkers` count. |
+| `runnerConfig` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
+| `skipLegacyWorkersInjection` | `false` or `true`            | *Optional.* This field tells `detox test` to stop appending `--maxWorkers 1` argument to `jest ...` command by default. Since `detox@18.19.0`, the control over `maxWorkers` count has been transfered to Jest config files, and that allows you to set any other value as a default `maxWorkers` count. |
 
 A typical Detox configuration in `.detoxrc.json` file looks like:
 
@@ -89,14 +89,14 @@ A typical Detox configuration in `.detoxrc.json` file looks like:
 }
 ```
 
-#### e2e/config.json
+##### e2e/config.json
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `maxWorkers `          | `1`                | *Recommended.* When being used with `skipLegacyWorkersInjection: true` in Detox config, it prevents overallocation of mobile devices in the light of Jest's default logic (`= cpusCount — 1`), when you do not pass any specific worker count. To override it, [use CLI arguments](APIRef.DetoxCLI.md#test), or see [Jest documentation](https://jestjs.io/docs/configuration#maxworkers-number--string) if you plan to change the default value in the config. |
-| `testEnvironment `     | `"./environment"`               | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testenvironment-string) for more details. |
-| `testRunner `          | `"jest-circus/runner"`                           | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testrunner-string) for more details.  |
-| `testTimeout `          | `120000`                           | *Required*. Overrides the default timeout (5 seconds), which is usually too short to complete a single end-to-end test. |
+| `maxWorkers`          | `1`                | *Recommended.* When being used with `skipLegacyWorkersInjection: true` in Detox config, it prevents overallocation of mobile devices in the light of Jest's default logic (`= cpusCount — 1`), when you do not pass any specific worker count. To override it, [use CLI arguments](APIRef.DetoxCLI.md#test), or see [Jest documentation](https://jestjs.io/docs/configuration#maxworkers-number--string) if you plan to change the default value in the config. |
+| `testEnvironment`     | `"./environment"`               | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testenvironment-string) for more details. |
+| `testRunner`          | `"jest-circus/runner"`                           | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testrunner-string) for more details.  |
+| `testTimeout`          | `120000`                           | *Required*. Overrides the default timeout (5 seconds), which is usually too short to complete a single end-to-end test. |
 | `reporters`            | `["detox/runners/jest/streamlineReporter"]`    | *Recommended.* Sets up our streamline replacement for [Jest's default reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), which removes Jest's default buffering of `console.log()` output. That is helpful for end-to-end tests since log messages appear on the screen without any artificial delays. For more context, [read Detox 12.7.0 migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
 | `verbose`              | `true`                                         | *Conditional.* Must be `true` if above you have replaced Jest's default reporter with Detox's `streamlineReporter`. Optional otherwise. |
 
@@ -112,7 +112,7 @@ A typical `jest-circus` configuration in `e2e/config.json` file would look like:
 }
 ```
 
-#### e2e/environment.js
+##### e2e/environment.js
 
 If you are not familiar with Environment concept in Jest, you could check [their documentation](https://jestjs.io/docs/en/configuration#testenvironment-string).
 
@@ -156,14 +156,14 @@ This is how a typical Jest log output looks when `SpecReporter` and `WorkerAssig
 
 ![Streamlined output](img/jest-guide/streamlined_logging.png)
 
-## Writing Tests
+### Writing Tests
 
 There are some things you should notice:
 
 - Don't worry about mocks being used, Detox works on the compiled version of your app.
 - Detox exposes it's primitives (`expect`, `device`, ...) globally, it will override Jest's global `expect` object.
 
-## Parallel Test Execution
+### Parallel Test Execution
 
 Through Detox' CLI, Jest can be started with [multiple workers](Guide.ParallelTestExecution.md) that run tests simultaneously, e.g.:
 
@@ -181,7 +181,7 @@ If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.D
 detox test --configuration <yourConfigurationName> --workers 2 --jest-report-specs
 ```
 
-## How to Run Unit and E2E Tests in the Same Project
+### How to Run Unit and E2E Tests in the Same Project
 
 - Create different Jest configs for unit and E2E tests, e.g. in `e2e/config.json` (for Detox) and `jest.config.js`
 (for unit tests). For example, in Jest's E2E config you can set `testRegex` to look for `\.e2e.js$` regexp,

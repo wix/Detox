@@ -1,6 +1,6 @@
-# Configuration Options
+## Configuration Options
 
-## Configuration File
+### Configuration File
 
 In order for Detox to know what device & app to use (and a lot more, actually), it needs some configuration to be statically available in a configuration file. It supports both standalone configuration files, and a configuration bundling inside the project's `package.json`.
 
@@ -19,7 +19,7 @@ Option 6 means the configuration is available in `json` format inside the projec
 Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a working reference. Also, look at
 [the typings file](https://github.com/wix/Detox/blob/master/detox/index.d.ts) provided by Detox.
 
-### Extending configurations
+#### Extending configurations
 
 Since Detox [18.9.0](https://github.com/wix/Detox/releases/tag/18.9.0), you can also define base Detox configurations,
 distribute them as `npm` modules for reuse across multiple projects, e.g.:
@@ -43,7 +43,7 @@ to the Detox config file which contains that specific `extends` property, e.g.:
 // and so on...
 ```
 
-### Individual Configurations
+#### Individual Configurations
 
 > NOTE: The configuration format has been significantly updated since [18.3.1](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) in a backward-compatible way.
 Click [here](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) to the reference on the former configuration format.
@@ -98,7 +98,7 @@ Note: If there is only one configuration in `configurations`, Detox will default
 }
 ```
 
-### Device configurations
+#### Device configurations
 
 The format of Detox config allows you to define inside it multiple device configs in a key-value manner, i.e.:
 
@@ -179,7 +179,7 @@ Also, in the Detox `configurations` you can use the device configs as-is, withou
 }
 ```
 
-### Apps configurations
+#### Apps configurations
 
 The format of Detox config allows you to define inside it multiple app configs in a key-value manner, i.e.:
 
@@ -270,7 +270,7 @@ Similar to device configs, any app config can be inlined as well:
 }
 ```
 
-### Artifacts Configuration
+#### Artifacts Configuration
 
 See more details in [APIRef.Artifacts.md](APIRef.Artifacts.md).
 
@@ -328,9 +328,9 @@ Below you can see mappings between the string presets and the corresponding obje
 
 | preset  |  object                                                      |
 |---------|--------------------------------------------------------------|
-| none    | `{ "enabled": false }                                      ` |
-| all     | `{ "enabled": true }                                       ` |
-| failing | `{ "enabled": true, "keepOnlyFailedTestsArtifacts": true } ` |
+| none    | `{ "enabled": false }` |
+| all     | `{ "enabled": true }` |
+| failing | `{ "enabled": true, "keepOnlyFailedTestsArtifacts": true }` |
 | manual  | `{ "enabled": true, "shouldTakeAutomaticSnapshots": false }` |
 
 There is also a shortcut to disable artifacts for a specific configuration:
@@ -346,7 +346,7 @@ There is also a shortcut to disable artifacts for a specific configuration:
 }
 ```
 
-### Behavior Configuration
+#### Behavior Configuration
 
 If you need to tweak the flow of `detox.init()` or `detox.cleanup()` steps,
 you have a few options to change. These are the default behavior values:
@@ -403,7 +403,7 @@ Also, you can override the behavior in specific Detox configurations:
 }
 ```
 
-### Server Configuration
+#### Server Configuration
 
 Detox can either initialize a server using a generated configuration, or can be overridden with a manual configuration:
 
@@ -462,9 +462,9 @@ The status will be printed if the action takes more than _[N]_ ms to complete.
 
 To disable `debugSynchronization` explicitly, use `0`.
 
-## `detox-cli`
+### `detox-cli`
 
-### Build Configuration
+#### Build Configuration
 
 In your detox config (in `package.json`) paste your build command into the configuration's `build` field.
 The build command will be triggered when running `detox build`.
@@ -498,8 +498,7 @@ You can choose to build your project in any of these ways...
 
 > Note: remember to update the `app` path in your `package.json`.
 
-
-### Test Configuration
+#### Test Configuration
 
 * If there's only one configuration, you can simply use:
 
@@ -515,7 +514,7 @@ where `./e2e` is the path to your Detox tests folder.
   detox test ./e2e --configuration yourConfiguration
   ```
 
-### Faster Test Runs with App Reuse
+#### Faster Test Runs with App Reuse
 
 By default the app is removed, reinstalled and launched before each run.
 Starting fresh is critical in CI but in dev you might be able to save time between test runs and reuse the app that was previously installed in the simulator. To do so use the `reuse` flag and run your tests like this:

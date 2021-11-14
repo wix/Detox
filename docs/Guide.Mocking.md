@@ -1,4 +1,4 @@
-# Mocking
+## Mocking
 
 > This guide is a bit out of date. We hope to have it updated soon.
 
@@ -18,15 +18,15 @@ This replacement mechanism provides a lot of flexibility to change implementatio
 
 **Note:** Repackager is available for RN 0.44 and 0.51. It is natively supported in RN 0.55 an up.
 
-
 ### Usage
 
 #### Configuration
+
 0. For RN < 0.55, setup `react-native-repackager` in your library.
 1. Configure the metro bundler to use the extensions defined by `RN_SRC_EXT`:
-   - If you use 0.55 <= RN < 0.59, create a file called `rn-cli.config.js` in the root folder. 
-   - If you use RN >= 0.59 (which in turn uses Metro with breaking changes introduced in [0.43](https://github.com/facebook/metro/releases/tag/v0.43.0)) the file should be named `metro.config.js` or `metro.config.json` (or define metro field in `package.json`) to root dir. 
-   
+   * If you use 0.55 <= RN < 0.59, create a file called `rn-cli.config.js` in the root folder.
+   * If you use RN >= 0.59 (which in turn uses Metro with breaking changes introduced in [0.43](https://github.com/facebook/metro/releases/tag/v0.43.0)) the file should be named `metro.config.js` or `metro.config.json` (or define metro field in `package.json`) to root dir.
+
    Then set up `resolver.sourceExts` to prioritize any given source extension over the default one:
 
     ```js
@@ -39,9 +39,9 @@ This replacement mechanism provides a lot of flexibility to change implementatio
       }
     };
     ```
-    
+
     or if you have RN < 0.57 or Metro < 0.43 use the old Metro configuration format:
-    
+
      ```js
     module.exports = {
       getSourceExts: () => process.env.RN_SRC_EXT ? 
@@ -52,9 +52,8 @@ This replacement mechanism provides a lot of flexibility to change implementatio
 
 2. Create `anyfile.e2e.js` alongside `anyfile.js`
 
+#### Triggering
 
-
-#### Triggering 
 Whenever Metro runs with `RN_SRC_EXT` environment variable set, it will override the default files with the the ones set in `RN_SRC_EXT`.
 
 ```bash
@@ -64,25 +63,29 @@ Whenever Metro runs with `RN_SRC_EXT` environment variable set, it will override
 ```
 
 #### Example of how to mock a module
-If you want to mock a module, here is an example of how to do it: 
+
+If you want to mock a module, here is an example of how to do it:
+
 1. Follow the steps above in the [Configuration](#Configuration) section
-2. Create a file that just imports the module, `YourNativeModuleProvider.js`, containing:
-```js
+1. Create a file that just imports the module, `YourNativeModuleProvider.js`, containing:
 
-import { NativeModules } from 'react-native';
+     ```js
+     import { NativeModules } from 'react-native';
 
-export const { YourNativeModule } = NativeModules;
+     export const { YourNativeModule } = NativeModules;
+     ```
 
-```
-3. Create a file on the same directory - `YourNativeModuleProvider.e2e.js`, containing:
-```js
-// You can add a console.log here so it shows on your react-native console:
-console.log('We are now using our mocked NativeModule')
+1. Create a file on the same directory - `YourNativeModuleProvider.e2e.js`, containing:
 
-const YourNativeModule = {
-  mockedFunctionCall: () => 'Do something'
-}
-export { YourNativeModule };
-```
-4. Run Metro using the information in [Triggering](#Triggering)
-5. On your simulator, enable debug mode and you should see "We are now using our mocked NativeModule"
+     ```js
+     // You can add a console.log here so it shows on your react-native console:
+     console.log('We are now using our mocked NativeModule')
+
+     const YourNativeModule = {
+       mockedFunctionCall: () => 'Do something'
+     }
+     export { YourNativeModule };
+     ```
+
+1. Run Metro using the information in [Triggering](#Triggering)
+1. On your simulator, enable debug mode and you should see "We are now using our mocked NativeModule"

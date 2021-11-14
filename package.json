@@ -2,12 +2,14 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "docs:lint": "markdownlint '**/*.md'",
+    "docs:fix": "markdownlint --fix '**/*.md'",
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/ci.release.js",
     "package:android": "node scripts/ci.android-release.js",
     "package:ios": "scripts/ci.ios-release.sh",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "node scripts/postinstall.js"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -16,6 +18,7 @@
     "chalk": "^2.4.2",
     "lerna": "3.22.1",
     "lodash": "4.17.x",
+    "markdownlint-cli": "^0.29.0",
     "semver": "5.x.x",
     "shell-utils": "1.x.x"
   },

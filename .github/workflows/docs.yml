@@ -1,0 +1,36 @@
+name: Docs
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
+      - 'package.json'
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
+      - 'package.json'
+      - 'docs/**'
+      - '**.md'
+
+jobs:
+  markdownlint:
+    name: markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+      - name: markdownlint
+        run: npm run docs:lint
