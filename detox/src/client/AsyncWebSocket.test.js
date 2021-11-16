@@ -298,7 +298,7 @@ describe('AsyncWebSocket', () => {
     it(`should throw error for all pending promises`, async () => {
       await connect();
       const message1 = aws.send(generateRequest(0, 'invoke'));
-      const message2 = aws.send(generateRequest(1, 'currentStatus', true));
+      const message2 = aws.send(generateRequest(1, 'currentStatus', false));
 
       aws.rejectAll(anError('TestError'));
       await expect(message1).rejects.toThrow(/TestError/);
@@ -309,8 +309,8 @@ describe('AsyncWebSocket', () => {
   describe('.resetInFlightPromises', () => {
     it(`should reset all pending promises`, async () => {
       await connect();
-      aws.send(generateRequest(1, 'currentStatus', true));
-      aws.send(generateRequest(2, 'currentStatus', true));
+      aws.send(generateRequest(1, 'currentStatus', false));
+      aws.send(generateRequest(2, 'currentStatus', false));
 
       expect(_.size(aws.inFlightPromises)).toBe(2);
 
@@ -339,7 +339,7 @@ describe('AsyncWebSocket', () => {
 
     it('should throw on multiple pending requests that cannot be concurrent', async () => {
       const response1 = aws.send(generateRequest(1, 'invoke'));
-      const response2 = aws.send(generateRequest(2, 'currentStatus', true));
+      const response2 = aws.send(generateRequest(2, 'currentStatus', false));
       const response3 = aws.send(generateRequest(3, 'invoke'));
 
       socket.mockMessage(generateResponse('invokeDone', 1));
@@ -353,8 +353,8 @@ describe('AsyncWebSocket', () => {
 
     it('should not throw on multiple pending requests that be concurrent', async () => {
       const response1 = aws.send(generateRequest(1, 'invoke'));
-      const response2 = aws.send(generateRequest(2, 'currentStatus', true));
-      const response3 = aws.send(generateRequest(3, 'currentStatus', true));
+      const response2 = aws.send(generateRequest(2, 'currentStatus', false));
+      const response3 = aws.send(generateRequest(3, 'currentStatus', false));
 
       socket.mockMessage(generateResponse('invokeDone', 1));
       socket.mockMessage(generateResponse('currentStatusDone', 2));
@@ -396,13 +396,13 @@ describe('AsyncWebSocket', () => {
   }
 
 
-  function generateRequest(messageId, type = 'invoke', canBeConcurrent = false) {
+  function generateRequest(messageId, type = 'invoke', isAtomic = true) {
     return {
       type,
       message: 'a message',
       messageId,
       timeout: 0,
-      canBeConcurrent,
+      isAtomic,
     };
   }
 

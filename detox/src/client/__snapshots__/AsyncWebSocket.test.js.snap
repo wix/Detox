@@ -57,7 +57,7 @@ https://github.com/wix/Detox/issues
   message: 'a message',
   messageId: undefined,
   timeout: 0,
-  canBeConcurrent: false
+  isAtomic: true
 }"
 `;
 
@@ -71,7 +71,7 @@ The tester has not received a response within 5000ms timeout to the message:
   message: 'a message',
   messageId: 0,
   timeout: 0,
-  canBeConcurrent: false
+  isAtomic: true
 }"
 `;
 

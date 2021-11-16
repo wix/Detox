@@ -175,9 +175,9 @@ describe('Client', () => {
       await client.connect();
     });
 
-    it('should throw error for actions without canBeConcurrent', async () => {
+    it('should throw error for actions without isAtomic', async () => {
       const withoutConcurrent = new ActionWithoutParams();
-      await expect(() => withoutConcurrent.canBeConcurrent).toThrowErrorMatchingSnapshot();
+      await expect(() => !withoutConcurrent.isAtomic).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error for actions without timeout', async () => {
@@ -185,10 +185,10 @@ describe('Client', () => {
       await expect(() => withoutTimeout.timeout).toThrowErrorMatchingSnapshot();
     });
 
-    it('should not throw .canBeConcurrent getter errors for exported actions', () => {
+    it('should not throw .isAtomic getter errors for exported actions', () => {
       for (const ActionClass of Object.values(actions)) {
         if (ActionClass !== actions.Action && ActionClass.prototype instanceof actions.Action) {
-          expect(() => ActionClass.prototype.canBeConcurrent).not.toThrow();
+          expect(() => ActionClass.prototype.isAtomic).not.toThrow();
         }
       }
     });
@@ -201,9 +201,9 @@ describe('Client', () => {
       }
     });
 
-    it('should return value for canBeConcurrent', async () => {
+    it('should return value for isAtomic', async () => {
       const withoutConcurrent = new actions.ReloadReactNative();
-      await expect(withoutConcurrent.canBeConcurrent).toBe(true);
+      await expect(withoutConcurrent.isAtomic).toBe(false);
     });
 
     it('should return value for timeout', async () => {
@@ -742,7 +742,7 @@ describe('Client', () => {
       params: {},
       handle: jest.fn(),
       get timeout() { return 0; },
-      get canBeConcurrent() { return false; },
+      get isAtomic() { return true; },
       ...overrides,
     };
   }

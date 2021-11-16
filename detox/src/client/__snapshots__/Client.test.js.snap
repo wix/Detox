@@ -39,8 +39,8 @@ Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
-exports[`Client .sendAction() should throw error for actions without canBeConcurrent 1`] = `
-"Action.prototype.canBeConcurrent must be defined for ActionWithoutParams
+exports[`Client .sendAction() should throw error for actions without isAtomic 1`] = `
+"Action.prototype.isAtomic must be defined for ActionWithoutParams
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;

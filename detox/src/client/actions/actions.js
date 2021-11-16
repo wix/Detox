@@ -16,8 +16,8 @@ class Action {
   }
 
   /** @returns {boolean} */
-  get canBeConcurrent() {
-    throw new DetoxInternalError(`Action.prototype.canBeConcurrent must be defined for ${this.type}`);
+  get isAtomic() {
+    throw new DetoxInternalError(`Action.prototype.isAtomic must be defined for ${this.type}`);
   }
 
   /** @returns {number} */
@@ -35,8 +35,8 @@ class Login extends Action {
     super('login', params);
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -55,8 +55,8 @@ class Ready extends Action {
     this.messageId = -1000;
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -74,8 +74,8 @@ class ReloadReactNative extends Action {
     this.messageId = -1000;
   }
 
-  get canBeConcurrent() {
-    return true;
+  get isAtomic() {
+    return false;
   }
 
   get timeout() {
@@ -92,8 +92,8 @@ class WaitForBackground extends Action {
     super('waitForBackground');
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -110,8 +110,8 @@ class WaitForActive extends Action {
     super('waitForActive');
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -128,8 +128,8 @@ class Shake extends Action {
     super('shakeDevice');
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -146,8 +146,8 @@ class SetOrientation extends Action {
     super('setOrientation', params);
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -165,8 +165,8 @@ class Cleanup extends Action {
     this.messageId = -0xc1ea;
   }
 
-  get canBeConcurrent() {
-    return true;
+  get isAtomic() {
+    return false;
   }
 
   get timeout() {
@@ -183,8 +183,8 @@ class Invoke extends Action {
     super('invoke', params);
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -218,8 +218,8 @@ class DeliverPayload extends Action {
     super('deliverPayload', params);
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -236,8 +236,8 @@ class SetSyncSettings extends Action {
     super('setSyncSettings', params);
   }
 
-  get canBeConcurrent() {
-    return false;
+  get isAtomic() {
+    return true;
   }
 
   get timeout() {
@@ -254,8 +254,8 @@ class CurrentStatus extends Action {
     super('currentStatus', params);
   }
 
-  get canBeConcurrent() {
-    return true;
+  get isAtomic() {
+    return false;
   }
 
   get timeout() {
@@ -273,8 +273,8 @@ class SetInstrumentsRecordingState extends Action {
     super('setRecordingState', params);
   }
 
-  get canBeConcurrent() {
-    return true;
+  get isAtomic() {
+    return false;
   }
 
   get timeout() {
@@ -291,8 +291,8 @@ class CaptureViewHierarchy extends Action {
     super('captureViewHierarchy', params);
   }
 
-  get canBeConcurrent() {
-    return true;
+  get isAtomic() {
+    return false;
   }
 
   get timeout() {
