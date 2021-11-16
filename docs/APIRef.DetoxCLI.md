@@ -49,10 +49,10 @@ Scaffolds initial E2E test folder structure for a specific test runner
 
 `detox init -r <test-runner-name>`
 
-| Option                          | Description                                      |
-| ------------------------------- | ------------------------------------------------ |
-| -r, --runner \<test-runner-name\> | test runner name (supported values: mocha, jest) |
-| --help                          | Show help                                        |
+| Option                           | Description                                      |
+| -------------------------------- | ------------------------------------------------ |
+| -r, --runner \<test-runner-name> | test runner name (supported values: mocha, jest) |
+| --help                           | Show help                                        |
 
 #### build
 

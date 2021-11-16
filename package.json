@@ -5,7 +5,7 @@
     "docs:markdownlint": "markdownlint -p .remarkignore '**/*.md'",
     "docs:remark": "remark .",
     "docs:lint": "npm run docs:markdownlint && npm run docs:remark",
-    "docs:fix": "npm run docs:remark -- -o && npm run docs:lint -- --fix",
+    "docs:fix": "npm run docs:remark -- -o && npm run docs:markdownlint -- --fix",
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/ci.release.js",
