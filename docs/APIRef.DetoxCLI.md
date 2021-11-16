@@ -49,10 +49,10 @@ Scaffolds initial E2E test folder structure for a specific test runner
 
 `detox init -r <test-runner-name>`
 
-| Option                           | Description                                      |
-| -------------------------------- | ------------------------------------------------ |
-| -r, --runner \<test-runner-name> | test runner name (supported values: mocha, jest) |
-| --help                           | Show help                                        |
+| Option                            | Description                                      |
+| --------------------------------- | ------------------------------------------------ |
+| -r, --runner `<test-runner-name>` | test runner name (supported values: mocha, jest) |
+| --help                            | Show help                                        |
 
 #### build
 
@@ -60,13 +60,13 @@ Run the command defined in `build` property of the specified **configuration**.
 
 `detox build [options]`
 
-| Option                               | Description                                                                                                                                   |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| -c, --configuration \<device config> | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it |
-| -C, --config-path \<configPath>      | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                         |
-| -i, --if-missing                     | Execute the build command only if the app binary is missing.                                                                                  |
-| -s, --silent                         | Do not fail with error if an app config has no build command.                                                                                 |
-| --help                               | Show help                                                                                                                                     |
+| Option                                | Description                                                                                                                                   |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| -c, --configuration `<device config>` | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it |
+| -C, --config-path `<configPath>`      | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                         |
+| -i, --if-missing                      | Execute the build command only if the app binary is missing.                                                                                  |
+| -s, --silent                          | Do not fail with error if an app config has no build command.                                                                                 |
+| --help                                | Show help                                                                                                                                     |
 
 #### test
 
@@ -76,20 +76,20 @@ Initiating your test suite[^1].
 
 | Option                                        | Description                                                                                                                                                                                                                                                                                               |
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| -C, --config-path \<configPath>               | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                                                                                                                                                                                     |
-| -c, --configuration \<device config>          | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it                                                                                                                                                             |
-| -o, --runner-config \<config>                 | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest.                                                                                                                                                                                                           |
+| -C, --config-path `<configPath>`              | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                                                                                                                                                                                     |
+| -c, --configuration `<device config>`         | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it                                                                                                                                                             |
+| -o, --runner-config `<config>`                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest.                                                                                                                                                                                                           |
 | -n, --device-name \[name]                     | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.                                                                                                                                                                               |
 | -l, --loglevel \[value]                       | Log level: fatal, error, warn, info, verbose, trace                                                                                                                                                                                                                                                       |
-| -d, --debug-synchronization \<value>          | Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. By default, the app status will be printed if the action takes more than 10s to complete.                                                                                              |
-| -a, --artifacts-location \<path>              | Artifacts (logs, screenshots, etc) root directory.[^2]                                                                                                                                                                                                                                                    |
+| -d, --debug-synchronization `<value>`         | Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. By default, the app status will be printed if the action takes more than 10s to complete.                                                                                              |
+| -a, --artifacts-location `<path>`             | Artifacts (logs, screenshots, etc) root directory.[^2]                                                                                                                                                                                                                                                    |
 | --record-logs \[failing/all/none]             | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**.                                                                                                                                                                      |
 | --take-screenshots \[manual/failing/all/none] | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **manual**.                                                                                                                                            |
 | --record-videos \[failing/all/none]           | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**.                                                                                                                                                       |
 | --record-performance \[all/none]              | \[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory. The default value is **none**.                                                                                                                                                                             |
 | --record-timeline \[all/none]                 | \[Jest Only] Record tests and events timeline, for visual display on the <chrome://tracing> tool. The default value is **none**.                                                                                                                                                                          |
 | --capture-view-hierarchy \[enabled/disabled]  | \[iOS Only] Capture `*.uihierarchy` snapshots on view action errors and `device.captureViewHierarchy()` calls. The default value is **disabled**.                                                                                                                                                         |
-| -R, --retries                                 | \[Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or \<N> times at most.                                                                                                                                                                                   |
+| -R, --retries                                 | \[Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or `<N>` times at most.                                                                                                                                                                                  |
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run.                                                                                                                                                                                                                                |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue                                                                                                                                                                                            |
 | -w, --workers                                 | Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest). _Note: For workers > 1, Jest’s spec-level reporting is disabled, by default (can be overridden using --jest-report-specs)._                         |
