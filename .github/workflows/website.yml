@@ -1,5 +1,4 @@
 name: Website
-
 on:
   pull_request:
     branches: [master]
@@ -22,6 +21,8 @@ jobs:
           npm run build
   gh-release:
     if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
