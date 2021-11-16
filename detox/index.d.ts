@@ -457,7 +457,7 @@ declare global {
             /**
              * Launch the app.
              *
-             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -481,7 +481,7 @@ declare global {
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              *
              * @example
              * // With Detox being preconfigured statically to use these arguments in app launch:
@@ -1120,7 +1120,7 @@ declare global {
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
-             * See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
+             * See [here](https://wix.github.io/Detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
              * @param value string value in set column (must be correct)
@@ -1164,7 +1164,7 @@ declare global {
 
             /**
              * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
-             * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md#element-level-screenshots}
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/screenshots#element-level-screenshots}
              * @param {string} name for the screenshot artifact
              * @returns {Promise<string>} a temporary path to the screenshot.
              * @example
@@ -1367,7 +1367,7 @@ declare global {
             delete?: boolean;
             /**
              * Arguments to pass-through into the app.
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              */
             launchArgs?: Record<string, any>;
             /**

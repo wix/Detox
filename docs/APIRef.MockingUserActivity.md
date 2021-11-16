@@ -1,3 +1,10 @@
+---
+id: mocking-user-activity
+slug: api/mocking-user-activity
+title: Mocking User Activity
+sidebar_label: Mocking User Activity
+---
+
 ## Mocking User Activity
 
 Detox supports mocking user activity for iOS apps.
@@ -57,7 +64,7 @@ The JSON object passed to Detox needs to provide some required data, but can als
 <!--- Use http://www.tablesgenerator.com/markdown_tables to edit these tables. --->
 
 | Key            | Required | Value Type | Description                                                                                                                         |
-|----------------|----------|------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| -------------- | -------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `activityType` | Yes      | String     | The activity type. Either a custom user string or a predefined constant as provided by Detox. See the Activity Types section below. |
 | `webpageURL`   | No       | String     | Used when simulating an associated domain link opening. This is the URL that the user browsed to.                                   |
 | `referrerURL`  | No       | String     | Used when simulating an associated domain link opening. This is the URL that the user browsed from.                                 |
@@ -85,8 +92,8 @@ const userActivityBrowsingWeb = {
 
 Currently supported system-generated activity types:
 
-* DetoxConstants.userActivityTypes.browsingWeb - Used for associated domains (deep links)
-* DetoxConstants.userActivityTypes.searchableItem - Used for Spotlight search results
+- DetoxConstants.userActivityTypes.browsingWeb - Used for associated domains (deep links)
+- DetoxConstants.userActivityTypes.searchableItem - Used for Spotlight search results
 
 #### Spotlight Search Results
 

@@ -39,7 +39,7 @@ exports[`DetoxRuntimeError should be created with message with hint and debug in
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 
 HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
-See the article for the guidance: https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
 
 testSummary was: "test name"]
 `;

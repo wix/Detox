@@ -6,7 +6,7 @@ exports[`failedToReachTheApp .evenThoughAppWasLaunched() 1`] = `
 HINT: 
 
 The test app might have crashed prematurely, or has had trouble setting up the connection.
-Refer to our troubleshooting guide, for full details: https://github.com/wix/Detox/blob/master/docs/Troubleshooting.RunningTests.md#tests-execution-hangs 
+Refer to our troubleshooting guide, for full details: https://wix.github.io/Detox/docs/troubleshooting/running-tests#tests-execution-hangs 
 ]
 `;
 
@@ -16,7 +16,7 @@ exports[`failedToReachTheApp .maybeAppWasNotLaunched(action) 1`] = `
 HINT: 
 
 Have you forgotten to call 'device.launchApp()' in the beginning of your test?
-Refer to our troubleshooting guide, for full details: https://github.com/wix/Detox/blob/master/docs/Troubleshooting.RunningTests.md#tests-execution-hangs
+Refer to our troubleshooting guide, for full details: https://wix.github.io/Detox/docs/troubleshooting/running-tests#tests-execution-hangs
 
 ---
 The following package could not be delivered:

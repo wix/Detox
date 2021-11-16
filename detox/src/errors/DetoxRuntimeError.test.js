@@ -77,7 +77,7 @@ describe('DetoxRuntimeError', () => {
         '\nExpected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }',
         hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
         '\nSee the article for the guidance: ' +
-        'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
+        'https://wix.github.io/Detox/docs/api/test-lifecycle',
         debugInfo: `testSummary was: ${JSON.stringify('test name')}`,
       }),
     });

@@ -1,18 +1,25 @@
+---
+id: contributing
+slug: contributing
+title: Contributing
+sidebar_label: Contributing
+---
+
 ## Contributing
 
 This guide is about contributing to our codebase.
 
-We don't have any special guidelines - just some setup walk-through's!
+We don’t have any special guidelines - just some setup walk-through’s!
 
 ### Environment
 
 #### Install Homebrew
 
-If you haven't yet - install [`brew`](https://brew.sh/).
+If you haven’t yet - install [`brew`](https://brew.sh/).
 
 #### Install Node.js v12.x or newer
 
-There's more than one way to install Node.js:
+There’s more than one way to install Node.js:
 
 - Download from the [official download page](https://nodejs.org/en/download/)
 - Use [Homebrew](https://formulae.brew.sh/formula/node)
@@ -27,9 +34,10 @@ brew install node
 #### Install `npm`
 
 Either install `npm` or check that you have it installed, using their [official guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+
 > **NOTE: For Detox, please use the latest `npm` version `6.x.x` (i.e not version 7.0.0 or newer).**
 
-#### Install the monorepo dev manager, `lerna`
+#### Install the monorepo management tool, `lerna`
 
 ```sh
 npm install -g lerna@3.x.x
@@ -53,7 +61,7 @@ brew install watchman
 
 #### iOS
 
-For iOS, you must install Xcode and related tools. Refer to our [iOS dev-env guide](Introduction.iOSDevEnv.md).
+For iOS, you must install Xcode and related tools. Refer to our [Setting Up an iOS Environment](Introduction.iOSDevEnv.md) guide.
 
 You must also have `xcpretty` installed:
 
@@ -63,7 +71,7 @@ gem install xcpretty
 
 #### Android
 
-For Android, you need to have Java and the Android SDK properly set up. Refer to our [Android dev-env guide](Introduction.AndroidDevEnv.md).
+For Android, you need to have Java and the Android SDK properly set up. Refer to our [Setting Up an Android Development & Testing Environment](Introduction.AndroidDevEnv.md) guide.
 
 ### Detox
 
@@ -93,9 +101,9 @@ lerna bootstrap
 
 The following steps can be run manually in order to build / test the various components of Detox.
 
-###### 0. (React Native ≤ v55) Fixing Compilation Issues in RN Sources
+###### 0. (React Native ≤ 0.55.x) Fixing Compilation Issues in RN Sources
 
-Detox Android test project uses React Native sources instead of the precompiled AAR. The test project uses RN51 and RN53, both have issues with compilation ([Fixed in RN55](https://github.com/facebook/react-native/commit/d8bb990abc226e778e2f32c2de3c6661c0aa64e5#diff-f44163238d434a443b56bd27b3ba0578)). In order to fix this issue, from inside `detox/test` run:
+Detox Android test project uses React Native sources instead of the precompiled AAR. The test project uses React Native 0.51 and 0.53, both have issues with compilation ([fixed in 0.55](https://github.com/facebook/react-native/commit/d8bb990abc226e778e2f32c2de3c6661c0aa64e5#diff-f44163238d434a443b56bd27b3ba0578)). In order to fix this issue, from inside `detox/test` run:
 
 ```sh
 mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
@@ -126,31 +134,31 @@ open coverage/lcov-report/index.html
 
 ###### 2. Running Detox E2E Coverage Tests
 
-Detox has a suite of end-to-end tests to test its own API while developing (and for regression); We maintain a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
+Detox has a suite of end-to-end tests to test its own API while developing (and for regression); We maintain a special application that is "tested" against Detox’s API, but essentially, it’s the API that is tested, not the app.
 
 To run the tests, you must first build the native code and then run based on your target of choice (Android / iOS):
 
 - **iOS:**
 
-    ```sh
-    cd detox/test
-    npm run build:ios
-    npm run e2e:ios
-    ```
+  ```sh
+  cd detox/test
+  npm run build:ios
+  npm run e2e:ios
+  ```
 
 - **Android:**
 
-    ```sh
-    cd detox/test
-    npm run build:android
-    npm run e2e:android
-    ```
+  ```sh
+  cd detox/test
+  npm run build:android
+  npm run e2e:android
+  ```
 
 FYI Android test project includes two flavors:
 
-- `fromBin` - (**standard use case**) utilizes the precompiled .aar from `node_modules` just like a standard RN project.
+- `fromBin` - (**standard use case**) utilizes the precompiled `.aar` from `node_modules` just like a standard RN project.
 - `fromSource` - compiles the project with RN sources from `node_modules`, this is useful when developing and debugging Espresso idle resource.
-[Here](https://facebook.github.io/react-native/docs/building-from-source.html#android) are the prerequisites to compiling React Native from source.
+  [Here](https://github.com/facebook/react-native/wiki/Building-from-source#android) are the prerequisites to compiling React Native from source.
 
 Each build can be triggered separately by running its Gradle assembling task (under `detox/test/android/`):
 
@@ -160,7 +168,7 @@ Each build can be triggered separately by running its Gradle assembling task (un
 ./gradlew assembleFromBinDebug
 ```
 
-To run from Android Studio, React Native's `react.gradle` script may require `node` to be in path.
+To run from Android Studio, React Native’s `react.gradle` script may require `node` to be in path.
 On MacOS, environment variables can be exported to desktop applications by adding the following to your `.bashrc`/`.zshrc`:
 
 ```sh
@@ -182,7 +190,7 @@ This is in fact a monorepo that also sports some example projects (for usage ref
 - `examples/demo-react-native` and `examples/demo-react-native-jest`: Demonstrate usage of Detox in React-Native app projects, with `mocha.js` and `Jest` as the hosting test-runner frameworks, respectively.
 - `examples/demo-native-ios`: Demonstrates usage of Detox in a pure-native iOS app.
 - `examples/demo-native-android` (broken): Demonstrates usage of Detox in a pure-native Android app.
-- `examples/demo-pure-native-android`: Demonstrates usage of the *pure* [Detox-Native](../detox/detox-native/README.md) project
+- `examples/demo-pure-native-android`: Demonstrates usage of the _pure_ [Detox-Native](https://github.com/wix/Detox/tree/master/detox-native/README.md) project
 - more...
 
-**In order to run E2E tests associated with any of these projects, refer to the [project-specific](../examples) README's.**
+**In order to run E2E tests associated with any of these projects, refer to the [project-specific](https://github.com/wix/Detox/tree/master/examples) READMEs.**
