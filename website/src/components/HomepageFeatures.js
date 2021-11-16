@@ -5,7 +5,7 @@ import styles from './HomepageFeatures.module.css';
 const FeatureList = [
   {
     title: 'Supports Different Test Runners',
-    img: require('../../static/img/test-runner.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Accept-icon.html
+    Svg: require('../../static/img/test-runner.svg').default, // taken from: https://uxwing.com/testing-icon/
     description: (
       <>
         Use Jest or Mocha as the test runner (spoiler: we have our favorite).
@@ -14,7 +14,7 @@ const FeatureList = [
   },
   {
     title: 'Cross Platform',
-    img: require('../../static/img/cross-platform.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Wizard-icon.html
+    Svg: require('../../static/img/cross-platform.svg').default, // taken from: https://uxwing.com/magic-icon/
     description: (
       <>
         Write cross-platform end-to-end tests in JavaScript.
@@ -24,7 +24,7 @@ const FeatureList = [
   },
   {
     title: 'Debuggable',
-    img: require('../../static/img/debug.png').default, // taken from: https://iconarchive.com/show/phuzion-icons-by-kyo-tux/Misc-Bug-icon.html
+    Svg: require('../../static/img/debug.svg').default, // taken from: https://uxwing.com/bug-icon/
     description: (
       <>
         Modern async-await API allows breakpoints in asynchronous tests to work as expected.
@@ -33,7 +33,7 @@ const FeatureList = [
   },
   {
     title: 'Automatically Synchronized',
-    img: require('../../static/img/sync.png').default, // taken from: https://iconarchive.com/show/firefox-os-icons-by-vcferreira/clock-icon.html
+    Svg: require('../../static/img/sync.svg').default, // taken from: https://uxwing.com/wait-sandclock-icon/
     description: (
       <>
         Stops flakiness at the core by monitoring asynchronous operations in your app.
@@ -42,7 +42,7 @@ const FeatureList = [
   },
   {
     title: 'Made For CI',
-    img: require('../../static/img/ci.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Semi-success-icon.html
+    Svg: require('../../static/img/ci.svg').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Semi-success-icon.html
     description: (
       <>
         Execute your E2E tests on CI platforms like Travis CI, CircleCI or Jenkins without grief.
@@ -51,7 +51,7 @@ const FeatureList = [
   },
   {
     title: 'Runs on Devices',
-    img: require('../../static/img/devices.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Iphone-icon.html
+    Svg: require('../../static/img/devices.svg').default, // taken from: https://uxwing.com/mobile-phone-icon/
     description: (
       <>
         Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
@@ -60,11 +60,11 @@ const FeatureList = [
   },
 ];
 
-function Feature({img, title, description}) {
+function Feature({Svg, title, description}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <img src={img} className={styles.featureImage} alt={title} />
+        <Svg className={styles.featureImage} alt={title} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
