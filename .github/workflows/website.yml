@@ -48,8 +48,8 @@ jobs:
           USE_SSH: true
           GIT_USER: git
         run: |
-          git config --global user.email "asafk@wix.com"
-          git config --global user.name "asafkorem"
+          git config --global user.email "mobile1@wix.com"
+          git config --global user.name "mobilewix"
           cd website/
           npm i
           npm run build
