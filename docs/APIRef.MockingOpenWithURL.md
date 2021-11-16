@@ -1,8 +1,8 @@
-# Mocking Open With URL (Deep Links)
+## Mocking Open With URL (Deep Links)
 
 You can mock opening the app from URL to test your app's deep link handling mechanism.
 
-## Mocking App Launch With a URL
+### Mocking App Launch With a URL
 
 ```js
 await device.launchApp({newInstance: true, url, sourceApp: bundleId}); // sourceApp is an optional iOS-only argument
@@ -23,11 +23,10 @@ describe('launch app from URL', () => {
   });
 ```
 
-## Mocking Opening With a URL On a Launched App
+### Mocking Opening With a URL On a Launched App
 
 > iOS-only
 
 ```js
 await device.openURL({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
 ```
-

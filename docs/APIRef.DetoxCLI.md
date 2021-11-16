@@ -1,8 +1,8 @@
-# Detox Command Line Tools (detox-cli)
+## Detox Command Line Tools (detox-cli)
 
 `detox-cli` lets you operate Detox from command line.
 
-## Installation
+### Installation
 
 Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 
@@ -10,13 +10,13 @@ Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 npm install -g detox-cli
 ```
 
-## Usage
+### Usage
 
 ```sh
 detox <command> [options] 
 ```
 
-## Commands
+### Commands
 
 | Command | Description |
 | --- | --- |
@@ -29,14 +29,14 @@ detox <command> [options]
 | [rebuild-framework-cache](#cache) | **MacOS only.** Rebuilds the Detox cache |
 | [recorder](#recorder) | Starts a [Detox Recorder](https://github.com/wix/DetoxRecorder) recording |
 
-### Options:
+#### Options
 
 | Options | Description |
 | --- | --- |
 | --version | Show version number |
 | --help | Show help |
 
-### init
+#### init
 
 Scaffolds initial E2E test folder structure for a specific test runner
 
@@ -47,7 +47,7 @@ Scaffolds initial E2E test folder structure for a specific test runner
 | -r, --runner <test-runner-name> | test runner name (supported values: mocha, jest) |
 | --help                          | Show help |
 
-### build
+#### build
 
 Run the command defined in `build` property of the specified **configuration**.
 
@@ -61,7 +61,7 @@ Run the command defined in `build` property of the specified **configuration**.
 | -s, --silent                          | Do not fail with error if an app config has no build command. |
 | --help                                | Show help |
 
-### test
+#### test
 
 Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 
@@ -82,7 +82,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --record-performance [all/none]               | [iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory. The default value is **none**. |
 | --record-timeline [all/none] | [Jest Only] Record tests and events timeline, for visual display on the [chrome://tracing](chrome://tracing) tool. The default value is **none**. |
 | --capture-view-hierarchy [enabled/disabled]   | [iOS Only] Capture `*.uihierarchy` snapshots on view action errors and `device.captureViewHierarchy()` calls. The default value is **disabled**. |
-| -R, --retries                                 | [Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or &lt;N&gt; times at least.|
+| -R, --retries                                 | [Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or &lt;N&gt; times at most.|
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
 | -w, --workers                                 | Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest). *Note: For workers > 1, Jest's spec-level reporting is disabled, by default (can be overridden using --jest-report-specs).* |
@@ -97,14 +97,14 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --inspect-brk | Uses [node's --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the jest/mocha test runner <br />*Default: false* |
 | --help                                        | Show help |
 
-#### DETOX_ARGV_OVERRIDE
+##### DETOX_ARGV_OVERRIDE
 
 If you happen to be troubleshooting Detox tests inside a complex script, or a failing CI build
 (e.g., on TeamCity or Jenkins), there is an escape-hatch feature for running Detox with
 some extra CLI args just by setting the `DETOX_ARGV_OVERRIDE` environment variable before
 rerunning it again.
 
-```
+```plain text
 > export DETOX_ARGV_OVERRIDE="--forceExit -w 1 --testNamePattern='that hanging test' e2e/sanity/login.test.js"
 > bash scripts/ci.e2e.sh
   # ... some output ...
@@ -123,24 +123,23 @@ save your time.
 Please avoid using it in your regular flows – instead, use Detox configuration files (`.detoxrc.js`)
 as your primary choice.
 
-#### Notices
+##### Notices
 
 1. <a name="notice-passthrough">It</a> should be noted that `detox test` is a convenience method to trigger an execution
 of a supported test runner, so for the most part it reads configuration from CLI args and `package.json` and remaps it
 to command-line arguments or environment variables that are supported by (or not conflict with) the test runner.
 Hence, **extra arguments to** `detox test` **will be forwarded to your test runner**, e.g:
-  * You run `detox test --bail`, and since `--bail` is an unknown option, it will be forwarded to the test runner as-is.
+    * You run `detox test --bail`, and since `--bail` is an unknown option, it will be forwarded to the test runner as-is.
     * If there is a name conflict for some option (between the test runner and `detox test`), you can pass it explicitly
-      after the reserved `--` sequence. For instance, `detox test -- --help`, will pass `--help` to the test runner CLI
-      itself.
-  
-2. <a name="notice-artifacts">If</a> `--artifacts-location` path does not end with a slash (`/`) or a backslash, then detox CLI will append to the
+        after the reserved `--` sequence. For instance, `detox test -- --help`, will pass `--help` to the test runner CLI
+        itself.
+1. <a name="notice-artifacts">If</a> `--artifacts-location` path does not end with a slash (`/`) or a backslash, then detox CLI will append to the
 path a subdirectory with configuration name and timestamp (e.g. `artifacts/android.emu.release.2018-06-12 05:52:43Z`).
 In other words, the path with a slash at the end assumes you do not want a subdirectory inside.
 For more details, please check the [Enabling artifacts](APIRef.Artifacts.md#artifacts).
-The default value is **artifacts** (plus a subdir). 
+The default value is **artifacts** (plus a subdir).
 
-### run-server
+#### run-server
 
 Start a standalone Detox server
 
@@ -153,10 +152,10 @@ Start a standalone Detox server
 | --no-color             | Disable colorful logs |
 | --help                 | Show help |
 
-### recorder
+#### recorder
 
 If you have installed [Detox Recorder](https://github.com/wix/DetoxRecorder) in your project, you can use this command to start a new recording.
 
-### Cache
+#### Cache
 
 Detox stores a cached version of its framework in `~/Library/Detox`. A different cache folder is used for different Xcode and Detox versions. Use the various cache commands to clean or build this cache.

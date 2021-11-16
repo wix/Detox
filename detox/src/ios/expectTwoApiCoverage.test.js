@@ -11,8 +11,10 @@ describe('expectTwo API Coverage', () => {
   describe('Matchers', () => {
     it(`by.accessibilityLabel`, async () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(25);
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible(25);
 
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
@@ -74,6 +76,13 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
       await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
       // await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
+    });
+
+    it(`should throw for invalid toBeVisible parameters`, async () => {
+      await expectToThrow(() =>e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0));
+      await expectToThrow(() =>e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
+      await expectToThrow(() =>e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0));
+      await expectToThrow(() =>e.e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
     });
   });
 

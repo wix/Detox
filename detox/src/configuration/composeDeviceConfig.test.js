@@ -15,8 +15,9 @@ describe('composeDeviceConfig', () => {
   let globalConfig;
   /** @type {DetoxConfigErrorComposer} */
   let errorComposer;
-  /** @type {DriverRegistry} */
-  let driverRegistry;
+  /** @type { { validateConfig: Function } */
+  let environmentFactory;
+
   /** @type {Logger} */
   let logger;
 
@@ -26,6 +27,9 @@ describe('composeDeviceConfig', () => {
     localConfig,
     cliConfig,
   });
+
+  const givenConfigValidationSuccess = () => environmentFactory.validateConfig.mockReturnValue(undefined);
+  const givenConfigValidationError = (error) => environmentFactory.validateConfig.mockImplementation(() => { throw error; });
 
   const KNOWN_CONFIGURATIONS = [['plain'], ['inline'], ['aliased']];
 
@@ -99,10 +103,6 @@ describe('composeDeviceConfig', () => {
     const deviceId = _.uniqueId('device');
     deviceConfig = _.cloneDeep(deviceTemplates[deviceType] || deviceTemplates[undefined]);
 
-    if (deviceType === './customDriver') {
-      driverRegistry.resolve = () => (class SomeDriver {});
-    }
-
     switch (configType) {
       case 'plain':
         Object.assign(localConfig, deviceConfig);
@@ -122,11 +122,9 @@ describe('composeDeviceConfig', () => {
     jest.mock('../utils/logger');
     logger = require('../utils/logger');
 
-    jest.mock('../devices/DriverRegistry', () => {
-      const DriverRegistry = jest.requireActual('../devices/DriverRegistry');
-      driverRegistry = DriverRegistry.default;
-      return DriverRegistry;
-    });
+    jest.mock('../environmentFactory');
+    environmentFactory = require('../environmentFactory');
+    givenConfigValidationSuccess();
 
     cliConfig = {};
     localConfig = {};
@@ -490,9 +488,7 @@ describe('composeDeviceConfig', () => {
         test('should throw if a device type cannot be resolved', () => {
           setConfig('./customDriver', configType);
           const someError = new Error('Some error');
-          driverRegistry.resolve = () => {
-            throw someError;
-          };
+          givenConfigValidationError(someError);
 
           expect(compose).toThrow(errorComposer.invalidDeviceType(
             alias(),
@@ -706,5 +702,6 @@ describe('composeDeviceConfig', () => {
         });
       });
     });
+
   });
 });

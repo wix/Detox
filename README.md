@@ -1,5 +1,6 @@
+<!-- markdownlint-configure-file { "first-line-heading": 0 } -->
 <p align="center">
-	<img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
+  <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
 </p>
 <h1 align="center">
   Detox
@@ -46,7 +47,7 @@ The most difficult part of automated testing on mobile is the tip of the testing
 * **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS and Android.
 * **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
 * **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
-* **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief. 
+* **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief.
 * **Test Runner Independent:** Use Jest, Mocha, AVA, or any other JavaScript test runner you like (spoiler: we have our favorite).
 * **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 
@@ -70,7 +71,7 @@ The following React Native versions have been tested:
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 
-## Get Started with Detox!
+## Get Started with Detox
 
 Read the [Getting Started Guide](docs/Introduction.GettingStarted.md) to get Detox running on your app in less than 10 minutes.
 
@@ -84,7 +85,7 @@ We believe that the only way to address the core difficulties with mobile end-to
 
 ## Contributing to Detox
 
-Detox has been open-source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged with the [![ ](https://placehold.it/15/c4532d/000000?text=+) looking for contributors](https://github.com/wix/detox/labels/user%3A%20looking%20for%20contributors) label. If you have encountered a bug or would like to suggest a new feature, please open an issue.
+Detox has been open-source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged with the [<img src="docs/img/github-label-contributors.png">](https://github.com/wix/Detox/labels/user%3A%20looking%20for%20contributors) label. If you have encountered a bug or would like to suggest a new feature, please open an issue.
 
 Dive into Detox core by reading the [Detox Contribution Guide](docs/Guide.Contributing.md).
 
@@ -94,5 +95,4 @@ Dive into Detox core by reading the [Detox Contribution Guide](docs/Guide.Contri
 
 ## Non-English Resources (Community)
 
-- [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)
-
+* [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)

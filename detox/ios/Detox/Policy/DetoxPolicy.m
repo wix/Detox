@@ -8,37 +8,21 @@
 
 #import "DetoxPolicy.h"
 
-static DetoxPolicy* _activePolicy;
-
 @implementation DetoxPolicy
 
-+ (DetoxPolicy *)activePolicy
-{
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		_activePolicy = [DetoxPolicy new];
-	});
-	
-	return _activePolicy;
-}
-
-- (CGFloat)visibilityPixelAlphaThreshold
-{
++ (CGFloat)visibilityPixelAlphaThreshold {
 	return 0.5;
 }
 
-- (CGFloat)visibilityVisiblePixelRatioThreshold
-{
-	return 0.75;
++ (NSUInteger)defaultPercentThresholdForVisibility {
+	return 75;
 }
 
-- (NSUInteger)consecutiveTouchPointsWithSameContentOffsetThreshold
-{
-	return 2;
++ (NSUInteger)consecutiveTouchPointsWithSameContentOffsetThreshold {
+	return 12;
 }
 
-+ (NSString*)descriptionForDouble:(CGFloat)number
-{
++ (NSString*)percentDescriptionForValue:(CGFloat)value {
 	static NSNumberFormatter* formatter;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -47,12 +31,7 @@ static DetoxPolicy* _activePolicy;
 		formatter.numberStyle = NSNumberFormatterPercentStyle;
 	});
 	
-	return [formatter stringFromNumber:@(number)];
-}
-
-- (NSString *)visibilityVisiblePixelRatioThresholdDescription
-{
-	return [self.class descriptionForDouble:self.visibilityVisiblePixelRatioThreshold];
+	return [formatter stringFromNumber:@(value)];
 }
 
 @end

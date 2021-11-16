@@ -7,7 +7,7 @@ const unparse = require('yargs-unparser');
 
 const { composeDetoxConfig } = require('../src/configuration');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
-const GenyDeviceRegistryFactory = require('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
+const GenyDeviceRegistryFactory = require('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const log = require('../src/utils/logger').child({ __filename });

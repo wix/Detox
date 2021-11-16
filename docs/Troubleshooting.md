@@ -1,4 +1,4 @@
-# Troubleshooting
+## Troubleshooting
 
 Issues related to building the app:
 
@@ -9,4 +9,3 @@ Issues related to tests execution & runtime:
 * [Running tests](Troubleshooting.RunningTests.md)
 * [Synchronization issues](Troubleshooting.Synchronization.md)
 * [General tests stability issues](Troubleshooting.Flakiness.md)
-

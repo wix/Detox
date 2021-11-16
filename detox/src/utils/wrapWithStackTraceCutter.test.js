@@ -30,7 +30,7 @@ describe('wrapWithStackTraceCutter', () => {
     const anError = await obj.willThrow().catch(e => e);
     expect(anError).toBeInstanceOf(ErrorClass);
     expect(anError.stack).toBe(obj.originalErrorStack);
-    expect(anError.stack).toContain('detox/src');
+    expect(anError.stack).toMatch(/detox[\\/]src/m);
   });
 
   it('should not much affect the original logic of wrapped methods', async () => {

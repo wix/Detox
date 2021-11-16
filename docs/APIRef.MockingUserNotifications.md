@@ -1,10 +1,10 @@
-# Mocking User Notifications
+## Mocking User Notifications
 
 Detox supports mocking user notifications.
 
 >**Note:** The mocking mechanism will not mimic the UI of a user notification. Instead, it will only simulate a user interaction with the notification - namely, the "opening" of it (equivalent to a user's tap/swipe on it in the notification center).
 
-## Mocking App Launch With a Notification
+### Mocking App Launch With a Notification
 
 `launchApp()` with custom parameters (i.e. `userNotification`) will trigger the mocking mechanism.
 
@@ -26,7 +26,7 @@ describe('Launch with push notification', () => {
 });
 ```
 
-## Mocking Notification Reception on a Running App
+### Mocking Notification Reception on a Running App
 
 Use the `sendUserNotification()` method to send notification to **running** app. Notifications can be sent to an active or a background app.
 
@@ -48,7 +48,7 @@ describe('Foreground user notifications', () => {
 });
 ```
 
-## Notification JSON Format
+### Notification JSON Format
 
 User notifications are passed as JSON objects to Detox. The JSON object needs to provide some required data, but can also provide an additional, optional payload.
 
@@ -67,7 +67,7 @@ User notifications are passed as JSON objects to Detox. The JSON object needs to
 | `user-text` | No | String | iOS | The text response provided by the user. |
 | `action-identifier` | No | String | iOS | The identifier for the action that the user selected. |
 
-### Triggers (iOS-only)
+#### Triggers (iOS-only)
 
 Triggers are objects representing the trigger.
 
@@ -79,9 +79,10 @@ Triggers are objects representing the trigger.
 | `date-components` | Yes for `calendar` trigger type | Object | The date components used to construct this object. See the Date Components section below. |
 | `region` | Yes for `location` trigger type | Object | The region used to determine when the notification is sent. See the Region section below. |
 
-#### Trigger Types
+##### Trigger Types
 
 There are four types of triggers supported by Detox at this time:
+
 - `push`
 - `calendar`
 - `timeInterval`
@@ -93,14 +94,14 @@ For convenience, these trigger types are provided as constants in `DetoxConstant
 const DetoxConstants = require('detox').DetoxConstants;
 
 const userNotification = {
-	"trigger": {
-		"type": DetoxConstants.userNotificationTriggers.push
-	},
-	...
+  "trigger": {
+    "type": DetoxConstants.userNotificationTriggers.push
+  },
+  // ...
 }
 ```
 
-### Date Components (iOS-only)
+#### Date Components (iOS-only)
 
 | Key | Required | Value Type | Description |
 |------------------|----------|------------|-------------------------------------------------------|
@@ -117,7 +118,7 @@ const userNotification = {
 | `weekOfMonth` | No | Integer | The week number of the month for the receiver. |
 | `leapMonth` | No | Boolean | Indicates whether the month is a leap month. |
 
-### Region (iOS-only)
+#### Region (iOS-only)
 
 | Key | Required | Value Type | Description |
 |-----------------|----------|------------|------------------------------------------------------------------------------------|
@@ -126,30 +127,29 @@ const userNotification = {
 | `notifyOnEntry` | No | Boolean | Indicates that notifications are generated upon entry into the region. |
 | `notifyOnExit` | No | Boolean | Indicates that notifications are generated upon exit from the region. |
 
-### Coordinate (iOS-only)
+#### Coordinate (iOS-only)
 
 | Key | Required | Value Type | Description |
 |-------------|----------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `latitude` | Yes | Number | The latitude in degrees. Positive values indicate latitudes north of the equator. Negative values indicate latitudes south of the equator. |
 | `longitude` | Yes | Number | The longitude in degrees. Measurements are relative to the zero meridian, with positive values extending east of the meridian and negative values extending west of the meridian. |
 
-### Payload
+#### Payload
 
 On Android, the content will be available via the activity's [`getIntent()`](https://developer.android.com/reference/android/app/Activity#getIntent()) API, inside the intent's _extra_ bundle. Under some limitations, that includes data-cascading so as to provide comprehensive support for Javascript's advanced object-hierarchy capabilities as much as possible. As an example, consider this payload:
 
 ```javascript
-  const userNotification = {
-    payload: {
-      userData: 'userDataValue',
-      userDataNum: 111.2,
-      userDataFlag: true,
-      userDataArray: ['rock', 'paper', 'scissors'],
-      userDataObj: {
-        cascadedKey: 'cascadedValue'
-      },
+const userNotification = {
+  payload: {
+    userData: 'userDataValue',
+    userDataNum: 111.2,
+    userDataFlag: true,
+    userDataArray: ['rock', 'paper', 'scissors'],
+    userDataObj: {
+      cascadedKey: 'cascadedValue'
     },
-  };
-
+  },
+};
 ```
 
 The outcome on the native side will be such that all of these conditions evaluate to _true_:
@@ -162,13 +162,13 @@ activity.getIntent().getStringArrayExtra("userDataArray")[0] == "rock";
 activity.getIntent().getBundleExtra("userDataObj").getString("cascadedKey") == "cascadedValue";
 ```
 
-#### Handling at Runtime
+##### Handling at Runtime
 
 Note that on Android, data delivered through an intent at runtime, is typically received in your activity's [`onNewIntent`](https://developer.android.com/reference/android/app/Activity#onNewIntent(android.content.Intent)) callback. Be sure to consider what should be done in order to handle this type of a use case in your app: Namely, that `setIntent()` should be called in order for the data to be later available in your app through `getIntent()`, as explained earlier.
 
->  **This isn't related to Detox in particular**, and is set here simply to help you consider all the use cases in your app so that tests coverage would be optimal.
+> **This isn't related to Detox in particular**, and is set here simply to help you consider all the use cases in your app so that tests coverage would be optimal.
 
-### Examples
+#### Examples
 
 1. [Calendar Trigger](https://github.com/wix/detox/blob/master/detox/ios/DetoxUserNotificationTests/user_notification_calendar_trigger.json)
 2. [Location Trigger](https://github.com/wix/detox/blob/master/detox/ios/DetoxUserNotificationTests/user_notification_location_trigger.json)

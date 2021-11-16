@@ -1,0 +1,48 @@
+name: Rapid Test
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintignore'
+      - '.markdownlintrc'
+      - 'docs/**'
+      - '**.md'
+
+jobs:
+
+  js:
+    name: JS & TS
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [12]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Bootstrap Lerna
+        run: npx lerna bootstrap --no-ci
+        env:
+          DETOX_DISABLE_POD_INSTALL: true
+          DETOX_DISABLE_POSTINSTALL: true
+      - name: Lint
+        run: npm run lint
+        working-directory: detox
+      - name: Typings
+        run: npm test
+        working-directory: detox/test
+      - name: Unit tests
+        run: npm run unit
+        working-directory: detox

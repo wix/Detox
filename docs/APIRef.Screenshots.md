@@ -1,4 +1,4 @@
-# Taking Screenshots
+## Taking Screenshots
 
 Detox supports taking in-test screenshots of the device, making the result immediately available in the form of an image file.
 
@@ -36,7 +36,7 @@ function expectBitmapsToBeEqual(imagePath, expectedImagePath) {
 
 **Important:** The recommended, more practical way of doing this, is by utilizing more advanced 3rd-party image snapshotting & comparison tools such as [applitools](https://applitools.com).
 
-## Device-level Screenshots
+### Device-level Screenshots
 
 Taking a screenshot of the entire screen can be done using a device-level API:
 
@@ -56,16 +56,16 @@ Important: The returned path is guaranteed to be valid only during the test exec
 
 `name (optional)` - Name of the final image-file to store as the artifact. For example, setting `name` to `opened general section` would result in an artifact file named `opened general section.png`. In case the name isn't provided, Detox would self-generate a random, distinct name, instead (though not a very descriptive one).
 
-### Artifacts Management
+#### Artifacts Management
 
 Means of creation of the final image as an artifact is tightly connected to the `--take-screenshots` argument to Detox CLI:
 
-* If `--take-screenshots none` is set, the screenshot will be taken, but it won't be saved to `<artifacts-location>` after the test ends.
-* If `--take-screenshots failing` is set, and the test passes, the screenshot won't be saved to `<artifacts-location>` after the test ends.
-* In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Members area should greet the member with an announcement/opened general section.png`.
-* In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Members area should greet the member with an announcement/opened general section.png`.
+- If `--take-screenshots none` is set, the screenshot will be taken, but it won't be saved to `<artifacts-location>` after the test ends.
+- If `--take-screenshots failing` is set, and the test passes, the screenshot won't be saved to `<artifacts-location>` after the test ends.
+- In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Members area should greet the member with an announcement/opened general section.png`.
+- In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Members area should greet the member with an announcement/opened general section.png`.
 
-### Caveats
+#### Caveats
 
 This API well-captures all elements, although alongside surrounding "visual noise" such as the navigation bar, as can be seen in the image below:
 
@@ -98,7 +98,7 @@ async function setDemoMode() {
 
 > Note: This script implicitly assumes only one device is used, as device ID isn't specified anywhere (e.g. with `adb -s <id>`).
 
-## Element-level Screenshots
+### Element-level Screenshots
 
 Taking a screenshot of a specific element can be simply done using an API similar to other element-interaction Detox API's:
 
@@ -114,7 +114,7 @@ In this example, the image-file specified by `imagePath` will hold the visual co
 
 Meaning, assuming `announcementsRoot` has been specified over some ancestor view which has both the `Announcement` title _and_ the card as its direct or indirect children, the result would include both. That, in turns, also includes the card's children, such as the the avatar, welcome text, etc.
 
-### Caveats of this approach
+#### Caveats of this approach
 
 Focusing on specific elements, this approach is key to more stable comparisons, and hence more stable tests, over time. However, inspecting less content evidently means protecting against less bugs. For example, In a screen where the element in question is partly obstructed by other elements drawn on the screen, the image created by `takeScreenshot()` will successfully hold all of it's content, nonetheless.
 
@@ -129,4 +129,3 @@ Taking an element-screenshot of the announcement part alone, would yield a prope
 Only by taking the element-screenshot of a common ancestor, will this bug be surfaced. However, in turn, that can affect stability, as the result is now sensitive to more details such as padding and background color.
 
 **As a bottom line, this API is mostly suited for testing UI components rather than complete screens.**
-

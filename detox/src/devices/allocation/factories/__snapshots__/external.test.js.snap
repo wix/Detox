@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`External allocator factory validation given no allocation-driver class should throw an error 1`] = `"The custom driver at '../fake/module/path' does not export the DeviceAllocationDriverClass property"`;
