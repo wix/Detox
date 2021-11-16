@@ -96,21 +96,32 @@ class AsyncWebSocket {
     const messageId = message.messageId;
     const inFlight = this.inFlightPromises[messageId] = new InflightRequest(message).withTimeout(options.timeout);
 
-    if (this.hasMultiplePendingActions()) {
-        for (const inflight of _.values(this.inFlightPromises)) {
-          if (!inflight.message.canBeConcurrent) {
-            inflight.reject(new DetoxRuntimeError({
-              message: 'Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?',
-            }));
-          }
-        }
-    }
+    this.handleMultipleNonAtomicPendingActions();
 
     const messageAsString = JSON.stringify(message);
     this._log.trace(EVENTS.SEND, messageAsString);
     this._ws.send(messageAsString);
 
     return inFlight.promise;
+  }
+
+  handleMultipleNonAtomicPendingActions() {
+    const pendingNonAtomicRequests = this.getNonAtomicPendingActions();
+    for (const inflight of pendingNonAtomicRequests) {
+        inflight.reject(new DetoxRuntimeError({
+          message: 'Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?',
+        }));
+    }
+  }
+
+  getNonAtomicPendingActions() {
+    const remaining = Object.keys(this.inFlightPromises).map((key) => {
+      return this.inFlightPromises[key];
+    }).filter(item => {
+      return item.message.isAtomic === true;
+    });
+
+    return remaining.length > 1 ? remaining : [];
   }
 
   setEventCallback(event, callback) {
@@ -133,11 +144,6 @@ class AsyncWebSocket {
   // TODO: handle this leaked abstraction some day
   hasPendingActions() {
     return _.some(this.inFlightPromises, p => p.message.type !== 'currentStatus');
-  }
-
-  hasMultiplePendingActions() {
-    const remainingMessages = _.filter(this.inFlightPromises, p => !p.message.canBeConcurrent);
-    return remainingMessages.length > 1;
   }
 
   rejectAll(error) {
