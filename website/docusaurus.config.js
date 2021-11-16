@@ -14,7 +14,7 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
   favicon: '/img/favicon.ico',
   organizationName: 'wix',
-  projectName: 'detox',
+  projectName: 'Detox',
 
   presets: [
     [
