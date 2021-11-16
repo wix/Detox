@@ -21,7 +21,7 @@ Provide the steps necessary to reproduce the issue. If you are seeing a regressi
 3. 
 
 <!--
-IMPORTANT! In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go DetoxTemplate project (https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / e2e tests). For complete information, review the guidelines there.
+IMPORTANT! In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go DetoxTemplate project (https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / E2E tests). For complete information, review the guidelines there.
 -->
 
 

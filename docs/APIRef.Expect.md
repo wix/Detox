@@ -30,9 +30,9 @@ Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with eleme
 Expects the view to be at least N% visible on the screen.
 Accepts an optional parameter of percent threshold of element visibility, integer ranging from 1 to 100, that determines whether the element is visible or not. If no number is provided then defaults to 75%.
 
-Negating this expectation with a `not` expression expects the view's visible area to be lower than N%.
+Negating this expectation with a `not` expression expects the view’s visible area to be lower than N%.
 
-On iOS, visibility is defined by having the view, or one of its subviews, be topmost at the view's activation point on screen.
+On iOS, visibility is defined by having the view, or one of its subviews, be topmost at the view’s activation point on screen.
 
 ```js
 await expect(element(by.id('UniqueId203'))).toBeVisible();
@@ -89,7 +89,7 @@ await expect(element(by.id('UniqueId533'))).toHaveValue('0');
 
 #### `toHaveSliderPosition(normalizedPosition, tolerance)`
 
-Expects the slider element to have the specified normalized position ([0, 1]), within the provided tolerance (optional).
+Expects the slider element to have the specified normalized position (\[0, 1]), within the provided tolerance (optional).
 
 ```js
 await expect(element(by.id('slider'))).toHaveSliderPosition(0.75);

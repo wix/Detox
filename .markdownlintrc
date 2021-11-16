@@ -1,5 +1,9 @@
 {
   "first-line-heading": { "level": 2 },
+  "heading-style": { "style": "atx" },
+  "hr-style": { "style": "---" },
+  "ol-prefix": { "style": "one" },
+  "ul-style": { "style": "dash" },
   "line-length": 0,
   "no-inline-html": 0
 }

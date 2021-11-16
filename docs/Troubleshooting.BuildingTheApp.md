@@ -7,19 +7,19 @@ sidebar_label: Dealing With Problems With Building the App & Detox
 
 ## Dealing With Problems With Building the App & Detox
 
-This page is about issues related to building the app, typically triggerred when running `detox build` (and not `detox test`, for example).
+This page is about issues related to building the app, typically triggered when running `detox build` (and not `detox test`, for example).
 
 For troubleshooting of other issue, refer to our [troubleshooting index](Troubleshooting.md).
 
 ## Android
 
-### Problem: Kotlin stdlib version conflicts
+### Problem: Kotlin `stdlib` version conflicts
 
-The problems and resolutions here are different if you're using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is the default, or compiling it yourself.
+The problems and resolutions here are different if you’re using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is the default, or compiling it yourself.
 
 #### Resolving for a precompiled dependency (`.aar`)
 
-Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies), Detox assumes the most recent one, namely `kotlin-stdlib-jdk8`. If your Android build fails due to conflicts with implementations coming from other dependencies or even your own app, consider adding an exclusion to either the "other" dependencies or detox itself, for example:
+Of all [Kotlin implementation flavors](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies), Detox assumes the most recent one, namely `kotlin-stdlib-jdk8`. If your Android build fails due to conflicts with implementations coming from other dependencies or even your own app, consider adding an exclusion to either the "other" dependencies or detox itself, for example:
 
 ```diff
 dependencies {
@@ -62,7 +62,7 @@ Could not determine the dependencies of task ':detox:compileDebugAidl'.
 
 #### Resolving for a compiling subproject
 
-Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
+Detox requires the Kotlin standard-library as it’s own dependency. Due to the [many flavors](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
 
 For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
 

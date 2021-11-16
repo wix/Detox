@@ -2,8 +2,10 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "docs:lint": "markdownlint '**/*.md'",
-    "docs:fix": "markdownlint --fix '**/*.md'",
+    "docs:markdownlint": "markdownlint -p .remarkignore '**/*.md'",
+    "docs:remark": "remark .",
+    "docs:lint": "npm run docs:markdownlint && npm run docs:remark",
+    "docs:fix": "npm run docs:remark -- -o && npm run docs:markdownlint -- --fix",
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/ci.release.js",
@@ -11,16 +13,46 @@
     "package:ios": "scripts/ci.ios-release.sh",
     "postinstall": "node scripts/postinstall.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix/Detox.git"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "chalk": "^2.4.2",
+    "dictionary-en": "^3.1.0",
     "lerna": "3.22.1",
     "lodash": "4.17.x",
     "markdownlint-cli": "^0.29.0",
+    "remark": "^14.0.1",
+    "remark-cli": "^10.0.0",
+    "remark-frontmatter": "^4.0.1",
+    "remark-gfm": "^3.0.1",
+    "remark-github": "^11.2.2",
+    "remark-lint-no-dead-urls": "^1.1.0",
+    "remark-retext": "^5.0.1",
+    "remark-validate-links": "^11.0.2",
+    "retext-contractions": "^5.1.0",
+    "retext-diacritics": "^4.1.0",
+    "retext-english": "^4.1.0",
+    "retext-equality": "^6.5.0",
+    "retext-indefinite-article": "^3.1.0",
+    "retext-intensify": "^6.1.0",
+    "retext-passive": "^4.1.0",
+    "retext-profanities": "^7.1.0",
+    "retext-readability": "^7.1.0",
+    "retext-redundant-acronyms": "^4.2.0",
+    "retext-repeated-words": "^4.1.0",
+    "retext-sentence-spacing": "^5.1.0",
+    "retext-simplify": "^7.1.0",
+    "retext-spell": "^5.1.0",
+    "retext-syntax-mentions": "^3.1.0",
+    "retext-syntax-urls": "^3.1.1",
     "semver": "5.x.x",
-    "shell-utils": "1.x.x"
+    "shell-utils": "1.x.x",
+    "unified": "^10.1.0"
   },
   "version": "19.0.0"
 }
