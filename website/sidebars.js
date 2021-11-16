@@ -41,6 +41,7 @@ const sidebars = {
         'matchers',
         'actions-on-element',
         'expect',
+        'launch-args',
         'mocking-open-with-url',
         'mocking-user-notifications',
         'mocking-user-activity',
@@ -69,12 +70,13 @@ const sidebars = {
         'debugging-in-xcode',
         'debugging-in-android-studio',
         'mocking',
+        'migration',
         'jest',
         'mocha',
         'parallel-test-execution',
         'third-party-drivers',
-        'uninstalling',
         'expo',
+        'uninstalling',
       ]
     },
     {
