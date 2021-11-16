@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>Detox</ShortName>
+  <Description>Search Detox</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="16" height="16" type="image/x-icon">https://wix.github.io/Detox/img/favicon.ico</Image>
+  <Url type="text/html" method="get" template="https://wix.github.io/Detox/search?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://wix.github.io/Detox/opensearch.xml" />
+  <moz:SearchForm>https://wix.github.io/Detox/</moz:SearchForm>
+</OpenSearchDescription>
