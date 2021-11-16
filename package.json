@@ -4,7 +4,7 @@
   "scripts": {
     "docs:markdownlint": "markdownlint -p .remarkignore '**/*.md'",
     "docs:remark": "remark .",
-    "docs:lint": "npm run docs:lint && npm run docs:remark",
+    "docs:lint": "npm run docs:markdownlint && npm run docs:remark",
     "docs:fix": "npm run docs:remark -- -o && npm run docs:lint -- --fix",
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
@@ -28,6 +28,7 @@
     "markdownlint-cli": "^0.29.0",
     "remark": "^14.0.1",
     "remark-cli": "^10.0.0",
+    "remark-frontmatter": "^4.0.1",
     "remark-gfm": "^3.0.1",
     "remark-github": "^11.2.2",
     "remark-lint-no-dead-urls": "^1.1.0",

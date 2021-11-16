@@ -455,7 +455,7 @@ session config:
 ```
 
 Also, you can specify an optional numeric `debugSynchronization` parameter
-(see also `--debug-synchronization` in [detox-cli test section](APIRef.DetoxCLI.md#test)).
+(see also `--debug-synchronization` in [`detox-cli` test section](APIRef.DetoxCLI.md#test)).
 When an action/expectation takes a significant amount time, use this option to print device synchronization status.
 The status will be printed if the action takes more than _\[N]_ ms to complete.
 

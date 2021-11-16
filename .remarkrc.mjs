@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 import dictionary_en from 'dictionary-en';
+import remark_frontmatter from 'remark-frontmatter';
 import remark_gfm from 'remark-gfm';
 import remark_github from 'remark-github';
 import remark_retext from 'remark-retext';
@@ -40,6 +41,10 @@ export default {
     strong: '*'
   },
   plugins: [
+    [remark_frontmatter, {
+      type: 'yaml',
+      marker: '-',
+    }],
     // GitHub and its flavored markdown integration
     [remark_gfm, {
       tablePipeAlign: true,
