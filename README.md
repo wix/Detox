@@ -1,4 +1,5 @@
 <!-- markdownlint-configure-file { "first-line-heading": 0 } -->
+
 <p align="center">
   <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
 </p>
@@ -40,24 +41,24 @@ describe('Login flow', () => {
 
 ## About
 
-High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. Detox tests your mobile app while it's running in a real device/simulator, interacting with it just like a real user.
+High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. Detox tests your mobile app while it’s running in a real device/simulator, interacting with it just like a real user.
 
-The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That's where Detox comes into play.
+The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That’s where Detox comes into play.
 
-* **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS and Android.
-* **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
-* **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
-* **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief.
-* **Test Runner Independent:** Use Jest, Mocha, AVA, or any other JavaScript test runner you like (spoiler: we have our favorite).
-* **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
+- **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS and Android.
+- **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
+- **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
+- **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief.
+- **Test Runner Independent:** Use Jest, Mocha, AVA, or any other JavaScript test runner you like (spoiler: we have our favorite).
+- **Debuggable:** Modern `async`-`await` API allows breakpoints in asynchronous tests to work as expected.
 
 ## Supported Versions
 
 ### Environment
 
-* **OS**: macOS 10.15 (Catalina) or higher
-* **Xcode**: 11.0 or higher
-  * **iOS Simulator Runtime**: iOS 13.0 or higher
+- **OS**: macOS 10.15 (Catalina) or higher
+- **Xcode**: 11.0 or higher
+  - **iOS Simulator Runtime**: iOS 13.0 or higher
 
 ### React Native
 
@@ -65,9 +66,9 @@ Detox is built from the ground up to support React Native projects as well as pu
 
 The following React Native versions have been tested:
 
-| iOS     | Android                                                      |
-| ------- | ------------------------------------------------------------ |
-| ≤0.64.x | ≥0.59, ≤0.64 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)* |
+| iOS     | Android                                                                                                           |
+| ------- | ----------------------------------------------------------------------------------------------------------------- |
+| ≤0.64.x | ≥0.59, ≤0.64 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)\* |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 
@@ -85,14 +86,14 @@ We believe that the only way to address the core difficulties with mobile end-to
 
 ## Contributing to Detox
 
-Detox has been open-source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged with the [<img src="docs/img/github-label-contributors.png">](https://github.com/wix/Detox/labels/user%3A%20looking%20for%20contributors) label. If you have encountered a bug or would like to suggest a new feature, please open an issue.
+Detox has been open-source from the first commit. If you’re interested in helping out with our roadmap, please see issues tagged with the [<img src="docs/img/github-label-contributors.png">](https://github.com/wix/Detox/labels/user%3A%20looking%20for%20contributors) label. If you have encountered a bug or would like to suggest a new feature, please open an issue.
 
 Dive into Detox core by reading the [Detox Contribution Guide](https://wix.github.io/detox/docs/guide/contributing).
 
 ## License
 
-* Detox is licensed under the [MIT License](LICENSE)
+- Detox is licensed under the [MIT License](LICENSE)
 
 ## Non-English Resources (Community)
 
-* [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)
+- [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)
