@@ -8,8 +8,8 @@ sidebar_label: Debugging in Android Studio
 ## Debugging in Android Studio During Detox Tests
 
 > This flow is not standard and serves mostly for investigating weird crashes or
-when contributing to Detox itself.  
-> **Don't use it unless you have a good reason.**
+> when contributing to Detox itself.\
+> **Don’t use it unless you have a good reason.**
 
 ### Setting Detox up as a compiling dependency
 
@@ -17,7 +17,7 @@ Before you go anywhere further, follow the
 [Setting Detox up as a compiling dependency](Introduction.Android.md#setting-detox-up-as-a-compiling-dependency)
 section from the **Detox for Android** document.
 
-### Add "manual" device configurations to your .detoxrc
+### Add "manual" device configurations to your `.detoxrc`
 
 Locate your `.detoxrc` config file or the corresponding `detox` section in your `package.json`
 and add a configuration similar to this one:
@@ -66,19 +66,19 @@ parameters to disable various side effects and make life easier when debugging:
 +  "artifacts": false
 ```
 
-* Using a preconfigured `session` with an autostarting server removes the legwork of copying and
-pasting values to the instrumentation runner launch arguments dialog every time before any launch
-from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
-are randomly generated for every new test session.
+- Using a preconfigured `session` with an autostarting server removes the legwork of copying and
+  pasting values to the instrumentation runner launch arguments dialog every time before any launch
+  from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
+  are randomly generated for every new test session.
 
-  * The `debugSynchronization: 0` override matters only if you have a global `session` config
-with `debugSynchronization` set to a positive integer value. Otherwise, it is not needed. The point
-is to disable regular app polling requests during debugging, since that only can hinder the debugging.
+  - The `debugSynchronization: 0` override matters only if you have a global `session` config
+    with `debugSynchronization` set to a positive integer value. Otherwise, it is not needed. The point
+    is to disable regular app polling requests during debugging, since that only can hinder the debugging.
 
-* Setting `artifacts: false` override also matters only if you have a global `artifacts` config.
-The motivation is to disable irrelevant taxing activities on the device such as capturing logs
-screenshots, videos and so on.
-  * If your investigation addresses a specific artifact plugin glitch on the native side, then just
+- Setting `artifacts: false` override also matters only if you have a global `artifacts` config.
+  The motivation is to disable irrelevant taxing activities on the device such as capturing logs
+  screenshots, videos and so on.
+  - If your investigation addresses a specific artifact plugin glitch on the native side, then just
     disable all the other plugins. See [Detox Configuration](APIRef.Configuration.md) document
     for the reference.
 
@@ -115,13 +115,13 @@ detoxSessionId | test
 Press any key to continue...
 ```
 
-Now it is time to switch back to Android Studio.  However, if for some reason you wish to terminate the process, use Ctrl+C to exit.
+Now it is time to switch back to Android Studio. However, if for some reason you wish to terminate the process, use `Ctrl+C` to exit.
 
 ### Launching the app
 
 Before you launch the app from Android Studio, make sure to put breakpoints at the points of interest.
 
-You'll need to run your instrumentation runner with the said arguments, this is why you
+You’ll need to run your instrumentation runner with the said arguments, this is why you
 should create a debug configuration of `Android Instrumented Tests` type similar to the
 one below:
 
@@ -149,7 +149,7 @@ If you feel like you see too often this timeout error while debugging:
 
 ```plain text
 Waited for the new RN-context for too long! (60 seconds)
-If you think that's not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
+If you think that’s not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
 ```
 
 you can temporarily hack the timeout here:

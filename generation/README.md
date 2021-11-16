@@ -1,7 +1,7 @@
 ## Generation
 
 This part of the repository aims to automate the adaption of the underlying testing frameworks.
-For now, it only covers `EarlGrey`'s `GREYActions`.
+For now, it only covers `EarlGrey`’s `GREYActions`.
 
 We chose to check the generated files into version control to have them available as documentation.
 
@@ -23,7 +23,7 @@ To correlate changes to the generation with changes in the generated code, pleas
 
 ### Resources
 
-Parsing, ASTs, and code generation are hard topics but don't worry; we got your back.
+Parsing, ASTs, and code generation are hard topics but don’t worry; we got your back.
 Here are some resources that might come in handy:
 
 - [astexplorer](https://astexplorer.net): Allows you to understand Abstract Syntax Trees by showing you code and the resulting AST side-by-side.

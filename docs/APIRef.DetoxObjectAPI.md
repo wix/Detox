@@ -9,7 +9,7 @@ sidebar_label: The `detox` Object
 
 `detox` is globally available in every test file, though currently it is only used in the setup/init file.
 
->NOTE: detox is test runner independent, and we encourage you to choose your own test runner, but for the sake of demonstration we will use `mocha`'s syntax.
+> NOTE: detox is test runner independent, and we encourage you to choose your own test runner, but for the sake of demonstration we will use `mocha`’s syntax.
 
 ### Methods
 
@@ -18,13 +18,13 @@ sidebar_label: The `detox` Object
 - [`detox.afterEach()`](#detoxaftereach)
 - [`detox.cleanup()`](#detoxcleanup)
 - [`detox.traceCall()`](#detoxtracecall)
-- [`detox.trace.startSection(), detox.trace.endSection()`](#detoxtracestartsection,-detoxtraceendsection)
+- [`detox.trace.startSection(), detox.trace.endSection()`](#detoxtracestartsection-detoxtraceendsection)
 
 #### `detox.init()`
 
 The setup phase happens inside `detox.init()`. This is the phase where detox reads its configuration, starts a server, loads its expectation library and starts a simulator.
 
-**If you're using _mocha_**, in your `init.js` add:
+**If you’re using _mocha_**, in your `init.js` add:
 
 ```js
 const detox = require('detox');
@@ -66,7 +66,7 @@ before(async () => {
 
 #### `detox.beforeEach()`
 
-This method should be called at the start of every test to let Detox's artifacts lifecycle know it is the time to start recording logs and videos, or to take another `beforeEach.png` screenshot. Although this is one of usage of `beforeEach`, Detox does not limit itself to this usage and may utilize calls to `beforeEach` for additional purposes in the future.
+This method should be called at the start of every test to let Detox’s artifacts lifecycle know it is the time to start recording logs and videos, or to take another `beforeEach.png` screenshot. Although this is one of usage of `beforeEach`, Detox does not limit itself to this usage and may utilize calls to `beforeEach` for additional purposes in the future.
 
 ```typescript
 declare function beforeEach(testSummary: {
@@ -76,13 +76,13 @@ declare function beforeEach(testSummary: {
 })
 ```
 
-Usually, you are not supposed to write own implementation of this call, instead rely on Detox in-house adapters for [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js) as in the examples. It should alleviate transitions to newer Detox versions for you as the chances are that API specification won't prove itself as sufficient and it may undergo rewrites and extensions.
+Usually, you are not supposed to write own implementation of this call, instead rely on Detox in-house adapters for [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js) as in the examples. It should alleviate transitions to newer Detox versions for you as the chances are that API specification won’t prove itself as sufficient and it may undergo rewrites and extensions.
 
-> NOTE: If you are implementing support for a test runner different from Mocha and Jest, please keep in mind that *pending* (also known as *skipped*) tests should not trigger `detox.beforeEach()` at all, neither `detox.afterEach()`. The rule of thumb is either you guarantee you call them both, or you don't call anyone.
+> NOTE: If you are implementing support for a test runner different from Mocha and Jest, please keep in mind that _pending_ (also known as _skipped_) tests should not trigger `detox.beforeEach()` at all, neither `detox.afterEach()`. The rule of thumb is either you guarantee you call them both, or you don’t call anyone.
 
 #### `detox.afterEach()`
 
-You are expected to call this method only after the test and all its inner `afterEach()`-es complete. Besides passing test title and full name you should pay heed on delivering a valid status field: *failed* or *passed*. If the test has another status (e.g. *skipped*), please comply to the note above in [detox.beforeEach()](#detox.beforeEach) or use one of these two values as a fallback.
+You are expected to call this method only after the test and all its inner `afterEach()`-es complete. Besides passing test title and full name you should pay heed on delivering a valid status field: _failed_ or _passed_. If the test has another status (e.g. _skipped_), please comply to the note above in [detox.beforeEach()](#detoxbeforeEach) or use one of these two values as a fallback.
 
 ```typescript
 declare function afterEach(testSummary: {
@@ -92,13 +92,13 @@ declare function afterEach(testSummary: {
 })
 ```
 
-Normally, you are not supposed to write own implementation of this call, as mentioned earlier in the [detox.beforeEach()](#detox.beforeEach) documentation.
+Normally, you are not supposed to write own implementation of this call, as mentioned earlier in the [detox.beforeEach()](#detoxbeforeEach) documentation.
 
 #### `detox.cleanup()`
 
 The cleanup phase should happen after all the tests have finished. This is the phase where detox server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
 
-**If you're using _mocha_**, in your `init.js` add:
+**If you’re using _mocha_**, in your `init.js` add:
 
 ```js
 after(async () => {
@@ -110,7 +110,7 @@ after(async () => {
 
 :warning: **Beta**
 
-Trace a subprocess of your test's runtime such that it would leave traces inside the [Timeline artifact](https://wix.github.io/docs/api/artifacts#timeline-plugin), for a later inspection.
+Trace a subprocess of your test’s runtime such that it would leave traces inside the [Timeline artifact](APIRef.Artifacts.md#timeline-plugin), for a later inspection.
 
 Example:
 
@@ -135,7 +135,7 @@ At the bottom right, you can see what portion of the test was spent in handling 
 
 :warning: **Beta**
 
-This is similar to the `traceCall()` API, except that it gives more freedom with respect to when a section's start and ending times are defined, so as to monitor a nontrivial flow. As a usage example:
+This is similar to the `traceCall()` API, except that it gives more freedom with respect to when a section’s start and ending times are defined, so as to monitor a nontrivial flow. As a usage example:
 
 ```js
 it('Verify sanity things', async () => {
