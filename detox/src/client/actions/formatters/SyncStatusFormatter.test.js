@@ -1,4 +1,4 @@
-const format = require('./SyncStatusFormatter').formatJSONStatus;
+const format = require('./SyncStatusFormatter');
 
 describe('Sync Status Formatter', () => {
   describe('assertions', () => {
