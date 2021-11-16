@@ -1,3 +1,10 @@
+---
+id: detox-object-api
+slug: api/detox-object-api
+title: Detox Object API
+sidebar_label: The `detox` Object
+---
+
 ## The `detox` Object
 
 `detox` is globally available in every test file, though currently it is only used in the setup/init file.
@@ -45,7 +52,7 @@ Then import them manually:
 const {device, expect, element, by, waitFor} = require('detox');
 ```
 
-Use [this example](../examples/demo-react-native/e2eExplicitRequire) for initial setup
+Use [this example](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2eExplicitRequire) for initial setup
 
 ##### Reusing existing app
 
@@ -69,7 +76,7 @@ declare function beforeEach(testSummary: {
 })
 ```
 
-Usually, you are not supposed to write own implementation of this call, instead rely on Detox in-house adapters for [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js) as in the examples. It should alleviate transitions to newer Detox versions for you as the chances are that API specification won't prove itself as sufficient and it may undergo rewrites and extensions.
+Usually, you are not supposed to write own implementation of this call, instead rely on Detox in-house adapters for [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js) as in the examples. It should alleviate transitions to newer Detox versions for you as the chances are that API specification won't prove itself as sufficient and it may undergo rewrites and extensions.
 
 > NOTE: If you are implementing support for a test runner different from Mocha and Jest, please keep in mind that *pending* (also known as *skipped*) tests should not trigger `detox.beforeEach()` at all, neither `detox.afterEach()`. The rule of thumb is either you guarantee you call them both, or you don't call anyone.
 
@@ -103,7 +110,7 @@ after(async () => {
 
 :warning: **Beta**
 
-Trace a subprocess of your test's runtime such that it would leave traces inside the [Timeline artifact](APIRef.Artifacts.md#timeline-plugin), for a later inspection.
+Trace a subprocess of your test's runtime such that it would leave traces inside the [Timeline artifact](https://wix.github.io/docs/api/artifacts#timeline-plugin), for a later inspection.
 
 Example:
 

@@ -1,3 +1,10 @@
+---
+id: mocking-user-notifications
+slug: api/mocking-user-notifications
+title: Mocking User Notifications
+sidebar_label: Mocking User Notifications
+---
+
 ## Mocking User Notifications
 
 Detox supports mocking user notifications.

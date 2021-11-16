@@ -32,7 +32,7 @@ IMPORTANT! In case of a vague bug or a crash, please create an example project t
 
 #### Screenshots / Video
 
-<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md -->
+<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://wix.github.io/detox/docs/api/artifacts -->
 
 
 #### Environment
@@ -52,7 +52,7 @@ IMPORTANT! In case of a vague bug or a crash, please create an example project t
 
 #### If you are experiencing a timeout in your test
 
-- [ ] I have followed the instructions under [Identifying which synchronization mechanism causes us to wait too much](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much), I have read [synchronization debug documentation](https://github.com/wix/DetoxSync/blob/master/IdleStatusDocumentation.md) and am providing the relevant synchronization debug output below:
+- [ ] I have followed the instructions under [Identifying which synchronization mechanism causes us to wait too much](https://wix.github.io/detox/docs/troubleshooting/synchronization#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much), I have read [synchronization debug documentation](https://github.com/wix/DetoxSync/blob/master/IdleStatusDocumentation.md) and am providing the relevant synchronization debug output below:
 
 #### If you are seeing a Detox build problem (e.g. during `npm install`, not `detox build`)
 
@@ -84,7 +84,7 @@ IMPORTANT: We will not be able to help out or provide proper analysis without th
 
 <!--
 Paste *device* logs from the test device - associated with the failing tests, under the "details" tag below.
-Device logs can be obtained by having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md) for more info).
+Device logs can be obtained by having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://wix.github.io/detox/docs/api/artifacts) for more info).
 
 IMPORTANT: We will not be able to help out or provide proper analysis without these!
 -->

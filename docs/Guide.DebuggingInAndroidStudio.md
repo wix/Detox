@@ -1,3 +1,10 @@
+---
+id: debugging-in-android-studio
+slug: guide/debugging-in-android-studio
+title: Debugging in Android Studio During Detox Tests
+sidebar_label: Debugging in Android Studio
+---
+
 ## Debugging in Android Studio During Detox Tests
 
 > This flow is not standard and serves mostly for investigating weird crashes or

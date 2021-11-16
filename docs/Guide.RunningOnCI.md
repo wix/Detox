@@ -1,3 +1,10 @@
+---
+id: running-on-ci
+slug: guide/running-on-ci
+title: Running on CI
+sidebar_label: Running on CI
+---
+
 ## Running on CI
 
 When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
@@ -9,7 +16,7 @@ Running Detox on CI is not that different from running it locally. There are two
 
 ### Step 1: Prepare a Release Configuration for Your App
 
-We will need to create a [release device configuration for Detox](/docs/APIRef.Configuration.md#device-configuration) inside `package.json` under the `detox` section.
+We will need to create a [release device configuration for Detox](APIRef.Configuration.md#device-configuration) inside `package.json` under the `detox` section.
 
 **Example:**
 
@@ -56,7 +63,7 @@ detox test --configuration ios.sim.release --cleanup
 
 #### • Running Detox on [Travis CI](https://travis-ci.org/)
 
-Detox's own build is running on Travis, check out Detox's [.travis.yml](/.travis.yml) file to see how it's done.
+Detox's own build is running on Travis, check out Detox's [.travis.yml](https://github.com/wix/Detox/tree/master/.travis.yml) file to see how it's done.
 
 This is a simple example configuration to get you started with Detox on Travis:
 

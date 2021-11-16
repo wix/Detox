@@ -1,3 +1,10 @@
+---
+id: android
+slug: introduction/android
+title: Detox for Android
+sidebar_label: Detox for Android
+---
+
 <!-- markdownlint-configure-file { "no-trailing-punctuation": 0 } -->
 ## Detox for Android
 
@@ -76,7 +83,7 @@ Following device types could be used to control Android devices:
   Use this type to connect to Genymotion emulator.
   The `avdName` property accepts a regular expression pattern that allows to specify the pool of device candidates to which you wish to connect. Use this property to run tests in parallel on multiple attached devices.
 
-For a complete, working example, refer to the [Detox example app](/examples/demo-react-native/detox.config.js).
+For a complete, working example, refer to the [Detox example app](https://github.com/wix/Detox/tree/master/examples/demo-react-native/detox.config.js).
 
 ##### 2a. Using product flavors
 

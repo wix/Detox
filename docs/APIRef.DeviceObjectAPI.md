@@ -1,3 +1,10 @@
+---
+id: device-object-api
+slug: api/device-object-api
+title: Device Object API
+sidebar_label: The `device` Object
+---
+
 ## The `device` Object
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).

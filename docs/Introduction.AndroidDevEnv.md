@@ -1,3 +1,10 @@
+---
+id: android-dev-env
+slug: introduction/android-dev-env
+title: Setting Up an Android Development & Testing Environment
+sidebar_label: Setting Up an Android Development & Testing Environment
+---
+
 ## Setting Up an Android Development & Testing Environment
 
 This guide provides some core practices to follow in setting up a stable, reliable environment for running automated UI tests using Android emulators (using Detox, in particular) -- be it on a personal, _local_ computer, or a powerful CI machine.
@@ -62,7 +69,7 @@ Fortunately, the Android team at Google offers a pretty decent alternative: **AO
 
 *Here's a visual comparison between the two - an SDK 28 (Android 9) AOSP emulator (left) vs. an emulator with Google API's installed (right):*
 
-<img src="img/android/aosp-vs-googleapi.png" alt="AOSP vs Google-API" style="zoom:75%;" />
+<img src="img/android/aosp-vs-googleapi.png" alt="AOSP vs Google-API" />
 
 ### Here's how to install them using the command line
 
@@ -140,7 +147,7 @@ Start by launching a freshly baked emulator. Wait for it to go stable.
 
 When running, go to settings (3 dots in the sidebar) > `Snapshots` > `Settings` tab. If not already set, select `Yes` in the `auto-save` option. This should prompt for a restart -- choose `Yes`. The emulator should restart **and save a snapshot.**
 
-<img src="img/android/snapshot-autosave.png" alt="Emulator auto-save menu" style="zoom:50%;" />
+<img src="img/android/snapshot-autosave.png" alt="Emulator auto-save menu" />
 
 Do this again after the emulator is back up, but set `No` in the `auto-save` option. Allow it to restart yet again: it will immediately boot into the state saved as a snapshot earlier.
 

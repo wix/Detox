@@ -1,3 +1,10 @@
+---
+id: building-the-app
+slug: guide/building-the-app
+title: Dealing With Problems With Building the App & Detox
+sidebar_label: Dealing With Problems With Building the App & Detox
+---
+
 ## Dealing With Problems With Building the App & Detox
 
 This page is about issues related to building the app, typically triggerred when running `detox build` (and not `detox test`, for example).

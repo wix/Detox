@@ -1,3 +1,10 @@
+---
+id: artifacts
+slug: api/artifacts
+title: Artifacts
+sidebar_label: Artifacts
+---
+
 ## Artifacts
 
 Artifacts are various recordings during tests including, but not limited to, device logs, device screenshots and screen recordings (videos).
@@ -46,10 +53,11 @@ The `artifacts` object has the following properties:
 | Property    | Example values                  | Default value | Description |
 |-------------|---------------------------------|---------------|-------------|
 | rootDir     | `".artifacts/"`                 | `./artifacts` | A directory, where all the recorded artifacts will be placed in. Please note that there is a trailing slash convention [described above](#slash-convention). |
-| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that exports a custom `PathBuilder` [<sup>\[a\]</sup>](#pathBuilder) |
+| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that exports a custom `PathBuilder` |
+
 | plugins     | `{ ... }`                       | ... see below | ... see below |
 
-<a id=pathBuilder><sup>a</sup><code>PathBuilder</code></a> should be either an _object_ with a method `buildPathForTestArtifact` or a _class_ &mdash; see the corresponding interfaces below:
+<code>PathBuilder</code> should be either an _object_ with a method `buildPathForTestArtifact` or a _class_ &mdash; see the corresponding interfaces below:
 
 ```typescript
 interface PathBuilder {

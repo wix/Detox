@@ -1,3 +1,10 @@
+---
+id: migration
+slug: guide/migration
+title: Migration Guide
+sidebar_label: Migration Guide
+---
+
 ## Migration Guide
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
@@ -568,7 +575,7 @@ In order for Detox to be able to create artifacts, `detox.beforeEach(testSummary
 
 Detox 8 introduces adapters for both Mocha and Jest, wrapping the original `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` functions, for easier integration.
 
-you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js). The gist is brought in the following sections:
+you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js). The gist is brought in the following sections:
 
 ##### *Mocha*
 

@@ -22,6 +22,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/wix/detox/edit/master/docs/',
         },
@@ -44,9 +45,9 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'getting-started',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Documentation',
           },
           {
             href: 'https://github.com/wix/detox',
@@ -62,8 +63,12 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
+                label: 'Getting Started',
+                to: 'docs/introduction/getting-started',
+              },
+              {
+                label: 'Contributing to Detox',
+                to: 'docs/contributing',
               },
             ],
           },

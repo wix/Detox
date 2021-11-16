@@ -1,3 +1,10 @@
+---
+id: third-party-drivers
+slug: guide/third-party-drivers
+title: Third-Party Drivers
+sidebar_label: Third-Party Drivers
+---
+
 ## Third-Party Drivers
 
 Detox comes with built-in support for running on Android and iOS by choosing a driver type in your Detox configurations.
