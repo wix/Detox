@@ -1,6 +1,6 @@
 ---
 id: running-tests
-slug: guide/running-tests
+slug: troubleshooting/running-tests
 title: Dealing With Problems With Running Tests
 sidebar_label: Dealing With Problems With Running Tests
 ---

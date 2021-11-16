@@ -279,7 +279,7 @@ Similar to device configs, any app config can be inlined as well:
 
 #### Artifacts Configuration
 
-See more details in [APIRef.Artifacts.md](APIRef.Artifacts.md).
+See more details in [artifacts doc](APIRef.Artifacts.md).
 
 Detox can store artifacts such as transient screenshots and device logs.
 You can control artifacts collection via Detox configuration:
@@ -455,7 +455,7 @@ session config:
 ```
 
 Also, you can specify an optional numeric `debugSynchronization` parameter
-(see also `--debug-synchronization` in [APIRef.DetoxCLI.md#test](APIRef.DetoxCLI.md#test)).
+(see also `--debug-synchronization` in [detox-cli test section](APIRef.DetoxCLI.md#test)).
 When an action/expectation takes a significant amount time, use this option to print device synchronization status.
 The status will be printed if the action takes more than _[N]_ ms to complete.
 

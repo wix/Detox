@@ -194,7 +194,7 @@ _Note: most guides advise of defining a global `kotlinVersion` constant - as in 
 Detox requires a dummy implementation of a single Android-native test.
 
 1. Add a new file to your project, under this path and name: `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java`. **Double-check that the path is correct!**
-2. Copy & paste the content of the equivalent file from [the detox example app for RN](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java), into it. **Don't forget to change the package name to your project's package name!**
+2. Copy & paste the content of the equivalent file from [the detox example app for RN](https://github.com/wix/Detox/tree/master/examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java), into it. **Don't forget to change the package name to your project's package name!**
 
 #### 6. Enable clear-text (unencrypted) traffic for Detox
 

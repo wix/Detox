@@ -1,6 +1,6 @@
 ---
 id: synchronization
-slug: guide/synchronization
+slug: troubleshooting/synchronization
 title: Dealing With Synchronization Issues in Tests
 sidebar_label: Dealing With Synchronization Issues in Tests
 ---

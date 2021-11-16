@@ -1,6 +1,6 @@
 ---
 id: troubleshooting
-slug: guide/troubleshooting
+slug: troubleshooting/troubleshooting
 title: Troubleshooting
 sidebar_label: Troubleshooting
 ---

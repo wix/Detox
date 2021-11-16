@@ -1,6 +1,6 @@
 ---
 id: building-the-app
-slug: guide/building-the-app
+slug: troubleshooting/building-the-app
 title: Dealing With Problems With Building the App & Detox
 sidebar_label: Dealing With Problems With Building the App & Detox
 ---

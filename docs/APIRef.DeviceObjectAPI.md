@@ -101,7 +101,7 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 #### `device.selectApp(name)`
 
 Use **only for advanced multi-app configs** when you need to switch between your apps
-within the same test scenario. Refer to the [APIRef.Configuration.md](APIRef.Configuration.md#apps-configuration)
+within the same test scenario. Refer to the [configuration doc](APIRef.Configuration.md#apps-configurations)
 to discover how to define multiple apps with different `name`s.
 
 ```js
@@ -113,7 +113,7 @@ app that had been running before.
 
 #### `device.launchApp(params)`
 
-Launch the app defined in the current [`configuration`](APIRef.Configuration.md#apps-configuration).
+Launch the app defined in the current [`configuration`](APIRef.Configuration.md#apps-configurations).
 
 `params`—object, containing one of more of the following keys and values:
 
