@@ -4,42 +4,67 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Supports Different Test Runners',
+    img: require('../../static/img/test-runner.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Accept-icon.html
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Use Jest or Mocha as the test runner (spoiler: we have our favorite).
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Cross Platform',
+    img: require('../../static/img/cross-platform.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Wizard-icon.html
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Write cross-platform end-to-end tests in JavaScript.
+        Currently supports iOS and Android.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
+    title: 'Debuggable',
+    img: require('../../static/img/debug.png').default, // taken from: https://iconarchive.com/show/phuzion-icons-by-kyo-tux/Misc-Bug-icon.html
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Modern async-await API allows breakpoints in asynchronous tests to work as expected.
+      </>
+    ),
+  },
+  {
+    title: 'Automatically Synchronized',
+    img: require('../../static/img/sync.png').default, // taken from: https://iconarchive.com/show/firefox-os-icons-by-vcferreira/clock-icon.html
+    description: (
+      <>
+        Stops flakiness at the core by monitoring asynchronous operations in your app.
+      </>
+    ),
+  },
+  {
+    title: 'Made For CI',
+    img: require('../../static/img/ci.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Semi-success-icon.html
+    description: (
+      <>
+        Execute your E2E tests on CI platforms like Travis CI, CircleCI or Jenkins without grief.
+      </>
+    ),
+  },
+  {
+    title: 'Runs on Devices',
+    img: require('../../static/img/devices.png').default, // taken from: https://iconarchive.com/show/flatastic-9-icons-by-custom-icon-design/Iphone-icon.html
+    description: (
+      <>
+        Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({img, title, description}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} alt={title} />
+        <img src={img} className={styles.featureImage} alt={title} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
