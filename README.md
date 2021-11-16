@@ -36,7 +36,7 @@ describe('Login flow', () => {
 });
 ```
 
- [Get started with Detox now!](https://wix.github.io/detox/docs/introduction/getting-started)
+ [Get started with Detox now!](https://wix.github.io/Detox/docs/introduction/getting-started)
 
 ## About
 
@@ -73,21 +73,21 @@ Future versions are most likely supported, but have not been tested yet. Please 
 
 ## Get Started with Detox
 
-Read the [Getting Started Guide](https://wix.github.io/detox/docs/introduction/getting-started) to get Detox running on your app in less than 10 minutes.
+Read the [Getting Started Guide](https://wix.github.io/Detox/docs/introduction/getting-started) to get Detox running on your app in less than 10 minutes.
 
 ## Documents Site
 
-Explore further about using Detox from our new **[documents site](https://wix.github.io/detox/docs)**.
+Explore further about using Detox from our new **[documents site](https://wix.github.io/Detox/docs)**.
 
 ## Core Principles
 
-We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the  principles of the entire approach. See what Detox [does differently](https://wix.github.io/detox/docs/introduction/design-principles).
+We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the  principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/introduction/design-principles).
 
 ## Contributing to Detox
 
 Detox has been open-source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged with the [<img src="docs/img/github-label-contributors.png">](https://github.com/wix/Detox/labels/user%3A%20looking%20for%20contributors) label. If you have encountered a bug or would like to suggest a new feature, please open an issue.
 
-Dive into Detox core by reading the [Detox Contribution Guide](https://wix.github.io/detox/docs/guide/contributing).
+Dive into Detox core by reading the [Detox Contribution Guide](https://wix.github.io/Detox/docs/guide/contributing).
 
 ## License
 
