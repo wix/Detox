@@ -8,11 +8,11 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Detox',
   tagline: 'Gray box end-to-end testing and automation framework for mobile apps',
-  url: 'https://wix.github.io/detox',
-  baseUrl: '/',
+  url: 'https://wix.github.io',
+  baseUrl: '/Detox/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
+  favicon: '/img/favicon.ico',
   organizationName: 'wix',
   projectName: 'detox',
 
@@ -24,7 +24,7 @@ const config = {
         docs: {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/wix/detox/edit/master/docs/',
+          editUrl: 'https://github.com/wix/Detox/edit/master/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -40,7 +40,7 @@ const config = {
         title: 'Detox',
         logo: {
           alt: 'Detox Logo',
-          src: 'img/logo.png',
+          src: '/img/logo.png',
         },
         items: [
           {
@@ -50,7 +50,7 @@ const config = {
             label: 'Documentation',
           },
           {
-            href: 'https://github.com/wix/detox',
+            href: 'https://github.com/wix/Detox',
             label: 'GitHub',
             position: 'right',
           },
@@ -90,7 +90,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/wix/detox',
+                href: 'https://github.com/wix/Detox',
               },
               {
                 label: 'Twitter',
