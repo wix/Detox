@@ -25,7 +25,7 @@ const DETOX_ARGV_OVERRIDE_NOTICE = `
   debugging flags and features, to speed up your investigation
   and collect additional test artifacts. For more details, see:
 
-  https://github.com/wix/Detox/blob/master/docs/APIRef.DetoxCLI.md#detox_argv_override
+  https://wix.github.io/detox/docs/api/matchers/detox-cli#detox_argv_override
 
 `;
 

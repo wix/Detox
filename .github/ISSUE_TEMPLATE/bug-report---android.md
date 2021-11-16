@@ -49,7 +49,7 @@ IMPORTANT: We will not be able to help out or provide proper analysis without th
 ### Device logs (adb logcat)
 <!--
 Paste *device* logs from the Android device/emulator - associated with the failing tests, under the "details" tag below.
-Device logs can be obtained either by using `adb` (e.g. by running `adb logcat` while the test is running), or by running having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md) for more info).
+Device logs can be obtained either by using `adb` (e.g. by running `adb logcat` while the test is running), or by running having Detox generate them as test artifacts (i.e. by providing the `--record-logs all` argument to the "detox test ..." command - see artifacts guide (https://wix.github.io/detox/docs/api/artifacts) for more info).
 
 IMPORTANT: We will not be able to help out or provide proper analysis without these!
 -->
@@ -64,7 +64,7 @@ IMPORTANT: We will not be able to help out or provide proper analysis without th
 
 ### Screenshots / Video
 
-<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md -->
+<!-- If applicable, add screenshots and videos to help explain your problem. To learn how to generate those, visit our test artifacts guide: https://wix.github.io/detox/docs/api/artifacts -->
 
 
 ### Environment

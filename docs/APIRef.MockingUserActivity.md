@@ -1,3 +1,10 @@
+---
+id: mocking-user-activity
+slug: api/mocking-user-activity
+title: Mocking User Activity
+sidebar_label: Mocking User Activity
+---
+
 ## Mocking User Activity
 
 Detox supports mocking user activity for iOS apps.

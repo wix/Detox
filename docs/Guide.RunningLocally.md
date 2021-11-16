@@ -1,3 +1,10 @@
+---
+id: running-locally
+slug: guide/running-locally
+title: Running Locally
+sidebar_label: Running Locally
+---
+
 ## Running Locally
 
 If your app is ready and does not require any active development, you can write your tests using this workflow and run them locally on your machine. This is convenient for developing your test suite without actively developing your app.

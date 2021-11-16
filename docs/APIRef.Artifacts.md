@@ -1,3 +1,10 @@
+---
+id: artifacts
+slug: api/artifacts
+title: Artifacts
+sidebar_label: Artifacts
+---
+
 ## Artifacts
 
 Artifacts are various recordings during tests including, but not limited to, device logs, device screenshots and screen recordings (videos).
@@ -46,10 +53,11 @@ The `artifacts` object has the following properties:
 | Property    | Example values                  | Default value | Description |
 |-------------|---------------------------------|---------------|-------------|
 | rootDir     | `".artifacts/"`                 | `./artifacts` | A directory, where all the recorded artifacts will be placed in. Please note that there is a trailing slash convention [described above](#slash-convention). |
-| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that exports a custom `PathBuilder` [<sup>\[a\]</sup>](#pathBuilder) |
+| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that exports a custom `PathBuilder` |
+
 | plugins     | `{ ... }`                       | ... see below | ... see below |
 
-<a id=pathBuilder><sup>a</sup><code>PathBuilder</code></a> should be either an _object_ with a method `buildPathForTestArtifact` or a _class_ &mdash; see the corresponding interfaces below:
+<code>PathBuilder</code> should be either an _object_ with a method `buildPathForTestArtifact` or a _class_ &mdash; see the corresponding interfaces below:
 
 ```typescript
 interface PathBuilder {
@@ -176,19 +184,19 @@ Hence, for example, if you wish to enable only `testDone` screenshots and leave 
 
 ##### Video Plugin
 
-To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
 
 ##### Log Plugin
 
-To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
 
 ##### Instruments Plugin
 
-To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
 
 ##### UI hierarchy Plugin
 
-To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
 
 ##### Timeline Plugin
 
@@ -253,7 +261,7 @@ artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert 
 
 #### Screenshots and Videos Do Not Appear in the Artifacts Folder
 
-Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` calls in your `./e2e/init.js`. Check out the recommendations on how to do that for [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js) using the out-of-the-box adapters.
+Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` calls in your `./e2e/init.js`. Check out the recommendations on how to do that for [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js) using the out-of-the-box adapters.
 
 #### Video Recording Issues on CI
 

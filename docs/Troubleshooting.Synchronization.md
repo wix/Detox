@@ -1,3 +1,10 @@
+---
+id: synchronization
+slug: troubleshooting/synchronization
+title: Dealing With Synchronization Issues in Tests
+sidebar_label: Dealing With Synchronization Issues in Tests
+---
+
 ## Dealing With Synchronization Issues in Tests
 
 Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take variable amount of time to complete. We can't continue the test until they've completed. How can we synchronize the test with these operations?
@@ -137,7 +144,7 @@ await device.launchApp({
 
 #### How do we wait manually?
 
-This makes sense only if we're not waiting enough (or if we've disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](/docs/APIRef.Expect.md#withtimeouttimeout).
+This makes sense only if we're not waiting enough (or if we've disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](https://github.com/wix/detox/docs/api/expect#withtimeouttimeout).
 
 ### Tweaking and fine-tuning the synchronization mechanisms
 

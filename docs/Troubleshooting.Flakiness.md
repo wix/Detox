@@ -1,3 +1,10 @@
+---
+id: flakiness
+slug: troubleshooting/flakiness
+title: Dealing With Flakiness in Tests
+sidebar_label: Dealing With Flakiness in Tests
+---
+
 ## Dealing With Flakiness in Tests
 
 > What is a flaky test?

@@ -1,3 +1,10 @@
+---
+id: contributing
+slug: contributing
+title: Contributing
+sidebar_label: Contributing
+---
+
 ## Contributing
 
 This guide is about contributing to our codebase.
@@ -182,7 +189,7 @@ This is in fact a monorepo that also sports some example projects (for usage ref
 - `examples/demo-react-native` and `examples/demo-react-native-jest`: Demonstrate usage of Detox in React-Native app projects, with `mocha.js` and `Jest` as the hosting test-runner frameworks, respectively.
 - `examples/demo-native-ios`: Demonstrates usage of Detox in a pure-native iOS app.
 - `examples/demo-native-android` (broken): Demonstrates usage of Detox in a pure-native Android app.
-- `examples/demo-pure-native-android`: Demonstrates usage of the *pure* [Detox-Native](../detox/detox-native/README.md) project
+- `examples/demo-pure-native-android`: Demonstrates usage of the *pure* [Detox-Native](https://github.com/wix/Detox/tree/master/detox-native/README.md) project
 - more...
 
-**In order to run E2E tests associated with any of these projects, refer to the [project-specific](../examples) README's.**
+**In order to run E2E tests associated with any of these projects, refer to the [project-specific](https://github.com/wix/Detox/tree/master/examples) README's.**

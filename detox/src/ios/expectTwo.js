@@ -656,11 +656,11 @@ class IosExpect {
 }
 
 function throwMatcherError(param) {
-  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://wix.github.io/detox/docs/api/matchers`);
 }
 
 function throwElementError(param) {
-  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://wix.github.io/detox/docs/api/matchers`);
 }
 
 module.exports = IosExpect;
