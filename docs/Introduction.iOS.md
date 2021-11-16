@@ -1,3 +1,10 @@
+---
+id: ios
+slug: introduction/ios
+title: Detox for iOS
+sidebar_label: Detox for iOS
+---
+
 ## Detox for iOS
 
 ### 1. Preliminary

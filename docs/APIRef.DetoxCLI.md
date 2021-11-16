@@ -1,3 +1,10 @@
+---
+id: detox-cli
+slug: api/detox-cli
+title: Detox Command Line Tools
+sidebar_label: Detox Command Line Tools
+---
+
 ## Detox Command Line Tools (detox-cli)
 
 `detox-cli` lets you operate Detox from command line.
@@ -44,7 +51,7 @@ Scaffolds initial E2E test folder structure for a specific test runner
 
 | Option                          | Description |
 | ---                             | --- |
-| -r, --runner <test-runner-name> | test runner name (supported values: mocha, jest) |
+| -r, --runner \<test-runner-name\> | test runner name (supported values: mocha, jest) |
 | --help                          | Show help |
 
 #### build

@@ -1,3 +1,10 @@
+---
+id: matchers
+slug: api/matchers
+title: Matchers
+sidebar_label: Matchers
+---
+
 ## Matchers
 
 Detox uses [matchers](APIRef.Matchers.md) to match UI elements in your app.

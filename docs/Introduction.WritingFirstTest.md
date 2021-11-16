@@ -1,3 +1,10 @@
+---
+id: writing-first-test
+slug: introduction/writing-first-test
+title: Writing Your First Test
+sidebar_label: Writing Your First Test
+---
+
 ## Writing Your First Test
 
 This tutorial assumes you've already installed Detox successfully on a working React Native project.

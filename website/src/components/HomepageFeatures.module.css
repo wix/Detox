@@ -1,0 +1,13 @@
+.features {
+  display: flex;
+  align-items: center;
+  padding: 5rem 0;
+  width: 100%;
+}
+
+.featureImage {
+  height: 64px;
+  width: 64px;
+  stroke: white;
+  stroke-width: 2px;
+}

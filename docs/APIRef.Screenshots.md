@@ -1,3 +1,10 @@
+---
+id: screenshots
+slug: api/screenshots
+title: Taking Screenshots
+sidebar_label: Taking Screenshots
+---
+
 ## Taking Screenshots
 
 Detox supports taking in-test screenshots of the device, making the result immediately available in the form of an image file.

@@ -1,3 +1,10 @@
+---
+id: configuration
+slug: api/configuration
+title: Configuration Options
+sidebar_label: Configuration Options
+---
+
 ## Configuration Options
 
 ### Configuration File
@@ -16,7 +23,7 @@ In essence, Detox scans for the configuration to use, through multiple files. It
 Options 1-5 allow for a standalone Detox configuration in either a `json` format or using Javascript syntax.
 Option 6 means the configuration is available in `json` format inside the project's `package.json`, which is more suitable if you like having all of your project's configurations in one place.
 
-Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a working reference. Also, look at
+Please find the [Detox example app](https://github.com/wix/Detox/blob/master/examples/demo-react-native/detox.config.js) as a working reference. Also, look at
 [the typings file](https://github.com/wix/Detox/blob/master/detox/index.d.ts) provided by Detox.
 
 #### Extending configurations
@@ -153,12 +160,12 @@ A device config can have the following params:
 |---|---|
 |`type`| _**Required.** String Literal_. Mandatory property to discern device types: `ios.simulator`, `android.emulator`, `android.attached`, `android.genycloud`, `ios.none`, etc. |
 |`device`| _**Required.** Object._ Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator, `{ "avdName": "Pixel_2_API_29" }` for Android emulator or `{ "adbName": "<pattern>" }` for attached Android device with name matching the regex. |
-|`bootArgs`| _Optional. String. Supported by `ios.simulator` and `android.emulator` only._ <br> Supply an extra **string** of arguments to `xcrun simctl boot ...` or `emulator -verbose ... @AVD_Name`.  |
-|`forceAdbInstall`| _Optional. Boolean. Supported for Android devices only._ <br> A **boolean** value, **false** by default. When set **true**, it tells `device.installApp()` to use `adb install`. Otherwise, it would use the combination of `adb push <app.apk>` and `adb shell pm install`.  |
-|`utilBinaryPaths`| _Optional. Array of strings. Supported for Android devices only._ <br> An array of relative paths of _utility_ app (apk) binary-files to preinstall on the tested devices - once before the test execution begins.<br>**Note**: these are not affected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
-|`gpuMode`|  _Optional. String Literal (<code>auto &#124; host &#124; swiftshader_indirect &#124; angle_indirect &#124; guest</code>). Supported by `android.emulator` only._ <br> A fixed **string** , which tells [in which GPU mode](https://developer.android.com/studio/run/emulator-acceleration#command-gpu) the emulator should be booted. |
-|`headless`| _Optional. Boolean. Supported by `android.emulator` only._ <br>  _False_ by default. When set to _true_, it tells Detox to boot an Android emulator with `-no-window` option.  |
-|`readonly`| _Optional. Boolean. Supported by `android.emulator` only._ <br>  _False_ by default. When set to _true_, it forces Detox to boot even a single emulator with `-read-only` option.<br>**Note**: when used with multiple workers, this setting has no effect — emulators will be booted always with `-read-only`. |
+|`bootArgs`| _Optional. String. Supported by `ios.simulator` and `android.emulator` only._ <br /> Supply an extra **string** of arguments to `xcrun simctl boot ...` or `emulator -verbose ... @AVD_Name`.  |
+|`forceAdbInstall`| _Optional. Boolean. Supported for Android devices only._ <br /> A **boolean** value, **false** by default. When set **true**, it tells `device.installApp()` to use `adb install`. Otherwise, it would use the combination of `adb push <app.apk>` and `adb shell pm install`.  |
+|`utilBinaryPaths`| _Optional. Array of strings. Supported for Android devices only._ <br /> An array of relative paths of _utility_ app (apk) binary-files to preinstall on the tested devices - once before the test execution begins.<br />**Note**: these are not affected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
+|`gpuMode`|  _Optional. String Literal (<code>auto &#124; host &#124; swiftshader_indirect &#124; angle_indirect &#124; guest</code>). Supported by `android.emulator` only._ <br /> A fixed **string** , which tells [in which GPU mode](https://developer.android.com/studio/run/emulator-acceleration#command-gpu) the emulator should be booted. |
+|`headless`| _Optional. Boolean. Supported by `android.emulator` only._ <br />  _False_ by default. When set to _true_, it tells Detox to boot an Android emulator with `-no-window` option.  |
+|`readonly`| _Optional. Boolean. Supported by `android.emulator` only._ <br />  _False_ by default. When set to _true_, it forces Detox to boot even a single emulator with `-read-only` option.<br />**Note**: when used with multiple workers, this setting has no effect — emulators will be booted always with `-read-only`. |
 
 Also, in the Detox `configurations` you can use the device configs as-is, without aliasing:
 
@@ -272,7 +279,7 @@ Similar to device configs, any app config can be inlined as well:
 
 #### Artifacts Configuration
 
-See more details in [APIRef.Artifacts.md](APIRef.Artifacts.md).
+See more details in [artifacts doc](APIRef.Artifacts.md).
 
 Detox can store artifacts such as transient screenshots and device logs.
 You can control artifacts collection via Detox configuration:
@@ -448,7 +455,7 @@ session config:
 ```
 
 Also, you can specify an optional numeric `debugSynchronization` parameter
-(see also `--debug-synchronization` in [APIRef.DetoxCLI.md#test](APIRef.DetoxCLI.md#test)).
+(see also `--debug-synchronization` in [detox-cli test section](APIRef.DetoxCLI.md#test)).
 When an action/expectation takes a significant amount time, use this option to print device synchronization status.
 The status will be printed if the action takes more than _[N]_ ms to complete.
 

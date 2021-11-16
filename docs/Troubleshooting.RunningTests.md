@@ -1,3 +1,10 @@
+---
+id: running-tests
+slug: troubleshooting/running-tests
+title: Dealing With Problems With Running Tests
+sidebar_label: Dealing With Problems With Running Tests
+---
+
 ## Dealing With Problems With Running Tests
 
 This page is about issues related to executing your Detox tests, typically triggerred when running `detox test` (and not `detox build`, for example).
@@ -148,7 +155,7 @@ In the test above, after tapping the Login button, the app performs several comp
 
 **Solution:** When you suspect that automatic synchronization didn't work, you have a fail-safe by synchronizing manually with `waitFor`. Using `waitFor` will poll until the expectation is met. This isn't a recommended approach so please use it as a workaround and open and issue to resolve the synchronization issue.
 
-Full documentation about `waitFor` is available [here](/docs/APIRef.waitFor.md). This is what the fixed test would look like:
+This is what the fixed test would look like:
 
 ```js
 await element(by.text('Login')).tap();
@@ -157,7 +164,7 @@ await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 
 #### Can't synchronize the test with my app
 
-If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](/docs/Troubleshooting.Synchronization.md).
+If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](Troubleshooting.Synchronization.md).
 
 #### Unknown option "configuration" (Mocha.js)
 
@@ -207,7 +214,7 @@ a `ui.viewhierarchy` in a folder of your failing test. Please mind that you need
 
 | in `visibilityFailingScreenshots` | in `visibilityFailingRects` |
 |:-------:|:---------:|
-|<img alt="visible" src="https://user-images.githubusercontent.com/2270433/94178906-68872380-fea4-11ea-845c-c55c25b68c0e.png" height=480>|<img alt="internals" src="https://user-images.githubusercontent.com/2270433/94178919-6c1aaa80-fea4-11ea-8db6-64f1f4b21361.png" height=480>|
+|<img alt="visible" src="https://user-images.githubusercontent.com/2270433/94178906-68872380-fea4-11ea-845c-c55c25b68c0e.png" height="480" />|<img alt="internals" src="https://user-images.githubusercontent.com/2270433/94178919-6c1aaa80-fea4-11ea-8db6-64f1f4b21361.png" height="480" />|
 
 The first is supposed to show what is seen on screen. The second shows the internal buffer that Detox tests for visibility; if the pixels aren't transparent enough and less than 75% of tested region is not transparent, the view is not considered visible.
 
@@ -228,10 +235,10 @@ Do the following:
 2. Open Xcode
 
 3. Attach Xcode to your app's process
-<img src="img/attach-to-process.jpg">
+<img src="img/attach-to-process.jpg" />
 
 4. Press the `Debug View Hierarchy` button
-<img src="img/debug-view-hierarchy.jpg">
+<img src="img/debug-view-hierarchy.jpg" />
 
 5. This will open the hierarchy viewer, and will show a breakdown of your app's native view hierarchy. Here you can browse through the views
 
@@ -247,13 +254,13 @@ Let's see an example. We will find the following view in the native hierarchy:
 
 This is the hierarchy viewer, pointing to the native view just mentioned:
 
-<img src="img/hierarchy-viewer.jpg">
+<img src="img/hierarchy-viewer.jpg" />
 
 #### Compare to a Working Setup
 
 If you feel lost, try starting from a working example for sanity.
 
-There are multiple working examples included in this repo, such as [demo-react-native](/examples/demo-react-native).
+There are multiple working examples included in this repo, such as [demo-react-native](https://github.com/wix/Detox/tree/master/examples/demo-react-native).
 
 First, install, build and make sure the tests are indeed passing. If they are, try comparing this setup with what you have.
 

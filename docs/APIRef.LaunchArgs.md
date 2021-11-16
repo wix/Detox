@@ -1,3 +1,10 @@
+---
+id: launch-args
+slug: api/launch-args
+title: Launch Arguments
+sidebar_label: Launch Arguments
+---
+
 ## Launch Arguments
 
 In Detox, the app under test is launched via an explicit call to [`device.launchApp()`](APIRef.DeviceObjectAPI.md). Through various means, Detox enables specifying a set of user-defined arguments (key-value pairs) to be passed on to the app when launched, so as to make them available inside the launched app itself at runtime (both on the native side, and - if applicable, on the Javascript side).

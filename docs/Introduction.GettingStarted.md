@@ -1,3 +1,10 @@
+---
+id: getting-started
+slug: introduction/getting-started
+title: Getting Started
+sidebar_label: Getting Started
+---
+
 ## Getting Started
 
 **Welcome to Detox!**

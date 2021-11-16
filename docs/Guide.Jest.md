@@ -1,3 +1,10 @@
+---
+id: jest
+slug: guide/jest
+title: Jest Setup Guide
+sidebar_label: Jest Setup Guide
+---
+
 ## Jest Setup Guide
 
 > **NOTE: This article previously focused on deprecated `jest-jasmine2` runner setup, and if you nevertheless need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).**
@@ -42,9 +49,9 @@ detox init -r jest
 If things go well, the following will be created:
 
 - An `e2e/` folder in your project root
-- An `e2e/config.json` file; [example](/examples/demo-react-native-jest/e2e/config.json)
-- An `e2e/environment.js` file; [example](/examples/demo-react-native-jest/e2e/environment.js)
-- An `e2e/firstTest.e2e.js` file with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.e2e.ts).
+- An `e2e/config.json` file; [example](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/config.json)
+- An `e2e/environment.js` file; [example](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/environment.js)
+- An `e2e/firstTest.e2e.js` file with content similar to [this](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/app-hello.e2e.ts).
 
 #### 3. Fix / Verify
 

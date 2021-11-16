@@ -1,3 +1,10 @@
+---
+id: parallel-test-execution
+slug: guide/parallel-test-execution
+title: Parallel Test Execution
+sidebar_label: Parallel Test Execution
+---
+
 ## Parallel Test Execution
 
 Detox can leverage multi worker support of JS test runners ([Jest](http://jestjs.io/docs/en/cli#maxworkers-num), [AVA](https://github.com/avajs/ava#process-isolation), etc.).

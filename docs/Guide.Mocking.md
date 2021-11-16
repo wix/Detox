@@ -1,3 +1,10 @@
+---
+id: mocking
+slug: guide/mocking
+title: Mocking
+sidebar_label: Mocking
+---
+
 ## Mocking
 
 > This guide is a bit out of date. We hope to have it updated soon.

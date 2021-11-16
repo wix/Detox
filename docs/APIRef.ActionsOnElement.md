@@ -1,3 +1,10 @@
+---
+id: actions-on-element
+slug: api/actions-on-element
+title: Actions
+sidebar_label: Actions
+---
+
 ## Actions
 
 Detox uses [matchers](APIRef.Matchers.md) to find UI elements in your app and actions to simulate user interaction with those elements.

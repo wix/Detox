@@ -1,3 +1,10 @@
+---
+id: workflows
+slug: introduction/workflows
+title: Workflows
+sidebar_label: Workflows
+---
+
 ## Workflows
 
 There are multiple recommended ways to work with Detox and make it a part of your development process. Choose the best workflow for your needs:
