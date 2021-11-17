@@ -56,6 +56,11 @@ const config = {
           },
         ],
       },
+      algolia: {
+        appId: 'BH4D9OD16A',
+        apiKey: 'f621c2d74268df173153c887526aebb3',
+        indexName: 'detox',
+      },
       footer: {
         style: 'dark',
         links: [
