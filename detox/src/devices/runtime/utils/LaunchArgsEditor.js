@@ -74,7 +74,7 @@ class LaunchArgsEditor {
     }
 
     const target = options.permanent ? 'appLaunchArgs.shared' : 'appLaunchArgs';
-    log.warn({ type: 'DEPRECATION' }, [
+    log.warn({ event: 'DEPRECATION' }, [
       `Detected an attempt to use device.launchArgs.${methodName}(...) with a deprecated 'options' parameter.`,
       `Please use device.${target}.${methodName}(...) instead.`,
       `For more details, see the reference at: https://wix.github.io/Detox/docs/api/device-object-api#deviceapplaunchargs\n`,

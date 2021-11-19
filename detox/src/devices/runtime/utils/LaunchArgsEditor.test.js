@@ -73,7 +73,7 @@ describe('Device launch-args editor', () => {
   });
 
   describe('deprecation warnings', () => {
-    const warningEvent = { type: 'DEPRECATION' };
+    const warningEvent = { event: 'DEPRECATION' };
 
     afterEach(() => {
       expect(log.warn).toHaveBeenCalledTimes(2);
