@@ -12,6 +12,10 @@ const composeSessionConfig = require('./composeSessionConfig');
 const loadExternalConfig = require('./loadExternalConfig');
 const selectConfiguration = require('./selectConfiguration');
 
+const hooks = {
+  UNSAFE_configReady: [],
+};
+
 async function composeDetoxConfig({
   cwd = process.cwd(),
   argv,
@@ -90,18 +94,30 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
-  return {
-    artifactsConfig,
+  const result = Object.freeze({
     appsConfig,
+    artifactsConfig,
     behaviorConfig,
     cliConfig,
+    configurationName,
     deviceConfig,
+    errorComposer,
     runnerConfig,
     sessionConfig,
-    errorComposer,
-  };
+  });
+
+  for (const fn of hooks.UNSAFE_configReady) {
+    await fn(result);
+  }
+
+  return result;
+}
+
+function hook(event, listener) {
+  hooks[event].push(listener);
 }
 
 module.exports = {
   composeDetoxConfig,
+  hook,
 };

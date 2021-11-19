@@ -1,28 +1,25 @@
-> detox
+## Pure Native iOS Demo Project
 
-# Pure Native iOS Demo Project
+### Environment
 
-## Requirements
+#### Fundamentals
 
-* make sure you have Xcode installed (tested with v8.1-8.2)
-* iPhone 7 Plus simulator is installed
-* make sure you have node installed (`brew install node`, node 8.3.0 and up is preferred, for native async-await support)
+**IMPORTANT:** Get your environment properly set up, as explained in our [contribution guide](https://wix.github.io/docs/contributing).
 
-### Step 1: Npm install
-* Make sure you're in folder `examples/demo-native-ios`
-* Run `npm install`
+#### Step 1: Build the Demo Project
 
-### Step 2: Build the Demo Project
-* Build the demo project
- 
- ```sh
- detox build --configuration ios.sim.release
- ```
- 
-### Step 3: Test
-* Run tests on the demo project
- 
- ```sh
- detox test e2e --configuration ios.sim.release
- ```
- This action will open a new simulator and run the tests on it.
+- Build the demo project
+
+  ```sh
+  detox build --configuration ios.sim.release
+  ```
+
+#### Step 2: Run the E2E Tests
+
+- Run tests on the demo project
+
+  ```sh
+  detox test --configuration ios.sim.release
+  ```
+
+This action will open a new simulator and run the tests on it.

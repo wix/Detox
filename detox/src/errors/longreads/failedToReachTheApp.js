@@ -1,7 +1,7 @@
 const DetoxRuntimeError = require('../DetoxRuntimeError');
 
 const message = 'Detox can\'t seem to connect to the test app(s)!';
-const troubleshootingRefMessage = 'Refer to our troubleshooting guide, for full details: https://github.com/wix/Detox/blob/master/docs/Troubleshooting.RunningTests.md#tests-execution-hangs';
+const troubleshootingRefMessage = 'Refer to our troubleshooting guide, for full details: https://wix.github.io/Detox/docs/troubleshooting/running-tests#tests-execution-hangs';
 
 const hintMaybeNotLaunched = `\
 Have you forgotten to call 'device.launchApp()' in the beginning of your test?

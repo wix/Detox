@@ -1,4 +1,11 @@
-# Getting Started
+---
+id: getting-started
+slug: introduction/getting-started
+title: Getting Started
+sidebar_label: Getting Started
+---
+
+## Getting Started
 
 **Welcome to Detox!**
 
@@ -10,36 +17,36 @@ You will find that some steps are longer than the others: some are just one-para
 
 ### Install [Node.js](https://nodejs.org/en/)
 
-`Node.js` is the JavaScript runtime Detox will run on. **Install Node.js `10.0` or above**.
+`Node.js` is the JavaScript runtime Detox will run on. **Install Node.js `v12.0` or above**.
 
-There's more than one way to install Node.js:
+There’s more than one way to install Node.js:
 
 - Download from the [official download page](https://nodejs.org/en/download/)
 - Use [Homebrew](https://formulae.brew.sh/formula/node)
 - Use `nvm` - if you need to allow for several versions to be installed on a single machine
 
-We recommend using Homebrew:
+The simplest way is to use Homebrew:
 
- ```sh
-brew update && brew install node
- ```
+```sh
+brew install node
+```
 
-> Tip: Verify installation succeeded by typing in `node -v` in the terminal to output current node version. Should be `8.3.0` or higher.
+> Tip: Verify installation succeeded by typing in `node -v` in the terminal to output current node version.
 
 ### Install Detox Command Line Tools (`detox-cli`)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
-  ```sh
+```sh
 npm install -g detox-cli
-  ```
+```
 
-### Install Platform-specific Dependencies, Tools and Dev-kits
+### Install Platform-specific Dependencies, Tools and SDKs
 
-Depending on the platform/s you're aiming at (iOS, Android), take the time to run through these environment setup guides:
+Depending on the platform/s you’re aiming at (iOS, Android), take the time to run through these environment setup guides:
 
-* [Android](Introduction.AndroidDevEnv.md)
-* [iOS](Introduction.iOSDevEnv.md)
+- [Android](Introduction.AndroidDevEnv.md)
+- [iOS](Introduction.iOSDevEnv.md)
 
 ## Step 2: Add Detox to Your Project
 
@@ -72,16 +79,16 @@ npm install detox --save-dev --no-package-lock
 
 ### Set Up a Test Runner
 
-Detox delegates the actual Javascript test-code execution to a dedicated test-runner. It supports the popular `Jest` and `Mocha` out of the box. You need to choose and set up one of them now, but it *is* possible to switch later on, should you change your mind.
+Detox delegates the actual JavaScript test-code execution to a dedicated test-runner. It supports the popular `Jest` and `Mocha` out of the box. You need to choose and set up one of them now, but it _is_ possible to switch later on, should you change your mind.
 
-* **[Jest](https://jestjs.io/) is the recommended test runner for use with Detox**, since it provides parallel test execution and a complete lifecycle integration with Detox. To set up, follow [our comprehensive guide for Jest](Guide.Jest.md).
-* [Mocha](https://mochajs.org/), albeit its integration is less complete, is still lightweight, and a bit easier to set up. To set up, follow [our guide for Mocha](Guide.Mocha.md).
+- **[Jest](https://jestjs.io/) is the recommended test runner for use with Detox**, since it provides parallel test execution and a complete lifecycle integration with Detox. To set up, follow [our comprehensive guide for Jest](Guide.Jest.md).
+- [Mocha](https://mochajs.org/), albeit its integration is less complete, is still lightweight, and a bit easier to set up. To set up, follow [our guide for Mocha](Guide.Mocha.md).
 
 > **Note:** Detox is coupled to neither Mocha or Jest, nor with a specific directory structure. Both runners are just a recommendation — with some effort, they can be replaced without touching the internal implementation of Detox itself.
 
 ### Apply Detox Configuration
 
-If you've completed the test-runner setup successfully using `detox init`, you should have a `.detoxrc.json` file containing a skeletal configuration for Detox to use. This configuration is only half-baked and needs to be set up properly. You now need to either create or edit that file, and apply the actual configuration suitable for your specific project.
+If you’ve completed the test-runner setup successfully using `detox init`, you should have a `.detoxrc.json` file containing a skeletal configuration for Detox to use. This configuration is only half-baked and needs to be set up properly. You now need to either create or edit that file, and apply the actual configuration suitable for your specific project.
 
 Detox scans for a configuration through multiple files. It starts from the current working directory, and runs over the following options, in this order:
 
@@ -96,12 +103,12 @@ If you prefer to use something other than `.detoxrc.json`—for example, would l
 
 For specific configuration options for each supported platform, see:
 
-* [Android](Introduction.Android.md)
-* [iOS](Introduction.iOS.md)
+- [Android](Introduction.Android.md)
+- [iOS](Introduction.iOS.md)
 
 ## Step 3: Build Your App and Run Detox Tests
 
-#### 1. Build Your App
+### 1. Build Your App
 
 Use a convenience method in Detox command line tools to build your project easily:
 
@@ -111,7 +118,7 @@ detox build --configuration <your configuration name>
 
 > **Note:** Detox executes the build command you specified in your Detox configuration. If your build fails, make sure to provide the correct build command.
 
-#### 2. Run the Tests
+### 2. Run the Tests
 
 Use the Detox command line tools to test your project easily:
 
@@ -119,8 +126,6 @@ Use the Detox command line tools to test your project easily:
 detox test --configuration <your configuration name>
 ```
 
-That's it. Your first failing Detox test is running!
+That’s it. Your first failing Detox test is running!
 
-Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
-
-
+Next, we’ll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).

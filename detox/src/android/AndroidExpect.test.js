@@ -29,6 +29,7 @@ describe('AndroidExpect', () => {
   describe('native', () => {
     it(`element by accessibilityLabel`, async () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(35);
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
@@ -54,6 +55,7 @@ describe('AndroidExpect', () => {
 
     it(`element by label (for backwards compat)`, async () => {
       await e.expect(e.element(e.by.label('test'))).toBeVisible();
+      await e.expect(e.element(e.by.label('test'))).toBeVisible(35);
       await e.expect(e.element(e.by.label('test'))).toBeNotVisible();
       await e.expect(e.element(e.by.label('test'))).toExist();
       await e.expect(e.element(e.by.label('test'))).toNotExist();
@@ -89,6 +91,13 @@ describe('AndroidExpect', () => {
       await e.expect(e.element(e.by.id('test').or(e.by.id('test2')))).toBeVisible();
     });
 
+    it(`should throw for invalid toBeVisible parameters`, async () => {
+      await expectToThrow(() =>e.expect(e.element(e.by.label('test'))).toBeVisible(0));
+      await expectToThrow(() =>e.expect(e.element(e.by.label('test'))).toBeVisible(120));
+      await expectToThrow(() =>e.waitFor(e.element(e.by.label('test'))).toBeVisible(0));
+      await expectToThrow(() =>e.e.waitFor(e.element(e.by.label('test'))).toBeVisible(120));
+    });
+
     it(`expect with wrong parameters should throw`, async () => {
       await expectToThrow(() => e.expect('notAnElement'));
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
@@ -112,8 +121,12 @@ describe('AndroidExpect', () => {
     it(`waitFor (element)`, async () => {
       await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
       await e.waitFor(e.element(e.by.id('id'))).not.toExist().withTimeout(0);
+
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible();
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible(35);
       await e.waitFor(e.element(e.by.id('id'))).toBeNotVisible();
+      await e.waitFor(e.element(e.by.id('id'))).not.toBeVisible();
+
       await e.waitFor(e.element(e.by.id('id'))).toExist();
       await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
       await e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);

@@ -1,5 +1,5 @@
 // TypeScript definitions for Detox
-// Original authors:
+// Original authors (from DefinitelyTyped):
 // * Jane Smith <jsmith@example.com>
 // * Tareq El-Masri <https://github.com/TareqElMasri>
 // * Steve Chun <https://github.com/stevechun>
@@ -7,10 +7,6 @@
 // * pera <https://github.com/santiagofm>
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
-// Current contributors:
-// * Yaroslav Serhieiev <https://github.com/noomorph>
-// * Oren Zakay <https://github.com/OrenZak>
-// * Chris Frewin <https://github.com/princefishthrower>
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -460,7 +456,7 @@ declare global {
             /**
              * Launch the app.
              *
-             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -484,7 +480,7 @@ declare global {
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              *
              * @example
              * // With Detox being preconfigured statically to use these arguments in app launch:
@@ -634,8 +630,8 @@ declare global {
 
             /**
              * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
-             * @param {string} name for the screenshot artifact
-             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @param name for the screenshot artifact
+             * @returns a temporary path to the screenshot.
              * @example
              * test('Menu items should have logout', async () => {
              *   const tempPath = await device.takeScreenshot('tap on menu');
@@ -646,6 +642,24 @@ declare global {
              * });
              */
             takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application
+             * to a temporary folder and schedules putting it to the artifacts folder upon the completion of
+             * the current test. The file can be opened later in Xcode 12.0 and above.
+             * @see https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113
+             * @param [name="capture"] optional name for the *.viewhierarchy artifact
+             * @returns a temporary path to the captured view hierarchy snapshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   await device.captureViewHierarchy('myElements');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the artifact will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/myElements.viewhierarchy
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/myElements.viewhierarchy
+             * });
+             */
+            captureViewHierarchy(name?: string): Promise<string>;
 
             /**
              * Simulate shake (iOS Only)
@@ -889,10 +903,13 @@ declare global {
         interface Expect<R = Promise<void>> {
 
             /**
-             * Expect the view to be at least 75% visible.
-             * @example await expect(element(by.id('UniqueId204'))).toBeVisible();
+             * Expect the view to be at least N% visible. If no number is provided then defaults to 75%. Negating this
+             * expectation with a `not` expects the view's visible area to be smaller than N%.
+             * @param pct optional integer ranging from 1 to 100, indicating how much percent of the view should be
+             *  visible to the user to be accepted.
+             * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
              */
-            toBeVisible(): R;
+            toBeVisible(pct?: number): R;
 
             /**
              * Negate the expectation.
@@ -1120,7 +1137,7 @@ declare global {
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
-             * See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
+             * See [here](https://wix.github.io/Detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
              * @param value string value in set column (must be correct)
@@ -1164,7 +1181,7 @@ declare global {
 
             /**
              * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
-             * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md#element-level-screenshots}
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/screenshots#element-level-screenshots}
              * @param {string} name for the screenshot artifact
              * @returns {Promise<string>} a temporary path to the screenshot.
              * @example
@@ -1386,7 +1403,7 @@ declare global {
             delete?: boolean;
             /**
              * Arguments to pass-through into the app.
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              */
             launchArgs?: Record<string, any>;
             /**

@@ -17,7 +17,14 @@ describe("Test", () => {
 
     beforeAll(async () => {
         await device.reloadReactNative();
-        await device.takeScreenshot("test screenshot");
+
+        const artifactsPaths: string[] = [
+            await device.takeScreenshot("test screenshot"),
+            await device.captureViewHierarchy(),
+            await device.captureViewHierarchy('a'),
+        ];
+
+        artifactsPaths.splice(0);
     });
 
     afterAll(async () => {
@@ -32,6 +39,7 @@ describe("Test", () => {
     test("Test", async () => {
         await element(by.id("element")).replaceText("text");
         await element(by.id("element")).tap();
+        await element(by.id("element")).tap({ x: 20, y: 30 });
         await element(by.id("element")).longPress();
         await element(by.id("element")).longPress(1000);
         await element(by.id("element")).scroll(50, "down");

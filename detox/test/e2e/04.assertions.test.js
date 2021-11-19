@@ -48,4 +48,44 @@ describe('Assertions', () => {
     await expect(element(by.id('UniqueId146'))).toHaveToggleValue(true);
     await expect(element(by.id('UniqueId146'))).not.toHaveToggleValue(false);
   });
+
+  it('should throw exception for visibility threshold out of range (lower than 1)', async () => {
+    try {
+      await expect(element(by.text('UniqueId204'))).toBeVisible(0);
+    } catch (e) {
+      if (!e.toString().includes('must be an integer between 1 and 100')) {
+        throw new Exception('should throw exception for visibility out of range');
+      }
+    }
+  });
+
+  it('should throw exception for visibility threshold out of range when negated (lower than 1)', async () => {
+    try {
+      await expect(element(by.text('UniqueId204'))).not.toBeVisible(0);
+    } catch (e) {
+      if (!e.toString().includes('must be an integer between 1 and 100')) {
+        throw new Exception('should throw exception for visibility out of range');
+      }
+    }
+  });
+
+  it('should throw exception for visibility threshold out of range (greater than 100)', async () => {
+    try {
+      await expect(element(by.text('UniqueId204'))).toBeVisible(101);
+    } catch (e) {
+      if (!e.toString().includes('must be an integer between 1 and 100')) {
+        throw new Exception('should throw exception for visibility out of range');
+      }
+    }
+  });
+
+  it('should throw exception for visibility threshold out of range when negated (greater than 100)', async () => {
+    try {
+      await expect(element(by.text('UniqueId204'))).toBeVisible(101);
+    } catch (e) {
+      if (!e.toString().includes('must be an integer between 1 and 100')) {
+        throw new Exception('should throw exception for visibility out of range');
+      }
+    }
+  });
 });

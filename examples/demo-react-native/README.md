@@ -1,54 +1,81 @@
-> detox
+## React Native Demo Project
 
-# React Native Demo Project
+### Environment
 
-## Requirements
+#### Fundamentals
 
-* Make sure you have Xcode installed (tested with Xcode 8.1-8.2).
-* make sure you have node installed (`brew install node`, node 8.3.0 and up is required for native async-await support, otherwise you'll have to babel the tests).
-* Make sure you have react-native dependencies installed:
-   * react-native-cli is installed (`npm install -g react-native-cli`)
-   * watchman is installed (`brew install watchman`)
+**IMPORTANT:** Get your environment properly set up, as explained in our [contribution guide](../../docs/Guide.Contributing.md).
 
-### Step 1: Npm install
+#### Execution Target
 
-* Make sure you're in folder `examples/demo-react-native`.
-* Run `npm install`.
+Be sure to set up either an iOS simulator or a proper Android AVD emulator matching the Detox configurations of the project (`devices` section of the `detox.config.js` file).
 
-## To test Release build of your app
-### Step 2: Build 
-* Build the demo project
- 
- ```sh
- detox build --configuration ios.sim.release
- ```
- 
-### Step 3: Test 
-* Run tests on the demo project
- 
- ```sh
- detox test --configuration ios.sim.release
- ```
- This action will open a new simulator and run the tests on it.
+### Running this project in Release mode
 
-## To test Debug build of your app
-### Step 2: Build 
-* Build the demo project
- 
- ```sh
- detox build --configuration ios.sim.debug
- ```
- 
-### Step 3: Test 
+#### Step 0: Prebuild
 
- * start react-native packager
- 
-  ```sh
- npm run start
- ```
- * Run tests on the demo project
- 
- ```sh
- detox test --configuration ios.sim.debug
- ```
- This action will open a new simulator and run the tests on it.
+##### Android
+
+Prebuild Detox as an Android archive (a `.aar` file), locally:
+
+```sh
+cd detox
+npm run build:android
+```
+
+> On success, the result is a set of maven artifacts published in subdirectories under `detox/Detox-android/`. That includes `detox-999.999.999.aar` (i.e. Detox' native code packaged with the fake version `999.999.999`).
+
+##### iOS
+
+Install the necessary pods:
+
+```sh
+cd detox
+npm run podInstall:ios
+```
+
+#### Step 1: Build
+
+Build the demo project using one of the `npm` scripts.
+
+```sh
+npm run build:ios-release
+-or-
+npm run build:android-release
+```
+
+#### Step 2: Execute Tests
+
+```sh
+npm run test:ios-release
+-or-
+npm run test:android-release
+```
+
+### Running this project in Debug mode
+
+The project’s tests can also be executed with the app running in debug mode (mainly, with JavaScript code getting bundled on-the-fly using the `metro` server).
+
+For that, first run the `metro` server:
+
+```sh
+npm start
+```
+
+then follow the same instructions specified for Release mode, above, using associated `debug` scripts instead of the `release` ones. Namely -
+
+Build:
+
+```sh
+npm run build:ios-debug
+-or-
+npm run build:android-debug
+```
+
+Test:
+
+```sh
+npm run test:ios-debug
+-or-
+npm run test:android-debug
+```

@@ -159,14 +159,18 @@ class DetoxMatcher {
     };
   }
 
-  static matcherForSufficientlyVisible() {
+  static matcherForSufficientlyVisible(pct) {
+    if (typeof pct !== "number") throw new Error("pct should be a number, but got " + (pct + (" (" + (typeof pct + ")"))));
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxMatcher"
       },
       method: "matcherForSufficientlyVisible",
-      args: []
+      args: [{
+        type: "Integer",
+        value: pct
+      }]
     };
   }
 
