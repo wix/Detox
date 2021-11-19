@@ -631,8 +631,8 @@ declare global {
 
             /**
              * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
-             * @param {string} name for the screenshot artifact
-             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @param name for the screenshot artifact
+             * @returns a temporary path to the screenshot.
              * @example
              * test('Menu items should have logout', async () => {
              *   const tempPath = await device.takeScreenshot('tap on menu');
@@ -643,6 +643,24 @@ declare global {
              * });
              */
             takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application
+             * to a temporary folder and schedules putting it to the artifacts folder upon the completion of
+             * the current test. The file can be opened later in Xcode 12.0 and above.
+             * @see https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113
+             * @param [name="capture"] optional name for the *.viewhierarchy artifact
+             * @returns a temporary path to the captured view hierarchy snapshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   await device.captureViewHierarchy('myElements');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the artifact will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/myElements.viewhierarchy
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/myElements.viewhierarchy
+             * });
+             */
+            captureViewHierarchy(name?: string): Promise<string>;
 
             /**
              * Simulate shake (iOS Only)

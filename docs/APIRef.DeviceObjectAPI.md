@@ -84,6 +84,7 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 - [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
 - [`device.getPlatform()`](#devicegetplatform)
 - [`device.takeScreenshot([name])`](#devicetakescreenshotname)
+- [`device.captureViewHierarchy([name])`](#devicecaptureviewhierarchyname)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
 - [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrollmentbool-ios-only)
 - [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
@@ -419,6 +420,28 @@ if (device.getPlatform() === 'ios') {
 #### `device.takeScreenshot([name])`
 
 Takes a screenshot of the device. For full details on taking screenshots with Detox, refer to the [screen-shots guide](APIRef.Screenshots.md).
+
+#### `device.captureViewHierarchy([name])`
+
+**iOS Only.** Saves a view hierarchy snapshot (`*.viewhierarchy`) of the
+currently opened application to a temporary folder and schedules putting it to
+the artifacts folder upon the completion of the current test. The file can be
+opened later in Xcode 12.0 and above.
+See [Xcode 12 Release notes: #57933113](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:\~:text=57933113)
+for more details.
+
+The `name` parameter is optional — by default, it equals to `capture`.
+
+```js
+test('Capture view hierarchy', async () => {
+  const temporaryArtifactPath = await device.captureViewHierarchy('myElements');
+
+  // The temporary path will remain valid until the test completion.
+  // Afterwards, the artifact will be moved, e.g.:
+  // * on success, to: <artifacts-location>/✓ Capture view hierarchy/myElements.viewhierarchy
+  // * on failure, to: <artifacts-location>/✗ Capture view hierarchy/myElements.viewhierarchy
+});
+```
 
 #### `device.shake()` **iOS Only**
 
