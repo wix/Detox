@@ -1,20 +1,13 @@
-describe('Device launch-args editor', () => {
+describe('Device launch-args editor (deprecated functionality tests)', () => {
   /** @type {typeof import('./LaunchArgsEditor')} */
   let LaunchArgsEditor;
   /** @type {LaunchArgsEditor} */
   let launchArgsEditor;
 
   beforeEach(() => {
+    jest.mock('../../../utils/logger'); // ignore the warnings
     LaunchArgsEditor = require('./LaunchArgsEditor');
     launchArgsEditor = new LaunchArgsEditor();
-  });
-
-  it('should have empty value at first', () => {
-    expect(launchArgsEditor.get()).toEqual({});
-  });
-
-  it('should not throw if modify() is called with undefined', () => {
-    expect(launchArgsEditor.modify().get()).toEqual({});
   });
 
   test.each([
