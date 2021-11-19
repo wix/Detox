@@ -17,7 +17,14 @@ describe("Test", () => {
 
     beforeAll(async () => {
         await device.reloadReactNative();
-        await device.takeScreenshot("test screenshot");
+
+        const artifactsPaths: string[] = [
+            await device.takeScreenshot("test screenshot"),
+            await device.captureViewHierarchy(),
+            await device.captureViewHierarchy('a'),
+        ];
+
+        artifactsPaths.splice(0);
     });
 
     afterAll(async () => {
