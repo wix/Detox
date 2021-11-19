@@ -46,19 +46,18 @@ In multi-app environments, you might want to persist your values between `device
 
 ```js
 device.appLaunchArgs.modify({ transientArg: 'value' });
-device.appLaunchArgs.modify({
+device.appLaunchArgs.shared.modify({
   permanentMockServerPort: 1234,
-}, { permanent: true });
+};
 
 device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234, transientArg: 'value' }
-device.appLaunchArgs.get({ permanent: false }); // ==> { transientArg: 'value' }
-device.appLaunchArgs.get({ permanent: true }); // ==> { permanentMockServerPort: 1234 }
+device.appLaunchArgs.shared.get(); // ==> { permanentMockServerPort: 1234 }
 
 await device.selectApp('anotherApp');
 device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234 }
 device.appLaunchArgs.reset();
 device.appLaunchArgs.get(); // ==> { permanentMockServerPort: 1234 }
-device.appLaunchArgs.reset({ permanent: true });
+device.appLaunchArgs.shared.reset();
 device.appLaunchArgs.get(); // ==> {}
 ```
 
