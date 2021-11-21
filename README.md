@@ -78,7 +78,7 @@ Read the [Getting Started Guide](https://wix.github.io/Detox/docs/introduction/g
 
 ## Documents Site
 
-Explore further about using Detox from our new **[documents site](https://wix.github.io/Detox/docs)**.
+Explore further about using Detox from our new **[website](https://wix.github.io/Detox/)**.
 
 ## Core Principles
 
