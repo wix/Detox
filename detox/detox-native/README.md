@@ -82,7 +82,7 @@ dependencies {
 }
 ```
 
-In your root-project’s `build.gradle` - be sure to add `mavenCentral()` as an artifacts repository:
+In your root-project’s `build.gradle` - be sure to add `mavenCentral()` as an artifacts' repository:
 
 ```groovy
 buildscript {

@@ -97,4 +97,4 @@ If you want to mock a module, here is an example of how to do it:
 
 1. Run Metro using the information in [Triggering](#Triggering)
 
-1. On your simulator, enable debug mode and you should see "We are now using our mocked `NativeModule`"
+1. On your simulator, enable debug mode, and you should see "We are now using our mocked `NativeModule`"

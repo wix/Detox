@@ -11,7 +11,7 @@ sidebar_label: Detox for Android
 
 ### Breaking Changes :warning:
 
-**If you are installing Detox for Android for the first time, you can skip right over to the setup section.**
+**If you are installing Detox for Android for the first time, you can skip over to the setup section.**
 
 > Follow our [Migration Guide](Guide.Migration.md) for instructions on how to upgrade from older versions.
 
@@ -201,7 +201,7 @@ Detox requires a dummy implementation of a single Android-native test.
 
 Starting from Android SDK API level 28, Google have disabled all clear-text network traffic by default. Namely, unless explicitly configured, all of your application’s outgoing unencrypted traffic (i.e. non-TLS using HTTP rather than HTTPS) is blocked by the device.
 
-For Detox to work, Detox test code running on the device must connect to the test-running host through it’s virtual localhost interface<sup>(\*)</sup> using simple HTTP traffic. Therefore, the following network-security exemption configuration must be applied --
+For Detox to work, Detox test code running on the device must connect to the test-running host through its virtual localhost interface<sup>(\*)</sup> using simple HTTP traffic. Therefore, the following network-security exemption configuration must be applied --
 
 _In an XML resource file, e.g. `android/app/src/main/res/xml/network_security_config.xml`:_
 
@@ -276,7 +276,7 @@ Here we utilize Gradle’s `initWith` to easily define `releaseE2E` in a way tha
 
 Following the example, you would then have to build your app using `gradlew assembleReleaseE2E` rather than `gradlew assembleRelease` before running Detox, and instruct Detox (i.e. via `binaryPath` in the Detox configuration file) to use the APK resulted specifically by _that_ Gradle target (e.g. in `app/build/apk/releaseE2E/app-releaseE2E.apk` instead of the equivalent `app/build/apk/release/app-release.apk`).
 
-> Note: if you app contains flavors -- that makes things a bit trickier, but the approach can generally be adjusted to support that as well.
+> Note: if your app contains flavors -- that makes things a bit trickier, but the approach can generally be adjusted to support that as well.
 
 **Last but not least:** If you’re having issue with Detox' ProGuard rules, please report them [here](https://github.com/wix/Detox/issues/new/choose).
 A special thanks to [@GEllickson-Hover](https://github.com/GEllickson-Hover) for reporting issues related to obfuscation in [#2431](https://github.com/wix/Detox/issues/2431).
@@ -285,7 +285,7 @@ A special thanks to [@GEllickson-Hover](https://github.com/GEllickson-Hover) for
 
 If, when [setting up your work environment](Introduction.AndroidDevEnv.md), you’ve selected Google emulators with an AOSP image as the test target - as recommended, **we strongly encourage** you would also integrate [Test Butler](https://github.com/linkedin/test-butler): in the very least - in order to suppress crash and ANR dialogs. They are a soft spot in UI testing on Android, all around, as - when displayed, they make the UI entirely inaccessible (and thus cause tests to fail in bulks).
 
-Setting Test Butler up for working with Detox is a bit different than explained in their guides. The process, as a whole, is twofold:
+Setting Test Butler up for working with Detox is a bit different from explained in their guides. The process, as a whole, is twofold:
 
 1. Preinstalling the test-butler-app APK onto the test device.
 1. Integrating the test-butler-lib into your own test APK, and initializing it in a custom test-runner (as explained).
@@ -324,7 +324,7 @@ a. In a custom script, have it predownloaded from Maven directly, as suggested i
 curl -f -o ./temp/test-butler-app.apk https://repo1.maven.org/maven2/com/linkedin/testbutler/test-butler-app/2.2.1/test-butler-app-2.2.1.apk
 ```
 
-_Jests' [global-setup](https://jestjs.io/docs/en/configuration#globalsetup-string) is a recommend place for those kind of things._
+_Jests' [global-setup](https://jestjs.io/docs/en/configuration#globalsetup-string) is a recommend place for those kinds of things._
 
 > Should you decide to go this path, we recommend you add `./temp/test-butler-app.apk` to the relevant `.gitignore`.
 

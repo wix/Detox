@@ -7,7 +7,7 @@ sidebar_label: Migration Guide
 
 ## Migration Guide
 
-We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
+We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the latter builds to learn about their improvements and changes.
 
 ### 19.0
 
@@ -15,7 +15,7 @@ We are improving Detox API as we go along, sometimes these changes require us to
 
 We decided to bump Detox into a major version release, nonetheless, because it is breaking for projects that sport [custom Detox drivers](Guide.ThirdPartyDrivers.md), such as [`detox-puppeteer`](https://github.com/ouihealth/detox-puppeteer).
 
-If you are a maintainer of such a project and you wish to upgrade your Detox dependency to 19 (kudos! :clap:),  follow this step-by-step migration guide; You can refer to [this pull-request](https://github.com/ouihealth/detox-puppeteer/pull/13), which does that for the  `detox-puppeteer` project.
+If you are a maintainer of such a project, and you wish to upgrade your Detox dependency to 19 (kudos! :clap:),  follow this step-by-step migration guide; You can refer to [this pull-request](https://github.com/ouihealth/detox-puppeteer/pull/13), which does that for the  `detox-puppeteer` project.
 
 #### Migrating Custom Drivers
 
@@ -68,7 +68,7 @@ Add the new class to the `module.exports` list, under the name: `ArtifactPlugins
 
 - Optionally rename your class from `PuppeteerDriver` to `PuppeteerRuntimeDriver`.
 - In the methods remaining in the class accepting the `deviceId` arg: **remove the `deviceId` arg entirely**. This might break your implementation - don’t worry, continue reading.
-- If applicable, change the signature of the class' c'tor to accept the cookie as it’s 2nd argument (instance previously allocated in `PuppeteerAllocationDriver.allocate()`). Save data from the cookie as part of the driver’s state, in order to unbreak your implementation, following the previous step.
+- If applicable, change the signature of the class' c'tor to accept the cookie as its 2nd argument (instance previously allocated in `PuppeteerAllocationDriver.allocate()`). Save data from the cookie as part of the driver’s state, in order to unbreak your implementation, following the previous step.
 - Add two methods: `getExternalId()` and `getDeviceName()`. Implement them such that they would comply with the `device.id` and `device.name` [API contracts](APIRef.DeviceObjectAPI.md), respectively.
 
 Export the runtime driver class in the `module.exports` list as `RuntimeDriverClass`, **instead of `DriverClass`.**
@@ -192,7 +192,7 @@ class PluginDriver {
 
 ### 17.0.0
 
-Detox for iOS now uses an entirely new, custom built matcher, action and expectation infrastructure. This is the first step in our roadmap of removing Earl Grey as a dependency.
+Detox for iOS now uses an entirely new, custom-built matcher, action and expectation infrastructure. This is the first step in our roadmap of removing Earl Grey as a dependency.
 
 While the new system has been designed to be as compatible as possible with the existing system, some changes we made to existing APIs that may or may not require your attention.
 
@@ -531,7 +531,7 @@ _**Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!**_
 
 ### Migrating from Detox 8.x.x to 9.x.x
 
-Detox 9.0.0 brings latest Espresso (3.0.2), and React Native 56 support on Android.
+Detox 9.0.0 brings the latest Espresso (3.0.2), and React Native 56 support on Android.
 Espresso 3.0.2 has a few mandatory dependency changes, which break the current setup for Detox users on Android.
 
 Use this to diff to upgrade your dependencies, and follow Android Studio’s in-editor guidance/lint support.
@@ -567,7 +567,7 @@ More details about Espresso dependencies [here](https://developer.android.com/tr
 
 ### Migrating from Detox 7.x.x to 8.x.x
 
-Detox 8.x.x brings support for test artifacts (videos, screenshot, logs), and to learn more about it you can refer to [Artifacts documentation](APIRef.Artifacts.md) and to [Detox CLI documentation](APIRef.DetoxCLI.md).
+Detox 8.x.x brings support for test artifacts (videos, screenshot, logs), and to learn more about it, you can refer to [Artifacts documentation](APIRef.Artifacts.md) and to [Detox CLI documentation](APIRef.DetoxCLI.md).
 
 #### Changes to `e2e/init.js`
 
@@ -661,7 +661,7 @@ API of these methods is subject to change in future versions due to complexity b
 ##### Changes to `detox test` CLI
 
 The `--artifact-location` argument became optional for `detox test` in the version 8.x.x.
-By default it dynamically creates `./artifacts/{configuration}.{timestamp}` directory in the project folder as soon as it has to save a recorded artifact.
+By default, it dynamically creates `./artifacts/{configuration}.{timestamp}` directory in the project folder as soon as it has to save a recorded artifact.
 
 Previously, to enable log recording you just had to specify `--artifact-location` arg. Currently, you need to tell that explicitly via a new CLI flag: `--record-logs all` or `--record-logs failing`.
 

@@ -57,7 +57,7 @@ The API immediately returns the path of a temporary, readable image file where t
 
 The path of a temporary file containing the resulted `.png` image.
 
-Important: The returned path is guaranteed to be valid only during the test execution. Later on, the screenshot will be moved to the artifacts location, and will not be available.
+Important: The returned path is guaranteed to be valid only during the test execution. Later on, the screenshot will be moved to the artifacts' folder, and will not be available.
 
 **Parameters:**
 
@@ -78,7 +78,7 @@ This API well-captures all elements, although alongside surrounding "visual nois
 
 ![device-screenshot](img/device-screenshot.png)
 
-As the image includes, for example, the current time (at the top-left corner), running the test in any _different_ time would unnecessarily result in an utter comparison failure, making the test downright useless. Fortunately, this can be resolved, by putting the device into "demo mode" (i.e. freezing the irrelevant, volatile elements) . For example (credits - [Miki](https://github.com/M-i-k-e-l)):
+As the image includes, for example, the current time (in the top-left corner), running the test in any _different_ time would unnecessarily result in an utter comparison failure, making the test downright useless. Fortunately, this can be resolved, by putting the device into "demo mode" (i.e. freezing the irrelevant, volatile elements) . For example (credits - [Miki](https://github.com/M-i-k-e-l)):
 
 ```js
 async function setDemoMode() {
