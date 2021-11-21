@@ -136,7 +136,7 @@ describe('Client', () => {
       mockAws.mockResponse('loginSuccess', {});
       expect(mockAws.send).not.toHaveBeenCalled();
       await client.connect();
-      expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId), SEND_OPTIONS.TIMED);
+      expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId), SEND_OPTIONS.TIMED_SHORT);
     });
 
     it('should not consider itself connected to the app if "loginSuccess" params.appConnected = false', async () => {
@@ -160,8 +160,55 @@ describe('Client', () => {
   });
 
   describe('.sendAction()', () => {
+
+    class ActionWithoutParams extends actions.Action {
+      constructor() {
+        super('ActionWithoutParams');
+      }
+
+      async handle(response) {
+        this.expectResponseOfType(response, 'ActionWithoutParams');
+      }
+    }
+
     beforeEach(async () => {
       await client.connect();
+    });
+
+    it('should throw error for actions without isAtomic', async () => {
+      const withoutConcurrent = new ActionWithoutParams();
+      await expect(() => !withoutConcurrent.isAtomic).toThrowErrorMatchingSnapshot();
+    });
+
+    it('should throw error for actions without timeout', async () => {
+      const withoutTimeout = new ActionWithoutParams();
+      await expect(() => withoutTimeout.timeout).toThrowErrorMatchingSnapshot();
+    });
+
+    it('should not throw .isAtomic getter errors for exported actions', () => {
+      for (const ActionClass of Object.values(actions)) {
+        if (ActionClass !== actions.Action && ActionClass.prototype instanceof actions.Action) {
+          expect(() => ActionClass.prototype.isAtomic).not.toThrow();
+        }
+      }
+    });
+
+    it('should not throw .timeout getter errors for exported actions', () => {
+      for (const ActionClass of Object.values(actions)) {
+        if (ActionClass !== actions.Action && ActionClass.prototype instanceof actions.Action) {
+          expect(() => ActionClass.prototype.timeout).not.toThrow();
+        }
+      }
+    });
+
+    it('should return value for isAtomic', async () => {
+      const withoutConcurrent = new actions.ReloadReactNative();
+      await expect(withoutConcurrent.isAtomic).toBe(false);
+    });
+
+    it('should return value for timeout', async () => {
+      const withoutTimeout = new actions.Login(123);
+      await expect(withoutTimeout.timeout).toEqual(1000);
     });
 
     it('should schedule "currentStatus" query when it takes too long', async () => {
@@ -694,6 +741,8 @@ describe('Client', () => {
       type: 'whatever',
       params: {},
       handle: jest.fn(),
+      get timeout() { return 0; },
+      get isAtomic() { return true; },
       ...overrides,
     };
   }
@@ -722,5 +771,6 @@ describe('Client', () => {
   const SEND_OPTIONS = {
     DEFAULT: { timeout: 0 },
     TIMED: { timeout: 5000 },
+    TIMED_SHORT: { timeout: 1000 }
   };
 });
