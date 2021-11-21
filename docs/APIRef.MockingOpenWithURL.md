@@ -7,7 +7,7 @@ sidebar_label: Mocking Open With URL (Deep Links)
 
 ## Mocking Open With URL (Deep Links)
 
-You can mock opening the app from URL to test your app's deep link handling mechanism.
+You can mock opening the app from URL to test your app’s deep link handling mechanism.
 
 ### Mocking App Launch With a URL
 

@@ -14,7 +14,7 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
   favicon: '/img/favicon.ico',
   organizationName: 'wix',
-  projectName: 'detox',
+  projectName: 'Detox',
 
   presets: [
     [
@@ -55,6 +55,11 @@ const config = {
             position: 'right',
           },
         ],
+      },
+      algolia: {
+        appId: 'BH4D9OD16A',
+        apiKey: 'f621c2d74268df173153c887526aebb3',
+        indexName: 'detox',
       },
       footer: {
         style: 'dark',

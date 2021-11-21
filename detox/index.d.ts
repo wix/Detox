@@ -353,15 +353,18 @@ declare global {
             reuse?: boolean;
         }
 
-        type AppLaunchArgsOperationOptions = Partial<{
-            /** Changes the scope of the operation: transient or permanent app launch args */
-            permanent: boolean;
-        }>;
-
         type Point2D = {
             x: number,
             y: number,
         }
+
+        /**
+         * @deprecated
+         */
+        type AppLaunchArgsOperationOptions = Partial<{
+            /** Changes the scope of the operation: transient or permanent app launch args */
+            permanent: boolean;
+        }>;
 
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
@@ -372,19 +375,25 @@ declare global {
          */
         interface AppLaunchArgs {
             /**
+             * Shared (global) arguments that are not specific to a particular application.
+             * Selecting another app does not reset them, yet they still can be overridden
+             * by configuring app-specific launch args.
+             * @see Device#selectApp
+             * @see AppLaunchArgs
+             */
+            readonly shared: ScopedAppLaunchArgs;
+
+            /**
              * Modify the launch-arguments via a modifier object, according to the following logic:
              * - Non-nullish modifier properties would set a new value or override the previous value of
              *   existing properties with the same name.
              * - Modifier properties set to either `undefined` or `null` would delete the corresponding property
              *   if it existed.
-             * These custom app launch arguments are transient by default, and will get erased as soon as
-             * you select another app. If you wish to keep them between the apps, use { permanent: true }
-             * option.
-             * Note: transient (default) values override the permanent ones if the corresponding properties
-             * have the same name.
+             * These custom app launch arguments get erased whenever you select a different application.
+             * If you need to share them between all the applications, use {@link AppLaunchArgs#shared} property.
+             * Note: app-specific launch args have a priority over shared ones.
              *
              * @param modifier The modifier object.
-             * @param options.permanent - when set to true, the function will set permanent app launch args.
              * @example
              * // With current launch arguments set to:
              * // {
@@ -403,23 +412,46 @@ declare global {
              * //   mockServerToken: 'abcdef',
              * // }
              */
-            modify(modifier: object, options?: AppLaunchArgsOperationOptions): this;
-
+            modify(modifier: object): this;
             /**
-             * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
-             * Note: by default, permanent app launch args are not reset.
-             * @param options.permanent - when set to true, the function will also reset permanent app launch args.
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
              */
-            reset(options?: AppLaunchArgsOperationOptions): this;
+            modify(modifier: object, options: AppLaunchArgsOperationOptions): this;
 
             /**
-             * Get all currently set launch-arguments.
-             * @param options.permanent - when set to true, the function will return only permanent app launch args.
-             * when set to false, the function will return only transient app launch args.
+             * Reset all app-specific launch arguments (back to an empty object).
+             * If you need to reset the shared launch args, use {@link AppLaunchArgs#shared}.
+             */
+            reset(): this;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            reset(options: AppLaunchArgsOperationOptions): this;
+
+            /**
+             * Get all currently set launch arguments (including shared ones).
              * @returns An object containing all launch-arguments.
-             * Note: Changes on the returned object will not be reflected on the launch-arguments associated with the device.
+             * Note: mutating the values inside the result object is pointless, as it is immutable.
              */
-            get(options?: AppLaunchArgsOperationOptions): object;
+            get(): object;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            get(options: AppLaunchArgsOperationOptions): object;
+        }
+
+        /**
+         * Shared (global) arguments that are not specific to a particular application.
+         */
+        interface ScopedAppLaunchArgs {
+            /** @see AppLaunchArgs#modify */
+            modify(modifier: object): this;
+
+            /** @see AppLaunchArgs#reset */
+            reset(): this;
+
+            /** @see AppLaunchArgs#get */
+            get(): object;
         }
 
         interface Device {
@@ -457,7 +489,7 @@ declare global {
             /**
              * Launch the app.
              *
-             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/detox/docs/api/launch-args).
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -481,7 +513,7 @@ declare global {
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
-             * Refer to the [dedicated guide](https://wix.github.io/detox/docs/api/launch-args) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              *
              * @example
              * // With Detox being preconfigured statically to use these arguments in app launch:
@@ -631,8 +663,8 @@ declare global {
 
             /**
              * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
-             * @param {string} name for the screenshot artifact
-             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @param name for the screenshot artifact
+             * @returns a temporary path to the screenshot.
              * @example
              * test('Menu items should have logout', async () => {
              *   const tempPath = await device.takeScreenshot('tap on menu');
@@ -643,6 +675,24 @@ declare global {
              * });
              */
             takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application
+             * to a temporary folder and schedules putting it to the artifacts folder upon the completion of
+             * the current test. The file can be opened later in Xcode 12.0 and above.
+             * @see https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113
+             * @param [name="capture"] optional name for the *.viewhierarchy artifact
+             * @returns a temporary path to the captured view hierarchy snapshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   await device.captureViewHierarchy('myElements');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the artifact will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/myElements.viewhierarchy
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/myElements.viewhierarchy
+             * });
+             */
+            captureViewHierarchy(name?: string): Promise<string>;
 
             /**
              * Simulate shake (iOS Only)
@@ -1120,7 +1170,7 @@ declare global {
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
-             * See [here](https://wix.github.io/detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
+             * See [here](https://wix.github.io/Detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
              * @param value string value in set column (must be correct)
@@ -1164,7 +1214,7 @@ declare global {
 
             /**
              * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
-             * For more information, see {@link https://wix.github.io/detox/docs/api/screenshots#element-level-screenshots}
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/screenshots#element-level-screenshots}
              * @param {string} name for the screenshot artifact
              * @returns {Promise<string>} a temporary path to the screenshot.
              * @example
@@ -1367,7 +1417,7 @@ declare global {
             delete?: boolean;
             /**
              * Arguments to pass-through into the app.
-             * Refer to the [dedicated guide](https://wix.github.io/detox/docs/api/launch-args) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              */
             launchArgs?: Record<string, any>;
             /**

@@ -16,7 +16,7 @@ Running Detox on CI is not that different from running it locally. There are two
 
 ### Step 1: Prepare a Release Configuration for Your App
 
-We will need to create a [release device configuration for Detox](APIRef.Configuration.md#device-configuration) inside `package.json` under the `detox` section.
+We will need to create a [release device configuration for Detox](APIRef.Configuration.md#device-configurations) inside `package.json` under the `detox` section.
 
 **Example:**
 
@@ -24,7 +24,7 @@ We will need to create a [release device configuration for Detox](APIRef.Configu
 "detox": {
   "devices": {
     "simulator": {
-      "type": "ios.simulator"
+      "type": "ios.simulator",
       "device": {
         "type": "iPhone 12 Pro Max"
       }
@@ -63,7 +63,7 @@ detox test --configuration ios.sim.release --cleanup
 
 #### • Running Detox on [Travis CI](https://travis-ci.org/)
 
-Detox's own build is running on Travis, check out Detox's [.travis.yml](https://github.com/wix/Detox/tree/master/.travis.yml) file to see how it's done.
+Detox’s own build is running on Travis, check out Detox’s [`.travis.yml`](https://github.com/wix/Detox/tree/master/.travis.yml) file to see how it’s done.
 
 This is a simple example configuration to get you started with Detox on Travis:
 
@@ -99,11 +99,11 @@ script:
 
 #### • Running Detox on [Bitrise](https://www.bitrise.io/)
 
-Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](http://blog.bitrise.io/2017/07/25/how-to-set-up-a-react-native-app-on-bitrise.html) guide.
+Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](https://blog.bitrise.io/post/how-to-set-up-a-react-native-app-on-bitrise) guide.
 
-You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`.
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise `.yml` file for a workflow called `tests`.
 
-Additionally, you can use a [webhook](http://devcenter.bitrise.io/webhooks/) on Bitrise to post the build status directly into your Slack channel.
+Additionally, you can use a [webhook](https://devcenter.bitrise.io/en/apps/webhooks/adding-incoming-webhooks.html) on Bitrise to post the build status directly into your Slack channel.
 
 ```yml
 ---
@@ -172,9 +172,9 @@ workflows:
     after_run: []
 ```
 
-#### • Running Detox on [GitlabCI](https://docs.gitlab.com/ee/ci/README.html) - Android Only
+#### • Running Detox on [GitLab CI](https://docs.gitlab.com/ee/ci/README.html) - Android Only
 
-Gitlab is also a popular git management service which also include a built-in CI system. They provide free runner up to 2000 minutes for private projects, however, the runners provided by them cannot be used to run Detox due to the lack of KVM support (in order to run Android Emulators). You can, instead, [create your own runner](https://docs.gitlab.com/ee/ci/runners/README.html) with KVM support. Some example of cloud providers offering this are: [Digital Ocean](https://www.digitalocean.com/products/droplets/), AWS (with [c5 instance types](https://aws.amazon.com/ec2/instance-types/c5/)), [Google Cloud](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances) and [Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nested-virtualization)
+GitLab is also a popular git management service which also include a built-in CI system. They provide free runner up to 2000 minutes for private projects, however, the runners provided by them cannot be used to run Detox due to the lack of KVM support (in order to run Android Emulators). You can, instead, [create your own runner](https://docs.gitlab.com/ee/ci/runners/README.html) with KVM support. Some example of cloud providers offering this are: [Digital Ocean](https://www.digitalocean.com/products/droplets/), AWS (with [C5 instance types](https://aws.amazon.com/ec2/instance-types/c5/)), [Google Cloud](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances) and [Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nested-virtualization)
 
 One example of such job can be:
 

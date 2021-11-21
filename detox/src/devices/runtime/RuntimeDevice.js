@@ -3,7 +3,7 @@ const debug = require('../../utils/debug'); // debug utils, leave here even if u
 const { traceCall } = require('../../utils/trace');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 
-const LaunchArgsEditor = require('./LaunchArgsEditor');
+const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
 class RuntimeDevice {
   constructor({

@@ -36,7 +36,7 @@ exports[`DetoxRuntimeErrorComposer invalidTestSummary - afterEach 1`] = `
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 
 HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
-See the article for the guidance: https://wix.github.io/detox/docs/api/test-lifecycle
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
 testSummary was: 
 
 {
@@ -49,7 +49,7 @@ exports[`DetoxRuntimeErrorComposer invalidTestSummary - afterEach 2`] = `
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 
 HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
-See the article for the guidance: https://wix.github.io/detox/docs/api/test-lifecycle
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
 testSummary was: 
 
 {
@@ -64,7 +64,7 @@ exports[`DetoxRuntimeErrorComposer invalidTestSummary - beforeEach 1`] = `
 Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
 
 HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
-See the article for the guidance: https://wix.github.io/detox/docs/api/test-lifecycle
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
 testSummary was: 
 
 deviceName]

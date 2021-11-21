@@ -13,8 +13,8 @@ This guide sums up the tools required for an environment for running automated U
 
 Running Detox (on iOS) requires the following:
 
-* MacOS Catalina or newer
-* Xcode `v12.x` or newer (`v13` support - see [here](https://github.com/wix/Detox/issues/2895)), with Xcode command-line tools installed
+- MacOS Catalina or newer
+- Xcode `v12.x` or newer (`v13` support - see [here](https://github.com/wix/Detox/issues/2895)), with Xcode command-line tools installed
 
   Xcode can be installed from the App Store, or downloaded [directly from Apple Developer](https://developer.apple.com/download/more/)
 

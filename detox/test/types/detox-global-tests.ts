@@ -5,24 +5,40 @@ declare var test: (test: string, callback: () => void) => void;
 
 describe("Test", () => {
     beforeAll(async () => {
-        await device.appLaunchArgs.modify({ ourMockServerPort: 9999 }, { permanent: true });
+        // Deprecated { permanent: boolean } API
+        device.appLaunchArgs.modify({ ourMockServerPort: 9999 }, { permanent: true });
         await device.selectApp('app1');
-        await device.appLaunchArgs.modify({ appMockServerPort: 4000 });
-        await device.appLaunchArgs.get({ permanent: true }); // {  ourMockServerPort: 9999 }
-
+        device.appLaunchArgs.get({ permanent: true }); // {  ourMockServerPort: 9999 }
         await device.selectApp('app2');
-        await device.appLaunchArgs.modify({ appMockServerPort: 4001 });
-        await device.appLaunchArgs.get(); // { appMockServerPort: 4001, ourMockServerPort: 9999 }
+        device.appLaunchArgs.modify({ appMockServerPort: 4001 });
+        device.appLaunchArgs.get(); // { appMockServerPort: 4001, ourMockServerPort: 9999 }
+    });
+
+    beforeAll(async () => {
+        device.appLaunchArgs.shared.modify({ ourMockServerPort: 9999 });
+        await device.selectApp('app1');
+        device.appLaunchArgs.shared.get(); // { ourMockServerPort: 9999 }
+        await device.selectApp('app2');
+        device.appLaunchArgs.modify({ appMockServerPort: 4001 });
+        device.appLaunchArgs.get(); // { appMockServerPort: 4001, ourMockServerPort: 9999 }
     });
 
     beforeAll(async () => {
         await device.reloadReactNative();
-        await device.takeScreenshot("test screenshot");
+
+        const artifactsPaths: string[] = [
+            await device.takeScreenshot("test screenshot"),
+            await device.captureViewHierarchy(),
+            await device.captureViewHierarchy('a'),
+        ];
+
+        artifactsPaths.splice(0);
     });
 
     afterAll(async () => {
-        await device.appLaunchArgs.reset();
-        await device.appLaunchArgs.reset({ permanent: true });
+        device.appLaunchArgs.reset();
+        device.appLaunchArgs.shared.reset();
+        device.appLaunchArgs.reset({ permanent: true });
     });
 
     afterAll(async () => {
