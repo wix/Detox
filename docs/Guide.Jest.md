@@ -168,7 +168,7 @@ This is how a typical Jest log output looks when `SpecReporter` and `WorkerAssig
 There are some things you should notice:
 
 - Don’t worry about mocks being used, Detox works on the compiled version of your app.
-- Detox exposes it’s primitives (`expect`, `device`, ...) globally, it will override Jest’s global `expect` object.
+- Detox exposes its primitives (`expect`, `device`, ...) globally, it will override Jest’s global `expect` object.
 
 ### Parallel Test Execution
 

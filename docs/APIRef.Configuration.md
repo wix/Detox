@@ -523,7 +523,7 @@ where `./e2e` is the path to your Detox tests folder.
 
 #### Faster Test Runs with App Reuse
 
-By default the app is removed, reinstalled and launched before each run.
+By default, the app is removed, reinstalled and launched before each run.
 Starting fresh is critical in CI but during the development you might be able to save time between test runs and reuse the app that was previously installed in the simulator. To do so use the `reuse` flag and run your tests like this:
 
 ```sh

@@ -171,7 +171,7 @@ activity.getIntent().getBundleExtra("userDataObj").getString("cascadedKey") == "
 
 ##### Handling at Runtime
 
-Note that on Android, data delivered through an intent at runtime, is typically received in your activity’s [`onNewIntent`](https://developer.android.com/reference/android/app/Activity#onNewIntent\(android.content.Intent\)) callback. Be sure to consider what should be done in order to handle this type of a use case in your app: Namely, that `setIntent()` should be called in order for the data to be later available in your app through `getIntent()`, as explained earlier.
+Note that on Android, data delivered through an intent at runtime, is typically received in your activity’s [`onNewIntent`](https://developer.android.com/reference/android/app/Activity#onNewIntent\(android.content.Intent\)) callback. Be sure to consider what should be done in order to handle this type of use case in your app: Namely, that `setIntent()` should be called in order for the data to be later available in your app through `getIntent()`, as explained earlier.
 
 > **This isn’t related to Detox in particular**, and is set here simply to help you consider all the use cases in your app so that tests coverage would be optimal.
 

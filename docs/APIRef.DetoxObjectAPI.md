@@ -82,7 +82,7 @@ Usually, you are not supposed to write own implementation of this call, instead 
 
 #### `detox.afterEach()`
 
-You are expected to call this method only after the test and all its inner `afterEach()`-es complete. Besides passing test title and full name you should pay heed on delivering a valid status field: _failed_ or _passed_. If the test has another status (e.g. _skipped_), please comply to the note above in [detox.beforeEach()](#detoxbeforeEach) or use one of these two values as a fallback.
+You are expected to call this method only after the test and all its inner `afterEach()`-es complete. Besides passing test title and full name, you should pay heed on delivering a valid status field: _failed_ or _passed_. If the test has another status (e.g. _skipped_), please comply to the note above in [detox.beforeEach()](#detoxbeforeEach) or use one of these two values as a fallback.
 
 ```typescript
 declare function afterEach(testSummary: {

@@ -26,7 +26,7 @@ Of course, you can add any of your initializations in this phase.
 
 Despite being a recent and _still_ an optional formation, `detox.beforeEach` and `detox.afterEach` lifecycle functions are **highly** recommended to be called in your test setups. The newer features (including test artifacts: video recordings, screenshots, logs) are not expected to work without these calls.
 
-> **TIP**: This API is still apt to change in future, thus to minimize the risks, you are encouraged to switch to the built-in adapters for `mocha` and `jest` like in examples here: [mocha adapter example](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js), [jest adapter example](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js).
+> **TIP**: This API is still apt to change in the future, thus to minimize the risks, you are encouraged to switch to the built-in adapters for `mocha` and `jest` like in examples here: [mocha adapter example](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js), [jest adapter example](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js).
 
 If nevertheless you use another test runner with Detox (not `mocha` and not `jest`), then you have to implement a logic similar to the one below. Futurewise, consider refactoring it to an adapter and sharing with Detox project (e.g. adapter for `ava.js` or `tape`):
 
