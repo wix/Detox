@@ -35,7 +35,7 @@ brew install node
 
 ### Install Detox Command Line Tools (`detox-cli`)
 
-This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
+This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside your npm scripts. `detox-cli` is merely a script that passes commands through to a command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
 ```sh
 npm install -g detox-cli

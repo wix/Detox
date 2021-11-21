@@ -26,7 +26,7 @@ If your app targets a third-party platform, you may switch to use a [third-party
 
 ### How to Use a Third-party Driver
 
-Check to see if a [third-party driver](#Existing-Third-party-drivers) already exists for the platform you wish to target. Mostly likely, the driver will have setup instructions.
+Check to see if a [third-party driver](#existing-third-party-drivers) already exists for the platform you wish to target. Mostly likely, the driver will have setup instructions.
 
 Overall the setup for any third party driver is fairly simple.
 
@@ -64,7 +64,7 @@ _The component running on the device being tested, injected into the test app:_
 
 1. **Native Client:** The driver client communicates with the server over
    websocket where it receives information from the serialized matchers, and expectations, and also sends responses
-   back of whether each step of your test succeeds or fails. Typically a device client will use an underlying library specific
+   back of whether each step of your test succeeds or fails. Typically, a device client will use an underlying library specific
    to the platform at hand to implement the expectations.
 
 #### Implementation Details

@@ -36,7 +36,7 @@ Detox tries to eliminate flakiness by automatically synchronizing your tests wit
 
 ### Architecture
 
-Detox is comprised of the following components:
+Detox comprises the following components:
 
 - [**Tester**](https://github.com/wix/Detox/tree/master/detox/src): The testing component, running in a Node.js process on the host computer, executing the test logic. The tester is also responsible for device management and artifact collection.
 - **Detox native client ([iOS](https://github.com/wix/Detox/tree/master/detox/ios) & [Android](https://github.com/wix/Detox/tree/master/detox/android)):** A component that gets seamlessly integrated into the tested app on the tested device, right as Detox starts executing. It synchronizes with the app, matches user queries, executes user commands (e.g. taps, scrolls) and validates expectations.

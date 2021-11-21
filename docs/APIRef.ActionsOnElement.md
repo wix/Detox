@@ -31,7 +31,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
-- [`.getAttributes()`](#getAttributes)
+- [`.getAttributes()`](#getattributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
 
 #### `tap(point)`
@@ -266,10 +266,10 @@ Retrieved attributes are:
 - `text`: The text value of any textual element.
 - `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android.
 - `placeholder`: The placeholder text value of the element. Matches `hint` on android.
-- `enabled`: Whether or not the element is enabled for user interaction.
+- `enabled`: Whether the element is enabled for user interaction.
 - `identifier`: The identifier of the element. Matches `accessibilityIdentifier` on iOS, and the main view tag, on Android - both commonly **holding the component’s test ID in React Native apps**.
-- `visible`: whether the element is visible. On iOS, visibility is calculated for the [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint). On Android, the attribute directly holds the value returned by [View.getLocalVisibleRect()](https://developer.android.com/reference/kotlin/android/view/View#getglobalvisiblerect)).
-- `value`: the value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches `accessibilityValue`, on iOS.
+- `visible`: Whether the element is visible. On iOS, visibility is calculated for the [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint). On Android, the attribute directly holds the value returned by [View.getLocalVisibleRect()](https://developer.android.com/reference/kotlin/android/view/View#getglobalvisiblerect)).
+- `value`: The value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches `accessibilityValue`, on iOS.
 
 ##### iOS-Only
 

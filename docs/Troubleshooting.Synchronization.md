@@ -35,7 +35,7 @@ When this works it’s like magic. You simply execute actions one after the othe
 
 It’s difficult for an automatic mechanism to be correct in 100% of the cases. There are always exceptions. We are optimizing for the common case so most of your scenarios will not have to deal with synchronization issues.
 
-For the rest of this tutorial, we’ll assume the test is having some sort of a synchronization issue.
+For the rest of this tutorial, we’ll assume the test is having some sort of synchronization issue.
 
 ### Are we waiting too much or not waiting enough?
 
@@ -98,7 +98,7 @@ await device.launchApp({
 
 ### Switching to manual synchronization as a workaround
 
-We always have the fail-safe of turning off automatic synchronization and waiting manually by ourselves. This isn’t the recommended approach but sometimes we don’t have a choice.
+We always have the fail-safe of turning off automatic synchronization and waiting manually by ourselves. This isn’t the recommended approach, but sometimes we don’t have a choice.
 
 #### How do we turn off automatic synchronization?
 
