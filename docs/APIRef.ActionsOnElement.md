@@ -31,7 +31,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
-- [`.getAttributes()`](#getAttributes)
+- [`.getAttributes()`](#getattributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
 
 #### `tap(point)`

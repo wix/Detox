@@ -92,7 +92,7 @@ declare function afterEach(testSummary: {
 })
 ```
 
-Normally, you are not supposed to write own implementation of this call, as mentioned earlier in the [detox.beforeEach()](#detoxbeforeEach) documentation.
+Normally, you are not supposed to write own implementation of this call, as mentioned earlier in the [detox.beforeEach()](#detoxbeforeeach) documentation.
 
 #### `detox.cleanup()`
 

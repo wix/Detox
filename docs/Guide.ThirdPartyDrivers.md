@@ -26,7 +26,7 @@ If your app targets a third-party platform, you may switch to use a [third-party
 
 ### How to Use a Third-party Driver
 
-Check to see if a [third-party driver](#Existing-Third-party-drivers) already exists for the platform you wish to target. Mostly likely, the driver will have setup instructions.
+Check to see if a [third-party driver](#existing-third-party-drivers) already exists for the platform you wish to target. Mostly likely, the driver will have setup instructions.
 
 Overall the setup for any third party driver is fairly simple.
 
