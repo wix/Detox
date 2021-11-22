@@ -249,7 +249,7 @@ Let’s see an example. We will find the following view in the native hierarchy:
 
 This is the hierarchy viewer, pointing to the native view just mentioned:
 
-<img src="img/hierarchy-viewer.jpg" />
+![hierarchy viewer](img/hierarchy-viewer.jpg)
 
 #### Compare to a Working Setup
 
