@@ -21,6 +21,6 @@ class ViewAtIndexMatcher(private val index: Int, private val innerMatcher: Match
     }
 
     override fun describeTo(description: Description) {
-        description.appendText("matches " + index + "th view.")
+        description.appendText("View at index #$index, of those matching MATCHER$innerMatcher")
     }
 }
