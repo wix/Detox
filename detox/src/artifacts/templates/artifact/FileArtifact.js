@@ -75,6 +75,7 @@ class FileArtifact extends Artifact {
 
     if (!await fs.exists(destination)) {
       logger.debug({ event: 'MOVE_FILE' }, `moving "${source}" to ${destination}`);
+      await fs.ensureDir(path.dirname(destination));
       await fs.move(source, destination);
       return true;
     }

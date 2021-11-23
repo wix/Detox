@@ -19,3 +19,8 @@ test('isDirEmptySync', async () => {
     await fs.remove(tempDir);
   }
 });
+
+test('globSync', async () => {
+  const relativeFileName = path.relative(__dirname, __filename);
+  expect(fsext.globSync(__dirname, relativeFileName + '*')).toEqual([relativeFileName]);
+});
