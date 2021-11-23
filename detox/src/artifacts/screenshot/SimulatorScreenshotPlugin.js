@@ -63,8 +63,8 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
         continue;
       }
 
-      for (const innerPath of fs.globSync(visiblityDir, '**/*.png')) {
-        this._registerSnapshot(innerPath, new FileArtifact({
+      for (const innerPath of fs.globSync(visiblityDir, '*.png')) {
+        this._registerSnapshot(innerPath.replace(/ /g, '_'), new FileArtifact({
           temporaryPath: path.join(visiblityDir, innerPath),
         }));
       }
