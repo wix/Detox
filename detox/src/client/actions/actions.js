@@ -14,6 +14,16 @@ class Action {
       throw new DetoxInternalError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
   }
+
+  /** @returns {boolean} */
+  get isAtomic() {
+    throw new DetoxInternalError(`Action.prototype.isAtomic must be defined for ${this.type}`);
+  }
+
+  /** @returns {number} */
+  get timeout() {
+    throw new DetoxInternalError(`Action.prototype.timeout getter must be defined for ${this.type}`);
+  }
 }
 
 class Login extends Action {
@@ -23,6 +33,14 @@ class Login extends Action {
       role: 'tester'
     };
     super('login', params);
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 1000;
   }
 
   async handle(response) {
@@ -37,6 +55,14 @@ class Ready extends Action {
     this.messageId = -1000;
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'ready');
   }
@@ -46,6 +72,14 @@ class ReloadReactNative extends Action {
   constructor() {
     super('reactNativeReload');
     this.messageId = -1000;
+  }
+
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -58,6 +92,14 @@ class WaitForBackground extends Action {
     super('waitForBackground');
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'waitForBackgroundDone');
   }
@@ -66,6 +108,14 @@ class WaitForBackground extends Action {
 class WaitForActive extends Action {
   constructor() {
     super('waitForActive');
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -78,6 +128,14 @@ class Shake extends Action {
     super('shakeDevice');
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'shakeDeviceDone');
   }
@@ -86,6 +144,14 @@ class Shake extends Action {
 class SetOrientation extends Action {
   constructor(params) {
     super('setOrientation', params);
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -99,6 +165,14 @@ class Cleanup extends Action {
     this.messageId = -0xc1ea;
   }
 
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 5000;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'cleanupDone');
   }
@@ -107,6 +181,14 @@ class Cleanup extends Action {
 class Invoke extends Action {
   constructor(params) {
     super('invoke', params);
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -136,6 +218,14 @@ class DeliverPayload extends Action {
     super('deliverPayload', params);
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'deliverPayloadDone');
   }
@@ -146,6 +236,14 @@ class SetSyncSettings extends Action {
     super('setSyncSettings', params);
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'setSyncSettingsDone');
   }
@@ -154,6 +252,14 @@ class SetSyncSettings extends Action {
 class CurrentStatus extends Action {
   constructor(params) {
     super('currentStatus', params);
+  }
+
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 5000;
   }
 
   async handle(response) {
@@ -167,6 +273,14 @@ class SetInstrumentsRecordingState extends Action {
     super('setRecordingState', params);
   }
 
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'setRecordingStateDone');
   }
@@ -175,6 +289,14 @@ class SetInstrumentsRecordingState extends Action {
 class CaptureViewHierarchy extends Action {
   constructor(params) {
     super('captureViewHierarchy', params);
+  }
+
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -193,6 +315,7 @@ class CaptureViewHierarchy extends Action {
 }
 
 module.exports = {
+  Action,
   Login,
   WaitForBackground,
   WaitForActive,

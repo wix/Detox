@@ -39,6 +39,18 @@ Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
+exports[`Client .sendAction() should throw error for actions without isAtomic 1`] = `
+"Action.prototype.isAtomic must be defined for ActionWithoutParams
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client .sendAction() should throw error for actions without timeout 1`] = `
+"Action.prototype.timeout getter must be defined for ActionWithoutParams
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
 exports[`Client on AppNonresponsiveDetected should log a warning 1`] = `
 "Application nonresponsiveness detected!
 On Android, this could imply an ANR alert, which evidently causes tests to fail.

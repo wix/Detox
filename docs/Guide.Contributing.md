@@ -9,7 +9,7 @@ sidebar_label: Contributing
 
 This guide is about contributing to our codebase.
 
-We don’t have any special guidelines - just some setup walk-through’s!
+We don’t have any special guidelines - just some setup walk-through!
 
 ### Environment
 

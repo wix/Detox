@@ -48,4 +48,4 @@ On iOS, the specified launch arguments are passed as the process launch argument
 
 On Android, the launch arguments are set as bundle-extra’s into the activity’s intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
 
-Further handling of these launch arguments is up to the user’s responsibility and is out of scope for Detox.
+Further, handling of these launch arguments is up to the user’s responsibility and is out of scope for Detox.

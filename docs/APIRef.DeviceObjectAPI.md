@@ -177,7 +177,7 @@ Read more in [here](APIRef.MockingUserActivity.md). Go back to subsection 1 to r
 
 Before launching the application, it is uninstalled and then reinstalled.
 
-A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary. Default is `false`.
+A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary). Default is `false`.
 
 ```js
 await device.launchApp({delete: true});
@@ -424,7 +424,7 @@ Takes a screenshot of the device. For full details on taking screenshots with De
 
 **iOS Only.** Saves a view hierarchy snapshot (`*.viewhierarchy`) of the
 currently opened application to a temporary folder and schedules putting it to
-the artifacts folder upon the completion of the current test. The file can be
+the artifacts' folder upon the completion of the current test. The file can be
 opened later in Xcode 12.0 and above.
 See [Xcode 12 Release notes: #57933113](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:\~:text=57933113)
 for more details.

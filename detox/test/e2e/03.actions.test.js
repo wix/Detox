@@ -214,4 +214,24 @@ describe('Actions', () => {
     await expect(textField1).not.toBeFocused();
     await expect(textField2).toBeFocused();
   });
+
+  describe('pending interactions', () => {
+    const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
+      'Have you forgotten to apply an await over one of the Detox actions in your test code?';
+
+    it('should throw an exception when attempting to send an interaction while another is pending', async () => {
+      element(by.id('UniqueId937')).typeText('one ')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+      await element(by.id('UniqueId937')).typeText(' two')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+    });
+  });
 });

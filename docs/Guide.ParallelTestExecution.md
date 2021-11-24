@@ -20,7 +20,7 @@ If no simulator is available for that worker, the worker will create one with th
 
 Simulators/emulators run on a different process, outside of node, and require some sort of lock mechanism to make sure only one process controls a simulator in a given time. Therefore, Detox 7.4.0 introduced `device.registry.state.lock`, a lock file controlled by Detox, that registers all in-use simulators.
 
-> **Note:** Each worker is responsible of removing the device ID from the list in `device.registry.state.lock`. Exiting a test runner abruptly (using `Ctrl+C` / `⌘+C`) will not give the worker a chance to unregister the device from the lock file, resulting in an inconsistent state, which can result in creation of unnecessary new simulators.
+> **Note:** Each worker is responsible for removing the device ID from the list in `device.registry.state.lock`. Exiting a test runner abruptly (using `Ctrl+C` / `⌘+C`) will not give the worker a chance to unregister the device from the lock file, resulting in an inconsistent state, which can result in creation of unnecessary new simulators.
 >
 > - `detox-cli` makes sure `device.registry.state.lock` is cleaned whenever it executes.
 > - If you use Detox without `detox-cli` make sure you delete or reset the lock file before running tests.
