@@ -1466,18 +1466,6 @@ declare global {
         // Element Attributes Shared Among iOS and Android
         interface ElementAttributes {
             /**
-             * The text value of any textual element.
-             */
-            text: string;
-            /**
-             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
-             */
-            label: string;
-            /**
-             * The placeholder text value of the element. Matches hint on android.
-             */
-            placeholder: string;
-            /**
              * Whether or not the element is enabled for user interaction.
              */
             enabled: boolean;
@@ -1490,9 +1478,23 @@ declare global {
              */
             visible: boolean;
             /**
-             * The value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches accessibilityValue, on iOS.
+             * The text value of any textual element.
              */
-            value: string;
+            text?: string;
+            /**
+             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
+             */
+            label?: string;
+            /**
+             * The placeholder text value of the element. Matches hint on android.
+             */
+            placeholder?: string;
+            /**
+             * The value of the element, where applicable.
+             * Matches accessibilityValue, on iOS.
+             * For example: the position of a slider, or whether a checkbox has been marked (Android).
+             */
+            value?: unknown;
         }
 
         interface IosElementAttributeFrame {
@@ -1512,7 +1514,7 @@ declare global {
         // iOS Specific Attributes
         interface IosElementAttributes extends ElementAttributes {
             /**
-             * The activation point of the element, in element coordinate space.
+             * The [activation point]{@link https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint} of the element, in element coordinate space.
              */
             activationPoint: Point2D;
             /**
@@ -1544,25 +1546,28 @@ declare global {
              */
             elementSafeBounds: IosElementAttributeFrame;
             /**
-             * the date of the element (in case the element is a date picker).
+             * The date of the element (if it is a date picker).
              */
-            date: string;
+            date?: string;
             /**
-             * The normalized slider position (in case the element is a slider).
+             * The normalized slider position (if it is a slider).
              */
-            normalizedSliderPosition: number;
+            normalizedSliderPosition?: number;
             /**
-             * The content offset (in case the element is a scroll view).
+             * The content offset (if it is a scroll view).
              */
-            contentOffset: number;
+            contentOffset?: number;
             /**
-             * The content inset (in case the element is a scroll view).
+             * The content inset (if it is a scroll view).
              */
-            contentInset: IosElementAttributeInsets;
+            contentInset?: IosElementAttributeInsets;
             /**
-             * The adjusted content inset (in case the element is a scroll view).
+             * The adjusted content inset (if it is a scroll view).
              */
-            adjustedContentInset: IosElementAttributeInsets;
+            adjustedContentInset?: IosElementAttributeInsets;
+            /**
+             * @example "<CALayer: 0x600003f759e0>"
+             */
             layer: string;
         }
 
@@ -1595,11 +1600,11 @@ declare global {
             /**
              * The text size for the text element.
              */
-            textSize: number;
+            textSize?: number;
             /**
              * The length of the text element (character count).
              */
-            length: number;
+            length?: number;
         }
     }
 }
