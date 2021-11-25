@@ -59,14 +59,14 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
     ].filter(Boolean);
 
     for (const visiblityDir of visibilityArtifactDirs) {
-      if (fs.isDirEmptySync(visiblityDir)) {
-        continue;
-      }
-
-      for (const innerPath of fs.globSync(visiblityDir, '*.png')) {
-        this._registerSnapshot(innerPath.replace(/ /g, '_'), new FileArtifact({
-          temporaryPath: path.join(visiblityDir, innerPath),
-        }));
+      for (const innerFile of fs.readdirSync(visiblityDir)) {
+        const ext = path.extname(innerFile);
+        if (ext === '.png') {
+          const artifactName = path.basename(innerFile, ext).replace(/ /g, '_');
+          this._registerSnapshot(artifactName, new FileArtifact({
+            temporaryPath: path.join(visiblityDir, innerFile),
+          }));
+        }
       }
     }
   }

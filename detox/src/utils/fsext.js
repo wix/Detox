@@ -1,7 +1,6 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const glob = require('glob');
 
 function isDirEmptySync(dirPath) {
   const files = fs.readdirSync(dirPath);
@@ -20,12 +19,12 @@ async function getDirectories (rootPath) {
   return dirs.sort();
 }
 
-function globSync(cwd, pattern) {
-  return glob.sync(pattern, { cwd });
+function readdirSync(dirPath) {
+  return fs.readdirSync(dirPath);
 }
 
 module.exports = {
   getDirectories,
   isDirEmptySync,
-  globSync,
+  readdirSync,
 };

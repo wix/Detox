@@ -20,7 +20,7 @@ test('isDirEmptySync', async () => {
   }
 });
 
-test('globSync', async () => {
+test('readdirSync', async () => {
   const relativeFileName = path.relative(__dirname, __filename);
-  expect(fsext.globSync(__dirname, relativeFileName + '*')).toEqual([relativeFileName]);
+  expect(fsext.readdirSync(__dirname)).toContain(relativeFileName);
 });
