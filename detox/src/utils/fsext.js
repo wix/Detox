@@ -19,12 +19,8 @@ async function getDirectories (rootPath) {
   return dirs.sort();
 }
 
-function readdirSync(dirPath) {
-  return fs.readdirSync(dirPath);
-}
-
 module.exports = {
   getDirectories,
   isDirEmptySync,
-  readdirSync,
+  readdirSync: fs.readdirSync,
 };
