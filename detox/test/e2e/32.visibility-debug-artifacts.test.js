@@ -20,7 +20,7 @@ describe(':ios: Visibility Debug Artifacts', () => {
   afterAll(async () => {
     await waitUntilArtifactsManagerIsIdle();
 
-    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/visibilityFailingRects');
-    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/visibilityFailingScreenshots');
+    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_*_SCREEN.png');
+    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_*_TEST.png');
   });
 });

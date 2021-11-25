@@ -19,3 +19,8 @@ test('isDirEmptySync', async () => {
     await fs.remove(tempDir);
   }
 });
+
+test('readdirSync', async () => {
+  const relativeFileName = path.relative(__dirname, __filename);
+  expect(fsext.readdirSync(__dirname)).toContain(relativeFileName);
+});

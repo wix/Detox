@@ -1,3 +1,5 @@
+const path = require('path');
+
 const fs = require('../../utils/fsext');
 const log = require('../../utils/logger').child({ __filename });
 const FileArtifact = require('../templates/artifact/FileArtifact');
@@ -51,19 +53,21 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
   }
 
   _onInvokeFailure({ params }) {
-    const artifacts = {
-      visibilityFailingScreenshots: params.visibilityFailingScreenshotsURL,
-      visibilityFailingRects: params.visibilityFailingRectsURL,
-    };
+    const visibilityArtifactDirs = [
+      params.visibilityFailingScreenshotsURL,
+      params.visibilityFailingRectsURL
+    ].filter(Boolean);
 
-    for (const [key, artifactPath] of Object.entries(artifacts)) {
-      if (!artifactPath || fs.isDirEmptySync(artifactPath)) {
-        continue;
+    for (const visiblityDir of visibilityArtifactDirs) {
+      for (const innerFile of fs.readdirSync(visiblityDir)) {
+        const ext = path.extname(innerFile);
+        if (ext === '.png') {
+          const artifactName = path.basename(innerFile, ext).replace(/ /g, '_');
+          this._registerSnapshot(artifactName, new FileArtifact({
+            temporaryPath: path.join(visiblityDir, innerFile),
+          }));
+        }
       }
-
-      this._registerSnapshot(`${key}/`, new FileArtifact({
-        temporaryPath: artifactPath,
-      }));
     }
   }
 
