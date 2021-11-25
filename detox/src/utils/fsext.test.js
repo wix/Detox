@@ -21,6 +21,5 @@ test('isDirEmptySync', async () => {
 });
 
 test('readdirSync', async () => {
-  const relativeFileName = path.relative(__dirname, __filename);
-  expect(fsext.readdirSync(__dirname)).toContain(relativeFileName);
+  expect(fsext.readdirSync).toBe(fs.readdirSync);
 });

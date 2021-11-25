@@ -58,13 +58,13 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
       params.visibilityFailingRectsURL
     ].filter(Boolean);
 
-    for (const visiblityDir of visibilityArtifactDirs) {
-      for (const innerFile of fs.readdirSync(visiblityDir)) {
+    for (const visibilityDir of visibilityArtifactDirs) {
+      for (const innerFile of fs.readdirSync(visibilityDir)) {
         const ext = path.extname(innerFile);
         if (ext === '.png') {
           const artifactName = path.basename(innerFile, ext).replace(/ /g, '_');
           this._registerSnapshot(artifactName, new FileArtifact({
-            temporaryPath: path.join(visiblityDir, innerFile),
+            temporaryPath: path.join(visibilityDir, innerFile),
           }));
         }
       }
