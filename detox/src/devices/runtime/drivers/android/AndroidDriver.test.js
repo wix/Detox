@@ -1,9 +1,12 @@
+const _ = require('lodash');
+
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
   const bundleId = 'bundle-id-mock';
   const detoxServerPort = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
+  let logger;
   let fs; // TODO don't mock
   let client;
   let getAbsoluteBinaryPath;
@@ -343,6 +346,19 @@ describe('Android driver', () => {
     const binaryPath = 'mock-bin-path';
     const testBinaryPath = 'mock-test-bin-path';
 
+    function givenIsTestAPKResults(forAppApk, forTestApk) {
+      aapt.isTestAPK = jest.fn();
+
+      aapt.isTestAPK.mockResolvedValueOnce(forAppApk);
+      if (!_.isUndefined(forTestApk)) {
+        aapt.isTestAPK.mockResolvedValueOnce(forTestApk);
+      }
+    }
+
+    beforeEach(() => {
+      givenIsTestAPKResults(false, true);
+    });
+
     it('should adb-install the app\'s binary', async () => {
       await uut.installApp(binaryPath, testBinaryPath);
 
@@ -375,8 +391,25 @@ describe('Android driver', () => {
 
       await expect(uut.installApp(binaryPath, undefined))
         .rejects
-        .toThrowError(`'${expectedTestBinPath}'`);
+        .toThrowErrorMatchingSnapshot(expectedTestBinPath);
     });
+
+    it('should warn if app APK happens to be the test APK', async () => {
+      givenIsTestAPKResults(true);
+
+      await uut.installApp(binaryPath, testBinaryPath);
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toMatchSnapshot();
+    });
+
+    it('should warn if test APK happens to be the app APK', async () => {
+      givenIsTestAPKResults(false, false);
+
+      await uut.installApp(binaryPath, testBinaryPath);
+      expect(logger.warn).toHaveBeenCalledTimes(1);
+      expect(logger.warn.mock.calls[0][0]).toMatchSnapshot();
+    });
+
   });
 
   describe('Util-binaries installation', () => {
@@ -461,6 +494,9 @@ describe('Android driver', () => {
   });
 
   const setUpModuleDepMocks = () => {
+    jest.mock('../../../../utils/logger');
+    logger = require('../../../../utils/logger');
+
     jest.mock('fs-extra', () => ({
       existsSync: jest.fn(),
       realpathSync: jest.fn(),
@@ -479,7 +515,7 @@ describe('Android driver', () => {
     );
     getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 
-    jest.mock('../../../common/drivers/android/tools/APKPath', () => ({
+    jest.mock('../../../common/drivers/android/tools/apk', () => ({
       getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 

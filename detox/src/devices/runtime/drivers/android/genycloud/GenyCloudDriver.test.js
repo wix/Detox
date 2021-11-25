@@ -6,12 +6,20 @@ describe('Genymotion-cloud driver', () => {
     toString: () => 'mock-instance-toString()',
   });
 
+  let aapt;
   let eventEmitter;
   let invocationManager;
   let appInstallHelper;
   let instrumentation;
   let detoxGenymotionManager;
   beforeEach(() => {
+    jest.mock('../../../../common/drivers/android/exec/AAPT');
+    const AAPT = require('../../../../common/drivers/android/exec/AAPT');
+    aapt = new AAPT();
+    aapt.isTestAPK
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+
     jest.mock('../../../../../utils/getAbsoluteBinaryPath');
 
     const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
@@ -41,6 +49,7 @@ describe('Genymotion-cloud driver', () => {
       instance = anInstance();
       GenyCloudDriver = require('./GenyCloudDriver');
       uut = new GenyCloudDriver({
+        aapt,
         invocationManager,
         eventEmitter,
         client: {},

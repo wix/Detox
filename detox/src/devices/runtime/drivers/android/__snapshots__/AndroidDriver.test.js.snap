@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Android driver App installation should throw if auto test-binary path resolves an invalid file: testApkPathOf(absolutePathOf(mock-bin-path)) 1`] = `
+"The test APK could not be found at path: 'testApkPathOf(absolutePathOf(mock-bin-path))'
+
+HINT: Try running the detox build command, and make sure it was configured to execute a build command (e.g. './gradlew assembleAndroidTest')
+For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+`;
+
+exports[`Android driver App installation should warn if app APK happens to be the test APK 1`] = `
+"App APK at path absolutePathOf(mock-bin-path) was detected as the *test* APK!
+
+HINT: Your binary-path was probably wrongly set in the active Detox configuration"
+`;
+
+exports[`Android driver App installation should warn if test APK happens to be the app APK 1`] = `
+"Test APK at path absolutePathOf(mock-test-bin-path) was detected as the *app* APK!
+
+HINT: Your test binary-path was probably wrongly set in the active Detox configuration"
+`;
