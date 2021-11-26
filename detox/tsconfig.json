@@ -5,14 +5,13 @@
     "target": "ES2018",
     "allowJs": true,
     "checkJs": true,
-    "jsx": "react-native",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["node", "jest", "detox"]
+    "types": ["node", "jest"]
   },
   "rootDir": ".",
   "include": [
@@ -20,10 +19,9 @@
     "**/*.ts"
   ],
   "exclude": [
+    "android",
     "coverage",
-    "e2e/**/*.js",
-    "e2e-unhappy/**/*.js",
-    "integration/**/*.js",
-    "types/*.ts"
+    "ios",
+    "test"
   ]
 }

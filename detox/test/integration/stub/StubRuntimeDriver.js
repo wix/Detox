@@ -1,6 +1,5 @@
 const temporaryPath = require('detox/src/artifacts/utils/temporaryPath');
 const DeviceDriverBase = require('detox/src/devices/runtime/drivers/DeviceDriverBase');
-// eslint-disable-next-line node/no-extraneous-require
 const tempfile = require('tempfile');
 
 const {
