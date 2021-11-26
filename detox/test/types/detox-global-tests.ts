@@ -93,4 +93,22 @@ describe("Test", () => {
         await expect(webview.element(by.web.cssSelector(".button"))).toExist();
         await expect(webview.element(by.web.cssSelector(".button")).atIndex(1)).toExist();
     });
+
+    test("getAttributes", async () => {
+        let iosAttribute: Detox.IosElementAttributes | undefined;
+        let androidAttribute: Detox.AndroidElementAttributes | undefined;
+
+        const attributes = await element(by.id("element")).getAttributes();
+        if ('elements' in attributes) {
+          iosAttribute = attributes.elements[0];
+        } else if ('activationPoint' in attributes) {
+          iosAttribute = attributes;
+        } else {
+          androidAttribute = attributes;
+        }
+
+        if (!iosAttribute && !androidAttribute) {
+            throw new Error('error');
+        }
+    });
 });

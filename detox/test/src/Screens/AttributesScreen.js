@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import {
+  Platform,
   Text,
   View,
-  Slider,
   TextInput,
+  ScrollView,
+  Slider, // TODO: migrate to callstack/react-native-slider
+  DatePickerIOS // TODO: migrate to @react-native-community/datetimepicker
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 
@@ -17,9 +20,20 @@ export default class AttributesScreen extends Component {
   }
 
   render() {
+    const datePicker = Platform.OS === 'ios' ?
+      (<DatePickerIOS key="datePicker" testID="attrDatePicker" style={{ width: '100%', height: 200 }} date={new Date(2022, 0, 1)} />)
+      : undefined;
+
     return (
       <View style={{flex: 1, justifyContent: 'center'}}>
+        {datePicker}
         <View testID={'viewId'} width={100} height={100}/>
+        <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff' }}>
+          <ScrollView testID='attrScrollView'>
+            <View testID={'innerView1'} width={100} height={75} style={{backgroundColor: '#8cc'}}/>
+            <View testID={'innerView2'} width={100} height={75} style={{backgroundColor: '#c8c'}}/>
+          </ScrollView>
+        </View>
         <Text testID={'textViewId'} accessibilityLabel={'TextView'}>TextView</Text>
         <CheckBox
           disabled={false}

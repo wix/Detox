@@ -6,6 +6,8 @@ describe('Attributes', () => {
   let currentElement;
   /** @type {Detox.ElementAttributes} */
   let attributes;
+  /** @type {Detox.ElementAttributes[]} */
+  let attributesArray;
 
   /**
    * @param {Detox.NativeMatcher} matcher
@@ -13,7 +15,12 @@ describe('Attributes', () => {
   function useMatcher(matcher) {
     return async () => {
       currentElement = element(matcher);
-      attributes = await currentElement.getAttributes();
+      const result = await currentElement.getAttributes();
+      if ('elements' in result) {
+        attributesArray = result.elements;
+      } else {
+        attributes = await result;
+      }
     };
   }
 
@@ -34,15 +41,8 @@ describe('Attributes', () => {
 
     it(':ios: should have the corresponding shape', () =>
       expect(attributes).toMatchObject({
-        activationPoint: shapes.Point2D(),
-        normalizedActivationPoint: shapes.Point2D(),
+        ...shapes.IosElementAttribute(),
         hittable: true,
-        frame: shapes.IosElementAttributes(),
-        elementFrame: shapes.IosElementAttributes(),
-        elementBounds: shapes.IosElementAttributes(),
-        safeAreaInsets: shapes.IosElementAttributeInsets(),
-        elementSafeBounds: shapes.IosElementAttributes(),
-        layer: expect.stringMatching(/^<CALayer: 0x[0-9a-f]+>$/),
       }));
 
     it(':android: should have the corresponding shape', () => {
@@ -59,7 +59,6 @@ describe('Attributes', () => {
 
   describe('of a text', () => {
     const EXPECTED_TEXT = 'TextView';
-    const EXPECTED_FONT_SIZE = 37.0;
 
     beforeAll(useMatcher(by.id('textViewId')));
 
@@ -84,7 +83,7 @@ describe('Attributes', () => {
 
     it(':android: should have the corresponding shape', () => {
       expect(attributes).toMatchObject({
-        textSize: EXPECTED_FONT_SIZE,
+        textSize: expect.any(Number),
         length: EXPECTED_TEXT.length,
       });
     });
@@ -161,33 +160,66 @@ describe('Attributes', () => {
     });
   });
 
-  describe.skip('of a date picker', () => {
-    /*
-      iOS:
-      - [ ] date: undefined,
-    */
+  describe('of a date picker', () => {
+    beforeAll(useMatcher(by.id('attrDatePicker')));
+
+    it(':ios: should have Date .value', () => {
+      expect(attributes).toMatchObject({
+        date: expect.stringMatching(/^2022-01-01T00:00:00\+\d{2}:\d{2}$/),
+      });
+    });
   });
 
-  describe.skip('of a scroll view', () => {
-    /*
-      iOS:
-      - [ ] contentOffset: undefined,
-      - [ ] contentInset: undefined,
-      - [ ] adjustedContentInset: undefined,
-    */
+  describe('of a scroll view', () => {
+    beforeAll(useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView'))));
+
+    it(':ios: should have offsets and insets', async () => {
+      expect(attributes).toMatchObject({
+        contentOffset: shapes.Point2D(),
+        contentInset: shapes.IosElementAttributesInsets(),
+        adjustedContentInset: shapes.IosElementAttributesInsets(),
+      });
+    });
   });
 
-  describe.skip('of a scroll view child', () => {
-    /*
-      iOS:
-      - [ ] contentOffset: undefined,
-      - [ ] contentInset: undefined,
-      - [ ] adjustedContentInset: undefined,
-    */
-  });
+  describe('of multiple views', () => {
+    describe(':ios:', () => {
+      beforeAll(useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView'))));
 
-  describe.skip('of multiple views', () => {
-    // test Array<Promise>
+      it('should return an object with .elements array', async () => {
+        const viewShape = {
+          identifier: expect.any(String),
+          enabled: true,
+          visible: true,
+          activationPoint: shapes.Point2D(),
+          normalizedActivationPoint: shapes.Point2D(),
+          hittable: true,
+          frame: shapes.IosElementAttributeFrame(),
+          elementFrame: shapes.IosElementAttributeFrame(),
+          elementBounds: shapes.IosElementAttributeFrame(),
+          safeAreaInsets: shapes.IosElementAttributesInsets(),
+          elementSafeBounds: shapes.IosElementAttributeFrame(),
+          layer: expect.stringMatching(/^<CALayer: 0x[0-9a-f]+>$/),
+        };
+
+        const innerViews = attributesArray.filter(a => a.identifier);
+        expect(innerViews.length).toBe(2);
+        expect(innerViews[0]).toMatchObject({ ...viewShape, hittable: true });
+        expect(innerViews[1]).toMatchObject({ ...viewShape, hittable: false });
+      });
+    });
+
+    describe(':android:', () => {
+      // TODO (@jonathanmos) : Can we decide something about it officially?
+      it('should throw an error (because it is not implemented)', async () => {
+        await expect(
+          element(
+            by.type('com.facebook.react.views.view.ReactViewGroup')
+              .withAncestor(by.id('attrScrollView'))
+          ).getAttributes()
+        ).rejects.toThrowError(/Problem views are marked with '....MATCHES....' below/m);
+      });
+    });
   });
 });
 
@@ -196,13 +228,24 @@ const shapes = {
     x: expect.any(Number),
     y: expect.any(Number),
   }),
-  IosElementAttributes: () => ({
+  IosElementAttribute: () => ({
+    activationPoint: shapes.Point2D(),
+    normalizedActivationPoint: shapes.Point2D(),
+    hittable: expect.any(Boolean),
+    frame: shapes.IosElementAttributeFrame(),
+    elementFrame: shapes.IosElementAttributeFrame(),
+    elementBounds: shapes.IosElementAttributeFrame(),
+    safeAreaInsets: shapes.IosElementAttributesInsets(),
+    elementSafeBounds: shapes.IosElementAttributeFrame(),
+    layer: expect.stringMatching(/^<CALayer: 0x[0-9a-f]+>$/),
+  }),
+  IosElementAttributeFrame: () => ({
     y: expect.any(Number),
     x: expect.any(Number),
     width: expect.any(Number),
     height: expect.any(Number),
   }),
-  IosElementAttributeInsets: () => ({
+  IosElementAttributesInsets: () => ({
     right: expect.any(Number),
     top: expect.any(Number),
     left: expect.any(Number),

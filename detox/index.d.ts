@@ -1230,8 +1230,7 @@ declare global {
 
             /**
              * Returns an object, representing various attributes of the element. Note that only a handful of attributes are available on both iOS and Android. Many others are OS specific.
-             * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.ActionsOnElement.md#getAttributes}
-             * @returns {Promise<IosElementAttributes | AndroidElementAttributes>}
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
              * @example
              * test('Get the attributes for my text element', async () => {
              *    const attributes = await element(by.id('myText')).getAttributes()
@@ -1244,7 +1243,7 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes> | Array<Promise<IosElementAttributes | AndroidElementAttributes>>
+             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1556,7 +1555,7 @@ declare global {
             /**
              * The content offset (if it is a scroll view).
              */
-            contentOffset?: number;
+            contentOffset?: Point2D;
             /**
              * The content inset (if it is a scroll view).
              */
