@@ -1,3 +1,4 @@
+// @ts-nocheck
 const path = require('path');
 
 const findUp = require('find-up');

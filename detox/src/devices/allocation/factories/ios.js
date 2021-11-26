@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DeviceAllocatorFactory = require('./base');
 
 class IosSimulator extends DeviceAllocatorFactory {

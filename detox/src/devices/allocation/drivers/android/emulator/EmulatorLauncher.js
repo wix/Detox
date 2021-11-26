@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { DetoxRuntimeError } = require('../../../../../errors');
 const retry = require('../../../../../utils/retry');
 const { traceCall } = require('../../../../../utils/trace');

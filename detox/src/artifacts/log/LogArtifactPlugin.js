@@ -1,3 +1,4 @@
+// @ts-nocheck
 const logger = require('../../utils/logger');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const StartupAndTestRecorderPlugin = require('../templates/plugin/StartupAndTestRecorderPlugin');

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxInternalError = require('../../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 

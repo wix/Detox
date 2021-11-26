@@ -1,3 +1,4 @@
+// @ts-nocheck
 const fs = require('fs-extra');
 const _ = require('lodash');
 

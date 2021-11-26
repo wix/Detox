@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { URL } = require('url');
 const util = require('util');
 

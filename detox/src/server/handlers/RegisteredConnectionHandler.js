@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { serializeError } = require('serialize-error');
 
 const DetoxError = require('../../errors/DetoxError');

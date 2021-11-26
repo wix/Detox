@@ -1,3 +1,4 @@
+// @ts-nocheck
 const cpp = require('child-process-promise');
 
 const sh = new Proxy({}, {

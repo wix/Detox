@@ -1,3 +1,4 @@
+// @ts-nocheck
 const _ = require('lodash');
 const { WebSocket } = require('ws'); // eslint-disable-line no-unused-vars
 

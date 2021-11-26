@@ -1,3 +1,4 @@
+// @ts-nocheck
 const InstrumentsArtifactRecording = require('./InstrumentsArtifactRecording');
 
 describe('InstrumentsArtifactRecording', () => {

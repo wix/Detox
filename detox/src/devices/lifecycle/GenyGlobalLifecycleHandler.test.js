@@ -1,3 +1,4 @@
+// @ts-nocheck
 const _ = require('lodash');
 
 describe('Global-context lifecycle handler for Genymotion cloud emulators', () => {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 if (process.platform === 'win32') {
   jest.retryTimes(1); // TODO: investigate why it gets stuck for the 1st time on Windows
 }

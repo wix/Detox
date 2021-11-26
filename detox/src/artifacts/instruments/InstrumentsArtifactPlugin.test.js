@@ -1,3 +1,4 @@
+// @ts-nocheck
 const InstrumentsArtifactPlugin = require('./InstrumentsArtifactPlugin');
 
 describe('InstrumentsArtifactPlugin', () => {

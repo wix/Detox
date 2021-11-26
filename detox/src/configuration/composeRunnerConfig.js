@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @param {Detox.DetoxConfig} globalConfig
  * @param {Detox.DetoxConfigurationOverrides} localConfig

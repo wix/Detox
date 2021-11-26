@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxGenymotionManager = require('../../../../../android/espressoapi/DetoxGenymotionManager');
 const AndroidDriver = require('../AndroidDriver');
 

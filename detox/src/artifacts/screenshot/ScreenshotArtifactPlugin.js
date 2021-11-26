@@ -1,3 +1,4 @@
+// @ts-nocheck
 const _ = require('lodash');
 
 const TwoSnapshotsPerTestPlugin = require('../templates/plugin/TwoSnapshotsPerTestPlugin');

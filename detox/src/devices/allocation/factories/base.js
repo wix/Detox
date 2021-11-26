@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DeviceAllocator = require('../DeviceAllocator');
 
 class DeviceAllocatorFactory {

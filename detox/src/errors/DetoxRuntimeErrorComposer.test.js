@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxRuntimeErrorComposer = require('./DetoxRuntimeErrorComposer');
 
 describe('DetoxRuntimeErrorComposer', () => {

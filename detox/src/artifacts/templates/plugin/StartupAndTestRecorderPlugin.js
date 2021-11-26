@@ -1,3 +1,4 @@
+// @ts-nocheck
 const WholeTestRecorderPlugin = require('./WholeTestRecorderPlugin');
 
 /***

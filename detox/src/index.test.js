@@ -1,3 +1,4 @@
+// @ts-nocheck
 const _ = require('lodash');
 
 jest.mock('./utils/logger');

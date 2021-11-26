@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
   const bundleId = 'bundle-id-mock';

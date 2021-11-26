@@ -1,3 +1,4 @@
+// @ts-nocheck
 const artifactsManagerFactories = require('./artifacts/factories');
 const deviceAllocationFactories = require('./devices/allocation/factories');
 const runtimeDeviceFactories = require('./devices/runtime/factories');

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const getPort = require('get-port');
 
 const isValidWebsocketURL = require('../utils/isValidWebsocketURL');

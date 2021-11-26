@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('iOS simulator test environment validator', () => {
 
   const DETOX_FRAMEWORK_PATH = '/path/to/framework';
