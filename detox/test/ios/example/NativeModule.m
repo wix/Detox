@@ -87,4 +87,18 @@ RCT_EXPORT_METHOD(sendNotification:(NSString*)notification name:(NSString*)name)
 	});
 }
 
+RCT_EXPORT_METHOD(presentOverlayWindow) {
+    static UIWindow *overlayWindow;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        CGRect screenBounds = UIScreen.mainScreen.bounds;
+        overlayWindow = [[UIWindow alloc] initWithFrame:screenBounds];
+
+        [overlayWindow setWindowLevel:UIWindowLevelStatusBar];
+        [overlayWindow setHidden:NO];
+
+        [overlayWindow makeKeyAndVisible];
+    });
+}
+
 @end
