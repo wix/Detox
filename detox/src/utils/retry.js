@@ -1,5 +1,6 @@
 const sleep = require('./sleep');
 
+const DEFAULT_UNREF = false;
 const DEFAULT_INITIAL_SLEEP = 0;
 const DEFAULT_RETRIES = 9;
 const DEFAULT_INTERVAL = 500;
@@ -23,12 +24,13 @@ async function retry(optionsOrFunc, func) {
     backoff = DEFAULT_BACKOFF_MODE,
     conditionFn = DEFAULT_CONDITION_FN,
     initialSleep = DEFAULT_INITIAL_SLEEP,
+    unref = DEFAULT_UNREF,
   } = options;
 
   const backoffFn = backoffModes[backoff]();
 
   if (initialSleep) {
-    await sleep(initialSleep);
+    await sleep(initialSleep, { unref });
   }
 
   // eslint-disable-next-line no-constant-condition
@@ -41,7 +43,7 @@ async function retry(optionsOrFunc, func) {
       if (!conditionFn(e) || (totalTries > retries)) {
         throw e;
       }
-      await sleep(backoffFn({ interval, totalTries }));
+      await sleep(backoffFn({ interval, totalTries }), { unref });
     }
   }
 }

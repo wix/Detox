@@ -67,7 +67,7 @@ class EmulatorLauncher extends DeviceLauncher {
   }
 
   async _waitForBootToComplete(adbName) {
-    await retry({ retries: 240, interval: 2500 }, async () => {
+    await retry({ retries: 240, interval: 2500, unref: true }, async () => {
       const isBootComplete = await this._adb.isBootComplete(adbName);
 
       if (!isBootComplete) {

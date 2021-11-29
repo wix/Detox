@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/child-process-promise": "^2.2.1",
+    "@types/node": "^12.20.37",
     "@types/ws": "^7.4.0",
     "eslint": "^4.11.0",
     "eslint-plugin-import": "^2.23.3",

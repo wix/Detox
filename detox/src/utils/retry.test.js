@@ -41,7 +41,27 @@ describe('retry', () => {
 
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(sleep).toHaveBeenCalledTimes(1);
-    expect(sleep).toHaveBeenCalledWith(1234);
+    expect(sleep).toHaveBeenCalledWith(1234, { unref: false });
+  });
+
+  it('should call sleep() with { unref: true } if set', async () => {
+    const mockFn = mockFailingTwiceUserFn();
+
+    try {
+      await retry({
+        initialSleep: 1000,
+        retries: 2,
+        interval: 0,
+        unref: true,
+      }, mockFn);
+    } catch (e) {
+      fail('expected retry not to fail');
+    }
+
+    expect(mockFn).toHaveBeenCalledTimes(3);
+    expect(sleep).toHaveBeenCalledTimes(3);
+    expect(sleep).toHaveBeenCalledWith(1000, { unref: true });
+    expect(sleep).toHaveBeenCalledWith(0, { unref: true });
   });
 
   it('should retry multiple times', async () => {
@@ -79,8 +99,8 @@ describe('retry', () => {
     } catch (error) {}
 
     expect(sleep).toHaveBeenCalledTimes(2);
-    expect(sleep).toHaveBeenCalledWith(baseInterval);
-    expect(sleep).toHaveBeenCalledWith(baseInterval * 2);
+    expect(sleep).toHaveBeenCalledWith(baseInterval, { unref: false });
+    expect(sleep).toHaveBeenCalledWith(baseInterval * 2, { unref: false });
   });
 
   it('should allow for a constant sleep interval instead of an increasing one by setting backoff="none"', async () => {
@@ -98,8 +118,8 @@ describe('retry', () => {
     } catch (error) {}
 
     expect(sleep).toHaveBeenCalledTimes(2);
-    expect(sleep).toHaveBeenNthCalledWith(1, baseInterval);
-    expect(sleep).toHaveBeenNthCalledWith(2, baseInterval);
+    expect(sleep).toHaveBeenNthCalledWith(1, baseInterval, { unref: false });
+    expect(sleep).toHaveBeenNthCalledWith(2, baseInterval, { unref: false });
   });
 
   it('should allow for the default linear backoff when set explicitly as "linear"', async () => {
@@ -117,8 +137,8 @@ describe('retry', () => {
     } catch (error) {}
 
     expect(sleep).toHaveBeenCalledTimes(2);
-    expect(sleep).toHaveBeenCalledWith(baseInterval);
-    expect(sleep).toHaveBeenCalledWith(baseInterval * 2);
+    expect(sleep).toHaveBeenCalledWith(baseInterval, { unref: false });
+    expect(sleep).toHaveBeenCalledWith(baseInterval * 2, { unref: false });
   });
 
   it('should adhere to a custom condition', async () => {
@@ -146,6 +166,6 @@ describe('retry', () => {
     } catch (error) {}
 
     expect(mockFn).toHaveBeenCalledTimes(defaultRetries + 1);
-    expect(sleep).toHaveBeenCalledWith(defaultInterval);
+    expect(sleep).toHaveBeenCalledWith(defaultInterval, { unref: false });
   });
 });
