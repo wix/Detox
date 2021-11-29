@@ -1227,10 +1227,10 @@ declare global {
              */
              takeScreenshot(name: string): Promise<string>;
 
-
             /**
-             * Returns an object, representing various attributes of the element. Note that only a handful of attributes are available on both iOS and Android. Many others are OS specific.
+             * Gets the native (OS-dependent) attributes of the element.
              * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             *
              * @example
              * test('Get the attributes for my text element', async () => {
              *    const attributes = await element(by.id('myText')).getAttributes()
