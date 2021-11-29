@@ -697,6 +697,32 @@ describe('Device', () => {
     });
   });
 
+  describe('existsOnDevice()', () => {
+    it('should check whether package is installed on device', async () => {
+      const device = await aValidDevice();
+      device._currentApp.bundleId = bundleId;
+      await device.existsOnDevice();
+      expect(driverMock.driver.existsOnDevice).toHaveBeenCalledWith(configurationsMock.appWithRelativeBinaryPath.binaryPath, bundleId);
+      expect(driverMock.driver.existsOnDevice).toHaveBeenCalledTimes(1);
+    });
+
+    it('should check whether package is installed with the same version', async () => {
+      const device = await aValidDevice();
+      device._currentApp.bundleId = bundleId;
+      await device.isInstalledWithSameVersion();
+      expect(driverMock.driver.isInstalledWithSameVersion).toHaveBeenCalledWith(configurationsMock.appWithRelativeBinaryPath.binaryPath, bundleId);
+      expect(driverMock.driver.isInstalledWithSameVersion).toHaveBeenCalledTimes(1);
+    });
+
+    it('should clear user data', async () => {
+      const device = await aValidDevice();
+      device._currentApp.bundleId = bundleId;
+      await device.clearUserData();
+      expect(driverMock.driver.clearUserData).toHaveBeenCalledWith(configurationsMock.appWithRelativeBinaryPath.binaryPath, bundleId);
+      expect(driverMock.driver.clearUserData).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('installBinary()', () => {
     it('should install the set of util binaries', async () => {
       const device = await aValidDevice({

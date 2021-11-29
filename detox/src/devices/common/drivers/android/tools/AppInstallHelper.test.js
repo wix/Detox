@@ -82,4 +82,49 @@ describe('Android app installation helper', () => {
     expect(adb.remoteInstall).toHaveBeenCalledWith(deviceId, '/mocked-final-dir/first.apk');
     expect(adb.remoteInstall).toHaveBeenCalledTimes(1);
   });
+
+  describe('reinstall if needed', () => {
+    const bundleId = 'com.wix.detox.test';
+
+    it('should check if package is installed via shell', async () => {
+      await uut.checkInstalled(deviceId, bundleId);
+      expect(adb.checkInstalled).toHaveBeenCalledWith(deviceId, bundleId);
+      expect(adb.checkInstalled).toHaveBeenCalledTimes(1);
+    });
+
+    it('should clear user data via shell', async () => {
+      await uut.clearUserData(deviceId, bundleId);
+      expect(adb.clearUserData).toHaveBeenCalledWith(deviceId, bundleId);
+      expect(adb.clearUserData).toHaveBeenCalledTimes(1);
+    });
+
+    it('should get remote package version number via shell', async () => {
+      await uut.getRemoteVersionNumber(deviceId, bundleId);
+      expect(adb.getRemoteVersionNumber).toHaveBeenCalledWith(deviceId, bundleId);
+      expect(adb.getRemoteVersionNumber).toHaveBeenCalledTimes(1);
+    });
+
+    it('should extract package version number from shell returned value', async () => {
+      adb.getRemoteVersionNumber.mockReturnValue('');
+      const withEmptyAdbResponse = await uut.getRemoteVersionNumber(deviceId, bundleId);
+      expect(withEmptyAdbResponse).toEqual('');
+
+      adb.getRemoteVersionNumber.mockReturnValue('Failed');
+      const withUnexpectedAdbResponse = await uut.getRemoteVersionNumber(deviceId, bundleId);
+      expect(withUnexpectedAdbResponse).toEqual('');
+
+      adb.getRemoteVersionNumber.mockReturnValue('versionNumber=1.9.0');
+      const withExpectedAdbResponse = await uut.getRemoteVersionNumber(deviceId, bundleId);
+      expect(withExpectedAdbResponse).toEqual('1.9.0');
+    });
+
+    it('should check local version number', async () => {
+      const withWorkingDirectory = await uut.getLocalVersionNumber(deviceId, bundleId);
+      expect(withWorkingDirectory).not.toEqual('');
+
+      process.cwd = () => '';
+      const withoutWorkingDirectory = await uut.getLocalVersionNumber(deviceId, bundleId);
+      expect(withoutWorkingDirectory).toEqual('');
+    });
+  });
 });

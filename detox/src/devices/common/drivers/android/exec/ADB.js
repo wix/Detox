@@ -132,6 +132,18 @@ class ADB {
     }
   }
 
+  async checkInstalled(deviceId, packageId) {
+    return await this.shell(deviceId, `pm list packages ${packageId}`);
+  }
+
+  async getRemoteVersionNumber(deviceId, packageId) {
+    return await this.shell(deviceId, `dumpsys package ${packageId} | grep versionName`);
+  }
+
+  async clearUserData(deviceId, packageId) {
+    return await this.shell(deviceId, `pm clear ${packageId}`);
+  }
+
   async uninstall(deviceId, appId) {
     await this.adbCmd(deviceId, `uninstall ${appId}`);
   }

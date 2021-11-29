@@ -18,6 +18,10 @@ describe('Detox', () => {
     chocolate: 'yum',
   };
 
+  const init = async () => {
+    detox = await new Detox(detoxConfig).init();
+  };
+
   const client = () => Client.mock.instances[0];
   const invocationManager = () => invoke.InvocationManager.mock.instances[0];
   const eventEmitter = () => AsyncEmitter.mock.instances[0];
@@ -65,6 +69,9 @@ describe('Detox', () => {
       matchersFactory,
       runtimeDeviceFactory,
     });
+
+    runtimeDevice.existsOnDevice.mockReturnValue(true);
+    runtimeDevice.isInstalledWithSameVersion.mockReturnValue(false);
   });
 
   beforeEach(async () => {
@@ -92,10 +99,6 @@ describe('Detox', () => {
 
   describe('when detox.init() is called', () => {
     let mockGlobalMatcher;
-
-    const init = async () => {
-      detox = await new Detox(detoxConfig).init();
-    };
 
     beforeEach(() => {
       mockGlobalMatcher = jest.fn();
@@ -676,4 +679,29 @@ describe('Detox', () => {
     runtimeDeviceFactory = new RuntimeDeviceFactory();
     runtimeDeviceFactory.createRuntimeDevice.mockReturnValue(runtimeDevice);
   }
+
+  describe('reinstall on device if necessary', () => {
+    it('should clear user data for package existing on the device with the same version', async () => {
+      runtimeDevice.existsOnDevice.mockReturnValue(true);
+      runtimeDevice.isInstalledWithSameVersion.mockReturnValue(true);
+      await init();
+      expect(runtimeDevice.clearUserData).toHaveBeenCalledTimes(1);
+    });
+
+    it('should uninstall for package exists on device with different version', async () => {
+      runtimeDevice.existsOnDevice.mockReturnValue(true);
+      runtimeDevice.isInstalledWithSameVersion.mockReturnValue(false);
+      await init();
+      expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(1);
+      expect(runtimeDevice.installApp).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not uninstall if package does not exist on device', async () => {
+      runtimeDevice.existsOnDevice.mockReturnValue(false);
+      runtimeDevice.isInstalledWithSameVersion.mockReturnValue(false);
+      await init();
+      expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
+      expect(runtimeDevice.installApp).toHaveBeenCalledTimes(1);
+    });
+  });
 });

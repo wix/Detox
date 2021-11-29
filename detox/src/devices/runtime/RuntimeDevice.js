@@ -46,6 +46,9 @@ class RuntimeDevice {
       'unmatchFace',
       'unmatchFinger',
       'unreverseTcpPort',
+      'existsOnDevice',
+      'isInstalledWithSameVersion',
+      'clearUserData',
     ]);
 
     this._appsConfig = appsConfig;
@@ -176,6 +179,21 @@ class RuntimeDevice {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.terminate(_bundleId);
     this._processes[_bundleId] = undefined;
+  }
+
+  async existsOnDevice() {
+    const currentApp = this._getCurrentApp();
+    return await this.deviceDriver.existsOnDevice(currentApp.binaryPath, currentApp.bundleId);
+  }
+
+  async isInstalledWithSameVersion() {
+    const currentApp = this._getCurrentApp();
+    return await this.deviceDriver.isInstalledWithSameVersion(currentApp.binaryPath, currentApp.bundleId);
+  }
+
+  async clearUserData() {
+    const currentApp = this._getCurrentApp();
+    return await this.deviceDriver.clearUserData(currentApp.binaryPath, currentApp.bundleId);
   }
 
   async installApp(binaryPath, testBinaryPath) {

@@ -243,12 +243,27 @@ class Detox {
 
     for (const appName of appNames) {
       await this.device.selectApp(appName);
-      await this.device.uninstallApp();
-      await this.device.installApp();
+
+      await this._reinstallIfNecessary();
     }
 
     if (appNames.length !== 1) {
       await this.device.selectApp(null);
+    }
+  }
+
+  async _reinstallIfNecessary() {
+    const checkExistsOnDevice = await this.device.existsOnDevice();
+    const checkExistsSameVersion = await this.device.isInstalledWithSameVersion();
+
+    if (checkExistsSameVersion) {
+      await this.device.clearUserData();
+    } else {
+      if (checkExistsOnDevice) {
+        await this.device.uninstallApp();
+      }
+
+      await this.device.installApp();
     }
   }
 

@@ -105,6 +105,27 @@ describe('ADB', () => {
       { retries: 1 });
   });
 
+  it('should send correct command to get version of installed package', async () => {
+    await adb.getRemoteVersionNumber('emulator-5556', 'com.detox.wix.test');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "dumpsys package com.detox.wix.test | grep versionName"'),
+      { retries: 1 });
+  });
+
+  it('should send correct command to check if package is installed', async () => {
+    await adb.checkInstalled('emulator-5556', 'com.detox.wix.test');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "pm list packages com.detox.wix.test"'),
+      { retries: 1 });
+  });
+
+  it('should send correct command to clear user data', async () => {
+    await adb.clearUserData('emulator-5556', 'com.detox.wix.test');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "pm clear com.detox.wix.test"'),
+      { retries: 1 });
+  });
+
   it(`uninstall`, async () => {
     await adb.uninstall('com.package');
     expect(exec).toHaveBeenCalledTimes(1);
