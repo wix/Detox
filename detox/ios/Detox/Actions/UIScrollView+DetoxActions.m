@@ -266,6 +266,8 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 
 - (void)_dtx_scrollWithOffset:(CGPoint)offset normalizedStartingPoint:(CGPoint)normalizedStartingPoint strict:(BOOL)strict
 {
+	[self dtx_assertVisibleWithPercent:@1];
+
 	if(offset.x == 0.0 && offset.y == 0.0)
 	{
 		return;

@@ -277,10 +277,8 @@ DTX_DIRECT_MEMBERS
 	CGRect testedRegionInWindowCoords = [windowToUse convertRect:rect fromView:self];
 	
 	CGRect visibleBounds = self.dtx_visibleBounds;
-	
-	if (CGRectIsNull(visibleBounds) || [self _dtx_isRegionObscured:visibleBounds
-		 										  fromTestedRegion:self.dtx_visibleBounds
-														   percent:percent]) {
+	if (CGRectIsNull(visibleBounds) || CGRectIsEmpty(visibleBounds) ||
+		[self _dtx_isRegionObscured:visibleBounds fromTestedRegion:visibleBounds percent:percent]) {
 		auto errorDescription = [NSString stringWithFormat:@"View is clipped by one or more of its "
 								 "superviews' bounds and does not pass visibility percent "
 								 "threshold (%lu)", (unsigned long)percent];

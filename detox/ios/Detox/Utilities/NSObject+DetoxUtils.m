@@ -146,10 +146,14 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (void)dtx_assertVisible {
-	[self dtx_assertVisibleAtRect:self.dtx_bounds percent:nil];
+	[self dtx_assertVisibleWithPercent:nil];
 }
 
-- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(NSNumber *)percent {
+- (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent {
+  [self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
+}
+
+- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
 	[self.dtx_view dtx_assertVisibleAtRect:rect percent:percent];
 }
 
