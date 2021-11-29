@@ -29,6 +29,7 @@ const log = logger.child({ __filename });
  * @property invocationManager { InvocationManager }
  * @property adb { ADB }
  * @property aapt { AAPT }
+ * @property apkValidator { ApkValidator }
  * @property fileXfer { FileXfer }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
@@ -47,6 +48,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.adbName = adbName;
     this.adb = deps.adb;
     this.aapt = deps.aapt;
+    this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
     this.fileXfer = deps.fileXfer;
     this.appInstallHelper = deps.appInstallHelper;
@@ -243,18 +245,16 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _validateAppBinaries(appBinaryPath, testBinaryPath) {
-    if (await this.aapt.isTestAPK(appBinaryPath)) {
-      logger.warn(new DetoxRuntimeError({
-        message: `App APK at path ${appBinaryPath} was detected as the *test* APK!`,
-        hint: 'Your binary-path was probably wrongly set in the active Detox configuration',
-      }).message);
+    try {
+      await this.apkValidator.validateAppApk(appBinaryPath);
+    } catch (e) {
+      logger.warn(e.toString());
     }
 
-    if (!await this.aapt.isTestAPK(testBinaryPath)) {
-      logger.warn(new DetoxRuntimeError({
-        message: `Test APK at path ${testBinaryPath} was detected as the *app* APK!`,
-        hint: 'Your test binary-path was probably wrongly set in the active Detox configuration',
-      }).message);
+    try {
+      await this.apkValidator.validateTestApk(testBinaryPath);
+    } catch (e) {
+      logger.warn(e.toString());
     }
   }
 
@@ -269,8 +269,8 @@ class AndroidDriver extends DeviceDriverBase {
     if (!fs.existsSync(testApkPath)) {
       throw new DetoxRuntimeError({
         message: `The test APK could not be found at path: '${testApkPath}'`,
-        hint: 'Try running the detox build command, and make sure it was configured to execute a build command (e.g. \'./gradlew assembleAndroidTest\')\n' +
-          'For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md',
+        hint: 'Try running the detox build command, and make sure it was configured to execute a build command (e.g. \'./gradlew assembleAndroidTest\')' +
+          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md',
       });
     }
     return testApkPath;

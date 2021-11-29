@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
   const bundleId = 'bundle-id-mock';
@@ -15,6 +13,7 @@ describe('Android driver', () => {
   let invocationManager;
   let adb;
   let aapt;
+  let apkValidator;
   let fileXfer;
   let appInstallHelper;
   let appUninstallHelper;
@@ -33,6 +32,7 @@ describe('Android driver', () => {
       eventEmitter,
       adb,
       aapt,
+      apkValidator,
       fileXfer,
       appInstallHelper,
       appUninstallHelper,
@@ -346,18 +346,9 @@ describe('Android driver', () => {
     const binaryPath = 'mock-bin-path';
     const testBinaryPath = 'mock-test-bin-path';
 
-    function givenIsTestAPKResults(forAppApk, forTestApk) {
-      aapt.isTestAPK = jest.fn();
-
-      aapt.isTestAPK.mockResolvedValueOnce(forAppApk);
-      if (!_.isUndefined(forTestApk)) {
-        aapt.isTestAPK.mockResolvedValueOnce(forTestApk);
-      }
-    }
-
-    beforeEach(() => {
-      givenIsTestAPKResults(false, true);
-    });
+    const givenAppApkValidationFailure = (error) => apkValidator.validateAppApk.mockRejectedValue(error);
+    const givenTestApkValidationFailure = (error) => apkValidator.validateTestApk.mockRejectedValue(error);
+    const loggerWarnMessage = () => logger.warn.mock.calls[0][0];
 
     it('should adb-install the app\'s binary', async () => {
       await uut.installApp(binaryPath, testBinaryPath);
@@ -394,22 +385,23 @@ describe('Android driver', () => {
         .toThrowErrorMatchingSnapshot(expectedTestBinPath);
     });
 
-    it('should warn if app APK happens to be the test APK', async () => {
-      givenIsTestAPKResults(true);
+    it('should warn if app APK validation fails', async () => {
+      const error = new Error('app apk validation failure');
+      givenAppApkValidationFailure(error);
 
       await uut.installApp(binaryPath, testBinaryPath);
-      expect(logger.warn).toHaveBeenCalled();
-      expect(logger.warn.mock.calls[0][0]).toMatchSnapshot();
+      expect(loggerWarnMessage()).toEqual(error.toString());
+      expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
 
-    it('should warn if test APK happens to be the app APK', async () => {
-      givenIsTestAPKResults(false, false);
+    it('should warn if test APK validation fails', async () => {
+      const error = new Error('test apk validation failure');
+      givenTestApkValidationFailure(error);
 
       await uut.installApp(binaryPath, testBinaryPath);
-      expect(logger.warn).toHaveBeenCalledTimes(1);
-      expect(logger.warn.mock.calls[0][0]).toMatchSnapshot();
+      expect(loggerWarnMessage()).toEqual(error.toString());
+      expect(apkValidator.validateTestApk).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(testBinaryPath));
     });
-
   });
 
   describe('Util-binaries installation', () => {
@@ -563,6 +555,10 @@ describe('Android driver', () => {
     jest.mock('../../../common/drivers/android/exec/AAPT');
     const AAPT = require('../../../common/drivers/android/exec/AAPT');
     aapt = new AAPT();
+
+    jest.mock('../../../common/drivers/android/tools/ApkValidator');
+    const ApkValidator = require('../../../common/drivers/android/tools/ApkValidator');
+    apkValidator = new ApkValidator();
 
     jest.mock('../../../common/drivers/android/tools/TempFileXfer');
     const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');

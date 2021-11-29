@@ -26,7 +26,7 @@ class AAPT {
     await this._prepare();
 
     const command = `${this.aaptBin} dump xmlstrings "${escape(apkPath)}" AndroidManifest.xml`;
-    const process = await exec(command, { retries: 1 });
+    const process = await exec(command, { retries: 1, verbosity: 'low' });
     return new RegExp(/^String #[0-9]*: instrumentation/gm).test(process.stdout);
   }
 }

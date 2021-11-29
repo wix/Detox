@@ -72,6 +72,11 @@ describe('AAPT', () => {
       expect(exec).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ retries: 1 }));
     });
 
+    it('should execute the command in non-verbose mode', async () => {
+      await aapt.isTestAPK(mockAPKPath);
+      expect(exec).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ verbosity: 'low' }));
+    });
+
     it('should return true for a test APK', async () => {
       givenAAPTResult(aaptMockResults.dumpXmlStrings.testApk);
 

@@ -5,6 +5,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
+    const apkValidator = serviceLocator.apkValidator;
     const fileXfer = serviceLocator.fileXfer;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
 
@@ -16,6 +17,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
       ...commonDeps,
       adb,
       aapt,
+      apkValidator,
       fileXfer,
       devicePathBuilder,
       appInstallHelper: new AppInstallHelper(adb, fileXfer),
