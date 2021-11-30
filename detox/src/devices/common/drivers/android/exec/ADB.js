@@ -137,7 +137,7 @@ class ADB {
   }
 
   async getRemoteVersionNumber(deviceId, packageId) {
-    return await this.shell(deviceId, `dumpsys package ${packageId} | grep versionName`);
+    return await this.shell(deviceId, `dumpsys package ${packageId} | grep versionName`, { silent: true }).catch(() => '');
   }
 
   async clearUserData(deviceId, packageId) {
