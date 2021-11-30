@@ -1,5 +1,5 @@
 // TypeScript definitions for Detox
-// Original authors:
+// Original authors (from DefinitelyTyped):
 // * Jane Smith <jsmith@example.com>
 // * Tareq El-Masri <https://github.com/TareqElMasri>
 // * Steve Chun <https://github.com/stevechun>
@@ -7,7 +7,6 @@
 // * pera <https://github.com/santiagofm>
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
-
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -1227,6 +1226,24 @@ declare global {
              * });
              */
              takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * Gets the native (OS-dependent) attributes of the element.
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             *
+             * @example
+             * test('Get the attributes for my text element', async () => {
+             *    const attributes = await element(by.id('myText')).getAttributes()
+             *    const jestExpect = require('expect');
+             *    // 'visible' attribute available on both iOS and Android
+             *    jestExpect(attributes.visible).toBe(true);
+             *    // 'activationPoint' attribute available on iOS only
+             *    jestExpect(attributes.activationPoint.x).toHaveValue(50);
+             *    // 'width' attribute available on Android only
+             *    jestExpect(attributes.width).toHaveValue(100);
+             * })
+             */
+             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1445,6 +1462,149 @@ declare global {
             };
         }
 
+        // Element Attributes Shared Among iOS and Android
+        interface ElementAttributes {
+            /**
+             * Whether or not the element is enabled for user interaction.
+             */
+            enabled: boolean;
+            /**
+             * The identifier of the element. Matches accessibilityIdentifier on iOS, and the main view tag, on Android - both commonly holding the component's test ID in React Native apps.
+             */
+            identifier: string;
+            /**
+             * Whether the element is visible. On iOS, visibility is calculated for the activation point. On Android, the attribute directly holds the value returned by View.getLocalVisibleRect()).
+             */
+            visible: boolean;
+            /**
+             * The text value of any textual element.
+             */
+            text?: string;
+            /**
+             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
+             */
+            label?: string;
+            /**
+             * The placeholder text value of the element. Matches hint on android.
+             */
+            placeholder?: string;
+            /**
+             * The value of the element, where applicable.
+             * Matches accessibilityValue, on iOS.
+             * For example: the position of a slider, or whether a checkbox has been marked (Android).
+             */
+            value?: unknown;
+        }
+
+        interface IosElementAttributeFrame {
+            y: number;
+            x: number;
+            width: number;
+            height: number;
+        }
+
+        interface IosElementAttributeInsets {
+            right: number;
+            top: number;
+            left: number;
+            bottom: number;
+        }
+
+        // iOS Specific Attributes
+        interface IosElementAttributes extends ElementAttributes {
+            /**
+             * The [activation point]{@link https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint} of the element, in element coordinate space.
+             */
+            activationPoint: Point2D;
+            /**
+             * The activation point of the element, in normalized percentage ([0.0, 1.0]).
+             */
+            normalizedActivationPoint: Point2D;
+            /**
+             * Whether the element is hittable at the activation point.
+             */
+            hittable: boolean;
+            /**
+             * The frame of the element, in screen coordinate space.
+             */
+            frame: IosElementAttributeFrame;
+            /**
+             * The frame of the element, in container coordinate space.
+             */
+            elementFrame: IosElementAttributeFrame;
+            /**
+             * The bounds of the element, in element coordinate space.
+             */
+            elementBounds: IosElementAttributeFrame;
+            /**
+             * The safe area insets of the element, in element coordinate space.
+             */
+            safeAreaInsets: IosElementAttributeInsets;
+            /**
+             * The safe area bounds of the element, in element coordinate space.
+             */
+            elementSafeBounds: IosElementAttributeFrame;
+            /**
+             * The date of the element (if it is a date picker).
+             */
+            date?: string;
+            /**
+             * The normalized slider position (if it is a slider).
+             */
+            normalizedSliderPosition?: number;
+            /**
+             * The content offset (if it is a scroll view).
+             */
+            contentOffset?: Point2D;
+            /**
+             * The content inset (if it is a scroll view).
+             */
+            contentInset?: IosElementAttributeInsets;
+            /**
+             * The adjusted content inset (if it is a scroll view).
+             */
+            adjustedContentInset?: IosElementAttributeInsets;
+            /**
+             * @example "<CALayer: 0x600003f759e0>"
+             */
+            layer: string;
+        }
+
+        // Android Specific Attributes
+        interface AndroidElementAttributes extends ElementAttributes {
+            /**
+             * The OS visibility type associated with the element: visible, invisible or gone.
+             */
+            visibility: 'visible' | 'invisible' | 'gone';
+            /**
+             * Width of the element, in pixels.
+             */
+            width: number;
+            /**
+             * Height of the element, in pixels.
+             */
+            height: number;
+            /**
+             * Elevation of the element.
+             */
+            elevation: number;
+            /**
+             * Alpha value for the element.
+             */
+            alpha: number;
+            /**
+             * Whether the element is the one currently in focus.
+             */
+            focused: boolean;
+            /**
+             * The text size for the text element.
+             */
+            textSize?: number;
+            /**
+             * The length of the text element (character count).
+             */
+            length?: number;
+        }
     }
 }
 

@@ -15,7 +15,7 @@ const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
-const APKPath = require('../../../common/drivers/android/tools/APKPath');
+const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
 const log = logger.child({ __filename });
@@ -30,6 +30,7 @@ const log = logger.child({ __filename });
  * @property invocationManager { InvocationManager }
  * @property adb { ADB }
  * @property aapt { AAPT }
+ * @property apkValidator { ApkValidator }
  * @property fileXfer { FileXfer }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
@@ -48,6 +49,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.adbName = adbName;
     this.adb = deps.adb;
     this.aapt = deps.aapt;
+    this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
     this.fileXfer = deps.fileXfer;
     this.appInstallHelper = deps.appInstallHelper;
@@ -67,13 +69,13 @@ class AndroidDriver extends DeviceDriverBase {
     return await this.aapt.getPackageName(binaryPath);
   }
 
-  async installApp(_binaryPath, _testBinaryPath) {
+  async installApp(_appBinaryPath, _testBinaryPath) {
     const {
-      binaryPath,
+      appBinaryPath,
       testBinaryPath,
-    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-    await this.adb.install(this.adbName, binaryPath);
-    await this.adb.install(this.adbName, testBinaryPath);
+    } = this._getAppInstallPaths(_appBinaryPath, _testBinaryPath);
+    await this._validateAppBinaries(appBinaryPath, testBinaryPath);
+    await this._installAppBinaries(appBinaryPath, testBinaryPath);
   }
 
   async uninstallApp(bundleId) {
@@ -234,20 +236,43 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
-  _getInstallPaths(_binaryPath, _testBinaryPath) {
-    const binaryPath = getAbsoluteBinaryPath(_binaryPath);
-    const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(binaryPath);
+  _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {
+    const appBinaryPath = getAbsoluteBinaryPath(_appBinaryPath);
+    const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(appBinaryPath);
     return {
-      binaryPath,
+      appBinaryPath,
       testBinaryPath,
     };
   }
 
+  async _validateAppBinaries(appBinaryPath, testBinaryPath) {
+    try {
+      await this.apkValidator.validateAppApk(appBinaryPath);
+    } catch (e) {
+      logger.warn(e.toString());
+    }
+
+    try {
+      await this.apkValidator.validateTestApk(testBinaryPath);
+    } catch (e) {
+      logger.warn(e.toString());
+    }
+  }
+
+  async _installAppBinaries(appBinaryPath, testBinaryPath) {
+    await this.adb.install(this.adbName, appBinaryPath);
+    await this.adb.install(this.adbName, testBinaryPath);
+  }
+
   _getTestApkPath(originalApkPath) {
-    const testApkPath = APKPath.getTestApkPath(originalApkPath);
+    const testApkPath = apkUtils.getTestApkPath(originalApkPath);
 
     if (!fs.existsSync(testApkPath)) {
-      throw new DetoxRuntimeError(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
+      throw new DetoxRuntimeError({
+        message: `The test APK could not be found at path: '${testApkPath}'`,
+        hint: 'Try running the detox build command, and make sure it was configured to execute a build command (e.g. \'./gradlew assembleAndroidTest\')' +
+          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md',
+      });
     }
     return testApkPath;
   }

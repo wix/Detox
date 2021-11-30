@@ -124,7 +124,6 @@
       "src/devices/allocation/factories",
       "src/devices/allocation/factories/drivers",
       "src/devices/cookies",
-      "src/devices/common/drivers/android/exec/AAPT.js",
       "src/devices/common/drivers/android/exec/ADB.js",
       "src/devices/common/drivers/android/emulator/exec/EmulatorExec.js",
       "src/devices/common/drivers/android/tools/EmulatorTelnet.js",

@@ -28,11 +28,11 @@ class EmulatorDriver extends AndroidDriver {
     return this._deviceName;
   }
 
-  async installApp(_binaryPath, _testBinaryPath) {
+  async _installAppBinaries(appBinaryPath, testBinaryPath) {
     if (this._forceAdbInstall) {
-      await super.installApp(_binaryPath, _testBinaryPath);
+      await super._installAppBinaries(appBinaryPath, testBinaryPath);
     } else {
-      await this._installApp(_binaryPath, _testBinaryPath);
+      await this.__installAppBinaries(appBinaryPath, testBinaryPath);
     }
   }
 
@@ -40,13 +40,8 @@ class EmulatorDriver extends AndroidDriver {
     await this.adb.setLocation(this.adbName, lat, lon);
   }
 
-  async _installApp(_binaryPath, _testBinaryPath) {
-    const {
-      binaryPath,
-      testBinaryPath,
-    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-
-    await this.appInstallHelper.install(this.adbName, binaryPath, testBinaryPath);
+  async __installAppBinaries(appBinaryPath, testBinaryPath) {
+    await this.appInstallHelper.install(this.adbName, appBinaryPath, testBinaryPath);
   }
 }
 
