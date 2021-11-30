@@ -4,6 +4,7 @@ describe('Android driver', () => {
   const detoxServerPort = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
+  let logger;
   let fs; // TODO don't mock
   let client;
   let getAbsoluteBinaryPath;
@@ -12,6 +13,7 @@ describe('Android driver', () => {
   let invocationManager;
   let adb;
   let aapt;
+  let apkValidator;
   let fileXfer;
   let appInstallHelper;
   let appUninstallHelper;
@@ -30,6 +32,7 @@ describe('Android driver', () => {
       eventEmitter,
       adb,
       aapt,
+      apkValidator,
       fileXfer,
       appInstallHelper,
       appUninstallHelper,
@@ -343,6 +346,10 @@ describe('Android driver', () => {
     const binaryPath = 'mock-bin-path';
     const testBinaryPath = 'mock-test-bin-path';
 
+    const givenAppApkValidationFailure = (error) => apkValidator.validateAppApk.mockRejectedValue(error);
+    const givenTestApkValidationFailure = (error) => apkValidator.validateTestApk.mockRejectedValue(error);
+    const loggerWarnMessage = () => logger.warn.mock.calls[0][0];
+
     it('should adb-install the app\'s binary', async () => {
       await uut.installApp(binaryPath, testBinaryPath);
 
@@ -375,7 +382,25 @@ describe('Android driver', () => {
 
       await expect(uut.installApp(binaryPath, undefined))
         .rejects
-        .toThrowError(`'${expectedTestBinPath}'`);
+        .toThrowErrorMatchingSnapshot(expectedTestBinPath);
+    });
+
+    it('should warn if app APK validation fails', async () => {
+      const error = new Error('app apk validation failure');
+      givenAppApkValidationFailure(error);
+
+      await uut.installApp(binaryPath, testBinaryPath);
+      expect(loggerWarnMessage()).toEqual(error.toString());
+      expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
+    });
+
+    it('should warn if test APK validation fails', async () => {
+      const error = new Error('test apk validation failure');
+      givenTestApkValidationFailure(error);
+
+      await uut.installApp(binaryPath, testBinaryPath);
+      expect(loggerWarnMessage()).toEqual(error.toString());
+      expect(apkValidator.validateTestApk).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(testBinaryPath));
     });
   });
 
@@ -461,6 +486,9 @@ describe('Android driver', () => {
   });
 
   const setUpModuleDepMocks = () => {
+    jest.mock('../../../../utils/logger');
+    logger = require('../../../../utils/logger');
+
     jest.mock('fs-extra', () => ({
       existsSync: jest.fn(),
       realpathSync: jest.fn(),
@@ -479,7 +507,7 @@ describe('Android driver', () => {
     );
     getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 
-    jest.mock('../../../common/drivers/android/tools/APKPath', () => ({
+    jest.mock('../../../common/drivers/android/tools/apk', () => ({
       getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 
@@ -527,6 +555,10 @@ describe('Android driver', () => {
     jest.mock('../../../common/drivers/android/exec/AAPT');
     const AAPT = require('../../../common/drivers/android/exec/AAPT');
     aapt = new AAPT();
+
+    jest.mock('../../../common/drivers/android/tools/ApkValidator');
+    const ApkValidator = require('../../../common/drivers/android/tools/ApkValidator');
+    apkValidator = new ApkValidator();
 
     jest.mock('../../../common/drivers/android/tools/TempFileXfer');
     const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');

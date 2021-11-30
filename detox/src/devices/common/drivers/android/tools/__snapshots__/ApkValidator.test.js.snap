@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`APK validation App APK validation should throw a descriptive error if app APK happens to be a test APK 1`] = `
+"App APK at path mock-bin-path was detected as the *test* APK!
+
+HINT: Your binary path was probably wrongly set in the active Detox configuration.
+For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+`;
+
+exports[`APK validation App APK validation should throw a specific error if AAPT throws 1`] = `
+"Failed to get details about the APK at path mock-bin-path. Root cause:
+Error: mock error
+
+HINT: Check that the binary path in the active Detox configuration has been set to a path of an APK file.
+For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+`;
+
+exports[`APK validation Test APK validation should throw a descriptive error if APK happens to be an app APK 1`] = `
+"Test APK at path mock-test-bin-path was detected as the *app* APK!
+
+HINT: Your test test-binary path was probably wrongly set in the active Detox configuration.
+For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+`;
+
+exports[`APK validation Test APK validation should throw a specific error if AAPT throws 1`] = `
+"Failed to get details about the APK at path mock-test-bin-path. Root cause:
+Error: mock error
+
+HINT: Check that the test-binary path in the active Detox configuration has been set to a path of an APK file.
+For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+`;
