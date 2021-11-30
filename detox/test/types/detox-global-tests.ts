@@ -1,7 +1,10 @@
 declare var describe: (test: string, callback: () => void) => void;
 declare var beforeAll: (callback: () => void) => void;
+declare var beforeEach: (callback: () => void) => void;
 declare var afterAll: (callback: () => void) => void;
 declare var test: (test: string, callback: () => void) => void;
+
+function assertType<T>(value: T) { return value; }
 
 describe("Test", () => {
     beforeAll(async () => {
@@ -92,5 +95,90 @@ describe("Test", () => {
         const webview = web(by.id("webview"));
         await expect(webview.element(by.web.cssSelector(".button"))).toExist();
         await expect(webview.element(by.web.cssSelector(".button")).atIndex(1)).toExist();
+    });
+
+    describe('getAttributes', async () => {
+        let commonAttributes: Detox.IosElementAttributes | Detox.AndroidElementAttributes;
+        let iosAttributes: Omit<Detox.IosElementAttributes, keyof Detox.AndroidElementAttributes>;
+        let androidAttributes: Omit<Detox.AndroidElementAttributes, keyof Detox.IosElementAttributes>;
+
+        beforeEach(async () => {
+            const attributes = await element(by.id("element")).getAttributes();
+            if ('elements' in attributes) {
+                commonAttributes = iosAttributes = attributes.elements[0];
+            } else if ('activationPoint' in attributes) {
+                commonAttributes = iosAttributes = attributes;
+            } else {
+                commonAttributes = androidAttributes = attributes;
+            }
+        });
+
+        test('common attributes', () => {
+            assertType<boolean>(commonAttributes.enabled);
+            assertType<string>(commonAttributes.identifier);
+            assertType<boolean>(commonAttributes.visible);
+            assertType<string | undefined>(commonAttributes.text);
+            assertType<string | undefined>(commonAttributes.label);
+            assertType<string | undefined>(commonAttributes.placeholder);
+            assertType<unknown>(commonAttributes.value);
+        });
+
+        test('iOS-specific attributes', () => {
+            assertType<number>(iosAttributes.activationPoint.x);
+            assertType<number>(iosAttributes.activationPoint.y);
+            assertType<number>(iosAttributes.normalizedActivationPoint.x);
+            assertType<number>(iosAttributes.normalizedActivationPoint.y);
+            assertType<boolean>(iosAttributes.hittable);
+            assertType<number>(iosAttributes.frame.x);
+            assertType<number>(iosAttributes.frame.y);
+            assertType<number>(iosAttributes.frame.width);
+            assertType<number>(iosAttributes.frame.height);
+            assertType<number>(iosAttributes.elementFrame.x);
+            assertType<number>(iosAttributes.elementFrame.y);
+            assertType<number>(iosAttributes.elementFrame.width);
+            assertType<number>(iosAttributes.elementFrame.height);
+            assertType<number>(iosAttributes.elementBounds.x);
+            assertType<number>(iosAttributes.elementBounds.y);
+            assertType<number>(iosAttributes.elementBounds.width);
+            assertType<number>(iosAttributes.elementBounds.height);
+            assertType<number>(iosAttributes.safeAreaInsets.top);
+            assertType<number>(iosAttributes.safeAreaInsets.left);
+            assertType<number>(iosAttributes.safeAreaInsets.right);
+            assertType<number>(iosAttributes.safeAreaInsets.bottom);
+            assertType<number>(iosAttributes.elementSafeBounds.x);
+            assertType<number>(iosAttributes.elementSafeBounds.y);
+            assertType<number>(iosAttributes.elementSafeBounds.width);
+            assertType<number>(iosAttributes.elementSafeBounds.height);
+            assertType<string | undefined>(iosAttributes.date);
+            assertType<number | undefined>(iosAttributes.normalizedSliderPosition);
+            if (iosAttributes.contentOffset) {
+                assertType<number>(iosAttributes.contentOffset.x);
+                assertType<number>(iosAttributes.contentOffset.y);
+            }
+            if (iosAttributes.contentInset) {
+                assertType<number>(iosAttributes.contentInset.bottom);
+                assertType<number>(iosAttributes.contentInset.left);
+                assertType<number>(iosAttributes.contentInset.right);
+                assertType<number>(iosAttributes.contentInset.top);
+            }
+            if (iosAttributes.adjustedContentInset) {
+                assertType<number>(iosAttributes.adjustedContentInset.bottom);
+                assertType<number>(iosAttributes.adjustedContentInset.left);
+                assertType<number>(iosAttributes.adjustedContentInset.right);
+                assertType<number>(iosAttributes.adjustedContentInset.top);
+            }
+            assertType<string>(iosAttributes.layer);
+        });
+
+        test('Android-specific attributes', () => {
+            assertType<'visible' | 'invisible' | 'gone'>(androidAttributes.visibility);
+            assertType<number>(androidAttributes.width);
+            assertType<number>(androidAttributes.height);
+            assertType<number>(androidAttributes.elevation);
+            assertType<number>(androidAttributes.alpha);
+            assertType<boolean>(androidAttributes.focused);
+            assertType<number | undefined>(androidAttributes.textSize);
+            assertType<number | undefined>(androidAttributes.length);
+        });
     });
 });
