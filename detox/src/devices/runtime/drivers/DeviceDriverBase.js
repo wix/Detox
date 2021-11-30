@@ -222,15 +222,15 @@ class DeviceDriverBase {
     return '';
   }
 
-  async existsOnDevice(_binaryPath, bundleId) {
+  async existsOnDevice(_binaryPath, _bundleId) {
     return false;
   }
 
-  async isInstalledWithSameVersion(_binaryPath, bundleId) {
+  async isInstalledWithSameVersion(_binaryPath, _bundleId) {
     return false;
   }
 
-  async clearUserData(_binaryPath, bundleId) {
+  async clearUserData(_binaryPath, _bundleId) {
     return false;
   }
 }
