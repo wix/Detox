@@ -109,7 +109,7 @@ describe('ADB', () => {
     await adb.getRemoteVersionNumber('emulator-5556', 'com.detox.wix.test');
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "dumpsys package com.detox.wix.test | grep versionName"'),
-      { retries: 1 });
+      { retries: 1, silent: true });
   });
 
   it('should send correct command to check if package is installed', async () => {
