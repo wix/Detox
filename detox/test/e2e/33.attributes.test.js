@@ -165,7 +165,7 @@ describe('Attributes', () => {
 
     it(':ios: should have Date .value', () => {
       expect(attributes).toMatchObject({
-        date: expect.stringMatching(/^2022-01-01T00:00:00\+\d{2}:\d{2}$/),
+        date: expect.stringMatching(/^2022-01-01T00:00:00[+\-]\d{2}:\d{2}$/),
       });
     });
   });
