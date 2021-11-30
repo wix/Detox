@@ -9,6 +9,11 @@ import org.joor.ReflectException;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+
 /**
  * Created by simonracz on 26/07/2017.
  */
@@ -38,6 +43,15 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
     private final static String FIELD_CATALYST_INSTANCE = "mCatalystInstance";
     private final static String LOCK_RUNNABLES = "mDispatchRunnablesLock";
     private final static String LOCK_OPERATIONS = "mNonBatchedOperationsLock";
+    private final static String CLASS_DISPATCH_COMMAND_VIEW_OPERATION =
+            "com.facebook.react.uimanager.UIViewOperationQueue$DispatchCommandViewOperation";
+    private final static String FIELD_MVIEW_COMMAND_OPERATIONS = "mViewCommandOperations";
+    private final static String CLASS_READABLE_ARRAY = "com.facebook.react.bridge.ReadableArray";
+    private final static String FIELD_MARGS = "mArgs";
+    private final static String METHOD_GET_BOOLEAN = "getBoolean";
+    private final static String FIELD_NUM_RETRIES = "numRetries";
+    private final static String FIELD_MCOMMAND = "mCommand";
+    private final static String SET_NATIVE_VALUE = "setNativeValue";
 
     private ResourceCallback callback;
     private Object reactContext;
@@ -93,17 +107,21 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
             boolean runnablesAreEmpty;
             boolean nonBatchesOpsEmpty;
             synchronized (runnablesLock) {
-                runnablesAreEmpty = (boolean) Reflect.on(uiOperationQueue)
+                runnablesAreEmpty = Reflect.on(uiOperationQueue)
                         .field(FIELD_DISPATCH_RUNNABLES)
                         .call(METHOD_IS_EMPTY).get();
             }
             synchronized (operationsLock) {
-                nonBatchesOpsEmpty = (boolean) Reflect.on(uiOperationQueue)
+                nonBatchesOpsEmpty = Reflect.on(uiOperationQueue)
                         .field(FIELD_NON_BATCHES_OPERATIONS)
                         .call(METHOD_IS_EMPTY).get();
             }
 
-            boolean isOperationQueueEmpty = (Boolean) Reflect.on(uiOperationQueue).call(METHOD_IS_EMPTY).get();
+            boolean isOperationQueueEmpty = Reflect.on(uiOperationQueue).call(METHOD_IS_EMPTY).get();
+
+            if (!isOperationQueueEmpty) {
+                isOperationQueueEmpty = workaroundForRN66Bug(uiOperationQueue);
+            }
 
             if (runnablesAreEmpty && nonBatchesOpsEmpty && isOperationQueueEmpty) {
                 notifyIdle();
@@ -120,6 +138,33 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
 
         notifyIdle();
         return true;
+    }
+
+    // This is a workaround for https://github.com/facebook/react-native/issues/32594
+    // uses duck typing heuristics to determine that this is probably the stuck Switch operation and if so, ignores it
+    private boolean workaroundForRN66Bug(Object uiOperationQueue) {
+        boolean isStuckSwitchOperation = false;
+
+        try {
+            Class<?> DispatchCommandViewOperation = Class.forName(CLASS_DISPATCH_COMMAND_VIEW_OPERATION);
+            List<?> mViewCommandOperations = Reflect.on(uiOperationQueue).field(FIELD_MVIEW_COMMAND_OPERATIONS).get();
+
+            if (mViewCommandOperations.size() == 1) {
+                Class<?> ReadableArray = Class.forName(CLASS_READABLE_ARRAY);
+                Object viewOperation = DispatchCommandViewOperation.cast(mViewCommandOperations.get(0));
+
+                Object viewArgs = ReadableArray.cast(Reflect.on(viewOperation).field(FIELD_MARGS).get());
+                Method getReadableArrayBoolean = viewArgs.getClass().getDeclaredMethod(METHOD_GET_BOOLEAN, int.class);
+                getReadableArrayBoolean.setAccessible(true);
+                Boolean nativeValueArg = (Boolean) getReadableArrayBoolean.invoke(viewArgs, 0);
+
+                int numRetries = Reflect.on(viewOperation).field(FIELD_NUM_RETRIES).get();
+                String mCommand = Reflect.on(viewOperation).field(FIELD_MCOMMAND).get();
+
+                isStuckSwitchOperation = (numRetries == 1 && mCommand.equals(SET_NATIVE_VALUE) && nativeValueArg != null);
+            }
+        } catch (ClassNotFoundException | IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
+        return isStuckSwitchOperation;
     }
 
     @Override
