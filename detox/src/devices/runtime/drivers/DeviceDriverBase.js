@@ -208,21 +208,6 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async existsOnDevice(_binaryPath, bundleId) {
-    const res = await this.appInstallHelper.checkInstalled(this.adbName, bundleId);
-    return res.length > 0;
-  }
-
-  async isInstalledWithSameVersion(_binaryPath, bundleId) {
-    const bundleVersion = await this.appInstallHelper.getRemoteVersionNumber(this.adbName, bundleId);
-    const localVersion = await this.appInstallHelper.getLocalVersionNumber();
-    return bundleVersion === localVersion;
-  }
-
-  async clearUserData(_binaryPath, bundleId) {
-    return await this.appInstallHelper.clearUserData(this.adbName, bundleId);
-  }
-
   async typeText(_text) {
     return await Promise.resolve('');
   }
@@ -235,6 +220,18 @@ class DeviceDriverBase {
 
   async captureViewHierarchy() {
     return '';
+  }
+
+  async existsOnDevice(_binaryPath, bundleId) {
+    return false;
+  }
+
+  async isInstalledWithSameVersion(_binaryPath, bundleId) {
+    return false;
+  }
+
+  async clearUserData(_binaryPath, bundleId) {
+    return false;
   }
 }
 
