@@ -17,8 +17,8 @@ describe('sleep', () => {
     expect(setTimeoutMock.mock.results[0].value.unref).not.toHaveBeenCalled();
   });
 
-  it('should call .unref() when given options = { unref: true }', async () => {
-    await sleep(0, { unref: true });
+  it('should call .unref() when given options = { shouldUnref: true }', async () => {
+    await sleep(0, { shouldUnref: true });
     expect(setTimeoutMock.mock.results[0].value.unref).toHaveBeenCalled();
   });
 });

@@ -1,9 +1,7 @@
-const defaultOptions = { unref: false };
-
-async function sleep(ms, options = defaultOptions) {
+async function sleep(ms, { shouldUnref = false } = {}) {
   return new Promise(resolve => {
     const handle = setTimeout(resolve, ms);
-    if (options.unref) {
+    if (shouldUnref) {
       handle.unref();
     }
   });
