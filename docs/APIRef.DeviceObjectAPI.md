@@ -360,8 +360,8 @@ Sets the simulator/emulator location to the given latitude and longitude.
 
 :::note
 
-* On iOS, `setLocation` is dependent on [applesimutils@546785](https://github.com/wix/AppleSimulatorUtils/commit/5467857407da4653305af119b2486051664a4f97) or more recent, that has `--setLocation` support.
-* On Android, `setLocation` will work with both Android Emulator (bundled with Android development tools) and Genymotion. The correct permissions must be set in your app manifest.
+- On iOS, `setLocation` is dependent on [applesimutils@546785](https://github.com/wix/AppleSimulatorUtils/commit/5467857407da4653305af119b2486051664a4f97) or more recent, that has `--setLocation` support.
+- On Android, `setLocation` will work with both Android Emulator (bundled with Android development tools) and Genymotion. The correct permissions must be set in your app manifest.
 
 :::
 
