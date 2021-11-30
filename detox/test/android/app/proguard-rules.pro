@@ -26,4 +26,3 @@
 -keepclassmembers class * {
     @com.facebook.jni.annotations.DoNotStrip *;
 }
--keep class kotlin.** { *; }
