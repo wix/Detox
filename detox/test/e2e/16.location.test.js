@@ -14,7 +14,7 @@ describe(':ios: location request', () => {
     await device.relaunchApp({ permissions: { location: 'never' } });
     await getLocation();
 
-    await expect(element(by.id('error'))).toBeVisible();
+    await expect(element(by.id('error'))).toHaveText('User denied access to location services.');
   });
 
   it('should allow to get and set location when location permission is set to `always`', async () => {
