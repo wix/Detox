@@ -16,6 +16,8 @@ describe('Client', () => {
   let client;
   /** @type {AsyncWebSocket} */
   let mockAws;
+  let DetoxRuntimeError;
+  let DetoxInternalError;
 
   beforeEach(() => {
     jest.clearAllTimers();
@@ -89,6 +91,7 @@ describe('Client', () => {
 
     Client = require('./Client');
     client = new Client(sessionConfig);
+    ({ DetoxInternalError, DetoxRuntimeError } = require('../errors'));
   });
 
   describe('.isConnected', () => {
@@ -502,7 +505,9 @@ describe('Client', () => {
     ])(`should throw "testFailed" error without view hierarchy but with a hint (on --loglevel %s)`, async (loglevel) => {
       log.level.mockReturnValue(loglevel);
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      const executionPromise = client.execute(anInvocation);
+      await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should throw "testFailed" error even if it has no a view hierarchy`, async () => {
@@ -510,11 +515,14 @@ describe('Client', () => {
 
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should rethrow an "error" result`, async () => {
       mockAws.mockResponse('error',  { error: 'this is an error' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      const executionPromise = client.execute(anInvocation);
+      await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should throw even if a non-error object is thrown`, async () => {
@@ -524,7 +532,9 @@ describe('Client', () => {
 
     it(`should throw on an unsupported result`, async () => {
       mockAws.mockResponse('unsupportedResult',  { foo: 'bar' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      const executionPromise = client.execute(anInvocation);
+      await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxInternalError);
     });
   });
 
