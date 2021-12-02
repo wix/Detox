@@ -289,6 +289,9 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	}
 	
 	CGPoint startPoint = CGPointMake(safeAreaToScroll.origin.x + safeAreaToScroll.size.width * normalizedStartingPoint.x, safeAreaToScroll.origin.y + safeAreaToScroll.size.height * normalizedStartingPoint.y);
+
+
+	[self dtx_assertHittableAtPoint:startPoint];
 	
 	NSUInteger successfullyAppliedScrolls = 0;
 	while (offset.x != 0.0 || offset.y != 0.0)
