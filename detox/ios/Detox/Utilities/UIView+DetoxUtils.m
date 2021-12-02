@@ -13,6 +13,7 @@
 #import "UIView+Drawing.h"
 #import "DetoxPolicy.h"
 #import "NSURL+DetoxUtils.h"
+#import "UIResponder+First.h"
 
 @interface DTXTouchVisualizerWindow : UIWindow @end
 
@@ -382,6 +383,11 @@ DTX_DIRECT_MEMBERS
 
   if ([self isDescendantOfView:visibleContainer]) {
 	return [self canHitFromView:self atAbsPoint:absPoint error:error];
+  }
+
+  UIView *firstResponderInputView = UIResponder.dtx_first.inputView;
+  if ([self isDescendantOfView:firstResponderInputView]) {
+	return [self canHitFromView:firstResponderInputView atAbsPoint:absPoint error:error];
   }
 
   return [self canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
