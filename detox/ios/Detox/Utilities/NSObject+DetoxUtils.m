@@ -141,15 +141,19 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError *__strong  _Nullable *)error {
+					  error:(NSError* __strong  _Nullable *)error {
 	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
 - (void)dtx_assertVisible {
-	[self dtx_assertVisibleAtRect:self.dtx_bounds percent:nil];
+	[self dtx_assertVisibleWithPercent:nil];
 }
 
-- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(NSNumber *)percent {
+- (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent {
+  [self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
+}
+
+- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
 	[self.dtx_view dtx_assertVisibleAtRect:rect percent:percent];
 }
 
@@ -165,25 +169,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return YES;
 }
 
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point
-{
-	return YES;
-}
+- (void)dtx_assertHittable {}
 
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error
-{
-	return YES;
-}
-
-- (void)dtx_assertHittable
-{
-	
-}
-
-- (void)dtx_assertHittableAtPoint:(CGPoint)point
-{
-	
-}
+- (void)dtx_assertHittableAtPoint:(CGPoint)point {}
 
 - (NSString *)dtx_text
 {

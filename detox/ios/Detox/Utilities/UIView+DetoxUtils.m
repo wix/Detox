@@ -28,29 +28,11 @@
 DTX_DIRECT_MEMBERS
 @implementation UIView (DetoxUtils)
 
-- (void)dtx_assertHittable
-{
-	[self _dtx_assertHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace isAtActivationPoint:YES];
-}
-
 - (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
 	NSError* error;
 	BOOL assert = [self dtx_isVisibleAtRect:rect percent:percent error:&error];
-	
+
 	DTXViewAssert(assert, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
-}
-
-- (void)dtx_assertHittableAtPoint:(CGPoint)point
-{
-	[self _dtx_assertHittableAtPoint:point isAtActivationPoint:NO];
-}
-
-- (void)_dtx_assertHittableAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
-{
-	NSError* error;
-	BOOL assert = [self dtx_isHittableAtPoint:point error:&error];
-	
-	DTXViewAssert(assert == YES, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
 }
 
 - (NSString *)dtx_shortDescription
@@ -119,7 +101,7 @@ DTX_DIRECT_MEMBERS
 			visibleBounds = CGRectIntersection(boundsInSelfCoords, visibleBounds);
 		}
 		
-		if(CGRectIsNull(visibleBounds))
+		if(CGRectIsEmpty(visibleBounds))
 		{
 			break;
 		}
@@ -277,10 +259,8 @@ DTX_DIRECT_MEMBERS
 	CGRect testedRegionInWindowCoords = [windowToUse convertRect:rect fromView:self];
 	
 	CGRect visibleBounds = self.dtx_visibleBounds;
-	
-	if (CGRectIsNull(visibleBounds) || [self _dtx_isRegionObscured:visibleBounds
-		 										  fromTestedRegion:self.dtx_visibleBounds
-														   percent:percent]) {
+	if (CGRectIsEmpty(visibleBounds) ||
+		[self _dtx_isRegionObscured:visibleBounds fromTestedRegion:visibleBounds percent:percent]) {
 		auto errorDescription = [NSString stringWithFormat:@"View is clipped by one or more of its "
 								 "superviews' bounds and does not pass visibility percent "
 								 "threshold (%lu)", (unsigned long)percent];
@@ -339,25 +319,6 @@ DTX_DIRECT_MEMBERS
 	return [self _dtx_testVisibilityInRect:rect percent:percentValue error:error];
 }
 
-- (BOOL)dtx_isHittable
-{
-	return [self dtx_isHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:NULL];
-}
-
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point
-{
-	return [self dtx_isHittableAtPoint:point error:NULL];
-}
-
-- (CGRect)_dtx_hitBoundsAroundPoint:(CGPoint)point {
-	return CGRectIntersection(self.bounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
-}
-
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error {
-	return [self _dtx_testVisibilityInRect:[self _dtx_hitBoundsAroundPoint:point] percent:100
-									 error:error];
-}
-
 - (BOOL)dtx_isEnabled
 {
 	BOOL enabled = self.userInteractionEnabled;
@@ -382,6 +343,117 @@ DTX_DIRECT_MEMBERS
 	}
 	
 	return rv;
+}
+
+#pragma mark - Check Hitability
+
+- (BOOL)dtx_isHittable {
+  CGPoint point = [self findVisiblePoint];
+  return [self dtx_isHittableAtPoint:point error:nil];
+}
+
+- (CGPoint)findVisiblePoint {
+  CGRect visibleBounds = self.dtx_visibleBounds;
+  if (CGRectIsEmpty(visibleBounds)) {
+	return CGPointMake(NAN, NAN);
+  }
+
+  return CGPointMake(visibleBounds.origin.x + visibleBounds.size.width / 2,
+					 visibleBounds.origin.y + visibleBounds.size.height / 2);
+}
+
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error {
+  if (point.x == NAN || point.y == NAN) {
+	*error = [NSError
+			  errorWithDomain:@"Detox" code:0
+			  userInfo:@{NSLocalizedDescriptionKey:@"Given point coordinates are NaN"}];
+
+	return NO;
+  }
+
+  if (![self dtx_isVisibleInPointHitBounds:point error:error]) {
+	return NO;
+  }
+
+  UIViewController *topMostViewController = [self findTopMostViewController];
+  UIView *visibleContainer = topMostViewController.view;
+
+  CGPoint absPoint = [self calcAbsPointFromLocalPoint:point];
+
+  if ([self isDescendantOfView:visibleContainer]) {
+	return [self canHitFromView:self atAbsPoint:absPoint error:error];
+  }
+
+  return [self canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
+}
+
+- (BOOL)dtx_isVisibleInPointHitBounds:(CGPoint)point
+								error:(NSError* __strong *)error {
+  return [self _dtx_testVisibilityInRect:[self _dtx_hitBoundsAroundPoint:point]
+								 percent:100 error:error];
+}
+
+- (CGRect)_dtx_hitBoundsAroundPoint:(CGPoint)point {
+  return CGRectIntersection(self.bounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
+}
+
+
+- (BOOL)canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
+				 error:(NSError* __strong *)error {
+  CGPoint absOrigin = [originView calcAbsOrigin];
+  CGPoint relativePoint = CGPointMake(point.x - absOrigin.x, point.y - absOrigin.y);
+
+  UIView *hitten = [originView hitTest:relativePoint withEvent:nil];
+
+  BOOL hitRemainedOnOrigin = !hitten;
+  if (hitRemainedOnOrigin && originView == self) {
+	return YES;
+  }
+
+  if ([hitten isDescendantOfView:self]) {
+	return YES;
+  }
+
+  NSString *message =
+	  [NSString stringWithFormat:@"Failed to hit view at point %@ with `hitTest`.\n" \
+	   "- Origin view: %@\n- Absolute origin: %@\n- Hitten: %@\n- Target view: %@\n" \
+	   "- Relative point: %@", NSStringFromCGPoint(point), originView,
+	   NSStringFromCGPoint(absOrigin), hitten, self, NSStringFromCGPoint(relativePoint)];
+  *error = [NSError errorWithDomain:@"Detox" code:0 userInfo:@{NSLocalizedDescriptionKey:message}];
+
+  return NO;
+}
+
+- (UIViewController *)findTopMostViewController {
+  UIWindow *topMostWindow = UIWindow.dtx_keyWindow;
+  return [self findTopMostViewControllerForViewController:topMostWindow.rootViewController];
+}
+
+- (UIViewController *)findTopMostViewControllerForViewController:(UIViewController *)viewController {
+  if (viewController.presentedViewController) {
+	return [self findTopMostViewControllerForViewController:viewController.presentedViewController];
+  }
+
+  return viewController;
+}
+
+- (void)dtx_assertHittable {
+  CGPoint point = [self findVisiblePoint];
+  [self dtx_assertHittableAtPoint:point];
+}
+
+- (void)dtx_assertHittableAtPoint:(CGPoint)point {
+  NSError *error;
+  DTXAssert([self dtx_isHittableAtPoint:point error:&error],
+			@"View is not hittable at its visible point. Error: %@", error.localizedDescription);
+}
+
+- (CGPoint)calcAbsOrigin {
+  return [self.superview calcAbsPointFromLocalPoint:self.frame.origin];
+}
+
+- (CGPoint)calcAbsPointFromLocalPoint:(CGPoint)localPoint {
+  return [self convertPoint:localPoint toView:nil];
 }
 
 @end
