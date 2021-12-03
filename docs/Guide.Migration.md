@@ -9,6 +9,27 @@ sidebar_label: Migration Guide
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the latter builds to learn about their improvements and changes.
 
+### 19.2
+
+The release has a **developer experience** improvement – _Detect pending in-flight requests_ (#3003, @jonathanmos).
+The feature adds an extra logic that prevents forgotten `await` statements on asynchronous Detox APIs, so you might see a new error like this:
+
+```plain text
+FAILED
+DetoxRuntimeError: The pending request \#246 ("invoke") has been rejected due to the following error:
+
+Detox has detected multiple interactions taking place simultaneously. Have you forgotten to apply an await over one of the Detox actions in your test code?
+```
+
+That should help you to find forgotten `await`s in your code which can be potentially be the reason for flakiness in your tests.
+You’ll need to find those places and apply a trivial fix like this:
+
+```diff
+   await screenDriver.performSomeAction();
+-  expect(screenDriver.get.myElement()).toBeNotVisible();
++  await expect(screenDriver.get.myElement()).toBeNotVisible();
+```
+
 ### 19.0
 
 **Version 19 is not really a breaking change!**
