@@ -1,5 +1,4 @@
-const DetoxInternalError = require('../../errors/DetoxInternalError');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const { DetoxInternalError, DetoxRuntimeError } = require('../../errors');
 const { getDetoxLevel } = require('../../utils/logger');
 
 class Action {
@@ -195,18 +194,23 @@ class Invoke extends Action {
     switch (response.type) {
       case 'testFailed':
         let message = 'Test Failed: ' + response.params.details;
+        let hint;
+        let debugInfo;
+
         if (response.params.viewHierarchy) {
           /* istanbul ignore next */
-          message += /^(debug|trace)$/.test(getDetoxLevel())
-            ? '\nView Hierarchy:\n' + response.params.viewHierarchy
-            : '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
+          if (/^(debug|trace)$/.test(getDetoxLevel())) {
+            debugInfo = 'View Hierarchy:\n' + response.params.viewHierarchy;
+          } else {
+            hint = 'To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
+          }
         }
 
-        throw new Error(message);
+        throw new DetoxRuntimeError({ message, hint, debugInfo });
       case 'invokeResult':
         return response.params;
       case 'error':
-        throw new Error(response.params.error);
+        throw new DetoxRuntimeError(response.params.error);
       default:
         throw new DetoxInternalError(`Tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
     }
