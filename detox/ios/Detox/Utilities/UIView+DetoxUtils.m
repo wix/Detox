@@ -363,8 +363,8 @@ DTX_DIRECT_MEMBERS
 					 visibleBounds.origin.y + visibleBounds.size.height / 2);
 }
 
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error {
-  if (point.x == NAN || point.y == NAN) {
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint error:(NSError* __strong *)error {
+  if (viewPoint.x == NAN || viewPoint.y == NAN) {
 	*error = [NSError
 			  errorWithDomain:@"Detox" code:0
 			  userInfo:@{NSLocalizedDescriptionKey:@"Given point coordinates are NaN"}];
@@ -372,39 +372,47 @@ DTX_DIRECT_MEMBERS
 	return NO;
   }
 
-  if (![self dtx_isVisibleInPointHitBounds:point error:error]) {
+  if (![self _isVisibleAroundPoint:viewPoint visibleBounds:self.dtx_visibleBounds
+							 error:error]) {
+	NSString *description = [NSString stringWithFormat:@"View is not visible around" \
+							 " point.\n- view point: %@\n- visible bounds: %@" \
+							 "\n- view bounds: %@\n---\nError: %@",
+							 NSStringFromCGPoint(viewPoint),
+							 NSStringFromCGRect(self.dtx_visibleBounds),
+							 NSStringFromCGRect(self.frame), *error];
+
+	*error = [NSError errorWithDomain:@"Detox" code:0
+							 userInfo:@{NSLocalizedDescriptionKey:description}];
+
 	return NO;
   }
 
-  UIViewController *topMostViewController = [self findTopMostViewController];
+  UIViewController *topMostViewController = [self _findTopMostViewController];
   UIView *visibleContainer = topMostViewController.view;
 
-  CGPoint absPoint = [self calcAbsPointFromLocalPoint:point];
+  CGPoint absPoint = [self calcAbsPointFromLocalPoint:viewPoint];
 
   if ([self isDescendantOfView:visibleContainer]) {
-	return [self canHitFromView:self atAbsPoint:absPoint error:error];
+	return [self _canHitFromView:self atAbsPoint:absPoint error:error];
   }
 
   UIView *firstResponderInputView = UIResponder.dtx_first.inputView;
   if ([self isDescendantOfView:firstResponderInputView]) {
-	return [self canHitFromView:firstResponderInputView atAbsPoint:absPoint error:error];
+	return [self _canHitFromView:firstResponderInputView atAbsPoint:absPoint error:error];
   }
 
-  return [self canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
+  return [self _canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
 }
 
-- (BOOL)dtx_isVisibleInPointHitBounds:(CGPoint)point
-								error:(NSError* __strong *)error {
-  return [self _dtx_testVisibilityInRect:[self _dtx_hitBoundsAroundPoint:point]
-								 percent:100 error:error];
+- (BOOL)_isVisibleAroundPoint:(CGPoint)point visibleBounds:(CGRect)visibleBounds
+						error:(NSError* __strong *)error {
+  CGRect intersection = CGRectIntersection(
+      visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
+  return [self _dtx_testVisibilityInRect:intersection percent:100 error:error];
 }
 
-- (CGRect)_dtx_hitBoundsAroundPoint:(CGPoint)point {
-  return CGRectIntersection(self.bounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
-}
-
-- (BOOL)canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
-				 error:(NSError* __strong *)error {
+- (BOOL)_canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
+			  	  error:(NSError* __strong *)error {
   CGPoint absOrigin = [originView calcAbsOrigin];
   CGPoint relativePoint = CGPointMake(point.x - absOrigin.x, point.y - absOrigin.y);
 
@@ -429,14 +437,14 @@ DTX_DIRECT_MEMBERS
   return NO;
 }
 
-- (UIViewController *)findTopMostViewController {
+- (UIViewController *)_findTopMostViewController {
   UIWindow *topMostWindow = UIWindow.dtx_keyWindow;
-  return [self findTopMostViewControllerForViewController:topMostWindow.rootViewController];
+  return [self _findTopMostViewControllerForViewController:topMostWindow.rootViewController];
 }
 
-- (UIViewController *)findTopMostViewControllerForViewController:(UIViewController *)viewController {
+- (UIViewController *)_findTopMostViewControllerForViewController:(UIViewController *)viewController {
   if (viewController.presentedViewController) {
-	return [self findTopMostViewControllerForViewController:viewController.presentedViewController];
+	return [self _findTopMostViewControllerForViewController:viewController.presentedViewController];
   }
 
   return viewController;
