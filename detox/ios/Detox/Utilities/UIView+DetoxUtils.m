@@ -403,7 +403,6 @@ DTX_DIRECT_MEMBERS
   return CGRectIntersection(self.bounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
 }
 
-
 - (BOOL)canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
 				 error:(NSError* __strong *)error {
   CGPoint absOrigin = [originView calcAbsOrigin];
