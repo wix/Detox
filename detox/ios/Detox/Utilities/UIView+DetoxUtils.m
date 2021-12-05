@@ -225,7 +225,7 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)_dtx_testVisibilityInRect:(CGRect)rect percent:(NSUInteger)percent
-							error:(NSError* __strong *)error {
+							error:(NSError* __strong * __nullable)error {
 	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
 	
 	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
@@ -314,7 +314,7 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong *)error {
+					  error:(NSError* __strong * __nullable)error {
 	NSUInteger percentValue = percent ? percent.unsignedIntegerValue :
 		DetoxPolicy.defaultPercentThresholdForVisibility;
 	return [self _dtx_testVisibilityInRect:rect percent:percentValue error:error];
@@ -365,24 +365,29 @@ DTX_DIRECT_MEMBERS
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint error:(NSError* __strong *)error {
   if (viewPoint.x == NAN || viewPoint.y == NAN) {
-	*error = [NSError
-			  errorWithDomain:@"Detox" code:0
-			  userInfo:@{NSLocalizedDescriptionKey:@"Given point coordinates are NaN"}];
+	if (error) {
+	  *error = [NSError
+				errorWithDomain:@"Detox" code:0
+				userInfo:@{NSLocalizedDescriptionKey:@"Given point coordinates are NaN"}];
+	}
 
 	return NO;
   }
 
   if (![self _isVisibleAroundPoint:viewPoint visibleBounds:self.dtx_visibleBounds
 							 error:error]) {
-	NSString *description = [NSString stringWithFormat:@"View is not visible around" \
-							 " point.\n- view point: %@\n- visible bounds: %@" \
-							 "\n- view bounds: %@\n---\nError: %@",
-							 NSStringFromCGPoint(viewPoint),
-							 NSStringFromCGRect(self.dtx_visibleBounds),
-							 NSStringFromCGRect(self.frame), *error];
+	if (error) {
+	  NSString *description = [NSString stringWithFormat:@"View is not visible around" \
+							   " point.\n- view point: %@\n- visible bounds: %@" \
+							   "\n- view bounds: %@\n---\nError: %@",
+							   NSStringFromCGPoint(viewPoint),
+							   NSStringFromCGRect(self.dtx_visibleBounds),
+							   NSStringFromCGRect(self.frame), *error];
 
-	*error = [NSError errorWithDomain:@"Detox" code:0
-							 userInfo:@{NSLocalizedDescriptionKey:description}];
+	  *error = [NSError errorWithDomain:@"Detox" code:0
+							   userInfo:@{NSLocalizedDescriptionKey:description}];
+
+	}
 
 	return NO;
   }
@@ -405,14 +410,14 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)_isVisibleAroundPoint:(CGPoint)point visibleBounds:(CGRect)visibleBounds
-						error:(NSError* __strong *)error {
+						error:(NSError* __strong * __nullable)error {
   CGRect intersection = CGRectIntersection(
       visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
   return [self _dtx_testVisibilityInRect:intersection percent:100 error:error];
 }
 
 - (BOOL)_canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
-			  	  error:(NSError* __strong *)error {
+			  	  error:(NSError* __strong * __nullable)error {
   CGPoint absOrigin = [originView calcAbsOrigin];
   CGPoint relativePoint = CGPointMake(point.x - absOrigin.x, point.y - absOrigin.y);
 
@@ -427,12 +432,15 @@ DTX_DIRECT_MEMBERS
 	return YES;
   }
 
-  NSString *message =
-	  [NSString stringWithFormat:@"Failed to hit view at point %@ with `hitTest`.\n" \
-	   "- Origin view: %@\n- Absolute origin: %@\n- Hitten: %@\n- Target view: %@\n" \
-	   "- Relative point: %@", NSStringFromCGPoint(point), originView,
-	   NSStringFromCGPoint(absOrigin), hitten, self, NSStringFromCGPoint(relativePoint)];
-  *error = [NSError errorWithDomain:@"Detox" code:0 userInfo:@{NSLocalizedDescriptionKey:message}];
+  if (error) {
+	NSString *message =
+		[NSString stringWithFormat:@"Failed to hit view at point %@ with `hitTest`.\n" \
+		 "- Origin view: %@\n- Absolute origin: %@\n- Hitten: %@\n- Target view: %@\n" \
+		 "- Relative point: %@", NSStringFromCGPoint(point), originView,
+		 NSStringFromCGPoint(absOrigin), hitten, self, NSStringFromCGPoint(relativePoint)];
+	*error = [NSError errorWithDomain:@"Detox" code:0
+							 userInfo:@{NSLocalizedDescriptionKey:message}];
+  }
 
   return NO;
 }

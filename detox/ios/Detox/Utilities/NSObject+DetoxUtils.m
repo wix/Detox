@@ -41,7 +41,7 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 DTX_ALWAYS_INLINE
 static NSString* DTXPointToString(CGPoint point)
 {
-	return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:NULL] encoding:NSUTF8StringEncoding];
+	return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:nil] encoding:NSUTF8StringEncoding];
 }
 
 @interface NSObject ()
@@ -137,11 +137,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (BOOL)dtx_isVisible {
-	return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:NULL];
+	return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:nil];
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong  _Nullable *)error {
+					  error:(NSError* __strong * __nullable)error {
 	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
@@ -255,7 +255,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		{
 			return;
 		}
-		
+
 		if([key isEqualToString:@"dtx_text"])
 		{
 			rv[@"text"] = obj;
@@ -367,9 +367,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return rv;
 }
 
-- (NSDictionary<NSString *,id> *)dtx_elementDebugAttributes
+- (NSDictionary<NSString *, id> *)dtx_elementDebugAttributes
 {
-	NSMutableDictionary* rv = [NSMutableDictionary new];
+	NSMutableDictionary<NSString *, id> *rv = [NSMutableDictionary new];
 	[rv addEntriesFromDictionary:NSObject.dtx_genericElementDebugAttributes];
 	
 	rv[@"elementAttributes"] = [self dtx_attributes];
