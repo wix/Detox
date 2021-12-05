@@ -225,7 +225,7 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)_dtx_testVisibilityInRect:(CGRect)rect percent:(NSUInteger)percent
-							error:(NSError* __strong * __nullable)error {
+							error:(NSError* __strong __nullable * __nullable)error {
 	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
 	
 	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
@@ -314,7 +314,7 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong * __nullable)error {
+					  error:(NSError* __strong __nullable * __nullable)error {
 	NSUInteger percentValue = percent ? percent.unsignedIntegerValue :
 		DetoxPolicy.defaultPercentThresholdForVisibility;
 	return [self _dtx_testVisibilityInRect:rect percent:percentValue error:error];
@@ -410,14 +410,14 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)_isVisibleAroundPoint:(CGPoint)point visibleBounds:(CGRect)visibleBounds
-						error:(NSError* __strong * __nullable)error {
+						error:(NSError* __strong __nullable * __nullable)error {
   CGRect intersection = CGRectIntersection(
       visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
   return [self _dtx_testVisibilityInRect:intersection percent:100 error:error];
 }
 
 - (BOOL)_canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
-			  	  error:(NSError* __strong * __nullable)error {
+			  	  error:(NSError* __strong __nullable * __nullable)error {
   CGPoint absOrigin = [originView calcAbsOrigin];
   CGPoint relativePoint = CGPointMake(point.x - absOrigin.x, point.y - absOrigin.y);
 

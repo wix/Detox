@@ -35,7 +35,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 - (BOOL)dtx_isVisible;
 - (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent;
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong * __nullable)error;
+					  error:(NSError* __strong __nullable * __nullable)error;
 - (void)dtx_assertVisible;
 - (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent;
 

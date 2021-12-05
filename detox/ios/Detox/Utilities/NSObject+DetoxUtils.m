@@ -141,7 +141,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong * __nullable)error {
+					  error:(NSError* __strong __nullable * __nullable)error {
 	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
