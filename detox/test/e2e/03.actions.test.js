@@ -145,7 +145,7 @@ describe('Actions', () => {
     await element(by.id('ScrollView161')).swipe('up');
 
     if (device.getPlatform() === 'ios') {
-      // TODO: investigate why this assertion fails on Android
+      // This won't work in Android, see related issue: https://github.com/facebook/react-native/issues/23870
       await expect(element(by.text('Text1'))).not.toBeVisible();
     }
 
@@ -168,7 +168,7 @@ describe('Actions', () => {
 
     await element(by.id('ScrollView161')).swipe('up', 'slow', NaN, 0.9, 0.95);
     if (device.getPlatform() === 'ios') {
-      // TODO: investigate why this assertion fails on Android
+      // This won't work in Android, see related issue: https://github.com/facebook/react-native/issues/23870
       await expect(element(by.text('Text1'))).not.toBeVisible(1);
     }
 
