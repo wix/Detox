@@ -25,7 +25,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
+example.xcworkspace
 
 # Android/IJ
 #
