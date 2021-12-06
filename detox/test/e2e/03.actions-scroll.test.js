@@ -109,7 +109,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('HText1'))).toBeVisible(1);
 
     try {
-      await element(by.id('ScrollViewH')).scrollTo('right');
+      await element(by.id('ScrollViewH')).scroll(200, 'right');
     } catch {}
 
     await expect(element(by.text('HText1'))).toBeVisible(1);
@@ -120,7 +120,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('Text1'))).toBeVisible(1);
 
     try {
-      await element(by.id('ScrollView161')).scrollTo('down');
+      await element(by.id('ScrollView161')).scroll(200, 'down');
     } catch {}
 
     await expect(element(by.text('Text1'))).toBeVisible(1);
