@@ -136,17 +136,14 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 @implementation UIWindow (DetoxUtils)
 
-+ (UIWindow*)dtx_keyWindow
-{
-    UIWindow *foundWindow = nil;
-    NSArray *windows = [[UIApplication sharedApplication]windows];
-    for (UIWindow *window in windows) {
-        if (window.isKeyWindow) {
-            foundWindow = window;
-            break;
-        }
-    }
-    return foundWindow;
++ (UIWindow*)dtx_keyWindow {
+  NSArray *windows = [[UIApplication sharedApplication]windows];
+  for (UIWindow *window in windows) {
+	  if (window.isKeyWindow) {
+		  return window;
+	  }
+  }
+  return nil;
 }
 
 + (id)dtx_keyWindowScene
