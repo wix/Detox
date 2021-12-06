@@ -169,6 +169,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return YES;
 }
 
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
+						error:(NSError* __strong __nullable * __nullable)error {
+  return YES;
+}
+
 - (void)dtx_assertHittable {}
 
 - (void)dtx_assertHittableAtPoint:(CGPoint)point {}

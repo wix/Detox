@@ -114,7 +114,7 @@ DTX_DIRECT_MEMBERS
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
-	return [self dtx_isVisibleAtRect:rect percent:percent error:NULL];
+	return [self dtx_isVisibleAtRect:rect percent:percent error:nil];
 }
 
 - (UIImage*)dtx_imageFromView
@@ -363,7 +363,8 @@ DTX_DIRECT_MEMBERS
 					 visibleBounds.origin.y + visibleBounds.size.height / 2);
 }
 
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint error:(NSError* __strong *)error {
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
+						error:(NSError* __strong __nullable * __nullable)error {
   if (viewPoint.x == NAN || viewPoint.y == NAN) {
 	if (error) {
 	  *error = [NSError
