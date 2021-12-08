@@ -20,10 +20,12 @@ class ViewCommandOperationsReflected {
     private final static String FIELD_MVIEW_MANAGERS = "mNativeViewHierarchyManager";
     private final static String SET_NATIVE_VALUE = "setNativeValue";
     private final static String REACT_SWITCH = "ReactSwitch";
+    private final static int NUM_TIMES_BEFORE_NOTIFY_IDLE = 10;
+    private int timesStuckQueueDetected = 0;
 
     // This is a workaround for https://github.com/facebook/react-native/issues/32594
     // uses duck typing heuristics to determine that this is probably the stuck Switch operation and if so, ignores it
-    static boolean workaroundForRN66Bug(Object uiOperationQueue) {
+    boolean workaroundForRN66Bug(Object uiOperationQueue) {
         boolean isStuckSwitchOperation = false;
 
         try {
@@ -45,7 +47,15 @@ class ViewCommandOperationsReflected {
                 boolean hasOneRetryIncremented = numRetries == 1;
                 boolean isSetNativeValueCommand = mCommand.equals(SET_NATIVE_VALUE);
 
-                isStuckSwitchOperation = (isReactSwitch && hasOneRetryIncremented && isSetNativeValueCommand);
+                if (isReactSwitch && hasOneRetryIncremented && isSetNativeValueCommand) {
+                    timesStuckQueueDetected++;
+                }
+
+                if (timesStuckQueueDetected >= NUM_TIMES_BEFORE_NOTIFY_IDLE) {
+                    isStuckSwitchOperation = true;
+                }
+            } else {
+                timesStuckQueueDetected = 0;
             }
         } catch (ClassNotFoundException e) {
             Log.d(LOG_TAG, String.valueOf(e.getCause()));

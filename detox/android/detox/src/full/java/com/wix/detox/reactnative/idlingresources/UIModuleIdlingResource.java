@@ -42,6 +42,7 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
 
     private ResourceCallback callback;
     private Object reactContext;
+    private ViewCommandOperationsReflected viewCommandOperationsReflected;
 
     public UIModuleIdlingResource(@NonNull Object reactContext) {
         this.reactContext = reactContext;
@@ -107,7 +108,11 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
             boolean isOperationQueueEmpty = Reflect.on(uiOperationQueue).call(METHOD_IS_EMPTY).get();
 
             if (!isOperationQueueEmpty) {
-                isOperationQueueEmpty = ViewCommandOperationsReflected.workaroundForRN66Bug(uiOperationQueue);
+                if (viewCommandOperationsReflected == null) {
+                    viewCommandOperationsReflected = new ViewCommandOperationsReflected();
+                }
+
+                isOperationQueueEmpty = viewCommandOperationsReflected.workaroundForRN66Bug(uiOperationQueue);
             }
 
             if (runnablesAreEmpty && nonBatchesOpsEmpty && isOperationQueueEmpty) {
