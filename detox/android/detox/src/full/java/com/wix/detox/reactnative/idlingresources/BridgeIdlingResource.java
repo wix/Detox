@@ -48,11 +48,7 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
     @Override
     public Map<String, Object> getJSONDescription() {
         final Map<String, Object> jsonDescription = new HashMap<>();
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "one_time_event");
-
-        final Map<String, Object> description = new HashMap<>();
-        description.put("event", "Activity on the React-Native bridge");
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_DESCRIPTION_KEY, description);
+        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "bridge");
 
         return jsonDescription;
     }
