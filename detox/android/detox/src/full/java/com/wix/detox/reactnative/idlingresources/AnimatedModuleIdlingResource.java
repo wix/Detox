@@ -1,12 +1,9 @@
 package com.wix.detox.reactnative.idlingresources;
 
-import java.util.HashMap;
-import java.util.Map;
 import android.util.Log;
 import android.view.Choreographer;
 
 import com.wix.detox.reactnative.ReactNativeInfo;
-import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants;
 
 import org.jetbrains.annotations.NotNull;
 import org.joor.Reflect;
