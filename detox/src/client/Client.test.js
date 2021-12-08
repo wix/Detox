@@ -127,6 +127,15 @@ describe('Client', () => {
     });
   });
 
+  describe('.open()', () => {
+    it('should open the web socket', async () => {
+      mockAws.mockResponse('loginSuccess', {});
+      expect(mockAws.open).not.toHaveBeenCalled();
+      await client.open();
+      expect(mockAws.open).toHaveBeenCalled();
+    });
+  });
+
   describe('.connect()', () => {
     it('should open the web socket', async () => {
       mockAws.mockResponse('loginSuccess', {});

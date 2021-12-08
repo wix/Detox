@@ -57,52 +57,28 @@ class LoginApp {
 
 class PluginApp {
   constructor(deps) {
-    this.configuration = deps.client.configuration;
+    this.configuration = deps.sessionConfig;
     this.client = new Client(this.configuration);
   }
 
   async connect() {
-    await this.client.ws.open();
+    await this.client.open();
 
     // NOTE: This is a sample way to handle events in a custom app client, but not needed
-    // for the test suite
-    // this.client.ws.ws.on('message', async (str) => {
-    //   const sendResponse = async (response) => {
-    //     this.client.ws.ws.send(JSON.stringify(response));
-    //   };
-
-    //   const action = JSON.parse(str);
-    //   const messageId = action.messageId;
-    //   if (!action.type) {
-    //     return;
+    // for the test suite:
+    //
+    // const { Action } = require('detox/src/client/actions/actions');
+    // class PongAction extends Action {
+    //   constructor(messageId) {
+    //     super('ping', { messageId });
     //   }
-    //   if (action.type === 'loginSuccess') {
-    //     return;
-    //   } else if (action.type === 'deliverPayload') {
-    //     await sendResponse({
-    //       type: 'deliverPayloadDone',
-    //       messageId: action.messageId,
-    //     });
-    //   } else if (action.type === 'currentStatus') {
-    //     await sendResponse(
-    //       { type: 'currentStatusResult', params: { resources: [] } }
-    //     );
-    //   } else {
-    //     try {
-    //       await sendResponse({
-    //         type: 'invokeResult',
-    //         messageId: action.messageId,
-    //       });
-    //     } catch (error) {
-    //       this.client.ws.ws.send(
-    //         JSON.stringify({
-    //           type: 'testFailed',
-    //           messageId,
-    //           params: { details: str + '\n' + error.message },
-    //         }),
-    //       );
-    //     }
+    //
+    //   handle() {
     //   }
+    // }
+    //
+    // this.client.setEventCallback('ping', async (json) => {
+    //   await this.client.sendAction(new PongAction(json.messageId));
     // });
 
     await this.client.sendAction(new LoginApp(this.configuration.sessionId));
