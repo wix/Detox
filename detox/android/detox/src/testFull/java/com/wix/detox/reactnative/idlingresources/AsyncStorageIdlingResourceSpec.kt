@@ -70,7 +70,11 @@ class AsyncStorageIdlingResourceSpec: Spek({
                 givenAnActiveTask()
                 givenNoPendingTasks()
                 assertThat(uut.isIdleNow).isFalse()
-                assertThat(uut.getJSONDescription()).isEqualTo(mapOf("name" to "io"))
+
+                val expectedDescription = IdlingResourceDescription.Builder()
+                    .name("io")
+                    .build()
+                assertThat(uut.getDescription()).isEqualTo(expectedDescription)
             }
 
             it("should be busy if executor has pending tasks") {

@@ -3,8 +3,8 @@ package com.wix.detox.reactnative.idlingresources.timers
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 
-import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants
 import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
+import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 
 class TimersIdlingResource @JvmOverloads constructor(
         private val interrogationStrategy: IdleInterrogationStrategy,
@@ -15,8 +15,8 @@ class TimersIdlingResource @JvmOverloads constructor(
 
     override fun getName(): String = this.javaClass.name
 
-    override fun getJSONDescription(): Map<String, Any> {
-        return mapOf<String, Any>( IdlingResourceConstants.RESOURCE_NAME_KEY to "timers")
+    override fun getDescription(): IdlingResourceDescription {
+        return IdlingResourceDescription.Builder().name("timers").build();
     }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {

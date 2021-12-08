@@ -120,7 +120,7 @@ class QueryStatusActionHandler(
 
     private fun formatResource(resource: IdlingResource): Map<String, Any> {
         if (resource is DescriptiveIdlingResource) {
-            return resource.getJSONDescription()
+            return resource.getDescription().json()
         }
 
         if (resource.javaClass.name.contains("LooperIdlingResource")) {
@@ -136,20 +136,24 @@ class QueryStatusActionHandler(
     }
 
     private fun formatLooperResourceFromName(resourceName: String): Map<String, Any> {
-        if (isJSCodeExecution(resourceName)) {
-            return formatLooperResource(
+        return when {
+            isJSCodeExecution(resourceName) -> {
+                formatLooperResource(
                     "\"${resourceName}\" (JS Thread)",
                     "JavaScript code"
-            )
-        } else if (isNativeCodeExecution(resourceName)) {
-            return formatLooperResource(
+                )
+            }
+            isNativeCodeExecution(resourceName) -> {
+                formatLooperResource(
                     "\"${resourceName}\" (Native Modules Thread)",
                     "native module calls"
-            )
-        } else {
-            return formatLooperResource(
+                )
+            }
+            else -> {
+                formatLooperResource(
                     "\"${resourceName}\""
-            )
+                )
+            }
         }
     }
 
@@ -157,13 +161,7 @@ class QueryStatusActionHandler(
      * @see URL https://reactnative.dev/docs/profiling
      */
     private fun isJSCodeExecution(looperName: String): Boolean {
-        val options = arrayOf(
-                "mqt_js",
-                "JSCall",
-                "Bridge.executeJSCall"
-        )
-
-        return options.any { looperName.contains(it) }
+        return looperName.contains("mqt_js")
     }
 
     private fun formatLooperResource(thread: String, executionType: String? = null): Map<String, Any> {
@@ -187,14 +185,7 @@ class QueryStatusActionHandler(
      * @see URL https://reactnative.dev/docs/profiling
      */
     private fun isNativeCodeExecution(looperName: String): Boolean {
-        val options = arrayOf(
-                "mqt_native",
-                "NativeCall",
-                "callJavaModuleMethod",
-                "onBatchComplete"
-        )
-
-        return options.any { looperName.contains(it) }
+        return looperName.contains("mqt_native")
     }
 }
 

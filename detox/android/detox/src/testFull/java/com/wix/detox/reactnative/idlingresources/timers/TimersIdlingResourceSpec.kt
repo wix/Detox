@@ -3,6 +3,7 @@ package com.wix.detox.reactnative.idlingresources.timers
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import com.nhaarman.mockitokotlin2.*
+import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 import org.assertj.core.api.Assertions
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -48,7 +49,11 @@ object TimersIdlingResourceSpec : Spek({
         it("should be busy if strategy says so") {
             givenBusyStrategy()
             Assertions.assertThat(uut().isIdleNow).isFalse()
-            Assertions.assertThat(uut().getJSONDescription()).isEqualTo(mapOf("name" to "timers"))
+
+            val expectedDescription = IdlingResourceDescription.Builder()
+                .name("timers")
+                .build()
+            Assertions.assertThat(uut().getDescription()).isEqualTo(expectedDescription)
         }
 
         it("should transition to idle if found idle by strategy") {

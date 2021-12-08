@@ -30,5 +30,17 @@ class IdlingResourceDescriptionSpec: Spek({
             Assertions.assertThat(description.json()).isEqualTo(expectedJSON)
         }
 
+        it("should build without name") {
+            description = IdlingResourceDescription.Builder()
+                .addDescription("bar", "baz")
+                .addDescription("qux", "quux")
+                .build()
+
+            expectedJSON = mapOf(
+                "name" to "unknown",
+                "description" to mapOf("bar" to "baz", "qux" to "quux")
+            )
+            Assertions.assertThat(description.json()).isEqualTo(expectedJSON)
+        }
     }
 })

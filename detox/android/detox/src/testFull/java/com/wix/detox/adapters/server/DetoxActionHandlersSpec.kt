@@ -8,6 +8,7 @@ import com.wix.detox.UTHelpers.yieldToOtherThreads
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.idlingresources.DescriptiveIdlingResource
+import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 import com.wix.invoke.MethodInvocation
 import org.assertj.core.api.Assertions
 import org.json.JSONObject
@@ -105,9 +106,10 @@ object DetoxActionHandlersSpec : Spek({
                 verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
             }
 
-            fun createMockedDescriptiveResource(jsonDescription: Map<String, Any>?): DescriptiveIdlingResource {
+            fun createMockedDescriptiveResource(description: IdlingResourceDescription):
+                    DescriptiveIdlingResource {
                 val resource: DescriptiveIdlingResource = mock()
-                whenever(resource.getJSONDescription()).thenReturn(jsonDescription)
+                whenever(resource.getDescription()).thenReturn(description)
                 return resource
             }
 
@@ -128,8 +130,14 @@ object DetoxActionHandlersSpec : Spek({
             }
 
             it("should return busy app status") {
+                val fakeDescription = IdlingResourceDescription.Builder()
+                    .name("foo")
+                    .addDescription("bar", "baz")
+                    .addDescription("qux", "quux")
+                    .build();
+
                 val busyResources: List<IdlingResource> = listOf(
-                    createMockedDescriptiveResource(mapOf("foo" to "bar", "baz" to "qux")),
+                    createMockedDescriptiveResource(fakeDescription),
                     createMockedIdlingResource( "quux"),
                     createMockedLooperIdlingResource("mqt_js"),
                     createMockedLooperIdlingResource("mqt_native"),
@@ -140,7 +148,7 @@ object DetoxActionHandlersSpec : Spek({
                 queryStatusHandler().handle(params, messageId)
 
                 val expectedBusyResourceDescription = listOf(
-                    mapOf("foo" to "bar", "baz" to "qux"),
+                    mapOf("name" to "foo", "description" to mapOf("bar" to "baz", "qux" to "quux")),
                     mapOf("name" to "unknown", "description" to mapOf("identifier" to "quux")),
                     mapOf("name" to "looper", "description" to mapOf("thread" to "\"mqt_js\" (JS Thread)", "execution_type" to "JavaScript code")),
                     mapOf("name" to "looper", "description" to mapOf("thread" to "\"mqt_native\" (Native Modules Thread)", "execution_type" to "native module calls")),

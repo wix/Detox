@@ -8,8 +8,6 @@ import com.wix.detox.reactnative.helpers.RNHelpers
 import org.joor.Reflect
 import java.util.concurrent.Executor
 
-import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants
-
 private typealias SExecutorReflectedGenFnType = (executor: Executor) -> SerialExecutorReflected
 private val defaultSExecutorReflectedGenFn: SExecutorReflectedGenFnType = { executor: Executor -> SerialExecutorReflected(executor) }
 
@@ -53,8 +51,8 @@ open class AsyncStorageIdlingResource
 
     override fun getName(): String = javaClass.name
 
-    override fun getJSONDescription(): Map<String, Any> {
-        return mapOf<String, Any>( IdlingResourceConstants.RESOURCE_NAME_KEY to "io")
+    override fun getDescription(): IdlingResourceDescription {
+        return IdlingResourceDescription.Builder().name("io").build()
     }
 
     override fun isIdleNow(): Boolean =

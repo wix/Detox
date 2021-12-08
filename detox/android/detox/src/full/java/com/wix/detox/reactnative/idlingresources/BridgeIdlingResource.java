@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants;
-
 /**
  * Created by simonracz on 01/06/2017.
  */
@@ -46,11 +44,8 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
 
     @NotNull
     @Override
-    public Map<String, Object> getJSONDescription() {
-        final Map<String, Object> jsonDescription = new HashMap<>();
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "bridge");
-
-        return jsonDescription;
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder().name("bridge").build();
     }
 
     @Override

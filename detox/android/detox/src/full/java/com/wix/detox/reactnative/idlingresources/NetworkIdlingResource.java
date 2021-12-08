@@ -1,7 +1,5 @@
 package com.wix.detox.reactnative.idlingresources;
 
-import java.util.HashMap;
-import java.util.Map;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -20,14 +18,10 @@ import androidx.annotation.NonNull;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 
-import com.wix.detox.reactnative.idlingresources.IdlingResourceConstants;
 
 /**
  * Created by simonracz on 09/10/2017.
- */
-
-
-/**
+ *
  * Idling Resource which monitors React Native's OkHttpClient.
  * <p>
  * Must call stop() on it, before removing it from Espresso.
@@ -75,15 +69,11 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
 
     @NotNull
     @Override
-    public Map<String, Object> getJSONDescription() {
-        final Map<String, Object> jsonDescription = new HashMap<>();
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "network");
-
-        final Map<String, Object> description = new HashMap<>();
-        description.put("urls", new ArrayList<String>(busyResources));
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_DESCRIPTION_KEY, description);
-
-        return jsonDescription;
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder()
+                .name("network")
+                .addDescription("urls", new ArrayList<>(busyResources))
+                .build();
     }
 
     @Override

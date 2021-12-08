@@ -68,15 +68,11 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
 
     @NotNull
     @Override
-    public Map<String, Object> getJSONDescription() {
-        final Map<String, Object> jsonDescription = new HashMap<>();
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_NAME_KEY, "ui");
-
-        final Map<String, Object> description = new HashMap<>();
-        description.put("reason", "Animations running on screen");
-        jsonDescription.put(IdlingResourceConstants.RESOURCE_DESCRIPTION_KEY, description);
-
-        return jsonDescription;
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder()
+                .name("ui")
+                .addDescription("reason", "Animations running on screen")
+                .build();
     }
 
     @Override
