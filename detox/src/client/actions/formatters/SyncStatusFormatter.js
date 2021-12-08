@@ -61,6 +61,7 @@ const resourceFormatters = {
   looper: looperFormatter,
   io: () => { return makeResourceTitle(`Disk I/O activity.`); },
   unknown: unknownResourceFormatter,
+  bridge: () => { return makeResourceTitle(`Activity on the React-Native bridge.`); },
 };
 
 function resourceDescriptionFromJSON(jsonDescription) {
