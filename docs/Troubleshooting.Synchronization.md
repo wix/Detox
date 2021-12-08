@@ -58,19 +58,18 @@ detox test --debug-synchronization 500
 Then, reproduce your issue, and you should see output similar to the following:
 
 ```plain text
-18:11:41 detox[15415] INFO:  [actions.js] The system is busy with the following tasks:
-18:11:41 
-18:11:41 Dispatch Queue
-18:11:41 ⏱ Queue: “Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)” with 1 work item
-18:11:41 
-18:11:41 Run Loop
-18:11:41 ⏱ “Main Run Loop”
-18:11:41 
-18:11:41 One-time Events
-18:11:41 ⏱ “Network Request” with object: “URL: “http://localhost:9001/delay/3000””
+detox[9733] INFO:  [APP_STATUS] The app is busy with the following tasks:
+• There are 1 work items pending on the dispatch queue: "Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)".
+• Run loop "Main Run Loop" is awake.
+• 1 enqueued native timers:
+  - Timer #1:
+    + Fire date: 2021-11-11 14:19:57 +0200.
+    + Time until fire: 0.072.
+    + Repeat interval: 0.
+    + Is recurring: NO.
 ```
 
-See [this document](https://github.com/wix/DetoxSync/blob/master/StatusDocumentation.md) for documentation of the synchronization debut output.
+See [this document](https://github.com/wix/DetoxSync/blob/master/StatusDocumentation.md) for documentation of the debug synchronization output.
 
 #### Lower-level Idling Resources Debug (iOS Only)
 
