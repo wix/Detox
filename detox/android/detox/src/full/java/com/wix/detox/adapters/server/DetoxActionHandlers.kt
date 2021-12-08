@@ -2,12 +2,10 @@ package com.wix.detox.adapters.server
 
 import android.content.Context
 import android.util.Log
-import androidx.test.espresso.IdlingResource
 import com.wix.detox.TestEngineFacade
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
-import com.wix.detox.reactnative.idlingresources.DescriptiveIdlingResource
 import com.wix.invoke.MethodInvocation
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
@@ -92,38 +90,6 @@ class CleanupActionHandler(
         }
         outboundServerAdapter.sendMessage("cleanupDone", emptyMap(), messageId)
     }
-}
-
-class QueryStatusActionHandler(
-        private val outboundServerAdapter: OutboundServerAdapter,
-        private val testEngineFacade: TestEngineFacade)
-    : DetoxActionHandler {
-
-    override fun handle(params: String, messageId: Long) {
-        val data = mutableMapOf<String, Any>()
-        val busyResources = testEngineFacade.getBusyIdlingResources()
-
-        data["status"] = "App synchronization debug: " +
-                if (busyResources.isEmpty()) {
-                    "The app appears to be idle!"
-                } else {
-                    val summary = busyResources.joinToString("\n") { "\t - ${formatResource(it)}" }
-
-                    "\nThe app is busy, due to: \n$summary"
-                }
-        outboundServerAdapter.sendMessage("currentStatusResult", data, messageId)
-    }
-
-    private fun formatResource(resource: IdlingResource): String =
-            if (resource is DescriptiveIdlingResource) {
-                resource.getDescription()
-            } else if (resource.javaClass.name.contains("LooperIdlingResource") && resource.name.contains("mqt_js")) {
-                "Javascript code execution"
-            } else if (resource.javaClass.name.contains("LooperIdlingResource") && resource.name.contains("mqt_native")) {
-                "Javascript code execution (native)"
-            } else {
-                "Resource ${resource.name} being busy"
-            }
 }
 
 class InstrumentsRecordingStateActionHandler(

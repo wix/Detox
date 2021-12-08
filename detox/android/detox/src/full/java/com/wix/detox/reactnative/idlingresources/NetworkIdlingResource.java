@@ -18,12 +18,10 @@ import androidx.annotation.NonNull;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 
+
 /**
  * Created by simonracz on 09/10/2017.
- */
-
-
-/**
+ *
  * Idling Resource which monitors React Native's OkHttpClient.
  * <p>
  * Must call stop() on it, before removing it from Espresso.
@@ -71,14 +69,11 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
 
     @NotNull
     @Override
-    public String getDescription() {
-        String description = "In-flight network activity";
-
-        if (!busyResources.isEmpty()) {
-            description += "\nDetails:\n\t - " + busyResources.toString();
-        }
-
-        return description;
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder()
+                .name("network")
+                .addDescription("urls", new ArrayList<>(busyResources))
+                .build();
     }
 
     @Override

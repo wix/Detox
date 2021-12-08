@@ -348,6 +348,19 @@ describe('Sync Status Formatter', () => {
       await expect(format(busyStatus)).toMatchSnapshot();
     });
 
+    it('should format "bridge" correctly', async () => {
+      let busyStatus = {
+        app_status: 'busy',
+        busy_resources: [
+          {
+            name: 'bridge'
+          }
+        ]
+      };
+
+      await expect(format(busyStatus)).toMatchSnapshot();
+    });
+
     it('should format "unknown" correctly', async () => {
       let busyStatus = {
         app_status: 'busy',
