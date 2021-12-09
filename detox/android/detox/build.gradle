@@ -87,7 +87,6 @@ dependencies {
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.4.0
     // Important: Should remain so when generator tag is replaced!
     api('androidx.test.espresso:espresso-core:3.4.0') {
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
         because 'Needed all across Detox but also makes Espresso seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
     api('androidx.test.espresso:espresso-web:3.4.0') {
