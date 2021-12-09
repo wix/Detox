@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;

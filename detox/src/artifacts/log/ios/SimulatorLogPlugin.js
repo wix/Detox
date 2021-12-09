@@ -1,3 +1,4 @@
+// @ts-nocheck
 const temporaryPath = require('../../utils/temporaryPath');
 const LogArtifactPlugin = require('../LogArtifactPlugin');
 

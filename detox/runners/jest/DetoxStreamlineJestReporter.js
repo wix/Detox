@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { VerboseReporter: JestVerboseReporter } = require('@jest/reporters'); // eslint-disable-line node/no-extraneous-require
 
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');

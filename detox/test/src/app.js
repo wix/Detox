@@ -14,7 +14,7 @@ const isIos = Platform.OS === 'ios';
 
 const { NativeModule } = NativeModules;
 
-class example extends Component {
+export default class example extends Component {
 
   constructor(props) {
     super(props);
@@ -22,7 +22,7 @@ class example extends Component {
       screen: undefined,
       screenProps: {},
       url: undefined,
-      notification: undefined
+      notification: undefined,
     };
 
     Linking.addEventListener('url', (params) => this._handleOpenURL(params));
@@ -49,18 +49,18 @@ class example extends Component {
   }
 
   renderScreenNotifyingButton_iOS(title, notificationName) {
-    if(notificationName == null) {
-      throw new Error("Got no notification name for " + title);
+    if (notificationName == null) {
+      throw new Error('Got no notification name for ' + title);
     }
 
     return this.renderButton(title, () => {
-      NativeModule.sendNotification("ChangeScreen", notificationName);
+      NativeModule.sendNotification('ChangeScreen', notificationName);
     });
   }
 
   renderScreenButton(title, component) {
-    if(component == null) {
-      throw new Error("Got no component for " + title);
+    if (component == null) {
+      throw new Error('Got no component for ' + title);
     }
 
     return this.renderButton(title, () => {
@@ -84,17 +84,17 @@ class example extends Component {
 
   render() {
     if (this.state.url) {
-      console.log("App@render: rendering a URL:", this.state.url);
+      console.log('App@render: rendering a URL:', this.state.url);
       return this.renderText(this.state.url);
     }
 
     if (this.state.screen) {
-      console.log("App@render: JS rendering screen");
+      console.log('App@render: JS rendering screen');
       const Screen = this.state.screen;
       return <Screen setScreen={this.setScreen}/>;
     }
 
-    console.log("App@render: JS rendering main screen");
+    console.log('App@render: JS rendering main screen');
     return (
       <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 18, marginBottom: 10}}>
@@ -184,5 +184,3 @@ class example extends Component {
     this.setState({url: params.url});
   }
 }
-
-module.exports = example;

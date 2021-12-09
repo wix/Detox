@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const log = require('../utils/logger').child({ __filename });
 

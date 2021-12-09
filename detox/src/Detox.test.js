@@ -1,3 +1,4 @@
+// @ts-nocheck
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 

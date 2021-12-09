@@ -1,3 +1,4 @@
+// @ts-nocheck
 const exec = require('../../../../../../utils/exec').execWithRetriesAndLogs;
 
 class GenyCloudExec {

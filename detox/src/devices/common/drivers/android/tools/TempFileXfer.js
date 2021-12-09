@@ -1,3 +1,4 @@
+// @ts-nocheck
 const FileXfer = require('./FileXfer');
 
 const EMU_TEMP_PATH = '/data/local/tmp';

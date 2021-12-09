@@ -1,3 +1,4 @@
+// @ts-nocheck
 const cp = require('child_process');
 const fs = require('fs');
 

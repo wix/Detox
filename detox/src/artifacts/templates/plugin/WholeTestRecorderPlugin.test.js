@@ -1,3 +1,4 @@
+// @ts-nocheck
 jest.mock('../../../utils/logger.js');
 const testSummaries = require('../../__mocks__/testSummaries.mock');
 

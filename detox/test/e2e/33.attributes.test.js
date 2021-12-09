@@ -199,7 +199,7 @@ describe('Attributes', () => {
           elementBounds: shapes.IosElementAttributeFrame(),
           safeAreaInsets: shapes.IosElementAttributesInsets(),
           elementSafeBounds: shapes.IosElementAttributeFrame(),
-          layer: expect.stringMatching(/^<CALayer: 0x[0-9a-f]+>$/),
+          layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
         };
 
         const innerViews = attributesArray.filter(a => a.identifier);
@@ -217,7 +217,7 @@ describe('Attributes', () => {
             by.type('com.facebook.react.views.view.ReactViewGroup')
               .withAncestor(by.id('attrScrollView'))
           ).getAttributes()
-        ).rejects.toThrowError(/Problem views are marked with '....MATCHES....' below/m);
+        ).rejects.toThrowError(/Problem views are marked with '.{4}MATCHES.{4}' below/m);
       });
     });
   });
@@ -237,7 +237,7 @@ const shapes = {
     elementBounds: shapes.IosElementAttributeFrame(),
     safeAreaInsets: shapes.IosElementAttributesInsets(),
     elementSafeBounds: shapes.IosElementAttributeFrame(),
-    layer: expect.stringMatching(/^<CALayer: 0x[0-9a-f]+>$/),
+    layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
   }),
   IosElementAttributeFrame: () => ({
     y: expect.any(Number),

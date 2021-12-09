@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
 const ArtifactPlugin = require('./ArtifactPlugin');

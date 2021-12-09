@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('Genymotion-cloud test environment validator', () => {
 
   const MOCK_GMSAAS_PATH = '/path/to/gmsaas';

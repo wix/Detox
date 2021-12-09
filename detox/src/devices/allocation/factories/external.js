@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
 const DeviceAllocatorFactory = require('./base');

@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('exec', () => {
   let logger;
   let exec;

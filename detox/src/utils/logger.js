@@ -1,3 +1,4 @@
+// @ts-nocheck
 const path = require('path');
 
 const bunyan = require('bunyan');

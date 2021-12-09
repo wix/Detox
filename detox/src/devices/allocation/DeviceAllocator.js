@@ -1,3 +1,4 @@
+// @ts-nocheck
 const { traceCall } = require('../../utils/trace');
 
 class DeviceAllocator {

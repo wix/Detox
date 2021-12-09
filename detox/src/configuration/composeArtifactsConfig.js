@@ -1,3 +1,4 @@
+// @ts-nocheck
 const _ = require('lodash');
 
 const InstrumentsArtifactPlugin = require('../artifacts/instruments/InstrumentsArtifactPlugin');

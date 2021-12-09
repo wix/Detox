@@ -1,3 +1,4 @@
+// @ts-nocheck
 const _ = require('lodash');
 
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');

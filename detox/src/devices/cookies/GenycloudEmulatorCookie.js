@@ -1,3 +1,4 @@
+// @ts-nocheck
 const AndroidDeviceCookie = require('./AndroidDeviceCookie');
 
 class GenycloudEmulatorCookie extends AndroidDeviceCookie {
