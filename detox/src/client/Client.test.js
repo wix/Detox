@@ -17,6 +17,8 @@ describe('Client', () => {
   let client;
   /** @type {AsyncWebSocket} */
   let mockAws;
+  let DetoxRuntimeError;
+  let DetoxInternalError;
 
   beforeEach(() => {
     jest.clearAllTimers();
@@ -90,6 +92,7 @@ describe('Client', () => {
 
     Client = require('./Client');
     client = new Client(sessionConfig);
+    ({ DetoxInternalError, DetoxRuntimeError } = require('../errors'));
   });
 
   describe('.isConnected', () => {
@@ -122,6 +125,15 @@ describe('Client', () => {
   describe('.serverUrl', () => {
     it('should return sessionConfig.server', () => {
       expect(client.serverUrl).toBe(sessionConfig.server);
+    });
+  });
+
+  describe('.open()', () => {
+    it('should open the web socket', async () => {
+      mockAws.mockResponse('loginSuccess', {});
+      expect(mockAws.open).not.toHaveBeenCalled();
+      await client.open();
+      expect(mockAws.open).toHaveBeenCalled();
     });
   });
 
@@ -240,7 +252,7 @@ describe('Client', () => {
     it('should consistently run "currentStatus" queries when it takes too long', async () => {
       await simulateInFlightAction();
 
-      mockAws.mockResponse('currentStatusResult', { status: 'zug-zug!' });
+      mockAws.mockResponse('currentStatusResult', { status: { app_status: 'idle' } });
       jest.advanceTimersByTime(validSession.debugSynchronization);
 
       expect(jest.getTimerCount()).toBe(0);
@@ -350,7 +362,7 @@ describe('Client', () => {
       ['waitForBackground', 'waitForBackgroundDone', actions.WaitForBackground],
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
-      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: 'App is idle' }],
+      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }],
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
         await client.connect();
@@ -503,7 +515,9 @@ describe('Client', () => {
     ])(`should throw "testFailed" error without view hierarchy but with a hint (on --loglevel %s)`, async (loglevel) => {
       log.level.mockReturnValue(loglevel);
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      const executionPromise = client.execute(anInvocation);
+      await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should throw "testFailed" error even if it has no a view hierarchy`, async () => {
@@ -511,11 +525,14 @@ describe('Client', () => {
 
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should rethrow an "error" result`, async () => {
       mockAws.mockResponse('error',  { error: 'this is an error' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      const executionPromise = client.execute(anInvocation);
+      await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should throw even if a non-error object is thrown`, async () => {
@@ -525,7 +542,9 @@ describe('Client', () => {
 
     it(`should throw on an unsupported result`, async () => {
       mockAws.mockResponse('unsupportedResult',  { foo: 'bar' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      const executionPromise = client.execute(anInvocation);
+      await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
+      await expect(executionPromise).rejects.toThrowError(DetoxInternalError);
     });
   });
 

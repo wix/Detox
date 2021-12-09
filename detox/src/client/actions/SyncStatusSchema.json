@@ -343,6 +343,17 @@
               {
                 "properties":{
                   "name":{
+                    "const":"bridge"
+                  }
+                },
+                "required":[
+                  "name"
+                ],
+                "additionalProperties":false
+              },
+              {
+                "properties":{
+                  "name":{
                     "const":"unknown"
                   },
                   "description":{

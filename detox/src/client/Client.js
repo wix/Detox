@@ -64,8 +64,12 @@ class Client {
     return this._serverUrl;
   }
 
+  async open() {
+    return this._asyncWebSocket.open();
+  }
+
   async connect() {
-    await this._asyncWebSocket.open();
+    await this.open();
     const sessionStatus = await this.sendAction(new actions.Login(this._sessionId));
     if (sessionStatus.appConnected) {
       this._onAppConnected();

@@ -377,8 +377,12 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			waitForRNLoad(withMessageId: messageId)
 			return
 		case "currentStatus":
-			DTXSyncManager.idleStatus { status in
-				self.webSocket.sendAction("currentStatusResult", params: ["messageId": messageId, "status": status], messageId: messageId)
+			DTXSyncManager.status { status in
+			  self.webSocket.sendAction(
+				"currentStatusResult",
+				params: ["messageId": messageId, "status": status],
+				messageId: messageId
+			  )
 			}
 			return
 		case "loginSuccess":
