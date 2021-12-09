@@ -22,4 +22,5 @@ async function getDirectories (rootPath) {
 module.exports = {
   getDirectories,
   isDirEmptySync,
+  readdirSync: fs.readdirSync,
 };

@@ -19,3 +19,7 @@ test('isDirEmptySync', async () => {
     await fs.remove(tempDir);
   }
 });
+
+test('readdirSync', async () => {
+  expect(fsext.readdirSync).toBe(fs.readdirSync);
+});

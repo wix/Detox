@@ -196,9 +196,6 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 		__block BOOL didSomeScroll = NO;
 		__block CGPoint prevOffset = scrollView.contentOffset;
 		
-		//10 points for UIPanGestureRecognizer to recognizer the pan, plus policy (2) for leeway.
-		const NSUInteger consecutiveTouchPointsWithSameContentOffsetThreshold = (10 + DetoxPolicy.activePolicy.consecutiveTouchPointsWithSameContentOffsetThreshold);
-		
 		__block BOOL didFailTouches = NO;
 		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnFirstTouch:0.0 holdDurationOnLastTouch:0.0 onTouchCallback:^ BOOL (UITouchPhase phase) {
 			if(phase != UITouchPhaseMoved)
@@ -226,7 +223,8 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 				return NO;
 			}
 			
-			if(consecutiveTouchPointsWithSameContentOffset > consecutiveTouchPointsWithSameContentOffsetThreshold)
+			if(consecutiveTouchPointsWithSameContentOffset >
+			   DetoxPolicy.consecutiveTouchPointsWithSameContentOffsetThreshold)
 			{
 				if(didSomeScroll == NO)
 				{
@@ -291,7 +289,10 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	}
 	
 	CGPoint startPoint = CGPointMake(safeAreaToScroll.origin.x + safeAreaToScroll.size.width * normalizedStartingPoint.x, safeAreaToScroll.origin.y + safeAreaToScroll.size.height * normalizedStartingPoint.y);
-	
+
+	CGPoint viewPoint = [self convertPoint:startPoint fromView:self.window];
+	[self dtx_assertScrollableAtPoint:viewPoint];
+
 	NSUInteger successfullyAppliedScrolls = 0;
 	while (offset.x != 0.0 || offset.y != 0.0)
 	{
@@ -307,7 +308,16 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	DTXViewAssert(strict == NO || successfullyAppliedScrolls > 0, self.dtx_elementDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
 	
 	self.dtx_disableDecelerationForScroll = NO;
-//	self.bounces = oldBounces;
+}
+
+- (void)dtx_assertScrollableAtPoint:(CGPoint)startPoint {
+  NSError *error;
+  DTXAssert([self dtx_isHittableAtPoint:startPoint error:&error],
+			@"View is not scrollable at the given start point. Start point (view coordinates): %@" \
+			"\n- Full error: %@\n----\nMore about scroll action API here: " \
+			"https://wix.github.io/Detox/docs/api/actions-on-element/" \
+			"#scrolloffset-direction-startpositionx-startpositiony",
+			NSStringFromCGPoint(startPoint), error.localizedDescription);
 }
 
 @end

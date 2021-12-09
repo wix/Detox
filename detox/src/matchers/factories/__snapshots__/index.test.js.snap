@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Matchers factories External-module given module with missing matchers class should throw an error 1`] = `"The custom driver at 'fake/path' does not export the ExpectClass property"`;

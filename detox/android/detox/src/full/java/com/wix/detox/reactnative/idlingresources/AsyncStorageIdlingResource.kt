@@ -50,7 +50,11 @@ open class AsyncStorageIdlingResource
     }
 
     override fun getName(): String = javaClass.name
-    override fun getDescription() = "Disk I/O activity"
+
+    override fun getDescription(): IdlingResourceDescription {
+        return IdlingResourceDescription.Builder().name("io").build()
+    }
+
     override fun isIdleNow(): Boolean =
         checkIdle().also { idle ->
             if (!idle) {

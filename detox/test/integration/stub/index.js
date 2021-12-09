@@ -1,7 +1,7 @@
-const StubDriver = require('./StubDriver');
-const StubExpect = require('./StubExpect');
-
 module.exports = {
-  DriverClass: StubDriver,
-  ExpectClass: StubExpect,
+  EnvironmentValidatorClass: require('./StubEnvValidator'),
+  ArtifactPluginsProviderClass: require('./StubArtifactPluginsProvider'),
+  DeviceAllocationDriverClass: require('./StubDeviceAllocationDriver'),
+  RuntimeDriverClass: require('./StubRuntimeDriver'),
+  ExpectClass: require('./StubExpect'),
 };

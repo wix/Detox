@@ -131,22 +131,18 @@ class Client {
   }
 
   async sendAction(action) {
-    const { queryStatus, ...options } = this._inferSendOptions(action);
+    const { shouldQueryStatus, ...options } = this._inferSendOptions(action);
 
-    return await (queryStatus
+    return await (shouldQueryStatus
       ? this._sendMonitoredAction(action, options)
       : this._doSendAction(action, options));
   }
 
   _inferSendOptions(action) {
-    if ( action instanceof actions.CurrentStatus
-      || action instanceof actions.Login
-      || action instanceof actions.Cleanup
-    ) {
-      return { queryStatus: false, timeout: 5000 };
-    }
+    const timeout = action.timeout;
+    const shouldQueryStatus = timeout === 0;
 
-    return { queryStatus: true, timeout: 0 };
+    return { shouldQueryStatus, timeout };
   }
 
   async _sendMonitoredAction(action, options) {

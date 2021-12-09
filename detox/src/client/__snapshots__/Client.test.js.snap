@@ -6,35 +6,52 @@ exports[`Client .execute() should throw "testFailed" error even if it has no a v
 
 exports[`Client .execute() should throw "testFailed" error with view hierarchy (on --loglevel debug) 1`] = `
 "Test Failed: this is an error
+
 View Hierarchy:
 mock-hierarchy"
 `;
 
 exports[`Client .execute() should throw "testFailed" error with view hierarchy (on --loglevel trace) 1`] = `
 "Test Failed: this is an error
+
 View Hierarchy:
 mock-hierarchy"
 `;
 
 exports[`Client .execute() should throw "testFailed" error without view hierarchy but with a hint (on --loglevel error) 1`] = `
 "Test Failed: this is an error
-TIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
+
+HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
 `;
 
 exports[`Client .execute() should throw "testFailed" error without view hierarchy but with a hint (on --loglevel info) 1`] = `
 "Test Failed: this is an error
-TIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
+
+HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
 `;
 
 exports[`Client .execute() should throw "testFailed" error without view hierarchy but with a hint (on --loglevel warn) 1`] = `
 "Test Failed: this is an error
-TIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
+
+HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
 `;
 
 exports[`Client .execute() should throw even if a non-error object is thrown 1`] = `"non-error"`;
 
 exports[`Client .execute() should throw on an unsupported result 1`] = `
 "Tried to invoke an action on app, got an unsupported response: {\\"type\\":\\"unsupportedResult\\",\\"params\\":{\\"foo\\":\\"bar\\"}}
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client .sendAction() should throw error for actions without isAtomic 1`] = `
+"Action.prototype.isAtomic must be defined for ActionWithoutParams
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client .sendAction() should throw error for actions without timeout 1`] = `
+"Action.prototype.timeout getter must be defined for ActionWithoutParams
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;

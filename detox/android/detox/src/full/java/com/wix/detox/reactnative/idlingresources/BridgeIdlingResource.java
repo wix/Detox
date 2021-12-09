@@ -7,6 +7,8 @@ import com.facebook.react.bridge.ReactContext;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -42,8 +44,8 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
 
     @NotNull
     @Override
-    public String getDescription() {
-        return "Activity on the React-Native bridge";
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder().name("bridge").build();
     }
 
     @Override

@@ -21,11 +21,12 @@ import LaunchArgsScreen from './LaunchArgsScreen';
 import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
+import OverlayScreen from './OverlayScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
+import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
-import ExpectationsScreen from './ExpectationsScreen';
 import AttributesScreen from './AttributesScreen';
 
 export {
@@ -52,10 +53,11 @@ export {
   LaunchArgsScreen,
   LaunchNotificationScreen,
   DeviceScreen,
+  OverlayScreen,
   ElementScreenshotScreen,
   WebViewScreen,
   VirtualizedListStressScreen,
+  VisibilityExpectationScreen,
   VisibilityScreen,
-  ExpectationsScreen,
   AttributesScreen,
 };

@@ -1,3 +1,5 @@
+const { expectToThrow } = require('./utils/custom-expects');
+
 describe('Matchers', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -19,17 +21,15 @@ describe('Matchers', () => {
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
 
-  it(':ios: should fail matching out of bounds index with a suitable error', async () => {
-    try {
-      await element(by.text('Index')).atIndex(123456).tap();
-    } catch(e) {
-      if(e.message.includes("Index 123456 beyond bounds") == false)
-      {
-        let err = Error();
-        err.message = "Unexpected error message";
-        throw err;
-      }
-    }
+  it('should give a clear error when index-matching fails (i.e. index out of bounds)', async () => {
+    const expectedMessage = device.getPlatform() === 'android'
+      ? 'View at index #3, of those matching MATCHER'
+      : 'Index 3 beyond bounds [0 .. 2] for “MATCHER';
+
+    await expectToThrow(
+      () => element(by.text('Index')).atIndex(3).tap(),
+      expectedMessage,
+    );
   });
 
   it('should be able to swipe elements matched by index', async () => {

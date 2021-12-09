@@ -103,9 +103,9 @@ class example extends Component {
         {this.renderScreenButton('Language', Screens.LanguageScreen)}
         {this.renderScreenButton('Sanity', Screens.SanityScreen)}
         {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
-        {this.renderScreenButton('Expectations', Screens.ExpectationsScreen)}
         {this.renderScreenButton('Actions', Screens.ActionsScreen)}
-        {!isAndroid && this.renderScreenButton('Visibility Cases', Screens.VisibilityScreen)}
+        {this.renderScreenButton('Visibility Expectation', Screens.VisibilityExpectationScreen)}
+        {isIos && this.renderScreenButton('Visibility Debug Artifacts', Screens.VisibilityScreen)}
         {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
         {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
         {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
@@ -118,9 +118,10 @@ class example extends Component {
         {this.renderScreenButton('Network', Screens.NetworkScreen)}
         {this.renderAnimationScreenButtons()}
         {this.renderScreenButton('Device', Screens.DeviceScreen)}
+        {isIos && this.renderScreenButton('Overlay', Screens.OverlayScreen)}
         {this.renderScreenButton('Location', Screens.LocationScreen)}
-        {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
-        {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
+        {isIos && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
+        {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
         {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
 

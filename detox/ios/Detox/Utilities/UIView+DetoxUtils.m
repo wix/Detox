@@ -13,6 +13,7 @@
 #import "UIView+Drawing.h"
 #import "DetoxPolicy.h"
 #import "NSURL+DetoxUtils.h"
+#import "UIResponder+First.h"
 
 @interface DTXTouchVisualizerWindow : UIWindow @end
 
@@ -28,35 +29,11 @@
 DTX_DIRECT_MEMBERS
 @implementation UIView (DetoxUtils)
 
-- (void)dtx_assertVisible
-{
-	[self dtx_assertVisibleAtRect:self.bounds];
-}
-
-- (void)dtx_assertHittable
-{
-	[self _dtx_assertHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace isAtActivationPoint:YES];
-}
-
-- (void)dtx_assertVisibleAtRect:(CGRect)rect
-{
+- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
 	NSError* error;
-	BOOL assert = [self dtx_isVisibleAtRect:rect error:&error];
-	
-	DTXViewAssert(assert == YES, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
-}
+	BOOL assert = [self dtx_isVisibleAtRect:rect percent:percent error:&error];
 
-- (void)dtx_assertHittableAtPoint:(CGPoint)point
-{
-	[self _dtx_assertHittableAtPoint:point isAtActivationPoint:NO];
-}
-
-- (void)_dtx_assertHittableAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
-{
-	NSError* error;
-	BOOL assert = [self dtx_isHittableAtPoint:point error:&error];
-	
-	DTXViewAssert(assert == YES, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
+	DTXViewAssert(assert, self.dtx_elementDebugAttributes, @"%@", error.localizedDescription);
 }
 
 - (NSString *)dtx_shortDescription
@@ -125,7 +102,7 @@ DTX_DIRECT_MEMBERS
 			visibleBounds = CGRectIntersection(boundsInSelfCoords, visibleBounds);
 		}
 		
-		if(CGRectIsNull(visibleBounds))
+		if(CGRectIsEmpty(visibleBounds))
 		{
 			break;
 		}
@@ -136,14 +113,8 @@ DTX_DIRECT_MEMBERS
 	return visibleBounds;
 }
 
-- (BOOL)dtx_isVisible
-{
-	return [self dtx_isVisibleAtRect:self.bounds error:NULL];
-}
-
-- (BOOL)dtx_isVisibleAtRect:(CGRect)rect
-{
-	return [self dtx_isVisibleAtRect:rect error:NULL];
+- (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
+	return [self dtx_isVisibleAtRect:rect percent:percent error:nil];
 }
 
 - (UIImage*)dtx_imageFromView
@@ -219,32 +190,42 @@ DTX_DIRECT_MEMBERS
 	return rv;
 }
 
-- (BOOL)_dtx_isTestedRegionObscuredWithVisiblePixels:(NSUInteger)visible totalPixels:(NSUInteger)total ofView:(UIView*)lookingFor explanation:(NSString**)explanation
-{
-	CGFloat fraction = (visible / (double)total);
-	BOOL rv = fraction < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
+- (BOOL)_dtx_isTestedRegionObscuredWithVisiblePixels:(NSUInteger)visible
+										 totalPixels:(NSUInteger)total percent:(NSUInteger)percent
+											  ofView:(UIView*)lookingFor
+										 explanation:(NSString**)explanation {
+	BOOL isRegionObscured = [self isRegionObscuredWithVisiblePixels:visible
+														totalPixels:total percent:percent];
 	
-	if(rv == YES)
-	{
-		*explanation = [NSString stringWithFormat:@"view does not pass visibility threshold (%@ visible of %@ required)", [DetoxPolicy descriptionForDouble:fraction], DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription];
+	if (isRegionObscured) {
+		*explanation = [NSString stringWithFormat:@"View does not pass visibility percent "
+						"threshold (%lu)", (unsigned long)percent];
 	}
 	
-	return rv;
+	return isRegionObscured;
+}
+
+- (BOOL)isRegionObscuredWithVisiblePixels:(NSUInteger)visible
+							  totalPixels:(NSUInteger)total percent:(NSUInteger)percent {
+	CGFloat visiblePercent = visible / (CGFloat)total * 100.;
+	return visiblePercent < (CGFloat)percent;
 }
 
 - (BOOL)_dtx_isRegionObscured:(CGRect)intersection fromTestedRegion:(CGRect)testedRegion
-{
-	return (intersection.size.width * intersection.size.height) / (testedRegion.size.width * testedRegion.size.height) < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
+					  percent:(NSUInteger)percent {
+	CGFloat visible = intersection.size.width * intersection.size.height;
+	CGFloat total = testedRegion.size.width * testedRegion.size.height;
+	return [self isRegionObscuredWithVisiblePixels:visible totalPixels:total percent:percent];
 }
 
 - (BOOL)_dtx_isTestedRegionObscured:(CGRect)testedRegion inWindowBounds:(CGRect)windowBounds
-{
+							percent:(NSUInteger)percent {
 	CGRect intersection = CGRectIntersection(windowBounds, testedRegion);
-	return [self _dtx_isRegionObscured:intersection fromTestedRegion:testedRegion];
+	return [self _dtx_isRegionObscured:intersection fromTestedRegion:testedRegion percent:percent];
 }
 
-- (BOOL)_dtx_testVisibilityInRect:(CGRect)rect error:(NSError* __strong *)error
-{
+- (BOOL)_dtx_testVisibilityInRect:(CGRect)rect percent:(NSUInteger)percent
+							error:(NSError* __strong __nullable * __nullable)error {
 	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
 	
 	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
@@ -279,18 +260,28 @@ DTX_DIRECT_MEMBERS
 	CGRect testedRegionInWindowCoords = [windowToUse convertRect:rect fromView:self];
 	
 	CGRect visibleBounds = self.dtx_visibleBounds;
-	
-	if(CGRectIsNull(visibleBounds) || [self _dtx_isRegionObscured:visibleBounds fromTestedRegion:self.dtx_visibleBounds])
-	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view is clipped by one or more of its superviews' bounds and does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
+	if (CGRectIsEmpty(visibleBounds) ||
+		[self _dtx_isRegionObscured:visibleBounds fromTestedRegion:visibleBounds percent:percent]) {
+		auto errorDescription = [NSString stringWithFormat:@"View is clipped by one or more of its "
+								 "superviews' bounds and does not pass visibility percent "
+								 "threshold (%lu)", (unsigned long)percent];
+		
+		auto userInfo = @{ NSLocalizedDescriptionKey: APPLY_PREFIX(errorDescription) };
+		
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:userInfo];
 		_DTXPopulateError(err);
 		
 		return NO;
 	}
 	
-	if([self _dtx_isTestedRegionObscured:testedRegionInWindowCoords inWindowBounds:windowToUse.bounds])
-	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view is obscured by its window bounds and does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
+	if ([self _dtx_isTestedRegionObscured:testedRegionInWindowCoords
+						   inWindowBounds:windowToUse.bounds percent:percent]) {
+		auto errorDescription = [NSString stringWithFormat:@"View is obscured by its window bounds "
+								 "and does not pass visibility percent threshold (%lu)", (unsigned long)percent];
+		
+		auto userInfo = @{ NSLocalizedDescriptionKey: APPLY_PREFIX(errorDescription) };
+		
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:userInfo];
 		_DTXPopulateError(err);
 		
 		return NO;
@@ -300,11 +291,13 @@ DTX_DIRECT_MEMBERS
 	image = [image dtx_imageByCroppingInRect:testedRegionInWindowCoords];
 	
 	NSUInteger total;
-	NSUInteger visible = [image dtx_numberOfVisiblePixelsWithAlphaThreshold:DetoxPolicy.activePolicy.visibilityPixelAlphaThreshold totalPixels:&total];
+	NSUInteger visible = [image
+	    dtx_numberOfVisiblePixelsWithAlphaThreshold:DetoxPolicy.visibilityPixelAlphaThreshold
+		totalPixels:&total];
 	
 	NSString* explanation;
-	if([self _dtx_isTestedRegionObscuredWithVisiblePixels:visible totalPixels:total ofView:self explanation:&explanation] == YES)
-	{
+	if ([self _dtx_isTestedRegionObscuredWithVisiblePixels:visible totalPixels:total percent:percent
+													ofView:self explanation:&explanation]) {
 		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(explanation)}];
 		_DTXPopulateError(err);
 		
@@ -320,29 +313,11 @@ DTX_DIRECT_MEMBERS
 	return YES;
 }
 
-- (BOOL)dtx_isVisibleAtRect:(CGRect)rect error:(NSError* __strong *)error
-{
-	return [self _dtx_testVisibilityInRect:rect error:error];
-}
-
-- (BOOL)dtx_isHittable
-{
-	return [self dtx_isHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:NULL];
-}
-
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point
-{
-	return [self dtx_isHittableAtPoint:point error:NULL];
-}
-
-- (CGRect)_dtx_hitBoundsAroundPoint:(CGPoint)point
-{
-	return CGRectIntersection(self.bounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
-}
-
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
-{
-	return [self _dtx_testVisibilityInRect:[self _dtx_hitBoundsAroundPoint:point] error:error];
+- (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
+					  error:(NSError* __strong __nullable * __nullable)error {
+	NSUInteger percentValue = percent ? percent.unsignedIntegerValue :
+		DetoxPolicy.defaultPercentThresholdForVisibility;
+	return [self _dtx_testVisibilityInRect:rect percent:percentValue error:error];
 }
 
 - (BOOL)dtx_isEnabled
@@ -369,6 +344,138 @@ DTX_DIRECT_MEMBERS
 	}
 	
 	return rv;
+}
+
+#pragma mark - Check Hitability
+
+- (BOOL)dtx_isHittable {
+  CGPoint point = [self findVisiblePoint];
+  return [self dtx_isHittableAtPoint:point error:nil];
+}
+
+- (CGPoint)findVisiblePoint {
+  CGRect visibleBounds = self.dtx_visibleBounds;
+  if (CGRectIsEmpty(visibleBounds)) {
+	return CGPointMake(NAN, NAN);
+  }
+
+  return CGPointMake(visibleBounds.origin.x + visibleBounds.size.width / 2,
+					 visibleBounds.origin.y + visibleBounds.size.height / 2);
+}
+
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
+						error:(NSError* __strong __nullable * __nullable)error {
+  if (viewPoint.x == NAN || viewPoint.y == NAN) {
+	if (error) {
+	  *error = [NSError
+				errorWithDomain:@"Detox" code:0
+				userInfo:@{NSLocalizedDescriptionKey:@"Given point coordinates are NaN"}];
+	}
+
+	return NO;
+  }
+
+  if (![self _isVisibleAroundPoint:viewPoint visibleBounds:self.dtx_visibleBounds
+							 error:error]) {
+	if (error) {
+	  NSString *description = [NSString stringWithFormat:@"View is not visible around" \
+							   " point.\n- view point: %@\n- visible bounds: %@" \
+							   "\n- view bounds: %@\n---\nError: %@",
+							   NSStringFromCGPoint(viewPoint),
+							   NSStringFromCGRect(self.dtx_visibleBounds),
+							   NSStringFromCGRect(self.frame), *error];
+
+	  *error = [NSError errorWithDomain:@"Detox" code:0
+							   userInfo:@{NSLocalizedDescriptionKey:description}];
+
+	}
+
+	return NO;
+  }
+
+  UIViewController *topMostViewController = [self _findTopMostViewController];
+  UIView *visibleContainer = topMostViewController.view;
+
+  CGPoint absPoint = [self calcAbsPointFromLocalPoint:viewPoint];
+
+  if ([self isDescendantOfView:visibleContainer]) {
+	return [self _canHitFromView:self atAbsPoint:absPoint error:error];
+  }
+
+  UIView *firstResponderInputView = UIResponder.dtx_first.inputView;
+  if ([self isDescendantOfView:firstResponderInputView]) {
+	return [self _canHitFromView:firstResponderInputView atAbsPoint:absPoint error:error];
+  }
+
+  return [self _canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
+}
+
+- (BOOL)_isVisibleAroundPoint:(CGPoint)point visibleBounds:(CGRect)visibleBounds
+						error:(NSError* __strong __nullable * __nullable)error {
+  CGRect intersection = CGRectIntersection(
+      visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
+  return [self _dtx_testVisibilityInRect:intersection percent:100 error:error];
+}
+
+- (BOOL)_canHitFromView:(UIView *)originView atAbsPoint:(CGPoint)point
+			  	  error:(NSError* __strong __nullable * __nullable)error {
+  CGPoint absOrigin = [originView calcAbsOrigin];
+  CGPoint relativePoint = CGPointMake(point.x - absOrigin.x, point.y - absOrigin.y);
+
+  UIView *hitten = [originView hitTest:relativePoint withEvent:nil];
+
+  BOOL hitRemainedOnOrigin = !hitten;
+  if (hitRemainedOnOrigin && originView == self) {
+	return YES;
+  }
+
+  if ([hitten isDescendantOfView:self]) {
+	return YES;
+  }
+
+  if (error) {
+	NSString *message =
+		[NSString stringWithFormat:@"Failed to hit view at point %@ with `hitTest`.\n" \
+		 "- Origin view: %@\n- Absolute origin: %@\n- Hitten: %@\n- Target view: %@\n" \
+		 "- Relative point: %@", NSStringFromCGPoint(point), originView,
+		 NSStringFromCGPoint(absOrigin), hitten, self, NSStringFromCGPoint(relativePoint)];
+	*error = [NSError errorWithDomain:@"Detox" code:0
+							 userInfo:@{NSLocalizedDescriptionKey:message}];
+  }
+
+  return NO;
+}
+
+- (UIViewController *)_findTopMostViewController {
+  UIWindow *topMostWindow = UIWindow.dtx_keyWindow;
+  return [self _findTopMostViewControllerForViewController:topMostWindow.rootViewController];
+}
+
+- (UIViewController *)_findTopMostViewControllerForViewController:(UIViewController *)viewController {
+  if (viewController.presentedViewController) {
+	return [self _findTopMostViewControllerForViewController:viewController.presentedViewController];
+  }
+
+  return viewController;
+}
+
+- (void)dtx_assertHittable {
+  CGPoint point = [self findVisiblePoint];
+  [self dtx_assertHittableAtPoint:point];
+}
+
+- (void)dtx_assertHittableAtPoint:(CGPoint)point {
+  NSError *error;
+  DTXAssert([self dtx_isHittableAtPoint:point error:&error],
+			@"View is not hittable at its visible point. Error: %@", error.localizedDescription);
+}
+
+- (CGPoint)calcAbsOrigin {
+  return [self.superview calcAbsPointFromLocalPoint:self.frame.origin];
+}
+
+- (CGPoint)calcAbsPointFromLocalPoint:(CGPoint)localPoint {
+  return [self convertPoint:localPoint toView:nil];
 }
 
 @end

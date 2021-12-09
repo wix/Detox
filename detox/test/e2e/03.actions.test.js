@@ -145,7 +145,7 @@ describe('Actions', () => {
     await element(by.id('ScrollView161')).swipe('up');
 
     if (device.getPlatform() === 'ios') {
-      // TODO: investigate why this assertion fails on Android
+      // This won't work in Android, see related issue: https://github.com/facebook/react-native/issues/23870
       await expect(element(by.text('Text1'))).not.toBeVisible();
     }
 
@@ -155,19 +155,35 @@ describe('Actions', () => {
 
   it('should swipe horizontally', async () => {
     await expect(element(by.text('HText1'))).toBeVisible();
+
     await element(by.id('ScrollViewH')).swipe('left');
     await expect(element(by.text('HText1'))).not.toBeVisible();
+
     await element(by.id('ScrollViewH')).swipe('right');
     await expect(element(by.text('HText1'))).toBeVisible();
   });
 
-  it('should swipe by offset from specified positions', async () => {
+  it('should swipe vertically by offset from specified positions', async () => {
     await element(by.id('toggleScrollOverlays')).tap();
 
     await element(by.id('ScrollView161')).swipe('up', 'slow', NaN, 0.9, 0.95);
+    if (device.getPlatform() === 'ios') {
+      // This won't work in Android, see related issue: https://github.com/facebook/react-native/issues/23870
+      await expect(element(by.text('Text1'))).not.toBeVisible(1);
+    }
+
     await element(by.id('ScrollView161')).swipe('down', 'fast', NaN, 0.1, 0.05);
+    await expect(element(by.text('Text1'))).toBeVisible(1);
+  });
+
+  it('should swipe horizontally by offset from specified positions ', async () => {
+    await element(by.id('toggleScrollOverlays')).tap();
+
     await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.25, 0.85, 0.75);
+    await expect(element(by.text('HText1'))).not.toBeVisible(1);
+
     await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.25, 0.15, 0.25);
+    await expect(element(by.text('HText1'))).toBeVisible(1);
   });
 
   it('should not wait for long timeout (>1.5s)', async () => {
@@ -193,5 +209,45 @@ describe('Actions', () => {
     if (device.getPlatform() === 'ios') {
       await expect(element(by.id(reactSliderId))).toHaveValue('75%');
     }
+  });
+
+  it('should expect text fields to be focused after tap but not before', async () => {
+    const textField1 = element(by.id('UniqueId005'));
+    const textField2 = element(by.id('UniqueId006'));
+
+    await expect(textField1).toBeNotFocused();
+    await expect(textField2).toBeNotFocused();
+    await expect(textField1).not.toBeFocused();
+    await expect(textField2).not.toBeFocused();
+
+    await textField1.tap();
+    await expect(textField1).toBeFocused();
+    await expect(textField2).toBeNotFocused();
+    await expect(textField2).not.toBeFocused();
+
+    await textField2.tap();
+    await expect(textField1).toBeNotFocused();
+    await expect(textField1).not.toBeFocused();
+    await expect(textField2).toBeFocused();
+  });
+
+  describe('pending interactions', () => {
+    const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
+      'Have you forgotten to apply an await over one of the Detox actions in your test code?';
+
+    it('should throw an exception when attempting to send an interaction while another is pending', async () => {
+      element(by.id('UniqueId937')).typeText('one ')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+      await element(by.id('UniqueId937')).typeText(' two')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+    });
   });
 });

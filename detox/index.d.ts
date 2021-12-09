@@ -1,5 +1,5 @@
 // TypeScript definitions for Detox
-// Original authors:
+// Original authors (from DefinitelyTyped):
 // * Jane Smith <jsmith@example.com>
 // * Tareq El-Masri <https://github.com/TareqElMasri>
 // * Steve Chun <https://github.com/stevechun>
@@ -7,9 +7,6 @@
 // * pera <https://github.com/santiagofm>
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
-// Current contributors:
-// * Yaroslav Serhieiev <https://github.com/noomorph>
-// * Oren Zakay <https://github.com/OrenZak>
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -355,15 +352,18 @@ declare global {
             reuse?: boolean;
         }
 
-        type AppLaunchArgsOperationOptions = Partial<{
-            /** Changes the scope of the operation: transient or permanent app launch args */
-            permanent: boolean;
-        }>;
-
         type Point2D = {
             x: number,
             y: number,
         }
+
+        /**
+         * @deprecated
+         */
+        type AppLaunchArgsOperationOptions = Partial<{
+            /** Changes the scope of the operation: transient or permanent app launch args */
+            permanent: boolean;
+        }>;
 
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
@@ -374,19 +374,25 @@ declare global {
          */
         interface AppLaunchArgs {
             /**
+             * Shared (global) arguments that are not specific to a particular application.
+             * Selecting another app does not reset them, yet they still can be overridden
+             * by configuring app-specific launch args.
+             * @see Device#selectApp
+             * @see AppLaunchArgs
+             */
+            readonly shared: ScopedAppLaunchArgs;
+
+            /**
              * Modify the launch-arguments via a modifier object, according to the following logic:
              * - Non-nullish modifier properties would set a new value or override the previous value of
              *   existing properties with the same name.
              * - Modifier properties set to either `undefined` or `null` would delete the corresponding property
              *   if it existed.
-             * These custom app launch arguments are transient by default, and will get erased as soon as
-             * you select another app. If you wish to keep them between the apps, use { permanent: true }
-             * option.
-             * Note: transient (default) values override the permanent ones if the corresponding properties
-             * have the same name.
+             * These custom app launch arguments get erased whenever you select a different application.
+             * If you need to share them between all the applications, use {@link AppLaunchArgs#shared} property.
+             * Note: app-specific launch args have a priority over shared ones.
              *
              * @param modifier The modifier object.
-             * @param options.permanent - when set to true, the function will set permanent app launch args.
              * @example
              * // With current launch arguments set to:
              * // {
@@ -405,23 +411,46 @@ declare global {
              * //   mockServerToken: 'abcdef',
              * // }
              */
-            modify(modifier: object, options?: AppLaunchArgsOperationOptions): this;
-
+            modify(modifier: object): this;
             /**
-             * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
-             * Note: by default, permanent app launch args are not reset.
-             * @param options.permanent - when set to true, the function will also reset permanent app launch args.
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
              */
-            reset(options?: AppLaunchArgsOperationOptions): this;
+            modify(modifier: object, options: AppLaunchArgsOperationOptions): this;
 
             /**
-             * Get all currently set launch-arguments.
-             * @param options.permanent - when set to true, the function will return only permanent app launch args.
-             * when set to false, the function will return only transient app launch args.
+             * Reset all app-specific launch arguments (back to an empty object).
+             * If you need to reset the shared launch args, use {@link AppLaunchArgs#shared}.
+             */
+            reset(): this;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            reset(options: AppLaunchArgsOperationOptions): this;
+
+            /**
+             * Get all currently set launch arguments (including shared ones).
              * @returns An object containing all launch-arguments.
-             * Note: Changes on the returned object will not be reflected on the launch-arguments associated with the device.
+             * Note: mutating the values inside the result object is pointless, as it is immutable.
              */
-            get(options?: AppLaunchArgsOperationOptions): object;
+            get(): object;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            get(options: AppLaunchArgsOperationOptions): object;
+        }
+
+        /**
+         * Shared (global) arguments that are not specific to a particular application.
+         */
+        interface ScopedAppLaunchArgs {
+            /** @see AppLaunchArgs#modify */
+            modify(modifier: object): this;
+
+            /** @see AppLaunchArgs#reset */
+            reset(): this;
+
+            /** @see AppLaunchArgs#get */
+            get(): object;
         }
 
         interface Device {
@@ -459,7 +488,7 @@ declare global {
             /**
              * Launch the app.
              *
-             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -483,7 +512,7 @@ declare global {
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              *
              * @example
              * // With Detox being preconfigured statically to use these arguments in app launch:
@@ -633,8 +662,8 @@ declare global {
 
             /**
              * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
-             * @param {string} name for the screenshot artifact
-             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @param name for the screenshot artifact
+             * @returns a temporary path to the screenshot.
              * @example
              * test('Menu items should have logout', async () => {
              *   const tempPath = await device.takeScreenshot('tap on menu');
@@ -645,6 +674,24 @@ declare global {
              * });
              */
             takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application
+             * to a temporary folder and schedules putting it to the artifacts folder upon the completion of
+             * the current test. The file can be opened later in Xcode 12.0 and above.
+             * @see https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113
+             * @param [name="capture"] optional name for the *.viewhierarchy artifact
+             * @returns a temporary path to the captured view hierarchy snapshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   await device.captureViewHierarchy('myElements');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the artifact will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/myElements.viewhierarchy
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/myElements.viewhierarchy
+             * });
+             */
+            captureViewHierarchy(name?: string): Promise<string>;
 
             /**
              * Simulate shake (iOS Only)
@@ -888,10 +935,13 @@ declare global {
         interface Expect<R = Promise<void>> {
 
             /**
-             * Expect the view to be at least 75% visible.
-             * @example await expect(element(by.id('UniqueId204'))).toBeVisible();
+             * Expect the view to be at least N% visible. If no number is provided then defaults to 75%. Negating this
+             * expectation with a `not` expects the view's visible area to be smaller than N%.
+             * @param pct optional integer ranging from 1 to 100, indicating how much percent of the view should be
+             *  visible to the user to be accepted.
+             * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
              */
-            toBeVisible(): R;
+            toBeVisible(pct?: number): R;
 
             /**
              * Negate the expectation.
@@ -1119,7 +1169,7 @@ declare global {
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
-             * See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
+             * See [here](https://wix.github.io/Detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
              * @param value string value in set column (must be correct)
@@ -1163,7 +1213,7 @@ declare global {
 
             /**
              * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
-             * For more information, see {@link https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md#element-level-screenshots}
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/screenshots#element-level-screenshots}
              * @param {string} name for the screenshot artifact
              * @returns {Promise<string>} a temporary path to the screenshot.
              * @example
@@ -1176,6 +1226,24 @@ declare global {
              * });
              */
              takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * Gets the native (OS-dependent) attributes of the element.
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             *
+             * @example
+             * test('Get the attributes for my text element', async () => {
+             *    const attributes = await element(by.id('myText')).getAttributes()
+             *    const jestExpect = require('expect');
+             *    // 'visible' attribute available on both iOS and Android
+             *    jestExpect(attributes.visible).toBe(true);
+             *    // 'activationPoint' attribute available on iOS only
+             *    jestExpect(attributes.activationPoint.x).toHaveValue(50);
+             *    // 'width' attribute available on Android only
+             *    jestExpect(attributes.width).toHaveValue(100);
+             * })
+             */
+             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1366,7 +1434,7 @@ declare global {
             delete?: boolean;
             /**
              * Arguments to pass-through into the app.
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              */
             launchArgs?: Record<string, any>;
             /**
@@ -1394,6 +1462,149 @@ declare global {
             };
         }
 
+        // Element Attributes Shared Among iOS and Android
+        interface ElementAttributes {
+            /**
+             * Whether or not the element is enabled for user interaction.
+             */
+            enabled: boolean;
+            /**
+             * The identifier of the element. Matches accessibilityIdentifier on iOS, and the main view tag, on Android - both commonly holding the component's test ID in React Native apps.
+             */
+            identifier: string;
+            /**
+             * Whether the element is visible. On iOS, visibility is calculated for the activation point. On Android, the attribute directly holds the value returned by View.getLocalVisibleRect()).
+             */
+            visible: boolean;
+            /**
+             * The text value of any textual element.
+             */
+            text?: string;
+            /**
+             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
+             */
+            label?: string;
+            /**
+             * The placeholder text value of the element. Matches hint on android.
+             */
+            placeholder?: string;
+            /**
+             * The value of the element, where applicable.
+             * Matches accessibilityValue, on iOS.
+             * For example: the position of a slider, or whether a checkbox has been marked (Android).
+             */
+            value?: unknown;
+        }
+
+        interface IosElementAttributeFrame {
+            y: number;
+            x: number;
+            width: number;
+            height: number;
+        }
+
+        interface IosElementAttributeInsets {
+            right: number;
+            top: number;
+            left: number;
+            bottom: number;
+        }
+
+        // iOS Specific Attributes
+        interface IosElementAttributes extends ElementAttributes {
+            /**
+             * The [activation point]{@link https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint} of the element, in element coordinate space.
+             */
+            activationPoint: Point2D;
+            /**
+             * The activation point of the element, in normalized percentage ([0.0, 1.0]).
+             */
+            normalizedActivationPoint: Point2D;
+            /**
+             * Whether the element is hittable at the activation point.
+             */
+            hittable: boolean;
+            /**
+             * The frame of the element, in screen coordinate space.
+             */
+            frame: IosElementAttributeFrame;
+            /**
+             * The frame of the element, in container coordinate space.
+             */
+            elementFrame: IosElementAttributeFrame;
+            /**
+             * The bounds of the element, in element coordinate space.
+             */
+            elementBounds: IosElementAttributeFrame;
+            /**
+             * The safe area insets of the element, in element coordinate space.
+             */
+            safeAreaInsets: IosElementAttributeInsets;
+            /**
+             * The safe area bounds of the element, in element coordinate space.
+             */
+            elementSafeBounds: IosElementAttributeFrame;
+            /**
+             * The date of the element (if it is a date picker).
+             */
+            date?: string;
+            /**
+             * The normalized slider position (if it is a slider).
+             */
+            normalizedSliderPosition?: number;
+            /**
+             * The content offset (if it is a scroll view).
+             */
+            contentOffset?: Point2D;
+            /**
+             * The content inset (if it is a scroll view).
+             */
+            contentInset?: IosElementAttributeInsets;
+            /**
+             * The adjusted content inset (if it is a scroll view).
+             */
+            adjustedContentInset?: IosElementAttributeInsets;
+            /**
+             * @example "<CALayer: 0x600003f759e0>"
+             */
+            layer: string;
+        }
+
+        // Android Specific Attributes
+        interface AndroidElementAttributes extends ElementAttributes {
+            /**
+             * The OS visibility type associated with the element: visible, invisible or gone.
+             */
+            visibility: 'visible' | 'invisible' | 'gone';
+            /**
+             * Width of the element, in pixels.
+             */
+            width: number;
+            /**
+             * Height of the element, in pixels.
+             */
+            height: number;
+            /**
+             * Elevation of the element.
+             */
+            elevation: number;
+            /**
+             * Alpha value for the element.
+             */
+            alpha: number;
+            /**
+             * Whether the element is the one currently in focus.
+             */
+            focused: boolean;
+            /**
+             * The text size for the text element.
+             */
+            textSize?: number;
+            /**
+             * The length of the text element (character count).
+             */
+            length?: number;
+        }
     }
 }
 

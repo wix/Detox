@@ -32,17 +32,18 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly) CGRect dtx_contentBounds;
 @property (nonatomic, readonly) CGRect dtx_visibleBounds;
 
-@property (nonatomic, readonly) BOOL dtx_isVisible;
-- (BOOL)dtx_isVisibleAtRect:(CGRect)rect;
-- (BOOL)dtx_isVisibleAtRect:(CGRect)rect error:(NSError* __strong * __nullable)error;
+- (BOOL)dtx_isVisible;
+- (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent;
+- (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
+					  error:(NSError* __strong __nullable * __nullable)error;
 - (void)dtx_assertVisible;
-- (void)dtx_assertVisibleVisibleAtRect:(CGRect)rect;
+- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent;
 
 - (BOOL)dtx_isFocused;
 
 @property (nonatomic, readonly) BOOL dtx_isHittable;
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point;
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error;
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
+						error:(NSError* __strong __nullable * __nullable)error;
 - (void)dtx_assertHittable;
 - (void)dtx_assertHittableAtPoint:(CGPoint)point;
 

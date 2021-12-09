@@ -1,5 +1,8 @@
 package com.wix.detox.reactnative.idlingresources;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -55,8 +58,11 @@ public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements C
 
     @NotNull
     @Override
-    public String getDescription() {
-        return "UI rendering activity";
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder()
+                .name("ui")
+                .addDescription("reason", "UI rendering activity")
+                .build();
     }
 
     @Override

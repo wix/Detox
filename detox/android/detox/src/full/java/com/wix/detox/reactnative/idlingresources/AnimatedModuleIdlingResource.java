@@ -65,8 +65,11 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
 
     @NotNull
     @Override
-    public String getDescription() {
-        return "Animations running on screen";
+    public IdlingResourceDescription getDescription() {
+        return new IdlingResourceDescription.Builder()
+                .name("ui")
+                .addDescription("reason", "Animations running on screen")
+                .build();
     }
 
     @Override

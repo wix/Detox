@@ -23,12 +23,14 @@ async function retry(optionsOrFunc, func) {
     backoff = DEFAULT_BACKOFF_MODE,
     conditionFn = DEFAULT_CONDITION_FN,
     initialSleep = DEFAULT_INITIAL_SLEEP,
+    shouldUnref,
   } = options;
 
   const backoffFn = backoffModes[backoff]();
+  const sleepOptions = shouldUnref ? { shouldUnref } : undefined;
 
   if (initialSleep) {
-    await sleep(initialSleep);
+    await sleep(initialSleep, sleepOptions);
   }
 
   // eslint-disable-next-line no-constant-condition
@@ -41,7 +43,7 @@ async function retry(optionsOrFunc, func) {
       if (!conditionFn(e) || (totalTries > retries)) {
         throw e;
       }
-      await sleep(backoffFn({ interval, totalTries }));
+      await sleep(backoffFn({ interval, totalTries }), sleepOptions);
     }
   }
 }

@@ -16,8 +16,13 @@ class Expect {
     this.modifiers = [];
   }
 
-  toBeVisible() {
-    return this.expect('toBeVisible');
+  toBeVisible(percent) {
+    if (percent !== undefined && (!Number.isSafeInteger(percent) || percent < 1 || percent > 100)) {
+      throw new Error('`percent` must be an integer between 1 and 100, but got '
+                      + (percent + (' (' + (typeof percent + ')'))));
+    }
+
+    return this.expect('toBeVisible', percent);
   }
 
   toBeNotVisible() {
@@ -86,13 +91,14 @@ class Expect {
   }
 
   createInvocation(expectation, ...params) {
+    const definedParams = _.without(params, undefined);
     return {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
       ...(this.element.index !== undefined && { atIndex: this.element.index }),
       ...(this.modifiers.length !== 0 && { modifiers: this.modifiers }),
       expectation,
-      ...(params.length !== 0 && { params: _.without(params, undefined) })
+      ...(definedParams.length !== 0 && { params: definedParams })
     };
   }
 
@@ -261,11 +267,13 @@ class Element {
 
   createInvocation(action, targetElementMatcher, ...params) {
     params = _.map(params, (param) => _.isNaN(param) ? null : param);
+
+    const definedParams = _.without(params, undefined);
     const invocation = {
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
-      ...(_.without(params, undefined).length !== 0 && { params: _.without(params, undefined) }),
+      ...(definedParams.length !== 0 && { params: definedParams }),
       predicate: this.matcher.predicate
     };
 
@@ -415,8 +423,8 @@ class WaitFor {
     this._emitter = emitter;
   }
 
-  toBeVisible() {
-    this.expectation = this.expectation.toBeVisible();
+  toBeVisible(percent) {
+    this.expectation = this.expectation.toBeVisible(percent);
     return this;
   }
 
@@ -648,11 +656,11 @@ class IosExpect {
 }
 
 function throwMatcherError(param) {
-  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://wix.github.io/Detox/docs/api/matchers`);
 }
 
 function throwElementError(param) {
-  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://wix.github.io/Detox/docs/api/matchers`);
 }
 
 module.exports = IosExpect;

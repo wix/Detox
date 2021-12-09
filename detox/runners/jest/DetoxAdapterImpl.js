@@ -8,7 +8,7 @@ class DetoxAdapterImpl {
         'While Detox CLI supports "-R <N>, --retries <N>" mechanism, ' +
         'this outdated Jest integration does not — expect artifacts issues. ' +
         'Please migrate to the new Jest Circus integration.\n\n' +
-        'See: https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md\n');
+        'See: https://wix.github.io/Detox/docs/api/guide/jest\n');
     }
 
     this.detox = detox;
