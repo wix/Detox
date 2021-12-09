@@ -91,6 +91,7 @@ function run() {
   if (semver.minor(rnVersion) === 66) {
     console.log('  Detected RN version .66! Applying necessary patches...');
     overrideReactAndroidGradleForRn66Android();
+    cleanFindNodeScriptFileForRn64IOS();
   }
 
   console.log('Detox test-app post-install script completed!');
