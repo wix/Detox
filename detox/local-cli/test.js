@@ -154,6 +154,10 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
       'take-screenshots': cliConfig.takeScreenshots || undefined,
       'capture-view-hierarchy': cliConfig.captureViewHierarchy || undefined,
       'use-custom-logger': cliConfig.useCustomLogger && 'true' || undefined,
+      'logger-show-date': cliConfig.loggerShowDate && 'true' || undefined,
+      'logger-show-logger-name': cliConfig.loggerShowLoggerName && 'true' || undefined,
+      'logger-show-pid': cliConfig.loggerShowPID && 'true' || undefined,
+      'logger-show-metadata': cliConfig.loggerShowMetadata && 'true' || undefined,
 
       ...passthrough,
     },
@@ -211,6 +215,10 @@ async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConf
       DETOX_START_TIMESTAMP: Date.now(),
       DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
       DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
+      DETOX_LOGGER_SHOW_DATE: cliConfig.loggerShowDate,
+      DETOX_LOGGER_SHOW_LOGGER_NAME: cliConfig.loggerShowLoggerName,
+      DETOX_LOGGER_SHOW_PID: cliConfig.loggerShowPID,
+      DETOX_LOGGER_SHOW_METADATA: cliConfig.loggerShowMetadata,
     }, _.isUndefined),
 
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,

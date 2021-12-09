@@ -90,8 +90,12 @@ describe('collectCliConfig', () => {
     ...asBoolean(['noColor',              'DETOX_NO_COLOR',               'no-color']),
     ...asBoolean(['reuse',                'DETOX_REUSE',                  'reuse']),
     ...asBoolean(['readonlyEmu',          'DETOX_READ_ONLY_EMU',          null]),
-    ...asString( ['runnerConfig',          'DETOX_RUNNER_CONFIG',          'runner-config']),
+    ...asString( ['runnerConfig',         'DETOX_RUNNER_CONFIG',          'runner-config']),
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
+    ...asBoolean(['loggerShowDate',       'DETOX_LOGGER_SHOW_DATE',       'logger-show-date']),
+    ...asBoolean(['loggerShowLoggerName', 'DETOX_LOGGER_SHOW_LOGGER_NAME','logger-show-logger-name']),
+    ...asBoolean(['loggerShowPID',        'DETOX_LOGGER_SHOW_PID',        'logger-show-pid']),
+    ...asBoolean(['loggerShowMetadata',   'DETOX_LOGGER_SHOW_METADATA',   'logger-show-metadata']),
     ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
   ])('.%s property' , (key, envName, argName, input, expected) => {

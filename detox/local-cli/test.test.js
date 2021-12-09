@@ -76,7 +76,10 @@ describe('CLI', () => {
           `--opts`, `e2e/mocha.opts`,
           `--grep`, `:android:`, `--invert`,
           `--config-path`, quote(detoxConfigPath, quoteChar),
-          `--use-custom-logger`, `true`
+          `--use-custom-logger`, `true`,
+          `--logger-show-date`, `true`,
+          `--logger-show-logger-name`, `true`,
+          `--logger-show-pid`, `true`
         ].join(' ');
 
         expect(cliCall().command).toBe(`mocha ${args} e2e`);
@@ -214,6 +217,46 @@ describe('CLI', () => {
       expect(cliCall().command).not.toContain('--use-custom-logger');
     });
 
+    test('should not pass `--logger-show-date` as a CLI argument when set to `false`', async () => {
+      await run(`--logger-show-date false`);
+      expect(cliCall().command).not.toContain('--logger-show-date');
+    });
+
+    test('should pass `--logger-show-date` as a CLI argument when set to `true`', async () => {
+      await run(`--logger-show-date true`);
+      expect(cliCall().command).toContain('--logger-show-date');
+    });
+
+    test('should not pass `--logger-show-logger-name` as a CLI argument when set to `false`', async () => {
+      await run(`--logger-show-logger-name false`);
+      expect(cliCall().command).not.toContain('--logger-show-logger-name');
+    });
+
+    test('should pass `--logger-show-logger-name` as a CLI argument when set to `true`', async () => {
+      await run(`--logger-show-logger-name true`);
+      expect(cliCall().command).toContain('--logger-show-logger-name');
+    });
+
+    test('should not pass `--logger-show-pid` as a CLI argument when set to `false`', async () => {
+      await run(`--logger-show-pid false`);
+      expect(cliCall().command).not.toContain('--logger-show-pid');
+    });
+
+    test('should pass `--logger-show-pid` as a CLI argument when set to `true`', async () => {
+      await run(`--logger-show-pid true`);
+      expect(cliCall().command).toContain('--logger-show-pid');
+    });
+
+    test('should not pass `--logger-show-metadata` as a CLI argument when set to `false`', async () => {
+      await run(`--logger-show-metadata false`);
+      expect(cliCall().command).not.toContain('--logger-show-metadata');
+    });
+
+    test('should pass `--logger-show-metadata` as a CLI argument when set to `true`', async () => {
+      await run(`--logger-show-metadata true`);
+      expect(cliCall().command).toContain('--logger-show-metadata');
+    });
+
     test('--force-adb-install should be ignored for iOS', async () => {
       singleConfig().type = 'ios.simulator';
       await run(`--force-adb-install`);
@@ -296,6 +339,10 @@ describe('CLI', () => {
           DETOX_CONFIG_PATH: expect.any(String),
           DETOX_REPORT_SPECS: true,
           DETOX_USE_CUSTOM_LOGGER: true,
+          DETOX_LOGGER_SHOW_DATE: true,
+          DETOX_LOGGER_SHOW_LOGGER_NAME: true,
+          DETOX_LOGGER_SHOW_PID: true,
+          DETOX_LOGGER_SHOW_METADATA: false,
         });
       });
     });
@@ -317,6 +364,10 @@ describe('CLI', () => {
           DETOX_CONFIG_PATH: expect.any(String),
           DETOX_REPORT_SPECS: true,
           DETOX_USE_CUSTOM_LOGGER: true,
+          DETOX_LOGGER_SHOW_DATE: true,
+          DETOX_LOGGER_SHOW_LOGGER_NAME: true,
+          DETOX_LOGGER_SHOW_PID: true,
+          DETOX_LOGGER_SHOW_METADATA: false,
         });
       });
     });
@@ -659,6 +710,10 @@ describe('CLI', () => {
       ['--headless e2eFolder', / e2eFolder$/, { DETOX_HEADLESS: true }],
       ['--keepLockFile e2eFolder', / e2eFolder$/, {}],
       ['--use-custom-logger e2eFolder', / e2eFolder$/, { DETOX_USE_CUSTOM_LOGGER: true }],
+      ['--logger-show-date e2eFolder', / e2eFolder$/, { DETOX_LOGGER_SHOW_DATE: true }],
+      ['--logger-show-logger-name e2eFolder', / e2eFolder$/, { DETOX_LOGGER_SHOW_LOGGER_NAME: true }],
+      ['--logger-show-pid e2eFolder', / e2eFolder$/, { DETOX_LOGGER_SHOW_PID: true }],
+      ['--logger-show-metadata e2eFolder', / e2eFolder$/, { DETOX_LOGGER_SHOW_METADATA: true }],
       ['--force-adb-install e2eFolder', / e2eFolder$/, { DETOX_FORCE_ADB_INSTALL: true }],
     ])('"%s" should be disambigued correctly', async (command, commandMatcher, envMatcher) => {
       singleConfig().type = 'android.emulator';

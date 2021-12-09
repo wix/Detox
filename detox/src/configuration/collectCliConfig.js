@@ -66,6 +66,10 @@ function collectCliConfig({ argv }) {
     reuse: asBoolean(get('reuse')),
     runnerConfig: get('runner-config'),
     useCustomLogger: asBoolean(get('use-custom-logger')),
+    loggerShowDate: asBoolean(get('logger-show-date')),
+    loggerShowLoggerName: asBoolean(get('logger-show-logger-name')),
+    loggerShowPID: asBoolean(get('logger-show-pid')),
+    loggerShowMetadata: asBoolean(get('logger-show-metadata')),
     workers: asNumber(get('workers')),
     inspectBrk: asBoolean(get('inspect-brk')),
   }, _.isUndefined);

@@ -147,6 +147,30 @@ module.exports = {
     group: 'Execution:',
     describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
   },
+  'logger-show-date': {
+    group: 'Execution:',
+    describe: 'When using Detox\' custom logger, add dates to logs',
+    boolean: true,
+    default: true,
+  },
+  'logger-show-logger-name': {
+    group: 'Execution:',
+    describe: 'When using Detox\' custom logger, add logger name to logs',
+    boolean: true,
+    default: true,
+  },
+  'logger-show-pid': {
+    group: 'Execution:',
+    describe: 'When using Detox\' custom logger, add PID to logs',
+    boolean: true,
+    default: true,
+  },
+  'logger-show-metadata': {
+    group: 'Execution:',
+    describe: 'When using Detox\' custom logger, add metadata to logs',
+    boolean: true,
+    default: false,
+  },
   'force-adb-install': {
     boolean: true,
     group: 'Execution:',

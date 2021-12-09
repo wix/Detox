@@ -35,12 +35,28 @@ function tryOverrideConsole(logger, global) {
   }
 }
 
+function shouldShowDate() {
+  return argparse.getArgValue('logger-show-date') === 'true';
+}
+
+function shouldShowLoggerName() {
+  return argparse.getArgValue('logger-show-logger-name') === 'true';
+}
+
+function shouldShowPID() {
+  return argparse.getArgValue('logger-show-pid') === 'true';
+}
+
+function shouldShowMetadata() {
+  return argparse.getArgValue('logger-show-metadata') === 'true';
+}
+
 function createPlainBunyanStream({ logPath, level }) {
   const options = {
-    showDate: false,
-    showLoggerName: true,
-    showPid: true,
-    showMetadata: false,
+    showDate: shouldShowDate(),
+    showLoggerName: shouldShowLoggerName(),
+    showPid: shouldShowPID(),
+    showMetadata: shouldShowMetadata(),
     basepath: __dirname,
     out: process.stderr,
     prefixers: {
