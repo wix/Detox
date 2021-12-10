@@ -48,6 +48,10 @@ We will need to create a [release device configuration for Detox](APIRef.Configu
 
 > TIP: Notice that the name `example` above should be replaced with your actual project name.
 
+> **Tip:** You may need to add build config `ENABLE_TESTABILITY=YES` to `xcodebuild` to keep symbols not being striped when you are using React Native.
+> Detox tests app with DetoxSync which dynamic loads React Native symbols to hook RN, so we need to keep these symbols visible.
+> Full build command will looks like: `xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build ENABLE_TESTABILITY=YES`
+
 ### Step 2: Add `build` and `test` Commands to Your CI Script
 
 Assuming your CI is executing some sort of shell script, add the following commands that should run inside the project root:
