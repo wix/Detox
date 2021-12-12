@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * @typedef DeallocOptions
  * @property shutdown { Boolean }

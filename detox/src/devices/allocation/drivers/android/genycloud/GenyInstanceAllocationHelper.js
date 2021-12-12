@@ -1,4 +1,3 @@
-// @ts-nocheck
 const logger = require('../../../../../utils/logger').child({ __filename });
 const DeviceAllocationHelper = require('../../../../common/drivers/DeviceAllocationHelper');
 

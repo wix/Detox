@@ -1,4 +1,3 @@
-// @ts-nocheck
 const DeviceAllocatorFactory = require('./base');
 
 class AndroidEmulator extends DeviceAllocatorFactory {

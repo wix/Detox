@@ -1,4 +1,3 @@
-// @ts-nocheck
 const LogArtifactPlugin = require('../LogArtifactPlugin');
 
 const ADBLogcatRecording = require('./ADBLogcatRecording');

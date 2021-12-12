@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('DetoxSession', () => {
   /**
    * @type {typeof require('./DetoxSession')}

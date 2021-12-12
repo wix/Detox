@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Instrumentation', () => {
   const deviceId = 'mock-device-id';
   const bundleId = 'mock-bundle-id';

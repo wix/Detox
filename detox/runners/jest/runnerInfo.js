@@ -1,4 +1,3 @@
-// @ts-nocheck
 const isJasmine = !!global.jasmine;
 const isJestCircus = !!global.detoxCircus;
 

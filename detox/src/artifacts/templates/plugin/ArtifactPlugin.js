@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable no-unused-vars */
 
 const _ = require('lodash');

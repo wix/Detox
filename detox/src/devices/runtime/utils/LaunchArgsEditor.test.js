@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Device launch-args editor', () => {
   /** @type {typeof import('./LaunchArgsEditor')} */
   let LaunchArgsEditor;

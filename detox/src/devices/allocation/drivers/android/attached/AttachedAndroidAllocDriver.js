@@ -1,4 +1,3 @@
-// @ts-nocheck
 const AttachedAndroidDeviceCookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 

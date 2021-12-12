@@ -1,4 +1,3 @@
-// @ts-nocheck
 const errors = require('../errors');
 
 const wrapWithStackTraceCutter = require('./wrapWithStackTraceCutter');

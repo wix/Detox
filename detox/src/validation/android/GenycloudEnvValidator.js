@@ -1,4 +1,3 @@
-// @ts-nocheck
 const semver = require('semver');
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');

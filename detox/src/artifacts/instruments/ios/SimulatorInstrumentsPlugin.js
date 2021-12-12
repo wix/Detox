@@ -1,4 +1,3 @@
-// @ts-nocheck
 const temporaryPath = require('../../utils/temporaryPath');
 const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
 

@@ -1,29 +1,25 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "lib": ["es2018"],
-    "target": "ES2018",
+    "lib": ["es6"],
+    "target": "ES2015",
     "allowJs": true,
-    "checkJs": true,
-    "jsx": "react-native",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true,
     "esModuleInterop": true,
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "types": ["node", "jest", "detox"]
+    "types": ["node", "detox"]
   },
-  "rootDir": ".",
-  "include": [
-    "**/*.js",
-    "**/*.ts"
-  ],
-  "exclude": [
-    "coverage",
-    "e2e/**/*.js",
-    "e2e-unhappy/**/*.js",
-    "integration/**/*.js",
-    "types/*.ts"
+  "files": [
+    "e2e/detox.config.js",
+    "types/detox-jest-circus-setup-tests.ts",
+    "types/detox-global-tests.ts",
+    "types/detox-module-tests.ts",
+    "types/detox-jest-setup-tests.ts",
+    "types/detox-mocha-setup-tests.ts"
   ]
 }

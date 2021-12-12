@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('AndroidExpect', () => {
   let e;
 

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const testSummaries = require('../__mocks__/testSummaries.mock');
 
 jest.mock('../templates/artifact/FileArtifact');

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const Module = require('module');
 const path = require('path');
 

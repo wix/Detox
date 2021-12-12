@@ -1,4 +1,3 @@
-// @ts-nocheck
 jest.useFakeTimers('modern');
 
 const permaproxy = require('funpermaproxy');

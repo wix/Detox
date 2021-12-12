@@ -1,4 +1,3 @@
-// @ts-nocheck
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 const {

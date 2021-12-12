@@ -1,4 +1,3 @@
-// @ts-nocheck
 jest.mock('child_process');
 jest.mock('../src/utils/logger');
 jest.mock('../src/configuration');

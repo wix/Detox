@@ -1,4 +1,3 @@
-// @ts-nocheck
 const { getAaptPath } = require('../../../../../utils/environment');
 const exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
 const pipeCommands = require('../../../../../utils/pipeCommands');

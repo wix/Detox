@@ -1,4 +1,3 @@
-// @ts-nocheck
 const funpermaproxy = require('funpermaproxy');
 
 const Detox = require('./Detox');

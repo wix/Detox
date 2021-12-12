@@ -1,4 +1,3 @@
-// @ts-nocheck
 const fs = require('fs-extra');
 
 const exec = require('../../../utils/exec');

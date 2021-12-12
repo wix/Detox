@@ -1,4 +1,3 @@
-// @ts-nocheck
 const ArtifactsManager = require('../ArtifactsManager');
 const {
   AndroidArtifactPluginsProvider,

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const retry = require('../../../../../utils/retry');
 const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const log = require('../../../utils/logger').child({ __filename });
 
 class Artifact {

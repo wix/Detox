@@ -1,4 +1,3 @@
-// @ts-nocheck
 const { DetoxInternalError, DetoxRuntimeError } = require('../../errors');
 const { getDetoxLevel } = require('../../utils/logger');
 const formatJSONStatus = require('../actions/formatters/SyncStatusFormatter');

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const util = require('util');
 
 const _ = require('lodash');

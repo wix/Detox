@@ -1,4 +1,3 @@
-// @ts-nocheck
 const _ = require('lodash');
 const parse = require('yargs/yargs').Parser;
 

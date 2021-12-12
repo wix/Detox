@@ -1,4 +1,3 @@
-// @ts-nocheck
 const _ = require('lodash');
 
 describe('expectTwo', () => {

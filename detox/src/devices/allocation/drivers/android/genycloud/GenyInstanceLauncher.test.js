@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Genymotion-Cloud instance launcher', () => {
   const recipeName = 'mock-recipe-name';
 

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const getPort = require('get-port');
 
 describe('DetoxServer', () => {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const FakeWebSocket = require('../__mocks__/FakeWebSocket');
 
 describe('Detox server integration', () => {

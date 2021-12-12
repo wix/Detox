@@ -1,4 +1,3 @@
-// @ts-nocheck
 const invoke = require('./invoke');
 
 describe('invoke', () => {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const NodeEnvironment = require('jest-environment-node');
 
 const DetoxError = require('../../src/errors/DetoxError');

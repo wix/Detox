@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Instrumentation arguments', () => {
   const mockEncodeBase64Fn = (arg) => `base64Mocked(${arg})`;
 

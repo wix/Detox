@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Device allocator', () => {
 
   let allocDriver;

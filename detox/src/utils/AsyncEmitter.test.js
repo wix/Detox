@@ -1,4 +1,3 @@
-// @ts-nocheck
 const AsyncEmitter = require('./AsyncEmitter');
 const noop = () => {};
 const sleep = require('./sleep');

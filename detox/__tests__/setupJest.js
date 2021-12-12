@@ -1,12 +1,11 @@
 jest.mock('proper-lockfile');
 
-const path = require('path');
-
 const yargs = require('yargs');
+const path = require('path');
 
 function callCli(modulePath, cmd) {
   return new Promise((resolve, reject) => {
-    const originalModule = require(path.join(__dirname, '../local-cli', modulePath));
+    const originalModule = require(path.join(__dirname, "../local-cli", modulePath));
     const originalHandler = originalModule.handler;
     const spiedModule = {
       ...originalModule,

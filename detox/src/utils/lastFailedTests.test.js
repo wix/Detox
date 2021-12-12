@@ -1,4 +1,3 @@
-// @ts-nocheck
 jest.mock('./environment');
 
 const fs = require('fs-extra');

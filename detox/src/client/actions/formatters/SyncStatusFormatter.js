@@ -1,4 +1,3 @@
-// @ts-nocheck
 const Ajv = require('ajv');
 
 const DetoxInternalError = require('../../../errors/DetoxInternalError');

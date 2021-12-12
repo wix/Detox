@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('composeRunnerConfig', () => {
   let composeRunnerConfig;
   let cliConfig, globalConfig;

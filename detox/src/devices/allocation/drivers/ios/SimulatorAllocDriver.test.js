@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Allocation driver for iOS simulators', () => {
 
   let applesimutils;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 jest.useFakeTimers('modern');
 
 const { serializeError } = require('serialize-error');

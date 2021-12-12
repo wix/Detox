@@ -1,4 +1,3 @@
-// @ts-nocheck
 const _ = require('lodash');
 const WebSocket = require('ws');
 
@@ -175,9 +174,6 @@ class AsyncWebSocket {
       case WebSocket.CLOSING: return 'closing';
       case WebSocket.CONNECTING: return 'opening';
       case WebSocket.OPEN: return 'open';
-      /* istanbul ignore next */
-      default: // TODO: [2021-12-01] throw new DetoxInternalError('...'); instead
-        return undefined;
     }
   }
 

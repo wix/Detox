@@ -1,4 +1,3 @@
-// @ts-nocheck
 /*
  * This is here to make it easier for users to apply this reporter in config.json (naming-wise)
  * TODO: rename this file to reporter.js in the next major version (Detox 18)

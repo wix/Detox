@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('IOS simulator driver', () => {
   const udid = 'UD-1D-MOCK';
   const type = 'Chika';

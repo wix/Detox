@@ -22,7 +22,7 @@
     "build": ":",
     "build:android": "cd android && ./gradlew publish -Dversion=999.999.999 && cd ..",
     "build:android-native": "cd android && ./gradlew publish -Dversion=999.999.999 -DbuildFlavour=coreNative -DforceLocal=true && cd ..",
-    "lint": "eslint .",
+    "lint": "eslint local-cli runners src scripts",
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",
@@ -33,16 +33,12 @@
   },
   "devDependencies": {
     "@types/child-process-promise": "^2.2.1",
-    "@types/jest": "^27.0.3",
     "@types/node": "^12.20.37",
     "@types/ws": "^7.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "eslint": "^8.3.0",
+    "eslint": "^4.11.0",
     "eslint-plugin-import": "^2.23.3",
     "eslint-plugin-no-only-tests": "^2.6.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-unicorn": "^39.0.0",
+    "eslint-plugin-node": "^6.0.1",
     "jest": "^27.0.0",
     "jest-environment-node": "^27.0.0",
     "mocha": ">=6.0.0",
@@ -50,8 +46,7 @@
     "prettier": "1.7.0",
     "react-native": "0.64.1",
     "react-native-codegen": "^0.0.8",
-    "typescript": "^4.5.2",
-    "wtfnode": "^0.9.1"
+    "wtfnode": "^0.8.0"
   },
   "dependencies": {
     "ajv": "^8.6.3",

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');

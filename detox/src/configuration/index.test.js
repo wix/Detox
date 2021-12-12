@@ -1,4 +1,3 @@
-// @ts-nocheck
 jest.mock('../utils/argparse');
 
 const os = require('os');
