@@ -5,6 +5,7 @@ import com.facebook.react.bridge.CatalystInstance
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import org.joor.Reflect
+import org.joor.ReflectException
 
 private const val FIELD_CATALYST_INSTANCE = "mCatalystInstance"
 private const val CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule"
@@ -14,7 +15,7 @@ class ReactContextReflected(private val reactContext: ReactContext) {
     fun getCatalystInstance(): CatalystInstance? {
         return try {
             Reflect.on(reactContext).field(FIELD_CATALYST_INSTANCE).get<CatalystInstance>()
-        } catch (e: Exception) {
+        } catch (e: ReflectException) {
             Log.e(LOG_TAG, "failed to get $FIELD_CATALYST_INSTANCE ", e.cause)
             null
         }
@@ -25,7 +26,7 @@ class ReactContextReflected(private val reactContext: ReactContext) {
             val uiModuleClass = Class.forName(CLASS_UI_MANAGER_MODULE)
             Reflect.on(reactContext)
                 .call(METHOD_HAS_NATIVE_MODULE, uiModuleClass).get<Boolean>()
-        } catch (e: Exception) {
+        } catch (e: ReflectException) {
             Log.e(LOG_TAG, "UIManagerModule is not on classpath. ", e)
             false
         }

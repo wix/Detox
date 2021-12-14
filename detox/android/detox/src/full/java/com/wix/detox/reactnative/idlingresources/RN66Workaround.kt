@@ -6,7 +6,6 @@ import java.lang.ref.WeakReference
 
 private const val NUM_TIMES_BEFORE_NOTIFY_IDLE = 10
 private const val SET_NATIVE_VALUE = "setNativeValue"
-
 private const val CLASS_REACT_SWITCH = "com.facebook.react.views.switchview.ReactSwitch"
 
 class RN66Workaround {
@@ -23,8 +22,8 @@ class RN66Workaround {
                 val viewClass = uiManagerModuleReflected.getViewClass()
                 val ReactSwitchClass: Class<*> = Class.forName(CLASS_REACT_SWITCH)
                 if (viewClass != null) ReactSwitchClass.isAssignableFrom(viewClass.javaClass) else false
-            } catch (e: Exception) {
-                Log.e(LOG_TAG, "got exception with class ", e)
+            } catch (e: ClassNotFoundException) {
+                Log.e(LOG_TAG, "failed to get $CLASS_REACT_SWITCH class ", e.cause)
                 false
             }
 

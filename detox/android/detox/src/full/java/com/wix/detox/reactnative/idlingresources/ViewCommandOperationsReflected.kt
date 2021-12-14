@@ -4,6 +4,7 @@ import android.util.Log
 import com.facebook.react.uimanager.UIViewOperationQueue
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import org.joor.Reflect
+import org.joor.ReflectException
 import java.lang.ref.WeakReference
 
 private const val FIELD_VIEW_COMMAND_OPERATIONS = "mViewCommandOperations"
@@ -21,7 +22,7 @@ class ViewCommandOperationsReflected(uIViewOperationQueueInstance: UIViewOperati
     fun getTag(): Int {
         return try {
             Reflect.on(firstElement()).field(FIELD_TAG).get<Int>()
-        } catch (e: Exception) {
+        } catch (e: ReflectException) {
             Log.e(LOG_TAG, "failed to get $FIELD_TAG ", e.cause)
             0
         }
@@ -29,7 +30,7 @@ class ViewCommandOperationsReflected(uIViewOperationQueueInstance: UIViewOperati
     fun getNumRetries(): Int {
         return try {
             Reflect.on(firstElement()).field(FIELD_NUM_RETRIES).get<Int>()
-        } catch (e: Exception) {
+        } catch (e: ReflectException) {
             Log.e(LOG_TAG, "failed to get $FIELD_NUM_RETRIES ", e.cause)
             0
         }
@@ -37,7 +38,7 @@ class ViewCommandOperationsReflected(uIViewOperationQueueInstance: UIViewOperati
     fun getViewCommand(): String {
         return try {
             Reflect.on(firstElement()).field(FIELD_COMMAND).get<String>()
-        } catch (e: Exception) {
+        } catch (e: ReflectException) {
             Log.e(LOG_TAG, "failed to get $FIELD_COMMAND ", e.cause)
             ""
         }
@@ -48,7 +49,7 @@ class ViewCommandOperationsReflected(uIViewOperationQueueInstance: UIViewOperati
     private fun viewCommandOperations(): Collection<Any>? {
         return try {
             reflectedInstance.field(FIELD_VIEW_COMMAND_OPERATIONS).get<Collection<Any>>()
-        } catch(e: Exception) {
+        } catch(e: ReflectException) {
             Log.e(LOG_TAG, "could not get reflected field mViewCommandOperations ", e.cause)
             null
         }
