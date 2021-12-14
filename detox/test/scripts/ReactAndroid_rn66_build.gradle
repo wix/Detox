@@ -7,7 +7,8 @@
 
 plugins {
     id("com.android.library")
-//     id("com.facebook.react.codegen")
+    // Edited by Detox' post-install script
+    // id("com.facebook.react.codegen")
     id("maven-publish")
     id("de.undercouch.download")
 }
@@ -441,10 +442,11 @@ task installArchives {
 
 android {
     compileSdkVersion 30
+    // Edited by Detox' post-install script
     // ndkVersion ANDROID_NDK_VERSION
-//     if (ANDROID_NDK_PATH != null) {
-//         ndkPath ANDROID_NDK_PATH
-//     }
+    //     if (ANDROID_NDK_PATH != null) {
+    //         ndkPath ANDROID_NDK_PATH
+    //     }
 
     defaultConfig {
         minSdkVersion(21)
@@ -530,6 +532,7 @@ dependencies {
     androidTestImplementation("org.mockito:mockito-core:${MOCKITO_CORE_VERSION}")
 }
 
+// Edited by Detox' post-install script
 // react {
 //     // TODO: The library name is chosen for parity with Fabric components & iOS
 //     // This should be changed to a more generic name, e.g. `ReactCoreSpec`.
