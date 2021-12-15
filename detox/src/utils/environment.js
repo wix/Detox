@@ -55,11 +55,11 @@ function getAvdDir(avdName) {
 }
 
 function getAvdManagerPath() {
-  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
+  return path.join(getAndroidSDKPath(), 'cmdline-tools', 'latest', 'bin', 'avdmanager');
 }
 
 function getAndroidSdkManagerPath() {
-  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'sdkmanager');
+  return path.join(getAndroidSDKPath(), 'cmdline-tools', 'latest', 'bin', 'sdkmanager');
 }
 
 function getAndroidEmulatorPath() {

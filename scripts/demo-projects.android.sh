@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 # Approve unapproved SDK licenses
-yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
 source $(dirname "$0")/demo-projects.sh
 
