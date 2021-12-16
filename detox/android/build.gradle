@@ -2,7 +2,7 @@ buildscript {
     ext {
         isOfficialDetoxLib = true
         kotlinVersion = '1.2.0'
-        dokkaVersion = '0.9.18'
+        dokkaVersion = '1.4.0-rc'
         buildToolsVersion = '29.0.3'
         compileSdkVersion = 29
         targetSdkVersion = 29
