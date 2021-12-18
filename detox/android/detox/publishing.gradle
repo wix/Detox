@@ -1,5 +1,3 @@
-import java.io.File;
-
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin-android'
 apply plugin: 'org.jetbrains.dokka'
