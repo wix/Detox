@@ -10,6 +10,11 @@ apply from: '../../node_modules/react-native/react.gradle'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId 'com.wix.detox.test'
         minSdkVersion rootProject.ext.minSdkVersion
