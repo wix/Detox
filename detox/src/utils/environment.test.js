@@ -126,7 +126,7 @@ describe('Environment', () => {
         process.env.ANDROID_SDK_ROOT = path.normalize('mock/path/to/sdk');
 
         const avdManagerPath = Environment.getAvdManagerPath();
-        expect(avdManagerPath).toBe(path.join(process.env.ANDROID_SDK_ROOT, 'tools/bin/avdmanager'));
+        expect(avdManagerPath).toBe(path.join(process.env.ANDROID_SDK_ROOT, 'cmdline-tools/latest/bin/avdmanager'));
       });
 
       it('should fall back to using ANDROID_HOME instead of ANDROID_SDK_ROOT', () => {
@@ -134,7 +134,7 @@ describe('Environment', () => {
         process.env.ANDROID_HOME = path.normalize('mock/path/to/sdk');
 
         const avdManagerPath = Environment.getAvdManagerPath();
-        expect(avdManagerPath).toBe(path.join(process.env.ANDROID_HOME, 'tools/bin/avdmanager'));
+        expect(avdManagerPath).toBe(path.join(process.env.ANDROID_HOME, 'cmdline-tools/latest/bin/avdmanager'));
       });
     });
 
@@ -143,7 +143,7 @@ describe('Environment', () => {
         process.env.ANDROID_SDK_ROOT = path.normalize('mock/path/to/sdk');
 
         const sdkManagerPath = Environment.getAndroidSdkManagerPath();
-        expect(sdkManagerPath).toBe(path.join(process.env.ANDROID_SDK_ROOT, 'tools/bin/sdkmanager'));
+        expect(sdkManagerPath).toBe(path.join(process.env.ANDROID_SDK_ROOT, 'cmdline-tools/latest/bin/sdkmanager'));
       });
 
       it('should fall back to using ANDROID_HOME instead of ANDROID_SDK_ROOT', () => {
@@ -151,7 +151,7 @@ describe('Environment', () => {
         process.env.ANDROID_HOME = path.normalize('mock/path/to/sdk');
 
         const sdkManagerPath = Environment.getAndroidSdkManagerPath();
-        expect(sdkManagerPath).toBe(path.join(process.env.ANDROID_HOME, 'tools/bin/sdkmanager'));
+        expect(sdkManagerPath).toBe(path.join(process.env.ANDROID_HOME, 'cmdline-tools/latest/bin/sdkmanager'));
       });
     });
 
