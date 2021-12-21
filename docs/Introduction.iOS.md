@@ -42,6 +42,11 @@ Whether you’ve selected to apply the configuration in a  `.detoxrc.json` or bu
 }
 ```
 
+If your app uses Cocoapods, pass -workspace to xcodebuild command:
+```
+"build": "xcodebuild -workspace ios/YourProject.xcworkspace -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build"
+```
+
 :::info
 
 For a comprehensive explanation of Detox configuration, see our [dedicated API-reference guide](APIRef.Configuration.md).
