@@ -1,6 +1,6 @@
-import moment from "moment";
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Picker } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 
 export default class PickerViewScreen extends Component {
   constructor(props) {
@@ -30,7 +30,7 @@ export default class PickerViewScreen extends Component {
           selectedValue={this.state.chosenValue}
           style={{width:"100%", height:200}}
           onValueChange={this.setValue}>
-          
+
           <Picker.Item label="a" value="com.wix.detox.a" />
           <Picker.Item label="b" value="com.wix.detox.b" />
           <Picker.Item label="c" value="com.wix.detox.c" />

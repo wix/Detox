@@ -85,41 +85,31 @@ initPublishing()
  * Dokka is the official javadoc equivalent that supports kotlin KDoc (see https://github.com/Kotlin/dokka)
  */
 
-dokka {
-    // Note: this only remains valid as long as we don't move kotlin code to src/main/kotlin instead of src/main/java.
-    // Will have to keep this up to date if we decided to do so.
-    sourceDirs = files(android.sourceSets.main.java.srcDirs)
-
-    // Nothing to add to what kotlinTasks() resolves on its own
-//    classpath = []
-//    classpath += files(android.bootClasspath)
-//    classpath += files(project.configurations.getByName('compile').asList())
-//    classpath += files(android.libraryVariants.collect { variant ->
-//        variant.javaCompile.classpath.files
-//    }.flatten())
-
-    reportUndocumented = false
-    skipEmptyPackages = true
-
-    outputFormat = 'javadoc' // https://github.com/Kotlin/dokka#output-formats
-    outputDirectory = "$buildDir/dokkaDoc" // Temp 'exploded' dir for .jar creation (i.e. by dokkaDocJar task)
-
-    def suppressedPackages = ["android_libs", "com.wix.detox.espresso.common.annot"]
-    for (String packagePrefix: suppressedPackages) {
-        packageOptions {
-            prefix = packagePrefix
-            suppress = true
+tasks.named("dokkaJavadoc") {
+    File dokkaDoc = new File("$buildDir/dokkaDoc");
+    outputDirectory.set(dokkaDoc)
+    dokkaSourceSets {
+        named("main") {
+            sourceRoots.from(android.sourceSets.main.java.srcDirs)
+            reportUndocumented.set(false)
+            skipEmptyPackages.set(true)
+            def suppressedPackages = ["android_libs", "com.wix.detox.espresso.common.annot"]
+            for (String packagePrefix : suppressedPackages) {
+                packageOptions {
+                    prefix = packagePrefix
+                    suppress = true
+                }
+            }
         }
     }
-
+}
     // Side note / TODO:
     // Dokka outputs R and BuildConfig; currently, there's nothing to do about it, as issues such as
     // this on - https://github.com/Kotlin/dokka/issues/419 are still open :-/
     // We might want to revisit this in the future -- see if they've decided to export a custom classes
     // suppression config var or something.
-}
 
-task dokkaDocJar(type: Jar, dependsOn: dokka) {
+task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from "$buildDir/dokkaDoc"
     classifier = 'javadoc'
 }

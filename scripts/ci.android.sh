@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 # Approve unapproved SDK licenses
-yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
 source $(dirname "$0")/ci.sh
 
@@ -9,7 +9,8 @@ pushd detox/test
 run_f "npm run integration"
 popd
 
-if [[ -z ${SKIP_UNIT_TESTS} ]]; then
+currentRnVersion=$(echo "${REACT_NATIVE_VERSION}" | cut -d "." -f2);
+if [[ -z ${SKIP_UNIT_TESTS} && $currentRnVersion -ge 66 ]]; then
   pushd detox/android
   run_f "./gradlew testFullRelease"
   popd

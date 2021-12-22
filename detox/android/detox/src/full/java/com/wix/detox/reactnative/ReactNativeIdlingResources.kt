@@ -9,6 +9,7 @@ import com.wix.detox.LaunchArgs
 import com.wix.detox.reactnative.idlingresources.*
 import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
+import com.wix.detox.reactnative.idlingresources.uimodule.UIModuleIdlingResource
 import org.joor.Reflect
 import org.joor.ReflectException
 import java.util.Set

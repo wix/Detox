@@ -16,6 +16,7 @@ private class AsyncStorageModuleStub: NativeModule {
     override fun initialize() {}
     override fun canOverrideExistingModule() = false
     override fun onCatalystInstanceDestroy() {}
+    override fun invalidate() {}
 }
 
 class AsyncStorageIdlingResourceSpec: Spek({

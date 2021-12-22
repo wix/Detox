@@ -12,3 +12,4 @@
 -keep class kotlin.collections.** { *; }
 -keep class kotlin.text.** { *; }
 -keep class kotlin.io.** { *; }
+-keep class okhttp3.** { *; }

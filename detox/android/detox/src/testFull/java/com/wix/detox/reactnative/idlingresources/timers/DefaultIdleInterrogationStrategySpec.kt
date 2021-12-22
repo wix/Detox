@@ -22,6 +22,8 @@ class TimersNativeModuleStub : NativeModule {
     val mTimerGuard = "Lock-Mock"
 
     override fun onCatalystInstanceDestroy() {}
+    override fun invalidate() {}
+
     override fun getName(): String = "TimersNativeModuleStub"
     override fun canOverrideExistingModule() = false
     override fun initialize() {}
