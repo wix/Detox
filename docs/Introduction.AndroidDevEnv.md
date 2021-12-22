@@ -15,7 +15,7 @@ Note that running automated UI tests is _not the same_ as developing Android app
 
 This is the most basic step in the process, as without a proper Java SDK installed, nothing Android-ish works -- at least not from command-line, which is mandatory for executing `Detox`.
 
-_The bottom line is that **Android needs Java 1.8 installed**._
+_The bottom line is that **Android needs Java 11 installed**._
 
 To check for your real java-executable’s version, in a command-line console, run:
 
@@ -26,15 +26,15 @@ java -version
 What needs to be verified is that `java` is in-path and that the output contains something as this:
 
 ```sh
-java version "1.8.0_121"
+java version "11.0.11"
 ...
 ```
 
-Namely, that the version is `1.8.x_abc`.
+Namely, that the version is `11.0.11`.
 
 > Note: Do not be confused by the Java version potentially used by your browsers, etc. For `Detox`, what the command-line sees is what matters.
 
-On macOS, in particular, java comes from both the OS _and_ possibly other installers such as `homebrew`, so you are more likely to go into a mess: see [this Stack Overflow post](https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac).
+On macOS, in particular, java comes from both the OS _and_ possibly other installers such as `homebrew`, so you are more likely to go into a mess: see [this Stack Overflow post](https://stackoverflow.com/questions/52524112/how-do-i-install-java-on-mac-osx-allowing-version-switching/52524114#52524114).
 
 ---
 
