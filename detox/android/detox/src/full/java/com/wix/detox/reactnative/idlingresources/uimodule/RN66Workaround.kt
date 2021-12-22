@@ -18,7 +18,7 @@ class RN66Workaround {
     fun isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected: UIManagerModuleReflected): Boolean {
         var isStuckSwitchOperation = false
 
-        if (uiManagerModuleReflected.getUIOpsCount() == 1) {
+        if (uiManagerModuleReflected.getUIOpsCount() >= 1) {
             val nextUIOperation = uiManagerModuleReflected.getNextUIOpReflected()
             val view = getUIOpView(uiManagerModuleReflected, nextUIOperation)
             val isReactSwitch = isReactSwitch(view)
