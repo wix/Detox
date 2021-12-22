@@ -23,7 +23,7 @@ To check for your real java-executable’s version, in a command-line console, r
 java -version
 ```
 
-What needs to be verified is that `java` is in-path and that the output contains something as this:
+What needs to be verified is that `java` is in-path and that the output contains something like this:
 
 ```sh
 java version "11.0.11"
