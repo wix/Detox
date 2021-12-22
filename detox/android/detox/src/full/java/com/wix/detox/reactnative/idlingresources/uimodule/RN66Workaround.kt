@@ -3,6 +3,7 @@ package com.wix.detox.reactnative.idlingresources.uimodule
 import android.util.Log
 import android.view.View
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.reactnative.ReactNativeInfo
 import java.lang.ref.WeakReference
 
 private const val NUM_TIMES_BEFORE_NOTIFY_IDLE = 10
@@ -18,7 +19,9 @@ class RN66Workaround {
     fun isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected: UIManagerModuleReflected): Boolean {
         var isStuckSwitchOperation = false
 
-        if (uiManagerModuleReflected.getUIOpsCount() == 1) {
+        val rnVersion = ReactNativeInfo.rnVersion();
+
+        if (rnVersion.minor >= 66 && uiManagerModuleReflected.getUIOpsCount() >= 1) {
             val nextUIOperation = uiManagerModuleReflected.getNextUIOpReflected()
             val view = getUIOpView(uiManagerModuleReflected, nextUIOperation)
             val isReactSwitch = isReactSwitch(view)
