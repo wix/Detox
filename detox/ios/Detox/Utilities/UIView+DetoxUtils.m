@@ -393,10 +393,10 @@ DTX_DIRECT_MEMBERS
 	return NO;
   }
 
-  UIViewController *topMostViewController = [self _findTopMostViewController];
-  UIView *visibleContainer = topMostViewController.view;
-
   CGPoint absPoint = [self calcAbsPointFromLocalPoint:viewPoint];
+
+  UIViewController *topMostViewController = [self _topMostViewControllerAtPoint:absPoint];
+  UIView *visibleContainer = topMostViewController.view;
 
   if ([self isDescendantOfView:visibleContainer]) {
 	return [self _canHitFromView:self atAbsPoint:absPoint error:error];
@@ -446,14 +446,14 @@ DTX_DIRECT_MEMBERS
   return NO;
 }
 
-- (UIViewController *)_findTopMostViewController {
-  UIWindow *topMostWindow = UIWindow.dtx_keyWindow;
-  return [self _findTopMostViewControllerForViewController:topMostWindow.rootViewController];
+- (UIViewController *)_topMostViewControllerAtPoint:(CGPoint)point {
+  UIWindow *topMostWindow = [UIWindow dtx_topMostWindowAtPoint:point];
+  return [self _topMostViewControllerForViewController:topMostWindow.rootViewController];
 }
 
-- (UIViewController *)_findTopMostViewControllerForViewController:(UIViewController *)viewController {
+- (UIViewController *)_topMostViewControllerForViewController:(UIViewController *)viewController {
   if (viewController.presentedViewController) {
-	return [self _findTopMostViewControllerForViewController:viewController.presentedViewController];
+	return [self _topMostViewControllerForViewController:viewController.presentedViewController];
   }
 
   return viewController;
