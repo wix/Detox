@@ -375,8 +375,7 @@ DTX_DIRECT_MEMBERS
 	return NO;
   }
 
-  if (![self _isVisibleAroundPoint:viewPoint visibleBounds:self.dtx_visibleBounds
-							 error:error]) {
+  if (![self _isVisibleAroundPoint:viewPoint error:error]) {
 	if (error) {
 	  NSString *description = [NSString stringWithFormat:@"View is not visible around" \
 							   " point.\n- view point: %@\n- visible bounds: %@" \
@@ -395,7 +394,19 @@ DTX_DIRECT_MEMBERS
 
   CGPoint absPoint = [self calcAbsPointFromLocalPoint:viewPoint];
 
-  UIViewController *topMostViewController = [self _topMostViewControllerAtPoint:absPoint];
+  UIViewController * _Nullable topMostViewController = [self _topMostViewControllerAtPoint:absPoint];
+  if (!topMostViewController) {
+	if (error) {
+	  NSString *description = [NSString stringWithFormat:@"Failed to interact with the screen "
+							   "at point: %@.", NSStringFromCGPoint(viewPoint)];
+	  *error = [NSError
+				errorWithDomain:@"Detox" code:0
+				userInfo:@{NSLocalizedDescriptionKey:description}];
+	}
+
+	return NO;
+  }
+
   UIView *visibleContainer = topMostViewController.view;
 
   if ([self isDescendantOfView:visibleContainer]) {
@@ -410,10 +421,13 @@ DTX_DIRECT_MEMBERS
   return [self _canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
 }
 
-- (BOOL)_isVisibleAroundPoint:(CGPoint)point visibleBounds:(CGRect)visibleBounds
-						error:(NSError* __strong __nullable * __nullable)error {
+- (BOOL)isVisibleAroundPoint:(CGPoint)point {
+  return [self _isVisibleAroundPoint:point error:nil];
+}
+
+- (BOOL)_isVisibleAroundPoint:(CGPoint)point error:(NSError* __strong __nullable * __nullable)error {
   CGRect intersection = CGRectIntersection(
-      visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
+      self.dtx_visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
   return [self _dtx_testVisibilityInRect:intersection percent:100 error:error];
 }
 
@@ -446,8 +460,12 @@ DTX_DIRECT_MEMBERS
   return NO;
 }
 
-- (UIViewController *)_topMostViewControllerAtPoint:(CGPoint)point {
-  UIWindow *topMostWindow = [UIWindow dtx_topMostWindowAtPoint:point];
+- (nullable UIViewController *)_topMostViewControllerAtPoint:(CGPoint)point {
+  UIWindow * _Nullable topMostWindow = [UIWindow dtx_topMostWindowAtPoint:point];
+  if (!topMostWindow) {
+	return nil;
+  }
+
   return [self _topMostViewControllerForViewController:topMostWindow.rootViewController];
 }
 
