@@ -7,8 +7,10 @@
 //
 
 #import "UIWindow+DetoxUtils.h"
-#import "NSObject+DetoxUtils.h"
+
 #import "DTXAppleInternals.h"
+#import "NSObject+DetoxUtils.h"
+#import "UIView+DetoxUtils.h"
 
 extern NSArray* DTXChildElements(id element);
 
@@ -221,13 +223,13 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 	return [NSString stringWithFormat:@"<%@: %p; frame = (%@ %@; %@ %@);>", self.class, self, @(frame.origin.x), @(frame.origin.y), @(frame.size.width), @(frame.size.height)];
 }
 
-+ (UIWindow *)dtx_topMostWindowAtPoint:(CGPoint)point {
++ (nullable UIWindow *)dtx_topMostWindowAtPoint:(CGPoint)point {
   NSArray<UIWindow *> *windows = UIApplication.sharedApplication.windows;
 
   NSArray<UIWindow *> *visibleWindowsAtPoint = [windows
     filteredArrayUsingPredicate:[NSPredicate
 	predicateWithBlock:^BOOL(UIWindow *window, NSDictionary<NSString *, id> * _Nullable __unused bindings) {
-	  if (window.isHidden) {
+	  if (![window isVisibleAroundPoint:point]) {
 		return NO;
 	  }
 
@@ -243,6 +245,10 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 	  return YES;
 	}]];
+
+  if (!visibleWindowsAtPoint) {
+	return nil;
+  }
 
   return [[visibleWindowsAtPoint
 	sortedArrayUsingComparator:^NSComparisonResult(UIWindow *window1, UIWindow *window2) {
