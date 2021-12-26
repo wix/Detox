@@ -229,11 +229,11 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
   NSArray<UIWindow *> *visibleWindowsAtPoint = [windows
     filteredArrayUsingPredicate:[NSPredicate
 	predicateWithBlock:^BOOL(UIWindow *window, NSDictionary<NSString *, id> * _Nullable __unused bindings) {
-	  if (![window isVisibleAroundPoint:point]) {
+	  if (!CGRectContainsPoint(window.frame, point)) {
 		return NO;
 	  }
 
-	  if (!CGRectContainsPoint(window.frame, point)) {
+	  if (![window isVisibleAroundPoint:point]) {
 		return NO;
 	  }
 
