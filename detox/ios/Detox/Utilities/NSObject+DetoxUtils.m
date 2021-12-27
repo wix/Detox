@@ -41,7 +41,7 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 DTX_ALWAYS_INLINE
 static NSString* DTXPointToString(CGPoint point)
 {
-	return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:nil] encoding:NSUTF8StringEncoding];
+	return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:NULL] encoding:NSUTF8StringEncoding];
 }
 
 @interface NSObject ()
@@ -137,23 +137,19 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (BOOL)dtx_isVisible {
-	return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:nil];
+	return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:NULL];
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong __nullable * __nullable)error {
+					  error:(NSError *__strong  _Nullable *)error {
 	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
 - (void)dtx_assertVisible {
-	[self dtx_assertVisibleWithPercent:nil];
+	[self dtx_assertVisibleAtRect:self.dtx_bounds percent:nil];
 }
 
-- (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent {
-  [self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
-}
-
-- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
+- (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(NSNumber *)percent {
 	[self.dtx_view dtx_assertVisibleAtRect:rect percent:percent];
 }
 
@@ -169,14 +165,25 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return YES;
 }
 
-- (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
-						error:(NSError* __strong __nullable * __nullable)error {
-  return YES;
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point
+{
+	return YES;
 }
 
-- (void)dtx_assertHittable {}
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error
+{
+	return YES;
+}
 
-- (void)dtx_assertHittableAtPoint:(CGPoint)point {}
+- (void)dtx_assertHittable
+{
+	
+}
+
+- (void)dtx_assertHittableAtPoint:(CGPoint)point
+{
+	
+}
 
 - (NSString *)dtx_text
 {
@@ -260,7 +267,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		{
 			return;
 		}
-
+		
 		if([key isEqualToString:@"dtx_text"])
 		{
 			rv[@"text"] = obj;
@@ -372,9 +379,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return rv;
 }
 
-- (NSDictionary<NSString *, id> *)dtx_elementDebugAttributes
+- (NSDictionary<NSString *,id> *)dtx_elementDebugAttributes
 {
-	NSMutableDictionary<NSString *, id> *rv = [NSMutableDictionary new];
+	NSMutableDictionary* rv = [NSMutableDictionary new];
 	[rv addEntriesFromDictionary:NSObject.dtx_genericElementDebugAttributes];
 	
 	rv[@"elementAttributes"] = [self dtx_attributes];

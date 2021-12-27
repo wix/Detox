@@ -21,7 +21,6 @@ import LaunchArgsScreen from './LaunchArgsScreen';
 import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
-import OverlayScreen from './OverlayScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
@@ -53,7 +52,6 @@ export {
   LaunchArgsScreen,
   LaunchNotificationScreen,
   DeviceScreen,
-  OverlayScreen,
   ElementScreenshotScreen,
   WebViewScreen,
   VirtualizedListStressScreen,

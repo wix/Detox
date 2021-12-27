@@ -213,7 +213,13 @@ class Element : NSObject {
 	}
 	
 	func isHittable() throws -> Bool {
-		return view.dtx_isHittable
+		var error: NSError? = nil
+		let rv = view.dtx_isHittable(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)
+		if let error = error {
+			throw error
+		}
+		
+		return rv
 	}
 	
 	func takeScreenshot(fileName: String?) -> [String : Any] {

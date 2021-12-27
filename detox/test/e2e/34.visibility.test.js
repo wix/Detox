@@ -1,10 +1,13 @@
 describe('visibility expectation', () => {
-  let halfVisibleElement;
-
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('Visibility Expectation')).tap();
-    halfVisibleElement = await element(by.id('halfVisible'));
+  });
+
+  let halfVisibleElement;
+
+  beforeEach(() => {
+    halfVisibleElement = element(by.id('halfVisible'));
   });
 
   it(`should be truthy when at least 50% visibility is required`, async () => {
