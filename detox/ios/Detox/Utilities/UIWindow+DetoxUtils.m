@@ -7,8 +7,10 @@
 //
 
 #import "UIWindow+DetoxUtils.h"
-#import "NSObject+DetoxUtils.h"
+
 #import "DTXAppleInternals.h"
+#import "NSObject+DetoxUtils.h"
+#import "UIView+DetoxUtils.h"
 
 extern NSArray* DTXChildElements(id element);
 
@@ -136,17 +138,14 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 @implementation UIWindow (DetoxUtils)
 
-+ (UIWindow*)dtx_keyWindow
-{
-    UIWindow *foundWindow = nil;
-    NSArray *windows = [[UIApplication sharedApplication]windows];
-    for (UIWindow *window in windows) {
-        if (window.isKeyWindow) {
-            foundWindow = window;
-            break;
-        }
-    }
-    return foundWindow;
++ (UIWindow*)dtx_keyWindow {
+  NSArray *windows = [[UIApplication sharedApplication]windows];
+  for (UIWindow *window in windows) {
+	  if (window.isKeyWindow) {
+		  return window;
+	  }
+  }
+  return nil;
 }
 
 + (id)dtx_keyWindowScene
@@ -222,6 +221,40 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 	CGRect frame = self.frame;
 	
 	return [NSString stringWithFormat:@"<%@: %p; frame = (%@ %@; %@ %@);>", self.class, self, @(frame.origin.x), @(frame.origin.y), @(frame.size.width), @(frame.size.height)];
+}
+
++ (nullable UIWindow *)dtx_topMostWindowAtPoint:(CGPoint)point {
+  NSArray<UIWindow *> *windows = UIApplication.sharedApplication.windows;
+
+  NSArray<UIWindow *> *visibleWindowsAtPoint = [windows
+    filteredArrayUsingPredicate:[NSPredicate
+	predicateWithBlock:^BOOL(UIWindow *window, NSDictionary<NSString *, id> * _Nullable __unused bindings) {
+	  if (!CGRectContainsPoint(window.frame, point)) {
+		return NO;
+	  }
+
+	  if (![window isVisibleAroundPoint:point]) {
+		return NO;
+	  }
+
+	  UIView * _Nullable hitten = [window hitTest:point withEvent:nil];
+	  if (!hitten) {
+		// The point lies completely outside the windos's hierarchy.
+		return NO;
+	  }
+
+	  return YES;
+	}]];
+
+  if (!visibleWindowsAtPoint) {
+	return nil;
+  }
+
+  return [[visibleWindowsAtPoint
+	sortedArrayUsingComparator:^NSComparisonResult(UIWindow *window1, UIWindow *window2) {
+	  return window1.windowLevel - window2.windowLevel;
+	}]
+	lastObject];
 }
 
 @end
