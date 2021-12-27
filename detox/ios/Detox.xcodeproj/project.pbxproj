@@ -112,6 +112,8 @@
 		6062B5E62720323700CBDBF0 /* DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6062B5E02720323700CBDBF0 /* DTXAddressInfo.mm */; };
 		60C1961A271F11C4000172DD /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C19618271F11C4000172DD /* fishhook.h */; };
 		60C1961B271F11C4000172DD /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 60C19619271F11C4000172DD /* fishhook.c */; };
+		60E149C72759038F00519EE4 /* UIResponder+First.h in Headers */ = {isa = PBXBuildFile; fileRef = 60E149C52759038F00519EE4 /* UIResponder+First.h */; };
+		60E149C82759038F00519EE4 /* UIResponder+First.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E149C62759038F00519EE4 /* UIResponder+First.m */; };
 		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
 /* End PBXBuildFile section */
@@ -299,6 +301,8 @@
 		6062B5E02720323700CBDBF0 /* DTXAddressInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DTXAddressInfo.mm; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXAddressInfo.mm; sourceTree = SOURCE_ROOT; };
 		60C19618271F11C4000172DD /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = DetoxSync/DetoxSync/fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		60C19619271F11C4000172DD /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = DetoxSync/DetoxSync/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
+		60E149C52759038F00519EE4 /* UIResponder+First.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIResponder+First.h"; sourceTree = "<group>"; };
+		60E149C62759038F00519EE4 /* UIResponder+First.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+First.m"; sourceTree = "<group>"; };
 		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
 		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -525,6 +529,8 @@
 				395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */,
 				AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */,
 				AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */,
+				60E149C52759038F00519EE4 /* UIResponder+First.h */,
+				60E149C62759038F00519EE4 /* UIResponder+First.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -601,6 +607,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60E149C72759038F00519EE4 /* UIResponder+First.h in Headers */,
 				3947679C1DBF985400D72256 /* Detox.h in Headers */,
 				39CA978C245B13CB00A7FC43 /* UIDevice+DetoxActions.h in Headers */,
 				3980D11C2448B52C004812DD /* DTXSyntheticEvents.h in Headers */,
@@ -828,6 +835,7 @@
 				396D455725238BCE0096E7FA /* UIImage+DetoxUtils.m in Sources */,
 				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
 				39EECB7D24C0A5AF009C3364 /* NSThread+DetoxUtils.m in Sources */,
+				60E149C82759038F00519EE4 /* UIResponder+First.m in Sources */,
 				390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */,
 				3980D158244C45EA004812DD /* Modifier.swift in Sources */,
 				39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */,

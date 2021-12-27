@@ -215,8 +215,8 @@ describe('Attributes', () => {
 
         const innerViews = attributesArray.filter(a => a.identifier);
         expect(innerViews.length).toBe(2);
-        expect(innerViews[0]).toMatchObject({ ...viewShape, hittable: true });
-        expect(innerViews[1]).toMatchObject({ ...viewShape, hittable: false });
+        expect(innerViews[0]).toMatchObject({ ...viewShape });
+        expect(innerViews[1]).toMatchObject({ ...viewShape });
       });
     });
 
