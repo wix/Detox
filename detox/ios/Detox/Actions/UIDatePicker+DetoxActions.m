@@ -13,7 +13,7 @@
 
 - (void)dtx_adjustToDate:(NSDate*)date
 {
-	[self dtx_assertHittable];
+	[self dtx_assertVisible];
 	
 	NSDate* previousDate = self.date;
 	
