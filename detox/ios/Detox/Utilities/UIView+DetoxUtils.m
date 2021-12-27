@@ -349,11 +349,6 @@ DTX_DIRECT_MEMBERS
 #pragma mark - Check Hitability
 
 - (BOOL)dtx_isHittable {
-  // TODO: This workaround should be removed (`sleepForTimeInterval`).
-  // It was added because DetoxSync appears to ignore UI view controller transitions to be completed
-  // before the next action is taking place.
-  [NSThread sleepForTimeInterval:0.5];
-
   CGPoint point = [self findVisiblePoint];
   return [self dtx_isHittableAtPoint:point error:nil];
 }
