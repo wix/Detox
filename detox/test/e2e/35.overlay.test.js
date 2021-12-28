@@ -1,6 +1,7 @@
 const { expectToThrow } = require('./utils/custom-expects');
 
 describe(':ios: Overlay', () => {
+  let showAlertButton;
   let showOverlayButton;
   let verticalScrollView;
 
@@ -13,25 +14,66 @@ describe(':ios: Overlay', () => {
     showOverlayButton = await element(by.id('ShowOverlayButton'));
     await expect(showOverlayButton).toBeVisible();
 
+    showAlertButton = await element(by.id('ShowDismissibleAlertButton'));
+    await expect(showAlertButton).toBeVisible();
+
     verticalScrollView = await element(by.id('VerticalScrollView'));
   });
 
-  describe('button', () => {
-    it('should not be hittable when overlay is shown', async () => {
-      await showOverlayButton.tap();
-      await expectToThrow(() => showOverlayButton.tap());
-    });
-  });
-
-  describe('scroll view', () => {
-    it('should be scrollable when overlay is not shown', async () => {
+  describe('default behaviour', () => {
+    it('should be able to scroll elements', async () => {
       await verticalScrollView.scrollTo('bottom');
       await expect(showOverlayButton).not.toBeVisible();
     });
+  });
 
-    it('should not be scrollable when overlay is shown', async () => {
-      await showOverlayButton.tap();
-      await expectToThrow(() => verticalScrollView.scrollTo('bottom'));
+  describe('alert window', () => {
+    let dismissAlertButton;
+
+    beforeEach(async () => {
+      await showAlertButton.tap();
+      dismissAlertButton = await element(by.text('Dismiss'));
+    });
+
+    describe('when shown', () => {
+      it('should not be able to tap on elements', async () => {
+        await expectToThrow(() => showOverlayButton.tap());
+      });
+
+      it('should not be able to scroll elements', async () => {
+        await expectToThrow(() => verticalScrollView.scrollTo('bottom'));
+      });
+    });
+
+    describe('after dismiss', () => {
+      beforeEach(async () => {
+        await dismissAlertButton.tap();
+      });
+
+      it('should be able to tap on elements', async () => {
+        await showOverlayButton.tap();
+      });
+
+      it('should be able to scroll elements', async () => {
+        await verticalScrollView.scrollTo('bottom');
+        await expect(showOverlayButton).not.toBeVisible();
+      });
+    });
+  });
+
+  describe('overlay window', () => {
+    describe('when shown', () => {
+      beforeEach(async () => {
+        await showOverlayButton.tap();
+      });
+
+      it('should not be able to tap on elements', async () => {
+        await expectToThrow(() => showOverlayButton.tap());
+      });
+
+      it('should not be able to scroll elements', async () => {
+        await expectToThrow(() => verticalScrollView.scrollTo('bottom'));
+      });
     });
   });
 });
