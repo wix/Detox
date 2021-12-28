@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Text, NativeModules, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Text, NativeModules, Dimensions, Alert } from 'react-native';
 
 const { NativeModule } = NativeModules;
 
@@ -7,6 +7,23 @@ export default class OverlayScreen extends Component {
   render() {
     return (
       <ScrollView style={styles.container} testID='VerticalScrollView'>
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert('Dismiss Alert?', 'Are you sure you want to dismiss the alert?', [
+              {
+                text: 'Dismiss',
+                style: 'cancel',
+              }
+            ])
+          }}
+          style={styles.button}
+          testID='ShowDismissibleAlertButton'
+        >
+          <Text style={styles.text}>
+            Show Alert
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => NativeModule.presentOverlayWindow()} style={styles.button} testID='ShowOverlayButton'>
           <Text style={styles.text}>Show Overlay</Text>
         </TouchableOpacity>
