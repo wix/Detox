@@ -125,12 +125,10 @@ class ADB {
   async remoteInstall(deviceId, path) {
     const apiLvl = await this.apiLevel(deviceId);
 
-    if (apiLvl >= 23) {
-      return this.shell(deviceId, `pm install -r -g -t ${path}`);
-    } else {
-      // NOTICE: MUST be in `-rg` form instead of individual `-g` form when API < 23
-      return this.shell(deviceId, `pm install -rg ${path}`);
-    }
+    const command = (apiLvl >= 23)
+      ? `pm install -r -g -t ${path}`
+      : `pm install -rg ${path}`; // NOTICE: MUST be in `-rg` form instead of individual `-g` form when API < 23
+    return this.shell(deviceId, command, { timeout: 45000, retries: 3 });
   }
 
   async uninstall(deviceId, appId) {
@@ -274,7 +272,7 @@ class ADB {
   }
 
   async push(deviceId, src, dst) {
-    await this.adbCmd(deviceId, `push "${src}" "${dst}"`);
+    await this.adbCmd(deviceId, `push "${src}" "${dst}"`, { timeout: 45000, retries: 3 });
   }
 
   async pull(deviceId, src, dst = '') {

@@ -150,7 +150,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
-      expect.anything());
+      expect.objectContaining({ timeout: 45000, retries: 3 }));
   });
 
   it('remote-install api 22', async () => {
@@ -160,7 +160,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator shell "pm install -rg ${binaryPath}"`),
-      expect.anything());
+      expect.objectContaining({ timeout: 45000, retries: 3 }));
   });
 
   it('remote-install api 23', async () => {
@@ -170,7 +170,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
-      expect.anything());
+      expect.objectContaining({ timeout: 45000, retries: 3 }));
   });
 
   it('global text-typing', async () => {
