@@ -93,6 +93,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
 
    > - With `;android-28;`, we assumed SDK 28 here, but other APIs are supported just the same.
    > - The `;default;` part replaces `;google_apis;`, which is the default, and is what matters here.
+   > - If you are running on a M1 you must install a arm64 architecture i.e. `system-images;android-28;default;arm64-v8a`
 
 1. Create an emulator (i.e. AVD - Android Virtual Device):
 
