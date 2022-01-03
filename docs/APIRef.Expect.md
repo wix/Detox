@@ -67,6 +67,8 @@ await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
 
 Expects the element to have the specified label as its accessibility label (iOS) or content description (Android). In React Native, this corresponds to the value in the [`accessibilityLabel`](https://facebook.github.io/react-native/docs/view.html#accessibilitylabel) prop.
 
+Note that there is an inconsistency between the implementation for accessibility between android and ios. On ios if a View has no accessibilityLabel explicitly defined, then it defaults to having a concatenation of the accessibilityLabels of the child Views. On android, the same View would have no accessibilityLabel at all. See [this](https://github.com/facebook/react-native/issues/32826) issue for details.
+
 ```js
 await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
 ```
