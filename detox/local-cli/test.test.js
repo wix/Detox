@@ -295,6 +295,7 @@ describe('CLI', () => {
         expect(cliCall().env).toEqual({
           DETOX_START_TIMESTAMP: expect.any(Number),
           DETOX_CONFIG_PATH: expect.any(String),
+          DETOX_MAX_WORKERS: expect.any(Number),
           DETOX_REPORT_SPECS: true,
           DETOX_USE_CUSTOM_LOGGER: true,
         });
@@ -314,6 +315,7 @@ describe('CLI', () => {
 
       test('should put default environment variables (integration test)', () => {
         expect(cliCall().env).toEqual({
+          DETOX_MAX_WORKERS: expect.any(Number),
           DETOX_START_TIMESTAMP: expect.any(Number),
           DETOX_CONFIG_PATH: expect.any(String),
           DETOX_REPORT_SPECS: true,
