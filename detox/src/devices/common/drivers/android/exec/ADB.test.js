@@ -3,30 +3,13 @@ describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
-  function aChildProcess() {
-    const instance = {
-      stdout: {
-        setEncoding: jest.fn(),
-        on: jest.fn(),
-      },
-      stderr: {
-        setEncoding: jest.fn(),
-        on: jest.fn(),
-      },
-      on: jest.fn(),
-      _mock_: {
-        onCloseCallback: () => instance.on.mock.calls[0][1],
-      },
-    };
-    return instance;
-  }
-
   let ADB;
   let adb;
   let DeviceHandle;
   let EmulatorHandle;
   let exec;
   let spawn;
+  let execSpawned;
 
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
@@ -46,9 +29,13 @@ describe('ADB', () => {
     jest.mock('../../../../../utils/exec', () => ({
       execWithRetriesAndLogs: jest.fn().mockReturnValue({ stdout: '' }),
       spawnAndLog: jest.fn(),
+      execSpawned: jest.fn().mockReturnValue(''),
     }));
-    exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
-    spawn = require('../../../../../utils/exec').spawnAndLog;
+
+    const execUtils = require('../../../../../utils/exec');
+    exec = execUtils.execWithRetriesAndLogs;
+    spawn = execUtils.spawnAndLog;
+    execSpawned = execUtils.execSpawned;
 
     ADB = require('./ADB');
     adb = new ADB();
@@ -101,9 +88,9 @@ describe('ADB', () => {
   it(`install`, async () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
-    expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 shell "getprop ro.build.version.sdk"'),
-      { retries: 5 });
+    expect(execSpawned).toHaveBeenCalledWith(
+      expect.stringContaining('adb -s emulator-5556 shell getprop ro.build.version.sdk'),
+      expect.objectContaining({ retries: 5 }));
   });
 
   it(`install api 22`, async () => {
@@ -131,7 +118,7 @@ describe('ADB', () => {
 
   it(`terminate`, async () => {
     await adb.terminate('com.package');
-    expect(exec).toHaveBeenCalledTimes(1);
+    expect(execSpawned).toHaveBeenCalledTimes(1);
   });
 
   it(`sets location both with commas and dots due to the locale issue`, async () => {
@@ -161,39 +148,19 @@ describe('ADB', () => {
     expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
   });
 
-  it('push (success)', async () => {
+  it('push', async () => {
     const sourceFile = '/mock-source/file.xyz';
     const destFile = '/sdcard/file.abc';
-    const childProcess = aChildProcess();
-    spawn.mockReturnValue({ childProcess });
+    const spawnPromise = Promise.resolve();
+    spawn.mockReturnValue(spawnPromise);
 
     const promise = adb.push(deviceId, sourceFile, destFile);
 
     expect(spawn).toHaveBeenCalledWith(
       adbBinPath,
       ['-s', deviceId, 'push', sourceFile, destFile],
-      expect.any(Object));
-    expect(childProcess.on).toHaveBeenCalledWith('close', expect.any(Function));
-
-    childProcess._mock_.onCloseCallback()(0);
-
-    await expect(promise).resolves.toBeUndefined();
-  });
-
-  it('push (failure)', async () => {
-    const sourceFile = '/mock-source/file.xyz';
-    const destFile = '/sdcard/file.abc';
-    const exitCode = 1337;
-    const childProcess = aChildProcess();
-    spawn.mockReturnValue({ childProcess });
-
-    const promise = adb.push(deviceId, sourceFile, destFile);
-
-    expect(childProcess.on).toHaveBeenCalledWith('close', expect.any(Function));
-
-    childProcess._mock_.onCloseCallback()(exitCode);
-
-    await expect(promise).rejects.toEqual(expect.stringContaining(`code ${exitCode}`));
+      expect.objectContaining({ silent: false }));
+    expect(promise).toEqual(spawnPromise);
   });
 
   it('remote-install api 22', async () => {
@@ -201,8 +168,8 @@ describe('ADB', () => {
     const binaryPath = '/mock-path/filename.mock';
     await adb.remoteInstall(deviceId, binaryPath);
 
-    expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install -rg ${binaryPath}"`),
+    expect(execSpawned).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell pm install -rg ${binaryPath}`),
       expect.anything());
   });
 
@@ -211,8 +178,8 @@ describe('ADB', () => {
     const binaryPath = '/mock-path/filename.mock';
     await adb.remoteInstall(deviceId, binaryPath);
 
-    expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
+    expect(execSpawned).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell pm install -r -g -t ${binaryPath}`),
       expect.anything());
   });
 
@@ -220,8 +187,8 @@ describe('ADB', () => {
     const text = 'some-text-with spaces';
     const expectedText = 'some-text-with%sspaces';
     await adb.typeText(deviceId, text);
-    expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "input text ${expectedText}"`),
+    expect(execSpawned).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell input text ${expectedText}`),
       expect.anything());
   });
 
@@ -348,17 +315,17 @@ describe('ADB', () => {
   describe('animation disabling', () => {
     it('should disable animator (e.g. ObjectAnimator) animations', async () => {
       await adb.disableAndroidAnimations();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global animator_duration_scale 0"`, { retries: 1 });
+      expect(execSpawned).toHaveBeenCalledWith(`${adbBinPath}  shell settings put global animator_duration_scale 0`, expect.objectContaining({ retries: 1 }));
     });
 
     it('should disable window animations', async () => {
       await adb.disableAndroidAnimations();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global window_animation_scale 0"`, { retries: 1 });
+      expect(execSpawned).toHaveBeenCalledWith(`${adbBinPath}  shell settings put global window_animation_scale 0`, expect.objectContaining({ retries: 1 }));
     });
 
     it('should disable transition (e.g. activity launch) animations', async () => {
       await adb.disableAndroidAnimations();
-      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global transition_animation_scale 0"`, { retries: 1 });
+      expect(execSpawned).toHaveBeenCalledWith(`${adbBinPath}  shell settings put global transition_animation_scale 0`, expect.objectContaining({ retries: 1 }));
     });
   });
 });

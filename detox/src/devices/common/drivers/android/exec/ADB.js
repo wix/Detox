@@ -3,9 +3,8 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { getAdbPath } = require('../../../../../utils/environment');
-const { execWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/exec');
+const { execWithRetriesAndLogs, spawnAndLog, execSpawned } = require('../../../../../utils/exec');
 const { escape } = require('../../../../../utils/pipeCommands');
-const logger = require('../../../../../utils/logger').child({ __filename });
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
@@ -275,20 +274,7 @@ class ADB {
   }
 
   async push(deviceId, src, dst) {
-    return new Promise((resolve, reject) => {
-      const { childProcess } = this.spawn(deviceId, ['push', src, dst], { /* timeout: 30000 */});
-      childProcess.stdout.setEncoding('utf8');
-      childProcess.stderr.setEncoding('utf8');
-      childProcess.stdout.on('data', (data) => logger.info({ event: 'ADB_PUSH' }, data));
-      childProcess.stderr.on('data', (data) => logger.error({ event: 'ADB_PUSH' }, data));
-      childProcess.on('close', (code) => {
-        if (code > 0) {
-          reject(`Exited with code ${code}`);
-        } else {
-          resolve();
-        }
-      });
-    });
+    return this.spawn(deviceId, ['push', src, dst], { silent: false, /* timeout: 30000 */ });
   }
 
   async pull(deviceId, src, dst = '') {
@@ -327,7 +313,15 @@ class ADB {
   }
 
   async shell(deviceId, cmd, options) {
-    return (await this.adbCmd(deviceId, `shell "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
+    const _options = {
+      ...options,
+      silent: false,
+    };
+    const shellCommand = `shell ${cmd}`;
+    return (await this.adbCmdSpawned(deviceId, shellCommand, _options)).trim();
+    //// const args = escape.inQuotedString(cmd).split(/\s+/);
+    // const args = cmd.split(/\s+/);
+    // return this.spawnWithResult(deviceId, ['shell', ...args], { ...options, silent: false });
   }
 
   async emu(deviceId, cmd, options) {
@@ -363,6 +357,19 @@ class ADB {
   spawn(deviceId, params, spawnOptions) {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
+  }
+
+  /**
+   * @returns {Promise<String>}
+   */
+  async adbCmdSpawned(deviceId, params, options) {
+    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
+    const command = `${this.adbBin} ${serial} ${params}`;
+    const _options = {
+      retries: 1,
+      ...options,
+    };
+    return execSpawned(command, _options);
   }
 }
 

@@ -142,17 +142,8 @@ function spawnAndLog(command, flags, options) {
   }
 
   if (!silent) {
-    stdout && stdout.on('data', (chunk) => {
-      const line = chunk.toString();
-      const loglevel = inferLogLevel(line, logLevelPatterns) || 'trace';
-      log[loglevel]({ stdout: true, event: 'SPAWN_STDOUT' }, line);
-    });
-
-    stderr && stderr.on('data', (chunk) => {
-      const line = chunk.toString();
-      const loglevel = inferLogLevel(line, logLevelPatterns) || 'error';
-      log[loglevel]({ stderr: true, event: 'SPAWN_STDERR' }, line);
-    });
+    stdout && stdout.on('data', _spawnStdoutLoggerFn(log, logLevelPatterns));
+    stderr && stderr.on('data', _spawnStderrLoggerFn(log, logLevelPatterns));
   }
 
   function onEnd(e) {
@@ -166,7 +157,56 @@ function spawnAndLog(command, flags, options) {
   return result;
 }
 
-function inferLogLevel(msg, patterns) {
+async function execSpawned(command, options) {
+  const flags = command.split(/\s+/);
+  const binary = flags.shift();
+  const {
+    retries = 9,
+    interval = 1000,
+    statusLogs = {},
+    ...spawnOptions
+  } = options;
+  const log = execLogger.child({ fn: 'execSpawned', command });
+
+  let result;
+  await retry({ retries, interval }, async (retryNumber, lastError) => {
+    if (statusLogs.trying) {
+      _logTrying(log, statusLogs.trying, retryNumber, lastError);
+    } else if (statusLogs.retrying) {
+      _logRetrying(log, command, retryNumber, lastError);
+    }
+    result = await _spawnAndLogWithResult(binary, flags, spawnOptions);
+  });
+
+  return result;
+}
+
+function _spawnAndLogWithResult(command, flags, options) {
+  return new Promise((resolve, reject) => {
+    let result = '';
+
+    const onFulfilled = () => resolve(result.trim());
+    const onRejected = (code) => reject(new Error(`Exited with code #${code}`));
+
+    spawnAndLog(command, flags, options)
+      .then(onFulfilled, onRejected)
+      .childProcess.stdout.on('data', (data) => result += data.toString());
+  });
+}
+
+const _spawnStdoutLoggerFn = (log, logLevelPatterns) => (chunk) => {
+  const line = chunk.toString();
+  const loglevel = _inferLogLevel(line, logLevelPatterns) || 'trace';
+  log[loglevel]({ stdout: true, event: 'SPAWN_STDOUT' }, line);
+};
+
+const _spawnStderrLoggerFn = (log, logLevelPatterns) => (chunk) => {
+  const line = chunk.toString();
+  const loglevel = _inferLogLevel(line, logLevelPatterns) || 'error';
+  log[loglevel]({ stderr: true, event: 'SPAWN_STDERR' }, line);
+};
+
+function _inferLogLevel(msg, patterns) {
   if (_.isEmpty(patterns)) {
     return;
   }
@@ -221,9 +261,11 @@ async function execAsync(command) {
   const result = await exec(command);
   return _.trim(result.stdout);
 }
+
 module.exports = {
   execWithRetriesAndLogs,
   spawnAndLog,
+  execSpawned,
   interruptProcess,
   execAsync
 };
