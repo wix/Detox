@@ -3,6 +3,24 @@ describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
+  function aChildProcess() {
+    const instance = {
+      stdout: {
+        setEncoding: jest.fn(),
+        on: jest.fn(),
+      },
+      stderr: {
+        setEncoding: jest.fn(),
+        on: jest.fn(),
+      },
+      on: jest.fn(),
+      _mock_: {
+        onCloseCallback: () => instance.on.mock.calls[0][1],
+      },
+    };
+    return instance;
+  }
+
   let ADB;
   let adb;
   let DeviceHandle;
@@ -143,14 +161,39 @@ describe('ADB', () => {
     expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
   });
 
-  it('push', async () => {
+  it('push (success)', async () => {
     const sourceFile = '/mock-source/file.xyz';
     const destFile = '/sdcard/file.abc';
-    await adb.push(deviceId, sourceFile, destFile);
+    const childProcess = aChildProcess();
+    spawn.mockReturnValue({ childProcess });
 
-    expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
-      expect.anything());
+    const promise = adb.push(deviceId, sourceFile, destFile);
+
+    expect(spawn).toHaveBeenCalledWith(
+      adbBinPath,
+      ['-s', deviceId, 'push', sourceFile, destFile],
+      expect.any(Object));
+    expect(childProcess.on).toHaveBeenCalledWith('close', expect.any(Function));
+
+    childProcess._mock_.onCloseCallback()(0);
+
+    await expect(promise).resolves.toBeUndefined();
+  });
+
+  it('push (failure)', async () => {
+    const sourceFile = '/mock-source/file.xyz';
+    const destFile = '/sdcard/file.abc';
+    const exitCode = 1337;
+    const childProcess = aChildProcess();
+    spawn.mockReturnValue({ childProcess });
+
+    const promise = adb.push(deviceId, sourceFile, destFile);
+
+    expect(childProcess.on).toHaveBeenCalledWith('close', expect.any(Function));
+
+    childProcess._mock_.onCloseCallback()(exitCode);
+
+    await expect(promise).rejects.toEqual(expect.stringContaining(`code ${exitCode}`));
   });
 
   it('remote-install api 22', async () => {
