@@ -29,22 +29,28 @@ What needs to be verified is that `java` is in-path and that the output contains
 java version "11.x.x"
 ...
 ```
+or, if you have [openjdk](https://techoral.com/blog/openjdk-developers-guide.html) installed:
+```sh
+openjdk version "11.0.2" 2019-01-1
+...
+```
 
-Namely, that the version is `11.x.x`.
+**Namely, that the version is `11.x.x`**.
 
 > Note: Do not be confused by the Java version potentially used by your browsers, etc. For `Detox`, what the command-line sees is what matters.
 
-On macOS, in particular, java comes from both the OS _and_ possibly other installers such as `homebrew`, so you are more likely to go into a mess: see [this Stack Overflow post](https://stackoverflow.com/questions/52524112/how-do-i-install-java-on-mac-osx-allowing-version-switching/52524114#52524114).
-
 ---
 
-If `java` isn’t in your path or not even installed (i.e. the command failed altogether), try [this guide](https://www.java.com/en/download/help/path.xml).
+If `java -version` yields an error, it is likely that `java` is either not in your path or not even installed at all. To try to understand which of the two is true, use [this guide](https://www.java.com/en/download/help/path.xml).
 
-If otherwise the version is simply wrong, try these refs for Macs; consider employing the `JAVA_HOME` variable to get things to work right:
+If otherwise the version is simply wrong, try these course of actions:
 
-- <https://java.com/en/download/faq/java_mac.xml#version>
-- <https://www.java.com/en/download/help/version_manual.xml>
-- <https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd>
+- On MacOS, in particular, Java comes from both the OS _and_ possibly other installers such as `homebrew`. That can really get things tangled up. To mitigate:
+  - Use one of the options suggested in this [Stack Overflow post](https://stackoverflow.com/questions/52524112/how-do-i-install-java-on-mac-osx-allowing-version-switching/52524114#52524114).
+  - Install OpenJDK 11 on top of the existing versions ([how to check?](https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd)): https://techoral.com/blog/java/install-openjdk-11-on-mac.html. Consider employing the `JAVA_HOME` variable to get things to work right. _Note: This is more suitable if your environment is fairly clean, and does not contain versions from 3rd-party installers (e.g. `homebrew`)._
+- Use these refs, which might be useful:
+  - <https://java.com/en/download/faq/java_mac.xml#version>
+  - <https://www.java.com/en/download/help/version_manual.xml>
 
 ## Android SDK
 
