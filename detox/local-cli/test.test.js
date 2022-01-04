@@ -496,6 +496,7 @@ describe('CLI', () => {
       test.each([['-w'], ['--workers']])('%s <value> should be passed as CLI argument', async (__workers) => {
         await run(`${__workers} 2`);
         expect(cliCall().command).toContain('--maxWorkers 2');
+        expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_MAX_WORKERS: 2 }));
       });
 
       test.each([['-w'], ['--workers']])('%s <value> should be replaced with --maxWorkers <value>', async (__workers) => {

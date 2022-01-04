@@ -169,13 +169,13 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
 async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
+  const maxWorkers = cliConfig.workers || (runnerConfig.skipLegacyWorkersInjection ? undefined : 1);
 
   const argv = _.omitBy({
     color: !cliConfig.noColor && undefined,
     config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
     testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
-    maxWorkers: cliConfig.workers || (runnerConfig.skipLegacyWorkersInjection ? undefined : 1),
-
+    maxWorkers,
     ...passthrough,
   }, _.isUndefined);
 
@@ -212,6 +212,7 @@ async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConf
       DETOX_START_TIMESTAMP: Date.now(),
       DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
       DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
+      DETOX_MAX_WORKERS: maxWorkers,
     }, _.isUndefined),
 
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
