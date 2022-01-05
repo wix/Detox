@@ -13,6 +13,8 @@ pushd examples/demo-react-native
 run_f "npm run build:android-release"
 popd
 
+export ADB_TRACE=all
+
 # this needs to go first because it preloads all the emulators we need,
 # as it runs tests in parallel. Also, it installs test-butler on them -
 # even for forward usage.
