@@ -5,6 +5,11 @@
   "scripts": {},
   "devDependencies": {
     "detox": "^19.4.2",
+  "version": "19.4.2-smoke.0",
+  "private": true,
+  "scripts": {},
+  "devDependencies": {
+    "detox": "^19.4.2-smoke.0",
     "mocha": "6.x.x"
   },
   "detox": {
