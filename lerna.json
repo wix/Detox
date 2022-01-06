@@ -13,7 +13,7 @@
     "generation",
     "."
   ],
-  "version": "19.4.2-smoke.0",
+  "version": "19.4.2-smoke.1",
   "npmClient": "npm",
   "command": {
     "publish": {
