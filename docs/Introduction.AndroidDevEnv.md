@@ -29,7 +29,9 @@ What needs to be verified is that `java` is in-path and that the output contains
 java version "11.x.x"
 ...
 ```
+
 or, if you have [openjdk](https://techoral.com/blog/openjdk-developers-guide.html) installed:
+
 ```sh
 openjdk version "11.0.2" 2019-01-1
 ...
@@ -47,7 +49,7 @@ If otherwise the version is simply wrong, try these course of actions:
 
 - On MacOS, in particular, Java comes from both the OS _and_ possibly other installers such as `homebrew`. That can really get things tangled up. To mitigate:
   - Use one of the options suggested in this [Stack Overflow post](https://stackoverflow.com/questions/52524112/how-do-i-install-java-on-mac-osx-allowing-version-switching/52524114#52524114).
-  - Install OpenJDK 11 on top of the existing versions ([how to check?](https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd)): https://techoral.com/blog/java/install-openjdk-11-on-mac.html. Consider employing the `JAVA_HOME` variable to get things to work right. _Note: This is more suitable if your environment is fairly clean, and does not contain versions from 3rd-party installers (e.g. `homebrew`)._
+  - Install OpenJDK 11 on top of the existing versions ([how to check?](https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd)): <https://techoral.com/blog/java/install-openjdk-11-on-mac.html>. Consider employing the `JAVA_HOME` variable to get things to work right. _Note: This is more suitable if your environment is fairly clean, and does not contain versions from 3rd-party installers (e.g. `homebrew`)._
 - Use these refs, which might be useful:
   - <https://java.com/en/download/faq/java_mac.xml#version>
   - <https://www.java.com/en/download/help/version_manual.xml>
