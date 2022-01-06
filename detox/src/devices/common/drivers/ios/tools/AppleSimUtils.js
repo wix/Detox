@@ -344,7 +344,7 @@ class AppleSimUtils {
     }
 
     const cmdArgs = quote(_.flatten(this._mergeLaunchArgs(launchArgs, languageAndLocale)));
-    let launchBin = `SIMCTL_CHILD_NSZombieEnabled=YES SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
+    let launchBin = `SIMCTL_CHILD_GULGeneratedClassDisposeDisabled=YES SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
       `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
 
     const result = await exec.execWithRetriesAndLogs(launchBin, {
