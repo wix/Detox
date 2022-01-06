@@ -1,5 +1,6 @@
 // @ts-nocheck
 const childProcess = require('child_process');
+
 const { exec, spawn } = require('child-process-promise');
 const _ = require('lodash');
 
@@ -181,18 +182,19 @@ async function execSpawned(binary, flags, options) { // TODO revert this to a sp
   return result;
 }
 
-function _spawnAndLogWithResult(command, flags, options) {
-  return new Promise((resolve, reject) => {
-    let result = '';
-
-    const onFulfilled = () => resolve(result.trim());
-    const onRejected = (code) => reject(new Error(`Exited with code #${code}`));
-
-    spawnAndLog(command, flags, options)
-      .then(onFulfilled, onRejected)
-      .childProcess.stdout.on('data', (data) => result += data.toString());
-  });
-}
+// function _spawnAndLogWithResult(command, flags, options) {
+//   return new Promise((resolve, reject) => {
+//     let result = '';
+//
+//     const onFulfilled = () => resolve(result.trim());
+//     const onRejected = (code) => reject(new Error(`Exited with code #${code}`));
+//
+//     spawnAndLog(command, flags, options)
+//       .then(onFulfilled, onRejected)
+//       .childProcess.stdout.on('data', (data) => result += data.toString());
+//   });
+// }
+//
 
 function _execSpawned(command, flags, options) {
   const cmd = _joinCommandAndFlags(command, flags);
