@@ -86,11 +86,12 @@ describe('ADB', () => {
   });
 
   it(`install`, async () => {
-    await adb.install('emulator-5556', 'path inside "quotes" to/app');
+    await adb.install(deviceId, 'path inside "quotes" to/app');
 
     expect(execSpawned).toHaveBeenCalledWith(
-      expect.stringContaining('adb -s emulator-5556 shell getprop ro.build.version.sdk'),
-      expect.objectContaining({ retries: 5 }));
+      adbBinPath,
+      ['-s', deviceId, 'shell', 'getprop', 'ro.build.version.sdk'],
+      expect.objectContaining({ retries: 5, silent: false }));
   });
 
   it(`install api 22`, async () => {
@@ -169,8 +170,9 @@ describe('ADB', () => {
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(execSpawned).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell pm install -rg ${binaryPath}`),
-      expect.anything());
+      adbBinPath,
+      ['-s', deviceId, 'shell', 'pm', 'install', '-rg', binaryPath],
+      expect.objectContaining({ retries: 3, silent: false }));
   });
 
   it('remote-install api 23', async () => {
@@ -179,17 +181,20 @@ describe('ADB', () => {
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(execSpawned).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell pm install -r -g -t ${binaryPath}`),
-      expect.anything());
+      adbBinPath,
+      ['-s', deviceId, 'shell', 'pm', 'install', '-r', '-g', '-t', binaryPath],
+      expect.objectContaining({ retries: 3, silent: false }));
   });
 
   it('global text-typing', async () => {
     const text = 'some-text-with spaces';
     const expectedText = 'some-text-with%sspaces';
     await adb.typeText(deviceId, text);
+
     expect(execSpawned).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell input text ${expectedText}`),
-      expect.anything());
+      adbBinPath,
+      ['-s', deviceId, 'shell', 'input', 'text', expectedText],
+      expect.objectContaining({ retries: 1, silent: false }));
   });
 
   describe('unlockScreen', () => {
@@ -314,18 +319,27 @@ describe('ADB', () => {
 
   describe('animation disabling', () => {
     it('should disable animator (e.g. ObjectAnimator) animations', async () => {
-      await adb.disableAndroidAnimations();
-      expect(execSpawned).toHaveBeenCalledWith(`${adbBinPath}  shell settings put global animator_duration_scale 0`, expect.objectContaining({ retries: 1 }));
+      await adb.disableAndroidAnimations(deviceId);
+      expect(execSpawned).toHaveBeenCalledWith(
+        adbBinPath,
+        ['-s', deviceId, 'shell', 'settings', 'put', 'global', 'animator_duration_scale', '0'],
+        expect.objectContaining({ retries: 1, silent: false }));
     });
 
     it('should disable window animations', async () => {
-      await adb.disableAndroidAnimations();
-      expect(execSpawned).toHaveBeenCalledWith(`${adbBinPath}  shell settings put global window_animation_scale 0`, expect.objectContaining({ retries: 1 }));
+      await adb.disableAndroidAnimations(deviceId);
+      expect(execSpawned).toHaveBeenCalledWith(
+        adbBinPath,
+        ['-s', deviceId, 'shell', 'settings', 'put', 'global', 'window_animation_scale', '0'],
+        expect.objectContaining({ retries: 1, silent: false }));
     });
 
     it('should disable transition (e.g. activity launch) animations', async () => {
-      await adb.disableAndroidAnimations();
-      expect(execSpawned).toHaveBeenCalledWith(`${adbBinPath}  shell settings put global transition_animation_scale 0`, expect.objectContaining({ retries: 1 }));
+      await adb.disableAndroidAnimations(deviceId);
+      expect(execSpawned).toHaveBeenCalledWith(
+        adbBinPath,
+        ['-s', deviceId, 'shell', 'settings', 'put', 'global', 'transition_animation_scale', '0'],
+        expect.objectContaining({ retries: 1, silent: false }));
     });
   });
 });

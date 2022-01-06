@@ -1,4 +1,5 @@
 // @ts-nocheck
+const childProcess = require('child_process');
 const { exec, spawn } = require('child-process-promise');
 const _ = require('lodash');
 
@@ -157,9 +158,8 @@ function spawnAndLog(command, flags, options) {
   return result;
 }
 
-async function execSpawned(command, options) {
-  const flags = command.split(/\s+/);
-  const binary = flags.shift();
+async function execSpawned(binary, flags, options) { // TODO revert this to a spawn-like signature (with explicit bin-path & args)
+  const command = _joinCommandAndFlags(binary, flags);
   const {
     retries = 9,
     interval = 1000,
@@ -175,7 +175,7 @@ async function execSpawned(command, options) {
     } else if (statusLogs.retrying) {
       _logRetrying(log, command, retryNumber, lastError);
     }
-    result = await _spawnAndLogWithResult(binary, flags, spawnOptions);
+    result = await _execSpawned(binary, flags, spawnOptions);
   });
 
   return result;
@@ -192,6 +192,43 @@ function _spawnAndLogWithResult(command, flags, options) {
       .then(onFulfilled, onRejected)
       .childProcess.stdout.on('data', (data) => result += data.toString());
   });
+}
+
+function _execSpawned(command, flags, options) {
+  const cmd = _joinCommandAndFlags(command, flags);
+
+  return new Promise((resolve, reject) => {
+    let result = '';
+
+    const cp = childProcess.spawn(command, flags, options);
+    const log = execLogger.child({ cmd, trackingId: cp.pid });
+    log.debug({ event: 'SPAWN_CMD' }, cmd);
+
+    cp.stdout.setEncoding('utf8');
+    cp.stderr.setEncoding('utf8');
+    cp.stdout.on('data', (data) => result += data);
+    cp.stdout.on('data', _spawnStdoutLoggerFn(log, undefined));
+    cp.stderr.on('data', _spawnStderrLoggerFn(log, undefined));
+
+    cp.on('error', (code) => reject(`${cmd}\nFailed to execute, exited with code #${code}`));
+    cp.on('exit', (code, signal) => {
+      cp.stdout.destroy();
+      cp.stderr.destroy();
+
+      if (signal !== null) {
+        log.debug({ event: 'SPAWN_END', signal }, `Command "${cmd}" killed by signal ${signal}`);
+        reject(`${cmd}\nKilled by signal ${signal}`);
+      } else if (code !== null && code !== 0) {
+        log.debug({ event: 'SPAWN_END', code }, `Command "${cmd}" failed with code #${code}`);
+        reject(`${cmd}\nExited with code #${code}`);
+      } else {
+        log.debug({ event: 'SPAWN_END', code: 0 }, cmd);
+        resolve(result);
+      }
+    });
+  });
+
+    // return spawnAndLog(command, flags, { ...options, capture: ['stdout', 'stderr'] });
 }
 
 const _spawnStdoutLoggerFn = (log, logLevelPatterns) => (chunk) => {
