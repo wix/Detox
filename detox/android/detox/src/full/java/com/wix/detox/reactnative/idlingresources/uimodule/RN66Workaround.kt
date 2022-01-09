@@ -19,7 +19,7 @@ class RN66Workaround {
     fun isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected: UIManagerModuleReflected): Boolean {
         var isStuckSwitchOperation = false
 
-        val rnVersion = ReactNativeInfo.rnVersion();
+        val rnVersion = ReactNativeInfo.rnVersion()
 
         if (rnVersion.minor >= 66 && uiManagerModuleReflected.getUIOpsCount() >= 1) {
             val nextUIOperation = uiManagerModuleReflected.getNextUIOpReflected()
