@@ -26,9 +26,9 @@ class DispatchCommandOperationReflected(val instance: Any?) {
             0
         }
 
-    val viewCommand: String?
+    val viewCommand
         get() = try {
-            Reflect.on(instance).field(FIELD_COMMAND).get<String>()
+            Reflect.on(instance).field(FIELD_COMMAND).get<Any>()
         } catch (e: ReflectException) {
             Log.e(DetoxLog.LOG_TAG, "failed to get $FIELD_COMMAND ", e)
             null
