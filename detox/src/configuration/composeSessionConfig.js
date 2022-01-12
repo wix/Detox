@@ -42,7 +42,6 @@ async function composeSessionConfig({ errorComposer, cliConfig, globalConfig, lo
 
   return {
     autoStart: !session.server,
-    server: `ws://localhost:${await getPort()}`,
     sessionId: uuid.UUID(),
     debugSynchronization: 10000,
 

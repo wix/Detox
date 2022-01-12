@@ -2,13 +2,14 @@
 const { URL } = require('url');
 const util = require('util');
 
+const getPort = require('get-port');
 const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 const Client = require('./client/Client');
 const environmentFactory = require('./environmentFactory');
-const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
+const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
 const AsyncEmitter = require('./utils/AsyncEmitter');
@@ -145,8 +146,11 @@ class Detox {
   async _doInit() {
     const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = this._sessionConfig;
+    if (!sessionConfig.server) {
+      sessionConfig.server = `ws://localhost:${await getPort()}`;
+    }
 
-    if (this._sessionConfig.autoStart) {
+    if (sessionConfig.autoStart) {
       this._server = new DetoxServer({
         port: new URL(sessionConfig.server).port,
         standalone: false,

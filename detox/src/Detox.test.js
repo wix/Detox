@@ -8,6 +8,7 @@ jest.mock('./utils/AsyncEmitter');
 jest.mock('./invoke');
 jest.mock('./utils/wrapWithStackTraceCutter');
 jest.mock('./environmentFactory');
+jest.mock('get-port');
 
 jest.mock('./server/DetoxServer', () => {
   const FakeServer = jest.genMockFromModule('./server/DetoxServer');
@@ -81,6 +82,8 @@ describe('Detox', () => {
       },
     });
 
+    require('get-port').mockResolvedValue(12345);
+
     logger = require('./utils/logger');
     invoke = require('./invoke');
     Client = require('./client/Client');
@@ -122,7 +125,7 @@ describe('Detox', () => {
 
       it('should create a new Client', () =>
         expect(Client).toHaveBeenCalledWith(expect.objectContaining({
-          server: expect.any(String),
+          server: 'ws://localhost:12345',
           sessionId: expect.any(String),
         })));
 
