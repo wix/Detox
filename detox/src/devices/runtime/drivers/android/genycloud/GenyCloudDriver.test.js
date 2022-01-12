@@ -10,8 +10,10 @@ describe('Genymotion-cloud driver', () => {
   let eventEmitter;
   let invocationManager;
   let appInstallHelper;
+  let apkValidator;
   let instrumentation;
   let detoxGenymotionManager;
+
   beforeEach(() => {
     jest.mock('../../../../common/drivers/android/exec/AAPT');
     const AAPT = require('../../../../common/drivers/android/exec/AAPT');
@@ -28,10 +30,15 @@ describe('Genymotion-cloud driver', () => {
     const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
     invocationManager = new InvocationManager();
 
-    jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
     jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
+
+    jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
     const AppInstallHelper = require('../../../../common/drivers/android/tools/AppInstallHelper');
     appInstallHelper = new AppInstallHelper();
+
+    jest.mock('../../../../common/drivers/android/tools/ApkValidator');
+    const ApkValidator = require('../../../../common/drivers/android/tools/ApkValidator');
+    apkValidator = new ApkValidator();
 
     jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
     const Instrumentation = require('../../../../common/drivers/android/tools/MonitoredInstrumentation');
@@ -50,6 +57,7 @@ describe('Genymotion-cloud driver', () => {
       GenyCloudDriver = require('./GenyCloudDriver');
       uut = new GenyCloudDriver({
         aapt,
+        apkValidator,
         invocationManager,
         eventEmitter,
         client: {},
