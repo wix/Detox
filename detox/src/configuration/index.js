@@ -95,7 +95,7 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
-  const result = Object.freeze({
+  const result = {
     appsConfig,
     artifactsConfig,
     behaviorConfig,
@@ -105,10 +105,10 @@ async function composeDetoxConfig({
     errorComposer,
     runnerConfig,
     sessionConfig,
-  });
+  };
 
   for (const fn of hooks.UNSAFE_configReady) {
-    await fn(result);
+    await fn({ ...result, argv });
   }
 
   return result;
