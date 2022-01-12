@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-mkdir ~/.npm-global
-npm config set prefix '~/.npm-global'
-export PATH=~/.npm-global/bin:$PATH
+# mkdir -p ~/.npm-global
+# npm config set prefix '~/.npm-global'
+# export PATH=~/.npm-global/bin:$PATH
 
 echo "Node version:"
 node --version

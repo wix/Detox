@@ -1,9 +1,9 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 
-const {log, logSection} = require('./ci.common');
+const {log, logSection, getReleaseVersionType, getDryRun, getSkipNpm} = require('./ci.common');
 
-function publishNewVersion(packageVersion, npmTag) {
+function publishNewVersion(npmTag) {
   validatePrerequisites();
   projectSetup();
   publishToNpm(npmTag);
@@ -18,16 +18,16 @@ function validatePrerequisites() {
 
 function projectSetup() {
   logSection('Project setup');
-  exec.execSync(`git checkout ${process.env.BRANCH}`);
+  exec.execSync(`git checkout ${process.env.BUILDKITE_BRANCH}`);
   // exec.execSync(`lerna bootstrap --no-ci --loglevel verebose`);
 }
 
 function publishToNpm(npmTag) {
   logSection('Lerna publish');
 
-  const versionType = process.env.RELEASE_VERSION_TYPE;
-  const dryRun = process.env.RELEASE_DRY_RUN === "true";
-  const skipNpm = process.env.RELEASE_SKIP_NPM === "true";
+  const versionType = getReleaseVersionType();
+  const dryRun = getDryRun() === "true";
+  const skipNpm = getSkipNpm() === "true";
   if (dryRun) {
     log('DRY RUN: Lerna-publishing without publishing to NPM');
   }

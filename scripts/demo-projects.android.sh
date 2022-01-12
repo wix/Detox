@@ -2,7 +2,8 @@
 
 # Approve unapproved SDK licenses
 yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-
+java -version
+echo $JAVA_HOME
 source $(dirname "$0")/demo-projects.sh
 
 pushd detox
