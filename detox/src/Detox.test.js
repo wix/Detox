@@ -119,7 +119,7 @@ describe('Detox', () => {
 
       it('should create a DetoxServer automatically', () =>
         expect(DetoxServer).toHaveBeenCalledWith({
-          port: expect.anything(),
+          port: '12345',
           standalone: false,
         }));
 
@@ -256,6 +256,17 @@ describe('Detox', () => {
 
       it('should not start DetoxServer', () =>
         expect(DetoxServer).not.toHaveBeenCalled());
+    });
+
+    describe('with sessionConfig.server custom URL', () => {
+      beforeEach(() => { detoxConfig.sessionConfig.server = 'ws://localhost:451'; });
+      beforeEach(init);
+
+      it('should create a DetoxServer using the port from that URL', () =>
+        expect(DetoxServer).toHaveBeenCalledWith({
+          port: '451',
+          standalone: false,
+        }));
     });
 
     describe('with behaviorConfig.init.exposeGlobals = false', () => {
