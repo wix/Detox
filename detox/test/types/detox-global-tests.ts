@@ -103,10 +103,12 @@ describe("Test", () => {
         let androidAttributes: Omit<Detox.AndroidElementAttributes, keyof Detox.IosElementAttributes>;
 
         beforeEach(async () => {
-            const attributes = await element(by.id("element")).getAttributes();
+            let attributes = await element(by.id("element")).getAttributes();
             if ('elements' in attributes) {
-                commonAttributes = iosAttributes = attributes.elements[0];
-            } else if ('activationPoint' in attributes) {
+                attributes = attributes.elements[0];
+            }
+
+            if ('activationPoint' in attributes) {
                 commonAttributes = iosAttributes = attributes;
             } else {
                 commonAttributes = androidAttributes = attributes;
