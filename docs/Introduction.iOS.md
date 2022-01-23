@@ -42,11 +42,6 @@ Whether you’ve selected to apply the configuration in a  `.detoxrc.json` or bu
 }
 ```
 
-If your app uses Cocoapods, pass -workspace to xcodebuild command:
-```
-"build": "xcodebuild -workspace ios/YourProject.xcworkspace -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build"
-```
-
 :::info
 
 For a comprehensive explanation of Detox configuration, see our [dedicated API-reference guide](APIRef.Configuration.md).
@@ -54,6 +49,21 @@ For a comprehensive explanation of Detox configuration, see our [dedicated API-r
 :::
 
 In the above configuration example, make sure to provide the correct information for your project/app. Under the key `"binaryPath"`, you should provide the path of the .app bundle to use. Normally, this is the path where the `"build”` command would output this bundle. Under the key `"build"`, specify the `xcodebuild` command for your project.
+
+:::tip
+
+If your app uses Cocoapods, pass `-workspace` in your `xcodebuild` command, for example:
+```
+"build": "xcodebuild -workspace ios/YourProject.xcworkspace -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build"
+```
+
+:::
+
+:::info
+
+For more information on using the xcodebuild command, visit [Apple Docs](https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_DO_I_BUILD_MY_PROJECTS_FROM_THE_COMMAND_LINE_).
+
+:::
 
 Also, make sure the simulator model specified under the key `device.type` (e.g. `iPhone 12 Pro Max` above) is actually available on your machine (it was installed by Xcode). Check this by typing `applesimutils --list` in Terminal to display all available simulators.
 
