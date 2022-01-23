@@ -53,6 +53,7 @@ In the above configuration example, make sure to provide the correct information
 :::tip
 
 If your app uses Cocoapods, pass `-workspace` in your `xcodebuild` command, for example:
+
 ```
 "build": "xcodebuild -workspace ios/YourProject.xcworkspace -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build"
 ```
