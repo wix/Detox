@@ -204,3 +204,59 @@ detox_e2e:
     - npx detox build -c android.emu.release.ci
     - npx detox test -c android.emu.release.ci --headless
 ```
+
+In order to enable KVM support, you will need to enable hardware virtualization on the machine of your choice. To check that KVM is enabled on an Ubuntu box:
+
+```
+$ sudo apt-get install cpu-checker
+```
+
+Among other things, CPU-Checker installs a command-line tool called `kvm-ok`:
+
+```
+$ sudo kvm-ok
+```
+
+This command should output something like:
+
+```
+INFO: /dev/kvm exists
+KVM acceleration can be used
+```
+
+When you set up and register a GitLab runner, you will want to choose `docker` as your runner of choice. With this configuration, you will need to forward KVM virtualization on your cloud device to the `reactnativecommunity/react-android` Docker container when GitLab runs the container. This is the equivalent of running
+
+```
+$ docker run --device /dev/kvm -it <IMAGE>
+```
+
+To do this, edit you gitlab-runner `config.toml` file. If you run as root, it will be located under `/etc/gitlab-runner`, if you run as user, it will be under `~/.gitlab-runner/`. Either way, you will need to add a `devices` argument to the `[runners.docker]` section:
+
+```
+devices = ["/dev/kvm"]
+```
+
+The entire `config.toml` will look something like:
+
+```
+concurrent = 1
+check_interval = 0
+
+[[runners]]
+  name = "Detox Android Testing Box"
+  url = "https://your.gitlab.url"
+  token = "<your-gitlab-token>"
+  tls-ca-file = "<any-certs-to-access-gitlab>"
+  executor = "docker"
+  [runners.docker]
+    tls_verify = false
+    image = "reactnativecommunity/react-native-android"
+    privileged = false
+    devices = ["/dev/kvm"]
+    disable_cache = false
+    volumes = ["/cache"]
+    shm_size = 0
+  [runners.cache]
+```
+
+GitLab runners automatically refresh when the config is changed. You should now be ready to run your Android Detox tests from a GitLab pipeline on an external environment with hardware virtualization enabled.
