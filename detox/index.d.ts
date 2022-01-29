@@ -1092,6 +1092,11 @@ declare global {
             typeText(text: string): Promise<void>;
 
             /**
+             * reset the state of the app (e.g. by reinstalling on the device)
+             */
+            resetAppState(): Promise<void>;
+
+            /**
              * Paste text into a text field.
              * @example await element(by.id('textField')).replaceText('passcode again');
              */

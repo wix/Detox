@@ -1,5 +1,7 @@
 // TODO Tweak such that if apk's already exist on the device (need to store uniquely), they will not be resent (would optimize cloud, for example)
 
+const { md5 } = require('crypto-js');
+
 class AppInstallHelper {
   constructor(adb, fileXfer) {
     this._adb = adb;
@@ -17,6 +19,27 @@ class AppInstallHelper {
   async _pushAndInstallBinary(deviceId, binaryPath, binaryFilenameOnTarget) {
     const binaryPathOnTarget = await this._fileXfer.send(deviceId, binaryPath, binaryFilenameOnTarget);
     await this._adb.remoteInstall(deviceId, binaryPathOnTarget);
+  }
+
+  async clearUserData(deviceId, bundleId) {
+    return await this._adb.clearUserData(deviceId, bundleId);
+  }
+
+  async getLocalBinaryHash(binary) {
+    await md5(binary);
+  }
+
+  async isAlreadyInstalled(deviceId, filehash) {
+    return await this._fileXfer.checkFileExists(deviceId,`${filehash}.hash`);
+  }
+
+  async _removeExistingFileHashes(deviceId) {
+    return await this._fileXfer.deleteByExtension(deviceId, 'hash');
+  }
+
+  async recordHash(deviceId, filehash) {
+    await this._removeExistingFileHashes(deviceId);
+    await this._fileXfer.createEmptyFile(deviceId,`${filehash}.hash`);
   }
 }
 

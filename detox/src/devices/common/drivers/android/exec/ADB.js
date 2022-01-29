@@ -1,4 +1,3 @@
-// @ts-nocheck
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
@@ -97,9 +96,7 @@ class ADB {
   async isPackageInstalled(deviceId, packageId) {
     const output = await this.shell(deviceId, `pm list packages ${packageId}`);
     const packageRegexp = new RegExp(`^package:${escape.inQuotedRegexp(packageId)}$`, 'm');
-    const isInstalled = packageRegexp.test(output);
-
-    return isInstalled;
+    return packageRegexp.test(output);
   }
 
   async install(deviceId, _apkPath) {
@@ -133,6 +130,25 @@ class ADB {
 
   async terminate(deviceId, appId) {
     await this.shell(deviceId, `am force-stop ${appId}`);
+  }
+
+  async createEmptyFile(deviceId, filepath, filename) {
+    await this.shell(deviceId, `touch ${filepath}/${filename}`);
+  }
+
+  async clearUserData(deviceId, packageId) {
+    await this.shell(deviceId, `pm clear ${packageId}`);
+  }
+
+  async deleteByExtension(deviceId, filepath, extension) {
+    if (filepath && extension) {
+      await this.shell(deviceId, `rm -f ${filepath}/*.${extension}`)
+    }
+  }
+
+  async checkFileExists(deviceId, filepath, filename) {
+    const output = await this.shell(deviceId, `ls ${filepath}/${filename}`, {silent: true}).catch(() => '');
+    return output.length > 0;
   }
 
   async setLocation(deviceId, lat, lon) {

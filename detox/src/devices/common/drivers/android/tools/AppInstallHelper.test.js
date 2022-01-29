@@ -2,6 +2,11 @@ const deviceId = 'mock-device-id';
 const appBinaryPath = '/mock-app-binary-path/binary.apk';
 const testBinaryPath = '/mock-test-binary-path/test/binary.apk';
 
+const mockMd5 = jest.fn();
+jest.mock('crypto-js', () => ({
+  md5: () => mockMd5(),
+}));
+
 describe('Android app installation helper', () => {
   let adb;
 
@@ -82,4 +87,35 @@ describe('Android app installation helper', () => {
     expect(adb.remoteInstall).toHaveBeenCalledWith(deviceId, '/mocked-final-dir/first.apk');
     expect(adb.remoteInstall).toHaveBeenCalledTimes(1);
   });
+
+  describe('reinstall if needed', () => {
+    const bundleId = 'com.wix.detox.test';
+    const filehash = '8efr';
+    const hashFile = '8efr.hash';
+
+    it('should clear user data via shell', async () => {
+      await uut.clearUserData(deviceId, bundleId);
+      expect(adb.clearUserData).toHaveBeenCalledTimes(1);
+      expect(adb.clearUserData).toHaveBeenCalledWith(deviceId, bundleId);
+    });
+
+    it('should find whether hash exists via shell', async () => {
+      await uut.isAlreadyInstalled(deviceId, filehash);
+      expect(fileXfer.checkFileExists).toHaveBeenCalledTimes(1);
+      expect(fileXfer.checkFileExists).toHaveBeenCalledWith(deviceId, hashFile);
+    });
+
+    it('should record installed file hash', async () => {
+      await uut.recordHash(deviceId, filehash);
+      expect(fileXfer.deleteByExtension).toHaveBeenCalledTimes(1);
+      expect(fileXfer.deleteByExtension).toHaveBeenCalledWith(deviceId, 'hash');
+      expect(fileXfer.createEmptyFile).toHaveBeenCalledTimes(1);
+      expect(fileXfer.createEmptyFile).toHaveBeenCalledWith(deviceId, hashFile);
+    });
+
+    it('should get local binary hash', async () => {
+      await uut.getLocalBinaryHash('/tmp');
+      expect(mockMd5).toHaveBeenCalledTimes(1);
+    });
+  })
 });

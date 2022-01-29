@@ -46,6 +46,7 @@ class RuntimeDevice {
       'unmatchFace',
       'unmatchFinger',
       'unreverseTcpPort',
+      'resetAppState',
     ]);
 
     this._appsConfig = appsConfig;
@@ -418,6 +419,12 @@ class RuntimeDevice {
     if (!bundleId) {
       this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
     }
+  }
+
+  async resetAppState() {
+    await traceCall('resetAppState', () => {
+      return this.deviceDriver.resetAppState(this._currentApp.binaryPath, this._currentApp.bundleId);
+    });
   }
 }
 

@@ -250,8 +250,7 @@ class Detox {
 
     for (const appName of appNames) {
       await this.device.selectApp(appName);
-      await this.device.uninstallApp();
-      await this.device.installApp();
+      await this.device.resetAppState();
     }
 
     if (appNames.length !== 1) {

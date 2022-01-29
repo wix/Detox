@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
@@ -14,6 +13,7 @@ describe('ADB', () => {
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
     jest.mock('../../../../../utils/environment');
+    // @ts-ignore
     require('../../../../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
 
     jest.mock('../../../../../utils/encoding', () => ({
@@ -117,6 +117,34 @@ describe('ADB', () => {
   it(`uninstall`, async () => {
     await adb.uninstall('com.package');
     expect(execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+  });
+
+  it('should send correct command to clear user data', async () => {
+    await adb.clearUserData('emulator-5556', 'com.detox.wix.test');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "pm clear com.detox.wix.test"'),
+      { retries: 1 });
+  });
+
+  it('should send correct command to delete by extension', async () => {
+    await adb.deleteByExtension('emulator-5556', '/tmp', 'hash');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "rm -f /tmp/*.hash"'),
+      { retries: 1 });
+  });
+
+  it('should check that file exists', async () => {
+    await adb.checkFileExists('emulator-5556', '/tmp', 'filename.txt');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "ls /tmp/filename.txt"'),
+      { retries: 1, silent: true });
+  });
+
+  it('should send correct command to create empty file', async () => {
+    await adb.createEmptyFile('emulator-5556', '/tmp', '8erc.hash');
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "touch /tmp/8erc.hash"'),
+      { retries: 1 });
   });
 
   it(`terminate`, async () => {

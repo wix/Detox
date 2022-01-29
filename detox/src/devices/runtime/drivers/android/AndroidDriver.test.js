@@ -403,6 +403,31 @@ describe('Android driver', () => {
       expect(loggerWarnMessage()).toEqual(error.toString());
       expect(apkValidator.validateTestApk).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(testBinaryPath));
     });
+
+    it('should get local binary hash', async () => {
+      await uut._getLocalBinaryHash(bundleId);
+      expect(appInstallHelper.getLocalBinaryHash).toHaveBeenCalledTimes(1);
+      expect(appInstallHelper.getLocalBinaryHash).toHaveBeenCalledWith(bundleId);
+    });
+
+    it('should get file hash', async () => {
+      await uut.getFileHash(bundleId);
+      expect(fileXfer.getFileHash).toHaveBeenCalledTimes(1);
+      expect(fileXfer.getFileHash).toHaveBeenCalledWith(bundleId);
+    });
+
+    it('should clear user data', async () => {
+      await uut._clearUserData(bundleId);
+      expect(appInstallHelper.clearUserData).toHaveBeenCalledTimes(1);
+      expect(appInstallHelper.clearUserData).toHaveBeenCalledWith(adbName, bundleId);
+    });
+
+    it('should check whether apk is already installed', async () => {
+      const filehash = '8ers';
+      await uut._isAlreadyInstalled(filehash);
+      expect(appInstallHelper.isAlreadyInstalled).toHaveBeenCalledTimes(1);
+      expect(appInstallHelper.isAlreadyInstalled).toHaveBeenCalledWith(adbName, filehash);
+    });
   });
 
   describe('Util-binaries installation', () => {

@@ -79,6 +79,10 @@ class DeviceDriverBase {
     return '';
   }
 
+  async resetAppState(_binaryPath, _testBinaryPath) {
+    return undefined;
+  }
+
   async installApp(_binaryPath, _testBinaryPath) {
     return '';
   }

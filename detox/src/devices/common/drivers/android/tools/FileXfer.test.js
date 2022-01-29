@@ -37,4 +37,22 @@ describe('File-transfer util', () => {
 
     expect(destPath).toEqual(`${deviceDestinationDir}/${destFilename}`);
   });
+
+  it('should check that file exists', async () => {
+    await uut.checkFileExists(deviceId, 'someFilename');
+    expect(adb.checkFileExists).toHaveBeenCalledTimes(1);
+    expect(adb.checkFileExists).toHaveBeenCalledWith(deviceId, deviceDestinationDir, 'someFilename');
+  });
+
+  it('should delete by extension', async () => {
+    await uut.deleteByExtension(deviceId, 'hash');
+    expect(adb.deleteByExtension).toHaveBeenCalledTimes(1);
+    expect(adb.deleteByExtension).toHaveBeenCalledWith(deviceId, deviceDestinationDir, 'hash');
+  });
+
+  it('should create empty file', async () => {
+    await uut.createEmptyFile(deviceId, 'someFilename');
+    expect(adb.createEmptyFile).toHaveBeenCalledTimes(1);
+    expect(adb.createEmptyFile).toHaveBeenCalledWith(deviceId, deviceDestinationDir, 'someFilename');
+  });
 });

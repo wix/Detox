@@ -1,4 +1,3 @@
-// @ts-nocheck
 const path = require('path');
 const URL = require('url').URL;
 
@@ -78,6 +77,10 @@ class AndroidDriver extends DeviceDriverBase {
     await this._installAppBinaries(appBinaryPath, testBinaryPath);
   }
 
+  async recordHash(filehash) {
+    await this.appInstallHelper.recordHash(this.adbName, filehash);
+  }
+
   async uninstallApp(bundleId) {
     await this.emitter.emit('beforeUninstallApp', { deviceId: this.adbName, bundleId });
     await this.appUninstallHelper.uninstall(this.adbName, bundleId);
@@ -89,6 +92,34 @@ class AndroidDriver extends DeviceDriverBase {
       if (!await this.adb.isPackageInstalled(this.adbName, packageId)) {
         await this.appInstallHelper.install(this.adbName, path);
       }
+    }
+  }
+
+  async _getLocalBinaryHash(binaryFile) {
+    return await this.appInstallHelper.getLocalBinaryHash(binaryFile);
+  }
+
+  async getFileHash(bundleId) {
+    return await this.fileXfer.getFileHash(bundleId);
+  }
+
+  async _clearUserData(bundleId) {
+    await this.appInstallHelper.clearUserData(this.adbName, bundleId);
+  }
+
+  async _isAlreadyInstalled(hash) {
+    return await this.appInstallHelper.isAlreadyInstalled(this.adbName, hash);
+  }
+
+  async resetAppState(binaryPath, bundleId) {
+    const hash = await this._getLocalBinaryHash(binaryPath);
+    const alreadyInstalled = await this._isAlreadyInstalled(hash);
+    if (alreadyInstalled) {
+      await this._clearUserData(bundleId);
+    } else {
+      await this.uninstallApp(bundleId);
+      await this.installApp(binaryPath);
+      await this.recordHash(hash);
     }
   }
 

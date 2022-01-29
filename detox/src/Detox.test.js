@@ -35,8 +35,7 @@ describe('Detox', () => {
     return releaseFn;
   };
   const suspendAllocation = () => suspendMethod(deviceAllocator, 'allocate');
-  const suspendAppUninstall = () => suspendMethod(runtimeDevice, 'uninstallApp');
-  const suspendAppInstall = () => suspendMethod(runtimeDevice, 'installApp');
+  const suspendResetAppState = () => suspendMethod(runtimeDevice, 'resetAppState');
 
   let detoxConfig;
 
@@ -201,8 +200,7 @@ describe('Detox', () => {
 
       it('should select and reinstall the app', () => {
         expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
-        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
-        expect(runtimeDevice.installApp).toHaveBeenCalled();
+        expect(runtimeDevice.resetAppState).toHaveBeenCalled();
       });
 
       it('should not unselect the app if it is the only one', () => {
@@ -241,8 +239,7 @@ describe('Detox', () => {
       beforeEach(init);
 
       it('should install only apps with unique binary paths, and deselect app on device', () => {
-        expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
-        expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
+        expect(runtimeDevice.resetAppState).toHaveBeenCalledTimes(2);
 
         expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(3);
         expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
@@ -302,8 +299,7 @@ describe('Detox', () => {
         expect(runtimeDevice._prepare).toHaveBeenCalled());
 
       it('should not reinstall the app', () => {
-        expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
-        expect(runtimeDevice.installApp).not.toHaveBeenCalled();
+        expect(runtimeDevice.resetAppState).not.toHaveBeenCalled();
       });
     });
 
@@ -511,7 +507,7 @@ describe('Detox', () => {
 
     describe('before app has been uninstalled', () => {
       let releaseFn;
-      beforeEach(() => { releaseFn = suspendAppUninstall(); });
+      beforeEach(() => { releaseFn = suspendResetAppState(); });
       beforeEach(startInit);
       afterEach(() => releaseFn());
 
@@ -523,7 +519,7 @@ describe('Detox', () => {
 
     describe('before app has been installed', () => {
       let releaseFn;
-      beforeEach(() => { releaseFn = suspendAppInstall(); });
+      beforeEach(() => { releaseFn = suspendResetAppState(); });
       beforeEach(startInit);
       afterEach(() => releaseFn());
 

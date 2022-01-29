@@ -63,11 +63,16 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async installApp(binaryPath) {
+  async resetAppState(binaryPath, bundleId) {
+    await this._uninstallApp(bundleId);
+    await this._installApp(binaryPath);
+  }
+
+  async _installApp(binaryPath) {
     await this._applesimutils.install(this.udid, getAbsoluteBinaryPath(binaryPath));
   }
 
-  async uninstallApp(bundleId) {
+  async _uninstallApp(bundleId) {
     const { udid } = this;
     await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
     await this._applesimutils.uninstall(udid, bundleId);

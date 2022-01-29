@@ -91,6 +91,10 @@ class StubRuntimeDriver extends DeviceDriverBase {
   async resetContentAndSettings() {
     await sleepALittle();
   }
+
+  async resetAppState() {
+    await sleepALittle();
+  }
 }
 
 module.exports = StubRuntimeDriver;

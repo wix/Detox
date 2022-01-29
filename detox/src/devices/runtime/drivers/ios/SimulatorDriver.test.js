@@ -137,4 +137,27 @@ describe('IOS simulator driver', () => {
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
   });
+
+  describe('resetAppState', () => {
+    it('should call uninstall and install for resetAppState', async () => {
+      const binaryPath = '/tmp';
+      const installSpy = jest.spyOn(uut, '_installApp');
+      const uninstallSpy = jest.spyOn(uut, '_uninstallApp');
+      const emitSpy = jest.spyOn(eventEmitter, 'emit');
+      await uut.resetAppState(binaryPath, bundleId);
+
+      expect(installSpy).toBeCalledTimes(1);
+      expect(installSpy).toBeCalledWith(binaryPath);
+      expect(uninstallSpy).toBeCalledTimes(1);
+      expect(uninstallSpy).toBeCalledWith(bundleId);
+
+      expect(applesimutils.install).toBeCalledTimes(1);
+      expect(applesimutils.install).toBeCalledWith(udid, binaryPath);
+      expect(applesimutils.uninstall).toBeCalledTimes(1);
+      expect(applesimutils.uninstall).toBeCalledWith(udid, bundleId);
+
+      expect(emitSpy).toBeCalledTimes(1);
+      expect(emitSpy).toBeCalledWith('beforeUninstallApp', {deviceId: udid, bundleId});
+    });
+  });
 });
