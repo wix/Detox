@@ -3,9 +3,9 @@ const appBinaryPath = '/mock-app-binary-path/binary.apk';
 const testBinaryPath = '/mock-test-binary-path/test/binary.apk';
 
 const mockMd5 = jest.fn();
-jest.mock('crypto-js', () => ({
-  md5: () => mockMd5(),
-}));
+jest.mock('./CryptoUtils', () => ({
+  getMd5: () => mockMd5(),
+}))
 
 describe('Android app installation helper', () => {
   let adb;

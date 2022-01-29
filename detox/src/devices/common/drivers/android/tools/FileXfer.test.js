@@ -1,6 +1,11 @@
 const deviceId = 'mock-device-id';
 const deviceDestinationDir = '/mock-tmp-dir';
 
+const mockMd5 = jest.fn();
+jest.mock('./CryptoUtils', () => ({
+  getMd5: () => mockMd5(),
+}))
+
 describe('File-transfer util', () => {
   let adb;
   let uut;
@@ -54,5 +59,10 @@ describe('File-transfer util', () => {
     await uut.createEmptyFile(deviceId, 'someFilename');
     expect(adb.createEmptyFile).toHaveBeenCalledTimes(1);
     expect(adb.createEmptyFile).toHaveBeenCalledWith(deviceId, deviceDestinationDir, 'someFilename');
+  });
+
+  it('should get file hash', async () => {
+    await uut.getFileHash('/tmp');
+    expect(mockMd5).toHaveBeenCalledTimes(1);
   });
 });
