@@ -856,6 +856,14 @@ describe('Device', () => {
     expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
+  it('resetAppState() should pass to device driver', async () => {
+    const device = await aValidDevice();
+    await device.resetAppState();
+
+    expect(driverMock.driver.resetAppState).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(device._currentApp.binaryPath, bundleId);
+  });
+
   it(`sendUserActivity() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.sendUserActivity('notif');
