@@ -1,5 +1,4 @@
 const path = require('path');
-const CryptoUtils = require('./CryptoUtils');
 
 class FileXfer {
   constructor(adb, destinationDir) {
@@ -8,7 +7,8 @@ class FileXfer {
   }
 
   async getFileHash(binary) {
-    return await CryptoUtils.getMd5(`${this._dir}/${binary}`);
+    const crypto = require('./CryptoUtils');
+    return await crypto.getMd5(`${this._dir}/${binary}`);
   }
 
   async createEmptyFile(deviceId, filename) {

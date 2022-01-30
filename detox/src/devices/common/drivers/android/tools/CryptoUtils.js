@@ -1,9 +1,8 @@
-const crypto = require('crypto-js');
-
-class CryptoUtils {
-  async getMd5(path) {
-    return await crypto.md5(path);
-  }
+const getMd5 = async (path) => {
+  const md5 = require('crypto-js/md5');
+  return await md5(path);
 }
 
-module.exports = CryptoUtils;
+module.exports = {
+  getMd5
+};

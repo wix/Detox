@@ -1,7 +1,5 @@
 // TODO Tweak such that if apk's already exist on the device (need to store uniquely), they will not be resent (would optimize cloud, for example)
 
-const CryptoUtils = require('./CryptoUtils');
-
 class AppInstallHelper {
   constructor(adb, fileXfer) {
     this._adb = adb;
@@ -26,7 +24,8 @@ class AppInstallHelper {
   }
 
   async getLocalBinaryHash(binary) {
-    await CryptoUtils.getMd5(binary);
+    const { getMd5 } = require('./CryptoUtils');
+    await getMd5(binary);
   }
 
   async isAlreadyInstalled(deviceId, filehash) {
