@@ -231,7 +231,26 @@ class AppleSimUtils {
       trying: `Terminating ${bundleId}...`,
       successful: `${bundleId} terminated`
     };
-    await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, statusLogs });
+
+    try {
+      await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, statusLogs });
+    } catch (err) {
+      // Since we have no convenient way to check whether the app is currently running or not, we might execute this
+      // command (terminate) even if the app is not currently running, or even installed.
+      // We have encountered some case where the following error is thrown in a case where the app did not run:
+      // ```
+      // An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=3):
+      // Application termination failed.
+      // FBSSystemService reported failure without an error, possibly because the app is not currently running.
+      // ```
+      // This workaround is done to ignore the error above, as we do not care if the app was running before, we just
+      // want to make sure it isn't now.
+      if (err.code === 3 && err.stderr.includes(`the app is not currently running`)) {
+        return
+      }
+
+      throw err
+    }
   }
 
   async shutdown(udid) {
