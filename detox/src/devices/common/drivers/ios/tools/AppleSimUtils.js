@@ -233,7 +233,11 @@ class AppleSimUtils {
     };
 
     try {
-      await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, statusLogs });
+      await this._execSimctl({
+        cmd: `terminate ${udid} ${bundleId}`,
+        statusLogs: statusLogs,
+        silent: true
+      });
     } catch (err) {
       // Since we have no convenient way to check whether the app is currently running or not, we might execute this
       // command (terminate) even if the app is not currently running, or even installed.
