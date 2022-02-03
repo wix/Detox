@@ -58,7 +58,7 @@ class GenyInstanceAllocationHelper extends DeviceAllocationHelper {
   }
 
   _logAllocationResult(deviceQuery, deviceHandle) {
-    logger.info({ event: ALLOCATE_DEVICE_LOG_EVT }, `Allocating Genymotion-Cloud instance ${deviceHandle.name} for testing. To access it via a browser, go to: https://cloud.geny.io/app/instance/${deviceHandle.uuid}`);
+    logger.info({ event: ALLOCATE_DEVICE_LOG_EVT }, `Allocating Genymotion-Cloud instance ${deviceHandle.name} for testing. To access it via a browser, go to: https://cloud.geny.io/instance/${deviceHandle.uuid}`);
   }
 }
 
