@@ -95,7 +95,7 @@ describe('Genymotion-Cloud instance allocation helper', () => {
 
       await uut.allocateDevice(aRecipe());
 
-      expect(logger.info).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, `Allocating Genymotion-Cloud instance ${instance.name} for testing. To access it via a browser, go to: https://cloud.geny.io/app/instance/${instance.uuid}`);
+      expect(logger.info).toHaveBeenCalledWith({ event: 'ALLOCATE_DEVICE' }, `Allocating Genymotion-Cloud instance ${instance.name} for testing. To access it via a browser, go to: https://cloud.geny.io/instance/${instance.uuid}`);
     });
   });
 
