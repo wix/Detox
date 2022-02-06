@@ -107,7 +107,10 @@ class AndroidDriver extends DeviceDriverBase {
     } else {
       await this.uninstallApp(bundleId);
       await this.installApp(binaryPath);
-      await this.recordHash(hash);
+
+      if (hash) {
+        await this.recordHash(hash);
+      }
     }
   }
 
