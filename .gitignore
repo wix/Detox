@@ -192,6 +192,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+project.pbxproj
 
 # Android/IJ
 #
