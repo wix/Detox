@@ -101,7 +101,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   async resetAppState(binaryPath, bundleId) {
     const hash = await this._getLocalBinaryHash(binaryPath);
-    const alreadyInstalled = await this._isAlreadyInstalled(hash);
+    const alreadyInstalled = hash ? await this._isAlreadyInstalled(hash) : false;
     if (alreadyInstalled) {
       await this._clearAppData(bundleId);
     } else {
