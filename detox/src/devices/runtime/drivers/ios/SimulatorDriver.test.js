@@ -141,8 +141,8 @@ describe('IOS simulator driver', () => {
   describe('resetAppState', () => {
     it('should call uninstall and install for resetAppState', async () => {
       const binaryPath = '/tmp';
-      const installSpy = jest.spyOn(uut, '_installApp');
-      const uninstallSpy = jest.spyOn(uut, '_uninstallApp');
+      const installSpy = jest.spyOn(uut, 'installApp');
+      const uninstallSpy = jest.spyOn(uut, 'uninstallApp');
       const emitSpy = jest.spyOn(eventEmitter, 'emit');
       await uut.resetAppState(binaryPath, bundleId);
 

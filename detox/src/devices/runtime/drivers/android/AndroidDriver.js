@@ -95,27 +95,15 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async _getLocalBinaryHash(binaryFile) {
-    return await this.appInstallHelper.getLocalBinaryHash(binaryFile);
-  }
-
   async getFileHash(bundleId) {
     return await this.fileXfer.getFileHash(bundleId);
-  }
-
-  async _clearUserData(bundleId) {
-    await this.appInstallHelper.clearUserData(this.adbName, bundleId);
-  }
-
-  async _isAlreadyInstalled(hash) {
-    return await this.appInstallHelper.isAlreadyInstalled(this.adbName, hash);
   }
 
   async resetAppState(binaryPath, bundleId) {
     const hash = await this._getLocalBinaryHash(binaryPath);
     const alreadyInstalled = await this._isAlreadyInstalled(hash);
     if (alreadyInstalled) {
-      await this._clearUserData(bundleId);
+      await this._clearAppData(bundleId);
     } else {
       await this.uninstallApp(bundleId);
       await this.installApp(binaryPath);
@@ -139,28 +127,6 @@ class AndroidDriver extends DeviceDriverBase {
       launchArgs,
       languageAndLocale,
     });
-  }
-
-  async _handleLaunchApp({ manually, bundleId, launchArgs }) {
-    const { adbName } = this;
-
-    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
-
-    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
-
-    if (manually) {
-      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
-    } else {
-      await this._launchApp(adbName, bundleId, launchArgs);
-    }
-
-    const pid = await this._waitForProcess(adbName, bundleId);
-    if (manually) {
-      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
-    }
-
-    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
-    return pid;
   }
 
   async deliverPayload(params) {
@@ -274,6 +240,28 @@ class AndroidDriver extends DeviceDriverBase {
       appBinaryPath,
       testBinaryPath,
     };
+  }
+
+  async _handleLaunchApp({ manually, bundleId, launchArgs }) {
+    const { adbName } = this;
+
+    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
+
+    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
+
+    if (manually) {
+      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
+    } else {
+      await this._launchApp(adbName, bundleId, launchArgs);
+    }
+
+    const pid = await this._waitForProcess(adbName, bundleId);
+    if (manually) {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+
+    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
+    return pid;
   }
 
   async _validateAppBinaries(appBinaryPath, testBinaryPath) {
@@ -424,6 +412,18 @@ class AndroidDriver extends DeviceDriverBase {
       `${separator}\n\n` +
       'Press any key to continue...'
     );
+  }
+
+  async _clearAppData(bundleId) {
+    await this.appInstallHelper.clearAppData(this.adbName, bundleId);
+  }
+
+  async _isAlreadyInstalled(hash) {
+    return await this.appInstallHelper.isAlreadyInstalled(this.adbName, hash);
+  }
+
+  async _getLocalBinaryHash(binaryFile) {
+    return await this.appInstallHelper.getLocalBinaryHash(binaryFile);
   }
 }
 

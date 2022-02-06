@@ -94,9 +94,9 @@ describe('Android app installation helper', () => {
     const hashFile = '8efr.hash';
 
     it('should clear user data via shell', async () => {
-      await uut.clearUserData(deviceId, bundleId);
-      expect(adb.clearUserData).toHaveBeenCalledTimes(1);
-      expect(adb.clearUserData).toHaveBeenCalledWith(deviceId, bundleId);
+      await uut.clearAppData(deviceId, bundleId);
+      expect(adb.clearAppData).toHaveBeenCalledTimes(1);
+      expect(adb.clearAppData).toHaveBeenCalledWith(deviceId, bundleId);
     });
 
     it('should find whether hash exists via shell', async () => {

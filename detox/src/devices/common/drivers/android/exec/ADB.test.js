@@ -120,7 +120,7 @@ describe('ADB', () => {
   });
 
   it('should send correct command to clear user data', async () => {
-    await adb.clearUserData('emulator-5556', 'com.detox.wix.test');
+    await adb.clearAppData('emulator-5556', 'com.detox.wix.test');
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "pm clear com.detox.wix.test"'),
       { retries: 1 });

@@ -417,9 +417,9 @@ describe('Android driver', () => {
     });
 
     it('should clear user data', async () => {
-      await uut._clearUserData(bundleId);
-      expect(appInstallHelper.clearUserData).toHaveBeenCalledTimes(1);
-      expect(appInstallHelper.clearUserData).toHaveBeenCalledWith(adbName, bundleId);
+      await uut._clearAppData(bundleId);
+      expect(appInstallHelper.clearAppData).toHaveBeenCalledTimes(1);
+      expect(appInstallHelper.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
     });
 
     it('should check whether apk is already installed', async () => {

@@ -19,8 +19,8 @@ class AppInstallHelper {
     await this._adb.remoteInstall(deviceId, binaryPathOnTarget);
   }
 
-  async clearUserData(deviceId, bundleId) {
-    return await this._adb.clearUserData(deviceId, bundleId);
+  async clearAppData(deviceId, bundleId) {
+    return await this._adb.clearAppData(deviceId, bundleId);
   }
 
   async getLocalBinaryHash(binary) {

@@ -136,7 +136,7 @@ class ADB {
     await this.shell(deviceId, `touch ${filepath}/${filename}`);
   }
 
-  async clearUserData(deviceId, packageId) {
+  async clearAppData(deviceId, packageId) {
     await this.shell(deviceId, `pm clear ${packageId}`);
   }
 

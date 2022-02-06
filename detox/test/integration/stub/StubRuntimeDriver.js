@@ -93,7 +93,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
   }
 
   async resetAppState() {
-    await sleepALittle();
+    await sleepSomeTime();
   }
 }
 
