@@ -203,7 +203,6 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-test/ios/example.xcodeproj/project.pbxproj
 
 # Android/IJ
 #
