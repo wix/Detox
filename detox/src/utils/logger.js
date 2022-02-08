@@ -1,4 +1,7 @@
 // @ts-nocheck
+
+const dateFormat = require('dateformat');
+
 const path = require('path');
 
 const bunyan = require('bunyan');
@@ -10,6 +13,9 @@ const temporaryPath = require('../artifacts/utils/temporaryPath');
 
 const argparse = require('./argparse');
 const customConsoleLogger = require('./customConsoleLogger');
+
+const LOG_DATE_FORMAT = "HH:MM:ss.l";
+const shortDateFormatter = (date) => dateFormat(date, LOG_DATE_FORMAT);
 
 function adaptLogLevelName(level) {
   switch (level) {
@@ -36,9 +42,9 @@ function tryOverrideConsole(logger, global) {
   }
 }
 
-function createPlainBunyanStream({ logPath, level }) {
+function createPlainBunyanStream({ logPath, level, showDate = true }) {
   const options = {
-    showDate: false,
+    showDate: showDate,
     showLoggerName: true,
     showPid: true,
     showMetadata: false,
@@ -85,7 +91,8 @@ function createPlainBunyanStream({ logPath, level }) {
 function init() {
   const levelFromArg = argparse.getArgValue('loglevel', 'l');
   const level = adaptLogLevelName(levelFromArg);
-  const bunyanStreams = [createPlainBunyanStream({ level })];
+  const debugStream = createPlainBunyanStream({ level, showDate: shortDateFormatter });
+  const bunyanStreams = [debugStream];
 
   let jsonFileStreamPath, plainFileStreamPath;
   if (!global.DETOX_CLI && !global.IS_RUNNING_DETOX_UNIT_TESTS) {
