@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
   const bundleId = 'bundle-id-mock';
@@ -16,10 +15,12 @@ describe('Android driver', () => {
   let aapt;
   let apkValidator;
   let fileXfer;
+  let hashXfer;
   let appInstallHelper;
   let appUninstallHelper;
   let instrumentation;
   let DeviceRegistryClass;
+  let hashHelper;
 
   let uut;
   beforeEach(() => {
@@ -35,8 +36,10 @@ describe('Android driver', () => {
       aapt,
       apkValidator,
       fileXfer,
+      hashXfer,
       appInstallHelper,
       appUninstallHelper,
+      hashHelper,
       instrumentation,
     }, { adbName });
   });
@@ -406,27 +409,22 @@ describe('Android driver', () => {
 
     it('should get local binary hash', async () => {
       await uut._getLocalBinaryHash(bundleId);
-      expect(appInstallHelper.getLocalBinaryHash).toHaveBeenCalledTimes(1);
-      expect(appInstallHelper.getLocalBinaryHash).toHaveBeenCalledWith(bundleId);
-    });
-
-    it('should get file hash', async () => {
-      await uut.getFileHash(bundleId);
-      expect(fileXfer.getFileHash).toHaveBeenCalledTimes(1);
-      expect(fileXfer.getFileHash).toHaveBeenCalledWith(bundleId);
+      expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
+      expect(hashHelper.generateHash).toHaveBeenCalledWith(bundleId);
     });
 
     it('should clear user data', async () => {
       await uut._clearAppData(bundleId);
-      expect(appInstallHelper.clearAppData).toHaveBeenCalledTimes(1);
-      expect(appInstallHelper.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
+      expect(adb.clearAppData).toHaveBeenCalledTimes(1);
+      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
     });
 
     it('should check whether apk is already installed', async () => {
       const filehash = '8ers';
-      await uut._isAlreadyInstalled(filehash);
-      expect(appInstallHelper.isAlreadyInstalled).toHaveBeenCalledTimes(1);
-      expect(appInstallHelper.isAlreadyInstalled).toHaveBeenCalledWith(adbName, filehash);
+      const bundleId = 'com.android.test';
+      await uut._isAlreadyInstalled(bundleId, filehash);
+      expect(hashHelper.checkHash).toHaveBeenCalledTimes(1);
+      expect(hashHelper.checkHash).toHaveBeenCalledWith(adbName, bundleId, filehash);
     });
   });
 
@@ -589,6 +587,10 @@ describe('Android driver', () => {
     fileXfer = new FileXfer();
     fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath);
 
+    jest.mock('../../../common/drivers/android/tools/HashFileXfer');
+    const HashXfer = require('../../../common/drivers/android/tools/HashFileXfer');
+    hashXfer = new HashXfer();
+
     jest.mock('../../../common/drivers/android/tools/AppInstallHelper');
     const AppInstallHelper = require('../../../common/drivers/android/tools/AppInstallHelper');
     appInstallHelper = new AppInstallHelper();
@@ -602,6 +604,10 @@ describe('Android driver', () => {
     DeviceRegistryClass = require('../../../DeviceRegistry');
     const createRegistry = jest.fn(() => new DeviceRegistryClass());
     DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
+
+    jest.mock('../../../common/drivers/android/tools/HashHelper');
+    const HashHelper = require('../../../common/drivers/android/tools/HashHelper');
+    hashHelper = new HashHelper();
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
@@ -609,4 +615,67 @@ describe('Android driver', () => {
 
   const mockInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
   const mockInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
+
+  describe('reset app state', () => {
+    const binaryPath = 'mock-bin-path';
+    const mockHash = 'abcdef';
+    let uninstallSpy;
+    let installSpy;
+    let recordHashSpy;
+    let clearAppSpy;
+    let reinstallSpy;
+    let isAlreadyInstalledSpy;
+
+    beforeEach(() => {
+      fs.existsSync.mockReturnValue(true);
+
+      clearAppSpy = jest.spyOn(uut, '_clearAppData' );
+      reinstallSpy = jest.spyOn(uut, '_performFullReinstall');
+      uninstallSpy = jest.spyOn(uut, 'uninstallApp');
+      installSpy = jest.spyOn(uut, 'installApp');
+      recordHashSpy = jest.spyOn(uut, '_recordHash');
+      isAlreadyInstalledSpy = jest.spyOn(uut, '_isAlreadyInstalled')
+
+      jest.spyOn(uut, '_getLocalBinaryHash').mockImplementation(() => mockHash);
+    });
+
+    it('should call appropriate steps for reinstall', async () => {
+      await uut._performFullReinstall(binaryPath, bundleId, mockHash);
+
+      expect(uninstallSpy).toHaveBeenCalledTimes(1);
+      expect(installSpy).toHaveBeenCalledTimes(1);
+      expect(recordHashSpy).toHaveBeenCalledTimes(1);
+
+      expect(uninstallSpy).toHaveBeenLastCalledWith(bundleId);
+      expect(installSpy).toHaveBeenCalledWith(binaryPath);
+      expect(recordHashSpy).toHaveBeenCalledWith(mockHash, bundleId);
+    });
+
+    it('should clear app data if already installed', async () => {
+      isAlreadyInstalledSpy.mockImplementation(() => true);
+      await uut.resetAppState(binaryPath, bundleId);
+      expect(clearAppSpy).toHaveBeenCalledTimes(1);
+      expect(clearAppSpy).toHaveBeenCalledWith(bundleId);
+      expect(reinstallSpy).not.toHaveBeenCalled();
+    });
+
+    it('should clear app data if already installed', async () => {
+      isAlreadyInstalledSpy.mockImplementation(() => false);
+      await uut.resetAppState(binaryPath, bundleId);
+      expect(clearAppSpy).not.toHaveBeenCalled();
+      expect(reinstallSpy).toHaveBeenCalledTimes(1);
+      expect(reinstallSpy).toHaveBeenCalledWith(binaryPath, bundleId, mockHash);
+    });
+
+    it('should do nothing in record_hash if no hash provided', async () => {
+      await uut._recordHash(undefined, bundleId);
+      expect(hashHelper.recordHash).not.toHaveBeenCalled();
+    });
+
+    it('should call hashhelper in record_hash if hash provided', async () => {
+      await uut._recordHash(mockHash, bundleId);
+      expect(hashHelper.recordHash).toHaveBeenCalledTimes(1);
+      expect(hashHelper.recordHash).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+    });
+  });
 });

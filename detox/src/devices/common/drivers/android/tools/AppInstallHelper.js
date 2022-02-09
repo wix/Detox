@@ -18,28 +18,6 @@ class AppInstallHelper {
     const binaryPathOnTarget = await this._fileXfer.send(deviceId, binaryPath, binaryFilenameOnTarget);
     await this._adb.remoteInstall(deviceId, binaryPathOnTarget);
   }
-
-  async clearAppData(deviceId, bundleId) {
-    return await this._adb.clearAppData(deviceId, bundleId);
-  }
-
-  async getLocalBinaryHash(binary) {
-    const { getMd5 } = require('./CryptoUtils');
-    await getMd5(binary);
-  }
-
-  async isAlreadyInstalled(deviceId, filehash) {
-    return await this._fileXfer.checkFileExists(deviceId,`${filehash}.hash`);
-  }
-
-  async _removeExistingFileHashes(deviceId) {
-    return await this._fileXfer.deleteByExtension(deviceId, 'hash');
-  }
-
-  async recordHash(deviceId, filehash) {
-    await this._removeExistingFileHashes(deviceId);
-    await this._fileXfer.createEmptyFile(deviceId,`${filehash}.hash`);
-  }
 }
 
 module.exports = AppInstallHelper;

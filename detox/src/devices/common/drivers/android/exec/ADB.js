@@ -132,23 +132,17 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
-  async createEmptyFile(deviceId, filepath, filename) {
-    await this.shell(deviceId, `touch ${filepath}/${filename}`);
-  }
 
   async clearAppData(deviceId, packageId) {
     await this.shell(deviceId, `pm clear ${packageId}`);
   }
 
-  async deleteByExtension(deviceId, filepath, extension) {
-    if (filepath && extension) {
-      await this.shell(deviceId, `rm -f ${filepath}/*.${extension}`)
-    }
+  async createFileWithContent(deviceId, filepath, filename, content) {
+    await this.shell(deviceId, `echo ${content} > ${filepath}/${filename}`);
   }
 
-  async checkFileExists(deviceId, filepath, filename) {
-    const output = await this.shell(deviceId, `ls ${filepath}/${filename}`, {silent: true}).catch(() => '');
-    return output.length > 0;
+  async readFile(deviceId, filepath) {
+    return await this.shell(deviceId, `cat ${filepath}`, {silent: true}).catch(() => '');
   }
 
   async setLocation(deviceId, lat, lon) {

@@ -119,32 +119,25 @@ describe('ADB', () => {
     expect(execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
   });
 
-  it('should send correct command to clear user data', async () => {
+  it('should send correct command to clear app data', async () => {
     await adb.clearAppData('emulator-5556', 'com.detox.wix.test');
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "pm clear com.detox.wix.test"'),
       { retries: 1 });
   });
 
-  it('should send correct command to delete by extension', async () => {
-    await adb.deleteByExtension('emulator-5556', '/tmp', 'hash');
+  it('should send correct command to read file', async () => {
+    await adb.readFile('emulator-5556', 'somefile.txt');
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 shell "rm -f /tmp/*.hash"'),
-      { retries: 1 });
-  });
-
-  it('should check that file exists', async () => {
-    await adb.checkFileExists('emulator-5556', '/tmp', 'filename.txt');
-    expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 shell "ls /tmp/filename.txt"'),
+      expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
       { retries: 1, silent: true });
   });
 
-  it('should send correct command to create empty file', async () => {
-    await adb.createEmptyFile('emulator-5556', '/tmp', '8erc.hash');
+  it('should send correct command to create file with content', async () => {
+    await adb.createFileWithContent('emulator-5556', '/tmp', 'testfile.tmp', 'hello world');
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 shell "touch /tmp/8erc.hash"'),
-      { retries: 1 });
+      expect.stringContaining('adb" -s emulator-5556 shell "echo hello world > /tmp/testfile.tmp"'),
+    {retries: 1});
   });
 
   it(`terminate`, async () => {
