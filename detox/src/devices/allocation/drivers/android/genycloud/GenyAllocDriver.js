@@ -63,7 +63,7 @@ class GenyAllocDriver extends AllocationDriverBase {
     if (!recipe) {
       throw new DetoxRuntimeError({
         message: `No Genymotion-Cloud template found to match the configured lookup query: ${JSON.stringify(deviceQuery)}`,
-        hint: `Revisit your detox configuration. Genymotion templates list is available at: https://cloud.geny.io/app/shared-devices`,
+        hint: `Revisit your detox configuration. Genymotion templates list is available at: https://cloud.geny.io/recipes#custom`,
       });
     }
   }
