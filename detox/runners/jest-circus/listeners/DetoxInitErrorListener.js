@@ -1,19 +1,23 @@
 const _ = require('lodash');
 
 class DetoxInitErrorListener {
-  setup(event, { unhandledErrors, rootDescribeBlock }) {
-    if (unhandledErrors.length > 0) {
-      rootDescribeBlock.mode = 'skip';
+  add_hook(event, { unhandledErrors, currentDescribeBlock, rootDescribeBlock }) {
+    if (_.isEmpty(unhandledErrors)) {
+      return;
+    }
+
+    if (currentDescribeBlock !== rootDescribeBlock || currentDescribeBlock.hooks.length > 1) {
+      _.last(currentDescribeBlock.hooks).fn = async () => {};
     }
   }
 
-  add_test(event, { currentDescribeBlock, rootDescribeBlock }) {
-    if (currentDescribeBlock === rootDescribeBlock && rootDescribeBlock.mode === 'skip') {
+  add_test(event, { unhandledErrors, currentDescribeBlock }) {
+    if (!_.isEmpty(unhandledErrors)) {
       const currentTest = _.last(currentDescribeBlock.children);
+      const dummyError = new Error('Environment setup failed. See the detailed error below.');
+      delete dummyError.stack;
 
-      if (currentTest) {
-        currentTest.mode = 'skip';
-      }
+      currentTest.errors.push(dummyError);
     }
   }
 }
