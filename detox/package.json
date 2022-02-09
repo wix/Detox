@@ -48,7 +48,7 @@
     "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.67.1",
+    "react-native": "0.67.2",
     "react-native-codegen": "^0.0.8",
     "typescript": "^4.5.2",
     "wtfnode": "^0.9.1"
