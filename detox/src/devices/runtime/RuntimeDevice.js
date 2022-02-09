@@ -179,6 +179,12 @@ class RuntimeDevice {
     this._processes[_bundleId] = undefined;
   }
 
+  async resetAppState() {
+    await traceCall('resetAppState', () => {
+      return this.deviceDriver.resetAppState(this._currentApp.binaryPath, this._currentApp.bundleId);
+    });
+  }
+
   async installApp(binaryPath, testBinaryPath) {
     await traceCall('appInstall', () => {
       const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
@@ -419,12 +425,6 @@ class RuntimeDevice {
     if (!bundleId) {
       this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
     }
-  }
-
-  async resetAppState() {
-    await traceCall('resetAppState', () => {
-      return this.deviceDriver.resetAppState(this._currentApp.binaryPath, this._currentApp.bundleId);
-    });
   }
 }
 
