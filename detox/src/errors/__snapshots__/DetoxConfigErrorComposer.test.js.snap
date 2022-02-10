@@ -1358,6 +1358,53 @@ Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .cannotSkipAutostartWithMissingServer should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: Cannot have both an undefined session.server URL and session.autoStart set to false
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        autoStart: false
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .cannotSkipAutostartWithMissingServer should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: Cannot have both an undefined session.server URL and session.autoStart set to false
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        autoStart: false
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .cannotSkipAutostartWithMissingServer should point to global session if there is one 1`] = `
+[DetoxConfigError: Cannot have both an undefined session.server URL and session.autoStart set to false
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    autoStart: false
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: session.debugSynchronization should be a positive number
 
