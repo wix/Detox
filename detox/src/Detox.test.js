@@ -12,7 +12,11 @@ jest.mock('get-port');
 
 jest.mock('./server/DetoxServer', () => {
   const FakeServer = jest.genMockFromModule('./server/DetoxServer');
-  return jest.fn().mockImplementation(() => new FakeServer());
+  return jest.fn().mockImplementation(() => {
+    const server =  new FakeServer();
+    server.port = 12345;
+    return server;
+  });
 });
 
 describe('Detox', () => {
@@ -82,8 +86,6 @@ describe('Detox', () => {
       },
     });
 
-    require('get-port').mockResolvedValue(12345);
-
     logger = require('./utils/logger');
     invoke = require('./invoke');
     Client = require('./client/Client');
@@ -119,7 +121,7 @@ describe('Detox', () => {
 
       it('should create a DetoxServer automatically', () =>
         expect(DetoxServer).toHaveBeenCalledWith({
-          port: '12345',
+          port: 0,
           standalone: false,
         }));
 

@@ -2,7 +2,6 @@
 const { URL } = require('url');
 const util = require('util');
 
-const getPort = require('get-port');
 const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
@@ -146,17 +145,20 @@ class Detox {
   async _doInit() {
     const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = this._sessionConfig;
-    if (!sessionConfig.server) {
-      sessionConfig.server = `ws://localhost:${await getPort()}`;
-    }
 
     if (sessionConfig.autoStart) {
       this._server = new DetoxServer({
-        port: new URL(sessionConfig.server).port,
+        port: sessionConfig.server
+          ? new URL(sessionConfig.server).port
+          : 0,
         standalone: false,
       });
 
       await this._server.open();
+
+      if (!sessionConfig.server) {
+        sessionConfig.server = `ws://localhost:${this._server.port}`;
+      }
     }
 
     this._client = new Client(sessionConfig);
