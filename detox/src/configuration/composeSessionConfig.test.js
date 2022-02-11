@@ -120,8 +120,8 @@ describe('composeSessionConfig', () => {
         globalConfig.session = { autoStart: false };
       });
 
-      it('should override the value', async () => {
-        expect(await compose()).toMatchObject({ autoStart: false });
+      it('should throw an error if the server is not defined', async () => {
+        await expect(compose).rejects.toThrowError(errorComposer.cannotSkipAutostartWithMissingServer());
       });
     });
 
