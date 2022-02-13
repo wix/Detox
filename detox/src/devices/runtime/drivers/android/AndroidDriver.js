@@ -413,23 +413,23 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _isAlreadyInstalled(bundleId, hash) {
-    return hash ? this.hashHelper.checkHash(this.adbName, bundleId, hash) : false;
+    return hash ? this.hashHelper.isRemoteHashEqualToLocal(this.adbName, bundleId, hash) : false;
   }
 
   _getLocalBinaryHash(binaryFile) {
     return this.hashHelper.generateHash(binaryFile);
   }
 
-  async _recordHash(hash, bundleId) {
+  async _saveHashToRemote(hash, bundleId) {
     if (hash) {
-      await this.hashHelper.recordHash(this.adbName, bundleId, hash);
+      await this.hashHelper.saveHashToRemote(this.adbName, bundleId, hash);
     }
   }
 
   async _performFullReinstall(binaryPath, bundleId, hash) {
     await this.uninstallApp(bundleId);
     await this.installApp(binaryPath);
-    await this._recordHash(hash, bundleId);
+    await this._saveHashToRemote(hash, bundleId);
   }
 }
 

@@ -418,14 +418,6 @@ describe('Android driver', () => {
       expect(adb.clearAppData).toHaveBeenCalledTimes(1);
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
     });
-
-    it('should check whether apk is already installed', async () => {
-      const filehash = '8ers';
-      const bundleId = 'com.android.test';
-      await uut._isAlreadyInstalled(bundleId, filehash);
-      expect(hashHelper.checkHash).toHaveBeenCalledTimes(1);
-      expect(hashHelper.checkHash).toHaveBeenCalledWith(adbName, bundleId, filehash);
-    });
   });
 
   describe('Util-binaries installation', () => {
@@ -619,63 +611,41 @@ describe('Android driver', () => {
   describe('reset app state', () => {
     const binaryPath = 'mock-bin-path';
     const mockHash = 'abcdef';
-    let uninstallSpy;
-    let installSpy;
-    let recordHashSpy;
-    let clearAppSpy;
-    let reinstallSpy;
-    let isAlreadyInstalledSpy;
 
     beforeEach(() => {
       fs.existsSync.mockReturnValue(true);
-
-      clearAppSpy = jest.spyOn(uut, '_clearAppData' );
-      reinstallSpy = jest.spyOn(uut, '_performFullReinstall');
-      uninstallSpy = jest.spyOn(uut, 'uninstallApp');
-      installSpy = jest.spyOn(uut, 'installApp');
-      recordHashSpy = jest.spyOn(uut, '_recordHash');
-      isAlreadyInstalledSpy = jest.spyOn(uut, '_isAlreadyInstalled')
-
-      jest.spyOn(uut, '_getLocalBinaryHash').mockImplementation(() => mockHash);
-    });
-
-    it('should call appropriate steps for reinstall', async () => {
-      await uut._performFullReinstall(binaryPath, bundleId, mockHash);
-
-      expect(uninstallSpy).toHaveBeenCalledTimes(1);
-      expect(installSpy).toHaveBeenCalledTimes(1);
-      expect(recordHashSpy).toHaveBeenCalledTimes(1);
-
-      expect(uninstallSpy).toHaveBeenLastCalledWith(bundleId);
-      expect(installSpy).toHaveBeenCalledWith(binaryPath);
-      expect(recordHashSpy).toHaveBeenCalledWith(mockHash, bundleId);
     });
 
     it('should clear app data if already installed', async () => {
-      isAlreadyInstalledSpy.mockImplementation(() => true);
+      hashHelper.generateHash.mockImplementation(() => mockHash);
+      hashHelper.isRemoteHashEqualToLocal.mockImplementation(() => true);
       await uut.resetAppState(binaryPath, bundleId);
-      expect(clearAppSpy).toHaveBeenCalledTimes(1);
-      expect(clearAppSpy).toHaveBeenCalledWith(bundleId);
-      expect(reinstallSpy).not.toHaveBeenCalled();
+      expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
+      expect(hashHelper.generateHash).toHaveBeenCalledWith(binaryPath);
+      expect(hashHelper.isRemoteHashEqualToLocal).toHaveBeenCalledTimes(1);
+      expect(hashHelper.isRemoteHashEqualToLocal).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+      expect(adb.clearAppData).toHaveBeenCalledTimes(1);
+      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
+      expect(appUninstallHelper.uninstall).not.toHaveBeenCalled();
     });
 
-    it('should clear app data if already installed', async () => {
-      isAlreadyInstalledSpy.mockImplementation(() => false);
+    it('should reinstall if not already installed', async () => {
+      const mockBinaryPath = mockGetAbsoluteBinaryPathImpl(binaryPath);
+      hashHelper.generateHash.mockImplementation(() => mockHash);
+      hashHelper.isRemoteHashEqualToLocal.mockImplementation(() => false);
       await uut.resetAppState(binaryPath, bundleId);
-      expect(clearAppSpy).not.toHaveBeenCalled();
-      expect(reinstallSpy).toHaveBeenCalledTimes(1);
-      expect(reinstallSpy).toHaveBeenCalledWith(binaryPath, bundleId, mockHash);
-    });
-
-    it('should do nothing in record_hash if no hash provided', async () => {
-      await uut._recordHash(undefined, bundleId);
-      expect(hashHelper.recordHash).not.toHaveBeenCalled();
-    });
-
-    it('should call hashhelper in record_hash if hash provided', async () => {
-      await uut._recordHash(mockHash, bundleId);
-      expect(hashHelper.recordHash).toHaveBeenCalledTimes(1);
-      expect(hashHelper.recordHash).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+      expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
+      expect(hashHelper.isRemoteHashEqualToLocal).toHaveBeenCalledTimes(1);
+      expect(adb.clearAppData).not.toHaveBeenCalled();
+      expect(appUninstallHelper.uninstall).toHaveBeenCalledTimes(1);
+      expect(appUninstallHelper.uninstall).toHaveBeenCalledWith(adbName, bundleId);
+      expect(apkValidator.validateAppApk).toHaveBeenCalledTimes(1);
+      expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockBinaryPath);
+      expect(adb.install).toHaveBeenCalledTimes(2);
+      expect(adb.install).toHaveBeenNthCalledWith(1, adbName, mockBinaryPath);
+      expect(adb.install).toHaveBeenNthCalledWith(2, adbName, mockAPKPathGetTestApkPathImpl(mockBinaryPath));
+      expect(hashHelper.saveHashToRemote).toHaveBeenCalledTimes(1);
+      expect(hashHelper.saveHashToRemote).toHaveBeenCalledWith(adbName, bundleId, mockHash);
     });
   });
 });

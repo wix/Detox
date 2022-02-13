@@ -19,33 +19,33 @@ describe('HashHelper', () => {
     uut = new HashHelper(adb, hashxfer);
   });
 
-  it('should pass arguments to adb for recordHash', async () => {
+  it('should pass arguments to adb', async () => {
     const HASH_PATH = '/data/local/tmp/detox';
-    await uut.recordHash(mockDeviceId, mockBundleId, mockHash);
+    await uut.saveHashToRemote(mockDeviceId, mockBundleId, mockHash);
     expect(adb.createFileWithContent).toHaveBeenCalledTimes(1);
     expect(adb.createFileWithContent).toHaveBeenLastCalledWith(mockDeviceId, HASH_PATH, `${mockBundleId}.hash`, mockHash);
   });
 
-  it('should return true for checkHash when remoteHash and localHash match', async () => {
+  it('should return true when remoteHash and localHash match', async () => {
     const HashXferMock = jest.genMockFromModule('./HashFileXfer');
     hashxfer = new HashXferMock();
     hashxfer.readHashFile.mockImplementation(() => mockHash);
     uut = new HashHelper(adb, hashxfer);
 
-    const actual = await uut.checkHash(mockDeviceId, mockBundleId, mockHash);
+    const actual = await uut.isRemoteHashEqualToLocal(mockDeviceId, mockBundleId, mockHash);
 
     expect(hashxfer.readHashFile).toHaveBeenCalledTimes(1);
     expect(hashxfer.readHashFile).toHaveBeenLastCalledWith(mockDeviceId, mockBundleId);
     expect(actual).toBe(true);
   });
 
-  it('should return false for checkHash when remoteHash and localHash dont match', async () => {
+  it('should return false when remoteHash and localHash dont match', async () => {
     const HashXferMock = jest.genMockFromModule('./HashFileXfer');
     hashxfer = new HashXferMock();
     hashxfer.readHashFile.mockImplementation(() => 'efghij');
     uut = new HashHelper(adb, hashxfer);
 
-    const actual = await uut.checkHash(mockDeviceId, mockBundleId, mockHash);
+    const actual = await uut.isRemoteHashEqualToLocal(mockDeviceId, mockBundleId, mockHash);
 
     expect(hashxfer.readHashFile).toHaveBeenCalledTimes(1);
     expect(hashxfer.readHashFile).toHaveBeenLastCalledWith(mockDeviceId, mockBundleId);

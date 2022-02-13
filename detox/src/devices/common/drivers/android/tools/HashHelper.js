@@ -19,12 +19,12 @@ class HashHelper {
     }
   }
 
-  async recordHash(deviceId, bundleId, hash) {
+  async saveHashToRemote(deviceId, bundleId, hash) {
     const hashFileName = `${bundleId}.hash`;
     await this._adb.createFileWithContent(deviceId, HASH_PATH, hashFileName, hash);
   }
 
-  async checkHash(deviceId, bundleId, localHash) {
+  async isRemoteHashEqualToLocal(deviceId, bundleId, localHash) {
     const remoteHash = await this._hashXfer.readHashFile(deviceId, bundleId);
     return localHash === remoteHash;
   }
