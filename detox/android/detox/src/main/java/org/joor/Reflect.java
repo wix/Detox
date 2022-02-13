@@ -25,6 +25,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -633,10 +634,10 @@ public class Reflect {
             return "";
         }
         else if (length == 1) {
-            return string.toLowerCase();
+            return string.toLowerCase(Locale.ROOT);
         }
         else {
-            return string.substring(0, 1).toLowerCase() + string.substring(1);
+            return string.substring(0, 1).toLowerCase(Locale.ROOT) + string.substring(1);
         }
     }
 
