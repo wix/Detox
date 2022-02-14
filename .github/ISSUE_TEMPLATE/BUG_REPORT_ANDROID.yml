@@ -21,7 +21,7 @@ body:
     id: tested-last-detox
     attributes:
       label: Was it tested on latest Detox?
-      description: Before reporting this issue, please make sure it can be reproduced on the latest released version of Detox.
+      description: Before reporting this issue, please make sure it can be reproduced on the latest released version of Detox, see our [releases](https://github.com/wix/Detox/releases).
       options:
         - label: I have tested this issue on the latest Detox release and it still reproduces.
           required: true
