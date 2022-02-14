@@ -6,11 +6,25 @@
 .heroBanner {
   padding: 4rem 0;
   color: white;
+  text-shadow:
+          -1px 1px 0 rgba(0, 0, 0, 0.4),
+          0 0 5px rgba(255, 255, 255, 0.4),
+          0 0 10px rgba(255, 255, 255, 0.3),
+          0 0 15px rgba(255, 255, 255, 0.2),
+          0 0 20px rgba(0, 0, 0, 0.5),
+          0 0 30px rgba(193, 0, 255, 0.5),
+          0 0 40px rgba(193, 0, 255, 0.5),
+          0 0 55px rgba(193, 0, 255, 0.5),
+          0 0 75px rgba(193, 0, 255, 0.5);
   text-align: center;
   position: relative;
   overflow: hidden;
-  background: rgb(111,127,147);
-  background: radial-gradient(circle, rgba(111,127,147,1) 0%, rgba(80,94,111,1) 24%, rgba(44,54,65,1) 50%, rgba(44,54,65,1) 99%);
+  background: rgb(21,33,107);
+  background-image: url(../../static/img/cover.jpg);
+  background-position-x: center;
+  background-position-y: top;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .githubStar {
@@ -27,4 +41,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-shadow: none;
 }

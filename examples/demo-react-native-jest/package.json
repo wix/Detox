@@ -1,6 +1,6 @@
 {
   "name": "demo-react-native-jest",
-  "version": "19.4.1",
+  "version": "19.4.5",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
-    "detox": "^19.4.1",
+    "detox": "^19.4.5",
     "jest": "^27.0.0",
     "sanitize-filename": "^1.6.1",
     "ts-jest": "^27.0.0",

@@ -52,7 +52,7 @@ function reportGlobalCleanupSummary(deletionLeaks) {
     deletionLeaks.forEach(({ uuid, name, error }) => {
       logger.warn(cleanupLogData, [
         `Instance ${name} (${uuid})${error ? `: ${error}` : ''}`,
-        `    Kill it by visiting https://cloud.geny.io/app/instance/${uuid}, or by running:`,
+        `    Kill it by visiting https://cloud.geny.io/instance/${uuid}, or by running:`,
         `    gmsaas instances stop ${uuid}`,
       ].join('\n'));
     });

@@ -8,7 +8,7 @@ const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 const Client = require('./client/Client');
 const environmentFactory = require('./environmentFactory');
-const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
+const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
 const AsyncEmitter = require('./utils/AsyncEmitter');
@@ -146,13 +146,19 @@ class Detox {
     const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = this._sessionConfig;
 
-    if (this._sessionConfig.autoStart) {
+    if (sessionConfig.autoStart) {
       this._server = new DetoxServer({
-        port: new URL(sessionConfig.server).port,
+        port: sessionConfig.server
+          ? new URL(sessionConfig.server).port
+          : 0,
         standalone: false,
       });
 
       await this._server.open();
+
+      if (!sessionConfig.server) {
+        sessionConfig.server = `ws://localhost:${this._server.port}`;
+      }
     }
 
     this._client = new Client(sessionConfig);

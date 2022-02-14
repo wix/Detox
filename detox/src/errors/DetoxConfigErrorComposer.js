@@ -622,6 +622,18 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  cannotSkipAutostartWithMissingServer() {
+    return new DetoxConfigError({
+      message: `Cannot have both an undefined session.server URL and session.autoStart set to false`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: 3 },
+      debugInfo: _.omitBy({
+        session: _.get(this.contents, ['session']),
+        ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
+      }, _.isEmpty),
+    });
+  }
+
   // endregion
 
   missingBuildScript(appConfig) {

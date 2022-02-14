@@ -88,7 +88,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
         expect(e.toString()).toContain('No Genymotion-Cloud template found to match the configured lookup query');
         expect(e.toString()).toContain(JSON.stringify(deviceConfig.device));
         expect(e.toString()).toContain('HINT: Revisit your detox configuration');
-        expect(e.toString()).toContain('https://cloud.geny.io/app/shared-devices');
+        expect(e.toString()).toContain('https://cloud.geny.io/recipes#custom');
         return;
       }
       throw new Error('Expected an error');

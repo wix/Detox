@@ -11,7 +11,11 @@ jest.mock('./environmentFactory');
 
 jest.mock('./server/DetoxServer', () => {
   const FakeServer = jest.genMockFromModule('./server/DetoxServer');
-  return jest.fn().mockImplementation(() => new FakeServer());
+  return jest.fn().mockImplementation(() => {
+    const server =  new FakeServer();
+    server.port = 12345;
+    return server;
+  });
 });
 
 describe('Detox', () => {
@@ -116,13 +120,13 @@ describe('Detox', () => {
 
       it('should create a DetoxServer automatically', () =>
         expect(DetoxServer).toHaveBeenCalledWith({
-          port: expect.anything(),
+          port: 0,
           standalone: false,
         }));
 
       it('should create a new Client', () =>
         expect(Client).toHaveBeenCalledWith(expect.objectContaining({
-          server: expect.any(String),
+          server: 'ws://localhost:12345',
           sessionId: expect.any(String),
         })));
 
@@ -253,6 +257,17 @@ describe('Detox', () => {
 
       it('should not start DetoxServer', () =>
         expect(DetoxServer).not.toHaveBeenCalled());
+    });
+
+    describe('with sessionConfig.server custom URL', () => {
+      beforeEach(() => { detoxConfig.sessionConfig.server = 'ws://localhost:451'; });
+      beforeEach(init);
+
+      it('should create a DetoxServer using the port from that URL', () =>
+        expect(DetoxServer).toHaveBeenCalledWith({
+          port: '451',
+          standalone: false,
+        }));
     });
 
     describe('with behaviorConfig.init.exposeGlobals = false', () => {

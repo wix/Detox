@@ -1,5 +1,5 @@
 // @ts-nocheck
-const getPort = require('get-port');
+const net = require('net');
 
 describe('DetoxServer', () => {
   let DetoxServer;
@@ -25,19 +25,34 @@ describe('DetoxServer', () => {
 
   describe('.open() / .close()', () => {
     beforeEach(async () => {
-      options = await someOptions();
+      options = { port: 0 };
     });
 
     it('should start listening on specified port (on open) and stop (on close)', async () => {
-      await expect(isPortBusy()).resolves.toBe(false);
+      let port;
 
       try {
         server = new DetoxServer(options);
         await server.open();
-        await expect(isPortBusy()).resolves.toBe(true);
+        port = server.port;
+
+        await expect(isPortBusy(port)).resolves.toBe(true);
       } finally {
         await server.close();
-        await expect(isPortBusy()).resolves.toBe(false);
+        await expect(isPortBusy(port)).resolves.toBe(false);
+      }
+    });
+
+    it('should allow getting server port if it is running', async () => {
+      try {
+        server = new DetoxServer(options);
+        expect(() => server.port).toThrowError(/Cannot get a port/);
+
+        await server.open();
+        expect(server.port).toBeGreaterThan(1023);
+      } finally {
+        await server.close();
+        expect(() => server.port).toThrowError(/Cannot get a port/);
       }
     });
 
@@ -47,7 +62,7 @@ describe('DetoxServer', () => {
         server = new DetoxServer(options);
         await server.open();
 
-        const expectedString = expect.stringContaining(`localhost:${options.port}`);
+        const expectedString = expect.stringContaining(`localhost:${server.port}`);
         expect(log.info).toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
         expect(log.debug).not.toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
       } finally {
@@ -61,7 +76,7 @@ describe('DetoxServer', () => {
         server = new DetoxServer(options);
         await server.open();
 
-        const expectedString = expect.stringContaining(`localhost:${options.port}`);
+        const expectedString = expect.stringContaining(`localhost:${server.port}`);
         expect(log.debug).toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
         expect(log.info).not.toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
       } finally {
@@ -76,6 +91,21 @@ describe('DetoxServer', () => {
 
       const expectedString = expect.stringContaining(`has been closed gracefully`);
       expect(log.debug).toHaveBeenCalledWith({ event: 'WSS_CLOSE' }, expectedString);
+    });
+
+    it('should throw upon an unsuccessful server opening', async () => {
+      options = optionsWithMockServer((wss, _o, listening) => {
+        listening.mockImplementation(() => {});
+
+        wss.on.mockImplementation((event, callback) => {
+          if (event === 'error') {
+            setImmediate(() => callback(new TestError()));
+          }
+        });
+      });
+
+      server = new DetoxServer(options);
+      await expect(server.open()).rejects.toThrowError('TEST_ERROR');
     });
 
     it('should WARN log a message upon unsuccessful server closing (timeout case)', async () => {
@@ -181,43 +211,39 @@ describe('DetoxServer', () => {
     expect(sessionManager.registerConnection).toHaveBeenCalledWith(fakeWs, fakeRequest.socket);
   });
 
-  async function someOptions() {
-    return {
-      standalone: true,
-      port: await getPort(),
-    };
-  }
-
   function optionsWithMockServer(callback) {
     const Server = jest.genMockFromModule('ws').Server;
     Server.mockImplementation(function(options, listening) {
+      const mockListening = jest.fn().mockImplementation(listening);
+      this.address.mockReturnValue({ port: 65534 });
       this.close.mockImplementation(callback => callback());
-      const result = callback && callback.call(null, this, options, listening);
-      listening();
-      return result;
+      const result = callback && callback.call(null, this, options, mockListening);
+      mockListening();
+      return result || this;
     });
 
     return { Server };
   }
 
-  async function isPortBusy({ port } = options) {
-    const probeServer = new DetoxServer({
-      standalone: true,
-      port,
+  async function isPortBusy(port) {
+    return new Promise((resolve, reject) => {
+      const server = net.createServer();
+
+      server.once('error', function(err) {
+        if (err.code === 'EADDRINUSE') {
+          resolve(true);
+        } else {
+          reject(err);
+        }
+      });
+
+      server.once('listening', function() {
+        server.close();
+        resolve(false);
+      });
+
+      server.listen(port);
     });
-
-    try {
-      await probeServer.open();
-      return false;
-    } catch (e) {
-      if (/ADDRINUSE/.test(e)) {
-        return true;
-      }
-
-      throw e;
-    } finally {
-      await probeServer.close();
-    }
   }
 
   class TestError extends Error {
