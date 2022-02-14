@@ -10,4 +10,9 @@ fi
 
 run_f "lerna bootstrap --no-ci"
 run_f "lerna run build"
-run_f "lerna run test"
+
+if [ "$1" == 'noGenerate' ]; then
+  run_f "lerna run test --ignore=generation"
+else
+  run_f "lerna run test"
+fi
