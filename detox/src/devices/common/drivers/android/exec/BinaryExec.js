@@ -1,7 +1,7 @@
 // @ts-nocheck
 const spawn = require('child-process-promise').spawn;
 
-const exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
+const exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
 
 class ExecCommand {
   toString() {

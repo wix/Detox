@@ -59,6 +59,7 @@ function createPlainBunyanStream({ logPath, level, showDate = true }) {
         return entry.event ? entry.event : filename;
       },
       'trackingId': id => ` #${id}`,
+      'cpid': pid => ` cpid=${pid}`,
     },
   };
 

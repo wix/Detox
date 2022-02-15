@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { getAdbPath } = require('../../../../../utils/environment');
-const { execWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/exec');
+const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/childProcess');
 const { escape } = require('../../../../../utils/pipeCommands');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
@@ -100,20 +100,15 @@ class ADB {
     return isInstalled;
   }
 
-  async install(deviceId, apkPath) {
-    apkPath = `"${escape.inQuotedString(apkPath)}"`;
-
+  async install(deviceId, _apkPath) {
+    const apkPath = escape.inQuotedString(_apkPath);
     const apiLvl = await this.apiLevel(deviceId);
+    const command = (apiLvl >= 23)
+      ? `install -r -g -t ${apkPath}`
+      : `install -rg ${apkPath}`;
+    const result = await this.adbCmdSpawned(deviceId, command, { timeout: 45000, retries: 3});
 
-    let childProcess;
-    if (apiLvl >= 23) {
-      childProcess = await this.adbCmd(deviceId, `install -r -g -t ${apkPath}`);
-    } else {
-      // NOTICE: MUST be in `-rg` form instead of individual `-g` form when API < 23
-      childProcess = await this.adbCmd(deviceId, `install -rg ${apkPath}`);
-    }
-
-    const [failure] = (childProcess.stdout || '').match(/^Failure \[.*\]$/m) || [];
+    const [failure] = (result.stdout || '').match(/^Failure \[.*\]$/m) || [];
     if (failure) {
       throw new DetoxRuntimeError({
         message: `Failed to install app on ${deviceId}: ${apkPath}`,
@@ -124,13 +119,10 @@ class ADB {
 
   async remoteInstall(deviceId, path) {
     const apiLvl = await this.apiLevel(deviceId);
-
-    if (apiLvl >= 23) {
-      return this.shell(deviceId, `pm install -r -g -t ${path}`);
-    } else {
-      // NOTICE: MUST be in `-rg` form instead of individual `-g` form when API < 23
-      return this.shell(deviceId, `pm install -rg ${path}`);
-    }
+    const command = (apiLvl >= 23)
+      ? `pm install -r -g -t ${path}`
+      : `pm install -rg ${path}`;
+    return this.shellSpawned(deviceId, command, { timeout: 45000, retries: 3 });
   }
 
   async uninstall(deviceId, appId) {
@@ -152,7 +144,7 @@ class ADB {
     // As by default Node.js is distributed without ICU, the locale issue
     // becomes tricky to solve across different platforms, that's why
     // it's easier for us just to send 2 commands in a row, ignoring one
-    // which will obviosuly fail.
+    // which will obviously fail.
     //
     // Since `adb emu` commands fail silently, .catch() is not necessary.
 
@@ -165,8 +157,10 @@ class ADB {
 
   async pidof(deviceId, bundleId) {
     const bundleIdRegex = escape.inQuotedRegexp(bundleId) + '$';
+    const command = `ps | grep "${bundleIdRegex}"`;
+    const options = { silent: true };
 
-    const processes = await this.shell(deviceId, `ps | grep "${bundleIdRegex}"`, { silent: true }).catch(() => '');
+    const processes = await this.shell(deviceId, command, options).catch(() => '');
     if (!processes) {
       return NaN;
     }
@@ -186,7 +180,7 @@ class ADB {
 
   async isBootComplete(deviceId) {
     try {
-      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`, { silent: true });
+      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`, { retries: 0, silent: true });
       return (bootComplete === '1');
     } catch (ex) {
       return false;
@@ -312,8 +306,15 @@ class ADB {
     return _.get(runnerForBundleRegEx.exec(instrumentationRunners), [1], 'undefined');
   }
 
-  async shell(deviceId, cmd, options) {
-    return (await this.adbCmd(deviceId, `shell "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
+  async shell(deviceId, command, options) {
+    const result = await this.adbCmd(deviceId, `shell "${escape.inQuotedString(command)}"`, options);
+    return result.stdout.trim();
+  }
+
+  async shellSpawned(deviceId, command, options) {
+    const _command = `shell ${command}`;
+    const result = await this.adbCmdSpawned(deviceId, _command, options);
+    return result.stdout.trim();
   }
 
   async emu(deviceId, cmd, options) {
@@ -341,6 +342,17 @@ class ADB {
       ...options,
     };
     return execWithRetriesAndLogs(cmd, _options);
+  }
+
+  async adbCmdSpawned(deviceId, command, spawnOptions = {}) {
+    const flags = command.split(/\s+/);
+    const serial = deviceId ? ['-s', deviceId] : [];
+    const _flags = [...serial, ...flags];
+    const _spawnOptions = {
+      ...spawnOptions,
+      capture: ['stdout'],
+    };
+    return spawnWithRetriesAndLogs(this.adbBin, _flags, _spawnOptions);
   }
 
   /***

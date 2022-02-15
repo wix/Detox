@@ -25,12 +25,13 @@ describe('ADB', () => {
     jest.mock('../tools/EmulatorHandle');
     EmulatorHandle = require('../tools/EmulatorHandle');
 
-    jest.mock('../../../../../utils/exec', () => ({
+    jest.mock('../../../../../utils/childProcess', () => ({
       execWithRetriesAndLogs: jest.fn().mockReturnValue({ stdout: '' }),
       spawnAndLog: jest.fn(),
+      spawnWithRetriesAndLogs: jest.fn(),
     }));
-    exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
-    spawn = require('../../../../../utils/exec').spawnAndLog;
+    exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
+    spawn = require('../../../../../utils/childProcess').spawnAndLog;
 
     ADB = require('./ADB');
     adb = new ADB();

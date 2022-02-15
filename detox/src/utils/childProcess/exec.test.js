@@ -1,18 +1,18 @@
 // @ts-nocheck
-describe('exec', () => {
+describe('Exec utils', () => {
   let logger;
   let exec;
   let cpp;
 
   beforeEach(() => {
-    jest.mock('./logger');
-    logger = require('./logger');
+    jest.mock('../logger');
+    logger = require('../logger');
 
     jest.mock('child-process-promise');
     cpp = require('child-process-promise');
 
-    jest.mock('./trace');
-    require('./trace').traceCall.mockImplementation((s, fn) => {
+    jest.mock('../trace');
+    require('../trace').traceCall.mockImplementation((s, fn) => {
       return fn();
     });
 
@@ -94,11 +94,14 @@ describe('exec', () => {
         retrying: true,
       },
     };
+
+    logger.debug.mockClear();
+
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 2 }, '(Retry #1)', 'bin --argument 123');
-    expect(logger.debug).not.toHaveBeenCalledWith({ event: 'EXEC_RETRY', retryNumber: 1 }, expect.any(String), expect.any(String));
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY' }, '(Retry #1)', 'bin --argument 123');
+    expect(logger.debug).not.toHaveBeenCalledWith({ event: 'EXEC_RETRY' }, expect.stringContaining('Retry #0'), expect.any(String));
     expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
   });
 
@@ -217,138 +220,13 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });
-});
 
-describe('spawn', () => {
-  let exec;
-  let cpp;
-  let log;
-
-  beforeEach(() => {
-    jest.mock('./logger');
-    jest.mock('child-process-promise');
-    cpp = require('child-process-promise');
-    exec = require('./exec');
-    log = require('./logger');
-
-    const childProcess = {
-      pid: 2018,
-      stdout: toStream('hello'),
-      stderr: toStream('world'),
-    };
-
-    const cpPromise = Promise.resolve({ code: 0, childProcess });
-    cpp.spawn.mockReturnValue(Object.assign(cpPromise, {
-      childProcess
-    }));
-  });
-
-  it('spawns an attached command with ignored input and piped output', () => {
-    const command = 'command';
-    const flags = ['--some', '--value', Math.random()];
-
-    exec.spawnAndLog(command, flags);
-
-    expect(cpp.spawn).toBeCalledWith(command, flags, {
-      stdio: ['ignore', 'pipe', 'pipe']
-    });
-  });
-
-  it('should collect output and log it', async () => {
-    jest.spyOn(log, 'child');
-    await exec.spawnAndLog('command', []);
-    await nextCycle();
-
-    expect(log.child).toHaveBeenCalledWith(expect.objectContaining({ trackingId: 2018 }));
-    expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
-    expect(log.trace).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT' }), 'hello');
-    expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
-  });
-
-  it('should override log levels if configured', async () => {
-    jest.spyOn(log, 'child');
-    await exec.spawnAndLog('command', [], {
-      logLevelPatterns: {
-        debug: [/hello/],
-        warn: [/world/],
-      },
-    });
-
-    await nextCycle();
-
-    expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT' }), 'hello');
-    expect(log.warn).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
-  });
-
-  it('should not log output if silent: true', async () => {
-    await exec.spawnAndLog('command', [], { silent: true });
-    await nextCycle();
-
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
-    expect(log.trace).not.toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), expect.any(String));
-    expect(log.error).not.toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), expect.any(String));
-  });
-
-  it('should log erroneously finished spawns', async () => {
-    const childProcess = {
-      pid: 8102,
-      stdout: toStream(''),
-      stderr: toStream('Some error.'),
-    };
-
-    cpp.spawn.mockReturnValue(Object.assign(Promise.reject({ code: -2, childProcess }), {
-      childProcess
-    }));
-
-    await exec.spawnAndLog('command', []).catch(() => {});
-    await nextCycle();
-
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = -2');
-    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
-  });
-
-  it('should log immediate spawn errors', async () => {
-    const childProcess = {
-      pid: null,
-      exitCode: -2,
-      stdout: toStream(''),
-      stderr: toStream('Command `command` not found.'),
-    };
-
-    cpp.spawn.mockReturnValue(Object.assign(Promise.resolve({ childProcess }), {
-      childProcess
-    }));
-
-    await exec.spawnAndLog('command', []);
-    await nextCycle();
-
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
-    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Command `command` not found.');
-  });
-
-  it(`execAsync command with no arguments successfully`, async () => {
+  it(`execAsync command with no arguments runs successfully`, async () => {
     mockCppSuccessful(cpp);
     await exec.execAsync('bin');
     expect(cpp.exec).toHaveBeenCalledWith(`bin`);
   });
 });
-
-function nextCycle() {
-  return new Promise(resolve => setTimeout(resolve));
-}
-
-function toStream(string) {
-  const { Readable } = require('stream');
-  const stream = new Readable();
-  stream._read = () => {};
-  stream.push(string);
-  stream.push(null);
-  return stream;
-}
 
 const returnSuccessfulWithValue = (value) => ({
     stdout: JSON.stringify(value),

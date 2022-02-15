@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
 
-const exec = require('../../../utils/exec');
+const childProcess = require('../../../utils/childProcess');
 
 describe('SimulatorLogPlugin', () => {
   async function majorWorkflow() {
@@ -44,7 +44,7 @@ describe('SimulatorLogPlugin', () => {
           // fs.writeFileSync(fakeSources.stdin, '');
 
           const handle = fs.openSync(fakeSources.stdin, 'r');
-          const process = exec.spawnAndLog('cat', [], {
+          const process = childProcess.spawnAndLog('cat', [], {
             stdio: [handle, stdout, stderr],
             silent: true,
           });
