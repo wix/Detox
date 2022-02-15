@@ -1,8 +1,6 @@
 #!/bin/bash -ex
 
 echo $REACT_NATIVE_VERSION
-echo $JAVA_HOME
-java -version
 
 source $(dirname "$0")/ci.sh
 mkdir -p coverage
