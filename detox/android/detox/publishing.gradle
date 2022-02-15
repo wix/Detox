@@ -140,7 +140,7 @@ signing {
 
 project.afterEvaluate {
     project.tasks.all { Task task ->
-        android.libraryVariants.all { variant ->
+        project.android.libraryVariants.all { variant ->
             String variantName = variant.name.capitalize()
             if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository") {
                 task.dependsOn "assemble${variantName}"
@@ -184,7 +184,9 @@ publishing {
 
                     // Register built .aar as published artifact (as a file, explicitly)
                     variant.outputs.forEach { output ->
-                        artifact output.outputFile
+//                        artifact output.outputFile
+                        def selfAssembledOutputPath = new File("${project.buildDir.absolutePath}/outputs/apk/${variant.flavorName}/${variant.buildType.name}")
+                        artifact selfAssembledOutputPath
 
                         // Also register as an archive-artifact, for signing (via equivalent task's output)
                         declareArchive project.tasks["bundle${variantNameCapitalized}Aar"]
