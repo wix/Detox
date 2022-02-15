@@ -2,6 +2,8 @@ buildscript {
     apply from: './rninfo.gradle'
 
     def androidGradlePluginVersion =
+    rnInfo.isRN67OrHigher ?
+        '7.0.1' :
         rnInfo.isRN66OrHigher ?
                 '4.2.2' :
             rnInfo.isRN64OrHigher
