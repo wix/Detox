@@ -5,7 +5,7 @@ buildscript {
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
-        kotlinVersion = '1.4.21'
+        kotlinVersion = '1.6.0'
         buildToolsVersion = '30.0.2'
         compileSdkVersion = 31
         targetSdkVersion = 31
