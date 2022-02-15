@@ -1,7 +1,5 @@
 #!/bin/bash -ex
 
-echo $REACT_NATIVE_VERSION
-
 source $(dirname "$0")/ci.sh
 mkdir -p coverage
 
