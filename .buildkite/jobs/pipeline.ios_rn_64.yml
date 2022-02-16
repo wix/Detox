@@ -5,3 +5,5 @@
     env:
       REACT_NATIVE_VERSION: 0.64.1
     artifact_paths: "/Users/builder/work/artifacts/**/*"
+    agents:
+      queue: testing
