@@ -16,8 +16,6 @@
       DETOX_DISABLE_POSTINSTALL: true
       DETOX_DISABLE_POD_INSTALL: true
     artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
-    agents:
-      queue: testing
       
   - label: ":shipit: Publish"
     depends_on:

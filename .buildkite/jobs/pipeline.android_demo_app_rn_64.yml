@@ -6,3 +6,4 @@
       REACT_NATIVE_VERSION: 0.64.1
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
+    artifact_paths: "/Users/builder/work/artifacts/**/*"
