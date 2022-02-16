@@ -10,7 +10,7 @@ upload_artifacts() {
   CONTEXT=$2
 
   if [ $CI ]; then
-    ARTIFACTS_NAME="artifacts_${BUILD_ID}_${CONTEXT}_${DATE}.tar.gz"
+    ARTIFACTS_NAME="artifacts_${BUILDKITE_BUILD_NUMBER}_${CONTEXT}_${DATE}.tar.gz"
   else
     ARTIFACTS_NAME="artifacts_${TRAVIS_BUILD_ID}_${CONTEXT}_${DATE}.tar.gz"
   fi
