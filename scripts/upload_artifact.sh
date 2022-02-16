@@ -9,7 +9,7 @@ upload_artifacts() {
   ARTIFACTS_DIR=$1
   CONTEXT=$2
 
-  if [ $JENKINS_CI ]; then
+  if [ $CI ]; then
     ARTIFACTS_NAME="artifacts_${BUILD_ID}_${CONTEXT}_${DATE}.tar.gz"
   else
     ARTIFACTS_NAME="artifacts_${TRAVIS_BUILD_ID}_${CONTEXT}_${DATE}.tar.gz"
@@ -19,7 +19,7 @@ upload_artifacts() {
     echo "Packing artifacts... (${CONTEXT})"
     tar cvzf "${ARTIFACTS_NAME}" ${ARTIFACTS_DIR}
 
-    if [ $JENKINS_CI ]; then
+    if [ $CI ]; then
         echo "Upload: Jenkins will upload using built-in plugin"
     else
         echo "Uploading artifacts..."
