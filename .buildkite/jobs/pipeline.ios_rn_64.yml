@@ -8,5 +8,3 @@
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
-    agents:
-      queue: testing
