@@ -3,14 +3,17 @@ const util = require('util');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
+const EventEmitter = require('events');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
 
 const FileArtifact = require('./templates/artifact/FileArtifact');
 
-class ArtifactsManager {
+class ArtifactsManager extends EventEmitter {
   constructor({ pathBuilder, plugins }) {
+    super();
+
     this._pluginConfigs = plugins;
     this._idlePromise = Promise.resolve();
     this._idleCallbackRequests = [];
@@ -32,8 +35,13 @@ class ArtifactsManager {
         return artifactPath;
       },
 
-      trackArtifact: _.noop,
-      untrackArtifact: _.noop,
+      trackArtifact: (artifact) => {
+        this.emit('trackArtifact', artifact);
+      },
+
+      untrackArtifact: (artifact) => {
+        this.emit('untrackArtifact', artifact);
+      },
 
       requestIdleCallback: (callback) => {
         this._idleCallbackRequests.push({
