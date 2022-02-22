@@ -201,6 +201,10 @@ const config = {
       device: 'android.emulator',
       apps: ['android.release', 'android.release.withArgs'],
     },
+    'android.genycloud.debug': {
+      device: 'android.genycloud.uuid',
+      apps: ['android.debug', 'android.debug.withArgs'],
+    },
     'android.genycloud.release': {
       device: 'android.genycloud.uuid',
       apps: ['android.release', 'android.release.withArgs'],

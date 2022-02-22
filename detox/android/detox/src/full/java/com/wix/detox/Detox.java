@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.wix.detox.config.DetoxConfig;
 import com.wix.detox.espresso.UiControllerSpy;
@@ -72,6 +74,7 @@ import androidx.test.rule.ActivityTestRule;
 public final class Detox {
     private static final String INTENT_LAUNCH_ARGS_KEY = "launchArgs";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
+    private static final String DEBUG_HOST_KEY = "debug_http_host";
 
     private static final LaunchArgs sLaunchArgs = new LaunchArgs();
     private static final LaunchIntentsFactory sIntentsFactory = new LaunchIntentsFactory();
@@ -186,6 +189,8 @@ public final class Detox {
      * @param detoxConfig The configurations to apply.
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
+        setDebugHost();
+
         DetoxConfig.CONFIG = detoxConfig;
         DetoxConfig.CONFIG.apply();
 
@@ -217,6 +222,12 @@ public final class Detox {
         Bundle notificationData = new NotificationDataParser(dataFilePath).parseNotificationData();
         Intent intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, false);
         launchActivitySync(intent);
+    }
+
+    private static void setDebugHost() {
+        SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(getAppContext());
+        preferences.edit().putString(DEBUG_HOST_KEY, "localhost:8081").apply();
     }
 
     private static Intent extractInitialIntent() {
