@@ -58,6 +58,17 @@ class Detox {
     };
   }
 
+  static setDebugHost() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "setDebugHost",
+      args: []
+    };
+  }
+
   static extractInitialIntent() {
     return {
       target: {
