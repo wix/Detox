@@ -413,7 +413,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _isAlreadyInstalled(bundleId, hash) {
-    return hash ? this.hashHelper.isRemoteHashEqualToLocal(this.adbName, bundleId, hash) : false;
+    return hash ? this.hashHelper.compareRemoteToLocal(this.adbName, bundleId, hash) : false;
   }
 
   _getLocalBinaryHash(binaryFile) {
@@ -421,9 +421,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _saveHashToRemote(hash, bundleId) {
-    if (hash) {
-      await this.hashHelper.saveHashToRemote(this.adbName, bundleId, hash);
-    }
+    await this.hashHelper.saveHashToRemote(this.adbName, bundleId, hash);
   }
 
   async _performFullReinstall(binaryPath, bundleId, hash) {

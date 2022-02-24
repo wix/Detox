@@ -12,7 +12,7 @@ class HashFileXfer extends FileXfer {
   }
 
   async readHashFile(deviceId, bundleId) {
-    const filePath = path.posix.join(this._dir, `${bundleId}.hash`);
+    const filePath = path.join(this._dir, `${bundleId}.hash`);
     return await this._adb.readFile(deviceId, filePath);
   }
 }

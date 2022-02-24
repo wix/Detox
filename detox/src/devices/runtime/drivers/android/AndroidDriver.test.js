@@ -618,12 +618,12 @@ describe('Android driver', () => {
 
     it('should clear app data if already installed', async () => {
       hashHelper.generateHash.mockImplementation(() => mockHash);
-      hashHelper.isRemoteHashEqualToLocal.mockImplementation(() => true);
+      hashHelper.compareRemoteToLocal.mockImplementation(() => true);
       await uut.resetAppState(binaryPath, bundleId);
       expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
       expect(hashHelper.generateHash).toHaveBeenCalledWith(binaryPath);
-      expect(hashHelper.isRemoteHashEqualToLocal).toHaveBeenCalledTimes(1);
-      expect(hashHelper.isRemoteHashEqualToLocal).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+      expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledTimes(1);
+      expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledWith(adbName, bundleId, mockHash);
       expect(adb.clearAppData).toHaveBeenCalledTimes(1);
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
       expect(appUninstallHelper.uninstall).not.toHaveBeenCalled();
@@ -632,10 +632,10 @@ describe('Android driver', () => {
     it('should reinstall if not already installed', async () => {
       const mockBinaryPath = mockGetAbsoluteBinaryPathImpl(binaryPath);
       hashHelper.generateHash.mockImplementation(() => mockHash);
-      hashHelper.isRemoteHashEqualToLocal.mockImplementation(() => false);
+      hashHelper.compareRemoteToLocal.mockImplementation(() => false);
       await uut.resetAppState(binaryPath, bundleId);
       expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
-      expect(hashHelper.isRemoteHashEqualToLocal).toHaveBeenCalledTimes(1);
+      expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledTimes(1);
       expect(adb.clearAppData).not.toHaveBeenCalled();
       expect(appUninstallHelper.uninstall).toHaveBeenCalledTimes(1);
       expect(appUninstallHelper.uninstall).toHaveBeenCalledWith(adbName, bundleId);

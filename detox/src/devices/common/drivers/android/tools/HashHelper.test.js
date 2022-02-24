@@ -1,4 +1,3 @@
-const HashHelper = require('./HashHelper');
 let uut;
 let adb;
 let hashxfer;
@@ -7,11 +6,13 @@ describe('HashHelper', () => {
   const mockDeviceId = '123';
   const mockHash = 'abcdef';
   const mockBundleId = 'com.android.test';
+  const HashHelper = require('./HashHelper');
 
   beforeEach(() => {
     const ADBMock = jest.genMockFromModule('../exec/ADB');
     const HashXferMock = jest.genMockFromModule('./HashFileXfer');
     hashxfer = new HashXferMock();
+    hashxfer.readHashFile.mockImplementation(() => mockHash);
     adb = new ADBMock();
 
     adb.createFileWithContent.mockImplementation( async () => jest.fn());
@@ -27,12 +28,7 @@ describe('HashHelper', () => {
   });
 
   it('should return true when remoteHash and localHash match', async () => {
-    const HashXferMock = jest.genMockFromModule('./HashFileXfer');
-    hashxfer = new HashXferMock();
-    hashxfer.readHashFile.mockImplementation(() => mockHash);
-    uut = new HashHelper(adb, hashxfer);
-
-    const actual = await uut.isRemoteHashEqualToLocal(mockDeviceId, mockBundleId, mockHash);
+    const actual = await uut.compareRemoteToLocal(mockDeviceId, mockBundleId, mockHash);
 
     expect(hashxfer.readHashFile).toHaveBeenCalledTimes(1);
     expect(hashxfer.readHashFile).toHaveBeenLastCalledWith(mockDeviceId, mockBundleId);
@@ -40,12 +36,9 @@ describe('HashHelper', () => {
   });
 
   it('should return false when remoteHash and localHash dont match', async () => {
-    const HashXferMock = jest.genMockFromModule('./HashFileXfer');
-    hashxfer = new HashXferMock();
     hashxfer.readHashFile.mockImplementation(() => 'efghij');
-    uut = new HashHelper(adb, hashxfer);
 
-    const actual = await uut.isRemoteHashEqualToLocal(mockDeviceId, mockBundleId, mockHash);
+    const actual = await uut.compareRemoteToLocal(mockDeviceId, mockBundleId, mockHash);
 
     expect(hashxfer.readHashFile).toHaveBeenCalledTimes(1);
     expect(hashxfer.readHashFile).toHaveBeenLastCalledWith(mockDeviceId, mockBundleId);
@@ -53,22 +46,26 @@ describe('HashHelper', () => {
   });
 
   describe('generate hash', () => {
-    it('should call md5 function when no hash provided', () => {
+    it('should use md5 by default when no hash provided', () => {
       const actual = uut.generateHash('test');
       const expected = '098f6bcd4621d373cade4e832627b4f6';
+
       expect(actual).toEqual(expected);
     });
 
-    it('should call md5 function when random hash provided', () => {
-      const actual = uut.generateHash('test', 'unsupportedHash');
-      const expected = '098f6bcd4621d373cade4e832627b4f6';
-      expect(actual).toEqual(expected);
-    });
-
-    it('should call md5 function when md5 hash given', () => {
+    it('should use md5 function for md5 hash', () => {
       const actual = uut.generateHash('test', 'md5');
       const expected = '098f6bcd4621d373cade4e832627b4f6';
+
       expect(actual).toEqual(expected);
+    });
+
+    it('should throw error for unsupported hashTypes', () => {
+      expect(() => uut.generateHash('test', 'unsupportedHash')).toThrowError(/Hashtype is unsupported/);
+    });
+
+    it('should throw error for empty path', () => {
+      expect(() => uut.generateHash(undefined)).toThrowError(/Path must be provided for hash generation/);
     });
   });
 });

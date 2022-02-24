@@ -1,5 +1,6 @@
 const deviceId = 'mock-device-id';
 const deviceDestinationDir = '/mock-tmp-dir';
+
 describe('File-transfer util', () => {
   let adb;
   let uut;
