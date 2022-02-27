@@ -74,7 +74,7 @@ class LaunchCommand extends ExecCommand {
     if (this._options.headless) {
       switch (os.platform()) {
         case 'darwin':
-          return 'off';
+          return 'host';
         case 'linux':
           return 'swiftshader_indirect';
         case 'win32':

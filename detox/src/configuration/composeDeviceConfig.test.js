@@ -81,7 +81,7 @@ describe('composeDeviceConfig', () => {
       'android.emulator': {
         type: 'android.emulator',
         device: { avdName: 'Pixel_API_28' },
-        gpu: 'off',
+        gpu: 'auto',
         headless: true,
         readonly: true,
         ...mixins.bootArgs,
