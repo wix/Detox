@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
-    "@react-native-community/checkbox": "^0.5.7",
+    "@react-native-community/checkbox": "^0.5.11",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-picker/picker": "^2.1.0",
     "moment": "^2.24.0",
