@@ -2,8 +2,11 @@
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.android.sh"
+      - "./scripts/upload_artifact.sh"
     env:
       REACT_NATIVE_VERSION: 0.64.1
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
-    artifact_paths: "/Users/builder/work/artifacts/**/*"
+    artifact_paths:
+      - "/Users/builder/work/coverage/**/*.lcov"
+      - "/Users/builder/work/artifacts*.tar.gz"
