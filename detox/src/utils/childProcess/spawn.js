@@ -138,7 +138,7 @@ function _logSpawnRetrying(logger, tryCount, lastError) {
 }
 
 function _logSpawnCommand(logger, command, tryCount) {
-  const message = (_.isNumber(tryCount) && tryCount > 1 ? `(Retry #${tryCount}) ${command}` : command);
+  const message = (_.isNumber(tryCount) && tryCount > 1 ? `(Retry #${tryCount - 1}) ${command}` : command);
   logger.debug({ event: 'SPAWN_CMD' }, message);
 }
 

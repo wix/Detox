@@ -175,6 +175,7 @@ describe('Spawn utils', () => {
         await spawn.spawnWithRetriesAndLogs(command, flags);
 
         expect(log.trace).toHaveBeenCalledWith({ event: 'SPAWN_TRY_FAIL' }, tryError.stderr);
+        expect(log.debug).toHaveBeenCalledWith({ event: 'SPAWN_CMD' }, expect.stringContaining('(Retry #1)'));
       });
 
       it('should not log the 1st try', async () => {
