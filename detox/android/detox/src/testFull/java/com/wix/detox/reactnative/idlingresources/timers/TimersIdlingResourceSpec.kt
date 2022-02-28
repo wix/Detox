@@ -2,9 +2,9 @@ package com.wix.detox.reactnative.idlingresources.timers
 
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
-import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 import org.assertj.core.api.Assertions
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 

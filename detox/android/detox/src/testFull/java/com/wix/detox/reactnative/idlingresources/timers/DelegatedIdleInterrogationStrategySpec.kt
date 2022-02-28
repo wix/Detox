@@ -1,8 +1,8 @@
 package com.wix.detox.reactnative.idlingresources.timers
 
 import com.facebook.react.bridge.NativeModule
-import com.nhaarman.mockitokotlin2.*
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 

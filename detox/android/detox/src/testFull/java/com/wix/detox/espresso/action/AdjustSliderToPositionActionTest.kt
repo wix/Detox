@@ -3,11 +3,11 @@ package com.wix.detox.espresso.action
 import android.view.View
 import com.facebook.react.views.slider.ReactSlider
 import com.facebook.react.views.slider.ReactSliderManager
-import com.nhaarman.mockitokotlin2.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matcher
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.*
 
 @Suppress("IllegalIdentifier")
 class AdjustSliderToPositionActionTest {

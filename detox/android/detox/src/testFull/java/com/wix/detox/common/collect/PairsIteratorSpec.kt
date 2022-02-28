@@ -3,7 +3,6 @@ package com.wix.detox.common.collect
 import org.assertj.core.api.Assertions.assertThat
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.lang.Exception
 import kotlin.test.assertFailsWith
 
 object PairsIteratorSpec: Spek({
