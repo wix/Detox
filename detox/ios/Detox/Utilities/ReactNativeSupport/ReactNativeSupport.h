@@ -14,6 +14,7 @@
 
 + (void)reloadApp;
 + (void)waitForReactNativeLoadWithCompletionHandler:(void(^)(void))handler;
++ (void)emitBackdoorEvent:(id)data;
 
 @end
 

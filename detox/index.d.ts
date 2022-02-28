@@ -762,6 +762,12 @@ declare global {
              * This is a no-op when running on iOS.
              */
             unreverseTcpPort(port: number): Promise<void>;
+
+            /**
+             * Sends a backdoor message to the app being tested.
+             * For more information, see {@link https://wix.github.io/Detox/docs/guide/backdoors}.
+             */
+            backdoor(message: object): Promise<void>;
         }
 
         /**

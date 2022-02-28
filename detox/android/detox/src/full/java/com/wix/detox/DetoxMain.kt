@@ -70,6 +70,7 @@ object DetoxMain {
                     this@DetoxMain.doTeardown(serverAdapter, actionsDispatcher, testEngineFacade)
                 }
             })
+            associateActionHandler("backdoor", BackdoorActionHandler(rnHostHolder, serverAdapter, testEngineFacade))
 
             if (DetoxInstrumentsManager.supports()) {
                 val instrumentsManager = DetoxInstrumentsManager(rnHostHolder)

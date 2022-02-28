@@ -730,6 +730,13 @@ describe('Device', () => {
     });
   });
 
+  it(`backdoor() should pass to device driver`, async () => {
+    const device = await aValidDevice();
+    await device.backdoor({ action: 'test' });
+    expect(driverMock.driver.backdoor).toHaveBeenCalledWith({ action: 'test' });
+    expect(driverMock.driver.backdoor).toHaveBeenCalledTimes(1);
+  });
+
   it(`sendToHome() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.sendToHome();

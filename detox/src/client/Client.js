@@ -227,6 +227,10 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
+  async backdoor(data) {
+    return await this.sendAction(new actions.Backdoor(data));
+  }
+
   async setOrientation(orientation) {
     await this.sendAction(new actions.SetOrientation(orientation));
   }

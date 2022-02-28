@@ -55,4 +55,15 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 	[DTXReactNativeSupport waitForReactNativeLoadWithCompletionHandler:handler];
 }
 
++ (void)emitBackdoorEvent:(id)data
+{
+	if([DTXReactNativeSupport hasReactNative] == NO)
+	{
+		return;
+	}
+
+	id<RN_RCTBridge> bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
+	[bridge enqueueJSCall:@"RCTNativeAppEventEmitter" method:@"emit" args:@[@"detoxBackdoor", data] completion:nil];
+}
+
 @end

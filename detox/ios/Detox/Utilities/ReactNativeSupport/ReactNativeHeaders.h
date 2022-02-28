@@ -25,6 +25,11 @@ typedef void (^RN_RCTJavaScriptCallback)(id json, NSError *error);
 - (id<RN_RCTUIManager>) uiManager;
 - (id)moduleForName:(NSString *)moduleName;
 - (id)moduleForClass:(Class)moduleClass;
+- (void)enqueueJSCall:(NSString *)module
+               method:(NSString *)method
+                 args:(NSArray *)args
+           completion:(dispatch_block_t)completion;
+
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
 

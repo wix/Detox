@@ -6,8 +6,13 @@ import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.wix.detox.LaunchArgs
+import com.wix.detox.common.JsonConverter
+import org.json.JSONObject
+
 
 private const val LOG_TAG = "DetoxRNExt"
 
@@ -112,6 +117,19 @@ object ReactNativeExtension {
         rnIdlingResources?.let {
             if (enable) it.resumeUIIdlingResource() else it.pauseUIIdlingResource()
         }
+    }
+
+    @JvmStatic
+    fun emitBackdoorEvent(applicationContext: Context, params: String) {
+        if (!ReactNativeInfo.isReactNativeApp()) {
+            return
+        }
+
+        val bundle = JsonConverter(JSONObject(params)).toBundle()
+        val payload = Arguments.fromBundle(bundle)
+
+        val reactContext = getCurrentReactContextSafe(applicationContext as ReactApplication) ?: return
+        reactContext.getJSModule(RCTDeviceEventEmitter::class.java).emit("detoxBackdoor", payload)
     }
 
     private fun reloadReactNativeInBackground(reactApplication: ReactApplication) {

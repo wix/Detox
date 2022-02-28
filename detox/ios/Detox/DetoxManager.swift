@@ -402,6 +402,9 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				rvParams["captureViewHierarchyError"] = "User ran process with -detoxDisableHierarchyDump YES"
 			}
 			self.webSocket.sendAction(done, params: rvParams, messageId: messageId)
+		case "backdoor":
+			ReactNativeSupport.emitBackdoorEvent(params)
+			self.safeSend(action: done, messageId: messageId)
 		default:
 			fatalError("Unknown action type received: \(type)")
 		}
