@@ -1,7 +1,9 @@
 package com.wix.detox.espresso.utils
 
-import com.wix.detox.action.common.*
-import com.wix.detox.espresso.common.*
+import com.wix.detox.action.common.MOTION_DIR_DOWN
+import com.wix.detox.action.common.MOTION_DIR_LEFT
+import com.wix.detox.action.common.MOTION_DIR_RIGHT
+import com.wix.detox.action.common.MOTION_DIR_UP
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals

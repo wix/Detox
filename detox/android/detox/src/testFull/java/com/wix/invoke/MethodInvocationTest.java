@@ -1,4 +1,7 @@
 package com.wix.invoke;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+
 import com.wix.invoke.types.ClassTarget;
 import com.wix.invoke.types.Invocation;
 import com.wix.invoke.types.InvocationTarget;
@@ -6,9 +9,6 @@ import com.wix.invoke.types.ObjectInstanceTarget;
 
 import org.junit.Before;
 import org.junit.Test;
-
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
 
 
 /**

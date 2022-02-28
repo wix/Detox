@@ -1,10 +1,10 @@
 package com.wix.detox.common
 
 import android.view.MotionEvent
-import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.espresso.action.common.MotionEvents
 import com.wix.detox.espresso.action.common.TapEvents
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 

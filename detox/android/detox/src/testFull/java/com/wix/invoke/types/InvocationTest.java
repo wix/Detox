@@ -1,10 +1,11 @@
 package com.wix.invoke.types;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import static org.assertj.core.api.Java6Assertions.assertThat;
 /**
  * Created by rotemm on 26/10/2016.
  */

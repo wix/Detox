@@ -5,15 +5,20 @@ import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.view.View
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.*
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
-import com.wix.detox.action.common.*
-import com.wix.detox.espresso.common.*
+import androidx.test.espresso.action.CoordinatesProvider
+import androidx.test.espresso.action.PrecisionDescriber
+import androidx.test.espresso.action.Press
+import androidx.test.espresso.action.Swiper
+import com.wix.detox.action.common.MOTION_DIR_DOWN
+import com.wix.detox.action.common.MOTION_DIR_LEFT
+import com.wix.detox.action.common.MOTION_DIR_RIGHT
+import com.wix.detox.action.common.MOTION_DIR_UP
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
 
 data class SwipeArguments(

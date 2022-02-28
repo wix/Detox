@@ -3,18 +3,18 @@ package com.wix.detox.espresso.registry
 import android.os.Looper
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.base.IdlingResourceRegistry
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import com.wix.detox.UTHelpers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import java.util.concurrent.*
+import java.util.concurrent.Executors
 
 @RunWith(RobolectricTestRunner::class)
 class IRStatusInquirerTest {
