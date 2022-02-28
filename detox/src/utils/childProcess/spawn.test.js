@@ -39,6 +39,11 @@ describe('Spawn utils', () => {
         .mockReturnValueOnce(Object.assign(cpPromise2, { childProcess: childProcess2 }));
     };
 
+    const advanceOpsCounter = (count) => {
+      const opsCounter = require('./opsCounter');
+      for (let i = 0; i < count; i++) opsCounter.inc();
+    };
+
     [
       'spawnAndLog',
       'spawnWithRetriesAndLogs',
@@ -73,9 +78,7 @@ describe('Spawn utils', () => {
 
         it('should form and use a child-logger', async () => {
           const trackingId = 7;
-
-          const opsCounter = require('./opsCounter');
-          for (let i = 0; i < trackingId; i++) opsCounter.inc();
+          advanceOpsCounter(trackingId);
 
           jest.spyOn(log, 'child');
           await spawn[func]('mockCommand', []);

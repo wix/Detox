@@ -19,16 +19,19 @@ async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   const command = _joinCommandAndFlags(binary, flags);
   const trackingId = execsCounter.inc();
   const logger = rootLogger.child({ fn: 'spawnWithRetriesAndLogs', command, trackingId });
+  const _options = {
+    ...options,
+    capture: _.union(options.capture || [], ['stderr']),
+  };
   const {
     retries = 1,
     interval = 100,
     ...spawnOptions
-  } = options;
-  spawnOptions.capture = _.union(spawnOptions.capture || [], ['stderr']);
+  } = _options;
 
   let result;
   await retry({ retries, interval }, async (tryCount, lastError) => {
-    _logSpawnRetrying(logger, command, tryCount, lastError);
+    _logSpawnRetrying(logger, tryCount, lastError);
     result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
   });
   return result;
@@ -128,7 +131,7 @@ function _inferLogLevel(msg, patterns) {
   });
 }
 
-function _logSpawnRetrying(logger, message, tryCount, lastError) {
+function _logSpawnRetrying(logger, tryCount, lastError) {
   if (tryCount > 1) {
     logger.trace({ event: 'SPAWN_TRY_FAIL' }, lastError.stderr);
   }

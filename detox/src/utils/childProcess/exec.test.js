@@ -3,7 +3,6 @@ describe('Exec utils', () => {
   let logger;
   let exec;
   let cpp;
-
   beforeEach(() => {
     jest.mock('../logger');
     logger = require('../logger');
@@ -19,13 +18,18 @@ describe('Exec utils', () => {
     exec = require('./exec');
   });
 
-  it(`exec command with no arguments successfully`, async () => {
+  const advanceOpsCounter = (count) => {
+    const opsCounter = require('./opsCounter');
+    for (let i = 0; i < count; i++) opsCounter.inc();
+  };
+
+  it(`exec command with no arguments ends successfully`, async () => {
     mockCppSuccessful(cpp);
     await exec.execWithRetriesAndLogs('bin');
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
   });
 
-  it(`exec command with arguments successfully`, async () => {
+  it(`exec command with arguments ends successfully`, async () => {
     mockCppSuccessful(cpp);
 
     const options = { args: `--argument 123` };
@@ -42,7 +46,7 @@ describe('Exec utils', () => {
     expect(cpp.exec).toHaveBeenCalledTimes(1);
   });
 
-  it(`exec command with arguments and prefix successfully`, async () => {
+  it(`exec command with arguments and prefix ends successfully`, async () => {
     mockCppSuccessful(cpp);
 
     const options = {
@@ -54,13 +58,23 @@ describe('Exec utils', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`, { timeout: 0 });
   });
 
-  it(`exec command with prefix (no args) successfully`, async () => {
+  it(`exec command with prefix (no args) ends successfully`, async () => {
     mockCppSuccessful(cpp);
 
     const options = { prefix: `export MY_PREFIX` };
     await exec.execWithRetriesAndLogs('bin', options);
 
     expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin`, { timeout: 0 });
+  });
+
+  it(`exec command log using a custom logger`, async () => {
+    const trackingId = 4;
+    advanceOpsCounter(trackingId);
+
+    jest.spyOn(logger, 'child');
+    mockCppSuccessful(cpp);
+    await exec.execWithRetriesAndLogs('bin');
+    expect(logger.child).toHaveBeenCalledWith({ fn: 'execWithRetriesAndLogs', trackingId, cmd: 'bin' });
   });
 
   it(`exec command with arguments and try-based status logs successfully, with status logging`, async () => {
