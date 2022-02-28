@@ -3,7 +3,6 @@ const { exec } = require('child-process-promise');
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-
 const rootLogger = require('../logger').child({ __filename });
 const retry = require('../retry');
 

@@ -8,6 +8,8 @@ const { escape } = require('../../../../../utils/pipeCommands');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
+const INSTALL_TIMEOUT = 45000; // TODO Double check 45s makes sense
+
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
@@ -106,7 +108,7 @@ class ADB {
     const command = (apiLvl >= 23)
       ? `install -r -g -t ${apkPath}`
       : `install -rg ${apkPath}`;
-    const result = await this.adbCmdSpawned(deviceId, command, { timeout: 45000, retries: 3});
+    const result = await this.adbCmdSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
 
     const [failure] = (result.stdout || '').match(/^Failure \[.*\]$/m) || [];
     if (failure) {
@@ -122,7 +124,7 @@ class ADB {
     const command = (apiLvl >= 23)
       ? `pm install -r -g -t ${path}`
       : `pm install -rg ${path}`;
-    return this.shellSpawned(deviceId, command, { timeout: 45000, retries: 3 });
+    return this.shellSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
   }
 
   async uninstall(deviceId, appId) {

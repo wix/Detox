@@ -1,11 +1,10 @@
 // @ts-nocheck
 const { spawn } = require('child-process-promise');
-
-const retry = require('../retry');
-const { escape } = require('../pipeCommands');
 const _ = require('lodash');
 
 const rootLogger = require('../logger').child({ __filename });
+const { escape } = require('../pipeCommands');
+const retry = require('../retry');
 
 const execsCounter = require('./opsCounter');
 
@@ -16,24 +15,20 @@ function spawnAndLog(binary, flags, options) {
   return _spawnAndLog(logger, binary, flags, command, options);
 }
 
-async function spawnWithRetriesAndLogs(binary, flags, options) {
+async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   const command = _joinCommandAndFlags(binary, flags);
   const trackingId = execsCounter.inc();
   const logger = rootLogger.child({ fn: 'spawnWithRetriesAndLogs', command, trackingId });
   const {
     retries = 1,
     interval = 100,
-    logRetry = true,
     ...spawnOptions
-  } = options; // TODO support slient: true
-
+  } = options;
   spawnOptions.capture = _.union(spawnOptions.capture || [], ['stderr']);
 
   let result;
   await retry({ retries, interval }, async (tryCount, lastError) => {
-    if (logRetry) {
-      _logSpawnRetrying(logger, command, tryCount, lastError);
-    }
+    _logSpawnRetrying(logger, command, tryCount, lastError);
     result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
   });
   return result;
