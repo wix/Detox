@@ -106,6 +106,17 @@ class SimulatorDriver extends IosDriver {
     return pid;
   }
 
+  async waitForTestTargetIfNeeded(launchArgs) {
+    const { udid } = this;
+
+    log.info(`LAUNCHING XCODEBUILD TEST TARGET`);
+    log.info(launchArgs)
+    let launchCommand = `TEST_RUNNER_IS_DETOX_ACTIVE='1' TEST_RUNNER_DETOX_SERVER='${launchArgs.detoxServer}' TEST_RUNNER_DETOX_SESSION_ID='${launchArgs.detoxSessionId}' xcodebuild -workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace -scheme DetoxTester -allowProvisioningUpdates -destination 'id=${udid}' test`;
+    log.info(`COMMAND: ${launchCommand}`);
+
+    await exec(launchCommand);
+  }
+
   async terminate(bundleId) {
     const { udid } = this;
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });

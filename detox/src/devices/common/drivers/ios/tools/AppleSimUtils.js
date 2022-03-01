@@ -408,14 +408,8 @@ class AppleSimUtils {
   }
 
   async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
-    let dylibs = `${frameworkPath}/Detox`;
-    if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
-      dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
-    }
-
     const cmdArgs = quote(_.flatten(this._mergeLaunchArgs(launchArgs, languageAndLocale)));
-    let launchBin = `SIMCTL_CHILD_GULGeneratedClassDisposeDisabled=YES SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
-      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
+    let launchBin = `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
 
     const result = await childProcess.execWithRetriesAndLogs(launchBin, {
       retries: 1,

@@ -3,14 +3,14 @@
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-import Foundation
 import DetoxMessageHandler
+import Foundation
 import XCTest
 
 class ExpectationDelegate: ExpectationDelegateProtocol {
   func expect(_ expectation: Expectation, isTruthy: Bool, on element: AnyHashable, timeout: Double?) throws {
     guard let element = element as? XCUIElement else {
-      throw ExpectationDelegateError.notXCUIElement
+      throw Error.notXCUIElement
     }
 
     switch expectation {
@@ -38,7 +38,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
 }
 
 extension ExpectationDelegate {
-  enum ExpectationDelegateError: Error {
+  enum Error: Swift.Error {
     case notXCUIElement
   }
 }

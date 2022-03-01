@@ -3,8 +3,8 @@
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-import Foundation
 import DetoxMessageHandler
+import Foundation
 import XCTest
 
 class ElementMatcher: ElementMatcherProtocol {
@@ -29,20 +29,26 @@ class ElementMatcher: ElementMatcherProtocol {
         return app.staticTexts.containing(predicate).textViews.allElementsBoundByIndex
         
       case .label(let label):
-
+        fatalError("not implmented yet")
 
       case .and(let patterns):
-        <#code#>
+        fatalError("not implmented yet")
 
       case .id(let id):
         // not enough
         return [app.buttons[id]]
 
       case .ancestor(let pattern):
-        app.
+        fatalError("not implmented yet")
 
       case .decendant(let pattern):
-        <#code#>
+        fatalError("not implmented yet")
+
+      case .value(_):
+        fatalError("not implmented yet")
+
+      case .traits(_):
+        fatalError("not implmented yet")
     }
   }
 }

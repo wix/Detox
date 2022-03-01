@@ -8,8 +8,6 @@
 
 import Foundation
 
-fileprivate let log = DetoxLog(category: "WebSocket")
-
 protocol WebSocketDelegate: AnyObject {
 	func webSocketDidConnect(_ webSocket: WebSocket)
 	func webSocket(_ webSocket: WebSocket, didFailWith error: Error)
@@ -47,11 +45,11 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			let message = URLSessionWebSocketTask.Message.data(data)
 			webSocketSessionTask?.send(message) { error in
 				if let error = error {
-					log.error("Error sending message: \(error.localizedDescription)")
+					fatalError("Error sending message: \(error.localizedDescription)")
 				}
 			}
 		} catch {
-			log.error("Error encoding message: \(error.localizedDescription)")
+          fatalError("Error encoding message: \(error.localizedDescription)")
 		}
 	}
 	
@@ -59,7 +57,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 		webSocketSessionTask?.receive { [weak self] result in
 			switch result {
 			case .failure(let error as NSError):
-				log.error("Error receiving message: \(error.localizedDescription)")
+                fatalError("Error receiving message: \(error.localizedDescription)")
 			case .success(let message):
 				switch message {
 				case .string(let string):
@@ -111,11 +109,11 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			let params = obj["params"] as? [String: Any]
 			let messageId = obj["messageId"] as! NSNumber
 			
-			log.info("Action received: \(type)")
+			print("Action received: \(type)")
 			
 			delegate?.webSocket(self, didReceiveAction: type, params: params ?? [:], messageId: messageId)
 		} catch {
-			log.error("Error decoding receiveAction decode: \(error.localizedDescription)")
+          fatalError("Error decoding receiveAction decode: \(error.localizedDescription)")
 		}
 	}
 	

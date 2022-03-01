@@ -10,19 +10,18 @@
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
-		609AA175279F1BDF008F6617 /* NSInvocation+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA174279F1BDF008F6617 /* NSInvocation+Utils.m */; };
-		609AA17A279FE83F008F6617 /* DetoxTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* DetoxTester.m */; };
-		609AA17D279FE932008F6617 /* DetoxTesterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTesterDelegate.swift */; };
-		609AA18D279FEB79008F6617 /* WSFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA188279FEB78008F6617 /* WSFacade.swift */; };
-		609AA19827A0247D008F6617 /* URL+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* URL+WebSocket.swift */; };
-		609AA19A27A047D4008F6617 /* WaitUntilDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19927A047D4008F6617 /* WaitUntilDone.swift */; };
-		60ED26D727872220004213B5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 60ED26D627872220004213B5 /* AppDelegate.m */; };
-		60ED26DA27872220004213B5 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 60ED26D927872220004213B5 /* SceneDelegate.m */; };
-		60ED26DD27872220004213B5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60ED26DC27872220004213B5 /* ViewController.m */; };
-		60ED26E027872220004213B5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60ED26DE27872220004213B5 /* Main.storyboard */; };
-		60ED26E227872221004213B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60ED26E127872221004213B5 /* Assets.xcassets */; };
-		60ED26E527872221004213B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60ED26E327872221004213B5 /* LaunchScreen.storyboard */; };
-		60ED26E827872221004213B5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 60ED26E727872221004213B5 /* main.m */; };
+		609AA17A279FE83F008F6617 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* Main.m */; };
+		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
+		609AA19827A0247D008F6617 /* String+Detox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* String+Detox.swift */; };
+		60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */; };
+		60C01FE727CBAF5F00EF6C1E /* libDetoxMessageHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60634AE127C4C6F800274F30 /* libDetoxMessageHandler.a */; };
+		60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0201F27CBB0A400EF6C1E /* ContentView.swift */; };
+		60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */; };
+		60C0202627CBB0A500EF6C1E /* Preview Content in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202127CBB0A500EF6C1E /* Preview Content */; };
+		60C0202727CBB0A500EF6C1E /* DetoxTesterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */; };
+		60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202827CBB20B00EF6C1E /* Assets.xcassets */; };
+		60C0203127CE564D00EF6C1E /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203027CE564D00EF6C1E /* WebSocket.swift */; };
+		60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203327CE610100EF6C1E /* WaitUntilDone.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +46,13 @@
 			remoteGlobalIDString = 60ED26D127872220004213B5;
 			remoteInfo = Tester;
 		};
+		60C01FE527CBA9B600EF6C1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 602DBC6827B90ECC00FC0C4C;
+			remoteInfo = DetoxMessageHandler;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -55,26 +61,19 @@
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
 		60634AD927C4339600274F30 /* ExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegate.swift; sourceTree = "<group>"; };
 		609AA14D279F10F4008F6617 /* DetoxTester.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTester.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		609AA173279F1BDF008F6617 /* NSInvocation+Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+Utils.h"; sourceTree = "<group>"; };
-		609AA174279F1BDF008F6617 /* NSInvocation+Utils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+Utils.m"; sourceTree = "<group>"; };
-		609AA179279FE83F008F6617 /* DetoxTester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxTester.m; sourceTree = "<group>"; };
-		609AA17C279FE932008F6617 /* DetoxTesterDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTesterDelegate.swift; sourceTree = "<group>"; };
+		609AA179279FE83F008F6617 /* Main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Main.m; sourceTree = "<group>"; };
+		609AA17C279FE932008F6617 /* DetoxTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTester.swift; sourceTree = "<group>"; };
 		609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DetoxTester-Bridging-Header.h"; sourceTree = "<group>"; };
-		609AA188279FEB78008F6617 /* WSFacade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSFacade.swift; sourceTree = "<group>"; };
-		609AA19727A0247D008F6617 /* URL+WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+WebSocket.swift"; sourceTree = "<group>"; };
-		609AA19927A047D4008F6617 /* WaitUntilDone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntilDone.swift; sourceTree = "<group>"; };
+		609AA19727A0247D008F6617 /* String+Detox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Detox.swift"; sourceTree = "<group>"; };
+		60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvArgKeys.swift; sourceTree = "<group>"; };
+		60C0201F27CBB0A400EF6C1E /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		60C0202127CBB0A500EF6C1E /* Preview Content */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Preview Content"; sourceTree = "<group>"; };
+		60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxTesterApp.swift; sourceTree = "<group>"; };
+		60C0202827CBB20B00EF6C1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../../../Downloads/AppIcons/Assets.xcassets; sourceTree = "<group>"; };
+		60C0203027CE564D00EF6C1E /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebSocket.swift; path = ../../Detox/Utilities/WebSocket.swift; sourceTree = "<group>"; };
+		60C0203327CE610100EF6C1E /* WaitUntilDone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntilDone.swift; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		60ED26D527872220004213B5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		60ED26D627872220004213B5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		60ED26D827872220004213B5 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
-		60ED26D927872220004213B5 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		60ED26DB27872220004213B5 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		60ED26DC27872220004213B5 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		60ED26DF27872220004213B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		60ED26E127872221004213B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		60ED26E427872221004213B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		60ED26E627872221004213B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		60ED26E727872221004213B5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60C01FE727CBAF5F00EF6C1E /* libDetoxMessageHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,33 +107,14 @@
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
 			isa = PBXGroup;
 			children = (
-				60C01FD327CB8E8100EF6C1E /* Matchers */,
-				60C01FD227CB8E7900EF6C1E /* Expectations */,
+				609AA179279FE83F008F6617 /* Main.m */,
 				609AA184279FEB06008F6617 /* Actions */,
-				609AA180279FE9AA008F6617 /* Resources */,
-				609AA182279FEABF008F6617 /* Utils */,
-				609AA187279FEB6B008F6617 /* WebSocket */,
-				609AA179279FE83F008F6617 /* DetoxTester.m */,
-				609AA17C279FE932008F6617 /* DetoxTesterDelegate.swift */,
+				60C01FD227CB8E7900EF6C1E /* Expectations */,
+				60C01FD327CB8E8100EF6C1E /* Matchers */,
+				60C01FDC27CB9FF700EF6C1E /* Resources */,
+				60C01FDA27CB9F1A00EF6C1E /* Tester */,
 			);
 			path = DetoxTester;
-			sourceTree = "<group>";
-		};
-		609AA180279FE9AA008F6617 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		609AA182279FEABF008F6617 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				609AA173279F1BDF008F6617 /* NSInvocation+Utils.h */,
-				609AA174279F1BDF008F6617 /* NSInvocation+Utils.m */,
-			);
-			name = Utils;
 			sourceTree = "<group>";
 		};
 		609AA184279FEB06008F6617 /* Actions */ = {
@@ -147,19 +128,11 @@
 		609AA187279FEB6B008F6617 /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
-				609AA19627A0242D008F6617 /* Utils */,
-				609AA188279FEB78008F6617 /* WSFacade.swift */,
+				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
+				60C0203027CE564D00EF6C1E /* WebSocket.swift */,
+				609AA19727A0247D008F6617 /* String+Detox.swift */,
 			);
 			name = WebSocket;
-			sourceTree = "<group>";
-		};
-		609AA19627A0242D008F6617 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				609AA19727A0247D008F6617 /* URL+WebSocket.swift */,
-				609AA19927A047D4008F6617 /* WaitUntilDone.swift */,
-			);
-			name = Utils;
 			sourceTree = "<group>";
 		};
 		60C01FD227CB8E7900EF6C1E /* Expectations */ = {
@@ -178,6 +151,31 @@
 			name = Matchers;
 			sourceTree = "<group>";
 		};
+		60C01FDA27CB9F1A00EF6C1E /* Tester */ = {
+			isa = PBXGroup;
+			children = (
+				609AA187279FEB6B008F6617 /* WebSocket */,
+				609AA17C279FE932008F6617 /* DetoxTester.swift */,
+			);
+			name = Tester;
+			sourceTree = "<group>";
+		};
+		60C01FDC27CB9FF700EF6C1E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */,
+				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		60C01FE327CBA96600EF6C1E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		60ED26C927872220004213B5 = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +183,7 @@
 				60ED26D427872220004213B5 /* DetoxTesterApp */,
 				609AA14E279F10F4008F6617 /* DetoxTester */,
 				60ED26D327872220004213B5 /* Products */,
+				60C01FE327CBA96600EF6C1E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -200,17 +199,11 @@
 		60ED26D427872220004213B5 /* DetoxTesterApp */ = {
 			isa = PBXGroup;
 			children = (
-				60ED26D527872220004213B5 /* AppDelegate.h */,
-				60ED26D627872220004213B5 /* AppDelegate.m */,
-				60ED26D827872220004213B5 /* SceneDelegate.h */,
-				60ED26D927872220004213B5 /* SceneDelegate.m */,
-				60ED26DB27872220004213B5 /* ViewController.h */,
-				60ED26DC27872220004213B5 /* ViewController.m */,
-				60ED26DE27872220004213B5 /* Main.storyboard */,
-				60ED26E127872221004213B5 /* Assets.xcassets */,
-				60ED26E327872221004213B5 /* LaunchScreen.storyboard */,
-				60ED26E627872221004213B5 /* Info.plist */,
-				60ED26E727872221004213B5 /* main.m */,
+				60C0202827CBB20B00EF6C1E /* Assets.xcassets */,
+				60C0201F27CBB0A400EF6C1E /* ContentView.swift */,
+				60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */,
+				60C0202127CBB0A500EF6C1E /* Preview Content */,
+				60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */,
 			);
 			path = DetoxTesterApp;
 			sourceTree = "<group>";
@@ -229,6 +222,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				60C01FE627CBA9B600EF6C1E /* PBXTargetDependency */,
 				609AA154279F10F4008F6617 /* PBXTargetDependency */,
 			);
 			name = DetoxTester;
@@ -270,6 +264,7 @@
 					};
 					60ED26D127872220004213B5 = {
 						CreatedOnToolsVersion = 13.2;
+						LastSwiftMigration = 1320;
 					};
 				};
 			};
@@ -327,9 +322,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60ED26E527872221004213B5 /* LaunchScreen.storyboard in Resources */,
-				60ED26E227872221004213B5 /* Assets.xcassets in Resources */,
-				60ED26E027872220004213B5 /* Main.storyboard in Resources */,
+				60C0202627CBB0A500EF6C1E /* Preview Content in Resources */,
+				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
+				60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,15 +335,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				609AA19827A0247D008F6617 /* URL+WebSocket.swift in Sources */,
-				609AA17A279FE83F008F6617 /* DetoxTester.m in Sources */,
-				609AA19A27A047D4008F6617 /* WaitUntilDone.swift in Sources */,
-				609AA18D279FEB79008F6617 /* WSFacade.swift in Sources */,
-				609AA17D279FE932008F6617 /* DetoxTesterDelegate.swift in Sources */,
+				609AA19827A0247D008F6617 /* String+Detox.swift in Sources */,
+				60C0203127CE564D00EF6C1E /* WebSocket.swift in Sources */,
+				609AA17A279FE83F008F6617 /* Main.m in Sources */,
+				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
+				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
+				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
 				60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */,
-				609AA175279F1BDF008F6617 /* NSInvocation+Utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,10 +351,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60ED26DD27872220004213B5 /* ViewController.m in Sources */,
-				60ED26D727872220004213B5 /* AppDelegate.m in Sources */,
-				60ED26E827872221004213B5 /* main.m in Sources */,
-				60ED26DA27872220004213B5 /* SceneDelegate.m in Sources */,
+				60C0202727CBB0A500EF6C1E /* DetoxTesterApp.swift in Sources */,
+				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,40 +364,28 @@
 			target = 60ED26D127872220004213B5 /* DetoxTesterApp */;
 			targetProxy = 609AA153279F10F4008F6617 /* PBXContainerItemProxy */;
 		};
+		60C01FE627CBA9B600EF6C1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DetoxMessageHandler;
+			targetProxy = 60C01FE527CBA9B600EF6C1E /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		60ED26DE27872220004213B5 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				60ED26DF27872220004213B5 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		60ED26E327872221004213B5 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				60ED26E427872221004213B5 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		609AA156279F10F4008F6617 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5J684MLCAU;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxTester;
@@ -422,15 +403,17 @@
 		609AA157279F10F4008F6617 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5J684MLCAU;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxTester;
@@ -562,13 +545,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5J684MLCAU;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DetoxTesterApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -579,6 +560,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxTesterApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -588,13 +571,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5J684MLCAU;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DetoxTesterApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -605,6 +586,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxTesterApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

@@ -47,6 +47,10 @@ class DeviceDriverBase {
     return NaN;
   }
 
+  async waitForTestTargetIfNeeded() {
+    return NaN;
+  }
+
   async takeScreenshot(_screenshotName) {
     return '';
   }

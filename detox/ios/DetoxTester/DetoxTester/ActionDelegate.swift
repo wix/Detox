@@ -3,8 +3,8 @@
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-import Foundation
 import DetoxMessageHandler
+import Foundation
 import XCTest
 
 class ActionDelegate: ActionDelegateProtocol {
@@ -28,15 +28,7 @@ class ActionDelegate: ActionDelegateProtocol {
       case .longPressAndDrag(
         let duration, let normalizedPositionX, let normalizedPositionY, let targetElement,
         let normalizedTargetPositionX, let normalizedTargetPositionY, let speed, let holdDuration):
-
-        let targetXCUIElement = targetElement as? XCUIElement
-        if (targetXCUIElement != nil) {
-          element.press(forDuration: duration ?? 0.7, thenDragTo: targetXCUIElement!,
-                        withVelocity: speed ?? 1 > 0.5 ? .fast : .slow,
-                        thenHoldForDuration: holdDuration ?? 0.1)
-        } else {
-          element.press(forDuration: duration ?? 0.7)
-        }
+        fatalError("not implmented yet")
 
       case .swipe(let direction, let speed, let normalizedOffset, let normalizedStartingPointX,
                   let normalizedStartingPointY):
@@ -44,12 +36,28 @@ class ActionDelegate: ActionDelegateProtocol {
 
       case .screenshot(let imageName):
         element.screenshot() // need to implement full functionality with image name
+      case .getAttributes:
+        fatalError("not implmented yet")
+      case .tapKey(_):
+        fatalError("not implmented yet")
+      case .changeText(_):
+        fatalError("not implmented yet")
+      case .scroll(_):
+        fatalError("not implmented yet")
+      case .setColumnToValue(index: let index, value: let value):
+        fatalError("not implmented yet")
+      case .setDatePicker(date: _):
+        fatalError("not implmented yet")
+      case .pinch(scale: let scale_, speed: let speed_, angle: let angle_):
+        fatalError("not implmented yet")
+      case .adjustSlider(normalizedPosition: let normalizedPosition):
+        fatalError("not implmented yet")
     }
   }
 
-  let app = XCUIApplication(bundleIdentifier: "com.wix.APP")
-  app.waitForExistence(timeout: 20000)
-  app.activate
+  func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
+    fatalError("not implmented yet")
+  }
 }
 
 extension ActionDelegate {
