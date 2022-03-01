@@ -3,7 +3,7 @@ describe('Instrumentation', () => {
   const deviceId = 'mock-device-id';
   const bundleId = 'mock-bundle-id';
 
-  let exec;
+  let childProcessUtils;
   let adb;
   let instrumentationArgs;
   let logger;
@@ -11,8 +11,8 @@ describe('Instrumentation', () => {
     const ADB = jest.genMockFromModule('../exec/ADB');
     adb = new ADB();
 
-    jest.mock('../../../../../utils/exec');
-    exec = require('../../../../../utils/exec');
+    jest.mock('../../../../../utils/childProcess');
+    childProcessUtils = require('../../../../../utils/childProcess');
 
     jest.mock('./instrumentationArgs');
     instrumentationArgs = require('./instrumentationArgs');
@@ -124,11 +124,11 @@ describe('Instrumentation', () => {
       expect(childProcess.on).toHaveBeenCalledWith('close', expect.any(Function));
 
       await invokeTerminationCallback();
-      expect(exec.interruptProcess).toHaveBeenCalledWith(instrumentationProcess);
+      expect(childProcessUtils.interruptProcess).toHaveBeenCalledWith(instrumentationProcess);
     });
 
     it('should fail if termination callback breaks', async () => {
-      exec.interruptProcess.mockRejectedValue(new Error());
+      childProcessUtils.interruptProcess.mockRejectedValue(new Error());
 
       await uut.launch(deviceId, bundleId, []);
 
@@ -142,7 +142,7 @@ describe('Instrumentation', () => {
       await uut.launch(deviceId, bundleId, []);
       await invokeTerminationCallback();
       await invokeTerminationCallback();
-      expect(exec.interruptProcess).toHaveBeenCalledTimes(1);
+      expect(childProcessUtils.interruptProcess).toHaveBeenCalledTimes(1);
     });
 
     it('should exec user\'s top-level custom termination callback', async () => {
@@ -156,11 +156,11 @@ describe('Instrumentation', () => {
     it('should terminate upon a termination API call', async () => {
       await uut.launch(deviceId, bundleId, []);
       await uut.terminate();
-      expect(exec.interruptProcess).toHaveBeenCalledWith(instrumentationProcess);
+      expect(childProcessUtils.interruptProcess).toHaveBeenCalledWith(instrumentationProcess);
     });
 
     it('should break if process interruption fails', async () => {
-      exec.interruptProcess.mockRejectedValue(new Error());
+      childProcessUtils.interruptProcess.mockRejectedValue(new Error());
       await uut.launch(deviceId, bundleId, []);
 
       try {
@@ -171,14 +171,14 @@ describe('Instrumentation', () => {
 
     it('should not terminate if not running', async () => {
       await uut.terminate();
-      expect(exec.interruptProcess).not.toHaveBeenCalled();
+      expect(childProcessUtils.interruptProcess).not.toHaveBeenCalled();
     });
 
     it('should not terminate if already terminated', async () => {
       await uut.launch(deviceId, bundleId, []);
       await uut.terminate();
       await uut.terminate();
-      expect(exec.interruptProcess).toHaveBeenCalledTimes(1);
+      expect(childProcessUtils.interruptProcess).toHaveBeenCalledTimes(1);
     });
 
     it('should NOT exec user\'s top-level custom termination callback', async () => {

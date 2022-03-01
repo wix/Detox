@@ -27,6 +27,7 @@ class Timer {
 
   async run(action) {
     const error = new DetoxRuntimeError();
+    delete error.stack;
 
     return Promise.race([
       this._timeoutDeferred.promise.then(() => {

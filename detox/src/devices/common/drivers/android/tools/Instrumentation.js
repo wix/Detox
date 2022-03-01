@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { interruptProcess } = require('../../../../../utils/exec');
+const { interruptProcess } = require('../../../../../utils/childProcess');
 
 const { prepareInstrumentationArgs } = require('./instrumentationArgs');
 

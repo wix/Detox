@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const WebSocket = require('ws');
 
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const { DetoxInternalError, DetoxRuntimeError } = require('../errors');
 const Deferred = require('../utils/Deferred');
 const log = require('../utils/logger').child({ __filename });
 
@@ -28,11 +28,19 @@ class DetoxServer {
     this._closing = null;
   }
 
+  get port() {
+    if (!this._wss) {
+      throw new DetoxInternalError('Cannot get a port of a closed WebSocket server');
+    }
+
+    return this._wss.address().port;
+  }
+
   async open() {
     await this._startListening();
 
     const level = this._options.standalone ? 'info' : 'debug';
-    log[level]({ event: 'WSS_CREATE' }, `Detox server listening on localhost:${this._options.port}...`);
+    log[level]({ event: 'WSS_CREATE' }, `Detox server listening on localhost:${this.port}...`);
   }
 
   async close() {

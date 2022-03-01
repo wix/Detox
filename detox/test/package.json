@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "19.4.2",
+  "version": "19.5.0",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -14,10 +14,10 @@
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test -c ios.sim.release",
-    "e2e:ios-ci": "npm run e2e:ios -- --workers 4 --retries 1 --jest-report-specs -l verbose",
+    "e2e:ios-ci": "npm run e2e:ios -- --workers 2 --retries 1 --jest-report-specs -l verbose",
     "e2e:android": "detox test -c android.emu.release",
     "e2e:android-ci-genycloud": "detox test -c android.genycloud.release --workers 5 --retries 1 --jest-report-specs --loglevel verbose",
-    "e2e:android-ci-google": "detox test -c android.emu.release --workers 3 --retries 1 --jest-report-specs --loglevel verbose --headless",
+    "e2e:android-ci-google": "detox test -c android.emu.release --workers 3 --retries 1 --jest-report-specs --loglevel verbose --headless --gpu off",
     "e2e:android-debug": "detox test -c android.emu.debug",
     "integration": "jest --clearCache && jest unit --config integration/config.js -w 1 .",
     "integration-update-snapshots": "npm run integration -- -u",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
-    "@react-native-community/checkbox": "^0.5.7",
+    "@react-native-community/checkbox": "^0.5.11",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-picker/picker": "^2.1.0",
     "moment": "^2.24.0",
@@ -49,7 +49,7 @@
     "@types/react-native": "^0.64.19",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "detox": "^19.4.2",
+    "detox": "^19.5.0",
     "eslint": "^7.32.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "express": "^4.15.3",

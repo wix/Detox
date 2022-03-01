@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 
-const { interruptProcess } = require('../../utils/exec');
+const { interruptProcess } = require('../../utils/childProcess');
 const log = require('../../utils/logger').child({ __filename });
 const Artifact = require('../templates/artifact/Artifact');
 const FileArtifact = require('../templates/artifact/FileArtifact');

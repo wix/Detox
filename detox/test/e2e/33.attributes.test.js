@@ -128,9 +128,9 @@ describe('Attributes', () => {
   describe('of a checkbox', () => {
     beforeAll(useMatcher(by.id('checkboxId')));
 
-    it(':ios: should not have any .value (because it is not implemented)', async () => {
-      expect(await currentElement.getAttributes()).not.toMatchObject({
-        value: expect.anything(),
+    it(':ios: should have a string .value', async () => {
+      expect(await currentElement.getAttributes()).toMatchObject({
+        value: expect.stringContaining('off'),
       });
     });
 

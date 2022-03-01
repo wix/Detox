@@ -1,18 +1,18 @@
 {
   "name": "demo-react-native-jest",
-  "version": "19.4.2",
+  "version": "19.5.0",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
     "test:ios-release-ci": "detox test --configuration ios.sim.release -l verbose --workers 2",
     "test:android-release": "detox test --configuration android.emu.release",
-    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2 --headless --record-logs all --take-screenshots all",
+    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2 --headless --gpu off --record-logs all --take-screenshots all",
     "test:android-genycloud-release": "detox test --configuration android.genycloud.release",
     "test:android-genycloud-release-ci": "detox test --configuration android.genycloud.release -l verbose --workers 2 --record-logs all --take-screenshots all"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
-    "detox": "^19.4.2",
+    "detox": "^19.5.0",
     "jest": "^27.0.0",
     "sanitize-filename": "^1.6.1",
     "ts-jest": "^27.0.0",

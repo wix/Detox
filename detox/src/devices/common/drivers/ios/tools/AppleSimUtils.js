@@ -6,7 +6,7 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { joinArgs } = require('../../../../../utils/argparse');
 const environment = require('../../../../../utils/environment');
-const exec = require('../../../../../utils/exec');
+const childProcess = require('../../../../../utils/childProcess');
 const log = require('../../../../../utils/logger').child({ __filename });
 const { quote } = require('../../../../../utils/shellQuote');
 
@@ -218,7 +218,7 @@ class AppleSimUtils {
       args.push(`processImagePath beginsWith "${processImagePath}"`);
     }
 
-    const promise = exec.spawnAndLog('/usr/bin/xcrun', args, {
+    const promise = childProcess.spawnAndLog('/usr/bin/xcrun', args, {
       stdio: ['ignore', stdout, 'ignore'],
       silent: true,
     });
@@ -231,7 +231,30 @@ class AppleSimUtils {
       trying: `Terminating ${bundleId}...`,
       successful: `${bundleId} terminated`
     };
-    await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, statusLogs });
+
+    try {
+      await this._execSimctl({
+        cmd: `terminate ${udid} ${bundleId}`,
+        statusLogs: statusLogs,
+        silent: true
+      });
+    } catch (err) {
+      // Since we have no convenient way to check whether the app is currently running or not, we might execute this
+      // command (terminate) even if the app is not currently running, or even installed.
+      // We have encountered some case where the following error is thrown in a case where the app did not run:
+      // ```
+      // An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=3):
+      // Application termination failed.
+      // FBSSystemService reported failure without an error, possibly because the app is not currently running.
+      // ```
+      // This workaround is done to ignore the error above, as we do not care if the app was running before, we just
+      // want to make sure it isn't now.
+      if (err.code === 3 && err.stderr.includes(`the app is not currently running`)) {
+        return
+      }
+
+      throw err
+    }
   }
 
   async shutdown(udid) {
@@ -247,9 +270,9 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, { retries: 1 });
+    const result = await childProcess.execWithRetriesAndLogs(`which fbsimctl`, { retries: 1 });
     if (_.get(result, 'stdout')) {
-      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, { retries: 1 });
+      await childProcess.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, { retries: 1 });
     } else {
       throw new DetoxRuntimeError(`setLocation currently supported only through fbsimctl.
       Install fbsimctl using:
@@ -275,7 +298,7 @@ class AppleSimUtils {
       args.push(options.codec);
     }
 
-    return exec.spawnAndLog('/usr/bin/xcrun', args, {
+    return childProcess.spawnAndLog('/usr/bin/xcrun', args, {
       logLevelPatterns: {
         trace: [
           /^Recording started/,
@@ -287,7 +310,7 @@ class AppleSimUtils {
 
   async _execAppleSimUtils(options) {
     const bin = `applesimutils`;
-    return await exec.execWithRetriesAndLogs(bin, options);
+    return await childProcess.execWithRetriesAndLogs(bin, options);
   }
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
@@ -296,7 +319,7 @@ class AppleSimUtils {
       statusLogs,
       retries,
     };
-    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, options);
+    return await childProcess.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, options);
   }
 
   _parseResponseFromAppleSimUtils(response) {
@@ -347,7 +370,7 @@ class AppleSimUtils {
     let launchBin = `SIMCTL_CHILD_GULGeneratedClassDisposeDisabled=YES SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
       `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
 
-    const result = await exec.execWithRetriesAndLogs(launchBin, {
+    const result = await childProcess.execWithRetriesAndLogs(launchBin, {
       retries: 1,
       statusLogs: {
         trying: `Launching ${bundleId}...`,
@@ -359,7 +382,7 @@ class AppleSimUtils {
 
   async _printLoggingHint(udid, bundleId) {
     const appContainer = await this.getAppContainer(udid, bundleId);
-    const CFBundleExecutable = await exec.execAsync(`/usr/libexec/PlistBuddy -c "Print CFBundleExecutable" "${path.join(appContainer, 'Info.plist')}"`);
+    const CFBundleExecutable = await childProcess.execAsync(`/usr/libexec/PlistBuddy -c "Print CFBundleExecutable" "${path.join(appContainer, 'Info.plist')}"`);
     const predicate = `process == "${CFBundleExecutable}"`;
     const command = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
 
