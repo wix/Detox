@@ -1,7 +1,6 @@
 #!/bin/bash -ex
 
 source $(dirname "$0")/ci.sh
-
 mkdir -p coverage
 
 pushd detox/test
