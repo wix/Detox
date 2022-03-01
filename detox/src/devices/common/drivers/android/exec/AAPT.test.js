@@ -21,8 +21,8 @@ describe('AAPT', () => {
     environment = require('../../../../../utils/environment');
     environment.getAaptPath.mockResolvedValue(mockAAPTPath);
 
-    jest.mock('../../../../../utils/exec');
-    exec = require('../../../../../utils/exec').execWithRetriesAndLogs;
+    jest.mock('../../../../../utils/childProcess');
+    exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
     givenAAPTResult('');
 
     jest.mock('../../../../../utils/pipeCommands');

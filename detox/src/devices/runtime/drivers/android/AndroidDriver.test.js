@@ -512,9 +512,7 @@ describe('Android driver', () => {
       getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 
-    jest.mock('../../../../utils/exec', () => ({
-      interruptProcess: jest.fn(),
-    }));
+    jest.mock('../../../../utils/childProcess');
 
     client = {
       serverUrl: `ws://localhost:${detoxServerPort}`,

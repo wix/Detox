@@ -1,7 +1,7 @@
 // @ts-nocheck
 const fs = require('fs-extra');
 
-const exec = require('../../../utils/exec');
+const childProcess = require('../../../utils/childProcess');
 const log = require('../../../utils/logger').child({ __filename });
 const sleep = require('../../../utils/sleep');
 const Artifact = require('../../templates/artifact/Artifact');
@@ -57,7 +57,7 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async _tryInterruptProcessGracefully(process) {
-    await exec.interruptProcess(process, {
+    await childProcess.interruptProcess(process, {
       SIGINT: 0,
       SIGTERM: this._config.delayBeforeSigterm,
     });

@@ -29,10 +29,8 @@ describe('Genymotion-cloud executable', () => {
   let exec;
   let uut;
   beforeEach(() => {
-    jest.mock('../../../../../../utils/exec', () => ({
-      execWithRetriesAndLogs: jest.fn(),
-    }));
-    exec = require('../../../../../../utils/exec').execWithRetriesAndLogs;
+    jest.mock('../../../../../../utils/childProcess');
+    exec = require('../../../../../../utils/childProcess').execWithRetriesAndLogs;
 
     const GenyCloudExec = require('./GenyCloudExec');
     uut = new GenyCloudExec('mock/path/to/gmsaas');
