@@ -19,7 +19,7 @@ popd
 
 # This solves a bug in brew
 brew tap wix/brew
-brew cask reinstall detox-instruments
+brew reinstall detox-instruments
 
 pushd examples/demo-react-native-detox-instruments
 run_f "detox test -c ios.sim.release --record-performance all"
