@@ -16,11 +16,3 @@ pushd examples/demo-react-native-jest
 run_f "npm run test:ios-release-ci"
 DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:ios-release-ci"
 popd
-
-# This solves a bug in brew
-brew tap wix/brew
-brew reinstall detox-instruments
-
-pushd examples/demo-react-native-detox-instruments
-run_f "detox test -c ios.sim.release --record-performance all"
-popd
