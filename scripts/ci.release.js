@@ -1,7 +1,7 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {log, logSection, getVersionSafe, releaseNpmTag, getIsRelease} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag, getIsRelease, getPackagesFromPreviousBuilds} = require('./ci.common');
 
 const isRelease = getIsRelease();
 
@@ -14,6 +14,7 @@ function run() {
 	log('Configuring stuff...');
 	setupGitConfig();
 	setupNpmConfig();
+	getPackagesFromPreviousBuilds();
 	versionTagAndPublish();
 }
 
