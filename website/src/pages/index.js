@@ -19,20 +19,30 @@ function HomepageHeader() {
             to="/docs/introduction/getting-started">
             Getting Started with Detox
           </Link>
-            <iframe className={styles.githubStar}
-                    src='https://ghbtns.com/github-btn.html?user=wix&repo=detox&type=star&count=true&size=large'
-                    frameBorder='0' scrolling='0' width='170' height='30' title='GitHub'/>
         </div>
       </div>
     </header>
   );
 }
 
+function HomepageSubHeader() {
+  return (
+    <div className={styles.subButtons}>
+      <a href="https://twitter.com/detoxe2e" className="twitter-follow-button" style={{color:'#ffffff'}} data-size="large" data-show-count="true">
+        Follow @detoxe2e
+      </a>
+      <iframe className={styles.githubStar}
+              src='https://ghbtns.com/github-btn.html?user=wix&repo=detox&type=star&count=true&size=large'
+              frameBorder='0' scrolling='0' width='170' height='30' title='GitHub'/>
+    </div>
+  );
+}
+
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout>
       <HomepageHeader />
+      <HomepageSubHeader />
       <main>
         <HomepageFeatures />
       </main>

@@ -38,8 +38,20 @@
 }
 
 .buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: none;
+}
+
+.subButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row wrap;
+    width:100%;
+    padding: 1.8rem 0;
+    position: relative;
+    overflow: hidden;
+    background: rgba(33,33,34, 1);
 }
