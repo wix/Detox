@@ -51,6 +51,11 @@ const config = {
             label: 'Documentation'
           },
           {
+            type: 'docsVersionDropdown',
+            position: 'left',
+            dropdownActiveClassDisabled: true,
+          },
+          {
             href: 'https://github.com/wix/Detox',
             label: 'GitHub',
             position: 'right'
