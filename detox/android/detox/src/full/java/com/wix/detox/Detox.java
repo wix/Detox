@@ -74,7 +74,7 @@ import androidx.test.rule.ActivityTestRule;
 public final class Detox {
     private static final String INTENT_LAUNCH_ARGS_KEY = "launchArgs";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
-    private static final String DEBUG_HOST_KEY = "debug_http_host";
+    private static final String RN_DEBUG_HOST_KEY = "debug_http_host";
 
     private static final LaunchArgs sLaunchArgs = new LaunchArgs();
     private static final LaunchIntentsFactory sIntentsFactory = new LaunchIntentsFactory();
@@ -189,7 +189,9 @@ public final class Detox {
      * @param detoxConfig The configurations to apply.
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
-        setDebugHost();
+        if (sLaunchArgs.isGenymotionDebug()) {
+            setDebugHost();
+        }
 
         DetoxConfig.CONFIG = detoxConfig;
         DetoxConfig.CONFIG.apply();
@@ -227,7 +229,7 @@ public final class Detox {
     private static void setDebugHost() {
         SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(getAppContext());
-        preferences.edit().putString(DEBUG_HOST_KEY, "localhost:8081").apply();
+        preferences.edit().putString(RN_DEBUG_HOST_KEY, "localhost:8081").apply();
     }
 
     private static Intent extractInitialIntent() {

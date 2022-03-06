@@ -15,6 +15,11 @@ public class LaunchArgs {
     private static final String DETOX_BLACKLIST_URLS_ARG = "detoxURLBlacklistRegex";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
+    private static final String DETOX_GENYMOTION_DEBUG_ARG = "detoxIsGenymotionDebug";
+
+    public boolean isGenymotionDebug() {
+        return InstrumentationRegistry.getArguments().containsKey(DETOX_GENYMOTION_DEBUG_ARG);
+    }
 
     public boolean hasNotificationPath() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_NOTIFICATION_PATH_ARG);
