@@ -5,6 +5,7 @@
 
 import Foundation
 import XCTest
+import Logger
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
 @objc public class DetoxTester: NSObject, WebSocketDelegate {
@@ -24,10 +25,6 @@ import XCTest
     WaitUntilDone { [self] done in
       self.webSocket = makeWebSocket()
       self.done = done
-
-
-      let app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
-      app.launch()
     }
   }
 
@@ -43,24 +40,30 @@ import XCTest
   }
 
   func webSocketDidConnect(_ webSocket: WebSocket) {
-//    exit(1)
+    log(.info, message: "Websocket did connect")
   }
 
   func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
-//    exit(2)
+    log(.error, message: "Websocket did fail with error: `\(error.localizedDescription)`")
   }
 
-  func webSocket(_ webSocket: WebSocket, didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
-//    exit(3)
+  func webSocket(
+    _ webSocket: WebSocket,
+    didReceiveAction type: String,
+    params: [String : Any],
+    messageId: NSNumber
+  ) {
+    log(.info, message: "Websocket did receive action with type: `\(type)`, " +
+        "params: `\(params.description)`, messageId: `\(messageId.stringValue)`")
+
   }
 
   func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
     guard let done = self.done else {
-//      exit(4)
-      fatalError("Done!")
+      fatalError("Unexpected call to close web-socket connection, Detox is already done")
     }
 
+    log(.info, message: "Websocket did close with reason: `\(reason ?? "nil")`")
     done()
-//    exit(5)
   }
 }
