@@ -9,7 +9,7 @@ const logSection = (message) => console.log(chalk.blue(`[RELEASE] ${message}`));
 
 // Export buildkite variables for Release build
 // We cast toString() because 'buildkite-agent meta-data get' function returns 'object'
-const BRANCH = process.env.BUILDKITE_BRANCH
+const BRANCH = process.env.BUILDKITE_BRANCH;
 const isRelease = process.env.BUILDKITE_MESSAGE.match(/^release$/i);
 let RELEASE_VERSION_TYPE, RELEASE_NPM_TAG, RELEASE_DRY_RUN, RELEASE_SKIP_NPM;
 if (isRelease) {
@@ -64,7 +64,7 @@ function releaseNpmTag() {
 function getPackagesFromPreviousBuilds() {
   cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
   cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
-  cp.execSync(`find Users/work/ -type f -name "*.t[gb]z" -exec cp {} . \\;`)
+  cp.execSync(`cp -a **/*.t[bg]z .`);
 }
 
 module.exports = {
