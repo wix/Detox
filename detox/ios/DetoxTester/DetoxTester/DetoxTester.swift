@@ -5,7 +5,6 @@
 
 import Foundation
 import XCTest
-import Logger
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
 @objc public class DetoxTester: NSObject, WebSocketDelegate {
@@ -40,11 +39,11 @@ import Logger
   }
 
   func webSocketDidConnect(_ webSocket: WebSocket) {
-    log(.info, message: "Websocket did connect")
+
   }
 
   func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
-    log(.error, message: "Websocket did fail with error: `\(error.localizedDescription)`")
+
   }
 
   func webSocket(
@@ -53,9 +52,6 @@ import Logger
     params: [String : Any],
     messageId: NSNumber
   ) {
-    log(.info, message: "Websocket did receive action with type: `\(type)`, " +
-        "params: `\(params.description)`, messageId: `\(messageId.stringValue)`")
-
   }
 
   func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
@@ -63,7 +59,6 @@ import Logger
       fatalError("Unexpected call to close web-socket connection, Detox is already done")
     }
 
-    log(.info, message: "Websocket did close with reason: `\(reason ?? "nil")`")
     done()
   }
 }
