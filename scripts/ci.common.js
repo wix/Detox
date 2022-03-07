@@ -52,6 +52,8 @@ function getVersionSafe() {
 }
 
 function releaseNpmTag() {
+  console.log('TAG is ' + RELEASE_NPM_TAG);
+  console.log('BRANCH is ' + BRANCH);
   if (RELEASE_NPM_TAG !== 'null') {
     return RELEASE_NPM_TAG;
   } else if (BRANCH === 'master') {
