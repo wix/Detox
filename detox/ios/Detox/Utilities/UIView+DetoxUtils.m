@@ -216,7 +216,7 @@ DTX_DIRECT_MEMBERS
 	
 	if (isRegionObscured) {
 		*explanation = [NSString stringWithFormat:@"View does not pass visibility percent "
-						"threshold (%@)", [DetoxPolicy percentDescriptionForValue:percent]];
+						"threshold (%@)", [DetoxPolicy percentDescriptionForPercent:percent]];
 	}
 	
 	return isRegionObscured;
@@ -284,7 +284,7 @@ DTX_DIRECT_MEMBERS
 		auto errorDescription = [NSString stringWithFormat:@"View is clipped by one or more of its "
 								 "superviews' bounds and does not pass visibility percent "
 								 "threshold (%@)",
-								 [DetoxPolicy percentDescriptionForValue:percent]];
+								 [DetoxPolicy percentDescriptionForPercent:percent]];
 		
 		auto userInfo = @{ NSLocalizedDescriptionKey: APPLY_PREFIX(errorDescription) };
 		
@@ -298,7 +298,7 @@ DTX_DIRECT_MEMBERS
 						   inWindowBounds:windowToUse.bounds percent:percent]) {
 		auto errorDescription = [NSString stringWithFormat:@"View is obscured by its window bounds "
 								 "and does not pass visibility percent threshold (%@)",
-								 [DetoxPolicy percentDescriptionForValue:percent]];
+								 [DetoxPolicy percentDescriptionForPercent:percent]];
 		
 		auto userInfo = @{ NSLocalizedDescriptionKey: APPLY_PREFIX(errorDescription) };
 		
