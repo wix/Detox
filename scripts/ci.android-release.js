@@ -1,11 +1,11 @@
 const exec = require('shell-utils').exec;
-const {log, logSection, getVersionSafe, releaseNpmTag, getReleaseVersionType} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag} = require('./ci.common');
 
 function run() {
   logSection('Initializing');
   exec.execSync('lerna bootstrap --no-ci');
 
-  const versionType = getReleaseVersionType();
+  const versionType = process.env.RELEASE_VERSION_TYPE;
   logSection(`Pre-calculating future version... (versionType=${versionType})`);
 
   const npmTag = releaseNpmTag();
@@ -20,9 +20,7 @@ function run() {
   exec.execSync(`yes | ${process.env.ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses`);
   process.chdir('detox/android');
   exec.execSync(`./gradlew clean detox:publish -Dversion=${futureVersion}`);
-  process.chdir('../Detox-android/');
-  exec.execSync(`tar -zcf ARCHIVE_${futureVersion}.tgz *`);
-  process.chdir(`../../`);
+  process.chdir('../..');
 }
 
 run();
