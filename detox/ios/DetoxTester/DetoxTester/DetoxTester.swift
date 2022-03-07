@@ -21,10 +21,15 @@ import XCTest
   private var done: (() -> Void)?
 
   func start() {
+    let app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
+    app.launch()
+
     WaitUntilDone { [self] done in
       self.webSocket = makeWebSocket()
       self.done = done
     }
+
+    fatalError("SHIT")
   }
 
   private func makeWebSocket() -> WebSocket {
@@ -39,7 +44,12 @@ import XCTest
   }
 
   func webSocketDidConnect(_ webSocket: WebSocket) {
+    let app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
+    app.launch()
 
+    DispatchQueue.main.async {
+      webSocket.sendAction("ready", params: [:], messageId: -1000)
+    }
   }
 
   func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
