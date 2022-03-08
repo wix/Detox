@@ -110,6 +110,12 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
+  scripts: [
+    {
+      src: 'https://platform.twitter.com/widgets.js',
+      async: true,
+    }
+  ],
 };
 
 module.exports = config;
