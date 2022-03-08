@@ -64,8 +64,8 @@ function releaseNpmTag() {
 }
 
 function getPackagesFromPreviousBuilds() {
-  cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
-  cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
+  cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" detox/ --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
+  cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" detox/ --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
   cp.execSync(`find . -name "*.t[bg]z" -exec cp {} . \\;`);
 }
 
