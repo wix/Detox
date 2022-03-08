@@ -24,7 +24,6 @@ function projectSetup() {
 
 function publishToNpm(npmTag) {
   logSection('Lerna publish');
-  console.log(`Publishing with tag: ${npmTag}`);
   const versionType = getReleaseVersionType();
   const dryRun = getDryRun() === "true";
   const skipNpm = getSkipNpm() === "true";
