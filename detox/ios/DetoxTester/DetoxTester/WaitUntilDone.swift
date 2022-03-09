@@ -14,7 +14,7 @@ public func WaitUntilDone(closure: @escaping (@escaping () -> Void) -> Void) {
 
   closure(done)
 
-  syncLog("synchronization started")
+  syncLog("synchronization started (thread: \(Thread.current.description))")
   semaphore.wait()
   syncLog("synchronization ended")
 }

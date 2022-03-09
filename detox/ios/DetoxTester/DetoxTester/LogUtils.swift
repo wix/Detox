@@ -15,7 +15,7 @@ public func wsLog(_ message: String, type: OSLogType = .info) {
 
 /// Logs the given `message` with its `type`, under the synchronization logs container.
 public func syncLog(_ message: String, type: OSLogType = .info) {
-  detoxLog(message: message, container: .webSocket, type: type)
+  detoxLog(message: message, container: .synchronization, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the main logs container.
