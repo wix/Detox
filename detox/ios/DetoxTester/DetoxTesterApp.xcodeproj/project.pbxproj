@@ -20,9 +20,9 @@
 		60C0202627CBB0A500EF6C1E /* Preview Content in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202127CBB0A500EF6C1E /* Preview Content */; };
 		60C0202727CBB0A500EF6C1E /* DetoxTesterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */; };
 		60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202827CBB20B00EF6C1E /* Assets.xcassets */; };
-		60C0203127CE564D00EF6C1E /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203027CE564D00EF6C1E /* WebSocket.swift */; };
 		60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203327CE610100EF6C1E /* WaitUntilDone.swift */; };
 		60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4EA27D8A5FE000D417A /* LogUtils.swift */; };
+		60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4F227D8D67D000D417A /* WebSocket.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,9 +72,9 @@
 		60C0202127CBB0A500EF6C1E /* Preview Content */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Preview Content"; sourceTree = "<group>"; };
 		60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxTesterApp.swift; sourceTree = "<group>"; };
 		60C0202827CBB20B00EF6C1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../../../Downloads/AppIcons/Assets.xcassets; sourceTree = "<group>"; };
-		60C0203027CE564D00EF6C1E /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebSocket.swift; path = ../../Detox/Utilities/WebSocket.swift; sourceTree = "<group>"; };
 		60C0203327CE610100EF6C1E /* WaitUntilDone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntilDone.swift; sourceTree = "<group>"; };
 		60C7F4EA27D8A5FE000D417A /* LogUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
+		60C7F4F227D8D67D000D417A /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -131,8 +131,8 @@
 		609AA187279FEB6B008F6617 /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
-				60C0203027CE564D00EF6C1E /* WebSocket.swift */,
 				609AA19727A0247D008F6617 /* WebSocket+Config.swift */,
+				60C7F4F227D8D67D000D417A /* WebSocket.swift */,
 			);
 			name = WebSocket;
 			sourceTree = "<group>";
@@ -356,13 +356,13 @@
 			files = (
 				60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */,
 				609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */,
-				60C0203127CE564D00EF6C1E /* WebSocket.swift in Sources */,
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
+				60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */,
 				60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
