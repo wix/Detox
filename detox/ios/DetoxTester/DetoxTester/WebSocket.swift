@@ -1,5 +1,5 @@
 //
-//  WebSocket.swift (DetoxTesterApp)
+//  WebSocket.swift (DetoxTester)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 

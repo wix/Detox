@@ -1,8 +1,6 @@
 //
-//  WebSocket+Config.swift
-//  DetoxTester
-//
-//  Created by Asaf Korem (Wix.com).
+//  WebSocket+Config.swift (DetoxTester)
+//  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
