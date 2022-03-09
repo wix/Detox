@@ -2,6 +2,7 @@
 const path = require('path');
 
 const exec = require('child-process-promise').exec;
+
 const _ = require('lodash');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
@@ -109,12 +110,18 @@ class SimulatorDriver extends IosDriver {
   async waitForTestTargetIfNeeded(launchArgs) {
     const { udid } = this;
 
-    log.info(`LAUNCHING XCODEBUILD TEST TARGET`);
-    log.info(launchArgs)
+    log.info(`Launching XCTest target`);
     let launchCommand = `TEST_RUNNER_IS_DETOX_ACTIVE='1' TEST_RUNNER_DETOX_SERVER='${launchArgs.detoxServer}' TEST_RUNNER_DETOX_SESSION_ID='${launchArgs.detoxSessionId}' xcodebuild -workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace -scheme DetoxTester -allowProvisioningUpdates -destination 'id=${udid}' test`;
-    log.info(`COMMAND: ${launchCommand}`);
 
-    await exec(launchCommand);
+    log.info(launchCommand)
+
+    await exec(launchCommand, { capture: [ 'stdout', 'stderr' ]})
+      .then(function (result) {
+        log.info('[spawn] stdout: ', result.stdout.toString());
+      })
+      .catch(function (err) {
+        log.error('[spawn] stderr: ', err.stderr);
+      });
   }
 
   async terminate(bundleId) {

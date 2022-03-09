@@ -1,5 +1,5 @@
 //
-//  Main.m (DetoxTesterApp)
+//  Main.m (DetoxTester)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 

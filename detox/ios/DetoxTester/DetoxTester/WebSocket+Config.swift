@@ -1,5 +1,5 @@
 //
-//  String+Detox.swift
+//  WebSocket+Config.swift
 //  DetoxTester
 //
 //  Created by Asaf Korem (Wix.com).
@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Extends `String` with Detox constants.
-extension String {
+/// Extends `WebSocket` with web-socket related configurations.
+extension WebSocket {
   ///
   static func detoxServer() -> String {
     let environment = ProcessInfo.processInfo.environment
