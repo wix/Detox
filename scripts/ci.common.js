@@ -25,9 +25,12 @@ function isRelease() {
 }
 
 function getReleaseVersionType() {
-  return PRE_RELEASE === 'true' ? 'pre' + RELEASE_VERSION_TYPE : RELEASE_VERSION_TYPE;
+  return isPreRelease() ? 'pre' + RELEASE_VERSION_TYPE : RELEASE_VERSION_TYPE;
 }
 
+function isPreRelease() {
+  return PRE_RELEASE === 'true';
+}
 function isSkipNpm() {
   return RELEASE_SKIP_NPM === 'true';
 }
@@ -56,7 +59,7 @@ function releaseNpmTag() {
   if (RELEASE_NPM_TAG !== 'null') {
     return RELEASE_NPM_TAG;
   } else if (BRANCH === 'master') {
-    return 'latest';
+      return isPreRelease() ? 'pre' + RELEASE_VERSION_TYPE : 'latest';
   } else {
     return BRANCH.trim().replace(/[^a-zA-Z0-9-]/g, '.');
   }
