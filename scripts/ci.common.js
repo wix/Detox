@@ -58,7 +58,7 @@ function releaseNpmTag() {
   } else if (BRANCH === 'master') {
     return 'latest';
   } else {
-    return BRANCH;
+    return BRANCH.trim().replace(/[^a-zA-Z0-9-]/g, '.');
   }
 }
 
