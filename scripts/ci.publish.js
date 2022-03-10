@@ -1,7 +1,7 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 
-const {log, logSection, getReleaseVersionType, getDryRun, getSkipNpm} = require('./ci.common');
+const {log, logSection, getReleaseVersionType, isDryRun, isSkipNpm} = require('./ci.common');
 
 function publishNewVersion(npmTag) {
   validatePrerequisites();
@@ -25,8 +25,8 @@ function projectSetup() {
 function publishToNpm(npmTag) {
   logSection('Lerna publish');
   const versionType = getReleaseVersionType();
-  const dryRun = getDryRun() === "true";
-  const skipNpm = getSkipNpm() === "true";
+  const dryRun = isDryRun();
+  const skipNpm = isSkipNpm();
   if (dryRun) {
     log('DRY RUN: Lerna-publishing without publishing to NPM');
   }

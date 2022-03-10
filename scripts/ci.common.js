@@ -10,29 +10,30 @@ const logSection = (message) => console.log(chalk.blue(`[RELEASE] ${message}`));
 // Export buildkite variables for Release build
 // We cast toString() because 'buildkite-agent meta-data get' function returns 'object'
 const BRANCH = process.env.BUILDKITE_BRANCH;
-const isRelease = process.env.BUILDKITE_MESSAGE.match(/^release$/i);
-let RELEASE_VERSION_TYPE, RELEASE_NPM_TAG, RELEASE_DRY_RUN, RELEASE_SKIP_NPM;
-if (isRelease) {
+const RELEASE = process.env.BUILDKITE_MESSAGE.match(/^release$/i);
+let RELEASE_VERSION_TYPE, RELEASE_NPM_TAG, RELEASE_DRY_RUN, RELEASE_SKIP_NPM, PRE_RELEASE;
+if (RELEASE) {
   RELEASE_VERSION_TYPE = cp.execSync(`buildkite-agent meta-data get release-version-type`).toString();
   RELEASE_SKIP_NPM = cp.execSync(`buildkite-agent meta-data get release-skip-npm`).toString();
   RELEASE_DRY_RUN = cp.execSync(`buildkite-agent meta-data get release-dry-run`).toString();
   RELEASE_NPM_TAG = cp.execSync(`buildkite-agent meta-data get release-npm-tag`).toString();
+  PRE_RELEASE = cp.execSync(`buildkite-agent meta-data get pre-release`).toString();
 }
 
-function getIsRelease() {
-  return isRelease;
+function isRelease() {
+  return RELEASE;
 }
 
 function getReleaseVersionType() {
-  return RELEASE_VERSION_TYPE;
+  return PRE_RELEASE === 'true' ? 'pre' + RELEASE_VERSION_TYPE : RELEASE_VERSION_TYPE;
 }
 
-function getSkipNpm() {
-  return RELEASE_SKIP_NPM;
+function isSkipNpm() {
+  return RELEASE_SKIP_NPM === 'true';
 }
 
-function getDryRun() {
-  return RELEASE_DRY_RUN;
+function isDryRun() {
+  return RELEASE_DRY_RUN === 'true';
 }
 
 function getPackageJsonPath() {
@@ -74,7 +75,7 @@ module.exports = {
   releaseNpmTag,
   getReleaseVersionType,
   getPackagesFromPreviousBuilds,
-  getIsRelease,
-  getDryRun,
-  getSkipNpm
+  isRelease,
+  isDryRun,
+  isSkipNpm
 };

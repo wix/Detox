@@ -3,6 +3,16 @@ steps:
     prompt: "Fill out the details for release"
     if: 'build.message =~ /^release\$/i'
     fields:
+      - select: "PRE-RELEASE?"
+        key: "pre-release"
+        default: true
+        hint: "A corresponding prefix will be added to published version ('alpha' or the one specified in RELEASE_NPM_TAG)"
+        options:
+          - label: "Yes, this is a PRE-release version."
+            value: true
+          - label: "No, this is a REAL release version."
+            value: false
+
       - select: "RELEASE_VERSION_TYPE"
         key: "release-version-type"
         hint: "If set, a successful build will be released with a version update according to specified type"
@@ -13,12 +23,7 @@ steps:
             value: "minor"
           - label: "Major"
             value: "major"
-          - label: "Prerelease"
-            value: "prerelease"
-          - label: "Preminor"
-            value: "preminor"
-          - label: "Premajor"
-            value: "premajor"
+
       - select: "RELEASE_DRY_RUN"
         key: "release-dry-run"
         hint: "Don't actually release anything, just run the scripts"

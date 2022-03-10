@@ -1,9 +1,9 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {log, logSection, getVersionSafe, releaseNpmTag, getIsRelease, getPackagesFromPreviousBuilds} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag, isRelease, getPackagesFromPreviousBuilds} = require('./ci.common');
 
-const isRelease = getIsRelease();
+// const isRelease = getIsRelease();
 
 function run() {
 	logSection('Script started');
@@ -55,7 +55,7 @@ function versionTagAndPublish() {
 	const currentPublished = findCurrentPublishedVersion();
 	log(`    current published version from ${process.env.BUILDKITE_BRANCH}: ${currentPublished}`);
 
-	if (isRelease) {
+	if (isRelease()) {
 		const publishNewVersion = require('./ci.publish');
 		publishNewVersion(releaseNpmTag());
 	} else {
