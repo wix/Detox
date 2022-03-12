@@ -5,23 +5,18 @@
 
 import Foundation
 
-protocol WebSocketDelegate: AnyObject {
-  func webSocketDidConnect(_ webSocket: WebSocket)
-  func webSocket(_ webSocket: WebSocket, didFailWith error: Error)
-  func webSocket(
-    _ webSocket: WebSocket,
-    didReceiveAction type : String,
-    params: [String: Any],
-    messageId: NSNumber
-  )
-  func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?)
-}
+///
+class WebSocket: NSObject {
+  ///
+  private var sessionId: String?
 
-class WebSocket : NSObject, URLSessionWebSocketDelegate {
-  var sessionId: String?
+  ///
   private var webSocketSessionTask: URLSessionWebSocketTask?
-  weak var delegate: WebSocketDelegate?
 
+  ///
+  weak var delegate: WebSocketDelegateProtocol?
+
+  ///
   func connect(toServer server: URL, withSessionId sessionId: String) {
     wsLog("connecting to server `\(server.absoluteString)` with session-id `\(sessionId)`")
 
@@ -37,12 +32,14 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
     webSocketSessionTask?.resume()
   }
 
+  ///
   func close() {
     wsLog("closing server connection")
     webSocketSessionTask?.cancel(with: .normalClosure, reason: nil)
     webSocketSessionTask = nil
   }
 
+  ///
   func sendAction(_ type: String, params: [String : Any], messageId: NSNumber) {
     wsLog("sending `\(type)` action message (\(messageId.stringValue)), " +
           "with params: `\(params.description)`")
@@ -98,7 +95,13 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
       }
     }
   }
+}
 
+  // MARK: - URLSessionWebSocketDelegate
+
+///
+extension WebSocket: URLSessionWebSocketDelegate {
+  ///
   func urlSession(
     _ session: URLSession,
     webSocketTask: URLSessionWebSocketTask,
@@ -112,7 +115,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
     delegate?.webSocketDidConnect(self)
   }
 
-
+  ///
   func urlSession(
     _ session: URLSession,
     webSocketTask: URLSessionWebSocketTask,
@@ -124,6 +127,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
     delegate?.webSocket(self, didCloseWith: reasonString)
   }
 
+  ///
   func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
     if let error = error {
       wsLog("web-socket did-complete with error: \(error.localizedDescription)", type: .error)
@@ -135,6 +139,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
     delegate?.webSocket(self, didCloseWith: nil)
   }
 
+  ///
   func receiveAction(json: String) {
     do {
       let jsonData = json.data(using: .utf8)!
@@ -153,7 +158,8 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
     }
   }
 
-  func onDidOpen() {
+  ///
+  private func onDidOpen() {
     wsLog("web-socket did-open")
     sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
   }

@@ -23,6 +23,7 @@
 		60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203327CE610100EF6C1E /* WaitUntilDone.swift */; };
 		60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4EA27D8A5FE000D417A /* LogUtils.swift */; };
 		60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4F227D8D67D000D417A /* WebSocket.swift */; };
+		60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		60C0203327CE610100EF6C1E /* WaitUntilDone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntilDone.swift; sourceTree = "<group>"; };
 		60C7F4EA27D8A5FE000D417A /* LogUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 		60C7F4F227D8D67D000D417A /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
+		60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketDelegateProtocol.swift; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -131,8 +133,9 @@
 		609AA187279FEB6B008F6617 /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
-				609AA19727A0247D008F6617 /* WebSocket+Config.swift */,
 				60C7F4F227D8D67D000D417A /* WebSocket.swift */,
+				609AA19727A0247D008F6617 /* WebSocket+Config.swift */,
+				60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */,
 			);
 			name = WebSocket;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
+				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,

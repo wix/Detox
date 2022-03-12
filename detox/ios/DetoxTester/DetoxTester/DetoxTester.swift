@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
-@objc public class DetoxTester: NSObject, WebSocketDelegate {
+@objc public class DetoxTester: NSObject, WebSocketDelegateProtocol {
   private static var shared : DetoxTester = {
     return DetoxTester()
   }()
@@ -21,8 +21,10 @@ import XCTest
 
   private var done: (() -> Void)?
 
+  private let waitUntilDone = WaitUntilDone()
+
   func start() {
-    WaitUntilDone { [self] done in
+    waitUntilDone.start { [self] done in
       self.webSocket = makeWebSocket()
       self.done = done
     }
