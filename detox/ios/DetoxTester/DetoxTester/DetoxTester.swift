@@ -8,25 +8,39 @@ import XCTest
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
 @objc public class DetoxTester: NSObject, WebSocketDelegateProtocol {
-  private static var shared : DetoxTester = {
-    return DetoxTester()
-  }()
+  // MARK: - Properties
 
+  /// The web-socket, used for the communication between Detox Server and Detox Tester.
+  private var webSocket: WebSocket?
+
+  /// Finishes the tester operation.
+  private var done: (() -> Void)?
+
+  /// Executes a given closure on the main-thread.
+  private var exec: ((@escaping () -> Void) -> Void)?
+
+  // MARK: - Start
+
+  /// Starts Detox Tester operation.
   @objc static public func startDetoxTesting() {
     mainLog("starting detox tester")
     shared.start()
   }
 
-  private var webSocket: WebSocket?
+  private static var shared : DetoxTester = {
+    return .init()
+  }()
 
-  private var done: (() -> Void)?
+  /// Make init as private method. Cannot be initialized from outside.
+  private override init() {
+    super.init()
+  }
 
-  private let waitUntilDone = WaitUntilDone()
-
-  func start() {
-    waitUntilDone.start { [self] done in
+  private func start() {
+    WaitUntilDone { [self] done, exec in
       self.webSocket = makeWebSocket()
       self.done = done
+      self.exec = exec
     }
   }
 
@@ -46,6 +60,10 @@ import XCTest
 
   func webSocketDidConnect(_ webSocket: WebSocket) {
     mainLog("web-socket did-connect")
+
+    exec! {
+      mainLog("[didConnect] Executes on main thread (\(Thread.current.description))")
+    }
   }
 
   func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
@@ -61,6 +79,10 @@ import XCTest
   ) {
     mainLog("web-socket received `\(type)` action message (\(messageId.stringValue), " +
             "with params: \(params.description)")
+
+    exec! {
+      mainLog("[didReceiveAction] Executes on main thread (\(Thread.current.description))")
+    }
   }
 
   func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {

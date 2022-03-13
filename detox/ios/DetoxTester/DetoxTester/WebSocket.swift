@@ -7,23 +7,23 @@ import Foundation
 
 ///
 class WebSocket: NSObject {
-  ///
+  /// Session idenfier of the web-socket session.
   private var sessionId: String?
 
-  ///
+  /// Web-socket session task.
   private var webSocketSessionTask: URLSessionWebSocketTask?
 
-  ///
+  /// Called when web-socket state is changes or when receiving messages.
   weak var delegate: WebSocketDelegateProtocol?
 
-  ///
+  /// Web-socket connect to given `server` with given `sessionId`.
   func connect(toServer server: URL, withSessionId sessionId: String) {
     wsLog("connecting to server `\(server.absoluteString)` with session-id `\(sessionId)`")
 
     let urlSession = URLSession(
       configuration: .default,
       delegate: self,
-      delegateQueue: OperationQueue.main
+      delegateQueue: .init()
     )
 
     self.sessionId = sessionId
@@ -32,14 +32,14 @@ class WebSocket: NSObject {
     webSocketSessionTask?.resume()
   }
 
-  ///
+  /// Closes the web-socket connection.
   func close() {
     wsLog("closing server connection")
     webSocketSessionTask?.cancel(with: .normalClosure, reason: nil)
     webSocketSessionTask = nil
   }
 
-  ///
+  /// Sends an action over the web-socket.
   func sendAction(_ type: String, params: [String : Any], messageId: NSNumber) {
     wsLog("sending `\(type)` action message (\(messageId.stringValue)), " +
           "with params: `\(params.description)`")
@@ -99,9 +99,7 @@ class WebSocket: NSObject {
 
   // MARK: - URLSessionWebSocketDelegate
 
-///
 extension WebSocket: URLSessionWebSocketDelegate {
-  ///
   func urlSession(
     _ session: URLSession,
     webSocketTask: URLSessionWebSocketTask,
@@ -115,7 +113,6 @@ extension WebSocket: URLSessionWebSocketDelegate {
     delegate?.webSocketDidConnect(self)
   }
 
-  ///
   func urlSession(
     _ session: URLSession,
     webSocketTask: URLSessionWebSocketTask,
@@ -127,7 +124,6 @@ extension WebSocket: URLSessionWebSocketDelegate {
     delegate?.webSocket(self, didCloseWith: reasonString)
   }
 
-  ///
   func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
     if let error = error {
       wsLog("web-socket did-complete with error: \(error.localizedDescription)", type: .error)
@@ -139,7 +135,6 @@ extension WebSocket: URLSessionWebSocketDelegate {
     delegate?.webSocket(self, didCloseWith: nil)
   }
 
-  ///
   func receiveAction(json: String) {
     do {
       let jsonData = json.data(using: .utf8)!
@@ -158,7 +153,6 @@ extension WebSocket: URLSessionWebSocketDelegate {
     }
   }
 
-  ///
   private func onDidOpen() {
     wsLog("web-socket did-open")
     sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
