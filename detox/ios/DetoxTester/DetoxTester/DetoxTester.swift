@@ -7,17 +7,20 @@ import Foundation
 import XCTest
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
-@objc public class DetoxTester: NSObject, WebSocketDelegateProtocol {
+@objc public class DetoxTester: NSObject {
   // MARK: - Properties
 
   /// The web-socket, used for the communication between Detox Server and Detox Tester.
-  private var webSocket: WebSocket?
+  fileprivate var webSocket: WebSocket?
 
   /// Finishes the tester operation.
-  private var done: (() -> Void)?
+  fileprivate var done: (() -> Void)?
 
   /// Executes a given closure on the main-thread.
-  private var exec: ((@escaping () -> Void) -> Void)?
+  fileprivate var exec: ((@escaping () -> Void) -> Void)?
+
+  /// Executes the tester operations.
+  fileprivate let executor = Executor()
 
   // MARK: - Start
 
@@ -34,6 +37,7 @@ import XCTest
   /// Make init as private method. Cannot be initialized from outside.
   private override init() {
     super.init()
+    executor.delegate = self
   }
 
   private func start() {
@@ -57,7 +61,11 @@ import XCTest
 
     return webSocket
   }
+}
 
+// MARK: - WebSocketDelegateProtocol
+
+extension DetoxTester: WebSocketDelegateProtocol {
   func webSocketDidConnect(_ webSocket: WebSocket) {
     mainLog("web-socket did-connect")
 
@@ -78,15 +86,16 @@ import XCTest
 
   func webSocket(
     _ webSocket: WebSocket,
-    didReceiveAction type: String,
+    didReceiveAction type: WebSocketReceiveActionType,
     params: [String : Any],
     messageId: NSNumber
   ) {
-    mainLog("web-socket received `\(type)` action message (\(messageId.stringValue), " +
+    mainLog("web-socket received `\(type.rawValue)` action message (\(messageId.stringValue), " +
             "with params: \(params.description)")
 
     exec! {
-      mainLog("[didReceiveAction] Executes action (`\(type)`) on main thread")
+      mainLog("[didReceiveAction] Executes action (`\(type.rawValue)`) on main thread")
+      
     }
   }
 
@@ -98,5 +107,17 @@ import XCTest
 
     mainLog("web-socket connection did close")
     done()
+  }
+}
+
+// MARK: - ExecutorDelegateProtocol
+
+extension DetoxTester: ExecutorDelegateProtocol {
+  public func sendAction(
+    _ type: WebSocketSendActionType,
+    params: [String : Any],
+    messageId: NSNumber
+  ) {
+    webSocket?.sendAction(type, params: params, messageId: messageId)
   }
 }

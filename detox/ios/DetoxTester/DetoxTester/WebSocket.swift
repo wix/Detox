@@ -40,7 +40,11 @@ class WebSocket: NSObject {
   }
 
   /// Sends an action over the web-socket.
-  func sendAction(_ type: WebSocketSendActionType, params: [String : Any] = [:], messageId: NSNumber) {
+  func sendAction(
+    _ type: WebSocketSendActionType,
+    params: [String : Any] = [:],
+    messageId: NSNumber
+  ) {
     wsLog("sending `\(type.rawValue)` action message (\(messageId.stringValue)), " +
           "with params: `\(params.description)`")
 
@@ -146,7 +150,12 @@ extension WebSocket: URLSessionWebSocketDelegate {
 
       wsLog("action received: \(jsonObject.description)")
 
-      delegate?.webSocket(self, didReceiveAction: type, params: params ?? [:], messageId: messageId)
+      delegate?.webSocket(
+        self,
+        didReceiveAction: WebSocketReceiveActionType(rawValue: type)!,
+        params: params ?? [:],
+        messageId: messageId
+      )
     } catch {
       wsLog("error decoding action: \(error.localizedDescription)", type: .error)
       fatalError("error decoding receiveAction decode: \(error.localizedDescription)")

@@ -28,6 +28,7 @@
 		60C7F50927DDF53E000D417A /* WebSocketSendActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50827DDF53E000D417A /* WebSocketSendActionType.swift */; };
 		60C7F50B27DDFA38000D417A /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50A27DDFA38000D417A /* Executor.swift */; };
 		60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50F27DE0978000D417A /* WebSocketReceiveActionType.swift */; };
+		60C7F51327DE2318000D417A /* ExecutorDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F51227DE2318000D417A /* ExecutorDelegateProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		60C7F50827DDF53E000D417A /* WebSocketSendActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketSendActionType.swift; sourceTree = "<group>"; };
 		60C7F50A27DDFA38000D417A /* Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executor.swift; sourceTree = "<group>"; };
 		60C7F50F27DE0978000D417A /* WebSocketReceiveActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReceiveActionType.swift; sourceTree = "<group>"; };
+		60C7F51227DE2318000D417A /* ExecutorDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutorDelegateProtocol.swift; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -222,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				60C7F50A27DDFA38000D417A /* Executor.swift */,
+				60C7F51227DE2318000D417A /* ExecutorDelegateProtocol.swift */,
 			);
 			name = Executor;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
+				60C7F51327DE2318000D417A /* ExecutorDelegateProtocol.swift in Sources */,
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
 				60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */,
 				60C7F50B27DDFA38000D417A /* Executor.swift in Sources */,
