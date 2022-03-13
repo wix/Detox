@@ -25,7 +25,7 @@ function isRelease() {
 }
 
 function getReleaseVersionType() {
-  return isPreRelease() ? 'pre' + RELEASE_VERSION_TYPE : RELEASE_VERSION_TYPE;
+  return (isPreRelease() ? 'pre' : '') + RELEASE_VERSION_TYPE;
 }
 
 function isPreRelease() {
@@ -55,6 +55,8 @@ function getVersionSafe() {
   return version;
 }
 
+// If theres a npm tag, use it. Otherwise, if releasing from `master` branch, use a corresponding pre-release prefix for
+// pre-releases, and "latest" otherwise, for non-master branches uses the branch name as the npm-tag.
 function releaseNpmTag() {
   if (RELEASE_NPM_TAG !== 'null') {
     return RELEASE_NPM_TAG;

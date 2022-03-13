@@ -3,19 +3,19 @@ steps:
     prompt: "Fill out the details for release"
     if: 'build.message =~ /^release\$/i'
     fields:
-      - select: "PRE-RELEASE?"
+      - select: "IS PRE-RELEASE?"
         key: "pre-release"
         default: true
-        hint: "A corresponding prefix will be added to published version ('alpha' or the one specified in RELEASE_NPM_TAG)"
+        hint: "A corresponding pre-release prefix will be added to published version name, with the npm tag of this version (for instance, `19.5.0-preminor.0`)."
         options:
           - label: "Yes, this is a PRE-release version."
             value: true
           - label: "No, this is a REAL release version."
             value: false
 
-      - select: "RELEASE_VERSION_TYPE"
+      - select: "VERSION TYPE"
         key: "release-version-type"
-        hint: "If set, a successful build will be released with a version update according to specified type"
+        hint: "If set, a successful build will be released with a version update according to specified type."
         options:
           - label: "Patch"
             value: "patch"
@@ -24,39 +24,39 @@ steps:
           - label: "Major"
             value: "major"
 
-      - select: "RELEASE_DRY_RUN"
+      - select: "IS DRY RUN?"
         key: "release-dry-run"
-        hint: "Don't actually release anything, just run the scripts"
-        default: 'false'
+        hint: "Don't actually release anything, just run the scripts."
+        default: false
         options:
-          - label: "True"
+          - label: "Yes"
             value: true
-          - label: "False"
+          - label: "No"
             value: false
 
-      - select: "RELEASE_SKIP_NPM"
+      - select: "SKIP NPM-PUBLISH?"
         key: "release-skip-npm"
-        hint: "This is a hack to fix previously broken release jobs. You need to really know what you're doing"
-        default: 'false'
+        hint: "This is a hack to fix previously broken release jobs. You need to really know what you're doing."
+        default: false
         options:
-          - label: "True"
+          - label: "Yes"
             value: true
-          - label: "False"
+          - label: "No"
             value: false
 
-      - select: "FAST_RELEASE"
+      - select: "DO FAST-RELEASE?"
         key: "fast-release"
         hint: "Skip building and testing, ONLY IF YOU REALLY REALLY HAVE TO!"
-        default: 'false'
+        default: false
         options:
-          - label: "True"
+          - label: "Yes"
             value: true
-          - label: "False"
+          - label: "No"
             value: false
 
-      - text: "RELEASE_NPM_TAG"
+      - text: "NPM TAG"
         key: "release-npm-tag"
-        hint: "For releases from master, the default is 'latest'. For releases from other branches, the default is the branch name, or RELEASE_NPM_TAG if set. Leave NULL if no version is specified"
+        hint: "Leave NULL for default. For releases from master, the default is `latest`, unless this is a pre-release version (then uses the corresponding version type as tag). For releases from other branches, the default is the branch name."
         default: 'null'
 
   - label: "Get Release Pipeline"
