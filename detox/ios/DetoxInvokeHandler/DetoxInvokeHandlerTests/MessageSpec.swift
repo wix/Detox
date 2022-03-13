@@ -1,9 +1,9 @@
 //
-//  MessageSpec.swift (DetoxMessageHandler)
+//  MessageSpec.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-@testable import DetoxMessageHandler
+@testable import DetoxInvokeHandler
 
 import Quick
 import Nimble

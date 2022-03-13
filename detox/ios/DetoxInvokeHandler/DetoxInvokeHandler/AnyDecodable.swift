@@ -1,5 +1,5 @@
 //
-//  AnyCodable.swift (DetoxMessageHandler)
+//  AnyDecodable.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //  Forked from: https://github.com/Flight-School/AnyCodable, extended to support `NSNull` objects.
 //
@@ -7,16 +7,35 @@
 import Foundation
 
 /**
- A type-erased `Codable` value.
- The `AnyCodable` type forwards encoding and decoding responsibilities
+ A type-erased `Decodable` value.
+
+ The `AnyDecodable` type forwards decoding responsibilities
  to an underlying value, hiding its specific underlying type.
- You can encode or decode mixed-type values in dictionaries
- and other collections that require `Encodable` or `Decodable` conformance
- by declaring their contained type to be `AnyCodable`.
- - SeeAlso: `AnyEncodable`
- - SeeAlso: `AnyDecodable`
+
+ You can decode mixed-type values in dictionaries
+ and other collections that require `Decodable` conformance
+ by declaring their contained type to be `AnyDecodable`:
+
+ let json = """
+ {
+ "boolean": true,
+ "integer": 42,
+ "double": 3.141592653589793,
+ "string": "string",
+ "array": [1, 2, 3],
+ "nested": {
+ "a": "alpha",
+ "b": "bravo",
+ "c": "charlie"
+ },
+ "null": null
+ }
+ """.data(using: .utf8)!
+
+ let decoder = JSONDecoder()
+ let dictionary = try! decoder.decode([String: AnyDecodable].self, from: json)
  */
-@frozen public struct AnyCodable: Codable {
+@frozen public struct AnyDecodable: Decodable {
   public let value: Any
 
   public init<T>(_ value: T?) {
@@ -24,14 +43,47 @@ import Foundation
   }
 }
 
-extension AnyCodable: _AnyEncodable, _AnyDecodable {}
+@usableFromInline
+protocol _AnyDecodable {
+  var value: Any { get }
+  init<T>(_ value: T?)
+}
 
-extension AnyCodable: Equatable {
-  public static func == (lhs: AnyCodable, rhs: AnyCodable) -> Bool {
+extension AnyDecodable: _AnyDecodable {}
+
+extension _AnyDecodable {
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+
+    if container.decodeNil() {
+      self.init(NSNull())
+    } else if let bool = try? container.decode(Bool.self) {
+      self.init(bool)
+    } else if let int = try? container.decode(Int.self) {
+      self.init(int)
+    } else if let uint = try? container.decode(UInt.self) {
+      self.init(uint)
+    } else if let double = try? container.decode(Double.self) {
+      self.init(double)
+    } else if let string = try? container.decode(String.self) {
+      self.init(string)
+    } else if let array = try? container.decode([AnyDecodable].self) {
+      self.init(array.map { $0.value })
+    } else if let dictionary = try? container.decode([String: AnyDecodable].self) {
+      self.init(dictionary.mapValues { $0.value })
+    } else {
+      throw DecodingError.dataCorruptedError(
+        in: container,
+        debugDescription: "AnyDecodable value cannot be decoded"
+      )
+    }
+  }
+}
+
+extension AnyDecodable: Equatable {
+  public static func == (lhs: AnyDecodable, rhs: AnyDecodable) -> Bool {
     switch (lhs.value, rhs.value) {
-      case is (Void, Void):
-        return true
-      case is (NSNull, NSNull):
+      case is (NSNull, NSNull), is (Void, Void):
         return true
       case let (lhs as Bool, rhs as Bool):
         return lhs == rhs
@@ -61,13 +113,9 @@ extension AnyCodable: Equatable {
         return lhs == rhs
       case let (lhs as String, rhs as String):
         return lhs == rhs
-      case let (lhs as [String: AnyCodable], rhs as [String: AnyCodable]):
+      case let (lhs as [String: AnyDecodable], rhs as [String: AnyDecodable]):
         return lhs == rhs
-      case let (lhs as [String: String], rhs as [String: String]):
-        return lhs == rhs
-      case let (lhs as [AnyCodable], rhs as [AnyCodable]):
-        return lhs == rhs
-      case let (lhs as [String], rhs as [String]):
+      case let (lhs as [AnyDecodable], rhs as [AnyDecodable]):
         return lhs == rhs
       default:
         return false
@@ -75,7 +123,7 @@ extension AnyCodable: Equatable {
   }
 }
 
-extension AnyCodable: CustomStringConvertible {
+extension AnyDecodable: CustomStringConvertible {
   public var description: String {
     switch value {
       case is Void:
@@ -88,27 +136,18 @@ extension AnyCodable: CustomStringConvertible {
   }
 }
 
-extension AnyCodable: CustomDebugStringConvertible {
+extension AnyDecodable: CustomDebugStringConvertible {
   public var debugDescription: String {
     switch value {
       case let value as CustomDebugStringConvertible:
-        return "AnyCodable(\(value.debugDescription))"
+        return "AnyDecodable(\(value.debugDescription))"
       default:
-        return "AnyCodable(\(description))"
+        return "AnyDecodable(\(description))"
     }
   }
 }
 
-extension AnyCodable: ExpressibleByNilLiteral {}
-extension AnyCodable: ExpressibleByBooleanLiteral {}
-extension AnyCodable: ExpressibleByIntegerLiteral {}
-extension AnyCodable: ExpressibleByFloatLiteral {}
-extension AnyCodable: ExpressibleByStringLiteral {}
-extension AnyCodable: ExpressibleByArrayLiteral {}
-extension AnyCodable: ExpressibleByDictionaryLiteral {}
-
-
-extension AnyCodable: Hashable {
+extension AnyDecodable: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch value {
       case let value as Bool:
@@ -139,9 +178,9 @@ extension AnyCodable: Hashable {
         hasher.combine(value)
       case let value as String:
         hasher.combine(value)
-      case let value as [String: AnyCodable]:
+      case let value as [String: AnyDecodable]:
         hasher.combine(value)
-      case let value as [AnyCodable]:
+      case let value as [AnyDecodable]:
         hasher.combine(value)
       default:
         break

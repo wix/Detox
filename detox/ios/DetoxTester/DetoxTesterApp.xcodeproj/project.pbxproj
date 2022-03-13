@@ -14,7 +14,6 @@
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
 		60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */; };
-		60C01FE727CBAF5F00EF6C1E /* libDetoxMessageHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60634AE127C4C6F800274F30 /* libDetoxMessageHandler.a */; };
 		60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0201F27CBB0A400EF6C1E /* ContentView.swift */; };
 		60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */; };
 		60C0202627CBB0A500EF6C1E /* Preview Content in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202127CBB0A500EF6C1E /* Preview Content */; };
@@ -32,20 +31,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		60634AE027C4C6F800274F30 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 602DBC6927B90ECC00FC0C4C;
-			remoteInfo = DetoxMessageHandler;
-		};
-		60634AE227C4C6F800274F30 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 602DBC7727B9103400FC0C4C;
-			remoteInfo = DetoxMessageHandlerTests;
-		};
 		609AA153279F10F4008F6617 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 60ED26CA27872220004213B5 /* Project object */;
@@ -53,17 +38,24 @@
 			remoteGlobalIDString = 60ED26D127872220004213B5;
 			remoteInfo = Tester;
 		};
-		60C01FE527CBA9B600EF6C1E /* PBXContainerItemProxy */ = {
+		60C7F51927DE2EE0000D417A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 602DBC6827B90ECC00FC0C4C;
-			remoteInfo = DetoxMessageHandler;
+			containerPortal = 60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 602DBC6927B90ECC00FC0C4C;
+			remoteInfo = DetoxInvokeHandler;
+		};
+		60C7F51B27DE2EE0000D417A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 602DBC7727B9103400FC0C4C;
+			remoteInfo = DetoxInvokeHandlerTests;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxMessageHandler.xcodeproj; path = ../DetoxMessageHandler/DetoxMessageHandler.xcodeproj; sourceTree = "<group>"; };
+		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
 		60634AD927C4339600274F30 /* ExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegate.swift; sourceTree = "<group>"; };
@@ -95,7 +87,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60C01FE727CBAF5F00EF6C1E /* libDetoxMessageHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,15 +100,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		60634ADC27C4C6F800274F30 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				60634AE127C4C6F800274F30 /* libDetoxMessageHandler.a */,
-				60634AE327C4C6F800274F30 /* DetoxMessageHandlerTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
 			isa = PBXGroup;
 			children = (
@@ -229,10 +211,19 @@
 			name = Executor;
 			sourceTree = "<group>";
 		};
+		60C7F51527DE2EE0000D417A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */,
+				60C7F51C27DE2EE0000D417A /* DetoxInvokeHandlerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		60ED26C927872220004213B5 = {
 			isa = PBXGroup;
 			children = (
-				60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */,
+				60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */,
 				60ED26D427872220004213B5 /* DetoxTesterApp */,
 				609AA14E279F10F4008F6617 /* DetoxTester */,
 				60ED26D327872220004213B5 /* Products */,
@@ -275,7 +266,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				60C01FE627CBA9B600EF6C1E /* PBXTargetDependency */,
 				609AA154279F10F4008F6617 /* PBXTargetDependency */,
 			);
 			name = DetoxTester;
@@ -334,8 +324,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 60634ADC27C4C6F800274F30 /* Products */;
-					ProjectRef = 60634AC727C42C3B00274F30 /* DetoxMessageHandler.xcodeproj */;
+					ProductGroup = 60C7F51527DE2EE0000D417A /* Products */;
+					ProjectRef = 60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -347,18 +337,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		60634AE127C4C6F800274F30 /* libDetoxMessageHandler.a */ = {
+		60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libDetoxMessageHandler.a;
-			remoteRef = 60634AE027C4C6F800274F30 /* PBXContainerItemProxy */;
+			path = libDetoxInvokeHandler.a;
+			remoteRef = 60C7F51927DE2EE0000D417A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		60634AE327C4C6F800274F30 /* DetoxMessageHandlerTests.xctest */ = {
+		60C7F51C27DE2EE0000D417A /* DetoxInvokeHandlerTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = DetoxMessageHandlerTests.xctest;
-			remoteRef = 60634AE227C4C6F800274F30 /* PBXContainerItemProxy */;
+			path = DetoxInvokeHandlerTests.xctest;
+			remoteRef = 60C7F51B27DE2EE0000D417A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -423,11 +413,6 @@
 			isa = PBXTargetDependency;
 			target = 60ED26D127872220004213B5 /* DetoxTesterApp */;
 			targetProxy = 609AA153279F10F4008F6617 /* PBXContainerItemProxy */;
-		};
-		60C01FE627CBA9B600EF6C1E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DetoxMessageHandler;
-			targetProxy = 60C01FE527CBA9B600EF6C1E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

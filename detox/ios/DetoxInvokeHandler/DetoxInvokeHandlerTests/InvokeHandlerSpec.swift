@@ -1,20 +1,20 @@
 //
-//  MessageHandlerSpec.swift (DetoxMessageHandler)
+//  InvokeHandlerSpec.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-@testable import DetoxMessageHandler
+@testable import DetoxInvokeHandler
 
 import Quick
 import Nimble
 import Foundation
 
-class MessageHandlerSpec: QuickSpec {
+class InvokeHandlerSpec: QuickSpec {
   override func spec() {
     var matcher: FakeElementMatcher!
     var actionDelegate: FakeActionDelegate!
     var expectationDelegate: FakeExpectationDelegate!
-    var handler: MessageHandler!
+    var handler: InvokeHandler!
 
     beforeEach {
       matcher = .init()
@@ -124,7 +124,7 @@ class MessageHandlerSpec: QuickSpec {
         matcher.setMatch(from: .text("foo"), to: "bar")
 
         expect { try handler.handle(message) }.to(throwError(
-          MessageHandler.Error.noElementAtIndex
+          InvokeHandler.Error.noElementAtIndex
         ))
       }
 

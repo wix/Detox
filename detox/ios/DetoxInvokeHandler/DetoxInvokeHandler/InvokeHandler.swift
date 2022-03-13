@@ -1,5 +1,5 @@
 //
-//  MessageHandler.swift (DetoxMessageHandler)
+//  InvokeHandler.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
@@ -8,7 +8,7 @@ import Foundation
 /// Handles JSON messages by parsing them and routing them into the relevant delegate
 /// (`actionDelegate` or `expectationDelegate`) to handle the requested action or expectation on the
 /// specified element (in which located by the provided `elementMatcher`).
-public class MessageHandler {
+public class InvokeHandler {
   /// Used to find elements by matching to a given pattern (the message predicate).
   private let elementMatcher: ElementMatcherProtocol
 

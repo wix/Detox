@@ -1,11 +1,11 @@
 //
-//  ActionDelegateProtocol.swift (DetoxMessageHandler)
+//  ActionDelegateProtocol.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
-/// Protocol for classes that can be used as a delegate of `MessageHandler`, in which handles
+/// Protocol for classes that can be used as a delegate of `InvokeHandler`, in which handles
 /// actions on a specified element.
 public protocol ActionDelegateProtocol {
   /// Performs the provided `action` on the specified `element`.

@@ -1,10 +1,10 @@
 //
-//  HandleError.swift (DetoxMessageHandler)
+//  HandleError.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-extension MessageHandler {
-  /// Represents an error caused by `MessageHandler`.
+extension InvokeHandler {
+  /// Represents an error caused by `InvokeHandler`.
   public enum Error: Swift.Error {
     /// Action type is illegal.
     case invalidActionType

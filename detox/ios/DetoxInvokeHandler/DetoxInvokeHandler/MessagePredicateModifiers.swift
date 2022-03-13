@@ -1,5 +1,5 @@
 //
-//  MessagePredicateModifiers.swift (DetoxMessageHandler)
+//  MessagePredicateModifiers.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 

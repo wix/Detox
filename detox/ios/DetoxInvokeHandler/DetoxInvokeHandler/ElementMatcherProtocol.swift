@@ -1,11 +1,11 @@
 //
-//  ElementMatcher.swift (DetoxMessageHandler)
+//  ElementMatcher.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
-/// Protocol for classes that can be used as a matcher for `MessageHandler`, in which handles
+/// Protocol for classes that can be used as a matcher for `InvokeHandler`, in which handles
 /// elements matching based on given `pattern`.
 public protocol ElementMatcherProtocol {
   /// Returns elements that matches the given `pattern`.

@@ -1,11 +1,11 @@
 //
-//  Message.swift (DetoxMessageHandler)
+//  Message.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
-/// Structure of messages sent to `MessageHandler`.
+/// Structure of messages sent to `InvokeHandler`.
 struct Message: Codable, Equatable {
   /// Type of the message.
   let type: MessageType

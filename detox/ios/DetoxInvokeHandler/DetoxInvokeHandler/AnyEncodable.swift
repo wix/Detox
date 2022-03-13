@@ -1,5 +1,5 @@
 //
-//  AnyEncodable.swift (DetoxMessageHandler)
+//  AnyEncodable.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //  Forked from: https://github.com/Flight-School/AnyCodable, extended to support `NSNull` objects.
 //

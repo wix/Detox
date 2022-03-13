@@ -3,7 +3,7 @@
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
-import DetoxMessageHandler
+import DetoxInvokeHandler
 import Foundation
 import XCTest
 

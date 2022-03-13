@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		602DBC7B27B9103400FC0C4C /* libDetoxMessageHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 602DBC6927B90ECC00FC0C4C /* libDetoxMessageHandler.a */; };
+		602DBC7B27B9103400FC0C4C /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 602DBC6927B90ECC00FC0C4C /* libDetoxInvokeHandler.a */; };
 		602DBC8327B9116500FC0C4C /* Quick in Frameworks */ = {isa = PBXBuildFile; productRef = 602DBC8227B9116500FC0C4C /* Quick */; };
-		602DBC8527B912AC00FC0C4C /* MessageHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC8427B912AC00FC0C4C /* MessageHandlerSpec.swift */; };
+		602DBC8527B912AC00FC0C4C /* InvokeHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC8427B912AC00FC0C4C /* InvokeHandlerSpec.swift */; };
 		602DBC8827B925A000FC0C4C /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = 602DBC8727B925A000FC0C4C /* Nimble */; };
-		602DBC8B27B925FA00FC0C4C /* MessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC8A27B925FA00FC0C4C /* MessageHandler.swift */; };
+		602DBC8B27B925FA00FC0C4C /* InvokeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC8A27B925FA00FC0C4C /* InvokeHandler.swift */; };
 		602DBC9F27B9602400FC0C4C /* MessageBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC9E27B9602400FC0C4C /* MessageBuilder.swift */; };
 		60634AEC27C514ED00274F30 /* AccessibilityTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AEB27C514ED00274F30 /* AccessibilityTraits.swift */; };
 		60634AED27C514F700274F30 /* AccessibilityTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AEB27C514ED00274F30 /* AccessibilityTraits.swift */; };
@@ -19,7 +19,7 @@
 		60BB923627BBDD0A0081D232 /* MessagePredicateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923527BBDD0A0081D232 /* MessagePredicateProtocol.swift */; };
 		60BB923B27BBE28C0081D232 /* MessagePredicateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923527BBDD0A0081D232 /* MessagePredicateProtocol.swift */; };
 		60BB923C27BBE36A0081D232 /* ElementMatcherProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923127BBD2340081D232 /* ElementMatcherProtocol.swift */; };
-		60BB923E27BBE8510081D232 /* MessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC8A27B925FA00FC0C4C /* MessageHandler.swift */; };
+		60BB923E27BBE8510081D232 /* InvokeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602DBC8A27B925FA00FC0C4C /* InvokeHandler.swift */; };
 		60BB924427BBFB380081D232 /* MessageSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB924327BBFB380081D232 /* MessageSpec.swift */; };
 		60BB924927BC4D3F0081D232 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB924827BC4D3F0081D232 /* Message.swift */; };
 		60BB924A27BC55100081D232 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB924827BC4D3F0081D232 /* Message.swift */; };
@@ -41,8 +41,8 @@
 		60BB926D27C23F5E0081D232 /* MessagePredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB926B27C23F5E0081D232 /* MessagePredicate.swift */; };
 		60BB926F27C2413D0081D232 /* ElementPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB926E27C2413D0081D232 /* ElementPattern.swift */; };
 		60BB927027C2413D0081D232 /* ElementPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB926E27C2413D0081D232 /* ElementPattern.swift */; };
-		60BB927227C26BB40081D232 /* MessageHandler+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927127C26BB40081D232 /* MessageHandler+Error.swift */; };
-		60BB927327C26BB40081D232 /* MessageHandler+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927127C26BB40081D232 /* MessageHandler+Error.swift */; };
+		60BB927227C26BB40081D232 /* InvokeHandler+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927127C26BB40081D232 /* InvokeHandler+Error.swift */; };
+		60BB927327C26BB40081D232 /* InvokeHandler+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927127C26BB40081D232 /* InvokeHandler+Error.swift */; };
 		60BB927C27C28CDB0081D232 /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927B27C28CDB0081D232 /* Expectation.swift */; };
 		60BB927D27C28CDB0081D232 /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927B27C28CDB0081D232 /* Expectation.swift */; };
 		60BB927F27C28CE80081D232 /* ExpectationDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB927E27C28CE80081D232 /* ExpectationDelegateProtocol.swift */; };
@@ -82,11 +82,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		602DBC6927B90ECC00FC0C4C /* libDetoxMessageHandler.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDetoxMessageHandler.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		602DBC7727B9103400FC0C4C /* DetoxMessageHandlerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxMessageHandlerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		602DBC8427B912AC00FC0C4C /* MessageHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandlerSpec.swift; sourceTree = "<group>"; };
-		602DBC8927B925FA00FC0C4C /* DetoxMessageHandler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DetoxMessageHandler-Bridging-Header.h"; sourceTree = "<group>"; };
-		602DBC8A27B925FA00FC0C4C /* MessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandler.swift; sourceTree = "<group>"; };
+		602DBC6927B90ECC00FC0C4C /* libDetoxInvokeHandler.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDetoxInvokeHandler.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		602DBC7727B9103400FC0C4C /* DetoxInvokeHandlerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxInvokeHandlerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		602DBC8427B912AC00FC0C4C /* InvokeHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvokeHandlerSpec.swift; sourceTree = "<group>"; };
+		602DBC8927B925FA00FC0C4C /* DetoxInvokeHandler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DetoxInvokeHandler-Bridging-Header.h"; sourceTree = "<group>"; };
+		602DBC8A27B925FA00FC0C4C /* InvokeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvokeHandler.swift; sourceTree = "<group>"; };
 		602DBC9E27B9602400FC0C4C /* MessageBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBuilder.swift; sourceTree = "<group>"; };
 		60634ADB27C4C5E400274F30 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		60634AEB27C514ED00274F30 /* AccessibilityTraits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTraits.swift; sourceTree = "<group>"; };
@@ -104,7 +104,7 @@
 		60BB926827C23F460081D232 /* MessagePredicateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePredicateType.swift; sourceTree = "<group>"; };
 		60BB926B27C23F5E0081D232 /* MessagePredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePredicate.swift; sourceTree = "<group>"; };
 		60BB926E27C2413D0081D232 /* ElementPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementPattern.swift; sourceTree = "<group>"; };
-		60BB927127C26BB40081D232 /* MessageHandler+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageHandler+Error.swift"; sourceTree = "<group>"; };
+		60BB927127C26BB40081D232 /* InvokeHandler+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InvokeHandler+Error.swift"; sourceTree = "<group>"; };
 		60BB927B27C28CDB0081D232 /* Expectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
 		60BB927E27C28CE80081D232 /* ExpectationDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegateProtocol.swift; sourceTree = "<group>"; };
 		60BB928127C28EC60081D232 /* FakeExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeExpectationDelegate.swift; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 			files = (
 				602DBC8827B925A000FC0C4C /* Nimble in Frameworks */,
 				602DBC8327B9116500FC0C4C /* Quick in Frameworks */,
-				602DBC7B27B9103400FC0C4C /* libDetoxMessageHandler.a in Frameworks */,
+				602DBC7B27B9103400FC0C4C /* libDetoxInvokeHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,8 +139,8 @@
 			isa = PBXGroup;
 			children = (
 				60634ADB27C4C5E400274F30 /* README.md */,
-				602DBC6B27B90ECC00FC0C4C /* DetoxMessageHandler */,
-				602DBC7827B9103400FC0C4C /* DetoxMessageHandlerTests */,
+				602DBC6B27B90ECC00FC0C4C /* DetoxInvokeHandler */,
+				602DBC7827B9103400FC0C4C /* DetoxInvokeHandlerTests */,
 				602DBC6A27B90ECC00FC0C4C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -148,13 +148,13 @@
 		602DBC6A27B90ECC00FC0C4C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				602DBC6927B90ECC00FC0C4C /* libDetoxMessageHandler.a */,
-				602DBC7727B9103400FC0C4C /* DetoxMessageHandlerTests.xctest */,
+				602DBC6927B90ECC00FC0C4C /* libDetoxInvokeHandler.a */,
+				602DBC7727B9103400FC0C4C /* DetoxInvokeHandlerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		602DBC6B27B90ECC00FC0C4C /* DetoxMessageHandler */ = {
+		602DBC6B27B90ECC00FC0C4C /* DetoxInvokeHandler */ = {
 			isa = PBXGroup;
 			children = (
 				60BB925D27BD32070081D232 /* Utils */,
@@ -164,23 +164,23 @@
 				60BB923827BBDD180081D232 /* Matcher */,
 				60BB923427BBDB490081D232 /* Resources */,
 			);
-			path = DetoxMessageHandler;
+			path = DetoxInvokeHandler;
 			sourceTree = "<group>";
 		};
-		602DBC7827B9103400FC0C4C /* DetoxMessageHandlerTests */ = {
+		602DBC7827B9103400FC0C4C /* DetoxInvokeHandlerTests */ = {
 			isa = PBXGroup;
 			children = (
 				60BB924727BC0C380081D232 /* Message */,
 				6098E2CA27BA4679009BF454 /* Test Utils */,
 				602DBC9A27B92F0000FC0C4C /* Handler */,
 			);
-			path = DetoxMessageHandlerTests;
+			path = DetoxInvokeHandlerTests;
 			sourceTree = "<group>";
 		};
 		602DBC9A27B92F0000FC0C4C /* Handler */ = {
 			isa = PBXGroup;
 			children = (
-				602DBC8427B912AC00FC0C4C /* MessageHandlerSpec.swift */,
+				602DBC8427B912AC00FC0C4C /* InvokeHandlerSpec.swift */,
 			);
 			name = Handler;
 			sourceTree = "<group>";
@@ -199,7 +199,7 @@
 		60BB923427BBDB490081D232 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				602DBC8927B925FA00FC0C4C /* DetoxMessageHandler-Bridging-Header.h */,
+				602DBC8927B925FA00FC0C4C /* DetoxInvokeHandler-Bridging-Header.h */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -230,8 +230,8 @@
 		60BB924627BC0ADB0081D232 /* Handler */ = {
 			isa = PBXGroup;
 			children = (
-				602DBC8A27B925FA00FC0C4C /* MessageHandler.swift */,
-				60BB927127C26BB40081D232 /* MessageHandler+Error.swift */,
+				602DBC8A27B925FA00FC0C4C /* InvokeHandler.swift */,
+				60BB927127C26BB40081D232 /* InvokeHandler+Error.swift */,
 			);
 			name = Handler;
 			sourceTree = "<group>";
@@ -294,9 +294,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		602DBC6827B90ECC00FC0C4C /* DetoxMessageHandler */ = {
+		602DBC6827B90ECC00FC0C4C /* DetoxInvokeHandler */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 602DBC7027B90ECC00FC0C4C /* Build configuration list for PBXNativeTarget "DetoxMessageHandler" */;
+			buildConfigurationList = 602DBC7027B90ECC00FC0C4C /* Build configuration list for PBXNativeTarget "DetoxInvokeHandler" */;
 			buildPhases = (
 				602DBC6527B90ECC00FC0C4C /* Sources */,
 				602DBC6627B90ECC00FC0C4C /* Frameworks */,
@@ -306,14 +306,14 @@
 			);
 			dependencies = (
 			);
-			name = DetoxMessageHandler;
+			name = DetoxInvokeHandler;
 			productName = DetoxTesterUtils;
-			productReference = 602DBC6927B90ECC00FC0C4C /* libDetoxMessageHandler.a */;
+			productReference = 602DBC6927B90ECC00FC0C4C /* libDetoxInvokeHandler.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		602DBC7627B9103400FC0C4C /* DetoxMessageHandlerTests */ = {
+		602DBC7627B9103400FC0C4C /* DetoxInvokeHandlerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 602DBC7E27B9103400FC0C4C /* Build configuration list for PBXNativeTarget "DetoxMessageHandlerTests" */;
+			buildConfigurationList = 602DBC7E27B9103400FC0C4C /* Build configuration list for PBXNativeTarget "DetoxInvokeHandlerTests" */;
 			buildPhases = (
 				602DBC7327B9103400FC0C4C /* Sources */,
 				602DBC7427B9103400FC0C4C /* Frameworks */,
@@ -324,13 +324,13 @@
 			dependencies = (
 				602DBC7D27B9103400FC0C4C /* PBXTargetDependency */,
 			);
-			name = DetoxMessageHandlerTests;
+			name = DetoxInvokeHandlerTests;
 			packageProductDependencies = (
 				602DBC8227B9116500FC0C4C /* Quick */,
 				602DBC8727B925A000FC0C4C /* Nimble */,
 			);
 			productName = DetoxTesterUtilsTests;
-			productReference = 602DBC7727B9103400FC0C4C /* DetoxMessageHandlerTests.xctest */;
+			productReference = 602DBC7727B9103400FC0C4C /* DetoxInvokeHandlerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -353,7 +353,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 602DBC6427B90ECC00FC0C4C /* Build configuration list for PBXProject "DetoxMessageHandler" */;
+			buildConfigurationList = 602DBC6427B90ECC00FC0C4C /* Build configuration list for PBXProject "DetoxInvokeHandler" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -370,8 +370,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				602DBC6827B90ECC00FC0C4C /* DetoxMessageHandler */,
-				602DBC7627B9103400FC0C4C /* DetoxMessageHandlerTests */,
+				602DBC6827B90ECC00FC0C4C /* DetoxInvokeHandler */,
+				602DBC7627B9103400FC0C4C /* DetoxInvokeHandlerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -393,10 +393,10 @@
 			files = (
 				60BB927F27C28CE80081D232 /* ExpectationDelegateProtocol.swift in Sources */,
 				60BB926127BD337C0081D232 /* AnyDecodable.swift in Sources */,
-				60BB927227C26BB40081D232 /* MessageHandler+Error.swift in Sources */,
+				60BB927227C26BB40081D232 /* InvokeHandler+Error.swift in Sources */,
 				60BB927C27C28CDB0081D232 /* Expectation.swift in Sources */,
 				60BB926927C23F460081D232 /* MessagePredicateType.swift in Sources */,
-				602DBC8B27B925FA00FC0C4C /* MessageHandler.swift in Sources */,
+				602DBC8B27B925FA00FC0C4C /* InvokeHandler.swift in Sources */,
 				60BB926F27C2413D0081D232 /* ElementPattern.swift in Sources */,
 				60BB925127BD085A0081D232 /* ActionDelegateProtocol.swift in Sources */,
 				60BB926C27C23F5E0081D232 /* MessagePredicate.swift in Sources */,
@@ -422,7 +422,7 @@
 				60BB926527BD34950081D232 /* AnyCodable.swift in Sources */,
 				60BB926727BD349A0081D232 /* AnyEncodable.swift in Sources */,
 				60BB927D27C28CDB0081D232 /* Expectation.swift in Sources */,
-				602DBC8527B912AC00FC0C4C /* MessageHandlerSpec.swift in Sources */,
+				602DBC8527B912AC00FC0C4C /* InvokeHandlerSpec.swift in Sources */,
 				60BB925627BD0A100081D232 /* Action.swift in Sources */,
 				60BB927027C2413D0081D232 /* ElementPattern.swift in Sources */,
 				60BB924C27BCEB170081D232 /* FakeElementMatcher.swift in Sources */,
@@ -431,7 +431,7 @@
 				60BB926A27C23F460081D232 /* MessagePredicateType.swift in Sources */,
 				60BB928627C29BD20081D232 /* MessagePredicateModifiers.swift in Sources */,
 				60BB926D27C23F5E0081D232 /* MessagePredicate.swift in Sources */,
-				60BB923E27BBE8510081D232 /* MessageHandler.swift in Sources */,
+				60BB923E27BBE8510081D232 /* InvokeHandler.swift in Sources */,
 				60BB924427BBFB380081D232 /* MessageSpec.swift in Sources */,
 				60BB928F27C3BE140081D232 /* WhileMessage.swift in Sources */,
 				60BB924A27BC55100081D232 /* Message.swift in Sources */,
@@ -441,7 +441,7 @@
 				60BB928327C28EC60081D232 /* FakeExpectationDelegate.swift in Sources */,
 				60BB928C27C29CDB0081D232 /* ActionType.swift in Sources */,
 				60BB923B27BBE28C0081D232 /* MessagePredicateProtocol.swift in Sources */,
-				60BB927327C26BB40081D232 /* MessageHandler+Error.swift in Sources */,
+				60BB927327C26BB40081D232 /* InvokeHandler+Error.swift in Sources */,
 				60634AED27C514F700274F30 /* AccessibilityTraits.swift in Sources */,
 				60BB926627BD34980081D232 /* AnyDecodable.swift in Sources */,
 				60BB923C27BBE36A0081D232 /* ElementMatcherProtocol.swift in Sources */,
@@ -453,7 +453,7 @@
 /* Begin PBXTargetDependency section */
 		602DBC7D27B9103400FC0C4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 602DBC6827B90ECC00FC0C4C /* DetoxMessageHandler */;
+			target = 602DBC6827B90ECC00FC0C4C /* DetoxInvokeHandler */;
 			targetProxy = 602DBC7C27B9103400FC0C4C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -588,7 +588,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "DetoxMessageHandler/DetoxMessageHandler-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "DetoxInvokeHandler/DetoxInvokeHandler-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -608,7 +608,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "DetoxMessageHandler/DetoxMessageHandler-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "DetoxInvokeHandler/DetoxInvokeHandler-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -628,7 +628,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxMessageHandlerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxInvokeHandlerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -651,7 +651,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxMessageHandlerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxInvokeHandlerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -662,7 +662,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		602DBC6427B90ECC00FC0C4C /* Build configuration list for PBXProject "DetoxMessageHandler" */ = {
+		602DBC6427B90ECC00FC0C4C /* Build configuration list for PBXProject "DetoxInvokeHandler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				602DBC6E27B90ECC00FC0C4C /* Debug */,
@@ -671,7 +671,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		602DBC7027B90ECC00FC0C4C /* Build configuration list for PBXNativeTarget "DetoxMessageHandler" */ = {
+		602DBC7027B90ECC00FC0C4C /* Build configuration list for PBXNativeTarget "DetoxInvokeHandler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				602DBC7127B90ECC00FC0C4C /* Debug */,
@@ -680,7 +680,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		602DBC7E27B9103400FC0C4C /* Build configuration list for PBXNativeTarget "DetoxMessageHandlerTests" */ = {
+		602DBC7E27B9103400FC0C4C /* Build configuration list for PBXNativeTarget "DetoxInvokeHandlerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				602DBC7F27B9103400FC0C4C /* Debug */,
