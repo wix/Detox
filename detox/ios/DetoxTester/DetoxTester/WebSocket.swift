@@ -40,12 +40,12 @@ class WebSocket: NSObject {
   }
 
   /// Sends an action over the web-socket.
-  func sendAction(_ type: String, params: [String : Any], messageId: NSNumber) {
-    wsLog("sending `\(type)` action message (\(messageId.stringValue)), " +
+  func sendAction(_ type: WebSocketSendActionType, params: [String : Any] = [:], messageId: NSNumber) {
+    wsLog("sending `\(type.rawValue)` action message (\(messageId.stringValue)), " +
           "with params: `\(params.description)`")
 
     let jsonData : [String: Any] = [
-      "type": type,
+      "type": type.rawValue,
       "params": params,
       "messageId": messageId
     ]
@@ -60,7 +60,7 @@ class WebSocket: NSObject {
           fatalError("error sending message: \(error.localizedDescription)")
         }
 
-        wsLog("message (`\(type)`) was sent successfully")
+        wsLog("message (`\(type.rawValue)`) was sent successfully")
       }
     } catch {
       wsLog("failed to encode message with error: \(error.localizedDescription)", type: .error)
@@ -154,7 +154,15 @@ extension WebSocket: URLSessionWebSocketDelegate {
   }
 
   private func onDidOpen() {
-    wsLog("web-socket did-open")
-    sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
+    wsLog("reporting web-socket did-open")
+
+    sendAction(
+      .reportWebSocketDidOpen,
+      params: [
+        "sessionId": sessionId!,
+        "role": "app"
+      ],
+      messageId: 0
+    )
   }
 }

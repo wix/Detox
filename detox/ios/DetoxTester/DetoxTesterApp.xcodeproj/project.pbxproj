@@ -24,6 +24,10 @@
 		60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4EA27D8A5FE000D417A /* LogUtils.swift */; };
 		60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4F227D8D67D000D417A /* WebSocket.swift */; };
 		60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */; };
+		60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50627DDF421000D417A /* WaitUntilAppIsReady.swift */; };
+		60C7F50927DDF53E000D417A /* WebSocketSendActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50827DDF53E000D417A /* WebSocketSendActionType.swift */; };
+		60C7F50B27DDFA38000D417A /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50A27DDFA38000D417A /* Executor.swift */; };
+		60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50F27DE0978000D417A /* WebSocketReceiveActionType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +81,10 @@
 		60C7F4EA27D8A5FE000D417A /* LogUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 		60C7F4F227D8D67D000D417A /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketDelegateProtocol.swift; sourceTree = "<group>"; };
+		60C7F50627DDF421000D417A /* WaitUntilAppIsReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntilAppIsReady.swift; sourceTree = "<group>"; };
+		60C7F50827DDF53E000D417A /* WebSocketSendActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketSendActionType.swift; sourceTree = "<group>"; };
+		60C7F50A27DDFA38000D417A /* Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executor.swift; sourceTree = "<group>"; };
+		60C7F50F27DE0978000D417A /* WebSocketReceiveActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReceiveActionType.swift; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -136,6 +144,8 @@
 				60C7F4F227D8D67D000D417A /* WebSocket.swift */,
 				609AA19727A0247D008F6617 /* WebSocket+Config.swift */,
 				60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */,
+				60C7F50827DDF53E000D417A /* WebSocketSendActionType.swift */,
+				60C7F50F27DE0978000D417A /* WebSocketReceiveActionType.swift */,
 			);
 			name = WebSocket;
 			sourceTree = "<group>";
@@ -159,6 +169,7 @@
 		60C01FDA27CB9F1A00EF6C1E /* Tester */ = {
 			isa = PBXGroup;
 			children = (
+				60C7F50C27DE08B9000D417A /* Executor */,
 				609AA17C279FE932008F6617 /* DetoxTester.swift */,
 			);
 			name = Tester;
@@ -183,6 +194,7 @@
 		60C7F4EC27D8A60E000D417A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				60C7F50527DDF3A6000D417A /* React Native */,
 				60C7F4F127D8AAC7000D417A /* Logs */,
 				609AA187279FEB6B008F6617 /* WebSocket */,
 				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
@@ -196,6 +208,22 @@
 				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
 			);
 			name = Logs;
+			sourceTree = "<group>";
+		};
+		60C7F50527DDF3A6000D417A /* React Native */ = {
+			isa = PBXGroup;
+			children = (
+				60C7F50627DDF421000D417A /* WaitUntilAppIsReady.swift */,
+			);
+			name = "React Native";
+			sourceTree = "<group>";
+		};
+		60C7F50C27DE08B9000D417A /* Executor */ = {
+			isa = PBXGroup;
+			children = (
+				60C7F50A27DDFA38000D417A /* Executor.swift */,
+			);
+			name = Executor;
 			sourceTree = "<group>";
 		};
 		60ED26C927872220004213B5 = {
@@ -363,9 +391,13 @@
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
+				60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */,
+				60C7F50B27DDFA38000D417A /* Executor.swift in Sources */,
+				60C7F50927DDF53E000D417A /* WebSocketSendActionType.swift in Sources */,
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
+				60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */,
 				60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */,
 				60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */,
 			);

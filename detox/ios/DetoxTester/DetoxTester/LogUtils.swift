@@ -23,6 +23,11 @@ public func mainLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .main, type: type)
 }
 
+/// Logs the given `message` with its `type`, under the react-native logs container.
+public func rnLog(_ message: String, type: OSLogType = .info) {
+  detoxLog(message: message, container: .reactNative, type: type)
+}
+
 /// Logs the `message` under a DetoxTester `container` along with its `type`.
 fileprivate func detoxLog(message: String, container: OSLog, type: OSLogType) {
   os_log("%{public}@", log: container, type: type, message)
@@ -39,6 +44,9 @@ fileprivate extension OSLog {
 
   /// Logs operations related to the tester main class (`DetoxTester`).
   static let main = OSLog(subsystem: subsystem, category: "DetoxTester.swift")
+
+  /// Logs operations related to React-Native utils.
+  static let reactNative = OSLog(subsystem: subsystem, category: "ReactNative")
 
   /// Logs operations related to the tester synchronization.
   static let synchronization = OSLog(subsystem: subsystem, category: "Synchronization")

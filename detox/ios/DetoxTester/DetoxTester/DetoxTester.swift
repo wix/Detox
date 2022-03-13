@@ -62,7 +62,12 @@ import XCTest
     mainLog("web-socket did-connect")
 
     exec! {
-      mainLog("[didConnect] Executes on main thread (\(Thread.current.description))")
+      mainLog("[didConnect] Executes on main thread")
+
+      WaitUntilAppIsReady()
+      webSocket.sendAction(.reportAppReady, messageId: -1000)
+
+      mainLog("application is ready, reported as ready")
     }
   }
 
@@ -81,7 +86,7 @@ import XCTest
             "with params: \(params.description)")
 
     exec! {
-      mainLog("[didReceiveAction] Executes on main thread (\(Thread.current.description))")
+      mainLog("[didReceiveAction] Executes action (`\(type)`) on main thread")
     }
   }
 
