@@ -28,6 +28,7 @@
 		60C7F50B27DDFA38000D417A /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50A27DDFA38000D417A /* Executor.swift */; };
 		60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50F27DE0978000D417A /* WebSocketReceiveActionType.swift */; };
 		60C7F51327DE2318000D417A /* ExecutorDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F51227DE2318000D417A /* ExecutorDelegateProtocol.swift */; };
+		60C7F51F27DE3024000D417A /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 602DBC7727B9103400FC0C4C;
 			remoteInfo = DetoxInvokeHandlerTests;
+		};
+		60C7F51D27DE301D000D417A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 602DBC6827B90ECC00FC0C4C;
+			remoteInfo = DetoxInvokeHandler;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -87,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60C7F51F27DE3024000D417A /* libDetoxInvokeHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +275,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				60C7F51E27DE301D000D417A /* PBXTargetDependency */,
 				609AA154279F10F4008F6617 /* PBXTargetDependency */,
 			);
 			name = DetoxTester;
@@ -413,6 +423,11 @@
 			isa = PBXTargetDependency;
 			target = 60ED26D127872220004213B5 /* DetoxTesterApp */;
 			targetProxy = 609AA153279F10F4008F6617 /* PBXContainerItemProxy */;
+		};
+		60C7F51E27DE301D000D417A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DetoxInvokeHandler;
+			targetProxy = 60C7F51D27DE301D000D417A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
