@@ -9,30 +9,34 @@ const logSection = (message) => console.log(chalk.blue(`[RELEASE] ${message}`));
 
 // Export buildkite variables for Release build
 // We cast toString() because 'buildkite-agent meta-data get' function returns 'object'
-const BRANCH = process.env.BUILDKITE_BRANCH
-const isRelease = process.env.BUILDKITE_MESSAGE.match(/^release$/i);
-let RELEASE_VERSION_TYPE, RELEASE_NPM_TAG, RELEASE_DRY_RUN, RELEASE_SKIP_NPM;
-if (isRelease) {
+const BRANCH = process.env.BUILDKITE_BRANCH;
+const RELEASE = process.env.BUILDKITE_MESSAGE.match(/^release$/i);
+let RELEASE_VERSION_TYPE, RELEASE_NPM_TAG, RELEASE_DRY_RUN, RELEASE_SKIP_NPM, PRE_RELEASE;
+if (RELEASE) {
   RELEASE_VERSION_TYPE = cp.execSync(`buildkite-agent meta-data get release-version-type`).toString();
   RELEASE_SKIP_NPM = cp.execSync(`buildkite-agent meta-data get release-skip-npm`).toString();
   RELEASE_DRY_RUN = cp.execSync(`buildkite-agent meta-data get release-dry-run`).toString();
   RELEASE_NPM_TAG = cp.execSync(`buildkite-agent meta-data get release-npm-tag`).toString();
+  PRE_RELEASE = cp.execSync(`buildkite-agent meta-data get pre-release`).toString();
 }
 
-function getIsRelease() {
-  return isRelease;
+function isRelease() {
+  return RELEASE;
 }
 
 function getReleaseVersionType() {
-  return RELEASE_VERSION_TYPE;
+  return (isPreRelease() ? 'pre' : '') + RELEASE_VERSION_TYPE;
 }
 
-function getSkipNpm() {
-  return RELEASE_SKIP_NPM;
+function isPreRelease() {
+  return PRE_RELEASE === 'true';
+}
+function isSkipNpm() {
+  return RELEASE_SKIP_NPM === 'true';
 }
 
-function getDryRun() {
-  return RELEASE_DRY_RUN;
+function isDryRun() {
+  return RELEASE_DRY_RUN === 'true';
 }
 
 function getPackageJsonPath() {
@@ -51,14 +55,22 @@ function getVersionSafe() {
   return version;
 }
 
+// If theres a npm tag, use it. Otherwise, if releasing from `master` branch, use a corresponding pre-release prefix for
+// pre-releases, and "latest" otherwise, for non-master branches uses the branch name as the npm-tag.
 function releaseNpmTag() {
   if (RELEASE_NPM_TAG !== 'null') {
     return RELEASE_NPM_TAG;
   } else if (BRANCH === 'master') {
-    return 'latest';
+      return isPreRelease() ? 'pre' + RELEASE_VERSION_TYPE : 'latest';
   } else {
-    return BRANCH;
+    return BRANCH.trim().replace(/[^a-zA-Z0-9-]/g, '.');
   }
+}
+
+function getPackagesFromPreviousBuilds() {
+  cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
+  cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
+  cp.execSync(`find . -name "*.t[bg]z" -exec cp {} detox/ \\;`);
 }
 
 module.exports = {
@@ -67,7 +79,8 @@ module.exports = {
   getVersionSafe,
   releaseNpmTag,
   getReleaseVersionType,
-  getIsRelease,
-  getDryRun,
-  getSkipNpm
+  getPackagesFromPreviousBuilds,
+  isRelease,
+  isDryRun,
+  isSkipNpm
 };
