@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-source $(dirname "$0")/ci.sh
+source $(dirname "$0")/ci.sh 'noGenerate'
 
 mkdir -p coverage
 
