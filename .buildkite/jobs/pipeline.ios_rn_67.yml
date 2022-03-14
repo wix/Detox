@@ -1,10 +1,10 @@
-  - label: ":ios:-:six::six: RN_66_iOS"
+  - label: ":ios:-:six::seven: RN_67_iOS"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.ios.sh"
       - "./scripts/upload_artifact.sh"
     env:
-      REACT_NATIVE_VERSION: 0.66.1
+      REACT_NATIVE_VERSION: 0.67.2
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
