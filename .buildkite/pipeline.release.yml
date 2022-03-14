@@ -56,7 +56,7 @@ steps:
 
       - text: "NPM TAG"
         key: "release-npm-tag"
-        hint: "Leave `null` for default. For releases from master, the default is `latest`, unless this is a pre-release version (then uses the corresponding version type as tag). For releases from other branches, the default is the branch name."
+        hint: "Leave `null` for default. For releases from master, the default is `latest`, unless this is a pre-release version, then uses `prerelease` as tag. For releases from other branches, the default is the branch name."
         default: 'null'
 
   - label: "Get Release Pipeline"
