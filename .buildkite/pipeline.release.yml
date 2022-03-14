@@ -5,13 +5,13 @@ steps:
     fields:
       - select: "IS PRE-RELEASE?"
         key: "pre-release"
-        default: true
+        default: "true"
         hint: "A corresponding pre-release prefix will be added to published version name, with the npm tag of this version (for instance, `19.5.0-preminor.0`)."
         options:
           - label: "Yes, this is a PRE-release version."
-            value: true
+            value: "true"
           - label: "No, this is a REAL release version."
-            value: false
+            value: "false"
 
       - select: "VERSION TYPE"
         key: "release-version-type"
@@ -27,36 +27,36 @@ steps:
       - select: "IS DRY RUN?"
         key: "release-dry-run"
         hint: "When set to `Yes`, don't actually release anything, just run the scripts."
-        default: false
+        default: "false"
         options:
           - label: "Yes"
-            value: true
+            value: "true"
           - label: "No"
-            value: false
+            value: "false"
 
       - select: "SKIP NPM-PUBLISH?"
         key: "release-skip-npm"
         hint: "This is a hack to fix previously broken release jobs. You need to really know what you're doing."
-        default: false
+        default: "false"
         options:
           - label: "Yes"
-            value: true
+            value: "true"
           - label: "No"
-            value: false
+            value: "false"
 
       - select: "DO FAST-RELEASE?"
         key: "fast-release"
         hint: "When set to `Yes`, skip building and testing. USE ONLY IF YOU REALLY REALLY HAVE TO!"
-        default: false
+        default: "false"
         options:
           - label: "Yes"
-            value: true
+            value: "true"
           - label: "No"
-            value: false
+            value: "false"
 
       - text: "NPM TAG"
         key: "release-npm-tag"
-        hint: "Leave `null` for default. For releases from master, the default is `latest`, unless this is a pre-release version (then uses the corresponding version type as tag). For releases from other branches, the default is the branch name."
+        hint: "Leave `null` for default. For releases from master, the default is `latest`, unless this is a pre-release version, then uses `prerelease` as tag. For releases from other branches, the default is the branch name."
         default: 'null'
 
   - label: "Get Release Pipeline"
