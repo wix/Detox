@@ -73,7 +73,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
       mainLog("[didConnect] Executes on main thread")
 
       WaitUntilAppIsReady()
-      webSocket.sendAction(.reportAppReady, messageId: -1000)
+      webSocket.sendAction(.reportReady, messageId: -1000)
 
       mainLog("application is ready, reported as ready")
     }
@@ -93,9 +93,9 @@ extension DetoxTester: WebSocketDelegateProtocol {
     mainLog("web-socket received `\(type.rawValue)` action message (\(messageId.stringValue), " +
             "with params: \(params.description)")
 
-    exec! {
+    exec! { [self] in
       mainLog("[didReceiveAction] Executes action (`\(type.rawValue)`) on main thread")
-      
+      executor.execute(type, params: params, messageId: messageId)
     }
   }
 
@@ -118,6 +118,7 @@ extension DetoxTester: ExecutorDelegateProtocol {
     params: [String : Any],
     messageId: NSNumber
   ) {
+    mainLog("executor-delegate send action: `\(type)`")
     webSocket?.sendAction(type, params: params, messageId: messageId)
   }
 }

@@ -20,8 +20,14 @@ public func WaitUntilDone(
   }
 
   var waitingToExec: (() -> Void)? = nil
+  // Allow only one exec operation to be handled at once.
+  let waitingToExecSemaphore = DispatchSemaphore(value: 1)
+
   let exec: (@escaping () -> Void) -> Void = { toExec in
     syncLog("`exec` was called", type: .debug)
+
+    waitingToExecSemaphore.wait()
+
     semaphore.signal()
     waitingToExec = toExec
   }
@@ -34,8 +40,12 @@ public func WaitUntilDone(
 
   while let toExec = waitingToExec {
     syncLog("executing (thread: \(Thread.current.description))")
+
     waitingToExec = nil
+    waitingToExecSemaphore.signal()
+
     toExec()
+
     semaphore.wait()
   }
 

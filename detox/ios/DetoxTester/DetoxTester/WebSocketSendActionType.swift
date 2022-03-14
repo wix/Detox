@@ -7,6 +7,6 @@ import Foundation
 
 /// Type of a web-socket action to be sent from Detox Tester to Detox Server.
 public enum WebSocketSendActionType: String {
-  case reportAppReady = "ready"
+  case reportReady = "ready"
   case reportWebSocketDidOpen = "login"
 }

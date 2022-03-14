@@ -11,58 +11,34 @@ public class Executor {
 
   /// Executes given operation.
   func execute(
-    action: WebSocketReceiveActionType,
+    _ action: WebSocketReceiveActionType,
     params: [String : Any],
     messageId: NSNumber
   ) {
-    switch action {
-      case .disconnect:
-        fatalError("Not implemented yet")
+    execLog("executes action: \(action)")
 
-      case .setRecordingState:
-        fatalError("Not implemented yet")
+    switch action {
+      case .disconnect, .setRecordingState, .waitForBackground, .waitForIdle,
+          .setSyncSettings, .invoke, .cleanup, .deliverPayload, .setOrientation,
+          .shakeDevice, .reactNativeReload, .currentStatus, .captureViewHierarchy:
+        execLog("not implemented yet (action: `\(action)`)", type: .error)
+        fatalError("Unexpected action execution (unimplemented operation): \(action)")
 
       case .waitForActive:
-        fatalError("Not implemented yet")
-
-      case .waitForBackground:
-        fatalError("Not implemented yet")
-
-      case .waitForIdle:
-        fatalError("Not implemented yet")
-
-      case .setSyncSettings:
-        fatalError("Not implemented yet")
-
-      case .invoke:
-        fatalError("Not implemented yet")
+        guard let delegate = delegate else {
+          execLog("delegate is nil", type: .error)
+          fatalError("Can't use nil delegate")
+        }
 
       case .isReady:
-        fatalError("Not implemented yet")
-
-      case .cleanup:
-        fatalError("Not implemented yet")
-
-      case .deliverPayload:
-        fatalError("Not implemented yet")
-
-      case .setOrientation:
-        fatalError("Not implemented yet")
-
-      case .shakeDevice:
-        fatalError("Not implemented yet")
-
-      case .reactNativeReload:
-        fatalError("Not implemented yet")
-
-      case .currentStatus:
-        fatalError("Not implemented yet")
+        guard let delegate = delegate else {
+          execLog("delegate is nil", type: .error)
+          fatalError("Can't use nil delegate")
+        }
+        delegate.sendAction(.reportReady, params: [:], messageId: -1000)
 
       case .loginSuccess:
-        fatalError("Not implemented yet")
-
-      case .captureViewHierarchy:
-        fatalError("Not implemented yet")
+        execLog("successfully logged-in to detox server")
     }
   }
 }

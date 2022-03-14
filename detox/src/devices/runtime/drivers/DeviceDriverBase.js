@@ -47,7 +47,7 @@ class DeviceDriverBase {
     return NaN;
   }
 
-  async waitForTestTargetIfNeeded() {
+  launchTestTarget() {
     return NaN;
   }
 

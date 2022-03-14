@@ -347,7 +347,7 @@ class RuntimeDevice {
       await this.deviceDriver.deliverPayload({ ...params, delayPayload: true });
     }
 
-    await this.deviceDriver.waitForTestTargetIfNeeded(this._prepareLaunchArgs());
+    this.deviceDriver.launchTestTarget(this._prepareLaunchArgs());
 
     if (this._behaviorConfig.launchApp === 'manual') {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);

@@ -12,6 +12,7 @@ const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
+const { execAsync } = require('../../../../utils/exec');
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -107,7 +108,7 @@ class SimulatorDriver extends IosDriver {
     return pid;
   }
 
-  async waitForTestTargetIfNeeded(launchArgs) {
+  launchTestTarget(launchArgs) {
     const { udid } = this;
 
     log.info(`Launching XCTest target`);
@@ -116,7 +117,7 @@ class SimulatorDriver extends IosDriver {
 
     log.info(launchCommand)
 
-    await exec(launchCommand, { capture: [ 'stdout', 'stderr' ]})
+    execAsync(launchCommand, { capture: [ 'stdout', 'stderr' ]})
       .then(function (result) {
         log.info('[spawn] stdout: ', result.stdout.toString());
       })
