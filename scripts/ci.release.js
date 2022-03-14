@@ -1,9 +1,9 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {log, logSection, getVersionSafe, releaseNpmTag, isRelease, getPackagesFromPreviousBuilds} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag} = require('./ci.common');
 
-// const isRelease = getIsRelease();
+const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
 function run() {
 	logSection('Script started');
@@ -14,14 +14,19 @@ function run() {
 	log('Configuring stuff...');
 	setupGitConfig();
 	setupNpmConfig();
-	getPackagesFromPreviousBuilds();
 	versionTagAndPublish();
 }
 
 function isEnvValid() {
-	if (!process.env.CI) {
+	if (!process.env.JENKINS_CI) {
 		throw new Error(`Release blocked: Not on a CI build machine!`);
 	}
+
+	if (!process.env.JENKINS_MASTER) {
+		log(`Release blocked: Not on jenkins' master build job!`);
+		return false;
+	}
+
 	return true;
 }
 
@@ -53,11 +58,11 @@ function versionTagAndPublish() {
 	log(`    package version: ${packageVersion}`);
 
 	const currentPublished = findCurrentPublishedVersion();
-	log(`    current published version from ${process.env.BUILDKITE_BRANCH}: ${currentPublished}`);
+	log(`    current published version from ${process.env.BRANCH}: ${currentPublished}`);
 
-	if (isRelease()) {
+	if (isRelease) {
 		const publishNewVersion = require('./ci.publish');
-		publishNewVersion(releaseNpmTag());
+		publishNewVersion(packageVersion, releaseNpmTag());
 	} else {
 		// Disabled for the time being
 		// const tagVersion = require('./ci.tagversion');

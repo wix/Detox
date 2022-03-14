@@ -22,8 +22,16 @@
 	return 12;
 }
 
-+ (NSString*)percentDescriptionForPercent:(CGFloat)percent {
-	return [NSString stringWithFormat:@"%g%%", percent];
++ (NSString*)percentDescriptionForValue:(CGFloat)value {
+	static NSNumberFormatter* formatter;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		formatter = [NSNumberFormatter new];
+		formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
+		formatter.numberStyle = NSNumberFormatterPercentStyle;
+	});
+	
+	return [formatter stringFromNumber:@(value)];
 }
 
 @end
