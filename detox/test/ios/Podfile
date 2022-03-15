@@ -21,6 +21,8 @@ end
 
 target 'example' do
   shared_pods
+  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
+
 end
 
 target 'example_ci' do

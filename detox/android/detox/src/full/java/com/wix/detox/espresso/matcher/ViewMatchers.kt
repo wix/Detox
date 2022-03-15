@@ -3,10 +3,12 @@
 package com.wix.detox.espresso.matcher
 
 import android.view.View
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import com.facebook.react.views.slider.ReactSlider
+import com.wix.detox.espresso.action.common.ReflectUtils
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -16,6 +18,9 @@ import org.hamcrest.TypeSafeMatcher
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
+
+private const val CLASS_REACT_SLIDER_LEGACY = "com.facebook.react.views.slider.ReactSlider"
+private const val CLASS_REACT_SLIDER_COMMUNITY = "com.reactnativecommunity.slider.ReactSlider"
 
 fun isOfClassName(className: String): Matcher<View> {
     try {
@@ -49,23 +54,25 @@ private class IsAssignableFromMatcher(private val clazz: Class<*>) : TypeSafeMat
 }
 
 fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> {
-    return object : BoundedMatcher<View?, ReactSlider>(ReactSlider::class.java) {
+    return object : BoundedMatcher<View?, View>(AppCompatSeekBar::class.java) {
         override fun describeTo(description: Description) {
             description.appendText("expected: $expectedValue")
         }
 
-        override fun matchesSafely(slider: ReactSlider?): Boolean {
-            val currentProgress = slider?.progress
-
-            if (currentProgress != null) {
-                val realProgress = slider.toRealProgress(currentProgress)
-                val currentPctFactor = slider.max / currentProgress.toDouble()
-                val realTotal = realProgress * currentPctFactor
-                val actualValue = realProgress / realTotal
-                return Math.abs(actualValue - expectedValue) <= tolerance
+        override fun matchesSafely(view: View?): Boolean {
+            val castView = view as AppCompatSeekBar
+            val currentProgress = castView.progress
+            val sliderProgress = when {
+                (ReflectUtils.isObjectAssignableFrom(view, CLASS_REACT_SLIDER_LEGACY)) ->
+                    (view as ReactSlider).toRealProgress(currentProgress)
+                (ReflectUtils.isObjectAssignableFrom(view, CLASS_REACT_SLIDER_COMMUNITY)) ->
+                    (view as com.reactnativecommunity.slider.ReactSlider).toRealProgress(currentProgress)
+                else -> (view as ReactSlider).toRealProgress(currentProgress)
             }
-
-            return false
+            val currentPctFactor = castView.max / currentProgress.toDouble()
+            val realTotal = sliderProgress * currentPctFactor
+            val actualValue = sliderProgress / realTotal
+            return Math.abs(actualValue - expectedValue) <= tolerance
         }
     }
 }

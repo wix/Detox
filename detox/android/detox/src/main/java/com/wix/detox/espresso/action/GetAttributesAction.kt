@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.UiController
-import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -140,11 +140,11 @@ private class ProgressBarAttributes {
 
 private class SliderAttributes {
     fun get(json: JSONObject, view: View) {
-        if (view is Slider) {
+        if (view is AppCompatSeekBar) {
             getSliderValue(json, view)
         }
     }
 
-    private fun getSliderValue(rootObject: JSONObject, view: Slider) =
-        rootObject.put("value", view.value)
+    private fun getSliderValue(rootObject: JSONObject, view: AppCompatSeekBar) =
+        rootObject.put("value", view.progress)
 }
