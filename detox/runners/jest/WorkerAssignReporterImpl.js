@@ -13,7 +13,7 @@ class WorkerAssignReporterImpl {
       ? chalk.redBright('undefined')
       : chalk.blueBright(deviceName);
 
-    log.trace({event: 'WORKER_ASSIGN'}, `${chalk.whiteBright(workerName)} is assigned to ${formattedDeviceName}`);
+    log.info({event: 'WORKER_ASSIGN'}, `${chalk.whiteBright(workerName)} is assigned to ${formattedDeviceName}`);
   }
 }
 

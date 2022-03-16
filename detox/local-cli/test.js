@@ -217,7 +217,7 @@ function launchTestRunner({ argv, env, specs }) {
     specs.join(' ')
   ].join(' ');
 
-  log.debug(printEnvironmentVariables(env) + fullCommand);
+  log.info(printEnvironmentVariables(env) + fullCommand);
 
   cp.execSync(fullCommand, {
     stdio: 'inherit',
