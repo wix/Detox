@@ -25,12 +25,13 @@ const config = {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/wix/Detox/edit/master/docs/',
+          docLayoutComponent: '@site/src/components/CustomLayout'
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      }),
-    ],
+          customCss: require.resolve('./src/css/custom.css')
+        }
+      })
+    ]
   ],
 
   themeConfig:
@@ -40,26 +41,26 @@ const config = {
         title: 'Detox',
         logo: {
           alt: 'Detox Logo',
-          src: '/img/logo.png',
+          src: '/img/logo.png'
         },
         items: [
           {
             type: 'doc',
             docId: 'getting-started',
             position: 'left',
-            label: 'Documentation',
+            label: 'Documentation'
           },
           {
             href: 'https://github.com/wix/Detox',
             label: 'GitHub',
-            position: 'right',
-          },
-        ],
+            position: 'right'
+          }
+        ]
       },
       algolia: {
         appId: 'BH4D9OD16A',
         apiKey: 'f621c2d74268df173153c887526aebb3',
-        indexName: 'detox',
+        indexName: 'detox'
       },
       footer: {
         style: 'dark',
@@ -69,53 +70,53 @@ const config = {
             items: [
               {
                 label: 'Getting Started',
-                to: 'docs/introduction/getting-started',
+                to: 'docs/introduction/getting-started'
               },
               {
                 label: 'Contributing to Detox',
-                to: 'docs/contributing',
-              },
-            ],
+                to: 'docs/contributing'
+              }
+            ]
           },
           {
             title: 'Support',
             items: [
               {
                 label: 'Ask a question on Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/detox',
+                href: 'https://stackoverflow.com/questions/tagged/detox'
               },
               {
                 label: 'Create new issue on Github',
-                href: 'https://github.com/wix/Detox/issues/new/choose',
-              },
-            ],
+                href: 'https://github.com/wix/Detox/issues/new/choose'
+              }
+            ]
           },
           {
             title: 'More',
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/wix/Detox',
+                href: 'https://github.com/wix/Detox'
               },
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/detoxe2e/',
-              },
-            ],
-          },
+                href: 'https://twitter.com/detoxe2e/'
+              }
+            ]
+          }
         ]
       },
       prism: {
         theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
-      },
+        darkTheme: darkCodeTheme
+      }
     }),
   scripts: [
     {
       src: 'https://platform.twitter.com/widgets.js',
-      async: true,
+      async: true
     }
-  ],
+  ]
 };
 
 module.exports = config;
