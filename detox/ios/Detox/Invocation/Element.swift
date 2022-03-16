@@ -192,14 +192,24 @@ class Element : NSObject {
 		slider.dtx_normalizedSliderPosition = normalizedSliderPosition
 	}
 	
-	func isVisible() throws -> Bool {
+	func isVisible(with percent: UInt?)
+	throws -> Bool {
 		var error: NSError? = nil
-		let rv = view.dtx_isVisible(at: view.dtx_bounds, error: &error)
+		let isVisible = view.dtx_isVisible(
+			at: view.dtx_bounds,
+			percent: percent != nil ? NSNumber(value: percent!) : nil,
+			error: &error
+		)
+
 		if let error = error {
 			throw error
 		}
 		
-		return rv
+		return isVisible
+	}
+	
+	func isFocused() -> Bool {
+		return view.dtx_isFocused()
 	}
 	
 	func isHittable() throws -> Bool {
@@ -210,6 +220,12 @@ class Element : NSObject {
 		}
 		
 		return rv
+	}
+	
+	func takeScreenshot(fileName: String?) -> [String : Any] {
+		let path: URL = view.dtx_takeScreenshot(fileName)
+		
+		return ["screenshotPath": path.path]
 	}
 	
 	@objc

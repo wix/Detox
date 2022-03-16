@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">DetoxExample</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings used for inter-fragments navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="actions_fragment_label">Actions Fragment</string>
+    <string name="main_navto_actions">Actions</string>
+
+    <string name="main_fragment_heading">Detox!</string>
+    <string name="main_logo__cd">Main Logo</string>
+    <string name="actions_heading">Actions Screen</string>
+</resources>

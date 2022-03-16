@@ -1,14 +1,29 @@
+// @ts-nocheck
 const _ = require('lodash');
 
 describe('expectTwo', () => {
+  let e;
+  let emitter;
+  let invocationManager;
+  let fs;
+
   beforeEach(() => {
+    jest.mock('fs-extra');
+    jest.mock('tempfile');
+
+    fs = require('fs-extra');
     const IosExpect = require('./expectTwo');
+    const AsyncEmitter = jest.genMockFromModule('../utils/AsyncEmitter');
+    invocationManager = new MockExecutor();
+    emitter = new AsyncEmitter();
+
     e = new IosExpect({
-      invocationManager: new MockExecutor(),
+      invocationManager,
+      emitter,
     });
   });
 
-  it(`element(by.text('tapMe')).tap()`, () => {
+  it(`should produce correct JSON for tap action`, () => {
     const testCall = e.element(e.by.text('tapMe')).tap();
     const jsonOutput = {
       invocation: {
@@ -21,10 +36,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.text('tapMe')).tap({x:1, y:2})`, () => {
+  it(`should produce correct JSON for tap action with parameters`, () => {
     const testCall = e.element(e.by.text('tapMe')).tap({ x: 1, y: 2 });
     const jsonOutput = {
       invocation: {
@@ -43,10 +58,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('uniqueId').and(by.text('some text'))).tap()`, () => {
+  it(`should produce correct JSON for element with id and text matchers`, () => {
     const testCall = e.element(e.by.id('uniqueId').and(e.by.text('some text'))).tap();
     const jsonOutput = {
       invocation: {
@@ -68,10 +83,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('child').withAncestor(by.id('parent'))).tap()`, () => {
+  it(`should produce correct JSON for element with ancestor matcher`, () => {
     const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent'))).tap();
     const jsonOutput = {
       invocation: {
@@ -96,10 +111,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('child').withAncestor(by.id('parent'))).atIndex(0).tap()`, () => {
+  it(`should produce correct JSON for element with ancestor and index matchers`, () => {
     const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent'))).atIndex(0).tap();
     const jsonOutput = {
       invocation: {
@@ -124,10 +139,10 @@ describe('expectTwo', () => {
         }
       }
     };
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('child').withAncestor(by.id('parent').and(by.text('text')))).tap()`, () => {
+  it(`should produce correct JSON for element with ancestor and test matchers`, () => {
     const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent').and(e.by.text('text')))).tap();
     const jsonOutput = {
       invocation: {
@@ -161,10 +176,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('child').and(by.text('text').and(by.value('value')))).tap()`, () => {
+  it(`should produce correct JSON for element with id, text and value matchers`, () => {
     const testCall = e.element(e.by.id('child').and(e.by.text('text').and(e.by.value('value')))).tap();
     const jsonOutput = {
       invocation: {
@@ -190,10 +205,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('tappable')).tapAtPoint({x:5, y:10})`, () => {
+  it(`should produce correct JSON for tap at point action`, () => {
     const testCall = e.element(e.by.id('tappable')).tapAtPoint({ x: 5, y: 10 });
     const jsonOutput = {
       invocation: {
@@ -212,10 +227,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('elementToDrag')longPressAndDrag(1000, 0.5, 0.5, element(by.id('targetElement')`, () => {
+  it(`should produce correct JSON for long-press and drag action`, () => {
     const testCall = e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')));
     const jsonOutput = {
       invocation: {
@@ -234,10 +249,10 @@ describe('expectTwo', () => {
         }
       }
     };
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`expect(element(by.text('Tap Working!!!'))).toBeVisible()`, () => {
+  it(`should produce correct JSON for visibility expectation`, () => {
     const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeVisible();
     const jsonOutput = {
       invocation: {
@@ -250,10 +265,27 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`expect(element(by.text('Tap Working!!!'))).toBeNotVisible()`, () => {
+  it(`should produce correct JSON for toBeVisible expectation with parameter`, () => {
+    const testCall = e.expect(e.element(e.by.id('foo'))).toBeVisible(25);
+    const jsonOutput = {
+      invocation: {
+        type: 'expectation',
+        predicate: {
+          type: 'id',
+          value: 'foo'
+        },
+        expectation: 'toBeVisible',
+        params: [25]
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for toBeNotVisible expectation`, () => {
     const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeNotVisible();
     const jsonOutput = {
       invocation: {
@@ -267,10 +299,43 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`expect(element(by.id('UniqueId204'))).toHaveText('I contain some text')`, () => {
+  it(`should produce correct JSON for toBeFocused expectation`, () => {
+    const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeFocused();
+    const jsonOutput = {
+      invocation: {
+        type: 'expectation',
+        predicate: {
+          type: 'text',
+          value: 'Tap Working!!!'
+        },
+        expectation: 'toBeFocused'
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for notToBeFocused expectation`, () => {
+    const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeNotFocused();
+    const jsonOutput = {
+      invocation: {
+        type: 'expectation',
+        predicate: {
+          type: 'text',
+          value: 'Tap Working!!!'
+        },
+        modifiers: ['not'],
+        expectation: 'toBeFocused'
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for toHaveText expectation`, () => {
     const testCall = e.expect(e.element(e.by.id('UniqueId204'))).toHaveText('I contain some text');
     const jsonOutput = {
       invocation: {
@@ -284,10 +349,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002')`, () => {
+  it(`should produce correct JSON for toHaveId expectation`, () => {
     const testCall = e.expect(e.element(e.by.text('Product')).atIndex(2)).toHaveId('ProductId002');
     const jsonOutput = {
       'invocation': {
@@ -302,10 +367,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`expect(element(by.id('slider'))).toHaveSliderPosition(position, tolerance)`, () => {
+  it(`should produce correct JSON for toHaveSliderPosition expectation`, () => {
     const testCall = e.expect(e.element(e.by.id('slider'))).toHaveSliderPosition(0.5, 1);
     const jsonOutput = {
       'invocation': {
@@ -319,10 +384,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`expect(element(by.id('switch'))).toHaveToggleValue(value)`, () => {
+  it(`should produce correct JSON for toHaveToggleValue expectation`, () => {
     const testCall = e.expect(e.element(e.by.id('switch'))).toHaveToggleValue(true);
     const jsonOutput = {
       'invocation': {
@@ -336,10 +401,10 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`element(by.id('ScrollView100')).swipe('up', 'fast', undefined, undefined, 0.5)`, () => {
+  it(`should produce correct JSON for swipe action`, () => {
     const testCall = e.element(e.by.id('ScrollView100')).swipe('up', 'fast', undefined, undefined, 0.5);
     const jsonOutput = {
       invocation: {
@@ -353,95 +418,175 @@ describe('expectTwo', () => {
       }
     };
 
-    expect(testCall).deepEquals(jsonOutput);
+    expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
-    const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
-    const jsonOutput = {
-      invocation: {
-        type: 'action',
-        action: 'scroll',
-        params: [50, 'down', null, null],
-        predicate: {
-          type: 'id',
-          value: 'ScrollView630'
-        },
-        while: {
-          type: 'expectation',
+  describe(`waitFor`, () => {
+    it(`should produce correct JSON for toBeNotVisible expectation`, () => {
+      const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
+      const jsonOutput = {
+        invocation: {
+          type: 'action',
+          action: 'scroll',
+          params: [50, 'down', null, null],
           predicate: {
-            type: 'text',
-            value: 'Text5'
+            type: 'id',
+            value: 'ScrollView630'
           },
-          modifiers: ['not'],
-          expectation: 'toBeVisible'
+          while: {
+            type: 'expectation',
+            predicate: {
+              type: 'text',
+              value: 'Text5'
+            },
+            modifiers: ['not'],
+            expectation: 'toBeVisible'
+          }
         }
-      }
-    };
+      };
 
-    expect(testCall).deepEquals(jsonOutput);
-  });
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
 
-  it(` waitFor(element(by.id('createdAndVisibleText'))).toExist().withTimeout(20000)`, async () => {
-    const testCall = await e.waitFor(e.element(e.by.id('createdAndVisibleText'))).toExist().withTimeout(2000);
-    const jsonOutput = {
-      invocation:
-        {
+    it(`should produce correct JSON for toExist expectation`, async () => {
+      const testCall = await e.waitFor(e.element(e.by.id('createdAndVisibleText'))).toExist().withTimeout(2000);
+      const jsonOutput = {
+        invocation:
+          {
+            type: 'expectation',
+            predicate: {
+              type: 'id',
+              value: 'createdAndVisibleText'
+            },
+            expectation: 'toExist',
+            timeout: 2000
+          }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should produce correct JSON for text and index matchers`, async () => {
+      const testCall = await e.waitFor(e.element(e.by.text('Item')).atIndex(1)).toExist().withTimeout(2000);
+      const jsonOutput = {
+        invocation:
+          {
+            type: 'expectation',
+            atIndex: 1,
+            predicate: {
+              type: 'text',
+              value: 'Item'
+            },
+            expectation: 'toExist',
+            timeout: 2000
+          }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should produce correct JSON for toBeNotVisible expectation`, () => {
+      const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).not.toBeVisible().withTimeout(2000);
+      const jsonOutput = {
+        invocation: {
           type: 'expectation',
           predicate: {
             type: 'id',
-            value: 'createdAndVisibleText'
+            value: 'uniqueId'
           },
-          expectation: 'toExist',
+          modifiers: ['not'],
+          expectation: 'toBeVisible',
           timeout: 2000
         }
-    };
+      };
 
-    expect(testCall).deepEquals(jsonOutput);
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
   });
 
-  it(`waitFor(element(by.id('uniqueId'))).not.toHaveValue('Some value').withTimeout(2000)`, () => {
-    const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).not.toBeVisible().withTimeout(2000);
-    const jsonOutput = {
-      invocation: {
-        type: 'expectation',
+  describe.each([
+    [''],
+    ["'imageName'", 'imageName']
+  ])(`e.element(e.by.id('uniqueId')).takeScreenshot(%s)`, (_comment, imageName) => {
+    let deviceTmpFilePath;
+    let tmpFileName;
+    let tmpFilePath;
+    let result;
+
+    beforeEach(async () => {
+      tmpFileName = '2317894723984';
+      tmpFilePath = `/tmp/somewhere/${tmpFileName}.png`;
+      deviceTmpFilePath = '/tmp/path/to/device/file.png';
+
+      invocationManager.execute.mockResolvedValueOnce({
+        screenshotPath: deviceTmpFilePath,
+      });
+
+      require('tempfile').mockReturnValue(tmpFilePath);
+      result = await e.element(e.by.id('uniqueId')).takeScreenshot(imageName);
+    });
+
+    it(`should send a JSON request via invocation manager`, async () => {
+      expect(invocationManager.execute).toHaveBeenCalledWith({
+        type: 'action',
+        action: 'takeScreenshot',
+        ...(imageName && { params: [imageName] }),
         predicate: {
           type: 'id',
           value: 'uniqueId'
-        },
-        modifiers: ['not'],
-        expectation: 'toBeVisible',
-        timeout: 2000
-      }
-    };
+        }
+      });
+    });
 
-    expect(testCall).deepEquals(jsonOutput);
+    it(`should move the temporary file for the device to a local temp location`, async () => {
+      expect(fs.move).toHaveBeenCalledWith(deviceTmpFilePath, tmpFilePath);
+    });
+
+    it(`should emit (for the artifact manager plugin) an event about an external artifact created`, async () => {
+      expect(emitter.emit).toHaveBeenCalledWith('createExternalArtifact', {
+        pluginId: 'screenshot',
+        artifactName: imageName || tmpFileName,
+        artifactPath: tmpFilePath,
+      });
+    });
+
+    it(`should return a temporary path to the screenshot`, async () => {
+      expect(result).toBe(tmpFilePath);
+    });
   });
 
-  it(`element().takeScreenshot`, () => {
-    try {
-      e.element(e.by.id('uniqueId')).takeScreenshot();
-      fail();
-    } catch (e) {
-      expect(e.message).toContain('not supported on iOS');
-    }
+  it('by.web should throw', () => {
+    expect(() => e.by.web).toThrowError(/not support/);
+  });
+
+  it('web() should throw', () => {
+    expect(() => e.web(e.by.id('someId'))).toThrowError(/not support/);
+  });
+
+  it('web.element() should throw', () => {
+    expect(() => e.web.element(e.by.id('someId'))).toThrowError(/not support/);
   });
 });
 
 expect.extend({
-  deepEquals(a, b) {
+  toDeepEqual(a, b) {
     const pass = _.isEqual(a, b);
+
     return {
       pass,
+      actual: a,
+      expected: b,
       message: () => `${JSON.stringify(a)} does not match 
        ${JSON.stringify(b)}`
     };
   }
 });
 
-
 class MockExecutor {
+  constructor() {
+    jest.spyOn(this, 'execute');
+  }
   execute(invocation) {
     return { invocation };
-  };
+  }
 }

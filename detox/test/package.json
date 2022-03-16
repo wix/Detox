@@ -1,24 +1,28 @@
 {
   "name": "detox-test",
-  "version": "18.6.0",
+  "version": "19.5.7",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
   },
   "scripts": {
-    "test": "tsc && tslint types/*.ts",
+    "lint": "eslint .",
+    "test:types": "tsc -p types/tsconfig.json",
+    "test": "npm run lint && npm run test:types",
     "postinstall": "node scripts/postinstall.js",
     "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test -c ios.sim.release",
+    "e2e:ios-ci": "npm run e2e:ios -- --workers 2 --retries 1 --jest-report-specs -l verbose",
     "e2e:android": "detox test -c android.emu.release",
+    "e2e:android-ci-genycloud": "detox test -c android.genycloud.release --workers 5 --retries 1 --jest-report-specs --loglevel verbose",
+    "e2e:android-ci-google": "detox test -c android.emu.release --workers 3 --retries 1 --jest-report-specs --loglevel verbose --headless --gpu off",
     "e2e:android-debug": "detox test -c android.emu.debug",
-    "e2e:ios-ci": "npm run e2e:ios -- --workers 3 --retries 1",
-    "e2e:android-ci": "npm run e2e:android -- --workers 3 --retries 1 --headless --jest-report-specs --loglevel verbose",
     "integration": "jest --clearCache && jest unit --config integration/config.js -w 1 .",
     "integration-update-snapshots": "npm run integration -- -u",
     "build:ios": "detox build -c ios.sim.release",
+    "build:ios-debug": "detox build -c ios.sim.debug",
     "build:android": "detox build -c android.emu.release",
     "build:android-debug": "detox build -c android.emu.debug",
     "clean:android": "pushd android && rm -fr ../android/detox/build/ && ./gradlew clean && popd",
@@ -27,22 +31,37 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
+    "@react-native-community/checkbox": "^0.5.11",
+    "@react-native-community/geolocation": "^2.0.2",
+    "@react-native-picker/picker": "^2.1.0",
     "moment": "^2.24.0",
-    "react": "16.11.x",
-    "react-native": "0.62.x"
+    "react": "17.0.2",
+    "react-native": "0.67.2",
+    "react-native-webview": "11.4.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.7",
-    "@types/node": "^14.14.20",
-    "detox": "^18.6.0",
-    "dtslint": "^4.0.6",
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^3.0.1",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^12.20.37",
+    "@types/react": "^17.0.37",
+    "@types/react-native": "^0.64.19",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "detox": "^19.5.7",
+    "eslint": "^7.32.0",
+    "eslint-plugin-unicorn": "^39.0.0",
     "express": "^4.15.3",
-    "jest": "^26.5.0",
-    "jest-circus": "^26.5.2",
+    "glob": "^7.2.0",
+    "jest": "^27.0.0",
     "jest-junit": "^10.0.0",
     "lodash": "^4.14.1",
+    "metro-react-native-babel-preset": "^0.66.2",
     "nyc": "^15.1.0",
+    "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",
+    "react-native-codegen": "^0.0.8",
     "typescript": "^4.1.3"
   },
   "jest-junit": {
@@ -51,5 +70,8 @@
     "ancestorSeparator": " > ",
     "classNameTemplate": "E2E Results.{classname}",
     "titleTemplate": "{classname} > {title}"
+  },
+  "detox": {
+    "extends": "./e2e/detox.config"
   }
 }

@@ -1,21 +1,22 @@
 buildscript {
     apply from: './rninfo.gradle'
 
-    def androidGradlePluginVersion = rnInfo.isRN62OrHigher ? '3.5.3' : '3.4.2'
+    def androidGradlePluginVersion = rnInfo.isRN66OrHigher ? '4.2.2' : rnInfo.isRN64OrHigher ? '4.1.0' : '3.5.3'
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
         kotlinVersion = '1.4.21'
-        buildToolsVersion = '29.0.3'
-        compileSdkVersion = 29
-        targetSdkVersion = 29
-        minSdkVersion = 18
+        buildToolsVersion = '30.0.2'
+        compileSdkVersion = 31
+        targetSdkVersion = 31
+        minSdkVersion = 21
     }
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
+
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
         classpath 'de.undercouch:gradle-download-task:4.0.2'
@@ -26,7 +27,7 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         google()
         maven {
             url "$rootDir/../node_modules/react-native/android"
@@ -38,5 +39,6 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
+        jcenter()
     }
 }

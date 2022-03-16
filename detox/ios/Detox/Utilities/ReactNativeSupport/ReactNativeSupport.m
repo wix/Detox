@@ -11,7 +11,6 @@
 
 #include <dlfcn.h>
 #include <stdatomic.h>
-#include "fishhook.h"
 @import ObjectiveC;
 @import Darwin;
 #import <DetoxSync/DTXReactNativeSupport.h>

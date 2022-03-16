@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
+const _ = require('lodash');
 const tempfile = require('tempfile');
 
 describe('FileArtifact', () => {
@@ -48,7 +48,7 @@ describe('FileArtifact', () => {
 
       describe('when called with { append: true }', () => {
         beforeEach(async () => {
-          await fileArtifact.save(destinationPath, {append: true});
+          await fileArtifact.save(destinationPath, { append: true });
         });
 
         it('should call FileArtifact.moveTemporaryFile with extra param', async () => {
@@ -111,7 +111,7 @@ describe('FileArtifact', () => {
 
       describe('when called with { append: true }', () => {
         beforeEach(async () => {
-          await fileArtifact.save(destinationPath, {append: true});
+          await fileArtifact.save(destinationPath, { append: true });
         });
 
         it('should call FileArtifact.moveTemporaryFile with extra param', async () => {
@@ -144,6 +144,106 @@ describe('FileArtifact', () => {
         await fileArtifact.discard(destinationPath);
 
         expect(logger.warn).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('relocate', () => {
+    beforeEach(() => {
+      jest.spyOn(FileArtifact, 'moveTemporaryFile').mockImplementation(_.noop);
+      jest.spyOn(FileArtifact, 'writeFile').mockImplementation(_.noop);
+    });
+
+    describe('if temporary file is passed to constructor', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          temporaryPath,
+        });
+      });
+
+      describe('and the file exists', () => {
+        beforeEach(async () => {
+          await fs.ensureFile(temporaryPath);
+        });
+
+        describe('when called', () => {
+          beforeEach(async () => {
+            await fileArtifact.relocate();
+          });
+
+          it('should call FileArtifact.moveTemporaryFile', async () => {
+            expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, expect.stringMatching(/\.artifact$/));
+          });
+        });
+      });
+
+      describe('and the file does not exist', () => {
+        beforeEach(async () => {
+          await fs.remove(temporaryPath);
+        });
+
+        describe('when called', () => {
+          beforeEach(async () => {
+            await fileArtifact.relocate();
+          });
+
+          it('should call FileArtifact.moveTemporaryFile', async () => {
+            expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
+    describe('if temporary file is created in start()', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          async start() {
+            await fs.ensureFile(temporaryPath);
+            this.temporaryPath = temporaryPath;
+          }
+        });
+      });
+
+      describe('when relocate() is called without start()', () => {
+        beforeEach(async () => {
+          await fileArtifact.relocate();
+        });
+
+        it('should not call FileArtifact.moveTemporaryFile', async () => {
+          expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('and start() was called', () => {
+        beforeEach(async () => {
+          await fileArtifact.start();
+          await fileArtifact.relocate();
+        });
+
+        it('should call FileArtifact.moveTemporaryFile', async () => {
+          expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, expect.stringMatching(/\.artifact$/));
+        });
+      });
+    });
+
+    describe('if temporary data is passed to constructor', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          temporaryData,
+        });
+      });
+
+      describe('when called', () => {
+        beforeEach(async () => {
+          await fileArtifact.relocate();
+        });
+
+        it('should not do anything', async () => {
+          expect(FileArtifact.moveTemporaryFile).not.toHaveBeenCalled();
+        });
       });
     });
   });
@@ -226,7 +326,7 @@ describe('FileArtifact', () => {
 
           expect(result).toBe(false);
           expect(await fs.readFile(destinationPath, 'utf8')).toBe('Hello');
-          expect(logger.warn).toHaveBeenCalledWith({event: 'FILE_WRITE_EMPTY_DATA'}, expect.any(String));
+          expect(logger.warn).toHaveBeenCalledWith({ event: 'FILE_WRITE_EMPTY_DATA' }, expect.any(String));
         });
       });
 
@@ -240,7 +340,7 @@ describe('FileArtifact', () => {
             const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
 
             expect(result).toBe(true);
-            expect(logger.debug).toHaveBeenCalledWith({event: 'FILE_WRITE_CREATE'}, expect.any(String));
+            expect(logger.debug).toHaveBeenCalledWith({ event: 'FILE_WRITE_CREATE' }, expect.any(String));
           });
 
           it('should create the file', async () => {
@@ -263,7 +363,7 @@ describe('FileArtifact', () => {
               const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
 
               expect(result).toBe(false);
-              expect(logger.warn).toHaveBeenCalledWith({event: 'FILE_WRITE_EXISTS'}, expect.any(String));
+              expect(logger.warn).toHaveBeenCalledWith({ event: 'FILE_WRITE_EXISTS' }, expect.any(String));
             });
           });
 
@@ -273,7 +373,7 @@ describe('FileArtifact', () => {
 
               expect(result).toBe(true);
               expect(await fs.readFile(destinationPath, 'utf8')).toBe(fileContent + temporaryData);
-              expect(logger.debug).toHaveBeenCalledWith({event: 'FILE_WRITE'}, expect.any(String));
+              expect(logger.debug).toHaveBeenCalledWith({ event: 'FILE_WRITE' }, expect.any(String));
             });
           });
         });

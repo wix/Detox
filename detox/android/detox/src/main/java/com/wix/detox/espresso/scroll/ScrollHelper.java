@@ -6,16 +6,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import com.wix.detox.espresso.UiAutomatorHelper;
-import com.wix.detox.espresso.common.annot.MotionDir;
+import com.wix.detox.action.common.MotionDir;
+import com.wix.detox.espresso.DeviceDisplay;
 
 import androidx.test.espresso.UiController;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_DOWN;
-import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_LEFT;
-import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_RIGHT;
-import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_UP;
+import static com.wix.detox.action.common.MotionDefs.MOTION_DIR_DOWN;
+import static com.wix.detox.action.common.MotionDefs.MOTION_DIR_LEFT;
+import static com.wix.detox.action.common.MotionDefs.MOTION_DIR_RIGHT;
+import static com.wix.detox.action.common.MotionDefs.MOTION_DIR_UP;
 import static com.wix.detox.espresso.scroll.ScrollProbes.getScrollableProbe;
 
 /**
@@ -46,7 +46,7 @@ public class ScrollHelper {
      * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view. Null means select automatically.
      */
     public static void perform(UiController uiController, View view, @MotionDir int direction, double amountInDP, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
-        final int amountInPx = UiAutomatorHelper.convertDiptoPix(amountInDP);
+        final int amountInPx = DeviceDisplay.convertDpiToPx(amountInDP);
         final int safeScrollableRangePx = getViewSafeScrollableRangePix(view, direction);
         final int times = amountInPx / safeScrollableRangePx;
         final int remainder = amountInPx % safeScrollableRangePx;
@@ -114,7 +114,7 @@ public class ScrollHelper {
     }
 
     private static int getViewSafeScrollableRangePix(View view, @MotionDir int direction) {
-        final float[] screenSize = UiAutomatorHelper.getScreenSizeInPX();
+        final float[] screenSize = DeviceDisplay.getScreenSizeInPX();
         final int[] pos = new int[2];
         view.getLocationInWindow(pos);
 
@@ -129,7 +129,7 @@ public class ScrollHelper {
     }
 
     private static Point getScrollStartPoint(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
-        final int safetyOffset = UiAutomatorHelper.convertDiptoPix(1);
+        final int safetyOffset = DeviceDisplay.convertDpiToPx(1);
 
         Point point = getGlobalViewLocation(view);
         float offsetFactorX;
@@ -174,7 +174,7 @@ public class ScrollHelper {
     }
 
     private static Point getScrollEndPoint(Point startPoint, @MotionDir int direction, int userAmountPx, Float startOffsetPercentX, Float startOffsetPercentY) {
-        int safetyOffset = UiAutomatorHelper.convertDiptoPix(1);
+        int safetyOffset = DeviceDisplay.convertDpiToPx(1);
         int safetyOffsetX = (startOffsetPercentX != null ? safetyOffset : 0);
         int safetyOffsetY = (startOffsetPercentY != null ? safetyOffset : 0);
 

@@ -1,20 +1,29 @@
-const _ = require('lodash');
-const logger = require('../../utils/logger');
-const log = logger.child({ __filename });
-const bunyan = require('bunyan');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+// @ts-nocheck
+const { DetoxInternalError, DetoxRuntimeError } = require('../../errors');
+const { getDetoxLevel } = require('../../utils/logger');
+const formatJSONStatus = require('../actions/formatters/SyncStatusFormatter');
 
 class Action {
   constructor(type, params = {}) {
     this.type = type;
     this.params = params;
-    this.messageId;
+    this.messageId = undefined;
   }
 
   expectResponseOfType(response, type) {
     if (response.type !== type) {
-      throw new Error(`was expecting '${type}' , got ${JSON.stringify(response)}`);
+      throw new DetoxInternalError(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
+  }
+
+  /** @returns {boolean} */
+  get isAtomic() {
+    throw new DetoxInternalError(`Action.prototype.isAtomic must be defined for ${this.type}`);
+  }
+
+  /** @returns {number} */
+  get timeout() {
+    throw new DetoxInternalError(`Action.prototype.timeout getter must be defined for ${this.type}`);
   }
 }
 
@@ -27,8 +36,17 @@ class Login extends Action {
     super('login', params);
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 1000;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'loginSuccess');
+    return response.params;
   }
 }
 
@@ -36,6 +54,33 @@ class Ready extends Action {
   constructor() {
     super('isReady');
     this.messageId = -1000;
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'ready');
+  }
+}
+
+class ReloadReactNative extends Action {
+  constructor() {
+    super('reactNativeReload');
+    this.messageId = -1000;
+  }
+
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -48,6 +93,14 @@ class WaitForBackground extends Action {
     super('waitForBackground');
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'waitForBackgroundDone');
   }
@@ -56,6 +109,14 @@ class WaitForBackground extends Action {
 class WaitForActive extends Action {
   constructor() {
     super('waitForActive');
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -68,6 +129,14 @@ class Shake extends Action {
     super('shakeDevice');
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'shakeDeviceDone');
   }
@@ -78,19 +147,16 @@ class SetOrientation extends Action {
     super('setOrientation', params);
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'setOrientationDone');
-  }
-}
-
-class ReloadReactNative extends Action {
-  constructor() {
-    super('reactNativeReload');
-    this.messageId = -1000;
-  }
-
-  async handle(response) {
-    this.expectResponseOfType(response, 'ready');
   }
 }
 
@@ -100,10 +166,16 @@ class Cleanup extends Action {
     this.messageId = -0xc1ea;
   }
 
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 5000;
+  }
+
   async handle(response) {
-    if (response.type !== 'appDisconnected') {
-      this.expectResponseOfType('cleanupDone');
-    }
+    this.expectResponseOfType(response, 'cleanupDone');
   }
 }
 
@@ -112,24 +184,37 @@ class Invoke extends Action {
     super('invoke', params);
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     switch (response.type) {
       case 'testFailed':
         let message = 'Test Failed: ' + response.params.details;
+        let hint;
+        let debugInfo;
+
         if (response.params.viewHierarchy) {
           /* istanbul ignore next */
-          message += /^(debug|trace)$/.test(logger.getDetoxLevel())
-            ? '\nView Hierarchy:\n' + response.params.viewHierarchy
-            : '\nTIP: To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
+          if (/^(debug|trace)$/.test(getDetoxLevel())) {
+            debugInfo = 'View Hierarchy:\n' + response.params.viewHierarchy;
+          } else {
+            hint = 'To print view hierarchy on failed actions/matches, use log-level verbose or higher.';
+          }
         }
 
-        throw new Error(message);
+        throw new DetoxRuntimeError({ message, hint, debugInfo });
       case 'invokeResult':
         return response.params;
       case 'error':
-        throw new Error(response.params.error);
+        throw new DetoxRuntimeError(response.params.error);
       default:
-        throw new Error(`tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
+        throw new DetoxInternalError(`Tried to invoke an action on app, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }
@@ -137,6 +222,14 @@ class Invoke extends Action {
 class DeliverPayload extends Action {
   constructor(params) {
     super('deliverPayload', params);
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
   }
 
   async handle(response) {
@@ -149,6 +242,14 @@ class SetSyncSettings extends Action {
     super('setSyncSettings', params);
   }
 
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'setSyncSettingsDone');
   }
@@ -159,10 +260,17 @@ class CurrentStatus extends Action {
     super('currentStatus', params);
   }
 
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 5000;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'currentStatusResult');
-    log.info({ class: 'CurrentStatus' }, response.params.status);
-    return response;
+    return formatJSONStatus(response.params.status);
   }
 }
 
@@ -171,31 +279,16 @@ class SetInstrumentsRecordingState extends Action {
     super('setRecordingState', params);
   }
 
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'setRecordingStateDone');
-  }
-}
-
-class AppWillTerminateWithError extends Action {
-  constructor() {
-    super('AppWillTerminateWithError');
-    this.messageId = -10000;
-  }
-
-  handle(response) {
-    this.expectResponseOfType(response, 'AppWillTerminateWithError');
-    return response.params.errorDetails;
-  }
-}
-
-class AppNonresponsive extends Action {
-  constructor() {
-    super('AppNonresponsiveDetected');
-    this.messageId = -10001;
-  }
-
-  handle(response) {
-    this.expectResponseOfType(response, 'AppNonresponsiveDetected');
   }
 }
 
@@ -204,10 +297,18 @@ class CaptureViewHierarchy extends Action {
     super('captureViewHierarchy', params);
   }
 
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
   async handle(response) {
     this.expectResponseOfType(response, 'captureViewHierarchyDone');
 
-    const {captureViewHierarchyError} = response.params;
+    const { captureViewHierarchyError } = response.params;
     if (captureViewHierarchyError) {
       throw new DetoxRuntimeError({
         message: 'Failed to capture view hierarchy. Reason:\n',
@@ -220,6 +321,7 @@ class CaptureViewHierarchy extends Action {
 }
 
 module.exports = {
+  Action,
   Login,
   WaitForBackground,
   WaitForActive,
@@ -233,7 +335,5 @@ module.exports = {
   Shake,
   SetOrientation,
   SetInstrumentsRecordingState,
-  AppWillTerminateWithError,
-  AppNonresponsive,
   CaptureViewHierarchy,
 };

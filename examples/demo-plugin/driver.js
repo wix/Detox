@@ -1,7 +1,10 @@
-const DeviceDriverBase = require('detox/src/devices/drivers/DeviceDriverBase');
+const DeviceDriverBase = require('detox/src/devices/runtime/drivers/DeviceDriverBase');
 const Client = require('detox/src/client/Client');
 
-class Expect {
+//
+// The following is needed in order to make the various expect() API's work (e.g. element(), waitFor()).
+
+class PluginExpect {
   constructor({ invocationManager }) {
     this._invocationManager = invocationManager;
 
@@ -38,6 +41,9 @@ class Expect {
   }
 }
 
+//
+// The following is needed in order to make the various device API's work (e.g. device.launchApp()).
+
 class LoginApp {
   constructor(sessionId) {
     this.type = 'login';
@@ -50,67 +56,93 @@ class LoginApp {
 }
 
 class PluginApp {
-  constructor(config) {
-    this.configuration = config.client.configuration;
+  constructor(deps) {
+    this.configuration = deps.sessionConfig;
     this.client = new Client(this.configuration);
   }
 
   async connect() {
-    await this.client.ws.open();
+    await this.client.open();
 
     // NOTE: This is a sample way to handle events in a custom app client, but not needed
-    // for the test suite
-    // this.client.ws.ws.on('message', async (str) => {
-    //   const sendResponse = async (response) => {
-    //     this.client.ws.ws.send(JSON.stringify(response));
-    //   };
-
-    //   const action = JSON.parse(str);
-    //   const messageId = action.messageId;
-    //   if (!action.type) {
-    //     return;
+    // for the test suite:
+    //
+    // const { Action } = require('detox/src/client/actions/actions');
+    // class PongAction extends Action {
+    //   constructor(messageId) {
+    //     super('ping', { messageId });
     //   }
-    //   if (action.type === 'loginSuccess') {
-    //     return;
-    //   } else if (action.type === 'deliverPayload') {
-    //     await sendResponse({
-    //       type: 'deliverPayloadDone',
-    //       messageId: action.messageId,
-    //     });
-    //   } else if (action.type === 'currentStatus') {
-    //     await sendResponse(
-    //       { type: 'currentStatusResult', params: { resources: [] } }
-    //     );
-    //   } else {
-    //     try {
-    //       await sendResponse({
-    //         type: 'invokeResult',
-    //         messageId: action.messageId,
-    //       });
-    //     } catch (error) {
-    //       this.client.ws.ws.send(
-    //         JSON.stringify({
-    //           type: 'testFailed',
-    //           messageId,
-    //           params: { details: str + '\n' + error.message },
-    //         }),
-    //       );
-    //     }
+    //
+    //   handle() {
     //   }
+    // }
+    //
+    // this.client.setEventCallback('ping', async (json) => {
+    //   await this.client.sendAction(new PongAction(json.messageId));
     // });
 
     await this.client.sendAction(new LoginApp(this.configuration.sessionId));
   }
 }
 
-class PluginDriver extends DeviceDriverBase {
-  constructor(config) {
-    super(config);
+class PluginAllocationCookie {
+  constructor(id) {
+    this.id = id;
+  }
+}
 
-    this.app = new PluginApp(config);
+class PluginDeviceAllocationDriver {
+  constructor(deps) {
+    this.emitter = deps.eventEmitter;
   }
 
-  async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
+  async allocate(deviceConfig) {
+    console.log('TODO Allocate an actual device here', deviceConfig.device);
+    return new PluginAllocationCookie('device ID');
+  }
+
+  async free(cookie, { shutdown }) {
+    console.log('TODO: Free up device and resources, here');
+
+    if (shutdown) {
+      await this.emitter.emit('beforeShutdownDevice', { deviceId: id });
+      await this.emitter.emit('shutdownDevice', { deviceId: id });
+    }
+  }
+}
+
+class PluginEnvironmentValidator {
+  async validate() {
+    console.log('TODO: perform some validations');
+  }
+}
+
+class PluginArtifactsProvider {
+  declareArtifactPlugins() {
+    console.log('TODO: Set up artifact generation handlers');
+    return {};
+  }
+}
+
+class PluginRuntimeDriver extends DeviceDriverBase {
+  constructor(deps, cookie) {
+    super(deps);
+
+    this.cookie = cookie;
+    this.app = new PluginApp(deps);
+  }
+
+  getExternalId() {
+    return this.cookie.id;
+  }
+
+  getDeviceName() {
+    return 'Plugin'; // TODO
+  }
+
+  async launchApp(bundleId, launchArgs, languageAndLocale) {
+    const deviceId = this.cookie.id;
+
     await this.emitter.emit('beforeLaunchApp', {
       bundleId,
       deviceId,
@@ -127,7 +159,6 @@ class PluginDriver extends DeviceDriverBase {
 
     return pid;
   }
-
 
   validateDeviceConfig(deviceConfig) {
     this.deviceConfig = deviceConfig;
@@ -146,6 +177,9 @@ class PluginDriver extends DeviceDriverBase {
 }
 
 module.exports = {
-  DriverClass: PluginDriver,
-  ExpectClass: Expect,
+  ExpectClass: PluginExpect,
+  EnvironmentValidatorClass: PluginEnvironmentValidator,
+  ArtifactPluginsProviderClass: PluginArtifactsProvider,
+  DeviceAllocationDriverClass: PluginDeviceAllocationDriver,
+  RuntimeDriverClass: PluginRuntimeDriver,
 };

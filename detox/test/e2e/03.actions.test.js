@@ -1,5 +1,4 @@
 const driver = require('./drivers/actions-driver').actionsScreenDriver;
-const custom = require('./utils/custom-it');
 
 describe('Actions', () => {
   beforeEach(async () => {
@@ -135,71 +134,6 @@ describe('Actions', () => {
     await expect(element(by.text('Replace Working!!!'))).toBeVisible();
   });
 
-  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a small amount in direction', async () => {
-    await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text4'))).not.toBeVisible();
-    await expect(element(by.id('ScrollView161'))).toBeVisible();
-    await element(by.id('ScrollView161')).scroll(100, 'down');
-    await expect(element(by.text('Text1'))).not.toBeVisible();
-    await expect(element(by.text('Text4'))).toBeVisible();
-    await element(by.id('ScrollView161')).scroll(100, 'up');
-    await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text4'))).not.toBeVisible();
-  });
-
-  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a large amount in direction', async () => {
-    await expect(element(by.text('Text6'))).not.toBeVisible();
-    await element(by.id('ScrollView161')).scroll(220, 'down');
-    await expect(element(by.text('Text6'))).toBeVisible();
-  });
-
-  it('should scroll for a large amount in horizontal direction', async () => {
-    await expect(element(by.text('HText7'))).not.toBeVisible();
-    await element(by.id('ScrollViewH')).scroll(220, 'right');
-    await expect(element(by.text('HText7'))).toBeVisible();
-  });
-
-  it('should scroll to edge', async () => {
-    await expect(element(by.text('Text8'))).not.toBeVisible();
-    await element(by.id('ScrollView161')).scrollTo('bottom');
-    await expect(element(by.text('Text8'))).toBeVisible();
-    await element(by.id('ScrollView161')).scrollTo('top');
-    await expect(element(by.text('Text1'))).toBeVisible();
-  });
-
-  it('should scroll horizontally to edge', async () => {
-    await expect(element(by.text('HText8'))).not.toBeVisible();
-    await element(by.id('ScrollViewH')).scrollTo('right');
-    await expect(element(by.text('HText8'))).toBeVisible();
-    await element(by.id('ScrollViewH')).scrollTo('left');
-    await expect(element(by.text('HText1'))).toBeVisible();
-  });
-
-  it('should scroll from a custom start-position ratio', async () => {
-    await expect(element(by.text('Text8'))).not.toBeVisible();
-    await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
-    await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('Text8'))).toBeVisible();
-
-    await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
-    await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('Text8'))).not.toBeVisible();
-  });
-
-  it('should scroll horizontally from a custom start-position ratio', async () => {
-    await expect(element(by.text('HText6'))).not.toBeVisible();
-    await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollViewH')).scroll(220, 'right', 0.8, 0.6);
-    await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('HText6'))).toBeVisible();
-
-    await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollViewH')).scroll(220, 'left', 0.2, 0.4);
-    await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('HText6'))).not.toBeVisible();
-  });
 
   it('should swipe down until pull to reload is triggered', async () => {
     await element(by.id('ScrollView799')).swipe('down', 'fast');
@@ -248,17 +182,56 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  it(':ios: should adjust slider and assert its value', async () => {
-    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
-    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);
-    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
-    await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
+  it('should adjust slider and assert its value', async () => {
+    const reactSliderId = 'sliderWithASimpleID';
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
+    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
+    await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
+
+    // on ios the accessibilityLabel is set to the slider value, but not on android
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+    }
   });
 
-  it(':ios: should get element attributes', async () => {
-    const jestExpect = require('expect');
-    const attributes = await element(by.text('Tap Me')).getAttributes();
-    jestExpect(attributes.text).toBe('Tap Me');
-    jestExpect(attributes.label).toBe('Tap Me');
+  it('should expect text fields to be focused after tap but not before', async () => {
+    const textField1 = element(by.id('UniqueId005'));
+    const textField2 = element(by.id('UniqueId006'));
+
+    await expect(textField1).toBeNotFocused();
+    await expect(textField2).toBeNotFocused();
+    await expect(textField1).not.toBeFocused();
+    await expect(textField2).not.toBeFocused();
+
+    await textField1.tap();
+    await expect(textField1).toBeFocused();
+    await expect(textField2).toBeNotFocused();
+    await expect(textField2).not.toBeFocused();
+
+    await textField2.tap();
+    await expect(textField1).toBeNotFocused();
+    await expect(textField1).not.toBeFocused();
+    await expect(textField2).toBeFocused();
+  });
+
+  describe('pending interactions', () => {
+    const multipleInteractionsWarning = 'Detox has detected multiple interactions taking place simultaneously. ' +
+      'Have you forgotten to apply an await over one of the Detox actions in your test code?';
+
+    it('should throw an exception when attempting to send an interaction while another is pending', async () => {
+      element(by.id('UniqueId937')).typeText('one ')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+      await element(by.id('UniqueId937')).typeText(' two')
+        .catch(e => {
+          if (!e.toString().includes(multipleInteractionsWarning)) {
+            throw new Error('Test should have thrown a multiple interactions error, but did not');
+          }
+        });
+    });
   });
 });

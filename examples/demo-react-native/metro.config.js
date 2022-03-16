@@ -1,8 +1,13 @@
 let createBlacklist;
 try {
-  createBlacklist = require('metro-config/src/defaults/blacklist');
+  // RN .64
+  createBlacklist = require('metro-config/src/defaults/exclusionList');
 } catch (ex) {
-  createBlacklist = require('metro-bundler').createBlacklist;
+  try {
+    createBlacklist = require('metro-config/src/defaults/blacklist');
+  } catch (ex) {
+    createBlacklist = require('metro-bundler').createBlacklist;
+  }
 }
 
 module.exports = {

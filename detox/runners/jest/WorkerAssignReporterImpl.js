@@ -1,5 +1,6 @@
-const _ = require('lodash');
 const chalk = require('chalk').default;
+const _ = require('lodash');
+
 const log = require('../../src/utils/logger').child();
 
 class WorkerAssignReporterImpl {
@@ -13,7 +14,7 @@ class WorkerAssignReporterImpl {
       ? chalk.redBright('undefined')
       : chalk.blueBright(deviceName);
 
-    log.info({event: 'WORKER_ASSIGN'}, `${chalk.whiteBright(workerName)} is assigned to ${formattedDeviceName}`);
+    log.info({ event: 'WORKER_ASSIGN' }, `${chalk.whiteBright(workerName)} is assigned to ${formattedDeviceName}`);
   }
 }
 

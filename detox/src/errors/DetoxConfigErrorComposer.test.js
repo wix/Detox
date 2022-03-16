@@ -1,6 +1,9 @@
-const _ = require('lodash');
+// @ts-nocheck
 const fs = require('fs');
 const os = require('os');
+
+const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('./DetoxConfigErrorComposer');
 
 describe('DetoxConfigErrorComposer', () => {
@@ -76,7 +79,16 @@ describe('DetoxConfigErrorComposer', () => {
 
     describe('.noConfigurationAtGivenPath', () => {
       it('should create an error with the attempted config path', () => {
-        expect(builder.noConfigurationAtGivenPath()).toMatchSnapshot();
+        expect(builder.noConfigurationAtGivenPath('./some/detox-config.js')).toMatchSnapshot();
+      });
+
+      it('should create an error with the attempted "extends" path', () => {
+        expect(
+          builder
+            .setExtends(true)
+            .setDetoxConfigPath('package.json')
+            .noConfigurationAtGivenPath('some-detox-preset')
+        ).toMatchSnapshot();
       });
     });
 
@@ -87,6 +99,7 @@ describe('DetoxConfigErrorComposer', () => {
 
       it('should create a simple error, but with the original intercepted IO error', () => {
         const ioError = _.attempt(() => fs.readFileSync(os.homedir()));
+        delete ioError.stack;
         expect(builder.failedToReadConfiguration(ioError)).toMatchSnapshot();
       });
     });
@@ -128,7 +141,7 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.noConfigurationWithGivenName', () => {
       beforeEach(() => {
         build = () => builder.noConfigurationWithGivenName();
-        builder.setConfigurationName('otherConf')
+        builder.setConfigurationName('otherConf');
       });
 
       it('should create an error with configuration suggestions', () => {
@@ -139,7 +152,7 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.configurationShouldNotBeEmpty', () => {
       beforeEach(() => {
         build = () => builder.configurationShouldNotBeEmpty();
-        builder.setConfigurationName('empty')
+        builder.setConfigurationName('empty');
         config.configurations.empty = {};
       });
 
@@ -154,7 +167,7 @@ describe('DetoxConfigErrorComposer', () => {
       beforeEach(() => {
         build = () => builder.thereAreNoDeviceConfigs('aDevice');
         config.devices = {};
-        builder.setConfigurationName('aliased')
+        builder.setConfigurationName('aliased');
       });
 
       it('should create an error with a hint', () => {
@@ -169,27 +182,69 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
-    describe('.malformedUtilBinaryPaths', () => {
-      beforeEach(() => {
-        build = (alias) => builder.malformedUtilBinaryPaths(alias);
+    describe('.malformedDeviceProperty', () => {
+      test.each([
+        ['bootArgs', 'inlined', ['--arg']],
+        ['bootArgs', 'aliased', ['--arg']],
+        ['forceAdbInstall', 'inlined', 'true'],
+        ['forceAdbInstall', 'aliased', 'false'],
+        ['gpuMode', 'inlined', 'something_odd'],
+        ['gpuMode', 'aliased', true],
+        ['headless', 'inlined', 'non-boolean'],
+        ['headless', 'aliased', 'non-boolean'],
+        ['readonly', 'inlined', 'non-boolean'],
+        ['readonly', 'aliased', 'non-boolean'],
+        ['utilBinaryPaths', 'plain', 'invalid'],
+        ['utilBinaryPaths', 'inlined', [NaN, 'valid']],
+        ['utilBinaryPaths', 'aliased', [NaN, 'valid']],
+      ])('(%j) should create an error for %s configuration', (propertyName, configurationType, invalidValue) => {
+        builder.setConfigurationName(configurationType);
+        const deviceAlias = configurationType === 'aliased' ? 'aDevice' : undefined;
+        const deviceConfig = configurationType === 'plain'
+          ? config.configurations[configurationType]
+          : configurationType === 'inlined'
+            ? config.configurations[configurationType].device
+            : config.devices.aDevice;
+
+        deviceConfig[propertyName] = invalidValue;
+        expect(builder.malformedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
       });
 
-      it('should create an error for plain configuration', () => {
-        builder.setConfigurationName('plain');
-        config.configurations.plain.utilBinaryPaths = 'invalid';
-        expect(build()).toMatchSnapshot();
+      it('should throw on an unknown argument', () => {
+        expect(() => builder.malformedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
+      });
+    });
+
+    describe('.unsupportedDeviceProperty', () => {
+      test.each([
+        ['bootArgs', 'inlined', '--no-window'],
+        ['bootArgs', 'aliased', '--no-window'],
+        ['forceAdbInstall', 'inlined', true],
+        ['forceAdbInstall', 'aliased', false],
+        ['gpuMode', 'inlined', 'auto'],
+        ['gpuMode', 'aliased', 'auto'],
+        ['headless', 'inlined', true],
+        ['headless', 'aliased', true],
+        ['readonly', 'inlined', false],
+        ['readonly', 'aliased', false],
+        ['utilBinaryPaths', 'plain', []],
+        ['utilBinaryPaths', 'inlined', []],
+        ['utilBinaryPaths', 'aliased', []],
+      ])('(%j) should create an error for %s configuration', (propertyName, configurationType, invalidValue) => {
+        builder.setConfigurationName(configurationType);
+        const deviceAlias = configurationType === 'aliased' ? 'aDevice' : undefined;
+        const deviceConfig = configurationType === 'plain'
+          ? config.configurations[configurationType]
+          : configurationType === 'inlined'
+            ? config.configurations[configurationType].device
+            : config.devices.aDevice;
+
+        deviceConfig[propertyName] = invalidValue;
+        expect(builder.unsupportedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
       });
 
-      it('should create an error for inlined configuration', () => {
-        builder.setConfigurationName('inlined');
-        config.configurations.inlined.device.utilBinaryPaths = 'invalid';
-        expect(build()).toMatchSnapshot();
-      });
-
-      it('should create an error for aliased configuration', () => {
-        builder.setConfigurationName('aliased');
-        config.devices.aDevice.utilBinaryPaths = 'invalid';
-        expect(build('aDevice')).toMatchSnapshot();
+      it('should throw on an unknown argument', () => {
+        expect(() => builder.unsupportedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
       });
     });
 
@@ -222,6 +277,30 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.invalidDeviceType', () => {
+      beforeEach(() => {
+        build = (deviceConfig, alias) => {
+          // eslint-disable-next-line node/no-missing-require
+          const err = _.attempt(() => require('android.apk'));
+          return builder.invalidDeviceType(alias, deviceConfig, err);
+        };
+      });
+
+      it('should create an error for inlined configuration', () => {
+        const deviceConfig = config.configurations.inlined.device;
+        deviceConfig.type = 'android.apk';
+        builder.setConfigurationName('inlined');
+        expect(build(deviceConfig)).toMatchSnapshot();
+      });
+
+      it('should create an error for aliased configuration', () => {
+        const deviceConfig = config.devices.aDevice;
+        deviceConfig.type = 'android.apk';
+        builder.setConfigurationName('aliased');
+        expect(build(deviceConfig, 'aDevice')).toMatchSnapshot();
+      });
+    });
+
     describe('.missingDeviceMatcherProperties', () => {
       beforeEach(() => {
         build = (alias) => builder.missingDeviceMatcherProperties(alias, ['foo', 'bar']);
@@ -248,7 +327,7 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.thereAreNoAppConfigs', () => {
       it('should create an error for aliased configuration', () => {
         delete config.apps.someApp;
-        builder.setConfigurationName('aliased')
+        builder.setConfigurationName('aliased');
 
         expect(builder.thereAreNoAppConfigs('someApp')).toMatchSnapshot();
       });
@@ -256,7 +335,7 @@ describe('DetoxConfigErrorComposer', () => {
 
     describe('.cantResolveAppAlias', () => {
       it('should create an error for aliased configuration', () => {
-        builder.setConfigurationName('aliased')
+        builder.setConfigurationName('aliased');
         expect(builder.cantResolveAppAlias('anotherApp')).toMatchSnapshot();
       });
     });
@@ -444,6 +523,19 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.oldSchemaHasAppAndApps', () => {
+      beforeEach(() => {
+        build = () => builder.oldSchemaHasAppAndApps();
+      });
+
+      it('should create an error for ambigous old/new configuration if it has .apps', () => {
+        builder.setConfigurationName('plain');
+        config.configurations.plain.app = 'my-app';
+
+        expect(build()).toMatchSnapshot();
+      });
+    });
+
     describe('.ambiguousAppAndApps', () => {
       beforeEach(() => {
         build = () => builder.ambiguousAppAndApps();
@@ -573,7 +665,7 @@ describe('DetoxConfigErrorComposer', () => {
             server: 'ws://localhost:12837',
           },
           configurations: {},
-        })
+        });
 
         builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
         expect(build()).toMatchSnapshot();
@@ -614,7 +706,48 @@ describe('DetoxConfigErrorComposer', () => {
             server: 'ws://localhost:12837',
           },
           configurations: {},
-        })
+        });
+
+        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+        expect(build()).toMatchSnapshot();
+      });
+    });
+
+    describe('.cannotSkipAutostartWithMissingServer', () => {
+      beforeEach(() => {
+        build = () => builder.cannotSkipAutostartWithMissingServer();
+        builder.setConfigurationName('android.release');
+        builder.setDetoxConfig({
+          configurations: {
+            'android.release': {
+              type: 'android.emulator',
+              device: {
+                avdName: 'Pixel_2_API_29',
+              },
+              session: {
+                autoStart: false,
+              },
+            }
+          }
+        });
+      });
+
+      it('should create a generic error, if the config location is not known', () => {
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error with a hint, if the config location is known', () => {
+        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should point to global session if there is one', () => {
+        builder.setDetoxConfig({
+          session: {
+            autoStart: false
+          },
+          configurations: {},
+        });
 
         builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
         expect(build()).toMatchSnapshot();

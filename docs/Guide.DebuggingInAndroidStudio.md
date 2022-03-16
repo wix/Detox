@@ -1,8 +1,15 @@
-# Debugging in Android Studio During Detox Tests
+---
+id: debugging-in-android-studio
+slug: guide/debugging-in-android-studio
+title: Debugging in Android Studio During Detox Tests
+sidebar_label: Debugging in Android Studio
+---
+
+## Debugging in Android Studio During Detox Tests
 
 > This flow is not standard and serves mostly for investigating weird crashes or
-when contributing to Detox itself.  
-> **Don't use it unless you have a good reason.**
+> when contributing to Detox itself.\
+> **Don’t use it unless you have a good reason.**
 
 ### Setting Detox up as a compiling dependency
 
@@ -10,7 +17,7 @@ Before you go anywhere further, follow the
 [Setting Detox up as a compiling dependency](Introduction.Android.md#setting-detox-up-as-a-compiling-dependency)
 section from the **Detox for Android** document.
 
-### Add "manual" device configurations to your .detoxrc
+### Add "manual" device configurations to your `.detoxrc`
 
 Locate your `.detoxrc` config file or the corresponding `detox` section in your `package.json`
 and add a configuration similar to this one:
@@ -59,19 +66,19 @@ parameters to disable various side effects and make life easier when debugging:
 +  "artifacts": false
 ```
 
-* Using a preconfigured `session` with an autostarting server removes the legwork of copying and
-pasting values to the instrumentation runner launch arguments dialog every time before any launch
-from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
-are randomly generated for every new test session.
+- Using a preconfigured `session` with an autostarting server removes the legwork of copying and
+  pasting values to the instrumentation runner launch arguments dialog every time before any launch
+  from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
+  are randomly generated for every new test session.
 
-    * The `debugSynchronization: 0` override matters only if you have a global `session` config
-with `debugSynchronization` set to a positive integer value. Otherwise, it is not needed. The point
-is to disable regular app polling requests during debugging, since that only can hinder the debugging.
+  - The `debugSynchronization: 0` override matters only if you have a global `session` config
+    with `debugSynchronization` set to a positive integer value. Otherwise, it is not needed. The point
+    is to disable regular app polling requests during debugging, since that only can hinder the debugging.
 
-* Setting `artifacts: false` override also matters only if you have a global `artifacts` config.
-The motivation is to disable unrelevant taxing activities on the device such as capturing logs
-screenshots, videos and so on.
-    * If your investigation addresses a specific artifact plugin glitch on the native side, then just
+- Setting `artifacts: false` override also matters only if you have a global `artifacts` config.
+  The motivation is to disable irrelevant taxing activities on the device such as capturing logs
+  screenshots, videos and so on.
+  - If your investigation addresses a specific artifact plugin glitch on the native side, then just
     disable all the other plugins. See [Detox Configuration](APIRef.Configuration.md) document
     for the reference.
 
@@ -79,7 +86,7 @@ screenshots, videos and so on.
 
 Usually, you would want to focus on a specific test suite to save time, e.g.:
 
-```
+```sh
 detox test -c android.manual e2e/someSuite.test.js
 ```
 
@@ -88,12 +95,12 @@ If you are using Jest as a test runner, you might want to increase the test time
 
 Also, if there is something you want to do step by step in JS code while debugging native, append
 `--inspect-brk` flag. To learn more about debugging with `--inspect-brk`, refer to
-[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/) on the offical Node.js website.
+[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/) on the official Node.js website.
 
 Afterwards, you should see your test suite starting as usual until it reaches the app launch, where
 Detox stops instead and prompts you to launch the app from the IDE:
 
-```
+```plain text
 detox[53038] INFO:  [AndroidDriver.js] Waiting for you to manually launch your app in Android Studio.
 
 Instrumentation class: com.wix.detox.test.test/com.example.DetoxTestAppJUnitRunner
@@ -108,13 +115,13 @@ detoxSessionId | test
 Press any key to continue...
 ```
 
-Now it is time to switch back to Android Studio.  However, if for some reason you wish to terminate the process, use Ctrl+C to exit.
+Now it is time to switch back to Android Studio. However, if for some reason you wish to terminate the process, use `Ctrl+C` to exit.
 
-## Launching the app
+### Launching the app
 
 Before you launch the app from Android Studio, make sure to put breakpoints at the points of interest.
 
-You'll need to run your instrumentation runner with the said arguments, this is why you
+You’ll need to run your instrumentation runner with the said arguments, this is why you
 should create a debug configuration of `Android Instrumented Tests` type similar to the
 one below:
 
@@ -125,7 +132,7 @@ running and press any key.
 
 As a result, you are expected to see a confirmation from Detox, e.g.:
 
-```
+```plain text
 Found the app (com.wix.detox-example) with process ID = 16854. Proceeding...
 ```
 
@@ -136,13 +143,13 @@ in your breakpoint.
 
 Happy debugging!
 
-## Extra tweaks
+### Extra tweaks
 
 If you feel like you see too often this timeout error while debugging:
 
-```
+```plain text
 Waited for the new RN-context for too long! (60 seconds)
-If you think that's not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
+If you think that’s not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
 ```
 
 you can temporarily hack the timeout here:
@@ -163,4 +170,3 @@ index b33b2086..aaf8e9e2 100644
      fun apply() {
          idlePolicyConfig.apply()
 ```
-

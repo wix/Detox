@@ -1,6 +1,13 @@
 jest.unmock('process');
 
 describe('argparse', () => {
+  let minimist;
+
+  beforeEach(() => {
+    jest.mock('minimist');
+    minimist = require('minimist');
+  });
+
   describe('getArgValue()', () => {
     describe('using env variables', () => {
       let _env;
@@ -14,6 +21,7 @@ describe('argparse', () => {
           DETOX_FOO_BAR: 'value',
         };
 
+        minimist.mockReturnValue(undefined);
         argparse = require('./argparse');
       });
 
@@ -43,14 +51,16 @@ describe('argparse', () => {
       let argparse;
 
       beforeEach(() => {
-        jest.mock('minimist');
-        const minimist = require('minimist');
-        minimist.mockReturnValue({'kebab-case-key': 'a value'});
+        minimist.mockReturnValue({ 'kebab-case-key': 'a value', 'b': 'shortened' });
         argparse = require('./argparse');
       });
 
       it(`nonexistent key should return undefined result`, () => {
         expect(argparse.getArgValue('blah')).not.toBeDefined();
+      });
+
+      it(`alias alternative should fiind the result`, () => {
+        expect(argparse.getArgValue('blah', 'b')).toBe('shortened');
       });
 
       it(`existing key should return a result`, () => {
@@ -63,9 +73,7 @@ describe('argparse', () => {
     let argparse;
 
     beforeEach(() => {
-      jest.mock('minimist');
-      const minimist = require('minimist');
-      minimist.mockReturnValue({'flag-true': 1, 'flag-false': 0});
+      minimist.mockReturnValue({ 'flag-true': 1, 'flag-false': 0 });
       argparse = require('./argparse');
     });
 
@@ -109,5 +117,5 @@ describe('argparse', () => {
 
       expect(argparse.joinArgs(argsObject, options)).toBe('-version=100 --help');
     });
-  })
+  });
 });

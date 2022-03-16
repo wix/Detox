@@ -4,9 +4,15 @@ source $(dirname "$0")/logger.sh
 source $(dirname "$0")/install.sh
 
 if [ ! -z ${REACT_NATIVE_VERSION} ]; then
-  node scripts/change_react_native_version.js "detox/test" ${REACT_NATIVE_VERSION}
+  node scripts/change_react_native_version.js "detox/test" ${REACT_NATIVE_VERSION} "dependencies"
+  node scripts/change_react_native_version.js "detox" ${REACT_NATIVE_VERSION} "devDependencies"
 fi
 
 run_f "lerna bootstrap --no-ci"
 run_f "lerna run build"
-run_f "lerna run test"
+
+if [ "$1" == 'noGenerate' ]; then
+  run_f "lerna run test --ignore=generation"
+else
+  run_f "lerna run test"
+fi

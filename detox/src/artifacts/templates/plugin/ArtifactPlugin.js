@@ -1,4 +1,8 @@
+// @ts-nocheck
+/* eslint-disable no-unused-vars */
+
 const _ = require('lodash');
+
 const log = require('../../../utils/logger').child({ __filename });
 
 /***
@@ -11,7 +15,7 @@ const log = require('../../../utils/logger').child({ __filename });
 class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
-    this.context = { testSummary: null , suite: null};
+    this.context = { testSummary: null , suite: null };
     this.enabled = api.userConfig.enabled;
     this.keepOnlyFailedTestsArtifacts = api.userConfig.keepOnlyFailedTestsArtifacts;
     this.priority = 16;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const Artifact = require('../Artifact');
 
 class ArtifactMock extends Artifact {

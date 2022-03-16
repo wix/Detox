@@ -2,6 +2,7 @@
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
 #import "DragDropTableViewController.h"
+#import "CustomKeyboardViewController.h"
 @import CoreSpotlight;
 
 @import UserNotifications;
@@ -163,6 +164,11 @@ RCT_EXPORT_MODULE();
 		if([name isEqualToString:@"dragAndDrop"])
 		{
 			DragDropTableViewController* vc = [[DragDropTableViewController alloc] initWithStyle:UITableViewStyleInsetGrouped];
+			[self.window.rootViewController presentViewController:vc animated:YES completion:nil];
+		} else if ([name isEqualToString:@"customKeyboard"])
+		{
+			CustomKeyboardViewController *vc = [[CustomKeyboardViewController alloc] init];
+			vc.modalPresentationStyle = UIModalPresentationFullScreen;
 			[self.window.rootViewController presentViewController:vc animated:YES completion:nil];
 		}
 	}];

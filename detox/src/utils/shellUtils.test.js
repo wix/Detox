@@ -1,11 +1,11 @@
 const {
-  escapeInDoubleQuotedString,
-  escapeInDoubleQuotedRegexp,
-  escapeWithSingleQuotedString,
-  escapeWithDoubleQuotedString,
-  isRunningInCMDEXE,
-  hasUnsafeChars,
   autoEscape,
+  escapeInDoubleQuotedRegexp,
+  escapeInDoubleQuotedString,
+  escapeWithDoubleQuotedString,
+  escapeWithSingleQuotedString,
+  hasUnsafeChars,
+  isRunningInCMDEXE,
 } = require('./shellUtils');
 
 describe('shellUtils', function() {
@@ -74,7 +74,7 @@ describe('shellUtils', function() {
       [true,  true,  '>',  'shell syntax'],
       [true,  true,  '?',  'a sh wildcard'],
       [true,  true,  '[',  'a sh wildcard'],
-      [false, true,  "\\", 'shell syntax'],
+      [false, true,  '\\', 'shell syntax'],
       [true,  true,  ']',  'a sh wildcard'],
       [true,  true,  '^',  'a history expansion, zsh wildcard'],
       [true,  true,  '`',  'shell syntax'],
@@ -94,7 +94,7 @@ describe('shellUtils', function() {
     describe('.cmd', () => {
       const CMD_CASES = CASES.map(([expected, _shell, input, comment]) => [expected, input, comment]);
 
-      test.each(CMD_CASES)('should return %j for %j because it is %s', (expected, str, comment) => {
+      test.each(CMD_CASES)('should return %j for %j because it is %s', (expected, str, __) => {
         expect(hasUnsafeChars.cmd(str)).toBe(expected);
       });
     });
@@ -102,7 +102,7 @@ describe('shellUtils', function() {
     describe('.shell', () => {
       const SHELL_CASES = CASES.map(([_cmd, expected, input, comment]) => [expected, input, comment]);
 
-      test.each(SHELL_CASES)('should return %j for %j because it is %s', (expected, str, comment) => {
+      test.each(SHELL_CASES)('should return %j for %j because it is %s', (expected, str, __) => {
         expect(hasUnsafeChars.shell(str)).toBe(expected);
       });
     });
@@ -121,7 +121,7 @@ describe('shellUtils', function() {
   describe('autoEscape.shell', () => {
     test.each([
       ['test', 'test'],
-      ["test string", "'test string'"],
+      ['test string', "'test string'"],
       ["test 'this' string", `'test '"'"'this'"'"' string'`],
     ])('should transform [ %s ] to [ %s ]', (input, expected) => {
       expect(autoEscape.shell(input)).toBe(expected);

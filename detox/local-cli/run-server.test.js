@@ -1,3 +1,4 @@
+// @ts-nocheck
 jest.mock('../src/utils/logger');
 
 describe('run-server', () => {

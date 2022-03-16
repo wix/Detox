@@ -17,13 +17,15 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
     console.log('Making problems with server');
 
     const instance = await this.detox.init(undefined, { launchApp: false });
-    const sendActionOriginal = instance._server.sendAction;
-    instance._server.sendAction = function(ws, action) {
+    const [detoxConnection] = [...instance._server._sessionManager._connectionsByWs.values()];
+    const sendActionOriginal = detoxConnection.sendAction;
+    detoxConnection.sendAction = function(action) {
       if (action.type !== 'ready') {
-        sendActionOriginal.call(this, ws, action);
+        sendActionOriginal.call(this, action);
       }
     };
 
+    await instance.device.selectApp('example');
     await instance.device.launchApp();
     return instance;
   }

@@ -3,7 +3,7 @@ package com.wix.detox.espresso.scroll
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.test.espresso.UiController
-import com.wix.detox.espresso.common.MotionEvents
+import com.wix.detox.espresso.action.common.MotionEvents
 
 /**
  * A detox-swiper that, given the total expected motions, tries to swipe fast and yet avoid an
@@ -92,7 +92,7 @@ class FlinglessSwiper @JvmOverloads constructor(
 
     companion object {
 //        private const val LOG_TAG = "DetoxBatchedSwiper"
-        private const val VELOCITY_SAFETY_RATIO = .85f
+        private const val VELOCITY_SAFETY_RATIO = .99f
         private const val FAST_EVENTS_RATIO = .75f
     }
 }

@@ -1,5 +1,6 @@
-const _ = require('lodash');
+// @ts-nocheck
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
+
 const {
   appWithAbsoluteBinaryPath,
   appWithRelativeBinaryPath,
@@ -31,7 +32,7 @@ describe('composeAppsConfig', () => {
       configurations: {
         [configurationName]: localConfig,
       },
-    }
+    };
 
     errorComposer = new DetoxConfigErrorComposer()
       .setDetoxConfig(globalConfig)
@@ -213,7 +214,7 @@ describe('composeAppsConfig', () => {
         it('should parse it and merge the values inside', () => {
           const { app1, app2 } = compose();
 
-          expect(app1.launchArgs).toEqual({ arg3: 'override'});
+          expect(app1.launchArgs).toEqual({ arg3: 'override' });
           expect(app2.launchArgs).toEqual({ arg1: 'value1', arg3: 'override' });
         });
       });
@@ -237,6 +238,31 @@ describe('composeAppsConfig', () => {
   });
 
   describe('unhappy scenarios:', () => {
+    describe('plain configuration:', () => {
+      beforeEach(() => {
+        localConfig = {
+          type: 'ios.simulator',
+          device: 'Phone',
+          binaryPath: 'path/to/app',
+          bundleId: 'com.example.app',
+          build: 'echo OK',
+          launchArgs: {
+            hello: 'world',
+          }
+        };
+      });
+
+      it('should throw if the config has .app property defined', () => {
+        localConfig.app = 'myapp';
+        expect(compose).toThrowError(errorComposer.oldSchemaHasAppAndApps());
+      });
+
+      it('should throw if the config has .apps property defined', () => {
+        localConfig.apps = ['myapp'];
+        expect(compose).toThrowError(errorComposer.oldSchemaHasAppAndApps());
+      });
+    });
+
     describe('aliased configuration:', () => {
       beforeEach(() => {
         globalConfig.apps = {

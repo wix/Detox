@@ -1,5 +1,7 @@
 const path = require('path');
+
 const sleep = require('../utils/sleep');
+
 const testSummaries = require('./__mocks__/testSummaries.mock');
 const testSuite = require('./templates/plugin/__mocks__/testSuite.mock');
 const testHookError = () => ({ hook: 'beforeEach', error: new Error() });
@@ -40,9 +42,10 @@ describe('ArtifactsManager', () => {
     let artifactsManager, factory, plugin;
 
     beforeEach(() => {
-      factory = jest.fn().mockReturnValue(plugin = {
+      plugin = {
         onBeforeLaunchApp: jest.fn(),
-      });
+      };
+      factory = jest.fn().mockReturnValue(plugin);
 
       artifactsManager = new proxy.ArtifactsManager({
         pathBuilder: new proxy.ArtifactPathBuilder({
@@ -119,10 +122,9 @@ describe('ArtifactsManager', () => {
     });
 
     describe('.preparePathForArtifact()', () => {
-      let argparse, fs;
+      let fs;
 
       beforeEach(() => {
-        argparse = require('../utils/argparse');
         fs = require('fs-extra');
       });
 
@@ -214,7 +216,7 @@ describe('ArtifactsManager', () => {
             expect(proxy.logger.warn.mock.calls).toEqual([[
               {
                 err: expect.any(Error),
-                event: 'SUPPRESS_PLUGIN_ERROR',
+                event: 'ERROR',
                 methodName: hookName,
                 plugin: 'testPlugin',
               },

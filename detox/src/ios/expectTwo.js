@@ -1,6 +1,12 @@
+// @ts-nocheck
+const path = require('path');
+
+const fs = require('fs-extra');
 const _ = require('lodash');
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const { assertEnum, assertNormalized, assertNumber } = require('../utils/assertArgument');
+const tempfile = require('tempfile');
+
+const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
 
@@ -11,12 +17,25 @@ class Expect {
     this.modifiers = [];
   }
 
-  toBeVisible() {
-    return this.expect('toBeVisible');
+  toBeVisible(percent) {
+    if (percent !== undefined && (!Number.isSafeInteger(percent) || percent < 1 || percent > 100)) {
+      throw new Error('`percent` must be an integer between 1 and 100, but got '
+                      + (percent + (' (' + (typeof percent + ')'))));
+    }
+
+    return this.expect('toBeVisible', percent);
   }
 
   toBeNotVisible() {
     return this.not.toBeVisible();
+  }
+
+  toBeFocused() {
+    return this.expect('toBeFocused');
+  }
+
+  toBeNotFocused() {
+    return this.not.toBeFocused();
   }
 
   toExist() {
@@ -73,13 +92,14 @@ class Expect {
   }
 
   createInvocation(expectation, ...params) {
+    const definedParams = _.without(params, undefined);
     return {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
       ...(this.element.index !== undefined && { atIndex: this.element.index }),
-      ...(this.modifiers.length !== 0 && {modifiers: this.modifiers}),
+      ...(this.modifiers.length !== 0 && { modifiers: this.modifiers }),
       expectation,
-      ...(params.length !== 0 && { params: _.without(params, undefined) })
+      ...(definedParams.length !== 0 && { params: definedParams })
     };
   }
 
@@ -97,9 +117,11 @@ class InternalExpect extends Expect {
 }
 
 class Element {
-  constructor(invocationManager, matcher) {
+  constructor(invocationManager, emitter, matcher, index) {
     this._invocationManager = invocationManager;
+    this._emitter = emitter;
     this.matcher = matcher;
+    this.index = index;
   }
 
   atIndex(index) {
@@ -230,24 +252,36 @@ class Element {
     return this.withAction('adjustSliderToPosition', position);
   }
 
-  takeScreenshot() {
-    throw new DetoxRuntimeError({message: 'Element screenshots are not supported on iOS, at the moment!'});
+  async takeScreenshot(fileName) {
+    const { screenshotPath } = await this.withAction('takeScreenshot', fileName);
+
+    const filePath = tempfile('.detox.element-screenshot.png');
+    await fs.move(screenshotPath, filePath);
+    await this._emitter.emit('createExternalArtifact', {
+      pluginId: 'screenshot',
+      artifactName: fileName || path.basename(filePath, '.png'),
+      artifactPath: filePath,
+    });
+
+    return filePath;
   }
 
   createInvocation(action, targetElementMatcher, ...params) {
     params = _.map(params, (param) => _.isNaN(param) ? null : param);
+
+    const definedParams = _.without(params, undefined);
     const invocation = {
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
-      ...(_.without(params, undefined).length !== 0 && { params: _.without(params, undefined) }),
+      ...(definedParams.length !== 0 && { params: definedParams }),
       predicate: this.matcher.predicate
     };
 
     if (targetElementMatcher && targetElementMatcher.matcher && targetElementMatcher.matcher.predicate) {
       invocation.targetElement = {
         predicate: targetElementMatcher.matcher.predicate
-      }
+      };
     }
 
     return invocation;
@@ -300,6 +334,10 @@ class By {
   value(value) {
     return new Matcher().value(value);
   }
+
+  get web() {
+    throw new Error('Detox does not support by.web matchers on iOS.');
+  }
 }
 
 class Matcher {
@@ -327,7 +365,7 @@ class Matcher {
   }
 
   traits(traits) {
-    if (typeof traits !== 'object' || !traits instanceof Array) throw new Error('traits must be an array, got ' + typeof traits);
+    if (!Array.isArray(traits)) throw new Error('traits must be an array, got ' + typeof traits);
     this.predicate = { type: 'traits', value: traits };
     return this;
   }
@@ -379,14 +417,15 @@ class Matcher {
 }
 
 class WaitFor {
-  constructor(invocationManager, element) {
+  constructor(invocationManager, emitter, element) {
     this._invocationManager = invocationManager;
-    this.element = new InternalElement(invocationManager, element.matcher);
+    this.element = new InternalElement(invocationManager, emitter, element.matcher, element.index);
     this.expectation = new InternalExpect(invocationManager, this.element);
+    this._emitter = emitter;
   }
 
-  toBeVisible() {
-    this.expectation = this.expectation.toBeVisible();
+  toBeVisible(percent) {
+    this.expectation = this.expectation.toBeVisible(percent);
     return this;
   }
 
@@ -459,7 +498,7 @@ class WaitFor {
 
   whileElement(matcher) {
     if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
-    this.actionableElement = new InternalElement(this._invocationManager, matcher);
+    this.actionableElement = new InternalElement(this._invocationManager, this._emitter, matcher);
     return this;
   }
 
@@ -568,11 +607,11 @@ class WaitFor {
   }
 }
 
-function element(invocationManager, matcher) {
+function element(invocationManager, emitter, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
-  return new Element(invocationManager, matcher);
+  return new Element(invocationManager, emitter, matcher);
 }
 
 function expect(invocationManager, element) {
@@ -582,24 +621,26 @@ function expect(invocationManager, element) {
   return new Expect(invocationManager, element);
 }
 
-function waitFor(invocationManager, element) {
+function waitFor(invocationManager, emitter, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new WaitFor(invocationManager, element);
+  return new WaitFor(invocationManager, emitter, element);
 }
 
 class IosExpect {
-  constructor({ invocationManager }) {
+  constructor({ invocationManager, emitter }) {
     this._invocationManager = invocationManager;
+    this._emitter = emitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
     this.by = new By();
+    this.web.element = this.web;
   }
 
   element(matcher) {
-    return element(this._invocationManager, matcher);
+    return element(this._invocationManager, this._emitter, matcher);
   }
 
   expect(element) {
@@ -607,16 +648,20 @@ class IosExpect {
   }
 
   waitFor(element) {
-    return waitFor(this._invocationManager, element);
+    return waitFor(this._invocationManager, this._emitter, element);
+  }
+
+  web(_matcher) {
+    throw new Error('Detox does not support web(), web.element() API on iOS.');
   }
 }
 
 function throwMatcherError(param) {
-  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://wix.github.io/Detox/docs/api/matchers`);
 }
 
 function throwElementError(param) {
-  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
+  throw new Error(`${param} is not a Detox element. More about Detox elements here: https://wix.github.io/Detox/docs/api/matchers`);
 }
 
 module.exports = IosExpect;

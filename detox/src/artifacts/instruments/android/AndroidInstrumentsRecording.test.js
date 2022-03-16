@@ -1,3 +1,4 @@
+// @ts-nocheck
 const AndroidInstrumentsRecording = require('./AndroidInstrumentsRecording');
 
 describe('AndroidInstrumentsRecording', () => {

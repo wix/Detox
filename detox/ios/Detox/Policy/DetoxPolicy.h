@@ -12,15 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DetoxPolicy : NSObject
 
-@property (class, nonatomic, strong, readonly) DetoxPolicy* activePolicy NS_SWIFT_NAME(active);
+@property (class, nonatomic, readonly) CGFloat visibilityPixelAlphaThreshold;
+@property (class, nonatomic, readonly) NSUInteger defaultPercentThresholdForVisibility;
+@property (class, nonatomic, readonly) NSUInteger consecutiveTouchPointsWithSameContentOffsetThreshold;
 
-@property (nonatomic, readonly) CGFloat visibilityPixelAlphaThreshold;
-@property (nonatomic, readonly) CGFloat visibilityVisiblePixelRatioThreshold;
-
-@property (nonatomic, readonly) NSUInteger consecutiveTouchPointsWithSameContentOffsetThreshold;
-
-+ (NSString*)descriptionForDouble:(CGFloat)number;
-@property (nonatomic, copy, readonly) NSString* visibilityVisiblePixelRatioThresholdDescription;
++ (NSString*)percentDescriptionForPercent:(CGFloat)percent;
 
 @end
 

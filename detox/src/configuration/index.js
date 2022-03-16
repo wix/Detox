@@ -1,17 +1,24 @@
+// @ts-nocheck
 const _ = require('lodash');
+
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
+
 const collectCliConfig = require('./collectCliConfig');
-const loadExternalConfig = require('./loadExternalConfig');
-const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeAppsConfig = require('./composeAppsConfig');
+const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeBehaviorConfig = require('./composeBehaviorConfig');
 const composeDeviceConfig = require('./composeDeviceConfig');
 const composeRunnerConfig = require('./composeRunnerConfig');
 const composeSessionConfig = require('./composeSessionConfig');
+const loadExternalConfig = require('./loadExternalConfig');
 const selectConfiguration = require('./selectConfiguration');
 
+const hooks = {
+  UNSAFE_configReady: [],
+};
+
 async function composeDetoxConfig({
-  cwd,
+  cwd = process.cwd(),
   argv,
   override,
   userParams,
@@ -88,18 +95,30 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
-  return {
-    artifactsConfig,
+  const result = {
     appsConfig,
+    artifactsConfig,
     behaviorConfig,
     cliConfig,
+    configurationName,
     deviceConfig,
+    errorComposer,
     runnerConfig,
     sessionConfig,
-    errorComposer,
   };
+
+  for (const fn of hooks.UNSAFE_configReady) {
+    await fn({ ...result, argv });
+  }
+
+  return result;
+}
+
+function hook(event, listener) {
+  hooks[event].push(listener);
 }
 
 module.exports = {
   composeDetoxConfig,
+  hook,
 };

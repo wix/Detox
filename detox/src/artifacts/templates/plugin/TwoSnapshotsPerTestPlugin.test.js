@@ -1,8 +1,10 @@
+// @ts-nocheck
 jest.mock('../../../utils/logger.js');
-const TwoSnapshotsPerTestPlugin = require('./TwoSnapshotsPerTestPlugin');
-const ArtifactMock = require('../artifact/__mocks__/ArtifactMock');
-const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
 const testSummaries = require('../../__mocks__/testSummaries.mock');
+const ArtifactMock = require('../artifact/__mocks__/ArtifactMock');
+
+const TwoSnapshotsPerTestPlugin = require('./TwoSnapshotsPerTestPlugin');
+const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
 
 describe('TwoSnapshotsPerTestPlugin', () => {
   let api;
@@ -253,7 +255,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
   describe('onCreateExternalArtifact', () => {
     it('should throw error if { artifact } is not defined', async () => {
-      await expect(plugin.onCreateExternalArtifact({ name: 'Hello'})).rejects.toThrowError();
+      await expect(plugin.onCreateExternalArtifact({ name: 'Hello' })).rejects.toThrowError();
     });
 
     it('should set snapshot in key-value map and track it', async () => {

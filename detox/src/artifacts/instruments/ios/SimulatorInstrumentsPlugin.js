@@ -1,10 +1,12 @@
-const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
-const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
+// @ts-nocheck
 const temporaryPath = require('../../utils/temporaryPath');
+const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
+
+const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
 
 class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
-  constructor({api, client}) {
-    super({api});
+  constructor({ api, client }) {
+    super({ api });
 
     this.client = client;
   }

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxRuntimeError = require('./DetoxRuntimeError');
 
 const J = s => JSON.stringify(s);
@@ -21,7 +22,7 @@ class DetoxRuntimeErrorComposer {
         '\nExpected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }',
       hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
         '\nSee the article for the guidance: ' +
-        'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md' +
+        'https://wix.github.io/Detox/docs/api/test-lifecycle' +
         '\ntestSummary was: ',
         debugInfo: testSummary,
     });
@@ -69,7 +70,7 @@ class DetoxRuntimeErrorComposer {
 }
 
 function toStarlist(dictionary) {
-  return _.keys(dictionary).map(c => `* ${c}`).join('\n')
+  return _.keys(dictionary).map(c => `* ${c}`).join('\n');
 }
 
 module.exports = DetoxRuntimeErrorComposer;

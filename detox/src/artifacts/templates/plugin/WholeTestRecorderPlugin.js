@@ -1,3 +1,4 @@
+// @ts-nocheck
 const ArtifactPlugin = require('./ArtifactPlugin');
 
 /***
@@ -27,7 +28,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
       await testRecording.stop();
 
       if (this.shouldKeepArtifactOfTest(testSummary)) {
-        this._startSavingTestRecording(testRecording, testSummary)
+        this._startSavingTestRecording(testRecording, testSummary);
       } else {
         this._startDiscardingTestRecording(testRecording);
       }
@@ -55,7 +56,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
   /***
    * @abstract
    */
-  async preparePathForTestArtifact(testSummary) {}
+  async preparePathForTestArtifact(testSummary) {} // eslint-disable-line no-unused-vars
 
   _startSavingTestRecording(testRecording, testSummary) {
     this.api.requestIdleCallback(async () => {

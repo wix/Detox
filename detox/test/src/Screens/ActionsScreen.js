@@ -131,6 +131,10 @@ export default class ActionsScreen extends Component {
             <Text style={styles.item}>Text6</Text>
             <Text style={styles.item}>Text7</Text>
             <Text style={styles.item}>Text8</Text>
+            <Text style={styles.item}>Text9</Text>
+            <Text style={styles.item}>Text10</Text>
+            <Text style={styles.item}>Text11</Text>
+            <Text style={styles.item}>Text12</Text>
           </ScrollView>
           { this.state.showScrollOverlays ? <View style={{ height: 55, width: width * 0.75, backgroundColor: 'deepskyblue', position: 'absolute', bottom: 0 }} /> : null }
           { this.state.showScrollOverlays ? <View style={{ height: 55, width: width * 0.75, backgroundColor: 'goldenrod', position: 'absolute', right: 0 }} /> : null }
@@ -159,7 +163,7 @@ export default class ActionsScreen extends Component {
         </View>
 
         <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>
-          <Slider testID='sliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0} />
+          <Slider testID='sliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0}/>
         </View>
 
         <View>

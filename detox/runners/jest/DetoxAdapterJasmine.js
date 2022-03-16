@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const DetoxAdapter = require('./DetoxAdapterImpl');
 
 class DetoxAdapterJasmine /* extends JasmineReporter */ {
@@ -24,11 +25,11 @@ class DetoxAdapterJasmine /* extends JasmineReporter */ {
   }
 
   async suiteStarted(result) {
-    await this._adapter.suiteStart({name: result.description});
+    await this._adapter.suiteStart({ name: result.description });
   }
 
   async suiteDone(result) {
-    await this._adapter.suiteEnd({name: result.description});
+    await this._adapter.suiteEnd({ name: result.description });
   }
 
   specStarted(result) {

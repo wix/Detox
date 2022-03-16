@@ -1,16 +1,14 @@
+// @ts-nocheck
 jest.mock('../utils/argparse');
 
-const _ = require('lodash');
 const os = require('os');
 const path = require('path');
+
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 describe('composeDetoxConfig', () => {
   let args;
   let configuration;
-  let detoxConfig;
-  let deviceConfig;
-  let userParams;
 
   /** @type {DetoxConfigErrorComposer} */
   let errorComposer;
@@ -19,9 +17,6 @@ describe('composeDetoxConfig', () => {
     errorComposer = new DetoxConfigErrorComposer();
 
     args = {};
-    detoxConfig = {};
-    deviceConfig = {};
-    userParams = undefined;
 
     require('../utils/argparse').getArgValue.mockImplementation(key => args[key]);
     configuration = require('./index');
@@ -123,7 +118,9 @@ describe('composeDetoxConfig', () => {
         },
         deviceConfig: expect.objectContaining({
           type: 'ios.simulator',
-          device: 'iPhone XS',
+          device: {
+            type: 'iPhone XS',
+          },
         }),
         runnerConfig: {
           testRunner: 'mocha',
@@ -134,6 +131,30 @@ describe('composeDetoxConfig', () => {
           sessionId: 'external file works',
         }),
       });
+    });
+
+    it('should enable to add hooks on UNSAFE_configReady', async () => {
+      const listener = jest.fn();
+      configuration.hook('UNSAFE_configReady', listener);
+
+      await configuration.composeDetoxConfig({
+        cwd: path.join(__dirname, '__mocks__/configuration/packagejson'),
+        override: {
+          configurations: {
+            simple: {
+              binaryPath: 'path/to/app',
+            },
+          },
+        },
+      });
+
+      expect(listener).toHaveBeenCalledWith(expect.objectContaining({
+        appsConfig: expect.any(Object),
+        artifactsConfig: expect.any(Object),
+        behaviorConfig: expect.any(Object),
+        cliConfig: expect.any(Object),
+        deviceConfig: expect.any(Object),
+      }));
     });
   });
 });

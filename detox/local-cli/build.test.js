@@ -1,8 +1,10 @@
+// @ts-nocheck
 jest.mock('child_process');
 jest.mock('../src/utils/logger');
 jest.mock('../src/configuration');
 
 const tempfile = require('tempfile');
+
 const DetoxConfigErrorComposer = require('../src/errors/DetoxConfigErrorComposer');
 
 describe('build', () => {
@@ -40,6 +42,18 @@ describe('build', () => {
 
     await callCli('./build', 'build');
     expect(execSync).toHaveBeenCalledWith('yet another command', expect.anything());
+  });
+
+  it('skips building the app if the binary exists and --if-missing flag is set', async () => {
+    detoxConfig.appsConfig.default = { build: 'yet another command', binaryPath: __filename };
+
+    await callCli('./build', 'build -i');
+    expect(execSync).not.toHaveBeenCalled();
+
+    await callCli('./build', 'build --if-missing');
+    expect(execSync).not.toHaveBeenCalled();
+
+    expect(log.info).toHaveBeenCalledWith('Skipping build for "default" app...');
   });
 
   it('fails with an error if a build script has not been found', async () => {

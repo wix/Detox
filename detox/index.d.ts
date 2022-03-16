@@ -1,6 +1,5 @@
 // TypeScript definitions for Detox
-//
-// Original authors:
+// Original authors (from DefinitelyTyped):
 // * Jane Smith <jsmith@example.com>
 // * Tareq El-Masri <https://github.com/TareqElMasri>
 // * Steve Chun <https://github.com/stevechun>
@@ -15,6 +14,7 @@ declare global {
     const waitFor: Detox.DetoxExportWrapper['waitFor'];
     const expect: Detox.DetoxExportWrapper['expect'];
     const by: Detox.DetoxExportWrapper['by'];
+    const web: Detox.DetoxExportWrapper['web'];
     const detoxCircus: Detox.DetoxCircus;
 
     namespace NodeJS {
@@ -24,6 +24,7 @@ declare global {
             waitFor: Detox.DetoxExportWrapper['waitFor'];
             expect: Detox.DetoxExportWrapper['expect'];
             by: Detox.DetoxExportWrapper['by'];
+            web: Detox.DetoxExportWrapper['web'];
             detoxCircus: Detox.DetoxCircus;
         }
     }
@@ -33,10 +34,21 @@ declare global {
 
         interface DetoxConfig {
             /**
+             * @example extends: './relative/detox.config'
+             * @example extends: '@my-org/detox-preset'
+             */
+            extends?: string;
+            /**
              * @example testRunner: 'jest'
              * @example testRunner: 'mocha'
              */
             testRunner?: string;
+            /**
+             * Stops passing default `--maxWorkers 1` to the test runner,
+             * presuming that from now on you have that already configured
+             * in your test runner config as a default.
+             */
+            skipLegacyWorkersInjection?: boolean;
             /**
              * @example runnerConfig: 'e2e/config.js'
              */
@@ -202,6 +214,7 @@ declare global {
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
             device: string | Partial<IosSimulatorQuery>;
+            bootArgs?: string;
         }
 
         interface DetoxIosNoneDriverConfig {
@@ -210,22 +223,28 @@ declare global {
             device?: string | Partial<IosSimulatorQuery>;
         }
 
-        interface DetoxAttachedAndroidDriverConfig {
+        interface DetoxSharedAndroidDriverConfig {
+            forceAdbInstall?: boolean;
+            utilBinaryPaths?: string[];
+        }
+
+        interface DetoxAttachedAndroidDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.attached';
             device: string | { adbName: string };
-            utilBinaryPaths?: string[];
         }
 
-        interface DetoxAndroidEmulatorDriverConfig {
+        interface DetoxAndroidEmulatorDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.emulator';
             device: string | { avdName: string };
-            utilBinaryPaths?: string[];
+            bootArgs?: string;
+            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
+            headless?: boolean;
+            readonly?: boolean;
         }
 
-        interface DetoxGenymotionCloudDriverConfig {
+        interface DetoxGenymotionCloudDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.genycloud';
             device: string | { recipeUUID: string; } | { recipeName: string; };
-            utilBinaryPaths?: string[];
         }
 
         interface DetoxCustomDriverConfig {
@@ -272,10 +291,11 @@ declare global {
         // Detox exports all methods from detox global and all of the global constants.
         interface DetoxInstance {
             device: Device;
-            element: Element;
-            waitFor: WaitFor;
-            expect: Expect<Expect<Promise<void>>>;
-            by: Matchers;
+            element: ElementFacade;
+            waitFor: WaitForFacade;
+            expect: ExpectFacade;
+            by: ByFacade;
+            web: WebFacade;
         }
 
         interface DetoxExportWrapper extends DetoxInstance {
@@ -304,6 +324,13 @@ declare global {
              * });
              */
             cleanup(): Promise<void>;
+
+            /**
+             * Unstable. API to access an assembled detox config before it gets passed to testRunner
+             * or detox.init(). Use it only if you don't have another option.
+             * @internal
+             */
+            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
         }
 
         interface DetoxInitOptions {
@@ -325,6 +352,19 @@ declare global {
             reuse?: boolean;
         }
 
+        type Point2D = {
+            x: number,
+            y: number,
+        }
+
+        /**
+         * @deprecated
+         */
+        type AppLaunchArgsOperationOptions = Partial<{
+            /** Changes the scope of the operation: transient or permanent app launch args */
+            permanent: boolean;
+        }>;
+
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
          *
@@ -334,13 +374,25 @@ declare global {
          */
         interface AppLaunchArgs {
             /**
+             * Shared (global) arguments that are not specific to a particular application.
+             * Selecting another app does not reset them, yet they still can be overridden
+             * by configuring app-specific launch args.
+             * @see Device#selectApp
+             * @see AppLaunchArgs
+             */
+            readonly shared: ScopedAppLaunchArgs;
+
+            /**
              * Modify the launch-arguments via a modifier object, according to the following logic:
-             *  - Concrete modifier properties would either set anew or override the value of existing properties with the same name, with
-             *    the specific value.
-             *  - Modifier properties set to either `undefined` or `null` would have the equivalent property deleted.
+             * - Non-nullish modifier properties would set a new value or override the previous value of
+             *   existing properties with the same name.
+             * - Modifier properties set to either `undefined` or `null` would delete the corresponding property
+             *   if it existed.
+             * These custom app launch arguments get erased whenever you select a different application.
+             * If you need to share them between all the applications, use {@link AppLaunchArgs#shared} property.
+             * Note: app-specific launch args have a priority over shared ones.
              *
              * @param modifier The modifier object.
-             *
              * @example
              * // With current launch arguments set to:
              * // {
@@ -351,7 +403,7 @@ declare global {
              *   mockServerPort: 4321,
              *   mockServerCredentials: null,
              *   mockServerToken: 'abcdef',
-             * };
+             * });
              * await device.launchApp();
              * // ==> launch-arguments become:
              * // {
@@ -359,18 +411,45 @@ declare global {
              * //   mockServerToken: 'abcdef',
              * // }
              */
-            modify(modifier: object): void;
+            modify(modifier: object): this;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            modify(modifier: object, options: AppLaunchArgsOperationOptions): this;
 
             /**
-             * Complete reset all currently set launch-arguments (i.e. back to an empty JS object).
+             * Reset all app-specific launch arguments (back to an empty object).
+             * If you need to reset the shared launch args, use {@link AppLaunchArgs#shared}.
              */
-            reset(): void;
+            reset(): this;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            reset(options: AppLaunchArgsOperationOptions): this;
 
             /**
-             * Get all currently set launch-arguments.
-             * @returns An object containing all launch-arguments. Note: Changes on the returned object will not be reflected on the
-             * launch-arguments associated with the device.
+             * Get all currently set launch arguments (including shared ones).
+             * @returns An object containing all launch-arguments.
+             * Note: mutating the values inside the result object is pointless, as it is immutable.
              */
+            get(): object;
+            /**
+             * @deprecated Use {@link AppLaunchArgs#shared} instead.
+             */
+            get(options: AppLaunchArgsOperationOptions): object;
+        }
+
+        /**
+         * Shared (global) arguments that are not specific to a particular application.
+         */
+        interface ScopedAppLaunchArgs {
+            /** @see AppLaunchArgs#modify */
+            modify(modifier: object): this;
+
+            /** @see AppLaunchArgs#reset */
+            reset(): this;
+
+            /** @see AppLaunchArgs#get */
             get(): object;
         }
 
@@ -409,7 +488,7 @@ declare global {
             /**
              * Launch the app.
              *
-             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md).
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -433,7 +512,7 @@ declare global {
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              *
              * @example
              * // With Detox being preconfigured statically to use these arguments in app launch:
@@ -518,7 +597,14 @@ declare global {
             setOrientation(orientation: Orientation): Promise<void>;
 
             /**
-             * Note: setLocation is dependent on fbsimctl. if fbsimctl is not installed, the command will fail, it must be installed. Sets the simulator location to the given latitude and longitude.
+             * Sets the simulator/emulator location to the given latitude and longitude.
+             *
+             * <p/>On iOS `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl)
+             * which [is now deprecated](https://github.com/wix/Detox/issues/1371).
+             * If `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+             *
+             * <p/>On Android `setLocation` will work with both Android Emulator (bundled with Android development tools) and Genymotion.
+             * The correct permissions must be set in your app manifest.
              *
              * @example await device.setLocation(32.0853, 34.7818);
              */
@@ -532,18 +618,30 @@ declare global {
             setURLBlacklist(urls: string[]): Promise<void>;
 
             /**
-             * Enable EarlGrey's synchronization mechanism (enabled by default). This is being reset on every new instance of the app.
+             * Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution.
              *
-             * @example await device.enableSynchronization();
-             */
-            enableSynchronization(): Promise<void>;
-
-            /**
-             * Disable EarlGrey's synchronization mechanism (enabled by default) This is being reset on every new instance of the app.
+             * <p/>This API is useful for cases where test assertions must be made in an area of your application where it is okay for it to ever remain partly *busy* (e.g. due to an
+             * endlessly repeating on-screen animation). However, using it inherently suggests that you are likely to resort to applying `sleep()`'s in your test code - testing
+             * that area, **which is not recommended and can never be 100% stable.
+             * **Therefore, as a rule of thumb, test code running "inside" a sync-disabled mode must be reduced to the bare minimum.
+             *
+             * <p/>Note: Synchronization is enabled by default, and it gets **reenabled on every launch of a new instance of the app.**
              *
              * @example await device.disableSynchronization();
              */
             disableSynchronization(): Promise<void>;
+
+            /**
+             * Reenable synchronization (idle/busy monitoring) with the app - namely, resume waiting for the app to go idle before moving forward in the test execution, after a
+             * previous disabling of it through a call to `device.disableSynchronization()`.
+             *
+             * <p/>Warning: Making this call would resume synchronization **instantly**, having its returned promise only resolve when the app becomes idle again.
+             * In other words, this **must only be called after you navigate back to "the safe zone", where the app should be able to eventually become idle again**, or it would
+             * remain suspended "forever" (i.e. until a safeguard time-out expires).
+             *
+             * @example await device.enableSynchronization();
+             */
+            enableSynchronization(): Promise<void>;
 
             /**
              * Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing previously set permissions.
@@ -564,8 +662,8 @@ declare global {
 
             /**
              * Takes a screenshot on the device and schedules putting it in the artifacts folder upon completion of the current test.
-             * @param {string} name for the screenshot artifact
-             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @param name for the screenshot artifact
+             * @returns a temporary path to the screenshot.
              * @example
              * test('Menu items should have logout', async () => {
              *   const tempPath = await device.takeScreenshot('tap on menu');
@@ -576,6 +674,24 @@ declare global {
              * });
              */
             takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application
+             * to a temporary folder and schedules putting it to the artifacts folder upon the completion of
+             * the current test. The file can be opened later in Xcode 12.0 and above.
+             * @see https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113
+             * @param [name="capture"] optional name for the *.viewhierarchy artifact
+             * @returns a temporary path to the captured view hierarchy snapshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   await device.captureViewHierarchy('myElements');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the artifact will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/myElements.viewhierarchy
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/myElements.viewhierarchy
+             * });
+             */
+            captureViewHierarchy(name?: string): Promise<string>;
 
             /**
              * Simulate shake (iOS Only)
@@ -628,23 +744,47 @@ declare global {
              * UIDevice's autogenerated code reference: https://github.com/wix/Detox/blob/master/detox/src/android/espressoapi/UIDevice.js
              */
             getUiDevice(): Promise<void>;
-        }
-
-        type DetoxAny = Element & Actions<any> & WaitFor;
-
-        interface Element {
-            (by: Matchers): DetoxAny;
 
             /**
-             * Choose from multiple elements matching the same matcher using index
-             * @example await element(by.text('Product')).atIndex(2);
+             * (Android Only)
+             * Runs `adb reverse tcp:PORT tcp:PORT` for the current device
+             * to enable network requests forwarding on localhost:PORT (computer<->device).
+             * For more information, see {@link https://www.reddit.com/r/reactnative/comments/5etpqw/what_do_you_call_what_adb_reverse_is_doing|here}.
+             * This is a no-op when running on iOS.
              */
-            atIndex(index: number): DetoxAny;
+            reverseTcpPort(port: number): Promise<void>;
+
+            /**
+             * (Android Only)
+             * Runs `adb reverse --remove tcp:PORT tcp:PORT` for the current device
+             * to disable network requests forwarding on localhost:PORT (computer<->device).
+             * For more information, see {@link https://www.reddit.com/r/reactnative/comments/5etpqw/what_do_you_call_what_adb_reverse_is_doing|here}.
+             * This is a no-op when running on iOS.
+             */
+            unreverseTcpPort(port: number): Promise<void>;
         }
 
-        interface Matchers {
-            (by: Matchers): Matchers;
+        /**
+         * @deprecated
+         */
+        type DetoxAny = NativeElement & WaitFor;
 
+        interface ElementFacade {
+            (by: NativeMatcher): IndexableNativeElement;
+        }
+
+        interface IndexableNativeElement extends NativeElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @example await element(by.text('Product')).atIndex(2).tap();
+             */
+            atIndex(index: number): NativeElement;
+        }
+
+        interface NativeElement extends NativeElementActions {
+        }
+
+        interface ByFacade {
             /**
              * by.id will match an id that is given to the view via testID prop.
              * @example
@@ -653,69 +793,166 @@ declare global {
              * // Then match with by.id:
              * await element(by.id('tap_me'));
              */
-            id(id: string): Matchers;
+            id(id: string): NativeMatcher;
 
             /**
              * Find an element by text, useful for text fields, buttons.
              * @example await element(by.text('Tap Me'));
              */
-            text(text: string): Matchers;
+            text(text: string): NativeMatcher;
 
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
              * @example await element(by.label('Welcome'));
              */
-            label(label: string): Matchers;
+            label(label: string): NativeMatcher;
 
             /**
              * Find an element by native view type.
              * @example await element(by.type('RCTImageView'));
              */
-            type(nativeViewType: string): Matchers;
+            type(nativeViewType: string): NativeMatcher;
 
             /**
              * Find an element with an accessibility trait. (iOS only)
              * @example await element(by.traits(['button']));
              */
-            traits(traits: string[]): Matchers;
+            traits(traits: string[]): NativeMatcher;
 
+            /**
+             * Collection of web matchers
+             */
+            readonly web: ByWebFacade;
+        }
+
+        interface ByWebFacade {
+            /**
+             * Find an element on the DOM tree by its id
+             * @param id
+             * @example
+             * web.element(by.web.id('testingh1'))
+             */
+            id(id: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its CSS class
+             * @param className
+             * @example
+             * web.element(by.web.className('a'))
+             */
+            className(className: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree matching the given CSS selector
+             * @param cssSelector
+             * @example
+             * web.element(by.web.cssSelector('#cssSelector'))
+             */
+            cssSelector(cssSelector: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its "name" attribute
+             * @param name
+             * @example
+             * web.element(by.web.name('sec_input'))
+             */
+            name(name: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its XPath
+             * @param xpath
+             * @example
+             * web.element(by.web.xpath('//*[@id="testingh1-1"]'))
+             */
+            xpath(xpath: string): WebMatcher;
+
+            /**
+             * Find an <a> element on the DOM tree by its link text (href content)
+             * @param linkText
+             * @example
+             * web.element(by.web.href('disney.com'))
+             */
+            href(linkText: string): WebMatcher;
+
+            /**
+             * Find an <a> element on the DOM tree by its partial link text (href content)
+             * @param linkTextFragment
+             * @example
+             * web.element(by.web.hrefContains('disney'))
+             */
+            hrefContains(linkTextFragment: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its tag name
+             * @param tag
+             * @example
+             * web.element(by.web.tag('mark'))
+             */
+            tag(tagName: string): WebMatcher;
+        }
+
+        interface NativeMatcher {
+            /**
+             * Find an element satisfying all the matchers
+             * @example await element(by.text('Product').and(by.id('product_name'));
+             */
+            and(by: NativeMatcher): NativeMatcher;
             /**
              * Find an element by a matcher with a parent matcher
              * @example await element(by.id('Grandson883').withAncestor(by.id('Son883')));
              */
-            withAncestor(parentBy: Matchers): Matchers;
-
+            withAncestor(parentBy: NativeMatcher): NativeMatcher;
             /**
              * Find an element by a matcher with a child matcher
              * @example await element(by.id('Son883').withDescendant(by.id('Grandson883')));
              */
-            withDescendant(childBy: Matchers): Matchers;
-
-            /**
-             * Find an element by multiple matchers
-             * @example await element(by.text('Product').and(by.id('product_name'));
-             */
-            and(by: Matchers): Matchers;
+            withDescendant(childBy: NativeMatcher): NativeMatcher;
         }
 
-        interface Expect<R> {
-            (element: Element): Expect<Promise<void>>;
+        interface WebMatcher {
+            __web__: any; // prevent type coersion
+        }
+
+        interface ExpectFacade {
+            (element: NativeElement): Expect;
+            (webElement: WebElement): WebExpect;
+        }
+
+        interface WebViewElement {
+            element(webMatcher: WebMatcher): IndexableWebElement;
+        }
+
+        interface WebFacade extends WebViewElement {
+            /**
+             * Gets the webview element as a testing element.
+             * @param matcher a simple view matcher for the webview element in th UI hierarchy.
+             * If there is only ONE webview element in the UI hierarchy, its NOT a must to supply it.
+             * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
+             */
+            (matcher?: NativeMatcher): WebViewElement;
+        }
+
+        interface Expect<R = Promise<void>> {
 
             /**
-             * Expect the view to be at least 75% visible.
-             * @example await expect(element(by.id('UniqueId204'))).toBeVisible();
+             * Expect the view to be at least N% visible. If no number is provided then defaults to 75%. Negating this
+             * expectation with a `not` expects the view's visible area to be smaller than N%.
+             * @param pct optional integer ranging from 1 to 100, indicating how much percent of the view should be
+             *  visible to the user to be accepted.
+             * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
              */
-            toBeVisible(): R;
+            toBeVisible(pct?: number): R;
 
             /**
              * Negate the expectation.
              * @example await expect(element(by.id('UniqueId205'))).not.toBeVisible();
              */
-            not: Expect<Promise<void>>;
+            not: this;
 
             /**
              * Expect the view to not be visible.
              * @example await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+             * @deprecated Use `.not.toBeVisible()` instead.
              */
             toBeNotVisible(): R;
 
@@ -728,8 +965,22 @@ declare global {
             /**
              * Expect the view to not exist in the UI hierarchy.
              * @example await expect(element(by.id('RandomJunk959'))).toNotExist();
+             * @deprecated Use `.not.toExist()` instead.
              */
             toNotExist(): R;
+
+            /**
+             * Expect the view to be focused.
+             * @example await expect(element(by.id('loginInput'))).toBeFocused();
+             */
+            toBeFocused(): R;
+
+            /**
+             * Expect the view not to be focused.
+             * @example await expect(element(by.id('passwordInput'))).toBeNotFocused();
+             * @deprecated Use `.not.toBeFocused()` instead.
+             */
+            toBeNotFocused(): R;
 
             /**
              * In React Native apps, expect UI component of type <Text> to have text.
@@ -763,16 +1014,26 @@ declare global {
              * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
              */
             toHaveValue(value: any): R;
+
+            /**
+             * Expect Slider to have a position (0 - 1).
+             * Can have an optional tolerance to take into account rounding issues on ios
+             * @example await expect(element(by.id('SliderId'))).toHavePosition(0.75);
+             * @example await expect(element(by.id('SliderId'))).toHavePosition(0.74, 0.1);
+             */
+            toHaveSliderPosition(position: number, tolerance?: number): Promise<void>;
         }
 
-        interface WaitFor {
+        interface WaitForFacade {
             /**
              * This API polls using the given expectation continuously until the expectation is met. Use manual synchronization with waitFor only as a last resort.
              * NOTE: Every waitFor call must set a timeout using withTimeout(). Calling waitFor without setting a timeout will do nothing.
              * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
              */
-            (element: Element): Expect<WaitFor>;
+            (element: NativeElement): Expect<WaitFor>;
+        }
 
+        interface WaitFor {
             /**
              * Waits for the condition to be met until the specified time (millis) have elapsed.
              * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
@@ -783,71 +1044,76 @@ declare global {
              * Performs the action repeatedly on the element until an expectation is met
              * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
              */
-            whileElement(by: Matchers): DetoxAny;
+            whileElement(by: NativeMatcher): NativeElement & WaitFor;
+            // TODO: not sure about & WaitFor - check if we can chain whileElement multiple times
         }
 
-        interface Actions<R> {
+        interface NativeElementActions {
             /**
              * Simulate tap on an element
+             * @param point relative coordinates to the matched element (the element size could changes on different devices or even when changing the device font size)
              * @example await element(by.id('tappable')).tap();
+             * @example await element(by.id('tappable')).tap({ x:5, y:10 });
              */
-            tap(): Promise<Actions<R>>;
+            tap(point?: Point2D): Promise<void>;
 
             /**
              * Simulate long press on an element
+             * @param duration (iOS only) custom press duration time, in milliseconds. Optional (default is 1000ms).
              * @example await element(by.id('tappable')).longPress();
              */
-            longPress(): Promise<Actions<R>>;
+            longPress(duration?: number): Promise<void>;
 
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)
              * @example await element(by.id('draggable')).longPressAndDrag(2000, NaN, NaN, element(by.id('target')), NaN, NaN, 'fast', 0);
              */
-            longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: Element,
-                             normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<Actions<R>>;
+            longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: NativeElement,
+                             normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<void>;
             /**
              * Simulate multiple taps on an element.
              * @param times number of times to tap
              * @example await element(by.id('tappable')).multiTap(3);
              */
-            multiTap(times: number): Promise<Actions<R>>;
+            multiTap(times: number): Promise<void>;
 
             /**
              * Simulate tap at a specific point on an element.
              * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
+             * @deprecated Use `.tap()` instead.
              */
-            tapAtPoint(point: { x: number; y: number }): Promise<Actions<R>>;
+            tapAtPoint(point: Point2D): Promise<void>;
 
             /**
              * Use the builtin keyboard to type text into a text field.
              * @example await element(by.id('textField')).typeText('passcode');
              */
-            typeText(text: string): Promise<Actions<R>>;
+            typeText(text: string): Promise<void>;
 
             /**
              * Paste text into a text field.
              * @example await element(by.id('textField')).replaceText('passcode again');
              */
-            replaceText(text: string): Promise<Actions<R>>;
+            replaceText(text: string): Promise<void>;
 
             /**
              * Clear text from a text field.
              * @example await element(by.id('textField')).clearText();
              */
-            clearText(): Promise<Actions<R>>;
+            clearText(): Promise<void>;
 
             /**
              * Taps the backspace key on the built-in keyboard.
              * @example await element(by.id('textField')).tapBackspaceKey();
              */
-            tapBackspaceKey(): Promise<Actions<R>>;
+            tapBackspaceKey(): Promise<void>;
 
             /**
              * Taps the return key on the built-in keyboard.
              * @example await element(by.id('textField')).tapReturnKey();
              */
-            tapReturnKey(): Promise<Actions<R>>;
+            tapReturnKey(): Promise<void>;
 
             /**
              * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
@@ -863,14 +1129,28 @@ declare global {
               direction: Direction,
               startPositionX?: number,
               startPositionY?: number,
-            ): Promise<Actions<R>>;
+            ): Promise<void>;
+
+            /**
+             * Scroll to index.
+             * @example await element(by.id('scrollView')).scrollToIndex(10);
+             */
+            scrollToIndex(
+              index: Number
+            ): Promise<void>;
 
             /**
              * Scroll to edge.
              * @example await element(by.id('scrollView')).scrollTo('bottom');
              * @example await element(by.id('scrollView')).scrollTo('top');
              */
-            scrollTo(edge: Direction): Promise<Actions<R>>;
+            scrollTo(edge: Direction): Promise<void>;
+
+            /**
+             * Adjust slider to position.
+             * @example await element(by.id('slider')).adjustSliderToPosition(0.75);
+             */
+            adjustSliderToPosition(newPosition: number): Promise<void>;
 
             /**
              * Swipes in the provided direction at the provided speed, started from percentage.
@@ -884,12 +1164,12 @@ declare global {
              * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2);
              * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
              */
-            swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<Actions<R>>;
+            swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<void>;
 
             /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
-             * See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
+             * See [here](https://wix.github.io/Detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
              *
              * @param column number of datepicker column (starts from 0)
              * @param value string value in set column (must be correct)
@@ -898,7 +1178,7 @@ declare global {
              * await element(by.type('UIPickerView')).setColumnToValue(1,"6");
              * await element(by.type('UIPickerView')).setColumnToValue(2,"34");
              */
-            setColumnToValue(column: number, value: string): Promise<Actions<R>>;
+            setColumnToValue(column: number, value: string): Promise<void>;
 
             /**
              * Sets the date of a date picker to a date generated from the provided string and date format. (iOS only)
@@ -908,7 +1188,7 @@ declare global {
              * await expect(element(by.id('datePicker'))).toBeVisible();
              * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
              */
-            setDatePickerDate(dateString: string, dateFormat: string): Promise<Actions<R>>;
+            setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
             /**
              * Pinches in the given direction with speed and angle. (iOS only)
@@ -916,11 +1196,163 @@ declare global {
              * @example
              * await expect(element(by.id('PinchableScrollView'))).toBeVisible();
              * await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+             * @deprecated Use `.pinch()` instead.
              */
-            pinchWithAngle(direction: Direction, speed: Speed, angle: number): Promise<Actions<R>>;
+            pinchWithAngle(direction: PinchDirection, speed: Speed, angle: number): Promise<void>;
+
+            /**
+             * Pinches with the given scale, speed, and angle. (iOS only)
+             * @param speed default is `fast`
+             * @param angle value in radiant, default is `0`
+             * @example
+             * await element(by.id('PinchableScrollView')).pinch(1.1);
+             * await element(by.id('PinchableScrollView')).pinch(2.0);
+             * await element(by.id('PinchableScrollView')).pinch(0.001);
+             */
+            pinch(scale: number, speed?: Speed, angle?: number): Promise<void>;
+
+            /**
+             * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/screenshots#element-level-screenshots}
+             * @param {string} name for the screenshot artifact
+             * @returns {Promise<string>} a temporary path to the screenshot.
+             * @example
+             * test('Menu items should have logout', async () => {
+             *   const imagePath = await element(by.id('menuRoot')).takeScreenshot('tap on menu');
+             *   // The temporary path will remain valid until the test completion.
+             *   // Afterwards, the screenshot will be moved, e.g.:
+             *   // * on success, to: <artifacts-location>/✓ Menu items should have Logout/tap on menu.png
+             *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
+             * });
+             */
+             takeScreenshot(name: string): Promise<string>;
+
+            /**
+             * Gets the native (OS-dependent) attributes of the element.
+             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             *
+             * @example
+             * test('Get the attributes for my text element', async () => {
+             *    const attributes = await element(by.id('myText')).getAttributes()
+             *    const jestExpect = require('expect');
+             *    // 'visible' attribute available on both iOS and Android
+             *    jestExpect(attributes.visible).toBe(true);
+             *    // 'activationPoint' attribute available on iOS only
+             *    jestExpect(attributes.activationPoint.x).toHaveValue(50);
+             *    // 'width' attribute available on Android only
+             *    jestExpect(attributes.width).toHaveValue(100);
+             * })
+             */
+             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+        }
+
+        interface WebExpect<R = Promise<void>> {
+            /**
+             * Negate the expectation.
+             * @example await expect(web.element(by.web.id('UniqueId205'))).not.toExist();
+             */
+            not: this;
+
+            /**
+             * Expect the element content to have the `text` supplied
+             * @param text expected to be on the element content
+             * @example
+             * await expect(web.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
+             */
+            toHaveText(text: string): R
+
+            /**
+             * Expect the view to exist in the webview DOM tree.
+             * @example await expect(web.element(by.web.id('UniqueId205'))).toExist();
+             */
+            toExist(): R;
+        }
+
+        interface IndexableWebElement extends WebElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @example await web.element(by.web.hrefContains('Details')).atIndex(2).tap();
+             */
+            atIndex(index: number): WebElement;
+        }
+
+        interface WebElement extends WebElementActions {
+        }
+
+        interface WebElementActions {
+            tap(): Promise<void>
+
+            /**
+             * @param text to type
+             * @param isContentEditable whether its a ContentEditable element, default is false.
+             */
+            typeText(text: string, isContentEditable: boolean): Promise<void>
+
+            /**
+             * At the moment not working on content-editable
+             * @param text to replace with the old content.
+             */
+            replaceText(text: string): Promise<void>
+
+            /**
+             * At the moment not working on content-editable
+             */
+            clearText(): Promise<void>
+
+            /**
+             * scrolling to the view, the element top position will be at the top of the screen.
+             */
+            scrollToView(): Promise<void>
+
+            /**
+             * Gets the input content
+             */
+            getText(): Promise<string>
+
+            /**
+             * Calls the focus function on the element
+             */
+            focus(): Promise<void>
+
+            /**
+             * Selects all the input content, works on ContentEditable at the moment.
+             */
+            selectAllText(): Promise<void>
+
+            /**
+             * Moves the input cursor / caret to the end of the content, works on ContentEditable at the moment.
+             */
+            moveCursorToEnd(): Promise<void>
+
+            /**
+             * Running a script on the element
+             * @param script a method that accept the element as its first arg
+             * @example function foo(element) { console.log(element); }
+             */
+            runScript(script: string): Promise<any>
+
+            /**
+             * Running a script on the element that accept args
+             * @param script a method that accept few args, and the element as the last arg.
+             * @param args a list of args to pass to the script
+             * @example function foo(a, b, c, element) { console.log(`${a}, ${b}, ${c}, ${element}`)}
+             */
+            runScriptWithArgs(script: string, args: any[]): Promise<any>;
+
+            /**
+             * Gets the current page url
+             */
+            getCurrentUrl(): Promise<string>;
+
+            /**
+             * Gets the current page title
+             */
+            getTitle(): Promise<string>;
         }
 
         type Direction = 'left' | 'right' | 'top' | 'bottom' | 'up' | 'down';
+
+        type PinchDirection = 'outward' | 'inward'
 
         type Orientation = 'portrait' | 'landscape';
 
@@ -950,6 +1382,7 @@ declare global {
             siri?: SiriPermission;
             speech?: SpeechPermission;
             faceid?: FaceIDPermission;
+            userTracking?: UserTrackingPermission;
         }
 
         type LocationPermission = 'always' | 'inuse' | 'never' | 'unset';
@@ -968,6 +1401,7 @@ declare global {
         type SpeechPermission = PermissionState;
         type NotificationsPermission = PermissionState;
         type FaceIDPermission = PermissionState;
+        type UserTrackingPermission = PermissionState;
 
         interface DeviceLaunchAppConfig {
             /**
@@ -1000,7 +1434,7 @@ declare global {
             delete?: boolean;
             /**
              * Arguments to pass-through into the app.
-             * Refer to the [dedicated guide](https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
              */
             launchArgs?: Record<string, any>;
             /**
@@ -1026,6 +1460,150 @@ declare global {
                  */
                 addEventsListener(listener: CircusTestEventListenerBase): void
             };
+        }
+
+        // Element Attributes Shared Among iOS and Android
+        interface ElementAttributes {
+            /**
+             * Whether or not the element is enabled for user interaction.
+             */
+            enabled: boolean;
+            /**
+             * The identifier of the element. Matches accessibilityIdentifier on iOS, and the main view tag, on Android - both commonly holding the component's test ID in React Native apps.
+             */
+            identifier: string;
+            /**
+             * Whether the element is visible. On iOS, visibility is calculated for the activation point. On Android, the attribute directly holds the value returned by View.getLocalVisibleRect()).
+             */
+            visible: boolean;
+            /**
+             * The text value of any textual element.
+             */
+            text?: string;
+            /**
+             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
+             */
+            label?: string;
+            /**
+             * The placeholder text value of the element. Matches hint on android.
+             */
+            placeholder?: string;
+            /**
+             * The value of the element, where applicable.
+             * Matches accessibilityValue, on iOS.
+             * For example: the position of a slider, or whether a checkbox has been marked (Android).
+             */
+            value?: unknown;
+        }
+
+        interface IosElementAttributeFrame {
+            y: number;
+            x: number;
+            width: number;
+            height: number;
+        }
+
+        interface IosElementAttributeInsets {
+            right: number;
+            top: number;
+            left: number;
+            bottom: number;
+        }
+
+        // iOS Specific Attributes
+        interface IosElementAttributes extends ElementAttributes {
+            /**
+             * The [activation point]{@link https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint} of the element, in element coordinate space.
+             */
+            activationPoint: Point2D;
+            /**
+             * The activation point of the element, in normalized percentage ([0.0, 1.0]).
+             */
+            normalizedActivationPoint: Point2D;
+            /**
+             * Whether the element is hittable at the activation point.
+             */
+            hittable: boolean;
+            /**
+             * The frame of the element, in screen coordinate space.
+             */
+            frame: IosElementAttributeFrame;
+            /**
+             * The frame of the element, in container coordinate space.
+             */
+            elementFrame: IosElementAttributeFrame;
+            /**
+             * The bounds of the element, in element coordinate space.
+             */
+            elementBounds: IosElementAttributeFrame;
+            /**
+             * The safe area insets of the element, in element coordinate space.
+             */
+            safeAreaInsets: IosElementAttributeInsets;
+            /**
+             * The safe area bounds of the element, in element coordinate space.
+             */
+            elementSafeBounds: IosElementAttributeFrame;
+            /**
+             * The date of the element (if it is a date picker).
+             */
+            date?: string;
+            /**
+             * The normalized slider position (if it is a slider).
+             */
+            normalizedSliderPosition?: number;
+            /**
+             * The content offset (if it is a scroll view).
+             */
+            contentOffset?: Point2D;
+            /**
+             * The content inset (if it is a scroll view).
+             */
+            contentInset?: IosElementAttributeInsets;
+            /**
+             * The adjusted content inset (if it is a scroll view).
+             */
+            adjustedContentInset?: IosElementAttributeInsets;
+            /**
+             * @example "<CALayer: 0x600003f759e0>"
+             */
+            layer: string;
+        }
+
+        // Android Specific Attributes
+        interface AndroidElementAttributes extends ElementAttributes {
+            /**
+             * The OS visibility type associated with the element: visible, invisible or gone.
+             */
+            visibility: 'visible' | 'invisible' | 'gone';
+            /**
+             * Width of the element, in pixels.
+             */
+            width: number;
+            /**
+             * Height of the element, in pixels.
+             */
+            height: number;
+            /**
+             * Elevation of the element.
+             */
+            elevation: number;
+            /**
+             * Alpha value for the element.
+             */
+            alpha: number;
+            /**
+             * Whether the element is the one currently in focus.
+             */
+            focused: boolean;
+            /**
+             * The text size for the text element.
+             */
+            textSize?: number;
+            /**
+             * The length of the text element (character count).
+             */
+            length?: number;
         }
     }
 }

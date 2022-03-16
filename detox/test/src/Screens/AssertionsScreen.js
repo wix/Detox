@@ -5,7 +5,7 @@ import {
   Switch,
 } from 'react-native';
 
-class TestSwitchWidget extends Switch {
+class TestSwitchWidget extends Component {
   constructor(props) {
     super(props);
     this.state = {

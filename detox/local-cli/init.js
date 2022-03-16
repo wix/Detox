@@ -1,9 +1,11 @@
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const mochaTemplates = require('./templates/mocha');
-const jestTemplates = require('./templates/jest');
+
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const log = require('../src/utils/logger').child({ __filename });
+
+const jestTemplates = require('./templates/jest');
+const mochaTemplates = require('./templates/mocha');
 
 let exitCode = 0;
 
@@ -20,7 +22,7 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function init(argv) {
-  const {runner} = argv;
+  const { runner } = argv;
 
   switch (runner) {
     case 'mocha':
@@ -30,7 +32,7 @@ module.exports.handler = async function init(argv) {
       createJestFolderE2E();
       break;
     default:
-      throw new Error([
+      throw new DetoxRuntimeError([
         `Convenience scaffolding for \`${runner}\` test runner is not supported currently.\n`,
         'Supported runners at the moment are: `mocha` and `jest`:',
         '* detox init -r mocha',
@@ -87,7 +89,7 @@ function createMochaFolderE2E() {
     testRunner: 'mocha',
     runnerConfig: 'e2e/.mocharc.json',
     ...createDefaultConfigurations(),
-  }, null, 2))
+  }, null, 2));
 }
 
 function createJestFolderE2E() {
@@ -100,8 +102,9 @@ function createJestFolderE2E() {
   createFile('.detoxrc.json', JSON.stringify({
     testRunner: 'jest',
     runnerConfig: 'e2e/config.json',
+    skipLegacyWorkersInjection: true,
     ...createDefaultConfigurations(),
-  }, null, 2))
+  }, null, 2));
 }
 
 function createDefaultConfigurations() {

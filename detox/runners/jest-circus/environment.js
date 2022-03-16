@@ -1,11 +1,14 @@
-const _ = require('lodash');
+// @ts-nocheck
 const NodeEnvironment = require('jest-environment-node');
+
+const DetoxError = require('../../src/errors/DetoxError');
+const Timer = require('../../src/utils/Timer');
+
 const DetoxCoreListener = require('./listeners/DetoxCoreListener');
 const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
-const assertJestCircus26 = require('./utils/assertJestCircus26');
 const assertExistingContext = require('./utils/assertExistingContext');
+const assertJestCircus26 = require('./utils/assertJestCircus26');
 const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
-const Timer = require('../../src/utils/Timer');
 
 const SYNC_CIRCUS_EVENTS = new Set([
   'start_describe_definition',
@@ -29,6 +32,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       DetoxInitErrorListener,
       DetoxCoreListener,
     };
+    /** @private */
+    this._calledDetoxInit = false;
+    /** @private */
+    this._calledDetoxCleanup = false;
     /** @protected */
     this.testPath = context.testPath;
     /** @protected */
@@ -43,6 +50,16 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     this.global.detox = require('../../src')
       ._setGlobal(this.global)
       ._suppressLoggingInitErrors();
+  }
+
+  async teardown() {
+    try {
+      if (this._calledDetoxInit && !this._calledDetoxCleanup) {
+        await this._runEmergencyTeardown();
+      }
+    } finally {
+      await super.teardown();
+    }
   }
 
   get detox() {
@@ -71,7 +88,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
           try {
             await this._timer.run(() => listener[name](event, state));
           } catch (listenerError) {
-            this._logger.error(`${listenerError}`);
+            this._logError(listenerError);
           }
         }
       }
@@ -101,10 +118,11 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     try {
       detox = await this._timer.run(async () => {
         try {
+          this._calledDetoxInit = true;
           return await this.initDetox();
         } catch (actualError) {
           state.unhandledErrors.push(actualError);
-          this._logger.error(`${actualError}`);
+          this._logError(actualError);
           throw actualError;
         }
       });
@@ -112,7 +130,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       if (!state.unhandledErrors.includes(maybeActualError)) {
         const timeoutError = maybeActualError;
         state.unhandledErrors.push(timeoutError);
-        this._logger.error(`${timeoutError}`);
+        this._logError(timeoutError);
       }
 
       detox = wrapErrorWithNoopLifecycle(maybeActualError);
@@ -134,16 +152,38 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   async _onTeardown(state) {
     try {
+      this._calledDetoxCleanup = true;
       await this._timer.run(() => this.cleanupDetox());
     } catch (cleanupError) {
       state.unhandledErrors.push(cleanupError);
-      this._logger.error(`${cleanupError}`);
+      this._logError(cleanupError);
+    }
+  }
+
+  async _runEmergencyTeardown() {
+    this._timer = new Timer({
+      description: `handling environment teardown`,
+      timeout: this.initTimeout,
+    });
+
+    try {
+      await this._timer.run(() => this.cleanupDetox());
+    } catch (cleanupError) {
+      this._logError(cleanupError);
+    } finally {
+      this._timer.dispose();
+      this._timer = null;
     }
   }
 
   /** @private */
   get _logger() {
     return require('../../src/utils/logger');
+  }
+
+  /** @private */
+  _logError(e) {
+    this._logger.error(DetoxError.format(e));
   }
 
   /** @protected */

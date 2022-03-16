@@ -4,64 +4,90 @@ import {
   View,
   Button
 } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+
+function Frame({ children }) {
+  return (
+    <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+      {children}
+    </View>
+  );
+}
+
+function Label({ testID, children }) {
+  return (
+    <Text testID={testID} style={{ marginBottom: 20 }}>
+      {children}
+    </Text>
+  );
+}
 
 export default class LocationScreen extends Component {
-
   constructor(props) {
     super(props);
+
     this.state = {
       locationRequested: false,
-      coordinates: null
+      coordinates: null,
+      error: '',
     }
-
-    this.getLocation();
   }
 
-  async getLocation() {
-    function success(pos) {
-      this.setState({
-        coordinates: pos.coords
-      });
+  onLocationReceived = (position) => {
+    this.setState({
+      coordinates: position.coords,
+      error: '',
+    });
+  };
+
+  onLocationError = (error) => {
+    this.setState({
+      coordinates: null,
+      error: error.message,
+    });
+  };
+
+  requestLocation = async () => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
     };
 
-    function error(err) {
-      this.setState({
-        coordinates: null
-      });
-    };
-
-    await navigator.geolocation.getCurrentPosition(success.bind(this), error.bind(this));
+    this.setState({ locationRequested: true }, () =>
+      Geolocation.watchPosition(this.onLocationReceived, this.onLocationError, options));
   }
 
   render() {
-    if(!this.state.locationRequested) {
+    if (!this.state.locationRequested) {
       return (
-        <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-          <Button
-            testID="getLocationButton"
-            title="get location"
-            onPress={async () => {
-              await this.getLocation();
-              this.setState({locationRequested: true});
-            }}
-            />
-        </View>
+        <Frame>
+          <Button testID="getLocationButton" title="Get location" onPress={this.requestLocation} />
+        </Frame>
       );
     }
 
     if (this.state.coordinates) {
       return (
-        <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-          <Text testID="latitude" style={{ marginBottom: 20 }}>Latitude: {this.state.coordinates.latitude}</Text>
-          <Text testID="longitude" style={{ marginBottom: 20 }}>Longitude: {this.state.coordinates.longitude}</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-          <Text testID="error" style={{ marginBottom: 20 }}>Location unavailable</Text>
-        </View>
+        <Frame>
+          <Label testID="latitude">Latitude: {this.state.coordinates.latitude}</Label>
+          <Label testID="longitude">Longitude: {this.state.coordinates.longitude}</Label>
+        </Frame>
       );
     }
+
+    if (this.state.error) {
+      return (
+        <Frame>
+          <Label testID="error">{this.state.error}</Label>
+        </Frame>
+      );
+    }
+
+    return (
+      <Frame>
+        <Label testID="loading">Locating...</Label>
+      </Frame>
+    );
   }
 }

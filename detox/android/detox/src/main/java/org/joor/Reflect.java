@@ -13,6 +13,8 @@
  */
 package org.joor;
 
+import android.os.Build;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -23,6 +25,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -236,9 +239,11 @@ public class Reflect {
 // Note (d4vidi): this is an important change, compared to the original implementation!!!
 // See here: https://stackoverflow.com/a/64378131/453052
 //                Field modifiersField = Field.class.getDeclaredField("modifiers");
-                Field modifiersField = Field.class.getDeclaredField("accessFlags");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Field modifiersField = Field.class.getDeclaredField("accessFlags");
+                    modifiersField.setAccessible(true);
+                    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                }
             }
             field.set(object, unwrap(value));
             return this;
@@ -629,10 +634,10 @@ public class Reflect {
             return "";
         }
         else if (length == 1) {
-            return string.toLowerCase();
+            return string.toLowerCase(Locale.ROOT);
         }
         else {
-            return string.substring(0, 1).toLowerCase() + string.substring(1);
+            return string.substring(0, 1).toLowerCase(Locale.ROOT) + string.substring(1);
         }
     }
 

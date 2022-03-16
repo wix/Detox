@@ -20,5 +20,7 @@ framework module Detox {
 		header "NSThread+DetoxUtils.h"
 		header "NSObject+DetoxUtils.h"
 		header "NSObject+DetoxActions.h"
+		header "NSURL+DetoxUtils.h"
+		header "NSURL+DetoxUtils.h"
 	}
 }

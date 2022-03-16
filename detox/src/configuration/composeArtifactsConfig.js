@@ -1,14 +1,15 @@
+// @ts-nocheck
 const _ = require('lodash');
-const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
-const buildDefaultArtifactsRootDirpath = require('../artifacts/utils/buildDefaultArtifactsRootDirpath');
 
-const TimelineArtifactPlugin = require('../artifacts/timeline/TimelineArtifactPlugin');
 const InstrumentsArtifactPlugin = require('../artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('../artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('../artifacts/screenshot/ScreenshotArtifactPlugin');
-const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
+const TimelineArtifactPlugin = require('../artifacts/timeline/TimelineArtifactPlugin');
 const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 const ArtifactPathBuilder = require('../artifacts/utils/ArtifactPathBuilder');
+const buildDefaultArtifactsRootDirpath = require('../artifacts/utils/buildDefaultArtifactsRootDirpath');
+const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
+const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
 
 /**
  * @param {*} cliConfig

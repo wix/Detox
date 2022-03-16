@@ -3,9 +3,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 def _ext = rootProject.ext
-def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 29
-def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 29
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '29.0.3'
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 31
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '30.0.2'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : '1.2.0'
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
@@ -13,6 +13,7 @@ def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'ko
 android {
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
+
     defaultConfig {
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
@@ -22,10 +23,19 @@ android {
         consumerProguardFiles 'proguard-rules.pro'
     }
 
+    flavorDimensions 'detox'
+    productFlavors {
+        full {
+            dimension 'detox'
+        }
+        coreNative {
+            dimension 'detox'
+        }
+    }
+
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true
-
         unitTests.all { t ->
             reports {
                 html.enabled true
@@ -66,41 +76,58 @@ android {
 // Fundamental deps.
 dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
-
-    // noinspection GradleDynamicVersion
     compileOnly 'com.facebook.react:react-native:+'
 }
 
 // androidx.test deps.
-// All are aligned with this release: https://developer.android.com/jetpack/androidx/releases/test#1.2.0
+// All are aligned with this release: https://developer.android.com/jetpack/androidx/releases/test#1.4.0
 dependencies {
 
-    // Versions are in-sync with the 'androidx-test-1.2.0' release/tag of the android-test github repo,
-    // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.2.0
+    // Versions are in-sync with the 'androidx-test-1.4.0' release/tag of the android-test github repo,
+    // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.4.0
     // Important: Should remain so when generator tag is replaced!
-    api('androidx.test.espresso:espresso-core:3.2.0') { // Needed all across Detox but also makes Espresso seamlessly provided to Detox users with hybrid apps/E2E-tests.
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    api('androidx.test.espresso:espresso-core:3.4.0') {
+        because 'Needed all across Detox but also makes Espresso seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
-    api 'androidx.test:rules:1.2.0' // Needed because of ActivityTestRule. Needed by users *and* internally used by Detox.
-    api 'androidx.test.ext:junit:1.1.1' // Needed so as to seamlessly provide AndroidJUnit4 to Detox users. Depends on junit core.
+    api('androidx.test.espresso:espresso-web:3.4.0') {
+        because 'Web-View testing'
+    }
+    api('androidx.test:rules:1.4.0') {
+        because 'of ActivityTestRule. Needed by users *and* internally used by Detox.'
+    }
+    api('androidx.test.ext:junit:1.1.3') {
+        because 'Needed so as to seamlessly provide AndroidJUnit4 to Detox users. Depends on junit core.'
+    }
 
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
     // packaging version of associated classes is simply not there...
-    api 'androidx.test.uiautomator:uiautomator:2.2.0' // Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.
+    api('androidx.test.uiautomator:uiautomator:2.2.0') {
+        because 'Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.'
+    }
 }
 
-// Third-party deps.
+// Third-party/extension deps.
 dependencies {
-    implementation 'org.apache.commons:commons-lang3:3.7' // Needed by invoke. Warning: Upgrading to newer versions is not seamless.
+    implementation('com.google.android.material:material:1.2.1') {
+        because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'
+    }
+    implementation('org.apache.commons:commons-lang3:3.7') {
+        because 'Needed by invoke. Warning: Upgrading to newer versions is not seamless.'
+    }
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
+
+    implementation fileTree(dir: '../libs', includes: ['*.jar']) // Includes: Genymotion SDK
 }
 
 // Unit-testing deps.
 dependencies {
-    // noinspection GradleDynamicVersion
     testImplementation 'com.facebook.react:react-native:+'
     testImplementation 'org.json:json:20140107'
-    testImplementation 'junit:junit:4.13'
+
+// https://github.com/spekframework/spek/issues/232#issuecomment-610732158
+//    testImplementation 'junit:junit:4.13.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.0'
+
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation "org.jetbrains.kotlin:kotlin-test:$_kotlinVersion"
     testImplementation 'org.apache.commons:commons-io:1.3.2'
@@ -109,8 +136,9 @@ dependencies {
 }
 
 // Spek (https://spekframework.org/setup-android)
-if (rootProject.hasProperty('isOfficialDetoxLib') ||
-    rootProject.hasProperty('isOfficialDetoxApp')) {
+if (!rootProject.hasProperty('suppressUnitTests') &&
+    (rootProject.hasProperty('isOfficialDetoxLib') ||
+     rootProject.hasProperty('isOfficialDetoxApp'))) {
     apply plugin: 'de.mannodermaus.android-junit5'
 
     android {
@@ -118,7 +146,7 @@ if (rootProject.hasProperty('isOfficialDetoxLib') ||
             junitPlatform {
                 filters {
                     engines {
-                        include 'spek2'
+                        include 'spek2', 'junit-vintage'
                     }
                 }
             }
@@ -126,13 +154,13 @@ if (rootProject.hasProperty('isOfficialDetoxLib') ||
     }
 
     dependencies {
-        testImplementation 'org.spekframework.spek2:spek-dsl-jvm:2.0.12'
-        testImplementation 'org.spekframework.spek2:spek-runner-junit5:2.0.12'
+        testImplementation 'org.spekframework.spek2:spek-dsl-jvm:2.0.15'
+        testImplementation 'org.spekframework.spek2:spek-runner-junit5:2.0.15'
         testImplementation "org.jetbrains.kotlin:kotlin-reflect:$_kotlinVersion"
     }
 }
 
 // Enable publishing
 if (rootProject.hasProperty('isOfficialDetoxLib')) {
-    apply from: './detox-publishing.gradle'
+    apply from: './publishing.gradle'
 }

@@ -39,7 +39,7 @@ describe('Chrome-Tracing exporter', () => {
       ph: 'B',
       args: startEvent.args,
     };
-    const result = uut.export([ startEvent ]);
+    const result = uut.export([startEvent]);
     expect(result).toEqual(`[${JSON.stringify(expectedObject)}`);
   });
 
@@ -54,7 +54,7 @@ describe('Chrome-Tracing exporter', () => {
       ph: 'E',
       args: endEvent.args,
     };
-    const result = uut.export([ endEvent ]);
+    const result = uut.export([endEvent]);
     expect(result).toEqual(`[${JSON.stringify(expectedObject)}`);
   });
 
@@ -79,7 +79,7 @@ describe('Chrome-Tracing exporter', () => {
       ph: 'M',
       args: { name: threadName }
     }];
-    const result = uut.export([ initEvent ]);
+    const result = uut.export([initEvent]);
     expect(result).toEqual(`[${JSON.stringify(expectedObjects).slice(1, -1)}`);
   });
 
@@ -89,13 +89,13 @@ describe('Chrome-Tracing exporter', () => {
       ts: 666,
     };
 
-    expect(() => uut.export([ bizarreEvent ])).toThrowError(/Invalid type 'bizarre'/);
+    expect(() => uut.export([bizarreEvent])).toThrowError(/Invalid type 'bizarre'/);
   });
 
   it('should export multiple events', () => {
     const startEvent = anEvent({ type: 'start' });
     const endEvent = anEvent({ type: 'end' });
-    const result = uut.export([ startEvent, endEvent ]);
+    const result = uut.export([startEvent, endEvent]);
     expect(result).toContain(`"ph":"B"`);
     expect(result).toContain(`"ph":"E"`);
   });

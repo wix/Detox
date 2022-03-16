@@ -1,4 +1,4 @@
-const log = require('../../../utils/logger').child({ __filename });
+// @ts-nocheck
 const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
 
 class AndroidInstrumentsRecording extends InstrumentsArtifactRecording {

@@ -1,6 +1,6 @@
 const {
-  escapeInDoubleQuotedString,
   escapeInDoubleQuotedRegexp,
+  escapeInDoubleQuotedString,
   isRunningInCMDEXE,
 } = require('./shellUtils');
 

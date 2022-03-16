@@ -1,35 +1,49 @@
 const _ = require('lodash');
-const util = require('util');
 
-class DetoxRuntimeError extends Error {
-  constructor({
-    message = '',
-    hint = '',
-    debugInfo = '',
-    inspectOptions,
-  } = {}) {
-    const formattedMessage = _.compact([
+const DetoxError = require('./DetoxError');
+
+/**
+ * @typedef DetoxRuntimeErrorOptions
+ * @property message { String }
+ * @property [hint] { String }
+ * @property [debugInfo] { String }
+ * @property [noStack] { Boolean }
+ * @property [inspectOptions] { Object }
+ */
+
+class DetoxRuntimeError extends DetoxError {
+  /**
+   * @param options { DetoxRuntimeErrorOptions }
+   */
+  constructor(options) {
+    super(formatOptions(options));
+    this.name = 'DetoxRuntimeError';
+
+    if (options && options.noStack) {
+      delete this.stack;
+    }
+  }
+}
+
+function formatOptions(options) {
+  if (_.isObject(options)) {
+    const {
+      message = '',
+      hint = '',
+      debugInfo = '',
+      inspectOptions = null,
+    } = options;
+
+    return _.compact([
       message,
       hint && `HINT: ${hint}`,
-      _.isObject(debugInfo)
-        ? DetoxRuntimeError.inspectObj(debugInfo, inspectOptions)
-        : debugInfo,
+      _.isString(debugInfo)
+        ? debugInfo
+        : DetoxError.format(debugInfo, inspectOptions),
     ]).join('\n\n');
-
-    super(formattedMessage);
-    this.name = 'DetoxRuntimeError';
   }
 
-  static inspectObj(obj, options) {
-    return util.inspect(obj, {
-      colors: false,
-      compact: false,
-      depth: 0,
-      showHidden: false,
-
-      ...options,
-    });
-  }
+  return options;
 }
 
 module.exports = DetoxRuntimeError;

@@ -1,4 +1,4 @@
-const { quote, parse } = require('./shellQuote');
+const { parse, quote } = require('./shellQuote');
 
 describe('shellQuote', () => {
   describe('.quote(argv)', () => {
@@ -7,10 +7,12 @@ describe('shellQuote', () => {
     });
 
     it('should escape unsafe characters', () => {
-      expect(quote([
-        '--detoxURLBlacklistRegex',
-        `("^http://192.168.1.253:19001/onchange$")`
-      ])).toBe(`--detoxURLBlacklistRegex '("^http://192.168.1.253:19001/onchange$")'`);
+      const pattern = /^http:\/\/192.168.1.253:19001\/onchange$/;
+      const expectedEscaping = process.platform === 'win32'
+        ? `"(\\"${pattern.source}\\")"`
+        : `'("${pattern.source}")'`;
+
+      expect(quote(['--detoxURLBlacklistRegex', `("${pattern.source}")`])).toBe(`--detoxURLBlacklistRegex ${expectedEscaping}`);
     });
   });
 

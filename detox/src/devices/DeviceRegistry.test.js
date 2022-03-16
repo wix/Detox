@@ -1,33 +1,11 @@
 const fs = require('fs-extra');
 const tempfile = require('tempfile');
+
 const environment = require('../utils/environment');
 
-const deviceHandle = 'emulator-5554';
-
-const deviceHandleAsRawObj = {
-  type: 'mocked-device-type',
-  adbName: 'emulator-5556',
-};
-const deviceHandleAsObj = {
-  ...deviceHandleAsRawObj,
-  mockFn: () => 'mock-fn-result',
-};
-
-class DeviceHandle {
-  constructor() {
-    this.type = 'mocked-device-type';
-    this.adbName = 'localhost:11111';
-  }
-
-  mockFunc() {
-    return 'mocked-func-result';
-  }
-}
-const deviceHandleAsClassInstance = new DeviceHandle();
-const deviceHandleInstanceRaw = {
-  type: 'mocked-device-type',
-  adbName: 'localhost:11111',
-}
+const deviceId = 'emulator-5554';
+const deviceId2 = 'emulator-5556';
+const mockData = { mock: 'data' };
 
 describe('DeviceRegistry', () => {
   let DeviceRegistry;
@@ -46,14 +24,14 @@ describe('DeviceRegistry', () => {
       await fs.remove(lockfilePath);
     });
 
-    async function allocateDevice(deviceHandle) {
-      return registry.allocateDevice(() => deviceHandle);
+    async function allocateDevice(deviceId, data) {
+      return registry.allocateDevice(() => deviceId, data);
     }
 
-    async function checkDeviceRegisteredAndDispose(deviceHandle) {
+    async function checkDeviceRegisteredAndDispose(deviceId) {
       return registry.disposeDevice(async () => {
-        expect(registry.includes(deviceHandle)).toBe(true);
-        return deviceHandle;
+        expect(registry.includes(deviceId)).toBe(true);
+        return deviceId;
       });
     }
 
@@ -61,39 +39,34 @@ describe('DeviceRegistry', () => {
       return registry.disposeDevice(() => deviceHandle);
     }
 
-    async function expectDeviceNotRegistered(deviceHandle) {
+    async function expectDeviceNotRegistered(deviceId) {
       return registry.allocateDevice(async () => {
-        expect(registry.includes(deviceHandle)).toBe(false);
+        expect(registry.includes(deviceId)).toBe(false);
         throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+      }).catch((e) => { if (e.message !== 'ignored') throw e; });
     }
 
-    function expectIncludedInDevicesList(deviceHandle) {
+    function expectIncludedInDevicesList(deviceId) {
       return registry.allocateDevice(() => {
         const registeredDevices = registry.getRegisteredDevices();
-        expect(registeredDevices.includes(deviceHandle)).toEqual(true);
+        expect(registeredDevices.includes(deviceId)).toEqual(true);
 
         throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+      }).catch((e) => { if (e.message !== 'ignored') throw e; });
     }
 
-    function expectDevicesListEquals(rawDevicesHandles) {
+    function expectDevicesListEquals(rawDevices) {
       return registry.allocateDevice(() => {
         const registeredDevices = registry.getRegisteredDevices();
-        expect(registeredDevices.rawDevices).toStrictEqual(rawDevicesHandles);
+        expect(registeredDevices.rawDevices).toStrictEqual(rawDevices);
 
         throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e });
+      }).catch((e) => { if (e.message !== 'ignored') throw e; });
     }
 
-    async function expectIncludedInReadDevicesList(deviceHandle) {
+    async function expectIncludedInReadDevicesList(deviceId) {
       const registeredDevices = await registry.readRegisteredDevices();
-      expect(registeredDevices.includes(deviceHandle)).toEqual(true);
-    }
-
-    async function expectNotIncludedInReadDevicesList(deviceHandle) {
-      const registeredDevices = await registry.readRegisteredDevices();
-      expect(registeredDevices.includes(deviceHandle)).not.toEqual(true);
+      expect(registeredDevices.includes(deviceId)).toEqual(true);
     }
 
     async function expectReadDevicesListEquals(rawDeviceHandles) {
@@ -118,110 +91,79 @@ describe('DeviceRegistry', () => {
       expect(() => registry.getRegisteredDevices()).toThrowError();
 
     it('should be able to tell whether a device is registered - for query and disposal', async () => {
-      await allocateDevice(deviceHandle);
-      await checkDeviceRegisteredAndDispose(deviceHandle);
-      await expectDeviceNotRegistered(deviceHandle);
+      await allocateDevice(deviceId);
+      await checkDeviceRegisteredAndDispose(deviceId);
+      await expectDeviceNotRegistered(deviceId);
     });
 
-    it('should be able to tell whether a device is registered, given objects as handles', async () => {
-      await allocateDevice(deviceHandleAsObj);
-      await checkDeviceRegisteredAndDispose(deviceHandleAsObj);
-      await expectDeviceNotRegistered(deviceHandleAsObj);
-    });
-
-    it('should be able to tell whether a device is registered, given class instances as handles', async () => {
-      await allocateDevice(deviceHandleAsClassInstance);
-      await checkDeviceRegisteredAndDispose(deviceHandleAsClassInstance);
-      await expectDeviceNotRegistered(deviceHandleAsClassInstance);
+    it('should be able to tell whether a device is registered, even with custom data associated with it', async () => {
+      await allocateDevice(deviceId, { mock: 'data' });
+      await checkDeviceRegisteredAndDispose(deviceId);
+      await expectDeviceNotRegistered(deviceId);
     });
 
     it('should throw on attempt of checking whether a device is registered outside of allocation/disposal context', async () => {
       assertForbiddenOutOfContextRegistryQuery();
 
-      await allocateDevice(deviceHandle);
+      await allocateDevice(deviceId);
       assertForbiddenOutOfContextRegistryQuery();
     });
 
     it('should be able to in-context get a valid list of registered devices, and query its content', async () => {
-      await allocateDevice(deviceHandle);
-      await allocateDevice(deviceHandleAsObj);
-      await allocateDevice(deviceHandleAsClassInstance);
-      await expectIncludedInDevicesList(deviceHandle);
-      await expectIncludedInDevicesList(deviceHandleAsObj);
-      await expectIncludedInDevicesList(deviceHandleAsClassInstance);
+      await allocateDevice(deviceId);
+      await allocateDevice(deviceId2, { mock: 'data' });
+      await expectIncludedInDevicesList(deviceId);
+      await expectIncludedInDevicesList(deviceId2);
     });
 
-    it('should be able to in-context-get a valid list of (raw) registered devices as an array', async () => {
-      const expectedrawDevicesList = [
-        deviceHandle,
-        deviceHandleAsRawObj,
-        deviceHandleInstanceRaw,
+    it('should be able to in-context-get a valid list of registered devices as a raw objects array, also containing custom data', async () => {
+      const expectedDevicesList = [
+        { id: deviceId, },
+        { id: deviceId2, data: mockData, },
       ];
 
-      await allocateDevice(deviceHandle);
-      await allocateDevice(deviceHandleAsObj);
-      await allocateDevice(deviceHandleAsClassInstance);
-      await expectDevicesListEquals(expectedrawDevicesList);
+      await allocateDevice(deviceId);
+      await allocateDevice(deviceId2, mockData);
+      await expectDevicesListEquals(expectedDevicesList);
     });
 
     it('should throw on an attempt of in-context getting registered devices list when outside of allocation/disposal context', async () => {
       assertForbiddenOutOfContextDeviceListQuery();
 
-      await allocateDevice(deviceHandle);
+      await allocateDevice(deviceId);
       assertForbiddenOutOfContextDeviceListQuery();
     });
 
     it('should be able to out-of-context read a valid list of registered devices and query its content', async () => {
-      await allocateDevice(deviceHandle);
-      await allocateDevice(deviceHandleAsObj);
-      await allocateDevice(deviceHandleAsClassInstance);
-      await expectIncludedInReadDevicesList(deviceHandle);
-      await expectIncludedInReadDevicesList(deviceHandleAsObj);
+      await allocateDevice(deviceId);
+      await allocateDevice(deviceId2, { mock: 'data' });
+      await expectIncludedInReadDevicesList(deviceId);
+      await expectIncludedInReadDevicesList(deviceId2);
     });
 
-    it('should be able to out-of-context-read a valid list of (raw) registered devices as an array', async () => {
+    it('should be able to out-of-context-read a valid list of registered devices as a raw objects array, also containing custom data', async () => {
       const expectedDevicesList = [
-        deviceHandle,
-        deviceHandleAsRawObj,
-        deviceHandleInstanceRaw,
+        { id: deviceId, },
+        { id: deviceId2, data: mockData, },
       ];
 
-      await allocateDevice(deviceHandle);
-      await allocateDevice(deviceHandleAsObj);
-      await allocateDevice(deviceHandleAsClassInstance);
+      await allocateDevice(deviceId);
+      await allocateDevice(deviceId2, mockData);
       await expectReadDevicesListEquals(expectedDevicesList);
     });
 
     it('should allow for UNSAFE (non-concurrent) reading of registered devices list, even outside of allocation/disposal context', async () => {
       const expectedDevicesList = [
-        deviceHandle,
-        deviceHandleAsRawObj,
-        deviceHandleInstanceRaw,
+        { id: deviceId, },
+        { id: deviceId2, data: mockData, },
       ];
 
-      await allocateDevice(deviceHandle);
-      await allocateDevice(deviceHandleAsObj);
-      await allocateDevice(deviceHandleAsClassInstance);
+      await allocateDevice(deviceId);
+      await allocateDevice(deviceId2, mockData);
 
-      await expectIncludedInUnsafeDevicesList(deviceHandle);
-      await expectIncludedInUnsafeDevicesList(deviceHandleAsObj);
-      await expectIncludedInUnsafeDevicesList(deviceHandleAsClassInstance);
+      await expectIncludedInUnsafeDevicesList(deviceId);
+      await expectIncludedInUnsafeDevicesList(deviceId2);
       await expectedUnsafeDevicesListEquals(expectedDevicesList);
-    });
-
-    it('should be able to dispose devices of all types', async () => {
-      await allocateDevice(deviceHandle);
-      await allocateDevice(deviceHandleAsObj);
-      await allocateDevice(deviceHandleAsClassInstance);
-
-      await disposeDevice(deviceHandle);
-      await expectNotIncludedInReadDevicesList(deviceHandle);
-
-      await disposeDevice(deviceHandleAsObj);
-      await expectNotIncludedInReadDevicesList(deviceHandleAsObj);
-
-      await disposeDevice(deviceHandleAsClassInstance);
-      await expectNotIncludedInReadDevicesList(deviceHandleAsClassInstance);
     });
 
     it('should not fail when there were no actual device to dispose', async () => {
@@ -240,7 +182,7 @@ describe('DeviceRegistry', () => {
         await registry.reset();
         expect(await fs.readFile(lockfilePath, 'utf8')).toBe('[]');
       });
-    })
+    });
   });
 
   describe('instantiation methods', () => {

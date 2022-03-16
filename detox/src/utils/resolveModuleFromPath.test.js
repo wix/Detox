@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const path = require('path');
+
 const resolveModuleFromPath = require('./resolveModuleFromPath');
 
 const RELATIVE_PATH_TO_PACKAGE_JSON = '../../package.json';

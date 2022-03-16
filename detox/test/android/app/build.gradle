@@ -33,6 +33,8 @@ android {
                 'detoxSessionId': 'test'
         ]
         */
+
+        missingDimensionStrategy 'detox', 'full'
     }
     splits {
         abi {
@@ -79,22 +81,21 @@ android {
 }
 
 dependencies {
-    if (rnInfo.isRN60OrHigher) {
-        implementation 'androidx.appcompat:appcompat:1.1.0'
-        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    } else {
-        implementation 'com.android.support:appcompat-v7:28.0.0'
-    }
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     fromSourceImplementation(project(path: ':ReactAndroid'))
+
     // noinspection GradleDynamicVersion
-    fromBinImplementation 'com.facebook.react:react-native:+'
-    // noinspection GradleDynamicVersion
-    implementation(project(path: ':AsyncStorage'))
+    fromBinImplementation('com.facebook.react:react-native:+')
+
+    implementation project(':AsyncStorage')
+    implementation project(':react-native-webview')
+    implementation project(':react-native-community-checkbox')
+    implementation project(':react-native-community-geolocation')
 
     androidTestImplementation(project(path: ':detox'))
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.1.0'
-    androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.1.0'
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
 if (rnInfo.isRN60OrHigher) {
@@ -116,6 +117,6 @@ if (rnInfo.isRN60OrHigher) {
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
-  from configurations.compile
+  from configurations.implementation
   into 'libs'
 }

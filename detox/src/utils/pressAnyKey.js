@@ -20,6 +20,6 @@ async function pressAnyKey() {
       }
     }
   });
-};
+}
 
 module.exports = pressAnyKey;

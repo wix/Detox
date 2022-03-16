@@ -1,23 +1,34 @@
 buildscript {
     apply from: './rninfo.gradle'
 
-    def androidGradlePluginVersion = rnInfo.isRN62OrHigher ? '3.5.3' : '3.4.2'
+    def androidGradlePluginVersion =
+        rnInfo.isRN66OrHigher ?
+                '4.2.2' :
+            rnInfo.isRN64OrHigher
+                ? '4.1.0'
+                : rnInfo.isRN62OrHigher
+                    ? '3.5.3'
+                    : '3.4.2'
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
         isOfficialDetoxApp = true
         kotlinVersion = '1.3.41'
-        buildToolsVersion = '29.0.3'
-        compileSdkVersion = 29
-        targetSdkVersion = 29
-        minSdkVersion = 18
+        buildToolsVersion = '30.0.2'
+        compileSdkVersion = 31
+        targetSdkVersion = 31
+        minSdkVersion = 21
+
+        if (!rnInfo.isRN62OrHigher) {
+            suppressUnitTests = true
+        }
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
         google()
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -25,24 +36,32 @@ buildscript {
         classpath 'de.undercouch:gradle-download-task:4.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        // Needed by Spek (https://spekframework.org/setup-android)
-        // Here in order to enable unit-tests run from Android Studio when working on the test app.
-        classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.4.2.1'
+        if (!rootProject.hasProperty('suppressUnitTests')) {
+            // Needed by Spek (https://spekframework.org/setup-android)
+            // Here in order to enable unit-tests run from Android Studio when working on the test app.
+            classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
+        }
     }
 }
 
 allprojects {
     repositories {
+        maven {
+            url "$rootDir/../../node_modules/react-native/android"
+        }
+        maven {
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        mavenCentral {
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
         google()
         mavenLocal()
         jcenter()
-        maven {
-            url "$projectDir/../../node_modules/react-native/android"
-        }
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
     }
 }
 

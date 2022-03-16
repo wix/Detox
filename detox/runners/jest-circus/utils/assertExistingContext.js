@@ -1,3 +1,5 @@
+// @ts-nocheck
+const { DetoxRuntimeError } = require('../../../src/errors/DetoxRuntimeError');
 const { filterErrorStack } = require('../../../src/utils/errorUtils');
 
 function findUserConstructor() {
@@ -23,7 +25,7 @@ function findUserConstructor() {
 
 function assertExistingContext(context) {
   if (!context) {
-    const error = new Error(`Please add both arguments to super() call in your environment constructor, e.g.:
+    const error = new DetoxRuntimeError(`Please add both arguments to super() call in your environment constructor, e.g.:
 
  class CustomDetoxEnvironment extends DetoxCircusEnvironment {
 -  constructor(config) {

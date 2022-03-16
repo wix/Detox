@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
 class ChromeTracingExporter {
   constructor({
     process,
@@ -32,7 +34,7 @@ class ChromeTracingExporter {
           this._event('thread_name', 'M', ts, { name: this._thread.name }),
         ];
       default:
-        throw new Error(`Invalid type '${type}' in event: ${event}`);
+        throw new DetoxRuntimeError(`Invalid type '${type}' in event: ${event}`);
     }
   }
 
@@ -43,8 +45,8 @@ class ChromeTracingExporter {
       tid: this._thread.id,
       ts,
       ph: phase,
-      args: {...args},
-    }
+      args: { ...args },
+    };
   }
 }
 

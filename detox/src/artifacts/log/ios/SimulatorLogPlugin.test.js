@@ -1,10 +1,13 @@
+// @ts-nocheck
 jest.mock('../../../utils/logger');
 
+const path = require('path');
+
+const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
-const fs = require('fs-extra');
-const exec = require('../../../utils/exec');
-const path = require('path');
+
+const childProcess = require('../../../utils/childProcess');
 
 describe('SimulatorLogPlugin', () => {
   async function majorWorkflow() {
@@ -37,11 +40,11 @@ describe('SimulatorLogPlugin', () => {
       };
 
       fakeAppleSimUtils = {
-        logStream({ udid, processImagePath, level, stdout, stderr }) {
+        logStream({ udid, processImagePath, level, stdout, stderr }) { // eslint-disable-line no-unused-vars
           // fs.writeFileSync(fakeSources.stdin, '');
 
           const handle = fs.openSync(fakeSources.stdin, 'r');
-          const process = exec.spawnAndLog('cat', [], {
+          const process = childProcess.spawnAndLog('cat', [], {
             stdio: [handle, stdout, stderr],
             silent: true,
           });
@@ -69,7 +72,7 @@ describe('SimulatorLogPlugin', () => {
           api,
           appleSimUtils: fakeAppleSimUtils,
         }),
-      })
+      });
     }
 
     async function logToDeviceLogs(line) {
@@ -86,7 +89,7 @@ describe('SimulatorLogPlugin', () => {
     await artifactsManager.onLaunchApp({ device: 'booted', bundleId: 'com.test', pid: 8000 });
     await logToDeviceLogs('omit - after launch inside detox.init()');
 
-    await artifactsManager.onTestStart({ title: 'test', fullName: 'some test', status: 'running'});
+    await artifactsManager.onTestStart({ title: 'test', fullName: 'some test', status: 'running' });
     await logToDeviceLogs('take - before relaunch inside test');
 
     await artifactsManager.onBeforeLaunchApp({ device: 'booted', bundleId: 'com.test' });
@@ -94,7 +97,7 @@ describe('SimulatorLogPlugin', () => {
     await artifactsManager.onLaunchApp({ device: 'booted', bundleId: 'com.test', pid: 8001 });
 
     await logToDeviceLogs('take - after relaunch inside test');
-    await artifactsManager.onTestDone({ title: 'test', fullName: 'some test', status: 'passed'});
+    await artifactsManager.onTestDone({ title: 'test', fullName: 'some test', status: 'passed' });
 
     await logToDeviceLogs('omit - before cleanup');
     await artifactsManager.onBeforeCleanup();

@@ -1,17 +1,38 @@
 const _ = require('lodash');
-const DetoxConfigError = require('./DetoxConfigError');
+
 const deviceAppTypes = require('../configuration/utils/deviceAppTypes');
+
+const DetoxConfigError = require('./DetoxConfigError');
+const DetoxInternalError = require('./DetoxInternalError');
 const J = s => JSON.stringify(s);
 
 class DetoxConfigErrorComposer {
   constructor() {
+    this.setConfigurationName();
     this.setDetoxConfigPath();
     this.setDetoxConfig();
-    this.setConfigurationName();
+    this.setExtends();
+  }
+
+  clone() {
+    return new DetoxConfigErrorComposer()
+      .setConfigurationName(this.configurationName)
+      .setDetoxConfigPath(this.filepath)
+      .setDetoxConfig(this.contents)
+      .setExtends(this._extends);
   }
 
   _atPath() {
     return this.filepath ? ` at path:\n${this.filepath}` : '.';
+  }
+
+  _inTheAppConfig() {
+    const { type } = this._getSelectedConfiguration();
+    if (type) {
+      return `in configuration ${J(this.configurationName)}`;
+    }
+
+    return `in the app config`;
   }
 
   _getSelectedConfiguration() {
@@ -31,10 +52,21 @@ class DetoxConfigErrorComposer {
     };
   }
 
+  _getDeviceConfig(deviceAlias) {
+    let config = undefined;
+
+    this._focusOnDeviceConfig(deviceAlias, (value) => {
+      config = value;
+      return value;
+    });
+
+    return config;
+  }
+
   _focusOnDeviceConfig(deviceAlias, postProcess = _.identity) {
     const { type, device } = this._getSelectedConfiguration();
     if (!deviceAlias) {
-      if (type) {
+      if (type || !device) {
         return this._focusOnConfiguration(postProcess);
       } else {
         return this._focusOnConfiguration(c => {
@@ -73,6 +105,12 @@ class DetoxConfigErrorComposer {
     };
   }
 
+  // region setters
+  setConfigurationName(configurationName) {
+    this.configurationName = configurationName || '';
+    return this;
+  }
+
   setDetoxConfigPath(filepath) {
     this.filepath = filepath || '';
     return this;
@@ -83,10 +121,11 @@ class DetoxConfigErrorComposer {
     return this;
   }
 
-  setConfigurationName(configurationName) {
-    this.configurationName = configurationName || '';
+  setExtends(value) {
+    this._extends = !!value;
     return this;
   }
+  // endregion
 
   // region configuration/index
 
@@ -99,17 +138,22 @@ class DetoxConfigErrorComposer {
     });
   }
 
-  noConfigurationAtGivenPath() {
-    return new DetoxConfigError({
-      message: 'Failed to find Detox config at:\n' + this.filepath,
-      hint: 'Make sure the specified path is correct.',
-    });
+  noConfigurationAtGivenPath(givenPath) {
+    const message = this._extends
+      ? `Failed to find the base Detox config specified in:\n{\n  "extends": ${J(givenPath)}\n}`
+      : `Failed to find Detox config at ${J(givenPath)}`;
+
+    const hint = this._extends
+      ? `Check your Detox config${this._atPath()}`
+      : 'Make sure the specified path is correct.';
+
+    return new DetoxConfigError({ message, hint });
   }
 
   failedToReadConfiguration(unknownError) {
     return new DetoxConfigError({
       message: 'An error occurred while trying to load Detox config from:\n' + this.filepath,
-      debugInfo: unknownError && unknownError.message,
+      debugInfo: unknownError,
     });
   }
 
@@ -130,7 +174,7 @@ class DetoxConfigErrorComposer {
 
     return new DetoxConfigError({
       message: `Cannot determine which configuration to use from Detox config${this._atPath()}`,
-      hint: 'Use --configuration to choose one of the following:\n' + hintConfigurations(configurations),
+      hint: 'Use --configuration to choose one of the following:\n' + hintList(configurations),
     });
   }
 
@@ -139,7 +183,7 @@ class DetoxConfigErrorComposer {
 
     return new DetoxConfigError({
       message: `Failed to find a configuration named ${J(this.configurationName)} in Detox config${this._atPath()}`,
-      hint: 'Below are the configurations Detox was able to find:\n' + hintConfigurations(configurations),
+      hint: 'Below are the configurations Detox was able to find:\n' + hintList(configurations),
     });
   }
 
@@ -211,7 +255,7 @@ You should create a dictionary of device configurations in Detox config, e.g.:
     return new DetoxConfigError({
       message: `Failed to find a device config ${J(alias)} in the "devices" dictionary of Detox config${this._atPath()}`,
       hint: 'Below are the device configurations Detox was able to find:\n'
-        + hintConfigurations(this.contents.devices) + '\n\n'
+        + hintList(this.contents.devices) + '\n\n'
         + `Check your configuration ${J(this.configurationName)}:`,
       debugInfo: this._getSelectedConfiguration(),
       inspectOptions: { depth: 0 },
@@ -253,14 +297,81 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
-  malformedUtilBinaryPaths(deviceAlias) {
+  invalidDeviceType(deviceAlias, deviceConfig, innerError) {
     return new DetoxConfigError({
-      message: `Invalid type of "utilBinaryPaths" inside the device configuration.`
-            + ` Expected an array of strings.`,
+      message: `Invalid device type ${J(deviceConfig.type)} inside your configuration.`,
+      hint: `Did you mean to use one of these?
+${hintList(deviceAppTypes)}
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+${innerError.message}
+
+Please check your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias, this._ensureProperty('type')),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
+  _invalidPropertyType(propertyName, expectedType, deviceAlias) {
+    return new DetoxConfigError({
+      message: `Invalid type of ${J(propertyName)} inside the device configuration.\n`
+        + `Expected ${expectedType}.`,
       hint: `Check that in your Detox config${this._atPath()}`,
       debugInfo: this._focusOnDeviceConfig(deviceAlias),
       inspectOptions: { depth: 3 },
     });
+  }
+
+  _unsupportedPropertyByDeviceType(propertyName, supportedDeviceTypes, deviceAlias) {
+    const { type } = this._getDeviceConfig(deviceAlias);
+
+    return new DetoxConfigError({
+      message: `The current device type ${J(type)} does not support ${J(propertyName)} property.`,
+      hint: `You can use this property only with the following device types:\n` +
+        hintList(supportedDeviceTypes) + '\n\n' +
+        `Please fix your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      inspectOptions: { depth: 4 },
+    });
+  }
+
+  malformedDeviceProperty(deviceAlias, propertyName) {
+    switch (propertyName) {
+      case 'bootArgs':
+        return this._invalidPropertyType('bootArgs', 'a string', deviceAlias);
+      case 'utilBinaryPaths':
+        return this._invalidPropertyType('utilBinaryPaths', 'an array of strings', deviceAlias);
+      case 'forceAdbInstall':
+        return this._invalidPropertyType('forceAdbInstall', 'a boolean value', deviceAlias);
+      case 'gpuMode':
+        return this._invalidPropertyType('gpuMode', "'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'", deviceAlias);
+      case 'headless':
+        return this._invalidPropertyType('headless', 'a boolean value', deviceAlias);
+      case 'readonly':
+        return this._invalidPropertyType('readonly', 'a boolean value', deviceAlias);
+      default:
+        throw new DetoxInternalError(`Composing .malformedDeviceProperty(${propertyName}) is not implemented`);
+    }
+  }
+
+  unsupportedDeviceProperty(deviceAlias, propertyName) {
+    switch (propertyName) {
+      case 'bootArgs':
+        return this._unsupportedPropertyByDeviceType('bootArgs', ['ios.simulator', 'android.emulator'], deviceAlias);
+      case 'forceAdbInstall':
+        return this._unsupportedPropertyByDeviceType('forceAdbInstall', ['android.attached', 'android.emulator', 'android.genycloud'], deviceAlias);
+      case 'gpuMode':
+        return this._unsupportedPropertyByDeviceType('gpuMode', ['android.emulator'], deviceAlias);
+      case 'headless':
+        return this._unsupportedPropertyByDeviceType('headless', ['android.emulator'], deviceAlias);
+      case 'readonly':
+        return this._unsupportedPropertyByDeviceType('readonly', ['android.emulator'], deviceAlias);
+      case 'utilBinaryPaths':
+        return this._unsupportedPropertyByDeviceType('utilBinaryPaths', ['android.attached', 'android.emulator', 'android.genycloud'], deviceAlias);
+      default:
+        throw new DetoxInternalError(`Composing .unsupportedDeviceProperty(${propertyName}) is not implemented`);
+    }
   }
 
   missingDeviceMatcherProperties(deviceAlias, expectedProperties) {
@@ -307,7 +418,7 @@ You should create a dictionary of app configurations in Detox config, e.g.:
   cantResolveAppAlias(appAlias) {
     return new DetoxConfigError({
       message: `Failed to find an app config ${J(appAlias)} in the "apps" dictionary of Detox config${this._atPath()}`,
-      hint: 'Below are the app configurations Detox was able to find:\n' + hintConfigurations(this.contents.apps) +
+      hint: 'Below are the app configurations Detox was able to find:\n' + hintList(this.contents.apps) +
         `\n\nCheck your configuration ${J(this.configurationName)}:`,
       debugInfo: this._getSelectedConfiguration(),
       inspectOptions: { depth: 1 },
@@ -345,7 +456,7 @@ Examine your Detox config${this._atPath()}`,
 
   malformedAppLaunchArgs(appPath) {
     return new DetoxConfigError({
-      message: `Invalid type of "launchArgs" property in the app config.\nExpected an object:`,
+      message: `Invalid type of "launchArgs" property ${this._inTheAppConfig()}.\nExpected an object:`,
       debugInfo: this._focusOnAppConfig(appPath),
       inspectOptions: { depth: 4 },
     });
@@ -353,7 +464,7 @@ Examine your Detox config${this._atPath()}`,
 
   missingAppBinaryPath(appPath) {
     return new DetoxConfigError({
-      message: `Missing "binaryPath" property in the app config.\nExpected a string:`,
+      message: `Missing "binaryPath" property ${this._inTheAppConfig()}.\nExpected a string:`,
       debugInfo: this._focusOnAppConfig(appPath, this._ensureProperty('binaryPath')),
       inspectOptions: { depth: 4 },
     });
@@ -424,6 +535,18 @@ Examine your Detox config${this._atPath()}`,
 Examine your Detox config${this._atPath()}`,
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 0 }
+    });
+  }
+
+  oldSchemaHasAppAndApps() {
+    return new DetoxConfigError({
+      message: `Your configuration ${J(this.configurationName)} appears to be in a legacy format, which can’t contain "app" or "apps".`,
+      hint: `Remove "type" property from configuration and use "device" property instead:\n` +
+        `a) "device": { "type": ${J(this._getSelectedConfiguration().type)}, ... }\n` +
+        `b) "device": "<alias-to-device>" // you should add that device configuration to "devices" with the same key` +
+        `\n\nCheck your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnConfiguration(this._ensureProperty('type', 'device')),
+      inspectOptions: { depth: 2 },
     });
   }
 
@@ -499,6 +622,18 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  cannotSkipAutostartWithMissingServer() {
+    return new DetoxConfigError({
+      message: `Cannot have both an undefined session.server URL and session.autoStart set to false`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: 3 },
+      debugInfo: _.omitBy({
+        session: _.get(this.contents, ['session']),
+        ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
+      }, _.isEmpty),
+    });
+  }
+
   // endregion
 
   missingBuildScript(appConfig) {
@@ -513,8 +648,9 @@ Check contents of your Detox config${this._atPath()}`,
   }
 }
 
-function hintConfigurations(configurations) {
-  return _.keys(configurations).map(c => `* ${c}`).join('\n')
+function hintList(items) {
+  const values = Array.isArray(items) ? items : _.keys(items);
+  return values.map(c => `* ${c}`).join('\n');
 }
 
 module.exports = DetoxConfigErrorComposer;

@@ -1,15 +1,19 @@
-const _ = require('lodash');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const ini = require('ini');
-const _which = require('which');
+
 const exec = require('child-process-promise').exec;
+const ini = require('ini');
+const _ = require('lodash');
+const _which = require('which');
+
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
 const appdatapath = require('./appdatapath');
 const fsext = require('./fsext');
 
 function which(executable, path) {
-  return _which.sync(executable, {path, nothrow: true});
+  return _which.sync(executable, { path, nothrow: true });
 }
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
@@ -39,23 +43,23 @@ function getAvdHome() {
 function getAvdDir(avdName) {
   const avdIniPath = path.join(getAvdHome(), `${avdName}.ini`);
   if (!fs.existsSync(avdIniPath)) {
-    throwMissingAvdINIError(avdName, avdIniPath)
+    throwMissingAvdINIError(avdName, avdIniPath);
   }
 
   const avdIni = ini.parse(fs.readFileSync(avdIniPath, 'utf-8'));
   if (!fs.existsSync(avdIni.path)) {
-    throwMissingAvdError(avdName, avdIni.path, avdIniPath)
+    throwMissingAvdError(avdName, avdIni.path, avdIniPath);
   }
 
   return avdIni.path;
 }
 
 function getAvdManagerPath() {
-  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
+  return path.join(getAndroidSDKPath(), 'cmdline-tools', 'latest', 'bin', 'avdmanager');
 }
 
 function getAndroidSdkManagerPath() {
-  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'sdkmanager');
+  return path.join(getAndroidSDKPath(), 'cmdline-tools', 'latest', 'bin', 'sdkmanager');
 }
 
 function getAndroidEmulatorPath() {
@@ -124,15 +128,15 @@ function getGmsaasPath() {
 }
 
 function throwMissingSdkError() {
-  throw new Error(MISSING_SDK_ERROR);
+  throw new DetoxRuntimeError(MISSING_SDK_ERROR);
 }
 
 function throwMissingAvdINIError(avdName, avdIniPath) {
-  throw new Error(`Failed to find INI file for ${avdName} at path: ${avdIniPath}`);
+  throw new DetoxRuntimeError(`Failed to find INI file for ${avdName} at path: ${avdIniPath}`);
 }
 
 function throwMissingAvdError(avdName, avdPath, avdIniPath) {
-  throw new Error(
+  throw new DetoxRuntimeError(
     `Failed to find AVD ${avdName} directory at path: ${avdPath}\n` +
     `Please verify "path" property in the INI file: ${avdIniPath}`
   );
@@ -143,22 +147,31 @@ function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
   const name = path.basename(executablePath);
   const dir = path.dirname(executablePath);
 
-  throw new Error(
+  throw new DetoxRuntimeError(
     `There was no "${name}" executable file in directory: ${dir}.\n` +
     `Check integrity of your Android SDK.`
   );
 }
 
 function throwMissingGmsaasError() {
-  throw new Error(`Failed to locate Genymotion\'s gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`)
+  throw new DetoxRuntimeError(`Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`);
 }
 
 function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
 }
 
+let _iosFrameworkPath;
 async function getFrameworkPath() {
-  const detoxVersion = this.getDetoxVersion();
+  if (!_iosFrameworkPath) {
+    _iosFrameworkPath = _doGetFrameworkPath();
+  }
+
+  return _iosFrameworkPath;
+}
+
+async function _doGetFrameworkPath() {
+  const detoxVersion = getDetoxVersion();
   const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
   return `${DETOX_LIBRARY_ROOT_PATH}/ios/${sha1}/Detox.framework`;
 }

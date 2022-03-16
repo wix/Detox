@@ -1,23 +1,19 @@
 package com.wix.detox.espresso.utils
 
 import com.wix.detox.common.DetoxErrors
-import com.wix.detox.espresso.common.annot.MOTION_DIR_DOWN
-import com.wix.detox.espresso.common.annot.MOTION_DIR_LEFT
-import com.wix.detox.espresso.common.annot.MOTION_DIR_RIGHT
-import com.wix.detox.espresso.common.annot.MOTION_DIR_UP
+import com.wix.detox.action.common.MOTION_DIR_DOWN
+import com.wix.detox.action.common.MOTION_DIR_LEFT
+import com.wix.detox.action.common.MOTION_DIR_RIGHT
+import com.wix.detox.action.common.MOTION_DIR_UP
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-private fun frac(value: Double): Double = if (value < 0)
-    -frac(-value)
-else
-    value - floor(value)
+private fun frac(value: Double): Double =
+    if (value < 0) -frac(-value) else (value - floor(value))
 
-private fun normalize(value: Double): Double = if (value < 0)
-    1 + frac(value)
-else
-    frac(value)
+private fun normalize(value: Double): Double
+    = if (value < 0) (1 + frac(value)) else frac(value)
 
 private fun clockwise90DegRotationsToDown(direction: Int) = when (direction) {
     MOTION_DIR_LEFT -> 3
@@ -28,7 +24,7 @@ private fun clockwise90DegRotationsToDown(direction: Int) = when (direction) {
 }
 
 private fun angleBetween(fromDirection: Int, toDirection: Int): Int =
-        90 * ((4 + clockwise90DegRotationsToDown(fromDirection) - clockwise90DegRotationsToDown(toDirection)) % 4)
+    90 * ((4 + clockwise90DegRotationsToDown(fromDirection) - clockwise90DegRotationsToDown(toDirection)) % 4)
 
 data class Vector2D(val x: Double, val y: Double) {
     fun add(other: Vector2D) = Vector2D(x + other.x, y + other.y)

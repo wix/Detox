@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`failedToReachTheApp .evenThoughAppWasLaunched() 1`] = `
+[DetoxRuntimeError: Detox can't seem to connect to the test app(s)!
+
+HINT: 
+
+The test app might have crashed prematurely, or has had trouble setting up the connection.
+Refer to our troubleshooting guide, for full details: https://wix.github.io/Detox/docs/troubleshooting/running-tests#tests-execution-hangs 
+]
+`;
+
+exports[`failedToReachTheApp .maybeAppWasNotLaunched(action) 1`] = `
+[DetoxRuntimeError: Detox can't seem to connect to the test app(s)!
+
+HINT: 
+
+Have you forgotten to call 'device.launchApp()' in the beginning of your test?
+Refer to our troubleshooting guide, for full details: https://wix.github.io/Detox/docs/troubleshooting/running-tests#tests-execution-hangs
+
+---
+The following package could not be delivered:
+
+{
+  type: 'isReady',
+  messageId: -1000
+}]
+`;

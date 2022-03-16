@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxRuntimeError should be created with empty object 1`] = `[DetoxRuntimeError]`;
+
+exports[`DetoxRuntimeError should be created with message with "Command failed" error 1`] = `
+[DetoxRuntimeError: Cannot run Detox due to an internal error
+
+Command failed: jest runMyTests]
+`;
+
+exports[`DetoxRuntimeError should be created with message with debug info 1`] = `
+[DetoxRuntimeError: no filename was given to constructSafeFilename()
+
+the arguments were: {
+  "prefix": "detox - "
+}]
+`;
+
+exports[`DetoxRuntimeError should be created with message with debug info object 1`] = `
+[DetoxRuntimeError: no filename was given to constructSafeFilename()
+
+{
+  prefix: 'detox - ',
+  trimmable: undefined,
+  suffix: undefined
+}]
+`;
+
+exports[`DetoxRuntimeError should be created with message with hint 1`] = `
+[DetoxRuntimeError: Detox adapter to Jest is malfunctioning.
+
+HINT: Make sure you register it as Jasmine reporter inside init.js:
+-------------------------------------------------------------
+jasmine.getEnv().addReporter(adapter);]
+`;
+
+exports[`DetoxRuntimeError should be created with message with hint and debug info 1`] = `
+[DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
+
+testSummary was: "test name"]
+`;
+
+exports[`DetoxRuntimeError should be created with message with no stack 1`] = `[DetoxRuntimeError: Test message without a stack]`;
+
+exports[`DetoxRuntimeError should be created with no args 1`] = `[DetoxRuntimeError]`;
+
+exports[`DetoxRuntimeError should be created with only message 1`] = `[DetoxRuntimeError: The video is not being recorded on device (emulator-5554) at path: /sdcard/712398.mp4]`;
+
+exports[`DetoxRuntimeError should be created with plain string 1`] = `[DetoxRuntimeError: A plain message]`;

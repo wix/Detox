@@ -4,7 +4,7 @@ import android.os.Bundle
 import org.json.JSONArray
 import org.json.JSONObject
 
-class JsonConverter(private val json: JSONObject) {
+internal class JsonConverter(private val json: JSONObject) {
     fun toBundle(): Bundle {
         val bundle = Bundle()
         json.keys().forEach { key: String ->

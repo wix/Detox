@@ -1,3 +1,6 @@
+// @ts-nocheck
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
 const Deferred = require('./Deferred');
 
 class Timer {
@@ -23,7 +26,8 @@ class Timer {
   }
 
   async run(action) {
-    const error = new Error();
+    const error = new DetoxRuntimeError();
+    delete error.stack;
 
     return Promise.race([
       this._timeoutDeferred.promise.then(() => {

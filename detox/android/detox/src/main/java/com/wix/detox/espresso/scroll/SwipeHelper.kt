@@ -2,11 +2,10 @@ package com.wix.detox.espresso.scroll
 
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
-import com.wix.detox.espresso.common.annot.*
-import com.wix.detox.espresso.utils.*
-import kotlin.math.abs
-import kotlin.math.min
+import com.wix.detox.action.common.MOTION_DIR_DOWN
+import com.wix.detox.espresso.utils.Vector2D
 import kotlin.math.max
+import kotlin.math.min
 
 private const val EDGE_FUZZ_FACTOR = 0.083
 

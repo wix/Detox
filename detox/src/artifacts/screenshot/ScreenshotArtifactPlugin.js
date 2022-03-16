@@ -1,4 +1,6 @@
+// @ts-nocheck
 const _ = require('lodash');
+
 const TwoSnapshotsPerTestPlugin = require('../templates/plugin/TwoSnapshotsPerTestPlugin');
 
 /***
@@ -10,11 +12,11 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
 
     _.defaults(this.takeAutomaticSnapshots, {
       appNotReady: true,
-    })
+    });
   }
 
-  async preparePathForSnapshot(testSummary, name) {
-    return this.api.preparePathForArtifact(`${name}.png`, testSummary);
+  async preparePathForSnapshot(testSummary, artifactName) {
+    return this.api.preparePathForArtifact(`${artifactName}.png`, testSummary);
   }
 
   async onBeforeCleanup(e) {

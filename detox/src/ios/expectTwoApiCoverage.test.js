@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('expectTwo API Coverage', () => {
   let e;
 
@@ -8,12 +9,13 @@ describe('expectTwo API Coverage', () => {
     });
   });
 
-
   describe('Matchers', () => {
     it(`by.accessibilityLabel`, async () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(25);
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible(25);
 
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
@@ -64,7 +66,6 @@ describe('expectTwo API Coverage', () => {
       await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
     });
 
-
     it(`matchers with wrong parameters should throw`, async () => {
       await expectToThrow(() => e.element(e.by.label(5)));
       await expectToThrow(() => e.element(e.by.id(5)));
@@ -76,6 +77,13 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
       await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
       // await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
+    });
+
+    it(`should throw for invalid toBeVisible parameters`, async () => {
+      await expectToThrow(() =>e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0));
+      await expectToThrow(() =>e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
+      await expectToThrow(() =>e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0));
+      await expectToThrow(() =>e.e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
     });
   });
 
@@ -89,7 +97,6 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
     });
   });
-
 
   describe('Actions', () => {
 
@@ -192,7 +199,7 @@ describe('expectTwo API Coverage', () => {
 
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.by.id('matcherNotElement')));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag('notANumber', 0.5, 0.5, e.element(e.by.id('targetElement'))));
-      await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, "slow", 'notANumber'));
+      await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, 'slow', 'notANumber'));
     });
 
   });

@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Client .execute() should rethrow an "error" result 1`] = `"this is an error"`;
+
+exports[`Client .execute() should throw "testFailed" error even if it has no a view hierarchy 1`] = `"Test Failed: this is an error"`;
+
+exports[`Client .execute() should throw "testFailed" error with view hierarchy (on --loglevel debug) 1`] = `
+"Test Failed: this is an error
+
+View Hierarchy:
+mock-hierarchy"
+`;
+
+exports[`Client .execute() should throw "testFailed" error with view hierarchy (on --loglevel trace) 1`] = `
+"Test Failed: this is an error
+
+View Hierarchy:
+mock-hierarchy"
+`;
+
+exports[`Client .execute() should throw "testFailed" error without view hierarchy but with a hint (on --loglevel error) 1`] = `
+"Test Failed: this is an error
+
+HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
+`;
+
+exports[`Client .execute() should throw "testFailed" error without view hierarchy but with a hint (on --loglevel info) 1`] = `
+"Test Failed: this is an error
+
+HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
+`;
+
+exports[`Client .execute() should throw "testFailed" error without view hierarchy but with a hint (on --loglevel warn) 1`] = `
+"Test Failed: this is an error
+
+HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher."
+`;
+
+exports[`Client .execute() should throw even if a non-error object is thrown 1`] = `"non-error"`;
+
+exports[`Client .execute() should throw on an unsupported result 1`] = `
+"Tried to invoke an action on app, got an unsupported response: {\\"type\\":\\"unsupportedResult\\",\\"params\\":{\\"foo\\":\\"bar\\"}}
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client .sendAction() should throw error for actions without isAtomic 1`] = `
+"Action.prototype.isAtomic must be defined for ActionWithoutParams
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client .sendAction() should throw error for actions without timeout 1`] = `
+"Action.prototype.timeout getter must be defined for ActionWithoutParams
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client on AppNonresponsiveDetected should log a warning 1`] = `
+"Application nonresponsiveness detected!
+On Android, this could imply an ANR alert, which evidently causes tests to fail.
+Here's the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):
+THREAD_DUMP
+Refer to https://developer.android.com/training/articles/perf-anr for further details."
+`;
+
+exports[`Client on AppWillTerminateWithError should schedule the app termination in 5 seconds, and reject pending 1`] = `
+[DetoxRuntimeError: The app has crashed, see the details below:
+
+SIGSEGV whatever]
+`;
+
+exports[`Client on AppWillTerminateWithError should unschedule the app termination if it disconnects earlier 1`] = `
+[DetoxRuntimeError: The app has crashed, see the details below:
+
+SIGSEGV whatever]
+`;
+
+exports[`Client on unhandled serverError should log a fallback error if the details were empty 1`] = `
+"DetoxInternalError: Received an empty error message from Detox Server:
+{ somethingElse: 0 }
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client on unhandled serverError should log a fallback error if the details were empty 2`] = `
+"DetoxInternalError: Received an empty error message from Detox Server:
+{ somethingElse: 0, params: {} }
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`Client on unhandled serverError should log an error 1`] = `"TEST ERROR"`;

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const glob = require('glob');
 
 function getLatestArtifactsDir() {
   if (!fs.existsSync('artifacts')) {
@@ -16,11 +17,17 @@ function getLatestArtifactsDir() {
     .maxBy((dir) => stats[dir].mtime);
 }
 
-function assertArtifactExists(name) {
+function assertDirExists(dirPath) {
+  if (!fs.statSync(dirPath).isDirectory()) {
+    throw new Error('Expected to find a directory at path: ' + dirPath);
+  }
+}
+
+function assertArtifactExists(pattern) {
   const artifactsRootDir = getLatestArtifactsDir();
-  const artifactPath = path.join(artifactsRootDir, name);
-  if (!fs.existsSync(artifactPath)) {
-    throw new Error('Assertion failed.\nFailed to find an artifact at path: ' + artifactPath);
+  const matchingArtifacts = glob.sync(pattern, { cwd: artifactsRootDir });
+  if (matchingArtifacts.length === 0) {
+    throw new Error('Assertion failed.\nFailed to find artifacts matching: ' + path.join(artifactsRootDir, pattern));
   }
 }
 
@@ -33,5 +40,6 @@ async function waitUntilArtifactsManagerIsIdle() {
 module.exports = {
   getLatestArtifactsDir,
   assertArtifactExists,
+  assertDirExists,
   waitUntilArtifactsManagerIsIdle,
 };

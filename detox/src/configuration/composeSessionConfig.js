@@ -1,13 +1,17 @@
-const getPort = require('get-port');
-const uuid = require('../utils/uuid');
 const isValidWebsocketURL = require('../utils/isValidWebsocketURL');
+const uuid = require('../utils/uuid');
 
 /**
- * @param {require('../errors/DetoxConfigErrorComposer')} errorComposer
- * @param {Detox.DetoxConfig} globalConfig
- * @param {Detox.DetoxConfigurationOverrides} localConfig
+ * @param {{
+ *  cliConfig: Record<string, any>;
+ *  globalConfig: Detox.DetoxConfig;
+ *  localConfig: Detox.DetoxConfigurationOverrides;
+ *  errorComposer: import('../errors/DetoxConfigErrorComposer');
+ * }} options
  */
-async function composeSessionConfig({ errorComposer, cliConfig, globalConfig, localConfig }) {
+async function composeSessionConfig(options) {
+  const { errorComposer, cliConfig, globalConfig, localConfig } = options;
+
   const session = {
     ...globalConfig.session,
     ...localConfig.session,
@@ -38,14 +42,19 @@ async function composeSessionConfig({ errorComposer, cliConfig, globalConfig, lo
     session.debugSynchronization = +cliConfig.debugSynchronization;
   }
 
-  return {
+  const result = {
     autoStart: !session.server,
-    server: `ws://localhost:${await getPort()}`,
     sessionId: uuid.UUID(),
     debugSynchronization: 10000,
 
     ...session,
   };
+
+  if (!result.server && !result.autoStart) {
+    throw errorComposer.cannotSkipAutostartWithMissingServer();
+  }
+
+  return result;
 }
 
 module.exports = composeSessionConfig;

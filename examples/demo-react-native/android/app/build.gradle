@@ -3,7 +3,7 @@ apply from: '../rninfo.gradle'
 
 //project.ext.react = [:]
 project.ext.react = [
-    enableHermes: rnInfo.isRN60OrHigher
+    enableHermes: true
 ]
 apply from: '../../node_modules/react-native/react.gradle'
 
@@ -22,7 +22,7 @@ android {
         }
 
         testBuildType System.getProperty('testBuildType', 'debug')
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
     }
     splits {
         abi {
@@ -69,10 +69,12 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    // noinspection GradleDynamicVersion
+
     implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
 
-    androidTestImplementation('com.wix:detox:+')
+    // noinspection GradleDynamicVersion
+    androidTestImplementation 'com.wix:detox:+'
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
 if (rnInfo.isRN60OrHigher) {

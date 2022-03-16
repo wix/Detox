@@ -1,3 +1,6 @@
+// @ts-nocheck
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+
 const ArtifactPlugin = require('./ArtifactPlugin');
 
 /***
@@ -20,7 +23,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
       : {
         testStart: true,
         testFailure: true,
-        testDone: true
+        testDone: true,
       };
 
     this.snapshots = {
@@ -72,7 +75,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
   async onCreateExternalArtifact(e) {
     if (!e.artifact) {
-      throw new Error('Internal error: expected Artifact instance in the event');
+      throw new DetoxRuntimeError('Internal error: expected Artifact instance in the event');
     }
 
     this._registerSnapshot(e.name, e.artifact);
@@ -82,8 +85,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    * @protected
    * @abstract
    */
-  async preparePathForSnapshot(testSummary, snapshotName) {}
-
+  async preparePathForSnapshot(testSummary, snapshotName) {} // eslint-disable-line no-unused-vars
 
   /***
    * Creates a handle for a test artifact (video recording, log, etc.)
@@ -120,7 +122,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
   }
 
   _startSavingSnapshots(where) {
-    const {testSummary} = this.context;
+    const { testSummary } = this.context;
     const snapshots = this.snapshots[where];
 
     for (const [name, snapshot] of Object.entries(snapshots)) {

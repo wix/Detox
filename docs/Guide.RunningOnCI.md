@@ -1,14 +1,24 @@
-# Running on CI
+---
+id: running-on-ci
+slug: guide/running-on-ci
+title: Running on CI
+sidebar_label: Running on CI
+---
+
+## Running on CI
+
+> Disclaimer: This guide is focused on iOS (i.e. lacking info about Android) and is generally out of date.
 
 When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
 Running Detox on CI is not that different from running it locally. There are two main differences:
+
 - You should test a release build rather than a debug build
-- Tell Detox to shut down the simulator when test is over 
+- Tell Detox to shut down the simulator when test is over
 
-## Step 1: Prepare a Release Configuration for Your App
+### Step 1: Prepare a Release Configuration for Your App
 
-We will need to create a [release device configuration for Detox](/docs/APIRef.Configuration.md#device-configuration) inside `package.json` under the `detox` section.
+We will need to create a [release device configuration for Detox](APIRef.Configuration.md#device-configurations) inside `package.json` under the `detox` section.
 
 **Example:**
 
@@ -16,7 +26,7 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
 "detox": {
   "devices": {
     "simulator": {
-      "type": "ios.simulator"
+      "type": "ios.simulator",
       "device": {
         "type": "iPhone 12 Pro Max"
       }
@@ -40,7 +50,7 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
 
 > TIP: Notice that the name `example` above should be replaced with your actual project name.
 
-## Step 2: Add `build` and `test` Commands to Your CI Script
+### Step 2: Add `build` and `test` Commands to Your CI Script
 
 Assuming your CI is executing some sort of shell script, add the following commands that should run inside the project root:
 
@@ -51,11 +61,15 @@ detox test --configuration ios.sim.release --cleanup
 
 > **Tip:** Adding `--cleanup` to the test command will make sure detox exits cleanly by shutting down the simulator when the test is over.
 
-## Appendix
+### Running Android Tests on CI
 
-### • Running Detox on [Travis CI](https://travis-ci.org/)
+Setting up a CI environment capable of running Android tests isn't as trivial. Fortunately, we've written all about it in a [blostpost on medium!](https://medium.com/wix-engineering/how-to-execute-android-ui-tests-on-ci-and-stay-alive-eb9089d88c1f)
 
-Detox's own build is running on Travis, check out Detox's [.travis.yml](/.travis.yml) file to see how it's done.
+### Appendix
+
+#### • Running Detox on [Travis CI](https://travis-ci.org/)
+
+Detox’s own build is running on Travis, check out Detox’s [`.travis.yml`](https://github.com/wix/Detox/tree/master/.travis.yml) file to see how it’s done.
 
 This is a simple example configuration to get you started with Detox on Travis:
 
@@ -89,13 +103,13 @@ script:
 
 ```
 
-### • Running Detox on [Bitrise](https://www.bitrise.io/)
+#### • Running Detox on [Bitrise](https://www.bitrise.io/)
 
-Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](http://blog.bitrise.io/2017/07/25/how-to-set-up-a-react-native-app-on-bitrise.html) guide.
+Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](https://blog.bitrise.io/post/how-to-set-up-a-react-native-app-on-bitrise) guide.
 
-You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`. 
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise `.yml` file for a workflow called `tests`.
 
-Additionally, you can use a [webhook](http://devcenter.bitrise.io/webhooks/) on Bitrise to post the build status directly into your Slack channel.
+Additionally, you can use a [webhook](https://devcenter.bitrise.io/en/apps/webhooks/adding-incoming-webhooks.html) on Bitrise to post the build status directly into your Slack channel.
 
 ```yml
 ---
@@ -164,9 +178,9 @@ workflows:
     after_run: []
 ```
 
-### • Running Detox on [GitlabCI](https://docs.gitlab.com/ee/ci/README.html) - Android Only
+#### • Running Detox on [GitLab CI](https://docs.gitlab.com/ee/ci/README.html) - Android Only
 
-Gitlab is also a popular git management service which also include a built-in CI system. They provide free runner up to 2000 minutes for private projects, however, the runners provided by them cannot be used to run Detox due to the lack of KVM support (in order to run Android Emulators). You can, instead, [create your own runner](https://docs.gitlab.com/ee/ci/runners/README.html) with KVM support. Some example of cloud providers offering this are: [Digital Ocean](https://www.digitalocean.com/products/droplets/), AWS (with [c5 instance types](https://aws.amazon.com/ec2/instance-types/c5/)), [Google Cloud](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances) and [Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nested-virtualization)
+GitLab is also a popular git management service which also include a built-in CI system. They provide free runner up to 2000 minutes for private projects, however, the runners provided by them cannot be used to run Detox due to the lack of KVM support (in order to run Android Emulators). You can, instead, [create your own runner](https://docs.gitlab.com/ee/ci/runners/README.html) with KVM support. Some example of cloud providers offering this are: [Digital Ocean](https://www.digitalocean.com/products/droplets/), AWS (with [C5 instance types](https://aws.amazon.com/ec2/instance-types/c5/)), [Google Cloud](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances) and [Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nested-virtualization)
 
 One example of such job can be:
 

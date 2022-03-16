@@ -1,9 +1,9 @@
-const Artifact = require('../../templates/artifact/Artifact');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const { interruptProcess } = require('../../../utils/exec');
+const { interruptProcess } = require('../../../utils/childProcess');
 const log = require('../../../utils/logger').child({ __filename });
 const retry = require('../../../utils/retry');
 const sleep = require('../../../utils/sleep');
+const Artifact = require('../../templates/artifact/Artifact');
 
 class ADBLogcatRecording extends Artifact {
   constructor({

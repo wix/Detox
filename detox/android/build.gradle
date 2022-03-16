@@ -2,33 +2,36 @@ buildscript {
     ext {
         isOfficialDetoxLib = true
         kotlinVersion = '1.2.0'
-        dokkaVersion = '0.9.18'
-        buildToolsVersion = '29.0.0'
-        compileSdkVersion = 29
-        targetSdkVersion = 29
-        minSdkVersion = 18
+        dokkaVersion = '1.6.0'
+        buildToolsVersion = '30.0.2'
+        compileSdkVersion = 31
+        targetSdkVersion = 31
+        minSdkVersion = 21
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
-        // Needed by Spek (https://spekframework.org/setup-android)
-        classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.4.2.1'
+        if (!rootProject.hasProperty('suppressUnitTests')) {
+            // Needed by Spek (https://spekframework.org/setup-android)
+            classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
+        }
     }
 }
 
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         google()
+        jcenter()
         maven {
             url "$projectDir/../../node_modules/react-native/android"
         }

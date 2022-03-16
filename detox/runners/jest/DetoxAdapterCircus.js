@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const DetoxAdapter = require('./DetoxAdapterImpl');
 const { getFullTestName, hasTimedOut } = require('./utils');
 
@@ -24,12 +23,12 @@ class DetoxAdapterCircus {
     await this._adapter.afterAll();
   }
 
-  async run_describe_start({describeBlock: {name, children}}, state) {
-    if (children.length) await this._adapter.suiteStart({name});
+  async run_describe_start({ describeBlock: { name, children } }, state) { // eslint-disable-line no-unused-vars
+    if (children.length) await this._adapter.suiteStart({ name });
   }
 
-  async run_describe_finish({describeBlock: {name, children}}, state) {
-    if (children.length) await this._adapter.suiteEnd({name});
+  async run_describe_finish({ describeBlock: { name, children } }, state) { // eslint-disable-line no-unused-vars
+    if (children.length) await this._adapter.suiteEnd({ name });
   }
 
   test_start(event) {
@@ -53,7 +52,7 @@ class DetoxAdapterCircus {
     });
   }
 
-  test_skip(event) {
+  test_skip(event) { // eslint-disable-line no-unused-vars
     // Ignored (for clarity)
   }
 }

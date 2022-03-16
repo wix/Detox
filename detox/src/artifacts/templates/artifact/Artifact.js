@@ -1,3 +1,4 @@
+// @ts-nocheck
 const log = require('../../../utils/logger').child({ __filename });
 
 class Artifact {
@@ -39,7 +40,7 @@ class Artifact {
   }
 
   start(...args) {
-    this.logger.trace({ event: 'START' }, `starting ${this.name}`, ...args);
+    this.logger.trace({ event: 'ARTIFACT_START' }, `starting ${this.name}`, ...args);
 
     if (this._savePromise) {
       this._startPromise = this._savePromise.then(() => this.doStart(...args));
@@ -57,7 +58,7 @@ class Artifact {
 
   stop(...args) {
     if (!this._stopPromise) {
-      this.logger.trace({ event: 'STOP' }, `stopping ${this.name}`, ...args);
+      this.logger.trace({ event: 'ARTIFACT_STOP' }, `stopping ${this.name}`, ...args);
 
       if (this._startPromise) {
         this._stopPromise = this._startPromise.then(() => this.doStop(...args));
@@ -71,10 +72,10 @@ class Artifact {
 
   save(artifactPath, ...args) {
     if (!this._savePromise) {
-      this.logger.trace({ event: 'SAVE' }, `saving ${this.name} to: ${artifactPath}`, ...args);
+      this.logger.trace({ event: 'ARTIFACT_SAVE' }, `saving ${this.name} to: ${artifactPath}`, ...args);
 
       if (this._discardPromise) {
-        this.logger.warn({ event: 'SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
+        this.logger.warn({ event: 'ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
         this._savePromise = this._discardPromise;
       } else if (this._startPromise) {
         this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));
@@ -88,7 +89,7 @@ class Artifact {
 
   discard(...args) {
     if (!this._discardPromise) {
-      this.logger.trace({ event: 'DISCARD' }, `discarding ${this.name}`, ...args);
+      this.logger.trace({ event: 'ARTIFACT_DISCARD' }, `discarding ${this.name}`, ...args);
 
       if (this._savePromise) {
         this._discardPromise = this._savePromise;
@@ -106,7 +107,7 @@ class Artifact {
 
   async doStop() {}
 
-  async doSave(artifactPath) {}
+  async doSave(artifactPath) {} // eslint-disable-line no-unused-vars
 
   async doDiscard() {}
 }

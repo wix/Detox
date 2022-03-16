@@ -1,3 +1,4 @@
+// @ts-nocheck
 const DetoxRuntimeErrorComposer = require('./DetoxRuntimeErrorComposer');
 
 describe('DetoxRuntimeErrorComposer', () => {
@@ -21,11 +22,17 @@ describe('DetoxRuntimeErrorComposer', () => {
     expect(builder().invalidTestSummary('afterEach', { weird: [['string']] })).toMatchSnapshot();
   });
 
-  test('invalidTestSummaryStatus - afterEach', () => {
+  test('invalidTestSummary - afterEach', () => {
     expect(builder().invalidTestSummary('afterEach', {
       title: 'foo test',
       fullName: 'suite foo test',
       status: 'uncertain',
+    })).toMatchSnapshot();
+  });
+
+  test('invalidTestSummaryStatus - afterEach', () => {
+    expect(builder().invalidTestSummaryStatus('afterEach', {
+      summary: 'invalid stuff',
     })).toMatchSnapshot();
   });
 

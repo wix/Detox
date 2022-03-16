@@ -1,5 +1,7 @@
+// @ts-nocheck
 const _ = require('lodash');
 const parse = require('yargs/yargs').Parser;
+
 const deviceAppTypes = require('./utils/deviceAppTypes');
 
 const CLI_PARSER_OPTIONS = {
@@ -38,6 +40,10 @@ function composeAppsConfig(opts) {
  */
 function composeAppsConfigFromPlain(opts) {
   const { errorComposer, localConfig } = opts;
+
+  if (localConfig.app || localConfig.apps) {
+    throw errorComposer.oldSchemaHasAppAndApps();
+  }
 
   /** @type {Detox.DetoxAppConfig} */
   let appConfig;

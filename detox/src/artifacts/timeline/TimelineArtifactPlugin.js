@@ -1,10 +1,11 @@
-const _noop = require('lodash/noop');
 const fs = require('fs-extra');
-const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
-const FileArtifact = require('../templates/artifact/FileArtifact');
-const { trace } = require('../../utils/trace');
+const _noop = require('lodash/noop');
+
 const ChromeTracingExporter = require('../../utils/ChromeTracingExporter');
 const fakeTimestampsProvider = require('../../utils/fakeTimestampsProvider');
+const { trace } = require('../../utils/trace');
+const FileArtifact = require('../templates/artifact/FileArtifact');
+const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 
 const traceNoop = {
   startSection: _noop,
@@ -47,7 +48,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
   }
 
   async onTestDone(testSummary) {
-    this._trace.endSection(testSummary.title, {status: testSummary.status});
+    this._trace.endSection(testSummary.title, { status: testSummary.status });
     await super.onTestDone(testSummary);
   }
 

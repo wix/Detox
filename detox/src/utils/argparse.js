@@ -1,24 +1,36 @@
 const _ = require('lodash');
 const argv = require('minimist')(process.argv.slice(2));
-const {escape} = require('./pipeCommands');
 
-function getArgValue(key) {
-  let value;
+const { escape } = require('./pipeCommands');
 
-  if (argv && argv[key]) {
-    value = argv[key];
-  } else {
-    const envKey = _.findKey(process.env, matchesKey(
-      `DETOX_${_.snakeCase(key)}`.toUpperCase()
-    ));
+function getArgValue(key, alias) {
+  const value = _getArgvValue(key, alias);
+  return value === undefined ? getEnvValue(key) : value;
+}
 
-    value = process.env[envKey];
-    if (value === 'undefined') {
-      value = undefined;
-    }
+function getEnvValue(key) {
+  const envKey = _.findKey(process.env, matchesKey(
+    `DETOX_${_.snakeCase(key)}`.toUpperCase()
+  ));
+
+  let value = process.env[envKey];
+  if (value === 'undefined') {
+    value = undefined;
   }
 
   return value;
+}
+
+function _getArgvValue(...aliases) {
+  if (!argv) {
+    return;
+  }
+
+  for (const alias of aliases) {
+    if (alias && argv[alias]) {
+      return argv[alias];
+    }
+  }
 }
 
 function matchesKey(key) {
@@ -40,7 +52,7 @@ const DEFAULT_JOIN_ARGUMENTS_OPTIONS = {
 };
 
 function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
-  const {prefix, joiner} = options === DEFAULT_JOIN_ARGUMENTS_OPTIONS
+  const { prefix, joiner } = options === DEFAULT_JOIN_ARGUMENTS_OPTIONS
     ? options
     : { ...DEFAULT_JOIN_ARGUMENTS_OPTIONS, ...options };
 
@@ -63,7 +75,7 @@ function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
       }
     }
 
-    argArray.push(arg)
+    argArray.push(arg);
   }
 
   return argArray.join(' ');
@@ -71,6 +83,7 @@ function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
 
 module.exports = {
   getArgValue,
+  getEnvValue,
   getFlag,
   joinArgs,
 };

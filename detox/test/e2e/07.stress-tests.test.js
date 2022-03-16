@@ -4,6 +4,11 @@ describe('StressTests', () => {
     await element(by.text('Stress')).tap();
   });
 
+  it('should handle busy render', async () => {
+    await element(by.text('VirtualizedList Stress')).tap();
+    await expect(element(by.id('stressContainer'))).toBeVisible();
+  });
+
   it('should handle tap during busy bridge (one way)', async () => {
     await element(by.text('Bridge OneWay Stress')).tap();
     await element(by.text('Next')).tap();

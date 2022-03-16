@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dtx_typeText:(NSString*)text;
 - (void)dtx_typeText:(NSString*)text atTextRange:(nullable UITextRange*)textRange;
 - (void)dtx_replaceText:(NSString*)text;
+- (NSURL *)dtx_takeScreenshot:(nullable NSString*)name;;
 
 @end
 

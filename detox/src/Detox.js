@@ -1,31 +1,38 @@
-const _ = require('lodash');
+// @ts-nocheck
+const { URL } = require('url');
 const util = require('util');
-const {URL} = require('url');
-const logger = require('./utils/logger');
-const Deferred = require('./utils/Deferred');
-const Device = require('./devices/Device');
-const DetoxRuntimeErrorComposer = require('./errors/DetoxRuntimeErrorComposer');
-const AsyncEmitter = require('./utils/AsyncEmitter');
-const MissingDetox = require('./utils/MissingDetox');
+
+const _ = require('lodash');
+
+const lifecycleSymbols = require('../runners/integration').lifecycle;
+
 const Client = require('./client/Client');
+const environmentFactory = require('./environmentFactory');
+const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
-const ArtifactsManager = require('./artifacts/ArtifactsManager');
+const AsyncEmitter = require('./utils/AsyncEmitter');
+const Deferred = require('./utils/Deferred');
+const MissingDetox = require('./utils/MissingDetox');
+const logger = require('./utils/logger');
 const log = logger.child({ __filename });
-const driverRegistry = require('./devices/DriverRegistry').default;
-const matchersRegistry = require('./matchersRegistry');
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
-
-const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 class Detox {
   constructor(config) {
     log.trace(
       { event: 'DETOX_CREATE', config },
-      'created a Detox instance with config:\n%j',
-      config
+      'created a Detox instance with config:\n%s',
+      util.inspect(_.omit(config, ['errorComposer']), {
+        getters: false,
+        depth: Infinity,
+        maxArrayLength: Infinity,
+        maxStringLength: Infinity,
+        breakLength: false,
+        compact: false,
+      })
     );
 
     this[_initHandle] = null;
@@ -37,7 +44,7 @@ class Detox {
     this[lifecycleSymbols.onTestStart] = this.beforeEach;
     this[lifecycleSymbols.onTestDone] = this.afterEach;
 
-    const {appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
+    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = config;
 
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
@@ -66,6 +73,8 @@ class Detox {
     });
 
     this.device = null;
+    this._deviceAllocator = null;
+    this._deviceCookie = null;
   }
 
   init() {
@@ -94,11 +103,9 @@ class Detox {
     }
 
     if (this.device) {
+      const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
       await this.device._cleanup();
-
-      if (this._behaviorConfig.cleanup.shutdownDevice) {
-        await this.device.shutdown();
-      }
+      await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
 
     if (this._server) {
@@ -106,6 +113,8 @@ class Detox {
       this._server = null;
     }
 
+    this._deviceAllocator = null;
+    this._deviceCookie = null;
     this.device = null;
   }
 
@@ -137,42 +146,70 @@ class Detox {
     const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = this._sessionConfig;
 
-    if (this._sessionConfig.autoStart) {
+    if (sessionConfig.autoStart) {
       this._server = new DetoxServer({
-        port: new URL(sessionConfig.server).port,
+        port: sessionConfig.server
+          ? new URL(sessionConfig.server).port
+          : 0,
+        standalone: false,
       });
+
+      await this._server.open();
+
+      if (!sessionConfig.server) {
+        sessionConfig.server = `ws://localhost:${this._server.port}`;
+      }
     }
 
     this._client = new Client(sessionConfig);
-    this._client.setNonresponsivenessListener(this._onNonresnponsivenessEvent.bind(this));
+    this._client.terminateApp = async () => {
+      if (this.device && this.device._isAppRunning()) {
+        await this.device.terminateApp();
+      }
+    };
+
     await this._client.connect();
 
     const invocationManager = new InvocationManager(this._client);
-    const deviceDriver = driverRegistry.resolve(this._deviceConfig.type, {
+
+    const {
+      envValidatorFactory,
+      deviceAllocatorFactory,
+      artifactsManagerFactory,
+      matchersFactory,
+      runtimeDeviceFactory,
+    } = environmentFactory.createFactories(this._deviceConfig);
+
+    const envValidator = envValidatorFactory.createValidator();
+    await envValidator.validate();
+
+    const commonDeps = {
+      invocationManager,
       client: this._client,
-      invocationManager,
-      emitter: this._eventEmitter,
-    });
-
-    this.device = new Device({
-      appsConfig: this._appsConfig,
-      behaviorConfig: this._behaviorConfig,
-      deviceConfig: this._deviceConfig,
-      emitter: this._eventEmitter,
+      eventEmitter: this._eventEmitter,
       runtimeErrorComposer: this._runtimeErrorComposer,
-      deviceDriver,
-      sessionConfig,
-    });
+    };
 
-    this._artifactsManager = new ArtifactsManager(this._artifactsConfig);
-    this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
-    this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
+    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
 
-    await this.device.prepare();
+    this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
+    this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
 
-    const matchers = matchersRegistry.resolve(this.device, {
+    this.device = runtimeDeviceFactory.createRuntimeDevice(
+      this._deviceCookie,
+      commonDeps,
+      {
+        appsConfig: this._appsConfig,
+        behaviorConfig: this._behaviorConfig,
+        deviceConfig: this._deviceConfig,
+        sessionConfig,
+      });
+    await this.device._prepare();
+
+    const matchers = matchersFactory.createMatchers({
       invocationManager,
-      emitter: this._eventEmitter,
+      runtimeDevice: this.device,
+      eventEmitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
 
@@ -205,10 +242,14 @@ class Detox {
   }
 
   async _reinstallAppsOnDevice() {
-    const appNames = Object.keys(this._appsConfig);
+    const appNames = _(this._appsConfig)
+      .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
+      .uniqBy(1)
+      .map(0)
+      .value();
 
     for (const appName of appNames) {
-      await this.device.selectApp(appName)
+      await this.device.selectApp(appName);
       await this.device.uninstallApp();
       await this.device.installApp();
     }
@@ -237,28 +278,9 @@ class Detox {
     }
   }
 
-  _onNonresnponsivenessEvent(params) {
-    const message = [
-      'Application nonresponsiveness detected!',
-      'On Android, this could imply an ANR alert, which evidently causes tests to fail.',
-      'Here\'s the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):',
-      params.threadDump,
-      'Refer to https://developer.android.com/training/articles/perf-anr for further details.'
-    ].join('\n');
-
-    log.warn({ event: 'APP_NONRESPONSIVE' }, message);
-  }
-
   async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
     if (pendingRequests) {
-      this._client.dumpPendingRequests({testName});
-    }
-
-    const pendingAppCrash = this._client.getPendingCrashAndReset();
-
-    if (pendingAppCrash) {
-      log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here are the crash details: \n${pendingAppCrash}`);
-      await this.device.launchApp({ newInstance: true });
+      this._client.dumpPendingRequests({ testName });
     }
   }
 
@@ -268,6 +290,20 @@ class Detox {
       `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
       error
     );
+  }
+
+  static async globalInit(configs) {
+    const handler = await environmentFactory.createGlobalLifecycleHandler(configs.deviceConfig);
+    if (handler) {
+      await handler.globalInit();
+    }
+  }
+
+  static async globalCleanup(configs) {
+    const handler = await environmentFactory.createGlobalLifecycleHandler(configs.deviceConfig);
+    if (handler) {
+      await handler.globalCleanup();
+    }
   }
 }
 

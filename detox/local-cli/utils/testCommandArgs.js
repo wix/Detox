@@ -41,7 +41,7 @@ module.exports = {
   u: {
     alias: 'cleanup',
     group: 'Execution:',
-    describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue',
+    describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exits cleanly with no residue',
     boolean: true,
   },
   d: {
@@ -63,7 +63,7 @@ module.exports = {
       return Number.isNaN(+value) ? value : +value;
     },
     describe:
-      '[iOS Only] Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. ' +
+      'Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. ' +
       'By default, the app status will be printed if the action takes more than 10s to complete.'
   },
   a: {
@@ -104,10 +104,8 @@ module.exports = {
   w: {
     alias: 'workers',
     group: 'Execution:',
-    describe:
-      '[iOS Only] Specifies the number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
+    describe: 'Specifies the number of workers the test runner should spawn. Requires a test runner with parallel execution support (e.g. Jest)',
     number: true,
-    default: 1,
   },
   'jest-report-specs': {
     group: 'Execution:',
@@ -134,9 +132,10 @@ module.exports = {
     group: 'Configuration:',
     describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.',
   },
-  'device-launch-args': {
+  'device-boot-args': {
+    alias: 'device-launch-args',
     group: 'Execution:',
-    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.',
+    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when booted.',
   },
   'app-launch-args': {
     group: 'Execution:',
@@ -150,7 +149,6 @@ module.exports = {
   },
   'force-adb-install': {
     boolean: true,
-    default: false,
     group: 'Execution:',
     describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },

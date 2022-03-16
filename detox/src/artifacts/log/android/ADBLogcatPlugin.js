@@ -1,4 +1,6 @@
+// @ts-nocheck
 const LogArtifactPlugin = require('../LogArtifactPlugin');
+
 const ADBLogcatRecording = require('./ADBLogcatRecording');
 
 class ADBLogcatPlugin extends LogArtifactPlugin {
@@ -29,7 +31,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
   }
 
   createTestRecording() {
-    const { deviceId, bundleId, pid } = this.context;
+    const { deviceId, bundleId } = this.context;
 
     return new ADBLogcatRecording({
       adb: this._adb,

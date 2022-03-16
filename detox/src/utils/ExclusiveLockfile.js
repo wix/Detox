@@ -1,10 +1,13 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
+const _ = require('lodash');
 const plockfile = require('proper-lockfile');
+
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
 const retry = require('./retry');
 
 const DEFAULT_OPTIONS = {
-  retry: {retries: 10000, interval: 5},
+  retry: { retries: 10000, interval: 5 },
   read: { encoding: 'utf8' },
   getInitialState: _.constant(null),
 };
@@ -12,7 +15,7 @@ const DEFAULT_OPTIONS = {
 class ExclusiveLockfile {
   constructor(lockfile, options) {
     if (!lockfile) {
-      throw new Error('Path to the lockfile should be a non-empty string');
+      throw new DetoxRuntimeError('Path to the lockfile should be a non-empty string');
     }
 
     this._lockFilePath = lockfile;
@@ -46,7 +49,7 @@ class ExclusiveLockfile {
    */
   read() {
     if (!this._isLocked) {
-      throw new Error('Forbidden to read in unlocked mode');
+      throw new DetoxRuntimeError('Forbidden to read in unlocked mode');
     }
 
     if (!this._hasValue) {
@@ -62,7 +65,7 @@ class ExclusiveLockfile {
    */
   write(value) {
     if (!this._isLocked) {
-      throw new Error('Forbidden to write in unlocked mode');
+      throw new DetoxRuntimeError('Forbidden to write in unlocked mode');
     }
 
     this._value = value;

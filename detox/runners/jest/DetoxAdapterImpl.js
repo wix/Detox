@@ -8,7 +8,7 @@ class DetoxAdapterImpl {
         'While Detox CLI supports "-R <N>, --retries <N>" mechanism, ' +
         'this outdated Jest integration does not — expect artifacts issues. ' +
         'Please migrate to the new Jest Circus integration.\n\n' +
-        'See: https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md\n');
+        'See: https://wix.github.io/Detox/docs/api/guide/jest\n');
     }
 
     this.detox = detox;
@@ -32,15 +32,15 @@ class DetoxAdapterImpl {
     await this._flush();
   }
 
-  async suiteStart({name}) {
-    this._enqueue(() => this.detox.suiteStart({name}));
+  async suiteStart({ name }) {
+    this._enqueue(() => this.detox.suiteStart({ name }));
   }
 
-  async suiteEnd({name}) {
-    this._enqueue(() => this.detox.suiteEnd({name}));
+  async suiteEnd({ name }) {
+    this._enqueue(() => this.detox.suiteEnd({ name }));
   }
 
-  testStart({title, fullName, status}) {
+  testStart({ title, fullName, status }) {
     this._currentTest = {
       title,
       fullName,
@@ -48,7 +48,7 @@ class DetoxAdapterImpl {
     };
   }
 
-  testComplete({status, timedOut}) {
+  testComplete({ status, timedOut }) {
     if (this._currentTest) {
       const _test = {
         ...this._currentTest,

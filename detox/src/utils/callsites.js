@@ -1,5 +1,6 @@
 const path = require('path');
-const {escapeRegExp} = require('lodash');
+
+const { escapeRegExp } = require('lodash');
 const cwd = process.cwd() + path.sep;
 
 // Taken from https://github.com/sindresorhus/callsites

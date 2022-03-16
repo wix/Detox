@@ -14,7 +14,7 @@ const isIos = Platform.OS === 'ios';
 
 const { NativeModule } = NativeModules;
 
-class example extends Component {
+export default class example extends Component {
 
   constructor(props) {
     super(props);
@@ -22,10 +22,12 @@ class example extends Component {
       screen: undefined,
       screenProps: {},
       url: undefined,
-      notification: undefined
+      notification: undefined,
     };
 
     Linking.addEventListener('url', (params) => this._handleOpenURL(params));
+
+    this.setScreen = this.setScreen.bind(this);
   }
 
   async componentDidMount() {
@@ -41,24 +43,24 @@ class example extends Component {
       <TouchableOpacity onPress={() => {
         onPressCallback();
       }}>
-        <Text style={{color: 'blue', marginBottom: 10}}>{title}</Text>
+        <Text style={{color: 'blue', marginBottom: 8}}>{title}</Text>
       </TouchableOpacity>
     );
   }
 
   renderScreenNotifyingButton_iOS(title, notificationName) {
-    if(notificationName == null) {
-      throw new Error("Got no notification name for " + title);
+    if (notificationName == null) {
+      throw new Error('Got no notification name for ' + title);
     }
-    
+
     return this.renderButton(title, () => {
-      NativeModule.sendNotification("ChangeScreen", notificationName);
-    }); 
+      NativeModule.sendNotification('ChangeScreen', notificationName);
+    });
   }
 
   renderScreenButton(title, component) {
-    if(component == null) {
-      throw new Error("Got no component for " + title);
+    if (component == null) {
+      throw new Error('Got no component for ' + title);
     }
 
     return this.renderButton(title, () => {
@@ -82,26 +84,28 @@ class example extends Component {
 
   render() {
     if (this.state.url) {
-      console.log("App@render: rendering a URL:", this.state.url);
+      console.log('App@render: rendering a URL:', this.state.url);
       return this.renderText(this.state.url);
     }
 
     if (this.state.screen) {
-      console.log("App@render: JS rendering screen");
+      console.log('App@render: JS rendering screen');
       const Screen = this.state.screen;
-      return <Screen/>;
+      return <Screen setScreen={this.setScreen}/>;
     }
 
-    console.log("App@render: JS rendering main screen");
+    console.log('App@render: JS rendering main screen');
     return (
       <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 20, marginBottom: 10}}>
+        <Text style={{fontSize: 18, marginBottom: 10}}>
           Choose a test
         </Text>
         {this.renderScreenButton('Language', Screens.LanguageScreen)}
         {this.renderScreenButton('Sanity', Screens.SanityScreen)}
         {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
         {this.renderScreenButton('Actions', Screens.ActionsScreen)}
+        {this.renderScreenButton('Visibility Expectation', Screens.VisibilityExpectationScreen)}
+        {!isAndroid && this.renderScreenButton('Visibility Debug Artifacts', Screens.VisibilityScreen)}
         {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
         {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
         {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
@@ -117,6 +121,8 @@ class example extends Component {
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
+        {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
+        {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
 
         { /* TODO: Push this into a dedicated screen */ }
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -138,8 +144,9 @@ class example extends Component {
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
         {isIos && this.renderScreenNotifyingButton_iOS('Drag And Drop', 'dragAndDrop')}
+        {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
-        {isAndroid && this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
+        {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
@@ -149,6 +156,12 @@ class example extends Component {
       </View>
     );
 }
+
+  setScreen(name) {
+    this.setState({
+      screen: Screens[name],
+    });
+  }
 
   _onNotification(notification) {
     console.log('App@onNotification:', notification);
@@ -170,5 +183,3 @@ class example extends Component {
     this.setState({url: params.url});
   }
 }
-
-module.exports = example;

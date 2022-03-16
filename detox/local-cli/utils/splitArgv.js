@@ -1,9 +1,7 @@
 const _ = require('lodash');
-const path = require('path');
-const Module = require('module');
-const resolveFrom = require('resolve-from');
+
+const { resolveJestCliArgs } = require('./jestInternals');
 const testCommandArgs = require('./testCommandArgs');
-const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
 
 function extractKnownKeys(yargsBuilder) {
   return Object.entries(yargsBuilder).reduce(
@@ -67,33 +65,6 @@ function getMochaBooleanArgs() {
     .flatMap(key => [key, ...(metadata.aliases[key] || [])])
     .thru(keys => new Set(keys))
     .value();
-}
-
-function resolveJestCliArgs() {
-  const cwd = process.cwd();
-  const getNodeModulePaths = (dir) => Module._nodeModulePaths(dir);
-
-  if (!resolveFrom.silent(cwd, 'jest')) {
-    throw new DetoxRuntimeError({
-      message: 'Could not resolve "jest" package from the current working directory.\n\n' +
-        'This means that Detox could not find it in any of the following locations:\n' +
-        getNodeModulePaths(cwd).map(p => `* ${p}`).join('\n'),
-      hint: `Try installing "jest": npm install jest --save-dev`,
-    });
-  }
-
-  const jestLocation = path.dirname(resolveFrom(cwd, 'jest/package.json'));
-
-  if (!resolveFrom.silent(jestLocation, 'jest-cli')) {
-    throw new DetoxRuntimeError({
-      message: 'Could not resolve "jest-cli" package from the "jest" npm package directory.\n\n' +
-        'This means that Detox could not find it in any of the following locations:\n' +
-        getNodeModulePaths(jestLocation).map(p => `* ${p}`).join('\n'),
-      hint: 'Consider reporting this as an issue at: https://github.com/wix/Detox/issues'
-    });
-  }
-
-  return require(resolveFrom(jestLocation, 'jest-cli/build/cli/args'));
 }
 
 function splitDetoxArgv(argv) {

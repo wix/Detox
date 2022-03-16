@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`External runtime-device factory validation given module with no runtime-driver class should throw an error 1`] = `"The custom driver at '../fake/path' does not export the RuntimeDriverClass property"`;

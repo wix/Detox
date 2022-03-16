@@ -1,19 +1,24 @@
-const _ = require('lodash');
+// @ts-nocheck
 const cp = require('child_process');
 const path = require('path');
-const unparse = require('yargs-unparser');
+
+const _ = require('lodash');
 const whichSync = require('which').sync;
-const splitArgv = require('./utils/splitArgv');
-const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
-const DeviceRegistry = require('../src/devices/DeviceRegistry');
-const GenyDeviceRegistryFactory = require('../src/devices/drivers/android/genycloud/GenyDeviceRegistryFactory');
-const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
-const { parse, quote } = require('../src/utils/shellQuote');
+const unparse = require('yargs-unparser');
+
 const { composeDetoxConfig } = require('../src/configuration');
+const DeviceRegistry = require('../src/devices/DeviceRegistry');
+const GenyDeviceRegistryFactory = require('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
+const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const log = require('../src/utils/logger').child({ __filename });
+const { parse, quote } = require('../src/utils/shellQuote');
+
+const { readJestConfig } = require('./utils/jestInternals');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
-const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./utils/warnings');
+const splitArgv = require('./utils/splitArgv');
+const { DETOX_ARGV_OVERRIDE_NOTICE, DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./utils/warnings');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
@@ -21,7 +26,7 @@ module.exports.builder = require('./utils/testCommandArgs');
 module.exports.handler = async function test(argv) {
   const { detoxArgs, runnerArgs } = splitArgv.detox(argv);
   const { cliConfig, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: detoxArgs });
-  const [ platform ] = deviceConfig.type.split('.');
+  const [platform] = deviceConfig.type.split('.');
   const runner = deduceTestRunner(runnerConfig.testRunner);
 
   const prepareArgs = choosePrepareArgs({
@@ -30,8 +35,9 @@ module.exports.handler = async function test(argv) {
     detoxArgs,
   });
 
-  const forwardedArgs = prepareArgs({
+  const forwardedArgs = await prepareArgs({
     cliConfig,
+    deviceConfig,
     runnerConfig,
     runnerArgs,
     platform,
@@ -47,12 +53,12 @@ module.exports.handler = async function test(argv) {
     forwardedArgs.argv.$0 = runnerConfig.testRunner;
   }
 
-  if (!cliConfig.keepLockFile) {
-    await resetLockFile({ platform });
-  }
-
   const retries = runner === 'jest' ? detoxArgs.retries : 0;
-  await runTestRunnerWithRetries(forwardedArgs, retries);
+  await runTestRunnerWithRetries(forwardedArgs, {
+    keepLockFile: cliConfig.keepLockFile,
+    platform,
+    retries,
+  });
 };
 
 module.exports.middlewares = [
@@ -67,13 +73,21 @@ module.exports.middlewares = [
     }
 
     return argv;
+  },
+
+  function warnDeviceAppLaunchArgsDeprecation(argv) {
+    if (argv['device-boot-args'] && process.argv.some(a => a.startsWith('--device-launch-args'))) {
+      log.warn(DEVICE_LAUNCH_ARGS_DEPRECATION);
+    }
+
+    return argv;
   }
 ];
 
 function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
-    if (hasMultipleWorkers(cliConfig)) {
-      log.warn('Cannot use -w, --workers. Parallel test execution is only supported with iOS and Jest');
+    if (cliConfig.workers) {
+      log.warn('Cannot use -w, --workers. Parallel test execution is only supported with Jest');
     }
 
     if (detoxArgs.retries > 0) {
@@ -146,25 +160,31 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     },
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
-      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
     }, _.isUndefined),
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
   };
 }
 
-function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
+async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
 
-  return {
-    argv: {
-      color: !cliConfig.noColor && undefined,
-      config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
-      testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
-      maxWorkers: cliConfig.workers,
+  const argv = _.omitBy({
+    color: !cliConfig.noColor && undefined,
+    config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
+    testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
+    maxWorkers: cliConfig.workers || (runnerConfig.skipLegacyWorkersInjection ? undefined : 1),
 
-      ...passthrough,
-    },
+    ...passthrough,
+  }, _.isUndefined);
+
+  const hasMultipleWorkers = runnerConfig.skipLegacyWorkersInjection
+    ? (await readJestConfig(argv)).globalConfig.maxWorkers > 1
+    : cliConfig.workers > 1;
+
+  return {
+    argv,
 
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
@@ -174,19 +194,19 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
       DETOX_CONFIGURATION: cliConfig.configuration,
       DETOX_CONFIG_PATH: cliConfig.configPath,
       DETOX_DEBUG_SYNCHRONIZATION: cliConfig.debugSynchronization,
-      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
       DETOX_DEVICE_NAME: cliConfig.deviceName,
       DETOX_FORCE_ADB_INSTALL: platform === 'android' ? cliConfig.forceAdbInstall : undefined,
       DETOX_GPU: cliConfig.gpu,
       DETOX_HEADLESS: cliConfig.headless,
       DETOX_LOGLEVEL: cliConfig.loglevel,
-      DETOX_READ_ONLY_EMU: platform === 'android' ? hasMultipleWorkers(cliConfig) : undefined,
+      DETOX_READ_ONLY_EMU: deviceConfig.type === 'android.emulator' && hasMultipleWorkers ? true : undefined,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
       DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,
       DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
       DETOX_REPORT_SPECS: _.isUndefined(cliConfig.jestReportSpecs)
-        ? !hasMultipleWorkers(cliConfig)
+        ? !hasMultipleWorkers
         : `${cliConfig.jestReportSpecs}` === 'true',
       DETOX_REUSE: cliConfig.reuse,
       DETOX_START_TIMESTAMP: Date.now(),
@@ -230,11 +250,7 @@ function launchTestRunner({ argv, env, specs }) {
   });
 }
 
-function hasMultipleWorkers(cliConfig) {
-  return cliConfig.workers != 1;
-}
-
-async function runTestRunnerWithRetries(forwardedArgs, retries) {
+async function runTestRunnerWithRetries(forwardedArgs, { keepLockFile, platform, retries }) {
   let runsLeft = 1 + retries;
   let launchError;
 
@@ -246,6 +262,10 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
           `There were failing tests in the following files:\n${list}\n\n` +
           'Detox CLI is going to restart the test runner with those files...\n'
         );
+      }
+
+      if (!keepLockFile) {
+        await resetLockFile({ platform });
       }
 
       await resetLastFailedTests();

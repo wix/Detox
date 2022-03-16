@@ -4,6 +4,7 @@ source $(dirname "$0")/logger.sh
 source $(dirname "$0")/install.sh
 
 # Only update the demo-react-native project; others will use this binary
-node scripts/change_react_native_version.js "examples/demo-react-native" ${REACT_NATIVE_VERSION}
+node scripts/change_react_native_version.js "examples/demo-react-native" ${REACT_NATIVE_VERSION} "dependencies"
+node scripts/change_react_native_version.js "detox" ${REACT_NATIVE_VERSION} "devDependencies"
 
 run_f "lerna bootstrap --no-ci"

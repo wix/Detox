@@ -1,8 +1,10 @@
+// @ts-nocheck
 const fs = require('fs-extra');
 
-const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
-const FileArtifact = require('../../templates/artifact/FileArtifact');
 const log = require('../../../utils/logger');
+const FileArtifact = require('../../templates/artifact/FileArtifact');
+
+const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
 
 jest.mock('fs-extra');
 jest.mock('../../templates/artifact/FileArtifact');

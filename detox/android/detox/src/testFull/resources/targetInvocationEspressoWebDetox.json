@@ -1,0 +1,44 @@
+{
+  "target":{
+    "type":"Invocation",
+    "value":{
+      "target":{
+        "type":"Invocation",
+        "value":{
+          "target":{
+            "type":"Class",
+            "value":"com.wix.detox.espresso.web.EspressoWebDetox"
+          },
+          "method":"getWebView",
+          "args":[
+
+          ]
+        }
+      },
+      "method":"element",
+      "args":[
+        {
+          "type":"Invocation",
+          "value":{
+            "target":{
+              "type":"Class",
+              "value":"com.wix.detox.espresso.web.DetoxWebAtomMatcher"
+            },
+            "method":"matcherForId",
+            "args":[
+              "textInput"
+            ]
+          }
+        },
+        {
+          "type":"Integer",
+          "value":0
+        }
+      ]
+    }
+  },
+  "method":"tap",
+  "args":[
+
+  ]
+}

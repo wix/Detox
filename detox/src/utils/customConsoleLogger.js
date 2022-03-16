@@ -1,4 +1,5 @@
 const util = require('util');
+
 const callsites = require('./callsites');
 
 const USER_STACK_FRAME_INDEX = 2;

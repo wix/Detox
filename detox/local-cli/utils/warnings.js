@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('../../src/configuration/utils/warnings');
 const log = require('../../src/utils/logger').child({ __filename });
 
 function coerceDeprecation(option) {
@@ -25,11 +25,12 @@ const DETOX_ARGV_OVERRIDE_NOTICE = `
   debugging flags and features, to speed up your investigation
   and collect additional test artifacts. For more details, see:
 
-  https://github.com/wix/Detox/blob/master/docs/APIRef.DetoxCLI.md#detox_argv_override
+  https://wix.github.io/Detox/docs/api/matchers/detox-cli#detox_argv_override
 
 `;
 
 module.exports = {
   coerceDeprecation,
   DETOX_ARGV_OVERRIDE_NOTICE,
+  DEVICE_LAUNCH_ARGS_DEPRECATION,
 };

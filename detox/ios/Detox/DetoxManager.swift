@@ -269,6 +269,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 							} catch {}
 						}
 						
+						if UserDefaults.standard.bool(forKey: "detoxDebugVisibility") {
+							params["visibilityFailingScreenshotsURL"] = NSURL.visibilityFailingScreenshotsPath().path
+							params["visibilityFailingRectsURL"] = NSURL.visibilityFailingRectsPath().path
+						}
+						
 						self.safeSend(action: "testFailed", params: params as! [String : Any], messageId: messageId)
 					} else {
 						self.safeSend(action: "invokeResult", params: result ?? [:], messageId: messageId)
@@ -372,8 +377,12 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			waitForRNLoad(withMessageId: messageId)
 			return
 		case "currentStatus":
-			DTXSyncManager.idleStatus { status in
-				self.webSocket.sendAction("currentStatusResult", params: ["messageId": messageId, "status": status], messageId: messageId)
+			DTXSyncManager.status { status in
+			  self.webSocket.sendAction(
+				"currentStatusResult",
+				params: ["messageId": messageId, "status": status],
+				messageId: messageId
+			  )
 			}
 			return
 		case "loginSuccess":

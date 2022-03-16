@@ -1,5 +1,6 @@
+// @ts-nocheck
 const _ = require('lodash');
-const {getFullTestName, hasTimedOut} = require('../../jest/utils');
+
 const {
   onRunDescribeStart,
   onTestStart,
@@ -8,7 +9,9 @@ const {
   onTestDone,
   onRunDescribeFinish,
 } = require('../../integration').lifecycle;
-const { RETRY_TIMES } = require('jest-circus/build/types');
+const { getFullTestName, hasTimedOut } = require('../../jest/utils');
+
+const RETRY_TIMES = Symbol.for('RETRY_TIMES');
 
 class DetoxCoreListener {
   constructor({ detox, env }) {
@@ -20,7 +23,7 @@ class DetoxCoreListener {
   }
 
   _getTestInvocations(test) {
-    const {DETOX_RERUN_INDEX} = process.env;
+    const { DETOX_RERUN_INDEX } = process.env;
 
     if (!isNaN(DETOX_RERUN_INDEX)) {
       return Number(DETOX_RERUN_INDEX) * this._testRunTimes + test.invocations;
@@ -29,13 +32,13 @@ class DetoxCoreListener {
     }
   }
 
-  async run_describe_start({describeBlock: {name, children}}) {
+  async run_describe_start({ describeBlock: { name, children } }) {
     if (children.length) {
       await this.detox[onRunDescribeStart]({ name });
     }
   }
 
-  async run_describe_finish({describeBlock: {name, children}}) {
+  async run_describe_finish({ describeBlock: { name, children } }) {
     if (children.length) {
       await this.detox[onRunDescribeFinish]({ name });
     }
