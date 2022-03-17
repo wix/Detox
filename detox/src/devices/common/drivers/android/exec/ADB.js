@@ -142,7 +142,7 @@ class ADB {
   }
 
   async readFile(deviceId, filepath) {
-    return await this.shell(deviceId, `cat ${filepath}`, {silent: true}).catch(() => '');
+    return await this.shell(deviceId, `cat ${filepath}`, {verbosity: 'low', silent: true}).catch(() => '');
   }
 
   async setLocation(deviceId, lat, lon) {
