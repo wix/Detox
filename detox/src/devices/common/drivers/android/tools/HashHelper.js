@@ -39,8 +39,6 @@ class HashHelper {
 
   async compareRemoteToLocal(deviceId, bundleId, localHash) {
     const remoteHash = await this._hashXfer.readHashFile(deviceId, bundleId);
-    console.log('remote hash is ' +remoteHash);
-    console.log('local hash is ' +localHash);
     return localHash === remoteHash;
   }
 }

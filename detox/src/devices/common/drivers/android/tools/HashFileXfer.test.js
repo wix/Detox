@@ -16,6 +16,6 @@ describe('hash file transfer', () => {
 
     uut.readHashFile(mockDeviceId, mockBundleId);
     expect(adb.readFile).toHaveBeenCalledTimes(1);
-    expect(adb.readFile).toHaveBeenCalledWith(mockDeviceId, `/data/local/tmp/detox/${mockBundleId}.hash`)
+    expect(adb.readFile).toHaveBeenCalledWith(mockDeviceId, expect.stringContaining(`${mockBundleId}.hash`));
   });
 });
