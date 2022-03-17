@@ -13,7 +13,7 @@
     "generation",
     "."
   ],
-  "version": "19.5.7",
+  "version": "19.5.8-improve-apk-install-attempt2.0",
   "npmClient": "npm",
   "command": {
     "publish": {
