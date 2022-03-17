@@ -12,7 +12,7 @@
 <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
 <p align="center">
-<img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif"/>
+<img alt="Demo" src="docs/img/Detox.gif"/>
 </p>
 <h1></h1>
 
