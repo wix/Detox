@@ -121,21 +121,21 @@ describe('ADB', () => {
 
   it('should send correct command to clear app data', async () => {
     await adb.clearAppData('emulator-5556', 'com.detox.wix.test');
-    expect(exec).toHaveBeenCalledWith(
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "pm clear com.detox.wix.test"'),
       { retries: 1 });
   });
 
   it('should send correct command to read file', async () => {
     await adb.readFile('emulator-5556', 'somefile.txt');
-    expect(exec).toHaveBeenCalledWith(
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
       { retries: 1, silent: true });
   });
 
   it('should send correct command to create file with content', async () => {
     await adb.createFileWithContent('emulator-5556', '/tmp', 'testfile.tmp', 'hello world');
-    expect(exec).toHaveBeenCalledWith(
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "echo hello world > /tmp/testfile.tmp"'),
     {retries: 1});
   });
