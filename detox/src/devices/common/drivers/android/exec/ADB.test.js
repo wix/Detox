@@ -130,7 +130,7 @@ describe('ADB', () => {
     await adb.readFile('emulator-5556', 'somefile.txt');
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
-      { retries: 1, silent: true });
+      { verbosity: 'low', retries: 1, silent: true });
   });
 
   it('should send correct command to create file with content', async () => {
