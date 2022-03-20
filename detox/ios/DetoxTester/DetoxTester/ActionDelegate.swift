@@ -13,9 +13,12 @@ class ActionDelegate: ActionDelegateProtocol {
       throw ActionDelegateError.notXCUIElement
     }
 
+    actionLog("handling action: `\(action)`, on element: `\(element)`")
+
     switch action {
-      case .tap:
-        element.tap()
+      case let .tap(times):
+        actionLog("taps on: `\(element)`, times: \(times)")
+        element.tap(withNumberOfTaps: Int(times), numberOfTouches: 1)
 
       case .tapOnAxis(let x, let y):
         let dx = Double(x) / element.frame.width

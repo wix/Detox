@@ -38,6 +38,16 @@ public func matcherLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .matcher, type: type)
 }
 
+/// Logs the given `message` with its `type`, under the tester actions container.
+public func actionLog(_ message: String, type: OSLogType = .info) {
+  detoxLog(message: message, container: .action, type: type)
+}
+
+/// Logs the given `message` with its `type`, under the tester expectations container.
+public func expectLog(_ message: String, type: OSLogType = .info) {
+  detoxLog(message: message, container: .expect, type: type)
+}
+
 /// Logs the `message` under a DetoxTester `container` along with its `type`.
 fileprivate func detoxLog(message: String, container: OSLog, type: OSLogType) {
   os_log("%{public}@", log: container, type: type, message)
@@ -64,6 +74,12 @@ fileprivate extension OSLog {
   /// Logs operations related to the tester executor.
   static let executor = OSLog(subsystem: subsystem, category: "Executor")
 
-  /// Logs operations related to the tester matcher.
-  static let matcher = OSLog(subsystem: subsystem, category: "Matcher")
+  /// Logs operations related to the tester's element-matcher.
+  static let matcher = OSLog(subsystem: subsystem, category: "ElementMatcher")
+
+  /// Logs operations related to the tester's actions.
+  static let action = OSLog(subsystem: subsystem, category: "UIActions")
+
+  /// Logs operations related to the tester's expectations.
+  static let expect = OSLog(subsystem: subsystem, category: "Expectations")
 }

@@ -11,7 +11,8 @@ public class Executor {
   /// Used to handle `invoke` messages.
   private let invokeHandler = InvokeHandler(
     elementMatcher: ElementMatcher(
-      app: XCUIApplication(bundleIdentifier: "com.wix.detox-example") // TODO: need to replace with current
+      // TODO: need to replace with current:
+      app: XCUIApplication(bundleIdentifier: "com.wix.detox-example")
     ),
     actionDelegate: ActionDelegate(),
     expectationDelegate: ExpectationDelegate()
@@ -62,7 +63,7 @@ public class Executor {
         sendAction(.reportWaitForActiveDone, params: [:], messageId: messageId)
 
       case .isReady, .reactNativeReload:
-        sendAction(.reportReady, params: [:], messageId: -1000)
+        sendAction(.reportReady, params: [:], messageId: messageId)
 
       case .loginSuccess:
         execLog("successfully logged-in to detox server")

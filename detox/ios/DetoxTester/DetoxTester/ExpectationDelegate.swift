@@ -13,6 +13,8 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
       throw Error.notXCUIElement
     }
 
+    expectLog("expect \(element) \(isTruthy ? "" : "NOT ")\(expectation), with timeout: \(timeout)")
+
     switch expectation {
       case .toBeVisible(let threshold):
         XCTAssertEqual(element.isHittable, isTruthy)
