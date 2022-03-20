@@ -79,7 +79,7 @@ class DeviceDriverBase {
     return '';
   }
 
-  async resetAppState(_binaryPath, _testBinaryPath) {
+  async resetAppState(_bundleId, _binaryPath, _testBinaryPath) {
     return undefined;
   }
 

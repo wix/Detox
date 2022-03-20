@@ -181,7 +181,7 @@ class RuntimeDevice {
 
   async resetAppState() {
     await traceCall('resetAppState', () => {
-      return this.deviceDriver.resetAppState(this._currentApp.binaryPath, this._currentApp.bundleId);
+      return this.deviceDriver.resetAppState(this._currentApp.bundleId, this._currentApp.binaryPath, this._currentApp.testBinaryPath);
     });
   }
 

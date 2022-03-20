@@ -95,13 +95,17 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async resetAppState(binaryPath, bundleId) {
+  async resetAppState(bundleId, binaryPath, testBinaryPath) {
     const hash = this._getLocalBinaryHash(binaryPath);
     const alreadyInstalled = await this._isAlreadyInstalled(bundleId, hash);
     if (alreadyInstalled) {
-      await this._clearAppData(bundleId);
+      try {
+        await this._clearAppData(bundleId);
+      } catch (e) {
+        await this._performFullReinstall(binaryPath, testBinaryPath, bundleId, hash);
+      }
     } else {
-      await this._performFullReinstall(binaryPath, bundleId, hash);
+      await this._performFullReinstall(binaryPath, testBinaryPath, bundleId, hash);
     }
   }
 
@@ -409,7 +413,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _clearAppData(bundleId) {
-    await this.adb.clearAppData(this.adbName, bundleId);
+    return await this.adb.clearAppData(this.adbName, bundleId);
   }
 
   async _isAlreadyInstalled(bundleId, hash) {
@@ -424,9 +428,9 @@ class AndroidDriver extends DeviceDriverBase {
     await this.hashHelper.saveHashToRemote(this.adbName, bundleId, hash);
   }
 
-  async _performFullReinstall(binaryPath, bundleId, hash) {
+  async _performFullReinstall(binaryPath, testBinaryPath, bundleId, hash) {
     await this.uninstallApp(bundleId);
-    await this.installApp(binaryPath);
+    await this.installApp(binaryPath, testBinaryPath);
     await this._saveHashToRemote(hash, bundleId);
   }
 }

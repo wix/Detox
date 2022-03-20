@@ -861,7 +861,7 @@ describe('Device', () => {
     await device.resetAppState();
 
     expect(driverMock.driver.resetAppState).toHaveBeenCalledTimes(1);
-    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(device._currentApp.binaryPath, bundleId);
+    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId, device._currentApp.binaryPath, device._currentApp.testBinaryPath);
   });
 
   it(`sendUserActivity() should pass to device driver`, async () => {

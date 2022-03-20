@@ -134,7 +134,7 @@ class ADB {
 
 
   async clearAppData(deviceId, packageId) {
-    await this.shell(deviceId, `pm clear ${packageId}`);
+    return await this.shell(deviceId, `pm clear ${packageId}`, {verbosity: 'low', silent: true});
   }
 
   async createFileWithContent(deviceId, filepath, filename, content) {

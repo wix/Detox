@@ -610,6 +610,7 @@ describe('Android driver', () => {
 
   describe('reset app state', () => {
     const binaryPath = 'mock-bin-path';
+    const testBinaryPath = 'mock-test-bin-path';
     const mockHash = 'abcdef';
 
     beforeEach(() => {
@@ -619,7 +620,7 @@ describe('Android driver', () => {
     it('should clear app data if already installed', async () => {
       hashHelper.generateHash.mockImplementation(() => mockHash);
       hashHelper.compareRemoteToLocal.mockImplementation(() => true);
-      await uut.resetAppState(binaryPath, bundleId);
+      await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
       expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
       expect(hashHelper.generateHash).toHaveBeenCalledWith(binaryPath);
       expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledTimes(1);
@@ -631,9 +632,10 @@ describe('Android driver', () => {
 
     it('should reinstall if not already installed', async () => {
       const mockBinaryPath = mockGetAbsoluteBinaryPathImpl(binaryPath);
+      const mockTestBinaryPath = mockGetAbsoluteBinaryPathImpl(testBinaryPath);
       hashHelper.generateHash.mockImplementation(() => mockHash);
       hashHelper.compareRemoteToLocal.mockImplementation(() => false);
-      await uut.resetAppState(binaryPath, bundleId);
+      await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
       expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
       expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledTimes(1);
       expect(adb.clearAppData).not.toHaveBeenCalled();
@@ -643,7 +645,7 @@ describe('Android driver', () => {
       expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockBinaryPath);
       expect(adb.install).toHaveBeenCalledTimes(2);
       expect(adb.install).toHaveBeenNthCalledWith(1, adbName, mockBinaryPath);
-      expect(adb.install).toHaveBeenNthCalledWith(2, adbName, mockAPKPathGetTestApkPathImpl(mockBinaryPath));
+      expect(adb.install).toHaveBeenNthCalledWith(2, adbName, mockTestBinaryPath);
       expect(hashHelper.saveHashToRemote).toHaveBeenCalledTimes(1);
       expect(hashHelper.saveHashToRemote).toHaveBeenCalledWith(adbName, bundleId, mockHash);
     });
