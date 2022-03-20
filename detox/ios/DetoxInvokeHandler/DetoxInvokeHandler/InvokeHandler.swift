@@ -20,7 +20,7 @@ public class InvokeHandler {
 
   /// Initializes the handler with given `elementMatcher`, `actionDelegate` and
   /// `expectationDelegate`.
-  init(
+  public init(
     elementMatcher: ElementMatcherProtocol,
     actionDelegate: ActionDelegateProtocol,
     expectationDelegate: ExpectationDelegateProtocol
@@ -81,7 +81,7 @@ public class InvokeHandler {
   private func element(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable {
     let index = index ?? 0
     guard index >= 0, elements.count > index else {
-      throw Error.noElementAtIndex
+      throw Error.noElementAtIndex(index: index)
     }
 
     return elements[index]

@@ -17,7 +17,7 @@ protocol WebSocketDelegateProtocol: AnyObject {
   func webSocket(
     _ webSocket: WebSocket,
     didReceiveAction type: WebSocketReceiveActionType,
-    params: [String: Any],
+    params: [String: AnyHashable],
     messageId: NSNumber
   )
 

@@ -4,41 +4,96 @@
 //
 
 import Foundation
+import DetoxInvokeHandler
+import XCTest
 
 public class Executor {
+  /// Used to handle `invoke` messages.
+  private let invokeHandler = InvokeHandler(
+    elementMatcher: ElementMatcher(
+      app: XCUIApplication(bundleIdentifier: "com.wix.detox-example") // TODO: need to replace with current
+    ),
+    actionDelegate: ActionDelegate(),
+    expectationDelegate: ExpectationDelegate()
+  )
+
   /// Used to send actions back.
   public var delegate: ExecutorDelegateProtocol?
 
   /// Executes given operation.
   func execute(
     _ action: WebSocketReceiveActionType,
-    params: [String : Any],
+    params: [String: AnyHashable],
     messageId: NSNumber
   ) {
     execLog("executes action: \(action)")
 
     switch action {
       case .disconnect, .setRecordingState, .waitForBackground, .waitForIdle,
-          .setSyncSettings, .invoke, .cleanup, .deliverPayload, .setOrientation,
-          .shakeDevice, .reactNativeReload, .currentStatus, .captureViewHierarchy:
-        execLog("not implemented yet (action: `\(action)`)", type: .error)
+          .setSyncSettings, .deliverPayload, .setOrientation,
+          .shakeDevice, .captureViewHierarchy:
+        execLog("action not implemented yet (action: `\(action)`)", type: .error)
         fatalError("Unexpected action execution (unimplemented operation): \(action)")
 
-      case .waitForActive:
-        guard let delegate = delegate else {
-          execLog("delegate is nil", type: .error)
-          fatalError("Can't use nil delegate")
+      case .invoke:
+        do {
+          let _result = try invokeHandler.handle(params)
+
+          guard let result = (_result?.value ?? [:]) as? [String : AnyHashable]
+          else {
+            execLog(
+              "failed to cast invoke handle-result: `\(String(describing: _result?.value))`",
+              type: .error
+            )
+            fatalError("Error while executing invoke")
+          }
+
+          sendAction(
+            .reportInvokeResult,
+            params: result,
+            messageId: messageId
+          )
+        } catch {
+          execLog("invoke error: \(error)", type: .error)
+          fatalError("Error while executing invoke")
         }
 
-      case .isReady:
-        guard let delegate = delegate else {
-          execLog("delegate is nil", type: .error)
-          fatalError("Can't use nil delegate")
-        }
-        delegate.sendAction(.reportReady, params: [:], messageId: -1000)
+      case .waitForActive:
+        sendAction(.reportWaitForActiveDone, params: [:], messageId: messageId)
+
+      case .isReady, .reactNativeReload:
+        sendAction(.reportReady, params: [:], messageId: -1000)
 
       case .loginSuccess:
         execLog("successfully logged-in to detox server")
+
+      case .currentStatus:
+        // Always report that the app is idle. XCUITest already handles the app-status
+        // synchronization.
+        sendAction(
+          .reportStatus,
+          params: [
+            "messageId": messageId,
+            "status": ["app_status": "idle"]
+          ],
+          messageId: messageId
+        )
+
+      case .cleanup:
+        sendAction(.reportCleanupDone, params: [:], messageId: messageId)
     }
+  }
+
+  private func sendAction(
+    _ type: WebSocketSendActionType,
+    params: [String : AnyHashable],
+    messageId: NSNumber
+  ) {
+    guard let delegate = delegate else {
+      execLog("delegate is nil", type: .error)
+      fatalError("Can't use nil delegate")
+    }
+
+    delegate.sendAction(type, params: params, messageId: messageId)
   }
 }

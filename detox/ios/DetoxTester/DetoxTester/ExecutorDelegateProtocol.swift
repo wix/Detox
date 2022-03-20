@@ -10,7 +10,7 @@ public protocol ExecutorDelegateProtocol: AnyObject {
   /// Send action.
   func sendAction(
     _ type: WebSocketSendActionType,
-    params: [String : Any],
+    params: [String: AnyHashable],
     messageId: NSNumber
   )
 }

@@ -145,7 +145,7 @@ extension WebSocket: URLSessionWebSocketDelegate {
       let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as! [String: Any]
 
       let type = jsonObject["type"] as! String
-      let params = jsonObject["params"] as? [String: Any]
+      let params = jsonObject["params"] as? [String: AnyHashable]
       let messageId = jsonObject["messageId"] as! NSNumber
 
       wsLog("action received: \(jsonObject.description)")

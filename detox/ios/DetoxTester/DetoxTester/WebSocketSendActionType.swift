@@ -9,4 +9,8 @@ import Foundation
 public enum WebSocketSendActionType: String {
   case reportReady = "ready"
   case reportWebSocketDidOpen = "login"
+  case reportStatus = "currentStatusResult"
+  case reportCleanupDone = "cleanupDone"
+  case reportWaitForActiveDone = "waitForActiveDone"
+  case reportInvokeResult = "invokeResult"
 }

@@ -20,6 +20,9 @@ class ElementMatcher: ElementMatcherProtocol {
   }
 
   func match(to pattern: ElementPattern) throws -> [AnyHashable] {
+    matcherLog("called to match pattern: \(pattern)")
+    
+    
     switch pattern {
       case .text(let text):
         let predicate = NSPredicate(format: "label CONTAINS[c] '%s'", text)

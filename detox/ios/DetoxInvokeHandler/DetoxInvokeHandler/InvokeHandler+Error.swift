@@ -10,7 +10,7 @@ extension InvokeHandler {
     case invalidActionType
 
     /// No element at specified index.
-    case noElementAtIndex
+    case noElementAtIndex(index: Int)
 
     /// Invalid action handling request.
     case invalidActionHandlingRequest

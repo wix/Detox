@@ -33,6 +33,11 @@ public func execLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .executor, type: type)
 }
 
+/// Logs the given `message` with its `type`, under the tester matcher container.
+public func matcherLog(_ message: String, type: OSLogType = .info) {
+  detoxLog(message: message, container: .matcher, type: type)
+}
+
 /// Logs the `message` under a DetoxTester `container` along with its `type`.
 fileprivate func detoxLog(message: String, container: OSLog, type: OSLogType) {
   os_log("%{public}@", log: container, type: type, message)
@@ -58,4 +63,7 @@ fileprivate extension OSLog {
 
   /// Logs operations related to the tester executor.
   static let executor = OSLog(subsystem: subsystem, category: "Executor")
+
+  /// Logs operations related to the tester matcher.
+  static let matcher = OSLog(subsystem: subsystem, category: "Matcher")
 }

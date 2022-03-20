@@ -87,7 +87,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
   func webSocket(
     _ webSocket: WebSocket,
     didReceiveAction type: WebSocketReceiveActionType,
-    params: [String : Any],
+    params: [String: AnyHashable],
     messageId: NSNumber
   ) {
     mainLog("web-socket received `\(type.rawValue)` action message (\(messageId.stringValue), " +
@@ -115,7 +115,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
 extension DetoxTester: ExecutorDelegateProtocol {
   public func sendAction(
     _ type: WebSocketSendActionType,
-    params: [String : Any],
+    params: [String: AnyHashable],
     messageId: NSNumber
   ) {
     mainLog("executor-delegate send action: `\(type)`")
