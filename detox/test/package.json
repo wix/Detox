@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "19.5.8-test-improve-apk-install-attempt2.0",
+  "version": "19.5.9-improve-apk-install-attempt2.0",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -49,7 +49,7 @@
     "@types/react-native": "^0.64.19",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "detox": "^19.5.8-test-improve-apk-install-attempt2.0",
+    "detox": "^19.5.9-improve-apk-install-attempt2.0",
     "eslint": "^7.32.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "express": "^4.15.3",
