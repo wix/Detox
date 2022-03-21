@@ -141,7 +141,7 @@ describe('IOS simulator driver', () => {
   describe('resetAppState', () => {
     it('should call uninstall and install for resetAppState', async () => {
       const binaryPath = '/tmp';
-      await uut.resetAppState(binaryPath, bundleId);
+      await uut.resetAppState(bundleId, binaryPath);
 
       expect(applesimutils.install).toBeCalledTimes(1);
       expect(applesimutils.install).toBeCalledWith(udid, binaryPath);

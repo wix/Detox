@@ -63,7 +63,7 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async resetAppState(binaryPath, bundleId) {
+  async resetAppState(bundleId, binaryPath) {
     await this.uninstallApp(bundleId);
     await this.installApp(binaryPath);
   }
