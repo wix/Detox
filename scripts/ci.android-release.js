@@ -1,5 +1,5 @@
 const exec = require('shell-utils').exec;
-const {log, logSection, getVersionSafe, releaseNpmTag, getReleaseVersionType} = require('./ci.common');
+const {log, logSection, getVersionSafe, releaseNpmTag, getReleaseVersionType} = require('./Utils/releaseArgs');
 
 function run() {
   logSection('Initializing');

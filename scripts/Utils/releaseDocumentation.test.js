@@ -4,7 +4,7 @@ const exec = require('shell-utils').exec;
 jest.mock('fs');
 const fs = require('fs');
 
-const documentation = require('./documentation');
+const documentation = require('./releaseDocumentation');
 
 describe('Documentation script', () => {
   beforeAll(() => {
