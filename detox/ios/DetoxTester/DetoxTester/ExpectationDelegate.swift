@@ -8,7 +8,9 @@ import Foundation
 import XCTest
 
 class ExpectationDelegate: ExpectationDelegateProtocol {
-  func expect(_ expectation: Expectation, isTruthy: Bool, on element: AnyHashable, timeout: Double?) throws {
+  func expect(
+    _ expectation: Expectation, isTruthy: Bool, on element: AnyHashable, timeout: Double?
+  ) throws {
     guard let element = element as? XCUIElement else {
       throw Error.notXCUIElement
     }

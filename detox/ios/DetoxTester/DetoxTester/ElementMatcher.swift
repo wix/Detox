@@ -28,14 +28,13 @@ class ElementMatcher: ElementMatcherProtocol {
         // TODO: need to distinguish between text and id.
         matcherLog("matcher found button: \(app.buttons[text])", type: .debug)
         return [app.buttons[text]]
-//        let predicate = NSPredicate(format: "label CONTAINS[c] '%s'", text)
-//
-//        // There's also the option for `allElementsBoundByAccessibilityElement`.
-//        // This resolves the element when calling it and not when creating this array..
-//        return app.staticTexts.containing(predicate).textViews.allElementsBoundByIndex
-        
+
       case .label(let label):
-        fatalError("not implmented yet")
+        let predicate = NSPredicate(format: "label CONTAINS[c] '%s'", text)
+
+        // There's also the option for `allElementsBoundByAccessibilityElement`.
+        // This resolves the element when calling it and not when creating this array..
+        return app.staticTexts.containing(predicate).textViews.allElementsBoundByIndex
 
       case .and(let patterns):
         fatalError("not implmented yet")
