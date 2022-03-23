@@ -10,12 +10,12 @@ run_f "npm run integration"
 popd
 
 currentRnVersion=$(echo "${REACT_NATIVE_VERSION}" | cut -d "." -f2);
-if [[ -z ${SKIP_UNIT_TESTS} && $currentRnVersion -ge 66 ]]; then
+if [[ $currentRnVersion -ge 66 ]]; then
   pushd detox/android
   run_f "./gradlew testFullRelease"
   popd
 else
-  echo "SKIP_UNIT_TESTS is set: Skipping Android unit tests"
+  echo "Skipping Android unit tests (react-native version ${currentRnVersion} is not ≥66)"
 fi
 
 mkdir -p coverage
