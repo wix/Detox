@@ -30,7 +30,7 @@ class ElementMatcher: ElementMatcherProtocol {
         return [app.buttons[text]]
 
       case .label(let label):
-        let predicate = NSPredicate(format: "label CONTAINS[c] '%s'", text)
+        let predicate = NSPredicate(format: "label CONTAINS[c] '%s'", label)
 
         // There's also the option for `allElementsBoundByAccessibilityElement`.
         // This resolves the element when calling it and not when creating this array..

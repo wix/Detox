@@ -13,12 +13,23 @@ class ActionDelegate: ActionDelegateProtocol {
       throw ActionDelegateError.notXCUIElement
     }
 
-    actionLog("handling action: `\(action)`, on element: `\(element)`")
+    uiLog("handling action: `\(action)`, on element: `\(element)`")
 
     switch action {
-      case let .tap(times):
-        actionLog("taps on: `\(element)`, times: \(times)")
-        element.tap(withNumberOfTaps: Int(times), numberOfTouches: 1)
+      case .tap(let times):
+        uiLog("taps on: `\(element)`, times: \(times)")
+        uiLog("- exists: \(element.exists)")
+        uiLog("- hittable: \(element.isHittable)")
+//        uiLog("- enabled: \(element.isEnabled)")
+        uiLog("- frame: \(element.frame)")
+        uiLog("- elementType: \(element.elementType)")
+        uiLog("- label: \(element.label)")
+        uiLog("- title: \(element.title)")
+        uiLog("- identifier: \(element.identifier)")
+
+
+        element.forceTapElement(withNumberOfTaps: Int(times))
+        uiLog("tap done")
 
       case .tapOnAxis(let x, let y):
         let dx = Double(x) / element.frame.width

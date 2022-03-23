@@ -39,7 +39,7 @@ public func matcherLog(_ message: String, type: OSLogType = .info) {
 }
 
 /// Logs the given `message` with its `type`, under the tester actions container.
-public func actionLog(_ message: String, type: OSLogType = .info) {
+public func uiLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .action, type: type)
 }
 

@@ -46,7 +46,7 @@
 }
 
 - (void)startDetoxTesting {
-  [DetoxTester startDetoxTesting];
+  [DetoxTester startDetoxTestingFrom:self];
 }
 
 @end

@@ -22,15 +22,18 @@ import XCTest
   /// Executes the tester operations.
   fileprivate let executor = Executor()
 
+  /// The test-case in which the tester is running from.
+  fileprivate(set) var testCase: XCTestCase?
+
   // MARK: - Start
 
   /// Starts Detox Tester operation.
-  @objc static public func startDetoxTesting() {
+  @objc static public func startDetoxTesting(from testCase: XCTestCase) {
     mainLog("starting detox tester")
-    shared.start()
+    shared.start(from: testCase)
   }
 
-  private static var shared : DetoxTester = {
+  fileprivate(set) static var shared : DetoxTester = {
     return .init()
   }()
 
@@ -40,11 +43,13 @@ import XCTest
     executor.delegate = self
   }
 
-  private func start() {
+  private func start(from testCase: XCTestCase) {
+    self.testCase = testCase
+
     WaitUntilDone { [self] done, exec in
-      self.webSocket = makeWebSocket()
-      self.done = done
       self.exec = exec
+      self.done = done
+      self.webSocket = makeWebSocket()
     }
   }
 
@@ -90,7 +95,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {
-    mainLog("web-socket received `\(type.rawValue)` action message (\(messageId.stringValue), " +
+    mainLog("web-socket received `\(type.rawValue)` message (#\(messageId.stringValue)), " +
             "with params: \(params.description)")
 
     exec! { [self] in

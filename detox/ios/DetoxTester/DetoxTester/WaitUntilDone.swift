@@ -27,27 +27,30 @@ public func WaitUntilDone(
     syncLog("`exec` was called", type: .debug)
 
     waitingToExecSemaphore.wait()
+    syncLog("next execution code block was set by `exec`", type: .debug)
 
-    semaphore.signal()
     waitingToExec = toExec
+    semaphore.signal()
   }
   
   closure(done, exec)
 
-  syncLog("synchronization started (thread: \(Thread.current.description))")
+  syncLog("main thread synchronization started")
 
   semaphore.wait()
 
   while let toExec = waitingToExec {
-    syncLog("executing (thread: \(Thread.current.description))")
+    syncLog("executing on main thread, exec is now available")
 
     waitingToExec = nil
     waitingToExecSemaphore.signal()
 
+    syncLog("execution started..")
     toExec()
+    syncLog("execution ended")
 
     semaphore.wait()
   }
 
-  syncLog("synchronization ended")
+  syncLog("main thread synchronization ended")
 }

@@ -62,7 +62,15 @@ public class Executor {
       case .waitForActive:
         sendAction(.reportWaitForActiveDone, params: [:], messageId: messageId)
 
-      case .isReady, .reactNativeReload:
+
+      case .reactNativeReload:
+        let app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
+        app.terminate()
+        app.launch()
+
+        sendAction(.reportReady, params: [:], messageId: messageId)
+
+      case .isReady:
         sendAction(.reportReady, params: [:], messageId: messageId)
 
       case .loginSuccess:
