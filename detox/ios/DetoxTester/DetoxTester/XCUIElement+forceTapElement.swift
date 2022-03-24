@@ -11,15 +11,15 @@ extension XCUIElement {
     withNumberOfTaps numberOfTaps: Int
   ) {
     if isHittable {
+      uiLog("tapping: \(self)...")
       self.tap()
       return
     }
 
-    uiLog("element metadata: \(self)")
+    uiLog("element is not tappable: \(self), force tapping..")
 
     let coordinate: XCUICoordinate = self.coordinate(withNormalizedOffset: .zero)
-    uiLog("force tapping element: \(self)...")
     coordinate.tap()
-    uiLog("force tapped")
+    uiLog("force tapped!")
   }
 }

@@ -18,16 +18,6 @@ class ActionDelegate: ActionDelegateProtocol {
     switch action {
       case .tap(let times):
         uiLog("taps on: `\(element)`, times: \(times)")
-        uiLog("- exists: \(element.exists)")
-        uiLog("- hittable: \(element.isHittable)")
-//        uiLog("- enabled: \(element.isEnabled)")
-        uiLog("- frame: \(element.frame)")
-        uiLog("- elementType: \(element.elementType)")
-        uiLog("- label: \(element.label)")
-        uiLog("- title: \(element.title)")
-        uiLog("- identifier: \(element.identifier)")
-
-
         element.forceTapElement(withNumberOfTaps: Int(times))
         uiLog("tap done")
 

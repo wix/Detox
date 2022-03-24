@@ -40,8 +40,8 @@ public func WaitUntilDone(
   semaphore.wait()
 
   while let toExec = waitingToExec {
-    syncLog("executing on main thread, exec is now available")
-
+    syncLog("`exec` started", type: .debug)
+    
     waitingToExec = nil
     waitingToExecSemaphore.signal()
 

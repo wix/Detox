@@ -25,23 +25,27 @@ class ElementMatcher: ElementMatcherProtocol {
     
     switch pattern {
       case .text(let text):
-        // TODO: need to distinguish between text and id.
-        matcherLog("matcher found button: \(app.buttons[text])", type: .debug)
-        return [app.buttons[text]]
+        let element = [app.otherElements[text], app.staticTexts[text]].first { element in
+          element.exists
+        }
+
+        guard let element = element else {
+          matcherLog("matcher did not found element with text: \(text)", type: .error)
+          matcherLog("application info: \(app.debugDescription)", type: .debug)
+          fatalError("Error matching element")
+        }
+
+        matcherLog("element: `\(element)` were found")
+        return [element]
 
       case .label(let label):
-        let predicate = NSPredicate(format: "label CONTAINS[c] '%s'", label)
-
-        // There's also the option for `allElementsBoundByAccessibilityElement`.
-        // This resolves the element when calling it and not when creating this array..
-        return app.staticTexts.containing(predicate).textViews.allElementsBoundByIndex
+        fatalError("not implmented yet")
 
       case .and(let patterns):
         fatalError("not implmented yet")
 
       case .id(let id):
-        // not enough
-        return [app.buttons[id]]
+        fatalError("not implmented yet")
 
       case .ancestor(let pattern):
         fatalError("not implmented yet")
