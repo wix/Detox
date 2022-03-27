@@ -31,7 +31,7 @@
 
 + (NSArray<NSInvocation *> *)testInvocations {
   // Overrides the default test invocations (methods with "test" prefix).
-  // If Detox testing is active, invokes the \c startDetoxTesting method. Otherwise, invokes the
+  // If Detox testing is active, invokes the `startDetoxTesting` method. Otherwise, invokes the
   // internal unit tests.
 
   if ([self isDetoxActive]) {

@@ -37,38 +37,13 @@ public class Executor {
         fatalError("Unexpected action execution (unimplemented operation): \(action)")
 
       case .invoke:
-        do {
-          let _result = try invokeHandler.handle(params)
-
-          guard let result = (_result?.value ?? [:]) as? [String : AnyHashable]
-          else {
-            execLog(
-              "failed to cast invoke handle-result: `\(String(describing: _result?.value))`",
-              type: .error
-            )
-            fatalError("Error while executing invoke")
-          }
-
-          sendAction(
-            .reportInvokeResult,
-            params: result,
-            messageId: messageId
-          )
-        } catch {
-          execLog("invoke error: \(error)", type: .error)
-          fatalError("Error while executing invoke")
-        }
+        handleInvoke(invokeHandler: invokeHandler, action, params: params, messageId: messageId)
 
       case .waitForActive:
         sendAction(.reportWaitForActiveDone, params: [:], messageId: messageId)
 
-
       case .reactNativeReload:
-        let app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
-        app.terminate()
-        app.launch()
-
-        sendAction(.reportReady, params: [:], messageId: messageId)
+        handleReactNativeReload(messageId: messageId)
 
       case .isReady:
         sendAction(.reportReady, params: [:], messageId: messageId)
@@ -77,42 +52,10 @@ public class Executor {
         execLog("successfully logged-in to detox server")
 
       case .currentStatus:
-        // Always report that the app is idle. XCUITest already handles the app-status
-        // synchronization.
-        sendAction(
-          .reportStatus,
-          params: [
-            "messageId": messageId,
-            "status": ["app_status": "idle"]
-          ],
-          messageId: messageId
-        )
+        handleCurrentStatus(messageId: messageId)
 
       case .cleanup:
-        sendAction(.reportCleanupDone, params: [:], messageId: messageId)
-        cleanup()
+        handleCleanup(messageId: messageId)
     }
-  }
-
-  private func sendAction(
-    _ type: WebSocketSendActionType,
-    params: [String : AnyHashable],
-    messageId: NSNumber
-  ) {
-    guard let delegate = delegate else {
-      execLog("delegate is nil, cannot send action (\(type.rawValue)", type: .error)
-      fatalError("Can't use nil delegate")
-    }
-
-    delegate.sendAction(type, params: params, messageId: messageId)
-  }
-
-  private func cleanup() {
-    guard let delegate = delegate else {
-      execLog("delegate is nil, can't do cleanup", type: .error)
-      return
-    }
-
-    delegate.cleanup()
   }
 }
