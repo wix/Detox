@@ -111,18 +111,23 @@ class SimulatorDriver extends IosDriver {
   launchTestTarget(launchArgs) {
     const { udid } = this;
 
-    log.info(`Launching XCTest target`);
-    log.info(`See target logs using: /usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
-    let launchCommand = `TEST_RUNNER_IS_DETOX_ACTIVE='1' TEST_RUNNER_DETOX_SERVER='${launchArgs.detoxServer}' TEST_RUNNER_DETOX_SESSION_ID='${launchArgs.detoxSessionId}' xcodebuild -workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace -scheme DetoxTester -allowProvisioningUpdates -destination 'id=${udid}' test`;
+    log.info(`Launching XCTest target.. See target logs using:\n` +
+      `\t/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact ` +
+      `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
 
-    log.info(launchCommand)
+    let launchCommand = `TEST_RUNNER_IS_DETOX_ACTIVE='1' ` +
+      `TEST_RUNNER_DETOX_SERVER='${launchArgs.detoxServer}' ` +
+      `TEST_RUNNER_DETOX_SESSION_ID='${launchArgs.detoxSessionId}' ` +
+      `xcodebuild -workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace ` +
+      `-scheme DetoxTester -sdk iphonesimulator -allowProvisioningUpdates -destination 'platform=iOS Simulator,id=${udid}' test`;
+    log.info(`Executing: ${launchCommand}`)
 
     execAsync(launchCommand, { capture: [ 'stdout', 'stderr' ]})
       .then(function (result) {
-        log.info('[spawn] stdout: ', result.stdout.toString());
+        log.info(`Tests execution finished:\n ${result.stdout.toString()}`);
       })
       .catch(function (err) {
-        log.error('[spawn] stderr: ', err.stderr);
+        log.error(`Error occurred:\n ${err.stderr}`);
       });
   }
 

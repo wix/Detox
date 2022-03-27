@@ -124,7 +124,7 @@ class InvokeHandlerSpec: QuickSpec {
         matcher.setMatch(from: .text("foo"), to: "bar")
 
         expect { try handler.handle(message) }.to(throwError(
-          InvokeHandler.Error.noElementAtIndex
+          InvokeHandler.Error.noElementAtIndex(index: 1)
         ))
       }
 

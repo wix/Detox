@@ -90,6 +90,7 @@ public class Executor {
 
       case .cleanup:
         sendAction(.reportCleanupDone, params: [:], messageId: messageId)
+        cleanup()
     }
   }
 
@@ -99,10 +100,19 @@ public class Executor {
     messageId: NSNumber
   ) {
     guard let delegate = delegate else {
-      execLog("delegate is nil", type: .error)
+      execLog("delegate is nil, cannot send action (\(type.rawValue)", type: .error)
       fatalError("Can't use nil delegate")
     }
 
     delegate.sendAction(type, params: params, messageId: messageId)
+  }
+
+  private func cleanup() {
+    guard let delegate = delegate else {
+      execLog("delegate is nil, can't do cleanup", type: .error)
+      return
+    }
+
+    delegate.cleanup()
   }
 }

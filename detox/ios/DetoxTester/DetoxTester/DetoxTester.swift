@@ -123,7 +123,22 @@ extension DetoxTester: ExecutorDelegateProtocol {
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {
+    guard let webSocket = webSocket else {
+      mainLog("web-socket is `nil`, cannot send action", type: .error)
+      fatalError("Failed sending action through web-socket")
+    }
+
     mainLog("executor-delegate send action: `\(type)`")
-    webSocket?.sendAction(type, params: params, messageId: messageId)
+    webSocket.sendAction(type, params: params, messageId: messageId)
+  }
+
+  public func cleanup() {
+    guard let webSocket = webSocket else {
+      mainLog("web-socket is `nil`, cannot cleanup test target", type: .error)
+      fatalError("Failed closing web-socket")
+    }
+
+    mainLog("cleanup: closing web-socket connection")
+    webSocket.close()
   }
 }

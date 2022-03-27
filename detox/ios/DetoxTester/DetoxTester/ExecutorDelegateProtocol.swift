@@ -13,4 +13,7 @@ public protocol ExecutorDelegateProtocol: AnyObject {
     params: [String: AnyHashable],
     messageId: NSNumber
   )
+
+  /// Do cleanup of Detox tester.
+  func cleanup()
 }
