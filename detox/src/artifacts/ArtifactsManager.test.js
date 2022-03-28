@@ -204,6 +204,26 @@ describe('ArtifactsManager', () => {
       });
     });
 
+    describe('.trackArtifact()', () => {
+      it('should emit "trackArtifact" event from the artifacts manaager', () => {
+        const artifact = {};
+        const listener = jest.fn();
+        artifactsManager.on('trackArtifact', listener);
+        artifactsApi.trackArtifact(artifact);
+        expect(listener).toHaveBeenCalledWith(artifact);
+      });
+    });
+
+    describe('.untrackArtifact()', () => {
+      it('should emit "untrackArtifact" event from the artifacts manaager', () => {
+        const artifact = {};
+        const listener = jest.fn();
+        artifactsManager.on('untrackArtifact', listener);
+        artifactsApi.untrackArtifact(artifact);
+        expect(listener).toHaveBeenCalledWith(artifact);
+      });
+    });
+
     describe('hooks', () => {
       describe('error handling', () => {
         function itShouldCatchErrorsOnPhase(hookName, argFactory) {
