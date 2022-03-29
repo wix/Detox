@@ -1,9 +1,7 @@
 const crypto = require('crypto');
-const { DetoxRuntimeError } = require('../../../../../errors');
+const fs = require('fs');
 
-const SUPPORTED_HASH_TYPES = {
-  MD5: 'md5',
-}
+const { DetoxInternalError } = require('../../../../../errors');
 
 const HASH_PATH = '/data/local/tmp/detox';
 
@@ -14,27 +12,31 @@ class HashHelper {
     this._hashPath = hashPath;
   }
 
-  generateHash(path, hashType = SUPPORTED_HASH_TYPES.MD5) {
+  async generateHash(path) {
     if (!path) {
-      throw new DetoxRuntimeError({
-        message: `Path must be provided for hash generation`,
-      });
+      throw new DetoxInternalError(`Path must be provided for hash generation`);
     }
 
-    switch (hashType) {
-      case SUPPORTED_HASH_TYPES.MD5:
-        return crypto.createHash('md5').update(path).digest("hex");
-      default:
-        throw new DetoxRuntimeError({
-        message: `Hashtype is unsupported: ${hashType}`,
-        hint: `Use a supported hashtype, such as MD5`,
-      });
-    }
+    return new Promise((resolve, reject) => {
+      const fileStream = fs.createReadStream(path);
+      const hash = crypto.createHash('md5');
+      hash.setEncoding('hex');
+
+      fileStream
+        .on('end', function() {
+          hash.end();
+          resolve(hash.read());
+        })
+        .on('error', reject);
+
+      // read all file and pipe it (write it) to the hash object
+      fileStream.pipe(hash);
+    });
   }
 
   async saveHashToRemote(deviceId, bundleId, hash) {
-    const hashFileName = `${bundleId}.hash`;
-    await this._adb.createFileWithContent(deviceId, this._hashPath, hashFileName, hash);
+    const hashFilePath = `${this._hashPath}/${bundleId}.hash`;
+    await this._adb.createFileWithContent(deviceId, hashFilePath, hash);
   }
 
   async compareRemoteToLocal(deviceId, bundleId, localHash) {

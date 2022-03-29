@@ -27,6 +27,7 @@ const config = {
     init: {
       exposeGlobals: true
     },
+    optimizeAppInstall: Boolean(process.env.CI),
     cleanup: {
       shutdownDevice: false
     }

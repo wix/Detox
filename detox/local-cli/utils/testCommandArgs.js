@@ -152,6 +152,11 @@ module.exports = {
     group: 'Execution:',
     describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },
+  'optimize-app-install': {
+    boolean: false,
+    group: 'Execution:',
+    describe: `use Detox' optimized install mechanism, where a hash is stored on the device allowing future app installation to be skipped when possible.`,
+  },
   'inspect-brk': {
     group: 'Debugging:',
     describe: 'Allows debugging of the underlying test runner',

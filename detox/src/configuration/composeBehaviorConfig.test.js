@@ -26,6 +26,7 @@ describe('composeBehaviorConfig', () => {
         exposeGlobals: true,
         reinstallApp: true,
       },
+      optimizeAppInstall: false,
       launchApp: 'auto',
       cleanup: {
         shutdownDevice: false,
@@ -56,6 +57,7 @@ describe('composeBehaviorConfig', () => {
             reinstallApp: false,
           },
           launchApp: 'manual',
+          optimizeAppInstall: true,
           cleanup: {
             shutdownDevice: true,
           },
@@ -78,6 +80,7 @@ describe('composeBehaviorConfig', () => {
               exposeGlobals: true,
               reinstallApp: true,
             },
+            optimizeAppInstall: false,
             launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
@@ -107,6 +110,7 @@ describe('composeBehaviorConfig', () => {
               exposeGlobals: false,
               reinstallApp: true,
             },
+            optimizeAppInstall: false,
             launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
@@ -118,6 +122,7 @@ describe('composeBehaviorConfig', () => {
           beforeEach(() => {
             cliConfig.reuse = true;
             cliConfig.cleanup = true;
+            cliConfig.optimizeAppInstall = true;
           });
 
           it('should override the user params', () => {
@@ -126,6 +131,7 @@ describe('composeBehaviorConfig', () => {
                 exposeGlobals: false,
                 reinstallApp: false,
               },
+              optimizeAppInstall: true,
               launchApp: 'auto',
               cleanup: {
                 shutdownDevice: true,

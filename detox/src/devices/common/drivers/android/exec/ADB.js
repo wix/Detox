@@ -137,8 +137,8 @@ class ADB {
     return await this.shell(deviceId, `pm clear ${packageId}`, {verbosity: 'low', silent: true});
   }
 
-  async createFileWithContent(deviceId, filepath, filename, content) {
-    await this.shell(deviceId, `echo ${content} > ${filepath}/${filename}`);
+  async createFileWithContent(deviceId, filepath, content) {
+    await this.shell(deviceId, `echo ${content} > ${filepath}`);
   }
 
   async readFile(deviceId, filepath) {

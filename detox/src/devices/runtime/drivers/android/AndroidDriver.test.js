@@ -618,7 +618,7 @@ describe('Android driver', () => {
     });
 
     it('should clear app data if already installed', async () => {
-      hashHelper.generateHash.mockImplementation(() => mockHash);
+      hashHelper.generateHash.mockImplementation(async () => mockHash);
       hashHelper.compareRemoteToLocal.mockImplementation(() => true);
       await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
       expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
@@ -633,7 +633,7 @@ describe('Android driver', () => {
     it('should reinstall if not already installed', async () => {
       const mockBinaryPath = mockGetAbsoluteBinaryPathImpl(binaryPath);
       const mockTestBinaryPath = mockGetAbsoluteBinaryPathImpl(testBinaryPath);
-      hashHelper.generateHash.mockImplementation(() => mockHash);
+      hashHelper.generateHash.mockImplementation(async () => mockHash);
       hashHelper.compareRemoteToLocal.mockImplementation(() => false);
       await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
       expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);

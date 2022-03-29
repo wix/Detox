@@ -134,7 +134,7 @@ describe('ADB', () => {
   });
 
   it('should send correct command to create file with content', async () => {
-    await adb.createFileWithContent('emulator-5556', '/tmp', 'testfile.tmp', 'hello world');
+    await adb.createFileWithContent('emulator-5556', '/tmp/testfile.tmp', 'hello world');
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "echo hello world > /tmp/testfile.tmp"'),
     {retries: 1});
