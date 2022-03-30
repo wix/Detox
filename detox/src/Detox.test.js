@@ -35,7 +35,6 @@ describe('Detox', () => {
     return releaseFn;
   };
   const suspendAllocation = () => suspendMethod(deviceAllocator, 'allocate');
-  const suspendResetAppState = () => suspendMethod(runtimeDevice, 'resetAppState');
 
   let detoxConfig;
 
@@ -511,7 +510,7 @@ describe('Detox', () => {
 
     describe('before app has been uninstalled', () => {
       let releaseFn;
-      beforeEach(() => { releaseFn = suspendResetAppState(); });
+      beforeEach(() => {releaseFn = suspendAllocation();});
       beforeEach(startInit);
       afterEach(() => releaseFn());
 
@@ -523,7 +522,7 @@ describe('Detox', () => {
 
     describe('before app has been installed', () => {
       let releaseFn;
-      beforeEach(() => { releaseFn = suspendResetAppState(); });
+      beforeEach(() => { releaseFn = suspendAllocation(); });
       beforeEach(startInit);
       afterEach(() => releaseFn());
 

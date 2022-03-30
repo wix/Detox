@@ -248,10 +248,10 @@ class Detox {
       .map(0)
       .value();
 
+    const optimizeAppInstall = this._behaviorConfig.optimizeAppInstall;
+
     for (const appName of appNames) {
       await this.device.selectApp(appName);
-
-      const optimizeAppInstall = this._behaviorConfig.optimizeAppInstall;
 
       if (optimizeAppInstall) {
         await this.device.resetAppState();
