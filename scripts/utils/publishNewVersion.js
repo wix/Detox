@@ -1,14 +1,25 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
-const releaseDocumentation = require('releaseDocumentation');
 
-const {log, logSection, getReleaseVersionType, isDryRun, isSkipNpm} = require('releaseArgs');
+const {log, logSection, getReleaseNpmTag, getReleaseVersionType, isDryRun, isSkipNpm} = require('releaseArgs');
+const {removeDocsForVersion, buildDocsForVersion} = require('./releaseDocumentation');
 
-function publishNewVersion(npmTag, previousVersion) {
+function publishNewVersion() {
   validatePrerequisites();
   projectSetup();
-  publishToNpm(npmTag);
-  releaseDocsVersionIfNeeded(npmTag, previousVersion);
+
+  const releaseTag = getReleaseNpmTag();
+  const currentVersion = queryNpmVersionByTag(releaseTag);
+  log(`    current published version on tag ${releaseTag}: ${currentVersion || 'N/A'}`);
+
+  publishToNpm(releaseTag);
+
+  const newVersion = queryNpmVersionByTag(releaseTag);
+  log(`    new published version on tag ${releaseTag}: ${newVersion}`);
+
+  if (releaseTag === 'latest') {
+    releaseDocsVersion(newVersion, currentVersion);
+  }
 }
 
 function validatePrerequisites() {
@@ -39,23 +50,22 @@ function publishToNpm(npmTag) {
   exec.execSync(`lerna publish ${versionType} --yes --dist-tag ${npmTag} ${preid} ${dryRun ? '--no-push': ''}  ${(dryRun || skipNpm) ? '--skip-npm' : ''} -m "Publish %v [ci skip]" --tag-version-prefix='' --force-publish=detox --loglevel trace`);
 }
 
-function releaseDocsVersionIfNeeded(npmTag, previousVersion) {
-  if (npmTag !== 'latest') {
-    return;
+function releaseDocsVersion(newVersion, previousVersion) {
+  const shouldReplaceWithPreviousVersion = previousVersion && isSameMajorVersion(newVersion, previousVersion);
+  if (shouldReplaceWithPreviousVersion) {
+    removeDocsForVersion(previousVersion);
   }
 
-  const newVersion = findCurrentPublishedVersion(npmTag);
-  const shouldReplaceWithPreviousVersion = isSameMajorVersion(newVersion, previousVersion);
-  releaseDocumentation.release(newVersion, shouldReplaceWithPreviousVersion ? previousVersion : undefined);
+  buildDocsForVersion(newVersion);
 }
 
-function findCurrentPublishedVersion(npmTag) {
-  return exec.execSyncRead(`npm view detox dist-tags.${npmTag}`);
+function queryNpmVersionByTag(npmTag) {
+  return exec.execSyncRead(`npm view detox dist-tags.${npmTag}`).trim();
 }
 
 function isSameMajorVersion(newVersion, previousVersion) {
-  const newMajor = newVersion.substring(newVersion.indexOf(".") + 1);
-  const previousMajor = previousVersion.substring(previousVersion.indexOf(".") + 1);
+  const [newMajor] = newVersion.split('.', 1)
+  const [previousMajor] = previousVersion.split('.', 1);
   return newMajor === previousMajor;
 }
 

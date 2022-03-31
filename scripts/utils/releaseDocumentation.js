@@ -6,21 +6,26 @@ const includes = require('lodash/includes');
 const docsPath = `${process.cwd()}/website`;
 const docsVersionsJsonPath = `${docsPath}/versions.json`;
 
-function release(version, removeVersion) {
+function buildDocsForVersion(version) {
   console.log(`Building documentation version: ${version}`);
-  if (removeVersion !== undefined && _versionExists(removeVersion)) {
-    _removeDocsVersion(removeVersion);
-  }
-
   const originalDir = process.cwd();
-  process.chdir(docsPath);
-  exec.execSync(`npm install`);
-  exec.execSync(`npm run docusaurus docs:version ${version}`);
-  exec.execSync(`git add ../website`);
-  process.chdir(originalDir);
+
+  try {
+    process.chdir(docsPath);
+    exec.execSync(`npm install`);
+    exec.execSync(`npm run docusaurus docs:version ${version}`);
+    exec.execSync(`git add .`);
+  } finally {
+    process.chdir(originalDir);
+  }
 }
 
-function _removeDocsVersion(version) {
+function removeDocsForVersion(version) {
+  if (!_versionExists(version)) {
+    console.log(`Version ${version} does not exist.`);
+    return;
+  }
+
   console.log(`Removing documentation version: ${version}`);
   exec.execSync(`rm -rf ${docsPath}/versioned_docs/version-${version}`);
   exec.execSync(`rm -f ${docsPath}/versioned_sidebars/version-${version}-sidebars.json`);
@@ -43,5 +48,6 @@ function _writeDocsVersionsJson(versionsJson) {
 }
 
 module.exports = {
-  release,
+  buildDocsForVersion,
+  removeDocsForVersion,
 };

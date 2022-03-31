@@ -1,73 +1,59 @@
 /* tslint:disable: no-console */
-const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {
-	log, logSection, getVersionSafe, releaseNpmTag, isRelease, getPackagesFromPreviousBuilds
-} = require('./Utils/releaseArgs');
+const {exec} = require('shell-utils');
 
-// const isRelease = getIsRelease();
+const {
+  log, logSection, isRelease, getPackagesFromPreviousBuilds
+} = require('./utils/releaseArgs');
+const publishNewVersion = require('./utils/publishNewVersion');
 
 function run() {
-	logSection('Script started');
-	if (!isEnvValid()) {
-		return;
-	}
+  logSection('Script started');
+  assertCI();
 
-	log('Configuring stuff...');
-	setupGitConfig();
-	setupNpmConfig();
-	getPackagesFromPreviousBuilds();
-	versionTagAndPublish();
+  log('Configuring stuff...');
+  setupGitConfig();
+  setupNpmConfig();
+  getPackagesFromPreviousBuilds();
+  versionTagAndPublish();
 }
 
-function isEnvValid() {
-	if (!process.env.CI) {
-		throw new Error(`Release blocked: Not on a CI build machine!`);
-	}
-	return true;
+function assertCI() {
+  if (!process.env.CI) {
+    throw new Error(`Release blocked: Not on a CI build machine!`);
+  }
 }
 
 function setupGitConfig() {
-	exec.execSyncSilent(`git config --global push.default simple`);
-	exec.execSyncSilent(`git config --global user.email "${process.env.GIT_EMAIL}"`);
-	exec.execSyncSilent(`git config --global user.name "${process.env.GIT_USER}"`);
-	const remoteUrl = new RegExp(`https?://(\\S+)`).exec(exec.execSyncRead(`git remote -v`))[1];
-	exec.execSyncSilent(`git remote set-url origin "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
+  exec.execSyncSilent(`git config --global push.default simple`);
+  exec.execSyncSilent(`git config --global user.email "${process.env.GIT_EMAIL}"`);
+  exec.execSyncSilent(`git config --global user.name "${process.env.GIT_USER}"`);
+  const remoteUrl = new RegExp(`https?://(\\S+)`).exec(exec.execSyncRead(`git remote -v`))[1];
+  exec.execSyncSilent(`git remote set-url origin "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
 }
 
 function setupNpmConfig() {
-	exec.execSync(`rm -f package-lock.json`);
-	const content = `
+  exec.execSync(`rm -f package-lock.json`);
+  const content = `
 email=\${NPM_EMAIL}
 //registry.npmjs.org/:_authToken=\${NPM_TOKEN}
 `;
-	fs.writeFileSync(`.npmrc`, content);
+  fs.writeFileSync(`.npmrc`, content);
 
-	// Workaround. see https://github.com/lerna/lerna/issues/361
-	fs.copyFileSync('.npmrc', 'detox/.npmrc');
-	fs.copyFileSync('.npmrc', 'detox-cli/.npmrc');
+  // Workaround. see https://github.com/lerna/lerna/issues/361
+  fs.copyFileSync('.npmrc', 'detox/.npmrc');
+  fs.copyFileSync('.npmrc', 'detox-cli/.npmrc');
 }
 
 function versionTagAndPublish() {
-	logSection('Preparing to tag/release');
+  logSection('Preparing to tag/release');
 
-	const packageVersion = getVersionSafe();
-	log(`    package version: ${packageVersion}`);
-
-	const currentPublished = findCurrentPublishedVersion();
-	log(`    current published version from ${process.env.BUILDKITE_BRANCH}: ${currentPublished}`);
-
-	if (isRelease()) {
-		const publishNewVersion = require('./Utils/publishNewVersion');
-		publishNewVersion(releaseNpmTag(), currentPublished);
-	}
-
-	log(`Great success, much amaze`);
-}
-
-
-function findCurrentPublishedVersion() {
-	return exec.execSyncRead(`npm view detox dist-tags.${releaseNpmTag()}`);
+  if (isRelease()) {
+    publishNewVersion();
+    log(`Great success, much amaze`);
+  } else {
+    log(`Skipping release...`);
+  }
 }
 
 run();
