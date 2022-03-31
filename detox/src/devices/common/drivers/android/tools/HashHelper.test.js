@@ -15,16 +15,22 @@ describe('HashHelper', () => {
     hashxfer.readHashFile.mockImplementation(() => mockHash);
     adb = new ADBMock();
 
-    adb.createFileWithContent.mockImplementation( async () => jest.fn());
-
     uut = new HashHelper(adb, hashxfer);
   });
 
-  it('should pass arguments to adb', async () => {
-    const HASH_PATH = `/data/local/tmp/detox/${mockBundleId}.hash`;
+  it('should save hash remotely and delete local hash file', async () => {
+    const hashFile = `${mockBundleId}.hash`;
+    const deviceHashPath = `/data/local/tmp/detox/${hashFile}`;
+    const fs = require('fs');
+    const writeFileSpy = jest.spyOn(fs, 'writeFileSync');
+    const deleteFileSpy = jest.spyOn(fs, 'unlinkSync');
+
     await uut.saveHashToRemote(mockDeviceId, mockBundleId, mockHash);
-    expect(adb.createFileWithContent).toHaveBeenCalledTimes(1);
-    expect(adb.createFileWithContent).toHaveBeenLastCalledWith(mockDeviceId, HASH_PATH, mockHash);
+    await expect(writeFileSpy).toHaveBeenCalledTimes(1);
+    await expect(writeFileSpy).toHaveBeenCalledWith(hashFile, mockHash);
+    await expect(adb.push).toHaveBeenCalledTimes(1);
+    await expect(adb.push).toHaveBeenCalledWith(mockDeviceId, hashFile, deviceHashPath);
+    await expect(deleteFileSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should return true when remoteHash and localHash match', async () => {
@@ -47,7 +53,7 @@ describe('HashHelper', () => {
 
   describe('generate hash', () => {
     it('should throw EISDIR error for unknown file', async () => {
-       await expect(uut.generateHash(__dirname)).rejects.toThrow(/EISDIR/)
+      await expect(uut.generateHash(__dirname)).rejects.toThrow(/EISDIR/)
     });
 
     it('should generate hash for file', async () => {

@@ -126,18 +126,18 @@ describe('ADB', () => {
       { retries: 1, silent: true, verbosity: 'low' });
   });
 
-  it('should send correct command to read file', async () => {
-    await adb.readFile('emulator-5556', 'somefile.txt');
+  it('should send correct command to read file with silent running', async () => {
+    await adb.readFile('emulator-5556', 'somefile.txt', true);
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
       { verbosity: 'low', retries: 1, silent: true });
   });
 
-  it('should send correct command to create file with content', async () => {
-    await adb.createFileWithContent('emulator-5556', '/tmp/testfile.tmp', 'hello world');
+  it('should send correct command to read file', async () => {
+    await adb.readFile('emulator-5556', 'somefile.txt', false);
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-      expect.stringContaining('adb" -s emulator-5556 shell "echo hello world > /tmp/testfile.tmp"'),
-    {retries: 1});
+      expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
+      { retries: 1 });
   });
 
   it(`terminate`, async () => {

@@ -132,17 +132,16 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
-
   async clearAppData(deviceId, packageId) {
     return await this.shell(deviceId, `pm clear ${packageId}`, {verbosity: 'low', silent: true});
   }
 
-  async createFileWithContent(deviceId, filepath, content) {
-    await this.shell(deviceId, `echo ${content} > ${filepath}`);
-  }
+  async readFile(deviceId, filepath, silent = false) {
+    if (silent) {
+      return await this.shell(deviceId, `cat ${filepath}`, {verbosity: 'low', silent: true}).catch(() => '');
+    }
 
-  async readFile(deviceId, filepath) {
-    return await this.shell(deviceId, `cat ${filepath}`, {verbosity: 'low', silent: true}).catch(() => '');
+    return await this.shell(deviceId, `cat ${filepath}`);
   }
 
   async setLocation(deviceId, lat, lon) {

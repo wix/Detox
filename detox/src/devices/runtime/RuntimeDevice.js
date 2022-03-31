@@ -317,8 +317,14 @@ class RuntimeDevice {
 
     if (params.delete) {
       await this.terminateApp(bundleId);
-      await this.uninstallApp();
-      await this.installApp();
+      const optimizeAppInstall = this._behaviorConfig.optimizeAppInstall;
+
+      if (optimizeAppInstall) {
+        await this.resetAppState();
+      } else {
+        await this.uninstallApp();
+        await this.installApp();
+      }
     } else if (newInstance) {
       await this.terminateApp(bundleId);
     }

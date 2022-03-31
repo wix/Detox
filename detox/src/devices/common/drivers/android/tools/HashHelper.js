@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 
 const { DetoxInternalError } = require('../../../../../errors');
+const path = require('path');
 
 const HASH_PATH = '/data/local/tmp/detox';
 
@@ -29,19 +30,34 @@ class HashHelper {
         })
         .on('error', reject);
 
-      // read all file and pipe it (write it) to the hash object
       fileStream.pipe(hash);
     });
   }
 
   async saveHashToRemote(deviceId, bundleId, hash) {
-    const hashFilePath = `${this._hashPath}/${bundleId}.hash`;
-    await this._adb.createFileWithContent(deviceId, hashFilePath, hash);
+    const hashFilename = `${bundleId}.hash`;
+
+    this._createLocalHashFile(hashFilename, hash);
+    await this._pushHashFileToDevice(deviceId, hashFilename);
+    this._deleteLocalHashFile(hashFilename);
   }
 
   async compareRemoteToLocal(deviceId, bundleId, localHash) {
     const remoteHash = await this._hashXfer.readHashFile(deviceId, bundleId);
     return localHash === remoteHash;
+  }
+
+  _createLocalHashFile(hashFilename, hash) {
+    fs.writeFileSync(hashFilename, hash);
+  }
+
+  async _pushHashFileToDevice(deviceId, hashFilename) {
+    const destinationPath = path.posix.join(this._hashPath, hashFilename);
+    await this._adb.push(deviceId, hashFilename, destinationPath);
+  }
+
+  _deleteLocalHashFile(hashFilename) {
+    fs.unlinkSync(hashFilename);
   }
 }
 

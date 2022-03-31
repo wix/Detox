@@ -373,6 +373,16 @@ describe('Device', () => {
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
+    it(`given behaviorConfig.optimizeAppInstall == true should call resetAppState`, async () => {
+      const device = await aValidDevice();
+
+      device._behaviorConfig.optimizeAppInstall = true;
+      await device.relaunchApp({ delete: true });
+
+      expect(driverMock.driver.launchApp).toHaveBeenCalled();
+      expect(driverMock.driver.resetAppState).toHaveBeenCalled();
+    });
+
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
