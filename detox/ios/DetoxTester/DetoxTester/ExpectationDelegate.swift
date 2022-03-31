@@ -8,6 +8,8 @@ import Foundation
 import XCTest
 
 class ExpectationDelegate: ExpectationDelegateProtocol {
+  static let shared = ExpectationDelegate()
+
   func expect(
     _ expectation: Expectation, isTruthy: Bool, on element: AnyHashable, timeout: Double?
   ) throws {

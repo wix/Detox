@@ -8,7 +8,7 @@ import XCTest
 
 extension Executor {
   func handleReactNativeReload(messageId: NSNumber) {
-    let app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
+    execLog("reloading react native (relaunch application)")
     app.terminate()
     app.launch()
 

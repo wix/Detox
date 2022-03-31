@@ -8,18 +8,11 @@ import DetoxInvokeHandler
 import XCTest
 
 public class Executor {
-  /// Used to handle `invoke` messages.
-  private let invokeHandler = InvokeHandler(
-    elementMatcher: ElementMatcher(
-      // TODO: need to replace with current:
-      app: XCUIApplication(bundleIdentifier: "com.wix.detox-example")
-    ),
-    actionDelegate: ActionDelegate(),
-    expectationDelegate: ExpectationDelegate()
-  )
+  ///
+  private(set) var app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
 
   /// Used to send actions back.
-  public var delegate: ExecutorDelegateProtocol?
+  private(set) var delegate: ExecutorDelegateProtocol!
 
   /// Executes given operation.
   func execute(
@@ -37,7 +30,7 @@ public class Executor {
         fatalError("Unexpected action execution (unimplemented operation): \(action)")
 
       case .invoke:
-        handleInvoke(invokeHandler: invokeHandler, action, params: params, messageId: messageId)
+        handleInvoke(action, params: params, messageId: messageId)
 
       case .waitForActive:
         sendAction(.reportWaitForActiveDone, params: [:], messageId: messageId)
@@ -57,5 +50,13 @@ public class Executor {
       case .cleanup:
         handleCleanup(messageId: messageId)
     }
+  }
+
+  func setApplication(_ bundleIdentifier: String) {
+    self.app = XCUIApplication(bundleIdentifier: bundleIdentifier)
+  }
+
+  func setDelegate(_ delegate: ExecutorDelegateProtocol) {
+    self.delegate = delegate
   }
 }

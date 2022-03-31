@@ -8,6 +8,8 @@ import Foundation
 import XCTest
 
 class ActionDelegate: ActionDelegateProtocol {
+  static let shared = ActionDelegate()
+
   func act(action: Action, on element: AnyHashable) throws {
     guard let element = element as? XCUIElement else {
       throw ActionDelegateError.notXCUIElement
@@ -69,4 +71,3 @@ extension ActionDelegate {
     case notXCUIElement
   }
 }
-
