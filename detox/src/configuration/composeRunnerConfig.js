@@ -11,7 +11,7 @@ function composeRunnerConfig({ globalConfig, cliConfig }) {
   return {
     testRunner,
     runnerConfig: customRunnerConfig || defaultRunnerConfig,
-    specs: globalConfig.specs || 'e2e',
+    specs: globalConfig.specs || '',
     skipLegacyWorkersInjection: Boolean(globalConfig.skipLegacyWorkersInjection),
   };
 }

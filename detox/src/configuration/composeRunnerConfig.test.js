@@ -63,9 +63,9 @@ describe('composeRunnerConfig', () => {
     expect(composeRunnerConfig().specs).toBe('e2e/suite1');
   });
 
-  it('should set .specs to default e2e/ value', () => {
+  it('should treat undefined .specs as an empty string', () => {
     delete globalConfig.specs;
-    expect(composeRunnerConfig().specs).toBe('e2e');
+    expect(composeRunnerConfig().specs).toBe('');
   });
 
 });
