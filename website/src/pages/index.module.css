@@ -55,3 +55,19 @@
     overflow: hidden;
     background: rgba(33,33,34, 1);
 }
+
+.discordButton {
+    background: #7289da;
+    padding: 0.13rem 0.6rem;
+    font-size: medium;
+    font-weight: bold;
+    border-radius: 0.3rem;
+    color: #fffdff;
+    margin-left: 0.9rem;
+}
+
+.discordButton:hover {
+    text-decoration: none;
+    color: #fffdff;
+    background: #687ecb;
+}
