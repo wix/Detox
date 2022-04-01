@@ -4,7 +4,7 @@ const runnerConfig = `{
     "maxWorkers": 1,
     "testEnvironment": "./environment",
     "testTimeout": 120000,
-    "testRegex": "\\\\.e2e\\\\.js$",
+    "testMatch": ["<rootDir>/e2e/*.e2e.js"],
     "reporters": ["detox/runners/jest-circus/reporter"],
     "verbose": true
 }
