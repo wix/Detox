@@ -162,7 +162,7 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
       DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
     }, _.isUndefined),
-    specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
+    specs: _.isEmpty(specs) && runnerConfig.specs ? [runnerConfig.specs] : specs,
   };
 }
 
@@ -214,7 +214,7 @@ async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConf
       DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
     }, _.isUndefined),
 
-    specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
+    specs: _.isEmpty(specs) && runnerConfig.specs ? [runnerConfig.specs] : specs,
   };
 }
 
@@ -235,7 +235,7 @@ function launchTestRunner({ argv, env, specs }) {
     command,
     quote(unparse(_.omitBy(restArgv, _.isUndefined))),
     specs.join(' ')
-  ].join(' ');
+  ].filter(Boolean).join(' ');
 
   log.info(printEnvironmentVariables(env) + fullCommand);
 
