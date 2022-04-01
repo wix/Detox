@@ -1,6 +1,8 @@
-const WorkerAssignReporterCircus = require('detox/runners/jest/WorkerAssignReporterCircus');
-const SpecReporterCircus = require('detox/runners/jest/SpecReporterCircus');
-const DetoxCircusEnvironment = require('detox/runners/jest-circus/environment');
+const {
+  DetoxCircusEnvironment,
+  SpecReporter,
+  WorkerAssignReporter,
+} = require('detox/runners/jest-circus');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {
@@ -8,8 +10,8 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
 
     this.initTimeout = 30000;
     this.registerListeners({
-      SpecReporterCircus,
-      WorkerAssignReporterCircus,
+      SpecReporter,
+      WorkerAssignReporter,
     });
   }
 
