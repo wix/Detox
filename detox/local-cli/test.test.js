@@ -68,7 +68,6 @@ describe('CLI', () => {
 
       test('should default to mocha', () => expect(cliCall().command).toMatch(/^mocha/));
       test('should default to --opts e2e/mocha.opts', () => expect(cliCall().command).toMatch(/--opts e2e\/mocha.opts/));
-      test('should default to "e2e" test folder', () => expect(cliCall().command).toMatch(/ e2e$/));
       test('should pass --use-custom-logger true', () => expect(cliCall().command).toMatch(/--use-custom-logger true/));
       test('should not override process.env', () => expect(cliCall().env).toStrictEqual({}));
       test('should produce a default command (integration test)', () => {
@@ -80,7 +79,7 @@ describe('CLI', () => {
           `--use-custom-logger`, `true`
         ].join(' ');
 
-        expect(cliCall().command).toBe(`mocha ${args} e2e`);
+        expect(cliCall().command).toBe(`mocha ${args}`);
       });
     });
 
@@ -288,7 +287,7 @@ describe('CLI', () => {
 
       test('should produce a default command (integration test, ios)', () => {
         const args = `--config e2e/config.json --testNamePattern ${quote('^((?!:android:).)*$')} --maxWorkers 1`;
-        expect(cliCall().command).toBe(`jest ${args} e2e`);
+        expect(cliCall().command).toBe(`jest ${args}`);
       });
 
       test('should put default environment variables (integration test, ios)', () => {
@@ -309,7 +308,7 @@ describe('CLI', () => {
 
       test('should produce a default command (integration test)', () => {
         const args = `--config e2e/config.json --testNamePattern ${quote('^((?!:ios:).)*$')} --maxWorkers 1`;
-        expect(cliCall().command).toBe(`jest ${args} e2e`);
+        expect(cliCall().command).toBe(`jest ${args}`);
       });
 
       test('should put default environment variables (integration test)', () => {
@@ -390,7 +389,6 @@ describe('CLI', () => {
       cp.execSync.mockImplementation(() => { throw new Error; });
 
       await run(`-R 2`).catch(_.noop);
-      expect(cliCall(0).command).toMatch(/ e2e$/);
       expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
 
       expect(cliCall(1).command).toMatch(/ e2e\/failing1.test.js e2e\/failing2.test.js$/);
@@ -701,7 +699,7 @@ describe('CLI', () => {
     test(`should deduce wrapped ${testRunner} CLI`, async () => {
       detoxConfig.testRunner = `nyc ${testRunner}`;
       await run();
-      expect(cliCall().command).toMatch(RegExp(`nyc ${testRunner} .* e2e$`));
+      expect(cliCall().command).toMatch(RegExp(`nyc ${testRunner} `));
     });
 
     describe.each([['ios.simulator'], ['android.emulator']])('for %s', (deviceType) => {
