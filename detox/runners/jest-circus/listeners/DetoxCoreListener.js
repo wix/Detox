@@ -9,7 +9,7 @@ const {
   onTestDone,
   onRunDescribeFinish,
 } = require('../../integration').lifecycle;
-const { getFullTestName, hasTimedOut } = require('../../jest/utils');
+const { getFullTestName, hasTimedOut } = require('../utils');
 
 const RETRY_TIMES = Symbol.for('RETRY_TIMES');
 
