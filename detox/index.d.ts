@@ -1445,25 +1445,6 @@ declare global {
             languageAndLocale?: LanguageAndLocale;
         }
 
-        interface CircusTestEventListenerBase {
-            handleTestEvent(event: any, state: any): Promise<void>;
-        }
-
-        interface DetoxCircus {
-            /**
-             * A get function that Enables access to this instance (single in each worker's scope)
-             */
-            getEnv(): {
-                /**
-                 * Registers a listener such as an adapter or reporter
-                 * @example
-                 * detoxCircus.getEnv().addEventsListener(adapter)
-                 * detoxCircus.getEnv().addEventsListener(assignReporter)
-                 */
-                addEventsListener(listener: CircusTestEventListenerBase): void
-            };
-        }
-
         // Element Attributes Shared Among iOS and Android
         interface ElementAttributes {
             /**
