@@ -1,10 +1,9 @@
-const SpecReporterCircus = require('../jest/SpecReporterCircus');
-const WorkerAssignReporterCircus = require('../jest/WorkerAssignReporterCircus');
-
 const DetoxCircusEnvironment = require('./environment');
+const SpecReporter = require('./listeners/SpecReporter');
+const WorkerAssignReporter = require('./listeners/WorkerAssignReporter');
 
 module.exports = {
   DetoxCircusEnvironment,
-  SpecReporter: SpecReporterCircus,
-  WorkerAssignReporter: WorkerAssignReporterCircus,
+  SpecReporter,
+  WorkerAssignReporter,
 };
