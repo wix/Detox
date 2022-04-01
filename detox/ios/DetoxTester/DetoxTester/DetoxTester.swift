@@ -40,7 +40,7 @@ import XCTest
   /// Make init as private method. Cannot be initialized from outside.
   private override init() {
     super.init()
-    executor.delegate = self
+    executor.setDelegate(self)
   }
 
   private func start(from testCase: XCTestCase) {
