@@ -101,6 +101,10 @@ const config = {
               {
                 label: 'Twitter',
                 href: 'https://twitter.com/detoxe2e/'
+              },
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/kENf4NbV'
               }
             ]
           }
