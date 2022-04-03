@@ -36,9 +36,7 @@ function HomepageSubHeader() {
       >
         Follow @detoxe2e
       </a>
-      <Link className={styles.discordButton} to="https://discord.gg/kENf4NbV">
-        Join our Discord
-      </Link>
+      <button className={styles.discordButton} onClick={()=> window.open("https://discord.gg/kENf4NbV")} />
       <iframe
         className={styles.githubStar}
         src="https://ghbtns.com/github-btn.html?user=wix&repo=detox&type=star&count=true&size=large"

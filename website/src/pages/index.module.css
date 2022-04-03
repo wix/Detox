@@ -57,17 +57,19 @@
 }
 
 .discordButton {
-    background: #7289da;
-    padding: 0.13rem 0.6rem;
-    font-size: medium;
-    font-weight: bold;
+    background-color: #7289da;
+    background-image: url(../../static/img/join-us-white.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 95% 95%;
+    height: 2.4rem;
+    width: 7rem;
     border-radius: 0.3rem;
-    color: #fffdff;
     margin-left: 0.9rem;
+    cursor: pointer;
+    border-width: 0;
 }
 
 .discordButton:hover {
-    text-decoration: none;
-    color: #fffdff;
-    background: #687ecb;
+    background-color: #687ecb;
 }
