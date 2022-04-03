@@ -59,11 +59,11 @@
 .discordButton {
     background-color: #7289da;
     background-image: url(../../static/img/join-us-white.svg);
-    background-position: center;
     background-repeat: no-repeat;
-    background-size: 95% 95%;
-    height: 2.4rem;
-    width: 7rem;
+    background-size: 76% 76%;
+    background-position: 50% 62%;
+    height: 30px;
+    width: 6rem;
     border-radius: 0.3rem;
     margin-left: 0.9rem;
     cursor: pointer;
