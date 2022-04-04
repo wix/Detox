@@ -25,7 +25,6 @@ beforeAll(async () => {
       testRunner: 'nyc jest',
       runnerConfig: 'e2e/config.js',
       specs: 'e2e/*.test.js',
-      skipLegacyWorkersInjection: true,
       behavior: {
         init: {
           reinstallApp: true,
