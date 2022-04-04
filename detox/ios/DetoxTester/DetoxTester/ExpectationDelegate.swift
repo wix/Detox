@@ -17,10 +17,12 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
       throw Error.notXCUIElement
     }
 
-    expectLog("expect \(element) \(isTruthy ? "" : "NOT ")\(expectation), with timeout: \(timeout)")
+    expectLog("expect \(element) \(isTruthy ? "" : "not ")\(expectation), " +
+              "with timeout: \(String(describing: timeout))")
 
     switch expectation {
       case .toBeVisible(let threshold):
+        // TODO: use threshold somehow.. maybe calculate same as Detox.
         XCTAssertEqual(element.isHittable, isTruthy)
 
       case .toBeFocused:

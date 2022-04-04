@@ -19,14 +19,10 @@ class ActionDelegate: ActionDelegateProtocol {
 
     switch action {
       case .tap(let times):
-        uiLog("taps on: `\(element)`, times: \(times)")
-        element.forceTapElement(withNumberOfTaps: Int(times))
-        uiLog("tap done")
+        element.tap(withNumberOfTaps: Int(times))
 
       case .tapOnAxis(let x, let y):
-        let dx = Double(x) / element.frame.width
-        let dy = Double(y) / element.frame.height
-        element.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: dy)).tap()
+        element.tap(on: CGPoint(x: x,y: y))
 
       case .longPress:
         element.press(forDuration: 0.7)
