@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-echo "steps:"
-
 ORIGINAL_REPO=$(echo "$BUILDKITE_REPO" | sed 's/.*github.com\///')
 echo $ORIGINAL_REPO
+echo "steps:"
+
 # PR_REPO=$(echo $BUILDKITE_PULL_REQUEST_REPO | sed 's/.*github.com\///')
 # echo $PR_REPO
 
