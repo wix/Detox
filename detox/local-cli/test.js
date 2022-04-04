@@ -174,14 +174,12 @@ async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConf
     color: !cliConfig.noColor && undefined,
     config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
     testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
-    maxWorkers: cliConfig.workers || (runnerConfig.skipLegacyWorkersInjection ? undefined : 1),
+    maxWorkers: cliConfig.workers || undefined,
 
     ...passthrough,
   }, _.isUndefined);
 
-  const hasMultipleWorkers = runnerConfig.skipLegacyWorkersInjection
-    ? (await readJestConfig(argv)).globalConfig.maxWorkers > 1
-    : cliConfig.workers > 1;
+  const hasMultipleWorkers = (await readJestConfig(argv)).globalConfig.maxWorkers > 1;
 
   return {
     argv,
