@@ -2,10 +2,10 @@
 
 echo "steps:"
 
-ORIGINAL_REPO=$(echo $BUILDKITE_REPO | sed 's/.*github.com\///')
-echo $ORIGINAL_REPO
-PR_REPO=$(echo $BUILDKITE_PULL_REQUEST_REPO | sed 's/.*github.com\///')
-echo $PR_REPO
+# ORIGINAL_REPO=$(echo $BUILDKITE_REPO | sed 's/.*github.com\///')
+# echo $ORIGINAL_REPO
+# PR_REPO=$(echo $BUILDKITE_PULL_REQUEST_REPO | sed 's/.*github.com\///')
+# echo $PR_REPO
 
 # [[ $ORIGINAL_REPO != $PR_REPO ]] && echo '  - block: ":rocket: Release!"'
 
