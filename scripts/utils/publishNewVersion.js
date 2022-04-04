@@ -51,22 +51,18 @@ function publishToNpm(npmTag) {
 }
 
 function releaseDocsVersion(newVersion, previousVersion) {
-  const shouldReplaceWithPreviousVersion = previousVersion && isSameMajorVersion(newVersion, previousVersion);
-  if (shouldReplaceWithPreviousVersion) {
-    removeDocsForVersion(previousVersion);
+  const newDocsVersion = newVersion.split('.', 1).concat('.x').join('');
+  const previousDocsVersion = previousVersion.split('.', 1).concat('.x').join('');
+
+  if (newDocsVersion === previousDocsVersion) {
+    removeDocsForVersion(previousDocsVersion);
   }
 
-  buildDocsForVersion(newVersion);
+  buildDocsForVersion(newDocsVersion);
 }
 
 function queryNpmVersionByTag(npmTag) {
   return exec.execSyncRead(`npm view detox dist-tags.${npmTag}`).trim();
-}
-
-function isSameMajorVersion(newVersion, previousVersion) {
-  const [newMajor] = newVersion.split('.', 1)
-  const [previousMajor] = previousVersion.split('.', 1);
-  return newMajor === previousMajor;
 }
 
 module.exports = publishNewVersion;
