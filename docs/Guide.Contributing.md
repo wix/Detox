@@ -180,7 +180,7 @@ launchctl setenv PATH $PATH
 Under `detox/android`:
 
 ```sh
-./gradlew test
+./gradlew testFullRelease
 ```
 
 ### Detox - Example Projects
