@@ -1,7 +1,6 @@
 package com.wix.detox.adapters.server
 
 import android.content.Context
-import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.TestEngineFacade
 import com.wix.detox.UTHelpers.yieldToOtherThreads
 import com.wix.detox.instruments.DetoxInstrumentsException
@@ -9,6 +8,7 @@ import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
 import org.assertj.core.api.Assertions
 import org.json.JSONObject
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.lang.reflect.InvocationTargetException

@@ -1,11 +1,9 @@
 package com.wix.detox.espresso.scroll
 
-import com.nhaarman.mockitokotlin2.*
 import org.mockito.AdditionalMatchers
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.lang.Exception
-import java.lang.RuntimeException
 
 private fun floatEq3(value: Float) = AdditionalMatchers.eq(value, 0.001f)
 
