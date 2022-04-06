@@ -54,6 +54,8 @@ declare global {
              */
             runnerConfig?: string;
             /**
+             * Optional. A default glob pattern for a test runner to use when no test files are specified.
+             *
              * @example specs: 'detoxE2E'
              */
             specs?: string;

@@ -11,7 +11,7 @@ We are improving Detox API as we go along, sometimes these changes require us to
 
 ### 19.2
 
-The release has a **developer experience** improvement – _Detect pending in-flight requests_ (#3003, @jonathanmos).
+The release has a **developer experience** improvement – _Detect pending in-flight requests_ ([#3003](https://github.com/wix/Detox/issues/3003), [**@jonathanmos**](https://github.com/jonathanmos)).
 The feature adds extra logic that prevents forgotten `await` statements on asynchronous Detox APIs. That’s why you might see a new error like this:
 
 ```plain text

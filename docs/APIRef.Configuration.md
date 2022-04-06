@@ -66,6 +66,9 @@ Note: If there is only one configuration in `configurations`, Detox will default
 | `artifacts`          | Overrides to the artifacts config. See [Artifacts guide](#artifacts-configuration).                                  |
 | `behavior`           | Overrides to the behavior config. See [Behavior guide](#behavior-configuration).                                     |
 | `session`            | Overrides to the session config. See [Session guide](#server-configuration).                                         |
+|                      |                                                                                                                      |
+| `runnerConfig`       | Path to the test runner config. Default value: `e2e/config.json` (for Jest), `e2e/mocha.opts` (for Mocha).           |
+| `specs`              | A default glob pattern for a test runner to use when no test files are specified, e.g.: `e2e/**/*.test.js`           |
 
 **Example:**
 
