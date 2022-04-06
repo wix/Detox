@@ -1,7 +1,7 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 
-const {log, logSection, getReleaseNpmTag, getReleaseVersionType, isDryRun, isSkipNpm} = require('releaseArgs');
+const {log, logSection, getReleaseNpmTag, getReleaseVersionType, isDryRun, isSkipNpm} = require('./releaseArgs');
 const {removeDocsForVersion, buildDocsForVersion} = require('./releaseDocumentation');
 
 function publishNewVersion() {
