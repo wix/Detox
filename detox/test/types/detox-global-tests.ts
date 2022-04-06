@@ -28,6 +28,7 @@ describe("Test", () => {
 
     beforeAll(async () => {
         await device.reloadReactNative();
+        await device.resetAppState();
 
         const artifactsPaths: string[] = [
             await device.takeScreenshot("test screenshot"),

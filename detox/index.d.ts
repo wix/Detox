@@ -100,6 +100,13 @@ declare global {
                  */
                 reinstallApp?: boolean;
             };
+            /**
+             * Avoid installing the app on the device if it has been already installed there.
+             * Instead of reinstalling, it calls Device#resetAppState().
+             *
+             * Experimental (currently implemented only for Android).
+             */
+            optimizeAppInstall?: boolean;
             launchApp?: 'auto' | 'manual';
             cleanup?: {
                 shutdownDevice?: boolean;
@@ -575,6 +582,12 @@ declare global {
              * @example await device.installApp('other.bundle.id');
              */
             uninstallApp(bundle?: string): Promise<void>;
+
+            /**
+             * Reset the state of the app (e.g. by reinstalling on the device)
+             * or deleting user data.
+             */
+            resetAppState(): Promise<void>;
 
             /**
              * Mock opening the app from URL. sourceApp is an optional parameter to specify source application bundle id.
@@ -1092,11 +1105,6 @@ declare global {
             typeText(text: string): Promise<void>;
 
             /**
-             * reset the state of the app (e.g. by reinstalling on the device)
-             */
-            resetAppState(): Promise<void>;
-
-            /**
              * Paste text into a text field.
              * @example await element(by.id('textField')).replaceText('passcode again');
              */
@@ -1433,7 +1441,7 @@ declare global {
              */
             userActivity?: any;
             /**
-             * Launch into a fresh installation
+             * Launch into a fresh installation.
              * A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is false.
              */
             delete?: boolean;
