@@ -57,7 +57,7 @@ function getVersionSafe() {
 
 // If theres a npm tag, use it. Otherwise, if releasing from `master` branch, use a `prerelease` prefix for
 // pre-releases, and "latest" otherwise, for non-master branches uses the branch name as the npm-tag.
-function releaseNpmTag() {
+function getReleaseNpmTag() {
   if (RELEASE_NPM_TAG !== 'null') {
     return RELEASE_NPM_TAG;
   } else if (BRANCH === 'master') {
@@ -80,7 +80,7 @@ module.exports = {
   log,
   logSection,
   getVersionSafe,
-  releaseNpmTag,
+  getReleaseNpmTag,
   getReleaseVersionType,
   getPackagesFromPreviousBuilds,
   isRelease,
