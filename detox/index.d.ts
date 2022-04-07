@@ -235,6 +235,9 @@ declare global {
             bootArgs?: string;
             gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
             headless?: boolean;
+            /**
+             * @default true
+             */
             readonly?: boolean;
         }
 
