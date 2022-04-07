@@ -4,11 +4,11 @@ const STATE_ONLINE = 'ONLINE';
 const STATE_CREATING = 'CREATING';
 const STATE_BOOTING = 'BOOTING';
 const STATE_STARTING = 'STARTING';
-const initStates = [
+const initStates = new Set([
   STATE_CREATING,
   STATE_BOOTING,
   STATE_STARTING,
-];
+]);
 
 class GenyInstance {
   constructor(rawInstance) {
@@ -43,7 +43,7 @@ class GenyInstance {
   }
 
   isInitializing() {
-    return initStates.includes(this.state);
+    return initStates.has(this.state);
   }
 
   get recipeName() {

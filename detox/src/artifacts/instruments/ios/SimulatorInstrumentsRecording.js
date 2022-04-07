@@ -13,7 +13,7 @@ class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
 
   static prepareSamplingInterval(samplingInterval) {
     if (samplingInterval) {
-      return samplingInterval / 1000.0;
+      return samplingInterval / 1000;
     }
     return 0.25;
   }
