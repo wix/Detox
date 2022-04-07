@@ -1,7 +1,7 @@
 const getWorkerId = require('../../../../../../utils/getWorkerId');
 
 class GenyInstanceNaming {
-  constructor(nowProvider = () => new Date().getTime()) {
+  constructor(nowProvider = () => Date.now()) {
     this.uniqueSessionId = Number(process.env.DETOX_START_TIMESTAMP);
     this.nowProvider = nowProvider;
     this._workerId = getWorkerId() || (this.nowProvider() - this.uniqueSessionId);

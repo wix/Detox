@@ -5,8 +5,8 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { joinArgs } = require('../../../../../utils/argparse');
-const environment = require('../../../../../utils/environment');
 const childProcess = require('../../../../../utils/childProcess');
+const environment = require('../../../../../utils/environment');
 const log = require('../../../../../utils/logger').child({ __filename });
 const { quote } = require('../../../../../utils/shellQuote');
 
@@ -204,18 +204,15 @@ class AppleSimUtils {
     const args = ['simctl', 'spawn', udid, 'log', 'stream'];
 
     if (level) {
-      args.push('--level');
-      args.push(level);
+      args.push('--level', level);
     }
 
     if (style) {
-      args.push('--style');
-      args.push(style);
+      args.push('--style', style);
     }
 
     if (processImagePath) {
-      args.push('--predicate');
-      args.push(`processImagePath beginsWith "${processImagePath}"`);
+      args.push('--predicate', `processImagePath beginsWith "${processImagePath}"`);
     }
 
     const promise = childProcess.spawnAndLog('/usr/bin/xcrun', args, {
@@ -250,10 +247,10 @@ class AppleSimUtils {
       // This workaround is done to ignore the error above, as we do not care if the app was running before, we just
       // want to make sure it isn't now.
       if (err.code === 3 && err.stderr.includes(`the app is not currently running`)) {
-        return
+        return;
       }
 
-      throw err
+      throw err;
     }
   }
 
@@ -294,8 +291,7 @@ class AppleSimUtils {
   recordVideo(udid, destination, options = {}) {
     const args = ['simctl', 'io', udid, 'recordVideo', destination];
     if (options.codec) {
-      args.push('--codec');
-      args.push(options.codec);
+      args.push('--codec', options.codec);
     }
 
     return childProcess.spawnAndLog('/usr/bin/xcrun', args, {

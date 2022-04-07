@@ -5,15 +5,15 @@ const ADB = require('../../devices/common/drivers/android/exec/ADB');
 const ApkValidator = require('../../devices/common/drivers/android/tools/ApkValidator');
 const TempFileXfer = require('../../devices/common/drivers/android/tools/TempFileXfer');
 
-class AndroidServiceLocator {
-  static get emulator() {
+const AndroidServiceLocator = {
+  get emulator() {
     return require('./emulatorServiceLocator');
-  }
+  },
 
-  static get genycloud() {
+  get genycloud() {
     return require('./genycloudServiceLocator');
-  }
-}
+  },
+};
 
 AndroidServiceLocator.adb = new ADB();
 AndroidServiceLocator.aapt = new AAPT();

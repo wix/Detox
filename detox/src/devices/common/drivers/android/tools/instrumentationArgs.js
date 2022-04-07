@@ -2,8 +2,8 @@ const _ = require('lodash');
 
 const { encodeBase64 } = require('../../../../../utils/encoding');
 
-const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
-const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.includes(arg);
+const reservedInstrumentationArgs = new Set(['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile']);
+const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.has(arg);
 
 function prepareInstrumentationArgs(args) {
   const usedReservedArgs = [];
