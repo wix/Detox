@@ -7,7 +7,7 @@ const docsPath = `${process.cwd()}/website`;
 const docsVersionsJsonPath = `${docsPath}/versions.json`;
 
 function buildDocsForVersion(version) {
-  console.log(`Building documentation version: ${version}`);
+  console.log(`Publishing documentation version: ${version}.`);
   const originalDir = process.cwd();
 
   try {
@@ -22,33 +22,39 @@ function buildDocsForVersion(version) {
 }
 
 function removeDocsForVersion(version) {
-  if (!_versionExists(version)) {
+  if (!_isVersionExists(version)) {
     console.log(`Version ${version} does not exist.`);
     return;
   }
 
-  console.log(`Removing documentation version: ${version}`);
+  console.log(`Removing documentation version: ${version}.`);
   exec.execSync(`rm -rf ${docsPath}/versioned_docs/version-${version}`);
   exec.execSync(`rm -f ${docsPath}/versioned_sidebars/version-${version}-sidebars.json`);
-  const docsVersionsJson = _readDocsVersionsJson();
-  docsVersionsJson.splice(docsVersionsJson.indexOf(version), 1);
-  _writeDocsVersionsJson(docsVersionsJson);
+  const versions = _readDocsVersions();
+  versions.splice(versions.indexOf(version), 1);
+  _updateDocsVersionsFile(versions);
 }
 
-function _versionExists(version) {
-  console.log(`check if version exists: ${version}`);
-  return version !== '' && includes(_readDocsVersionsJson(), version);
+function _isVersionExists(version) {
+  console.log(`Check if version exists: ${version}.`);
+  const versions = _readDocsVersions();
+  return includes(versions, version);
 }
 
-function _readDocsVersionsJson() {
-  return JSON.parse(fs.readFileSync(docsVersionsJsonPath));
+function _readDocsVersions() {
+  if (fs.existsSync(docsVersionsJsonPath)) {
+    return JSON.parse(fs.readFileSync(docsVersionsJsonPath));
+  } else {
+    console.log(`Versions file (${docsVersionsJsonPath}) does not exist.`);
+    return [];
+  }
 }
 
-function _writeDocsVersionsJson(versionsJson) {
-  fs.writeFileSync(docsVersionsJsonPath, JSON.stringify(versionsJson, null, 2));
+function _updateDocsVersionsFile(versions) {
+  fs.writeFileSync(docsVersionsJsonPath, JSON.stringify(versions, null, 2));
 }
 
 module.exports = {
   buildDocsForVersion,
-  removeDocsForVersion,
+  removeDocsForVersion
 };
