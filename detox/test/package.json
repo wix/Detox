@@ -3,7 +3,7 @@
   "version": "19.6.6",
   "private": true,
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=12.10.0"
   },
   "scripts": {
     "lint": "eslint .",
