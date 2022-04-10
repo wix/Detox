@@ -39,18 +39,18 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	}
 	
 	func sendAction(_ type: String, params: [String : Any], messageId: NSNumber) {
-		let data : [String: Any] = ["type": type, "params": params, "messageId": messageId]
-		do {
-			let data = try JSONSerialization.data(withJSONObject: data, options: [])
-			let message = URLSessionWebSocketTask.Message.data(data)
-			webSocketSessionTask?.send(message) { error in
-				if let error = error {
-					fatalError("Error sending message: \(error.localizedDescription)")
-				}
-			}
-		} catch {
-          fatalError("Error encoding message: \(error.localizedDescription)")
-		}
+	  let data : [String: Any] = ["type": type, "params": params, "messageId": messageId, "sender": "app"]
+	  do {
+		let data = try JSONSerialization.data(withJSONObject: data, options: [])
+		let message = URLSessionWebSocketTask.Message.data(data)
+		webSocketSessionTask?.send(message) { error in
+		  if let error = error {
+			fatalError("Error sending message: \(error.localizedDescription)")
+		  }
+		  }
+	  } catch {
+		fatalError("Error encoding message: \(error.localizedDescription)")
+	  }
 	}
 	
 	private func receive() {
