@@ -1,0 +1,204 @@
+{
+  "version-19.x/tutorialSidebar": [
+    {
+      "type": "category",
+      "label": "Introduction",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-19.x/getting-started"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/ios-dev-env"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/android-dev-env"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/ios"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/android"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/writing-first-test"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/how-detox-works"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/design-principles"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/workflows"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "API Reference",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-19.x/detox-cli"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/configuration"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/detox-object-api"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/device-object-api"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/test-lifecycle"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/matchers"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/actions-on-element"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/expect"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/launch-args"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/mocking-open-with-url"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/mocking-user-notifications"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/mocking-user-activity"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/artifacts"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/screenshots"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "Troubleshooting",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-19.x/troubleshooting"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/building-the-app"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/running-tests"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/synchronization"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/flakiness"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "category",
+      "label": "Guides",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-19.x/running-locally"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/developing-while-writing-tests"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/running-on-ci"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/debugging-in-xcode"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/debugging-in-android-studio"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/mocking"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/migration"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/jest"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/mocha"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/parallel-test-execution"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/third-party-drivers"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/expo"
+        },
+        {
+          "type": "doc",
+          "id": "version-19.x/uninstalling"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "type": "doc",
+      "id": "version-19.x/contributing"
+    }
+  ]
+}
