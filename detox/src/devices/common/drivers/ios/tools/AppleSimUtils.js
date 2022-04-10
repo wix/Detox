@@ -47,7 +47,7 @@ class AppleSimUtils {
    * @param {Boolean} headless If false, opens the Simulator app after the Simulator has booted.
    * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state.
    */
-  async boot(udid, deviceBootArgs = '', headless = true) {
+  async boot(udid, deviceBootArgs = '', headless = false) {
     const isBooted = await this.isBooted(udid);
 
     if (isBooted) {
