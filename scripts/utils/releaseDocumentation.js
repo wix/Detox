@@ -16,6 +16,7 @@ function buildDocsForVersion(version) {
     exec.execSync(`npm run docusaurus docs:version ${version}`);
     exec.execSync(`git add .`);
     exec.execSync(`git commit -m "Publish docs version ${version}"`);
+    exec.execSync(`git push origin master"`);
   } finally {
     process.chdir(originalDir);
   }

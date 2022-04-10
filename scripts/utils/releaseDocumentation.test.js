@@ -19,13 +19,15 @@ describe('Documentation script', () => {
     const version = '1.0.0';
     fs.readFileSync.mockReturnValue(JSON.stringify([]));
     documentation.buildDocsForVersion('1.0.0');
-    expect(exec.execSync).toHaveBeenCalledTimes(4);
+
+    expect(exec.execSync).toHaveBeenCalledTimes(5);
     expect(process.chdir).toHaveBeenCalledWith(docsPath());
 
     expect(exec.execSync).toHaveBeenCalledWith(`npm install`);
     expect(exec.execSync).toHaveBeenCalledWith(`npm run docusaurus docs:version ${version}`);
     expect(exec.execSync).toHaveBeenCalledWith(`git add .`);
     expect(exec.execSync).toHaveBeenCalledWith(`git commit -m "Publish docs version ${version}"`);
+    expect(exec.execSync).toHaveBeenCalledWith(`git push origin master`);
     expect(process.chdir).toHaveBeenCalledWith(process.cwd());
   });
 
