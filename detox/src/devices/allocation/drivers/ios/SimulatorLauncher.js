@@ -6,9 +6,9 @@ class SimulatorLauncher extends DeviceLauncher {
     this._applesimutils = applesimutils;
   }
 
-  async launch(udid, type, bootArgs) {
-    const coldBoot = await this._applesimutils.boot(udid, bootArgs);
-    await this._notifyBootEvent(udid, type, coldBoot);
+  async launch(udid, type, bootArgs, headless) {
+    const coldBoot = await this._applesimutils.boot(udid, bootArgs, headless);
+    await this._notifyBootEvent(udid, type, coldBoot, headless);
   }
 
   async shutdown(udid) {

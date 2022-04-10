@@ -159,7 +159,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'headless');
     }
 
-    if (deviceConfig.type !== 'android.emulator') {
+    if (deviceConfig.type !== 'ios.simulator' && deviceConfig.type !== 'android.emulator') {
       throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'headless');
     }
   }
@@ -187,41 +187,44 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 }
 
 function applyCLIOverrides(deviceConfig, cliConfig) {
-  if (cliConfig.deviceName) {
-    deviceConfig.device = cliConfig.deviceName;
+  _assignCLIConfigIfSupported('device-name', cliConfig.deviceName, deviceConfig, 'device');
+  _assignCLIConfigIfSupported('device-boot-args', cliConfig.deviceBootArgs, deviceConfig, 'bootArgs');
+  _assignCLIConfigIfSupported('headless', cliConfig.headless, deviceConfig, 'headless');
+  _assignCLIConfigIfSupported('force-adb-install', cliConfig.forceAdbInstall, deviceConfig, 'forceAdbInstall');
+  _assignCLIConfigIfSupported('gpu', cliConfig.gpu, deviceConfig, 'gpuMode');
+  _assignCLIConfigIfSupported('readonly-emu', cliConfig.readonlyEmu, deviceConfig, 'readonly');
+}
+
+function _assignCLIConfigIfSupported(configName, configValue, deviceConfig, deviceConfigKey) {
+  if (!configValue) {
+    return;
   }
 
   const deviceType = deviceConfig.type;
-  if (cliConfig.deviceBootArgs) {
-    if ((deviceType === 'ios.simulator') || (deviceType === 'android.emulator')) {
-      deviceConfig.bootArgs = cliConfig.deviceBootArgs;
-    } else {
-      log.warn(`--device-boot-args CLI override is not supported by device type = "${deviceType}" and will be ignored`);
-    }
+  const supportedDeviceTypesPrefixes = _supportedDeviceTypesPrefixes(configName);
+  if (!supportedDeviceTypesPrefixes.some((prefix) => deviceType.startsWith(prefix))) {
+    log.warn(`--${configName} CLI override is not supported by device type = "${deviceType}" and will be ignored`);
+    return;
   }
 
-  if (cliConfig.forceAdbInstall !== undefined) {
-    if (deviceType.startsWith('android.')) {
-      deviceConfig.forceAdbInstall = cliConfig.forceAdbInstall;
-    } else {
-      log.warn(`--force-adb-install CLI override is not supported by device type = "${deviceType}" and will be ignored`);
-    }
-  }
+  deviceConfig[deviceConfigKey] = configValue;
+}
 
-  const emulatorCLIConfig = _.pick(cliConfig, ['headless', 'gpu', 'readonlyEmu']);
-  const emulatorOverrides = _.omitBy({
-    headless: cliConfig.headless,
-    gpuMode: cliConfig.gpu,
-    readonly: cliConfig.readonlyEmu,
-  }, _.isUndefined);
+function _supportedDeviceTypesPrefixes(configName) {
+  switch (configName) {
+    case 'device-name':
+      return [''];
 
-  if (!_.isEmpty(emulatorOverrides)) {
-    if (deviceType === 'android.emulator') {
-      Object.assign(deviceConfig, emulatorOverrides);
-    } else {
-      const flags = Object.keys(emulatorCLIConfig).map(key => '--' + _.kebabCase(key)).join(', ');
-      log.warn(`${flags} CLI overriding is not supported by device type = "${deviceType}" and will be ignored`);
-    }
+    case 'force-adb-install':
+      return ['android.'];
+
+    case 'gpu':
+    case 'readonly-emu':
+      return ['android.emulator'];
+
+    case 'device-boot-args':
+    case 'headless':
+      return ['ios.simulator', 'android.emulator'];
   }
 }
 

@@ -363,8 +363,11 @@ describe('composeDeviceConfig', () => {
         });
 
         describe('--headless', () => {
-          describe('given android.emulator device', () => {
-            beforeEach(() => setConfig('android.emulator', configType));
+          describe.each([
+            ['ios.simulator'],
+            ['android.emulator']
+          ])('given a supported device type (%j)', (deviceType) => {
+            beforeEach(() => setConfig(deviceType, configType));
 
             it('should override .headless without warnings', () => {
               cliConfig.headless = true;
@@ -378,10 +381,9 @@ describe('composeDeviceConfig', () => {
 
           describe.each([
             ['ios.none'],
-            ['ios.simulator'],
             ['android.attached'],
             ['android.genycloud'],
-            ['./customDriver'],
+            ['./customDriver']
           ])('given a non-supported device (%j)', (deviceType) => {
             beforeEach(() => setConfig(deviceType, configType));
 
@@ -608,21 +610,28 @@ describe('composeDeviceConfig', () => {
         describe('.headless validation', () => {
           test.each([
             'ios.none',
-            'ios.simulator',
             'android.attached',
-            'android.genycloud',
+            'android.genycloud'
           ])('cannot be used for a non-emulator device (%j)', (deviceType) => {
             setConfig(deviceType, configType);
             deviceConfig.headless = true;
             expect(compose).toThrow(errorComposer.unsupportedDeviceProperty(alias(), 'headless'));
           });
 
-          describe('given android.emulator device', () => {
-            beforeEach(() => setConfig('android.emulator', configType));
+          describe.each([
+            'ios.simulator',
+            'android.emulator'
+          ])('given supporting device type (%j)', (deviceType) => {
+            beforeEach(() => setConfig(deviceType, configType));
 
             test(`should throw if value is not a boolean (e.g., string)`, () => {
-              deviceConfig.headless = `${Math.random() > 0.5}`; // string
+              deviceConfig.headless = `${Math.random() > 0.5}`;
               expect(compose).toThrowError(errorComposer.malformedDeviceProperty(alias(), 'headless'));
+            });
+
+            test('should not throw if value is a boolean', () => {
+              deviceConfig.headless = false;
+              expect(compose).not.toThrowError();
             });
           });
 
