@@ -59,7 +59,7 @@ class AppleSimUtils {
     await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
 
     if (!headless) {
-      await this._openSimulatorApp();
+      await this._openSimulatorApp(udid);
     }
 
     return true;
@@ -79,8 +79,22 @@ class AppleSimUtils {
     return device;
   }
 
-  async _openSimulatorApp() {
-    await childProcess.execWithRetriesAndLogs(`open -a Simulator.app`, { retries: 0 });
+  async _openSimulatorApp(udid) {
+    try {
+      await childProcess.execWithRetriesAndLogs(`open -a Simulator --args -CurrentDeviceUDID ${udid}`, { retries: 0 });
+    } catch (error) {
+      this._logUnableToOpenSimulator();
+    }
+  }
+
+  _logUnableToOpenSimulator() {
+    log.warn(
+      `Unable to open the Simulator app. Please make sure you have Xcode and iOS Simulator installed ` +
+      `(https://developer.apple.com/xcode/). In case you already have the latest Xcode version installed, ` +
+      `try run the command: \`sudo xcode-select -s /Applications/Xcode.app\`. If you are running tests from CI, ` +
+      `we recommend running them with "--headless" device configuration (see: ` +
+      `https://wix.github.io/Detox/docs/next/api/configuration/#device-configurations).`
+    );
   }
 
   /***
