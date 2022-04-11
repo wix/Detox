@@ -14,7 +14,7 @@ function publishNewVersion() {
 
   publishToNpm(releaseTag);
 
-  const newVersion = queryNpmVersionByTag(releaseTag);
+  const newVersion = require('package.json').version;
   log(`    new published version on tag ${releaseTag}: ${newVersion}`);
 
   if (releaseTag === 'latest') {
