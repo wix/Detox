@@ -1,7 +1,16 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 
-const {log, logSection, getReleaseNpmTag, getReleaseVersionType, isDryRun, isSkipNpm} = require('./releaseArgs');
+const {
+  log,
+  logSection,
+  getReleaseNpmTag,
+  getReleaseVersionType,
+  getVersionSafe,
+  isDryRun,
+  isSkipNpm
+} = require('./releaseArgs');
+
 const {removeDocsForVersion, buildDocsForVersion} = require('./releaseDocumentation');
 
 function publishNewVersion() {
@@ -14,7 +23,7 @@ function publishNewVersion() {
 
   publishToNpm(releaseTag);
 
-  const newVersion = require('package.json').version;
+  const newVersion = getVersionSafe();
   log(`    new published version on tag ${releaseTag}: ${newVersion}`);
 
   if (releaseTag === 'latest') {
