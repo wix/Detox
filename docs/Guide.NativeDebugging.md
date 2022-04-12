@@ -161,7 +161,7 @@ You’ll need to run your app with the said arguments from Android Studio (at th
 
 ## Launch the app
 
-Before you launch the app, make sure to put breakpoints at the points of interest, e.g.:
+Before you launch the app, make sure to [put breakpoints](https://developer.apple.com/documentation/xcode/setting-breakpoints-to-pause-your-running-app) at the points of interest, e.g.:
 
 ![put a breakpoint in the native code](https://user-images.githubusercontent.com/1962469/103086544-8d974980-45ed-11eb-8057-e03d9f664cad.png)
 
