@@ -19,6 +19,8 @@
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
 		60B4AC4D27FB2040000691BC /* XCUIElement+longPressAndDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B4AC4C27FB2040000691BC /* XCUIElement+longPressAndDrag.swift */; };
+		60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BB447C28070AED00772A2A /* DTXTestCase.m */; };
+		60BB448028070BC100772A2A /* ActionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB447F28070BC100772A2A /* ActionDelegateTests.swift */; };
 		60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */; };
 		60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0201F27CBB0A400EF6C1E /* ContentView.swift */; };
 		60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */; };
@@ -86,6 +88,9 @@
 		609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DetoxTester-Bridging-Header.h"; sourceTree = "<group>"; };
 		609AA19727A0247D008F6617 /* WebSocket+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Config.swift"; sourceTree = "<group>"; };
 		60B4AC4C27FB2040000691BC /* XCUIElement+longPressAndDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+longPressAndDrag.swift"; sourceTree = "<group>"; };
+		60BB447C28070AED00772A2A /* DTXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXTestCase.m; sourceTree = "<group>"; };
+		60BB447F28070BC100772A2A /* ActionDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegateTests.swift; sourceTree = "<group>"; };
+		60BB448128070C6800772A2A /* DTXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTestCase.h; sourceTree = "<group>"; };
 		60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvArgKeys.swift; sourceTree = "<group>"; };
 		60C0201F27CBB0A400EF6C1E /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -147,7 +152,6 @@
 				609AA184279FEB06008F6617 /* Actions */,
 				60C01FD227CB8E7900EF6C1E /* Expectations */,
 				60C01FD327CB8E8100EF6C1E /* Matchers */,
-				60C01FDC27CB9FF700EF6C1E /* Resources */,
 				60C01FDA27CB9F1A00EF6C1E /* Tester */,
 			);
 			path = DetoxTester;
@@ -288,6 +292,7 @@
 		60F482EE2806BD6700C4F78D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				60BB447F28070BC100772A2A /* ActionDelegateTests.swift */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -295,8 +300,11 @@
 		60F482EF2806BDC900C4F78D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				60C01FDC27CB9FF700EF6C1E /* Resources */,
 				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
 				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
+				60BB448128070C6800772A2A /* DTXTestCase.h */,
+				60BB447C28070AED00772A2A /* DTXTestCase.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -353,6 +361,7 @@
 					609AA14C279F10F4008F6617 = {
 						CreatedOnToolsVersion = 13.2;
 						LastSwiftMigration = 1320;
+						TestTargetID = 60ED26D127872220004213B5;
 					};
 					60ED26D127872220004213B5 = {
 						CreatedOnToolsVersion = 13.2;
@@ -427,6 +436,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60BB448028070BC100772A2A /* ActionDelegateTests.swift in Sources */,
 				603497B127F08E6600770EE0 /* Executor+handleReactNativeReload.swift in Sources */,
 				60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */,
 				60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */,
@@ -446,6 +456,7 @@
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
 				60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */,
+				60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */,
 				603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */,
 				60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */,
 				60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */,
@@ -504,6 +515,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DetoxTesterApp;
 			};
 			name = Debug;
 		};
@@ -532,6 +544,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DetoxTesterApp;
 			};
 			name = Release;
 		};
