@@ -9,10 +9,7 @@ import android.os.Bundle;
 import com.wix.detox.config.DetoxConfig;
 import com.wix.detox.espresso.UiControllerSpy;
 
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
-import androidx.test.espresso.IdlingPolicies;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
@@ -77,28 +74,6 @@ public final class Detox {
     private static final LaunchIntentsFactory sIntentsFactory = new LaunchIntentsFactory();
     private static ActivityTestRule sActivityTestRule;
 
-    /**
-     * Specification of values to use for Espresso's {@link IdlingPolicies} timeouts.
-     * <br/>Overrides Espresso's defaults as they tend to be too short (e.g. when running a heavy-load app
-     * on suboptimal CI machines).
-     *
-     * @deprecated Use {@link com.wix.detox.config.DetoxConfig}.
-     */
-    @Deprecated
-    public static class DetoxIdlePolicyConfig {
-        /** Directly binds to {@link IdlingPolicies#setMasterPolicyTimeout(long, TimeUnit)}. Applied in seconds. */
-        public Integer masterTimeoutSec = 120;
-        /** Directly binds to {@link IdlingPolicies#setIdlingResourceTimeout(long, TimeUnit)}. Applied in seconds. */
-        public Integer idleResourceTimeoutSec = 60;
-
-        private com.wix.detox.config.DetoxIdlePolicyConfig toNewConfig() {
-            com.wix.detox.config.DetoxIdlePolicyConfig newConfig = new com.wix.detox.config.DetoxIdlePolicyConfig();
-            newConfig.masterTimeoutSec = masterTimeoutSec;
-            newConfig.idleResourceTimeoutSec = idleResourceTimeoutSec;
-            return newConfig;
-        }
-    }
-
     private Detox() {
     }
 
@@ -129,20 +104,6 @@ public final class Detox {
     }
 
     /**
-     * Same as the default {@link #runTests(ActivityTestRule)} method, but allows for the explicit specification of
-     * a custom idle-policy configuration. Note: review {@link DetoxIdlePolicyConfig} for defaults.
-     *
-     * @param idlePolicyConfig The custom idle-policy configuration to pass in; Will be applied into Espresso via
-     *                         the {@link IdlingPolicies} API.
-     *
-     * @deprecated Use {@link #runTests(ActivityTestRule, DetoxConfig)}
-     */
-    @Deprecated
-    public static void runTests(ActivityTestRule activityTestRule, DetoxIdlePolicyConfig idlePolicyConfig) {
-        runTests(activityTestRule, getAppContext(), idlePolicyConfig);
-    }
-
-    /**
      * <p>
      * Use this method only if you have a React Native application and it
      * doesn't implement ReactApplication; Otherwise use {@link Detox#runTests(ActivityTestRule)}.
@@ -159,24 +120,6 @@ public final class Detox {
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
         runTests(activityTestRule, context, new DetoxConfig());
-    }
-
-    /**
-     * Same as {@link #runTests(ActivityTestRule, Context)}, but allows for the explicit specification of
-     * a custom idle-policy configuration. Note: review {@link DetoxIdlePolicyConfig} for defaults.
-     *
-     *
-     * @param idlePolicyConfig The custom idle-policy configuration to pass in; Will be applied into Espresso via
-     *                         the {@link IdlingPolicies} API.
-     *
-     * @deprecated Use {@link #runTests(ActivityTestRule, Context, DetoxConfig)}
-     */
-    @Deprecated
-    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxIdlePolicyConfig idlePolicyConfig) {
-        DetoxConfig config = new DetoxConfig();
-        config.idlePolicyConfig = idlePolicyConfig.toNewConfig();
-
-        runTests(activityTestRule, context, config);
     }
 
     /**
@@ -214,7 +157,7 @@ public final class Detox {
     }
 
     public static void startActivityFromNotification(String dataFilePath) {
-        Bundle notificationData = new NotificationDataParser(dataFilePath).parseNotificationData();
+        Bundle notificationData = new NotificationDataParser(dataFilePath).toBundle();
         Intent intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, false);
         launchActivitySync(intent);
     }
@@ -225,7 +168,7 @@ public final class Detox {
         if (sLaunchArgs.hasUrlOverride()) {
             intent = sIntentsFactory.intentWithUrl(sLaunchArgs.getUrlOverride(), true);
         } else if (sLaunchArgs.hasNotificationPath()) {
-            Bundle notificationData = new NotificationDataParser(sLaunchArgs.getNotificationPath()).parseNotificationData();
+            Bundle notificationData = new NotificationDataParser(sLaunchArgs.getNotificationPath()).toBundle();
             intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, true);
         } else {
             intent = sIntentsFactory.cleanIntent();
