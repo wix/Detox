@@ -45,7 +45,6 @@
     "eslint-plugin-unicorn": "^39.0.0",
     "jest": "^27.0.0",
     "jest-environment-node": "^27.0.0",
-    "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.67.2",
@@ -82,8 +81,7 @@
   },
   "peerDependencies": {
     "jest-circus": "26.0.x - 26.4.x || >=26.5.2",
-    "jest-environment-node": ">=25.0.0",
-    "mocha": ">=6.0.0"
+    "jest-environment-node": ">=25.0.0"
   },
   "engines": {
     "node": ">=12.10.0"

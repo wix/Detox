@@ -13,7 +13,7 @@ module.exports = {
   o: {
     alias: 'runner-config',
     group: 'Configuration:',
-    describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest',
+    describe: 'Test runner config file, default value is: e2e/config.json',
   },
   l: {
     alias: 'loglevel',

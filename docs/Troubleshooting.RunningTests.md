@@ -20,7 +20,6 @@ For troubleshooting of other issue, refer to our [troubleshooting index](Trouble
 - [Can’t Find My Component Even Though I Added a `testID` to Its Props](#cant-find-my-component-even-though-i-added-a-testid-to-its-props)
 - [Test Tries to Find My Component Before It’s Created](#test-tries-to-find-my-component-before-its-created)
 - [Can’t synchronize the test with my app](#cant-synchronize-the-test-with-my-app)
-- [Unknown option "configuration" (Mocha.js)](#unknown-option-configuration-mochajs)
 - [An Element is Not Visible](#an-element-is-not-visible)
 - [Debug View Hierarchy](#debug-view-hierarchy)
 - [Compare to a Working Setup](#compare-to-a-working-setup)
@@ -165,38 +164,6 @@ await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 #### Can’t synchronize the test with my app
 
 If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](Troubleshooting.Synchronization.md).
-
-#### Unknown option "configuration" (Mocha.js)
-
-In an attempt to run `detox test`, the following error is thrown:
-
-```plain text
-detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --configuration ios.sim.release --grep :android: --invert
-
-  error: unknown option `--configuration'
-```
-
-**Solution:** Upgrade to `detox@^12.4.0` or newer (latest, recommended), and `mocha@^6.1.3`.
-That weird error has been spotted in older versions of `mocha` (including `v5.2.0`) and was fixed in `v6.0.0`. In fact, it conceals the genuine error:
-
-```plain text
-Error: No test files found
-```
-
-If the error appeared after running a short command like `detox test`, please try out `detox test e2e/` (in other words, append the path to your end-to-end tests folder) - and if that fixes the error, then you deal the bug in the question and upgrading `detox` and `mocha` should help.
-
-After you upgrade, you can configure the default path to your end-to-end tests folder in `package.json`:
-
-```diff
- {
-   "detox": {
--    "specs": "",  
-+    "specs": "your-e2e-tests-folder",
-   }
- }
-```
-
-Please mind that if your E2E tests are located at the default path (`e2e`), then you don’t need to add `"specs"` property explicitly to `package.json`.
 
 #### An Element is Not Visible
 

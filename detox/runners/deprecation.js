@@ -7,16 +7,16 @@ console.error(chalk.yellow(`
 
              _.-;-._              Sorry, traveler from the lands of Detox 19!
             ;_.JL___;
-            F"-/\\_-7L             Detox 20 comes without old adapters for Jest.
-            | a/ e | \\            You have to rearrange your init code before
-           ,L,c;,.='/;,           you can continue your journey.
-        _,-;;S:;:S;;:' '--._
-       ;. \\;;s:::s;;: .'   /\\     Navigate to the link above and follow the
-      /  \\  ;::::;;  /    /  \\    migration guide steps.
-     / ,  k ;S';;'S.'    j __,l
-  ,---/| /  /S   /S '.   |'   ;   Sincerely yours,
- ,Ljjj |/|.' s .' s   \\  L    |   Detox team.
- LL,_ ]( \\    /    '.  '.||   ;
+            F"-/\\_-7L             Detox 20 comes without old adapters for Jest
+            | a/ e | \\            and Mocha test runners. You have to rearrange
+           ,L,c;,.='/;,           your init code before you can continue your
+        _,-;;S:;:S;;:' '--._      journey.
+       ;. \\;;s:::s;;: .'   /\\
+      /  \\  ;::::;;  /    /  \\    Navigate to the link above and follow the
+     / ,  k ;S';;'S.'    j __,l   migration guide steps.
+  ,---/| /  /S   /S '.   |'   ;
+ ,Ljjj |/|.' s .' s   \\  L    |   Sincerely yours,
+ LL,_ ]( \\    /    '.  '.||   ;   Detox team.
  ||\\ > /  ;-.'_.-.___\\.-'(|=="(
  JJ," /   |_  [   ]     _]|   /
   LL\\/   ,' '--'-'-----'  \\  (

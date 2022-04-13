@@ -187,7 +187,7 @@ Under `detox/android`:
 
 This is in fact a monorepo that also sports some example projects (for usage reference), alongside the main test project:
 
-- `examples/demo-react-native` and `examples/demo-react-native-jest`: Demonstrate usage of Detox in React-Native app projects, with `mocha.js` and `Jest` as the hosting test-runner frameworks, respectively.
+- `examples/demo-react-native-jest`: Demonstrate usage of Detox in a React Native app project.
 - `examples/demo-native-ios`: Demonstrates usage of Detox in a pure-native iOS app.
 - `examples/demo-native-android` (broken): Demonstrates usage of Detox in a pure-native Android app.
 - `examples/demo-pure-native-android`: Demonstrates usage of the _pure_ [Detox-Native](https://github.com/wix/Detox/tree/master/detox-native/README.md) project

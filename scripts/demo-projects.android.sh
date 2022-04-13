@@ -21,11 +21,6 @@ run_f "npm run test:android-release-ci"
 DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
 popd
 
-pushd examples/demo-react-native
-run_f "npm run test:android-release-ci"
-DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
-popd
-
 pushd examples/demo-plugin
 run_f "npm run test:plugin"
 popd
