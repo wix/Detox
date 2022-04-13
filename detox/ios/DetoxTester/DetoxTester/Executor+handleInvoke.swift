@@ -14,7 +14,7 @@ extension Executor {
     messageId: NSNumber
   ) {
     let handler = InvokeHandler(
-      elementMatcher: ElementMatcher(app: app),
+      elementMatcher: ElementMatcher(app: getAppUnderTest()),
       actionDelegate: ActionDelegate.shared,
       expectationDelegate: ExpectationDelegate.shared
     )

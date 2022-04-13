@@ -9,6 +9,8 @@ import XCTest
 extension Executor {
   func handleReactNativeReload(messageId: NSNumber) {
     execLog("reloading react native (relaunch application)")
+
+    let app = getAppUnderTest()
     app.terminate()
     app.launch()
 

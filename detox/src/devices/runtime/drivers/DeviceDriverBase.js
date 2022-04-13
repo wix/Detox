@@ -47,7 +47,7 @@ class DeviceDriverBase {
     return NaN;
   }
 
-  launchTestTarget() {
+  launchTestTarget(_launchArgs, _bundleId) {
     return NaN;
   }
 

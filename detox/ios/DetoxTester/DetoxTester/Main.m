@@ -7,7 +7,7 @@
 
 #import "DetoxTester-Swift.h"
 
-/// Executes the target tests.
+/// Main executor of the XCTest target, executes the tests.
 @interface Main : XCTestCase
 
 @end
@@ -35,7 +35,7 @@
   // internal unit tests.
 
   if ([self isDetoxActive]) {
-    return @[[NSInvocation createFromSelector:@selector(startDetoxTesting) target:self]];
+    return @[[self detoxTestsInvocation]];
   }
 
   return @[];
@@ -43,6 +43,10 @@
 
 + (BOOL)isDetoxActive {
   return NSProcessInfo.processInfo.environment[EnvArgKeys.isDetoxActive].boolValue;
+}
+
++ (NSInvocation *)detoxTestsInvocation {
+  return [NSInvocation createFromSelector:@selector(startDetoxTesting) target:self];
 }
 
 - (void)startDetoxTesting {

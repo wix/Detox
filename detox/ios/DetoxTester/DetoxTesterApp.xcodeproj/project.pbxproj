@@ -36,6 +36,7 @@
 		60C7F51327DE2318000D417A /* ExecutorDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F51227DE2318000D417A /* ExecutorDelegateProtocol.swift */; };
 		60C7F51F27DE3024000D417A /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */; };
+		60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		60C7F51227DE2318000D417A /* ExecutorDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutorDelegateProtocol.swift; sourceTree = "<group>"; };
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+getAppUnderTest.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +133,7 @@
 				603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */,
 				603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */,
 				603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */,
+				60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -138,7 +141,8 @@
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
 			isa = PBXGroup;
 			children = (
-				60C7F4EC27D8A60E000D417A /* Utils */,
+				60F482EF2806BDC900C4F78D /* Utils */,
+				60F482EE2806BD6700C4F78D /* Tests */,
 				609AA179279FE83F008F6617 /* Main.m */,
 				609AA184279FEB06008F6617 /* Actions */,
 				60C01FD227CB8E7900EF6C1E /* Expectations */,
@@ -190,6 +194,7 @@
 		60C01FDA27CB9F1A00EF6C1E /* Tester */ = {
 			isa = PBXGroup;
 			children = (
+				60F482EB2805BE2800C4F78D /* Utils */,
 				60C7F50C27DE08B9000D417A /* Executor */,
 				609AA17C279FE932008F6617 /* DetoxTester.swift */,
 			);
@@ -200,7 +205,6 @@
 			isa = PBXGroup;
 			children = (
 				609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */,
-				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -210,25 +214,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		60C7F4EC27D8A60E000D417A /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				60C7F50527DDF3A6000D417A /* React Native */,
-				60C7F4F127D8AAC7000D417A /* Logs */,
-				609AA187279FEB6B008F6617 /* WebSocket */,
-				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
-			);
-			name = Utils;
-			sourceTree = "<group>";
-		};
-		60C7F4F127D8AAC7000D417A /* Logs */ = {
-			isa = PBXGroup;
-			children = (
-				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
-			);
-			name = Logs;
 			sourceTree = "<group>";
 		};
 		60C7F50527DDF3A6000D417A /* React Native */ = {
@@ -288,6 +273,32 @@
 				60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */,
 			);
 			path = DetoxTesterApp;
+			sourceTree = "<group>";
+		};
+		60F482EB2805BE2800C4F78D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				60C7F50527DDF3A6000D417A /* React Native */,
+				609AA187279FEB6B008F6617 /* WebSocket */,
+				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		60F482EE2806BD6700C4F78D /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		60F482EF2806BDC900C4F78D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
+				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -434,6 +445,7 @@
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
+				60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */,
 				603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */,
 				60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */,
 				60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */,

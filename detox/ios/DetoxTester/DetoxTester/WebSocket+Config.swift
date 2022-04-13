@@ -16,6 +16,6 @@ extension WebSocket {
   /// Session ID for web-socket connection with Detox Server.
   static func detoxSessionId() -> String {
     let environment = ProcessInfo.processInfo.environment
-    return environment[EnvArgKeys.detoxSessionId] ?? Bundle.main.bundleIdentifier!
+    return environment[EnvArgKeys.detoxSessionId] ?? "NONE"
   }
 }

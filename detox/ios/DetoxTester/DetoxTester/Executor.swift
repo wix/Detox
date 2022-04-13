@@ -8,9 +8,6 @@ import DetoxInvokeHandler
 import XCTest
 
 public class Executor {
-  ///
-  private(set) var app = XCUIApplication(bundleIdentifier: "com.wix.detox-example")
-
   /// Used to send actions back.
   private(set) var delegate: ExecutorDelegateProtocol!
 
@@ -50,10 +47,6 @@ public class Executor {
       case .cleanup:
         handleCleanup(messageId: messageId)
     }
-  }
-
-  func setApplication(_ bundleIdentifier: String) {
-    self.app = XCUIApplication(bundleIdentifier: bundleIdentifier)
   }
 
   func setDelegate(_ delegate: ExecutorDelegateProtocol) {
