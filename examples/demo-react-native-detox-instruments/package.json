@@ -4,12 +4,9 @@
   "private": true,
   "scripts": {},
   "devDependencies": {
-    "detox": "^19.6.5",
-    "mocha": "6.x.x"
+    "detox": "^19.6.5"
   },
   "detox": {
-    "test-runner": "mocha",
-    "runner-config": "e2e/mocha.opts",
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",

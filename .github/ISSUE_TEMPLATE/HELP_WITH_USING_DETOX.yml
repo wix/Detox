@@ -22,4 +22,4 @@ body:
       \nNode version:
       \nDevice model:
       \nOS:
-      \nTest-runner (select one): jest-circus / jest+jasmine / mocha / other"
+      \nTest-runner (select one): jest / other"

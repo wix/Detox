@@ -1,1 +1,1 @@
-require('./deprecation');
+require('../deprecation');

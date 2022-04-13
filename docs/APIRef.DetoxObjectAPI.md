@@ -7,104 +7,12 @@ sidebar_label: The `detox` Object
 
 ## The `detox` Object
 
-`detox` is globally available in every test file, though currently it is only used in the setup/init file.
-
-> NOTE: detox is test runner independent, and we encourage you to choose your own test runner, but for the sake of demonstration we will use `mocha`’s syntax.
+TODO: rewrite this document
 
 ### Methods
 
-- [`detox.init()`](#detoxinit)
-- [`detox.beforeEach()`](#detoxbeforeeach)
-- [`detox.afterEach()`](#detoxaftereach)
-- [`detox.cleanup()`](#detoxcleanup)
 - [`detox.traceCall()`](#detoxtracecall)
 - [`detox.trace.startSection(), detox.trace.endSection()`](#detoxtracestartsection-detoxtraceendsection)
-
-#### `detox.init()`
-
-The setup phase happens inside `detox.init()`. This is the phase where detox reads its configuration, starts a server, loads its expectation library and starts a simulator.
-
-**If you’re using _mocha_**, in your `init.js` add:
-
-```js
-const detox = require('detox');
-
-before(async () => {
-  await detox.init();
-});
-```
-
-##### Explicit imports during initialization
-
-Detox exports `device`, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overridden by Detox when this option is used.
-
-```js
-const detox = require('detox');
-
-before(async () => {
-  await detox.init(undefined, {initGlobals: false});
-});
-```
-
-Then import them manually:
-
-```js
-const {device, expect, element, by, waitFor} = require('detox');
-```
-
-Use [this example](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2eExplicitRequire) for initial setup
-
-##### Reusing existing app
-
-By default `await detox.init();` will uninstall and install the app. If you wish to reuse the existing app for a faster run, add `{reuse: true}` param to your init.
-
-```js
-before(async () => {
-  await detox.init(undefined, {reuse: true});
-});
-```
-
-#### `detox.beforeEach()`
-
-This method should be called at the start of every test to let Detox’s artifacts lifecycle know it is the time to start recording logs and videos, or to take another `beforeEach.png` screenshot. Although this is one of usage of `beforeEach`, Detox does not limit itself to this usage and may utilize calls to `beforeEach` for additional purposes in the future.
-
-```typescript
-declare function beforeEach(testSummary: {
-  title: string;
-  fullName: string;
-  status: 'running';
-})
-```
-
-Usually, you are not supposed to write own implementation of this call, instead rely on Detox in-house adapters for [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js) as in the examples. It should alleviate transitions to newer Detox versions for you as the chances are that API specification won’t prove itself as sufficient and it may undergo rewrites and extensions.
-
-> NOTE: If you are implementing support for a test runner different from Mocha and Jest, please keep in mind that _pending_ (also known as _skipped_) tests should not trigger `detox.beforeEach()` at all, neither `detox.afterEach()`. The rule of thumb is either you guarantee you call them both, or you don’t call anyone.
-
-#### `detox.afterEach()`
-
-You are expected to call this method only after the test and all its inner `afterEach()`-es complete. Besides passing test title and full name, you should pay heed on delivering a valid status field: _failed_ or _passed_. If the test has another status (e.g. _skipped_), please comply to the note above in [detox.beforeEach()](#detoxbeforeEach) or use one of these two values as a fallback.
-
-```typescript
-declare function afterEach(testSummary: {
-  title: string;
-  fullName: string;
-  status: 'failed' | 'passed';
-})
-```
-
-Normally, you are not supposed to write own implementation of this call, as mentioned earlier in the [detox.beforeEach()](#detoxbeforeeach) documentation.
-
-#### `detox.cleanup()`
-
-The cleanup phase should happen after all the tests have finished. This is the phase where detox server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
-
-**If you’re using _mocha_**, in your `init.js` add:
-
-```js
-after(async () => {
-  await detox.cleanup();
-});
-```
 
 #### `detox.traceCall()`
 

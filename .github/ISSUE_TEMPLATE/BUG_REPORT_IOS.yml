@@ -50,7 +50,7 @@ body:
       \niOS version:
       \nmacOS version:
       \nXcode version:
-      \nTest-runner (select one): jest-circus / jest+jasmine / mocha / other"
+      \nTest-runner (select one): jest / other"
   - type: textarea
     id: detox-logs
     attributes:
