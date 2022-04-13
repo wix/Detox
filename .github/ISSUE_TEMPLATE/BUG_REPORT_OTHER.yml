@@ -19,7 +19,7 @@ body:
       description: A clear and concise description of what was expected to happen.
   - type: markdown
     attributes:
-      value: "***If the bug occurred while running tests, please re-consider opening a platform-specific bug (iOS or Android), (here)[https://github.com/wix/Detox/issues/new/choose]. If this is not relevant for a specific platform, please fill in the following fields.***"
+      value: "***If the bug occurred while running tests, please re-consider opening a platform-specific bug (iOS or Android), [here](https://github.com/wix/Detox/issues/new/choose). If this is not relevant for a specific platform, please fill in the following fields.***"
   - type: checkboxes
     id: tested-last-detox
     attributes:
