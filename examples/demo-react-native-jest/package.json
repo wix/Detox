@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
-    "test:ios-release-ci": "detox test --configuration ios.sim.release -l verbose --workers 2",
+    "test:ios-release-ci": "detox test --configuration ios.sim.release -l verbose --workers 2 --headless",
     "test:android-release": "detox test --configuration android.emu.release",
     "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2 --headless --gpu off --record-logs all --take-screenshots all",
     "test:android-genycloud-release": "detox test --configuration android.genycloud.release",
