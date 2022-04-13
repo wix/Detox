@@ -1,6 +1,6 @@
 name: "Bug Report - Android"
 description: Create a report to help us improve Detox on Android
-labels: ["type: bug 🐞", "platform: android"]
+labels: ["type: bug 🐞", "platform: android", "status: triage"]
 body:
   - type: markdown
     attributes:
