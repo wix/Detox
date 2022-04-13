@@ -1,6 +1,6 @@
 name: "Bug Report - Other"
 description: Report a non-platform-specific bug to help us improve Detox
-labels: ["type: bug 🐞"]
+labels: ["type: bug 🐞", "status: triage"]
 body:
   - type: markdown
     attributes:
