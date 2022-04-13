@@ -370,9 +370,9 @@ describe('composeDeviceConfig', () => {
             beforeEach(() => setConfig(deviceType, configType));
 
             it('should override .headless without warnings', () => {
-              cliConfig.headless = true;
+              cliConfig.headless = false;
               expect(compose()).toEqual(expect.objectContaining({
-                headless: true,
+                headless: false,
               }));
 
               expect(logger.warn).not.toHaveBeenCalled();
@@ -388,9 +388,9 @@ describe('composeDeviceConfig', () => {
             beforeEach(() => setConfig(deviceType, configType));
 
             it('should print a warning and refuse to override .headless', () => {
-              cliConfig.headless = true;
+              cliConfig.headless = false;
               expect(compose()).not.toEqual(expect.objectContaining({
-                headless: true,
+                headless: false,
               }));
 
               expect(logger.warn).toHaveBeenCalledWith(expect.stringMatching(/--headless.*not supported/));

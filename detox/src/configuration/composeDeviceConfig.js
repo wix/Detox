@@ -195,23 +195,23 @@ function applyCLIOverrides(deviceConfig, cliConfig) {
   _assignCLIConfigIfSupported('readonly-emu', cliConfig.readonlyEmu, deviceConfig, 'readonly');
 }
 
-function _assignCLIConfigIfSupported(configName, configValue, deviceConfig, deviceConfigKey) {
-  if (!configValue) {
+function _assignCLIConfigIfSupported(argName, argValue, deviceConfig, propertyName) {
+  if (argValue === undefined) {
     return;
   }
 
   const deviceType = deviceConfig.type;
-  const supportedDeviceTypesPrefixes = _supportedDeviceTypesPrefixes(configName);
+  const supportedDeviceTypesPrefixes = _supportedDeviceTypesPrefixes(argName);
   if (!supportedDeviceTypesPrefixes.some((prefix) => deviceType.startsWith(prefix))) {
-    log.warn(`--${configName} CLI override is not supported by device type = "${deviceType}" and will be ignored`);
+    log.warn(`--${argName} CLI override is not supported by device type = "${deviceType}" and will be ignored`);
     return;
   }
 
-  deviceConfig[deviceConfigKey] = configValue;
+  deviceConfig[propertyName] = argValue;
 }
 
-function _supportedDeviceTypesPrefixes(configName) {
-  switch (configName) {
+function _supportedDeviceTypesPrefixes(argName) {
+  switch (argName) {
     case 'device-name':
       return [''];
 
