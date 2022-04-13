@@ -17,7 +17,7 @@ Before you go anywhere further, follow the
 [Setting Detox up as a compiling dependency](Introduction.Android.md#setting-detox-up-as-a-compiling-dependency)
 section from the **Detox for Android** document.
 
-### Add "manual" device configurations to your `.detoxrc`
+### Add a "manual" configuration to your `.detoxrc`
 
 Locate your `.detoxrc` config file or the corresponding `detox` section in your `package.json`
 and add a configuration similar to this one:
@@ -93,9 +93,16 @@ detox test -c android.manual e2e/someSuite.test.js
 If you are using Jest as a test runner, you might want to increase the test timeout via appending
 `--testTimeout 999999` to the command. For Mocha, that would be `--timeout 999999`.
 
-Also, if there is something you want to do step by step in JS code while debugging native, append
-`--inspect-brk` flag. To learn more about debugging with `--inspect-brk`, refer to
-[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/) on the official Node.js website.
+> Also, if there is something you want to do step by step in JS code while debugging native, append
+> `--inspect-brk` flag:
+>
+> ```sh
+> detox test -c ios.manual e2e/someSuite.test.js --inspect-brk
+> ```
+>
+> To learn more about debugging with `--inspect-brk`, refer to
+> [Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/)
+> on the official Node.js website.
 
 Afterwards, you should see your test suite starting as usual until it reaches the app launch, where
 Detox stops instead and prompts you to launch the app from the IDE:
