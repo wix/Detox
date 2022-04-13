@@ -72,7 +72,6 @@ const sidebars = {
         'mocking',
         'migration',
         'jest',
-        'mocha',
         'parallel-test-execution',
         'third-party-drivers',
         'expo',

@@ -58,15 +58,6 @@ function getJestBooleanArgs() {
     .value();
 }
 
-function getMochaBooleanArgs() {
-  const metadata = require('mocha/lib/cli/run-option-metadata');
-
-  return _(metadata.types.boolean)
-    .flatMap(key => [key, ...(metadata.aliases[key] || [])])
-    .thru(keys => new Set(keys))
-    .value();
-}
-
 function splitDetoxArgv(argv) {
   const aliases = extractKnownKeys(testCommandArgs);
   const isDetoxArg = (_value, key) => aliases.has(key);
@@ -81,10 +72,6 @@ function splitDetoxArgv(argv) {
   }
 
   return { detoxArgs, runnerArgs };
-}
-
-function splitMochaArgv(argv) {
-  return disengageBooleanArgs(argv, getMochaBooleanArgs());
 }
 
 function splitJestArgv(argv) {
@@ -103,5 +90,4 @@ function realiasJestArgv({ specs, passthrough }) {
 module.exports = {
   detox: splitDetoxArgv,
   jest: splitJestArgv,
-  mocha: splitMochaArgv,
 };
