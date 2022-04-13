@@ -115,7 +115,7 @@ which are likely to be thrown if you spend too much time in debugging.
 Afterwards, you should see your test suite starting as usual until it reaches the app launch, where
 Detox stops instead and prompts you to launch the app from the IDE:
 
-```
+```plain text
 detox[16804] INFO:  [SimulatorDriver.js] Waiting for you to manually launch your app in Xcode.
 Make sure to pass the launch arguments listed below:
   -detoxServer ws://localhost:8099
