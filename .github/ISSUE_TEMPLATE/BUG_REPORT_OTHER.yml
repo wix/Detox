@@ -1,6 +1,6 @@
-name: "Bug Report - iOS"
-description: Create a report to help us improve Detox on iOS
-labels: ["type: bug 🐞", "platform: ios"]
+name: "Bug Report - Other"
+description: Report a non-platform-specific bug to help us improve Detox
+labels: ["type: bug 🐞"]
 body:
   - type: markdown
     attributes:
@@ -17,6 +17,9 @@ body:
     attributes:
       label: What was the expected behaviour?
       description: A clear and concise description of what was expected to happen.
+  - type: markdown
+    attributes:
+      value: "***If the bug occurred while running tests, please re-consider opening a platform-specific bug (iOS or Android), (here)[https://github.com/wix/Detox/issues/new/choose]. If this is not relevant for a specific platform, please fill in the following fields.***"
   - type: checkboxes
     id: tested-last-detox
     attributes:
@@ -24,14 +27,6 @@ body:
       description: Before reporting this issue, please make sure it can be reproduced on the latest released version of Detox, see our [releases](https://github.com/wix/Detox/releases).
       options:
         - label: I have tested this issue on the latest Detox release and it still reproduces.
-          required: true
-  - type: checkboxes
-    id: timeout
-    attributes:
-      label: Did your test throw out a timeout?
-      description: If this is the case, try going over our synchronization troubleshooting guide.
-      options:
-        - label: I have followed the instructions under [Identifying which synchronization mechanism causes us to wait too much](https://wix.github.io/Detox/docs/troubleshooting/synchronization#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
   - type: textarea
     id: reproduction
     attributes:
@@ -46,10 +41,6 @@ body:
       value: "Detox version:
       \nReact Native version:
       \nNode version:
-      \nDevice model:
-      \niOS version:
-      \nmacOS version:
-      \nXcode version:
       \nTest-runner (select one): jest-circus / jest+jasmine / mocha / other"
   - type: textarea
     id: detox-logs
