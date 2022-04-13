@@ -27,7 +27,7 @@ detox <command> [options]
 
 | Command                           | Description                                                                                                                                                  |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [init](#init)                     | Create initial E2E tests folder for jest or mocha                                                                                                            |
+| [init](#init)                     | Create initial E2E tests folder for Detox                                                                                                                    |
 | [build](#build)                   | **Convenience method.** Run the command defined in 'build' property of the specified configuration.                                                          |
 | [test](#test)                     | Initiating your test suite                                                                                                                                   |
 | [run-server](#run-server)         | Starts a standalone detox server                                                                                                                             |
@@ -47,12 +47,11 @@ detox <command> [options]
 
 Scaffolds initial E2E test folder structure for a specific test runner
 
-`detox init -r <test-runner-name>`
+`detox init`
 
-| Option                            | Description                                      |
-| --------------------------------- | ------------------------------------------------ |
-| -r, --runner `<test-runner-name>` | test runner name (supported values: mocha, jest) |
-| --help                            | Show help                                        |
+| Option | Description |
+| ------ | ----------- |
+| --help | Show help   |
 
 #### build
 
@@ -78,7 +77,7 @@ Initiating your test suite[^1].
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | -C, --config-path `<configPath>`              | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                                                                                                                                                                                     |
 | -c, --configuration `<device config>`         | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it                                                                                                                                                             |
-| -o, --runner-config `<config>`                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest.                                                                                                                                                                                                           |
+| -o, --runner-config `<config>`                | Test runner config file, defaults to 'e2e/config.json'.                                                                                                                                                                                                                                                   |
 | -n, --device-name \[name]                     | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.                                                                                                                                                                               |
 | -l, --loglevel \[value]                       | Log level: fatal, error, warn, info, verbose, trace                                                                                                                                                                                                                                                       |
 | -d, --debug-synchronization `<value>`         | Customize how long an action/expectation can take to complete before Detox starts querying the app why it is busy. By default, the app status will be printed if the action takes more than 10s to complete.                                                                                              |
@@ -101,7 +100,7 @@ Initiating your test suite[^1].
 | --no-color                                    | Disable colors in log output                                                                                                                                                                                                                                                                              |
 | --use-custom-logger                           | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner’s implementation (e.g. Jest / Mocha).<br />_Default: true_                                                                                                        |
 | --force-adb-install                           | Due to problems with the `adb install` command on Android, Detox resorts to a different scheme for installing APKs. Setting true will disable that and force usage of `adb install`, instead.<br/>This flag is temporary until the Detox way proves stable.<br/>_Default: false_                          |
-| --inspect-brk                                 | Uses [node’s --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the jest/mocha test runner <br />_Default: false_                                                                                                                      |
+| --inspect-brk                                 | Uses [node’s --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the test runner <br />_Default: false_                                                                                                                                 |
 | --help                                        | Show help                                                                                                                                                                                                                                                                                                 |
 
 ##### `DETOX_ARGV_OVERRIDE`

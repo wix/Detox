@@ -18,8 +18,3 @@ popd
 pushd examples/demo-react-native-jest
 run_f "npm run test:ios-release-ci"
 popd
-
-pushd examples/demo-react-native
-run_f "npm run test:ios-release-ci"
-popd
-

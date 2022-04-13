@@ -1,6 +1,5 @@
 // @ts-nocheck
 const cp = require('child_process');
-const path = require('path');
 
 const _ = require('lodash');
 const whichSync = require('which').sync;
@@ -9,7 +8,6 @@ const unparse = require('yargs-unparser');
 const { composeDetoxConfig } = require('../src/configuration');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
 const GenyDeviceRegistryFactory = require('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const log = require('../src/utils/logger').child({ __filename });
 const { parse, quote } = require('../src/utils/shellQuote');
@@ -27,13 +25,6 @@ module.exports.handler = async function test(argv) {
   const { detoxArgs, runnerArgs } = splitArgv.detox(argv);
   const { cliConfig, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: detoxArgs });
   const [platform] = deviceConfig.type.split('.');
-  const runner = deduceTestRunner(runnerConfig.testRunner);
-
-  const prepareArgs = choosePrepareArgs({
-    cliConfig,
-    runner,
-    detoxArgs,
-  });
 
   const forwardedArgs = await prepareArgs({
     cliConfig,
@@ -44,7 +35,7 @@ module.exports.handler = async function test(argv) {
   });
 
   if (detoxArgs['inspect-brk']) {
-    const runnerBinary = whichSync(runner, {
+    const runnerBinary = whichSync('jest', {
       path: prependNodeModulesBinToPATH({ ...process.env }),
     });
 
@@ -53,11 +44,10 @@ module.exports.handler = async function test(argv) {
     forwardedArgs.argv.$0 = runnerConfig.testRunner;
   }
 
-  const retries = runner === 'jest' ? detoxArgs.retries : 0;
   await runTestRunnerWithRetries(forwardedArgs, {
     keepLockFile: cliConfig.keepLockFile,
+    retries: detoxArgs.retries,
     platform,
-    retries,
   });
 };
 
@@ -84,89 +74,7 @@ module.exports.middlewares = [
   }
 ];
 
-function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
-  if (runner === 'mocha') {
-    if (cliConfig.workers) {
-      log.warn('Cannot use -w, --workers. Parallel test execution is only supported with Jest');
-    }
-
-    if (detoxArgs.retries > 0) {
-      log.warn('Cannot use -R, --retries. The test retry mechanism is only supported with Jest runner');
-    }
-
-    if (cliConfig.recordTimeline) {
-      log.warn('Cannot use --record-timeline. This artifact type is only supported with Jest runner');
-    }
-
-    return prepareMochaArgs;
-  }
-
-  if (runner === 'jest') {
-    return prepareJestArgs;
-  }
-
-  throw new DetoxRuntimeError({
-    message: `"${runner}" is not supported in Detox CLI tools.`,
-    hint: `You can still run your tests with the runner's own CLI tool`
-  });
-}
-
-function deduceTestRunner(command) {
-  if (command.includes('mocha')) {
-    return 'mocha';
-  }
-
-  if (command.includes('jest')) {
-    return 'jest';
-  }
-
-  return command;
-}
-
-function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
-  const { specs, passthrough } = splitArgv.mocha(runnerArgs);
-  const configParam = path.extname(runnerConfig.runnerConfig) === '.opts'
-    ? 'opts'
-    : 'config';
-
-  const platformFilter = getPlatformSpecificString(platform);
-
-  return {
-    argv: {
-      [configParam]: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
-      cleanup: Boolean(cliConfig.cleanup) || undefined,
-      colors: !cliConfig.noColor && undefined,
-      configuration: cliConfig.configuration || undefined,
-      gpu: cliConfig.gpu || undefined,
-      // TODO: check if we can --grep from user
-      grep: platformFilter || undefined,
-      invert: Boolean(platformFilter) || undefined,
-      headless: Boolean(cliConfig.headless) || undefined,
-      loglevel: cliConfig.loglevel || undefined,
-      reuse: cliConfig.reuse || undefined,
-      'artifacts-location': cliConfig.artifactsLocation || undefined,
-      'config-path': cliConfig.configPath /* istanbul ignore next */ || undefined,
-      'debug-synchronization': isFinite(cliConfig.debugSynchronization) ? cliConfig.debugSynchronization : undefined,
-      'device-name': cliConfig.deviceName || undefined,
-      'force-adb-install': platform === 'android' && cliConfig.forceAdbInstall || undefined,
-      'record-logs': cliConfig.recordLogs || undefined,
-      'record-performance': cliConfig.recordPerformance || undefined,
-      'record-videos': cliConfig.recordVideos || undefined,
-      'take-screenshots': cliConfig.takeScreenshots || undefined,
-      'capture-view-hierarchy': cliConfig.captureViewHierarchy || undefined,
-      'use-custom-logger': cliConfig.useCustomLogger && 'true' || undefined,
-
-      ...passthrough,
-    },
-    env: _.omitBy({
-      DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
-      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
-    }, _.isUndefined),
-    specs: _.isEmpty(specs) && runnerConfig.specs ? [runnerConfig.specs] : specs,
-  };
-}
-
-async function prepareJestArgs({ cliConfig, deviceConfig, runnerArgs, runnerConfig, platform }) {
+async function prepareArgs({ cliConfig, deviceConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
   const platformFilter = getPlatformSpecificString(platform);
 
