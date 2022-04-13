@@ -30,12 +30,13 @@ class SimulatorDriver extends IosDriver {
    * @param deps { SimulatorDriverDeps }
    * @param props { SimulatorDriverProps }
    */
-  constructor(deps, { udid, type, bootArgs }) {
+  constructor(deps, { udid, type, bootArgs, headless }) {
     super(deps);
 
     this.udid = udid;
     this._type = type;
     this._bootArgs = bootArgs;
+    this._headless = headless;
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
@@ -151,7 +152,7 @@ class SimulatorDriver extends IosDriver {
   async resetContentAndSettings() {
     await this._simulatorLauncher.shutdown(this.udid);
     await this._applesimutils.resetContentAndSettings(this.udid);
-    await this._simulatorLauncher.launch(this.udid, this._type, this._bootArgs);
+    await this._simulatorLauncher.launch(this.udid, this._type, this._bootArgs, this._headless);
   }
 
   getLogsPaths() {

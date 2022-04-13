@@ -28,6 +28,7 @@ class IosSimulator extends RuntimeDriverFactoryIos {
       udid: deviceCookie.udid,
       type: deviceConfig.device.type,
       bootArgs: deviceConfig.bootArgs,
+      headless: deviceConfig.headless
     };
 
     const { IosSimulatorRuntimeDriver } = require('../drivers');

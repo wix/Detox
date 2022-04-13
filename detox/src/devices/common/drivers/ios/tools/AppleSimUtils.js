@@ -42,20 +42,27 @@ class AppleSimUtils {
   /***
    * Boots the simulator if it is not booted already.
    *
-   * @param {String} udid - device id
-   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state
+   * @param {String} udid iOS Simulator UDID.
+   * @param {String} deviceBootArgs simctl boot command arguments.
+   * @param {Boolean} headless If false, opens the Simulator app after the Simulator has booted.
+   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state.
    */
-  async boot(udid, deviceBootArgs = '') {
+  async boot(udid, deviceBootArgs = '', headless = false) {
     const isBooted = await this.isBooted(udid);
 
-    if (!isBooted) {
-      const statusLogs = { trying: `Booting device ${udid}...` };
-      await this._execSimctl({ cmd: `boot ${udid} ${deviceBootArgs}`, statusLogs, retries: 10 });
-      await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
-      return true;
+    if (isBooted) {
+      return false;
     }
 
-    return false;
+    const statusLogs = { trying: `Booting device ${udid}...` };
+    await this._execSimctl({ cmd: `boot ${udid} ${deviceBootArgs}`, statusLogs, retries: 10 });
+    await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
+
+    if (!headless) {
+      await this._openSimulatorApp(udid);
+    }
+
+    return true;
   }
 
   async isBooted(udid) {
@@ -70,6 +77,24 @@ class AppleSimUtils {
     }
 
     return device;
+  }
+
+  async _openSimulatorApp(udid) {
+    try {
+      await childProcess.execWithRetriesAndLogs(`open -a Simulator --args -CurrentDeviceUDID ${udid}`, { retries: 0 });
+    } catch (error) {
+      this._logUnableToOpenSimulator();
+    }
+  }
+
+  _logUnableToOpenSimulator() {
+    log.warn(
+      `Unable to open the Simulator app. Please make sure you have Xcode and iOS Simulator installed ` +
+      `(https://developer.apple.com/xcode/). In case you already have the latest Xcode version installed, ` +
+      `try run the command: \`sudo xcode-select -s /Applications/Xcode.app\`. If you are running tests from CI, ` +
+      `we recommend running them with "--headless" device configuration (see: ` +
+      `https://wix.github.io/Detox/docs/next/api/configuration/#device-configurations).`
+    );
   }
 
   /***
