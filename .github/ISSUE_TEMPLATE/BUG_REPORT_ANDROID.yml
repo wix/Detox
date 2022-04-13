@@ -48,7 +48,7 @@ body:
       \nNode version:
       \nDevice model:
       \nAndroid version:
-      \nTest-runner (select one): jest-circus / jest+jasmine / mocha / other"
+      \nTest-runner (select one): jest / other"
   - type: textarea
     id: detox-logs
     attributes:

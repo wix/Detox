@@ -64,6 +64,7 @@ beforeAll
 beforeEach
 biometric
 blob/M
+blogpost/M
 breakpoint/M
 bundler
 cancelled
@@ -145,6 +146,8 @@ unminified
 unobfuscated
 unregister/M
 util/M
+v12.x
+v20
 webhook/M
 websocket/M
 xcodebuild

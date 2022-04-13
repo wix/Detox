@@ -52,7 +52,7 @@ describe('composeDetoxConfig', () => {
           cleanup: true,
           reuse: true,
           'record-logs': 'all',
-          'runner-config': 'e2e/.mocharc.js',
+          'runner-config': 'e2e/jest.config.js',
         },
         userParams: {
           initGlobals: false,
@@ -114,7 +114,7 @@ describe('composeDetoxConfig', () => {
           cleanup: true,
           reuse: true,
           recordLogs: 'all',
-          runnerConfig: 'e2e/.mocharc.js',
+          runnerConfig: 'e2e/jest.config.js',
         },
         deviceConfig: expect.objectContaining({
           type: 'ios.simulator',
@@ -123,8 +123,7 @@ describe('composeDetoxConfig', () => {
           },
         }),
         runnerConfig: {
-          testRunner: 'mocha',
-          runnerConfig: 'e2e/.mocharc.js',
+          runnerConfig: 'e2e/jest.config.js',
         },
         sessionConfig: expect.objectContaining({
           server: 'ws://localhost:9999',

@@ -80,218 +80,6 @@ describe('CLI', () => {
     });
   });
 
-  describe('(mocha)', () => {
-    describe('given no extra args', () => {
-      beforeEach(async () => run());
-
-      test('should default to mocha', () => expect(cliCall().command).toMatch(/^mocha/));
-      test('should default to --opts e2e/mocha.opts', () => expect(cliCall().command).toMatch(/--opts e2e\/mocha.opts/));
-      test('should pass --use-custom-logger true', () => expect(cliCall().command).toMatch(/--use-custom-logger true/));
-      test('should not override process.env', () => expect(cliCall().env).toStrictEqual({}));
-      test('should produce a default command (integration test)', () => {
-        const quoteChar = detoxConfigPath.indexOf('\\') === -1 ? '' : undefined;
-        const args = [
-          `--opts`, `e2e/mocha.opts`,
-          `--grep`, `:android:`, `--invert`,
-          `--config-path`, quote(detoxConfigPath, quoteChar),
-          `--use-custom-logger`, `true`
-        ].join(' ');
-
-        expect(cliCall().command).toBe(`mocha ${args}`);
-      });
-    });
-
-    test.each([['-o'], ['--runner-config']])('%s <path> should be aware of mocha.opts extension', async (__runnerConfig) => {
-      await run(`${__runnerConfig} e2e/custom.opts`);
-      expect(cliCall().command).toContain(`--opts e2e/custom.opts`);
-    });
-
-    test.each([['-o'], ['--runner-config']])('%s <path> should be aware of .mocharc extension', async (__runnerConfig) => {
-      await run(`${__runnerConfig} e2e/.mocharc`);
-      expect(cliCall().command).toContain(`--config e2e/.mocharc`);
-    });
-
-    test.each([['-l'], ['--loglevel']])('%s <value> should be passed as CLI argument', async (__loglevel) => {
-      await run(`${__loglevel} verbose`);
-      expect(cliCall().command).toContain(`--loglevel verbose`);
-    });
-
-    test('--no-color should be passed as CLI argument', async () => {
-      await run(`--no-color`);
-      expect(cliCall().command).toContain(' --no-colors ');
-    });
-
-    test.each([['-R'], ['--retries']])('%s <value> should print warning', async (__retries) => {
-      await run(`${__retries} 1`);
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('Cannot use -R, --retries.'));
-    });
-
-    test.each([['-R'], ['--retries']])('%s <value> should be ignored', async (__retries) => {
-      cp.execSync.mockImplementation(() => { throw new Error; });
-      await run(`${__retries} 1`).catch(_.noop);
-
-      expect(cliCall(0)).toBeDefined();
-      expect(cliCall(1)).toBe(null);
-    });
-
-    test.each([['-r'], ['--reuse']])('%s <value> should be passed as CLI argument', async (__reuse) => {
-      await run(`${__reuse}`);
-      expect(cliCall().command).toContain('--reuse');
-    });
-
-    test.each([['-u'], ['--cleanup']])('%s <value> should be passed as CLI argument', async (__cleanup) => {
-      await run(`${__cleanup}`);
-      expect(cliCall().command).toContain('--cleanup');
-    });
-
-    test.each([['-d'], ['--debug-synchronization']])('%s <value> should have default value = 3000', async (__debug_synchronization) => {
-      await run(`${__debug_synchronization}`);
-      expect(cliCall().command).toContain('--debug-synchronization 3000');
-    });
-
-    test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as 0 when given false', async (__debug_synchronization) => {
-      await run(`${__debug_synchronization} false`);
-      expect(cliCall().command).toContain('--debug-synchronization 0');
-    });
-
-    test.each([['-a'], ['--artifacts-location']])('%s <value> should be passed as CLI argument', async (__artifacts_location) => {
-      await run(`${__artifacts_location} someLocation`);
-      expect(cliCall().command).toContain('--artifacts-location someLocation');
-    });
-
-    test('--record-logs <value> should be passed as CLI argument', async () => {
-      await run(`--record-logs all`);
-      expect(cliCall().command).toContain('--record-logs all');
-    });
-
-    test('--take-screenshots <value> should be passed as CLI argument', async () => {
-      await run(`--take-screenshots failing`);
-      expect(cliCall().command).toContain('--take-screenshots failing');
-    });
-
-    test('--record-videos <value> should be passed as CLI argument', async () => {
-      await run(`--record-videos failing`);
-      expect(cliCall().command).toContain('--record-videos failing');
-    });
-
-    test('--capture-view-hierarchy <value> should be passed as CLI argument', async () => {
-      await run(`--capture-view-hierarchy enabled`);
-      expect(cliCall().command).toContain('--capture-view-hierarchy enabled');
-    });
-
-    test('--record-performance <value> should be passed as CLI argument', async () => {
-      await run(`--record-performance all`);
-      expect(cliCall().command).toContain('--record-performance all');
-    });
-
-    test('--record-timeline <value> should print "unsupported" warning', async () => {
-      await run(`--record-timeline all`);
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('Cannot use --record-timeline.'));
-    });
-
-    test.each([['-w'], ['--workers']])('%s <value> should print "unsupported" warning', async (__workers) => {
-      await run(`${__workers} 2`);
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('Cannot use -w, --workers.'));
-    });
-
-    test.each([['-H'], ['--headless']])('%s <value> should be passed as CLI argument', async (__headless) => {
-      await run(`${__headless}`);
-      expect(cliCall().command).toContain('--headless');
-    });
-
-    test('--gpu <value> should be passed as CLI argument', async () => {
-      await run(`--gpu angle_indirect`);
-      expect(cliCall().command).toContain('--gpu angle_indirect');
-    });
-
-    test('--device-boot-args should be passed as an environment variable (without deprecation warnings)', async () => {
-      await run(`--device-boot-args "--verbose"`);
-      expect(cliCall().env).toEqual({
-        DETOX_DEVICE_BOOT_ARGS: '--verbose',
-      });
-      expect(logger.warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
-    });
-
-    test('--device-launch-args should serve as a deprecated alias to --device-boot-args', async () => {
-      await run(`--device-launch-args "--verbose"`);
-      expect(cliCall().env).toEqual({
-        DETOX_DEVICE_BOOT_ARGS: '--verbose',
-      });
-      expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
-    });
-
-    test('--app-launch-args should be passed as an environment variable', async () => {
-      await run(`--app-launch-args "--debug yes"`);
-      expect(cliCall().env).toEqual({
-        DETOX_APP_LAUNCH_ARGS: '--debug yes',
-      });
-    });
-
-    test('--use-custom-logger false should be prevent passing CLI argument', async () => {
-      await run(`--use-custom-logger false`);
-      expect(cliCall().command).not.toContain('--use-custom-logger');
-    });
-
-    test('--force-adb-install should be ignored for iOS', async () => {
-      singleConfig().type = 'ios.simulator';
-      await run(`--force-adb-install`);
-
-      expect(cliCall().command).not.toContain('--force-adb-install');
-    });
-
-    test('--force-adb-install should be passed as CLI argument for Android', async () => {
-      singleConfig().type = 'android.emulator';
-      await run(`--force-adb-install`);
-
-      expect(cliCall().command).toContain('--force-adb-install');
-    });
-
-    test.each([['-n'], ['--device-name']])('%s <value> should be passed as CLI argument', async (__device_name) => {
-      await run(`${__device_name} TheDevice`);
-      expect(cliCall().command).toContain('--device-name TheDevice');
-    });
-
-    test('should omit --grep --invert for custom platforms', async () => {
-      singleConfig().type = tempfile('.js', aCustomDriverModule());
-
-      await run();
-      expect(cliCall().command).not.toContain(' --invert ');
-      expect(cliCall().command).not.toContain(' --grep ');
-    });
-
-    test('specifying direct test paths', async () => {
-      await run(`e2e/01.sanity.test.js e2e/02.sanity.test.js`);
-      expect(cliCall().command).not.toMatch(/ e2e /);
-      expect(cliCall().command).not.toMatch(/ e2e$/);
-      expect(cliCall().command).toMatch(/ e2e\/01.sanity.test.js e2e\/02.sanity.test.js$/);
-    });
-
-    test('e.g., --bail should be passed through', async () => {
-      await run(`--bail`);
-      expect(cliCall().command).toContain('--bail');
-    });
-
-    test('e.g., --reporter spec should be passed through', async () => {
-      await run(`--reporter spec`);
-      expect(cliCall().command).toContain('--reporter spec');
-    });
-
-    test('e.g., --bail e2e/Login.test.js should be split to --bail and e2e/Login.test.js', async () => {
-      await run(`--bail e2e/Login.test.js --reporter spec`);
-      expect(cliCall().command).toContain('--bail --reporter spec e2e/Login.test.js');
-    });
-
-    test.each([
-      [`--runner-config "mocha configs/.mocharc"`, `--config ${quote('mocha configs/.mocharc')}`],
-      [`--artifacts-location "artifacts dir/"`, `--artifacts-location ${quote('artifacts dir/')}`],
-      [`--device-name "iPhone X"`, `--device-name ${quote('iPhone X')}`],
-      [`"e2e tests/first test.spec.js"`, `"e2e tests/first test.spec.js"`],
-    ])('should escape %s when forwarding it as a CLI argument', async (cmd, expected) => {
-      await run(cmd);
-      expect(cliCall().command).toContain(` ${expected}`);
-    });
-  });
-
   describe('(jest)', () => {
     beforeEach(() => {
       detoxConfig.testRunner = 'jest';
@@ -676,17 +464,11 @@ describe('CLI', () => {
       await run(cmd);
       expect(cliCall().command).toContain(` ${expected}`);
     });
-  });
 
-  describe.each([['mocha'], ['jest']])('(%s)', (testRunner) => {
-    beforeEach(() => {
-      detoxConfig.testRunner = testRunner;
-    });
-
-    test(`should deduce wrapped ${testRunner} CLI`, async () => {
-      detoxConfig.testRunner = `nyc ${testRunner}`;
+    test(`should deduce wrapped jest CLI`, async () => {
+      detoxConfig.testRunner = `nyc jest`;
       await run();
-      expect(cliCall().command).toMatch(RegExp(`nyc ${testRunner} `));
+      expect(cliCall().command).toMatch(RegExp(`nyc jest `));
     });
 
     describe.each([['ios.simulator'], ['android.emulator']])('for %s', (deviceType) => {
@@ -723,7 +505,7 @@ describe('CLI', () => {
       if (process.platform === 'win32') return;
 
       await run('--inspect-brk');
-      const absolutePathToTestRunnerJs = require.resolve(`.bin/${testRunner}`);
+      const absolutePathToTestRunnerJs = require.resolve(`.bin/jest`);
       expect(cliCall().command).toMatch(RegExp(`^node --inspect-brk ${absolutePathToTestRunnerJs}`));
     });
 
@@ -737,11 +519,6 @@ describe('CLI', () => {
       expect(cliCall().command).toMatch(pattern);
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
     });
-  });
-
-  test('should fail for unrecognized test runner', async () => {
-    detoxConfig.testRunner = 'ava';
-    await expect(run('--inspect-brk')).rejects.toThrowError(/ava.*is not supported/);
   });
 
   // Helpers

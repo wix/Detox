@@ -263,10 +263,6 @@ artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert 
 
 ### Troubleshooting
 
-#### Screenshots and Videos Do Not Appear in the Artifacts Folder
-
-Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` calls in your `./e2e/init.js`. Check out the recommendations on how to do that for [mocha](https://github.com/wix/Detox/tree/master/examples/demo-react-native/e2e/init.js) and [jest](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/init.js) using the out-of-the-box adapters.
-
 #### Video Recording Issues on CI
 
 For iOS, you might be getting errors on CI similar to this:

@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "mocha", "detox"]
+    "types": ["node", "detox"]
   },
   "include": [
     "e2e/**/*.ts",
