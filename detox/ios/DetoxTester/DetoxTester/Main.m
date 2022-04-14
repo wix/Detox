@@ -33,12 +33,7 @@
   // Overrides the default test invocations (methods with "test" prefix).
   // If Detox testing is active, invokes the `startDetoxTesting` method. Otherwise, invokes the
   // internal unit tests.
-
-  if ([self isDetoxActive]) {
-    return @[[self detoxTestsInvocation]];
-  }
-
-  return @[];
+  return self.isDetoxActive ? @[[self detoxTestsInvocation]] : @[];
 }
 
 + (BOOL)isDetoxActive {
