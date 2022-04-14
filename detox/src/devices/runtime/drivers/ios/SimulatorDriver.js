@@ -1,6 +1,4 @@
 // @ts-nocheck
-const path = require('path');
-
 const exec = require('child-process-promise').exec;
 
 const _ = require('lodash');
