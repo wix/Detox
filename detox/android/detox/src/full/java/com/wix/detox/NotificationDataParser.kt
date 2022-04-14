@@ -6,13 +6,13 @@ import com.wix.detox.common.TextFileReader
 import org.json.JSONObject
 
 internal class NotificationDataParser(private val notificationPath: String) {
-    fun parseNotificationData(): Bundle {
-        val rawData = readNotificationData()
+    fun toBundle(): Bundle {
+        val rawData = readNotificationFromFile()
         val json = JSONObject(rawData)
         val payload = json.getJSONObject("payload")
         return JsonConverter(payload).toBundle()
     }
 
-    private fun readNotificationData()
+    private fun readNotificationFromFile()
             = TextFileReader(notificationPath).read()
 }
