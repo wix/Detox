@@ -12,7 +12,7 @@ const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
-const { execAsync } = require('../../../../utils/exec');
+const { execAsync } = require('../../../../utils/childProcess');
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
