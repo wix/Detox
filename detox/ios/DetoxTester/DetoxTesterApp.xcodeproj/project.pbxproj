@@ -39,6 +39,12 @@
 		60C7F51F27DE3024000D417A /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */; };
 		60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */; };
+		60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F9382808369B005DB569 /* ActionsMenu.swift */; };
+		60F9F93E2808396D005DB569 /* ActionsMenuStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */; };
+		60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */; };
+		60F9F94728084524005DB569 /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
+		60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F94828084EEB005DB569 /* TapViewController.swift */; };
+		60F9F95028084F7A005DB569 /* TapStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F94F28084F7A005DB569 /* TapStoryboard.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +70,13 @@
 			remoteInfo = DetoxInvokeHandlerTests;
 		};
 		60C7F51D27DE301D000D417A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 602DBC6827B90ECC00FC0C4C;
+			remoteInfo = DetoxInvokeHandler;
+		};
+		60F9F9452808445A005DB569 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */;
 			proxyType = 1;
@@ -109,6 +122,11 @@
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+getAppUnderTest.swift"; sourceTree = "<group>"; };
+		60F9F9382808369B005DB569 /* ActionsMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsMenu.swift; sourceTree = "<group>"; };
+		60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ActionsMenuStoryboard.storyboard; sourceTree = "<group>"; };
+		60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsMenuViewController.swift; sourceTree = "<group>"; };
+		60F9F94828084EEB005DB569 /* TapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapViewController.swift; sourceTree = "<group>"; };
+		60F9F94F28084F7A005DB569 /* TapStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TapStoryboard.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60F9F94728084524005DB569 /* libDetoxInvokeHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,13 +165,12 @@
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
 			isa = PBXGroup;
 			children = (
-				60F482EF2806BDC900C4F78D /* Utils */,
-				60F482EE2806BD6700C4F78D /* Tests */,
-				609AA179279FE83F008F6617 /* Main.m */,
 				609AA184279FEB06008F6617 /* Actions */,
 				60C01FD227CB8E7900EF6C1E /* Expectations */,
 				60C01FD327CB8E8100EF6C1E /* Matchers */,
 				60C01FDA27CB9F1A00EF6C1E /* Tester */,
+				60F9F9332808346C005DB569 /* Tests */,
+				60F482EF2806BDC900C4F78D /* Utils */,
 			);
 			path = DetoxTester;
 			sourceTree = "<group>";
@@ -253,6 +271,7 @@
 				60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */,
 				60ED26D427872220004213B5 /* DetoxTesterApp */,
 				609AA14E279F10F4008F6617 /* DetoxTester */,
+				609AA179279FE83F008F6617 /* Main.m */,
 				60ED26D327872220004213B5 /* Products */,
 				60C01FE327CBA96600EF6C1E /* Frameworks */,
 			);
@@ -270,6 +289,8 @@
 		60ED26D427872220004213B5 /* DetoxTesterApp */ = {
 			isa = PBXGroup;
 			children = (
+				60F9F94B28084F1B005DB569 /* Actions Screens */,
+				60F9F93C280837C1005DB569 /* Actions Menu */,
 				60C0202827CBB20B00EF6C1E /* Assets.xcassets */,
 				60C0201F27CBB0A400EF6C1E /* ContentView.swift */,
 				60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */,
@@ -289,24 +310,75 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
-		60F482EE2806BD6700C4F78D /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				60BB447F28070BC100772A2A /* ActionDelegateTests.swift */,
-			);
-			name = Tests;
-			sourceTree = "<group>";
-		};
 		60F482EF2806BDC900C4F78D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				60C01FDC27CB9FF700EF6C1E /* Resources */,
 				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
 				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		60F9F9332808346C005DB569 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				60F9F937280834E1005DB569 /* Matchers */,
+				60F9F936280834D8005DB569 /* Expectations */,
+				60F9F935280834CE005DB569 /* Actions */,
 				60BB448128070C6800772A2A /* DTXTestCase.h */,
 				60BB447C28070AED00772A2A /* DTXTestCase.m */,
 			);
-			name = Utils;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		60F9F935280834CE005DB569 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				60BB447F28070BC100772A2A /* ActionDelegateTests.swift */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		60F9F936280834D8005DB569 /* Expectations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Expectations;
+			sourceTree = "<group>";
+		};
+		60F9F937280834E1005DB569 /* Matchers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Matchers;
+			sourceTree = "<group>";
+		};
+		60F9F93C280837C1005DB569 /* Actions Menu */ = {
+			isa = PBXGroup;
+			children = (
+				60F9F9382808369B005DB569 /* ActionsMenu.swift */,
+				60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */,
+				60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */,
+			);
+			name = "Actions Menu";
+			sourceTree = "<group>";
+		};
+		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
+			isa = PBXGroup;
+			children = (
+				60F9F94E28084F69005DB569 /* Tap */,
+			);
+			path = "Actions Screens";
+			sourceTree = "<group>";
+		};
+		60F9F94E28084F69005DB569 /* Tap */ = {
+			isa = PBXGroup;
+			children = (
+				60F9F94828084EEB005DB569 /* TapViewController.swift */,
+				60F9F94F28084F7A005DB569 /* TapStoryboard.storyboard */,
+			);
+			path = Tap;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,6 +414,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				60F9F9462808445A005DB569 /* PBXTargetDependency */,
 			);
 			name = DetoxTesterApp;
 			productName = Tester;
@@ -423,8 +496,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60F9F93E2808396D005DB569 /* ActionsMenuStoryboard.storyboard in Resources */,
 				60C0202627CBB0A500EF6C1E /* Preview Content in Resources */,
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
+				60F9F95028084F7A005DB569 /* TapStoryboard.storyboard in Resources */,
 				60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -471,6 +546,9 @@
 			files = (
 				60C0202727CBB0A500EF6C1E /* DetoxTesterApp.swift in Sources */,
 				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
+				60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */,
+				60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */,
+				60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +564,11 @@
 			isa = PBXTargetDependency;
 			name = DetoxInvokeHandler;
 			targetProxy = 60C7F51D27DE301D000D417A /* PBXContainerItemProxy */;
+		};
+		60F9F9462808445A005DB569 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DetoxInvokeHandler;
+			targetProxy = 60F9F9452808445A005DB569 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

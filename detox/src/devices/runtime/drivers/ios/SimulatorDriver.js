@@ -1,4 +1,6 @@
 // @ts-nocheck
+const path = require('path');
+
 const exec = require('child-process-promise').exec;
 
 const _ = require('lodash');
@@ -116,7 +118,7 @@ class SimulatorDriver extends IosDriver {
     let launchCommand = `TEST_RUNNER_IS_DETOX_ACTIVE='1' ` +
       `TEST_RUNNER_DETOX_SERVER='${launchArgs.detoxServer}' ` +
       `TEST_RUNNER_DETOX_SESSION_ID='${launchArgs.detoxSessionId}' ` +
-      `TEST_RUNNER_APP_UNDER_TEST='${bundleId}'` +
+      `TEST_RUNNER_APP_UNDER_TEST='${bundleId}' ` +
       `xcodebuild -workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace ` +
       `-scheme DetoxTester -sdk iphonesimulator -allowProvisioningUpdates -destination 'platform=iOS Simulator,id=${udid}' test`;
     log.info(`Executing: ${launchCommand}`);
