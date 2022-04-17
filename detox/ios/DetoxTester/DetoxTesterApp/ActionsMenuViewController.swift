@@ -72,14 +72,21 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
     print("Tapped on action cell: `\(action)`.")
     switch action {
       case .tap:
-        let storyboard = UIStoryboard(name: "TapScreen",bundle: nil)
-        let viewController = storyboard.instantiateInitialViewController()!
-        self.present(viewController, animated: true, completion: nil)
+        presentScreen("LongPressScreen")
 
-      case .multiTap, .longPress, .swipe, .takeScreenshot, .getAttributes, .tapBackspaceKey,
+      case .longPress:
+        presentScreen("LongPressScreen")
+
+      case .multiTap, .swipe, .takeScreenshot, .getAttributes, .tapBackspaceKey,
           .tapReturnKey, .typeText, .replaceText, .clearText, .scroll, .scrollTo, .setColumnToValue,
           .setDatePickerDate, .pinch, .adjustSliderToPosition:
         fatalError("not implemented yet")
     }
+  }
+
+  private func presentScreen(_ storyboardName: String) {
+    let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
+    let viewController = storyboard.instantiateInitialViewController()!
+    self.present(viewController, animated: true, completion: nil)
   }
 }

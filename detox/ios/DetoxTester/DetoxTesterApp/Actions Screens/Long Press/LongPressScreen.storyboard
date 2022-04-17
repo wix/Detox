@@ -8,19 +8,19 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Tap View Controller-->
+        <!--Long Press View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" customClass="TapViewController" customModule="DetoxTesterApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Y6W-OH-hqX" customClass="LongPressViewController" customModule="DetoxTesterApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UYt-ZA-MM8">
                                 <rect key="frame" x="175" y="370" width="67" height="31"/>
-                                <accessibility key="accessibilityConfiguration" identifier="tapButton"/>
+                                <accessibility key="accessibilityConfiguration" identifier="longPressButton"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Tap"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Long Press"/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Text Will Be Here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3PE-LA-XMb">
                                 <rect key="frame" x="143" y="426" width="129" height="21"/>
@@ -50,7 +50,7 @@
                     <connections>
                         <outlet property="dismissButton" destination="yfe-CK-yht" id="XdR-E8-QkT"/>
                         <outlet property="label" destination="3PE-LA-XMb" id="rWi-M9-feV"/>
-                        <outlet property="tapButton" destination="UYt-ZA-MM8" id="bhN-om-Ohi"/>
+                        <outlet property="longPressButton" destination="UYt-ZA-MM8" id="bhN-om-Ohi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

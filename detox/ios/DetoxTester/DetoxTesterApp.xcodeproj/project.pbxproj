@@ -13,6 +13,8 @@
 		603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */; };
 		603497B127F08E6600770EE0 /* Executor+handleReactNativeReload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */; };
 		60534156280C177300C0405D /* ActionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534155280C177300C0405D /* ActionDelegateTests.swift */; };
+		6053415A280C472700C0405D /* LongPressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534159280C472700C0405D /* LongPressViewController.swift */; };
+		6053415C280C473400C0405D /* LongPressScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6053415B280C473400C0405D /* LongPressScreen.storyboard */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
@@ -92,6 +94,8 @@
 		603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleCurrentStatus.swift"; sourceTree = "<group>"; };
 		603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleReactNativeReload.swift"; sourceTree = "<group>"; };
 		60534155280C177300C0405D /* ActionDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegateTests.swift; sourceTree = "<group>"; };
+		60534159280C472700C0405D /* LongPressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LongPressViewController.swift; sourceTree = "<group>"; };
+		6053415B280C473400C0405D /* LongPressScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LongPressScreen.storyboard; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
@@ -162,12 +166,12 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
-		60534154280C173600C0405D /* Tests */ = {
+		60534154280C173600C0405D /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
 				60534155280C177300C0405D /* ActionDelegateTests.swift */,
 			);
-			name = Tests;
+			name = "Unit Tests";
 			sourceTree = "<group>";
 		};
 		60534157280C178500C0405D /* Test Utils */ = {
@@ -177,6 +181,15 @@
 				60BB447C28070AED00772A2A /* DTXTestCase.m */,
 			);
 			name = "Test Utils";
+			sourceTree = "<group>";
+		};
+		60534158280C46F700C0405D /* Long Press */ = {
+			isa = PBXGroup;
+			children = (
+				60534159280C472700C0405D /* LongPressViewController.swift */,
+				6053415B280C473400C0405D /* LongPressScreen.storyboard */,
+			);
+			path = "Long Press";
 			sourceTree = "<group>";
 		};
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
@@ -194,7 +207,7 @@
 		609AA184279FEB06008F6617 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				60534154280C173600C0405D /* Tests */,
+				60534154280C173600C0405D /* Unit Tests */,
 				60634AD327C42E5200274F30 /* ActionDelegate.swift */,
 				60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */,
 				60B4AC4C27FB2040000691BC /* XCUIElement+longPressAndDrag.swift */,
@@ -351,6 +364,7 @@
 		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
 			isa = PBXGroup;
 			children = (
+				60534158280C46F700C0405D /* Long Press */,
 				60F9F93C280837C1005DB569 /* Actions Menu */,
 				60F9F94E28084F69005DB569 /* Tap */,
 			);
@@ -481,6 +495,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6053415C280C473400C0405D /* LongPressScreen.storyboard in Resources */,
 				60F9F93E2808396D005DB569 /* ActionsMenuStoryboard.storyboard in Resources */,
 				60C0202627CBB0A500EF6C1E /* Preview Content in Resources */,
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
@@ -533,6 +548,7 @@
 				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
 				60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */,
 				60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */,
+				6053415A280C472700C0405D /* LongPressViewController.swift in Sources */,
 				60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
