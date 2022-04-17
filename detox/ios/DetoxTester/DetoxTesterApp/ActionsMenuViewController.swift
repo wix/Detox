@@ -72,7 +72,9 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
     print("Tapped on action cell: `\(action)`.")
     switch action {
       case .tap:
-          fatalError("implement next")
+        let storyboard = UIStoryboard(name: "TapScreen",bundle: nil)
+        let viewController = storyboard.instantiateInitialViewController()!
+        self.present(viewController, animated: true, completion: nil)
 
       case .multiTap, .longPress, .swipe, .takeScreenshot, .getAttributes, .tapBackspaceKey,
           .tapReturnKey, .typeText, .replaceText, .clearText, .scroll, .scrollTo, .setColumnToValue,

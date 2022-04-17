@@ -12,6 +12,7 @@
 		603497AD27F08D9300770EE0 /* Executor+handleCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */; };
 		603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */; };
 		603497B127F08E6600770EE0 /* Executor+handleReactNativeReload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */; };
+		60534156280C177300C0405D /* ActionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534155280C177300C0405D /* ActionDelegateTests.swift */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
@@ -20,7 +21,6 @@
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
 		60B4AC4D27FB2040000691BC /* XCUIElement+longPressAndDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B4AC4C27FB2040000691BC /* XCUIElement+longPressAndDrag.swift */; };
 		60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BB447C28070AED00772A2A /* DTXTestCase.m */; };
-		60BB448028070BC100772A2A /* ActionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB447F28070BC100772A2A /* ActionDelegateTests.swift */; };
 		60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */; };
 		60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0201F27CBB0A400EF6C1E /* ContentView.swift */; };
 		60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */; };
@@ -44,7 +44,7 @@
 		60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */; };
 		60F9F94728084524005DB569 /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F94828084EEB005DB569 /* TapViewController.swift */; };
-		60F9F95028084F7A005DB569 /* TapStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F94F28084F7A005DB569 /* TapStoryboard.storyboard */; };
+		60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F94F28084F7A005DB569 /* TapScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +91,7 @@
 		603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleCleanup.swift"; sourceTree = "<group>"; };
 		603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleCurrentStatus.swift"; sourceTree = "<group>"; };
 		603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleReactNativeReload.swift"; sourceTree = "<group>"; };
+		60534155280C177300C0405D /* ActionDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegateTests.swift; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
@@ -102,7 +103,6 @@
 		609AA19727A0247D008F6617 /* WebSocket+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Config.swift"; sourceTree = "<group>"; };
 		60B4AC4C27FB2040000691BC /* XCUIElement+longPressAndDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+longPressAndDrag.swift"; sourceTree = "<group>"; };
 		60BB447C28070AED00772A2A /* DTXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXTestCase.m; sourceTree = "<group>"; };
-		60BB447F28070BC100772A2A /* ActionDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegateTests.swift; sourceTree = "<group>"; };
 		60BB448128070C6800772A2A /* DTXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTestCase.h; sourceTree = "<group>"; };
 		60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvArgKeys.swift; sourceTree = "<group>"; };
 		60C0201F27CBB0A400EF6C1E /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 		60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ActionsMenuStoryboard.storyboard; sourceTree = "<group>"; };
 		60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsMenuViewController.swift; sourceTree = "<group>"; };
 		60F9F94828084EEB005DB569 /* TapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapViewController.swift; sourceTree = "<group>"; };
-		60F9F94F28084F7A005DB569 /* TapStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TapStoryboard.storyboard; sourceTree = "<group>"; };
+		60F9F94F28084F7A005DB569 /* TapScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TapScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +162,23 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		60534154280C173600C0405D /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				60534155280C177300C0405D /* ActionDelegateTests.swift */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		60534157280C178500C0405D /* Test Utils */ = {
+			isa = PBXGroup;
+			children = (
+				60BB448128070C6800772A2A /* DTXTestCase.h */,
+				60BB447C28070AED00772A2A /* DTXTestCase.m */,
+			);
+			name = "Test Utils";
+			sourceTree = "<group>";
+		};
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,7 +186,6 @@
 				60C01FD227CB8E7900EF6C1E /* Expectations */,
 				60C01FD327CB8E8100EF6C1E /* Matchers */,
 				60C01FDA27CB9F1A00EF6C1E /* Tester */,
-				60F9F9332808346C005DB569 /* Tests */,
 				60F482EF2806BDC900C4F78D /* Utils */,
 			);
 			path = DetoxTester;
@@ -178,6 +194,7 @@
 		609AA184279FEB06008F6617 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				60534154280C173600C0405D /* Tests */,
 				60634AD327C42E5200274F30 /* ActionDelegate.swift */,
 				60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */,
 				60B4AC4C27FB2040000691BC /* XCUIElement+longPressAndDrag.swift */,
@@ -290,7 +307,6 @@
 			isa = PBXGroup;
 			children = (
 				60F9F94B28084F1B005DB569 /* Actions Screens */,
-				60F9F93C280837C1005DB569 /* Actions Menu */,
 				60C0202827CBB20B00EF6C1E /* Assets.xcassets */,
 				60C0201F27CBB0A400EF6C1E /* ContentView.swift */,
 				60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */,
@@ -313,45 +329,12 @@
 		60F482EF2806BDC900C4F78D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				60534157280C178500C0405D /* Test Utils */,
 				60C01FDC27CB9FF700EF6C1E /* Resources */,
 				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
 				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
 			);
 			name = Utils;
-			sourceTree = "<group>";
-		};
-		60F9F9332808346C005DB569 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				60F9F937280834E1005DB569 /* Matchers */,
-				60F9F936280834D8005DB569 /* Expectations */,
-				60F9F935280834CE005DB569 /* Actions */,
-				60BB448128070C6800772A2A /* DTXTestCase.h */,
-				60BB447C28070AED00772A2A /* DTXTestCase.m */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		60F9F935280834CE005DB569 /* Actions */ = {
-			isa = PBXGroup;
-			children = (
-				60BB447F28070BC100772A2A /* ActionDelegateTests.swift */,
-			);
-			name = Actions;
-			sourceTree = "<group>";
-		};
-		60F9F936280834D8005DB569 /* Expectations */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Expectations;
-			sourceTree = "<group>";
-		};
-		60F9F937280834E1005DB569 /* Matchers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Matchers;
 			sourceTree = "<group>";
 		};
 		60F9F93C280837C1005DB569 /* Actions Menu */ = {
@@ -362,11 +345,13 @@
 				60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */,
 			);
 			name = "Actions Menu";
+			path = ..;
 			sourceTree = "<group>";
 		};
 		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
 			isa = PBXGroup;
 			children = (
+				60F9F93C280837C1005DB569 /* Actions Menu */,
 				60F9F94E28084F69005DB569 /* Tap */,
 			);
 			path = "Actions Screens";
@@ -376,7 +361,7 @@
 			isa = PBXGroup;
 			children = (
 				60F9F94828084EEB005DB569 /* TapViewController.swift */,
-				60F9F94F28084F7A005DB569 /* TapStoryboard.storyboard */,
+				60F9F94F28084F7A005DB569 /* TapScreen.storyboard */,
 			);
 			path = Tap;
 			sourceTree = "<group>";
@@ -499,7 +484,7 @@
 				60F9F93E2808396D005DB569 /* ActionsMenuStoryboard.storyboard in Resources */,
 				60C0202627CBB0A500EF6C1E /* Preview Content in Resources */,
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
-				60F9F95028084F7A005DB569 /* TapStoryboard.storyboard in Resources */,
+				60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */,
 				60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -511,7 +496,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60BB448028070BC100772A2A /* ActionDelegateTests.swift in Sources */,
+				60534156280C177300C0405D /* ActionDelegateTests.swift in Sources */,
 				603497B127F08E6600770EE0 /* Executor+handleReactNativeReload.swift in Sources */,
 				60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */,
 				60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */,
