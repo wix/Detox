@@ -11,7 +11,7 @@
     "test:android-genycloud-release-ci": "detox test --configuration android.genycloud.release -l verbose --workers 2 --record-logs all --take-screenshots all"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.3",
     "detox": "^19.6.5",
     "jest": "^27.0.0",
     "sanitize-filename": "^1.6.1",

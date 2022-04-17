@@ -30,14 +30,14 @@
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.12.0",
+    "@react-native-async-storage/async-storage": "^1.17.3",
     "@react-native-community/checkbox": "^0.5.11",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-picker/picker": "^2.1.0",
     "moment": "^2.24.0",
     "react": "17.0.2",
     "react-native": "0.67.2",
-    "react-native-webview": "11.4.4"
+    "react-native-webview": "11.18.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
