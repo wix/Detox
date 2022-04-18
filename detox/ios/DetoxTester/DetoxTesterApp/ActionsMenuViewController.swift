@@ -5,10 +5,9 @@
 
 import Foundation
 import UIKit
-import DetoxInvokeHandler
 
 class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-  let options: [String] = ActionType.allCases.map { $0.rawValue }
+  let options: [String] = MenuOptions.allCases.map { $0.rawValue }
 
   let cellReuseIdentifier = "actions menu cell"
 
@@ -63,24 +62,41 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
       UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut, animations: {
         tableView.cellForRow(at: indexPath)!.backgroundColor = .white
       }) { [self] _ in
-        actionCellTapped(ActionType.allCases[indexPath.section])
+        actionCellTapped(MenuOptions.allCases[indexPath.section])
       }
     }
   }
 
-  private func actionCellTapped(_ action: ActionType) {
-    print("Tapped on action cell: `\(action)`.")
-    switch action {
-      case .tap:
-        presentScreen("LongPressScreen")
+  private func actionCellTapped(_ menuOption: MenuOptions) {
+    print("Tapped on action cell: `\(menuOption.rawValue)`.")
+    switch menuOption {
+      case .tap, .tapOnAxis:
+        presentScreen("TapScreen")
 
       case .longPress:
         presentScreen("LongPressScreen")
 
-      case .multiTap, .swipe, .takeScreenshot, .getAttributes, .tapBackspaceKey,
-          .tapReturnKey, .typeText, .replaceText, .clearText, .scroll, .scrollTo, .setColumnToValue,
-          .setDatePickerDate, .pinch, .adjustSliderToPosition:
-        fatalError("not implemented yet")
+      case .longPressAndDrag:
+        presentScreen("LongPressAndDragScreen")
+
+      case .swipe:
+        fatalError()
+      case .screenshot:
+        fatalError()
+      case .getAttributes:
+        fatalError()
+      case .keyboardActions:
+        fatalError()
+      case .scroll:
+        fatalError()
+      case .setColumnToValue:
+        fatalError()
+      case .setDatePicker:
+        fatalError()
+      case .pinch:
+        fatalError()
+      case .adjustSlider:
+        fatalError()
     }
   }
 
@@ -89,4 +105,20 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
     let viewController = storyboard.instantiateInitialViewController()!
     self.present(viewController, animated: true, completion: nil)
   }
+}
+
+enum MenuOptions: String, CaseIterable {
+  case tap = "Tap"
+  case tapOnAxis = "Tap on Axis"
+  case longPress = "Long Press"
+  case longPressAndDrag = "Long Press & Drag"
+  case swipe = "Swipe"
+  case screenshot = "Screenshot"
+  case getAttributes = "Get Attributes"
+  case keyboardActions = "Keyboard Actions"
+  case scroll = "Scroll"
+  case setColumnToValue = "Set Column"
+  case setDatePicker = "Date Picker"
+  case pinch = "Pinch"
+  case adjustSlider = "Adjust Slider"
 }

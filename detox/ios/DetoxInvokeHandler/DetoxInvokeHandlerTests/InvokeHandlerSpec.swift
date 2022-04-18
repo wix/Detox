@@ -208,7 +208,7 @@ class InvokeHandlerSpec: QuickSpec {
             targetElement: "foo",
             normalizedTargetPositionX: NSNull(),
             normalizedTargetPositionY: NSNull(),
-            speed: 100,
+            speed: .fast,
             holdDuration: 10
           ).build()
 
@@ -221,7 +221,7 @@ class InvokeHandlerSpec: QuickSpec {
             targetElement: "foo",
             normalizedTargetPositionX: nil,
             normalizedTargetPositionY: nil,
-            speed: 100,
+            speed: .fast,
             holdDuration: 10
           ), element)
           expect(actionDelegate.actRecorder.last).to(equal(expected))

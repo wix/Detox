@@ -29,26 +29,18 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yfe-CK-yht">
-                                <rect key="frame" x="174" y="293" width="81" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="gray" title="Dismiss"/>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <accessibility key="accessibilityConfiguration" identifier="screenView"/>
                         <constraints>
-                            <constraint firstItem="UYt-ZA-MM8" firstAttribute="top" secondItem="yfe-CK-yht" secondAttribute="bottom" constant="10" id="7IF-Kt-b38"/>
                             <constraint firstItem="UYt-ZA-MM8" firstAttribute="centerY" secondItem="vDu-zF-Fre" secondAttribute="centerY" id="9fc-AF-Etz"/>
-                            <constraint firstItem="yfe-CK-yht" firstAttribute="centerX" secondItem="UYt-ZA-MM8" secondAttribute="centerX" id="LTj-He-943"/>
                             <constraint firstItem="3PE-LA-XMb" firstAttribute="centerX" secondItem="UYt-ZA-MM8" secondAttribute="centerX" id="Y2X-FB-mcp"/>
                             <constraint firstItem="3PE-LA-XMb" firstAttribute="top" secondItem="UYt-ZA-MM8" secondAttribute="bottom" constant="10" id="gUf-TI-OEx"/>
                             <constraint firstItem="UYt-ZA-MM8" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="jTa-JT-zMO"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="dismissButton" destination="yfe-CK-yht" id="XdR-E8-QkT"/>
                         <outlet property="label" destination="3PE-LA-XMb" id="rWi-M9-feV"/>
                         <outlet property="tapButton" destination="UYt-ZA-MM8" id="bhN-om-Ohi"/>
                     </connections>

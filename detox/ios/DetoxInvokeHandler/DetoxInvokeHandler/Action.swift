@@ -18,13 +18,13 @@ public enum Action: Equatable, Hashable {
 
   /// Long press on element on its activation point, and drag it to a position of a `targetElement`.
   case longPressAndDrag(
-    duration: Double?,
+    duration: Double,
     normalizedPositionX: Double?,
     normalizedPositionY: Double?,
     targetElement: AnyHashable,
     normalizedTargetPositionX: Double?,
     normalizedTargetPositionY: Double?,
-    speed: Double?,
+    speed: ActionSpeed?,
     holdDuration: Double?
   )
 

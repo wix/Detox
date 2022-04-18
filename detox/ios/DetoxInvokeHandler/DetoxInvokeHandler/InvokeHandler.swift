@@ -214,14 +214,17 @@ public class InvokeHandler {
       return .longPress
     }
 
+    let speedString = params[6].value as? String
+    let speed: Action.ActionSpeed? = speedString != nil ? .init(rawValue: speedString!)! : nil
+
     return .longPressAndDrag(
-      duration: (params[0].value as? NSNumber)?.doubleValue,
+      duration: (params[0].value as! NSNumber).doubleValue,
       normalizedPositionX: (params[1].value as? NSNumber)?.doubleValue,
       normalizedPositionY: (params[2].value as? NSNumber)?.doubleValue,
       targetElement: params[3].value as! AnyHashable,
       normalizedTargetPositionX: (params[4].value as? NSNumber)?.doubleValue,
       normalizedTargetPositionY: (params[5].value as? NSNumber)?.doubleValue,
-      speed: (params[6].value as? NSNumber)?.doubleValue,
+      speed: speed,
       holdDuration: (params[7].value as? NSNumber)?.doubleValue
     )
   }

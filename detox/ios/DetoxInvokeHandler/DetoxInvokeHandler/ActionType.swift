@@ -4,7 +4,7 @@
 //
 
 /// Representation of interaction with an element.
-public enum ActionType: String, Codable, Equatable, CaseIterable {
+public enum ActionType: String, Codable, Equatable {
   /// Tap on element.
   case tap = "tap"
 

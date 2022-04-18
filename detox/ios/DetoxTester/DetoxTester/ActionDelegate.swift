@@ -25,15 +25,25 @@ class ActionDelegate: ActionDelegateProtocol {
         element.tap(on: CGPoint(x: x,y: y))
 
       case .longPress:
-        element.press(forDuration: 0.7)
+        element.longPress()
 
-      case .longPressAndDrag(
-        let duration, let normalizedPositionX, let normalizedPositionY, let targetElement,
-        let normalizedTargetPositionX, let normalizedTargetPositionY, let speed, let holdDuration):
-        fatalError("not implmented yet")
+      case .longPressAndDrag(let duration, let normalizedPositionX, let normalizedPositionY,
+                             let targetElement, let normalizedTargetPositionX,
+                             let normalizedTargetPositionY, let speed, let holdDuration):
+        try element.longPress(
+          duration: duration,
+          normalizedOffsetX: normalizedPositionX,
+          normalizedOffsetY: normalizedPositionY,
+          dragTo: targetElement,
+          normalizedTargetOffsetX: normalizedTargetPositionX,
+          normalizedTargetOffsetY: normalizedTargetPositionY,
+          speed: speed,
+          holdDuration: holdDuration
+        )
 
-      case .swipe(let direction, let speed, let normalizedOffset, let normalizedStartingPointX,
-                  let normalizedStartingPointY):
+      case .swipe(
+        let direction, let speed, let normalizedOffset, let normalizedStartingPointX,
+        let normalizedStartingPointY):
         element.swipeUp(velocity: .fast)
 
       case .screenshot(let imageName):

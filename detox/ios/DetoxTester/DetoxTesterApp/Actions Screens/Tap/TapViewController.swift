@@ -8,7 +8,6 @@ import UIKit
 
 class TapViewController: UIViewController {
   @IBOutlet var tapButton: UIButton!
-  @IBOutlet var dismissButton: UIButton!
   @IBOutlet var label: UILabel!
 
   override func viewDidLoad() {
@@ -16,18 +15,10 @@ class TapViewController: UIViewController {
 
     let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
     tapButton.addGestureRecognizer(tapGestureRecognizer)
-
-    let dismissGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissed))
-    dismissButton.addGestureRecognizer(dismissGestureRecognizer)
   }
 
   @objc private func tapped() {
     print("Tap button tapped")
     label.text = "Success!"
-  }
-
-  @objc private func dismissed() {
-    print("Dismiss button tapped")
-    dismiss(animated: true, completion: nil)
   }
 }
