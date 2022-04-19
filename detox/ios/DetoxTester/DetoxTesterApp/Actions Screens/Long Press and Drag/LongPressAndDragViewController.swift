@@ -10,8 +10,10 @@ class LongPressAndDragViewController: UIViewController {
   @IBOutlet var longPressAndDragButton: UIButton!
   @IBOutlet var label: UILabel!
 
+  var longPressGestureRecognizer: UILongPressGestureRecognizer?
+  var panGestureRecognizer: UIPanGestureRecognizer?
+
   var allowDragging = false
-  var intersectionStarted: Date?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -26,20 +28,25 @@ class LongPressAndDragViewController: UIViewController {
     )
     longPressGestureRecognizer.delegate = self
     longPressAndDragButton.addGestureRecognizer(longPressGestureRecognizer)
+
+    self.longPressGestureRecognizer = longPressGestureRecognizer
   }
 
   private func setupDragGestureRecognizer() {
-    let dragGestureRecognizer = UIPanGestureRecognizer(
+    let panGestureRecognizer = UIPanGestureRecognizer(
       target: self,
       action: #selector(panned)
     )
-    dragGestureRecognizer.delegate = self
-    longPressAndDragButton.addGestureRecognizer(dragGestureRecognizer)
+    panGestureRecognizer.delegate = self
+    longPressAndDragButton.addGestureRecognizer(panGestureRecognizer)
+
+    self.panGestureRecognizer = panGestureRecognizer
   }
 
-  @objc private func pressed() {
+  @objc private func pressed(_ sender: UIGestureRecognizer) {
     print("Long-press button long-pressed")
     changeButtonToDraggableState()
+    longPressAndDragButton.removeGestureRecognizer(sender)
   }
 
   private func changeButtonToDraggableState() {
@@ -72,6 +79,10 @@ class LongPressAndDragViewController: UIViewController {
   }
 
   @objc private func panned(_ sender: UIPanGestureRecognizer) {
+    guard allowDragging else {
+      return
+    }
+
     print("Drag button panned")
 
     if (sender.state == .ended) {
@@ -82,22 +93,11 @@ class LongPressAndDragViewController: UIViewController {
     }
 
     if (longPressAndDragButton.frame.intersects(label.frame)) {
-      if (intersectionStarted == nil) {
-        intersectionStarted = Date.now
+      label.text = "Success!"
+
+      UIView.animate(withDuration: 0.05, delay: 0, options: .curveEaseIn) {
+        self.longPressAndDragButton!.center = self.view.center
       }
-
-      if (intersectionStarted?.timeIntervalSinceNow ?? 0 <= -1) {
-        UIView.animate(withDuration: 0.05, delay: 0, options: .curveEaseIn) {
-          self.longPressAndDragButton!.center = self.view.center
-        }
-
-        label.text = "Success!"
-
-        intersectionStarted = nil
-        return
-      }
-    } else {
-      intersectionStarted = nil
     }
 
     longPressAndDragButton.center += sender.translation(in: longPressAndDragButton)
@@ -110,15 +110,21 @@ extension LongPressAndDragViewController: UIGestureRecognizerDelegate {
     _ gestureRecognizer: UIGestureRecognizer,
     shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
   ) -> Bool {
-      return gestureRecognizer is UIPanGestureRecognizer
-          && otherGestureRecognizer is UILongPressGestureRecognizer
+    if (gestureRecognizer == longPressGestureRecognizer
+        && otherGestureRecognizer == panGestureRecognizer) {
+      return true
+    }
+
+    if (gestureRecognizer == panGestureRecognizer
+        && otherGestureRecognizer == longPressGestureRecognizer) {
+      return true
+    }
+
+    return false
   }
 
-  func gestureRecognizer(
-    _ gestureRecognizer: UIGestureRecognizer,
-    shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
-  ) -> Bool {
-    return gestureRecognizer is UIPanGestureRecognizer
-        && otherGestureRecognizer is UILongPressGestureRecognizer
+  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    return gestureRecognizer == longPressGestureRecognizer
+      && otherGestureRecognizer == panGestureRecognizer
   }
 }

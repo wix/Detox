@@ -22,7 +22,8 @@ extension XCUIElement {
     normalizedTargetOffsetX: Double?,
     normalizedTargetOffsetY: Double?,
     speed: Action.ActionSpeed?,
-    holdDuration: Double?
+    holdDuration: Double?,
+    testCase: XCTestCase
   ) throws {
     guard let target = target as? XCUIElement else {
       throw ActionDelegate.ActionDelegateError.notXCUIElement
@@ -38,11 +39,12 @@ extension XCUIElement {
       normalizedOffsetY: normalizedOffsetY
     )
 
+    let holdSeconds = (holdDuration ?? 1000) / 1000
     startCoordinate.press(
       forDuration: duration,
       thenDragTo: endCoordinate,
       withVelocity: speed?.gestureVelocity ?? .default,
-      thenHoldForDuration: (holdDuration ?? 1000) / 1000
+      thenHoldForDuration: holdSeconds
     )
   }
 

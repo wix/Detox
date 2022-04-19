@@ -20,6 +20,7 @@
 		6053416A280D760100C0405D /* CGPoint+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534168280D757900C0405D /* CGPoint+Operators.swift */; };
 		60534175280D835100C0405D /* XCUIElement+longPress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534174280D835100C0405D /* XCUIElement+longPress.swift */; };
 		60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534176280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift */; };
+		60534179280DABAA00C0405D /* XCTestCase+wait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534178280DABAA00C0405D /* XCTestCase+wait.swift */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
@@ -105,6 +106,7 @@
 		60534168280D757900C0405D /* CGPoint+Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Operators.swift"; sourceTree = "<group>"; };
 		60534174280D835100C0405D /* XCUIElement+longPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+longPress.swift"; sourceTree = "<group>"; };
 		60534176280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionSpeed+XCUIGestureVelocity.swift"; sourceTree = "<group>"; };
+		60534178280DABAA00C0405D /* XCTestCase+wait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+wait.swift"; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 				60C7F50527DDF3A6000D417A /* React Native */,
 				609AA187279FEB6B008F6617 /* WebSocket */,
 				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
+				60534178280DABAA00C0405D /* XCTestCase+wait.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -552,6 +555,7 @@
 				60C7F51327DE2318000D417A /* ExecutorDelegateProtocol.swift in Sources */,
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
 				60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */,
+				60534179280DABAA00C0405D /* XCTestCase+wait.swift in Sources */,
 				603497AD27F08D9300770EE0 /* Executor+handleCleanup.swift in Sources */,
 				60C7F50B27DDFA38000D417A /* Executor.swift in Sources */,
 				60C7F50927DDF53E000D417A /* WebSocketSendActionType.swift in Sources */,

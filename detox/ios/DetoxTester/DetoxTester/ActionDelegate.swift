@@ -10,7 +10,17 @@ import XCTest
 class ActionDelegate: ActionDelegateProtocol {
   static let shared = ActionDelegate()
 
+  /// Make an action by Detox Tester.
   func act(action: Action, on element: AnyHashable) throws {
+    try act(action: action, on: element, testCase: DetoxTester.shared.testCase!)
+  }
+
+  /// Used for unit testing.
+  func act(
+    action: Action,
+    on element: AnyHashable,
+    testCase: XCTestCase
+  ) throws {
     guard let element = element as? XCUIElement else {
       throw ActionDelegateError.notXCUIElement
     }
@@ -38,7 +48,8 @@ class ActionDelegate: ActionDelegateProtocol {
           normalizedTargetOffsetX: normalizedTargetPositionX,
           normalizedTargetOffsetY: normalizedTargetPositionY,
           speed: speed,
-          holdDuration: holdDuration
+          holdDuration: holdDuration,
+          testCase: testCase
         )
 
       case .swipe(
