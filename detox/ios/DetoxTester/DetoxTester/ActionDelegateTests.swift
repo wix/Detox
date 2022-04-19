@@ -94,7 +94,7 @@ class ActionDelegateTests: DTXTestCase {
 
   // MARK: Long-press and drag
 
-  func testLongPressAndDrag() throws {
+  func testLongPressAndDragElements() throws {
     let longPressAndDragCell = app.staticTexts["Long Press & Drag"]
     XCTAssert(longPressAndDragCell.waitForExistence(timeout: 30))
 
@@ -114,6 +114,33 @@ class ActionDelegateTests: DTXTestCase {
       normalizedTargetPositionX: nil,
       normalizedTargetPositionY: nil,
       speed: .slow,
+      holdDuration: nil
+    )
+    try actionDelegate.act(action: action, on: longPressAndDragButton, testCase: self)
+
+    XCTAssertEqual(resultLabel.label, "Success!")
+  }
+
+  func testLongPressAndDragCoordinates() throws {
+    let longPressAndDragCell = app.staticTexts["Long Press & Drag"]
+    XCTAssert(longPressAndDragCell.waitForExistence(timeout: 30))
+
+    try actionDelegate.act(action: Action.tap(times: 1), on: longPressAndDragCell, testCase: self)
+
+    let longPressAndDragButton = app.buttons["longPressAndDragButton"]
+    XCTAssert(longPressAndDragButton.waitForExistence(timeout: 30))
+
+    let resultLabel = app.staticTexts["resultLabel"]
+    XCTAssertEqual(resultLabel.label, "Text Will Be Here")
+
+    let action = Action.longPressAndDrag(
+      duration: 0.7,
+      normalizedPositionX: 0.2,
+      normalizedPositionY: 0.2,
+      targetElement: resultLabel,
+      normalizedTargetPositionX: 0.7,
+      normalizedTargetPositionY: 0.6,
+      speed: .fast,
       holdDuration: nil
     )
     try actionDelegate.act(action: action, on: longPressAndDragButton, testCase: self)
@@ -164,3 +191,5 @@ class ActionDelegateTests: DTXTestCase {
     XCTAssertNotEqual(resultLabel.label, "Success!")
   }
 }
+
+// MARK: Swipe

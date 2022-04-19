@@ -29,6 +29,20 @@ extension XCUIElement {
       throw ActionDelegate.ActionDelegateError.notXCUIElement
     }
 
+    let velocity = speed?.gestureVelocity ?? .default
+    let holdSeconds = (holdDuration ?? 1000) / 1000
+
+    if (normalizedOffsetX == nil || normalizedOffsetY == nil) &&
+        (normalizedTargetOffsetX == nil || normalizedTargetOffsetY == nil) {
+      press(
+        forDuration: duration,
+        thenDragTo: target,
+        withVelocity: velocity,
+        thenHoldForDuration: holdSeconds
+      )
+      return
+    }
+
     let startCoordinate = coordinate(
       normalizedOffsetX: normalizedOffsetX,
       normalizedOffsetY: normalizedOffsetY
@@ -39,11 +53,10 @@ extension XCUIElement {
       normalizedOffsetY: normalizedOffsetY
     )
 
-    let holdSeconds = (holdDuration ?? 1000) / 1000
     startCoordinate.press(
       forDuration: duration,
       thenDragTo: endCoordinate,
-      withVelocity: speed?.gestureVelocity ?? .default,
+      withVelocity: velocity,
       thenHoldForDuration: holdSeconds
     )
   }
