@@ -143,6 +143,8 @@ extension AnyCodable: Hashable {
         hasher.combine(value)
       case let value as [AnyCodable]:
         hasher.combine(value)
+      case let value as [String: String]:
+        hasher.combine(value)
       default:
         break
     }

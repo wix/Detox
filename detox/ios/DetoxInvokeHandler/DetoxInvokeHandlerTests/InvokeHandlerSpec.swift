@@ -208,7 +208,7 @@ class InvokeHandlerSpec: QuickSpec {
             targetElement: "foo",
             normalizedTargetPositionX: NSNull(),
             normalizedTargetPositionY: NSNull(),
-            speed: .fast,
+            speed: "fast",
             holdDuration: 10
           ).build()
 
@@ -273,28 +273,22 @@ class InvokeHandlerSpec: QuickSpec {
       }
 
       describe("screenshot") {
+        beforeEach {
+          actionDelegate.defaultImagePath = "bar"
+        }
+
         it("should call delegate for taking screenshot") {
           let message = messageBuilderWithPredicate.makeScreenshotAction(name: nil).build()
 
-          expect(try handler.handle(message)).to(beNil())
-
-          let expected = (
-            Action.screenshot(imageName: nil),
-            element
-          )
-          expect(actionDelegate.actRecorder.last).to(equal(expected))
+          expect(try handler.handle(message)).to(equal("bar"))
+          expect(actionDelegate.actRecorder.last).to(beNil())
         }
 
         it("should call delegate for taking screenshot with name") {
           let message = messageBuilderWithPredicate.makeScreenshotAction(name: "foo").build()
 
-          expect(try handler.handle(message)).to(beNil())
-
-          let expected = (
-            Action.screenshot(imageName: "foo"),
-            element
-          )
-          expect(actionDelegate.actRecorder.last).to(equal(expected))
+          expect(try handler.handle(message)).to(equal("foo"))
+          expect(actionDelegate.actRecorder.last).to(beNil())
         }
       }
 

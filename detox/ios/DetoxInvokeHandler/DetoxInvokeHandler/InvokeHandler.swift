@@ -100,7 +100,10 @@ public class InvokeHandler {
   // MARK: - Get attributes
 
   private func takeScreenshot(_ params: [AnyCodable]?) throws -> AnyCodable {
-    return try actionDelegate.takeScreenshot((params![1].value as! String))
+    return try actionDelegate.takeScreenshot(
+      params != nil ? (params![0].value as! String) : nil,
+      date: Date.now
+    )
   }
 
   // MARK: - Handle actions

@@ -82,10 +82,6 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
       case .swipe:
         presentScreen("SwipeScreen")
 
-      case .screenshot:
-        fatalError()
-      case .getAttributes:
-        fatalError()
       case .keyboardActions:
         fatalError()
       case .scroll:

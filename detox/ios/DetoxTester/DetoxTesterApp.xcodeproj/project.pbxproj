@@ -28,7 +28,7 @@
 		605341A1280F010700C0405D /* TapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A0280F010700C0405D /* TapTests.swift */; };
 		605341A3280F01B000C0405D /* LongPressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A2280F01B000C0405D /* LongPressTests.swift */; };
 		605341A5280F01E000C0405D /* LongPressAndDragTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A4280F01E000C0405D /* LongPressAndDragTests.swift */; };
-		605341A7280F037200C0405D /* XCUIElement+takeScreenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A6280F037200C0405D /* XCUIElement+takeScreenshot.swift */; };
+		605341A7280F037200C0405D /* XCUIApplication+takeScreenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */; };
 		605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A8280F067200C0405D /* ScreenshotTests.swift */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
@@ -123,7 +123,7 @@
 		605341A0280F010700C0405D /* TapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapTests.swift; sourceTree = "<group>"; };
 		605341A2280F01B000C0405D /* LongPressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongPressTests.swift; sourceTree = "<group>"; };
 		605341A4280F01E000C0405D /* LongPressAndDragTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongPressAndDragTests.swift; sourceTree = "<group>"; };
-		605341A6280F037200C0405D /* XCUIElement+takeScreenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+takeScreenshot.swift"; sourceTree = "<group>"; };
+		605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+takeScreenshot.swift"; sourceTree = "<group>"; };
 		605341A8280F067200C0405D /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
@@ -272,7 +272,7 @@
 				60534176280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift */,
 				6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */,
 				6053419E280EF1DC00C0405D /* XCUIElement+coordinate.swift */,
-				605341A6280F037200C0405D /* XCUIElement+takeScreenshot.swift */,
+				605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -587,7 +587,7 @@
 				609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */,
 				605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */,
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
-				605341A7280F037200C0405D /* XCUIElement+takeScreenshot.swift in Sources */,
+				605341A7280F037200C0405D /* XCUIApplication+takeScreenshot.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */,

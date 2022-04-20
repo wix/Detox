@@ -10,6 +10,8 @@ class FakeActionDelegate: ActionDelegateProtocol {
 
   var shouldThrow: Bool = false
 
+  var defaultImagePath: String!
+
   private var attributes: [[AnyHashable]: AnyCodable] = [:]
 
   private(set) var actRecorder: [(Action, AnyHashable)] = []
@@ -28,5 +30,9 @@ class FakeActionDelegate: ActionDelegateProtocol {
 
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
     return attributes[elements]!
+  }
+
+  func takeScreenshot(_ imageName: String?, date: Date) throws -> AnyCodable {
+    return AnyCodable(imageName ?? defaultImagePath)
   }
 }

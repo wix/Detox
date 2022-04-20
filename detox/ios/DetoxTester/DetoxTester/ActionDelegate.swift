@@ -106,8 +106,11 @@ class ActionDelegate: ActionDelegateProtocol {
     fatalError("not implmented yet")
   }
 
-  func takeScreenshot(_ imageName: String?) throws -> AnyCodable {
-    return takeScreenshot(imageName)
+  func takeScreenshot(
+    _ imageName: String?,
+    date: Date = Date.now
+  ) throws -> AnyCodable {
+    return try AnyCodable(app.takeScreenshot(imageName, date: date))
   }
 }
 

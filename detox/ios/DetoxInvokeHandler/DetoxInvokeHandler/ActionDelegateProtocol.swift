@@ -17,5 +17,5 @@ public protocol ActionDelegateProtocol {
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable
 
   /// Takes a screenshot and saves the image as `imageName`.
-  func takeScreenshot(_ imageName: String?) throws -> AnyCodable
+  func takeScreenshot(_ imageName: String?, date: Date) throws -> AnyCodable
 }
