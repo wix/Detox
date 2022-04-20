@@ -3,4 +3,4 @@ rootProject.name = 'DetoxRNExample'
 include ':app'
 
 include ':AsyncStorage'
-project(':AsyncStorage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/async-storage/android')
+project(':AsyncStorage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-async-storage/async-storage/android')
