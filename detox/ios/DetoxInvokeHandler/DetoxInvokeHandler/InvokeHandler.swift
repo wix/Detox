@@ -48,8 +48,12 @@ public class InvokeHandler {
           throw Error.invalidActionType
         }
 
-        guard action != .getAttributes else {
+        if action == .getAttributes {
           return try getAttributes(from: elements)
+        }
+
+        if action == .takeScreenshot {
+          return try takeScreenshot(parsedMessage.params)
         }
 
         try handleAction(
@@ -91,6 +95,12 @@ public class InvokeHandler {
 
   private func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
     return try actionDelegate.getAttributes(from: elements)
+  }
+
+  // MARK: - Get attributes
+
+  private func takeScreenshot(_ params: [AnyCodable]?) throws -> AnyCodable {
+    return try actionDelegate.takeScreenshot((params![1].value as! String))
   }
 
   // MARK: - Handle actions

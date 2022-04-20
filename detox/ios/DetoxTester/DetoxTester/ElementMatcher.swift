@@ -15,7 +15,7 @@ class ElementMatcher: ElementMatcherProtocol {
   // A string to match against any one of each element’s identifying properties:
   //   identifier, title, label, value, or placeholderValue.
 
-  init(app: XCUIApplication) {
+  init(_ app: XCUIApplication) {
     self.app = app
   }
 

@@ -8,7 +8,11 @@ import Foundation
 import XCTest
 
 class ActionDelegate: ActionDelegateProtocol {
-  static let shared = ActionDelegate()
+  let app: XCUIApplication
+
+  init(_ app: XCUIApplication) {
+    self.app = app
+  }
 
   /// Make an action by Detox Tester.
   func act(action: Action, on element: AnyHashable) throws {
@@ -37,9 +41,16 @@ class ActionDelegate: ActionDelegateProtocol {
       case .longPress:
         element.longPress()
 
-      case .longPressAndDrag(let duration, let normalizedPositionX, let normalizedPositionY,
-                             let targetElement, let normalizedTargetPositionX,
-                             let normalizedTargetPositionY, let speed, let holdDuration):
+      case .longPressAndDrag(
+        let duration,
+        let normalizedPositionX,
+        let normalizedPositionY,
+        let targetElement,
+        let normalizedTargetPositionX,
+        let normalizedTargetPositionY,
+        let speed,
+        let holdDuration
+      ):
         try element.longPress(
           duration: duration,
           normalizedOffsetX: normalizedPositionX,
@@ -53,14 +64,27 @@ class ActionDelegate: ActionDelegateProtocol {
         )
 
       case .swipe(
-        let direction, let speed, let normalizedOffset, let normalizedStartingPointX,
-        let normalizedStartingPointY):
-        element.swipeUp(velocity: .fast)
+        let direction,
+        let speed,
+        let normalizedOffset,
+        let normalizedStartingPointX,
+        let normalizedStartingPointY
+      ):
+        element.swipe(
+          direction: direction,
+          speed: speed,
+          normalizedOffset: normalizedOffset,
+          normalizedStartingPointX: normalizedStartingPointX,
+          normalizedStartingPointY: normalizedStartingPointY,
+          app: app
+        )
 
       case .screenshot(let imageName):
-        element.screenshot() // need to implement full functionality with image name
+        fatalError("this action should not be called under `act()`")
+
       case .getAttributes:
-        fatalError("not implmented yet")
+        fatalError("this action should not be called under `act()`")
+
       case .tapKey(_):
         fatalError("not implmented yet")
       case .changeText(_):
@@ -80,6 +104,10 @@ class ActionDelegate: ActionDelegateProtocol {
 
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
     fatalError("not implmented yet")
+  }
+
+  func takeScreenshot(_ imageName: String?) throws -> AnyCodable {
+    return takeScreenshot(imageName)
   }
 }
 

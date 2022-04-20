@@ -8,7 +8,11 @@ import Foundation
 import XCTest
 
 class ExpectationDelegate: ExpectationDelegateProtocol {
-  static let shared = ExpectationDelegate()
+  let app: XCUIApplication
+
+  init(_ app: XCUIApplication) {
+    self.app = app
+  }
 
   func expect(
     _ expectation: Expectation, isTruthy: Bool, on element: AnyHashable, timeout: Double?

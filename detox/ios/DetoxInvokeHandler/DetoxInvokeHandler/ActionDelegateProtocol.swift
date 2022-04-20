@@ -15,4 +15,7 @@ public protocol ActionDelegateProtocol {
   /// only, or list of dictionaries, each represents the state attributes (specifically, the
   /// available accessibility information) of the element.
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable
+
+  /// Takes a screenshot and saves the image as `imageName`.
+  func takeScreenshot(_ imageName: String?) throws -> AnyCodable
 }

@@ -123,7 +123,10 @@ extension LongPressAndDragViewController: UIGestureRecognizerDelegate {
     return false
   }
 
-  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+  func gestureRecognizer(
+    _ gestureRecognizer: UIGestureRecognizer,
+    shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
+  ) -> Bool {
     return gestureRecognizer == longPressGestureRecognizer
       && otherGestureRecognizer == panGestureRecognizer
   }

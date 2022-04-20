@@ -13,10 +13,11 @@ extension Executor {
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {
+    let app = getAppUnderTest()
     let handler = InvokeHandler(
-      elementMatcher: ElementMatcher(app: getAppUnderTest()),
-      actionDelegate: ActionDelegate.shared,
-      expectationDelegate: ExpectationDelegate.shared
+      elementMatcher: ElementMatcher(app),
+      actionDelegate: ActionDelegate(app),
+      expectationDelegate: ExpectationDelegate(app)
     )
 
     var handlerResult: AnyCodable?

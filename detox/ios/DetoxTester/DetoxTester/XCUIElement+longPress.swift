@@ -60,22 +60,6 @@ extension XCUIElement {
       thenHoldForDuration: holdSeconds
     )
   }
-
-  private func coordinate(
-    normalizedOffsetX: Double?,
-    normalizedOffsetY: Double?
-  ) -> XCUICoordinate {
-    guard
-      let normalizedOffsetX = normalizedOffsetX,
-      let normalizedOffsetY = normalizedOffsetY
-    else {
-      return coordinate(normalizedOffsetX: 0.5, normalizedOffsetY: 0.5)
-    }
-
-    return coordinate(
-      withNormalizedOffset: .init(dx: normalizedOffsetX, dy: normalizedOffsetY)
-    )
-  }
 }
 
 extension XCUICoordinate {

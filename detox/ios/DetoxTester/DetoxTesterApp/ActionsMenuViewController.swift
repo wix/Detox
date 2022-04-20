@@ -80,7 +80,8 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
         presentScreen("LongPressAndDragScreen")
 
       case .swipe:
-        fatalError()
+        presentScreen("SwipeScreen")
+
       case .screenshot:
         fatalError()
       case .getAttributes:
@@ -113,8 +114,6 @@ enum MenuOptions: String, CaseIterable {
   case longPress = "Long Press"
   case longPressAndDrag = "Long Press & Drag"
   case swipe = "Swipe"
-  case screenshot = "Screenshot"
-  case getAttributes = "Get Attributes"
   case keyboardActions = "Keyboard Actions"
   case scroll = "Scroll"
   case setColumnToValue = "Set Column"
