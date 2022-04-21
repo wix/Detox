@@ -92,48 +92,6 @@ describe('composeBehaviorConfig', () => {
 
         expect(actual).toEqual(expected);
       });
-
-      describe('if user params is set', () => {
-        beforeEach(() => {
-          userParams = {
-            initGlobals: false,
-            reuse: false,
-          };
-        });
-
-        it('should override the defaults from local config', () => {
-          expect(composed()).toEqual({
-            init: {
-              exposeGlobals: false,
-              reinstallApp: true,
-            },
-            launchApp: 'auto',
-            cleanup: {
-              shutdownDevice: false,
-            }
-          });
-        });
-
-        describe('if cli args are set', () => {
-          beforeEach(() => {
-            cliConfig.reuse = true;
-            cliConfig.cleanup = true;
-          });
-
-          it('should override the user params', () => {
-            expect(composed()).toEqual({
-              init: {
-                exposeGlobals: false,
-                reinstallApp: false,
-              },
-              launchApp: 'auto',
-              cleanup: {
-                shutdownDevice: true,
-              }
-            });
-          });
-        });
-      });
     });
   });
 });
