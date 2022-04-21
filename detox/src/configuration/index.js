@@ -19,9 +19,8 @@ const hooks = {
 
 async function composeDetoxConfig({
   cwd = process.cwd(),
-  argv,
+  argv = undefined,
   override,
-  userParams,
 }) {
   const errorComposer = new DetoxConfigErrorComposer();
   const cliConfig = collectCliConfig({ argv });
@@ -84,7 +83,6 @@ async function composeDetoxConfig({
   const behaviorConfig = composeBehaviorConfig({
     globalConfig,
     localConfig,
-    userParams,
     cliConfig,
   });
 

@@ -305,7 +305,7 @@ declare global {
              *   await detox.init();
              * });
              */
-            init(configOverride?: Partial<DetoxConfig>, options?: DetoxInitOptions): Promise<void>;
+            init(configOverride?: Partial<DetoxConfig>): Promise<void>;
 
             beforeEach(...args: any[]): Promise<void>;
 
@@ -328,25 +328,6 @@ declare global {
              * @internal
              */
             hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
-        }
-
-        interface DetoxInitOptions {
-            /**
-             * By default, Detox exports `device`, `expect`, `element`, `by` and `waitFor`
-             * as global variables. If you want to control their initialization manually,
-             * set this property to `false`.
-             *
-             * This is useful when during E2E tests you also need to run regular expectations
-             * in Node.js. Jest's `expect` for instance, will not be overridden by Detox when
-             * this option is used.
-             */
-            initGlobals?: boolean;
-            /**
-             * By default, `await detox.init()` will uninstall and install the app.
-             * If you wish to reuse the existing app for a faster run, set the property to
-             * `false`.
-             */
-            reuse?: boolean;
         }
 
         type Point2D = {

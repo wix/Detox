@@ -54,9 +54,6 @@ describe('composeDetoxConfig', () => {
           'record-logs': 'all',
           'runner-config': 'e2e/jest.config.js',
         },
-        userParams: {
-          initGlobals: false,
-        },
         override: {
           artifacts: {
             pathBuilder: class {
@@ -101,7 +98,7 @@ describe('composeDetoxConfig', () => {
         },
         behaviorConfig: {
           init: {
-            exposeGlobals: false,
+            exposeGlobals: true,
             reinstallApp: false,
           },
           cleanup: {
