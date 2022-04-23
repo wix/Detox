@@ -10,6 +10,8 @@ import XCTest
 class SwipeTests: DTXTestCase {
   var app: XCUIApplication!
   var actionDelegate: ActionDelegate!
+  var swipableView: XCUIElement!
+  var resultLabel: XCUIElement!
 
   override func setUpWithError() throws {
     try super.setUpWithError()
@@ -18,21 +20,20 @@ class SwipeTests: DTXTestCase {
     actionDelegate = ActionDelegate(app)
 
     app.launch()
-  }
 
-  func testSwipeRight() throws {
     let swipeCell = app.staticTexts["Swipe"]
     XCTAssert(swipeCell.waitForExistence(timeout: 30))
 
     try actionDelegate.act(action: Action.tap(times: 1), on: swipeCell, testCase: self)
 
-    let swipableView = app.otherElements.containing(
-      .staticText, identifier: "Swipe right").firstMatch
+    swipableView = app.otherElements.containing(.staticText, identifier: "Swipe right").firstMatch
     XCTAssert(swipableView.waitForExistence(timeout: 30))
 
-    let resultLabel = app.staticTexts["resultLabel"]
+    resultLabel = app.staticTexts["resultLabel"]
     XCTAssertEqual(resultLabel.label, "Text Will Be Here")
+  }
 
+  func testSwipeRight() throws {
     let swipe = Action.swipe(
       direction: .right,
       speed: .fast,
@@ -40,23 +41,13 @@ class SwipeTests: DTXTestCase {
       normalizedStartingPointX: nil,
       normalizedStartingPointY: nil
     )
+
     try actionDelegate.act(action: swipe, on: swipableView, testCase: self)
+
     XCTAssertEqual(resultLabel.label, "Success!")
   }
 
   func testCoordinateSwipeRight() throws {
-    let swipeCell = app.staticTexts["Swipe"]
-    XCTAssert(swipeCell.waitForExistence(timeout: 30))
-
-    try actionDelegate.act(action: Action.tap(times: 1), on: swipeCell, testCase: self)
-
-    let swipableView = app.otherElements.containing(
-      .staticText, identifier: "Swipe right").firstMatch
-    XCTAssert(swipableView.waitForExistence(timeout: 30))
-
-    let resultLabel = app.staticTexts["resultLabel"]
-    XCTAssertEqual(resultLabel.label, "Text Will Be Here")
-
     let swipe = Action.swipe(
       direction: .right,
       speed: .fast,
@@ -64,23 +55,13 @@ class SwipeTests: DTXTestCase {
       normalizedStartingPointX: 0.5,
       normalizedStartingPointY: 0.5
     )
+
     try actionDelegate.act(action: swipe, on: swipableView, testCase: self)
+
     XCTAssertEqual(resultLabel.label, "Success!")
   }
 
   func testSwipeLeft() throws {
-    let swipeCell = app.staticTexts["Swipe"]
-    XCTAssert(swipeCell.waitForExistence(timeout: 30))
-
-    try actionDelegate.act(action: Action.tap(times: 1), on: swipeCell, testCase: self)
-
-    let swipableView = app.otherElements.containing(
-      .staticText, identifier: "Swipe right").firstMatch
-    XCTAssert(swipableView.waitForExistence(timeout: 30))
-
-    let resultLabel = app.staticTexts["resultLabel"]
-    XCTAssertEqual(resultLabel.label, "Text Will Be Here")
-
     let swipe = Action.swipe(
       direction: .left,
       speed: .fast,
@@ -88,7 +69,9 @@ class SwipeTests: DTXTestCase {
       normalizedStartingPointX: nil,
       normalizedStartingPointY: nil
     )
+
     try actionDelegate.act(action: swipe, on: swipableView, testCase: self)
+
     XCTAssertNotEqual(resultLabel.label, "Success!")
   }
 }

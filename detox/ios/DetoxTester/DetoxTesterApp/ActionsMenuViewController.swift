@@ -82,6 +82,9 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
       case .swipe:
         presentScreen("SwipeScreen")
 
+      case .getAttributes:
+        presentScreen("AccessibilityScreen")
+
       case .keyboardActions:
         fatalError()
       case .scroll:
@@ -110,6 +113,7 @@ enum MenuOptions: String, CaseIterable {
   case longPress = "Long Press"
   case longPressAndDrag = "Long Press & Drag"
   case swipe = "Swipe"
+  case getAttributes = "Get Attributes"
   case keyboardActions = "Keyboard Actions"
   case scroll = "Scroll"
   case setColumnToValue = "Set Column"

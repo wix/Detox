@@ -79,7 +79,7 @@ class ActionDelegate: ActionDelegateProtocol {
           app: app
         )
 
-      case .screenshot(let imageName):
+      case .screenshot(_):
         fatalError("this action should not be called under `act()`")
 
       case .getAttributes:
@@ -103,7 +103,13 @@ class ActionDelegate: ActionDelegateProtocol {
   }
 
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
-    fatalError("not implmented yet")
+    let mappedElements = elements.compactMap { $0 as? XCUIElement }
+    guard mappedElements.count == elements.count
+    else {
+      throw ActionDelegateError.notXCUIElement
+    }
+
+    return AnyCodable([AnyCodable(mappedElements.map { $0.getAttributes() })])
   }
 
   func takeScreenshot(

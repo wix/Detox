@@ -31,11 +31,13 @@ class ScreenshotTests: DTXTestCase {
 
   func testScreenshotWithoutImageName() throws {
     let someDate = Date.init(timeIntervalSince1970: 123456789.5)
+
     let result = try actionDelegate.takeScreenshot(nil, date: someDate)
 
     let expectedPath = FileManager.default.temporaryDirectory
       .appendingPathComponent("elementsScreenshot", isDirectory: true)
       .appendingPathComponent("ImageScreenshot_1973-11-29--23-33-09-500.png").path
+
     XCTAssertEqual(result, ["screenshotPath": expectedPath])
   }
 }

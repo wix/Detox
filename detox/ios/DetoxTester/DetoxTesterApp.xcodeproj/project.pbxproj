@@ -30,6 +30,13 @@
 		605341A5280F01E000C0405D /* LongPressAndDragTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A4280F01E000C0405D /* LongPressAndDragTests.swift */; };
 		605341A7280F037200C0405D /* XCUIApplication+takeScreenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */; };
 		605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341A8280F067200C0405D /* ScreenshotTests.swift */; };
+		605341C22813055A00C0405D /* AccessibilityScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 605341C12813055A00C0405D /* AccessibilityScreen.storyboard */; };
+		605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C32814124000C0405D /* XCUIElement+getAttributes.swift */; };
+		605341C628141EA600C0405D /* ElementAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C528141EA600C0405D /* ElementAttributes.swift */; };
+		605341CA2814536700C0405D /* GetAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C92814536700C0405D /* GetAttributes.swift */; };
+		605341CC28145C6800C0405D /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341CB28145C6800C0405D /* JSON.swift */; };
+		605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341CD28145FC600C0405D /* CGPoint+Extensions.swift */; };
+		605341D02814A85200C0405D /* UIAccessibilityTraits+asStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341CF2814A85200C0405D /* UIAccessibilityTraits+asStrings.swift */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
@@ -125,6 +132,13 @@
 		605341A4280F01E000C0405D /* LongPressAndDragTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongPressAndDragTests.swift; sourceTree = "<group>"; };
 		605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+takeScreenshot.swift"; sourceTree = "<group>"; };
 		605341A8280F067200C0405D /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
+		605341C12813055A00C0405D /* AccessibilityScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AccessibilityScreen.storyboard; sourceTree = "<group>"; };
+		605341C32814124000C0405D /* XCUIElement+getAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+getAttributes.swift"; sourceTree = "<group>"; };
+		605341C528141EA600C0405D /* ElementAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementAttributes.swift; sourceTree = "<group>"; };
+		605341C92814536700C0405D /* GetAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAttributes.swift; sourceTree = "<group>"; };
+		605341CB28145C6800C0405D /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		605341CD28145FC600C0405D /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
+		605341CF2814A85200C0405D /* UIAccessibilityTraits+asStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAccessibilityTraits+asStrings.swift"; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
@@ -197,11 +211,8 @@
 		60534154280C173600C0405D /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
-				605341A4280F01E000C0405D /* LongPressAndDragTests.swift */,
-				605341A2280F01B000C0405D /* LongPressTests.swift */,
-				60534155280C177300C0405D /* SwipeTests.swift */,
-				605341A0280F010700C0405D /* TapTests.swift */,
-				605341A8280F067200C0405D /* ScreenshotTests.swift */,
+				60534157280C178500C0405D /* Test Utils */,
+				605341BF2810BF7800C0405D /* Actions */,
 			);
 			name = "Unit Tests";
 			sourceTree = "<group>";
@@ -250,9 +261,31 @@
 			path = Swipe;
 			sourceTree = "<group>";
 		};
+		605341BF2810BF7800C0405D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				605341A4280F01E000C0405D /* LongPressAndDragTests.swift */,
+				605341A2280F01B000C0405D /* LongPressTests.swift */,
+				60534155280C177300C0405D /* SwipeTests.swift */,
+				605341A0280F010700C0405D /* TapTests.swift */,
+				605341C92814536700C0405D /* GetAttributes.swift */,
+				605341A8280F067200C0405D /* ScreenshotTests.swift */,
+			);
+			name = Actions;
+			sourceTree = "<group>";
+		};
+		605341C02810C0C100C0405D /* Get Accessibility Attributes */ = {
+			isa = PBXGroup;
+			children = (
+				605341C12813055A00C0405D /* AccessibilityScreen.storyboard */,
+			);
+			path = "Get Accessibility Attributes";
+			sourceTree = "<group>";
+		};
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
 			isa = PBXGroup;
 			children = (
+				60534154280C173600C0405D /* Unit Tests */,
 				609AA184279FEB06008F6617 /* Actions */,
 				60C01FD227CB8E7900EF6C1E /* Expectations */,
 				60C01FD327CB8E8100EF6C1E /* Matchers */,
@@ -265,7 +298,6 @@
 		609AA184279FEB06008F6617 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				60534154280C173600C0405D /* Unit Tests */,
 				60634AD327C42E5200274F30 /* ActionDelegate.swift */,
 				60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */,
 				60534174280D835100C0405D /* XCUIElement+longPress.swift */,
@@ -273,6 +305,9 @@
 				6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */,
 				6053419E280EF1DC00C0405D /* XCUIElement+coordinate.swift */,
 				605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */,
+				605341C32814124000C0405D /* XCUIElement+getAttributes.swift */,
+				605341C528141EA600C0405D /* ElementAttributes.swift */,
+				605341CF2814A85200C0405D /* UIAccessibilityTraits+asStrings.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -326,6 +361,7 @@
 		60C01FE327CBA96600EF6C1E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -360,7 +396,6 @@
 		60ED26C927872220004213B5 = {
 			isa = PBXGroup;
 			children = (
-				60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */,
 				60ED26D427872220004213B5 /* DetoxTesterApp */,
 				609AA14E279F10F4008F6617 /* DetoxTester */,
 				609AA179279FE83F008F6617 /* Main.m */,
@@ -406,10 +441,11 @@
 		60F482EF2806BDC900C4F78D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				60534157280C178500C0405D /* Test Utils */,
 				60C01FDC27CB9FF700EF6C1E /* Resources */,
 				60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */,
 				60C7F4EA27D8A5FE000D417A /* LogUtils.swift */,
+				605341CB28145C6800C0405D /* JSON.swift */,
+				605341CD28145FC600C0405D /* CGPoint+Extensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -428,6 +464,7 @@
 		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
 			isa = PBXGroup;
 			children = (
+				605341C02810C0C100C0405D /* Get Accessibility Attributes */,
 				60534196280EE6D200C0405D /* Swipe */,
 				6053415D280C57EB00C0405D /* Long Press and Drag */,
 				60534158280C46F700C0405D /* Long Press */,
@@ -567,6 +604,7 @@
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
 				60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */,
 				60534199280EE6E700C0405D /* SwipeScreen.storyboard in Resources */,
+				605341C22813055A00C0405D /* AccessibilityScreen.storyboard in Resources */,
 				60534161280C581200C0405D /* LongPressAndDragScreen.storyboard in Resources */,
 				60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */,
 			);
@@ -587,12 +625,17 @@
 				609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */,
 				605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */,
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
+				605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */,
 				605341A7280F037200C0405D /* XCUIApplication+takeScreenshot.swift in Sources */,
+				605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */,
+				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
+				605341CA2814536700C0405D /* GetAttributes.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */,
 				60C7F51327DE2318000D417A /* ExecutorDelegateProtocol.swift in Sources */,
 				605341A5280F01E000C0405D /* LongPressAndDragTests.swift in Sources */,
+				605341D02814A85200C0405D /* UIAccessibilityTraits+asStrings.swift in Sources */,
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
 				60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */,
 				60534179280DABAA00C0405D /* XCTestCase+wait.swift in Sources */,
@@ -603,6 +646,7 @@
 				6053419F280EF1DC00C0405D /* XCUIElement+coordinate.swift in Sources */,
 				603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */,
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
+				605341CC28145C6800C0405D /* JSON.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
 				60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */,
