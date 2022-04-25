@@ -13,9 +13,40 @@ For troubleshooting of other issue, refer to our [troubleshooting index](Trouble
 
 ## Android
 
+### Problem: minSdkVersion mistmatch
+
+For Gradle errors involving `minSdkVersion` mismatches resembling this one:
+
+```
+uses-sdk:minSdkVersion 18 cannot be smaller than version 21 declared in library [com.facebook.react:react-native:0.64.3] /Users/janedoe/.gradle/caches/transforms-3/6a9cd4eeeb285f80b9e6f413ecd78d0d/transformed/jetified-react-native-0.64.3/AndroidManifest.xml as the library might be using APIs not available in 18
+        Suggestion: use a compatible library with a minSdk of at most 18,
+                or increase this project's minSdk version to at least 21,
+                or use tools:overrideLibrary="com.facebook.react" to force usage (may lead to runtime failures)
+```
+
+Try applying the solution suggested in [this Stack-overflow](https://stackoverflow.com/questions/21032271/how-to-inject-android-configuration-to-each-subproject-with-gradle) post, namely adding this to your root-project's `build.gradle` file (replace `21` those matching your app's `build.gradle`):
+
+```groovy
+// build.gradle
+
+allprojects {
+    afterEvaluate {
+        if (it.hasProperty('android')){
+            android {
+                defaultConfig {
+                    minSdkVersion 21 // Replace '21' with whatever suites your case
+                }
+            }
+        }
+    }
+}
+```
+
+
+
 ### Problem: Kotlin `stdlib` version conflicts
 
-The problems and resolutions here are different if you’re using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is the default, or compiling it yourself.
+The problems and resolutions here are different depending on whether you’re using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is by far the common case, or compiling it yourself.
 
 #### Resolving for a precompiled dependency (`.aar`)
 
@@ -78,7 +109,7 @@ buildscript {
 
 If you get an error like this:
 
-```sh
+```
 Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
 > com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK META-INF/LICENSE
 ```
