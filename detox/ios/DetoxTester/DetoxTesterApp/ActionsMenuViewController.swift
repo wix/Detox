@@ -86,9 +86,11 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
         presentScreen("AccessibilityScreen")
 
       case .keyboardActions:
-        fatalError()
+        presentScreen("KeyboardScreen")
+
       case .scroll:
-        fatalError()
+        presentScreen("ScrollScreen")
+
       case .setColumnToValue:
         fatalError()
       case .setDatePicker:

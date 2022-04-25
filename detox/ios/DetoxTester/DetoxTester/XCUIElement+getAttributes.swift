@@ -8,20 +8,24 @@ import XCTest
 import DetoxInvokeHandler
 
 extension XCUIElement {
-  /// Returns an object, representing various attributes of the element.
+  /// Returns a dictionary object, wrapped as `AnyCodable`, representing various attributes of the
+  /// element.
   func getAttributes() -> AnyCodable {
     let activationPoint = getActivationPoint()
     let normalizedSliderPosition = elementType == .slider ? normalizedSliderPosition : nil
-    
+
+    // TODO: implement `text` attribute(!)
+    // TODO: remove `nil` values.
+    // TODO: Update docs.
+
     let attributes = ElementAttributes(
-      isAccessibilityElement: isAccessibilityElement,
       text: label,
       accessibilityLabel: label,
       placeholderValue: placeholderValue,
       isEnabled: isEnabled,
       accessibilityIdentifier: identifier,
       isVisible: isHittable,
-      accessibilityValue: value as? String ?? (value as? NSObject)?.description,
+      accessibilityValue: value as? String ?? String(describing: value),
       activationPoint: activationPoint,
       normalizedActivationPoint: activationPoint.normalize(in: frame.size),
       isHittable: isHittable,

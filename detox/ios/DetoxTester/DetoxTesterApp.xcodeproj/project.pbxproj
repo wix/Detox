@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */; };
+		6026FEAF2816C6AF00A016A1 /* KeyboardScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEAE2816C6AF00A016A1 /* KeyboardScreen.storyboard */; };
+		6026FEB12816C80200A016A1 /* KeyboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB02816C80200A016A1 /* KeyboardTests.swift */; };
+		6026FEB32816CB3300A016A1 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB22816CB3300A016A1 /* KeyboardViewController.swift */; };
+		6026FEB52816CD2F00A016A1 /* XCUIElement+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */; };
+		6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */; };
+		6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */; };
+		6026FEBD2816E9E700A016A1 /* ScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEBC2816E9E700A016A1 /* ScrollViewController.swift */; };
 		603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */; };
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+handleCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */; };
@@ -34,7 +41,7 @@
 		605341C22813055A00C0405D /* AccessibilityScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 605341C12813055A00C0405D /* AccessibilityScreen.storyboard */; };
 		605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C32814124000C0405D /* XCUIElement+getAttributes.swift */; };
 		605341C628141EA600C0405D /* ElementAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C528141EA600C0405D /* ElementAttributes.swift */; };
-		605341CA2814536700C0405D /* GetAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C92814536700C0405D /* GetAttributes.swift */; };
+		605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341C92814536700C0405D /* GetAttributesTests.swift */; };
 		605341CC28145C6800C0405D /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341CB28145C6800C0405D /* JSON.swift */; };
 		605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341CD28145FC600C0405D /* CGPoint+Extensions.swift */; };
 		605341D5281525C600C0405D /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341D4281525C600C0405D /* CGRect+Extensions.swift */; };
@@ -112,6 +119,13 @@
 
 /* Begin PBXFileReference section */
 		6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementType+Extensions.swift"; sourceTree = "<group>"; };
+		6026FEAE2816C6AF00A016A1 /* KeyboardScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = KeyboardScreen.storyboard; sourceTree = "<group>"; };
+		6026FEB02816C80200A016A1 /* KeyboardTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardTests.swift; sourceTree = "<group>"; };
+		6026FEB22816CB3300A016A1 /* KeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Keyboard.swift"; sourceTree = "<group>"; };
+		6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+scroll.swift"; sourceTree = "<group>"; };
+		6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ScrollScreen.storyboard; sourceTree = "<group>"; };
+		6026FEBC2816E9E700A016A1 /* ScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollViewController.swift; sourceTree = "<group>"; };
 		603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleInvoke.swift"; sourceTree = "<group>"; };
 		603497A927F08C3700770EE0 /* Executor+sendAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendAction.swift"; sourceTree = "<group>"; };
 		603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleCleanup.swift"; sourceTree = "<group>"; };
@@ -138,7 +152,7 @@
 		605341C12813055A00C0405D /* AccessibilityScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AccessibilityScreen.storyboard; sourceTree = "<group>"; };
 		605341C32814124000C0405D /* XCUIElement+getAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+getAttributes.swift"; sourceTree = "<group>"; };
 		605341C528141EA600C0405D /* ElementAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementAttributes.swift; sourceTree = "<group>"; };
-		605341C92814536700C0405D /* GetAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAttributes.swift; sourceTree = "<group>"; };
+		605341C92814536700C0405D /* GetAttributesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAttributesTests.swift; sourceTree = "<group>"; };
 		605341CB28145C6800C0405D /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		605341CD28145FC600C0405D /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		605341D4281525C600C0405D /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
@@ -199,6 +213,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6026FEAD2816C69500A016A1 /* Keyboard */ = {
+			isa = PBXGroup;
+			children = (
+				6026FEB22816CB3300A016A1 /* KeyboardViewController.swift */,
+				6026FEAE2816C6AF00A016A1 /* KeyboardScreen.storyboard */,
+			);
+			path = Keyboard;
+			sourceTree = "<group>";
+		};
+		6026FEB92816E9C600A016A1 /* Scroll */ = {
+			isa = PBXGroup;
+			children = (
+				6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */,
+				6026FEBC2816E9E700A016A1 /* ScrollViewController.swift */,
+			);
+			path = Scroll;
+			sourceTree = "<group>";
+		};
 		603497AB27F08C4A00770EE0 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -272,7 +304,8 @@
 				605341A2280F01B000C0405D /* LongPressTests.swift */,
 				60534155280C177300C0405D /* SwipeTests.swift */,
 				605341A0280F010700C0405D /* TapTests.swift */,
-				605341C92814536700C0405D /* GetAttributes.swift */,
+				6026FEB02816C80200A016A1 /* KeyboardTests.swift */,
+				605341C92814536700C0405D /* GetAttributesTests.swift */,
 				605341A8280F067200C0405D /* ScreenshotTests.swift */,
 			);
 			name = Actions;
@@ -322,6 +355,8 @@
 				605341A6280F037200C0405D /* XCUIApplication+takeScreenshot.swift */,
 				605341C32814124000C0405D /* XCUIElement+getAttributes.swift */,
 				605341C528141EA600C0405D /* ElementAttributes.swift */,
+				6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */,
+				6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -478,6 +513,8 @@
 		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
 			isa = PBXGroup;
 			children = (
+				6026FEB92816E9C600A016A1 /* Scroll */,
+				6026FEAD2816C69500A016A1 /* Keyboard */,
 				605341C02810C0C100C0405D /* Get Accessibility Attributes */,
 				60534196280EE6D200C0405D /* Swipe */,
 				6053415D280C57EB00C0405D /* Long Press and Drag */,
@@ -617,8 +654,10 @@
 				60C0202627CBB0A500EF6C1E /* Preview Content in Resources */,
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
 				60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */,
+				6026FEAF2816C6AF00A016A1 /* KeyboardScreen.storyboard in Resources */,
 				60534199280EE6E700C0405D /* SwipeScreen.storyboard in Resources */,
 				605341C22813055A00C0405D /* AccessibilityScreen.storyboard in Resources */,
+				6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */,
 				60534161280C581200C0405D /* LongPressAndDragScreen.storyboard in Resources */,
 				60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */,
 			);
@@ -638,13 +677,14 @@
 				60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */,
 				609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */,
 				605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */,
+				6026FEB52816CD2F00A016A1 /* XCUIElement+Keyboard.swift in Sources */,
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
 				605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */,
 				605341A7280F037200C0405D /* XCUIApplication+takeScreenshot.swift in Sources */,
 				605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */,
 				6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */,
 				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
-				605341CA2814536700C0405D /* GetAttributes.swift in Sources */,
+				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */,
@@ -661,8 +701,10 @@
 				6053419D280EEDBE00C0405D /* XCUIElement+swipe.swift in Sources */,
 				6053419F280EF1DC00C0405D /* XCUIElement+coordinate.swift in Sources */,
 				603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */,
+				6026FEB12816C80200A016A1 /* KeyboardTests.swift in Sources */,
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				605341CC28145C6800C0405D /* JSON.swift in Sources */,
+				6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
 				60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */,
@@ -682,11 +724,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6053416A280D760100C0405D /* CGPoint+Operators.swift in Sources */,
+				6026FEB32816CB3300A016A1 /* KeyboardViewController.swift in Sources */,
 				60C0202727CBB0A500EF6C1E /* DetoxTesterApp.swift in Sources */,
 				6053419B280EE6F400C0405D /* SwipeViewController.swift in Sources */,
 				6053415F280C580500C0405D /* LongPressAndDragViewController.swift in Sources */,
 				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
 				60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */,
+				6026FEBD2816E9E700A016A1 /* ScrollViewController.swift in Sources */,
 				60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */,
 				6053415A280C472700C0405D /* LongPressViewController.swift in Sources */,
 				60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */,

@@ -150,26 +150,3 @@ extension AnyCodable: Hashable {
     }
   }
 }
-
-/// Extends `AnyCodable` with various casting methods.
-extension AnyCodable {
-  /// Returns the codable `value` casted to `[AnyCodable]`, if possible. If impossible to cast,
-  /// returns `nil`.
-  public func asList() -> [AnyCodable]? {
-    guard let value = value as? [AnyCodable] else {
-      return nil
-    }
-
-    return value
-  }
-
-  /// Returns the codable `value` casted to `[String: AnyCodable]`, if possible. If impossible to
-  /// cast, returns `nil`.
-  public func asStringKeyedDictionary() -> [String: AnyCodable]? {
-    guard let value = value as? [String: AnyCodable] else {
-      return nil
-    }
-
-    return value
-  }
-}

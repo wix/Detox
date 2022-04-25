@@ -79,18 +79,15 @@ class ActionDelegate: ActionDelegateProtocol {
           app: app
         )
 
-      case .screenshot(_):
-        fatalError("this action should not be called under `act()`")
+      case .tapKey(let type):
+        try element.tapKey(type)
 
-      case .getAttributes:
-        fatalError("this action should not be called under `act()`")
+      case .changeText(let change):
+        element.changeText(change)
 
-      case .tapKey(_):
-        fatalError("not implmented yet")
-      case .changeText(_):
-        fatalError("not implmented yet")
-      case .scroll(_):
-        fatalError("not implmented yet")
+      case .scroll(let type):
+        element.scroll(type, app: app)
+
       case .setColumnToValue(index: let index, value: let value):
         fatalError("not implmented yet")
       case .setDatePicker(date: _):
@@ -99,6 +96,10 @@ class ActionDelegate: ActionDelegateProtocol {
         fatalError("not implmented yet")
       case .adjustSlider(normalizedPosition: let normalizedPosition):
         fatalError("not implmented yet")
+
+      case .screenshot, .getAttributes:
+        fatalError("this action should not be called under `act()`")
+
     }
   }
 

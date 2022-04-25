@@ -25,12 +25,22 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <slider opaque="NO" contentMode="scaleToFill" enabled="NO" highlighted="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.75" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="kNJ-7D-Kzd">
+                                <rect key="frame" x="81" y="97" width="252" height="31"/>
+                                <accessibility key="accessibilityConfiguration" hint="this is a slider view" identifier="sliderView" label="slider label">
+                                    <accessibilityTraits key="traits" selected="YES" notEnabled="YES" updatesFrequently="YES" adjustable="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                            </slider>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <accessibility key="accessibilityConfiguration" identifier="screenView"/>
                         <constraints>
                             <constraint firstItem="4UW-4t-Kkq" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="12" id="JZO-sa-USu"/>
+                            <constraint firstItem="kNJ-7D-Kzd" firstAttribute="centerX" secondItem="4UW-4t-Kkq" secondAttribute="centerX" id="YLc-Th-4jK"/>
+                            <constraint firstItem="kNJ-7D-Kzd" firstAttribute="width" secondItem="5EZ-qb-Rvc" secondAttribute="width" multiplier="0.6" id="ebY-NL-0Ct"/>
+                            <constraint firstItem="kNJ-7D-Kzd" firstAttribute="top" secondItem="4UW-4t-Kkq" secondAttribute="bottom" constant="20" id="ymo-05-r3q"/>
                             <constraint firstItem="4UW-4t-Kkq" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="zMt-kS-mpU"/>
                         </constraints>
                     </view>

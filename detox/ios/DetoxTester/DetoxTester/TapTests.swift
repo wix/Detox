@@ -33,7 +33,6 @@ class TapTests: DTXTestCase {
 
     resultLabel = app.staticTexts["resultLabel"]
     XCTAssertEqual(resultLabel.label, "Text Will Be Here")
-
   }
 
   func testTap() throws {
