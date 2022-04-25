@@ -9,54 +9,48 @@ import DetoxInvokeHandler
 
 extension XCUIElement {
   /// Returns an object, representing various attributes of the element.
-  func getAttributes() -> [String: AnyCodable] {
-    let activationPoint = accessibilityActivationPoint.convertToRectCoordinates(frame)
+  func getAttributes() -> AnyCodable {
+    let activationPoint = getActivationPoint()
     let normalizedSliderPosition = elementType == .slider ? normalizedSliderPosition : nil
-
-    return ElementAttributes(
-      text: nil,
-      label: accessibilityLabel,
-      placeholder: placeholderValue,
-      enabled: isEnabled,
-      identifier: identifier,
-      visible: isHittable,
-      value: accessibilityValue,
+    
+    let attributes = ElementAttributes(
+      isAccessibilityElement: isAccessibilityElement,
+      text: label,
+      accessibilityLabel: label,
+      placeholderValue: placeholderValue,
+      isEnabled: isEnabled,
+      accessibilityIdentifier: identifier,
+      isVisible: isHittable,
+      accessibilityValue: value as? String ?? (value as? NSObject)?.description,
       activationPoint: activationPoint,
       normalizedActivationPoint: activationPoint.normalize(in: frame.size),
-      hittable: isHittable,
+      isHittable: isHittable,
       frame: frame,
       elementFrame: nil,
       elementBounds: nil,
       safeAreaInsets: nil,
       elementSafeBounds: nil,
-      date: nil,
+      datePickerDate: nil,
       normalizedSliderPosition: normalizedSliderPosition,
-      contentOffset: nil,
-      contentInset: nil,
-      adjustedContentInset: nil,
-      traits: accessibilityTraits.asStrings(),
-      hint: accessibilityHint,
-      isAccessible: isAccessibilityElement,
-      selected: isSelected,
-      focused: accessibilityElementIsFocused()
-    ).dictionary.mapValues { AnyCodable($0) }
-  }
-}
+      scrollViewContentOffset: nil,
+      scrollViewContentInset: nil,
+      scrollViewAdjustedContentInset: nil,
+      elementType: elementType,
+      accessibilityHint: accessibilityHint,
+      isSelected: isSelected,
+      isFocused: hasFocus
+    ).encodeToDictionary().mapValues {
+      AnyCodable($0)
+    }
 
-private extension CGPoint {
-  func asDictionary() -> [String: CGFloat] {
-    return ["x": self.x, "y": self.y]
+    return AnyCodable(attributes)
   }
-}
 
-private extension CGSize {
-  func asDictionary() -> [String: CGFloat] {
-    return ["width": self.width, "height": self.height]
-  }
-}
-
-private extension CGRect {
-  func asDictionary() -> [String: [String: CGFloat]] {
-    return ["origin": self.origin.asDictionary(), "size": self.size.asDictionary()]
+  private func getActivationPoint() -> CGPoint {
+    if (accessibilityActivationPoint != .zero) {
+      return accessibilityActivationPoint.convertToRectCoordinates(frame)
+    } else {
+      return frame.center
+    }
   }
 }

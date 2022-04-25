@@ -109,7 +109,11 @@ class ActionDelegate: ActionDelegateProtocol {
       throw ActionDelegateError.notXCUIElement
     }
 
-    return AnyCodable([AnyCodable(mappedElements.map { $0.getAttributes() })])
+    let attributes = mappedElements.map {
+      $0.getAttributes()
+    }
+
+    return AnyCodable(attributes)
   }
 
   func takeScreenshot(

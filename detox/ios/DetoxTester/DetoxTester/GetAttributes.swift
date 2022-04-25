@@ -28,20 +28,51 @@ class GetAttributes: DTXTestCase {
     XCTAssert(screenView.waitForExistence(timeout: 30))
   }
 
-  func testLabelAttributeד() throws {
+  func decode(from codable: AnyCodable) throws -> ElementAttributes {
+    let data = try JSONSerialization.data(withJSONObject: codable)
+    self = try JSONDecoder().decode(ElementAttributes.self, from: data)
+
+  }
+
+  func testIdentifierAttribute() throws {
     let labelElement = app.staticTexts["labelIdentifier"]
 
-    let attributes = try actionDelegate.getAttributes(from: [labelElement])
-    XCTAssertEqual(
-      attributes,
-      AnyCodable(
-        [
-          "identifier": AnyCodable("foo")
-        ]
-      )
-    )
+    let result = try actionDelegate.getAttributes(from: [labelElement])
+    let elementsAttributes = result.asList()!
+    XCTAssertEqual(elementsAttributes.count, 1)
+
+    let labelElementAttributes = elementsAttributes.first!.asStringKeyedDictionary()!
+    XCTAssertEqual(labelElementAttributes["identifier"], AnyCodable("labelIdentifier"))
   }
 
-  func testMultipleElements() throws {
-  }
+  //      AnyCodable(
+  //        [
+  //          "focused": AnyCodable(false),
+  //          "normalizedActivationPoint": AnyCodable([
+  //            "x": "1.496884735202492",
+  //            "y": "8.283102143757882"
+  //          ]),
+  //          "hittable": AnyCodable(1),
+  //          "activationPoint": AnyCodable([
+  //            "x": "195.2031250000001",
+  //            "y": "205.265625"
+  //          ]),
+  //          "identifier": AnyCodable("labelIdentifier"),
+  //          "frame": AnyCodable(arrayLiteral: [
+  //            "origin": [
+  //              "x": 130,
+  //              "y": "192.875"
+  //            ],
+  //            "size": [
+  //              "height": "24.78125",
+  //              "width": "130.40625"
+  //            ]
+  //          ]),
+  //          "isAccessibilityElement": AnyCodable(0),
+  //          "enabled": AnyCodable(true),
+  //          "selected": AnyCodable(true),
+  //          "visible": AnyCodable(true)
+  //        ]
+  //      )
+  //    )
 }

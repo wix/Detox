@@ -18,7 +18,9 @@
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label element" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4UW-4t-Kkq">
                                 <rect key="frame" x="153.5" y="56" width="107" height="21"/>
-                                <accessibility key="accessibilityConfiguration" hint="label hint..." identifier="labelIdentifier"/>
+                                <accessibility key="accessibilityConfiguration" hint="accessibility hint" identifier="labelIdentifier" label="accessibility label">
+                                    <accessibilityTraits key="traits" staticText="YES" header="YES"/>
+                                </accessibility>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>

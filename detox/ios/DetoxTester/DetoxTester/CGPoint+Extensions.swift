@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import DetoxInvokeHandler
 
 extension CGPoint {
   /// Normalize the point in the given `size`.
