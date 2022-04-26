@@ -24,7 +24,7 @@ extension XCUIElement {
       placeholderValue: placeholderValue,
       isEnabled: isEnabled,
       accessibilityIdentifier: identifier,
-      isVisible: isHittable,
+      isVisible: isVisible,
       accessibilityValue: value as? String ?? String(describing: value),
       activationPoint: activationPoint,
       normalizedActivationPoint: activationPoint.normalize(in: frame.size),

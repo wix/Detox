@@ -87,10 +87,10 @@ extension XCUIElement {
 
     switch direction {
       case .up:
-        return .init(dx: 0, dy: normalizedOffset * app.frame.height)
+        return .init(dx: 0, dy: -normalizedOffset * app.frame.height)
 
       case .down:
-        return .init(dx: 0, dy: -normalizedOffset * app.frame.height)
+        return .init(dx: 0, dy: normalizedOffset * app.frame.height)
 
       case .right:
         return .init(dx: normalizedOffset * app.frame.width, dy: 0)

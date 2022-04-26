@@ -14,7 +14,6 @@
 		6026FEB52816CD2F00A016A1 /* XCUIElement+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */; };
 		6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */; };
 		6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */; };
-		6026FEBD2816E9E700A016A1 /* ScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEBC2816E9E700A016A1 /* ScrollViewController.swift */; };
 		603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */; };
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+handleCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */; };
@@ -77,6 +76,8 @@
 		60F9F94728084524005DB569 /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F94828084EEB005DB569 /* TapViewController.swift */; };
 		60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F94F28084F7A005DB569 /* TapScreen.storyboard */; };
+		60FBF56E2817915B000B73B1 /* ScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FBF56D2817915B000B73B1 /* ScrollTests.swift */; };
+		60FBF5EA28183A9F000B73B1 /* XCUIElement+isVisible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,7 +126,6 @@
 		6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Keyboard.swift"; sourceTree = "<group>"; };
 		6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+scroll.swift"; sourceTree = "<group>"; };
 		6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ScrollScreen.storyboard; sourceTree = "<group>"; };
-		6026FEBC2816E9E700A016A1 /* ScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollViewController.swift; sourceTree = "<group>"; };
 		603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleInvoke.swift"; sourceTree = "<group>"; };
 		603497A927F08C3700770EE0 /* Executor+sendAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendAction.swift"; sourceTree = "<group>"; };
 		603497AC27F08D9300770EE0 /* Executor+handleCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleCleanup.swift"; sourceTree = "<group>"; };
@@ -191,6 +191,8 @@
 		60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsMenuViewController.swift; sourceTree = "<group>"; };
 		60F9F94828084EEB005DB569 /* TapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapViewController.swift; sourceTree = "<group>"; };
 		60F9F94F28084F7A005DB569 /* TapScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TapScreen.storyboard; sourceTree = "<group>"; };
+		60FBF56D2817915B000B73B1 /* ScrollTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollTests.swift; sourceTree = "<group>"; };
+		60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+isVisible.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,7 +228,6 @@
 			isa = PBXGroup;
 			children = (
 				6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */,
-				6026FEBC2816E9E700A016A1 /* ScrollViewController.swift */,
 			);
 			path = Scroll;
 			sourceTree = "<group>";
@@ -304,6 +305,7 @@
 				605341A2280F01B000C0405D /* LongPressTests.swift */,
 				60534155280C177300C0405D /* SwipeTests.swift */,
 				605341A0280F010700C0405D /* TapTests.swift */,
+				60FBF56D2817915B000B73B1 /* ScrollTests.swift */,
 				6026FEB02816C80200A016A1 /* KeyboardTests.swift */,
 				605341C92814536700C0405D /* GetAttributesTests.swift */,
 				605341A8280F067200C0405D /* ScreenshotTests.swift */,
@@ -327,6 +329,7 @@
 				605341D4281525C600C0405D /* CGRect+Extensions.swift */,
 				605341D8281547AC00C0405D /* Encodable+Extensions.swift */,
 				6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */,
+				60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -715,6 +718,8 @@
 				60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */,
 				603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */,
 				60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */,
+				60FBF56E2817915B000B73B1 /* ScrollTests.swift in Sources */,
+				60FBF5EA28183A9F000B73B1 /* XCUIElement+isVisible.swift in Sources */,
 				605341A3280F01B000C0405D /* LongPressTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -730,7 +735,6 @@
 				6053415F280C580500C0405D /* LongPressAndDragViewController.swift in Sources */,
 				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
 				60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */,
-				6026FEBD2816E9E700A016A1 /* ScrollViewController.swift in Sources */,
 				60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */,
 				6053415A280C472700C0405D /* LongPressViewController.swift in Sources */,
 				60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */,

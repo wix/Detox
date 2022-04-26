@@ -7,7 +7,10 @@ import Foundation
 import DetoxInvokeHandler
 
 extension XCUIElement {
+  /// Scroll a scrollable element to new location based on given scroll `type`.
   ///
+  /// - Note: `scroll(byDeltaX: CGFloat, deltaY: CGFloat)` is not supported in iOS, see:
+  /// https://developer.apple.com/documentation/xctest/xcuielement/1500758-scroll
   func scroll(_ type: Action.ScrollType, app: XCUIApplication) {
     switch type {
       case .to(let edge):
@@ -30,18 +33,28 @@ extension XCUIElement {
   }
 
   private func scroll(toEdge edge: Action.ScrollToEdgeType, app: XCUIApplication) {
-    switch edge {
-      case .top:
-        scroll(byDeltaX: 0, deltaY: -frame.origin.y)
+    var lastPNG = screenshot().pngRepresentation
+    while (true) {
+      switch edge {
+        case .top:
+          swipeDown()
 
-      case .bottom:
-        scroll(byDeltaX: 0, deltaY: frame.origin.y)
+        case .bottom:
+          swipeUp()
 
-      case .left:
-        scroll(byDeltaX: -frame.origin.x, deltaY: 0)
+        case .left:
+          swipeRight()
 
-      case .right:
-        scroll(byDeltaX: frame.origin.x, deltaY: 0)
+        case .right:
+          swipeLeft()
+      }
+
+      let newPNG = screenshot().pngRepresentation
+      if newPNG == lastPNG {
+        return
+      }
+
+      lastPNG = newPNG
     }
   }
 
@@ -49,26 +62,54 @@ extension XCUIElement {
     fromNormalizedOffsetX normalizedOffsetX: Double?,
     normalizedOffsetY: Double?,
     withOffset offset: CGFloat,
-    toDirection direction: Action.ScrollToEdgeType,
+    toDirection edge: Action.ScrollToEdgeType,
     app: XCUIApplication
   ) {
-    let coordinate = coordinate(
-      normalizedOffsetX: normalizedOffsetX,
-      normalizedOffsetY: normalizedOffsetY
-    )
+    let direction = edge.toDirection()
+    let normalizedOffset = normalize(offset, in: direction, app: app)
 
+    swipe(
+      direction: direction,
+      speed: .slow,
+      normalizedOffset: normalizedOffset,
+      normalizedStartingPointX: normalizedOffsetX,
+      normalizedStartingPointY: normalizedOffsetY,
+      app: app
+    )
+  }
+
+  private func normalize(
+    _ offset: CGFloat,
+    in direction: Action.SwipeDirection,
+    app: XCUIApplication
+  ) -> CGFloat {
+    var fraction: CGFloat!
     switch direction {
+      case .up, .down:
+        fraction = offset / app.frame.height
+
+      case .right, .left:
+        fraction = offset / app.frame.width
+    }
+
+    return fraction
+  }
+}
+
+private extension Action.ScrollToEdgeType {
+  func toDirection() -> Action.SwipeDirection {
+    switch self {
       case .top:
-        coordinate.scroll(byDeltaX: 0, deltaY: -offset)
+        return .down
 
       case .bottom:
-        coordinate.scroll(byDeltaX: 0, deltaY: offset)
+        return .up
 
       case .left:
-        coordinate.scroll(byDeltaX: -offset, deltaY: 0)
+        return .left
 
       case .right:
-        coordinate.scroll(byDeltaX: offset, deltaY: 0)
+        return .right
     }
   }
 }

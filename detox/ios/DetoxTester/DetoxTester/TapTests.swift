@@ -50,5 +50,4 @@ class TapTests: DTXTestCase {
 
     XCTAssertEqual(resultLabel.label, "Success!")
   }
-
 }
