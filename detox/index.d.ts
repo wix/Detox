@@ -336,14 +336,6 @@ declare global {
         }
 
         /**
-         * @deprecated
-         */
-        type AppLaunchArgsOperationOptions = Partial<{
-            /** Changes the scope of the operation: transient or permanent app launch args */
-            permanent: boolean;
-        }>;
-
-        /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
          *
          * @see AppLaunchArgs#modify
@@ -390,20 +382,12 @@ declare global {
              * // }
              */
             modify(modifier: object): this;
-            /**
-             * @deprecated Use {@link AppLaunchArgs#shared} instead.
-             */
-            modify(modifier: object, options: AppLaunchArgsOperationOptions): this;
 
             /**
              * Reset all app-specific launch arguments (back to an empty object).
              * If you need to reset the shared launch args, use {@link AppLaunchArgs#shared}.
              */
             reset(): this;
-            /**
-             * @deprecated Use {@link AppLaunchArgs#shared} instead.
-             */
-            reset(options: AppLaunchArgsOperationOptions): this;
 
             /**
              * Get all currently set launch arguments (including shared ones).
@@ -411,10 +395,6 @@ declare global {
              * Note: mutating the values inside the result object is pointless, as it is immutable.
              */
             get(): object;
-            /**
-             * @deprecated Use {@link AppLaunchArgs#shared} instead.
-             */
-            get(options: AppLaunchArgsOperationOptions): object;
         }
 
         /**
