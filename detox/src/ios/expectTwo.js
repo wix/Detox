@@ -636,6 +636,7 @@ class IosExpect {
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
     this.by = new By();
+    this.web = this.web.bind(this);
     this.web.element = this.web;
   }
 
