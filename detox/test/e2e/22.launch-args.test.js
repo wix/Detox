@@ -16,7 +16,7 @@ describe(':android: Launch arguments', () => {
     assertPreconfiguredValues(device.appLaunchArgs.get(), defaultArgs);
   });
 
-  it('should have permanent arg in spite of .selectApp()', async () => {
+  it('should preserve a shared arg in spite of app reselection', async () => {
     const override = { ama: 'zed' };
 
     try {
@@ -35,23 +35,6 @@ describe(':android: Launch arguments', () => {
       await assertLaunchArgs(override);
     } finally {
       device.appLaunchArgs.shared.reset();
-    }
-  });
-
-  it('(deprecated API!) should have permanent arg in spite of .selectApp()', async () => {
-    try {
-      assertPreconfiguredValues(device.appLaunchArgs.get({ permanent: true }), {});
-      device.appLaunchArgs.modify({ ama: 'zed' }, { permanent: true });
-      assertPreconfiguredValues(device.appLaunchArgs.get({ permanent: true }), { ama: 'zed' });
-
-      await device.selectApp('example');
-      assertPreconfiguredValues(device.appLaunchArgs.get(), { ama: 'zed' });
-      assertPreconfiguredValues(device.appLaunchArgs.get({ permanent: false }), {});
-
-      await device.launchApp({ newInstance: true });
-      await assertLaunchArgs({ ama: 'zed' });
-    } finally {
-      device.appLaunchArgs.reset({ permanent: true });
     }
   });
 
