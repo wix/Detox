@@ -14,6 +14,10 @@ class Storage {
   }
 
   assign(map) {
+    if (_.isEmpty(map)) {
+      return;
+    }
+
     for (const key of Object.keys(map)) {
       this.set(key, map[key]);
     }
