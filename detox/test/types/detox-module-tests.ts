@@ -8,6 +8,45 @@ import { by, device, element, expect, waitFor } from 'detox';
 describe('Test', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
+    await device.launchApp({
+      newInstance: false,
+      permissions: {
+        location: 'always',
+        notifications: 'YES',
+        calendar: 'NO',
+        camera: 'YES',
+        contacts: 'NO',
+        health: 'YES',
+        homekit: 'NO',
+        medialibrary: 'YES',
+        microphone: 'NO',
+        motion: 'YES',
+        photos: 'NO',
+        reminders: 'YES',
+        siri: 'NO',
+        speech: 'YES',
+        faceid: 'NO',
+        userTracking: 'YES',
+      },
+      url: 'detoxtesturlscheme://such-string',
+      userNotification: {},
+      userActivity: {},
+      delete: false,
+      launchArgs: {
+        someArg: 42,
+      },
+      languageAndLocale: {
+        language: 'en',
+        locale: 'en-CA',
+      },
+    });
+
+    await device.relaunchApp();
+    await device.relaunchApp({
+      launchArgs: {
+        someArg: 42,
+      },
+    });
   });
 
   afterAll(async () => {

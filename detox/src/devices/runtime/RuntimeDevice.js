@@ -116,9 +116,6 @@ class RuntimeDevice {
     return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
   }
 
-  /**
-   * @deprecated
-   */
   async relaunchApp(params = {}, bundleId) {
     if (params.newInstance === undefined) {
       params['newInstance'] = true;

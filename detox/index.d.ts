@@ -486,6 +486,15 @@ declare global {
              */
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
 
+           /**
+            * Relaunch the app. Convenience method that calls {@link Device#launchApp}
+            * with { newInstance: true } override.
+            *
+            * @param config
+            * @see Device#launchApp
+            */
+            relaunchApp(config?: Omit<DeviceLaunchAppConfig, 'newInstance'>): Promise<void>;
+
             /**
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
