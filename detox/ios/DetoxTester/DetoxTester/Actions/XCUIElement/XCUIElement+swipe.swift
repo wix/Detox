@@ -19,7 +19,7 @@ extension XCUIElement {
     normalizedStartingPointY: Double?,
     app: XCUIApplication
   ) {
-    let velocity = speed?.gestureVelocity ?? .default
+    let velocity = (speed ?? .slow).gestureVelocity
 
     if (normalizedOffset == nil && normalizedStartingPointX == nil &&
         normalizedStartingPointY == nil) {

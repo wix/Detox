@@ -92,13 +92,13 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
         presentScreen("ScrollScreen")
 
       case .setColumnToValue:
-        fatalError()
-      case .setDatePicker:
-        fatalError()
+        presentScreen("PickerScreen")
+
       case .pinch:
-        fatalError()
+        presentScreen("PinchScreen")
+
       case .adjustSlider:
-        fatalError()
+        presentScreen("SliderScreen")
     }
   }
 
@@ -118,8 +118,7 @@ enum MenuOptions: String, CaseIterable {
   case getAttributes = "Get Attributes"
   case keyboardActions = "Keyboard Actions"
   case scroll = "Scroll"
-  case setColumnToValue = "Set Column"
-  case setDatePicker = "Date Picker"
+  case setColumnToValue = "Column Picker"
   case pinch = "Pinch"
   case adjustSlider = "Adjust Slider"
 }

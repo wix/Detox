@@ -89,13 +89,16 @@ class ActionDelegate: ActionDelegateProtocol {
         element.scroll(type, app: app)
 
       case .setColumnToValue(index: let index, value: let value):
-        fatalError("not implmented yet")
+        element.setColumnToValue(value, atIndex: index)
+
       case .setDatePicker(date: _):
-        fatalError("not implmented yet")
-      case .pinch(scale: let scale_, speed: let speed_, angle: let angle_):
-        fatalError("not implmented yet")
+        fatalError("can't set the date, this action is not implemented in XCUITest target")
+
+      case .pinch(scale: let scale, speed: let speed, angle: let angle):
+        element.pinch(withScale: scale, speed: speed, angle: angle)
+
       case .adjustSlider(normalizedPosition: let normalizedPosition):
-        fatalError("not implmented yet")
+        element.adjustSlider(to: normalizedPosition)
 
       case .screenshot, .getAttributes:
         fatalError("this action should not be called under `act()`")
@@ -104,6 +107,8 @@ class ActionDelegate: ActionDelegateProtocol {
   }
 
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
+    // TODO: mix XCUITest attributes with the application's attributes.
+
     let mappedElements = elements.compactMap { $0 as? XCUIElement }
     guard mappedElements.count == elements.count
     else {

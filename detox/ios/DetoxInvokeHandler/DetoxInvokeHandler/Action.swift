@@ -59,7 +59,7 @@ public enum Action: Equatable, Hashable {
   case setDatePicker(date: Date)
 
   /// Pinch the element with the specified `scale`, `speed` and `angle`.
-  case pinch(scale: Double, speed: ActionSpeed, angle: Double)
+  case pinch(scale: Double, speed: ActionSpeed?, angle: Double?)
 
   /// Adjust a slider element to the new `normalizedPosition`.
   case adjustSlider(normalizedPosition: Double)
