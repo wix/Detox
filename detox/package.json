@@ -115,7 +115,6 @@
       "src/artifacts/screenshot",
       "src/artifacts/video",
       "src/devices/allocation/drivers/AllocationDriverBase.js",
-      "src/devices/allocation/drivers/NoneAllocDriver.js",
       "src/devices/allocation/drivers/android/emulator/launchEmulatorProcess.js",
       "src/devices/allocation/drivers/android/emulator/patchAvdSkinConfig.js",
       "src/devices/allocation/drivers/ios",

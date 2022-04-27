@@ -584,7 +584,6 @@ exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .invalidDeviceType 
 
 HINT: Did you mean to use one of these?
 * ios.simulator
-* ios.none
 * android.attached
 * android.emulator
 * android.genycloud
@@ -613,7 +612,6 @@ exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .invalidDeviceType 
 
 HINT: Did you mean to use one of these?
 * ios.simulator
-* ios.none
 * android.attached
 * android.emulator
 * android.genycloud

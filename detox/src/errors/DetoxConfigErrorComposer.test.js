@@ -499,7 +499,6 @@ describe('DetoxConfigErrorComposer', () => {
       });
 
       it('should create same versions for device subtypes', () => {
-        expect(build('ios.simulator')).toEqual(build('ios.none'));
         expect(build('android.emulator')).toEqual(build('android.attached'));
         expect(build('android.emulator')).toEqual(build('android.genycloud'));
       });
