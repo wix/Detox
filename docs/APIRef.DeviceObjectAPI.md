@@ -269,12 +269,12 @@ Launches the app with a URL blacklist to disable network synchronization on cert
 await device.launchApp({
   newInstance: true,
   launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
-}); 
+});
 ```
 
 #### `device.relaunchApp(params)`
 
-**Deprecated:** Use `device.launchApp(params)` instead. The method calls `launchApp({newInstance: true})` for backwards compatibility.
+The method calls `launchApp({newInstance: true})` as a convenience method.
 
 #### `device.terminateApp()`
 
