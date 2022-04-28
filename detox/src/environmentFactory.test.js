@@ -24,7 +24,6 @@ describe('Main environment factory', () => {
 
   describe('validation', () => {
     [
-      'ios.none',
       'ios.simulator',
       'android.attached',
       'android.emulator',

@@ -85,14 +85,6 @@ function _getFactoryClasses(deviceConfig) {
       runtimeDeviceFactoryClass = runtimeDeviceFactories.IosSimulator;
       break;
 
-    case 'ios.none':
-      envValidatorFactoryClass = envValidationFactories.Noop;
-      deviceAllocatorFactoryClass = deviceAllocationFactories.None;
-      artifactsManagerFactoryClass = artifactsManagerFactories.Ios;
-      matchersFactoryClass = matchersFactories.Ios;
-      runtimeDeviceFactoryClass = runtimeDeviceFactories.Ios;
-      break;
-
     default: {
       return null;
     }

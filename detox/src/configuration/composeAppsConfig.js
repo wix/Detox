@@ -60,7 +60,6 @@ function composeAppsConfigFromPlain(opts) {
         testBinaryPath: localConfig.testBinaryPath,
         launchArgs: localConfig.launchArgs,
       }; break;
-    case 'ios.none':
     case 'ios.simulator':
       appConfig = {
         type: 'ios.app',
