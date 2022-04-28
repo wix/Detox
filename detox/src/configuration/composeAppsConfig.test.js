@@ -63,7 +63,6 @@ describe('composeAppsConfig', () => {
     });
 
     it.each([
-      ['ios.none', 'ios.app'],
       ['ios.simulator', 'ios.app'],
       ['android.attached', 'android.apk'],
       ['android.emulator', 'android.apk'],
@@ -104,7 +103,6 @@ describe('composeAppsConfig', () => {
     });
 
     it.each([
-      ['ios.none'],
       ['ios.simulator'],
       ['android.attached'],
       ['android.emulator'],
@@ -348,7 +346,6 @@ describe('composeAppsConfig', () => {
       });
 
       test.each([
-        ['ios.app', 'ios.none'],
         ['ios.app', 'ios.simulator'],
         ['android.apk', 'android.attached'],
         ['android.apk', 'android.emulator'],
@@ -365,7 +362,6 @@ describe('composeAppsConfig', () => {
       });
 
       test.each([
-        ['android.apk', 'ios.none'],
         ['android.apk', 'ios.simulator'],
         ['ios.app', 'android.attached'],
         ['ios.app', 'android.emulator'],

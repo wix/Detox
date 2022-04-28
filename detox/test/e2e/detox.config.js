@@ -142,14 +142,6 @@ const config = {
   },
 
   configurations: {
-    'ios.none': {
-      device: { type: 'ios.none' },
-      app: 'ios.debug',
-      session: {
-        server: 'ws://localhost:8099',
-        sessionId: 'com.wix.detox-example'
-      }
-    },
     'ios.sim.debug': {
       device: 'ios.simulator',
       app: 'ios.debug',

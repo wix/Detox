@@ -176,6 +176,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 
   if (_.isObject(deviceConfig.device)) {
     const expectedProperties = EXPECTED_DEVICE_MATCHER_PROPS[deviceConfig.type];
+    /* istanbul ignore else */
     if (!_.isEmpty(expectedProperties)) {
       const minimalShape = _.pick(deviceConfig.device, expectedProperties);
 
@@ -235,7 +236,6 @@ function unpackDeviceQuery(deviceConfig) {
   }
 
   switch (deviceConfig.type) {
-    case 'ios.none':
     case 'ios.simulator':
       if (_.includes(query, ',')) {
         const [type, os] = _.split(query, /\s*,\s*/);
@@ -255,7 +255,6 @@ function unpackDeviceQuery(deviceConfig) {
 }
 
 const EXPECTED_DEVICE_MATCHER_PROPS = {
-  'ios.none': null,
   'ios.simulator': ['type', 'name', 'id'],
   'android.attached': ['adbName'],
   'android.emulator': ['avdName'],

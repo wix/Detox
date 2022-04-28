@@ -50,9 +50,14 @@ module.exports = {
       "device": "simulator",
       "app": "ios.debug"
     },
-    "ios.none": {
-      "type": "ios.none",
+    "ios.manual": {
+      "type": "ios.manual",
+      "behavior": {
+        "launchApp": "manual"
+      },
+      "artifacts": false,
       "session": {
+        "autoStart": true,
         "server": "ws://localhost:8099",
         "sessionId": "com.wix.demo.react.native"
       }

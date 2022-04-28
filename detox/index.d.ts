@@ -191,14 +191,12 @@ declare global {
 
         type DetoxBuiltInDeviceConfig =
           | DetoxIosSimulatorDriverConfig
-          | DetoxIosNoneDriverConfig
           | DetoxAttachedAndroidDriverConfig
           | DetoxAndroidEmulatorDriverConfig
           | DetoxGenymotionCloudDriverConfig;
 
         type DetoxPlainConfiguration = DetoxConfigurationOverrides & (
           | (DetoxIosSimulatorDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxIosNoneDriverConfig & _DetoxAppConfigFragment)
           | (DetoxAttachedAndroidDriverConfig & _DetoxAppConfigFragment)
           | (DetoxAndroidEmulatorDriverConfig & _DetoxAppConfigFragment)
           | (DetoxGenymotionCloudDriverConfig & _DetoxAppConfigFragment)
@@ -209,12 +207,6 @@ declare global {
             type: 'ios.simulator';
             device: string | Partial<IosSimulatorQuery>;
             bootArgs?: string;
-        }
-
-        interface DetoxIosNoneDriverConfig {
-            type: 'ios.none';
-            // TODO: check if we need it at all?
-            device?: string | Partial<IosSimulatorQuery>;
         }
 
         interface DetoxSharedAndroidDriverConfig {

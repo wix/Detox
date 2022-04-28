@@ -35,7 +35,6 @@ describe('composeDeviceConfig', () => {
   const KNOWN_CONFIGURATIONS = [['plain'], ['inline'], ['aliased']];
 
   const KNOWN_DEVICES = [
-    'ios.none',
     'ios.simulator',
     'android.attached',
     'android.emulator',
@@ -46,7 +45,7 @@ describe('composeDeviceConfig', () => {
   const KNOWN_GPU_MODES = ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest'];
 
   /**
-   * @param {'ios.none' | 'ios.simulator' | 'android.attached' | 'android.emulator' | 'android.genycloud' | './customDriver'} deviceType
+   * @param {'ios.simulator' | 'android.attached' | 'android.emulator' | 'android.genycloud' | './customDriver'} deviceType
    * @param {'plain' | 'inline' | 'aliased' } configType
    */
   function setConfig(deviceType, configType = 'aliased') {
@@ -63,10 +62,6 @@ describe('composeDeviceConfig', () => {
     };
 
     const deviceTemplates = {
-      'ios.none': {
-        type: 'ios.none',
-        ...mixins.iosDevice,
-      },
       'ios.simulator': {
         type: 'ios.simulator',
         ...mixins.iosDevice,
@@ -237,7 +232,6 @@ describe('composeDeviceConfig', () => {
       describe('CLI overrides', () => {
         describe('--device-name', () => {
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
           ])('given iOS (%s) device', (deviceType) => {
             beforeEach(() => setConfig(deviceType, configType));
@@ -308,7 +302,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['android.attached'],
             ['android.genycloud'],
             ['./customDriver'],
@@ -345,7 +338,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
             ['./customDriver'],
           ])('given a non-supported device (%j)', (deviceType) => {
@@ -380,7 +372,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['android.attached'],
             ['android.genycloud'],
             ['./customDriver']
@@ -413,7 +404,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
             ['android.attached'],
             ['./customDriver'],
@@ -446,7 +436,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
             ['android.attached'],
             ['android.genycloud'],
@@ -505,7 +494,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.bootArgs validation', () => {
           test.each([
-            'ios.none',
             'android.attached',
             'android.genycloud',
           ])('cannot be used for %j device', (deviceType) => {
@@ -538,7 +526,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.forceAdbInstall validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
           ])('cannot be used for iOS device (%j)', (deviceType) => {
             setConfig(deviceType, configType);
@@ -571,7 +558,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.gpuMode validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
             'android.attached',
             'android.genycloud',
@@ -609,7 +595,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.headless validation', () => {
           test.each([
-            'ios.none',
             'android.attached',
             'android.genycloud'
           ])('cannot be used for a non-emulator device (%j)', (deviceType) => {
@@ -644,7 +629,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.readonly validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
             'android.attached',
             'android.genycloud',
@@ -672,7 +656,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.utilBinaryPaths validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
           ])('cannot be used for a non-Android device (%j)', (deviceType) => {
             setConfig(deviceType, configType);
