@@ -1,15 +1,15 @@
 //
-//  ActionsMenuViewController.swift (DetoxTesterApp)
+//  MenuViewController.swift (DetoxTesterApp)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 import UIKit
 
-class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
   let options: [String] = MenuOptions.allCases.map { $0.rawValue }
 
-  let cellReuseIdentifier = "actions menu cell"
+  let cellReuseIdentifier = "menu cell"
 
   @IBOutlet var tableView: UITableView!
 
@@ -99,6 +99,9 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
 
       case .adjustSlider:
         presentScreen("SliderScreen")
+
+      case .elementsMatching:
+        presentScreen("ElementsScreen")
     }
   }
 
@@ -110,6 +113,7 @@ class ActionsMenuViewController: UIViewController, UITableViewDelegate, UITableV
 }
 
 enum MenuOptions: String, CaseIterable {
+  case elementsMatching = "Elements Matching"
   case tap = "Tap"
   case tapOnAxis = "Tap on Axis"
   case longPress = "Long Press"

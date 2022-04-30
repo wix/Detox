@@ -299,6 +299,10 @@ class MessageBuilder {
     return setPredicate("label", value)
   }
 
+  func setTypePredicate(_ value: String) -> MessageBuilder {
+    return setPredicate("type", value)
+  }
+
   func setTraitsPredicate(_ values: [String]) -> MessageBuilder {
     let predicate: [String: AnyHashable] = [
       "type": "traits",

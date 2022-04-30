@@ -719,6 +719,26 @@ class MessageSpec: QuickSpec {
         ))
       }
 
+      it("should parse predicate with `type` type") {
+        let message = messageBuilder.setTypePredicate("bar").build()
+
+        let parsed = try Message(from: message)
+
+        expect(parsed).to(equal(
+          Message(
+            type: .action,
+            action: .tap,
+            expectation: nil,
+            modifiers: nil,
+            atIndex: nil,
+            params: nil,
+            predicate: .init(type: .type, value: "bar"),
+            while: nil,
+            timeout: nil
+          )
+        ))
+      }
+
       it("should parse predicate with `and` type") {
         let message = messageBuilder.setAndPredicates([
           ("text", "foo"),

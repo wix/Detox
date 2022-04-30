@@ -70,9 +70,9 @@
 		60C7F51F27DE3024000D417A /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */; };
 		60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */; };
-		60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F9382808369B005DB569 /* ActionsMenu.swift */; };
-		60F9F93E2808396D005DB569 /* ActionsMenuStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */; };
-		60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */; };
+		60F9F9392808369B005DB569 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F9382808369B005DB569 /* Menu.swift */; };
+		60F9F93E2808396D005DB569 /* MenuStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */; };
+		60F9F9402808397C005DB569 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F93F2808397C005DB569 /* MenuViewController.swift */; };
 		60F9F94728084524005DB569 /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F94828084EEB005DB569 /* TapViewController.swift */; };
 		60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F94F28084F7A005DB569 /* TapScreen.storyboard */; };
@@ -89,6 +89,9 @@
 		60FBF608281981F9000B73B1 /* XCUIElement+adjustSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FBF607281981F9000B73B1 /* XCUIElement+adjustSlider.swift */; };
 		60FBF60B281983D8000B73B1 /* SliderScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60FBF60A281983D8000B73B1 /* SliderScreen.storyboard */; };
 		60FBF60D28198433000B73B1 /* SliderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FBF60C28198433000B73B1 /* SliderTests.swift */; };
+		60FBF6C1281AAA31000B73B1 /* ElementMatchersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FBF6C0281AAA31000B73B1 /* ElementMatchersTests.swift */; };
+		60FBF6C4281AABB1000B73B1 /* ElementsScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60FBF6C3281AABB1000B73B1 /* ElementsScreen.storyboard */; };
+		60FBF6C7281AC336000B73B1 /* XCUIElement+compare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FBF6C6281AC336000B73B1 /* XCUIElement+compare.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,9 +200,9 @@
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+getAppUnderTest.swift"; sourceTree = "<group>"; };
-		60F9F9382808369B005DB569 /* ActionsMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsMenu.swift; sourceTree = "<group>"; };
-		60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ActionsMenuStoryboard.storyboard; sourceTree = "<group>"; };
-		60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsMenuViewController.swift; sourceTree = "<group>"; };
+		60F9F9382808369B005DB569 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MenuStoryboard.storyboard; sourceTree = "<group>"; };
+		60F9F93F2808397C005DB569 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		60F9F94828084EEB005DB569 /* TapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapViewController.swift; sourceTree = "<group>"; };
 		60F9F94F28084F7A005DB569 /* TapScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TapScreen.storyboard; sourceTree = "<group>"; };
 		60FBF56D2817915B000B73B1 /* ScrollTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollTests.swift; sourceTree = "<group>"; };
@@ -215,6 +218,9 @@
 		60FBF607281981F9000B73B1 /* XCUIElement+adjustSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+adjustSlider.swift"; sourceTree = "<group>"; };
 		60FBF60A281983D8000B73B1 /* SliderScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SliderScreen.storyboard; sourceTree = "<group>"; };
 		60FBF60C28198433000B73B1 /* SliderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderTests.swift; sourceTree = "<group>"; };
+		60FBF6C0281AAA31000B73B1 /* ElementMatchersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatchersTests.swift; sourceTree = "<group>"; };
+		60FBF6C3281AABB1000B73B1 /* ElementsScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ElementsScreen.storyboard; sourceTree = "<group>"; };
+		60FBF6C6281AC336000B73B1 /* XCUIElement+compare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+compare.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,8 +356,10 @@
 		60ED26D427872220004213B5 /* DetoxTesterApp */ = {
 			isa = PBXGroup;
 			children = (
-				6053416B280D760900C0405D /* Utils */,
 				60F9F94B28084F1B005DB569 /* Actions Screens */,
+				60FBF6C2281AAB53000B73B1 /* Matchers Screens */,
+				60F9F93C280837C1005DB569 /* Menu Screen */,
+				6053416B280D760900C0405D /* Utils */,
 				60C0202827CBB20B00EF6C1E /* Assets.xcassets */,
 				60C0201F27CBB0A400EF6C1E /* ContentView.swift */,
 				60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */,
@@ -361,15 +369,14 @@
 			path = DetoxTesterApp;
 			sourceTree = "<group>";
 		};
-		60F9F93C280837C1005DB569 /* Actions Menu */ = {
+		60F9F93C280837C1005DB569 /* Menu Screen */ = {
 			isa = PBXGroup;
 			children = (
-				60F9F9382808369B005DB569 /* ActionsMenu.swift */,
-				60F9F93D2808396D005DB569 /* ActionsMenuStoryboard.storyboard */,
-				60F9F93F2808397C005DB569 /* ActionsMenuViewController.swift */,
+				60F9F9382808369B005DB569 /* Menu.swift */,
+				60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */,
+				60F9F93F2808397C005DB569 /* MenuViewController.swift */,
 			);
-			name = "Actions Menu";
-			path = ..;
+			name = "Menu Screen";
 			sourceTree = "<group>";
 		};
 		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
@@ -384,7 +391,6 @@
 				60534196280EE6D200C0405D /* Swipe */,
 				6053415D280C57EB00C0405D /* Long Press and Drag */,
 				60534158280C46F700C0405D /* Long Press */,
-				60F9F93C280837C1005DB569 /* Actions Menu */,
 				60F9F94E28084F69005DB569 /* Tap */,
 			);
 			path = "Actions Screens";
@@ -428,6 +434,7 @@
 		60FBF60E281985E2000B73B1 /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
+				60FBF6BF281AAA1C000B73B1 /* Element Matcher */,
 				60FBF610281985F1000B73B1 /* Actions */,
 				60FBF60F281985EA000B73B1 /* Test Utils */,
 			);
@@ -481,6 +488,7 @@
 		60FBF6132819862D000B73B1 /* Matchers */ = {
 			isa = PBXGroup;
 			children = (
+				60FBF6C5281AC329000B73B1 /* XCUIElement */,
 				60634AD727C4338800274F30 /* ElementMatcher.swift */,
 			);
 			path = Matchers;
@@ -598,6 +606,30 @@
 				60FBF5F028184828000B73B1 /* XCUIElement+setColumnToValue.swift */,
 				6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */,
 				60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */,
+			);
+			path = XCUIElement;
+			sourceTree = "<group>";
+		};
+		60FBF6BF281AAA1C000B73B1 /* Element Matcher */ = {
+			isa = PBXGroup;
+			children = (
+				60FBF6C0281AAA31000B73B1 /* ElementMatchersTests.swift */,
+			);
+			path = "Element Matcher";
+			sourceTree = "<group>";
+		};
+		60FBF6C2281AAB53000B73B1 /* Matchers Screens */ = {
+			isa = PBXGroup;
+			children = (
+				60FBF6C3281AABB1000B73B1 /* ElementsScreen.storyboard */,
+			);
+			path = "Matchers Screens";
+			sourceTree = "<group>";
+		};
+		60FBF6C5281AC329000B73B1 /* XCUIElement */ = {
+			isa = PBXGroup;
+			children = (
+				60FBF6C6281AC336000B73B1 /* XCUIElement+compare.swift */,
 			);
 			path = XCUIElement;
 			sourceTree = "<group>";
@@ -720,11 +752,12 @@
 				60FBF5ED281844DB000B73B1 /* PickerScreen.storyboard in Resources */,
 				60FBF60B281983D8000B73B1 /* SliderScreen.storyboard in Resources */,
 				6053415C280C473400C0405D /* LongPressScreen.storyboard in Resources */,
-				60F9F93E2808396D005DB569 /* ActionsMenuStoryboard.storyboard in Resources */,
+				60F9F93E2808396D005DB569 /* MenuStoryboard.storyboard in Resources */,
 				60C0202627CBB0A500EF6C1E /* Preview Content in Resources */,
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
 				60FBF60228196780000B73B1 /* PinchScreen.storyboard in Resources */,
 				60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */,
+				60FBF6C4281AABB1000B73B1 /* ElementsScreen.storyboard in Resources */,
 				6026FEAF2816C6AF00A016A1 /* KeyboardScreen.storyboard in Resources */,
 				60534199280EE6E700C0405D /* SwipeScreen.storyboard in Resources */,
 				605341C22813055A00C0405D /* AccessibilityScreen.storyboard in Resources */,
@@ -750,11 +783,13 @@
 				605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */,
 				6026FEB52816CD2F00A016A1 /* XCUIElement+Keyboard.swift in Sources */,
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
+				60FBF6C7281AC336000B73B1 /* XCUIElement+compare.swift in Sources */,
 				605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */,
 				605341A7280F037200C0405D /* XCUIApplication+takeScreenshot.swift in Sources */,
 				60FBF5F3281848C0000B73B1 /* WheelPickerTests.swift in Sources */,
 				605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */,
 				6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */,
+				60FBF6C1281AAA31000B73B1 /* ElementMatchersTests.swift in Sources */,
 				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
 				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
@@ -811,9 +846,9 @@
 				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
 				60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */,
 				60FBF5EF28184583000B73B1 /* PickerViewController.swift in Sources */,
-				60F9F9392808369B005DB569 /* ActionsMenu.swift in Sources */,
+				60F9F9392808369B005DB569 /* Menu.swift in Sources */,
 				6053415A280C472700C0405D /* LongPressViewController.swift in Sources */,
-				60F9F9402808397C005DB569 /* ActionsMenuViewController.swift in Sources */,
+				60F9F9402808397C005DB569 /* MenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -859,7 +894,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "DetoxTester/DetoxTester-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "DetoxTester/Utils/Resources/DetoxTester-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -888,7 +923,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "DetoxTester/DetoxTester-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "DetoxTester/Utils/Resources/DetoxTester-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

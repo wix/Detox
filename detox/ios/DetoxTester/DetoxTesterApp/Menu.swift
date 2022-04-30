@@ -1,16 +1,16 @@
 //
-//  ActionsMenu.swift (DetoxTesterApp)
+//  Menu.swift (DetoxTesterApp)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 import SwiftUI
 
-struct ActionsMenu: UIViewControllerRepresentable {
+struct Menu: UIViewControllerRepresentable {
   typealias UIViewControllerType = UIViewController
 
   func makeUIViewController(context: Context) -> UIViewController {
-    let storyboard = UIStoryboard(name: "ActionsMenuStoryboard",bundle: nil)
+    let storyboard = UIStoryboard(name: "MenuStoryboard",bundle: nil)
     let viewController = storyboard.instantiateInitialViewController()!
     return viewController
   }

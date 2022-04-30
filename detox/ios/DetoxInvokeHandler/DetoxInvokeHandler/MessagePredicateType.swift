@@ -20,6 +20,9 @@ public enum MessagePredicateType: String, Codable, Hashable {
   /// ID predicate, expects the element's identifier to equal the specified `value`.
   case id = "id"
 
+  /// Type predicate, expects the element's identifier to equal the specified `value`.
+  case type = "type"
+
   /// Traits predicate, expects the element's traits to equal the specified `value`.
   case traits = "traits"
 

@@ -11,7 +11,7 @@ struct ContentView: View {
       .ignoresSafeArea(.all, edges: .vertical)
       .overlay(VStack(spacing: 10) {
 
-      ActionsMenu()
+      Menu()
     })
   }
 }

@@ -16,6 +16,9 @@ public indirect enum ElementPattern: Hashable, Equatable {
   /// Value pattern, find elements that have the specified value.
   case value(String)
 
+  /// Type pattern, find elements that have the specified class type.
+  case type(String)
+
   /// And composition pattern, find elements that matches all specified `patterns`.
   case and(patterns: [ElementPattern])
 
@@ -56,6 +59,9 @@ extension ElementPattern {
       case .id:
         self = .id(predicate.value?.value as! String)
 
+      case .type:
+        self = .type(predicate.value?.value as! String)
+
       case .traits:
         let rawTraits = predicate.value?.value as! [String]
         self = .traits(rawTraits.map{ AccessibilityTrait(rawValue: $0)! })
@@ -85,6 +91,9 @@ extension ElementPattern {
 
       case .id:
         self = .id(predicate.value?.value as! String)
+
+      case .type:
+        self = .type(predicate.value?.value as! String)
 
       case .traits:
         let rawTraits = predicate.value?.value as! [String]
@@ -116,6 +125,9 @@ extension ElementPattern {
       case .id:
         self = .id(predicate.value?.value as! String)
 
+      case .type:
+        self = .type(predicate.value?.value as! String)
+
       case .traits:
         let rawTraits = predicate.value?.value as! [String]
         self = .traits(rawTraits.map{ AccessibilityTrait(rawValue: $0)! })
@@ -142,6 +154,9 @@ extension ElementPattern {
 
       case .id:
         self = .id(predicate.value?.value as! String)
+
+      case .type:
+        self = .type(predicate.value?.value as! String)
 
       case .value:
         self = .value(predicate.value?.value as! String)
