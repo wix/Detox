@@ -27,7 +27,6 @@
 		6053416A280D760100C0405D /* CGPoint+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534168280D757900C0405D /* CGPoint+Operators.swift */; };
 		60534175280D835100C0405D /* XCUIElement+longPress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534174280D835100C0405D /* XCUIElement+longPress.swift */; };
 		60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534176280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift */; };
-		60534179280DABAA00C0405D /* XCTestCase+wait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534178280DABAA00C0405D /* XCTestCase+wait.swift */; };
 		60534199280EE6E700C0405D /* SwipeScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60534198280EE6E700C0405D /* SwipeScreen.storyboard */; };
 		6053419B280EE6F400C0405D /* SwipeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053419A280EE6F400C0405D /* SwipeViewController.swift */; };
 		6053419D280EEDBE00C0405D /* XCUIElement+swipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */; };
@@ -156,7 +155,6 @@
 		60534168280D757900C0405D /* CGPoint+Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Operators.swift"; sourceTree = "<group>"; };
 		60534174280D835100C0405D /* XCUIElement+longPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+longPress.swift"; sourceTree = "<group>"; };
 		60534176280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionSpeed+XCUIGestureVelocity.swift"; sourceTree = "<group>"; };
-		60534178280DABAA00C0405D /* XCTestCase+wait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+wait.swift"; sourceTree = "<group>"; };
 		60534198280EE6E700C0405D /* SwipeScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SwipeScreen.storyboard; sourceTree = "<group>"; };
 		6053419A280EE6F400C0405D /* SwipeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeViewController.swift; sourceTree = "<group>"; };
 		6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+swipe.swift"; sourceTree = "<group>"; };
@@ -551,7 +549,6 @@
 				60FBF619281986DC000B73B1 /* Web Socket */,
 				60FBF618281986D2000B73B1 /* React Native */,
 				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
-				60534178280DABAA00C0405D /* XCTestCase+wait.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -818,7 +815,6 @@
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
 				605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */,
 				60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */,
-				60534179280DABAA00C0405D /* XCTestCase+wait.swift in Sources */,
 				60FBF5F128184828000B73B1 /* XCUIElement+setColumnToValue.swift in Sources */,
 				603497AD27F08D9300770EE0 /* Executor+handleCleanup.swift in Sources */,
 				60C7F50B27DDFA38000D417A /* Executor.swift in Sources */,

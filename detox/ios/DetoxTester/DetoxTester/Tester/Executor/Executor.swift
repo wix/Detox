@@ -11,7 +11,7 @@ public class Executor {
   /// Used to send actions back.
   private(set) var delegate: ExecutorDelegateProtocol!
 
-  /// Executes given operation.
+  /// Executes the given operation from the XCTest bundle.
   func execute(
     _ action: WebSocketReceiveActionType,
     params: [String: AnyHashable],

@@ -168,6 +168,13 @@
 			remoteGlobalIDString = 39DE8F5122F707DD00780546;
 			remoteInfo = DetoxSync;
 		};
+		60BF52E1281EC53B00610DBD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 602F956A274528ED00BAFA74;
+			remoteInfo = DetoxSyncTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -586,6 +593,7 @@
 			isa = PBXGroup;
 			children = (
 				39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */,
+				60BF52E2281EC53B00610DBD /* DetoxSyncTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -767,6 +775,13 @@
 			fileType = wrapper.framework;
 			path = DetoxSync.framework;
 			remoteRef = 39DC984E24BB8FCD00FFB224 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60BF52E2281EC53B00610DBD /* DetoxSyncTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DetoxSyncTests.xctest;
+			remoteRef = 60BF52E1281EC53B00610DBD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1083,6 +1098,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = "";
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
@@ -1128,6 +1144,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = "";
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
