@@ -34,6 +34,7 @@ public class Executor {
 
       case .reactNativeReload:
         handleReactNativeReload(messageId: messageId)
+        fatalError("Text expectation is not supported by the XCUITest target")
 
       case .isReady:
         sendAction(.reportReady, params: [:], messageId: messageId)

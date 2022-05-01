@@ -20,6 +20,7 @@ public func WaitUntilDone(
   }
 
   var waitingToExec: (() -> Void)? = nil
+
   // Allow only one exec operation to be handled at once.
   let waitingToExecSemaphore = DispatchSemaphore(value: 1)
 
@@ -45,7 +46,7 @@ public func WaitUntilDone(
     waitingToExec = nil
     waitingToExecSemaphore.signal()
 
-    syncLog("execution started..")
+    syncLog("execution started")
     toExec()
     syncLog("execution ended")
 
