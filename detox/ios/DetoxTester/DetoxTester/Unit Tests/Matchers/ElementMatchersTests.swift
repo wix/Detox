@@ -9,7 +9,6 @@ import XCTest
 class ElementMatchersTests: DTXTestCase {
   var app: XCUIApplication!
   var matcher: ElementMatcher!
-  var pinchView: XCUIElement!
 
   override func setUpWithError() throws {
     try super.setUpWithError()
@@ -28,22 +27,50 @@ class ElementMatchersTests: DTXTestCase {
     XCTAssert(screenView.waitForExistence(timeout: 30))
   }
 
-  func testMatchByLabel() throws {
+  func testMatchByDefaultLabel() throws {
     let result = try matcher.match(to: .label("Label value"))
+
     XCTAssertEqual(result.count, 1)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "labelIdentifier")
   }
 
-  func testMatchByValue() throws {
-    let result = try matcher.match(to: .value("Text Field Value"))
+  func testMatchByCustomLabel() throws {
+    let result = try matcher.match(to: .label("Text field label"))
+
     XCTAssertEqual(result.count, 1)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "textFieldIdentifier")
   }
 
+  func testMatchByWrongLabel() throws {
+    let result = try matcher.match(to: .label("Label valueZ"))
+
+    XCTAssertEqual(result.count, 0)
+  }
+
+  func testMatchByValue() throws {
+    let result = try matcher.match(to: .value("Text Field Value"))
+
+    XCTAssertEqual(result.count, 1)
+    XCTAssertEqual((result.first as! XCUIElement).identifier, "textFieldIdentifier")
+  }
+
+  func testMatchByWrongValue() throws {
+    let result = try matcher.match(to: .value("Text Field ValueZ"))
+
+    XCTAssertEqual(result.count, 0)
+  }
+
   func testMatchById() throws {
     let result = try matcher.match(to: .id("labelIdentifier"))
+
     XCTAssertEqual(result.count, 1)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "labelIdentifier")
+  }
+
+  func testMatchByWrongId() throws {
+    let result = try matcher.match(to: .id("labelIdentifierZ"))
+
+    XCTAssertEqual(result.count, 0)
   }
 
   func testMatchByIdAndLabel() throws {

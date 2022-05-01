@@ -25,26 +25,25 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
               "with timeout: \(String(describing: timeout))")
 
     switch expectation {
-      case .toBeVisible(let threshold):
-        // TODO: use threshold somehow.. maybe calculate same as Detox.
-        XCTAssertEqual(element.isHittable, isTruthy)
-
       case .toBeFocused:
         XCTAssertEqual(element.accessibilityElementIsFocused(), isTruthy)
 
-      case .toHaveText(let text):
-        let predicate = NSPredicate(format: "label CONTAINS[c] %@", text)
-        XCTAssertEqual(element.staticTexts.containing(predicate).count > 0, isTruthy)
-
       case .toHaveId(let id):
-        XCTAssertEqual(element.identifier == id, isTruthy)
+        let equalsId = element.identifier == id
+        XCTAssertEqual(equalsId, isTruthy)
 
       case .toHaveSliderInPosition(let normalizedPosition, let tolerance):
-        XCTAssertLessThanOrEqual(element.normalizedSliderPosition, normalizedPosition + (tolerance ?? 0))
-        XCTAssertGreaterThanOrEqual(element.normalizedSliderPosition, normalizedPosition - (tolerance ?? 0))
+        let deviation = abs(element.normalizedSliderPosition - normalizedPosition)
+        XCTAssertLessThanOrEqual(deviation, tolerance ?? 0)
 
       case .toExist:
         XCTAssertEqual(element.exists, isTruthy)
+
+      case .toBeVisible(_):
+        fatalError("Visibility expectation is not supported by the XCUITest target")
+
+      case .toHaveText(_):
+        fatalError("Text expectation is not supported by the XCUITest target")
     }
   }
 }

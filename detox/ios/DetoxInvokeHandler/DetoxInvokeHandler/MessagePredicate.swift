@@ -12,7 +12,7 @@ public struct MessagePredicate: MessagePredicateProtocol, Equatable {
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
   var predicates: [MessageSubPredicate]?
 
-  /// Underlying predicate, if there is any (when using `ancestor` or `decendant` predicates
+  /// Underlying predicate, if there is any (when using `ancestor` or `descendant` predicates
   /// for example).
   var predicate: MessageSubPredicate?
 }

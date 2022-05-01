@@ -106,12 +106,12 @@ class InvokeHandlerSpec: QuickSpec {
         expect { try handler.handle(message) }.notTo(throwError())
       }
 
-      it("should find element by parent with decendant predicate") {
-        let message = messageBuilderWithAction.setParentWithDecendantPredicate("foo", "bar").build()
+      it("should find element by parent with descendant predicate") {
+        let message = messageBuilderWithAction.setParentWithdescendantPredicate("foo", "bar").build()
 
         let pattern = ElementPattern.and(patterns: [
           .id("foo"),
-          .decendant(pattern: .id("bar"))
+          .descendant(pattern: .id("bar"))
         ])
         matcher.setMatch(from: pattern, to: "baz")
 

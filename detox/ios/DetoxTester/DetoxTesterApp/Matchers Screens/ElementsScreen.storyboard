@@ -23,15 +23,9 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VSa-eF-qgO">
-                                <rect key="frame" x="165" y="139" width="97" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <textField opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Text Field Value" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rNI-xO-tBQ">
                                 <rect key="frame" x="159" y="139" width="97" height="34"/>
-                                <accessibility key="accessibilityConfiguration" identifier="textFieldIdentifier"/>
+                                <accessibility key="accessibilityConfiguration" identifier="textFieldIdentifier" label="Text field label"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="Ubt-JX-ZS6"/>
                                 </constraints>

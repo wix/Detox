@@ -264,14 +264,14 @@ class MessageBuilder {
     return self
   }
 
-  func setParentWithDecendantPredicate(_ parentID: String, _ childId: String) -> MessageBuilder {
+  func setParentWithdescendantPredicate(_ parentID: String, _ childId: String) -> MessageBuilder {
     let parentPredicate: [String: AnyHashable] = [
       "type": "id",
       "value": parentID
     ]
 
-    let decendantPredicate: [String: AnyHashable] = [
-      "type": "decendant",
+    let descendantPredicate: [String: AnyHashable] = [
+      "type": "descendant",
       "predicate": [
         "type": "id",
         "value": childId
@@ -282,7 +282,7 @@ class MessageBuilder {
       "type": "and",
       "predicates": [
         parentPredicate,
-        decendantPredicate
+        descendantPredicate
       ]
     ]
 

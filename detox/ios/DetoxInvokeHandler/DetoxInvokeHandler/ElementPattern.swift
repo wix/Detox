@@ -31,8 +31,8 @@ public indirect enum ElementPattern: Hashable, Equatable {
   /// Ancestor pattern, find elements that have the specified `pattern` on their ancestor.
   case ancestor(pattern: ElementPattern)
 
-  /// Decendant pattern, find elements that have the specified `pattern` on one of their decendants.
-  case decendant(pattern: ElementPattern)
+  /// descendant pattern, find elements that have the specified `pattern` on one of their descendants.
+  case descendant(pattern: ElementPattern)
 }
 
 extension ElementPattern {
@@ -72,8 +72,8 @@ extension ElementPattern {
       case .ancestor:
         self = .ancestor(pattern: try .init(from: predicate.predicate!))
 
-      case .decendant:
-        self = .decendant(pattern: try .init(from: predicate.predicate!))
+      case .descendant:
+        self = .descendant(pattern: try .init(from: predicate.predicate!))
     }
   }
 
@@ -105,8 +105,8 @@ extension ElementPattern {
       case .ancestor:
         self = .ancestor(pattern: try .init(from: predicate.predicate!))
 
-      case .decendant:
-        self = .decendant(pattern: try .init(from: predicate.predicate!))
+      case .descendant:
+        self = .descendant(pattern: try .init(from: predicate.predicate!))
     }
   }
 
@@ -138,8 +138,8 @@ extension ElementPattern {
       case .ancestor:
         self = .ancestor(pattern: try .init(from: predicate.predicate!))
 
-      case .decendant:
-        self = .decendant(pattern: try .init(from: predicate.predicate!))
+      case .descendant:
+        self = .descendant(pattern: try .init(from: predicate.predicate!))
     }
   }
 

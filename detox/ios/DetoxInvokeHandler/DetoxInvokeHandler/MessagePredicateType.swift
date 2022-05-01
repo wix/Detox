@@ -30,7 +30,7 @@ public enum MessagePredicateType: String, Codable, Hashable {
   /// `predicate`.
   case ancestor = "ancestor"
 
-  /// Decendant predicate, expects the element to have a decendant with the state specified in
+  /// descendant predicate, expects the element to have a descendant with the state specified in
   /// `predicate`.
-  case decendant = "decendant"
+  case descendant = "descendant"
 }

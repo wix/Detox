@@ -788,8 +788,8 @@ class MessageSpec: QuickSpec {
         ))
       }
 
-      it("should parse predicate with parent and decendant ids") {
-        let message = messageBuilder.setParentWithDecendantPredicate("foo", "bar").build()
+      it("should parse predicate with parent and descendant ids") {
+        let message = messageBuilder.setParentWithdescendantPredicate("foo", "bar").build()
 
         let parsed = try Message(from: message)
 
@@ -803,7 +803,7 @@ class MessageSpec: QuickSpec {
             params: nil,
             predicate: .init(type: .and, predicates: [
               .init(type: .id, value: "foo"),
-              .init(type: .decendant, predicate: .init(type: .id, value: "bar"))
+              .init(type: .descendant, predicate: .init(type: .id, value: "bar"))
             ]),
             while: nil,
             timeout: nil
