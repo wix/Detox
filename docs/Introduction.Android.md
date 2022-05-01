@@ -285,12 +285,14 @@ A special thanks to [@GEllickson-Hover](https://github.com/GEllickson-Hover) for
 
 If, when [setting up your work environment](Introduction.AndroidDevEnv.md), you’ve selected Google emulators with an AOSP image as the test target - as recommended, **we strongly encourage** you would also integrate [Test Butler](https://github.com/linkedin/test-butler): in the very least - in order to suppress crash and ANR dialogs. They are a soft spot in UI testing on Android, all around, as - when displayed, they make the UI entirely inaccessible (and thus cause tests to fail in bulks).
 
-Setting Test Butler up for working with Detox is a bit different from explained in their guides. The process, as a whole, is twofold:
+Setting Test Butler up for working with Detox is a bit different than explained in their guides. The process, as a whole, is twofold:
 
 1. Preinstalling the test-butler-app APK onto the test device.
 1. Integrating the test-butler-lib into your own test APK, and initializing it in a custom test-runner (as explained).
 
 The library part can be easily achieved as explained there (i.e. by using Gradle’s `androidTestImplementation`). Same goes for initialization. As for the APK, the suggested usage of Gradle’s `androidTestUtil` is scarce when running with Detox (i.e. non-native instrumentation tests). Here’s what to do instead.
+
+> _For a complete and thorough coverage of the Test Bulter integration with Detox, consider going over our [blogpost on CI execution](https://medium.com/wix-engineering/how-to-execute-android-ui-tests-on-ci-and-stay-alive-eb9089d88c1f) on medium_.
 
 ##### Solution 1: Prebaked Images
 
