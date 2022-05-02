@@ -53,7 +53,7 @@ describe('HashHelper', () => {
 
   describe('generate hash', () => {
     it('should throw EISDIR error for unknown file', async () => {
-      await expect(uut.generateHash(__dirname)).rejects.toThrow(/EISDIR/)
+      await expect(uut.generateHash(__dirname)).rejects.toThrow(/EISDIR/);
     });
 
     it('should generate hash for file', async () => {

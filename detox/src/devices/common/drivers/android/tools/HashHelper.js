@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const fs = require('fs');
+const path = require('path');
 
 const { DetoxInternalError } = require('../../../../../errors');
-const path = require('path');
 
 const HASH_PATH = '/data/local/tmp/detox';
 

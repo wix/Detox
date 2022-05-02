@@ -3,9 +3,9 @@ const DeviceRegistry = require('../../devices/DeviceRegistry');
 const AAPT = require('../../devices/common/drivers/android/exec/AAPT');
 const ADB = require('../../devices/common/drivers/android/exec/ADB');
 const ApkValidator = require('../../devices/common/drivers/android/tools/ApkValidator');
-const TempFileXfer = require('../../devices/common/drivers/android/tools/TempFileXfer');
-const HashHelper = require('../../devices/common/drivers/android/tools/HashHelper');
 const HashFileXfer = require('../../devices/common/drivers/android/tools/HashFileXfer');
+const HashHelper = require('../../devices/common/drivers/android/tools/HashHelper');
+const TempFileXfer = require('../../devices/common/drivers/android/tools/TempFileXfer');
 
 const AndroidServiceLocator = {
   get emulator() {

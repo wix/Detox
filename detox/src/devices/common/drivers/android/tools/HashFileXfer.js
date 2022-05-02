@@ -1,5 +1,6 @@
-const FileXfer = require('./FileXfer');
 const path = require('path');
+
+const FileXfer = require('./FileXfer');
 
 const HASH_PATH = '/data/local/tmp/detox';
 

@@ -133,12 +133,12 @@ class ADB {
   }
 
   async clearAppData(deviceId, packageId) {
-    return await this.shell(deviceId, `pm clear ${packageId}`, {verbosity: 'low', silent: true});
+    return await this.shell(deviceId, `pm clear ${packageId}`, { verbosity: 'low', silent: true });
   }
 
   async readFile(deviceId, filepath, silent = false) {
     if (silent) {
-      return await this.shell(deviceId, `cat ${filepath}`, {verbosity: 'low', silent: true}).catch(() => '');
+      return await this.shell(deviceId, `cat ${filepath}`, { verbosity: 'low', silent: true }).catch(() => '');
     }
 
     return await this.shell(deviceId, `cat ${filepath}`);
