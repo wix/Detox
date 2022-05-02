@@ -2,9 +2,9 @@ package com.wix.detox.reactnative.idlingresources
 
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
-import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.util.concurrent.Executor

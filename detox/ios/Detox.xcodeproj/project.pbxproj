@@ -667,9 +667,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3947679F1DBF985400D72256 /* Build configuration list for PBXNativeTarget "Detox" */;
 			buildPhases = (
+				394767941DBF985400D72256 /* Headers */,
 				394767921DBF985400D72256 /* Sources */,
 				394767931DBF985400D72256 /* Frameworks */,
-				394767941DBF985400D72256 /* Headers */,
 				394767951DBF985400D72256 /* Resources */,
 				39C3C34B1DBF9A05008177E1 /* CopyFiles */,
 			);

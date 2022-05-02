@@ -51,6 +51,11 @@ const config = {
             label: 'Documentation'
           },
           {
+            type: 'docsVersionDropdown',
+            position: 'left',
+            dropdownActiveClassDisabled: true,
+          },
+          {
             href: 'https://github.com/wix/Detox',
             label: 'GitHub',
             position: 'right'
@@ -101,6 +106,10 @@ const config = {
               {
                 label: 'Twitter',
                 href: 'https://twitter.com/detoxe2e/'
+              },
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/CkD5QKheF5'
               }
             ]
           }

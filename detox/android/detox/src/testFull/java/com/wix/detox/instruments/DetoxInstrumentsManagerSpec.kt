@@ -1,7 +1,7 @@
 package com.wix.detox.instruments
 
 import android.content.Context
-import com.nhaarman.mockitokotlin2.*
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.io.File

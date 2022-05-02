@@ -63,7 +63,7 @@ detox test --configuration ios.sim.release --cleanup
 
 ### Running Android Tests on CI
 
-Setting up a CI environment capable of running Android tests isn't as trivial. Fortunately, we've written all about it in a [blostpost on medium!](https://medium.com/wix-engineering/how-to-execute-android-ui-tests-on-ci-and-stay-alive-eb9089d88c1f)
+Setting up a CI environment capable of running Android tests isn’t as trivial. Fortunately, we’ve written all about it in a [blogpost on medium!](https://medium.com/wix-engineering/how-to-execute-android-ui-tests-on-ci-and-stay-alive-eb9089d88c1f)
 
 ### Appendix
 

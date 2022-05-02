@@ -1,5 +1,7 @@
 package com.wix.invoke;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+
 import com.wix.invoke.parser.JsonParser;
 import com.wix.invoke.types.ClassTarget;
 import com.wix.invoke.types.Invocation;
@@ -10,8 +12,6 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import java.util.ArrayList;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
 
 /**
  * Created by rotemm on 13/10/2016.

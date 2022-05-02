@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "19.5.8-prerelease.0",
+  "version": "19.6.7",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -30,14 +30,14 @@
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.12.0",
+    "@react-native-async-storage/async-storage": "^1.17.3",
     "@react-native-community/checkbox": "^0.5.11",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-picker/picker": "^2.1.0",
     "moment": "^2.24.0",
     "react": "17.0.2",
     "react-native": "0.67.2",
-    "react-native-webview": "11.4.4"
+    "react-native-webview": "11.18.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -49,7 +49,7 @@
     "@types/react-native": "^0.64.19",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "detox": "^19.5.8-prerelease.0",
+    "detox": "^19.6.7",
     "eslint": "^7.32.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "express": "^4.15.3",

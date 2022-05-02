@@ -1,6 +1,6 @@
 // @ts-nocheck
-const { getAaptPath } = require('../../../../../utils/environment');
 const exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
+const { getAaptPath } = require('../../../../../utils/environment');
 const pipeCommands = require('../../../../../utils/pipeCommands');
 
 const escape = pipeCommands.escape.inQuotedString;

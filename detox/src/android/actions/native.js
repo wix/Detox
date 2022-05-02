@@ -67,14 +67,14 @@ class ClearTextAction extends Action {
 }
 
 class ScrollAmountAction extends Action {
-  constructor(direction, amount, startPositionX = -1.0, startPositionY = -1.0) {
+  constructor(direction, amount, startPositionX = -1, startPositionY = -1) {
     super();
     this._call = invoke.callDirectly(DetoxActionApi.scrollInDirection(direction, amount, startPositionX, startPositionY));
   }
 }
 
 class ScrollAmountStopAtEdgeAction extends Action {
-  constructor(direction, amount, startPositionX = -1.0, startPositionY = -1.0) {
+  constructor(direction, amount, startPositionX = -1, startPositionY = -1) {
     super();
     this._call = invoke.callDirectly(DetoxActionApi.scrollInDirectionStaleAtEdge(direction, amount, startPositionX, startPositionY));
   }

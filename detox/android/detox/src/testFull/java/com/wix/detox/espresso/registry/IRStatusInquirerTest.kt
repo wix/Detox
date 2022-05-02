@@ -3,20 +3,24 @@ package com.wix.detox.espresso.registry
 import android.os.Looper
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.base.IdlingResourceRegistry
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import com.wix.detox.UTHelpers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import java.util.concurrent.*
+import org.robolectric.annotation.LooperMode
+import java.util.concurrent.Executors
 
 @RunWith(RobolectricTestRunner::class)
+// Fixes: Hangs in UIThread.postFirstSync inside IRStatusInquirer.getAllBusyResources when upgrading robolectric 4.3.x -> 4.4
+// See http://robolectric.org/blog/2019/06/04/paused-looper/ (coming from https://github.com/robolectric/robolectric/releases/tag/robolectric-4.4)
+@LooperMode(LooperMode.Mode.LEGACY)
 class IRStatusInquirerTest {
 
     lateinit var registry: IdlingResourceRegistry

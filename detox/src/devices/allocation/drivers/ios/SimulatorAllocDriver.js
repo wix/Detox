@@ -88,8 +88,8 @@ class SimulatorAllocDriver extends AllocationDriverBase {
   async _groupDevicesByStatus(deviceQuery) {
     const searchResults = await this._queryDevices(deviceQuery);
     const { rawDevices: takenDevices } = this._deviceRegistry.getRegisteredDevices();
-    const takenUDIDs = _.map(takenDevices, 'id');
-    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => takenUDIDs.includes(udid) ? 'taken' : 'free');
+    const takenUDIDs = new Set(_.map(takenDevices, 'id'));
+    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => takenUDIDs.has(udid) ? 'taken' : 'free');
 
     const targetOS = _.get(taken, '0.os.identifier');
     const isMatching = targetOS && { os: { identifier: targetOS } };

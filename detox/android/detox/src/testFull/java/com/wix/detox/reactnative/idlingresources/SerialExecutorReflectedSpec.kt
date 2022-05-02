@@ -1,9 +1,10 @@
 package com.wix.detox.reactnative.idlingresources
 
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import com.nhaarman.mockitokotlin2.*
 import java.util.concurrent.Executor
 
 

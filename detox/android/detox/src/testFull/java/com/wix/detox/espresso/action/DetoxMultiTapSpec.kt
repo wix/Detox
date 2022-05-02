@@ -3,12 +3,12 @@ package com.wix.detox.espresso.action
 import android.view.MotionEvent
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
-import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.common.DetoxLog
 import com.wix.detox.common.proxy.CallInfo
 import com.wix.detox.espresso.UiControllerSpy
 import com.wix.detox.espresso.action.common.TapEvents
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertFailsWith

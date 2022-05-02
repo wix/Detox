@@ -62,7 +62,7 @@ describe('SimulatorInstrumentsPlugin', () => {
     };
     await plugin.onTestStart(testSummary);
     await plugin.onBeforeLaunchApp(event);
-    expect(event.launchArgs.samplingInterval).toBe(100.500);
+    expect(event.launchArgs.samplingInterval).toBe(100.5);
   });
 
   it('should build launchArgs with instrumentsPath from ENV', async () => {

@@ -7,15 +7,15 @@ const TempFileXfer = require('../../devices/common/drivers/android/tools/TempFil
 const HashHelper = require('../../devices/common/drivers/android/tools/HashHelper');
 const HashFileXfer = require('../../devices/common/drivers/android/tools/HashFileXfer');
 
-class AndroidServiceLocator {
-  static get emulator() {
+const AndroidServiceLocator = {
+  get emulator() {
     return require('./emulatorServiceLocator');
-  }
+  },
 
-  static get genycloud() {
+  get genycloud() {
     return require('./genycloudServiceLocator');
-  }
-}
+  },
+};
 
 AndroidServiceLocator.adb = new ADB();
 AndroidServiceLocator.aapt = new AAPT();
