@@ -1,5 +1,4 @@
 // @ts-nocheck
-const fs = require('fs');
 const path = require('path');
 
 const exec = require('child-process-promise').exec;
@@ -10,7 +9,8 @@ const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../../utils/logger').child({ __filename });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
-const DeviceDriverBase = require('../DeviceDriverBase');
+
+const IosDriver = require('./IosDriver');
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -25,7 +25,7 @@ const DeviceDriverBase = require('../DeviceDriverBase');
  * @property bootArgs { Object }
  */
 
-class SimulatorDriver extends DeviceDriverBase {
+class SimulatorDriver extends IosDriver {
   /**
    * @param deps { SimulatorDriverDeps }
    * @param props { SimulatorDriverProps }
@@ -40,37 +40,6 @@ class SimulatorDriver extends DeviceDriverBase {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
-  }
-
-  createPayloadFile(notification) {
-    const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
-    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
-    return notificationFilePath;
-  }
-
-  async setURLBlacklist(blacklistURLs) {
-    await this.client.setSyncSettings({ blacklistURLs: blacklistURLs });
-  }
-
-  async enableSynchronization() {
-    await this.client.setSyncSettings({ enabled: true });
-  }
-
-  async disableSynchronization() {
-    await this.client.setSyncSettings({ enabled: false });
-  }
-
-  async shake() {
-    await this.client.shake();
-  }
-
-  async setOrientation(orientation) {
-    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new DetoxRuntimeError("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ')'));
-    await this.client.setOrientation({ orientation });
-  }
-
-  getPlatform() {
-    return 'ios';
   }
 
   getExternalId() {
