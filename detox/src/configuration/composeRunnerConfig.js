@@ -4,8 +4,8 @@
  * @param {Detox.DetoxConfigurationOverrides} localConfig
  */
 function composeRunnerConfig({ globalConfig, cliConfig }) {
-  const testRunner = globalConfig.testRunner || globalConfig['test-runner'] || 'jest';
-  const customRunnerConfig = cliConfig.runnerConfig || globalConfig.runnerConfig || globalConfig['runner-config'];
+  const testRunner = globalConfig.testRunner || 'jest';
+  const customRunnerConfig = cliConfig.runnerConfig || globalConfig.runnerConfig;
 
   return {
     testRunner,

@@ -18,11 +18,6 @@ describe('composeRunnerConfig', () => {
     expect(composeRunnerConfig().testRunner).toBe('nyc jest');
   });
 
-  it('should take .test-runner from globalConfig', () => {
-    globalConfig['test-runner'] = 'nyc jest';
-    expect(composeRunnerConfig().testRunner).toBe('nyc jest');
-  });
-
   it('should set .testRunner to "jest" by default', () => {
     expect(composeRunnerConfig().testRunner).toBe('jest');
   });
@@ -36,13 +31,6 @@ describe('composeRunnerConfig', () => {
 
   it('should take .runnerConfig from config if it is not defined via CLI', () => {
     globalConfig.runnerConfig = 'from/config.json';
-    delete cliConfig.runnerConfig;
-
-    expect(composeRunnerConfig().runnerConfig).toBe('from/config.json');
-  });
-
-  it('should take .runner-config from config if it is not defined via CLI', () => {
-    globalConfig['runner-config'] = 'from/config.json';
     delete cliConfig.runnerConfig;
 
     expect(composeRunnerConfig().runnerConfig).toBe('from/config.json');
