@@ -7,9 +7,9 @@ sidebar_label: Parallel Test Execution
 
 ## Parallel Test Execution
 
-Detox can leverage multi worker support of JS test runners ([Jest](http://jestjs.io/docs/en/cli#maxworkers-num), [AVA](https://github.com/avajs/ava#process-isolation), etc.).
+Detox can leverage multi worker support of JS test runners ([Jest](http://jestjs.io/docs/en/cli#maxworkers-num),  etc.).
 
-By default `detox test` will run the test runner with one worker (it will pass `--maxWorkers=1` to Jest CLI, Mocha is unaffected). Worker count can be controlled by adding `--workers n` to `detox test`, read more in [`detox-cli` section](APIRef.DetoxCLI.md#test).
+By default `detox test` will run the test runner with one worker. Worker count can be controlled by adding `--workers n` to `detox test`, read more in [`detox-cli` section](APIRef.DetoxCLI.md#test).
 
 ### Device Creation
 

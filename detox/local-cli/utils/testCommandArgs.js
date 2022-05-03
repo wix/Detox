@@ -145,7 +145,7 @@ module.exports = {
     boolean: true,
     default: true,
     group: 'Execution:',
-    describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
+    describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test runner's implementation (e.g. Jest).`,
   },
   'force-adb-install': {
     boolean: true,

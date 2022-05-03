@@ -83,7 +83,7 @@ Follow [our comprehensive guide for Jest](Guide.Jest.md).
 
 ### Apply Detox Configuration
 
-If you’ve completed the test-runner setup successfully using `detox init`, you should have a `.detoxrc.json` file containing a skeletal configuration for Detox to use. This configuration is only half-baked and needs to be set up properly. You now need to either create or edit that file, and apply the actual configuration suitable for your specific project.
+If you’ve completed the test runner setup successfully using `detox init`, you should have a `.detoxrc.json` file containing a skeletal configuration for Detox to use. This configuration is only half-baked and needs to be set up properly. You now need to either create or edit that file, and apply the actual configuration suitable for your specific project.
 
 Detox scans for a configuration through multiple files. It starts from the current working directory, and runs over the following options, in this order:
 
