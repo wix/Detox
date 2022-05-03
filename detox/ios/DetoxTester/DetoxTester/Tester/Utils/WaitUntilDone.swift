@@ -7,7 +7,7 @@ import Foundation
 
 /// Blocks the main-thread until `done` block is called. Can execute operations on main-thread
 /// (without releasing it) by calling `exec`.
-public func WaitUntilDone(
+func WaitUntilDone(
   closure: @escaping (
     _ done: @escaping () -> Void,
     _ exec: @escaping (@escaping () -> Void) -> Void

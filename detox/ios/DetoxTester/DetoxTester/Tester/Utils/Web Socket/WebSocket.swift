@@ -41,7 +41,7 @@ class WebSocket: NSObject {
 
   /// Sends an action over the web-socket.
   func sendAction(
-    _ type: WebSocketSendActionType,
+    _ type: ServerMessageType,
     params: [String : Any] = [:],
     messageId: NSNumber
   ) {

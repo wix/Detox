@@ -7,9 +7,12 @@ import Foundation
 import DetoxInvokeHandler
 import XCTest
 
-public class Executor {
+class Executor {
   /// Used to send actions back.
-  private(set) var delegate: ExecutorDelegateProtocol!
+  private(set) var serverMessageSender: ServerMessageSenderProtocol!
+
+  /// Used to handle the target application directly (within the app target).
+  private(set) var appHandler: AppHandlerProtocol!
 
   /// Executes the given operation from the XCTest bundle.
   func execute(
@@ -50,7 +53,7 @@ public class Executor {
     }
   }
 
-  func setDelegate(_ delegate: ExecutorDelegateProtocol) {
-    self.delegate = delegate
+  func setServerMessageSender(_ sender: ServerMessageSenderProtocol) {
+    self.serverMessageSender = sender
   }
 }

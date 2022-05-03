@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
-@objc public class DetoxTester: NSObject {
+@objc class DetoxTester: NSObject {
   // MARK: - Properties
 
   /// The web-socket, used for the communication between Detox Server and Detox Tester.
@@ -28,7 +28,7 @@ import XCTest
   // MARK: - Start
 
   /// Starts Detox Tester operation.
-  @objc static public func startDetoxTesting(from testCase: XCTestCase) {
+  @objc static func startDetoxTesting(from testCase: XCTestCase) {
     mainLog("starting detox tester")
     shared.start(from: testCase)
   }
@@ -40,7 +40,7 @@ import XCTest
   /// Make init as private method. Cannot be initialized from outside.
   private override init() {
     super.init()
-    executor.setDelegate(self)
+    executor.setServerMessageSender(self)
   }
 
   private func start(from testCase: XCTestCase) {
@@ -115,11 +115,11 @@ extension DetoxTester: WebSocketDelegateProtocol {
   }
 }
 
-// MARK: - ExecutorDelegateProtocol
+// MARK: - ServerMessageSenderProtocol
 
-extension DetoxTester: ExecutorDelegateProtocol {
-  public func sendAction(
-    _ type: WebSocketSendActionType,
+extension DetoxTester: ServerMessageSenderProtocol {
+  func sendAction(
+    _ type: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {
@@ -132,7 +132,7 @@ extension DetoxTester: ExecutorDelegateProtocol {
     webSocket.sendAction(type, params: params, messageId: messageId)
   }
 
-  public func cleanup() {
+  func cleanup() {
     guard let webSocket = webSocket else {
       mainLog("web-socket is `nil`, cannot cleanup test target", type: .error)
       fatalError("Failed closing web-socket")

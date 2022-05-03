@@ -9,42 +9,42 @@ import OSLog
 // MARK: - Logging methods
 
 /// Logs the given `message` with its `type`, under the web-socket logs container.
-public func wsLog(_ message: String, type: OSLogType = .info) {
+func wsLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .webSocket, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the synchronization logs container.
-public func syncLog(_ message: String, type: OSLogType = .info) {
+func syncLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .synchronization, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the main logs container.
-public func mainLog(_ message: String, type: OSLogType = .info) {
+func mainLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .main, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the react-native logs container.
-public func rnLog(_ message: String, type: OSLogType = .info) {
+func rnLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .reactNative, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the tester executor logs container.
-public func execLog(_ message: String, type: OSLogType = .info) {
+func execLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .executor, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the tester matcher container.
-public func matcherLog(_ message: String, type: OSLogType = .info) {
+func matcherLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .matcher, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the tester actions container.
-public func uiLog(_ message: String, type: OSLogType = .info) {
+func uiLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .action, type: type)
 }
 
 /// Logs the given `message` with its `type`, under the tester expectations container.
-public func expectLog(_ message: String, type: OSLogType = .info) {
+func expectLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .expect, type: type)
 }
 

@@ -6,7 +6,7 @@
 import Foundation
 
 /// Wait on thread until app is ready.
-public func WaitUntilAppIsReady() {
+func WaitUntilAppIsReady() {
   rnLog("waiting for app to be ready")
 
   // TODO: implement.

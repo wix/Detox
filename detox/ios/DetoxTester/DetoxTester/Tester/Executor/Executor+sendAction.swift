@@ -5,18 +5,18 @@
 
 import Foundation
 
-public extension Executor {
+extension Executor {
   /// Sends actions through the web-socket.
   func sendAction(
-    _ type: WebSocketSendActionType,
+    _ type: ServerMessageType,
     params: [String : AnyHashable],
     messageId: NSNumber
   ) {
-    guard let delegate = delegate else {
-      execLog("delegate is nil, cannot send action (\(type.rawValue)", type: .error)
-      fatalError("Can't use nil delegate")
+    guard let serverMessageSender = serverMessageSender else {
+      execLog("`serverMessageSender` is nil, cannot send action (\(type.rawValue)", type: .error)
+      fatalError("Can't use nil message handler")
     }
 
-    delegate.sendAction(type, params: params, messageId: messageId)
+    serverMessageSender.sendAction(type, params: params, messageId: messageId)
   }
 }
