@@ -160,7 +160,7 @@ dependencies {
 ```groovy
 android {
   // ...
-  
+
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
@@ -219,7 +219,7 @@ _In the app’s `AndroidManifest.xml`_
 
 ```xml
 <manifest>
-  <application 
+  <application
         ...
         android:networkSecurityConfig="@xml/network_security_config">
   </application>
@@ -288,7 +288,7 @@ If, when [setting up your work environment](Introduction.AndroidDevEnv.md), you�
 Setting Test Butler up for working with Detox is a bit different than explained in their guides. The process, as a whole, is twofold:
 
 1. Preinstalling the test-butler-app APK onto the test device.
-1. Integrating the test-butler-lib into your own test APK, and initializing it in a custom test-runner (as explained).
+1. Integrating the test-butler-lib into your own test APK, and initializing it in a custom test runner (as explained).
 
 The library part can be easily achieved as explained there (i.e. by using Gradle’s `androidTestImplementation`). Same goes for initialization. As for the APK, the suggested usage of Gradle’s `androidTestUtil` is scarce when running with Detox (i.e. non-native instrumentation tests). Here’s what to do instead.
 
@@ -369,7 +369,7 @@ In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this to the 
 ```groovy
 android {
   // ...
-  
+
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type

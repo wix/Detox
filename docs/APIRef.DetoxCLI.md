@@ -20,7 +20,7 @@ npm install -g detox-cli
 ### Usage
 
 ```sh
-detox <command> [options] 
+detox <command> [options]
 ```
 
 ### Commands
@@ -98,7 +98,7 @@ Initiating your test suite[^1].
 | --device-launch-args                          | A list of passthrough-arguments to use when (if) devices (Android emulator / iOS simulator) are launched by Detox.<br />**Note: the value must be specified after an equal sign (`=`) and inside quotes.** Usage example:<br />`--device-launch-args="-http-proxy http://1.1.1.1:8000 -no-snapshot-load"` |
 | --app-launch-args                             | Custom arguments to pass (through) onto the app every time it is launched. The same **note** applies here, as for **--device-launch-args**.<br />See [launch arguments guide](APIRef.LaunchArgs.md) for complete info.                                                                                    |
 | --no-color                                    | Disable colors in log output                                                                                                                                                                                                                                                                              |
-| --use-custom-logger                           | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner’s implementation (e.g. Jest / Mocha).<br />_Default: true_                                                                                                        |
+| --use-custom-logger                           | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test runner’s implementation (e.g. Jest).<br />_Default: true_                                                                                                        |
 | --force-adb-install                           | Due to problems with the `adb install` command on Android, Detox resorts to a different scheme for installing APKs. Setting true will disable that and force usage of `adb install`, instead.<br/>This flag is temporary until the Detox way proves stable.<br/>_Default: false_                          |
 | --inspect-brk                                 | Uses [node’s --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the test runner <br />_Default: false_                                                                                                                                 |
 | --help                                        | Show help                                                                                                                                                                                                                                                                                                 |
