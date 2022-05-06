@@ -1,5 +1,5 @@
 const { device, element, by } = require('detox');
-const expect = require('expect');
+const expect = require('expect').default;
 
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
