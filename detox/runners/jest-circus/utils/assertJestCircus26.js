@@ -33,7 +33,7 @@ function assertJestCircus26(maybeProjectConfig) {
     );
   }
 
-  return projectConfig;
+  return maybeProjectConfig;
 }
 
 module.exports = assertJestCircus26;
