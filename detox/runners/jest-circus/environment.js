@@ -1,5 +1,6 @@
 // @ts-nocheck
-const NodeEnvironment = require('jest-environment-node');
+const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-unpublished-require
+const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const DetoxError = require('../../src/errors/DetoxError');
 const Timer = require('../../src/utils/Timer');

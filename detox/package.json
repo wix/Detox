@@ -80,8 +80,16 @@
     "yargs-unparser": "^2.0.0"
   },
   "peerDependencies": {
-    "jest-circus": "26.0.x - 26.4.x || >=26.5.2",
-    "jest-environment-node": ">=25.0.0"
+    "jest": "26.0.x - 26.4.x || ^26.5.2 || 27.x.x || 28.x.x",
+    "mocha": ">=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "jest": {
+      "optional": true
+    },
+    "mocha": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=12.10.0"
