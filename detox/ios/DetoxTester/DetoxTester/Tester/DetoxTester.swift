@@ -99,7 +99,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
             "with params: \(params.description)")
 
     exec! { [self] in
-      mainLog("[didReceiveAction] Executes action (`\(type.rawValue)`) on main thread")
+      mainLog("`didReceiveAction` was called, executes action: `\(type.rawValue)`")
       executor.execute(type, params: params, messageId: messageId)
     }
   }

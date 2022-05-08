@@ -50,11 +50,12 @@
 		609AA17A279FE83F008F6617 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* Main.m */; };
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
+		60A3B3AE2827C3F6002F903B /* WebSocketReceiveActionType+isWhiteBoxAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B3AD2827C3F6002F903B /* WebSocketReceiveActionType+isWhiteBoxAction.swift */; };
 		60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BB447C28070AED00772A2A /* DTXTestCase.m */; };
 		60BF52D0281E739D00610DBD /* XCUIElementQuery+matching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52CF281E739D00610DBD /* XCUIElementQuery+matching.swift */; };
 		60BF52D2281E7D0600610DBD /* XCUIElement+query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52D1281E7D0600610DBD /* XCUIElement+query.swift */; };
 		60BF52D5281E808D00610DBD /* XCUIElementQuery+run.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52D4281E808D00610DBD /* XCUIElementQuery+run.swift */; };
-		60BF52ED281ECBFB00610DBD /* AppHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52EC281ECBFB00610DBD /* AppHandlerProtocol.swift */; };
+		60BF52ED281ECBFB00610DBD /* WhiteBoxHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52EC281ECBFB00610DBD /* WhiteBoxHandler.swift */; };
 		60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */; };
 		60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0201F27CBB0A400EF6C1E /* ContentView.swift */; };
 		60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */; };
@@ -181,12 +182,13 @@
 		609AA17C279FE932008F6617 /* DetoxTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTester.swift; sourceTree = "<group>"; };
 		609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DetoxTester-Bridging-Header.h"; sourceTree = "<group>"; };
 		609AA19727A0247D008F6617 /* WebSocket+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Config.swift"; sourceTree = "<group>"; };
+		60A3B3AD2827C3F6002F903B /* WebSocketReceiveActionType+isWhiteBoxAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocketReceiveActionType+isWhiteBoxAction.swift"; sourceTree = "<group>"; };
 		60BB447C28070AED00772A2A /* DTXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXTestCase.m; sourceTree = "<group>"; };
 		60BB448128070C6800772A2A /* DTXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTestCase.h; sourceTree = "<group>"; };
 		60BF52CF281E739D00610DBD /* XCUIElementQuery+matching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+matching.swift"; sourceTree = "<group>"; };
 		60BF52D1281E7D0600610DBD /* XCUIElement+query.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+query.swift"; sourceTree = "<group>"; };
 		60BF52D4281E808D00610DBD /* XCUIElementQuery+run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+run.swift"; sourceTree = "<group>"; };
-		60BF52EC281ECBFB00610DBD /* AppHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHandlerProtocol.swift; sourceTree = "<group>"; };
+		60BF52EC281ECBFB00610DBD /* WhiteBoxHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoxHandler.swift; sourceTree = "<group>"; };
 		60C01FD727CB992700EF6C1E /* EnvArgKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvArgKeys.swift; sourceTree = "<group>"; };
 		60C0201F27CBB0A400EF6C1E /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -318,6 +320,15 @@
 				60FBF6152819864A000B73B1 /* Utils */,
 			);
 			path = DetoxTester;
+			sourceTree = "<group>";
+		};
+		60A3B3AC2827C3BB002F903B /* White-box Handler */ = {
+			isa = PBXGroup;
+			children = (
+				60A3B3AD2827C3F6002F903B /* WebSocketReceiveActionType+isWhiteBoxAction.swift */,
+				60BF52EC281ECBFB00610DBD /* WhiteBoxHandler.swift */,
+			);
+			name = "White-box Handler";
 			sourceTree = "<group>";
 		};
 		60BF52CD281E711D00610DBD /* XCUIElementQuery */ = {
@@ -575,10 +586,10 @@
 		60FBF61A281986F2000B73B1 /* Executor */ = {
 			isa = PBXGroup;
 			children = (
+				60A3B3AC2827C3BB002F903B /* White-box Handler */,
 				60FBF61C28198718000B73B1 /* Extensions */,
 				60C7F50A27DDFA38000D417A /* Executor.swift */,
 				60C7F51227DE2318000D417A /* ServerMessageSenderProtocol.swift */,
-				60BF52EC281ECBFB00610DBD /* AppHandlerProtocol.swift */,
 			);
 			path = Executor;
 			sourceTree = "<group>";
@@ -805,6 +816,7 @@
 				6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */,
 				60FBF6C1281AAA31000B73B1 /* ElementMatchersTests.swift in Sources */,
 				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
+				60A3B3AE2827C3F6002F903B /* WebSocketReceiveActionType+isWhiteBoxAction.swift in Sources */,
 				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
@@ -813,7 +825,7 @@
 				60C7F51327DE2318000D417A /* ServerMessageSenderProtocol.swift in Sources */,
 				605341A5280F01E000C0405D /* LongPressAndDragTests.swift in Sources */,
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
-				60BF52ED281ECBFB00610DBD /* AppHandlerProtocol.swift in Sources */,
+				60BF52ED281ECBFB00610DBD /* WhiteBoxHandler.swift in Sources */,
 				605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */,
 				60C7F51027DE0978000D417A /* WebSocketReceiveActionType.swift in Sources */,
 				60FBF5F128184828000B73B1 /* XCUIElement+setColumnToValue.swift in Sources */,
