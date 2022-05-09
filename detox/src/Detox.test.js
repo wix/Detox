@@ -135,17 +135,7 @@ describe('Detox', () => {
 
       it('should connect a client to the server', () =>
         expect(client().connect).toHaveBeenCalled());
-
-      it('should inject terminateApp method into client', async () => {
-        await client().terminateApp();
-        expect(runtimeDevice._isAppRunning).toHaveBeenCalled();
-        expect(runtimeDevice.terminateApp).not.toHaveBeenCalled();
-
-        runtimeDevice._isAppRunning.mockReturnValue(true);
-        await client().terminateApp();
-        expect(runtimeDevice.terminateApp).toHaveBeenCalled();
-      });
-
+      
       it('should pre-validate the using the environment validator', () =>
         expect(envValidator.validate).toHaveBeenCalled());
 

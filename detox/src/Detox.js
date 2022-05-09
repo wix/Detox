@@ -162,12 +162,6 @@ class Detox {
     }
 
     this._client = new Client(sessionConfig);
-    this._client.terminateApp = async () => {
-      if (this.device && this.device._isAppRunning()) {
-        await this.device.terminateApp();
-      }
-    };
-
     await this._client.connect();
 
     const invocationManager = new InvocationManager(this._client);
