@@ -1,12 +1,12 @@
 //
-//  WebSocketReceiveActionType.swift (DetoxTesterApp)
+//  ServerMessageType.swift (DetoxTesterApp)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
 /// Type of a web-socket action that can be received from Detox Server.
-enum WebSocketReceiveActionType: String {
+enum ServerMessageType: String {
   case disconnect = "testerDisconnected"
   case setRecordingState = "setRecordingState"
   case waitForActive = "waitForActive"

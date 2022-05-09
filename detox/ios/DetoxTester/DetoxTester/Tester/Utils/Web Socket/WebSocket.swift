@@ -152,7 +152,7 @@ extension WebSocket: URLSessionWebSocketDelegate {
 
       delegate?.webSocket(
         self,
-        didReceiveAction: WebSocketReceiveActionType(rawValue: type)!,
+        didReceiveMessage: ServerMessageType(rawValue: type)!,
         params: params ?? [:],
         messageId: messageId
       )

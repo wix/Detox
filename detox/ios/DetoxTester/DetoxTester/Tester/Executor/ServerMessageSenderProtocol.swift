@@ -7,9 +7,9 @@ import Foundation
 
 /// Protocol for classes that can be used as a delegate for `Executor`.
 protocol ServerMessageSenderProtocol: AnyObject {
-  /// Send action.
+  /// Send action with `type`, `params` and `messageId`.
   func sendAction(
-    _ type: ServerMessageType,
+    _ type: ResponseMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   )
@@ -18,8 +18,8 @@ protocol ServerMessageSenderProtocol: AnyObject {
   func cleanup()
 }
 
-/// Type of a web-socket action to be sent from Detox Tester to Detox Server.
-enum ServerMessageType: String {
+/// Type of a web-socket action to be sent from Detox Tester back to Detox Server.
+enum ResponseMessageType: String {
   case reportReady = "ready"
   case reportWebSocketDidOpen = "login"
   case reportStatus = "currentStatusResult"

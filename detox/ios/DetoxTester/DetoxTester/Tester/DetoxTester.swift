@@ -91,7 +91,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
 
   func webSocket(
     _ webSocket: WebSocket,
-    didReceiveAction type: WebSocketReceiveActionType,
+    didReceiveMessage type: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {

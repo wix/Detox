@@ -16,7 +16,7 @@ protocol WebSocketDelegateProtocol: AnyObject {
   /// Called when the web-socket did receive action.
   func webSocket(
     _ webSocket: WebSocket,
-    didReceiveAction type: WebSocketReceiveActionType,
+    didReceiveMessage type: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   )

@@ -9,7 +9,7 @@ import DetoxInvokeHandler
 extension Executor {
   /// Handles invoke messages.
   func handleInvoke(
-    _ action: WebSocketReceiveActionType,
+    _ action: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {

@@ -18,7 +18,7 @@ class Executor {
 
   /// Executes the given operation from the XCTest bundle.
   func execute(
-    _ action: WebSocketReceiveActionType,
+    _ action: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {
@@ -56,7 +56,7 @@ class Executor {
 
   /// Returns `true` if handled succesfully by the white-box handler.
   private func whiteBoxHandle(
-    _ action: WebSocketReceiveActionType,
+    _ action: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) -> Bool {

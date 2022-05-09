@@ -17,7 +17,7 @@ protocol WhiteBoxHandlerProtocol: AnyObject {
   ///
   /// Returns `nil` if unable to interact with the application directly.
   func send(
-    _ action: WebSocketReceiveActionType,
+    _ action: ServerMessageType,
     withParams: [String: AnyHashable],
     messageId: NSNumber
   ) -> AnyHashable?
@@ -31,15 +31,10 @@ class WhiteBoxHandler: WhiteBoxHandlerProtocol {
   }
 
   func send(
-    _ action: WebSocketReceiveActionType,
+    _ action: ServerMessageType,
     withParams: [String : AnyHashable],
     messageId: NSNumber
   ) -> AnyHashable? {
-    guard action.isWhiteBox else {
-      // TODO: handle the white box action by sending it to the app using the websocket..
-      return nil
-    }
-
     return nil
   }
 }
