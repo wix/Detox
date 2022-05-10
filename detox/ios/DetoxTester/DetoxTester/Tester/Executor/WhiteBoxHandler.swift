@@ -35,6 +35,10 @@ class WhiteBoxHandler: WhiteBoxHandlerProtocol {
     withParams: [String : AnyHashable],
     messageId: NSNumber
   ) -> AnyHashable? {
+
+    // TODO: map bundle identifier to websocket connection
+    // send message to websocket connection
+    
     return nil
   }
 }

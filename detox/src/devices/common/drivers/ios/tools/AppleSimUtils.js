@@ -140,6 +140,9 @@ class AppleSimUtils {
 
   async launch(udid, bundleId, launchArgs, languageAndLocale) {
     const frameworkPath = await environment.getFrameworkPath();
+
+    delete launchArgs.detoxServer;
+
     const result = await this._launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale);
     await this._printLoggingHint(udid, bundleId);
 
@@ -412,8 +415,6 @@ class AppleSimUtils {
     if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
     }
-
-    delete launchArgs.detoxServer;
 
     const cmdArgs = quote(_.flatten(this._mergeLaunchArgs(launchArgs, languageAndLocale)));
     let launchBin = `SIMCTL_CHILD_GULGeneratedClassDisposeDisabled=YES SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +

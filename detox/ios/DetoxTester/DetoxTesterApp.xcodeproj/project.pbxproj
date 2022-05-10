@@ -666,6 +666,7 @@
 				609AA149279F10F4008F6617 /* Sources */,
 				609AA14A279F10F4008F6617 /* Frameworks */,
 				609AA14B279F10F4008F6617 /* Resources */,
+				60A3B441282A502A002F903B /* Swift Linter */,
 			);
 			buildRules = (
 			);
@@ -685,6 +686,7 @@
 				60ED26CE27872220004213B5 /* Sources */,
 				60ED26CF27872220004213B5 /* Frameworks */,
 				60ED26D027872220004213B5 /* Resources */,
+				60A3B442282A5061002F903B /* Swift Linter */,
 			);
 			buildRules = (
 			);
@@ -790,6 +792,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		60A3B441282A502A002F903B /* Swift Linter */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Linter";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse # todo: remove this warning\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+		60A3B442282A5061002F903B /* Swift Linter */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Linter";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse # todo: remove this warning\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		609AA149279F10F4008F6617 /* Sources */ = {
