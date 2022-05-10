@@ -12,13 +12,16 @@ const log = require('../../../utils/logger').child({ __filename });
  * @property eventEmitter { AsyncEmitter }
  */
 
-class DeviceDriverBase {
+class RuntimeDriverBase {
   /**
    * @param deps { DeviceDriverDeps }
    */
   constructor({ client, eventEmitter }) {
     this.client = client;
     this.emitter = eventEmitter;
+
+    this._apps = {};
+    this._selectedApp = null;
   }
 
   /**
@@ -35,97 +38,59 @@ class DeviceDriverBase {
     return undefined;
   }
 
-  declareArtifactPlugins() {
-    return {};
+  get selectedApp() {
+    return this._selectedApp;
   }
 
-  async launchApp() {
-    return NaN;
+  selectApp(appAlias) {
+    this._selectedApp = this._apps[appAlias];
   }
 
-  async waitForAppLaunch() {
-    return NaN;
+  clearSelectedApp() {
+    this._selectedApp = null;
   }
 
-  async takeScreenshot(_screenshotName) {
-    return '';
+  get invocationManager() {
+    return this._selectedApp.invocationManager;
   }
 
-  async sendToHome() {
-    return '';
+  async installApp(_binaryPath, _testBinaryPath) {}
+  async uninstallApp() {}
+  installUtilBinaries() {}
+
+  async launchApp() {}
+  async terminate(_bundleId) {}
+  async waitForAppLaunch() {}
+
+  async waitUntilReady() {
+    return await this.client.waitUntilReady();
   }
 
-  async setBiometricEnrollment() {
-    return '';
-  }
+  async waitForActive() {}
+  async waitForBackground() {}
 
-  async matchFace() {
-    return '';
-  }
-
-  async unmatchFace() {
-    return '';
-  }
-
-  async matchFinger() {
-    return '';
-  }
-
-  async unmatchFinger() {
-    return '';
-  }
-
-  async shake() {
-    return '';
-  }
-
-  async installApp(_binaryPath, _testBinaryPath) {
-    return '';
-  }
-
-  async uninstallApp() {
-    return '';
-  }
-
-  installUtilBinaries() {
-    return '';
+  async reloadReactNative() {
+    return await this.client.reloadReactNative();
   }
 
   async deliverPayload(params) {
     return await this.client.deliverPayload(params);
   }
 
-  async setLocation(_lat, _lon) {
-    return '';
-  }
+  async takeScreenshot(_screenshotName) {}
+  async sendToHome() {}
+  async setBiometricEnrollment() {}
+  async matchFace() {}
+  async unmatchFace() {}
+  async matchFinger() {}
+  async unmatchFinger() {}
+  async shake() {}
+  async setLocation(_lat, _lon) {}
 
-  async reverseTcpPort() {
-    return '';
-  }
+  async reverseTcpPort() {}
+  async unreverseTcpPort() {}
 
-  async unreverseTcpPort() {
-    return '';
-  }
-
-  async clearKeychain(_udid) {
-    return '';
-  }
-
-  async waitUntilReady() {
-    return await this.client.waitUntilReady();
-  }
-
-  async waitForActive() {
-    return '';
-  }
-
-  async waitForBackground() {
-    return '';
-  }
-
-  async reloadReactNative() {
-    return await this.client.reloadReactNative();
-  }
+  async clearKeychain(_udid) {}
 
   createPayloadFile(notification) {
     const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
@@ -133,33 +98,14 @@ class DeviceDriverBase {
     return notificationFilePath;
   }
 
-  async setPermissions(_bundleId, _permissions) {
-    return '';
-  }
+  async setPermissions(_bundleId, _permissions) {}
 
-  async terminate(_bundleId) {
-    return '';
-  }
+  async setOrientation(_orientation) {}
+  async setURLBlacklist(_urlList) {}
 
-  async setOrientation(_orientation) {
-    return '';
-  }
-
-  async setURLBlacklist(_urlList) {
-    return '';
-  }
-
-  async enableSynchronization() {
-    return '';
-  }
-
-  async disableSynchronization() {
-    return '';
-  }
-
-  async resetContentAndSettings(_deviceId, _deviceConfig) {
-    return '';
-  }
+  async enableSynchronization() {}
+  async disableSynchronization() {}
+  async resetContentAndSettings(_deviceId, _deviceConfig) {}
 
   createRandomDirectory() {
     const randomDir = fs.mkdtempSync(path.join(os.tmpdir(), 'detoxrand-'));
@@ -188,7 +134,7 @@ class DeviceDriverBase {
     log.warn(`getUiDevice() is an Android-specific function, it exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice).`);
     log.warn(`Make sure you create an Android-specific test for this scenario.`);
 
-    return await Promise.resolve('');
+    return undefined;
   }
 
   async cleanup(_bundleId) {
@@ -205,23 +151,16 @@ class DeviceDriverBase {
   async pressBack() {
     log.warn('pressBack() is an Android-specific function.');
     log.warn(`Make sure you create an Android-specific test for this scenario.`);
-
-    return await Promise.resolve('');
   }
 
-  async typeText(_text) {
-    return await Promise.resolve('');
-  }
+  async typeText(_text) {}
 
-  async setStatusBar(_flags) {
-  }
-
-  async resetStatusBar() {
-  }
+  async setStatusBar(_flags) {}
+  async resetStatusBar() {}
 
   async captureViewHierarchy() {
     return '';
   }
 }
 
-module.exports = DeviceDriverBase;
+module.exports = RuntimeDriverBase;

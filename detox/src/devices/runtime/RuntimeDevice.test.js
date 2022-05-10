@@ -2,6 +2,7 @@
 const _ = require('lodash');
 
 const configurationsMock = require('../../configuration/configurations.mock');
+const DEFAULT_APP_ALIAS = 'default';
 
 describe('Device', () => {
   const bundleId = 'test.bundle';
@@ -41,62 +42,11 @@ describe('Device', () => {
     client = new Client(configurationsMock.validSession);
     await client.connect();
 
-    driverMock = new DeviceDriverMock();
+    driverMock = new DeviceDriverMock(DeviceDriverBase, { emitter, client });
+    driverMock.givenNoSelectedApp();
+    driverMock.driver.selectApp.mockImplementation((appAlias) => driverMock.givenAppSelection(appAlias));
+    driverMock.driver.clearSelectedApp.mockImplementation(() => driverMock.givenNoSelectedApp());
   });
-
-  class DeviceDriverMock {
-    constructor() {
-      this.driver = new DeviceDriverBase({
-        client,
-        emitter,
-      });
-    }
-
-    expectExternalIdCalled() {
-      expect(this.driver.getExternalId).toHaveBeenCalled();
-    }
-
-    expectLaunchCalledWithArgs(bundleId, expectedArgs, languageAndLocale) {
-      expect(this.driver.launchApp).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
-    }
-
-    expectLaunchCalledContainingArgs(expectedArgs) {
-      expect(this.driver.launchApp).toHaveBeenCalledWith(
-        this.driver.getBundleIdFromBinary(),
-        expect.objectContaining(expectedArgs),
-        undefined);
-    }
-
-    expectWaitForLaunchCalled(bundleId, expectedArgs, languageAndLocale) {
-      expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
-    }
-
-    expectReinstallCalled() {
-      expect(this.driver.uninstallApp).toHaveBeenCalled();
-      expect(this.driver.installApp).toHaveBeenCalled();
-    }
-
-    expectReinstallNotCalled() {
-      expect(this.driver.uninstallApp).not.toHaveBeenCalled();
-      expect(this.driver.installApp).not.toHaveBeenCalled();
-    }
-
-    expectTerminateCalled() {
-      expect(this.driver.terminate).toHaveBeenCalled();
-    }
-
-    expectTerminateNotCalled() {
-      expect(this.driver.terminate).not.toHaveBeenCalled();
-    }
-
-    expectReverseTcpPortCalled(port) {
-      expect(this.driver.reverseTcpPort).toHaveBeenCalledWith(port);
-    }
-
-    expectUnreverseTcpPortCalled(port) {
-      expect(this.driver.unreverseTcpPort).toHaveBeenCalledWith(port);
-    }
-  }
 
   function aDevice(overrides) {
     const appsConfig = overrides.appsConfig || {};
@@ -114,13 +64,14 @@ describe('Device', () => {
     }, driverMock.driver);
 
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue(bundleId);
+
     return device;
   }
 
   function aValidUnpreparedDevice(overrides) {
     const configs = _.merge(_.cloneDeep({
       appsConfig: {
-        default: configurationsMock.appWithRelativeBinaryPath,
+        [DEFAULT_APP_ALIAS]: configurationsMock.appWithRelativeBinaryPath,
       },
       deviceConfig: configurationsMock.iosSimulatorWithShorthandQuery,
       sessionConfig: configurationsMock.validSession,
@@ -142,7 +93,7 @@ describe('Device', () => {
   async function aValidDeviceWithLaunchArgs(launchArgs) {
     return await aValidDevice({
       appsConfig: {
-        default: {
+        [DEFAULT_APP_ALIAS]: {
           launchArgs,
         },
       },
@@ -150,10 +101,11 @@ describe('Device', () => {
   }
 
   it('should return the name from the driver', async () => {
-    driverMock.driver.getDeviceName.mockReturnValue('mock-device-name-from-driver');
+    const deviceName = 'mock-device-name-from-driver';
+    driverMock.givenDeviceName(deviceName);
 
     const device = await aValidDevice();
-    expect(device.name).toEqual('mock-device-name-from-driver');
+    expect(device.name).toEqual(deviceName);
   });
 
   it('should return the type from the configuration', async () => {
@@ -182,7 +134,7 @@ describe('Device', () => {
       });
 
       it(`should select the default app upon prepare()`, async () => {
-        expect(device.selectApp).toHaveBeenCalledWith('default');
+        expect(device.selectApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
       });
 
       it(`should function as usual when the app is selected`, async () => {
@@ -192,6 +144,11 @@ describe('Device', () => {
 
       it(`should throw on call without args`, async () => {
         await expect(device.selectApp()).rejects.toThrowError(errorComposer.cantSelectEmptyApp());
+      });
+
+      it(`should clear app in driver for null-app case`, async () => {
+        await device.selectApp(null);
+        driverMock.expectAppClearCalled();
       });
 
       it(`should throw on app interactions with no selected app`, async () => {
@@ -205,13 +162,16 @@ describe('Device', () => {
     });
 
     describe('when there are multiple apps', () => {
+      const anAppName = 'withBinaryPath';
+      const otherAppName = 'withBundleId';
+
       beforeEach(async () => {
         device = await aValidUnpreparedDevice({
           appsConfig: {
-            withBinaryPath: {
+            [anAppName]: {
               binaryPath: 'path/to/app',
             },
-            withBundleId: {
+            [otherAppName]: {
               binaryPath: 'path/to/app2',
               bundleId: 'com.app2'
             },
@@ -228,30 +188,53 @@ describe('Device', () => {
         expect(device.selectApp).not.toHaveBeenCalled();
       });
 
+      it(`should select an app in the driver`, async () => {
+        await device.selectApp(anAppName);
+        driverMock.expectSelectedAppCalled(anAppName);
+      });
+
+      it(`should not select the app in the driver if given invalid alias`, async () => {
+        try {
+          await device.selectApp(undefined);
+        } catch (e) {}
+        try {
+          await device.selectApp(null);
+        } catch (e) {}
+
+        driverMock.expectSelectedAppNotCalled();
+      });
+
+      it(`should not select the app in the driver if given unknown alias`, async () => {
+        try {
+          await device.selectApp('asdasd');
+        } catch(e) {}
+        driverMock.expectSelectedAppNotCalled();
+      });
+
       it(`upon select, it should infer bundleId if it is missing`, async () => {
-        await device.selectApp('withBinaryPath');
+        await device.selectApp(anAppName);
         expect(driverMock.driver.getBundleIdFromBinary).toHaveBeenCalledWith('path/to/app');
       });
 
       it(`upon select, it should terminate the previous app`, async () => {
         jest.spyOn(device, 'terminateApp');
 
-        await device.selectApp('withBinaryPath');
+        await device.selectApp(anAppName);
         expect(device.terminateApp).not.toHaveBeenCalled(); // because no app was running before
 
-        await device.selectApp('withBundleId');
+        await device.selectApp(otherAppName);
         expect(device.terminateApp).toHaveBeenCalled(); // because there is a running app
       });
 
       it(`upon select, it should not infer bundleId if it is specified`, async () => {
-        await device.selectApp('withBundleId');
+        await device.selectApp(otherAppName);
         expect(driverMock.driver.getBundleIdFromBinary).not.toHaveBeenCalled();
       });
 
       it(`upon re-selecting the same app, it should not infer bundleId twice`, async () => {
-        await device.selectApp('withBinaryPath');
-        await device.selectApp('withBundleId');
-        await device.selectApp('withBinaryPath');
+        await device.selectApp(anAppName);
+        await device.selectApp(otherAppName);
+        await device.selectApp(anAppName);
         expect(driverMock.driver.getBundleIdFromBinary).toHaveBeenCalledTimes(1);
       });
     });
@@ -1025,9 +1008,91 @@ describe('Device', () => {
       ? configurationsMock.appWithAbsoluteBinaryPath
       : configurationsMock.appWithRelativeBinaryPath;
 
-    const device = await aValidDevice({ appsConfig: { default: appConfig } });
+    const device = await aValidDevice({ appsConfig: { [DEFAULT_APP_ALIAS]: appConfig } });
     await device.installApp();
 
     return driverMock.driver.installApp.mock.calls[0][0];
   }
 });
+
+class DeviceDriverMock {
+  constructor(DeviceDriverBase, { emitter, client }) {
+    this.driver = new DeviceDriverBase({
+      client,
+      emitter,
+    });
+  }
+
+  expectExternalIdCalled() {
+    expect(this.driver.getExternalId).toHaveBeenCalled();
+  }
+
+  expectLaunchCalledWithArgs(bundleId, expectedArgs, languageAndLocale) {
+    expect(this.driver.launchApp).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
+  }
+
+  expectLaunchCalledContainingArgs(expectedArgs) {
+    expect(this.driver.launchApp).toHaveBeenCalledWith(
+      this.driver.getBundleIdFromBinary(),
+      expect.objectContaining(expectedArgs),
+      undefined);
+  }
+
+  expectWaitForLaunchCalled(bundleId, expectedArgs, languageAndLocale) {
+    expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
+  }
+
+  expectReinstallCalled() {
+    expect(this.driver.uninstallApp).toHaveBeenCalled();
+    expect(this.driver.installApp).toHaveBeenCalled();
+  }
+
+  expectReinstallNotCalled() {
+    expect(this.driver.uninstallApp).not.toHaveBeenCalled();
+    expect(this.driver.installApp).not.toHaveBeenCalled();
+  }
+
+  expectTerminateCalled() {
+    expect(this.driver.terminate).toHaveBeenCalled();
+  }
+
+  expectTerminateNotCalled() {
+    expect(this.driver.terminate).not.toHaveBeenCalled();
+  }
+
+  expectReverseTcpPortCalled(port) {
+    expect(this.driver.reverseTcpPort).toHaveBeenCalledWith(port);
+  }
+
+  expectUnreverseTcpPortCalled(port) {
+    expect(this.driver.unreverseTcpPort).toHaveBeenCalledWith(port);
+  }
+
+  expectAppClearCalled() {
+    expect(this.driver.clearSelectedApp).toHaveBeenCalled();
+  }
+
+  expectSelectedAppCalled(appAlias) {
+    expect(this.driver.selectApp).toHaveBeenCalledWith(appAlias);
+  }
+
+  expectSelectedAppNotCalled() {
+    expect(this.driver.selectApp).not.toHaveBeenCalled();
+  }
+
+  givenDefaultAppSelection() {
+    this.givenAppSelection(DEFAULT_APP_ALIAS);
+  }
+
+  givenAppSelection(appAlias) {
+    this.driver.selectedApp = appAlias;
+  }
+
+  givenNoSelectedApp() {
+    this.driver.selectedApp = null;
+  }
+
+  givenDeviceName(name) {
+    this.driver.getDeviceName.mockReturnValue(name);
+  }
+}

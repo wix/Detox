@@ -50,7 +50,6 @@ class AndroidDriver extends DeviceDriverBase {
     this.adb = deps.adb;
     this.aapt = deps.aapt;
     this.apkValidator = deps.apkValidator;
-    this.invocationManager = deps.invocationManager;
     this.fileXfer = deps.fileXfer;
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
