@@ -108,9 +108,6 @@ dependencies {
 
 // Third-party/extension deps.
 dependencies {
-    implementation('com.google.android.material:material:1.2.1') {
-        because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'
-    }
     implementation('org.apache.commons:commons-lang3:3.7') {
         because 'Needed by invoke. Warning: Upgrading to newer versions is not seamless.'
     }

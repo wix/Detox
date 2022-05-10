@@ -4,7 +4,6 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.google.android.material.slider.Slider
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Before
@@ -179,23 +178,13 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return ProgressBar (or SeekBar) "progress" via value attribute`() {
+    fun `should return ProgressBar (or SeekBar) 'progress' via value attribute`() {
         val progressBar: ProgressBar = mock {
             on { progress } doReturn 42
         }
 
         val resultJson = perform(progressBar)
         assertThat(resultJson.opt("value")).isEqualTo(42)
-    }
-
-    @Test
-    fun `should return Slider state through value attribute`() {
-        val slider: Slider = mock {
-            on { value } doReturn 0.42f
-        }
-
-        val resultJson = perform(slider)
-        assertThat(resultJson.opt("value")).isEqualTo(0.42)
     }
 
     @Test

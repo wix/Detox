@@ -38,6 +38,22 @@ fun isOfClassName(className: String): Matcher<View> {
 fun isMatchingAtIndex(index: Int, innerMatcher: Matcher<View>): Matcher<View> =
     ViewAtIndexMatcher(index, innerMatcher)
 
+fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> =
+    object: BoundedMatcher<View?, AppCompatSeekBar>(AppCompatSeekBar::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("expected: $expectedValue")
+        }
+
+        override fun matchesSafely(view: AppCompatSeekBar): Boolean {
+            val sliderHelper = SliderHelper.createHelper(view)
+            val maxProgress = sliderHelper.calcMaxProgress()
+
+            val rawProgress = view.progress
+            val actualValue = rawProgress / maxProgress
+            return (abs(actualValue - expectedValue) <= tolerance)
+        }
+    }
+
 /**
  * Same as [androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom], but accepts any class. Needed
  * in order to avoid warning when passing 'any' class.
@@ -49,19 +65,3 @@ private class IsAssignableFromMatcher(private val clazz: Class<*>) : TypeSafeMat
         description.appendText("is assignable from class: $clazz")
     }
 }
-
-fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> =
-    object: BoundedMatcher<View?, AppCompatSeekBar>(AppCompatSeekBar::class.java) {
-        override fun describeTo(description: Description) {
-            description.appendText("expected: $expectedValue")
-        }
-
-        override fun matchesSafely(view: AppCompatSeekBar): Boolean {
-            val rawProgress = view.progress
-            val sliderHelper = SliderHelper.createHelper(view)
-            val maxProgress = sliderHelper.calcMaxProgress()
-
-            val actualValue = rawProgress / maxProgress
-            return (abs(actualValue - expectedValue) <= tolerance)
-        }
-    }
