@@ -7,20 +7,17 @@ import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import com.facebook.react.views.slider.ReactSlider
-import com.wix.detox.espresso.action.common.ReflectUtils
+import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
+import kotlin.math.abs
 
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
-
-private const val CLASS_REACT_SLIDER_LEGACY = "com.facebook.react.views.slider.ReactSlider"
-private const val CLASS_REACT_SLIDER_COMMUNITY = "com.reactnativecommunity.slider.ReactSlider"
 
 fun isOfClassName(className: String): Matcher<View> {
     try {
@@ -53,26 +50,18 @@ private class IsAssignableFromMatcher(private val clazz: Class<*>) : TypeSafeMat
     }
 }
 
-fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> {
-    return object : BoundedMatcher<View?, View>(AppCompatSeekBar::class.java) {
+fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> =
+    object: BoundedMatcher<View?, AppCompatSeekBar>(AppCompatSeekBar::class.java) {
         override fun describeTo(description: Description) {
             description.appendText("expected: $expectedValue")
         }
 
-        override fun matchesSafely(view: View?): Boolean {
-            val castView = view as AppCompatSeekBar
-            val currentProgress = castView.progress
-            val sliderProgress = when {
-                (ReflectUtils.isObjectAssignableFrom(view, CLASS_REACT_SLIDER_LEGACY)) ->
-                    (view as ReactSlider).toRealProgress(currentProgress)
-                (ReflectUtils.isObjectAssignableFrom(view, CLASS_REACT_SLIDER_COMMUNITY)) ->
-                    (view as com.reactnativecommunity.slider.ReactSlider).toRealProgress(currentProgress)
-                else -> (view as ReactSlider).toRealProgress(currentProgress)
-            }
-            val currentPctFactor = castView.max / currentProgress.toDouble()
-            val realTotal = sliderProgress * currentPctFactor
-            val actualValue = sliderProgress / realTotal
-            return Math.abs(actualValue - expectedValue) <= tolerance
+        override fun matchesSafely(view: AppCompatSeekBar): Boolean {
+            val rawProgress = view.progress
+            val sliderHelper = SliderHelper.createHelper(view)
+            val maxProgress = sliderHelper.calcMaxProgress()
+
+            val actualValue = rawProgress / maxProgress
+            return (abs(actualValue - expectedValue) <= tolerance)
         }
     }
-}

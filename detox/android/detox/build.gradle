@@ -121,7 +121,6 @@ dependencies {
 
 // Unit-testing deps.
 dependencies {
-    implementation project(path: ':@react-native-community_slider')
     testImplementation 'com.facebook.react:react-native:+'
     testImplementation 'org.json:json:20140107'
 
