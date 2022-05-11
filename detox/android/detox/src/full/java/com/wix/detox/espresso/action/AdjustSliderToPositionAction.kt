@@ -10,15 +10,16 @@ import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class AdjustSliderToPositionAction(private val desiredPosition: Double) : ViewAction {
+class AdjustSliderToPositionAction(private val targetPositionPct: Double) : ViewAction {
     override fun getDescription() = "adjustSliderToPosition"
     override fun getConstraints(): Matcher<View?>? =
         Matchers.allOf( isDisplayed(), isAssignableFrom(AppCompatSeekBar::class.java) )
 
     override fun perform(uiController: UiController?, view: View) {
-        val helper = SliderHelper.createHelper(view)
+        val sliderHelper = SliderHelper.createHelper(view)
 
-        val targetValue = helper.calcProgressTargetValue(desiredPosition)
-        helper.setProgressValue(targetValue)
+        val maxJSProgress = sliderHelper.calcMaxJSProgress()
+        val targetValue = targetPositionPct * maxJSProgress
+        sliderHelper.setProgressValue(targetValue)
     }
 }

@@ -38,19 +38,16 @@ fun isOfClassName(className: String): Matcher<View> {
 fun isMatchingAtIndex(index: Int, innerMatcher: Matcher<View>): Matcher<View> =
     ViewAtIndexMatcher(index, innerMatcher)
 
-fun toHaveSliderPosition(expectedValue: Double, tolerance: Double): Matcher<View?> =
+fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<View?> =
     object: BoundedMatcher<View?, AppCompatSeekBar>(AppCompatSeekBar::class.java) {
         override fun describeTo(description: Description) {
-            description.appendText("expected: $expectedValue")
+            description.appendText("sliderPositionPercent($expectedValuePct)")
         }
 
         override fun matchesSafely(view: AppCompatSeekBar): Boolean {
             val sliderHelper = SliderHelper.createHelper(view)
-            val maxProgress = sliderHelper.calcMaxProgress()
-
-            val rawProgress = view.progress
-            val actualValue = rawProgress / maxProgress
-            return (abs(actualValue - expectedValue) <= tolerance)
+            val progressPct = sliderHelper.calcCurrentProgressPct()
+            return (abs(progressPct - expectedValuePct) <= tolerance)
         }
     }
 

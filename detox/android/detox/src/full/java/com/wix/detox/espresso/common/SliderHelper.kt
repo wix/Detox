@@ -13,19 +13,25 @@ private const val CLASS_REACT_SLIDER_LEGACY = "com.facebook.react.views.slider.R
 private const val CLASS_REACT_SLIDER_COMMUNITY = "com.reactnativecommunity.slider.ReactSlider"
 
 abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
-    fun calcProgressTargetValue(desiredPosition: Double): Double {
-        val sliderMaxProgress = calcMaxProgress()
-        return desiredPosition * sliderMaxProgress
+    fun calcCurrentProgressPct(): Double {
+        val jsProgress = getJSProgress()
+        val maxJSProgress = calcMaxJSProgress()
+        return jsProgress / maxJSProgress
     }
 
-    fun calcMaxProgress(): Double {
-        val rawProgress = slider.progress
-        val sliderProgress = Reflect.on(slider).call("toRealProgress", rawProgress).get() as Double
-        val sliderScrollFactor = slider.max / rawProgress.toDouble()
-        return sliderProgress * sliderScrollFactor
+    fun calcMaxJSProgress(): Double {
+        val nativeProgress = slider.progress.toDouble()
+        val nativeMax = slider.max
+        val toMaxFactor = nativeMax / nativeProgress
+
+        val jsProgress = getJSProgress()
+        return jsProgress * toMaxFactor
     }
 
-    abstract fun setProgressValue(value: Double)
+    abstract fun setProgressValue(valueJS: Double)
+
+    private fun getJSProgress(): Double =
+        Reflect.on(slider).call("toRealProgress", slider.progress).get() as Double
 
     companion object {
         fun createHelper(view: View) =
@@ -42,17 +48,17 @@ abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
 }
 
 private class LegacySliderHelper(slider: AppCompatSeekBar): SliderHelper(slider) {
-    override fun setProgressValue(value: Double) {
+    override fun setProgressValue(valueJS: Double) {
         val reactSliderManager = com.facebook.react.views.slider.ReactSliderManager()
-        reactSliderManager.updateProperties(slider as ReactSlider, buildStyles("value", value))
+        reactSliderManager.updateProperties(slider as ReactSlider, buildStyles("value", valueJS))
     }
 
     private fun buildStyles(vararg keysAndValues: Any) = ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
 }
 
 private class CommunitySliderHelper(slider: AppCompatSeekBar): SliderHelper(slider) {
-    override fun setProgressValue(value: Double) {
+    override fun setProgressValue(valueJS: Double) {
         val reactSliderManager = Class.forName("com.reactnativecommunity.slider.ReactSliderManager").newInstance()
-        Reflect.on(reactSliderManager).call("setValue", slider, value)
+        Reflect.on(reactSliderManager).call("setValue", slider, valueJS)
     }
 }
