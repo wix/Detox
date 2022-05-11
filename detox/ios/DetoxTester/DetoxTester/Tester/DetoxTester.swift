@@ -11,7 +11,7 @@ import XCTest
   // MARK: - Properties
 
   /// The web-socket, used for the communication between Detox Server and Detox Tester.
-  fileprivate var webSocket: WebSocket?
+  fileprivate var webSocket: WebSocketClient?
 
   /// Finishes the tester operation.
   fileprivate var done: (() -> Void)?
@@ -53,13 +53,13 @@ import XCTest
     }
   }
 
-  private func makeWebSocket() -> WebSocket {
-    let webSocket: WebSocket = WebSocket()
+  private func makeWebSocket() -> WebSocketClient {
+    let webSocket: WebSocketClient = WebSocketClient()
     webSocket.delegate = self
 
     webSocket.connect(
-      toServer: URL(string: WebSocket.detoxServer())!,
-      withSessionId: WebSocket.detoxSessionId()
+      toServer: URL(string: WebSocketClient.detoxServer())!,
+      withSessionId: WebSocketClient.detoxSessionId()
     )
 
     mainLog("web-socket connection started")
@@ -71,7 +71,7 @@ import XCTest
 // MARK: - WebSocketDelegateProtocol
 
 extension DetoxTester: WebSocketDelegateProtocol {
-  func webSocketDidConnect(_ webSocket: WebSocket) {
+  func webSocketDidConnect(_ webSocket: WebSocketClient) {
     mainLog("web-socket did-connect")
 
     exec! {
@@ -84,13 +84,13 @@ extension DetoxTester: WebSocketDelegateProtocol {
     }
   }
 
-  func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
+  func webSocket(_ webSocket: WebSocketClient, didFailWith error: Error) {
     mainLog("web-socket failed with error: \(error.localizedDescription)", type: .error)
     fatalError("web-socket did fail with error: \(error.localizedDescription)")
   }
 
   func webSocket(
-    _ webSocket: WebSocket,
+    _ webSocket: WebSocketClient,
     didReceiveMessage type: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
@@ -104,7 +104,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
     }
   }
 
-  func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
+  func webSocket(_ webSocket: WebSocketClient, didCloseWith reason: String?) {
     guard let done = self.done else {
       mainLog("unexpected call to close web-socket connection", type: .error)
       fatalError("unexpected call to close web-socket connection, Detox is already done")

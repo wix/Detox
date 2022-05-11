@@ -66,7 +66,7 @@
 		60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202827CBB20B00EF6C1E /* Assets.xcassets */; };
 		60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203327CE610100EF6C1E /* WaitUntilDone.swift */; };
 		60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4EA27D8A5FE000D417A /* LogUtils.swift */; };
-		60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4F227D8D67D000D417A /* WebSocket.swift */; };
+		60C7F4F327D8D67D000D417A /* WebSocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4F227D8D67D000D417A /* WebSocketClient.swift */; };
 		60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */; };
 		60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50627DDF421000D417A /* WaitUntilAppIsReady.swift */; };
 		60C7F50B27DDFA38000D417A /* Executor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F50A27DDFA38000D417A /* Executor.swift */; };
@@ -201,7 +201,7 @@
 		60C0202827CBB20B00EF6C1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../../../Downloads/AppIcons/Assets.xcassets; sourceTree = "<group>"; };
 		60C0203327CE610100EF6C1E /* WaitUntilDone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntilDone.swift; sourceTree = "<group>"; };
 		60C7F4EA27D8A5FE000D417A /* LogUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
-		60C7F4F227D8D67D000D417A /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
+		60C7F4F227D8D67D000D417A /* WebSocketClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient.swift; sourceTree = "<group>"; };
 		60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketDelegateProtocol.swift; sourceTree = "<group>"; };
 		60C7F50627DDF421000D417A /* WaitUntilAppIsReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntilAppIsReady.swift; sourceTree = "<group>"; };
 		60C7F50A27DDFA38000D417A /* Executor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executor.swift; sourceTree = "<group>"; };
@@ -563,7 +563,7 @@
 		60FBF617281986C2000B73B1 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				60FBF619281986DC000B73B1 /* Web Socket */,
+				60FBF619281986DC000B73B1 /* Web Socket Client */,
 				60FBF618281986D2000B73B1 /* React Native */,
 				60C0203327CE610100EF6C1E /* WaitUntilDone.swift */,
 			);
@@ -578,29 +578,29 @@
 			path = "React Native";
 			sourceTree = "<group>";
 		};
-		60FBF619281986DC000B73B1 /* Web Socket */ = {
+		60FBF619281986DC000B73B1 /* Web Socket Client */ = {
 			isa = PBXGroup;
 			children = (
-				60C7F4F227D8D67D000D417A /* WebSocket.swift */,
+				60C7F4F227D8D67D000D417A /* WebSocketClient.swift */,
 				609AA19727A0247D008F6617 /* WebSocket+Config.swift */,
 				60C7F4FC27DA1F80000D417A /* WebSocketDelegateProtocol.swift */,
 				60C7F50F27DE0978000D417A /* ServerMessageType.swift */,
 			);
-			path = "Web Socket";
+			path = "Web Socket Client";
 			sourceTree = "<group>";
 		};
 		60FBF61A281986F2000B73B1 /* Executor */ = {
 			isa = PBXGroup;
 			children = (
 				60A3B3AC2827C3BB002F903B /* White-Box Delegate */,
-				60FBF61C28198718000B73B1 /* Extensions */,
+				60FBF61C28198718000B73B1 /* Handlers */,
 				60C7F50A27DDFA38000D417A /* Executor.swift */,
 				60C7F51227DE2318000D417A /* ServerMessageSenderProtocol.swift */,
 			);
 			path = Executor;
 			sourceTree = "<group>";
 		};
-		60FBF61C28198718000B73B1 /* Extensions */ = {
+		60FBF61C28198718000B73B1 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
 				60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */,
@@ -610,7 +610,7 @@
 				603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */,
 				603497A927F08C3700770EE0 /* Executor+sendAction.swift */,
 			);
-			name = Extensions;
+			name = Handlers;
 			sourceTree = "<group>";
 		};
 		60FBF61E28198779000B73B1 /* Resources */ = {
@@ -859,7 +859,7 @@
 				60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */,
 				60FBF608281981F9000B73B1 /* XCUIElement+adjustSlider.swift in Sources */,
 				60A3B448282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift in Sources */,
-				60C7F4F327D8D67D000D417A /* WebSocket.swift in Sources */,
+				60C7F4F327D8D67D000D417A /* WebSocketClient.swift in Sources */,
 				603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */,
 				60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */,
 				60FBF56E2817915B000B73B1 /* ScrollTests.swift in Sources */,

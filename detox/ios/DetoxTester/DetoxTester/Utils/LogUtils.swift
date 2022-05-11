@@ -60,7 +60,7 @@ fileprivate extension OSLog {
   private static var subsystem = Bundle.main.bundleIdentifier!
 
   /// Logs operations related to the web-socket.
-  static let webSocket = OSLog(subsystem: subsystem, category: "WebSocket")
+  static let webSocket = OSLog(subsystem: subsystem, category: "WebSocketClient")
 
   /// Logs operations related to the tester main class (`DetoxTester`).
   static let main = OSLog(subsystem: subsystem, category: "DetoxTester.swift")

@@ -21,9 +21,58 @@ class Executor {
     execLog("executes action: \(action)")
 
     switch action {
-      case .loginSuccess, .disconnect, .setRecordingState, .waitForBackground, .waitForIdle,
-          .setSyncSettings, .deliverPayload, .setOrientation, .currentStatus,
-          .shakeDevice, .captureViewHierarchy, .waitForActive, .reactNativeReload:
+      case .loginSuccess:
+        execLog("successfully logged in to Detox server")
+
+      case .disconnect:
+        if isWhiteBoxExecutorAvailable() {
+          execute(whiteBoxRequest: .disconnect).assertResponse(equalsTo: .none)
+        }
+
+        handleCleanup(messageId: messageId)
+
+      case .setRecordingState:
+        fatalError("not implemented yet")
+
+      case .waitForBackground:
+        let result1 = getAppUnderTest().wait(for: .runningBackground, timeout: 555)
+        let result2 = getAppUnderTest().wait(for: .runningBackgroundSuspended, timeout: 555)
+        guard result1 || result2 == true else {
+          fatalError("handle failure..")
+        }
+        fatalError("TODO: complete the implementation...")
+
+      case .waitForIdle:
+        if isWhiteBoxExecutorAvailable() {
+          execute(whiteBoxRequest: .waitFor(.idle)).assertResponse(equalsTo: .none)
+        }
+
+      case .setSyncSettings:
+        fatalError("not implemented yet")
+
+      case .deliverPayload:
+        fatalError("not implemented yet")
+
+      case.setOrientation:
+        fatalError("not implemented yet")
+
+      case .currentStatus:
+        fatalError("not implemented yet")
+
+      case .shakeDevice:
+        fatalError("not implemented yet")
+
+      case .captureViewHierarchy:
+        fatalError("not implemented yet")
+
+      case .waitForActive:
+        let result = getAppUnderTest().wait(for: .runningForeground, timeout: 555)
+        guard result == true else {
+          fatalError("handle failure..")
+        }
+        fatalError("TODO: complete the implementation...")
+
+      case.reactNativeReload:
         fatalError("not implemented yet")
 
       case .invoke:

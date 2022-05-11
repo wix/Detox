@@ -8,6 +8,21 @@ import Foundation
 extension WhiteBoxExecutor {
   ///
   enum Message {
-    case dummyMessage
+    ///
+    case disconnect
+
+    ///
+    case waitFor(_ state: AppState)
+  }
+}
+
+extension WhiteBoxExecutor.Message {
+  ///
+  enum AppState {
+    ///
+    case idle
+
+    ///
+    case busy
   }
 }

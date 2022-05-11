@@ -19,10 +19,9 @@ class WhiteBoxExecutor {
   /// and synchronically waits for a response.
   func execute(_ message: Message) -> Response {
 
-    // TODO: map bundle identifier to websocket connection
-
-    // TODO: replace dummy message..
-    return .dummyCase
+    // TODO: handle messages
+    
+    return .none
   }
 }
 

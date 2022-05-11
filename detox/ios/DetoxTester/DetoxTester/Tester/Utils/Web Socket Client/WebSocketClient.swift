@@ -1,12 +1,12 @@
 //
-//  WebSocket.swift (DetoxTester)
+//  WebSocketClient.swift (DetoxTester)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
 ///
-class WebSocket: NSObject {
+class WebSocketClient: NSObject {
   /// Session idenfier of the web-socket session.
   private var sessionId: String?
 
@@ -103,7 +103,7 @@ class WebSocket: NSObject {
 
   // MARK: - URLSessionWebSocketDelegate
 
-extension WebSocket: URLSessionWebSocketDelegate {
+extension WebSocketClient: URLSessionWebSocketDelegate {
   func urlSession(
     _ session: URLSession,
     webSocketTask: URLSessionWebSocketTask,

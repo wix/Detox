@@ -7,7 +7,19 @@ import Foundation
 
 extension WhiteBoxExecutor {
   ///
-  enum Response {
-    case dummyCase
+  enum Response: Equatable {
+    ///
+    case none
+  }
+}
+
+
+extension WhiteBoxExecutor.Response {
+  ///
+  func assertResponse(equalsTo expected: WhiteBoxExecutor.Response) {
+    if self != expected {
+      execLog("reponse `\(self)` expected to be `\(expected)`", type: .error)
+      fatalError("reponse `\(self)` expected to be `\(expected)`")
+    }
   }
 }
