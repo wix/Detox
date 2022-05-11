@@ -2,7 +2,6 @@ package com.example;
 
 import android.app.Application;
 
-import com.facebook.react.BuildConfig;
 import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
