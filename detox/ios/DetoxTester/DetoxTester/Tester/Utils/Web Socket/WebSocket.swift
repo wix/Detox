@@ -41,14 +41,14 @@ class WebSocket: NSObject {
 
   /// Sends an action over the web-socket.
   func sendAction(
-    _ type: ServerMessageType,
-    params: [String : Any] = [:],
+    _ type: ResponseMessageType,
+    params: [String: Any] = [:],
     messageId: NSNumber
   ) {
     wsLog("sending `\(type.rawValue)` action message (\(messageId.stringValue)), " +
           "with params: `\(params.description)`")
 
-    let jsonData : [String: Any] = [
+    let jsonData: [String: Any] = [
       "type": type.rawValue,
       "params": params,
       "messageId": messageId
@@ -107,7 +107,7 @@ extension WebSocket: URLSessionWebSocketDelegate {
   func urlSession(
     _ session: URLSession,
     webSocketTask: URLSessionWebSocketTask,
-    didOpenWithProtocol pr: String?
+    didOpenWithProtocol protocolName: String?
   ) {
     wsLog("web-socket did open")
 

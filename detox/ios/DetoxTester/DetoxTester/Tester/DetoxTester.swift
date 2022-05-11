@@ -119,7 +119,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
 
 extension DetoxTester: ServerMessageSenderProtocol {
   func sendAction(
-    _ type: ServerMessageType,
+    _ type: ResponseMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {

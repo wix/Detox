@@ -9,7 +9,6 @@ import DetoxInvokeHandler
 extension Executor {
   /// Handles invoke messages.
   func handleInvoke(
-    _ action: ServerMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {

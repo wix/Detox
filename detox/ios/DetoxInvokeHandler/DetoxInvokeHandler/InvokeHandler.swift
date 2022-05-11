@@ -31,8 +31,8 @@ public class InvokeHandler {
   }
 
   /// Handles the given `message` by parsing and calling the relevant delegate.
-  /// - Returns: `nil` if nothing was requested by the message. Otherwise returns a value wrapped
-  /// with `AnyCodable` object.
+  ///
+  /// - Returns `nil` if nothing was requested by the message. Otherwise returns a dictionary.
   public func handle(_ message: [String: AnyHashable]) throws -> AnyCodable? {
     let parsedMessage = try Message(from: message)
     return try handle(parsedMessage: parsedMessage)
