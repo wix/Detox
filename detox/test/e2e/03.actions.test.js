@@ -66,7 +66,7 @@ describe('Actions', () => {
     });
   });
 
-  it.skip(':android: should throw if tap handling is too slow', async () => {
+  it(':android: should throw if tap handling is too slow', async () => {
     try {
       await driver.sluggishTapElement.tap();
     } catch (e) {

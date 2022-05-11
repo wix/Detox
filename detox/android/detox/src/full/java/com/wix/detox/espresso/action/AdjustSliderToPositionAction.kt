@@ -16,10 +16,7 @@ class AdjustSliderToPositionAction(private val targetPositionPct: Double) : View
         Matchers.allOf( isDisplayed(), isAssignableFrom(AppCompatSeekBar::class.java) )
 
     override fun perform(uiController: UiController?, view: View) {
-        val sliderHelper = SliderHelper.createHelper(view)
-
-        val maxJSProgress = sliderHelper.calcMaxJSProgress()
-        val targetValue = targetPositionPct * maxJSProgress
-        sliderHelper.setProgressValue(targetValue)
+        val sliderHelper = SliderHelper.create(view)
+        sliderHelper.setProgressPct(targetPositionPct)
     }
 }

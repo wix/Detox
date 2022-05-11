@@ -155,8 +155,7 @@ describe('Attributes', () => {
     });
 
     it(':android: should have a number .value', () => {
-      const MIDDLE = 0.5 * 128; // Why 1 is 128 in RN? I'm not sure... maybe px vs. dp?! :shrug:
-      expect(attributes).toMatchObject({ value: MIDDLE });
+      expect(attributes).toMatchObject({ value: 0.5 });
     });
   });
 
@@ -168,8 +167,7 @@ describe('Attributes', () => {
     });
 
     it(':android: should have a number .value', () => {
-      const MIDDLE = 0.5 * 128; // Why 1 is 128 in RN? I'm not sure... maybe px vs. dp?! :shrug:
-      expect(attributes).toMatchObject({ value: MIDDLE });
+      expect(attributes).toMatchObject({ value: 0.5 });
     });
   });
 

@@ -45,8 +45,8 @@ fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<V
         }
 
         override fun matchesSafely(view: AppCompatSeekBar): Boolean {
-            val sliderHelper = SliderHelper.createHelper(view)
-            val progressPct = sliderHelper.calcCurrentProgressPct()
+            val sliderHelper = SliderHelper.create(view)
+            val progressPct = sliderHelper.getCurrentProgressPct()
             return (abs(progressPct - expectedValuePct) <= tolerance)
         }
     }
