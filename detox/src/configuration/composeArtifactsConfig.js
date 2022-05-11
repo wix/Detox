@@ -15,7 +15,7 @@ const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
  * @param {*} cliConfig
  * @param {string} configurationName
  * @param {Detox.DetoxConfig} globalConfig
- * @param {Detox.DetoxConfigurationOverrides} localConfig
+ * @param {Detox.DetoxConfiguration} localConfig
  */
 function composeArtifactsConfig({
   cliConfig,

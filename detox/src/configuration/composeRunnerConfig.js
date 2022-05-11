@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * @param {Detox.DetoxConfig} globalConfig
- * @param {Detox.DetoxConfigurationOverrides} localConfig
+ * @param {Detox.DetoxConfiguration} localConfig
  */
 function composeRunnerConfig({ globalConfig, cliConfig }) {
   const testRunner = globalConfig.testRunner || 'jest';

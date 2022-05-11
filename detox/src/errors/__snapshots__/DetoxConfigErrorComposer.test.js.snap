@@ -267,22 +267,6 @@ Expected an object:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppLaunchArgs should work with plain configurations 1`] = `
-[DetoxConfigError: Invalid type of "launchArgs" property in configuration "plain".
-Expected an object:
-
-{
-  configurations: {
-    plain: {
-      type: 'android.emulator',
-      device: 'Pixel_3a_API_30_x86',
-      binaryPath: 'path/to/apk',
-      launchArgs: 'invalid'
-    }
-  }
-}]
-`;
-
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .missingAppBinaryPath should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Missing "binaryPath" property in the app config.
 Expected a string:
@@ -323,21 +307,6 @@ Expected a string:
       apps: [
         undefined
       ]
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorComposer (from composeAppsConfig) .missingAppBinaryPath should create an error for plain configuration 1`] = `
-[DetoxConfigError: Missing "binaryPath" property in configuration "plain".
-Expected a string:
-
-{
-  configurations: {
-    plain: {
-      type: 'android.emulator',
-      device: 'Pixel_3a_API_30_x86',
-      binaryPath: undefined
     }
   }
 }]
@@ -495,28 +464,6 @@ Examine your Detox config at path:
 /home/detox/myproject/.detoxrc.json]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeAppsConfig) .oldSchemaHasAppAndApps should create an error for ambigous old/new configuration if it has .apps 1`] = `
-[DetoxConfigError: Your configuration "plain" appears to be in a legacy format, which can’t contain "app" or "apps".
-
-HINT: Remove "type" property from configuration and use "device" property instead:
-a) "device": { "type": "android.emulator", ... }
-b) "device": "<alias-to-device>" // you should add that device configuration to "devices" with the same key
-
-Check your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    plain: {
-      type: 'android.emulator',
-      device: 'Pixel_3a_API_30_x86',
-      binaryPath: 'path/to/apk',
-      app: 'my-app'
-    }
-  }
-}]
-`;
-
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .thereAreNoAppConfigs should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Cannot use app alias "someApp" since there is no "apps" config in Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -555,7 +502,7 @@ Check your configuration "aliased":
 `;
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .deviceConfigIsUndefined should produce a helpful error 1`] = `
-[DetoxConfigError: Missing "device" property in the selected configuration "plain":
+[DetoxConfigError: Missing "device" property in the selected configuration "aliased":
 
 HINT: It should be an alias to the device config, or the device config itself, e.g.:
 {
@@ -567,7 +514,7 @@ HINT: It should be an alias to the device config, or the device config itself, e
 |   }
 | },
 | "configurations": {
-|   "plain": {
+|   "aliased": {
 *---- "device": "myDevice", // or { type: 'ios.simulator', ... }
       ...
     },
@@ -880,25 +827,6 @@ HINT: Check that in your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for plain configuration 1`] = `
-[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
-Expected an array of strings.
-
-HINT: Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    plain: {
-      type: 'android.emulator',
-      device: 'Pixel_3a_API_30_x86',
-      binaryPath: 'path/to/apk',
-      utilBinaryPaths: 'invalid'
-    }
-  }
-}]
-`;
-
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty should throw on an unknown argument 1`] = `
 "Composing .malformedDeviceProperty(unknown) is not implemented
 Please report this issue on our GitHub tracker:
@@ -952,30 +880,6 @@ Check that in your Detox config at path:
           type: 'iPhone 12'
         }
       }
-    }
-  }
-}]
-`;
-
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceMatcherProperties should work with plain configurations 1`] = `
-[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
-
-HINT: It should have the device query to run on, e.g.:
-
-{
-  "type": "android.emulator",
-  "device": { "foo": ... }
-      // or { "bar": ... }
-}
-Check that in your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    plain: {
-      type: 'android.emulator',
-      device: 'Pixel_3a_API_30_x86',
-      binaryPath: 'path/to/apk'
     }
   }
 }]
@@ -1327,29 +1231,6 @@ Please fix your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("utilBinaryPaths") should create an error for plain configuration 1`] = `
-[DetoxConfigError: The current device type "android.emulator" does not support "utilBinaryPaths" property.
-
-HINT: You can use this property only with the following device types:
-* android.attached
-* android.emulator
-* android.genycloud
-
-Please fix your Detox config at path:
-/home/detox/myproject/.detoxrc.json
-
-{
-  configurations: {
-    plain: {
-      type: 'android.emulator',
-      device: 'Pixel_3a_API_30_x86',
-      binaryPath: 'path/to/apk',
-      utilBinaryPaths: []
-    }
-  }
-}]
-`;
-
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty should throw on an unknown argument 1`] = `
 "Composing .unsupportedDeviceProperty(unknown) is not implemented
 Please report this issue on our GitHub tracker:
@@ -1536,7 +1417,6 @@ exports[`DetoxConfigErrorComposer (from configuration/index) .cantChooseConfigur
 /etc/detox/config.js
 
 HINT: Use --configuration to choose one of the following:
-* plain
 * aliased
 * inlined
 * inlinedMulti]
@@ -1573,10 +1453,239 @@ Examine your Detox config at path:
 {
   configurations: {
     empty: {},
-    plain: [Object],
     aliased: [Object],
     inlined: [Object],
     inlinedMulti: [Object]
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for "android.emulator" device type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.android": {
+|     "type": "android.apk",
+|     "binaryPath": "/path/android.emulator.app",
+|   },
+| },
+| "devices": {
+|*->"emulator": {
+||    "type": "android.emulator",
+||    "device": "some-query(android.emulator)"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "android.emulator" */
+|*--- "device": "emulator",
+*---- "app": "myApp.android",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: 'android.emulator',
+      device: 'some-query(android.emulator)',
+      binaryPath: '/path/android.emulator.app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for "android.genycloud" device type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.android": {
+|     "type": "android.apk",
+|     "binaryPath": "/path/android.genycloud.app",
+|   },
+| },
+| "devices": {
+|*->"emulator": {
+||    "type": "android.genycloud",
+||    "device": "some-query(android.genycloud)"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "android.genycloud" */
+|*--- "device": "emulator",
+*---- "app": "myApp.android",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: 'android.genycloud',
+      device: 'some-query(android.genycloud)',
+      binaryPath: '/path/android.genycloud.app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for "ios.simulator" device type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "/path/ios.simulator.app",
+|   },
+| },
+| "devices": {
+|*->"simulator": {
+||    "type": "ios.simulator",
+||    "device": "some-query(ios.simulator)"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "ios.simulator" */
+|*--- "device": "simulator",
+*---- "app": "myApp.ios",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: 'ios.simulator',
+      device: 'some-query(ios.simulator)',
+      binaryPath: '/path/ios.simulator.app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for custom driver type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp": {
+|     "type": "<optional property>",
+|     "binaryPath": "<optional property>",
+|   },
+| },
+| "devices": {
+|*->"myDevice": {
+||    "type": "./custom-driver",
+||    "device": "<optional property>"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "./custom-driver" */
+|*--- "device": "myDevice",
+*---- "app": "myApp",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: './custom-driver',
+      webUrl: 'https://example.com'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for missing global .apps and .devices should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "/some/path",
+|   },
+| },
+| "devices": {
+|*->"simulator": {
+||    "type": "ios.simulator",
+||    "device": "iPhone 12"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "ios.simulator" */
+|*--- "device": "simulator",
+*---- "app": "myApp.ios",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: undefined,
+  devices: undefined,
+  configurations: {
+    legacy: {
+      type: 'ios.simulator',
+      device: 'iPhone 12',
+      binaryPath: '/some/path'
+    }
   }
 }]
 `;
@@ -1627,7 +1736,6 @@ exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationWit
 /home/detox/myproject/.detoxrc.json
 
 HINT: Below are the configurations Detox was able to find:
-* plain
 * aliased
 * inlined
 * inlinedMulti]

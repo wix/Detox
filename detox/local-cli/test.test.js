@@ -35,9 +35,11 @@ describe('CLI', () => {
     detoxConfig = {
       configurations: {
         single: {
-          type: 'ios.simulator',
-          device: 'iPhone X',
-          binaryPath: 'path/to/app',
+          device: {
+            type: 'ios.simulator',
+            device: 'iPhone X'
+          },
+          apps: [],
         },
       },
     };
@@ -87,7 +89,7 @@ describe('CLI', () => {
 
     describe('given no extra args (iOS)', () => {
       beforeEach(async () => {
-        singleConfig().type = 'ios.simulator';
+        singleConfig().device.type = 'ios.simulator';
         await run();
       });
 
@@ -108,7 +110,7 @@ describe('CLI', () => {
 
     describe('given no extra args (Android)', () => {
       beforeEach(async () => {
-        singleConfig().type = 'android.emulator';
+        singleConfig().device.type = 'android.emulator';
         await run();
       });
 
@@ -130,10 +132,10 @@ describe('CLI', () => {
     test.each([['-c'], ['--configuration']])(
       '%s <configuration> should provide inverted --testNamePattern that configuration (jest)',
       async (__configuration) => {
-        detoxConfig.configurations.iosTest = { ...detoxConfig.configurations.single };
-        detoxConfig.configurations.iosTest.type = 'ios.simulator';
-        detoxConfig.configurations.androidTest = { ...detoxConfig.configurations.single };
-        detoxConfig.configurations.androidTest.type = 'android.emulator';
+        detoxConfig.configurations.iosTest = _.cloneDeep(detoxConfig.configurations.single);
+        detoxConfig.configurations.iosTest.device.type = 'ios.simulator';
+        detoxConfig.configurations.androidTest = _.cloneDeep(detoxConfig.configurations.single);
+        detoxConfig.configurations.androidTest.device.type = 'android.emulator';
 
         await run(`${__configuration} androidTest`);
         expect(cliCall(0).command).toContain(`--testNamePattern ${quote('^((?!:ios:).)*$')}`);
@@ -289,37 +291,37 @@ describe('CLI', () => {
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should not warn anything for iOS', async (__workers) => {
-      singleConfig().type = 'ios.simulator';
+      singleConfig().device.type = 'ios.simulator';
       await run(`${__workers} 2`);
       expect(logger.warn).not.toHaveBeenCalled();
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for iOS', async (__workers) => {
-      singleConfig().type = 'ios.simulator';
+      singleConfig().device.type = 'ios.simulator';
       await run(`${__workers} 2`);
       expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for android.attached', async (__workers) => {
-      singleConfig().type = 'android.attached';
+      singleConfig().device.type = 'android.attached';
       await run(`${__workers} 2`);
       expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for android.emulator if there is a single worker', async (__workers) => {
-      singleConfig().type = 'android.emulator';
+      singleConfig().device.type = 'android.emulator';
       await run(`${__workers} 1`);
       expect(cliCall().env).not.toHaveProperty('DETOX_READ_ONLY_EMU');
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there are multiple workers', async (__workers) => {
-      singleConfig().type = 'android.emulator';
+      singleConfig().device.type = 'android.emulator';
       await run(`${__workers} 2`);
       expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_READ_ONLY_EMU: true }));
     });
 
     test('should omit --testNamePattern for custom platforms', async () => {
-      singleConfig().type = tempfile('.js', aCustomDriverModule());
+      singleConfig().device.type = tempfile('.js', aCustomDriverModule());
 
       await run();
       expect(cliCall().command).not.toContain('--testNamePattern');
@@ -392,13 +394,13 @@ describe('CLI', () => {
     });
 
     test('--force-adb-install should be ignored for iOS', async () => {
-      singleConfig().type = 'ios.simulator';
+      singleConfig().device.type = 'ios.simulator';
       await run(`--force-adb-install`);
       expect(cliCall().env).not.toHaveProperty('DETOX_FORCE_ADB_INSTALL');
     });
 
     test('--force-adb-install should be passed as environment variable', async () => {
-      singleConfig().type = 'android.emulator';
+      singleConfig().device.type = 'android.emulator';
       await run(`--force-adb-install`);
       expect(cliCall().env).toEqual(expect.objectContaining({
         DETOX_FORCE_ADB_INSTALL: true,
@@ -435,7 +437,7 @@ describe('CLI', () => {
       ['--use-custom-logger e2eFolder', / e2eFolder$/, { DETOX_USE_CUSTOM_LOGGER: true }],
       ['--force-adb-install e2eFolder', / e2eFolder$/, { DETOX_FORCE_ADB_INSTALL: true }],
     ])('"%s" should be disambigued correctly', async (command, commandMatcher, envMatcher) => {
-      singleConfig().type = 'android.emulator';
+      singleConfig().device.type = 'android.emulator';
       await run(command);
 
       expect(cliCall().command).toMatch(commandMatcher);
@@ -473,7 +475,7 @@ describe('CLI', () => {
 
     describe.each([['ios.simulator'], ['android.emulator']])('for %s', (deviceType) => {
       beforeEach(() => {
-        Object.values(detoxConfig.configurations)[0].type = deviceType;
+        Object.values(detoxConfig.configurations)[0].device.type = deviceType;
       });
 
       test('--keepLockFile should be suppress clearing the device lock file', async () => {

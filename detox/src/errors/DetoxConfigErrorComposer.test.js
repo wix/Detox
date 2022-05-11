@@ -30,11 +30,6 @@ describe('DetoxConfigErrorComposer', () => {
         },
       },
       configurations: {
-        plain: {
-          type: 'android.emulator',
-          device: 'Pixel_3a_API_30_x86',
-          binaryPath: 'path/to/apk',
-        },
         aliased: {
           device: 'aDevice',
           apps: ['someApp'],
@@ -160,6 +155,61 @@ describe('DetoxConfigErrorComposer', () => {
         expect(build()).toMatchSnapshot();
       });
     });
+
+    describe('.configurationShouldNotUseLegacyFormat', () => {
+      describe.each([
+        'ios.simulator',
+        'android.emulator',
+        'android.genycloud',
+      ])('for %j device type', (deviceType) => {
+        beforeEach(() => {
+          build = () => builder.configurationShouldNotUseLegacyFormat();
+          builder.setConfigurationName('legacy');
+          config.configurations.legacy = {
+            type: deviceType,
+            device: `some-query(${deviceType})`,
+            binaryPath: '/path/' + deviceType + '.app',
+          };
+        });
+
+        it('should create a helpful error', () => {
+          expect(build()).toMatchSnapshot();
+        });
+      });
+
+      describe('for custom driver type', () => {
+        beforeEach(() => {
+          build = () => builder.configurationShouldNotUseLegacyFormat();
+          builder.setConfigurationName('legacy');
+          config.configurations.legacy = {
+            type: './custom-driver',
+            webUrl: 'https://example.com',
+          };
+        });
+
+        it('should create a helpful error', () => {
+          expect(build()).toMatchSnapshot();
+        });
+      });
+
+      describe('for missing global .apps and .devices', () => {
+        beforeEach(() => {
+          build = () => builder.configurationShouldNotUseLegacyFormat();
+          builder.setConfigurationName('legacy');
+          delete config.devices;
+          delete config.apps;
+          config.configurations.legacy = {
+            type: 'ios.simulator',
+            device: 'iPhone 12',
+            binaryPath: '/some/path',
+          };
+        });
+
+        it('should create a helpful error', () => {
+          expect(build()).toMatchSnapshot();
+        });
+      });
+    });
   });
 
   describe('(from composeDeviceConfig)', () => {
@@ -194,17 +244,14 @@ describe('DetoxConfigErrorComposer', () => {
         ['headless', 'aliased', 'non-boolean'],
         ['readonly', 'inlined', 'non-boolean'],
         ['readonly', 'aliased', 'non-boolean'],
-        ['utilBinaryPaths', 'plain', 'invalid'],
         ['utilBinaryPaths', 'inlined', [NaN, 'valid']],
         ['utilBinaryPaths', 'aliased', [NaN, 'valid']],
       ])('(%j) should create an error for %s configuration', (propertyName, configurationType, invalidValue) => {
         builder.setConfigurationName(configurationType);
         const deviceAlias = configurationType === 'aliased' ? 'aDevice' : undefined;
-        const deviceConfig = configurationType === 'plain'
-          ? config.configurations[configurationType]
-          : configurationType === 'inlined'
-            ? config.configurations[configurationType].device
-            : config.devices.aDevice;
+        const deviceConfig = configurationType === 'inlined'
+          ? config.configurations[configurationType].device
+          : config.devices.aDevice;
 
         deviceConfig[propertyName] = invalidValue;
         expect(builder.malformedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
@@ -227,17 +274,14 @@ describe('DetoxConfigErrorComposer', () => {
         ['headless', 'aliased', true],
         ['readonly', 'inlined', false],
         ['readonly', 'aliased', false],
-        ['utilBinaryPaths', 'plain', []],
         ['utilBinaryPaths', 'inlined', []],
         ['utilBinaryPaths', 'aliased', []],
       ])('(%j) should create an error for %s configuration', (propertyName, configurationType, invalidValue) => {
         builder.setConfigurationName(configurationType);
         const deviceAlias = configurationType === 'aliased' ? 'aDevice' : undefined;
-        const deviceConfig = configurationType === 'plain'
-          ? config.configurations[configurationType]
-          : configurationType === 'inlined'
-            ? config.configurations[configurationType].device
-            : config.devices.aDevice;
+        const deviceConfig = configurationType === 'inlined'
+          ? config.configurations[configurationType].device
+          : config.devices.aDevice;
 
         deviceConfig[propertyName] = invalidValue;
         expect(builder.unsupportedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
@@ -254,7 +298,8 @@ describe('DetoxConfigErrorComposer', () => {
       });
 
       it('should produce a helpful error', () => {
-        builder.setConfigurationName('plain');
+        builder.setConfigurationName('aliased');
+        delete config.configurations.aliased.device;
         expect(build()).toMatchSnapshot();
       });
     });
@@ -306,11 +351,6 @@ describe('DetoxConfigErrorComposer', () => {
         build = (alias) => builder.missingDeviceMatcherProperties(alias, ['foo', 'bar']);
       });
 
-      it('should work with plain configurations', () => {
-        builder.setConfigurationName('plain');
-        expect(build()).toMatchSnapshot();
-      });
-
       it('should work with inlined configurations', () => {
         builder.setConfigurationName('inlined');
         expect(build()).toMatchSnapshot();
@@ -360,12 +400,6 @@ describe('DetoxConfigErrorComposer', () => {
         build = (appPath) => builder.malformedAppLaunchArgs(appPath);
       });
 
-      it('should work with plain configurations', () => {
-        config.configurations.plain.launchArgs = 'invalid';
-        builder.setConfigurationName('plain');
-        expect(build(['configurations', 'plain'])).toMatchSnapshot();
-      });
-
       it('should work with inlined configurations', () => {
         config.configurations.inlinedMulti.apps[0].launchArgs = 'invalid';
         builder.setConfigurationName('inlinedMulti');
@@ -382,12 +416,6 @@ describe('DetoxConfigErrorComposer', () => {
     describe('.missingAppBinaryPath', () => {
       beforeEach(() => {
         build = (appPath) => builder.missingAppBinaryPath(appPath);
-      });
-
-      it('should create an error for plain configuration', () => {
-        builder.setConfigurationName('plain');
-        delete config.configurations.plain.binaryPath;
-        expect(build(['configurations', 'plain'])).toMatchSnapshot();
       });
 
       it('should create an error for aliased configuration', () => {
@@ -519,19 +547,6 @@ describe('DetoxConfigErrorComposer', () => {
 
       it('should produce a custom error message for unknown device type', () => {
         expect(build('unknown')).toMatchSnapshot();
-      });
-    });
-
-    describe('.oldSchemaHasAppAndApps', () => {
-      beforeEach(() => {
-        build = () => builder.oldSchemaHasAppAndApps();
-      });
-
-      it('should create an error for ambigous old/new configuration if it has .apps', () => {
-        builder.setConfigurationName('plain');
-        config.configurations.plain.app = 'my-app';
-
-        expect(build()).toMatchSnapshot();
       });
     });
 

@@ -15,7 +15,10 @@ For example, the following configuration uses the "ios.simulator" driver.
   "ios.sim": {
     "type": "ios.simulator",
     "device": "...",
-    "binaryPath": "bin/YourApp.app"
+    "app": {
+      "type": "ios.app",
+      "binaryPath": "bin/YourApp.app"
+    }
   }
 }
 ```
@@ -37,7 +40,9 @@ Overall the setup for any third party driver is fairly simple.
    ```diff
    +  "thirdparty.driver.config": {
    +    "type": "detox-driver-package",
-   +    "binaryPath": "bin/YourApp.app",
+   +    "app": {
+   +      "binaryPath": "bin/YourApp.app",
+   +    }
    +  }
    ```
 

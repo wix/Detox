@@ -200,10 +200,12 @@ const config = {
       apps: ['android.release', 'android.release.withArgs'],
     },
     'stub': {
-      type: './integration/stub',
-      name: 'integration-stub',
       device: {
+        type: './integration/stub',
         integ: 'stub'
+      },
+      app: {
+        name: 'example'
       }
     }
   }

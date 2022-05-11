@@ -25,16 +25,6 @@ class DetoxConfigErrorComposer {
   _atPath() {
     return this.filepath ? ` at path:\n${this.filepath}` : '.';
   }
-
-  _inTheAppConfig() {
-    const { type } = this._getSelectedConfiguration();
-    if (type) {
-      return `in configuration ${J(this.configurationName)}`;
-    }
-
-    return `in the app config`;
-  }
-
   _getSelectedConfiguration() {
     return _.get(this.contents, ['configurations', this.configurationName]);
   }
@@ -64,9 +54,10 @@ class DetoxConfigErrorComposer {
   }
 
   _focusOnDeviceConfig(deviceAlias, postProcess = _.identity) {
-    const { type, device } = this._getSelectedConfiguration();
+    const { device } = this._getSelectedConfiguration();
     if (!deviceAlias) {
-      if (type || !device) {
+      // istanbul ignore next
+      if (!device) {
         return this._focusOnConfiguration(postProcess);
       } else {
         return this._focusOnConfiguration(c => {
@@ -92,8 +83,7 @@ class DetoxConfigErrorComposer {
     if (alias) {
       return this.contents.devices[alias];
     } else {
-      const config = this._getSelectedConfiguration();
-      return config.type ? config : config.device;
+      return this._getSelectedConfiguration().device;
     }
   }
 
@@ -222,6 +212,61 @@ Examine your Detox config${this._atPath()}`,
         }
       },
       inspectOptions: { depth: 1 }
+    });
+  }
+
+  configurationShouldNotUseLegacyFormat() {
+    const name = this.configurationName;
+    const localConfig = this._getSelectedConfiguration();
+    /* istanbul ignore next */
+    const deviceType = localConfig.type || '';
+    const isAndroid = deviceType.startsWith('android.');
+    const isIOS = deviceType.startsWith('ios.');
+    const appName = 'myApp' + (isIOS ? '.ios' : '') + (isAndroid ? '.android' : '');
+    const deviceName = isIOS ? 'simulator' : isAndroid ? 'emulator' : 'myDevice';
+    const appType = isIOS ? 'ios.app' : isAndroid ? 'android.apk' : '<optional property>';
+    const binaryPath = isIOS || isAndroid ? localConfig.binaryPath : (localConfig.binaryPath || '<optional property>');
+    const deviceQuery = isIOS || isAndroid ? localConfig.device : (localConfig.device || '<optional property>');
+
+    return new DetoxConfigError({
+      message: `The ${J(name)} configuration utilizes a deprecated all-in-one schema, that is not supported ` +
+        `by the current version of Detox.`,
+      hint: `Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases ` +
+        `pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:\n
+{
+  "apps": {
+*-->${J(appName)}: {
+|     "type": ${J(appType)},
+|     "binaryPath": ${J(binaryPath)},
+|   },
+| },
+| "devices": {
+|*->${J(deviceName)}: {
+||    "type": ${J(deviceType)},
+||    "device": ${J(deviceQuery)}
+||  },
+||},
+||"configurations": {
+||  ${J(name)}: {
+||    /* REMOVE (!) "type": ${J(deviceType)} */
+|*--- "device": ${J(deviceName)},
+*---- "app": ${J(appName)},
+      ...
+    }
+  }
+}
+Examine your Detox config${this._atPath()}`,
+      debugInfo: {
+        apps: this.contents.apps
+          ? _.mapValues(this.contents.apps, _.constant({}))
+          : undefined,
+        devices: this.contents.devices
+          ? _.mapValues(this.contents.devices, _.constant({}))
+          : undefined,
+
+        ...this._focusOnConfiguration(),
+      },
+      inspectOptions: { depth: 2 }
     });
   }
 
@@ -456,7 +501,7 @@ Examine your Detox config${this._atPath()}`,
 
   malformedAppLaunchArgs(appPath) {
     return new DetoxConfigError({
-      message: `Invalid type of "launchArgs" property ${this._inTheAppConfig()}.\nExpected an object:`,
+      message: `Invalid type of "launchArgs" property in the app config.\nExpected an object:`,
       debugInfo: this._focusOnAppConfig(appPath),
       inspectOptions: { depth: 4 },
     });
@@ -464,7 +509,7 @@ Examine your Detox config${this._atPath()}`,
 
   missingAppBinaryPath(appPath) {
     return new DetoxConfigError({
-      message: `Missing "binaryPath" property ${this._inTheAppConfig()}.\nExpected a string:`,
+      message: `Missing "binaryPath" property in the app config.\nExpected a string:`,
       debugInfo: this._focusOnAppConfig(appPath, this._ensureProperty('binaryPath')),
       inspectOptions: { depth: 4 },
     });
@@ -535,18 +580,6 @@ Examine your Detox config${this._atPath()}`,
 Examine your Detox config${this._atPath()}`,
       debugInfo: this._focusOnConfiguration(),
       inspectOptions: { depth: 0 }
-    });
-  }
-
-  oldSchemaHasAppAndApps() {
-    return new DetoxConfigError({
-      message: `Your configuration ${J(this.configurationName)} appears to be in a legacy format, which can’t contain "app" or "apps".`,
-      hint: `Remove "type" property from configuration and use "device" property instead:\n` +
-        `a) "device": { "type": ${J(this._getSelectedConfiguration().type)}, ... }\n` +
-        `b) "device": "<alias-to-device>" // you should add that device configuration to "devices" with the same key` +
-        `\n\nCheck your Detox config${this._atPath()}`,
-      debugInfo: this._focusOnConfiguration(this._ensureProperty('type', 'device')),
-      inspectOptions: { depth: 2 },
     });
   }
 

@@ -32,7 +32,7 @@ describe('composeDeviceConfig', () => {
   const givenConfigValidationSuccess = () => environmentFactory.validateConfig.mockReturnValue(undefined);
   const givenConfigValidationError = (error) => environmentFactory.validateConfig.mockImplementation(() => { throw error; });
 
-  const KNOWN_CONFIGURATIONS = [['plain'], ['inline'], ['aliased']];
+  const KNOWN_CONFIGURATIONS = [['inline'], ['aliased']];
 
   const KNOWN_DEVICES = [
     'ios.simulator',
@@ -46,7 +46,7 @@ describe('composeDeviceConfig', () => {
 
   /**
    * @param {'ios.simulator' | 'android.attached' | 'android.emulator' | 'android.genycloud' | './customDriver'} deviceType
-   * @param {'plain' | 'inline' | 'aliased' } configType
+   * @param {'inline' | 'aliased' } configType
    */
   function setConfig(deviceType, configType = 'aliased') {
     const mixins = {
@@ -100,10 +100,6 @@ describe('composeDeviceConfig', () => {
     deviceConfig = _.cloneDeep(deviceTemplates[deviceType] || deviceTemplates[undefined]);
 
     switch (configType) {
-      case 'plain':
-        Object.assign(localConfig, deviceConfig);
-        localConfig.binaryPath = deviceConfig.binaryPath || _.uniqueId('/path/to/app');
-        break;
       case 'inline':
         localConfig.device = deviceConfig;
         break;
@@ -140,46 +136,6 @@ describe('composeDeviceConfig', () => {
 
   describe('by config type', () => {
     describe.each(KNOWN_DEVICES)('given a device (%j)', (deviceType) => {
-      describe('plain', () => {
-        beforeEach(() => {
-          setConfig(deviceType, 'plain');
-
-          // NOTE: these properties are ignored for plain configurations
-          delete deviceConfig.bootArgs;
-          delete deviceConfig.forceAdbInstall;
-          delete deviceConfig.gpu;
-          delete deviceConfig.headless;
-          delete deviceConfig.readonly;
-        });
-
-        it('should extract type and device', () =>
-          expect(compose()).toEqual(deviceConfig));
-
-        // region supported devices
-        if (deviceType === './customDriver') return;
-
-        it('should have a fallback for known devices: .name -> .device', () => {
-          const expected = compose();
-
-          localConfig.name = localConfig.device;
-          delete localConfig.device;
-
-          const actual = compose();
-          expect(actual).toEqual(expected);
-        });
-
-        it('should extract type, utilBinaryPaths and unpack device query', () => {
-          localConfig.device = Object.values(deviceConfig.device).join(', ');
-
-          expect(compose()).toEqual({
-            type: deviceConfig.type,
-            device: deviceConfig.device,
-            utilBinaryPaths: deviceConfig.utilBinaryPaths,
-          });
-        });
-        // endregion
-      });
-
       describe('inlined', () => {
         beforeEach(() => setConfig(deviceType, 'inline'));
 
@@ -214,6 +170,41 @@ describe('composeDeviceConfig', () => {
           test('should throw if device config is not found', () => {
             localConfig.device = 'unknownDevice';
             expect(compose).toThrow(errorComposer.cantResolveDeviceAlias('unknownDevice'));
+          });
+
+          test('should throw on no .type in device config', () => {
+            delete deviceConfig.type;
+            expect(compose).toThrow(errorComposer.missingDeviceType(localConfig.device));
+          });
+        });
+      });
+    });
+
+    describe('given a custom device', () => {
+      describe('inlined', () => {
+        beforeEach(() => setConfig('./customDriver', 'inline'));
+
+        it('should extract type and device', () =>
+          expect(compose()).toEqual(deviceConfig));
+
+        describe('unhappy scenarios', () => {
+          test('should throw on no .type in device config', () => {
+            delete deviceConfig.type;
+            expect(compose).toThrow(errorComposer.missingDeviceType(undefined));
+          });
+        });
+      });
+
+      describe('aliased', () => {
+        beforeEach(() => setConfig('./customDriver', 'aliased'));
+
+        it('should extract type and device', () =>
+          expect(compose()).toEqual(deviceConfig));
+
+        describe('unhappy scenarios', () => {
+          test('should throw if devices are not declared', () => {
+            globalConfig.devices = {};
+            expect(compose).toThrow(errorComposer.thereAreNoDeviceConfigs(localConfig.device));
           });
 
           test('should throw on no .type in device config', () => {
@@ -488,9 +479,6 @@ describe('composeDeviceConfig', () => {
             someError
           ));
         });
-
-        //region separate device config validation
-        if (configType === 'plain') return;
 
         describe('.bootArgs validation', () => {
           test.each([

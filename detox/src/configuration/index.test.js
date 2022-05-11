@@ -43,6 +43,18 @@ describe('composeDetoxConfig', () => {
       })).rejects.toThrowError(errorComposer.noConfigurationSpecified());
     });
 
+    it('should throw an error if the local config has the old schema', async () => {
+      try {
+        await configuration.composeDetoxConfig({
+          cwd: path.join(__dirname, '__mocks__/configuration/oldschema'),
+          errorComposer,
+        });
+      } catch (e) {
+        // NOTE: we want errorComposer to be mutated, that's why we assert inside try-catch
+        expect(e).toEqual(errorComposer.configurationShouldNotUseLegacyFormat());
+      }
+    });
+
     it('should return a complete Detox config merged with the file configuration', async () => {
       const config = await configuration.composeDetoxConfig({
         cwd: path.join(__dirname, '__mocks__/configuration/packagejson'),
@@ -68,9 +80,14 @@ describe('composeDetoxConfig', () => {
           },
           configurations: {
             another: {
-              type: 'ios.simulator',
-              device: 'iPhone X',
-              binaryPath: 'path/to/app',
+              device: {
+                type: 'ios.simulator',
+                device: 'iPhone X'
+              },
+              app: {
+                type: 'ios.app',
+                binaryPath: 'path/to/app',
+              },
             },
           },
         }

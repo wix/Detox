@@ -20,9 +20,9 @@ const hooks = {
 async function composeDetoxConfig({
   cwd = process.cwd(),
   argv = undefined,
+  errorComposer = new DetoxConfigErrorComposer(),
   override,
 }) {
-  const errorComposer = new DetoxConfigErrorComposer();
   const cliConfig = collectCliConfig({ argv });
   const findupResult = await loadExternalConfig({
     errorComposer,
@@ -56,6 +56,10 @@ async function composeDetoxConfig({
   });
 
   const localConfig = configurations[configurationName];
+
+  if (localConfig['type']) {
+    throw errorComposer.configurationShouldNotUseLegacyFormat();
+  }
 
   const deviceConfig = composeDeviceConfig({
     errorComposer,

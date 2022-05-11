@@ -12,13 +12,8 @@ const log = require('../utils/logger').child({ __filename });
  * @returns {Detox.DetoxDeviceConfig}
  */
 function composeDeviceConfig(opts) {
-  const { localConfig, cliConfig } = opts;
-
-  const deviceConfig = localConfig.type
-    ? composeDeviceConfigFromPlain(opts)
-    : composeDeviceConfigFromAliased(opts);
-
-  applyCLIOverrides(deviceConfig, cliConfig);
+  const deviceConfig = composeDeviceConfigFromAliased(opts);
+  applyCLIOverrides(deviceConfig, opts.cliConfig);
   deviceConfig.device = unpackDeviceQuery(deviceConfig);
 
   return deviceConfig;
@@ -27,29 +22,7 @@ function composeDeviceConfig(opts) {
 /**
  * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {Detox.DetoxConfig} opts.globalConfig
- * @param {Detox.DetoxPlainConfiguration} opts.localConfig
- * @returns {Detox.DetoxDeviceConfig}
- */
-function composeDeviceConfigFromPlain(opts) {
-  const { errorComposer, localConfig } = opts;
-
-  const type = localConfig.type;
-  const device = localConfig.device || localConfig.name;
-  const utilBinaryPaths = localConfig.utilBinaryPaths;
-
-  const deviceConfig = type in EXPECTED_DEVICE_MATCHER_PROPS
-    ? _.omitBy({ type, device, utilBinaryPaths }, _.isUndefined)
-    : { ...localConfig };
-
-  validateDeviceConfig({ deviceConfig, errorComposer });
-
-  return deviceConfig;
-}
-
-/**
- * @param {DetoxConfigErrorComposer} opts.errorComposer
- * @param {Detox.DetoxConfig} opts.globalConfig
- * @param {Detox.DetoxAliasedConfiguration} opts.localConfig
+ * @param {Detox.DetoxConfiguration} opts.localConfig
  * @returns {Detox.DetoxDeviceConfig}
  */
 function composeDeviceConfigFromAliased(opts) {
