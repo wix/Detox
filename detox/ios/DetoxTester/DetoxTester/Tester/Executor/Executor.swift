@@ -22,25 +22,16 @@ class Executor {
 
     switch action {
       case .loginSuccess:
-        execLog("successfully logged in to Detox server")
+        execLog("successfully logged into Detox server")
 
       case .disconnect:
-        if isWhiteBoxExecutorAvailable() {
-          execute(whiteBoxRequest: .disconnect).assertResponse(equalsTo: .none)
-        }
-
-        handleCleanup(messageId: messageId)
+        disconnect(messageId: messageId)
 
       case .setRecordingState:
         fatalError("not implemented yet")
 
       case .waitForBackground:
-        let result1 = getAppUnderTest().wait(for: .runningBackground, timeout: 555)
-        let result2 = getAppUnderTest().wait(for: .runningBackgroundSuspended, timeout: 555)
-        guard result1 || result2 == true else {
-          fatalError("handle failure..")
-        }
-        fatalError("TODO: complete the implementation...")
+        waitFor(appState: .background, messageId: messageId)
 
       case .waitForIdle:
         if isWhiteBoxExecutorAvailable() {
@@ -48,7 +39,7 @@ class Executor {
         }
 
       case .setSyncSettings:
-        fatalError("not implemented yet")
+        setSyncSettings(params: params, messageId: messageId)
 
       case .deliverPayload:
         fatalError("not implemented yet")
@@ -66,11 +57,7 @@ class Executor {
         fatalError("not implemented yet")
 
       case .waitForActive:
-        let result = getAppUnderTest().wait(for: .runningForeground, timeout: 555)
-        guard result == true else {
-          fatalError("handle failure..")
-        }
-        fatalError("TODO: complete the implementation...")
+        waitFor(appState: .foreground, messageId: messageId)
 
       case.reactNativeReload:
         fatalError("not implemented yet")
@@ -79,10 +66,10 @@ class Executor {
         handleInvoke(params: params, messageId: messageId)
 
       case .isReady:
-        sendAction(.reportReady, params: [:], messageId: messageId)
+        sendAction(.reportReady, messageId: messageId)
 
       case .cleanup:
-        handleCleanup(messageId: messageId)
+        cleanup(messageId: messageId)
     }
   }
 

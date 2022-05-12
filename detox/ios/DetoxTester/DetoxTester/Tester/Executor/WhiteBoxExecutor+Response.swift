@@ -10,6 +10,9 @@ extension WhiteBoxExecutor {
   enum Response: Equatable {
     ///
     case none
+
+    ///
+    case failed(reason: String)
   }
 }
 

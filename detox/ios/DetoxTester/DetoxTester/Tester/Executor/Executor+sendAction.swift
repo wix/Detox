@@ -9,7 +9,7 @@ extension Executor {
   /// Sends actions through the web-socket.
   func sendAction(
     _ type: ResponseMessageType,
-    params: [String : AnyHashable],
+    params: [String : AnyHashable] = [:],
     messageId: NSNumber
   ) {
     guard let serverMessageSender = serverMessageSender else {

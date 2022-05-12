@@ -21,9 +21,11 @@ protocol ServerMessageSenderProtocol: AnyObject {
 /// Type of a web-socket action to be sent from Detox Tester back to Detox Server.
 enum ResponseMessageType: String {
   case reportReady = "ready"
+  case reportSetSyncSettingsDone = "setSyncSettingsDone"
   case reportWebSocketDidOpen = "login"
   case reportStatus = "currentStatusResult"
   case reportCleanupDone = "cleanupDone"
-  case reportWaitForActiveDone = "waitForActiveDone"
+  case reportWaitForBackgroundDone = "waitForBackgroundDone"
+  case reportWaitForForegroundDone = "waitForActiveDone"
   case reportInvokeResult = "invokeResult"
 }

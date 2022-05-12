@@ -12,7 +12,13 @@ extension WhiteBoxExecutor {
     case disconnect
 
     ///
+    case cleanup
+
+    ///
     case waitFor(_ state: AppState)
+
+    ///
+    case setSyncSettings(maxTimerWait: TimeInterval?, blacklistURLs: [String]?, disabled: Bool?)
   }
 }
 

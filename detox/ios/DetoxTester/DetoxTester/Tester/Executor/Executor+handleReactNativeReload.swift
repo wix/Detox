@@ -14,6 +14,6 @@ extension Executor {
     app.terminate()
     app.launch()
 
-    sendAction(.reportReady, params: [:], messageId: messageId)
+    sendAction(.reportReady, messageId: messageId)
   }
 }
