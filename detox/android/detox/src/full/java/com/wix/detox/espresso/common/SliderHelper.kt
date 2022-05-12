@@ -19,6 +19,7 @@ abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
         return nativeProgress / nativeMax
     }
 
+    // TODO Make this more testable (e.g. by delegating the set action away)
     fun setProgressPct(valuePct: Double) {
         val maxJSProgress = calcMaxJSProgress()
         val valueJS = valuePct * maxJSProgress
