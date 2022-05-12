@@ -77,9 +77,14 @@ describe('Detox', () => {
       override: {
         configurations: {
           test: {
-            type: 'fake.device',
-            binaryPath: '/tmp/fake/path',
-            device: 'a device',
+            device: {
+              type: 'fake.device',
+              device: 'a device',
+            },
+            app: {
+              type: 'fake.app',
+              binaryPath: '/tmp/fake/path',
+            },
           },
         },
       },

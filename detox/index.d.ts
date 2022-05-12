@@ -30,7 +30,7 @@ declare global {
     namespace Detox {
         // region DetoxConfig
 
-        interface DetoxConfig {
+        interface DetoxConfig extends DetoxConfigurationCommon {
             /**
              * @example extends: './relative/detox.config'
              * @example extends: '@my-org/detox-preset'
@@ -51,14 +51,17 @@ declare global {
              * @example specs: 'detoxE2E'
              */
             specs?: string;
-            artifacts?: DetoxArtifactsConfig;
-            behavior?: DetoxBehaviorConfig;
-            session?: DetoxSessionConfig;
             apps?: Record<string, DetoxAppConfig>;
             devices?: Record<string, DetoxDeviceConfig>;
             selectedConfiguration?: string;
             configurations: Record<string, DetoxConfiguration>;
         }
+
+        type DetoxConfigurationCommon = {
+            artifacts?: false | DetoxArtifactsConfig;
+            behavior?: DetoxBehaviorConfig;
+            session?: DetoxSessionConfig;
+        };
 
         interface DetoxArtifactsConfig {
             rootDir?: string;
@@ -107,7 +110,7 @@ declare global {
             sessionId?: string;
         }
 
-        type DetoxAppConfig = (DetoxIosAppConfig | DetoxAndroidAppConfig) & {
+        type DetoxAppConfig = (DetoxBuiltInAppConfig | DetoxCustomAppConfig) & {
             /**
              * App name to use with device.selectApp(appName) calls.
              * Can be omitted if you have a single app under the test.
@@ -118,8 +121,6 @@ declare global {
         };
 
         type DetoxDeviceConfig = DetoxBuiltInDeviceConfig | DetoxCustomDriverConfig;
-
-        type DetoxConfiguration = DetoxPlainConfiguration | DetoxAliasedConfiguration;
 
         interface DetoxLogArtifactsPluginConfig {
             enabled?: boolean;
@@ -164,6 +165,8 @@ declare global {
             enabled?: boolean;
         }
 
+        type DetoxBuiltInAppConfig = (DetoxIosAppConfig | DetoxAndroidAppConfig);
+
         interface DetoxIosAppConfig {
             type: 'ios.app';
             binaryPath: string;
@@ -181,27 +184,17 @@ declare global {
             launchArgs?: Record<string, any>;
         }
 
-        interface _DetoxAppConfigFragment {
-            binaryPath: string;
-            bundleId?: string;
-            build?: string;
-            testBinaryPath?: string;
-            launchArgs?: Record<string, any>;
+        interface DetoxCustomAppConfig {
+            type: string;
+
+            [prop: string]: unknown;
         }
 
         type DetoxBuiltInDeviceConfig =
-          | DetoxIosSimulatorDriverConfig
-          | DetoxAttachedAndroidDriverConfig
-          | DetoxAndroidEmulatorDriverConfig
-          | DetoxGenymotionCloudDriverConfig;
-
-        type DetoxPlainConfiguration = DetoxConfigurationOverrides & (
-          | (DetoxIosSimulatorDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxAttachedAndroidDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxAndroidEmulatorDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxGenymotionCloudDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxCustomDriverConfig)
-          );
+            | DetoxIosSimulatorDriverConfig
+            | DetoxAttachedAndroidDriverConfig
+            | DetoxAndroidEmulatorDriverConfig
+            | DetoxGenymotionCloudDriverConfig;
 
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
@@ -251,29 +244,24 @@ declare global {
 
         type DetoxKnownDeviceType = DetoxBuiltInDeviceConfig['type'];
 
-        type DetoxConfigurationOverrides = {
-            artifacts?: false | DetoxArtifactsConfig;
-            behavior?: DetoxBehaviorConfig;
-            session?: DetoxSessionConfig;
-        };
+        type DetoxConfiguration = DetoxConfigurationCommon & (
+            | DetoxConfigurationSingleApp
+            | DetoxConfigurationMultiApps
+            );
 
-        type DetoxAliasedConfiguration =
-          | DetoxAliasedConfigurationSingleApp
-          | DetoxAliasedConfigurationMultiApps;
-
-        interface DetoxAliasedConfigurationSingleApp {
-            type?: never;
+        interface DetoxConfigurationSingleApp {
             device: DetoxAliasedDevice;
-            app: string | DetoxAppConfig;
+            app: DetoxAliasedApp;
         }
 
-        interface DetoxAliasedConfigurationMultiApps {
-            type?: never;
+        interface DetoxConfigurationMultiApps {
             device: DetoxAliasedDevice;
-            apps: string[];
+            apps: DetoxAliasedApp[];
         }
 
         type DetoxAliasedDevice = string | DetoxDeviceConfig;
+
+        type DetoxAliasedApp = string | DetoxAppConfig;
 
         // endregion DetoxConfig
 
@@ -458,13 +446,13 @@ declare global {
              */
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
 
-           /**
-            * Relaunch the app. Convenience method that calls {@link Device#launchApp}
-            * with { newInstance: true } override.
-            *
-            * @param config
-            * @see Device#launchApp
-            */
+            /**
+             * Relaunch the app. Convenience method that calls {@link Device#launchApp}
+             * with { newInstance: true } override.
+             *
+             * @param config
+             * @see Device#launchApp
+             */
             relaunchApp(config?: Omit<DeviceLaunchAppConfig, 'newInstance'>): Promise<void>;
 
             /**
@@ -492,6 +480,7 @@ declare global {
              * @see AppLaunchArgs
              */
             appLaunchArgs: AppLaunchArgs;
+
             /**
              * Terminate the app.
              *
@@ -856,11 +845,13 @@ declare global {
              * @example await element(by.text('Product').and(by.id('product_name'));
              */
             and(by: NativeMatcher): NativeMatcher;
+
             /**
              * Find an element by a matcher with a parent matcher
              * @example await element(by.id('Grandson883').withAncestor(by.id('Son883')));
              */
             withAncestor(parentBy: NativeMatcher): NativeMatcher;
+
             /**
              * Find an element by a matcher with a child matcher
              * @example await element(by.id('Son883').withDescendant(by.id('Grandson883')));
@@ -874,6 +865,7 @@ declare global {
 
         interface ExpectFacade {
             (element: NativeElement): Expect;
+
             (webElement: WebElement): WebExpect;
         }
 
@@ -968,6 +960,7 @@ declare global {
              * @example await expect(element(by.id('switch'))).toHaveToggleValue(true);
              */
             toHaveToggleValue(value: boolean): R;
+
             /**
              * Expect components like a Switch to have a value ('0' for off, '1' for on).
              * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
@@ -1004,6 +997,7 @@ declare global {
              * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
              */
             whileElement(by: NativeMatcher): NativeElement & WaitFor;
+
             // TODO: not sure about & WaitFor - check if we can chain whileElement multiple times
         }
 
@@ -1029,6 +1023,7 @@ declare global {
              */
             longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: NativeElement,
                              normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<void>;
+
             /**
              * Simulate multiple taps on an element.
              * @param times number of times to tap
@@ -1084,10 +1079,10 @@ declare global {
              * @example await element(by.id('scrollView')).scroll(100, 'up');
              */
             scroll(
-              pixels: number,
-              direction: Direction,
-              startPositionX?: number,
-              startPositionY?: number,
+                pixels: number,
+                direction: Direction,
+                startPositionX?: number,
+                startPositionY?: number
             ): Promise<void>;
 
             /**
@@ -1095,7 +1090,7 @@ declare global {
              * @example await element(by.id('scrollView')).scrollToIndex(10);
              */
             scrollToIndex(
-              index: Number
+                index: Number
             ): Promise<void>;
 
             /**
@@ -1184,7 +1179,7 @@ declare global {
              *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
              * });
              */
-             takeScreenshot(name: string): Promise<string>;
+            takeScreenshot(name: string): Promise<string>;
 
             /**
              * Gets the native (OS-dependent) attributes of the element.
@@ -1202,7 +1197,7 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1218,7 +1213,7 @@ declare global {
              * @example
              * await expect(web.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
              */
-            toHaveText(text: string): R
+            toHaveText(text: string): R;
 
             /**
              * Expect the view to exist in the webview DOM tree.
@@ -1239,56 +1234,56 @@ declare global {
         }
 
         interface WebElementActions {
-            tap(): Promise<void>
+            tap(): Promise<void>;
 
             /**
              * @param text to type
              * @param isContentEditable whether its a ContentEditable element, default is false.
              */
-            typeText(text: string, isContentEditable: boolean): Promise<void>
+            typeText(text: string, isContentEditable: boolean): Promise<void>;
 
             /**
              * At the moment not working on content-editable
              * @param text to replace with the old content.
              */
-            replaceText(text: string): Promise<void>
+            replaceText(text: string): Promise<void>;
 
             /**
              * At the moment not working on content-editable
              */
-            clearText(): Promise<void>
+            clearText(): Promise<void>;
 
             /**
              * scrolling to the view, the element top position will be at the top of the screen.
              */
-            scrollToView(): Promise<void>
+            scrollToView(): Promise<void>;
 
             /**
              * Gets the input content
              */
-            getText(): Promise<string>
+            getText(): Promise<string>;
 
             /**
              * Calls the focus function on the element
              */
-            focus(): Promise<void>
+            focus(): Promise<void>;
 
             /**
              * Selects all the input content, works on ContentEditable at the moment.
              */
-            selectAllText(): Promise<void>
+            selectAllText(): Promise<void>;
 
             /**
              * Moves the input cursor / caret to the end of the content, works on ContentEditable at the moment.
              */
-            moveCursorToEnd(): Promise<void>
+            moveCursorToEnd(): Promise<void>;
 
             /**
              * Running a script on the element
              * @param script a method that accept the element as its first arg
              * @example function foo(element) { console.log(element); }
              */
-            runScript(script: string): Promise<any>
+            runScript(script: string): Promise<any>;
 
             /**
              * Running a script on the element that accept args
