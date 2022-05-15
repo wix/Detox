@@ -34,9 +34,7 @@ class Executor {
         waitFor(appState: .background, messageId: messageId)
 
       case .waitForIdle:
-        if isWhiteBoxExecutorAvailable() {
-          execute(whiteBoxRequest: .waitFor(.idle)).assertResponse(equalsTo: .none)
-        }
+        waitForIdle(messageId: messageId)
 
       case .setSyncSettings:
         setSyncSettings(params: params, messageId: messageId)
@@ -51,16 +49,16 @@ class Executor {
         fatalError("not implemented yet")
 
       case .shakeDevice:
-        fatalError("not implemented yet")
+        shakeDevice(messageId: messageId)
 
       case .captureViewHierarchy:
-        fatalError("not implemented yet")
+        captureViewHierarchy(params: params, messageId: messageId)
 
       case .waitForActive:
         waitFor(appState: .foreground, messageId: messageId)
 
       case.reactNativeReload:
-        fatalError("not implemented yet")
+        reactNativeReload(messageId: messageId)
 
       case .invoke:
         handleInvoke(params: params, messageId: messageId)

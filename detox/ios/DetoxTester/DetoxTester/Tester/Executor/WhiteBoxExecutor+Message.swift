@@ -15,6 +15,15 @@ extension WhiteBoxExecutor {
     case cleanup
 
     ///
+    case reloadReactNative
+
+    ///
+    case shakeDevice
+
+    ///
+    case captureViewHierarchy(viewHierarchyURL: URL)
+
+    ///
     case waitFor(_ state: AppState)
 
     ///

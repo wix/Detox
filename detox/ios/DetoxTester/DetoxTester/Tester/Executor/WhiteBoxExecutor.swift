@@ -21,7 +21,7 @@ class WhiteBoxExecutor {
 
     // TODO: handle messages
     
-    return .none
+    return .completed
   }
 }
 

@@ -17,6 +17,15 @@ extension Executor {
 
     sendAction(state.completionMessage(), messageId: messageId)
   }
+
+  ///
+  func waitForIdle(messageId: NSNumber) {
+    if isWhiteBoxExecutorAvailable() {
+      execute(whiteBoxRequest: .waitFor(.idle)).assertResponse(equalsTo: .completed)
+    }
+
+    sendAction(.reportWaitForIdleDone, messageId: messageId)
+  }
 }
 
 extension Executor {

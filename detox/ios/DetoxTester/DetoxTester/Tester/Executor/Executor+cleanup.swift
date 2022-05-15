@@ -14,7 +14,7 @@ extension Executor {
     }
 
     if isWhiteBoxExecutorAvailable() {
-      execute(whiteBoxRequest: .cleanup).assertResponse(equalsTo: .none)
+      execute(whiteBoxRequest: .cleanup).assertResponse(equalsTo: .completed)
     }
 
     sendAction(.reportCleanupDone, messageId: messageId)

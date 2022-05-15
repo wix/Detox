@@ -18,7 +18,10 @@
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+cleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+cleanup.swift */; };
 		603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */; };
-		603497B127F08E6600770EE0 /* Executor+handleReactNativeReload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */; };
+		603497B127F08E6600770EE0 /* Executor+reactNativeReload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497B027F08E6600770EE0 /* Executor+reactNativeReload.swift */; };
+		604B94B928313C3200508C27 /* Executor+captureViewHierarchy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */; };
+		604B94BB28314B6400508C27 /* Executor+shakeDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */; };
+		604B94BD28314DE600508C27 /* XCUIApplication+settingsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B94BC28314DE600508C27 /* XCUIApplication+settingsApp.swift */; };
 		60534156280C177300C0405D /* SwipeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534155280C177300C0405D /* SwipeTests.swift */; };
 		6053415A280C472700C0405D /* LongPressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60534159280C472700C0405D /* LongPressViewController.swift */; };
 		6053415C280C473400C0405D /* LongPressScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6053415B280C473400C0405D /* LongPressScreen.storyboard */; };
@@ -153,7 +156,10 @@
 		603497A927F08C3700770EE0 /* Executor+sendAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendAction.swift"; sourceTree = "<group>"; };
 		603497AC27F08D9300770EE0 /* Executor+cleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+cleanup.swift"; sourceTree = "<group>"; };
 		603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleCurrentStatus.swift"; sourceTree = "<group>"; };
-		603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleReactNativeReload.swift"; sourceTree = "<group>"; };
+		603497B027F08E6600770EE0 /* Executor+reactNativeReload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+reactNativeReload.swift"; sourceTree = "<group>"; };
+		604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+captureViewHierarchy.swift"; sourceTree = "<group>"; };
+		604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+shakeDevice.swift"; sourceTree = "<group>"; };
+		604B94BC28314DE600508C27 /* XCUIApplication+settingsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+settingsApp.swift"; sourceTree = "<group>"; };
 		60534155280C177300C0405D /* SwipeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTests.swift; sourceTree = "<group>"; };
 		60534159280C472700C0405D /* LongPressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LongPressViewController.swift; sourceTree = "<group>"; };
 		6053415B280C473400C0405D /* LongPressScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LongPressScreen.storyboard; sourceTree = "<group>"; };
@@ -565,6 +571,7 @@
 				605341D8281547AC00C0405D /* Encodable+Extensions.swift */,
 				60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */,
 				60A3B467282D3344002F903B /* TimeInterval+Extensions.swift */,
+				604B94BC28314DE600508C27 /* XCUIApplication+settingsApp.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -616,11 +623,13 @@
 				603497AC27F08D9300770EE0 /* Executor+cleanup.swift */,
 				603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */,
 				603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */,
-				603497B027F08E6600770EE0 /* Executor+handleReactNativeReload.swift */,
+				603497B027F08E6600770EE0 /* Executor+reactNativeReload.swift */,
 				603497A927F08C3700770EE0 /* Executor+sendAction.swift */,
 				60A3B463282D0356002F903B /* Executor+disconnect.swift */,
 				60A3B465282D0439002F903B /* Executor+waitFor.swift */,
 				60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */,
+				604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */,
+				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
 			);
 			name = Handlers;
 			sourceTree = "<group>";
@@ -819,7 +828,7 @@
 			files = (
 				605341A1280F010700C0405D /* TapTests.swift in Sources */,
 				60534156280C177300C0405D /* SwipeTests.swift in Sources */,
-				603497B127F08E6600770EE0 /* Executor+handleReactNativeReload.swift in Sources */,
+				603497B127F08E6600770EE0 /* Executor+reactNativeReload.swift in Sources */,
 				60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */,
 				60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */,
 				609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */,
@@ -833,6 +842,7 @@
 				60FBF5F3281848C0000B73B1 /* WheelPickerTests.swift in Sources */,
 				605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */,
 				6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */,
+				604B94BD28314DE600508C27 /* XCUIApplication+settingsApp.swift in Sources */,
 				60FBF6C1281AAA31000B73B1 /* ElementMatchersTests.swift in Sources */,
 				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
 				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,
@@ -845,6 +855,7 @@
 				60C7F4FD27DA1F80000D417A /* WebSocketDelegateProtocol.swift in Sources */,
 				60BF52ED281ECBFB00610DBD /* WhiteBoxExecutor.swift in Sources */,
 				605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */,
+				604B94B928313C3200508C27 /* Executor+captureViewHierarchy.swift in Sources */,
 				60C7F51027DE0978000D417A /* ServerMessageType.swift in Sources */,
 				60FBF5F128184828000B73B1 /* XCUIElement+setColumnToValue.swift in Sources */,
 				603497AD27F08D9300770EE0 /* Executor+cleanup.swift in Sources */,
@@ -875,6 +886,7 @@
 				60A3B448282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift in Sources */,
 				60C7F4F327D8D67D000D417A /* WebSocketClient.swift in Sources */,
 				603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */,
+				604B94BB28314B6400508C27 /* Executor+shakeDevice.swift in Sources */,
 				60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */,
 				60FBF56E2817915B000B73B1 /* ScrollTests.swift in Sources */,
 				60FBF5EA28183A9F000B73B1 /* XCUIElement+isVisible.swift in Sources */,

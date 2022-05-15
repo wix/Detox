@@ -21,26 +21,38 @@ extension Executor {
   }
 
   private func setWhiteBoxSyncSettings(params: [String: AnyHashable], messageId: NSNumber) {
-    let waitMilisecondsForDebugger = (params["waitForDebugger"] as? NSNumber)?.doubleValue
-    if waitMilisecondsForDebugger != nil {
-      let seconds = waitMilisecondsForDebugger! / 1000
-      Thread.sleep(forTimeInterval: seconds)
+    let waitSecondsForDebugger = params.waitSecondsForDebugger
+    if waitSecondsForDebugger != nil {
+      Thread.sleep(forTimeInterval: waitSecondsForDebugger!)
     }
-
-    let maxTimerWaitMiliseconds = (params["maxTimerWait"] as? NSNumber)?.doubleValue
-    let maxTimerWait = maxTimerWaitMiliseconds != nil ? maxTimerWaitMiliseconds! / 1000 : nil
-
-    let blacklistURLs = params["blacklistURLs"] as? [String]
-
-    let enabled = (params["enabled"] as? NSNumber)?.boolValue
-    let disabled = enabled != nil ? !enabled! : nil
 
     execute(
       whiteBoxRequest: .setSyncSettings(
-        maxTimerWait: maxTimerWait,
-        blacklistURLs: blacklistURLs,
-        disabled: disabled
+        maxTimerWait: params.maxTimerWait,
+        blacklistURLs: params.blacklistURLs,
+        disabled: params.disabled
       )
-    ).assertResponse(equalsTo: .none)
+    ).assertResponse(equalsTo: .completed)
+  }
+}
+
+private extension Dictionary where Key == String, Value == AnyHashable {
+  var waitSecondsForDebugger: Double? {
+    let waitMilisecondsForDebugger = (self["waitForDebugger"] as? NSNumber)?.doubleValue
+    return waitMilisecondsForDebugger != nil ? waitMilisecondsForDebugger! / 1000 : nil
+  }
+
+  var maxTimerWait: TimeInterval? {
+    let maxTimerWaitMiliseconds = (self["maxTimerWait"] as? NSNumber)?.doubleValue
+    return maxTimerWaitMiliseconds != nil ? maxTimerWaitMiliseconds! / 1000 : nil
+  }
+
+  var blacklistURLs: [String]? {
+    self["blacklistURLs"] as? [String]
+  }
+
+  var disabled: Bool? {
+    let enabled = (self["enabled"] as? NSNumber)?.boolValue
+    return enabled != nil ? !enabled! : nil
   }
 }

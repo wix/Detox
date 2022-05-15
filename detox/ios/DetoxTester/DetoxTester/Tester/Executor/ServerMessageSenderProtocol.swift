@@ -27,5 +27,8 @@ enum ResponseMessageType: String {
   case reportCleanupDone = "cleanupDone"
   case reportWaitForBackgroundDone = "waitForBackgroundDone"
   case reportWaitForForegroundDone = "waitForActiveDone"
+  case reportWaitForIdleDone = "waitForIdleDone"
   case reportInvokeResult = "invokeResult"
+  case reportCaptureViewHierarchyDone = "captureViewHierarchyDone"
+  case reportShakeDeviceDone = "shakeDeviceDone"
 }

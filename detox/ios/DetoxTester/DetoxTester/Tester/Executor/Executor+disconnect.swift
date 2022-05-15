@@ -9,7 +9,7 @@ extension Executor {
   ///
   func disconnect(messageId: NSNumber) {
     if isWhiteBoxExecutorAvailable() {
-      execute(whiteBoxRequest: .disconnect).assertResponse(equalsTo: .none)
+      execute(whiteBoxRequest: .disconnect).assertResponse(equalsTo: .completed)
     }
 
     cleanup(messageId: messageId)
