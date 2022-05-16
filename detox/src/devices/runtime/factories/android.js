@@ -54,11 +54,6 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
       };
 
       const client = new Client(appSessionConfig);
-      client.terminateApp = async () => {
-        if (this.device && this.device._isAppRunning()) { // TODO use app alias here
-          await this.device.terminateApp(); // TODO use app alias here
-        }
-      };
       const invocationManager = new InvocationManager(client);
       const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice(); // TODO one instance of this should be enough
 
@@ -83,7 +78,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
     };
 
     const { AndroidEmulatorRuntimeDriver } = require('../drivers');
-    return new AndroidEmulatorRuntimeDriver(deps, props);
+    return new AndroidEmulatorRuntimeDriver(deps, configs, props);
   }
 }
 
@@ -95,7 +90,7 @@ class AndroidAttached extends RuntimeDriverFactoryAndroid {
     };
 
     const { AttachedAndroidRuntimeDriver } = require('../drivers');
-    return new AttachedAndroidRuntimeDriver(deps, props);
+    return new AttachedAndroidRuntimeDriver(deps, configs, props);
   }
 }
 
@@ -107,7 +102,7 @@ class Genycloud extends RuntimeDriverFactoryAndroid {
     };
 
     const { GenycloudRuntimeDriver } = require('../drivers');
-    return new GenycloudRuntimeDriver(deps, props);
+    return new GenycloudRuntimeDriver(deps, configs, props);
   }
 }
 

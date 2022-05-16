@@ -14,10 +14,11 @@ const AndroidDriver = require('../AndroidDriver');
 class GenyCloudDriver extends AndroidDriver {
   /**
    * @param deps { GenycloudDriverDeps }
+   * @param configs {{ appsConfig: Object }}
    * @param props { GenycloudDriverProps }
    */
-  constructor(deps, { instance }) {
-    super(deps, { adbName: instance.adbName });
+  constructor(deps, configs, { instance }) {
+    super(deps, configs, { adbName: instance.adbName });
     this.instance = instance;
   }
 

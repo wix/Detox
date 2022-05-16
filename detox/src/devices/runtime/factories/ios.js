@@ -1,14 +1,20 @@
+// TODO (multiapps): Consider relocating the things below (belongs under runtime/)
+const Client = require('../../../client/Client');
+
 const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
-  _createDriverDependencies(commonDeps) {
+  _createDriverDependencies(commonDeps, { sessionConfig }) {
     const serviceLocator = require('../../../servicelocator/ios');
     const applesimutils = serviceLocator.appleSimUtils;
+    const client = new Client(sessionConfig);
+
     const { eventEmitter } = commonDeps;
 
     const SimulatorLauncher = require('../../allocation/drivers/ios/SimulatorLauncher');
     return {
       ...commonDeps,
+      client,
       applesimutils,
       simulatorLauncher: new SimulatorLauncher({ applesimutils, eventEmitter }),
     };
@@ -18,12 +24,13 @@ class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
 class Ios extends RuntimeDriverFactoryIos {
   _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
     const { IosRuntimeDriver } = require('../drivers');
-    return new IosRuntimeDriver(deps);
+    return new IosRuntimeDriver(deps, configs);
   }
 }
 
 class IosSimulator extends RuntimeDriverFactoryIos {
-  _createDriver(deviceCookie, deps, { deviceConfig }) {
+  _createDriver(deviceCookie, deps, configs) {
+    const { deviceConfig } = configs;
     const props = {
       udid: deviceCookie.udid,
       type: deviceConfig.device.type,
@@ -31,7 +38,7 @@ class IosSimulator extends RuntimeDriverFactoryIos {
     };
 
     const { IosSimulatorRuntimeDriver } = require('../drivers');
-    return new IosSimulatorRuntimeDriver(deps, props);
+    return new IosSimulatorRuntimeDriver(deps, configs, props);
   }
 }
 

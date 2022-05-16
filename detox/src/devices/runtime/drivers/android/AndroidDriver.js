@@ -41,10 +41,11 @@ const log = logger.child({ __filename });
 class AndroidDriver extends DeviceDriverBase {
   /**
    * @param deps { AndroidDriverDeps }
+   * @param configs {{ appsConfig: Object }}
    * @param props { AndroidDriverProps }
    */
-  constructor(deps, { adbName }) {
-    super(deps);
+  constructor(deps, configs, { adbName }) {
+    super(deps, configs);
 
     this.adbName = adbName;
     this.adb = deps.adb;
@@ -56,7 +57,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.devicePathBuilder = deps.devicePathBuilder;
     this.instrumentation = deps.instrumentation;
 
-    this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
+    this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice(); // TODO (multiapps) don't instantiate here; Drop direct invocationManager ref
   }
 
   getExternalId() {

@@ -3,25 +3,35 @@ const os = require('os');
 const path = require('path');
 
 const fs = require('fs-extra');
+const _ = require('lodash');
 
 const log = require('../../../utils/logger').child({ __filename });
 
 /**
- * @typedef DeviceDriverDeps
+ * @typedef App
+ * @property alias { String }
  * @property client { Client }
+ */
+
+/**
+ * @typedef DeviceDriverDeps
+ * @property apps { Object.<String, App> }
  * @property eventEmitter { AsyncEmitter }
  */
 
 class RuntimeDriverBase {
   /**
    * @param deps { DeviceDriverDeps }
+   * @param configs {{ appsConfig: Object }}
    */
-  constructor({ client, eventEmitter }) {
-    this.client = client;
+  constructor({ apps, eventEmitter }, configs) {
     this.emitter = eventEmitter;
 
-    this._apps = {};
-    this._selectedApp = null;
+    this._apps = apps;
+    this._selectedApp = '';
+
+    _.forEach(apps, (app, alias) =>
+      app.client.terminateApp = () => this.terminate(TODO)); // TODO (multiapps) alias to bundleId!!!
   }
 
   /**
@@ -38,20 +48,39 @@ class RuntimeDriverBase {
     return undefined;
   }
 
+  /**
+   * // TODO (multiapps) unit-test
+   * @returns {string} App alias.
+   */
   get selectedApp() {
-    return this._selectedApp;
+    return this._selectedApp.alias;
   }
 
+  // TODO (multiapps) unit-test
   selectApp(appAlias) {
     this._selectedApp = this._apps[appAlias];
   }
 
+  // TODO (multiapps) unit-test
   clearSelectedApp() {
     this._selectedApp = null;
   }
 
   get invocationManager() {
     return this._selectedApp.invocationManager;
+  }
+
+  get client() {
+    return this._selectedApp.client;
+  }
+
+  // TODO (multiapps) unit-test
+  isAppRunning(appId) {
+    throw new Error('Not implemented'); TODO ASDASD
+  }
+
+  async onTestEnd(testSummary) {
+    this._dumpUnhandledErrorsIfAny(testSummary);
   }
 
   async installApp(_binaryPath, _testBinaryPath) {}
@@ -139,6 +168,7 @@ class RuntimeDriverBase {
 
   async cleanup(_bundleId) {
     this.emitter.off(); // clean all listeners
+    await this._cleanupApps(); // TODO (multiapps) unit-test
   }
 
   getLogsPaths() {
@@ -160,6 +190,20 @@ class RuntimeDriverBase {
 
   async captureViewHierarchy() {
     return '';
+  }
+
+  async _cleanupApps() {
+    const promises = this._apps.map(({ client }) => {
+      client.dumpPendingRequests();
+      return client.cleanup();
+    });
+    return Promise.all(promises);
+  }
+
+  _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
+    if (pendingRequests) {
+      this._apps.forEach(({ client }) => client.dumpPendingRequests({ testName }));
+    }
   }
 }
 

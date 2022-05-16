@@ -16,6 +16,7 @@ const IosDriver = require('./IosDriver');
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
  * @property simulatorLauncher { SimulatorLauncher }
  * @property applesimutils { AppleSimUtils }
+ * @property client { Client }
  */
 
 /**
@@ -28,10 +29,11 @@ const IosDriver = require('./IosDriver');
 class SimulatorDriver extends IosDriver {
   /**
    * @param deps { SimulatorDriverDeps }
+   * @param configs {{ appsConfig: Object }}
    * @param props { SimulatorDriverProps }
    */
-  constructor(deps, { udid, type, bootArgs }) {
-    super(deps);
+  constructor(deps, configs, { udid, type, bootArgs }) {
+    super(deps, configs);
 
     this.udid = udid;
     this._type = type;

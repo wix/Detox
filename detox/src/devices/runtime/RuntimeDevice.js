@@ -91,8 +91,8 @@ class RuntimeDevice {
     }
   }
 
-  async selectApp(name) {
-    if (name === undefined) {
+  async selectApp(alias) {
+    if (alias === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();
     }
 
@@ -100,17 +100,17 @@ class RuntimeDevice {
       await this.terminateApp();
     }
 
-    if (name === null) { // Internal use to unselect the app
+    if (alias === null) { // Internal use to unselect the app
       this.deviceDriver.clearSelectedApp();
       return;
     }
 
-    const appConfig = this._appsConfig[name];
+    const appConfig = this._appsConfig[alias];
     if (!appConfig) {
-      throw this._errorComposer.cantFindApp(name);
+      throw this._errorComposer.cantFindApp(alias);
     }
 
-    this.deviceDriver.selectApp(name);
+    this.deviceDriver.selectApp(alias);
 
     this._appLaunchArgs.reset();
     this._appLaunchArgs.modify(this._currentApp.launchArgs);
@@ -267,11 +267,6 @@ class RuntimeDevice {
     return this.deviceDriver.getPlatform();
   }
 
-  async _cleanup() {
-    const bundleId = this._currentApp && this._currentApp.bundleId;
-    await this.deviceDriver.cleanup(bundleId);
-  }
-
   async pressBack() {
     await this.deviceDriver.pressBack();
   }
@@ -286,6 +281,11 @@ class RuntimeDevice {
 
   async resetStatusBar() {
     await this.deviceDriver.resetStatusBar();
+  }
+
+  async _cleanup() {
+    const bundleId = this._currentApp && this._currentApp.bundleId;
+    await this.deviceDriver.cleanup(bundleId);
   }
 
   /**
@@ -309,9 +309,9 @@ class RuntimeDevice {
   async _doLaunchApp(launchParams, bundleId) {
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, launchParams);
-    const newInstance = launchParams.newInstance !== undefined
+    const newInstance = (launchParams.newInstance !== undefined)
       ? launchParams.newInstance
-      : this._processes[bundleId] == null;
+      : !this._isAppRunning(bundleId);
 
     if (launchParams.delete) {
       await this.terminateApp(bundleId);
@@ -321,11 +321,11 @@ class RuntimeDevice {
       await this.terminateApp(bundleId);
     }
 
-    const launchArgs = this._prepareLaunchArgs(launchParams);
-
     if (launchParams.permissions) {
       await this.deviceDriver.setPermissions(bundleId, launchParams.permissions);
     }
+
+    const launchArgs = this._prepareLaunchArgs(launchParams);
 
     if (this._isAppRunning(bundleId) && hasPayload) {
       await this.deviceDriver.deliverPayload({ ...launchParams, delayPayload: true });
@@ -413,6 +413,10 @@ class RuntimeDevice {
     //`params` will be used later for `predeliverPayload`, so remove the actual notification and add the file URL
     delete params[key];
     params[launchKey] = payloadFilePath;
+  }
+
+  async _onTestEnd(testSummary) {
+    await this.deviceDriver.onTestEnd(testSummary);
   }
 
   async _notifyAppReady(bundleId) {

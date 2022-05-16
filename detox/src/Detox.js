@@ -6,10 +6,8 @@ const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
 
-const Client = require('./client/Client');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
-const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const Deferred = require('./utils/Deferred');
@@ -53,7 +51,6 @@ class Detox {
     this._sessionConfig = sessionConfig;
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer({ appsConfig });
 
-    this._client = null;
     this._server = null;
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
@@ -96,12 +93,6 @@ class Detox {
       this._artifactsManager = null;
     }
 
-    if (this._client) {
-      this._client.dumpPendingRequests();
-      await this._client.cleanup();
-      this._client = null;
-    }
-
     if (this.device) {
       const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
       await this.device._cleanup();
@@ -123,10 +114,6 @@ class Detox {
 
     this._validateTestSummary('beforeEach', testSummary);
     this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
-    await this._dumpUnhandledErrorsIfAny({
-      pendingRequests: false,
-      testName: testSummary.fullName,
-    });
     await this._artifactsManager.onTestStart(testSummary);
   }
 
@@ -136,10 +123,6 @@ class Detox {
     this._validateTestSummary('afterEach', testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
     await this._artifactsManager.onTestDone(testSummary);
-    await this._dumpUnhandledErrorsIfAny({
-      pendingRequests: testSummary.timedOut,
-      testName: testSummary.fullName,
-    });
   }
 
   async _doInit() {
@@ -161,17 +144,6 @@ class Detox {
       }
     }
 
-    this._client = new Client(sessionConfig);
-    this._client.terminateApp = async () => {
-      if (this.device && this.device._isAppRunning()) {
-        await this.device.terminateApp();
-      }
-    };
-
-    await this._client.connect();
-
-    const invocationManager = new InvocationManager(this._client);
-
     const {
       envValidatorFactory,
       deviceAllocatorFactory,
@@ -184,8 +156,6 @@ class Detox {
     await envValidator.validate();
 
     const commonDeps = {
-      invocationManager,
-      client: this._client,
       eventEmitter: this._eventEmitter,
       runtimeErrorComposer: this._runtimeErrorComposer,
     };
@@ -206,8 +176,7 @@ class Detox {
       });
     await this.device._prepare();
 
-    const matchers = matchersFactory.createMatchers({
-      invocationManager,
+    const matchers = matchersFactory.createMatchers({ // TOOD (multiapps) Pass in driver instead of device
       runtimeDevice: this.device,
       eventEmitter: this._eventEmitter,
     });
@@ -275,12 +244,6 @@ class Detox {
         break;
       default:
         throw this._runtimeErrorComposer.invalidTestSummaryStatus(methodName, testSummary);
-    }
-  }
-
-  async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
-    if (pendingRequests) {
-      this._client.dumpPendingRequests({ testName });
     }
   }
 

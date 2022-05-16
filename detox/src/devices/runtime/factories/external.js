@@ -1,3 +1,5 @@
+const Client = require('../../../client/Client');
+
 const RuntimeDeviceFactory = require('./base');
 
 class External extends RuntimeDeviceFactory {
@@ -16,8 +18,9 @@ class External extends RuntimeDeviceFactory {
     this._module = module;
   }
 
-  _createDriverDependencies(commonDeps) {
-    return { ...commonDeps };
+  _createDriverDependencies(commonDeps, { sessionConfig }) {
+    const client = new Client(sessionConfig);
+    return { ...commonDeps, client };
   }
 
   _createDriver(deviceCookie, deps, configs) {
