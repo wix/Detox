@@ -5,7 +5,7 @@ const runnerConfig = `{
     "testEnvironment": "./environment",
     "testTimeout": 120000,
     "testMatch": ["<rootDir>/e2e/*.e2e.js"],
-    "reporters": ["detox/runners/jest-circus/reporter"],
+    "reporters": ["detox/runners/jest/reporter"],
     "verbose": true
 }
 `;
@@ -14,7 +14,7 @@ const environmentJsContent = `const {
   DetoxCircusEnvironment,
   SpecReporter,
   WorkerAssignReporter,
-} = require('detox/runners/jest-circus');
+} = require('detox/runners/jest');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {

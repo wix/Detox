@@ -112,7 +112,7 @@ A typical `jest-circus` configuration in `e2e/config.json` file would look like:
   "testRunner": "jest-circus/runner",
   "testEnvironment": "./environment",
   "testTimeout": 120000,
-  "reporters": ["detox/runners/jest/streamlineReporter"],
+  "reporters": ["detox/runners/jest/reporter"],
   "verbose": true
 }
 ```
@@ -130,7 +130,7 @@ const {
   DetoxCircusEnvironment,
   SpecReporter,
   WorkerAssignReporter,
-} = require('detox/runners/jest-circus');
+} = require('detox/runners/jest');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {

@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 
+// @ts-ignore
 console.error(chalk.yellow(`
 =========================  THE NEW JOURNEY BEGINS  =============================
 

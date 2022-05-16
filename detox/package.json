@@ -147,7 +147,7 @@
       "src/utils/pipeCommands.js",
       "src/utils/pressAnyKey.js",
       "src/utils/shellUtils.js",
-      "runners/jest-circus/utils/assertJestCircus27.js"
+      "runners/jest/.*.js"
     ],
     "resetMocks": true,
     "resetModules": true,
