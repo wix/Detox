@@ -7,17 +7,17 @@ const { ActionInteraction } = require('../interactions/web');
 
 const { WebMatcher } = require('./WebMatcher');
 
-const _device = Symbol('device');
+const _runtimeDriver = Symbol('runtimeDriver');
+const _invocationManager = Symbol('invocationManager');
 const _emitter = Symbol('emitter');
 const _matcher = Symbol('matcher');
-const _invocationManager = Symbol('invocationManager');
 const _webMatcher = Symbol('webMatcher');
 const _webViewElement = Symbol('webViewElement');
 
 class WebElement {
-  constructor({ device, invocationManager, webMatcher, webViewElement }) {
-    this[_device] = device;
-    this[_invocationManager] = invocationManager;
+  constructor({ runtimeDriver, webMatcher, webViewElement }) {
+    this[_runtimeDriver] = runtimeDriver;
+    this[_invocationManager] = runtimeDriver.invocationManager;
     this[_webMatcher] = webMatcher;
     this[_webViewElement] = webViewElement;
     this.atIndex(0);
@@ -38,7 +38,7 @@ class WebElement {
 
   async typeText(text, isContentEditable = false) {
     if (isContentEditable) {
-      return await this[_device]._typeText(text);
+      return await this[_runtimeDriver].typeText(text);
     }
     return await new ActionInteraction(this[_invocationManager],  new actions.WebTypeTextAction(this, text)).execute();
   }
@@ -91,10 +91,9 @@ class WebElement {
 }
 
 class WebViewElement {
-  constructor({ device, emitter, invocationManager, matcher }) {
-    this[_device] = device;
+  constructor({ runtimeDriver, emitter, matcher }) {
+    this[_runtimeDriver] = runtimeDriver;
     this[_emitter] = emitter;
-    this[_invocationManager] = invocationManager;
     this[_matcher] = matcher;
 
     if (matcher !== undefined) {
@@ -109,8 +108,7 @@ class WebViewElement {
   element(webMatcher) {
     if (webMatcher instanceof WebMatcher) {
       return new WebElement({
-        device: this[_device],
-        invocationManager: this[_invocationManager],
+        runtimeDriver: this[_runtimeDriver],
         webViewElement: this,
         webMatcher,
       });

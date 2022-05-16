@@ -10,10 +10,9 @@ const { WebExpectElement } = require('./core/WebExpect');
 const matchers = require('./matchers');
 
 class AndroidExpect {
-  constructor({ invocationManager, device, emitter }) {
-    this._device = device;
+  constructor({ runtimeDriver, emitter }) {
+    this._runtimeDriver = runtimeDriver;
     this._emitter = emitter;
-    this._invocationManager = invocationManager;
 
     this.by = matchers;
     this.element = this.element.bind(this);
@@ -25,7 +24,7 @@ class AndroidExpect {
 
   element(matcher) {
     if (matcher instanceof NativeMatcher) {
-      return new NativeElement(this._invocationManager, this._emitter, matcher);
+      return new NativeElement(this._runtimeDriver.invocationManager, this._emitter, matcher);
     }
 
     throw new DetoxRuntimeError(`element() argument is invalid, expected a native matcher, but got ${typeof element}`);
@@ -35,9 +34,8 @@ class AndroidExpect {
   web(matcher) {
     if (matcher == null || matcher instanceof NativeMatcher) {
       return new WebViewElement({
-        device: this._device,
+        runtimeDriver: this._runtimeDriver,
         emitter: this._emitter,
-        invocationManager: this._invocationManager,
         matcher,
       });
     }
@@ -46,13 +44,13 @@ class AndroidExpect {
   }
 
   expect(element) {
-    if (element instanceof WebElement) return new WebExpectElement(this._invocationManager, element);
-    if (element instanceof NativeElement) return new NativeExpectElement(this._invocationManager, element);
+    if (element instanceof WebElement) return new WebExpectElement(this._runtimeDriver.invocationManager, element);
+    if (element instanceof NativeElement) return new NativeExpectElement(this._runtimeDriver.invocationManager, element);
     throw new DetoxRuntimeError(`expect() argument is invalid, expected a native or web matcher, but got ${typeof element}`);
   }
 
   waitFor(element) {
-    if (element instanceof NativeElement) return new NativeWaitForElement(this._invocationManager, element);
+    if (element instanceof NativeElement) return new NativeWaitForElement(this._runtimeDriver.invocationManager, element);
     throw new DetoxRuntimeError(`waitFor() argument is invalid, got ${typeof element}`);
   }
 }

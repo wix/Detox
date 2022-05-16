@@ -176,8 +176,8 @@ class Detox {
       });
     await this.device._prepare();
 
-    const matchers = matchersFactory.createMatchers({ // TOOD (multiapps) Pass in driver instead of device
-      runtimeDevice: this.device,
+    const matchers = matchersFactory.createMatchers({
+      runtimeDriver: this.device.deviceDriver,
       eventEmitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
