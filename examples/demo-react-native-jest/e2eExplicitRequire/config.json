@@ -6,6 +6,6 @@
     "transform": {
       "\\.tsx?$": "ts-jest"
     },
-    "reporters": ["detox/runners/jest/streamlineReporter"],
+    "reporters": ["detox/runners/jest-circus/reporter"],
     "verbose": true
 }

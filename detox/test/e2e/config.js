@@ -7,8 +7,8 @@ module.exports = {
   'globalTeardown': './test/e2e/global-teardown.js',
   'testTimeout': 120000,
   'reporters': process.env.DISABLE_JUNIT_REPORTER === '1'
-    ? ['<rootDir>/runners/jest/streamlineReporter']
-    : ['<rootDir>/runners/jest/streamlineReporter', '<rootDir>/test/node_modules/jest-junit'],
+    ? ['<rootDir>/runners/jest-circus/reporter']
+    : ['<rootDir>/runners/jest-circus/reporter', '<rootDir>/test/node_modules/jest-junit'],
   'verbose': true,
   'bail': false,
   'maxWorkers': Number(process.env.DEMO_MAX_WORKERS || '1'),

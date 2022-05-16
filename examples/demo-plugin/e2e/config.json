@@ -2,6 +2,6 @@
     "testEnvironment": "./environment",
     "testTimeout": 120000,
     "testRegex": "\\.test\\.js$",
-    "reporters": ["detox/runners/jest/streamlineReporter"],
+    "reporters": ["detox/runners/jest-circus/reporter"],
     "verbose": true
 }
