@@ -1,5 +1,5 @@
 // @ts-nocheck
-const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-unpublished-require
+const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const DetoxError = require('../../src/errors/DetoxError');
@@ -8,7 +8,7 @@ const Timer = require('../../src/utils/Timer');
 const DetoxCoreListener = require('./listeners/DetoxCoreListener');
 const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
 const assertExistingContext = require('./utils/assertExistingContext');
-const assertJestCircus26 = require('./utils/assertJestCircus26');
+const { assertJestCircus27 } = require('./utils/assertJestCircus27');
 const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
 
 const SYNC_CIRCUS_EVENTS = new Set([
@@ -24,7 +24,7 @@ const SYNC_CIRCUS_EVENTS = new Set([
  */
 class DetoxCircusEnvironment extends NodeEnvironment {
   constructor(config, context) {
-    super(assertJestCircus26(config), assertExistingContext(context));
+    super(assertJestCircus27(config), assertExistingContext(context));
 
     /** @private */
     this._timer = null;
