@@ -28,6 +28,9 @@ extension WhiteBoxExecutor {
 
     ///
     case setSyncSettings(maxTimerWait: TimeInterval?, blacklistURLs: [String]?, disabled: Bool?)
+
+    ///
+    case requestBundleIdentifier
   }
 }
 
@@ -39,5 +42,8 @@ extension WhiteBoxExecutor.Message {
 
     ///
     case busy
+
+    ///
+    case bundleIdentifier(String)
   }
 }
