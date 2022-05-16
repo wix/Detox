@@ -92,7 +92,7 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async launchApp(bundleId, launchArgs, languageAndLocale) {
+  async _launchApp(bundleId, launchArgs, languageAndLocale) {
     return await this._handleLaunchApp({
       manually: false,
       bundleId,
@@ -101,7 +101,7 @@ class AndroidDriver extends DeviceDriverBase {
     });
   }
 
-  async waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
+  async _waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
     return await this._handleLaunchApp({
       manually: true,
       bundleId,
@@ -118,9 +118,9 @@ class AndroidDriver extends DeviceDriverBase {
     launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
 
     if (manually) {
-      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
+      await this.__waitForAppLaunch(adbName, bundleId, launchArgs);
     } else {
-      await this._launchApp(adbName, bundleId, launchArgs);
+      await this.__launchApp(adbName, bundleId, launchArgs);
     }
 
     const pid = await this._waitForProcess(adbName, bundleId);
@@ -289,7 +289,7 @@ class AndroidDriver extends DeviceDriverBase {
     return _launchArgs;
   }
 
-  async _launchApp(adbName, bundleId, launchArgs) {
+  async __launchApp(adbName, bundleId, launchArgs) {
     if (!this.instrumentation.isRunning()) {
       await this._launchInstrumentationProcess(adbName, bundleId, launchArgs);
       await sleep(500);
@@ -361,7 +361,7 @@ class AndroidDriver extends DeviceDriverBase {
     return pid;
   }
 
-  async _waitForAppLaunch(adbName, bundleId, launchArgs) {
+  async __waitForAppLaunch(adbName, bundleId, launchArgs) {
     const instrumentationClass = await this.adb.getInstrumentationRunner(adbName, bundleId);
     this._printInstrumentationHint({ instrumentationClass, launchArgs });
     await pressAnyKey();

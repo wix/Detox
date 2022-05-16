@@ -308,7 +308,7 @@ describe('Device', () => {
 
       expect(emitter.emit).toHaveBeenCalledWith('appReady', {
         deviceId: device.id,
-        bundleId: device._bundleId,
+        bundleId: device._appId,
         pid: 42,
       });
     });

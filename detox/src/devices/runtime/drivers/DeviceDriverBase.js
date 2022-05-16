@@ -29,6 +29,7 @@ class RuntimeDriverBase {
 
     this._apps = apps;
     this._selectedApp = '';
+    this._processes = {};
 
     _.forEach(apps, (app, alias) =>
       app.client.terminateApp = () => this.terminate(TODO)); // TODO (multiapps) alias to bundleId!!!
@@ -76,9 +77,10 @@ class RuntimeDriverBase {
 
   // TODO (multiapps) unit-test
   isAppRunning(appId) {
-    throw new Error('Not implemented'); TODO ASDASD
+    return (this._processes[appId] != null); // TODO (multiapps) Change to '!==' ???
   }
 
+  // TODO (multiapps) unit-test this addition
   async onTestEnd(testSummary) {
     this._dumpUnhandledErrorsIfAny(testSummary);
   }
@@ -87,9 +89,25 @@ class RuntimeDriverBase {
   async uninstallApp() {}
   installUtilBinaries() {}
 
-  async launchApp() {}
+  async launchApp(appId, launchArgs, languageAndLocale) {
+    this._processes[appId] = await this._launchApp(appId, launchArgs, languageAndLocale);
+
+    // TODO (multiapps) unit-test this addition
+    await this.waitUntilReady();
+    await this.waitForActive();
+
+    // TODO (multiapps) unit-test this addition
+    await this._notifyAppReady(appId);
+  }
+
+  async waitForAppLaunch(appId, launchArgs, languageAndLocale) {
+    this._processes[appId] = await this._waitForAppLaunch(appId, launchArgs, languageAndLocale);
+
+    // TODO (multiapps) unit-test this addition
+    await this._notifyAppReady(appId);
+  }
+
   async terminate(_bundleId) {}
-  async waitForAppLaunch() {}
 
   async waitUntilReady() {
     return await this.client.waitUntilReady();
@@ -166,7 +184,7 @@ class RuntimeDriverBase {
     return undefined;
   }
 
-  async cleanup(_bundleId) {
+  async cleanup(appId) {
     this.emitter.off(); // clean all listeners
     await this._cleanupApps(); // TODO (multiapps) unit-test
   }
@@ -192,6 +210,18 @@ class RuntimeDriverBase {
     return '';
   }
 
+  _launchApp() {}
+  _waitForAppLaunch() {}
+
+  async _notifyAppReady(appId) {
+    await this.emitter.emit('appReady', {
+      deviceId: this.getExternalId(),
+      bundleId: appId, // TODO (multiapps) can rename bundleId to appId?
+      pid: this._processes[appId],
+    });
+  }
+
+  // TODO (multiapps) unit-test this addition
   async _cleanupApps() {
     const promises = this._apps.map(({ client }) => {
       client.dumpPendingRequests();
