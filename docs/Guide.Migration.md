@@ -268,7 +268,7 @@ Before:
 {
   "ios.sim.debug": {
     "type": "ios.simulator",
-    "name": "iPhone 11 Pro"
+    "name": "iPhone 12 Pro"
   },
   "android.emu.release": {
     "type": "android.emulator",
@@ -289,9 +289,9 @@ After:
     "type": "ios.simulator",
     "device": { // one of these or a combination of them
       "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
-      "type": "iPhone 11 Pro",
+      "type": "iPhone 12 Pro",
       "name": "MySim",
-      "os": "iOS 13.0",
+      "os": "iOS 15.4",
     }
   },
   "android.emu.release": {

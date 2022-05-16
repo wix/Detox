@@ -21,7 +21,7 @@ module.exports = {
     "simulator": {
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 11 Pro"
+        "type": "iPhone 12 Pro"
       }
     },
     "emulator": {
