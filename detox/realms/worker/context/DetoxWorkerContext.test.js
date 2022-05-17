@@ -1,22 +1,13 @@
 // @ts-nocheck
-const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
-const configuration = require('./configuration');
+const testSummaries = require('../../../src/artifacts/__mocks__/testSummaries.mock');
+const configuration = require('../../../src/configuration');
 
-jest.mock('./utils/logger');
-jest.mock('./client/Client');
-jest.mock('./utils/AsyncEmitter');
-jest.mock('./invoke');
-jest.mock('./utils/wrapWithStackTraceCutter');
-jest.mock('./environmentFactory');
-
-jest.mock('./server/DetoxServer', () => {
-  const FakeServer = jest.genMockFromModule('./server/DetoxServer');
-  return jest.fn().mockImplementation(() => {
-    const server =  new FakeServer();
-    server.port = 12345;
-    return server;
-  });
-});
+jest.mock('../../../src/utils/logger');
+jest.mock('../../../src/client/Client');
+jest.mock('../../../src/utils/AsyncEmitter');
+jest.mock('../../../src/invoke');
+jest.mock('../../../src/utils/wrapWithStackTraceCutter');
+jest.mock('../../../src/environmentFactory');
 
 describe('Detox', () => {
   const fakeCookie = {
@@ -50,7 +41,6 @@ describe('Detox', () => {
   let logger;
   let Client;
   let AsyncEmitter;
-  let DetoxServer;
   let invoke;
   let envValidator;
   let deviceAllocator;
@@ -62,7 +52,7 @@ describe('Detox', () => {
   beforeEach(() => {
     mockEnvironmentFactories();
 
-    const environmentFactory = require('./environmentFactory');
+    const environmentFactory = require('../../../src/environmentFactory');
     environmentFactory.createFactories.mockReturnValue({
       envValidatorFactory,
       deviceAllocatorFactory,
@@ -90,14 +80,13 @@ describe('Detox', () => {
       },
     });
 
-    logger = require('./utils/logger');
-    invoke = require('./invoke');
-    Client = require('./client/Client');
-    AsyncEmitter = require('./utils/AsyncEmitter');
-    DetoxServer = require('./server/DetoxServer');
-    lifecycleSymbols = require('../runners/integration').lifecycle;
+    logger = require('../../../src/utils/logger');
+    invoke = require('../../../src/invoke');
+    Client = require('../../../src/client/Client');
+    AsyncEmitter = require('../../../src/utils/AsyncEmitter');
+    lifecycleSymbols = require('../integration').lifecycle;
 
-    Detox = require('./Detox');
+    Detox = require('./DetoxWorkerContext');
   });
 
   describe('when detox.init() is called', () => {
@@ -123,15 +112,9 @@ describe('Detox', () => {
     describe('', () => {
       beforeEach(init);
 
-      it('should create a DetoxServer automatically', () =>
-        expect(DetoxServer).toHaveBeenCalledWith({
-          port: 0,
-          standalone: false,
-        }));
-
-      it('should create a new Client', () =>
+      it('should create a new Client with a random sessionId', () =>
         expect(Client).toHaveBeenCalledWith(expect.objectContaining({
-          server: 'ws://localhost:12345',
+          server: process.env.DETOX_WSS_ADDRESS,
           sessionId: expect.any(String),
         })));
 
@@ -254,25 +237,6 @@ describe('Detox', () => {
         expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
         expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
       });
-    });
-
-    describe('with sessionConfig.autoStart undefined', () => {
-      beforeEach(() => { delete detoxConfig.sessionConfig.autoStart; });
-      beforeEach(init);
-
-      it('should not start DetoxServer', () =>
-        expect(DetoxServer).not.toHaveBeenCalled());
-    });
-
-    describe('with sessionConfig.server custom URL', () => {
-      beforeEach(() => { detoxConfig.sessionConfig.server = 'ws://localhost:451'; });
-      beforeEach(init);
-
-      it('should create a DetoxServer using the port from that URL', () =>
-        expect(DetoxServer).toHaveBeenCalledWith({
-          port: '451',
-          standalone: false,
-        }));
     });
 
     describe('with behaviorConfig.init.exposeGlobals = false', () => {
@@ -630,7 +594,7 @@ describe('Detox', () => {
     let environmentFactory;
     let lifecycleHandler;
     beforeEach(() => {
-      environmentFactory = require('./environmentFactory');
+      environmentFactory = require('../../../src/environmentFactory');
 
       lifecycleHandler = {
         globalInit: jest.fn(),
@@ -669,30 +633,30 @@ describe('Detox', () => {
   });
 
   function mockEnvironmentFactories() {
-    const EnvValidator = jest.genMockFromModule('./validation/EnvironmentValidatorBase');
-    const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').External;
+    const EnvValidator = jest.genMockFromModule('../../../src/validation/EnvironmentValidatorBase');
+    const EnvValidatorFactory = jest.genMockFromModule('../../../src/validation/factories').External;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
     envValidatorFactory.createValidator.mockReturnValue(envValidator);
 
-    const ArtifactsManager = jest.genMockFromModule('./artifacts/ArtifactsManager');
-    const ArtifactsManagerFactory = jest.genMockFromModule('./artifacts/factories').External;
+    const ArtifactsManager = jest.genMockFromModule('../../../src/artifacts/ArtifactsManager');
+    const ArtifactsManagerFactory = jest.genMockFromModule('../../../src/artifacts/factories').External;
     artifactsManager = new ArtifactsManager();
     artifactsManagerFactory = new ArtifactsManagerFactory();
     artifactsManagerFactory.createArtifactsManager.mockReturnValue(artifactsManager);
 
-    const MatchersFactory = jest.genMockFromModule('./matchers/factories/index').External;
+    const MatchersFactory = jest.genMockFromModule('../../../src/matchers/factories/index').External;
     matchersFactory = new MatchersFactory();
 
-    const DeviceAllocator = jest.genMockFromModule('./devices/allocation/DeviceAllocator');
-    const DeviceAllocatorFactory = jest.genMockFromModule('./devices/allocation/factories').External;
+    const DeviceAllocator = jest.genMockFromModule('../../../src/devices/allocation/DeviceAllocator');
+    const DeviceAllocatorFactory = jest.genMockFromModule('../../../src/devices/allocation/factories').External;
     deviceAllocator = new DeviceAllocator();
     deviceAllocatorFactory = new DeviceAllocatorFactory();
     deviceAllocatorFactory.createDeviceAllocator.mockReturnValue(deviceAllocator);
     deviceAllocator.allocate.mockResolvedValue(fakeCookie);
 
-    const RuntimeDevice = jest.genMockFromModule('./devices/runtime/RuntimeDevice');
-    const RuntimeDeviceFactory = jest.genMockFromModule('./devices/runtime/factories').External;
+    const RuntimeDevice = jest.genMockFromModule('../../../src/devices/runtime/RuntimeDevice');
+    const RuntimeDeviceFactory = jest.genMockFromModule('../../../src/devices/runtime/factories').External;
     runtimeDevice = new RuntimeDevice();
     runtimeDeviceFactory = new RuntimeDeviceFactory();
     runtimeDeviceFactory.createRuntimeDevice.mockReturnValue(runtimeDevice);

@@ -1,26 +1,23 @@
 // @ts-nocheck
-const { URL } = require('url');
 const util = require('util');
 
 const _ = require('lodash');
 
-const lifecycleSymbols = require('../runners/integration').lifecycle;
+const Client = require('../../../src/client/Client');
+const environmentFactory = require('../../../src/environmentFactory');
+const { DetoxRuntimeErrorComposer } = require('../../../src/errors');
+const { InvocationManager } = require('../../../src/invoke');
+const AsyncEmitter = require('../../../src/utils/AsyncEmitter');
+const Deferred = require('../../../src/utils/Deferred');
+const logger = require('../../../src/utils/logger');
+const lifecycleSymbols = require('../integration').lifecycle;
 
-const Client = require('./client/Client');
-const environmentFactory = require('./environmentFactory');
-const { DetoxRuntimeErrorComposer } = require('./errors');
-const { InvocationManager } = require('./invoke');
-const DetoxServer = require('./server/DetoxServer');
-const AsyncEmitter = require('./utils/AsyncEmitter');
-const Deferred = require('./utils/Deferred');
-const MissingDetox = require('./utils/MissingDetox');
-const logger = require('./utils/logger');
 const log = logger.child({ __filename });
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
 
-class Detox {
+class DetoxWorkerContext {
   constructor(config) {
     log.trace(
       { event: 'DETOX_CREATE', config },
@@ -54,7 +51,6 @@ class Detox {
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer({ appsConfig });
 
     this._client = null;
-    this._server = null;
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
       events: [
@@ -108,11 +104,6 @@ class Detox {
       await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
 
-    if (this._server) {
-      await this._server.close();
-      this._server = null;
-    }
-
     this._deviceAllocator = null;
     this._deviceCookie = null;
     this.device = null;
@@ -146,22 +137,11 @@ class Detox {
     const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = this._sessionConfig;
 
-    if (sessionConfig.autoStart) {
-      this._server = new DetoxServer({
-        port: sessionConfig.server
-          ? new URL(sessionConfig.server).port
-          : 0,
-        standalone: false,
-      });
+    this._client = new Client({
+      ...sessionConfig,
+      server: process.env.DETOX_WSS_ADDRESS,
+    });
 
-      await this._server.open();
-
-      if (!sessionConfig.server) {
-        sessionConfig.server = `ws://localhost:${this._server.port}`;
-      }
-    }
-
-    this._client = new Client(sessionConfig);
     this._client.terminateApp = async () => {
       if (this.device && this.device._isAppRunning()) {
         await this.device.terminateApp();
@@ -214,7 +194,7 @@ class Detox {
     Object.assign(this, matchers);
 
     if (behaviorConfig.exposeGlobals) {
-      Object.assign(Detox.global, {
+      Object.assign(DetoxWorkerContext.global, {
         ...matchers,
         device: this.device,
       });
@@ -307,7 +287,6 @@ class Detox {
   }
 }
 
-Detox.none = new MissingDetox();
-Detox.global = global;
+DetoxWorkerContext.global = global;
 
-module.exports = Detox;
+module.exports = DetoxWorkerContext;

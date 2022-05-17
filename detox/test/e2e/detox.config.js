@@ -1,15 +1,3 @@
-const detox = require('detox');
-
-detox.hook('UNSAFE_configReady', ({ deviceConfig }) => {
-  if (process.env.CI && !process.env.DEMO_MAX_WORKERS) {
-    process.env.DEMO_MAX_WORKERS = ({
-      'ios.simulator': '4',
-      'android.emulator': '3',
-      'android.genycloud': '5',
-    })[deviceConfig.type] || '1';
-  }
-});
-
 const launchArgs = {
   app: 'le',
   goo: 'gle?',

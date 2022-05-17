@@ -21,14 +21,10 @@ module.exports = {
     choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
     describe: 'Log level',
   },
-  'no-color': {
-    describe: 'Disable colors in log output',
-    boolean: true,
-  },
   R: {
     alias: 'retries',
     group: 'Execution:',
-    describe: '[Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or <N> times at least.',
+    describe: 'Re-spawn the test runner for individual failing suite files until they pass, or <N> times at least.',
     number: true,
     default: 0,
   },
@@ -48,10 +44,6 @@ module.exports = {
     alias: 'debug-synchronization',
     group: 'Debugging:',
     coerce(value) {
-      if (value == null) {
-        return undefined;
-      }
-
       if (value === false || value === 'false') {
         return 0;
       }
@@ -99,17 +91,11 @@ module.exports = {
   'record-timeline': {
     group: 'Debugging:',
     choices: ['all', 'none'],
-    describe: '[Jest Only] Record tests and events timeline, for visual display on the chrome://tracing tool.',
-  },
-  w: {
-    alias: 'workers',
-    group: 'Execution:',
-    describe: 'Specifies the number of workers the test runner should spawn. Requires a test runner with parallel execution support (e.g. Jest)',
-    number: true,
+    describe: 'Record tests and events timeline, for visual display on the chrome://tracing tool.',
   },
   'jest-report-specs': {
     group: 'Execution:',
-    describe: '[Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.',
+    describe: 'Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.',
     boolean: true,
   },
   H: {
@@ -122,7 +108,7 @@ module.exports = {
     group: 'Execution:',
     describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.',
   },
-  keepLockFile:{
+  keepLockFile: {
     group: 'Configuration:',
     describe:'Keep the device lock file when running Detox tests',
     boolean: true,
@@ -143,7 +129,6 @@ module.exports = {
   },
   'use-custom-logger': {
     boolean: true,
-    default: true,
     group: 'Execution:',
     describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test runner's implementation (e.g. Jest).`,
   },

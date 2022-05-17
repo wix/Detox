@@ -14,7 +14,6 @@ describe('ArtifactsManager', () => {
     jest.mock('fs-extra');
     jest.mock('./__mocks__/FakePathBuilder');
     jest.mock('./utils/ArtifactPathBuilder');
-    jest.mock('../utils/argparse');
     jest.mock('../utils/logger');
 
     FakePathBuilder = require('./__mocks__/FakePathBuilder');
@@ -31,9 +30,6 @@ describe('ArtifactsManager', () => {
       },
       get fs() {
         return require('fs-extra');
-      },
-      get argparse() {
-        return require('../utils/argparse');
       },
     };
   });

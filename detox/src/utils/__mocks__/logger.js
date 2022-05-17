@@ -7,8 +7,10 @@ class FakeLogger {
     this.opts = opts;
     this.log = jest.fn();
     this.reinitialize = jest.fn();
-    this.level = jest.fn();
-    this.getDetoxLevel = this.getDetoxLevel.bind(this);
+    this._level = jest.fn();
+    Object.defineProperty(this, 'level', {
+      get: () => this._level(),
+    });
 
     for (const method of METHODS) {
       this[method] = jest.fn().mockImplementation((...args) => {
@@ -20,10 +22,6 @@ class FakeLogger {
   child(opts) {
     this.opts = Object.assign(this.opts, opts);
     return this;
-  }
-
-  getDetoxLevel() {
-    return this.level();
   }
 
   clear() {

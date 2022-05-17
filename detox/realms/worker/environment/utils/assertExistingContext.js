@@ -1,6 +1,6 @@
 // @ts-nocheck
-const { DetoxRuntimeError } = require('../../../src/errors/DetoxRuntimeError');
-const { filterErrorStack } = require('../../../src/utils/errorUtils');
+const { DetoxRuntimeError } = require('../../../../src/errors/DetoxRuntimeError');
+const { filterErrorStack } = require('../../../../src/utils/errorUtils');
 
 function findUserConstructor() {
   let wasInBaseClass = false;

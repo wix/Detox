@@ -1,6 +1,1 @@
-async function globalSetup() {
-  const detox = require('detox');
-  await detox.globalInit();
-}
-
-module.exports = globalSetup;
+module.exports = require('detox/runners/jest/globalSetup')

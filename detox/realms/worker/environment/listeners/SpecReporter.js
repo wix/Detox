@@ -1,6 +1,6 @@
 const chalk = require('chalk').default;
 
-const log = require('../../../src/utils/logger').child();
+const log = require('../../../../src/utils/logger');
 const { traceln } = require('../utils/stdout');
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');

@@ -7,6 +7,7 @@ function buildDefaultRootForArtifactsRootDirpath(configuration, rootDir) {
     return rootDir;
   }
 
+  // TODO: remove this dependency
   const seed = Number(process.env.DETOX_START_TIMESTAMP || String(Date.now()));
   const subdir = `${configuration}.${getTimeStampString(new Date(seed))}`;
   return path.join(rootDir, subdir);

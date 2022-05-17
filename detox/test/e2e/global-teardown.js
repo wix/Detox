@@ -1,7 +1,1 @@
-const detox = require('detox');
-
-async function globalTeardown() {
-  await detox.globalCleanup();
-}
-
-module.exports = globalTeardown;
+module.exports = require('detox/runners/jest/globalTeardown')

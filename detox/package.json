@@ -63,6 +63,7 @@
     "ini": "^1.3.4",
     "lodash": "^4.17.5",
     "minimist": "^1.2.0",
+    "node-ipc": "^10.1.0",
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
@@ -97,9 +98,10 @@
     "testRunner": "jest-circus/runner",
     "roots": [
       "node_modules",
+      "local-cli",
       "src",
-      "runners",
-      "local-cli"
+      "realms",
+      "runners"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
@@ -139,7 +141,6 @@
       "src/validation/EnvironmentValidatorBase.js",
       "src/validation/factories",
       "src/validation/ios/IosSimulatorEnvValidator",
-      "src/utils/MissingDetox.js",
       "src/utils/appdatapath.js",
       "src/utils/debug.js",
       "src/utils/environment.js",

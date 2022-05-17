@@ -13,10 +13,6 @@ const composeSessionConfig = require('./composeSessionConfig');
 const loadExternalConfig = require('./loadExternalConfig');
 const selectConfiguration = require('./selectConfiguration');
 
-const hooks = {
-  UNSAFE_configReady: [],
-};
-
 async function composeDetoxConfig({
   cwd = process.cwd(),
   argv = undefined,
@@ -109,18 +105,9 @@ async function composeDetoxConfig({
     sessionConfig,
   };
 
-  for (const fn of hooks.UNSAFE_configReady) {
-    await fn({ ...result, argv });
-  }
-
   return result;
-}
-
-function hook(event, listener) {
-  hooks[event].push(listener);
 }
 
 module.exports = {
   composeDetoxConfig,
-  hook,
 };

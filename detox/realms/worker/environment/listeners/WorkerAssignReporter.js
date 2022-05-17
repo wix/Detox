@@ -3,7 +3,7 @@ const path = require('path');
 const chalk = require('chalk').default;
 const _ = require('lodash');
 
-const log = require('../../../src/utils/logger').child();
+const log = require('../../../../src/utils/logger');
 
 class WorkerAssignReporter {
   constructor({ detox, env }) {

@@ -1,6 +1,7 @@
 class Trace {
   constructor() {
     this.events = [];
+    this._timestampProviderFn = Date.now; // TODO: fix me
   }
 
   init(timestampProviderFn = Date.now) {

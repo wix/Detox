@@ -1,13 +1,4 @@
 const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('../../src/configuration/utils/warnings');
-const log = require('../../src/utils/logger').child({ __filename });
-
-function coerceDeprecation(option) {
-  return function coerceDeprecationFn(value) {
-    log.warn(`Beware: ${option} will be removed in the next version of Detox.`);
-
-    return value;
-  };
-}
 
 const DETOX_ARGV_OVERRIDE_NOTICE = `
    _____ _____ ___________
@@ -30,7 +21,6 @@ const DETOX_ARGV_OVERRIDE_NOTICE = `
 `;
 
 module.exports = {
-  coerceDeprecation,
   DETOX_ARGV_OVERRIDE_NOTICE,
   DEVICE_LAUNCH_ARGS_DEPRECATION,
 };

@@ -3,8 +3,8 @@ const path = require('path');
 
 const semver = require('semver');
 
-const detoxPackageJson = require('../../../package.json');
-const DetoxRuntimeError = require('../../../src/errors/DetoxRuntimeError');
+const detoxPackageJson = require('../../../../package.json');
+const { DetoxRuntimeError } = require('../../../../src/errors');
 
 function assertJestCircus27(maybeProjectConfig) {
   const projectConfig = maybeProjectConfig.projectConfig || maybeProjectConfig;

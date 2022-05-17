@@ -62,6 +62,24 @@ function collectCliConfig({ argv }) {
     jestReportSpecs: asBoolean(get('jest-report-specs')),
     keepLockFile: asBoolean(get('keepLockFile')),
     loglevel: get('loglevel'),
+    // TODO: now since this is the single source of truth, we can process it here
+    // function adaptLogLevelName(level) {
+    //   switch (level) {
+    //     case 'fatal':
+    //     case 'error':
+    //     case 'warn':
+    //     case 'info':
+    //     case 'debug':
+    //     case 'trace':
+    //       return level;
+    //
+    //     case 'verbose':
+    //       return 'debug';
+    //
+    //     default:
+    //       return 'info';
+    //   }
+    // }
     noColor: asBoolean(get('no-color')),
     reuse: asBoolean(get('reuse')),
     runnerConfig: get('runner-config'),

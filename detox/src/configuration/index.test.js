@@ -145,29 +145,5 @@ describe('composeDetoxConfig', () => {
         }),
       });
     });
-
-    it('should enable to add hooks on UNSAFE_configReady', async () => {
-      const listener = jest.fn();
-      configuration.hook('UNSAFE_configReady', listener);
-
-      await configuration.composeDetoxConfig({
-        cwd: path.join(__dirname, '__mocks__/configuration/packagejson'),
-        override: {
-          configurations: {
-            simple: {
-              binaryPath: 'path/to/app',
-            },
-          },
-        },
-      });
-
-      expect(listener).toHaveBeenCalledWith(expect.objectContaining({
-        appsConfig: expect.any(Object),
-        artifactsConfig: expect.any(Object),
-        behaviorConfig: expect.any(Object),
-        cliConfig: expect.any(Object),
-        deviceConfig: expect.any(Object),
-      }));
-    });
   });
 });
