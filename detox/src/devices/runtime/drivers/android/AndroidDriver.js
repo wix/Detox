@@ -7,7 +7,6 @@ const _ = require('lodash');
 
 const DetoxApi = require('../../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox');
-const UiDeviceProxy = require('../../../../android/espressoapi/UiDeviceProxy');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
@@ -19,6 +18,12 @@ const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
 const log = logger.child({ __filename });
+
+/**
+ * @typedef { App } AndroidApp
+ * @property invocationManager { InvocationManager }
+ * @property uiDevice { UiDeviceProxy }
+ */
 
 /**
  * @typedef AndroidDriverProps
@@ -41,7 +46,7 @@ const log = logger.child({ __filename });
 class AndroidDriver extends DeviceDriverBase {
   /**
    * @param deps { AndroidDriverDeps }
-   * @param configs {{ appsConfig: Object }}
+   * @param configs {{ appsConfig: Object.<String, AndroidApp> }}
    * @param props { AndroidDriverProps }
    */
   constructor(deps, configs, { adbName }) {
@@ -56,12 +61,14 @@ class AndroidDriver extends DeviceDriverBase {
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
     this.instrumentation = deps.instrumentation;
-
-    this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice(); // TODO (multiapps) don't instantiate here; Drop direct invocationManager ref
   }
 
   getExternalId() {
     return this.adbName;
+  }
+
+  getUiDevice() {
+    return this._selectedApp.uiDevice;
   }
 
   async getBundleIdFromBinary(apkPath) {
@@ -181,10 +188,6 @@ class AndroidDriver extends DeviceDriverBase {
 
   getPlatform() {
     return 'android';
-  }
-
-  getUiDevice() {
-    return this.uiDevice;
   }
 
   async reverseTcpPort(port) {

@@ -47,18 +47,18 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
    * @internal
    */
   _createAppConnections({ appsConfig, sessionConfig }) {
-    return _.mapValues(appsConfig, (appConfig, appAlias) => {
+    return _.mapValues(appsConfig, (appConfig, alias) => {
       const appSessionConfig = {
         ...sessionConfig,
-        sessionId: `${sessionConfig.sessionId}:${appAlias}`,
+        sessionId: `${sessionConfig.sessionId}:${alias}`,
       };
 
       const client = new Client(appSessionConfig);
       const invocationManager = new InvocationManager(client);
-      const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice(); // TODO one instance of this should be enough
+      const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice();
 
       return {
-        alias: appAlias,
+        alias,
         client,
         invocationManager,
         uiDevice,

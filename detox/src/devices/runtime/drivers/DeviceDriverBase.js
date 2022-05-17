@@ -22,7 +22,7 @@ const log = require('../../../utils/logger').child({ __filename });
 class RuntimeDriverBase {
   /**
    * @param deps { DeviceDriverDeps }
-   * @param configs {{ appsConfig: Object }}
+   * @param configs {{ appsConfig: Object.<String, App> }}
    */
   constructor({ apps, eventEmitter }, configs) {
     this.emitter = eventEmitter;
@@ -177,7 +177,7 @@ class RuntimeDriverBase {
     return '';
   }
 
-  async getUiDevice() {
+  getUiDevice() {
     log.warn(`getUiDevice() is an Android-specific function, it exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice).`);
     log.warn(`Make sure you create an Android-specific test for this scenario.`);
 
