@@ -1,1 +1,1 @@
-module.exports = require('./reporters/DetoxReporter');
+module.exports = require('../migration')(__filename);

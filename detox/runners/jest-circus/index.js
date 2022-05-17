@@ -1,9 +1,1 @@
-const DetoxCircusEnvironment = require('./environment');
-const SpecReporter = require('./listeners/SpecReporter');
-const WorkerAssignReporter = require('./listeners/WorkerAssignReporter');
-
-module.exports = {
-  DetoxCircusEnvironment,
-  SpecReporter,
-  WorkerAssignReporter,
-};
+module.exports = require('../migration')(__filename);

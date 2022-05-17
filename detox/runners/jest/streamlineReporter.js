@@ -1,1 +1,3 @@
-module.exports = require('../jest-circus/reporter');
+/** @deprecated */
+/** @type {never} */
+module.exports = require('../deprecation');
