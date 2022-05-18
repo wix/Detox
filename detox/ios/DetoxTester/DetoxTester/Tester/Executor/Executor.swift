@@ -10,7 +10,7 @@ import XCTest
 /// Executes all Detox UI operations.
 class Executor {
   /// Used to send actions back.
-  private(set) var serverMessageSender: ServerMessageSenderProtocol!
+  private(set) var serverMessageSender: DetoxServerMessageSenderProtocol!
 
   /// Executes the given operation from the XCTest bundle.
   func execute(
@@ -71,7 +71,7 @@ class Executor {
     }
   }
 
-  func setServerMessageSender(_ sender: ServerMessageSenderProtocol) {
+  func setServerMessageSender(_ sender: DetoxServerMessageSenderProtocol) {
     self.serverMessageSender = sender
   }
 }

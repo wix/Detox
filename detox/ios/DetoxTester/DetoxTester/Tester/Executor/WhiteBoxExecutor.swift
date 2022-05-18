@@ -13,7 +13,15 @@ import UIKit
 ///  must have Detox framework in its dependencies.
 class WhiteBoxExecutor {
   /// Stored handlers.
-  private static var handlers: [String: WhiteBoxExecutor] = [:]
+  fileprivate static var handlers: [String: WhiteBoxExecutor] = [:]
+
+  ///
+  private let messageSender: AppClientMessageSenderProtocol
+
+  ///
+  private init(messageSender: AppClientMessageSenderProtocol) {
+    self.messageSender = messageSender
+  }
 
   /// Sends a message with given `message` to the application using the internal Detox framework
   /// and synchronically waits for a response.
@@ -33,5 +41,14 @@ extension WhiteBoxExecutor {
     }
 
     return handlers[bundleIdentifier]!
+  }
+}
+
+extension WhiteBoxExecutor {
+  ///
+  class func setNewHandler(
+    for bundleId: String, withMessageSender sender: AppClientMessageSenderProtocol
+  ) {
+    handlers[bundleId] = .init(messageSender: sender)
   }
 }

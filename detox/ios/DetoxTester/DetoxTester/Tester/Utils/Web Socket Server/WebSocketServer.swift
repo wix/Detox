@@ -9,16 +9,16 @@ import Network
 ///
 protocol WebSocketServerDelegateProtocol {
   ///
-  static func responseRecived(data: Data)
+  func serverDidReceive(data: Data)
 
   ///
-  static func serverDidInit(onPort: UInt16)
+  func serverDidInit(onPort: UInt16)
 
   ///
-  static func serverIsReady()
+  func serverIsReady()
 
   ///
-  static func connectionIsReady()
+  func serverDidConnectClient()
 }
 
 /// Manages a web-socket server, assuming there's only one connection.
@@ -26,15 +26,18 @@ class WebSocketServer {
   ///
   private let listener: NWListener
 
-  /// Websocket connection. Currently, we assume that there is only one network connection
-  /// is available.
+  ///
   private var client: NWConnection?
 
   ///
   private var delegate: WebSocketServerDelegateProtocol
 
   ///
-  init(withPort port: UInt16, delegate: WebSocketServerDelegateProtocol) throws {
+  public let port: UInt16
+
+  ///
+  private init(withPort port: UInt16, delegate: WebSocketServerDelegateProtocol) throws {
+    self.port = port
     self.delegate = delegate
 
     let parameters = NWParameters(tls: nil)
@@ -54,12 +57,17 @@ class WebSocketServer {
     listener = try NWListener(using: parameters, on: port)
 
     wsLog("web-socket server established on port \(port)")
-    self.delegate.serverDidInit(onPort: port.rawValue)
+    delegate.serverDidInit(onPort: port.rawValue)
   }
 
   ///
   func startServer() {
     listener.newConnectionHandler = { newConnection in
+      guard self.client == nil else {
+        wsLog("server is already connected to a client", type: .error)
+        fatalError("server is already connected to a client")
+      }
+
       wsLog("new connection with tester server")
       self.client = newConnection
 
@@ -67,7 +75,7 @@ class WebSocketServer {
         newConnection.receiveMessage { (data, context, isComplete, error) in
           if let data = data {
             wsLog("received a new message from client")
-            self.delegate.responseRecived(data: data)
+            self.delegate.serverDidReceive(data: data)
           }
 
           receive()
@@ -80,7 +88,7 @@ class WebSocketServer {
         switch state {
           case .ready:
             wsLog("connection with client is ready")
-            self.delegate.connectionIsReady()
+            self.delegate.serverDidConnectClient()
 
           case .failed(let error):
             wsLog("connection has failed with error: \(error.localizedDescription)", type: .error)
@@ -122,7 +130,7 @@ class WebSocketServer {
       }
     }
 
-    listener.start(queue: serverQueue)
+    listener.start(queue: .init(label: "XCUITestServerQueue"))
   }
 
   ///
@@ -157,5 +165,25 @@ extension WebSocketServer {
   enum Error: Swift.Error {
     /// Server to establish server due to invalid port.
     case invalidPort
+  }
+}
+
+extension WebSocketServer {
+  ///
+  static func makeServer(
+    withDelegate delegate: WebSocketServerDelegateProtocol
+  ) -> WebSocketServer {
+    var port: UInt16 = 8000
+    while true {
+      do {
+        return try WebSocketServer(withPort: port, delegate: delegate)
+      } catch is WebSocketServer.Error {
+          port += 1
+          continue
+      } catch {
+        wsLog("failed to create web-socket server: \(error.localizedDescription)", type: .error)
+        fatalError("Failed to create web-socket server: \(error.localizedDescription)")
+      }
+    }
   }
 }

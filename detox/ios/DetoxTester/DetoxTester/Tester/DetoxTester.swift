@@ -10,8 +10,13 @@ import XCTest
 @objc class DetoxTester: NSObject {
   // MARK: - Properties
 
-  /// The web-socket, used for the communication between Detox Server and Detox Tester.
-  fileprivate var webSocket: WebSocketClient?
+  /// Web-socket client, used for the communication between Detox Server and Detox Tester (this
+  /// target).
+  fileprivate var webSocketClient: WebSocketClient?
+
+  /// Web-socket server, used for the communication between Detox Tester (this target) and the AUT
+  /// (application under test).
+  fileprivate var webSocketServer: WebSocketServer?
 
   /// Finishes the tester operation.
   fileprivate var done: (() -> Void)?
@@ -24,6 +29,9 @@ import XCTest
 
   /// The test-case in which the tester is running from.
   fileprivate(set) var testCase: XCTestCase?
+
+  ///
+  fileprivate(set) var serverDidReceiveHandler: ((Data) -> Void)?
 
   // MARK: - Start
 
@@ -49,22 +57,30 @@ import XCTest
     WaitUntilDone { [self] done, exec in
       self.exec = exec
       self.done = done
-      self.webSocket = makeWebSocket()
+      self.webSocketClient = makeWebSocketClient()
+      self.webSocketServer = makeWebSocketServer()
     }
   }
 
-  private func makeWebSocket() -> WebSocketClient {
-    let webSocket: WebSocketClient = WebSocketClient()
-    webSocket.delegate = self
+  private func makeWebSocketClient() -> WebSocketClient {
+    let client = WebSocketClient()
+    client.delegate = self
 
-    webSocket.connect(
+    client.connect(
       toServer: URL(string: WebSocketClient.detoxServer())!,
       withSessionId: WebSocketClient.detoxSessionId()
     )
 
-    mainLog("web-socket connection started")
+    mainLog("web-socket connection with Detox Server started")
+    return client
+  }
 
-    return webSocket
+  private func makeWebSocketServer() -> WebSocketServer {
+    let server = WebSocketServer.makeServer(withDelegate: self)
+    server.startServer()
+
+    mainLog("web-socket server (tester target) has started")
+    return server
   }
 }
 
@@ -115,15 +131,15 @@ extension DetoxTester: WebSocketDelegateProtocol {
   }
 }
 
-// MARK: - ServerMessageSenderProtocol
+// MARK: - DetoxServerMessageSenderProtocol
 
-extension DetoxTester: ServerMessageSenderProtocol {
+extension DetoxTester: DetoxServerMessageSenderProtocol {
   func sendAction(
     _ type: ResponseMessageType,
     params: [String: AnyHashable],
     messageId: NSNumber
   ) {
-    guard let webSocket = webSocket else {
+    guard let webSocket = webSocketClient else {
       mainLog("web-socket is `nil`, cannot send action", type: .error)
       fatalError("Failed sending action through web-socket")
     }
@@ -133,12 +149,107 @@ extension DetoxTester: ServerMessageSenderProtocol {
   }
 
   func cleanup() {
-    guard let webSocket = webSocket else {
+    guard let webSocket = webSocketClient else {
       mainLog("web-socket is `nil`, cannot cleanup test target", type: .error)
       fatalError("Failed closing web-socket")
     }
 
     mainLog("cleanup: closing web-socket connection")
     webSocket.close()
+  }
+}
+
+// MARK: - WebSocketServerDelegateProtocol
+
+extension DetoxTester: WebSocketServerDelegateProtocol {
+  ///
+  static private let serverSemaphore: DispatchSemaphore = .init(value: 0)
+
+  func serverDidReceive(data: Data) {
+    guard let handler = serverDidReceiveHandler else {
+      mainLog("there is no handler for handling messages from client", type: .error)
+      return
+    }
+
+    handler(data)
+  }
+
+  func serverDidInit(onPort port: UInt16) {
+    guard let server = webSocketServer else {
+      mainLog("web-socket server has not initialized yet", type: .error)
+      fatalError("web-socket server has not initialized yet")
+    }
+
+    mainLog("tester server did initialized on port \(server.port)")
+  }
+
+  func serverIsReady() {
+    guard let server = webSocketServer else {
+      mainLog("web-socket server has not initialized yet", type: .error)
+      fatalError("web-socket server has not initialized yet")
+    }
+
+    mainLog("tester server is ready on port \(server.port)")
+
+    guard let client = webSocketClient else {
+      mainLog("web-socket client has not initialized yet", type: .error)
+      fatalError("web-socket client has not initialized yet")
+    }
+
+    let port = server.port
+    client.sendAction(.reportTesterServerPort, params: ["port": port], messageId: 0)
+
+    DetoxTester.serverSemaphore.wait()
+  }
+
+  func serverDidConnectClient() {
+    mainLog("tester server did connect to app client")
+
+    // TODO: should be revisited. There is an implicit assumption where the there is only one app
+    //  handled in a white-box manner.
+
+    WhiteBoxExecutor.setNewHandler(
+      for: executor.getAppUnderTestBundleIdentifier(),
+         withMessageSender: self
+    )
+
+    DetoxTester.serverSemaphore.signal()
+  }
+}
+
+// MARK: - AppClientMessageSenderProtocol
+
+extension DetoxTester: AppClientMessageSenderProtocol {
+  func sendMessageToClient(_ data: Data) -> Data {
+    guard let server = webSocketServer else {
+      mainLog("web-socket server has not initialized yet", type: .error)
+      fatalError("web-socket server has not initialized yet")
+    }
+
+    do {
+      try server.sendMessage(data: data)
+    } catch {
+      mainLog(
+        "sending a message to the client has failed, error: \(error.localizedDescription)",
+        type: .error
+      )
+      fatalError("sending a message to the client has failed, error: \(error.localizedDescription)")
+    }
+
+    let semaphore = DispatchSemaphore(value: 0)
+    var serverResponse: Data?
+    serverDidReceiveHandler = { data in
+      serverResponse = data
+      semaphore.signal()
+    }
+
+    // Wait until reponse is received via `serverDidReceiveHandler`.
+    semaphore.wait()
+
+    guard let serverResponse = serverResponse else {
+      mainLog("server has responsed but return value is nil", type: .error)
+      fatalError("server has responsed but return value is nil")
+    }
+    return serverResponse
   }
 }

@@ -1,12 +1,12 @@
 //
-//  ServerMessageSenderProtocol.swift (DetoxTesterApp)
+//  DetoxServerMessageSenderProtocol.swift (DetoxTesterApp)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
 /// Protocol for classes that can be used as a delegate for `Executor`.
-protocol ServerMessageSenderProtocol: AnyObject {
+protocol DetoxServerMessageSenderProtocol: AnyObject {
   /// Send action with `type`, `params` and `messageId`.
   func sendAction(
     _ type: ResponseMessageType,
@@ -20,6 +20,7 @@ protocol ServerMessageSenderProtocol: AnyObject {
 
 /// Type of a web-socket action to be sent from Detox Tester back to Detox Server.
 enum ResponseMessageType: String {
+  case reportTesterServerPort = "testerServerPort"
   case reportReady = "ready"
   case reportSetSyncSettingsDone = "setSyncSettingsDone"
   case reportWebSocketDidOpen = "login"
