@@ -152,6 +152,7 @@ In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this in `dep
 dependencies {
     // ...
     androidTestImplementation('com.wix:detox:+')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 ```
 
