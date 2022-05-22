@@ -13,9 +13,9 @@ For troubleshooting of other issue, refer to our [troubleshooting index](Trouble
 
 ## Android
 
-### Problem: AAPT
+### Problem: AAPT - resource linking failure
 
-For build errors involving AAPT such as this one:
+For build errors involving AAPT resource linking failure, such as this one:
 
 ```text
 Execution failed for task ':app:processReleaseAndroidTestResources'.
