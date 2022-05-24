@@ -1,28 +1,24 @@
 const _ = require('lodash');
 
-// TODO (multiapps): Consider relocating the things below (belongs under runtime/)
-const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
-const Client = require('../../../client/Client');
-const { InvocationManager } = require('../../../invoke');
-
 const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
   _createDriverDependencies(commonDeps, configs) {
-    const apps = this._createAppDeps(configs);
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
     const apkValidator = serviceLocator.apkValidator;
     const fileXfer = serviceLocator.fileXfer;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
+    const unspecifiedAppDeps = this._createAppDeps({ adb }, configs.sessionConfig);
+    const apps = this._createAppsDeps({ adb }, configs);
 
     const AppInstallHelper = require('../../common/drivers/android/tools/AppInstallHelper');
     const AppUninstallHelper = require('../../common/drivers/android/tools/AppUninstallHelper');
-    const MonitoredInstrumentation = require('../../common/drivers/android/tools/MonitoredInstrumentation');
 
     return {
       ...commonDeps,
+      ...unspecifiedAppDeps,
       apps,
       adb,
       aapt,
@@ -31,7 +27,6 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
       devicePathBuilder,
       appInstallHelper: new AppInstallHelper(adb, fileXfer),
       appUninstallHelper: new AppUninstallHelper(adb),
-      instrumentation: new MonitoredInstrumentation(adb),
     };
   }
 
@@ -39,26 +34,36 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
    * @returns { Object.<String, AndroidApp> }
    * @internal
    */
-  _createAppDeps({ appsConfig, sessionConfig }) {
+  _createAppsDeps({ adb }, { appsConfig, sessionConfig }) {
     const { sessionId } = sessionConfig;
-
     return _.mapValues(appsConfig, (appConfig, alias) => {
       const appSessionConfig = {
         ...sessionConfig,
         sessionId: `${sessionId}:${alias}`,
       };
-
-      const client = new Client(appSessionConfig);
-      const invocationManager = new InvocationManager(client);
-      const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice();
-
-      return {
-        alias,
-        client,
-        invocationManager,
-        uiDevice,
-      };
+      return this._createAppDeps({ adb }, appSessionConfig, alias);
     });
+  }
+
+  _createAppDeps({ adb }, appSessionConfig, alias) {
+    // TODO (multiapps): Consider relocating the things below (belongs under runtime/)
+    const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
+    const Client = require('../../../client/Client');
+    const { InvocationManager } = require('../../../invoke');
+    const MonitoredInstrumentation = require('../../common/drivers/android/tools/MonitoredInstrumentation');
+
+    const client = new Client(appSessionConfig);
+    const invocationManager = new InvocationManager(client);
+    const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice();
+    const instrumentation = new MonitoredInstrumentation(adb);
+
+    return {
+      alias,
+      client,
+      invocationManager,
+      uiDevice,
+      instrumentation,
+    };
   }
 }
 

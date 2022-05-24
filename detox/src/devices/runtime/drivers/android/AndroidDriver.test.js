@@ -1,16 +1,29 @@
 // @ts-nocheck
+const _ = require('lodash');
+
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
-  const appId = 'com.mock.packageId';
-  const appAlias = 'mock-app';
-  const appAlias2 = 'mock-app2';
-  const detoxServerPort = 1234;
+  const packageId = 'com.mock.packageId';
+  const roguePackageId = 'some.app.detox.was.not.aware.of.beforehand';
+  const detoxServerPortBase = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
+  const selectDefaultApp = () => uut.selectApp(defaultApp.alias);
+  const launchSelectedApp = (launchArgs = {}) => uut.launchApp(launchArgs, '');
+  const deliverPayloadToSelectedApp = (params) => uut.deliverPayload(params);
+  const terminateSelectedApp = () => uut.terminate();
+  const launchApp = (appId, launchArgs = {}) => uut.launchApp(launchArgs, '', appId);
+
+  const givenResolvedPackageId = (packageId) => aapt.getPackageName.mockResolvedValue(packageId);
+
+  const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
+  const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
+
+  const mockInstrumentationRunning = (app) => app.instrumentation.isRunning.mockReturnValue(true);
+  const mockInstrumentationDead = (app) => app.instrumentation.isRunning.mockReturnValue(false);
+
   let logger;
-  let fs; // TODO don't mock
-  let testApp;
-  let testApp2;
+  let fs;
   let getAbsoluteBinaryPath;
   let eventEmitter;
   let detoxApi;
@@ -20,25 +33,22 @@ describe('Android driver', () => {
   let fileXfer;
   let appInstallHelper;
   let appUninstallHelper;
-  let instrumentation;
   let DeviceRegistryClass;
+  let defaultApp;
+  let secondaryApp;
+  let unspecifiedApp;
 
   let uut;
-  let uutMultiapps;
-  beforeEach(() => {
+  beforeEach(async () => {
     setUpModuleDepMocks();
     setUpClassDepMocks();
 
-    const apps = { [appAlias]: testApp };
-    uut = createDriver(apps);
-    uut.selectApp(appAlias);
-
-    const multiapps = {
-      [appAlias]: testApp,
-      [appAlias2]: testApp2,
+    const apps = {
+      [defaultApp.alias]: defaultApp,
+      [secondaryApp.alias]: secondaryApp,
     };
-    uutMultiapps = createDriver(multiapps);
-    uutMultiapps.selectApp(appAlias);
+    uut = createDriver(apps);
+    await uut.selectApp(defaultApp.alias);
   });
 
   it('should return the ADB name as the external ID', () => {
@@ -47,113 +57,165 @@ describe('Android driver', () => {
 
   describe('UIAutomator uiDevice', () => {
     it('should be available via a getter', () => {
-      expect(uut.getUiDevice()).toEqual(testApp.uiDevice);
+      expect(uut.getUiDevice()).toEqual(defaultApp.uiDevice);
     });
 
     it('should consider app selection', () => {
-      uutMultiapps.selectApp(appAlias2);
-      expect(uutMultiapps.getUiDevice()).toEqual(testApp2.uiDevice);
+      uut.selectApp(secondaryApp.alias);
+      expect(uut.getUiDevice()).toEqual(secondaryApp.uiDevice);
     });
   });
 
   describe('Press-back', () => {
     it('should delegate back-press to uiDevice', async () => {
       await uut.pressBack();
-      expect(testApp.uiDevice.pressBack).toHaveBeenCalled();
+      expect(defaultApp.uiDevice.pressBack).toHaveBeenCalled();
     });
 
     it('should consider app selection', async () => {
-      uutMultiapps.selectApp(appAlias2);
-      await uutMultiapps.pressBack();
-      expect(testApp2.uiDevice.pressBack).toHaveBeenCalled();
+      uut.selectApp(secondaryApp.alias);
+      await uut.pressBack();
+      expect(secondaryApp.uiDevice.pressBack).toHaveBeenCalled();
     });
   });
 
   describe('Nav to home', () => {
     it('should delegate nav-to-home to uiDevice', async () => {
       await uut.sendToHome();
-      expect(testApp.uiDevice.pressHome).toHaveBeenCalled();
+      expect(defaultApp.uiDevice.pressHome).toHaveBeenCalled();
     });
 
     it('should consider app selection', async () => {
-      uutMultiapps.selectApp(appAlias2);
-      await uutMultiapps.sendToHome();
-      expect(testApp2.uiDevice.pressHome).toHaveBeenCalled();
+      uut.selectApp(secondaryApp.alias);
+      await uut.sendToHome();
+      expect(secondaryApp.uiDevice.pressHome).toHaveBeenCalled();
     });
   });
 
-  describe('Instrumentation bootstrap', () => {
-    it('should launch instrumentation upon app launch', async () => {
-      const userArgs = {
-        anArg: 'aValue',
-      };
-      await uut.launchApp(appId, userArgs, '');
-      expect(instrumentation.launch).toHaveBeenCalledWith(adbName, appId, userArgs);
-    });
-
-    it('should break if instrumentation launch fails', async () => {
-      instrumentation.launch.mockRejectedValue(new Error());
-
-      try {
-        await uut.launchApp(appId, {}, '');
-        fail();
-      } catch (e) {}
-    });
-
-    it('should set a termination callback function', async () => {
-      await uut.launchApp(appId, {}, '');
-      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(expect.any(Function));
-    });
-
-    it('should adb-reverse the detox server port', async () => {
-      await uut.launchApp(appId, {}, '');
-      await expect(adb.reverse).toHaveBeenCalledWith(adbName, detoxServerPort.toString());
-    });
-  });
-
-  describe('Instrumentation unexpected termination', () => {
-    beforeEach(async () => {
-      await uut.launchApp(appId, {}, '');
-      await invokeTerminationCallbackFn();
-    });
-
-    it('should clear out the termination callback function', () =>
-      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
-
-    it('should adb-unreverse the detox server port', () =>
-      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, detoxServerPort.toString()));
-
-    const extractTerminationCallbackFn = () => instrumentation.setTerminationFn.mock.calls[0][0];
-    const invokeTerminationCallbackFn = async () => {
-      const fn = extractTerminationCallbackFn();
-      await fn();
+  describe('app launching', () => {
+    const userArgs = {
+      anArg: 'aValue',
     };
+
+    describe('of a preconfigured app', () => {
+      beforeEach(() => givenResolvedPackageId(packageId));
+
+      it('should launch instrumentation upon app launch', async () => {
+        await selectDefaultApp();
+        await launchSelectedApp(userArgs);
+        expect(defaultApp.instrumentation.launch).toHaveBeenCalledWith(adbName, packageId, expect.objectContaining(userArgs));
+      });
+
+      it('should break if instrumentation launch fails', async () => {
+        defaultApp.instrumentation.launch.mockRejectedValue(new Error());
+
+        await selectDefaultApp();
+
+        try {
+          await launchSelectedApp(userArgs);
+          fail();
+        } catch (e) {}
+      });
+
+      it('should set a termination callback function', async () => {
+        await selectDefaultApp();
+        await launchSelectedApp(userArgs);
+        expect(defaultApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(expect.any(Function));
+      });
+
+      it('should adb-reverse the detox server port', async () => {
+        await selectDefaultApp();
+        await launchSelectedApp(userArgs);
+        await expect(adb.reverse).toHaveBeenCalledWith(adbName, detoxServerPortBase.toString());
+      });
+
+      it('should launch instrumentation strictly associated with the selected app', async () => {
+        await uut.selectApp(secondaryApp.alias);
+        await uut.launchApp(userArgs, '');
+        expect(secondaryApp.instrumentation.launch).toHaveBeenCalledWith(adbName, packageId, expect.objectContaining(userArgs));
+      });
+
+      describe('with an unexpected instrumentation termination', () => {
+        beforeEach(async () => {
+          await selectDefaultApp();
+          await launchSelectedApp(userArgs);
+          await invokeTerminationCallbackFn(defaultApp);
+        });
+
+        it('should clear out the termination callback function', () =>
+          expect(defaultApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+
+        it('should adb-unreverse the detox server port', () =>
+          expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, detoxServerPortBase.toString()));
+
+        const extractTerminationCallbackFn = (app) => app.instrumentation.setTerminationFn.mock.calls[0][0];
+        const invokeTerminationCallbackFn = async (app) => {
+          const fn = extractTerminationCallbackFn(app);
+          await fn();
+        };
+      });
+    });
+
+    describe('of a rogue app', () => {
+      beforeEach(() => givenResolvedPackageId(packageId));
+
+      it('should launch instrumentation upon app launch', async () => {
+        await launchApp(roguePackageId, userArgs);
+        expect(unspecifiedApp.instrumentation.launch).toHaveBeenCalledWith(adbName, roguePackageId, expect.objectContaining(userArgs));
+      });
+    });
   });
 
   describe('App termination', () => {
-    beforeEach(async () => {
-      await uut.launchApp(appId, {}, '');
-      await uut.terminate();
+    describe('of a preconfigured app', () => {
+      beforeEach(async () => {
+        givenResolvedPackageId(packageId);
+
+        await selectDefaultApp();
+        await launchSelectedApp({});
+        await terminateSelectedApp();
+      });
+
+      it('should terminate instrumentation', () =>
+        expect(defaultApp.instrumentation.terminate).toHaveBeenCalled());
+
+      it('should clear out the termination callback function', () =>
+        expect(defaultApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+
+      it('should terminate ADB altogether', () =>
+        expect(adb.terminate).toHaveBeenCalledWith(adbName, packageId));
     });
 
-    it('should terminate instrumentation', () =>
-      expect(instrumentation.terminate).toHaveBeenCalled());
+    describe('of a rogue app', () => {
+      beforeEach(async () => {
+        givenResolvedPackageId(roguePackageId);
 
-    it('should clear out the termination callback function', () =>
-      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+        await launchApp(roguePackageId);
+        await uut.terminate();
+      });
 
-    it('should terminate ADB altogether', () =>
-      expect(adb.terminate).toHaveBeenCalled());
+      it('should terminate instrumentation', () =>
+        expect(unspecifiedApp.instrumentation.terminate).toHaveBeenCalled());
+
+      it('should clear out the termination callback function', () =>
+        expect(unspecifiedApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+    });
   });
 
   describe('Cleanup', () => {
     beforeEach(async () => await uut.cleanup());
 
-    it('should terminate instrumentation', () =>
-      expect(instrumentation.terminate).toHaveBeenCalled());
+    it('should terminate instrumentation associated with all apps', () => {
+      expect(defaultApp.instrumentation.terminate).toHaveBeenCalled();
+      expect(secondaryApp.instrumentation.terminate).toHaveBeenCalled();
+      expect(unspecifiedApp.instrumentation.terminate).toHaveBeenCalled();
+    });
 
-    it('should clear out the termination callback function', () =>
-      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+    it('should clear out the termination callback of instrumentations of all apps', () => {
+      expect(defaultApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(null);
+      expect(secondaryApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(null);
+      expect(unspecifiedApp.instrumentation.setTerminationFn).toHaveBeenCalledWith(null);
+    });
 
     it('should turn off the events emitter', () =>
       expect(eventEmitter.off).toHaveBeenCalled());
@@ -167,13 +229,18 @@ describe('Android driver', () => {
     };
     const mockStartActivityInvokeApi = () => detoxApi.startActivityFromUrl.mockReturnValue(detoxApiInvocation);
     const assertActivityStartInvoked = () => {
-      expect(testApp.invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
+      expect(defaultApp.invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
       expect(detoxApi.startActivityFromUrl).toHaveBeenCalledWith(detoxURLOverride);
     };
     const assertActivityStartNotInvoked = () => expect(detoxApi.startActivityFromUrl).not.toHaveBeenCalled();
 
-    const assertInstrumentationLaunchedWith = (args) => expect(instrumentation.launch).toHaveBeenCalledWith(adbName, appId, args);
-    const assertInstrumentationNotLaunched = () => expect(instrumentation.launch).not.toHaveBeenCalled();
+    const assertInstrumentationLaunchedWith = (args) => expect(defaultApp.instrumentation.launch).toHaveBeenCalledWith(adbName, packageId, expect.objectContaining(args));
+    const assertInstrumentationNotLaunched = () => expect(defaultApp.instrumentation.launch).not.toHaveBeenCalled();
+
+    beforeEach(async () => {
+      givenResolvedPackageId(packageId);
+      await selectDefaultApp();
+    });
 
     describe('in app launch (with dedicated arg)', () => {
       const args = {
@@ -183,16 +250,15 @@ describe('Android driver', () => {
       it('should launch instrumentation with the URL in a clean launch', async () => {
         adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
 
-        await uut.launchApp(appId, args, '');
-
+        await launchSelectedApp(args);
         assertInstrumentationLaunchedWith(args);
       });
 
       it('should start the app with URL via invocation-manager', async () => {
         mockStartActivityInvokeApi();
-        mockInstrumentationRunning();
+        mockInstrumentationRunning(defaultApp);
 
-        await uut.launchApp(appId, args, '');
+        await launchSelectedApp(args);
 
         assertActivityStartInvoked();
         assertInstrumentationNotLaunched();
@@ -211,7 +277,7 @@ describe('Android driver', () => {
       it('should start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
-        await uut.launchApp(appId, {}, '');
+        await launchSelectedApp({});
         await uut.deliverPayload(args);
 
         assertActivityStartInvoked();
@@ -220,7 +286,7 @@ describe('Android driver', () => {
       it('should not start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
-        await uut.launchApp(appId, {}, '');
+        await launchSelectedApp({});
         await uut.deliverPayload(argsDelayed);
 
         assertActivityStartNotInvoked();
@@ -239,36 +305,41 @@ describe('Android driver', () => {
     };
     const mockStartActivityInvokeApi = () => detoxApi.startActivityFromNotification.mockReturnValue(detoxApiInvocation);
     const assertActivityStartInvoked = () => {
-      expect(testApp.invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
+      expect(defaultApp.invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
       expect(detoxApi.startActivityFromNotification).toHaveBeenCalledWith(mockNotificationDataTargetPath);
     };
     const assertActivityStartNotInvoked = () => {
       expect(detoxApi.startActivityFromNotification).not.toHaveBeenCalled();
     };
 
-    const assertInstrumentationLaunchedWith = (args) => expect(instrumentation.launch).toHaveBeenCalledWith(adbName, appId, args);
-    const assertInstrumentationNotSpawned = () => expect(instrumentation.launch).not.toHaveBeenCalled();
+    const assertInstrumentationLaunchedWith = (args) => expect(defaultApp.instrumentation.launch).toHaveBeenCalledWith(adbName, packageId, expect.objectContaining(args));
+    const assertInstrumentationNotSpawned = () => expect(defaultApp.instrumentation.launch).not.toHaveBeenCalled();
+
+    beforeEach(async () => {
+      givenResolvedPackageId(packageId);
+      await selectDefaultApp();
+    });
 
     describe('in app launch (with dedicated arg)', () => {
       it('should prepare the device for receiving notification data file', async () => {
-        await uut.launchApp(appId, notificationArgs, '');
+        await launchSelectedApp(notificationArgs);
         expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
       });
 
       it('should transfer the notification data file to the device', async () => {
-        await uut.launchApp(appId, notificationArgs, '');
+        await launchSelectedApp(notificationArgs);
         expect(fileXfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
       });
 
       it('should not send the data if device prep fails', async () => {
         fileXfer.prepareDestinationDir.mockRejectedValue(new Error());
-        await expect(uut.launchApp(appId, notificationArgs, '')).rejects.toThrowError();
+        await expect(launchSelectedApp(notificationArgs)).rejects.toThrowError();
       });
 
       it('should launch instrumentation with a modified notification data URL arg', async () => {
         fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
 
-        await uut.launchApp(appId, notificationArgs, '');
+        await launchSelectedApp(notificationArgs);
 
         assertInstrumentationLaunchedWith({ detoxUserNotificationDataURL: mockNotificationDataTargetPath });
       });
@@ -278,13 +349,13 @@ describe('Android driver', () => {
       {
         description: 'in app launch when already running',
         applyFn: () => {
-          mockInstrumentationRunning();
-          return uut.launchApp(appId, notificationArgs, '');
+          mockInstrumentationRunning(defaultApp);
+          return launchSelectedApp(notificationArgs);
         },
       },
       {
         description: 'via explicit payload-delivery call',
-        applyFn: () => uut.deliverPayload(notificationArgs),
+        applyFn: () => deliverPayloadToSelectedApp(notificationArgs),
       },
     ].forEach((spec) => {
       describe(spec.description, () => {
@@ -313,14 +384,14 @@ describe('Android driver', () => {
       };
 
       it('should not send notification data is payload send-out is set as delayed', async () => {
-        await uut.launchApp(appId, {}, '');
+        await uut.launchApp(packageId, {}, '');
         await uut.deliverPayload(notificationArgsDelayed);
 
         expect(fileXfer.send).not.toHaveBeenCalled();
       });
 
       it('should not start the app using invocation-manager', async () => {
-        await uut.launchApp(appId, {}, '');
+        await uut.launchApp(packageId, {}, '');
         await uut.deliverPayload(notificationArgsDelayed, adbName);
 
         assertActivityStartNotInvoked();
@@ -330,24 +401,30 @@ describe('Android driver', () => {
   });
 
   describe('Device ready-wait', () => {
+
+    beforeEach(async () => {
+      givenResolvedPackageId(packageId);
+      await selectDefaultApp();
+    });
+
     it('should delegate wait to device being ready via client api', async () => {
-      await uut.waitUntilReady();
-      expect(testApp.client.waitUntilReady).toHaveBeenCalled();
+      await uut._waitUntilReady(defaultApp);
+      expect(defaultApp.client.waitUntilReady).toHaveBeenCalled();
     }, 2000);
 
     it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
       const crashError = new Error('mock instrumentation crash error');
       let waitForCrashReject = () => {};
-      instrumentation.waitForCrash.mockImplementation(() => {
+      defaultApp.instrumentation.waitForCrash.mockImplementation(() => {
         return new Promise((__, reject) => {
           waitForCrashReject = reject;
         });
       });
 
-      await uut.launchApp(appId, {}, '');
+      await launchSelectedApp();
 
       const clientWaitResolve = mockDeviceReadyPromise();
-      const promise = uut.waitUntilReady();
+      const promise = uut._waitUntilReady(defaultApp);
       setTimeout(() => waitForCrashReject(crashError), 1);
 
       try {
@@ -359,26 +436,26 @@ describe('Android driver', () => {
     }, 2000);
 
     it('should abort crash-wait if instrumentation doesnt crash', async () => {
-      testApp.client.waitUntilReady.mockResolvedValue('mocked');
-      await uut.waitUntilReady();
-      expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
+      defaultApp.client.waitUntilReady.mockResolvedValue('mocked');
+      await uut._waitUntilReady(defaultApp);
+      expect(defaultApp.instrumentation.abortWaitForCrash).toHaveBeenCalled();
     });
 
     it('should abort crash-wait if instrumentation crashes', async () => {
-      testApp.client.waitUntilReady.mockResolvedValue('mocked');
-      instrumentation.waitForCrash.mockRejectedValue(new Error());
+      defaultApp.client.waitUntilReady.mockResolvedValue('mocked');
+      defaultApp.instrumentation.waitForCrash.mockRejectedValue(new Error());
 
       try {
-        await uut.launchApp(appId, {}, '');
+        await launchSelectedApp();
         fail();
       } catch (e) {
-        expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
+        expect(defaultApp.instrumentation.abortWaitForCrash).toHaveBeenCalled();
       }
     });
 
     const mockDeviceReadyPromise = () => {
       let clientResolve;
-      testApp.client.waitUntilReady.mockReturnValue(new Promise((resolve) => clientResolve = resolve));
+      defaultApp.client.waitUntilReady.mockReturnValue(new Promise((resolve) => clientResolve = resolve));
       return clientResolve;
     };
   });
@@ -530,10 +607,7 @@ describe('Android driver', () => {
     jest.mock('../../../../utils/logger');
     logger = require('../../../../utils/logger');
 
-    jest.mock('fs-extra', () => ({
-      existsSync: jest.fn(),
-      realpathSync: jest.fn(),
-    }));
+    jest.mock('fs-extra');
     fs = require('fs-extra');
 
     jest.mock('../../../../utils/encoding', () => ({
@@ -564,11 +638,6 @@ describe('Android driver', () => {
   };
 
   const setUpClassDepMocks = () => {
-    jest.mock('../../../common/drivers/android/tools/MonitoredInstrumentation');
-    const MonitoredInstrumentation = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
-    instrumentation = new MonitoredInstrumentation();
-    mockInstrumentationDead();
-
     jest.mock('../../../common/drivers/android/exec/ADB');
     const ADB = require('../../../common/drivers/android/exec/ADB');
     adb = new ADB();
@@ -609,16 +678,22 @@ describe('Android driver', () => {
     const createRegistry = jest.fn(() => new DeviceRegistryClass());
     DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
 
-    testApp = createTestApp();
-    testApp2 = createTestApp(2);
+    defaultApp = createTestApp(1);
+    secondaryApp = createTestApp(2);
+    unspecifiedApp = createTestApp(0);
   };
 
-  const createTestApp = (index = 1) => {
-    const app = {};
+  const createTestApp = (index) => {
+    const app = {
+      alias: `mock-alias-#${index}`,
+      config: {
+        binaryPath: `mock/path/${index}`,
+      },
+    };
 
     const Client = jest.genMockFromModule('../../../../client/Client');
     app.client = new Client();
-    app.client.serverUrl = `ws://localhost:${detoxServerPort * index}`;
+    app.client.serverUrl = `ws://localhost:${detoxServerPortBase * index}`;
 
     const InvocationManager = jest.genMockFromModule('../../../../invoke').InvocationManager;
     app.invocationManager = new InvocationManager();
@@ -632,12 +707,19 @@ describe('Android driver', () => {
     }
     app.uiDevice = new UiDeviceMock();
 
+    jest.mock('../../../common/drivers/android/tools/MonitoredInstrumentation');
+    const MonitoredInstrumentation = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
+    app.instrumentation = new MonitoredInstrumentation();
+    mockInstrumentationDead(app);
+
     return app;
   };
 
   const createDriver = (apps) => {
+    const unspecifiedAppDeps = _.pick(unspecifiedApp, ['client', 'invocationManager', 'uiDevice', 'instrumentation']);
     const AndroidDriver = require('./AndroidDriver');
     const deps = {
+      ...unspecifiedAppDeps,
       apps,
       eventEmitter,
       adb,
@@ -646,14 +728,7 @@ describe('Android driver', () => {
       fileXfer,
       appInstallHelper,
       appUninstallHelper,
-      instrumentation,
     };
     return new AndroidDriver(deps, { adbName });
   };
-
-  const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
-  const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
-
-  const mockInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
-  const mockInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
 });

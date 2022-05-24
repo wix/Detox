@@ -11,6 +11,7 @@ const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const logger = require('../../../../utils/logger');
+const { forEachSeries } = require('../../../../utils/p-iteration');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
@@ -20,9 +21,9 @@ const DeviceDriverBase = require('../DeviceDriverBase');
 const log = logger.child({ __filename });
 
 /**
- * @typedef { App } AndroidApp
- * @property invocationManager { InvocationManager }
+ * @typedef { TestApp } AndroidApp
  * @property uiDevice { UiDeviceProxy }
+ * @property instrumentation { MonitoredInstrumentation }
  */
 
 /**
@@ -33,6 +34,7 @@ const log = logger.child({ __filename });
 /**
  * @typedef { DeviceDriverDeps } AndroidDriverDeps
  * @property uiDevice { UiDevice } The *general-purpose* (non-app-bound) UIDevice
+ * @property instrumentation { MonitoredInstrumentation } The *general-purpose* (non-app-bound) instrumentation
  * @property adb { ADB }
  * @property aapt { AAPT }
  * @property apkValidator { ApkValidator }
@@ -40,7 +42,6 @@ const log = logger.child({ __filename });
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
  * @property devicePathBuilder { AndroidDevicePathBuilder }
- * @property instrumentation { MonitoredInstrumentation }
  */
 
 class AndroidDriver extends DeviceDriverBase {
@@ -59,9 +60,9 @@ class AndroidDriver extends DeviceDriverBase {
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
-    this.instrumentation = deps.instrumentation;
 
     this._unspecifiedApp.uiDevice = deps.uiDevice;
+    this._unspecifiedApp.instrumentation = deps.instrumentation;
   }
 
   getExternalId() {
@@ -69,12 +70,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   getUiDevice() {
-    return this.uiDevice;
-  }
-
-  async getAppIdFromBinary(apkPath) {
-    const binaryPath = getAbsoluteBinaryPath(apkPath);
-    return await this.aapt.getPackageName(binaryPath);
+    return this._selectedApp.uiDevice;
   }
 
   async installApp(_appBinaryPath, _testBinaryPath) {
@@ -93,32 +89,42 @@ class AndroidDriver extends DeviceDriverBase {
 
   async installUtilBinaries(paths) {
     for (const path of paths) {
-      const packageId = await this.getAppIdFromBinary(path);
+      const packageId = await this._inferPackageIdFromApk(path);
       if (!await this.adb.isPackageInstalled(this.adbName, packageId)) {
         await this.appInstallHelper.install(this.adbName, path);
       }
     }
   }
 
-  async _launchApp(appId, launchArgs, languageAndLocale) {
-    return await this._handleLaunchApp({
+  /**
+   * @override
+   */
+  async _launchApp(launchArgs, languageAndLocale, app) {
+    return await this.__handleLaunchApp({
       manually: false,
-      appId,
+      app,
       launchArgs,
       languageAndLocale,
     });
   }
 
-  async _waitForAppLaunch(appId, launchArgs, languageAndLocale) {
-    return await this._handleLaunchApp({
+  /**
+   * @override
+   */
+  async _waitForAppLaunch(launchArgs, languageAndLocale, app) {
+    return await this.__handleLaunchApp({
       manually: true,
-      appId,
+      app,
       launchArgs,
       languageAndLocale,
     });
   }
 
-  async _handleLaunchApp({ manually, appId, launchArgs }) {
+  /**
+   * @private
+   */
+  async __handleLaunchApp({ manually, app, launchArgs }) {
+    const { appId } = app;
     const { adbName } = this;
 
     await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId: appId, launchArgs });
@@ -126,9 +132,9 @@ class AndroidDriver extends DeviceDriverBase {
     launchArgs = await this._modifyArgsForNotificationHandling(adbName, appId, launchArgs);
 
     if (manually) {
-      await this.__waitForAppLaunch(adbName, appId, launchArgs);
+      await this.__waitForAppLaunch(adbName, app, launchArgs);
     } else {
-      await this.__launchApp(adbName, appId, launchArgs);
+      await this.__launchApp(adbName, app, launchArgs);
     }
 
     const pid = await this._waitForProcess(adbName, appId);
@@ -138,6 +144,26 @@ class AndroidDriver extends DeviceDriverBase {
 
     await this.emitter.emit('launchApp', { deviceId: adbName, bundleId: appId, launchArgs, pid });
     return pid;
+  }
+
+  async __launchApp(adbName, app, launchArgs) {
+    if (!app.instrumentation.isRunning()) {
+      await this._launchInstrumentationProcess(adbName, app, launchArgs);
+      await sleep(500);
+    } else if (launchArgs.detoxURLOverride) {
+      await this._startActivityWithUrl(launchArgs.detoxURLOverride);
+    } else if (launchArgs.detoxUserNotificationDataURL) {
+      await this._startActivityFromNotification(launchArgs.detoxUserNotificationDataURL);
+    } else {
+      await this._resumeMainActivity();
+    }
+  }
+
+  async __waitForAppLaunch(adbName, app, launchArgs) {
+    const instrumentationClass = await this.adb.getInstrumentationRunner(adbName, app.appId);
+    this._printInstrumentationHint({ instrumentationClass, launchArgs });
+    await pressAnyKey();
+    await this._reverseServerPort(adbName);
   }
 
   async deliverPayload(params) {
@@ -154,11 +180,11 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async waitUntilReady() {
+  async _waitUntilReady(app) {
       try {
-        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
+        await Promise.race([super._waitUntilReady(app), app.instrumentation.waitForCrash()]);
       } finally {
-        this.instrumentation.abortWaitForCrash();
+        app.instrumentation.abortWaitForCrash();
       }
   }
 
@@ -174,17 +200,21 @@ class AndroidDriver extends DeviceDriverBase {
     await this.adb.typeText(this.adbName, text);
   }
 
-  async terminate(appId) {
+  /**
+   * @override
+   */
+  async _terminate(app) {
     const { adbName } = this;
+    const { appId } = app;
     await this.emitter.emit('beforeTerminateApp', { deviceId: adbName, bundleId: appId });
-    await this._terminateInstrumentation();
+    await this._terminateInstrumentation(app);
     await this.adb.terminate(adbName, appId);
     await this.emitter.emit('terminateApp', { deviceId: adbName, bundleId: appId });
   }
 
-  async cleanup(appId) {
-    await this._terminateInstrumentation();
-    await super.cleanup(appId);
+  async cleanup() {
+    await this._terminateAllInstrumentations();
+    await super.cleanup();
   }
 
   getPlatform() {
@@ -268,6 +298,15 @@ class AndroidDriver extends DeviceDriverBase {
     await this.adb.install(this.adbName, testBinaryPath);
   }
 
+  async _inferAppId(app) {
+    return this._inferPackageIdFromApk(app.config.binaryPath);
+  }
+
+  async _inferPackageIdFromApk(apkPath) {
+    const binaryPath = getAbsoluteBinaryPath(apkPath);
+    return await this.aapt.getPackageName(binaryPath);
+  }
+
   _getTestApkPath(originalApkPath) {
     const testApkPath = apkUtils.getTestApkPath(originalApkPath);
 
@@ -293,26 +332,13 @@ class AndroidDriver extends DeviceDriverBase {
     return _launchArgs;
   }
 
-  async __launchApp(adbName, appId, launchArgs) {
-    if (!this.instrumentation.isRunning()) {
-      await this._launchInstrumentationProcess(adbName, appId, launchArgs);
-      await sleep(500);
-    } else if (launchArgs.detoxURLOverride) {
-      await this._startActivityWithUrl(launchArgs.detoxURLOverride);
-    } else if (launchArgs.detoxUserNotificationDataURL) {
-      await this._startActivityFromNotification(launchArgs.detoxUserNotificationDataURL);
-    } else {
-      await this._resumeMainActivity();
-    }
-  }
-
-  async _launchInstrumentationProcess(adbName, appId, userLaunchArgs) {
+  async _launchInstrumentationProcess(adbName, app, userLaunchArgs) {
     const serverPort = await this._reverseServerPort(adbName);
-    this.instrumentation.setTerminationFn(async () => {
-      await this._terminateInstrumentation();
+    app.instrumentation.setTerminationFn(async () => {
+      await this._terminateInstrumentation(app);
       await this.adb.reverseRemove(adbName, serverPort);
     });
-    await this.instrumentation.launch(adbName, appId, userLaunchArgs);
+    await app.instrumentation.launch(adbName, app.appId, userLaunchArgs);
   }
 
   async _reverseServerPort(adbName) {
@@ -321,9 +347,16 @@ class AndroidDriver extends DeviceDriverBase {
     return serverPort;
   }
 
-  async _terminateInstrumentation() {
-    await this.instrumentation.terminate();
-    await this.instrumentation.setTerminationFn(null);
+  async _terminateAllInstrumentations() {
+    return forEachSeries(
+      this._allAppsList(),
+      this._terminateInstrumentation,
+      this);
+  }
+
+  async _terminateInstrumentation(app) {
+    await app.instrumentation.terminate();
+    await app.instrumentation.setTerminationFn(null);
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
@@ -363,13 +396,6 @@ class AndroidDriver extends DeviceDriverBase {
       throw new DetoxRuntimeError('PID still not available');
     }
     return pid;
-  }
-
-  async __waitForAppLaunch(adbName, appId, launchArgs) {
-    const instrumentationClass = await this.adb.getInstrumentationRunner(adbName, appId);
-    this._printInstrumentationHint({ instrumentationClass, launchArgs });
-    await pressAnyKey();
-    await this._reverseServerPort(adbName);
   }
 
   _printInstrumentationHint({ instrumentationClass, launchArgs }) {
