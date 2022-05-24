@@ -1,5 +1,6 @@
 // TODO (multiapps): Consider relocating the things below (belongs under runtime/)
 const Client = require('../../../client/Client');
+const { InvocationManager } = require('../../../invoke');
 
 const RuntimeDeviceFactory = require('./base');
 
@@ -8,6 +9,7 @@ class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
     const serviceLocator = require('../../../servicelocator/ios');
     const applesimutils = serviceLocator.appleSimUtils;
     const client = new Client(sessionConfig);
+    const invocationManager = new InvocationManager(client);
 
     const { eventEmitter } = commonDeps;
 
@@ -15,6 +17,7 @@ class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
     return {
       ...commonDeps,
       client,
+      invocationManager,
       applesimutils,
       simulatorLauncher: new SimulatorLauncher({ applesimutils, eventEmitter }),
     };

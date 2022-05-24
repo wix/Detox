@@ -128,6 +128,12 @@ describe('Client', () => {
     });
   });
 
+  describe('.sessionId', () => {
+    it('should return sessionConfig.sessionId', () => {
+      expect(client.sessionId).toBe(sessionConfig.sessionId);
+    });
+  });
+
   describe('.open()', () => {
     it('should open the web socket', async () => {
       mockAws.mockResponse('loginSuccess', {});

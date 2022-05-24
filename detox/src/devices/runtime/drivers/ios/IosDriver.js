@@ -6,16 +6,6 @@ const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
 class IosDriver extends DeviceDriverBase {
-  constructor(deps, configs) {
-    super({
-      ...deps,
-      apps: {
-        alias: Object.keys(configs.appsConfig)[0],
-        client: deps.client,
-      },
-    });
-  }
-
   createPayloadFile(notification) {
     const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));

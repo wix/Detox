@@ -15,11 +15,10 @@ const AndroidDriver = require('../AndroidDriver');
 class EmulatorDriver extends AndroidDriver {
   /**
    * @param deps { EmulatorDriverDeps }
-   * @param configs {{ appsConfig: Object }}
    * @param props { EmulatorDriverProps }
    */
-  constructor(deps, configs, { adbName, avdName, forceAdbInstall }) {
-    super(deps, configs, { adbName });
+  constructor(deps, { adbName, avdName, forceAdbInstall }) {
+    super(deps, { adbName });
 
     this._deviceName = `${adbName} (${avdName})`;
     this._forceAdbInstall = forceAdbInstall;

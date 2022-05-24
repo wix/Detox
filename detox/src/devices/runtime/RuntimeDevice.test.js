@@ -63,7 +63,7 @@ describe('Device', () => {
       ...overrides,
     }, driverMock.driver);
 
-    device.deviceDriver.getBundleIdFromBinary.mockReturnValue(bundleId);
+    device.deviceDriver.getAppIdFromBinary.mockReturnValue(bundleId);
 
     return device;
   }
@@ -179,7 +179,7 @@ describe('Device', () => {
         });
 
         jest.spyOn(device, 'selectApp');
-        driverMock.driver.getBundleIdFromBinary.mockReturnValue('com.app1');
+        driverMock.driver.getAppIdFromBinary.mockReturnValue('com.app1');
 
         await device._prepare();
       });
@@ -213,7 +213,7 @@ describe('Device', () => {
 
       it(`upon select, it should infer bundleId if it is missing`, async () => {
         await device.selectApp(anAppName);
-        expect(driverMock.driver.getBundleIdFromBinary).toHaveBeenCalledWith('path/to/app');
+        expect(driverMock.driver.getAppIdFromBinary).toHaveBeenCalledWith('path/to/app');
       });
 
       it(`upon select, it should terminate the previous app`, async () => {
@@ -228,14 +228,14 @@ describe('Device', () => {
 
       it(`upon select, it should not infer bundleId if it is specified`, async () => {
         await device.selectApp(otherAppName);
-        expect(driverMock.driver.getBundleIdFromBinary).not.toHaveBeenCalled();
+        expect(driverMock.driver.getAppIdFromBinary).not.toHaveBeenCalled();
       });
 
       it(`upon re-selecting the same app, it should not infer bundleId twice`, async () => {
         await device.selectApp(anAppName);
         await device.selectApp(otherAppName);
         await device.selectApp(anAppName);
-        expect(driverMock.driver.getBundleIdFromBinary).toHaveBeenCalledTimes(1);
+        expect(driverMock.driver.getAppIdFromBinary).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -1033,7 +1033,7 @@ class DeviceDriverMock {
 
   expectLaunchCalledContainingArgs(expectedArgs) {
     expect(this.driver.launchApp).toHaveBeenCalledWith(
-      this.driver.getBundleIdFromBinary(),
+      this.driver.getAppIdFromBinary(),
       expect.objectContaining(expectedArgs),
       undefined);
   }

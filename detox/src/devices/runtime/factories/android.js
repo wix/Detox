@@ -7,17 +7,9 @@ const { InvocationManager } = require('../../../invoke');
 
 const RuntimeDeviceFactory = require('./base');
 
-/**
- * @typedef {{
- *    alias: String,
- *    client: Client,
- *    invocationManager: InvocationManager,
- *    uiDevice: UiDeviceProxy,
- *  }} TestApp
- */
-
 class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
-  _createDriverDependencies(commonDeps) {
+  _createDriverDependencies(commonDeps, configs) {
+    const apps = this._createAppDeps(configs);
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
@@ -31,6 +23,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
 
     return {
       ...commonDeps,
+      apps,
       adb,
       aapt,
       apkValidator,
@@ -43,14 +36,16 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
   }
 
   /**
-   * @returns { Object.<String, TestApp> }
+   * @returns { Object.<String, AndroidApp> }
    * @internal
    */
-  _createAppConnections({ appsConfig, sessionConfig }) {
+  _createAppDeps({ appsConfig, sessionConfig }) {
+    const { sessionId } = sessionConfig;
+
     return _.mapValues(appsConfig, (appConfig, alias) => {
       const appSessionConfig = {
         ...sessionConfig,
-        sessionId: `${sessionConfig.sessionId}:${alias}`,
+        sessionId: `${sessionId}:${alias}`,
       };
 
       const client = new Client(appSessionConfig);
@@ -68,41 +63,37 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
 }
 
 class AndroidEmulator extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) {
-    const { deviceConfig } = configs;
+  _createDriver(deviceCookie, deps, { deviceConfig }) {
     const props = {
       adbName: deviceCookie.adbName,
       avdName: deviceConfig.device.avdName,
-      apps: this._createAppConnections(configs),
       forceAdbInstall: deviceConfig.forceAdbInstall,
     };
 
     const { AndroidEmulatorRuntimeDriver } = require('../drivers');
-    return new AndroidEmulatorRuntimeDriver(deps, configs, props);
+    return new AndroidEmulatorRuntimeDriver(deps, props);
   }
 }
 
 class AndroidAttached extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps) {
     const props = {
       adbName: deviceCookie.adbName,
-      apps: this._createAppConnections(configs),
     };
 
     const { AttachedAndroidRuntimeDriver } = require('../drivers');
-    return new AttachedAndroidRuntimeDriver(deps, configs, props);
+    return new AttachedAndroidRuntimeDriver(deps, props);
   }
 }
 
 class Genycloud extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps) {
     const props = {
       instance: deviceCookie.instance,
-      apps: this._createAppConnections(configs),
     };
 
     const { GenycloudRuntimeDriver } = require('../drivers');
-    return new GenycloudRuntimeDriver(deps, configs, props);
+    return new GenycloudRuntimeDriver(deps, props);
   }
 }
 

@@ -109,7 +109,7 @@ class RuntimeDevice {
       throw this._errorComposer.cantFindApp(alias);
     }
 
-    this.deviceDriver.selectApp(alias);
+    await this.deviceDriver.selectApp(alias);
 
     this._appLaunchArgs.reset();
     this._appLaunchArgs.modify(this._currentApp.launchArgs);
@@ -286,13 +286,6 @@ class RuntimeDevice {
     await this.deviceDriver.cleanup(appId);
   }
 
-  /**
-   * @internal
-   */
-  async _typeText(text) {
-    await this.deviceDriver.typeText(text);
-  }
-
   get _appId() {
     return this._getCurrentApp().bundleId; // TODO (multiapps) Might be able to rename bundleId->appId here too
   }
@@ -370,31 +363,26 @@ class RuntimeDevice {
   }
 
   _prepareLaunchArgs(launchParams) {
-    const baseLaunchArgs = {
+    const launchArgs = {
       ...this._appLaunchArgs.get(),
       ...launchParams.launchArgs,
     };
 
     if (launchParams.url) {
-      baseLaunchArgs['detoxURLOverride'] = launchParams.url;
+      launchArgs['detoxURLOverride'] = launchParams.url;
       if (launchParams.sourceApp) {
-        baseLaunchArgs['detoxSourceAppOverride'] = launchParams.sourceApp;
+        launchArgs['detoxSourceAppOverride'] = launchParams.sourceApp;
       }
     } else if (launchParams.userNotification) {
-      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', launchParams, baseLaunchArgs);
+      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', launchParams, launchArgs);
     } else if (launchParams.userActivity) {
-      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', launchParams, baseLaunchArgs);
+      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', launchParams, launchArgs);
     }
 
     if (launchParams.disableTouchIndicators) {
-      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+      launchArgs['detoxDisableTouchIndicators'] = true;
     }
-
-    return {
-      detoxServer: this._sessionConfig.server,
-      detoxSessionId: this._sessionConfig.sessionId,
-      ...baseLaunchArgs,
-    };
+    return launchArgs;
   }
 
   _createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
@@ -413,7 +401,7 @@ class RuntimeDevice {
     const { binaryPath, bundleId } = this._currentApp; // TODO (multiapps) Might be able to rename bundleId->appId
 
     if (!bundleId) {
-      this._currentApp.bundleId = await this.deviceDriver.getBundleIdFromBinary(binaryPath);
+      this._currentApp.bundleId = await this.deviceDriver.getAppIdFromBinary(binaryPath);
     }
   }
 }

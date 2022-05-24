@@ -51,7 +51,7 @@ class SimulatorDriver extends IosDriver {
     return this._deviceName;
   }
 
-  async getBundleIdFromBinary(appPath) {
+  async getAppIdFromBinary(appPath) {
     appPath = getAbsoluteBinaryPath(appPath);
     try {
       const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
