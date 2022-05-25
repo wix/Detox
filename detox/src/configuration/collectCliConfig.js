@@ -82,9 +82,8 @@ function collectCliConfig({ argv }) {
     // }
     noColor: asBoolean(get('no-color')),
     reuse: asBoolean(get('reuse')),
-    runnerConfig: get('runner-config'),
     useCustomLogger: asBoolean(get('use-custom-logger')),
-    workers: asNumber(get('workers')),
+    retries: asNumber(get('retries')),
     inspectBrk: asBoolean(get('inspect-brk')),
   }, _.isUndefined);
 }

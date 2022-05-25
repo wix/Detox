@@ -64,7 +64,9 @@ describe('composeDetoxConfig', () => {
           cleanup: true,
           reuse: true,
           'record-logs': 'all',
-          'runner-config': 'e2e/jest.config.js',
+        },
+        testRunnerArgv: {
+          config: 'e2e/jest.config.js',
         },
         override: {
           artifacts: {
@@ -128,7 +130,6 @@ describe('composeDetoxConfig', () => {
           cleanup: true,
           reuse: true,
           recordLogs: 'all',
-          runnerConfig: 'e2e/jest.config.js',
         },
         deviceConfig: expect.objectContaining({
           type: 'ios.simulator',
@@ -137,7 +138,11 @@ describe('composeDetoxConfig', () => {
           },
         }),
         runnerConfig: {
-          runnerConfig: 'e2e/jest.config.js',
+          args: {
+            $0: 'jest',
+            config: 'e2e/jest.config.js',
+            _: [],
+          },
         },
         sessionConfig: expect.objectContaining({
           server: 'ws://localhost:9999',

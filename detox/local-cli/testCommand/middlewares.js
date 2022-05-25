@@ -33,13 +33,12 @@ function warnDeviceAppLaunchArgsDeprecation(argv) {
  * @param {Record<string, *>} argv
  * @returns {{
  *   detoxArgs: Record<string, *>,
- *   specs: string[],
  *   runnerArgs: Record<string, *>
  * }}
  */
 function splitArgv(argv) {
   const aliases = extractKnownKeys(testCommandArgs);
-  const isDetoxArg = (_value, key) => aliases.has(key);
+  const isDetoxArg = (_value, key) => key === '$0' || aliases.has(key);
 
   const detoxArgs = _.pickBy(argv, isDetoxArg);
   const runnerArgv = _.omitBy(argv, isDetoxArg);
@@ -50,8 +49,8 @@ function splitArgv(argv) {
     runnerArgv._.unshift(erroneousPassthrough);
   }
 
-  const { specs, passthrough } = disengageBooleanArgs(runnerArgv, getJestBooleanArgs());
-  return { detoxArgs, runnerArgs: passthrough, specs };
+  const runnerArgs = disengageBooleanArgs(runnerArgv, getJestBooleanArgs());
+  return { detoxArgs, runnerArgs };
 }
 
 // noinspection JSUnusedGlobalSymbols

@@ -10,12 +10,10 @@ const { quote } = require('../../src/utils/shellQuote');
 
 class TestRunnerCommand {
   constructor() {
-    this._$0 = 'jest';
     this._argv = {};
     this._env = {};
     this._envHint = {};
     this._retries = 0;
-    this._specs = [];
     this._deviceConfig = null;
   }
 
@@ -25,39 +23,23 @@ class TestRunnerCommand {
     return this;
   }
 
-  setRunnerConfig({ testRunner, runnerConfig, specs }) {
-    this._$0 = testRunner;
+  setRunnerConfig({ args, retries, inspectBrk }) {
+    this._argv = args;
+    this._retries = retries;
 
-    this.setSpecs(specs);
-    this.assignArgv({ config: runnerConfig });
-
-    return this;
-  }
-
-  assignArgv(runnerArgs) {
-    Object.assign(this._argv, runnerArgs);
-    return this;
-  }
-
-  setRetries(count) {
-    this._retries = count;
-    return this;
-  }
-
-  setSpecs(specs) {
-    if (!_.isEmpty(specs)) {
-      this._specs = Array.isArray(specs) ? specs : [specs];
+    if (inspectBrk) {
+      this._enableDebugMode();
     }
 
     return this;
   }
 
-  enableDebugMode() {
+  _enableDebugMode() {
     /* istanbul ignore if */
     if (os.platform() === 'win32') {
-      this._$0 = `node --inspect-brk ./node_modules/jest/bin/jest.js`;
+      this._argv.$0 = `node --inspect-brk ./node_modules/jest/bin/jest.js`;
     } else {
-      this._$0 = `node --inspect-brk ./node_modules/.bin/jest`;
+      this._argv.$0 = `node --inspect-brk ./node_modules/.bin/jest`;
     }
 
     this._env = this._envHint;
@@ -103,7 +85,7 @@ class TestRunnerCommand {
     do {
       try {
         if (launchError) {
-          const list = this._specs.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
+          const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
           context.log.error(
             `There were failing tests in the following files:\n${list}\n\n` +
             'Detox CLI is going to restart the test runner with those files...\n'
@@ -120,7 +102,7 @@ class TestRunnerCommand {
           throw e;
         }
 
-        this.setSpecs(lastFailedTests);
+        this._argv._ = lastFailedTests;
         this._env.DETOX_RERUN_INDEX = 1 + (this._env.DETOX_RERUN_INDEX || 0);
       }
     } while (launchError && --runsLeft > 0);
@@ -131,12 +113,12 @@ class TestRunnerCommand {
   }
 
   async _doExecute() {
-    const command = this._$0;
-    const restArgv = this._argv;
+    const { $0: command, _: specs, '--': passthrough, ...restArgv } = this._argv;
     const fullCommand = [
       command,
       quote(unparse(_.omitBy(restArgv, _.isUndefined))),
-      this._specs.join(' ')
+      passthrough ? passthrough.join(' ') : undefined,
+      specs ? specs.join(' ') : undefined,
     ].filter(Boolean).join(' ');
 
     context.log.info(

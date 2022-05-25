@@ -59,6 +59,11 @@ describe('CLI', () => {
     process.env = { ..._env };
 
     detoxConfig = {
+      testRunner: {
+        args: {
+          config: 'e2e/config.json'
+        },
+      },
       configurations: {
         single: {
           device: {
@@ -110,7 +115,7 @@ describe('CLI', () => {
 
   describe('given no extra args (iOS)', () => {
     beforeEach(async () => {
-        singleConfig().device.type = 'ios.simulator';
+      singleConfig().device.type = 'ios.simulator';
       await run();
     });
 
@@ -143,12 +148,12 @@ describe('CLI', () => {
   });
 
   test('should use runnerConfig.specs as default specs', async () => {
-    detoxConfig.specs = 'e2e/sanity';
+    detoxConfig.testRunner.args._ = ['e2e/sanity'];
     await run('');
     expect(cliCall().command).toMatch(/ e2e\/sanity$/);
   });
 
-  test.each([['-o'], ['--runner-config']])('%s <path> should point to the specified Jest config', async (__runnerConfig) => {
+  test.each([['--config']])('%s <path> should point to the specified Jest config', async (__runnerConfig) => {
     await run(`${__runnerConfig} e2e/custom.config.js`);
     expect(cliCall().command).toContain(`--config e2e/custom.config.js`);
   });
@@ -172,6 +177,7 @@ describe('CLI', () => {
     cp.execSync.mockImplementation(() => { throw new Error; });
 
     await run(`-R 2`).catch(_.noop);
+
     expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
 
     expect(cliCall(1).command).toMatch(/ e2e\/failing1.test.js e2e\/failing2.test.js$/);
@@ -199,8 +205,8 @@ describe('CLI', () => {
     cp.execSync.mockImplementation(() => { throw new Error; });
 
     await run(`-R 1 tests -- --debug`).catch(_.noop);
-    expect(cliCall(0).command).toMatch(/ --debug .* tests$/);
-    expect(cliCall(1).command).toMatch(/ --debug .* tests\/failing.test.js$/);
+    expect(cliCall(0).command).toMatch(/ --debug\b.*\btests$/);
+    expect(cliCall(1).command).toMatch(/ --debug\b.*\btests\/failing.test.js$/);
   });
 
   test.each([['-r'], ['--reuse']])('%s <value> should be passed as environment variable', async (__reuse) => {
@@ -334,7 +340,6 @@ describe('CLI', () => {
     expect(cliCall().command).toMatch(/ e2e\/01.sanity.test.js e2e\/02.sanity.test.js$/);
   });
 
-  // TODO: fix --inspect-brk behavior on Windows, and replace (cmd|js) with js here
   test.each([
     ['--inspect-brk e2eFolder', /^node --inspect-brk \.\/node_modules\/.*jest.* .* e2eFolder$/, {}],
     ['-d e2eFolder', / e2eFolder$/, { DETOX_DEBUG_SYNCHRONIZATION: 3000 }],
@@ -350,7 +355,7 @@ describe('CLI', () => {
     ['--use-custom-logger e2eFolder', / e2eFolder$/, { DETOX_USE_CUSTOM_LOGGER: true }],
     ['--force-adb-install e2eFolder', / e2eFolder$/, { DETOX_FORCE_ADB_INSTALL: true }],
   ])('"%s" should be disambigued correctly', async (command, commandMatcher, envMatcher) => {
-      singleConfig().device.type = 'android.emulator';
+    singleConfig().device.type = 'android.emulator';
     await run(command);
 
     expect(cliCall().command).toMatch(commandMatcher);
@@ -380,22 +385,22 @@ describe('CLI', () => {
   });
 
   test(`should be able to use custom test runner commands`, async () => {
-    detoxConfig.testRunner = `nyc jest`;
+    detoxConfig.testRunner.args.$0 = `nyc jest`;
     await run();
     expect(cliCall().command).toMatch(RegExp(`nyc jest `));
   });
 
   test('-- <...explicitPassthroughArgs> should be forwarded to the test runner CLI as-is', async () => {
     await run('--device-boot-args detoxArgs e2eFolder -- a -a --a --device-boot-args runnerArgs');
-    expect(cliCall().command).toMatch(/a -a --a --device-boot-args runnerArgs .* e2eFolder$/);
+    expect(cliCall().command).toMatch(/a -a --a --device-boot-args runnerArgs\b.*\be2eFolder$/);
     expect(cliCall().envHint).toEqual(expect.objectContaining({ DETOX_DEVICE_BOOT_ARGS: 'detoxArgs' }));
   });
 
   test('-- <...explicitPassthroughArgs> should omit double-dash "--" itself, when forwarding args', async () => {
     await run('./detox -- --forceExit');
 
-    expect(cliCall().command).toMatch(/ --forceExit .* \.\/detox$/);
-    expect(cliCall().command).not.toMatch(/ -- --forceExit .* \.\/detox$/);
+    expect(cliCall().command).toMatch(/ --forceExit \.\/detox$/);
+    expect(cliCall().command).not.toMatch(/ -- --forceExit \.\/detox$/);
   });
 
   test('--inspect-brk should prepend "node --inspect-brk" to the command', async () => {

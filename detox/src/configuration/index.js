@@ -16,6 +16,7 @@ const selectConfiguration = require('./selectConfiguration');
 async function composeDetoxConfig({
   cwd = process.cwd(),
   argv = undefined,
+  testRunnerArgv = undefined,
   errorComposer = new DetoxConfigErrorComposer(),
   override,
 }) {
@@ -40,11 +41,6 @@ async function composeDetoxConfig({
 
   const { configurations } = globalConfig;
 
-  const runnerConfig = composeRunnerConfig({
-    globalConfig,
-    cliConfig,
-  });
-
   const configurationName = selectConfiguration({
     errorComposer,
     globalConfig,
@@ -56,6 +52,13 @@ async function composeDetoxConfig({
   if (localConfig['type']) {
     throw errorComposer.configurationShouldNotUseLegacyFormat();
   }
+
+  const runnerConfig = composeRunnerConfig({
+    globalConfig,
+    localConfig,
+    cliConfig,
+    testRunnerArgv,
+  });
 
   const deviceConfig = composeDeviceConfig({
     errorComposer,

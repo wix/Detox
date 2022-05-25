@@ -36,21 +36,7 @@ declare global {
              * @example extends: '@my-org/detox-preset'
              */
             extends?: string;
-            /**
-             * Override test runner binary command.
-             * @default 'jest'
-             */
-            testRunner?: string;
-            /**
-             * @example runnerConfig: 'e2e/config.js'
-             */
-            runnerConfig?: string;
-            /**
-             * Optional. A default glob pattern for a test runner to use when no test files are specified.
-             *
-             * @example specs: 'detoxE2E'
-             */
-            specs?: string;
+
             apps?: Record<string, DetoxAppConfig>;
             devices?: Record<string, DetoxDeviceConfig>;
             selectedConfiguration?: string;
@@ -61,6 +47,7 @@ declare global {
             artifacts?: false | DetoxArtifactsConfig;
             behavior?: DetoxBehaviorConfig;
             session?: DetoxSessionConfig;
+            testRunner?: DetoxTestRunnerConfig;
         };
 
         interface DetoxArtifactsConfig {
@@ -109,6 +96,36 @@ declare global {
             server?: string;
             sessionId?: string;
         }
+
+        interface DetoxTestRunnerConfig {
+            args?: {
+                /**
+                 * The command to use for runner: 'jest', 'nyc jest',
+                 */
+                $0: _HookableProperty<string>;
+                /**
+                 * The positional arguments to pass to the runner.
+                 */
+                _?: _HookableProperty<string[]>;
+                /**
+                 * Any other properties recognized by test runner
+                 */
+                [prop: string]: _HookableProperty<unknown>;
+            };
+            /**
+             * Retries count. Zero means one attempt.
+             */
+            retries?: number;
+            /**
+             * Put --inspect-brk for Node.js debugging
+             */
+            inspectBrk?: boolean;
+        }
+
+        /**
+         * @private
+         */
+        type _HookableProperty<T> = T | ((value: T) => T);
 
         type DetoxAppConfig = (DetoxBuiltInAppConfig | DetoxCustomAppConfig) & {
             /**

@@ -57,8 +57,12 @@ function createJestFolderE2E() {
   });
 
   createFile('.detoxrc.json', JSON.stringify({
-    testRunner: 'jest',
-    runnerConfig: 'e2e/config.json',
+    testRunner: {
+      args: {
+        config: 'e2e/config.json'
+      },
+    },
+
     ...createDefaultConfigurations(),
   }, null, 2));
 }

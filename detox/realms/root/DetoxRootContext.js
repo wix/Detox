@@ -24,8 +24,11 @@ class DetoxRootContext {
     this.teardown = this.teardown.bind(this);
   }
 
-  async setup({ argv }) {
-    this._config = await configuration.composeDetoxConfig({ argv });
+  async setup({ argv, testRunnerArgv }) {
+    this._config = await configuration.composeDetoxConfig({
+      argv,
+      testRunnerArgv,
+    });
 
     try {
       await this._doSetup();

@@ -89,10 +89,9 @@ describe('collectCliConfig', () => {
     ...asString( ['loglevel',             'DETOX_LOGLEVEL',               'loglevel']),
     ...asBoolean(['noColor',              'DETOX_NO_COLOR',               'no-color']),
     ...asBoolean(['reuse',                'DETOX_REUSE',                  'reuse']),
+    ...asNumber( ['retries',              'DETOX_RETRIES',                'retries']),
     ...asBoolean(['readonlyEmu',          'DETOX_READ_ONLY_EMU',          null]),
-    ...asString( ['runnerConfig',          'DETOX_RUNNER_CONFIG',          'runner-config']),
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
-    ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {

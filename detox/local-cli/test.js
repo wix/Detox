@@ -8,21 +8,14 @@ module.exports.desc = 'Run your test suite with the test runner specified in pac
 module.exports.builder = require('./testCommand/builder');
 module.exports.middlewares = require('./testCommand/middlewares').default;
 
-module.exports.handler = async function test({ detoxArgs, runnerArgs, specs }) {
+module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
   try {
-    await realm.setup({ argv: detoxArgs });
+    await realm.setup({ argv: detoxArgs, testRunnerArgv: runnerArgs });
 
     const runnerCommand = new TestRunnerCommand()
-      .setDeviceConfig(realm.config.deviceConfig)
-      .replicateCLIConfig(realm.config.cliConfig)
       .setRunnerConfig(realm.config.runnerConfig)
-      .assignArgv(runnerArgs)
-      .setRetries(detoxArgs.retries)
-      .setSpecs(specs);
-
-    if (detoxArgs['inspect-brk']) {
-      runnerCommand.enableDebugMode();
-    }
+      .setDeviceConfig(realm.config.deviceConfig)
+      .replicateCLIConfig(realm.config.cliConfig);
 
     await runnerCommand.execute();
   } finally {

@@ -24,7 +24,7 @@ function extractKnownKeys(yargsBuilder) {
 /**
  * @param {Record<string, *>} argv
  * @param {Set<string>} booleanKeys
- * @returns {{specs: string[], passthrough: Record<string, *>}}
+ * @returns {Record<string, *>}
  */
 function disengageBooleanArgs(argv, booleanKeys) {
   const result = {};
@@ -46,11 +46,9 @@ function disengageBooleanArgs(argv, booleanKeys) {
   }
 
   return {
-    specs: passthrough.concat(argv._),
-    passthrough: {
-      _: argv['--'] || [],
-      ...result,
-    },
+    ...result,
+    '_': passthrough.concat(argv._),
+    '--': argv['--'] || [],
   };
 }
 
