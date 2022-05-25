@@ -196,20 +196,6 @@ class ValuePredicate : Predicate {
 	let value : CustomStringConvertible
 	let requiresAccessibilityElement: Bool
 	
-	static let mapping : [String: (String, (Any) -> Any)] = [
-		Kind.id: ("accessibilityIdentifier", { return $0 }),
-		Kind.label: ("accessibilityLabel", { return $0 }),
-		Kind.text: ("dtx_text", { return $0 }),
-		Kind.value: ("accessibilityValue", { return $0 })
-	]
-	
-	static let translator : [String: String] = [
-		"accessibilityIdentifier": "identifier",
-		"accessibilityLabel": "label",
-		"dtx_text": "text",
-		"accessibilityValue": "value"
-	]
-	
 	init(kind: String, modifiers: Set<String>, value: CustomStringConvertible, requiresAccessibilityElement: Bool) {
 		self.value = value
 		self.requiresAccessibilityElement = requiresAccessibilityElement
@@ -218,15 +204,41 @@ class ValuePredicate : Predicate {
 	}
 	
 	override func innerPredicateForQuery() -> NSPredicate {
-		let (keyPath, transformer) = ValuePredicate.mapping[kind]!
-		
-		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: keyPath), rightExpression: NSExpression(forConstantValue: transformer(value)), modifier: .direct, type: .equalTo, options: [])
+	  return NSPredicate { evaluatedObject, _ in
+		guard let evaluatedObject = evaluatedObject else {
+		  return false
+		}
+
+		let value = self.getValue(evaluatedObject, fromKind: self.kind)
+		return value as? NSObject == self.value as? NSObject
+	  }
 	}
+
+  private func getValue(_ evaluatedObject: Any, fromKind kind: String) -> Any? {
+	guard let object = evaluatedObject as? NSObject else {
+	  return nil
+	}
+
+	switch kind {
+	  case Kind.id:
+		return object.accessibilityIdentifier
+
+	  case Kind.label:
+		return object.accessibilityLabel
+
+	  case Kind.text:
+		return object.dtx_text
+
+	  case Kind.value:
+		return object.accessibilityValue
+
+	  default:
+		return nil
+	}
+  }
 	
 	override var innerDescription: String {
-		let (keyPath, transformer) = ValuePredicate.mapping[kind]!
-		
-		return "\(ValuePredicate.translator[keyPath] ?? keyPath) == “\(transformer(value))”"
+		return "\(kind) == “\(value)”"
 	}
 }
 
