@@ -1,47 +1,40 @@
-const ipc = require('node-ipc').default;
+const ipc = require('node-ipc');
 
 const Deferred = require('../utils/Deferred');
 
 const state = {
   open: false,
   detoxConfig: new Deferred(),
+  workersCount: 1,
 };
 
 module.exports = {
   async init({
     serverId = process.env.DETOX_IPC_SERVER_ID,
-    workerId = process.env.JEST_WORKER_ID,
-  }) {
-    return new Promise((resolve, reject) => {
-      ipc.config.id = `${serverId}-${process.env.JEST_WORKER_ID}`;
+    workerId = process.env.JEST_WORKER_ID || '0',
+  } = {}) {
+    await new Promise((resolve, reject) => {
+      ipc.config.id = `${serverId}-${workerId}`;
       ipc.config.retry = 1000;
+      ipc.config.stopRetrying = true;
       ipc.config.sync = true;
+      ipc.config.silent = true;
       ipc.connectTo(serverId, function() {
         const server = state.server = ipc.of[serverId];
         server.on('error', reject);
         server.on('connect', () => {
           state.open = true;
-
-          server.emit('app.message', {
-            type: 'registerWorker',
-            workerId,
-          });
-
+          server.emit('registerWorker', { workerId });
           resolve();
         });
-
         server.on('disconnect', () => {
           state.open = false;
         });
-
-        server.on('app.message', ({ type, ...payload }) => {
-          switch (type) {
-            case 'registerWorkerDone': {
-              const { detoxConfig } = payload;
-              state.detoxConfig.resolve(detoxConfig);
-              break;
-            }
-          }
+        server.on('detoxConfig', (detoxConfig) => {
+          state.detoxConfig.resolve(detoxConfig);
+        });
+        server.on('workersCount', ({ value }) => {
+          state.workersCount = value;
         });
       });
     });

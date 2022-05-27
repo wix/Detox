@@ -1,1 +1,1 @@
-module.exports = require('../../realms/runner').teardown;
+module.exports = require('../../realms/secondary').teardown;

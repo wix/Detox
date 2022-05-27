@@ -1,1 +1,1 @@
-module.exports = require('../../realms/runner').setup;
+module.exports = require('../../realms').setup;

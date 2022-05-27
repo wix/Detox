@@ -7,6 +7,7 @@ const _ = require('lodash');
 const configuration = require('../../src/configuration');
 const DeviceRegistry = require('../../src/devices/DeviceRegistry');
 const GenyDeviceRegistryFactory = require('../../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+const environmentFactory = require('../../src/environmentFactory');
 const NullLogger = require('../../src/logger/NullLogger');
 const DetoxServer = require('../../src/server/DetoxServer');
 
@@ -19,6 +20,7 @@ class DetoxRootContext {
     this._wss = null;
     this._ipc = null;
     this._logger = new NullLogger();
+    this._globalLifecycleHandler = null;
 
     this.setup = this.setup.bind(this);
     this.teardown = this.teardown.bind(this);
@@ -48,6 +50,10 @@ class DetoxRootContext {
       this._wss = null;
     }
 
+    if (this._globalLifecycleHandler) {
+      await this._globalLifecycleHandler.globalCleanup();
+    }
+
     // TODO: move the artifacts
   }
 
@@ -66,6 +72,7 @@ class DetoxRootContext {
 
   async _doSetup() {
     const config = this._config;
+
     this._logger = new BunyanLogger({
       loglevel: config.cliConfig.loglevel || 'info',
     });
@@ -84,13 +91,21 @@ class DetoxRootContext {
     );
 
     this._ipc = new IPCServer({
-      sessionId: `detox-${process.pid}`,
+      id: 'detox-' + process.pid,
       detoxConfig: this._config,
       logger: this._logger,
     });
 
+    process.env.DETOX_IPC_SERVER_ID = this._ipc.id;
     await this._ipc.start();
-    const { cliConfig, sessionConfig } = config;
+
+    const { cliConfig, deviceConfig, sessionConfig } = config;
+
+    this._globalLifecycleHandler = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
+
+    if (this._globalLifecycleHandler) {
+      await this._globalLifecycleHandler.globalInit();
+    }
 
     if (!cliConfig.keepLockFile) {
       await this._resetLockFile();

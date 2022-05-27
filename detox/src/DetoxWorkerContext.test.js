@@ -1,13 +1,15 @@
 // @ts-nocheck
-const testSummaries = require('../../../src/artifacts/__mocks__/testSummaries.mock');
-const configuration = require('../../../src/configuration');
+const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
+const configuration = require('./configuration');
+const Deferred = require('./utils/Deferred');
 
-jest.mock('../../../src/utils/logger');
-jest.mock('../../../src/client/Client');
-jest.mock('../../../src/utils/AsyncEmitter');
-jest.mock('../../../src/invoke');
-jest.mock('../../../src/utils/wrapWithStackTraceCutter');
-jest.mock('../../../src/environmentFactory');
+jest.mock('./ipc/client');
+jest.mock('./utils/logger');
+jest.mock('./client/Client');
+jest.mock('./utils/AsyncEmitter');
+jest.mock('./invoke');
+jest.mock('./utils/wrapWithStackTraceCutter');
+jest.mock('./environmentFactory');
 
 describe('Detox', () => {
   const fakeCookie = {
@@ -18,16 +20,6 @@ describe('Detox', () => {
   const invocationManager = () => invoke.InvocationManager.mock.instances[0];
   const eventEmitter = () => AsyncEmitter.mock.instances[0];
   eventEmitter.errorCallback = () => AsyncEmitter.mock.calls[0][0].onError;
-
-  const suspendMethod = (obj, methodName) => {
-    let releaseFn;
-    const promise = new Promise((resolve) => { releaseFn = resolve; });
-    obj[methodName].mockReturnValue(promise);
-    return releaseFn;
-  };
-  const suspendAllocation = () => suspendMethod(deviceAllocator, 'allocate');
-  const suspendAppUninstall = () => suspendMethod(runtimeDevice, 'uninstallApp');
-  const suspendAppInstall = () => suspendMethod(runtimeDevice, 'installApp');
 
   let detoxConfig;
 
@@ -48,11 +40,12 @@ describe('Detox', () => {
   let Detox;
   let detox;
   let lifecycleSymbols;
+  let ipcClient;
 
   beforeEach(() => {
     mockEnvironmentFactories();
 
-    const environmentFactory = require('../../../src/environmentFactory');
+    const environmentFactory = require('./environmentFactory');
     environmentFactory.createFactories.mockReturnValue({
       envValidatorFactory,
       deviceAllocatorFactory,
@@ -60,6 +53,9 @@ describe('Detox', () => {
       matchersFactory,
       runtimeDeviceFactory,
     });
+
+    ipcClient = require('./ipc/client');
+    ipcClient.getDetoxConfig.mockImplementation(() => detoxConfig);
   });
 
   beforeEach(async () => {
@@ -80,20 +76,20 @@ describe('Detox', () => {
       },
     });
 
-    logger = require('../../../src/utils/logger');
-    invoke = require('../../../src/invoke');
-    Client = require('../../../src/client/Client');
-    AsyncEmitter = require('../../../src/utils/AsyncEmitter');
-    lifecycleSymbols = require('../integration').lifecycle;
+    logger = require('./utils/logger');
+    invoke = require('./invoke');
+    Client = require('./client/Client');
+    AsyncEmitter = require('./utils/AsyncEmitter');
+    lifecycleSymbols = require('./symbols').lifecycle;
 
     Detox = require('./DetoxWorkerContext');
   });
 
-  describe('when detox.init() is called', () => {
+  describe('when detox.setup() is called', () => {
     let mockGlobalMatcher;
 
     const init = async () => {
-      detox = await new Detox(detoxConfig).init();
+      detox = await new Detox().setup();
     };
 
     beforeEach(() => {
@@ -104,7 +100,7 @@ describe('Detox', () => {
     });
 
     afterEach(() => {
-      // cleanup spilled globals after detox.init()
+      // cleanup spilled globals after detox.setup()
       delete global.device;
       delete global.globalMatcher;
     });
@@ -198,16 +194,7 @@ describe('Detox', () => {
       });
 
       it('should return itself', async () =>
-        expect(await detox.init()).toBeInstanceOf(Detox));
-    });
-
-    it('should return the same promise on consequent calls', () => {
-      detox = new Detox(detoxConfig);
-
-      const initPromise1 = detox.init();
-      const initPromise2 = detox.init();
-
-      expect(initPromise1).toBe(initPromise2);
+        expect(await detox.setup()).toBeInstanceOf(Detox));
     });
 
     describe('with multiple apps', () => {
@@ -308,220 +295,257 @@ describe('Detox', () => {
     });
   });
 
-  describe('when detox.beforeEach() is called', () => {
-    describe('before detox.init() is called', () => {
-      beforeEach(() => {
-        detox = new Detox(detoxConfig);
-      });
-
-      it('should throw an error', () =>
-        expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/of null/));
+  describe('when detox[onTestStart]() is called', () => {
+    beforeEach(async () => {
+      detox = await new Detox(detoxConfig).setup();
     });
 
-    describe('before detox.init() is finished', () => {
-      beforeEach(() => {
-        detox = new Detox(detoxConfig);
-      });
-
-      it('should throw an error', async () => {
-        const initPromise = detox.init();
-        await expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init/);
-      });
+    it('should validate test summary object', async () => {
+      await expect(detox[lifecycleSymbols.onTestStart]('Test')).rejects.toThrowError(
+        /Invalid test summary was passed/
+      );
     });
 
-    describe('after detox.init() is finished', () => {
-      beforeEach(async () => {
-        detox = await new Detox(detoxConfig).init();
+    it('should validate test summary status', async () => {
+      await expect(detox[lifecycleSymbols.onTestStart]({
+        ...testSummaries.running(),
+        status: undefined,
+      })).rejects.toThrowError(/Invalid test summary status/);
+    });
+
+    it('should validate test summary status', async () => {
+      await expect(detox[lifecycleSymbols.onTestStart]({
+        ...testSummaries.running(),
+        status: undefined,
+      })).rejects.toThrowError(/Invalid test summary status/);
+    });
+
+    describe('with a valid test summary', () => {
+      beforeEach(() => detox[lifecycleSymbols.onTestStart](testSummaries.running()));
+
+      it('should trace DETOX_BEFORE_EACH event', () =>
+        expect(logger.trace).toHaveBeenCalledWith(
+          expect.objectContaining({ event: 'DETOX_BEFORE_EACH' }),
+          expect.any(String)
+        ));
+
+      it('should notify artifacts manager about "testStart', () =>
+        expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
+
+      it('should not relaunch app', async () => {
+        await detox[lifecycleSymbols.onTestStart](testSummaries.running());
+        expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
       });
 
-      it('should validate test summary object', async () => {
-        await expect(detox.beforeEach('Test')).rejects.toThrowError(
-          /Invalid test summary was passed/
-        );
-      });
-
-      it('should validate test summary status', async () => {
-        await expect(detox.beforeEach({
-          ...testSummaries.running(),
-          status: undefined,
-        })).rejects.toThrowError(/Invalid test summary status/);
-      });
-
-      it('should validate test summary status', async () => {
-        await expect(detox.beforeEach({
-          ...testSummaries.running(),
-          status: undefined,
-        })).rejects.toThrowError(/Invalid test summary status/);
-      });
-
-      describe('with a valid test summary', () => {
-        beforeEach(() => detox.beforeEach(testSummaries.running()));
-
-        it('should trace DETOX_BEFORE_EACH event', () =>
-          expect(logger.trace).toHaveBeenCalledWith(
-            expect.objectContaining({ event: 'DETOX_BEFORE_EACH' }),
-            expect.any(String)
-          ));
-
-        it('should notify artifacts manager about "testStart', () =>
-          expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
-
-        it('should not relaunch app', async () => {
-          await detox.beforeEach(testSummaries.running());
-          expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
-        });
-
-        it('should not dump pending network requests', async () => {
-          await detox.beforeEach(testSummaries.running());
-          expect(client().dumpPendingRequests).not.toHaveBeenCalled();
-        });
+      it('should not dump pending network requests', async () => {
+        await detox[lifecycleSymbols.onTestStart](testSummaries.running());
+        expect(client().dumpPendingRequests).not.toHaveBeenCalled();
       });
     });
   });
 
-  describe('when detox.afterEach() is called', () => {
-    describe('before detox.init() is called', () => {
-      beforeEach(() => {
-        detox = new Detox(detoxConfig);
-      });
-
-      it('should throw an error', () =>
-        expect(detox.afterEach(testSummaries.running())).rejects.toThrowError(/of null/));
+  describe('when detox[onTestDone]() is called', () => {
+    beforeEach(async () => {
+      detox = await new Detox(detoxConfig).setup();
+      await detox[lifecycleSymbols.onTestStart](testSummaries.running());
     });
 
-    describe('before detox.init() is finished', () => {
-      beforeEach(() => {
-        detox = new Detox(detoxConfig);
-      });
+    it('should validate non-object test summary', () =>
+      expect(detox[lifecycleSymbols.onTestDone]).rejects.toThrowError(/Invalid test summary was passed/));
 
-      it('should throw an error', async () => {
-        const initPromise = detox.init();
-        await expect(detox.afterEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init/);
-      });
+    it('should validate against invalid test summary status', () =>
+      expect(detox[lifecycleSymbols.onTestDone]({})).rejects.toThrowError(/Invalid test summary status/));
+
+    describe('with a passing test summary', () => {
+      beforeEach(() => detox[lifecycleSymbols.onTestDone](testSummaries.passed()));
+
+      it('should trace DETOX_AFTER_EACH event', () =>
+        expect(logger.trace).toHaveBeenCalledWith(
+          expect.objectContaining({ event: 'DETOX_AFTER_EACH' }),
+          expect.any(String)
+        ));
+
+      it('should notify artifacts manager about "testDone"', () =>
+        expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
     });
 
-    describe('after detox.init() is finished', () => {
-      beforeEach(async () => {
-        detox = await new Detox(detoxConfig).init();
-        await detox.beforeEach(testSummaries.running());
-      });
+    describe('with a failed test summary (due to failed asseration)', () => {
+      beforeEach(() => detox[lifecycleSymbols.onTestDone](testSummaries.failed()));
 
-      it('should validate non-object test summary', () =>
-        expect(detox.afterEach()).rejects.toThrowError(/Invalid test summary was passed/));
+      it('should not dump pending network requests', () =>
+        expect(client().dumpPendingRequests).not.toHaveBeenCalled());
+    });
 
-      it('should validate against invalid test summary status', () =>
-        expect(detox.afterEach({})).rejects.toThrowError(/Invalid test summary status/));
+    describe('with a failed test summary (due to a timeout)', () => {
+      beforeEach(() => detox[lifecycleSymbols.onTestDone](testSummaries.timedOut()));
 
-      describe('with a passing test summary', () => {
-        beforeEach(() => detox.afterEach(testSummaries.passed()));
-
-        it('should trace DETOX_AFTER_EACH event', () =>
-          expect(logger.trace).toHaveBeenCalledWith(
-            expect.objectContaining({ event: 'DETOX_AFTER_EACH' }),
-            expect.any(String)
-          ));
-
-        it('should notify artifacts manager about "testDone"', () =>
-          expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
-      });
-
-      describe('with a failed test summary (due to failed asseration)', () => {
-        beforeEach(() => detox.afterEach(testSummaries.failed()));
-
-        it('should not dump pending network requests', () =>
-          expect(client().dumpPendingRequests).not.toHaveBeenCalled());
-      });
-
-      describe('with a failed test summary (due to a timeout)', () => {
-        beforeEach(() => detox.afterEach(testSummaries.timedOut()));
-
-        it('should dump pending network requests', () =>
-          expect(client().dumpPendingRequests).toHaveBeenCalled());
-      });
+      it('should dump pending network requests', () =>
+        expect(client().dumpPendingRequests).toHaveBeenCalled());
     });
   });
 
-  describe('when detox.cleanup() is called', () => {
+  describe('when detox.teardown() is called', () => {
+    let deferred;
     let initPromise;
 
     const startInit = () => {
       detox = new Detox(detoxConfig);
-      initPromise = detox.init();
+      initPromise = detox.setup();
     };
 
-    describe('before detox.init() has been called', () => {
-      it(`should not throw`, async () =>
-        await expect(new Detox(detoxConfig).cleanup()).resolves.not.toThrowError());
+    beforeEach(() => {
+      deferred = new Deferred();
     });
 
-    describe('before client has connected', () => {
-      beforeEach(() => Client.setInfiniteConnect());
-      beforeEach(startInit);
+    describe('before detox.setup()', () => {
+      describe('has been called', () => {
+        it(`should not throw`, async () => {
+          await expect(new Detox(detoxConfig).teardown()).resolves.not.toThrowError();
+        });
 
-      it(`should not throw, but should reject detox.init() promise`, async () => {
-        await expect(detox.cleanup()).resolves.not.toThrowError();
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
+        it(`should not try to get config in detox.setup()`, async () => {
+          detox = new Detox(detoxConfig);
+          await expect(Promise.all([detox.teardown(), detox.setup()])).resolves.not.toThrowError();
+          expect(ipcClient.getDetoxConfig).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('gets its config', () => {
+        beforeEach(() => {
+          ipcClient.getDetoxConfig.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip creating a WebSocket client`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve(detoxConfig);
+          await expect(initPromise).resolves.toBe(undefined);
+          await expect(Client).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('connects WS client', () => {
+        beforeEach(() => Client.setInfiniteConnect());
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip creation of the invocation manager`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrow();
+          await expect(initPromise).rejects.toThrowError(/Fake error/);
+          await expect(invocationManager()).not.toBeDefined();
+        });
+      });
+
+      describe('validates the config', () => {
+        beforeEach(() => {
+          envValidator.validate.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip allocating the device`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve();
+          await expect(initPromise).resolves.toBe(undefined);
+          await expect(deviceAllocator.allocate).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('allocates the device', () => {
+        beforeEach(() => {
+          deviceAllocator.allocate.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip uninstall the app`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve();
+          await expect(initPromise).resolves.toBe(undefined);
+          await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('prepares the device', () => {
+        beforeEach(() => {
+          runtimeDevice._prepare.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip uninstall the app`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve();
+          await expect(initPromise).resolves.toBe(undefined);
+          await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('before util binaries have been installed', () => {
+        beforeEach(() => {
+          runtimeDevice.installUtilBinaries.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip uninstalling the app`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve();
+          await expect(initPromise).resolves.toBe(undefined);
+          await expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('before app has been uninstalled', () => {
+        beforeEach(() => {
+          runtimeDevice.uninstallApp.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should stop the execution and skip installing the app`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve();
+          await expect(initPromise).resolves.not.toThrowError();
+          await expect(runtimeDevice.installApp).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('before app has been installed', () => {
+        beforeEach(() => {
+          runtimeDevice.installApp.mockReturnValue(deferred.promise);
+        });
+
+        beforeEach(startInit);
+
+        it(`should not throw, but should reject detox.setup() promise`, async () => {
+          await expect(detox.teardown()).resolves.not.toThrowError();
+          deferred.resolve();
+          await expect(initPromise).resolves.not.toThrowError();
+        });
       });
     });
 
-    describe('before device has been allocated', () => {
-      let releaseFn;
-      beforeEach(() => { releaseFn = suspendAllocation(); });
-      beforeEach(startInit);
-      afterEach(() => releaseFn());
-
-      it(`should not throw, but should reject detox.init() promise`, async () => {
-        await expect(detox.cleanup()).resolves.not.toThrowError();
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
-      });
-    });
-
-    describe('before app has been uninstalled', () => {
-      let releaseFn;
-      beforeEach(() => { releaseFn = suspendAppUninstall(); });
-      beforeEach(startInit);
-      afterEach(() => releaseFn());
-
-      it(`should not throw, but should reject detox.init() promise`, async () => {
-        await expect(detox.cleanup()).resolves.not.toThrowError();
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
-      });
-    });
-
-    describe('before app has been installed', () => {
-      let releaseFn;
-      beforeEach(() => { releaseFn = suspendAppInstall(); });
-      beforeEach(startInit);
-      afterEach(() => releaseFn());
-
-      it(`should not throw, but should reject detox.init() promise`, async () => {
-        await expect(detox.cleanup()).resolves.not.toThrowError();
-        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
-      });
-    });
-
-    describe('after detox.init()', () => {
+    describe('after detox.setup()', () => {
       beforeEach(async () => {
         detox = new Detox(detoxConfig);
-        await detox.init();
+        await detox.setup();
       });
 
       describe('if the device has not been allocated', () => {
         beforeEach(async () => {
-          await detox.cleanup();
+          await detox.teardown();
         });
 
         it(`should omit calling runtimeDevice._cleanup()`, async () => {
-          await detox.cleanup();
+          await detox.teardown();
           expect(runtimeDevice._cleanup).toHaveBeenCalledTimes(1);
         });
       });
 
       describe('if the device has been allocated', function() {
         beforeEach(async () => {
-          await detox.cleanup();
+          await detox.teardown();
         });
 
         it(`should call runtimeDevice._cleanup()`, () =>
@@ -541,19 +565,19 @@ describe('Detox', () => {
     describe('when behaviorConfig.cleanup.shutdownDevice = true', () => {
       beforeEach(async () => {
         detoxConfig.behaviorConfig.cleanup.shutdownDevice = true;
-        detox = await new Detox(detoxConfig).init();
+        detox = await new Detox(detoxConfig).setup();
       });
 
-      it(`should shut the device down on detox.cleanup()`, async () => {
-        await detox.cleanup();
+      it(`should shut the device down on detox.teardown()`, async () => {
+        await detox.teardown();
         expect(deviceAllocator.free).toHaveBeenCalledWith(fakeCookie, { shutdown: true });
       });
 
       describe('if the device has not been allocated', () => {
-        beforeEach(() => detox.cleanup());
+        beforeEach(() => detox.teardown());
 
         it(`should omit the shutdown`, async () => {
-          await detox.cleanup();
+          await detox.teardown();
           expect(deviceAllocator.free).toHaveBeenCalledTimes(1);
         });
       });
@@ -575,7 +599,7 @@ describe('Detox', () => {
     ['onRunFinish', null],
   ])('when detox[symbols.%s](%j) is called', (method, arg) => {
     beforeEach(async () => {
-      detox = await new Detox(detoxConfig).init();
+      detox = await new Detox(detoxConfig).setup();
     });
 
     it(`should pass it through to artifactsManager.${method}()`, async () => {
@@ -584,7 +608,8 @@ describe('Detox', () => {
     });
   });
 
-  describe('global context', () => {
+  // TODO: move it to the root realm
+  describe.skip('global context', () => {
     const configs = {
       deviceConfig: {
         mock: 'config',
@@ -594,7 +619,7 @@ describe('Detox', () => {
     let environmentFactory;
     let lifecycleHandler;
     beforeEach(() => {
-      environmentFactory = require('../../../src/environmentFactory');
+      environmentFactory = require('./environmentFactory');
 
       lifecycleHandler = {
         globalInit: jest.fn(),
@@ -633,30 +658,30 @@ describe('Detox', () => {
   });
 
   function mockEnvironmentFactories() {
-    const EnvValidator = jest.genMockFromModule('../../../src/validation/EnvironmentValidatorBase');
-    const EnvValidatorFactory = jest.genMockFromModule('../../../src/validation/factories').External;
+    const EnvValidator = jest.genMockFromModule('./validation/EnvironmentValidatorBase');
+    const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').External;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
     envValidatorFactory.createValidator.mockReturnValue(envValidator);
 
-    const ArtifactsManager = jest.genMockFromModule('../../../src/artifacts/ArtifactsManager');
-    const ArtifactsManagerFactory = jest.genMockFromModule('../../../src/artifacts/factories').External;
+    const ArtifactsManager = jest.genMockFromModule('./artifacts/ArtifactsManager');
+    const ArtifactsManagerFactory = jest.genMockFromModule('./artifacts/factories').External;
     artifactsManager = new ArtifactsManager();
     artifactsManagerFactory = new ArtifactsManagerFactory();
     artifactsManagerFactory.createArtifactsManager.mockReturnValue(artifactsManager);
 
-    const MatchersFactory = jest.genMockFromModule('../../../src/matchers/factories/index').External;
+    const MatchersFactory = jest.genMockFromModule('./matchers/factories/index').External;
     matchersFactory = new MatchersFactory();
 
-    const DeviceAllocator = jest.genMockFromModule('../../../src/devices/allocation/DeviceAllocator');
-    const DeviceAllocatorFactory = jest.genMockFromModule('../../../src/devices/allocation/factories').External;
+    const DeviceAllocator = jest.genMockFromModule('./devices/allocation/DeviceAllocator');
+    const DeviceAllocatorFactory = jest.genMockFromModule('./devices/allocation/factories').External;
     deviceAllocator = new DeviceAllocator();
     deviceAllocatorFactory = new DeviceAllocatorFactory();
     deviceAllocatorFactory.createDeviceAllocator.mockReturnValue(deviceAllocator);
     deviceAllocator.allocate.mockResolvedValue(fakeCookie);
 
-    const RuntimeDevice = jest.genMockFromModule('../../../src/devices/runtime/RuntimeDevice');
-    const RuntimeDeviceFactory = jest.genMockFromModule('../../../src/devices/runtime/factories').External;
+    const RuntimeDevice = jest.genMockFromModule('./devices/runtime/RuntimeDevice');
+    const RuntimeDeviceFactory = jest.genMockFromModule('./devices/runtime/factories').External;
     runtimeDevice = new RuntimeDevice();
     runtimeDeviceFactory = new RuntimeDeviceFactory();
     runtimeDeviceFactory.createRuntimeDevice.mockReturnValue(runtimeDevice);

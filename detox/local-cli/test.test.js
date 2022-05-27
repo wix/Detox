@@ -169,7 +169,7 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
-    const context = require('../realms/root');
+    const context = require('../realms/primary');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce(['e2e/failing1.test.js', 'e2e/failing2.test.js'])
       .mockReturnValueOnce(['e2e/failing2.test.js']);
@@ -188,7 +188,7 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should not restart test runner if there are no failing tests paths', async (__retries) => {
-    const context = require('../realms/root');
+    const context = require('../realms/primary');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce([]);
     cp.execSync.mockImplementation(() => { throw new Error; });
@@ -199,7 +199,7 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should retain -- <...explicitPassthroughArgs>', async (__retries) => {
-    const context = require('../realms/root');
+    const context = require('../realms/primary');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce(['tests/failing.test.js']);
     cp.execSync.mockImplementation(() => { throw new Error; });

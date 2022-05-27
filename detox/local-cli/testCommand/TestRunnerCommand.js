@@ -4,7 +4,7 @@ const os = require('os');
 const _ = require('lodash');
 const unparse = require('yargs-unparser');
 
-const context = require('../../realms/root');
+const context = require('../../realms/primary');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 const { quote } = require('../../src/utils/shellQuote');
 
@@ -126,14 +126,16 @@ class TestRunnerCommand {
       printEnvironmentVariables(this._envHint) + fullCommand
     );
 
-    cp.execSync(fullCommand, {
-      stdio: 'inherit',
-      env: _({})
-        .assign(process.env)
-        .assign(this._env)
-        .omitBy(_.isUndefined)
-        .tap(prependNodeModulesBinToPATH)
-        .value()
+    return new Promise((resolve, reject) => {
+      cp.spawn(command, fullCommand.split(' ').slice(1), {
+        stdio: 'inherit',
+        env: _({})
+          .assign(process.env)
+          .assign(this._env)
+          .omitBy(_.isUndefined)
+          .tap(prependNodeModulesBinToPATH)
+          .value()
+      }).on('exit', (code) => code === 0 ? resolve() : reject(code));
     });
   }
 }

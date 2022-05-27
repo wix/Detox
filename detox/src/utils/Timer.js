@@ -52,6 +52,15 @@ class Timer {
       this._timeoutHandle = setTimeout(() => this._timeoutDeferred.resolve(), extraDelayMs);
     }
   }
+
+  static async run({ description, timeout, fn }) {
+    const timer = new Timer({ description, timeout });
+    try {
+      await timer.run(fn);
+    } finally {
+      timer.dispose();
+    }
+  }
 }
 
 module.exports = Timer;

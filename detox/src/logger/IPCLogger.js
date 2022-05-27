@@ -11,7 +11,6 @@ class IPCLogger {
         this._config.level = config.cliConfig.loglevel;
       }
     });
-
   }
 
   child(context) {

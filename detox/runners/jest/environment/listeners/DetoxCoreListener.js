@@ -8,7 +8,7 @@ const {
   onTestFnFailure,
   onTestDone,
   onRunDescribeFinish,
-} = require('../../integration').lifecycle;
+} = require('../../../../src/symbols').lifecycle;
 const { getFullTestName, hasTimedOut } = require('../utils');
 
 const RETRY_TIMES = Symbol.for('RETRY_TIMES');

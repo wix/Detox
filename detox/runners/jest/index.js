@@ -1,28 +1,28 @@
 module.exports = {
-  //#region *** Global Realm ***
+  //#region *** Runner Realm ***
 
   get DetoxCircusEnvironment() {
-    return require('../../realms/worker').DetoxCircusEnvironment;
-  },
-
-  get SpecReporter() {
-    return require('../../realms/worker').SpecReporter;
+    return require('./environment');
   },
 
   //#endregion
 
   //#region *** Worker Realm ***
 
+  get SpecReporter() {
+    return require('./environment/listeners/SpecReporter');
+  },
+
   get WorkerAssignReporter() {
-    return require('../../realms/worker').WorkerAssignReporter;
+    return require('./environment/listeners/WorkerAssignReporter');
   },
 
   get globalSetup() {
-    return require('../../realms/runner').context.setup;
+    return require('../../realms/secondary').setup;
   },
 
   get globalTeardown() {
-    return require('../../realms/runner').context.teardown;
+    return require('../../realms/secondary').teardown;
   },
 
   //#endregion

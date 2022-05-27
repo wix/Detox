@@ -1,5 +1,5 @@
 // @ts-nocheck
-const realm = require('../realms/root');
+const realm = require('../realms/primary');
 
 const TestRunnerCommand = require('./testCommand/TestRunnerCommand');
 
