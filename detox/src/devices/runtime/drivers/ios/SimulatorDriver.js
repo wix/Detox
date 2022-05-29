@@ -110,7 +110,7 @@ class SimulatorDriver extends IosDriver {
     return pid;
   }
 
-  launchTestTarget(launchArgs, bundleId) {
+  async launchTestTarget(launchArgs, bundleId, callback) {
     const { udid } = this;
 
     log.info(`Launching XCTest target.. See target logs using:\n` +
@@ -134,37 +134,33 @@ class SimulatorDriver extends IosDriver {
       });
 
     log.info(`Allowing network permissions`);
-    this.setTestTargetNetworkPermissions();
+    await this.allowNetworkPermissionsXCUITest(callback);
   }
 
-  setTestTargetNetworkPermissions() {
+  async allowNetworkPermissionsXCUITest(callback) {
     osascript.execute(
-      'delay 1\n' +
-      '\n' +
-      'tell application "System Events"\n' +
-      '\tset frontmost of process "UserNotificationCenter" to true\n' +
-      '\t\n' +
-      '\ttell process "UserNotificationCenter"\n' +
-      '\t\t\n' +
-      '\t\tif exists button "Allow" of window 1 then\n' +
-      '\t\t\trepeat while exists button "Allow" of window 1\n' +
-      '\t\t\t\t\n' +
-      '\t\t\t\tif exists button "Allow" of window 1 then\n' +
-      '\t\t\t\t\tclick button "Allow" of window 1\n' +
-      '\t\t\t\tend if\n' +
-      '\t\t\t\t\n' +
-      '\t\t\tend repeat\n' +
-      '\t\t\t\n' +
-      '\t\tend if\n' +
-      '\t\t\n' +
-      '\tend tell\n' +
-      'end tell',
+      `tell application "System Events"
+      set frontmost of process "UserNotificationCenter" to true
+        tell process "UserNotificationCenter"
+                repeat until (exists button "Allow" of window 1)
+                    delay 1
+                end repeat
+        
+                repeat while exists button "Allow" of window 1
+                    if exists button "Allow" of window 1 then
+                        click button "Allow" of window 1
+                    end if
+                end repeat
+        end tell
+      end tell`,
       function(err, result, raw) {
         if (err) {
-          return console.error(err);
+          console.error(`Network permissions are not allowed: ${err}`);
+        } else {
+          console.log(`Network permissions are allowed`);
         }
 
-        console.log(result, raw);
+        callback();
       });
   }
 

@@ -29,15 +29,9 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	func connect(toServer server: URL, withSessionId sessionId: String) {
 		self.sessionId = sessionId
 
-		let log = DetoxLog(category: "XCUITest")
-		log.info("starting to connect..")
-		while webSocketSessionTask == nil {
-			log.debug("trying to connect..")
-			webSocketSessionTask = urlSession.webSocketTask(with: server)
-		}
-		log.debug("connected?")
+		webSocketSessionTask = urlSession.webSocketTask(with: server)
 
-		webSocketSessionTask!.resume()
+		webSocketSessionTask?.resume()
 	}
 	
 	func close() {
@@ -64,7 +58,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 		webSocketSessionTask?.receive { [weak self] result in
 			switch result {
 			case .failure(let error as NSError):
-                fatalError("Error receiving message: \(error.localizedDescription)")
+					fatalError("Error receiving message: \(error.localizedDescription)")
 			case .success(let message):
 				switch message {
 				case .string(let string):

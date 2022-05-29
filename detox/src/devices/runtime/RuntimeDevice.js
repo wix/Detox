@@ -6,6 +6,8 @@ const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter')
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
+const Lock = require('semaphore-async-await').Lock;
+
 class RuntimeDevice {
   constructor({
     appsConfig,
@@ -347,7 +349,16 @@ class RuntimeDevice {
       await this.deviceDriver.deliverPayload({ ...params, delayPayload: true });
     }
 
-    this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId);
+    const lock = new Lock();
+    await this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId, function() {
+      lock.release();
+      console.log('Lock just released!');
+    });
+
+    console.log('Waiting for the lock to be released');
+    await lock.acquire();
+    await lock.acquire();
+    console.log('Can proceed (lock released)');
 
     if (this._behaviorConfig.launchApp === 'manual') {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);

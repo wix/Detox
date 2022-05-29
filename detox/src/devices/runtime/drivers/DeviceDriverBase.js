@@ -47,7 +47,7 @@ class DeviceDriverBase {
     return NaN;
   }
 
-  launchTestTarget(_launchArgs, _bundleId) {
+  async launchTestTarget(_launchArgs, _bundleId, _callback) {
     return NaN;
   }
 
