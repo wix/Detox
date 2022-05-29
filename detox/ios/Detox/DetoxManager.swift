@@ -121,7 +121,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		}
 		
 		let options = UserDefaults.standard
-		let detoxServer = options.string(forKey: "detoxServer") ?? "ws://localhost:8099"
+		let detoxServer = options.string(forKey: "detoxTestTargetServer") ?? "ws://localhost:8797"
 		let detoxSessionId = options.string(forKey: "detoxSessionId") ?? Bundle.main.bundleIdentifier!
 		
 		webSocket.connect(toServer: URL(string: detoxServer)!, withSessionId: detoxSessionId)

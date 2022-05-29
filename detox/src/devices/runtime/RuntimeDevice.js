@@ -349,8 +349,6 @@ class RuntimeDevice {
 
     this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId);
 
-    // todo: expect to receive the port (wait)..
-
     if (this._behaviorConfig.launchApp === 'manual') {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
@@ -414,6 +412,7 @@ class RuntimeDevice {
   _prepareLaunchArgs(additionalLaunchArgs) {
     return {
       detoxServer: this._sessionConfig.server,
+      detoxTestTargetServer: `ws://localhost:8797`, // todo: important, should pass only on iOS..
       detoxSessionId: this._sessionConfig.sessionId,
       ...additionalLaunchArgs
     };

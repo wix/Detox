@@ -28,9 +28,12 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	
 	func connect(toServer server: URL, withSessionId sessionId: String) {
 		self.sessionId = sessionId
-		
-		webSocketSessionTask = urlSession.webSocketTask(with: server)
-		webSocketSessionTask?.resume()
+
+		while webSocketSessionTask == nil {
+			webSocketSessionTask = urlSession.webSocketTask(with: server)
+		}
+
+		webSocketSessionTask!.resume()
 	}
 	
 	func close() {
