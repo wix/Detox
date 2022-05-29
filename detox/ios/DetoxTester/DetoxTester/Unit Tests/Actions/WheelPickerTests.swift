@@ -16,7 +16,7 @@ class WheelPickerTests: DTXTestCase {
     try super.setUpWithError()
 
     app = XCUIApplication()
-    actionDelegate = ActionDelegate(app)
+    actionDelegate = ActionDelegate(app, whiteBoxMessageHandler: { _ in return nil })
 
     app.launch()
 

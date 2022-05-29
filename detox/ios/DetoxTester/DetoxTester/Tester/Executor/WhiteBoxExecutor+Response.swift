@@ -9,6 +9,12 @@ extension WhiteBoxExecutor {
   ///
   enum Response: Equatable {
     ///
+    case boolean(_ value: Bool)
+
+    ///
+    case string(_ value: String)
+
+    ///
     case completed
 
     ///

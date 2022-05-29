@@ -27,9 +27,40 @@ class WhiteBoxExecutor {
   /// and synchronically waits for a response.
   func execute(_ message: Message) -> Response {
 
-    // TODO: handle messages
-    
-    return .completed
+    switch message {
+      case .disconnect:
+        return .completed
+
+      case .cleanup:
+        return .completed
+
+      case .reloadReactNative:
+        return .completed
+
+      case .shakeDevice:
+        return .completed
+
+      case .captureViewHierarchy(let viewHierarchyURL):
+        return .completed
+
+      case .waitFor(let _):
+        return .completed
+
+      case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
+        return .completed
+
+      case .setDatePicker(let toDate, let onElement):
+        return .completed
+
+      case .verifyVisibility(let ofElement, let withThreshold):
+        return .boolean(true)
+
+      case .verifyText(let ofElement, let equals):
+        return .boolean(true)
+
+      case .findElementIDByText(let text):
+        return .string("some uuid")
+    }
   }
 }
 

@@ -10,8 +10,11 @@ import XCTest
 class ExpectationDelegate: ExpectationDelegateProtocol {
   let app: XCUIApplication
 
-  init(_ app: XCUIApplication) {
+  let whiteBoxMessageHandler: WhiteBoxMessageHandler
+
+  init(_ app: XCUIApplication, whiteBoxMessageHandler: @escaping WhiteBoxMessageHandler) {
     self.app = app
+    self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
   func expect(
@@ -41,11 +44,23 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
       case .toExist:
         element.assertExists(isTruthy: isTruthy)
 
-      case .toBeVisible(_):
-        fatalError("Visibility expectation is not supported by the XCUITest target")
+      case .toBeVisible(let threshold):
+        guard let response = whiteBoxMessageHandler(
+          .verifyVisibility(ofElement: element, withThreshold: threshold)
+        ) else {
+          fatalError("Visibility expectation is not supported by the XCUITest target")
+        }
 
-      case .toHaveText(_):
-        fatalError("Text expectation is not supported by the XCUITest target")
+        response.assertResponse(equalsTo: .boolean(isTruthy))
+
+      case .toHaveText(let text):
+        guard let response = whiteBoxMessageHandler(
+          .verifyText(ofElement: element, equals: text)
+        ) else {
+          fatalError("Text expectation is not supported by the XCUITest target")
+        }
+
+        response.assertResponse(equalsTo: .boolean(isTruthy))
     }
   }
 }

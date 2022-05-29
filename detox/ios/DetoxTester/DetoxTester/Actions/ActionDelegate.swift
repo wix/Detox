@@ -10,8 +10,11 @@ import XCTest
 class ActionDelegate: ActionDelegateProtocol {
   let app: XCUIApplication
 
-  init(_ app: XCUIApplication) {
+  let whiteBoxMessageHandler: WhiteBoxMessageHandler
+
+  init(_ app: XCUIApplication, whiteBoxMessageHandler: @escaping WhiteBoxMessageHandler) {
     self.app = app
+    self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
   /// Make an action by Detox Tester.
@@ -91,8 +94,10 @@ class ActionDelegate: ActionDelegateProtocol {
       case .setColumnToValue(index: let index, value: let value):
         element.setColumnToValue(value, atIndex: index)
 
-      case .setDatePicker(date: _):
-        fatalError("can't set the date, this action is not implemented in XCUITest target")
+      case .setDatePicker(date: let date):
+        if let response = whiteBoxMessageHandler(.setDatePicker(toDate: date, onElement: element)) {
+          response.assertResponse(equalsTo: .completed)
+        }
 
       case .pinch(scale: let scale, speed: let speed, angle: let angle):
         element.pinch(withScale: scale, speed: speed, angle: angle)

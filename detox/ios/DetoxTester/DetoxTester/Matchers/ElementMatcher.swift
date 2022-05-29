@@ -10,12 +10,18 @@ import XCTest
 class ElementMatcher: ElementMatcherProtocol {
   let app: XCUIApplication
 
-  init(_ app: XCUIApplication) {
+  let whiteBoxMessageHandler: WhiteBoxMessageHandler
+
+  init(_ app: XCUIApplication, whiteBoxMessageHandler: @escaping WhiteBoxMessageHandler) {
     self.app = app
+    self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
   func match(to pattern: ElementPattern) throws -> [AnyHashable] {
     matcherLog("called to match with pattern: \(pattern)")
-    return app.newQuery().matching(pattern: pattern).run()
+    return app.newQuery().matching(
+      pattern: pattern,
+      whiteBoxMessageHandler: whiteBoxMessageHandler
+    ).run()
   }
 }

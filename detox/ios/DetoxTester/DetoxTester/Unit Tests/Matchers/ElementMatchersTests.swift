@@ -14,7 +14,7 @@ class ElementMatchersTests: DTXTestCase {
     try super.setUpWithError()
 
     app = XCUIApplication()
-    matcher = ElementMatcher(app)
+    matcher = ElementMatcher(app, whiteBoxMessageHandler: { _ in return nil })
 
     app.launch()
 

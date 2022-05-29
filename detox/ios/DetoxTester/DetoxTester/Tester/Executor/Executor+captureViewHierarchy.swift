@@ -35,6 +35,9 @@ extension Executor {
       case .failed(reason: let reason):
         execLog("capture view hierarchy failed, reason: \(reason)", type: .error)
         fatalError("capture view hierarchy failed, reason: \(reason)")
+
+      case .boolean, .string:
+        fatalError("Should never get here")
     }
   }
 }
