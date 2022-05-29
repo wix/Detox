@@ -14,6 +14,7 @@ class AnonymousConnectionHandler {
     switch (action.type) {
       case 'login': return this._handleLoginAction(action);
       case 'ready': return this._handleEarlyReadyAction(action);
+      // case 'testerServerStarted': return this._handleTesterServerStarted(action);
       default: return this._handleUnknownAction(action);
     }
   }
@@ -88,6 +89,30 @@ class AnonymousConnectionHandler {
   _handleEarlyReadyAction() {
     this._api.log.debug('The app has dispatched "ready" action too early.');
   }
-}
+
+//   _handleTesterServerStarted(action) {
+//     if (!action.params) {
+//       throw new DetoxRuntimeError({
+//         message: `Invalid tester server started action received, it has no .params`,
+//         hint: DetoxInternalError.reportIssue,
+//         debugInfo: action,
+//       });
+//     }
+//
+//     if (!action.params.port) {
+//       throw new DetoxRuntimeError({
+//         message: `Invalid login action received, it has no .port`,
+//         hint: DetoxInternalError.reportIssue,
+//         debugInfo: action,
+//         inspectOptions: { depth: 2 },
+//       });
+//     }
+//
+//     const serverPort = action.params.port;
+//     this._api.log.debug(`XCUITest server is connected with port: ${serverPort}.`);
+//
+//     this._api.setXCUITestServerPort(serverPort);
+//   }
+// }
 
 module.exports = AnonymousConnectionHandler;

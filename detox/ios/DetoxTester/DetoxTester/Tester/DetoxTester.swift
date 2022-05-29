@@ -163,7 +163,7 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
 
 extension DetoxTester: WebSocketServerDelegateProtocol {
   ///
-  static private let serverSemaphore: DispatchSemaphore = .init(value: 0)
+  static private let whiteBoxClientConnectionSemaphore: DispatchSemaphore = .init(value: 0)
 
   func serverDidReceive(data: Data) {
     guard let handler = serverDidReceiveHandler else {
@@ -191,29 +191,29 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
 
     mainLog("tester server is ready on port \(server.port)")
 
-    guard let client = webSocketClient else {
+    guard webSocketClient != nil else {
       mainLog("web-socket client has not initialized yet", type: .error)
       fatalError("web-socket client has not initialized yet")
     }
 
-    let port = server.port
-    client.sendAction(.reportTesterServerPort, params: ["port": port], messageId: 0)
+//    let port = server.port
+//    client.sendAction(.reportTesterServerStarted, params: ["port": port], messageId: -1000)
 
-    DetoxTester.serverSemaphore.wait()
+    DetoxTester.whiteBoxClientConnectionSemaphore.wait()
   }
 
   func serverDidConnectClient() {
     mainLog("tester server did connect to app client")
 
-    // TODO: should be revisited. There is an implicit assumption where the there is only one app
-    //  handled in a white-box manner.
+    // TODO: revisit. There is an implicit assumption where the there is only one app handled in a
+    // white-box manner.
 
     WhiteBoxExecutor.setNewHandler(
       for: executor.getAppUnderTestBundleIdentifier(),
-         withMessageSender: self
+      withMessageSender: self
     )
 
-    DetoxTester.serverSemaphore.signal()
+    DetoxTester.whiteBoxClientConnectionSemaphore.signal()
   }
 }
 

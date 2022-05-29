@@ -349,6 +349,8 @@ class RuntimeDevice {
 
     this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId);
 
+    // todo: expect to receive the port (wait)..
+
     if (this._behaviorConfig.launchApp === 'manual') {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
