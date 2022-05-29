@@ -5,10 +5,10 @@ const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
 const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
 
 class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
-  constructor({ api, client }) {
+  constructor({ api, runtimeDriver }) {
     super({ api });
 
-    this.client = client;
+    this.runtimeDriver = runtimeDriver;
   }
 
   async onBeforeLaunchApp(event) {
@@ -32,7 +32,7 @@ class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
   createTestRecording() {
     return new SimulatorInstrumentsRecording({
       pluginContext: this.context,
-      client: this.client,
+      runtimeDriver: this.runtimeDriver,
       userConfig: this.api.userConfig,
       temporaryRecordingPath: temporaryPath.for.dtxrec(),
     });

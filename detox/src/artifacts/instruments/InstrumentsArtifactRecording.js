@@ -1,10 +1,10 @@
 const Artifact = require('../templates/artifact/Artifact');
 
 class InstrumentsArtifactRecording extends Artifact {
-  constructor({ client, userConfig, temporaryRecordingPath }) {
+  constructor({ runtimeDriver, userConfig, temporaryRecordingPath }) {
     super();
 
-    this._client = client;
+    this._runtimeDriver = runtimeDriver;
     this._userConfig = userConfig;
     this.temporaryRecordingPath = temporaryRecordingPath;
   }
@@ -14,11 +14,7 @@ class InstrumentsArtifactRecording extends Artifact {
       return; // nominal start, to preserve state change
     }
 
-    if (!this._isClientConnected()) {
-      return;
-    }
-
-    await this._client.startInstrumentsRecording({
+    await this._runtimeDriver.startInstrumentsRecording({
       recordingPath: this.temporaryRecordingPath,
       samplingInterval: this.prepareSamplingInterval(this._userConfig.samplingInterval)
     });
@@ -29,13 +25,7 @@ class InstrumentsArtifactRecording extends Artifact {
   }
 
   async doStop() {
-    if (this._isClientConnected()) {
-      await this._client.stopInstrumentsRecording();
-    }
-  }
-
-  _isClientConnected() {
-    return this._client.isConnected;
+    await this._runtimeDriver.stopInstrumentsRecording();
   }
 }
 

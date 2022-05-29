@@ -6,6 +6,7 @@ describe('IOS simulator driver', () => {
   const bootArgs = { boot: 'args' };
 
   let client;
+  let invocationManager;
   let eventEmitter;
   let applesimutils;
   let simulatorLauncher;
@@ -17,8 +18,11 @@ describe('IOS simulator driver', () => {
       onError: (e) => { throw e; },
     });
 
-    const ClientMock = jest.requireMock('../../../../client/Client');
-    client = new ClientMock();
+    const Client = jest.requireMock('../../../../client/Client');
+    client = new Client();
+
+    const InvocationManager = jest.genMockFromModule('../../../../invoke').InvocationManager;
+    invocationManager = new InvocationManager();
 
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
@@ -27,7 +31,7 @@ describe('IOS simulator driver', () => {
     simulatorLauncher = new SimulatorLauncher();
 
     const SimulatorDriver = require('./SimulatorDriver');
-    uut = new SimulatorDriver({ simulatorLauncher, applesimutils, client, eventEmitter }, { udid, type, bootArgs });
+    uut = new SimulatorDriver({ simulatorLauncher, applesimutils, client, invocationManager, eventEmitter }, { udid, type, bootArgs });
   });
 
   it('should return the UDID as the external ID', () => {
@@ -50,7 +54,10 @@ describe('IOS simulator driver', () => {
     });
 
     it('should be passed to AppleSimUtils', async () => {
-      await uut.launchApp(bundleId, launchArgs, languageAndLocale);
+      await uut.selectUnspecifiedApp({
+        appId: bundleId,
+      });
+      await uut.launchApp(launchArgs, languageAndLocale);
       expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, launchArgs, languageAndLocale);
     });
 
@@ -59,7 +66,10 @@ describe('IOS simulator driver', () => {
         launchArgs.dog3 = 'Chika, from plugin';
       });
 
-      await uut.launchApp(bundleId, launchArgs, languageAndLocale);
+      await uut.selectUnspecifiedApp({
+        appId: bundleId,
+      });
+      await uut.launchApp(launchArgs, languageAndLocale);
       expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, {
         ...launchArgs,
         dog3: 'Chika, from plugin',

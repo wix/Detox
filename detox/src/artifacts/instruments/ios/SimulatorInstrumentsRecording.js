@@ -7,8 +7,8 @@ const FileArtifact = require('../../templates/artifact/FileArtifact');
 const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
 
 class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
-  constructor({ pluginContext, client, userConfig, temporaryRecordingPath }) {
-    super({ pluginContext, client, userConfig, temporaryRecordingPath });
+  constructor({ pluginContext, runtimeDriver, userConfig, temporaryRecordingPath }) {
+    super({ pluginContext, runtimeDriver, userConfig, temporaryRecordingPath });
   }
 
   static prepareSamplingInterval(samplingInterval) {

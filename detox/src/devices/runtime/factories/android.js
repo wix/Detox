@@ -11,7 +11,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
     const fileXfer = serviceLocator.fileXfer;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
     const unspecifiedAppDeps = this._createAppDeps({ adb }, configs.sessionConfig);
-    const apps = this._createAppsDeps({ adb }, configs);
+    const apps = this._createApps({ adb }, configs);
 
     const AppInstallHelper = require('../../common/drivers/android/tools/AppInstallHelper');
     const AppUninstallHelper = require('../../common/drivers/android/tools/AppUninstallHelper');
@@ -32,33 +32,35 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
 
   /**
    * @returns { Object.<String, AndroidApp> }
-   * @internal
+   * @protected
    */
-  _createAppsDeps({ adb }, { appsConfig, sessionConfig }) {
+  _createApps({ adb }, { appsConfig, sessionConfig }) {
     const { sessionId } = sessionConfig;
     return _.mapValues(appsConfig, (appConfig, alias) => {
       const appSessionConfig = {
         ...sessionConfig,
         sessionId: `${sessionId}:${alias}`,
       };
-      return this._createAppDeps({ adb }, appSessionConfig, alias);
+      return this._createAppDeps({ adb }, { appConfig, appSessionConfig }, alias);
     });
   }
 
-  _createAppDeps({ adb }, appSessionConfig, alias) {
+  /** @protected */
+  _createAppDeps({ adb }, { appConfig, appSessionConfig }, alias) {
     // TODO (multiapps): Consider relocating the things below (belongs under runtime/)
     const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
     const Client = require('../../../client/Client');
     const { InvocationManager } = require('../../../invoke');
     const MonitoredInstrumentation = require('../../common/drivers/android/tools/MonitoredInstrumentation');
 
-    const client = new Client(appSessionConfig);
+    const client = new Client(appSessionConfig); // TODO (multiapps): Share the same ws
     const invocationManager = new InvocationManager(client);
     const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice();
     const instrumentation = new MonitoredInstrumentation(adb);
 
     return {
       alias,
+      config: appConfig,
       client,
       invocationManager,
       uiDevice,

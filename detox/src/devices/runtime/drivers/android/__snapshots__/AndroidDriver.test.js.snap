@@ -1,7 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Android driver App installation should throw if auto test-binary path resolves an invalid file: testApkPathOf(absolutePathOf([object Object])) 1`] = `"Cannot read property 'config' of undefined"`;
+
+exports[`Android driver App installation should throw if auto test-binary path resolves an invalid file: testApkPathOf(absolutePathOf(mock/path/bin-1.apk)) 1`] = `"Cannot read property 'config' of undefined"`;
+
 exports[`Android driver App installation should throw if auto test-binary path resolves an invalid file: testApkPathOf(absolutePathOf(mock-bin-path)) 1`] = `
 "The test APK could not be found at path: 'testApkPathOf(absolutePathOf(mock-bin-path))'
+
+HINT: Try running the detox build command, and make sure it was configured to execute a build command (e.g. './gradlew assembleAndroidTest')
+For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+`;
+
+exports[`Android driver App installation should throw if auto test-binary path resolves an invalid file: testApkPathOf(absolutePathOf(stairway/to/heaven)) 1`] = `
+"The test APK could not be found at path: 'testApkPathOf(absolutePathOf(stairway/to/heaven))'
 
 HINT: Try running the detox build command, and make sure it was configured to execute a build command (e.g. './gradlew assembleAndroidTest')
 For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"

@@ -16,8 +16,7 @@ describe('SimulatorInstrumentsPlugin', () => {
       trackArtifact: jest.fn(),
       untrackArtifact: jest.fn()
     };
-    const mockedClient = {
-      isConnected: true,
+    const mockedRuntimeDriver = {
       startInstrumentsRecording: jest.fn(),
     };
     pluginConfig = {
@@ -27,7 +26,7 @@ describe('SimulatorInstrumentsPlugin', () => {
           enabled: true
         }
       },
-      client: mockedClient
+      runtimeDriver: mockedRuntimeDriver
     };
     temporaryPath.for.dtxrec.mockReturnValueOnce(testPath);
   });

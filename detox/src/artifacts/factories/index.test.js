@@ -5,8 +5,8 @@ describe('Artifacts manager factory', () => {
   const eventEmitter = {
     mock: 'emitter',
   };
-  const client = {
-    mock: 'client',
+  const runtimeDriver = {
+    mock: 'runtimeDriver',
   };
 
   const givenArtifactPlugins = (plugins) => pluginsProvider.declareArtifactPlugins.mockReturnValue(plugins);
@@ -26,13 +26,13 @@ describe('Artifacts manager factory', () => {
   });
 
   it('should create an artifacts manager', () => {
-    const artifactsManager = factory.createArtifactsManager(config, { eventEmitter, client });
+    const artifactsManager = factory.createArtifactsManager(config, { eventEmitter, runtimeDriver });
     expect(artifactsManager).toBeDefined();
     expect(ArtifactsManager).toHaveBeenCalledWith(config);
   });
 
   it('should subscribe artifacts manager to device events', () => {
-    const artifactsManager = factory.createArtifactsManager(config, { eventEmitter, client });
+    const artifactsManager = factory.createArtifactsManager(config, { eventEmitter, runtimeDriver });
     expect(artifactsManager.subscribeToDeviceEvents).toHaveBeenCalledWith(eventEmitter);
   });
 
@@ -42,8 +42,8 @@ describe('Artifacts manager factory', () => {
     };
     givenArtifactPlugins(plugins);
 
-    const artifactsManager = factory.createArtifactsManager(config, { eventEmitter, client });
+    const artifactsManager = factory.createArtifactsManager(config, { eventEmitter, runtimeDriver });
     expect(artifactsManager.registerArtifactPlugins).toHaveBeenCalledWith(plugins);
-    expect(pluginsProvider.declareArtifactPlugins).toHaveBeenCalledWith({ client });
+    expect(pluginsProvider.declareArtifactPlugins).toHaveBeenCalledWith({ runtimeDriver });
   });
 });

@@ -8,6 +8,7 @@ describe('Genymotion-cloud driver', () => {
 
   let aapt;
   let eventEmitter;
+  let client;
   let invocationManager;
   let appInstallHelper;
   let apkValidator;
@@ -26,6 +27,9 @@ describe('Genymotion-cloud driver', () => {
 
     const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
     eventEmitter = new Emitter();
+
+    const Client = jest.genMockFromModule('../../../../../client/Client');
+    client = new Client();
 
     const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
     invocationManager = new InvocationManager();
@@ -55,15 +59,16 @@ describe('Genymotion-cloud driver', () => {
     beforeEach(() => {
       instance = anInstance();
       GenyCloudDriver = require('./GenyCloudDriver');
-      uut = new GenyCloudDriver({
+      const deps = {
         aapt,
         apkValidator,
         invocationManager,
         eventEmitter,
-        client: {},
+        client,
         appInstallHelper,
         instrumentation,
-      }, { instance });
+      };
+      uut = new GenyCloudDriver(deps, { instance });
     });
 
     it('should return the adb-name as the external ID', () => {
@@ -85,7 +90,12 @@ describe('Genymotion-cloud driver', () => {
           .mockReturnValueOnce('bin-install-path')
           .mockReturnValueOnce('testbin-install-path');
 
-        await uut.installApp('bin-path', 'testbin-path');
+        await uut.selectUnspecifiedApp({
+          appId: 'com.geny.example',
+          binaryPath: 'abc',
+          testBinaryPath: 'def',
+        });
+        await uut.installApp();
         expect(appInstallHelper.install).toHaveBeenCalledWith(instance.adbName, 'bin-install-path', 'testbin-install-path');
       });
     });

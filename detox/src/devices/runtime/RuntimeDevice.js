@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../../utils/trace');
@@ -88,46 +90,47 @@ class RuntimeDevice {
     if (appAliases.length === 1) {
       await this.selectApp(appAliases[0]);
     }
+
+    await this.deviceDriver.prepare();
   }
 
-  async selectApp(alias) {
-    if (alias === undefined) {
+  // TODO (multiapps) contract change
+  async selectApp(aliasOrConfig) {
+    if (aliasOrConfig === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();
     }
 
-    if (this._currentApp) {
-      await this.terminateApp();
-    }
+    let alias;
+    if (_.isObject(aliasOrConfig)) {
+      const appConfig = aliasOrConfig;
+      await this.deviceDriver.selectUnspecifiedApp(appConfig);
+    } else {
+      alias = aliasOrConfig;
 
-    if (alias === null) { // Internal use to unselect the app
-      this.deviceDriver.clearSelectedApp();
-      return;
+      const appConfig = this._appsConfig[alias];
+      if (!appConfig) {
+        throw this._errorComposer.cantFindApp(alias);
+      }
+      await this.deviceDriver.selectApp(alias);
     }
-
-    const appConfig = this._appsConfig[alias];
-    if (!appConfig) {
-      throw this._errorComposer.cantFindApp(alias);
-    }
-
-    await this.deviceDriver.selectApp(alias);
 
     this._appLaunchArgs.reset();
     this._appLaunchArgs.modify(this._currentApp.launchArgs);
-    await this._inferBundleIdFromBinary();
   }
 
-  async launchApp(params = {}, appId = this._appId) {
-    return traceCall('launchApp', () => this._doLaunchApp(params, appId));
+  /** TODO (multiapps) Contract change: no appId; Only works on currently selected app */
+  async launchApp(params = {}) {
+    return traceCall('launchApp', () => this._doLaunchApp(params));
   }
 
   /**
    * @deprecated
    */
-  async relaunchApp(params = {}, appId) {
+  async relaunchApp(params = {}) {
     if (params.newInstance === undefined) {
-      params['newInstance'] = true;
+      params.newInstance = true;
     }
-    await this.launchApp(params, appId);
+    await this.launchApp(params);
   }
 
   async takeScreenshot(name) {
@@ -144,7 +147,6 @@ class RuntimeDevice {
 
   async sendToHome() {
     await this.deviceDriver.sendToHome();
-    await this.deviceDriver.waitForBackground();
   }
 
   async setBiometricEnrollment(toggle) {
@@ -154,44 +156,37 @@ class RuntimeDevice {
 
   async matchFace() {
     await this.deviceDriver.matchFace();
-    await this.deviceDriver.waitForActive();
   }
 
   async unmatchFace() {
     await this.deviceDriver.unmatchFace();
-    await this.deviceDriver.waitForActive();
   }
 
   async matchFinger() {
     await this.deviceDriver.matchFinger();
-    await this.deviceDriver.waitForActive();
   }
 
   async unmatchFinger() {
     await this.deviceDriver.unmatchFinger();
-    await this.deviceDriver.waitForActive();
   }
 
   async shake() {
     await this.deviceDriver.shake();
   }
 
-  async terminateApp(appId) {
-    const _appId = appId || this._appId;
-    await this.deviceDriver.terminate(_appId);
+  // TODO (multiapps) contract change: no freestyle app ID accepted anymore
+  async terminateApp(appAlias) {
+    await this.deviceDriver.terminateApp(appAlias);
   }
 
-  async installApp(binaryPath, testBinaryPath) {
-    await traceCall('appInstall', () => {
-      const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
-      return this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
-    });
+  // TODO (multiapps) contract change: no freestyle installs with app/apk path(s)
+  async installApp(appAlias) {
+    await traceCall('appInstall', () => this.deviceDriver.installApp(appAlias));
   }
 
-  async uninstallApp(appId) {
-    const _appId = appId || this._appId;
-    await traceCall('appUninstall', () =>
-      this.deviceDriver.uninstallApp(_appId));
+  // TODO (multiapps) contract change: no freestyle app ID accepted anymore
+  async uninstallApp(appAlias) {
+    await traceCall('appUninstall', () => this.deviceDriver.uninstallApp(appAlias));
   }
 
   async installUtilBinaries() {
@@ -282,12 +277,7 @@ class RuntimeDevice {
   }
 
   async _cleanup() {
-    const appId = this._currentApp && this._currentApp.bundleId; // TODO (multiapps) Might be able to rename bundleId->appId
-    await this.deviceDriver.cleanup(appId);
-  }
-
-  get _appId() {
-    return this._getCurrentApp().bundleId; // TODO (multiapps) Might be able to rename bundleId->appId here too
+    await this.deviceDriver.cleanup();
   }
 
   _getCurrentApp() {
@@ -297,35 +287,37 @@ class RuntimeDevice {
     return this._currentApp;
   }
 
-  async _doLaunchApp(launchParams, appId) {
+  async _doLaunchApp(launchParams) {
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, launchParams);
+    const appAlias = this.deviceDriver.selectedApp;
+    const isRunning = this.deviceDriver.isAppRunning(appAlias);
     const newInstance = (launchParams.newInstance !== undefined)
       ? launchParams.newInstance
-      : !this.deviceDriver.isAppRunning(appId);
+      : !isRunning;
 
     if (launchParams.delete) {
-      await this.terminateApp(appId);
-      await this.uninstallApp();
-      await this.installApp();
+      await this.terminateApp(appAlias);
+      await this.uninstallApp(appAlias);
+      await this.installApp(appAlias);
     } else if (newInstance) {
-      await this.terminateApp(appId);
+      await this.terminateApp(appAlias);
     }
 
     if (launchParams.permissions) {
-      await this.deviceDriver.setPermissions(appId, launchParams.permissions);
+      await this.deviceDriver.setPermissions(launchParams.permissions, appAlias);
     }
 
     const launchArgs = this._prepareLaunchArgs(launchParams);
 
-    if (this.deviceDriver.isAppRunning(appId) && hasPayload) {
+    if (isRunning && hasPayload) {
       await this.deviceDriver.deliverPayload({ ...launchParams, delayPayload: true });
     }
 
     if (this._behaviorConfig.launchApp === 'manual') {
-      await this.deviceDriver.waitForAppLaunch(appId, launchArgs, launchParams.languageAndLocale);
+      await this.deviceDriver.waitForAppLaunch(launchArgs, launchParams.languageAndLocale, appAlias);
     } else {
-      await this.deviceDriver.launchApp(appId, launchArgs, launchParams.languageAndLocale);
+      await this.deviceDriver.launchApp(launchArgs, launchParams.languageAndLocale, appAlias);
     }
 
     if (launchParams.detoxUserNotificationDataURL) {
@@ -395,14 +387,6 @@ class RuntimeDevice {
 
   async _onTestEnd(testSummary) {
     await this.deviceDriver.onTestEnd(testSummary);
-  }
-
-  async _inferBundleIdFromBinary() {
-    const { binaryPath, bundleId } = this._currentApp; // TODO (multiapps) Might be able to rename bundleId->appId
-
-    if (!bundleId) {
-      this._currentApp.bundleId = await this.deviceDriver.getAppIdFromBinary(binaryPath);
-    }
   }
 }
 

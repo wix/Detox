@@ -17,6 +17,7 @@ const IosDriver = require('./IosDriver');
  * @property simulatorLauncher { SimulatorLauncher }
  * @property applesimutils { AppleSimUtils }
  * @property client { Client }
+ * @property invocationManager { InvocationManager }
  */
 
 /**
@@ -29,11 +30,10 @@ const IosDriver = require('./IosDriver');
 class SimulatorDriver extends IosDriver {
   /**
    * @param deps { SimulatorDriverDeps }
-   * @param configs {{ appsConfig: Object }}
    * @param props { SimulatorDriverProps }
    */
-  constructor(deps, configs, { udid, type, bootArgs }) {
-    super(deps, configs);
+  constructor(deps, { udid, type, bootArgs }) {
+    super(deps);
 
     this.udid = udid;
     this._type = type;
@@ -51,32 +51,24 @@ class SimulatorDriver extends IosDriver {
     return this._deviceName;
   }
 
-  async getAppIdFromBinary(appPath) {
-    appPath = getAbsoluteBinaryPath(appPath);
-    try {
-      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
-      const bundleId = _.trim(result.stdout);
-      if (_.isEmpty(bundleId)) {
-        throw new Error();
-      }
-      return bundleId;
-    } catch (ex) {
-      throw new DetoxRuntimeError(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
-    }
-  }
-
-  async installApp(binaryPath) {
+  async _installApp(app) {
+    const { binaryPath } = app.config;
     await this._applesimutils.install(this.udid, getAbsoluteBinaryPath(binaryPath));
   }
 
-  async uninstallApp(bundleId) {
+  async _uninstallApp(app) {
+    const bundleId = app.appId;
     const { udid } = this;
+
     await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
     await this._applesimutils.uninstall(udid, bundleId);
   }
 
-  async _launchApp(bundleId, launchArgs, languageAndLocale) {
+  /** @override */
+  async _launchApp(app, launchArgs, languageAndLocale) {
+    const { appId: bundleId } = app;
     const { udid } = this;
+
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
@@ -84,7 +76,9 @@ class SimulatorDriver extends IosDriver {
     return pid;
   }
 
-  async _waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
+  /** @override */
+  async _waitForAppLaunch(launchArgs, languageAndLocale, app) {
+    const { appId: bundleId } = app;
     const { udid } = this;
 
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
@@ -120,30 +114,36 @@ class SimulatorDriver extends IosDriver {
 
   async matchFace() {
     await this._applesimutils.matchBiometric(this.udid, 'Face');
+    await this._waitForActive();
   }
 
   async unmatchFace() {
     await this._applesimutils.unmatchBiometric(this.udid, 'Face');
+    await this._waitForActive();
   }
 
   async matchFinger() {
     await this._applesimutils.matchBiometric(this.udid, 'Finger');
+    await this._waitForActive();
   }
 
   async unmatchFinger() {
     await this._applesimutils.unmatchBiometric(this.udid, 'Finger');
+    await this._waitForActive();
   }
 
   async sendToHome() {
     await this._applesimutils.sendToHome(this.udid);
+    await this._waitForBackground();
   }
 
   async setLocation(lat, lon) {
     await this._applesimutils.setLocation(this.udid, lat, lon);
   }
 
-  async setPermissions(bundleId, permissions) {
-    await this._applesimutils.setPermissions(this.udid, bundleId, permissions);
+  async setPermissions(permissions, appAlias) {
+    const app = super._getAppByAlias(appAlias);
+    await this._applesimutils.setPermissions(this.udid, app.appId, permissions);
   }
 
   async clearKeychain() {
@@ -158,14 +158,6 @@ class SimulatorDriver extends IosDriver {
 
   getLogsPaths() {
     return this._applesimutils.getLogsPaths(this.udid);
-  }
-
-  async waitForActive() {
-    return await this.client.waitForActive();
-  }
-
-  async waitForBackground() {
-    return await this.client.waitForBackground();
   }
 
   async takeScreenshot(screenshotName) {
@@ -200,6 +192,36 @@ class SimulatorDriver extends IosDriver {
 
   async resetStatusBar() {
     await this._applesimutils.statusBarReset(this.udid);
+  }
+
+  /**
+   * @override
+   */
+  async _waitUntilReady() {
+    await super._waitUntilReady();
+    await this._waitForActive();
+  }
+
+  async _waitForActive() {
+    return this.client.waitForActive();
+  }
+
+  async _waitForBackground() {
+    return this.client.waitForBackground();
+  }
+
+  async  _inferAppId(app) {
+    const appPath = getAbsoluteBinaryPath(app.config.binaryPath);
+    try {
+      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
+      const bundleId = _.trim(result.stdout);
+      if (_.isEmpty(bundleId)) {
+        throw new Error();
+      }
+      return bundleId;
+    } catch (ex) {
+      throw new DetoxRuntimeError(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
+    }
   }
 }
 

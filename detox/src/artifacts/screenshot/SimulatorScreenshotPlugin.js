@@ -12,8 +12,8 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
-    this.client = config.client;
-    this.client.setEventCallback('testFailed', this._onInvokeFailure.bind(this));
+
+    config.runtimeDriver.setInvokeFailuresListener( this._onInvokeFailure.bind(this) );
   }
 
   async onBeforeLaunchApp({ launchArgs }) {

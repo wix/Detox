@@ -10,7 +10,9 @@ const log = require('../../../utils/logger').child({ __filename });
 /**
  * @typedef TestApp
  * @property alias { String }
+ * @property config { Object }
  * @property client { Client }
+ * @property invocationManager { InvocationManager }
  */
 
 /**
@@ -19,6 +21,7 @@ const log = require('../../../utils/logger').child({ __filename });
  * @property client { Client } The *general purpose* (non-app-bound) client
  * @property invocationManager { InvocationManager } The *general purpose* (non-app-bound) invocation manager
  * @property eventEmitter { AsyncEmitter }
+ * @property errorComposer { DetoxRuntimeErrorComposer }
  */
 
 const _unspecifiedAppAlias = Symbol('unspecified-app');
@@ -27,8 +30,9 @@ class RuntimeDriverBase {
   /**
    * @param deps { DeviceDriverDeps }
    */
-  constructor({ client, invocationManager, apps, eventEmitter }) {
+  constructor({ client, invocationManager, apps = {}, eventEmitter, errorComposer }) {
     this.emitter = eventEmitter;
+    this.errorComposer = errorComposer;
 
     this._apps = _.clone(apps);
     this._apps[_unspecifiedAppAlias] = {
@@ -37,10 +41,15 @@ class RuntimeDriverBase {
       invocationManager,
     };
     this._selectedApp = this._apps[_unspecifiedAppAlias];
-    this._processes = {}; // Note: Can't integrate this into _apps because we allow launching of apps out of the apps list
+    this._processes = {}; // TODO (multiapps) Merge this into the app object?
 
     _.forEach(apps, (app, alias) =>
       app.client.terminateApp = () => this.terminateApp(alias));
+  }
+
+  async prepare() {
+    const promises = this._allAppsList().map(({ client }) => client.connect());
+    await Promise.all(promises);
   }
 
   /**
@@ -64,6 +73,7 @@ class RuntimeDriverBase {
     return this._selectedApp.alias;
   }
 
+  /** @protected */
   get _unspecifiedApp() {
     return this._apps[_unspecifiedAppAlias];
   }
@@ -76,12 +86,21 @@ class RuntimeDriverBase {
     }
   }
 
-  async _selectUnspecifiedApp() {
-    this._selectedApp = this._unspecifiedApp;
-  }
+  /**
+   * @param appConfig {{ appId: String, binaryPath: String }}
+   */
+  async selectUnspecifiedApp(appConfig) {
+    const { appId } = appConfig;
+    // TODO (multiapps)
+    // if (this._unspecifiedApp.appId && this._unspecifiedApp.appId !== appId && this.isAppRunning(appId)) {
+    //   throw this.errorComposer.todo(); // Already selected
+    // }
 
-  async clearSelectedApp() {
-    this._selectedApp = this._apps[_unspecifiedAppAlias];
+    this._apps[_unspecifiedAppAlias] = {
+      ...this._apps[_unspecifiedAppAlias],
+      appId: appConfig.appId,
+      config: appConfig,
+    };
   }
 
   get invocationManager() {
@@ -92,9 +111,52 @@ class RuntimeDriverBase {
     return this._selectedApp.client;
   }
 
-  isAppRunning(appId) {
+  isAppRunning(appAlias) {
+    const app = this._getAppByAlias(appAlias);
+    return this._isAppRunning(app.appId);
+  }
+
+  _isAppRunning(appId) {
     return (this._processes[appId] !== undefined);
   }
+
+  /**
+   * @param appAlias { String | undefined }
+   */
+  async launchApp(launchArgs, languageAndLocale, appAlias) {
+    const app = this._getAppByAlias(appAlias);
+    this._validateLaunchApp(app);
+
+    const _appId = app.appId;
+    const _launchArgs = this._applyAppSessionArgs(app, launchArgs);
+
+    this._processes[_appId] = await this._launchApp(app, _launchArgs, languageAndLocale);
+
+    await this._waitUntilReady(app);
+    await this._notifyAppReady(_appId);
+  }
+
+  // TODO (multiapps) unit-test this
+  async waitForAppLaunch(launchArgs, languageAndLocale, appAlias) {
+    const app = this._getAppByAlias(appAlias);
+    const _appId = app.appId;
+    const _launchArgs = this._applyAppSessionArgs(app, launchArgs);
+
+    this._processes[_appId] = await this._waitForAppLaunch(_launchArgs, languageAndLocale, app);
+  }
+
+  /**
+   * @param appAlias { String | undefined }
+   */
+  async terminateApp(appAlias) {
+    const app = this._getAppByAlias(appAlias);
+    await this._terminate(app);
+
+    this._processes[app.appId] = undefined;
+  }
+
+  /** @protected */
+  async _terminate(app) {}
 
   /**
    * @param testSummary {{ testName: String, pendingRequests: Boolean }}
@@ -106,53 +168,6 @@ class RuntimeDriverBase {
     }
   }
 
-  async installApp(_binaryPath, _testBinaryPath) {}
-  async uninstallApp() {}
-  installUtilBinaries() {}
-
-  async launchApp(launchArgs, languageAndLocale, appId) {
-    if (appId) {
-      await this._selectUnspecifiedApp();
-      this._selectedApp.appId = appId;
-    }
-    const app = this._selectedApp;
-    const _appId = app.appId;
-    const _launchArgs = this._applyAppSessionArgs(app, launchArgs);
-
-    this._processes[_appId] = await this._launchApp(_launchArgs, languageAndLocale, app);
-
-    await this._waitUntilReady(app);
-    await this.waitForActive();
-    await this._notifyAppReady(_appId);
-  }
-
-  // TODO (multiapps) unit-test this
-  async waitForAppLaunch(launchArgs, languageAndLocale, appId) {
-    const app = this._getAppById(appId);
-    const _appId = app.appId;
-    const _launchArgs = this._applyAppSessionArgs(app, launchArgs);
-
-    this._processes[_appId] = await this._waitForAppLaunch(_launchArgs, languageAndLocale, app);
-  }
-
-  async terminateApp(appAlias) {
-    const appId = this._apps[appAlias].appId;
-    return this.terminate(appId);
-  }
-
-  async terminate() {
-    const app = this._selectedApp;
-    const appId = app.appId;
-    await this._terminate(app);
-    this._processes[appId] = undefined;
-  }
-
-  /**
-   * @param app { TestApp }
-   * @protected
-   */
-  async _terminate(app) {}
-
   /**
    * @protected
    */
@@ -160,8 +175,53 @@ class RuntimeDriverBase {
     return this.client.waitUntilReady();
   }
 
-  async waitForActive() {}
-  async waitForBackground() {}
+  /**
+   * @param appAlias { String | undefined }
+   */
+  async installApp(appAlias) {
+    const app = this._getAppByAlias(appAlias);
+    return this._installApp(app);
+  }
+
+  /** @protected */
+  async _installApp(_app) {}
+
+  /**
+   * @param appAlias { String | undefined }
+   */
+  async uninstallApp(appAlias) {
+    const app = this._getAppByAlias(appAlias);
+    return this._uninstallApp(app);
+  }
+
+  /** @protected */
+  async _uninstallApp(_app) {}
+
+  installUtilBinaries() {}
+
+  setInvokeFailuresListener(handler) {
+    this._allAppsList().forEach(({ client }) => client.setEventCallback('testFailed', handler));
+  }
+
+  // TODO Instruments recording probably belongs in a separate (yet equivalent) driver framework,
+  //  where recordingPath and samplingInterval could be computed within.
+  //  Note: This set of drivers would have to have access to the apps state.
+
+  async startInstrumentsRecording({ recordingPath, samplingInterval }) {
+    const startClientRecording = ({ client }) =>
+      ( client.isConnected ? client.startInstrumentsRecording(recordingPath, samplingInterval) : Promise.resolve() );
+
+    const promises = this._allAppsList().map(startClientRecording);
+    return Promise.all(promises);
+  }
+
+  async stopInstrumentsRecording() {
+    const stopClientRecording = ({ client }) =>
+      ( client.isConnected ? client.stopInstrumentsRecording() : Promise.resolve() );
+
+    const promises = this._allAppsList().map(stopClientRecording);
+    return Promise.all(promises);
+  }
 
   async reloadReactNative() {
     return await this.client.reloadReactNative();
@@ -192,7 +252,7 @@ class RuntimeDriverBase {
     return notificationFilePath;
   }
 
-  async setPermissions(_appId, _permissions) {}
+  async setPermissions(_permissions, appAlias) {}
 
   async setOrientation(_orientation) {}
   async setURLBlacklist(_urlList) {}
@@ -291,22 +351,22 @@ class RuntimeDriverBase {
     return Reflect.ownKeys(this._apps).map((alias) => this._apps[alias]);
   }
 
-  _getAppById(appId) {
-    let app = this._selectedApp;
-    if (appId) {
-      app = this._unspecifiedApp;
-      app.appId = appId;
-    }
-    return app;
+  /** @protected */
+  _getAppByAlias(appAlias = _unspecifiedAppAlias) {
+    return this._apps[appAlias];
   }
 
   /**
-   * @param app
-   * @returns {Promise<string>}
    * @protected
    */
-  async _inferAppId(app) { // eslint-disable-line no-unused-vars
+  async _inferAppId(_app) { // eslint-disable-line no-unused-vars
     return '';
+  }
+
+  _validateLaunchApp(app) {
+    if (!app.appId) {
+      throw this.errorComposer.appNotSelected();
+    }
   }
 }
 

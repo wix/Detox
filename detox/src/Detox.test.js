@@ -2,10 +2,9 @@
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 
+jest.mock('./devices/runtime/RuntimeDevice');
 jest.mock('./utils/logger');
-jest.mock('./client/Client');
 jest.mock('./utils/AsyncEmitter');
-jest.mock('./invoke');
 jest.mock('./utils/wrapWithStackTraceCutter');
 jest.mock('./environmentFactory');
 
@@ -23,8 +22,6 @@ describe('Detox', () => {
     chocolate: 'yum',
   };
 
-  const client = () => Client.mock.instances[0];
-  const invocationManager = () => invoke.InvocationManager.mock.instances[0];
   const eventEmitter = () => AsyncEmitter.mock.instances[0];
   eventEmitter.errorCallback = () => AsyncEmitter.mock.calls[0][0].onError;
 
@@ -48,12 +45,11 @@ describe('Detox', () => {
   let artifactsManager;
 
   let logger;
-  let Client;
   let AsyncEmitter;
   let DetoxServer;
-  let invoke;
   let envValidator;
   let deviceAllocator;
+  let RuntimeDevice;
   let runtimeDevice;
   let Detox;
   let detox;
@@ -86,8 +82,6 @@ describe('Detox', () => {
     });
 
     logger = require('./utils/logger');
-    invoke = require('./invoke');
-    Client = require('./client/Client');
     AsyncEmitter = require('./utils/AsyncEmitter');
     DetoxServer = require('./server/DetoxServer');
     lifecycleSymbols = require('../runners/integration').lifecycle;
@@ -124,28 +118,6 @@ describe('Detox', () => {
           standalone: false,
         }));
 
-      it('should create a new Client', () =>
-        expect(Client).toHaveBeenCalledWith(expect.objectContaining({
-          server: 'ws://localhost:12345',
-          sessionId: expect.any(String),
-        })));
-
-      it('should create an invocation manager', () =>
-        expect(invoke.InvocationManager).toHaveBeenCalledWith(client()));
-
-      it('should connect a client to the server', () =>
-        expect(client().connect).toHaveBeenCalled());
-
-      it('should inject terminateApp method into client', async () => {
-        await client().terminateApp();
-        expect(runtimeDevice._isAppRunning).toHaveBeenCalled();
-        expect(runtimeDevice.terminateApp).not.toHaveBeenCalled();
-
-        runtimeDevice._isAppRunning.mockReturnValue(true);
-        await client().terminateApp();
-        expect(runtimeDevice.terminateApp).toHaveBeenCalled();
-      });
-
       it('should pre-validate the using the environment validator', () =>
         expect(envValidator.validate).toHaveBeenCalled());
 
@@ -157,10 +129,8 @@ describe('Detox', () => {
         expect(runtimeDeviceFactory.createRuntimeDevice).toHaveBeenCalledWith(
           fakeCookie,
           {
-            invocationManager: invocationManager(),
             eventEmitter: eventEmitter(),
-            client: client(),
-            runtimeErrorComposer: expect.any(Object),
+            errorComposer: expect.any(Object),
           },
           {
             appsConfig: detoxConfig.appsConfig,
@@ -172,9 +142,8 @@ describe('Detox', () => {
 
       it('should create matchers', () => {
         expect(matchersFactory.createMatchers).toHaveBeenCalledWith({
-          invocationManager: invocationManager(),
+          runtimeDriver: runtimeDevice.driver,
           eventEmitter: eventEmitter(),
-          runtimeDevice,
         });
       });
 
@@ -192,17 +161,16 @@ describe('Detox', () => {
 
       it('should create artifacts manager', () =>
         expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig, expect.objectContaining({
-          client: client(),
+          runtimeDriver: runtimeDevice.driver,
           eventEmitter: eventEmitter(),
         })));
 
       it('should prepare the device', () =>
         expect(runtimeDevice._prepare).toHaveBeenCalled());
 
-      it('should select and reinstall the app', () => {
-        expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
-        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
-        expect(runtimeDevice.installApp).toHaveBeenCalled();
+      it('should reinstall the app', () => {
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalledWith('default');
+        expect(runtimeDevice.installApp).toHaveBeenCalledWith('default');
       });
 
       it('should not unselect the app if it is the only one', () => {
@@ -243,11 +211,6 @@ describe('Detox', () => {
       it('should install only apps with unique binary paths, and deselect app on device', () => {
         expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
         expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
-
-        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(3);
-        expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
-        expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
-        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
       });
     });
 
@@ -402,11 +365,6 @@ describe('Detox', () => {
           await detox.beforeEach(testSummaries.running());
           expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
         });
-
-        it('should not dump pending network requests', async () => {
-          await detox.beforeEach(testSummaries.running());
-          expect(client().dumpPendingRequests).not.toHaveBeenCalled();
-        });
       });
     });
   });
@@ -457,20 +415,6 @@ describe('Detox', () => {
         it('should notify artifacts manager about "testDone"', () =>
           expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
       });
-
-      describe('with a failed test summary (due to failed asseration)', () => {
-        beforeEach(() => detox.afterEach(testSummaries.failed()));
-
-        it('should not dump pending network requests', () =>
-          expect(client().dumpPendingRequests).not.toHaveBeenCalled());
-      });
-
-      describe('with a failed test summary (due to a timeout)', () => {
-        beforeEach(() => detox.afterEach(testSummaries.timedOut()));
-
-        it('should dump pending network requests', () =>
-          expect(client().dumpPendingRequests).toHaveBeenCalled());
-      });
     });
   });
 
@@ -487,8 +431,12 @@ describe('Detox', () => {
         await expect(new Detox(detoxConfig).cleanup()).resolves.not.toThrowError());
     });
 
-    describe('before client has connected', () => {
-      beforeEach(() => Client.setInfiniteConnect());
+    describe('before device has been properly prepared', () => {
+      beforeEach(() => {
+        RuntimeDevice.setInfinitePrepare();
+        const device = new RuntimeDevice();
+        runtimeDeviceFactory.createRuntimeDevice.mockReturnValue(device);
+      });
       beforeEach(startInit);
 
       it(`should not throw, but should reject detox.init() promise`, async () => {
@@ -563,9 +511,6 @@ describe('Detox', () => {
 
         it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
           expect(artifactsManager.onBeforeCleanup).toHaveBeenCalled());
-
-        it(`should dump pending network requests`, () =>
-          expect(client().dumpPendingRequests).toHaveBeenCalled());
       });
     });
 
@@ -686,7 +631,7 @@ describe('Detox', () => {
     deviceAllocatorFactory.createDeviceAllocator.mockReturnValue(deviceAllocator);
     deviceAllocator.allocate.mockResolvedValue(fakeCookie);
 
-    const RuntimeDevice = jest.genMockFromModule('./devices/runtime/RuntimeDevice');
+    RuntimeDevice = require('./devices/runtime/RuntimeDevice');
     const RuntimeDeviceFactory = jest.genMockFromModule('./devices/runtime/factories').External;
     runtimeDevice = new RuntimeDevice();
     runtimeDeviceFactory = new RuntimeDeviceFactory();

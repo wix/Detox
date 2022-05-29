@@ -73,16 +73,20 @@ class AndroidDriver extends DeviceDriverBase {
     return this._selectedApp.uiDevice;
   }
 
-  async installApp(_appBinaryPath, _testBinaryPath) {
+  /** @override */
+  async _installApp(app) {
+    const appConfig = app.config;
     const {
       appBinaryPath,
       testBinaryPath,
-    } = this._getAppInstallPaths(_appBinaryPath, _testBinaryPath);
+    } = this._getAppInstallPaths(appConfig.binaryPath, appConfig.testBinaryPath);
     await this._validateAppBinaries(appBinaryPath, testBinaryPath);
     await this._installAppBinaries(appBinaryPath, testBinaryPath);
   }
 
-  async uninstallApp(appId) {
+  /** @override */
+  async _uninstallApp(app) {
+    const { appId } = app;
     await this.emitter.emit('beforeUninstallApp', { deviceId: this.adbName, bundleId: appId });
     await this.appUninstallHelper.uninstall(this.adbName, appId);
   }
@@ -99,7 +103,7 @@ class AndroidDriver extends DeviceDriverBase {
   /**
    * @override
    */
-  async _launchApp(launchArgs, languageAndLocale, app) {
+  async _launchApp(app, launchArgs, languageAndLocale) {
     return await this.__handleLaunchApp({
       manually: false,
       app,
@@ -111,7 +115,7 @@ class AndroidDriver extends DeviceDriverBase {
   /**
    * @override
    */
-  async _waitForAppLaunch(launchArgs, languageAndLocale, app) {
+  async _waitForAppLaunch(app, launchArgs, languageAndLocale) {
     return await this.__handleLaunchApp({
       manually: true,
       app,

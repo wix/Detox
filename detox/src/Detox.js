@@ -157,10 +157,8 @@ class Detox {
 
     const commonDeps = {
       eventEmitter: this._eventEmitter,
-      runtimeErrorComposer: this._runtimeErrorComposer,
+      errorComposer: this._runtimeErrorComposer,
     };
-
-    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
 
     this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
     this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
@@ -181,6 +179,12 @@ class Detox {
       eventEmitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
+
+    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(
+      this._artifactsConfig, {
+        ...commonDeps,
+        runtimeDriver: this.device.deviceDriver,
+      });
 
     if (behaviorConfig.exposeGlobals) {
       Object.assign(Detox.global, {
@@ -211,20 +215,15 @@ class Detox {
   }
 
   async _reinstallAppsOnDevice() {
-    const appNames = _(this._appsConfig)
+    const appAliases = _(this._appsConfig)
       .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
       .uniqBy(1)
       .map(0)
       .value();
 
-    for (const appName of appNames) {
-      await this.device.selectApp(appName);
-      await this.device.uninstallApp();
-      await this.device.installApp();
-    }
-
-    if (appNames.length !== 1) {
-      await this.device.selectApp(null);
+    for (const alias of appAliases) {
+      await this.device.uninstallApp(alias);
+      await this.device.installApp(alias);
     }
   }
 

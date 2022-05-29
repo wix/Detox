@@ -9,8 +9,7 @@ describe('AndroidInstrumentsPlugin', () => {
       trackArtifact: jest.fn(),
       untrackArtifact: jest.fn()
     };
-    const mockedClient = {
-      isConnected: true,
+    const mockedRuntimeDriver = {
       startInstrumentsRecording: jest.fn(),
     };
     const mockedDevicePathBuilder = {
@@ -25,7 +24,7 @@ describe('AndroidInstrumentsPlugin', () => {
           enabled: true
         }
       },
-      client: mockedClient,
+      runtimeDriver: mockedRuntimeDriver,
       devicePathBuilder: mockedDevicePathBuilder
     };
   });

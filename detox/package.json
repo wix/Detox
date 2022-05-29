@@ -146,7 +146,8 @@
       "src/utils/logger.js",
       "src/utils/pipeCommands.js",
       "src/utils/pressAnyKey.js",
-      "src/utils/shellUtils.js"
+      "src/utils/shellUtils.js",
+      "src/utils/p-iteration.js"
     ],
     "resetMocks": true,
     "resetModules": true,

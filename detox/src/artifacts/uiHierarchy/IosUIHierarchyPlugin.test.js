@@ -2,23 +2,21 @@
 const testSummaries = require('../__mocks__/testSummaries.mock');
 
 jest.mock('../templates/artifact/FileArtifact');
-jest.mock('../../client/Client');
+jest.mock('../../devices/runtime/drivers/DeviceDriverBase');
 
 describe('IosUIHierarchyPlugin', () => {
-  let Client, FileArtifact, IosUIHierarchyPlugin;
-  let plugin, api, client, onTestFailed;
+  let DeviceDriverBase, FileArtifact, IosUIHierarchyPlugin;
+  let plugin, api, runtimeDriver, onTestFailed;
   const testSummary = 'TestSummary';
 
   beforeEach(() => {
-    Client = require('../../client/Client');
+    DeviceDriverBase = require('../../devices/runtime/drivers/DeviceDriverBase');
     FileArtifact = require('../templates/artifact/FileArtifact');
     IosUIHierarchyPlugin = require('./IosUIHierarchyPlugin');
 
-    client = new Client();
-    client.setEventCallback.mockImplementation((event, callback) => {
-      if (event === 'testFailed') {
-        onTestFailed = callback;
-      }
+    runtimeDriver = new DeviceDriverBase();
+    runtimeDriver.setInvokeFailuresListener.mockImplementation((callback) => {
+      onTestFailed = callback;
     });
 
     api = {
@@ -38,10 +36,10 @@ describe('IosUIHierarchyPlugin', () => {
       },
     };
 
-    plugin = new IosUIHierarchyPlugin({ api, client });
+    plugin = new IosUIHierarchyPlugin({ api, runtimeDriver });
   });
 
-  describe('behavior for "testFailed" client events', () => {
+  describe('behavior for invoke failures', () => {
     it('should ignore empty view hierarchy on test failure', () => {
       onTestFailed({ params: {} });
       expect(FileArtifact.mock.instances.length).toBe(0);
@@ -109,7 +107,7 @@ describe('IosUIHierarchyPlugin', () => {
   describe('when disabled', () => {
     beforeEach(() => {
       api.userConfig.enabled = false;
-      plugin = new IosUIHierarchyPlugin({ api, client });
+      plugin = new IosUIHierarchyPlugin({ api, runtimeDriver });
     });
 
     it('should propagate -detoxDisableHierarchyDump YES to native', async () => {

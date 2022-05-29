@@ -45,14 +45,14 @@ describe('Device', () => {
     driverMock = new DeviceDriverMock(DeviceDriverBase, { emitter, client });
     driverMock.givenNoSelectedApp();
     driverMock.driver.selectApp.mockImplementation((appAlias) => driverMock.givenAppSelection(appAlias));
-    driverMock.driver.clearSelectedApp.mockImplementation(() => driverMock.givenNoSelectedApp());
+    driverMock.driver.selectedApp = DEFAULT_APP_ALIAS;
   });
 
   function aDevice(overrides) {
     const appsConfig = overrides.appsConfig || {};
     errorComposer = new DetoxRuntimeErrorComposer({ appsConfig });
 
-    const device = new RuntimeDevice({
+    return new RuntimeDevice({
       appsConfig,
       behaviorConfig: {},
       deviceConfig: {},
@@ -62,10 +62,6 @@ describe('Device', () => {
 
       ...overrides,
     }, driverMock.driver);
-
-    device.deviceDriver.getAppIdFromBinary.mockReturnValue(bundleId);
-
-    return device;
   }
 
   function aValidUnpreparedDevice(overrides) {
@@ -123,10 +119,17 @@ describe('Device', () => {
     driverMock.expectExternalIdCalled();
   });
 
+  it('should prepare the driver', async () => {
+    const device = await aValidUnpreparedDevice();
+    await device._prepare();
+
+    expect(driverMock.driver.prepare).toHaveBeenCalled();
+  });
+
   describe('selectApp()', () => {
     let device;
 
-    describe('when there is a single app', () => {
+    describe('when there is a single preconfigured app', () => {
       beforeEach(async () => {
         device = await aValidUnpreparedDevice();
         jest.spyOn(device, 'selectApp');
@@ -146,40 +149,28 @@ describe('Device', () => {
         await expect(device.selectApp()).rejects.toThrowError(errorComposer.cantSelectEmptyApp());
       });
 
-      it(`should clear app in driver for null-app case`, async () => {
-        await device.selectApp(null);
-        driverMock.expectAppClearCalled();
-      });
-
-      it(`should throw on app interactions with no selected app`, async () => {
-        await device.selectApp(null);
-        await expect(device.launchApp()).rejects.toThrowError(errorComposer.appNotSelected());
-      });
-
       it(`should throw on attempt to select a non-existent app`, async () => {
         await expect(device.selectApp('nonExistent')).rejects.toThrowError();
       });
     });
 
     describe('when there are multiple apps', () => {
-      const anAppName = 'withBinaryPath';
-      const otherAppName = 'withBundleId';
+      const anAppAlias = 'cfgWithBinaryPath';
+      const otherAppAlias = 'cfgWithBundleId';
 
       beforeEach(async () => {
         device = await aValidUnpreparedDevice({
           appsConfig: {
-            [anAppName]: {
+            [anAppAlias]: {
               binaryPath: 'path/to/app',
             },
-            [otherAppName]: {
+            [otherAppAlias]: {
               binaryPath: 'path/to/app2',
               bundleId: 'com.app2'
             },
           },
         });
-
         jest.spyOn(device, 'selectApp');
-        driverMock.driver.getAppIdFromBinary.mockReturnValue('com.app1');
 
         await device._prepare();
       });
@@ -189,8 +180,8 @@ describe('Device', () => {
       });
 
       it(`should select an app in the driver`, async () => {
-        await device.selectApp(anAppName);
-        driverMock.expectSelectedAppCalled(anAppName);
+        await device.selectApp(anAppAlias);
+        driverMock.expectSelectedAppCalled(anAppAlias);
       });
 
       it(`should not select the app in the driver if given invalid alias`, async () => {
@@ -211,31 +202,15 @@ describe('Device', () => {
         driverMock.expectSelectedAppNotCalled();
       });
 
-      it(`upon select, it should infer bundleId if it is missing`, async () => {
-        await device.selectApp(anAppName);
-        expect(driverMock.driver.getAppIdFromBinary).toHaveBeenCalledWith('path/to/app');
-      });
+      it(`should allow for selection of an (unspecified) app configuration object`, async () => {
+        const appConfig = {
+          appId: bundleId,
+          binaryPath: 'proper/path',
+        };
 
-      it(`upon select, it should terminate the previous app`, async () => {
-        jest.spyOn(device, 'terminateApp');
+        await device.selectApp(appConfig);
 
-        await device.selectApp(anAppName);
-        expect(device.terminateApp).not.toHaveBeenCalled(); // because no app was running before
-
-        await device.selectApp(otherAppName);
-        expect(device.terminateApp).toHaveBeenCalled(); // because there is a running app
-      });
-
-      it(`upon select, it should not infer bundleId if it is specified`, async () => {
-        await device.selectApp(otherAppName);
-        expect(driverMock.driver.getAppIdFromBinary).not.toHaveBeenCalled();
-      });
-
-      it(`upon re-selecting the same app, it should not infer bundleId twice`, async () => {
-        await device.selectApp(anAppName);
-        await device.selectApp(otherAppName);
-        await device.selectApp(anAppName);
-        expect(driverMock.driver.getAppIdFromBinary).toHaveBeenCalledTimes(1);
+        driverMock.expectSelectUnspecifiedAppCalled(appConfig);
       });
     });
 
@@ -253,81 +228,52 @@ describe('Device', () => {
         expect(device.selectApp).not.toHaveBeenCalled();
       });
 
-      it(`should be able to execute actions with an explicit bundleId`, async () => {
-        const bundleId = 'com.example.app';
-        jest.spyOn(device, 'terminateApp');
+      it(`should be able to execute actions based on the selected app`, async () => {
+        await device.uninstallApp(DEFAULT_APP_ALIAS);
+        expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
 
-        await device.uninstallApp(bundleId);
-        expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(bundleId);
+        await device.installApp(DEFAULT_APP_ALIAS);
+        expect(driverMock.driver.installApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
 
-        await device.installApp('/tmp/app', '/tmp/app-test');
-        expect(driverMock.driver.installApp).toHaveBeenCalledWith('/tmp/app', '/tmp/app-test');
+        await device.launchApp({});
+        expect(driverMock.driver.launchApp).toHaveBeenCalledWith({}, undefined, DEFAULT_APP_ALIAS);
 
-        await device.launchApp({}, bundleId);
-        expect(driverMock.driver.launchApp).toHaveBeenCalledWith(bundleId, expect.anything(), undefined);
+        await device.terminateApp(DEFAULT_APP_ALIAS);
+        expect(driverMock.driver.terminateApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
 
-        await device.terminateApp(bundleId);
-        expect(driverMock.driver.terminate).toHaveBeenCalledWith(bundleId);
-
-        await device.uninstallApp(bundleId);
-        expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(bundleId);
+        await device.uninstallApp(DEFAULT_APP_ALIAS);
+        expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
       });
     });
   });
 
   describe('re/launchApp()', () => {
-    const expectedDriverArgs = {
-      'detoxServer': 'ws://localhost:8099',
-      'detoxSessionId': 'test',
-    };
-
     it(`with no args should launch app with defaults`, async () => {
-      const expectedArgs = expectedDriverArgs;
+      const expectedArgs = {};
       const device = await aValidDevice();
       await device.launchApp();
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`given behaviorConfig.launchApp == 'manual' should wait for the app launch`, async () => {
-      const expectedArgs = expectedDriverArgs;
+      const expectedArgs = {};
       const device = await aValidDevice({
         behaviorConfig: { launchApp: 'manual' }
       });
       await device.launchApp();
 
       expect(driverMock.driver.launchApp).not.toHaveBeenCalled();
-      driverMock.expectWaitForLaunchCalled(bundleId, expectedArgs);
-    });
-
-    it(`args should launch app and emit appReady`, async () => {
-      driverMock.driver.launchApp = async () => 42;
-
-      const device = await aValidDevice();
-      await device.launchApp();
-
-      expect(emitter.emit).toHaveBeenCalledWith('appReady', {
-        deviceId: device.id,
-        bundleId: device._appId,
-        pid: 42,
-      });
+      driverMock.expectWaitForLaunchCalled(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with no args should use defaults`, async () => {
-      const expectedArgs = expectedDriverArgs;
+      const expectedArgs = {};
       const device = await aValidDevice();
 
       await device.relaunchApp();
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
-    });
-
-    it(`(relaunch) with no args should terminate the app before launch - backwards compat`, async () => {
-      const device = await aValidDevice();
-
-      await device.relaunchApp();
-
-      driverMock.expectTerminateCalled();
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with newInstance=false should not terminate the app before launch`, async () => {
@@ -347,50 +293,48 @@ describe('Device', () => {
     });
 
     it(`(relaunch) with delete=true`, async () => {
-      const expectedArgs = expectedDriverArgs;
+      const expectedArgs = {};
       const device = await aValidDevice();
 
       await device.relaunchApp({ delete: true });
 
       driverMock.expectReinstallCalled();
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
-      const expectedArgs = expectedDriverArgs;
+      const expectedArgs = {};
       const device = await aValidDevice();
       argparse.getArgValue.mockReturnValue(true);
 
       await device.relaunchApp();
 
       driverMock.expectReinstallNotCalled();
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with url should send the url as a param in launchParams`, async () => {
-      const expectedArgs = { ...expectedDriverArgs, 'detoxURLOverride': 'scheme://some.url' };
+      const expectedArgs = { 'detoxURLOverride': 'scheme://some.url' };
       const device = await aValidDevice();
 
       await device.relaunchApp({ url: `scheme://some.url` });
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with url should send the url as a param in launchParams`, async () => {
       const expectedArgs = {
-        ...expectedDriverArgs,
         'detoxURLOverride': 'scheme://some.url',
         'detoxSourceAppOverride': 'sourceAppBundleId',
       };
       const device = await aValidDevice();
       await device.relaunchApp({ url: `scheme://some.url`, sourceApp: 'sourceAppBundleId' });
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with userNofitication should send the userNotification as a param in launchParams`, async () => {
       const expectedArgs = {
-        ...expectedDriverArgs,
         'detoxUserNotificationDataURL': 'url',
       };
       const device = await aValidDevice();
@@ -399,7 +343,7 @@ describe('Device', () => {
 
       await device.relaunchApp({ userNotification: 'json' });
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
     it(`(relaunch) with url and userNofitication should throw`, async () => {
@@ -416,11 +360,11 @@ describe('Device', () => {
       const device = await aValidDevice();
       await device.relaunchApp({ permissions: { calendar: 'YES' } });
 
-      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(bundleId, { calendar: 'YES' });
+      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith({ calendar: 'YES' }, DEFAULT_APP_ALIAS);
     });
 
     it('with languageAndLocale should launch app with a specific language/locale', async () => {
-      const expectedArgs = expectedDriverArgs;
+      const expectedArgs = {};
       const device = await aValidDevice();
 
       const languageAndLocale = {
@@ -430,35 +374,35 @@ describe('Device', () => {
 
       await device.launchApp({ languageAndLocale });
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs, languageAndLocale);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs, languageAndLocale);
     });
 
     it(`with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {
-      const expectedArgs = { ...expectedDriverArgs, 'detoxDisableTouchIndicators': true };
+      const expectedArgs = { 'detoxDisableTouchIndicators': true };
       const device = await aValidDevice();
 
       await device.launchApp({ disableTouchIndicators: true });
 
-      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+      driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
     });
 
-    it(`with newInstance=false should check if process is in background and reopen it`, async () => {
-      const processId = 1;
-      const device = await aValidDevice();
+    it(`with newInstance=false should check if app is running and reopen it`, async () => {
+      driverMock.givenAppRunState(false);
 
-      device.deviceDriver.launchApp.mockReturnValue(processId);
+      const device = await aValidDevice();
 
       await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp({ newInstance: false });
 
       expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
+      expect(driverMock.driver.isAppRunning).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
     });
 
-    it(`with a url should check if process is in background and use openURL() instead of launch args`, async () => {
-      const processId = 1;
+    it(`with a url should check if app is in running and use openURL() instead of launch args`, async () => {
+      driverMock.givenAppRunState(true);
+
       const device = await aValidDevice();
-      device.deviceDriver.launchApp.mockReturnValue(processId);
 
       await device._prepare();
       await device.launchApp({ newInstance: true });
@@ -467,26 +411,11 @@ describe('Device', () => {
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
     });
 
-    it(`with a url should check if process is in background and if not use launch args`, async () => {
+    it(`with a url should check if app is in running and use openURL() instead of launch args`, async () => {
+      driverMock.givenAppRunState(true);
+
       const launchParams = { url: 'url://me' };
-      const processId = 1;
-      const newProcessId = 2;
-
       const device = await aValidDevice();
-      device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
-
-      await device._prepare();
-      await device.launchApp(launchParams);
-
-      expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
-    });
-
-    it(`with a url should check if process is in background and use openURL() instead of launch args`, async () => {
-      const launchParams = { url: 'url://me' };
-      const processId = 1;
-
-      const device = await aValidDevice();
-      device.deviceDriver.launchApp.mockReturnValue(processId);
 
       await device._prepare();
       await device.launchApp({ newInstance: true });
@@ -495,12 +424,11 @@ describe('Device', () => {
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({ delayPayload: true, url: 'url://me' });
     });
 
-    it('with userActivity should check if process is in background and if it is use deliverPayload', async () => {
-      const launchParams = { userActivity: 'userActivity' };
-      const processId = 1;
+    it('with userActivity should check if app is in running and if so use deliverPayload', async () => {
+      driverMock.givenAppRunState(true);
 
+      const launchParams = { userActivity: 'userActivity' };
       const device = await aValidDevice();
-      device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
       await device._prepare();
@@ -511,11 +439,10 @@ describe('Device', () => {
     });
 
     it('with userNotification should check if process is in background and if it is use deliverPayload', async () => {
-      const launchParams = { userNotification: 'notification' };
-      const processId = 1;
+      driverMock.givenAppRunState(true);
 
+      const launchParams = { userNotification: 'notification' };
       const device = await aValidDevice();
-      device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
       await device._prepare();
@@ -574,10 +501,6 @@ describe('Device', () => {
     });
 
     describe('launch arguments', () => {
-      const baseArgs = {
-        detoxServer: 'ws://localhost:8099',
-        detoxSessionId: 'test',
-      };
       const someLaunchArgs = () => ({
         argX: 'valX',
         argY: { value: 'Y' },
@@ -588,20 +511,19 @@ describe('Device', () => {
         const device = await aValidDeviceWithLaunchArgs(launchArgs);
         await device.launchApp();
 
-        driverMock.expectLaunchCalledContainingArgs(launchArgs);
+        driverMock.expectLaunchCalledContainingArgs(DEFAULT_APP_ALIAS, launchArgs);
       });
 
       it('should pass on-site launch-args to device via driver', async () => {
         const launchArgs = someLaunchArgs();
         const expectedArgs = {
-          ...baseArgs,
           ...launchArgs,
         };
 
         const device = await aValidDevice();
         await device.launchApp({ launchArgs });
 
-        driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+        driverMock.expectLaunchCalledContainingArgs(DEFAULT_APP_ALIAS, expectedArgs);
       });
 
       it('should allow for launch-args modification', async () => {
@@ -619,7 +541,7 @@ describe('Device', () => {
         device.appLaunchArgs.modify(argsModifier);
         await device.launchApp();
 
-        driverMock.expectLaunchCalledContainingArgs(expectedArgs);
+        driverMock.expectLaunchCalledContainingArgs(DEFAULT_APP_ALIAS, expectedArgs);
       });
 
       it('should override launch-args with on-site launch-args', async () => {
@@ -635,49 +557,38 @@ describe('Device', () => {
           },
         });
 
-        driverMock.expectLaunchCalledContainingArgs({ aLaunchArg: 'aValue!' });
+        driverMock.expectLaunchCalledContainingArgs(DEFAULT_APP_ALIAS, { aLaunchArg: 'aValue!' });
       });
 
       it('should allow for resetting all args', async () => {
         const launchArgs = someLaunchArgs();
-        const expectedArgs = { ...baseArgs };
+        const expectedArgs = {};
 
         const device = await aValidDeviceWithLaunchArgs(launchArgs);
         device.appLaunchArgs.modify({ argZ: 'valZ' });
         device.appLaunchArgs.reset();
         await device.launchApp();
 
-        driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+        driverMock.expectLaunchCalledWithArgs(DEFAULT_APP_ALIAS, expectedArgs);
       });
     });
   });
 
   describe('installApp()', () => {
-    it(`with a custom app path should use custom app path`, async () => {
+    it(`should pass-through alias to driver`, async () => {
       const device = await aValidDevice();
 
-      await device.installApp('newAppPath');
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith('newAppPath', device._deviceConfig.testBinaryPath);
-    });
-
-    it(`with no args should use the default path given in configuration`, async () => {
-      const device = await aValidDevice();
-      await device.installApp();
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._currentApp.binaryPath, device._currentApp.testBinaryPath);
+      await device.installApp(DEFAULT_APP_ALIAS);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
     });
   });
 
   describe('uninstallApp()', () => {
-    it(`with a custom app path should use custom app path`, async () => {
+    it(`should pass-through alias to driver`, async () => {
       const device = await aValidDevice();
-      await device.uninstallApp('newBundleId');
-      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith('newBundleId');
-    });
 
-    it(`with no args should use the default path given in configuration`, async () => {
-      const device = await aValidDevice();
-      await device.uninstallApp();
-      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(bundleId);
+      await device.uninstallApp(DEFAULT_APP_ALIAS);
+      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
     });
   });
 
@@ -779,13 +690,6 @@ describe('Device', () => {
     expect(driverMock.driver.resetStatusBar).toHaveBeenCalledWith();
   });
 
-  it(`typeText() should pass to device driver`, async () => {
-    const device = await aValidDevice();
-    await device._typeText('Text');
-
-    expect(driverMock.driver.typeText).toHaveBeenCalledWith('Text');
-  });
-
   it(`shake() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.shake();
@@ -795,9 +699,9 @@ describe('Device', () => {
 
   it(`terminateApp() should pass to device driver`, async () => {
     const device = await aValidDevice();
-    await device.terminateApp();
+    await device.terminateApp(DEFAULT_APP_ALIAS);
 
-    expect(driverMock.driver.terminate).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.terminateApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
   });
 
   it(`openURL({url:url}) should pass to device driver`, async () => {
@@ -910,16 +814,6 @@ describe('Device', () => {
     expect(driverMock.driver.cleanup).toHaveBeenCalledTimes(1);
   });
 
-  it(`should accept absolute path for binary`, async () => {
-    const actualPath = await launchAndTestBinaryPath('absolute');
-    expect(actualPath).toEqual(configurationsMock.appWithAbsoluteBinaryPath.binaryPath);
-  });
-
-  it(`should accept relative path for binary`, async () => {
-    const actualPath = await launchAndTestBinaryPath('relative');
-    expect(actualPath).toEqual(configurationsMock.appWithRelativeBinaryPath.binaryPath);
-  });
-
   it(`pressBack() should invoke driver's pressBack()`, async () => {
     const device = await aValidDevice();
 
@@ -983,36 +877,6 @@ describe('Device', () => {
     await device.captureViewHierarchy();
     expect(device.deviceDriver.captureViewHierarchy).toHaveBeenCalledWith('capture');
   });
-
-  describe('_isAppRunning (internal method)', () => {
-    let device;
-
-    beforeEach(async () => {
-      device = await aValidDevice();
-      driverMock.driver.launchApp = async () => 42;
-      await device.launchApp();
-    });
-
-    it('should return the value for the current app if called with no args', async () => {
-      expect(device._isAppRunning()).toBe(true);
-    });
-
-    it('should return the value for the given bundleId', async () => {
-      expect(device._isAppRunning('test.bundle')).toBe(true);
-      expect(device._isAppRunning('somethingElse')).toBe(false);
-    });
-  });
-
-  async function launchAndTestBinaryPath(absoluteOrRelative) {
-    const appConfig = absoluteOrRelative === 'absolute'
-      ? configurationsMock.appWithAbsoluteBinaryPath
-      : configurationsMock.appWithRelativeBinaryPath;
-
-    const device = await aValidDevice({ appsConfig: { [DEFAULT_APP_ALIAS]: appConfig } });
-    await device.installApp();
-
-    return driverMock.driver.installApp.mock.calls[0][0];
-  }
 });
 
 class DeviceDriverMock {
@@ -1027,19 +891,16 @@ class DeviceDriverMock {
     expect(this.driver.getExternalId).toHaveBeenCalled();
   }
 
-  expectLaunchCalledWithArgs(bundleId, expectedArgs, languageAndLocale) {
-    expect(this.driver.launchApp).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
+  expectLaunchCalledWithArgs(appAlias, expectedArgs, languageAndLocale) {
+    expect(this.driver.launchApp).toHaveBeenCalledWith(expectedArgs, languageAndLocale, appAlias);
   }
 
-  expectLaunchCalledContainingArgs(expectedArgs) {
-    expect(this.driver.launchApp).toHaveBeenCalledWith(
-      this.driver.getAppIdFromBinary(),
-      expect.objectContaining(expectedArgs),
-      undefined);
+  expectLaunchCalledContainingArgs(appAlias, expectedArgs) {
+    expect(this.driver.launchApp).toHaveBeenCalledWith(expect.objectContaining(expectedArgs), undefined, appAlias);
   }
 
-  expectWaitForLaunchCalled(bundleId, expectedArgs, languageAndLocale) {
-    expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
+  expectWaitForLaunchCalled(appAlias, expectedArgs, languageAndLocale) {
+    expect(this.driver.waitForAppLaunch).toHaveBeenCalledWith(expectedArgs, languageAndLocale, appAlias);
   }
 
   expectReinstallCalled() {
@@ -1053,11 +914,11 @@ class DeviceDriverMock {
   }
 
   expectTerminateCalled() {
-    expect(this.driver.terminate).toHaveBeenCalled();
+    expect(this.driver.terminateApp).toHaveBeenCalled();
   }
 
   expectTerminateNotCalled() {
-    expect(this.driver.terminate).not.toHaveBeenCalled();
+    expect(this.driver.terminateApp).not.toHaveBeenCalled();
   }
 
   expectReverseTcpPortCalled(port) {
@@ -1068,16 +929,16 @@ class DeviceDriverMock {
     expect(this.driver.unreverseTcpPort).toHaveBeenCalledWith(port);
   }
 
-  expectAppClearCalled() {
-    expect(this.driver.clearSelectedApp).toHaveBeenCalled();
-  }
-
   expectSelectedAppCalled(appAlias) {
     expect(this.driver.selectApp).toHaveBeenCalledWith(appAlias);
   }
 
   expectSelectedAppNotCalled() {
     expect(this.driver.selectApp).not.toHaveBeenCalled();
+  }
+
+  expectSelectUnspecifiedAppCalled(appConfig) {
+    expect(this.driver.selectUnspecifiedApp).toHaveBeenCalledWith(appConfig);
   }
 
   givenDefaultAppSelection() {
@@ -1094,5 +955,9 @@ class DeviceDriverMock {
 
   givenDeviceName(name) {
     this.driver.getDeviceName.mockReturnValue(name);
+  }
+
+  givenAppRunState(state) {
+    this.driver.isAppRunning.mockReturnValue(state);
   }
 }
