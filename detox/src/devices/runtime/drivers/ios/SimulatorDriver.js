@@ -14,6 +14,8 @@ const pressAnyKey = require('../../../../utils/pressAnyKey');
 const IosDriver = require('./IosDriver');
 const { execAsync } = require('../../../../utils/childProcess');
 
+const osascript = require('node-osascript');
+
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
  * @property simulatorLauncher { SimulatorLauncher }
@@ -129,6 +131,40 @@ class SimulatorDriver extends IosDriver {
       })
       .catch(function (err) {
         log.error(`Error occurred:\n ${err.stderr}`);
+      });
+
+    log.info(`Allowing network permissions`);
+    this.setTestTargetNetworkPermissions();
+  }
+
+  setTestTargetNetworkPermissions() {
+    osascript.execute(
+      'delay 1\n' +
+      '\n' +
+      'tell application "System Events"\n' +
+      '\tset frontmost of process "UserNotificationCenter" to true\n' +
+      '\t\n' +
+      '\ttell process "UserNotificationCenter"\n' +
+      '\t\t\n' +
+      '\t\tif exists button "Allow" of window 1 then\n' +
+      '\t\t\trepeat while exists button "Allow" of window 1\n' +
+      '\t\t\t\t\n' +
+      '\t\t\t\tif exists button "Allow" of window 1 then\n' +
+      '\t\t\t\t\tclick button "Allow" of window 1\n' +
+      '\t\t\t\tend if\n' +
+      '\t\t\t\t\n' +
+      '\t\t\tend repeat\n' +
+      '\t\t\t\n' +
+      '\t\tend if\n' +
+      '\t\t\n' +
+      '\tend tell\n' +
+      'end tell',
+      function(err, result, raw) {
+        if (err) {
+          return console.error(err);
+        }
+
+        console.log(result, raw);
       });
   }
 

@@ -33,6 +33,9 @@ import XCTest
   ///
   fileprivate(set) var serverDidReceiveHandler: ((Data) -> Void)?
 
+  ///
+  static private let whiteBoxClientConnectionSemaphore: DispatchSemaphore = .init(value: 0)
+
   // MARK: - Start
 
   /// Starts Detox Tester operation.
@@ -57,8 +60,13 @@ import XCTest
     WaitUntilDone { [self] done, exec in
       self.exec = exec
       self.done = done
-      self.webSocketClient = makeWebSocketClient()
+
+      mainLog("connecting with app (white-box connection)...")
       self.webSocketServer = makeWebSocketServer()
+      DetoxTester.whiteBoxClientConnectionSemaphore.wait()
+
+      mainLog("connecting with server (main connection)...")
+      self.webSocketClient = makeWebSocketClient()
     }
   }
 
@@ -162,9 +170,6 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
 // MARK: - WebSocketServerDelegateProtocol
 
 extension DetoxTester: WebSocketServerDelegateProtocol {
-  ///
-  static private let whiteBoxClientConnectionSemaphore: DispatchSemaphore = .init(value: 0)
-
   func serverDidReceive(data: Data) {
     guard let handler = serverDidReceiveHandler else {
       mainLog("there is no handler for handling messages from client", type: .error)
@@ -175,12 +180,7 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
   }
 
   func serverDidInit(onPort port: UInt16) {
-    guard let server = webSocketServer else {
-      mainLog("web-socket server has not initialized yet", type: .error)
-      fatalError("web-socket server has not initialized yet")
-    }
-
-    mainLog("tester server did initialized on port \(server.port)")
+    mainLog("tester server did initialized on port \(port)")
   }
 
   func serverIsReady() {
@@ -191,15 +191,13 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
 
     mainLog("tester server is ready on port \(server.port)")
 
-    guard webSocketClient != nil else {
-      mainLog("web-socket client has not initialized yet", type: .error)
-      fatalError("web-socket client has not initialized yet")
-    }
+//    guard webSocketClient != nil else {
+//      mainLog("web-socket client has not initialized yet", type: .error)
+//      fatalError("web-socket client has not initialized yet")
+//    }
 
 //    let port = server.port
 //    client.sendAction(.reportTesterServerStarted, params: ["port": port], messageId: -1000)
-
-    DetoxTester.whiteBoxClientConnectionSemaphore.wait()
   }
 
   func serverDidConnectClient() {

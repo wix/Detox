@@ -29,9 +29,13 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	func connect(toServer server: URL, withSessionId sessionId: String) {
 		self.sessionId = sessionId
 
+		let log = DetoxLog(category: "XCUITest")
+		log.info("starting to connect..")
 		while webSocketSessionTask == nil {
+			log.debug("trying to connect..")
 			webSocketSessionTask = urlSession.webSocketTask(with: server)
 		}
+		log.debug("connected?")
 
 		webSocketSessionTask!.resume()
 	}
