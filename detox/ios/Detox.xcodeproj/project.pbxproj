@@ -110,6 +110,7 @@
 		6062B5E42720323700CBDBF0 /* NSArray+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6062B5DE2720323700CBDBF0 /* NSArray+Utils.m */; };
 		6062B5E52720323700CBDBF0 /* Swiftier.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DF2720323700CBDBF0 /* Swiftier.h */; };
 		6062B5E62720323700CBDBF0 /* DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6062B5E02720323700CBDBF0 /* DTXAddressInfo.mm */; };
+		609BC9B328448EBE00F09D8A /* DetoxManager_OLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609BC9B228448EBE00F09D8A /* DetoxManager_OLD.swift */; };
 		60C1961A271F11C4000172DD /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 60C19618271F11C4000172DD /* fishhook.h */; };
 		60C1961B271F11C4000172DD /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 60C19619271F11C4000172DD /* fishhook.c */; };
 		60E149C72759038F00519EE4 /* UIResponder+First.h in Headers */ = {isa = PBXBuildFile; fileRef = 60E149C52759038F00519EE4 /* UIResponder+First.h */; };
@@ -306,6 +307,7 @@
 		6062B5DE2720323700CBDBF0 /* NSArray+Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+Utils.m"; path = "DetoxSync/DetoxSync/DTXObjectiveCHelpers/NSArray+Utils.m"; sourceTree = SOURCE_ROOT; };
 		6062B5DF2720323700CBDBF0 /* Swiftier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Swiftier.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/Swiftier.h; sourceTree = SOURCE_ROOT; };
 		6062B5E02720323700CBDBF0 /* DTXAddressInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DTXAddressInfo.mm; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXAddressInfo.mm; sourceTree = SOURCE_ROOT; };
+		609BC9B228448EBE00F09D8A /* DetoxManager_OLD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxManager_OLD.swift; sourceTree = "<group>"; };
 		60C19618271F11C4000172DD /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = DetoxSync/DetoxSync/fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		60C19619271F11C4000172DD /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = DetoxSync/DetoxSync/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		60E149C52759038F00519EE4 /* UIResponder+First.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIResponder+First.h"; sourceTree = "<group>"; };
@@ -427,6 +429,7 @@
 				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
 				392324D62477D87D00A3D119 /* DetoxManager.swift */,
+				609BC9B228448EBE00F09D8A /* DetoxManager_OLD.swift */,
 				3947679A1DBF985400D72256 /* Detox.h */,
 				39F6422A1FDD5EEC00468FED /* Detox.pch */,
 				3947679B1DBF985400D72256 /* Info.plist */,
@@ -842,6 +845,7 @@
 				397CA78D248010B5005E8A71 /* UISlider+DetoxUtils.m in Sources */,
 				3980D15D244C45EA004812DD /* Expectation.swift in Sources */,
 				3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */,
+				609BC9B328448EBE00F09D8A /* DetoxManager_OLD.swift in Sources */,
 				3946CD3F2566EB9E000A3606 /* NSObject+DetoxActions.m in Sources */,
 				395B06E5256D5A5600941716 /* UIView+DetoxSpeedup.m in Sources */,
 				3980D15B244C45EA004812DD /* InvocationManager.swift in Sources */,

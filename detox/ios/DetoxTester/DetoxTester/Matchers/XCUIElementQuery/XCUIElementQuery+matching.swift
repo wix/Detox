@@ -30,18 +30,20 @@ extension XCUIElementQuery {
         return matching(parameter: .id, byOperator: .equals, toValue: id)
 
       case .text(let text):
-        let response = whiteBoxMessageHandler(.findElementIDByText(text: text))
-        guard let response = response else {
-          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
-        }
+        return matching(parameter: .label, byOperator: .equals, toValue: text)
 
-        guard case let .string(id) = response else {
-          execLog("reponse for white-box is not a string: \(response)", type: .error)
-          fatalError("Reponse is not a string: \(response)")
-        }
-
-        execLog("found identifier for element with text (\(text)): \(id)")
-        return matching(parameter: .id, byOperator: .equals, toValue: id)
+//        let response = whiteBoxMessageHandler(.findElementIDByText(text: text))
+//        guard let response = response else {
+//          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
+//        }
+//
+//        guard case let .string(id) = response else {
+//          execLog("reponse for white-box is not a string: \(response)", type: .error)
+//          fatalError("Reponse is not a string: \(response)")
+//        }
+//
+//        execLog("found identifier for element with text (\(text)): \(id)")
+//        return matching(parameter: .id, byOperator: .equals, toValue: id)
 
       case .type, .traits, .ancestor, .descendant:
         fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")

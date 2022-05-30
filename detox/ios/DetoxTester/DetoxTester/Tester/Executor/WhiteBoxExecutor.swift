@@ -6,6 +6,8 @@
 import Foundation
 import UIKit
 
+import DetoxInvokeHandler
+
 /// Protocol for handling application operations directly from the app itself, in a "white-box"
 /// manner.
 ///
@@ -26,7 +28,6 @@ class WhiteBoxExecutor {
   /// Sends a message with given `message` to the application using the internal Detox framework
   /// and synchronically waits for a response.
   func execute(_ message: Message) -> Response {
-
     switch message {
       case .disconnect:
         return .completed
@@ -35,6 +36,25 @@ class WhiteBoxExecutor {
         return .completed
 
       case .reloadReactNative:
+        let message: [String: AnyCodable] = [
+          "type": "reloadReactNative",
+          "params": [:],
+          "messageId": AnyCodable(5)
+        ]
+        let encoder = JSONEncoder()
+
+        var result: Data?
+        do {
+          result = messageSender.sendMessageToClient(try encoder.encode(message))
+        }
+        catch {
+          fatalError("failed to create a new message")
+        }
+
+        guard result != nil else {
+          fatalError("result is nil")
+        }
+
         return .completed
 
       case .shakeDevice:
@@ -61,6 +81,10 @@ class WhiteBoxExecutor {
       case .findElementIDByText(let text):
         return .string("some uuid")
     }
+  }
+
+  func send(_ data: Data) -> Data {
+    return messageSender.sendMessageToClient(data)
   }
 }
 
