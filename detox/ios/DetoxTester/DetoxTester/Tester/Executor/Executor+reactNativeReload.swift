@@ -10,6 +10,7 @@ extension Executor {
   func reactNativeReload(messageId: NSNumber) {
     if !isWhiteBoxExecutorAvailable() {
       execLog("can't reload react-native, app is not white-box controlled", type: .error)
+      fatalError("Failed to reload react-native, app is not white-box controlled")
     }
 
     execLog("reloading react-native")

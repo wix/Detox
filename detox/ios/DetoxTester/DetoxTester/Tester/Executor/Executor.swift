@@ -25,7 +25,7 @@ class Executor {
         execLog("successfully logged into Detox server")
 
       case .disconnect:
-        disconnect(messageId: messageId)
+        cleanup(messageId: messageId)
 
       case .setRecordingState:
         fatalError("not implemented yet")

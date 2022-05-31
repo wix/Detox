@@ -57,7 +57,6 @@
 		60A3B444282A56B0002F903B /* WhiteBoxExecutor+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B443282A56B0002F903B /* WhiteBoxExecutor+Response.swift */; };
 		60A3B448282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B447282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift */; };
 		60A3B44A282AF75D002F903B /* WhiteBoxExecutor+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B449282AF75D002F903B /* WhiteBoxExecutor+Message.swift */; };
-		60A3B464282D0356002F903B /* Executor+disconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B463282D0356002F903B /* Executor+disconnect.swift */; };
 		60A3B466282D0439002F903B /* Executor+waitFor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B465282D0439002F903B /* Executor+waitFor.swift */; };
 		60A3B468282D3344002F903B /* TimeInterval+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B467282D3344002F903B /* TimeInterval+Extensions.swift */; };
 		60A3B46C282D3605002F903B /* Executor+setSyncSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */; };
@@ -200,7 +199,6 @@
 		60A3B443282A56B0002F903B /* WhiteBoxExecutor+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WhiteBoxExecutor+Response.swift"; sourceTree = "<group>"; };
 		60A3B447282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+WhiteBoxExecutor.swift"; sourceTree = "<group>"; };
 		60A3B449282AF75D002F903B /* WhiteBoxExecutor+Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WhiteBoxExecutor+Message.swift"; sourceTree = "<group>"; };
-		60A3B463282D0356002F903B /* Executor+disconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+disconnect.swift"; sourceTree = "<group>"; };
 		60A3B465282D0439002F903B /* Executor+waitFor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+waitFor.swift"; sourceTree = "<group>"; };
 		60A3B467282D3344002F903B /* TimeInterval+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extensions.swift"; sourceTree = "<group>"; };
 		60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setSyncSettings.swift"; sourceTree = "<group>"; };
@@ -639,7 +637,6 @@
 				603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */,
 				603497B027F08E6600770EE0 /* Executor+reactNativeReload.swift */,
 				603497A927F08C3700770EE0 /* Executor+sendAction.swift */,
-				60A3B463282D0356002F903B /* Executor+disconnect.swift */,
 				60A3B465282D0439002F903B /* Executor+waitFor.swift */,
 				60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */,
 				604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */,
@@ -891,7 +888,6 @@
 				60FBF60D28198433000B73B1 /* SliderTests.swift in Sources */,
 				60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */,
 				603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */,
-				60A3B464282D0356002F903B /* Executor+disconnect.swift in Sources */,
 				60BF52D5281E808D00610DBD /* XCUIElementQuery+run.swift in Sources */,
 				60534175280D835100C0405D /* XCUIElement+longPress.swift in Sources */,
 				60BF52D2281E7D0600610DBD /* XCUIElement+query.swift in Sources */,

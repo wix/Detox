@@ -13,10 +13,6 @@ extension Executor {
       return
     }
 
-    if isWhiteBoxExecutorAvailable() {
-      execute(whiteBoxRequest: .cleanup).assertResponse(equalsTo: .completed)
-    }
-
     sendAction(.reportCleanupDone, messageId: messageId)
     serverMessageSender.cleanup()
   }

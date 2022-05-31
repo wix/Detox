@@ -29,100 +29,19 @@ class WhiteBoxExecutor {
   /// and synchronically waits for a response.
   func execute(_ message: Message) -> Response {
     switch message {
-      case .disconnect:
-        return .completed
-
-      case .cleanup:
-        return .completed
-
       case .reloadReactNative:
-        let message: [String: AnyCodable] = [
-          "type": "reloadReactNative",
-          "params": [:],
-          "messageId": AnyCodable(5)
-        ]
-        let encoder = JSONEncoder()
-
-        var result: Data?
-        do {
-          result = messageSender.sendMessageToClient(try encoder.encode(message))
-        }
-        catch {
-          fatalError("failed to create a new message")
-        }
-
-        guard let result = result else {
-          execLog("reloading react native failed (result is nil)", type: .error)
-          fatalError("result is nil")
-        }
-
-        let decoder = JSONDecoder()
-
-        var decoded: [String: AnyCodable]!
-        do {
-          decoded = try decoder.decode([String: AnyCodable].self, from: result)
-        }
-        catch {
-          execLog("reloading react native failed (result can't be decoded): \(result)", type: .error)
-          fatalError("result is invalid")
-        }
-
-        guard decoded["type"]?.value as? String == "reloadedReactNative" else {
-          execLog(
-            "reloading react native failed, decoded result: \(String(describing: decoded))",
-            type: .error
-          )
-          fatalError("reloading react native failed")
-        }
-
+        send("reloadReactNative", andExpectTo: "reactNativeDidReload")
         return .completed
 
       case .shakeDevice:
+        send("shakeDevice", andExpectTo: "deviceDidShake")
         return .completed
 
       case .captureViewHierarchy(let viewHierarchyURL):
         return .completed
 
       case .waitUntilReady:
-        let message: [String: AnyCodable] = [
-          "type": "waitUntilReady",
-          "params": [:],
-          "messageId": AnyCodable(10)
-        ]
-        let encoder = JSONEncoder()
-
-        var result: Data?
-        do {
-          result = messageSender.sendMessageToClient(try encoder.encode(message))
-        }
-        catch {
-          fatalError("failed to create a new message")
-        }
-
-        guard let result = result else {
-          execLog("waiting for ready failed (result is nil)", type: .error)
-          fatalError("result is nil")
-        }
-
-        let decoder = JSONDecoder()
-
-        var decoded: [String: AnyCodable]!
-        do {
-          decoded = try decoder.decode([String: AnyCodable].self, from: result)
-        }
-        catch {
-          execLog("waiting for ready failed (result can't be decoded): \(result)", type: .error)
-          fatalError("result is invalid")
-        }
-
-        guard decoded["type"]?.value as? String == "isReady" else {
-          execLog(
-            "waiting for ready failed, decoded result: \(String(describing: decoded))",
-            type: .error
-          )
-          fatalError("waiting for ready failed")
-        }
-
+        send("waitUntilReady", andExpectTo: "isReady")
         return .completed
 
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
@@ -138,12 +57,106 @@ class WhiteBoxExecutor {
         return .boolean(true)
 
       case .findElementIDByText(let text):
-        return .string("some uuid")
+        let message = createMessage(
+          type: "findElementIDByText",
+          params: ["text": AnyCodable(text)],
+          messageId: 0
+        )
+
+        let result = send(message, andExpectToType: "didLookedForElementByText", messageId: 0)
+
+        let identifier = result["elementID"]?.value as? String
+        return identifier != nil ?
+          .string(identifier!) :
+          .failed(reason: "could not find element with text: \(text)")
     }
   }
 
-  func send(_ data: Data) -> Data {
-    return messageSender.sendMessageToClient(data)
+  private func send(_ stringMessage: String, andExpectTo stringExpected: String) {
+    send(
+      createMessage(type: stringMessage),
+      andExpectTo: createMessage(type: stringExpected)
+    )
+  }
+
+  private func createMessage(
+    type: String, params: [String: AnyCodable] = [:], messageId: Int = 0
+  ) -> [String: AnyCodable] {
+    return [
+      "type": AnyCodable(type),
+      "params": AnyCodable(params),
+      "messageId": AnyCodable(messageId)
+    ]
+  }
+
+  private func send(_ message: [String: AnyCodable], andExpectTo expected: [String: AnyCodable]) {
+    let response = send(message)
+
+    if response != expected {
+      whiteExecLog(
+        "expected to have message with type `\(String(describing: expected))`, " +
+        "got result: \(String(describing: response))",
+        type: .error
+      )
+      fatalError("Got unexpected result for white-box message")
+    }
+  }
+
+  private func send(_ message: [String: AnyCodable]) -> [String: AnyCodable] {
+    var result: Data?
+    do {
+      result = messageSender.sendMessageToClient(try JSONEncoder().encode(message))
+    }
+    catch {
+      whiteExecLog("failed to send the message `\(message)`", type: .error)
+      fatalError("Failed to create a new message")
+    }
+
+    guard let result = result else {
+      whiteExecLog("response for `\(message)` is empty", type: .error)
+      fatalError("Response for `\(message)` is empty")
+    }
+
+    var decoded: [String: AnyCodable]!
+    do {
+      decoded = try JSONDecoder().decode([String: AnyCodable].self, from: result)
+    }
+    catch {
+      whiteExecLog(
+        "response for `\(message)` is invalid (can't be decoded): \(result)",
+        type: .error
+      )
+      fatalError("Response for `\(message)` is invalid")
+    }
+
+    return decoded
+  }
+
+  private func send(
+    _ message: [String: AnyCodable],
+    andExpectToType expectedType: String, messageId expectedMessageId: Int
+  ) -> [String: AnyCodable] {
+    let response = send(message)
+
+    guard
+      response["type"]?.value as? String == expectedType,
+      response["messageId"]?.value as? Int == expectedMessageId
+    else {
+      whiteExecLog(
+        "expected to have message with type `\(String(describing: expectedType))` " +
+        "and message-id: `\(expectedMessageId)`, " +
+        "got result: \(String(describing: response))",
+        type: .error
+      )
+      fatalError("Got unexpected result for white-box message")
+    }
+
+    guard let params = response["params"]?.value as? [String: AnyCodable] else {
+      whiteExecLog("got result with invalid params", type: .error)
+      fatalError("Got unexpected result for white-box message")
+    }
+
+    return params
   }
 }
 

@@ -9,12 +9,6 @@ extension WhiteBoxExecutor {
   ///
   enum Message {
     /// Returns response of `completed` if succsfully done.
-    case disconnect
-
-    /// Returns response of `completed` if succsfully done.
-    case cleanup
-
-    /// Returns response of `completed` if succsfully done.
     case reloadReactNative
 
     /// Returns response of `completed` if succsfully done.

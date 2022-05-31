@@ -33,6 +33,11 @@ func execLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .executor, type: type)
 }
 
+/// Logs the given `message` with its `type`, under the tester white-box executor logs container.
+func whiteExecLog(_ message: String, type: OSLogType = .info) {
+  detoxLog(message: message, container: .whiteBoxExecutor, type: type)
+}
+
 /// Logs the given `message` with its `type`, under the tester matcher container.
 func matcherLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .matcher, type: type)
@@ -73,6 +78,9 @@ fileprivate extension OSLog {
 
   /// Logs operations related to the tester executor.
   static let executor = OSLog(subsystem: subsystem, category: "Executor")
+
+  /// Logs operations related to the tester white-box executor.
+  static let whiteBoxExecutor = OSLog(subsystem: subsystem, category: "WhiteBoxExecutor")
 
   /// Logs operations related to the tester's element-matcher.
   static let matcher = OSLog(subsystem: subsystem, category: "ElementMatcher")

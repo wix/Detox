@@ -30,7 +30,7 @@ extension WhiteBoxExecutor.Response {
   ///
   func assertResponse(equalsTo expected: WhiteBoxExecutor.Response) {
     if self != expected {
-      execLog("reponse `\(self)` expected to be `\(expected)`", type: .error)
+      whiteExecLog("reponse `\(self)` expected to be `\(expected)`", type: .error)
       fatalError("reponse `\(self)` expected to be `\(expected)`")
     }
   }

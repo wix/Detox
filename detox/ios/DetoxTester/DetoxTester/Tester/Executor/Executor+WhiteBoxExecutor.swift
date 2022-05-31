@@ -13,7 +13,7 @@ extension Executor {
 
     if handler == nil {
       execLog(
-        "can't find white-box handler for bundle with identifier: \(bundleIdentifier)",
+        "could not find white-box handler for bundle with identifier: \(bundleIdentifier)",
         type: .debug
       )
     }

@@ -225,10 +225,10 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}
 	
 	func webSocket(_ webSocket: WebSocket, didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
-		switch ActionType(rawValue: type) {
-			case .reloadReactNative:
+		switch type {
+			case "reloadReactNative":
 				guard ReactNativeSupport.isReactNativeApp else {
-					self.safeSend(action: "reloadedReactNative", messageId: messageId)
+					self.safeSend(action: "reactNativeDidReload", messageId: messageId)
 					return
 				}
 
@@ -237,15 +237,32 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 				ReactNativeSupport.waitForReactNativeLoad {
-					self.safeSend(action: "reloadedReactNative", messageId: messageId)
+					self.safeSend(action: "reactNativeDidReload", messageId: messageId)
 				}
 
-				return
-
-			case .waitUntilReady:
+			case "waitUntilReady":
 				safeSend(action: "isReady", messageId: messageId)
 
-			case .none:
+			case "shakeDevice":
+				DTXSyncManager.enqueueMainQueueIdleClosure {
+					UIDevice.dtx_shake()
+					self.safeSend(action: "deviceDidShake", messageId: messageId)
+				}
+
+			case "findElementIDByText":
+				let text = params["text"] as! String
+				let predicate = NSPredicate { evaluatedObject, _ in
+					guard let evaluatedObject = evaluatedObject as? NSObject else {
+						return false
+					}
+
+					return evaluatedObject.dtx_text == text
+				}
+
+				let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
+				let identifiers : [String] = array.map { $0.accessibilityIdentifier! }
+
+			default:
 				fatalError("Unknown action type received")
 		}
 	}
@@ -259,13 +276,5 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		
 		stopAndCleanupRecording()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: self.start)
-	}
-}
-
-
-extension DetoxManager {
-	enum ActionType: String {
-		case reloadReactNative = "reloadReactNative"
-		case waitUntilReady = "waitUntilReady"
 	}
 }
