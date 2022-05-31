@@ -51,8 +51,28 @@ class WhiteBoxExecutor {
           fatalError("failed to create a new message")
         }
 
-        guard result != nil else {
+        guard let result = result else {
+          execLog("reloading react native failed (result is nil)", type: .error)
           fatalError("result is nil")
+        }
+
+        let decoder = JSONDecoder()
+
+        var decoded: [String: AnyCodable]!
+        do {
+          decoded = try decoder.decode([String: AnyCodable].self, from: result)
+        }
+        catch {
+          execLog("reloading react native failed (result can't be decoded): \(result)", type: .error)
+          fatalError("result is invalid")
+        }
+
+        guard decoded["type"]?.value as? String == "reloadedReactNative" else {
+          execLog(
+            "reloading react native failed, decoded result: \(String(describing: decoded))",
+            type: .error
+          )
+          fatalError("reloading react native failed")
         }
 
         return .completed
@@ -63,7 +83,46 @@ class WhiteBoxExecutor {
       case .captureViewHierarchy(let viewHierarchyURL):
         return .completed
 
-      case .waitFor(let _):
+      case .waitUntilReady:
+        let message: [String: AnyCodable] = [
+          "type": "waitUntilReady",
+          "params": [:],
+          "messageId": AnyCodable(10)
+        ]
+        let encoder = JSONEncoder()
+
+        var result: Data?
+        do {
+          result = messageSender.sendMessageToClient(try encoder.encode(message))
+        }
+        catch {
+          fatalError("failed to create a new message")
+        }
+
+        guard let result = result else {
+          execLog("waiting for ready failed (result is nil)", type: .error)
+          fatalError("result is nil")
+        }
+
+        let decoder = JSONDecoder()
+
+        var decoded: [String: AnyCodable]!
+        do {
+          decoded = try decoder.decode([String: AnyCodable].self, from: result)
+        }
+        catch {
+          execLog("waiting for ready failed (result can't be decoded): \(result)", type: .error)
+          fatalError("result is invalid")
+        }
+
+        guard decoded["type"]?.value as? String == "isReady" else {
+          execLog(
+            "waiting for ready failed, decoded result: \(String(describing: decoded))",
+            type: .error
+          )
+          fatalError("waiting for ready failed")
+        }
+
         return .completed
 
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):

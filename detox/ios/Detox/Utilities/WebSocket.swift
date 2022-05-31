@@ -30,7 +30,6 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 		self.sessionId = sessionId
 
 		webSocketSessionTask = urlSession.webSocketTask(with: server)
-
 		webSocketSessionTask?.resume()
 	}
 	
@@ -119,6 +118,6 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	}
 	
 	func onDidOpen() {
-		sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
+//		sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
 	}
 }

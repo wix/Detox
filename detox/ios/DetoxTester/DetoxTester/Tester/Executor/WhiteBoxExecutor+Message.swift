@@ -24,7 +24,7 @@ extension WhiteBoxExecutor {
     case captureViewHierarchy(viewHierarchyURL: URL)
 
     /// Returns response of `completed` if succsfully done.
-    case waitFor(_ state: AppState)
+    case waitUntilReady
 
     /// Returns response of `completed` if succsfully done.
     case setSyncSettings(maxTimerWait: TimeInterval?, blacklistURLs: [String]?, disabled: Bool?)
@@ -40,19 +40,5 @@ extension WhiteBoxExecutor {
 
     /// Returns response of `string`.
     case findElementIDByText(text: String)
-  }
-}
-
-extension WhiteBoxExecutor.Message {
-  ///
-  enum AppState {
-    ///
-    case idle
-
-    ///
-    case busy
-
-    ///
-    case bundleIdentifier(String)
   }
 }

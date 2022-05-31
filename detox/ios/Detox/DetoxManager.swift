@@ -228,7 +228,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		switch ActionType(rawValue: type) {
 			case .reloadReactNative:
 				guard ReactNativeSupport.isReactNativeApp else {
-					self.safeSend(action: "completed", messageId: messageId)
+					self.safeSend(action: "reloadedReactNative", messageId: messageId)
 					return
 				}
 
@@ -237,14 +237,14 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 				ReactNativeSupport.waitForReactNativeLoad {
-					self.safeSend(action: "completed", messageId: messageId)
+					self.safeSend(action: "reloadedReactNative", messageId: messageId)
 				}
 
 				return
 
-			case .waitForIdle:
-				safeSend(action: "completed", messageId: messageId)
-				
+			case .waitUntilReady:
+				safeSend(action: "isReady", messageId: messageId)
+
 			case .none:
 				fatalError("Unknown action type received")
 		}
@@ -266,6 +266,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 extension DetoxManager {
 	enum ActionType: String {
 		case reloadReactNative = "reloadReactNative"
-		case waitForIdle = "waitForIdle"
+		case waitUntilReady = "waitUntilReady"
 	}
 }
