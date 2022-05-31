@@ -10,7 +10,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
     const apkValidator = serviceLocator.apkValidator;
     const fileXfer = serviceLocator.fileXfer;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
-    const unspecifiedAppDeps = this._createAppDeps({ adb }, configs.sessionConfig);
+    const unspecifiedAppDeps = this._createAppDeps({ adb }, configs);
     const apps = this._createApps({ adb }, configs);
 
     const AppInstallHelper = require('../../common/drivers/android/tools/AppInstallHelper');
@@ -41,19 +41,19 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
         ...sessionConfig,
         sessionId: `${sessionId}:${alias}`,
       };
-      return this._createAppDeps({ adb }, { appConfig, appSessionConfig }, alias);
+      return this._createAppDeps({ adb }, { appConfig, sessionConfig: appSessionConfig }, alias);
     });
   }
 
   /** @protected */
-  _createAppDeps({ adb }, { appConfig, appSessionConfig }, alias) {
+  _createAppDeps({ adb }, { appConfig, sessionConfig }, alias) {
     // TODO (multiapps): Consider relocating the things below (belongs under runtime/)
     const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
     const Client = require('../../../client/Client');
     const { InvocationManager } = require('../../../invoke');
     const MonitoredInstrumentation = require('../../common/drivers/android/tools/MonitoredInstrumentation');
 
-    const client = new Client(appSessionConfig); // TODO (multiapps): Share the same ws
+    const client = new Client(sessionConfig); // TODO (multiapps): Share the same ws
     const invocationManager = new InvocationManager(client);
     const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice();
     const instrumentation = new MonitoredInstrumentation(adb);

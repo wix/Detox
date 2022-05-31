@@ -169,8 +169,8 @@ describe('Detox', () => {
         expect(runtimeDevice._prepare).toHaveBeenCalled());
 
       it('should reinstall the app', () => {
-        expect(runtimeDevice.uninstallApp).toHaveBeenCalledWith('default');
-        expect(runtimeDevice.installApp).toHaveBeenCalledWith('default');
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
+        expect(runtimeDevice.installApp).toHaveBeenCalled();
       });
 
       it('should not unselect the app if it is the only one', () => {

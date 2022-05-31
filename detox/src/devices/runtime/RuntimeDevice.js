@@ -85,12 +85,11 @@ class RuntimeDevice {
     return this._appsConfig[alias];
   }
 
-  async _prepare() {
-    const appAliases = Object.keys(this._appsConfig);
-    if (appAliases.length === 1) {
-      await this.selectApp(appAliases[0]);
-    }
+  get _currentAppAlias() {
+    return this.deviceDriver.selectedApp;
+  }
 
+  async _prepare() {
     await this.deviceDriver.prepare();
   }
 
@@ -175,18 +174,18 @@ class RuntimeDevice {
   }
 
   // TODO (multiapps) contract change: no freestyle app ID accepted anymore
-  async terminateApp(appAlias) {
-    await this.deviceDriver.terminateApp(appAlias);
+  async terminateApp() {
+    await this.deviceDriver.terminateApp(this._currentAppAlias);
   }
 
   // TODO (multiapps) contract change: no freestyle installs with app/apk path(s)
-  async installApp(appAlias) {
-    await traceCall('appInstall', () => this.deviceDriver.installApp(appAlias));
+  async installApp() {
+    await traceCall('appInstall', () => this.deviceDriver.installApp(this._currentAppAlias));
   }
 
   // TODO (multiapps) contract change: no freestyle app ID accepted anymore
-  async uninstallApp(appAlias) {
-    await traceCall('appUninstall', () => this.deviceDriver.uninstallApp(appAlias));
+  async uninstallApp() {
+    await traceCall('appUninstall', () => this.deviceDriver.uninstallApp(this._currentAppAlias));
   }
 
   async installUtilBinaries() {
@@ -297,11 +296,11 @@ class RuntimeDevice {
       : !isRunning;
 
     if (launchParams.delete) {
-      await this.terminateApp(appAlias);
-      await this.uninstallApp(appAlias);
-      await this.installApp(appAlias);
+      await this.deviceDriver.terminateApp(appAlias);
+      await this.deviceDriver.uninstallApp(appAlias);
+      await this.deviceDriver.installApp(appAlias);
     } else if (newInstance) {
-      await this.terminateApp(appAlias);
+      await this.deviceDriver.terminateApp(appAlias);
     }
 
     if (launchParams.permissions) {

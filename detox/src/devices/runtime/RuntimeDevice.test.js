@@ -83,6 +83,7 @@ describe('Device', () => {
   async function aValidDevice(overrides) {
     const device = aValidUnpreparedDevice(overrides);
     await device._prepare();
+    await device.selectApp(DEFAULT_APP_ALIAS);
     return device;
   }
 
@@ -134,10 +135,6 @@ describe('Device', () => {
         device = await aValidUnpreparedDevice();
         jest.spyOn(device, 'selectApp');
         await device._prepare();
-      });
-
-      it(`should select the default app upon prepare()`, async () => {
-        expect(device.selectApp).toHaveBeenCalledWith(DEFAULT_APP_ALIAS);
       });
 
       it(`should function as usual when the app is selected`, async () => {

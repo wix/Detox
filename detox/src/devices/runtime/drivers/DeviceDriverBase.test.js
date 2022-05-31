@@ -142,6 +142,7 @@ describe('Device-driver base class', () => {
     // Give chance to get app ID's
     await selectDefaultApp();
     await selectSecondaryApp();
+    await selectUnspecifiedApp();
 
     await defaultApp.client.terminateApp();
     expect(terminateSpy).toHaveBeenCalledTimes(1);
@@ -152,6 +153,10 @@ describe('Device-driver base class', () => {
     expect(terminateSpy).toHaveBeenCalledTimes(2);
     expect(terminateSpy).toHaveBeenLastCalledWith(secondaryApp);
     expect(uut.mockFn._inferAppId).toHaveBeenNthCalledWith(2, secondaryApp);
+
+    await unspecifiedApp.client.terminateApp();
+    expect(terminateSpy).toHaveBeenCalledTimes(3);
+    expect(terminateSpy).toHaveBeenLastCalledWith(expect.objectContaining(unspecifiedApp));
   });
 
   describe('app launching and termination', () => {

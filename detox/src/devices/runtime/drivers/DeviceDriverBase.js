@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 
 const log = require('../../../utils/logger').child({ __filename });
+const { forEachSeries } = require('../../../utils/p-iteration');
 
 /**
  * @typedef TestApp
@@ -43,8 +44,8 @@ class RuntimeDriverBase {
     this._selectedApp = this._apps[_unspecifiedAppAlias];
     this._processes = {}; // TODO (multiapps) Merge this into the app object?
 
-    _.forEach(apps, (app, alias) =>
-      app.client.terminateApp = () => this.terminateApp(alias));
+    this._allAppsList().forEach((app) =>
+      app.client.terminateApp = () => this.terminateApp(app.alias));
   }
 
   async prepare() {
@@ -90,7 +91,7 @@ class RuntimeDriverBase {
    * @param appConfig {{ appId: String, binaryPath: String }}
    */
   async selectUnspecifiedApp(appConfig) {
-    const { appId } = appConfig;
+    const { appId } = appConfig; // TODO (multiapps) Don't expect appId from the user
     // TODO (multiapps)
     // if (this._unspecifiedApp.appId && this._unspecifiedApp.appId !== appId && this.isAppRunning(appId)) {
     //   throw this.errorComposer.todo(); // Already selected
@@ -113,11 +114,7 @@ class RuntimeDriverBase {
 
   isAppRunning(appAlias) {
     const app = this._getAppByAlias(appAlias);
-    return this._isAppRunning(app.appId);
-  }
-
-  _isAppRunning(appId) {
-    return (this._processes[appId] !== undefined);
+    return (this._processes[app.appId] !== undefined);
   }
 
   /**
@@ -156,7 +153,7 @@ class RuntimeDriverBase {
   }
 
   /** @protected */
-  async _terminate(app) {}
+  async _terminate(_app) {}
 
   /**
    * @param testSummary {{ testName: String, pendingRequests: Boolean }}
@@ -352,8 +349,14 @@ class RuntimeDriverBase {
   }
 
   /** @protected */
-  _getAppByAlias(appAlias = _unspecifiedAppAlias) {
-    return this._apps[appAlias];
+  _getAppByAlias(appAlias) {
+    return this._apps[appAlias || _unspecifiedAppAlias];
+  }
+
+  async _inferAllPreconfiguredAppIds() {
+    await forEachSeries(Object.values(this._apps), async (app) => {
+      app.appId = await this._inferAppId(app);
+    });
   }
 
   /**

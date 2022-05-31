@@ -194,10 +194,15 @@ class Detox {
     }
 
     await this.device.installUtilBinaries();
+
     if (behaviorConfig.reinstallApp) {
       await this._reinstallAppsOnDevice();
     }
 
+    const appAliases = Object.keys(this._appsConfig);
+    if (appAliases.length > 0) {
+      await this.device.selectApp(appAliases[0]);
+    }
     return this;
   }
 
@@ -222,8 +227,9 @@ class Detox {
       .value();
 
     for (const alias of appAliases) {
-      await this.device.uninstallApp(alias);
-      await this.device.installApp(alias);
+      await this.device.selectApp(alias);
+      await this.device.uninstallApp();
+      await this.device.installApp();
     }
   }
 
