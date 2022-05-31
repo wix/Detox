@@ -29,7 +29,7 @@ Ensure that the following line appears in your app's `buildscript` (`android/app
 ```groovy
 dependencies {
     // ...
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0' // (check what the latest version is!)
 }
 ```
 
