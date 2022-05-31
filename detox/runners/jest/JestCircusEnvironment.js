@@ -1,4 +1,4 @@
-const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-unpublished-require
+const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 // @ts-ignore
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
