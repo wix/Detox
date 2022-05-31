@@ -136,7 +136,6 @@ class RuntimeDevice {
     if (!name) {
       throw new DetoxRuntimeError('Cannot take a screenshot with an empty name.');
     }
-
     return this.deviceDriver.takeScreenshot(name);
   }
 

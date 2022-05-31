@@ -67,6 +67,13 @@ class DetoxRuntimeErrorComposer {
         toStarlist(this.appsConfig)
     });
   }
+
+  differentAppAlreadyRunning() {
+    return new DetoxRuntimeError({
+      message: `Cannot select a new random app if another one is already running`,
+      hint: 'Make sure you terminate the previously launched app before calling device.selectApp()',
+    });
+  }
 }
 
 function toStarlist(dictionary) {

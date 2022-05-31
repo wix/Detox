@@ -6,18 +6,23 @@ describe('Device-driver base class', () => {
   const appId = 'com.wix.preconfigured.app';
   const unspecifiedAppId = 'some.app.detox.was.not.aware.of.beforehand';
   const unspecifiedAppConfig = {
-    appId: unspecifiedAppId,
     binaryPath: 'stairway/to/heaven',
   };
   const appAliases = ['app-alias-mock', 'app-alias2-mock'];
   const deviceId = 'device.id-mock';
   const launchArgs = { anArg: 'aValue' };
   const languageAndLocale = 'ab-אב';
+  const pid = 121314;
   const errorComposer = new DetoxRuntimeErrorComposer({ appsConfig: {} });
+
+  const mockAppIdResolution = (appId) => uut.mockFn._inferAppId.mockResolvedValue(appId);
 
   const selectDefaultApp = () => uut.selectApp(defaultApp.alias);
   const selectSecondaryApp = () => uut.selectApp(secondaryApp.alias);
-  const selectUnspecifiedApp = () => uut.selectUnspecifiedApp(unspecifiedAppConfig);
+  const selectUnspecifiedApp = async () => {
+    await mockAppIdResolution(unspecifiedAppId);
+    await uut.selectUnspecifiedApp(unspecifiedAppConfig);
+  };
 
   const launchApp = (appAlias) => uut.launchApp(launchArgs, languageAndLocale, appAlias);
   const launchDefaultApp = () => launchApp(defaultApp.alias);
@@ -108,13 +113,12 @@ describe('Device-driver base class', () => {
       });
     });
 
-    describe('of unspecified apps', () => {
+    describe('of an unspecified app', () => {
       const appConfig = {
-        appId: unspecifiedAppId,
         binaryPath: 'oh/my/gosh.apk',
       };
 
-      it('should select those apps based on config', async () => {
+      it('should select it based on on-site config', async () => {
         await uut.selectUnspecifiedApp(appConfig);
 
         expect(uut.selectedApp).toBeNull();
@@ -125,8 +129,7 @@ describe('Device-driver base class', () => {
       it('should allow for double selection (if the app is not running)', async () => {
         await uut.selectUnspecifiedApp(appConfig);
         await uut.selectUnspecifiedApp({
-          appId: 'blah.blah',
-          binaryPath: 'blah/blah.apk',
+          binaryPath: 'dont/care.apk',
         });
 
         expect(uut.selectedApp).toBeNull();
@@ -160,10 +163,6 @@ describe('Device-driver base class', () => {
   });
 
   describe('app launching and termination', () => {
-    const launchArgs = { anArg: 'aValue' };
-    const languageAndLocale = 'ab-אב';
-    const pid = 121314;
-
     beforeEach(() => uut.mockFn._launchApp.mockResolvedValue(pid));
 
     describe('of preconfigured test apps', () => {
@@ -195,7 +194,10 @@ describe('Device-driver base class', () => {
         await selectDefaultApp();
         await launchDefaultApp();
         await terminateDefaultApp();
-        expect(uut.mockFn._terminate).toHaveBeenCalledWith(defaultApp);
+        expect(uut.mockFn._terminate).toHaveBeenCalledWith({
+          ...defaultApp,
+          pid,
+        });
       });
 
       it('should clear out is-running indication following a termination', async () => {
@@ -208,6 +210,8 @@ describe('Device-driver base class', () => {
 
     describe('of unspecified apps', () => {
       it('should ask concrete class to launch based on selected config', async () => {
+        mockAppIdResolution(unspecifiedAppId);
+
         await selectUnspecifiedApp();
         await launchApp(undefined);
         expect(uut.mockFn._launchApp).toHaveBeenCalledWith(
@@ -255,7 +259,6 @@ describe('Device-driver base class', () => {
       });
     });
 
-
     it('should wait for app to become ready', async () => {
       await selectDefaultApp();
       await launchDefaultApp();
@@ -270,6 +273,23 @@ describe('Device-driver base class', () => {
         bundleId: appId,
         pid,
       });
+    });
+  });
+
+  describe('app launching and selection combo', () => {
+    beforeEach(() => uut.mockFn._launchApp.mockResolvedValue(pid));
+
+    it('should not allow selection of unspecific app Y is X is already running', async () => {
+      const unspecifiedApp2Id = 'yet.another.' + unspecifiedAppId;
+      const unspecifiedApp2Config = {
+        binaryPath: 'dont/care/',
+      };
+
+      await selectUnspecifiedApp();
+      await uut.launchApp({}, '', undefined);
+
+      mockAppIdResolution(unspecifiedApp2Id);
+      await expect(() => uut.selectUnspecifiedApp(unspecifiedApp2Config)).rejects.toThrowError(errorComposer.differentAppAlreadyRunning());
     });
   });
 

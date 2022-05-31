@@ -42,7 +42,6 @@ class RuntimeDriverBase {
       invocationManager,
     };
     this._selectedApp = this._apps[_unspecifiedAppAlias];
-    this._processes = {}; // TODO (multiapps) Merge this into the app object?
 
     this._allAppsList().forEach((app) =>
       app.client.terminateApp = () => this.terminateApp(app.alias));
@@ -91,17 +90,17 @@ class RuntimeDriverBase {
    * @param appConfig {{ appId: String, binaryPath: String }}
    */
   async selectUnspecifiedApp(appConfig) {
-    const { appId } = appConfig; // TODO (multiapps) Don't expect appId from the user
-    // TODO (multiapps)
-    // if (this._unspecifiedApp.appId && this._unspecifiedApp.appId !== appId && this.isAppRunning(appId)) {
-    //   throw this.errorComposer.todo(); // Already selected
-    // }
-
-    this._apps[_unspecifiedAppAlias] = {
+    const app = {
       ...this._apps[_unspecifiedAppAlias],
-      appId: appConfig.appId,
       config: appConfig,
     };
+    app.appId = await this._inferAppId(app);
+
+    const currentAppId = this._unspecifiedApp.appId;
+    if (currentAppId && currentAppId !== app.appId && this.isAppRunning(undefined)) {
+      throw this.errorComposer.differentAppAlreadyRunning();
+    }
+    this._apps[_unspecifiedAppAlias] = app;
   }
 
   get invocationManager() {
@@ -114,7 +113,7 @@ class RuntimeDriverBase {
 
   isAppRunning(appAlias) {
     const app = this._getAppByAlias(appAlias);
-    return (this._processes[app.appId] !== undefined);
+    return !!app.pid;
   }
 
   /**
@@ -124,22 +123,19 @@ class RuntimeDriverBase {
     const app = this._getAppByAlias(appAlias);
     this._validateLaunchApp(app);
 
-    const _appId = app.appId;
     const _launchArgs = this._applyAppSessionArgs(app, launchArgs);
-
-    this._processes[_appId] = await this._launchApp(app, _launchArgs, languageAndLocale);
+    app.pid = await this._launchApp(app, _launchArgs, languageAndLocale);
 
     await this._waitUntilReady(app);
-    await this._notifyAppReady(_appId);
+    await this._notifyAppReady(app);
   }
 
   // TODO (multiapps) unit-test this
   async waitForAppLaunch(launchArgs, languageAndLocale, appAlias) {
     const app = this._getAppByAlias(appAlias);
-    const _appId = app.appId;
     const _launchArgs = this._applyAppSessionArgs(app, launchArgs);
 
-    this._processes[_appId] = await this._waitForAppLaunch(_launchArgs, languageAndLocale, app);
+    app.pid = await this._waitForAppLaunch(_launchArgs, languageAndLocale, app);
   }
 
   /**
@@ -149,7 +145,7 @@ class RuntimeDriverBase {
     const app = this._getAppByAlias(appAlias);
     await this._terminate(app);
 
-    this._processes[app.appId] = undefined;
+    app.pid = undefined;
   }
 
   /** @protected */
@@ -320,11 +316,11 @@ class RuntimeDriverBase {
    */
   _waitForAppLaunch() {}
 
-  async _notifyAppReady(appId) {
+  async _notifyAppReady(app) {
     await this.emitter.emit('appReady', {
       deviceId: this.getExternalId(),
-      bundleId: appId,
-      pid: this._processes[appId],
+      bundleId: app.appId,
+      pid: app.pid,
     });
   }
 
