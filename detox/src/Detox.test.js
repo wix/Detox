@@ -244,10 +244,12 @@ describe('Detox', () => {
         expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
         expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
 
-        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(3);
+        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(5);
         expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
         expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
-        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
+        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual(['default']);
+        expect(runtimeDevice.selectApp.mock.calls[3]).toEqual(['extraApp']);
+        expect(runtimeDevice.selectApp.mock.calls[4]).toEqual([null]);
       });
     });
 
