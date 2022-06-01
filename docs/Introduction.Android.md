@@ -160,7 +160,7 @@ also ensure that this line appears in `dependencies`:
 ```groovy
 dependencies {
     // ...
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0' // (check what the latest version is!)
 }
 ```
 
