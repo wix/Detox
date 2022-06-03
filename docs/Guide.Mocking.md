@@ -83,7 +83,7 @@ While the mentioned way is good enough for the **debug mode**, it falls short fo
  module.exports = {
 +  resolver: {
 +    sourceExts: process.env.MY_APP_MODE === 'mocked'
-+        ? ['mock.js', ...defaultSourceExts],
++        ? ['mock.js', ...defaultSourceExts]
 +        : defaultSourceExts,
 +  },
    transformer: {
