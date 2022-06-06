@@ -5,16 +5,14 @@ if (process.platform === 'win32') {
 
 jest.mock('child_process');
 jest.mock('node-ipc', () => ({
-  default: {
-    config: {},
-    serve: jest.fn(cb => cb()),
+  config: {},
+  serve: jest.fn(cb => cb()),
+  server: {
+    on: jest.fn(),
+    start: jest.fn(),
+    stop: jest.fn(),
     server: {
-      on: jest.fn(),
-      start: jest.fn(),
-      stop: jest.fn(),
-      server: {
-        close: jest.fn(cb => cb()),
-      },
+      close: jest.fn(cb => cb()),
     },
   },
 }));
@@ -26,7 +24,7 @@ jest.mock('../src/logger/NullLogger', () => class {
     return require('../src/utils/logger');
   }
 });
-jest.mock('../realms/root/BunyanLogger', () => class {
+jest.mock('../realms/primary/BunyanLogger', () => class {
   constructor() {
     return require('../src/utils/logger');
   }
@@ -44,6 +42,7 @@ const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./testCommand/warnings');
 
 describe('CLI', () => {
   let cp;
+  let cpResult;
   let logger;
   let temporaryFiles;
   let detoxConfig;
@@ -76,6 +75,17 @@ describe('CLI', () => {
     };
 
     cp = require('child_process');
+    cpResult = {
+      stdout: '',
+      stderr: '',
+      exitCode: 0,
+      on: jest.fn((type, listener) => {
+        if (type === 'exit') listener(cpResult.exitCode);
+        return cpResult;
+      }),
+    };
+
+    cp.spawn.mockReturnValue(cpResult);
 
     const realJestInternals = jest.requireActual('./utils/jestInternals');
     jestInternals = require('./utils/jestInternals');
@@ -174,7 +184,7 @@ describe('CLI', () => {
       .mockReturnValueOnce(['e2e/failing1.test.js', 'e2e/failing2.test.js'])
       .mockReturnValueOnce(['e2e/failing2.test.js']);
 
-    cp.execSync.mockImplementation(() => { throw new Error; });
+    cpResult.exitCode = 1;
 
     await run(`-R 2`).catch(_.noop);
 
@@ -191,7 +201,7 @@ describe('CLI', () => {
     const context = require('../realms/primary');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce([]);
-    cp.execSync.mockImplementation(() => { throw new Error; });
+    cpResult.exitCode = 1;
 
     await run(`-R 1`).catch(_.noop);
     expect(cliCall(0)).not.toBe(null);
@@ -202,7 +212,7 @@ describe('CLI', () => {
     const context = require('../realms/primary');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce(['tests/failing.test.js']);
-    cp.execSync.mockImplementation(() => { throw new Error; });
+    cpResult.exitCode = 1;
 
     await run(`-R 1 tests -- --debug`).catch(_.noop);
     expect(cliCall(0).command).toMatch(/ --debug\b.*\btests$/);
@@ -484,12 +494,12 @@ describe('CLI', () => {
   }
 
   function cliCall(index = 0) {
-    const mockCall = cp.execSync.mock.calls[index];
+    const mockCall = cp.spawn.mock.calls[index];
     if (!mockCall) {
       return null;
     }
 
-    const [command, opts] = mockCall;
+    const [$0, command, opts] = mockCall;
 
     const envHint = _.chain(logger)
       .thru(({ log }) => log.mock.calls)
@@ -499,7 +509,7 @@ describe('CLI', () => {
       .value();
 
     return {
-      command,
+      command: [$0, ...command].join(' '),
       env: _.omitBy(opts.env, (_value, key) => key in process.env),
       envHint,
     };

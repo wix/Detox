@@ -6,25 +6,26 @@ const state = {
   open: false,
   detoxConfig: new Deferred(),
   workersCount: 1,
+  serverId: process.env.DETOX_IPC_SERVER_ID,
+  workerId: process.env.JEST_WORKER_ID || '0',
 };
 
 module.exports = {
-  async init({
-    serverId = process.env.DETOX_IPC_SERVER_ID,
-    workerId = process.env.JEST_WORKER_ID || '0',
-  } = {}) {
+  async setup() {
     await new Promise((resolve, reject) => {
-      ipc.config.id = `${serverId}-${workerId}`;
+      ipc.config.id = `${state.serverId}-${state.workerId}`;
       ipc.config.retry = 1000;
       ipc.config.stopRetrying = true;
       ipc.config.sync = true;
       ipc.config.silent = true;
-      ipc.connectTo(serverId, function() {
-        const server = state.server = ipc.of[serverId];
+      ipc.connectTo(state.serverId, function() {
+        const server = state.server = ipc.of[state.serverId];
         server.on('error', reject);
         server.on('connect', () => {
           state.open = true;
-          server.emit('registerWorker', { workerId });
+          server.emit('registerWorker', {
+            workerId: state.workerId,
+          });
           resolve();
         });
         server.on('disconnect', () => {
@@ -38,6 +39,10 @@ module.exports = {
         });
       });
     });
+  },
+
+  async teardown() {
+    ipc.disconnect(state.serverId);
   },
 
   async getDetoxConfig() {

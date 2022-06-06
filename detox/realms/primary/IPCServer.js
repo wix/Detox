@@ -22,6 +22,7 @@ class IPCServer {
     this._ipc.config.id = this._id;
     this._ipc.config.retry = 1500;
     this._ipc.config.silent = true;
+
     await new Promise((resolve) => {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
@@ -32,6 +33,10 @@ class IPCServer {
   }
 
   async stop() {
+    if (!this._ipc.server) {
+      return;
+    }
+
     return new Promise((resolve, reject) =>{
       // @ts-ignore
       this._ipc.server.server.close(e => e ? reject(e) : resolve());

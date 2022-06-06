@@ -55,7 +55,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         await realm.setup();
 
         DetoxWorkerContext.global = this.global;
-        this.detox = new DetoxWorkerContext();
+        this.global.__detox__ = this.detox = new DetoxWorkerContext();
         await this.detox.setup();
         this._instantiateListeners(this.detox);
       },
@@ -142,7 +142,6 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   _logError(e) {
     realm.log.error(DetoxError.format(e));
   }
-
 }
 
 module.exports = DetoxCircusEnvironment;

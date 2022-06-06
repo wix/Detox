@@ -1,6 +1,7 @@
 // @ts-nocheck
 const _ = require('lodash');
 
+const realm = require('../../../../realms');
 const {
   onRunDescribeStart,
   onTestStart,
@@ -29,6 +30,13 @@ class DetoxCoreListener {
       return Number(DETOX_RERUN_INDEX) * this._testRunTimes + test.invocations;
     } else {
       return test.invocations;
+    }
+  }
+
+  async setup() {
+    // Workaround to override Jest's expect
+    if (realm.config.behaviorConfig.init.exposeGlobals) {
+      this._env.global.expect = this.detox.expect;
     }
   }
 

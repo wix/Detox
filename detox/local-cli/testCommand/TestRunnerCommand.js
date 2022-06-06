@@ -135,7 +135,12 @@ class TestRunnerCommand {
           .omitBy(_.isUndefined)
           .tap(prependNodeModulesBinToPATH)
           .value()
-      }).on('exit', (code) => code === 0 ? resolve() : reject(code));
+      })
+        .on('error', (err) => reject(err))
+        .on('exit', (code) => code === 0
+          ? resolve()
+          : reject(new Error(`Process exited with code = ${code}`)
+        ));
     });
   }
 }

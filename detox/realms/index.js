@@ -2,4 +2,5 @@ function current() {
   return process.env.DETOX_IPC_SERVER_ID ? require('./secondary') : require('./primary');
 }
 
-module.exports = current();
+// TODO: improve somehow?
+module.exports = global['__detox__'] || current();

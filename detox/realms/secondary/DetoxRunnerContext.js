@@ -18,7 +18,7 @@ class DetoxRunnerContext {
       return;
     }
 
-    await ipcClient.init();
+    await ipcClient.setup();
     this._config = await ipcClient.getDetoxConfig();
     this._logger = new IPCLogger({
       level: this._config.cliConfig.loglevel,
@@ -28,6 +28,7 @@ class DetoxRunnerContext {
 
   async teardown() {
     this._ready = false;
+    await ipcClient.teardown();
   }
 
   get config() {

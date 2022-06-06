@@ -110,7 +110,6 @@ describe('Detox', () => {
 
       it('should create a new Client with a random sessionId', () =>
         expect(Client).toHaveBeenCalledWith(expect.objectContaining({
-          server: process.env.DETOX_WSS_ADDRESS,
           sessionId: expect.any(String),
         })));
 
