@@ -3,7 +3,6 @@ const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 const Deferred = require('./utils/Deferred');
 
-jest.mock('./ipc/client');
 jest.mock('./utils/logger');
 jest.mock('./client/Client');
 jest.mock('./utils/AsyncEmitter');
@@ -22,6 +21,7 @@ describe('Detox', () => {
   eventEmitter.errorCallback = () => AsyncEmitter.mock.calls[0][0].onError;
 
   let detoxConfig;
+  let detoxContext;
 
   let envValidatorFactory;
   let artifactsManagerFactory;
@@ -40,7 +40,6 @@ describe('Detox', () => {
   let Detox;
   let detox;
   let lifecycleSymbols;
-  let ipcClient;
 
   beforeEach(() => {
     mockEnvironmentFactories();
@@ -53,9 +52,6 @@ describe('Detox', () => {
       matchersFactory,
       runtimeDeviceFactory,
     });
-
-    ipcClient = require('./ipc/client');
-    ipcClient.getDetoxConfig.mockImplementation(() => detoxConfig);
   });
 
   beforeEach(async () => {
@@ -83,13 +79,14 @@ describe('Detox', () => {
     lifecycleSymbols = require('./symbols').lifecycle;
 
     Detox = require('./DetoxWorker');
+    detoxContext = { log: logger, _config: detoxConfig };
   });
 
   describe('when detox.setup() is called', () => {
     let mockGlobalMatcher;
 
     const init = async () => {
-      detox = await new Detox().setup();
+      detox = await new Detox(detoxContext).setup();
     };
 
     beforeEach(() => {
@@ -296,7 +293,7 @@ describe('Detox', () => {
 
   describe('when detox[onTestStart]() is called', () => {
     beforeEach(async () => {
-      detox = await new Detox(detoxConfig).setup();
+      detox = await new Detox(detoxContext).setup();
     });
 
     it('should validate test summary object', async () => {
@@ -345,7 +342,7 @@ describe('Detox', () => {
 
   describe('when detox[onTestDone]() is called', () => {
     beforeEach(async () => {
-      detox = await new Detox(detoxConfig).setup();
+      detox = await new Detox(detoxContext).setup();
       await detox[lifecycleSymbols.onTestStart](testSummaries.running());
     });
 
@@ -388,7 +385,7 @@ describe('Detox', () => {
     let initPromise;
 
     const startInit = () => {
-      detox = new Detox(detoxConfig);
+      detox = new Detox(detoxContext);
       initPromise = detox.setup();
     };
 
@@ -399,27 +396,12 @@ describe('Detox', () => {
     describe('before detox.setup()', () => {
       describe('has been called', () => {
         it(`should not throw`, async () => {
-          await expect(new Detox(detoxConfig).teardown()).resolves.not.toThrowError();
+          await expect(new Detox(detoxContext).teardown()).resolves.not.toThrowError();
         });
 
-        it(`should not try to get config in detox.setup()`, async () => {
-          detox = new Detox(detoxConfig);
+        it(`should not try to create a Websocket client`, async () => {
+          detox = new Detox(detoxContext);
           await expect(Promise.all([detox.teardown(), detox.setup()])).resolves.not.toThrowError();
-          expect(ipcClient.getDetoxConfig).not.toHaveBeenCalled();
-        });
-      });
-
-      describe('gets its config', () => {
-        beforeEach(() => {
-          ipcClient.getDetoxConfig.mockReturnValue(deferred.promise);
-        });
-
-        beforeEach(startInit);
-
-        it(`should stop the execution and skip creating a WebSocket client`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
-          deferred.resolve(detoxConfig);
-          await expect(initPromise).resolves.toBe(undefined);
           await expect(Client).not.toHaveBeenCalled();
         });
       });
@@ -527,7 +509,7 @@ describe('Detox', () => {
 
     describe('after detox.setup()', () => {
       beforeEach(async () => {
-        detox = new Detox(detoxConfig);
+        detox = new Detox(detoxContext);
         await detox.setup();
       });
 
@@ -564,7 +546,7 @@ describe('Detox', () => {
     describe('when behaviorConfig.cleanup.shutdownDevice = true', () => {
       beforeEach(async () => {
         detoxConfig.behaviorConfig.cleanup.shutdownDevice = true;
-        detox = await new Detox(detoxConfig).setup();
+        detox = await new Detox(detoxContext).setup();
       });
 
       it(`should shut the device down on detox.teardown()`, async () => {
@@ -598,7 +580,7 @@ describe('Detox', () => {
     ['onRunFinish', null],
   ])('when detox[symbols.%s](%j) is called', (method, arg) => {
     beforeEach(async () => {
-      detox = await new Detox(detoxConfig).setup();
+      detox = await new Detox(detoxContext).setup();
     });
 
     it(`should pass it through to artifactsManager.${method}()`, async () => {

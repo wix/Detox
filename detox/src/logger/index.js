@@ -1,2 +1,1 @@
-const funpermaproxy = require('funpermaproxy');
-module.exports = funpermaproxy(() => require('../index').log);
+module.exports = require('../index').log;

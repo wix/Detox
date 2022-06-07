@@ -19,21 +19,18 @@ jest.mock('node-ipc', () => ({
 
 // TODO: fix this mess with Loggers
 jest.mock('../src/utils/logger');
-jest.mock('../src/logger/NullLogger', () => class {
-  constructor() {
-    return require('../src/utils/logger');
-  }
-});
 jest.mock('../src/logger/BunyanLogger', () => class {
   constructor() {
-    return require('../src/utils/logger');
+    const instance = require('../src/utils/logger');
+    instance.init = jest.fn();
+    instance.dispose = jest.fn();
+    return instance;
   }
 });
 jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('../src/utils/lastFailedTests');
 jest.mock('./utils/jestInternals');
-
 const fs = require('fs-extra');
 const _ = require('lodash');
 const yargs = require('yargs');

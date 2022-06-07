@@ -30,6 +30,7 @@ yargs
       for (const line of lines) {
         logger.error(line);
       }
+      logger.dispose();
       // eslint-disable-next-line no-console
       console.error('');
       // eslint-disable-next-line no-process-exit
@@ -38,6 +39,7 @@ yargs
 
     if (msg) {
       logger.error(msg + '\n');
+      logger.dispose();
       program.showHelp();
     }
   })

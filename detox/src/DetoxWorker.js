@@ -4,27 +4,20 @@ const Client = require('./client/Client');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
-const ipcClient = require('./ipc/client');
-const NullLogger = require('./logger/NullLogger');
 const lifecycleSymbols = require('./symbols').lifecycle;
 const AsyncEmitter = require('./utils/AsyncEmitter');
-const logger = require('./utils/logger');
-
-const log = logger.child({ __filename });
 
 class DetoxWorker {
-  constructor() {
+  constructor(context) {
     for (const [key, symbol] of Object.entries(lifecycleSymbols)) {
       this[symbol] = this[symbol]
         ? this[symbol].bind(this)
         : (...args) => this._artifactsManager[key](...args);
     }
 
-    this._logger = new NullLogger();
+    this._context = context;
     this._isTearingDown = false;
-    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer({
-      appsConfig: {}
-    });
+    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(context._config);
     this._client = null;
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
@@ -63,9 +56,7 @@ class DetoxWorker {
   async setup() {
     if (this._isTearingDown) return;
 
-    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = await ipcClient.getDetoxConfig();
-    if (this._isTearingDown) return;
-
+    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._context._config;
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
@@ -180,7 +171,7 @@ class DetoxWorker {
   }
 
   get log() {
-    return this._logger;
+    return this._context.log;
   }
 
   async [lifecycleSymbols.onTestStart](testSummary) {
@@ -235,7 +226,7 @@ class DetoxWorker {
   }
 
   _logTestRunCheckpoint(event, { status, fullName }) {
-    log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
+    this.log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }
 
   _validateTestSummary(methodName, testSummary) {
@@ -260,7 +251,7 @@ class DetoxWorker {
   }
 
   _onEmitError({ error, eventName, eventObj }) {
-    log.error(
+    this.log.error(
       { event: 'EMIT_ERROR', fn: eventName },
       `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
       error

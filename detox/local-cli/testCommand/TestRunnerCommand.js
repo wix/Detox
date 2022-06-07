@@ -113,13 +113,14 @@ class TestRunnerCommand {
   }
 
   async _doExecute() {
-    const { $0: command, _: specs, '--': passthrough, ...restArgv } = this._argv;
+    const { _: specs, '--': passthrough, ...restArgv } = this._argv;
     const fullCommand = [
-      command,
+      this._argv.$0,
       quote(unparse(_.omitBy(restArgv, _.isUndefined))),
       passthrough ? passthrough.join(' ') : undefined,
       specs ? specs.join(' ') : undefined,
     ].filter(Boolean).join(' ');
+    const [command, ...theArgs] = fullCommand.split(' ');
 
     detox.log.info(
       { env: this._envHint },
@@ -127,7 +128,7 @@ class TestRunnerCommand {
     );
 
     return new Promise((resolve, reject) => {
-      cp.spawn(command, fullCommand.split(' ').slice(1), {
+      cp.spawn(command, theArgs, {
         stdio: 'inherit',
         env: _({})
           .assign(process.env)

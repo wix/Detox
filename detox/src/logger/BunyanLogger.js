@@ -3,53 +3,92 @@ const path = require('path');
 const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const fs = require('fs-extra');
+const _ = require('lodash');
 const onExit = require('signal-exit');
 
 const temporaryPath = require('../../src/artifacts/utils/temporaryPath');
 const { shortFormat: shortDateFormat } = require('../../src/utils/dateUtils');
 
 class BunyanLogger {
-  constructor(config, meta, bunyan) {
-    this._config = { ...config };
-    this._meta = { ...meta };
-    this._bunyan = bunyan || this._createBunyanLogger();
+  constructor(config, context) {
+    this._config = config;
+    this._context = context;
+  }
+
+  init() {
+    this._config.bunyanInstance = this._createBunyanLogger();
   }
 
   child(overrides) {
-    const childMeta = { ...this._meta, ...overrides };
-    if (overrides.__filename) {
-      childMeta.__filename = path.basename(overrides.__filename);
+    return new BunyanLogger(this._config, {
+      ...this._context,
+      ...overrides,
+    });
+  }
+
+  error(...args) {
+    return this.send({ level: 'error', args });
+  }
+
+  warn(...args) {
+    return this.send({ level: 'warn', args });
+  }
+
+  info(...args) {
+    return this.send({ level: 'info', args });
+  }
+
+  debug(...args) {
+    return this.send({ level: 'debug', args });
+  }
+
+  trace(...args) {
+    return this.send({ level: 'trace', args });
+  }
+
+  send(msg) {
+    const { bunyanInstance, queue } = this._config;
+
+    if (bunyanInstance) {
+      while (queue.length) {
+        const { level, meta, args } = queue.shift();
+        bunyanInstance[level](meta, ...args);
+      }
     }
 
-    return new BunyanLogger(
-      this._config,
-      childMeta,
-      this._bunyan,
-    );
+    this._send(msg);
   }
 
-  error() {
-    this._bunyan.error(...arguments);
+  dispose() {
+    const { queue } = this._config;
+    while (queue.length) {
+      const { level, meta, args } = queue.shift();
+      console[level](...args);
+    }
   }
 
-  warn() {
-    this._bunyan.warn(...arguments);
-  }
+  _send(msg) {
+    const { level, args: msgArgs } = msg;
+    const msgContext = _.isObject(msgArgs[0]) ? msgArgs[0] : undefined;
+    const args = msgContext ? msgArgs.slice(1) : msgArgs;
+    const meta = {
+      pid: process.pid,
+      time: new Date(),
 
-  info() {
-    this._bunyan.info(...arguments);
-  }
+      ...this._context,
+      ...msgContext,
+    };
 
-  debug() {
-    this._bunyan.debug(...arguments);
-  }
-
-  trace() {
-    this._bunyan.trace(...arguments);
+    const { bunyanInstance, queue } = this._config;
+    if (!bunyanInstance) {
+      queue.push({ level, meta, args });
+    } else {
+      bunyanInstance[level](meta, ...args);
+    }
   }
 
   get level() {
-    return this._config.loglevel;
+    return this._config.level;
   }
 
   // TODO: do we need it at all???
@@ -125,10 +164,10 @@ class BunyanLogger {
           }
 
           if (entry.event === 'ERROR') {
-            return `${filename}/${entry.event}`;
+            return `${path.basename(filename)}/${entry.event}`;
           }
 
-          return entry.event ? entry.event : filename;
+          return entry.event ? entry.event : path.basename(filename);
         },
         'trackingId': id => ` #${id}`,
         'cpid': pid => ` cpid=${pid}`,

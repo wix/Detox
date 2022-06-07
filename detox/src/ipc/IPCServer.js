@@ -47,8 +47,11 @@ class IPCServer {
     this._ipc.server.broadcast('workersCount', { value: workersCount });
   }
 
-  onLog({ level, args }) {
-    this._logger[level](args);
+  onLog({ level, meta, args }) {
+    if (typeof meta.time === 'string') {
+      meta.time = new Date(meta.time);
+    }
+    this._logger[level](meta, ...args);
   }
 }
 

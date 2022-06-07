@@ -2,7 +2,7 @@
 const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
-const detox = require('../../../src');
+const DetoxSecondaryContext = require('../../../src/DetoxSecondaryContext');
 const DetoxError = require('../../../src/errors/DetoxError');
 const Timer = require('../../../src/utils/Timer');
 
@@ -41,6 +41,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     this.initTimeout = 300000;
     /** @protected */
     this.detox = null;
+    /** @protected */
+    this.detoxContext = null;
   }
 
   /** @override */
@@ -51,10 +53,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `setting up Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await detox.setup();
-
-        this.detox = await detox.allocateWorker({
+        this.detoxContext = new DetoxSecondaryContext();
+        this.detox = await this.detoxContext.setup({
           global: this.global,
+          workerId: +process.env.JEST_WORKER_ID,
         });
 
         this._instantiateListeners(this.detox);
@@ -96,24 +98,14 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @override */
   async teardown() {
-    try {
-      await Timer.run({
-        description: `tearing down Detox environment`,
-        timeout: this.initTimeout,
-        fn: async () => {
-          try {
-            if (this.detox) {
-              await this.detox.teardown();
-            }
-          } finally {
-            await detox.teardown();
-          }
-        },
-      });
-    } finally {
-      this.detox = null;
-      await super.teardown();
-    }
+    await Timer.run({
+      description: `tearing down Detox environment`,
+      timeout: this.initTimeout,
+      fn: async () => {
+        await this.detoxContext.teardown();
+        this.detox = null;
+      },
+    });
   }
 
   /** @protected */
@@ -144,7 +136,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @private */
   _logError(e) {
-    detox.log.error(DetoxError.format(e));
+    this.detoxContext.log.error(DetoxError.format(e));
   }
 }
 

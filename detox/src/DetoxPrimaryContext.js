@@ -4,10 +4,22 @@ const util = require('util');
 const _ = require('lodash');
 
 const DetoxSecondaryContext = require('./DetoxSecondaryContext');
+const BunyanLogger = require('./logger/BunyanLogger');
 
 class DetoxPrimaryContext extends DetoxSecondaryContext {
   constructor() {
     super();
+
+    // eslint-disable-next-line unicorn/no-this-assignment
+    const context = this;
+
+    this._logger = new BunyanLogger({
+      bunyanInstance: null,
+      queue: [],
+      get level() {
+        return context._config ? context._config.cliConfig.loglevel : 'info';
+      },
+    });
 
     this._wss = null;
     this._globalLifecycleHandler = null;
@@ -24,11 +36,7 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
       testRunnerArgv: opts.testRunnerArgv,
     });
 
-    const BunyanLogger = require('./logger/BunyanLogger');
-    this._logger = new BunyanLogger({
-      loglevel: config.cliConfig.loglevel || 'info',
-    });
-
+    this._logger.init();
     this._logger.trace(
       { event: 'DETOX_CONFIG', config },
       'creating Detox server with config:\n%s',
@@ -94,6 +102,7 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
 
     await super._doTeardown();
 
+    await this._logger.dispose();
     // TODO: move the artifacts
   }
 
