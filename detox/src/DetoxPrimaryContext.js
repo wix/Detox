@@ -1,56 +1,73 @@
-// @ts-nocheck
 const { URL } = require('url');
 const util = require('util');
 
 const _ = require('lodash');
 
-const IPCServer = require('./ipc/IPCServer');
 const NullLogger = require('./logger/NullLogger');
 
-class DetoxRootContext {
+class DetoxPrimaryContext {
   constructor() {
     this._config = null;
     this._wss = null;
     this._ipc = null;
     this._logger = new NullLogger();
     this._globalLifecycleHandler = null;
+    /** @type {import('./DetoxWorker') | null} */
+    this._worker = null;
 
     this.setup = this.setup.bind(this);
     this.teardown = this.teardown.bind(this);
   }
 
-  async setup({ argv, testRunnerArgv }) {
+  /**
+   * @param {object} [opts]
+   * @param {object} [opts.argv]
+   * @param {String} [opts.cwd]
+   * @param {NodeJS.Global} [opts.global]
+   * @param {object} [opts.testRunnerArgv]
+   * @param {Boolean} [opts.noWorker]
+   * @returns {Promise<import('./DetoxWorker') | null>}
+   */
+  async setup(opts = {}) {
     const configuration = require('./configuration');
     this._config = await configuration.composeDetoxConfig({
-      argv,
-      testRunnerArgv,
+      argv: opts.argv,
+      testRunnerArgv: opts.testRunnerArgv,
     });
 
     try {
       await this._doSetup();
+
+      if (!opts.noWorker) {
+          const worker = this._worker = this._allocateWorker(opts.global || global);
+          await worker.setup();
+      }
+
+      return this._worker;
     } catch (e) {
       await this.teardown();
       throw e;
     }
   }
 
-  async allocateWorker(opts) {
-    const DetoxWorkerContext = require('./DetoxWorkerContext');
-    DetoxWorkerContext.global = opts.global || global;
-
-    // TODO: implement timeout
-    const context = new DetoxWorkerContext();
-    try {
-      await context.setup();
-      return context;
-    } catch (e) {
-      await context.teardown();
-    }
+  /**
+   * @returns {import('./DetoxWorker')}
+   */
+  _allocateWorker(opts) {
+    const DetoxWorker = require('./DetoxWorker');
+    DetoxWorker.global = opts.global || global;
+    return new DetoxWorker();
   }
 
   async teardown() {
+    if (this._worker) {
+      await this._worker.teardown();
+      this._worker = null;
+    }
+
     if (this._ipc) {
       await this._ipc.stop();
+      this._ipc = null;
     }
 
     if (this._wss) {
@@ -60,6 +77,7 @@ class DetoxRootContext {
 
     if (this._globalLifecycleHandler) {
       await this._globalLifecycleHandler.globalCleanup();
+      this._globalLifecycleHandler = null;
     }
 
     // TODO: move the artifacts
@@ -89,6 +107,7 @@ class DetoxRootContext {
     this.log.trace(
       { event: 'DETOX_CONFIG', config },
       'creating Detox server with config:\n%s',
+      // @ts-ignore
       util.inspect(_.omit(config, ['errorComposer']), {
         getters: false,
         depth: Infinity,
@@ -99,6 +118,7 @@ class DetoxRootContext {
       })
     );
 
+    const IPCServer = require('./ipc/IPCServer');
     this._ipc = new IPCServer({
       id: 'detox-' + process.pid,
       detoxConfig: this._config,
@@ -138,7 +158,6 @@ class DetoxRootContext {
 
   async _resetLockFile() {
     const DeviceRegistry = require('./devices/DeviceRegistry');
-    const GenyDeviceRegistryFactory = require('./devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 
     const deviceType = this._config.deviceConfig.type;
 
@@ -155,9 +174,10 @@ class DetoxRootContext {
     }
 
     if (deviceType === 'android.genycloud') {
+      const GenyDeviceRegistryFactory = require('./devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
       await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
     }
   }
 }
 
-module.exports = DetoxRootContext;
+module.exports = DetoxPrimaryContext;

@@ -18,7 +18,7 @@ async function composeDetoxConfig({
   argv = undefined,
   testRunnerArgv = undefined,
   errorComposer = new DetoxConfigErrorComposer(),
-  override,
+  override = undefined,
 }) {
   const cliConfig = collectCliConfig({ argv });
   const findupResult = await loadExternalConfig({

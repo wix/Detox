@@ -82,7 +82,7 @@ describe('Detox', () => {
     AsyncEmitter = require('./utils/AsyncEmitter');
     lifecycleSymbols = require('./symbols').lifecycle;
 
-    Detox = require('./DetoxWorkerContext');
+    Detox = require('./DetoxWorker');
   });
 
   describe('when detox.setup() is called', () => {

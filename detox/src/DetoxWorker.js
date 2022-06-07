@@ -12,7 +12,7 @@ const logger = require('./utils/logger');
 
 const log = logger.child({ __filename });
 
-class DetoxWorkerContext {
+class DetoxWorker {
   constructor() {
     for (const [key, symbol] of Object.entries(lifecycleSymbols)) {
       this[symbol] = this[symbol]
@@ -121,7 +121,7 @@ class DetoxWorkerContext {
     Object.assign(this, matchers);
 
     if (behaviorConfig.init.exposeGlobals) {
-      Object.assign(DetoxWorkerContext.global, {
+      Object.assign(DetoxWorker.global, {
         ...matchers,
         device: this.device,
         detox: this,
@@ -252,6 +252,6 @@ class DetoxWorkerContext {
   }
 }
 
-DetoxWorkerContext.global = global;
+DetoxWorker.global = global;
 
-module.exports = DetoxWorkerContext;
+module.exports = DetoxWorker;

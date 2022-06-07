@@ -1,4 +1,3 @@
-// @ts-nocheck
 const detox = require('../src');
 
 const TestRunnerCommand = require('./testCommand/TestRunnerCommand');
@@ -10,7 +9,11 @@ module.exports.middlewares = require('./testCommand/middlewares').default;
 
 module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
   try {
-    await detox.setup({ argv: detoxArgs, testRunnerArgv: runnerArgs });
+    await detox.setup({
+      argv: detoxArgs,
+      testRunnerArgv: runnerArgs,
+      noWorker: true,
+    });
 
     const runnerCommand = new TestRunnerCommand()
       .setRunnerConfig(detox.config.runnerConfig)

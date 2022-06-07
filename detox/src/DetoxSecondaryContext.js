@@ -2,7 +2,7 @@ const ipcClient = require('./ipc/client');
 const IPCLogger = require('./logger/IPCLogger');
 const NullLogger = require('./logger/NullLogger');
 
-class DetoxRunnerContext {
+class DetoxSecondaryContext {
   constructor() {
     this.setup = this.setup.bind(this);
     this.teardown = this.teardown.bind(this);
@@ -27,11 +27,11 @@ class DetoxRunnerContext {
   }
 
   async allocateWorker(opts) {
-    const DetoxWorkerContext = require('./DetoxWorkerContext');
-    DetoxWorkerContext.global = opts.global || global;
+    const DetoxWorker = require('./DetoxWorker');
+    DetoxWorker.global = opts.global || global;
 
     // TODO: implement timeout
-    const context = new DetoxWorkerContext();
+    const context = new DetoxWorker();
     try {
       await context.setup();
       return context;
@@ -54,4 +54,4 @@ class DetoxRunnerContext {
   }
 }
 
-module.exports = DetoxRunnerContext;
+module.exports = DetoxSecondaryContext;

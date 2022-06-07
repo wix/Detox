@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-global.DETOX_CLI = true;
+global['DETOX_CLI'] = true;
 const yargs = require('yargs');
 
 const DetoxError = require('../src/errors/DetoxError');

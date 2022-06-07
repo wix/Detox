@@ -1,3 +1,3 @@
-const DetoxRootContext = require('../../src/DetoxRootContext');
+const DetoxPrimaryContext = require('../DetoxPrimaryContext');
 
-module.exports = new DetoxRootContext();
+module.exports = new DetoxPrimaryContext();
