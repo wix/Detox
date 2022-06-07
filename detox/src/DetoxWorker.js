@@ -43,7 +43,19 @@ class DetoxWorker {
       onError: this._onEmitError.bind(this),
     });
 
+    /** @type {Detox.Device} */
     this.device = null;
+    /** @type {Detox.ElementFacade} */
+    this.element = null;
+    /** @type {Detox.WaitForFacade} */
+    this.waitFor = null;
+    /** @type {Detox.ExpectFacade} */
+    this.expect = null;
+    /** @type {Detox.ByFacade} */
+    this.by = null;
+    /** @type {Detox.WebFacade} */
+    this.web = null;
+
     this._deviceAllocator = null;
     this._deviceCookie = null;
   }
@@ -63,6 +75,7 @@ class DetoxWorker {
 
     this._client = new Client(sessionConfig);
     this._client.terminateApp = async () => {
+      // @ts-ignore
       if (this.device && this.device._isAppRunning()) {
         await this.device.terminateApp();
       }
@@ -110,6 +123,7 @@ class DetoxWorker {
         deviceConfig: this._deviceConfig,
         sessionConfig,
       });
+    // @ts-ignore
     await this.device._prepare();
     if (this._isTearingDown) return;
 
@@ -128,6 +142,7 @@ class DetoxWorker {
       });
     }
 
+    // @ts-ignore
     await this.device.installUtilBinaries();
     if (this._isTearingDown) return;
 
@@ -154,6 +169,7 @@ class DetoxWorker {
 
     if (this.device) {
       const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
+      // @ts-ignore
       await this.device._cleanup();
       await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
@@ -252,6 +268,9 @@ class DetoxWorker {
   }
 }
 
+/**
+ * @type {NodeJS.Global}
+ */
 DetoxWorker.global = global;
 
 module.exports = DetoxWorker;

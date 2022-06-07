@@ -3,108 +3,33 @@ const util = require('util');
 
 const _ = require('lodash');
 
-const NullLogger = require('./logger/NullLogger');
+const DetoxSecondaryContext = require('./DetoxSecondaryContext');
 
-class DetoxPrimaryContext {
+class DetoxPrimaryContext extends DetoxSecondaryContext {
   constructor() {
-    this._config = null;
-    this._wss = null;
-    this._ipc = null;
-    this._logger = new NullLogger();
-    this._globalLifecycleHandler = null;
-    /** @type {import('./DetoxWorker') | null} */
-    this._worker = null;
+    super();
 
-    this.setup = this.setup.bind(this);
-    this.teardown = this.teardown.bind(this);
+    this._wss = null;
+    this._globalLifecycleHandler = null;
   }
 
   /**
-   * @param {object} [opts]
-   * @param {object} [opts.argv]
-   * @param {String} [opts.cwd]
-   * @param {NodeJS.Global} [opts.global]
-   * @param {object} [opts.testRunnerArgv]
-   * @param {Boolean} [opts.noWorker]
-   * @returns {Promise<import('./DetoxWorker') | null>}
+   * @override
+   * @param {Detox.DetoxInitOptions} [opts]
    */
-  async setup(opts = {}) {
+  async _doSetup(opts) {
     const configuration = require('./configuration');
-    this._config = await configuration.composeDetoxConfig({
+    const config = this._config = await configuration.composeDetoxConfig({
       argv: opts.argv,
       testRunnerArgv: opts.testRunnerArgv,
     });
-
-    try {
-      await this._doSetup();
-
-      if (!opts.noWorker) {
-          const worker = this._worker = this._allocateWorker(opts.global || global);
-          await worker.setup();
-      }
-
-      return this._worker;
-    } catch (e) {
-      await this.teardown();
-      throw e;
-    }
-  }
-
-  /**
-   * @returns {import('./DetoxWorker')}
-   */
-  _allocateWorker(opts) {
-    const DetoxWorker = require('./DetoxWorker');
-    DetoxWorker.global = opts.global || global;
-    return new DetoxWorker();
-  }
-
-  async teardown() {
-    if (this._worker) {
-      await this._worker.teardown();
-      this._worker = null;
-    }
-
-    if (this._ipc) {
-      await this._ipc.stop();
-      this._ipc = null;
-    }
-
-    if (this._wss) {
-      await this._wss.close();
-      this._wss = null;
-    }
-
-    if (this._globalLifecycleHandler) {
-      await this._globalLifecycleHandler.globalCleanup();
-      this._globalLifecycleHandler = null;
-    }
-
-    // TODO: move the artifacts
-  }
-
-  get config() {
-    return this._config;
-  }
-
-  get log() {
-    return this._logger;
-  }
-
-  get lastFailedTests() {
-    // TODO: retrieve from IPC
-    return [];
-  }
-
-  async _doSetup() {
-    const config = this._config;
 
     const BunyanLogger = require('./logger/BunyanLogger');
     this._logger = new BunyanLogger({
       loglevel: config.cliConfig.loglevel || 'info',
     });
 
-    this.log.trace(
+    this._logger.trace(
       { event: 'DETOX_CONFIG', config },
       'creating Detox server with config:\n%s',
       // @ts-ignore
@@ -126,7 +51,7 @@ class DetoxPrimaryContext {
     });
 
     process.env.DETOX_IPC_SERVER_ID = this._ipc.id;
-    await this._ipc.start();
+    await this._ipc.setup();
 
     const { cliConfig, deviceConfig, sessionConfig } = config;
 
@@ -154,6 +79,27 @@ class DetoxPrimaryContext {
     if (!sessionConfig.server) {
       sessionConfig.server = `ws://localhost:${this._wss.port}`;
     }
+  }
+
+  async _doTeardown() {
+    if (this._globalLifecycleHandler) {
+      await this._globalLifecycleHandler.globalCleanup();
+      this._globalLifecycleHandler = null;
+    }
+
+    if (this._wss) {
+      await this._wss.close();
+      this._wss = null;
+    }
+
+    await super._doTeardown();
+
+    // TODO: move the artifacts
+  }
+
+  get lastFailedTests() {
+    // TODO: retrieve from IPC
+    return [];
   }
 
   async _resetLockFile() {

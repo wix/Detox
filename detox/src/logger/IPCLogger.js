@@ -5,12 +5,6 @@ const ipcClient = require('../ipc/client');
 class IPCLogger {
   constructor(config) {
     this._config = config;
-    this._config.level = 'info';
-    ipcClient.getDetoxConfig().then(config => {
-      if (config.cliConfig.loglevel) {
-        this._config.level = config.cliConfig.loglevel;
-      }
-    });
   }
 
   child(context) {

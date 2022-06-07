@@ -13,7 +13,7 @@ class IPCServer {
     return this._id;
   }
 
-  async start() {
+  async setup() {
     this._ipc = require('node-ipc');
     this._ipc.config.id = this._id;
     this._ipc.config.retry = 1500;
@@ -28,8 +28,8 @@ class IPCServer {
     });
   }
 
-  async stop() {
-    if (!this._ipc.server) {
+  async teardown() {
+    if (!this._ipc) {
       return;
     }
 

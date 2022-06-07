@@ -284,12 +284,12 @@ declare global {
 
         // Detox exports all methods from detox global and all of the global constants.
         interface DetoxInstance {
-            device: Device;
-            element: ElementFacade;
-            waitFor: WaitForFacade;
-            expect: ExpectFacade;
-            by: ByFacade;
-            web: WebFacade;
+            readonly device: Device;
+            readonly element: ElementFacade;
+            readonly waitFor: WaitForFacade;
+            readonly expect: ExpectFacade;
+            readonly by: ByFacade;
+            readonly web: WebFacade;
         }
 
         interface DetoxExportWrapper extends DetoxInstance {
@@ -302,11 +302,9 @@ declare global {
              *   await detox.init();
              * });
              */
-            init(configOverride?: Partial<DetoxConfig>): Promise<void>;
+            init(options?: Partial<DetoxInitOptions>): Promise<void>;
 
-            beforeEach(...args: any[]): Promise<void>;
-
-            afterEach(...args: any[]): Promise<void>;
+            readonly log: Detox.Logger;
 
             /**
              * The cleanup phase should happen after all the tests have finished.
@@ -318,14 +316,25 @@ declare global {
              * });
              */
             cleanup(): Promise<void>;
-
-            /**
-             * Unstable. API to access an assembled detox config before it gets passed to testRunner
-             * or detox.init(). Use it only if you don't have another option.
-             * @internal
-             */
-            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
         }
+
+        type DetoxInitOptions = {
+            cwd: string;
+            argv: Record<string, unknown>;
+            testRunnerArgv: Record<string, unknown>;
+            overrides: Partial<DetoxConfig>;
+
+            global: NodeJS.Global;
+            workerId: number;
+        };
+
+        type Logger = {
+            debug(...args: any[]): void;
+            error(...args: any[]): void;
+            info(...args: any[]): void;
+            trace(...args: any[]): void;
+            warn(...args: any[]): void;
+        };
 
         type Point2D = {
             x: number,

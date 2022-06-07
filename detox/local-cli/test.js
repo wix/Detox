@@ -12,7 +12,7 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
     await detox.setup({
       argv: detoxArgs,
       testRunnerArgv: runnerArgs,
-      noWorker: true,
+      workerId: NaN,
     });
 
     const runnerCommand = new TestRunnerCommand()
