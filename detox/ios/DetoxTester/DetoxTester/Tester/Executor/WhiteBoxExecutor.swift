@@ -56,18 +56,19 @@ class WhiteBoxExecutor {
       case .verifyText(let ofElement, let equals):
         return .boolean(true)
 
-      case .findElementIDByText(let text):
+      case .findElementsByText(let text):
         let message = createMessage(
-          type: "findElementIDByText",
+          type: "findElementsByText",
           params: ["text": AnyCodable(text)],
           messageId: 0
         )
 
-        let result = send(message, andExpectToType: "didLookedForElementByText", messageId: 0)
+        let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
 
-        let identifier = result["elementID"]?.value as? String
-        return identifier != nil ?
-          .string(identifier!) :
+        let identifiers: [String] = result["identifiers"]?.value as? [String] ?? []
+
+        return identifiers.count > 0 ?
+          .strings(identifiers) :
           .failed(reason: "could not find element with text: \(text)")
     }
   }

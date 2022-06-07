@@ -15,6 +15,9 @@ extension WhiteBoxExecutor {
     case string(_ value: String)
 
     ///
+    case strings(_ value: [String])
+
+    ///
     case completed
 
     ///

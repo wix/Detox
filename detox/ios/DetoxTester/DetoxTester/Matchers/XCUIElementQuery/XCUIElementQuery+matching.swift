@@ -30,20 +30,18 @@ extension XCUIElementQuery {
         return matching(parameter: .id, byOperator: .equals, toValue: id)
 
       case .text(let text):
-        return matching(parameter: .label, byOperator: .equals, toValue: text)
+        let response = whiteBoxMessageHandler(.findElementsByText(text: text))
+        guard let response = response else {
+          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
+        }
 
-//        let response = whiteBoxMessageHandler(.findElementIDByText(text: text))
-//        guard let response = response else {
-//          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
-//        }
-//
-//        guard case let .string(id) = response else {
-//          execLog("reponse for white-box is not a string: \(response)", type: .error)
-//          fatalError("Reponse is not a string: \(response)")
-//        }
-//
-//        execLog("found identifier for element with text (\(text)): \(id)")
-//        return matching(parameter: .id, byOperator: .equals, toValue: id)
+        guard case let .strings(identifiers) = response else {
+          execLog("reponse for white-box is not a string: \(response)", type: .error)
+          fatalError("Reponse is not a string: \(response)")
+        }
+
+        execLog("found elements with text `\(text)`: \(identifiers)")
+        return matching(anyIdentifierFrom: identifiers)
 
       case .type, .traits, .ancestor, .descendant:
         fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
@@ -63,6 +61,25 @@ private extension XCUIElementQuery {
     toValue value: String
   ) -> XCUIElementQuery {
     let predicate = NSPredicate(format: "\(parameter.rawValue) \(`operator`.rawValue) %@", value)
+    return matching(predicate)
+  }
+
+  ///
+  func matching(
+    anyIdentifierFrom identifiers: [String]
+  ) -> XCUIElementQuery {
+    let predicate = NSPredicate { evaluatedObject, _ in
+      guard let evaluatedObject = evaluatedObject as? UIView else {
+        return false
+      }
+
+      guard let identifier = evaluatedObject.accessibilityIdentifier else {
+        return false
+      }
+
+      return identifiers.contains(identifier)
+    }
+
     return matching(predicate)
   }
 

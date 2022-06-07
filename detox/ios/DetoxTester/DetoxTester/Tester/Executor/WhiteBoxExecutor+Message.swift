@@ -33,6 +33,6 @@ extension WhiteBoxExecutor {
     case verifyText(ofElement: XCUIElement, equals: String)
 
     /// Returns response of `string`.
-    case findElementIDByText(text: String)
+    case findElementsByText(text: String)
   }
 }

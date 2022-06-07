@@ -249,21 +249,30 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					self.safeSend(action: "deviceDidShake", messageId: messageId)
 				}
 
-			case "findElementIDByText":
-				let text = params["text"] as! String
-				let predicate = NSPredicate { evaluatedObject, _ in
-					guard let evaluatedObject = evaluatedObject as? NSObject else {
-						return false
+			case "findElementsByText":
+				DTXSyncManager.enqueueMainQueueIdleClosure {
+					let text = params["text"] as! String
+					let predicate = NSPredicate { evaluatedObject, _ in
+						guard let evaluatedObject = evaluatedObject as? NSObject else {
+							return false
+						}
+
+						return evaluatedObject.dtx_text == text
 					}
 
-					return evaluatedObject.dtx_text == text
+					let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
+					let identifiers : [String] = array.map { $0.accessibilityIdentifier! }
+
+					self.safeSend(
+						action: "elementsDidFound",
+						params: ["identifiers": identifiers],
+						messageId: messageId
+					)
 				}
 
-				let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
-				let identifiers : [String] = array.map { $0.accessibilityIdentifier! }
-
 			default:
-				fatalError("Unknown action type received")
+				log.error("Unknown action type received: \(type)")
+				fatalError("Unknown action type received: \(type)")
 		}
 	}
 	
