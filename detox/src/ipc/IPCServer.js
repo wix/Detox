@@ -1,7 +1,3 @@
-const { upperFirst, camelCase } = require('lodash');
-
-const { DetoxInternalError } = require('../../src/errors');
-
 class IPCServer {
   constructor({ id, logger, detoxConfig }) {
     this._id = id;
@@ -43,11 +39,11 @@ class IPCServer {
     });
   }
 
-  onRegisterWorker({ workerId }, socket) {
+  onRegisterWorker({ workerId }, _socket) {
     const workersCount = this._state.workers = Math.max(this._state.workers, +workerId);
     const detoxConfig = this._state.detoxConfig;
     // TODO: change only for 1 worker (!))
-    this._ipc.server.broadcast('detoxConfig', this._state.detoxConfig);
+    this._ipc.server.broadcast('detoxConfig', detoxConfig);
     this._ipc.server.broadcast('workersCount', { value: workersCount });
   }
 

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const realm = require('../../realms');
+const detox = require('../../src');
 const { parse } = require('../../src/utils/shellQuote');
 const { getJestBooleanArgs } = require('../utils/jestInternals');
 const { extractKnownKeys, disengageBooleanArgs } = require('../utils/yargsUtils');
@@ -10,7 +10,7 @@ const { DETOX_ARGV_OVERRIDE_NOTICE, DEVICE_LAUNCH_ARGS_DEPRECATION } = require('
 
 function applyEnvironmentVariableAddendum(argv, yargs) {
   if (process.env.DETOX_ARGV_OVERRIDE) {
-    realm.log.warn(DETOX_ARGV_OVERRIDE_NOTICE);
+    detox.log.warn(DETOX_ARGV_OVERRIDE_NOTICE);
 
     return yargs.parse([
       ...process.argv.slice(2),
@@ -23,7 +23,7 @@ function applyEnvironmentVariableAddendum(argv, yargs) {
 
 function warnDeviceAppLaunchArgsDeprecation(argv) {
   if (argv['device-boot-args'] && process.argv.some(a => a.startsWith('--device-launch-args'))) {
-    realm.log.warn(DEVICE_LAUNCH_ARGS_DEPRECATION);
+    detox.log.warn(DEVICE_LAUNCH_ARGS_DEPRECATION);
   }
 
   return argv;

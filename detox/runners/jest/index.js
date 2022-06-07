@@ -18,11 +18,11 @@ module.exports = {
   },
 
   get globalSetup() {
-    return require('../../realms/secondary').setup;
+    return require('./globalSetup');
   },
 
   get globalTeardown() {
-    return require('../../realms/secondary').teardown;
+    return require('./globalTeardown');
   },
 
   //#endregion

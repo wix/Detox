@@ -1,7 +1,7 @@
 // @ts-nocheck
 const _ = require('lodash');
 
-const realm = require('../../../../realms');
+const detox = require('../../../../src');
 const {
   onRunDescribeStart,
   onTestStart,
@@ -35,7 +35,7 @@ class DetoxCoreListener {
 
   async setup() {
     // Workaround to override Jest's expect
-    if (realm.config.behaviorConfig.init.exposeGlobals) {
+    if (detox.config.behaviorConfig.init.exposeGlobals) {
       this._env.global.expect = this.detox.expect;
     }
   }

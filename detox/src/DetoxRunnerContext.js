@@ -1,6 +1,6 @@
-const ipcClient = require('../../src/ipc/client');
-const IPCLogger = require('../../src/logger/IPCLogger');
-const NullLogger = require('../../src/logger/NullLogger');
+const ipcClient = require('./ipc/client');
+const IPCLogger = require('./logger/IPCLogger');
+const NullLogger = require('./logger/NullLogger');
 
 class DetoxRunnerContext {
   constructor() {
@@ -24,6 +24,20 @@ class DetoxRunnerContext {
       level: this._config.cliConfig.loglevel,
     });
     this._ready = true;
+  }
+
+  async allocateWorker(opts) {
+    const DetoxWorkerContext = require('./DetoxWorkerContext');
+    DetoxWorkerContext.global = opts.global || global;
+
+    // TODO: implement timeout
+    const context = new DetoxWorkerContext();
+    try {
+      await context.setup();
+      return context;
+    } catch (e) {
+      await context.teardown();
+    }
   }
 
   async teardown() {

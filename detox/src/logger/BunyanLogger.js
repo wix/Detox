@@ -73,48 +73,40 @@ class BunyanLogger {
     });
 
     const bunyanStreams = [debugStream];
-    let jsonFileStreamPath, plainFileStreamPath;
+
+    const jsonFileStreamPath = temporaryPath.for.log();
+    fs.ensureFileSync(jsonFileStreamPath);
+
     // @ts-ignore
-    if (!global.DETOX_CLI && !global.IS_RUNNING_DETOX_UNIT_TESTS) {
-      {
-        jsonFileStreamPath = temporaryPath.for.log();
-        fs.ensureFileSync(jsonFileStreamPath);
+    bunyanStreams.push({
+      level: 'trace',
+      path: jsonFileStreamPath,
+    });
 
-        // @ts-ignore
-        bunyanStreams.push({
-          level: 'trace',
-          path: jsonFileStreamPath,
-        });
-      }
+    const plainFileStreamPath = temporaryPath.for.log();
+    fs.ensureFileSync(plainFileStreamPath);
+    bunyanStreams.push(this._createPlainBunyanStream({
+      level: 'trace',
+      logPath: plainFileStreamPath,
+    }));
 
-      {
-        plainFileStreamPath = temporaryPath.for.log();
-        fs.ensureFileSync(plainFileStreamPath);
-        bunyanStreams.push(this._createPlainBunyanStream({
-          level: 'trace',
-          logPath: plainFileStreamPath,
-        }));
-      }
+    onExit(() => {
+      try {
+        fs.unlinkSync(jsonFileStreamPath);
+      } catch (e) {}
 
-      onExit(() => {
-        try { fs.unlinkSync(jsonFileStreamPath); } catch (e) {}
-        try { fs.unlinkSync(plainFileStreamPath); } catch (e) {}
-      });
-    }
+      try {
+        fs.unlinkSync(plainFileStreamPath);
+      } catch (e) {}
+    });
 
     const logger = bunyan.createLogger({
       name: 'detox',
       streams: bunyanStreams,
     });
 
-    if (jsonFileStreamPath) {
-      logger.jsonFileStreamPath = jsonFileStreamPath;
-    }
-
-    if (plainFileStreamPath) {
-      logger.plainFileStreamPath = plainFileStreamPath;
-    }
-
+    logger.jsonFileStreamPath = jsonFileStreamPath;
+    logger.plainFileStreamPath = plainFileStreamPath;
     return logger;
   }
 

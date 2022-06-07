@@ -24,7 +24,7 @@ jest.mock('../src/logger/NullLogger', () => class {
     return require('../src/utils/logger');
   }
 });
-jest.mock('../realms/primary/BunyanLogger', () => class {
+jest.mock('../src/logger/BunyanLogger', () => class {
   constructor() {
     return require('../src/utils/logger');
   }
@@ -179,7 +179,7 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
-    const context = require('../realms/primary');
+    const context = require('../src');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce(['e2e/failing1.test.js', 'e2e/failing2.test.js'])
       .mockReturnValueOnce(['e2e/failing2.test.js']);
@@ -198,7 +198,7 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should not restart test runner if there are no failing tests paths', async (__retries) => {
-    const context = require('../realms/primary');
+    const context = require('../src');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce([]);
     cpResult.exitCode = 1;
@@ -209,7 +209,7 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should retain -- <...explicitPassthroughArgs>', async (__retries) => {
-    const context = require('../realms/primary');
+    const context = require('../src');
     jest.spyOn(context, 'lastFailedTests', 'get')
       .mockReturnValueOnce(['tests/failing.test.js']);
     cpResult.exitCode = 1;

@@ -4,7 +4,7 @@ const os = require('os');
 const _ = require('lodash');
 const unparse = require('yargs-unparser');
 
-const context = require('../../realms/primary');
+const detox = require('../../src');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 const { quote } = require('../../src/utils/shellQuote');
 
@@ -86,7 +86,7 @@ class TestRunnerCommand {
       try {
         if (launchError) {
           const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
-          context.log.error(
+          detox.log.error(
             `There were failing tests in the following files:\n${list}\n\n` +
             'Detox CLI is going to restart the test runner with those files...\n'
           );
@@ -97,7 +97,7 @@ class TestRunnerCommand {
       } catch (e) {
         launchError = e;
 
-        const { lastFailedTests } = context;
+        const { lastFailedTests } = detox;
         if (_.isEmpty(lastFailedTests)) {
           throw e;
         }
@@ -121,7 +121,7 @@ class TestRunnerCommand {
       specs ? specs.join(' ') : undefined,
     ].filter(Boolean).join(' ');
 
-    context.log.info(
+    detox.log.info(
       { env: this._envHint },
       printEnvironmentVariables(this._envHint) + fullCommand
     );

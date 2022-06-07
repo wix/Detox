@@ -4,15 +4,8 @@ const util = require('util');
 
 const _ = require('lodash');
 
-const configuration = require('../../src/configuration');
-const DeviceRegistry = require('../../src/devices/DeviceRegistry');
-const GenyDeviceRegistryFactory = require('../../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-const environmentFactory = require('../../src/environmentFactory');
-const NullLogger = require('../../src/logger/NullLogger');
-const DetoxServer = require('../../src/server/DetoxServer');
-
-const BunyanLogger = require('./BunyanLogger');
-const IPCServer = require('./IPCServer');
+const IPCServer = require('./ipc/IPCServer');
+const NullLogger = require('./logger/NullLogger');
 
 class DetoxRootContext {
   constructor() {
@@ -27,6 +20,7 @@ class DetoxRootContext {
   }
 
   async setup({ argv, testRunnerArgv }) {
+    const configuration = require('./configuration');
     this._config = await configuration.composeDetoxConfig({
       argv,
       testRunnerArgv,
@@ -37,6 +31,20 @@ class DetoxRootContext {
     } catch (e) {
       await this.teardown();
       throw e;
+    }
+  }
+
+  async allocateWorker(opts) {
+    const DetoxWorkerContext = require('./DetoxWorkerContext');
+    DetoxWorkerContext.global = opts.global || global;
+
+    // TODO: implement timeout
+    const context = new DetoxWorkerContext();
+    try {
+      await context.setup();
+      return context;
+    } catch (e) {
+      await context.teardown();
     }
   }
 
@@ -73,6 +81,7 @@ class DetoxRootContext {
   async _doSetup() {
     const config = this._config;
 
+    const BunyanLogger = require('./logger/BunyanLogger');
     this._logger = new BunyanLogger({
       loglevel: config.cliConfig.loglevel || 'info',
     });
@@ -101,6 +110,7 @@ class DetoxRootContext {
 
     const { cliConfig, deviceConfig, sessionConfig } = config;
 
+    const environmentFactory = require('./environmentFactory');
     this._globalLifecycleHandler = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
 
     if (this._globalLifecycleHandler) {
@@ -111,6 +121,7 @@ class DetoxRootContext {
       await this._resetLockFile();
     }
 
+    const DetoxServer = require('./server/DetoxServer');
     this._wss = new DetoxServer({
       port: sessionConfig.server
         ? new URL(sessionConfig.server).port
@@ -126,6 +137,9 @@ class DetoxRootContext {
   }
 
   async _resetLockFile() {
+    const DeviceRegistry = require('./devices/DeviceRegistry');
+    const GenyDeviceRegistryFactory = require('./devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+
     const deviceType = this._config.deviceConfig.type;
 
     switch (deviceType) {

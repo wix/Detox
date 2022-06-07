@@ -1,5 +1,5 @@
 // @ts-nocheck
-const realm = require('../realms/primary');
+const detox = require('../src');
 
 const TestRunnerCommand = require('./testCommand/TestRunnerCommand');
 
@@ -10,15 +10,15 @@ module.exports.middlewares = require('./testCommand/middlewares').default;
 
 module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
   try {
-    await realm.setup({ argv: detoxArgs, testRunnerArgv: runnerArgs });
+    await detox.setup({ argv: detoxArgs, testRunnerArgv: runnerArgs });
 
     const runnerCommand = new TestRunnerCommand()
-      .setRunnerConfig(realm.config.runnerConfig)
-      .setDeviceConfig(realm.config.deviceConfig)
-      .replicateCLIConfig(realm.config.cliConfig);
+      .setRunnerConfig(detox.config.runnerConfig)
+      .setDeviceConfig(detox.config.deviceConfig)
+      .replicateCLIConfig(detox.config.cliConfig);
 
     await runnerCommand.execute();
   } finally {
-    await realm.teardown();
+    await detox.teardown();
   }
 };

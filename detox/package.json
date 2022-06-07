@@ -101,7 +101,6 @@
       "node_modules",
       "local-cli",
       "src",
-      "realms",
       "runners"
     ],
     "testPathIgnorePatterns": [

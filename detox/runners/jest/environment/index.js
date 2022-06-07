@@ -2,8 +2,7 @@
 const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
-const realm = require('../../../realms');
-const DetoxWorkerContext = require('../../../src/DetoxWorkerContext');
+const detox = require('../../../src');
 const DetoxError = require('../../../src/errors/DetoxError');
 const Timer = require('../../../src/utils/Timer');
 
@@ -52,11 +51,12 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `setting up Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await realm.setup();
+        await detox.setup();
 
-        DetoxWorkerContext.global = this.global;
-        this.global.__detox__ = this.detox = new DetoxWorkerContext();
-        await this.detox.setup();
+        this.detox = await detox.allocateWorker({
+          global: this.global,
+        });
+
         this._instantiateListeners(this.detox);
       },
     });
@@ -101,8 +101,12 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         description: `tearing down Detox environment`,
         timeout: this.initTimeout,
         fn: async () => {
-          if (this.detox) {
-            await this.detox.teardown();
+          try {
+            if (this.detox) {
+              await this.detox.teardown();
+            }
+          } finally {
+            await detox.teardown();
           }
         },
       });
@@ -140,7 +144,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @private */
   _logError(e) {
-    realm.log.error(DetoxError.format(e));
+    detox.log.error(DetoxError.format(e));
   }
 }
 

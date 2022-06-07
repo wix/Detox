@@ -1,1 +1,1 @@
-module.exports = require('../../realms').setup;
+module.exports = require('../../src').setup;
