@@ -270,6 +270,15 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					)
 				}
 
+			case "requestCurrentStatus":
+				DTXSyncManager.status { status in
+					self.webSocket.sendAction(
+						"currentStatusResult",
+						params: ["messageId": messageId, "status": status],
+						messageId: messageId
+					)
+				}
+
 			default:
 				log.error("Unknown action type received: \(type)")
 				fatalError("Unknown action type received: \(type)")

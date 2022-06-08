@@ -13,8 +13,17 @@ extension Executor {
       return
     }
 
-    let status = execute(whiteBoxRequest: .currentStatus)
+    let status = execute(whiteBoxRequest: .requestCurrentStatus)
 
-    sendAction(.reportStatus, params: ["status": status], messageId: messageId)
+    guard case let .status(statusValue) = status else {
+      execLog("the received current-status has an invalid type", type: .error)
+      fatalError("The received current-status has an invalid type")
+    }
+
+    serverMessageSender.sendAction(
+      .reportStatus,
+      params: ["status": statusValue],
+      messageId: messageId
+    )
   }
 }

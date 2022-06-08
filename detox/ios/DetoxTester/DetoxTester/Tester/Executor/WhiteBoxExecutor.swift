@@ -59,8 +59,7 @@ class WhiteBoxExecutor {
       case .findElementsByText(let text):
         let message = createMessage(
           type: "findElementsByText",
-          params: ["text": AnyCodable(text)],
-          messageId: 0
+          params: ["text": AnyCodable(text)]
         )
 
         let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
@@ -70,6 +69,18 @@ class WhiteBoxExecutor {
         return identifiers.count > 0 ?
           .strings(identifiers) :
           .failed(reason: "could not find element with text: \(text)")
+
+      case .requestCurrentStatus:
+        let message = createMessage(type: "requestCurrentStatus")
+
+        let result = send(message, andExpectToType: "currentStatusResult", messageId: 0)
+
+        guard let statusResult = result["status"] as? [String: AnyCodable] else {
+          whiteExecLog("current-status result is invalid: \(result)", type: .error)
+          fatalError("current-status result is invalid")
+        }
+
+        return .status(statusResult)
     }
   }
 
