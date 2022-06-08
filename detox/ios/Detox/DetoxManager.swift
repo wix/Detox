@@ -279,6 +279,25 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					)
 				}
 
+			case "setDatePicker":
+				let targetIdentifier = params["elementID"] as! String
+				let predicate = NSPredicate { evaluatedObject, _ in
+					guard let evaluatedObject = evaluatedObject as? NSObject else {
+						return false
+					}
+
+					return evaluatedObject.accessibilityIdentifier == targetIdentifier
+				}
+
+				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIDatePicker]).first!
+				let targetDate = params["date"] as! Date
+				targetElement.setDate(targetDate, animated: true)
+
+				self.safeSend(
+					action: "didSetDatePicker",
+					messageId: messageId
+				)
+
 			default:
 				log.error("Unknown action type received: \(type)")
 				fatalError("Unknown action type received: \(type)")

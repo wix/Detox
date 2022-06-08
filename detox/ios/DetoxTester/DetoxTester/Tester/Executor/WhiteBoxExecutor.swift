@@ -47,7 +47,16 @@ class WhiteBoxExecutor {
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
         return .completed
 
-      case .setDatePicker(let toDate, let onElement):
+      case .setDatePicker(let date, let element):
+        let message = createMessage(
+          type: "setDatePicker",
+          params: [
+            "date": AnyCodable(date),
+            "elementID": AnyCodable(element.identifier)
+          ]
+        )
+
+        let _ = send(message, andExpectToType: "didSetDatePicker", messageId: 0)
         return .completed
 
       case .verifyVisibility(let ofElement, let withThreshold):
