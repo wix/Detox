@@ -32,6 +32,9 @@ class ActionDelegate: ActionDelegateProtocol {
       throw ActionDelegateError.notXCUIElement
     }
 
+    uiLog("wait until ready to handle action: `\(action)`, on element: `\(element)`")
+    whiteBoxMessageHandler(.waitUntilReady)?.assertResponse(equalsTo: .completed)
+
     uiLog("handling action: `\(action)`, on element: `\(element)`")
 
     switch action {
@@ -41,8 +44,12 @@ class ActionDelegate: ActionDelegateProtocol {
       case .tapOnAxis(let x, let y):
         element.tap(on: CGPoint(x: x,y: y))
 
-      case .longPress:
-        element.longPress()
+      case let .longPress(duration):
+        if let duration = duration {
+          element.longPress(duration)
+        } else {
+          element.longPress()
+        }
 
       case .longPressAndDrag(
         let duration,

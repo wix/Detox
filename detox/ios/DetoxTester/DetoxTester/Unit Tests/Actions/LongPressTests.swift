@@ -34,7 +34,22 @@ class LongPressTests: DTXTestCase {
   }
 
   func testLongPress() throws {
-    try actionDelegate.act(action: Action.longPress, on: longPressButton, testCase: self)
+    try actionDelegate.act(
+      action: .longPress(),
+      on: longPressButton,
+      testCase: self
+    )
+
+    XCTAssertEqual(resultLabel.label, "Success!")
+  }
+
+  func testLongPressWithDuration() throws {
+    try actionDelegate.act(
+      action: .longPress(duration: 1),
+      on: longPressButton,
+      testCase: self
+    )
+
     XCTAssertEqual(resultLabel.label, "Success!")
   }
 

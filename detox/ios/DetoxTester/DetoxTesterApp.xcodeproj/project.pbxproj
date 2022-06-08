@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6014C3C42833C4910012C715 /* AppClientMessageSenderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014C3C32833C4910012C715 /* AppClientMessageSenderProtocol.swift */; };
+		6025B474284FA18D0073AE0E /* Executor+reportCurrentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */; };
 		6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */; };
 		6026FEAF2816C6AF00A016A1 /* KeyboardScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEAE2816C6AF00A016A1 /* KeyboardScreen.storyboard */; };
 		6026FEB12816C80200A016A1 /* KeyboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB02816C80200A016A1 /* KeyboardTests.swift */; };
@@ -147,6 +148,7 @@
 
 /* Begin PBXFileReference section */
 		6014C3C32833C4910012C715 /* AppClientMessageSenderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppClientMessageSenderProtocol.swift; sourceTree = "<group>"; };
+		6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Executor+reportCurrentStatus.swift"; sourceTree = "<group>"; };
 		6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementType+Extensions.swift"; sourceTree = "<group>"; };
 		6026FEAE2816C6AF00A016A1 /* KeyboardScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = KeyboardScreen.storyboard; sourceTree = "<group>"; };
 		6026FEB02816C80200A016A1 /* KeyboardTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardTests.swift; sourceTree = "<group>"; };
@@ -633,6 +635,7 @@
 			children = (
 				60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */,
 				603497AC27F08D9300770EE0 /* Executor+cleanup.swift */,
+				6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */,
 				603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */,
 				603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */,
 				603497B027F08E6600770EE0 /* Executor+reactNativeReload.swift */,
@@ -875,6 +878,7 @@
 				60FBF5FA28192BD1000B73B1 /* PinchTests.swift in Sources */,
 				60A3B444282A56B0002F903B /* WhiteBoxExecutor+Response.swift in Sources */,
 				6053419D280EEDBE00C0405D /* XCUIElement+swipe.swift in Sources */,
+				6025B474284FA18D0073AE0E /* Executor+reportCurrentStatus.swift in Sources */,
 				6053419F280EF1DC00C0405D /* XCUIElement+coordinate.swift in Sources */,
 				603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */,
 				6026FEB12816C80200A016A1 /* KeyboardTests.swift in Sources */,

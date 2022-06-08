@@ -85,7 +85,7 @@ public class InvokeHandler {
   private func element(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable {
     let index = index ?? 0
     guard index >= 0, elements.count > index else {
-      throw Error.noElementAtIndex(index: index)
+      throw Error.noElementAtIndex(index: index, elementsCount: elements.count)
     }
 
     return elements[index]
@@ -224,14 +224,20 @@ public class InvokeHandler {
 
   private func longPressAction(params: [AnyCodable]?) throws -> Action {
     guard let params = params else {
-      return .longPress
+      return .longPress()
+    }
+
+    let duration = (params[0].value as! NSNumber).doubleValue / 1000
+
+    if params.count == 1 {
+      return .longPress(duration: duration)
     }
 
     let speedString = params[6].value as? String
     let speed: Action.ActionSpeed? = speedString != nil ? .init(rawValue: speedString!)! : nil
 
     return .longPressAndDrag(
-      duration: (params[0].value as! NSNumber).doubleValue,
+      duration: duration,
       normalizedPositionX: (params[1].value as? NSNumber)?.doubleValue,
       normalizedPositionY: (params[2].value as? NSNumber)?.doubleValue,
       targetElement: params[3].value as! AnyHashable,

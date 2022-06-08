@@ -46,7 +46,7 @@ class Executor {
         fatalError("not implemented yet")
 
       case .currentStatus:
-        fatalError("not implemented yet")
+        reportCurrentStatus(messageId: messageId)
 
       case .shakeDevice:
         shakeDevice(messageId: messageId)

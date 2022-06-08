@@ -65,7 +65,7 @@ class WhiteBoxExecutor {
 
         let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
 
-        let identifiers: [String] = result["identifiers"]?.value as? [String] ?? []
+        let identifiers: [String] = result["identifiers"] as? [String] ?? []
 
         return identifiers.count > 0 ?
           .strings(identifiers) :
@@ -136,7 +136,7 @@ class WhiteBoxExecutor {
   private func send(
     _ message: [String: AnyCodable],
     andExpectToType expectedType: String, messageId expectedMessageId: Int
-  ) -> [String: AnyCodable] {
+  ) -> [String: Any] {
     let response = send(message)
 
     guard
@@ -152,8 +152,12 @@ class WhiteBoxExecutor {
       fatalError("Got unexpected result for white-box message")
     }
 
-    guard let params = response["params"]?.value as? [String: AnyCodable] else {
-      whiteExecLog("got result with invalid params", type: .error)
+    guard let params = response["params"]?.value as? [String: Any] else {
+      whiteExecLog(
+        "got result with invalid params: \(String(describing: response["params"]))",
+        type: .error
+      )
+
       fatalError("Got unexpected result for white-box message")
     }
 

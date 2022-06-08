@@ -45,7 +45,7 @@ extension XCUIElement {
       self.tap()
     }
 
-    if shouldClearBefore {
+    if shouldClearBefore == true {
       guard let currentValue = self.value as? String else {
         fatalError("Tried to clear and type text into a non string value")
       }

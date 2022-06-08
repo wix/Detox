@@ -162,6 +162,11 @@ class MessageBuilder {
     return self
   }
 
+  func setDurationParam(duration: AnyHashable) -> MessageBuilder {
+    message["params"] = [duration]
+    return self
+  }
+
   func setDragParams(
     duration: AnyHashable, normalizedPositionX: AnyHashable, normalizedPositionY: AnyHashable,
     targetElement: AnyHashable, normalizedTargetPositionX: AnyHashable,
@@ -264,7 +269,7 @@ class MessageBuilder {
     return self
   }
 
-  func setParentWithdescendantPredicate(_ parentID: String, _ childId: String) -> MessageBuilder {
+  func setParentWithDescendantPredicate(_ parentID: String, _ childId: String) -> MessageBuilder {
     let parentPredicate: [String: AnyHashable] = [
       "type": "id",
       "value": parentID

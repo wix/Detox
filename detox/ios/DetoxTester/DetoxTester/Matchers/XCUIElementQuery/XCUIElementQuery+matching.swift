@@ -44,6 +44,7 @@ extension XCUIElementQuery {
         return matching(anyIdentifierFrom: identifiers)
 
       case .type, .traits, .ancestor, .descendant:
+        execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework", type: .error)
         fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
     }
   }
@@ -69,11 +70,15 @@ private extension XCUIElementQuery {
     anyIdentifierFrom identifiers: [String]
   ) -> XCUIElementQuery {
     let predicate = NSPredicate { evaluatedObject, _ in
-      guard let evaluatedObject = evaluatedObject as? UIView else {
-        return false
-      }
+      guard
+        let evaluatedObject = evaluatedObject as? NSObject,
+        let identifier = evaluatedObject.value(forKey: "identifier") as? String
+      else {
+        execLog(
+          "cannot run matching on a non UI element: `\(String(describing: evaluatedObject))`",
+          type: .error
+        )
 
-      guard let identifier = evaluatedObject.accessibilityIdentifier else {
         return false
       }
 

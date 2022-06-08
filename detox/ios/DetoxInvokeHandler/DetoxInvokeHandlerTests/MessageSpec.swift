@@ -789,7 +789,7 @@ class MessageSpec: QuickSpec {
       }
 
       it("should parse predicate with parent and descendant ids") {
-        let message = messageBuilder.setParentWithdescendantPredicate("foo", "bar").build()
+        let message = messageBuilder.setParentWithDescendantPredicate("foo", "bar").build()
 
         let parsed = try Message(from: message)
 

@@ -13,8 +13,8 @@ public enum Action: Equatable, Hashable {
   /// Tap on element on the specified point.
   case tapOnAxis(x: Int, y: Int)
 
-  /// Long press on element on its activation point.
-  case longPress
+  /// Long press on element on its activation point with `duration` (`nil` when default).
+  case longPress(duration: TimeInterval? = nil)
 
   /// Long press on element on its activation point, and drag it to a position of a `targetElement`.
   case longPressAndDrag(

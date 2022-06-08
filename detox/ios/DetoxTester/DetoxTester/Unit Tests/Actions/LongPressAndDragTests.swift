@@ -85,7 +85,12 @@ class LongPressAndDragTests: DTXTestCase {
   }
 
   func testLongPressWithoutDrag() throws {
-    try actionDelegate.act(action: Action.longPress, on: longPressAndDragButton, testCase: self)
+    try actionDelegate.act(
+      action: Action.longPress(),
+      on: longPressAndDragButton,
+      testCase: self
+    )
+
     XCTAssertNotEqual(resultLabel.label, "Success!")
   }
 }

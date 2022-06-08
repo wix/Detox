@@ -107,7 +107,7 @@ class InvokeHandlerSpec: QuickSpec {
       }
 
       it("should find element by parent with descendant predicate") {
-        let message = messageBuilderWithAction.setParentWithdescendantPredicate("foo", "bar").build()
+        let message = messageBuilderWithAction.setParentWithDescendantPredicate("foo", "bar").build()
 
         let pattern = ElementPattern.and(patterns: [
           .id("foo"),
@@ -124,7 +124,7 @@ class InvokeHandlerSpec: QuickSpec {
         matcher.setMatch(from: .text("foo"), to: "bar")
 
         expect { try handler.handle(message) }.to(throwError(
-          InvokeHandler.Error.noElementAtIndex(index: 1)
+          InvokeHandler.Error.noElementAtIndex(index: 1, elementsCount: 1)
         ))
       }
 
@@ -196,7 +196,16 @@ class InvokeHandlerSpec: QuickSpec {
 
           expect(try handler.handle(message)).to(beNil())
 
-          let expected = (Action.longPress, element)
+          let expected = (Action.longPress(), element)
+          expect(actionDelegate.actRecorder.last).to(equal(expected))
+        }
+
+        it("should call delegate for long-press with duration action") {
+          let message = longPressMessageBuilder.setDurationParam(duration: 320).build()
+
+          expect(try handler.handle(message)).to(beNil())
+
+          let expected = (Action.longPress(duration: 0.32), element)
           expect(actionDelegate.actRecorder.last).to(equal(expected))
         }
 

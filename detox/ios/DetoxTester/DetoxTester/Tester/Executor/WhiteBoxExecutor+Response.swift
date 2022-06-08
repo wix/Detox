@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import DetoxInvokeHandler
 
 extension WhiteBoxExecutor {
   ///
@@ -22,6 +23,9 @@ extension WhiteBoxExecutor {
 
     ///
     case completedWithError(message: String)
+
+    ///
+    case status(_ value: [String: AnyCodable])
 
     ///
     case failed(reason: String)

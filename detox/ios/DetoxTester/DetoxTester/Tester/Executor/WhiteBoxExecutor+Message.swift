@@ -34,5 +34,8 @@ extension WhiteBoxExecutor {
 
     /// Returns response of `string`.
     case findElementsByText(text: String)
+
+    /// Returns response of `status`.
+    case requestCurrentStatus
   }
 }
