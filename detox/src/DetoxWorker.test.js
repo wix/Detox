@@ -82,11 +82,11 @@ describe('Detox', () => {
     detoxContext = { log: logger, _config: detoxConfig };
   });
 
-  describe('when detox.setup() is called', () => {
+  describe('when detox.init() is called', () => {
     let mockGlobalMatcher;
 
     const init = async () => {
-      detox = await new Detox(detoxContext).setup();
+      detox = await new Detox(detoxContext).init();
     };
 
     beforeEach(() => {
@@ -97,7 +97,7 @@ describe('Detox', () => {
     });
 
     afterEach(() => {
-      // cleanup spilled globals after detox.setup()
+      // cleanup spilled globals after detox.init()
       delete global.device;
       delete global.globalMatcher;
     });
@@ -190,7 +190,7 @@ describe('Detox', () => {
       });
 
       it('should return itself', async () =>
-        expect(await detox.setup()).toBeInstanceOf(Detox));
+        expect(await detox.init()).toBeInstanceOf(Detox));
     });
 
     describe('with multiple apps', () => {
@@ -293,7 +293,7 @@ describe('Detox', () => {
 
   describe('when detox[onTestStart]() is called', () => {
     beforeEach(async () => {
-      detox = await new Detox(detoxContext).setup();
+      detox = await new Detox(detoxContext).init();
     });
 
     it('should validate test summary object', async () => {
@@ -342,7 +342,7 @@ describe('Detox', () => {
 
   describe('when detox[onTestDone]() is called', () => {
     beforeEach(async () => {
-      detox = await new Detox(detoxContext).setup();
+      detox = await new Detox(detoxContext).init();
       await detox[lifecycleSymbols.onTestStart](testSummaries.running());
     });
 
@@ -380,28 +380,28 @@ describe('Detox', () => {
     });
   });
 
-  describe('when detox.teardown() is called', () => {
+  describe('when detox.cleanup() is called', () => {
     let deferred;
     let initPromise;
 
     const startInit = () => {
       detox = new Detox(detoxContext);
-      initPromise = detox.setup();
+      initPromise = detox.init();
     };
 
     beforeEach(() => {
       deferred = new Deferred();
     });
 
-    describe('before detox.setup()', () => {
+    describe('before detox.init()', () => {
       describe('has been called', () => {
         it(`should not throw`, async () => {
-          await expect(new Detox(detoxContext).teardown()).resolves.not.toThrowError();
+          await expect(new Detox(detoxContext).cleanup()).resolves.not.toThrowError();
         });
 
         it(`should not try to create a Websocket client`, async () => {
           detox = new Detox(detoxContext);
-          await expect(Promise.all([detox.teardown(), detox.setup()])).resolves.not.toThrowError();
+          await expect(Promise.all([detox.cleanup(), detox.init()])).resolves.not.toThrowError();
           await expect(Client).not.toHaveBeenCalled();
         });
       });
@@ -411,7 +411,7 @@ describe('Detox', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip creation of the invocation manager`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrow();
+          await expect(detox.cleanup()).resolves.not.toThrow();
           await expect(initPromise).rejects.toThrowError(/Fake error/);
           await expect(invocationManager()).not.toBeDefined();
         });
@@ -425,7 +425,7 @@ describe('Detox', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip allocating the device`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(undefined);
           await expect(deviceAllocator.allocate).not.toHaveBeenCalled();
@@ -440,7 +440,7 @@ describe('Detox', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip uninstall the app`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(undefined);
           await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
@@ -455,7 +455,7 @@ describe('Detox', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip uninstall the app`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(undefined);
           await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
@@ -470,7 +470,7 @@ describe('Detox', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip uninstalling the app`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(undefined);
           await expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
@@ -485,7 +485,7 @@ describe('Detox', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip installing the app`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
           await expect(initPromise).resolves.not.toThrowError();
           await expect(runtimeDevice.installApp).not.toHaveBeenCalled();
@@ -499,34 +499,34 @@ describe('Detox', () => {
 
         beforeEach(startInit);
 
-        it(`should not throw, but should reject detox.setup() promise`, async () => {
-          await expect(detox.teardown()).resolves.not.toThrowError();
+        it(`should not throw, but should reject detox.init() promise`, async () => {
+          await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
           await expect(initPromise).resolves.not.toThrowError();
         });
       });
     });
 
-    describe('after detox.setup()', () => {
+    describe('after detox.init()', () => {
       beforeEach(async () => {
         detox = new Detox(detoxContext);
-        await detox.setup();
+        await detox.init();
       });
 
       describe('if the device has not been allocated', () => {
         beforeEach(async () => {
-          await detox.teardown();
+          await detox.cleanup();
         });
 
         it(`should omit calling runtimeDevice._cleanup()`, async () => {
-          await detox.teardown();
+          await detox.cleanup();
           expect(runtimeDevice._cleanup).toHaveBeenCalledTimes(1);
         });
       });
 
       describe('if the device has been allocated', function() {
         beforeEach(async () => {
-          await detox.teardown();
+          await detox.cleanup();
         });
 
         it(`should call runtimeDevice._cleanup()`, () =>
@@ -546,19 +546,19 @@ describe('Detox', () => {
     describe('when behaviorConfig.cleanup.shutdownDevice = true', () => {
       beforeEach(async () => {
         detoxConfig.behaviorConfig.cleanup.shutdownDevice = true;
-        detox = await new Detox(detoxContext).setup();
+        detox = await new Detox(detoxContext).init();
       });
 
-      it(`should shut the device down on detox.teardown()`, async () => {
-        await detox.teardown();
+      it(`should shut the device down on detox.cleanup()`, async () => {
+        await detox.cleanup();
         expect(deviceAllocator.free).toHaveBeenCalledWith(fakeCookie, { shutdown: true });
       });
 
       describe('if the device has not been allocated', () => {
-        beforeEach(() => detox.teardown());
+        beforeEach(() => detox.cleanup());
 
         it(`should omit the shutdown`, async () => {
-          await detox.teardown();
+          await detox.cleanup();
           expect(deviceAllocator.free).toHaveBeenCalledTimes(1);
         });
       });
@@ -580,7 +580,7 @@ describe('Detox', () => {
     ['onRunFinish', null],
   ])('when detox[symbols.%s](%j) is called', (method, arg) => {
     beforeEach(async () => {
-      detox = await new Detox(detoxContext).setup();
+      detox = await new Detox(detoxContext).init();
     });
 
     it(`should pass it through to artifactsManager.${method}()`, async () => {

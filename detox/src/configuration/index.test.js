@@ -70,11 +70,7 @@ describe('composeDetoxConfig', () => {
         },
         override: {
           artifacts: {
-            pathBuilder: class {
-              constructor() {
-                this.testProperty = 42;
-              }
-            },
+            pathBuilder: '@some/pathbuilder-implementation',
             plugins: {
               log: 'none',
               video: 'failing',
@@ -101,9 +97,7 @@ describe('composeDetoxConfig', () => {
           filepath: path.join(__dirname, '__mocks__/configuration/packagejson/package.json'),
         },
         artifactsConfig: {
-          pathBuilder: {
-            testProperty: 42,
-          },
+          pathBuilder: '@some/pathbuilder-implementation',
           plugins: {
             log: {
               enabled: true,

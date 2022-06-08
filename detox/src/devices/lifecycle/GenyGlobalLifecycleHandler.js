@@ -15,7 +15,7 @@ class GenyGlobalLifecycleHandler {
   async globalInit() {
     onSignalExit((code, signal) => {
       if (signal) {
-        const { rawDevices  } = this._deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+        const { rawDevices } = this._deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
         const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
         if (instanceHandles.length) {
           reportGlobalCleanupSummary(instanceHandles);

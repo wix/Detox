@@ -1,1 +1,1 @@
-module.exports = require('../../src').teardown;
+module.exports = async () => require('../../src').cleanup();

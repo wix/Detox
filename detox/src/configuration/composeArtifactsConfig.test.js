@@ -1,7 +1,3 @@
-const path = require('path');
-
-const _ = require('lodash');
-
 const schemes = require('./configurations.mock');
 
 describe('composeArtifactsConfig', () => {
@@ -18,9 +14,7 @@ describe('composeArtifactsConfig', () => {
       globalConfig: {},
       cliConfig: {},
     })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^artifacts[\\/]abracadabra\.\d{4}/),
-      }),
+      rootDir: expect.stringMatching(/^artifacts[\\/]abracadabra\.\d{4}/),
       plugins: schemes.pluginsDefaultsResolved,
     });
   });
@@ -32,15 +26,14 @@ describe('composeArtifactsConfig', () => {
         artifacts: {
           ...schemes.allArtifactsConfiguration,
           rootDir: 'otherPlace',
-          pathBuilder: _.noop,
+          pathBuilder: '@local/pathbuilder',
         }
       },
       globalConfig: {},
       cliConfig: {},
     })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
-      }),
+      rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
+      pathBuilder: '@local/pathbuilder',
       plugins: schemes.pluginsAllResolved,
     });
   });
@@ -53,14 +46,12 @@ describe('composeArtifactsConfig', () => {
         artifacts: {
           ...schemes.allArtifactsConfiguration,
           rootDir: 'otherPlace',
-          pathBuilder: _.noop,
+          pathBuilder: '@global/pathbuilder',
         }
       },
       cliConfig: {},
     })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
-      }),
+      rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
       plugins: schemes.pluginsAllResolved,
     });
   });
@@ -75,14 +66,13 @@ describe('composeArtifactsConfig', () => {
         artifacts: {
           ...schemes.allArtifactsConfiguration,
           rootDir: 'otherPlace',
-          pathBuilder: _.noop,
+          pathBuilder: '@global/pathbuilder',
         }
       },
       cliConfig: {},
     })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^artifacts[\\/]abracadabra\.\d{4}/),
-      }),
+      rootDir: expect.stringMatching(/^artifacts[\\/]abracadabra\.\d{4}/),
+      pathBuilder: undefined,
       plugins: schemes.pluginsDefaultsResolved,
     });
   });
@@ -102,9 +92,7 @@ describe('composeArtifactsConfig', () => {
         captureViewHierarchy: 'enabled',
       },
     })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
-      }),
+      rootDir: expect.stringMatching(/^otherPlace[\\/]abracadabra\.\d{4}/),
       plugins: schemes.pluginsAllResolved,
     });
   });
@@ -118,7 +106,7 @@ describe('composeArtifactsConfig', () => {
       localConfig: {
         artifacts: {
           rootDir: 'configuration',
-          pathBuilder: _.identity,
+          pathBuilder: '@local/pathbuilder',
           plugins: {
             log: 'failing',
           },
@@ -127,16 +115,15 @@ describe('composeArtifactsConfig', () => {
       globalConfig: {
         artifacts: {
           rootDir: 'global',
-          pathBuilder: _.noop,
+          pathBuilder: '@global/pathbuilder',
           plugins: {
             screenshot: 'all',
           },
         },
       },
     })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        rootDir: expect.stringMatching(/^cli[\\/]priority\.\d{4}/),
-      }),
+      rootDir: expect.stringMatching(/^cli[\\/]priority\.\d{4}/),
+      pathBuilder: '@local/pathbuilder',
       plugins: {
         log: schemes.pluginsFailingResolved.log,
         screenshot: schemes.pluginsAllResolved.screenshot,
@@ -144,38 +131,6 @@ describe('composeArtifactsConfig', () => {
         instruments: schemes.pluginsDefaultsResolved.instruments,
         timeline: schemes.pluginsDefaultsResolved.timeline,
       },
-    });
-  });
-
-  it('should resolve path builder from string (absolute path)', () => {
-    const FakePathBuilder = require('../artifacts/__mocks__/FakePathBuilder');
-    expect(composeArtifactsConfig({
-      configurationName: 'customization',
-      localConfig: {
-        artifacts: {
-          pathBuilder: path.join(__dirname, '../artifacts/__mocks__/FakePathBuilder')
-        },
-      },
-      globalConfig: {},
-      cliConfig: {},
-    }).pathBuilder).toBeInstanceOf(FakePathBuilder);
-  });
-
-  it('should resolve path builder from string (relative path)', () => {
-    expect(composeArtifactsConfig({
-      configurationName: 'customization',
-      cliConfig: {},
-      localConfig: {
-        artifacts: {
-          pathBuilder: './package.json',
-        },
-      },
-      globalConfig: {},
-    })).toMatchObject({
-      pathBuilder: expect.objectContaining({
-        'name': expect.any(String),
-        'version': expect.any(String),
-      }),
     });
   });
 
@@ -203,7 +158,6 @@ describe('composeArtifactsConfig', () => {
       globalConfig: {
         artifacts: {
           rootDir: 'configuration',
-          pathBuilder: _.identity,
           plugins: {
             screenshot: {
               takeWhen: {

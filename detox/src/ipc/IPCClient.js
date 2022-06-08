@@ -12,7 +12,7 @@ class IPCClient {
     this.workerId = workerId;
   }
 
-  async setup() {
+  async init() {
     this.ipc = new IPC();
 
     Object.assign(this.ipc.config, {
@@ -47,7 +47,7 @@ class IPCClient {
     });
   }
 
-  async teardown() {
+  async dispose() {
     this.server = null;
     this.ipc.disconnect(this.serverId);
   }

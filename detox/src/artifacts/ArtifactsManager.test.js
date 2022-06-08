@@ -8,15 +8,12 @@ const testHookError = () => ({ hook: 'beforeEach', error: new Error() });
 const testError = () => ({ error: new Error() });
 
 describe('ArtifactsManager', () => {
-  let proxy, FakePathBuilder;
+  let proxy;
 
   beforeEach(() => {
     jest.mock('fs-extra');
-    jest.mock('./__mocks__/FakePathBuilder');
     jest.mock('./utils/ArtifactPathBuilder');
     jest.mock('../utils/logger');
-
-    FakePathBuilder = require('./__mocks__/FakePathBuilder');
 
     proxy = {
       get ArtifactPathBuilder() {
@@ -99,9 +96,8 @@ describe('ArtifactsManager', () => {
         });
       };
 
-      pathBuilder = new FakePathBuilder();
       artifactsManager = new proxy.ArtifactsManager({
-        pathBuilder,
+        pathBuilder: path.join(__dirname, '__mocks__/FakePathBuilder.js'),
         plugins: {
           testPlugin: {
             lifecycle: 'all',
@@ -109,6 +105,8 @@ describe('ArtifactsManager', () => {
         }
       });
       artifactsManager.registerArtifactPlugins({ testPlugin: testPluginFactory });
+      pathBuilder = artifactsManager._pathBuilder;
+      jest.spyOn(pathBuilder, 'buildPathForTestArtifact');
     });
 
     describe('.userConfig', () => {

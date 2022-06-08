@@ -54,7 +54,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       timeout: this.initTimeout,
       fn: async () => {
         this.detoxContext = new DetoxSecondaryContext();
-        this.detox = await this.detoxContext.setup({
+        this.detox = await this.detoxContext.init({
           global: this.global,
           workerId: +process.env.JEST_WORKER_ID,
         });
@@ -102,7 +102,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `tearing down Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await this.detoxContext.teardown();
+        await this.detoxContext.cleanup();
         this.detox = null;
       },
     });

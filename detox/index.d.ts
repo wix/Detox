@@ -307,6 +307,11 @@ declare global {
             readonly log: Detox.Logger;
 
             /**
+             * Detox runtime config
+             */
+            readonly config: Detox.DetoxRuntimeConfig;
+
+            /**
              * The cleanup phase should happen after all the tests have finished.
              * This is the phase where the Detox server shuts down.
              *
@@ -328,12 +333,56 @@ declare global {
             workerId: number;
         };
 
+        /**
+         * @internal
+         */
+        type DetoxRuntimeConfig = Readonly<{
+            appsConfig: Record<string, Readonly<DetoxAppConfig>>;
+            artifactsConfig: DetoxArtifactsConfig;
+            behaviorConfig: DetoxBehaviorConfig;
+            cliConfig: DetoxCLIConfig;
+            deviceConfig: DetoxDeviceConfig;
+            runnerConfig: DetoxTestRunnerConfig;
+            configurationName: string;
+            sessionConfig: DetoxSessionConfig;
+        }>;
+
+        /**
+         * @internal
+         */
+        type DetoxCLIConfig = Partial<{
+            appLaunchArgs: string;
+            artifactsLocation: string;
+            captureViewHierarchy: string;
+            cleanup: boolean;
+            configPath: string;
+            configuration: string;
+            debugSynchronization: number;
+            deviceBootArgs: string;
+            deviceName: string;
+            forceAdbInstall: boolean;
+            gpu: string;
+            headless: boolean;
+            jestReportSpecs: boolean;
+            keepLockFile: boolean;
+            loglevel: string;
+            readonlyEmu: boolean;
+            recordLogs: string;
+            recordPerformance: string;
+            recordTimeline: string;
+            recordVideos: string;
+            reuse: string;
+            takeScreenshots: string;
+            useCustomLogger: string;
+        }>;
+
         type Logger = {
-            debug(...args: any[]): void;
-            error(...args: any[]): void;
-            info(...args: any[]): void;
-            trace(...args: any[]): void;
-            warn(...args: any[]): void;
+            child(context?: Record<string, unknown>): Logger;
+            debug(context?: unknown, ...args: any[]): void;
+            error(context?: unknown, ...args: any[]): void;
+            info(context?: unknown, ...args: any[]): void;
+            trace(context?: unknown, ...args: any[]): void;
+            warn(context?: unknown, ...args: any[]): void;
         };
 
         type Point2D = {

@@ -1,1 +1,1 @@
-module.exports = require('../../src').setup;
+module.exports = async () => require('../../src').init();

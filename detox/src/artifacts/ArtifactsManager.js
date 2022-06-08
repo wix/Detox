@@ -7,18 +7,40 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
+const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
 
 const FileArtifact = require('./templates/artifact/FileArtifact');
+const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager extends EventEmitter {
-  constructor({ pathBuilder, plugins }) {
+  constructor({ rootDir, pathBuilder, plugins }) {
     super();
 
     this._pluginConfigs = plugins;
     this._idlePromise = Promise.resolve();
     this._idleCallbackRequests = [];
     this._artifactPlugins = {};
-    this._pathBuilder = pathBuilder;
+    this._pathBuilder = this._resolveArtifactsPathBuilder(pathBuilder, rootDir);
+  }
+
+  _resolveArtifactsPathBuilder(pathBuilder, rootDir) {
+    if (typeof pathBuilder === 'string') {
+      pathBuilder = resolveModuleFromPath(pathBuilder);
+
+      if (typeof pathBuilder === 'function') {
+        try {
+          pathBuilder = pathBuilder({ rootDir });
+        } catch (e) {
+          pathBuilder = new pathBuilder({ rootDir });
+        }
+      }
+    }
+
+    if (!pathBuilder) {
+      pathBuilder = new ArtifactPathBuilder({ rootDir });
+    }
+
+    return pathBuilder;
   }
 
   _instantiateArtifactPlugin(pluginFactory, pluginUserConfig) {

@@ -16,7 +16,7 @@ class DetoxWorker {
     }
 
     this._context = context;
-    this._isTearingDown = false;
+    this._isCleaningUp = false;
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(context._config);
     this._client = null;
     this._artifactsManager = null;
@@ -53,8 +53,8 @@ class DetoxWorker {
     this._deviceCookie = null;
   }
 
-  async setup() {
-    if (this._isTearingDown) return;
+  async init() {
+    if (this._isCleaningUp) return;
 
     const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._context._config;
     this._appsConfig = appsConfig;
@@ -73,7 +73,7 @@ class DetoxWorker {
     };
 
     await this._client.connect();
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
 
     const invocationManager = new InvocationManager(this._client);
 
@@ -91,7 +91,7 @@ class DetoxWorker {
 
     const envValidator = envValidatorFactory.createValidator();
     await envValidator.validate();
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
 
     const commonDeps = {
       invocationManager,
@@ -103,7 +103,7 @@ class DetoxWorker {
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
     this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
     this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
@@ -116,7 +116,7 @@ class DetoxWorker {
       });
     // @ts-ignore
     await this.device._prepare();
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
 
     const matchers = matchersFactory.createMatchers({
       invocationManager,
@@ -135,7 +135,7 @@ class DetoxWorker {
 
     // @ts-ignore
     await this.device.installUtilBinaries();
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
 
     if (behaviorConfig.init.reinstallApp) {
       await this._reinstallAppsOnDevice();
@@ -144,8 +144,8 @@ class DetoxWorker {
     return this;
   }
 
-  async teardown() {
-    this._isTearingDown = true;
+  async cleanup() {
+    this._isCleaningUp = true;
 
     if (this._artifactsManager) {
       await this._artifactsManager.onBeforeCleanup();
@@ -175,29 +175,29 @@ class DetoxWorker {
   }
 
   async [lifecycleSymbols.onTestStart](testSummary) {
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
     this._validateTestSummary('beforeEach', testSummary);
     this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
 
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
     await this._dumpUnhandledErrorsIfAny({
       pendingRequests: false,
       testName: testSummary.fullName,
     });
 
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
     await this._artifactsManager.onTestStart(testSummary);
   }
 
   async [lifecycleSymbols.onTestDone](testSummary) {
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
     this._validateTestSummary('afterEach', testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
 
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
     await this._artifactsManager.onTestDone(testSummary);
 
-    if (this._isTearingDown) return;
+    if (this._isCleaningUp) return;
     await this._dumpUnhandledErrorsIfAny({
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
@@ -213,11 +213,11 @@ class DetoxWorker {
 
     for (const appName of appNames) {
       await this.device.selectApp(appName);
-      if (this._isTearingDown) return;
+      if (this._isCleaningUp) return;
       await this.device.uninstallApp();
-      if (this._isTearingDown) return;
+      if (this._isCleaningUp) return;
       await this.device.installApp();
-      if (this._isTearingDown) return;
+      if (this._isCleaningUp) return;
     }
 
     if (appNames.length !== 1) {

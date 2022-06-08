@@ -4,7 +4,7 @@ const os = require('os');
 const _ = require('lodash');
 const unparse = require('yargs-unparser');
 
-const detox = require('../../src');
+const detox = require('../../src/realms/primary');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 const { quote } = require('../../src/utils/shellQuote');
 
@@ -14,20 +14,29 @@ class TestRunnerCommand {
     this._env = {};
     this._envHint = {};
     this._retries = 0;
+    /** @type {Detox.DetoxDeviceConfig} */
     this._deviceConfig = null;
   }
 
+  /**
+   * @param {Detox.DetoxDeviceConfig} config
+   * @returns {this}
+   */
   setDeviceConfig(config) {
     this._deviceConfig = config;
 
     return this;
   }
 
-  setRunnerConfig({ args, retries, inspectBrk }) {
-    this._argv = args;
-    this._retries = retries;
+  /**
+   * @param {Detox.DetoxTestRunnerConfig} config
+   * @returns {this}
+   */
+  setRunnerConfig(config) {
+    this._argv = config.args;
+    this._retries = config.retries;
 
-    if (inspectBrk) {
+    if (config.inspectBrk) {
       this._enableDebugMode();
     }
 
@@ -46,6 +55,10 @@ class TestRunnerCommand {
     this._argv.runInBand = true;
   }
 
+  /**
+   * @param {Partial<Readonly<Detox.DetoxCLIConfig>>} cliConfig
+   * @returns {this}
+   */
   replicateCLIConfig(cliConfig) {
     this._envHint = _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,

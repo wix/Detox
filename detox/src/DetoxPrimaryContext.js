@@ -27,9 +27,9 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
 
   /**
    * @override
-   * @param {Detox.DetoxInitOptions} [opts]
+   * @param {Partial<Detox.DetoxInitOptions>} [opts]
    */
-  async _doSetup(opts) {
+  async _doInit(opts) {
     const configuration = require('./configuration');
     const config = this._config = await configuration.composeDetoxConfig({
       argv: opts.argv,
@@ -59,7 +59,7 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
     });
 
     process.env.DETOX_IPC_SERVER_ID = this._ipc.id;
-    await this._ipc.setup();
+    await this._ipc.init();
 
     const { cliConfig, deviceConfig, sessionConfig } = config;
 
@@ -89,7 +89,7 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
     }
   }
 
-  async _doTeardown() {
+  async _doCleanup() {
     if (this._globalLifecycleHandler) {
       await this._globalLifecycleHandler.globalCleanup();
       this._globalLifecycleHandler = null;
@@ -100,7 +100,7 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
       this._wss = null;
     }
 
-    await super._doTeardown();
+    await super._doCleanup();
 
     await this._logger.dispose();
     // TODO: move the artifacts

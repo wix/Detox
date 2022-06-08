@@ -5,8 +5,8 @@ const IPCLogger = require('./logger/IPCLogger');
 
 class DetoxSecondaryContext {
   constructor() {
-    this.setup = this.setup.bind(this);
-    this.teardown = this.teardown.bind(this);
+    this.init = this.init.bind(this);
+    this.cleanup = this.cleanup.bind(this);
 
     /**
      * @protected
@@ -29,7 +29,7 @@ class DetoxSecondaryContext {
       },
 
       get client() {
-        return this._ipc;
+        return context._ipc;
       },
     });
     /**
@@ -46,23 +46,23 @@ class DetoxSecondaryContext {
     this.config = funpermaproxy(() => this._config);
     this.log = funpermaproxy(() => this._logger);
     this.device = funpermaproxy(() => this.worker.device);
-    this.element = funpermaproxy(() => this.worker.element);
-    this.waitFor = funpermaproxy(() => this.worker.waitFor);
-    this.expect = funpermaproxy(() => this.worker.expect);
+    this.element = funpermaproxy.callable(() => this.worker.element);
+    this.waitFor = funpermaproxy.callable(() => this.worker.waitFor);
+    this.expect = funpermaproxy.callable(() => this.worker.expect);
     this.by = funpermaproxy(() => this.worker.by);
-    this.web = funpermaproxy(() => this.worker.web);
+    this.web = funpermaproxy.callable(() => this.worker.web);
   }
 
   /**
    * @param {Partial<Detox.DetoxInitOptions>} [opts]
    * @returns {Promise<import('./DetoxWorker') | null>}
    */
-  async setup(opts) {
+  async init(opts) {
     try {
-      await this._doSetup(opts || {});
+      await this._doInit(opts || {});
       return this._worker;
     } catch (e) {
-      await this.teardown();
+      await this.cleanup();
       throw e;
     }
   }
@@ -72,14 +72,14 @@ class DetoxSecondaryContext {
    * @param {Partial<Detox.DetoxInitOptions>} [opts]
    * @returns {Promise<void>}
    */
-  async _doSetup(opts) {
+  async _doInit(opts) {
     const IPCClient = require('./ipc/IPCClient');
     this._ipc = new IPCClient({
       serverId: process.env.DETOX_IPC_SERVER_ID,
       workerId: opts.workerId,
     });
 
-    await this._ipc.setup();
+    await this._ipc.init();
 
     this._config = await this._ipc.getDetoxConfig();
 
@@ -100,25 +100,25 @@ class DetoxSecondaryContext {
       const DetoxWorker = require('./DetoxWorker');
       DetoxWorker.global = opts.global || global;
       this._worker = new DetoxWorker(this);
-      await this._worker.setup();
+      await this._worker.init();
     }
   }
 
-  async teardown() {
+  async cleanup() {
     if (this._worker) {
-      await this._worker.teardown();
+      await this._worker.cleanup();
       this._worker = null;
     }
 
-    await this._doTeardown();
+    await this._doCleanup();
   }
 
   /**
    * @protected
    */
-  async _doTeardown() {
+  async _doCleanup() {
     if (this._ipc) {
-      await this._ipc.teardown();
+      await this._ipc.dispose();
       this._ipc = null;
     }
   }

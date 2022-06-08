@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { serializeError } = require('serialize-error');
 
 class IPCLogger {
   constructor(config, context) {
@@ -56,6 +57,10 @@ class IPCLogger {
       ...this._context,
       ...msgContext,
     };
+
+    if (_.isError(meta.err)) {
+      meta.err = serializeError(meta.err);
+    }
 
     if (!client) {
       queue.push({ level, meta, args });

@@ -62,7 +62,7 @@ class BunyanLogger {
   dispose() {
     const { queue } = this._config;
     while (queue.length) {
-      const { level, meta, args } = queue.shift();
+      const { level, args } = queue.shift();
       console[level](...args);
     }
   }
