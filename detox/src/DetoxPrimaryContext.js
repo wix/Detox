@@ -3,26 +3,17 @@ const util = require('util');
 
 const _ = require('lodash');
 
-const DetoxSecondaryContext = require('./DetoxSecondaryContext');
-const BunyanLogger = require('./logger/BunyanLogger');
+const DetoxContext = require('./DetoxContext');
 
-class DetoxPrimaryContext extends DetoxSecondaryContext {
+class DetoxPrimaryContext extends DetoxContext {
   constructor() {
     super();
 
-    // eslint-disable-next-line unicorn/no-this-assignment
-    const context = this;
-
-    this._logger = new BunyanLogger({
-      bunyanInstance: null,
-      queue: [],
-      get level() {
-        return context._config ? context._config.cliConfig.loglevel : 'info';
-      },
-    });
-
     this._wss = null;
     this._globalLifecycleHandler = null;
+    this._ipcServer = null;
+
+    // TODO: think about signal-exit and cleaning up the logs
   }
 
   /**
@@ -36,7 +27,9 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
       testRunnerArgv: opts.testRunnerArgv,
     });
 
-    this._logger.init();
+    const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = config;
+    await this._logger.setConfig(loggerConfig);
+
     this._logger.trace(
       { event: 'DETOX_CONFIG', config },
       'creating Detox server with config:\n%s',
@@ -52,16 +45,14 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
     );
 
     const IPCServer = require('./ipc/IPCServer');
-    this._ipc = new IPCServer({
+    this._ipcServer = new IPCServer({
       id: 'detox-' + process.pid,
       detoxConfig: this._config,
       logger: this._logger,
     });
 
-    process.env.DETOX_IPC_SERVER_ID = this._ipc.id;
-    await this._ipc.init();
-
-    const { cliConfig, deviceConfig, sessionConfig } = config;
+    process.env.DETOX_IPC_SERVER_ID = this._ipcServer.id;
+    await this._ipcServer.init();
 
     const environmentFactory = require('./environmentFactory');
     this._globalLifecycleHandler = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
@@ -70,7 +61,7 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
       await this._globalLifecycleHandler.globalInit();
     }
 
-    if (!cliConfig.keepLockFile) {
+    if (!behaviorConfig.init.keepLockFile) {
       await this._resetLockFile();
     }
 
@@ -90,20 +81,26 @@ class DetoxPrimaryContext extends DetoxSecondaryContext {
   }
 
   async _doCleanup() {
-    if (this._globalLifecycleHandler) {
-      await this._globalLifecycleHandler.globalCleanup();
-      this._globalLifecycleHandler = null;
+    try {
+      if (this._globalLifecycleHandler) {
+        await this._globalLifecycleHandler.globalCleanup();
+        this._globalLifecycleHandler = null;
+      }
+
+      if (this._wss) {
+        await this._wss.close();
+        this._wss = null;
+      }
+
+      if (this._ipcServer) {
+        await this._ipcServer.dispose();
+        this._ipcServer = null;
+      }
+
+      // TODO: move the artifacts
+    } finally {
+      await super._doCleanup();
     }
-
-    if (this._wss) {
-      await this._wss.close();
-      this._wss = null;
-    }
-
-    await super._doCleanup();
-
-    await this._logger.dispose();
-    // TODO: move the artifacts
   }
 
   get lastFailedTests() {

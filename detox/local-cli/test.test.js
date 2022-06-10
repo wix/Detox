@@ -17,20 +17,12 @@ jest.mock('node-ipc', () => ({
   },
 }));
 
-// TODO: fix this mess with Loggers
-jest.mock('../src/utils/logger');
-jest.mock('../src/logger/BunyanLogger', () => class {
-  constructor() {
-    const instance = require('../src/utils/logger');
-    instance.init = jest.fn();
-    instance.dispose = jest.fn();
-    return instance;
-  }
-});
+jest.mock('../src/utils/DetoxLogger');
 jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('../src/utils/lastFailedTests');
 jest.mock('./utils/jestInternals');
+
 const fs = require('fs-extra');
 const _ = require('lodash');
 const yargs = require('yargs');
@@ -99,7 +91,7 @@ describe('CLI', () => {
       });
     });
 
-    logger = require('../src/utils/logger');
+    logger = () => require('../src/utils/DetoxLogger').instances[0];
     DeviceRegistry = require('../src/devices/DeviceRegistry');
     DeviceRegistry.forAndroid.mockImplementation(() => new DeviceRegistry());
     DeviceRegistry.forIOS.mockImplementation(() => new DeviceRegistry());
@@ -296,13 +288,13 @@ describe('CLI', () => {
     expect(cliCall().envHint).toEqual(expect.objectContaining({
       DETOX_DEVICE_BOOT_ARGS: '--verbose'
     }));
-    expect(logger.warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
+    expect(logger().warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
   });
 
   test('--device-launch-args should serve as a deprecated alias to --device-boot-args', async () => {
     await run(`--device-launch-args "--verbose"`);
     expect(cliCall().envHint.DETOX_DEVICE_BOOT_ARGS).toBe('--verbose');
-    expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
+    expect(logger().warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
   });
 
   test('--app-launch-args should be passed as an environment variable', async () => {
@@ -428,7 +420,7 @@ describe('CLI', () => {
     const pattern = new RegExp(`^node --inspect-brk.* --testNamePattern ${quote('\\[ios\\] tap')}.* e2e/sanity/\\*\\.test.js$`);
 
     expect(cliCall().command).toMatch(pattern);
-    expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
+    expect(logger().warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
   });
 
   // Helpers
@@ -498,8 +490,8 @@ describe('CLI', () => {
 
     const [$0, command, opts] = mockCall;
 
-    const envHint = _.chain(logger)
-      .thru(({ log }) => log.mock.calls)
+    const mockLog = logger().log;
+    const envHint = _.chain(mockLog.mock.calls)
       .map(([_level, _childMeta, meta]) => meta && meta.env)
       .filter(Boolean)
       .get(index)

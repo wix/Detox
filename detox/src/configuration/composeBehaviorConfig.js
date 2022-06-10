@@ -15,6 +15,7 @@ function composeBehaviorConfig({
     .defaultsDeep(
       {
         init: {
+          keepLockFile: cliConfig.keepLockFile ? true : undefined,
           reinstallApp: cliConfig.reuse ? false : undefined,
         },
         cleanup: {
@@ -26,6 +27,7 @@ function composeBehaviorConfig({
       {
         init: {
           exposeGlobals: true,
+          keepLockFile: false,
           reinstallApp: undefined,
         },
         launchApp: 'auto',

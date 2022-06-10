@@ -8,6 +8,8 @@
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
 
+import {BunyanDebugStreamOptions} from 'bunyan-debug-stream';
+
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
     const element: Detox.DetoxExportWrapper['element'];
@@ -46,6 +48,7 @@ declare global {
         type DetoxConfigurationCommon = {
             artifacts?: false | DetoxArtifactsConfig;
             behavior?: DetoxBehaviorConfig;
+            logger?: DetoxLoggerConfig;
             session?: DetoxSessionConfig;
             testRunner?: DetoxTestRunnerConfig;
         };
@@ -88,6 +91,12 @@ declare global {
             cleanup?: {
                 shutdownDevice?: boolean;
             };
+        }
+
+        interface DetoxLoggerConfig {
+            level?: DetoxLogLevel;
+            overrideConsole?: boolean;
+            options?: BunyanDebugStreamOptions;
         }
 
         interface DetoxSessionConfig {
@@ -337,13 +346,15 @@ declare global {
          * @internal
          */
         type DetoxRuntimeConfig = Readonly<{
+            configurationName: string;
+
             appsConfig: Record<string, Readonly<DetoxAppConfig>>;
             artifactsConfig: DetoxArtifactsConfig;
             behaviorConfig: DetoxBehaviorConfig;
             cliConfig: DetoxCLIConfig;
             deviceConfig: DetoxDeviceConfig;
+            loggerConfig: DetoxLoggerConfig;
             runnerConfig: DetoxTestRunnerConfig;
-            configurationName: string;
             sessionConfig: DetoxSessionConfig;
         }>;
 
@@ -377,13 +388,19 @@ declare global {
         }>;
 
         type Logger = {
-            child(context?: Record<string, unknown>): Logger;
-            debug(context?: unknown, ...args: any[]): void;
+            readonly level: DetoxLogLevel;
+
+            fatal(context?: unknown, ...args: any[]): void;
             error(context?: unknown, ...args: any[]): void;
-            info(context?: unknown, ...args: any[]): void;
-            trace(context?: unknown, ...args: any[]): void;
             warn(context?: unknown, ...args: any[]): void;
+            info(context?: unknown, ...args: any[]): void;
+            debug(context?: unknown, ...args: any[]): void;
+            trace(context?: unknown, ...args: any[]): void;
+
+            child(context?: Record<string, unknown>): Logger;
         };
+
+        type DetoxLogLevel = 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
         type Point2D = {
             x: number,

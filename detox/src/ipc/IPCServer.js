@@ -44,6 +44,7 @@ class IPCServer {
     const detoxConfig = this._state.detoxConfig;
     // TODO: change only for 1 worker (!))
     this._ipc.server.broadcast('detoxConfig', detoxConfig);
+    // TODO: think how to serialize/deserialize tricky loggerConfig
     this._ipc.server.broadcast('workersCount', { value: workersCount });
   }
 

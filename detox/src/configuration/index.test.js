@@ -131,6 +131,11 @@ describe('composeDetoxConfig', () => {
             type: 'iPhone XS',
           },
         }),
+        loggerConfig: {
+          level: 'info',
+          overrideConsole: true,
+          options: expect.objectContaining({}),
+        },
         runnerConfig: {
           args: {
             $0: 'jest',

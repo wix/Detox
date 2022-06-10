@@ -32,6 +32,7 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.8",
     "@types/child-process-promise": "^2.2.1",
     "@types/jest": "^27.0.3",
     "@types/node": "^12.20.37",
@@ -55,7 +56,7 @@
   "dependencies": {
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
-    "bunyan-debug-stream": "^2.0.1",
+    "bunyan-debug-stream": "^3.0.2",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
     "find-up": "^4.1.0",

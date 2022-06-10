@@ -8,6 +8,7 @@ const composeAppsConfig = require('./composeAppsConfig');
 const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeBehaviorConfig = require('./composeBehaviorConfig');
 const composeDeviceConfig = require('./composeDeviceConfig');
+const composeLoggerConfig = require('./composeLoggerConfig');
 const composeRunnerConfig = require('./composeRunnerConfig');
 const composeSessionConfig = require('./composeSessionConfig');
 const loadExternalConfig = require('./loadExternalConfig');
@@ -89,6 +90,12 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
+  const loggerConfig = composeLoggerConfig({
+    globalConfig,
+    localConfig,
+    cliConfig,
+  });
+
   const sessionConfig = await composeSessionConfig({
     errorComposer,
     globalConfig,
@@ -104,6 +111,7 @@ async function composeDetoxConfig({
     configurationName,
     deviceConfig,
     errorComposer,
+    loggerConfig,
     runnerConfig,
     sessionConfig,
   };
