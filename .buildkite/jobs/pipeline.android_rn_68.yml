@@ -1,12 +1,13 @@
-  - label: ":android::mushroom:-RN_67_demo_project"
+  - label: ":android:-:six::eight:-RN_68_android"
     command:
       - "nvm install"
-      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.android.sh"
+      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.android.sh"
       - "./scripts/upload_artifact.sh"
     env:
-      REACT_NATIVE_VERSION: 0.67.2
+      REACT_NATIVE_VERSION: 0.68.2
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
+      SKIP_UNIT_TESTS: true
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"

@@ -1,10 +1,10 @@
-  - label: ":ios::mushroom:-RN_67_demo_project"
+  - label: ":ios:-:six::eight: RN_68_iOS"
     command:
       - "nvm install"
-      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.ios.sh"
+      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.ios.sh"
       - "./scripts/upload_artifact.sh"
     env:
-      REACT_NATIVE_VERSION: 0.67.2
+      REACT_NATIVE_VERSION: 0.68.2
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
