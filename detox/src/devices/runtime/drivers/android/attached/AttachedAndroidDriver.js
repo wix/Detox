@@ -1,7 +1,8 @@
 const AndroidDriver = require('../AndroidDriver');
 
 class AttachedAndroidDriver extends AndroidDriver {
-  getDeviceName() {
+  /** @override */
+  get deviceName() {
     return `AttachedDevice:${this.adbName}`;
   }
 }

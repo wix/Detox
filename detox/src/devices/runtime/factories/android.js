@@ -1,7 +1,7 @@
 const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
-  _createDriverDependencies(commonDeps) {
+  _createFundamentalDriverDeps(commonDeps) {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
@@ -25,18 +25,72 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
       instrumentation: new MonitoredInstrumentation(adb),
     };
   }
+
+  _createAppDriverDeps(fundamentalDeps, { sessionConfig }, alias) {
+    const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
+    const Client = require('../../../client/Client');
+    const { InvocationManager } = require('../../../invoke');
+    const MonitoredInstrumentation = require('../../common/drivers/android/tools/MonitoredInstrumentation');
+
+    const { adb } = fundamentalDeps;
+    const appSessionConfig = this._createAppSessionConfig(sessionConfig, alias);
+    const client = new Client(appSessionConfig); // TODO (multiapps): Share the same ws
+    const invocationManager = new InvocationManager(client);
+    const uiDevice = new UiDeviceProxy(invocationManager).getUIDevice();
+    const instrumentation = new MonitoredInstrumentation(adb);
+
+    return {
+      client,
+      invocationManager,
+      uiDevice,
+      instrumentation,
+    };
+  }
+
+  _createAppSessionConfig(sessionConfig, alias) {
+    const { sessionId } = sessionConfig;
+
+    if (alias) {
+      return {
+        ...sessionConfig,
+        sessionId: `${sessionId}:${alias}`,
+      };
+    }
+    return sessionConfig;
+  }
 }
 
 class AndroidEmulator extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, { deviceConfig }) {
+  /** @override */
+  _createTestAppDriver(deviceCookie, commonDeps, { deviceConfig, sessionConfig }, alias) {
+    const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
+    const appDeps = this._createAppDriverDeps(fundamentalDeps, { sessionConfig }, alias);
+
+    const deps = {
+      ...fundamentalDeps,
+      ...appDeps,
+    };
+
     const props = {
       adbName: deviceCookie.adbName,
-      avdName: deviceConfig.device.avdName,
       forceAdbInstall: deviceConfig.forceAdbInstall,
     };
 
-    const { AndroidEmulatorRuntimeDriver } = require('../drivers');
-    return new AndroidEmulatorRuntimeDriver(deps, props);
+    const { EmulatorAppDriver } = require('../drivers/android/emulator/EmulatorDriver');
+    return new EmulatorAppDriver(deps, props);
+  }
+
+  /** @override */
+  _createDeviceDriver(deviceCookie, commonDeps, { deviceConfig }) {
+    const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
+
+    const props = {
+      adbName: deviceCookie.adbName,
+      avdName: deviceConfig.device.avdName,
+    };
+
+    const { EmulatorDeviceDriver } = require('../drivers/android/emulator/EmulatorDriver');
+    return new EmulatorDeviceDriver(fundamentalDeps, props);
   }
 }
 

@@ -1,33 +1,43 @@
 // @ts-nocheck
-const AndroidDriver = require('../AndroidDriver');
+const { AndroidDeviceDriver, AndroidAppDriver } = require('../AndroidDrivers');
 
 /**
- * @typedef { AndroidDriverDeps } EmulatorDriverDeps
+ * @typedef { AndroidDeviceDriverDeps } EmulatorDeviceDriverDeps
  */
 
-/**
- * @typedef { AndroidDriverProps } EmulatorDriverProps
- * @property avdName { String }
- * @property forceAdbInstall { Boolean }
- */
-
-// TODO Unit test coverage
-class EmulatorDriver extends AndroidDriver {
+class EmulatorDeviceDriver extends AndroidDeviceDriver {
   /**
-   * @param deps { EmulatorDriverDeps }
-   * @param props { EmulatorDriverProps }
+   * @param deps { EmulatorDeviceDriverDeps }
+   * @param props {{ adbName: String, avdName: String }}
    */
-  constructor(deps, { adbName, avdName, forceAdbInstall }) {
+  constructor(deps, { adbName, avdName }) {
     super(deps, { adbName });
 
     this._deviceName = `${adbName} (${avdName})`;
-    this._forceAdbInstall = forceAdbInstall;
   }
 
-  getDeviceName() {
+  /** @override */
+  get deviceName() {
     return this._deviceName;
   }
 
+  async setLocation(lat, lon) {
+    await this.adb.setLocation(this.adbName, lat, lon);
+  }
+}
+
+class EmulatorAppDriver extends AndroidAppDriver {
+  /**
+   * @param deps { AndroidAppDriverDeps }
+   * @param props {{ adbName: String, forceAdbInstall: Boolean }}
+   */
+  constructor(deps, { adbName, forceAdbInstall }) {
+    super(deps, { adbName });
+
+    this._forceAdbInstall = forceAdbInstall;
+  }
+
+  /** @override */
   async _installAppBinaries(appBinaryPath, testBinaryPath) {
     if (this._forceAdbInstall) {
       await super._installAppBinaries(appBinaryPath, testBinaryPath);
@@ -36,13 +46,13 @@ class EmulatorDriver extends AndroidDriver {
     }
   }
 
-  async setLocation(lat, lon) {
-    await this.adb.setLocation(this.adbName, lat, lon);
-  }
-
   async __installAppBinaries(appBinaryPath, testBinaryPath) {
     await this.appInstallHelper.install(this.adbName, appBinaryPath, testBinaryPath);
   }
 }
 
-module.exports = EmulatorDriver;
+
+module.exports = {
+  EmulatorDeviceDriver,
+  EmulatorAppDriver,
+};

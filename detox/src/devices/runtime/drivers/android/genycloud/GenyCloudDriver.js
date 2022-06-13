@@ -3,7 +3,7 @@ const DetoxGenymotionManager = require('../../../../../android/espressoapi/Detox
 const AndroidDriver = require('../AndroidDriver');
 
 /**
- * @typedef { AndroidDriverDeps } GenycloudDriverDeps
+ * @typedef { AndroidDeviceDriverDeps } GenycloudDriverDeps
  */
 
 /**
@@ -21,7 +21,8 @@ class GenyCloudDriver extends AndroidDriver {
     this.instance = instance;
   }
 
-  getDeviceName() {
+  /** @override */
+  get deviceName() {
     return this.instance.toString();
   }
 

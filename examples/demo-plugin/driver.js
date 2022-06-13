@@ -132,11 +132,11 @@ class PluginRuntimeDriver extends DeviceDriverBase {
     this.app = new PluginApp(deps);
   }
 
-  getExternalId() {
+  get externalId() {
     return this.cookie.id;
   }
 
-  getDeviceName() {
+  get deviceName() {
     return 'Plugin'; // TODO
   }
 
