@@ -71,6 +71,10 @@ class DeviceAPI {
     return this.platform;
   }
 
+  get appLaunchArgs() {
+    return this.device.selectedApp.launchArgs;
+  }
+
   async selectApp(aliasOrConfig) {
     if (aliasOrConfig === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();
@@ -110,11 +114,11 @@ class DeviceAPI {
   }
 
   async sendToHome() {
-    return this.device.sendToHome();
+    return this.device.selectedApp.sendToHome();
   }
 
   async pressBack() {
-    return this.device.pressBack();
+    return this.device.selectedApp.pressBack();
   }
 
   async setBiometricEnrollment(toggle) {

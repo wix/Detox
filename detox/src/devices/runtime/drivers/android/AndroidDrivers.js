@@ -54,11 +54,6 @@ class AndroidDeviceDriver extends DeviceDriver {
   }
 
   /** @override */
-  async typeText(text) {
-    await this.adb.typeText(this.adbName, text);
-  }
-
-  /** @override */
   async takeScreenshot(screenshotName) {
     const { adbName } = this;
 
@@ -76,6 +71,21 @@ class AndroidDeviceDriver extends DeviceDriver {
     });
 
     return tempPath;
+  }
+
+  /** @override */
+  async reverseTcpPort(port) {
+    await this.adb.reverse(this.adbName, port);
+  }
+
+  /** @override */
+  async unreverseTcpPort(port) {
+    await this.adb.reverseRemove(this.adbName, port);
+  }
+
+  /** @override */
+  async typeText(text) {
+    await this.adb.typeText(this.adbName, text);
   }
 }
 
@@ -147,6 +157,7 @@ class AndroidAppDriver extends TestAppDriver {
       manually: true,
       launchArgs: launchInfo.launchArgs,
     });
+    await this._notifyAppReady(this.adbName, this._packageId);
   }
 
   /** @override */

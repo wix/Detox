@@ -24,16 +24,6 @@ class IosAppDriver extends TestAppDriver {
   }
 
   /** @override */
-  async sendUserActivity(payload) {
-    await this._sendPayload('detoxUserActivityDataURL', payload);
-  }
-
-  /** @override */
-  async sendUserNotification(payload) {
-    await this._sendPayload('detoxUserNotificationDataURL', payload);
-  }
-
-  /** @override */
   async terminate() {
     // TODO effectively terminate
     await super.terminate();
@@ -52,15 +42,6 @@ class IosAppDriver extends TestAppDriver {
   async shake() {
     await this.client.shake();
     await this._waitForActive();
-  }
-
-  async _sendPayload(name, payload) {
-    const payloadFile = this._createPayloadFile(payload);
-
-    await this.deliverPayload({
-      [name]: payloadFile.path,
-    });
-    payloadFile.cleanup();
   }
 
   async _waitForActive() {

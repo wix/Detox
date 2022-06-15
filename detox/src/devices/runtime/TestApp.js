@@ -30,15 +30,15 @@ class RunnableTestApp extends TestApp {
     this.behaviorConfig = behaviorConfig;
 
     this._launchArgs = new LaunchArgsEditor();
+    this._launchArgs.modify(appConfig.launchArgs);
+  }
+
+  get launchArgs() {
+    return this._launchArgs;
   }
 
   async init() {
-    const onDisconnectListener = async () => {
-      if (this._driver.isRunning()) {
-        await this.terminate();
-      }
-    };
-    this._driver.setOnDisconnectListener(onDisconnectListener());
+    this._driver.setOnDisconnectListener(this._onDisconnect.bind(this));
 
     await this._driver.init();
   }
@@ -114,12 +114,20 @@ class RunnableTestApp extends TestApp {
     await this._driver.shake();
   }
 
+  async sendToHome() {
+    await this._driver.sendToHome();
+  }
+
+  async pressBack() {
+    await this._driver.pressBack();
+  }
+
   async setOrientation(orientation) {
     await this._driver.setOrientation(orientation);
   }
 
   async terminate() {
-    await traceCall('appTerminate', this._driver.terminate());
+    await traceCall('appTerminate', () => this._driver.terminate());
   }
 
   async cleanup() {
@@ -128,7 +136,7 @@ class RunnableTestApp extends TestApp {
 
   // TODO (multiapps) Effectively, this only provides an abstraction over the means by which invocation is implemented.
   //  If we are to push further in order to get a real inter-layer separation and abstract away the whole means by
-  //  which that various expectations are performed, we must in fact extend the entity model slightly further and create
+  //  which the various expectations are performed altogether, we must in fact extend the entity model slightly further and create
   //  a TestApp equivalent for matching, with an equivalent driver. Something like:
   //    TestAppExpect -> A class that would hold a copy of invocationManager, with methods such as tap() and expectVisible()
   //    TestAppExpectDriver -> A delegate that would generate the proper invocation for tap(), expectVisible(), etc., depending on
@@ -141,8 +149,8 @@ class RunnableTestApp extends TestApp {
   //  under a TestApp equivalent which is strictly associated with artifacts. It should be accompanied by a driver. For example:
   //    TestAppArtifacts -> The equivalent class
   //    TestAppArtifactsDriver -> The driver delegate
-  //  In this case, most likely, an additional change is required: recordingPath and samplingInterval should stem
-  //  from the driver, rather than from the top-most layer (i.e. our caller).
+  //  In this case, most likely, an additional change is required: recordingPath should stem from the driver, rather than from
+  //  the top-most layer (i.e. our caller).
 
   setInvokeFailuresListener(listener) {
     this._driver.setInvokeFailuresListener(listener);
@@ -154,6 +162,12 @@ class RunnableTestApp extends TestApp {
 
   async stopInstrumentsRecording() {
     return this._driver.stopInstrumentsRecording();
+  }
+
+  async _onDisconnect() {
+    if (this._driver.isRunning()) {
+      await this.terminate();
+    }
   }
 
   async _launch(launchParams) {
@@ -257,7 +271,7 @@ class PredefinedTestApp extends RunnableTestApp {
 
 class UnspecifiedTestApp extends RunnableTestApp {
   constructor(driver, { behaviorConfig }) {
-    super(driver, { behaviorConfig, appConfig: null });
+    super(driver, { behaviorConfig, appConfig: {}  });
   }
 
   async select(appConfig) {

@@ -32,7 +32,7 @@ class EmulatorVersionResolver {
     }
 
     const version = this._parseVersionString(matches[1]);
-    log.debug({ event: EMU_BIN_VERSION_DETECT_EV, success: true }, 'Detected emulator binary version', version);
+    log.debug({ event: EMU_BIN_VERSION_DETECT_EV, success: true }, 'Detected emulator binary version', JSON.stringify(version));
     return version;
   }
 

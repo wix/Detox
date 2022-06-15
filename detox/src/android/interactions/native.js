@@ -40,8 +40,8 @@ class MatcherAssertionInteraction extends Interaction {
 }
 
 class WaitForInteraction extends Interaction {
-  constructor(invocationManager, element, assertionMatcher) {
-    super(invocationManager);
+  constructor(device, element, assertionMatcher) {
+    super(device);
     this._element = element;
     this._assertionMatcher = assertionMatcher;
     this._element._selectElementWithMatcher(this._element._originalMatcher);
@@ -56,17 +56,18 @@ class WaitForInteraction extends Interaction {
   }
 
   whileElement(searchMatcher) {
-    return new WaitForActionInteraction(this._invocationManager, this._element, this._assertionMatcher, searchMatcher);
+    return new WaitForActionInteraction(this._device, this._element, this._assertionMatcher, searchMatcher);
   }
 }
 
 class WaitForActionInteractionBase extends Interaction {
-  constructor(invocationManager, element, matcher, searchMatcher) {
-    super(invocationManager);
+  constructor(device, element, matcher, searchMatcher) {
+    super(device);
     //if (!(element instanceof NativeElement)) throw new DetoxRuntimeError(`WaitForActionInteraction ctor 1st argument must be a valid NativeElement, got ${typeof element}`);
     //if (!(matcher instanceof NativeMatcher)) throw new DetoxRuntimeError(`WaitForActionInteraction ctor 2nd argument must be a valid NativeMatcher, got ${typeof matcher}`);
     if (!(searchMatcher instanceof NativeMatcher))
       throw new DetoxRuntimeError(`WaitForActionInteraction ctor 3rd argument must be a valid NativeMatcher, got ${typeof searchMatcher}`);
+
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;

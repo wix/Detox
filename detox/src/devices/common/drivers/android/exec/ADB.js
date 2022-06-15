@@ -127,12 +127,12 @@ class ADB {
     return this.shellSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
   }
 
-  async uninstall(deviceId, appId) {
-    await this.adbCmd(deviceId, `uninstall ${appId}`);
+  async uninstall(deviceId, packageId) {
+    await this.adbCmd(deviceId, `uninstall ${packageId}`);
   }
 
-  async terminate(deviceId, appId) {
-    await this.shell(deviceId, `am force-stop ${appId}`);
+  async terminate(deviceId, packageId) {
+    await this.shell(deviceId, `am force-stop ${packageId}`);
   }
 
   async setLocation(deviceId, lat, lon) {
@@ -295,7 +295,7 @@ class ADB {
 
   async getInstrumentationRunner(deviceId, packageId) {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
-    const instrumentationRunner = this._instrumentationRunnerForPacakgeId(instrumentationRunners, packageId);
+    const instrumentationRunner = this._instrumentationRunnerForPackageId(instrumentationRunners, packageId);
     if (instrumentationRunner === 'undefined') {
       throw new DetoxRuntimeError(`No instrumentation runner found on device ${deviceId} for package ${packageId}`);
     }
@@ -303,7 +303,7 @@ class ADB {
     return instrumentationRunner;
   }
 
-  _instrumentationRunnerForPacakgeId(instrumentationRunners, packageId) {
+  _instrumentationRunnerForPackageId(instrumentationRunners, packageId) {
     const runnerForPackageRegEx = new RegExp(`^instrumentation:(.*) \\(target=${packageId.replace(new RegExp('\\.', 'g'), '\\.')}\\)$`, 'gm');
     return _.get(runnerForPackageRegEx.exec(instrumentationRunners), [1], 'undefined');
   }

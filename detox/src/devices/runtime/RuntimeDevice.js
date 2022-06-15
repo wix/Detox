@@ -72,7 +72,7 @@ class RuntimeDevice {
     }
 
     this._selectedApp = app;
-    this._selectedApp.select();
+    await this._selectedApp.select();
   }
 
   async selectUnspecifiedApp(appConfig) {
@@ -129,14 +129,6 @@ class RuntimeDevice {
 
   async captureViewHierarchy(name) {
     return this._driver.captureViewHierarchy(name);
-  }
-
-  async sendToHome() {
-    await this._driver.sendToHome();
-  }
-
-  async pressBack() {
-    await this._driver.pressBack();
   }
 
   async setBiometricEnrollment(yesOrNo) {

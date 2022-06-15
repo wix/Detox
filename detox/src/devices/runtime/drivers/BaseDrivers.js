@@ -43,8 +43,8 @@ class DeviceDriver {
   async setStatusBar(_params) {}
   async resetStatusBar() {}
   async setLocation(_lat, _lon) {}
-  async reverseTcpPort() {}
-  async unreverseTcpPort() {}
+  async reverseTcpPort(_port) {}
+  async unreverseTcpPort(_port) {}
   async clearKeychain() {}
   async typeText(_text) {}
   async cleanup() {}
@@ -123,9 +123,17 @@ class TestAppDriver {
 
   async reloadReactNative() {}
   async resetContentAndSettings() {}
+
   async deliverPayload(_params) {} // TODO (multiapps) Revisit whether keeping this method public makes sense at all
-  async sendUserActivity(_payload) {}
-  async sendUserNotification(_payload) {}
+
+  async sendUserActivity(payload) {
+    await this._sendPayload('detoxUserActivityDataURL', payload);
+  }
+
+  async sendUserNotification(payload) {
+    await this._sendPayload('detoxUserNotificationDataURL', payload);
+  }
+
   async terminate() {
     this._pid = null;
   }
@@ -182,6 +190,15 @@ class TestAppDriver {
     const payloadFile = tempFile.create('payload.json');
     fs.writeFileSync(payloadFile.path, JSON.stringify(payload, null, 2));
     return payloadFile;
+  }
+
+  async _sendPayload(name, payload) {
+    const payloadFile = this._createPayloadFile(payload);
+
+    await this.deliverPayload({
+      [name]: payloadFile.path,
+    });
+    payloadFile.cleanup();
   }
 
   async _notifyAppReady(deviceId, bundleId) {
