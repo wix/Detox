@@ -193,6 +193,7 @@ class RunnableTestApp extends TestApp {
     } else {
       await this._driver.launch(launchInfo);
     }
+
   }
 
   _assertHasSingleParam(singleParams, params) {

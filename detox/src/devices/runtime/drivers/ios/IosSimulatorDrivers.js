@@ -134,6 +134,7 @@ class IosSimulatorAppDriver extends IosAppDriver {
 
     await this._waitUntilReady();
     await this._waitForActive();
+    await this._notifyAppReady(udid, bundleId);
     return pid;
   }
 

@@ -183,6 +183,14 @@ class TestAppDriver {
     fs.writeFileSync(payloadFile.path, JSON.stringify(payload, null, 2));
     return payloadFile;
   }
+
+  async _notifyAppReady(deviceId, bundleId) {
+    await this.emitter.emit('appReady', {
+      deviceId,
+      bundleId,
+      pid: this._pid,
+    });
+  }
 }
 
 

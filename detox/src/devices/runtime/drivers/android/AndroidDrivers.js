@@ -138,6 +138,7 @@ class AndroidAppDriver extends TestAppDriver {
       launchArgs: launchInfo.launchArgs,
     });
     await this._waitUntilReady();
+    await this._notifyAppReady(this.adbName, this._packageId);
   }
 
   /** @override */
