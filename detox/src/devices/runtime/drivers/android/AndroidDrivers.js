@@ -257,6 +257,7 @@ class AndroidAppDriver extends TestAppDriver {
 
     await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId: _packageId, launchArgs });
 
+    launchArgs = await this._applyAppSessionArgs(launchArgs);
     launchArgs = await this._modifyArgsForNotificationHandling(launchArgs);
 
     if (manually) {
@@ -316,6 +317,14 @@ class AndroidAppDriver extends TestAppDriver {
 
   _resumeMainActivity() {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
+  }
+
+  _applyAppSessionArgs(launchArgs) {
+    return {
+      detoxServer: this.client.serverUrl,
+      detoxSessionId: this.client.sessionId,
+      ...launchArgs,
+    };
   }
 
   async _modifyArgsForNotificationHandling(launchArgs) {

@@ -22,13 +22,20 @@ class RuntimeDevice {
   }
 
   async init() {
+    await this._initApps();
+
     const appAliases = Object.keys(this._predefinedApps);
     if (appAliases.length === 1) {
       const appAlias = appAliases[0];
-      this._selectedApp = this._predefinedApps[appAlias];
+      await this.selectPredefinedApp(appAlias);
     }
+  }
 
-    await this._initApps();
+  async cleanup() {
+    await traceCall('deviceCleanup', async () => {
+      await this._driver.cleanup();
+      await forEachSeries(this._allRunnableApps(), (app) => app.cleanup(), this);
+    });
   }
 
   /**
@@ -39,15 +46,15 @@ class RuntimeDevice {
   }
 
   get id() {
-    return this._driver.getExternalId();
+    return this._driver.externalId;
   }
 
   get name() {
-    return this._driver.getDeviceName();
+    return this._driver.deviceName;
   }
 
   get platform() {
-    return this._driver.platform();
+    return this._driver.platform;
   }
 
   get type() {
@@ -84,10 +91,18 @@ class RuntimeDevice {
   }
 
   async reinstallApps(appAliases) {
+    const selectedApp = this._selectedApp;
+
     for (const appAlias of appAliases) {
       const app = this._predefinedApps[appAlias];
+      await app.select();
       await app.uninstall();
       await app.install();
+      await app.deselect();
+    }
+
+    if (selectedApp) {
+      await selectedApp.select();
     }
   }
 

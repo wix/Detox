@@ -38,7 +38,7 @@ class RuntimeDeviceFactory {
   _createUtilAppsList(deviceCookie, commonDeps, configs) {
     const { deviceConfig } = configs;
 
-    return deviceConfig.utilBinaryPaths.map((binaryPath) => {
+    return (deviceConfig.utilBinaryPaths || []).map((binaryPath) => {
       const driver = this._createTestAppDriver(deviceCookie, commonDeps, configs, null);
       const appConfig = { binaryPath };
       return new UtilApp(driver, { appConfig });

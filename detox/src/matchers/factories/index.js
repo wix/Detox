@@ -5,9 +5,9 @@ class MatchersFactory {
 }
 
 class Android extends MatchersFactory {
-  createMatchers({ invocationManager, runtimeDevice, eventEmitter }) {
+  createMatchers({ runtimeDevice, eventEmitter }) {
     const AndroidExpect = require('../../android/AndroidExpect');
-    return new AndroidExpect({ invocationManager, device: runtimeDevice, emitter: eventEmitter });
+    return new AndroidExpect({ device: runtimeDevice, emitter: eventEmitter });
   }
 }
 

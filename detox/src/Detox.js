@@ -6,17 +6,16 @@ const _ = require('lodash');
 
 const lifecycleSymbols = require('../runners/integration').lifecycle;
 
-const Client = require('./client/Client');
+const DeviceAPI = require('./DeviceAPI');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
-const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const Deferred = require('./utils/Deferred');
 const MissingDetox = require('./utils/MissingDetox');
 const logger = require('./utils/logger');
-const log = logger.child({ __filename });
 
+const log = logger.child({ __filename });
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
 
@@ -96,16 +95,14 @@ class Detox {
       this._artifactsManager = null;
     }
 
-    if (this._client) {
-      this._client.dumpPendingRequests();
-      await this._client.cleanup();
-      this._client = null;
+    if (this.runtimeDevice) {
+      const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
+      await this.runtimeDevice.cleanup();
+      await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
 
-    if (this.device) {
-      const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
-      await this.device._cleanup();
-      await this._deviceAllocator.free(this._deviceCookie, { shutdown });
+    if (this._eventEmitter) {
+      this._eventEmitter.off();
     }
 
     if (this._server) {
@@ -115,6 +112,7 @@ class Detox {
 
     this._deviceAllocator = null;
     this._deviceCookie = null;
+    this._runtimeDevice = null;
     this.device = null;
   }
 
@@ -161,17 +159,6 @@ class Detox {
       }
     }
 
-    this._client = new Client(sessionConfig);
-    this._client.terminateApp = async () => {
-      if (this.device && this.device._isAppRunning()) {
-        await this.device.terminateApp();
-      }
-    };
-
-    await this._client.connect();
-
-    const invocationManager = new InvocationManager(this._client);
-
     const {
       envValidatorFactory,
       deviceAllocatorFactory,
@@ -184,18 +171,21 @@ class Detox {
     await envValidator.validate();
 
     const commonDeps = {
-      invocationManager,
-      client: this._client,
       eventEmitter: this._eventEmitter,
-      runtimeErrorComposer: this._runtimeErrorComposer,
+      errorComposer: this._runtimeErrorComposer,
     };
 
-    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
+    const runtimeDeviceArtifacts = {
+      setInvokeFailuresListener: () => runtimeDevice.setInvokeFailuresListener(...arguments),
+      startInstrumentsRecording: () => runtimeDevice.startInstrumentsRecording(...arguments),
+      stopInstrumentsRecording: () => runtimeDevice.stopInstrumentsRecording(...arguments),
+    };
+    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, { ...commonDeps, device: runtimeDeviceArtifacts });
 
     this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
     this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
 
-    this.device = runtimeDeviceFactory.createRuntimeDevice(
+    const runtimeDevice = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
       commonDeps,
       {
@@ -204,11 +194,13 @@ class Detox {
         deviceConfig: this._deviceConfig,
         sessionConfig,
       });
-    await this.device._prepare();
+    await runtimeDevice.init();
+
+    this.runtimeDevice = runtimeDevice;
+    this.device = new DeviceAPI(runtimeDevice, this._runtimeErrorComposer);
 
     const matchers = matchersFactory.createMatchers({
-      invocationManager,
-      runtimeDevice: this.device,
+      runtimeDevice,
       eventEmitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
@@ -220,9 +212,9 @@ class Detox {
       });
     }
 
-    await this.device.installUtilBinaries();
+    await runtimeDevice.installUtilBinaries();
     if (behaviorConfig.reinstallApp) {
-      await this._reinstallAppsOnDevice();
+      await this._reinstallAppsOnDevice(runtimeDevice);
     }
 
     return this;
@@ -241,22 +233,14 @@ class Detox {
     return handle.promise;
   }
 
-  async _reinstallAppsOnDevice() {
-    const appNames = _(this._appsConfig)
+  async _reinstallAppsOnDevice(runtimeDevice) {
+    const appAliases = _(this._appsConfig)
       .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
       .uniqBy(1)
       .map(0)
       .value();
 
-    for (const appName of appNames) {
-      await this.device.selectApp(appName);
-      await this.device.uninstallApp();
-      await this.device.installApp();
-    }
-
-    if (appNames.length !== 1) {
-      await this.device.selectApp(null);
-    }
+    await runtimeDevice.reinstallApps(appAliases);
   }
 
   _logTestRunCheckpoint(event, { status, fullName }) {

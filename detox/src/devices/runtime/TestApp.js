@@ -32,6 +32,17 @@ class RunnableTestApp extends TestApp {
     this._launchArgs = new LaunchArgsEditor();
   }
 
+  async init() {
+    const onDisconnectListener = async () => {
+      if (this._driver.isRunning()) {
+        await this.terminate();
+      }
+    };
+    this._driver.setOnDisconnectListener(onDisconnectListener());
+
+    await this._driver.init();
+  }
+
   get alias() {
     return null;
   }
@@ -109,6 +120,10 @@ class RunnableTestApp extends TestApp {
 
   async terminate() {
     await traceCall('appTerminate', this._driver.terminate());
+  }
+
+  async cleanup() {
+    await traceCall('appCleanup', () => this._driver.cleanup());
   }
 
   // TODO (multiapps) Effectively, this only provides an abstraction over the means by which invocation is implemented.

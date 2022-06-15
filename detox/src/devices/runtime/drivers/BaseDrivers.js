@@ -47,10 +47,7 @@ class DeviceDriver {
   async unreverseTcpPort() {}
   async clearKeychain() {}
   async typeText(_text) {}
-
-  async cleanup() {
-    this.emitter.off(); // TODO not the right place for this
-  }
+  async cleanup() {}
 }
 
 /**
@@ -84,6 +81,10 @@ class TestAppDriver {
     this._appInfo = null;
   }
 
+  async init() {
+    await this.client.connect();
+  }
+
   get uiDevice() {
     return null;
   }
@@ -93,6 +94,10 @@ class TestAppDriver {
    */
   isRunning() {
     return !!this._pid;
+  }
+
+  setOnDisconnectListener(listener) {
+    this.client.terminateApp = listener;
   }
 
   /**
@@ -157,10 +162,15 @@ class TestAppDriver {
   async matchFinger() {}
   async unmatchFinger() {}
   async shake() {}
+  async setURLBlacklist(_urlList) {}
   async enableSynchronization() {}
   async disableSynchronization() {}
   async captureViewHierarchy() {}
-  async cleanup() {}
+  async cleanup() {
+    this.client.dumpPendingRequests();
+    await this.client.cleanup();
+    this.client = null;
+  }
 
   /** @protected */
   async _waitUntilReady() {
