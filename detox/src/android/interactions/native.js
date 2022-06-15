@@ -9,28 +9,31 @@ function call(maybeAFunction) {
 }
 
 class Interaction {
-  constructor(invocationManager) {
+  /**
+   * @param device { RuntimeDevice }
+   */
+  constructor(device) {
     this._call = undefined;
-    this._invocationManager = invocationManager;
+    this._device = device;
   }
 
   async execute() {
-    const resultObj = await this._invocationManager.execute(this._call);
+    const resultObj = await this._device.selectedApp.invoke(this._call);
     return resultObj ? resultObj.result : undefined;
   }
 }
 
 class ActionInteraction extends Interaction {
-  constructor(invocationManager, element, action) {
-    super(invocationManager);
+  constructor(device, element, action) {
+    super(device);
     this._call = EspressoDetoxApi.perform(call(element._call), action._call);
     // TODO: move this.execute() here from the caller
   }
 }
 
 class MatcherAssertionInteraction extends Interaction {
-  constructor(invocationManager, element, matcher) {
-    super(invocationManager);
+  constructor(device, element, matcher) {
+    super(device);
     this._call = DetoxAssertionApi.assertMatcher(call(element._call), matcher._call.value);
     // TODO: move this.execute() here from the caller
   }

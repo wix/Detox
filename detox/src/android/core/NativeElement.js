@@ -10,8 +10,8 @@ const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 const { ActionInteraction } = require('../interactions/native');
 
 class NativeElement {
-  constructor(invocationManager, emitter, matcher) {
-    this._invocationManager = invocationManager;
+  constructor(device, emitter, matcher) {
+    this._device = device;
     this._emitter = emitter;
     this._originalMatcher = matcher;
     this._selectElementWithMatcher(this._originalMatcher);
@@ -23,7 +23,11 @@ class NativeElement {
   }
 
   atIndex(index) {
-    if (typeof index !== 'number') throw new DetoxRuntimeError(`Element atIndex argument must be a number, got ${typeof index}`);
+    const message = `Element atIndex argument must be a number, got ${typeof index}`;
+    if (typeof index !== 'number') {
+      throw new DetoxRuntimeError({ message });
+    }
+
     const matcher = this._originalMatcher;
     this._originalMatcher._call = invoke.callDirectly(DetoxMatcherApi.matcherForAtIndex(index, matcher._call.value));
 
@@ -32,56 +36,56 @@ class NativeElement {
   }
 
   async tap(value) {
-    return await new ActionInteraction(this._invocationManager, this, new actions.TapAction(value)).execute();
+    return await new ActionInteraction(this._device, this, new actions.TapAction(value)).execute();
   }
 
   async tapAtPoint(value) {
-    return await new ActionInteraction(this._invocationManager, this, new actions.TapAtPointAction(value)).execute();
+    return await new ActionInteraction(this._device, this, new actions.TapAtPointAction(value)).execute();
   }
 
   async longPress() {
-    return await new ActionInteraction(this._invocationManager, this, new actions.LongPressAction()).execute();
+    return await new ActionInteraction(this._device, this, new actions.LongPressAction()).execute();
   }
 
   async multiTap(times) {
-    return await new ActionInteraction(this._invocationManager, this, new actions.MultiClickAction(times)).execute();
+    return await new ActionInteraction(this._device, this, new actions.MultiClickAction(times)).execute();
   }
 
   async tapBackspaceKey() {
-    return await new ActionInteraction(this._invocationManager, this, new actions.PressKeyAction(67)).execute();
+    return await new ActionInteraction(this._device, this, new actions.PressKeyAction(67)).execute();
   }
 
   async tapReturnKey() {
-    return await new ActionInteraction(this._invocationManager, this, new actions.TypeTextAction('\n')).execute();
+    return await new ActionInteraction(this._device, this, new actions.TypeTextAction('\n')).execute();
   }
 
   async typeText(value) {
-    return await new ActionInteraction(this._invocationManager, this, new actions.TypeTextAction(value)).execute();
+    return await new ActionInteraction(this._device, this, new actions.TypeTextAction(value)).execute();
   }
 
   async replaceText(value) {
-    return await new ActionInteraction(this._invocationManager, this, new actions.ReplaceTextAction(value)).execute();
+    return await new ActionInteraction(this._device, this, new actions.ReplaceTextAction(value)).execute();
   }
 
   async clearText() {
-    return await new ActionInteraction(this._invocationManager, this, new actions.ClearTextAction()).execute();
+    return await new ActionInteraction(this._device, this, new actions.ClearTextAction()).execute();
   }
 
   async scroll(amount, direction = 'down', startPositionX, startPositionY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     // this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this._invocationManager, this, new actions.ScrollAmountAction(direction, amount, startPositionX, startPositionY)).execute();
+    return await new ActionInteraction(this._device, this, new actions.ScrollAmountAction(direction, amount, startPositionX, startPositionY)).execute();
   }
 
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this._invocationManager, this, new actions.ScrollEdgeAction(edge)).execute();
+    return await new ActionInteraction(this._device, this, new actions.ScrollEdgeAction(edge)).execute();
   }
 
   async scrollToIndex(index) {
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this._invocationManager, this, new actions.ScrollToIndex(index)).execute();
+    return await new ActionInteraction(this._device, this, new actions.ScrollToIndex(index)).execute();
   }
 
   /**
@@ -97,12 +101,12 @@ class NativeElement {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
     const action = new actions.SwipeAction(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY);
-    return await new ActionInteraction(this._invocationManager, this, action).execute();
+    return await new ActionInteraction(this._device, this, action).execute();
   }
 
   async takeScreenshot(screenshotName) {
     // TODO this should be moved to a lower-layer handler of this use-case
-    const resultBase64 = await new ActionInteraction(this._invocationManager, this, new actions.TakeElementScreenshot()).execute();
+    const resultBase64 = await new ActionInteraction(this._device, this, new actions.TakeElementScreenshot()).execute();
     const filePath = tempfile('detox.element-screenshot.png');
     await fs.writeFile(filePath, resultBase64, 'base64');
 
@@ -115,12 +119,12 @@ class NativeElement {
   }
 
   async getAttributes() {
-    const result = await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
+    const result = await new ActionInteraction(this._device, this, new actions.GetAttributes()).execute();
     return JSON.parse(result);
   }
 
   async adjustSliderToPosition(newPosition) {
-    return await new ActionInteraction(this._invocationManager, this, new actions.AdjustSliderToPosition(newPosition)).execute();
+    return await new ActionInteraction(this._device, this, new actions.AdjustSliderToPosition(newPosition)).execute();
   }
 }
 

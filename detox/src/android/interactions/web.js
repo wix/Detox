@@ -1,25 +1,28 @@
 class WebInteraction {
-  constructor(invocationManager) {
+  /**
+   * @param device { RuntimeDevice }
+   */
+  constructor(device) {
     this._call = undefined;
-    this._invocationManager = invocationManager;
+    this._device = device;
   }
 
   async execute() {
-    const resultObj = await this._invocationManager.execute(this._call);
+    const resultObj = await this._device.selectedApp.invoke(this._call);
     return resultObj ? resultObj.result : undefined;
   }
 }
 
 class ActionInteraction extends WebInteraction {
-  constructor(invocationManager, action) {
-    super(invocationManager);
+  constructor(device, action) {
+    super(device);
     this._call = action._call;
   }
 }
 
 class WebAssertionInteraction extends WebInteraction {
-  constructor(invocationManager, assertion) {
-    super(invocationManager);
+  constructor(device, assertion) {
+    super(device);
     this._call = assertion._call;
   }
 }

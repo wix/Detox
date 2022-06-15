@@ -2,6 +2,11 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { traceCall } = require('../../utils/trace');
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
+const { ActionInteraction } = require('../interactions/native');
+const actions = require('../actions/native');
+const tempfile = require('tempfile');
+const fs = require('fs-extra');
+const path = require('path');
 
 class TestApp {
   /**
@@ -111,6 +116,13 @@ class RunnableTestApp extends TestApp {
     await traceCall('appTerminate', this._driver.terminate());
   }
 
+  // TODO (multiapps) Effectively, this only provides an abstraction over the means by which invocation is implemented.
+  //  If we are to push further in order to get a real inter-layer separation and abstract away the whole means by
+  //  which that various expectations are performed, we must in fact extend the entity model slightly further and create
+  //  a TestApp equivalent for matching, with an equivalent driver. Something like:
+  //    ExpectApp -> A class that would hold a copy of invocationManager, with methods such as tap() and expectVisible()
+  //    ExpectAppDriver -> A delegate that would generate the proper invocation for tap(), expectVisible(), etc., depending on
+  //                       the platform (iOS / Android).
   async invoke(action) {
     return this._driver.invoke(action);
   }

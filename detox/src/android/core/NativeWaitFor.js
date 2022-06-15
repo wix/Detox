@@ -2,14 +2,14 @@ const { WaitForInteraction } = require('../interactions/native');
 const matchers = require('../matchers/native');
 
 class NativeWaitFor {
-  constructor(invocationManager) {
-    this._invocationManager = invocationManager;
+  constructor(device) {
+    this._device = device;
   }
 }
 
 class NativeWaitForElement extends NativeWaitFor {
-  constructor(invocationManager, element) {
-    super(invocationManager);
+  constructor(device, element) {
+    super(device);
     this._element = element;
   }
 
@@ -19,7 +19,7 @@ class NativeWaitForElement extends NativeWaitFor {
   }
 
   toBeVisible(pct) {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct));
+    return new WaitForInteraction(this._device, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct));
   }
 
   toBeNotVisible() {
@@ -27,7 +27,7 @@ class NativeWaitForElement extends NativeWaitFor {
   }
 
   toExist() {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ExistsMatcher().not : new matchers.ExistsMatcher());
+    return new WaitForInteraction(this._device, this._element, this._notCondition ? new matchers.ExistsMatcher().not : new matchers.ExistsMatcher());
   }
 
   toNotExist() {
@@ -35,7 +35,7 @@ class NativeWaitForElement extends NativeWaitFor {
   }
 
   toHaveText(text) {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.TextMatcher(text).not : new matchers.TextMatcher(text));
+    return new WaitForInteraction(this._device, this._element, this._notCondition ? new matchers.TextMatcher(text).not : new matchers.TextMatcher(text));
   }
 
   toNotHaveText(text) {
@@ -43,7 +43,7 @@ class NativeWaitForElement extends NativeWaitFor {
   }
 
   toHaveLabel(value) {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.LabelMatcher(value).not : new matchers.LabelMatcher(value));
+    return new WaitForInteraction(this._device, this._element, this._notCondition ? new matchers.LabelMatcher(value).not : new matchers.LabelMatcher(value));
   }
 
   toNotHaveLabel(value) {
@@ -51,7 +51,7 @@ class NativeWaitForElement extends NativeWaitFor {
   }
 
   toHaveId(value) {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.IdMatcher(value).not : new matchers.IdMatcher(value));
+    return new WaitForInteraction(this._device, this._element, this._notCondition ? new matchers.IdMatcher(value).not : new matchers.IdMatcher(value));
   }
 
   toNotHaveId(value) {
@@ -59,7 +59,7 @@ class NativeWaitForElement extends NativeWaitFor {
   }
 
   toHaveValue(value) {
-    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ValueMatcher(value).not : new matchers.ValueMatcher(value));
+    return new WaitForInteraction(this._device, this._element, this._notCondition ? new matchers.ValueMatcher(value).not : new matchers.ValueMatcher(value));
   }
 
   toNotHaveValue(value) {

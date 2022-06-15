@@ -4,8 +4,8 @@ const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
 const { WebAssertionInteraction } = require('../interactions/web');
 
 class WebExpect {
-  constructor(invocationManager) {
-    this._invocationManager = invocationManager;
+  constructor(device) {
+    this._device = device;
     this._notCondition = false;
   }
 
@@ -16,17 +16,17 @@ class WebExpect {
 }
 
 class WebExpectElement extends WebExpect {
-  constructor(invocationManager, webElement) {
-    super(invocationManager);
+  constructor(device, webElement) {
+    super(device);
     this._call = invoke.callDirectly(EspressoWebDetoxApi.expect(webElement._call.value));
   }
 
   async toHaveText(text) {
-    return await new WebAssertionInteraction(this._invocationManager, new WebHasTextAssertion(this, text)).execute();
+    return await new WebAssertionInteraction(this._device, new WebHasTextAssertion(this, text)).execute();
   }
 
   async toExist() {
-    return await new WebAssertionInteraction(this._invocationManager, new WebExistsAssertion(this)).execute();
+    return await new WebAssertionInteraction(this._device, new WebExistsAssertion(this)).execute();
   }
 }
 

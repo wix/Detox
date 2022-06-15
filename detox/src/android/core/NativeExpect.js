@@ -2,8 +2,8 @@ const { MatcherAssertionInteraction } = require('../interactions/native');
 const matchers = require('../matchers/native');
 
 class NativeExpect {
-  constructor(invocationManager) {
-    this._invocationManager = invocationManager;
+  constructor(device) {
+    this._device = device;
   }
 
   get not() {
@@ -13,13 +13,13 @@ class NativeExpect {
 }
 
 class NativeExpectElement extends NativeExpect {
-  constructor(invocationManager, element) {
-    super(invocationManager);
+  constructor(device, element) {
+    super(device);
     this._element = element;
   }
 
   async toBeVisible(pct) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct)).execute();
   }
 
   async toBeNotVisible() {
@@ -27,7 +27,7 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toExist() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ExistsMatcher().not : new matchers.ExistsMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.ExistsMatcher().not : new matchers.ExistsMatcher()).execute();
   }
 
   async toNotExist() {
@@ -35,7 +35,7 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveText(text) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.TextMatcher(text).not : new matchers.TextMatcher(text)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.TextMatcher(text).not : new matchers.TextMatcher(text)).execute();
   }
 
   async toNotHaveText(text) {
@@ -43,7 +43,7 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveLabel(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.LabelMatcher(value).not : new matchers.LabelMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.LabelMatcher(value).not : new matchers.LabelMatcher(value)).execute();
   }
 
   async toNotHaveLabel(value) {
@@ -51,7 +51,7 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveId(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.IdMatcher(value).not : new matchers.IdMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.IdMatcher(value).not : new matchers.IdMatcher(value)).execute();
   }
 
   async toNotHaveId(value) {
@@ -59,7 +59,7 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveValue(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ValueMatcher(value).not : new matchers.ValueMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.ValueMatcher(value).not : new matchers.ValueMatcher(value)).execute();
   }
 
   async toNotHaveValue(value) {
@@ -67,15 +67,15 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveToggleValue(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.ToggleMatcher(value).not : new matchers.ToggleMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.ToggleMatcher(value).not : new matchers.ToggleMatcher(value)).execute();
   }
 
   async toHaveSliderPosition(value, tolerance = 0) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.SliderPositionMatcher(value, tolerance).not : new matchers.SliderPositionMatcher(value, tolerance)).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.SliderPositionMatcher(value, tolerance).not : new matchers.SliderPositionMatcher(value, tolerance)).execute();
   }
 
   async toBeFocused() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.FocusMatcher().not : new matchers.FocusMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.FocusMatcher().not : new matchers.FocusMatcher()).execute();
   }
 
   async toBeNotFocused() {
