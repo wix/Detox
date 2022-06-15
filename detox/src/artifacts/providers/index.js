@@ -1,9 +1,10 @@
 class ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {} // eslint-disable-line no-unused-vars
+  declareArtifactPlugins({ device }) {} // eslint-disable-line no-unused-vars
 }
 
 class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {
+  /** @override */
+  declareArtifactPlugins({ device }) {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
@@ -15,7 +16,7 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
 
     return {
-      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
+      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, device, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
@@ -25,7 +26,8 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
 }
 
 class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {
+  /** @override */
+  declareArtifactPlugins({ device }) {
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
     const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
 
@@ -37,7 +39,8 @@ class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
 }
 
 class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {
+  /** @override */
+  declareArtifactPlugins({ device }) {
     const serviceLocator = require('../../servicelocator/ios');
     const appleSimUtils = serviceLocator.appleSimUtils;
 

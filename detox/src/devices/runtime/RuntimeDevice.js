@@ -91,6 +91,20 @@ class RuntimeDevice {
     }
   }
 
+  setInvokeFailuresListener(handler) {
+    this._allRunnableApps().forEach((app) => app.setInvokeFailuresListener(handler));
+  }
+
+  async startInstrumentsRecording({ recordingPath, samplingInterval }) {
+    const promises = this._allRunnableApps().map((app) => app.startInstrumentsRecording({ recordingPath, samplingInterval }));
+    return Promise.all(promises);
+  }
+
+  async stopInstrumentsRecording() {
+    const promises = this._allRunnableApps().map((app) => app.stopInstrumentsRecording());
+    return Promise.all(promises);
+  }
+
   async takeScreenshot(name) {
     if (!name) {
       throw new DetoxRuntimeError({ message: 'Cannot take a screenshot with an empty name.' });
@@ -150,6 +164,10 @@ class RuntimeDevice {
 
   _allApps() {
     return [...Object.values(this._predefinedApps), this._unspecifiedApp, ...this._utilApps];
+  }
+
+  _allRunnableApps() {
+    return [...Object.values(this._predefinedApps), this._unspecifiedApp];
   }
 }
 

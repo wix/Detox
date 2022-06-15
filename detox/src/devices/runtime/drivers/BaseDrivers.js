@@ -89,6 +89,13 @@ class TestAppDriver {
   }
 
   /**
+   * @returns {boolean} Whether the app is currently running
+   */
+  isRunning() {
+    return !!this._pid;
+  }
+
+  /**
    * @param appInfo { AppInfo }
    */
   async select(appInfo) {
@@ -120,11 +127,22 @@ class TestAppDriver {
 
   async invoke(_action) {}
 
-  /**
-   * @returns {boolean} Whether the app is currently running
-   */
-  isRunning() {
-    return !!this._pid;
+  setInvokeFailuresListener(listener) {
+    this.client.setEventCallback('testFailed', listener);
+  }
+
+  async startInstrumentsRecording({ recordingPath, samplingInterval }) {
+    const { client } = this;
+    if (client.isConnected) {
+      return client.startInstrumentsRecording(recordingPath, samplingInterval);
+    }
+  }
+
+  async stopInstrumentsRecording() {
+    const { client } = this;
+    if (client.isConnected) {
+      return client.stopInstrumentsRecording();
+    }
   }
 
   async install() {}
@@ -142,7 +160,6 @@ class TestAppDriver {
   async enableSynchronization() {}
   async disableSynchronization() {}
   async captureViewHierarchy() {}
-
   async cleanup() {}
 
   /** @protected */

@@ -2,11 +2,6 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { traceCall } = require('../../utils/trace');
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
-const { ActionInteraction } = require('../interactions/native');
-const actions = require('../actions/native');
-const tempfile = require('tempfile');
-const fs = require('fs-extra');
-const path = require('path');
 
 class TestApp {
   /**
@@ -120,11 +115,30 @@ class RunnableTestApp extends TestApp {
   //  If we are to push further in order to get a real inter-layer separation and abstract away the whole means by
   //  which that various expectations are performed, we must in fact extend the entity model slightly further and create
   //  a TestApp equivalent for matching, with an equivalent driver. Something like:
-  //    ExpectApp -> A class that would hold a copy of invocationManager, with methods such as tap() and expectVisible()
-  //    ExpectAppDriver -> A delegate that would generate the proper invocation for tap(), expectVisible(), etc., depending on
-  //                       the platform (iOS / Android).
+  //    TestAppExpect -> A class that would hold a copy of invocationManager, with methods such as tap() and expectVisible()
+  //    TestAppExpectDriver -> A delegate that would generate the proper invocation for tap(), expectVisible(), etc., depending on
+  //                           the platform (iOS / Android).
   async invoke(action) {
     return this._driver.invoke(action);
+  }
+
+  // TODO (multiapps) Similar to the notes about invoke(), these artifacts-related methods should probably reside
+  //  under a TestApp equivalent which is strictly associated with artifacts. It should be accompanied by a driver. For example:
+  //    TestAppArtifacts -> The equivalent class
+  //    TestAppArtifactsDriver -> The driver delegate
+  //  In this case, most likely, an additional change is required: recordingPath and samplingInterval should stem
+  //  from the driver, rather than from the top-most layer (i.e. our caller).
+
+  setInvokeFailuresListener(listener) {
+    this._driver.setInvokeFailuresListener(listener);
+  }
+
+  async startInstrumentsRecording({ recordingPath, samplingInterval }) {
+    return this._driver.startInstrumentsRecording({ recordingPath, samplingInterval });
+  }
+
+  async stopInstrumentsRecording() {
+    return this._driver.stopInstrumentsRecording();
   }
 
   async _launch(launchParams) {

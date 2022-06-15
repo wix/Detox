@@ -4,11 +4,11 @@ const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
 const AndroidInstrumentsRecording = require('./AndroidInstrumentsRecording');
 
 class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {
-  constructor({ api, adb, client, devicePathBuilder }) {
+  constructor({ api, adb, device, devicePathBuilder }) {
     super({ api });
 
     this.adb = adb;
-    this.client = client;
+    this.device = device;
     this.devicePathBuilder = devicePathBuilder;
   }
 
@@ -31,7 +31,7 @@ class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {
     return new AndroidInstrumentsRecording({
       adb: this.adb,
       pluginContext: this.context,
-      client: this.client,
+      device: this.device,
       deviceId: this.context.deviceId,
       userConfig: this.api.userConfig,
       temporaryRecordingPath: this.devicePathBuilder.buildTemporaryArtifactPath('.dtxplain'),
