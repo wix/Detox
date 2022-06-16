@@ -125,6 +125,8 @@ class AndroidAppDriver extends TestAppDriver {
 
     this.adbName = adbName;
     this._packageId = null;
+
+    this._inferPackageIdFromApk = _.memoize(this._inferPackageIdFromApk.bind(this), (appInfo) => appInfo.binaryPath);
   }
 
   /** @override */
@@ -138,7 +140,8 @@ class AndroidAppDriver extends TestAppDriver {
    */
   async select(appInfo) {
     await super.select(appInfo);
-    this._packageId = await this._inferPackageIdFromApk(appInfo.binaryPath); // TODO (multiapps) Cache?
+
+    this._packageId = await this._inferPackageIdFromApk(appInfo.binaryPath);
   }
 
   /** @override */
