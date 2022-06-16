@@ -37,7 +37,7 @@ class RunnableTestApp extends TestApp {
   }
 
   async init() {
-    this._driver.setOnDisconnectListener(this._onDisconnect.bind(this));
+    this._driver.setDisconnectListener(this._onDisconnect.bind(this));
 
     await this._driver.init();
   }
@@ -77,9 +77,9 @@ class RunnableTestApp extends TestApp {
 
   async openURL(params) {
     if (typeof params !== 'object' || !params.url) {
-      throw new DetoxRuntimeError({ message: `openURL must be called with JSON params, and a value for 'url' key must be provided. See https://wix.github.io/Detox/docs/api/device-object-api/#deviceopenurlurl-sourceappoptional.` });
+      throw new DetoxRuntimeError({ message: `openURL must be called with JSON params, and a value for 'url' key must be provided. See https://wix.github.io/Detox/docs/api/device-object-api/#deviceopenurlurl-sourceappoptional` });
     }
-    await this._driver.deliverPayload(params);
+    await this._driver.openURL(params);
   }
 
   async sendUserActivity(payload) {
@@ -175,8 +175,6 @@ class RunnableTestApp extends TestApp {
   }
 
   async _launch(launchParams) {
-    const payloadParams = ['url', 'userNotification', 'userActivity'];
-    const hasPayload = this._assertHasSingleParam(payloadParams, launchParams);
     const isRunning = this._driver.isRunning();
     const newInstance = (launchParams.newInstance !== undefined)
       ? launchParams.newInstance
@@ -195,12 +193,6 @@ class RunnableTestApp extends TestApp {
     }
 
     const launchArgs = this._prepareLaunchArgs(launchParams);
-
-    if (isRunning && hasPayload) {
-      // TODO (multiapps) Is this really needed, provided that the payload gets inject via the launch args?
-      await this._driver.deliverPayload({ ...launchParams, delayPayload: true });
-    }
-
     const launchInfo = {
       launchArgs,
       languageAndLocale: launchParams.languageAndLocale,
@@ -211,22 +203,6 @@ class RunnableTestApp extends TestApp {
     } else {
       await this._driver.launch(launchInfo);
     }
-
-  }
-
-  _assertHasSingleParam(singleParams, params) {
-    let paramsCounter = 0;
-
-    singleParams.forEach((item) => {
-      if(params[item]) {
-        paramsCounter += 1;
-      }
-    });
-
-    if (paramsCounter > 1) {
-      throw new DetoxRuntimeError({ message: `Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.` });
-    }
-    return (paramsCounter === 1);
   }
 
   _prepareLaunchArgs(launchInfo) {
@@ -243,10 +219,8 @@ class RunnableTestApp extends TestApp {
       }
     } else if (launchInfo.userNotification) {
       launchArgs.detoxUserNotificationDataURL = launchInfo.userNotification;
-      delete launchInfo.userNotification; // TODO (multiapps) revisit whether this is needed
     } else if (launchInfo.userActivity) {
       launchArgs.detoxUserActivityDataURL = launchInfo.userActivity;
-      delete launchInfo.userActivity;  // TODO (multiapps) revisit whether this is needed
     }
 
     if (launchInfo.disableTouchIndicators) {

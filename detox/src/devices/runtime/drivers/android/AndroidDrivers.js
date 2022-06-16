@@ -164,23 +164,13 @@ class AndroidAppDriver extends TestAppDriver {
   }
 
   /** @override */
-  async reloadReactNative() {
-    return this.client.reloadReactNative();
+  async openURL(params) {
+    return this._deliverPayload(params);
   }
 
   /** @override */
-  async deliverPayload(params) {
-    if (params.delayPayload) {
-      return;
-    }
-
-    const { url, detoxUserNotificationDataURL } = params;
-    if (url) {
-      await this._startActivityWithUrl(url);
-    } else if (detoxUserNotificationDataURL) {
-      const payloadPathOnDevice = await this._sendNotificationDataToDevice(detoxUserNotificationDataURL, this.adbName);
-      await this._startActivityFromNotification(payloadPathOnDevice);
-    }
+  async reloadReactNative() {
+    return this.client.reloadReactNative();
   }
 
   /** @override */
@@ -322,6 +312,16 @@ class AndroidAppDriver extends TestAppDriver {
     await this._instrumentation.launch(adbName, _packageId, userLaunchArgs);
   }
 
+  /** @override */
+  async _deliverPayload({ url, detoxUserNotificationDataURL }) {
+    if (url) {
+      await this._startActivityWithUrl(url);
+    } else if (detoxUserNotificationDataURL) {
+      const payloadPathOnDevice = await this._sendNotificationDataToDevice(detoxUserNotificationDataURL, this.adbName);
+      await this._startActivityFromNotification(payloadPathOnDevice);
+    }
+  }
+
   _startActivityWithUrl(url) {
     return this.invocationManager.execute(DetoxApi.startActivityFromUrl(url));
   }
@@ -365,20 +365,17 @@ class AndroidAppDriver extends TestAppDriver {
     }
   }
 
-  /** @protected */
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
     await this.fileXfer.prepareDestinationDir(adbName);
     return await this.fileXfer.send(adbName, dataFileLocalPath, 'notification.json');
   }
 
-  /** @protected */
   async _reverseServerPort(adbName) {
     const serverPort = new URL(this.client.serverUrl).port;
     await this.adb.reverse(adbName, serverPort);
     return serverPort;
   }
 
-  /** @protected */
   _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {
     const appBinaryPath = getAbsoluteBinaryPath(_appBinaryPath);
     const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(appBinaryPath);
@@ -388,7 +385,6 @@ class AndroidAppDriver extends TestAppDriver {
     };
   }
 
-  /** @protected */
   _getTestApkPath(originalApkPath) {
     const testApkPath = apkUtils.getTestApkPath(originalApkPath);
 
@@ -402,7 +398,6 @@ class AndroidAppDriver extends TestAppDriver {
     return testApkPath;
   }
 
-  /** @protected */
   async _validateAppBinaries(appBinaryPath, testBinaryPath) {
     try {
       await this.apkValidator.validateAppApk(appBinaryPath);
@@ -417,13 +412,11 @@ class AndroidAppDriver extends TestAppDriver {
     }
   }
 
-  /** @protected */
   async _installAppBinaries(appBinaryPath, testBinaryPath) {
     await this.adb.install(this.adbName, appBinaryPath);
     await this.adb.install(this.adbName, testBinaryPath);
   }
 
-  /** @protected */
   async _waitForProcess() {
     const { adbName, _packageId } = this;
     let pid = NaN;
@@ -439,7 +432,6 @@ class AndroidAppDriver extends TestAppDriver {
     return pid;
   }
 
-  /** @protected */
   async _queryPID(appId) {
     const pid = await this.adb.pidof(this.adbName, appId);
     if (!pid) {
@@ -448,13 +440,11 @@ class AndroidAppDriver extends TestAppDriver {
     return pid;
   }
 
-  /** @protected */
   async _terminateInstrumentation() {
     await this._instrumentation.terminate();
     await this._instrumentation.setTerminationFn(null);
   }
 
-  /** @protected */
   _printInstrumentationHint({ instrumentationClass, launchArgs }) {
     const keyMaxLength = Math.max(3, _(launchArgs).keys().maxBy('length').length);
     const valueMaxLength = Math.max(5, _(launchArgs).values().map(String).maxBy('length').length);

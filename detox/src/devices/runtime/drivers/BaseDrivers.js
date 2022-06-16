@@ -1,6 +1,11 @@
 const fs = require('fs-extra');
 
+const { DetoxInternalError } = require('../../../errors');
 const tempFile = require('../../../utils/tempFile');
+
+function throwNotImplemented(func) {
+  throw new DetoxInternalError({ message: `Function '${func.name}' is not implemented!` });
+}
 
 /**
  * @typedef DeviceDriverDeps
@@ -63,8 +68,15 @@ class DeviceDriver {
  */
 
 /**
- * @typedef LaunchInfo
- * @property launchArgs { Object }
+ * @typedef { Object } LaunchArgs
+ * @property [detoxURLOverride] { String }
+ * @property [detoxUserNotificationDataURL] { Object }
+ * @property [detoxUserActivityDataURL] { Object }
+ */
+
+/**
+ * @typedef { Object } LaunchInfo
+ * @property launchArgs { LaunchArgs }
  */
 
 class TestAppDriver {
@@ -96,7 +108,7 @@ class TestAppDriver {
     return !!this._pid;
   }
 
-  setOnDisconnectListener(listener) {
+  setDisconnectListener(listener) {
     this.client.terminateApp = listener;
   }
 
@@ -114,17 +126,24 @@ class TestAppDriver {
   /**
    * @param _launchInfo { LaunchInfo }
    */
-  async launch(_launchInfo) {}
+  async launch(_launchInfo) {
+    throwNotImplemented(this.launch);
+  }
 
   /**
    * @param _launchInfo { LaunchInfo }
    */
-  async waitForLaunch(_launchInfo) {}
+  async waitForLaunch(_launchInfo) {
+    throwNotImplemented(this.waitForLaunch);
+  }
+
+  /**
+   * @param _params {{ url: String, sourceApp: (String|undefined) }}
+   */
+  async openURL(_params) {}
 
   async reloadReactNative() {}
   async resetContentAndSettings() {}
-
-  async deliverPayload(_params) {} // TODO (multiapps) Revisit whether keeping this method public makes sense at all
 
   async sendUserActivity(payload) {
     await this._sendPayload('detoxUserActivityDataURL', payload);
@@ -138,24 +157,8 @@ class TestAppDriver {
     this._pid = null;
   }
 
-  async invoke(_action) {}
-
-  setInvokeFailuresListener(listener) {
-    this.client.setEventCallback('testFailed', listener);
-  }
-
-  async startInstrumentsRecording({ recordingPath, samplingInterval }) {
-    const { client } = this;
-    if (client.isConnected) {
-      return client.startInstrumentsRecording(recordingPath, samplingInterval);
-    }
-  }
-
-  async stopInstrumentsRecording() {
-    const { client } = this;
-    if (client.isConnected) {
-      return client.stopInstrumentsRecording();
-    }
+  async invoke(_action) {
+    throwNotImplemented(this.invoke);
   }
 
   async install() {}
@@ -180,9 +183,42 @@ class TestAppDriver {
     this.client = null;
   }
 
+  setInvokeFailuresListener(listener) {
+    this.client.setEventCallback('testFailed', listener);
+  }
+
+  async startInstrumentsRecording({ recordingPath, samplingInterval }) {
+    const { client } = this;
+    if (client.isConnected) {
+      return client.startInstrumentsRecording(recordingPath, samplingInterval);
+    }
+  }
+
+  async stopInstrumentsRecording() {
+    const { client } = this;
+    if (client.isConnected) {
+      return client.stopInstrumentsRecording();
+    }
+  }
+
   /** @protected */
   async _waitUntilReady() {
     return this.client.waitUntilReady();
+  }
+
+  /** @protected */
+  async _sendPayload(name, payload) {
+    const payloadFile = this._createPayloadFile(payload);
+
+    await this._deliverPayload({
+      [name]: payloadFile.path,
+    });
+    payloadFile.cleanup();
+  }
+
+  /** @protected */
+  async _deliverPayload(_payload) {
+    throwNotImplemented(this._deliverPayload);
   }
 
   /** @protected */
@@ -192,15 +228,7 @@ class TestAppDriver {
     return payloadFile;
   }
 
-  async _sendPayload(name, payload) {
-    const payloadFile = this._createPayloadFile(payload);
-
-    await this.deliverPayload({
-      [name]: payloadFile.path,
-    });
-    payloadFile.cleanup();
-  }
-
+  /** @protected */
   async _notifyAppReady(deviceId, bundleId) {
     await this.emitter.emit('appReady', {
       deviceId,
@@ -210,8 +238,7 @@ class TestAppDriver {
   }
 }
 
-
 module.exports = {
-  DeviceDriver,
   TestAppDriver,
+  DeviceDriver,
 };

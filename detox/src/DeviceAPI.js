@@ -65,7 +65,7 @@ class DeviceAPI {
   }
 
   /**
-   * @deprecated Use 'platform'
+   * @deprecated Use 'platform' property
    */
   getPlatform() {
     return this.platform;
@@ -73,6 +73,17 @@ class DeviceAPI {
 
   get appLaunchArgs() {
     return this.device.selectedApp.launchArgs;
+  }
+
+  get uiDevice() {
+    return this.device.selectedApp.uiDevice;
+  }
+
+  /**
+   * @deprecated Use 'uiDevice' property
+   */
+  getUiDevice() {
+    return this.device.selectedApp.uiDevice;
   }
 
   async selectApp(aliasOrConfig) {
@@ -95,9 +106,6 @@ class DeviceAPI {
     return this.device.selectedApp.launch(params);
   }
 
-  /**
-   * @deprecated
-   */
   async relaunchApp(params = {}) {
     if (params.newInstance === undefined) {
       params.newInstance = true;
@@ -211,10 +219,6 @@ class DeviceAPI {
 
   async resetContentAndSettings() {
     return this.device.selectedApp.resetContentAndSettings();
-  }
-
-  getUiDevice() {
-    return this.device.selectedApp.uiDevice;
   }
 
   async setStatusBar(params) {

@@ -19,8 +19,8 @@ class IosAppDriver extends TestAppDriver {
   }
 
   /** @override */
-  async deliverPayload(params) {
-    return await this.client.deliverPayload(params);
+  async openURL(params) {
+    return this._deliverPayload(params);
   }
 
   /** @override */
@@ -42,6 +42,10 @@ class IosAppDriver extends TestAppDriver {
   async shake() {
     await this.client.shake();
     await this._waitForActive();
+  }
+
+  async _deliverPayload(payload) {
+    return this.client.deliverPayload(payload);
   }
 
   async _waitForActive() {

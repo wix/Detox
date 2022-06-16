@@ -7,7 +7,6 @@ const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const log = require('../../../../utils/logger').child({ __filename });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
-const tempFile = require('../../../../utils/tempFile');
 
 const { IosDeviceDriver, IosAppDriver } = require('./IosDrivers');
 
@@ -104,7 +103,7 @@ class IosSimulatorDeviceDriver extends IosDeviceDriver {
 
 /**
  * @typedef { LaunchInfo } LaunchInfoIosSim
- * @property languageAndLocale { String }
+ * @property [languageAndLocale] { String }
  */
 
 class IosSimulatorAppDriver extends IosAppDriver {
@@ -122,6 +121,9 @@ class IosSimulatorAppDriver extends IosAppDriver {
    */
   async launch(launchInfo) {
     const { udid, bundleId } = this;
+
+    // TODO Is this "predelivery" indeed required when we're just 2ms away from sending the payload via the 'payload.json' file? :facepalm:
+    await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
 
     const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
     const { launchArgs } = launchArgsHandle;
@@ -144,6 +146,9 @@ class IosSimulatorAppDriver extends IosAppDriver {
    */
   async waitForLaunch(launchInfo) {
     const { udid, bundleId } = this;
+
+    // TODO Is this "predelivery" even required in the waitForLaunch (i.e. manual) mode?
+    await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
 
     // Note: This is purely semantic; Has no analytical value.
     const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
@@ -231,7 +236,17 @@ class IosSimulatorAppDriver extends IosAppDriver {
     return this.client.waitForActive();
   }
 
-  // TODO (multiapps) Reiterate this ugly func signature
+  async _predeliverPayloadIfNeeded(launchArgs) {
+    if (this.isRunning()) {
+      const payloadKeys = ['detoxURLOverride', 'detoxUserNotificationDataURL', 'detoxUserActivityDataURL'];
+      const payload = assertAndPickSingleKey(payloadKeys, launchArgs);
+      if (payload) {
+        await this._deliverPayload(payload);
+      }
+    }
+  }
+
+  // TODO (multiapps) Revisit this ugly func signature
   _getLaunchArgsForPayloadsData(launchArgs) {
     let paramName;
     if (launchArgs.detoxUserNotificationDataURL) {
@@ -242,7 +257,7 @@ class IosSimulatorAppDriver extends IosAppDriver {
       return { launchArgs, cleanup: _.noop };
     }
 
-    const payloadFile = tempFile.create('payload.json');
+    const payloadFile = this._createPayloadFile(launchArgs[paramName]);
     return {
       launchArgs: {
         ...launchArgs,
@@ -253,6 +268,21 @@ class IosSimulatorAppDriver extends IosAppDriver {
   }
 }
 
+function assertAndPickSingleKey(keys, pojo) {
+  const projection = _.pick(pojo, keys);
+  const projKeys = Object.keys(projection);
+
+  if (projKeys.length > 1) {
+    const message = `An app cannot be launched with more than one url/data arguments; See https://wix.github.io/Detox/docs/api/device-object-api/#devicelaunchappparams`;
+    throw new DetoxRuntimeError({ message });
+  }
+
+  if (projKeys.length === 0) {
+    return null;
+  }
+
+  return projection;
+}
 
 module.exports = {
   IosSimulatorDeviceDriver,
