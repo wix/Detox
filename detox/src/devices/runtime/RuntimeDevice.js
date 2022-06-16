@@ -97,6 +97,12 @@ class RuntimeDevice {
       const app = this._predefinedApps[appAlias];
       await app.select();
       await app.uninstall();
+      await app.deselect();
+    }
+
+    for (const appAlias of appAliases) {
+      const app = this._predefinedApps[appAlias];
+      await app.select();
       await app.install();
       await app.deselect();
     }
