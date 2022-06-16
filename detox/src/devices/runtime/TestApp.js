@@ -30,7 +30,6 @@ class RunnableTestApp extends TestApp {
     this.behaviorConfig = behaviorConfig;
 
     this._launchArgs = new LaunchArgsEditor();
-    this._launchArgs.modify(appConfig.launchArgs);
   }
 
   get launchArgs() {
@@ -49,6 +48,11 @@ class RunnableTestApp extends TestApp {
 
   get uiDevice() {
     return this._driver.uiDevice;
+  }
+
+  async select() {
+    this._launchArgs.reset();
+    this._launchArgs.modify(this.appConfig.launchArgs);
   }
 
   async deselect() {
@@ -265,6 +269,7 @@ class PredefinedTestApp extends RunnableTestApp {
   }
 
   async select() {
+    await super.select();
     await this._driver.select(this.appConfig);
   }
 }
@@ -275,8 +280,12 @@ class UnspecifiedTestApp extends RunnableTestApp {
   }
 
   async select(appConfig) {
+    if (!appConfig) {
+      throw new DetoxRuntimeError({ message: 'Please provide an appConfig argument in order to select this app' });
+    }
     this.appConfig = appConfig;
 
+    await super.select();
     await this._driver.select(this.appConfig);
   }
 }
