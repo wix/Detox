@@ -1216,7 +1216,7 @@ declare global {
             /**
              * Takes a screenshot of the element and schedules putting it in the artifacts folder upon completion of the current test.
              * For more information, see {@link https://wix.github.io/Detox/docs/api/screenshots#element-level-screenshots}
-             * @param {string} name for the screenshot artifact
+             * @param [name] Name for the screenshot artifact
              * @returns {Promise<string>} a temporary path to the screenshot.
              * @example
              * test('Menu items should have logout', async () => {
@@ -1227,7 +1227,7 @@ declare global {
              *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
              * });
              */
-             takeScreenshot(name: string): Promise<string>;
+             takeScreenshot(name?: string): Promise<string>;
 
             /**
              * Gets the native (OS-dependent) attributes of the element.

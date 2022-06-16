@@ -18,8 +18,7 @@ class Interaction {
   }
 
   async execute() {
-    const resultObj = await this._device.selectedApp.invoke(this._call);
-    return resultObj ? resultObj.result : undefined;
+    return this._device.selectedApp.invoke(this._call);
   }
 }
 
