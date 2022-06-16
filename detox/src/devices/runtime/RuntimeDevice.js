@@ -165,6 +165,10 @@ class RuntimeDevice {
     await this._driver.clearKeychain();
   }
 
+  async typeText(text) {
+    await this._driver.typeText(text);
+  }
+
   async _initApps() {
     await forEachSeries(this._allApps(), (app) => app.init(), this);
   }

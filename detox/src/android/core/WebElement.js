@@ -36,27 +36,27 @@ class WebElement {
 
   async typeText(text, isContentEditable = false) {
     if (isContentEditable) {
-      return await this[_device]._typeText(text);
+      return await this[_device].typeText(text);
     }
-    return await new ActionInteraction(this[_device],  new actions.WebTypeTextAction(this, text)).execute();
+    return await new ActionInteraction(this[_device], new actions.WebTypeTextAction(this, text)).execute();
   }
 
   // At the moment not working on content-editable
   async replaceText(text) {
-    return await new ActionInteraction(this[_device],  new actions.WebReplaceTextAction(this, text)).execute();
+    return await new ActionInteraction(this[_device], new actions.WebReplaceTextAction(this, text)).execute();
   }
 
   // At the moment not working on content-editable
   async clearText() {
-    return await new ActionInteraction(this[_device],  new actions.WebClearTextAction(this)).execute();
+    return await new ActionInteraction(this[_device], new actions.WebClearTextAction(this)).execute();
   }
 
   async scrollToView() {
-    return await new ActionInteraction(this[_device],  new actions.WebScrollToViewAction(this)).execute();
+    return await new ActionInteraction(this[_device], new actions.WebScrollToViewAction(this)).execute();
   }
 
   async getText() {
-    return await new ActionInteraction(this[_device],  new actions.WebGetTextAction(this)).execute();
+    return await new ActionInteraction(this[_device], new actions.WebGetTextAction(this)).execute();
   }
 
   async focus() {
