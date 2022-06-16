@@ -175,13 +175,7 @@ class Detox {
       errorComposer: this._runtimeErrorComposer,
     };
 
-    const runtimeDeviceArtifacts = {
-      setInvokeFailuresListener: () => runtimeDevice.setInvokeFailuresListener(...arguments),
-      startInstrumentsRecording: () => runtimeDevice.startInstrumentsRecording(...arguments),
-      stopInstrumentsRecording: () => runtimeDevice.stopInstrumentsRecording(...arguments),
-    };
-    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, { ...commonDeps, device: runtimeDeviceArtifacts });
-
+    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
     this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
     this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
 
@@ -195,6 +189,7 @@ class Detox {
         sessionConfig,
       });
     await runtimeDevice.init();
+    await this._artifactsManager.onDeviceCreated(runtimeDevice);
 
     this.runtimeDevice = runtimeDevice;
     this.device = new DeviceAPI(runtimeDevice, this._runtimeErrorComposer);

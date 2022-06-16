@@ -41,6 +41,7 @@ class DeviceDriver {
     return '';
   }
 
+  // TODO (multiapps) Where should this be called from?
   validateDeviceConfig(_deviceConfig) {}
 
   async takeScreenshot(_screenshotName) {}

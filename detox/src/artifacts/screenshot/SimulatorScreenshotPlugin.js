@@ -12,8 +12,10 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
-    this.client = config.client;
-    this.client.setEventCallback('testFailed', this._onInvokeFailure.bind(this));
+  }
+
+  async onDeviceCreated(device) {
+    device.setInvokeFailuresListener(this._onInvokeFailure.bind(this));
   }
 
   async onBeforeLaunchApp({ launchArgs }) {
@@ -24,6 +26,8 @@ class SimulatorScreenshotPlugin extends ScreenshotArtifactPlugin {
 
   async onBootDevice(event) {
     await super.onBootDevice(event);
+
+
 
     if (this.enabled && event.coldBoot) {
       await this.appleSimUtils.takeScreenshot(event.deviceId, '/dev/null').catch(() => {

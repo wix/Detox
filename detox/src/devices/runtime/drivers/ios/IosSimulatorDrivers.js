@@ -95,10 +95,6 @@ class IosSimulatorDeviceDriver extends IosDeviceDriver {
   async resetStatusBar() {
     await this._applesimutils.statusBarReset(this.udid);
   }
-
-  async _waitForBackground() {
-    return await this.client.waitForBackground();
-  }
 }
 
 /**
@@ -234,6 +230,10 @@ class IosSimulatorAppDriver extends IosAppDriver {
 
   async _waitForActive() {
     return this.client.waitForActive();
+  }
+
+  async _waitForBackground() {
+    return await this.client.waitForBackground();
   }
 
   async _predeliverPayloadIfNeeded(launchArgs) {

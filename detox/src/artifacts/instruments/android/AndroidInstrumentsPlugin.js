@@ -4,12 +4,15 @@ const InstrumentsArtifactPlugin = require('../InstrumentsArtifactPlugin');
 const AndroidInstrumentsRecording = require('./AndroidInstrumentsRecording');
 
 class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {
-  constructor({ api, adb, device, devicePathBuilder }) {
+  constructor({ api, adb, devicePathBuilder }) {
     super({ api });
 
     this.adb = adb;
-    this.device = device;
     this.devicePathBuilder = devicePathBuilder;
+  }
+
+  async onDeviceCreated(device) {
+    this.device = device;
   }
 
   async onBeforeLaunchApp(event) {
