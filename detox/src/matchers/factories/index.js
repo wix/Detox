@@ -12,9 +12,9 @@ class Android extends MatchersFactory {
 }
 
 class Ios extends MatchersFactory {
-  createMatchers({ invocationManager, eventEmitter }) {
+  createMatchers({ runtimeDevice, eventEmitter }) {
     const IosExpect = require('../../ios/expectTwo');
-    return new IosExpect({ invocationManager, emitter: eventEmitter });
+    return new IosExpect({ runtimeDevice, eventEmitter });
   }
 }
 

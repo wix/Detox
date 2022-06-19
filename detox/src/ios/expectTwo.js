@@ -11,8 +11,12 @@ const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
 
 class Expect {
-  constructor(invocationManager, element) {
-    this._invocationManager = invocationManager;
+  /**
+   * @param runtimeDevice { RuntimeDevice }
+   * @param element { Element }
+   */
+  constructor(runtimeDevice, element) {
+    this._device = runtimeDevice;
     this.element = element;
     this.modifiers = [];
   }
@@ -105,20 +109,25 @@ class Expect {
 
   expect(expectation, ...params) {
     const invocation = this.createInvocation(expectation, ...params);
-    return this._invocationManager.execute(invocation);
+    return this._device.selectedApp.invoke(invocation);
   }
 }
 
 class InternalExpect extends Expect {
   expect(expectation, ...params) {
-    const invocation = this.createInvocation(expectation, ...params);
-    return invocation;
+    return this.createInvocation(expectation, ...params);
   }
 }
 
 class Element {
-  constructor(invocationManager, emitter, matcher, index) {
-    this._invocationManager = invocationManager;
+  /**
+   * @param runtimeDevice { RuntimeDevice }
+   * @param emitter { AsyncEmitter }
+   * @param matcher { Matcher }
+   * @param index { Number }
+   */
+  constructor(runtimeDevice, emitter, matcher, index) {
+    this._device = runtimeDevice;
     this._emitter = emitter;
     this.matcher = matcher;
     this.index = index;
@@ -289,20 +298,18 @@ class Element {
 
   withAction(action, ...params) {
     const invocation = this.createInvocation(action, null, ...params);
-    return this._invocationManager.execute(invocation);
+    return this._device.selectedApp.invoke(invocation);
   }
 
   withActionAndTargetElement(action, targetElement, ...params) {
     const invocation = this.createInvocation(action, targetElement, ...params);
-    return this._invocationManager.execute(invocation);
+    return this._device.selectedApp.invoke(invocation);
   }
 }
 
 class InternalElement extends Element {
-
   withAction(action, ...params) {
-    const invocation = this.createInvocation(action, null, ...params);
-    return invocation;
+    return this.createInvocation(action, null, ...params);
   }
 }
 
@@ -417,10 +424,15 @@ class Matcher {
 }
 
 class WaitFor {
-  constructor(invocationManager, emitter, element) {
-    this._invocationManager = invocationManager;
-    this.element = new InternalElement(invocationManager, emitter, element.matcher, element.index);
-    this.expectation = new InternalExpect(invocationManager, this.element);
+  /**
+   * @param runtimeDevice { RuntimeDevice }
+   * @param emitter { AsyncEmitter }
+   * @param element { Element }
+   */
+  constructor(runtimeDevice, emitter, element) {
+    this._device = runtimeDevice;
+    this.element = new InternalElement(runtimeDevice, emitter, element.matcher, element.index);
+    this.expectation = new InternalExpect(runtimeDevice, this.element);
     this._emitter = emitter;
   }
 
@@ -498,7 +510,7 @@ class WaitFor {
 
   whileElement(matcher) {
     if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
-    this.actionableElement = new InternalElement(this._invocationManager, this._emitter, matcher);
+    this.actionableElement = new InternalElement(this._device, this._emitter, matcher);
     return this;
   }
 
@@ -585,53 +597,57 @@ class WaitFor {
   waitForWithAction() {
     const expectation = this.expectation;
     const action = this.action;
-
-    return this._invocationManager.execute({
+    const invocation = {
       ...action,
       while: {
         ...expectation
       }
-    });
+    };
+    return this._device.selectedApp.invoke(invocation);
   }
 
   waitForWithTimeout() {
     const expectation = this.expectation;
     const action = this.action;
     const timeout = this.timeout;
-
-    return this._invocationManager.execute({
+    const invocation = {
       ...action,
       ...expectation,
       timeout
-    });
+    };
+    return this._device.selectedApp.invoke(invocation);
   }
 }
 
-function element(invocationManager, emitter, matcher) {
+function element(runtimeDevice, emitter, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
-  return new Element(invocationManager, emitter, matcher);
+  return new Element(runtimeDevice, emitter, matcher);
 }
 
-function expect(invocationManager, element) {
+function expect(runtimeDevice, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new Expect(invocationManager, element);
+  return new Expect(runtimeDevice, element);
 }
 
-function waitFor(invocationManager, emitter, element) {
+function waitFor(runtimeDevice, emitter, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new WaitFor(invocationManager, emitter, element);
+  return new WaitFor(runtimeDevice, emitter, element);
 }
 
 class IosExpect {
-  constructor({ invocationManager, emitter }) {
-    this._invocationManager = invocationManager;
-    this._emitter = emitter;
+  /**
+   * @param runtimeDevice { RuntimeDevice }
+   * @param eventEmitter { AsyncEmitter }
+   */
+  constructor({ runtimeDevice, eventEmitter }) {
+    this._device = runtimeDevice;
+    this._emitter = eventEmitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
@@ -641,15 +657,15 @@ class IosExpect {
   }
 
   element(matcher) {
-    return element(this._invocationManager, this._emitter, matcher);
+    return element(this._device, this._emitter, matcher);
   }
 
   expect(element) {
-    return expect(this._invocationManager, element);
+    return expect(this._device, element);
   }
 
   waitFor(element) {
-    return waitFor(this._invocationManager, this._emitter, element);
+    return waitFor(this._device, this._emitter, element);
   }
 
   web(_matcher) {
