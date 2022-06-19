@@ -1,4 +1,10 @@
+const path = require('path');
+
+const exec = require('child-process-promise').exec;
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const { DeviceDriver, TestAppDriver } = require('../BaseDrivers');
 
 class IosDeviceDriver extends DeviceDriver {
@@ -8,7 +14,30 @@ class IosDeviceDriver extends DeviceDriver {
   }
 }
 
+/**
+ * @typedef { AppInfo } IosAppInfo
+ */
+
 class IosAppDriver extends TestAppDriver {
+  /**
+   * @param deps { TestAppDriverDeps }
+   */
+  constructor(deps) {
+    super(deps);
+
+    this._inferBundleIdFromBinary = _.memoize(this._inferBundleIdFromBinary.bind(this), (appInfo) => appInfo.binaryPath);
+  }
+
+  /**
+   * @override
+   * @param appInfo { IosAppInfo }
+   */
+  async select(appInfo) {
+    await super.select(appInfo);
+
+    this.bundleId = await this._inferBundleIdFromBinary(appInfo.binaryPath);
+  }
+
   /** @override */
   async deselect() {
     // We do not yet support concurrently running apps on iOS, so - keeping the legacy behavior,
@@ -42,6 +71,20 @@ class IosAppDriver extends TestAppDriver {
   async shake() {
     await this.client.shake();
     await this._waitForActive();
+  }
+
+  async _inferBundleIdFromBinary(appPath) {
+    appPath = getAbsoluteBinaryPath(appPath);
+    try {
+      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
+      const bundleId = _.trim(result.stdout);
+      if (_.isEmpty(bundleId)) {
+        throw new Error();
+      }
+      return bundleId;
+    } catch (ex) {
+      throw new DetoxRuntimeError({ message: `field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}` });
+    }
   }
 
   async _deliverPayload(payload) {

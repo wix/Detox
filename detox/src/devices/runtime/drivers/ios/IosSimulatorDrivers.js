@@ -5,6 +5,7 @@ const _ = require('lodash');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../../utils/logger').child({ __filename });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
@@ -102,11 +103,20 @@ class IosSimulatorDeviceDriver extends IosDeviceDriver {
  * @property [languageAndLocale] { String }
  */
 
+/**
+ * @typedef { TestAppDriverDeps } IosSimulatorAppDriverDeps
+ * @property applesimutils { AppleSimUtils }
+ */
+
 class IosSimulatorAppDriver extends IosAppDriver {
-  constructor(deps, { udid, bundleId }) {
+
+  /**
+   * @param deps { IosSimulatorAppDriverDeps }
+   * @param props {{ udid: String }}
+   */
+  constructor(deps, { udid }) {
     super(deps);
     this.udid = udid;
-    this.bundleId = bundleId;
 
     this._applesimutils = deps.applesimutils;
   }
@@ -172,6 +182,18 @@ class IosSimulatorAppDriver extends IosAppDriver {
     await this._waitUntilReady();
     await this._waitForActive();
     return pid;
+  }
+
+  /** @override */
+  async install() {
+    await this._applesimutils.install(this.udid, getAbsoluteBinaryPath(this._appInfo.binaryPath));
+  }
+
+  /** @override */
+  async uninstall() {
+    const { udid, bundleId } = this;
+    await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
+    await this._applesimutils.uninstall(udid, bundleId);
   }
 
   /** @override */
