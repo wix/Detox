@@ -53,9 +53,8 @@ class IosAppDriver extends TestAppDriver {
   }
 
   /** @override */
-  async terminate() {
-    // TODO effectively terminate
-    await super.terminate();
+  async reloadReactNative() {
+    return this.client.reloadReactNative();
   }
 
   /** @override */

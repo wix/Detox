@@ -37,6 +37,7 @@ class RunnableTestApp extends TestApp {
   }
 
   async init() {
+    // TODO (multiapps) Maybe just wire the driver to do this internally and agnostically
     this._driver.setDisconnectListener(this._onDisconnect.bind(this));
 
     await this._driver.init();

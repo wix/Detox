@@ -46,18 +46,6 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
       instrumentation,
     };
   }
-
-  _createAppSessionConfig(sessionConfig, alias) {
-    const { sessionId } = sessionConfig;
-
-    if (alias) {
-      return {
-        ...sessionConfig,
-        sessionId: `${sessionId}:${alias}`,
-      };
-    }
-    return sessionConfig;
-  }
 }
 
 class AndroidEmulator extends RuntimeDriverFactoryAndroid {

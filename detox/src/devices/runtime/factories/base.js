@@ -45,6 +45,19 @@ class RuntimeDeviceFactory {
     });
   }
 
+  /** @protected */
+  _createAppSessionConfig(sessionConfig, alias) {
+    const { sessionId } = sessionConfig;
+
+    if (alias) {
+      return {
+        ...sessionConfig,
+        sessionId: `${sessionId}:${alias}`,
+      };
+    }
+    return sessionConfig;
+  }
+
   _createTestAppDriver(_deviceCookie, _commonDeps, _configs, _alias) {}
   _createDeviceDriver(_deviceCookie, _deps, _configs) {}
 }

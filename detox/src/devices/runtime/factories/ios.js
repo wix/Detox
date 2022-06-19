@@ -1,12 +1,19 @@
 const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
-  _createAppDriverDeps({ sessionConfig }) {
-    const Client = require('../../../client/Client');
-    const { InvocationManager } = require('../../../invoke');
+  _createAppDriverDeps({ sessionConfig }, alias) {
+    // TODO (multiapps) Revisit whether a session can be used in a straightforward way by managing
+    //  the client connection better inside the driver (e.g. align with a select=>connect/deselect=>disconnect lifecycle)
+    //  In the current way, we are in fact slightly imposing the multi-apps functionality on a platform
+    //  that does not yet support it.
+    const appSessionConfig = this._createAppSessionConfig(sessionConfig, alias);
 
-    const client = new Client(sessionConfig);
+    const Client = require('../../../client/Client');
+    const client = new Client(appSessionConfig);
+
+    const { InvocationManager } = require('../../../invoke');
     const invocationManager = new InvocationManager(client);
+
     return {
       client,
       invocationManager,
@@ -16,8 +23,8 @@ class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
 
 class Ios extends RuntimeDriverFactoryIos {
   /** @override */
-  _createTestAppDriver(deviceCookie, commonDeps, { sessionConfig }, _alias) {
-    const appDeps = this._createAppDriverDeps({ sessionConfig });
+  _createTestAppDriver(deviceCookie, commonDeps, { sessionConfig }, alias) {
+    const appDeps = this._createAppDriverDeps({ sessionConfig }, alias);
     const deps = {
       ...commonDeps,
       ...appDeps,
@@ -36,9 +43,9 @@ class Ios extends RuntimeDriverFactoryIos {
 
 class IosSimulator extends RuntimeDriverFactoryIos {
   /** @override */
-  _createTestAppDriver(deviceCookie, commonDeps, { deviceConfig, sessionConfig }, _alias) {
+  _createTestAppDriver(deviceCookie, commonDeps, { sessionConfig }, alias) {
     const simulatorDeps = this.__createIosSimulatorDriverDeps(commonDeps);
-    const appDeps = this._createAppDriverDeps({ sessionConfig });
+    const appDeps = this._createAppDriverDeps({ sessionConfig }, alias);
     const deps = {
       ...simulatorDeps,
       ...appDeps,

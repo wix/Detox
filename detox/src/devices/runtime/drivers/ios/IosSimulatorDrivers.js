@@ -132,7 +132,9 @@ class IosSimulatorAppDriver extends IosAppDriver {
     await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
 
     const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
-    const { launchArgs } = launchArgsHandle;
+    let { launchArgs } = launchArgsHandle;
+
+    launchArgs = await this._applyAppSessionArgs(launchArgs);
 
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, launchInfo.languageAndLocale);
@@ -182,6 +184,21 @@ class IosSimulatorAppDriver extends IosAppDriver {
     await this._waitUntilReady();
     await this._waitForActive();
     return pid;
+  }
+
+  /** @override */
+  async terminate() {
+    const { udid, bundleId } = this;
+    await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
+    await this._applesimutils.terminate(udid, bundleId);
+    await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
+
+    await super.terminate();
+  }
+
+  /** @override */
+  async invoke(action) {
+    return this.invocationManager.execute(action);
   }
 
   /** @override */
@@ -266,6 +283,14 @@ class IosSimulatorAppDriver extends IosAppDriver {
         await this._deliverPayload(payload);
       }
     }
+  }
+
+  _applyAppSessionArgs(launchArgs) {
+    return {
+      detoxServer: this.client.serverUrl,
+      detoxSessionId: this.client.sessionId,
+      ...launchArgs,
+    };
   }
 
   // TODO (multiapps) Revisit this ugly func signature

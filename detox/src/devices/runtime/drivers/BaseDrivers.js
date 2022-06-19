@@ -4,7 +4,7 @@ const { DetoxInternalError } = require('../../../errors');
 const tempFile = require('../../../utils/tempFile');
 
 function throwNotImplemented(func) {
-  throw new DetoxInternalError({ message: `Function '${func.name}' is not implemented!` });
+  throw new DetoxInternalError(`Oops! Function '${func.name}' was left unimplemented!`);
 }
 
 /**
@@ -143,7 +143,9 @@ class TestAppDriver {
    */
   async openURL(_params) {}
 
-  async reloadReactNative() {}
+  async reloadReactNative() {
+    throwNotImplemented(this.reloadReactNative);
+  }
   async resetContentAndSettings() {}
 
   async sendUserActivity(payload) {

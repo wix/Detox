@@ -185,6 +185,12 @@ class AndroidAppDriver extends TestAppDriver {
   }
 
   /** @override */
+  async invoke(invocation) {
+    const resultObj = await this.invocationManager.execute(invocation);
+    return resultObj ? resultObj.result : undefined;
+  }
+
+  /** @override */
   async install() {
     const { _appInfo } = this;
     const {
@@ -203,12 +209,6 @@ class AndroidAppDriver extends TestAppDriver {
       await this.emitter.emit('beforeUninstallApp', { deviceId: this.adbName, bundleId: _packageId });
       await this.appUninstallHelper.uninstall(this.adbName, _packageId);
     }
-  }
-
-  /** @override */
-  async invoke(invocation) {
-    const resultObj = await this.invocationManager.execute(invocation);
-    return resultObj ? resultObj.result : undefined;
   }
 
   /** @override */
