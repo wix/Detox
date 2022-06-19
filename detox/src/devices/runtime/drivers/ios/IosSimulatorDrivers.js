@@ -126,26 +126,7 @@ class IosSimulatorAppDriver extends IosAppDriver {
    * @param launchInfo { LaunchInfoIosSim }
    */
   async launch(launchInfo) {
-    const { udid, bundleId } = this;
-
-    // TODO Is this "predelivery" indeed required when we're just 2ms away from sending the payload via the 'payload.json' file? :facepalm:
-    await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
-
-    const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
-    let { launchArgs } = launchArgsHandle;
-
-    launchArgs = await this._applyAppSessionArgs(launchArgs);
-
-    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
-    const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, launchInfo.languageAndLocale);
-    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
-
-    launchArgsHandle.cleanup();
-
-    await this._waitUntilReady();
-    await this._waitForActive();
-    await this._notifyAppReady(udid, bundleId);
-    return pid;
+    this._pid = await this._handleLaunchApp({ manually: false, launchInfo });
   }
 
   /**
@@ -153,37 +134,7 @@ class IosSimulatorAppDriver extends IosAppDriver {
    * @param launchInfo { LaunchInfoIosSim }
    */
   async waitForLaunch(launchInfo) {
-    const { udid, bundleId } = this;
-
-    // TODO Is this "predelivery" even required in the waitForLaunch (i.e. manual) mode?
-    await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
-
-    // Note: This is purely semantic; Has no analytical value.
-    const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
-    const { launchArgs } = launchArgsHandle;
-
-    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
-
-    this._applesimutils.printLaunchHint(udid, bundleId, launchArgs, launchInfo.languageAndLocale);
-    await pressAnyKey();
-
-    const pid = await this._applesimutils.getPid(udid, bundleId);
-    if (Number.isNaN(pid)) {
-      throw new DetoxRuntimeError({
-        message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
-        hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
-          `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`,
-      });
-    } else {
-      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
-    }
-    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
-
-    launchArgsHandle.cleanup();
-
-    await this._waitUntilReady();
-    await this._waitForActive();
-    return pid;
+    this._pid = await this._handleLaunchApp({ manually: true, launchInfo });
   }
 
   /** @override */
@@ -283,6 +234,67 @@ class IosSimulatorAppDriver extends IosAppDriver {
         await this._deliverPayload(payload);
       }
     }
+  }
+
+  async _handleLaunchApp({ manually, launchInfo }) {
+    const { udid, bundleId } = this;
+
+    // TODO In launch-mode: Is this "predelivery" indeed required when we're just 2ms away from sending the payload via the
+    //  'payload.json' file? :facepalm:
+    // TODO In manual-mode: Is this "predelivery" even required altogether?
+    await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
+
+    const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
+    let { launchArgs } = launchArgsHandle;
+
+    launchArgs = await this._applyAppSessionArgs(launchArgs);
+
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+
+    let pid;
+    if (manually) {
+      pid = await this.__waitForAppLaunch(launchArgs, launchInfo.languageAndLocale);
+    } else {
+      pid = await this.__launchApp(launchArgs, launchInfo.languageAndLocale);
+    }
+
+    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
+
+    launchArgsHandle.cleanup();
+
+    await this._waitUntilReady();
+    await this._waitForActive();
+    await this._notifyAppReady(udid, bundleId);
+
+    return pid;
+  }
+
+  async __waitForAppLaunch(launchArgs, languageAndLocale) {
+    const { udid, bundleId } = this;
+
+    this._applesimutils.printLaunchHint(udid, bundleId, launchArgs, languageAndLocale);
+    await pressAnyKey();
+
+    const pid = await this._applesimutils.getPid(udid, bundleId);
+    if (Number.isNaN(pid)) {
+      throw new DetoxRuntimeError({
+        message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
+        hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
+          `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`,
+      });
+    } else {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+    return pid;
+  }
+
+  async __launchApp(launchArgs, languageAndLocale) {
+    const { udid, bundleId } = this;
+
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+    const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
+    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
+    return pid;
   }
 
   _applyAppSessionArgs(launchArgs) {
