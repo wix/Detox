@@ -1,20 +1,20 @@
 // @ts-nocheck
 const DetoxGenymotionManager = require('../../../../../android/espressoapi/DetoxGenymotionManager');
-const AndroidDriver = require('../AndroidDriver');
+const { AndroidDeviceDriver, AndroidAppDriver } = require('../AndroidDrivers');
 
 /**
- * @typedef { AndroidDeviceDriverDeps } GenycloudDriverDeps
+ * @typedef { AndroidDeviceDriverDeps } GenycloudDeviceDriverDeps
  */
 
 /**
- * @typedef GenycloudDriverProps
+ * @typedef { Object } GenycloudDeviceDriverProps
  * @property instance { GenyInstance } The DTO associated with the cloud instance
  */
 
-class GenyCloudDriver extends AndroidDriver {
+class GenycloudDeviceDriver extends AndroidDeviceDriver {
   /**
-   * @param deps { GenycloudDriverDeps }
-   * @param props { GenycloudDriverProps }
+   * @param deps { GenycloudDeviceDriverDeps }
+   * @param props { GenycloudDeviceDriverProps }
    */
   constructor(deps, { instance }) {
     super(deps, { adbName: instance.adbName });
@@ -29,10 +29,20 @@ class GenyCloudDriver extends AndroidDriver {
   async setLocation(lat, lon) {
     await this.invocationManager.execute(DetoxGenymotionManager.setLocation(parseFloat(lat), parseFloat(lon)));
   }
+}
 
+class GenycloudAppDriver extends AndroidAppDriver {
+  constructor(deps, { instance }) {
+    super(deps, { adbName: instance.adbName });
+  }
+
+  /** @override */
   async _installAppBinaries(appBinaryPath, testBinaryPath) {
     await this.appInstallHelper.install(this.adbName, appBinaryPath, testBinaryPath);
   }
 }
 
-module.exports = GenyCloudDriver;
+module.exports = {
+  GenycloudDeviceDriver,
+  GenycloudAppDriver,
+};

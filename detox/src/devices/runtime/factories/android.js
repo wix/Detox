@@ -53,7 +53,6 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
   _createTestAppDriver(deviceCookie, commonDeps, { deviceConfig, sessionConfig }, alias) {
     const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
     const appDeps = this._createAppDriverDeps(fundamentalDeps, { sessionConfig }, alias);
-
     const deps = {
       ...fundamentalDeps,
       ...appDeps,
@@ -94,13 +93,30 @@ class AndroidAttached extends RuntimeDriverFactoryAndroid {
 }
 
 class Genycloud extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createTestAppDriver(deviceCookie, commonDeps, { sessionConfig }, alias) {
+    const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
+    const appDeps = this._createAppDriverDeps(fundamentalDeps, { sessionConfig }, alias);
+    const deps = {
+      ...fundamentalDeps,
+      ...appDeps,
+    };
+
     const props = {
       instance: deviceCookie.instance,
     };
 
-    const { GenycloudRuntimeDriver } = require('../drivers');
-    return new GenycloudRuntimeDriver(deps, props);
+    const { GenycloudAppDriver } = require('../drivers/android/genycloud/GenycloudDrivers');
+    return new GenycloudAppDriver(deps, props);
+  }
+
+  _createDeviceDriver(deviceCookie, commonDeps, _configs) {
+    const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
+    const props = {
+      instance: deviceCookie.instance,
+    };
+
+    const { GenycloudDeviceDriver } = require('../drivers/android/genycloud/GenycloudDrivers');
+    return new GenycloudDeviceDriver(fundamentalDeps, props);
   }
 }
 
