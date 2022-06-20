@@ -127,25 +127,18 @@ class TestAppDriver {
   /**
    * @param _launchInfo { LaunchInfo }
    */
-  async launch(_launchInfo) {
-    throwNotImplemented(this.launch);
-  }
+  async launch(_launchInfo) { throwNotImplemented(this.launch); }
 
   /**
    * @param _launchInfo { LaunchInfo }
    */
-  async waitForLaunch(_launchInfo) {
-    throwNotImplemented(this.waitForLaunch);
-  }
+  async waitForLaunch(_launchInfo) { throwNotImplemented(this.waitForLaunch); }
 
   /**
    * @param _params {{ url: String, sourceApp: (String|undefined) }}
    */
-  async openURL(_params) {}
-
-  async reloadReactNative() {
-    throwNotImplemented(this.reloadReactNative);
-  }
+  async openURL(_params) { throwNotImplemented(this.openURL); }
+  async reloadReactNative() { throwNotImplemented(this.reloadReactNative); }
   async resetContentAndSettings() {}
 
   async sendUserActivity(payload) {

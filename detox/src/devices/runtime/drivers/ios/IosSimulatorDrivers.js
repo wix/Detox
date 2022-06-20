@@ -206,6 +206,21 @@ class IosSimulatorAppDriver extends IosAppDriver {
   }
 
   /** @override */
+  async setURLBlacklist(urlList) {
+    await this.client.setSyncSettings({ blacklistURLs: urlList });
+  }
+
+  /** @override */
+  async enableSynchronization() {
+    await this.client.setSyncSettings({ enabled: true });
+  }
+
+  /** @override */
+  async disableSynchronization() {
+    await this.client.setSyncSettings({ enabled: false });
+  }
+
+  /** @override */
   async captureViewHierarchy(artifactName) {
     const viewHierarchyURL = temporaryPath.for.viewhierarchy();
     await this.client.captureViewHierarchy({ viewHierarchyURL });
@@ -231,32 +246,18 @@ class IosSimulatorAppDriver extends IosAppDriver {
     return await this.client.waitForBackground();
   }
 
-  async _predeliverPayloadIfNeeded(launchArgs) {
-    if (this.isRunning()) {
-      const payloadKeys = ['detoxURLOverride', 'detoxUserNotificationDataURL', 'detoxUserActivityDataURL'];
-      const payload = assertAndPickSingleKey(payloadKeys, launchArgs);
-      if (payload) {
-        await this._deliverPayload(payload);
-      }
-    }
-  }
-
   async _handleLaunchApp({ manually, launchInfo }) {
     const { udid, bundleId } = this;
 
     const fundamentalLaunchArgs = this._getFundamentalLaunchArgs(launchInfo);
-    const payloadLaunchArgsHandle = this._getPayloadFileOrUrlLaunchArgs(launchInfo);
+    const payloadLaunchArgsHandle = await this._getPayloadFileOrUrlLaunchArgs(launchInfo);
     const sessionLaunchArgs = this._getAppSessionArgs();
     const launchArgs = {
       ...fundamentalLaunchArgs,
-      ...payloadLaunchArgsHandle.launchArgs,
+      ...payloadLaunchArgsHandle.args,
       ...sessionLaunchArgs,
     };
 
-    // TODO In launch-mode: Is this "predelivery" indeed required when we're just 2ms away from sending the payload via the
-    //  'payload.json' file? :facepalm:
-    // TODO In manual-mode: Is this "predelivery" even required altogether?
-    await this._predeliverPayloadIfNeeded(launchArgs);
     await this._notifyBeforeAppLaunch(udid, bundleId, launchArgs);
 
     let pid;
@@ -311,26 +312,45 @@ class IosSimulatorAppDriver extends IosAppDriver {
     return launchArgs;
   }
 
-  _getPayloadFileOrUrlLaunchArgs(launchInfo) {
-    const launchArgs = {};
+  async _getPayloadFileOrUrlLaunchArgs(launchInfo) {
+    // TODO (multiapps) Why the heck is payload predelivery even needed if it is anyways available via the launch-arg? :shrug:
+
+    const deliverPayloadIfNeeded = async (payload) => {
+      if (this.isRunning()) {
+        await this._deliverPayload(payload);
+      }
+    };
+
+    const deliverPayloadAndSetupLaunchArg = async (argName, payload) => {
+      const payloadFile = this._createPayloadFile(payload);
+      args[argName] = payloadFile.path;
+
+      await deliverPayloadIfNeeded({ [argName]: payloadFile.path });
+      cleanup = () => payloadFile.cleanup();
+    };
+
+    const args = {};
     let cleanup = _.noop;
 
     if (launchInfo.url) {
-      launchArgs.detoxURLOverride = launchInfo.url;
+      // TODO Are 'url' and 'detoxURLOverride' both required?
+      args.url = launchInfo.url;
+      args.detoxURLOverride = launchInfo.url;
 
       if (launchInfo.sourceApp) {
-        launchArgs.detoxSourceAppOverride = launchInfo.sourceApp;
+        args.detoxSourceAppOverride = launchInfo.sourceApp;
       }
+
+      // TODO Why 'url' instead of 'detoxURLOverride' in payload, unlike the other params?
+      await deliverPayloadIfNeeded({ url: launchInfo.url, sourceApp: launchInfo.sourceApp });
     } else if (launchInfo.userNotification) {
-      const payloadFile = this._createPayloadFile(launchInfo.userNotification);
-      launchArgs.detoxUserNotificationDataURL = payloadFile.path;
+      await deliverPayloadAndSetupLaunchArg('detoxUserNotificationDataURL', launchInfo.userNotification);
     } else if (launchInfo.userActivity) {
-      const payloadFile = this._createPayloadFile(launchInfo.userActivity);
-      launchArgs.detoxUserActivityDataURL = payloadFile.path;
+      await deliverPayloadAndSetupLaunchArg('detoxUserActivityDataURL', launchInfo.userActivity);
     }
 
     return {
-      launchArgs,
+      args,
       cleanup,
     };
   }
