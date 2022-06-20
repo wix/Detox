@@ -95,9 +95,9 @@ class Detox {
       this._artifactsManager = null;
     }
 
-    if (this.runtimeDevice) {
+    if (this._runtimeDevice) {
       const shutdown = this._behaviorConfig.cleanup.shutdownDevice;
-      await this.runtimeDevice.cleanup();
+      await this._runtimeDevice.cleanup();
       await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
 
@@ -191,7 +191,7 @@ class Detox {
     await runtimeDevice.init();
     await this._artifactsManager.onDeviceCreated(runtimeDevice);
 
-    this.runtimeDevice = runtimeDevice;
+    this._runtimeDevice = runtimeDevice;
     this.device = new DeviceAPI(runtimeDevice, this._runtimeErrorComposer);
 
     const matchers = matchersFactory.createMatchers({
