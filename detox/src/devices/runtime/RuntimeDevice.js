@@ -133,10 +133,6 @@ class RuntimeDevice {
     return this._driver.takeScreenshot(name);
   }
 
-  async captureViewHierarchy(name) {
-    return this._driver.captureViewHierarchy(name);
-  }
-
   async setBiometricEnrollment(yesOrNo) {
     await this._driver.setBiometricEnrollment(yesOrNo);
   }

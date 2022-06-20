@@ -363,22 +363,6 @@ class IosSimulatorAppDriver extends IosAppDriver {
   }
 }
 
-function assertAndPickSingleKey(keys, pojo) {
-  const projection = _.pick(pojo, keys);
-  const projKeys = Object.keys(projection);
-
-  if (projKeys.length > 1) {
-    const message = `An app cannot be launched with more than one url/data arguments; See https://wix.github.io/Detox/docs/api/device-object-api/#devicelaunchappparams`;
-    throw new DetoxRuntimeError({ message });
-  }
-
-  if (projKeys.length === 0) {
-    return null;
-  }
-
-  return projection;
-}
-
 module.exports = {
   IosSimulatorDeviceDriver,
   IosSimulatorAppDriver,

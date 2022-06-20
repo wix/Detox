@@ -78,6 +78,10 @@ class RunnableTestApp extends TestApp {
     await this._driver.disableSynchronization();
   }
 
+  async captureViewHierarchy(name) {
+    return this._driver.captureViewHierarchy(name);
+  }
+
   async openURL(params) {
     if (typeof params !== 'object' || !params.url) {
       throw new DetoxRuntimeError({ message: `openURL must be called with JSON params, and a value for 'url' key must be provided. See https://wix.github.io/Detox/docs/api/device-object-api/#deviceopenurlurl-sourceappoptional` });

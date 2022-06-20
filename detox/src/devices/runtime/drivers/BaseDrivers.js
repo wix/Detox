@@ -172,7 +172,7 @@ class TestAppDriver {
   async setURLBlacklist(_urlList) {}
   async enableSynchronization() {}
   async disableSynchronization() {}
-  async captureViewHierarchy() {}
+  async captureViewHierarchy(_name) {}
   async cleanup() {
     this.client.dumpPendingRequests();
     await this.client.cleanup();

@@ -118,7 +118,7 @@ class DeviceAPI {
   }
 
   async captureViewHierarchy(name = 'capture') {
-    return this.device.captureViewHierarchy(name);
+    return this.device.selectedApp.captureViewHierarchy(name);
   }
 
   async sendToHome() {
