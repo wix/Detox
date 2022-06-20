@@ -100,6 +100,11 @@ class IosSimulatorDeviceDriver extends IosDeviceDriver {
 
 /**
  * @typedef { LaunchInfo } LaunchInfoIosSim
+ * @property [url] { String }
+ * @property [sourceApp] { String }
+ * @property [userNotification] { Object }
+ * @property [userActivity] { Object }
+ * @property [disableTouchIndicators] { Boolean }
  * @property [languageAndLocale] { String }
  */
 
@@ -239,17 +244,20 @@ class IosSimulatorAppDriver extends IosAppDriver {
   async _handleLaunchApp({ manually, launchInfo }) {
     const { udid, bundleId } = this;
 
+    const fundamentalLaunchArgs = this._getFundamentalLaunchArgs(launchInfo);
+    const payloadLaunchArgsHandle = this._getPayloadFileOrUrlLaunchArgs(launchInfo);
+    const sessionLaunchArgs = this._getAppSessionArgs();
+    const launchArgs = {
+      ...fundamentalLaunchArgs,
+      ...payloadLaunchArgsHandle.launchArgs,
+      ...sessionLaunchArgs,
+    };
+
     // TODO In launch-mode: Is this "predelivery" indeed required when we're just 2ms away from sending the payload via the
     //  'payload.json' file? :facepalm:
     // TODO In manual-mode: Is this "predelivery" even required altogether?
-    await this._predeliverPayloadIfNeeded(launchInfo.launchArgs);
-
-    const launchArgsHandle = this._getLaunchArgsForPayloadsData(launchInfo.launchArgs);
-    let { launchArgs } = launchArgsHandle;
-
-    launchArgs = await this._applyAppSessionArgs(launchArgs);
-
-    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+    await this._predeliverPayloadIfNeeded(launchArgs);
+    await this._notifyBeforeAppLaunch(udid, bundleId, launchArgs);
 
     let pid;
     if (manually) {
@@ -257,15 +265,12 @@ class IosSimulatorAppDriver extends IosAppDriver {
     } else {
       pid = await this.__launchApp(launchArgs, launchInfo.languageAndLocale);
     }
+    payloadLaunchArgsHandle.cleanup();
 
-    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
-
-    launchArgsHandle.cleanup();
-
+    await this._notifyAppLaunch(udid, bundleId, launchArgs, pid);
     await this._waitUntilReady();
     await this._waitForActive();
     await this._notifyAppReady(udid, bundleId);
-
     return pid;
   }
 
@@ -291,38 +296,49 @@ class IosSimulatorAppDriver extends IosAppDriver {
   async __launchApp(launchArgs, languageAndLocale) {
     const { udid, bundleId } = this;
 
-    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
-    await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
     return pid;
   }
 
-  _applyAppSessionArgs(launchArgs) {
+  _getFundamentalLaunchArgs(launchInfo) {
+    const launchArgs = {
+      ...launchInfo.userLaunchArgs,
+    };
+
+    if (launchInfo.disableTouchIndicators) {
+      launchArgs.detoxDisableTouchIndicators = true;
+    }
+    return launchArgs;
+  }
+
+  _getPayloadFileOrUrlLaunchArgs(launchInfo) {
+    const launchArgs = {};
+    let cleanup = _.noop;
+
+    if (launchInfo.url) {
+      launchArgs.detoxURLOverride = launchInfo.url;
+
+      if (launchInfo.sourceApp) {
+        launchArgs.detoxSourceAppOverride = launchInfo.sourceApp;
+      }
+    } else if (launchInfo.userNotification) {
+      const payloadFile = this._createPayloadFile(launchInfo.userNotification);
+      launchArgs.detoxUserNotificationDataURL = payloadFile.path;
+    } else if (launchInfo.userActivity) {
+      const payloadFile = this._createPayloadFile(launchInfo.userActivity);
+      launchArgs.detoxUserActivityDataURL = payloadFile.path;
+    }
+
     return {
-      detoxServer: this.client.serverUrl,
-      detoxSessionId: this.client.sessionId,
-      ...launchArgs,
+      launchArgs,
+      cleanup,
     };
   }
 
-  // TODO (multiapps) Revisit this ugly func signature
-  _getLaunchArgsForPayloadsData(launchArgs) {
-    let paramName;
-    if (launchArgs.detoxUserNotificationDataURL) {
-      paramName = 'detoxUserNotificationDataURL';
-    } else if (launchArgs.detoxUserActivityDataURL) {
-      paramName = 'detoxUserActivityDataURL';
-    } else {
-      return { launchArgs, cleanup: _.noop };
-    }
-
-    const payloadFile = this._createPayloadFile(launchArgs[paramName]);
+  _getAppSessionArgs() {
     return {
-      launchArgs: {
-        ...launchArgs,
-        [paramName]: payloadFile.path,
-      },
-      cleanup: () => payloadFile.cleanup(),
+      detoxServer: this.client.serverUrl,
+      detoxSessionId: this.client.sessionId,
     };
   }
 }

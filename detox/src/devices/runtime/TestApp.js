@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { traceCall } = require('../../utils/trace');
 
@@ -176,6 +178,8 @@ class RunnableTestApp extends TestApp {
   }
 
   async _launch(launchParams) {
+    const passthroughParams = ['url', 'sourceApp', 'userNotification', 'userActivity', 'disableTouchIndicators', 'languageAndLocale'];
+
     const isRunning = this._driver.isRunning();
     const newInstance = (launchParams.newInstance !== undefined)
       ? launchParams.newInstance
@@ -193,10 +197,10 @@ class RunnableTestApp extends TestApp {
       await this._driver.setPermissions(launchParams.permissions);
     }
 
-    const launchArgs = this._prepareLaunchArgs(launchParams);
+    const userLaunchArgs = this._mergeUserLaunchArgs(launchParams);
     const launchInfo = {
-      launchArgs,
-      languageAndLocale: launchParams.languageAndLocale,
+      ..._.pick(launchParams, passthroughParams),
+      userLaunchArgs,
     };
 
     if (this.behaviorConfig.launchApp === 'manual') {
@@ -206,28 +210,11 @@ class RunnableTestApp extends TestApp {
     }
   }
 
-  _prepareLaunchArgs(launchInfo) {
-    const launchArgs = {
+  _mergeUserLaunchArgs(launchInfo) {
+    return {
       ...this._launchArgs.get(),
       ...launchInfo.launchArgs,
     };
-
-    if (launchInfo.url) {
-      launchArgs.detoxURLOverride = launchInfo.url;
-
-      if (launchInfo.sourceApp) {
-        launchArgs.detoxSourceAppOverride = launchInfo.sourceApp;
-      }
-    } else if (launchInfo.userNotification) {
-      launchArgs.detoxUserNotificationDataURL = launchInfo.userNotification;
-    } else if (launchInfo.userActivity) {
-      launchArgs.detoxUserActivityDataURL = launchInfo.userActivity;
-    }
-
-    if (launchInfo.disableTouchIndicators) {
-      launchArgs.detoxDisableTouchIndicators = true;
-    }
-    return launchArgs;
   }
 }
 

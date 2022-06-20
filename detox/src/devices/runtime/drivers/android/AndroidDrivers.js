@@ -95,6 +95,11 @@ class AndroidDeviceDriver extends DeviceDriver {
  */
 
 /**
+ * @typedef { LaunchInfo } LaunchInfoAndroid
+ * @property [userNotification] { Object }
+ */
+
+/**
  * @typedef { TestAppDriverDeps } AndroidAppDriverDeps
  * @property adb { ADB }
  * @property aapt { AAPT }
@@ -144,23 +149,26 @@ class AndroidAppDriver extends TestAppDriver {
     this._packageId = await this._inferPackageIdFromApk(appInfo.binaryPath);
   }
 
-  /** @override */
+  /**
+   * @override
+   * @param launchInfo { LaunchInfoAndroid }
+   */
   async launch(launchInfo) {
     this._pid = await this._handleLaunchApp({
       manually: false,
-      launchArgs: launchInfo.launchArgs,
+      launchInfo,
     });
-    await this._waitUntilReady();
-    await this._notifyAppReady(this.adbName, this._packageId);
   }
 
-  /** @override */
+  /**
+   * @override
+   * @param launchInfo { LaunchInfoAndroid }
+   */
   async waitForLaunch(launchInfo) {
     this._pid = await this._handleLaunchApp({
       manually: true,
-      launchArgs: launchInfo.launchArgs,
+      launchInfo,
     });
-    await this._notifyAppReady(this.adbName, this._packageId);
   }
 
   /** @override */
@@ -257,13 +265,19 @@ class AndroidAppDriver extends TestAppDriver {
     return await this.aapt.getPackageName(binaryPath);
   }
 
-  async _handleLaunchApp({ manually, launchArgs }) {
+  async _handleLaunchApp({ manually, launchInfo }) {
     const { adbName, _packageId } = this;
 
-    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId: _packageId, launchArgs });
+    const userLaunchArgs = { ...launchInfo.userLaunchArgs };
+    const notificationLaunchArgs = await this._getNotificationLaunchArgs(launchInfo);
+    const sessionLaunchArgs = this._getAppSessionArgs();
+    const launchArgs = {
+      ...userLaunchArgs,
+      ...notificationLaunchArgs,
+      ...sessionLaunchArgs,
+    };
 
-    launchArgs = await this._applyAppSessionArgs(launchArgs);
-    launchArgs = await this._modifyArgsForNotificationHandling(launchArgs);
+    await this._notifyBeforeAppLaunch(adbName, _packageId, launchArgs);
 
     if (manually) {
       await this.__waitForAppLaunch(launchArgs);
@@ -276,7 +290,9 @@ class AndroidAppDriver extends TestAppDriver {
       log.info({}, `Found the app (${_packageId}) with process ID = ${pid}. Proceeding...`);
     }
 
-    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId: _packageId, launchArgs, pid });
+    await this._notifyAppLaunch(adbName, _packageId, launchArgs, pid);
+    await this._waitUntilReady();
+    await this._notifyAppReady(adbName, _packageId, pid);
     return pid;
   }
 
@@ -317,7 +333,7 @@ class AndroidAppDriver extends TestAppDriver {
     if (url) {
       await this._startActivityWithUrl(url);
     } else if (detoxUserNotificationDataURL) {
-      const payloadPathOnDevice = await this._sendNotificationDataToDevice(detoxUserNotificationDataURL, this.adbName);
+      const payloadPathOnDevice = await this._sendNotificationFileToDevice(detoxUserNotificationDataURL, this.adbName);
       await this._startActivityFromNotification(payloadPathOnDevice);
     }
   }
@@ -334,26 +350,24 @@ class AndroidAppDriver extends TestAppDriver {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
   }
 
-  _applyAppSessionArgs(launchArgs) {
+  async _getNotificationLaunchArgs(launchInfo) {
+    const launchArgs = {};
+
+    if (launchInfo.userNotification) {
+      const notificationLocalFile = this._createPayloadFile(launchInfo.userNotification);
+      const notificationTargetPath = await this._sendNotificationFileToDevice(notificationLocalFile.path, this.adbName);
+      notificationLocalFile.cleanup();
+
+      launchArgs.detoxUserNotificationDataURL = notificationTargetPath;
+    }
+    return launchArgs;
+  }
+
+  _getAppSessionArgs() {
     return {
       detoxServer: this.client.serverUrl,
       detoxSessionId: this.client.sessionId,
-      ...launchArgs,
     };
-  }
-
-  async _modifyArgsForNotificationHandling(launchArgs) {
-    if (launchArgs.detoxUserNotificationDataURL) {
-      const notificationLocalFile = this._createPayloadFile(launchArgs.detoxUserNotificationDataURL);
-      const notificationTargetPath = await this._sendNotificationDataToDevice(notificationLocalFile.path, this.adbName);
-      notificationLocalFile.cleanup();
-
-      return {
-        ...launchArgs,
-        detoxUserNotificationDataURL: notificationTargetPath,
-      };
-    }
-    return launchArgs;
   }
 
   /** @override */
@@ -365,7 +379,7 @@ class AndroidAppDriver extends TestAppDriver {
     }
   }
 
-  async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
+  async _sendNotificationFileToDevice(dataFileLocalPath, adbName) {
     await this.fileXfer.prepareDestinationDir(adbName);
     return await this.fileXfer.send(adbName, dataFileLocalPath, 'notification.json');
   }

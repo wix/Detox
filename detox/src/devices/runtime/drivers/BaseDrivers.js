@@ -77,7 +77,7 @@ class DeviceDriver {
 
 /**
  * @typedef { Object } LaunchInfo
- * @property launchArgs { LaunchArgs }
+ * @property userLaunchArgs { LaunchArgs }
  */
 
 class TestAppDriver {
@@ -232,12 +232,18 @@ class TestAppDriver {
   }
 
   /** @protected */
-  async _notifyAppReady(deviceId, bundleId) {
-    await this.emitter.emit('appReady', {
-      deviceId,
-      bundleId,
-      pid: this._pid,
-    });
+  async _notifyBeforeAppLaunch(deviceId, bundleId, launchArgs) {
+    await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId, launchArgs });
+  }
+
+  /** @protected */
+  async _notifyAppLaunch(deviceId, bundleId, launchArgs, pid) {
+    await this.emitter.emit('launchApp', { bundleId, deviceId, launchArgs, pid });
+  }
+
+  /** @protected */
+  async _notifyAppReady(deviceId, bundleId, pid) {
+    await this.emitter.emit('appReady', { deviceId, bundleId, pid });
   }
 }
 
