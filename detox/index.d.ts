@@ -400,7 +400,7 @@ declare global {
             child(context?: Record<string, unknown>): Logger;
         };
 
-        type DetoxLogLevel = 'error' | 'warn' | 'info' | 'debug' | 'trace';
+        type DetoxLogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
         type Point2D = {
             x: number,

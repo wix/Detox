@@ -14,6 +14,7 @@ class DetoxContext {
      * @type {DetoxLogger}
      */
     this._logger = new DetoxLogger({
+      level: DetoxLogger.castLevel(process.env.DETOX_LOGLEVEL),
       file: temporaryPath.for.log(),
     });
     /**

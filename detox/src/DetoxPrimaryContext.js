@@ -46,12 +46,13 @@ class DetoxPrimaryContext extends DetoxContext {
 
     const IPCServer = require('./ipc/IPCServer');
     this._ipcServer = new IPCServer({
-      id: 'detox-' + process.pid,
+      id: `primary-${process.pid}`,
       detoxConfig: this._config,
       logger: this._logger,
     });
 
     process.env.DETOX_IPC_SERVER_ID = this._ipcServer.id;
+    process.env.DETOX_LOGLEVEL = this._logger.level;
     await this._ipcServer.init();
 
     const environmentFactory = require('./environmentFactory');
@@ -97,7 +98,7 @@ class DetoxPrimaryContext extends DetoxContext {
         this._ipcServer = null;
       }
 
-      // TODO: move the artifacts
+      // TODO: reconcile the log artifacts
     } finally {
       await super._doCleanup();
     }

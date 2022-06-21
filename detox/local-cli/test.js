@@ -12,7 +12,6 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
     await detox.init({
       argv: detoxArgs,
       testRunnerArgv: runnerArgs,
-      workerId: NaN,
     });
 
     const runnerCommand = new TestRunnerCommand()

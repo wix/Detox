@@ -1,11 +1,15 @@
+const { IPC } = require('node-ipc');
+
+const SessionState = require('./SessionState');
+
 class IPCServer {
   constructor({ id, logger, detoxConfig }) {
     this._id = id;
-    this._logger = logger;
-    this._state = {
-      workers: 0,
+    this._logger = logger.child({ __filename, event: 'IPC_SERVER' });
+    this._state = new SessionState({
       detoxConfig,
-    };
+      workersCount: 0,
+    });
     this._ipc = null;
   }
 
@@ -14,16 +18,15 @@ class IPCServer {
   }
 
   async init() {
-    this._ipc = require('node-ipc');
+    this._ipc = new IPC();
     this._ipc.config.id = this._id;
-    this._ipc.config.retry = 1500;
-    this._ipc.config.silent = true;
+    this._ipc.config.appspace = 'detox.';
+    this._ipc.config.logger = (msg) => this._logger.trace(msg);
 
     await new Promise((resolve) => {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
-      this._ipc.server.on('registerWorker', this.onRegisterWorker.bind(this));
-      this._ipc.server.on('log', this.onLog.bind(this));
+      this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
       this._ipc.server.start();
     });
   }
@@ -39,20 +42,13 @@ class IPCServer {
     });
   }
 
-  onRegisterWorker({ workerId }, _socket) {
-    const workersCount = this._state.workers = Math.max(this._state.workers, +workerId);
-    const detoxConfig = this._state.detoxConfig;
-    // TODO: change only for 1 worker (!))
-    this._ipc.server.broadcast('detoxConfig', detoxConfig);
-    // TODO: think how to serialize/deserialize tricky loggerConfig
-    this._ipc.server.broadcast('workersCount', { value: workersCount });
-  }
+  onRegisterContext({ workerId }, socket) {
+    this._ipc.server.emit(socket, 'registerContextDone', this._state);
 
-  onLog({ level, meta, args }) {
-    if (typeof meta.time === 'string') {
-      meta.time = new Date(meta.time);
+    if (workerId && workerId > this._state.workersCount) {
+      const workersCount = this._state.workersCount = workerId;
+      this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }
-    this._logger[level](meta, ...args);
   }
 }
 

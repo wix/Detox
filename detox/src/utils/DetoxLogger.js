@@ -22,10 +22,7 @@ class DetoxLogger {
     this._config = {
       level: 'info',
       overrideConsole: false,
-      options: {
-        ...DetoxLogger.defaultOptions,
-      },
-
+      options: _.cloneDeep(DetoxLogger.defaultOptions),
       ...config,
     };
 
@@ -51,7 +48,7 @@ class DetoxLogger {
    * @param config
    */
   async setConfig(config) {
-    Object.assign(this._config, config);
+    _.merge(this._config, config);
 
     // @ts-ignore
     const [oldStream] = this._bunyan.streams.splice(1, 1);
@@ -107,13 +104,15 @@ class DetoxLogger {
   }
 
   _createDebugStream(overrides) {
+    const streamOptions = {
+      ...this._config.options,
+      ...overrides,
+    };
+
     return {
       type: 'raw',
       level: this._config.level,
-      stream: bunyanDebugStream.default({
-        ...this._config.options,
-        ...overrides,
-      }),
+      stream: bunyanDebugStream.default(streamOptions),
     };
   }
 
@@ -140,6 +139,24 @@ class DetoxLogger {
       'cpid': pid => ` cpid=${pid}`,
     },
   };
+
+  /**
+   * @param level
+   * @returns {Detox.DetoxLogLevel}
+   */
+  static castLevel(level) {
+    switch (level) {
+      case 'fatal':
+      case 'error':
+      case 'warn':
+      case 'info':
+      case 'debug':
+      case 'trace':
+        return level;
+      default:
+        return 'info';
+    }
+  }
 }
 
 module.exports = DetoxLogger;
