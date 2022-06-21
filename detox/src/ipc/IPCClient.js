@@ -2,13 +2,13 @@ const { IPC } = require('node-ipc');
 
 const { DetoxInternalError } = require('../errors');
 
-const SessionState = require('./SessionState');
+const { SecondarySessionState } = require('./state');
 
 class IPCClient {
   constructor({ logger, id, serverId, workerId }) {
     this._onSessionStateUpdate = this._onSessionStateUpdate.bind(this);
 
-    this._state = new SessionState({});
+    this._state = new SecondarySessionState({});
     this._logger = logger.child({ __filename, event: 'IPC_CLIENT' });
 
     this._id = id;

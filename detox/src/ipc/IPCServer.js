@@ -1,6 +1,6 @@
 const { IPC } = require('node-ipc');
 
-const SessionState = require('./SessionState');
+const { PrimarySessionState } = require('./state');
 
 /**
  * @typedef {object} ServerState
@@ -13,26 +13,15 @@ class IPCServer {
     this._id = id;
     this._logger = logger.child({ __filename, event: 'IPC_SERVER' });
 
-    this._sessionState = new SessionState({
+    this._sessionState = new PrimarySessionState({
       detoxConfig,
-      workersCount: 0,
     });
-
-    /** @type {ServerState} */
-    this._serverState = {
-      contexts: [],
-      logFiles: [],
-    };
 
     this._ipc = null;
   }
 
   get id() {
     return this._id;
-  }
-
-  get state() {
-    return this._serverState;
   }
 
   get sessionState() {
@@ -65,10 +54,10 @@ class IPCServer {
   }
 
   onRegisterContext({ id, logFile, workerId }, socket) {
-    this._serverState.contexts.push(id);
+    this._sessionState.contexts.push(id);
 
     if (logFile) {
-      this._serverState.logFiles.push(logFile);
+      this._sessionState.logFiles.push(logFile);
     }
 
     this._ipc.server.emit(socket, 'registerContextDone', this._sessionState);

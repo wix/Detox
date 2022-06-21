@@ -110,12 +110,12 @@ class TestRunnerCommand {
       } catch (e) {
         launchError = e;
 
-        const { lastFailedTests } = detox;
-        if (_.isEmpty(lastFailedTests)) {
+        const { failedTestFiles } = detox.session;
+        if (_.isEmpty(failedTestFiles)) {
           throw e;
         }
 
-        this._argv._ = lastFailedTests;
+        this._argv._ = failedTestFiles;
         this._env.DETOX_RERUN_INDEX = 1 + (this._env.DETOX_RERUN_INDEX || 0);
       }
     } while (launchError && --runsLeft > 0);

@@ -121,6 +121,9 @@ declare global {
                  */
                 [prop: string]: _HookableProperty<unknown>;
             };
+            jest?: {
+                reportSpecs?: boolean | undefined;
+            };
             /**
              * Retries count. Zero means one attempt.
              */
@@ -313,13 +316,6 @@ declare global {
              */
             init(options?: Partial<DetoxInitOptions>): Promise<void>;
 
-            readonly log: Detox.Logger;
-
-            /**
-             * Detox runtime config
-             */
-            readonly config: Detox.DetoxRuntimeConfig;
-
             /**
              * The cleanup phase should happen after all the tests have finished.
              * This is the phase where the Detox server shuts down.
@@ -330,6 +326,25 @@ declare global {
              * });
              */
             cleanup(): Promise<void>;
+
+            /**
+             * Detox logger instance. Can be used for saving user logs to the general log file.
+             */
+            readonly log: Detox.Logger;
+
+            /**
+             * Detox runtime config
+             *
+             * @internal
+             */
+            readonly config: Detox.DetoxRuntimeConfig;
+
+            /**
+             * Detox session state
+             *
+             * @internal
+             */
+            readonly session: Detox.DetoxSessionState;
         }
 
         type DetoxInitOptions = {
@@ -341,6 +356,13 @@ declare global {
             global: NodeJS.Global;
             workerId: number;
         };
+
+        /**
+         * @internal
+         */
+        type DetoxSessionState = Readonly<{
+            workersCount: number;
+        }>;
 
         /**
          * @internal

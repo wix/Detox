@@ -36,10 +36,24 @@ function composeRunnerConfig(opts) {
 
   if (globalConfig) {
     Object.assign(merged.args, globalConfig.args);
+
+    if (globalConfig.jest) {
+      merged.jest = Object.assign(merged.jest || {}, globalConfig.jest);
+    }
   }
 
   if (localConfig) {
     Object.assign(merged.args, localConfig.args);
+
+    if (localConfig.jest) {
+      merged.jest = Object.assign(merged.jest || {}, localConfig.jest);
+    }
+  }
+
+  if (cliConfig.jestReportSpecs != null) {
+    merged.jest = Object.assign(merged.jest || {}, {
+      reportSpecs: cliConfig.jestReportSpecs,
+    });
   }
 
   if (argOverrides) {

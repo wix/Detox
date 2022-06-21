@@ -85,6 +85,26 @@ describe('composeRunnerConfig', () => {
     }));
   });
 
+  it('should apply --jest-report-specs overrides from cliConfig onto globalConfig and localConfig', () => {
+    globalConfig.testRunner = {
+      jest: { customProperty: 1 },
+    };
+
+    localConfig.testRunner = {
+      jest: { otherProperty: true },
+    };
+
+    cliConfig.jestReportSpecs = true;
+
+    expect(composeRunnerConfig()).toEqual(expect.objectContaining({
+      jest: {
+        customProperty: 1,
+        reportSpecs: true,
+        otherProperty: true,
+      },
+    }));
+  });
+
   it('should take overrides from testRunnerArgv', () => {
     testRunnerArgv = {
       listFiles: true,

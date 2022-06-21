@@ -1,6 +1,6 @@
 const chalk = require('chalk').default;
 
-const log = require('../../../../src/utils/logger');
+const detox = require('../../../..');
 const { traceln } = require('../utils/stdout');
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
@@ -15,7 +15,16 @@ class SpecReporter {
     this._suitesDesc = '';
   }
 
+  get enabled() {
+    const jestSection = detox.config.runnerConfig.jest;
+    const reportSpecs = jestSection && jestSection.reportSpecs;
+
+    return reportSpecs !== undefined ? reportSpecs : detox.session.workersCount === 1;
+  }
+
   run_describe_start(event) {
+    if (!this.enabled) return;
+
     if (event.describeBlock.parent !== undefined) {
       this._onSuiteStart({
         description: event.describeBlock.name,
@@ -24,12 +33,16 @@ class SpecReporter {
   }
 
   run_describe_finish(event) {
+    if (!this.enabled) return;
+
     if (event.describeBlock.parent !== undefined) {
       this._onSuiteEnd();
     }
   }
 
   test_start(event) {
+    if (!this.enabled) return;
+
     const { test } = event;
     this._onTestStart({
       description: test.name,
@@ -38,6 +51,8 @@ class SpecReporter {
   }
 
   test_done(event) {
+    if (!this.enabled) return;
+
     const { test } = event;
     const testInfo = {
       description: test.name,
@@ -47,6 +62,8 @@ class SpecReporter {
   }
 
   test_skip(event) {
+    if (!this.enabled) return;
+
     const testInfo = {
       description: event.test.name,
     };
@@ -101,10 +118,8 @@ class SpecReporter {
     const retriesDescription = (invocations > 1) ? chalk.gray(` [Retry #${invocations - 1}]`) : '';
     const status = chalk.gray(_status ? ` [${_status}]` : '');
     const desc = this._suitesDesc + testDescription + retriesDescription + status;
-    log.info({ event: 'SPEC_STATE_CHANGE' }, desc);
+    detox.log.info({ event: 'SPEC_STATE_CHANGE' }, desc);
   }
 }
 
-module.exports = process.env.DETOX_REPORT_SPECS === 'true'
-  ? SpecReporter
-  : class {};
+module.exports = SpecReporter;

@@ -11,6 +11,12 @@ class DetoxSecondaryContext extends DetoxContext {
     this._ipcClient = null;
   }
 
+  get session() {
+    return this._ipcClient
+      ? this._ipcClient.sessionState
+      : null;
+  }
+
   async _doInit(opts) {
     const IPCClient = require('./ipc/IPCClient');
     this._ipcClient = new IPCClient({

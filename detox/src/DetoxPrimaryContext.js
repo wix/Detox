@@ -22,6 +22,12 @@ class DetoxPrimaryContext extends DetoxContext {
     // TODO: think about signal-exit and cleaning up the logs
   }
 
+  get session() {
+    return this._ipcServer
+      ? this._ipcServer.sessionState
+      : null;
+  }
+
   /**
    * @override
    * @param {Partial<Detox.DetoxInitOptions>} [opts]
@@ -101,7 +107,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
       const logFiles = [this._logger.config.file];
       if (this._ipcServer) {
-        logFiles.push(...this._ipcServer.state.logFiles);
+        logFiles.push(...this._ipcServer.sessionState.logFiles);
         await this._ipcServer.dispose();
         this._ipcServer = null;
       }
@@ -132,11 +138,6 @@ class DetoxPrimaryContext extends DetoxContext {
         fs.unlinkSync(filepath);
       }
     }
-  }
-
-  get lastFailedTests() {
-    // TODO: retrieve from IPC
-    return [];
   }
 
   async _resetLockFile() {
