@@ -4,19 +4,6 @@ if (process.platform === 'win32') {
 }
 
 jest.mock('child_process');
-jest.mock('node-ipc', () => ({
-  config: {},
-  serve: jest.fn(cb => cb()),
-  server: {
-    on: jest.fn(),
-    start: jest.fn(),
-    stop: jest.fn(),
-    server: {
-      close: jest.fn(cb => cb()),
-    },
-  },
-}));
-
 jest.mock('../src/utils/DetoxLogger');
 jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');

@@ -7,6 +7,7 @@ const METHODS = [
 class FakeLogger {
   static instances = [];
   static defaultOptions = DetoxLogger.defaultOptions;
+  static castLevel = DetoxLogger.castLevel;
 
   constructor(opts = {}) {
     FakeLogger.instances.push(this);
