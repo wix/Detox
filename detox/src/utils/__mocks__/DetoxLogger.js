@@ -26,6 +26,10 @@ class FakeLogger {
     }
   }
 
+  get config() {
+    return {};
+  }
+
   setConfig() {}
 
   child(opts) {

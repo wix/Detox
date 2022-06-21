@@ -1,8 +1,8 @@
-const fs = require('fs');
 const path = require('path');
-const util = require('util');
 const { URL } = require('url');
+const util = require('util');
 
+const fs = require('fs-extra');
 const _ = require('lodash');
 
 const DetoxContext = require('./DetoxContext');
@@ -106,25 +106,30 @@ class DetoxPrimaryContext extends DetoxContext {
         this._ipcServer = null;
       }
 
-      this._finalizeLogs(logFiles);
+      this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
     } finally {
       await super._doCleanup();
     }
   }
 
   _finalizeLogs(logs) {
-    // TODO: reconcile the log artifacts
+    if (!logs || logs.length === 0) {
+      return;
+    }
 
-    const rootDir = this._config.artifactsConfig.rootDir;
-    const logConfig = this._config.artifactsConfig.plugins.log;
-    const enabled = typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled;
-    if (rootDir && enabled) {
-      if (!fs.existsSync(rootDir)) {
-        fs.mkdirSync(rootDir);
-      }
+    // TODO: reconcile the log artifacts
+    const { rootDir, plugins } = this._config && this._config.artifactsConfig || {};
+    const logConfig = plugins && plugins.log || 'none';
+    const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
+    if (enabled) {
+      fs.mkdirpSync(rootDir);
 
       for (const filepath of logs) {
         fs.renameSync(filepath, path.join(this._config.artifactsConfig.rootDir, path.basename(filepath)));
+      }
+    } else {
+      for (const filepath of logs) {
+        fs.unlinkSync(filepath);
       }
     }
   }

@@ -66,7 +66,11 @@ class IPCServer {
 
   onRegisterContext({ id, logFile, workerId }, socket) {
     this._serverState.contexts.push(id);
-    this._serverState.logFiles.push(logFile);
+
+    if (logFile) {
+      this._serverState.logFiles.push(logFile);
+    }
+
     this._ipc.server.emit(socket, 'registerContextDone', this._sessionState);
 
     if (workerId && workerId > this._sessionState.workersCount) {
