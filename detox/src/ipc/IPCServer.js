@@ -2,19 +2,41 @@ const { IPC } = require('node-ipc');
 
 const SessionState = require('./SessionState');
 
+/**
+ * @typedef {object} ServerState
+ * @property {string[]} contexts
+ * @property {string[]} logFiles
+ */
+
 class IPCServer {
   constructor({ id, logger, detoxConfig }) {
     this._id = id;
     this._logger = logger.child({ __filename, event: 'IPC_SERVER' });
-    this._state = new SessionState({
+
+    this._sessionState = new SessionState({
       detoxConfig,
       workersCount: 0,
     });
+
+    /** @type {ServerState} */
+    this._serverState = {
+      contexts: [],
+      logFiles: [],
+    };
+
     this._ipc = null;
   }
 
   get id() {
     return this._id;
+  }
+
+  get state() {
+    return this._serverState;
+  }
+
+  get sessionState() {
+    return this._sessionState;
   }
 
   async init() {
@@ -42,11 +64,13 @@ class IPCServer {
     });
   }
 
-  onRegisterContext({ workerId }, socket) {
-    this._ipc.server.emit(socket, 'registerContextDone', this._state);
+  onRegisterContext({ id, logFile, workerId }, socket) {
+    this._serverState.contexts.push(id);
+    this._serverState.logFiles.push(logFile);
+    this._ipc.server.emit(socket, 'registerContextDone', this._sessionState);
 
-    if (workerId && workerId > this._state.workersCount) {
-      const workersCount = this._state.workersCount = workerId;
+    if (workerId && workerId > this._sessionState.workersCount) {
+      const workersCount = this._sessionState.workersCount = workerId;
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }
   }

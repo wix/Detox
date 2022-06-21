@@ -1,5 +1,7 @@
-const { URL } = require('url');
+const fs = require('fs');
+const path = require('path');
 const util = require('util');
+const { URL } = require('url');
 
 const _ = require('lodash');
 
@@ -11,6 +13,10 @@ class DetoxPrimaryContext extends DetoxContext {
 
     this._wss = null;
     this._globalLifecycleHandler = null;
+    /**
+     * @type {import('./ipc/IPCServer') | null}
+     * @private
+     */
     this._ipcServer = null;
 
     // TODO: think about signal-exit and cleaning up the logs
@@ -93,14 +99,33 @@ class DetoxPrimaryContext extends DetoxContext {
         this._wss = null;
       }
 
+      const logFiles = [this._logger.config.file];
       if (this._ipcServer) {
+        logFiles.push(...this._ipcServer.state.logFiles);
         await this._ipcServer.dispose();
         this._ipcServer = null;
       }
 
-      // TODO: reconcile the log artifacts
+      this._finalizeLogs(logFiles);
     } finally {
       await super._doCleanup();
+    }
+  }
+
+  _finalizeLogs(logs) {
+    // TODO: reconcile the log artifacts
+
+    const rootDir = this._config.artifactsConfig.rootDir;
+    const logConfig = this._config.artifactsConfig.plugins.log;
+    const enabled = typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled;
+    if (rootDir && enabled) {
+      if (!fs.existsSync(rootDir)) {
+        fs.mkdirSync(rootDir);
+      }
+
+      for (const filepath of logs) {
+        fs.renameSync(filepath, path.join(this._config.artifactsConfig.rootDir, path.basename(filepath)));
+      }
     }
   }
 

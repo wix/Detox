@@ -39,6 +39,13 @@ class DetoxLogger {
     this.trace = this._forward.bind(this, 'trace');
   }
 
+  /**
+   * @internal
+   */
+  get config() {
+    return this._config;
+  }
+
   /** @returns {Detox.DetoxLogLevel} */
   get level() {
     return this._config.level;

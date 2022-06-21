@@ -23,7 +23,7 @@ class DetoxContext {
      */
     this._worker = null;
     /**
-     * @type {*}
+     * @type {Detox.DetoxRuntimeConfig}
      * @protected
      */
     this._config = null;
