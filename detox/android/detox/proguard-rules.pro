@@ -13,6 +13,9 @@
 -dontnote org.hamcrest.**
 -dontnote com.facebook.**
 
+-keep class org.apache.commons.lang3.** { *; }
+-keep class org.apache.commons.io.** { *; }
+
 # Detox profiler (optional)
 
 -keep class com.wix.detoxprofiler.** { *; }
