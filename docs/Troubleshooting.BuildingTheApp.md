@@ -13,7 +13,27 @@ For troubleshooting of other issue, refer to our [troubleshooting index](Trouble
 
 ## Android
 
-### Problem: minSdkVersion mistmatch
+### Problem: AAPT - resource linking failure
+
+For build errors involving AAPT resource linking failure, such as this one:
+
+```text
+Execution failed for task ':app:processReleaseAndroidTestResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+   > Android resource linking failed
+     ERROR:: AAPT: error: resource style/Widget.AppCompat.TextView ...
+```
+
+Ensure that the following line appears in your app's `buildscript` (`android/app/build.gradle`) in the `dependencies` section:
+
+```groovy
+dependencies {
+    // ...
+    implementation 'androidx.appcompat:appcompat:1.1.0' // (check what the latest version is!)
+}
+```
+
+### Problem: minSdkVersion mismatch
 
 For Gradle errors involving `minSdkVersion` mismatches resembling this one:
 

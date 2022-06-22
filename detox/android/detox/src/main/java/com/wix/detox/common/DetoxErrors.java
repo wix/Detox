@@ -5,7 +5,6 @@ public interface DetoxErrors {
         public DetoxRuntimeException(Throwable cause) {
             super(cause);
         }
-
         public DetoxRuntimeException(String message) {
             super(message);
         }

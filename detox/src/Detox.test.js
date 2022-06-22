@@ -199,11 +199,11 @@ describe('Detox', () => {
       it('should prepare the device', () =>
         expect(runtimeDevice._prepare).toHaveBeenCalled());
 
-      it('should select and reinstall the app', async () => {
-        detoxConfig.behaviorConfig.optimizeAppInstall = true;
-        await init();
+      it('should select and reinstall the app', () => {
+        detoxConfig.behaviorConfig.optimizeAppInstall = false;
         expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
-        expect(runtimeDevice.resetAppState).toHaveBeenCalled();
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
+        expect(runtimeDevice.installApp).toHaveBeenCalled();
       });
 
       it('should not unselect the app if it is the only one', () => {
@@ -249,7 +249,10 @@ describe('Detox', () => {
         expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(6);
         expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
         expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
-        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
+        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual(['default']);
+        expect(runtimeDevice.selectApp.mock.calls[3]).toEqual(['extraApp']);
+        expect(runtimeDevice.selectApp.mock.calls[4]).toEqual([null]);
+        expect(runtimeDevice.selectApp.mock.calls[5]).toEqual([null]);
       });
     });
 

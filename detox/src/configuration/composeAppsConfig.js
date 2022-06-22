@@ -1,6 +1,6 @@
 // @ts-nocheck
 const _ = require('lodash');
-const parse = require('yargs/yargs').Parser;
+const parse = require('yargs-parser');
 
 const deviceAppTypes = require('./utils/deviceAppTypes');
 

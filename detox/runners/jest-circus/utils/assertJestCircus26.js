@@ -3,12 +3,14 @@ const path = require('path');
 
 const DetoxRuntimeError = require('../../../src/errors/DetoxRuntimeError');
 
-function assertJestCircus26(config) {
-  if (!/jest-circus/.test(config.testRunner)) {
+function assertJestCircus26(maybeProjectConfig) {
+  const projectConfig = maybeProjectConfig.projectConfig || maybeProjectConfig;
+
+  if (!/jest-circus/.test(projectConfig.testRunner)) {
     throw new DetoxRuntimeError('Cannot run tests without "jest-circus" npm package, exiting.');
   }
 
-  const circusPackageJson = path.join(path.dirname(config.testRunner), 'package.json');
+  const circusPackageJson = path.join(path.dirname(projectConfig.testRunner), 'package.json');
   if (!fs.existsSync(circusPackageJson)) {
     throw new DetoxRuntimeError('Check that you have an installed copy of "jest-circus" npm package, exiting.');
   }
@@ -31,7 +33,7 @@ function assertJestCircus26(config) {
     );
   }
 
-  return config;
+  return maybeProjectConfig;
 }
 
 module.exports = assertJestCircus26;

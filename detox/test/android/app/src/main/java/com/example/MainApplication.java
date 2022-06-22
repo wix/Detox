@@ -3,6 +3,7 @@ package com.example;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.asList(
                     new MainReactPackage(),
+                    new ReactSliderPackage(),
                     new GeolocationPackage(),
                     new RNCWebViewPackage(),
                     new NativeModulePackage(),
