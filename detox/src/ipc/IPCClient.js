@@ -27,6 +27,7 @@ class IPCClient {
       appspace: 'detox.',
       logger: (msg) => this._logger.trace(msg),
       stopRetrying: 0,
+      maxRetries: 0,
     });
 
     await this._connectToServer();

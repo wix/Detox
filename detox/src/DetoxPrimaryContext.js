@@ -123,7 +123,7 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   async _finalizeLogs(logs) {
-    const mergeJsonLogs = require('./utils/mergeJsonLogs');
+    const jsonl = require('./utils/jsonl');
 
     if (!logs || logs.length === 0) {
       return;
@@ -138,13 +138,34 @@ class DetoxPrimaryContext extends DetoxContext {
         await fs.mkdirp(rootDir);
 
         return new Promise((resolve, reject) => {
-          const outStream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.jsonl'));
+          const resolveCache = [false, false];
+          const resolveIndex = (index) => {
+            resolveCache[index] = true;
+            if (resolveCache[0] && resolveCache[1]) {
+              resolve();
+            }
+          };
 
-          mergeJsonLogs(logs.map(filepath => fs.createReadStream(filepath)))
-            .on('error', err => outStream.emit('error', err))
-            .pipe(outStream)
+          const mergedStream = jsonl
+            .mergeSorted(
+              logs
+                .map(filePath => fs.createReadStream(filePath))
+                .map(fileStream => jsonl.toJSONLStream(fileStream))
+            );
+
+          const out1Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.jsonl'));
+          jsonl.toStringifiedStream(mergedStream)
+            .on('error', err => out1Stream.emit('error', err))
+            .pipe(out1Stream)
             .on('error', reject)
-            .on('end', resolve);
+            .on('end', () => resolveIndex(0));
+
+          const out2Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox-copy.jsonl'));
+          jsonl.toStringifiedStream(mergedStream)
+            .on('error', err => out2Stream.emit('error', err))
+            .pipe(out2Stream)
+            .on('error', reject)
+            .on('end', () => resolveIndex(1));
         });
       }
     } finally {

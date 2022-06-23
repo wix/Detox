@@ -162,7 +162,10 @@ class ArtifactsManager extends EventEmitter {
   async onRunStart() {}
 
   async onRunDescribeStart(suite) {
-    await this._callPlugins('ascending', 'onRunDescribeStart', suite);
+    await this._callPlugins('ascending', 'onRunDescribeStart', {
+      // TODO: propose as a separate PR
+      suiteName: suite.name,
+    });
   }
 
   async onTestStart(testSummary) {
@@ -190,7 +193,10 @@ class ArtifactsManager extends EventEmitter {
   }
 
   async onRunDescribeFinish(suite) {
-    await this._callPlugins('descending', 'onRunDescribeFinish', suite);
+    await this._callPlugins('descending', 'onRunDescribeFinish', {
+      // TODO: propose as a separate PR
+      suiteName: suite.name,
+    });
   }
 
   async onRunFinish() {}
