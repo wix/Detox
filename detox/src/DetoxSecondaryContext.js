@@ -1,9 +1,11 @@
+const fs = require('fs');
+
 const DetoxContext = require('./DetoxContext');
+const { SecondarySessionState } = require('./ipc/state');
 
 class DetoxSecondaryContext extends DetoxContext {
   constructor() {
     super();
-
     /**
      * @protected
      * @type {*}
@@ -11,25 +13,26 @@ class DetoxSecondaryContext extends DetoxContext {
     this._ipcClient = null;
   }
 
-  get session() {
-    return this._ipcClient
-      ? this._ipcClient.sessionState
-      : null;
+  /**
+   * @protected
+   * @override
+   * @return {SecondarySessionState}
+   */
+  _restoreSessionState() {
+    return SecondarySessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
   }
 
   async _doInit(opts) {
     const IPCClient = require('./ipc/IPCClient');
+
     this._ipcClient = new IPCClient({
       id: opts.workerId != null ? `worker-${opts.workerId}` : `secondary-${process.pid}`,
+      serverId: this._sessionState.detoxIPCServer,
       logger: this._logger,
-      serverId: process.env.DETOX_IPC_SERVER_ID,
       workerId: opts.workerId,
     });
 
     await this._ipcClient.init();
-
-    this._config = this._ipcClient.sessionState.detoxConfig;
-    await this._logger.setConfig(this._config.loggerConfig);
   }
 
   /**

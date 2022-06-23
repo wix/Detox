@@ -9,26 +9,8 @@ class DetoxContext {
     this.init = this.init.bind(this);
     this.cleanup = this.cleanup.bind(this);
 
-    /**
-     * @protected
-     * @type {DetoxLogger}
-     */
-    this._logger = new DetoxLogger({
-      level: DetoxLogger.castLevel(process.env.DETOX_LOGLEVEL),
-      file: temporaryPath.for.log(),
-    });
-    /**
-     * @protected
-     * @type {import('./DetoxWorker') | null}
-     */
-    this._worker = null;
-    /**
-     * @type {Detox.DetoxRuntimeConfig}
-     * @protected
-     */
-    this._config = null;
-
-    this.config = funpermaproxy(() => this._config);
+    this.session = funpermaproxy(() => this._sessionState);
+    this.config = funpermaproxy(() => this.session.detoxConfig);
     this.log = funpermaproxy(() => this._logger);
     this.device = funpermaproxy(() => this.worker.device);
     this.element = funpermaproxy.callable(() => this.worker.element);
@@ -36,10 +18,25 @@ class DetoxContext {
     this.expect = funpermaproxy.callable(() => this.worker.expect);
     this.by = funpermaproxy(() => this.worker.by);
     this.web = funpermaproxy.callable(() => this.worker.web);
+
+    this._sessionState = this._restoreSessionState();
+
+    /**
+     * @protected
+     * @type {DetoxLogger & Detox.Logger}
+     */
+    this._logger = new DetoxLogger({
+      ...this.config.loggerConfig,
+      file: temporaryPath.for.log(),
+    });
+    /**
+     * @protected
+     * @type {import('./DetoxWorker') | null}
+     */
+    this._worker = null;
   }
 
   /**
-   * @abstract
    * @protected
    * @param {Partial<Detox.DetoxInitOptions>} [opts]
    * @returns {Promise<Detox.DetoxInstance>}
@@ -81,6 +78,13 @@ class DetoxContext {
     if (opts.global && !opts.global['__detox__']) {
       opts.global['__detox__'] = this;
     }
+  }
+
+  /**
+   * @protected
+   */
+  _restoreSessionState() {
+    return null;
   }
 
   async cleanup() {

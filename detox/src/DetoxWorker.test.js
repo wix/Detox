@@ -79,7 +79,7 @@ describe('Detox', () => {
     lifecycleSymbols = require('./symbols').lifecycle;
 
     Detox = require('./DetoxWorker');
-    detoxContext = { log: logger, _config: detoxConfig };
+    detoxContext = { log: logger, config: detoxConfig };
   });
 
   describe('when detox.init() is called', () => {

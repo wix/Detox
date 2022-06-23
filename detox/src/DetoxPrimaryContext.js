@@ -6,6 +6,8 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 
 const DetoxContext = require('./DetoxContext');
+const temporary = require('./artifacts/utils/temporaryPath');
+const { PrimarySessionState } = require('./ipc/state');
 
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
@@ -13,19 +15,24 @@ class DetoxPrimaryContext extends DetoxContext {
 
     this._wss = null;
     this._globalLifecycleHandler = null;
+
     /**
      * @type {import('./ipc/IPCServer') | null}
      * @private
      */
     this._ipcServer = null;
-
-    // TODO: think about signal-exit and cleaning up the logs
   }
 
-  get session() {
-    return this._ipcServer
-      ? this._ipcServer.sessionState
-      : null;
+  /**
+   * @protected
+   * @override
+   * @return {PrimarySessionState}
+   */
+  _restoreSessionState() {
+    return new PrimarySessionState({
+      detoxConfigSnapshotPath: temporary.for.json(),
+      detoxIPCServer: `primary-${process.pid}`,
+    });
   }
 
   /**
@@ -34,19 +41,21 @@ class DetoxPrimaryContext extends DetoxContext {
    */
   async _doInit(opts) {
     const configuration = require('./configuration');
-    const config = this._config = await configuration.composeDetoxConfig({
+    const detoxConfig = await configuration.composeDetoxConfig({
       argv: opts.argv,
       testRunnerArgv: opts.testRunnerArgv,
     });
 
-    const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = config;
+    this._sessionState.patch({ detoxConfig });
+
+    const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = detoxConfig;
     await this._logger.setConfig(loggerConfig);
 
     this._logger.trace(
-      { event: 'DETOX_CONFIG', config },
-      'creating Detox server with config:\n%s',
+      { event: 'DETOX_SESSION', ...this._sessionState },
+      'created Detox session:\n%s',
       // @ts-ignore
-      util.inspect(_.omit(config, ['errorComposer']), {
+      util.inspect(_.omit(this._sessionState, ['errorComposer']), {
         getters: false,
         depth: Infinity,
         maxArrayLength: Infinity,
@@ -58,13 +67,10 @@ class DetoxPrimaryContext extends DetoxContext {
 
     const IPCServer = require('./ipc/IPCServer');
     this._ipcServer = new IPCServer({
-      id: `primary-${process.pid}`,
-      detoxConfig: this._config,
+      sessionState: this._sessionState,
       logger: this._logger,
     });
 
-    process.env.DETOX_IPC_SERVER_ID = this._ipcServer.id;
-    process.env.DETOX_LOGLEVEL = this._logger.level;
     await this._ipcServer.init();
 
     const environmentFactory = require('./environmentFactory');
@@ -91,6 +97,10 @@ class DetoxPrimaryContext extends DetoxContext {
     if (!sessionConfig.server) {
       sessionConfig.server = `ws://localhost:${this._wss.port}`;
     }
+
+    await fs.writeFile(this._sessionState.detoxConfigSnapshotPath, this._sessionState.stringify());
+    process.env.DETOX_CONFIG_SNAPSHOT_PATH = this._sessionState.detoxConfigSnapshotPath;
+    // TODO: think about signal-exit and cleaning up the logs
   }
 
   async _doCleanup() {
@@ -117,6 +127,8 @@ class DetoxPrimaryContext extends DetoxContext {
       } catch (err) {
         this._logger.error({ err }, 'Encountered an error while merging the process logs:');
       }
+
+      await fs.remove(this._sessionState.detoxConfigSnapshotPath);
     } finally {
       await super._doCleanup();
     }
@@ -129,7 +141,7 @@ class DetoxPrimaryContext extends DetoxContext {
       return;
     }
 
-    const { rootDir, plugins } = this._config && this._config.artifactsConfig || {};
+    const { rootDir, plugins } = this.config.artifactsConfig || {};
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
 
@@ -153,11 +165,11 @@ class DetoxPrimaryContext extends DetoxContext {
                 .map(fileStream => jsonl.toJSONLStream(fileStream))
             );
 
-          const out1Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.log.jsonl'))
+          const out1Stream = fs.createWriteStream(path.join(rootDir, 'detox.log.jsonl'))
             .on('error', reject)
             .on('end', () => resolveIndex(0));
 
-          const out2Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.log'))
+          const out2Stream = fs.createWriteStream(path.join(rootDir, 'detox.log'))
             .on('error', reject)
             .on('end', () => resolveIndex(1));
 
@@ -180,7 +192,7 @@ class DetoxPrimaryContext extends DetoxContext {
   async _resetLockFile() {
     const DeviceRegistry = require('./devices/DeviceRegistry');
 
-    const deviceType = this._config.deviceConfig.type;
+    const deviceType = this.config.deviceConfig.type;
 
     switch (deviceType) {
       case 'ios.none':

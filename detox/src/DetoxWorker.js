@@ -17,7 +17,7 @@ class DetoxWorker {
 
     this._context = context;
     this._isCleaningUp = false;
-    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(context._config);
+    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(context.config);
     this._client = null;
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
@@ -56,7 +56,7 @@ class DetoxWorker {
   async init() {
     if (this._isCleaningUp) return;
 
-    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._context._config;
+    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._context.config;
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;

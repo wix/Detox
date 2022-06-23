@@ -1,5 +1,5 @@
 function current() {
-  return process.env.DETOX_IPC_SERVER_ID ? require('./realms/secondary') : require('./realms/primary');
+  return process.env.DETOX_CONFIG_SNAPSHOT_PATH ? require('./realms/secondary') : require('./realms/primary');
 }
 
 /** @type {Detox.DetoxExportWrapper} */
