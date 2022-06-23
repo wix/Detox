@@ -153,19 +153,23 @@ class DetoxPrimaryContext extends DetoxContext {
                 .map(fileStream => jsonl.toJSONLStream(fileStream))
             );
 
-          const out1Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.jsonl'));
-          jsonl.toStringifiedStream(mergedStream)
-            .on('error', err => out1Stream.emit('error', err))
-            .pipe(out1Stream)
+          const out1Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.log.jsonl'))
             .on('error', reject)
             .on('end', () => resolveIndex(0));
 
-          const out2Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox-copy.jsonl'));
-          jsonl.toStringifiedStream(mergedStream)
-            .on('error', err => out2Stream.emit('error', err))
-            .pipe(out2Stream)
+          const out2Stream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.log'))
             .on('error', reject)
             .on('end', () => resolveIndex(1));
+
+          jsonl.toStringifiedStream(mergedStream)
+            .on('error', err => out1Stream.emit('error', err))
+            .pipe(out1Stream);
+
+          const bds = jsonl.toDebugStream(out2Stream, this._logger.config.options);
+
+          mergedStream
+            .on('error', err => bds.emit('error', err))
+            .pipe(bds);
         });
       }
     } finally {

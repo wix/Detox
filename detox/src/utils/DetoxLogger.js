@@ -86,10 +86,10 @@ class DetoxLogger {
   _forward(level, ...args) {
     const msgContext = _.isError(args[0]) ? { err: args[0] } : _.isObject(args[0]) ? args[0] : undefined;
     const msgArgs = msgContext !== undefined ? args.slice(1) : args;
-    const mergedContext = {
+    const mergedContext = sanitizeBunyanContext({
       ...this._context,
       ...msgContext,
-    };
+    });
 
     this._bunyan[level](mergedContext, ...msgArgs);
   }
@@ -164,6 +164,31 @@ class DetoxLogger {
         return 'info';
     }
   }
+}
+
+const RESERVED_PROPERTIES = [
+  'hostname',
+  'level',
+  'msg',
+  'name',
+  'pid',
+  'time',
+];
+
+function hasProperty(p) {
+  return _.has(this, p);
+}
+
+function hasReservedProperties(o) {
+  return RESERVED_PROPERTIES.some(hasProperty, o); // eslint-disable-line unicorn/no-array-method-this-argument
+}
+
+function escapeCallback(value, key) {
+  return RESERVED_PROPERTIES.includes(key) ? `${key}$` : key;
+}
+
+function sanitizeBunyanContext(context) {
+  return hasReservedProperties(context) ? _.mapKeys(context, escapeCallback) : context;
 }
 
 module.exports = DetoxLogger;

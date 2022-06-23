@@ -30,12 +30,12 @@ describe('JSONL', () => {
 
     const result = jsonl.mergeSorted([jsonlStreamA, jsonlStreamB]);
     await expect(streamToJSONs(result)).resolves.toEqual([
-      { key: 0, value: { time: '2000-01-01T00:00:00.000Z', value: 'b1' } },
-      { key: 0, value: { time: '2000-01-01T00:00:00.001Z', value: 'a1' } },
-      { key: 1, value: { time: '2000-01-01T00:00:00.002Z', value: 'a2' } },
-      { key: 1, value: { time: '2000-01-01T00:00:00.003Z', value: 'b2' } },
-      { key: 2, value: { time: '2000-01-01T00:00:00.004Z', value: 'a3' } },
-      { key: 2, value: { time: '2000-01-01T00:00:00.005Z', value: 'b3' } },
+      { time: new Date('2000-01-01T00:00:00.000Z'), value: 'b1' },
+      { time: new Date('2000-01-01T00:00:00.001Z'), value: 'a1' },
+      { time: new Date('2000-01-01T00:00:00.002Z'), value: 'a2' },
+      { time: new Date('2000-01-01T00:00:00.003Z'), value: 'b2' },
+      { time: new Date('2000-01-01T00:00:00.004Z'), value: 'a3' },
+      { time: new Date('2000-01-01T00:00:00.005Z'), value: 'b3' },
     ]);
   });
 

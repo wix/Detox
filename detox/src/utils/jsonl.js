@@ -1,8 +1,10 @@
 const { PassThrough } = require('stream');
 
+const bunyanDebugStream = require('bunyan-debug-stream');
 const multiSort = require('multi-sort-stream');
 const JsonlParser = require('stream-json/jsonl/Parser');
 const JsonlStringer = require('stream-json/jsonl/Stringer');
+const stripAnsi = require('strip-ansi');
 
 const log = require('./logger').child({ __filename });
 const { combine, passErrorsTo, mapTransform } = require('./streamUtils');
@@ -35,8 +37,14 @@ function toJSONLStream(input) {
   return safeStream.output;
 }
 
-function extractValue(entry) {
-  return entry.value;
+function extractValue({ value }) {
+  value.msg = stripAnsi(value.msg);
+
+  if (typeof value.time === 'string') {
+    value.time = new Date(value.time);
+  }
+
+  return value;
 }
 
 /**
@@ -44,20 +52,27 @@ function extractValue(entry) {
  * @return {import('stream').Transform}
  */
 function mergeSorted(jsonlStreams, comparator = compareTimestamps) {
-  const outputStream = new PassThrough({ objectMode: true });
+  const outputStream = mapTransform(extractValue);
   jsonlStreams.forEach(passErrorsTo(outputStream));
   return combine(multiSort(jsonlStreams, comparator), outputStream).output;
 }
 
 function toStringifiedStream(readableStream) {
-  const extractorStream = mapTransform(extractValue);
   const jsonStringerStream = JsonlStringer.make();
+  return combine(readableStream, jsonStringerStream).output;
+}
 
-  return combine(combine(readableStream, extractorStream).output, jsonStringerStream).output;
+function toDebugStream(outputStream, options) {
+  return bunyanDebugStream.default({
+    ...options,
+    colors: false,
+    out: outputStream,
+  }).on('error', err => outputStream.emit('error', err));
 }
 
 module.exports = {
   toJSONLStream,
   mergeSorted,
   toStringifiedStream,
+  toDebugStream,
 };
