@@ -112,31 +112,43 @@ class DetoxPrimaryContext extends DetoxContext {
         this._ipcServer = null;
       }
 
-      this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
+      try {
+        await this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
+      } catch (err) {
+        this._logger.error({ err }, 'Encountered an error while merging the process logs:');
+      }
     } finally {
       await super._doCleanup();
     }
   }
 
-  _finalizeLogs(logs) {
+  async _finalizeLogs(logs) {
+    const mergeJsonLogs = require('./utils/mergeJsonLogs');
+
     if (!logs || logs.length === 0) {
       return;
     }
 
-    // TODO: reconcile the log artifacts
     const { rootDir, plugins } = this._config && this._config.artifactsConfig || {};
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
-    if (enabled) {
-      fs.mkdirpSync(rootDir);
 
-      for (const filepath of logs) {
-        fs.renameSync(filepath, path.join(this._config.artifactsConfig.rootDir, path.basename(filepath)));
+    try {
+      if (enabled) {
+        await fs.mkdirp(rootDir);
+
+        return new Promise((resolve, reject) => {
+          const outStream = fs.createWriteStream(path.join(this._config.artifactsConfig.rootDir, 'detox.jsonl'));
+
+          mergeJsonLogs(logs.map(filepath => fs.createReadStream(filepath)))
+            .on('error', err => outStream.emit('error', err))
+            .pipe(outStream)
+            .on('error', reject)
+            .on('end', resolve);
+        });
       }
-    } else {
-      for (const filepath of logs) {
-        fs.unlinkSync(filepath);
-      }
+    } finally {
+      await Promise.all(logs.map(filepath => fs.remove(filepath)));
     }
   }
 
