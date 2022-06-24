@@ -387,8 +387,8 @@ describe('CLI', () => {
   });
 
   test('should escape whitespaces when forwarding a CLI argument', async () => {
-    await run(`"e2e tests/first test.spec.js"`);
-    expect(_.last(cliCall().argv)).toEqual(`"e2e tests/first test.spec.js"`);
+    await run(`e2e tests/first test.spec.js`);
+    expect(_.last(cliCall().argv)).toEqual(`e2e tests/first test.spec.js`);
   });
 
   test(`should be able to use custom test runner commands`, async () => {
@@ -433,11 +433,11 @@ describe('CLI', () => {
 
   test('should append $DETOX_ARGV_OVERRIDE to detox test ... command and print a warning', async () => {
     process.env.PLATFORM = 'ios';
-    process.env.DETOX_ARGV_OVERRIDE = '--testNamePattern "[$PLATFORM] tap" -l trace e2e/sanity/*.test.js';
+    process.env.DETOX_ARGV_OVERRIDE = '--testNamePattern="[$PLATFORM] tap" -l trace e2e/sanity/*.test.js';
     await run();
 
     expect(cliCall().fullCommand).toMatch(/\bDETOX_LOGLEVEL="trace" /);
-    expect(cliCall().argv.slice(-3)).toEqual(['--testNamePattern', '[$PLATFORM] tap', 'e2e/sanity/*.test.js']);
+    expect(cliCall().argv.slice(-3)).toEqual(['--testNamePattern', '[ios] tap', 'e2e/sanity/*.test.js']);
     expect(logger().warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
   });
 
@@ -525,10 +525,6 @@ describe('CLI', () => {
 
   function singleConfig() {
     return Object.values(detoxConfig.configurations)[0];
-  }
-
-  function isInCMD() {
-    return process.platform === 'win32' && !process.env.SHELL;
   }
 
   function mockExitCode(code) {
