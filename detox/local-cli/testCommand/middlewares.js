@@ -11,7 +11,7 @@ function applyEnvironmentVariableAddendum(argv, yargs) {
   if (process.env.DETOX_ARGV_OVERRIDE) {
     detox.log.warn(DETOX_ARGV_OVERRIDE_NOTICE);
 
-    const { _: positional, '--': passthrough, ...o } = yargs.parse(process.env.DETOX_ARGV_OVERRIDE);
+    const { _: positional, '--': passthrough, ...named } = yargs.parse(process.env.DETOX_ARGV_OVERRIDE);
 
     if (positional) {
       argv._ = argv._ || [];
@@ -23,7 +23,7 @@ function applyEnvironmentVariableAddendum(argv, yargs) {
       argv['--'].push(...passthrough.map(simpleUnquote));
     }
 
-    Object.assign(argv, o);
+    Object.assign(argv, named);
   }
 
   return argv;

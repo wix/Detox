@@ -7,7 +7,7 @@ const unparse = require('yargs-unparser');
 
 const detox = require('../../src/realms/primary');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
-const { escapeWithDoubleQuotedString } = require('../../src/utils/shellUtils');
+const { autoEscape } = require('../../src/utils/shellUtils');
 
 class TestRunnerCommand {
   constructor() {
@@ -127,11 +127,10 @@ class TestRunnerCommand {
   }
 
   async _doExecute() {
-    const fullCommand = this._buildSpawnArguments().map(s =>
-      s.indexOf(' ') >= 0 ? escapeWithDoubleQuotedString(s) : s);
+    const fullCommand = this._buildSpawnArguments().map(autoEscape);
 
     detox.log.info(
-      { env: this._envHint },
+      { event: 'RUN_START', env: this._envHint },
       printEnvironmentVariables(this._envHint) + fullCommand.join(' '),
     );
 
