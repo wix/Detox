@@ -1,9 +1,8 @@
 const _ = require('lodash');
 
 const detox = require('../../src');
-const { parse } = require('../../src/utils/shellQuote');
 const { getJestBooleanArgs } = require('../utils/jestInternals');
-const { extractKnownKeys, disengageBooleanArgs } = require('../utils/yargsUtils');
+const { simpleUnquote, extractKnownKeys, disengageBooleanArgs } = require('../utils/yargsUtils');
 
 const testCommandArgs = require('./builder');
 const { DETOX_ARGV_OVERRIDE_NOTICE, DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./warnings');
@@ -12,10 +11,19 @@ function applyEnvironmentVariableAddendum(argv, yargs) {
   if (process.env.DETOX_ARGV_OVERRIDE) {
     detox.log.warn(DETOX_ARGV_OVERRIDE_NOTICE);
 
-    return yargs.parse([
-      ...process.argv.slice(2),
-      ...parse(process.env.DETOX_ARGV_OVERRIDE),
-    ]);
+    const { _: positional, '--': passthrough, ...o } = yargs.parse(process.env.DETOX_ARGV_OVERRIDE);
+
+    if (positional) {
+      argv._ = argv._ || [];
+      argv._.push(...positional.map(simpleUnquote));
+    }
+
+    if (passthrough) {
+      argv['--'] = argv['--'] || [];
+      argv['--'].push(...passthrough.map(simpleUnquote));
+    }
+
+    Object.assign(argv, o);
   }
 
   return argv;

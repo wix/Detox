@@ -8,7 +8,7 @@ const launchArgs = {
 const config = {
   testRunner: {
     args: {
-      $0: 'jest',
+      $0: 'nyc jest',
       config: 'e2e/config.js',
       _: ['e2e/*.test.js'],
     },

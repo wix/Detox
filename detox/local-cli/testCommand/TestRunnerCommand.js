@@ -2,11 +2,12 @@ const cp = require('child_process');
 const os = require('os');
 
 const _ = require('lodash');
+const parser = require('yargs-parser');
 const unparse = require('yargs-unparser');
 
 const detox = require('../../src/realms/primary');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
-const { quote } = require('../../src/utils/shellQuote');
+const { escapeWithDoubleQuotedString } = require('../../src/utils/shellUtils');
 
 class TestRunnerCommand {
   constructor() {
@@ -126,22 +127,17 @@ class TestRunnerCommand {
   }
 
   async _doExecute() {
-    const { _: specs, '--': passthrough, ...restArgv } = this._argv;
-    const fullCommand = [
-      this._argv.$0,
-      quote(unparse(_.omitBy(restArgv, _.isUndefined))),
-      passthrough ? passthrough.join(' ') : undefined,
-      specs ? specs.join(' ') : undefined,
-    ].filter(Boolean).join(' ');
-    const [command, ...theArgs] = fullCommand.split(' ');
+    const fullCommand = this._buildSpawnArguments().map(s =>
+      s.indexOf(' ') >= 0 ? escapeWithDoubleQuotedString(s) : s);
 
     detox.log.info(
       { env: this._envHint },
-      printEnvironmentVariables(this._envHint) + fullCommand
+      printEnvironmentVariables(this._envHint) + fullCommand.join(' '),
     );
 
     return new Promise((resolve, reject) => {
-      cp.spawn(command, theArgs, {
+      cp.spawn(fullCommand[0], fullCommand.slice(1), {
+        shell: true,
         stdio: 'inherit',
         env: _({})
           .assign(process.env)
@@ -156,6 +152,18 @@ class TestRunnerCommand {
           : reject(new Error(`Process exited with code = ${code}`)
         ));
     });
+  }
+
+  _buildSpawnArguments() {
+    const { _: specs = [], '--': passthrough = [], $0, ...argv } = this._argv;
+    const { _: $0_, ...$0argv } = parser($0);
+
+    return [
+      ...$0_,
+      ...unparse($0argv),
+      ...unparse(argv),
+      ...unparse({ _: [...passthrough, ...specs] }),
+    ];
   }
 }
 

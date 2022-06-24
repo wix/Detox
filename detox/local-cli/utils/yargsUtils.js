@@ -52,7 +52,16 @@ function disengageBooleanArgs(argv, booleanKeys) {
   };
 }
 
+function simpleUnquote(arg) {
+  if ((arg[0] === '"' || arg[0] === "'") && arg[0] === arg[arg.length - 1]) {
+    return arg.slice(1, -1);
+  }
+
+  return arg;
+}
+
 module.exports = {
-  extractKnownKeys,
   disengageBooleanArgs,
+  extractKnownKeys,
+  simpleUnquote,
 };
