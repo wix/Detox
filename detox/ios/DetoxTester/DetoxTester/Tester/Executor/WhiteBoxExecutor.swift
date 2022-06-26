@@ -59,13 +59,34 @@ class WhiteBoxExecutor {
         let _ = send(message, andExpectToType: "didSetDatePicker", messageId: 0)
         return .completed
 
-      // TODO: implement.
-      case .verifyVisibility(let ofElement, let withThreshold):
-        return .boolean(true)
+      case .verifyVisibility(let element, let threshold):
+        let message = createMessage(
+          type: "verifyText",
+          params: [
+            "threshold": AnyCodable(threshold),
+            "elementID": AnyCodable(element.identifier)
+          ]
+        )
 
-      // TODO: implement.
-      case .verifyText(let ofElement, let equals):
-        return .boolean(true)
+        let result = send(message, andExpectToType: "didVerifyVisibility", messageId: 0)
+        let isVisible = (result["isVisible"] as! NSNumber).boolValue
+
+        return .boolean(isVisible)
+
+      case .verifyText(let element, let text):
+        let message = createMessage(
+          type: "verifyText",
+          params: [
+            "text": AnyCodable(text),
+            "elementID": AnyCodable(element.identifier)
+          ]
+        )
+
+        let result = send(message, andExpectToType: "didVerifyText", messageId: 0)
+        expectLog("result for verify text: \(result)")
+        let hasText = (result["hasText"] as! NSNumber).boolValue
+
+        return .boolean(hasText)
 
       case .findElementsByText(let text):
         let message = createMessage(

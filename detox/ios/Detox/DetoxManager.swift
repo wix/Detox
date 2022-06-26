@@ -298,6 +298,50 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "verifyVisibility":
+				let targetIdentifier = params["elementID"] as! String
+				let threshold = params["threshold"] as! NSNumber
+
+				let predicate = NSPredicate { evaluatedObject, _ in
+					guard let evaluatedObject = evaluatedObject as? NSObject else {
+						return false
+					}
+
+					return evaluatedObject.accessibilityIdentifier == targetIdentifier
+				}
+
+				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
+
+				self.safeSend(
+					action: "didVerifyVisibility",
+					params: [
+						"isVisible": targetElement.dtx_isVisible(withPercent: threshold)
+					],
+					messageId: messageId
+				)
+
+			case "verifyText":
+				let targetIdentifier = params["elementID"] as! String
+				let text = params["text"] as! String
+
+				let predicate = NSPredicate { evaluatedObject, _ in
+					guard let evaluatedObject = evaluatedObject as? NSObject else {
+						return false
+					}
+
+					return evaluatedObject.accessibilityIdentifier == targetIdentifier
+				}
+
+				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
+
+				self.safeSend(
+					action: "didVerifyText",
+					params: [
+						"hasText": targetElement.dtx_text == text
+					],
+					messageId: messageId
+				)
+
 			default:
 				log.error("Unknown action type received: \(type)")
 				fatalError("Unknown action type received: \(type)")
