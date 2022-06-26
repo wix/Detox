@@ -17,6 +17,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
     self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
+  // TODO: extract to methods.
   func expect(
     _ expectation: Expectation, isTruthy: Bool, on element: AnyHashable, timeout: Double?
   ) throws {

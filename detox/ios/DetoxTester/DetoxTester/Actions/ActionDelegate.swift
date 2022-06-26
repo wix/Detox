@@ -51,6 +51,8 @@ class ActionDelegate: ActionDelegateProtocol {
           element.longPress()
         }
 
+      // TODO: use white-box implementation :(
+      // TODO: link to Developer Forums.
       case .longPressAndDrag(
         let duration,
         let normalizedPositionX,

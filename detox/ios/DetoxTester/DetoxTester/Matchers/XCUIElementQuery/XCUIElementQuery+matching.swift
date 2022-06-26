@@ -7,6 +7,8 @@ import Foundation
 import DetoxInvokeHandler
 import XCTest
 
+// TODO: extract to methods.
+
 extension XCUIElementQuery {
   /// Returns a new query matches the given pattern.
   func matching(
@@ -27,7 +29,9 @@ extension XCUIElementQuery {
         return query
 
       case .id(let id):
-        return matching(parameter: .id, byOperator: .equals, toValue: id)
+        let predicate = NSPredicate(format: "(identifier == %@) OR (identifier BEGINSWITH[c] %@ [Detox:)", id)
+        execLog("matching with identifier")
+        return matching(predicate)
 
       case .text(let text):
         let response = whiteBoxMessageHandler(.findElementsByText(text: text))

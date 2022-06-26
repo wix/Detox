@@ -4,19 +4,10 @@ describe(':ios: DatePicker', () => {
       await element(by.text('DatePicker')).tap();
     });
 
-    it('setColumnToValue should not work for a date picker', async () => {
-      let failed = false;
-      try {
-        await element(by.id('datePicker')).setColumnToValue(1, "6");
-        await element(by.id('datePicker')).setColumnToValue(2, "34");
-        await expect(element(by.id('localTimeLabel'))).toHaveText('Time: 06:34');
-      } catch(ex) {
-        failed = true;
-      }
-
-      if(failed === false) {
-        throw new Error('Test should have thrown an error, but did not');
-      }
+    it('setColumnToValue should work for a date picker', async () => {
+      await element(by.id('datePicker')).setColumnToValue(1, "6");
+      await element(by.id('datePicker')).setColumnToValue(2, "34");
+      await expect(element(by.id('localTimeLabel'))).toHaveText('Time: 06:34');
     });
 
     it('can select dates on a UIDatePicker', async () => {

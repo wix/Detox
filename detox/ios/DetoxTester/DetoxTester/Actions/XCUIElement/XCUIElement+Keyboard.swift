@@ -24,10 +24,6 @@ extension XCUIElement {
 
   ///
   func changeText(_ changeType: Action.ChangeTextType) {
-    if !self.hasFocus {
-      self.tap()
-    }
-
     switch changeType {
       case .clear:
         changeText(nil, shouldClearBefore: true)

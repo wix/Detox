@@ -290,8 +290,8 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIDatePicker]).first!
-				let targetDate = params["date"] as! Date
-				targetElement.setDate(targetDate, animated: true)
+				let timeIntervalSince1970 = (params["timeIntervalSince1970"] as! NSNumber).doubleValue
+				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
 
 				self.safeSend(
 					action: "didSetDatePicker",

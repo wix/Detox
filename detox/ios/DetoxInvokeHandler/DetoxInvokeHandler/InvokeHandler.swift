@@ -306,11 +306,12 @@ public class InvokeHandler {
 
   private func date(from dateString: String, using formatString: String) -> Date? {
     if formatString == "ISO8601" {
-      return ISO8601DateFormatter().date(from: dateString)
+      let formatter = ISO8601DateFormatter()
+      return formatter.date(from: dateString)
     }
 
-    let dateFormatter = dateFormatter(from: formatString)
-    return dateFormatter.date(from: dateString)
+    let formatter = dateFormatter(from: formatString)
+    return formatter.date(from: dateString)
   }
 
   private func dateFormatter(from format: String) -> DateFormatter {

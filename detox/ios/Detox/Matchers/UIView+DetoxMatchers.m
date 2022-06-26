@@ -108,11 +108,6 @@ NSArray* DTXChildElements(id element)
 	}
 	
 	[views enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		// In case this view has no identifier, set him one.
-		if (obj.accessibilityIdentifier == nil) {
-			[obj setAccessibilityIdentifier:[NSUUID UUID].UUIDString];
-		}
-
 		if(predicate == nil || [predicate evaluateWithObject:obj] == YES)
 		{
 			[storage addObject:obj];

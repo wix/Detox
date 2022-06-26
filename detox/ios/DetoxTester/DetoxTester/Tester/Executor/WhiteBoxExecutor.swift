@@ -17,10 +17,10 @@ class WhiteBoxExecutor {
   /// Stored handlers.
   fileprivate static var handlers: [String: WhiteBoxExecutor] = [:]
 
-  ///
+  /// Used to send messages to the target application (through the injected Detox dylib).
   private let messageSender: AppClientMessageSenderProtocol
 
-  ///
+  /// Initializes the executor with the given `messageSender`.
   private init(messageSender: AppClientMessageSenderProtocol) {
     self.messageSender = messageSender
   }
@@ -51,7 +51,7 @@ class WhiteBoxExecutor {
         let message = createMessage(
           type: "setDatePicker",
           params: [
-            "date": AnyCodable(date),
+            "timeIntervalSince1970": AnyCodable(date.timeIntervalSince1970),
             "elementID": AnyCodable(element.identifier)
           ]
         )
@@ -59,9 +59,11 @@ class WhiteBoxExecutor {
         let _ = send(message, andExpectToType: "didSetDatePicker", messageId: 0)
         return .completed
 
+      // TODO: implement.
       case .verifyVisibility(let ofElement, let withThreshold):
         return .boolean(true)
 
+      // TODO: implement.
       case .verifyText(let ofElement, let equals):
         return .boolean(true)
 
