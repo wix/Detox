@@ -38,13 +38,24 @@ class WhiteBoxExecutor {
         return .completed
 
       case .captureViewHierarchy(let viewHierarchyURL):
-        return .completed
+        let message = createMessage(
+          type: "captureViewHierarchy",
+          params: [
+            "viewHierarchyURL": AnyCodable(viewHierarchyURL)
+          ]
+        )
+
+        let result = send(message, andExpectToType: "didCaptureViewHierarchy", messageId: 0)
+        let error = result["error"] as? String
+
+        return error != nil ? .completedWithError(message: error!) : .completed
 
       case .waitUntilReady:
         send("waitUntilReady", andExpectTo: "isReady")
         return .completed
 
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
+        // TODO: to implement.
         return .completed
 
       case .setDatePicker(let date, let element):

@@ -342,6 +342,26 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "captureViewHierarchy":
+				let url = URL(fileURLWithPath: params["viewHierarchyURL"] as! String)
+				precondition(url.lastPathComponent.hasSuffix(".viewhierarchy"), "Provided view Hierarchy URL is not in the expected format, ending with “.viewhierarchy”")
+				var errorParam: String?
+				if UserDefaults.standard.bool(forKey: "detoxDisableHierarchyDump") == false {
+					do {
+						try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
+					} catch {
+						errorParam = error.localizedDescription
+					}
+				} else {
+					errorParam = "User ran process with -detoxDisableHierarchyDump YES"
+				}
+
+				self.safeSend(
+					action: "didCaptureViewHierarchy",
+					params: errorParam != nil ? ["error": errorParam!] : [:],
+					messageId: messageId
+				)
+
 			default:
 				log.error("Unknown action type received: \(type)")
 				fatalError("Unknown action type received: \(type)")
