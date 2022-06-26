@@ -29,8 +29,21 @@ extension XCUIElementQuery {
         return query
 
       case .id(let id):
-        let predicate = NSPredicate(format: "(identifier == %@) OR (identifier BEGINSWITH[c] %@ [Detox:)", id)
-        execLog("matching with identifier")
+        let predicate = NSPredicate { evaluatedObject, _ in
+          guard
+            let evaluatedObject = evaluatedObject as? NSObject,
+            let identifier = evaluatedObject.value(forKey: "identifier") as? String
+          else {
+            execLog(
+              "cannot run matching on a non UI element: `\(String(describing: evaluatedObject))`",
+              type: .error
+            )
+
+            return false
+          }
+
+          return identifier == id || identifier.starts(with: "\(id)_detox:")
+        }
         return matching(predicate)
 
       case .text(let text):
