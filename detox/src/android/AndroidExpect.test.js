@@ -276,7 +276,7 @@ describe('AndroidExpect', () => {
           });
         });
 
-        it('should retrieve attributes', async () => {
+        it('should get attributes for single element', async () => {
           const execResult = {
             result: [{
               text: 'hello',
@@ -288,12 +288,12 @@ describe('AndroidExpect', () => {
           expect(result).toEqual(execResult);
         });
 
-        it('empty response', async () => {
+        it('should throw exception for getting attributes on a nonexistent view', async () => {
           mockExecutor.executeResults = [];
           await expectToThrow(() => e.element(e.by.id('UniqueId005')).getAttributes());
         });
 
-        it('should retrieve attributes for multiple views', async () => {
+        it('should get attributes for multiple elements', async () => {
             const execResult = [
               {
                 result: [{
