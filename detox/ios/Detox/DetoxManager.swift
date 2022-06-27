@@ -449,7 +449,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 		return CGPoint(x: xPos, y: yPos)
 	}
-}
 	
 	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
 		if let reason = reason {
