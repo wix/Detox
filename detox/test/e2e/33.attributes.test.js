@@ -1,5 +1,6 @@
 const { device, element, by } = require('detox');
 const expect = require('expect').default;
+const {expectToThrow} = require('./utils/custom-expects');
 
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
@@ -221,14 +222,33 @@ describe('Attributes', () => {
     });
 
     describe(':android:', () => {
-      // TODO (@jonathanmos) : Can we decide something about it officially?
-      it('should throw an error (because it is not implemented)', async () => {
-        await expect(
+      it('getAttributes on nonexistent view', async () => {
+        await expectToThrow(() => element(by.id('nonexistentId')).getAttributes());
+      });
+
+      it('should return an object with .elements array', async () => {
+        const viewShape = {
+          identifier: expect.any(String),
+          visibility: 'visible',
+          visible: true,
+          alpha: 1,
+          elevation: 0,
+          height: expect.any(Number),
+          width: expect.any(Number),
+          focused: expect.any(Boolean),
+          enabled: expect.any(Boolean),
+        };
+
+        const result = await
           element(
             by.type('com.facebook.react.views.view.ReactViewGroup')
               .withAncestor(by.id('attrScrollView'))
-          ).getAttributes()
-        ).rejects.toThrowError(/Problem views are marked with '.{4}MATCHES.{4}' below/m);
+          ).getAttributes();
+
+        const innerViews = result.filter(a => a.identifier);
+        expect(innerViews.length).toBe(2);
+        expect(innerViews[0]).toMatchObject({ ...viewShape });
+        expect(innerViews[1]).toMatchObject({ ...viewShape });
       });
     });
   });

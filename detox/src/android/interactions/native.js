@@ -1,8 +1,14 @@
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { ScrollAmountStopAtEdgeAction } = require('../actions/native');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxAssertionApi = require('../espressoapi/DetoxAssertion');
 const EspressoDetoxApi = require('../espressoapi/EspressoDetox');
+
+const SUPPORTED_MULTIVIEW_ACTIONS = new Set([
+  'getAttributes'
+]);
 
 function call(maybeAFunction) {
   return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;
@@ -11,10 +17,41 @@ function call(maybeAFunction) {
 class Interaction {
   constructor(invocationManager) {
     this._call = undefined;
+    this._element = undefined;
+    this._action = undefined;
     this._invocationManager = invocationManager;
   }
 
   async execute() {
+    const actionMethod = _.get(this._action, '_call.value.method', '');
+    if (SUPPORTED_MULTIVIEW_ACTIONS.has(actionMethod)) {
+      const resultObjects = [];
+      let index = 0;
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        try {
+          const currentElement = _.cloneDeep(this._element);
+          currentElement.atIndex(index);
+          const invocationResult = await this._invocationManager.execute(EspressoDetoxApi.perform(call(currentElement._call), this._action._call));
+
+          resultObjects.push(JSON.parse(invocationResult.result));
+
+          index++;
+        } catch (e) {
+          if (index === 0) {
+            throw e;
+          }
+
+          break;
+        }
+      }
+
+      return resultObjects.length === 1 ?
+        resultObjects[0] :
+        resultObjects;
+    }
+
     const resultObj = await this._invocationManager.execute(this._call);
     return resultObj ? resultObj.result : undefined;
   }
@@ -23,6 +60,8 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(invocationManager, element, action) {
     super(invocationManager);
+    this._action = action;
+    this._element = element;
     this._call = EspressoDetoxApi.perform(call(element._call), action._call);
     // TODO: move this.execute() here from the caller
   }
@@ -94,5 +133,5 @@ module.exports = {
   MatcherAssertionInteraction,
   WaitForActionInteraction,
   WaitForActionInteractionBase,
-  WaitForInteraction,
+  WaitForInteraction
 };

@@ -251,18 +251,70 @@ describe('AndroidExpect', () => {
         await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
       });
 
-      it('should retrieve attributes', async () => {
-        const execResult = {
-          text: 'hello',
-          value: 1,
-        };
-        mockExecutor.executeResult = Promise.resolve(JSON.stringify(execResult));
-        const result = await e.element(e.by.id('UniqueId005')).getAttributes();
-        expect(result).toEqual(execResult);
-      });
-
       it('should adjust slider to position', async () => {
         await e.element(e.by.id('sliderWithASimpleID')).adjustSliderToPosition(75);
+      });
+
+      describe('getAttributes', () => {
+        beforeEach(() => {
+          mockExecutor = new MockExecutor();
+
+          mockExecutor.type = 'getAttributes';
+
+          const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
+          emitter = new Emitter();
+
+          device = {
+            _typeText: jest.fn()
+          };
+
+          const AndroidExpect = require('./AndroidExpect');
+          e = new AndroidExpect({
+            invocationManager: mockExecutor,
+            device,
+            emitter
+          });
+        });
+
+        it('should retrieve attributes', async () => {
+          const execResult = {
+            result: [{
+              text: 'hello',
+              value: 1
+            }]
+          };
+          mockExecutor.executeResults = ['{"result": [{"text": "hello", "value": 1}]}'];
+          const result = await e.element(e.by.id('UniqueId005')).getAttributes();
+          expect(result).toEqual(execResult);
+        });
+
+        it('empty response', async () => {
+          mockExecutor.executeResults = [];
+          await expectToThrow(() => e.element(e.by.id('UniqueId005')).getAttributes());
+        });
+
+        it('should retrieve attributes for multiple views', async () => {
+            const execResult = [
+              {
+                result: [{
+                  text: 'hello',
+                  value: 1
+                }] },
+              {
+                result: [{
+                  text: 'hello',
+                  value: 2
+                }]
+              }];
+            mockExecutor
+              .executeResults = ['{"result": [{"text": "hello", "value": 1}]}', '{"result": [{"text": "hello", "value": 2}]}'];
+            const result = await e.element(e.by.type('com.facebook.react.views.view.ReactViewGroup')
+              .withAncestor(e.by.id('attrScrollView'))).getAttributes();
+            expect(result)
+              .toEqual(execResult);
+          }
+        )
+        ;
       });
     });
 
@@ -274,7 +326,7 @@ describe('AndroidExpect', () => {
       let fs;
       let _element;
       beforeEach(() => {
-        mockExecutor.executeResult = Promise.resolve(invokeResultInBase64);
+        mockExecutor.executeResults = [Promise.resolve(invokeResultInBase64)];
 
         fs = require('fs-extra');
         tempfile = require('tempfile');
@@ -319,7 +371,7 @@ describe('AndroidExpect', () => {
   describe('web', () => {
     describe('General', () => {
       it('should return undefined', async () => {
-        mockExecutor.executeResult = Promise.resolve(undefined);
+        mockExecutor.executeResults = [Promise.resolve(undefined)];
         await e.web(e.by.id('webview_id')).element(e.by.web.id('any')).tap();
       });
     });
@@ -602,10 +654,19 @@ async function expectToThrow(func) {
 
 class MockExecutor {
   constructor() {
-    this.executeResult = undefined;
+    this.executeResults = [];
+    this.callsCount = 0;
+    this.type = undefined;
   }
 
   async execute(invocation) {
+    if (this.type === 'getAttributes' && this.callsCount === this.executeResults.length) {
+      throw new Error('unknown view');
+    }
+
+    const executeResult = this.executeResults[this.callsCount];
+    this.callsCount++;
+
     if (typeof invocation === 'function') {
       invocation = invocation();
     }
@@ -615,8 +676,8 @@ class MockExecutor {
 
     this.recurse(invocation);
     await this.timeout(1);
-    return this.executeResult ? {
-      result: this.executeResult,
+    return executeResult ? {
+      result: executeResult
     } : undefined;
   }
 
