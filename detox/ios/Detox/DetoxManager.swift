@@ -298,6 +298,70 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "longPressAndDrag":
+				let elementIdentifier = params["elementID"] as! String
+				let targetIdentifier = params["targetElementID"] as! String
+				let duration = params["duration"] as! NSNumber
+				let normalizedPositionX = params["normalizedPositionX"] as? NSNumber
+				let normalizedPositionY = params["normalizedPositionY"] as? NSNumber
+				let normalizedTargetPositionX = params["normalizedTargetPositionX"] as? NSNumber
+				let normalizedTargetPositionY = params["normalizedTargetPositionY"] as? NSNumber
+				let speedParam = params["speed"] as? String
+				let holdDurationParam = params["holdDuration"] as? NSNumber
+
+				let elementPredicate = NSPredicate { evaluatedObject, _ in
+					guard let evaluatedObject = evaluatedObject as? NSObject else {
+						return false
+					}
+
+					return evaluatedObject.accessibilityIdentifier == elementIdentifier
+				}
+
+				let element = (UIView.dtx_findViewsInKeySceneWindows(passing: elementPredicate) as! [UIView]).first!
+
+				let targetPredicate = NSPredicate { evaluatedObject, _ in
+					guard let evaluatedObject = evaluatedObject as? NSObject else {
+						return false
+					}
+
+					return evaluatedObject.accessibilityIdentifier == targetIdentifier
+				}
+
+				let target = (UIView.dtx_findViewsInKeySceneWindows(passing: targetPredicate) as! [UIView]).first!
+
+				let normalizedStartingPoint = getNormalizedPoint(xPosition: normalizedPositionX, yPosition: normalizedPositionY)
+				let normalizedTargetingPoint = getNormalizedPoint(xPosition: normalizedTargetPositionX, yPosition: normalizedTargetPositionY)
+
+				var speed = CGFloat(0.5)
+				if let speedString = speedParam {
+					switch speedString {
+						case "slow":
+							speed = 0.1
+							break;
+						case "fast":
+							speed = 0.5
+							break
+						default:
+							fatalError("Unknown speed")
+					}
+				}
+
+				let holdDuration : TimeInterval
+				if let param = holdDurationParam?.doubleValue {
+					holdDuration = param.toSeconds()
+				} else {
+					holdDuration = 1.0
+				}
+
+				element.dtx_longPress(
+					at: normalizedStartingPoint,
+					duration: duration.doubleValue,
+					target: target,
+					normalizedTargetPoint: normalizedTargetingPoint,
+					velocity: speed,
+					lastHoldDuration: holdDuration
+				)
+
 			case "verifyVisibility":
 				let targetIdentifier = params["elementID"] as! String
 				let threshold = params["threshold"] as! NSNumber
@@ -367,6 +431,25 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				fatalError("Unknown action type received: \(type)")
 		}
 	}
+
+	func getNormalizedPoint(xPosition: NSNumber?, yPosition: NSNumber?) -> CGPoint {
+		let xPos, yPos: Double
+
+		if let pos = xPosition?.doubleValue, pos.isNaN == false {
+			xPos = pos
+		} else {
+			xPos = Double.nan
+		}
+
+		if let pos = yPosition?.doubleValue, pos.isNaN == false {
+			yPos = pos
+		} else {
+			yPos = Double.nan
+		}
+
+		return CGPoint(x: xPos, y: yPos)
+	}
+}
 	
 	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
 		if let reason = reason {

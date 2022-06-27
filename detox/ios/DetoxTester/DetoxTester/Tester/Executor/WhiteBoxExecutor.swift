@@ -124,6 +124,40 @@ class WhiteBoxExecutor {
         }
 
         return .status(statusResult)
+
+      case .longPressAndDrag(
+        let duration,
+        let normalizedPositionX,
+        let normalizedPositionY,
+        let targetElement,
+        let normalizedTargetPositionX,
+        let normalizedTargetPositionY,
+        let speed,
+        let holdDuration,
+        let element
+      ):
+        let message = createMessage(
+          type: "longPressAndDrag",
+          params: [
+            "elementID": AnyCodable(element.identifier),
+            "targetElementID": AnyCodable(targetElement.identifier),
+            "duration": AnyCodable(duration),
+            "normalizedPositionX": (normalizedPositionX != nil) ?
+                AnyCodable(normalizedPositionX!) : nil,
+            "normalizedPositionY": (normalizedPositionY != nil) ?
+                AnyCodable(normalizedPositionY!) : nil,
+            "normalizedTargetPositionX": (normalizedTargetPositionX != nil) ?
+                AnyCodable(normalizedTargetPositionX!) : nil,
+            "normalizedTargetPositionY": (normalizedTargetPositionY != nil) ?
+                AnyCodable(normalizedTargetPositionY!) : nil,
+            "speed": (speed != nil) ? AnyCodable(speed!.rawValue) : nil,
+            "holdDuration": (holdDuration != nil) ? AnyCodable(holdDuration!) : nil
+          ]
+        )
+
+        let _ = send(message, andExpectToType: "didLongPressAndDrag", messageId: 0)
+        return .completed
+
     }
   }
 

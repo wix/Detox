@@ -51,8 +51,6 @@ class ActionDelegate: ActionDelegateProtocol {
           element.longPress()
         }
 
-      // TODO: use white-box implementation :(
-      // TODO: link to Developer Forums.
       case .longPressAndDrag(
         let duration,
         let normalizedPositionX,
@@ -63,17 +61,45 @@ class ActionDelegate: ActionDelegateProtocol {
         let speed,
         let holdDuration
       ):
-        try element.longPress(
-          duration: duration,
-          normalizedOffsetX: normalizedPositionX,
-          normalizedOffsetY: normalizedPositionY,
-          dragTo: targetElement,
-          normalizedTargetOffsetX: normalizedTargetPositionX,
-          normalizedTargetOffsetY: normalizedTargetPositionY,
-          speed: speed,
-          holdDuration: holdDuration,
-          testCase: testCase
-        )
+        guard let targetElement = targetElement as? XCUIElement else {
+          throw ActionDelegate.ActionDelegateError.notXCUIElement
+        }
+
+        if let response = whiteBoxMessageHandler(
+          .longPressAndDrag(
+            duration: duration,
+            normalizedPositionX: normalizedPositionX,
+            normalizedPositionY: normalizedPositionY,
+            targetElement: targetElement,
+            normalizedTargetPositionX: normalizedTargetPositionX,
+            normalizedTargetPositionY: normalizedTargetPositionY,
+            speed: speed,
+            holdDuration: holdDuration,
+            onElement: element
+          )) {
+          response.assertResponse(equalsTo: .completed)
+        } else {
+          // Element holding after dragging is not working on XCUITest.
+          // See: https://github.com/asafkorem/XCUITestHoldBugReproduction for details regarding
+          // this bug.
+          uiLog(
+            "long press and drag was executed by XCUITest. Note that the preferred " +
+            "implementation for this action is invoked only for white-box-handled applications",
+            type: .debug
+          )
+
+          try element.longPress(
+            duration: duration,
+            normalizedOffsetX: normalizedPositionX,
+            normalizedOffsetY: normalizedPositionY,
+            dragTo: targetElement,
+            normalizedTargetOffsetX: normalizedTargetPositionX,
+            normalizedTargetOffsetY: normalizedTargetPositionY,
+            speed: speed,
+            holdDuration: holdDuration,
+            testCase: testCase
+          )
+        }
 
       case .swipe(
         let direction,
@@ -120,6 +146,7 @@ class ActionDelegate: ActionDelegateProtocol {
     }
   }
 
+  // TODO: extract to another file.
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
     // TODO: mix XCUITest attributes with the application's attributes.
 

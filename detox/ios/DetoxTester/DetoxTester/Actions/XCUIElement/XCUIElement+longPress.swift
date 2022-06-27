@@ -18,17 +18,13 @@ extension XCUIElement {
     duration: Double,
     normalizedOffsetX: Double?,
     normalizedOffsetY: Double?,
-    dragTo target: AnyHashable,
+    dragTo target: XCUIElement,
     normalizedTargetOffsetX: Double?,
     normalizedTargetOffsetY: Double?,
     speed: Action.ActionSpeed?,
     holdDuration: Double?,
     testCase: XCTestCase
   ) throws {
-    guard let target = target as? XCUIElement else {
-      throw ActionDelegate.ActionDelegateError.notXCUIElement
-    }
-
     let velocity = speed?.gestureVelocity ?? .default
     let holdSeconds = (holdDuration ?? 1000) / 1000
 

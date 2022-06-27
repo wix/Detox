@@ -4,9 +4,10 @@
 //
 
 import Foundation
+import DetoxInvokeHandler
 
 extension WhiteBoxExecutor {
-  ///
+  // TODO: document.
   enum Message {
     /// Returns response of `completed` if succsfully done.
     case reloadReactNative
@@ -37,5 +38,18 @@ extension WhiteBoxExecutor {
 
     /// Returns response of `status`.
     case requestCurrentStatus
+
+    /// Returns reponse of `completed` if succsfully done.
+    case longPressAndDrag(
+      duration: Double,
+      normalizedPositionX: Double?,
+      normalizedPositionY: Double?,
+      targetElement: XCUIElement,
+      normalizedTargetPositionX: Double?,
+      normalizedTargetPositionY: Double?,
+      speed: Action.ActionSpeed?,
+      holdDuration: Double?,
+      onElement: XCUIElement
+    )
   }
 }
