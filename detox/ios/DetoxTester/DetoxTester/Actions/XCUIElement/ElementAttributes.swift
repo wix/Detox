@@ -9,7 +9,7 @@ import DetoxInvokeHandler
 /// Represents various attributes of an element.
 struct ElementAttributes: Codable, Equatable {
   /// The text value of any textual element.
-  let text: AnyCodable?
+  let text: String?
 
   /// A succinct label in a localized string that identifies the accessibility element.
   let label: String?
@@ -87,7 +87,7 @@ struct ElementAttributes: Codable, Equatable {
 }
 
 extension ElementAttributes {
-  init(text: AnyCodable?, accessibilityLabel: String?,
+  init(text: String?, accessibilityLabel: String?,
        placeholderValue: String?, isEnabled: Bool?, accessibilityIdentifier: String?,
        isVisible: Bool?, accessibilityValue: String?, activationPoint: CGPoint?,
        normalizedActivationPoint: CGPoint?, isHittable: Bool?, frame: CGRect?,

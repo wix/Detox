@@ -19,7 +19,7 @@ extension XCUIElement {
     // TODO: Update docs.
 
     let attributes = ElementAttributes(
-      text: AnyCodable(label),
+      text: label,
       accessibilityLabel: label,
       placeholderValue: placeholderValue,
       isEnabled: isEnabled,
@@ -44,7 +44,7 @@ extension XCUIElement {
       isSelected: isSelected,
       isFocused: hasFocus
     ).encodeToDictionary().mapValues {
-      $0 as? AnyCodable ?? AnyCodable($0)
+      AnyCodable($0)
     }
 
     return AnyCodable(attributes)
