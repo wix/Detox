@@ -72,7 +72,7 @@ class GetAttributesTests: DTXTestCase {
     XCTAssertEqual(sliderAttributes["selected"], AnyCodable(true))
     XCTAssertEqual(sliderAttributes["visible"], AnyCodable(true))
     XCTAssertEqual(sliderAttributes["enabled"], AnyCodable(false))
-    XCTAssertEqual(sliderAttributes["value"]!, AnyCodable("‏75%"))
+    XCTAssertEqual(sliderAttributes["value"]!, AnyCodable("75%"))
     XCTAssertEqual(sliderAttributes["normalizedSliderPosition"], AnyCodable(0.75))
     XCTAssertEqual(sliderAttributes["type"], AnyCodable("slider"))
     XCTAssertEqual(sliderAttributes["text"], AnyCodable("slider label"))
