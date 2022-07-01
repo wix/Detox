@@ -1,5 +1,7 @@
 const { IPC } = require('node-ipc');
 
+const { TRACE } = require('../constants');
+
 /**
  * @typedef {object} ServerState
  * @property {string[]} contexts
@@ -30,9 +32,9 @@ class IPCServer {
     this._ipc = new IPC();
     this._ipc.config.id = this.id;
     this._ipc.config.appspace = 'detox.';
-    this._ipc.config.logger = (msg) => this._logger.trace(msg);
+    this._ipc.config.logger = (msg) => this._logger.trace.instant({ ...TRACE.IPC, name: msg });
 
-    await new Promise((resolve) => {
+      await new Promise((resolve) => {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));

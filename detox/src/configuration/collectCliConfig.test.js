@@ -72,7 +72,6 @@ describe('collectCliConfig', () => {
     ...asString( ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',       'take-screenshots']),
     ...asString( ['recordVideos',         'DETOX_RECORD_VIDEOS',          'record-videos']),
     ...asString( ['recordPerformance',    'DETOX_RECORD_PERFORMANCE',     'record-performance']),
-    ...asString( ['recordTimeline',       'DETOX_RECORD_TIMELINE',        'record-timeline']),
     ...asBoolean(['cleanup',              'DETOX_CLEANUP',                'cleanup']),
     ...asString( ['configPath',            'DETOX_CONFIG_PATH',            'config-path']),
     ...asString( ['configuration' ,        'DETOX_CONFIGURATION',          'configuration']),

@@ -88,11 +88,6 @@ module.exports = {
     choices: ['enabled', 'disabled'],
     describe: '[iOS Only] Capture *.uihierarchy snapshots on view action errors and device.captureViewHierarchy() calls.',
   },
-  'record-timeline': {
-    group: 'Debugging:',
-    choices: ['all', 'none'],
-    describe: 'Record tests and events timeline, for visual display on the chrome://tracing tool.',
-  },
   'jest-report-specs': {
     group: 'Execution:',
     describe: 'Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.',

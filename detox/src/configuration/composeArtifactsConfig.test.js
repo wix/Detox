@@ -86,7 +86,6 @@ describe('composeArtifactsConfig', () => {
         artifactsLocation: 'otherPlace',
         recordLogs: 'all',
         recordPerformance: 'all',
-        recordTimeline: 'all',
         recordVideos: 'all',
         takeScreenshots: 'all',
         captureViewHierarchy: 'enabled',
@@ -129,7 +128,6 @@ describe('composeArtifactsConfig', () => {
         screenshot: schemes.pluginsAllResolved.screenshot,
         video: schemes.pluginsDefaultsResolved.video,
         instruments: schemes.pluginsDefaultsResolved.instruments,
-        timeline: schemes.pluginsDefaultsResolved.timeline,
       },
     });
   });

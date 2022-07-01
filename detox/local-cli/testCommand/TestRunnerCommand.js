@@ -80,7 +80,6 @@ class TestRunnerCommand {
       DETOX_READ_ONLY_EMU: cliConfig.readonlyEmu,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
-      DETOX_RECORD_TIMELINE: cliConfig.recordTimeline,
       DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
       DETOX_REPORT_SPECS: cliConfig.jestReportSpecs,
       DETOX_REUSE: cliConfig.reuse,

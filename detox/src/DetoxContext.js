@@ -8,6 +8,7 @@ class DetoxContext {
   constructor() {
     this.init = this.init.bind(this);
     this.cleanup = this.cleanup.bind(this);
+    this.traceCall = this.traceCall.bind(this);
 
     this.session = funpermaproxy(() => this._sessionState);
     this.config = funpermaproxy(() => this.session.detoxConfig);
@@ -34,6 +35,22 @@ class DetoxContext {
      * @type {import('./DetoxWorker') | null}
      */
     this._worker = null;
+  }
+
+  /**
+   * @deprecated
+   */
+  async traceCall(name, func) {
+    const handle = this._logger.trace.begin({ cat: 'user', name });
+
+    try {
+      const result = await func();
+      handle.end({ args: { success: true } });
+      return result;
+    } catch (error) {
+      handle.end({ args: { success: false, error } });
+      throw error;
+    }
   }
 
   /**

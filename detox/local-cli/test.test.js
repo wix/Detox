@@ -254,12 +254,6 @@ describe('CLI', () => {
     expect(cliCall().fullCommand).toMatch(/\DETOX_RECORD_PERFORMANCE="all" /);
   });
 
-  test('--record-timeline <value> should be passed as environment variable', async () => {
-    await run('--record-timeline', 'all');
-    expect(cliCall().env).not.toHaveProperty('DETOX_RECORD_TIMELINE');
-    expect(cliCall().fullCommand).toMatch(/\DETOX_RECORD_TIMELINE="all" /);
-  });
-
   test('--capture-view-hierarchy <value> should be passed as environment variable', async () => {
     await run('--capture-view-hierarchy', 'enabled');
     expect(cliCall().env).not.toHaveProperty('DETOX_CAPTURE_VIEW_HIERARCHY');

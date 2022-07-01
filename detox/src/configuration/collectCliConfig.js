@@ -47,7 +47,6 @@ function collectCliConfig({ argv }) {
     takeScreenshots: get('take-screenshots'),
     recordVideos: get('record-videos'),
     recordPerformance: get('record-performance'),
-    recordTimeline: get('record-timeline'),
     cleanup: asBoolean(get('cleanup')),
     configPath: get('config-path'),
     configuration: get('configuration'),

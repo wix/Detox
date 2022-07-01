@@ -1,12 +1,11 @@
 const path = require('path');
 const { URL } = require('url');
-const util = require('util');
 
 const fs = require('fs-extra');
-const _ = require('lodash');
 
 const DetoxContext = require('./DetoxContext');
 const temporary = require('./artifacts/utils/temporaryPath');
+const { TRACE, THREADS } = require('./constants');
 const { PrimarySessionState } = require('./ipc/state');
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -51,19 +50,11 @@ class DetoxPrimaryContext extends DetoxContext {
     const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = detoxConfig;
     await this._logger.setConfig(loggerConfig);
 
-    this._logger.trace(
-      { event: 'DETOX_SESSION', ...this._sessionState },
-      'created Detox session:\n%s',
-      // @ts-ignore
-      util.inspect(_.omit(this._sessionState, ['errorComposer']), {
-        getters: false,
-        depth: Infinity,
-        maxArrayLength: Infinity,
-        maxStringLength: Infinity,
-        breakLength: false,
-        compact: false,
-      })
-    );
+    this._logger.trace.begin({
+      ...TRACE.PRIMARY_CONTEXT,
+      args: this._sessionState,
+      name: process.argv.slice(1).join(' '),
+    });
 
     const IPCServer = require('./ipc/IPCServer');
     this._ipcServer = new IPCServer({
@@ -104,33 +95,30 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   async _doCleanup() {
+    if (this._globalLifecycleHandler) {
+      await this._globalLifecycleHandler.globalCleanup();
+      this._globalLifecycleHandler = null;
+    }
+
+    if (this._wss) {
+      await this._wss.close();
+      this._wss = null;
+    }
+
+    const logFiles = [this._logger.config.file];
+    if (this._ipcServer) {
+      logFiles.push(...this._ipcServer.sessionState.logFiles);
+      await this._ipcServer.dispose();
+      this._ipcServer = null;
+    }
+
+    await fs.remove(this._sessionState.detoxConfigSnapshotPath);
+
     try {
-      if (this._globalLifecycleHandler) {
-        await this._globalLifecycleHandler.globalCleanup();
-        this._globalLifecycleHandler = null;
-      }
-
-      if (this._wss) {
-        await this._wss.close();
-        this._wss = null;
-      }
-
-      const logFiles = [this._logger.config.file];
-      if (this._ipcServer) {
-        logFiles.push(...this._ipcServer.sessionState.logFiles);
-        await this._ipcServer.dispose();
-        this._ipcServer = null;
-      }
-
-      try {
-        await this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
-      } catch (err) {
-        this._logger.error({ err }, 'Encountered an error while merging the process logs:');
-      }
-
-      await fs.remove(this._sessionState.detoxConfigSnapshotPath);
-    } finally {
-      await super._doCleanup();
+      this._logger.trace.end(THREADS.PRIMARY_CONTEXT);
+      await this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
+    } catch (err) {
+      this._logger.error({ err }, 'Encountered an error while merging the process logs:');
     }
   }
 

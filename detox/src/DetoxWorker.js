@@ -51,6 +51,9 @@ class DetoxWorker {
 
     this._deviceAllocator = null;
     this._deviceCookie = null;
+
+    /** @deprecated */
+    this.traceCall = this._context.traceCall;
   }
 
   async init() {

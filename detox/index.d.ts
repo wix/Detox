@@ -9,6 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import {BunyanDebugStreamOptions} from 'bunyan-debug-stream';
+import {AbstractEventBuilder} from 'trace-event-lib';
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -61,7 +62,6 @@ declare global {
                 screenshot?: 'none' | 'manual' | 'failing' | 'all' | DetoxScreenshotArtifactsPluginConfig;
                 video?: 'none' | 'failing' | 'all' | DetoxVideoArtifactsPluginConfig;
                 instruments?: 'none' | 'all' | DetoxInstrumentsArtifactsPluginConfig;
-                timeline?: 'none' | 'all' | DetoxTimelineArtifactsPluginConfig;
                 uiHierarchy?: 'disabled' | 'enabled' | DetoxUIHierarchyArtifactsPluginConfig;
 
                 [pluginId: string]: unknown;
@@ -187,10 +187,6 @@ declare global {
         }
 
         interface DetoxUIHierarchyArtifactsPluginConfig {
-            enabled?: boolean;
-        }
-
-        interface DetoxTimelineArtifactsPluginConfig {
             enabled?: boolean;
         }
 
@@ -402,12 +398,19 @@ declare global {
             readonlyEmu: boolean;
             recordLogs: string;
             recordPerformance: string;
-            recordTimeline: string;
             recordVideos: string;
             reuse: string;
             takeScreenshots: string;
             useCustomLogger: string;
         }>;
+
+        interface Tracer {
+            (context?: unknown, ...args: any[]): void;
+
+            readonly begin: AbstractEventBuilder['begin'];
+            readonly instant: AbstractEventBuilder['instant'];
+            readonly end: AbstractEventBuilder['instant'];
+        }
 
         type Logger = {
             readonly level: DetoxLogLevel;
@@ -417,7 +420,8 @@ declare global {
             warn(context?: unknown, ...args: any[]): void;
             info(context?: unknown, ...args: any[]): void;
             debug(context?: unknown, ...args: any[]): void;
-            trace(context?: unknown, ...args: any[]): void;
+
+            readonly trace: Tracer;
 
             child(context?: Record<string, unknown>): Logger;
         };

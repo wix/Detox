@@ -35,7 +35,6 @@ const config = {
         shouldTakeAutomaticSnapshots: true,
         takeWhen: {}
       },
-      timeline: 'all',
       uiHierarchy: 'enabled'
     }
   },
