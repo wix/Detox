@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const isPromise = require('../utils/isPromise');
 
 const DetoxTraceEventBuilder = require('./DetoxTraceEventBuilder');
@@ -41,12 +43,12 @@ class DetoxTracer {
   }
 
   end(eventOrName, args) {
-    const event = typeof eventOrName === 'string' ? { name: eventOrName, args } : eventOrName;
+    const event = typeof eventOrName === 'string' ? { name: eventOrName, args } : eventOrName || {};
     const mainCategory = event.cat ? event.cat.split(',', 1)[0] : '';
     const dispatcher = this.eventDispatchers[mainCategory] || this.defaultEventDispatcher;
     const tid = dispatcher.end(event.id);
 
-    return this.builder.end({
+    this.builder.end({
       args: event.args,
       cname: event.cname,
       tid,
@@ -87,15 +89,10 @@ class DetoxTracer {
   }
 
   static default(options) {
-    const tracer = new DetoxTracer(options)
-      .registerThreads('lifecycle', [0, 0])
-      .registerThreads('ipc', [29, 29])
-      .registerThreads('ws-server', [30, 99])
-      .registerThreads('ws-client', [100, 131])
-      .registerThreads('artifacts-manager', [200, 209])
-      .registerThreads('artifact-plugin', [210, 249])
-      .registerThreads('artifact', [250, 299])
-      .registerThreads('child-process', [300, 399]);
+    const tracer = new DetoxTracer(options);
+    for (const [key, range] of Object.entries(this.CATEGORIES)) {
+      tracer.registerThreads(key, range);
+    }
 
     return Object.assign(
       tracer.section.bind(tracer),
@@ -106,6 +103,24 @@ class DetoxTracer {
         endSection: tracer.end.bind(tracer),
       });
   }
+
+  static categorize(tid) {
+    return _.findKey(this.CATEGORIES, ([min, max]) => min <= tid && tid <= max) || 'user';
+  }
+
+  /**
+   * @type {Record<string, [number, number]>}
+   */
+  static CATEGORIES = {
+    'lifecycle': [0, 0],
+    'ipc': [29, 29],
+    'ws-server': [30, 99],
+    'ws-client': [100, 131],
+    'artifacts-manager': [200, 209],
+    'artifact-plugin': [210, 249],
+    'artifact': [250, 299],
+    'child-process': [300, 399],
+  };
 }
 
 module.exports = DetoxTracer;

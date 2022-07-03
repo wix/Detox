@@ -1,5 +1,3 @@
-const vm = require('vm');
-
 const cycle = require('json-cycle');
 
 class SessionState {
@@ -22,7 +20,7 @@ class SessionState {
 
   static reviver(key, val) {
     if (typeof val === 'object' && typeof val.$fn == 'string') {
-      return vm.runInThisContext(val.$fn);
+      return eval(val.$fn);
     } else {
       return val;
     }

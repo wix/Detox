@@ -1,25 +1,18 @@
 // @ts-nocheck
 const _ = require('lodash');
 
-const {
-  onRunDescribeStart,
-  onTestStart,
-  onHookFailure,
-  onTestFnFailure,
-  onTestDone,
-  onRunDescribeFinish,
-} = require('../../../../src/symbols').lifecycle;
+const detox = require('../../../..');
+const detoxInternals = require('../../../../internals');
 const { getFullTestName, hasTimedOut } = require('../utils');
 
 const RETRY_TIMES = Symbol.for('RETRY_TIMES');
 
 class DetoxCoreListener {
-  constructor({ detox, env }) {
+  constructor({ env }) {
     this._startedTests = new WeakSet();
     this._testsFailedBeforeStart = new WeakSet();
     this._env = env;
     this._testRunTimes = 1;
-    this.detox = detox;
   }
 
   _getTestInvocations(test) {
@@ -34,20 +27,20 @@ class DetoxCoreListener {
 
   async setup() {
     // Workaround to override Jest's expect
-    if (this.detox._behaviorConfig.init.exposeGlobals) {
-      this._env.global.expect = this.detox.expect;
+    if (detoxInternals.config.behaviorConfig.init.exposeGlobals) {
+      this._env.global.expect = detox.expect;
     }
   }
 
   async run_describe_start({ describeBlock: { name, children } }) {
     if (children.length) {
-      await this.detox[onRunDescribeStart]({ name });
+      await detoxInternals.onRunDescribeStart({ name });
     }
   }
 
   async run_describe_finish({ describeBlock: { name, children } }) {
     if (children.length) {
-      await this.detox[onRunDescribeFinish]({ name });
+      await detoxInternals.onRunDescribeFinish({ name });
     }
   }
 
@@ -65,7 +58,7 @@ class DetoxCoreListener {
   }
 
   async hook_failure({ error, hook }) {
-    await this.detox[onHookFailure]({
+    await detoxInternals.onHookFailure({
       error,
       hook: hook.type,
     });
@@ -76,7 +69,7 @@ class DetoxCoreListener {
   }
 
   async test_fn_failure({ error }) {
-    await this.detox[onTestFnFailure]({ error });
+    await detoxInternals.onTestFnFailure({ error });
   }
 
   async _onBeforeActualTestStart(test) {
@@ -86,7 +79,7 @@ class DetoxCoreListener {
 
     this._startedTests.add(test);
 
-    await this.detox[onTestStart]({
+    await detoxInternals.onTestStart({
       title: test.name,
       fullName: getFullTestName(test),
       status: 'running',
@@ -96,7 +89,7 @@ class DetoxCoreListener {
 
   async test_done({ test }) {
     if (this._startedTests.has(test)) {
-      await this.detox[onTestDone]({
+      await detoxInternals.onTestDone({
         title: test.name,
         fullName: getFullTestName(test),
         status: test.errors.length ? 'failed' : 'passed',

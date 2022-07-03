@@ -1,5 +1,7 @@
 const { VerboseReporter: JestVerboseReporter } = require('@jest/reporters'); // eslint-disable-line node/no-extraneous-require
 
+const detoxInternals = require('../../../internals');
+
 const FailingTestsReporter = require('./FailingTestsReporter');
 
 class DetoxReporter extends JestVerboseReporter {
@@ -11,7 +13,13 @@ class DetoxReporter extends JestVerboseReporter {
   async onRunComplete(contexts, results) {
     // @ts-ignore
     await super.onRunComplete(contexts, results);
-    await this._failingTestsReporter.onRunComplete(contexts, results);
+
+    try {
+      await detoxInternals.init();
+      await this._failingTestsReporter.onRunComplete(contexts, results);
+    } finally {
+      await detoxInternals.cleanup();
+    }
   }
 }
 

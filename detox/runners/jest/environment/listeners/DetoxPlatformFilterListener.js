@@ -1,10 +1,12 @@
 const _ = require('lodash');
 
+const { device } = require('../../../..');
+
 const PLATFORM_REGEXP = /^:([^:]+):/;
 
 class DetoxPlatformFilterListener {
-  constructor({ detox }) {
-    this._platform = detox.device.getPlatform();
+  constructor() {
+    this._platform = device.getPlatform();
   }
 
   start_describe_definition(event, state) {

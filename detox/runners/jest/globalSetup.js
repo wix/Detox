@@ -1,1 +1,1 @@
-module.exports = async () => require('../../src').init();
+module.exports = async () => require('../../internals').init();

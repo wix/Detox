@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const detox = require('../../src');
+const detox = require('../..');
 const { getJestBooleanArgs } = require('../utils/jestInternals');
 const { simpleUnquote, extractKnownKeys, disengageBooleanArgs } = require('../utils/yargsUtils');
 

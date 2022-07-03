@@ -1,6 +1,6 @@
 const chalk = require('chalk').default;
 
-const detox = require('../../../..');
+const detox = require('../../../../internals');
 const { traceln } = require('../utils/stdout');
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');

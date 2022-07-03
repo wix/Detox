@@ -6,10 +6,8 @@ const { SecondarySessionState } = require('./state');
 
 class IPCClient {
   constructor({ logger, id, serverId, workerId }) {
-    this._onSessionStateUpdate = this._onSessionStateUpdate.bind(this);
-
     this._state = new SecondarySessionState({});
-    /** @type {Detox.Logger} logger */
+    /** @type {import('../logger/DetoxLogger')} logger */
     this._logger = logger.child({ __filename, cat: 'ipc-client,ipc' });
 
     this._id = id;
@@ -36,38 +34,38 @@ class IPCClient {
   }
 
   async dispose() {
-    if (this._serverConnection) {
-      this._removeListeners();
-      this._serverConnection = null;
-    }
+    this._serverConnection = null;
 
-    this._client.disconnect(this._serverId);
+    if (this._client) {
+      this._client.disconnect(this._serverId);
+      this._client = null;
+    }
   }
 
   get sessionState() {
     return this._state;
   }
 
+  /**
+   * @param {string[]} testFilePaths
+   */
+  async reportFailedTests(testFilePaths) {
+    await this._emit('failedTests', { testFilePaths });
+  }
+
   async _connectToServer() {
-    return new Promise((resolve, reject) => {
-      const serverId = this._serverId;
+    const serverId = this._serverId;
+
+    this._serverConnection = await new Promise((resolve, reject) => {
       this._client.connectTo(serverId, (client) => {
-        const server = client.of[serverId];
-        server
-          .on('disconnect', () => {
-            this._serverConnection = null;
-          })
-          .on('error', function onError(e) {
-            server.off('error', onError);
-            reject(e);
-          })
-          .on('connect', () => {
-            this._serverConnection = server;
-            this._addListeners();
-            resolve();
-          });
+        client.of[serverId]
+          .on('error', reject)
+          .on('disconnect', () => reject(new DetoxInternalError('IPC server has unexpectedly disconnected.')))
+          .on('connect', () => resolve(client.of[serverId]));
       });
     });
+
+    this._serverConnection.on('sessionStateUpdate', this._onSessionStateUpdate);
   }
 
   async _registerContext() {
@@ -107,17 +105,9 @@ class IPCClient {
     });
   }
 
-  _onSessionStateUpdate(payload) {
+  _onSessionStateUpdate = (payload) => {
     this._state.patch(payload);
-  }
-
-  _addListeners() {
-    this._serverConnection.on('sessionStateUpdate', this._onSessionStateUpdate);
-  }
-
-  _removeListeners() {
-    this._serverConnection.off('sessionStateUpdate', this._onSessionStateUpdate);
-  }
+  };
 }
 
 module.exports = IPCClient;

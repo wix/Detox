@@ -6,7 +6,6 @@ if (process.platform === 'win32') {
 jest.mock('../src/logger/DetoxLogger');
 jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-jest.mock('../src/utils/lastFailedTests');
 jest.mock('./utils/jestInternals');
 
 const os = require('os');
@@ -140,12 +139,10 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
-    const context = require('../src');
-    delete context.session.failedTestFiles;
-    Object.defineProperty(context.session, 'failedTestFiles', {
-      get: jest.fn()
-        .mockReturnValueOnce(['e2e/failing1.test.js', 'e2e/failing2.test.js'])
-        .mockReturnValueOnce(['e2e/failing2.test.js'])
+    const context = require('../internals');
+    context.session.failedTestFiles = ['e2e/failing1.test.js', 'e2e/failing2.test.js'];
+    context.reportFailedTests = jest.fn(() => {
+      context.session.failedTestFiles = ['e2e/failing2.test.js'];
     });
 
     mockExitCode(1);
@@ -166,12 +163,6 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should not restart test runner if there are no failing tests paths', async (__retries) => {
-    const context = require('../src');
-    delete context.session.failedTestFiles;
-    Object.defineProperty(context.session, 'failedTestFiles', {
-      get: jest.fn().mockReturnValueOnce([])
-    });
-
     mockExitCode(1);
 
     await run(__retries, 1).catch(_.noop);
@@ -180,11 +171,8 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should retain -- <...explicitPassthroughArgs>', async (__retries) => {
-    const context = require('../src');
-    delete context.session.failedTestFiles;
-    Object.defineProperty(context.session, 'failedTestFiles', {
-      get: jest.fn().mockReturnValueOnce(['tests/failing.test.js'])
-    });
+    const context = require('../internals');
+    context.session.failedTestFiles = ['tests/failing.test.js'];
 
     mockExitCode(1);
 

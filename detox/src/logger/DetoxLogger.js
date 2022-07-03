@@ -6,6 +6,8 @@ const _ = require('lodash');
 
 const { shortFormat } = require('../utils/dateUtils');
 
+const customConsoleLogger = require('./customConsoleLogger');
+
 /**
  * @typedef PrivateLoggerConfig
  * @property {string} [file]
@@ -25,6 +27,7 @@ class DetoxLogger {
       level: 'info',
       overrideConsole: false,
       options: _.cloneDeep(DetoxLogger.defaultOptions),
+
       ...config,
     };
 
@@ -65,7 +68,7 @@ class DetoxLogger {
     this._bunyan.addStream(this._createDebugStream());
 
     if (this._config.overrideConsole) {
-      // TODO: restore the console override
+      customConsoleLogger.overrideConsoleMethods(console, this);
     }
   }
 
@@ -74,6 +77,10 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
+    if (overrides && overrides.__filename) {
+      overrides.__filename = path.basename(overrides.__filename, '.js');
+    }
+
     return new DetoxLogger(this._config, {
       ...this._context,
       ...overrides,
@@ -139,10 +146,10 @@ class DetoxLogger {
         }
 
         if (entry.event === 'ERROR') {
-          return `${path.basename(filename)}/${entry.event}`;
+          return `${filename}/${entry.event}`;
         }
 
-        return entry.event ? entry.event : path.basename(filename);
+        return entry.event ? entry.event : filename;
       },
       'trackingId': id => ` #${id}`,
       'cpid': pid => ` cpid=${pid}`,

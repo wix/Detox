@@ -40,8 +40,8 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
   });
 
   describe('- proxying to bunyan -', () => {
-    const expectedOrigin = expect.stringMatching(/at src[\\/]utils[\\/]customConsoleLogger\.test\.js:\d+:\d+/);
-    const expectedStackDump = expect.stringMatching(/at.*src[\\/]utils[\\/]customConsoleLogger\.test\.js:\d+:\d+/m);
+    const expectedOrigin = expect.stringMatching(/at src[\\/]logger[\\/]customConsoleLogger\.test\.js:\d+:\d+/);
+    const expectedStackDump = expect.stringMatching(/at.*src[\\/]logger[\\/]customConsoleLogger\.test\.js:\d+:\d+/m);
 
     beforeEach(() => {
       overrideConsoleMethods(fakeConsole, bunyanLogger);

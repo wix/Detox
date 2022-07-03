@@ -1,11 +1,5 @@
 const { IPC } = require('node-ipc');
 
-/**
- * @typedef {object} ServerState
- * @property {string[]} contexts
- * @property {string[]} logFiles
- */
-
 class IPCServer {
   /**
    * @param {object} options
@@ -36,6 +30,7 @@ class IPCServer {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
+      this._ipc.server.on('failedTests', this.onFailedTests.bind(this));
       this._ipc.server.start();
     });
   }
@@ -63,6 +58,18 @@ class IPCServer {
     if (workerId && workerId > this._sessionState.workersCount) {
       const workersCount = this._sessionState.workersCount = workerId;
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
+    }
+  }
+
+  onFailedTests({ testFilePaths }, socket) {
+    if (testFilePaths == null) {
+      this._sessionState.failedTestFiles.splice(0, Infinity);
+    } else {
+      this._sessionState.failedTestFiles.push(...testFilePaths);
+    }
+
+    if (socket) {
+      this._ipc.server.emit(socket, 'failedTestsDone', {});
     }
   }
 }

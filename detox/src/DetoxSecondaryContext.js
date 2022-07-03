@@ -1,7 +1,9 @@
 const fs = require('fs');
 
 const DetoxContext = require('./DetoxContext');
+const { DetoxInternalError } = require('./errors');
 const { SecondarySessionState } = require('./ipc/state');
+const symbols = require('./symbols');
 
 class DetoxSecondaryContext extends DetoxContext {
   constructor() {
@@ -22,17 +24,27 @@ class DetoxSecondaryContext extends DetoxContext {
     return SecondarySessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
   }
 
+  [symbols.reportFailedTests] = async (testFilePaths) => {
+    if (this._ipcClient) {
+      await this._ipcClient.reportFailedTests(testFilePaths);
+    } else {
+      throw new DetoxInternalError('Detected an attempt to report failed tests using a non-initialized context.');
+    }
+  };
+
   async _doInit(opts) {
     const IPCClient = require('./ipc/IPCClient');
 
-    this._ipcClient = new IPCClient({
-      id: opts.workerId != null ? `worker-${opts.workerId}` : `secondary-${process.pid}`,
-      serverId: this._sessionState.detoxIPCServer,
-      logger: this._logger,
-      workerId: opts.workerId,
-    });
+    if (!this._ipcClient) {
+      this._ipcClient = new IPCClient({
+        id: opts.workerId != null ? `worker-${opts.workerId}` : `secondary-${process.pid}`,
+        serverId: this._sessionState.detoxIPCServer,
+        logger: this._logger,
+        workerId: opts.workerId,
+      });
 
-    await this._ipcClient.init();
+      await this._ipcClient.init();
+    }
   }
 
   /**

@@ -3,12 +3,11 @@ const path = require('path');
 const chalk = require('chalk').default;
 const _ = require('lodash');
 
-const log = require('../../../../src/utils/logger');
+const { device, log } = require('../../../..');
 
 class WorkerAssignReporter {
-  constructor({ detox, env }) {
-    this._detox = detox;
-    this._env = env;
+  constructor({ env }) {
+    this._testName = path.basename(env.testPath);
   }
 
   run_start() {
@@ -16,7 +15,7 @@ class WorkerAssignReporter {
   }
 
   _formatDeviceName() {
-    const deviceName = _.attempt(() => this._detox.device.name);
+    const deviceName = _.attempt(() => device.name);
     const formattedDeviceName = _.isError(deviceName)
       ? chalk.redBright('undefined')
       : chalk.blueBright(deviceName);
@@ -25,8 +24,7 @@ class WorkerAssignReporter {
   }
 
   _formatTestName() {
-    const testName = path.basename(this._env.testPath);
-    return chalk.whiteBright(testName);
+    return chalk.whiteBright(this._testName);
   }
 }
 

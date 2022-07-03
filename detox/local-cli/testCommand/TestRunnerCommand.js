@@ -5,7 +5,7 @@ const _ = require('lodash');
 const parser = require('yargs-parser');
 const unparse = require('yargs-unparser');
 
-const detox = require('../../src/realms/primary');
+const detox = require('../../internals');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 
 class TestRunnerCommand {
@@ -56,7 +56,7 @@ class TestRunnerCommand {
   }
 
   /**
-   * @param {Partial<Readonly<Detox.DetoxCLIConfig>>} cliConfig
+   * @param {Partial<Readonly<DetoxInternals.DetoxCLIConfig>>} cliConfig
    * @returns {this}
    */
   replicateCLIConfig(cliConfig) {
@@ -114,8 +114,9 @@ class TestRunnerCommand {
           throw e;
         }
 
-        this._argv._ = failedTestFiles;
+        this._argv._ = failedTestFiles.slice();
         this._env.DETOX_RERUN_INDEX = 1 + (this._env.DETOX_RERUN_INDEX || 0);
+        await detox.reportFailedTests(null);
       }
     } while (launchError && --runsLeft > 0);
 

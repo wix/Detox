@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const DetoxContext = require('./DetoxContext');
 const temporary = require('./artifacts/utils/temporaryPath');
 const { PrimarySessionState } = require('./ipc/state');
+const symbols = require('./symbols');
 
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
@@ -35,7 +36,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
   /**
    * @override
-   * @param {Partial<Detox.DetoxInitOptions>} [opts]
+   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
    */
   async _doInit(opts) {
     const configuration = require('./configuration');
@@ -114,7 +115,7 @@ class DetoxPrimaryContext extends DetoxContext {
     await fs.remove(this._sessionState.detoxConfigSnapshotPath);
 
     try {
-      this.trace.end();
+      this.trace.end({ cat: 'lifecycle' });
       await this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
     } catch (err) {
       this._logger.error({ err }, 'Encountered an error while merging the process logs:');
@@ -128,7 +129,7 @@ class DetoxPrimaryContext extends DetoxContext {
       return;
     }
 
-    const { rootDir, plugins } = this.config.artifactsConfig || {};
+    const { rootDir, plugins } = this[symbols.config].artifactsConfig || {};
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
 
@@ -137,10 +138,10 @@ class DetoxPrimaryContext extends DetoxContext {
         await fs.mkdirp(rootDir);
 
         return new Promise((resolve, reject) => {
-          const resolveCache = [false, false];
+          const resolveCache = [false, false, false];
           const resolveIndex = (index) => {
             resolveCache[index] = true;
-            if (resolveCache[0] && resolveCache[1]) {
+            if (resolveCache.every(Boolean)) {
               resolve();
             }
           };
@@ -160,7 +161,11 @@ class DetoxPrimaryContext extends DetoxContext {
             .on('error', reject)
             .on('end', () => resolveIndex(1));
 
-          jsonl.toStringifiedStream(mergedStream)
+          const out3Stream = fs.createWriteStream(path.join(rootDir, 'trace.json'))
+            .on('error', reject)
+            .on('end', () => resolveIndex(2));
+
+          jsonl.toStringifiedStream(mergedStream, 'default')
             .on('error', err => out1Stream.emit('error', err))
             .pipe(out1Stream);
 
@@ -169,6 +174,16 @@ class DetoxPrimaryContext extends DetoxContext {
           mergedStream
             .on('error', err => bds.emit('error', err))
             .pipe(bds);
+
+          const foo = jsonl.foo();
+
+          mergedStream
+            .on('error', err => foo.emit('error', err))
+            .pipe(foo);
+
+          jsonl.toStringifiedStream(foo, 'single')
+            .on('error', err => out3Stream.emit('error', err))
+            .pipe(out3Stream);
         });
       }
     } finally {
@@ -179,7 +194,7 @@ class DetoxPrimaryContext extends DetoxContext {
   async _resetLockFile() {
     const DeviceRegistry = require('./devices/DeviceRegistry');
 
-    const deviceType = this.config.deviceConfig.type;
+    const deviceType = this[symbols.config].deviceConfig.type;
 
     switch (deviceType) {
       case 'ios.none':
@@ -198,6 +213,12 @@ class DetoxPrimaryContext extends DetoxContext {
       await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
     }
   }
+
+  [symbols.reportFailedTests] = async (testFilePaths) => {
+    if (this._ipcServer) {
+      this._ipcServer.onFailedTests({ testFilePaths });
+    }
+  };
 }
 
 module.exports = DetoxPrimaryContext;

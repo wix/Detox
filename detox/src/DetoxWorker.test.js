@@ -39,7 +39,6 @@ describe('Detox', () => {
   let runtimeDevice;
   let Detox;
   let detox;
-  let lifecycleSymbols;
 
   beforeEach(() => {
     mockEnvironmentFactories();
@@ -76,10 +75,10 @@ describe('Detox', () => {
     invoke = require('./invoke');
     Client = require('./client/Client');
     AsyncEmitter = require('./utils/AsyncEmitter');
-    lifecycleSymbols = require('./symbols').lifecycle;
 
     Detox = require('./DetoxWorker');
-    detoxContext = { log: logger, config: detoxConfig };
+    const symbols = require('./symbols');
+    detoxContext = { log: logger, [symbols.config]: detoxConfig };
   });
 
   describe('when detox.init() is called', () => {
@@ -105,10 +104,8 @@ describe('Detox', () => {
     describe('', () => {
       beforeEach(init);
 
-      it('should create a new Client with a random sessionId', () =>
-        expect(Client).toHaveBeenCalledWith(expect.objectContaining({
-          sessionId: expect.any(String),
-        })));
+      it('should create a new Client', () =>
+        expect(Client).toHaveBeenCalled());
 
       it('should create an invocation manager', () =>
         expect(invoke.InvocationManager).toHaveBeenCalledWith(client()));
@@ -297,27 +294,27 @@ describe('Detox', () => {
     });
 
     it('should validate test summary object', async () => {
-      await expect(detox[lifecycleSymbols.onTestStart]('Test')).rejects.toThrowError(
+      await expect(detox.onTestStart('Test')).rejects.toThrowError(
         /Invalid test summary was passed/
       );
     });
 
     it('should validate test summary status', async () => {
-      await expect(detox[lifecycleSymbols.onTestStart]({
+      await expect(detox.onTestStart({
         ...testSummaries.running(),
         status: undefined,
       })).rejects.toThrowError(/Invalid test summary status/);
     });
 
     it('should validate test summary status', async () => {
-      await expect(detox[lifecycleSymbols.onTestStart]({
+      await expect(detox.onTestStart({
         ...testSummaries.running(),
         status: undefined,
       })).rejects.toThrowError(/Invalid test summary status/);
     });
 
     describe('with a valid test summary', () => {
-      beforeEach(() => detox[lifecycleSymbols.onTestStart](testSummaries.running()));
+      beforeEach(() => detox.onTestStart(testSummaries.running()));
 
       it('should trace DETOX_BEFORE_EACH event', () =>
         expect(logger.trace).toHaveBeenCalledWith(
@@ -329,12 +326,12 @@ describe('Detox', () => {
         expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
       it('should not relaunch app', async () => {
-        await detox[lifecycleSymbols.onTestStart](testSummaries.running());
+        await detox.onTestStart(testSummaries.running());
         expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
       });
 
       it('should not dump pending network requests', async () => {
-        await detox[lifecycleSymbols.onTestStart](testSummaries.running());
+        await detox.onTestStart(testSummaries.running());
         expect(client().dumpPendingRequests).not.toHaveBeenCalled();
       });
     });
@@ -343,17 +340,17 @@ describe('Detox', () => {
   describe('when detox[onTestDone]() is called', () => {
     beforeEach(async () => {
       detox = await new Detox(detoxContext).init();
-      await detox[lifecycleSymbols.onTestStart](testSummaries.running());
+      await detox.onTestStart(testSummaries.running());
     });
 
     it('should validate non-object test summary', () =>
-      expect(detox[lifecycleSymbols.onTestDone]).rejects.toThrowError(/Invalid test summary was passed/));
+      expect(detox.onTestDone).rejects.toThrowError(/Invalid test summary was passed/));
 
     it('should validate against invalid test summary status', () =>
-      expect(detox[lifecycleSymbols.onTestDone]({})).rejects.toThrowError(/Invalid test summary status/));
+      expect(detox.onTestDone({})).rejects.toThrowError(/Invalid test summary status/));
 
     describe('with a passing test summary', () => {
-      beforeEach(() => detox[lifecycleSymbols.onTestDone](testSummaries.passed()));
+      beforeEach(() => detox.onTestDone(testSummaries.passed()));
 
       it('should trace DETOX_AFTER_EACH event', () =>
         expect(logger.trace).toHaveBeenCalledWith(
@@ -366,14 +363,14 @@ describe('Detox', () => {
     });
 
     describe('with a failed test summary (due to failed asseration)', () => {
-      beforeEach(() => detox[lifecycleSymbols.onTestDone](testSummaries.failed()));
+      beforeEach(() => detox.onTestDone(testSummaries.failed()));
 
       it('should not dump pending network requests', () =>
         expect(client().dumpPendingRequests).not.toHaveBeenCalled());
     });
 
     describe('with a failed test summary (due to a timeout)', () => {
-      beforeEach(() => detox[lifecycleSymbols.onTestDone](testSummaries.timedOut()));
+      beforeEach(() => detox.onTestDone(testSummaries.timedOut()));
 
       it('should dump pending network requests', () =>
         expect(client().dumpPendingRequests).toHaveBeenCalled());
@@ -578,13 +575,13 @@ describe('Detox', () => {
     ['onTestDone', testSummaries.passed()],
     ['onRunDescribeFinish', { name: 'testSuiteName' }],
     ['onRunFinish', null],
-  ])('when detox[symbols.%s](%j) is called', (method, arg) => {
+  ])('when detox.%s(%j) is called', (method, arg) => {
     beforeEach(async () => {
       detox = await new Detox(detoxContext).init();
     });
 
     it(`should pass it through to artifactsManager.${method}()`, async () => {
-      await detox[lifecycleSymbols[method]](arg);
+      await detox[method](arg);
       expect(artifactsManager[method]).toHaveBeenCalledWith(arg);
     });
   });

@@ -1,1 +1,1 @@
-module.exports = async () => require('../../src').cleanup();
+module.exports = async () => require('../../internals').cleanup();

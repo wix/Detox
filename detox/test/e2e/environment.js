@@ -3,6 +3,7 @@ const {
   SpecReporter,
   WorkerAssignReporter,
 } = require('detox/runners/jest');
+const { worker } = require('detox/internals')
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {
@@ -14,14 +15,12 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
     });
   }
 
-  async initDetox() {
-    const instance = await super.initDetox();
+  async setup() {
+    await super.setup();
 
-    this.global.detox.__waitUntilArtifactsManagerIsIdle__ = () => {
-      return instance._artifactsManager._idlePromise;
+    this.global.__detox__.__waitUntilArtifactsManagerIsIdle__ = () => {
+      return worker._artifactsManager._idlePromise;
     };
-
-    return instance;
   }
 }
 

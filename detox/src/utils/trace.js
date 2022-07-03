@@ -1,5 +1,5 @@
 /** @type {Detox.Tracer} */
-const trace = require('..').trace;
+const trace = require('../..').trace;
 
 module.exports = {
   trace,

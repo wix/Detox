@@ -2,8 +2,8 @@
 const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
-const DetoxSecondaryContext = require('../../../src/DetoxSecondaryContext');
-const DetoxError = require('../../../src/errors/DetoxError');
+const detox = require('../../../internals');
+const { DetoxError } = require('../../../src/errors');
 const Timer = require('../../../src/utils/Timer');
 
 const DetoxCoreListener = require('./listeners/DetoxCoreListener');
@@ -41,10 +41,6 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     this.testEventListeners = [];
     /** @protected */
     this.initTimeout = 300000;
-    /** @protected */
-    this.detox = null;
-    /** @protected */
-    this.detoxContext = null;
   }
 
   /** @override */
@@ -55,13 +51,12 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `setting up Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        this.detoxContext = new DetoxSecondaryContext();
-        this.detox = await this.detoxContext.init({
+        await detox.init({
           global: this.global,
           workerId: +process.env.JEST_WORKER_ID,
         });
 
-        this._instantiateListeners(this.detox);
+        this._instantiateListeners();
       },
     });
   }
@@ -104,8 +99,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `tearing down Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await this.detoxContext.cleanup();
-        this.detox = null;
+        await detox.cleanup();
       },
     });
   }
@@ -127,10 +121,9 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   }
 
   /** @private */
-  _instantiateListeners(detoxInstance) {
+  _instantiateListeners() {
     for (const Listener of Object.values(this._listenerFactories)) {
       this.testEventListeners.push(new Listener({
-        detox: detoxInstance,
         env: this,
       }));
     }
@@ -138,7 +131,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @private */
   _logError(e) {
-    this.detoxContext.log.error(DetoxError.format(e));
+    detox.log.error(DetoxError.format(e));
   }
 }
 

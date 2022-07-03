@@ -4,20 +4,15 @@ const Client = require('./client/Client');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
-const lifecycleSymbols = require('./symbols').lifecycle;
+const symbols = require('./symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 
 class DetoxWorker {
   constructor(context) {
-    for (const [key, symbol] of Object.entries(lifecycleSymbols)) {
-      this[symbol] = this[symbol]
-        ? this[symbol].bind(this)
-        : (...args) => this._artifactsManager[key](...args);
-    }
-
     this._context = context;
     this._isCleaningUp = false;
-    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(context.config);
+    this._config = context[symbols.config];
+    this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(this._config);
     this._client = null;
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
@@ -52,6 +47,7 @@ class DetoxWorker {
     this._deviceAllocator = null;
     this._deviceCookie = null;
 
+    this.trace = this._context.trace;
     /** @deprecated */
     this.traceCall = this._context.traceCall;
   }
@@ -59,7 +55,7 @@ class DetoxWorker {
   async init() {
     if (this._isCleaningUp) return;
 
-    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._context.config;
+    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._config;
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
@@ -177,7 +173,9 @@ class DetoxWorker {
     return this._context.log;
   }
 
-  async [lifecycleSymbols.onTestStart](testSummary) {
+  onRunStart = async (...args) => this._artifactsManager.onRunStart(...args);
+  onRunDescribeStart = async (...args) => this._artifactsManager.onRunDescribeStart(...args);
+  onTestStart = async (testSummary) => {
     if (this._isCleaningUp) return;
     this._validateTestSummary('beforeEach', testSummary);
     this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
@@ -190,9 +188,14 @@ class DetoxWorker {
 
     if (this._isCleaningUp) return;
     await this._artifactsManager.onTestStart(testSummary);
-  }
-
-  async [lifecycleSymbols.onTestDone](testSummary) {
+  };
+  onHookStart = async (...args) => this._artifactsManager.onHookStart(...args);
+  onHookFailure = async (...args) => this._artifactsManager.onHookFailure(...args);
+  onHookSuccess = async (...args) => this._artifactsManager.onHookSuccess(...args);
+  onTestFnStart = async (...args) => this._artifactsManager.onTestFnStart(...args);
+  onTestFnFailure = async (...args) => this._artifactsManager.onTestFnFailure(...args);
+  onTestFnSuccess = async (...args) => this._artifactsManager.onTestFnSuccess(...args);
+  onTestDone = async (testSummary) => {
     if (this._isCleaningUp) return;
     this._validateTestSummary('afterEach', testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
@@ -205,7 +208,9 @@ class DetoxWorker {
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
-  }
+  };
+  onRunDescribeFinish = async (...args) => this._artifactsManager.onRunDescribeFinish(...args);
+  onRunFinish = async (...args) => this._artifactsManager.onRunFinish(...args);
 
   async _reinstallAppsOnDevice() {
     const appNames = _(this._appsConfig)

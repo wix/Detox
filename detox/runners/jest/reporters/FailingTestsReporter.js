@@ -1,6 +1,6 @@
 const path = require('path');
 
-const { saveLastFailedTests } = require('../../../src/utils/lastFailedTests');
+const detoxInternals = require('../../../internals');
 
 class FailingTestsReporter {
   async onRunComplete(_contexts, { testResults }) {
@@ -9,7 +9,7 @@ class FailingTestsReporter {
       .filter(result => result.numFailingTests > 0)
       .map(result => path.relative(cwd, result.testFilePath));
 
-    await saveLastFailedTests(failedFiles);
+    await detoxInternals.reportFailedTests(failedFiles);
   }
 }
 

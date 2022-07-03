@@ -9,7 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import { AbstractEventBuilder, CompleteEvent, DurationEndEvent, EndHandle } from 'trace-event-lib';
+import { EndHandle } from 'trace-event-lib';
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -290,38 +290,18 @@ declare global {
 
         // endregion DetoxConfig
 
-        // Detox exports all methods from detox global and all of the global constants.
-        interface DetoxInstance {
+        interface DetoxExportWrapper {
             readonly device: Device;
+
             readonly element: ElementFacade;
+
             readonly waitFor: WaitForFacade;
+
             readonly expect: ExpectFacade;
+
             readonly by: ByFacade;
+
             readonly web: WebFacade;
-        }
-
-        interface DetoxExportWrapper extends DetoxInstance {
-            /**
-             * The setup phase happens inside detox.init(). This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator
-             *
-             * @param configOverride - this object is deep-merged with the selected Detox configuration from .detoxrc
-             * @example
-             * beforeAll(async () => {
-             *   await detox.init();
-             * });
-             */
-            init(options?: Partial<DetoxInitOptions>): Promise<void>;
-
-            /**
-             * The cleanup phase should happen after all the tests have finished.
-             * This is the phase where the Detox server shuts down.
-             *
-             * @example
-             * after(async () => {
-             *  await detox.cleanup();
-             * });
-             */
-            cleanup(): Promise<void>;
 
             /**
              * Detox logger instance. Can be used for saving user logs to the general log file.
@@ -337,88 +317,12 @@ declare global {
              * @deprecated
              */
             readonly traceCall: TraceCallSignature;
-
-            /**
-             * Detox runtime config
-             *
-             * @internal
-             */
-            readonly config: DetoxRuntimeConfig;
-
-            /**
-             * Detox session state
-             *
-             * @internal
-             */
-            readonly session: DetoxSessionState;
         }
-
-        type DetoxInitOptions = {
-            cwd: string;
-            argv: Record<string, unknown>;
-            testRunnerArgv: Record<string, unknown>;
-            overrides: Partial<DetoxConfig>;
-
-            global: NodeJS.Global;
-            workerId: number;
-        };
-
-        /**
-         * @internal
-         */
-        type DetoxSessionState = Readonly<{
-            workersCount: number;
-        }>;
-
-        /**
-         * @internal
-         */
-        type DetoxRuntimeConfig = Readonly<{
-            configurationName: string;
-
-            appsConfig: Record<string, Readonly<DetoxAppConfig>>;
-            artifactsConfig: DetoxArtifactsConfig;
-            behaviorConfig: DetoxBehaviorConfig;
-            cliConfig: DetoxCLIConfig;
-            deviceConfig: DetoxDeviceConfig;
-            loggerConfig: DetoxLoggerConfig;
-            runnerConfig: DetoxTestRunnerConfig;
-            sessionConfig: DetoxSessionConfig;
-        }>;
-
-        /**
-         * @internal
-         */
-        type DetoxCLIConfig = Partial<{
-            appLaunchArgs: string;
-            artifactsLocation: string;
-            captureViewHierarchy: string;
-            cleanup: boolean;
-            configPath: string;
-            configuration: string;
-            debugSynchronization: number;
-            deviceBootArgs: string;
-            deviceName: string;
-            forceAdbInstall: boolean;
-            gpu: string;
-            headless: boolean;
-            jestReportSpecs: boolean;
-            keepLockFile: boolean;
-            loglevel: string;
-            readonlyEmu: boolean;
-            recordLogs: string;
-            recordPerformance: string;
-            recordVideos: string;
-            reuse: string;
-            takeScreenshots: string;
-            useCustomLogger: string;
-        }>;
 
         protected type TraceEventArgs = Record<string, unknown>;
 
         type TraceEvent = {
-            name: string;
-
+            name?: string;
             cat?: string;
             cname?: string;
             id?: number;
