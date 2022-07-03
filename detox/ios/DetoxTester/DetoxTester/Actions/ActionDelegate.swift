@@ -160,7 +160,11 @@ class ActionDelegate: ActionDelegateProtocol {
       $0.getAttributes()
     }
 
-    return AnyCodable(attributes)
+    if attributes.count > 1 {
+      return AnyCodable(["elements": attributes])
+    } else {
+      return AnyCodable(attributes.first!)
+    }
   }
 
   func takeScreenshot(

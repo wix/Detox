@@ -54,11 +54,16 @@ class WebSocketClient: NSObject {
       "messageId": messageId
     ]
 
+    guard let webSocketSessionTask = webSocketSessionTask else {
+      wsLog("web-socket session task is nil, can't send invoke result", type: .error)
+      return
+    }
+
     do {
       let data = try JSONSerialization.data(withJSONObject: jsonData, options: [])
       let message = URLSessionWebSocketTask.Message.data(data)
 
-      webSocketSessionTask?.send(message) { error in
+      webSocketSessionTask.send(message) { error in
         if let error = error {
           wsLog("failed to send message with error: \(error.localizedDescription)", type: .error)
           fatalError("error sending message: \(error.localizedDescription)")
@@ -73,7 +78,12 @@ class WebSocketClient: NSObject {
   }
 
   private func receive() {
-    webSocketSessionTask?.receive { [weak self] result in
+    guard let webSocketSessionTask = webSocketSessionTask else {
+      wsLog("web-socket session task is nil, can't receive messages", type: .error)
+      fatalError("web-socket session task is nil, can't receive messages")
+    }
+
+    webSocketSessionTask.receive { [weak self] result in
       switch result {
         case .failure(let error as NSError):
           wsLog("error receiving message: \(error.localizedDescription)", type: .error)

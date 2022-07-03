@@ -345,6 +345,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					lastHoldDuration: holdDuration
 				)
 
+				self.safeSend(
+					action: "didLongPressAndDrag",
+					messageId: messageId
+				)
+
 			case "verifyVisibility":
 				let targetIdentifier = params["elementID"] as! String
 				let threshold = params["threshold"] as! NSNumber

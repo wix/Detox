@@ -128,12 +128,12 @@ class WhiteBoxExecutor {
 
         let result = send(message, andExpectToType: "currentStatusResult", messageId: 0)
 
-        guard let statusResult = result["status"] as? [String: AnyCodable] else {
+        guard let statusResult = result["status"] as? [String: Any] else {
           whiteExecLog("current-status result is invalid: \(result)", type: .error)
           fatalError("current-status result is invalid")
         }
 
-        return .status(statusResult)
+        return .status(statusResult.mapValues { AnyCodable($0) })
 
       case .longPressAndDrag(
         let duration,
@@ -167,7 +167,6 @@ class WhiteBoxExecutor {
 
         let _ = send(message, andExpectToType: "didLongPressAndDrag", messageId: 0)
         return .completed
-
     }
   }
 
