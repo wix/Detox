@@ -12,7 +12,6 @@ import org.hamcrest.Matchers
 
 class AdjustSliderToPositionAction(private val targetPositionPct: Double) : ViewAction {
     override fun getDescription() = "adjustSliderToPosition"
-
     override fun getConstraints(): Matcher<View?>? =
         Matchers.allOf( isDisplayed(), isAssignableFrom(AppCompatSeekBar::class.java) )
 
