@@ -4,8 +4,7 @@ const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const _ = require('lodash');
 
-const DetoxTraceEventBuilder = require('./DetoxTraceEventBuilder');
-const { shortFormat } = require('./dateUtils');
+const { shortFormat } = require('../utils/dateUtils');
 
 /**
  * @typedef PrivateLoggerConfig
@@ -33,7 +32,6 @@ class DetoxLogger {
     this._context = context;
     /** @type {bunyan} */
     this._bunyan = bunyanLogger || this._initBunyanLogger();
-    this._tracer = new DetoxTraceEventBuilder(this._forward.bind(this));
 
     this.fatal = this._forward.bind(this, 'fatal');
     this.error = this._forward.bind(this, 'error');
@@ -41,11 +39,6 @@ class DetoxLogger {
     this.info = this._forward.bind(this, 'info');
     this.debug = this._forward.bind(this, 'debug');
     this.trace = this._forward.bind(this, 'trace');
-    Object.assign(this.trace, {
-      begin: this._tracer.begin.bind(this._tracer),
-      instant: this._tracer.instant.bind(this._tracer),
-      end: this._tracer.end.bind(this._tracer),
-    });
   }
 
   /**

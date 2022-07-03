@@ -1,6 +1,5 @@
 const { IPC } = require('node-ipc');
 
-const { TRACE } = require('../constants');
 const { DetoxInternalError } = require('../errors');
 
 const { SecondarySessionState } = require('./state');
@@ -11,7 +10,7 @@ class IPCClient {
 
     this._state = new SecondarySessionState({});
     /** @type {Detox.Logger} logger */
-    this._logger = logger.child({ __filename, event: 'IPC_CLIENT' });
+    this._logger = logger.child({ __filename, cat: 'ipc-client,ipc' });
 
     this._id = id;
     this._serverId = serverId;
@@ -27,7 +26,7 @@ class IPCClient {
     Object.assign(this._client.config, {
       id: this._id,
       appspace: 'detox.',
-      logger: (msg) => this._logger.trace.instant({ ...TRACE.IPC, name: msg }),
+      logger: (msg) => this._logger.trace(msg),
       stopRetrying: 0,
       maxRetries: 0,
     });

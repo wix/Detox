@@ -5,7 +5,6 @@ const fs = require('fs-extra');
 
 const DetoxContext = require('./DetoxContext');
 const temporary = require('./artifacts/utils/temporaryPath');
-const { TRACE, THREADS } = require('./constants');
 const { PrimarySessionState } = require('./ipc/state');
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -50,8 +49,8 @@ class DetoxPrimaryContext extends DetoxContext {
     const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = detoxConfig;
     await this._logger.setConfig(loggerConfig);
 
-    this._logger.trace.begin({
-      ...TRACE.PRIMARY_CONTEXT,
+    this.trace.begin({
+      cat: 'lifecycle',
       args: this._sessionState,
       name: process.argv.slice(1).join(' '),
     });
@@ -115,7 +114,7 @@ class DetoxPrimaryContext extends DetoxContext {
     await fs.remove(this._sessionState.detoxConfigSnapshotPath);
 
     try {
-      this._logger.trace.end(THREADS.PRIMARY_CONTEXT);
+      this.trace.end();
       await this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
     } catch (err) {
       this._logger.error({ err }, 'Encountered an error while merging the process logs:');

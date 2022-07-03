@@ -1,5 +1,4 @@
 const DetoxLogger = jest.requireActual('../DetoxLogger');
-const DetoxTraceEventBuilder = jest.requireActual('../DetoxTraceEventBuilder');
 
 const METHODS = [
   'trace', 'debug', 'info', 'warn', 'error', 'fatal'
@@ -32,13 +31,6 @@ class FakeLogger {
         this.log(method, this.opts, ...args);
       });
     }
-
-    this._tracer = new DetoxTraceEventBuilder(this.log);
-    Object.assign(this.trace, {
-      begin: this._tracer.begin.bind(this._tracer),
-      instant: this._tracer.instant.bind(this._tracer),
-      end: this._tracer.end.bind(this._tracer),
-    });
   }
 
   get config() {

@@ -8,8 +8,8 @@
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
 
-import {BunyanDebugStreamOptions} from 'bunyan-debug-stream';
-import {AbstractEventBuilder} from 'trace-event-lib';
+import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
+import { AbstractEventBuilder, CompleteEvent, DurationEndEvent, EndHandle } from 'trace-event-lib';
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -326,21 +326,31 @@ declare global {
             /**
              * Detox logger instance. Can be used for saving user logs to the general log file.
              */
-            readonly log: Detox.Logger;
+            readonly log: Logger;
+
+            /**
+             * Detox tracer instance. Can be used for building timelines in Google Event Tracing format.
+             */
+            readonly trace: Tracer;
+
+            /**
+             * @deprecated
+             */
+            readonly traceCall: TraceCallSignature;
 
             /**
              * Detox runtime config
              *
              * @internal
              */
-            readonly config: Detox.DetoxRuntimeConfig;
+            readonly config: DetoxRuntimeConfig;
 
             /**
              * Detox session state
              *
              * @internal
              */
-            readonly session: Detox.DetoxSessionState;
+            readonly session: DetoxSessionState;
         }
 
         type DetoxInitOptions = {
@@ -404,12 +414,38 @@ declare global {
             useCustomLogger: string;
         }>;
 
-        interface Tracer {
-            (context?: unknown, ...args: any[]): void;
+        protected type TraceEventArgs = Record<string, unknown>;
 
-            readonly begin: AbstractEventBuilder['begin'];
-            readonly instant: AbstractEventBuilder['instant'];
-            readonly end: AbstractEventBuilder['instant'];
+        type TraceEvent = {
+            name: string;
+
+            cat?: string;
+            cname?: string;
+            id?: number;
+            args?: TraceEventArgs;
+        };
+
+        /**
+         * Trace a duration event before and after executing the action function
+         */
+        protected interface TraceCallSignature {
+            <T>(event: string | TraceEvent, action: () => T): T;
+            <T>(event: string | TraceEvent, action: () => Promise<T>): Promise<T>;
+        }
+
+        protected interface TraceSectionSignature<T> {
+            (event?: string, args?: TraceEventArgs): T;
+            (event: TraceEvent): T;
+        }
+
+        interface Tracer extends TraceCallSignature {
+            readonly begin: TraceSectionSignature<EndHandle<{ cname: string; args: TraceEventArgs; }>>;
+            readonly end: TraceSectionSignature<void>;
+
+            /** @deprecated */
+            readonly startSection: TraceSectionSignature<void>;
+            /** @deprecated */
+            readonly endSection: TraceSectionSignature<void>;
         }
 
         type Logger = {
@@ -420,8 +456,7 @@ declare global {
             warn(context?: unknown, ...args: any[]): void;
             info(context?: unknown, ...args: any[]): void;
             debug(context?: unknown, ...args: any[]): void;
-
-            readonly trace: Tracer;
+            trace(context?: unknown, ...args: any[]): void;
 
             child(context?: Record<string, unknown>): Logger;
         };

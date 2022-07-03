@@ -2,17 +2,16 @@ const funpermaproxy = require('funpermaproxy');
 
 const temporaryPath = require('./artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('./errors');
-const DetoxLogger = require('./utils/DetoxLogger');
+const DetoxLogger = require('./logger/DetoxLogger');
+const DetoxTracer = require('./logger/DetoxTracer');
 
 class DetoxContext {
   constructor() {
     this.init = this.init.bind(this);
     this.cleanup = this.cleanup.bind(this);
-    this.traceCall = this.traceCall.bind(this);
 
     this.session = funpermaproxy(() => this._sessionState);
     this.config = funpermaproxy(() => this.session.detoxConfig);
-    this.log = funpermaproxy(() => this._logger);
     this.device = funpermaproxy(() => this.worker.device);
     this.element = funpermaproxy.callable(() => this.worker.element);
     this.waitFor = funpermaproxy.callable(() => this.worker.waitFor);
@@ -30,27 +29,17 @@ class DetoxContext {
       ...this.config.loggerConfig,
       file: temporaryPath.for.log(),
     });
+    /** @protected */
+    this._tracer = DetoxTracer.default({
+      logger: this._logger,
+    });
+    /** @deprecated */
+    this.traceCall = this._tracer.bind(this._tracer);
     /**
      * @protected
      * @type {import('./DetoxWorker') | null}
      */
     this._worker = null;
-  }
-
-  /**
-   * @deprecated
-   */
-  async traceCall(name, func) {
-    const handle = this._logger.trace.begin({ cat: 'user', name });
-
-    try {
-      const result = await func();
-      handle.end({ args: { success: true } });
-      return result;
-    } catch (error) {
-      handle.end({ args: { success: false, error } });
-      throw error;
-    }
   }
 
   /**
@@ -120,6 +109,20 @@ class DetoxContext {
    * @protected
    */
   async _doCleanup() {}
+
+  /**
+   * @returns {Detox.Logger}
+   */
+  get log() {
+    return this._logger;
+  }
+
+  /**
+   * @returns {Detox.Tracer}
+   */
+  get trace() {
+    return this._tracer;
+  }
 
   /**
    * @protected

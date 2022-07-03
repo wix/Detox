@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { defaultOptions } = require('../utils/DetoxLogger');
+const { defaultOptions } = require('../logger/DetoxLogger');
 
 /**
  * @param {object} opts

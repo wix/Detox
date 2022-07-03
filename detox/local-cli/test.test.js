@@ -3,7 +3,7 @@ if (process.platform === 'win32') {
   jest.retryTimes(1); // TODO: investigate why it gets stuck for the 1st time on Windows
 }
 
-jest.mock('../src/utils/DetoxLogger');
+jest.mock('../src/logger/DetoxLogger');
 jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('../src/utils/lastFailedTests');
@@ -74,7 +74,7 @@ describe('CLI', () => {
       });
     });
 
-    logger = () => require('../src/utils/DetoxLogger').instances[0];
+    logger = () => require('../src/logger/DetoxLogger').instances[0];
     DeviceRegistry = require('../src/devices/DeviceRegistry');
     DeviceRegistry.forAndroid.mockImplementation(() => new DeviceRegistry());
     DeviceRegistry.forIOS.mockImplementation(() => new DeviceRegistry());
