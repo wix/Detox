@@ -19,7 +19,10 @@ class NativeElement {
 
   _selectElementWithMatcher(matcher) {
     // if (!(matcher instanceof NativeMatcher)) throw new DetoxRuntimeError(`Element _selectElementWithMatcher argument must be a valid NativeMatcher, got ${typeof matcher}`);
-    this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
+    this._call = invoke.call({
+      type: 'Class',
+      value: 'com.wix.detox.espresso.EspressoDetox'
+    }, 'onView', matcher._call);
   }
 
   atIndex(index) {
@@ -115,7 +118,8 @@ class NativeElement {
   }
 
   async getAttributes() {
-    return await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
+    let result = await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
+    return result.length === 1 ? result[0] : result;
   }
 
   async adjustSliderToPosition(newPosition) {

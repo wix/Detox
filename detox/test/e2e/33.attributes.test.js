@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const { device, element, by } = require('detox');
 const expect = require('expect').default;
 const {expectToThrow} = require('./utils/custom-expects');
@@ -222,11 +224,7 @@ describe('Attributes', () => {
     });
 
     describe(':android:', () => {
-      it('getAttributes on nonexistent view', async () => {
-        await expectToThrow(() => element(by.id('nonexistentId')).getAttributes());
-      });
-
-      it('should return an object with .elements array', async () => {
+      it('should return an array of attributes', async () => {
         const viewShape = {
           identifier: expect.any(String),
           visibility: 'visible',
@@ -245,7 +243,7 @@ describe('Attributes', () => {
               .withAncestor(by.id('attrScrollView'))
           ).getAttributes();
 
-        const innerViews = result.filter(a => a.identifier);
+        const innerViews = _.filter(result, a => a.identifier);
         expect(innerViews.length).toBe(2);
         expect(innerViews[0]).toMatchObject({ ...viewShape });
         expect(innerViews[1]).toMatchObject({ ...viewShape });

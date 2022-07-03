@@ -259,8 +259,6 @@ describe('AndroidExpect', () => {
         beforeEach(() => {
           mockExecutor = new MockExecutor();
 
-          mockExecutor.type = 'getAttributes';
-
           const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
           emitter = new Emitter();
 
@@ -283,34 +281,33 @@ describe('AndroidExpect', () => {
               value: 1
             }]
           };
-          mockExecutor.executeResults = ['{"result": [{"text": "hello", "value": 1}]}'];
+          mockExecutor.executeResult = ['{"result": [{"text": "hello", "value": 1}]}'];
           const result = await e.element(e.by.id('UniqueId005')).getAttributes();
-          expect(result).toEqual(execResult);
+          expect(JSON.parse(result)).toEqual(execResult);
         });
 
         it('should throw exception for getting attributes on a nonexistent view', async () => {
-          mockExecutor.executeResults = [];
+          mockExecutor.executeResult = [];
           await expectToThrow(() => e.element(e.by.id('UniqueId005')).getAttributes());
         });
 
         it('should get attributes for multiple elements', async () => {
-            const execResult = [
+            const execResult =
               {
                 result: [{
                   text: 'hello',
                   value: 1
-                }] },
+                },
               {
-                result: [{
                   text: 'hello',
                   value: 2
                 }]
-              }];
+              };
             mockExecutor
-              .executeResults = ['{"result": [{"text": "hello", "value": 1}]}', '{"result": [{"text": "hello", "value": 2}]}'];
+              .executeResult = '{"result": [{"text": "hello", "value": 1}, {"text": "hello", "value": 2}]}';
             const result = await e.element(e.by.type('com.facebook.react.views.view.ReactViewGroup')
               .withAncestor(e.by.id('attrScrollView'))).getAttributes();
-            expect(result)
+            expect(JSON.parse(result))
               .toEqual(execResult);
           }
         )
@@ -326,7 +323,7 @@ describe('AndroidExpect', () => {
       let fs;
       let _element;
       beforeEach(() => {
-        mockExecutor.executeResults = [Promise.resolve(invokeResultInBase64)];
+        mockExecutor.executeResult = Promise.resolve(invokeResultInBase64);
 
         fs = require('fs-extra');
         tempfile = require('tempfile');
@@ -371,7 +368,7 @@ describe('AndroidExpect', () => {
   describe('web', () => {
     describe('General', () => {
       it('should return undefined', async () => {
-        mockExecutor.executeResults = [Promise.resolve(undefined)];
+        mockExecutor.executeResult = Promise.resolve(undefined);
         await e.web(e.by.id('webview_id')).element(e.by.web.id('any')).tap();
       });
     });
@@ -654,19 +651,10 @@ async function expectToThrow(func) {
 
 class MockExecutor {
   constructor() {
-    this.executeResults = [];
-    this.callsCount = 0;
-    this.type = undefined;
+    this.executeResult = undefined;
   }
 
   async execute(invocation) {
-    if (this.type === 'getAttributes' && this.callsCount === this.executeResults.length) {
-      throw new Error('unknown view');
-    }
-
-    const executeResult = this.executeResults[this.callsCount];
-    this.callsCount++;
-
     if (typeof invocation === 'function') {
       invocation = invocation();
     }
@@ -676,8 +664,8 @@ class MockExecutor {
 
     this.recurse(invocation);
     await this.timeout(1);
-    return executeResult ? {
-      result: executeResult
+    return this.executeResult ? {
+      result: this.executeResult
     } : undefined;
   }
 

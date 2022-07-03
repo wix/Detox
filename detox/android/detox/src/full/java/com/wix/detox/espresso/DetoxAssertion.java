@@ -28,11 +28,11 @@ public class DetoxAssertion {
         // static class
     }
 
-    public static ViewInteraction assertMatcher(ViewInteraction i, Matcher<View> m) {
+    public static ViewInteraction assertMatcher(MultiViewInteraction i, Matcher<View> m) {
         return i.check(matches(m));
     }
 
-    public static ViewInteraction assertNotVisible(ViewInteraction i) {
+    public static ViewInteraction assertNotVisible(MultiViewInteraction i) {
         ViewInteraction ret;
         try {
             ret = i.check(doesNotExist());
@@ -43,11 +43,11 @@ public class DetoxAssertion {
         }
     }
 
-    public static ViewInteraction assertNotExists(ViewInteraction i) {
+    public static ViewInteraction assertNotExists(MultiViewInteraction i) {
         return i.check(doesNotExist());
     }
 
-    public static void waitForAssertMatcher(final ViewInteraction i, final Matcher<View> m, double timeoutSeconds) {
+    public static void waitForAssertMatcher(final MultiViewInteraction i, final Matcher<View> m, double timeoutSeconds) {
         final long originTime = System.nanoTime();
 
         while (true) {
@@ -68,7 +68,7 @@ public class DetoxAssertion {
     }
 
     public static void waitForAssertMatcherWithSearchAction(
-            final ViewInteraction i,
+            final MultiViewInteraction i,
             final Matcher<View> vm,
             final ViewAction searchAction,
             final Matcher<View> searchMatcher) {

@@ -5,9 +5,16 @@
 */
 
 
+function sanitize_matcher(matcher) {
+  if (!matcher._call) {
+    return matcher;
+  }
 
+  const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
+  return originalMatcher.type ? originalMatcher.value : originalMatcher;
+} 
 class EspressoDetox {
-  static perform(interaction, action) {
+  static perform(multiViewInteraction, action) {
     return {
       target: {
         type: "Class",
@@ -16,7 +23,7 @@ class EspressoDetox {
       method: "perform",
       args: [{
         type: "Invocation",
-        value: interaction
+        value: multiViewInteraction
       }, action]
     };
   }
@@ -63,6 +70,20 @@ class EspressoDetox {
       },
       method: "setURLBlacklist",
       args: [urls]
+    };
+  }
+
+  static onView(viewMatcher) {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "onView",
+      args: [{
+        type: "Invocation",
+        value: sanitize_matcher(viewMatcher)
+      }]
     };
   }
 

@@ -13,6 +13,7 @@ const typeCheckInterfaces = {
   String: isString,
   ViewAction: null, // there are optional view actions
   ViewInteraction: null,
+  MultiViewInteraction: null,
   WebElement: null,
   'Atom<List<ElementReference>>': null
 };
@@ -74,13 +75,15 @@ module.exports = generator({
     'ViewAction',
     'ViewInteraction',
     'WebElement',
-    'Atom<List<ElementReference>>'
+    'Atom<List<ElementReference>>',
+    'MultiViewInteraction'
   ],
   renameTypesMap: {
     int: 'Integer', // TODO: add test
     double: 'Double',
     ViewInteraction: 'Invocation',
     WebInteraction: 'Invocation',
+    MultiViewInteraction: 'Invocation',
     WebElement: 'Invocation',
     'Atom<List<ElementReference>>': 'Invocation'
   },
