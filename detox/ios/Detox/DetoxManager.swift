@@ -203,12 +203,12 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				return
 			}
 		}
-		
+
 		if let messageId = messageId {
 			safeSend(action: "setSyncSettingsDone", messageId: messageId)
 		}
 	}
-	
+
 	// MARK: WebSocketDelegate
 	
 	func webSocketDidConnect(_ webSocket: WebSocket) {
@@ -295,6 +295,30 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 				self.safeSend(
 					action: "didSetDatePicker",
+					messageId: messageId
+				)
+
+			case "setSyncSettings":
+				let maxTimerWait = params["maxTimerWait"] as? NSNumber
+				let blacklistURLs = params["blacklistURLs"] as? [String]
+				let disabled = params["disabled"] as? NSNumber
+
+				if let maxTimerWait = maxTimerWait {
+					DTXSyncManager.maximumAllowedDelayedActionTrackingDuration = maxTimerWait.doubleValue
+					DTXSyncManager.maximumTimerIntervalTrackingDuration = maxTimerWait.doubleValue
+				}
+
+				if let blacklistURLs = blacklistURLs {
+					DTXSyncManager.urlBlacklist = blacklistURLs
+					DTXSyncManager.urlBlacklist = blacklistURLs
+				}
+
+				if let disabled = disabled {
+					DTXSyncManager.synchronizationDisabled = disabled.boolValue
+				}
+
+				self.safeSend(
+					action: "didSetSyncSettings",
 					messageId: messageId
 				)
 

@@ -55,7 +55,17 @@ class WhiteBoxExecutor {
         return .completed
 
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
-        // TODO: to implement.
+        let message = createMessage(
+          type: "setSyncSettings",
+          params: [
+            "maxTimerWait": maxTimerWait != nil ? AnyCodable(maxTimerWait!) : nil,
+            "blacklistURLs": blacklistURLs != nil ? AnyCodable(blacklistURLs!): nil,
+            "disabled": disabled != nil ? AnyCodable(disabled!) : nil
+          ]
+        )
+
+        let _ = send(message, andExpectToType: "didSetSyncSettings", messageId: 0)
+
         return .completed
 
       case .setDatePicker(let date, let element):

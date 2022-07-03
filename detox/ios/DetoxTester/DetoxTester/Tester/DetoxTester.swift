@@ -98,10 +98,10 @@ extension DetoxTester: WebSocketDelegateProtocol {
   func webSocketDidConnect(_ webSocket: WebSocketClient) {
     mainLog("web-socket did-connect")
 
-    exec! {
+    exec! { [self] in
       mainLog("[didConnect] Executes on main thread")
 
-      WaitUntilAppIsReady()
+      waitUntilAppIsReady(executor.getAppUnderTest())
       webSocket.sendAction(.reportReady, messageId: -1000)
 
       mainLog("application is ready, reported as ready")
