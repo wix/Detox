@@ -5,13 +5,12 @@ import android.view.View;
 import org.hamcrest.Matcher;
 
 import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.TypeTextAction;
 
 import static org.hamcrest.Matchers.allOf;
 
-import com.wix.detox.espresso.DetoxViewAction;
-
-public class DetoxTypeTextAction implements DetoxViewAction {
+public class DetoxTypeTextAction implements ViewAction {
     private final String text;
     private final RNClickAction clickAction;
     private final TypeTextAction typeTextAction;
@@ -36,10 +35,5 @@ public class DetoxTypeTextAction implements DetoxViewAction {
     public void perform(UiController uiController, View view) {
         clickAction.perform(uiController, view);
         typeTextAction.perform(uiController, view);
-    }
-
-    @Override
-    public boolean isMultiViewAction() {
-        return false;
     }
 }

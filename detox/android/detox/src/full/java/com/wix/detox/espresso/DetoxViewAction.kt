@@ -1,7 +1,5 @@
 package com.wix.detox.espresso
 
-import androidx.test.espresso.ViewAction
+interface DetoxViewAction<R: Any?> : ViewActionWithResult<R> {
 
-interface DetoxViewAction : ViewAction {
-    fun isMultiViewAction(): Boolean
 }

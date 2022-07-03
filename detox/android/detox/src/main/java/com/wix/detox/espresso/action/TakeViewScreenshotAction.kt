@@ -16,10 +16,6 @@ open class TakeViewScreenshotAction(private val viewScreenshot: ViewScreenshot =
     }
 
     override fun getResult() = result
-    override fun isMultiViewAction(): Boolean {
-        return false
-    }
-
     override fun getDescription() = "View screenshot"
     override fun getConstraints(): Matcher<View> = Matchers.notNullValue(View::class.java)
 }

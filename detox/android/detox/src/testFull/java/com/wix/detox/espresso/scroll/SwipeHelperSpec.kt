@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.CoordinatesProvider
 import androidx.test.espresso.action.PrecisionDescriber
 import androidx.test.espresso.action.Press
@@ -12,7 +13,6 @@ import com.wix.detox.action.common.MOTION_DIR_DOWN
 import com.wix.detox.action.common.MOTION_DIR_LEFT
 import com.wix.detox.action.common.MOTION_DIR_RIGHT
 import com.wix.detox.action.common.MOTION_DIR_UP
-import com.wix.detox.espresso.DetoxViewAction
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,7 +55,7 @@ class SwipeHelperTest(
         val args: SwipeArguments,
         val expected: SwipeCoordinates
 ) {
-    lateinit var action: DetoxViewAction
+    lateinit var action: ViewAction
     lateinit var swiper: Swiper
     lateinit var startCoordinatesProvider: CoordinatesProvider
     lateinit var endCoordinatesProvider: CoordinatesProvider

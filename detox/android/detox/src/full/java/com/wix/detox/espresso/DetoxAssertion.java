@@ -9,6 +9,7 @@ import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
 
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -69,7 +70,7 @@ public class DetoxAssertion {
     public static void waitForAssertMatcherWithSearchAction(
             final DetoxViewInteraction i,
             final Matcher<View> vm,
-            final DetoxViewAction searchAction,
+            final ViewAction searchAction,
             final Matcher<View> searchMatcher) {
 
         while (true) {

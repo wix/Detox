@@ -4,12 +4,12 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.wix.detox.espresso.DetoxViewAction;
 import com.wix.detox.reactnative.ReactNativeExtension;
 
 import org.hamcrest.Matcher;
 
 import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.CoordinatesProvider;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
@@ -17,7 +17,7 @@ import androidx.test.espresso.action.Press;
 
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
 
-public class RNClickAction implements DetoxViewAction {
+public class RNClickAction implements ViewAction {
     private final GeneralClickAction clickAction;
 
     public RNClickAction() {
@@ -57,10 +57,5 @@ public class RNClickAction implements DetoxViewAction {
             ReactNativeExtension.toggleTimersSynchronization(true);
         }
         uiController.loopMainThreadUntilIdle();
-    }
-
-    @Override
-    public boolean isMultiViewAction() {
-        return false;
     }
 }

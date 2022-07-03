@@ -12,13 +12,11 @@ import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
  * An alternative to {@link ViewActions} - providing alternative implementations, where needed.
  */
 public class DetoxViewActions {
-    public static DetoxViewAction click() {
-        ViewAction viewAction = actionWithAssertions(new RNClickAction());
-        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
+    public static ViewAction click() {
+        return actionWithAssertions(new RNClickAction());
     }
 
-    public static DetoxViewAction typeText(String text) {
-        ViewAction viewAction = actionWithAssertions(new DetoxTypeTextAction(text));
-        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
+    public static ViewAction typeText(String text) {
+        return actionWithAssertions(new DetoxTypeTextAction(text));
     }
 }

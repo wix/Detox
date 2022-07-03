@@ -2,6 +2,7 @@ package com.wix.detox.espresso
 
 import android.view.View
 import androidx.test.espresso.*
+import com.wix.detox.common.DetoxErrors
 import com.wix.detox.espresso.DetoxMatcher.matcherForAtIndex
 import org.hamcrest.Matcher
 import org.json.JSONObject
@@ -12,6 +13,47 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
 
     init {
         viewInteraction = Espresso.onView(viewMatcher)
+    }
+
+    fun performSingleViewAction(viewAction: ViewAction): Any? {
+        kotlin.run {
+            Espresso.onView(viewMatcher)
+                .perform(viewAction)
+        }
+
+        return if (viewAction is ViewActionWithResult<*>) {
+            viewAction.getResult()
+        } else {
+            null
+        }
+    }
+
+    fun performMultiViewAction(detoxViewAction: DetoxViewAction): Any? {
+        val returnArray = ArrayList<JSONObject>()
+        var index = 0
+        while (true) {
+            var hasIndex = true
+            kotlin.runCatching {
+                Espresso.onView(matcherForAtIndex(index, viewMatcher))
+                    .perform(detoxViewAction)
+            }.getOrElse {
+                false.also { hasIndex = it }
+            }
+
+            if (hasIndex) {
+                val actionResult = (detoxViewAction as ViewActionWithResult<*>?)?.getResult()
+                returnArray.add(JSONObject(actionResult.toString()))
+                index++
+            } else {
+                break
+            }
+        }
+
+        if (returnArray.size == 0) {
+            throw DetoxErrors.DetoxRuntimeException("No views were found to perform the action on")
+        }
+
+        return if (returnArray.size == 1) returnArray[0] else returnArray.toTypedArray()
     }
 
     fun withFailureHandler(failureHandler: FailureHandler): ViewInteraction {
@@ -28,43 +70,5 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
 
     fun check(viewAssert: ViewAssertion): ViewInteraction {
         return viewInteraction.check(viewAssert)
-    }
-
-    fun perform(detoxViewAction: DetoxViewAction): Any? {
-        val returnArray = ArrayList<JSONObject>()
-
-        if (detoxViewAction.isMultiViewAction()) {
-            var index = 0
-            while (true) {
-                var hasIndex = true
-                kotlin.runCatching {
-                    Espresso.onView(matcherForAtIndex(index, viewMatcher))
-                        .perform(detoxViewAction)
-                }.getOrElse {
-                    false.also { hasIndex = it }
-                }
-
-                if (hasIndex) {
-                    val actionResult = (detoxViewAction as ViewActionWithResult<*>?)?.getResult()
-                    returnArray.add(JSONObject(actionResult.toString()))
-                    index++
-                } else {
-                    break
-                }
-            }
-
-            return if (returnArray.size == 1) returnArray[0] else returnArray.toTypedArray()
-        } else {
-            kotlin.run {
-                Espresso.onView(viewMatcher)
-                    .perform(detoxViewAction)
-            }
-
-            return if (detoxViewAction is ViewActionWithResult<*>) {
-                detoxViewAction.getResult()
-            } else {
-                null
-            }
-        }
     }
 }

@@ -18,6 +18,7 @@ import org.hamcrest.Matcher;
 import java.util.ArrayList;
 
 import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -28,8 +29,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
-    public static Object perform(DetoxViewInteraction detoxViewInteraction, DetoxViewAction action) {
-        return detoxViewInteraction.perform(action);
+    public static Object perform(DetoxViewInteraction detoxViewInteraction, ViewAction action) {
+        if (action instanceof DetoxViewAction) {
+            return detoxViewInteraction.performMultiViewAction((DetoxViewAction) action);
+        } else {
+            return detoxViewInteraction.performSingleViewAction(action);
+        }
     }
 
     public static Activity getActivity(Context context) {
@@ -46,12 +51,7 @@ public class EspressoDetox {
     }
 
     public static void changeOrientation(final int orientation) {
-        onView(isRoot()).perform(new DetoxViewAction() {
-            @Override
-            public boolean isMultiViewAction() {
-                return false;
-            }
-
+        onView(isRoot()).performSingleViewAction(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
                 return isRoot();
