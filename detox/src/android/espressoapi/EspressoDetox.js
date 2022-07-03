@@ -14,7 +14,7 @@ function sanitize_matcher(matcher) {
   return originalMatcher.type ? originalMatcher.value : originalMatcher;
 } 
 class EspressoDetox {
-  static perform(multiViewInteraction, action) {
+  static perform(detoxViewInteraction, action) {
     return {
       target: {
         type: "Class",
@@ -23,7 +23,7 @@ class EspressoDetox {
       method: "perform",
       args: [{
         type: "Invocation",
-        value: multiViewInteraction
+        value: detoxViewInteraction
       }, action]
     };
   }

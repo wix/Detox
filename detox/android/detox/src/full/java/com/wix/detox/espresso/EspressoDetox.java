@@ -17,10 +17,8 @@ import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
 
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -31,8 +29,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
-    public static Object perform(MultiViewInteraction multiViewInteraction, ViewAction action) {
-        return multiViewInteraction.perform(action);
+    public static Object perform(DetoxViewInteraction detoxViewInteraction, ViewAction action) {
+        return detoxViewInteraction.perform(action);
     }
 
     public static Activity getActivity(Context context) {
@@ -118,8 +116,8 @@ public class EspressoDetox {
         });
     }
 
-    public static MultiViewInteraction onView(final Matcher<View> viewMatcher) {
-        return new MultiViewInteraction(viewMatcher);
+    public static DetoxViewInteraction onView(final Matcher<View> viewMatcher) {
+        return new DetoxViewInteraction(viewMatcher);
     }
 }
 

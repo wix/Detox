@@ -7,7 +7,7 @@ import org.hamcrest.Matcher
 import org.json.JSONObject
 
 
-class MultiViewInteraction(private val viewMatcher: Matcher<View>) {
+class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
     var viewInteraction: ViewInteraction
 
     init {
