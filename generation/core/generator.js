@@ -203,7 +203,8 @@ module.exports = function getGenerator({
     'GREYElementInteraction*',
     'String',
     'ArrayList<String>',
-    'ViewAction'
+    'ViewAction',
+    'DetoxViewAction',
   ];
 
   function shouldBeWrapped({ type }) {

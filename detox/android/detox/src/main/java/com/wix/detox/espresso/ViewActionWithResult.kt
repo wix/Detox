@@ -1,7 +1,5 @@
 package com.wix.detox.espresso
 
-import androidx.test.espresso.ViewAction
-
-interface ViewActionWithResult<R: Any?>: ViewAction {
+interface ViewActionWithResult<R: Any?>: DetoxViewAction {
     fun getResult(): R
 }

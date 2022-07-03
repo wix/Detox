@@ -24,6 +24,10 @@ class GetAttributesAction() : ViewActionWithResult<String?> {
     private val sliderAttributes = SliderAttributes()
     private var result: String = ""
 
+    init {
+
+    }
+
     override fun perform(uiController: UiController?, view: View?) {
         view!!
 
@@ -39,6 +43,10 @@ class GetAttributesAction() : ViewActionWithResult<String?> {
     }
 
     override fun getResult() = result
+    override fun isMultiViewAction(): Boolean {
+        return true
+    }
+
     override fun getDescription() = "Get view attributes"
     override fun getConstraints(): Matcher<View> = allOf(notNullValue(), Matchers.isA(View::class.java))
 }

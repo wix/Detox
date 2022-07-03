@@ -2,6 +2,7 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.wix.detox.Detox;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
@@ -44,11 +45,12 @@ public class DetoxAction {
         // static class
     }
 
-    public static ViewAction multiClick(int times) {
-        return actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+    public static DetoxViewAction multiClick(int times) {
+        ViewAction viewAction = actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
     }
 
-    public static ViewAction tapAtLocation(final int x, final int y) {
+    public static DetoxViewAction tapAtLocation(final int x, final int y) {
         final int px = DeviceDisplay.convertDpiToPx(x);
         final int py = DeviceDisplay.convertDpiToPx(y);
         CoordinatesProvider c = new CoordinatesProvider() {
@@ -61,7 +63,8 @@ public class DetoxAction {
                 return new float[] {fx, fy};
             }
         };
-        return actionWithAssertions(new RNClickAction(c));
+        ViewAction viewAction = actionWithAssertions(new RNClickAction(c));
+        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
     }
 
     /**
@@ -70,8 +73,8 @@ public class DetoxAction {
      * @param edge Direction to scroll (see {@link MotionDir})
      * @return ViewAction
      */
-    public static ViewAction scrollToEdge(final int edge) {
-        return actionWithAssertions(new ViewAction() {
+    public static DetoxViewAction scrollToEdge(final int edge) {
+        ViewAction viewAction = actionWithAssertions(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
                 return allOf(isAssignableFrom(View.class), isDisplayed());
@@ -94,6 +97,7 @@ public class DetoxAction {
                 }
             }
         });
+        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
     }
 
     /**
@@ -104,10 +108,11 @@ public class DetoxAction {
      * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
      * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
      */
-    public static ViewAction scrollInDirection(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
+    public static DetoxViewAction scrollInDirection(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
         final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
-        return actionWithAssertions(new DetoxScrollAction(direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY));
+        ViewAction viewAction = actionWithAssertions(new DetoxScrollAction(direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY));
+        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
     }
 
     /**
@@ -121,10 +126,11 @@ public class DetoxAction {
      * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
      * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
      */
-    public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
+    public static DetoxViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
         final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
-        return actionWithAssertions(new DetoxScrollActionStaleAtEdge(direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY));
+        ViewAction viewAction = actionWithAssertions(new DetoxScrollActionStaleAtEdge(direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY));
+        return DetoxViewActionHelper.Companion.convertToDetoxViewAction(viewAction, false);
     }
 
     /**
@@ -136,25 +142,30 @@ public class DetoxAction {
      * @param normalizedStartingPointX X coordinate of swipe starting point (between 0.0 and 1.0), relative to the view width
      * @param normalizedStartingPointY Y coordinate of swipe starting point (between 0.0 and 1.0), relative to the view height
      */
-    public static ViewAction swipeInDirection(final int direction, boolean fast, double normalizedOffset, double normalizedStartingPointX, double normalizedStartingPointY) {
+    public static DetoxViewAction swipeInDirection(final int direction, boolean fast, double normalizedOffset, double normalizedStartingPointX, double normalizedStartingPointY) {
         SwipeHelper swipeHelper = SwipeHelper.getDefault();
         return swipeHelper.swipeInDirection(direction, fast, normalizedOffset, normalizedStartingPointX, normalizedStartingPointY);
     }
 
-    public static ViewAction getAttributes() {
+    public static DetoxViewAction getAttributes() {
         return new GetAttributesAction();
     }
 
-    public static ViewAction scrollToIndex(int index) {
+    public static DetoxViewAction scrollToIndex(int index) {
         return new ScrollToIndexAction(index);
     }
 
-    public static ViewAction adjustSliderToPosition(final double newPosition) {
+    public static DetoxViewAction adjustSliderToPosition(final double newPosition) {
         return new AdjustSliderToPositionAction(newPosition);
     }
 
-    public static ViewAction takeViewScreenshot() {
+    public static DetoxViewAction takeViewScreenshot() {
         return new ViewActionWithResult<String>() {
+            @Override
+            public boolean isMultiViewAction() {
+                return false;
+            }
+
             private final TakeViewScreenshotAction action = new TakeViewScreenshotAction();
 
             @Override

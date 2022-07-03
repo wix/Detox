@@ -1,8 +1,9 @@
 package com.wix.detox.espresso.scroll
 
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
 import com.wix.detox.action.common.MOTION_DIR_DOWN
+import com.wix.detox.espresso.DetoxViewAction
+import com.wix.detox.espresso.DetoxViewActionHelper
 import com.wix.detox.espresso.utils.Vector2D
 import kotlin.math.max
 import kotlin.math.min
@@ -21,7 +22,7 @@ typealias CreateSwipeAction = (
         startCoordinatesProvider: CoordinatesProvider,
         endCoordinatesProvider: CoordinatesProvider,
         precisionDescriber: PrecisionDescriber
-) -> ViewAction
+) -> DetoxViewAction
 
 class SwipeHelper(private val createAction: CreateSwipeAction) {
 
@@ -31,7 +32,7 @@ class SwipeHelper(private val createAction: CreateSwipeAction) {
             normalizedSwipeAmount: Double,
             normalizedStartingPointX: Double,
             normalizedStartingPointY: Double
-    ): ViewAction {
+    ): DetoxViewAction {
         val (edgeMin, edgeMax) = Pair(EDGE_FUZZ_FACTOR, 1.0 - EDGE_FUZZ_FACTOR)
         val defaultNormalizedStartingPoint = Vector2D(0.5, edgeMin).rotate(direction, MOTION_DIR_DOWN).normalize()
         val safeNormalizedStartPoint = Vector2D(
@@ -44,7 +45,8 @@ class SwipeHelper(private val createAction: CreateSwipeAction) {
         val endCoordinatesProvider = buildEndCoordinatesProvider(startCoordinatesProvider, direction, safeSwipeAmount)
         val swiper = if (fast) Swipe.FAST else Swipe.SLOW
 
-        return this.createAction(swiper, startCoordinatesProvider, endCoordinatesProvider, Press.FINGER)
+        val viewAction = this.createAction(swiper, startCoordinatesProvider, endCoordinatesProvider, Press.FINGER)
+        return DetoxViewActionHelper.convertToDetoxViewAction(viewAction, false);
     }
 
     private fun buildStartCoordinatesProvider(normalizedStartPoint: Vector2D) = CoordinatesProvider { view ->
@@ -80,14 +82,14 @@ class SwipeHelper(private val createAction: CreateSwipeAction) {
                                     startCoordinatesProvider: CoordinatesProvider,
                                     endCoordinatesProvider: CoordinatesProvider,
                                     precisionDescriber: PrecisionDescriber ->
-            ViewActions.actionWithAssertions(
+            DetoxViewActionHelper.convertToDetoxViewAction(ViewActions.actionWithAssertions(
                     GeneralSwipeAction(
                             swiper,
                             startCoordinatesProvider,
                             endCoordinatesProvider,
                             precisionDescriber
                     )
-            );
+            ), false)
         }
 
         const val edgeFuzzFactor = EDGE_FUZZ_FACTOR.toFloat()

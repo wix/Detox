@@ -30,23 +30,22 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
         return viewInteraction.check(viewAssert)
     }
 
-    fun perform(viewAction: ViewAction): Any? {
-        val getAttributesDesc = "Get view attributes"
+    fun perform(detoxViewAction: DetoxViewAction): Any? {
         val returnArray = ArrayList<JSONObject>()
 
-        if (viewAction.description == getAttributesDesc) {
+        if (detoxViewAction.isMultiViewAction()) {
             var index = 0
             while (true) {
                 var hasIndex = true
                 kotlin.runCatching {
                     Espresso.onView(matcherForAtIndex(index, viewMatcher))
-                        .perform(viewAction)
+                        .perform(detoxViewAction)
                 }.getOrElse {
                     false.also { hasIndex = it }
                 }
 
                 if (hasIndex) {
-                    val actionResult = (viewAction as ViewActionWithResult<*>?)?.getResult()
+                    val actionResult = (detoxViewAction as ViewActionWithResult<*>?)?.getResult()
                     returnArray.add(JSONObject(actionResult.toString()))
                     index++
                 } else {
@@ -54,15 +53,15 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
                 }
             }
 
-            return returnArray.toTypedArray()
+            return if (returnArray.size == 1) returnArray[0] else returnArray.toTypedArray()
         } else {
             kotlin.run {
                 Espresso.onView(viewMatcher)
-                    .perform(viewAction)
+                    .perform(detoxViewAction)
             }
 
-            return if (viewAction is ViewActionWithResult<*>) {
-                viewAction.getResult()
+            return if (detoxViewAction is ViewActionWithResult<*>) {
+                detoxViewAction.getResult()
             } else {
                 null
             }

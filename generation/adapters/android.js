@@ -12,6 +12,7 @@ const typeCheckInterfaces = {
   Integer: isNumber,
   String: isString,
   ViewAction: null, // there are optional view actions
+  DetoxViewAction: null,
   ViewInteraction: null,
   DetoxViewInteraction: null,
   WebElement: null,
@@ -73,6 +74,7 @@ module.exports = generator({
     'Matcher<View>',
     'String',
     'ViewAction',
+    'DetoxViewAction',
     'ViewInteraction',
     'WebElement',
     'Atom<List<ElementReference>>',

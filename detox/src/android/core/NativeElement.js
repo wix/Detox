@@ -118,8 +118,7 @@ class NativeElement {
   }
 
   async getAttributes() {
-    let result = await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
-    return result.length === 1 ? result[0] : result;
+    return await new ActionInteraction(this._invocationManager, this, new actions.GetAttributes()).execute();
   }
 
   async adjustSliderToPosition(newPosition) {
