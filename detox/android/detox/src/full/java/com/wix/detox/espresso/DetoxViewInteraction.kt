@@ -2,18 +2,10 @@ package com.wix.detox.espresso
 
 import android.view.View
 import androidx.test.espresso.*
-import com.wix.detox.common.DetoxErrors
-import com.wix.detox.espresso.DetoxMatcher.matcherForAtIndex
 import org.hamcrest.Matcher
-import org.json.JSONObject
-
 
 class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
-    var viewInteraction: ViewInteraction
-
-    init {
-        viewInteraction = Espresso.onView(viewMatcher)
-    }
+    private var viewInteraction: ViewInteraction = Espresso.onView(viewMatcher)
 
     fun performSingleViewAction(viewAction: ViewAction): Any? {
         kotlin.run {
@@ -28,32 +20,11 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
         }
     }
 
-    fun performMultiViewAction(detoxViewAction: DetoxViewAction): Any? {
-        val returnArray = ArrayList<JSONObject>()
-        var index = 0
-        while (true) {
-            var hasIndex = true
-            kotlin.runCatching {
-                Espresso.onView(matcherForAtIndex(index, viewMatcher))
-                    .perform(detoxViewAction)
-            }.getOrElse {
-                false.also { hasIndex = it }
-            }
-
-            if (hasIndex) {
-                val actionResult = (detoxViewAction as ViewActionWithResult<*>?)?.getResult()
-                returnArray.add(JSONObject(actionResult.toString()))
-                index++
-            } else {
-                break
-            }
-        }
-
-        if (returnArray.size == 0) {
-            throw DetoxErrors.DetoxRuntimeException("No views were found to perform the action on")
-        }
-
-        return if (returnArray.size == 1) returnArray[0] else returnArray.toTypedArray()
+    fun perform(viewAction: ViewAction): Any? {
+        return if (MultiViewAction::class.java.isAssignableFrom(viewAction::class.java))
+            return (viewAction as MultiViewAction<*>).perform(viewMatcher)
+        else
+            performSingleViewAction(viewAction)
     }
 
     fun withFailureHandler(failureHandler: FailureHandler): ViewInteraction {

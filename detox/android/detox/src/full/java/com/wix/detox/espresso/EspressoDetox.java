@@ -30,11 +30,7 @@ public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
     public static Object perform(DetoxViewInteraction detoxViewInteraction, ViewAction action) {
-        if (action instanceof DetoxViewAction) {
-            return detoxViewInteraction.performMultiViewAction((DetoxViewAction) action);
-        } else {
-            return detoxViewInteraction.performSingleViewAction(action);
-        }
+        return detoxViewInteraction.perform(action);
     }
 
     public static Activity getActivity(Context context) {
@@ -51,7 +47,7 @@ public class EspressoDetox {
     }
 
     public static void changeOrientation(final int orientation) {
-        onView(isRoot()).performSingleViewAction(new ViewAction() {
+        onView(isRoot()).perform(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
                 return isRoot();

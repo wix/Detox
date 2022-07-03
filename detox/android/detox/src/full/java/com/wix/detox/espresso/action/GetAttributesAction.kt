@@ -8,7 +8,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
-import com.wix.detox.espresso.DetoxViewAction
+import com.wix.detox.espresso.MultiViewAction
 import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -16,7 +16,7 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.notNullValue
 import org.json.JSONObject
 
-class GetAttributesAction : DetoxViewAction<String> {
+class GetAttributesAction : MultiViewAction<String>() {
     private val commonAttributes = CommonAttributes()
     private val textViewAttributes = TextViewAttributes()
     private val checkBoxAttributes = CheckBoxAttributes()

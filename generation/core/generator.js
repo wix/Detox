@@ -204,7 +204,7 @@ module.exports = function getGenerator({
     'String',
     'ArrayList<String>',
     'ViewAction',
-    'DetoxViewAction',
+    'MultiViewAction',
   ];
 
   function shouldBeWrapped({ type }) {
