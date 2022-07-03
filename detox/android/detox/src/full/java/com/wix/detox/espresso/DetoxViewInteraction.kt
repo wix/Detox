@@ -7,7 +7,7 @@ import org.hamcrest.Matcher
 class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
     private var viewInteraction: ViewInteraction = Espresso.onView(viewMatcher)
 
-    fun performSingleViewAction(viewAction: ViewAction): Any? {
+    private fun performSingleViewAction(viewAction: ViewAction): Any? {
         kotlin.run {
             Espresso.onView(viewMatcher)
                 .perform(viewAction)
@@ -21,8 +21,8 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
     }
 
     fun perform(viewAction: ViewAction): Any? {
-        return if (MultiViewAction::class.java.isAssignableFrom(viewAction::class.java))
-            return (viewAction as MultiViewAction<*>).perform(viewMatcher)
+        return if (MultiViewActionWithResult::class.java.isAssignableFrom(viewAction::class.java))
+            (viewAction as MultiViewActionWithResult<*>).perform(viewMatcher)
         else
             performSingleViewAction(viewAction)
     }

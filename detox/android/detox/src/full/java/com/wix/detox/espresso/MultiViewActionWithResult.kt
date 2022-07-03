@@ -6,7 +6,7 @@ import com.wix.detox.common.DetoxErrors
 import org.hamcrest.Matcher
 import org.json.JSONObject
 
-abstract class MultiViewAction<R> : ViewActionWithResult<R> {
+abstract class MultiViewActionWithResult<R> : ViewActionWithResult<R> {
     fun perform(viewMatcher: Matcher<View>): Any {
         val returnArray = ArrayList<JSONObject>()
         var index = 0
