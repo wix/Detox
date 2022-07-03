@@ -141,6 +141,7 @@ class InvokeHandlerSpec: QuickSpec {
 
     describe("actions") {
       let element = "foo"
+      let targetElement = "qux"
 
       var messageBuilderWithPredicate: MessageBuilder!
 
@@ -148,6 +149,7 @@ class InvokeHandlerSpec: QuickSpec {
         messageBuilderWithPredicate = MessageBuilder().setTextPredicate("bar")
 
         matcher.setMatch(from: .text("bar"), to: element)
+        matcher.setMatch(from: .id("baz"), to: targetElement)
       }
 
       it("should throw if action is throwing") {
@@ -210,24 +212,24 @@ class InvokeHandlerSpec: QuickSpec {
         }
 
         it("should call delegate for long-press and drag action") {
-          let message = longPressMessageBuilder.setDragParams(
+          let message = longPressMessageBuilder.setDragParamsAndTarget(
             duration: 12,
             normalizedPositionX: 0.2,
             normalizedPositionY: 0.1,
-            targetElement: "foo",
             normalizedTargetPositionX: NSNull(),
             normalizedTargetPositionY: NSNull(),
             speed: "fast",
-            holdDuration: 10
+            holdDuration: 10,
+            targetElementID: "baz"
           ).build()
 
           expect(try handler.handle(message)).to(beNil())
 
           let expected = (Action.longPressAndDrag(
-            duration: 12,
+            duration: 0.012,
             normalizedPositionX: 0.2,
             normalizedPositionY: 0.1,
-            targetElement: "foo",
+            targetElement: targetElement,
             normalizedTargetPositionX: nil,
             normalizedTargetPositionY: nil,
             speed: .fast,

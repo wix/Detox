@@ -40,6 +40,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -60,6 +61,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: 50
           )
@@ -80,6 +82,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: ["foo"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -100,6 +103,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: ["foo"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -120,6 +124,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -140,6 +145,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -160,6 +166,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: [25],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -180,6 +187,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: [0.5],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -200,6 +208,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -229,6 +238,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: WhileMessage(
               type: .expectation,
               expectation: .toBeVisible,
@@ -256,6 +266,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -276,6 +287,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -296,6 +308,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -316,6 +329,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: ["foo"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -336,6 +350,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: ["foo"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -356,6 +371,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -376,6 +392,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: [3],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -396,6 +413,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: ["left"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -421,6 +439,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: [1.1, "right", .init(NSNull()), .init(NSNull())],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -441,6 +460,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: [23, "foo"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -464,6 +484,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: ["2022/02/22", "yyyy/MM/dd"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -484,6 +505,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: [1, "slow", 2],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -504,6 +526,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: [0.5],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -524,6 +547,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: ["foo"],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -550,6 +574,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: ["down", "slow", .init(NSNull()), .init(NSNull()), .init(NSNull())],
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -570,6 +595,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -590,6 +616,7 @@ class MessageSpec: QuickSpec {
             atIndex: 3,
             params: nil,
             predicate: predicate,
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -597,15 +624,15 @@ class MessageSpec: QuickSpec {
       }
 
       it("should parse long press and drag action") {
-        let message = messageBuilder.makeLongPressAction().setDragParams(
+        let message = messageBuilder.makeLongPressAction().setDragParamsAndTarget(
           duration: 55,
           normalizedPositionX: 0.3,
           normalizedPositionY: 0.2,
-          targetElement: "foo",
           normalizedTargetPositionX: NSNull(),
           normalizedTargetPositionY: NSNull(),
           speed: 22,
-          holdDuration: 10
+          holdDuration: 10,
+          targetElementID: "foo"
         ).build()
 
         let parsed = try Message(from: message)
@@ -617,8 +644,9 @@ class MessageSpec: QuickSpec {
             expectation: nil,
             modifiers: nil,
             atIndex: 3,
-            params: [55, 0.3, 0.2, "foo", .init(NSNull()), .init(NSNull()), 22, 10],
+            params: [55, 0.3, 0.2, .init(NSNull()), .init(NSNull()), 22, 10],
             predicate: predicate,
+            targetElement: .init(predicate: .init(type: .id, value: "foo")),
             while: nil,
             timeout: nil
           )
@@ -647,6 +675,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: .init(type: .text, value: "foo"),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -667,6 +696,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: .init(type: .value, value: "foo"),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -693,6 +723,7 @@ class MessageSpec: QuickSpec {
               type: .traits,
               value: ["updatesFrequently", "startsMediaSession"]
             ),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -713,6 +744,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: .init(type: .label, value: "bar"),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -733,6 +765,7 @@ class MessageSpec: QuickSpec {
             atIndex: nil,
             params: nil,
             predicate: .init(type: .type, value: "bar"),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -759,6 +792,7 @@ class MessageSpec: QuickSpec {
               .init(type: .text, value: "foo"),
               .init(type: .label, value: "bar")
             ]),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -782,6 +816,7 @@ class MessageSpec: QuickSpec {
               .init(type: .id, value: "foo"),
               .init(type: .ancestor, predicate: .init(type: .id, value: "bar"))
             ]),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )
@@ -805,6 +840,7 @@ class MessageSpec: QuickSpec {
               .init(type: .id, value: "foo"),
               .init(type: .descendant, predicate: .init(type: .id, value: "bar"))
             ]),
+            targetElement: nil,
             while: nil,
             timeout: nil
           )

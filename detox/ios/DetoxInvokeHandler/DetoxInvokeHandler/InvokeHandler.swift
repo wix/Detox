@@ -40,7 +40,12 @@ public class InvokeHandler {
 
   private func handle(parsedMessage: Message) throws -> AnyCodable? {
     let elements = try findElements(by: parsedMessage.predicate)
-    let element = try element(from: elements, at: parsedMessage.atIndex)
+    let element = try getElement(from: elements, at: parsedMessage.atIndex)
+
+    let targetElementPredicate = parsedMessage.targetElement?.predicate
+    let targetElements = targetElementPredicate != nil ?
+        try findElements(by: targetElementPredicate!) : nil
+    let targetElement = targetElements != nil ? try getElement(from: targetElements!, at: 0) : nil
 
     switch parsedMessage.type {
       case .action:
@@ -60,7 +65,8 @@ public class InvokeHandler {
           on: element,
           type: action,
           params: parsedMessage.params,
-          whileMessage: parsedMessage.whileMessage
+          whileMessage: parsedMessage.whileMessage,
+          target: targetElement
         )
 
       case .expectation:
@@ -82,7 +88,7 @@ public class InvokeHandler {
     return try elementMatcher.match(to: pattern)
   }
 
-  private func element(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable {
+  private func getElement(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable {
     let index = index ?? 0
     guard index >= 0, elements.count > index else {
       throw Error.noElementAtIndex(index: index, elementsCount: elements.count)
@@ -109,10 +115,14 @@ public class InvokeHandler {
   // MARK: - Handle actions
 
   private func handleAction(
-    on element: AnyHashable, type: ActionType, params: [AnyCodable]?, whileMessage: WhileMessage?
+    on element: AnyHashable,
+    type: ActionType,
+    params: [AnyCodable]?,
+    whileMessage: WhileMessage?,
+    target targetElement: AnyHashable? = nil
   ) throws {
     guard let whileMessage = whileMessage else {
-      try handleAction(on: element, type: type, params: params)
+      try handleAction(on: element, type: type, params: params, target: targetElement)
       return
     }
 
@@ -120,7 +130,7 @@ public class InvokeHandler {
       do {
         try handleWhileMessage(whileMessage)
       } catch {
-        try handleAction(on: element, type: type, params: params)
+        try handleAction(on: element, type: type, params: params, target: targetElement)
 
         // Continue to next iteration if expectation is not fulfilled.
         continue
@@ -131,15 +141,22 @@ public class InvokeHandler {
   }
 
   private func handleAction(
-    on element: AnyHashable, type: ActionType, params: [AnyCodable]?
+    on element: AnyHashable,
+    type: ActionType,
+    params: [AnyCodable]?,
+    target targetElement: AnyHashable?
   ) throws {
     try actionDelegate.act(
-      action: action(type: type, params: params),
+      action: action(type: type, params: params, target: targetElement),
       on: element
     )
   }
 
-  private func action(type: ActionType, params: [AnyCodable]?) throws -> Action {
+  private func action(
+    type: ActionType,
+    params: [AnyCodable]?,
+    target targetElement: AnyHashable?
+  ) throws -> Action {
     switch type {
       case .tap:
         return try tapAction(params: params)
@@ -148,7 +165,7 @@ public class InvokeHandler {
         return try multiTapAction(params: params)
 
       case .longPress:
-        return try longPressAction(params: params)
+        return try longPressAction(params: params, target: targetElement)
 
       case .swipe:
         return try swipeAction(params: params)
@@ -196,7 +213,7 @@ public class InvokeHandler {
 
   private func handleWhileMessage(_ whileMessage: WhileMessage) throws {
     let elements = try findElements(by: whileMessage.predicate)
-    let element = try element(from: elements, at: whileMessage.atIndex)
+    let element = try getElement(from: elements, at: whileMessage.atIndex)
 
     try handleExpectation(
       on: element, type: whileMessage.expectation,
@@ -222,7 +239,10 @@ public class InvokeHandler {
     return .tap(times: UInt(params!.first!.value as! Int))
   }
 
-  private func longPressAction(params: [AnyCodable]?) throws -> Action {
+  private func longPressAction(
+    params: [AnyCodable]?,
+    target targetElement: AnyHashable?
+  ) throws -> Action {
     guard let params = params else {
       return .longPress()
     }
@@ -233,18 +253,18 @@ public class InvokeHandler {
       return .longPress(duration: duration)
     }
 
-    let speedString = params[6].value as? String
+    let speedString = params[5].value as? String
     let speed: Action.ActionSpeed? = speedString != nil ? .init(rawValue: speedString!)! : nil
 
     return .longPressAndDrag(
       duration: duration,
       normalizedPositionX: (params[1].value as? NSNumber)?.doubleValue,
       normalizedPositionY: (params[2].value as? NSNumber)?.doubleValue,
-      targetElement: params[3].value as! AnyHashable,
-      normalizedTargetPositionX: (params[4].value as? NSNumber)?.doubleValue,
-      normalizedTargetPositionY: (params[5].value as? NSNumber)?.doubleValue,
+      targetElement: targetElement!,
+      normalizedTargetPositionX: (params[3].value as? NSNumber)?.doubleValue,
+      normalizedTargetPositionY: (params[4].value as? NSNumber)?.doubleValue,
       speed: speed,
-      holdDuration: (params[7].value as? NSNumber)?.doubleValue
+      holdDuration: (params[6].value as? NSNumber)?.doubleValue
     )
   }
 

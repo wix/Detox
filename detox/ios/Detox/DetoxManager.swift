@@ -57,7 +57,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	private func appDidLaunch(_ note: Notification) {
 		DTXSyncManager.enqueueMainQueueIdleClosure {
 			self.isReady = true
-			self.sendGeneralReadyMessage()
+//			self.sendGeneralReadyMessage()
 		}
 	}
 	
@@ -67,47 +67,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		bgTask = UIApplication.shared.beginBackgroundTask(withName: "DetoxBackground") {
 			UIApplication.shared.endBackgroundTask(bgTask)
 		}
-	}
-	
-	private func waitFor(applicationState: UIApplication.State, action: String, messageId: NSNumber) {
-		var observer : NSObjectProtocol?
-		
-		let response : () -> Void = {
-			self.safeSend(action: "\(action)Done", messageId: messageId)
-			
-			guard observer == nil else {
-				NotificationCenter.default.removeObserver(observer!)
-				observer = nil
-				return
-			}
-		}
-		
-		guard UIApplication.shared.applicationState != applicationState else {
-			response()
-			return
-		}
-		
-		let notificationName : NSNotification.Name
-		switch  applicationState {
-		case .active:
-			notificationName = UIApplication.didBecomeActiveNotification
-			break
-		case .background:
-			notificationName = UIApplication.didEnterBackgroundNotification
-			break
-		case .inactive:
-			notificationName = UIApplication.willResignActiveNotification
-		default:
-			fatalError("Unknown application state \(applicationState)")
-		}
-		
-		observer = NotificationCenter.default.addObserver(forName: notificationName, object: nil, queue: .main, using: { notification in
-			DispatchQueue.main.async(execute: response)
-		})
-	}
-	
-	private func sendGeneralReadyMessage() {
-		safeSend(action: "ready", messageId: -1000)
 	}
 	
 	private func start() {
@@ -203,10 +162,10 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				return
 			}
 		}
-
-		if let messageId = messageId {
-			safeSend(action: "setSyncSettingsDone", messageId: messageId)
-		}
+//
+//		if let messageId = messageId {
+//			safeSend(action: "setSyncSettingsDone", messageId: messageId)
+//		}
 	}
 
 	// MARK: WebSocketDelegate
@@ -214,7 +173,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	func webSocketDidConnect(_ webSocket: WebSocket) {
 		if ReactNativeSupport.isReactNativeApp {
 			isReady = true
-			sendGeneralReadyMessage()
+//			sendGeneralReadyMessage()
 		}
 	}
 	

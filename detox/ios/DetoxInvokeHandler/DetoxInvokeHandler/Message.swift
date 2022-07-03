@@ -30,6 +30,9 @@ struct Message: Codable, Equatable {
   /// Predicate of the message.
   let predicate: MessagePredicate
 
+  /// Target element of the action, if exists.
+  let targetElement: TargetElement?
+
   /// Represents a while condition, specified in case of action request, that should be performed
   /// until the condition is fulfilled.
   let `while`: WhileMessage?

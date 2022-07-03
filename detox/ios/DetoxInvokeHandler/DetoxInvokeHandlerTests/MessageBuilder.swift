@@ -167,17 +167,15 @@ class MessageBuilder {
     return self
   }
 
-  func setDragParams(
+  func setDragParamsAndTarget(
     duration: AnyHashable, normalizedPositionX: AnyHashable, normalizedPositionY: AnyHashable,
-    targetElement: AnyHashable, normalizedTargetPositionX: AnyHashable,
-    normalizedTargetPositionY: AnyHashable,
-    speed: AnyHashable, holdDuration: AnyHashable
+    normalizedTargetPositionX: AnyHashable, normalizedTargetPositionY: AnyHashable,
+    speed: AnyHashable, holdDuration: AnyHashable, targetElementID: AnyHashable
   ) -> MessageBuilder {
     let params: [AnyHashable] = [
       duration,
       normalizedPositionX,
       normalizedPositionY,
-      targetElement,
       normalizedTargetPositionX,
       normalizedTargetPositionY,
       speed,
@@ -185,6 +183,13 @@ class MessageBuilder {
     ]
 
     message["params"] = params
+
+    message["targetElement"] = [
+      "predicate": [
+        "type": "id",
+        "value": targetElementID
+      ]
+    ]
 
     return self
   }
