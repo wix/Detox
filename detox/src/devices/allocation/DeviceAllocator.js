@@ -1,5 +1,5 @@
 // @ts-nocheck
-const { traceCall } = require('../../utils/trace');
+const { traceMethods } = require('../../utils/trace');
 
 class DeviceAllocator {
   /**
@@ -7,6 +7,7 @@ class DeviceAllocator {
    */
   constructor(allocationDriver) {
     this._driver = allocationDriver;
+    traceMethods(this, 'device', ['allocate', 'free']);
   }
 
   /**
@@ -14,8 +15,7 @@ class DeviceAllocator {
    * @return {Promise<DeviceCookie>}
    */
   allocate(deviceConfig) {
-    return traceCall('allocateDevice', () =>
-      this._driver.allocate(deviceConfig));
+    return this._driver.allocate(deviceConfig);
   }
 
   /**

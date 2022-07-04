@@ -9,8 +9,7 @@ const config = {
   testRunner: {
     args: {
       $0: 'nyc jest',
-      config: 'e2e/config.js',
-      _: ['e2e/*.test.js'],
+      config: 'e2e/config.js'
     },
   },
 

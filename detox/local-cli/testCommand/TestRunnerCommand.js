@@ -54,6 +54,8 @@ class TestRunnerCommand {
 
     this._env = this._envHint;
     this._argv.runInBand = true;
+    delete this._argv.w;
+    delete this._argv.workers;
   }
 
   /**

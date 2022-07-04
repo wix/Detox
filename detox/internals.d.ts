@@ -87,6 +87,7 @@ declare global {
       deviceName: string;
       forceAdbInstall: boolean;
       gpu: string;
+      inspectBrk: boolean;
       headless: boolean;
       jestReportSpecs: boolean;
       keepLockFile: boolean;
@@ -95,6 +96,7 @@ declare global {
       recordLogs: string;
       recordPerformance: string;
       recordVideos: string;
+      retries: number;
       reuse: string;
       takeScreenshots: string;
       useCustomLogger: string;

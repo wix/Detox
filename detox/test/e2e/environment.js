@@ -18,7 +18,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   async setup() {
     await super.setup();
 
-    this.global.__detox__.__waitUntilArtifactsManagerIsIdle__ = () => {
+    this.global.__waitUntilArtifactsManagerIsIdle__ = () => {
       return worker._artifactsManager._idlePromise;
     };
   }

@@ -316,40 +316,44 @@ declare global {
             /**
              * @deprecated
              */
-            readonly traceCall: TraceCallSignature;
+            readonly traceCall: _TraceCallSignature;
         }
 
-        protected type TraceEventArgs = Record<string, unknown>;
+        /** @internal */
+        type _TraceEventArgs = Record<string, unknown>;
 
         type TraceEvent = {
             name?: string;
             cat?: string;
             cname?: string;
             id?: number;
-            args?: TraceEventArgs;
+            args?: _TraceEventArgs;
         };
 
         /**
          * Trace a duration event before and after executing the action function
+         *
+         * @internal
          */
-        protected interface TraceCallSignature {
+        interface _TraceCallSignature {
             <T>(event: string | TraceEvent, action: () => T): T;
             <T>(event: string | TraceEvent, action: () => Promise<T>): Promise<T>;
         }
 
-        protected interface TraceSectionSignature<T> {
-            (event?: string, args?: TraceEventArgs): T;
+        /** @internal */
+        interface _TraceSectionSignature<T> {
+            (event?: string, args?: _TraceEventArgs): T;
             (event: TraceEvent): T;
         }
 
-        interface Tracer extends TraceCallSignature {
-            readonly begin: TraceSectionSignature<EndHandle<{ cname: string; args: TraceEventArgs; }>>;
-            readonly end: TraceSectionSignature<void>;
+        interface Tracer extends _TraceCallSignature {
+            readonly begin: _TraceSectionSignature<EndHandle<{ cname: string; args: _TraceEventArgs; }>>;
+            readonly end: _TraceSectionSignature<void>;
 
             /** @deprecated */
-            readonly startSection: TraceSectionSignature<void>;
+            readonly startSection: _TraceSectionSignature<void>;
             /** @deprecated */
-            readonly endSection: TraceSectionSignature<void>;
+            readonly endSection: _TraceSectionSignature<void>;
         }
 
         type Logger = {

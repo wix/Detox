@@ -2,7 +2,7 @@
  * @param {object} opts
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
- * @param {Record<string, any>} opts.cliConfig
+ * @param {DetoxInternals.DetoxCLIConfig} opts.cliConfig
  * @param {Record<string, any>} opts.testRunnerArgv
  * @returns {Detox.DetoxTestRunnerConfig} opts.testRunnerArgv
  */

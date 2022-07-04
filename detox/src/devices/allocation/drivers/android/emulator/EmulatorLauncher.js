@@ -1,7 +1,7 @@
 // @ts-nocheck
 const { DetoxRuntimeError } = require('../../../../../errors');
 const retry = require('../../../../../utils/retry');
-const { traceCall } = require('../../../../../utils/trace');
+const { traceMethods } = require('../../../../../utils/trace');
 const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
 const { LaunchCommand } = require('../../../../common/drivers/android/emulator/exec/EmulatorExec');
 
@@ -14,6 +14,7 @@ class EmulatorLauncher extends DeviceLauncher {
     super(eventEmitter);
     this._adb = adb;
     this._emulatorExec = emulatorExec;
+    traceMethods(this, 'device', ['_awaitEmulatorBoot']);
   }
 
   /**
@@ -63,11 +64,6 @@ class EmulatorLauncher extends DeviceLauncher {
   }
 
   async _awaitEmulatorBoot(adbName) {
-    await traceCall('awaitBoot', () =>
-      this._waitForBootToComplete(adbName));
-  }
-
-  async _waitForBootToComplete(adbName) {
     await retry({ retries: 240, interval: 2500, shouldUnref: true }, async () => {
       const isBootComplete = await this._adb.isBootComplete(adbName);
 

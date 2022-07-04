@@ -108,18 +108,25 @@ class DetoxTracer {
     return _.findKey(this.CATEGORIES, ([min, max]) => min <= tid && tid <= max) || 'user';
   }
 
+  static threadize(cat) {
+    const [mainCategory] = cat ? cat.split(',', 1) : 'user';
+    const threads = _.find(this.CATEGORIES, (_, key) => key === mainCategory);
+    return threads ? threads[0] : 10000;
+  }
+
   /**
    * @type {Record<string, [number, number]>}
    */
   static CATEGORIES = {
     'lifecycle': [0, 0],
     'ipc': [29, 29],
-    'ws-server': [30, 99],
-    'ws-client': [100, 131],
-    'artifacts-manager': [200, 209],
-    'artifact-plugin': [210, 249],
-    'artifact': [250, 299],
-    'child-process': [300, 399],
+    'ws-server': [50, 99],
+    'ws-client': [100, 149],
+    'device': [150, 159],
+    'artifacts-manager': [300, 300],
+    'artifact-plugin': [310, 349],
+    'artifact': [350, 399],
+    'child-process': [400, 499],
   };
 }
 

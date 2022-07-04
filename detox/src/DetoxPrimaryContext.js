@@ -2,6 +2,7 @@ const path = require('path');
 const { URL } = require('url');
 
 const fs = require('fs-extra');
+const pipe = require('multipipe');
 
 const DetoxContext = require('./DetoxContext');
 const temporary = require('./artifacts/utils/temporaryPath');
@@ -123,7 +124,7 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   async _finalizeLogs(logs) {
-    const jsonl = require('./utils/jsonl');
+    const streamUtils = require('./utils/streamUtils');
 
     if (!logs || logs.length === 0) {
       return;
@@ -133,62 +134,24 @@ class DetoxPrimaryContext extends DetoxContext {
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
 
-    try {
-      if (enabled) {
-        await fs.mkdirp(rootDir);
+    if (enabled) {
+      await fs.mkdirp(rootDir);
+      const [out1Stream, out2Stream, out3Stream] = ['detox.log.jsonl', 'detox.log', 'detox.trace.json']
+        .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
 
-        return new Promise((resolve, reject) => {
-          const resolveCache = [false, false, false];
-          const resolveIndex = (index) => {
-            resolveCache[index] = true;
-            if (resolveCache.every(Boolean)) {
-              resolve();
-            }
-          };
+      const mergedStream = streamUtils
+        .mergeSortedJSONL(
+          logs.map(filePath => fs.createReadStream(filePath).pipe(streamUtils.readJSONL()))
+        );
 
-          const mergedStream = jsonl
-            .mergeSorted(
-              logs
-                .map(filePath => fs.createReadStream(filePath))
-                .map(fileStream => jsonl.toJSONLStream(fileStream))
-            );
-
-          const out1Stream = fs.createWriteStream(path.join(rootDir, 'detox.log.jsonl'))
-            .on('error', reject)
-            .on('end', () => resolveIndex(0));
-
-          const out2Stream = fs.createWriteStream(path.join(rootDir, 'detox.log'))
-            .on('error', reject)
-            .on('end', () => resolveIndex(1));
-
-          const out3Stream = fs.createWriteStream(path.join(rootDir, 'trace.json'))
-            .on('error', reject)
-            .on('end', () => resolveIndex(2));
-
-          jsonl.toStringifiedStream(mergedStream, 'default')
-            .on('error', err => out1Stream.emit('error', err))
-            .pipe(out1Stream);
-
-          const bds = jsonl.toDebugStream(out2Stream, this._logger.config.options);
-
-          mergedStream
-            .on('error', err => bds.emit('error', err))
-            .pipe(bds);
-
-          const foo = jsonl.foo();
-
-          mergedStream
-            .on('error', err => foo.emit('error', err))
-            .pipe(foo);
-
-          jsonl.toStringifiedStream(foo, 'single')
-            .on('error', err => out3Stream.emit('error', err))
-            .pipe(out3Stream);
-        });
-      }
-    } finally {
-      await Promise.all(logs.map(filepath => fs.remove(filepath)));
+      await Promise.all([
+        pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
+        pipe(mergedStream, streamUtils.debugStream(this._logger.config.options), out2Stream),
+        pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
+      ]);
     }
+
+    await Promise.all(logs.map(filepath => fs.remove(filepath)));
   }
 
   async _resetLockFile() {

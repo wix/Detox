@@ -8,7 +8,7 @@ class IPCClient {
   constructor({ logger, id, serverId, workerId }) {
     this._state = new SecondarySessionState({});
     /** @type {import('../logger/DetoxLogger')} logger */
-    this._logger = logger.child({ __filename, cat: 'ipc-client,ipc' });
+    this._logger = logger.child({ __filename, cat: 'ipc' });
 
     this._id = id;
     this._serverId = serverId;

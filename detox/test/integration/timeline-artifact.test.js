@@ -15,7 +15,7 @@ describe('Timeline integration test', () => {
   beforeEach(clearAllArtifacts);
 
   it('should deterministically produce a timeline artifact', async () => {
-    await execCommand(`detox test -c stub -o integration/e2e/config.js -a ${artifactsDirectory} -w 2 .`);
+    await execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -w 2 .`);
     const timelineArtifactContents = await readFile(timelineArtifactPath, 'utf8');
     expect(timelineArtifactContents).toMatchSnapshot();
   });

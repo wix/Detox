@@ -113,8 +113,6 @@ class DetoxWorker {
         deviceConfig: this._deviceConfig,
         sessionConfig,
       });
-    // @ts-ignore
-    await this.device._prepare();
     if (this._isCleaningUp) return;
 
     const matchers = matchersFactory.createMatchers({
@@ -138,6 +136,14 @@ class DetoxWorker {
 
     if (behaviorConfig.init.reinstallApp) {
       await this._reinstallAppsOnDevice();
+      if (this._isCleaningUp) return;
+    }
+
+    const appAliases = Object.keys(this._appsConfig);
+    if (appAliases.length === 1) {
+      await this.device.selectApp(appAliases[0]);
+    } else {
+      await this.device.selectApp(null);
     }
 
     return this;
@@ -226,10 +232,6 @@ class DetoxWorker {
       if (this._isCleaningUp) return;
       await this.device.installApp();
       if (this._isCleaningUp) return;
-    }
-
-    if (appNames.length !== 1) {
-      await this.device.selectApp(null);
     }
   }
 

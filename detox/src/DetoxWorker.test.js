@@ -10,7 +10,7 @@ jest.mock('./invoke');
 jest.mock('./utils/wrapWithStackTraceCutter');
 jest.mock('./environmentFactory');
 
-describe('Detox', () => {
+describe('DetoxWorker', () => {
   const fakeCookie = {
     chocolate: 'yum',
   };
@@ -173,9 +173,6 @@ describe('Detox', () => {
           eventEmitter: eventEmitter(),
         })));
 
-      it('should prepare the device', () =>
-        expect(runtimeDevice._prepare).toHaveBeenCalled());
-
       it('should select and reinstall the app', () => {
         expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
         expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
@@ -246,9 +243,6 @@ describe('Detox', () => {
       });
 
       beforeEach(init);
-
-      it('should prepare the device', () =>
-        expect(runtimeDevice._prepare).toHaveBeenCalled());
 
       it('should not reinstall the app', () => {
         expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
@@ -432,21 +426,6 @@ describe('Detox', () => {
       describe('allocates the device', () => {
         beforeEach(() => {
           deviceAllocator.allocate.mockReturnValue(deferred.promise);
-        });
-
-        beforeEach(startInit);
-
-        it(`should stop the execution and skip uninstall the app`, async () => {
-          await expect(detox.cleanup()).resolves.not.toThrowError();
-          deferred.resolve();
-          await expect(initPromise).resolves.toBe(undefined);
-          await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
-        });
-      });
-
-      describe('prepares the device', () => {
-        beforeEach(() => {
-          runtimeDevice._prepare.mockReturnValue(deferred.promise);
         });
 
         beforeEach(startInit);

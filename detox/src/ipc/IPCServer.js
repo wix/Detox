@@ -8,7 +8,7 @@ class IPCServer {
    */
   constructor({ sessionState, logger }) {
     this._sessionState = sessionState;
-    this._logger = logger.child({ __filename, cat: 'ipc-server,ipc' });
+    this._logger = logger.child({ __filename, cat: 'ipc' });
     this._ipc = null;
   }
 

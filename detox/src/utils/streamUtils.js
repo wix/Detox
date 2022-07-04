@@ -1,4 +1,20 @@
-const { Transform } = require('stream');
+const { PassThrough, Transform } = require('stream');
+
+const bunyanDebugStream = require('bunyan-debug-stream');
+const duplexify = require('duplexify');
+const multiSort = require('multi-sort-stream');
+const pipe = require('multipipe');
+const JsonlParser = require('stream-json/jsonl/Parser');
+const stripAnsi = require('strip-ansi');
+const { AbstractEventBuilder } = require('trace-event-lib');
+
+const DetoxTracer = require('../logger/DetoxTracer');
+
+const log = require('./logger').child({ __filename });
+
+function compareTimestamps(a, b) {
+  return +(a.value.time > b.value.time) - +(a.value.time < b.value.time);
+}
 
 function mapTransform(fn) {
   return new Transform({
@@ -33,20 +49,165 @@ function pushThis(x) {
   return this.push(x);
 }
 
-function passErrorsTo(output) {
-  const reemitError = (err) => output.emit('error', err);
-  return (input) => input.on('error', reemitError);
+function extractValue({ value }) {
+  value.msg = stripAnsi(value.msg);
+
+  if (typeof value.time === 'string') {
+    value.time = new Date(value.time);
+  }
+
+  return value;
 }
 
-function combine(readable, writable) {
-  passErrorsTo(writable)(readable);
-  readable.pipe(writable);
-  return { input: readable, output: writable };
+function through() {
+  return new PassThrough({ objectMode: true });
+}
+
+function mergeSortedJSONL(jsonlStreams, comparator = compareTimestamps) {
+  const intermediate = mapTransform(extractValue);
+  const reemitError = (err) => intermediate.emit('error', err);
+  const addReemit = (stream) => stream.on('error', reemitError);
+  return pipe(multiSort(jsonlStreams.map(addReemit), comparator), intermediate, through());
+}
+
+function writeJSONL() {
+  return new JsonlStringer({
+    header: '',
+    delimiter: '\n',
+    footer: '',
+  });
+}
+
+function writeJSON() {
+  return new JsonlStringer({
+    header: '[\n\t',
+    delimiter: ',\n\t',
+    footer: '\n]\n',
+  });
+}
+
+function debugStream(options) {
+  const out = new PassThrough({ encoding: 'utf8' });
+  const writable = bunyanDebugStream.default({
+    ...options,
+    colors: false,
+    out,
+  });
+
+  return duplexify(writable, out, {
+    readableObjectMode: false,
+    writableObjectMode: true
+  });
+}
+
+class JsonlStringer extends Transform {
+  constructor({ replacer = undefined, header = '', delimiter = '\n', footer = '' } = {}) {
+    super({ writableObjectMode: true, readableObjectMode: false });
+
+    this._replacer = replacer;
+    this._header = header;
+    this._delimiter = delimiter;
+    this._footer = footer;
+  }
+
+  _transform(chunk, _, callback) {
+    if (this._header) {
+      this.push(this._header);
+    }
+
+    this.push(JSON.stringify(chunk, this._replacer));
+    this._transform = this._nextTransform;
+    callback(null);
+  }
+
+  _nextTransform(chunk, _, callback) {
+    this.push(this._delimiter + JSON.stringify(chunk, this._replacer));
+    callback(null);
+  }
+
+  _flush(callback) {
+    if (this._footer) {
+      this.push(this._footer);
+    }
+
+    callback();
+  }
+}
+
+class SimpleEventBuilder extends AbstractEventBuilder {
+  events = [];
+  send(event) {
+    this.events.push(event);
+  }
+}
+
+function chromeTraceStream() {
+  const knownPids = new Set();
+  const knownTids = new Set();
+
+  return flatMapTransform((data) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    const { pid, trace, msg, time, name: _name, hostname: _hostname, ...args } = data;
+    const tid = trace ? trace.tid : DetoxTracer.threadize(args.cat);
+    const ts = new Date(time).getTime() * 1E3;
+
+    const builder = new SimpleEventBuilder();
+    if (!knownPids.has(pid)) {
+      builder.process_name(pid === process.pid ? 'primary' : 'secondary', pid);
+      knownPids.add(pid);
+    }
+
+    const tidHash = `${pid}:${tid}`;
+    if (!knownTids.has(tidHash)) {
+      builder.thread_name(DetoxTracer.categorize(tid), tid, pid);
+      knownTids.add(tidHash);
+    }
+
+    const event = { ph: 'i', ...data.trace, pid, tid, ts, args };
+    if (!trace || trace.ph !== 'E') {
+      event.name = msg || '';
+    }
+
+    builder.events.push(event);
+    return builder.events;
+  });
+}
+
+// TODO: create PR to https://github.com/mafintosh/duplexify
+// should be able to pass { error: false } to end-of-stream
+function preventErrorSubscriptions(emitter) {
+  const originalOn = emitter.on.bind(emitter);
+  emitter.on = (event, ...args) => {
+    if (event === 'error') {
+      return emitter;
+    }
+
+    return originalOn(event, ...args);
+  };
+
+  return emitter;
+}
+
+function readJSONL() {
+  const readable = new PassThrough({ objectMode: true });
+  const writable = JsonlParser.make({ checkErrors: true })
+    .on('error', (err) => {
+      if (err instanceof SyntaxError) {
+        log.debug({ event: 'JSONL_ERROR', err });
+        readable.end();
+      } else {
+        readable.emit('error', err);
+      }
+    });
+
+  return duplexify.obj(preventErrorSubscriptions(writable), writable.pipe(readable));
 }
 
 module.exports = {
-  combine,
-  mapTransform,
-  flatMapTransform,
-  passErrorsTo,
+  readJSONL,
+  writeJSON,
+  writeJSONL,
+  mergeSortedJSONL,
+  debugStream,
+  chromeTraceStream,
 };

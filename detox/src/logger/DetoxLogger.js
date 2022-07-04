@@ -14,8 +14,6 @@ const customConsoleLogger = require('./customConsoleLogger');
  * @property {string} [file]
  */
 
-// TODO: add closed mode (without file - only errors)
-
 class DetoxLogger {
   /**
    * @param {Detox.DetoxLoggerConfig | PrivateLoggerConfig} [config]

@@ -8,6 +8,7 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const log = require('../utils/logger').child({ __filename });
 const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
+const { traceMethods } = require('../utils/trace');
 
 const FileArtifact = require('./templates/artifact/FileArtifact');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
@@ -21,6 +22,32 @@ class ArtifactsManager extends EventEmitter {
     this._idleCallbackRequests = [];
     this._artifactPlugins = {};
     this._pathBuilder = this._resolveArtifactsPathBuilder(pathBuilder, rootDir);
+
+    traceMethods(this, 'artifacts-manager,artifacts', [
+      'onAppReady',
+      'onBeforeCleanup',
+      'onBeforeLaunchApp',
+      'onBeforeShutdownDevice',
+      'onBeforeTerminateApp',
+      'onBeforeUninstallApp',
+      'onBootDevice',
+      'onCreateExternalArtifact',
+      'onHookFailure',
+      'onHookStart',
+      'onHookSuccess',
+      'onLaunchApp',
+      'onRunDescribeFinish',
+      'onRunDescribeStart',
+      'onRunFinish',
+      'onRunStart',
+      'onShutdownDevice',
+      'onTerminateApp',
+      'onTestDone',
+      'onTestFnFailure',
+      'onTestFnStart',
+      'onTestFnSuccess',
+      'onTestStart',
+    ]);
   }
 
   _resolveArtifactsPathBuilder(pathBuilder, rootDir) {
