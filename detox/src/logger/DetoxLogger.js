@@ -1,4 +1,5 @@
 const path = require('path');
+const { PassThrough } = require('stream');
 
 const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
@@ -105,9 +106,7 @@ class DetoxLogger {
 
   _initBunyanLogger() {
     /** @type {bunyan.Stream[]} */
-    const streams = [this._createDebugStream({
-      out: process.stdout,
-    })];
+    const streams = [this._createDebugStream()];
 
     if (this._config.file) {
       streams.unshift({
@@ -119,16 +118,17 @@ class DetoxLogger {
     return bunyan.createLogger({ name: 'detox', streams });
   }
 
-  _createDebugStream(overrides) {
-    const streamOptions = {
-      ...this._config.options,
-      ...overrides,
-    };
+  _createDebugStream() {
+    const { out = process.stderr, ...streamOptions } = this._config.options;
+    const passthrough = new PassThrough().pipe(out);
 
     return {
       type: 'raw',
       level: this._config.level,
-      stream: bunyanDebugStream.default(streamOptions),
+      stream: bunyanDebugStream.default({
+        ...streamOptions,
+        out: passthrough,
+      }),
     };
   }
 

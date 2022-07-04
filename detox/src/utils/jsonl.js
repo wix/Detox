@@ -130,6 +130,7 @@ function foo() {
   const knownTids = new Set();
 
   return flatMapTransform((data) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const { pid, trace, msg, time, name: _name, hostname: _hostname, ...args } = data;
     const tid = trace ? trace.tid : 9999;
     const ts = new Date(time).getTime() * 1E3;

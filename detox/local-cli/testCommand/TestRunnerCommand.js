@@ -7,6 +7,7 @@ const unparse = require('yargs-unparser');
 
 const detox = require('../../internals');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
+const { escapeSpaces } = require('../../src/utils/shellUtils');
 
 class TestRunnerCommand {
   constructor() {
@@ -126,9 +127,7 @@ class TestRunnerCommand {
   }
 
   async _doExecute() {
-    const fullCommand = this._buildSpawnArguments().map(a => {
-      return a.replace(/ /g, '\\ ');
-    });
+    const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
 
     detox.log.info(
       { event: 'RUN_START', env: this._envHint },
