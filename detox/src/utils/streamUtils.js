@@ -160,6 +160,7 @@ function chromeTraceStream() {
     const tidHash = `${pid}:${tid}`;
     if (!knownTids.has(tidHash)) {
       builder.thread_name(DetoxTracer.categorize(tid), tid, pid);
+      builder.thread_sort_index(tid, tid, pid);
       knownTids.add(tidHash);
     }
 

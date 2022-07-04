@@ -6,6 +6,8 @@ const _ = require('lodash');
 
 const config = require('../configuration/configurations.mock').validSession;
 
+// TODO: check why it triggers MaxListenersExceededWarning
+
 describe('AsyncWebSocket', () => {
   let AsyncWebSocket;
   let WebSocket;
@@ -19,6 +21,7 @@ describe('AsyncWebSocket', () => {
 
   beforeEach(() => {
     jest.mock('../utils/logger');
+    jest.mock('../utils/trace');
     jest.mock('ws');
     WebSocket = require('ws');
     WebSocket.CONNECTING = 0;
@@ -26,6 +29,7 @@ describe('AsyncWebSocket', () => {
     WebSocket.CLOSING = 2;
     WebSocket.CLOSED = 3;
 
+    WebSocket.prototype._socket = { localPort: NaN };
     WebSocket.prototype.readyState = WebSocket.CONNECTING;
     WebSocket.prototype.mockOpen = function () {
       this.readyState = WebSocket.OPEN;

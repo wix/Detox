@@ -12,6 +12,8 @@ function traceMethods(obj, cat, methodNames) {
 
 module.exports = {
   trace: {
+    begin: jest.fn(() => ({ payload: {}, end: jest.fn() })),
+    end: jest.fn(),
     startSection: jest.fn(),
     endSection: jest.fn(),
   },

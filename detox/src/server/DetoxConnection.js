@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { WebSocket } = require('ws'); // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const logger = require('../utils/logger').child({ __filename });
+const logger = require('../utils/logger').child({ __filename, cat: 'ws-server,ws' });
 
 const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandler');
 

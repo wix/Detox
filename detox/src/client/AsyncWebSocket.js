@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const Deferred = require('../utils/Deferred');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ __filename, cat: 'ws-client,ws' });
 
 const InflightRequest = require('./InflightRequest');
 

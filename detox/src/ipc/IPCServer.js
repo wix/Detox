@@ -49,7 +49,7 @@ class IPCServer {
   onRegisterContext({ id, logFile, workerId }, socket) {
     this._sessionState.contexts.push(id);
 
-    if (logFile) {
+    if (logFile && !this._sessionState.logFiles.includes(logFile)) {
       this._sessionState.logFiles.push(logFile);
     }
 
