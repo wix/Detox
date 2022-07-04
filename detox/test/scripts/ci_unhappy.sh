@@ -7,7 +7,7 @@ export DISABLE_JUNIT_REPORTER=1
 platform=$1
 
 echo "Running e2e test for timeout handling..."
-node scripts/assert_timeout.js npm run "e2e:$platform" -- -H -o e2e-unhappy/detox-init-timeout/config.js e2e-unhappy
+node scripts/assert_timeout.js npm run "e2e:$platform" -- -H --config e2e-unhappy/detox-init-timeout/config.js e2e-unhappy
 cp coverage/lcov.info "../../coverage/e2e-$platform-timeout-ci.lcov"
 
 echo "Running early syntax error test..."

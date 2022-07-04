@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+
+const DETOX_REGEXP = /^DETOX_(?!DISABLE_POD_INSTALL|DISABLE_POSTINSTALL)/;
+
 const env = Object.keys(process.env)
-  .filter(k => k.toUpperCase().startsWith('DETOX_'))
+  .filter(k => DETOX_REGEXP.test(k.toUpperCase()))
   .reduce((acc, key) => {
     acc[key] = process.env[key];
     return acc;
