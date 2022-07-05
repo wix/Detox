@@ -17,6 +17,7 @@
 		60634AED27C514F700274F30 /* AccessibilityTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AEB27C514ED00274F30 /* AccessibilityTraits.swift */; };
 		6072FD2C28719A3800E00C4D /* TargetElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6072FD2B28719A3800E00C4D /* TargetElement.swift */; };
 		6072FD2D28719F3A00E00C4D /* TargetElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6072FD2B28719A3800E00C4D /* TargetElement.swift */; };
+		6072FD3C28734C5A00E00C4D /* Action+name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6072FD3B28734C5A00E00C4D /* Action+name.swift */; };
 		60BB923227BBD2340081D232 /* ElementMatcherProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923127BBD2340081D232 /* ElementMatcherProtocol.swift */; };
 		60BB923627BBDD0A0081D232 /* MessagePredicateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923527BBDD0A0081D232 /* MessagePredicateProtocol.swift */; };
 		60BB923B27BBE28C0081D232 /* MessagePredicateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923527BBDD0A0081D232 /* MessagePredicateProtocol.swift */; };
@@ -93,6 +94,7 @@
 		60634ADB27C4C5E400274F30 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		60634AEB27C514ED00274F30 /* AccessibilityTraits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTraits.swift; sourceTree = "<group>"; };
 		6072FD2B28719A3800E00C4D /* TargetElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetElement.swift; sourceTree = "<group>"; };
+		6072FD3B28734C5A00E00C4D /* Action+name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Action+name.swift"; sourceTree = "<group>"; };
 		60BB923127BBD2340081D232 /* ElementMatcherProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcherProtocol.swift; sourceTree = "<group>"; };
 		60BB923527BBDD0A0081D232 /* MessagePredicateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePredicateProtocol.swift; sourceTree = "<group>"; };
 		60BB924327BBFB380081D232 /* MessageSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSpec.swift; sourceTree = "<group>"; };
@@ -263,6 +265,7 @@
 				60BB925327BD08C70081D232 /* Action.swift */,
 				60BB925027BD085A0081D232 /* ActionDelegateProtocol.swift */,
 				60BB928A27C29CDB0081D232 /* ActionType.swift */,
+				6072FD3B28734C5A00E00C4D /* Action+name.swift */,
 			);
 			name = Action;
 			sourceTree = "<group>";
@@ -404,6 +407,7 @@
 				60BB926F27C2413D0081D232 /* ElementPattern.swift in Sources */,
 				60BB925127BD085A0081D232 /* ActionDelegateProtocol.swift in Sources */,
 				60BB926C27C23F5E0081D232 /* MessagePredicate.swift in Sources */,
+				6072FD3C28734C5A00E00C4D /* Action+name.swift in Sources */,
 				6072FD2C28719A3800E00C4D /* TargetElement.swift in Sources */,
 				60BB924927BC4D3F0081D232 /* Message.swift in Sources */,
 				60BB928827C29CC40081D232 /* ExpectationType.swift in Sources */,

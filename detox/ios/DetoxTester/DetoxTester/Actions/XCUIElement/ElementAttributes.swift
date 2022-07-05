@@ -179,7 +179,6 @@ extension CGSize {
   }
 }
 
-
 extension CGRect {
   ///
   var codable: Rect {

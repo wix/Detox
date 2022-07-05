@@ -32,10 +32,14 @@ class ActionDelegate: ActionDelegateProtocol {
       throw ActionDelegateError.notXCUIElement
     }
 
-    uiLog("wait until ready to handle action: `\(action)`, on element: `\(element)`")
+    uiLog(
+      "wait until ready to handle action: `\(action.name)`, on element: " +
+      "`\(element.debugDescription)`"
+    )
+
     whiteBoxMessageHandler(.waitUntilReady)?.assertResponse(equalsTo: .completed)
 
-    uiLog("handling action: `\(action)`, on element: `\(element)`")
+    uiLog("handling action: `\(action.name)`, on element: `\(element.debugDescription)`")
 
     switch action {
       case .tap(let times):
@@ -78,6 +82,9 @@ class ActionDelegate: ActionDelegateProtocol {
             onElement: element
           )) {
           response.assertResponse(equalsTo: .completed)
+
+          // TODO: remove log
+          uiLog("long press and drag was executed by the app", type: .debug)
         } else {
           // Element holding after dragging is not working on XCUITest.
           // See: https://github.com/asafkorem/XCUITestHoldBugReproduction for details regarding
@@ -142,7 +149,6 @@ class ActionDelegate: ActionDelegateProtocol {
 
       case .screenshot, .getAttributes:
         fatalError("this action should not be called under `act()`")
-
     }
   }
 
