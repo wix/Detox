@@ -28,6 +28,7 @@ class Executor {
         cleanup(messageId: messageId)
 
       case .setRecordingState:
+        execLog("not implemented yet: \(action)", type: .error)
         fatalError("not implemented yet")
 
       case .waitForBackground:
@@ -40,9 +41,11 @@ class Executor {
         setSyncSettings(params: params, messageId: messageId)
 
       case .deliverPayload:
+        execLog("not implemented yet: \(action)", type: .error)
         fatalError("not implemented yet")
 
       case.setOrientation:
+        execLog("not implemented yet: \(action)", type: .error)
         fatalError("not implemented yet")
 
       case .currentStatus:

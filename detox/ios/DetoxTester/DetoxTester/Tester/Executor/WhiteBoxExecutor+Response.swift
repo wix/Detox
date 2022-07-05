@@ -25,7 +25,7 @@ extension WhiteBoxExecutor {
     case completedWithError(message: String)
 
     ///
-    case status(_ value: [String: AnyCodable])
+    case status(_ value: [String: AnyHashable])
 
     ///
     case failed(reason: String)

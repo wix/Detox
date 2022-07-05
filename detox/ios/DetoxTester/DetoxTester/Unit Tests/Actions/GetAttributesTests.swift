@@ -104,20 +104,11 @@ class GetAttributesTests: DTXTestCase {
 extension GetAttributesTests {
   private func getLabelElementAttributes() throws -> [String: AnyHashable] {
     let element = app.staticTexts["labelIdentifier"]
-
-    let result = try actionDelegate.getAttributes(from: [element]).value as! [String: [AnyCodable]]
-    let elements = result["elements"]!
-    XCTAssertEqual(elements.count, 1)
-
-    return elements.first?.value as! [String: AnyHashable]
+    return try actionDelegate.getAttributes(from: [element]).value as! [String: AnyHashable]
   }
 
   private func getSliderElementAttributes() throws -> [String: AnyHashable] {
     let element = app.sliders["sliderView"]
-
-    let result = try actionDelegate.getAttributes(from: [element]).value as! [AnyCodable]
-    XCTAssertEqual(result.count, 1)
-
-    return result.first?.value as! [String: AnyHashable]
+    return try actionDelegate.getAttributes(from: [element]).value as! [String: AnyHashable]
   }
 }

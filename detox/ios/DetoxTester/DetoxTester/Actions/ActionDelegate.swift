@@ -148,6 +148,9 @@ class ActionDelegate: ActionDelegateProtocol {
         element.adjustSlider(to: normalizedPosition)
 
       case .screenshot, .getAttributes:
+        // TODO: remove log
+        uiLog("this action should not be called under `act`: \(action.name)", type: .error)
+
         fatalError("this action should not be called under `act()`")
     }
   }
@@ -169,7 +172,12 @@ class ActionDelegate: ActionDelegateProtocol {
     if attributes.count > 1 {
       return AnyCodable(["elements": attributes])
     } else {
-      return AnyCodable(attributes.first!)
+      guard let attributes = attributes.first else {
+        uiLog("could not find any attributes (no matching elements)", type: .error)
+        fatalError("could not find any attributes (no matching elements)")
+      }
+
+      return AnyCodable(attributes)
     }
   }
 

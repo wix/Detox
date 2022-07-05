@@ -20,9 +20,17 @@ extension Executor {
       fatalError("The received current-status has an invalid type")
     }
 
+    let params: [String: AnyHashable] = [
+      "status": ["app_status": "idle"],
+      "messageId": messageId
+    ]
+
+    // TODO: stop fake the current status!
+    execLog("reporting status with params: \(params). real status result: \(statusValue)")
+
     serverMessageSender.sendAction(
       .reportStatus,
-      params: ["status": statusValue],
+      params: params,
       messageId: messageId
     )
   }

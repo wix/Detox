@@ -49,6 +49,10 @@ extension XCUIElementQuery {
       case .text(let text):
         let response = whiteBoxMessageHandler(.findElementsByText(text: text))
         guard let response = response else {
+          execLog(
+            "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
+            type: .error
+          )
           fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
         }
 
