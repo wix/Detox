@@ -15,7 +15,12 @@ describe('Attributes', () => {
   function useMatcher(matcher) {
     return async () => {
       currentElement = element(matcher);
+      console.log(`DEBUG: getAttributes request`)
+      
       const result = await currentElement.getAttributes();
+
+      console.log(`DEBUG: getAttributes result: ${result}`)
+
       if ('elements' in result) {
         attributesArray = result.elements;
       } else {

@@ -3,7 +3,7 @@ describe(':ios: Drag And Drop', () => {
     await device.reloadReactNative();
     await element(by.text('Drag And Drop')).tap();
   });
-  
+
   afterEach(async () => {
     await element(by.id('closeButton')).tap();
   });
@@ -21,11 +21,11 @@ describe(':ios: Drag And Drop', () => {
     //Because we used 0.001 as the drop Y point, the `cell2` actually landed at cell9, not cell10.
     await assertCellText(9, '2');
   });
-  
+
   async function assertCellText(idx, value) {
     const attribs = await element(by.id('cellTextLabel')).getAttributes();
     const cellStrings = attribs.elements.map(x => x.text);
-    
+
     if(cellStrings[idx - 1] !== value) {
       throw new Error("Failed!");
     }
