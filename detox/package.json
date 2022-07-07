@@ -46,7 +46,7 @@
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-unicorn": "^39.0.0",
-    "jest": "^27.0.0",
+    "jest": "^27.5.1",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.67.2",

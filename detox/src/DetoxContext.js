@@ -37,6 +37,7 @@ class DetoxContext {
   }
 
   //#region Internal members
+  [symbols.status] = 'inactive';
   [symbols.onRunStart] = (...args) => this[symbols.worker].onRunStart(...args);
   [symbols.onRunDescribeStart] = (...args) => this[symbols.worker].onRunDescribeStart(...args);
   [symbols.onTestStart] = (...args) => this[symbols.worker].onTestStart(...args);
@@ -58,7 +59,8 @@ class DetoxContext {
   get [symbols.worker]() {
     if (!this._worker) {
       throw new DetoxRuntimeError({
-        message: 'Detox worker instance has not been initialized in this context.',
+        message: `Detox worker instance has not been initialized in this context (${this.constructor.name}).`,
+        hint: DetoxRuntimeError.reportIssueIfJest,
       });
     }
 
@@ -98,10 +100,20 @@ class DetoxContext {
    * @returns {Promise<void>}
    */
   [symbols.init] = async (opts = {}) => {
+    const status = this[symbols.status];
+    if (status !== 'inactive') {
+      throw new DetoxRuntimeError({
+        message: `Cannot initialize Detox context while it is in "${status}" status.`,
+        hint: DetoxRuntimeError.reportIssueIfJest,
+      });
+    }
+
     try {
+      this[symbols.status] = 'init';
       await this._doInit(opts);
       await this._allocateWorker(opts);
       this._injectIntoSandbox(opts);
+      this[symbols.status] = 'active';
     } catch (e) {
       await this[symbols.cleanup]();
       throw e;
@@ -109,13 +121,23 @@ class DetoxContext {
   };
 
   [symbols.cleanup] = async () => {
+    const status = this[symbols.status];
+    if (status === 'inactive' || status === 'cleanup') {
+      throw new DetoxRuntimeError({
+        message: `Cannot clean up Detox context when it is already in "${status}" status.`,
+        hint: DetoxRuntimeError.reportIssueIfJest,
+      });
+    }
+
     try {
+      this[symbols.status] = 'cleanup';
       if (this._worker) {
         await this._worker.cleanup();
         this._worker = null;
       }
     } finally {
       await this._doCleanup();
+      this[symbols.status] = 'inactive';
     }
   };
 

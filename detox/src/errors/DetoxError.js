@@ -12,6 +12,10 @@ class DetoxError extends Error {
     return 'Please report this issue on our GitHub tracker:\nhttps://github.com/wix/Detox/issues';
   }
 
+  static get reportIssueIfJest() {
+    return `If you are using Detox with Jest according to the latest guide, ${_.lowerFirst(this.reportIssue)}`;
+  }
+
   static inspectObj(obj, options) {
     return util.inspect(obj, {
       colors: false,

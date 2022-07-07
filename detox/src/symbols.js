@@ -17,6 +17,7 @@
  *   readonly onTestStart: unique symbol;
  *   readonly reportFailedTests: unique symbol;
  *   readonly session: unique symbol;
+ *   readonly status: unique symbol;
  *   readonly worker: unique symbol;
  * }}
  */
@@ -41,6 +42,7 @@ module.exports = {
   //#endregion
 
   //#region Main
+  status: Symbol('status'),
   init: Symbol('init'),
   cleanup: Symbol('cleanup'),
   config: Symbol('config'),
