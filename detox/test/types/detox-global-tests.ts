@@ -105,7 +105,7 @@ describe("Test", () => {
         beforeEach(async () => {
             const attributes = await element(by.id("element")).getAttributes();
             if ('elements' in attributes) {
-                commonAttributes = iosAttributes = attributes.elements[0];
+                commonAttributes = attributes.elements[0];
             } else if ('activationPoint' in attributes) {
                 commonAttributes = iosAttributes = attributes;
             } else {
