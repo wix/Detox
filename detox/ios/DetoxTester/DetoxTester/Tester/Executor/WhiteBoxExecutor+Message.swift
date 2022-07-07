@@ -51,5 +51,10 @@ extension WhiteBoxExecutor {
       holdDuration: Double?,
       onElement: XCUIElement
     )
+
+    ///
+    case requestAttributes(
+      ofElements: [XCUIElement]
+    )
   }
 }

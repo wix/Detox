@@ -29,6 +29,9 @@ extension WhiteBoxExecutor {
 
     ///
     case failed(reason: String)
+
+    ///
+    case elementsAttributes(_ value: [[String: AnyHashable]])
   }
 }
 

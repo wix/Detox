@@ -167,6 +167,17 @@ class WhiteBoxExecutor {
 
         let _ = send(message, andExpectToType: "didLongPressAndDrag", messageId: 0)
         return .completed
+
+      case .requestAttributes(let elements):
+        let message = createMessage(
+          type: "getAttributes",
+          params: [
+            "elementIDs": AnyCodable(elements.map { $0.identifier })
+          ]
+        )
+
+        let attributes = send(message, andExpectToType: "attributes", messageId: 0)["values"]!
+        return .elementsAttributes(attributes as! [[String: AnyHashable]])
     }
   }
 
