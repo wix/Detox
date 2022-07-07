@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('AndroidExpect', () => {
   let e;
 
@@ -256,59 +255,19 @@ describe('AndroidExpect', () => {
       });
 
       describe('getAttributes', () => {
-        beforeEach(() => {
-          mockExecutor = new MockExecutor();
-
-          const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
-          emitter = new Emitter();
-
-          device = {
-            _typeText: jest.fn()
-          };
-
-          const AndroidExpect = require('./AndroidExpect');
-          e = new AndroidExpect({
-            invocationManager: mockExecutor,
-            device,
-            emitter
-          });
-        });
-
-        it('should get attributes for single element', async () => {
-          const execResult = {
-            result: [{
-              text: 'hello',
-              value: 1
-            }]
-          };
-          mockExecutor.executeResult = ['{"result": [{"text": "hello", "value": 1}]}'];
+        it('should return attributes for a single matching view', async () => {
+          const execResult = { result: [{ text: 'hello', value: 1 }] };
+          mockExecutor.executeResult = execResult;
           const result = await e.element(e.by.id('UniqueId005')).getAttributes();
-          expect(JSON.parse(result)).toEqual(execResult);
+          expect(result).toEqual(execResult);
         });
 
-        it('should throw exception for getting attributes on a nonexistent view', async () => {
-          mockExecutor.executeResult = [];
-          await expectToThrow(() => e.element(e.by.id('UniqueId005')).getAttributes());
-        });
-
-        it('should get attributes for multiple elements', async () => {
-            const execResult =
-              {
-                result: [{
-                  text: 'hello',
-                  value: 1
-                },
-              {
-                  text: 'hello',
-                  value: 2
-                }]
-              };
-            mockExecutor
-              .executeResult = '{"result": [{"text": "hello", "value": 1}, {"text": "hello", "value": 2}]}';
+        it('should return an array if multiple views match', async () => {
+            const execResult = { result: [{ text: 'hello', value: 1 }, { text: 'hello', value: 2 }] };
+            mockExecutor.executeResult = execResult;
             const result = await e.element(e.by.type('com.facebook.react.views.view.ReactViewGroup')
               .withAncestor(e.by.id('attrScrollView'))).getAttributes();
-            expect(JSON.parse(result))
-              .toEqual(execResult);
+            expect(result).toEqual(execResult);
           }
         )
         ;

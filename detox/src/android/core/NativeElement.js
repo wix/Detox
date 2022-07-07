@@ -18,11 +18,7 @@ class NativeElement {
   }
 
   _selectElementWithMatcher(matcher) {
-    // if (!(matcher instanceof NativeMatcher)) throw new DetoxRuntimeError(`Element _selectElementWithMatcher argument must be a valid NativeMatcher, got ${typeof matcher}`);
-    this._call = invoke.call({
-      type: 'Class',
-      value: 'com.wix.detox.espresso.EspressoDetox'
-    }, 'onView', matcher._call);
+    this._call = invoke.call({ type: 'Class', value: 'com.wix.detox.espresso.EspressoDetox' }, 'onView', matcher._call);
   }
 
   atIndex(index) {

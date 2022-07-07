@@ -8,5 +8,9 @@
 -keep class com.facebook.react.ReactInstanceManager** { *; }
 -keep class com.reactnativecommunity.asyncstorage.** { *; }
 
--keep class kotlin.** { *; }
+-keep class kotlin.jvm.** { *; }
+-keep class kotlin.collections.** { *; }
+-keep class kotlin.text.** { *; }
+-keep class kotlin.io.** { *; }
+-keep class kotlin.Result { *; }
 -keep class okhttp3.** { *; }

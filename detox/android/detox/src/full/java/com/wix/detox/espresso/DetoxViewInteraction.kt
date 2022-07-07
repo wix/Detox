@@ -5,41 +5,39 @@ import androidx.test.espresso.*
 import org.hamcrest.Matcher
 
 class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
-    private var viewInteraction: ViewInteraction = Espresso.onView(viewMatcher)
+    private val espressoInteraction: ViewInteraction = Espresso.onView(viewMatcher)
 
-    private fun performSingleViewAction(viewAction: ViewAction): Any? {
-        kotlin.run {
-            Espresso.onView(viewMatcher)
-                .perform(viewAction)
-        }
-
-        return if (viewAction is ViewActionWithResult<*>) {
-            viewAction.getResult()
-        } else {
-            null
+    fun perform(viewAction: ViewAction): Any? {
+        return when (viewAction) {
+            is MultiViewActionWithResult<*> -> viewAction.performOnView(viewMatcher)
+            is ViewActionWithResult<*> -> performSingleViewActionWithResult(viewAction)
+            else -> performSingleViewAction(viewAction)
         }
     }
 
-    fun perform(viewAction: ViewAction): Any? {
-        return if (MultiViewActionWithResult::class.java.isAssignableFrom(viewAction::class.java))
-            (viewAction as MultiViewActionWithResult<*>).perform(viewMatcher)
-        else
-            performSingleViewAction(viewAction)
+    private fun performSingleViewActionWithResult(viewAction: ViewActionWithResult<*>): Any? {
+        espressoInteraction.perform(viewAction)
+        return viewAction.getResult()
+    }
+
+    private fun performSingleViewAction(viewAction: ViewAction): Unit? {
+        espressoInteraction.perform(viewAction)
+        return null
     }
 
     fun withFailureHandler(failureHandler: FailureHandler): ViewInteraction {
-        return viewInteraction.withFailureHandler(failureHandler)
+        return espressoInteraction.withFailureHandler(failureHandler)
     }
 
     fun inRoot(rootMatcher: Matcher<Root>): ViewInteraction {
-        return viewInteraction.inRoot(rootMatcher)
+        return espressoInteraction.inRoot(rootMatcher)
     }
 
     fun noActivity(): ViewInteraction {
-        return viewInteraction.noActivity()
+        return espressoInteraction.noActivity()
     }
 
     fun check(viewAssert: ViewAssertion): ViewInteraction {
-        return viewInteraction.check(viewAssert)
+        return espressoInteraction.check(viewAssert)
     }
 }

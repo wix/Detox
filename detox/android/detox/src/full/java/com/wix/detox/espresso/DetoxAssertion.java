@@ -23,31 +23,30 @@ import static org.hamcrest.Matchers.not;
  */
 
 public class DetoxAssertion {
-
     private DetoxAssertion() {
         // static class
     }
 
-    public static ViewInteraction assertMatcher(DetoxViewInteraction i, Matcher<View> m) {
-        return i.check(matches(m));
+    public static ViewInteraction assertMatcher(DetoxViewInteraction interaction, Matcher<View> matcher) {
+        return interaction.check(matches(matcher));
     }
 
-    public static ViewInteraction assertNotVisible(DetoxViewInteraction i) {
-        ViewInteraction ret;
+    public static ViewInteraction assertNotVisible(DetoxViewInteraction interaction) {
+        ViewInteraction result;
         try {
-            ret = i.check(doesNotExist());
-            return ret;
+            result = interaction.check(doesNotExist());
         } catch (AssertionFailedError e) {
-            ret = i.check(matches(not(isDisplayed())));
-            return ret;
+            result = interaction.check(matches(not(isDisplayed())));
         }
+
+        return result;
     }
 
-    public static ViewInteraction assertNotExists(DetoxViewInteraction i) {
-        return i.check(doesNotExist());
+    public static ViewInteraction assertNotExists(DetoxViewInteraction interaction) {
+        return interaction.check(doesNotExist());
     }
 
-    public static void waitForAssertMatcher(final DetoxViewInteraction i, final Matcher<View> m, double timeoutSeconds) {
+    public static void waitForAssertMatcher(final DetoxViewInteraction interaction, final Matcher<View> matcher, double timeoutSeconds) {
         final long originTime = System.nanoTime();
 
         while (true) {
@@ -55,11 +54,11 @@ public class DetoxAssertion {
             long elapsed = currentTime - originTime;
             double seconds = (double) elapsed / 1000000000.0;
             if (seconds >= timeoutSeconds) {
-                throw new DetoxRuntimeException("" + timeoutSeconds + "sec timeout expired without matching of given matcher: " + m);
+                throw new DetoxRuntimeException("" + timeoutSeconds + "sec timeout expired without matching of given matcher: " + matcher);
             }
 
             try {
-                i.check(matches(m));
+                interaction.check(matches(matcher));
                 break;
             } catch (AssertionFailedError err) {
                 UiAutomatorHelper.espressoSync(20);
@@ -68,20 +67,20 @@ public class DetoxAssertion {
     }
 
     public static void waitForAssertMatcherWithSearchAction(
-            final DetoxViewInteraction i,
-            final Matcher<View> vm,
+            final DetoxViewInteraction interaction,
+            final Matcher<View> viewMatcher,
             final ViewAction searchAction,
             final Matcher<View> searchMatcher) {
 
         while (true) {
             try {
-                assertMatcher(i, vm);
+                assertMatcher(interaction, viewMatcher);
                 break;
             } catch (AssertionFailedError err) {
                 try {
                     onView(searchMatcher).perform(searchAction);
                 } catch (StaleActionException exStaleAction) {
-                    assertMatcher(i, vm);
+                    assertMatcher(interaction, viewMatcher);
                     break;
                 }
             }

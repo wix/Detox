@@ -2,36 +2,41 @@ package com.wix.detox.espresso
 
 import android.view.View
 import androidx.test.espresso.Espresso
-import com.wix.detox.common.DetoxErrors
 import org.hamcrest.Matcher
+import org.json.JSONException
 import org.json.JSONObject
 
 abstract class MultiViewActionWithResult<R> : ViewActionWithResult<R> {
-    fun perform(viewMatcher: Matcher<View>): Any {
-        val returnArray = ArrayList<JSONObject>()
+    fun performOnView(viewMatcher: Matcher<View>): Any {
+        val results = ArrayList<JSONObject>()
         var index = 0
-        while (true) {
-            var hasIndex = true
+        var shouldCheckNextIndex = true
+
+        while (shouldCheckNextIndex) {
             kotlin.runCatching {
-                Espresso.onView(DetoxMatcher.matcherForAtIndex(index, viewMatcher))
-                    .perform(this)
-            }.getOrElse {
-                false.also { hasIndex = it }
-            }
+                val matcherAtIndex = DetoxMatcher.matcherForAtIndex(index, viewMatcher)
+                Espresso.onView(matcherAtIndex).perform(this)
+            }.onSuccess {
+                val actionResult = this.getResult()
 
-            if (hasIndex) {
-                val actionResult = (this as ViewActionWithResult<*>?)?.getResult()
-                returnArray.add(JSONObject(actionResult.toString()))
+                lateinit var actionResultJson: JSONObject
+                try {
+                    actionResultJson = JSONObject(actionResult.toString())
+                } catch (e: JSONException) {
+                    throw e
+                }
+
+                results.add(actionResultJson)
                 index++
-            } else {
-                break
+            }.onFailure {
+                if (results.isEmpty()) {
+                    throw it
+                }
+
+                shouldCheckNextIndex = false
             }
         }
 
-        if (returnArray.size == 0) {
-            throw DetoxErrors.DetoxRuntimeException("No views were found to perform the action on")
-        }
-
-        return if (returnArray.size == 1) returnArray[0] else returnArray.toTypedArray()
+        return if (results.size == 1) results.first() else results.toTypedArray()
     }
 }
