@@ -1,8 +1,5 @@
-const _ = require('lodash');
-
 const { device, element, by } = require('detox');
 const expect = require('expect').default;
-const {expectToThrow} = require('./utils/custom-expects');
 
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
@@ -224,6 +221,8 @@ describe('Attributes', () => {
     });
 
     describe(':android:', () => {
+      beforeAll(useMatcher(by.type('com.facebook.react.views.view.ReactViewGroup').withAncestor(by.id('attrScrollView'))));
+
       it('should return an array of attributes', async () => {
         const viewShape = {
           identifier: expect.any(String),
@@ -237,13 +236,7 @@ describe('Attributes', () => {
           enabled: expect.any(Boolean),
         };
 
-        const result = await
-          element(
-            by.type('com.facebook.react.views.view.ReactViewGroup')
-              .withAncestor(by.id('attrScrollView'))
-          ).getAttributes();
-
-        const innerViews = _.filter(result, a => a.identifier);
+        const innerViews = attributesArray.filter(a => a.identifier);
         expect(innerViews.length).toBe(2);
         expect(innerViews[0]).toMatchObject({ ...viewShape });
         expect(innerViews[1]).toMatchObject({ ...viewShape });

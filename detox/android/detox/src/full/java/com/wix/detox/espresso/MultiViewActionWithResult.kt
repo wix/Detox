@@ -3,6 +3,7 @@ package com.wix.detox.espresso
 import android.view.View
 import androidx.test.espresso.Espresso
 import org.hamcrest.Matcher
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -37,6 +38,8 @@ abstract class MultiViewActionWithResult<R> : ViewActionWithResult<R> {
             }
         }
 
-        return if (results.size == 1) results.first() else results.toTypedArray()
+        val elementsObject = JSONObject()
+        elementsObject.put("elements", JSONArray(results))
+        return if (results.size == 1) results.first() else elementsObject
     }
 }

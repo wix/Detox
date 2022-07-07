@@ -1245,7 +1245,7 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; } | { elements: AndroidElementAttributes[]; }>;
         }
 
         interface WebExpect<R = Promise<void>> {
