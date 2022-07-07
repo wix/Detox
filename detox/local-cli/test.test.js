@@ -415,7 +415,10 @@ describe('CLI', () => {
 
   test('should append $DETOX_ARGV_OVERRIDE to detox test ... command and print a warning', async () => {
     process.env.PLATFORM = 'ios';
-    process.env.DETOX_ARGV_OVERRIDE = '--testNamePattern="[$PLATFORM] tap" -l trace e2e/sanity/*.test.js';
+    process.env.DETOX_ARGV_OVERRIDE = os.platform() === 'win32'
+      ? '--testNamePattern="[%PLATFORM%] tap" -l trace e2e/sanity/*.test.js'
+      : '--testNamePattern="[$PLATFORM] tap" -l trace e2e/sanity/*.test.js';
+
     await run();
 
     expect(cliCall().fullCommand).toMatch(/\bDETOX_LOGLEVEL="trace" /);

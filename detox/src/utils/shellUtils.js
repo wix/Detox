@@ -1,12 +1,10 @@
 const SPACE = ' ';
 const BACK_SLASH = '\\';
-const HAT = '^';
 const SINGLE_QUOTE = "'";
 const DOUBLE_QUOTE = '"';
 
-const HAT_SPACE = HAT + SPACE;
 function escapeSpacesCMD(str) {
-  return str.replace(/ /g, HAT_SPACE);
+  return str.includes(' ') ? `"${str}"` : str;
 }
 
 const BACK_SLASH_SPACE = BACK_SLASH + SPACE;
