@@ -108,16 +108,11 @@ class DetoxContext {
       });
     }
 
-    try {
-      this[symbols.status] = 'init';
-      await this._doInit(opts);
-      await this._allocateWorker(opts);
-      this._injectIntoSandbox(opts);
-      this[symbols.status] = 'active';
-    } catch (e) {
-      await this[symbols.cleanup]();
-      throw e;
-    }
+    this[symbols.status] = 'init';
+    await this._doInit(opts);
+    await this._allocateWorker(opts);
+    this._injectIntoSandbox(opts);
+    this[symbols.status] = 'active';
   };
 
   [symbols.cleanup] = async () => {
