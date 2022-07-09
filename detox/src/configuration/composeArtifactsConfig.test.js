@@ -143,7 +143,7 @@ describe('composeArtifactsConfig', () => {
       globalConfig: {},
       cliConfig: {},
     })).toMatchObject({
-      rootDir: '.artifacts/',
+      rootDir: '.artifacts',
     });
   });
 

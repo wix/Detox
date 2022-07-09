@@ -9,26 +9,41 @@ const temporary = require('./artifacts/utils/temporaryPath');
 const { PrimarySessionState } = require('./ipc/state');
 const symbols = require('./symbols');
 
+const { $cleanup, $init, $initWorker, $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
+
+const _finalizeLogs = Symbol('finalizeLogs');
+const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
+const _ipcServer = Symbol('ipcServer');
+const _resetLockFile = Symbol('resetLockFile');
+const _wss = Symbol('wss');
+
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
     super();
 
-    this._wss = null;
-    this._globalLifecycleHandler = null;
-
+    this[_wss] = null;
+    this[_globalLifecycleHandler] = null;
     /**
      * @type {import('./ipc/IPCServer') | null}
-     * @private
      */
-    this._ipcServer = null;
+    this[_ipcServer] = null;
   }
 
+  //#region Internal members
+  [symbols.reportFailedTests] = async (testFilePaths) => {
+    if (this[_ipcServer]) {
+      this[_ipcServer].onFailedTests({ testFilePaths });
+    }
+  };
+  //#endregion
+
+  //#region Protected members
   /**
    * @protected
    * @override
    * @return {PrimarySessionState}
    */
-  _restoreSessionState() {
+  [$restoreSessionState]() {
     return new PrimarySessionState({
       detoxConfigSnapshotPath: temporary.for.json(),
       detoxIPCServer: `primary-${process.pid}`,
@@ -39,91 +54,103 @@ class DetoxPrimaryContext extends DetoxContext {
    * @override
    * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
    */
-  async _doInit(opts) {
+  async [$init](opts) {
     const configuration = require('./configuration');
     const detoxConfig = await configuration.composeDetoxConfig({
       argv: opts.argv,
       testRunnerArgv: opts.testRunnerArgv,
     });
 
-    this._sessionState.patch({ detoxConfig });
+    this[$sessionState].patch({ detoxConfig });
 
     const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = detoxConfig;
-    await this._logger.setConfig(loggerConfig);
+    await this[$logger].setConfig(loggerConfig);
 
     this.trace.begin({
       cat: 'lifecycle',
-      args: this._sessionState,
+      args: this[$sessionState],
       name: process.argv.slice(1).join(' '),
     });
 
     const IPCServer = require('./ipc/IPCServer');
-    this._ipcServer = new IPCServer({
-      sessionState: this._sessionState,
-      logger: this._logger,
+    this[_ipcServer] = new IPCServer({
+      sessionState: this[$sessionState],
+      logger: this[$logger],
     });
 
-    await this._ipcServer.init();
+    await this[_ipcServer].init();
 
     const environmentFactory = require('./environmentFactory');
-    this._globalLifecycleHandler = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
+    this[_globalLifecycleHandler] = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
 
-    if (this._globalLifecycleHandler) {
-      await this._globalLifecycleHandler.globalInit();
+    if (this[_globalLifecycleHandler]) {
+      await this[_globalLifecycleHandler].globalInit();
     }
 
     if (!behaviorConfig.init.keepLockFile) {
-      await this._resetLockFile();
+      await this[_resetLockFile]();
     }
 
     const DetoxServer = require('./server/DetoxServer');
-    this._wss = new DetoxServer({
+    this[_wss] = new DetoxServer({
       port: sessionConfig.server
         ? new URL(sessionConfig.server).port
         : 0,
       standalone: false,
     });
 
-    await this._wss.open();
+    await this[_wss].open();
 
     if (!sessionConfig.server) {
-      sessionConfig.server = `ws://localhost:${this._wss.port}`;
+      sessionConfig.server = `ws://localhost:${this[_wss].port}`;
     }
 
-    await fs.writeFile(this._sessionState.detoxConfigSnapshotPath, this._sessionState.stringify());
-    process.env.DETOX_CONFIG_SNAPSHOT_PATH = this._sessionState.detoxConfigSnapshotPath;
+    await fs.writeFile(this[$sessionState].detoxConfigSnapshotPath, this[$sessionState].stringify());
+    process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[$sessionState].detoxConfigSnapshotPath;
     // TODO: think about signal-exit and cleaning up the logs
   }
 
-  async _doCleanup() {
-    if (this._globalLifecycleHandler) {
-      await this._globalLifecycleHandler.globalCleanup();
-      this._globalLifecycleHandler = null;
+  /**
+   * @override
+   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
+   */
+  async [$initWorker](opts) {
+    await super[$initWorker](opts);
+    this[$sessionState].workerId = opts.workerId;
+    this[_ipcServer].onRegisterWorker({ workerId: opts.workerId });
+  }
+
+  async [$cleanup]() {
+    if (this[_globalLifecycleHandler]) {
+      await this[_globalLifecycleHandler].globalCleanup();
+      this[_globalLifecycleHandler] = null;
     }
 
-    if (this._wss) {
-      await this._wss.close();
-      this._wss = null;
+    if (this[_wss]) {
+      await this[_wss].close();
+      this[_wss] = null;
     }
 
-    const logFiles = [this._logger.config.file];
-    if (this._ipcServer) {
-      logFiles.push(...this._ipcServer.sessionState.logFiles);
-      await this._ipcServer.dispose();
-      this._ipcServer = null;
+    const logFiles = [this[$logger].config.file];
+    if (this[_ipcServer]) {
+      logFiles.push(...this[_ipcServer].sessionState.logFiles);
+      await this[_ipcServer].dispose();
+      this[_ipcServer] = null;
     }
 
-    await fs.remove(this._sessionState.detoxConfigSnapshotPath);
+    await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
 
     try {
       this.trace.end({ cat: 'lifecycle' });
-      await this._finalizeLogs(logFiles.filter(f => f && fs.existsSync(f)));
+      await this[_finalizeLogs](logFiles.filter(f => f && fs.existsSync(f)));
     } catch (err) {
-      this._logger.error({ err }, 'Encountered an error while merging the process logs:');
+      this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
     }
   }
+  //#endregion
 
-  async _finalizeLogs(logs) {
+  //#region Private members
+  async[_finalizeLogs](logs) {
     const streamUtils = require('./utils/streamUtils');
 
     if (!logs || logs.length === 0) {
@@ -146,7 +173,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
       await Promise.all([
         pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
-        pipe(mergedStream, streamUtils.debugStream(this._logger.config.options), out2Stream),
+        pipe(mergedStream, streamUtils.debugStream(this[$logger].config.options), out2Stream),
         pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
       ]);
     }
@@ -154,7 +181,7 @@ class DetoxPrimaryContext extends DetoxContext {
     await Promise.all(logs.map(filepath => fs.remove(filepath)));
   }
 
-  async _resetLockFile() {
+  async[_resetLockFile]() {
     const DeviceRegistry = require('./devices/DeviceRegistry');
 
     const deviceType = this[symbols.config].deviceConfig.type;
@@ -176,12 +203,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
     }
   }
-
-  [symbols.reportFailedTests] = async (testFilePaths) => {
-    if (this._ipcServer) {
-      this._ipcServer.onFailedTests({ testFilePaths });
-    }
-  };
+  //#endregion
 }
 
 module.exports = DetoxPrimaryContext;

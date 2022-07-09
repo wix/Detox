@@ -1,19 +1,13 @@
-const getWorkerId = require('../../../../../../utils/getWorkerId');
+const session = () => require('../../../../../../../internals').session;
 
 class GenyInstanceNaming {
-  constructor(nowProvider = () => Date.now()) {
-    // TODO: remove this dependency
-    this.uniqueSessionId = Number(process.env.DETOX_START_TIMESTAMP);
-    this.nowProvider = nowProvider;
-    this._workerId = getWorkerId() || (this.nowProvider() - this.uniqueSessionId);
-  }
-
   generateName() {
-    return `Detox-${this.uniqueSessionId}.${this._workerId}`;
+    const { id, workerId } = session();
+    return `Detox-${id}.${workerId}`;
   }
 
   isFamilial(name) {
-    return name.startsWith(`Detox-${this.uniqueSessionId}.${this._workerId}`);
+    return name === this.generateName();
   }
 }
 

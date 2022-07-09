@@ -1,5 +1,7 @@
 const cycle = require('json-cycle');
 
+const uuid = require('../utils/uuid');
+
 class SessionState {
   patch(state) {
     Object.assign(this, state);
@@ -36,12 +38,14 @@ class SessionState {
 }
 
 class SecondarySessionState extends SessionState {
-  constructor({ detoxConfigSnapshotPath = '', detoxConfig = null, detoxIPCServer = '', workersCount = 0 }) {
+  constructor({ id = uuid.UUID(), detoxConfigSnapshotPath = '', detoxConfig = null, detoxIPCServer = '', workerId = undefined, workersCount = 0 }) {
     super();
 
+    this.id = id;
     this.detoxConfigSnapshotPath = detoxConfigSnapshotPath;
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
+    this.workerId = workerId;
     this.workersCount = workersCount;
   }
 }

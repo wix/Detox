@@ -2,17 +2,13 @@ const { IPC } = require('node-ipc');
 
 const { DetoxInternalError } = require('../errors');
 
-const { SecondarySessionState } = require('./state');
-
 class IPCClient {
-  constructor({ logger, id, serverId, workerId }) {
-    this._state = new SecondarySessionState({});
+  constructor({ id, logger, state }) {
+    this._id = id;
     /** @type {import('../logger/DetoxLogger')} logger */
     this._logger = logger.child({ __filename, cat: 'ipc' });
-
-    this._id = id;
-    this._serverId = serverId;
-    this._workerId = workerId;
+    /** @type {import('./state').SecondarySessionState} */
+    this._state = state;
 
     this._client = null;
     this._serverConnection = null;
@@ -37,13 +33,22 @@ class IPCClient {
     this._serverConnection = null;
 
     if (this._client) {
-      this._client.disconnect(this._serverId);
+      this._client.disconnect(this.serverId);
       this._client = null;
     }
   }
 
   get sessionState() {
     return this._state;
+  }
+
+  get serverId() {
+    return this.sessionState.detoxIPCServer;
+  }
+
+  async registerWorker(workerId) {
+    this._state.workerId = workerId;
+    await this._emit('registerWorker', { workerId });
   }
 
   /**
@@ -54,7 +59,7 @@ class IPCClient {
   }
 
   async _connectToServer() {
-    const serverId = this._serverId;
+    const serverId = this.serverId;
 
     this._serverConnection = await new Promise((resolve, reject) => {
       this._client.connectTo(serverId, (client) => {
@@ -71,7 +76,6 @@ class IPCClient {
   async _registerContext() {
     const sessionState = await this._emit('registerContext', {
       id: this._id,
-      workerId: this._workerId,
       logFile: this._logger.config.file,
     });
 
@@ -80,7 +84,7 @@ class IPCClient {
 
   async _emit(event, payload) {
     if (!this._serverConnection) {
-      throw new DetoxInternalError(`IPC server ${this._serverId} has unexpectedly disconnected.`);
+      throw new DetoxInternalError(`IPC server ${this.serverId} has unexpectedly disconnected.`);
     }
 
     return new Promise((resolve, reject) => {

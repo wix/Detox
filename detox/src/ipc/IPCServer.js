@@ -30,6 +30,7 @@ class IPCServer {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
+      this._ipc.server.on('registerWorker', this.onRegisterWorker.bind(this));
       this._ipc.server.on('failedTests', this.onFailedTests.bind(this));
       this._ipc.server.start();
     });
@@ -46,7 +47,7 @@ class IPCServer {
     });
   }
 
-  onRegisterContext({ id, logFile, workerId }, socket) {
+  onRegisterContext({ id, logFile }, socket) {
     this._sessionState.contexts.push(id);
 
     if (logFile && !this._sessionState.logFiles.includes(logFile)) {
@@ -54,8 +55,14 @@ class IPCServer {
     }
 
     this._ipc.server.emit(socket, 'registerContextDone', {});
+  }
 
-    if (workerId && workerId > this._sessionState.workersCount) {
+  onRegisterWorker({ workerId }, socket) {
+    if (socket) {
+      this._ipc.server.emit(socket, 'registerWorkerDone', {});
+    }
+
+    if (workerId > this._sessionState.workersCount) {
       const workersCount = this._sessionState.workersCount = workerId;
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }

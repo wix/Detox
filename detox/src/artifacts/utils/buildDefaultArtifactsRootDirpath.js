@@ -4,13 +4,10 @@ const getTimeStampString = require('./getTimeStampString');
 
 function buildDefaultRootForArtifactsRootDirpath(configuration, rootDir) {
   if (rootDir.endsWith('/') || rootDir.endsWith('\\')) {
-    return rootDir;
+    return rootDir.slice(0, -1);
   }
 
-  // TODO: remove this dependency
-  const seed = Number(process.env.DETOX_START_TIMESTAMP || String(Date.now()));
-  const subdir = `${configuration}.${getTimeStampString(new Date(seed))}`;
-  return path.join(rootDir, subdir);
+  return path.join(rootDir, `${configuration}.${getTimeStampString(new Date())}`);
 }
 
 module.exports = buildDefaultRootForArtifactsRootDirpath;
