@@ -1,5 +1,11 @@
 const { init, config } = require('detox/internals');
 
+const maxWorkersMap = {
+  'android.emulator': 3,
+  'android.genycloud': 5,
+  'ios.simulator': 2,
+};
+
 module.exports = async () => {
   await init();
 
@@ -19,9 +25,7 @@ module.exports = async () => {
       : ['<rootDir>/runners/jest/reporter', '<rootDir>/test/node_modules/jest-junit'],
     'verbose': true,
     'bail': false,
-    'maxWorkers': process.env.CI ? (
-      config.deviceConfig.type === 'android.genycloud' ? 3 : 2
-    ) : 1,
+    'maxWorkers': process.env.CI ? maxWorkersMap[config.deviceConfig.type] || 1 : 1,
     'collectCoverageFrom': [
       'src/**/*.js',
       '!**/__test/**',
