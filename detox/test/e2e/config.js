@@ -1,7 +1,7 @@
-const { init, config, status } = require('detox/internals');
+const { init, config } = require('detox/internals');
 
 module.exports = async () => {
-  if (status() === 'inactive') await init();
+  await init();
 
   return {
     'rootDir': '../..',

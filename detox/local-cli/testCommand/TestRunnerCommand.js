@@ -164,7 +164,7 @@ class TestRunnerCommand {
       ...unparse($0argv),
       ...unparse(argv),
       ...unparse({ _: [...passthrough, ...specs] }),
-    ];
+    ].map(String);
   }
 }
 

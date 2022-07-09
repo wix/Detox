@@ -2,7 +2,8 @@
 const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
-const detox = require('../../../internals');
+const detox = require('../../..');
+const detoxInternals = require('../../../internals');
 const { DetoxError } = require('../../../src/errors');
 const Timer = require('../../../src/utils/Timer');
 
@@ -51,7 +52,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `setting up Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await detox.init({
+        await detoxInternals.init({
           global: this.global,
           workerId: +process.env.JEST_WORKER_ID,
         });
@@ -99,7 +100,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `tearing down Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await detox.cleanup();
+        await detoxInternals.cleanup();
       },
     });
   }

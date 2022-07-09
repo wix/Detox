@@ -10,8 +10,6 @@ declare global {
        */
       init(options?: Partial<DetoxInitOptions>): Promise<void>;
 
-      status(): 'inactive' | 'init' | 'active' | 'cleanup';
-
       /**
        * The cleanup phase should happen after all the tests have finished.
        * This is the phase where the Detox server shuts down.
