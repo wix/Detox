@@ -74,15 +74,9 @@ dependencies {
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
-// refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
-//       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
 dependencies {
-    def enableHermes = project.ext.react.get('enableHermes', false)
-    if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/"
-        debugImplementation files(hermesPath + 'hermes-debug.aar')
-        releaseImplementation files(hermesPath + 'hermes-release.aar')
-    } else {
-        implementation 'org.webkit:android-jsc:+'
-    }
+    // Use Hermes as our JS engine
+    def hermesPath = "../../node_modules/hermes-engine/android"
+    debugImplementation files("$hermesPath/hermes-debug.aar")
+    releaseImplementation files("$hermesPath/hermes-release.aar")
 }
