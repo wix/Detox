@@ -267,14 +267,28 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    const result = await childProcess.execWithRetriesAndLogs(`which fbsimctl`, { retries: 1 });
-    if (_.get(result, 'stdout')) {
-      await childProcess.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, { retries: 1 });
-    } else {
-      throw new DetoxRuntimeError(`setLocation currently supported only through fbsimctl.
-      Install fbsimctl using:
-      "brew tap facebook/fb && export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl"`);
+    try {
+      // Setting a new location is enabled only when the Simulator app is running.
+      await this._openSimulatorApp(udid);
+
+      await this._execAppleSimUtils({ args: `--byId ${udid} --setLocation "[${lat}, ${lon}]"` });
+    } catch (e) {
+      const stderr = e && e.stderr || '';
+
+      if (stderr.match(/Unknown command line option.*--setLocation/)) {
+        throw new DetoxRuntimeError({
+          message: `Failed to set the location (${lat}, ${lon}) on the device ${udid}.`
+          + '\nYour current "applesimutils" version needs to be upgraded to the latest version.',
+          hint: 'Try running:\n  brew update && brew upgrade applesimutils',
+        });
+      }
+
+      throw e;
     }
+  }
+
+  async _openSimulatorApp(udid) {
+    await childProcess.execWithRetriesAndLogs(`open -a Simulator --args -CurrentDeviceUDID ${udid}`, { retries: 0 });
   }
 
   async resetContentAndSettings(udid) {
@@ -306,7 +320,26 @@ class AppleSimUtils {
 
   async _execAppleSimUtils(options) {
     const bin = `applesimutils`;
-    return await childProcess.execWithRetriesAndLogs(bin, options);
+    try {
+      return await childProcess.execWithRetriesAndLogs(bin, options);
+    } catch (e) {
+      const stderr = e && e.stderr || '';
+
+      if (stderr.match(/applesimutils: command not found/m)) {
+        throw new DetoxRuntimeError({
+          message: `Detox failed to find "applesimutils" installed on the computer.\n`
+          + 'It is impossible to run tests on iOS simulators without this utility.',
+          hint: [
+            'To install "applesimutils", run:',
+            '  brew tap wix/brew',
+            '  brew install applesimutils',
+          ].join('\n'),
+        });
+      }
+
+      throw e;
+
+    }
   }
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {

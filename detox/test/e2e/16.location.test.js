@@ -1,45 +1,40 @@
-const exec = require('child-process-promise').exec;
+const { expectToThrow } = require('./utils/custom-expects');
+const driver = require('./drivers/location-driver').locationScreenDriver;
 
-//TODO: Ignoring the test in CI until fbsimctl supports Xcode 9
-async function isFbsimctlInstalled() {
-  try {
-    await exec(`which fbsimctl`);
-    return true;
-  } catch (e) {
-    console.log(`setLocation only works through fbsimctl currently`);
-    return false;
-  }
-}
+// Skipped on Android because there is no Android permissions support yet
+describe(':ios: location request', () => {
+  it('should show nothing in the app (permission request dialog)', async () => {
+    await device.launchApp({ permissions: { location: 'unset' } });
 
-describe('location', () => {
-  const lat = -80.125;
-  const lon = 66.5;
+    await driver.openScreen();
 
-  // Skipped on Android because there is no Android permissions support yet
-  it(':ios: Location should be unavailable', async () => {
-    if (!await isFbsimctlInstalled()) {
-      return;
-    }
-    await device.relaunchApp({ permissions: { location: 'never' } });
-    await element(by.text('Location')).tap();
-    await element(by.id('getLocationButton')).tap();
-    await expect(element(by.id('error'))).toBeVisible();
+    await expect(driver.errorElement).not.toBeVisible();
+    await expectToThrow(() => driver.latitude.waitUntilVisible());
   });
 
-  it('Should accept a location', async () => {
-    const isIOS = device.getPlatform() === 'ios';
+  it('should err when location permission was set to `never`', async () => {
+    await device.launchApp({ permissions: { location: 'never' } });
 
-    if (isIOS && !await isFbsimctlInstalled()) {
-      return;
-    }
+    await driver.openScreen();
+    await driver.tapOnGetLocation();
 
-    await device.relaunchApp({ permissions: { location: 'always' } });
-    await device.setLocation(lat, lon);
-    await element(by.text('Location')).tap();
-    await element(by.id('getLocationButton')).tap();
-    await waitFor(element(by.text(`Latitude: ${lat}`))).toBeVisible().withTimeout(5500);
+    await expect(driver.errorElement).toHaveText('User denied access to location services.');
+  });
 
-    await expect(element(by.text(`Latitude: ${lat}`))).toBeVisible();
-    await expect(element(by.text(`Longitude: ${lon}`))).toBeVisible();
+  it('should allow to get and set location when location permission is set to `always`', async () => {
+    await device.launchApp({ permissions: { location: 'always' } });
+    await driver.expectLocationToBeAvailable();
+  });
+
+  it('should allow to get and set location when location permission is set to `inuse`', async () => {
+    await device.launchApp({ permissions: { location: 'inuse' } });
+    await driver.expectLocationToBeAvailable();
+  });
+});
+
+describe(':android: location permission granted from manifest', () => {
+  it('should allow to get and set location', async () => {
+    await device.launchApp();
+    await driver.expectLocationToBeAvailable();
   });
 });
