@@ -1,9 +1,6 @@
 function current() {
   if (process.env.DETOX_CONFIG_SNAPSHOT_PATH) {
-    const secondary = require('./secondary');
-    const { init } = require('../symbols');
-    secondary[init]();
-    return secondary;
+    return require('./secondary');
   } else {
     return require('./primary');
   }

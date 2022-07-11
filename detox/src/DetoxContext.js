@@ -5,7 +5,6 @@ const temporaryPath = require('./artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('./errors');
 const DetoxLogger = require('./logger/DetoxLogger');
 const DetoxTracer = require('./logger/DetoxTracer');
-const customConsoleLogger = require('./logger/customConsoleLogger');
 const symbols = require('./symbols');
 
 const $cleanup = Symbol('cleanup');
@@ -194,10 +193,7 @@ class DetoxContext {
 
   [_injectToSandbox](global) {
     global['__detox__'] = this;
-
-    if (this[symbols.config].loggerConfig.overrideConsole) {
-      customConsoleLogger.overrideConsoleMethods(global.console, this[$logger]);
-    }
+    this[$logger].overrideConsole(global);
   }
 
   async [_cleanupFn]() {

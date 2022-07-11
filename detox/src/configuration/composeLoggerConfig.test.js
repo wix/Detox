@@ -19,7 +19,7 @@ describe('composeLoggerConfig', () => {
   it('should return a default behavior if nothing is set', () => {
     expect(composed()).toEqual({
       level: 'info',
-      overrideConsole: true,
+      overrideConsole: 'sandbox',
       options: {
         showDate: expect.any(Function),
         showLoggerName: true,
@@ -43,7 +43,7 @@ describe('composeLoggerConfig', () => {
       const config = description.startsWith('local') ? localConfig : globalConfig;
       config.logger = {
         level: 'debug',
-        overrideConsole: false,
+        overrideConsole: 'all',
         options: {
           showLoggerName: false,
           prefixers: {
@@ -56,7 +56,7 @@ describe('composeLoggerConfig', () => {
     it('should apply them upon the defaults', () => {
       expect(composed()).toEqual({
         level: 'debug',
-        overrideConsole: false,
+        overrideConsole: 'all',
         options: expect.objectContaining({
           showLoggerName: false,
           showPid: true,
@@ -79,7 +79,7 @@ describe('composeLoggerConfig', () => {
     it('should apply them upon the defaults', () => {
       expect(composed()).toEqual({
         level: 'trace',
-        overrideConsole: false,
+        overrideConsole: 'none',
         options: expect.objectContaining({
           colors: false,
           showPid: true,
@@ -99,7 +99,7 @@ describe('composeLoggerConfig', () => {
   test('configs should have priority: CLI > local > global > defaults', () => {
     globalConfig.logger = {
       level: 'warn',
-      overrideConsole: true,
+      overrideConsole: 'none',
       options: {
         colors: {},
         indent: '\t',
@@ -109,7 +109,7 @@ describe('composeLoggerConfig', () => {
 
     localConfig.logger = {
       level: 'error',
-      overrideConsole: true,
+      overrideConsole: 'sandbox',
       options: {
         colors: { 40: 'yellow' },
         showDate: jest.fn(),
@@ -119,12 +119,12 @@ describe('composeLoggerConfig', () => {
     cliConfig = {
       loglevel: 'fatal',
       noColor: true,
-      useCustomLogger: false,
+      useCustomLogger: true,
     };
 
     expect(composed()).toEqual({
       level: 'fatal',
-      overrideConsole: false,
+      overrideConsole: 'all',
       options: expect.objectContaining({
         colors: false,
         indent: '\t',

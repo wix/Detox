@@ -63,7 +63,7 @@ declare global {
     };
 
     type RuntimeConfig = Readonly<{
-      reconfigurationName: string;
+      configurationName: string;
 
       appsConfig: Record<string, Readonly<Detox.DetoxAppConfig>>;
       artifactsConfig: Detox.DetoxArtifactsConfig;

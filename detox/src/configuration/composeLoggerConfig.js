@@ -15,7 +15,7 @@ function composeLoggerConfig(opts) {
   return _.merge(
     {
       level: 'info',
-      overrideConsole: true,
+      overrideConsole: 'sandbox',
       options: {
         ...defaultOptions,
         prefixers: {
@@ -37,7 +37,7 @@ function adaptCLI(cliConfig) {
   }
 
   if (cliConfig.useCustomLogger !== undefined) {
-    result.overrideConsole = cliConfig.useCustomLogger;
+    result.overrideConsole = cliConfig.useCustomLogger ? 'all' : 'none';
   }
 
   if (cliConfig.noColor) {

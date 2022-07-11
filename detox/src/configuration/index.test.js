@@ -133,7 +133,7 @@ describe('composeDetoxConfig', () => {
         }),
         loggerConfig: {
           level: 'info',
-          overrideConsole: true,
+          overrideConsole: 'sandbox',
           options: expect.objectContaining({}),
         },
         runnerConfig: {

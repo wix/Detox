@@ -24,7 +24,7 @@ class DetoxLogger {
     /** @type {Detox.DetoxLoggerConfig & PrivateLoggerConfig} */
     this._config = {
       level: 'info',
-      overrideConsole: false,
+      overrideConsole: 'none',
       options: _.cloneDeep(DetoxLogger.defaultOptions),
 
       ...config,
@@ -41,6 +41,8 @@ class DetoxLogger {
     this.info = this._forward.bind(this, 'info');
     this.debug = this._forward.bind(this, 'debug');
     this.trace = this._forward.bind(this, 'trace');
+
+    this.overrideConsole();
   }
 
   /**
@@ -66,9 +68,7 @@ class DetoxLogger {
     oldStream.stream.end();
     this._bunyan.addStream(this._createDebugStream());
 
-    if (this._config.overrideConsole) {
-      customConsoleLogger.overrideConsoleMethods(console, this);
-    }
+    this.overrideConsole();
   }
 
   /**
@@ -128,6 +128,17 @@ class DetoxLogger {
         out: passthrough,
       }),
     };
+  }
+
+  overrideConsole(sandbox) {
+    const option = this._config.overrideConsole;
+    if (option === 'none') {
+      return;
+    }
+
+    if ((option === 'sandbox' && sandbox) || option === 'all') {
+      customConsoleLogger.overrideConsoleMethods((sandbox || global).console, this);
+    }
   }
 
   /** @type {bunyanDebugStream.BunyanDebugStreamOptions} */
