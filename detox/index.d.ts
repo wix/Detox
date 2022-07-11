@@ -303,6 +303,20 @@ declare global {
 
             readonly web: WebFacade;
 
+            readonly DetoxConstants: {
+                userNotificationTriggers: {
+                    push: 'push';
+                    calendar: 'calendar';
+                    timeInterval: 'timeInterval';
+                    location: 'location';
+                };
+                userActivityTypes: {
+                    searchableItem: string;
+                    browsingWeb: string;
+                },
+                searchableItemActivityIdentifier: string;
+            };
+
             /**
              * Detox logger instance. Can be used for saving user logs to the general log file.
              */

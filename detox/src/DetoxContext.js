@@ -1,5 +1,6 @@
 const funpermaproxy = require('funpermaproxy');
 
+const DetoxConstants = require('./DetoxConstants');
 const temporaryPath = require('./artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('./errors');
 const DetoxLogger = require('./logger/DetoxLogger');
@@ -66,6 +67,10 @@ class DetoxContext {
   by = funpermaproxy(() => this[symbols.worker].by);
 
   web = funpermaproxy.callable(() => this[symbols.worker].web);
+
+  get DetoxConstants() {
+    return DetoxConstants;
+  }
 
   /**
    * @returns {Detox.Logger}
