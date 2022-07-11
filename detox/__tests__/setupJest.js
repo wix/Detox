@@ -1,4 +1,5 @@
 jest.mock('proper-lockfile');
+jest.mock('../src/logger/DetoxLogger');
 
 const path = require('path');
 
