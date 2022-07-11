@@ -10,16 +10,21 @@ const { shortFormat } = require('../utils/dateUtils');
 
 const customConsoleLogger = require('./customConsoleLogger');
 
+/**
+ * @typedef PrivateLoggerConfig
+ * @property {string} [file]
+ */
+
 class DetoxLogger {
   /**
-   * @param {Detox.DetoxLoggerConfig} [config]
+   * @param {Detox.DetoxLoggerConfig & PrivateLoggerConfig} [config]
    * @param {object} [context]
    * @param {bunyan} [bunyanLogger]
    */
   constructor(config, context, bunyanLogger) {
-    this._file = config ? temporaryPath.for.jsonl() : undefined;
-    /** @type {Detox.DetoxLoggerConfig} */
+    // IMPORTANT: all the loggers should share the same object instance of this._config
     this._config = config || {
+      file: undefined,
       level: 'info',
       overrideConsole: 'none',
       options: {
@@ -61,7 +66,7 @@ class DetoxLogger {
    * @internal
    */
   get file() {
-    return this._file;
+    return this._config.file;
   }
 
   /**
@@ -75,11 +80,11 @@ class DetoxLogger {
     oldStream.stream.end();
     this._bunyan.addStream(this._createDebugStream());
 
-    if (!this._file) {
-      this._file = temporaryPath.for.jsonl();
+    if (!this._config.file) {
+      this._config.file = temporaryPath.for.jsonl();
       this._bunyan.addStream({
         level: 'trace',
-        path: this._file,
+        path: this._config.file,
       });
     }
 
@@ -121,10 +126,10 @@ class DetoxLogger {
     /** @type {bunyan.Stream[]} */
     const streams = [this._createDebugStream()];
 
-    if (this._file) {
+    if (this._config.file) {
       streams.push({
         level: 'trace',
-        path: this._file,
+        path: this._config.file,
       });
     }
 
