@@ -76,7 +76,7 @@ class IPCClient {
   async _registerContext() {
     const sessionState = await this._emit('registerContext', {
       id: this._id,
-      logFile: this._logger.config.file,
+      logFile: this._logger.file,
     });
 
     this._state.patch(sessionState);

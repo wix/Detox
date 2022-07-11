@@ -5,6 +5,7 @@ const tempfile = require('tempfile');
 module.exports = {
   for: {
     json: () => tempfile('.detox.json'),
+    jsonl: () => tempfile('.detox.jsonl'),
     png: () => tempfile('.detox.png'),
     log: () => tempfile('.detox.log'),
     mp4: () => tempfile('.detox.mp4'),

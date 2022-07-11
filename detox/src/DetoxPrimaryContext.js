@@ -56,10 +56,7 @@ class DetoxPrimaryContext extends DetoxContext {
    */
   async [$init](opts) {
     const configuration = require('./configuration');
-    const detoxConfig = await configuration.composeDetoxConfig({
-      argv: opts.argv,
-      testRunnerArgv: opts.testRunnerArgv,
-    });
+    const detoxConfig = await configuration.composeDetoxConfig(opts);
 
     this[$sessionState].patch({ detoxConfig });
 
@@ -92,21 +89,24 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     const DetoxServer = require('./server/DetoxServer');
-    this[_wss] = new DetoxServer({
-      port: sessionConfig.server
-        ? new URL(sessionConfig.server).port
-        : 0,
-      standalone: false,
-    });
+    if (sessionConfig.autoStart) {
+      this[_wss] = new DetoxServer({
+        port: sessionConfig.server
+          ? new URL(sessionConfig.server).port
+          : 0,
+        standalone: false,
+      });
 
-    await this[_wss].open();
+      await this[_wss].open();
+    }
 
-    if (!sessionConfig.server) {
+    if (!sessionConfig.server && this[_wss]) {
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
     }
 
     await fs.writeFile(this[$sessionState].detoxConfigSnapshotPath, this[$sessionState].stringify());
     process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[$sessionState].detoxConfigSnapshotPath;
+
     // TODO: think about signal-exit and cleaning up the logs
   }
 
@@ -132,7 +132,10 @@ class DetoxPrimaryContext extends DetoxContext {
       this[_wss] = null;
     }
 
-    const logFiles = [this[$logger].config.file];
+    const logFiles = [];
+    if (this[$logger].file) {
+      logFiles.push(this[$logger].file);
+    }
     if (this[_ipcServer]) {
       logFiles.push(...this[_ipcServer].sessionState.logFiles);
       await this[_ipcServer].dispose();
@@ -140,6 +143,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
+    delete process.env.DETOX_CONFIG_SNAPSHOT_PATH;
 
     try {
       this.trace.end({ cat: 'lifecycle' });

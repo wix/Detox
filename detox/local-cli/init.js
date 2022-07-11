@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const log = require('../src/utils/logger').child({ __filename });
+const detox = require('..');
 
 const jestTemplates = require('./templates/jest');
 
@@ -43,7 +43,7 @@ function createFile(filename, content) {
 
   try {
     fs.writeFileSync(filename, content);
-    log.info(`Created a file at path: ${filename}`);
+    detox.log.info(`Created a file at path: ${filename}`);
   } catch (err) {
     reportError({ err }, `Failed to create a file at path: ${filename}`);
   }
@@ -107,6 +107,6 @@ function createDefaultConfigurations() {
 }
 
 function reportError(...args) {
-  log.error(...args);
+  detox.log.error(...args);
   exitCode = 1;
 }

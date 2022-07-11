@@ -5,29 +5,29 @@ const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const _ = require('lodash');
 
+const temporaryPath = require('../artifacts/utils/temporaryPath');
 const { shortFormat } = require('../utils/dateUtils');
 
 const customConsoleLogger = require('./customConsoleLogger');
 
-/**
- * @typedef PrivateLoggerConfig
- * @property {string} [file]
- */
-
 class DetoxLogger {
   /**
-   * @param {Detox.DetoxLoggerConfig | PrivateLoggerConfig} [config]
+   * @param {Detox.DetoxLoggerConfig} [config]
    * @param {object} [context]
    * @param {bunyan} [bunyanLogger]
    */
   constructor(config, context, bunyanLogger) {
-    /** @type {Detox.DetoxLoggerConfig & PrivateLoggerConfig} */
-    this._config = {
+    this._file = config ? temporaryPath.for.jsonl() : undefined;
+    /** @type {Detox.DetoxLoggerConfig} */
+    this._config = config || {
       level: 'info',
       overrideConsole: 'none',
-      options: _.cloneDeep(DetoxLogger.defaultOptions),
-
-      ...config,
+      options: {
+        showDate: true,
+        showLoggerName: true,
+        showPid: true,
+        showMetadata: false,
+      },
     };
 
     /** @type {object | undefined} */
@@ -58,15 +58,30 @@ class DetoxLogger {
   }
 
   /**
+   * @internal
+   */
+  get file() {
+    return this._file;
+  }
+
+  /**
    * @param config
    */
   async setConfig(config) {
     _.merge(this._config, config);
 
     // @ts-ignore
-    const [oldStream] = this._bunyan.streams.splice(1, 1);
+    const [oldStream] = this._bunyan.streams.splice(0, 1);
     oldStream.stream.end();
     this._bunyan.addStream(this._createDebugStream());
+
+    if (!this._file) {
+      this._file = temporaryPath.for.jsonl();
+      this._bunyan.addStream({
+        level: 'trace',
+        path: this._file,
+      });
+    }
 
     this.overrideConsole();
   }
@@ -106,10 +121,10 @@ class DetoxLogger {
     /** @type {bunyan.Stream[]} */
     const streams = [this._createDebugStream()];
 
-    if (this._config.file) {
-      streams.unshift({
+    if (this._file) {
+      streams.push({
         level: 'trace',
-        path: this._config.file,
+        path: this._file,
       });
     }
 

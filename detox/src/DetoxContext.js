@@ -1,7 +1,6 @@
 const funpermaproxy = require('funpermaproxy');
 
 const DetoxConstants = require('./DetoxConstants');
-const temporaryPath = require('./artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('./errors');
 const DetoxLogger = require('./logger/DetoxLogger');
 const DetoxTracer = require('./logger/DetoxTracer');
@@ -34,10 +33,7 @@ class DetoxContext {
      * @protected
      * @type {DetoxLogger & Detox.Logger}
      */
-    this[$logger] = new DetoxLogger({
-      ...loggerConfig,
-      file: temporaryPath.for.log(),
-    });
+    this[$logger] = new DetoxLogger(loggerConfig);
     /** @protected */
     this[$tracer] = DetoxTracer.default({
       logger: this[$logger],

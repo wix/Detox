@@ -46,7 +46,7 @@ declare global {
       cwd: string;
       argv: Record<string, unknown>;
       testRunnerArgv: Record<string, unknown>;
-      overrides: Partial<Detox.DetoxConfig>;
+      override: Partial<Detox.DetoxConfig>;
 
       global: NodeJS.Global;
       workerId: number;
