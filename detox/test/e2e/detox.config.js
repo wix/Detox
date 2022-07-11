@@ -14,7 +14,7 @@ const config = {
     args: {
       $0: 'nyc jest',
       config: 'e2e/jest.config.js',
-      _: ['e2e']
+      _: ['e2e/']
     },
     retries: process.env.CI ? 1 : undefined,
     jest: {
