@@ -115,9 +115,10 @@ class DetoxPrimaryContext extends DetoxContext {
    * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
    */
   async [$initWorker](opts) {
-    await super[$initWorker](opts);
     this[$sessionState].workerId = opts.workerId;
     this[_ipcServer].onRegisterWorker({ workerId: opts.workerId });
+
+    await super[$initWorker](opts);
   }
 
   async [$cleanup]() {

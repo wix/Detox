@@ -14,7 +14,7 @@ module.exports = async () => {
     'testEnvironment': './test/e2e/environment.js',
     'testRunner': './test/node_modules/jest-circus/runner',
     'testMatch': [
-      '<rootDir>/test/e2e/**/*.test.{js,ts}'
+      '<rootDir>/test/{e2e,e2e-unhappy}/**/*.test.{js,ts}',
     ],
     'setupFilesAfterEnv': ['./test/e2e/setup.js'],
     'globalSetup': './test/e2e/global-setup.js',

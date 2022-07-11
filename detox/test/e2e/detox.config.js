@@ -13,7 +13,8 @@ const config = {
   testRunner: {
     args: {
       $0: 'nyc jest',
-      config: 'e2e/config.js',
+      config: 'e2e/jest.config.js',
+      _: ['e2e']
     },
     retries: process.env.CI ? 1 : undefined,
     jest: {

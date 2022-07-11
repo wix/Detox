@@ -47,8 +47,8 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   async [$initWorker](opts) {
-    await super[$initWorker](opts);
     await this[_ipcClient].registerWorker(opts.workerId);
+    await super[$initWorker](opts);
   }
 
   async [$cleanup]() {

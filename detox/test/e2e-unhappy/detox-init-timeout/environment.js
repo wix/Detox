@@ -3,6 +3,8 @@ const {
   SpecReporter,
   WorkerAssignReporter,
 } = require('detox/runners/jest');
+const { device } = require('detox');
+const detoxInternals = require('detox/internals');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {
@@ -15,21 +17,27 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
     });
   }
 
+  /** @override */
   async initDetox() {
-    console.log('Making problems with server');
+    await super.initDetox();
 
-    const instance = await this.detox.init(undefined, { launchApp: false });
-    const [detoxConnection] = [...instance._server._sessionManager._connectionsByWs.values()];
-    const sendActionOriginal = detoxConnection.sendAction;
-    detoxConnection.sendAction = function(action) {
-      if (action.type !== 'ready') {
-        sendActionOriginal.call(this, action);
+    console.log('Making problems with client');
+
+    const client = detoxInternals.worker._client;
+    client._slowInvocationTimeout = 0;
+
+    const aws = client._asyncWebSocket;
+    const awsSend = aws.send.bind(aws);
+    aws.send = (message, opts) => {
+      const promise = awsSend(message, opts);
+      if (message.type === 'isReady') {
+        aws.inFlightPromises[message.messageId] = { resolve() {}, reject() {}, promise: new Promise(() => {}) };
       }
+      return promise;
     };
 
-    await instance.device.selectApp('example');
-    await instance.device.launchApp();
-    return instance;
+    await device.selectApp('example');
+    await device.launchApp();
   }
 }
 

@@ -52,11 +52,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `setting up Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await detoxInternals.init({
-          global: this.global,
-          workerId: +process.env.JEST_WORKER_ID,
-        });
-
+        await this.initDetox();
         this._instantiateListeners();
       },
     });
@@ -100,7 +96,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       description: `tearing down Detox environment`,
       timeout: this.initTimeout,
       fn: async () => {
-        await detoxInternals.cleanup();
+        await this.cleanupDetox();
       },
     });
   }
@@ -108,6 +104,21 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   /** @protected */
   registerListeners(map) {
     Object.assign(this._listenerFactories, map);
+  }
+
+  /**
+   * @protected
+   */
+  async initDetox() {
+    await detoxInternals.init({
+      global: this.global,
+      workerId: +process.env.JEST_WORKER_ID,
+    });
+  }
+
+  /** @protected */
+  async cleanupDetox() {
+    await detoxInternals.cleanup();
   }
 
   /** @private */

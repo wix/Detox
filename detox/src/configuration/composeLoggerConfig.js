@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { defaultOptions } = require('../logger/DetoxLogger');
+const { castLevel, defaultOptions } = require('../logger/DetoxLogger');
 
 /**
  * @param {object} opts
@@ -33,11 +33,7 @@ function adaptCLI(cliConfig) {
   const result = {};
 
   if (cliConfig.loglevel !== undefined) {
-    if (cliConfig.loglevel === 'verbose') {
-      result.level = 'debug';
-    } else {
-      result.level = cliConfig.loglevel;
-    }
+    result.level = castLevel(cliConfig.loglevel);
   }
 
   if (cliConfig.useCustomLogger !== undefined) {

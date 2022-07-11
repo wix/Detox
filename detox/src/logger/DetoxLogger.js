@@ -155,7 +155,7 @@ class DetoxLogger {
   };
 
   /**
-   * @param level
+   * @param {string} level
    * @returns {Detox.DetoxLogLevel}
    */
   static castLevel(level) {
@@ -167,6 +167,8 @@ class DetoxLogger {
       case 'debug':
       case 'trace':
         return level;
+      case 'verbose':
+        return 'debug';
       default:
         return 'info';
     }
