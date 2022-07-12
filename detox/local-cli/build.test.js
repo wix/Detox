@@ -12,17 +12,19 @@ describe('build', () => {
     jest.mock('../src/utils/logger');
     jest.mock('../internals', () => {
       const DetoxConfigErrorComposer = require('../src/errors/DetoxConfigErrorComposer');
+
+      const config = {
+        appsConfig: {},
+        artifactsConfig: {},
+        behaviorConfig: {},
+        errorComposer: new DetoxConfigErrorComposer(),
+        deviceConfig: {},
+        sessionConfig: {}
+      };
+
       return ({
-        init: jest.fn(),
-        cleanup: jest.fn(),
-        config: {
-          appsConfig: {},
-          artifactsConfig: {},
-          behaviorConfig: {},
-          errorComposer: new DetoxConfigErrorComposer(),
-          deviceConfig: {},
-          sessionConfig: {}
-        },
+        config,
+        resolveConfig: jest.fn().mockResolvedValue(config),
         log: require('../src/utils/logger')
       });
     });
@@ -30,20 +32,13 @@ describe('build', () => {
     detox = require('../internals');
   });
 
-  it('passes argv to composeConfig', async () => {
+  it('passes argv to resolveConfig', async () => {
     await callCli('./build', 'build -C /etc/.detoxrc.js -c myconf').catch(() => {});
 
-    expect(detox.init).toHaveBeenCalledWith({
+    expect(detox.resolveConfig).toHaveBeenCalledWith({
       argv: expect.objectContaining({
         'C': '/etc/.detoxrc.js',
         'c': 'myconf',
-      }),
-      override: expect.objectContaining({
-        artifacts: false,
-        session: {
-          autoStart: false,
-          server: expect.any(String),
-        },
       }),
     });
   });

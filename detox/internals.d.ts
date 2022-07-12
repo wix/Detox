@@ -21,6 +21,11 @@ declare global {
        */
       reportFailedTests(testFilePaths: string[] | null): Promise<void>;
 
+      /**
+       * Use with a caution, when you still have no config yet need to avoid init()
+       */
+      resolveConfig(options?: Partial<DetoxInitOptions>): Promise<RuntimeConfig>;
+
       onRunStart(event: unknown): Promise<void>;
       onRunDescribeStart(event: unknown): Promise<void>;
       onTestStart(event: unknown): Promise<void>;

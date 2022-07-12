@@ -6,6 +6,7 @@ const bunyanDebugStream = require('bunyan-debug-stream');
 const _ = require('lodash');
 
 const temporaryPath = require('../artifacts/utils/temporaryPath');
+const { DetoxInternalError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
 
 const customConsoleLogger = require('./customConsoleLogger');
@@ -73,6 +74,14 @@ class DetoxLogger {
    * @param config
    */
   async setConfig(config) {
+    if (this._context !== undefined) {
+      throw new DetoxInternalError('Trying to set a config for a non-root logger');
+    }
+
+    if (this.file) {
+      throw new DetoxInternalError('Trying to set a config for a fully initialized logger');
+    }
+
     _.merge(this._config, config);
 
     // @ts-ignore
@@ -80,13 +89,11 @@ class DetoxLogger {
     oldStream.stream.end();
     this._bunyan.addStream(this._createDebugStream());
 
-    if (!this._config.file) {
-      this._config.file = temporaryPath.for.jsonl();
-      this._bunyan.addStream({
-        level: 'trace',
-        path: this._config.file,
-      });
-    }
+    this._config.file = temporaryPath.for.jsonl();
+    this._bunyan.addStream({
+      level: 'trace',
+      path: this._config.file,
+    });
 
     this.overrideConsole();
   }

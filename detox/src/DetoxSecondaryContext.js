@@ -1,12 +1,9 @@
 const fs = require('fs');
 
-const _ = require('lodash');
-
 const DetoxContext = require('./DetoxContext');
 const { DetoxInternalError } = require('./errors');
 const { SecondarySessionState } = require('./ipc/state');
 const symbols = require('./symbols');
-const uuid = require('./utils/uuid');
 
 const { $cleanup, $init, $initWorker, $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
@@ -29,6 +26,8 @@ class DetoxSecondaryContext extends DetoxContext {
       throw new DetoxInternalError('Detected an attempt to report failed tests using a non-initialized context.');
     }
   };
+
+  [symbols.resolveConfig] = async () => this[symbols.config];
   //#endregion
 
   //#region Protected members
@@ -64,10 +63,7 @@ class DetoxSecondaryContext extends DetoxContext {
    * @return {SecondarySessionState}
    */
   [$restoreSessionState]() {
-    return _.defaultsDeep(
-      SecondarySessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH)),
-      { detoxConfig: { sessionConfig: { sessionId: uuid.UUID() } } }
-    );
+    return SecondarySessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
   }
   //#endregion
 }

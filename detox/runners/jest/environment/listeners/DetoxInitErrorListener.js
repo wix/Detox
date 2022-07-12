@@ -15,7 +15,7 @@ class DetoxInitErrorListener {
     if (!_.isEmpty(unhandledErrors)) {
       const currentTest = _.last(currentDescribeBlock.children);
       const dummyError = new Error('Environment setup failed. See the detailed error below.');
-      delete dummyError.stack;
+      dummyError.stack = '';
 
       currentTest.errors.push(dummyError);
     }

@@ -15,7 +15,6 @@ const $sessionState = Symbol('restoreSessionState');
 const $tracer = Symbol('tracer');
 const _cleanupFn = Symbol('cleanupFn');
 const _cleanupPromise = Symbol('cleanupPromise');
-const _initFn = Symbol('initFn');
 const _initPromise = Symbol('initPromise');
 const _initWorkerPromise = Symbol('initWorkerPromise');
 const _injectToSandbox = Symbol('initWorker');
@@ -99,6 +98,13 @@ class DetoxContext {
   [symbols.session] = funpermaproxy(() => this[$sessionState]);
   /** @abstract */
   [symbols.reportFailedTests](_testFilePaths) {}
+  /**
+   * @abstract
+   * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts
+   * @returns {Promise<DetoxInternals.RuntimeConfig>}
+   */
+  async [symbols.resolveConfig](_opts) { return null; }
+
   get [symbols.worker]() {
     if (!this[_worker]) {
       throw new DetoxRuntimeError({
@@ -183,10 +189,6 @@ class DetoxContext {
   //#endregion
 
   //#region Private members
-  async [_initFn](opts) {
-    await this[$init](opts);
-  }
-
   [_injectToSandbox](global) {
     global['__detox__'] = this;
     this[$logger].overrideConsole(global);

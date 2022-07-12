@@ -6,6 +6,7 @@ const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
 const symbols = require('./symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
+const uuid = require('./utils/uuid');
 
 class DetoxWorker {
   constructor(context) {
@@ -63,6 +64,7 @@ class DetoxWorker {
     this._sessionConfig = sessionConfig;
     this._runtimeErrorComposer.appsConfig = this._appsConfig;
 
+    sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
     this._client = new Client(sessionConfig);
     this._client.terminateApp = async () => {
       // @ts-ignore

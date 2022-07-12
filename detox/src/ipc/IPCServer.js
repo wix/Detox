@@ -44,6 +44,7 @@ class IPCServer {
     return new Promise((resolve, reject) =>{
       // @ts-ignore
       this._ipc.server.server.close(e => e ? reject(e) : resolve());
+      this._ipc.server.stop();
     });
   }
 

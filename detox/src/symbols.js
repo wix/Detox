@@ -16,6 +16,7 @@
  *   readonly onTestFnSuccess: unique symbol;
  *   readonly onTestStart: unique symbol;
  *   readonly reportFailedTests: unique symbol;
+ *   readonly resolveConfig: unique symbol;
  *   readonly session: unique symbol;
  *   readonly worker: unique symbol;
  * }}
@@ -44,6 +45,7 @@ module.exports = {
   init: Symbol('init'),
   cleanup: Symbol('cleanup'),
   config: Symbol('config'),
+  resolveConfig: Symbol('resolveConfig'),
   session: Symbol('session'),
   worker: Symbol('worker'),
   //#endregion

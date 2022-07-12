@@ -6,6 +6,7 @@ const pipe = require('multipipe');
 
 const DetoxContext = require('./DetoxContext');
 const temporary = require('./artifacts/utils/temporaryPath');
+const { DetoxRuntimeError } = require('./errors');
 const { PrimarySessionState } = require('./ipc/state');
 const symbols = require('./symbols');
 
@@ -16,11 +17,13 @@ const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
 const _ipcServer = Symbol('ipcServer');
 const _resetLockFile = Symbol('resetLockFile');
 const _wss = Symbol('wss');
+const _dirty = Symbol('dirty');
 
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
     super();
 
+    this[_dirty] = false;
     this[_wss] = null;
     this[_globalLifecycleHandler] = null;
     /**
@@ -34,6 +37,16 @@ class DetoxPrimaryContext extends DetoxContext {
     if (this[_ipcServer]) {
       this[_ipcServer].onFailedTests({ testFilePaths });
     }
+  };
+
+  [symbols.resolveConfig] = async (opts) => {
+    const session = this[symbols.session];
+    if (!session.detoxConfig) {
+      const configuration = require('./configuration');
+      session.detoxConfig = await configuration.composeDetoxConfig(opts);
+    }
+
+    return session.detoxConfig;
   };
   //#endregion
 
@@ -55,10 +68,15 @@ class DetoxPrimaryContext extends DetoxContext {
    * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
    */
   async [$init](opts) {
-    const configuration = require('./configuration');
-    const detoxConfig = await configuration.composeDetoxConfig(opts);
+    if (this[_dirty]) {
+      throw new DetoxRuntimeError({
+        message: 'Cannot initialize primary Detox context more than once.',
+        hint: DetoxRuntimeError.reportIssueIfJest,
+      });
+    }
 
-    this[$sessionState].patch({ detoxConfig });
+    this[_dirty] = true;
+    const detoxConfig = await this[symbols.resolveConfig](opts);
 
     const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = detoxConfig;
     await this[$logger].setConfig(loggerConfig);

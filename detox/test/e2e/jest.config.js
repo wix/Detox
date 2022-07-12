@@ -1,4 +1,4 @@
-const { init, cleanup, config } = require('detox/internals');
+const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
   'android.emulator': 3,
@@ -7,13 +7,7 @@ const maxWorkersMap = {
 };
 
 module.exports = async () => {
-  if (!config.deviceConfig) {
-    try {
-      await init();
-    } finally {
-      await cleanup();
-    }
-  }
+  const config = await resolveConfig();
 
   return {
     'rootDir': '../..',

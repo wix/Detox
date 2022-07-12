@@ -26,14 +26,13 @@ class Timer {
   }
 
   async run(action) {
-    const error = new DetoxRuntimeError();
-    delete error.stack;
+    const error = new DetoxRuntimeError({
+      message: `Exceeded timeout of ${this._timeout}ms while ${this.description}`,
+      noStack: true,
+    });
 
     return Promise.race([
-      this._timeoutDeferred.promise.then(() => {
-        error.message = `Exceeded timeout of ${this._timeout}ms while ${this.description}`;
-        throw error;
-      }),
+      this._timeoutDeferred.promise.then(() => { throw error; }),
       Promise.resolve().then(action),
     ]);
   }

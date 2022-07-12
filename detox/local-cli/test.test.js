@@ -312,15 +312,12 @@ describe('CLI', () => {
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEVICE_NAME="TheDevice" /);
   });
 
-  test('specifying direct test paths instead of default _', async () => {
-    detoxConfig.testRunner.args._ = ['e2e'];
-
-    await run();
+  test('specifying direct test paths instead of default args._', async () => {
+    detoxConfig.testRunner.args._ = ['e2e/'];
     await run('e2e/01.sanity.test.js', 'e2e/02.sanity.test.js');
 
-    expect(cliCall(0).argv).toContain('e2e');
-    expect(cliCall(1).argv).not.toContain('e2e');
-    expect(cliCall(1).argv.slice(-2)).toEqual(['e2e/01.sanity.test.js', 'e2e/02.sanity.test.js']);
+    expect(cliCall().argv).not.toContain('e2e');
+    expect(cliCall().argv.slice(-2)).toEqual(['e2e/01.sanity.test.js', 'e2e/02.sanity.test.js']);
   });
 
   test.todo('--inspect-brk should work');
