@@ -1,6 +1,7 @@
 #!/bin/bash -ex
 
-trap $(dirname "$0")/upload_artifact.sh EXIT
+UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
+trap "$UPLOAD_ARTIFACT" EXIT
 
 # Approve unapproved SDK licenses
 yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
