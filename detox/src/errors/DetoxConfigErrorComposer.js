@@ -655,6 +655,20 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  invalidTestRunnerProperty(isGlobal) {
+    return new DetoxConfigError({
+      message: `testRunner should be an object, not a string`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: isGlobal ? 0 : 3 },
+      debugInfo: isGlobal ? {
+        testRunner: _.get(this.contents, ['testRunner']),
+        ...this.contents,
+      } : {
+        ...this._focusOnConfiguration(c => _.pick(c, ['testRunner'])),
+      },
+    });
+  }
+
   cannotSkipAutostartWithMissingServer() {
     return new DetoxConfigError({
       message: `Cannot have both an undefined session.server URL and session.autoStart set to false`,

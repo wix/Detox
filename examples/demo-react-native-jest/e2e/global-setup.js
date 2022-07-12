@@ -1,15 +1,10 @@
 const fs = require('fs-extra');
 const { execSync } = require('child_process');
-const detox = require('detox');
+const { resolveConfig } = require('detox/internals');
 
 async function globalSetup() {
-  const config = resolveSelectedConfiguration() || {};
-  downloadTestButlerAPKIfNeeded(config);
-  await detox.globalInit();
-}
-
-function downloadTestButlerAPKIfNeeded(config) {
-  if (isAndroidConfig(config)) {
+  const { deviceConfig } = await resolveConfig();
+  if (deviceConfig.type === 'android.emulator') {
     downloadTestButlerAPK();
   }
 }
@@ -24,17 +19,6 @@ function downloadTestButlerAPK() {
     console.log(`\nDownloading Test-Butler APK v${version}...`);
     execSync(`curl -f -o ${filePath} ${artifactUrl}`);
   }
-}
-
-function resolveSelectedConfiguration() {
-  const { configurations } = require('../detox.config.js');
-  const configName = process.env.DETOX_CONFIGURATION;
-  return configurations[configName];
-}
-
-// TODO eventually, this should be made available by Detox more explicitly
-function isAndroidConfig(config) {
-  return [config.type, process.env.DETOX_CONFIGURATION, config.device].some(s => `${s}`.includes('android'));
 }
 
 module.exports = globalSetup;

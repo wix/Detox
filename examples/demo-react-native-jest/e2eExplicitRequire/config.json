@@ -1,11 +1,11 @@
 {
-    "testEnvironment": "./environment",
-    "testRunner": "jest-circus/runner",
-    "testTimeout": 120000,
-    "testRegex": "\\.e2e\\.ts$",
-    "transform": {
-      "\\.tsx?$": "ts-jest"
-    },
-    "reporters": ["detox/runners/jest/reporter"],
-    "verbose": true
+  "testEnvironment": "./environment",
+  "testRunner": "jest-circus/runner",
+  "testTimeout": 120000,
+  "testMatch": ["<rootDir>/*.e2e.ts"],
+  "transform": {
+    "\\.tsx?$": "ts-jest"
+  },
+  "reporters": ["detox/runners/jest/reporter"],
+  "verbose": true
 }

@@ -100,6 +100,24 @@ class DetoxCoreListener {
       this._startedTests.delete(test);
     }
   }
+
+  async run_finish(_event, state) {
+    if (this._hasFailedTests(state.rootDescribeBlock)) {
+      await detoxInternals.reportFailedTests([this._env.testPath]);
+    }
+  }
+
+  _hasFailedTests(block) {
+    if (block.children) {
+      for (const child of block.children) {
+        if (this._hasFailedTests(child)) {
+          return true;
+        }
+      }
+    }
+
+    return block.errors ? block.errors.length > 0 : false;
+  }
 }
 
 module.exports = DetoxCoreListener;

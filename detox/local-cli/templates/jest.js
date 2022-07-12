@@ -4,7 +4,7 @@ const runnerConfig = `{
     "maxWorkers": 1,
     "testEnvironment": "./environment",
     "testTimeout": 120000,
-    "testMatch": ["<rootDir>/e2e/*.e2e.js"],
+    "testMatch": ["<rootDir>/e2e/**/*.test.js"],
     "reporters": ["detox/runners/jest/reporter"],
     "verbose": true
 }
@@ -36,5 +36,5 @@ module.exports = CustomDetoxEnvironment;
 `;
 
 exports.environment = environmentJsContent;
-exports.firstTest = firstTestContent;
+exports.starter = firstTestContent;
 exports.runnerConfig = runnerConfig;

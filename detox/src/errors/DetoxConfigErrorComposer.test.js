@@ -727,6 +727,36 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.invalidTestRunnerProperty', () => {
+      beforeEach(() => {
+        build = (isGlobal) => builder.invalidTestRunnerProperty(isGlobal);
+        builder.setConfigurationName('android.release');
+        builder.setDetoxConfig({
+          testRunner: 'jest',
+          configurations: {
+            'android.release': {
+              testRunner: 'mocha',
+              type: 'android.emulator',
+              device: {
+                avdName: 'Pixel_2_API_29',
+              },
+              session: {
+                autoStart: false,
+              },
+            }
+          }
+        });
+      });
+
+      it('should be able to create a global config error', () => {
+        expect(build(true)).toMatchSnapshot();
+      });
+
+      it('should be able to create a local config error', () => {
+        expect(build(false)).toMatchSnapshot();
+      });
+    });
+
     describe('.cannotSkipAutostartWithMissingServer', () => {
       beforeEach(() => {
         build = () => builder.cannotSkipAutostartWithMissingServer();

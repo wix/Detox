@@ -10,15 +10,10 @@ module.exports = {
     describe:
       'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it',
   },
-  o: {
-    alias: 'runner-config',
-    group: 'Configuration:',
-    describe: 'Test runner config file, default value is: e2e/config.json',
-  },
   l: {
     alias: 'loglevel',
     group: 'Debugging:',
-    choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
+    choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'debug', 'trace'],
     describe: 'Log level',
   },
   R: {
@@ -96,11 +91,12 @@ module.exports = {
   H: {
     alias: 'headless',
     group: 'Execution:',
-    describe: '[Android Only] Launch emulator in headless mode. Useful when running on CI.',
+    describe: 'Launch device in headless mode. Useful when running on CI.',
     boolean: true,
   },
   gpu: {
     group: 'Execution:',
+    choices: ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest'],
     describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.',
   },
   keepLockFile: {
@@ -130,11 +126,11 @@ module.exports = {
   'force-adb-install': {
     boolean: true,
     group: 'Execution:',
-    describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
+    describe: `[Android Only] Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },
   'inspect-brk': {
     group: 'Debugging:',
-    describe: 'Allows debugging of the underlying test runner',
+    describe: '[Jest Only] Allows debugging of the underlying test runner',
     boolean: true,
   }
 };

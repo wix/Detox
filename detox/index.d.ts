@@ -86,6 +86,14 @@ declare global {
                  * `false`.
                  */
                 reinstallApp?: boolean;
+                /**
+                 * If you wish to run multiple "detox test" commands in parallel,
+                 * make sure they don't delete the shared lock file – only the
+                 * first command should reset the lock file.
+                 *
+                 * @default false
+                 */
+                keepLockFile?: boolean;
             };
             launchApp?: 'auto' | 'manual';
             cleanup?: {

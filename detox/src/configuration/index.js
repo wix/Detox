@@ -59,6 +59,7 @@ async function composeDetoxConfig({
     localConfig,
     cliConfig,
     testRunnerArgv,
+    errorComposer,
   });
 
   const deviceConfig = composeDeviceConfig({

@@ -1412,6 +1412,33 @@ HINT: Check that in your Detox config at path:
 }]
 `;
 
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidTestRunnerProperty should be able to create a global config error 1`] = `
+[DetoxConfigError: testRunner should be an object, not a string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  testRunner: 'jest',
+  configurations: [Object]
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidTestRunnerProperty should be able to create a local config error 1`] = `
+[DetoxConfigError: testRunner should be an object, not a string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      testRunner: 'mocha'
+    }
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorComposer (from configuration/index) .cantChooseConfiguration should create an error with --configuration suggestions 1`] = `
 [DetoxConfigError: Cannot determine which configuration to use from Detox config at path:
 /etc/detox/config.js

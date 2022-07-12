@@ -52,7 +52,7 @@ If things go well, the following will be created:
 - An `e2e/` folder in your project root
 - An `e2e/config.json` file; [example](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/config.json)
 - An `e2e/environment.js` file; [example](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/environment.js)
-- An `e2e/firstTest.e2e.js` file with content similar to [this](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/app-hello.e2e.ts).
+- An `e2e/starter.test.js` file with content similar to [this](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest/e2e/app-hello.e2e.ts).
 
 #### 3. Fix / Verify
 
@@ -189,6 +189,6 @@ detox test --configuration <yourConfigurationName> --workers 2 --jest-report-spe
 ### How to Run Unit and E2E Tests in the Same Project
 
 - Create different Jest configs for unit and E2E tests, e.g. in `e2e/config.json` (for Detox) and `jest.config.js`
-  (for unit tests). For example, in Jest’s E2E config you can set `testRegex` to look for `\.e2e.js$` regexp,
-  and this way avoid accidental triggering of unit tests with `.test.js` extension.
+  (for unit tests). For example, in Jest’s E2E config you can set `testMatch` to look for `<rootDir>/e2e/**/*.test.js$`
+  glob, and this way avoid accidental triggering of unit tests in your `src/` or `lib/` folder.
 - To run your E2E tests, use `detox test` command (or `npx detox test`, if you haven’t installed `detox-cli`).

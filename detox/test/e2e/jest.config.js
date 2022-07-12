@@ -17,8 +17,6 @@ module.exports = async () => {
       '<rootDir>/test/{e2e,e2e-unhappy}/**/*.test.{js,ts}',
     ],
     'setupFilesAfterEnv': ['./test/e2e/setup.js'],
-    'globalSetup': './test/e2e/global-setup.js',
-    'globalTeardown': './test/e2e/global-teardown.js',
     'testTimeout': 120000,
     'reporters': process.env.DISABLE_JUNIT_REPORTER === '1'
       ? ['<rootDir>/runners/jest/reporter']
