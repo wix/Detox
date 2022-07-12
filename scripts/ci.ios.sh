@@ -1,5 +1,7 @@
 #!/bin/bash -ex
 
+trap $(dirname "$0")/upload_artifact.sh EXIT
+
 source $(dirname "$0")/ci.sh 'noGenerate'
 
 mkdir -p coverage
