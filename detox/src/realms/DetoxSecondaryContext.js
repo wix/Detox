@@ -1,9 +1,10 @@
 const fs = require('fs');
 
+const { DetoxInternalError } = require('../errors');
+const { SecondarySessionState } = require('../ipc/state');
+const symbols = require('../symbols');
+
 const DetoxContext = require('./DetoxContext');
-const { DetoxInternalError } = require('./errors');
-const { SecondarySessionState } = require('./ipc/state');
-const symbols = require('./symbols');
 
 const { $cleanup, $init, $initWorker, $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
@@ -11,6 +12,7 @@ const _ipcClient = Symbol('ipcClient');
 class DetoxSecondaryContext extends DetoxContext {
   constructor() {
     super();
+
     /**
      * @protected
      * @type {*}
@@ -19,6 +21,11 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   //#region Internal members
+  [symbols.secondary] = {
+    init: this[symbols.init],
+    cleanup: this[symbols.cleanup],
+  };
+
   [symbols.reportFailedTests] = async (testFilePaths) => {
     if (this[_ipcClient]) {
       await this[_ipcClient].reportFailedTests(testFilePaths);
@@ -32,7 +39,7 @@ class DetoxSecondaryContext extends DetoxContext {
 
   //#region Protected members
   async [$init]() {
-    const IPCClient = require('./ipc/IPCClient');
+    const IPCClient = require('../ipc/IPCClient');
 
     if (!this[_ipcClient]) {
       this[_ipcClient] = new IPCClient({

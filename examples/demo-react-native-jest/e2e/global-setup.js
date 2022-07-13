@@ -1,10 +1,12 @@
 const fs = require('fs-extra');
 const { execSync } = require('child_process');
-const { resolveConfig } = require('detox/internals');
+const { globalSetup } = require('detox/runners/jest');
+const { config } = require('detox/internals');
 
-async function globalSetup() {
-  const { deviceConfig } = await resolveConfig();
-  if (deviceConfig.type === 'android.emulator') {
+async function customGlobalSetup() {
+  await globalSetup();
+
+  if (config.deviceConfig.type === 'android.emulator') {
     downloadTestButlerAPK();
   }
 }
@@ -21,4 +23,4 @@ function downloadTestButlerAPK() {
   }
 }
 
-module.exports = globalSetup;
+module.exports = customGlobalSetup;

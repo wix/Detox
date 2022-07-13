@@ -2,13 +2,15 @@ const path = require('path');
 const { URL } = require('url');
 
 const fs = require('fs-extra');
+const _ = require('lodash');
 const pipe = require('multipipe');
 
+const temporary = require('../artifacts/utils/temporaryPath');
+const { DetoxRuntimeError } = require('../errors');
+const { PrimarySessionState } = require('../ipc/state');
+const symbols = require('../symbols');
+
 const DetoxContext = require('./DetoxContext');
-const temporary = require('./artifacts/utils/temporaryPath');
-const { DetoxRuntimeError } = require('./errors');
-const { PrimarySessionState } = require('./ipc/state');
-const symbols = require('./symbols');
 
 const { $cleanup, $init, $initWorker, $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 
@@ -27,22 +29,33 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_wss] = null;
     this[_globalLifecycleHandler] = null;
     /**
-     * @type {import('./ipc/IPCServer') | null}
+     * @type {import('../ipc/IPCServer') | null}
      */
     this[_ipcServer] = null;
   }
 
   //#region Internal members
+  [symbols.primary] = {
+    init: this[symbols.init],
+    cleanup: this[symbols.cleanup],
+  };
+
+  // TODO: rewrite maybe into { globalInit -> init -> cleanup -> globalCleanup } signature
+  [symbols.secondary] = {
+    init: _.once(this[symbols.init]),
+    cleanup: async function secondaryCleanupStub() {}
+  };
+
   [symbols.reportFailedTests] = async (testFilePaths) => {
     if (this[_ipcServer]) {
       this[_ipcServer].onFailedTests({ testFilePaths });
     }
   };
 
-  [symbols.resolveConfig] = async (opts) => {
+  [symbols.resolveConfig] = async (opts = {}) => {
     const session = this[symbols.session];
     if (!session.detoxConfig) {
-      const configuration = require('./configuration');
+      const configuration = require('../configuration');
       session.detoxConfig = await configuration.composeDetoxConfig(opts);
     }
 
@@ -87,7 +100,7 @@ class DetoxPrimaryContext extends DetoxContext {
       name: process.argv.slice(1).join(' '),
     });
 
-    const IPCServer = require('./ipc/IPCServer');
+    const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
       logger: this[$logger],
@@ -95,7 +108,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
     await this[_ipcServer].init();
 
-    const environmentFactory = require('./environmentFactory');
+    const environmentFactory = require('../environmentFactory');
     this[_globalLifecycleHandler] = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
 
     if (this[_globalLifecycleHandler]) {
@@ -106,7 +119,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_resetLockFile]();
     }
 
-    const DetoxServer = require('./server/DetoxServer');
+    const DetoxServer = require('../server/DetoxServer');
     if (sessionConfig.autoStart) {
       this[_wss] = new DetoxServer({
         port: sessionConfig.server
@@ -174,7 +187,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
   //#region Private members
   async[_finalizeLogs](logs) {
-    const streamUtils = require('./utils/streamUtils');
+    const streamUtils = require('../utils/streamUtils');
 
     if (!logs || logs.length === 0) {
       return;
@@ -205,7 +218,7 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   async[_resetLockFile]() {
-    const DeviceRegistry = require('./devices/DeviceRegistry');
+    const DeviceRegistry = require('../devices/DeviceRegistry');
 
     const deviceType = this[symbols.config].deviceConfig.type;
 
@@ -222,7 +235,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     if (deviceType === 'android.genycloud') {
-      const GenyDeviceRegistryFactory = require('./devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+      const GenyDeviceRegistryFactory = require('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
       await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
     }
   }

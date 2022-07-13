@@ -3,7 +3,7 @@
 
 declare global {
   namespace DetoxInternals {
-    interface Facade {
+    type InitializerFacade = {
       /**
        * The setup phase happens inside detox.init().
        * This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a device.
@@ -15,17 +15,9 @@ declare global {
        * This is the phase where the Detox server shuts down.
        */
       cleanup(): Promise<void>;
+    };
 
-      /**
-       * Powers the "--retries <N>" of Detox CLI under the hood.
-       */
-      reportFailedTests(testFilePaths: string[] | null): Promise<void>;
-
-      /**
-       * Use with a caution, when you still have no config yet need to avoid init()
-       */
-      resolveConfig(options?: Partial<DetoxInitOptions>): Promise<RuntimeConfig>;
-
+    type LifecycleFacade = {
       onRunStart(event: unknown): Promise<void>;
       onRunDescribeStart(event: unknown): Promise<void>;
       onTestStart(event: unknown): Promise<void>;
@@ -38,6 +30,27 @@ declare global {
       onTestDone(event: unknown): Promise<void>;
       onRunDescribeFinish(event: unknown): Promise<void>;
       onRunFinish(event: unknown): Promise<void>;
+    };
+
+    type Facade = InitializerFacade & LifecycleFacade & {
+      /**
+       * Powers the "--retries <N>" of Detox CLI under the hood.
+       */
+      reportFailedTests(testFilePaths: string[] | null): Promise<void>;
+
+      /**
+       * Use with a caution, when you still have no config yet need to avoid init()
+       */
+      resolveConfig(options?: Partial<DetoxInitOptions>): Promise<RuntimeConfig>;
+
+      /**
+       * TODO
+       */
+      readonly primary: InitializerFacade;
+      /**
+       * TODO
+       */
+      readonly secondary: InitializerFacade;
 
       readonly config: RuntimeConfig;
       readonly log: Detox.Logger;

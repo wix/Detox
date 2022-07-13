@@ -1,6 +1,6 @@
 const funpermaproxy = require('funpermaproxy');
 
-const symbols = require('./symbols');
+const symbols = require('../symbols');
 
 class DetoxInternalsFacade {
   /**
@@ -23,8 +23,10 @@ class DetoxInternalsFacade {
     this.onTestFnStart = context[symbols.onTestFnStart];
     this.onTestFnSuccess = context[symbols.onTestFnSuccess];
     this.onTestStart = context[symbols.onTestStart];
+    this.primary = context[symbols.primary];
     this.reportFailedTests = context[symbols.reportFailedTests];
     this.resolveConfig = context[symbols.resolveConfig];
+    this.secondary = context[symbols.secondary];
     this.session = context[symbols.session];
     this.worker = funpermaproxy(() => context[symbols.worker]);
   }

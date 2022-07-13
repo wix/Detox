@@ -1,10 +1,11 @@
 const funpermaproxy = require('funpermaproxy');
 
+const { DetoxRuntimeError } = require('../errors');
+const DetoxLogger = require('../logger/DetoxLogger');
+const DetoxTracer = require('../logger/DetoxTracer');
+const symbols = require('../symbols');
+
 const DetoxConstants = require('./DetoxConstants');
-const { DetoxRuntimeError } = require('./errors');
-const DetoxLogger = require('./logger/DetoxLogger');
-const DetoxTracer = require('./logger/DetoxTracer');
-const symbols = require('./symbols');
 
 const $cleanup = Symbol('cleanup');
 const $init = Symbol('init');
@@ -39,7 +40,7 @@ class DetoxContext {
     });
     /** @deprecated */
     this.traceCall = this[$tracer].bind(this[$tracer]);
-    /** @type {import('./DetoxWorker') | null} */
+    /** @type {import('../DetoxWorker') | null} */
     this[_worker] = null;
     /** @type {Promise | null} */
     this[_initPromise] = null;
@@ -153,6 +154,16 @@ class DetoxContext {
 
     return this[_cleanupPromise];
   };
+
+  [symbols.primary] = {
+    init: async function primaryInitStub(_opts) {},
+    cleanup: async function primaryCleanupStub() {},
+  };
+
+  [symbols.secondary] = {
+    init: async function secondaryInitStub(_opts) {},
+    cleanup: async function secondaryCleanupStub() {},
+  };
   //#endregion
 
   //#region Protected members
@@ -168,7 +179,7 @@ class DetoxContext {
    * @returns {Promise<void>}
    */
   async [$initWorker](opts) {
-    const DetoxWorker = require('./DetoxWorker');
+    const DetoxWorker = require('../DetoxWorker');
     DetoxWorker.global = opts.global || global;
     this[_worker] = new DetoxWorker(this);
     await this[_worker].init();

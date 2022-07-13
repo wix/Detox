@@ -6,5 +6,5 @@ function current() {
   }
 }
 
-/** @type {Detox.DetoxExportWrapper} */
+/** @type {DetoxInternals.Facade} */
 module.exports = global['__detox__'] || current();

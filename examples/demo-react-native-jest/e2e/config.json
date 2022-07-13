@@ -1,5 +1,6 @@
 {
   "globalSetup": "./global-setup.js",
+  "globalTeardown": "detox/runners/jest/globalTeardown",
   "setupFilesAfterEnv": ["./setup.ts"],
   "maxWorkers": 1,
   "testEnvironment": "./environment",

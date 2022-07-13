@@ -15,8 +15,10 @@
  *   readonly onTestFnStart: unique symbol;
  *   readonly onTestFnSuccess: unique symbol;
  *   readonly onTestStart: unique symbol;
+ *   readonly primary: unique symbol;
  *   readonly reportFailedTests: unique symbol;
  *   readonly resolveConfig: unique symbol;
+ *   readonly secondary: unique symbol;
  *   readonly session: unique symbol;
  *   readonly worker: unique symbol;
  * }}
@@ -48,5 +50,10 @@ module.exports = {
   resolveConfig: Symbol('resolveConfig'),
   session: Symbol('session'),
   worker: Symbol('worker'),
+  //#endregion
+
+  //#region Realms
+  primary: Symbol('primary'),
+  secondary: Symbol('secondary'),
   //#endregion
 };
