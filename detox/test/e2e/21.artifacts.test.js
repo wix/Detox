@@ -124,15 +124,11 @@ describe('Artifacts', () => {
   });
 
   describe('device log creation', () => {
-    beforeEach(async () => {
-      await device.terminateApp();
-    });
-
-    it('should create device log for empty test', async () => {});
-
     it('should create device log for calling terminate', async () => {
       await device.terminateApp();
     });
+
+    it('should create device log for non-running app', async () => {});
 
     it('should create device log for calling launch app', async () => {
       await device.launchApp();
@@ -140,7 +136,7 @@ describe('Artifacts', () => {
 
     afterAll(async () => {
       await waitUntilArtifactsManagerIsIdle();
-      assertArtifactExists('✓ Artifacts device log creation should create device log for empty test/device.log');
+      assertArtifactExists('✓ Artifacts device log creation should create device log for non-running app/device.log');
       assertArtifactExists('✓ Artifacts device log creation should create device log for calling terminate/device.log');
       assertArtifactExists('✓ Artifacts device log creation should create device log for calling launch app/device.log');
     });
