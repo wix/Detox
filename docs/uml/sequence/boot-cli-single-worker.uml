@@ -1,0 +1,46 @@
+@startuml
+
+title "detox test → jest --runInBand"
+
+actor User
+boundary "Detox CLI" as CLI
+participant "DetoxPrimaryContext" as Pri
+boundary "Jest (main)" as Jest0
+participant "DetoxSecondaryContext" as Sec
+participant "DetoxCircusEnvironment" as Env
+
+User -> CLI: detox test
+activate CLI
+CLI -> Pri: require('detox')
+activate Pri
+CLI -> Pri: globalSetup()
+loop while exitCode != 0 and retries > 0
+  CLI -> Jest0: child_process.spawn('jest')
+  activate Jest0
+  Jest0 -> Sec: require('detox')
+  activate Sec
+  Jest0 -> Sec: resolveConfig()
+  Jest0 -> Sec: globalSetup()
+  note right: no-op
+  loop every test file
+    Jest0 -> Env: new()
+    activate Env
+    Jest0 -> Env: setup()
+    Env -> Sec: setup()
+    Sec --> Pri: register worker
+    Jest0 -> Env: run test file
+    Jest0 -> Env: teardown()
+    Env -> Sec: teardown()
+    Sec --> Pri: report failed tests
+    deactivate Env
+  end loop
+  Jest0 -> Sec: globalTeardown()
+  note right: no-op
+  deactivate Sec
+  deactivate Jest0
+end loop
+CLI -> Pri: globalTeardown()
+deactivate Pri
+deactivate CLI
+
+@enduml
