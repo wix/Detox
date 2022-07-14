@@ -11,6 +11,10 @@ class TempFileXfer extends FileXfer {
   constructor(adb) {
     super(adb, EMU_TEMP_INSTALL_PATH);
   }
+
+  getFilePath() {
+    return EMU_TEMP_INSTALL_PATH;
+  }
 }
 
 module.exports = TempFileXfer;

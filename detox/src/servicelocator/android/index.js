@@ -3,7 +3,6 @@ const DeviceRegistry = require('../../devices/DeviceRegistry');
 const AAPT = require('../../devices/common/drivers/android/exec/AAPT');
 const ADB = require('../../devices/common/drivers/android/exec/ADB');
 const ApkValidator = require('../../devices/common/drivers/android/tools/ApkValidator');
-const HashFileXfer = require('../../devices/common/drivers/android/tools/HashFileXfer');
 const HashHelper = require('../../devices/common/drivers/android/tools/HashHelper');
 const TempFileXfer = require('../../devices/common/drivers/android/tools/TempFileXfer');
 
@@ -23,8 +22,8 @@ AndroidServiceLocator.apkValidator = new ApkValidator(AndroidServiceLocator.aapt
 AndroidServiceLocator.fileXfer = new TempFileXfer(AndroidServiceLocator.adb);
 AndroidServiceLocator.deviceRegistry = DeviceRegistry.forAndroid();
 AndroidServiceLocator.devicePathBuilder = new AndroidDevicePathBuilder();
-AndroidServiceLocator.hashXfer = new HashFileXfer(AndroidServiceLocator.adb);
-AndroidServiceLocator.hashHelper = new HashHelper(AndroidServiceLocator.adb, AndroidServiceLocator.hashXfer);
+AndroidServiceLocator.tempFileXfer = new TempFileXfer(AndroidServiceLocator.adb);
+AndroidServiceLocator.hashHelper = new HashHelper(AndroidServiceLocator.adb, AndroidServiceLocator.tempFileXfer);
 
 
 module.exports = AndroidServiceLocator;

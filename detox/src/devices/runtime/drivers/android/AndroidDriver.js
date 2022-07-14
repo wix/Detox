@@ -9,6 +9,7 @@ const EspressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox'
 const UiDeviceProxy = require('../../../../android/espressoapi/UiDeviceProxy');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const generateHash = require('../../../../utils/generateHash');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
@@ -53,7 +54,6 @@ class AndroidDriver extends DeviceDriverBase {
     this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
     this.fileXfer = deps.fileXfer;
-    this.hashXfer = deps.hashXfer;
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
@@ -75,7 +75,7 @@ class AndroidDriver extends DeviceDriverBase {
   async installApp(_appBinaryPath, _testBinaryPath) {
     const {
       appBinaryPath,
-      testBinaryPath,
+      testBinaryPath
     } = this._getAppInstallPaths(_appBinaryPath, _testBinaryPath);
     await this._validateAppBinaries(appBinaryPath, testBinaryPath);
     await this._installAppBinaries(appBinaryPath, testBinaryPath);
@@ -97,15 +97,14 @@ class AndroidDriver extends DeviceDriverBase {
 
   async resetAppState(bundleId, binaryPath, testBinaryPath) {
     const hash = await this._getLocalBinaryHash(binaryPath);
-    const alreadyInstalled = await this._isAlreadyInstalled(bundleId, hash);
-    if (alreadyInstalled) {
-      try {
-        await this._clearAppData(bundleId);
-      } catch (e) {
-        await this._performFullReinstall(binaryPath, testBinaryPath, bundleId, hash);
-      }
+    const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
+    const params = { binaryPath, testBinaryPath, bundleId, hash, isPkgInstalled };
+    const shouldClearData = await this._shouldClearData(bundleId, hash, isPkgInstalled);
+
+    if (shouldClearData) {
+      await this._clearData(params);
     } else {
-      await this._performFullReinstall(binaryPath, testBinaryPath, bundleId, hash);
+      await this._reinstallApp(params);
     }
   }
 
@@ -114,7 +113,7 @@ class AndroidDriver extends DeviceDriverBase {
       manually: false,
       bundleId,
       launchArgs,
-      languageAndLocale,
+      languageAndLocale
     });
   }
 
@@ -123,7 +122,7 @@ class AndroidDriver extends DeviceDriverBase {
       manually: true,
       bundleId,
       launchArgs,
-      languageAndLocale,
+      languageAndLocale
     });
   }
 
@@ -142,11 +141,11 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async waitUntilReady() {
-      try {
-        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
-      } finally {
-        this.instrumentation.abortWaitForCrash();
-      }
+    try {
+      await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
+    } finally {
+      this.instrumentation.abortWaitForCrash();
+    }
   }
 
   async pressBack() { // eslint-disable-line no-unused-vars
@@ -215,7 +214,7 @@ class AndroidDriver extends DeviceDriverBase {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
       artifactName: screenshotName || path.basename(tempPath, '.png'),
-      artifactPath: tempPath,
+      artifactPath: tempPath
     });
 
     return tempPath;
@@ -236,7 +235,7 @@ class AndroidDriver extends DeviceDriverBase {
     const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(appBinaryPath);
     return {
       appBinaryPath,
-      testBinaryPath,
+      testBinaryPath
     };
   }
 
@@ -288,7 +287,7 @@ class AndroidDriver extends DeviceDriverBase {
       throw new DetoxRuntimeError({
         message: `The test APK could not be found at path: '${testApkPath}'`,
         hint: 'Try running the detox build command, and make sure it was configured to execute a build command (e.g. \'./gradlew assembleAndroidTest\')' +
-          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md',
+          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md'
       });
     }
     return testApkPath;
@@ -300,7 +299,7 @@ class AndroidDriver extends DeviceDriverBase {
       const notificationPayloadTargetPath = await this._sendNotificationDataToDevice(launchArgs.detoxUserNotificationDataURL, adbName);
       _launchArgs = {
         ...launchArgs,
-        detoxUserNotificationDataURL: notificationPayloadTargetPath,
+        detoxUserNotificationDataURL: notificationPayloadTargetPath
       };
     }
     return _launchArgs;
@@ -412,26 +411,41 @@ class AndroidDriver extends DeviceDriverBase {
     );
   }
 
-  async _clearAppData(bundleId) {
-    return await this.adb.clearAppData(this.adbName, bundleId);
-  }
-
-  async _isAlreadyInstalled(bundleId, hash) {
-    return hash ? this.hashHelper.compareRemoteToLocal(this.adbName, bundleId, hash) : false;
-  }
-
   _getLocalBinaryHash(binaryFile) {
-    return this.hashHelper.generateHash(binaryFile);
+    return generateHash(binaryFile);
   }
 
   async _saveHashToRemote(hash, bundleId) {
     await this.hashHelper.saveHashToRemote(this.adbName, bundleId, hash);
   }
 
-  async _performFullReinstall(binaryPath, testBinaryPath, bundleId, hash) {
-    await this.uninstallApp(bundleId);
-    await this.installApp(binaryPath, testBinaryPath);
-    await this._saveHashToRemote(hash, bundleId);
+  async _shouldClearData(bundleId, hash, isPkgInstalled) {
+    const isSameVersionInstalled = this._compareRemoteToLocal(bundleId, hash);
+    return isPkgInstalled && isSameVersionInstalled;
+  }
+
+  async _compareRemoteToLocal(bundleId, localHash) {
+    const hashFilename = `${bundleId}.hash`;
+    const destinationPath = path.posix.join(this.fileXfer.getFilePath(), hashFilename);
+    const remoteHash = await this.adb.readFile(this.adbName, destinationPath, true);
+    return localHash === remoteHash;
+  }
+
+  async _clearData(params) {
+    try {
+      return await this.adb.clearAppData(this.adbName, params.bundleId);
+    } catch (e) {
+      await this._reinstallApp(params);
+    }
+  }
+
+  async _reinstallApp(params) {
+    if (params.isPkgInstalled) {
+      await this.uninstallApp(params.bundleId);
+    }
+
+    await this.installApp(params.binaryPath, params.testBinaryPath);
+    await this._saveHashToRemote(params.hash, params.bundleId);
   }
 }
 

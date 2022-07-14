@@ -4,6 +4,7 @@ describe('Android driver', () => {
   const detoxServerPort = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
+  let generateHash;
   let logger;
   let fs; // TODO don't mock
   let client;
@@ -40,14 +41,14 @@ describe('Android driver', () => {
       appInstallHelper,
       appUninstallHelper,
       hashHelper,
-      instrumentation,
+      instrumentation
     }, { adbName });
   });
 
   describe('Instrumentation bootstrap', () => {
     it('should launch instrumentation upon app launch', async () => {
       const userArgs = {
-        anArg: 'aValue',
+        anArg: 'aValue'
       };
       await uut.launchApp(bundleId, userArgs, '');
       expect(instrumentation.launch).toHaveBeenCalledWith(adbName, bundleId, userArgs);
@@ -59,7 +60,8 @@ describe('Android driver', () => {
       try {
         await uut.launchApp(bundleId, {}, '');
         fail();
-      } catch (e) {}
+      } catch (e) {
+      }
     });
 
     it('should set a termination callback function', async () => {
@@ -139,7 +141,7 @@ describe('Android driver', () => {
 
     describe('in app launch (with dedicated arg)', () => {
       const args = {
-        detoxURLOverride,
+        detoxURLOverride
       };
 
       it('should launch instrumentation with the URL in a clean launch', async () => {
@@ -163,11 +165,11 @@ describe('Android driver', () => {
 
     describe('via explicit payload-delivery call', () => {
       const args = {
-        url: detoxURLOverride,
+        url: detoxURLOverride
       };
       const argsDelayed = {
         ...args,
-        delayPayload: true,
+        delayPayload: true
       };
 
       it('should start the app via invocation-manager', async () => {
@@ -193,7 +195,7 @@ describe('Android driver', () => {
 
   describe('Notification data handling', () => {
     const notificationArgs = Object.freeze({
-      detoxUserNotificationDataURL: '/path/to/notif.data',
+      detoxUserNotificationDataURL: '/path/to/notif.data'
     });
 
     const detoxApiInvocation = {
@@ -242,12 +244,12 @@ describe('Android driver', () => {
         applyFn: () => {
           mockInstrumentationRunning();
           return uut.launchApp(bundleId, notificationArgs, '');
-        },
+        }
       },
       {
         description: 'via explicit payload-delivery call',
-        applyFn: () => uut.deliverPayload(notificationArgs),
-      },
+        applyFn: () => uut.deliverPayload(notificationArgs)
+      }
     ].forEach((spec) => {
       describe(spec.description, () => {
         it('should pre-transfer notification data to device', async () => {
@@ -271,7 +273,7 @@ describe('Android driver', () => {
     describe('via explicit payload-delivery call', () => {
       const notificationArgsDelayed = {
         ...notificationArgs,
-        delayPayload: true,
+        delayPayload: true
       };
 
       it('should not send notification data is payload send-out is set as delayed', async () => {
@@ -299,7 +301,8 @@ describe('Android driver', () => {
 
     it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
       const crashError = new Error('mock instrumentation crash error');
-      let waitForCrashReject = () => {};
+      let waitForCrashReject = () => {
+      };
       instrumentation.waitForCrash.mockImplementation(() => {
         return new Promise((__, reject) => {
           waitForCrashReject = reject;
@@ -406,18 +409,6 @@ describe('Android driver', () => {
       expect(loggerWarnMessage()).toEqual(error.toString());
       expect(apkValidator.validateTestApk).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(testBinaryPath));
     });
-
-    it('should get local binary hash', async () => {
-      await uut._getLocalBinaryHash(bundleId);
-      expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
-      expect(hashHelper.generateHash).toHaveBeenCalledWith(bundleId);
-    });
-
-    it('should clear user data', async () => {
-      await uut._clearAppData(bundleId);
-      expect(adb.clearAppData).toHaveBeenCalledTimes(1);
-      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
-    });
   });
 
   describe('Util-binaries installation', () => {
@@ -491,7 +482,7 @@ describe('Android driver', () => {
     const text = 'text to type';
 
     it(`should invoke ADB's text typing`, async () => {
-      await uut.typeText( text);
+      await uut.typeText(text);
       expect(adb.typeText).toHaveBeenCalledWith(adbName, text);
     });
 
@@ -502,41 +493,44 @@ describe('Android driver', () => {
   });
 
   const setUpModuleDepMocks = () => {
+    jest.mock('../../../../utils/generateHash');
+    generateHash = require('../../../../utils/generateHash');
+
     jest.mock('../../../../utils/logger');
     logger = require('../../../../utils/logger');
 
     jest.mock('fs-extra', () => ({
       existsSync: jest.fn(),
-      realpathSync: jest.fn(),
+      realpathSync: jest.fn()
     }));
     fs = require('fs-extra');
 
     jest.mock('../../../../utils/encoding', () => ({
-      encodeBase64: (x) => `base64(${x})`,
+      encodeBase64: (x) => `base64(${x})`
     }));
 
     jest.mock('../../../../utils/sleep', () => jest.fn().mockResolvedValue(''));
     jest.mock('../../../../utils/retry', () => jest.fn().mockResolvedValue(''));
 
     jest.mock('../../../../utils/getAbsoluteBinaryPath', () =>
-      jest.fn().mockImplementation((x) => `absolutePathOf(${x})`),
+      jest.fn().mockImplementation((x) => `absolutePathOf(${x})`)
     );
     getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 
     jest.mock('../../../common/drivers/android/tools/apk', () => ({
-      getTestApkPath: mockAPKPathGetTestApkPathImpl,
+      getTestApkPath: mockAPKPathGetTestApkPathImpl
     }));
 
     jest.mock('../../../../utils/childProcess');
 
     client = {
       serverUrl: `ws://localhost:${detoxServerPort}`,
-      waitUntilReady: jest.fn(),
+      waitUntilReady: jest.fn()
     };
 
     eventEmitter = {
       emit: jest.fn(),
-      off: jest.fn(),
+      off: jest.fn()
     };
 
     jest.mock('../../../../android/espressoapi/Detox');
@@ -561,7 +555,7 @@ describe('Android driver', () => {
         on: jest.fn(),
         stdout: {
           setEncoding: jest.fn(),
-          on: jest.fn(),
+          on: jest.fn()
         }
       }
     });
@@ -578,10 +572,6 @@ describe('Android driver', () => {
     const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');
     fileXfer = new FileXfer();
     fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath);
-
-    jest.mock('../../../common/drivers/android/tools/HashFileXfer');
-    const HashXfer = require('../../../common/drivers/android/tools/HashFileXfer');
-    hashXfer = new HashXfer();
 
     jest.mock('../../../common/drivers/android/tools/AppInstallHelper');
     const AppInstallHelper = require('../../../common/drivers/android/tools/AppInstallHelper');
@@ -615,39 +605,84 @@ describe('Android driver', () => {
 
     beforeEach(() => {
       fs.existsSync.mockReturnValue(true);
+      generateHash.mockImplementation(async () => mockHash);
+      fileXfer.getFilePath.mockImplementation(() => '/data/local/tmp/detox');
     });
 
-    it('should clear app data if already installed', async () => {
-      hashHelper.generateHash.mockImplementation(async () => mockHash);
-      hashHelper.compareRemoteToLocal.mockImplementation(() => true);
+    it('should call generateHash when resetting state', async () => {
       await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
-      expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
-      expect(hashHelper.generateHash).toHaveBeenCalledWith(binaryPath);
-      expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledTimes(1);
-      expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledWith(adbName, bundleId, mockHash);
-      expect(adb.clearAppData).toHaveBeenCalledTimes(1);
-      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
-      expect(appUninstallHelper.uninstall).not.toHaveBeenCalled();
+
+      expect(generateHash).toHaveBeenCalledTimes(1);
+      expect(generateHash).toHaveBeenCalledWith(binaryPath);
     });
 
-    it('should reinstall if not already installed', async () => {
+    it('should call isPackageInstalled when resetting state', async () => {
+      await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+      expect(adb.isPackageInstalled).toHaveBeenCalledTimes(1);
+      expect(adb.isPackageInstalled).toHaveBeenCalledWith(adbName, bundleId);
+    });
+
+    it('should call readFile when resetting state', async () => {
+      await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+      expect(adb.readFile).toHaveBeenCalledTimes(1);
+      expect(adb.readFile).toHaveBeenCalledWith(adbName, '/data/local/tmp/detox/bundle-id-mock.hash', true);
+    });
+
+    describe('same app already installed', function() {
+      beforeEach(() => {
+        adb.isPackageInstalled.mockImplementation(() => true);
+      });
+
+      it('should call clearAppData for already installed app', async () => {
+        adb.readFile.mockImplementation(() => mockHash);
+
+        await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+        expect(adb.clearAppData).toHaveBeenCalledTimes(1);
+        expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
+        expect(appUninstallHelper.uninstall).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('same app is not installed', function() {
       const mockBinaryPath = mockGetAbsoluteBinaryPathImpl(binaryPath);
       const mockTestBinaryPath = mockGetAbsoluteBinaryPathImpl(testBinaryPath);
-      hashHelper.generateHash.mockImplementation(async () => mockHash);
-      hashHelper.compareRemoteToLocal.mockImplementation(() => false);
-      await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
-      expect(hashHelper.generateHash).toHaveBeenCalledTimes(1);
-      expect(hashHelper.compareRemoteToLocal).toHaveBeenCalledTimes(1);
-      expect(adb.clearAppData).not.toHaveBeenCalled();
-      expect(appUninstallHelper.uninstall).toHaveBeenCalledTimes(1);
-      expect(appUninstallHelper.uninstall).toHaveBeenCalledWith(adbName, bundleId);
-      expect(apkValidator.validateAppApk).toHaveBeenCalledTimes(1);
-      expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockBinaryPath);
-      expect(adb.install).toHaveBeenCalledTimes(2);
-      expect(adb.install).toHaveBeenNthCalledWith(1, adbName, mockBinaryPath);
-      expect(adb.install).toHaveBeenNthCalledWith(2, adbName, mockTestBinaryPath);
-      expect(hashHelper.saveHashToRemote).toHaveBeenCalledTimes(1);
-      expect(hashHelper.saveHashToRemote).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+
+      beforeEach(() => {
+        adb.isPackageInstalled.mockImplementation(() => false);
+      });
+
+      it('should call uninstall if the package is installed', async () => {
+        adb.isPackageInstalled.mockImplementation(() => true);
+        await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+        expect(appUninstallHelper.uninstall).toHaveBeenCalledTimes(1);
+        expect(appUninstallHelper.uninstall).toHaveBeenCalledWith(adbName, bundleId);
+      });
+
+      it('should call validateAppApk', async () => {
+        await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+        expect(apkValidator.validateAppApk).toHaveBeenCalledTimes(1);
+        expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockBinaryPath);
+      });
+
+      it('should call adb.install', async () => {
+        await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+        expect(adb.install).toHaveBeenCalledTimes(2);
+        expect(adb.install).toHaveBeenNthCalledWith(1, adbName, mockBinaryPath);
+        expect(adb.install).toHaveBeenNthCalledWith(2, adbName, mockTestBinaryPath);
+      });
+
+      it('should save hash to device', async () => {
+        await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
+
+        expect(hashHelper.saveHashToRemote).toHaveBeenCalledTimes(1);
+        expect(hashHelper.saveHashToRemote).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+      });
     });
   });
 });

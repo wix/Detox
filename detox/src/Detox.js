@@ -248,23 +248,9 @@ class Detox {
       .map(0)
       .value();
 
-    const optimizeAppInstall = this._behaviorConfig.optimizeAppInstall;
-
-    if (optimizeAppInstall) {
-      for (const appName of appNames) {
-        await this.device.selectApp(appName);
-        await this.device.resetAppState();
-      }
-    } else {
-      for (const appName of appNames) {
-        await this.device.selectApp(appName);
-        await this.device.uninstallApp();
-      }
-
-      for (const appName of appNames) {
-        await this.device.selectApp(appName);
-        await this.device.installApp();
-      }
+    for (const appName of appNames) {
+      await this.device.selectApp(appName);
+      await this.device.resetAppState();
     }
 
     if (appNames.length !== 1) {

@@ -866,8 +866,9 @@ describe('Device', () => {
     expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it('resetAppState() should pass to device driver', async () => {
+  it('resetAppState() should pass to device driver if optimize is active', async () => {
     const device = await aValidDevice();
+    device._behaviorConfig.optimizeAppInstall = true;
     await device.resetAppState();
 
     expect(driverMock.driver.resetAppState).toHaveBeenCalledTimes(1);
