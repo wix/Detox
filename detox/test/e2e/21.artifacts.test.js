@@ -124,6 +124,10 @@ describe('Artifacts', () => {
   });
 
   describe('device log creation', () => {
+    beforeAll(async () => {
+      await device.launchApp();
+    });
+
     it('should create device log for calling terminate', async () => {
       await device.terminateApp();
     });
