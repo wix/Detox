@@ -94,7 +94,7 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async resetAppData(bundleId, binaryPath, testBinaryPath) {
+  async optimizedInstallApp(bundleId, binaryPath, testBinaryPath) {
     const hash = await this._getLocalBinaryHash(binaryPath);
     const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
     const params = { binaryPath, testBinaryPath, bundleId, hash, isPkgInstalled };

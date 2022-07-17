@@ -79,7 +79,7 @@ class DeviceDriverBase {
     return '';
   }
 
-  async resetAppData(_bundleId, _binaryPath, _testBinaryPath) {
+  async optimizedInstallApp(_bundleId, _binaryPath, _testBinaryPath) {
     return undefined;
   }
 

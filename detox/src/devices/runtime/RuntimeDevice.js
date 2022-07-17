@@ -181,7 +181,7 @@ class RuntimeDevice {
 
   async resetAppState() {
     if (this._behaviorConfig.optimizeAppInstall) {
-      await this.deviceDriver.resetAppData(this._currentApp.bundleId, this._currentApp.binaryPath, this._currentApp.testBinaryPath);
+      await this.deviceDriver.optimizedInstallApp(this._currentApp.bundleId, this._currentApp.binaryPath, this._currentApp.testBinaryPath);
     } else {
       await this.uninstallApp();
       await this.installApp();

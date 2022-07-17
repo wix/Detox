@@ -63,8 +63,8 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async resetAppData(_bundleId, _binaryPath) {
-    throw new DetoxRuntimeError('Reset app state is not supported on iOS Simulator.');
+  async optimizedInstallApp(_bundleId, _binaryPath) {
+    throw new DetoxRuntimeError('Optimized app installation is not supported on iOS.');
   }
 
   async installApp(binaryPath) {

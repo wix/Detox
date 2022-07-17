@@ -606,14 +606,14 @@ describe('Android driver', () => {
     });
 
     it('should call generateHash when resetting state', async () => {
-      await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+      await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
       expect(generateHash).toHaveBeenCalledTimes(1);
       expect(generateHash).toHaveBeenCalledWith(binaryPath);
     });
 
     it('should call isPackageInstalled when resetting state', async () => {
-      await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+      await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
       expect(adb.isPackageInstalled).toHaveBeenCalledTimes(1);
       expect(adb.isPackageInstalled).toHaveBeenCalledWith(adbName, bundleId);
@@ -623,7 +623,7 @@ describe('Android driver', () => {
       const { FILE_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
       const hashfilePath = FILE_PATH + '/' + bundleId +'.hash';
 
-      await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+      await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
       expect(adb.readFile).toHaveBeenCalledTimes(1);
       expect(adb.readFile).toHaveBeenCalledWith(adbName, hashfilePath, true);
@@ -637,7 +637,7 @@ describe('Android driver', () => {
       it('should call clearAppData for already installed app', async () => {
         adb.readFile.mockImplementation(() => mockHash);
 
-        await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+        await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
         expect(adb.clearAppData).toHaveBeenCalledTimes(1);
         expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
@@ -654,14 +654,14 @@ describe('Android driver', () => {
       });
 
       it('should call validateAppApk', async () => {
-        await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+        await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
         expect(apkValidator.validateAppApk).toHaveBeenCalledTimes(1);
         expect(apkValidator.validateAppApk).toHaveBeenCalledWith(mockBinaryPath);
       });
 
       it('should call adb.install', async () => {
-        await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+        await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
         expect(adb.install).toHaveBeenCalledTimes(2);
         expect(adb.install).toHaveBeenNthCalledWith(1, adbName, mockBinaryPath);
@@ -669,7 +669,7 @@ describe('Android driver', () => {
       });
 
       it('should save hash to device', async () => {
-        await uut.resetAppData(bundleId, binaryPath, testBinaryPath);
+        await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
         expect(saveHashToRemoteMock).toHaveBeenCalledTimes(1);
         expect(saveHashToRemoteMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, bundleId, hash: mockHash });
