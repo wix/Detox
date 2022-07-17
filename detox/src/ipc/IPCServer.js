@@ -70,11 +70,7 @@ class IPCServer {
   }
 
   onFailedTests({ testFilePaths }, socket) {
-    if (testFilePaths == null) {
-      this._sessionState.failedTestFiles.splice(0, Infinity);
-    } else {
-      this._sessionState.failedTestFiles.push(...testFilePaths);
-    }
+    this._sessionState.failedTestFiles.push(...testFilePaths);
 
     if (socket) {
       this._ipc.server.emit(socket, 'failedTestsDone', {});

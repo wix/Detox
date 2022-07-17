@@ -7,10 +7,12 @@ class DetoxInternalsFacade {
    * @param context
    */
   constructor(context) {
-    this.cleanup = context[symbols.cleanup];
     this.config = context[symbols.config];
-    this.init = context[symbols.init];
+    this.globalSetup = context[symbols.globalSetup];
+    this.globalTeardown = context[symbols.globalTeardown];
     this.log = context.log;
+    this.setup = context[symbols.setup];
+    this.teardown = context[symbols.teardown];
     this.onHookFailure = context[symbols.onHookFailure];
     this.onHookStart = context[symbols.onHookStart];
     this.onHookSuccess = context[symbols.onHookSuccess];
@@ -23,10 +25,8 @@ class DetoxInternalsFacade {
     this.onTestFnStart = context[symbols.onTestFnStart];
     this.onTestFnSuccess = context[symbols.onTestFnSuccess];
     this.onTestStart = context[symbols.onTestStart];
-    this.primary = context[symbols.primary];
     this.reportFailedTests = context[symbols.reportFailedTests];
     this.resolveConfig = context[symbols.resolveConfig];
-    this.secondary = context[symbols.secondary];
     this.session = context[symbols.session];
     this.worker = funpermaproxy(() => context[symbols.worker]);
   }

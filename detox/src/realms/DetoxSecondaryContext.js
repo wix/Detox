@@ -6,7 +6,7 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $cleanup, $init, $initWorker, $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
+const { $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
 
 class DetoxSecondaryContext extends DetoxContext {
@@ -21,48 +21,63 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   //#region Internal members
-  [symbols.secondary] = {
-    init: this[symbols.init],
-    cleanup: this[symbols.cleanup],
-  };
-
-  [symbols.reportFailedTests] = async (testFilePaths) => {
+  async [symbols.reportFailedTests](testFilePaths) {
     if (this[_ipcClient]) {
       await this[_ipcClient].reportFailedTests(testFilePaths);
     } else {
       throw new DetoxInternalError('Detected an attempt to report failed tests using a non-initialized context.');
     }
-  };
+  }
 
-  [symbols.resolveConfig] = async () => this[symbols.config];
+  async [symbols.resolveConfig]() {
+    return this[symbols.config];
+  }
+
+  /** @override */
+  async [symbols.globalSetup](_opts = {}) {
+    // This is a no-op function.
+    // It is forbidden to add any logic to `globalSetup` of the secondary context.
+    // Violating this principle will almost definitely break some flows, where it is
+    // not guaranteed that `globalSetup` will ever get called. See UML diagrams.
+  }
+
+  /** @override */
+  async [symbols.globalTeardown]() {
+    // This is a no-op function.
+    // It is forbidden to add any logic to `globalTeardown` of the secondary context.
+    // Violating this principle will almost definitely break some flows, where it is
+    // not guaranteed that `globalTeardown` will ever get called. See UML diagrams.
+  }
+
+  /** @override */
+  async [symbols.setup](opts) {
+    const IPCClient = require('../ipc/IPCClient');
+
+    this[_ipcClient] = new IPCClient({
+      id: `secondary-${process.pid}`,
+      state: this[$sessionState],
+      logger: this[$logger],
+    });
+
+    await this[_ipcClient].init();
+    await this[_ipcClient].registerWorker(opts.workerId);
+    await super[symbols.setup](opts);
+  }
+
+  /** @override */
+  async [symbols.teardown]() {
+    try {
+      await super[symbols.teardown]();
+    } finally {
+      if (this[_ipcClient]) {
+        await this[_ipcClient].dispose();
+        this[_ipcClient] = null;
+      }
+    }
+  }
   //#endregion
 
   //#region Protected members
-  async [$init]() {
-    const IPCClient = require('../ipc/IPCClient');
-
-    if (!this[_ipcClient]) {
-      this[_ipcClient] = new IPCClient({
-        id: `secondary-${process.pid}`,
-        state: this[$sessionState],
-        logger: this[$logger],
-      });
-
-      await this[_ipcClient].init();
-    }
-  }
-
-  async [$initWorker](opts) {
-    await this[_ipcClient].registerWorker(opts.workerId);
-    await super[$initWorker](opts);
-  }
-
-  async [$cleanup]() {
-    if (this[_ipcClient]) {
-      await this[_ipcClient].dispose();
-      this[_ipcClient] = null;
-    }
-  }
 
   /**
    * @protected

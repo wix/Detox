@@ -2,7 +2,6 @@ const path = require('path');
 const { URL } = require('url');
 
 const fs = require('fs-extra');
-const _ = require('lodash');
 const pipe = require('multipipe');
 
 const temporary = require('../artifacts/utils/temporaryPath');
@@ -12,7 +11,7 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $cleanup, $init, $initWorker, $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
+const { $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 
 const _finalizeLogs = Symbol('finalizeLogs');
 const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
@@ -35,24 +34,13 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   //#region Internal members
-  [symbols.primary] = {
-    init: this[symbols.init],
-    cleanup: this[symbols.cleanup],
-  };
-
-  // TODO: rewrite maybe into { globalInit -> init -> cleanup -> globalCleanup } signature
-  [symbols.secondary] = {
-    init: _.once(this[symbols.init]),
-    cleanup: async function secondaryCleanupStub() {}
-  };
-
-  [symbols.reportFailedTests] = async (testFilePaths) => {
+  async [symbols.reportFailedTests](testFilePaths) {
     if (this[_ipcServer]) {
       this[_ipcServer].onFailedTests({ testFilePaths });
     }
-  };
+  }
 
-  [symbols.resolveConfig] = async (opts = {}) => {
+  async [symbols.resolveConfig](opts = {}) {
     const session = this[symbols.session];
     if (!session.detoxConfig) {
       const configuration = require('../configuration');
@@ -60,27 +48,13 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     return session.detoxConfig;
-  };
-  //#endregion
-
-  //#region Protected members
-  /**
-   * @protected
-   * @override
-   * @return {PrimarySessionState}
-   */
-  [$restoreSessionState]() {
-    return new PrimarySessionState({
-      detoxConfigSnapshotPath: temporary.for.json(),
-      detoxIPCServer: `primary-${process.pid}`,
-    });
   }
 
   /**
    * @override
-   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
+   * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} [opts]
    */
-  async [$init](opts) {
+  async [symbols.globalSetup](opts) {
     if (this[_dirty]) {
       throw new DetoxRuntimeError({
         message: 'Cannot initialize primary Detox context more than once.',
@@ -143,16 +117,16 @@ class DetoxPrimaryContext extends DetoxContext {
 
   /**
    * @override
-   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
+   * @param {Partial<DetoxInternals.DetoxConfigurationSetupOptions>} [opts]
    */
-  async [$initWorker](opts) {
+  async [symbols.setup](opts) {
     this[$sessionState].workerId = opts.workerId;
     this[_ipcServer].onRegisterWorker({ workerId: opts.workerId });
-
-    await super[$initWorker](opts);
+    await super[symbols.setup](opts);
   }
 
-  async [$cleanup]() {
+  /** @override */
+  async [symbols.globalTeardown]() {
     if (this[_globalLifecycleHandler]) {
       await this[_globalLifecycleHandler].globalCleanup();
       this[_globalLifecycleHandler] = null;
@@ -163,12 +137,7 @@ class DetoxPrimaryContext extends DetoxContext {
       this[_wss] = null;
     }
 
-    const logFiles = [];
-    if (this[$logger].file) {
-      logFiles.push(this[$logger].file);
-    }
     if (this[_ipcServer]) {
-      logFiles.push(...this[_ipcServer].sessionState.logFiles);
       await this[_ipcServer].dispose();
       this[_ipcServer] = null;
     }
@@ -178,21 +147,35 @@ class DetoxPrimaryContext extends DetoxContext {
 
     try {
       this.trace.end({ cat: 'lifecycle' });
-      await this[_finalizeLogs](logFiles.filter(f => f && fs.existsSync(f)));
+      await this[_finalizeLogs]();
     } catch (err) {
       this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
     }
   }
   //#endregion
 
-  //#region Private members
-  async[_finalizeLogs](logs) {
-    const streamUtils = require('../utils/streamUtils');
+  //#region Protected members
+  /**
+   * @protected
+   * @override
+   * @return {PrimarySessionState}
+   */
+  [$restoreSessionState]() {
+    return new PrimarySessionState({
+      detoxConfigSnapshotPath: temporary.for.json(),
+      detoxIPCServer: `primary-${process.pid}`,
+    });
+  }
+  //#endregion
 
-    if (!logs || logs.length === 0) {
+  //#region Private members
+  async[_finalizeLogs]() {
+    const logs = [this[$logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
+    if (logs.length === 0) {
       return;
     }
 
+    const streamUtils = require('../utils/streamUtils');
     const { rootDir, plugins } = this[symbols.config].artifactsConfig || {};
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);

@@ -8,21 +8,22 @@ const symbols = require('../symbols');
 const DetoxConstants = require('./DetoxConstants');
 
 const $cleanup = Symbol('cleanup');
-const $init = Symbol('init');
-const $initWorker = Symbol('initWorker');
 const $logger = Symbol('logger');
 const $restoreSessionState = Symbol('restoreSessionState');
 const $sessionState = Symbol('restoreSessionState');
 const $tracer = Symbol('tracer');
-const _cleanupFn = Symbol('cleanupFn');
-const _cleanupPromise = Symbol('cleanupPromise');
-const _initPromise = Symbol('initPromise');
-const _initWorkerPromise = Symbol('initWorkerPromise');
-const _injectToSandbox = Symbol('initWorker');
+
 const _worker = Symbol('worker');
 
 class DetoxContext {
   constructor() {
+    this[symbols.globalSetup] = this[symbols.globalSetup].bind(this);
+    this[symbols.globalTeardown] = this[symbols.globalTeardown].bind(this);
+    this[symbols.reportFailedTests] = this[symbols.globalTeardown].bind(this);
+    this[symbols.resolveConfig] = this[symbols.resolveConfig].bind(this);
+    this[symbols.setup] = this[symbols.setup].bind(this);
+    this[symbols.teardown] = this[symbols.teardown].bind(this);
+
     this[$sessionState] = this[$restoreSessionState]();
 
     const loggerConfig = this[$sessionState].detoxConfig
@@ -42,12 +43,6 @@ class DetoxContext {
     this.traceCall = this[$tracer].bind(this[$tracer]);
     /** @type {import('../DetoxWorker') | null} */
     this[_worker] = null;
-    /** @type {Promise | null} */
-    this[_initPromise] = null;
-    /** @type {Promise | null} */
-    this[_initWorkerPromise] = null;
-    /** @type {Promise | null} */
-    this[_cleanupPromise] = null;
   }
 
   //#region Public members
@@ -101,7 +96,7 @@ class DetoxContext {
   [symbols.reportFailedTests](_testFilePaths) {}
   /**
    * @abstract
-   * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts
+   * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} _opts
    * @returns {Promise<DetoxInternals.RuntimeConfig>}
    */
   async [symbols.resolveConfig](_opts) { return null; }
@@ -110,116 +105,57 @@ class DetoxContext {
     if (!this[_worker]) {
       throw new DetoxRuntimeError({
         message: `Detox worker instance has not been initialized in this context (${this.constructor.name}).`,
-        hint: DetoxRuntimeError.reportIssueIfJest,
+        hint: DetoxRuntimeError.reportIssueIfJest + '\n' + 'Otherwise, make sure you call detox.setup() beforehand.',
       });
     }
 
     return this[_worker];
   }
+
   /**
-   * @async
-   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
+   * @abstract
+   * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} [_opts]
    * @returns {Promise<void>}
    */
-  [symbols.init] = (opts = {}) => {
-    if (this[_cleanupPromise]) {
-      return Promise.reject(new DetoxRuntimeError({
-        message: 'Cannot init while in cleanup TODO',
-      }));
-    }
+  async [symbols.globalSetup](_opts = {}) {}
 
-    if (!this[_initPromise]) {
-      this[_initPromise] = this[$init](opts);
-    }
+  /**
+   * @param {Partial<DetoxInternals.DetoxConfigurationSetupOptions>} [opts]
+   */
+  async [symbols.setup](opts) {
+    const theGlobal = opts.global || global;
+    theGlobal['__detox__'] = this;
+    this[$logger].overrideConsole(theGlobal);
 
-    if (opts.global) {
-      this[_initPromise] = this[_initPromise].then(() => {
-        this[_injectToSandbox](opts.global);
-      });
-    }
+    const DetoxWorker = require('../DetoxWorker');
+    DetoxWorker.global = theGlobal;
+    this[_worker] = new DetoxWorker(this);
+    await this[_worker].init();
+  }
 
-    if (opts.workerId != null) {
-      if (!this[_initWorkerPromise]) {
-        this[_initWorkerPromise] = this[_initPromise].then(() => this[$initWorker](opts));
+  async [symbols.teardown]() {
+    try {
+      if (this[_worker]) {
+        await this[_worker].cleanup();
       }
+    } finally {
+      this[_worker] = null;
     }
+  }
 
-    return this[_initWorkerPromise] || this[_initPromise];
-  };
-
-  [symbols.cleanup] = async () => {
-    if (!this[_cleanupPromise]) {
-      this[_cleanupPromise] = this[_cleanupFn]();
-    }
-
-    return this[_cleanupPromise];
-  };
-
-  [symbols.primary] = {
-    init: async function primaryInitStub(_opts) {},
-    cleanup: async function primaryCleanupStub() {},
-  };
-
-  [symbols.secondary] = {
-    init: async function secondaryInitStub(_opts) {},
-    cleanup: async function secondaryCleanupStub() {},
-  };
+  /**
+   * @abstract
+   */
+  async [symbols.globalTeardown]() {}
   //#endregion
 
   //#region Protected members
   /**
    * @abstract
    * @protected
-   * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts
-   */
-  async [$init](_opts) {}
-
-  /**
-   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
-   * @returns {Promise<void>}
-   */
-  async [$initWorker](opts) {
-    const DetoxWorker = require('../DetoxWorker');
-    DetoxWorker.global = opts.global || global;
-    this[_worker] = new DetoxWorker(this);
-    await this[_worker].init();
-  }
-
-  /**
-   * @protected
    */
   [$restoreSessionState]() {
     return null;
-  }
-
-  /**
-   * @abstract
-   * @protected
-   */
-  async [$cleanup]() {}
-  //#endregion
-
-  //#region Private members
-  [_injectToSandbox](global) {
-    global['__detox__'] = this;
-    this[$logger].overrideConsole(global);
-  }
-
-  async [_cleanupFn]() {
-    try {
-      try {
-        if (this[_worker]) {
-          await this[_worker].cleanup();
-        }
-      } finally {
-        this[_worker] = null;
-        this[_initWorkerPromise] = null;
-        await this[$cleanup]();
-      }
-    } finally {
-      this[_cleanupPromise] = null;
-      this[_initPromise] = null;
-    }
   }
   //#endregion
 }
@@ -227,8 +163,6 @@ class DetoxContext {
 module.exports = DetoxContext;
 module.exports.protected = {
   $cleanup,
-  $init,
-  $initWorker,
   $logger,
   $restoreSessionState,
   $sessionState,

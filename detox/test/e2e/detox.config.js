@@ -121,6 +121,7 @@ const config = {
     'android.emulator': {
       type: 'android.emulator',
       headless: Boolean(process.env.CI),
+      gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
       },

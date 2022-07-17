@@ -1,8 +1,8 @@
 /**
  * @type {{
- *   readonly cleanup: unique symbol;
  *   readonly config: unique symbol;
- *   readonly init: unique symbol;
+ *   readonly globalSetup: unique symbol;
+ *   readonly globalTeardown: unique symbol;
  *   readonly onHookFailure: unique symbol;
  *   readonly onHookStart: unique symbol;
  *   readonly onHookSuccess: unique symbol;
@@ -15,11 +15,11 @@
  *   readonly onTestFnStart: unique symbol;
  *   readonly onTestFnSuccess: unique symbol;
  *   readonly onTestStart: unique symbol;
- *   readonly primary: unique symbol;
  *   readonly reportFailedTests: unique symbol;
  *   readonly resolveConfig: unique symbol;
- *   readonly secondary: unique symbol;
  *   readonly session: unique symbol;
+ *   readonly setup: unique symbol;
+ *   readonly teardown: unique symbol;
  *   readonly worker: unique symbol;
  * }}
  */
@@ -44,16 +44,13 @@ module.exports = {
   //#endregion
 
   //#region Main
-  init: Symbol('init'),
-  cleanup: Symbol('cleanup'),
   config: Symbol('config'),
+  globalSetup: Symbol('globalSetup'),
+  globalTeardown: Symbol('globalTeardown'),
   resolveConfig: Symbol('resolveConfig'),
   session: Symbol('session'),
+  setup: Symbol('setup'),
+  teardown: Symbol('teardown'),
   worker: Symbol('worker'),
-  //#endregion
-
-  //#region Realms
-  primary: Symbol('primary'),
-  secondary: Symbol('secondary'),
   //#endregion
 };

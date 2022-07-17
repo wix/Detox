@@ -81,7 +81,7 @@ declare global {
                  */
                 exposeGlobals?: boolean;
                 /**
-                 * By default, `await detox.init()` will uninstall and install the app.
+                 * By default, Detox will uninstall and install the app upon the initialization.
                  * If you wish to reuse the existing app for a faster run, set the property to
                  * `false`.
                  */
@@ -252,7 +252,7 @@ declare global {
             type: 'android.emulator';
             device: string | { avdName: string };
             bootArgs?: string;
-            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
+            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off';
             headless?: boolean;
             /**
              * @default true
@@ -482,12 +482,10 @@ declare global {
              * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
              * as used by simctl (e.g. AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE).
              *
-             * The value will be undefined until the device is properly prepared (i.e. in detox.init())
              */
             id: string;
             /**
              * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_29)
-             * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
 

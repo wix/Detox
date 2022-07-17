@@ -96,7 +96,7 @@ module.exports = {
   },
   gpu: {
     group: 'Execution:',
-    choices: ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest'],
+    choices: ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest', 'off'],
     describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.',
   },
   keepLockFile: {

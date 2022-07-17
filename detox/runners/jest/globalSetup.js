@@ -1,1 +1,1 @@
-module.exports = async () => require('../../internals').primary.init();
+module.exports = async () => require('../../internals').globalSetup();

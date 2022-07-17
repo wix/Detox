@@ -81,7 +81,7 @@ describe('DetoxWorker', () => {
     detoxContext = { log: logger, [symbols.config]: detoxConfig };
   });
 
-  describe('when detox.init() is called', () => {
+  describe('when DetoxWorker#init() is called', () => {
     let mockGlobalMatcher;
 
     const init = async () => {
@@ -282,7 +282,7 @@ describe('DetoxWorker', () => {
     });
   });
 
-  describe('when detox[onTestStart]() is called', () => {
+  describe('when DetoxWorker#@onTestStart() is called', () => {
     beforeEach(async () => {
       detox = await new Detox(detoxContext).init();
     });
@@ -331,7 +331,7 @@ describe('DetoxWorker', () => {
     });
   });
 
-  describe('when detox[onTestDone]() is called', () => {
+  describe('when DetoxWorker#@onTestDone() is called', () => {
     beforeEach(async () => {
       detox = await new Detox(detoxContext).init();
       await detox.onTestStart(testSummaries.running());
@@ -371,7 +371,7 @@ describe('DetoxWorker', () => {
     });
   });
 
-  describe('when detox.cleanup() is called', () => {
+  describe('when DetoxWorker#cleanup() is called', () => {
     let deferred;
     let initPromise;
 
@@ -554,7 +554,7 @@ describe('DetoxWorker', () => {
     ['onTestDone', testSummaries.passed()],
     ['onRunDescribeFinish', { name: 'testSuiteName' }],
     ['onRunFinish', null],
-  ])('when detox.%s(%j) is called', (method, arg) => {
+  ])('when DetoxWorker#@%s(%j) is called', (method, arg) => {
     beforeEach(async () => {
       detox = await new Detox(detoxContext).init();
     });

@@ -666,7 +666,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
-Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -686,7 +686,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
-Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json

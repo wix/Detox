@@ -110,7 +110,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
    * @protected
    */
   async initDetox() {
-    await detoxInternals.secondary.init({
+    await detoxInternals.setup({
       global: this.global,
       workerId: +process.env.JEST_WORKER_ID,
     });
@@ -118,7 +118,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @protected */
   async cleanupDetox() {
-    await detoxInternals.secondary.cleanup();
+    await detoxInternals.teardown();
   }
 
   /** @private */

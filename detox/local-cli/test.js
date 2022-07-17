@@ -9,7 +9,7 @@ module.exports.middlewares = require('./testCommand/middlewares').default;
 
 module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
   try {
-    await detox.init({
+    await detox.globalSetup({
       argv: detoxArgs,
       testRunnerArgv: runnerArgs,
     });
@@ -21,6 +21,6 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
 
     await runnerCommand.execute();
   } finally {
-    await detox.cleanup();
+    await detox.globalTeardown();
   }
 };

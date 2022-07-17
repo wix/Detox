@@ -141,7 +141,7 @@ describe('CLI', () => {
   test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
     const context = require('../internals');
     context.session.failedTestFiles = ['e2e/failing1.test.js', 'e2e/failing2.test.js'];
-    context.reportFailedTests = jest.fn(() => {
+    context.session.failedTestFiles.splice = jest.fn(() => {
       context.session.failedTestFiles = ['e2e/failing2.test.js'];
     });
 

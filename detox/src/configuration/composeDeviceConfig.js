@@ -118,7 +118,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
-    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest)$/)) {
+    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest|off)$/)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
