@@ -1,10 +1,9 @@
 let uut;
 let adb;
-let tempfilexfer;
+let tempFileTransfer;
 
 describe('HashHelper', () => {
   const mockDeviceId = '123';
-  const mockPath = '/data/local/tmp/detox';
   const mockHash = 'abcdef';
   const mockBundleId = 'com.android.test';
   const HashHelper = require('./HashHelper');
@@ -13,11 +12,10 @@ describe('HashHelper', () => {
     const ADBMock = jest.genMockFromModule('../exec/ADB');
     adb = new ADBMock();
     adb.readFile.mockImplementation(() => Promise.resolve(mockHash));
-    const TempFileXfer = jest.genMockFromModule('./TempFileXfer');
-    tempfilexfer = new TempFileXfer(adb);
-    tempfilexfer.getFilePath.mockImplementation(() => mockPath);
+    const { TempFileTransfer } = jest.genMockFromModule('./TempFileTransfer');
+    tempFileTransfer = new TempFileTransfer(adb);
 
-    uut = new HashHelper(adb, tempfilexfer);
+    uut = new HashHelper(adb, tempFileTransfer);
   });
 
   it('should save hash remotely and delete local hash file', async () => {
@@ -29,8 +27,8 @@ describe('HashHelper', () => {
     await uut.saveHashToRemote(mockDeviceId, mockBundleId, mockHash);
     await expect(writeFileSpy).toHaveBeenCalledTimes(1);
     await expect(writeFileSpy).toHaveBeenCalledWith(hashFile, mockHash);
-    await expect(tempfilexfer.send).toHaveBeenCalledTimes(1);
-    await expect(tempfilexfer.send).toHaveBeenCalledWith(mockDeviceId, hashFile, hashFile);
+    await expect(tempFileTransfer.send).toHaveBeenCalledTimes(1);
+    await expect(tempFileTransfer.send).toHaveBeenCalledWith(mockDeviceId, hashFile, hashFile);
     await expect(deleteFileSpy).toHaveBeenCalledTimes(1);
   });
 });

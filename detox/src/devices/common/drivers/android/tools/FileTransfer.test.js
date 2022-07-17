@@ -9,8 +9,8 @@ describe('File-transfer util', () => {
     const ADBMock = jest.genMockFromModule('../exec/ADB');
     adb = new ADBMock();
 
-    const FileXfer = require('./FileXfer');
-    uut = new FileXfer(adb, deviceDestinationDir);
+    const FileTransfer = require('./FileTransfer');
+    uut = new FileTransfer(adb, deviceDestinationDir);
   });
 
   it('should create the destination directory on the device', async () => {

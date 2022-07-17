@@ -1,16 +1,17 @@
 const fs = require('fs');
 
 class HashHelper {
-  constructor(adb, tempFileXfer) {
+  constructor(adb, tempFileTransfer) {
     this._adb = adb;
-    this._tempFileXfer = tempFileXfer;
+    this._tempFileTransfer = tempFileTransfer;
   }
 
   async saveHashToRemote(deviceId, bundleId, hash) {
     const hashFilename = `${bundleId}.hash`;
 
     this._createLocalHashFile(hashFilename, hash);
-    await this._tempFileXfer.send(deviceId, hashFilename, hashFilename);
+    await this._tempFileTransfer.prepareDestinationDir(deviceId);
+    await this._tempFileTransfer.send(deviceId, hashFilename, hashFilename);
     this._deleteLocalHashFile(hashFilename);
   }
 

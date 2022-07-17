@@ -15,6 +15,7 @@ const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
+const { EMU_TEMP_INSTALL_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
@@ -31,8 +32,7 @@ const log = logger.child({ __filename });
  * @property adb { ADB }
  * @property aapt { AAPT }
  * @property apkValidator { ApkValidator }
- * @property fileXfer { FileXfer }
- * @property hashXfer { FileXfer }
+ * @property tempFileTransfer { tempFileTransfer }
  * @property hashHelper { HashHelper }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
@@ -53,7 +53,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = deps.aapt;
     this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
-    this.fileXfer = deps.fileXfer;
+    this.tempFileTransfer = deps.tempFileTransfer;
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
@@ -339,8 +339,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
-    await this.fileXfer.prepareDestinationDir(adbName);
-    return await this.fileXfer.send(adbName, dataFileLocalPath, 'notification.json');
+    await this.tempFileTransfer.prepareDestinationDir(adbName);
+    return await this.tempFileTransfer.send(adbName, dataFileLocalPath, 'notification.json');
   }
 
   _startActivityWithUrl(url) {
@@ -426,7 +426,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   async _compareRemoteToLocal(bundleId, localHash) {
     const hashFilename = `${bundleId}.hash`;
-    const destinationPath = path.posix.join(this.fileXfer.getFilePath(), hashFilename);
+    const destinationPath = path.posix.join(EMU_TEMP_INSTALL_PATH, hashFilename);
     const remoteHash = await this.adb.readFile(this.adbName, destinationPath, true);
     return localHash === remoteHash;
   }
@@ -440,10 +440,6 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _reinstallApp(params) {
-    if (params.isPkgInstalled) {
-      await this.uninstallApp(params.bundleId);
-    }
-
     await this.installApp(params.binaryPath, params.testBinaryPath);
     await this._saveHashToRemote(params.hash, params.bundleId);
   }
