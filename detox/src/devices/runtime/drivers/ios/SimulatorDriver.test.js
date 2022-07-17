@@ -138,15 +138,17 @@ describe('IOS simulator driver', () => {
     });
   });
 
-  describe('resetAppState', () => {
-    it('should call uninstall and install for resetAppState', async () => {
+  describe('resetAppData', () => {
+    it('should throw an exception that resetAppData is unsupported on iOS', async () => {
       const binaryPath = '/tmp';
-      await uut.resetAppState(bundleId, binaryPath);
+      let caughtException;
+      try {
+        await uut.resetAppData(bundleId, binaryPath);
+      } catch (e) {
+        caughtException = e;
+      }
 
-      expect(applesimutils.install).toBeCalledTimes(1);
-      expect(applesimutils.install).toBeCalledWith(udid, binaryPath);
-      expect(applesimutils.uninstall).toBeCalledTimes(1);
-      expect(applesimutils.uninstall).toBeCalledWith(udid, bundleId);
+      expect(caughtException.toString()).toContain('DetoxRuntimeError: Reset app state is not supported on iOS Simulator.');
     });
   });
 });

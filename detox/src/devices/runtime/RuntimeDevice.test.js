@@ -373,14 +373,14 @@ describe('Device', () => {
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
-    it(`given behaviorConfig.optimizeAppInstall == true should call resetAppState`, async () => {
+    it(`given behaviorConfig.optimizeAppInstall == true should call resetAppData`, async () => {
       const device = await aValidDevice();
 
       device._behaviorConfig.optimizeAppInstall = true;
       await device.relaunchApp({ delete: true });
 
       expect(driverMock.driver.launchApp).toHaveBeenCalled();
-      expect(driverMock.driver.resetAppState).toHaveBeenCalled();
+      expect(driverMock.driver.resetAppData).toHaveBeenCalled();
     });
 
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
@@ -866,13 +866,13 @@ describe('Device', () => {
     expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it('resetAppState() should pass to device driver if optimize is active', async () => {
+  it('resetAppState should pass to device driver resetAppData if optimize is active', async () => {
     const device = await aValidDevice();
     device._behaviorConfig.optimizeAppInstall = true;
     await device.resetAppState();
 
-    expect(driverMock.driver.resetAppState).toHaveBeenCalledTimes(1);
-    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId, device._currentApp.binaryPath, device._currentApp.testBinaryPath);
+    expect(driverMock.driver.resetAppData).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.resetAppData).toHaveBeenCalledWith(bundleId, device._currentApp.binaryPath, device._currentApp.testBinaryPath);
   });
 
   it(`sendUserActivity() should pass to device driver`, async () => {

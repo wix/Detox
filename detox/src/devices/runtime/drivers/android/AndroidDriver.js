@@ -16,7 +16,7 @@ const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
 const { saveHashToRemote } = require('../../../common/drivers/android/tools/SaveHashToRemote');
-const { EMU_TEMP_INSTALL_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
+const { FILE_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
@@ -94,7 +94,7 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async resetAppState(bundleId, binaryPath, testBinaryPath) {
+  async resetAppData(bundleId, binaryPath, testBinaryPath) {
     const hash = await this._getLocalBinaryHash(binaryPath);
     const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
     const params = { binaryPath, testBinaryPath, bundleId, hash, isPkgInstalled };
@@ -415,13 +415,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _saveHashToRemote(hash, bundleId) {
-    const params = {
-      tempFileTransfer: this.tempFileTransfer,
-      deviceId: this.adbName,
-      bundleId,
-      hash
-    };
-
+    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, bundleId, hash };
     await saveHashToRemote(params);
   }
 
@@ -432,7 +426,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   async _compareRemoteToLocal(bundleId, localHash) {
     const hashFilename = `${bundleId}.hash`;
-    const destinationPath = path.posix.join(EMU_TEMP_INSTALL_PATH, hashFilename);
+    const destinationPath = path.posix.join(FILE_PATH, hashFilename);
     const remoteHash = await this.adb.readFile(this.adbName, destinationPath, true);
     return localHash === remoteHash;
   }

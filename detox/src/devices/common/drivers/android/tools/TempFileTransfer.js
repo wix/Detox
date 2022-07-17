@@ -1,14 +1,14 @@
 const FileTransfer = require('./FileTransfer');
 
-const EMU_TEMP_INSTALL_PATH = '/data/local/tmp/detox';
+const FILE_PATH = '/data/local/tmp/detox';
 
 class TempFileTransfer extends FileTransfer {
   constructor(adb) {
-    super(adb, EMU_TEMP_INSTALL_PATH);
+    super(adb, FILE_PATH);
   }
 }
 
 module.exports = {
   TempFileTransfer,
-  EMU_TEMP_INSTALL_PATH
+  FILE_PATH
 };

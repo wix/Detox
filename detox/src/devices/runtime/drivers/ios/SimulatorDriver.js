@@ -63,9 +63,8 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async resetAppState(bundleId, binaryPath) {
-    await this.uninstallApp(bundleId);
-    await this.installApp(binaryPath);
+  async resetAppData(_bundleId, _binaryPath) {
+    throw new DetoxRuntimeError('Reset app state is not supported on iOS Simulator.');
   }
 
   async installApp(binaryPath) {
