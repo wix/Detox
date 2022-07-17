@@ -1,12 +1,11 @@
-let uut;
+const { saveHashToRemote } = require('./SaveHashToRemote');
 let adb;
 let tempFileTransfer;
 
-describe('HashHelper', () => {
+describe('SaveHashToRemote', () => {
   const mockDeviceId = '123';
   const mockHash = 'abcdef';
   const mockBundleId = 'com.android.test';
-  const HashHelper = require('./HashHelper');
 
   beforeEach(() => {
     const ADBMock = jest.genMockFromModule('../exec/ADB');
@@ -14,8 +13,6 @@ describe('HashHelper', () => {
     adb.readFile.mockImplementation(() => Promise.resolve(mockHash));
     const { TempFileTransfer } = jest.genMockFromModule('./TempFileTransfer');
     tempFileTransfer = new TempFileTransfer(adb);
-
-    uut = new HashHelper(adb, tempFileTransfer);
   });
 
   it('should save hash remotely and delete local hash file', async () => {
@@ -24,7 +21,14 @@ describe('HashHelper', () => {
     const writeFileSpy = jest.spyOn(fs, 'writeFileSync');
     const deleteFileSpy = jest.spyOn(fs, 'unlinkSync');
 
-    await uut.saveHashToRemote(mockDeviceId, mockBundleId, mockHash);
+    const params = {
+      tempFileTransfer,
+      deviceId: mockDeviceId,
+      bundleId: mockBundleId,
+      hash: mockHash
+    };
+
+    await saveHashToRemote(params);
     await expect(writeFileSpy).toHaveBeenCalledTimes(1);
     await expect(writeFileSpy).toHaveBeenCalledWith(hashFile, mockHash);
     await expect(tempFileTransfer.send).toHaveBeenCalledTimes(1);

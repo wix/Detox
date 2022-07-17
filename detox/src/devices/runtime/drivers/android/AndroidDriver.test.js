@@ -20,7 +20,7 @@ describe('Android driver', () => {
   let appUninstallHelper;
   let instrumentation;
   let DeviceRegistryClass;
-  let hashHelper;
+  let saveHashToRemoteMock;
 
   let uut;
   beforeEach(() => {
@@ -38,7 +38,6 @@ describe('Android driver', () => {
       tempFileTransfer,
       appInstallHelper,
       appUninstallHelper,
-      hashHelper,
       instrumentation
     }, { adbName });
   });
@@ -585,9 +584,9 @@ describe('Android driver', () => {
     const createRegistry = jest.fn(() => new DeviceRegistryClass());
     DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
 
-    jest.mock('../../../common/drivers/android/tools/HashHelper');
-    const HashHelper = require('../../../common/drivers/android/tools/HashHelper');
-    hashHelper = new HashHelper();
+    jest.mock('../../../common/drivers/android/tools/SaveHashToRemote');
+    const { saveHashToRemote } = require('../../../common/drivers/android/tools/SaveHashToRemote');
+    saveHashToRemoteMock = saveHashToRemote;
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
@@ -672,8 +671,8 @@ describe('Android driver', () => {
       it('should save hash to device', async () => {
         await uut.resetAppState(bundleId, binaryPath, testBinaryPath);
 
-        expect(hashHelper.saveHashToRemote).toHaveBeenCalledTimes(1);
-        expect(hashHelper.saveHashToRemote).toHaveBeenCalledWith(adbName, bundleId, mockHash);
+        expect(saveHashToRemoteMock).toHaveBeenCalledTimes(1);
+        expect(saveHashToRemoteMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, bundleId, hash: mockHash });
       });
     });
   });

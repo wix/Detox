@@ -105,14 +105,13 @@ declare global {
             /**
              * Avoid installing the app on the device if it has been already installed there.
              * Instead of reinstalling, it calls Device#resetAppState().
+             * By default, Detox will perform app reinstallation.
              *
-             * Experimental (currently implemented only for Android).
+             * Experimental and available for Android only.
              */
             optimizeAppInstall?: boolean;
             launchApp?: 'auto' | 'manual';
-            cleanup?: {
-                shutdownDevice?: boolean;
-            };
+            cleanup?: { shutdownDevice?: boolean; };
         }
 
         interface DetoxSessionConfig {
@@ -586,8 +585,8 @@ declare global {
             uninstallApp(bundle?: string): Promise<void>;
 
             /**
-             * Reset the state of the app (e.g. by reinstalling on the device)
-             * or deleting user data.
+             * Reinstall the application if the APK has changed, or reset the user data otherwise (without reinstalling).
+             * Available for Android only.
              */
             resetAppState(): Promise<void>;
 

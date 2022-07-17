@@ -269,16 +269,9 @@ describe('Detox', () => {
       });
     });
 
-    describe('with behaviorConfig.init.reinstallApp = true', () => {
-      beforeEach(() => {
-        detoxConfig.behaviorConfig.init.reinstallApp = true;
-      });
-
-      beforeEach(init);
-
-      it('should call reinstallApp on the device', () => {
-        expect(runtimeDevice.resetAppState).toHaveBeenCalled();
-      });
+    it('should call resetAppState on the device', async () => {
+      await init();
+      expect(runtimeDevice.resetAppState).toHaveBeenCalled();
     });
 
     describe('with multiple apps', () => {

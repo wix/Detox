@@ -15,6 +15,7 @@ const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
+const { saveHashToRemote } = require('../../../common/drivers/android/tools/SaveHashToRemote');
 const { EMU_TEMP_INSTALL_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
@@ -33,7 +34,6 @@ const log = logger.child({ __filename });
  * @property aapt { AAPT }
  * @property apkValidator { ApkValidator }
  * @property tempFileTransfer { tempFileTransfer }
- * @property hashHelper { HashHelper }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
  * @property devicePathBuilder { AndroidDevicePathBuilder }
@@ -58,7 +58,6 @@ class AndroidDriver extends DeviceDriverBase {
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
     this.instrumentation = deps.instrumentation;
-    this.hashHelper = deps.hashHelper;
 
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
   }
@@ -416,7 +415,14 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _saveHashToRemote(hash, bundleId) {
-    await this.hashHelper.saveHashToRemote(this.adbName, bundleId, hash);
+    const params = {
+      tempFileTransfer: this.tempFileTransfer,
+      deviceId: this.adbName,
+      bundleId,
+      hash
+    };
+
+    await saveHashToRemote(params);
   }
 
   async _shouldClearData(bundleId, hash, isPkgInstalled) {

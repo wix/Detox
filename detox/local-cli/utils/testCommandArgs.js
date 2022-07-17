@@ -145,7 +145,7 @@ module.exports = {
     boolean: true,
     default: true,
     group: 'Execution:',
-    describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
+    describe: `Use Detox's custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
   },
   'force-adb-install': {
     boolean: true,
@@ -155,7 +155,7 @@ module.exports = {
   'optimize-app-install': {
     boolean: false,
     group: 'Execution:',
-    describe: `use Detox' optimized install mechanism, where a hash is stored on the device allowing future app installation to be skipped when possible.`,
+    describe: `On Android, reinstalls the app only when the APK has changed, otherwise reset the app data.`,
   },
   'inspect-brk': {
     group: 'Debugging:',
