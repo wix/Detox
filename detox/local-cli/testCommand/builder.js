@@ -21,7 +21,6 @@ module.exports = {
     group: 'Execution:',
     describe: 'Re-spawn the test runner for individual failing suite files until they pass, or <N> times at least.',
     number: true,
-    default: 0,
   },
   r: {
     alias: 'reuse',
