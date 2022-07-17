@@ -8,7 +8,7 @@ install! 'cocoapods', :deterministic_uuids => false
 def shared_pods
   config = use_native_modules!
 
-    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.69.[2-9]/)
+    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.68.*/)
       # Flags change depending on the env values.
       flags = get_default_flags()
 
