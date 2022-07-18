@@ -25,7 +25,6 @@ class DetoxLogger {
   constructor(config, context, bunyanLogger) {
     // IMPORTANT: all the loggers should share the same object instance of this._config
     this._config = config || {
-      file: undefined,
       level: 'info',
       overrideConsole: 'none',
       options: {
@@ -35,6 +34,10 @@ class DetoxLogger {
         showMetadata: false,
       },
     };
+
+    if (config && !context) {
+      this._config.file = temporaryPath.for.jsonl();
+    }
 
     /** @type {object | undefined} */
     this._context = context;
