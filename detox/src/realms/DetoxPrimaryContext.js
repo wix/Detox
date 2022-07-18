@@ -120,8 +120,9 @@ class DetoxPrimaryContext extends DetoxContext {
    * @param {Partial<DetoxInternals.DetoxConfigurationSetupOptions>} [opts]
    */
   async [symbols.setup](opts) {
-    this[$sessionState].workerId = opts.workerId;
-    this[_ipcServer].onRegisterWorker({ workerId: opts.workerId });
+    const workerId = opts.workerId || 1;
+    this[$sessionState].workerId = workerId;
+    this[_ipcServer].onRegisterWorker({ workerId });
     await super[symbols.setup](opts);
   }
 

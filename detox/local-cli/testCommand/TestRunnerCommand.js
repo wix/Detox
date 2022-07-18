@@ -99,6 +99,7 @@ class TestRunnerCommand {
       } catch (e) {
         launchError = e;
 
+        // @ts-ignore
         const { failedTestFiles } = detox.session;
         if (_.isEmpty(failedTestFiles)) {
           throw e;
@@ -106,7 +107,7 @@ class TestRunnerCommand {
 
         this._argv._ = failedTestFiles.slice();
         this._env.DETOX_RERUN_INDEX = 1 + (this._env.DETOX_RERUN_INDEX || 0);
-        detox.session.failedTestFiles.splice(0, Infinity);
+        failedTestFiles.splice(0, Infinity);
       }
     } while (launchError && --runsLeft > 0);
 

@@ -59,8 +59,9 @@ class DetoxSecondaryContext extends DetoxContext {
       logger: this[$logger],
     });
 
+    const workerId = opts.workerId || 1;
     await this[_ipcClient].init();
-    await this[_ipcClient].registerWorker(opts.workerId);
+    await this[_ipcClient].registerWorker(workerId);
     await super[symbols.setup](opts);
   }
 

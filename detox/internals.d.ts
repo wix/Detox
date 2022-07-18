@@ -72,15 +72,9 @@ declare global {
       workerId: number;
     };
 
-    type SessionState = Readonly<PrimarySessionState | SecondarySessionState>;
-
-    type SecondarySessionState = {
+    type SessionState = Readonly<{
       workersCount: number;
-    };
-
-    type PrimarySessionState = PrimarySessionState & {
-      failedTestFiles: string[];
-    };
+    }>;
 
     type RuntimeConfig = Readonly<{
       configurationName: string;
