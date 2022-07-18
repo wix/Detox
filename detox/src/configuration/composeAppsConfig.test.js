@@ -56,6 +56,9 @@ describe('composeAppsConfig', () => {
         binaryPath: 'path/to/app',
         bundleId: 'com.example.app',
         build: 'echo OK',
+        permissions: {
+          calendar: 'YES',
+        },
         launchArgs: {
           hello: 'world',
         }
@@ -65,6 +68,18 @@ describe('composeAppsConfig', () => {
     it.each([
       ['ios.none', 'ios.app'],
       ['ios.simulator', 'ios.app'],
+    ])('should infer type and app properties for %j', (deviceType, appType) => {
+      deviceConfig.type = deviceType;
+      expect(compose()).toEqual({
+        default: {
+          ...localConfig,
+          type: appType,
+          device: undefined,
+        },
+      });
+    });
+
+    it.each([
       ['android.attached', 'android.apk'],
       ['android.emulator', 'android.apk'],
       ['android.genycloud', 'android.apk'],
@@ -75,6 +90,7 @@ describe('composeAppsConfig', () => {
           ...localConfig,
           type: appType,
           device: undefined,
+          permissions: undefined,
         },
       });
     });

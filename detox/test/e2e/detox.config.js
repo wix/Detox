@@ -16,6 +16,13 @@ const launchArgs = {
   micro: 'soft',
 };
 
+const defaultPermissions = {
+  calendar: 'YES',
+  notifications: 'YES',
+  camera: 'YES',
+  photos: 'YES',
+};
+
 /** @type {Detox.DetoxConfig} */
 const config = {
   testRunner: 'nyc jest',
@@ -57,6 +64,7 @@ const config = {
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
       build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       bundleId: 'com.wix.detox-example',
+      permissions: defaultPermissions,
     },
 
     'ios.release': {
@@ -64,6 +72,7 @@ const config = {
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
       build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      permissions: defaultPermissions,
     },
 
     'android.debug': {

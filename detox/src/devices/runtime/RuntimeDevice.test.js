@@ -687,9 +687,35 @@ describe('Device', () => {
       expect(driverMock.driver.installApp).toHaveBeenCalledWith('newAppPath', device._deviceConfig.testBinaryPath);
     });
 
+    it(`with a custom app permissions should setPermissions after installing`, async () => {
+      const device = await aValidDevice({
+        appsConfig: {
+          default: {
+            permissions: {
+              calendar: 'NO',
+              camera: 'YES',
+            },
+          },
+        },
+      });
+
+      driverMock.driver.setPermissions.mockRejectedValue(new Error('Should be called last!'));
+      driverMock.driver.installApp.mockImplementation(() => {
+        driverMock.driver.setPermissions.mockReset();
+      });
+
+      await device.installApp();
+      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith('test.bundle', {
+        calendar: 'NO',
+        camera: 'YES',
+      });
+    });
+
     it(`with no args should use the default path given in configuration`, async () => {
       const device = await aValidDevice();
       await device.installApp();
+
+      expect(driverMock.driver.setPermissions).not.toHaveBeenCalled();
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._currentApp.binaryPath, device._currentApp.testBinaryPath);
     });
   });

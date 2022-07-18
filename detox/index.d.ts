@@ -184,6 +184,7 @@ declare global {
             bundleId?: string;
             build?: string;
             launchArgs?: Record<string, any>;
+            permissions?: DevicePermissions;
         }
 
         interface DetoxAndroidAppConfig {
@@ -201,6 +202,7 @@ declare global {
             build?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
+            permissions?: DevicePermissions;
         }
 
         type DetoxBuiltInDeviceConfig =

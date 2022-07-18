@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const { traceCall } = require('../../utils/trace');
@@ -56,6 +58,7 @@ class RuntimeDevice {
     this._emitter = eventEmitter;
     this._errorComposer = runtimeErrorComposer;
 
+    /** @type {Detox.DetoxAppConfig | null} */
     this._currentApp = null;
     this._currentAppLaunchArgs = new LaunchArgsEditor();
     this._processes = {};
@@ -189,9 +192,13 @@ class RuntimeDevice {
   }
 
   async installApp(binaryPath, testBinaryPath) {
-    await traceCall('appInstall', () => {
+    await traceCall('appInstall', async () => {
+      /** @type {*} */
       const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
-      return this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
+      await this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
+      if (!_.isEmpty(currentApp.permissions)) {
+        await this.deviceDriver.setPermissions(currentApp.bundleId, currentApp.permissions);
+      }
     });
   }
 

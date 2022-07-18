@@ -202,7 +202,11 @@ The format of Detox config allows you to define inside it multiple app configs i
     "ios.debug": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+      "permissions": {
+        /** @see {Detox.DevicePermissions} */
+        notifications: 'YES',
+      },
     },
     "android.release": {
       "type": "android.apk",
@@ -218,14 +222,15 @@ The format of Detox config allows you to define inside it multiple app configs i
 
 An app config can have the following params:
 
-| Configuration Params | Details                                                                                                                                                                                                             |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`               | Mandatory property to discern app types: `ios.app`, `android.apk`.                                                                                                                                                  |
-| `name`               | Use only when working with multiple apps within the same configuration. See an example below.                                                                                                                       |
-| `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                          |
-| `build`              | **\[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience.                                                        |
-| `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                       |
-| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](APIRef.LaunchArgs.md). |
+| Configuration Params | Details                                                                                                                                                                                                               |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`               | Mandatory property to discern app types: `ios.app`, `android.apk`.                                                                                                                                                    |
+| `name`               | Use only when working with multiple apps within the same configuration. See an example below.                                                                                                                         |
+| `build`              | **\[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience.                                                          |
+| `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                            |
+| `testBinaryPath`     | **\[optional, Android only]**: relative path to the test app (apk)                                                                                                                                                    |
+| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](APIRef.LaunchArgs.md).   |
+| `permissions`        | **\[optional, iOS only]** An object specifying default [runtime permissions](APIRef.DeviceObjectAPI.md#permissions-ios-only) to give before launching the app.                                                        |
 
 To work with multiple apps within the same configuration you should be giving each app its name, e.g.:
 

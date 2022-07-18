@@ -68,6 +68,7 @@ function composeAppsConfigFromPlain(opts) {
         bundleId: localConfig.bundleId,
         build: localConfig.build,
         launchArgs: localConfig.launchArgs,
+        permissions: localConfig.permissions,
       };
       break;
     default:
