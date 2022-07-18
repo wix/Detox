@@ -64,7 +64,7 @@ Let's start with the quicker way.
 
    This command is already enough to start your application in an altered mode, and you can start running your tests. Now, if some module imports `./src/config`, you tell _Metro bundler_ to prefer `./src/config.mock.js` over the plain `./src/config.js`, which means the consumer gets the mocked implementation.
 
-> CAVEAT: whichever file extension you might take for the mock files – make sure you don't accidentally "pick up" unforeseen file overrides from `node_modules/**/*.your-extension.js`!
+> CAVEAT: whichever file extension you might take for the mock files – make sure you don’t accidentally "pick up" unforeseen file overrides from `node_modules/**/*.your-extension.js`!
 > _Metro bundler_ does not limit itself to your project files only – applying those `--sourceExts` also affects the resolution of the `node_modules` content!
 
 ### Configuring Metro bundler
