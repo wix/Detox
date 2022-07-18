@@ -2,14 +2,17 @@
 const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
-const detox = require('../../..');
-const detoxInternals = require('../../../internals');
+const detox = require('../../../internals');
 const { DetoxError } = require('../../../src/errors');
 const Timer = require('../../../src/utils/Timer');
 
-const DetoxCoreListener = require('./listeners/DetoxCoreListener');
-const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
-const DetoxPlatformFilterListener = require('./listeners/DetoxPlatformFilterListener');
+const {
+  DetoxCoreListener,
+  DetoxInitErrorListener,
+  DetoxPlatformFilterListener,
+  SpecReporter,
+  WorkerAssignReporter
+} = require('./listeners');
 const assertExistingContext = require('./utils/assertExistingContext');
 const { assertJestCircus27 } = require('./utils/assertJestCircus27');
 
@@ -35,13 +38,15 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       DetoxInitErrorListener,
       DetoxPlatformFilterListener,
       DetoxCoreListener,
+      SpecReporter,
+      WorkerAssignReporter,
     };
     /** @protected */
     this.testPath = context.testPath;
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.initTimeout = 300000;
+    this.initTimeout = detox.config.runnerConfig.jest.initTimeout;
   }
 
   /** @override */
@@ -110,7 +115,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
    * @protected
    */
   async initDetox() {
-    await detoxInternals.setup({
+    await detox.setup({
       global: this.global,
       workerId: +process.env.JEST_WORKER_ID,
     });
@@ -118,7 +123,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @protected */
   async cleanupDetox() {
-    await detoxInternals.teardown();
+    await detox.teardown();
   }
 
   /** @private */

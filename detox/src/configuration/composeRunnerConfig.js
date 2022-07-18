@@ -1,3 +1,7 @@
+const os = require('os');
+
+const _ = require('lodash');
+
 /**
  * @param {object} opts
  * @param {Detox.DetoxConfig} opts.globalConfig
@@ -19,69 +23,57 @@ function composeRunnerConfig(opts) {
   }
 
   const cliConfig = opts.cliConfig;
-  const argOverrides = opts.testRunnerArgv;
 
   /** @type {Detox.DetoxTestRunnerConfig} */
-  const merged = {
-    retries: 0,
-    inspectBrk: false,
-
-    ...globalConfig,
-    ...localConfig,
-
-    args: {
-      $0: 'jest',
-      _: [],
+  const merged = _.merge(
+    {
+      retries: 0,
+      inspectBrk: inspectBrkHookDefault,
+      jest: {
+        initTimeout: 300000,
+        reportSpecs: undefined,
+        reportWorkerAssign: true,
+      },
+      args: {
+        $0: 'jest',
+        _: [],
+      },
     },
-  };
-
-  if (cliConfig.retries != null) {
-    merged.retries = cliConfig.retries;
-  }
-
-  if (cliConfig.inspectBrk != null) {
-    merged.inspectBrk = cliConfig.inspectBrk;
-  }
-
-  if (globalConfig) {
-    Object.assign(merged.args, globalConfig.args);
-
-    if (globalConfig.jest) {
-      merged.jest = Object.assign(merged.jest || {}, globalConfig.jest);
+    globalConfig,
+    localConfig,
+    cliConfig.retries != null ? { retries: cliConfig.retries } : null,
+    cliConfig.jestReportSpecs != null ? { jest: { reportSpecs: cliConfig.jestReportSpecs } } : null,
+    {
+      args: _.omitBy(opts.testRunnerArgv, hasEmptyPositionalArgs)
     }
-  }
+  );
 
-  if (localConfig) {
-    Object.assign(merged.args, localConfig.args);
-
-    if (localConfig.jest) {
-      merged.jest = Object.assign(merged.jest || {}, localConfig.jest);
-    }
-  }
-
-  if (cliConfig.jestReportSpecs != null) {
-    merged.jest = Object.assign(merged.jest || {}, {
-      reportSpecs: cliConfig.jestReportSpecs,
-    });
-  }
-
-  if (argOverrides) {
-    const theArgs = merged.args;
-    for (const key of Object.keys(argOverrides)) {
-      const defaultValue = theArgs[key];
-      const value = argOverrides[key];
-
-      if (key === '_' && !value || (Array.isArray(value) && value.length === 0)) {
-        continue;
-      }
-
-      theArgs[key] = typeof defaultValue === 'function'
-        ? defaultValue(value)
-        : value;
+  if (typeof merged.inspectBrk === 'function') {
+    if (cliConfig.inspectBrk) {
+      merged.inspectBrk(merged);
+      merged.inspectBrk = true;
+    } else {
+      merged.inspectBrk = false;
     }
   }
 
   return merged;
+}
+
+function hasEmptyPositionalArgs(value, key) {
+  return key === '_' ? _.isEmpty(value) : false;
+}
+
+/**
+ * @param {Detox.DetoxTestRunnerConfig} config
+ */
+function inspectBrkHookDefault(config) {
+  config.args.$0 = /* istanbul ignore if */ os.platform() === 'win32'
+    ? `node --inspect-brk ./node_modules/jest/bin/jest.js`
+    : `node --inspect-brk ./node_modules/.bin/jest`;
+  config.args.runInBand = true;
+  delete config.args.w;
+  delete config.args.workers;
 }
 
 module.exports = composeRunnerConfig;

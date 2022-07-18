@@ -10,7 +10,6 @@
     "jest": "^27.0.0"
   },
   "detox": {
-    "test-runner": "jest",
     "configurations": {
       "plugin": {
         "device": {

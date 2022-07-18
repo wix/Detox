@@ -1,40 +1,16 @@
 const firstTestContent = require('./firstTestContent');
 
 const runnerConfig = `{
-    "maxWorkers": 1,
-    "testEnvironment": "./environment",
-    "testTimeout": 120000,
-    "testMatch": ["<rootDir>/e2e/**/*.test.js"],
-    "reporters": ["detox/runners/jest/reporter"],
-    "verbose": true
+  "globalSetup": "detox/runners/jest/globalSetup",
+  "globalTeardown": "detox/runners/jest/globalTeardown",
+  "maxWorkers": 1,
+  "reporters": ["detox/runners/jest/reporter"],
+  "testEnvironment": "detox/runners/jest/testEnvironment",
+  "testMatch": ["<rootDir>/e2e/**/*.test.js"],
+  "testTimeout": 120000,
+  "verbose": true
 }
 `;
 
-const environmentJsContent = `const {
-  DetoxCircusEnvironment,
-  SpecReporter,
-  WorkerAssignReporter,
-} = require('detox/runners/jest');
-
-class CustomDetoxEnvironment extends DetoxCircusEnvironment {
-  constructor(config, context) {
-    super(config, context);
-
-    // Can be safely removed, if you are content with the default value (=300000ms)
-    this.initTimeout = 300000;
-
-    // This takes care of generating status logs on a per-spec basis. By default, Jest only reports at file-level.
-    // This is strictly optional.
-    this.registerListeners({
-      SpecReporter,
-      WorkerAssignReporter,
-    });
-  }
-}
-
-module.exports = CustomDetoxEnvironment;
-`;
-
-exports.environment = environmentJsContent;
 exports.starter = firstTestContent;
 exports.runnerConfig = runnerConfig;

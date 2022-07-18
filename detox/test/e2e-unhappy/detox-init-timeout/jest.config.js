@@ -8,7 +8,7 @@ module.exports = {
 
   rootDir,
 
-  testEnvironment: `${dirname}/environment.js`,
+  testEnvironment: `${dirname}/testEnvironment.js`,
   testMatch: ["**/detox-init-timeout/timeout.test.js"],
   testTimeout: 15000,
 };

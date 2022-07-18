@@ -11,7 +11,7 @@ module.exports = async () => {
 
   return {
     'rootDir': '../..',
-    'testEnvironment': './test/e2e/environment.js',
+    'testEnvironment': './test/e2e/testEnvironment.js',
     'testRunner': './test/node_modules/jest-circus/runner',
     'testMatch': [
       '<rootDir>/test/e2e/**/*.test.{js,ts}',

@@ -1,9 +1,9 @@
 {
+  "maxWorkers": 1,
   "globalSetup": "./global-setup.js",
   "globalTeardown": "detox/runners/jest/globalTeardown",
   "setupFilesAfterEnv": ["./setup.ts"],
-  "maxWorkers": 1,
-  "testEnvironment": "./environment",
+  "testEnvironment": "detox/runners/jest/testEnvironment",
   "testRunner": "jest-circus/runner",
   "testTimeout": 120000,
   "testMatch": ["<rootDir>/*.e2e.ts"],

@@ -1,22 +1,8 @@
-const {
-  DetoxCircusEnvironment,
-  SpecReporter,
-  WorkerAssignReporter,
-} = require('detox/runners/jest');
+const { DetoxCircusEnvironment } = require('detox/runners/jest');
 const { device } = require('detox');
 const detoxInternals = require('detox/internals');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
-  constructor(config, context) {
-    super(config, context);
-
-    this.initTimeout = 30000;
-    this.registerListeners({
-      SpecReporter,
-      WorkerAssignReporter,
-    });
-  }
-
   /** @override */
   async initDetox() {
     await super.initDetox();

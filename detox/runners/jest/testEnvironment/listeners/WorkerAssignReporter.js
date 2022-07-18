@@ -3,7 +3,8 @@ const path = require('path');
 const chalk = require('chalk').default;
 const _ = require('lodash');
 
-const { device, log } = require('../../../..');
+const { device } = require('../../../..');
+const { config, log } = require('../../../../internals');
 
 class WorkerAssignReporter {
   constructor({ env }) {
@@ -11,7 +12,9 @@ class WorkerAssignReporter {
   }
 
   run_start() {
-    log.info({ event: 'WORKER_ASSIGN' }, `${this._formatTestName()} is assigned to ${this._formatDeviceName()}`);
+    if (config.runnerConfig.jest.reportWorkerAssign) {
+      log.info({ event: 'WORKER_ASSIGN' }, `${this._formatTestName()} is assigned to ${this._formatDeviceName()}`);
+    }
   }
 
   _formatDeviceName() {

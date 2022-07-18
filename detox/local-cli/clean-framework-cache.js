@@ -3,7 +3,7 @@ const path = require('path');
 
 const fs = require('fs-extra');
 
-const detox = require('..');
+const detox = require('../internals');
 
 module.exports.command = 'clean-framework-cache';
 module.exports.desc = "Deletes all Detox cached frameworks from ~/Library/Detox. Cached framework can be rebuilt using the 'build-framework-cache' command. (macOS only)";

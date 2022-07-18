@@ -1,6 +1,6 @@
 const chalk = require('chalk').default;
 
-const detox = require('../../../../internals');
+const { config, log, session } = require('../../../../internals');
 const { traceln } = require('../utils/stdout');
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
@@ -16,10 +16,10 @@ class SpecReporter {
   }
 
   get enabled() {
-    const jestSection = detox.config.runnerConfig.jest;
+    const jestSection = config.runnerConfig.jest;
     const reportSpecs = jestSection && jestSection.reportSpecs;
 
-    return reportSpecs !== undefined ? reportSpecs : detox.session.workersCount === 1;
+    return reportSpecs !== undefined ? reportSpecs : session.workersCount === 1;
   }
 
   run_describe_start(event) {
@@ -118,7 +118,7 @@ class SpecReporter {
     const retriesDescription = (invocations > 1) ? chalk.gray(` [Retry #${invocations - 1}]`) : '';
     const status = chalk.gray(_status ? ` [${_status}]` : '');
     const desc = this._suitesDesc + testDescription + retriesDescription + status;
-    detox.log.info({ event: 'SPEC_STATE_CHANGE' }, desc);
+    log.info({ event: 'SPEC_STATE_CHANGE' }, desc);
   }
 }
 

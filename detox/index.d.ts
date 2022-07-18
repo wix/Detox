@@ -122,33 +122,38 @@ declare global {
                 /**
                  * The command to use for runner: 'jest', 'nyc jest',
                  */
-                $0: _HookableProperty<string>;
+                $0: string;
                 /**
                  * The positional arguments to pass to the runner.
                  */
-                _?: _HookableProperty<string[]>;
+                _?: string[];
                 /**
                  * Any other properties recognized by test runner
                  */
-                [prop: string]: _HookableProperty<unknown>;
-            };
-            jest?: {
-                reportSpecs?: boolean | undefined;
+                [prop: string]: unknown;
             };
             /**
-             * Retries count. Zero means one attempt.
+             * Configuration of custom integration features
+             * between Detox and Jest
+             */
+            jest?: {
+                /**
+                 * Device init timeout
+                 */
+                initTimeout?: number | undefined;
+                reportSpecs?: boolean | undefined;
+                reportWorkerAssign?: boolean | undefined;
+            };
+            /**
+             * Retries count. Zero means a single attempt to run tests.
              */
             retries?: number;
             /**
-             * Put --inspect-brk for Node.js debugging
+             * Custom handler to process --inspect-brk CLI flag.
+             * Use it when you rely on another test runner than Jest.
              */
-            inspectBrk?: boolean;
+            inspectBrk?: boolean | ((config: DetoxTestRunnerConfig) => void);
         }
-
-        /**
-         * @private
-         */
-        type _HookableProperty<T> = T | ((value: T) => T);
 
         type DetoxAppConfig = (DetoxBuiltInAppConfig | DetoxCustomAppConfig) & {
             /**

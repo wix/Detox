@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const detox = require('..');
+const detox = require('../internals');
 
 const jestTemplates = require('./templates/jest');
 
@@ -52,7 +52,6 @@ function createFile(filename, content) {
 function createJestFolderE2E() {
   createFolder('e2e', {
     'config.json': jestTemplates.runnerConfig,
-    'environment.js': jestTemplates.environment,
     'starter.test.js': jestTemplates.starter,
   });
 
@@ -69,6 +68,12 @@ function createJestFolderE2E() {
 
 function createDefaultConfigurations() {
   return {
+    testRunner: {
+      args: {
+        $0: 'jest',
+        config: 'e2e/config.json',
+      },
+    },
     apps: {
       ios: {
         type: 'ios.app',

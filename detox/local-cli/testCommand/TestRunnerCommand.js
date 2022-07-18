@@ -1,5 +1,4 @@
 const cp = require('child_process');
-const os = require('os');
 
 const _ = require('lodash');
 const parser = require('yargs-parser');
@@ -38,25 +37,11 @@ class TestRunnerCommand {
     this._argv = config.args;
     this._retries = config.retries;
 
-    if (config.inspectBrk) {
-      this._enableDebugMode();
+    if (config.inspectBrk === true) {
+      this._env = this._envHint;
     }
 
     return this;
-  }
-
-  _enableDebugMode() {
-    /* istanbul ignore if */
-    if (os.platform() === 'win32') {
-      this._argv.$0 = `node --inspect-brk ./node_modules/jest/bin/jest.js`;
-    } else {
-      this._argv.$0 = `node --inspect-brk ./node_modules/.bin/jest`;
-    }
-
-    this._env = this._envHint;
-    this._argv.runInBand = true;
-    delete this._argv.w;
-    delete this._argv.workers;
   }
 
   /**

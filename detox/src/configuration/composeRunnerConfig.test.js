@@ -8,12 +8,16 @@ describe('composeRunnerConfig', () => {
     cliConfig = {};
     testRunnerArgv = undefined;
 
-    composeRunnerConfig = () => require('./composeRunnerConfig')({
-      globalConfig,
-      localConfig,
-      cliConfig,
-      testRunnerArgv,
-    });
+    composeRunnerConfig = () => {
+      const { DetoxConfigErrorComposer } = require('../errors');
+      return require('./composeRunnerConfig')({
+        globalConfig,
+        localConfig,
+        cliConfig,
+        testRunnerArgv,
+        errorComposer: new DetoxConfigErrorComposer(),
+      });
+    };
   });
 
   it('should return default test runner args as if it is Jest', () => {
@@ -21,6 +25,11 @@ describe('composeRunnerConfig', () => {
       args: {
         $0: 'jest',
         _: [],
+      },
+      jest: {
+        initTimeout: 300000,
+        reportSpecs: undefined,
+        reportWorkerAssign: true,
       },
       retries: 0,
       inspectBrk: false,
@@ -30,6 +39,10 @@ describe('composeRunnerConfig', () => {
   it('should take overrides from globalConfig', () => {
     globalConfig.testRunner = {
       args: { $0: 'nyc jest' },
+      jest: {
+        initTimeout: 5000,
+        reportSpecs: false,
+      },
       retries: 1,
       inspectBrk: true,
     };
@@ -39,6 +52,11 @@ describe('composeRunnerConfig', () => {
         $0: 'nyc jest',
         _: [],
       },
+      jest: {
+        initTimeout: 5000,
+        reportSpecs: false,
+        reportWorkerAssign: true,
+      },
       retries: 1,
       inspectBrk: true,
     });
@@ -47,6 +65,10 @@ describe('composeRunnerConfig', () => {
   it('should take overrides from localConfig', () => {
     localConfig.testRunner = {
       args: { $0: 'nyc jest' },
+      jest: {
+        initTimeout: 120000,
+        reportSpecs: true,
+      },
       retries: 1,
       inspectBrk: true,
     };
@@ -55,6 +77,11 @@ describe('composeRunnerConfig', () => {
       args: {
         $0: 'nyc jest',
         _: [],
+      },
+      jest: {
+        initTimeout: 120000,
+        reportSpecs: true,
+        reportWorkerAssign: true,
       },
       retries: 1,
       inspectBrk: true,
@@ -74,13 +101,13 @@ describe('composeRunnerConfig', () => {
   });
 
   it('should take --inspect-brk overrides from cliConfig', () => {
-    localConfig.testRunner = {
-      inspectBrk: false,
-    };
-
     cliConfig.inspectBrk = true;
 
     expect(composeRunnerConfig()).toEqual(expect.objectContaining({
+      args: expect.objectContaining({
+        $0: expect.stringMatching(/--inspect-brk.*jest/),
+        runInBand: true,
+      }),
       inspectBrk: true,
     }));
   });
@@ -99,8 +126,10 @@ describe('composeRunnerConfig', () => {
     expect(composeRunnerConfig()).toEqual(expect.objectContaining({
       jest: {
         customProperty: 1,
-        reportSpecs: true,
+        initTimeout: 300000,
         otherProperty: true,
+        reportSpecs: true,
+        reportWorkerAssign: true,
       },
     }));
   });
@@ -125,6 +154,9 @@ describe('composeRunnerConfig', () => {
         _: ['first.test.js'],
         maxWorkers: 3,
       },
+      jest: {
+        reportSpecs: true,
+      },
       retries: 1,
     };
 
@@ -134,6 +166,9 @@ describe('composeRunnerConfig', () => {
         $0: 'jest2',
         bail: true,
         _: ['second.test.js'],
+      },
+      jest: {
+        reportSpecs: false,
       },
       retries: 3,
     };
@@ -147,21 +182,26 @@ describe('composeRunnerConfig', () => {
         maxWorkers: 3,
         _: ['second.test.js'],
       },
+      jest: {
+        initTimeout: 300_000,
+        reportSpecs: false,
+        reportWorkerAssign: true,
+      },
       retries: 3,
       inspectBrk: false,
     });
   });
 
-  it('should support dynamic merging with CLI args', () => {
+  it('should support positional CLI args override', () => {
     localConfig.testRunner = {
       args: {
-        _: jest.fn((specs) => [...specs, 'second.test.js']),
+        _: ['default.test.js'],
         verbose: true,
       },
     };
 
     testRunnerArgv = {
-      _: ['first.test.js'],
+      _: [],
       debug: true,
     };
 
@@ -169,11 +209,11 @@ describe('composeRunnerConfig', () => {
       $0: 'jest',
       debug: true,
       verbose: true,
-      _: ['first.test.js', 'second.test.js'],
+      _: ['default.test.js'],
     });
 
-    expect(localConfig.testRunner.args._).toHaveBeenCalledTimes(1);
-    expect(localConfig.testRunner.args._).toHaveBeenCalledWith(testRunnerArgv._);
+    testRunnerArgv._[0] = 'specific.test.js';
+    expect(composeRunnerConfig().args._).toEqual(['specific.test.js']);
   });
 
   it('should also support simple positional arguments merging with CLI args', () => {

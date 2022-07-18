@@ -2,20 +2,12 @@ module.exports = {
   //#region *** Runner Realm ***
 
   get DetoxCircusEnvironment() {
-    return require('./environment');
+    return require('./testEnvironment');
   },
 
   //#endregion
 
   //#region *** Worker Realm ***
-
-  get SpecReporter() {
-    return require('./environment/listeners/SpecReporter');
-  },
-
-  get WorkerAssignReporter() {
-    return require('./environment/listeners/WorkerAssignReporter');
-  },
 
   get globalSetup() {
     return require('./globalSetup');

@@ -1,7 +1,10 @@
 {
-    "testEnvironment": "./environment",
-    "testTimeout": 120000,
-    "testRegex": "\\.test\\.js$",
-    "reporters": ["detox/runners/jest/reporter"],
-    "verbose": true
+  "maxWorkers": 1,
+  "globalSetup": "detox/runners/jest/globalSetup",
+  "globalTeardown": "detox/runners/jest/globalTeardown",
+  "testEnvironment": "detox/runners/jest/testEnvironment",
+  "testTimeout": 120000,
+  "testRegex": "\\.test\\.js$",
+  "reporters": ["detox/runners/jest/reporter"],
+  "verbose": true
 }
