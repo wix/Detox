@@ -659,7 +659,7 @@ describe('Android driver', () => {
         await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
         expect(saveHashToDeviceMock).toHaveBeenCalledTimes(1);
-        expect(saveHashToDeviceMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, bundleId });
+        expect(saveHashToDeviceMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, bundleId, binaryPath });
       });
     });
   });

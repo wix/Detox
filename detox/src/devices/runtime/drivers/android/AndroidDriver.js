@@ -411,7 +411,14 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _shouldClearData(bundleId, isPkgInstalled, binaryPath) {
-    const isSameVersionInstalled = await isHashUpdated(this.adb, this.adbName, bundleId, binaryPath);
+    const params = {
+      adb: this.adb,
+      deviceId: this.adbName,
+      bundleId,
+      binaryPath
+    };
+
+    const isSameVersionInstalled = await isHashUpdated(params);
     return isPkgInstalled && isSameVersionInstalled;
   }
 
@@ -421,11 +428,11 @@ class AndroidDriver extends DeviceDriverBase {
 
   async _reinstallApp(params) {
     await this.installApp(params.binaryPath, params.testBinaryPath);
-    await this._saveHashToDevice(params.bundleId);
+    await this._saveHashToDevice(params.bundleId, params.binaryPath);
   }
 
-  async _saveHashToDevice(bundleId) {
-    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, bundleId };
+  async _saveHashToDevice(bundleId, binaryPath) {
+    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, bundleId, binaryPath };
     await saveHashToDevice(params);
   }
 }

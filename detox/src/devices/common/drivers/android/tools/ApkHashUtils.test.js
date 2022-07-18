@@ -2,19 +2,21 @@ jest.mock('../../../../../utils/generateHash');
 const generateHash = require('../../../../../utils/generateHash');
 
 const { isHashUpdated, saveHashToDevice } = require('./ApkHashUtils');
-let adb;
+
+const mockDeviceId = '123';
+const mockHash = 'abcdef';
+const mockBundleId = 'com.android.test';
+const mockBinaryPath = 'mock-bin-path';
+
 let tempFileTransfer;
 
-describe('apkHashUtils', () => {
-  const mockDeviceId = '123';
-  const mockHash = 'abcdef';
-  const mockBundleId = 'com.android.test';
-  const mockFilename = 'abcd.hash';
+const ADBMock = jest.genMockFromModule('../exec/ADB');
+const adb = new ADBMock();
 
+describe('apkHashUtils', () => {
   beforeEach(() => {
-    const ADBMock = jest.genMockFromModule('../exec/ADB');
-    adb = new ADBMock();
     adb.readFile.mockImplementation(() => Promise.resolve(mockHash));
+
     const { TempFileTransfer } = jest.genMockFromModule('./TempFileTransfer');
     tempFileTransfer = new TempFileTransfer(adb);
     // @ts-ignore
@@ -22,15 +24,22 @@ describe('apkHashUtils', () => {
   });
 
   describe('isHashUpdated', () => {
+    const params = {
+      adb,
+      deviceId: mockDeviceId,
+      bundleId: mockBundleId,
+      binaryPath: mockBinaryPath
+    };
+
     it('should return true for revision updated', async () => {
-      const actual = await isHashUpdated(adb, mockDeviceId, mockBundleId, mockFilename);
+      const actual = await isHashUpdated(params);
       expect(actual).toBe(true);
     });
 
     it('should return false for different hash', async () => {
       // @ts-ignore
       generateHash.mockImplementation(() => Promise.resolve('something else'));
-      const actual = await isHashUpdated(adb, mockDeviceId, mockBundleId, mockFilename);
+      const actual = await isHashUpdated(params);
       expect(actual).toBe(false);
     });
   });
@@ -46,6 +55,7 @@ describe('apkHashUtils', () => {
         tempFileTransfer,
         deviceId: mockDeviceId,
         bundleId: mockBundleId,
+        binaryPath: mockBinaryPath
       };
 
       await saveHashToDevice(params);
