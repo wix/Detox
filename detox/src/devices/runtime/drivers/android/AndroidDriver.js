@@ -9,14 +9,16 @@ const EspressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox'
 const UiDeviceProxy = require('../../../../android/espressoapi/UiDeviceProxy');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const generateHash = require('../../../../utils/generateHash');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
-const { saveHashToRemote } = require('../../../common/drivers/android/tools/SaveHashToRemote');
-const { FILE_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
+const {
+  getHashFilename,
+  saveHashToDevice,
+  isRevisionUpdated
+} = require('../../../common/drivers/android/tools/ApkHashUtils');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
@@ -95,10 +97,10 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async optimizedInstallApp(bundleId, binaryPath, testBinaryPath) {
-    const hash = await this._getLocalBinaryHash(binaryPath);
     const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
-    const params = { binaryPath, testBinaryPath, bundleId, hash, isPkgInstalled };
-    const shouldClearData = await this._shouldClearData(bundleId, hash, isPkgInstalled);
+    const hashFilename = getHashFilename(bundleId);
+    const params = { binaryPath, testBinaryPath, bundleId, isPkgInstalled, hashFilename };
+    const shouldClearData = await this._shouldClearData(bundleId, isPkgInstalled, hashFilename, binaryPath);
 
     if (shouldClearData) {
       await this._clearData(params);
@@ -410,38 +412,23 @@ class AndroidDriver extends DeviceDriverBase {
     );
   }
 
-  _getLocalBinaryHash(binaryFile) {
-    return generateHash(binaryFile);
-  }
-
-  async _saveHashToRemote(hash, bundleId) {
-    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, bundleId, hash };
-    await saveHashToRemote(params);
-  }
-
-  async _shouldClearData(bundleId, hash, isPkgInstalled) {
-    const isSameVersionInstalled = this._compareRemoteToLocal(bundleId, hash);
+  async _shouldClearData(bundleId, isPkgInstalled, hashFilename, binaryPath) {
+    const isSameVersionInstalled = await isRevisionUpdated(this.adb, this.adbName, bundleId, hashFilename, binaryPath);
     return isPkgInstalled && isSameVersionInstalled;
   }
 
-  async _compareRemoteToLocal(bundleId, localHash) {
-    const hashFilename = `${bundleId}.hash`;
-    const destinationPath = path.posix.join(FILE_PATH, hashFilename);
-    const remoteHash = await this.adb.readFile(this.adbName, destinationPath, true);
-    return localHash === remoteHash;
-  }
-
   async _clearData(params) {
-    try {
-      return await this.adb.clearAppData(this.adbName, params.bundleId);
-    } catch (e) {
-      await this._reinstallApp(params);
-    }
+    return await this.adb.clearAppData(this.adbName, params.bundleId);
   }
 
   async _reinstallApp(params) {
     await this.installApp(params.binaryPath, params.testBinaryPath);
-    await this._saveHashToRemote(params.hash, params.bundleId);
+    await this._saveHashToDevice(params.bundleId, params.hashFilename);
+  }
+
+  async _saveHashToDevice(bundleId, hashFilename) {
+    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, hashFilename };
+    await saveHashToDevice(params);
   }
 }
 

@@ -20,7 +20,9 @@ describe('Android driver', () => {
   let appUninstallHelper;
   let instrumentation;
   let DeviceRegistryClass;
-  let saveHashToRemoteMock;
+  let saveHashToDeviceMock;
+  let getHashFilenameMock;
+  let isRevisionUpdatedMock;
 
   let uut;
   beforeEach(() => {
@@ -578,15 +580,16 @@ describe('Android driver', () => {
     const AppUninstallHelper = require('../../../common/drivers/android/tools/AppUninstallHelper');
     appUninstallHelper = new AppUninstallHelper();
 
-
     jest.mock('../../../DeviceRegistry');
     DeviceRegistryClass = require('../../../DeviceRegistry');
     const createRegistry = jest.fn(() => new DeviceRegistryClass());
     DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
 
-    jest.mock('../../../common/drivers/android/tools/SaveHashToRemote');
-    const { saveHashToRemote } = require('../../../common/drivers/android/tools/SaveHashToRemote');
-    saveHashToRemoteMock = saveHashToRemote;
+    jest.mock('../../../common/drivers/android/tools/ApkHashUtils');
+    const { getHashFilename, isRevisionUpdated, saveHashToDevice } = require('../../../common/drivers/android/tools/ApkHashUtils');
+    saveHashToDeviceMock = saveHashToDevice;
+    getHashFilenameMock = getHashFilename;
+    isRevisionUpdatedMock = isRevisionUpdated;
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
@@ -595,42 +598,33 @@ describe('Android driver', () => {
   const mockInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
   const mockInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
 
-  describe('reset app state', () => {
+  describe('optimized app install', () => {
     const binaryPath = 'mock-bin-path';
     const testBinaryPath = 'mock-test-bin-path';
     const mockHash = 'abcdef';
+    const hashFilename = bundleId +'.hash';
 
-    beforeEach(() => {
+    beforeEach(async () => {
       fs.existsSync.mockReturnValue(true);
       generateHash.mockImplementation(async () => mockHash);
+      adb.isPackageInstalled.mockImplementation(() => true);
+      isRevisionUpdatedMock.mockImplementation(() => false);
     });
 
-    it('should call generateHash when resetting state', async () => {
+    it('should call get hash filename', async () => {
       await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
-
-      expect(generateHash).toHaveBeenCalledTimes(1);
-      expect(generateHash).toHaveBeenCalledWith(binaryPath);
+      expect(getHashFilenameMock).toHaveBeenCalledWith(bundleId);
     });
 
     it('should call isPackageInstalled when resetting state', async () => {
       await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
-
       expect(adb.isPackageInstalled).toHaveBeenCalledTimes(1);
       expect(adb.isPackageInstalled).toHaveBeenCalledWith(adbName, bundleId);
     });
 
-    it('should call readFile when resetting state', async () => {
-      const { FILE_PATH } = require('../../../common/drivers/android/tools/TempFileTransfer');
-      const hashfilePath = FILE_PATH + '/' + bundleId +'.hash';
-
-      await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
-
-      expect(adb.readFile).toHaveBeenCalledTimes(1);
-      expect(adb.readFile).toHaveBeenCalledWith(adbName, hashfilePath, true);
-    });
-
     describe('same app already installed', function() {
       beforeEach(() => {
+        isRevisionUpdatedMock.mockImplementation(() => true);
         adb.isPackageInstalled.mockImplementation(() => true);
       });
 
@@ -650,6 +644,7 @@ describe('Android driver', () => {
       const mockTestBinaryPath = mockGetAbsoluteBinaryPathImpl(testBinaryPath);
 
       beforeEach(() => {
+        isRevisionUpdatedMock.mockImplementation(() => false);
         adb.isPackageInstalled.mockImplementation(() => false);
       });
 
@@ -669,10 +664,11 @@ describe('Android driver', () => {
       });
 
       it('should save hash to device', async () => {
+        getHashFilenameMock.mockImplementation(() => hashFilename);
         await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
-        expect(saveHashToRemoteMock).toHaveBeenCalledTimes(1);
-        expect(saveHashToRemoteMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, bundleId, hash: mockHash });
+        expect(saveHashToDeviceMock).toHaveBeenCalledTimes(1);
+        expect(saveHashToDeviceMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, hashFilename });
       });
     });
   });

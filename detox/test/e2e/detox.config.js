@@ -27,7 +27,7 @@ const config = {
     init: {
       exposeGlobals: true
     },
-    optimizeAppInstall: Boolean(process.env.CI),
+    optimizeAppInstall: (process.env.PLATFORM === 'android' && Boolean(process.env.CI)),
     cleanup: {
       shutdownDevice: false
     }
