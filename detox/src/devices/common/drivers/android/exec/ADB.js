@@ -1,4 +1,3 @@
-// @ts-nocheck
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
@@ -97,9 +96,7 @@ class ADB {
   async isPackageInstalled(deviceId, packageId) {
     const output = await this.shell(deviceId, `pm list packages ${packageId}`);
     const packageRegexp = new RegExp(`^package:${escape.inQuotedRegexp(packageId)}$`, 'm');
-    const isInstalled = packageRegexp.test(output);
-
-    return isInstalled;
+    return packageRegexp.test(output);
   }
 
   async install(deviceId, _apkPath) {
@@ -133,6 +130,18 @@ class ADB {
 
   async terminate(deviceId, appId) {
     await this.shell(deviceId, `am force-stop ${appId}`);
+  }
+
+  async clearAppData(deviceId, packageId) {
+    return await this.shell(deviceId, `pm clear ${packageId}`, { verbosity: 'low', silent: true });
+  }
+
+  async readFile(deviceId, filepath, silent = false) {
+    if (silent) {
+      return await this.shell(deviceId, `cat ${filepath}`, { verbosity: 'low', silent: true }).catch(() => '');
+    }
+
+    return await this.shell(deviceId, `cat ${filepath}`);
   }
 
   async setLocation(deviceId, lat, lon) {

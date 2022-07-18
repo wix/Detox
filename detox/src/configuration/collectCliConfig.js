@@ -68,6 +68,7 @@ function collectCliConfig({ argv }) {
     useCustomLogger: asBoolean(get('use-custom-logger')),
     workers: asNumber(get('workers')),
     inspectBrk: asBoolean(get('inspect-brk')),
+    optimizeAppInstall: asBoolean(get('optimize-app-install')),
   }, _.isUndefined);
 }
 

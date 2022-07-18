@@ -373,6 +373,16 @@ describe('Device', () => {
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
+    it(`given behaviorConfig.optimizeAppInstall == true should call optimizedInstallApp`, async () => {
+      const device = await aValidDevice();
+
+      device._behaviorConfig.optimizeAppInstall = true;
+      await device.relaunchApp({ delete: true });
+
+      expect(driverMock.driver.launchApp).toHaveBeenCalled();
+      expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalled();
+    });
+
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
@@ -854,6 +864,15 @@ describe('Device', () => {
 
     expect(driverMock.driver.createPayloadFile).toHaveBeenCalledTimes(1);
     expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
+  });
+
+  it('resetAppState should pass to device driver optimizedInstallApp if optimize is active', async () => {
+    const device = await aValidDevice();
+    device._behaviorConfig.optimizeAppInstall = true;
+    await device.resetAppState();
+
+    expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalledWith(bundleId, device._currentApp.binaryPath, device._currentApp.testBinaryPath);
   });
 
   it(`sendUserActivity() should pass to device driver`, async () => {
