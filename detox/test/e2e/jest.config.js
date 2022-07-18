@@ -1,3 +1,4 @@
+const path = require('path');
 const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
@@ -10,7 +11,7 @@ module.exports = async () => {
   const config = await resolveConfig();
 
   return {
-    'rootDir': '../..',
+    'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
     'testRunner': './test/node_modules/jest-circus/runner',
     'testMatch': [

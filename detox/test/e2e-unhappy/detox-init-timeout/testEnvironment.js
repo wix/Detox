@@ -3,6 +3,12 @@ const { device } = require('detox');
 const detoxInternals = require('detox/internals');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
+  constructor(config, context) {
+    super(config, context);
+
+    this.initTimeout = 15000;
+  }
+
   /** @override */
   async initDetox() {
     await super.initDetox();

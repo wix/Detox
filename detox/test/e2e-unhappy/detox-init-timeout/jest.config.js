@@ -1,14 +1,13 @@
-const path = require('path').posix;
+const baseConfigModule = require(`../../../test/e2e/jest.config.js`);
 
-const rootDir =  '../../..';
-const dirname = './' + path.relative(path.join(__dirname, rootDir), __dirname);
+module.exports = async () => {
+  const baseConfig = await baseConfigModule();
 
-module.exports = {
-  ...require(`${rootDir}/test/e2e/jest.config.js`),
+  return {
+    ...baseConfig,
 
-  rootDir,
-
-  testEnvironment: `${dirname}/testEnvironment.js`,
-  testMatch: ["**/detox-init-timeout/timeout.test.js"],
-  testTimeout: 15000,
+    testEnvironment: require.resolve('./testEnvironment.js'),
+    testMatch: ["<rootDir>/test/e2e-unhappy/detox-init-timeout/timeout.test.js"],
+    testTimeout: 15000,
+  };
 };
