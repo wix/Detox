@@ -15,9 +15,8 @@ const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
 const {
-  getHashFilename,
   saveHashToDevice,
-  isRevisionUpdated
+  isHashUpdated
 } = require('../../../common/drivers/android/tools/ApkHashUtils');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
@@ -98,9 +97,8 @@ class AndroidDriver extends DeviceDriverBase {
 
   async optimizedInstallApp(bundleId, binaryPath, testBinaryPath) {
     const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
-    const hashFilename = getHashFilename(bundleId);
-    const params = { binaryPath, testBinaryPath, bundleId, isPkgInstalled, hashFilename };
-    const shouldClearData = await this._shouldClearData(bundleId, isPkgInstalled, hashFilename, binaryPath);
+    const params = { binaryPath, testBinaryPath, bundleId, isPkgInstalled };
+    const shouldClearData = await this._shouldClearData(bundleId, isPkgInstalled, binaryPath);
 
     if (shouldClearData) {
       await this._clearData(params);
@@ -412,8 +410,8 @@ class AndroidDriver extends DeviceDriverBase {
     );
   }
 
-  async _shouldClearData(bundleId, isPkgInstalled, hashFilename, binaryPath) {
-    const isSameVersionInstalled = await isRevisionUpdated(this.adb, this.adbName, bundleId, hashFilename, binaryPath);
+  async _shouldClearData(bundleId, isPkgInstalled, binaryPath) {
+    const isSameVersionInstalled = await isHashUpdated(this.adb, this.adbName, bundleId, binaryPath);
     return isPkgInstalled && isSameVersionInstalled;
   }
 
@@ -423,11 +421,11 @@ class AndroidDriver extends DeviceDriverBase {
 
   async _reinstallApp(params) {
     await this.installApp(params.binaryPath, params.testBinaryPath);
-    await this._saveHashToDevice(params.bundleId, params.hashFilename);
+    await this._saveHashToDevice(params.bundleId);
   }
 
-  async _saveHashToDevice(bundleId, hashFilename) {
-    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, hashFilename };
+  async _saveHashToDevice(bundleId) {
+    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, bundleId };
     await saveHashToDevice(params);
   }
 }

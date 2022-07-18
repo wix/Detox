@@ -1,7 +1,7 @@
 jest.mock('../../../../../utils/generateHash');
 const generateHash = require('../../../../../utils/generateHash');
 
-const { getHashFilename, isRevisionUpdated, saveHashToDevice } = require('./ApkHashUtils');
+const { isHashUpdated, saveHashToDevice } = require('./ApkHashUtils');
 let adb;
 let tempFileTransfer;
 
@@ -21,20 +21,16 @@ describe('apkHashUtils', () => {
     generateHash.mockImplementation(() => Promise.resolve(mockHash));
   });
 
-  it('should return hash filename for given bundleId', () => {
-    expect(getHashFilename('abcd')).toBe(mockFilename);
-  });
-
-  describe('isRevisionUpdated', () => {
+  describe('isHashUpdated', () => {
     it('should return true for revision updated', async () => {
-      const actual = await isRevisionUpdated(adb, mockDeviceId, mockBundleId, mockFilename);
+      const actual = await isHashUpdated(adb, mockDeviceId, mockBundleId, mockFilename);
       expect(actual).toBe(true);
     });
 
     it('should return false for different hash', async () => {
       // @ts-ignore
       generateHash.mockImplementation(() => Promise.resolve('something else'));
-      const actual = await isRevisionUpdated(adb, mockDeviceId, mockBundleId, mockFilename);
+      const actual = await isHashUpdated(adb, mockDeviceId, mockBundleId, mockFilename);
       expect(actual).toBe(false);
     });
   });
@@ -49,7 +45,7 @@ describe('apkHashUtils', () => {
       const params = {
         tempFileTransfer,
         deviceId: mockDeviceId,
-        hashFilename
+        bundleId: mockBundleId,
       };
 
       await saveHashToDevice(params);

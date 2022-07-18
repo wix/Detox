@@ -21,8 +21,7 @@ describe('Android driver', () => {
   let instrumentation;
   let DeviceRegistryClass;
   let saveHashToDeviceMock;
-  let getHashFilenameMock;
-  let isRevisionUpdatedMock;
+  let isHashUpdatedMock;
 
   let uut;
   beforeEach(() => {
@@ -586,10 +585,9 @@ describe('Android driver', () => {
     DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
 
     jest.mock('../../../common/drivers/android/tools/ApkHashUtils');
-    const { getHashFilename, isRevisionUpdated, saveHashToDevice } = require('../../../common/drivers/android/tools/ApkHashUtils');
+    const { isHashUpdated, saveHashToDevice } = require('../../../common/drivers/android/tools/ApkHashUtils');
     saveHashToDeviceMock = saveHashToDevice;
-    getHashFilenameMock = getHashFilename;
-    isRevisionUpdatedMock = isRevisionUpdated;
+    isHashUpdatedMock = isHashUpdated;
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
@@ -602,18 +600,12 @@ describe('Android driver', () => {
     const binaryPath = 'mock-bin-path';
     const testBinaryPath = 'mock-test-bin-path';
     const mockHash = 'abcdef';
-    const hashFilename = bundleId +'.hash';
 
     beforeEach(async () => {
       fs.existsSync.mockReturnValue(true);
       generateHash.mockImplementation(async () => mockHash);
       adb.isPackageInstalled.mockImplementation(() => true);
-      isRevisionUpdatedMock.mockImplementation(() => false);
-    });
-
-    it('should call get hash filename', async () => {
-      await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
-      expect(getHashFilenameMock).toHaveBeenCalledWith(bundleId);
+      isHashUpdatedMock.mockImplementation(() => false);
     });
 
     it('should call isPackageInstalled when resetting state', async () => {
@@ -624,7 +616,7 @@ describe('Android driver', () => {
 
     describe('same app already installed', function() {
       beforeEach(() => {
-        isRevisionUpdatedMock.mockImplementation(() => true);
+        isHashUpdatedMock.mockImplementation(() => true);
         adb.isPackageInstalled.mockImplementation(() => true);
       });
 
@@ -644,7 +636,7 @@ describe('Android driver', () => {
       const mockTestBinaryPath = mockGetAbsoluteBinaryPathImpl(testBinaryPath);
 
       beforeEach(() => {
-        isRevisionUpdatedMock.mockImplementation(() => false);
+        isHashUpdatedMock.mockImplementation(() => false);
         adb.isPackageInstalled.mockImplementation(() => false);
       });
 
@@ -664,11 +656,10 @@ describe('Android driver', () => {
       });
 
       it('should save hash to device', async () => {
-        getHashFilenameMock.mockImplementation(() => hashFilename);
         await uut.optimizedInstallApp(bundleId, binaryPath, testBinaryPath);
 
         expect(saveHashToDeviceMock).toHaveBeenCalledTimes(1);
-        expect(saveHashToDeviceMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, hashFilename });
+        expect(saveHashToDeviceMock).toHaveBeenCalledWith({ tempFileTransfer, deviceId: adbName, bundleId });
       });
     });
   });
