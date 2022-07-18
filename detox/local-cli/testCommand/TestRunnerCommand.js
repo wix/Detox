@@ -71,6 +71,7 @@ class TestRunnerCommand {
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
       DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
       DETOX_REPORT_SPECS: cliConfig.jestReportSpecs,
+      DETOX_RETRIES: cliConfig.retries,
       DETOX_REUSE: cliConfig.reuse,
       DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
       DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,

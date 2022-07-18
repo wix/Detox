@@ -3,6 +3,7 @@
 set -e
 
 export DISABLE_JUNIT_REPORTER=1
+export DETOX_RETRIES=0
 
 platform=$1
 
