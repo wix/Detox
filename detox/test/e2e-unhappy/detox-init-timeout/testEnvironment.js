@@ -6,7 +6,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {
     super(config, context);
 
-    this.initTimeout = 15000;
+    this.initTimeout = 30000;
   }
 
   /** @override */

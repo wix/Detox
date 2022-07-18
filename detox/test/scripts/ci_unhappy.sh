@@ -14,8 +14,10 @@ copy_coverage_to() {
 }
 
 echo "Running e2e test for timeout handling..."
+export DETOX_LOGLEVEL=trace
 node scripts/assert_timeout.js npm run "e2e:$platform" -- --config e2e-unhappy/detox-init-timeout/jest.config.js e2e-unhappy
 copy_coverage_to "../../coverage/e2e-$platform-timeout-ci.lcov"
+unset DETOX_LOGLEVEL
 
 echo "Running early syntax error test..."
 node scripts/assert_timeout.js npm run "e2e:$platform" -- e2e-unhappy/early-syntax-error.test.js
