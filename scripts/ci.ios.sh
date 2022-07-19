@@ -1,5 +1,8 @@
 #!/bin/bash -ex
 
+UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
+trap "$UPLOAD_ARTIFACT" EXIT
+
 source $(dirname "$0")/ci.sh 'noGenerate'
 
 mkdir -p coverage
