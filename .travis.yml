@@ -13,7 +13,6 @@ matrix:
     - ./scripts/install.ios.sh
     script:
     - ./scripts/ci.ios.sh
-    - ./scripts/upload_artifact.sh
   - language: objective-c
     os: osx
     osx_image: xcode10.2
@@ -24,7 +23,6 @@ matrix:
     - ./scripts/install.ios.sh
     script:
     - ./scripts/ci.ios.sh
-    - ./scripts/upload_artifact.sh
   - language: android
     env:
     - REACT_NATIVE_VERSION=0.59.4

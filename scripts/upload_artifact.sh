@@ -18,6 +18,7 @@ upload_artifacts() {
   fi
 }
 
+cd "$(dirname "$0")/.."
 upload_artifacts "detox/test/artifacts" "detoxtest"
 upload_artifacts "examples/demo-react-native/artifacts" "rnexample"
 upload_artifacts "examples/demo-react-native-jest/artifacts" "rnexamplejest"

@@ -2,7 +2,6 @@
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.ios.sh"
-      - "./scripts/upload_artifact.sh"
     env:
       REACT_NATIVE_VERSION: 0.67.2
     artifact_paths:
