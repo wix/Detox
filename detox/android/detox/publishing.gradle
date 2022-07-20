@@ -140,13 +140,15 @@ signing {
 
 project.afterEvaluate {
     project.tasks.all { Task task ->
-        android.libraryVariants.all { variant ->
-            String variantName = variant.name.capitalize()
-            if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository") {
-                task.dependsOn "assemble${variantName}"
-                task.dependsOn project.tasks.signArchives
-                task.doFirst {
-                    onPrePublish()
+        android {
+            libraryVariants.all { variant ->
+                String variantName = variant.name.capitalize()
+                if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository") {
+                    task.dependsOn "assemble${variantName}"
+                    task.dependsOn project.tasks.signArchives
+                    task.doFirst {
+                        onPrePublish()
+                    }
                 }
             }
         }

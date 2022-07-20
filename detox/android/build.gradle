@@ -3,7 +3,7 @@ buildscript {
         isOfficialDetoxLib = true
         kotlinVersion = '1.2.0'
         dokkaVersion = '1.6.0'
-        buildToolsVersion = '30.0.2'
+        buildToolsVersion = '31.0.0'
         compileSdkVersion = 31
         targetSdkVersion = 31
         minSdkVersion = 21
@@ -15,7 +15,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
