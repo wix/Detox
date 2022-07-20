@@ -26,6 +26,13 @@ describe('Crash Handling', () => {
     await expect(element(by.text('Sanity'))).toBeVisible();
   });
 
+  it('Should throw error upon early app crash', async () => {
+    await expectToThrow(() => device.launchApp({
+      newInstance: true,
+      launchArgs: { simulateEarlyCrash: true }
+    }), 'The app has crashed');
+  });
+
   it(':android: should throw error upon invoke crash', async () => {
     await device.reloadReactNative();
     await expectToThrow(() => element(by.text('UI Crash')).tap(), 'Test Failed: Simulated crash (native)');

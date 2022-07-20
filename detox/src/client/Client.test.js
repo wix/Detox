@@ -383,6 +383,26 @@ describe('Client', () => {
     });
   });
 
+  describe('.waitUntilDisconnected()', () => {
+    it(`should be resolved before connecting to the app`, async () => {
+      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      expect(result).not.toBe('pending');
+    });
+
+    it(`should be pending after connecting to the app`, async () => {
+      await client.connect();
+      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      expect(result).toBe('pending');
+    });
+
+    it(`should be resolve after the app disconnects`, async () => {
+      await client.connect();
+      mockAws.mockEventCallback('appDisconnected', {});
+      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      expect(result).not.toBe('pending');
+    });
+  });
+
   describe('.captureViewHierarchy()', () => {
     beforeEach(async () => {
       await client.connect();
@@ -675,6 +695,7 @@ describe('Client', () => {
       mockAws.mockEventCallback('appDisconnected');
       expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
       expect(log.error).not.toHaveBeenCalled();
+      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
     });
 
     it('should log errors if the app termination does not go well', async () => {
