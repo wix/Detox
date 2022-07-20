@@ -17,6 +17,7 @@ buildscript {
         compileSdkVersion = 31
         targetSdkVersion = 31
         minSdkVersion = 21
+        appCompatVersion = (rnInfo.isRN68OrHigher ? '1.4.2' : '1.3.0')
 
         if (!rnInfo.isRN62OrHigher) {
             suppressUnitTests = true

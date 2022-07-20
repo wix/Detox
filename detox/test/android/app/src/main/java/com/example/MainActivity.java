@@ -21,15 +21,6 @@ public class MainActivity extends ReactActivity {
         return "example";
     }
 
-    /**
-    * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
-    * you can specify the rendered you wish to use (Fabric or the older renderer).
-    */
-    @Override
-    protected ReactActivityDelegate createReactActivityDelegate() {
-        return new MainActivityDelegate(this, getMainComponentName());
-    }
-
     public static class MainActivityDelegate extends ReactActivityDelegate {
         public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
             super(activity, mainComponentName);
