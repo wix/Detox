@@ -5,8 +5,8 @@ describe('Temp file transfer', () => {
     const ADB = jest.genMockFromModule('../exec/ADB');
     adb = new ADB();
 
-    const { TempFileTransfer } = require('./TempFileTransfer');
-    uut = new TempFileTransfer(adb);
+    const TempFileXfer = require('./TempFileXfer');
+    uut = new TempFileXfer(adb);
   });
 
   it('should use the default temp-dir', async () => {

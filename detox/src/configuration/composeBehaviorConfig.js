@@ -19,7 +19,6 @@ function composeBehaviorConfig({
         init: {
           reinstallApp: cliConfig.reuse ? false : undefined,
         },
-        optimizeAppInstall: cliConfig.optimizeAppInstall ? true : undefined,
         cleanup: {
           shutdownDevice: cliConfig.cleanup ? true : undefined,
         },
@@ -37,7 +36,6 @@ function composeBehaviorConfig({
           exposeGlobals: true,
           reinstallApp: undefined,
         },
-        optimizeAppInstall: false,
         launchApp: 'auto',
         cleanup: {
           shutdownDevice: false,

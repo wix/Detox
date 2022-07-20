@@ -94,7 +94,6 @@ describe('collectCliConfig', () => {
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
     ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
-    ...asBoolean(['optimizeAppInstall',   'DETOX_OPTIMIZE_APP_INSTALL',   'optimize-app-install']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {
       if (envName) env[envName] = input;

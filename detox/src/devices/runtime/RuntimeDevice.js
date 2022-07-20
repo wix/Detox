@@ -7,13 +7,13 @@ const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
 class RuntimeDevice {
   constructor({
-                appsConfig,
-                behaviorConfig,
-                deviceConfig,
-                eventEmitter,
-                sessionConfig,
-                runtimeErrorComposer
-              }, deviceDriver) {
+    appsConfig,
+    behaviorConfig,
+    deviceConfig,
+    eventEmitter,
+    sessionConfig,
+    runtimeErrorComposer,
+  }, deviceDriver) {
     wrapWithStackTraceCutter(this, [
       'captureViewHierarchy',
       'clearKeychain',
@@ -46,7 +46,6 @@ class RuntimeDevice {
       'unmatchFace',
       'unmatchFinger',
       'unreverseTcpPort',
-      'resetAppState'
     ]);
 
     this._appsConfig = appsConfig;
@@ -177,15 +176,6 @@ class RuntimeDevice {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.terminate(_bundleId);
     this._processes[_bundleId] = undefined;
-  }
-
-  async resetAppState() {
-    if (this._behaviorConfig.optimizeAppInstall) {
-      await this.deviceDriver.optimizedInstallApp(this._currentApp.bundleId, this._currentApp.binaryPath, this._currentApp.testBinaryPath);
-    } else {
-      await this.uninstallApp();
-      await this.installApp();
-    }
   }
 
   async installApp(binaryPath, testBinaryPath) {
@@ -320,14 +310,15 @@ class RuntimeDevice {
 
     if (params.delete) {
       await this.terminateApp(bundleId);
-      await this.resetAppState();
+      await this.uninstallApp();
+      await this.installApp();
     } else if (newInstance) {
       await this.terminateApp(bundleId);
     }
 
     const baseLaunchArgs = {
       ...this._currentAppLaunchArgs.get(),
-      ...params.launchArgs
+      ...params.launchArgs,
     };
 
     if (params.url) {
@@ -364,14 +355,14 @@ class RuntimeDevice {
     await this._emitter.emit('appReady', {
       deviceId: this.deviceDriver.getExternalId(),
       bundleId,
-      pid: this._processes[bundleId]
+      pid: this._processes[bundleId],
     });
 
-    if (params.detoxUserNotificationDataURL) {
+    if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
     }
 
-    if (params.detoxUserActivityDataURL) {
+    if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
   }
@@ -379,7 +370,7 @@ class RuntimeDevice {
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
     const payload = {
-      [key]: payloadFilePath
+      [key]: payloadFilePath,
     };
     await this.deviceDriver.deliverPayload(payload);
     this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
@@ -401,7 +392,7 @@ class RuntimeDevice {
     let paramsCounter = 0;
 
     singleParams.forEach((item) => {
-      if (params[item]) {
+      if(params[item]) {
         paramsCounter += 1;
       }
     });

@@ -35,6 +35,8 @@ describe('Detox', () => {
     return releaseFn;
   };
   const suspendAllocation = () => suspendMethod(deviceAllocator, 'allocate');
+  const suspendAppUninstall = () => suspendMethod(runtimeDevice, 'uninstallApp');
+  const suspendAppInstall = () => suspendMethod(runtimeDevice, 'installApp');
 
   let detoxConfig;
 
@@ -197,6 +199,12 @@ describe('Detox', () => {
       it('should prepare the device', () =>
         expect(runtimeDevice._prepare).toHaveBeenCalled());
 
+      it('should select and reinstall the app', () => {
+        expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
+        expect(runtimeDevice.installApp).toHaveBeenCalled();
+      });
+
       it('should not unselect the app if it is the only one', () => {
         expect(runtimeDevice.selectApp).not.toHaveBeenCalledWith(null);
       });
@@ -212,6 +220,37 @@ describe('Detox', () => {
       const initPromise2 = detox.init();
 
       expect(initPromise1).toBe(initPromise2);
+    });
+
+    describe('with multiple apps', () => {
+      beforeEach(() => {
+        detoxConfig.appsConfig['extraApp'] = {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+        };
+
+        detoxConfig.appsConfig['extraAppWithAnotherArguments'] = {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          launchArgs: {
+            overrideArg: 2,
+          },
+        };
+      });
+
+      beforeEach(init);
+
+      it('should install only apps with unique binary paths, and deselect app on device', () => {
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
+        expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
+
+        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(5);
+        expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
+        expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
+        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual(['default']);
+        expect(runtimeDevice.selectApp.mock.calls[3]).toEqual(['extraApp']);
+        expect(runtimeDevice.selectApp.mock.calls[4]).toEqual([null]);
+      });
     });
 
     describe('with sessionConfig.autoStart undefined', () => {
@@ -265,45 +304,8 @@ describe('Detox', () => {
         expect(runtimeDevice._prepare).toHaveBeenCalled());
 
       it('should not reinstall the app', () => {
-        expect(runtimeDevice.resetAppState).not.toHaveBeenCalled();
-      });
-    });
-
-    it('should call resetAppState on the device', async () => {
-      await init();
-      expect(runtimeDevice.resetAppState).toHaveBeenCalled();
-    });
-
-    describe('with multiple apps', () => {
-      beforeEach(() => {
-        detoxConfig.appsConfig['extraApp'] = {
-          type: 'ios.app',
-          binaryPath: 'path/to/app',
-        };
-
-        detoxConfig.appsConfig['extraAppWithAnotherArguments'] = {
-          type: 'ios.app',
-          binaryPath: 'path/to/app',
-          launchArgs: {
-            overrideArg: 2,
-          },
-        };
-      });
-
-      beforeEach(init);
-
-      it('should install only apps with unique binary paths, and deselect app on device', async () => {
-        detoxConfig.behaviorConfig.optimizeAppInstall = true;
-        await init();
-        expect(runtimeDevice.resetAppState).toHaveBeenCalledTimes(4);
-
-        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(6);
-        expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
-        expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
-        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
-        expect(runtimeDevice.selectApp.mock.calls[3]).toEqual(['default']);
-        expect(runtimeDevice.selectApp.mock.calls[4]).toEqual(['extraApp']);
-        expect(runtimeDevice.selectApp.mock.calls[5]).toEqual([null]);
+        expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
+        expect(runtimeDevice.installApp).not.toHaveBeenCalled();
       });
     });
 
@@ -500,6 +502,30 @@ describe('Detox', () => {
     describe('before device has been allocated', () => {
       let releaseFn;
       beforeEach(() => { releaseFn = suspendAllocation(); });
+      beforeEach(startInit);
+      afterEach(() => releaseFn());
+
+      it(`should not throw, but should reject detox.init() promise`, async () => {
+        await expect(detox.cleanup()).resolves.not.toThrowError();
+        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
+      });
+    });
+
+    describe('before app has been uninstalled', () => {
+      let releaseFn;
+      beforeEach(() => { releaseFn = suspendAppUninstall(); });
+      beforeEach(startInit);
+      afterEach(() => releaseFn());
+
+      it(`should not throw, but should reject detox.init() promise`, async () => {
+        await expect(detox.cleanup()).resolves.not.toThrowError();
+        await expect(initPromise).rejects.toThrowError(/Aborted detox.init.*execution/);
+      });
+    });
+
+    describe('before app has been installed', () => {
+      let releaseFn;
+      beforeEach(() => { releaseFn = suspendAppInstall(); });
       beforeEach(startInit);
       afterEach(() => releaseFn());
 

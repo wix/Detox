@@ -229,12 +229,6 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--force-adb-install');
     });
 
-    test('--optimize-app-install should be passed as CLI argument', async () => {
-      singleConfig().type = 'android.emulator';
-      await run(`--optimize-app-install`);
-      expect(cliCall().command).toContain('--optimize-app-install');
-    });
-
     test.each([['-n'], ['--device-name']])('%s <value> should be passed as CLI argument', async (__device_name) => {
       await run(`${__device_name} TheDevice`);
       expect(cliCall().command).toContain('--device-name TheDevice');
@@ -635,14 +629,6 @@ describe('CLI', () => {
       await run(`--force-adb-install`);
       expect(cliCall().env).toEqual(expect.objectContaining({
         DETOX_FORCE_ADB_INSTALL: true,
-      }));
-    });
-
-    test('--optimize-app-install should be passed as environment variable', async () => {
-      singleConfig().type = 'android.emulator';
-      await run(`--optimize-app-install`);
-      expect(cliCall().env).toEqual(expect.objectContaining({
-        DETOX_OPTIMIZE_APP_INSTALL: true,
       }));
     });
 

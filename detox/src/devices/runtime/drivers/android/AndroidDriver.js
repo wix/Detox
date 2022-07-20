@@ -1,3 +1,4 @@
+// @ts-nocheck
 const path = require('path');
 const URL = require('url').URL;
 
@@ -14,10 +15,6 @@ const logger = require('../../../../utils/logger');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const retry = require('../../../../utils/retry');
 const sleep = require('../../../../utils/sleep');
-const {
-  saveHashToDevice,
-  isHashUpdated
-} = require('../../../common/drivers/android/tools/ApkHashUtils');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
@@ -34,7 +31,7 @@ const log = logger.child({ __filename });
  * @property adb { ADB }
  * @property aapt { AAPT }
  * @property apkValidator { ApkValidator }
- * @property tempFileTransfer { tempFileTransfer }
+ * @property fileXfer { FileXfer }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
  * @property devicePathBuilder { AndroidDevicePathBuilder }
@@ -54,7 +51,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = deps.aapt;
     this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
-    this.tempFileTransfer = deps.tempFileTransfer;
+    this.fileXfer = deps.fileXfer;
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
@@ -75,7 +72,7 @@ class AndroidDriver extends DeviceDriverBase {
   async installApp(_appBinaryPath, _testBinaryPath) {
     const {
       appBinaryPath,
-      testBinaryPath
+      testBinaryPath,
     } = this._getAppInstallPaths(_appBinaryPath, _testBinaryPath);
     await this._validateAppBinaries(appBinaryPath, testBinaryPath);
     await this._installAppBinaries(appBinaryPath, testBinaryPath);
@@ -95,24 +92,12 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async optimizedInstallApp(bundleId, binaryPath, testBinaryPath) {
-    const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
-    const params = { binaryPath, testBinaryPath, bundleId, isPkgInstalled };
-    const shouldClearData = await this._shouldClearData(bundleId, isPkgInstalled, binaryPath);
-
-    if (shouldClearData) {
-      await this._clearData(params);
-    } else {
-      await this._reinstallApp(params);
-    }
-  }
-
   async launchApp(bundleId, launchArgs, languageAndLocale) {
     return await this._handleLaunchApp({
       manually: false,
       bundleId,
       launchArgs,
-      languageAndLocale
+      languageAndLocale,
     });
   }
 
@@ -121,8 +106,30 @@ class AndroidDriver extends DeviceDriverBase {
       manually: true,
       bundleId,
       launchArgs,
-      languageAndLocale
+      languageAndLocale,
     });
+  }
+
+  async _handleLaunchApp({ manually, bundleId, launchArgs }) {
+    const { adbName } = this;
+
+    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
+
+    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
+
+    if (manually) {
+      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
+    } else {
+      await this._launchApp(adbName, bundleId, launchArgs);
+    }
+
+    const pid = await this._waitForProcess(adbName, bundleId);
+    if (manually) {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+
+    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
+    return pid;
   }
 
   async deliverPayload(params) {
@@ -140,11 +147,11 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async waitUntilReady() {
-    try {
-      await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
-    } finally {
-      this.instrumentation.abortWaitForCrash();
-    }
+      try {
+        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
+      } finally {
+        this.instrumentation.abortWaitForCrash();
+      }
   }
 
   async pressBack() { // eslint-disable-line no-unused-vars
@@ -213,7 +220,7 @@ class AndroidDriver extends DeviceDriverBase {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
       artifactName: screenshotName || path.basename(tempPath, '.png'),
-      artifactPath: tempPath
+      artifactPath: tempPath,
     });
 
     return tempPath;
@@ -234,30 +241,8 @@ class AndroidDriver extends DeviceDriverBase {
     const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(appBinaryPath);
     return {
       appBinaryPath,
-      testBinaryPath
+      testBinaryPath,
     };
-  }
-
-  async _handleLaunchApp({ manually, bundleId, launchArgs }) {
-    const { adbName } = this;
-
-    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
-
-    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
-
-    if (manually) {
-      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
-    } else {
-      await this._launchApp(adbName, bundleId, launchArgs);
-    }
-
-    const pid = await this._waitForProcess(adbName, bundleId);
-    if (manually) {
-      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
-    }
-
-    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
-    return pid;
   }
 
   async _validateAppBinaries(appBinaryPath, testBinaryPath) {
@@ -286,7 +271,7 @@ class AndroidDriver extends DeviceDriverBase {
       throw new DetoxRuntimeError({
         message: `The test APK could not be found at path: '${testApkPath}'`,
         hint: 'Try running the detox build command, and make sure it was configured to execute a build command (e.g. \'./gradlew assembleAndroidTest\')' +
-          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md'
+          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md',
       });
     }
     return testApkPath;
@@ -298,7 +283,7 @@ class AndroidDriver extends DeviceDriverBase {
       const notificationPayloadTargetPath = await this._sendNotificationDataToDevice(launchArgs.detoxUserNotificationDataURL, adbName);
       _launchArgs = {
         ...launchArgs,
-        detoxUserNotificationDataURL: notificationPayloadTargetPath
+        detoxUserNotificationDataURL: notificationPayloadTargetPath,
       };
     }
     return _launchArgs;
@@ -338,8 +323,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
-    await this.tempFileTransfer.prepareDestinationDir(adbName);
-    return await this.tempFileTransfer.send(adbName, dataFileLocalPath, 'notification.json');
+    await this.fileXfer.prepareDestinationDir(adbName);
+    return await this.fileXfer.send(adbName, dataFileLocalPath, 'notification.json');
   }
 
   _startActivityWithUrl(url) {
@@ -408,32 +393,6 @@ class AndroidDriver extends DeviceDriverBase {
       `${separator}\n\n` +
       'Press any key to continue...'
     );
-  }
-
-  async _shouldClearData(bundleId, isPkgInstalled, binaryPath) {
-    const params = {
-      adb: this.adb,
-      deviceId: this.adbName,
-      bundleId,
-      binaryPath
-    };
-
-    const isSameVersionInstalled = await isHashUpdated(params);
-    return isPkgInstalled && isSameVersionInstalled;
-  }
-
-  async _clearData(params) {
-    return await this.adb.clearAppData(this.adbName, params.bundleId);
-  }
-
-  async _reinstallApp(params) {
-    await this.installApp(params.binaryPath, params.testBinaryPath);
-    await this._saveHashToDevice(params.bundleId, params.binaryPath);
-  }
-
-  async _saveHashToDevice(bundleId, binaryPath) {
-    const params = { tempFileTransfer: this.tempFileTransfer, deviceId: this.adbName, bundleId, binaryPath };
-    await saveHashToDevice(params);
   }
 }
 

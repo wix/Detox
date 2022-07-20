@@ -6,22 +6,21 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
     const apkValidator = serviceLocator.apkValidator;
-    const tempFileTransfer = serviceLocator.tempFileTransfer;
+    const fileXfer = serviceLocator.fileXfer;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
 
     const AppInstallHelper = require('../../common/drivers/android/tools/AppInstallHelper');
     const AppUninstallHelper = require('../../common/drivers/android/tools/AppUninstallHelper');
     const MonitoredInstrumentation = require('../../common/drivers/android/tools/MonitoredInstrumentation');
 
-
     return {
       ...commonDeps,
       adb,
       aapt,
       apkValidator,
-      tempFileTransfer,
+      fileXfer,
       devicePathBuilder,
-      appInstallHelper: new AppInstallHelper(adb, tempFileTransfer),
+      appInstallHelper: new AppInstallHelper(adb, fileXfer),
       appUninstallHelper: new AppUninstallHelper(adb),
       instrumentation: new MonitoredInstrumentation(adb),
     };

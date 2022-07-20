@@ -1,6 +1,6 @@
 const path = require('path');
 
-class FileTransfer {
+class FileXfer {
   constructor(adb, destinationDir) {
     this._adb = adb;
     this._dir = destinationDir;
@@ -18,4 +18,4 @@ class FileTransfer {
   }
 }
 
-module.exports = FileTransfer;
+module.exports = FileXfer;

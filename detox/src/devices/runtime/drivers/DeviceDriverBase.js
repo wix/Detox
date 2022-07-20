@@ -79,10 +79,6 @@ class DeviceDriverBase {
     return '';
   }
 
-  async optimizedInstallApp(_bundleId, _binaryPath, _testBinaryPath) {
-    return undefined;
-  }
-
   async installApp(_binaryPath, _testBinaryPath) {
     return '';
   }

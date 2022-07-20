@@ -137,16 +137,4 @@ describe('IOS simulator driver', () => {
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
   });
-
-  it('should throw an exception that optimized app installation is unsupported on iOS', async () => {
-    const binaryPath = '/tmp';
-    let caughtException;
-    try {
-      await uut.optimizedInstallApp(bundleId, binaryPath);
-    } catch (e) {
-      caughtException = e;
-    }
-
-    expect(caughtException.toString()).toContain('DetoxRuntimeError: Optimized app installation is not supported on iOS.');
-  });
 });
