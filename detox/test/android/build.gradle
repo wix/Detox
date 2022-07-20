@@ -6,8 +6,8 @@ buildscript {
                 '7.0.4' :
             rnInfo.isRN66OrHigher ?
                     '4.2.2' :
-                rnInfo.isRN64OrHigher
-                    ? '4.1.0'
+                        '4.1.0'
+
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
