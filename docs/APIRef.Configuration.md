@@ -230,7 +230,7 @@ An app config can have the following params:
 | `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                            |
 | `testBinaryPath`     | **\[optional, Android only]**: relative path to the test app (apk)                                                                                                                                                    |
 | `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](APIRef.LaunchArgs.md).   |
-| `permissions`        | **\[optional, iOS only]** An object specifying default [runtime permissions](APIRef.DeviceObjectAPI.md#permissions-ios-only) to give before launching the app.                                                        |
+| `permissions`        | **\[optional, iOS only]** An object specifying default [runtime permissions](APIRef.DeviceObjectAPI.md#permissions-ios-only) to give to the app after installing.                                                   |
 
 To work with multiple apps within the same configuration you should be giving each app its name, e.g.:
 
