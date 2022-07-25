@@ -46,6 +46,21 @@ function overrideReactAndroidGradleForRn68Android() {
   fs.copySync(PATCH_SCRIPT_PATH, REACT_ANDROID_GRADLE_SCRIPT_PATH);
 }
 
+function overrideReactAndroidGradleForRn67Android() {
+  const REACT_ANDROID_PATH = path.join('node_modules', 'react-native', 'ReactAndroid');
+  const REACT_ANDROID_GRADLE_SCRIPT_PATH = path.join(REACT_ANDROID_PATH, 'build.gradle');
+  const REACT_ANDROID_GRADLE_BAK_SCRIPT_PATH = path.join(REACT_ANDROID_PATH, 'build.gradle.bak');
+  const PATCH_SCRIPT_PATH = path.join('scripts', 'ReactAndroid_rn67_build.gradle');
+
+  console.log('  Overriding ReactAndroid\'s build.gradle...');
+  try {
+    fs.renameSync(REACT_ANDROID_GRADLE_SCRIPT_PATH, REACT_ANDROID_GRADLE_BAK_SCRIPT_PATH);
+  } catch (e) {
+    console.warn('  Couldn\'t create a backup to original script (skipping)', e);
+  }
+  fs.copySync(PATCH_SCRIPT_PATH, REACT_ANDROID_GRADLE_SCRIPT_PATH);
+}
+
 function cleanFindNodeScriptFileForRn64IOS() {
   const REACT_SCRIPTS_PATH = path.join('node_modules', 'react-native', 'scripts');
   const REACT_FIND_NODE_SCRIPT_PATH = path.join(REACT_SCRIPTS_PATH, 'find-node.sh');
@@ -93,6 +108,12 @@ function run() {
   if (semver.minor(rnVersion) === 68) {
     console.log('  Detected RN version .68! Applying necessary patches...');
     overrideReactAndroidGradleForRn68Android();
+  }
+
+  if (semver.minor(rnVersion) === 67) {
+    console.log('  Detected RN version .67! Applying necessary patches...');
+    overrideReactAndroidGradleForRn67Android();
+    cleanFindNodeScriptFileForRn64IOS();
   }
 
   if (semver.minor(rnVersion) < 68) {
