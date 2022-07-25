@@ -14,6 +14,7 @@ public class LaunchArgs {
     private static final String DETOX_NOTIFICATION_PATH_ARG = "detoxUserNotificationDataURL";
     private static final String DETOX_BLACKLIST_URLS_ARG = "detoxURLBlacklistRegex";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
+    private static final String DETOX_ENABLE_SYNCHRONIZATION = "detoxEnableSynchronization";
     private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
 
     public boolean hasNotificationPath() {
@@ -34,6 +35,14 @@ public class LaunchArgs {
 
     public boolean hasURLBlacklist() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_BLACKLIST_URLS_ARG);
+    }
+
+    public String getDetoxEnableSynchronization() {
+        return InstrumentationRegistry.getArguments().getString(DETOX_ENABLE_SYNCHRONIZATION);
+    }
+
+    public boolean hasDetoxEnableSynchronization() {
+        return InstrumentationRegistry.getArguments().containsKey(DETOX_ENABLE_SYNCHRONIZATION);
     }
 
     public String getUrlOverride() {

@@ -2,6 +2,7 @@ package com.wix.detox.reactnative
 
 import android.os.Looper
 import android.util.Log
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
@@ -12,7 +13,6 @@ import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
 import com.wix.detox.reactnative.idlingresources.uimodule.UIModuleIdlingResource
 import org.joor.Reflect
 import org.joor.ReflectException
-import java.util.Set
 
 private const val LOG_TAG = "DetoxRNIdleRes"
 
@@ -46,15 +46,10 @@ private class MQThreadReflected(private val queue: Any?, private val queueName: 
 }
 
 class ReactNativeIdlingResources constructor(
-        private val reactContext: ReactContext,
-        private var launchArgs: LaunchArgs,
-        internal var networkSyncEnabled: Boolean = true
-        )
-
-    {
-
+    private val reactContext: ReactContext,
+    internal var networkSyncEnabled: Boolean = true
+) {
     companion object {
-        private const val FIELD_UI_BG_MSG_QUEUE = "mUiBackgroundMessageQueueThread"
         private const val FIELD_NATIVE_MODULES_MSG_QUEUE = "mNativeModulesMessageQueueThread"
         private const val FIELD_JS_MSG_QUEUE = "mJSMessageQueueThread"
     }
@@ -69,17 +64,11 @@ class ReactNativeIdlingResources constructor(
 
     fun registerAll() {
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native")
-
         unregisterAll()
 
-        if (launchArgs.hasURLBlacklist()) {
-            val blacklistUrls = launchArgs.getURLBlacklist()
-            setBlacklistUrls(blacklistUrls)
-        }
-
+        setUrlBlacklist()
         setupMQThreadsInterrogators()
         syncIdlingResources()
-
         setupCustomRNIdlingResources()
         syncIdlingResources()
     }
@@ -108,25 +97,36 @@ class ReactNativeIdlingResources constructor(
             networkIdlingResource?.resume()
         }
     }
+
     fun pauseRNTimersIdlingResource() = timersIdlingResource?.pause()
     fun resumeRNTimersIdlingResource() = timersIdlingResource?.resume()
     fun pauseUIIdlingResource() = uiModuleIdlingResource?.pause()
     fun resumeUIIdlingResource() = uiModuleIdlingResource?.resume()
-    fun pauseJSBridgeIdlingResource() = rnBridgeIdlingResource?.pause()
-    fun resumeJSBridgeIdlingResource() = rnBridgeIdlingResource?.resume()
+
+    fun setBlacklistUrls(urlList: String) {
+        val urlArray = toFormattedUrlArray(urlList)
+        NetworkIdlingResource.setURLBlacklist(urlArray)
+    }
 
     private fun setupMQThreadsInterrogators() {
         if (IdlingRegistry.getInstance().loopers.isEmpty()) {
             val mqThreadsReflector = MQThreadsReflector(reactContext)
-//            val mqUIBackground = mqThreadsReflector.getQueue(FIELD_UI_BG_MSG_QUEUE)?.getLooper() TODO
             val mqJS = mqThreadsReflector.getQueue(FIELD_JS_MSG_QUEUE)?.getLooper()
-            val mqNativeModules = mqThreadsReflector.getQueue(FIELD_NATIVE_MODULES_MSG_QUEUE)?.getLooper()
+            val mqNativeModules =
+                mqThreadsReflector.getQueue(FIELD_NATIVE_MODULES_MSG_QUEUE)?.getLooper()
 
             IdlingRegistry.getInstance().apply {
-//                registerLooperAsIdlingResource(mqUIBackground)
                 registerLooperAsIdlingResource(mqJS)
                 registerLooperAsIdlingResource(mqNativeModules)
             }
+        }
+    }
+
+    private fun setUrlBlacklist() {
+        val launchArgs = LaunchArgs()
+        if (launchArgs.hasURLBlacklist()) {
+            val blacklistUrls = launchArgs.urlBlacklist
+            setBlacklistUrls(blacklistUrls)
         }
     }
 
@@ -141,7 +141,8 @@ class ReactNativeIdlingResources constructor(
                 timersIdlingResource,
                 rnBridgeIdlingResource,
                 uiModuleIdlingResource,
-                animIdlingResource)
+                animIdlingResource
+            )
 
         if (networkSyncEnabled) {
             setupNetworkIdlingResource()
@@ -151,13 +152,16 @@ class ReactNativeIdlingResources constructor(
 
     private fun syncIdlingResources() {
         IdlingRegistry.getInstance().apply {
-            val irr: IdlingResourceRegistry = Reflect.on(androidx.test.espresso.Espresso::class.java).field("baseRegistry").get()
+            val irr: IdlingResourceRegistry =
+                Reflect.on(Espresso::class.java).field("baseRegistry").get()
             irr.sync(this.resources, this.loopers)
         }
     }
 
     private fun unregisterMQThreadsInterrogators() {
-        Reflect.on(IdlingRegistry.getInstance()).field("loopers").get<Set<Any>>().clear()
+        val idlingResourceInstance = IdlingRegistry.getInstance()
+        val loopersField = Reflect.on(idlingResourceInstance).field("loopers")
+        loopersField.get<MutableSet<Any>>().clear()
     }
 
     private fun unregisterCustomRNIdlingResources() {
@@ -166,7 +170,8 @@ class ReactNativeIdlingResources constructor(
                 timersIdlingResource,
                 rnBridgeIdlingResource,
                 uiModuleIdlingResource,
-                animIdlingResource)
+                animIdlingResource
+            )
         rnBridgeIdlingResource?.onDetach()
 
         removeNetworkIdlingResource()
@@ -174,13 +179,15 @@ class ReactNativeIdlingResources constructor(
     }
 
     private fun setupAsyncStorageIdlingResource() {
-        asyncStorageIdlingResource = AsyncStorageIdlingResource.createIfNeeded(reactContext, false)?.also {
-            IdlingRegistry.getInstance().register(it)
-        }
+        asyncStorageIdlingResource =
+            AsyncStorageIdlingResource.createIfNeeded(reactContext, false)?.also {
+                IdlingRegistry.getInstance().register(it)
+            }
 
-        legacyAsyncStorageIdlingResource = AsyncStorageIdlingResource.createIfNeeded(reactContext, true)?.also {
-            IdlingRegistry.getInstance().register(it)
-        }
+        legacyAsyncStorageIdlingResource =
+            AsyncStorageIdlingResource.createIfNeeded(reactContext, true)?.also {
+                IdlingRegistry.getInstance().register(it)
+            }
     }
 
     private fun removeAsyncStorageIdlingResource() {
@@ -212,13 +219,8 @@ class ReactNativeIdlingResources constructor(
 
     private fun toFormattedUrlArray(urlList: String): List<String> {
         var formattedUrls = urlList
-        formattedUrls = formattedUrls.replace(Regex("""[()"]"""), "");
-        formattedUrls = formattedUrls.trim();
-        return formattedUrls.split(',');
-    }
-
-    fun setBlacklistUrls(urlList: String) {
-        val urlArray = toFormattedUrlArray(urlList)
-        NetworkIdlingResource.setURLBlacklist(urlArray);
+        formattedUrls = formattedUrls.replace(Regex("""[()"]"""), "")
+        formattedUrls = formattedUrls.trim()
+        return formattedUrls.split(',')
     }
 }
