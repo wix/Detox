@@ -49,6 +49,20 @@ Match elements with the specified text.
 element(by.text('Tap Me'));
 ```
 
+You can use regex, use JS flags in order to:
+
+Flag	Name	Modification
+i	Ignore Casing	Makes the expression search case-insensitively.
+g	Global	Makes the expression search for all occurrences.
+s	Dot All	Makes the wild character . match newlines as well.
+m	Multiline	Makes the boundary characters ^ and $ match the beginning and ending of every single line instead of the beginning and ending of the whole string.
+y	Sticky	Makes the expression start its searching from the index indicated in its lastIndex property.
+u	Unicode	Makes the expression assume individual characters as code points, not code units, and thus match 32-bit characters as well.
+
+```js
+element(by.text(/Tap [A-Za-z]+/isu));
+```
+
 #### `by.type(className)`
 
 Matches elements whose class is, or inherits from, the specified class name. On Android, provide the class canonical name.

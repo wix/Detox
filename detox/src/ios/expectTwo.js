@@ -377,8 +377,14 @@ class Matcher {
   }
 
   text(text) {
-    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
-    this.predicate = { type: 'text', value: text };
+    if (text instanceof RegExp) {
+      this.predicate = { type: 'text', value: text.toString(), isRegex: true };
+    } else if (typeof text === 'string') {
+      this.predicate = { type: 'text', value: text };
+    } else {
+      throw new TypeError('text should be a string or regular expression, got: ' + (text + (' (' + (typeof text + ')'))));
+    }
+
     return this;
   }
 

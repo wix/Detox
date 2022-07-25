@@ -12,7 +12,7 @@ function sanitize_matcher(matcher) {
 
   const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
   return originalMatcher.type ? originalMatcher.value : originalMatcher;
-} 
+}
 class DetoxMatcher {
   static matcherForText(text) {
     if (typeof text !== "string") throw new Error("text should be a string, but got " + (text + (" (" + (typeof text + ")"))));

@@ -39,6 +39,23 @@ describe('expectTwo', () => {
     expect(testCall).toDeepEqual(jsonOutput);
   });
 
+  it(`should produce correct JSON for RegExp matcher`, () => {
+    const testCall = e.element(e.by.text(/tapMe/g)).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'text',
+          value: '/tapMe/g',
+          isRegex: true
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
   it(`should produce correct JSON for tap action with parameters`, () => {
     const testCall = e.element(e.by.text('tapMe')).tap({ x: 1, y: 2 });
     const jsonOutput = {

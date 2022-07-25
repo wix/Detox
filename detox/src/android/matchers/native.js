@@ -45,6 +45,7 @@ class ExistsMatcher extends NativeMatcher {
 
 class TextMatcher extends NativeMatcher {
   constructor(value) {
+    // TODO: Change here.
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
   }
