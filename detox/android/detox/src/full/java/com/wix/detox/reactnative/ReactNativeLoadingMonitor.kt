@@ -35,13 +35,26 @@ open class ReactNativeLoadingMonitor(
                         return@Runnable
                     }
 
-                    rnInstanceManager.addReactInstanceEventListener(object : ReactInstanceManager.ReactInstanceEventListener {
-                        override fun onReactContextInitialized(context: ReactContext) {
-                            Log.i(LOG_TAG, "Got new RN-context async'ly through listener")
+                    // Why this ugly branching? -
+                    // In RN .68, ReactInstanceManager.addReactInstanceEventListener has transitioned to accepting strictly the
+                    // new com.facebook.react.ReactInstanceEventListener class (which, up until .67, was ReactInstanceManager.ReactInstanceEventListener),
+                    // which doesn't exist at all in newer version. Hence using strictly the new class isn't backwards compatible, and
+                    // fails *at runtime*.
+                    val logMessage = "Got new RN-context async'ly through listener"
+                    val listener = if (ReactNativeInfo.rnVersion().minor >= 68) object: com.facebook.react.ReactInstanceEventListener {
+                        override fun onReactContextInitialized(context: ReactContext?) {
+                            Log.i(LOG_TAG, logMessage)
                             rnInstanceManager.removeReactInstanceEventListener(this)
                             countDownLatch.countDown()
                         }
-                    })
+                    } else object: ReactInstanceManager.ReactInstanceEventListener {
+                        override fun onReactContextInitialized(context: ReactContext?) {
+                            Log.i(LOG_TAG, logMessage)
+                            rnInstanceManager.removeReactInstanceEventListener(this)
+                            countDownLatch.countDown()
+                        }
+                    }
+                    rnInstanceManager.addReactInstanceEventListener(listener)
                 })
     }
 
