@@ -66,7 +66,7 @@ class ReactNativeIdlingResources constructor(
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native")
         unregisterAll()
 
-        setUrlBlacklist()
+        setupUrlBlacklist()
         setupMQThreadsInterrogators()
         syncIdlingResources()
         setupCustomRNIdlingResources()
@@ -122,7 +122,7 @@ class ReactNativeIdlingResources constructor(
         }
     }
 
-    private fun setUrlBlacklist() {
+    private fun setupUrlBlacklist() {
         val launchArgs = LaunchArgs()
         if (launchArgs.hasURLBlacklist()) {
             val blacklistUrls = launchArgs.urlBlacklist

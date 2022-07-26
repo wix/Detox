@@ -1,10 +1,36 @@
 describe('React-Native Animations', () => {
-  beforeEach(async () => {
-    await device.reloadReactNative();
-    await element(by.text('RN Animations')).tap();
-  });
+  const _delay = ms => new Promise(res => setTimeout(res, ms));
+
+  async function _startTest(driver, options = {}) {
+    let driverControlSegment = element(by.text(driver).withAncestor(by.id('UniqueId_AnimationsScreen_useNativeDriver')));
+    await driverControlSegment.tap();
+
+    if (options.loops !== undefined) {
+      let loopSwitch = element(by.id('UniqueId_AnimationsScreen_enableLoop'));
+      await loopSwitch.tap();
+      if (device.getPlatform() === 'ios') {
+        await expect(loopSwitch).toHaveValue('1');
+      }
+      await element(by.id('UniqueId_AnimationsScreen_numberOfIterations')).replaceText(String(options.loops));
+    }
+
+    if (options.duration !== undefined) {
+      await element(by.id('UniqueId_AnimationsScreen_duration')).replaceText(String(options.duration));
+    }
+
+    if (options.delay !== undefined) {
+      await element(by.id('UniqueId_AnimationsScreen_delay')).replaceText(String(options.delay));
+    }
+
+    await element(by.id('UniqueId_AnimationsScreen_startButton')).tap();
+  }
 
   describe.each(['JS', 'Native'])('(driver: %s)', (driver) => {
+    beforeEach(async () => {
+      await device.reloadReactNative();
+      await element(by.text('RN Animations')).tap();
+    });
+
     it(`should find element`, async () => {
       await _startTest(driver);
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
@@ -32,73 +58,62 @@ describe('React-Native Animations', () => {
 
     it(`should not wait for an animation to complete while the synchronization is disabled`, async () => {
       await device.disableSynchronization();
+      await _delay(800);
       await _startTest(driver, { duration: 5000 });
+      await _delay(800);
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
 
       await device.enableSynchronization();
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
   });
-});
 
-describe(':android: Native animations', () => {
-  it('should expect a native android-animator animation to be short-circuited / fully-completed', async () => {
-    await device.reloadReactNative();
-    await element(by.text('Native Animation')).tap();
+  describe('detoxEnableSynchronization', () => {
+    it('should launch without synchronization for detoxEnableSynchronization 0', async () => {
+      await device.launchApp({
+        newInstance: true,
+        launchArgs: {
+          detoxEnableSynchronization: 0
+        }
+      });
 
-    await element(by.id('startButton')).tap();
-    await expect(element(by.text('Animation Complete'))).toBeVisible();
-  });
-});
+      // The delays are necessary since we're running without synchronization
+      await _delay(800);
+      await element(by.text('RN Animations')).tap();
+      await _delay(800);
+      await _startTest('JS', { duration: 5000 });
+      await _delay(800);
+      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
 
-describe.each(['JS', 'Native'])('(driver: %s)', (driver) => {
-  const delay = ms => new Promise(res => setTimeout(res, ms));
-
-  beforeAll(async () => {
-    await device.terminateApp();
-  });
-
-  it('should launch without synchronization for detoxEnableSynchronization 0', async () => {
-    await device.launchApp({
-      newInstance: true,
-      launchArgs: {
-        detoxEnableSynchronization: 0
-      }
+      await device.launchApp({
+        newInstance: true,
+        launchArgs: {
+          detoxEnableSynchronization: 1
+        }
+      });
     });
 
-    // The delays are necessary since we're running without synchronization
-    await delay(800);
-    await element(by.text('RN Animations')).tap();
-    await delay(800);
-    await _startTest(driver, { duration: 5000 });
-    await delay(800);
-    await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
+    it('should launch with synchronization for detoxEnableSynchronization 1', async () => {
+      await device.launchApp({
+        newInstance: true,
+        launchArgs: {
+          detoxEnableSynchronization: 1
+        }
+      });
 
-    await device.enableSynchronization();
-    await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
+      await element(by.text('RN Animations')).tap();
+      await _startTest('JS');
+      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
+    });
+  });
+
+  describe(':android: Native animations', () => {
+    it('should expect a native android-animator animation to be short-circuited / fully-completed', async () => {
+      await device.reloadReactNative();
+      await element(by.text('Native Animation')).tap();
+
+      await element(by.id('startButton')).tap();
+      await expect(element(by.text('Animation Complete'))).toBeVisible();
+    });
   });
 });
-
-async function _startTest(driver, options = {}) {
-  let driverControlSegment = element(by.text(driver).withAncestor(by.id('UniqueId_AnimationsScreen_useNativeDriver')));
-  await driverControlSegment.tap();
-
-  if (options.loops !== undefined) {
-    let loopSwitch = element(by.id('UniqueId_AnimationsScreen_enableLoop'));
-    await loopSwitch.tap();
-    if (device.getPlatform() === 'ios') {
-      await expect(loopSwitch).toHaveValue('1');
-    }
-    await element(by.id('UniqueId_AnimationsScreen_numberOfIterations')).replaceText(String(options.loops));
-  }
-
-  if (options.duration !== undefined) {
-    await element(by.id('UniqueId_AnimationsScreen_duration')).replaceText(String(options.duration));
-  }
-
-  if (options.delay !== undefined) {
-    await element(by.id('UniqueId_AnimationsScreen_delay')).replaceText(String(options.delay));
-  }
-
-  await element(by.id('UniqueId_AnimationsScreen_startButton')).tap();
-}
