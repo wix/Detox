@@ -268,9 +268,7 @@ describe('AndroidExpect', () => {
             const result = await e.element(e.by.type('com.facebook.react.views.view.ReactViewGroup')
               .withAncestor(e.by.id('attrScrollView'))).getAttributes();
             expect(result).toEqual(execResult);
-          }
-        )
-        ;
+          });
       });
     });
 

@@ -9,11 +9,14 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
 
     fun perform(viewAction: ViewAction): Any? {
         return when (viewAction) {
-            is MultiViewActionWithResult<*> -> viewAction.performOnView(viewMatcher)
+            is MultipleViewsActionWithResult<*> -> viewAction.performOnView(viewMatcher)
             is ViewActionWithResult<*> -> performSingleViewActionWithResult(viewAction)
             else -> performSingleViewAction(viewAction)
         }
     }
+
+    fun check(viewAssert: ViewAssertion): ViewInteraction =
+        espressoInteraction.check(viewAssert)
 
     private fun performSingleViewActionWithResult(viewAction: ViewActionWithResult<*>): Any? {
         espressoInteraction.perform(viewAction)
@@ -23,21 +26,5 @@ class DetoxViewInteraction(private val viewMatcher: Matcher<View>) {
     private fun performSingleViewAction(viewAction: ViewAction): Unit? {
         espressoInteraction.perform(viewAction)
         return null
-    }
-
-    fun withFailureHandler(failureHandler: FailureHandler): ViewInteraction {
-        return espressoInteraction.withFailureHandler(failureHandler)
-    }
-
-    fun inRoot(rootMatcher: Matcher<Root>): ViewInteraction {
-        return espressoInteraction.inRoot(rootMatcher)
-    }
-
-    fun noActivity(): ViewInteraction {
-        return espressoInteraction.noActivity()
-    }
-
-    fun check(viewAssert: ViewAssertion): ViewInteraction {
-        return espressoInteraction.check(viewAssert)
     }
 }

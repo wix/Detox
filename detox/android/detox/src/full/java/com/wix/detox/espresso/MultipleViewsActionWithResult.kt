@@ -7,13 +7,13 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-abstract class MultiViewActionWithResult<R> : ViewActionWithResult<R> {
+abstract class MultipleViewsActionWithResult<R> : ViewActionWithResult<R> {
     fun performOnView(viewMatcher: Matcher<View>): Any {
         val results = ArrayList<JSONObject>()
         var index = 0
-        var shouldCheckNextIndex = true
+        var hasMoreMatchingViews = true
 
-        while (shouldCheckNextIndex) {
+        while (hasMoreMatchingViews) {
             kotlin.runCatching {
                 val matcherAtIndex = DetoxMatcher.matcherForAtIndex(index, viewMatcher)
                 Espresso.onView(matcherAtIndex).perform(this)
@@ -21,11 +21,7 @@ abstract class MultiViewActionWithResult<R> : ViewActionWithResult<R> {
                 val actionResult = this.getResult()
 
                 lateinit var actionResultJson: JSONObject
-                try {
-                    actionResultJson = JSONObject(actionResult.toString())
-                } catch (e: JSONException) {
-                    throw e
-                }
+                actionResultJson = JSONObject(actionResult.toString())
 
                 results.add(actionResultJson)
                 index++
@@ -34,12 +30,13 @@ abstract class MultiViewActionWithResult<R> : ViewActionWithResult<R> {
                     throw it
                 }
 
-                shouldCheckNextIndex = false
+                hasMoreMatchingViews = false
             }
         }
-
-        val elementsObject = JSONObject()
-        elementsObject.put("elements", JSONArray(results))
-        return if (results.size == 1) results.first() else elementsObject
+        
+        return if (results.size == 1) results.first() else {
+            val elementsObject = JSONObject()
+            elementsObject.put("elements", JSONArray(results))
+        }
     }
 }
