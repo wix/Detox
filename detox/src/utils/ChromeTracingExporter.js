@@ -26,15 +26,16 @@ class ChromeTracingExporter {
 
   _parseEvent(event) {
     const { name, ts, args, type } = event;
+    const tsInMicroseconds = ts * 1000;
     switch (type) {
-      case 'start': return this._event(name, 'B', ts * 1000, args);
-      case 'end': return this._event(name, 'E', ts * 1000, args);
+      case 'start': return this._event(name, 'B', tsInMicroseconds, args);
+      case 'end': return this._event(name, 'E', tsInMicroseconds, args);
       case 'init': return [
-          this._event('process_name', 'M', ts, { name: this._process.name }),
-          this._event('thread_name', 'M', ts, { name: this._thread.name }),
+          this._event('process_name', 'M', tsInMicroseconds, { name: this._process.name }),
+          this._event('thread_name', 'M', tsInMicroseconds, { name: this._thread.name }),
         ];
       default:
-        throw new DetoxRuntimeError(`Invalid type '${type}' in event: ${event}`);
+        throw new DetoxRuntimeError({ message: `Invalid type '${type}' in event: ${event}` });
     }
   }
 
