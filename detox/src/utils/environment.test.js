@@ -204,10 +204,10 @@ describe('Environment', () => {
 
         it('should throw error if aapt is missing inside (a valid) build-tools/<sdk-version> directory', async () => {
           const validBuildToolsPath = 'build-tools/20.0.0';
-          const expectedErrPath = `${tempSdkPath}/${validBuildToolsPath}`;
+          const expectedErrPath = path.join(tempSdkPath, validBuildToolsPath);
 
           await genExec(`${validBuildToolsPath}/not-aapt`);
-          await expect(Environment.getAaptPath()).rejects.toThrow(new RegExp(`There was no "aapt" .*file in directory: ${expectedErrPath}/`));
+          await expect(Environment.getAaptPath()).rejects.toThrow(new RegExp(`There was no "aapt" .*file in directory: ${expectedErrPath}${path.sep}`));
         });
 
         it('should throw error if there are no inner <sdk-version> directories where aapt could reside', async () => {
@@ -234,9 +234,9 @@ describe('Environment', () => {
         });
 
         it('should throw error if adb is not found in platform-tools/', async () => {
-          const expectedErrPath = `${tempSdkPath}/platform-tools`;
+          const expectedErrPath = path.join(tempSdkPath, 'platform-tools');
 
-          expect(() => Environment.getAdbPath()).toThrow(new RegExp(`There was no "adb" .*file in directory: ${expectedErrPath}/`));
+          expect(() => Environment.getAdbPath()).toThrow(new RegExp(`There was no "adb" .*file in directory: ${expectedErrPath}${path.sep}`));
         });
       });
 

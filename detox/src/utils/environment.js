@@ -161,7 +161,7 @@ function throwSdkToolPathError(sdkToolPath) {
   const name = path.basename(sdkToolPath);
   const dir = path.dirname(sdkToolPath);
 
-  throwSdkIntegrityError(`There was no "${name}" executable file in directory: ${dir}/`);
+  throwSdkIntegrityError(`There was no "${name}" executable file in directory: ${dir}${path.sep}`);
 }
 
 function throwSdkIntegrityError(errMessage) {
