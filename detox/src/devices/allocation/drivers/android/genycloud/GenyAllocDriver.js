@@ -40,6 +40,7 @@ class GenyAllocDriver extends AllocationDriverBase {
     const { adbName } = instance;
 
     await this._adb.disableAndroidAnimations(adbName);
+    await this._adb.setWiFiToggle(adbName, true);
     await this._adb.apiLevel(adbName);
     return new GenycloudEmulatorCookie(instance);
   }
