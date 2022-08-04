@@ -20,10 +20,6 @@ class EmulatorDeviceDriver extends AndroidDeviceDriver {
   get deviceName() {
     return this._deviceName;
   }
-
-  async setLocation(lat, lon) {
-    await this.adb.setLocation(this.adbName, lat, lon);
-  }
 }
 
 class EmulatorAppDriver extends AndroidAppDriver {
@@ -35,6 +31,11 @@ class EmulatorAppDriver extends AndroidAppDriver {
     super(deps, { adbName });
 
     this._forceAdbInstall = forceAdbInstall;
+  }
+
+  /** @override */
+  async setLocation(lat, lon) {
+    await this.adb.setLocation(this.adbName, lat, lon);
   }
 
   /** @override */

@@ -57,11 +57,6 @@ class IosSimulatorDeviceDriver extends IosDeviceDriver {
   }
 
   /** @override */
-  async setLocation(lat, lon) {
-    await this._applesimutils.setLocation(this.udid, lat, lon);
-  }
-
-  /** @override */
   async clearKeychain() {
     await this._applesimutils.clearKeychain(this.udid);
   }
@@ -167,6 +162,11 @@ class IosSimulatorAppDriver extends IosAppDriver {
     const { udid, bundleId } = this;
     await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
     await this._applesimutils.uninstall(udid, bundleId);
+  }
+
+  /** @override */
+  async setLocation(lat, lon) {
+    await this._applesimutils.setLocation(this.udid, lat, lon);
   }
 
   /** @override */

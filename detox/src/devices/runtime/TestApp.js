@@ -137,6 +137,12 @@ class RunnableTestApp extends TestApp {
     await this._driver.setOrientation(orientation);
   }
 
+  async setLocation(lat, lon) {
+    lat = String(lat);
+    lon = String(lon);
+    await this._driver.setLocation(lat, lon);
+  }
+
   async terminate() {
     await traceCall('appTerminate', () => this._driver.terminate());
   }

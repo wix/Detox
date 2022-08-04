@@ -182,7 +182,7 @@ class DeviceAPI {
   }
 
   async setLocation(lat, lon) {
-    return this.device.setLocation(lat, lon);
+    return this.device.selectedApp.setLocation(lat, lon);
   }
 
   async reverseTcpPort(port) {

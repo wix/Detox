@@ -25,15 +25,16 @@ class GenycloudDeviceDriver extends AndroidDeviceDriver {
   get deviceName() {
     return this.instance.toString();
   }
-
-  async setLocation(lat, lon) {
-    await this.invocationManager.execute(DetoxGenymotionManager.setLocation(parseFloat(lat), parseFloat(lon)));
-  }
 }
 
 class GenycloudAppDriver extends AndroidAppDriver {
   constructor(deps, { instance }) {
     super(deps, { adbName: instance.adbName });
+  }
+
+  /** @override */
+  async setLocation(lat, lon) {
+    await this.invocationManager.execute(DetoxGenymotionManager.setLocation(parseFloat(lat), parseFloat(lon)));
   }
 
   /** @override */

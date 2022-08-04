@@ -48,7 +48,6 @@ class DeviceDriver {
   async setBiometricEnrollment() {}
   async setStatusBar(_params) {}
   async resetStatusBar() {}
-  async setLocation(_lat, _lon) {}
   async reverseTcpPort(_port) {}
   async unreverseTcpPort(_port) {}
   async clearKeychain() {}
@@ -161,6 +160,7 @@ class TestAppDriver {
   async uninstall() {}
 
   async setOrientation(_orientation) {}
+  async setLocation(_lat, _lon) {}
   async setPermissions(_permissions) {}
   async sendToHome() {}
   async pressBack() {}

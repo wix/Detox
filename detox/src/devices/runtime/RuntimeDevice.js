@@ -149,12 +149,6 @@ class RuntimeDevice {
     return this._driver.resetStatusBar(params);
   }
 
-  async setLocation(lat, lon) {
-    lat = String(lat);
-    lon = String(lon);
-    await this._driver.setLocation(lat, lon);
-  }
-
   async reverseTcpPort(port) {
     await this._driver.reverseTcpPort(port);
   }

@@ -1,6 +1,6 @@
 const RuntimeDeviceFactory = require('./base');
 
-class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
+class RuntimeDeviceFactoryAndroid extends RuntimeDeviceFactory {
   _createFundamentalDriverDeps(commonDeps) {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
@@ -48,7 +48,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
   }
 }
 
-class AndroidEmulator extends RuntimeDriverFactoryAndroid {
+class AndroidEmulator extends RuntimeDeviceFactoryAndroid {
   /** @override */
   _createTestAppDriver(deviceCookie, commonDeps, { deviceConfig, sessionConfig }, alias) {
     const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
@@ -81,7 +81,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
   }
 }
 
-class AndroidAttached extends RuntimeDriverFactoryAndroid {
+class AndroidAttached extends RuntimeDeviceFactoryAndroid {
   _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
     const props = {
       adbName: deviceCookie.adbName,
@@ -92,7 +92,7 @@ class AndroidAttached extends RuntimeDriverFactoryAndroid {
   }
 }
 
-class Genycloud extends RuntimeDriverFactoryAndroid {
+class Genycloud extends RuntimeDeviceFactoryAndroid {
   _createTestAppDriver(deviceCookie, commonDeps, { sessionConfig }, alias) {
     const fundamentalDeps = this._createFundamentalDriverDeps(commonDeps);
     const appDeps = this._createAppDriverDeps(fundamentalDeps, { sessionConfig }, alias);
