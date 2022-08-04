@@ -63,7 +63,7 @@ describe('Chrome-Tracing exporter', () => {
       type: 'init',
       ts: 1234,
     };
-    const expectedTs = initEvent.ts;
+    const expectedTs = initEvent.ts * 1000;
     const expectedObjects = [{
       name: 'process_name',
       pid: processId,

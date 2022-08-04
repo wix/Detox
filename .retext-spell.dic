@@ -1,3 +1,4 @@
+AAPT/M
 AAR/M
 ANR/M
 AOSP/M
@@ -64,6 +65,7 @@ beforeAll
 beforeEach
 biometric
 blob/M
+blogpost/M
 breakpoint/M
 bundler
 cancelled
@@ -97,6 +99,7 @@ lockfile/M
 macOS
 matcher/M
 minification/M
+minSdkVersion
 monorepo
 multistep
 natively
@@ -145,6 +148,7 @@ unminified
 unobfuscated
 unregister/M
 util/M
+v12.x
 webhook/M
 websocket/M
 xcodebuild

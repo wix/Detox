@@ -206,6 +206,11 @@ class ADB {
     await this.shell(deviceId, `settings put global transition_animation_scale 0`);
   }
 
+  async setWiFiToggle(deviceId, state) {
+    const value = (state === true ? 'enable' : 'disable');
+    await this.shell(deviceId, `svc wifi ${value}`);
+  }
+
   async screencap(deviceId, path) {
     await this.shell(deviceId, `screencap ${path}`);
   }

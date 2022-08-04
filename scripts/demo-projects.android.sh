@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
+trap "$UPLOAD_ARTIFACT" EXIT
+
 # Approve unapproved SDK licenses
 yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
@@ -20,6 +23,12 @@ pushd examples/demo-react-native-jest
 run_f "npm run test:android-release-ci"
 DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
 popd
+
+# Early completion if this is just about RN compatibility -
+# in which case, running the demo project's tests is enough.
+if [ "$REACT_NATIVE_COMPAT_TEST" = "true" ]; then
+  exit 0
+fi
 
 pushd examples/demo-react-native
 run_f "npm run test:android-release-ci"
