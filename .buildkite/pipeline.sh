@@ -27,3 +27,4 @@ elif [[ "$1" == 'debug' ]];then
       cat .buildkite/jobs/pipeline.$step.yml
   done
 fi
+
