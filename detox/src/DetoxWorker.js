@@ -232,6 +232,11 @@ class DetoxWorker {
       if (this._isCleaningUp) return;
       await this.device.uninstallApp();
       if (this._isCleaningUp) return;
+    }
+
+    for (const appName of appNames) {
+      await this.device.selectApp(appName);
+      if (this._isCleaningUp) return;
       await this.device.installApp();
       if (this._isCleaningUp) return;
     }
