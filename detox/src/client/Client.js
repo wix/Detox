@@ -4,12 +4,14 @@ const util = require('util');
 const _ = require('lodash');
 const { deserializeError } = require('serialize-error');
 
+const TIMELINE_CONTEXT_TYPES = require('../artifacts/timeline/TimelineContextTypes');
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
 const Deferred = require('../utils/Deferred');
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
 const log = require('../utils/logger').child({ __filename });
+const { traceCall } = require('../utils/trace');
 
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
@@ -163,12 +165,17 @@ class Client {
     const errorWithUserStack = createErrorWithUserStack();
 
     try {
-      const parsedResponse = await this._asyncWebSocket.send(action, options);
-      if (parsedResponse && parsedResponse.type === 'serverError') {
-        throw deserializeError(parsedResponse.params.error);
-      }
+      const actionName = this._extractActionName(action);
+      const invocation = JSON.stringify(action);
 
-      return await action.handle(parsedResponse);
+      return await traceCall(actionName, async () => {
+        const parsedResponse = await this._asyncWebSocket.send(action, options);
+        if (parsedResponse && parsedResponse.type === 'serverError') {
+          throw deserializeError(parsedResponse.params.error);
+        }
+
+        return await action.handle(parsedResponse);
+      }, { context: TIMELINE_CONTEXT_TYPES.ACTION, invocation });
     } catch (err) {
       throw replaceErrorStack(errorWithUserStack, asError(err));
     }
@@ -249,6 +256,11 @@ class Client {
     /* see the property injection from Detox.js */
   }
 
+  _extractActionName(action) {
+    const actualAction = _.last(action.params.args);
+    return _.get(actualAction, 'value.method', '');
+  }
+
   _scheduleSlowInvocationQuery() {
     if (this._slowInvocationTimeout > 0 && !this._isCleaningUp) {
       this._slowInvocationStatusHandle = setTimeout(async () => {
@@ -322,7 +334,7 @@ class Client {
   _onBeforeAppCrash({ params }) {
     this._pendingAppCrash = new DetoxRuntimeError({
       message: 'The app has crashed, see the details below:',
-      debugInfo: params.errorDetails,
+      debugInfo: params.errorDetails
     });
 
     this._unscheduleSlowInvocationQuery();

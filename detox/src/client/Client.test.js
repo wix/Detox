@@ -4,6 +4,7 @@ jest.useFakeTimers('modern');
 const { serializeError } = require('serialize-error');
 const tempfile = require('tempfile');
 
+const TIMELINE_CONTEXT_TYPES = require('../artifacts/timeline/TimelineContextTypes');
 const { validSession } = require('../configuration/configurations.mock');
 const Deferred = require('../utils/Deferred');
 
@@ -19,6 +20,7 @@ describe('Client', () => {
   let mockAws;
   let DetoxRuntimeError;
   let DetoxInternalError;
+  let localTrace;
 
   beforeEach(() => {
     jest.clearAllTimers();
@@ -40,7 +42,7 @@ describe('Client', () => {
 
       mockAws.mockResponse('loginSuccess', {
         testerConnected: true,
-        appConnected: mockAws.__appConnected,
+        appConnected: mockAws.__appConnected
       });
     });
 
@@ -89,6 +91,12 @@ describe('Client', () => {
         }
       };
     });
+
+    const { trace } = require('../utils/trace');
+    trace.init = jest.fn();
+    trace.startSection = jest.fn();
+    trace.endSection = jest.fn();
+    localTrace = trace;
 
     Client = require('./Client');
     client = new Client(sessionConfig);
@@ -240,7 +248,7 @@ describe('Client', () => {
     it('should not schedule "currentStatus" query if config.debugSynchronization = 0', async () => {
       client = new Client({
         ...sessionConfig,
-        debugSynchronization: 0,
+        debugSynchronization: 0
       });
 
       await client.connect();
@@ -332,8 +340,8 @@ describe('Client', () => {
       const response = {
         type: 'whateverDone',
         params: {
-          foo: 'bar',
-        },
+          foo: 'bar'
+        }
       };
       mockAws.mockResponse(response.type, response.params);
       await client.sendAction(action);
@@ -347,6 +355,42 @@ describe('Client', () => {
       mockAws.mockResponse('whateverDone');
       await expect(client.sendAction(action)).resolves.toBe(42);
     });
+
+    describe('send events to timeline', () => {
+      let methodName = 'someMethodName';
+
+      beforeEach(async () => {
+        const action = anAction();
+        action.params.args = [];
+        action.params.args.push({
+          value: {
+            method: methodName
+          }
+        });
+
+        mockAws.mockResponse('whateverDone');
+
+        await client.sendAction(action);
+      });
+
+      it('should send start event for action', async () => {
+        const expectedContext = {
+          context: TIMELINE_CONTEXT_TYPES.ACTION,
+          invocation: '{"type":"whatever","params":{"args":[{"value":{"method":"someMethodName"}}]},"timeout":0,"isAtomic":true}'
+        };
+
+        expect(localTrace.startSection).toHaveBeenCalledWith(methodName, expectedContext);
+      });
+
+      it('should send end event for action', async () => {
+        const expectedContext = {
+          context: TIMELINE_CONTEXT_TYPES.ACTION,
+          invocation: '{"type":"whatever","params":{"args":[{"value":{"method":"someMethodName"}}]},"timeout":0,"isAtomic":true}',
+          success: true
+        };
+        expect(localTrace.endSection).toHaveBeenCalledWith(methodName, expectedContext);
+      });
+    });
   });
 
   describe('wrapper methods', () => {
@@ -356,13 +400,16 @@ describe('Client', () => {
       ['setSyncSettings', 'setSyncSettingsDone', actions.SetSyncSettings, { foo: 'bar' }],
       ['shake', 'shakeDeviceDone', actions.Shake],
       ['setOrientation', 'setOrientationDone', actions.SetOrientation, 'portrait'],
-      ['startInstrumentsRecording', 'setRecordingStateDone', actions.SetInstrumentsRecordingState, { recordingPath: 'foo', samplingInterval: 500 }],
+      ['startInstrumentsRecording', 'setRecordingStateDone', actions.SetInstrumentsRecordingState, {
+        recordingPath: 'foo',
+        samplingInterval: 500
+      }],
       ['stopInstrumentsRecording', 'setRecordingStateDone', actions.SetInstrumentsRecordingState],
       ['captureViewHierarchy', 'captureViewHierarchyDone', actions.CaptureViewHierarchy, { viewHierarchyURL: 'foo' }, {}],
       ['waitForBackground', 'waitForBackgroundDone', actions.WaitForBackground],
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
-      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }],
+      ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }]
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
         await client.connect();
@@ -390,7 +437,7 @@ describe('Client', () => {
 
     it(`should throw an error if the response has "captureViewHierarchyError" in params`, async () => {
       mockAws.mockResponse('captureViewHierarchyDone', {
-        captureViewHierarchyError: 'Test error to check',
+        captureViewHierarchyError: 'Test error to check'
       });
 
       const viewHierarchyURL = tempfile('.viewhierarchy');
@@ -501,27 +548,27 @@ describe('Client', () => {
 
     it.each([
       ['debug'],
-      ['trace'],
+      ['trace']
     ])(`should throw "testFailed" error with view hierarchy (on --loglevel %s)`, async (loglevel) => {
       log.level.mockReturnValue(loglevel);
-      mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
+      mockAws.mockResponse('testFailed', { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
       await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it.each([
       ['error'],
       ['warn'],
-      ['info'],
+      ['info']
     ])(`should throw "testFailed" error without view hierarchy but with a hint (on --loglevel %s)`, async (loglevel) => {
       log.level.mockReturnValue(loglevel);
-      mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
+      mockAws.mockResponse('testFailed', { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should throw "testFailed" error even if it has no a view hierarchy`, async () => {
-      mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: undefined });
+      mockAws.mockResponse('testFailed', { details: 'this is an error', viewHierarchy: undefined });
 
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
@@ -529,7 +576,7 @@ describe('Client', () => {
     });
 
     it(`should rethrow an "error" result`, async () => {
-      mockAws.mockResponse('error',  { error: 'this is an error' });
+      mockAws.mockResponse('error', { error: 'this is an error' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
@@ -541,7 +588,7 @@ describe('Client', () => {
     });
 
     it(`should throw on an unsupported result`, async () => {
-      mockAws.mockResponse('unsupportedResult',  { foo: 'bar' });
+      mockAws.mockResponse('unsupportedResult', { foo: 'bar' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxInternalError);
@@ -625,7 +672,9 @@ describe('Client', () => {
   describe('.waitUntilReady()', () => {
     it('should wait until connected, then send Ready action', async () => {
       let isReady = false;
-      client.waitUntilReady().then(() => { isReady = true; });
+      client.waitUntilReady().then(() => {
+        isReady = true;
+      });
 
       await fastForwardAllPromises();
       expect(isReady).toBe(false);
@@ -642,7 +691,9 @@ describe('Client', () => {
 
     it('should wait until connected and ready, if the app sends ready status beforehand', async () => {
       let isReady = false;
-      client.waitUntilReady().then(() => { isReady = true; });
+      client.waitUntilReady().then(() => {
+        isReady = true;
+      });
 
       mockAws.mockEventCallback('ready');
       await fastForwardAllPromises();
@@ -662,7 +713,7 @@ describe('Client', () => {
       await client.connect();
 
       mockAws.mockEventCallback('AppWillTerminateWithError', {
-        params: { errorDetails: 'SIGSEGV whatever' },
+        params: { errorDetails: 'SIGSEGV whatever' }
       });
       expect(client.terminateApp).not.toHaveBeenCalled();
       expect(mockAws.rejectAll).not.toHaveBeenCalled();
@@ -685,7 +736,7 @@ describe('Client', () => {
 
       await client.connect();
       mockAws.mockEventCallback('AppWillTerminateWithError', {
-        params: { errorDetails: 'SIGSEGV whatever' },
+        params: { errorDetails: 'SIGSEGV whatever' }
       });
 
       jest.advanceTimersByTime(5000);
@@ -701,7 +752,7 @@ describe('Client', () => {
       await client.connect();
 
       mockAws.mockEventCallback('AppWillTerminateWithError', {
-        params: { errorDetails: 'SIGSEGV whatever' },
+        params: { errorDetails: 'SIGSEGV whatever' }
       });
       mockAws.mockEventCallback('appDisconnected');
 
@@ -742,7 +793,7 @@ describe('Client', () => {
       mockAws.mockEventCallback('serverError', {
         params: {
           error: serializeError(testError)
-        },
+        }
       });
 
       expect(log.error.mock.calls[0][1]).toMatchSnapshot();
@@ -761,15 +812,19 @@ describe('Client', () => {
       type: 'whatever',
       params: {},
       handle: jest.fn(),
-      get timeout() { return 0; },
-      get isAtomic() { return true; },
-      ...overrides,
+      get timeout() {
+        return 0;
+      },
+      get isAtomic() {
+        return true;
+      },
+      ...overrides
     };
   }
 
   function anInvocation() {
     return {
-      type: 'SomeInvocation',
+      type: 'SomeInvocation'
     };
   }
 
