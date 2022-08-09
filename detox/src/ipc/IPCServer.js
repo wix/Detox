@@ -55,7 +55,9 @@ class IPCServer {
       this._sessionState.logFiles.push(logFile);
     }
 
-    this._ipc.server.emit(socket, 'registerContextDone', {});
+    this._ipc.server.emit(socket, 'registerContextDone', {
+      failedTestFiles: this._sessionState.failedTestFiles,
+    });
   }
 
   onRegisterWorker({ workerId }, socket) {
@@ -75,6 +77,10 @@ class IPCServer {
     if (socket) {
       this._ipc.server.emit(socket, 'failedTestsDone', {});
     }
+
+    this._ipc.server.broadcast('sessionStateUpdate', {
+      failedTestFiles: this._sessionState.failedTestFiles,
+    });
   }
 }
 

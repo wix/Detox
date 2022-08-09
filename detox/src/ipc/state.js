@@ -38,13 +38,22 @@ class SessionState {
 }
 
 class SecondarySessionState extends SessionState {
-  constructor({ id = uuid.UUID(), detoxConfigSnapshotPath = '', detoxConfig = null, detoxIPCServer = '', workerId = undefined, workersCount = 0 }) {
+  constructor({
+    id = uuid.UUID(),
+    detoxConfigSnapshotPath = '',
+    detoxConfig = null,
+    detoxIPCServer = '',
+    failedTestFiles = [],
+    workerId = undefined,
+    workersCount = 0
+  }) {
     super();
 
     this.id = id;
     this.detoxConfigSnapshotPath = detoxConfigSnapshotPath;
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
+    this.failedTestFiles = failedTestFiles;
     this.workerId = workerId;
     this.workersCount = workersCount;
   }

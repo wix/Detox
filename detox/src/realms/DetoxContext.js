@@ -19,7 +19,7 @@ class DetoxContext {
   constructor() {
     this[symbols.globalSetup] = this[symbols.globalSetup].bind(this);
     this[symbols.globalTeardown] = this[symbols.globalTeardown].bind(this);
-    this[symbols.reportFailedTests] = this[symbols.globalTeardown].bind(this);
+    this[symbols.reportFailedTests] = this[symbols.reportFailedTests].bind(this);
     this[symbols.resolveConfig] = this[symbols.resolveConfig].bind(this);
     this[symbols.setup] = this[symbols.setup].bind(this);
     this[symbols.teardown] = this[symbols.teardown].bind(this);

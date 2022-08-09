@@ -73,6 +73,7 @@ declare global {
     };
 
     type SessionState = Readonly<{
+      failedTestFiles: string[];
       workersCount: number;
     }>;
 
