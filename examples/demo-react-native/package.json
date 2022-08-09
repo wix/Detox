@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "20.0.0-breaking.new-global-lifecycle.0",
+  "version": "21.0.0-breaking.new-global-lifecycle.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -20,7 +20,7 @@
     "tslib": "^2.0.3"
   },
   "devDependencies": {
-    "detox": "^20.0.0-breaking.new-global-lifecycle.0",
+    "detox": "^21.0.0-breaking.new-global-lifecycle.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   }
