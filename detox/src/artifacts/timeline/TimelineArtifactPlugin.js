@@ -7,14 +7,11 @@ const { trace } = require('../../utils/trace');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 
+const TIMELINE_CONTEXT_TYPES = require('./TimelineContextTypes');
+
 const traceNoop = {
   startSection: _noop,
   endSection: _noop,
-};
-
-const CONTEXT_TYPES = {
-  TEST: 'test',
-  DESCRIBE: 'describe'
 };
 
 class TimelineArtifactPlugin extends ArtifactPlugin {
@@ -37,23 +34,23 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
   async onRunDescribeStart(suite) {
     const sectionName = (suite.name === 'ROOT_DESCRIBE_BLOCK' ? this._deviceName : suite.name);
-    this._trace.startSection(sectionName, { context: CONTEXT_TYPES.DESCRIBE });
+    this._trace.startSection(sectionName, { context: TIMELINE_CONTEXT_TYPES.DESCRIBE });
     await super.onRunDescribeStart(suite);
   }
 
   async onRunDescribeFinish(suite) {
     const sectionName = (suite.name === 'ROOT_DESCRIBE_BLOCK' ? this._deviceName : suite.name);
-    this._trace.endSection(sectionName, { context: CONTEXT_TYPES.DESCRIBE });
+    this._trace.endSection(sectionName, { context: TIMELINE_CONTEXT_TYPES.DESCRIBE });
     await super.onRunDescribeFinish(suite);
   }
 
   async onTestStart(testSummary) {
-    this._trace.startSection(testSummary.title, { context: CONTEXT_TYPES.TEST });
+    this._trace.startSection(testSummary.title, { context: TIMELINE_CONTEXT_TYPES.TEST });
     await super.onTestStart(testSummary);
   }
 
   async onTestDone(testSummary) {
-    this._trace.endSection(testSummary.title, { status: testSummary.status, context: CONTEXT_TYPES.TEST });
+    this._trace.endSection(testSummary.title, { status: testSummary.status, context: TIMELINE_CONTEXT_TYPES.TEST });
     await super.onTestDone(testSummary);
   }
 
