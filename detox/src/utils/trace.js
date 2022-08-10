@@ -35,14 +35,14 @@ class Trace {
 }
 
 let trace = new Trace();
-async function traceCall(sectionName, func) {
-  trace.startSection(sectionName);
+async function traceCall(sectionName, func, args = {}) {
+  trace.startSection(sectionName, args);
   try {
     const result = await func();
-    trace.endSection(sectionName, { success: true });
+    trace.endSection(sectionName, { ...args, success: true });
     return result;
   } catch (error) {
-    trace.endSection(sectionName, { success: false, error: error.toString() });
+    trace.endSection(sectionName, { ...args, success: false, error: error.toString() });
     throw error;
   }
 }
