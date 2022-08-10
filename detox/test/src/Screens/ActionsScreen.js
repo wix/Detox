@@ -9,11 +9,12 @@ import {
   Platform,
   Dimensions,
   StyleSheet,
-  Slider,
+  Slider as LegacySlider,
   SafeAreaView,
   requireNativeComponent,
 } from 'react-native';
 import TextInput from '../Views/TextInput';
+import Slider from '@react-native-community/slider';
 
 const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
 const SluggishTapsText = requireNativeComponent('DetoxSluggishTapsTextView');
@@ -160,6 +161,10 @@ export default class ActionsScreen extends Component {
             <RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.onRefresh.bind(this)} title="Loading..." />
           }>
           </ScrollView>
+        </View>
+
+        <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>
+          <LegacySlider testID='legacySliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0}/>
         </View>
 
         <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>

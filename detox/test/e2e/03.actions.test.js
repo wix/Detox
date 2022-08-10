@@ -97,12 +97,11 @@ describe('Actions', () => {
     let failed = false;
     try {
       await element(by.id('NoTextInputInside')).typeText(typedText);
-    }
-    catch(ex) {
+    } catch (ex) {
       failed = true;
     }
 
-    if(failed === false) {
+    if (failed === false) {
       throw new Error('Test should have thrown an error, but did not');
     }
   });
@@ -120,7 +119,7 @@ describe('Actions', () => {
   });
 
   it('should clear text in an element', async () => {
-    if(device.getPlatform() === 'ios') {
+    if (device.getPlatform() === 'ios') {
       //Add a complex string on iOS to ensure clear works as expected.
       const typedText = 'Clear this אֱבּג';
       await element(by.id('UniqueId005')).replaceText(typedText);
@@ -180,6 +179,19 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).not.toBeVisible();
     await element(by.id('PinchableScrollView')).pinch(0.75, 'slow');
     await expect(element(by.id('UniqueId007'))).toBeVisible();
+  });
+
+  it('should adjust legacy slider and assert its value', async () => {
+    const reactSliderId = 'legacySliderWithASimpleID';
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
+    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
+    await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
+
+    // on ios the accessibilityLabel is set to the slider value, but not on android
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+    }
   });
 
   it('should adjust slider and assert its value', async () => {

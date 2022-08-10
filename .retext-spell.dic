@@ -1,3 +1,4 @@
+AAPT/M
 AAR/M
 ANR/M
 AOSP/M
@@ -98,6 +99,7 @@ lockfile/M
 macOS
 matcher/M
 minification/M
+minSdkVersion
 monorepo
 multistep
 natively

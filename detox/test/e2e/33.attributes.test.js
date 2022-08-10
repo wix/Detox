@@ -147,6 +147,18 @@ describe('Attributes', () => {
     });
   });
 
+  describe('of a legacy slider', () => {
+    beforeAll(useMatcher(by.id('legacySliderId')));
+
+    it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {
+      expect(attributes).toMatchObject({ value: '50%', normalizedSliderPosition: 0.5 });
+    });
+
+    it(':android: should have a number .value', () => {
+      expect(attributes).toMatchObject({ value: 0.5 });
+    });
+  });
+
   describe('of a slider', () => {
     beforeAll(useMatcher(by.id('sliderId')));
 
@@ -155,8 +167,7 @@ describe('Attributes', () => {
     });
 
     it(':android: should have a number .value', () => {
-      const MIDDLE = 0.5 * 128; // Why 1 is 128 in RN? I'm not sure... maybe px vs. dp?! :shrug:
-      expect(attributes).toMatchObject({ value: MIDDLE });
+      expect(attributes).toMatchObject({ value: 0.5 });
     });
   });
 

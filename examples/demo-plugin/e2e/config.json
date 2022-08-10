@@ -1,7 +1,8 @@
 {
-    "testEnvironment": "./environment",
-    "testTimeout": 120000,
-    "testRegex": "\\.test\\.js$",
-    "reporters": ["detox/runners/jest/reporter"],
-    "verbose": true
+  "maxWorkers": 1,
+  "testEnvironment": "./environment",
+  "testTimeout": 120000,
+  "testRegex": "\\.test\\.js$",
+  "reporters": ["detox/runners/jest/reporter"],
+  "verbose": true
 }

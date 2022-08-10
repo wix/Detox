@@ -78,7 +78,7 @@ function getAndroidEmulatorPath() {
     return legacyPath;
   }
 
-  throwSdkIntegrityError(sdkRoot, 'emulator/emulator');
+  throwSdkBinIntegrityError(sdkRoot, 'emulator/emulator');
 }
 
 async function getAaptPath() {
@@ -88,23 +88,33 @@ async function getAaptPath() {
   }
 
   const latestBuildTools = await getLatestBuildToolsPath(sdkRoot);
-  const defaultPath = latestBuildTools && which('aapt', latestBuildTools);
+  if (!latestBuildTools) {
+    throwSdkIntegrityError('Failed to find the "aapt" tool under the Android SDK: No build-tools are installed!');
+  }
+
+  const defaultPath = which('aapt', latestBuildTools);
   if (defaultPath) {
     return defaultPath;
   }
 
-  throwSdkIntegrityError(sdkRoot, `${latestBuildTools}/aapt`);
+  throwSdkToolPathError(`${latestBuildTools}/aapt`);
 }
 
 async function getLatestBuildToolsPath(sdkRoot) {
-  if (!sdkRoot) return '';
+  if (!sdkRoot) {
+    return '';
+  }
 
   const buildToolsDir = path.join(sdkRoot, 'build-tools');
-  if (!fs.existsSync(buildToolsDir)) return '';
+  if (!fs.existsSync(buildToolsDir)) {
+    return '';
+  }
 
   const buildToolsVersions = await fsext.getDirectories(buildToolsDir);
   const latestBuildToolsVersion = _.last(buildToolsVersions);
-  if (!latestBuildToolsVersion) return '';
+  if (!latestBuildToolsVersion) {
+    return '';
+  }
 
   return path.join(buildToolsDir, latestBuildToolsVersion);
 }
@@ -120,7 +130,7 @@ function getAdbPath() {
     return defaultPath;
   }
 
-  throwSdkIntegrityError(sdkRoot, 'platform-tools/adb');
+  throwSdkBinIntegrityError(sdkRoot, 'platform-tools/adb');
 }
 
 function getGmsaasPath() {
@@ -142,15 +152,20 @@ function throwMissingAvdError(avdName, avdPath, avdIniPath) {
   );
 }
 
-function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
-  const executablePath = path.join(sdkRoot, relativeExecutablePath);
-  const name = path.basename(executablePath);
-  const dir = path.dirname(executablePath);
+function throwSdkBinIntegrityError(sdkRoot, relativeBinPath) {
+  const executablePath = path.join(sdkRoot, relativeBinPath);
+  throwSdkToolPathError(executablePath);
+}
 
-  throw new DetoxRuntimeError(
-    `There was no "${name}" executable file in directory: ${dir}.\n` +
-    `Check integrity of your Android SDK.`
-  );
+function throwSdkToolPathError(sdkToolPath) {
+  const name = path.basename(sdkToolPath);
+  const dir = path.dirname(sdkToolPath);
+
+  throwSdkIntegrityError(`There was no "${name}" executable file in directory: ${dir}`);
+}
+
+function throwSdkIntegrityError(errMessage) {
+  throw new DetoxRuntimeError(`${errMessage}\nCheck the integrity of your Android SDK.`);
 }
 
 function throwMissingGmsaasError() {
