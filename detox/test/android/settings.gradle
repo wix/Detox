@@ -18,3 +18,6 @@ project(':react-native-community-checkbox').projectDir = new File(rootProject.pr
 
 include ':react-native-community-geolocation'
 project(':react-native-community-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/geolocation/android')
+
+include ':@react-native-community_slider'
+project(':@react-native-community_slider').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/slider/android')

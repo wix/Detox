@@ -33,11 +33,13 @@
     "@react-native-async-storage/async-storage": "^1.17.3",
     "@react-native-community/checkbox": "^0.5.11",
     "@react-native-community/geolocation": "^2.0.2",
+    "@react-native-community/slider": "^4.2.1",
     "@react-native-picker/picker": "^2.1.0",
     "moment": "^2.24.0",
     "react": "17.0.2",
-    "react-native": "0.67.2",
-    "react-native-webview": "11.18.1"
+    "react-native": "0.68.2",
+    "react-native-gradle-plugin": "^0.0.7",
+    "react-native-webview": "^11.18.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -56,7 +58,7 @@
     "jest": "^28.0.0",
     "jest-junit": "^10.0.0",
     "lodash": "^4.14.1",
-    "metro-react-native-babel-preset": "^0.66.2",
+    "metro-react-native-babel-preset": "^0.67.0",
     "nyc": "^15.1.0",
     "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",

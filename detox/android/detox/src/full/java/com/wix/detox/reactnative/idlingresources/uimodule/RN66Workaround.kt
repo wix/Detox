@@ -2,6 +2,7 @@ package com.wix.detox.reactnative.idlingresources.uimodule
 
 import android.util.Log
 import android.view.View
+import com.facebook.react.uimanager.IllegalViewOperationException
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import com.wix.detox.reactnative.ReactNativeInfo
 import java.lang.ref.WeakReference
@@ -19,9 +20,7 @@ class RN66Workaround {
     fun isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected: UIManagerModuleReflected): Boolean {
         var isStuckSwitchOperation = false
 
-        val rnVersion = ReactNativeInfo.rnVersion()
-
-        if (rnVersion.minor >= 66 && uiManagerModuleReflected.getUIOpsCount() >= 1) {
+        if (isRelevantRNVersion() && uiManagerModuleReflected.getUIOpsCount() >= 1) {
             val nextUIOperation = uiManagerModuleReflected.getNextUIOpReflected()
             val view = getUIOpView(uiManagerModuleReflected, nextUIOperation)
             val isReactSwitch = isReactSwitch(view)
@@ -46,10 +45,20 @@ class RN66Workaround {
         return isStuckSwitchOperation
     }
 
+    private fun isRelevantRNVersion(): Boolean {
+        val rnVersion = ReactNativeInfo.rnVersion()
+        return rnVersion.minor == 66 || (rnVersion.minor == 67 && rnVersion.patch < 4)
+    }
+
     private fun getUIOpView(uiManagerModuleReflected: UIManagerModuleReflected, uiOperation: DispatchCommandOperationReflected?): View? {
         val nativeViewHierarchyManager = uiManagerModuleReflected.nativeViewHierarchyManager() ?: return null
         val tag = uiOperation?.tag ?: return null
-        return nativeViewHierarchyManager.getViewClass(tag)
+        return try {
+            nativeViewHierarchyManager.getViewClass(tag)
+        } catch(e: IllegalViewOperationException) {
+            Log.e(LOG_TAG, "failed to get view from tag ", e.cause)
+            null
+        }
     }
 
     private fun isReactSwitch(view: View?) = try {

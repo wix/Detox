@@ -6,10 +6,14 @@ describe('sliceErrorStack(error, fromIndex)', () => {
   it('should clean up error stack by N first lines containing at:', () => {
     function innerFunction() { throw new Error('Source Error'); }
     function outerFunction() { innerFunction(); }
+    function attemptFunction() {
+      try { outerFunction(); } catch (e) { console.error('err', e); return e; }
+    }
+
     const slicer = at => (_line) => --at < 0;
-    const error0 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(0));
-    const error2 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(1));
-    const error3 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(2));
+    const error0 = errorUtils.filterErrorStack(attemptFunction(), slicer(1));
+    const error2 = errorUtils.filterErrorStack(attemptFunction(), slicer(2));
+    const error3 = errorUtils.filterErrorStack(attemptFunction(), slicer(3));
     expect(error0.stack).toMatch(/at innerFunction/);
     expect(error0.stack).toMatch(/at outerFunction/);
     expect(error2.stack).not.toMatch(/at innerFunction/);

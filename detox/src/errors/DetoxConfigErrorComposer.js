@@ -409,7 +409,7 @@ Please check your Detox config${this._atPath()}`,
       case 'gpuMode':
         return this._unsupportedPropertyByDeviceType('gpuMode', ['android.emulator'], deviceAlias);
       case 'headless':
-        return this._unsupportedPropertyByDeviceType('headless', ['android.emulator'], deviceAlias);
+        return this._unsupportedPropertyByDeviceType('headless', ['ios.simulator', 'android.emulator'], deviceAlias);
       case 'readonly':
         return this._unsupportedPropertyByDeviceType('readonly', ['android.emulator'], deviceAlias);
       case 'utilBinaryPaths':

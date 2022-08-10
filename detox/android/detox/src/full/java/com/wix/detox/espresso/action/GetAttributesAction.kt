@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
+import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -127,11 +128,22 @@ private class CheckBoxAttributes {
             rootObject.put("value", view.isChecked)
 }
 
+/**
+ * Note: this applies also to [androidx.appcompat.widget.AppCompatSeekBar], which
+ * is anything RN-slider-ish.
+ */
 private class ProgressBarAttributes {
     fun get(json: JSONObject, view: View) {
         if (view is ProgressBar) {
-            getProgressBarValue(json, view)
+            SliderHelper.maybeCreate(view)?.let {
+                getRNSliderValue(json, it)
+            } ?:
+                getProgressBarValue(json, view)
         }
+    }
+
+    private fun getRNSliderValue(rootObject: JSONObject, sliderHelper: SliderHelper) {
+        rootObject.put("value", sliderHelper.getCurrentProgressPct())
     }
 
     private fun getProgressBarValue(rootObject: JSONObject, view: ProgressBar) =

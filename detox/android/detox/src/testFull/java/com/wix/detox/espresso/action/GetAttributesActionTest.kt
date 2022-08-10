@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.facebook.react.views.slider.ReactSlider
 import com.google.android.material.slider.Slider
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
@@ -179,7 +180,7 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return ProgressBar (or SeekBar) "progress" via value attribute`() {
+    fun `should return raw ProgressBar or SeekBar 'progress' via value attribute`() {
         val progressBar: ProgressBar = mock {
             on { progress } doReturn 42
         }
@@ -189,7 +190,18 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return Slider state through value attribute`() {
+    fun `should return RN-Slider via value attribute`() {
+        val progressBar: ReactSlider = mock {
+            on { max } doReturn 100
+            on { progress } doReturn 50
+        }
+
+        val resultJson = perform(progressBar)
+        assertThat(resultJson.opt("value")).isEqualTo(0.5)
+    }
+
+    @Test
+    fun `should return material-Slider state through value attribute`() {
         val slider: Slider = mock {
             on { value } doReturn 0.42f
         }
@@ -225,7 +237,7 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return text hint via "placeholder" attribute, if applicable`() {
+    fun `should return text hint via 'placeholder' attribute, if applicable`() {
         val textViewWithHint: TextView = mock {
             on { hint } doReturn "hint-text-mock"
         }

@@ -46,10 +46,10 @@
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-unicorn": "^39.0.0",
-    "jest": "^27.5.1",
+    "jest": "^28.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.67.2",
+    "react-native": "0.68.2",
     "react-native-codegen": "^0.0.8",
     "typescript": "^4.5.2",
     "wtfnode": "^0.9.1"

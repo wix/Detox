@@ -1093,6 +1093,7 @@ exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceP
 [DetoxConfigError: The current device type "ios.simulator" does not support "headless" property.
 
 HINT: You can use this property only with the following device types:
+* ios.simulator
 * android.emulator
 
 Please fix your Detox config at path:
@@ -1115,6 +1116,7 @@ exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceP
 [DetoxConfigError: The current device type "ios.simulator" does not support "headless" property.
 
 HINT: You can use this property only with the following device types:
+* ios.simulator
 * android.emulator
 
 Please fix your Detox config at path:
