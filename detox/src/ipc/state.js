@@ -44,6 +44,8 @@ class SecondarySessionState extends SessionState {
     detoxConfig = null,
     detoxIPCServer = '',
     failedTestFiles = [],
+    testFilesToRetry = [],
+    testSessionIndex = 0,
     workerId = undefined,
     workersCount = 0
   }) {
@@ -54,18 +56,29 @@ class SecondarySessionState extends SessionState {
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
     this.failedTestFiles = failedTestFiles;
+    this.testFilesToRetry = testFilesToRetry;
+    this.testSessionIndex = testSessionIndex;
     this.workerId = workerId;
     this.workersCount = workersCount;
   }
 }
 
 class PrimarySessionState extends SecondarySessionState {
-  constructor({ contexts = [], failedTestFiles = [], logFiles = [], ...baseOpts }) {
+  constructor({
+    contexts = [],
+    logFiles = [],
+    failedTestFiles = [],
+    testFilesToRetry = [],
+    testSessionIndex = 0,
+    ...baseOpts
+  }) {
     super(baseOpts);
 
     this.contexts = contexts;
     this.failedTestFiles = failedTestFiles;
     this.logFiles = logFiles;
+    this.testSessionIndex = testSessionIndex;
+    this.testFilesToRetry = testFilesToRetry;
   }
 }
 

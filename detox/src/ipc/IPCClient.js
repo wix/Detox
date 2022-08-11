@@ -53,9 +53,10 @@ class IPCClient {
 
   /**
    * @param {string[]} testFilePaths
+   * @param {Boolean} permanent
    */
-  async reportFailedTests(testFilePaths) {
-    await this._emit('failedTests', { testFilePaths });
+  async reportFailedTests(testFilePaths, permanent) {
+    await this._emit('failedTests', { testFilePaths, permanent });
   }
 
   async _connectToServer() {

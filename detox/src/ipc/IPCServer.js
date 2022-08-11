@@ -57,6 +57,8 @@ class IPCServer {
 
     this._ipc.server.emit(socket, 'registerContextDone', {
       failedTestFiles: this._sessionState.failedTestFiles,
+      testFilesToRetry: this._sessionState.testFilesToRetry,
+      testSessionIndex: this._sessionState.testSessionIndex,
     });
   }
 
@@ -71,8 +73,12 @@ class IPCServer {
     }
   }
 
-  onFailedTests({ testFilePaths }, socket) {
-    this._sessionState.failedTestFiles.push(...testFilePaths);
+  onFailedTests({ testFilePaths, permanent }, socket = null) {
+    if (permanent) {
+      this._sessionState.failedTestFiles.push(...testFilePaths);
+    } else {
+      this._sessionState.testFilesToRetry.push(...testFilePaths);
+    }
 
     if (socket) {
       this._ipc.server.emit(socket, 'failedTestsDone', {});
@@ -80,6 +86,7 @@ class IPCServer {
 
     this._ipc.server.broadcast('sessionStateUpdate', {
       failedTestFiles: this._sessionState.failedTestFiles,
+      testFilesToRetry: this._sessionState.testFilesToRetry,
     });
   }
 }

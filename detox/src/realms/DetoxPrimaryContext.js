@@ -34,9 +34,9 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   //#region Internal members
-  async [symbols.reportFailedTests](testFilePaths) {
+  async [symbols.reportFailedTests](testFilePaths, permanent = false) {
     if (this[_ipcServer]) {
-      this[_ipcServer].onFailedTests({ testFilePaths });
+      this[_ipcServer].onFailedTests({ testFilePaths, permanent });
     }
   }
 

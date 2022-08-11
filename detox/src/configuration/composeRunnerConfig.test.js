@@ -28,6 +28,7 @@ describe('composeRunnerConfig', () => {
       },
       jest: {
         initTimeout: 300000,
+        retryAfterCircusRetries: false,
         reportSpecs: undefined,
         reportWorkerAssign: true,
       },
@@ -41,6 +42,7 @@ describe('composeRunnerConfig', () => {
       args: { $0: 'nyc jest' },
       jest: {
         initTimeout: 5000,
+        retryAfterCircusRetries: true,
         reportSpecs: false,
       },
       retries: 1,
@@ -54,6 +56,7 @@ describe('composeRunnerConfig', () => {
       },
       jest: {
         initTimeout: 5000,
+        retryAfterCircusRetries: true,
         reportSpecs: false,
         reportWorkerAssign: true,
       },
@@ -67,6 +70,7 @@ describe('composeRunnerConfig', () => {
       args: { $0: 'nyc jest' },
       jest: {
         initTimeout: 120000,
+        retryAfterCircusRetries: true,
         reportSpecs: true,
       },
       retries: 1,
@@ -80,6 +84,7 @@ describe('composeRunnerConfig', () => {
       },
       jest: {
         initTimeout: 120000,
+        retryAfterCircusRetries: true,
         reportSpecs: true,
         reportWorkerAssign: true,
       },
@@ -128,6 +133,7 @@ describe('composeRunnerConfig', () => {
         customProperty: 1,
         initTimeout: 300000,
         otherProperty: true,
+        retryAfterCircusRetries: false,
         reportSpecs: true,
         reportWorkerAssign: true,
       },
@@ -184,6 +190,7 @@ describe('composeRunnerConfig', () => {
       },
       jest: {
         initTimeout: 300_000,
+        retryAfterCircusRetries: false,
         reportSpecs: false,
         reportWorkerAssign: true,
       },

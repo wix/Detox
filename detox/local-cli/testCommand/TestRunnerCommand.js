@@ -88,7 +88,7 @@ class TestRunnerCommand {
       try {
         if (launchError) {
           const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
-          detox.log.error(
+          detox.log.error({ event: 'RETRY_RUN' },
             `There were failing tests in the following files:\n${list}\n\n` +
             'Detox CLI is going to restart the test runner with those files...\n'
           );
@@ -99,15 +99,14 @@ class TestRunnerCommand {
       } catch (e) {
         launchError = e;
 
-        // @ts-ignore
-        const { failedTestFiles } = detox.session;
-        if (_.isEmpty(failedTestFiles)) {
+        const { failedTestFiles, testFilesToRetry } = detox.session;
+        if (!_.isEmpty(failedTestFiles) || _.isEmpty(testFilesToRetry)) {
           throw e;
         }
 
-        this._argv._ = failedTestFiles.slice();
-        this._env.DETOX_RERUN_INDEX = 1 + (this._env.DETOX_RERUN_INDEX || 0);
-        failedTestFiles.splice(0, Infinity);
+        this._argv._ = testFilesToRetry.splice(0, Infinity);
+        // @ts-ignore
+        detox.session.testSessionIndex++; // it is always a primary context, so we can update it
       }
     } while (launchError && --runsLeft > 0);
 

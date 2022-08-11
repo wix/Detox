@@ -93,7 +93,7 @@ class DetoxContext {
   [symbols.config] = funpermaproxy(() => this[symbols.session].detoxConfig);
   [symbols.session] = funpermaproxy(() => this[$sessionState]);
   /** @abstract */
-  [symbols.reportFailedTests](_testFilePaths) {}
+  [symbols.reportFailedTests](_testFilePaths, _permanent) {}
   /**
    * @abstract
    * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} _opts

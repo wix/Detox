@@ -47,9 +47,14 @@ declare global {
       onRunFinish(event: unknown): Promise<void>;
 
       /**
-       * Powers the "--retries <N>" of Detox CLI under the hood.
+       * Reports to Detox CLI about failed tests that could have been re-run if
+       * {@link Detox.DetoxTestRunnerConfig#retries} is set to a non-zero.
+       *
+       * @param testFilePaths array of failed test files' paths
+       * @param permanent whether the failure is permanent, and the tests
+       * should not be re-run.
        */
-      reportFailedTests(testFilePaths: string[]): Promise<void>;
+      reportFailedTests(testFilePaths: string[], permanent?: boolean): Promise<void>;
       // endregion
 
       readonly config: RuntimeConfig;
@@ -74,6 +79,8 @@ declare global {
 
     type SessionState = Readonly<{
       failedTestFiles: string[];
+      testFilesToRetry: string[];
+      testSessionIndex: number;
       workersCount: number;
     }>;
 

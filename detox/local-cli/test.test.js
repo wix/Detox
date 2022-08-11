@@ -140,10 +140,24 @@ describe('CLI', () => {
 
   test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
     const context = require('../internals');
-    context.session.failedTestFiles = ['e2e/failing1.test.js', 'e2e/failing2.test.js'];
-    context.session.failedTestFiles.splice = jest.fn(() => {
-      context.session.failedTestFiles = ['e2e/failing2.test.js'];
-    });
+    context.session.testFilesToRetry = ['e2e/failing1.test.js', 'e2e/failing2.test.js'];
+    context.session.testFilesToRetry.splice = jest.fn()
+      .mockImplementationOnce(() => ['e2e/failing1.test.js', 'e2e/failing2.test.js'])
+      .mockImplementationOnce(() => ['e2e/failing2.test.js']);
+
+    mockExitCode(1);
+
+    await run(__retries, 2).catch(_.noop);
+
+    expect(cliCall(0).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json']);
+    expect(cliCall(1).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json', 'e2e/failing1.test.js', 'e2e/failing2.test.js']);
+    expect(cliCall(2).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json', 'e2e/failing2.test.js']);
+  });
+
+  test.each([['-R'], ['--retries']])('%s <value> should bail if has permanently failed tests', async (__retries) => {
+    const context = require('../internals');
+    context.session.failedTestFiles = ['e2e/failing1.test.js'];
+    context.session.testFilesToRetry = ['e2e/failing2.test.js'];
 
     mockExitCode(1);
 
@@ -151,15 +165,7 @@ describe('CLI', () => {
 
     expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
     expect(cliCall(0).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json']);
-    expect(cliCall(0).fullCommand).not.toMatch(/DETOX_RERUN_INDEX/);
-
-    expect(cliCall(1).env.DETOX_RERUN_INDEX).toBe('1');
-    expect(cliCall(1).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json', 'e2e/failing1.test.js', 'e2e/failing2.test.js']);
-    expect(cliCall(1).fullCommand).not.toMatch(/DETOX_RERUN_INDEX/);
-
-    expect(cliCall(2).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json', 'e2e/failing2.test.js']);
-    expect(cliCall(2).env.DETOX_RERUN_INDEX).toBe('2');
-    expect(cliCall(2).fullCommand).not.toMatch(/DETOX_RERUN_INDEX/);
+    expect(cliCall(1)).toBe(null);
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should not restart test runner if there are no failing tests paths', async (__retries) => {
@@ -172,7 +178,7 @@ describe('CLI', () => {
 
   test.each([['-R'], ['--retries']])('%s <value> should retain -- <...explicitPassthroughArgs>', async (__retries) => {
     const context = require('../internals');
-    context.session.failedTestFiles = ['tests/failing.test.js'];
+    context.session.testFilesToRetry = ['tests/failing.test.js'];
 
     mockExitCode(1);
 

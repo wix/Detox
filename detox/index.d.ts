@@ -141,6 +141,11 @@ declare global {
                  * Device init timeout
                  */
                 initTimeout?: number | undefined;
+                /**
+                 * Insist on CLI-based retry mechanism even when the failed tests have been handled
+                 * by jest.retryTimes(n) mechanism from Jest Circus.
+                 */
+                retryAfterCircusRetries?: boolean;
                 reportSpecs?: boolean | undefined;
                 reportWorkerAssign?: boolean | undefined;
             };

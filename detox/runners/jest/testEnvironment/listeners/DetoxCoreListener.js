@@ -16,13 +16,8 @@ class DetoxCoreListener {
   }
 
   _getTestInvocations(test) {
-    const { DETOX_RERUN_INDEX } = process.env;
-
-    if (!isNaN(DETOX_RERUN_INDEX)) {
-      return Number(DETOX_RERUN_INDEX) * this._testRunTimes + test.invocations;
-    } else {
-      return test.invocations;
-    }
+    const { testSessionIndex } = detoxInternals.session;
+    return testSessionIndex * this._testRunTimes + test.invocations;
   }
 
   async setup() {
@@ -103,7 +98,8 @@ class DetoxCoreListener {
 
   async run_finish(_event, state) {
     if (this._hasFailedTests(state.rootDescribeBlock)) {
-      await detoxInternals.reportFailedTests([this._env.testPath]);
+      const handledByJestCircus = this._testRunTimes > 1 && !detoxInternals.config.runnerConfig.jest.retryAfterCircusRetries;
+      await detoxInternals.reportFailedTests([this._env.testPath], handledByJestCircus);
     }
   }
 
