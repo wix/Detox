@@ -13,7 +13,7 @@
     "generation",
     "."
   ],
-  "version": "20.0.1-breaking.new-global-lifecycle.0",
+  "version": "20.0.2-breaking.new-global-lifecycle.0",
   "npmClient": "npm",
   "command": {
     "publish": {

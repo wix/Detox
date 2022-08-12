@@ -1,10 +1,10 @@
 {
   "name": "demo-react-native-detox-instruments",
-  "version": "20.0.1-breaking.new-global-lifecycle.0",
+  "version": "20.0.2-breaking.new-global-lifecycle.0",
   "private": true,
   "scripts": {},
   "devDependencies": {
-    "detox": "^20.0.1-breaking.new-global-lifecycle.0"
+    "detox": "^20.0.2-breaking.new-global-lifecycle.0"
   },
   "detox": {
     "configurations": {
