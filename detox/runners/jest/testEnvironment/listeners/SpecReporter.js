@@ -16,7 +16,7 @@ class SpecReporter {
   }
 
   get enabled() {
-    const jestSection = config.runnerConfig.jest;
+    const jestSection = config.testRunner.jest;
     const reportSpecs = jestSection && jestSection.reportSpecs;
 
     return reportSpecs !== undefined ? reportSpecs : session.workersCount === 1;

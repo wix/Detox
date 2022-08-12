@@ -22,7 +22,7 @@ class DetoxCoreListener {
 
   async setup() {
     // Workaround to override Jest's expect
-    if (detoxInternals.config.behaviorConfig.init.exposeGlobals) {
+    if (detoxInternals.config.behavior.init.exposeGlobals) {
       this._env.global.expect = detox.expect;
     }
   }
@@ -98,7 +98,7 @@ class DetoxCoreListener {
 
   async run_finish(_event, state) {
     if (this._hasFailedTests(state.rootDescribeBlock)) {
-      const handledByJestCircus = this._testRunTimes > 1 && !detoxInternals.config.runnerConfig.jest.retryAfterCircusRetries;
+      const handledByJestCircus = this._testRunTimes > 1 && !detoxInternals.config.testRunner.jest.retryAfterCircusRetries;
       await detoxInternals.reportFailedTests([this._env.testPath], handledByJestCircus);
     }
   }

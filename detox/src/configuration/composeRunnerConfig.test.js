@@ -298,7 +298,7 @@ describe('composeRunnerConfig', () => {
 
   describe('unhappy scenarios', () => {
     test('non-string and non-object "testRunner" in global config', () => {
-      globalConfig['testRunner'] = () => ({ jest: {} });
+      globalConfig['testRunner'] = 0;
       expect(composeRunnerConfig).toThrowErrorMatchingSnapshot();
     });
 

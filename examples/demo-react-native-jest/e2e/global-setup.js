@@ -6,7 +6,7 @@ const { config } = require('detox/internals');
 async function customGlobalSetup() {
   await globalSetup();
 
-  if (config.deviceConfig.type === 'android.emulator') {
+  if (config.device.type === 'android.emulator') {
     downloadTestButlerAPK();
   }
 }

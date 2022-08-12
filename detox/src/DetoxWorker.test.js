@@ -127,7 +127,7 @@ describe('DetoxWorker', () => {
         expect(envValidator.validate).toHaveBeenCalled());
 
       it('should allocate a device', () => {
-        expect(deviceAllocator.allocate).toHaveBeenCalledWith(detoxConfig.deviceConfig);
+        expect(deviceAllocator.allocate).toHaveBeenCalledWith(detoxConfig.device);
       });
 
       it('should create a runtime-device based on the allocation result (cookie)', () =>
@@ -140,9 +140,9 @@ describe('DetoxWorker', () => {
             runtimeErrorComposer: expect.any(Object),
           },
           {
-            appsConfig: detoxConfig.appsConfig,
-            behaviorConfig: detoxConfig.behaviorConfig,
-            deviceConfig: detoxConfig.deviceConfig,
+            appsConfig: detoxConfig.apps,
+            behaviorConfig: detoxConfig.behavior,
+            deviceConfig: detoxConfig.device,
             sessionConfig: expect.any(Object),
           },
         ));
@@ -168,7 +168,7 @@ describe('DetoxWorker', () => {
         expect(global.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should create artifacts manager', () =>
-        expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig, expect.objectContaining({
+        expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifacts, expect.objectContaining({
           client: client(),
           eventEmitter: eventEmitter(),
         })));
@@ -189,12 +189,12 @@ describe('DetoxWorker', () => {
 
     describe('with multiple apps', () => {
       beforeEach(() => {
-        detoxConfig.appsConfig['extraApp'] = {
+        detoxConfig.apps['extraApp'] = {
           type: 'ios.app',
           binaryPath: 'path/to/app',
         };
 
-        detoxConfig.appsConfig['extraAppWithAnotherArguments'] = {
+        detoxConfig.apps['extraAppWithAnotherArguments'] = {
           type: 'ios.app',
           binaryPath: 'path/to/app',
           launchArgs: {
@@ -218,9 +218,9 @@ describe('DetoxWorker', () => {
       });
     });
 
-    describe('with behaviorConfig.init.exposeGlobals = false', () => {
+    describe('with behavior.init.exposeGlobals = false', () => {
       beforeEach(() => {
-        detoxConfig.behaviorConfig.init.exposeGlobals = false;
+        detoxConfig.behavior.init.exposeGlobals = false;
       });
 
       beforeEach(init);
@@ -239,9 +239,9 @@ describe('DetoxWorker', () => {
         expect(global.globalMatcher).toBe(undefined));
     });
 
-    describe('with behaviorConfig.init.reinstallApp = false', () => {
+    describe('with behavior.init.reinstallApp = false', () => {
       beforeEach(() => {
-        detoxConfig.behaviorConfig.init.reinstallApp = false;
+        detoxConfig.behavior.init.reinstallApp = false;
       });
 
       beforeEach(init);
@@ -521,9 +521,9 @@ describe('DetoxWorker', () => {
       });
     });
 
-    describe('when behaviorConfig.cleanup.shutdownDevice = true', () => {
+    describe('when behavior.cleanup.shutdownDevice = true', () => {
       beforeEach(async () => {
-        detoxConfig.behaviorConfig.cleanup.shutdownDevice = true;
+        detoxConfig.behavior.cleanup.shutdownDevice = true;
         detox = await new Detox(detoxContext).init();
       });
 
@@ -570,7 +570,7 @@ describe('DetoxWorker', () => {
   // TODO: move it to the root realm
   describe.skip('global context', () => {
     const configs = {
-      deviceConfig: {
+      device: {
         mock: 'config',
       },
     };
@@ -594,7 +594,7 @@ describe('DetoxWorker', () => {
 
       await Detox.globalInit(configs);
       expect(lifecycleHandler.globalInit).toHaveBeenCalled();
-      expect(environmentFactory.createGlobalLifecycleHandler).toHaveBeenCalledWith(configs.deviceConfig);
+      expect(environmentFactory.createGlobalLifecycleHandler).toHaveBeenCalledWith(configs.device);
     });
 
     it(`should not invoke init if no handler was resolved`, async () => {
@@ -607,7 +607,7 @@ describe('DetoxWorker', () => {
 
       await Detox.globalCleanup(configs);
       expect(lifecycleHandler.globalCleanup).toHaveBeenCalled();
-      expect(environmentFactory.createGlobalLifecycleHandler).toHaveBeenCalledWith(configs.deviceConfig);
+      expect(environmentFactory.createGlobalLifecycleHandler).toHaveBeenCalledWith(configs.device);
     });
 
     it(`should not invoke cleanup if no handler was resolved`, async () => {

@@ -105,16 +105,17 @@ async function composeDetoxConfig({
   });
 
   const result = {
-    appsConfig,
-    artifactsConfig,
-    behaviorConfig,
-    cliConfig,
     configurationName,
-    deviceConfig,
     errorComposer,
-    loggerConfig,
-    runnerConfig,
-    sessionConfig,
+
+    apps: appsConfig,
+    artifacts: artifactsConfig,
+    behavior: behaviorConfig,
+    cli: cliConfig,
+    device: deviceConfig,
+    logger: loggerConfig,
+    testRunner: runnerConfig,
+    session: sessionConfig,
   };
 
   return result;

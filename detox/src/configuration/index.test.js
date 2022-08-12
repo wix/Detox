@@ -96,7 +96,7 @@ describe('composeDetoxConfig', () => {
           configurationName: 'another',
           filepath: path.join(__dirname, '__mocks__/configuration/packagejson/package.json'),
         },
-        artifactsConfig: {
+        artifacts: {
           pathBuilder: '@some/pathbuilder-implementation',
           plugins: {
             log: {
@@ -109,7 +109,7 @@ describe('composeDetoxConfig', () => {
             },
           },
         },
-        behaviorConfig: {
+        behavior: {
           init: {
             exposeGlobals: true,
             reinstallApp: false,
@@ -118,32 +118,32 @@ describe('composeDetoxConfig', () => {
             shutdownDevice: true,
           }
         },
-        cliConfig: {
+        cli: {
           configuration: 'another',
           deviceName: 'iPhone XS',
           cleanup: true,
           reuse: true,
           recordLogs: 'all',
         },
-        deviceConfig: expect.objectContaining({
+        device: expect.objectContaining({
           type: 'ios.simulator',
           device: {
             type: 'iPhone XS',
           },
         }),
-        loggerConfig: {
+        logger: {
           level: 'info',
           overrideConsole: 'sandbox',
           options: expect.objectContaining({}),
         },
-        runnerConfig: {
+        testRunner: {
           args: {
             $0: 'jest',
             config: 'e2e/jest.config.js',
             _: [],
           },
         },
-        sessionConfig: expect.objectContaining({
+        session: expect.objectContaining({
           server: 'ws://localhost:9999',
           sessionId: 'external file works',
         }),

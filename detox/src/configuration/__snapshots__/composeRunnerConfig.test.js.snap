@@ -15,12 +15,12 @@ HINT: Check that in your Detox config.
 `;
 
 exports[`composeRunnerConfig unhappy scenarios non-string and non-object "testRunner" in global config 1`] = `
-"testRunner should be an object, not a function
+"testRunner should be an object, not a number
 
 HINT: Check that in your Detox config.
 
 {
-  testRunner: [Function (anonymous)],
+  testRunner: 0,
   configurations: [Object]
 }"
 `;

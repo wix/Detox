@@ -12,7 +12,7 @@ class WorkerAssignReporter {
   }
 
   run_start() {
-    if (config.runnerConfig.jest.reportWorkerAssign) {
+    if (config.testRunner.jest.reportWorkerAssign) {
       log.info({ event: 'WORKER_ASSIGN' }, `${this._formatTestName()} is assigned to ${this._formatDeviceName()}`);
     }
   }

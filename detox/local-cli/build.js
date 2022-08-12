@@ -37,7 +37,7 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function build(argv) {
-  const { appsConfig, errorComposer } = await detox.resolveConfig({ argv });
+  const { apps: appsConfig, errorComposer } = await detox.resolveConfig({ argv });
   const apps = _.entries(appsConfig);
 
   for (const [appName, app] of apps) {

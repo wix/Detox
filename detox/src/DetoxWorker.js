@@ -56,7 +56,13 @@ class DetoxWorker {
   async init() {
     if (this._isCleaningUp) return;
 
-    const { appsConfig, artifactsConfig, behaviorConfig, deviceConfig, sessionConfig } = this._config;
+    const {
+      apps: appsConfig,
+      artifacts: artifactsConfig,
+      behavior: behaviorConfig,
+      device: deviceConfig,
+      session: sessionConfig
+    } = this._config;
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;

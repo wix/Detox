@@ -116,7 +116,7 @@ describe('CLI', () => {
     });
   });
 
-  test('should use runnerConfig.specs as default specs', async () => {
+  test('should use testRunner.args._ as default specs', async () => {
     detoxConfig.testRunner.args._ = ['e2e/sanity'];
     await run();
     expect(_.last(cliCall().argv)).toEqual('e2e/sanity');

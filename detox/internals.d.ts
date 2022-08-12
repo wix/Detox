@@ -87,14 +87,19 @@ declare global {
     type RuntimeConfig = Readonly<{
       configurationName: string;
 
-      appsConfig: Record<string, Readonly<Detox.DetoxAppConfig>>;
-      artifactsConfig: Detox.DetoxArtifactsConfig;
-      behaviorConfig: Detox.DetoxBehaviorConfig;
-      cliConfig: DetoxCLIConfig;
-      deviceConfig: Detox.DetoxDeviceConfig;
-      loggerConfig: Detox.DetoxLoggerConfig;
-      runnerConfig: Detox.DetoxTestRunnerConfig;
-      sessionConfig: Detox.DetoxSessionConfig;
+      /**
+       * Dictionary of app configurations,
+       * where the keys are defined by {@link Detox.DetoxAppConfig#name}
+       * or equal to "default" if the name is not configured.
+       */
+      apps: Record<string, Readonly<Detox.DetoxAppConfig>>;
+      artifacts: Readonly<Detox.DetoxArtifactsConfig>;
+      behavior: Readonly<Detox.DetoxBehaviorConfig>;
+      cli: Readonly<DetoxCLIConfig>;
+      device: Readonly<Detox.DetoxDeviceConfig>;
+      logger: Readonly<Detox.DetoxLoggerConfig>;
+      testRunner: Readonly<Detox.DetoxTestRunnerConfig>;
+      session: Readonly<Detox.DetoxSessionConfig>;
     }>;
 
     type DetoxCLIConfig = Readonly<Partial<{

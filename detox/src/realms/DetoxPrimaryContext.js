@@ -65,7 +65,12 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_dirty] = true;
     const detoxConfig = await this[symbols.resolveConfig](opts);
 
-    const { behaviorConfig, deviceConfig, loggerConfig, sessionConfig } = detoxConfig;
+    const {
+      behavior: behaviorConfig,
+      device: deviceConfig,
+      logger: loggerConfig,
+      session: sessionConfig
+    } = detoxConfig;
     await this[$logger].setConfig(loggerConfig);
 
     this.trace.begin({
@@ -177,7 +182,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     const streamUtils = require('../utils/streamUtils');
-    const { rootDir, plugins } = this[symbols.config].artifactsConfig || {};
+    const { rootDir, plugins } = this[symbols.config].artifacts || {};
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
 
@@ -204,7 +209,7 @@ class DetoxPrimaryContext extends DetoxContext {
   async[_resetLockFile]() {
     const DeviceRegistry = require('../devices/DeviceRegistry');
 
-    const deviceType = this[symbols.config].deviceConfig.type;
+    const deviceType = this[symbols.config].device.type;
 
     switch (deviceType) {
       case 'ios.none':

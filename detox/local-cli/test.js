@@ -15,9 +15,9 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
     });
 
     const runnerCommand = new TestRunnerCommand()
-      .setRunnerConfig(detox.config.runnerConfig)
-      .setDeviceConfig(detox.config.deviceConfig)
-      .replicateCLIConfig(detox.config.cliConfig);
+      .setRunnerConfig(detox.config.testRunner)
+      .setDeviceConfig(detox.config.device)
+      .replicateCLIConfig(detox.config.cli);
 
     await runnerCommand.execute();
   } finally {

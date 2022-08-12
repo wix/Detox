@@ -56,6 +56,8 @@ async function internalsTest() {
     workerId: 1,
   });
 
+  assert<unknown>(worker);
+
   await teardown();
   await globalTeardown();
 }
@@ -125,15 +127,15 @@ async function logTest() {
 
 function configTest() {
   assert<number>(session.workersCount);
-  assert<Detox.DetoxDeviceConfig>(config.deviceConfig);
-  assert<Detox.DetoxTestRunnerConfig>(config.runnerConfig);
-  assert<Record<string, Detox.DetoxAppConfig>>(config.appsConfig);
-  assert<Detox.DetoxSessionConfig>(config.sessionConfig);
-  assert<Detox.DetoxArtifactsConfig>(config.artifactsConfig);
-  assert<Detox.DetoxBehaviorConfig>(config.behaviorConfig);
-  assert<DetoxInternals.DetoxCLIConfig>(config.cliConfig);
   assert<string>(config.configurationName);
-  assert<Detox.DetoxLoggerConfig>(config.loggerConfig);
+  assert<Record<string, Detox.DetoxAppConfig>>(config.apps);
+  assert<Detox.DetoxArtifactsConfig>(config.artifacts);
+  assert<Detox.DetoxBehaviorConfig>(config.behavior);
+  assert<DetoxInternals.DetoxCLIConfig>(config.cli);
+  assert<Detox.DetoxDeviceConfig>(config.device);
+  assert<Detox.DetoxLoggerConfig>(config.logger);
+  assert<Detox.DetoxSessionConfig>(config.session);
+  assert<Detox.DetoxTestRunnerConfig>(config.testRunner);
 }
 
 async function lifecycleTest() {

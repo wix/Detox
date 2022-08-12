@@ -46,7 +46,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.initTimeout = detox.config.runnerConfig.jest.initTimeout;
+    this.initTimeout = detox.config.testRunner.jest.initTimeout;
   }
 
   /** @override */

@@ -27,7 +27,7 @@ class DetoxContext {
     this[$sessionState] = this[$restoreSessionState]();
 
     const loggerConfig = this[$sessionState].detoxConfig
-      ? this[$sessionState].detoxConfig.loggerConfig
+      ? this[$sessionState].detoxConfig.logger
       : undefined;
 
     /**
