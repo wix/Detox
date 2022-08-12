@@ -2,6 +2,8 @@ const os = require('os');
 
 const _ = require('lodash');
 
+const log = require('../utils/logger');
+
 /**
  * @param {object} opts
  * @param {Detox.DetoxConfig} opts.globalConfig
@@ -12,7 +14,7 @@ const _ = require('lodash');
  * @returns {Detox.DetoxTestRunnerConfig} opts.testRunnerArgv
  */
 function composeRunnerConfig(opts) {
-  const globalConfig = opts.globalConfig.testRunner;
+  const globalConfig = adaptLegacyRunnerConfig(opts.globalConfig);
   if (globalConfig != null && typeof globalConfig !== 'object') {
     throw opts.errorComposer.invalidTestRunnerProperty(true);
   }
@@ -59,6 +61,51 @@ function composeRunnerConfig(opts) {
   }
 
   return merged;
+}
+
+function adaptLegacyRunnerConfig(globalConfig) {
+  let isLegacy = false;
+
+  const runnerConfigKey = 'runnerConfig' in globalConfig ? 'runnerConfig' : 'runner-config';
+  if (_.isString(globalConfig[runnerConfigKey])) {
+    isLegacy = true;
+    log.warn(`Detected a deprecated "${runnerConfigKey}" property (string).`);
+  }
+
+  const testRunnerKey = 'testRunner' in globalConfig ? 'testRunner' : 'test-runner';
+  if (_.isString(globalConfig[testRunnerKey])) {
+    isLegacy = true;
+    log.warn(`Detected a deprecated "${testRunnerKey}" property (string).`);
+  }
+
+  if (globalConfig.specs != null) {
+    isLegacy = true;
+    log.warn(`Detected a deprecated "specs" property.`);
+  }
+
+  if (!isLegacy) {
+    return globalConfig.testRunner;
+  }
+
+  log.warn(`Please migrate your Detox config according to the guide: [TODO: insert the migration guilde link]`);
+  const testRunner = globalConfig[testRunnerKey];
+  const runnerConfig = globalConfig[runnerConfigKey];
+  const specs = globalConfig.specs != null ? String(globalConfig.specs) : undefined;
+
+  const args = {};
+  if (_.isString(testRunner)) {
+    args.$0 = testRunner;
+  }
+
+  if (_.isString(runnerConfig)) {
+    args.config = runnerConfig;
+  }
+
+  if (specs) {
+    args._ = [specs];
+  }
+
+  return { args };
 }
 
 function hasEmptyPositionalArgs(value, key) {

@@ -656,12 +656,14 @@ Examine your Detox config${this._atPath()}`,
   }
 
   invalidTestRunnerProperty(isGlobal) {
+    const testRunner = _.get(this.contents, ['testRunner']);
+
     return new DetoxConfigError({
-      message: `testRunner should be an object, not a string`,
+      message: `testRunner should be an object, not a ${typeof testRunner}`,
       hint: `Check that in your Detox config${this._atPath()}`,
       inspectOptions: { depth: isGlobal ? 0 : 3 },
       debugInfo: isGlobal ? {
-        testRunner: _.get(this.contents, ['testRunner']),
+        testRunner,
         ...this.contents,
       } : {
         ...this._focusOnConfiguration(c => _.pick(c, ['testRunner'])),

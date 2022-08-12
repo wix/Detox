@@ -10,12 +10,23 @@ describe('composeRunnerConfig', () => {
 
     composeRunnerConfig = () => {
       const { DetoxConfigErrorComposer } = require('../errors');
+      const errorComposer = new DetoxConfigErrorComposer()
+        .setConfigurationName('default')
+        .setDetoxConfig({
+          ...globalConfig,
+          configurations: {
+            default: {
+              ...localConfig,
+            },
+          },
+        });
+
       return require('./composeRunnerConfig')({
         globalConfig,
         localConfig,
         cliConfig,
         testRunnerArgv,
-        errorComposer: new DetoxConfigErrorComposer(),
+        errorComposer,
       });
     };
   });
@@ -239,4 +250,62 @@ describe('composeRunnerConfig', () => {
     testRunnerArgv = { _: ['override.test.js'] };
     expect(composeRunnerConfig().args._).toEqual(['override.test.js']);
   });
+
+  describe('legacy fallbacks', () => {
+    let log;
+
+    beforeEach(() => {
+      jest.mock('../utils/logger');
+      log = require('../utils/logger');
+    });
+
+    test('deprecated "test-runner"', () => {
+      globalConfig['test-runner'] = 'nyc jest';
+      expect(composeRunnerConfig().args).toEqual({ $0: 'nyc jest', _: [] });
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('"test-runner" property'));
+    });
+
+    test('deprecated "testRunner"', () => {
+      globalConfig['testRunner'] = 'nyc jest';
+      expect(composeRunnerConfig().args).toEqual({ $0: 'nyc jest', _: [] });
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('"testRunner" property'));
+    });
+
+    test('deprecated "runner-config"', () => {
+      globalConfig['runner-config'] = 'e2e/config.json';
+      expect(composeRunnerConfig().args).toEqual({ $0: 'jest', config: 'e2e/config.json', _: [] });
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('"runner-config" property'));
+    });
+
+    test('deprecated "runnerConfig"', () => {
+      globalConfig['runnerConfig'] = 'e2e/config.json';
+      expect(composeRunnerConfig().args).toEqual({ $0: 'jest', config: 'e2e/config.json', _: [] });
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('"runnerConfig" property'));
+    });
+
+    test('deprecated "specs"', () => {
+      globalConfig['specs'] = '.';
+      expect(composeRunnerConfig().args).toEqual({ $0: 'jest', _: ['.'] });
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('"specs" property'));
+    });
+
+    test('deprecated "specs": empty array workaround', () => {
+      globalConfig['specs'] = [];
+      expect(composeRunnerConfig().args).toEqual({ $0: 'jest', _: [] });
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('"specs" property'));
+    });
+  });
+
+  describe('unhappy scenarios', () => {
+    test('non-string and non-object "testRunner" in global config', () => {
+      globalConfig['testRunner'] = () => ({ jest: {} });
+      expect(composeRunnerConfig).toThrowErrorMatchingSnapshot();
+    });
+
+    test('deprecated "testRunner" in local config', () => {
+      localConfig['testRunner'] = 'nyc jest';
+      expect(composeRunnerConfig).toThrowErrorMatchingSnapshot();
+    });
+  });
+
 });
