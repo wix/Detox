@@ -187,7 +187,7 @@ describe('Monitored instrumentation', () => {
     const assertRejectedWithNativeStacktrace = () => {
       const e = onReject.mock.calls[0][0];
       expect(e.toString()).toContain('DetoxRuntimeError: Failed to run application on the device');
-      expect(e.toString()).toContain(`Native stacktrace dump: ${INSTRUMENTATION_STACKTRACE_MOCK}`);
+      expect(e.toString()).toContain(`Native stacktrace dump:\n${INSTRUMENTATION_STACKTRACE_MOCK}`);
     };
 
     const assertRejectedWithoutStacktrace = () => {
