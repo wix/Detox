@@ -1,9 +1,9 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "20.0.3-breaking.new-global-lifecycle.0",
+  "version": "20.0.4-breaking.new-global-lifecycle.0",
   "private": true,
   "devDependencies": {
-    "detox": "^20.0.3-breaking.new-global-lifecycle.0"
+    "detox": "^20.0.4-breaking.new-global-lifecycle.0"
   },
   "detox": {
     "specs": "",
