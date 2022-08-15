@@ -22,6 +22,8 @@ class DetoxSecondaryContext extends DetoxContext {
     /**
      * @private
      * @type {undefined | boolean}
+     *
+     * TODO: explain what is short lifecycle and why we need it
      */
     this[_shortLifecycle] = false;
   }
