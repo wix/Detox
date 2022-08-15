@@ -8,16 +8,22 @@ const DetoxContext = require('./DetoxContext');
 
 const { $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
+const _shortLifecycle = Symbol('shortLifecycle');
 
 class DetoxSecondaryContext extends DetoxContext {
   constructor() {
     super();
 
     /**
-     * @protected
-     * @type {*}
+     * @private
+     * @type {import('../ipc/IPCClient')}
      */
     this[_ipcClient] = null;
+    /**
+     * @private
+     * @type {undefined | boolean}
+     */
+    this[_shortLifecycle] = false;
   }
 
   //#region Internal members
@@ -34,23 +40,7 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   /** @override */
-  async [symbols.globalSetup](_opts = {}) {
-    // This is a no-op function.
-    // It is forbidden to add any logic to `globalSetup` of the secondary context.
-    // Violating this principle will almost definitely break some flows, where it is
-    // not guaranteed that `globalSetup` will ever get called. See UML diagrams.
-  }
-
-  /** @override */
-  async [symbols.globalTeardown]() {
-    // This is a no-op function.
-    // It is forbidden to add any logic to `globalTeardown` of the secondary context.
-    // Violating this principle will almost definitely break some flows, where it is
-    // not guaranteed that `globalTeardown` will ever get called. See UML diagrams.
-  }
-
-  /** @override */
-  async [symbols.setup](opts) {
+  async [symbols.globalSetup]() {
     const IPCClient = require('../ipc/IPCClient');
 
     this[_ipcClient] = new IPCClient({
@@ -59,8 +49,25 @@ class DetoxSecondaryContext extends DetoxContext {
       logger: this[$logger],
     });
 
-    const workerId = opts.workerId || 1;
     await this[_ipcClient].init();
+  }
+
+  /** @override */
+  async [symbols.globalTeardown]() {
+    if (this[_ipcClient]) {
+      await this[_ipcClient].dispose();
+      this[_ipcClient] = null;
+    }
+  }
+
+  /** @override */
+  async [symbols.setup](opts = {}) {
+    if (!this[_ipcClient]) {
+      this[_shortLifecycle] = true;
+      await this[symbols.globalSetup]();
+    }
+
+    const workerId = opts.workerId || 1;
     await this[_ipcClient].registerWorker(workerId);
     await super[symbols.setup](opts);
   }
@@ -70,9 +77,8 @@ class DetoxSecondaryContext extends DetoxContext {
     try {
       await super[symbols.teardown]();
     } finally {
-      if (this[_ipcClient]) {
-        await this[_ipcClient].dispose();
-        this[_ipcClient] = null;
+      if (this[_shortLifecycle]) {
+        await this[symbols.globalTeardown]();
       }
     }
   }
