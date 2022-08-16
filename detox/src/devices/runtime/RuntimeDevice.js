@@ -113,7 +113,7 @@ class RuntimeDevice {
   }
 
   async launchApp(params = {}, bundleId = this._bundleId) {
-    return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
+    return traceCall('launch app', () => this._doLaunchApp(params, bundleId));
   }
 
   /**
@@ -200,7 +200,7 @@ class RuntimeDevice {
   }
 
   async reloadReactNative() {
-    await traceCall('reloadRN', () =>
+    await traceCall('reload React Native', () =>
       this.deviceDriver.reloadReactNative());
   }
 
