@@ -26,7 +26,7 @@ describe('Crash Handling', () => {
     await expect(element(by.text('Sanity'))).toBeVisible();
   });
 
-  it('Should throw error upon app early crash by Detox', async () => {
+  it('Should throw a detailed error upon early app crash by Detox', async () => {
     const error = await expectToThrow(
       () => relaunchAppWithArgs({ simulateEarlyCrash: true }),
       'The app has crashed');
@@ -39,14 +39,14 @@ describe('Crash Handling', () => {
   });
 
   it(':android: should throw error upon invoke crash', async () => {
-    await device.reloadReactNative();
+    await device.launchApp({ newInstance: true });
     await expectToThrow(() => element(by.text('UI Crash')).tap(), 'Test Failed: Simulated crash (native)');
   });
 
-  it(':android: Should throw error upon app bootstrap crash', async () => {
-    const _relaunchApp = () => relaunchAppWithArgs({ detoxAndroidCrashingActivity: true });
-
-    const error = await expectToThrow(_relaunchApp, 'Failed to run application on the device');
+  it(':android: Should throw a detailed error upon app bootstrap crash', async () => {
+    const error = await expectToThrow(
+      () => relaunchAppWithArgs({ detoxAndroidCrashingActivity: true }),
+      'Failed to run application on the device');
 
     // It's important that the native-error message (containing the native stack-trace) would also
     // be included in the error's stack property, in order for Jest (specifically) to properly output all
