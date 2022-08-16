@@ -34,8 +34,11 @@ describe('Crash Handling', () => {
     // It's important that the native-error message (containing the native stack-trace) would also
     // be included in the error's stack property, in order for Jest (specifically) to properly output all
     // of that into the shell, as we expect it to.
-    jestExpect(error.stack).toEqual(jestExpect.stringContaining('Error: Simulating early crash'));
-    jestExpect(error.stack).toEqual(jestExpect.stringContaining('\tat java.lang.Thread.run'));
+    jestExpect(error.stack).toEqual(jestExpect.stringContaining('Simulating early crash'));
+
+    if (device.getPlatform() === 'android') {
+      jestExpect(error.stack).toEqual(jestExpect.stringContaining('\tat java.lang.Thread.run'));
+    }
   });
 
   it(':android: should throw error upon invoke crash', async () => {
