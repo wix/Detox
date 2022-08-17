@@ -62,7 +62,7 @@ declare global {
       readonly trace: Detox.Tracer;
       readonly session: SessionState;
 
-      readonly worker: unknown;
+      readonly worker: Detox.DetoxWorker;
     }
 
     type DetoxGlobalSetupOptions = {
@@ -73,14 +73,46 @@ declare global {
     };
 
     type DetoxConfigurationSetupOptions = {
+      /**
+       * Used for integration with sandboxed test environments.
+       * {@link DetoxInternals.Facade#setup} might override {@link Console} methods
+       * to integrate it with Detox loggeing subsystem.
+       */
       global: NodeJS.Global;
-      workerId: number;
+      /**
+       * Worker index. Used to distinguish allocated workers
+       * in multi-worker (parallel) test execution environment.
+       *
+       * Use undefined if you don't wish to allocate a device
+       * in a specific process.
+       */
+      workerIndex: undefined | number;
     };
 
     type SessionState = Readonly<{
+      /**
+       * Randomly generated ID for the entire Detox test session, including retries.
+       */
+      id: string;
+      /**
+       * Permanently failed test file paths.
+       */
       failedTestFiles: string[];
+      /**
+       * Failed test file paths suggested to retry via Detox CLI mechanism.
+       */
       testFilesToRetry: string[];
+      /**
+       * Retry index of the test session: 0..retriesCount.
+       */
       testSessionIndex: number;
+      /**
+       * TODO
+       */
+      workerIndex: number;
+      /**
+       * TODO
+       */
       workersCount: number;
     }>;
 

@@ -69,8 +69,8 @@ class DetoxSecondaryContext extends DetoxContext {
       await this[symbols.globalSetup]();
     }
 
-    const workerId = opts.workerId || 1;
-    await this[_ipcClient].registerWorker(workerId);
+    const workerIndex = opts.workerIndex;
+    await this[_ipcClient].registerWorker(workerIndex);
     await super[symbols.setup](opts);
   }
 

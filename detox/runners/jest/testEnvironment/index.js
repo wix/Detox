@@ -117,7 +117,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   async initDetox() {
     await detox.setup({
       global: this.global,
-      workerId: +process.env.JEST_WORKER_ID,
+      workerIndex: +(process.env.JEST_WORKER_ID || '1'),
     });
   }
 

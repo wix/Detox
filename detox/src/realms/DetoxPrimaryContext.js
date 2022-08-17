@@ -111,6 +111,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     if (!sessionConfig.server && this[_wss]) {
+      // @ts-ignore
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
     }
 
@@ -125,9 +126,9 @@ class DetoxPrimaryContext extends DetoxContext {
    * @param {Partial<DetoxInternals.DetoxConfigurationSetupOptions>} [opts]
    */
   async [symbols.setup](opts = {}) {
-    const workerId = opts.workerId || 1;
-    this[$sessionState].workerId = workerId;
-    this[_ipcServer].onRegisterWorker({ workerId });
+    const workerIndex = opts.workerIndex || 1;
+    this[$sessionState].workerIndex = workerIndex;
+    this[_ipcServer].onRegisterWorker({ workerIndex });
     await super[symbols.setup](opts);
   }
 

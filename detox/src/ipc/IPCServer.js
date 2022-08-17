@@ -62,13 +62,13 @@ class IPCServer {
     });
   }
 
-  onRegisterWorker({ workerId }, socket) {
+  onRegisterWorker({ workerIndex }, socket = null) {
     if (socket) {
       this._ipc.server.emit(socket, 'registerWorkerDone', {});
     }
 
-    if (workerId > this._sessionState.workersCount) {
-      const workersCount = this._sessionState.workersCount = workerId;
+    if (workerIndex > this._sessionState.workersCount) {
+      const workersCount = this._sessionState.workersCount = workerIndex;
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }
   }

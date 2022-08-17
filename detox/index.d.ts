@@ -311,7 +311,9 @@ declare global {
 
         // endregion DetoxConfig
 
-        interface DetoxExportWrapper {
+        type DetoxExportWrapper = DetoxWorker;
+
+        interface DetoxWorker {
             readonly device: Device;
 
             readonly element: ElementFacade;

@@ -5,7 +5,7 @@ async function main() {
     await detoxInternals.globalSetup();
 
     try {
-      await detoxInternals.setup({ workerId: 1 });
+      await detoxInternals.setup({ workerIndex: 1 });
       try { await test1() } catch (e) { console.error(e); }
       try { await test2() } catch (e) { console.error(e); }
     } finally {

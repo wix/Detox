@@ -53,10 +53,10 @@ async function internalsTest() {
   await setup({});
   await setup({
     global,
-    workerId: 1,
+    workerIndex: 1,
   });
 
-  assert<unknown>(worker);
+  assert<Detox.DetoxWorker>(worker);
 
   await teardown();
   await globalTeardown();
