@@ -328,6 +328,10 @@ class Client {
   }
 
   _onBeforeAppCrash({ params }) {
+    if (this._pendingAppCrash) {
+      return;
+    }
+
     this._pendingAppCrash = new DetoxRuntimeError({
       message: 'The app has crashed, see the details below:',
       debugInfo: params.errorDetails,

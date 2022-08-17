@@ -735,6 +735,26 @@ describe('Client', () => {
       expect(client.terminateApp).not.toHaveBeenCalled();
     });
 
+    it('should ignore consequent AppWillTerminateWithError notifications', async () => {
+      jest.spyOn(client, 'terminateApp');
+
+      await client.connect();
+
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'SIGSEGV whatever' },
+      });
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'collateral damage' },
+      });
+
+      jest.advanceTimersByTime(5000);
+      await fastForwardAllPromises();
+
+      expect(client.terminateApp).toHaveBeenCalledTimes(1);
+
+      mockAws.mockEventCallback('appDisconnected');
+      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+    });
   });
 
   describe('on appDisconnected', () => {

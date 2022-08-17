@@ -26,7 +26,7 @@ describe('Crash Handling', () => {
     await expect(element(by.text('Sanity'))).toBeVisible();
   });
 
-  it('Should throw a detailed error upon early app crash by Detox', async () => {
+  it('Should throw a detailed error upon early app crash', async () => {
     const error = await expectToThrow(
       () => relaunchAppWithArgs({ simulateEarlyCrash: true }),
       'The app has crashed');
@@ -34,10 +34,12 @@ describe('Crash Handling', () => {
     // It's important that the native-error message (containing the native stack-trace) would also
     // be included in the error's stack property, in order for Jest (specifically) to properly output all
     // of that into the shell, as we expect it to.
-    jestExpect(error.stack).toEqual(jestExpect.stringContaining('Simulating early crash'));
+    jestExpect(error.stack).toContain('Simulating early crash');
 
     if (device.getPlatform() === 'android') {
-      jestExpect(error.stack).toEqual(jestExpect.stringContaining('\tat java.lang.Thread.run'));
+      jestExpect(error.stack).toContain('\tat java.lang.Thread.run');
+    } else {
+      jestExpect(error.stack).toContain('\t0   CoreFoundation');
     }
   });
 
@@ -54,8 +56,8 @@ describe('Crash Handling', () => {
     // It's important that the native-error message (containing the native stack-trace) would also
     // be included in the error's stack property, in order for Jest (specifically) to properly output all
     // of that into the shell, as we expect it to.
-    jestExpect(error.stack).toEqual(jestExpect.stringContaining('Native stacktrace dump:\njava.lang.RuntimeException:'));
-    jestExpect(error.stack).toEqual(jestExpect.stringContaining('\tat android.app'));
-    jestExpect(error.stack).toEqual(jestExpect.stringContaining('Caused by: java.lang.IllegalStateException: This is an intentional crash!'));
+    jestExpect(error.stack).toContain('Native stacktrace dump:\njava.lang.RuntimeException:');
+    jestExpect(error.stack).toContain('\tat android.app');
+    jestExpect(error.stack).toContain('Caused by: java.lang.IllegalStateException: This is an intentional crash!');
   }, 60000);
 });
