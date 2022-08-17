@@ -32,6 +32,8 @@ class DetoxWorker {
       onError: this._onEmitError.bind(this),
     });
 
+    /** @type {string} */
+    this.id = 'worker';
     /** @type {Detox.Device} */
     this.device = null;
     /** @type {Detox.ElementFacade} */

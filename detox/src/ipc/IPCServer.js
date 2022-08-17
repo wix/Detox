@@ -10,6 +10,7 @@ class IPCServer {
     this._sessionState = sessionState;
     this._logger = logger.child({ __filename, cat: 'ipc' });
     this._ipc = null;
+    this._workers = new Set();
   }
 
   get id() {
@@ -62,13 +63,16 @@ class IPCServer {
     });
   }
 
-  onRegisterWorker({ workerIndex }, socket = null) {
+  onRegisterWorker({ workerId }, socket = null) {
+    const workersCount = this._workers.add(workerId).size;
+    const shouldBroadcast = workersCount > this._sessionState.workersCount;
+    this._sessionState.workersCount = workersCount;
+
     if (socket) {
-      this._ipc.server.emit(socket, 'registerWorkerDone', {});
+      this._ipc.server.emit(socket, 'registerWorkerDone', { workersCount });
     }
 
-    if (workerIndex > this._sessionState.workersCount) {
-      const workersCount = this._sessionState.workersCount = workerIndex;
+    if (shouldBroadcast) {
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }
   }

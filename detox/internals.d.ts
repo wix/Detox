@@ -3,33 +3,40 @@
 
 declare global {
   namespace DetoxInternals {
+    type DetoxStatus = 'inactive' | 'init' | 'active' | 'cleanup';
+
     type Facade = {
       // region Initialization
       /**
-       * Use with a caution, when you still have no config, yet need to avoid {@link Facade#globalSetup}
+       * Use with a caution, when you still have no config, yet need to avoid {@link Facade#init}
        */
-      resolveConfig(options?: Partial<DetoxGlobalSetupOptions>): Promise<RuntimeConfig>;
+      resolveConfig(options?: Partial<DetoxInitOptions>): Promise<RuntimeConfig>;
+
+      /**
+       *
+       */
+      getStatus(): DetoxStatus;
 
       /**
        * This is the phase where Detox reads its configuration, starts a server.
        */
-      globalSetup(options?: Partial<DetoxGlobalSetupOptions>): Promise<void>;
+      init(options?: Partial<DetoxInitOptions>): Promise<void>;
 
       /**
-       * This is the phase where Detox loads its expection library and starts a device.
+       * This is the phase where Detox loads its expectation library and starts a device.
        */
-      setup(options?: Partial<DetoxConfigurationSetupOptions>): Promise<void>;
+      installWorker(options?: Partial<DetoxInstallWorkerOptions>): Promise<void>;
 
       /**
-       * The teardown phase deallocates the device.
+       * Deallocates the device.
        */
-      teardown(): Promise<void>;
+      uninstallWorker(): Promise<void>;
 
       /**
        * The global cleanup phase should happen after all the tests have finished.
        * This is the phase where the Detox server shuts down.
        */
-      globalTeardown(): Promise<void>;
+      cleanup(): Promise<void>;
       // endregion
 
       // region Lifecycle
@@ -65,14 +72,26 @@ declare global {
       readonly worker: Detox.DetoxWorker;
     }
 
-    type DetoxGlobalSetupOptions = {
+    type DetoxInitOptions = {
       cwd: string;
       argv: Record<string, unknown>;
       testRunnerArgv: Record<string, unknown>;
       override: Partial<Detox.DetoxConfig>;
+      /** @inheritDoc */
+      global: NodeJS.Global;
+      /**
+       * Worker ID. Used to distinguish allocated workers in parallel test execution environment.
+       *
+       * If explicitly set to null, tells {@link Facade#init} to skip {@link Facade#installWorker} call.
+       * Useful for complex test runner integrations, where you have to install the worker via a separate call,
+       * when the environment is ready for that.
+       *
+       * @default 'worker'
+       */
+      workerId: string | null;
     };
 
-    type DetoxConfigurationSetupOptions = {
+    type DetoxInstallWorkerOptions = {
       /**
        * Used for integration with sandboxed test environments.
        * {@link DetoxInternals.Facade#setup} might override {@link Console} methods
@@ -80,13 +99,11 @@ declare global {
        */
       global: NodeJS.Global;
       /**
-       * Worker index. Used to distinguish allocated workers
-       * in multi-worker (parallel) test execution environment.
+       * Worker ID. Used to distinguish allocated workers in parallel test execution environment.
        *
-       * Use undefined if you don't wish to allocate a device
-       * in a specific process.
+       * @default 'worker'
        */
-      workerIndex: undefined | number;
+      workerId: string;
     };
 
     type SessionState = Readonly<{
@@ -106,10 +123,6 @@ declare global {
        * Retry index of the test session: 0..retriesCount.
        */
       testSessionIndex: number;
-      /**
-       * TODO
-       */
-      workerIndex: number;
       /**
        * TODO
        */

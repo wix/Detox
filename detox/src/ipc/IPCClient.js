@@ -46,9 +46,8 @@ class IPCClient {
     return this.sessionState.detoxIPCServer;
   }
 
-  async registerWorker(workerIndex) {
-    this._state.workerIndex = workerIndex;
-    await this._emit('registerWorker', { workerIndex });
+  async registerWorker(workerId) {
+    await this._emit('registerWorker', { workerId });
   }
 
   /**

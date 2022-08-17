@@ -14,7 +14,7 @@ activate Jest0
 Jest0 -> Pri: require('detox')
 activate Pri
 Jest0 -> Pri: resolveConfig()
-Jest0 -> Pri: globalSetup()
+Jest0 -> Pri: init()
 Jest0 -> JestN: child_process.fork()
 activate JestN
 loop every test file
@@ -23,17 +23,18 @@ loop every test file
   JestN -> Env: setup()
   Env -> Sec: require('detox')
   activate Sec
-  Env -> Sec: setup()
+  Env -> Sec: init()
+  Env -> Sec: installWorker()
   Sec --> Pri: register worker
   JestN -> Env: run test file
   JestN -> Env: teardown()
-  Env -> Sec: teardown()
+  Env -> Sec: uninstallWorker()
   Sec --> Pri: report failed tests
   deactivate Env
 end loop
 deactivate Sec
 deactivate JestN
-Jest0 -> Pri: globalTeardown()
+Jest0 -> Pri: cleanup()
 deactivate Pri
 deactivate Jest0
 

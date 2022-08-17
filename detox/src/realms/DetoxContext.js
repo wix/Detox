@@ -12,17 +12,36 @@ const $logger = Symbol('logger');
 const $restoreSessionState = Symbol('restoreSessionState');
 const $sessionState = Symbol('restoreSessionState');
 const $tracer = Symbol('tracer');
-
-const _worker = Symbol('worker');
+const $status = Symbol('status');
+const $worker = Symbol('worker');
 
 class DetoxContext {
   constructor() {
-    this[symbols.globalSetup] = this[symbols.globalSetup].bind(this);
-    this[symbols.globalTeardown] = this[symbols.globalTeardown].bind(this);
+    /** @type {DetoxInternals.DetoxStatus} */
+    this[$status] = 'inactive';
+
+    const _init = this[symbols.init].bind(this);
+    this[symbols.init] = async (opts) => {
+      this[$status] = 'init';
+      await _init(opts);
+      this[$status] = 'active';
+    };
+
+    const _cleanup = this[symbols.cleanup].bind(this);
+    this[symbols.cleanup] = async () => {
+      this[$status] = 'cleanup';
+      try {
+        await _cleanup();
+      } finally {
+        this[$status] = 'inactive';
+      }
+    };
+
+    this[symbols.getStatus] = this[symbols.getStatus].bind(this);
     this[symbols.reportFailedTests] = this[symbols.reportFailedTests].bind(this);
     this[symbols.resolveConfig] = this[symbols.resolveConfig].bind(this);
-    this[symbols.setup] = this[symbols.setup].bind(this);
-    this[symbols.teardown] = this[symbols.teardown].bind(this);
+    this[symbols.installWorker] = this[symbols.installWorker].bind(this);
+    this[symbols.uninstallWorker] = this[symbols.uninstallWorker].bind(this);
 
     this[$sessionState] = this[$restoreSessionState]();
 
@@ -42,7 +61,7 @@ class DetoxContext {
     /** @deprecated */
     this.traceCall = this[$tracer].bind(this[$tracer]);
     /** @type {import('../DetoxWorker') | null} */
-    this[_worker] = null;
+    this[$worker] = null;
   }
 
   //#region Public members
@@ -96,57 +115,63 @@ class DetoxContext {
   [symbols.reportFailedTests](_testFilePaths, _permanent) {}
   /**
    * @abstract
-   * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} _opts
+   * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts
    * @returns {Promise<DetoxInternals.RuntimeConfig>}
    */
   async [symbols.resolveConfig](_opts) { return null; }
 
+  [symbols.getStatus]() {
+    return this[$status];
+  }
+
   get [symbols.worker]() {
-    if (!this[_worker]) {
+    if (!this[$worker]) {
       throw new DetoxRuntimeError({
-        message: `Detox worker instance has not been initialized in this context (${this.constructor.name}).`,
-        hint: DetoxRuntimeError.reportIssueIfJest + '\n' + 'Otherwise, make sure you call detox.setup() beforehand.',
+        message: `Detox worker instance has not been installed in this context (${this.constructor.name}).`,
+        hint: DetoxRuntimeError.reportIssueIfJest + '\n' + 'Otherwise, make sure you call detox.installWorker() beforehand.',
       });
     }
 
-    return this[_worker];
+    return this[$worker];
   }
 
   /**
    * @abstract
-   * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} [_opts]
+   * @param {Partial<DetoxInternals.DetoxInitOptions>} [_opts]
    * @returns {Promise<void>}
    */
-  async [symbols.globalSetup](_opts = {}) {}
+  async [symbols.init](_opts = {}) {}
 
   /**
-   * @param {Partial<DetoxInternals.DetoxConfigurationSetupOptions>} [opts]
+   * @param {Partial<DetoxInternals.DetoxInstallWorkerOptions>} [opts]
    */
-  async [symbols.setup](opts) {
-    const theGlobal = opts.global || global;
-    theGlobal['__detox__'] = this;
-    this[$logger].overrideConsole(theGlobal);
+  async [symbols.installWorker](opts) {
+    if (opts.global) {
+      opts.global['__detox__'] = this;
+      this[$logger].overrideConsole(opts.global);
+    }
 
     const DetoxWorker = require('../DetoxWorker');
-    DetoxWorker.global = theGlobal;
-    this[_worker] = new DetoxWorker(this);
-    await this[_worker].init();
+    DetoxWorker.global = opts.global || global;
+    this[$worker] = new DetoxWorker(this);
+    this[$worker].id = opts.workerId;
+    await this[$worker].init();
   }
 
-  async [symbols.teardown]() {
+  async [symbols.uninstallWorker]() {
     try {
-      if (this[_worker]) {
-        await this[_worker].cleanup();
+      if (this[$worker]) {
+        await this[$worker].cleanup();
       }
     } finally {
-      this[_worker] = null;
+      this[$worker] = null;
     }
   }
 
   /**
    * @abstract
    */
-  async [symbols.globalTeardown]() {}
+  async [symbols.cleanup]() {}
   //#endregion
 
   //#region Protected members
@@ -165,6 +190,8 @@ module.exports.protected = {
   $cleanup,
   $logger,
   $restoreSessionState,
+  $status,
   $sessionState,
   $tracer,
+  $worker,
 };

@@ -1,8 +1,10 @@
 /**
  * @type {{
+ *   readonly cleanup: unique symbol;
  *   readonly config: unique symbol;
- *   readonly globalSetup: unique symbol;
- *   readonly globalTeardown: unique symbol;
+ *   readonly getStatus: unique symbol;
+ *   readonly init: unique symbol;
+ *   readonly installWorker: unique symbol;
  *   readonly onHookFailure: unique symbol;
  *   readonly onHookStart: unique symbol;
  *   readonly onHookSuccess: unique symbol;
@@ -18,8 +20,7 @@
  *   readonly reportFailedTests: unique symbol;
  *   readonly resolveConfig: unique symbol;
  *   readonly session: unique symbol;
- *   readonly setup: unique symbol;
- *   readonly teardown: unique symbol;
+ *   readonly uninstallWorker: unique symbol;
  *   readonly worker: unique symbol;
  * }}
  */
@@ -44,13 +45,14 @@ module.exports = {
   //#endregion
 
   //#region Main
+  cleanup: Symbol('cleanup'),
   config: Symbol('config'),
-  globalSetup: Symbol('globalSetup'),
-  globalTeardown: Symbol('globalTeardown'),
+  getStatus: Symbol('getStatus'),
+  init: Symbol('init'),
+  installWorker: Symbol('installWorker'),
   resolveConfig: Symbol('resolveConfig'),
   session: Symbol('session'),
-  setup: Symbol('setup'),
-  teardown: Symbol('teardown'),
+  uninstallWorker: Symbol('uninstallWorker'),
   worker: Symbol('worker'),
   //#endregion
 };

@@ -2,9 +2,10 @@ declare function random<T>(): T
 declare function assert<T>(x: T): void;
 
 import {
+  cleanup,
   config,
-  globalSetup,
-  globalTeardown,
+  init,
+  installWorker,
   log,
   onHookFailure,
   onHookStart,
@@ -20,14 +21,13 @@ import {
   onTestStart,
   resolveConfig,
   session,
-  setup,
-  teardown,
   trace,
+  uninstallWorker,
   worker,
 } from 'detox/internals';
 
 async function internalsTest() {
-  const globalOptions: DetoxInternals.DetoxGlobalSetupOptions = {
+  const globalOptions: DetoxInternals.DetoxInitOptions = {
     cwd: __dirname,
     argv: {
       configuration: 'android.debug',
@@ -39,27 +39,29 @@ async function internalsTest() {
       artifacts: {},
       devices: {},
     },
+    global,
+    workerId: Math.random() > 0.5 ? null : 'worker-1',
   };
 
   await resolveConfig();
   await resolveConfig({});
   await resolveConfig(globalOptions);
 
-  await globalSetup();
-  await globalSetup({});
-  await globalSetup(globalOptions);
+  await init();
+  await init({});
+  await init(globalOptions);
 
-  await setup();
-  await setup({});
-  await setup({
+  await installWorker();
+  await installWorker({});
+  await installWorker({
     global,
-    workerIndex: 1,
+    workerId: 'worker-1',
   });
 
   assert<Detox.DetoxWorker>(worker);
 
-  await teardown();
-  await globalTeardown();
+  await uninstallWorker();
+  await cleanup();
 }
 
 async function logTest() {

@@ -6,7 +6,7 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
+const { $logger, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
 const _shortLifecycle = Symbol('shortLifecycle');
 
@@ -42,7 +42,9 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   /** @override */
-  async [symbols.globalSetup]() {
+  async [symbols.init](opts = {}) {
+    this[$logger].overrideConsole();
+
     const IPCClient = require('../ipc/IPCClient');
 
     this[_ipcClient] = new IPCClient({
@@ -52,42 +54,35 @@ class DetoxSecondaryContext extends DetoxContext {
     });
 
     await this[_ipcClient].init();
-  }
 
-  /** @override */
-  async [symbols.globalTeardown]() {
-    if (this[_ipcClient]) {
-      await this[_ipcClient].dispose();
-      this[_ipcClient] = null;
+    if (opts.workerId !== null) {
+      await this[symbols.installWorker](opts);
     }
   }
 
   /** @override */
-  async [symbols.setup](opts = {}) {
-    if (!this[_ipcClient]) {
-      this[_shortLifecycle] = true;
-      await this[symbols.globalSetup]();
-    }
-
-    const workerIndex = opts.workerIndex;
-    await this[_ipcClient].registerWorker(workerIndex);
-    await super[symbols.setup](opts);
-  }
-
-  /** @override */
-  async [symbols.teardown]() {
+  async [symbols.cleanup]() {
     try {
-      await super[symbols.teardown]();
+      if (this[$worker]) {
+        await this[symbols.uninstallWorker]();
+      }
     } finally {
-      if (this[_shortLifecycle]) {
-        await this[symbols.globalTeardown]();
+      if (this[_ipcClient]) {
+        await this[_ipcClient].dispose();
+        this[_ipcClient] = null;
       }
     }
+  }
+
+  /** @override */
+  async [symbols.installWorker](opts = {}) {
+    const workerId = opts.workerId = opts.workerId || 'worker';
+    await this[_ipcClient].registerWorker(workerId);
+    await super[symbols.installWorker](opts);
   }
   //#endregion
 
   //#region Protected members
-
   /**
    * @protected
    * @override

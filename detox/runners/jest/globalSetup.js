@@ -1,1 +1,1 @@
-module.exports = async () => require('../../internals').globalSetup();
+module.exports = async () => require('../../internals').init({ workerId: null });

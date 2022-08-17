@@ -13,33 +13,31 @@ User -> CLI: detox test
 activate CLI
 CLI -> Pri: require('detox')
 activate Pri
-CLI -> Pri: globalSetup()
+CLI -> Pri: init()
 loop while exitCode != 0 and retries > 0
   CLI -> Jest0: child_process.spawn('jest')
   activate Jest0
   Jest0 -> Sec: require('detox')
   activate Sec
   Jest0 -> Sec: resolveConfig()
-  Jest0 -> Sec: globalSetup()
-  note right: no-op
+  Jest0 -> Sec: init()
   loop every test file
     Jest0 -> Env: new()
     activate Env
     Jest0 -> Env: setup()
-    Env -> Sec: setup()
+    Env -> Sec: installWorker()
     Sec --> Pri: register worker
     Jest0 -> Env: run test file
     Jest0 -> Env: teardown()
-    Env -> Sec: teardown()
+    Env -> Sec: uninstallWorker()
     Sec --> Pri: report failed tests
     deactivate Env
   end loop
-  Jest0 -> Sec: globalTeardown()
-  note right: no-op
+  Jest0 -> Sec: cleanup()
   deactivate Sec
   deactivate Jest0
 end loop
-CLI -> Pri: globalTeardown()
+CLI -> Pri: cleanup()
 deactivate Pri
 deactivate CLI
 

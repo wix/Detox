@@ -1,18 +1,12 @@
-const detoxInternals = require('detox/internals');
+const detox = require('detox/internals');
 
 async function main() {
   try {
-    await detoxInternals.globalSetup();
-
-    try {
-      await detoxInternals.setup({ workerIndex: 1 });
-      try { await test1() } catch (e) { console.error(e); }
-      try { await test2() } catch (e) { console.error(e); }
-    } finally {
-      await detoxInternals.teardown();
-    }
+    await detox.init();
+    await test1().catch(e => console.error(e));
+    await test2().catch(e => console.error(e));
   } finally {
-    await detoxInternals.globalTeardown();
+    await detox.cleanup();
   }
 }
 

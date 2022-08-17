@@ -12,7 +12,7 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
+const { $logger, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
 const _finalizeLogs = Symbol('finalizeLogs');
 const _finalizeLogsSync = Symbol('finalizeLogsSync');
@@ -56,9 +56,9 @@ class DetoxPrimaryContext extends DetoxContext {
 
   /**
    * @override
-   * @param {Partial<DetoxInternals.DetoxGlobalSetupOptions>} [opts]
+   * @param {Partial<DetoxInternals.DetoxInitOptions>} [opts]
    */
-  async [symbols.globalSetup](opts) {
+  async [symbols.init](opts = {}) {
     if (this[_dirty]) {
       throw new DetoxRuntimeError({
         message: 'Cannot initialize primary Detox context more than once.',
@@ -67,7 +67,6 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     this[_dirty] = true;
-
     onSignalExit(this[_emergencyTeardown]);
 
     const detoxConfig = await this[symbols.resolveConfig](opts);
@@ -124,44 +123,53 @@ class DetoxPrimaryContext extends DetoxContext {
 
     await fs.writeFile(this[$sessionState].detoxConfigSnapshotPath, this[$sessionState].stringify());
     process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[$sessionState].detoxConfigSnapshotPath;
+
+    if (opts.workerId !== null) {
+      await this[symbols.installWorker](opts);
+    }
   }
 
   /**
    * @override
-   * @param {Partial<DetoxInternals.DetoxConfigurationSetupOptions>} [opts]
+   * @param {Partial<DetoxInternals.DetoxInstallWorkerOptions>} [opts]
    */
-  async [symbols.setup](opts = {}) {
-    const workerIndex = opts.workerIndex || 1;
-    this[$sessionState].workerIndex = workerIndex;
-    this[_ipcServer].onRegisterWorker({ workerIndex });
-    await super[symbols.setup](opts);
+  async [symbols.installWorker](opts = {}) {
+    const workerId = this[$sessionState].workerId = opts.workerId = opts.workerId || 'worker';
+    this[_ipcServer].onRegisterWorker({ workerId });
+
+    await super[symbols.installWorker](opts);
   }
 
   /** @override */
-  async [symbols.globalTeardown]() {
-    if (this[_globalLifecycleHandler]) {
-      await this[_globalLifecycleHandler].globalCleanup();
-      this[_globalLifecycleHandler] = null;
-    }
-
-    if (this[_wss]) {
-      await this[_wss].close();
-      this[_wss] = null;
-    }
-
-    if (this[_ipcServer]) {
-      await this[_ipcServer].dispose();
-      this[_ipcServer] = null;
-    }
-
-    await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
-    delete process.env.DETOX_CONFIG_SNAPSHOT_PATH;
-
+  async [symbols.cleanup]() {
     try {
-      this.trace.end({ cat: 'lifecycle' });
-      await this[_finalizeLogs]();
-    } catch (err) {
-      this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
+      if (this[$worker]) {
+        await this[symbols.uninstallWorker]();
+      }
+    } finally {
+      if (this[_globalLifecycleHandler]) {
+        await this[_globalLifecycleHandler].globalCleanup();
+        this[_globalLifecycleHandler] = null;
+      }
+
+      if (this[_wss]) {
+        await this[_wss].close();
+        this[_wss] = null;
+      }
+
+      if (this[_ipcServer]) {
+        await this[_ipcServer].dispose();
+        this[_ipcServer] = null;
+      }
+
+      await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
+
+      try {
+        this.trace.end({ cat: 'lifecycle' });
+        await this[_finalizeLogs]();
+      } catch (err) {
+        this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
+      }
     }
   }
 
@@ -209,48 +217,45 @@ class DetoxPrimaryContext extends DetoxContext {
 
   //#region Private members
   async[_finalizeLogs]() {
-    if (!this[_areLogsEnabled]) {
-      return;
-    }
-
     const logs = [this[$logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
     if (logs.length === 0) {
       return;
     }
 
-    const streamUtils = require('../utils/streamUtils');
-    const { rootDir } = this[symbols.config].artifacts;
+    if (this[_areLogsEnabled]) {
+      const streamUtils = require('../utils/streamUtils');
+      const { rootDir } = this[symbols.config].artifacts;
 
-    await fs.mkdirp(rootDir);
-    const [out1Stream, out2Stream, out3Stream] = ['detox.log.jsonl', 'detox.log', 'detox.trace.json']
-      .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
+      await fs.mkdirp(rootDir);
+      const [out1Stream, out2Stream, out3Stream] = ['detox.log.jsonl', 'detox.log', 'detox.trace.json']
+        .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
 
-    const mergedStream = streamUtils
-      .mergeSortedJSONL(
-        logs.map(filePath => fs.createReadStream(filePath).pipe(streamUtils.readJSONL()))
-      );
+      const mergedStream = streamUtils
+        .mergeSortedJSONL(
+          logs.map(filePath => fs.createReadStream(filePath).pipe(streamUtils.readJSONL()))
+        );
 
-    await Promise.all([
-      pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
-      pipe(mergedStream, streamUtils.debugStream(this[$logger].config.options), out2Stream),
-      pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
-    ]);
+      await Promise.all([
+        pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
+        pipe(mergedStream, streamUtils.debugStream(this[$logger].config.options), out2Stream),
+        pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
+      ]);
+    }
 
     await Promise.all(logs.map(filepath => fs.remove(filepath)));
   }
 
   async[_finalizeLogsSync]() {
-    if (!this[_areLogsEnabled]()) {
-      return;
-    }
+    const logsEnabled = this[_areLogsEnabled]();
 
     const { rootDir } = this[symbols.config].artifacts;
     fs.mkdirpSync(rootDir);
 
-    const logs = [this[$logger].file, ...this[$sessionState].logFiles];
+    const logs = [this[$logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
     for (const log of logs) {
-      if (log && fs.existsSync(log)) {
+      if (logsEnabled) {
         fs.moveSync(log, path.join(rootDir, path.basename(log)));
+      } else {
         fs.removeSync(log);
       }
     }

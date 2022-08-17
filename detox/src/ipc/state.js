@@ -46,7 +46,6 @@ class SecondarySessionState extends SessionState {
     failedTestFiles = [],
     testFilesToRetry = [],
     testSessionIndex = 0,
-    workerIndex = undefined,
     workersCount = 0
   }) {
     super();
@@ -58,7 +57,6 @@ class SecondarySessionState extends SessionState {
     this.failedTestFiles = failedTestFiles;
     this.testFilesToRetry = testFilesToRetry;
     this.testSessionIndex = testSessionIndex;
-    this.workerIndex = workerIndex;
     this.workersCount = workersCount;
   }
 }

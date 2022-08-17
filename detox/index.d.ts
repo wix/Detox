@@ -314,6 +314,8 @@ declare global {
         type DetoxExportWrapper = DetoxWorker;
 
         interface DetoxWorker {
+            readonly id: string;
+
             readonly device: Device;
 
             readonly element: ElementFacade;

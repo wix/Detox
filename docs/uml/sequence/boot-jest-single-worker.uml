@@ -12,18 +12,18 @@ activate Jest0
 Jest0 -> Pri: require('detox')
 activate Pri
 Jest0 -> Pri: resolveConfig()
-Jest0 -> Pri: globalSetup()
+Jest0 -> Pri: init()
 loop every test file
   Jest0 -> Env: new()
   activate Env
   Jest0 -> Env: setup()
-  Env -> Pri: setup()
+  Env -> Pri: installWorker()
   Jest0 -> Env: run test file
   Jest0 -> Env: teardown()
-  Env -> Pri: teardown()
+  Env -> Pri: uninstallWorker()
   deactivate Env
 end loop
-Jest0 -> Pri: globalTeardown()
+Jest0 -> Pri: cleanup()
 deactivate Pri
 deactivate Jest0
 

@@ -8,11 +8,12 @@ class DetoxInternalsFacade {
    */
   constructor(context) {
     this.config = context[symbols.config];
-    this.globalSetup = context[symbols.globalSetup];
-    this.globalTeardown = context[symbols.globalTeardown];
+    this.getStatus = context[symbols.getStatus];
+    this.init = context[symbols.init];
+    this.cleanup = context[symbols.cleanup];
     this.log = context.log;
-    this.setup = context[symbols.setup];
-    this.teardown = context[symbols.teardown];
+    this.installWorker = context[symbols.installWorker];
+    this.uninstallWorker = context[symbols.uninstallWorker];
     this.onHookFailure = context[symbols.onHookFailure];
     this.onHookStart = context[symbols.onHookStart];
     this.onHookSuccess = context[symbols.onHookSuccess];

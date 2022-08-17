@@ -41,6 +41,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       SpecReporter,
       WorkerAssignReporter,
     };
+    /** @private */
+    this._shouldManageDetox = detox.getStatus() === 'inactive';
     /** @protected */
     this.testPath = context.testPath;
     /** @protected */
@@ -115,15 +117,25 @@ class DetoxCircusEnvironment extends NodeEnvironment {
    * @protected
    */
   async initDetox() {
-    await detox.setup({
+    const opts = {
       global: this.global,
-      workerIndex: +(process.env.JEST_WORKER_ID || '1'),
-    });
+      workerId: `worker-${process.env.JEST_WORKER_ID}`,
+    };
+
+    if (this._shouldManageDetox) {
+      await detox.init(opts);
+    } else {
+      await detox.installWorker(opts);
+    }
   }
 
   /** @protected */
   async cleanupDetox() {
-    await detox.teardown();
+    if (this._shouldManageDetox) {
+      await detox.cleanup();
+    } else {
+      await detox.uninstallWorker();
+    }
   }
 
   /** @private */

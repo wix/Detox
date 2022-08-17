@@ -1,9 +1,9 @@
-const session = () => require('../../../../../../../internals').session;
+const internals = () => require('../../../../../../../internals');
 
 class GenyInstanceNaming {
   generateName() {
-    const { id, workerIndex } = session();
-    return `Detox.${id}.${workerIndex}`;
+    const { session, worker } = internals();
+    return `Detox.${session.id}.${worker.id}`;
   }
 
   isFamilial(name) {

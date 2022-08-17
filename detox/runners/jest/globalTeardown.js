@@ -1,1 +1,1 @@
-module.exports = async () => require('../../internals').globalTeardown();
+module.exports = async () => require('../../internals').cleanup();
