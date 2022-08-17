@@ -383,6 +383,26 @@ describe('Client', () => {
     });
   });
 
+  describe('.waitUntilDisconnected()', () => {
+    it(`should be resolved before connecting to the app`, async () => {
+      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      expect(result).not.toBe('pending');
+    });
+
+    it(`should be pending after connecting to the app`, async () => {
+      await client.connect();
+      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      expect(result).toBe('pending');
+    });
+
+    it(`should be resolve after the app disconnects`, async () => {
+      await client.connect();
+      mockAws.mockEventCallback('appDisconnected', {});
+      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      expect(result).not.toBe('pending');
+    });
+  });
+
   describe('.captureViewHierarchy()', () => {
     beforeEach(async () => {
       await client.connect();
@@ -675,6 +695,7 @@ describe('Client', () => {
       mockAws.mockEventCallback('appDisconnected');
       expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
       expect(log.error).not.toHaveBeenCalled();
+      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
     });
 
     it('should log errors if the app termination does not go well', async () => {
@@ -714,6 +735,26 @@ describe('Client', () => {
       expect(client.terminateApp).not.toHaveBeenCalled();
     });
 
+    it('should ignore consequent AppWillTerminateWithError notifications', async () => {
+      jest.spyOn(client, 'terminateApp');
+
+      await client.connect();
+
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'SIGSEGV whatever' },
+      });
+      mockAws.mockEventCallback('AppWillTerminateWithError', {
+        params: { errorDetails: 'collateral damage' },
+      });
+
+      jest.advanceTimersByTime(5000);
+      await fastForwardAllPromises();
+
+      expect(client.terminateApp).toHaveBeenCalledTimes(1);
+
+      mockAws.mockEventCallback('appDisconnected');
+      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+    });
   });
 
   describe('on appDisconnected', () => {
