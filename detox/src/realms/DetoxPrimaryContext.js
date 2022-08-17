@@ -3,6 +3,7 @@ const { URL } = require('url');
 
 const fs = require('fs-extra');
 const pipe = require('multipipe');
+const onSignalExit = require('signal-exit');
 
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
@@ -14,11 +15,14 @@ const DetoxContext = require('./DetoxContext');
 const { $logger, $restoreSessionState, $sessionState } = DetoxContext.protected;
 
 const _finalizeLogs = Symbol('finalizeLogs');
+const _finalizeLogsSync = Symbol('finalizeLogsSync');
 const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
 const _ipcServer = Symbol('ipcServer');
 const _resetLockFile = Symbol('resetLockFile');
 const _wss = Symbol('wss');
 const _dirty = Symbol('dirty');
+const _emergencyTeardown = Symbol('emergencyTeardown');
+const _areLogsEnabled = Symbol('areLogsEnabled');
 
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
@@ -63,6 +67,9 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     this[_dirty] = true;
+
+    onSignalExit(this[_emergencyTeardown]);
+
     const detoxConfig = await this[symbols.resolveConfig](opts);
 
     const {
@@ -117,8 +124,6 @@ class DetoxPrimaryContext extends DetoxContext {
 
     await fs.writeFile(this[$sessionState].detoxConfigSnapshotPath, this[$sessionState].stringify());
     process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[$sessionState].detoxConfigSnapshotPath;
-
-    // TODO: think about signal-exit and cleaning up the logs
   }
 
   /**
@@ -159,6 +164,33 @@ class DetoxPrimaryContext extends DetoxContext {
       this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
     }
   }
+
+  [_emergencyTeardown] = (_code, signal) => {
+    if (!signal) {
+      return;
+    }
+
+    if (this[_globalLifecycleHandler]) {
+      this[_globalLifecycleHandler].emergencyCleanup();
+      this[_globalLifecycleHandler] = null;
+    }
+
+    if (this[_wss]) {
+      this[_wss].close();
+    }
+
+    if (this[_ipcServer]) {
+      this[_ipcServer].dispose();
+    }
+
+    try {
+      this.trace.end({ cat: 'lifecycle', args: { abortSignal: signal } });
+      this[_finalizeLogsSync]();
+    } catch (err) {
+      this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
+    }
+  };
+
   //#endregion
 
   //#region Protected members
@@ -177,34 +209,59 @@ class DetoxPrimaryContext extends DetoxContext {
 
   //#region Private members
   async[_finalizeLogs]() {
+    if (!this[_areLogsEnabled]) {
+      return;
+    }
+
     const logs = [this[$logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
     if (logs.length === 0) {
       return;
     }
 
     const streamUtils = require('../utils/streamUtils');
+    const { rootDir } = this[symbols.config].artifacts;
+
+    await fs.mkdirp(rootDir);
+    const [out1Stream, out2Stream, out3Stream] = ['detox.log.jsonl', 'detox.log', 'detox.trace.json']
+      .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
+
+    const mergedStream = streamUtils
+      .mergeSortedJSONL(
+        logs.map(filePath => fs.createReadStream(filePath).pipe(streamUtils.readJSONL()))
+      );
+
+    await Promise.all([
+      pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
+      pipe(mergedStream, streamUtils.debugStream(this[$logger].config.options), out2Stream),
+      pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
+    ]);
+
+    await Promise.all(logs.map(filepath => fs.remove(filepath)));
+  }
+
+  async[_finalizeLogsSync]() {
+    if (!this[_areLogsEnabled]()) {
+      return;
+    }
+
+    const { rootDir } = this[symbols.config].artifacts;
+    fs.mkdirpSync(rootDir);
+
+    const logs = [this[$logger].file, ...this[$sessionState].logFiles];
+    for (const log of logs) {
+      if (log && fs.existsSync(log)) {
+        fs.moveSync(log, path.join(rootDir, path.basename(log)));
+        fs.removeSync(log);
+      }
+    }
+  }
+
+  [_areLogsEnabled]() {
     const { rootDir, plugins } = this[symbols.config].artifacts || {};
     const logConfig = plugins && plugins.log || 'none';
     const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
 
-    if (enabled) {
-      await fs.mkdirp(rootDir);
-      const [out1Stream, out2Stream, out3Stream] = ['detox.log.jsonl', 'detox.log', 'detox.trace.json']
-        .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
-
-      const mergedStream = streamUtils
-        .mergeSortedJSONL(
-          logs.map(filePath => fs.createReadStream(filePath).pipe(streamUtils.readJSONL()))
-        );
-
-      await Promise.all([
-        pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
-        pipe(mergedStream, streamUtils.debugStream(this[$logger].config.options), out2Stream),
-        pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
-      ]);
-    }
-
-    await Promise.all(logs.map(filepath => fs.remove(filepath)));
+    return enabled;
   }
 
   async[_resetLockFile]() {
