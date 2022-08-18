@@ -7,7 +7,7 @@ import {
 
 class exampleIos extends example {}
 
-if (LaunchArguments.value().simulateEarlyCrash) {
+if (LaunchArguments.value().simulateEarlyCrash) { // TODO integrate this into iOS' NativeModule and lose react-native-launch-arguments
   throw new Error('Simulating early crash');
 }
 

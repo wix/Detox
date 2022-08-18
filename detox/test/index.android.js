@@ -1,19 +1,21 @@
-import { LaunchArguments } from 'react-native-launch-arguments';
 import {
   AppRegistry,
+  NativeModules,
 } from 'react-native';
 
 import example from './src/app';
 
+const { NativeModule } = NativeModules;
+
 class exampleAndroid extends example {
   async componentDidMount() {
     await super.componentDidMount();
-
-    this._registerEarlyCrashIfNeeded();
+    await this._registerEarlyCrashIfNeeded();
   }
 
-  _registerEarlyCrashIfNeeded() {
-    if (LaunchArguments.value().simulateEarlyCrash) {
+  async _registerEarlyCrashIfNeeded() {
+    const launchArguments = await NativeModule.getLaunchArguments();
+    if (launchArguments.simulateEarlyCrash) {
       console.warn('simulateEarlyCrash=true detected: Will crash in a few seconds from now (all-the-while keeping the app busy)...');
       this._setupBusyFutureCrash();
     }
@@ -39,9 +41,8 @@ class exampleAndroid extends example {
         console.warn('simulateEarlyCrash=true', 'Simulating a crash now!');
         throw new Error('Simulating early crash');
       }
-      setTimeout(handler, INTERVAL)
+      setTimeout(handler, INTERVAL);
     };
-
     setTimeout(handler, INTERVAL);
   }
 }
