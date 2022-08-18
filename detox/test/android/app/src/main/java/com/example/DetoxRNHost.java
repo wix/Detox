@@ -10,7 +10,6 @@ import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.reactnativelauncharguments.LaunchArgumentsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,8 +39,7 @@ class DetoxRNHost extends ReactNativeHost {
               new RNCWebViewPackage(),
               new NativeModulePackage(),
               new AsyncStoragePackage(),
-              new ReactCheckBoxPackage(),
-              new LaunchArgumentsPackage()
+              new ReactCheckBoxPackage()
       );
    }
 }
