@@ -1,3 +1,5 @@
+const assert = require('assert');
+
 class Trace {
   constructor() {
     this.events = [];
@@ -35,16 +37,21 @@ class Trace {
 }
 
 let trace = new Trace();
-async function traceCall(sectionName, func, args = {}) {
+
+function traceCall(sectionName, promise, args = {}) {
+  assert(sectionName,
+    `must provide section name when calling \`traceCall\` with args: \n ${JSON.stringify(args)}`);
+
   trace.startSection(sectionName, args);
-  try {
-    const result = await func();
+  return promise
+    .then((result) => {
     trace.endSection(sectionName, { ...args, success: true });
     return result;
-  } catch (error) {
+    })
+    .catch((error) => {
     trace.endSection(sectionName, { ...args, success: false, error: error.toString() });
     throw error;
-  }
+    });
 }
 
 module.exports = {

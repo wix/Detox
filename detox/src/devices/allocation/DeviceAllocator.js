@@ -14,8 +14,7 @@ class DeviceAllocator {
    * @return {Promise<DeviceCookie>}
    */
   allocate(deviceConfig) {
-    return traceCall('allocateDevice', () =>
-      this._driver.allocate(deviceConfig));
+    return traceCall('allocateDevice', this._driver.allocate(deviceConfig));
   }
 
   /**
