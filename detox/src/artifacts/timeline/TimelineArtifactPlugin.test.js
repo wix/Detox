@@ -129,7 +129,10 @@ describe('TimelineArtifactPlugin', () => {
     it('should trace a section-start with the test name on test-start', async () => {
       const uut = uutEnabled();
       await uut.onTestStart(testSummary);
-      expect(trace.startSection).toHaveBeenCalledWith(testSummary.title, { context: TIMELINE_CONTEXT_TYPES.TEST });
+      expect(trace.startSection).toHaveBeenCalledWith(testSummary.title, {
+        title: 'test-name-mock',
+        context: TIMELINE_CONTEXT_TYPES.TEST
+      });
     });
 
     it('should save the test summary in the plugin\'s context on test-start', async () => {
@@ -141,7 +144,11 @@ describe('TimelineArtifactPlugin', () => {
     it('should trace a section-end with the test name on test-end', async () => {
       const _testSummary = { ...testSummary, status: 'alright!' };
       await uutEnabled().onTestDone(_testSummary);
-      expect(trace.endSection).toHaveBeenCalledWith(testSummary.title, { status: 'alright!', context: TIMELINE_CONTEXT_TYPES.TEST });
+      expect(trace.endSection).toHaveBeenCalledWith(testSummary.title, {
+        title: 'test-name-mock',
+        status: 'alright!',
+        context: TIMELINE_CONTEXT_TYPES.TEST
+      });
     });
 
     it('should not trace anything if disabled', async () => {
