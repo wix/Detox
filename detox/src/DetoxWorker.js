@@ -65,14 +65,15 @@ class DetoxWorker {
       device: deviceConfig,
       session: sessionConfig
     } = this._config;
+
     this._appsConfig = appsConfig;
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
+    this._sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
     this._runtimeErrorComposer.appsConfig = this._appsConfig;
 
-    sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
     this._client = new Client(sessionConfig);
     this._client.terminateApp = async () => {
       // @ts-ignore

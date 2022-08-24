@@ -43,26 +43,39 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     };
     /** @private */
     this._shouldManageDetox = detox.getStatus() === 'inactive';
-    /** @protected */
+    /** @internal */
     this.testPath = context.testPath;
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
     this.initTimeout = detox.config.testRunner.jest.initTimeout;
+    /** @internal */
+    this.traceEvent = detox.trace.begin({
+      name: this.testPath,
+      cat: 'lifecycle',
+    });
   }
 
   /** @override */
   async setup() {
-    await super.setup();
+    try {
+      this.traceEvent.begin({ name: 'set up environment' });
 
-    await Timer.run({
-      description: `setting up Detox environment`,
-      timeout: this.initTimeout,
-      fn: async () => {
-        await this.initDetox();
-        this._instantiateListeners();
-      },
-    });
+      await super.setup();
+      await Timer.run({
+        description: `setting up Detox environment`,
+        timeout: this.initTimeout,
+        fn: async () => {
+          await this.initDetox();
+          this._instantiateListeners();
+        },
+      });
+
+      this.traceEvent.end({ args: { success: true } });
+    } catch (error) {
+      this.traceEvent.end({ args: { success: false, error } });
+      throw error;
+    }
   }
 
   /** @override */
@@ -99,13 +112,23 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @override */
   async teardown() {
-    await Timer.run({
-      description: `tearing down Detox environment`,
-      timeout: this.initTimeout,
-      fn: async () => {
-        await this.cleanupDetox();
-      },
-    });
+    try {
+      this.traceEvent.begin({ name: 'tear down environment' });
+
+      await Timer.run({
+        description: `tearing down Detox environment`,
+        timeout: this.initTimeout,
+        fn: async () => this.cleanupDetox(),
+      });
+
+      this.traceEvent.end({ args: { success: true } });
+    } catch (error) {
+      this.traceEvent.end({ args: { success: false, error } });
+      throw error;
+    } finally {
+      this.traceEvent.end();
+      this.traceEvent = null;
+    }
   }
 
   /** @protected */

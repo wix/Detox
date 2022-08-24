@@ -53,16 +53,16 @@ describe('Trace util', () => {
     });
 
     it('should trace a failed function call', async () => {
-      const err = new Error('error mock');
-      const functionCall = () => Promise.reject(err);
+      const error = new Error('error mock');
+      const functionCall = () => Promise.reject(error);
 
-      await expect(traceCall('error-call', functionCall)).rejects.toThrowError(err);
+      await expect(traceCall('error-call', functionCall)).rejects.toThrowError(error);
       expect(logger().trace).toHaveBeenCalledWith(
         expect.objectContaining({ trace: traceShape({ ph: 'B' }) }),
         'error-call'
       );
       expect(logger().trace).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false, err, trace: traceShape({ ph: 'E' }) }),
+        expect.objectContaining({ success: false, error, trace: traceShape({ ph: 'E' }) }),
         'end'
       );
     });

@@ -25,7 +25,7 @@ class DetoxTracer {
   /**
    * @param {Detox.TraceEvent | string} eventOrName
    * @param {Detox.TraceEvent['args']} [args]
-   * @returns {import('trace-event-lib').EndHandle<Detox.TraceEvent>}
+   * @returns {import('trace-event-lib').DurationEventHandle}
    */
   begin(eventOrName, args) {
     const event = typeof eventOrName === 'string' ? { name: eventOrName, args } : eventOrName;
@@ -55,23 +55,26 @@ class DetoxTracer {
     });
   }
 
-  section(sectionName, func) {
+  section(sectionName, funcOrPromise) {
     let result;
 
     this.begin(sectionName);
     try {
-      result = func();
+      result = typeof funcOrPromise === 'function'
+        ? funcOrPromise()
+        : funcOrPromise;
+
       if (!isPromise(result)) {
         this.end(sectionName, { success: true });
       } else {
         result.then(
           () => this.end(sectionName, { success: true }),
-          (err) => this.end(sectionName, { success: false, err }),
+          (error) => this.end(sectionName, { success: false, error }),
         );
       }
-    } catch (err) {
-      this.end(sectionName, { success: false, err });
-      throw err;
+    } catch (error) {
+      this.end(sectionName, { success: false, error });
+      throw error;
     }
 
     return result;

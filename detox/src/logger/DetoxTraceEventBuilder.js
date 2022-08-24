@@ -1,6 +1,6 @@
-const { AbstractEventBuilder } = require('trace-event-lib');
+const tel = require('trace-event-lib');
 
-class DetoxTraceEventBuilder extends AbstractEventBuilder {
+class DetoxTraceEventBuilder extends tel.AbstractEventBuilder {
   constructor(forward) {
     super();
 

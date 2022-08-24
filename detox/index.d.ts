@@ -9,7 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import { EndHandle } from 'trace-event-lib';
+import { DurationEventHandle } from 'trace-event-lib';
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -376,21 +376,22 @@ declare global {
          */
         interface _TraceCallSignature {
             <T>(event: string | TraceEvent, action: () => T): T;
+            <T>(event: string | TraceEvent, action: Promise<T>): Promise<T>;
             <T>(event: string | TraceEvent, action: () => Promise<T>): Promise<T>;
         }
 
         /** @internal */
         interface _TraceSectionSignature<T> {
-            (event?: string, args?: _TraceEventArgs): T;
+            (event: string, args?: _TraceEventArgs): T;
             (event: TraceEvent): T;
         }
 
         interface Tracer extends _TraceCallSignature {
-            readonly begin: _TraceSectionSignature<EndHandle<{ cname: string; args: _TraceEventArgs; }>>;
+            readonly begin: _TraceSectionSignature<DurationEventHandle>;
             readonly end: _TraceSectionSignature<void>;
 
             /** @deprecated */
-            readonly startSection: _TraceSectionSignature<void>;
+            readonly startSection: _TraceSectionSignature<DurationEventHandle>;
             /** @deprecated */
             readonly endSection: _TraceSectionSignature<void>;
         }

@@ -13,11 +13,8 @@ class DetoxCoreListener {
     this._testsFailedBeforeStart = new WeakSet();
     this._env = env;
     this._testRunTimes = 1;
-  }
-
-  _getTestInvocations(test) {
-    const { testSessionIndex } = detoxInternals.session;
-    return testSessionIndex * this._testRunTimes + test.invocations;
+    /** @type import('trace-event-lib').DurationEventHandle */
+    this._testTraceEvent = null;
   }
 
   async setup() {
@@ -29,6 +26,7 @@ class DetoxCoreListener {
 
   async run_describe_start({ describeBlock: { name, children } }) {
     if (children.length) {
+      this._env.traceEvent.begin({ name });
       await detoxInternals.onRunDescribeStart({ name });
     }
   }
@@ -36,6 +34,7 @@ class DetoxCoreListener {
   async run_describe_finish({ describeBlock: { name, children } }) {
     if (children.length) {
       await detoxInternals.onRunDescribeFinish({ name });
+      this._env.traceEvent.end();
     }
   }
 
@@ -48,38 +47,64 @@ class DetoxCoreListener {
     this._testRunTimes = isNaN(circusRetryTimes) ? 1 : 1 + circusRetryTimes;
   }
 
-  async hook_start(_event, state) {
+  async hook_start(event, state) {
     await this._onBeforeActualTestStart(state.currentlyRunningTest);
+
+    if (this._testTraceEvent) {
+      this._testTraceEvent.begin({
+        name: event.hook.type,
+        args: {
+          fn: event.hook.fn.toString()
+        },
+      });
+    }
   }
 
-  async hook_failure({ error, hook }) {
-    await detoxInternals.onHookFailure({
-      error,
-      hook: hook.type,
-    });
+  async hook_success() {
+    if (this._testTraceEvent) {
+      this._testTraceEvent.end({
+        args: { success: true }
+      });
+    }
+  }
+
+  async hook_failure({ error }) {
+    if (this._testTraceEvent) {
+      this._testTraceEvent.end({
+        args: { success: false, error: error.toString() }
+      });
+    }
   }
 
   async test_fn_start({ test }) {
     await this._onBeforeActualTestStart(test);
+
+    if (this._testTraceEvent) {
+      this._testTraceEvent.begin({
+        name: 'test_fn',
+        args: { fn: test.fn.toString() }
+      });
+    }
+  }
+
+  async test_fn_success({ test }) {
+    await this._onBeforeActualTestStart(test);
+
+    if (this._testTraceEvent) {
+      this._testTraceEvent.end({
+        args: { success: true }
+      });
+    }
   }
 
   async test_fn_failure({ error }) {
     await detoxInternals.onTestFnFailure({ error });
-  }
 
-  async _onBeforeActualTestStart(test) {
-    if (!test || test.status === 'skip' || this._startedTests.has(test) || this._testsFailedBeforeStart.has(test)) {
-      return;
+    if (this._testTraceEvent) {
+      this._testTraceEvent.end({
+        args: { success: false, error: error.toString() }
+      });
     }
-
-    this._startedTests.add(test);
-
-    await detoxInternals.onTestStart({
-      title: test.name,
-      fullName: getFullTestName(test),
-      status: 'running',
-      invocations: this._getTestInvocations(test),
-    });
   }
 
   async test_done({ test }) {
@@ -93,14 +118,47 @@ class DetoxCoreListener {
       });
 
       this._startedTests.delete(test);
+      this._testTraceEvent.end({
+        args: {
+          success: !test.errors.length,
+          errors: test.errors.map(String).join('\n\n'),
+        },
+      });
+      this._testTraceEvent = null;
     }
   }
 
   async run_finish(_event, state) {
-    if (this._hasFailedTests(state.rootDescribeBlock)) {
+    const hasFailedTests = this._hasFailedTests(state.rootDescribeBlock);
+    if (hasFailedTests) {
       const handledByJestCircus = this._testRunTimes > 1 && !detoxInternals.config.testRunner.jest.retryAfterCircusRetries;
       await detoxInternals.reportFailedTests([this._env.testPath], handledByJestCircus);
     }
+  }
+
+  async _onBeforeActualTestStart(test) {
+    if (!test || test.status === 'skip' || this._startedTests.has(test) || this._testsFailedBeforeStart.has(test)) {
+      return false;
+    }
+
+    this._startedTests.add(test);
+    this._testTraceEvent = this._env.traceEvent.begin({
+      name: test.name,
+    });
+
+    await detoxInternals.onTestStart({
+      title: test.name,
+      fullName: getFullTestName(test),
+      status: 'running',
+      invocations: this._getTestInvocations(test),
+    });
+
+    return true;
+  }
+
+  _getTestInvocations(test) {
+    const { testSessionIndex } = detoxInternals.session;
+    return testSessionIndex * this._testRunTimes + test.invocations;
   }
 
   _hasFailedTests(block) {
