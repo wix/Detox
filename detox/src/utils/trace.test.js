@@ -99,7 +99,7 @@ describe('Trace util', () => {
       trace.reset();
     });
 
-    it('should trace a successful call', async () => {
+    it('should trace a successful promise call', async () => {
       const promise = Promise.resolve(42);
 
       trace.init();
@@ -112,7 +112,20 @@ describe('Trace util', () => {
       expect(result).toEqual(42);
     });
 
-    it('should trace a failed call', async () => {
+    it('should trace a successful function call', async () => {
+      const functionCall = () => Promise.resolve(42);
+
+      trace.init();
+      const result = await traceCall(sectionName, functionCall);
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(startEventTraits),
+        expect.objectContaining(successEndEventTraits),
+      ]);
+      expect(result).toEqual(42);
+    });
+
+    it('should trace a failed promise call', async () => {
       const error = new Error('error mock');
       const promise = Promise.reject(error);
 
@@ -124,6 +137,20 @@ describe('Trace util', () => {
         expect.objectContaining(aFailEndEventTraits(error)),
       ]);
     });
+
+    it('should trace a failed function call', async () => {
+      const error = new Error('error mock');
+      const functionCall = () => Promise.reject(error);
+
+      trace.init();
+      await expect(traceCall(sectionName, functionCall)).rejects.toThrowError(error);
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(startEventTraits),
+        expect.objectContaining(aFailEndEventTraits(error)),
+      ]);
+    });
+
   });
 
   describe('trace-invocation-call function', () => {
