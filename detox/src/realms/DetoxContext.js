@@ -89,7 +89,7 @@ class DetoxContext {
   }
 
   /**
-   * @returns {Detox.Tracer}
+   * @returns {Detox.DetoxExportWrapper['trace']}
    */
   get trace() {
     return this[$tracer];

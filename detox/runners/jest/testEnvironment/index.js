@@ -50,7 +50,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     /** @protected */
     this.initTimeout = detox.config.testRunner.jest.initTimeout;
     /** @internal */
-    this.traceEvent = detox.trace.begin({
+    this.traceEvent = detox.trace.startSection({
       name: this.testPath,
       cat: 'lifecycle',
     });

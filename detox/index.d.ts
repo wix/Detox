@@ -311,11 +311,7 @@ declare global {
 
         // endregion DetoxConfig
 
-        type DetoxExportWrapper = DetoxWorker;
-
-        interface DetoxWorker {
-            readonly id: string;
-
+        interface DetoxExportWrapper {
             readonly device: Device;
 
             readonly element: ElementFacade;
@@ -348,65 +344,69 @@ declare global {
             readonly log: Logger;
 
             /**
+             * @deprecated
+             *
+             * Deprecated - use {@link DetoxExportWrapper#trace}
              * Detox tracer instance. Can be used for building timelines in Google Event Tracing format.
              */
-            readonly trace: Tracer;
+            readonly trace: {
+                /** @deprecated */
+                readonly startSection: (name: string) => void;
+                /** @deprecated */
+                readonly endSection: (name: string) => void;
+            };
 
             /**
              * @deprecated
              */
-            readonly traceCall: _TraceCallSignature;
+            readonly traceCall: <T>(event: string, action: () => Promise<T>) => Promise<T>;
         }
 
-        /** @internal */
-        type _TraceEventArgs = Record<string, unknown>;
-
-        type TraceEvent = {
-            name?: string;
-            cat?: string;
-            cname?: string;
-            id?: number;
-            args?: _TraceEventArgs;
-        };
-
-        /**
-         * Trace a duration event before and after executing the action function
-         *
-         * @internal
-         */
-        interface _TraceCallSignature {
-            <T>(event: string | TraceEvent, action: () => T): T;
-            <T>(event: string | TraceEvent, action: Promise<T>): Promise<T>;
-            <T>(event: string | TraceEvent, action: () => Promise<T>): Promise<T>;
-        }
-
-        /** @internal */
-        interface _TraceSectionSignature<T> {
-            (event: string, args?: _TraceEventArgs): T;
-            (event: TraceEvent): T;
-        }
-
-        interface Tracer extends _TraceCallSignature {
-            readonly begin: _TraceSectionSignature<DurationEventHandle>;
-            readonly end: _TraceSectionSignature<void>;
-
-            /** @deprecated */
-            readonly startSection: _TraceSectionSignature<DurationEventHandle>;
-            /** @deprecated */
-            readonly endSection: _TraceSectionSignature<void>;
-        }
 
         type Logger = {
             readonly level: DetoxLogLevel;
 
-            fatal(context?: unknown, ...args: any[]): void;
-            error(context?: unknown, ...args: any[]): void;
-            warn(context?: unknown, ...args: any[]): void;
-            info(context?: unknown, ...args: any[]): void;
-            debug(context?: unknown, ...args: any[]): void;
-            trace(context?: unknown, ...args: any[]): void;
+            readonly fatal: LogMethod;
+            readonly error: LogMethod;
+            readonly warn: LogMethod;
+            readonly info: LogMethod;
+            readonly debug: LogMethod;
+            readonly trace: TraceLogMethod;
 
             child(context?: Record<string, unknown>): Logger;
+        };
+
+        interface LogMethod {
+            (event: TraceEvent, name?: string): void;
+        }
+
+        interface TraceLogMethod extends LogMethod {
+            begin(event: TraceEvent): TraceEventHandle;
+            begin(eventName: string): TraceEventHandle;
+            complete(event: TraceEvent, fn: Function | Promise<any>): Promise<void>;
+            complete(eventName: string, fn: Function | Promise<any>): Promise<void>;
+        }
+
+        interface TraceEventHandle {
+            end(event?: TraceEventBase): void;
+        }
+
+        type TraceEventBase = {
+            name: string;
+
+            cname?: string;
+
+            /** Reserved property. */
+            pid?: never;
+            /** Reserved property. */
+            tid?: never;
+
+            [key: string]: unknown;
+        };
+
+        type TraceEvent = TraceEventBase & {
+            cat?: string;
+            id?: string | number;
         };
 
         type DetoxLogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';

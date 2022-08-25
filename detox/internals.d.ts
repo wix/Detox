@@ -66,10 +66,14 @@ declare global {
 
       readonly config: RuntimeConfig;
       readonly log: Detox.Logger;
-      readonly trace: Detox.Tracer;
+      readonly trace: Detox._LegacyTracer;
       readonly session: SessionState;
 
-      readonly worker: Detox.DetoxWorker;
+      readonly worker: Worker;
+    }
+
+    interface Worker extends Detox.DetoxExportWrapper {
+      readonly id: string;
     }
 
     type DetoxInitOptions = {
@@ -140,14 +144,14 @@ declare global {
       apps: Record<string, Readonly<Detox.DetoxAppConfig>>;
       artifacts: Readonly<Detox.DetoxArtifactsConfig>;
       behavior: Readonly<Detox.DetoxBehaviorConfig>;
-      cli: Readonly<DetoxCLIConfig>;
+      cli: Readonly<CLIConfig>;
       device: Readonly<Detox.DetoxDeviceConfig>;
       logger: Readonly<Detox.DetoxLoggerConfig>;
       testRunner: Readonly<Detox.DetoxTestRunnerConfig>;
       session: Readonly<Detox.DetoxSessionConfig>;
     }>;
 
-    type DetoxCLIConfig = Readonly<Partial<{
+    type CLIConfig = Readonly<Partial<{
       appLaunchArgs: string;
       artifactsLocation: string;
       captureViewHierarchy: string;

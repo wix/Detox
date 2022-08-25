@@ -58,7 +58,7 @@ async function internalsTest() {
     workerId: 'worker-1',
   });
 
-  assert<Detox.DetoxWorker>(worker);
+  assert<DetoxInternals.Worker>(worker);
 
   await uninstallWorker();
   await cleanup();
@@ -99,19 +99,19 @@ async function logTest() {
     cname: 'inactive'
   };
 
-  const event2: Detox.TraceEvent = {
+  const event2 = {
     cname: 'red',
     args: { $success: true },
   };
 
-  const handle1 = trace.begin('Long method', event1.args);
+  const handle1 = trace.startSection('Long method', event1.args);
   if (Math.random() > 0.5) {
     handle1.end();
   } else {
     handle1.end(event2);
   }
 
-  const handle2 = trace.begin(event1);
+  const handle2 = trace.startSection(event1);
   if (Math.random() > 0.5) {
     handle2.end();
   } else {
@@ -133,7 +133,7 @@ function configTest() {
   assert<Record<string, Detox.DetoxAppConfig>>(config.apps);
   assert<Detox.DetoxArtifactsConfig>(config.artifacts);
   assert<Detox.DetoxBehaviorConfig>(config.behavior);
-  assert<DetoxInternals.DetoxCLIConfig>(config.cli);
+  assert<DetoxInternals.CLIConfig>(config.cli);
   assert<Detox.DetoxDeviceConfig>(config.device);
   assert<Detox.DetoxLoggerConfig>(config.logger);
   assert<Detox.DetoxSessionConfig>(config.session);

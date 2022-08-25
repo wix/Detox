@@ -45,7 +45,7 @@ class TestRunnerCommand {
   }
 
   /**
-   * @param {Partial<Readonly<DetoxInternals.DetoxCLIConfig>>} cliConfig
+   * @param {Partial<Readonly<DetoxInternals.CLIConfig>>} cliConfig
    * @returns {this}
    */
   replicateCLIConfig(cliConfig) {

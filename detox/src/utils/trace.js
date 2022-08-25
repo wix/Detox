@@ -1,4 +1,4 @@
-/** @type {Detox.Tracer} */
+/** @type {Detox._LegacyTracer} */
 const trace = require('../..').trace;
 const traceCall = trace.bind(null);
 

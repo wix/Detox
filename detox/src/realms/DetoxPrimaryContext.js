@@ -79,7 +79,7 @@ class DetoxPrimaryContext extends DetoxContext {
     } = detoxConfig;
     await this[$logger].setConfig(loggerConfig);
 
-    this.trace.begin({
+    this.trace.startSection({
       cat: 'lifecycle',
       args: this[$sessionState],
       name: process.argv.slice(1).join(' '),
@@ -165,7 +165,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
 
       try {
-        this.trace.end({ cat: 'lifecycle' });
+        this.trace.endSection();
         await this[_finalizeLogs]();
       } catch (err) {
         this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
@@ -192,7 +192,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     try {
-      this.trace.end({ cat: 'lifecycle', args: { abortSignal: signal } });
+      this.trace.endSection({ cat: 'lifecycle', args: { abortSignal: signal } });
       this[_finalizeLogsSync]();
     } catch (err) {
       this[$logger].error({ err }, 'Encountered an error while merging the process logs:');

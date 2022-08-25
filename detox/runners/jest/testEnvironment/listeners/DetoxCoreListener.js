@@ -54,7 +54,7 @@ class DetoxCoreListener {
       this._testTraceEvent.begin({
         name: event.hook.type,
         args: {
-          fn: event.hook.fn.toString()
+          functionCode: event.hook.fn.toString()
         },
       });
     }
@@ -82,7 +82,9 @@ class DetoxCoreListener {
     if (this._testTraceEvent) {
       this._testTraceEvent.begin({
         name: 'test_fn',
-        args: { fn: test.fn.toString() }
+        args: {
+          functionCode: test.fn.toString()
+        },
       });
     }
   }
@@ -109,19 +111,19 @@ class DetoxCoreListener {
 
   async test_done({ test }) {
     if (this._startedTests.has(test)) {
-      await detoxInternals.onTestDone({
-        title: test.name,
-        fullName: getFullTestName(test),
-        status: test.errors.length ? 'failed' : 'passed',
-        invocations: this._getTestInvocations(test),
-        timedOut: hasTimedOut(test)
-      });
+      const failed = test.errors.length > 0;
+      const metadata = {
+        ...this._getTestMetadata(test),
+        status: failed ? 'failed' : 'passed',
+        timedOut: failed ? hasTimedOut(test) : undefined,
+      };
 
+      await detoxInternals.onTestDone(metadata);
       this._startedTests.delete(test);
       this._testTraceEvent.end({
         args: {
-          success: !test.errors.length,
-          errors: test.errors.map(String).join('\n\n'),
+          status: metadata.status,
+          timedOut: metadata.timedOut,
         },
       });
       this._testTraceEvent = null;
@@ -141,18 +143,23 @@ class DetoxCoreListener {
       return false;
     }
 
+    const metadata = {
+      ...this._getTestMetadata(test),
+      status: 'running',
+    };
+
     this._startedTests.add(test);
     this._testTraceEvent = this._env.traceEvent.begin({
-      name: test.name,
+      name: metadata.title,
+      args: {
+        context: 'test',
+        status: metadata.status,
+        fullName: metadata.fullName,
+        invocations: metadata.invocations,
+      },
     });
 
-    await detoxInternals.onTestStart({
-      title: test.name,
-      fullName: getFullTestName(test),
-      status: 'running',
-      invocations: this._getTestInvocations(test),
-    });
-
+    await detoxInternals.onTestStart(metadata);
     return true;
   }
 
@@ -171,6 +178,14 @@ class DetoxCoreListener {
     }
 
     return block.errors ? block.errors.length > 0 : false;
+  }
+
+  _getTestMetadata(test) {
+    return {
+      title: test.name,
+      fullName: getFullTestName(test),
+      invocations: this._getTestInvocations(test),
+    };
   }
 }
 

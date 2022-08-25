@@ -9,11 +9,13 @@ const temporaryPath = require('../artifacts/utils/temporaryPath');
 const { DetoxInternalError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
 
+const DetoxTracer = require('./DetoxTracer');
 const customConsoleLogger = require('./customConsoleLogger');
 
 /**
  * @typedef PrivateLoggerConfig
  * @property {string} [file]
+ * @property {DetoxTracer} [tracer]
  */
 
 class DetoxLogger {
@@ -37,6 +39,9 @@ class DetoxLogger {
 
     if (config && !context) {
       this._config.file = temporaryPath.for.jsonl();
+      this._config.tracer = DetoxTracer.default({
+        logger: this,
+      });
     }
 
     /** @type {object | undefined} */
@@ -49,7 +54,7 @@ class DetoxLogger {
     this.warn = this._forward.bind(this, 'warn');
     this.info = this._forward.bind(this, 'info');
     this.debug = this._forward.bind(this, 'debug');
-    this.trace = this._forward.bind(this, 'trace');
+    this.trace = this._createTracerInterface();
 
     this.overrideConsole();
   }
@@ -114,6 +119,24 @@ class DetoxLogger {
       ...this._context,
       ...overrides,
     }, this._bunyan);
+  }
+
+  _createTracerInterface() {
+    const fn = this._forward.bind(this, 'trace');
+
+    return Object.assign(fn, {
+      begin: this._createTracerBegin(fn),
+      complete: this._createTracerComplete(fn),
+    });
+  }
+
+  _createTracerBegin(logFn) {
+
+
+  }
+
+  _createTracerComplete(logFn) {
+
   }
 
   /**

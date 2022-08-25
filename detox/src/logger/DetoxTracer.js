@@ -25,7 +25,6 @@ class DetoxTracer {
   /**
    * @param {Detox.TraceEvent | string} eventOrName
    * @param {Detox.TraceEvent['args']} [args]
-   * @returns {import('trace-event-lib').DurationEventHandle}
    */
   begin(eventOrName, args) {
     const event = typeof eventOrName === 'string' ? { name: eventOrName, args } : eventOrName;
