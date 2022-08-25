@@ -9,14 +9,6 @@ const log = require('../utils/logger').child({ __filename, cat: 'ws-client,ws' }
 
 const InflightRequest = require('./InflightRequest');
 
-const EVENTS = {
-  OPEN: Object.freeze({ event: 'WS_OPEN' }),
-  ERROR: Object.freeze({ event: 'WS_ERROR' }),
-  MESSAGE: Object.freeze({ event: 'WS_MESSAGE' }),
-  SEND: Object.freeze({ event: 'WS_SEND' }),
-  LATE_RESPONSE: Object.freeze({ event: 'WS_LATE_RESPONSE' }),
-};
-
 const DEFAULT_SEND_OPTIONS = {
   timeout: 0,
 };
@@ -99,9 +91,9 @@ class AsyncWebSocket {
 
     this.handleMultipleNonAtomicPendingActions();
 
-    const messageAsString = JSON.stringify(message);
-    this._log.trace(EVENTS.SEND, messageAsString);
-    this._ws.send(messageAsString);
+    const payload = JSON.stringify(message);
+    this._log.trace({ payload }, 'send message');
+    this._ws.send(payload);
 
     return inFlight.promise;
   }

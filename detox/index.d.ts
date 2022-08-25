@@ -377,36 +377,39 @@ declare global {
         };
 
         interface LogMethod {
-            (event: TraceEvent, name?: string): void;
+            (eventName: string): void;
+            (event: TraceEvent): void;
+            (event: Omit<TraceEvent, 'name'>, name: string): void;
         }
 
         interface TraceLogMethod extends LogMethod {
-            begin(event: TraceEvent): TraceEventHandle;
+            begin<E extends TraceEvent>(event: E): TraceEventHandle;
             begin(eventName: string): TraceEventHandle;
-            complete(event: TraceEvent, fn: Function | Promise<any>): Promise<void>;
+            complete<E extends TraceEvent>(event: E, fn: Function | Promise<any>): Promise<void>;
             complete(eventName: string, fn: Function | Promise<any>): Promise<void>;
         }
 
         interface TraceEventHandle {
-            end(event?: TraceEventBase): void;
+            end<E extends Omit<TraceEvent, 'id' | 'name'>>(event?: E): void;
         }
 
-        type TraceEventBase = {
+        type TraceEvent = {
+            id?: string | number;
             name: string;
 
+            /** Event category */
+            cat?: string;
+            /** Color (applicable in Google Chrome Trace Format) */
             cname?: string;
 
-            /** Reserved property. */
+            /** Reserved property. Process ID. */
             pid?: never;
-            /** Reserved property. */
+            /** Reserved property. Thread ID. */
             tid?: never;
+            /** Reserved property. Timestamp. */
+            ts?: never;
 
-            [key: string]: unknown;
-        };
-
-        type TraceEvent = TraceEventBase & {
-            cat?: string;
-            id?: string | number;
+            [customProperty: string]: unknown;
         };
 
         type DetoxLogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';

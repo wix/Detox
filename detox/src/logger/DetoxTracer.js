@@ -121,6 +121,7 @@ class DetoxTracer {
    */
   static CATEGORIES = {
     'lifecycle': [0, 0],
+    'logger': [1, 1],
     'ipc': [29, 29],
     'ws-server': [50, 99],
     'ws-client': [100, 149],

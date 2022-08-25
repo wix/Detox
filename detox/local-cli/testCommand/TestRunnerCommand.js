@@ -88,7 +88,7 @@ class TestRunnerCommand {
       try {
         if (launchError) {
           const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
-          detox.log.error({ event: 'RETRY_RUN' },
+          detox.log.error({ cat: 'lifecycle,cli' },
             `There were failing tests in the following files:\n${list}\n\n` +
             'Detox CLI is going to restart the test runner with those files...\n'
           );
@@ -119,7 +119,7 @@ class TestRunnerCommand {
     const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
     const fullCommandWithHint = printEnvironmentVariables(this._envHint) + fullCommand.join(' ');
 
-    detox.log.info({ event: 'RUN_START', env: this._envHint }, fullCommandWithHint);
+    detox.log.info({ cat: 'lifecycle,cli', env: this._envHint }, fullCommandWithHint);
 
     return new Promise((resolve, reject) => {
       cp.spawn(fullCommand[0], fullCommand.slice(1), {

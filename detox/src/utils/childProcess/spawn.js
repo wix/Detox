@@ -2,7 +2,7 @@
 const { spawn } = require('child-process-promise');
 const _ = require('lodash');
 
-const rootLogger = require('../logger').child({ __filename });
+const rootLogger = require('../logger').child({ __filename, cat: 'child-process,child-process-spawn' });
 const { escape } = require('../pipeCommands');
 const retry = require('../retry');
 
@@ -10,15 +10,13 @@ const execsCounter = require('./opsCounter');
 
 function spawnAndLog(binary, flags, options) {
   const command = _joinCommandAndFlags(binary, flags);
-  const trackingId = execsCounter.inc();
-  const logger = rootLogger.child({ fn: 'spawnAndLog', command, trackingId });
+  const logger = rootLogger.child({ id: execsCounter.inc() });
   return _spawnAndLog(logger, binary, flags, command, options);
 }
 
 async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   const command = _joinCommandAndFlags(binary, flags);
-  const trackingId = execsCounter.inc();
-  const logger = rootLogger.child({ fn: 'spawnWithRetriesAndLogs', command, trackingId });
+  const logger = rootLogger.child({ id: execsCounter.inc() });
   const _options = {
     ...options,
     capture: _.union(options.capture || [], ['stderr']),
@@ -30,8 +28,11 @@ async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   } = _options;
 
   let result;
-  await retry({ retries, interval }, async (tryCount, lastError) => {
-    _logSpawnRetrying(logger, tryCount, lastError);
+  await retry({ retries, interval }, async (tryCount) => {
+    if (tryCount > 1) {
+      logger.trace(`retrying #${tryCount}`);
+    }
+
     result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
   });
   return result;
@@ -45,7 +46,7 @@ async function interruptProcess(childProcessPromise, schedule) {
   const childProcess = childProcessPromise.childProcess;
   const cpid = childProcess.pid;
   const spawnargs = childProcess.spawnargs.join(' ');
-  const log = rootLogger.child({ event: 'SPAWN_KILL', pid: cpid });
+  const log = rootLogger.child({ cpid });
 
   const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
     return setTimeout(() => {
@@ -66,31 +67,28 @@ async function interruptProcess(childProcessPromise, schedule) {
   }
 }
 
-function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
+function _spawnAndLog(logger, binary, flags, command, options, tryCount = 1) {
   const { logLevelPatterns, silent, ...spawnOptions } = { stdio: ['ignore', 'pipe', 'pipe'], ...options };
+  const traceHandle = logger.trace.begin({ tryCount }, command);
   const cpPromise = spawn(binary, flags, spawnOptions);
 
   const { childProcess } = cpPromise;
-  const { exitCode, stdout, stderr } = childProcess;
-
-  const _logger = logger.child({ cpid: childProcess.pid });
-  _logSpawnCommand(_logger, command, tryCount);
+  const { exitCode, stdout, stderr, pid: cpid } = childProcess;
 
   if (exitCode != null && exitCode !== 0) {
-    _logger.error({ event: 'SPAWN_ERROR' }, `${command} failed with code = ${exitCode}`);
+    traceHandle.end({ exitCode, cpid });
   }
 
   if (!silent) {
-    stdout && stdout.on('data', _spawnStdoutLoggerFn(_logger, logLevelPatterns));
-    stderr && stderr.on('data', _spawnStderrLoggerFn(_logger, logLevelPatterns));
+    stdout && stdout.on('data', _spawnStdoutLoggerFn(logger, logLevelPatterns));
+    stderr && stderr.on('data', _spawnStderrLoggerFn(logger, logLevelPatterns));
   }
 
   function onEnd(resultOrErr) {
     const signal = resultOrErr.childProcess.signalCode || '';
-    const { code } = resultOrErr;
-    const action = signal ? `terminated with ${signal}` : `exited with code #${code}`;
+    const { code: exitCode } = resultOrErr;
 
-    _logger.debug({ event: 'SPAWN_END', signal, code }, `${command} ${action}`);
+    traceHandle.end({ exitCode, signal });
   }
 
   cpPromise.then(onEnd, onEnd);
@@ -110,13 +108,13 @@ function _joinCommandAndFlags(command, flags) {
 const _spawnStdoutLoggerFn = (log, logLevelPatterns) => (chunk) => {
   const line = chunk.toString();
   const loglevel = _inferLogLevel(line, logLevelPatterns) || 'trace';
-  log[loglevel]({ stdout: true, event: 'SPAWN_STDOUT' }, line);
+  log[loglevel]({ stdout: true, cat: 'child-process,child-process-output' }, line);
 };
 
 const _spawnStderrLoggerFn = (log, logLevelPatterns) => (chunk) => {
   const line = chunk.toString();
   const loglevel = _inferLogLevel(line, logLevelPatterns) || 'error';
-  log[loglevel]({ stderr: true, event: 'SPAWN_STDERR' }, line);
+  log[loglevel]({ stderr: true, cat: 'child-process,child-process-output' }, line);
 };
 
 function _inferLogLevel(msg, patterns) {
@@ -129,17 +127,6 @@ function _inferLogLevel(msg, patterns) {
   return _.findKey(patterns, (regexps) => {
     return regexps.some(matchesRegex);
   });
-}
-
-function _logSpawnRetrying(logger, tryCount, lastError) {
-  if (tryCount > 1) {
-    logger.trace({ event: 'SPAWN_TRY_FAIL' }, lastError.stderr);
-  }
-}
-
-function _logSpawnCommand(logger, command, tryCount) {
-  const message = (_.isNumber(tryCount) && tryCount > 1 ? `(Retry #${tryCount - 1}) ${command}` : command);
-  logger.debug({ event: 'SPAWN_CMD' }, message);
 }
 
 module.exports = {
