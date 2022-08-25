@@ -40,9 +40,20 @@ class Trace {
 
 let trace = new Trace();
 
-function traceCall(sectionName, promise, args = {}) {
+/**
+ * Trace a single call, with a given name and arguments.
+ * @param sectionName The name of the section to trace.
+ * @param promiseOrFunction {Promise|Function} Promise or a function that provides a promise.
+ * @param args {Object} Optional arguments to pass to the trace.
+ * @returns {any} The returned value of the traced call.
+ *
+ * @see https://wix.github.io/Detox/docs/next/api/detox-object-api/#detoxtracecall.
+ */
+function traceCall(sectionName, promiseOrFunction, args = {}) {
   assert(sectionName,
     `must provide section name when calling \`traceCall\` with args: \n ${JSON.stringify(args)}`);
+
+  const promise = typeof promiseOrFunction === 'function' ? promiseOrFunction() : promiseOrFunction;
 
   trace.startSection(sectionName, args);
   return promise
