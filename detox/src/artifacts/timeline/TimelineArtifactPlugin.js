@@ -45,12 +45,12 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
   }
 
   async onTestStart(testSummary) {
-    this._trace.startSection(testSummary.title, { context: TIMELINE_CONTEXT_TYPES.TEST });
+    this._trace.startSection(testSummary.title, { context: TIMELINE_CONTEXT_TYPES.TEST, ...testSummary });
     await super.onTestStart(testSummary);
   }
 
   async onTestDone(testSummary) {
-    this._trace.endSection(testSummary.title, { status: testSummary.status, context: TIMELINE_CONTEXT_TYPES.TEST });
+    this._trace.endSection(testSummary.title, { context: TIMELINE_CONTEXT_TYPES.TEST, ...testSummary });
     await super.onTestDone(testSummary);
   }
 
