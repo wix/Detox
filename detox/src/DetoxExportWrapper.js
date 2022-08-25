@@ -66,7 +66,7 @@ class DetoxExportWrapper {
       }
 
       this[_detox] = new Detox(resolvedConfig);
-      await traceCall('detoxInit', () => this[_detox].init());
+      await traceCall('detoxInit', this[_detox].init());
       Detox.none.setError(null);
 
       return this[_detox];

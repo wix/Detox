@@ -3,7 +3,10 @@ describe('expectTwo API Coverage', () => {
   let e;
 
   beforeEach(() => {
+    jest.mock('../utils/trace');
+
     const IosExpect = require('./expectTwo');
+
     e = new IosExpect({
       invocationManager: new MockExecutor(),
     });
@@ -152,7 +155,9 @@ describe('expectTwo API Coverage', () => {
     });
 
     it(`interactions with wrong parameters should throw`, async () => {
-      await expectToThrow(() => e.element(e.by.id('someId')).multiTap('NaN'));
+      await [null, undefined, 0, -1, 'NaN'].forEach(item => {
+        expectToThrow(() => e.element(e.by.id('someId')).multiTap(item));
+      });
       await expectToThrow(() => e.element(e.by.id('someId')).typeText(0));
       await expectToThrow(() => e.element(e.by.id('someId')).replaceText(3));
 
