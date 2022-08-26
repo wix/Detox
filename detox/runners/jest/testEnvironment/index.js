@@ -24,6 +24,8 @@ const SYNC_CIRCUS_EVENTS = new Set([
   'error',
 ]);
 
+const log = detox.log.child({ cat: 'lifecycle,jest-environment' });
+
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
  */
@@ -50,32 +52,29 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     /** @protected */
     this.initTimeout = detox.config.testRunner.jest.initTimeout;
     /** @internal */
-    this.traceEvent = detox.trace.startSection({
-      name: this.testPath,
-      cat: 'lifecycle',
-    });
+    log.trace.begin(this.testPath);
+
+    this.setup = log.trace.complete.bind(null, 'set up environment', this.setup.bind(this));
+    this.teardown = async () => {
+      try {
+        await log.trace.complete('tear down environment', this.teardown.bind(this));
+      } finally {
+        await log.trace.end();
+      }
+    };
   }
 
   /** @override */
   async setup() {
-    try {
-      this.traceEvent.begin({ name: 'set up environment' });
-
-      await super.setup();
-      await Timer.run({
-        description: `setting up Detox environment`,
-        timeout: this.initTimeout,
-        fn: async () => {
-          await this.initDetox();
-          this._instantiateListeners();
-        },
-      });
-
-      this.traceEvent.end({ args: { success: true } });
-    } catch (error) {
-      this.traceEvent.end({ args: { success: false, error } });
-      throw error;
-    }
+    await super.setup();
+    await Timer.run({
+      description: `setting up Detox environment`,
+      timeout: this.initTimeout,
+      fn: async () => {
+        await this.initDetox();
+        this._instantiateListeners();
+      },
+    });
   }
 
   /** @override */
@@ -100,7 +99,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         try {
           await this._timer.run(() => listener[name](event, state));
         } catch (listenerError) {
-          this._logError(listenerError);
+          log.error(listenerError);
           break;
         }
       }
@@ -112,23 +111,11 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @override */
   async teardown() {
-    try {
-      this.traceEvent.begin({ name: 'tear down environment' });
-
-      await Timer.run({
-        description: `tearing down Detox environment`,
-        timeout: this.initTimeout,
-        fn: async () => this.cleanupDetox(),
-      });
-
-      this.traceEvent.end({ args: { success: true } });
-    } catch (error) {
-      this.traceEvent.end({ args: { success: false, error } });
-      throw error;
-    } finally {
-      this.traceEvent.end();
-      this.traceEvent = null;
-    }
+    await Timer.run({
+      description: `tearing down Detox environment`,
+      timeout: this.initTimeout,
+      fn: async () => await this.cleanupDetox(),
+    });
   }
 
   /** @protected */
@@ -179,11 +166,6 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         env: this,
       }));
     }
-  }
-
-  /** @private */
-  _logError(e) {
-    detox.log.error(DetoxError.format(e));
   }
 }
 

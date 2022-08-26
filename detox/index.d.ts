@@ -9,7 +9,6 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import { DurationEventHandle } from 'trace-event-lib';
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -346,7 +345,7 @@ declare global {
             /**
              * @deprecated
              *
-             * Deprecated - use {@link DetoxExportWrapper#trace}
+             * Deprecated - use {@link Detox.Logger#trace}
              * Detox tracer instance. Can be used for building timelines in Google Event Tracing format.
              */
             readonly trace: {
@@ -362,44 +361,44 @@ declare global {
             readonly traceCall: <T>(event: string, action: () => Promise<T>) => Promise<T>;
         }
 
-
-        type Logger = {
+        interface Logger {
             readonly level: DetoxLogLevel;
 
-            readonly fatal: LogMethod;
-            readonly error: LogMethod;
-            readonly warn: LogMethod;
-            readonly info: LogMethod;
-            readonly debug: LogMethod;
-            readonly trace: TraceLogMethod;
+            readonly fatal: _LogMethod;
+            readonly error: _LogMethod;
+            readonly warn: _LogMethod;
+            readonly info: _LogMethod;
+            readonly debug: _LogMethod;
+            readonly trace: _LogMethod;
 
-            child(context?: Record<string, unknown>): Logger;
-        };
-
-        interface LogMethod {
-            (eventName: string): void;
-            (event: TraceEvent): void;
-            (event: Omit<TraceEvent, 'name'>, name: string): void;
+            child(context?: Partial<LogEvent>): Logger;
         }
 
-        interface TraceLogMethod extends LogMethod {
-            begin<E extends TraceEvent>(event: E): TraceEventHandle;
-            begin(eventName: string): TraceEventHandle;
-            complete<E extends TraceEvent>(event: E, fn: Function | Promise<any>): Promise<void>;
-            complete(eventName: string, fn: Function | Promise<any>): Promise<void>;
+        /** @internal */
+        interface _LogMethod extends _LogMethodSignature {
+            readonly begin: _LogMethodSignature;
+            readonly complete: _CompleteMethodSignature;
+            readonly end: _LogMethodSignature;
         }
 
-        interface TraceEventHandle {
-            end<E extends Omit<TraceEvent, 'id' | 'name'>>(event?: E): void;
+        /** @internal */
+        interface _LogMethodSignature {
+            (message?: string): void
+            (event: LogEvent, message?: string): void;
         }
 
-        type TraceEvent = {
+        /** @internal */
+        interface _CompleteMethodSignature {
+            <T>(message: string, action: Promise<T> | (() => Promise<T>)): Promise<T>;
+            <T>(event: LogEvent, message: string, action: Promise<T> | (() => Promise<T>)): Promise<T>;
+        }
+
+        type LogEvent = {
+            /** Use when there's a risk of logging several parallel duration events. */
             id?: string | number;
-            name: string;
-
-            /** Event category */
-            cat?: string;
-            /** Color (applicable in Google Chrome Trace Format) */
+            /** Optional. Event categories (tags) to facilitate filtering. */
+            cat?: string | string[];
+            /** Optional. Color name (applicable in Google Chrome Trace Format) */
             cname?: string;
 
             /** Reserved property. Process ID. */
@@ -408,6 +407,8 @@ declare global {
             tid?: never;
             /** Reserved property. Timestamp. */
             ts?: never;
+            /** Reserved property. Event phase. */
+            ph?: never;
 
             [customProperty: string]: unknown;
         };

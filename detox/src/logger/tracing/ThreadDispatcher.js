@@ -1,6 +1,6 @@
 const isUndefined = (x) => x === undefined;
 
-class TraceThreadDispatcher {
+class ThreadDispatcher {
   /**
    * @param {object} options
    * @param {Detox.Logger} options.logger
@@ -25,6 +25,15 @@ class TraceThreadDispatcher {
     const tid = this._findTID(id);
     this.threads[tid] = id;
     this.stacks[tid] = (this.stacks[tid] || 0) + 1;
+    return this._transpose(tid);
+  }
+
+  /**
+   * @param {string | number} [id]
+   * @returns {number}
+   */
+  resolve(id) {
+    const tid = this._findTID(id);
     return this._transpose(tid);
   }
 
@@ -59,11 +68,14 @@ class TraceThreadDispatcher {
   _transpose(id) {
     const result = this.min + id;
     if (result > this.max) {
-      this.logger.warn({ cat: 'logger,thread-dispatcher' }, `${this.name} trace thread dispatcher has run out of available thread IDs: ${this.min}..${this.max}`);
+      this.logger.warn(
+        { cat: ['logger', 'thread-dispatcher'] },
+        `${this.name} trace thread dispatcher has run out of available thread IDs: ${this.min}..${this.max}`
+      );
     }
 
     return Math.min(result, this.max);
   }
 }
 
-module.exports = TraceThreadDispatcher;
+module.exports = ThreadDispatcher;

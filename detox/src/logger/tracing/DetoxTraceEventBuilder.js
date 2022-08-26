@@ -1,19 +1,21 @@
 const tel = require('trace-event-lib');
 
 class DetoxTraceEventBuilder extends tel.AbstractEventBuilder {
-  constructor(forward) {
+  constructor({ logger, level }) {
     super();
 
-    this._forward = forward;
+    this._logger = logger;
+    this._level = level;
   }
 
   send(event) {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const { pid, ts, name, args = {}, ...trace } = event;
+
     if (trace.ph === 'E') {
-      this._forward({ ...args, trace }, `end`);
+      this._logger[this._level]({ ...args, trace }, `end`);
     } else {
-      this._forward({ ...args, trace }, name);
+      this._logger[this._level]({ ...args, trace }, name);
     }
   }
 }

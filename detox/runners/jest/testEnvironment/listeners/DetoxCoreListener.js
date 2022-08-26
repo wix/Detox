@@ -7,14 +7,15 @@ const { getFullTestName, hasTimedOut } = require('../utils');
 
 const RETRY_TIMES = Symbol.for('RETRY_TIMES');
 
+const log = detoxInternals.log.child({ cat: 'lifecycle,jest-environment' });
+
 class DetoxCoreListener {
   constructor({ env }) {
     this._startedTests = new WeakSet();
     this._testsFailedBeforeStart = new WeakSet();
     this._env = env;
     this._testRunTimes = 1;
-    /** @type import('trace-event-lib').DurationEventHandle */
-    this._testTraceEvent = null;
+    this._runningTest = false;
   }
 
   async setup() {
@@ -26,7 +27,7 @@ class DetoxCoreListener {
 
   async run_describe_start({ describeBlock: { name, children } }) {
     if (children.length) {
-      this._env.traceEvent.begin({ name });
+      log.trace.begin(name);
       await detoxInternals.onRunDescribeStart({ name });
     }
   }
@@ -34,7 +35,7 @@ class DetoxCoreListener {
   async run_describe_finish({ describeBlock: { name, children } }) {
     if (children.length) {
       await detoxInternals.onRunDescribeFinish({ name });
-      this._env.traceEvent.end();
+      log.trace.end();
     }
   }
 
@@ -50,62 +51,44 @@ class DetoxCoreListener {
   async hook_start(event, state) {
     await this._onBeforeActualTestStart(state.currentlyRunningTest);
 
-    if (this._testTraceEvent) {
-      this._testTraceEvent.begin({
-        name: event.hook.type,
-        args: {
-          functionCode: event.hook.fn.toString()
-        },
-      });
+    if (this._runningTest) {
+      log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
     }
   }
 
   async hook_success() {
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: true }
-      });
+    if (this._runningTest) {
+      log.trace.end({ success: true });
     }
   }
 
   async hook_failure({ error }) {
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: false, error: error.toString() }
-      });
+    if (this._runningTest) {
+      log.trace.end({ success: false, error });
     }
   }
 
   async test_fn_start({ test }) {
     await this._onBeforeActualTestStart(test);
 
-    if (this._testTraceEvent) {
-      this._testTraceEvent.begin({
-        name: 'test_fn',
-        args: {
-          functionCode: test.fn.toString()
-        },
-      });
+    if (this._runningTest) {
+      log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
     }
   }
 
   async test_fn_success({ test }) {
     await this._onBeforeActualTestStart(test);
 
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: true }
-      });
+    if (this._runningTest) {
+      log.trace.end({ success: true });
     }
   }
 
   async test_fn_failure({ error }) {
     await detoxInternals.onTestFnFailure({ error });
 
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: false, error: error.toString() }
-      });
+    if (this._runningTest) {
+      log.trace.end({ success: false, error });
     }
   }
 
@@ -120,13 +103,13 @@ class DetoxCoreListener {
 
       await detoxInternals.onTestDone(metadata);
       this._startedTests.delete(test);
-      this._testTraceEvent.end({
+      log.trace.end({
         args: {
           status: metadata.status,
           timedOut: metadata.timedOut,
         },
       });
-      this._testTraceEvent = null;
+      this._runningTest = false;
     }
   }
 
@@ -149,15 +132,14 @@ class DetoxCoreListener {
     };
 
     this._startedTests.add(test);
-    this._testTraceEvent = this._env.traceEvent.begin({
-      name: metadata.title,
-      args: {
-        context: 'test',
-        status: metadata.status,
-        fullName: metadata.fullName,
-        invocations: metadata.invocations,
-      },
-    });
+    this._runningTest = true;
+
+    log.trace.begin({
+      context: 'test',
+      status: metadata.status,
+      fullName: metadata.fullName,
+      invocations: metadata.invocations,
+    }, metadata.title);
 
     await detoxInternals.onTestStart(metadata);
     return true;

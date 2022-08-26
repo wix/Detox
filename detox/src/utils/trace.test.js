@@ -12,11 +12,11 @@ describe('Trace util', () => {
 
   it('should log { ph: B } event', () => {
     const event = {
-      name: 'event-name',
+      msg: 'event-name',
       args: { arg1: 'val1' },
     };
 
-    trace.startSection(event.name, event.args);
+    trace.startSection(event.msg, event.args);
     expect(logger().trace).toHaveBeenCalledWith(
       expect.objectContaining({ arg1: 'val1', trace: traceShape({ ph: 'B' }) }),
       'event-name'
@@ -25,12 +25,12 @@ describe('Trace util', () => {
 
   it('should log { ph: E } event', () => {
     const section = {
-      name: 'section-name',
+      msg: 'section-name',
       args: { arg1: 'val1' },
     };
 
-    trace.startSection(section.name, section.args);
-    trace.endSection(section.name, section.args);
+    trace.startSection(section.msg, section.args);
+    trace.endSection(section.msg, section.args);
     expect(logger().trace).toHaveBeenCalledWith(
       expect.objectContaining({ arg1: 'val1', trace: { ph: 'E', tid: expect.any(Number) } }),
       'end'

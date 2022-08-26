@@ -91,10 +91,17 @@ async function logTest() {
   log.child().info('msg');
   log.child({ anything: 'value' }).trace('msg');
 
-  const event1: Detox.TraceEvent = {
+  const serverLogger = log.child({ cat: 'server', id: 4333 });
+  serverLogger.info.begin({}, 'Starting server...');
+  serverLogger.trace.complete('something', async () => {
+
+  });
+  serverLogger.trace.end();
+
+  const event1: Detox.LogEvent = {
     id: 1,
-    name: 'Long method',
-    cat: 'user',
+    msg: 'Long method',
+    cat: [],
     args: {},
     cname: 'inactive'
   };

@@ -5,6 +5,7 @@ const parser = require('yargs-parser');
 const unparse = require('yargs-unparser');
 
 const detox = require('../../internals');
+const log = detox.log.child({ cat: ['lifecycle', 'cli'] });
 const { DetoxRuntimeError } = require('../../src/errors');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 const { escapeSpaces } = require('../../src/utils/shellUtils');
@@ -88,7 +89,7 @@ class TestRunnerCommand {
       try {
         if (launchError) {
           const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
-          detox.log.error({ cat: 'lifecycle,cli' },
+          log.error(
             `There were failing tests in the following files:\n${list}\n\n` +
             'Detox CLI is going to restart the test runner with those files...\n'
           );
@@ -119,7 +120,7 @@ class TestRunnerCommand {
     const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
     const fullCommandWithHint = printEnvironmentVariables(this._envHint) + fullCommand.join(' ');
 
-    detox.log.info({ cat: 'lifecycle,cli', env: this._envHint }, fullCommandWithHint);
+    log.info({ env: this._envHint }, fullCommandWithHint);
 
     return new Promise((resolve, reject) => {
       cp.spawn(fullCommand[0], fullCommand.slice(1), {

@@ -8,14 +8,15 @@ const _ = require('lodash');
 const temporaryPath = require('../artifacts/utils/temporaryPath');
 const { DetoxInternalError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
+const isPromise = require('../utils/isPromise');
 
-const DetoxTracer = require('./DetoxTracer');
 const customConsoleLogger = require('./customConsoleLogger');
+const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
 
 /**
  * @typedef PrivateLoggerConfig
  * @property {string} [file]
- * @property {DetoxTracer} [tracer]
+ * @property {CategoryThreadDispatcher} [dispatcher]
  */
 
 class DetoxLogger {
@@ -38,10 +39,27 @@ class DetoxLogger {
     };
 
     if (config && !context) {
+      // Here we work with the first (root) logger instance
       this._config.file = temporaryPath.for.jsonl();
-      this._config.tracer = DetoxTracer.default({
+      this._config.dispatcher = new CategoryThreadDispatcher({
         logger: this,
+        categories: {
+          'lifecycle': [0],
+          'logger': [2],
+          'ipc': [29],
+          'ws-server': [50, 99],
+          'ws-client': [100, 149],
+          'device': [150, 159],
+          'artifacts-manager': [300],
+          'artifact-plugin': [310, 349],
+          'artifact': [350, 399],
+          'child-process': [400, 499],
+          'default': [500],
+          'user': [10000, 10999]
+        },
       });
+
+      this.overrideConsole();
     }
 
     /** @type {object | undefined} */
@@ -49,14 +67,12 @@ class DetoxLogger {
     /** @type {bunyan} */
     this._bunyan = bunyanLogger || this._initBunyanLogger();
 
-    this.fatal = this._forward.bind(this, 'fatal');
-    this.error = this._forward.bind(this, 'error');
-    this.warn = this._forward.bind(this, 'warn');
-    this.info = this._forward.bind(this, 'info');
-    this.debug = this._forward.bind(this, 'debug');
-    this.trace = this._createTracerInterface();
-
-    this.overrideConsole();
+    this.fatal = this._setupLogMethod('fatal');
+    this.error = this._setupLogMethod('error');
+    this.warn = this._setupLogMethod('warn');
+    this.info = this._setupLogMethod('info');
+    this.debug = this._setupLogMethod('debug');
+    this.trace = this._setupLogMethod('trace');
   }
 
   /**
@@ -111,32 +127,23 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    if (overrides && overrides.__filename) {
-      overrides.__filename = path.basename(overrides.__filename, '.js');
-    }
-
-    return new DetoxLogger(this._config, {
-      ...this._context,
-      ...overrides,
-    }, this._bunyan);
+    const merged = mergeContexts(this._context, overrides )
+    return new DetoxLogger(this._config, merged, this._bunyan);
   }
 
-  _createTracerInterface() {
-    const fn = this._forward.bind(this, 'trace');
+  /**
+   * @param {Detox.DetoxLogLevel} level
+   * @returns {Detox._LogMethod}
+   * @private
+   */
+  _setupLogMethod(level) {
+    const logMethod = this[level] = this._forward.bind(this, level, null);
 
-    return Object.assign(fn, {
-      begin: this._createTracerBegin(fn),
-      complete: this._createTracerComplete(fn),
+    return Object.assign(logMethod, {
+      begin: this._forward.bind(this, level, { ph: 'B' }),
+      complete: this._complete.bind(this, level),
+      end: this._forward.bind(this, level, { ph: 'E' }),
     });
-  }
-
-  _createTracerBegin(logFn) {
-
-
-  }
-
-  _createTracerComplete(logFn) {
-
   }
 
   /**
@@ -144,15 +151,75 @@ class DetoxLogger {
    * @param {any[]} args
    * @private
    */
-  _forward(level, ...args) {
-    const msgContext = _.isError(args[0]) ? { err: args[0] } : _.isObject(args[0]) ? args[0] : undefined;
-    const msgArgs = msgContext !== undefined ? args.slice(1) : args;
-    const mergedContext = sanitizeBunyanContext({
+  _forward(level, boundContext, ...args) {
+    const { context, msg } = this._parseArgs(boundContext, args);
+    const { ph = 'i', cat, id } = context;
+
+    if (Array.isArray(cat)) {
+      context.cat = context.cat.join(',');
+    }
+
+    if (id != null) {
+      context.tid = this._config.dispatcher.resolve(ph, cat, id);
+      delete context.id;
+    }
+
+    this._bunyan[level](context, ...msg);
+  }
+
+  /**
+   * @param {bunyan.LogLevel} level
+   * @private
+   */
+  _complete(level, arg1, arg2, arg3) {
+    const end = (ctx) => this._bunyan[level].end(ctx, 'end');
+    const action = typeof arg1 === 'string' ? arg2 : arg3;
+    const args = arg3 === action ? [arg1, arg2] : [arg1];
+    const { context, msg } = this._parseArgs(null, args);
+
+    let result;
+    this._bunyan[level].begin(context, msg);
+    try {
+      result = typeof action === 'function'
+        ? action()
+        : action;
+
+      if (!isPromise(result)) {
+        end(context);
+      } else {
+        result.then(
+          () => end({ ...context, success: true }),
+          (err) => end({ ...context, success: false, err }),
+        );
+      }
+    } catch (err) {
+      end({ ...context, success: false, err });
+      throw err;
+    }
+  }
+
+  _parseArgs(boundContext, args) {
+    const userContext = _.isError(args[0]) ? { err: args[0] } : _.isObject(args[0]) ? args[0] : undefined;
+    const msg = userContext !== undefined ? args.slice(1) : args;
+
+    if (userContext) {
+      delete userContext.pid;
+      delete userContext.tid;
+      delete userContext.ts;
+      delete userContext.time;
+      delete userContext.ph;
+    }
+
+    const context = sanitizeBunyanContext({
       ...this._context,
-      ...msgContext,
+      ...boundContext,
+      ...userContext,
     });
 
-    this._bunyan[level](mergedContext, ...msgArgs);
+    return { context, msg };
+  }
+
+  _mergeContexts(...contexts) {
   }
 
   _initBunyanLogger() {
@@ -262,6 +329,20 @@ function escapeCallback(value, key) {
 
 function sanitizeBunyanContext(context) {
   return hasReservedProperties(context) ? _.mapKeys(context, escapeCallback) : context;
+}
+
+function mergeContexts(...contexts) {
+  // TODO: transform errors via Detox.error
+
+  // if (overrides.__filename) {
+  //   overrides.__filename = path.basename(overrides.__filename, '.js');
+  // }
+  // TODO: merge cats
+  // if (overrides.cat && !Array.isArray(overrides.cat)) {
+  //   overrides.cat = overrides.cat.split(',');
+  // }
+
+  return Object.assign({}, ...contexts);
 }
 
 module.exports = DetoxLogger;
