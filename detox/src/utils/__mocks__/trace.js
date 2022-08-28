@@ -6,9 +6,13 @@ class FakeTrace {
     this.events = [];
   }
 }
-const traceCall = jest.fn().mockImplementation((_, fn) => fn());
+
+const traceCall = jest.fn().mockImplementation((__, promise) => promise);
+
+const traceInvocationCall = jest.fn().mockImplementation((__, ___, promise) => promise);
 
 module.exports = {
   trace: new FakeTrace(),
   traceCall,
+  traceInvocationCall,
 };

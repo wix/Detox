@@ -1,6 +1,6 @@
 @file:JvmName("UiControllerUtils")
 
-package com.wix.detox.espresso.common.utils
+package com.wix.detox.espresso.action.common.utils
 
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController

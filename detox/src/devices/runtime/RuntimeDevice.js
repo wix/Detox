@@ -113,7 +113,7 @@ class RuntimeDevice {
   }
 
   async launchApp(params = {}, bundleId = this._bundleId) {
-    return traceCall('launchApp', () => this._doLaunchApp(params, bundleId));
+    return traceCall('launch app', this._doLaunchApp(params, bundleId));
   }
 
   /**
@@ -179,29 +179,25 @@ class RuntimeDevice {
   }
 
   async installApp(binaryPath, testBinaryPath) {
-    await traceCall('appInstall', () => {
-      const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
-      return this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
-    });
+    const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
+    await traceCall('appInstall',
+      this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath));
   }
 
   async uninstallApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
-    await traceCall('appUninstall', () =>
-      this.deviceDriver.uninstallApp(_bundleId));
+    await traceCall('appUninstall', this.deviceDriver.uninstallApp(_bundleId));
   }
 
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      await traceCall('installUtilBinaries', () =>
-        this.deviceDriver.installUtilBinaries(paths));
+      await traceCall('installUtilBinaries', this.deviceDriver.installUtilBinaries(paths));
     }
   }
 
   async reloadReactNative() {
-    await traceCall('reloadRN', () =>
-      this.deviceDriver.reloadReactNative());
+    await traceCall('reload React Native', this.deviceDriver.reloadReactNative());
   }
 
   async openURL(params) {

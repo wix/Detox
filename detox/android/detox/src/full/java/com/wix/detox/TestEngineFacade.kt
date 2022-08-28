@@ -10,7 +10,7 @@ import com.wix.detox.reactnative.ReactNativeExtension
 
 class TestEngineFacade {
     fun awaitIdle(): Unit? = Espresso.onIdle() {
-        Log.i(LOG_TAG, "Wait is over: app is now idle!")
+        Log.i(LOG_TAG, "Wait is over: App is now idle!")
         null
     }
     fun syncIdle() = UiAutomatorHelper.espressoSync() // TODO Check whether this can be replaced with #awaitIdle()

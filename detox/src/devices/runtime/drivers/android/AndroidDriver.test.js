@@ -1,3 +1,5 @@
+const Deferred = require('../../../../utils/Deferred');
+
 // @ts-nocheck
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
@@ -295,25 +297,49 @@ describe('Android driver', () => {
     }, 2000);
 
     it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
-      const crashError = new Error('mock instrumentation crash error');
-      let waitForCrashReject = () => {};
-      instrumentation.waitForCrash.mockImplementation(() => {
-        return new Promise((__, reject) => {
-          waitForCrashReject = reject;
-        });
-      });
+      const instrumentationError = new Error('mock instrumentation crash error');
+      const waitForCrash = new Deferred();
+      instrumentation.waitForCrash.mockReturnValue(waitForCrash.promise);
 
       await uut.launchApp(bundleId, {}, '');
 
-      const clientWaitResolve = mockDeviceReadyPromise();
+      const clientWait = new Deferred();
+      client.waitUntilReady.mockReturnValue(clientWait.promise);
+
       const promise = uut.waitUntilReady();
-      setTimeout(() => waitForCrashReject(crashError), 1);
+      setTimeout(waitForCrash.reject, 1, instrumentationError);
 
       try {
-        await expect(promise).rejects.toThrowError(crashError);
+        await expect(promise).rejects.toThrowError(instrumentationError);
       } finally {
-        clientWaitResolve();
+        clientWait.resolve();
+      }
+    }, 2000);
 
+    it('should fail with client error if instrumentation dies because of client terminating the app', async () => {
+      const instrumentationError = new Error('mock instrumentation crash error');
+      const clientCrashError = new Error('mock client crash error');
+
+      const clientWait = new Deferred();
+      const clientDisconnect = new Deferred();
+      const waitForCrash = new Deferred();
+
+      client.waitUntilReady.mockReturnValue(clientWait.promise);
+      client.waitUntilDisconnected.mockReturnValue(clientDisconnect.promise);
+      instrumentation.waitForCrash.mockReturnValue(waitForCrash.promise);
+
+      waitForCrash.promise.catch(() => setTimeout(clientWait.reject, 1));
+      clientWait.promise.catch(() => setTimeout(clientDisconnect.reject, 2, clientCrashError));
+
+      await uut.launchApp(bundleId, {}, '');
+
+      const promise = uut.waitUntilReady();
+      setTimeout(waitForCrash.reject, 1, instrumentationError);
+
+      try {
+        await expect(promise).rejects.toThrowError(clientCrashError);
+      } finally {
+        clientWait.resolve();
       }
     }, 2000);
 
@@ -335,12 +361,6 @@ describe('Android driver', () => {
         expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
       }
     });
-
-    const mockDeviceReadyPromise = () => {
-      let clientResolve;
-      client.waitUntilReady.mockReturnValue(new Promise((resolve) => clientResolve = resolve));
-      return clientResolve;
-    };
   });
 
   describe('App installation', () => {
@@ -517,6 +537,7 @@ describe('Android driver', () => {
     client = {
       serverUrl: `ws://localhost:${detoxServerPort}`,
       waitUntilReady: jest.fn(),
+      waitUntilDisconnected: jest.fn().mockResolvedValue(),
     };
 
     eventEmitter = {

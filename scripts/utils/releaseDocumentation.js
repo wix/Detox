@@ -15,7 +15,7 @@ function buildDocsForVersion(version) {
     exec.execSync(`npm install`);
     exec.execSync(`npm run docusaurus docs:version ${version}`);
     exec.execSync(`git add .`);
-    exec.execSync(`git commit -m "Publish docs version ${version}"`);
+    exec.execSync(`git diff --staged --quiet || git commit -m "Publish docs version ${version}"`);
     exec.execSync(`git push origin ${process.env.BUILDKITE_BRANCH}`);
   } finally {
     process.chdir(originalDir);

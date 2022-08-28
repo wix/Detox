@@ -202,9 +202,17 @@ describe('Environment', () => {
           expect(await Environment.getAaptPath()).toMatch(/.build-tools.20.0.0.aapt/);
         });
 
-        it('should throw error if aapt is not found inside build-tools/<someDir>', async () => {
-          await genExec('build-tools/aapt');
-          await expect(Environment.getAaptPath()).rejects.toThrow(/There was no.*file in directory:/);
+        it('should throw error if aapt is missing inside (a valid) build-tools/<sdk-version> directory', async () => {
+          const validBuildToolsPath = 'build-tools/20.0.0';
+          const expectedErrPath = path.join(tempSdkPath, validBuildToolsPath);
+
+          await genExec(`${validBuildToolsPath}/not-aapt`);
+          await expect(Environment.getAaptPath()).rejects.toThrow(`There was no "aapt" executable file in directory: ${expectedErrPath}`);
+        });
+
+        it('should throw error if there are no inner <sdk-version> directories where aapt could reside', async () => {
+          await genExec('build-tools/dummy');
+          await expect(Environment.getAaptPath()).rejects.toThrow('Failed to find the "aapt" tool under the Android SDK: No build-tools are installed!');
         });
       });
 
@@ -226,7 +234,9 @@ describe('Environment', () => {
         });
 
         it('should throw error if adb is not found in platform-tools/', async () => {
-          await expect(Environment.getAaptPath()).rejects.toThrow(/There was no.*file in directory:/);
+          const expectedErrPath = path.join(tempSdkPath, 'platform-tools');
+
+          expect(() => Environment.getAdbPath()).toThrow(`There was no "adb" executable file in directory: ${expectedErrPath}`);
         });
       });
 

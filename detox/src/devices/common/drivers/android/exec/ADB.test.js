@@ -326,18 +326,30 @@ describe('ADB', () => {
 
   describe('animation disabling', () => {
     it('should disable animator (e.g. ObjectAnimator) animations', async () => {
-      await adb.disableAndroidAnimations();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global animator_duration_scale 0"`, { retries: 1 });
+      await adb.disableAndroidAnimations(deviceId);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global animator_duration_scale 0"`, { retries: 1 });
     });
 
     it('should disable window animations', async () => {
-      await adb.disableAndroidAnimations();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global window_animation_scale 0"`, { retries: 1 });
+      await adb.disableAndroidAnimations(deviceId);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global window_animation_scale 0"`, { retries: 1 });
     });
 
     it('should disable transition (e.g. activity launch) animations', async () => {
-      await adb.disableAndroidAnimations();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global transition_animation_scale 0"`, { retries: 1 });
+      await adb.disableAndroidAnimations(deviceId);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global transition_animation_scale 0"`, { retries: 1 });
+    });
+  });
+
+  describe('WiFi toggle', () => {
+    it('should enable wifi', async () => {
+      await adb.setWiFiToggle(deviceId, true);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi enable"`, { retries: 1 });
+    });
+
+    it('should disable wifi', async () => {
+      await adb.setWiFiToggle(deviceId, false);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi disable"`, { retries: 1 });
     });
   });
 });

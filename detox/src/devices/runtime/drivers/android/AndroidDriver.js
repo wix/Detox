@@ -148,7 +148,15 @@ class AndroidDriver extends DeviceDriverBase {
 
   async waitUntilReady() {
       try {
-        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
+        await Promise.race([
+          super.waitUntilReady(),
+          this.instrumentation.waitForCrash()
+        ]);
+      } catch (e) {
+        console.warn('An error occurred while waiting for the app to become ready. Waiting for disconnection... Error:\n', e);
+        await this.client.waitUntilDisconnected();
+        console.warn('...app disconnected.');
+        throw e;
       } finally {
         this.instrumentation.abortWaitForCrash();
       }

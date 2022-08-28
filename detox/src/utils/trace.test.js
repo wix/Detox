@@ -99,7 +99,20 @@ describe('Trace util', () => {
       trace.reset();
     });
 
-    it('should trace a successful function', async () => {
+    it('should trace a successful promise call', async () => {
+      const promise = Promise.resolve(42);
+
+      trace.init();
+      const result = await traceCall(sectionName, promise);
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(startEventTraits),
+        expect.objectContaining(successEndEventTraits),
+      ]);
+      expect(result).toEqual(42);
+    });
+
+    it('should trace a successful function call', async () => {
       const functionCall = () => Promise.resolve(42);
 
       trace.init();
@@ -110,6 +123,19 @@ describe('Trace util', () => {
         expect.objectContaining(successEndEventTraits),
       ]);
       expect(result).toEqual(42);
+    });
+
+    it('should trace a failed promise call', async () => {
+      const error = new Error('error mock');
+      const promise = Promise.reject(error);
+
+      trace.init();
+      await expect(traceCall(sectionName, promise)).rejects.toThrowError(error);
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(startEventTraits),
+        expect.objectContaining(aFailEndEventTraits(error)),
+      ]);
     });
 
     it('should trace a failed function call', async () => {
@@ -124,5 +150,72 @@ describe('Trace util', () => {
         expect.objectContaining(aFailEndEventTraits(error)),
       ]);
     });
+
   });
+
+  describe('trace-invocation-call function', () => {
+    const { trace, traceInvocationCall } = require('./trace');
+    const sectionName = 'section-name';
+    const invocation = {
+      foo: 'bar'
+    };
+    const args = {
+      context: 'invocation',
+      invocation: JSON.stringify(invocation),
+      stackTrace: expect.any(String)
+    };
+
+    afterEach(() => {
+      trace.reset();
+    });
+
+    it('should trace a successful invocation call', async () => {
+      const promise = Promise.resolve(42);
+
+      trace.init();
+      const result = await traceInvocationCall(sectionName, invocation, promise);
+
+      const expectedStartEvent = {
+        type: 'start',
+        name: sectionName,
+        args
+      };
+      const expectedEndEvent = {
+        type: 'end',
+        name: sectionName,
+        args: { ...args, success: true },
+      };
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(expectedStartEvent),
+        expect.objectContaining(expectedEndEvent),
+      ]);
+      expect(result).toEqual(42);
+    });
+
+    it('should trace a failed invocation call', async () => {
+      const error = new Error('error mock');
+      const promise = Promise.reject(error);
+
+      trace.init();
+      await expect(traceInvocationCall(sectionName, invocation, promise)).rejects.toThrowError(error);
+
+      const expectedStartEvent = {
+        type: 'start',
+        name: sectionName,
+        args
+      };
+      const expectedEndEvent = {
+        type: 'end',
+        name: sectionName,
+        args: { ...args, error: 'Error: error mock', success: false },
+      };
+      expect(trace.events).toEqual([
+        expect.any(Object),
+        expect.objectContaining(expectedStartEvent),
+        expect.objectContaining(expectedEndEvent),
+      ]);
+    });
+  });
+
 });

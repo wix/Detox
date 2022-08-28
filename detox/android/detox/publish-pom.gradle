@@ -4,8 +4,12 @@ project.ext.buildPomXmlDependencies = { pom, configurations ->
     pom.withXml {
         final rootNode = asNode().appendNode('dependencies')
         addConfigurationDependencies(rootNode, configurations.api, 'compile')
-        addConfigurationDependencies(rootNode, configurations.compile, 'compile')
         addConfigurationDependencies(rootNode, configurations.implementation, 'runtime')
+
+        // Legacy syntax
+        if (configurations.hasProperty('compile')) {
+            addConfigurationDependencies(rootNode, configurations.compile, 'compile')
+        }
     }
 }
 

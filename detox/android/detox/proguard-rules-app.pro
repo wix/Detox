@@ -6,6 +6,10 @@
 -keep class com.facebook.react.ReactNativeHost { *; }
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
+-keep class com.facebook.react.ReactInstanceEventListener { *; }
+
+-keep class com.facebook.react.views.slider.ReactSlider { *; }
+-keep class com.reactnativecommunity.slider.ReactSlider { *; }
 -keep class com.reactnativecommunity.asyncstorage.** { *; }
 
 -keep class kotlin.jvm.** { *; }
