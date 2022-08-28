@@ -1,4 +1,5 @@
 import example from './src/app';
+import { LogBox } from 'react-native';
 
 import {
   AppRegistry
@@ -10,5 +11,5 @@ class exampleIos extends example {
   }
 }
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs();
 AppRegistry.registerComponent('example', () => exampleIos);
