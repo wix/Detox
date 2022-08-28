@@ -47,6 +47,7 @@ private class MQThreadReflected(private val queue: Any?, private val queueName: 
 
 class ReactNativeIdlingResources constructor(
     private val reactContext: ReactContext,
+    private var launchArgs: LaunchArgs,
     internal var networkSyncEnabled: Boolean = true
 ) {
     companion object {
@@ -104,6 +105,10 @@ class ReactNativeIdlingResources constructor(
     fun resumeUIIdlingResource() = uiModuleIdlingResource?.resume()
 
     fun setBlacklistUrls(urlList: String) {
+        setIldingResourceBlacklist(urlList)
+    }
+
+    private fun setIldingResourceBlacklist(urlList: String) {
         val urlArray = toFormattedUrlArray(urlList)
         NetworkIdlingResource.setURLBlacklist(urlArray)
     }
@@ -123,10 +128,9 @@ class ReactNativeIdlingResources constructor(
     }
 
     private fun setupUrlBlacklist() {
-        val launchArgs = LaunchArgs()
         if (launchArgs.hasURLBlacklist()) {
             val blacklistUrls = launchArgs.urlBlacklist
-            setBlacklistUrls(blacklistUrls)
+            setIldingResourceBlacklist(blacklistUrls)
         }
     }
 
@@ -141,8 +145,7 @@ class ReactNativeIdlingResources constructor(
                 timersIdlingResource,
                 rnBridgeIdlingResource,
                 uiModuleIdlingResource,
-                animIdlingResource
-            )
+                animIdlingResource)
 
         if (networkSyncEnabled) {
             setupNetworkIdlingResource()

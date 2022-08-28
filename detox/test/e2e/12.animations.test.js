@@ -70,37 +70,14 @@ describe('React-Native Animations', () => {
 
   describe('detoxEnableSynchronization', () => {
     it('should launch without synchronization for detoxEnableSynchronization 0', async () => {
-      await device.launchApp({
-        newInstance: true,
-        launchArgs: {
-          detoxEnableSynchronization: 0
-        }
-      });
-
-      // The delays are necessary since we're running without synchronization
-      await _delay(800);
+      await launchAppWithSynchronization(false);
       await element(by.text('RN Animations')).tap();
-      await _delay(800);
       await _startTest('JS', { duration: 5000 });
-      await _delay(800);
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
-
-      await device.launchApp({
-        newInstance: true,
-        launchArgs: {
-          detoxEnableSynchronization: 1
-        }
-      });
+      await launchAppWithSynchronization(true);
     });
 
     it('should launch with synchronization for detoxEnableSynchronization 1', async () => {
-      await device.launchApp({
-        newInstance: true,
-        launchArgs: {
-          detoxEnableSynchronization: 1
-        }
-      });
-
       await element(by.text('RN Animations')).tap();
       await _startTest('JS');
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
@@ -117,3 +94,13 @@ describe('React-Native Animations', () => {
     });
   });
 });
+
+const launchAppWithSynchronization = async (synchronizationState) => {
+return await device.launchApp({
+    newInstance: true,
+    launchArgs: {
+      detoxEnableSynchronization: synchronizationState ? 1 : 0
+    }
+  });
+}
+

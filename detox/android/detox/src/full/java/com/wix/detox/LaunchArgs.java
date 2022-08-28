@@ -37,11 +37,11 @@ public class LaunchArgs {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_BLACKLIST_URLS_ARG);
     }
 
-    public String getDetoxEnableSynchronization() {
+    public String getEnableSynchronization() {
         return InstrumentationRegistry.getArguments().getString(DETOX_ENABLE_SYNCHRONIZATION);
     }
 
-    public boolean hasDetoxEnableSynchronization() {
+    public boolean hasEnableSynchronization() {
         return InstrumentationRegistry.getArguments().containsKey(DETOX_ENABLE_SYNCHRONIZATION);
     }
 
