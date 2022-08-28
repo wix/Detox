@@ -25,10 +25,12 @@ class DetoxCoreListener {
     }
   }
 
-  async run_describe_start({ describeBlock: { name, children } }) {
-    if (children.length) {
-      log.trace.begin(name);
-      await detoxInternals.onRunDescribeStart({ name });
+  async run_describe_start({ describeBlock }) {
+    if (describeBlock.children.length) {
+      log.trace.begin(describeBlock.parent ? describeBlock.name : 'run the tests');
+      await detoxInternals.onRunDescribeStart({
+        name: describeBlock.name,
+      });
     }
   }
 
@@ -57,15 +59,11 @@ class DetoxCoreListener {
   }
 
   async hook_success() {
-    if (this._runningTest) {
-      log.trace.end({ success: true });
-    }
+    log.trace.end({ success: true });
   }
 
   async hook_failure({ error }) {
-    if (this._runningTest) {
-      log.trace.end({ success: false, error });
-    }
+    log.trace.end({ success: false, error });
   }
 
   async test_fn_start({ test }) {
@@ -76,20 +74,13 @@ class DetoxCoreListener {
     }
   }
 
-  async test_fn_success({ test }) {
-    await this._onBeforeActualTestStart(test);
-
-    if (this._runningTest) {
-      log.trace.end({ success: true });
-    }
+  async test_fn_success() {
+    log.trace.end({ success: true });
   }
 
   async test_fn_failure({ error }) {
     await detoxInternals.onTestFnFailure({ error });
-
-    if (this._runningTest) {
-      log.trace.end({ success: false, error });
-    }
+    log.trace.end({ success: false, error });
   }
 
   async test_done({ test }) {
