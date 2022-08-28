@@ -2,11 +2,13 @@ buildscript {
     apply from: './rninfo.gradle'
 
     def androidGradlePluginVersion =
-        rnInfo.isRN68OrHigher ?
-                '7.0.4' :
-            rnInfo.isRN66OrHigher ?
-                    '4.2.2' :
-                        '4.1.0'
+            rnInfo.isRN69OrHigher ?
+                    '7.1.1' :
+                    rnInfo.isRN68OrHigher ?
+                            '7.0.4' :
+                            rnInfo.isRN66OrHigher ?
+                                    '4.2.2' :
+                                    '4.1.0'
 
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
@@ -33,7 +35,7 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath 'de.undercouch:gradle-download-task:4.1.2'
+        classpath 'de.undercouch:gradle-download-task:5.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         if (!rootProject.hasProperty('suppressUnitTests')) {
@@ -66,7 +68,7 @@ allprojects {
 
 subprojects {
     afterEvaluate { p ->
-        if (p.hasProperty('android')){
+        if (p.hasProperty('android')) {
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
             }
