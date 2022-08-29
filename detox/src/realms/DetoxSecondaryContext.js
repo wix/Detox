@@ -6,7 +6,7 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $logger, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
+const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
 const _shortLifecycle = Symbol('shortLifecycle');
 
@@ -43,14 +43,14 @@ class DetoxSecondaryContext extends DetoxContext {
 
   /** @override */
   async [symbols.init](opts = {}) {
-    this[$logger].overrideConsole();
+    this.log.overrideConsole();
 
     const IPCClient = require('../ipc/IPCClient');
 
     this[_ipcClient] = new IPCClient({
       id: `secondary-${process.pid}`,
       state: this[$sessionState],
-      logger: this[$logger],
+      logger: this[symbols.logger],
     });
 
     await this[_ipcClient].init();

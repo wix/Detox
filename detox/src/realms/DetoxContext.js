@@ -2,16 +2,14 @@ const funpermaproxy = require('funpermaproxy');
 
 const { DetoxRuntimeError } = require('../errors');
 const DetoxLogger = require('../logger/DetoxLogger');
-const DetoxTracer = require('../logger/DetoxTracer');
+const legacyTracing = require('../logger/tracing/legacy');
 const symbols = require('../symbols');
 
 const DetoxConstants = require('./DetoxConstants');
 
 const $cleanup = Symbol('cleanup');
-const $logger = Symbol('logger');
 const $restoreSessionState = Symbol('restoreSessionState');
 const $sessionState = Symbol('restoreSessionState');
-const $tracer = Symbol('tracer');
 const $status = Symbol('status');
 const $worker = Symbol('worker');
 
@@ -50,16 +48,19 @@ class DetoxContext {
       : undefined;
 
     /**
-     * @protected
      * @type {DetoxLogger & Detox.Logger}
      */
-    this[$logger] = new DetoxLogger(loggerConfig);
-    /** @protected */
-    this[$tracer] = DetoxTracer.default({
-      logger: this[$logger],
+    this[symbols.logger] = new DetoxLogger(loggerConfig);
+
+    this.log = this[symbols.logger].child({ cat: 'user' });
+
+    this.trace = Object.freeze({
+      startSection: legacyTracing.startSection(this.log),
+      endSection: legacyTracing.endSection(this.log),
     });
-    /** @deprecated */
-    this.traceCall = this[$tracer].bind(this[$tracer]);
+
+    this.traceCall = legacyTracing.traceCall(this.log);
+
     /** @type {import('../DetoxWorker') | null} */
     this[$worker] = null;
   }
@@ -81,19 +82,6 @@ class DetoxContext {
     return DetoxConstants;
   }
 
-  /**
-   * @returns {Detox.Logger}
-   */
-  get log() {
-    return this[$logger];
-  }
-
-  /**
-   * @returns {Detox.DetoxExportWrapper['trace']}
-   */
-  get trace() {
-    return this[$tracer];
-  }
   //#endregion
 
   //#region Internal members
@@ -148,7 +136,7 @@ class DetoxContext {
   async [symbols.installWorker](opts) {
     if (opts.global) {
       opts.global['__detox__'] = this;
-      this[$logger].overrideConsole(opts.global);
+      this.log.overrideConsole(opts.global);
     }
 
     const DetoxWorker = require('../DetoxWorker');
@@ -188,10 +176,8 @@ class DetoxContext {
 module.exports = DetoxContext;
 module.exports.protected = {
   $cleanup,
-  $logger,
   $restoreSessionState,
   $status,
   $sessionState,
-  $tracer,
   $worker,
 };

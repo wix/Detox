@@ -6,9 +6,9 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'artifacts-manager,artifacts' });
 const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
-const { traceMethods } = require('../utils/trace');
+const traceMethods = require('../utils/traceMethods');
 
 const FileArtifact = require('./templates/artifact/FileArtifact');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
@@ -23,7 +23,7 @@ class ArtifactsManager extends EventEmitter {
     this._artifactPlugins = {};
     this._pathBuilder = this._resolveArtifactsPathBuilder(pathBuilder, rootDir);
 
-    traceMethods(this, 'artifacts-manager,artifacts', [
+    traceMethods(log, this, [
       'onAppReady',
       'onBeforeCleanup',
       'onBeforeLaunchApp',

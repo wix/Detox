@@ -219,9 +219,6 @@ class DetoxLogger {
     return { context, msg };
   }
 
-  _mergeContexts(...contexts) {
-  }
-
   _initBunyanLogger() {
     /** @type {bunyan.Stream[]} */
     const streams = [this._createDebugStream()];
@@ -332,6 +329,7 @@ function sanitizeBunyanContext(context) {
 }
 
 function mergeContexts(...contexts) {
+  // alias err and error
   // TODO: transform errors via Detox.error
 
   // if (overrides.__filename) {

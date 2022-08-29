@@ -1,7 +1,8 @@
 // @ts-nocheck
 const { DetoxRuntimeError } = require('../../../../../errors');
+const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const retry = require('../../../../../utils/retry');
-const { traceMethods } = require('../../../../../utils/trace');
+const traceMethods = require('../../../../../utils/traceMethods');
 const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
 const { LaunchCommand } = require('../../../../common/drivers/android/emulator/exec/EmulatorExec');
 
@@ -14,7 +15,7 @@ class EmulatorLauncher extends DeviceLauncher {
     super(eventEmitter);
     this._adb = adb;
     this._emulatorExec = emulatorExec;
-    traceMethods(this, 'device', ['_awaitEmulatorBoot']);
+    traceMethods(log, this, ['_awaitEmulatorBoot']);
   }
 
   /**

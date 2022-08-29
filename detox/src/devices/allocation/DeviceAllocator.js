@@ -1,5 +1,6 @@
 // @ts-nocheck
-const { traceMethods } = require('../../utils/trace');
+const log = require('../../utils/logger').child({ cat: 'device' });
+const traceMethods = require('../../utils/traceMethods');
 
 class DeviceAllocator {
   /**
@@ -7,7 +8,7 @@ class DeviceAllocator {
    */
   constructor(allocationDriver) {
     this._driver = allocationDriver;
-    traceMethods(this, 'device', ['allocate', 'free']);
+    traceMethods(log, this, ['allocate', 'free']);
   }
 
   /**

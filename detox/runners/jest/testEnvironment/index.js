@@ -3,7 +3,6 @@ const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const detox = require('../../../internals');
-const { DetoxError } = require('../../../src/errors');
 const Timer = require('../../../src/utils/Timer');
 
 const {

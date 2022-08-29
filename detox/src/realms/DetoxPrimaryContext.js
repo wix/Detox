@@ -12,7 +12,7 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $logger, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
+const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
 const _finalizeLogs = Symbol('finalizeLogs');
 const _finalizeLogsSync = Symbol('finalizeLogsSync');
@@ -23,6 +23,7 @@ const _wss = Symbol('wss');
 const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _areLogsEnabled = Symbol('areLogsEnabled');
+const _lifecycleLogger = Symbol('lifecycleLogger');
 
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
@@ -35,6 +36,8 @@ class DetoxPrimaryContext extends DetoxContext {
      * @type {import('../ipc/IPCServer') | null}
      */
     this[_ipcServer] = null;
+    /** @type {Detox.Logger} */
+    this[_lifecycleLogger] = this[symbols.logger].child({ cat: 'lifecycle' });
   }
 
   //#region Internal members
@@ -77,18 +80,16 @@ class DetoxPrimaryContext extends DetoxContext {
       logger: loggerConfig,
       session: sessionConfig
     } = detoxConfig;
-    await this[$logger].setConfig(loggerConfig);
+    await this[symbols.logger].setConfig(loggerConfig);
 
-    this.trace.startSection({
-      cat: 'lifecycle',
+    this[_lifecycleLogger].trace.begin({
       args: this[$sessionState],
-      name: process.argv.slice(1).join(' '),
-    });
+    }, process.argv.slice(1).join(' '));
 
     const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
-      logger: this[$logger],
+      logger: this[symbols.logger],
     });
 
     await this[_ipcServer].init();
@@ -165,10 +166,10 @@ class DetoxPrimaryContext extends DetoxContext {
       await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
 
       try {
-        this.trace.endSection();
+        this[_lifecycleLogger].trace.end();
         await this[_finalizeLogs]();
       } catch (err) {
-        this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
+        this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
       }
     }
   }
@@ -195,7 +196,7 @@ class DetoxPrimaryContext extends DetoxContext {
       this.trace.endSection({ cat: 'lifecycle', args: { abortSignal: signal } });
       this[_finalizeLogsSync]();
     } catch (err) {
-      this[$logger].error({ err }, 'Encountered an error while merging the process logs:');
+      this[symbols.logger].error({ err }, 'Encountered an error while merging the process logs:');
     }
   };
 
@@ -217,7 +218,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
   //#region Private members
   async[_finalizeLogs]() {
-    const logs = [this[$logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
+    const logs = [this[symbols.logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
     if (logs.length === 0) {
       return;
     }
@@ -237,7 +238,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
       await Promise.all([
         pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
-        pipe(mergedStream, streamUtils.debugStream(this[$logger].config.options), out2Stream),
+        pipe(mergedStream, streamUtils.debugStream(this[symbols.logger].config.options), out2Stream),
         pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
       ]);
     }
@@ -251,7 +252,11 @@ class DetoxPrimaryContext extends DetoxContext {
     const { rootDir } = this[symbols.config].artifacts;
     fs.mkdirpSync(rootDir);
 
-    const logs = [this[$logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
+    const logs = [
+      this[symbols.logger].file,
+      ...this[$sessionState].logFiles
+    ].filter(f => f && fs.existsSync(f));
+
     for (const log of logs) {
       if (logsEnabled) {
         fs.moveSync(log, path.join(rootDir, path.basename(log)));

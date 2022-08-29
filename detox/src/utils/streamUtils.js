@@ -8,8 +8,6 @@ const JsonlParser = require('stream-json/jsonl/Parser');
 const stripAnsi = require('strip-ansi');
 const { AbstractEventBuilder } = require('trace-event-lib');
 
-const DetoxTracer = require('../logger/DetoxTracer');
-
 const log = require('./logger').child({ __filename });
 
 function compareTimestamps(a, b) {

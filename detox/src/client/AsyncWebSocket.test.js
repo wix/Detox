@@ -169,12 +169,9 @@ describe('AsyncWebSocket', () => {
         socket.mockMessage({ type: 'somethingElse' });
 
         expect(onErrorCallback).not.toHaveBeenCalled();
-        expect(log.error).toHaveBeenCalledWith(
-          { event: 'WS_ERROR' },
-          expect.stringMatching('Unexpected error')
-        );
+        expect(log.error).toHaveBeenCalledWith({ error: expect.anything() });
 
-        const error = log.error.mock.calls[0][1];
+        const { error } = log.error.mock.calls[0][0];
         expect(error).toMatchSnapshot();
       });
 

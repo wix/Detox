@@ -66,7 +66,6 @@ declare global {
 
       readonly config: RuntimeConfig;
       readonly log: Detox.Logger;
-      readonly trace: Detox._LegacyTracer;
       readonly session: SessionState;
 
       readonly worker: Worker;

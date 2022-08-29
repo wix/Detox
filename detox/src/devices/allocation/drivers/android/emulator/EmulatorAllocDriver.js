@@ -1,7 +1,8 @@
 // @ts-nocheck
 const _ = require('lodash');
 
-const { traceMethods } = require('../../../../../utils/trace');
+const log = require('../../../../../utils/logger').child({ cat: 'device' });
+const traceMethods = require('../../../../../utils/traceMethods');
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -23,7 +24,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     this._emulatorLauncher = emulatorLauncher;
     this._allocationHelper = allocationHelper;
 
-    traceMethods(this, 'device', ['_launchEmulator']);
+    traceMethods(log, this, ['_launchEmulator']);
   }
 
   /**
