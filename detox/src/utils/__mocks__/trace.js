@@ -7,7 +7,9 @@ class FakeTrace {
   }
 }
 
-const traceCall = jest.fn().mockImplementation((__, promise) => promise);
+const traceCall = jest.fn().mockImplementation((__, promiseOrFunction) =>
+  typeof promiseOrFunction === 'function' ? promiseOrFunction() : promiseOrFunction
+);
 
 const traceInvocationCall = jest.fn().mockImplementation((__, ___, promise) => promise);
 
