@@ -71,13 +71,17 @@ describe('React-Native Animations', () => {
   describe('detoxEnableSynchronization', () => {
     it('should launch without synchronization for detoxEnableSynchronization 0', async () => {
       await launchAppWithSynchronization(false);
+      await _delay(800);
       await element(by.text('RN Animations')).tap();
+      await _delay(800);
       await _startTest('JS', { duration: 5000 });
+      await _delay(800);
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
       await launchAppWithSynchronization(true);
     });
 
     it('should launch with synchronization for detoxEnableSynchronization 1', async () => {
+      await launchAppWithSynchronization(true);
       await element(by.text('RN Animations')).tap();
       await _startTest('JS');
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
