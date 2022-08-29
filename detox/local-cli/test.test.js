@@ -504,7 +504,7 @@ describe('CLI', () => {
     return {
       ...mockCall,
       fullCommand: _.chain(logger().log.mock.calls)
-        .filter(([_level, _childMeta, meta]) => meta && meta.event === 'RUN_START')
+        .filter(([_level, _childMeta, meta]) => meta && meta.env)
         .get(index)
         .get(3)
         .value(),

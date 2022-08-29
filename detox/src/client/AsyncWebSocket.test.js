@@ -327,7 +327,7 @@ describe('AsyncWebSocket', () => {
       aws.resetInFlightPromises();
 
       socket.mockMessage({ type: 'someReply', messageId: 1 });
-      expect(log.debug).toHaveBeenCalledWith({ event: 'WS_LATE_RESPONSE' }, expect.stringContaining('messageId=1'));
+      expect(log.debug).toHaveBeenCalledWith({ messageId: 1 }, 'late response');
     });
   });
 
