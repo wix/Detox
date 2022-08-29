@@ -13,7 +13,7 @@ This checklist might come in handy whenever you have to make a clean uninstallat
 
 ### Detox Framework Cache
 
-Every `npm install detox` also has a `postinstall` phase, which builds (or unpacks) `Detox.framework` into `~/Library/Detox`.
+Every install of Detox also triggers a `postinstall` script in its `package.json`, which builds (or unpacks) `Detox.framework` into `~/Library/Detox`.
 
 You can either delete the folder manually:
 
@@ -100,6 +100,6 @@ adb -s <emulator-port> shell rm -rf /sdcard/*_*.*
 
 If you have installed the official CLI wrapper for Detox, then make sure to uninstall it as well:
 
-```sh
+```bash npm2yarn
 npm uninstall -g detox-cli
 ```
