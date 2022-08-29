@@ -15,7 +15,6 @@ const DEFAULT_SEND_OPTIONS = {
 
 class AsyncWebSocket {
   constructor(url) {
-    this._log = log.child({ url });
     this._url = url;
     this._ws = null;
     this._eventCallbacks = {};
@@ -92,7 +91,7 @@ class AsyncWebSocket {
     this.handleMultipleNonAtomicPendingActions();
 
     const payload = JSON.stringify(message);
-    this._log.trace({ payload }, 'send message');
+    log.trace({ payload }, 'send message');
     this._ws.send(payload);
 
     return inFlight.promise;
@@ -149,7 +148,7 @@ class AsyncWebSocket {
     }
 
     if (!hasPendingActions) {
-      log.error(EVENTS.ERROR, DetoxRuntimeError.format(error));
+      log.error({ error });
     }
   }
 
@@ -178,7 +177,7 @@ class AsyncWebSocket {
    * @private
    */
   _onOpen(event) { // eslint-disable-line no-unused-vars
-    this._log.trace(EVENTS.OPEN, `opened web socket to: ${this._url}`);
+    log.trace(`opened web socket to: ${this._url}`);
     this._opening.resolve();
     this._opening = null;
   }
@@ -226,7 +225,7 @@ class AsyncWebSocket {
     const data = event && event.data || null;
 
     try {
-      this._log.trace(EVENTS.MESSAGE, data);
+      log.trace({ payload: data }, 'get message');
 
       const json = JSON.parse(data);
       if (!json || !json.type) {
@@ -251,7 +250,7 @@ class AsyncWebSocket {
 
       if (!handled) {
         if (this._abortedMessageIds.has(json.messageId)) {
-          log.debug(EVENTS.LATE_RESPONSE, `Received late response for messageId=${json.messageId}`);
+          log.debug({ messageId: json.messageId }, `late response`);
         } else {
           throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
         }

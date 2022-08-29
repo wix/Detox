@@ -136,6 +136,7 @@ class JsonlStringer extends Transform {
 
 class SimpleEventBuilder extends AbstractEventBuilder {
   events = [];
+
   send(event) {
     this.events.push(event);
   }
@@ -147,9 +148,9 @@ function chromeTraceStream() {
 
   return flatMapTransform((data) => {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const { pid, trace, msg, time, name: _name, hostname: _hostname, ...args } = data;
-    const tid = trace ? trace.tid : DetoxTracer.threadize(args.cat);
+    const { pid, tid, cat = 'misc', trace, msg, time, name: _name, hostname: _hostname, ...args } = data;
     const ts = new Date(time).getTime() * 1E3;
+    const primaryCategory = cat.split(',', 1)[0];
 
     const builder = new SimpleEventBuilder();
     if (!knownPids.has(pid)) {
@@ -159,7 +160,7 @@ function chromeTraceStream() {
 
     const tidHash = `${pid}:${tid}`;
     if (!knownTids.has(tidHash)) {
-      builder.thread_name(DetoxTracer.categorize(tid), tid, pid);
+      builder.thread_name(primaryCategory, tid, pid);
       builder.thread_sort_index(tid, tid, pid);
       knownTids.add(tidHash);
     }

@@ -39,7 +39,7 @@ class DetoxLogger {
     };
 
     if (config && !context) {
-      // Here we work with the first (root) logger instance
+      // In this branch, `this` refers to the first (root) logger instance.
       this._config.file = temporaryPath.for.jsonl();
       this._config.dispatcher = new CategoryThreadDispatcher({
         logger: this,
@@ -127,7 +127,7 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    const merged = mergeContexts(this._context, overrides )
+    const merged = mergeContexts(this._context, overrides);
     return new DetoxLogger(this._config, merged, this._bunyan);
   }
 
@@ -172,13 +172,13 @@ class DetoxLogger {
    * @private
    */
   _complete(level, arg1, arg2, arg3) {
-    const end = (ctx) => this._bunyan[level].end(ctx, 'end');
+    const end = (ctx) => this[level].end(ctx, 'end');
     const action = typeof arg1 === 'string' ? arg2 : arg3;
     const args = arg3 === action ? [arg1, arg2] : [arg1];
     const { context, msg } = this._parseArgs(null, args);
 
     let result;
-    this._bunyan[level].begin(context, msg);
+    this[level].begin(context, msg);
     try {
       result = typeof action === 'function'
         ? action()
