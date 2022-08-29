@@ -60,7 +60,6 @@ describe('React-Native Animations', () => {
       await device.disableSynchronization();
       await _delay(800);
       await _startTest(driver, { duration: 5000 });
-      await _delay(800);
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
 
       await device.enableSynchronization();
@@ -74,9 +73,11 @@ describe('React-Native Animations', () => {
       await _delay(800);
       await element(by.text('RN Animations')).tap();
       await _delay(800);
-      await _startTest('JS', { duration: 5000 });
-      await _delay(800);
+      await _startTest('JS', { duration: 2000 });
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
+      await _delay(2200);
+      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
+
       await launchAppWithSynchronization(true);
     });
 
