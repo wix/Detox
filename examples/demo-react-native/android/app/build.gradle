@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
 apply from: '../rninfo.gradle'
 
-//project.ext.react = [:]
 project.ext.react = [
     enableHermes: true
 ]
 
 apply from: '../../node_modules/react-native/react.gradle'
+
+def enableHermes = project.ext.react.get("enableHermes", false)
+def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -67,7 +69,8 @@ dependencies {
     // noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
 
-    implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
+    implementation(project(path: ':AsyncStorage'))
+    // Note: not required unless effectively used by your app
 
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
@@ -76,7 +79,11 @@ dependencies {
 
 dependencies {
     // Use Hermes as our JS engine
-    def hermesPath = "../../node_modules/hermes-engine/android"
-    debugImplementation files("$hermesPath/hermes-debug.aar")
-    releaseImplementation files("$hermesPath/hermes-release.aar")
+    if (enableHermes) {
+        implementation("com.facebook.react:hermes-engine:+") {
+            exclude group: 'com.facebook.fbjni'
+        }
+    } else {
+        implementation jscFlavor
+    }
 }
