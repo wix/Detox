@@ -9,6 +9,7 @@ project.ext.rnInfo = [
     isRN66OrHigher: rnMajorVer >= 66,
     isRN68OrHigher: rnMajorVer >= 68,
     isRN69OrHigher: rnMajorVer >= 69,
+    isRn68OrLower: rnMajorVer <= 68,
 ]
 
 private static def getRNMajorVersion() {
