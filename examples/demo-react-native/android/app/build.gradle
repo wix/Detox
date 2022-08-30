@@ -78,7 +78,7 @@ dependencies {
 }
 
 dependencies {
-    if (project.ext.rnInfoLT.isRn68OrLower) {
+    if (project.ext.rnInfoLT.isRN68OrLower) {
         def hermesPath = "../../node_modules/hermes-engine/android"
         debugImplementation files("$hermesPath/hermes-debug.aar")
         releaseImplementation files("$hermesPath/hermes-release.aar")
