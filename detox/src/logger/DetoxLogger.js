@@ -1,8 +1,5 @@
 const path = require('path');
-const { PassThrough } = require('stream');
 
-const bunyan = require('bunyan');
-const bunyanDebugStream = require('bunyan-debug-stream');
 const _ = require('lodash');
 
 const temporaryPath = require('../artifacts/utils/temporaryPath');
@@ -10,6 +7,7 @@ const { DetoxInternalError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
 const isPromise = require('../utils/isPromise');
 
+const BunyanLogger = require('./BunyanLogger');
 const customConsoleLogger = require('./customConsoleLogger');
 const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
 
@@ -17,17 +15,22 @@ const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
  * @typedef PrivateLoggerConfig
  * @property {string} [file]
  * @property {CategoryThreadDispatcher} [dispatcher]
+ * @property {BunyanLogger} [bunyan]
  */
 
 class DetoxLogger {
   /**
-   * @param {Detox.DetoxLoggerConfig & PrivateLoggerConfig} [config]
+   * @param {Partial<Detox.DetoxLoggerConfig & PrivateLoggerConfig>} [config]
    * @param {object} [context]
-   * @param {bunyan} [bunyanLogger]
    */
-  constructor(config, context, bunyanLogger) {
-    // IMPORTANT: all the loggers should share the same object instance of this._config
-    this._config = config || {
+  constructor(config, context) {
+    /**
+     * @type {Detox.DetoxLoggerConfig & PrivateLoggerConfig}
+     *
+     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._config.
+     */
+    this._config = {
+      file: temporaryPath.for.jsonl(),
       level: 'info',
       overrideConsole: 'none',
       options: {
@@ -36,11 +39,13 @@ class DetoxLogger {
         showPid: true,
         showMetadata: false,
       },
+
+      ...config,
     };
 
-    if (config && !context) {
+    if (!context) {
       // In this branch, `this` refers to the first (root) logger instance.
-      this._config.file = temporaryPath.for.jsonl();
+      this._config.bunyan = new BunyanLogger(this._config);
       this._config.dispatcher = new CategoryThreadDispatcher({
         logger: this,
         categories: {
@@ -64,8 +69,6 @@ class DetoxLogger {
 
     /** @type {object | undefined} */
     this._context = context;
-    /** @type {bunyan} */
-    this._bunyan = bunyanLogger || this._initBunyanLogger();
 
     this.fatal = this._setupLogMethod('fatal');
     this.error = this._setupLogMethod('error');
@@ -107,18 +110,9 @@ class DetoxLogger {
     }
 
     _.merge(this._config, config);
-
-    // @ts-ignore
-    const [oldStream] = this._bunyan.streams.splice(0, 1);
-    oldStream.stream.end();
-    this._bunyan.addStream(this._createDebugStream());
-
     this._config.file = temporaryPath.for.jsonl();
-    this._bunyan.addStream({
-      level: 'trace',
-      path: this._config.file,
-    });
-
+    this._config.bunyan.installDebugStream(this._config);
+    this._config.bunyan.installFileStream(this._config);
     this.overrideConsole();
   }
 
@@ -128,7 +122,7 @@ class DetoxLogger {
    */
   child(overrides) {
     const merged = mergeContexts(this._context, overrides);
-    return new DetoxLogger(this._config, merged, this._bunyan);
+    return new DetoxLogger(this._config, merged);
   }
 
   /**
@@ -147,7 +141,7 @@ class DetoxLogger {
   }
 
   /**
-   * @param {bunyan.LogLevel} level
+   * @param {import('bunyan').LogLevel} level
    * @param {any[]} args
    * @private
    */
@@ -164,11 +158,11 @@ class DetoxLogger {
       delete context.id;
     }
 
-    this._bunyan[level](context, ...msg);
+    this._config.bunyan.logger[level](context, ...msg);
   }
 
   /**
-   * @param {bunyan.LogLevel} level
+   * @param {import('bunyan').LogLevel} level
    * @private
    */
   _complete(level, arg1, arg2, arg3) {
@@ -219,34 +213,6 @@ class DetoxLogger {
     return { context, msg };
   }
 
-  _initBunyanLogger() {
-    /** @type {bunyan.Stream[]} */
-    const streams = [this._createDebugStream()];
-
-    if (this._config.file) {
-      streams.push({
-        level: 'trace',
-        path: this._config.file,
-      });
-    }
-
-    return bunyan.createLogger({ name: 'detox', streams });
-  }
-
-  _createDebugStream() {
-    const { out = process.stderr, ...streamOptions } = this._config.options;
-    const passthrough = new PassThrough().pipe(out);
-
-    return {
-      type: 'raw',
-      level: this._config.level,
-      stream: bunyanDebugStream.default({
-        ...streamOptions,
-        out: passthrough,
-      }),
-    };
-  }
-
   overrideConsole(sandbox) {
     const option = this._config.overrideConsole;
     if (option === 'none') {
@@ -258,7 +224,7 @@ class DetoxLogger {
     }
   }
 
-  /** @type {bunyanDebugStream.BunyanDebugStreamOptions} */
+  /** @type {import('bunyan-debug-stream').BunyanDebugStreamOptions} */
   static defaultOptions = {
     showDate: shortFormat,
     showLoggerName: true,

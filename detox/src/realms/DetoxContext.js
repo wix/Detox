@@ -45,7 +45,7 @@ class DetoxContext {
 
     const loggerConfig = this[$sessionState].detoxConfig
       ? this[$sessionState].detoxConfig.logger
-      : undefined;
+      : { file: null };
 
     /**
      * @type {DetoxLogger & Detox.Logger}
