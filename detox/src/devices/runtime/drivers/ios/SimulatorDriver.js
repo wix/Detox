@@ -7,7 +7,7 @@ const _ = require('lodash');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
-const log = require('../../../../utils/logger').child({ __filename });
+const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');

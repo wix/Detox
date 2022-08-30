@@ -38,7 +38,7 @@ class CategoryThreadDispatcher {
 
   /** @returns {ThreadDispatcher} */
   _resolveDispatcher(cat) {
-    const mainCategory = cat ? cat[0] : '';
+    const mainCategory = cat ? cat.split(',', 1)[0] : '';
     return this.dispatchers[mainCategory] || this.dispatchers.default;
   }
 

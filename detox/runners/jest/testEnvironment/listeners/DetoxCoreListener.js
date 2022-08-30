@@ -15,7 +15,6 @@ class DetoxCoreListener {
     this._testsFailedBeforeStart = new WeakSet();
     this._env = env;
     this._testRunTimes = 1;
-    this._runningTest = false;
   }
 
   async setup() {
@@ -34,9 +33,9 @@ class DetoxCoreListener {
     }
   }
 
-  async run_describe_finish({ describeBlock: { name, children } }) {
-    if (children.length) {
-      await detoxInternals.onRunDescribeFinish({ name });
+  async run_describe_finish({ describeBlock }) {
+    if (describeBlock.children.length) {
+      await detoxInternals.onRunDescribeFinish({ name: describeBlock.name });
       log.trace.end();
     }
   }
@@ -52,10 +51,7 @@ class DetoxCoreListener {
 
   async hook_start(event, state) {
     await this._onBeforeActualTestStart(state.currentlyRunningTest);
-
-    if (this._runningTest) {
-      log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
-    }
+    log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
   }
 
   async hook_success() {
@@ -68,10 +64,7 @@ class DetoxCoreListener {
 
   async test_fn_start({ test }) {
     await this._onBeforeActualTestStart(test);
-
-    if (this._runningTest) {
-      log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
-    }
+    log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
   }
 
   async test_fn_success() {
@@ -95,12 +88,9 @@ class DetoxCoreListener {
       await detoxInternals.onTestDone(metadata);
       this._startedTests.delete(test);
       log.trace.end({
-        args: {
-          status: metadata.status,
-          timedOut: metadata.timedOut,
-        },
+        status: metadata.status,
+        timedOut: metadata.timedOut,
       });
-      this._runningTest = false;
     }
   }
 
@@ -123,7 +113,6 @@ class DetoxCoreListener {
     };
 
     this._startedTests.add(test);
-    this._runningTest = true;
 
     log.trace.begin({
       context: 'test',

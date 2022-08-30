@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const argparse = require('../utils/argparse');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'config' });
 
 const { DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION } = require('./utils/warnings');
 

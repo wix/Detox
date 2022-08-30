@@ -83,7 +83,7 @@ class DetoxPrimaryContext extends DetoxContext {
     await this[symbols.logger].setConfig(loggerConfig);
 
     this[_lifecycleLogger].trace.begin({
-      args: this[$sessionState],
+      data: this[$sessionState],
     }, process.argv.slice(1).join(' '));
 
     const IPCServer = require('../ipc/IPCServer');
@@ -193,7 +193,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     try {
-      this.trace.endSection({ cat: 'lifecycle', args: { abortSignal: signal } });
+      this[_lifecycleLogger].trace.end({ abortSignal: signal });
       this[_finalizeLogsSync]();
     } catch (err) {
       this[symbols.logger].error({ err }, 'Encountered an error while merging the process logs:');

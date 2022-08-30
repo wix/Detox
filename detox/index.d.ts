@@ -383,8 +383,8 @@ declare global {
 
         /** @internal */
         interface _LogMethodSignature {
-            (message?: string): void
-            (event: LogEvent, message?: string): void;
+            (...args?: unknown[]): void
+            (event: LogEvent, ...args?: unknown[]): void;
         }
 
         /** @internal */

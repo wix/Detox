@@ -3,11 +3,12 @@ const path = require('path');
 const _ = require('lodash');
 
 const temporaryPath = require('../artifacts/utils/temporaryPath');
-const { DetoxInternalError } = require('../errors');
+const { DetoxInternalError, DetoxError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
 const isPromise = require('../utils/isPromise');
 
 const BunyanLogger = require('./BunyanLogger');
+const MessageStack = require('./MessageStack');
 const customConsoleLogger = require('./customConsoleLogger');
 const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
 
@@ -16,6 +17,7 @@ const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
  * @property {string} [file]
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
+ * @property {MessageStack} [messageStack]
  */
 
 class DetoxLogger {
@@ -50,19 +52,21 @@ class DetoxLogger {
         logger: this,
         categories: {
           'lifecycle': [0],
+          'cli': [1],
           'logger': [2],
           'ipc': [29],
           'ws-server': [50, 99],
           'ws-client': [100, 149],
           'device': [150, 159],
           'artifacts-manager': [300],
-          'artifact-plugin': [310, 349],
+          'artifacts-plugin': [310, 349],
           'artifact': [350, 399],
           'child-process': [400, 499],
-          'default': [500],
+          'default': [999],
           'user': [10000, 10999]
         },
       });
+      this._config.messageStack = new MessageStack();
 
       this.overrideConsole();
     }
@@ -121,41 +125,62 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    const merged = mergeContexts(this._context, overrides);
+    const merged = this._mergeContexts(this._context, overrides);
     return new DetoxLogger(this._config, merged);
   }
 
+  _mergeContexts(...contexts) {
+    const context = Object.assign({}, ...contexts);
+
+    if (context.error || context.err) {
+      context.error = DetoxError.format(context.error || context.err);
+      delete context.err;
+    }
+
+    if (Array.isArray(context.cat)) {
+      context.cat = context.cat.join(',');
+    }
+
+    if (context.__filename) {
+      context.__filename = path.basename(context.__filename);
+    }
+
+    context.ph = context.ph || 'i';
+    context.cat = context.cat || '';
+
+    context.tid = this._config.dispatcher.resolve(
+      context.ph,
+      context.cat,
+      context.id || 0
+    );
+
+    return sanitizeBunyanContext(context);
+  }
   /**
    * @param {Detox.DetoxLogLevel} level
    * @returns {Detox._LogMethod}
    * @private
    */
   _setupLogMethod(level) {
-    const logMethod = this[level] = this._forward.bind(this, level, null);
+    const logMethod = this[level] = this._instant.bind(this, level);
 
     return Object.assign(logMethod, {
-      begin: this._forward.bind(this, level, { ph: 'B' }),
+      begin: this._begin.bind(this, level),
       complete: this._complete.bind(this, level),
-      end: this._forward.bind(this, level, { ph: 'E' }),
+      end: this._end.bind(this, level),
     });
   }
 
-  /**
-   * @param {import('bunyan').LogLevel} level
-   * @param {any[]} args
-   * @private
-   */
-  _forward(level, boundContext, ...args) {
-    const { context, msg } = this._parseArgs(boundContext, args);
-    const { ph = 'i', cat, id } = context;
+  _begin(level, ...args) {
+    const { context, msg } = this._parseArgs({ ph: 'B' }, args);
+    this._config.messageStack.push(context.tid, msg);
+    this._config.bunyan.logger[level](context, ...msg);
+  }
 
-    if (Array.isArray(cat)) {
-      context.cat = context.cat.join(',');
-    }
-
-    if (id != null) {
-      context.tid = this._config.dispatcher.resolve(ph, cat, id);
-      delete context.id;
+  _end(level, ...args) {
+    let { context, msg } = this._parseArgs({ ph: 'E' }, args);
+    if (msg.length === 0) {
+      msg = this._config.messageStack.pop(context.tid);
     }
 
     this._config.bunyan.logger[level](context, ...msg);
@@ -163,16 +188,26 @@ class DetoxLogger {
 
   /**
    * @param {import('bunyan').LogLevel} level
+   * @param {any[]} args
    * @private
    */
-  _complete(level, arg1, arg2, arg3) {
-    const end = (ctx) => this[level].end(ctx, 'end');
-    const action = typeof arg1 === 'string' ? arg2 : arg3;
-    const args = arg3 === action ? [arg1, arg2] : [arg1];
+  _instant(level, ...args) {
     const { context, msg } = this._parseArgs(null, args);
+    this._config.bunyan.logger[level](context, ...msg);
+  }
+
+  /**
+   * @param {import('bunyan').LogLevel} level
+   * @private
+   */
+  _complete(level, maybeContext, maybeMessage, maybeAction) {
+    const action = typeof maybeContext !== 'string' ? maybeAction : maybeMessage;
+    const args = maybeAction === action ? [maybeContext, maybeMessage] : [maybeContext];
+    const { context, msg } = this._parseArgs(null, args);
+    const end = (ctx) => this[level].end(ctx);
 
     let result;
-    this[level].begin(context, msg);
+    this[level].begin(context, ...msg);
     try {
       result = typeof action === 'function'
         ? action()
@@ -182,18 +217,24 @@ class DetoxLogger {
         end(context);
       } else {
         result.then(
-          () => end({ ...context, success: true }),
-          (err) => end({ ...context, success: false, err }),
+          () => end({ success: true }),
+          (err) => end({ success: false, err }),
         );
       }
+
+      return result;
     } catch (err) {
-      end({ ...context, success: false, err });
+      end({ success: false, err });
       throw err;
     }
   }
 
   _parseArgs(boundContext, args) {
-    const userContext = _.isError(args[0]) ? { err: args[0] } : _.isObject(args[0]) ? args[0] : undefined;
+    const userContext = _.isError(args[0])
+      ? { err: args[0] }
+      : _.isObject(args[0])
+        ? args[0]
+        : undefined;
     const msg = userContext !== undefined ? args.slice(1) : args;
 
     if (userContext) {
@@ -204,11 +245,11 @@ class DetoxLogger {
       delete userContext.ph;
     }
 
-    const context = sanitizeBunyanContext({
-      ...this._context,
-      ...boundContext,
-      ...userContext,
-    });
+    const context = this._mergeContexts(
+      this._context,
+      boundContext,
+      userContext,
+    );
 
     return { context, msg };
   }
@@ -229,23 +270,21 @@ class DetoxLogger {
     showDate: shortFormat,
     showLoggerName: true,
     showPid: true,
+    showLevel: false,
     showMetadata: false,
     basepath: path.join(__dirname, '..'),
     prefixers: {
-      '__filename': (filename, { entry }) => {
-        if (entry.event === 'USER_LOG') {
-          return '';
-        }
-
-        if (entry.event === 'ERROR') {
-          return `${filename}/${entry.event}`;
-        }
-
-        return entry.event ? entry.event : filename;
-      },
-      'trackingId': id => ` #${id}`,
-      'cpid': pid => ` cpid=${pid}`,
+      'cat': (value) => (value || '').split(',', 1)[0],
+      'event': (value) => value,
+      'id': (id) => `#${id}`,
+      'ph': ph => ph,
     },
+    stringifiers: {
+      // eslint-disable-next-line unicorn/no-array-method-this-argument
+      'args': args => `(${require('lodash').map(args, a => JSON.stringify(a)).join(', ')})`,
+      'error': err => DetoxError.format(err),
+      'data': json => typeof json === 'string' ? json : JSON.stringify(json, null, 2),
+    }
   };
 
   /**
@@ -294,19 +333,5 @@ function sanitizeBunyanContext(context) {
   return hasReservedProperties(context) ? _.mapKeys(context, escapeCallback) : context;
 }
 
-function mergeContexts(...contexts) {
-  // alias err and error
-  // TODO: transform errors via Detox.error
-
-  // if (overrides.__filename) {
-  //   overrides.__filename = path.basename(overrides.__filename, '.js');
-  // }
-  // TODO: merge cats
-  // if (overrides.cat && !Array.isArray(overrides.cat)) {
-  //   overrides.cat = overrides.cat.split(',');
-  // }
-
-  return Object.assign({}, ...contexts);
-}
 
 module.exports = DetoxLogger;

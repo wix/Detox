@@ -6,7 +6,7 @@ class IPCClient {
   constructor({ id, logger, state }) {
     this._id = id;
     /** @type {import('../logger/DetoxLogger')} logger */
-    this._logger = logger.child({ __filename, cat: 'ipc' });
+    this._logger = logger.child({ cat: 'ipc' });
     /** @type {import('./state').SecondarySessionState} */
     this._state = state;
 

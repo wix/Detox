@@ -120,7 +120,7 @@ class DetoxSession {
   }
 
   _notifyAboutAppConnect() {
-    log.trace({ event: 'SESSION_JOINED' }, `app joined session ${this.id}`);
+    log.trace(`app joined session ${this.id}`);
 
     if (!this._tester) {
       return;
@@ -132,7 +132,7 @@ class DetoxSession {
   }
 
   _notifyAboutAppDisconnect() {
-    log.trace({ event: 'SESSION_TORN' }, `app exited session ${this.id}`);
+    log.trace(`app exited session ${this.id}`);
 
     if (!this._tester) {
       return;
@@ -144,11 +144,11 @@ class DetoxSession {
   }
 
   _notifyAboutTesterConnect() {
-    log.trace({ event: 'SESSION_JOINED' }, `tester joined session ${this.id}`);
+    log.trace(`tester joined session ${this.id}`);
   }
 
   _notifyAboutTesterDisconnect() {
-    log.trace({ event: 'SESSION_TORN' }, `tester exited session ${this.id}`);
+    log.trace(`tester exited session ${this.id}`);
 
     if (!this._app) {
       return;

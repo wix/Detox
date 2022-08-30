@@ -3,7 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const { Tail } = require('tail');
 
-const unitLogger = require('../../../../../utils/logger').child({ __filename });
+const unitLogger = require('../../../../../utils/logger').child({ cat: 'device' });
 
 function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand) {
   let childProcessOutput;

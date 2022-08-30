@@ -38,4 +38,5 @@ function callCli(modulePath, cmd) {
   });
 }
 
+// @ts-ignore
 global.callCli = callCli;

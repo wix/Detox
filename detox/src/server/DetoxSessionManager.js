@@ -1,6 +1,6 @@
 // @ts-nocheck
 const DetoxInternalError = require('../errors/DetoxInternalError');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'ws-server,ws' });
 
 const DetoxConnection = require('./DetoxConnection');
 const DetoxSession = require('./DetoxSession');

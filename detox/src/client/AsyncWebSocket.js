@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 const DetoxInternalError = require('../errors/DetoxInternalError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const Deferred = require('../utils/Deferred');
-const log = require('../utils/logger').child({ __filename, cat: 'ws-client,ws' });
+const log = require('../utils/logger').child({ cat: 'ws-client,ws' });
 
 const InflightRequest = require('./InflightRequest');
 
@@ -91,7 +91,7 @@ class AsyncWebSocket {
     this.handleMultipleNonAtomicPendingActions();
 
     const payload = JSON.stringify(message);
-    log.trace({ payload }, 'send message');
+    log.trace({ data: payload }, 'send message');
     this._ws.send(payload);
 
     return inFlight.promise;
@@ -225,7 +225,7 @@ class AsyncWebSocket {
     const data = event && event.data || null;
 
     try {
-      log.trace({ payload: data }, 'get message');
+      log.trace({ data }, 'get message');
 
       const json = JSON.parse(data);
       if (!json || !json.type) {

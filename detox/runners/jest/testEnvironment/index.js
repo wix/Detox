@@ -54,9 +54,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     log.trace.begin(this.testPath);
 
     this.setup = log.trace.complete.bind(null, 'set up environment', this.setup.bind(this));
+    const _teardown = this.teardown.bind(this);
     this.teardown = async () => {
       try {
-        await log.trace.complete('tear down environment', this.teardown.bind(this));
+        await log.trace.complete('tear down environment', _teardown);
       } finally {
         await log.trace.end();
       }
