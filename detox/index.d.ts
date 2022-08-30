@@ -383,14 +383,14 @@ declare global {
 
         /** @internal */
         interface _LogMethodSignature {
-            (...args?: unknown[]): void
-            (event: LogEvent, ...args?: unknown[]): void;
+            (...args: unknown[]): void
+            (event: LogEvent, ...args: unknown[]): void;
         }
 
         /** @internal */
         interface _CompleteMethodSignature {
-            <T>(message: string, action: Promise<T> | (() => Promise<T>)): Promise<T>;
-            <T>(event: LogEvent, message: string, action: Promise<T> | (() => Promise<T>)): Promise<T>;
+            <T>(message: string, action: T | (() => T)): T;
+            <T>(event: LogEvent, message: string, action: T | (() => T)): T;
         }
 
         type LogEvent = {

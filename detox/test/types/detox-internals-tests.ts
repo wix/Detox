@@ -21,7 +21,6 @@ import {
   onTestStart,
   resolveConfig,
   session,
-  trace,
   uninstallWorker,
   worker,
 } from 'detox/internals';
@@ -77,6 +76,18 @@ async function logTest() {
 
   log.trace('msg');
   log.trace({ event: 'EVENT' }, 'msg');
+
+  log.trace.begin('Outer section');
+  log.debug.begin({ arg: 'value' }, 'Inner section');
+
+  log.info.complete('Sync section', () => 'sync').toUpperCase();
+  log.warn.complete('Async section', async () => 42).then(() => 84);
+  log.error.complete('Promise section', Promise.resolve(42)).finally(() => {});
+  log.fatal.complete('Value section', 42).toFixed(1);
+
+  log.warn.end({ extra: 'data' });
+  log.info.end();
+
   log.debug('msg');
   log.debug({ event: 'EVENT' }, 'msg');
   log.info('msg');
@@ -93,45 +104,11 @@ async function logTest() {
 
   const serverLogger = log.child({ cat: 'server', id: 4333 });
   serverLogger.info.begin({}, 'Starting server...');
-  serverLogger.trace.complete('something', async () => {
-
+  await serverLogger.trace.complete('something', async () => {
+    // ... do something ...
   });
+
   serverLogger.trace.end();
-
-  const event1: Detox.LogEvent = {
-    id: 1,
-    msg: 'Long method',
-    cat: [],
-    args: {},
-    cname: 'inactive'
-  };
-
-  const event2 = {
-    cname: 'red',
-    args: { $success: true },
-  };
-
-  const handle1 = trace.startSection('Long method', event1.args);
-  if (Math.random() > 0.5) {
-    handle1.end();
-  } else {
-    handle1.end(event2);
-  }
-
-  const handle2 = trace.startSection(event1);
-  if (Math.random() > 0.5) {
-    handle2.end();
-  } else {
-    handle2.end(event2);
-  }
-
-  await trace('Long method', async () => {
-    // do something
-  });
-
-  trace(event1, () => {
-    // do something
-  });
 }
 
 function configTest() {
