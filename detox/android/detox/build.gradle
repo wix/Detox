@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 def _ext = rootProject.ext
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
@@ -13,6 +12,10 @@ def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'ko
 android {
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
+
+    buildFeatures {
+        viewBinding true
+    }
 
     defaultConfig {
         minSdkVersion _minSdkVersion
@@ -163,4 +166,14 @@ if (!rootProject.hasProperty('suppressUnitTests') &&
 // Enable publishing
 if (rootProject.hasProperty('isOfficialDetoxLib')) {
     apply from: './publishing.gradle'
+}
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin") && (!requested.name.startsWith("kotlin-gradle"))) {
+                useVersion("1.6.0")
+            }
+        }
+    }
 }

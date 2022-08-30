@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.lang.NullPointerException
 import kotlin.test.assertFailsWith
 
 object DetoxMultiTapSpec: Spek({
@@ -136,17 +137,17 @@ object DetoxMultiTapSpec: Spek({
         }
 
         it("should throw if no UI-controller provided") {
-            assertFailsWith(KotlinNullPointerException::class) {
+            assertFailsWith(NullPointerException::class) {
                 uut(1).sendTap(null, coordinates, precision, -1, -1)
             }
         }
 
         it("should throw if no coordinates / precision are provided") {
-            assertFailsWith(KotlinNullPointerException::class) {
+            assertFailsWith(NullPointerException::class) {
                 uut(1).sendTap(uiController, null, precision, -1, -1)
             }
 
-            assertFailsWith(KotlinNullPointerException::class) {
+            assertFailsWith(NullPointerException::class) {
                 uut(1).sendTap(uiController, coordinates, null, -1, -1)
             }
         }
