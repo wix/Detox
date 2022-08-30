@@ -24,12 +24,19 @@ describe('composeLoggerConfig', () => {
         showDate: expect.any(Function),
         showLoggerName: true,
         showPid: true,
+        showLevel: false,
         showMetadata: false,
         basepath: expect.any(String),
         prefixers: {
-          '__filename': expect.any(Function),
-          'trackingId': expect.any(Function),
-          'cpid': expect.any(Function),
+          'cat': expect.any(Function),
+          'event': expect.any(Function),
+          'id': expect.any(Function),
+          'ph': expect.any(Function),
+        },
+        stringifiers: {
+          'args': expect.any(Function),
+          'data': expect.any(Function),
+          'error': expect.any(Function),
         },
       },
     });
@@ -61,7 +68,7 @@ describe('composeLoggerConfig', () => {
           showLoggerName: false,
           showPid: true,
           prefixers: expect.objectContaining({
-            '__filename': expect.any(Function),
+            'cat': expect.any(Function),
             somethingElse: expect.any(Function),
           }),
         }),

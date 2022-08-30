@@ -1,6 +1,4 @@
-// @ts-nocheck
 const _ = require('lodash');
-const { WebSocket } = require('ws'); // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const logger = require('../utils/logger').child({ cat: 'ws-server,ws' });
@@ -9,9 +7,11 @@ const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandle
 
 class DetoxConnection {
   /**
-   * @param {DetoxSessionManager} sessionManager
-   * @param {WebSocket} webSocket
-   * @param {Socket} socket
+   * @param {{
+   *   sessionManager: import('./DetoxSessionManager');
+   *   webSocket: import('ws');
+   *   socket: import('net').Socket;
+   * }} config
    */
   constructor({ sessionManager, webSocket, socket }) {
     this._onMessage = this._onMessage.bind(this);
@@ -78,11 +78,11 @@ class DetoxConnection {
         this._handler.onError(handlerError, action);
       }
     } catch (error) {
-      this._log.warn({ error });
+      this._log.warn({ error }, 'Caught unhandled error:');
     }
   }
 
-  _onError(e) {
+  _onError(error) {
     this._log.warn({ error }, 'Caught socket error:');
   }
 

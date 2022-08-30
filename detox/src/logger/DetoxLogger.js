@@ -274,10 +274,10 @@ class DetoxLogger {
     showMetadata: false,
     basepath: path.join(__dirname, '..'),
     prefixers: {
+      'ph': ph => require('chalk').gray(ph),
       'cat': (value) => (value || '').split(',', 1)[0],
       'event': (value) => value,
       'id': (id) => `#${id}`,
-      'ph': ph => ph,
     },
     stringifiers: {
       // eslint-disable-next-line unicorn/no-array-method-this-argument

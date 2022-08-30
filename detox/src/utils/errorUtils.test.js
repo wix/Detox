@@ -7,7 +7,7 @@ describe('sliceErrorStack(error, fromIndex)', () => {
     function innerFunction() { throw new Error('Source Error'); }
     function outerFunction() { innerFunction(); }
     function attemptFunction() {
-      try { outerFunction(); } catch (e) { console.error('err', e); return e; }
+      try { outerFunction(); } catch (e) { return e; }
     }
 
     const slicer = at => (_line) => --at < 0;
