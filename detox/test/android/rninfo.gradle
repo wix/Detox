@@ -1,14 +1,18 @@
 import groovy.json.JsonSlurper
 
 def rnMajorVer = getRNMajorVersion()
-println "[$project] rn-info: detected React Native version (major) $rnMajorVer"
+println "[$gradle] rn-info: detected React Native version (major) $rnMajorVer"
 
-project.ext.rnInfo = [
+gradle.ext.rnInfo = [
     majorVersion: rnMajorVer,
     isRN64OrHigher: rnMajorVer >= 64,
     isRN66OrHigher: rnMajorVer >= 66,
     isRN68OrHigher: rnMajorVer >= 68,
     isRN69OrHigher: rnMajorVer >= 69,
+]
+
+gradle.ext.rnInfoLT = [
+    majorVersion: rnMajorVer,
     isRn68OrLower: rnMajorVer <= 68,
 ]
 

@@ -80,7 +80,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation project(path: ':@react-native-community_slider')
 
-    if (rnInfo.isRn68OrLower) {
+    if (gradle.ext.rnInfoLT.isRn68OrLower) {
         fromSourceImplementation(project(path: ':ReactAndroid'))
     }
 
@@ -98,7 +98,7 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    if (rnInfo.isRN68OrLower) {
+    if (gradle.ext.rnInfoLT.isRn68OrLower) {
         def hermesPath = "../../node_modules/hermes-engine/android"
         debugImplementation files("$hermesPath/hermes-debug.aar")
         releaseImplementation files("$hermesPath/hermes-release.aar")

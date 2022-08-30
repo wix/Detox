@@ -6,6 +6,8 @@ pluginManagement {
     }
 }
 
+apply from: './rninfo.gradle'
+
 rootProject.name = 'DetoxTest'
 include ':app'
 
@@ -14,9 +16,7 @@ includeBuild('../node_modules/react-native-gradle-plugin')
 include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')
 
-def rnMajorVer = getRNMajorVersion()
-
-if (rnMajorVer <= 68) {
+if (gradle.ext.rnInfoLT.isRn68OrLower) {
     include ':ReactAndroid'
     project(':ReactAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native/ReactAndroid')
 } else {
@@ -42,13 +42,3 @@ project(':react-native-community-geolocation').projectDir = new File(rootProject
 
 include ':@react-native-community_slider'
 project(':@react-native-community_slider').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/slider/android')
-
-import groovy.json.JsonSlurper
-
-private static def getRNMajorVersion() {
-    def jsonSlurper = new JsonSlurper()
-    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
-    String rnVersion = packageJSON.get('version')
-    Integer rnVersionMajor = rnVersion.split('\\.')[1].toInteger()
-    return rnVersionMajor
-}
