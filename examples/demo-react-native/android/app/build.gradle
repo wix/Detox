@@ -78,12 +78,17 @@ dependencies {
 }
 
 dependencies {
-    // Use Hermes as our JS engine
-    if (enableHermes) {
-        implementation("com.facebook.react:hermes-engine:+") {
-            exclude group: 'com.facebook.fbjni'
-        }
+    if (project.ext.rnInfoLT.isRn68OrLower) {
+        def hermesPath = "../../node_modules/hermes-engine/android"
+        debugImplementation files("$hermesPath/hermes-debug.aar")
+        releaseImplementation files("$hermesPath/hermes-release.aar")
     } else {
-        implementation jscFlavor
+        if (enableHermes) {
+            implementation("com.facebook.react:hermes-engine:+") {
+                exclude group: 'com.facebook.fbjni'
+            }
+        } else {
+            implementation jscFlavor
+        }
     }
 }
