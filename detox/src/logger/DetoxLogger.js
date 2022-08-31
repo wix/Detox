@@ -282,7 +282,7 @@ class DetoxLogger {
     stringifiers: {
       // eslint-disable-next-line unicorn/no-array-method-this-argument
       'args': args => `(${require('lodash').map(args, a => JSON.stringify(a)).join(', ')})`,
-      'error': err => DetoxError.format(err),
+      'error': err => err,
       'data': json => typeof json === 'string' ? json : JSON.stringify(json, null, 2),
     }
   };

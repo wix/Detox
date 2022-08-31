@@ -189,7 +189,7 @@ function preventErrorSubscriptions(emitter) {
 }
 
 function readJSONL() {
-  const readable = new PassThrough({ objectMode: true });
+  const readable = through();
   const writable = JsonlParser.make({ checkErrors: true })
     .on('error', (err) => {
       if (err instanceof SyntaxError) {
