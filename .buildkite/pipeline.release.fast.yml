@@ -22,7 +22,7 @@
       - 'android_package'
       - 'ios_package'
     command:
-      - "nvm install"
+      - "nvm install 16"
       - "npm install"
       - "npm run release"
     env:

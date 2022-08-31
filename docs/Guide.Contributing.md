@@ -39,7 +39,7 @@ Either install `npm` or check that you have it installed, using their [official 
 
 #### Install the monorepo management tool, `lerna`
 
-```sh
+```bash npm2yarn
 npm install -g lerna@3.x.x
 ```
 
@@ -49,7 +49,7 @@ For all the internal projects (detox, detox-cli, demos, test) `lerna` will creat
 
 React-Native CLI:
 
-```sh
+```bash npm2yarn
 npm install -g react-native-cli
 ```
 
@@ -119,9 +119,13 @@ Detox JS code is 100% test covered and is set to break the build if coverage get
 
 Alternatively, to run only the JS tests, run the following from the `detox/detox` directory:
 
-```sh
+```bash npm2yarn
 npm run unit
--or-
+```
+
+or
+
+```bash npm2yarn
 npm run unit:watch
 ```
 
@@ -140,7 +144,7 @@ To run the tests, you must first build the native code and then run based on you
 
 - **iOS:**
 
-  ```sh
+  ```bash npm2yarn
   cd detox/test
   npm run build:ios
   npm run e2e:ios
@@ -148,7 +152,7 @@ To run the tests, you must first build the native code and then run based on you
 
 - **Android:**
 
-  ```sh
+  ```bash npm2yarn
   cd detox/test
   npm run build:android
   npm run e2e:android
