@@ -26,12 +26,11 @@ describe('composeLoggerConfig', () => {
         showPid: true,
         showLevel: false,
         showMetadata: false,
+        showPrefixes: false,
         basepath: expect.any(String),
         prefixers: {
           'cat': expect.any(Function),
           'event': expect.any(Function),
-          'id': expect.any(Function),
-          'ph': expect.any(Function),
         },
         stringifiers: {
           'args': expect.any(Function),
@@ -66,6 +65,7 @@ describe('composeLoggerConfig', () => {
         overrideConsole: 'all',
         options: expect.objectContaining({
           showLoggerName: false,
+          showPrefixes: expect.any(Function),
           showPid: true,
           prefixers: expect.objectContaining({
             'cat': expect.any(Function),
@@ -90,6 +90,10 @@ describe('composeLoggerConfig', () => {
         options: expect.objectContaining({
           colors: false,
           showPid: true,
+          prefixers: expect.objectContaining({
+            ph: expect.any(Function),
+            id: expect.any(Function),
+          }),
         }),
       });
     });

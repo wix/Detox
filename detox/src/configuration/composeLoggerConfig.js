@@ -12,7 +12,7 @@ const { castLevel, defaultOptions } = require('../logger/DetoxLogger');
 function composeLoggerConfig(opts) {
   const { globalConfig, localConfig, cliConfig } = opts;
 
-  return _.merge(
+  return _({}).merge(
     {
       level: 'info',
       overrideConsole: 'sandbox',
@@ -26,7 +26,7 @@ function composeLoggerConfig(opts) {
     globalConfig.logger,
     localConfig.logger,
     adaptCLI(cliConfig),
-  );
+  ).tap(reduceVerbosity).value();
 }
 
 function adaptCLI(cliConfig) {
@@ -45,6 +45,17 @@ function adaptCLI(cliConfig) {
   }
 
   return result;
+}
+
+function reduceVerbosity(config) {
+  if (config.level !== 'debug' && config.level !== 'trace') {
+    config.options.showPrefixes = false;
+  }
+
+  if (config.level !== 'trace') {
+    delete config.options.prefixers.id;
+    delete config.options.prefixers.ph;
+  }
 }
 
 module.exports = composeLoggerConfig;

@@ -39,6 +39,7 @@ class DetoxLogger {
         showDate: true,
         showLoggerName: true,
         showPid: true,
+        showPrefixes: false,
         showMetadata: false,
       },
 
@@ -272,12 +273,13 @@ class DetoxLogger {
     showPid: true,
     showLevel: false,
     showMetadata: false,
+    showPrefixes: (p) => p.join(''),
     basepath: path.join(__dirname, '..'),
     prefixers: {
-      'ph': ph => require('chalk').gray(ph),
-      'cat': (value) => (value || '').split(',', 1)[0],
-      'event': (value) => value,
-      'id': (id) => `#${id}`,
+      'ph': ph => require('chalk').grey(ph) + ' ',
+      'cat': (value) => require('chalk').yellow((value || '').split(',', 1)[0]),
+      'event': (value) => require('chalk').grey(`:${value}`),
+      'id': (id) => require('chalk').yellow(`@${id}`),
     },
     stringifiers: {
       // eslint-disable-next-line unicorn/no-array-method-this-argument
