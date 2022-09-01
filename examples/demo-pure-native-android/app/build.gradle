@@ -49,12 +49,3 @@ dependencies {
     androidTestImplementation 'com.google.truth:truth:1.1.3'
 }
 
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if ((requested.group == "org.jetbrains.kotlin") && (!requested.name.startsWith("kotlin-gradle"))) {
-                useVersion("1.6.0")
-            }
-        }
-    }
-}
