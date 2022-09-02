@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const { DetoxInternalError } = require('../errors');
-const { SecondarySessionState } = require('../ipc/state');
+const SessionState = require('../ipc/SessionState');
 const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
@@ -84,10 +84,10 @@ class DetoxSecondaryContext extends DetoxContext {
   /**
    * @protected
    * @override
-   * @return {SecondarySessionState}
+   * @return {SessionState}
    */
   [$restoreSessionState]() {
-    return SecondarySessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
+    return SessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
   }
   //#endregion
 }

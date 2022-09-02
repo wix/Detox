@@ -7,7 +7,7 @@ class IPCClient {
     this._id = id;
     /** @type {import('../logger/DetoxLogger')} logger */
     this._logger = logger.child({ cat: 'ipc' });
-    /** @type {import('./state').SecondarySessionState} */
+    /** @type {import('./SessionState')} */
     this._state = state;
 
     this._client = null;
@@ -74,11 +74,7 @@ class IPCClient {
   }
 
   async _registerContext() {
-    const sessionState = await this._emit('registerContext', {
-      id: this._id,
-      logFile: this._logger.file,
-    });
-
+    const sessionState = await this._emit('registerContext', { id: this._id });
     this._state.patch(sessionState);
   }
 

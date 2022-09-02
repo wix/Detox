@@ -6,6 +6,7 @@ const legacyTracing = require('../logger/tracing/legacy');
 const symbols = require('../symbols');
 
 const DetoxConstants = require('./DetoxConstants');
+const temporary = require('../artifacts/utils/temporaryPath');
 
 const $cleanup = Symbol('cleanup');
 const $restoreSessionState = Symbol('restoreSessionState');
@@ -43,14 +44,18 @@ class DetoxContext {
 
     this[$sessionState] = this[$restoreSessionState]();
 
+    const runtimeLoggerConfig = {
+      file: temporary.for.jsonl(`${this[$sessionState].id}.${process.pid}`),
+    };
+
     const loggerConfig = this[$sessionState].detoxConfig
       ? this[$sessionState].detoxConfig.logger
-      : { file: null };
+      : null;
 
     /**
      * @type {DetoxLogger & Detox.Logger}
      */
-    this[symbols.logger] = new DetoxLogger(loggerConfig);
+    this[symbols.logger] = new DetoxLogger(runtimeLoggerConfig, loggerConfig);
 
     this.log = this[symbols.logger].child({ cat: 'user' });
 

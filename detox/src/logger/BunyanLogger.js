@@ -7,18 +7,12 @@ const _ = require('lodash');
 const { DetoxInternalError } = require('../errors');
 
 class BunyanLogger {
-  /**
-   * @param {Detox.DetoxLoggerConfig & { file?: string; }} config
-   */
-  constructor(config) {
+  constructor() {
     this._bunyan = bunyan.createLogger({ name: 'detox', streams: [] });
     /** @type {bunyan.Stream} */
     this._debugStream = null;
     /** @type {bunyan.Stream} */
     this._fileStream = null;
-
-    this.installDebugStream(config);
-    this.installFileStream(config);
   }
 
   /**
@@ -30,11 +24,10 @@ class BunyanLogger {
 
   /**
    * @param {Detox.DetoxLoggerConfig} config
+   * @returns {this}
    */
   installDebugStream(config) {
     const level = config.level || 'info';
-    const { out = process.stderr, ...streamOptions } = config.options;
-    const passthrough = new PassThrough().pipe(out);
 
     if (this._debugStream) {
       _.remove(this._bunyan['streams'], this._debugStream);
@@ -47,30 +40,32 @@ class BunyanLogger {
       type: 'raw',
       level,
       stream: bds.default({
-        ...streamOptions,
-        out: passthrough,
+        ...config.options,
+        out: new PassThrough().pipe(process.stderr),
       }),
     };
 
     this._bunyan.addStream(this._debugStream);
+    return this;
   }
 
   /**
-   * @param {{ file?: string; }} config
+   * @param {string} file
+   * @returns {this}
    */
-  installFileStream(config) {
+  installFileStream(file) {
     if (this._fileStream) {
       throw new DetoxInternalError('Trying to install a second file stream inside already initialized Bunyan logger');
     }
 
-    if (config.file) {
-      this._fileStream = {
-        level: 'trace',
-        path: config.file,
-      };
+    this._fileStream = {
+      level: 'trace',
+      path: file,
+    };
 
-      this._bunyan.addStream(this._fileStream);
-    }
+    this._bunyan.addStream(this._fileStream);
+
+    return this;
   }
 }
 

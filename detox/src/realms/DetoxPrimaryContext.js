@@ -1,14 +1,19 @@
 const path = require('path');
 const { URL } = require('url');
+const { promisify } = require('util');
 
 const fs = require('fs-extra');
+const glob = require('glob');
 const pipe = require('multipipe');
 const onSignalExit = require('signal-exit');
 
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
-const { PrimarySessionState } = require('../ipc/state');
+const SessionState = require('../ipc/SessionState');
 const symbols = require('../symbols');
+
+const globAsync = promisify(glob);
+const globSync = glob.sync;
 
 const DetoxContext = require('./DetoxContext');
 
@@ -206,10 +211,10 @@ class DetoxPrimaryContext extends DetoxContext {
   /**
    * @protected
    * @override
-   * @return {PrimarySessionState}
+   * @return {SessionState}
    */
   [$restoreSessionState]() {
-    return new PrimarySessionState({
+    return new SessionState({
       detoxConfigSnapshotPath: temporary.for.json(),
       detoxIPCServer: `primary-${process.pid}`,
     });
@@ -218,7 +223,8 @@ class DetoxPrimaryContext extends DetoxContext {
 
   //#region Private members
   async[_finalizeLogs]() {
-    const logs = [this[symbols.logger].file, ...this[$sessionState].logFiles].filter(f => f && fs.existsSync(f));
+    const sessionId = this[$sessionState].id;
+    const logs = await globAsync(temporary.for.jsonl(`${sessionId}.*`));
     if (logs.length === 0) {
       return;
     }
@@ -252,10 +258,8 @@ class DetoxPrimaryContext extends DetoxContext {
     const { rootDir } = this[symbols.config].artifacts;
     fs.mkdirpSync(rootDir);
 
-    const logs = [
-      this[symbols.logger].file,
-      ...this[$sessionState].logFiles
-    ].filter(f => f && fs.existsSync(f));
+    const sessionId = this[$sessionState].id;
+    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
 
     for (const log of logs) {
       if (logsEnabled) {

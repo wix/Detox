@@ -13,8 +13,8 @@ const customConsoleLogger = require('./customConsoleLogger');
 const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
 
 /**
- * @typedef PrivateLoggerConfig
- * @property {string} [file]
+ * @typedef RuntimeLoggerConfig
+ * @property {string} file
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
  * @property {MessageStack} [messageStack]
@@ -22,17 +22,22 @@ const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
 
 class DetoxLogger {
   /**
-   * @param {Partial<Detox.DetoxLoggerConfig & PrivateLoggerConfig>} [config]
+   * @param {Pick<RuntimeLoggerConfig, 'file'>} runtimeConfig
+   * @param {Partial<Detox.DetoxLoggerConfig>} [userConfig]
    * @param {object} [context]
    */
-  constructor(config, context) {
+  constructor(runtimeConfig, userConfig, context) {
     /**
-     * @type {Detox.DetoxLoggerConfig & PrivateLoggerConfig}
-     *
-     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._config.
+     * @type {RuntimeLoggerConfig}
+     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._runtimeConfig.
      */
-    this._config = {
-      file: temporaryPath.for.jsonl(),
+    this._runtimeConfig = runtimeConfig;
+
+    /**
+     * @type {Detox.DetoxLoggerConfig}
+     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._userConfig..
+     */
+    this._userConfig = {
       level: 'info',
       overrideConsole: 'none',
       options: {
@@ -43,13 +48,16 @@ class DetoxLogger {
         showMetadata: false,
       },
 
-      ...config,
+      ...userConfig,
     };
 
     if (!context) {
       // In this branch, `this` refers to the first (root) logger instance.
-      this._config.bunyan = new BunyanLogger(this._config);
-      this._config.dispatcher = new CategoryThreadDispatcher({
+      this._runtimeConfig.bunyan = new BunyanLogger()
+        .installFileStream(this._runtimeConfig.file)
+        .installDebugStream(this._userConfig);
+
+      this._runtimeConfig.dispatcher = new CategoryThreadDispatcher({
         logger: this,
         categories: {
           'lifecycle': [0],
@@ -67,7 +75,8 @@ class DetoxLogger {
           'user': [10000, 10999]
         },
       });
-      this._config.messageStack = new MessageStack();
+
+      this._runtimeConfig.messageStack = new MessageStack();
 
       this.overrideConsole();
     }
@@ -87,19 +96,19 @@ class DetoxLogger {
    * @internal
    */
   get config() {
-    return this._config;
+    return this._userConfig;
   }
 
   /** @returns {Detox.DetoxLogLevel} */
   get level() {
-    return this._config.level;
+    return this._userConfig.level;
   }
 
   /**
    * @internal
    */
   get file() {
-    return this._config.file;
+    return this._runtimeConfig.file;
   }
 
   /**
@@ -110,14 +119,9 @@ class DetoxLogger {
       throw new DetoxInternalError('Trying to set a config for a non-root logger');
     }
 
-    if (this.file) {
-      throw new DetoxInternalError('Trying to set a config for a fully initialized logger');
-    }
-
-    _.merge(this._config, config);
-    this._config.file = temporaryPath.for.jsonl();
-    this._config.bunyan.installDebugStream(this._config);
-    this._config.bunyan.installFileStream(this._config);
+    _.merge(this._userConfig, config);
+    this._runtimeConfig.file = temporaryPath.for.jsonl();
+    this._runtimeConfig.bunyan.installDebugStream(this._userConfig);
     this.overrideConsole();
   }
 
@@ -127,7 +131,7 @@ class DetoxLogger {
    */
   child(overrides) {
     const merged = this._mergeContexts(this._context, overrides);
-    return new DetoxLogger(this._config, merged);
+    return new DetoxLogger(this._runtimeConfig, this._userConfig, merged);
   }
 
   /**
@@ -163,7 +167,7 @@ class DetoxLogger {
     context.ph = context.ph || 'i';
     context.cat = context.cat || '';
 
-    context.tid = this._config.dispatcher.resolve(
+    context.tid = this._runtimeConfig.dispatcher.resolve(
       context.ph,
       context.cat,
       context.id || 0
@@ -171,6 +175,7 @@ class DetoxLogger {
 
     return sanitizeBunyanContext(context);
   }
+
   /**
    * @param {Detox.DetoxLogLevel} level
    * @returns {Detox._LogMethod}
@@ -188,17 +193,17 @@ class DetoxLogger {
 
   _begin(level, ...args) {
     const { context, msg } = this._parseArgs({ ph: 'B' }, args);
-    this._config.messageStack.push(context.tid, msg);
-    this._config.bunyan.logger[level](context, ...msg);
+    this._runtimeConfig.messageStack.push(context.tid, msg);
+    this._runtimeConfig.bunyan.logger[level](context, ...msg);
   }
 
   _end(level, ...args) {
     let { context, msg } = this._parseArgs({ ph: 'E' }, args);
     if (msg.length === 0) {
-      msg = this._config.messageStack.pop(context.tid);
+      msg = this._runtimeConfig.messageStack.pop(context.tid);
     }
 
-    this._config.bunyan.logger[level](context, ...msg);
+    this._runtimeConfig.bunyan.logger[level](context, ...msg);
   }
 
   /**
@@ -208,7 +213,7 @@ class DetoxLogger {
    */
   _instant(level, ...args) {
     const { context, msg } = this._parseArgs(null, args);
-    this._config.bunyan.logger[level](context, ...msg);
+    this._runtimeConfig.bunyan.logger[level](context, ...msg);
   }
 
   /**
