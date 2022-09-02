@@ -11,7 +11,7 @@ class DetoxInternalsFacade {
     this.getStatus = context[symbols.getStatus];
     this.init = context[symbols.init];
     this.cleanup = context[symbols.cleanup];
-    this.log = context.log;
+    this.log = context[symbols.logger];
     this.installWorker = context[symbols.installWorker];
     this.uninstallWorker = context[symbols.uninstallWorker];
     this.onHookFailure = context[symbols.onHookFailure];

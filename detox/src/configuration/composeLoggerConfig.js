@@ -7,26 +7,35 @@ const { castLevel, defaultOptions } = require('../logger/DetoxLogger');
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
  * @param {*} opts.cliConfig
- * @returns {Detox.DetoxLoggerConfig}
  */
 function composeLoggerConfig(opts) {
   const { globalConfig, localConfig, cliConfig } = opts;
 
-  return _({}).merge(
+  const items = [
     {
       level: 'info',
       overrideConsole: 'sandbox',
-      options: {
-        ...defaultOptions,
-        prefixers: {
-          ...defaultOptions.prefixers,
-        },
-      },
+      options: defaultOptions,
     },
     globalConfig.logger,
     localConfig.logger,
     adaptCLI(cliConfig),
-  ).tap(reduceVerbosity).value();
+  ];
+
+  return items.reduce(
+    /**
+     * @param {Partial<Detox.DetoxLoggerConfig>} acc
+     * @param config
+     */
+    (acc, config) => {
+      if (!config) return acc;
+      const { options } = config;
+      return _.merge(acc, {
+        options: typeof options === 'function' ? options(acc) : options
+      });
+    },
+    items.reduce((a, b) => _.merge(a, _.omit(b, 'options')))
+  );
 }
 
 function adaptCLI(cliConfig) {
@@ -45,17 +54,6 @@ function adaptCLI(cliConfig) {
   }
 
   return result;
-}
-
-function reduceVerbosity(config) {
-  if (config.level !== 'debug' && config.level !== 'trace') {
-    config.options.showPrefixes = false;
-  }
-
-  if (config.level !== 'trace') {
-    delete config.options.prefixers.id;
-    delete config.options.prefixers.ph;
-  }
 }
 
 module.exports = composeLoggerConfig;

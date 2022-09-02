@@ -26,11 +26,10 @@ describe('composeLoggerConfig', () => {
         showPid: true,
         showLevel: false,
         showMetadata: false,
-        showPrefixes: false,
+        showPrefixes: expect.any(Function),
         basepath: expect.any(String),
         prefixers: {
-          'cat': expect.any(Function),
-          'event': expect.any(Function),
+          'ph': expect.any(Function),
         },
         stringifiers: {
           'args': expect.any(Function),

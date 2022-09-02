@@ -43,8 +43,6 @@ class DetoxSecondaryContext extends DetoxContext {
 
   /** @override */
   async [symbols.init](opts = {}) {
-    this.log.overrideConsole();
-
     const IPCClient = require('../ipc/IPCClient');
 
     this[_ipcClient] = new IPCClient({

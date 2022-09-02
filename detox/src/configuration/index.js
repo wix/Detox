@@ -106,7 +106,6 @@ async function composeDetoxConfig({
 
   const result = {
     configurationName,
-    errorComposer,
 
     apps: appsConfig,
     artifacts: artifactsConfig,
@@ -117,6 +116,11 @@ async function composeDetoxConfig({
     testRunner: runnerConfig,
     session: sessionConfig,
   };
+
+  Object.defineProperty(result, 'errorComposer', {
+    enumerable: false,
+    value: errorComposer,
+  });
 
   return result;
 }

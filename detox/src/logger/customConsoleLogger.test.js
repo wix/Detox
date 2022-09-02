@@ -2,8 +2,6 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
   let overrideConsoleMethods;
   let fakeConsole, bunyanLogger;
 
-  const USER_LOG_EVENT = { event: 'USER_LOG' };
-
   beforeEach(() => {
     overrideConsoleMethods = require('./customConsoleLogger').overrideConsoleMethods;
 
@@ -40,8 +38,8 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
   });
 
   describe('- proxying to bunyan -', () => {
-    const expectedOrigin = expect.stringMatching(/at src[\\/]logger[\\/]customConsoleLogger\.test\.js:\d+:\d+/);
-    const expectedStackDump = expect.stringMatching(/at.*src[\\/]logger[\\/]customConsoleLogger\.test\.js:\d+:\d+/m);
+    const expectedOrigin = { origin: expect.stringMatching(/at src[\\/]logger[\\/]customConsoleLogger\.test\.js:\d+:\d+/) };
+    const expectedStackDump = { stack: expect.stringMatching(/at.*src[\\/]logger[\\/]customConsoleLogger\.test\.js:\d+:\d+/m) };
 
     beforeEach(() => {
       overrideConsoleMethods(fakeConsole, bunyanLogger);
@@ -49,32 +47,32 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
 
     it('should connect: console.log -> logger.info', () => {
       fakeConsole.log('OK %d', 200);
-      expect(bunyanLogger.info).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'OK 200');
+      expect(bunyanLogger.info).toHaveBeenCalledWith(expectedOrigin, 'OK 200');
     });
 
     it('should connect: console.warn -> logger.warn', () => {
       fakeConsole.warn('Warning %d', 301);
-      expect(bunyanLogger.warn).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'Warning 301');
+      expect(bunyanLogger.warn).toHaveBeenCalledWith(expectedOrigin, 'Warning 301');
     });
 
     it('should connect: console.trace -> logger.info', () => {
       fakeConsole.trace('TraceMe %d', 100500);
-      expect(bunyanLogger.info).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n  Trace:', 'TraceMe 100500', expectedStackDump);
+      expect(bunyanLogger.info).toHaveBeenCalledWith({ ...expectedOrigin, ...expectedStackDump }, 'TraceMe 100500');
     });
 
     it('should connect: console.error -> logger.error', () => {
       fakeConsole.error('MyError %d', 500);
-      expect(bunyanLogger.error).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'MyError 500');
+      expect(bunyanLogger.error).toHaveBeenCalledWith(expectedOrigin, 'MyError 500');
     });
 
     it('should connect: console.debug -> logger.debug', () => {
       fakeConsole.debug('Debug %d', 0);
-      expect(bunyanLogger.debug).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n', 'Debug 0');
+      expect(bunyanLogger.debug).toHaveBeenCalledWith(expectedOrigin, 'Debug 0');
     });
 
     it('should connect: console.assert -> logger.error', () => {
       fakeConsole.assert(false, 'Failed condition %s', false);
-      expect(bunyanLogger.error).toHaveBeenCalledWith(USER_LOG_EVENT, expectedOrigin, '\n  AssertionError:', 'Failed condition false');
+      expect(bunyanLogger.error).toHaveBeenCalledWith(expectedOrigin, 'AssertionError:', 'Failed condition false');
     });
 
     it('should not connect console.assert to logger.error, if the condition is true', () => {

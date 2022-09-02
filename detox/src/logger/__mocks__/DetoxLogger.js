@@ -6,7 +6,7 @@ const METHODS = [
 
 class FakeLogger {
   static instances = [];
-  static defaultOptions = DetoxLogger.defaultOptions;
+  static defaultOptions = DetoxLogger.defaultOptions.bind(DetoxLogger);
   static castLevel = DetoxLogger.castLevel;
 
   fatal;

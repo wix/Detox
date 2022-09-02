@@ -130,6 +130,20 @@ class DetoxLogger {
     return new DetoxLogger(this._config, merged);
   }
 
+  /**
+   * @internal
+   */
+  overrideConsole(sandbox) {
+    const option = this._config.overrideConsole;
+    if (option === 'none') {
+      return;
+    }
+
+    if ((option === 'sandbox' && sandbox) || option === 'all') {
+      customConsoleLogger.overrideConsoleMethods((sandbox || global).console, this);
+    }
+  }
+
   _mergeContexts(...contexts) {
     const context = Object.assign({}, ...contexts);
 
@@ -255,39 +269,49 @@ class DetoxLogger {
     return { context, msg };
   }
 
-  overrideConsole(sandbox) {
-    const option = this._config.overrideConsole;
-    if (option === 'none') {
-      return;
-    }
+  static defaultOptions({ level }) {
+    const ph = level === 'trace' || level === 'debug'
+      ? value => require('chalk').grey(value) + ' '
+      : value => require('chalk').grey(value);
 
-    if ((option === 'sandbox' && sandbox) || option === 'all') {
-      customConsoleLogger.overrideConsoleMethods((sandbox || global).console, this);
-    }
+    const id = level === 'trace'
+      ? value => require('chalk').yellow(`@${value}`)
+      : undefined;
+
+    const cat = level === 'trace' || level === 'debug'
+      ? (value) => require('chalk').yellow((value || '').split(',', 1)[0])
+      : undefined;
+
+    const event = level === 'trace' || level === 'debug'
+      ? (value) => require('chalk').grey(`:${value}`)
+      : undefined;
+
+    const identity = x => x;
+
+    return ({
+      showDate: shortFormat,
+      showLoggerName: true,
+      showPid: true,
+      showLevel: false,
+      showMetadata: false,
+      showPrefixes: (p) => p.join(''),
+      basepath: path.join(__dirname, '..'),
+      prefixers: _.omitBy({
+        ph,
+        cat,
+        event,
+        id,
+      }, _.isUndefined),
+      stringifiers: _.omitBy({
+        // eslint-disable-next-line unicorn/no-array-method-this-argument
+        'args': args => `(${require('lodash').map(args, a => JSON.stringify(a)).join(', ')})`,
+        'error': identity,
+        'data': json => typeof json === 'string' ? json : JSON.stringify(json, null, 2),
+        'stack': level === 'trace' || level === 'debug' ? identity : undefined,
+        'origin': level === 'trace' || level === 'debug' ? identity : undefined,
+      }, _.isUndefined),
+    });
   }
-
-  /** @type {import('bunyan-debug-stream').BunyanDebugStreamOptions} */
-  static defaultOptions = {
-    showDate: shortFormat,
-    showLoggerName: true,
-    showPid: true,
-    showLevel: false,
-    showMetadata: false,
-    showPrefixes: (p) => p.join(''),
-    basepath: path.join(__dirname, '..'),
-    prefixers: {
-      'ph': ph => require('chalk').grey(ph) + ' ',
-      'cat': (value) => require('chalk').yellow((value || '').split(',', 1)[0]),
-      'event': (value) => require('chalk').grey(`:${value}`),
-      'id': (id) => require('chalk').yellow(`@${id}`),
-    },
-    stringifiers: {
-      // eslint-disable-next-line unicorn/no-array-method-this-argument
-      'args': args => `(${require('lodash').map(args, a => JSON.stringify(a)).join(', ')})`,
-      'error': err => err,
-      'data': json => typeof json === 'string' ? json : JSON.stringify(json, null, 2),
-    }
-  };
 
   /**
    * @param {string} level
