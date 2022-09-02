@@ -27,12 +27,12 @@ const config = {
           editUrl: 'https://github.com/wix/Detox/edit/master/docs/',
           docLayoutComponent: '@site/src/components/CustomLayout',
           remarkPlugins: [
-            require('@docusaurus/remark-plugin-npm2yarn'), { sync: true },
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
           ],
         },
         pages: {
           remarkPlugins: [
-            require('@docusaurus/remark-plugin-npm2yarn'), { sync: true },
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
           ],
         },
         theme: {
