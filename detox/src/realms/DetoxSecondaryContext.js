@@ -1,12 +1,12 @@
 const fs = require('fs');
 
 const { DetoxInternalError } = require('../errors');
-const { SecondarySessionState } = require('../ipc/state');
+const SessionState = require('../ipc/SessionState');
 const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
-const { $logger, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
+const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 const _ipcClient = Symbol('ipcClient');
 const _shortLifecycle = Symbol('shortLifecycle');
 
@@ -43,14 +43,12 @@ class DetoxSecondaryContext extends DetoxContext {
 
   /** @override */
   async [symbols.init](opts = {}) {
-    this[$logger].overrideConsole();
-
     const IPCClient = require('../ipc/IPCClient');
 
     this[_ipcClient] = new IPCClient({
       id: `secondary-${process.pid}`,
       state: this[$sessionState],
-      logger: this[$logger],
+      logger: this[symbols.logger],
     });
 
     await this[_ipcClient].init();
@@ -86,10 +84,10 @@ class DetoxSecondaryContext extends DetoxContext {
   /**
    * @protected
    * @override
-   * @return {SecondarySessionState}
+   * @return {SessionState}
    */
   [$restoreSessionState]() {
-    return SecondarySessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
+    return SessionState.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH));
   }
   //#endregion
 }

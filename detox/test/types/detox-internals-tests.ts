@@ -21,7 +21,6 @@ import {
   onTestStart,
   resolveConfig,
   session,
-  trace,
   uninstallWorker,
   worker,
 } from 'detox/internals';
@@ -58,7 +57,7 @@ async function internalsTest() {
     workerId: 'worker-1',
   });
 
-  assert<Detox.DetoxWorker>(worker);
+  assert<DetoxInternals.Worker>(worker);
 
   await uninstallWorker();
   await cleanup();
@@ -77,6 +76,18 @@ async function logTest() {
 
   log.trace('msg');
   log.trace({ event: 'EVENT' }, 'msg');
+
+  log.trace.begin('Outer section');
+  log.debug.begin({ arg: 'value' }, 'Inner section');
+
+  log.info.complete('Sync section', () => 'sync').toUpperCase();
+  log.warn.complete('Async section', async () => 42).then(() => 84);
+  log.error.complete('Promise section', Promise.resolve(42)).finally(() => {});
+  log.fatal.complete('Value section', 42).toFixed(1);
+
+  log.warn.end({ extra: 'data' });
+  log.info.end();
+
   log.debug('msg');
   log.debug({ event: 'EVENT' }, 'msg');
   log.info('msg');
@@ -91,40 +102,13 @@ async function logTest() {
   log.child().info('msg');
   log.child({ anything: 'value' }).trace('msg');
 
-  const event1: Detox.TraceEvent = {
-    id: 1,
-    name: 'Long method',
-    cat: 'user',
-    args: {},
-    cname: 'inactive'
-  };
-
-  const event2: Detox.TraceEvent = {
-    cname: 'red',
-    args: { $success: true },
-  };
-
-  const handle1 = trace.begin('Long method', event1.args);
-  if (Math.random() > 0.5) {
-    handle1.end();
-  } else {
-    handle1.end(event2);
-  }
-
-  const handle2 = trace.begin(event1);
-  if (Math.random() > 0.5) {
-    handle2.end();
-  } else {
-    handle2.end(event2);
-  }
-
-  await trace('Long method', async () => {
-    // do something
+  const serverLogger = log.child({ cat: 'server', id: 4333 });
+  serverLogger.info.begin({}, 'Starting server...');
+  await serverLogger.trace.complete('something', async () => {
+    // ... do something ...
   });
 
-  trace(event1, () => {
-    // do something
-  });
+  serverLogger.trace.end();
 }
 
 function configTest() {
@@ -133,7 +117,7 @@ function configTest() {
   assert<Record<string, Detox.DetoxAppConfig>>(config.apps);
   assert<Detox.DetoxArtifactsConfig>(config.artifacts);
   assert<Detox.DetoxBehaviorConfig>(config.behavior);
-  assert<DetoxInternals.DetoxCLIConfig>(config.cli);
+  assert<DetoxInternals.CLIConfig>(config.cli);
   assert<Detox.DetoxDeviceConfig>(config.device);
   assert<Detox.DetoxLoggerConfig>(config.logger);
   assert<Detox.DetoxSessionConfig>(config.session);

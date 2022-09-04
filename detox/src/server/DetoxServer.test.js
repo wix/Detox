@@ -63,8 +63,8 @@ describe('DetoxServer', () => {
         await server.open();
 
         const expectedString = expect.stringContaining(`localhost:${server.port}`);
-        expect(log.info).toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
-        expect(log.debug).not.toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
+        expect(log.info).toHaveBeenCalledWith(expectedString);
+        expect(log.debug).not.toHaveBeenCalledWith(expectedString);
       } finally {
         await server.close();
       }
@@ -77,8 +77,8 @@ describe('DetoxServer', () => {
         await server.open();
 
         const expectedString = expect.stringContaining(`localhost:${server.port}`);
-        expect(log.debug).toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
-        expect(log.info).not.toHaveBeenCalledWith({ event: 'WSS_CREATE' }, expectedString);
+        expect(log.debug).toHaveBeenCalledWith(expectedString);
+        expect(log.info).not.toHaveBeenCalledWith(expectedString);
       } finally {
         await server.close();
       }
@@ -90,7 +90,7 @@ describe('DetoxServer', () => {
       await server.close();
 
       const expectedString = expect.stringContaining(`has been closed gracefully`);
-      expect(log.debug).toHaveBeenCalledWith({ event: 'WSS_CLOSE' }, expectedString);
+      expect(log.debug).toHaveBeenCalledWith(expectedString);
     });
 
     it('should throw upon an unsuccessful server opening', async () => {
@@ -122,9 +122,7 @@ describe('DetoxServer', () => {
       jest.advanceTimersByTime(10000);
       await closePromise;
 
-      const expectedString = expect.stringContaining(`closed abruptly`);
-      expect(log.warn).toHaveBeenCalledWith({ event: 'ERROR' }, expectedString);
-      expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0]).toMatchSnapshot();
     });
 
     it('should WARN log a message upon unsuccessful server closing (rejection case)', async () => {
@@ -138,9 +136,7 @@ describe('DetoxServer', () => {
       await server.open();
       await server.close();
 
-      const expectedString = expect.stringContaining(`TEST_ERROR`);
-      expect(log.warn).toHaveBeenCalledWith({ event: 'ERROR' }, expectedString);
-      expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0]).toMatchSnapshot();
     });
 
     it('should WARN log a message upon unsuccessful server closing (error emit case)', async () => {
@@ -162,9 +158,7 @@ describe('DetoxServer', () => {
       await server.open();
       await server.close();
 
-      const expectedString = expect.stringContaining(`TEST_ERROR`);
-      expect(log.warn).toHaveBeenCalledWith({ event: 'ERROR' }, expectedString);
-      expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0]).toMatchSnapshot();
     });
   });
 
@@ -183,9 +177,7 @@ describe('DetoxServer', () => {
     await server.open();
     errorCallback(new TestError());
 
-    const expectedString = expect.stringContaining(`unhandled error`);
-    expect(log.error).toHaveBeenCalledWith(expectedString);
-    expect(log.error.mock.calls[0][0]).toMatchSnapshot();
+    expect(log.error.mock.calls[0]).toMatchSnapshot();
   });
 
   it('should register an incoming connection in SessionManager', async () => {

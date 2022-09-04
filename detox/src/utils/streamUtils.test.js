@@ -48,7 +48,7 @@ describe('JSONL', () => {
     ]);
 
     const logger = require('./logger');
-    expect(logger.debug).toHaveBeenCalledWith({ event: 'JSONL_ERROR', err: expect.any(Error) });
+    expect(logger.debug).toHaveBeenCalledWith({ err: expect.any(Error) });
   });
 
   it('should convert bunyan JSON to bunyan debug streams', async () => {

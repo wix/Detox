@@ -8,7 +8,7 @@ const log = require('../utils/logger');
  * @param {object} opts
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
- * @param {DetoxInternals.DetoxCLIConfig} opts.cliConfig
+ * @param {DetoxInternals.CLIConfig} opts.cliConfig
  * @param {Record<string, any>} opts.testRunnerArgv
  * @param {import('../errors/DetoxConfigErrorComposer')} opts.errorComposer
  * @returns {Detox.DetoxTestRunnerConfig} opts.testRunnerArgv

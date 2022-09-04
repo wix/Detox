@@ -7,14 +7,14 @@ const { getFullTestName, hasTimedOut } = require('../utils');
 
 const RETRY_TIMES = Symbol.for('RETRY_TIMES');
 
+const log = detoxInternals.log.child({ cat: 'lifecycle,jest-environment' });
+
 class DetoxCoreListener {
   constructor({ env }) {
     this._startedTests = new WeakSet();
     this._testsFailedBeforeStart = new WeakSet();
     this._env = env;
     this._testRunTimes = 1;
-    /** @type import('trace-event-lib').DurationEventHandle */
-    this._testTraceEvent = null;
   }
 
   async setup() {
@@ -24,17 +24,19 @@ class DetoxCoreListener {
     }
   }
 
-  async run_describe_start({ describeBlock: { name, children } }) {
-    if (children.length) {
-      this._env.traceEvent.begin({ name });
-      await detoxInternals.onRunDescribeStart({ name });
+  async run_describe_start({ describeBlock }) {
+    if (describeBlock.children.length) {
+      log.trace.begin(describeBlock.parent ? describeBlock.name : 'run the tests');
+      await detoxInternals.onRunDescribeStart({
+        name: describeBlock.name,
+      });
     }
   }
 
-  async run_describe_finish({ describeBlock: { name, children } }) {
-    if (children.length) {
-      await detoxInternals.onRunDescribeFinish({ name });
-      this._env.traceEvent.end();
+  async run_describe_finish({ describeBlock }) {
+    if (describeBlock.children.length) {
+      await detoxInternals.onRunDescribeFinish({ name: describeBlock.name });
+      log.trace.end();
     }
   }
 
@@ -49,82 +51,46 @@ class DetoxCoreListener {
 
   async hook_start(event, state) {
     await this._onBeforeActualTestStart(state.currentlyRunningTest);
-
-    if (this._testTraceEvent) {
-      this._testTraceEvent.begin({
-        name: event.hook.type,
-        args: {
-          fn: event.hook.fn.toString()
-        },
-      });
-    }
+    log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
   }
 
   async hook_success() {
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: true }
-      });
-    }
+    log.trace.end({ success: true });
   }
 
   async hook_failure({ error }) {
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: false, error: error.toString() }
-      });
-    }
+    log.trace.end({ success: false, error });
   }
 
   async test_fn_start({ test }) {
     await this._onBeforeActualTestStart(test);
-
-    if (this._testTraceEvent) {
-      this._testTraceEvent.begin({
-        name: 'test_fn',
-        args: { fn: test.fn.toString() }
-      });
-    }
+    log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
   }
 
-  async test_fn_success({ test }) {
-    await this._onBeforeActualTestStart(test);
-
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: true }
-      });
-    }
+  async test_fn_success() {
+    log.trace.end({ success: true });
   }
 
   async test_fn_failure({ error }) {
     await detoxInternals.onTestFnFailure({ error });
-
-    if (this._testTraceEvent) {
-      this._testTraceEvent.end({
-        args: { success: false, error: error.toString() }
-      });
-    }
+    log.trace.end({ success: false, error });
   }
 
   async test_done({ test }) {
     if (this._startedTests.has(test)) {
-      await detoxInternals.onTestDone({
-        title: test.name,
-        fullName: getFullTestName(test),
-        status: test.errors.length ? 'failed' : 'passed',
-        invocations: this._getTestInvocations(test),
-        timedOut: hasTimedOut(test)
-      });
+      const failed = test.errors.length > 0;
+      const metadata = {
+        ...this._getTestMetadata(test),
+        status: failed ? 'failed' : 'passed',
+        timedOut: failed ? hasTimedOut(test) : undefined,
+      };
 
+      await detoxInternals.onTestDone(metadata);
       this._startedTests.delete(test);
-      this._testTraceEvent.end({
-        args: {
-          success: !test.errors.length,
-          errors: test.errors.map(String).join('\n\n'),
-        },
+      log.trace.end({
+        status: metadata.status,
+        timedOut: metadata.timedOut,
       });
-      this._testTraceEvent = null;
     }
   }
 
@@ -141,18 +107,21 @@ class DetoxCoreListener {
       return false;
     }
 
-    this._startedTests.add(test);
-    this._testTraceEvent = this._env.traceEvent.begin({
-      name: test.name,
-    });
-
-    await detoxInternals.onTestStart({
-      title: test.name,
-      fullName: getFullTestName(test),
+    const metadata = {
+      ...this._getTestMetadata(test),
       status: 'running',
-      invocations: this._getTestInvocations(test),
-    });
+    };
 
+    this._startedTests.add(test);
+
+    log.trace.begin({
+      context: 'test',
+      status: metadata.status,
+      fullName: metadata.fullName,
+      invocations: metadata.invocations,
+    }, metadata.title);
+
+    await detoxInternals.onTestStart(metadata);
     return true;
   }
 
@@ -171,6 +140,14 @@ class DetoxCoreListener {
     }
 
     return block.errors ? block.errors.length > 0 : false;
+  }
+
+  _getTestMetadata(test) {
+    return {
+      title: test.name,
+      fullName: getFullTestName(test),
+      invocations: this._getTestInvocations(test),
+    };
   }
 }
 

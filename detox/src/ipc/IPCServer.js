@@ -3,12 +3,12 @@ const { IPC } = require('node-ipc');
 class IPCServer {
   /**
    * @param {object} options
-   * @param {import('./state').PrimarySessionState} options.sessionState
+   * @param {import('./SessionState')} options.sessionState
    * @param {Detox.Logger} options.logger
    */
   constructor({ sessionState, logger }) {
     this._sessionState = sessionState;
-    this._logger = logger.child({ __filename, cat: 'ipc' });
+    this._logger = logger.child({ cat: 'ipc,ipc-server' });
     this._ipc = null;
     this._workers = new Set();
   }
@@ -49,12 +49,8 @@ class IPCServer {
     });
   }
 
-  onRegisterContext({ id, logFile }, socket) {
+  onRegisterContext({ id }, socket) {
     this._sessionState.contexts.push(id);
-
-    if (logFile && !this._sessionState.logFiles.includes(logFile)) {
-      this._sessionState.logFiles.push(logFile);
-    }
 
     this._ipc.server.emit(socket, 'registerContextDone', {
       failedTestFiles: this._sessionState.failedTestFiles,

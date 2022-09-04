@@ -1,43 +1,37 @@
-// @ts-nocheck
 const _ = require('lodash');
-const { WebSocket } = require('ws'); // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const logger = require('../utils/logger').child({ __filename, cat: 'ws-server,ws' });
+const logger = require('../utils/logger').child({ cat: 'ws-server,ws' });
 
 const AnonymousConnectionHandler = require('./handlers/AnonymousConnectionHandler');
 
-const EVENTS = {
-  NEW: { event: 'WSS_CONNECTION' },
-  GET: { event: 'WSS_GET_FROM' },
-  SEND: { event: 'WSS_SEND_TO' },
-  ERROR: { event: 'ERROR' },
-  SOCKET_ERROR: { event: 'WSS_SOCKET_ERROR' },
-};
-
 class DetoxConnection {
   /**
-   * @param {DetoxSessionManager} sessionManager
-   * @param {WebSocket} webSocket
-   * @param {Socket} socket
+   * @param {{
+   *   sessionManager: import('./DetoxSessionManager');
+   *   webSocket: import('ws');
+   *   socket: import('net').Socket;
+   * }} config
    */
   constructor({ sessionManager, webSocket, socket }) {
     this._onMessage = this._onMessage.bind(this);
     this._onError = this._onError.bind(this);
     this._onClose = this._onClose.bind(this);
 
-    this._log = logger.child({ trackingId: socket.remotePort });
+    this._log = logger.child({ id: socket.remotePort });
+    this._log.debug.begin(`connection :${socket.localPort}<->:${socket.remotePort}`);
+
     this._sessionManager = sessionManager;
     this._webSocket = webSocket;
     this._webSocket.on('message', this._onMessage);
     this._webSocket.on('error', this._onError);
     this._webSocket.on('close', this._onClose);
-    this._log.debug(EVENTS.NEW, 'registered a new connection.');
 
-    const log = this._log;
+    // eslint-disable-next-line unicorn/no-this-assignment
+    const self = this;
     this._handler = new AnonymousConnectionHandler({
       api: {
-        get log() { return log; },
+        get log() { return self._log; },
         appendLogDetails: (details) => { this._log = this._log.child(details); },
 
         registerSession: (params) => this._sessionManager.registerSession(this, params),
@@ -49,13 +43,13 @@ class DetoxConnection {
 
   sendAction(action) {
     const messageAsString = JSON.stringify(action);
-    this._log.trace(EVENTS.SEND, messageAsString);
+    this._log.trace({ data: action }, 'send');
     this._webSocket.send(messageAsString + '\n ');
   }
 
   _onMessage(rawData) {
     const data = _.isString(rawData) ? rawData : rawData.toString('utf8');
-    this._log.trace(EVENTS.GET, data);
+    this._log.trace({ data }, 'get');
 
     try {
       let action;
@@ -84,16 +78,17 @@ class DetoxConnection {
         this._handler.onError(handlerError, action);
       }
     } catch (error) {
-      this._log.warn({ ...EVENTS.ERROR }, error instanceof DetoxRuntimeError ? error.message : `${error}`);
+      this._log.warn({ error }, 'Caught unhandled error:');
     }
   }
 
-  _onError(e) {
-    this._log.warn(EVENTS.SOCKET_ERROR, DetoxRuntimeError.format(e));
+  _onError(error) {
+    this._log.warn({ error }, 'Caught socket error:');
   }
 
   _onClose() {
     this._sessionManager.unregisterConnection(this._webSocket);
+    this._log.debug.end();
   }
 }
 

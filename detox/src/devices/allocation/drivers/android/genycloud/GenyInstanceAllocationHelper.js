@@ -1,5 +1,5 @@
 // @ts-nocheck
-const logger = require('../../../../../utils/logger').child({ __filename });
+const logger = require('../../../../../utils/logger').child({ cat: 'device' });
 const DeviceAllocationHelper = require('../../../../common/drivers/DeviceAllocationHelper');
 
 const { ALLOCATE_DEVICE_LOG_EVT } = DeviceAllocationHelper;

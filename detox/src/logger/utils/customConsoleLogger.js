@@ -1,6 +1,6 @@
 const util = require('util');
 
-const callsites = require('../utils/callsites');
+const callsites = require('../../utils/callsites');
 
 const USER_STACK_FRAME_INDEX = 2;
 
@@ -25,20 +25,20 @@ function getStackDump() {
 
 function proxyLog(bunyanLoggerFn) {
   return (...args) => {
-    bunyanLoggerFn({ event: 'USER_LOG' }, getOrigin(), '\n', util.format(...args));
+    bunyanLoggerFn({ origin: getOrigin() }, util.format(...args));
   };
 }
 
 function proxyTracing(bunyanLoggerFn) {
   return (...args) => {
-    bunyanLoggerFn({ event: 'USER_LOG' }, getOrigin(), '\n  Trace:', util.format(...args), '\n\r' + getStackDump());
+    bunyanLoggerFn({ origin: getOrigin(), stack: getStackDump() }, util.format(...args));
   };
 }
 
 function proxyAssert(bunyanLoggerFn) {
   return (condition, ...args) => {
     if (!condition) {
-      bunyanLoggerFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...args));
+      bunyanLoggerFn({ origin: getOrigin() }, 'AssertionError:', util.format(...args));
     }
   };
 }

@@ -8,9 +8,7 @@ const JsonlParser = require('stream-json/jsonl/Parser');
 const stripAnsi = require('strip-ansi');
 const { AbstractEventBuilder } = require('trace-event-lib');
 
-const DetoxTracer = require('../logger/DetoxTracer');
-
-const log = require('./logger').child({ __filename });
+const log = require('./logger').child({ cat: 'logger' });
 
 function compareTimestamps(a, b) {
   return +(a.value.time > b.value.time) - +(a.value.time < b.value.time);
@@ -136,6 +134,7 @@ class JsonlStringer extends Transform {
 
 class SimpleEventBuilder extends AbstractEventBuilder {
   events = [];
+
   send(event) {
     this.events.push(event);
   }
@@ -147,8 +146,7 @@ function chromeTraceStream() {
 
   return flatMapTransform((data) => {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const { pid, trace, msg, time, name: _name, hostname: _hostname, ...args } = data;
-    const tid = trace ? trace.tid : DetoxTracer.threadize(args.cat);
+    const { cat = 'default', msg: name, ph = 'i', pid, tid, time, name: _name, hostname: _hostname, ...args } = data;
     const ts = new Date(time).getTime() * 1E3;
 
     const builder = new SimpleEventBuilder();
@@ -159,14 +157,15 @@ function chromeTraceStream() {
 
     const tidHash = `${pid}:${tid}`;
     if (!knownTids.has(tidHash)) {
-      builder.thread_name(DetoxTracer.categorize(tid), tid, pid);
+      const primaryCategory = cat.split(',', 1)[0];
+      builder.thread_name(primaryCategory, tid, pid);
       builder.thread_sort_index(tid, tid, pid);
       knownTids.add(tidHash);
     }
 
-    const event = { ph: 'i', ...data.trace, pid, tid, ts, args };
-    if (!trace || trace.ph !== 'E') {
-      event.name = msg || '';
+    const event = { ph, name, pid, tid, cat, ts, args };
+    if (ph === 'E') {
+      delete event.name;
     }
 
     builder.events.push(event);
@@ -190,11 +189,11 @@ function preventErrorSubscriptions(emitter) {
 }
 
 function readJSONL() {
-  const readable = new PassThrough({ objectMode: true });
+  const readable = through();
   const writable = JsonlParser.make({ checkErrors: true })
     .on('error', (err) => {
       if (err instanceof SyntaxError) {
-        log.debug({ event: 'JSONL_ERROR', err });
+        log.debug({ err });
         readable.end();
       } else {
         readable.emit('error', err);

@@ -118,7 +118,7 @@ class SpecReporter {
     const retriesDescription = (invocations > 1) ? chalk.gray(` [Retry #${invocations - 1}]`) : '';
     const status = chalk.gray(_status ? ` [${_status}]` : '');
     const desc = this._suitesDesc + testDescription + retriesDescription + status;
-    log.info({ event: 'SPEC_STATE_CHANGE' }, desc);
+    log.info({ cat: 'lifecycle' }, desc);
   }
 }
 

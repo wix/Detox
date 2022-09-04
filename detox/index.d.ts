@@ -9,7 +9,6 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import { DurationEventHandle } from 'trace-event-lib';
 
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
@@ -107,7 +106,7 @@ declare global {
              * @default 'sandbox'
              */
             overrideConsole?: 'all' | 'sandbox' | 'none';
-            options?: BunyanDebugStreamOptions;
+            options?: BunyanDebugStreamOptions | ((config: Partial<DetoxLoggerConfig>) => BunyanDebugStreamOptions);
         }
 
         interface DetoxSessionConfig {
@@ -311,11 +310,7 @@ declare global {
 
         // endregion DetoxConfig
 
-        type DetoxExportWrapper = DetoxWorker;
-
-        interface DetoxWorker {
-            readonly id: string;
-
+        interface DetoxExportWrapper {
             readonly device: Device;
 
             readonly element: ElementFacade;
@@ -348,65 +343,74 @@ declare global {
             readonly log: Logger;
 
             /**
+             * @deprecated
+             *
+             * Deprecated - use {@link Detox.Logger#trace}
              * Detox tracer instance. Can be used for building timelines in Google Event Tracing format.
              */
-            readonly trace: Tracer;
+            readonly trace: {
+                /** @deprecated */
+                readonly startSection: (name: string) => void;
+                /** @deprecated */
+                readonly endSection: (name: string) => void;
+            };
 
             /**
              * @deprecated
              */
-            readonly traceCall: _TraceCallSignature;
+            readonly traceCall: <T>(event: string, action: () => Promise<T>) => Promise<T>;
         }
 
-        /** @internal */
-        type _TraceEventArgs = Record<string, unknown>;
-
-        type TraceEvent = {
-            name?: string;
-            cat?: string;
-            cname?: string;
-            id?: number;
-            args?: _TraceEventArgs;
-        };
-
-        /**
-         * Trace a duration event before and after executing the action function
-         *
-         * @internal
-         */
-        interface _TraceCallSignature {
-            <T>(event: string | TraceEvent, action: () => T): T;
-            <T>(event: string | TraceEvent, action: Promise<T>): Promise<T>;
-            <T>(event: string | TraceEvent, action: () => Promise<T>): Promise<T>;
-        }
-
-        /** @internal */
-        interface _TraceSectionSignature<T> {
-            (event: string, args?: _TraceEventArgs): T;
-            (event: TraceEvent): T;
-        }
-
-        interface Tracer extends _TraceCallSignature {
-            readonly begin: _TraceSectionSignature<DurationEventHandle>;
-            readonly end: _TraceSectionSignature<void>;
-
-            /** @deprecated */
-            readonly startSection: _TraceSectionSignature<DurationEventHandle>;
-            /** @deprecated */
-            readonly endSection: _TraceSectionSignature<void>;
-        }
-
-        type Logger = {
+        interface Logger {
             readonly level: DetoxLogLevel;
 
-            fatal(context?: unknown, ...args: any[]): void;
-            error(context?: unknown, ...args: any[]): void;
-            warn(context?: unknown, ...args: any[]): void;
-            info(context?: unknown, ...args: any[]): void;
-            debug(context?: unknown, ...args: any[]): void;
-            trace(context?: unknown, ...args: any[]): void;
+            readonly fatal: _LogMethod;
+            readonly error: _LogMethod;
+            readonly warn: _LogMethod;
+            readonly info: _LogMethod;
+            readonly debug: _LogMethod;
+            readonly trace: _LogMethod;
 
-            child(context?: Record<string, unknown>): Logger;
+            child(context?: Partial<LogEvent>): Logger;
+        }
+
+        /** @internal */
+        interface _LogMethod extends _LogMethodSignature {
+            readonly begin: _LogMethodSignature;
+            readonly complete: _CompleteMethodSignature;
+            readonly end: _LogMethodSignature;
+        }
+
+        /** @internal */
+        interface _LogMethodSignature {
+            (...args: unknown[]): void
+            (event: LogEvent, ...args: unknown[]): void;
+        }
+
+        /** @internal */
+        interface _CompleteMethodSignature {
+            <T>(message: string, action: T | (() => T)): T;
+            <T>(event: LogEvent, message: string, action: T | (() => T)): T;
+        }
+
+        type LogEvent = {
+            /** Use when there's a risk of logging several parallel duration events. */
+            id?: string | number;
+            /** Optional. Event categories (tags) to facilitate filtering. */
+            cat?: string | string[];
+            /** Optional. Color name (applicable in Google Chrome Trace Format) */
+            cname?: string;
+
+            /** Reserved property. Process ID. */
+            pid?: never;
+            /** Reserved property. Thread ID. */
+            tid?: never;
+            /** Reserved property. Timestamp. */
+            ts?: never;
+            /** Reserved property. Event phase. */
+            ph?: never;
+
+            [customProperty: string]: unknown;
         };
 
         type DetoxLogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';

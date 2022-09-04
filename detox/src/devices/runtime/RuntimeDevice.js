@@ -1,6 +1,8 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
-const { traceCall, traceMethods } = require('../../utils/trace');
+const log = require('../../utils/logger').child({ cat: 'device' });
+const { traceCall } = require('../../utils/trace');
+const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
@@ -48,7 +50,7 @@ class RuntimeDevice {
       'unreverseTcpPort',
     ];
 
-    traceMethods(this, 'device', methodNames);
+    traceMethods(log, this, methodNames);
     wrapWithStackTraceCutter(this, methodNames);
 
     this._appsConfig = appsConfig;

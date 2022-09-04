@@ -18,7 +18,7 @@ const sleep = require('../../../../utils/sleep');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
-const log = logger.child({ __filename });
+const log = logger.child({ cat: 'device' });
 
 /**
  * @typedef AndroidDriverProps

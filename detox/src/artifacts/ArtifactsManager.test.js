@@ -230,11 +230,10 @@ describe('ArtifactsManager', () => {
             expect(proxy.logger.warn.mock.calls).toEqual([[
               {
                 err: expect.any(Error),
-                event: 'ERROR',
                 methodName: hookName,
                 plugin: 'testPlugin',
               },
-              expect.stringContaining(`Suppressed error inside function call: testPlugin.${hookName}`)
+              expect.stringContaining(`Suppressed error inside function call.`)
             ]]);
           });
         }

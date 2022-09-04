@@ -5,6 +5,7 @@
  *   readonly getStatus: unique symbol;
  *   readonly init: unique symbol;
  *   readonly installWorker: unique symbol;
+ *   readonly logger: unique symbol;
  *   readonly onHookFailure: unique symbol;
  *   readonly onHookStart: unique symbol;
  *   readonly onHookSuccess: unique symbol;
@@ -50,6 +51,7 @@ module.exports = {
   getStatus: Symbol('getStatus'),
   init: Symbol('init'),
   installWorker: Symbol('installWorker'),
+  logger: Symbol('logger'),
   resolveConfig: Symbol('resolveConfig'),
   session: Symbol('session'),
   uninstallWorker: Symbol('uninstallWorker'),

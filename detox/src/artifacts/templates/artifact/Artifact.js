@@ -1,5 +1,5 @@
 // @ts-nocheck
-const log = require('../../../utils/logger').child({ __filename });
+const log = require('../../../utils/logger').child({ cat: 'artifact' });
 
 class Artifact {
   constructor(template) {

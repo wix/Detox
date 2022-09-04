@@ -6,7 +6,7 @@ const METHODS = [
 
 class FakeLogger {
   static instances = [];
-  static defaultOptions = DetoxLogger.defaultOptions;
+  static defaultOptions = DetoxLogger.defaultOptions.bind(DetoxLogger);
   static castLevel = DetoxLogger.castLevel;
 
   fatal;
@@ -29,6 +29,21 @@ class FakeLogger {
     for (const method of METHODS) {
       this[method] = jest.fn((...args) => {
         this.log(method, this.opts, ...args);
+      });
+      this[method].begin = jest.fn((...args) => {
+        this.log(method, this.opts, ...args, '(begin)');
+      });
+      this[method].complete = jest.fn((...args) => {
+        const [action] = args.slice(-1);
+        this.log(method, this.opts, ...args, '(begin)');
+        try {
+          return (typeof action === 'function' ? action() : action);
+        } finally {
+          this.log(method, this.opts, ...args, '(end)');
+        }
+      });
+      this[method].end = jest.fn((...args) => {
+        this.log(method, this.opts, ...args, '(end)');
       });
     }
   }

@@ -3,7 +3,7 @@ declare var beforeAll: (callback: () => void) => void;
 declare var afterAll: (callback: () => void) => void;
 declare var test: (name: string, callback: () => void) => void;
 
-import { by, device, element, expect, waitFor } from 'detox';
+import { by, device, element, expect, waitFor, log, trace, traceCall } from 'detox';
 
 describe('Test', () => {
   beforeAll(async () => {
@@ -78,4 +78,59 @@ describe('Test', () => {
     await expect(element(by.id('element'))).not.toBeVisible();
     await expect(element(by.id('element'))).not.toExist();
   });
+
+  test('Trace', async () => {
+    trace.startSection('Long method');
+    trace.endSection('Long method');
+
+    await traceCall('Another long method', async () => {
+      // do something
+    });
+
+    switch (log.level) {
+      case 'fatal':
+      case 'error':
+      case 'warn':
+      case 'info':
+      case 'debug':
+      case 'trace':
+        break;
+    }
+
+    log.trace('msg');
+    log.trace({ event: 'EVENT' }, 'msg');
+
+    log.trace.begin('Outer section');
+    log.debug.begin({ arg: 'value' }, 'Inner section');
+
+    log.info.complete('Sync section', () => 'sync').toUpperCase();
+    log.warn.complete('Async section', async () => 42).then(() => 84);
+    log.error.complete('Promise section', Promise.resolve(42)).finally(() => {});
+    log.fatal.complete('Value section', 42).toFixed(1);
+
+    log.warn.end({ extra: 'data' });
+    log.info.end();
+
+    log.debug('msg');
+    log.debug({ event: 'EVENT' }, 'msg');
+    log.info('msg');
+    log.info({ event: 'EVENT' }, 'msg');
+    log.warn('msg');
+    log.warn({ event: 'EVENT' }, 'msg');
+    log.error('msg');
+    log.error({ event: 'EVENT' }, 'msg');
+    log.fatal('msg');
+    log.fatal({ event: 'EVENT' }, 'msg');
+
+    log.child().info('msg');
+    log.child({ anything: 'value' }).trace('msg');
+
+    const serverLogger = log.child({ cat: 'server', id: 4333 });
+    serverLogger.info.begin({}, 'Starting server...');
+    await serverLogger.trace.complete('something', async () => {
+      // ... do something ...
+    });
+
+    serverLogger.trace.end();
+  })
 });
