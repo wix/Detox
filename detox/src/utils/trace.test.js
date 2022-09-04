@@ -30,10 +30,7 @@ describe('Trace util', () => {
     };
 
     trace.endSection(section.msg, section.args);
-    expect(logger().trace.end).toHaveBeenCalledWith(
-      section.args,
-      'end'
-    );
+    expect(logger().trace.end).toHaveBeenCalledWith(section.args);
   });
 
   it('should trace a successful function', async () => {

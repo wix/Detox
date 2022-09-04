@@ -4,7 +4,7 @@ const bunyan = require('bunyan');
 const bds = require('bunyan-debug-stream');
 const _ = require('lodash');
 
-const { DetoxInternalError } = require('../errors');
+const { DetoxInternalError } = require('../../errors');
 
 class BunyanLogger {
   constructor() {

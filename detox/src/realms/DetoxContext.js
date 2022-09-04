@@ -1,12 +1,11 @@
 const funpermaproxy = require('funpermaproxy');
 
+const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
-const DetoxLogger = require('../logger/DetoxLogger');
-const legacyTracing = require('../logger/tracing/legacy');
+const { DetoxLogger, installLegacyTracerInterface } = require('../logger');
 const symbols = require('../symbols');
 
 const DetoxConstants = require('./DetoxConstants');
-const temporary = require('../artifacts/utils/temporaryPath');
 
 const $cleanup = Symbol('cleanup');
 const $restoreSessionState = Symbol('restoreSessionState');
@@ -44,27 +43,18 @@ class DetoxContext {
 
     this[$sessionState] = this[$restoreSessionState]();
 
-    const runtimeLoggerConfig = {
-      file: temporary.for.jsonl(`${this[$sessionState].id}.${process.pid}`),
-    };
-
-    const loggerConfig = this[$sessionState].detoxConfig
-      ? this[$sessionState].detoxConfig.logger
-      : null;
-
     /**
      * @type {DetoxLogger & Detox.Logger}
      */
-    this[symbols.logger] = new DetoxLogger(runtimeLoggerConfig, loggerConfig);
-
-    this.log = this[symbols.logger].child({ cat: 'user' });
-
-    this.trace = Object.freeze({
-      startSection: legacyTracing.startSection(this.log),
-      endSection: legacyTracing.endSection(this.log),
+    this[symbols.logger] = new DetoxLogger({
+      file: temporary.for.jsonl(`${this[$sessionState].id}.${process.pid}`),
+      userConfig: this[$sessionState].detoxConfig
+        ? this[$sessionState].detoxConfig.logger
+        : null,
     });
 
-    this.traceCall = legacyTracing.traceCall(this.log);
+    this.log = this[symbols.logger].child({ cat: 'user' });
+    installLegacyTracerInterface(this.log, this);
 
     /** @type {import('../DetoxWorker') | null} */
     this[$worker] = null;

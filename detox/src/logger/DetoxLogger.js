@@ -7,14 +7,16 @@ const { DetoxInternalError, DetoxError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
 const isPromise = require('../utils/isPromise');
 
-const BunyanLogger = require('./BunyanLogger');
-const MessageStack = require('./MessageStack');
-const customConsoleLogger = require('./customConsoleLogger');
-const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
+const BunyanLogger = require('./utils/BunyanLogger');
+const CategoryThreadDispatcher = require('./utils/CategoryThreadDispatcher');
+const MessageStack = require('./utils/MessageStack');
+const customConsoleLogger = require('./utils/customConsoleLogger');
+const sanitizeBunyanContext = require('./utils/sanitizeBunyanContext');
 
 /**
- * @typedef RuntimeLoggerConfig
+ * @typedef SharedLoggerConfig
  * @property {string} file
+ * @property {Detox.DetoxLoggerConfig} userConfig
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
  * @property {MessageStack} [messageStack]
@@ -22,42 +24,36 @@ const CategoryThreadDispatcher = require('./tracing/CategoryThreadDispatcher');
 
 class DetoxLogger {
   /**
-   * @param {Pick<RuntimeLoggerConfig, 'file'>} runtimeConfig
-   * @param {Partial<Detox.DetoxLoggerConfig>} [userConfig]
+   * @param {Pick<SharedLoggerConfig, 'file' | 'userConfig'>} sharedConfig
    * @param {object} [context]
    */
-  constructor(runtimeConfig, userConfig, context) {
+  constructor(sharedConfig, context) {
     /**
-     * @type {RuntimeLoggerConfig}
-     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._runtimeConfig.
+     * @type {SharedLoggerConfig}
+     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._sharedConfig.
      */
-    this._runtimeConfig = runtimeConfig;
-
-    /**
-     * @type {Detox.DetoxLoggerConfig}
-     * IMPORTANT: all instances of {@link DetoxLogger} must share the same object instance of this._userConfig..
-     */
-    this._userConfig = {
-      level: 'info',
-      overrideConsole: 'none',
-      options: {
-        showDate: true,
-        showLoggerName: true,
-        showPid: true,
-        showPrefixes: false,
-        showMetadata: false,
-      },
-
-      ...userConfig,
-    };
+    this._sharedConfig = sharedConfig;
 
     if (!context) {
       // In this branch, `this` refers to the first (root) logger instance.
-      this._runtimeConfig.bunyan = new BunyanLogger()
-        .installFileStream(this._runtimeConfig.file)
-        .installDebugStream(this._userConfig);
 
-      this._runtimeConfig.dispatcher = new CategoryThreadDispatcher({
+      this._sharedConfig.userConfig = this._sharedConfig.userConfig || {
+        level: 'info',
+        overrideConsole: 'none',
+        options: {
+          showDate: true,
+          showLoggerName: true,
+          showPid: true,
+          showPrefixes: false,
+          showMetadata: false,
+        },
+      };
+
+      this._sharedConfig.bunyan = new BunyanLogger()
+        .installFileStream(this.file)
+        .installDebugStream(this.config);
+
+      this._sharedConfig.dispatcher = new CategoryThreadDispatcher({
         logger: this,
         categories: {
           'lifecycle': [0],
@@ -76,7 +72,7 @@ class DetoxLogger {
         },
       });
 
-      this._runtimeConfig.messageStack = new MessageStack();
+      this._sharedConfig.messageStack = new MessageStack();
 
       this.overrideConsole();
     }
@@ -84,61 +80,68 @@ class DetoxLogger {
     /** @type {object | undefined} */
     this._context = context;
 
+    /** @public */
     this.fatal = this._setupLogMethod('fatal');
+    /** @public */
     this.error = this._setupLogMethod('error');
+    /** @public */
     this.warn = this._setupLogMethod('warn');
+    /** @public */
     this.info = this._setupLogMethod('info');
+    /** @public */
     this.debug = this._setupLogMethod('debug');
+    /** @public */
     this.trace = this._setupLogMethod('trace');
   }
 
   /**
-   * @internal
+   * @public
+   * @returns {Detox.DetoxLogLevel}
    */
-  get config() {
-    return this._userConfig;
-  }
-
-  /** @returns {Detox.DetoxLogLevel} */
   get level() {
-    return this._userConfig.level;
+    return this.config.level;
   }
 
   /**
-   * @internal
-   */
-  get file() {
-    return this._runtimeConfig.file;
-  }
-
-  /**
-   * @param config
-   */
-  async setConfig(config) {
-    if (this._context !== undefined) {
-      throw new DetoxInternalError('Trying to set a config for a non-root logger');
-    }
-
-    _.merge(this._userConfig, config);
-    this._runtimeConfig.file = temporaryPath.for.jsonl();
-    this._runtimeConfig.bunyan.installDebugStream(this._userConfig);
-    this.overrideConsole();
-  }
-
-  /**
+   * @public
    * @param {object} [overrides]
    * @returns {DetoxLogger}
    */
   child(overrides) {
     const merged = this._mergeContexts(this._context, overrides);
-    return new DetoxLogger(this._runtimeConfig, this._userConfig, merged);
+    return new DetoxLogger(this._sharedConfig, merged);
+  }
+
+  /** @internal */
+  get config() {
+    return this._sharedConfig.userConfig;
+  }
+
+  /** @internal */
+  get file() {
+    return this._sharedConfig.file;
+  }
+
+  /**
+   * @internal
+   * @param config
+   */
+  async setConfig(config) {
+    if (this._context) {
+      throw new DetoxInternalError('Trying to set a config in a non-root logger');
+    }
+
+    _.merge(this.config, config);
+    this._sharedConfig.file = temporaryPath.for.jsonl();
+    this._sharedConfig.bunyan.installDebugStream(this.config);
+    this.overrideConsole();
   }
 
   /**
    * @internal
    */
   overrideConsole(sandbox) {
-    const option = this._config.overrideConsole;
+    const option = this.config.overrideConsole;
     if (option === 'none') {
       return;
     }
@@ -148,6 +151,9 @@ class DetoxLogger {
     }
   }
 
+  /**
+   * @private
+   */
   _mergeContexts(...contexts) {
     const context = Object.assign({}, ...contexts);
 
@@ -167,7 +173,7 @@ class DetoxLogger {
     context.ph = context.ph || 'i';
     context.cat = context.cat || '';
 
-    context.tid = this._runtimeConfig.dispatcher.resolve(
+    context.tid = this._sharedConfig.dispatcher.resolve(
       context.ph,
       context.cat,
       context.id || 0
@@ -177,9 +183,9 @@ class DetoxLogger {
   }
 
   /**
+   * @private
    * @param {Detox.DetoxLogLevel} level
    * @returns {Detox._LogMethod}
-   * @private
    */
   _setupLogMethod(level) {
     const logMethod = this[level] = this._instant.bind(this, level);
@@ -191,29 +197,31 @@ class DetoxLogger {
     });
   }
 
+  /** @private */
   _begin(level, ...args) {
     const { context, msg } = this._parseArgs({ ph: 'B' }, args);
-    this._runtimeConfig.messageStack.push(context.tid, msg);
-    this._runtimeConfig.bunyan.logger[level](context, ...msg);
+    this._sharedConfig.messageStack.push(context.tid, msg);
+    this._sharedConfig.bunyan.logger[level](context, ...msg);
   }
 
+  /** @private */
   _end(level, ...args) {
     let { context, msg } = this._parseArgs({ ph: 'E' }, args);
     if (msg.length === 0) {
-      msg = this._runtimeConfig.messageStack.pop(context.tid);
+      msg = this._sharedConfig.messageStack.pop(context.tid);
     }
 
-    this._runtimeConfig.bunyan.logger[level](context, ...msg);
+    this._sharedConfig.bunyan.logger[level](context, ...msg);
   }
 
   /**
+   * @private
    * @param {import('bunyan').LogLevel} level
    * @param {any[]} args
-   * @private
    */
   _instant(level, ...args) {
     const { context, msg } = this._parseArgs(null, args);
-    this._runtimeConfig.bunyan.logger[level](context, ...msg);
+    this._sharedConfig.bunyan.logger[level](context, ...msg);
   }
 
   /**
@@ -249,6 +257,7 @@ class DetoxLogger {
     }
   }
 
+  /** @private */
   _parseArgs(boundContext, args) {
     const userContext = _.isError(args[0])
       ? { err: args[0] }
@@ -274,6 +283,7 @@ class DetoxLogger {
     return { context, msg };
   }
 
+  /** @internal */
   static defaultOptions({ level }) {
     const ph = level === 'trace' || level === 'debug'
       ? value => require('chalk').grey(value) + ' '
@@ -319,6 +329,7 @@ class DetoxLogger {
   }
 
   /**
+   * @internal
    * @param {string} level
    * @returns {Detox.DetoxLogLevel}
    */
@@ -338,31 +349,5 @@ class DetoxLogger {
     }
   }
 }
-
-const RESERVED_PROPERTIES = [
-  'hostname',
-  'level',
-  'msg',
-  'name',
-  'pid',
-  'time',
-];
-
-function hasProperty(p) {
-  return _.has(this, p);
-}
-
-function hasReservedProperties(o) {
-  return RESERVED_PROPERTIES.some(hasProperty, o); // eslint-disable-line unicorn/no-array-method-this-argument
-}
-
-function escapeCallback(value, key) {
-  return RESERVED_PROPERTIES.includes(key) ? `${key}$` : key;
-}
-
-function sanitizeBunyanContext(context) {
-  return hasReservedProperties(context) ? _.mapKeys(context, escapeCallback) : context;
-}
-
 
 module.exports = DetoxLogger;
