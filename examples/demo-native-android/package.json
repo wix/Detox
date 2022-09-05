@@ -1,13 +1,13 @@
 {
   "name": "detox-demo-native-android",
-  "version": "20.0.5-breaking.new-global-lifecycle.0",
+  "version": "20.0.6-breaking.new-global-lifecycle.0",
   "private": true,
   "scripts": {
     "packager": "react-native start",
     "detox-server": "detox run-server"
   },
   "devDependencies": {
-    "detox": "^20.0.5-breaking.new-global-lifecycle.0"
+    "detox": "^20.0.6-breaking.new-global-lifecycle.0"
   },
   "detox": {}
 }
