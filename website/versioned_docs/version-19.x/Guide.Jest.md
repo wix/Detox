@@ -32,7 +32,7 @@ Before starting with Jest setup, be sure to complete the preliminary sections of
 
 Afterward, install the respective npm package:
 
-```sh
+```bash npm2yarn
 npm install -D "jest@>=27.2.5"
 ```
 

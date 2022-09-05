@@ -73,7 +73,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 
   async _launchEmulator(avdName, adbName, isRunning, options) {
     try {
-      await traceCall('emulatorLaunch', () =>
+      await traceCall('emulatorLaunch',
         this._emulatorLauncher.launch(avdName, adbName, isRunning, options));
     } catch (e) {
       await this._allocationHelper.deallocateDevice(adbName);

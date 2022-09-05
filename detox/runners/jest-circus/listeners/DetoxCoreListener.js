@@ -22,16 +22,6 @@ class DetoxCoreListener {
     this.detox = detox;
   }
 
-  _getTestInvocations(test) {
-    const { DETOX_RERUN_INDEX } = process.env;
-
-    if (!isNaN(DETOX_RERUN_INDEX)) {
-      return Number(DETOX_RERUN_INDEX) * this._testRunTimes + test.invocations;
-    } else {
-      return test.invocations;
-    }
-  }
-
   async run_describe_start({ describeBlock: { name, children } }) {
     if (children.length) {
       await this.detox[onRunDescribeStart]({ name });
@@ -80,20 +70,39 @@ class DetoxCoreListener {
     this._startedTests.add(test);
 
     await this.detox[onTestStart]({
+      ...this._getTestMetadata(test),
+      status: 'running',
+    });
+  }
+
+  _getTestMetadata(test) {
+    return {
       title: test.name,
+      parent: test.parent.name,
       fullName: getFullTestName(test),
       status: 'running',
+      functionCode: test.fn.toString(),
       invocations: this._getTestInvocations(test),
-    });
+    };
+  }
+
+  _getTestInvocations(test) {
+    const { DETOX_RERUN_INDEX } = process.env;
+
+    if (!isNaN(DETOX_RERUN_INDEX)) {
+      return Number(DETOX_RERUN_INDEX) * this._testRunTimes + test.invocations;
+    } else {
+      return test.invocations;
+    }
   }
 
   async test_done({ test }) {
     if (this._startedTests.has(test)) {
       await this.detox[onTestDone]({
-        title: test.name,
-        fullName: getFullTestName(test),
-        status: test.errors.length ? 'failed' : 'passed',
-        invocations: this._getTestInvocations(test),
+        ...this._getTestMetadata(test),
+        status: _.isEmpty(test.errors) ? 'passed' : 'failed',
+        errors: _.isEmpty(test.errors) ? undefined : test.errors,
+        asyncError: _.isEmpty(test.asyncError) ? undefined : test.asyncError,
         timedOut: hasTimedOut(test)
       });
 

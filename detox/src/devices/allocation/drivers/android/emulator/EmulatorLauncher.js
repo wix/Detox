@@ -63,8 +63,7 @@ class EmulatorLauncher extends DeviceLauncher {
   }
 
   async _awaitEmulatorBoot(adbName) {
-    await traceCall('awaitBoot', () =>
-      this._waitForBootToComplete(adbName));
+    await traceCall('awaitBoot', this._waitForBootToComplete(adbName));
   }
 
   async _waitForBootToComplete(adbName) {
