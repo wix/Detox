@@ -14,7 +14,7 @@ sidebar_label: Detox Command Line Tools
 Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 
 ```bash npm2yarn
-npm install -g detox-cli
+npm install detox-cli --global
 ```
 
 ### Usage
