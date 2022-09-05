@@ -1,15 +1,15 @@
 {
-    "globalSetup": "./global-setup.js",
-    "globalTeardown": "./global-teardown.js",
-    "setupFilesAfterEnv": ["./setup.ts"],
-    "maxWorkers": 1,
-    "testEnvironment": "./environment",
-    "testRunner": "jest-circus/runner",
-    "testTimeout": 120000,
-    "testRegex": "\\.e2e\\.ts$",
-    "transform": {
-      "\\.tsx?$": "ts-jest"
-    },
-    "reporters": ["detox/runners/jest/reporter"],
-    "verbose": true
+  "maxWorkers": 1,
+  "globalSetup": "./global-setup.js",
+  "globalTeardown": "detox/runners/jest/globalTeardown",
+  "setupFilesAfterEnv": ["./setup.ts"],
+  "testEnvironment": "detox/runners/jest/testEnvironment",
+  "testRunner": "jest-circus/runner",
+  "testTimeout": 120000,
+  "testMatch": ["<rootDir>/*.e2e.ts"],
+  "transform": {
+    "\\.tsx?$": "ts-jest"
+  },
+  "reporters": ["detox/runners/jest/reporter"],
+  "verbose": true
 }

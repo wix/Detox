@@ -390,7 +390,7 @@ Please check your Detox config${this._atPath()}`,
       case 'forceAdbInstall':
         return this._invalidPropertyType('forceAdbInstall', 'a boolean value', deviceAlias);
       case 'gpuMode':
-        return this._invalidPropertyType('gpuMode', "'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'", deviceAlias);
+        return this._invalidPropertyType('gpuMode', "'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'", deviceAlias);
       case 'headless':
         return this._invalidPropertyType('headless', 'a boolean value', deviceAlias);
       case 'readonly':
@@ -652,6 +652,22 @@ Examine your Detox config${this._atPath()}`,
         session: _.get(this.contents, ['session']),
         ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
       }, _.isEmpty),
+    });
+  }
+
+  invalidTestRunnerProperty(isGlobal) {
+    const testRunner = _.get(this.contents, ['testRunner']);
+
+    return new DetoxConfigError({
+      message: `testRunner should be an object, not a ${typeof testRunner}`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: isGlobal ? 0 : 3 },
+      debugInfo: isGlobal ? {
+        testRunner,
+        ...this.contents,
+      } : {
+        ...this._focusOnConfiguration(c => _.pick(c, ['testRunner'])),
+      },
     });
   }
 

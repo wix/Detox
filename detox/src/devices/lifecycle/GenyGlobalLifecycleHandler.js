@@ -1,6 +1,4 @@
-const onSignalExit = require('signal-exit');
-
-const logger = require('../../utils/logger').child({ __filename });
+const logger = require('../../utils/logger').child({ cat: 'device' });
 
 const cleanupLogData = {
   event: 'GENYCLOUD_TEARDOWN',
@@ -12,16 +10,14 @@ class GenyGlobalLifecycleHandler {
     this._instanceLifecycleService = instanceLifecycleService;
   }
 
-  async globalInit() {
-    onSignalExit((code, signal) => {
-      if (signal) {
-        const { rawDevices  } = this._deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
-        const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
-        if (instanceHandles.length) {
-          reportGlobalCleanupSummary(instanceHandles);
-        }
-      }
-    });
+  async globalInit() {}
+
+  emergencyCleanup() {
+    const { rawDevices } = this._deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+    const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
+    if (instanceHandles.length) {
+      reportGlobalCleanupSummary(instanceHandles);
+    }
   }
 
   async globalCleanup() {

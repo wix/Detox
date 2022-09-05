@@ -72,7 +72,6 @@ describe('collectCliConfig', () => {
     ...asString( ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',       'take-screenshots']),
     ...asString( ['recordVideos',         'DETOX_RECORD_VIDEOS',          'record-videos']),
     ...asString( ['recordPerformance',    'DETOX_RECORD_PERFORMANCE',     'record-performance']),
-    ...asString( ['recordTimeline',       'DETOX_RECORD_TIMELINE',        'record-timeline']),
     ...asBoolean(['cleanup',              'DETOX_CLEANUP',                'cleanup']),
     ...asString( ['configPath',            'DETOX_CONFIG_PATH',            'config-path']),
     ...asString( ['configuration' ,        'DETOX_CONFIGURATION',          'configuration']),
@@ -89,10 +88,9 @@ describe('collectCliConfig', () => {
     ...asString( ['loglevel',             'DETOX_LOGLEVEL',               'loglevel']),
     ...asBoolean(['noColor',              'DETOX_NO_COLOR',               'no-color']),
     ...asBoolean(['reuse',                'DETOX_REUSE',                  'reuse']),
+    ...asNumber( ['retries',              'DETOX_RETRIES',                'retries']),
     ...asBoolean(['readonlyEmu',          'DETOX_READ_ONLY_EMU',          null]),
-    ...asString( ['runnerConfig',          'DETOX_RUNNER_CONFIG',          'runner-config']),
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
-    ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {

@@ -2,13 +2,12 @@ const _ = require('lodash');
 
 describe('composeBehaviorConfig', () => {
   let composeBehaviorConfig;
-  let cliConfig, localConfig, globalConfig, userParams;
+  let cliConfig, localConfig, globalConfig;
 
   beforeEach(() => {
     cliConfig = {};
     localConfig = {};
     globalConfig = {};
-    userParams = {};
 
     composeBehaviorConfig = require('./composeBehaviorConfig');
   });
@@ -17,12 +16,12 @@ describe('composeBehaviorConfig', () => {
     cliConfig,
     localConfig,
     globalConfig,
-    userParams,
   });
 
   it('should return a default behavior if nothing is set', () => {
     expect(composed()).toEqual({
       init: {
+        keepLockFile: false,
         exposeGlobals: true,
         reinstallApp: true,
       },
@@ -53,6 +52,7 @@ describe('composeBehaviorConfig', () => {
         behavior: {
           init: {
             exposeGlobals: false,
+            keepLockFile: true,
             reinstallApp: false,
           },
           launchApp: 'manual',
@@ -76,6 +76,7 @@ describe('composeBehaviorConfig', () => {
           behavior: {
             init: {
               exposeGlobals: true,
+              keepLockFile: false,
               reinstallApp: true,
             },
             launchApp: 'auto',
@@ -91,6 +92,28 @@ describe('composeBehaviorConfig', () => {
         const actual = composed();
 
         expect(actual).toEqual(expected);
+      });
+    });
+
+    describe('if CLI config is set', () => {
+      beforeEach(() => {
+        cliConfig = {
+          keepLockFile: true,
+          reuse: true,
+          cleanup: true,
+        };
+      });
+
+      it('should override the defaults from global config', () => {
+        expect(composed()).toEqual(expect.objectContaining({
+          init: expect.objectContaining({
+            keepLockFile: true,
+            reinstallApp: false,
+          }),
+          cleanup: expect.objectContaining({
+            shutdownDevice: true,
+          }),
+        }));
       });
     });
   });

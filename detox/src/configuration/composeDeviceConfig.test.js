@@ -42,7 +42,7 @@ describe('composeDeviceConfig', () => {
     './customDriver'
   ];
 
-  const KNOWN_GPU_MODES = ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest'];
+  const KNOWN_GPU_MODES = ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest', 'off'];
 
   /**
    * @param {'ios.simulator' | 'android.attached' | 'android.emulator' | 'android.genycloud' | './customDriver'} deviceType

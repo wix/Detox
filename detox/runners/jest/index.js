@@ -1,9 +1,21 @@
-const DetoxCircusEnvironment = require('./environment');
-const SpecReporter = require('./listeners/SpecReporter');
-const WorkerAssignReporter = require('./listeners/WorkerAssignReporter');
-
 module.exports = {
-  DetoxCircusEnvironment,
-  SpecReporter,
-  WorkerAssignReporter,
+  //#region *** Runner Realm ***
+
+  get DetoxCircusEnvironment() {
+    return require('./testEnvironment');
+  },
+
+  //#endregion
+
+  //#region *** Worker Realm ***
+
+  get globalSetup() {
+    return require('./globalSetup');
+  },
+
+  get globalTeardown() {
+    return require('./globalTeardown');
+  },
+
+  //#endregion
 };

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const argparse = require('../utils/argparse');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'config' });
 
 const { DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION } = require('./utils/warnings');
 
@@ -36,7 +36,7 @@ const deprecateDeviceLaunchArgs = (value) => {
 function collectCliConfig({ argv }) {
   const env = (key) => argparse.getArgValue(key);
   const get = (key, fallback) => {
-    const value = argv ? argv[key] : env(key);
+    const value = argv && Reflect.has(argv, key) ? argv[key] : env(key);
     return value === undefined ? fallback : value;
   };
 
@@ -47,7 +47,6 @@ function collectCliConfig({ argv }) {
     takeScreenshots: get('take-screenshots'),
     recordVideos: get('record-videos'),
     recordPerformance: get('record-performance'),
-    recordTimeline: get('record-timeline'),
     cleanup: asBoolean(get('cleanup')),
     configPath: get('config-path'),
     configuration: get('configuration'),
@@ -64,9 +63,8 @@ function collectCliConfig({ argv }) {
     loglevel: get('loglevel'),
     noColor: asBoolean(get('no-color')),
     reuse: asBoolean(get('reuse')),
-    runnerConfig: get('runner-config'),
     useCustomLogger: asBoolean(get('use-custom-logger')),
-    workers: asNumber(get('workers')),
+    retries: asNumber(get('retries')),
     inspectBrk: asBoolean(get('inspect-brk')),
   }, _.isUndefined);
 }

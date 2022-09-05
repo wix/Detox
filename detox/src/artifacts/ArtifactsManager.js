@@ -1,24 +1,72 @@
 const EventEmitter = require('events');
 const path = require('path');
-const util = require('util');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'artifacts-manager,artifact' });
+const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
+const traceMethods = require('../utils/traceMethods');
 
 const FileArtifact = require('./templates/artifact/FileArtifact');
+const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager extends EventEmitter {
-  constructor({ pathBuilder, plugins }) {
+  constructor({ rootDir, pathBuilder, plugins }) {
     super();
 
     this._pluginConfigs = plugins;
     this._idlePromise = Promise.resolve();
     this._idleCallbackRequests = [];
     this._artifactPlugins = {};
-    this._pathBuilder = pathBuilder;
+    this._pathBuilder = this._resolveArtifactsPathBuilder(pathBuilder, rootDir);
+
+    traceMethods(log, this, [
+      'onAppReady',
+      'onBeforeCleanup',
+      'onBeforeLaunchApp',
+      'onBeforeShutdownDevice',
+      'onBeforeTerminateApp',
+      'onBeforeUninstallApp',
+      'onBootDevice',
+      'onCreateExternalArtifact',
+      'onHookFailure',
+      'onHookStart',
+      'onHookSuccess',
+      'onLaunchApp',
+      'onRunDescribeFinish',
+      'onRunDescribeStart',
+      'onRunFinish',
+      'onRunStart',
+      'onShutdownDevice',
+      'onTerminateApp',
+      'onTestDone',
+      'onTestFnFailure',
+      'onTestFnStart',
+      'onTestFnSuccess',
+      'onTestStart',
+    ]);
+  }
+
+  _resolveArtifactsPathBuilder(pathBuilder, rootDir) {
+    if (typeof pathBuilder === 'string') {
+      pathBuilder = resolveModuleFromPath(pathBuilder);
+
+      if (typeof pathBuilder === 'function') {
+        try {
+          pathBuilder = pathBuilder({ rootDir });
+        } catch (e) {
+          pathBuilder = new pathBuilder({ rootDir });
+        }
+      }
+    }
+
+    if (!pathBuilder) {
+      pathBuilder = new ArtifactPathBuilder({ rootDir });
+    }
+
+    return pathBuilder;
   }
 
   _instantiateArtifactPlugin(pluginFactory, pluginUserConfig) {
@@ -179,27 +227,21 @@ class ArtifactsManager extends EventEmitter {
   }
 
   async _callSinglePlugin(pluginId, methodName, ...args) {
-    const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
-    log.trace(Object.assign({ event: 'ARTIFACTS_LIFECYCLE', fn: methodName }, ...args), callSignature);
-
     const plugin = this._artifactPlugins[pluginId];
     try {
       await plugin[methodName](...args);
     } catch (e) {
-      this._unhandledPluginExceptionHandler(e, { plugin, methodName, args });
+      this._unhandledPluginExceptionHandler(e, { plugin, methodName });
     }
   }
 
   async _callPlugins(strategy, methodName, ...args) {
-    const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
-    log.trace(Object.assign({ event: 'ARTIFACTS_LIFECYCLE', fn: methodName }, ...args), callSignature);
-
     for (const pluginGroup of this._groupPlugins(strategy)) {
       await Promise.all(pluginGroup.map(async (plugin) => {
         try {
           await plugin[methodName](...args);
         } catch (e) {
-          this._unhandledPluginExceptionHandler(e, { plugin, methodName, args });
+          this._unhandledPluginExceptionHandler(e, { plugin, methodName });
         }
       }));
     }
@@ -229,28 +271,20 @@ class ArtifactsManager extends EventEmitter {
     }
   }
 
-  _composeCallSignature(object, methodName, args) {
-    const argsString = args.map(arg => util.inspect(arg)).join(', ');
-    return `${object}.${methodName}(${argsString})`;
-  }
-
-  _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
+  _unhandledPluginExceptionHandler(err, { plugin, methodName }) {
     const logObject = {
-      event: 'ERROR',
       plugin: plugin.name,
-      err,
       methodName,
+      err,
     };
 
-    const callSignature = this._composeCallSignature(plugin.name, methodName, args);
-    log.warn(logObject, `Suppressed error inside function call: ${callSignature}`);
+    log.warn(logObject, `Suppressed error inside function call.`);
   }
 
   _idleCallbackErrorHandle(err, caller) {
     this._unhandledPluginExceptionHandler(err, {
       plugin: caller,
       methodName: 'onIdleCallback',
-      args: []
     });
   }
 }

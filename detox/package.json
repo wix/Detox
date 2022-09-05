@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "19.9.1",
+  "version": "20.0.6-breaking.new-global-lifecycle.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -14,7 +14,7 @@
     "url": "https://github.com/wix/Detox/issues"
   },
   "homepage": "https://github.com/wix/Detox#readme",
-  "main": "./src/index.js",
+  "main": "./index.js",
   "types": "./index.d.ts",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
@@ -32,9 +32,12 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.8",
     "@types/child-process-promise": "^2.2.1",
+    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.3",
     "@types/node": "^12.20.37",
+    "@types/node-ipc": "^9.2.0",
     "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
@@ -44,7 +47,6 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "jest": "^28.0.0",
-    "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.68.2",
@@ -55,15 +57,21 @@
   "dependencies": {
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
-    "bunyan-debug-stream": "^2.0.1",
+    "bunyan-debug-stream": "^3.1.0",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
+    "duplexify": "^4.1.2",
     "find-up": "^4.1.0",
     "fs-extra": "^4.0.2",
     "funpermaproxy": "^1.0.1",
+    "glob": "^8.0.3",
     "ini": "^1.3.4",
+    "json-cycle": "^1.3.0",
     "lodash": "^4.17.5",
     "minimist": "^1.2.0",
+    "multi-sort-stream": "^1.0.3",
+    "multipipe": "^4.0.0",
+    "node-ipc": "^9.2.1",
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
@@ -71,13 +79,16 @@
     "serialize-error": "^8.0.1",
     "shell-quote": "^1.7.2",
     "signal-exit": "^3.0.3",
+    "stream-json": "^1.7.4",
+    "strip-ansi": "^6.0.1",
     "tail": "^2.0.0",
     "telnet-client": "1.2.8",
     "tempfile": "^2.0.0",
+    "trace-event-lib": "^1.3.1",
     "which": "^1.3.1",
     "ws": "^7.0.0",
     "yargs": "^16.0.3",
-    "yargs-parser": "^20.2.2",
+    "yargs-parser": "^20.2.9",
     "yargs-unparser": "^2.0.0"
   },
   "peerDependencies": {
@@ -99,9 +110,9 @@
     "testRunner": "jest-circus/runner",
     "roots": [
       "node_modules",
+      "local-cli",
       "src",
-      "runners",
-      "local-cli"
+      "runners"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
@@ -141,7 +152,6 @@
       "src/validation/EnvironmentValidatorBase.js",
       "src/validation/factories",
       "src/validation/ios/IosSimulatorEnvValidator",
-      "src/utils/MissingDetox.js",
       "src/utils/appdatapath.js",
       "src/utils/debug.js",
       "src/utils/environment.js",
@@ -167,10 +177,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 100,
-        "branches": 100,
-        "functions": 100,
-        "lines": 100
+        "statements": 0,
+        "branches": 0,
+        "functions": 0,
+        "lines": 0
       }
     }
   }

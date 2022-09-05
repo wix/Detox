@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const log = require('../src/utils/logger').child({ __filename });
+const detox = require('../internals');
 
 const jestTemplates = require('./templates/jest');
 
@@ -43,7 +43,7 @@ function createFile(filename, content) {
 
   try {
     fs.writeFileSync(filename, content);
-    log.info(`Created a file at path: ${filename}`);
+    detox.log.info(`Created a file at path: ${filename}`);
   } catch (err) {
     reportError({ err }, `Failed to create a file at path: ${filename}`);
   }
@@ -52,19 +52,28 @@ function createFile(filename, content) {
 function createJestFolderE2E() {
   createFolder('e2e', {
     'config.json': jestTemplates.runnerConfig,
-    'environment.js': jestTemplates.environment,
-    'firstTest.e2e.js': jestTemplates.firstTest,
+    'starter.test.js': jestTemplates.starter,
   });
 
   createFile('.detoxrc.json', JSON.stringify({
-    testRunner: 'jest',
-    runnerConfig: 'e2e/config.json',
+    testRunner: {
+      args: {
+        config: 'e2e/config.json'
+      },
+    },
+
     ...createDefaultConfigurations(),
   }, null, 2));
 }
 
 function createDefaultConfigurations() {
   return {
+    testRunner: {
+      args: {
+        $0: 'jest',
+        config: 'e2e/config.json',
+      },
+    },
     apps: {
       ios: {
         type: 'ios.app',
@@ -103,6 +112,6 @@ function createDefaultConfigurations() {
 }
 
 function reportError(...args) {
-  log.error(...args);
+  detox.log.error(...args);
   exitCode = 1;
 }

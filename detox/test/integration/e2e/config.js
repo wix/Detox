@@ -1,10 +1,9 @@
 module.exports = {
-  "rootDir": "../..",
-  "testEnvironment": "../test/e2e/environment.js",
-  "testRunner": "../test/node_modules/jest-circus/runner",
-  "testMatch": ["<rootDir>/integration/e2e/*.test.js"],
-  "setupFilesAfterEnv": [],
-  "testTimeout": 120000,
-  "verbose": false,
-  "bail": false,
+  globalSetup: 'detox/runners/jest/globalSetup',
+  globalTeardown: 'detox/runners/jest/globalTeardown',
+  testEnvironment: 'detox/runners/jest/testEnvironment',
+  testRunner: 'jest-circus/runner',
+  testMatch: ['<rootDir>/*.test.js'],
+  testTimeout: 120000,
+  verbose: true,
 };

@@ -8,6 +8,8 @@
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
 
+import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
+
 declare global {
     const device: Detox.DetoxExportWrapper['device'];
     const element: Detox.DetoxExportWrapper['element'];
@@ -36,21 +38,7 @@ declare global {
              * @example extends: '@my-org/detox-preset'
              */
             extends?: string;
-            /**
-             * Override test runner binary command.
-             * @default 'jest'
-             */
-            testRunner?: string;
-            /**
-             * @example runnerConfig: 'e2e/config.js'
-             */
-            runnerConfig?: string;
-            /**
-             * Optional. A default glob pattern for a test runner to use when no test files are specified.
-             *
-             * @example specs: 'detoxE2E'
-             */
-            specs?: string;
+
             apps?: Record<string, DetoxAppConfig>;
             devices?: Record<string, DetoxDeviceConfig>;
             selectedConfiguration?: string;
@@ -60,7 +48,9 @@ declare global {
         type DetoxConfigurationCommon = {
             artifacts?: false | DetoxArtifactsConfig;
             behavior?: DetoxBehaviorConfig;
+            logger?: DetoxLoggerConfig;
             session?: DetoxSessionConfig;
+            testRunner?: DetoxTestRunnerConfig;
         };
 
         interface DetoxArtifactsConfig {
@@ -71,7 +61,6 @@ declare global {
                 screenshot?: 'none' | 'manual' | 'failing' | 'all' | DetoxScreenshotArtifactsPluginConfig;
                 video?: 'none' | 'failing' | 'all' | DetoxVideoArtifactsPluginConfig;
                 instruments?: 'none' | 'all' | DetoxInstrumentsArtifactsPluginConfig;
-                timeline?: 'none' | 'all' | DetoxTimelineArtifactsPluginConfig;
                 uiHierarchy?: 'disabled' | 'enabled' | DetoxUIHierarchyArtifactsPluginConfig;
 
                 [pluginId: string]: unknown;
@@ -91,11 +80,19 @@ declare global {
                  */
                 exposeGlobals?: boolean;
                 /**
-                 * By default, `await detox.init()` will uninstall and install the app.
+                 * By default, Detox will uninstall and install the app upon the initialization.
                  * If you wish to reuse the existing app for a faster run, set the property to
                  * `false`.
                  */
                 reinstallApp?: boolean;
+                /**
+                 * If you wish to run multiple "detox test" commands in parallel,
+                 * make sure they don't delete the shared lock file – only the
+                 * first command should reset the lock file.
+                 *
+                 * @default false
+                 */
+                keepLockFile?: boolean;
             };
             launchApp?: 'auto' | 'manual';
             cleanup?: {
@@ -103,11 +100,63 @@ declare global {
             };
         }
 
+        interface DetoxLoggerConfig {
+            level?: DetoxLogLevel;
+            /**
+             * @default 'sandbox'
+             */
+            overrideConsole?: 'all' | 'sandbox' | 'none';
+            options?: BunyanDebugStreamOptions | ((config: Partial<DetoxLoggerConfig>) => BunyanDebugStreamOptions);
+        }
+
         interface DetoxSessionConfig {
             autoStart?: boolean;
             debugSynchronization?: number;
             server?: string;
             sessionId?: string;
+        }
+
+        interface DetoxTestRunnerConfig {
+            args?: {
+                /**
+                 * The command to use for runner: 'jest', 'nyc jest',
+                 */
+                $0: string;
+                /**
+                 * The positional arguments to pass to the runner.
+                 */
+                _?: string[];
+                /**
+                 * Any other properties recognized by test runner
+                 */
+                [prop: string]: unknown;
+            };
+            /**
+             * Configuration of custom integration features
+             * between Detox and Jest
+             */
+            jest?: {
+                /**
+                 * Device init timeout
+                 */
+                initTimeout?: number | undefined;
+                /**
+                 * Insist on CLI-based retry mechanism even when the failed tests have been handled
+                 * by jest.retryTimes(n) mechanism from Jest Circus.
+                 */
+                retryAfterCircusRetries?: boolean;
+                reportSpecs?: boolean | undefined;
+                reportWorkerAssign?: boolean | undefined;
+            };
+            /**
+             * Retries count. Zero means a single attempt to run tests.
+             */
+            retries?: number;
+            /**
+             * Custom handler to process --inspect-brk CLI flag.
+             * Use it when you rely on another test runner than Jest.
+             */
+            inspectBrk?: boolean | ((config: DetoxTestRunnerConfig) => void);
         }
 
         type DetoxAppConfig = (DetoxBuiltInAppConfig | DetoxCustomAppConfig) & {
@@ -158,10 +207,6 @@ declare global {
         }
 
         interface DetoxUIHierarchyArtifactsPluginConfig {
-            enabled?: boolean;
-        }
-
-        interface DetoxTimelineArtifactsPluginConfig {
             enabled?: boolean;
         }
 
@@ -216,7 +261,7 @@ declare global {
             type: 'android.emulator';
             device: string | { avdName: string };
             bootArgs?: string;
-            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
+            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off';
             headless?: boolean;
             /**
              * @default true
@@ -265,50 +310,110 @@ declare global {
 
         // endregion DetoxConfig
 
-        // Detox exports all methods from detox global and all of the global constants.
-        interface DetoxInstance {
-            device: Device;
-            element: ElementFacade;
-            waitFor: WaitForFacade;
-            expect: ExpectFacade;
-            by: ByFacade;
-            web: WebFacade;
+        interface DetoxExportWrapper {
+            readonly device: Device;
+
+            readonly element: ElementFacade;
+
+            readonly waitFor: WaitForFacade;
+
+            readonly expect: ExpectFacade;
+
+            readonly by: ByFacade;
+
+            readonly web: WebFacade;
+
+            readonly DetoxConstants: {
+                userNotificationTriggers: {
+                    push: 'push';
+                    calendar: 'calendar';
+                    timeInterval: 'timeInterval';
+                    location: 'location';
+                };
+                userActivityTypes: {
+                    searchableItem: string;
+                    browsingWeb: string;
+                },
+                searchableItemActivityIdentifier: string;
+            };
+
+            /**
+             * Detox logger instance. Can be used for saving user logs to the general log file.
+             */
+            readonly log: Logger;
+
+            /**
+             * @deprecated
+             *
+             * Deprecated - use {@link Detox.Logger#trace}
+             * Detox tracer instance. Can be used for building timelines in Google Event Tracing format.
+             */
+            readonly trace: {
+                /** @deprecated */
+                readonly startSection: (name: string) => void;
+                /** @deprecated */
+                readonly endSection: (name: string) => void;
+            };
+
+            /**
+             * @deprecated
+             */
+            readonly traceCall: <T>(event: string, action: () => Promise<T>) => Promise<T>;
         }
 
-        interface DetoxExportWrapper extends DetoxInstance {
-            /**
-             * The setup phase happens inside detox.init(). This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator
-             *
-             * @param configOverride - this object is deep-merged with the selected Detox configuration from .detoxrc
-             * @example
-             * beforeAll(async () => {
-             *   await detox.init();
-             * });
-             */
-            init(configOverride?: Partial<DetoxConfig>): Promise<void>;
+        interface Logger {
+            readonly level: DetoxLogLevel;
 
-            beforeEach(...args: any[]): Promise<void>;
+            readonly fatal: _LogMethod;
+            readonly error: _LogMethod;
+            readonly warn: _LogMethod;
+            readonly info: _LogMethod;
+            readonly debug: _LogMethod;
+            readonly trace: _LogMethod;
 
-            afterEach(...args: any[]): Promise<void>;
-
-            /**
-             * The cleanup phase should happen after all the tests have finished.
-             * This is the phase where the Detox server shuts down.
-             *
-             * @example
-             * after(async () => {
-             *  await detox.cleanup();
-             * });
-             */
-            cleanup(): Promise<void>;
-
-            /**
-             * Unstable. API to access an assembled detox config before it gets passed to testRunner
-             * or detox.init(). Use it only if you don't have another option.
-             * @internal
-             */
-            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
+            child(context?: Partial<LogEvent>): Logger;
         }
+
+        /** @internal */
+        interface _LogMethod extends _LogMethodSignature {
+            readonly begin: _LogMethodSignature;
+            readonly complete: _CompleteMethodSignature;
+            readonly end: _LogMethodSignature;
+        }
+
+        /** @internal */
+        interface _LogMethodSignature {
+            (...args: unknown[]): void
+            (event: LogEvent, ...args: unknown[]): void;
+        }
+
+        /** @internal */
+        interface _CompleteMethodSignature {
+            <T>(message: string, action: T | (() => T)): T;
+            <T>(event: LogEvent, message: string, action: T | (() => T)): T;
+        }
+
+        type LogEvent = {
+            /** Use when there's a risk of logging several parallel duration events. */
+            id?: string | number;
+            /** Optional. Event categories (tags) to facilitate filtering. */
+            cat?: string | string[];
+            /** Optional. Color name (applicable in Google Chrome Trace Format) */
+            cname?: string;
+
+            /** Reserved property. Process ID. */
+            pid?: never;
+            /** Reserved property. Thread ID. */
+            tid?: never;
+            /** Reserved property. Timestamp. */
+            ts?: never;
+            /** Reserved property. Event phase. */
+            ph?: never;
+
+            [customProperty: string]: unknown;
+        };
+
+        type DetoxLogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
         type Point2D = {
             x: number,
@@ -396,12 +501,10 @@ declare global {
              * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
              * as used by simctl (e.g. AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE).
              *
-             * The value will be undefined until the device is properly prepared (i.e. in detox.init())
              */
             id: string;
             /**
              * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_29)
-             * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
 

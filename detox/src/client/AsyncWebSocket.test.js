@@ -6,6 +6,8 @@ const _ = require('lodash');
 
 const config = require('../configuration/configurations.mock').validSession;
 
+// TODO: check why it triggers MaxListenersExceededWarning
+
 describe('AsyncWebSocket', () => {
   let AsyncWebSocket;
   let WebSocket;
@@ -19,6 +21,7 @@ describe('AsyncWebSocket', () => {
 
   beforeEach(() => {
     jest.mock('../utils/logger');
+    jest.mock('../utils/trace');
     jest.mock('ws');
     WebSocket = require('ws');
     WebSocket.CONNECTING = 0;
@@ -26,6 +29,7 @@ describe('AsyncWebSocket', () => {
     WebSocket.CLOSING = 2;
     WebSocket.CLOSED = 3;
 
+    WebSocket.prototype._socket = { localPort: NaN };
     WebSocket.prototype.readyState = WebSocket.CONNECTING;
     WebSocket.prototype.mockOpen = function () {
       this.readyState = WebSocket.OPEN;
@@ -165,12 +169,9 @@ describe('AsyncWebSocket', () => {
         socket.mockMessage({ type: 'somethingElse' });
 
         expect(onErrorCallback).not.toHaveBeenCalled();
-        expect(log.error).toHaveBeenCalledWith(
-          { event: 'WS_ERROR' },
-          expect.stringMatching('Unexpected error')
-        );
+        expect(log.error).toHaveBeenCalledWith({ error: expect.anything() });
 
-        const error = log.error.mock.calls[0][1];
+        const { error } = log.error.mock.calls[0][0];
         expect(error).toMatchSnapshot();
       });
 
@@ -326,7 +327,7 @@ describe('AsyncWebSocket', () => {
       aws.resetInFlightPromises();
 
       socket.mockMessage({ type: 'someReply', messageId: 1 });
-      expect(log.debug).toHaveBeenCalledWith({ event: 'WS_LATE_RESPONSE' }, expect.stringContaining('messageId=1'));
+      expect(log.debug).toHaveBeenCalledWith({ messageId: 1 }, 'late response');
     });
   });
 

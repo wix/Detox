@@ -4,8 +4,7 @@ const fs = require('fs');
 
 const _ = require('lodash');
 
-const { composeDetoxConfig } = require('../src/configuration');
-const log = require('../src/utils/logger').child({ __filename });
+const detox = require('../internals');
 
 module.exports.command = 'build';
 module.exports.desc = "Runs the user-provided build command, as defined in the 'build' property of the specified configuration.";
@@ -38,27 +37,27 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function build(argv) {
-  const { errorComposer, appsConfig } = await composeDetoxConfig({ argv });
+  const { apps: appsConfig, errorComposer } = await detox.resolveConfig({ argv });
   const apps = _.entries(appsConfig);
 
   for (const [appName, app] of apps) {
     const buildScript = app.build;
 
     if (argv['if-missing'] && app.binaryPath && fs.existsSync(app.binaryPath)) {
-      log.info(`Skipping build for "${appName}" app...`);
+      detox.log.info(`Skipping build for "${appName}" app...`);
       continue;
     }
 
     if (buildScript) {
       try {
         if (apps.length > 1) {
-          log.info(`Building "${appName}" app...`);
+          detox.log.info(`Building "${appName}" app...`);
         }
 
-        log.info(buildScript);
+        detox.log.info(buildScript);
         cp.execSync(buildScript, { stdio: 'inherit' });
       } catch (e) {
-        log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for maintaining this command.\n");
+        detox.log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for maintaining this command.\n");
         throw e;
       }
     } else if (!argv.silent) {
@@ -66,7 +65,7 @@ module.exports.handler = async function build(argv) {
     }
 
     if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
-      log.warn('\nImportant: after running the build command, Detox could not find your app at the given binary path:\n\t' + app.binaryPath + "\nMake sure it is correct, otherwise you'll get an error on an attempt to install your app.\n");
+      detox.log.warn('\nImportant: after running the build command, Detox could not find your app at the given binary path:\n\t' + app.binaryPath + "\nMake sure it is correct, otherwise you'll get an error on an attempt to install your app.\n");
     }
   }
 };

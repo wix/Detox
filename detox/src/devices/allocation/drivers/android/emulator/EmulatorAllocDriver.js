@@ -1,7 +1,8 @@
 // @ts-nocheck
 const _ = require('lodash');
 
-const { traceCall } = require('../../../../../utils/trace');
+const log = require('../../../../../utils/logger').child({ cat: 'device' });
+const traceMethods = require('../../../../../utils/traceMethods');
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -22,6 +23,8 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     this._emulatorVersionResolver = emulatorVersionResolver;
     this._emulatorLauncher = emulatorLauncher;
     this._allocationHelper = allocationHelper;
+
+    traceMethods(log, this, ['_launchEmulator']);
   }
 
   /**
@@ -73,8 +76,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 
   async _launchEmulator(avdName, adbName, isRunning, options) {
     try {
-      await traceCall('emulatorLaunch', () =>
-        this._emulatorLauncher.launch(avdName, adbName, isRunning, options));
+      await this._emulatorLauncher.launch(avdName, adbName, isRunning, options);
     } catch (e) {
       await this._allocationHelper.deallocateDevice(adbName);
       throw e;

@@ -1,16 +1,20 @@
 {
   "name": "demo-plugin",
-  "version": "19.9.1",
+  "version": "20.0.6-breaking.new-global-lifecycle.0",
   "private": true,
   "scripts": {
     "test:plugin": "detox test --configuration plugin -l verbose"
   },
   "devDependencies": {
-    "detox": "^19.9.1",
-    "jest": "^28.0.0"
+    "detox": "^20.0.6-breaking.new-global-lifecycle.0",
+    "jest": "^27.0.0"
   },
   "detox": {
-    "test-runner": "jest",
+    "testRunner": {
+      "args": {
+        "config": "e2e/config.json"
+      }
+    },
     "configurations": {
       "plugin": {
         "device": {

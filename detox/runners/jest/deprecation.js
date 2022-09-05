@@ -1,46 +1,25 @@
 const chalk = require('chalk');
 
+// @ts-ignore
 console.error(chalk.yellow(`
 =========================  THE NEW JOURNEY BEGINS  =============================
 
-        https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md
+                  https://wix.github.io/Detox/docs/guide/jest
 
-             _.-;-._              Sorry, traveler from the lands of Detox 19!
-            ;_.JL___;
-            F"-/\\_-7L             Detox 20 comes without old adapters for Jest.
-            | a/ e | \\            You have to rearrange your init code before
-           ,L,c;,.='/;,           you can continue your journey.
-        _,-;;S:;:S;;:' '--._
-       ;. \\;;s:::s;;: .'   /\\     Navigate to the link above and follow the
-      /  \\  ;::::;;  /    /  \\    migration guide steps.
-     / ,  k ;S';;'S.'    j __,l
-  ,---/| /  /S   /S '.   |'   ;   Sincerely yours,
- ,Ljjj |/|.' s .' s   \\  L    |   Detox team.
- LL,_ ]( \\    /    '.  '.||   ;
- ||\\ > /  ;-.'_.-.___\\.-'(|=="(
- JJ," /   |_  [   ]     _]|   /
-  LL\\/   ,' '--'-'-----'  \\  (
-  ||     ;      |          |  >
-  JJ     |      |\\         |,/
-   LL    |      ||       ' |
-   ||    |      ||       . |
-   JJ    /_     ||       ;_|
-    LL   L "==='|i======='_|
-    ||    i----' '-------';
-    JJ    ';-----.------,-'
-     LL     L_.__J,'---;'
-     ||      |   ,|    (
-     JJ     .'=  (|  ,_|
-      LL   /    .'L_    \\
-snd   ||   '---'    '.___>
-Credit: "Gimli" by Shanaka Dias
+         Sorry to say that Detox 20 comes without old adapters for Jest.
+    You have to rearrange your init code before you can continue your journey.
 
-        https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md
+         Navigate to the link and follow the migration guide steps.
+
+         Sincerely yours,
+         Detox team.
+
+                  https://wix.github.io/Detox/docs/guide/jest
 
 =========================  THE NEW JOURNEY BEGINS  =============================
 
 `));
 
 throw Object.assign(new Error(
-  '\n\nPlease follow the new Jest setup guide:\nhttps://github.com/wix/Detox/blob/master/docs/Guide.Jest.md\n\n'
+  '\n\nPlease follow the new Jest setup guide:\nhttps://wix.github.io/Detox/docs/guide/jest\n\n'
 ), { stack: '' });

@@ -2,7 +2,7 @@
 const _ = require('lodash');
 
 const environmentFactory = require('../environmentFactory');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'config' });
 
 /**
  * @param {DetoxConfigErrorComposer} opts.errorComposer
@@ -118,7 +118,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
-    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest)$/)) {
+    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest|off)$/)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 

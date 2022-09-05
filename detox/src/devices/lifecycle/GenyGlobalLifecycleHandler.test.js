@@ -11,15 +11,12 @@ describe('Global-context lifecycle handler for Genymotion cloud emulators', () =
   };
 
   let GenyInstance;
-  let signalExit;
   let logger;
   let deviceCleanupRegistry;
   let instanceLifecycleService;
   let lifecycleHandler;
-  beforeEach(() => {
-    jest.mock('signal-exit');
-    signalExit = require('signal-exit');
 
+  beforeEach(() => {
     jest.mock('../../utils/logger');
     logger = require('../../utils/logger');
 
@@ -117,24 +114,15 @@ describe('Global-context lifecycle handler for Genymotion cloud emulators', () =
   });
 
   describe('global *emergency* clean-up', () => {
-    const signalExitCallback = () => signalExit.mock.calls[0][0];
-    const invokeExitCallback = (signal = 'SIGINT') => signalExitCallback()(null, signal);
     const givenCleanupPendingDevices = (rawDevices) => deviceCleanupRegistry.readRegisteredDevicesUNSAFE.mockReturnValue({ rawDevices });
     const givenNoCleanupPendingDevices = () => givenCleanupPendingDevices([]);
-
-    it('should register a callback on global init via signal-exit, for an emergency global clean-up', async () => {
-      await lifecycleHandler.globalInit();
-      expect(signalExit).toHaveBeenCalled();
-      expect(signalExitCallback()).toBeDefined();
-    });
 
     it('should warn of leaking instances in signal-exit callback', async () => {
       givenCleanupPendingDevices([
         aPendingRawDevice('aDevice', 'uuid'),
       ]);
 
-      await lifecycleHandler.globalInit();
-      invokeExitCallback();
+      lifecycleHandler.emergencyCleanup();
 
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/aDevice \(uuid\)\n/));
@@ -143,20 +131,7 @@ describe('Global-context lifecycle handler for Genymotion cloud emulators', () =
     it('should not warn if no instances were registered', async () => {
       givenNoCleanupPendingDevices();
 
-      await lifecycleHandler.globalInit();
-      invokeExitCallback();
-
-      expect(logger.warn).not.toHaveBeenCalled();
-      expect(logger.info).not.toHaveBeenCalled();
-    });
-
-    it('should not warn if called with no signal', async () => {
-      givenCleanupPendingDevices([
-        aPendingRawDevice('aDevice', 'uuid'),
-      ]);
-
-      await lifecycleHandler.globalInit();
-      invokeExitCallback(null);
+      lifecycleHandler.emergencyCleanup();
 
       expect(logger.warn).not.toHaveBeenCalled();
       expect(logger.info).not.toHaveBeenCalled();

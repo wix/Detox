@@ -2,7 +2,7 @@
 const fs = require('fs-extra');
 const _ = require('lodash');
 
-const log = require('../../../utils/logger').child({ __filename });
+const log = require('../../../utils/logger').child({ cat: 'artifact' });
 const FileArtifact = require('../../templates/artifact/FileArtifact');
 const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
 
@@ -37,9 +37,9 @@ class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
 SimulatorInstrumentsRecording.hintAboutDetoxInstruments = _.once(() => {
   log.warn(`Make sure either:
 1. You have installed Detox Instruments:
-   https://github.com/wix/DetoxInstruments#installation 
+   https://github.com/wix/DetoxInstruments#installation
 2. You have integrated Detox Instruments in your app:
-   https://github.com/wix/DetoxInstruments/blob/master/Documentation/XcodeIntegrationGuide.md 
+   https://github.com/wix/DetoxInstruments/blob/master/Documentation/XcodeIntegrationGuide.md
 3. You have set the environment variable with your custom Detox Instruments location:
    export DETOX_INSTRUMENTS_PATH="/path/to/Detox Instruments.app"`);
 });

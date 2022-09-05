@@ -20,7 +20,7 @@ class DetoxRuntimeError extends DetoxError {
     this.name = 'DetoxRuntimeError';
 
     if (options && typeof options !== 'string' && options.noStack) {
-      delete this.stack;
+      this.stack = '';
     }
   }
 }

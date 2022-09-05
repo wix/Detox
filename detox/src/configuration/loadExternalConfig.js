@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const resolveFrom = require('resolve-from');
 
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'config' });
 
 async function locateExternalConfig(cwd) {
   return findUp([

@@ -7,15 +7,15 @@ describe('file migration', () => {
   });
 
   test.each([
-    ['environment'],
+    ['environment', 'testEnvironment'],
     ['index'],
     ['reporter'],
-  ])('should work for: jest-circus/%s', (moduleName) => {
-    const newImpl = require(`../jest/${moduleName}`);
+  ])('should work for: jest-circus/%s', (oldModuleName, newModuleName = oldModuleName) => {
+    const newImpl = require(`../jest/${newModuleName}`);
     expect(logger).not.toHaveBeenCalled();
-    expect(require(`../jest-circus/${moduleName}`)).toBe(newImpl);
+    expect(require(`../jest-circus/${oldModuleName}`)).toBe(newImpl);
     expect(logger.mock.calls[0][0]).toMatchSnapshot();
-    expect(require(`../jest-circus/${moduleName}`)).toBe(newImpl);
+    expect(require(`../jest-circus/${oldModuleName}`)).toBe(newImpl);
     expect(logger).not.toHaveBeenCalledTimes(2);
   });
 });

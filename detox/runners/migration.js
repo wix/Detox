@@ -16,9 +16,10 @@ function jsify(pathToFile) {
     .replace(/(?:\/index)?\.js$/, '');
 }
 
-const redirectWithWarning = _.memoize((oldPath) => {
-  const newPath = oldPath.replace(SEARCH_VALUE, REPLACE_VALUE);
-
+const redirectWithWarning = _.memoize((
+  oldPath,
+  newPath = oldPath.replace(SEARCH_VALUE, REPLACE_VALUE)
+) => {
   redirectWithWarning._log([
     '[DEPRECATION] Detox detected an attempt to require a module from an outdated location, please change in your project:',
     `- ${jsify(oldPath)}`,

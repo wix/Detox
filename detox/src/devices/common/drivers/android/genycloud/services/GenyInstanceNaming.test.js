@@ -1,73 +1,32 @@
-jest.mock('../../../../../../utils/getWorkerId');
+jest.mock('../../../../../../../internals', () => ({}));
 
 describe('Genymotion-Cloud instance unique-name strategy', () => {
-  let getWorkerId;
-  let now;
+  let sessionId, workerId;
 
   function uut() {
     const GenyInstanceNaming = require('./GenyInstanceNaming');
-    return new GenyInstanceNaming(() => now);
+    return new GenyInstanceNaming();
   }
 
   beforeEach(() => {
-    getWorkerId = require('../../../../../../utils/getWorkerId');
-    process.env.DETOX_START_TIMESTAMP = '123456';
-    now = 123534;
-  });
-
-  afterAll(() => {
-    delete process.env.DETOX_START_TIMESTAMP;
+    Object.defineProperties(require('../../../../../../../internals'), {
+      session: { get: () => ({ id: sessionId }) } ,
+      worker: { get: () => ({ id: workerId }) } ,
+    });
   });
 
   it('should generate a session-scope unique name', () => {
-    expect(uut().generateName()).toMatch(/^Detox-123456\./);
+    sessionId = '71dd7a96-bdd7-480a-b4a0-fd265fb208cd';
+    workerId = 'worker-1';
+
+    expect(uut().generateName()).toBe('Detox.71dd7a96-bdd7-480a-b4a0-fd265fb208cd.worker-1');
   });
 
-  it('should generate an instance-scope unique name based on jest-worker IDs', () => {
-    getWorkerId.mockReturnValue('777');
-    expect(uut().generateName()).toEqual('Detox-123456.777');
-  });
+  it('should accept only the same session and worker id as a familial device', () => {
+    sessionId = 'session';
+    workerId = 'worker-3';
 
-  it('should generate an instance-scope unique name based on time delta, as a fallback', () => {
-    getWorkerId.mockReturnValue('');
-    expect(uut().generateName()).toEqual('Detox-123456.78');
-  });
-
-  it('should generate an instance-scope unique name', () => {
-    getWorkerId.mockReturnValue('');
-
-    const name1 = uut().generateName();
-    now = now + 1;
-    const name2 = uut().generateName();
-
-    expect(name1).not.toEqual(name2);
-  });
-
-  it('should accept names with the correct timestamp and matching worker id', () => {
-    getWorkerId.mockReturnValue('10');
-    expect(uut().isFamilial('Detox-123456.10')).toEqual(true);
-  });
-
-  it('should deny names with the correct timestamp and incorrect worker id', () =>
-    expect(uut().isFamilial('Detox-123456.10')).toEqual(false));
-
-  it('should deny names with the incorrect timestamp', () =>
-    expect(uut().isFamilial('Detox-123457.10')).toEqual(false));
-
-  it('should deny names not starting with "Detox-"', () =>
-    expect(uut().isFamilial('Dtx-123456.10')).toEqual(false));
-
-  it('should deny names in wrong sections orders', () =>
-    expect(uut().isFamilial('123456-Detox-.10')).toEqual(false));
-
-  it('should deny names with the wrong prefix', () =>
-    expect(uut().isFamilial('_Detox-123456.10')).toEqual(false));
-
-  it('should deny names not containing a dot separator', () =>
-    expect(uut().isFamilial('Detox-123456-10')).toEqual(false));
-
-  it('should have a default now-provider', () => {
-    const GenyInstanceNaming = require('./GenyInstanceNaming');
-    expect(new GenyInstanceNaming().generateName()).toMatch(/^Detox-/);
+    expect(uut().isFamilial('Detox.session.worker-3')).toEqual(true);
+    expect(uut().isFamilial('Detox.session.worker-2')).toEqual(false);
   });
 });

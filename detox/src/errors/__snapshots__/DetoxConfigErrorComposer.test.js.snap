@@ -666,7 +666,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
-Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -686,7 +686,7 @@ HINT: Check that in your Detox config at path:
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
-Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'.
 
 HINT: Check that in your Detox config at path:
 /home/detox/myproject/.detoxrc.json
@@ -1410,6 +1410,33 @@ HINT: Check that in your Detox config at path:
 {
   session: {
     server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidTestRunnerProperty should be able to create a global config error 1`] = `
+[DetoxConfigError: testRunner should be an object, not a string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  testRunner: 'jest',
+  configurations: [Object]
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidTestRunnerProperty should be able to create a local config error 1`] = `
+[DetoxConfigError: testRunner should be an object, not a string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      testRunner: 'mocha'
+    }
   }
 }]
 `;

@@ -26,7 +26,7 @@ describe('Client', () => {
 
     jest.mock('../utils/logger');
     log = require('../utils/logger');
-    log.level.mockReturnValue('debug');
+    log._level.mockReturnValue('debug');
 
     const AsyncWebSocket = jest.genMockFromModule('./AsyncWebSocket');
     mockAws = new AsyncWebSocket();
@@ -503,7 +503,7 @@ describe('Client', () => {
       ['debug'],
       ['trace'],
     ])(`should throw "testFailed" error with view hierarchy (on --loglevel %s)`, async (loglevel) => {
-      log.level.mockReturnValue(loglevel);
+      log._level.mockReturnValue(loglevel);
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
       await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
     });
@@ -513,7 +513,7 @@ describe('Client', () => {
       ['warn'],
       ['info'],
     ])(`should throw "testFailed" error without view hierarchy but with a hint (on --loglevel %s)`, async (loglevel) => {
-      log.level.mockReturnValue(loglevel);
+      log._level.mockReturnValue(loglevel);
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();

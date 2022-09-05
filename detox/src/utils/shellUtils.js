@@ -1,6 +1,16 @@
+const SPACE = ' ';
 const BACK_SLASH = '\\';
 const SINGLE_QUOTE = "'";
 const DOUBLE_QUOTE = '"';
+
+function escapeSpacesCMD(str) {
+  return str.includes(' ') ? `"${str}"` : str;
+}
+
+const BACK_SLASH_SPACE = BACK_SLASH + SPACE;
+function escapeSpacesShell(str) {
+  return str.replace(/ /g, BACK_SLASH_SPACE);
+}
 
 const ESCAPED_DOUBLE_QUOTE = BACK_SLASH + DOUBLE_QUOTE;
 function escapeInDoubleQuotedString(fragment) {
@@ -62,12 +72,20 @@ const autoEscape = isRunningInCMDEXE()
   /* istanbul ignore next */ ? autoEscapeCmd
   /* istanbul ignore next */ : autoEscapeShell;
 
+const escapeSpaces = isRunningInCMDEXE()
+  /* istanbul ignore next */ ? escapeSpacesCMD
+  /* istanbul ignore next */ : escapeSpacesShell;
+
 module.exports = {
   escapeInDoubleQuotedString,
   escapeInDoubleQuotedRegexp,
   escapeWithSingleQuotedString,
   escapeWithDoubleQuotedString,
   isRunningInCMDEXE,
+  escapeSpaces: Object.assign(escapeSpaces, {
+    cmd: escapeSpacesCMD,
+    shell: escapeSpacesShell,
+  }),
   hasUnsafeChars: Object.assign(hasUnsafeChars, {
     cmd: hasUnsafeCMDChars,
     shell: hasUnsafeShellChars,

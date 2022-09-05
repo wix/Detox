@@ -1,15 +1,3 @@
-const detox = require('detox');
-
-detox.hook('UNSAFE_configReady', ({ deviceConfig }) => {
-  if (process.env.CI && !process.env.DEMO_MAX_WORKERS) {
-    process.env.DEMO_MAX_WORKERS = ({
-      'ios.simulator': '4',
-      'android.emulator': '3',
-      'android.genycloud': '5',
-    })[deviceConfig.type] || '1';
-  }
-});
-
 const launchArgs = {
   app: 'le',
   goo: 'gle?',
@@ -18,9 +6,21 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
-  testRunner: 'nyc jest',
-  runnerConfig: 'e2e/config.js',
-  specs: 'e2e/*.test.js',
+  logger: {
+    level: process.env.CI ? 'debug' : undefined,
+  },
+
+  testRunner: {
+    args: {
+      $0: 'nyc jest',
+      config: 'e2e/jest.config.js',
+      _: ['e2e/']
+    },
+    retries: process.env.CI ? 1 : undefined,
+    jest: {
+      reportSpecs: process.env.CI ? true : undefined,
+    },
+  },
 
   behavior: {
     init: {
@@ -43,7 +43,6 @@ const config = {
         shouldTakeAutomaticSnapshots: true,
         takeWhen: {}
       },
-      timeline: 'all',
       uiHierarchy: 'enabled'
     }
   },
@@ -115,13 +114,14 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 12 Pro Max'
+        type: 'iPhone 12 Pro Max',
       },
     },
 
     'android.emulator': {
       type: 'android.emulator',
       headless: Boolean(process.env.CI),
+      gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
       },

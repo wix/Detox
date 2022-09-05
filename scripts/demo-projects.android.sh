@@ -30,11 +30,6 @@ if [ "$REACT_NATIVE_COMPAT_TEST" = "true" ]; then
   exit 0
 fi
 
-pushd examples/demo-react-native
-run_f "npm run test:android-release-ci"
-DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
-popd
-
 pushd examples/demo-plugin
 run_f "npm run test:plugin"
 popd
