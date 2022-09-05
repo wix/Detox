@@ -1,5 +1,6 @@
-// @ts-nocheck
-const maybeNodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
+const resolveFrom = require('resolve-from');
+const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
+// @ts-ignore
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const detox = require('../../../internals');
