@@ -53,7 +53,7 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   async [symbols.resolveConfig](opts = {}) {
-    const session = this[symbols.session];
+    const session = this[$sessionState];
     if (!session.detoxConfig) {
       const configuration = require('../configuration');
       session.detoxConfig = await configuration.composeDetoxConfig(opts);
@@ -229,7 +229,7 @@ class DetoxPrimaryContext extends DetoxContext {
       return;
     }
 
-    if (this[_areLogsEnabled]) {
+    if (this[_areLogsEnabled]()) {
       const streamUtils = require('../utils/streamUtils');
       const { rootDir } = this[symbols.config].artifacts;
 
@@ -256,7 +256,10 @@ class DetoxPrimaryContext extends DetoxContext {
     const logsEnabled = this[_areLogsEnabled]();
 
     const { rootDir } = this[symbols.config].artifacts;
-    fs.mkdirpSync(rootDir);
+
+    if (logsEnabled) {
+      fs.mkdirpSync(rootDir);
+    }
 
     const sessionId = this[$sessionState].id;
     const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
@@ -272,10 +275,20 @@ class DetoxPrimaryContext extends DetoxContext {
 
   [_areLogsEnabled]() {
     const { rootDir, plugins } = this[symbols.config].artifacts || {};
-    const logConfig = plugins && plugins.log || 'none';
-    const enabled = rootDir && (typeof logConfig === 'string' ? logConfig !== 'none' : logConfig.enabled);
+    if (!rootDir || !plugins) {
+      return false;
+    }
 
-    return enabled;
+    if (!plugins.log.enabled) {
+      return false;
+    }
+
+    if (!plugins.log.keepOnlyFailedTestsArtifacts) {
+      return true;
+    }
+
+    const { failedTestFiles, testFilesToRetry } = this[$sessionState];
+    return failedTestFiles.length + testFilesToRetry.length > 0;
   }
 
   async[_resetLockFile]() {

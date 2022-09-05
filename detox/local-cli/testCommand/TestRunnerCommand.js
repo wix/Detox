@@ -105,11 +105,13 @@ class TestRunnerCommand {
           throw e;
         }
 
-        this._argv._ = testFilesToRetry.splice(0, Infinity);
-        // @ts-ignore
-        detox.session.testSessionIndex++; // it is always a primary context, so we can update it
+        if (--runsLeft > 0) {
+          this._argv._ = testFilesToRetry.splice(0, Infinity);
+          // @ts-ignore
+          detox.session.testSessionIndex++; // it is always a primary context, so we can update it
+        }
       }
-    } while (launchError && --runsLeft > 0);
+    } while (launchError && runsLeft > 0);
 
     if (launchError) {
       throw launchError;

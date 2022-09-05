@@ -34,6 +34,22 @@ class DetoxLogger {
      */
     this._sharedConfig = sharedConfig;
 
+    /** @type {object | undefined} */
+    this._context = context;
+
+    /** @public */
+    this.fatal = this._setupLogMethod('fatal');
+    /** @public */
+    this.error = this._setupLogMethod('error');
+    /** @public */
+    this.warn = this._setupLogMethod('warn');
+    /** @public */
+    this.info = this._setupLogMethod('info');
+    /** @public */
+    this.debug = this._setupLogMethod('debug');
+    /** @public */
+    this.trace = this._setupLogMethod('trace');
+
     if (!context) {
       // In this branch, `this` refers to the first (root) logger instance.
 
@@ -76,22 +92,6 @@ class DetoxLogger {
 
       this.overrideConsole();
     }
-
-    /** @type {object | undefined} */
-    this._context = context;
-
-    /** @public */
-    this.fatal = this._setupLogMethod('fatal');
-    /** @public */
-    this.error = this._setupLogMethod('error');
-    /** @public */
-    this.warn = this._setupLogMethod('warn');
-    /** @public */
-    this.info = this._setupLogMethod('info');
-    /** @public */
-    this.debug = this._setupLogMethod('debug');
-    /** @public */
-    this.trace = this._setupLogMethod('trace');
   }
 
   /**
