@@ -27,10 +27,8 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
-        if (!rootProject.hasProperty('suppressUnitTests')) {
             // Needed by Spek (https://spekframework.org/setup-android)
             classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
-        }
     }
 }
 

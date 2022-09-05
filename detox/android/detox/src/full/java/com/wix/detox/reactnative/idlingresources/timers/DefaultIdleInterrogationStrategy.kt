@@ -65,7 +65,7 @@ class DefaultIdleInterrogationStrategy
     }
 
     companion object {
-        fun createIfSupported(reactContext: ReactContext): DefaultIdleInterrogationStrategy? {
+        fun create(reactContext: ReactContext): IdleInterrogationStrategy? {
             // RN = 0.62.0:
             // Should have been handled by DelegatedIdleInterrogationStrategy.createIfSupported() but seems the new TimingModule class
             // was released without the awaited-for "hasActiveTimersInRange()" method.
