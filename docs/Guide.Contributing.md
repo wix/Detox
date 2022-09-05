@@ -211,10 +211,17 @@ npm install
 npm start
 ```
 
+#### Updating the Website
+
 To update a specific page, edit the corresponding markdown file in `docs/`. To add a new page, create a new markdown file in `docs/` and add a link to it in `website/sidebars.json`.
 
+##### Website Deployment
+
 While changes to the website are published automatically on every commit to `master` under the `Next` version, tagging and locking docs to a specific version is done automatically on every Detox release.
+
 In case you want to update the docs for a specific version, you can change the related files and code under `website/versioned_docs/version-<version>/` and `website/versioned_sidebars/version-<version>-sidebars.json`.
+
+##### Update Old Versions
 
 To update a specific version with the latest changes:
 
