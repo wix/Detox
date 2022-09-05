@@ -198,3 +198,32 @@ This is in fact a monorepo that also sports some example projects (for usage ref
 - more...
 
 **In order to run E2E tests associated with any of these projects, refer to the [project-specific](https://github.com/wix/Detox/tree/master/examples) READMEs.**
+
+### Detox Documentation Website
+
+The [documentation website](https://wix.github.io/Detox) is built using [Docusaurus](https://docusaurus.io/).
+
+To run the website locally, run the following commands:
+
+```sh
+cd website
+npm install
+npm start
+```
+
+#### Updating the Website
+
+To update a specific page, edit the corresponding markdown file in `docs/`. To add a new page, create a new markdown file in `docs/` and add a link to it in `website/sidebars.json`.
+
+##### Website Deployment
+
+While changes to the website are published automatically on every commit to `master` under the `Next` version, tagging and locking docs to a specific version is done automatically on every Detox release.
+
+In case you want to update the docs for a specific version, you can change the related files and code under `website/versioned_docs/version-<version>/` and `website/versioned_sidebars/version-<version>-sidebars.json`.
+
+##### Update Old Versions
+
+To update a specific version with the latest changes:
+
+1. Remove the version from `versions.json`.
+2. Run `npm run docusaurus docs:version <version>`.
