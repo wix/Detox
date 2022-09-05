@@ -201,7 +201,7 @@ This is in fact a monorepo that also sports some example projects (for usage ref
 
 ### Detox Documentation Website
 
-The documentation website is built using [Docusaurus](https://docusaurus.io/).
+The [documentation website](https://wix.github.io/Detox) is built using [Docusaurus](https://docusaurus.io/).
 
 To run the website locally, run the following commands:
 
