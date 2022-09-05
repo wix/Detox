@@ -11,8 +11,8 @@ String PUB_FLAVOUR_FULL_DETOX = 'full'
 String PUB_FLAVOUR_DETOX_NATIVE = 'coreNative'
 
 def DEVELOPERS = [
-    [name: 'WixMobile', email: 'mobile1@wix.com'],
-    [name: 'd4vidi', email: 'amitd@wix.com'],
+        [name: 'WixMobile', email: 'mobile1@wix.com'],
+        [name: 'd4vidi', email: 'amitd@wix.com'],
 ]
 
 String _versionName = System.getProperty('version')
@@ -71,10 +71,8 @@ def shouldPublishVariant = {
 }
 
 def declareArchive = { target ->
-    if (_shouldSignArtifacts) {
-        project.artifacts {
-            archives target
-        }
+    project.artifacts {
+        archives target
     }
 }
 
@@ -103,11 +101,11 @@ tasks.named("dokkaJavadoc") {
         }
     }
 }
-    // Side note / TODO:
-    // Dokka outputs R and BuildConfig; currently, there's nothing to do about it, as issues such as
-    // this on - https://github.com/Kotlin/dokka/issues/419 are still open :-/
-    // We might want to revisit this in the future -- see if they've decided to export a custom classes
-    // suppression config var or something.
+// Side note / TODO:
+// Dokka outputs R and BuildConfig; currently, there's nothing to do about it, as issues such as
+// this on - https://github.com/Kotlin/dokka/issues/419 are still open :-/
+// We might want to revisit this in the future -- see if they've decided to export a custom classes
+// suppression config var or something.
 
 task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from "$buildDir/dokkaDoc"
@@ -143,7 +141,7 @@ project.afterEvaluate {
         android {
             libraryVariants.all { variant ->
                 String variantName = variant.name.capitalize()
-                if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository") {
+                if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository".toString()) {
                     task.dependsOn "assemble${variantName}"
                     task.dependsOn project.tasks.signArchives
                     task.doFirst {
@@ -235,7 +233,8 @@ publishing {
                     if (_shouldSignArtifacts) {
                         pom.withXml {
                             def pomFile = file("${project.buildDir}/generated-pom.xml")
-                            writeTo(pomFile) // Need to force-write so as to have the signature generated over the finalized content
+                            writeTo(pomFile)
+                            // Need to force-write so as to have the signature generated over the finalized content
 
                             def pomAscFile = signing.sign(pomFile).signatureFiles[0]
                             artifact(pomAscFile) {
@@ -248,19 +247,21 @@ publishing {
                     // Register all artifacts we've previously registered as archives (i.e. .jar.asc's, .aar.asc's) as published artifacts.
                     // Note: this relies on preregistering the equivalent generator-tasks as archive artifacts
                     // inside a project.artifacts { ... } clause.
-                    project.tasks.signArchives.signatureFiles.each {
-                        artifact(it) {
-                            def matcherSrcDocs = (it.file =~ /-(sources|javadoc)\.jar\.asc$/)
-                            def matcherAAR = (it.file =~ /\.aar\.asc$/)
-                            if (matcherSrcDocs.find()) {
-                                classifier = matcherSrcDocs.group(1)
-                                extension = 'jar.asc'
-                            } else if (matcherAAR.find()) {
-                                classifier = null
-                                extension = 'aar.asc'
-                            } else {
-                                classifier = null
-                                extension = null
+                    if (_shouldSignArtifacts) {
+                        project.tasks.signArchives.signatureFiles.each {
+                            artifact(it) {
+                                def matcherSrcDocs = (it.file =~ /-(sources|javadoc)\.jar\.asc$/)
+                                def matcherAAR = (it.file =~ /\.aar\.asc$/)
+                                if (matcherSrcDocs.find()) {
+                                    classifier = matcherSrcDocs.group(1)
+                                    extension = 'jar.asc'
+                                } else if (matcherAAR.find()) {
+                                    classifier = null
+                                    extension = 'aar.asc'
+                                } else {
+                                    classifier = null
+                                    extension = null
+                                }
                             }
                         }
                     }

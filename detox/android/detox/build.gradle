@@ -13,10 +13,6 @@ android {
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
 
-    buildFeatures {
-        viewBinding true
-    }
-
     defaultConfig {
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
@@ -79,6 +75,7 @@ android {
 // Fundamental deps.
 dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
+    //noinspection GradleDynamicVersion
     compileOnly 'com.facebook.react:react-native:+'
 }
 
@@ -124,11 +121,11 @@ dependencies {
 
 // Unit-testing deps.
 dependencies {
+    //noinspection GradleDynamicVersion
     testImplementation 'com.facebook.react:react-native:+'
     testImplementation 'org.json:json:20140107'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158
-//    testImplementation 'junit:junit:4.13.2'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.0'
 
     testImplementation 'org.assertj:assertj-core:3.16.1'
@@ -139,9 +136,8 @@ dependencies {
 }
 
 // Spek (https://spekframework.org/setup-android)
-if (!rootProject.hasProperty('suppressUnitTests') &&
-    (rootProject.hasProperty('isOfficialDetoxLib') ||
-     rootProject.hasProperty('isOfficialDetoxApp'))) {
+if (rootProject.hasProperty('isOfficialDetoxLib') ||
+                rootProject.hasProperty('isOfficialDetoxApp')) {
     apply plugin: 'de.mannodermaus.android-junit5'
 
     android {
@@ -168,12 +164,3 @@ if (rootProject.hasProperty('isOfficialDetoxLib')) {
     apply from: './publishing.gradle'
 }
 
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if ((requested.group == "org.jetbrains.kotlin") && (!requested.name.startsWith("kotlin-gradle"))) {
-                useVersion("1.6.0")
-            }
-        }
-    }
-}
