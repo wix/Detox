@@ -11,8 +11,8 @@ String PUB_FLAVOUR_FULL_DETOX = 'full'
 String PUB_FLAVOUR_DETOX_NATIVE = 'coreNative'
 
 def DEVELOPERS = [
-        [name: 'WixMobile', email: 'mobile1@wix.com'],
-        [name: 'd4vidi', email: 'amitd@wix.com'],
+    [name: 'WixMobile', email: 'mobile1@wix.com'],
+    [name: 'd4vidi', email: 'amitd@wix.com'],
 ]
 
 String _versionName = System.getProperty('version')
@@ -234,9 +234,8 @@ publishing {
                     if (_shouldSignArtifacts) {
                         pom.withXml {
                             def pomFile = file("${project.buildDir}/generated-pom.xml")
-                            writeTo(pomFile)
-                            
-                            // Need to force-write so as to have the signature generated over the finalized content
+                            writeTo(pomFile) // Need to force-write so as to have the signature generated over the finalized content
+
                             def pomAscFile = signing.sign(pomFile).signatureFiles[0]
                             artifact(pomAscFile) {
                                 classifier = null
@@ -245,9 +244,8 @@ publishing {
                         }
                     }
 
-                    // Register all artifacts we've previously registered as archives (i.e. .jar.asc's, .aar.asc's) as published artifacts.
-                    // Note: this relies on preregistering the equivalent generator-tasks as archive artifacts
-                    // inside a project.artifacts { ... } clause.
+                    // Register all artifacts we've previously registered as signed archives (i.e. .jar.asc's, .aar.asc's) as publish-artifacts.
+                    // Note: this relies on preregistering the equivalent generator-tasks as archive artifacts inside a project.artifacts { ... } clause.
                     if (_shouldSignArtifacts) {
                         project.tasks.signArchives.signatureFiles.each {
                             artifact(it) {
