@@ -104,7 +104,7 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work for previous RN versions as well
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
         implementation('com.facebook.react:hermes-engine:+') {
             exclude group: 'com.facebook.fbjni'
         }

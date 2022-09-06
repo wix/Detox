@@ -7,9 +7,6 @@ project.ext.react = [
 
 apply from: '../../node_modules/react-native/react.gradle'
 
-def enableHermes = project.ext.react.get("enableHermes", false)
-def jscFlavor = 'org.webkit:android-jsc:+'
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -69,26 +66,22 @@ dependencies {
     // noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
 
-    implementation(project(path: ':AsyncStorage'))
-    // Note: not required unless effectively used by your app
+    implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
 
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
+// Apply Hermes as the JS engine
 dependencies {
-    if (project.ext.rnInfoLT.isRN68OrLower) {
-        def hermesPath = "../../node_modules/hermes-engine/android"
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+        implementation('com.facebook.react:hermes-engine:+') {
+            exclude group: 'com.facebook.fbjni'
+        }
+    } else {
+        def hermesPath = '../../node_modules/hermes-engine/android'
         debugImplementation files("$hermesPath/hermes-debug.aar")
         releaseImplementation files("$hermesPath/hermes-release.aar")
-    } else {
-        if (enableHermes) {
-            implementation("com.facebook.react:hermes-engine:+") {
-                exclude group: 'com.facebook.fbjni'
-            }
-        } else {
-            implementation jscFlavor
-        }
     }
 }
