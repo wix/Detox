@@ -18,6 +18,7 @@ def DEVELOPERS = [
 String _versionName = System.getProperty('version')
 String _flavour = System.getProperty('buildFlavour', PUB_FLAVOUR_FULL_DETOX)
 Boolean _forceLocal = System.getProperty('forceLocal', 'false').toBoolean()
+Boolean _forceSign = System.getProperty('forceSign', 'false').toBoolean()
 
 String _mavenRepoUrl
 Map _mavenCredentials
@@ -28,7 +29,7 @@ def _selectedVariant
 def initLocalPublishing = {
     _mavenRepoUrl = TARGET_LOCAL_DIR
     _mavenCredentials = null
-    _shouldSignArtifacts = false
+    _shouldSignArtifacts = _forceSign
 }
 
 def initMavenPublishing = {
