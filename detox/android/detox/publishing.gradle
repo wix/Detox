@@ -234,8 +234,8 @@ publishing {
                         pom.withXml {
                             def pomFile = file("${project.buildDir}/generated-pom.xml")
                             writeTo(pomFile)
+                            
                             // Need to force-write so as to have the signature generated over the finalized content
-
                             def pomAscFile = signing.sign(pomFile).signatureFiles[0]
                             artifact(pomAscFile) {
                                 classifier = null

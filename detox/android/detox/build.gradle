@@ -1,12 +1,15 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+def _kotlinMinVersion = '1.2.0'
+def _materialMinVersion = '1.2.1'
+
 def _ext = rootProject.ext
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
 def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 31
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : "31.0.0"
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '31.0.0'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
-def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : '1.2.0'
+def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : _kotlinMinVersion
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
 
 android {
@@ -74,7 +77,7 @@ android {
 
 // Fundamental deps.
 dependencies {
-    implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
+    implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinMinVersion"
     //noinspection GradleDynamicVersion
     compileOnly 'com.facebook.react:react-native:+'
 }
@@ -108,7 +111,7 @@ dependencies {
 
 // Third-party/extension deps.
 dependencies {
-    implementation('com.google.android.material:material:1.2.1') {
+    implementation("com.google.android.material:material:$_materialMinVersion") {
         because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'
     }
     implementation('org.apache.commons:commons-lang3:3.7') {
@@ -137,7 +140,8 @@ dependencies {
 
 // Spek (https://spekframework.org/setup-android)
 if (rootProject.hasProperty('isOfficialDetoxLib') ||
-                rootProject.hasProperty('isOfficialDetoxApp')) {
+    rootProject.hasProperty('isOfficialDetoxApp')) {
+    
     apply plugin: 'de.mannodermaus.android-junit5'
 
     android {
