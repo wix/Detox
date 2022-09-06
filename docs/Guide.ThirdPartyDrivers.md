@@ -33,7 +33,11 @@ Check to see if a [third-party driver](#existing-third-party-drivers) already ex
 
 Overall the setup for any third party driver is fairly simple.
 
-1. Add the driver to your `package.json` with `npm install --save-dev detox-driver-package` or `yarn add --dev detox-driver-package`.
+1. Add the driver to your `package.json` with:
+
+   ```bash npm2yarn
+   npm install --save-dev detox-driver-package
+   ```
 
 1. Add a new Detox configuration to your existing configurations with the `type` set to driver’s package name.
 

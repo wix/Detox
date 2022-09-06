@@ -248,14 +248,12 @@ class RuntimeDevice {
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      await traceCall('installUtilBinaries', () =>
-        this.deviceDriver.installUtilBinaries(paths));
+      await traceCall('installUtilBinaries', this.deviceDriver.installUtilBinaries(paths));
     }
   }
 
   async reloadReactNative() {
-    await traceCall('reloadRN', () =>
-      this.deviceDriver.reloadReactNative());
+    await traceCall('reload React Native', this.deviceDriver.reloadReactNative());
   }
 
   async openURL(params) {

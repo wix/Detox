@@ -232,7 +232,11 @@ class DetoxLogger {
     const action = typeof maybeContext !== 'string' ? maybeAction : maybeMessage;
     const args = maybeAction === action ? [maybeContext, maybeMessage] : [maybeContext];
     const { context, msg } = this._parseArgs(null, args);
-    const end = (ctx) => this[level].end(ctx);
+    const end = (ctx) => this[level].end({
+      id: context.id,
+      cat: context.cat,
+      ...ctx,
+    });
 
     let result;
     this[level].begin(context, ...msg);

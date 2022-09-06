@@ -1,4 +1,5 @@
 // @ts-nocheck
+const assert = require('assert');
 const path = require('path');
 
 const fs = require('fs-extra');
@@ -6,6 +7,8 @@ const _ = require('lodash');
 const tempfile = require('tempfile');
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
+const { trace } = require('../utils/trace');
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
@@ -23,7 +26,8 @@ class Expect {
                       + (percent + (' (' + (typeof percent + ')'))));
     }
 
-    return this.expect('toBeVisible', percent);
+    const traceDescription = expectDescription.toBeVisible(percent);
+    return this.expect('toBeVisible', traceDescription, percent);
   }
 
   toBeNotVisible() {
@@ -31,7 +35,8 @@ class Expect {
   }
 
   toBeFocused() {
-    return this.expect('toBeFocused');
+    const traceDescription = expectDescription.toBeFocused();
+    return this.expect('toBeFocused', traceDescription);
   }
 
   toBeNotFocused() {
@@ -39,7 +44,8 @@ class Expect {
   }
 
   toExist() {
-    return this.expect('toExist');
+    const traceDescription = expectDescription.toExist();
+    return this.expect('toExist', traceDescription);
   }
 
   toNotExist() {
@@ -47,7 +53,8 @@ class Expect {
   }
 
   toHaveText(text) {
-    return this.expect('toHaveText', text);
+    const traceDescription = expectDescription.toHaveText(text);
+    return this.expect('toHaveText', traceDescription, text);
   }
 
   toNotHaveText(text) {
@@ -55,7 +62,8 @@ class Expect {
   }
 
   toHaveLabel(label) {
-    return this.expect('toHaveLabel', label);
+    const traceDescription = expectDescription.toHaveLabel(label);
+    return this.expect('toHaveLabel', traceDescription, label);
   }
 
   toNotHaveLabel(label) {
@@ -63,7 +71,8 @@ class Expect {
   }
 
   toHaveId(id) {
-    return this.expect('toHaveId', id);
+    const traceDescription = expectDescription.toHaveId(id);
+    return this.expect('toHaveId', traceDescription, id);
   }
 
   toNotHaveId(id) {
@@ -71,7 +80,8 @@ class Expect {
   }
 
   toHaveValue(value) {
-    return this.expect('toHaveValue', value);
+    const traceDescription = expectDescription.toHaveValue(value);
+    return this.expect('toHaveValue', traceDescription, value);
   }
 
   toNotHaveValue(value) {
@@ -79,7 +89,8 @@ class Expect {
   }
 
   toHaveSliderPosition(position, tolerance = 0) {
-    return this.expect('toHaveSliderPosition', position, tolerance);
+    const traceDescription = expectDescription.toHaveSliderPosition(position, tolerance);
+    return this.expect('toHaveSliderPosition', traceDescription, position, tolerance);
   }
 
   toHaveToggleValue(value) {
@@ -103,16 +114,18 @@ class Expect {
     };
   }
 
-  expect(expectation, ...params) {
+  expect(expectation, traceDescription, ...params) {
+    assert(traceDescription, `must provide trace description for expectation: \n ${JSON.stringify(expectation)}`);
+
     const invocation = this.createInvocation(expectation, ...params);
-    return this._invocationManager.execute(invocation);
+    traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
+    return _executeInvocation(this._invocationManager, invocation, traceDescription);
   }
 }
 
 class InternalExpect extends Expect {
-  expect(expectation, ...params) {
-    const invocation = this.createInvocation(expectation, ...params);
-    return invocation;
+  expect(expectation, _traceDescription, ...params) {
+    return this.createInvocation(expectation, ...params);
   }
 }
 
@@ -131,7 +144,8 @@ class Element {
   }
 
   getAttributes() {
-    return this.withAction('getAttributes');
+    const traceDescription = actionDescription.getAttributes();
+    return this.withAction('getAttributes', traceDescription);
   }
 
   tap(point) {
@@ -140,12 +154,16 @@ class Element {
       if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
       if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
     }
-    return this.withAction('tap', point);
+
+    const traceDescription = actionDescription.tapAtPoint(point);
+    return this.withAction('tap', traceDescription, point);
   }
 
   longPress(duration = 1000) {
     if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
-    return this.withAction('longPress', duration);
+
+    const traceDescription = actionDescription.longPress(duration);
+    return this.withAction('longPress', traceDescription, duration);
   }
 
   longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
@@ -162,13 +180,18 @@ class Element {
     assertNormalized({ normalizedTargetPositionX });
     assertNormalized({ normalizedTargetPositionY });
 
-    return this.withActionAndTargetElement('longPress', targetElement, duration, normalizedPositionX, normalizedPositionY,
+    const traceDescription = actionDescription.longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
+      normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
+    return this.withActionAndTargetElement('longPress', targetElement, traceDescription, duration, normalizedPositionX, normalizedPositionY,
       normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
   }
 
   multiTap(times) {
     if (typeof times !== 'number') throw new Error('times should be a number, but got ' + (times + (' (' + (typeof times + ')'))));
-    return this.withAction('multiTap', times);
+    if (times < 1) throw new Error('times should be greater than 0, but got ' + times);
+
+    const traceDescription = actionDescription.multiTap(times);
+    return this.withAction('multiTap', traceDescription, times);
   }
 
   tapAtPoint(point) {
@@ -176,25 +199,32 @@ class Element {
   }
 
   tapBackspaceKey() {
-    return this.withAction('tapBackspaceKey');
+    const traceDescription = actionDescription.tapBackspaceKey();
+    return this.withAction('tapBackspaceKey', traceDescription);
   }
 
   tapReturnKey() {
-    return this.withAction('tapReturnKey');
+    const traceDescription = actionDescription.tapReturnKey();
+    return this.withAction('tapReturnKey', traceDescription);
   }
 
   typeText(text) {
     if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
-    return this.withAction('typeText', text);
+
+    const traceDescription = actionDescription.typeText(text);
+    return this.withAction('typeText', traceDescription, text);
   }
 
   replaceText(text) {
     if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
-    return this.withAction('replaceText', text);
+
+    const traceDescription = actionDescription.replaceText(text);
+    return this.withAction('replaceText', traceDescription, text);
   }
 
   clearText() {
-    return this.withAction('clearText');
+    const traceDescription = actionDescription.clearText();
+    return this.withAction('clearText', traceDescription);
   }
 
   scroll(pixels, direction = 'down', startPositionX = NaN, startPositionY = NaN) {
@@ -202,12 +232,15 @@ class Element {
     if (typeof pixels !== 'number') throw new Error('amount of pixels should be a number, but got ' + (pixels + (' (' + (typeof pixels + ')'))));
     if (typeof startPositionX !== 'number') throw new Error('startPositionX should be a number, but got ' + (startPositionX + (' (' + (typeof startPositionX + ')'))));
     if (typeof startPositionY !== 'number') throw new Error('startPositionY should be a number, but got ' + (startPositionY + (' (' + (typeof startPositionY + ')'))));
-    return this.withAction('scroll', pixels, direction, startPositionX, startPositionY);
+
+    const traceDescription = actionDescription.scroll(pixels, direction, startPositionX, startPositionY);
+    return this.withAction('scroll', traceDescription, pixels, direction, startPositionX, startPositionY);
   }
 
   scrollTo(edge) {
     if (!['left', 'right', 'top', 'bottom'].some(option => option === edge)) throw new Error('edge should be one of [left, right, top, bottom], but got ' + edge);
-    return this.withAction('scrollTo', edge);
+    const traceDescription = actionDescription.scrollTo(edge);
+    return this.withAction('scrollTo', traceDescription, edge);
   }
 
   swipe(direction, speed = 'fast', normalizedSwipeOffset = NaN, normalizedStartingPointX = NaN, normalizedStartingPointY = NaN) {
@@ -218,42 +251,62 @@ class Element {
     assertNormalized({ normalizedStartingPointY });
 
     normalizedSwipeOffset = Number.isNaN(normalizedSwipeOffset) ? 0.75 : normalizedSwipeOffset;
-    return this.withAction('swipe', direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY);
+    const traceDescription = actionDescription.swipe(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY);
+    return this.withAction(
+      'swipe',
+      traceDescription,
+      direction,
+      speed,
+      normalizedSwipeOffset,
+      normalizedStartingPointX,
+      normalizedStartingPointY
+    );
   }
 
   setColumnToValue(column, value) {
     if (typeof column !== 'number') throw new Error('column should be a number, but got ' + (column + (' (' + (typeof column + ')'))));
     if (typeof value !== 'string') throw new Error('value should be a string, but got ' + (value + (' (' + (typeof value + ')'))));
-    return this.withAction('setColumnToValue', column, value);
+
+    const traceDescription = actionDescription.setColumnToValue(column, value);
+    return this.withAction('setColumnToValue', traceDescription, column, value);
   }
 
   setDatePickerDate(dateString, dateFormat) {
     if (typeof dateString !== 'string') throw new Error('dateString should be a string, but got ' + (dateString + (' (' + (typeof dateString + ')'))));
     if (typeof dateFormat !== 'string') throw new Error('dateFormat should be a string, but got ' + (dateFormat + (' (' + (typeof dateFormat + ')'))));
-    return this.withAction('setDatePickerDate', dateString, dateFormat);
+
+    const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
+    return this.withAction('setDatePickerDate', traceDescription, dateString, dateFormat);
   }
 
   pinch(scale, speed = 'fast', angle = 0) {
     if (typeof scale !== 'number' || !Number.isFinite(scale) || scale < 0) throw new Error(`pinch scale must be a finite number larger than zero`);
     if (!['slow', 'fast'].includes(speed)) throw new Error(`pinch speed is either 'slow' or 'fast'`);
     if (typeof angle !== 'number' || !Number.isFinite(angle)) throw new Error(`pinch angle must be a finite number (radian)`);
-    return this.withAction('pinch', scale, speed, angle);
+
+    const traceDescription = actionDescription.pinch(scale, speed, angle);
+    return this.withAction('pinch', traceDescription, scale, speed, angle);
   }
 
   pinchWithAngle(direction, speed = 'slow', angle = 0) {
     if (!['inward', 'outward'].includes(direction)) throw new Error(`pinchWithAngle direction is either 'inward' or 'outward'`);
     if (!['slow', 'fast'].includes(speed)) throw new Error(`pinchWithAngle speed is either 'slow' or 'fast'`);
     if (typeof angle !== 'number') throw new Error(`pinchWithAngle angle must be a number (radiant), got ${typeof angle}`);
-    return this.withAction('pinchWithAngle', direction, speed, angle);
+
+    const traceDescription = actionDescription.pinchWithAngle(direction, speed, angle);
+    return this.withAction('pinchWithAngle', traceDescription, direction, speed, angle);
   }
 
   adjustSliderToPosition(position) {
     if (!(typeof position === 'number' && position >= 0 && position <= 1)) throw new Error('position should be a number [0.0, 1.0], but got ' + (position + (' (' + (typeof position + ')'))));
-    return this.withAction('adjustSliderToPosition', position);
+
+    const traceDescription = actionDescription.adjustSliderToPosition(position);
+    return this.withAction('adjustSliderToPosition', traceDescription, position);
   }
 
   async takeScreenshot(fileName) {
-    const { screenshotPath } = await this.withAction('takeScreenshot', fileName);
+    const traceDescription = actionDescription.takeScreenshot(fileName);
+    const { screenshotPath } = await this.withAction('takeScreenshot', traceDescription, fileName);
 
     const filePath = tempfile('.detox.element-screenshot.png');
     await fs.move(screenshotPath, filePath);
@@ -287,22 +340,20 @@ class Element {
     return invocation;
   }
 
-  withAction(action, ...params) {
+  withAction(action, traceDescription, ...params) {
     const invocation = this.createInvocation(action, null, ...params);
-    return this._invocationManager.execute(invocation);
+    return _executeInvocation(this._invocationManager, invocation, traceDescription);
   }
 
-  withActionAndTargetElement(action, targetElement, ...params) {
+  withActionAndTargetElement(action, targetElement, traceDescription, ...params) {
     const invocation = this.createInvocation(action, targetElement, ...params);
-    return this._invocationManager.execute(invocation);
+    return _executeInvocation(this._invocationManager, invocation, traceDescription);
   }
 }
 
 class InternalElement extends Element {
-
-  withAction(action, ...params) {
-    const invocation = this.createInvocation(action, null, ...params);
-    return invocation;
+  withAction(action, _traceDescription, ...params) {
+    return this.createInvocation(action, null, ...params);
   }
 }
 
@@ -341,7 +392,6 @@ class By {
 }
 
 class Matcher {
-
   accessibilityLabel(label) {
     return this.label(label);
   }
@@ -395,14 +445,12 @@ class Matcher {
     if (!(matcher instanceof Matcher)) {
       throwMatcherError(matcher);
     }
+
     this.and({ predicate: { type: 'descendant', predicate: matcher.predicate } });
     return this;
   }
 
   and(matcher) {
-    // if (!(matcher instanceof Matcher)) {
-    //   throwMatcherError(matcher);
-    // }
     const tempPredicate = this.predicate;
     delete this.predicate;
     this.predicate = { type: 'and', predicates: [] };
@@ -493,7 +541,9 @@ class WaitFor {
     if (typeof timeout !== 'number') throw new Error('text should be a number, but got ' + (timeout + (' (' + (typeof timeout + ')'))));
     if (timeout < 0) throw new Error('timeout must be larger than 0');
     this.timeout = timeout;
-    return this.waitForWithTimeout();
+
+    const traceDescription = expectDescription.withTimeout(timeout);
+    return this.waitForWithTimeout(traceDescription);
   }
 
   whileElement(matcher) {
@@ -504,106 +554,137 @@ class WaitFor {
 
   tap(point) {
     this.action = this.actionableElement.tap(point);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.tapAtPoint(point);
+    return this.waitForWithAction(traceDescription);
   }
 
   longPress(duration) {
     this.action = this.actionableElement.longPress(duration);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.longPress(duration);
+    return this.waitForWithAction(traceDescription);
   }
 
   multiTap(times) {
     this.action = this.actionableElement.multiTap(times);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.multiTap(times);
+    return this.waitForWithAction(traceDescription);
   }
 
   tapAtPoint(point) {
     this.action = this.actionableElement.tap(point);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.tapAtPoint(point);
+    return this.waitForWithAction(traceDescription);
   }
 
   tapBackspaceKey() {
     this.action = this.actionableElement.tapBackspaceKey();
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.tapBackspaceKey();
+    return this.waitForWithAction(traceDescription);
   }
 
   tapReturnKey() {
     this.action = this.actionableElement.tapReturnKey();
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.tapReturnKey();
+    return this.waitForWithAction(traceDescription);
   }
 
   typeText(text) {
     this.action = this.actionableElement.typeText(text);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.typeText(text);
+    return this.waitForWithAction(traceDescription);
   }
 
   replaceText(text) {
     this.action = this.actionableElement.replaceText(text);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.replaceText(text);
+    return this.waitForWithAction(traceDescription);
   }
 
   clearText() {
     this.action = this.actionableElement.clearText();
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.clearText();
+    return this.waitForWithAction(traceDescription);
   }
 
   scroll(pixels, direction, startPositionX, startPositionY) {
     this.action = this.actionableElement.scroll(pixels, direction, startPositionX, startPositionY);
-    return this.waitForWithAction();
+
+    const traceDescription = actionDescription.scroll(pixels, direction, startPositionX, startPositionY);
+    return this.waitForWithAction(traceDescription);
   }
 
   scrollTo(edge) {
     this.action = this.actionableElement.scrollTo(edge);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.scrollTo(edge);
+    return this.waitForWithAction(traceDescription);
   }
 
   swipe(direction, speed, percentage) {
     this.action = this.actionableElement.swipe(direction, speed, percentage);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.swipe(direction, speed, percentage);
+    return this.waitForWithAction(traceDescription);
   }
 
   setColumnToValue(column, value) {
     this.action = this.actionableElement.setColumnToValue(column, value);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.setColumnToValue(column, value);
+    return this.waitForWithAction(traceDescription);
   }
 
   setDatePickerDate(dateString, dateFormat) {
     this.action = this.actionableElement.setDatePickerDate(dateString, dateFormat);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
+    return this.waitForWithAction(traceDescription);
   }
 
   pinch(scale, speed, angle) {
     this.action = this.actionableElement.pinch(scale, speed, angle);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.pinch(scale, speed, angle);
+    return this.waitForWithAction(traceDescription);
   }
 
   pinchWithAngle(direction, speed, angle) {
     this.action = this.actionableElement.pinchWithAngle(direction, speed, angle);
-    return this.waitForWithAction();
+    const traceDescription = actionDescription.pinchWithAngle(direction, speed, angle);
+    return this.waitForWithAction(traceDescription);
   }
 
-  waitForWithAction() {
+  waitForWithAction(actionTraceDescription) {
     const expectation = this.expectation;
     const action = this.action;
 
-    return this._invocationManager.execute({
+    const invocation = this.createWaitForWithActionInvocation(expectation, action);
+
+    const traceDescription = expectDescription.waitFor(actionTraceDescription);
+    return _executeInvocation(this._invocationManager, invocation, traceDescription);
+  }
+
+  createWaitForWithActionInvocation(expectation, action) {
+    return {
       ...action,
       while: {
         ...expectation
       }
-    });
+    };
   }
 
-  waitForWithTimeout() {
+  waitForWithTimeout(expectTraceDescription) {
     const expectation = this.expectation;
     const action = this.action;
     const timeout = this.timeout;
 
-    return this._invocationManager.execute({
+    const invocation = this.createWaitForWithTimeoutInvocation(expectation, action, timeout);
+
+    const traceDescription = expectDescription.waitForWithTimeout(expectTraceDescription, timeout);
+    return _executeInvocation(this._invocationManager, invocation, traceDescription);
+  }
+
+  createWaitForWithTimeoutInvocation(expectation, action, timeout) {
+    return {
       ...action,
       ...expectation,
       timeout
-    });
+    };
   }
 }
 
@@ -663,6 +744,10 @@ function throwMatcherError(param) {
 
 function throwElementError(param) {
   throw new Error(`${param} is not a Detox element. More about Detox elements here: https://wix.github.io/Detox/docs/api/matchers`);
+}
+
+function _executeInvocation(invocationManager, invocation, traceDescription) {
+  return trace.invocationCall(traceDescription, invocation, invocationManager.execute(invocation));
 }
 
 module.exports = IosExpect;

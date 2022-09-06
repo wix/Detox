@@ -353,12 +353,21 @@ declare global {
                 readonly startSection: (name: string) => void;
                 /** @deprecated */
                 readonly endSection: (name: string) => void;
+                /** @private */
+                readonly invocationCall: (...args: unknown[]) => unknown;
             };
 
             /**
+             * Trace a single call, with a given name and arguments.
+             *
              * @deprecated
+             * @param sectionName The name of the section to trace.
+             * @param promiseOrFunction Promise or a function that provides a promise.
+             * @param args Optional arguments to pass to the trace.
+             * @returns The returned value of the traced call.
+             * @see https://wix.github.io/Detox/docs/next/api/detox-object-api/#detoxtracecall.
              */
-            readonly traceCall: <T>(event: string, action: () => Promise<T>) => Promise<T>;
+            readonly traceCall: <T>(event: string, action: () => Promise<T>, args?: Record<string, unknown>) => Promise<T>;
         }
 
         interface Logger {

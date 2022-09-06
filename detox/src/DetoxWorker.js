@@ -195,7 +195,6 @@ class DetoxWorker {
   onTestStart = async (testSummary) => {
     if (this._isCleaningUp) return;
     this._validateTestSummary('beforeEach', testSummary);
-    this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
 
     if (this._isCleaningUp) return;
     await this._dumpUnhandledErrorsIfAny({
@@ -215,7 +214,6 @@ class DetoxWorker {
   onTestDone = async (testSummary) => {
     if (this._isCleaningUp) return;
     this._validateTestSummary('afterEach', testSummary);
-    this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
 
     if (this._isCleaningUp) return;
     await this._artifactsManager.onTestDone(testSummary);
@@ -249,10 +247,6 @@ class DetoxWorker {
       await this.device.installApp();
       if (this._isCleaningUp) return;
     }
-  }
-
-  _logTestRunCheckpoint(event, { status, fullName }) {
-    this.log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }
 
   _validateTestSummary(methodName, testSummary) {

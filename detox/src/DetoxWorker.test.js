@@ -312,12 +312,6 @@ describe('DetoxWorker', () => {
     describe('with a valid test summary', () => {
       beforeEach(() => detox.onTestStart(testSummaries.running()));
 
-      it('should trace DETOX_BEFORE_EACH event', () =>
-        expect(logger.trace).toHaveBeenCalledWith(
-          expect.objectContaining({ event: 'DETOX_BEFORE_EACH' }),
-          expect.any(String)
-        ));
-
       it('should notify artifacts manager about "testStart', () =>
         expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
@@ -347,12 +341,6 @@ describe('DetoxWorker', () => {
 
     describe('with a passing test summary', () => {
       beforeEach(() => detox.onTestDone(testSummaries.passed()));
-
-      it('should trace DETOX_AFTER_EACH event', () =>
-        expect(logger.trace).toHaveBeenCalledWith(
-          expect.objectContaining({ event: 'DETOX_AFTER_EACH' }),
-          expect.any(String)
-        ));
 
       it('should notify artifacts manager about "testDone"', () =>
         expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));

@@ -16,11 +16,12 @@ function filterErrorStack(error, predicate) {
 }
 
 function replaceErrorStack(source, target) {
-  const sourceStack = source.stack || source.message;
-  const targetStack = target.stack || target.message;
+  const sourceStack = (source.stack || '');
   const sourceMessage = sourceStack.replace(CLEAN_AT, '');
-  const targetMessage = targetStack.replace(CLEAN_AT, '');
   const actualSourceStack = sourceStack.slice(sourceMessage.length);
+
+  const targetMessage = target.message || target.stack.replace(CLEAN_AT, '');
+
   target.stack = targetMessage + actualSourceStack;
   return target;
 }
