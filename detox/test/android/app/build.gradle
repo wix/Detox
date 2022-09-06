@@ -6,9 +6,6 @@ project.ext.react = [
 ]
 apply from: '../../node_modules/react-native/react.gradle'
 
-def enableHermes = project.ext.react.get("enableHermes", false)
-def jscFlavor = 'org.webkit:android-jsc:+'
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -28,6 +25,13 @@ android {
         }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
+
+        /*
+        testInstrumentationRunnerArguments = [
+                'detoxServer': 'ws://localhost:8099',
+                'detoxSessionId': 'test'
+        ]
+        */
 
         missingDimensionStrategy 'detox', 'full'
     }
@@ -80,12 +84,14 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation project(path: ':@react-native-community_slider')
 
-    if (gradle.ext.rnInfoLT.isRn68OrLower) {
-        fromSourceImplementation(project(path: ':ReactAndroid'))
-    }
-
     // noinspection GradleDynamicVersion
     fromBinImplementation('com.facebook.react:react-native:+')
+
+    // In order to build from source:
+    // 1. Uncomment the fromSourceImplementation() statement
+    // 2. Uncomment associated section in settings.gradle
+    // 3. Pave through the wilderness
+//    fromSourceImplementation(project(path: ':ReactAndroid'))
 
     implementation project(':AsyncStorage')
     implementation project(':react-native-webview')
@@ -98,18 +104,14 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    if (gradle.ext.rnInfoLT.isRn68OrLower) {
-        def hermesPath = "../../node_modules/hermes-engine/android"
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work for previous RN versions as well
+        implementation('com.facebook.react:hermes-engine:+') {
+            exclude group: 'com.facebook.fbjni'
+        }
+    } else {
+        def hermesPath = '../../node_modules/hermes-engine/android'
         debugImplementation files("$hermesPath/hermes-debug.aar")
         releaseImplementation files("$hermesPath/hermes-release.aar")
-    } else {
-        if (enableHermes) {
-            implementation("com.facebook.react:hermes-engine:+") {
-                exclude group: 'com.facebook.fbjni'
-            }
-        } else {
-            implementation jscFlavor
-        }
     }
 }
 

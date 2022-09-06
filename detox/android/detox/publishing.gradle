@@ -102,12 +102,12 @@ tasks.named("dokkaJavadoc") {
         }
     }
 }
-// Side note / TODO:
+
+// Side note / TODO (revisit because dokka's 419 issue has been resolved, since):
 // Dokka outputs R and BuildConfig; currently, there's nothing to do about it, as issues such as
 // this on - https://github.com/Kotlin/dokka/issues/419 are still open :-/
 // We might want to revisit this in the future -- see if they've decided to export a custom classes
 // suppression config var or something.
-
 task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from "$buildDir/dokkaDoc"
     classifier = 'javadoc'
