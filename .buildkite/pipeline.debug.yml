@@ -16,12 +16,8 @@ steps:
             value: "android_rn_66"
           - label: "Android RN 69"
             value: "android_rn_69"
-          - label: "Android Demo App RN 66"
-            value: "android_demo_app_rn_66"
           - label: "Android Demo App RN 69"
             value: "android_demo_app_rn_69"
-          - label: "iOS Demo App RN 66"
-            value: "ios_demo_app_rn_66"
           - label: "iOS Demo App RN 69"
             value: "ios_demo_app_rn_69"
 
