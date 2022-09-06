@@ -5,6 +5,11 @@ const TIMELINE_CONTEXT_TYPES = require('../artifacts/timeline/TimelineContextTyp
 class Trace {
   constructor() {
     this.events = [];
+    this.reporterDelegate = undefined;
+  }
+
+  setReporterDelegate(delegate) {
+    this.reporterDelegate = delegate;
   }
 
   init(timestampProviderFn = Date.now) {
@@ -16,10 +21,18 @@ class Trace {
 
   startSection(name, args) {
     this.events.push(this._event('start', name, args));
+
+    if (this.reporterDelegate !== undefined) {
+      this.reporterDelegate.reportStartSection(name, args);
+    }
   }
 
   endSection(name, args) {
     this.events.push(this._event('end', name, args));
+
+    if (this.reporterDelegate !== undefined) {
+      this.reporterDelegate.reportEndSection(name, args);
+    }
   }
 
   reset() {
