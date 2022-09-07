@@ -38,10 +38,6 @@ class TestRunnerCommand {
     this._argv = config.args;
     this._retries = config.retries;
 
-    if (config.inspectBrk === true) {
-      this._env = this._envHint;
-    }
-
     return this;
   }
 
@@ -50,7 +46,7 @@ class TestRunnerCommand {
    * @returns {this}
    */
   replicateCLIConfig(cliConfig) {
-    this._envHint = _.omitBy({
+    this._env = this._envHint = _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
       DETOX_ARTIFACTS_LOCATION: cliConfig.artifactsLocation,
       DETOX_CAPTURE_VIEW_HIERARCHY: cliConfig.captureViewHierarchy,
