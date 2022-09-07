@@ -80,7 +80,6 @@ class DetoxCoreListener {
       title: test.name,
       parent: test.parent.name,
       fullName: getFullTestName(test),
-      status: 'running',
       functionCode: test.fn.toString(),
       invocations: this._getTestInvocations(test),
     };
