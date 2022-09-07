@@ -1,7 +1,11 @@
 buildscript {
     apply from: './rninfo.gradle'
 
-    def androidGradlePluginVersion = rnInfo.isRN68OrHigher ? '7.0.4' : rnInfo.isRN66OrHigher ? '4.2.2' : rnInfo.isRN64OrHigher ? '4.1.0' : '3.5.3'
+    def androidGradlePluginVersion =
+        rnInfo.isRN69OrHigher ? '7.1.1'
+            : rnInfo.isRN68OrHigher ? '7.0.4'
+            : '4.2.2'
+
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
@@ -19,7 +23,7 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath 'de.undercouch:gradle-download-task:4.1.2'
+        classpath 'de.undercouch:gradle-download-task:5.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }

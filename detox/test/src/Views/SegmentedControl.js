@@ -3,10 +3,10 @@ import {
     View,
     Text,
     TouchableOpacity,
-    SegmentedControlIOS,
     Platform,
     StyleSheet,
 } from 'react-native';
+import SegmentedControlIOS from '@react-native-segmented-control/segmented-control';
 
 const accentColor = '#007AFF';
 const styles = StyleSheet.create({
