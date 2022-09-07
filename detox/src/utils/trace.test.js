@@ -72,6 +72,50 @@ describe('Trace util', () => {
     trace.reset();
   });
 
+  describe('should send to delegate if one is defined', () => {
+    const delegate = ({
+      addEvent: jest.fn(),
+    });
+
+    beforeEach(() => {
+      uut.setDelegate(delegate);
+    });
+
+    it('should throw exception for passing null to setDelegate', () => {
+      const error = new Error('You must pass a delegate to setDelegate!');
+      expect(() => uut.setDelegate(null)).toThrowError(error);
+    });
+
+    it('should throw exception for passing delegate that does not implement addEvent', () => {
+      const error = new Error('Delegate passed to setDelegate must implement addEvent function!');
+      const badDelegate = () => ({
+        badMethod: jest.fn(),
+      })
+      expect(() => uut.setDelegate(badDelegate)).toThrowError(error);
+    });
+
+    it('should send on startSection', () => {
+      uut.startSection('section1', {});
+
+      const expected = {"args": {}, "name": "section1", "ts": expect.any(Number), "type": "start"};
+      expect(delegate.addEvent).toHaveBeenCalledWith(expected);
+    });
+
+    it('should send on endSection', () => {
+      uut.endSection('section1', {});
+
+      const expected = {"args": {}, "name": "section1", "ts": expect.any(Number), "type": "end"};
+      expect(delegate.addEvent).toHaveBeenCalledWith(expected);
+    });
+
+    it('should send on reset', () => {
+      uut.reset();
+
+      const expected = {"ts": expect.any(Number), "type": "init"};
+      expect(delegate.addEvent).toHaveBeenCalledWith(expected);
+    });
+  });
+
   describe('trace-call function', () => {
     const { trace, traceCall } = require('./trace');
     const sectionName = 'section-name';

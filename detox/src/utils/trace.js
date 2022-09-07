@@ -1,31 +1,56 @@
 const assert = require('assert');
 
 const TIMELINE_CONTEXT_TYPES = require('../artifacts/timeline/TimelineContextTypes');
+const { DetoxRuntimeError } = require('../errors');
 
 class Trace {
   constructor() {
     this.events = [];
+    this.delegate = undefined;
   }
 
   init(timestampProviderFn = Date.now) {
     this._timestampProviderFn = timestampProviderFn;
-    this.events = [
-      this._event('init'),
-    ];
+    this.reset();
+  }
+
+  setDelegate(delegate) {
+    if (!delegate) {
+      throw new DetoxRuntimeError({message: 'You must pass a delegate to setDelegate!'});
+    }
+
+    if (typeof delegate.addEvent !== 'function') {
+      throw new DetoxRuntimeError({message: 'Delegate passed to setDelegate must implement addEvent function!'});
+    }
+
+    this.delegate = delegate;
   }
 
   startSection(name, args) {
-    this.events.push(this._event('start', name, args));
+    const event = this._event('start', name, args);
+
+    this.events.push(event);
+    this._sendEventToDelegate(event);
   }
 
   endSection(name, args) {
-    this.events.push(this._event('end', name, args));
+    const event = this._event('end', name, args);
+
+    this.events.push(event);
+    this._sendEventToDelegate(event);
   }
 
   reset() {
-    this.events = [
-      this._event('init'),
-    ];
+    const event = this._event('init');
+
+    this.events = [event];
+    this._sendEventToDelegate(event);
+  }
+
+  _sendEventToDelegate(event) {
+    if (this.delegate) {
+      this.delegate.addEvent(event);
+    }
   }
 
   _event(type, name, args) {
