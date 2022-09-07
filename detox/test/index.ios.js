@@ -1,5 +1,6 @@
 import {LaunchArguments} from 'react-native-launch-arguments';
 import example from './src/app';
+import { LogBox } from 'react-native';
 
 import {
   AppRegistry,
@@ -11,5 +12,5 @@ if (LaunchArguments.value().simulateEarlyCrash) { // TODO integrate this into iO
   throw new Error('Simulating early crash');
 }
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs();
 AppRegistry.registerComponent('example', () => exampleIos);

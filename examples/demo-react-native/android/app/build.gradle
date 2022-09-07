@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply from: '../rninfo.gradle'
 
-//project.ext.react = [:]
 project.ext.react = [
     enableHermes: true
 ]
@@ -74,9 +73,15 @@ dependencies {
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
+// Apply Hermes as the JS engine
 dependencies {
-    // Use Hermes as our JS engine
-    def hermesPath = "../../node_modules/hermes-engine/android"
-    debugImplementation files("$hermesPath/hermes-debug.aar")
-    releaseImplementation files("$hermesPath/hermes-release.aar")
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+        implementation('com.facebook.react:hermes-engine:+') {
+            exclude group: 'com.facebook.fbjni'
+        }
+    } else {
+        def hermesPath = '../../node_modules/hermes-engine/android'
+        debugImplementation files("$hermesPath/hermes-debug.aar")
+        releaseImplementation files("$hermesPath/hermes-release.aar")
+    }
 }

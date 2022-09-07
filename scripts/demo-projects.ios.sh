@@ -5,11 +5,6 @@ trap "$UPLOAD_ARTIFACT" EXIT
 
 source $(dirname "$0")/demo-projects.sh
 
-pushd detox
-run_f "npm run build:android"
-popd
-
-
 # This must be built first as all other demo apps use this binary.
 pushd examples/demo-react-native
 pushd ios
