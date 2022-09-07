@@ -31,6 +31,7 @@ function composeRunnerConfig(opts) {
     {
       retries: 0,
       inspectBrk: inspectBrkHookDefault,
+      forwardEnv: false,
       jest: {
         initTimeout: 300000,
         retryAfterCircusRetries: false,

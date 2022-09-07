@@ -157,6 +157,17 @@ declare global {
              * Use it when you rely on another test runner than Jest.
              */
             inspectBrk?: boolean | ((config: DetoxTestRunnerConfig) => void);
+            /**
+             * Forward environment variables to the spawned test runner
+             * accordingly to the given CLI argument overrides.
+             *
+             * If false, Detox CLI will be only printing a hint message on
+             * how to start the test runner using environment variables,
+             * in case when a user wants to avoid using Detox CLI.
+             *
+             * @default false
+             */
+            forwardEnv?: boolean;
         }
 
         type DetoxAppConfig = (DetoxBuiltInAppConfig | DetoxCustomAppConfig) & {

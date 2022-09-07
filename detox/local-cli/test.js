@@ -9,16 +9,21 @@ module.exports.middlewares = require('./testCommand/middlewares').default;
 
 module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
   try {
-    await detox.init({
+    const opts = {
       argv: detoxArgs,
       testRunnerArgv: runnerArgs,
       workerId: null,
-    });
+    };
+
+    const config = await detox.resolveConfig(opts);
+    if (!config.testRunner.inspectBrk) {
+      await detox.init(opts);
+    }
 
     const runnerCommand = new TestRunnerCommand()
-      .setRunnerConfig(detox.config.testRunner)
       .setDeviceConfig(detox.config.device)
-      .replicateCLIConfig(detox.config.cli);
+      .replicateCLIConfig(detox.config.cli)
+      .setRunnerConfig(detox.config.testRunner);
 
     await runnerCommand.execute();
   } finally {

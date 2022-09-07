@@ -45,6 +45,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 0,
       inspectBrk: false,
+      forwardEnv: false,
     });
   });
 
@@ -58,6 +59,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 1,
       inspectBrk: true,
+      forwardEnv: true,
     };
 
     expect(composeRunnerConfig()).toEqual({
@@ -73,6 +75,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 1,
       inspectBrk: true,
+      forwardEnv: true,
     });
   });
 
@@ -86,6 +89,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 1,
       inspectBrk: true,
+      forwardEnv: true,
     };
 
     expect(composeRunnerConfig()).toEqual({
@@ -101,6 +105,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 1,
       inspectBrk: true,
+      forwardEnv: true,
     });
   });
 
@@ -207,6 +212,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 3,
       inspectBrk: false,
+      forwardEnv: false,
     });
   });
 

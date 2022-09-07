@@ -170,11 +170,13 @@ class DetoxPrimaryContext extends DetoxContext {
 
       await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
 
-      try {
-        this[_lifecycleLogger].trace.end();
-        await this[_finalizeLogs]();
-      } catch (err) {
-        this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
+      if (this[_dirty]) {
+        try {
+          this[_lifecycleLogger].trace.end();
+          await this[_finalizeLogs]();
+        } catch (err) {
+          this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
+        }
       }
     }
   }

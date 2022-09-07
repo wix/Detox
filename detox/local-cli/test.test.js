@@ -107,11 +107,8 @@ describe('CLI', () => {
       expect(cliCall().argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
     });
 
-    test('should add environment variables', () => {
-      expect(cliCall().env).toEqual({
-        DETOX_CONFIG_PATH: expect.any(String),
-        DETOX_CONFIG_SNAPSHOT_PATH: expect.any(String)
-      });
+    test('should not override environment variables', () => {
+      expect(cliCall().env).toEqual({ DETOX_CONFIG_SNAPSHOT_PATH: expect.any(String) });
     });
 
     test('should hint essential environment variables', () => {
@@ -132,7 +129,7 @@ describe('CLI', () => {
 
   test.each([['-l'], ['--loglevel']])('%s <value> should be passed as environment variable', async (__loglevel) => {
     await run(__loglevel, 'trace');
-    expect(cliCall().env).toHaveProperty('DETOX_LOGLEVEL');
+    expect(cliCall().env).not.toHaveProperty('DETOX_LOGLEVEL');
     expect(cliCall().fullCommand).toMatch(/ DETOX_LOGLEVEL="trace" /);
   });
 
@@ -166,6 +163,7 @@ describe('CLI', () => {
 
     await run(__retries, 2).catch(_.noop);
 
+    expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
     expect(cliCall(0).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json']);
     expect(cliCall(1)).toBe(null);
   });
@@ -192,111 +190,111 @@ describe('CLI', () => {
 
   test.each([['-r'], ['--reuse']])('%s <value> should be passed as environment variable', async (__reuse) => {
     await run(__reuse);
-    expect(cliCall().env).toHaveProperty('DETOX_REUSE');
+    expect(cliCall().env).not.toHaveProperty('DETOX_REUSE');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_REUSE=true /);
   });
 
   test.each([['-u'], ['--cleanup']])('%s <value> should be passed as environment variable', async (__cleanup) => {
     await run(__cleanup);
-    expect(cliCall().env).toHaveProperty('DETOX_CLEANUP');
+    expect(cliCall().env).not.toHaveProperty('DETOX_CLEANUP');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_CLEANUP=true /);
   });
 
   test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as environment variable', async (__debug_synchronization) => {
     await run(__debug_synchronization, 5000);
-    expect(cliCall().env).toHaveProperty('DETOX_DEBUG_SYNCHRONIZATION');
+    expect(cliCall().env).not.toHaveProperty('DETOX_DEBUG_SYNCHRONIZATION');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEBUG_SYNCHRONIZATION=5000 /);
   });
 
   test.each([['-d'], ['--debug-synchronization']])('%s <value> should be passed as 0 when given false', async (__debug_synchronization) => {
     await run(__debug_synchronization, false);
-    expect(cliCall().env).toHaveProperty('DETOX_DEBUG_SYNCHRONIZATION');
+    expect(cliCall().env).not.toHaveProperty('DETOX_DEBUG_SYNCHRONIZATION');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEBUG_SYNCHRONIZATION=0 /);
   });
 
   test.each([['-d'], ['--debug-synchronization']])('%s <value> should have default value = 3000', async (__debug_synchronization) => {
     await run(`${__debug_synchronization}`);
-    expect(cliCall().env).toHaveProperty('DETOX_DEBUG_SYNCHRONIZATION');
+    expect(cliCall().env).not.toHaveProperty('DETOX_DEBUG_SYNCHRONIZATION');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEBUG_SYNCHRONIZATION=3000 /);
   });
 
   test.each([['-a'], ['--artifacts-location']])('%s <value> should be passed as environment variable', async (__artifacts_location) => {
     await run(__artifacts_location, '/tmp');
-    expect(cliCall().env).toHaveProperty('DETOX_ARTIFACTS_LOCATION');
+    expect(cliCall().env).not.toHaveProperty('DETOX_ARTIFACTS_LOCATION');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_ARTIFACTS_LOCATION="\/tmp" /);
   });
 
   test('--record-logs <value> should be passed as environment variable', async () => {
     await run('--record-logs', 'all');
-    expect(cliCall().env).toHaveProperty('DETOX_RECORD_LOGS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_RECORD_LOGS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_RECORD_LOGS="all" /);
   });
 
   test('--take-screenshots <value> should be passed as environment variable', async () => {
     await run('--take-screenshots', 'failing');
-    expect(cliCall().env).toHaveProperty('DETOX_TAKE_SCREENSHOTS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_TAKE_SCREENSHOTS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_TAKE_SCREENSHOTS="failing" /);
   });
 
   test('--record-videos <value> should be passed as environment variable', async () => {
     await run('--record-videos', 'failing');
-    expect(cliCall().env).toHaveProperty('DETOX_RECORD_VIDEOS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_RECORD_VIDEOS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_RECORD_VIDEOS="failing" /);
   });
 
   test('--record-performance <value> should be passed as environment variable', async () => {
     await run('--record-performance', 'all');
-    expect(cliCall().env).toHaveProperty('DETOX_RECORD_PERFORMANCE');
+    expect(cliCall().env).not.toHaveProperty('DETOX_RECORD_PERFORMANCE');
     expect(cliCall().fullCommand).toMatch(/\DETOX_RECORD_PERFORMANCE="all" /);
   });
 
   test('--capture-view-hierarchy <value> should be passed as environment variable', async () => {
     await run('--capture-view-hierarchy', 'enabled');
-    expect(cliCall().env).toHaveProperty('DETOX_CAPTURE_VIEW_HIERARCHY');
+    expect(cliCall().env).not.toHaveProperty('DETOX_CAPTURE_VIEW_HIERARCHY');
     expect(cliCall().fullCommand).toMatch(/\DETOX_CAPTURE_VIEW_HIERARCHY="enabled" /);
   });
 
   test('--jest-report-specs, set explicitly, should be passed as an environment variable', async () => {
     await run('--jest-report-specs');
-    expect(cliCall().env).toHaveProperty('DETOX_REPORT_SPECS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_REPORT_SPECS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_REPORT_SPECS=true /);
   });
 
   test.each([['-H'], ['--headless']])('%s <value> should be passed as environment variable', async (__headless) => {
     await run(__headless);
-    expect(cliCall().env).toHaveProperty('DETOX_HEADLESS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_HEADLESS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_HEADLESS=true /);
   });
 
   test('--gpu <value> should be passed as environment variable', async () => {
     await run('--gpu', 'angle_indirect');
-    expect(cliCall().env).toHaveProperty('DETOX_GPU');
+    expect(cliCall().env).not.toHaveProperty('DETOX_GPU');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_GPU="angle_indirect" /);
   });
 
   test('--device-boot-args should be passed as an environment variable (without deprecation warnings)', async () => {
     await run('--device-boot-args="--verbose"');
-    expect(cliCall().env).toHaveProperty('DETOX_DEVICE_BOOT_ARGS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_DEVICE_BOOT_ARGS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEVICE_BOOT_ARGS="--verbose" /);
     expect(logger().warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
   });
 
   test('--device-launch-args should serve as a deprecated alias to --device-boot-args', async () => {
     await run(`--device-launch-args="--verbose"`);
-    expect(cliCall().env).toHaveProperty('DETOX_DEVICE_BOOT_ARGS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_DEVICE_BOOT_ARGS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEVICE_BOOT_ARGS="--verbose" /);
     expect(logger().warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
   });
 
   test('--app-launch-args should be passed as an environment variable', async () => {
     await run(`--app-launch-args="--debug yes"`);
-    expect(cliCall().env).toHaveProperty('DETOX_APP_LAUNCH_ARGS');
+    expect(cliCall().env).not.toHaveProperty('DETOX_APP_LAUNCH_ARGS');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_APP_LAUNCH_ARGS="--debug yes" /);
   });
 
   test('--use-custom-logger false should be prevent passing environment variable', async () => {
     await run(`--use-custom-logger=false`);
-    expect(cliCall().env).toHaveProperty('DETOX_USE_CUSTOM_LOGGER');
+    expect(cliCall().env).not.toHaveProperty('DETOX_USE_CUSTOM_LOGGER');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_USE_CUSTOM_LOGGER=false /);
   });
 
@@ -310,13 +308,13 @@ describe('CLI', () => {
   test('--force-adb-install should be passed as environment variable', async () => {
     singleConfig().device.type = 'android.emulator';
     await run(`--force-adb-install`);
-    expect(cliCall().env).toHaveProperty('DETOX_FORCE_ADB_INSTALL');
+    expect(cliCall().env).not.toHaveProperty('DETOX_FORCE_ADB_INSTALL');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_FORCE_ADB_INSTALL=true /);
   });
 
   test.each([['-n'], ['--device-name']])('%s <value> should be passed as environment variable', async (__device_name) => {
     await run(__device_name, 'TheDevice');
-    expect(cliCall().env).toHaveProperty('DETOX_DEVICE_NAME');
+    expect(cliCall().env).not.toHaveProperty('DETOX_DEVICE_NAME');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_DEVICE_NAME="TheDevice" /);
   });
 
