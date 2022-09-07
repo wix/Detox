@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "19.11.0",
+  "version": "19.12.0",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -31,11 +31,11 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.3",
-    "@react-native-segmented-control/segmented-control": "2.3.0",
     "@react-native-community/checkbox": "^0.5.11",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/slider": "4.2.4",
     "@react-native-picker/picker": "^2.1.0",
+    "@react-native-segmented-control/segmented-control": "2.3.0",
     "moment": "^2.24.0",
     "react": "18.0.0",
     "react-native": "0.69.5",
@@ -52,7 +52,7 @@
     "@types/react-native": "0.69.5",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "detox": "^19.11.0",
+    "detox": "^19.12.0",
     "eslint": "^7.32.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "express": "^4.15.3",
