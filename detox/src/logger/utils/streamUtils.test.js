@@ -4,7 +4,7 @@ const { Readable } = require('stream');
 const pipe = require('multipipe');
 const tempfile = require('tempfile');
 
-jest.mock('./logger');
+jest.mock('../../utils/logger');
 
 describe('JSONL', () => {
   let utils;
@@ -47,7 +47,7 @@ describe('JSONL', () => {
       { key: 0, value: { time: '2000-01-01T00:00:00.001Z', value: 'a1' } },
     ]);
 
-    const logger = require('./logger');
+    const logger = require('../../utils/logger');
     expect(logger.debug).toHaveBeenCalledWith({ err: expect.any(Error) });
   });
 

@@ -29,7 +29,7 @@ class DetoxInternalsFacade {
     this.reportFailedTests = context[symbols.reportFailedTests];
     this.resolveConfig = context[symbols.resolveConfig];
     this.session = context[symbols.session];
-    this.trace = context.trace;
+    this.tracing = context[symbols.tracing];
     this.worker = funpermaproxy(() => context[symbols.worker]);
   }
 }

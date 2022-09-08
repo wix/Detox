@@ -67,6 +67,17 @@ declare global {
       readonly config: RuntimeConfig;
       readonly log: Detox.Logger;
       readonly session: SessionState;
+      readonly tracing: {
+        /**
+         * Creates a readable stream of the currently recorded events in Chrome Trace Event format.
+         *
+         * @see {@link https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU}
+         * @see {import('trace-event-lib').DurationBeginEvent}
+         * @see {import('trace-event-lib').DurationEndEvent}
+         * @see {import('trace-event-lib').InstantEvent}
+         */
+        createEventStream(): NodeJS.ReadableStream;
+      };
 
       readonly worker: Worker;
     }

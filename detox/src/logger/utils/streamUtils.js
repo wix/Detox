@@ -2,13 +2,16 @@ const { PassThrough, Transform } = require('stream');
 
 const bunyanDebugStream = require('bunyan-debug-stream');
 const duplexify = require('duplexify');
+const fs = require('fs-extra');
+const glob = require('glob');
 const multiSort = require('multi-sort-stream');
 const pipe = require('multipipe');
 const JsonlParser = require('stream-json/jsonl/Parser');
 const stripAnsi = require('strip-ansi');
 const { AbstractEventBuilder } = require('trace-event-lib');
 
-const log = require('./logger').child({ cat: 'logger' });
+const temporary = require('../../artifacts/utils/temporaryPath');
+const log = require('../../utils/logger').child({ cat: 'logger' });
 
 function compareTimestamps(a, b) {
   return +(a.value.time > b.value.time) - +(a.value.time < b.value.time);
@@ -203,6 +206,29 @@ function readJSONL() {
   return duplexify.obj(preventErrorSubscriptions(writable), writable.pipe(readable));
 }
 
+/**
+ * @param {string} sessionId
+ * @returns {NodeJS.ReadableStream}
+ */
+function uniteSessionLogs(sessionId) {
+  const readable = through();
+
+  glob(temporary.for.jsonl(`${sessionId}.*`), function (err, logs) {
+    if (err) {
+      return readable.emit('error', err);
+    }
+
+    if (logs.length === 0) {
+      return;
+    }
+
+    const jsonlStreams = logs.map(filePath => fs.createReadStream(filePath).pipe(readJSONL()));
+    mergeSortedJSONL(jsonlStreams).pipe(readable);
+  });
+
+  return readable;
+}
+
 module.exports = {
   readJSONL,
   writeJSON,
@@ -210,4 +236,5 @@ module.exports = {
   mergeSortedJSONL,
   debugStream,
   chromeTraceStream,
+  uniteSessionLogs,
 };

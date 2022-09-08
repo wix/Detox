@@ -21,6 +21,7 @@
  *   readonly reportFailedTests: unique symbol;
  *   readonly resolveConfig: unique symbol;
  *   readonly session: unique symbol;
+ *   readonly tracing: unique symbol;
  *   readonly uninstallWorker: unique symbol;
  *   readonly worker: unique symbol;
  * }}
@@ -54,6 +55,7 @@ module.exports = {
   logger: Symbol('logger'),
   resolveConfig: Symbol('resolveConfig'),
   session: Symbol('session'),
+  tracing: Symbol('tracing'),
   uninstallWorker: Symbol('uninstallWorker'),
   worker: Symbol('worker'),
   //#endregion

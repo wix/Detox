@@ -94,6 +94,14 @@ class DetoxContext {
   [symbols.onRunFinish] = (...args) => this[symbols.worker].onRunFinish(...args);
   [symbols.config] = funpermaproxy(() => this[symbols.session].detoxConfig);
   [symbols.session] = funpermaproxy(() => this[$sessionState]);
+  [symbols.tracing] = Object.freeze({
+    createEventStream: () => {
+      const streamUtils = require('../logger/utils/streamUtils');
+      return streamUtils
+        .uniteSessionLogs(this[$sessionState].id)
+        .pipe(streamUtils.chromeTraceStream());
+    },
+  });
   /** @abstract */
   [symbols.reportFailedTests](_testFilePaths, _permanent) {}
   /**

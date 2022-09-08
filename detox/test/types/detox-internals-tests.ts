@@ -1,3 +1,5 @@
+import { Event } from 'trace-event-lib';
+
 declare function random<T>(): T
 declare function assert<T>(x: T): void;
 
@@ -21,6 +23,7 @@ import {
   onTestStart,
   resolveConfig,
   session,
+  tracing,
   uninstallWorker,
   worker,
 } from 'detox/internals';
@@ -109,6 +112,17 @@ async function logTest() {
   });
 
   serverLogger.trace.end();
+}
+
+function tracingTest() {
+  return new Promise((resolve, reject) => {
+    tracing.createEventStream()
+      .on('data', function (e: Event) {
+        console.log(e.ph, e.name);
+      })
+      .on('error', reject)
+      .on('end', resolve)
+  });
 }
 
 function configTest() {
