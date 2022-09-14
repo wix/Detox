@@ -45,6 +45,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     };
     /** @private */
     this._shouldManageDetox = detox.getStatus() === 'inactive';
+    /** @private */
+    this._setupFailed = false;
     /** @internal */
     this.testPath = context.testPath;
     /** @protected */
@@ -67,15 +69,20 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @override */
   async setup() {
-    await super.setup();
-    await Timer.run({
-      description: `setting up Detox environment`,
-      timeout: this.initTimeout,
-      fn: async () => {
-        await this.initDetox();
-        this._instantiateListeners();
-      },
-    });
+    try {
+      await super.setup();
+      await Timer.run({
+        description: `setting up Detox environment`,
+        timeout: this.initTimeout,
+        fn: async () => {
+          await this.initDetox();
+          this._instantiateListeners();
+        },
+      });
+    } catch (e) {
+      this._setupFailed = true;
+      throw e;
+    }
   }
 
   /** @override */
@@ -115,7 +122,15 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     await Timer.run({
       description: `tearing down Detox environment`,
       timeout: this.initTimeout,
-      fn: async () => await this.cleanupDetox(),
+      fn: async () => {
+        try {
+          if (this._setupFailed) {
+            await detox.reportFailedTests([this.testPath], false);
+          }
+        } finally {
+          await this.cleanupDetox();
+        }
+      },
     });
   }
 
