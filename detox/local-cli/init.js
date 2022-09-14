@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 
 const detox = require('../internals');
 
@@ -12,6 +13,7 @@ module.exports.desc = 'Scaffold initial E2E test folder structure for Detox';
 module.exports.builder = {};
 
 module.exports.handler = async function init() {
+  createDetoxConfig();
   createJestFolderE2E();
   process.exit(exitCode); // eslint-disable-line
 };
@@ -51,44 +53,65 @@ function createFile(filename, content) {
 
 function createJestFolderE2E() {
   createFolder('e2e', {
-    'config.json': jestTemplates.runnerConfig,
+    'jest.config.js': jestTemplates.runnerConfig,
     'starter.test.js': jestTemplates.starter,
   });
-
-  createFile('.detoxrc.json', JSON.stringify({
-    testRunner: {
-      args: {
-        config: 'e2e/config.json'
-      },
-    },
-
-    ...createDefaultConfigurations(),
-  }, null, 2));
 }
 
+function createDetoxConfig() {
+  createFile('.detoxrc.js',
+    '/** @type {Detox.DetoxConfig} */\n' +
+    'module.exports = ' +
+    util.inspect(createDefaultConfigurations(), { compact: false, depth: Infinity }) +
+    ';\n'
+  );
+}
+
+/** @returns {Detox.DetoxConfig} */
 function createDefaultConfigurations() {
   return {
     testRunner: {
       args: {
         $0: 'jest',
-        config: 'e2e/config.json',
+        config: 'e2e/jest.config.js',
+      },
+      jest: {
+        initTimeout: 120000,
       },
     },
     apps: {
-      ios: {
+      'ios.debug': {
         type: 'ios.app',
-        binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
+        binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/YOUR_APP.app',
+        build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build',
       },
-      android: {
+      'ios.release': {
+        type: 'ios.app',
+        binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/YOUR_APP.app',
+        build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration Release -sdk iphonesimulator -derivedDataPath ios/build',
+      },
+      'android.debug': {
         type: 'android.apk',
-        binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
+        binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+        build: 'cd android ; ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug ; cd -',
+      },
+      'android.release': {
+        type: 'android.apk',
+        binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+        build: 'cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -',
       },
     },
     devices: {
       simulator: {
         type: 'ios.simulator',
         device: {
-          type: 'iPhone 11',
+          type: 'iPhone 12',
+        },
+      },
+      attached: {
+        type: 'android.attached',
+        device: {
+          adbName: '.*',
         },
       },
       emulator: {
@@ -99,13 +122,29 @@ function createDefaultConfigurations() {
       },
     },
     configurations: {
-      ios: {
+      'ios.sim.debug': {
         device: 'simulator',
-        app: 'ios',
+        app: 'ios.debug',
       },
-      android: {
+      'ios.sim.release': {
+        device: 'simulator',
+        app: 'ios.release',
+      },
+      'android.att.debug': {
+        device: 'attached',
+        app: 'android.debug',
+      },
+      'android.att.release': {
+        device: 'attached',
+        app: 'android.release',
+      },
+      'android.emu.debug': {
         device: 'emulator',
-        app: 'android',
+        app: 'android.debug',
+      },
+      'android.emu.release': {
+        device: 'emulator',
+        app: 'android.release',
       },
     },
   };

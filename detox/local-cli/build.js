@@ -65,7 +65,7 @@ module.exports.handler = async function build(argv) {
     }
 
     if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
-      detox.log.warn('\nImportant: after running the build command, Detox could not find your app at the given binary path:\n\t' + app.binaryPath + "\nMake sure it is correct, otherwise you'll get an error on an attempt to install your app.\n");
+      detox.log.warn('After running the build command, Detox could not find your app at the given binary path:\n\t' + app.binaryPath + "\nMake sure it is correct, otherwise you'll get an error on an attempt to install your app.\n");
     }
   }
 };
