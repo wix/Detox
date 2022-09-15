@@ -2,10 +2,7 @@
 id: migration
 slug: guide/migration
 title: Migration Guide
-sidebar_label: Migration Guide
 ---
-
-## Migration Guide
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the latter builds to learn about their improvements and changes.
 
@@ -34,7 +31,7 @@ You’ll need to find those places and apply trivial fixes like shown below:
 
 **Version 19 is not really a breaking change!**
 
-We decided to bump Detox into a major version release, nonetheless, because it is breaking for projects that sport [custom Detox drivers](Guide.ThirdPartyDrivers.md), such as [`detox-puppeteer`](https://github.com/ouihealth/detox-puppeteer).
+We decided to bump Detox into a major version release, nonetheless, because it is breaking for projects that sport [custom Detox drivers](articles/third-party-drivers.md), such as [`detox-puppeteer`](https://github.com/ouihealth/detox-puppeteer).
 
 If you are a maintainer of such a project, and you wish to upgrade your Detox dependency to 19 (kudos! :clap:),  follow this step-by-step migration guide; You can refer to [this pull-request](https://github.com/ouihealth/detox-puppeteer/pull/13), which does that for the  `detox-puppeteer` project.
 
@@ -49,7 +46,7 @@ The core of the change is that Detox' drivers framework is **no longer a single 
 
 > You can find a visual explanation, [here](https://github.com/wix/Detox/files/7338121/pre-multiapps-rfc.pdf).
 
-In addition, the runtime driver is no longer state-less -- basically, allowing implementation to hold any state that is required in identifying and managing the associated device.
+In addition, the runtime driver is no longer state-less – basically, allowing implementation to hold any state that is required in identifying and managing the associated device.
 
 ##### How to migrate
 
@@ -90,7 +87,7 @@ Add the new class to the `module.exports` list, under the name: `ArtifactPlugins
 - Optionally rename your class from `PuppeteerDriver` to `PuppeteerRuntimeDriver`.
 - In the methods remaining in the class accepting the `deviceId` arg: **remove the `deviceId` arg entirely**. This might break your implementation - don’t worry, continue reading.
 - If applicable, change the signature of the class' c'tor to accept the cookie as its 2nd argument (instance previously allocated in `PuppeteerAllocationDriver.allocate()`). Save data from the cookie as part of the driver’s state, in order to unbreak your implementation, following the previous step.
-- Add two methods: `getExternalId()` and `getDeviceName()`. Implement them such that they would comply with the `device.id` and `device.name` [API contracts](APIRef.DeviceObjectAPI.md), respectively.
+- Add two methods: `getExternalId()` and `getDeviceName()`. Implement them such that they would comply with the `device.id` and `device.name` [API contracts](api/device.md), respectively.
 
 Export the runtime driver class in the `module.exports` list as `RuntimeDriverClass`, **instead of `DriverClass`.**
 
@@ -101,7 +98,7 @@ For issue related to these migrations, approach us by [submitting an issue on Gi
 ### 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
-Please refer to the [configuration doc](https://github.com/wix/Detox/blob/18.6.0/docs/APIRef.Configuration.md) to obtain more details.
+Please refer to the [configuration doc](config/overview.md) to obtain more details.
 This change is backward-compatible, although the new format is now the recommended option.
 
 ### 18.0
@@ -243,7 +240,7 @@ The following APIs have been deprecated, but is still available
 - `toBeNotVisible()`—deprecated in favor of `not.toBeVisible()` (iOS, Android)
 - `toNotExist()`—deprecated in favor of `not.toExist()` (iOS, Android)
 
-Make sure to read the API reference for [matchers](https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md), [actions](https://github.com/wix/Detox/blob/master/docs/APIRef.ActionsOnElement.md) and [expectations](https://github.com/wix/Detox/blob/master/docs/APIRef.Expect.md).
+Make sure to read the API reference for [matchers](api/matchers.md), [actions](api/actions.md) and [expectations](api/expect.md).
 
 If you see unexpected results, make sure to open an issue.
 

@@ -18,42 +18,44 @@ const sidebars = {
       type: 'category',
       label: 'Introduction',
       items: [
-        'getting-started',
-        'ios-dev-env',
-        'android-dev-env',
-        'ios',
-        'android',
-        'writing-first-test',
-        'how-detox-works',
-        'design-principles',
-        'workflows'
+        'introduction/getting-started',
+        'introduction/building-with-detox',
+        'introduction/writing-first-test',
+        'introduction/preparing-for-ci',
+        'introduction/debugging'
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Configuration',
+      items: [
+        'config/overview',
+        'config/devices',
+        'config/apps',
+        'config/artifacts',
+        'config/behavior',
+        'config/logger',
+        'config/session',
+        'config/testRunner',
       ]
     },
     {
       type: 'category',
       label: 'API Reference',
       items: [
-        'detox-cli',
-        'configuration',
-        'detox-object-api',
-        'device-object-api',
-        'test-lifecycle',
-        'matchers',
-        'actions-on-element',
-        'expect',
-        'launch-args',
-        'mocking-open-with-url',
-        'mocking-user-notifications',
-        'mocking-user-activity',
-        'artifacts',
-        'screenshots'
+        'api/detox-cli',
+        'api/device',
+        'api/matchers',
+        'api/actions',
+        'api/expect',
+        'api/logger',
+        'api/internals',
       ]
     },
     {
       type: 'category',
       label: 'Troubleshooting',
       items: [
-        'troubleshooting',
         'building-the-app',
         'running-tests',
         'synchronization',
@@ -64,19 +66,32 @@ const sidebars = {
       type: 'category',
       label: 'Guides',
       items: [
-        'running-locally',
-        'developing-while-writing-tests',
-        'running-on-ci',
-        'debugging-in-xcode',
-        'debugging-in-android-studio',
-        'mocking',
-        'migration',
-        'jest',
         'parallel-test-execution',
-        'third-party-drivers',
-        'expo',
+        'guide/genymotion-cloud',
+        'guide/taking-screenshots',
+        'mocking',
+        'launch-args',
+        'mocking-open-with-url',
+        'mocking-user-notifications',
+        'mocking-user-activity',
+        'developing-while-writing-tests',
+        'android-dev-env',
+        'proguard-configuration',
         'uninstalling',
       ]
+    },
+    {
+      type: 'category',
+      label: 'Articles',
+      items: [
+        'articles/design-principles',
+        'articles/how-detox-works',
+        'articles/third-party-drivers',
+      ]
+    },
+    {
+      type: 'doc',
+      id: 'migration',
     },
     {
       type: 'doc',

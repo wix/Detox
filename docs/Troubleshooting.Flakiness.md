@@ -35,6 +35,6 @@ In order to identify the source of flakiness you’re suffering from you need mo
 
 To enable `trace` mode run your tests in trace log mode:
 
-```sh
+```bash
 detox test --loglevel trace
 ```

@@ -5,9 +5,13 @@ title: Mocking
 sidebar_label: Mocking
 ---
 
-## Mocking
+# Mocking
 
-> **NOTE: This article previously focused on the older React Native versions (`<0.59`), so if you need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/01ad250fe4168502a57339b8bcab0ec5a5c89e4b/docs/Guide.Mocking.md).**
+:::info
+
+This article previously focused on the older React Native versions (`<0.59`), so if you need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/01ad250fe4168502a57339b8bcab0ec5a5c89e4b/docs/Guide.Mocking.md).
+
+:::
 
 Mocking is an integral part of testing.
 You may want to use mocks to alter specific behavior of your app during tests, e.g., to:
@@ -34,7 +38,7 @@ Thanks to Metro bundler, there are two modes your React Native application can r
 There are two ways to configure the _Metro bundler_ to use your mocks: quick (**debug mode** only) and universal.
 Let's start with the quicker way.
 
-### Quick flow
+## Quick flow
 
 1. Pick a module that you are going to mock, e.g.:
 
@@ -58,7 +62,7 @@ Let's start with the quicker way.
 
 1. Stop your _Metro bundler_ if it has been already running, and run it again with the corresponding file extension override, e.g.:
 
-   ```sh
+   ```bash
    npx react-native start --sourceExts mock.js,js,json,ts,tsx
    ```
 
@@ -67,17 +71,17 @@ Let's start with the quicker way.
 > CAVEAT: whichever file extension you might take for the mock files – make sure you don’t accidentally "pick up" unforeseen file overrides from `node_modules/**/*.your-extension.js`!
 > _Metro bundler_ does not limit itself to your project files only – applying those `--sourceExts` also affects the resolution of the `node_modules` content!
 
-### Configuring Metro bundler
+## Configuring Metro bundler
 
 While the mentioned way is good enough for the **debug mode**, it falls short for the **release builds**. The problem is that the `--sourceExts` argument is supported only by `react-native start` command. Hence, you’d need a CLI-independent way to configure your Metro bundler, and that is patching your project's `metro.config.js`:
 
-```diff
-/**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
- *
- * @format
- */
+```diff title="metro.config.js"
+ /**
+  * Metro configuration for React Native
+  * https://github.com/facebook/react-native
+  *
+  * @format
+  */
 +const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts;
 
  module.exports = {
@@ -101,13 +105,13 @@ This way, we are enforcing a custom convention that if the Metro bundler finds t
 
 Therefore, to start the Metro bundler in the mocked mode, you would run something like:
 
-```sh
+```bash
 MY_APP_MODE=mocked npx react-native start
 ```
 
 This principle stays the same for the **release mode**, although the build commands might differ depending on the platform and a specific script:
 
-```sh
+```bash
 export MY_APP_MODE=mocked
 # from now on, even an implicit run of Metro bundler will use our override
 

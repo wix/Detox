@@ -13,29 +13,7 @@ We don’t have any special guidelines - just some setup walk-through!
 
 ### Environment
 
-#### Install Homebrew
-
-If you haven’t yet - install [`brew`](https://brew.sh/).
-
-#### Install Node.js v12.x or newer
-
-There’s more than one way to install Node.js:
-
-- Download from the [official download page](https://nodejs.org/en/download/)
-- Use [Homebrew](https://formulae.brew.sh/formula/node)
-- Use `nvm` - if you need to allow for several versions to be installed on a single machine
-
-The best way is to use `nvm`, but the simplest way is to use Homebrew:
-
-```sh
-brew install node
-```
-
-#### Install `npm`
-
-Either install `npm` or check that you have it installed, using their [official guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
-
-> **NOTE: For Detox, please use the latest `npm` version `6.x.x` (i.e not version 7.0.0 or newer).**
+First, complete our [Getting Started](introduction/getting-started.mdx) guide.
 
 #### Install the monorepo management tool, `lerna`
 
@@ -55,29 +33,23 @@ npm install react-native-cli --global
 
 Watchman:
 
-```sh
+```bash
 brew install watchman
 ```
 
-#### iOS
-
-For iOS, you must install Xcode and related tools. Refer to our [Setting Up an iOS Environment](Introduction.iOSDevEnv.md) guide.
+#### xcpretty
 
 You must also have `xcpretty` installed:
 
-```sh
+```bash
 gem install xcpretty
 ```
-
-#### Android
-
-For Android, you need to have Java and the Android SDK properly set up. Refer to our [Setting Up an Android Development & Testing Environment](Introduction.AndroidDevEnv.md) guide.
 
 ### Detox
 
 #### Clone Detox and Submodules
 
-```sh
+```bash
 git clone git@github.com:wix/detox.git
 cd detox
 git submodule update --init --recursive
@@ -87,7 +59,7 @@ git submodule update --init --recursive
 
 #### Installing and Linking Internal Projects
 
-```sh
+```bash
 lerna bootstrap
 ```
 
@@ -101,17 +73,9 @@ lerna bootstrap
 
 The following steps can be run manually in order to build / test the various components of Detox.
 
-###### 0. (React Native ≤ 0.55.x) Fixing Compilation Issues in RN Sources
-
-Detox Android test project uses React Native sources instead of the precompiled AAR. The test project uses React Native 0.51 and 0.53, both have issues with compilation ([fixed in 0.55](https://github.com/facebook/react-native/commit/d8bb990abc226e778e2f32c2de3c6661c0aa64e5#diff-f44163238d434a443b56bd27b3ba0578)). In order to fix this issue, from inside `detox/test` run:
-
-```sh
-mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
-```
-
 ###### 1. Unit Tests and Lint
 
-```sh
+```bash
 lerna run test
 ```
 
@@ -131,7 +95,7 @@ npm run unit:watch
 
 After running the tests, _Jest_ will create a coverage report you can examine:
 
-```sh
+```bash
 cd detox
 open coverage/lcov-report/index.html
 ```
@@ -166,7 +130,7 @@ FYI Android test project includes two flavors:
 
 Each build can be triggered separately by running its Gradle assembling task (under `detox/test/android/`):
 
-```sh
+```bash
 ./gradlew assembleFromSourceDebug
 -or-
 ./gradlew assembleFromBinDebug
@@ -175,7 +139,7 @@ Each build can be triggered separately by running its Gradle assembling task (un
 To run from Android Studio, React Native’s `react.gradle` script may require `node` to be in path.
 On MacOS, environment variables can be exported to desktop applications by adding the following to your `.bashrc`/`.zshrc`:
 
-```sh
+```bash
 launchctl setenv PATH $PATH
 ```
 
@@ -183,7 +147,7 @@ launchctl setenv PATH $PATH
 
 Under `detox/android`:
 
-```sh
+```bash
 ./gradlew testFullRelease
 ```
 
@@ -205,7 +169,7 @@ The [documentation website](https://wix.github.io/Detox) is built using [Docusau
 
 To run the website locally, run the following commands:
 
-```sh
+```bash
 cd website
 npm install
 npm start
@@ -226,4 +190,53 @@ In case you want to update the docs for a specific version, you can change the r
 To update a specific version with the latest changes:
 
 1. Remove the version from `versions.json`.
-2. Run `npm run docusaurus docs:version <version>`.
+1. Run `npm run docusaurus docs:version <version>`.
+
+### TODO: Setting Detox up as a compiling dependency
+
+This is an **alternative** to the setup process described under the previous section, on adding Detox as a dependency.
+
+In your project’s `settings.gradle` add:
+
+```groovy
+include ':detox'
+project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
+```
+
+In your _root_ `buildscript` (i.e. `android/build.gradle`), register `google()` as a repository lookup point in all projects:
+
+```groovy
+// Note: add the 'allproject' section if it doesn’t exist
+allprojects {
+    repositories {
+        // ...
+        google()
+    }
+}
+```
+
+In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this in `dependencies` section:
+
+```groovy
+dependencies {
+   // ...
+    androidTestImplementation(project(path: ":detox"))
+}
+```
+
+In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this to the `defaultConfig` subsection:
+
+```groovy
+android {
+  // ...
+
+  defaultConfig {
+      // ...
+      testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
+      testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+      missingDimensionStrategy 'detox', 'full'
+  }
+}
+```
+
+Please be aware that the `minSdkVersion` needs to be at least 18.

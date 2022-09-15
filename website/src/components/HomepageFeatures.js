@@ -4,15 +4,6 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Supports Different Test Runners',
-    Svg: require('../../static/img/test-runner.svg').default, // taken from: https://uxwing.com/testing-icon/
-    description: (
-      <>
-        Use Jest or Mocha as the test runner (spoiler: we have our favorite).
-      </>
-    ),
-  },
-  {
     title: 'Cross Platform',
     Svg: require('../../static/img/cross-platform.svg').default, // taken from: https://uxwing.com/magic-icon/
     description: (
@@ -55,6 +46,17 @@ const FeatureList = [
     description: (
       <>
         Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
+      </>
+    ),
+  },
+  {
+    title: 'Test Runner Agnostic',
+    Svg: require('../../static/img/test-runner.svg').default, // taken from: https://uxwing.com/testing-icon/
+    description: (
+      <>
+        Detox provides a set of APIs to use with any test runner or without it.
+        It comes with <a href="https://jestjs.io" target="_blank" rel="noopener noreferrer">Jest</a> integration
+        out of the box.
       </>
     ),
   },

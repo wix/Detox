@@ -1,0 +1,134 @@
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import IntroExpo from './partials/_getting-started-expo.md';
+import IntroOther from './partials/_getting-started-other.mdx';
+
+# Getting Started
+
+**Welcome to Detox!**
+
+In this guide, we will walk you through setting Detox up in your project, one step at a time.
+
+You will find that some steps are longer than the others: some are just one-paragraph long, while for others we have a dedicated multistep guide worked out. Bear with us - it is all necessary, and once set-up, it is easy to move forward with writing tests very rapidly.
+
+Please select type of your mobile application before you start the tutorial:
+
+<Tabs groupId="appType">
+    <TabItem value="start-rn" label="React Native" default />
+    <TabItem value="start-expo" label="Expo">
+        <IntroExpo />
+    </TabItem>
+    <TabItem value="start-other" label="Other">
+        <IntroOther />
+    </TabItem>
+</Tabs>
+
+## Setting up the environment
+
+Your first step would be to complete the
+[📚 React Native Environment Setup Guide](https://reactnative.dev/docs/next/environment-setup).
+
+![](../img/rn-env.png)
+
+<p>
+    Open the link above and switch there to <b>React Native CLI Quickstart</b> tab to see
+    the interactive tutorial for <b>Development OS</b> and <b>Target OS</b> of your choice.
+</p>
+
+<p>
+    Follow all
+    the steps <span style={{color: 'red'}}>(yes, even if you have a native app!)</span> and
+    make sure you can create and run React Native apps on virtual testing devices.
+</p>
+
+![](../img/rn-env-done.png)
+
+## Installing Detox prerequisites
+
+To complete the environment setup, you still have 2 steps ahead: installing `detox-cli` and `applesimutils`.
+
+### 1. Command Line Tools (`detox-cli`)
+
+`detox-cli` is merely a script that passes commands through to
+a local Detox executable located at `node_modules/.bin/detox`,
+making it easier to operate Detox from the command line, e.g. `detox test -c ios.sim.debug`.
+
+It should be installed globally, enabling usage of the command line tools outside your npm scripts:
+
+```bash npm2yarn
+npm install detox-cli --global
+```
+
+On the other hand, if you are fine with running Detox commands with `npx detox ...`, you may skip installing `detox-cli`.
+
+### 2. [MacOS Only] `applesimutils`
+
+This tool is **required** by Detox to work with iOS simulators. The recommended way to install
+[`applesimutils`](https://github.com/wix/AppleSimulatorUtils) is via [Homebrew](https://brew.sh):
+
+```bash
+brew tap wix/brew
+brew install applesimutils
+```
+
+:::info Note
+
+Make sure to periodically update your version of `applesimutils` to the latest version.
+
+:::
+
+## Setting up the project
+
+<Tabs groupId="appType">
+    <TabItem value="start-rn" label="React Native" default>
+        Go to your project's root folder (where <code>package.json</code> is found) and run:
+    </TabItem>
+    <TabItem value="start-other" label="Native iOS">
+        <p>Create a <code>package.json</code> in your project's root by running this command:</p>
+        <CodeBlock language="bash">
+            npm init -y
+        </CodeBlock>
+        <p>And remember to add the <code>node_modules</code> folder to your <code>.gitignore</code> file.</p>
+        <p>Now you are ready to install the Detox itself. Run:</p>
+    </TabItem>
+</Tabs>
+
+```bash npm2yarn
+npm install detox --save-dev
+```
+
+The next step would be to **install a test runner**. Out of the box, Detox offers you first-class integration
+with [Jest](https://jestjs.io), and that is our official recommendation:
+
+```bash npm2yarn
+npm install "jest@>=27.2.5" --save-dev
+```
+
+:::info
+The command above will install the **latest Jest version** regardless of the constraint, but `@>=27.2.5` is
+recommended in the first place to prevent you from getting an incompatible Jest version unknowingly, under influence
+of the existing lock files. Reportedly, `package-lock.json` could restrict `npm install jest` to installing
+an older, unsupported version `26.x`.
+:::
+
+Now, when all the dependencies are installed, initialize Detox in your project:
+
+```bash
+detox init
+```
+
+Normally you should see an output like:
+
+```plain text
+Created a file at path: .detoxrc.js
+Created a file at path: e2e/jest.config.js
+Created a file at path: e2e/starter.test.js
+```
+
+:::tip
+If you see a message like `command not found: detox`, make sure you have [installed Detox command line tools](#1-command-line-tools-detox-cli).
+:::
+
+Now, when your environment and a boilerplate with configuration are ready, let's move to the next section,
+[Building for Detox](building-with-detox.mdx).

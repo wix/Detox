@@ -1,0 +1,94 @@
+import CodeBlock from '@theme/CodeBlock';
+
+<CodeBlock language="sh">
+  detox build --configuration {props.configurationName}
+</CodeBlock>
+
+If the build is failing, try out our [Troubleshooting](../../Troubleshooting.BuildingTheApp.md) section.
+
+:::info
+
+Detox CLI just executes the build command you specified in your Detox config (`.detoxrc.js`)
+for a specific configuration. In the other words, it has no extra logic – it just takes the command and runs it,
+nothing more and nothing less.
+
+:::
+
+<>
+  {props.debug && <div>
+
+Since this is a debug configuration, you need to have React Native packager running in parallel before you start
+Detox tests:
+
+```bash
+npm start
+
+> react-native start
+
+#                        #######
+#                   ################
+#                #########     #########
+#            #########             ##########
+#        #########        ######        #########
+#       ##########################################
+#      #####      #####################       #####
+#      #####          ##############          #####
+#      #####    ###       ######       ###    #####
+#      #####    #######            #######    #####
+#      #####    ###########    ###########    #####
+#      #####    ##########################    #####
+#      #####    ##########################    #####
+#      #####      ######################     ######
+#       ######        #############        #######
+#         #########        ####       #########
+#              #########          #########
+#                  ######### #########
+#                       #########
+#
+#
+#                    Welcome to Metro!
+#              Fast - Scalable - Integrated
+```
+
+  </div>}
+</>
+
+Now you can run the starter test:
+
+<CodeBlock language="sh">
+  detox test --configuration {props.configurationName}
+</CodeBlock>
+
+You should see something like:
+
+```
+ FAIL  e2e/starter.test.js (25.916 s)
+  Example
+    ✕ should have welcome screen (662 ms)
+    ✕ should show hello screen after tap (236 ms)
+    ✕ should show world screen after tap (236 ms)
+
+  ● Example › should have welcome screen
+
+    Test Failed: No elements found for “MATCHER(id == “welcome”)”
+
+    HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher.
+
+       9 |
+      10 |   it('should have welcome screen', async () => {
+    > 11 |     await expect(element(by.id('welcome'))).toBeVisible();
+         |                                             ^
+      12 |   });
+      13 |
+      14 |   it('should show hello screen after tap', async () => {
+
+      at Object.toBeVisible (e2e/starter.test.js:11:45)
+
+  …
+```
+
+Although all the three tests are failing, this is exactly what we expect
+(because you don't have elements with such IDs in your app).
+
+Now you are ready to write your first test. Congratulations!
+

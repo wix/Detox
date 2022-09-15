@@ -51,7 +51,7 @@ Interactions with the application are synchronized, meaning that they will not e
 When an action/expectation takes a significant amount of time use this option to print device synchronization status.
 The status will be printed if the action takes more than \[value] (in ms) to complete
 
-```sh
+```bash
 detox test --debug-synchronization 500
 ```
 
@@ -75,13 +75,13 @@ See [this document](https://github.com/wix/DetoxSync/blob/master/StatusDocumenta
 
 If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
 
-```shell
+```plain text
 -DTXEnableVerboseSyncSystem YES -DTXEnableVerboseSyncResources YES
 ```
 
 You can then obtain this log by running the following command:
 
-```shell
+```bash
 xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='SyncManager'"
 ```
 
@@ -103,7 +103,7 @@ We always have the fail-safe of turning off automatic synchronization and waitin
 
 This makes sense only if we’re waiting too much.
 
-##### [Controlling the entire synchronization mechanism](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization)
+##### [Controlling the entire synchronization mechanism](api/device.md#devicedisablesynchronization)
 
 The synchronization mechanism can be shut down using
 
@@ -117,7 +117,7 @@ to turn it on again use
 await device.enableSynchronization();
 ```
 
-##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls)
+##### [Controlling network synchronization](api/device.md#deviceseturlblacklisturls)
 
 You can skip over synchronizing on certain URLs (for long polling tasks, or websocket connections)
 
@@ -143,7 +143,7 @@ await device.launchApp({
 
 #### How do we wait manually?
 
-This makes sense only if we’re not waiting enough (or if we’ve disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](APIRef.Expect.md#withtimeouttimeout).
+This makes sense only if we’re not waiting enough (or if we’ve disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](api/expect.md#withtimeouttimeout).
 
 ### Tweaking and fine-tuning the synchronization mechanisms
 

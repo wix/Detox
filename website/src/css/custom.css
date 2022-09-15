@@ -14,6 +14,7 @@
   --ifm-color-primary-lighter: #8859c9;
   --ifm-color-primary-lightest: #9f6de5;
   --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: #d9e5f6;
 }
 
 .footer--dark {

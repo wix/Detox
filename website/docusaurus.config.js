@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Detox',
-  tagline: 'Gray box end-to-end testing and automation framework for mobile apps',
+  tagline: 'Gray box end-to-end testing and automation framework for React Native apps',
   url: 'https://wix.github.io',
   baseUrl: '/Detox/',
   onBrokenLinks: 'throw',
@@ -122,6 +122,11 @@ const config = {
             ]
           }
         ]
+      },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
       },
       prism: {
         theme: lightCodeTheme,

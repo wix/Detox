@@ -30,7 +30,7 @@ For troubleshooting of other issue, refer to our [troubleshooting index](Trouble
 
 It’s a good idea to get as much information as possible about what’s going on. We can enable trace mode during tests by running our tests with:
 
-```sh
+```bash
 detox test --loglevel trace
 ```
 
@@ -44,7 +44,7 @@ In order to run tests on a simulator, you need to have simulator images installe
 
 If you’re missing a simulator, make sure Xcode is installed and use it to download the simulator. Take a look at the Preferences screen, some screenshots can be seen [here](http://stackoverflow.com/questions/33738113/how-to-install-ios-9-1-simulator-in-xcode-version-7-1-1-7b1005).
 
-Once the desired simulator is installed and returned by `xcrun simctl list`, double check its name in the list and make sure this name is found in the `detox` configuration entry in `package.json`. The reference for the configuration options is available [here](APIRef.Configuration.md).
+Once the desired simulator is installed and returned by `xcrun simctl list`, double check its name in the list and make sure this name is found in the `detox` configuration entry in `package.json`. The reference for the configuration options is available [here](config/devices.md).
 
 #### Tests execution hangs
 
@@ -60,12 +60,12 @@ This can be a result of various reasons. It is generally up to you to debug and 
 
 - You might have forgotten to run `device.launchApp()` in the beginning of your test.
 - The app might have crashed before Detox has had a chance to connect to it. To get the crash details, you can run Detox tests with `--record-logs all` CLI option and then inspect the device logs in the artifacts' folder.
-- **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](Introduction.Android.md#5-create-a-detox-test-class) in the setup guide.
+- **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](introduction/building-with-detox.mdx#5-create-a-detox-test-class) in the setup guide.
 
 ##### If you _do_ see your app running on the device
 
 - **On Android with SDK≥28**, the app’s connection to the Detox test server is blocked due to clear-traffic blockage (as reported in issue [#1450](https://github.com/wix/Detox/issues/1450)).
-  The main step for getting this fixed is to revisit the [associated section](Introduction.Android.md#6-enable-clear-text-unencrypted-traffic-for-detox) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app’s `AndroidManifest.xml`, but **that is highly discouraged**.
+  The main step for getting this fixed is to revisit the [associated section](introduction/building-with-detox.mdx#6-enable-clear-text-unencrypted-traffic-for-detox) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app’s `AndroidManifest.xml`, but **that is highly discouraged**.
 - If you’ve applied the above suggestion but the app fails to connect to the Detox test server, nonetheless: Refer to the device’s logs, which should contain messages about failed connection attempts (get them using the `--record-logs all` argument)
 - The app could be running without Detox native code injected. In this case, first, make sure you’re not trying to run in manual launch mode (where this behavior is valid). If so, examine the logs from the device (get them using the `--record-logs all` argument). If you see a crash related to Detox’s native code, you are welcome to report it on our GitHub tracker.
 - If you are in fact debugging your native code integration with Detox, these guides may prove helpful:
@@ -174,7 +174,7 @@ Test Failed: View "<RCTScrollView: 0x7f8d32296d70>" is not visible: view does no
 ```
 
 1. Try retrieving `ui.viewhierarchy` artifact — sometimes examining the hierarchy visually can give you insights.
-   Add a line `"uiHierarchy": "enabled"` to your artifacts' configuration in `.detoxrc.js`, like in an example here: [Artifacts Configuration](https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration). After a rerun, you should find
+   Add a line `"uiHierarchy": "enabled"` to your artifacts' configuration in `.detoxrc.js`, like in an example here: [Artifacts Configuration](config/artifacts.md). After a rerun, you should find
    a `ui.viewhierarchy` in a folder of your failing test. Please mind that you need Xcode 12 at least to open `*.viewhierarchy` files.
 
 1. Besides, you can rerun your iOS app tests with `--take-screenshots failing`. What will happen is, for each view that fails visibility, two images will be saved at `artifacts/<configuration-timestamp-dir>/<test name>/DETOX_VISIBILITY_<viewType>__<viewID>__SCREEN.png` (and `.../DETOX_VISIBILITY_<viewType>__<viewID>__TEST.png` folder aside) with autogenerated names, e.g. `DETOX_VISIBILITY_RCTTextView__0x7fab7660f3e0__TEST.png`:

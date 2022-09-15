@@ -1,0 +1,20 @@
+# Using Genymotion Cloud
+
+As the number of your end-to-end tests grows, the overall test session duration might easily surpass an hour or two.
+A good idea first would be to parallelize the test execution using your test runner (e.g. for Jest that
+would be forwarding `--maxWorkers <N>`), but this approach has its limitations. An average build agent could manage
+running a few virtual devices at once, but running a dozen devices at once would make it slow and unreliable.
+
+So, if you're running into scaling issues, it's the right time to move on to SaaS platforms, where you can
+start and stop devices on demand at any scale. At the moment, Detox can offer you a first-class integration with
+[Genymotion Cloud], the platform that offers cloud-based Android Virtual Devices.
+
+## Prerequisites
+
+* Android SDK platform tools with `adb` installed
+* `gmsaas` [installed and configured](https://docs.genymotion.com/gmsaas/01_Get_Started)
+
+TODO
+
+
+[Genymotion Cloud]: https://cloud.geny.io/

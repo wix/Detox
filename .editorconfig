@@ -22,5 +22,9 @@ tab_width = 4
 indent_size = 2
 tab_width = 2
 
+[{*.md,*.mdx}]
+indent_size = 2
+tab_width = 2
+
 [{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
 indent_size = 2

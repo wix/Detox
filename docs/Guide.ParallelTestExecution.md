@@ -9,7 +9,7 @@ sidebar_label: Parallel Test Execution
 
 Detox can leverage multi worker support of JS test runners ([Jest](http://jestjs.io/docs/en/cli#maxworkers-num),  etc.).
 
-By default `detox test` will run the test runner with one worker. Worker count can be controlled by adding `--workers n` to `detox test`, read more in [`detox-cli` section](APIRef.DetoxCLI.md#test).
+By default `detox test` will run the test runner with one worker. Worker count can be controlled by adding `--maxWorkers <N>` to `detox test`, read more in [`detox-cli` section](api/detox-cli.md#test).
 
 ### Device Creation
 
@@ -25,7 +25,7 @@ Simulators/emulators run on a different process, outside of node, and require so
 > - `detox-cli` makes sure `device.registry.state.lock` is cleaned whenever it executes.
 > - If you use Detox without `detox-cli` make sure you delete or reset the lock file before running tests.
 >
->   ```sh
+>   ```bash
 >   echo "[]" > ~/Library/Detox/device.registry.state.lock
 >   ```
 
