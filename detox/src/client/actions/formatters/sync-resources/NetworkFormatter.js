@@ -1,7 +1,7 @@
 const { makeResourceTitle, makeResourceSubTitle } = require('./utils');
 
 function makeURLDescription(url, urlCount) {
-  return makeResourceSubTitle(`URL #${urlCount}: ${url}.`);
+  return makeResourceSubTitle(`URL #${urlCount}: ${url}`);
 }
 
 module.exports = function(properties) {
