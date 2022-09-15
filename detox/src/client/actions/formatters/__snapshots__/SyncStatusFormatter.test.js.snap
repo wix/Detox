@@ -136,8 +136,8 @@ exports[`Sync Status Formatter busy status should format "looper" correctly 1`] 
 exports[`Sync Status Formatter busy status should format "network" correctly 1`] = `
 "The app is busy with the following tasks:
 • 2 network requests with URLs:
-  - URL #1: foo://bar.baz.
-  - URL #2: qux://quux.quuz."
+  - URL #1: foo://bar.baz
+  - URL #2: qux://quux.quuz"
 `;
 
 exports[`Sync Status Formatter busy status should format "one_time_events" correctly 1`] = `
