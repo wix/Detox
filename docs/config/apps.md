@@ -28,7 +28,7 @@ The format of Detox config allows you to define inside it multiple app configs i
 An app config can have the following params:
 
 | Configuration Params | Details                                                                                                                                                                                                               |
-| -------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`               | Mandatory property to discern app types: `ios.app`, `android.apk`.                                                                                                                                                    |
 | `name`               | Use only when working with multiple apps within the same configuration. See an example below.                                                                                                                         |
 | `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                            |
@@ -61,7 +61,7 @@ To work with multiple apps within the same configuration you should be giving ea
 }
 ```
 
-After that, you can change the current app in your tests via [device API](api/device.md):
+After that, you can change the current app in your tests via [device API](../api/device.md):
 
 ```js
 await device.selectApp('driver');

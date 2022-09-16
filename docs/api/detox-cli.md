@@ -2,7 +2,7 @@
 
 `detox-cli` lets you operate Detox from command line.
 
-### Installation
+## Installation
 
 Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 
@@ -10,13 +10,13 @@ Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 npm install detox-cli --global
 ```
 
-### Usage
+## Usage
 
 ```bash
 detox <command> [options]
 ```
 
-### Commands
+## Commands
 
 | Command                           | Description                                                                                                                                                  |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -29,14 +29,14 @@ detox <command> [options]
 | [rebuild-framework-cache](#cache) | **MacOS only.** Rebuilds the Detox cache                                                                                                                     |
 | [recorder](#recorder)             | Starts a [Detox Recorder](https://github.com/wix/DetoxRecorder) recording                                                                                    |
 
-#### Options
+## Options
 
 | Options   | Description         |
 | --------- | ------------------- |
 | --version | Show version number |
 | --help    | Show help           |
 
-#### init
+## init
 
 Scaffolds initial E2E test folder structure for a specific test runner
 
@@ -46,7 +46,7 @@ Scaffolds initial E2E test folder structure for a specific test runner
 | ------ | ----------- |
 | --help | Show help   |
 
-#### build
+## build
 
 Run the command defined in `build` property of the specified **configuration**.
 
@@ -60,7 +60,7 @@ Run the command defined in `build` property of the specified **configuration**.
 | -s, --silent                          | Do not fail with error if an app config has no build command.                                                                                 |
 | --help                                | Show help                                                                                                                                     |
 
-##### Examples
+### Examples
 
 If you have only one configuration, you can simply use:
 
@@ -80,7 +80,7 @@ To skip building an app if it already is built:
 detox build --configuration yourConfiguration --if-missing
 ```
 
-#### test
+## test
 
 `detox test [options] <...testFilePaths>`
 
@@ -106,7 +106,7 @@ DETOX_CONFIGURATION=ios.debug jest --help
 ```
 
 | Option                                        | Description                                                                                                                                                                                                                                                                                               |
-| --------------------------------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | -C, --config-path `<configPath>`              | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                                                                                                                                                                                     |
 | -c, --configuration `<device config>`         | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it                                                                                                                                                             |
 | -n, --device-name \[name]                     | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.                                                                                                                                                                               |
@@ -132,7 +132,7 @@ DETOX_CONFIGURATION=ios.debug jest --help
 | --inspect-brk                                 | Uses [node’s --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the test runner <br />_Default: false_                                                                                                                                 |
 | --help                                        | Show help                                                                                                                                                                                                                                                                                                 |
 
-##### `DETOX_ARGV_OVERRIDE`
+### `DETOX_ARGV_OVERRIDE`
 
 If you happen to be troubleshooting Detox tests inside a complex script, or a failing CI build
 (e.g., on TeamCity or Jenkins), there is an escape-hatch feature for running Detox with
@@ -158,7 +158,7 @@ save your time.
 Please avoid using it in your regular flows – instead, use Detox configuration files (`.detoxrc.js`)
 as your primary choice.
 
-#### run-server
+## run-server
 
 Start a standalone Detox server
 
@@ -171,11 +171,11 @@ Start a standalone Detox server
 | --no-color              | Disable colorful logs                               |
 | --help                  | Show help                                           |
 
-#### recorder
+## recorder
 
 If you have installed [Detox Recorder](https://github.com/wix/DetoxRecorder) in your project, you can use this command to start a new recording.
 
-#### Cache
+## Cache
 
 Detox stores a cached version of its framework in `~/Library/Detox`. A different cache folder is used for different Xcode and Detox versions. Use the various cache commands to clean or build this cache.
 

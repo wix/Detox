@@ -13,32 +13,32 @@ or if you are planning to integrate with a third-party test runner like
 
 ## Main lifecycle
 
-### resolveConfig
+### `resolveConfig`
 
 Use with a caution, when you still have no config, yet need to avoid \[internals.init()]\[#init] call.
 
-You normally don't need it if you use Detox CLI (`detox test …`), but if you want to start tests
+You normally don’t need it if you use Detox CLI (`detox test …`), but if you want to start tests
 directly and you need to have the config resolved before \[internals.init()]\[#init] is called, this
 is the way to go.
 
-### getStatus
+### `getStatus`
 
-Returns a string (`inactive`, `init`, `active` or `cleanup`) depending on what's going on.
+Returns a string (`inactive`, `init`, `active` or `cleanup`) depending on what’s going on.
 
-### init
+### `init`
 
 This is the phase where Detox reads its configuration, starts a server.
 
-### cleanup
+### `cleanup`
 
 The global cleanup phase should happen after all the tests have finished.
 This is the phase where the Detox server shuts down.
 
-### installWorker
+### `installWorker`
 
 This is the phase where Detox loads its expectation library and starts a device.
 
-### uninstallWorker
+### `uninstallWorker`
 
 Deallocates the device.
 
@@ -48,18 +48,18 @@ Deallocates the device.
 
 The naming you can see adheres much to Jest Circus workflow:
 
-- onRunStart
-- onRunDescribeStart
-- onTestStart
-- onHookStart
-- onHookFailure
-- onHookSuccess
-- onTestFnStart
-- onTestFnFailure
-- onTestFnSuccess
-- onTestDone
-- onRunDescribeFinish
-- onRunFinish
+- `onRunStart`
+- `onRunDescribeStart`
+- `onTestStart`
+- `onHookStart`
+- `onHookFailure`
+- `onHookSuccess`
+- `onTestFnStart`
+- `onTestFnFailure`
+- `onTestFnSuccess`
+- `onTestDone`
+- `onRunDescribeFinish`
+- `onRunFinish`
 
 ### Reporting failed tests
 
@@ -80,12 +80,12 @@ It takes two arguments:
 
 ### log
 
-### tracing.createEventStream()
+### `tracing`
 
-Creates a readable stream of the currently recorded events in
+`tracing.createEventStream()` – creates a readable stream of the currently recorded events in
 [Chrome Trace Event format](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU).
 
-See also: [DurationBeginEvent], [DurationEndEvent], [InstantEvent].
+See also: [`DurationBeginEvent`], [`DurationEndEvent`], [`InstantEvent`].
 
 ### worker
 
@@ -98,8 +98,8 @@ holds the device driver, websocket client, matchers, expectations, etc.
 
 [Vitest]: https://vitest.dev
 
-[DurationBeginEvent]: https://wix-incubator.github.io/trace-event-lib/interfaces/DurationBeginEvent.html
+[`DurationBeginEvent`]: https://wix-incubator.github.io/trace-event-lib/interfaces/DurationBeginEvent.html
 
-[DurationEndEvent]: https://wix-incubator.github.io/trace-event-lib/interfaces/DurationEndEvent.html
+[`DurationEndEvent`]: https://wix-incubator.github.io/trace-event-lib/interfaces/DurationEndEvent.html
 
-[InstantEvent]: https://wix-incubator.github.io/trace-event-lib/interfaces/InstantEvent.html
+[`InstantEvent`]: https://wix-incubator.github.io/trace-event-lib/interfaces/InstantEvent.html

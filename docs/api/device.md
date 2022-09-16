@@ -279,7 +279,7 @@ The method calls `launchApp({newInstance: true})` as a convenience method.
 
 ### `device.terminateApp()`
 
-By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](config/overview.md).
+By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](../config/overview.md).
 
 To terminate another app, specify its bundle id
 
@@ -309,7 +309,7 @@ If this is a React Native app, reload the React Native JS bundle. This action is
 
 ### `device.installApp()`
 
-By default, `installApp()` with no params will install the app file defined in the current [`configuration`](config/overview.md).
+By default, `installApp()` with no params will install the app file defined in the current [`configuration`](../config/overview.md).
 
 To install another app, specify its path
 
@@ -319,7 +319,7 @@ await device.installApp('path/to/other/app');
 
 ### `device.uninstallApp()`
 
-By default, `uninstallApp()` with no params will uninstall the app defined in the current [`configuration`](config/overview.md).
+By default, `uninstallApp()` with no params will uninstall the app defined in the current [`configuration`](../config/overview.md).
 
 To uninstall another app, specify its bundle id
 

@@ -1,3 +1,5 @@
+<!-- markdownlint-configure-file { "first-line-h1": 0 } -->
+
 :::caution Note
 
 Expo support with Detox is entirely a community driven effort. We have no specific support in Detox for Expo applications (ejected or otherwise).

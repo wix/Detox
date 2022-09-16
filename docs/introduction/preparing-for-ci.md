@@ -16,7 +16,7 @@ Running Detox on CI is not that different from running it locally. There are two
 ## Step 1: Prepare a Release Configuration for Your App
 
 We will need to create a release app configuration for Detox – follow [the previous tutorial](building-with-detox.mdx)
-if you haven't completed it already.
+if you haven’t completed it already.
 
 ## Step 2: Add `build` and `test` Commands to Your CI Script
 

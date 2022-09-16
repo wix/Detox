@@ -9,17 +9,17 @@ slug: guide/proguard-configuration
 
 You can skip this guide if you are working solely with debug builds (`android.emu.debug`, etc.),
 but as soon as you move to the **release builds**, where the native code gets minified and obfuscated,
-you are going to have problems with Detox if you leave your ProGuard rules unconfigured.
+you are going to have problems with Detox if you leave your ProGuard rules not configured.
 
 :::
 
 Since Detox relies on
 [Android Reflection API](https://developer.android.com/reference/java/lang/reflect/package-summary)
 to integrate with React Native on Android, you should keep [ProGuard minification](https://developer.android.com/studio/build/shrink-code)
-under tight control. Otherwise, you'll be seeing Detox crashing or hanging up infinitely upon an attempt to
+under tight control. Otherwise, you’ll be seeing Detox crashing or hanging up infinitely upon an attempt to
 run tests with your app built in **release mode**.
 
-To fix that, you'd need to return to your app build script:
+To fix that, you’d need to return to your app build script:
 
 ```diff title="app/build.gradle"
      buildTypes {
@@ -36,7 +36,7 @@ To fix that, you'd need to return to your app build script:
      }
 ```
 
-1. `release` is typically the default proguard-enabled build-type
+1. `release` build type is usually expected to have ProGuard enabled
 1. Typical pro-guard definitions. Check out Android docs to get to know more.
 1. Detox-specific additions to pro-guard
 

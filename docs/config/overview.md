@@ -127,7 +127,7 @@ Note: If there is only one configuration in `configurations`, Detox will default
 }
 ```
 
-If you have multiple configurations, you'll have to append `-c <configurationName>` to every invocation of
+If you have multiple configurations, you’ll have to append `-c <configurationName>` to every invocation of
 `detox build` and `detox test` CLI, e.g.:
 
 ```bash
@@ -135,7 +135,7 @@ detox build -c ios.sim.debug
 detox test -c ios.sim.debug
 ```
 
-If this is inconvenient, and you can have some configuration as a default choice, there's a property for that:
+If this is inconvenient, and you can have some configuration as a default choice, there’s a property for that:
 
 ```diff
 +"selectedConfiguration": "ios.sim.debug",
@@ -146,5 +146,5 @@ If this is inconvenient, and you can have some configuration as a default choice
    },
 ```
 
-Obviously, if you have only one configuration, there's no need to specify its name, just use `detox build` and
+Obviously, if you have only one configuration, there’s no need to specify its name, just use `detox build` and
 `detox test` as-is.

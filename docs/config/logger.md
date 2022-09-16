@@ -1,11 +1,11 @@
 # Logger
 
-## level
+## `level`
 
 default level
 
-## overrideConsole
+## `overrideConsole`
 
-## options
+## `options`
 
 TODO: bunyan options

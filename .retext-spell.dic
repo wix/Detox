@@ -15,6 +15,7 @@ CLI
 CMD
 CocoaPods
 Detox
+Docusaurus
 E2E/M
 ES5
 Genymotion
@@ -48,6 +49,7 @@ TeamCity
 TypeScript
 UDID/M
 UI/M
+Vitest
 WebDriver
 Wix
 XCTest
@@ -68,13 +70,14 @@ blob/M
 blogpost/M
 breakpoint/M
 bundler
+bunyan
 cancelled
 cheatsheet/M
 codebase/M
 config/M
-config/M
 customization/M
 de
+deallocate/M
 debuggable
 dedupe
 destructure/M
@@ -99,6 +102,7 @@ lockfile/M
 macOS
 matcher/M
 minification/M
+minified
 minSdkVersion
 monorepo
 multistep
@@ -153,4 +157,5 @@ v20
 webhook/M
 websocket/M
 xcodebuild
+xcpretty
 ᵃ

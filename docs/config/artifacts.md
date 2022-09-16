@@ -74,20 +74,20 @@ There is also a shortcut to disable artifacts for a specific configuration:
 
 Artifacts are various recordings during tests including, but not limited to, device logs, device screenshots and screen recordings (videos).
 
-### Enabling Artifacts
+## Enabling Artifacts
 
 Artifacts are disabled by default. To enable them, specify via **launch arguments** or a **configuration** object what artifacts you want to record.
 
-#### Launch Arguments
+### Launch Arguments
 
 - To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
 - To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
 - To record `.dtxrec` (Detox Instruments recordings) for each test, add `--record-performance all`. To open those recordings, you’ll need [Detox Instruments](https://github.com/wix/DetoxInstruments). **NOTE:** only iOS is supported.
 - To capture `.uihierarchy` snapshots (**iOS only, Xcode 12.0+**) on view action failures, add `--capture-view-hierarchy enabled`.
 - To take `.png` screenshots before and after each test, add `--take-screenshots all` (or `--take-screenshots failing`, if you want to keep only screenshots of failing tests).\
-  Alternatively, you might leverage the [device.takeScreenshot()](api/device.md#devicetakescreenshotname) API for manual control.
+  Alternatively, you might leverage the [device.takeScreenshot()](../api/device.md#devicetakescreenshotname) API for manual control.
 
-##### Artifacts root directory
+#### Artifacts root directory
 
 - To change artifacts root directory location (by default it is `./artifacts`), add `--artifacts-location <path>`.\
   **NOTE:** There is a slightly obscure convention. If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consequent reruns), specify a path to directory that does not end with a slash. Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), add a slash (or a backslash) to the end.
@@ -97,7 +97,7 @@ detox test --artifacts-location /tmp/detox_artifacts  # will also append /androi
 detox test --artifacts-location /tmp/detox_artifacts/ # won’t append anything, hereby treating it as a root
 ```
 
-#### Configuration Object
+### Configuration Object
 
 Detox artifacts can be configured in a more advanced way with the `artifacts` configuration in `package.json` (or `.detoxrc`):
 
@@ -123,7 +123,7 @@ The `artifacts` object has the following properties:
 | pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that exports a custom `PathBuilder` [ᵃ](#path-builder)                                                                                              |
 | plugins     | `{ ... }`                       | ... see below | ... see below                                                                                                                                                        |
 
-##### Path builder
+#### Path builder
 
 **ᵃ** `PathBuilder` should be either an _object_ with a method `buildPathForTestArtifact` or a _class_ — see the corresponding interfaces below:
 
@@ -193,7 +193,7 @@ For more technical details, search for `ArtifactPathBuilder.js` in Detox source 
 
 The further subsections describe the `plugins` object structure.
 
-##### Screenshot Plugin
+#### Screenshot Plugin
 
 Below is a default screenshot plugin object configuration, which is loaded implicitly and corresponds to the `manual` preset:
 
@@ -250,23 +250,23 @@ Hence, for example, if you wish to enable only `testDone` screenshots and leave 
 }
 ```
 
-##### Video Plugin
+#### Video Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](#artifacts-configuration).
+To be done. See meanwhile the example [above](#artifacts).
 
-##### Log Plugin
+#### Log Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](#artifacts-configuration).
+To be done. See meanwhile the example [above](#artifacts).
 
-##### Instruments Plugin
+#### Instruments Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](#artifacts-configuration).
+To be done. See meanwhile the example [above](#artifacts).
 
-##### UI hierarchy Plugin
+#### UI hierarchy Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](#artifacts-configuration).
+To be done. See meanwhile the example [above](#artifacts).
 
-### Artifacts Structure
+## Artifacts Structure
 
 1. **Artifacts root folder** is created per detox test run. If, for instance,`--artifacts-location /tmp` is used with `--configuration ios.sim.release` configuration on 14th June 2018 at 11:02:11 GMT+02, then the folder `/tmp/ios.sim.release.2018-06-14 09:02:11Z` is created.
 
@@ -287,7 +287,7 @@ To be done. See meanwhile the example in [artifacts configuration section](#arti
    afterEach.png
    ```
 
-#### Example of the structure
+### Example of the structure
 
 ```plain text
 artifacts/android.emu.release.2018-06-12 06:36:18Z/startup.log

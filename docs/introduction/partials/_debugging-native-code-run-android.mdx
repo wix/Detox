@@ -33,24 +33,3 @@ in your breakpoint.
 ![Breakpoint is active](../../img/android-happy-debugging.png)
 
 Happy debugging!
-
-P.S. If you see this timeout error too often while debugging:
-
-```plain text
-Waited for the new RN-context for too long! (60 seconds)
-If you think that’s not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
-```
-
-you can temporarily hack the timeout here:
-
-```diff title="detox/android/detox/src/main/java/com/wix/detox/config/DetoxConfig.kt"
- package com.wix.detox.config
-
- class DetoxConfig {
-     @JvmField var idlePolicyConfig: DetoxIdlePolicyConfig = DetoxIdlePolicyConfig()
--    @JvmField var rnContextLoadTimeoutSec = 60
-+    @JvmField var rnContextLoadTimeoutSec = Int.MAX_VALUE
-
-     fun apply() {
-         idlePolicyConfig.apply()
-```

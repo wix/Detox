@@ -58,7 +58,7 @@ we recommend adding `--reuse` flag to save your time when running the tests.
 detox test -c ios.sim.debug --reuse # or android.emu.debug
 ```
 
-By default, Detox reinstalls the app before picking every next test suite which is redundant in this situation
+By default, Detox re-installs the app before picking every next test suite which is redundant in this situation
 since your app code changes are delivered via network with React Native packager, and the app binary itself does
 not change.
 

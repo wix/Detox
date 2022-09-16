@@ -36,7 +36,7 @@ function expectBitmapsToBeEqual(imagePath, expectedImagePath) {
 
 **Important:** The recommended, more practical way of doing this, is by utilizing more advanced 3rd-party image snapshotting & comparison tools such as [Applitools](https://applitools.com).
 
-### Device-level Screenshots
+## Device-level Screenshots
 
 Taking a screenshot of the entire screen can be done using a device-level API:
 
@@ -56,7 +56,7 @@ Important: The returned path is guaranteed to be valid only during the test exec
 
 `name (optional)` - Name of the final image-file to store as the artifact. For example, setting `name` to `opened general section` would result in an artifact file named `opened general section.png`. In case the name isn’t provided, Detox would self-generate a random, distinct name, instead (though not a very descriptive one).
 
-#### Artifacts Management
+### Artifacts Management
 
 Means of creation of the final image as an artifact is tightly connected to the `--take-screenshots` argument to Detox CLI:
 
@@ -65,7 +65,7 @@ Means of creation of the final image as an artifact is tightly connected to the 
 - In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Members area should greet the member with an announcement/opened general section.png`.
 - In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Members area should greet the member with an announcement/opened general section.png`.
 
-#### Caveats
+### Caveats
 
 This API well-captures all elements, although alongside surrounding "visual noise" such as the navigation bar, as can be seen in the image below:
 
@@ -98,7 +98,7 @@ async function setDemoMode() {
 
 > Note: This script implicitly assumes only one device is used, as device ID isn’t specified anywhere (e.g. with `adb -s <id>`).
 
-### Element-level Screenshots
+## Element-level Screenshots
 
 Taking a screenshot of a specific element can be simply done using an API similar to other element-interaction Detox APIs:
 
@@ -114,7 +114,7 @@ In this example, the image-file specified by `imagePath` will hold the visual co
 
 Meaning, assuming `announcementsRoot` has been specified over some ancestor view which has both the `Announcement` title _and_ the card as its direct or indirect children, the result would include both. That, in turns, also includes the card’s children, such as the avatar, welcome text, etc.
 
-#### Caveats of this approach
+### Caveats of this approach
 
 Focusing on specific elements, this approach is key to more stable comparisons, and hence more stable tests, over time. However, inspecting less content evidently means protecting against less bugs. For example, In a screen where the element in question is partly obstructed by other elements drawn on the screen, the image created by `takeScreenshot()` will successfully hold all of it’s content, nonetheless.
 

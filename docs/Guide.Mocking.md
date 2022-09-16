@@ -1,8 +1,6 @@
 ---
 id: mocking
 slug: guide/mocking
-title: Mocking
-sidebar_label: Mocking
 ---
 
 # Mocking

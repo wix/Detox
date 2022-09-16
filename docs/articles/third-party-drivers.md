@@ -20,7 +20,7 @@ While Detox technically supports Android devices and iOS simulators out of the b
 
 If your app targets a third-party platform, you may switch to use a [third-party driver](#how-to-use-a-third-party-driver) to run your tests on said platform. If one doesn’t already exist, you can [write your own](#Writing-a-new-third-party-driver).
 
-### How to Use a Third-party Driver
+## How to Use a Third-party Driver
 
 Check to see if a [third-party driver](#existing-third-party-drivers) already exists for the platform you wish to target. Mostly likely, the driver will have setup instructions.
 
@@ -49,9 +49,9 @@ Overall the setup for any third party driver is fairly simple.
    detox test --configuration thirdparty.driver.config
    ```
 
-### Writing a New Third-party Driver
+## Writing a New Third-party Driver
 
-#### Anatomy of the Drivers
+### Anatomy of the Drivers
 
 The architecture of a driver is split into a few different pieces; Understanding the [overall architecture of Detox](how-detox-works.md#Architecture) will help with this section.
 
@@ -69,7 +69,7 @@ _The component running on the device being tested, injected into the test app:_
    back of whether each step of your test succeeds or fails. Typically, a device client will use an underlying library specific
    to the platform at hand to implement the expectations.
 
-#### Implementation Details
+### Implementation Details
 
 In order to introduce a third-party Driver, there is a set of core classes you must implement - each responsible for a different Detox concern:
 
@@ -135,6 +135,6 @@ class MyExpect {
 module.exports = MyNewDriver;
 ```
 
-### Existing Third-party Drivers
+## Existing Third-party Drivers
 
 - [detox-puppeteer](https://github.com/ouihealth/detox-puppeteer)
