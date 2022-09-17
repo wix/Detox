@@ -88,7 +88,7 @@ function adaptLegacyRunnerConfig(globalConfig) {
     return globalConfig.testRunner;
   }
 
-  log.warn(`Please migrate your Detox config according to the guide: [TODO: insert the migration guilde link]`);
+  log.warn(`Please migrate your Detox config according to the guide:\nhttps://wix.github.io/Detox/docs/next/guide/migration\n`);
   const testRunner = globalConfig[testRunnerKey];
   const runnerConfig = globalConfig[runnerConfigKey];
   const specs = globalConfig.specs != null ? String(globalConfig.specs) : undefined;

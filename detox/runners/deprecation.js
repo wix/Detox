@@ -4,7 +4,7 @@ const chalk = require('chalk');
 console.error(chalk.yellow(`
 =========================  THE NEW JOURNEY BEGINS  =============================
 
-        https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md
+            https://wix.github.io/Detox/docs/next/guide/migration
 
              _.-;-._              Sorry, traveler from the lands of Detox 19!
             ;_.JL___;
@@ -36,7 +36,7 @@ console.error(chalk.yellow(`
 snd   ||   '---'    '.___>
 Credit: "Gimli" by Shanaka Dias
 
-        https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md
+            https://wix.github.io/Detox/docs/next/guide/migration
 
 =========================  THE NEW JOURNEY BEGINS  =============================
 
