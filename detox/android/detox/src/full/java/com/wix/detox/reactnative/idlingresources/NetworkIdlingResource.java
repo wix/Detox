@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -32,7 +34,7 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
 
     private ResourceCallback callback;
     private Dispatcher dispatcher;
-    private final Set<String> busyResources = new HashSet<>();
+    private final Set<String> busyResources = new CopyOnWriteArraySet<>();
 
     private static final ArrayList<Pattern> blacklist = new ArrayList<>();
 
@@ -72,7 +74,7 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
     public IdlingResourceDescription getDescription() {
         return new IdlingResourceDescription.Builder()
                 .name("network")
-                .addDescription("urls", new ArrayList<>(busyResources))
+                .addDescription("urls", new CopyOnWriteArrayList<>(busyResources))
                 .build();
     }
 
