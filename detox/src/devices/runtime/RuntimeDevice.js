@@ -238,6 +238,16 @@ class RuntimeDevice {
   async installApp(binaryPath, testBinaryPath) {
     const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
     await this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
+
+    // This abstraction leaks because our drivers themselves leak,
+    // so don't blame me - DeviceBaseDriver itself has `reverseTcpPort`,
+    // setting a vicious downward spiral. I can't refactor everything
+    // in a single pull request, so let's bear with it for now.
+    if (Array.isArray(currentApp.reversePorts)) {
+      for (const port of currentApp.reversePorts) {
+        await this.reverseTcpPort(port);
+      }
+    }
   }
 
   async uninstallApp(bundleId) {

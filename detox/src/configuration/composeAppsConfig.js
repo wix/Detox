@@ -144,6 +144,10 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer }) 
   if (appConfig.launchArgs && !_.isObject(appConfig.launchArgs)) {
     throw errorComposer.malformedAppLaunchArgs(appPath);
   }
+
+  if (appConfig.type !== 'android.apk' && appConfig.reversePorts) {
+    throw errorComposer.unsupportedReversePorts(appPath);
+  }
 }
 
 module.exports = composeAppsConfig;

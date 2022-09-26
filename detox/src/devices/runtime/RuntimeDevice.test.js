@@ -659,6 +659,18 @@ describe('Device', () => {
       const device = await aValidDevice();
       await device.installApp();
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._currentApp.binaryPath, device._currentApp.testBinaryPath);
+      expect(driverMock.driver.reverseTcpPort).not.toHaveBeenCalled();
+    });
+
+    it(`with reversePorts, it should reverse the ports`, async () => {
+      const device = await aValidDevice({
+        appsConfig: {
+          default: { reversePorts: [3000] },
+        },
+      });
+
+      await device.installApp();
+      expect(driverMock.driver.reverseTcpPort).toHaveBeenCalledWith(3000);
     });
   });
 

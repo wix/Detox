@@ -238,6 +238,13 @@ declare global {
             build?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
+            /**
+             * TCP ports to `adb reverse` upon the installation.
+             * E.g. 8081 - to be able to access React Native packager in Debug mode.
+             *
+             * @example [8081]
+             */
+            reversePorts?: number[];
         }
 
         interface DetoxCustomAppConfig {

@@ -68,6 +68,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
       build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
+      reversePorts: [8081],
     },
 
     'android.debug.withArgs': {
@@ -75,6 +76,7 @@ const config = {
       name: 'exampleWithArgs',
       binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
       build: ':',
+      reversePorts: [8081],
       launchArgs,
     },
 
@@ -83,6 +85,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
       build: 'cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..',
+      reversePorts: [8081],
     },
 
     'android.fromSource.withArgs': {
@@ -90,6 +93,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
       build: ':',
+      reversePorts: [8081],
       launchArgs,
     },
 

@@ -507,6 +507,14 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  unsupportedReversePorts(appPath) {
+    return new DetoxConfigError({
+      message: `Non-Android app configs cannot have "reversePorts" property:`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 4 },
+    });
+  }
+
   missingAppBinaryPath(appPath) {
     return new DetoxConfigError({
       message: `Missing "binaryPath" property in the app config.\nExpected a string:`,

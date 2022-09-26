@@ -72,21 +72,6 @@ Copy that UUID and use it to create a new device and a new configuration in your
  };
 ```
 
-:::info
-
-In the example above we assume you'll be running a _release configuration_ of your app since this is what
-usually happens on CI. Running _debug builds_ is likely to require more preparations like
-reversing `8081` port (used by React Native packager by default) before you launch your app, e.g.:
-
-```javascript
-await device.reverseTcpPort(8081);
-await device.launchApp();
-```
-
-If you use extra ports, make sure to have them reversed as well. That might also apply to _release configurations_,
-provided you rely on custom communication with _localhost_ (e.g. for mock servers).
-:::
-
 Although the _recipe UUIDs_ are guaranteed to be unique and never change unlike the _recipe names_, you still can use
 the latter if you like – just switch from `recipeUUID` to `recipeName` property like this:
 
@@ -100,6 +85,65 @@ the latter if you like – just switch from `recipeUUID` to `recipeName` propert
      },
    },
 ```
+
+:::info
+
+In the example above we assume you'll be running a _release configuration_ of your app since this is what
+usually happens on CI.
+
+Running _debug builds_ is trickier to set up (and might be less stable), but if you have to do it,
+follow the instructions. You'll be setting up tunneling between your local machine (where React Native packager is
+running on port 8081) and the remote device in the cloud.
+
+First, patch your `MainApplication.java` (or your main activity class) to change `debug_http_host`, e.g.:
+
+```diff
+ package com.example;
+
+ import android.app.Application;
++import android.content.SharedPreferences;
++import android.os.Bundle;
++import android.preference.PreferenceManager;
+
+ import com.facebook.react.ReactApplication;
+ import com.facebook.react.ReactNativeHost;
+@@ -37,6 +40,9 @@ public class MainApplication extends Application implements ReactApplication {
+     public void onCreate() {
+         super.onCreate();
+         SoLoader.init(this, /* native exopackage */ false);
++        SharedPreferences preferences =
++            PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
++        preferences.edit().putString("debug_http_host", "localhost:8081").apply();
+     }
+
+ }
+```
+
+Now, as your React Native app will be forced to use `localhost:8081` to download the bundle, you'll need to make sure
+that there is a tunnel between your local machine and the remote device – add 8081 to `reversePorts` in your app config,
+e.g.:
+
+```diff
+  'android.debug': {
+    type: 'android.apk',
+    binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
+    build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
++   reversePorts: [8081],
+  },
+```
+
+Clean your Android build intermediates and build your app again:
+
+```bash
+cd android
+./gradlew clean # remove ./ on Windows
+cd ..
+detox build -c android.emu.debug
+```
+
+If your application is trivial enough, these adjustments should be already enough to run _debug builds_ remotely.
+
+:::
 
 ## Running
 

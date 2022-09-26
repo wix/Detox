@@ -276,6 +276,19 @@ describe('composeAppsConfig', () => {
       });
 
       test.each([
+        ['ios.app', 'ios.simulator'],
+      ])('known app (device type = %s) has unsupported reversePorts', (appType, deviceType) => {
+        globalConfig.apps.example1.reversePorts = [3000];
+        globalConfig.apps.example1.type = appType;
+        deviceConfig.type = deviceType;
+        localConfig.app = 'example1';
+
+        expect(compose).toThrowError(errorComposer.unsupportedReversePorts(
+          ['apps', 'example1']
+        ));
+      });
+
+      test.each([
         ['android.apk', 'ios.simulator'],
         ['ios.app', 'android.attached'],
         ['ios.app', 'android.emulator'],

@@ -413,6 +413,24 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.unsupportedReversePorts', () => {
+      beforeEach(() => {
+        build = (appPath) => builder.unsupportedReversePorts(appPath);
+      });
+
+      it('should work with inlined configurations', () => {
+        config.configurations.inlinedMulti.apps[0].reversePorts = [3000];
+        builder.setConfigurationName('inlinedMulti');
+        expect(build(['configurations', 'inlinedMulti', 'apps', 0])).toMatchSnapshot();
+      });
+
+      it('should work with aliased configurations', () => {
+        config.apps.someApp.launchArgs = [3000];
+        builder.setConfigurationName('aliased');
+        expect(build(['apps', 'someApp'])).toMatchSnapshot();
+      });
+    });
+
     describe('.missingAppBinaryPath', () => {
       beforeEach(() => {
         build = (appPath) => builder.missingAppBinaryPath(appPath);
