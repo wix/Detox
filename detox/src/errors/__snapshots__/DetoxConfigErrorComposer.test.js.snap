@@ -486,6 +486,40 @@ HINT: You should create a dictionary of app configurations in Detox config, e.g.
 ]
 `;
 
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedReversePorts should work with aliased configurations 1`] = `
+[DetoxConfigError: Non-Android app configs cannot have "reversePorts" property:
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: 'path/to/app',
+      launchArgs: [
+        3000
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedReversePorts should work with inlined configurations 1`] = `
+[DetoxConfigError: Non-Android app configs cannot have "reversePorts" property:
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          reversePorts: [Array]
+        }
+      ]
+    }
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .cantResolveDeviceAlias should create a helpful error 1`] = `
 [DetoxConfigError: Failed to find a device config "otherDevice" in the "devices" dictionary of Detox config at path:
 /home/detox/myproject/.detoxrc.json
