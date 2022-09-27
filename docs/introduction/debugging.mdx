@@ -65,13 +65,13 @@ For the rest of details, please refer to [React Native – Debugging](https://re
 
 ## Native application code
 
+### Setting Detox up as a compiling dependency
+
 :::info Note
 
-This workflow is mostly useful for investigating weird crashes or when contributing to Detox itself.
+This step is optional. It is intended for investigating weird crashes or when contributing to Detox itself.
 
 :::
-
-### Setting Detox up as a compiling dependency
 
 <Tabs groupId="mobileOs">
   <TabItem value="iOS" label="iOS" default>
@@ -97,21 +97,29 @@ While the `behavior` section is a **mandatory** thing to include, there are a fe
 parameters to disable various side effects and make life easier when debugging:
 
 ```diff
-   "behavior": {
-     "launchApp": "manual"
-   },
-+  "session": {
-+    "autoStart": true,
-+    "debugSynchronization": 0,
-+    "server": "ws://localhost:8099",
-+    "sessionId": "test"
-+  },
-+  "testRunner": {
-+    "args": {
-+      "testTimeout": 999999
-+    }
-+  }
-+  "artifacts": false
+ {
+   …
+   "configurations": {
+     "<your configuration>": {
+       …
+       "behavior": {
+         "launchApp": "manual"
+       },
++      "session": {
++        "autoStart": true,
++        "debugSynchronization": 0,
++        "server": "ws://localhost:8099",
++        "sessionId": "test"
++      },
++      "testRunner": {
++        "args": {
++          "testTimeout": 999999
++        }
++      }
++      "artifacts": false
+     },
+   }
+ }
 ```
 
 - Using a preconfigured `session` with an autostarting server removes the legwork of copying and
