@@ -1,32 +1,185 @@
 # Overview
 
-## Config resolution
+:::info
 
-In order for Detox to know what device & app to use (and a lot more, actually), it needs some configuration to be statically available in a configuration file.
-It supports both standalone configuration files, and a configuration bundling inside the project’s `package.json`.
+If you prefer to read TypeScript files instead of docs, feel free to browse through
+[the typings file](https://github.com/wix/Detox/blob/master/detox/index.d.ts) provided by Detox.
 
-In essence, Detox scans for the configuration to use, through multiple files.
-It starts from the current working directory, and runs over the following options, in this order:
+:::
 
-1. `.detoxrc.js`
-1. `.detoxrc.json`
-1. `.detoxrc`
-1. `detox.config.js`
-1. `detox.config.json`
-1. `package.json`
+Running automated tests on your mobile application implies firstly that
+you have a mobile device and an application. Unlike unit tests, where
+passing tests don’t require extra checks, the end-to-end tests are better
+to be executed multiple times – on various devices and app flavors (e.g.
+_debug_ and _release_).
 
-So, you can have a Detox config in a standalone JS or JSON file:
+This is why Detox is inclined towards static configuration files describing
+permutations of _apps_, _devices_ and a lot more, actually. If you come to
+think of it, even a simple React Native application is likely to have four
+combinations:
+
+1. iOS simulator running a _debug_ build;
+1. iOS simulator running a _release_ build;
+1. Android emulator running a _debug_ build;
+1. Android emulator running a _release_ build;
+
+Imagine you want to check your app both on phones and tablets, and now you
+have eight combinations already! Add multiple OS versions into the test
+coverage matrix equation, and the configuration grows by a factor of N.
+
+## Config structure
+
+In view of the arguments above, our recommendation to keep Detox configs
+neat and tidy is to keep them inside three key-value dictionaries:
+`devices`, `apps` and `configurations`. See the schematic code below:
 
 ```javascript
 /* @type {Detox.DetoxConfig} */
 module.exports = {
+// highlight-next-line
+  devices: {
+    device1: { /* ... */  },
+    device2: { /* ... */  },
+  },
+// highlight-next-line
+  apps: {
+    app1: { /* ... */  },
+    app2: { /* ... */  },
+  },
+// highlight-next-line
+  configurations: {
+    'device1+app1': {
+      device: 'device1',
+      app: 'app1',
+    },
+    /* ... */
+  },
+};
+```
+
+Configuration names serve as an entry point, when you want to run Detox tests:
+
+```bash
+detox test -c 'device1+app1'
+```
+
+When Detox starts, it picks the specified configuration and resolves its aliases to the device and
+the application. However, the config file is not limited only to devices and applications – there
+are more sections:
+
+```javascript
+/* @type {Detox.DetoxConfig} */
+module.exports = {
+// highlight-start
+  artifacts: { /* ... */ },
+  behavior: { /* ... */ },
+  logger: { /* ... */ },
+  session: { /* ... */ },
+  testRunner: { /* ... */ },
+// highlight-end
   devices: { /* ... */ },
   apps: { /* ... */ },
   configurations: { /* ... */ },
 };
 ```
 
-or as a named section inside your `package.json`:
+When the config gets finally resolved, it looks more like a flat structure, as shown on the diagram:
+
+![Detox config with its global dictionaries for apps, devices and configurations, and also its other config sections, when resolved, it becomes a flat object with all imaginable properties: device, apps, test runner, logger, artifacts, behavior, session, etc.](../img/internals/config-resolution.png)
+
+Aside from mandatory `device` and `app` properties, each configuration can have
+overrides to the global config sections such as `testRunner`, `artifacts`,
+`behavior` and others, e.g.:
+
+```javascript
+/* @type {Detox.DetoxConfig} */
+module.exports = {
+  logger: {
+// highlight-next-line
+    level: process.env.CI ? 'debug' : 'info',
+  },
+  /* ... */
+  configurations: {
+    'ios.sim.debug': {
+      device: 'iphone',
+      app: 'ios.debug',
+// highlight-start
+      testRunner: {
+        args: {
+          runInBand: true,
+        },
+      },
+// highlight-end
+      // ...
+// highlight-start
+      logger: {
+        level: 'trace' // override
+      },
+// highlight-end
+    },
+  },
+};
+```
+
+For more clarity, this relationship might be illustrated with a diagram:
+
+![Detox configurations refer to devices and apps dictionaries, and may also contain overrides to the other global config sections: test runner, artifacts, behavior, logger and session.](../img/internals/config-dictionaries.png)
+
+It should be noted that the aliasing of devices and apps is optional in fact.
+Instead of using keys, you can inline both device and app configs into your
+configuration, e.g.:
+
+```javascript
+/* @type {Detox.DetoxConfig} */
+module.exports = {
+  configurations: {
+    'ios.sim.debug': {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 13 Pro',
+        },
+      },
+      app: {
+        type: 'ios.app',
+        binaryPath: '/path/to/your.app',
+      },
+    },
+  },
+};
+```
+
+Besides, there is [basic support](apps.md) for tests with multiple applications, if you switch
+to `apps` array (aliased or inlined) instead of `app`, e.g.:
+
+```javascript
+/* @type {Detox.DetoxConfig} */
+module.exports = {
+  apps: { /* ... */ },
+  devices: { /* ... */ },
+  configurations: {
+    'multi.ios.debug': {
+      device: 'iphone',
+      apps: ['passenger.ios.debug', 'driver.ios.debug'],
+    },
+  },
+};
+```
+
+## Path conventions
+
+Detox supports standalone configuration files and the respective named section inside `package.json`.
+It starts scanning from the current working directory, and runs over the following options, in this order:
+
+1. `.detoxrc.js`
+1. `.detoxrc.json`
+1. `.detoxrc` (JSON)
+1. `detox.config.js`
+1. `detox.config.json`
+1. `package.json`
+
+If you decide to have `detox` section in your `package.json`, it should be defined as a top-level
+property:
 
 ```json
 {
@@ -43,18 +196,16 @@ or as a named section inside your `package.json`:
 }
 ```
 
-If you prefer to read TypeScript files instead of docs, you can open now
-[the typings file](https://github.com/wix/Detox/blob/master/detox/index.d.ts) provided by Detox.
+## Extending
 
-## Extending configs
-
-Detox config files can be extensible and be extended if you ever need to share certain settings across multiple mobile projects, e.g.:
+All Detox config files are extensible by definition.
+That helps if you ever need to share certain settings across multiple mobile projects, e.g.:
 
 ```json
 {
 // highlight-next-line
   "extends": "@my-org/detox-preset",
-  "apps": {
+  "configurations": {
     // …
   },
 }
@@ -63,88 +214,52 @@ Detox config files can be extensible and be extended if you ever need to share c
 Please note that `extends` has to be a valid Node module path. Relative module paths will be resolved relatively
 to the Detox config file which contains that specific `extends` property, e.g.:
 
-```js
-// given: ~/Projects/my-project/.detoxrc.json
-{ extends: "./e2e/detox-base-config" }
-// goes to: ~/Projects/my-project/e2e/detox-base-config.js
-{ extends: "./configs/base" }
-// then goes to: ~/Projects/my-project/e2e/configs/base/index.js
-// and so on...
+```js title="~/Projects/my-project/e2e/detox.config.js"
+module.exports = { extends: "../base.detox.config.js" };
+// the path resolves to: ~/Projects/my-project/base.detox.config.js
+
+module.exports = { extends: "./ci.detox.config.js" };
+// the path resolves to: ~/Projects/my-project/e2e/ci.detox.config.js
 ```
 
-## Individual configurations
+The extension chain can have an arbitrary length. All the configs are going to be _deep-merged_ in the logical
+order: grandparent ← parent ← child.
 
-`configurations` holds all the device/app-oriented configurations. To select a specific configuration when running Detox in command-line (i.e. `detox build`, `detox test`), use the `--configuration` argument.
-Note: If there is only one configuration in `configurations`, Detox will default to it.
+## Default configuration
 
-| Configuration Params | Details                                                                                                              |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `device`             | Device config (object) or an alias pointing to an already defined device in `"devices"` dictionary (see below).      |
-| `app`                | App config (object) or an alias pointing to an already defined application in `"apps"` dictionary (see below).       |
-| `apps`               | Same as the `app`, but that is an array form used for multi-app testing. Mutually exclusive with the `app` property. |
-| `artifacts`          | Overrides to the artifacts config. See [Artifacts config](artifacts.md).                                             |
-| `behavior`           | Overrides to the behavior config. See [Behavior config](behavior.md).                                                |
-| `session`            | Overrides to the session config. See [Session config](session.md).                                                   |
-|                      |                                                                                                                      |
-| `runnerConfig`       | Path to the test runner config. Default value: `e2e/config.json`.                                                    |
-| `specs`              | A default glob pattern for a test runner to use when no test files are specified, e.g.: `e2e/**/*.test.js`           |
-
-**Example:**
-
-```js
-{
-  // ...
-  "detox": {
-    // ...
-    "devices": {
-      // ... see in the next sections ...
-    },
-    "apps": {
-      // ... see in the next sections ...
-    },
-    "session": {
-      // ... see in the next sections ...
-    },
-    "configurations": {
-      "ios.sim.debug": {
-        "device": "simulator",
-        "app": "ios.debug"
-      },
-      "android.emu.release": {
-        "device": "emulator",
-        "app": "android.release"
-      },
-      "android.att.release": {
-        "device": "android.attached",
-        "app": "android.release"
-      },
-      "android.genymotion.release": {
-        "device": "android.genycloud",
-        "app": "android.release"
-      }
-    }
-  }
-}
-```
-
-If you have multiple configurations, you’ll have to append `-c <configurationName>` to every invocation of
-`detox build` and `detox test` CLI, e.g.:
+As you might have noticed, you always have to pass `-c <configuration name>` argument when running Detox tests:
 
 ```bash
-detox build -c ios.sim.debug
 detox test -c ios.sim.debug
 ```
 
-If this is inconvenient, and you can have some configuration as a default choice, there’s a property for that:
+Technically this is not true. You can omit the configuration name if:
 
-```diff
-+"selectedConfiguration": "ios.sim.debug",
- "configurations": {
-   "ios.sim.debug": {
-     "device": "simulator",
-     "app": "ios.debug"
-   },
-```
+- there is only one configuration in `configurations` dictionary;
+- you set some configuration as a default choice via `selectedConfiguration` property:
 
-Obviously, if you have only one configuration, there’s no need to specify its name, just use `detox build` and
-`detox test` as-is.
+  ```javascript
+  /* @type {Detox.DetoxConfig} */
+  module.exports = {
+  // highlight-next-line
+    selectedConfiguration: 'device1+app1',
+    devices: {
+      device1: { /* ... */  },
+      device2: { /* ... */  },
+    },
+    apps: {
+      app1: { /* ... */  },
+      app2: { /* ... */  },
+    },
+    configurations: {
+  // highlight-next-line
+      'device1+app1': {
+        device: 'device1',
+        app: 'app1',
+      },
+      /* ... */
+    },
+  };
+  ```
+
+The next articles will be describing each configuration section in detail.

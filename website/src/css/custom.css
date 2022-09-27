@@ -28,6 +28,7 @@
   padding: 0 var(--ifm-pre-padding);
 }
 
-html[data-theme='dark'] .docusaurus-highlight-code-line {
-  background-color: rgba(0, 0, 0, 0.3);
+:root[data-theme='dark'] {
+  --ifm-pre-color: red;
+  --docusaurus-highlighted-code-line-bg: #091425;
 }
