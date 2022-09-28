@@ -275,6 +275,60 @@ You’ll be able to tell that you’ve run into a situation like this if you see
   https://jestjs.io/docs/cli
 ```
 
+### Revisit environment variables
+
+If you’re relying somewhere in your code on things like `process.env.DETOX_CONFIGURATION` or any other that starts from `DETOX_`, as a matter of a workaround, you can turn on `testRunner.forwardEnv` in your Detox config:
+
+```javascript title=".detoxrc.js"
+/** @type {Detox.DetoxConfig} */
+module.exports = {
+  testRunner: {
+    args: {
+      $0: 'jest',
+    },
+    // highlight-next-line
+    forwardEnv: true,
+  },
+  devices: { /* ... */ },
+  apps: { /* ... */ },
+  configurations: { /* ... */ },
+};
+```
+
+That should solve temporarily the issue with missing environment variables, but this is
+not the best solution overall. The better fix for that would be switch to using Detox
+Internals API.
+
+For example, you were determining the number of workers depending on your configuration:
+
+```javascript title="e2e/jest.config.js"
+module.exports = {
+  maxWorkers: process.env.CI
+    ? (`${process.env.DETOX_CONFIGURATION}`.startsWith('ios.') ? 3 : 2)
+    : 1,
+    globalSetup: '...',
+    globalTeardown: '...',
+    // ... and so on ...
+};
+```
+
+That would translate to a cleaner code in Detox 20:
+
+```javascript title="e2e/jest.config.js"
+const { resolveConfig } = require('detox/internals');
+
+module.exports = async () => {
+  const { device } = await resolveConfig();
+
+  return {
+    maxWorkers: process.env.CI ? (device.type === 'ios.simulator' ? 3 : 2) : 1,
+    globalSetup: '...',
+    globalTeardown: '...',
+    // ... and so on ...
+  };
+};
+```
+
 The hard part is over now, congratulations on finishing the migration!
 Stay tuned for the upcoming minor releases leveraging the recent architectural changes in Detox.
 

@@ -1,6 +1,8 @@
 const firstTestContent = require('./firstTestContent');
 
-const runnerConfig = `module.exports = {
+const runnerConfig = `\
+/** @type {import('@jest/types').Config.InitialOptions} */
+module.exports = {
   rootDir: '..',
   testMatch: ['<rootDir>/e2e/**/*.test.js'],
   testTimeout: 120000,
