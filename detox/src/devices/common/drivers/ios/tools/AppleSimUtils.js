@@ -132,6 +132,30 @@ class AppleSimUtils {
   }
 
   async sendToHome(udid) {
+    if (await this._isSpringBoardInaccessible(udid)) {
+      // SpringBoard is not directly accessible by Simctl on iOS 16.0 and above, therefore we launch and terminate the
+      // Settings app instead. This sends the currently open app to the background and brings the home screen to the
+      // foreground.
+      await this._launchAndTerminateSettings(udid);
+      return;
+    }
+
+    await this._launchSpringBoard(udid);
+  }
+
+  async _isSpringBoardInaccessible(udid) {
+    const device = await this._findDeviceByUDID(udid);
+    const majorIOSVersion = parseInt(device.os.version.split('.')[0]);
+    return majorIOSVersion >= 16;
+  }
+
+  async _launchAndTerminateSettings(udid) {
+    const bundleId = 'com.apple.Preferences';
+    await this._execSimctl({ cmd: `launch ${udid} ${bundleId}`, retries: 10 });
+    await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, retries: 10 });
+  }
+
+  async _launchSpringBoard(udid) {
     await this._execSimctl({ cmd: `launch ${udid} com.apple.springboard`, retries: 10 });
   }
 
@@ -246,7 +270,7 @@ class AppleSimUtils {
       // ```
       // This workaround is done to ignore the error above, as we do not care if the app was running before, we just
       // want to make sure it isn't now.
-      if (err.code === 3 && 
+      if (err.code === 3 &&
           (err.stderr.includes(`the app is not currently running`) ||
            err.stderr.includes(`The operation couldn’t be completed. found nothing to terminate`))) {
         return;
