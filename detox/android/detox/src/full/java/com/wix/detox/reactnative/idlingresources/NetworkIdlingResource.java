@@ -69,40 +69,11 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
 
     @NotNull
     @Override
-    public IdlingResourceDescription getDescription() {
+    public synchronized IdlingResourceDescription getDescription() {
         return new IdlingResourceDescription.Builder()
                 .name("network")
                 .addDescription("urls", new ArrayList<>(busyResources))
                 .build();
-    }
-
-    @Override
-    protected boolean checkIdle() {
-        boolean idle = true;
-        busyResources.clear();
-        List<Call> calls = dispatcher.runningCalls();
-        for (Call call : calls) {
-            idle = false;
-            String url = call.request().url().toString();
-            for (Pattern pattern : blacklist) {
-                if (pattern.matcher(url).matches()) {
-                    idle = true;
-                    break;
-                }
-            }
-            if (!idle) {
-                busyResources.add(call.request().url().toString());
-            }
-        }
-        if (!idle) {
-            Choreographer.getInstance().postFrameCallback(this);
-            Log.i(LOG_TAG, "Network is busy");
-        } else {
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
-        }
-        return idle;
     }
 
     @Override
@@ -117,9 +88,41 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
     }
 
     @Override
+    protected synchronized boolean checkIdle() {
+        busyResources.clear();
+
+        List<Call> calls = dispatcher.runningCalls();
+        for (Call call: calls) {
+            final String url = call.request().url().toString();
+
+            if (!isUrlBlacklisted(url)) {
+                busyResources.add(url);
+            }
+        }
+
+        if (!busyResources.isEmpty()) {
+            Log.i(LOG_TAG, "Network is busy, with " + busyResources.size() + " in-flight calls");
+            Choreographer.getInstance().postFrameCallback(this);
+            return false;
+        }
+
+        notifyIdle();
+        return true;
+    }
+
+    @Override
     protected void notifyIdle() {
         if (callback != null) {
             callback.onTransitionToIdle();
         }
+    }
+
+    private boolean isUrlBlacklisted(String url) {
+        for (Pattern pattern: blacklist) {
+            if (pattern.matcher(url).matches()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
