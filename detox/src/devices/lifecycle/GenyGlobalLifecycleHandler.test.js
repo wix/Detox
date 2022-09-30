@@ -1,7 +1,7 @@
 // @ts-nocheck
 const _ = require('lodash');
 
-describe('Global-context lifecycle handler for Genymotion cloud emulators', () => {
+describe('Global-context lifecycle handler for Genymotion SaaS emulators', () => {
   const anInstance = () => {
     const instance = new GenyInstance();
     instance.uuid = 'mock-instance-uuid';
@@ -85,7 +85,7 @@ describe('Global-context lifecycle handler for Genymotion cloud emulators', () =
 
       await lifecycleHandler.globalCleanup();
 
-      expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
+      expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:');
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing1 \(uuid1\): .*mock-error1/));
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/failing2 \(uuid2\): .*mock-error2/));
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/Kill it .* https:\/\/cloud.geny.io\/instance\/uuid1/));
@@ -124,7 +124,7 @@ describe('Global-context lifecycle handler for Genymotion cloud emulators', () =
 
       lifecycleHandler.emergencyCleanup();
 
-      expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
+      expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, 'WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:');
       expect(logger.warn).toHaveBeenCalledWith({ event: 'GENYCLOUD_TEARDOWN' }, expect.stringMatching(/aDevice \(uuid\)\n/));
     });
 

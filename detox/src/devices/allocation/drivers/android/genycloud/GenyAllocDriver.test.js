@@ -1,4 +1,4 @@
-describe('Allocation driver for Genymotion cloud emulators', () => {
+describe('Allocation driver for Genymotion SaaS emulators', () => {
   const deviceConfig = {
     device: {
       query: 'mock',

@@ -1,4 +1,4 @@
-# Using Genymotion Cloud
+# Using Genymotion SaaS
 
 As the number of your end-to-end tests grows, the overall test session duration might easily surpass an hour or two.
 A good idea first would be to parallelize the test execution using your test runner (e.g. for Jest that
@@ -13,8 +13,8 @@ At the moment, Detox can offer you a first-class integration with
 ## Prerequisites
 
 You need to register an account in [Genymotion SaaS], so that you have valid credentials to use with their CLI tool,
-[`gmsaas`]. If you have already an account there, make sure there are available device minutes. This is less of a concern
-for the new accounts, as they get charged with 60 minutes for free.
+[`gmsaas`]. If you already have an account there, make sure there are available device minutes. Don't worry about
+the new accounts – they come with **2** concurrent devices and free **60** minutes out of the box.
 
 ![](../img/genymotion/register.png)
 
@@ -32,7 +32,7 @@ section if your problem persists.
 ## Configuring
 
 To run tests on a device, you need to define its properties first: OS version, screen dimensions, etc.
-This entire set of device specs is called a **recipe**. _Genymotion SaaS_ offers you a predefined list of recipes
+This entire set of device specs is called a **recipe**. Genymotion SaaS offers you a predefined list of recipes
 to pick from, but you can create custom recipes as well. Refer to the [Basic Steps] tutorial on their website for
 more details.
 
@@ -95,7 +95,7 @@ Running _debug builds_ is trickier to set up (and might be less stable), but if 
 follow the instructions. You'll be setting up tunneling between your local machine (where React Native packager is
 running on port 8081) and the remote device in the cloud.
 
-First, patch your `MainApplication.java` (or your main activity class) to change `debug_http_host`, e.g.:
+First, patch your `MainApplication.java` (or your main activity class) to override `debug_http_host`, e.g.:
 
 ```diff
  package com.example;
@@ -164,14 +164,23 @@ Use the link to see what's happening on your device in real time:
 
 ![](../img/genymotion/live.png)
 
-After you make sure the tests run as intended, try running multiple workers to pick the optimal
-count of workers for your project:
+After that, try running tests with 2 workers to make sure that your tests don't have issues with
+concurrency. The latter might happen if different test files are fighting over the same resource
+(e.g. deleting an account while another test is using it, and so on):
 
 ```bash
-detox test -c android.genycloud.release --maxWorkers 8
-# DETOX_CONFIGURATION="android.genycloud.release" jest --config e2e/jest.config.js --maxWorkers 8
+detox test -c android.genycloud.release --maxWorkers 2
+# DETOX_CONFIGURATION="android.genycloud.release" jest --config e2e/jest.config.js --maxWorkers 2
 # …
 ```
+
+:::info
+
+Free Genymotion SaaS accounts are limited to **2** concurrently running devices.
+If you need more devices or more minutes for testing, you can reach Genymotion's team
+at <sales@genymobile.com>.
+
+:::
 
 ## Caveats
 
@@ -181,7 +190,7 @@ If you have to terminate your tests execution via `Ctrl+C` or another forcible w
 the warnings printed, e.g.:
 
 ```plain text
-detox[22314] i WARNING! Detected a Genymotion cloud instance leakage, for the following instances:
+detox[22314] i WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:
 detox[22314] i Instance Detox.1e0ee8a4-6949-90c7-6680-5c3a9010d1e5.w1 (8fc62d21-3de0-4ed8-bf18-e69b90246dc5)
     Kill it by visiting https://cloud.geny.io/instance/8fc62d21-3de0-4ed8-bf18-e69b90246dc5, or by running:
     gmsaas instances stop 8fc62d21-3de0-4ed8-bf18-e69b90246dc5
@@ -194,28 +203,33 @@ instructions and stop your instances, e.g.:
 gmsaas instances stop 8fc62d21-3de0-4ed8-bf18-e69b90246dc5
 ```
 
+:::tip
+
+You can set up a safeguard for the [maximum run duration](https://docs.genymotion.com/saas/05_Administration_interface/#maximum-run-duration)
+on the [Administration > Settings](https://cloud.geny.io/administration/settings) panel. This can minimize the costs
+even if you accidentally leave the device powered on.
+
+:::
+
 We plan to improve this behavior and secure emergency teardown someday, but beforehand the next issue
 should be resolved (see it below). Besides, `Ctrl+C`'ing proves to be useful when you want to leave the device active
 at some point of your test scenario and interact with it manually.
 
-### Ignored behavior
+### `behavior.shutdownDevice` is ignored
 
-Detox CLI has [`-u, --cleanup` option], and the behavior config has the respective [`shutdownDevice`
-property], but **none of them has effect** on _Genymotion SaaS_ devices. Detox always shuts them down in the end
-of the test session (unless you terminate it abruptly – see the previous caveat).
+Detox CLI has [`-u, --cleanup` argument], and the behavior config has the respective [`shutdownDevice`
+property], but **none of them has effect** on Genymotion SaaS devices. Detox _always shuts them down_ in the end
+of the test session, unless you abruptly terminate its execution (see the previous caveat).
 
-This is a **known issue** which stems from the older one. Originally these flags meant _"shutting down the devices
-after all the tests have been executed"_, but historically it had always been working
-as a _"shut them down after each test file"_ instead.
-
-Taking into account that starting a device in Genymotion SaaS is apt to take about a minute, we chose to hard-code
-the more cost-effective strategy as a lesser evil. This is why we'll be always stopping your
-instances in the end until there's a proper fix to `shutdownDevice` behavior.
+In other words, you can't leave Genymotion SaaS devices up and running after your test session ends. On the ond hand,
+that reduces your chances to forget a running device. On the other hand, that doesn't allow you to keep a pool of
+immediately ready devices – a kind of strategy that could be more efficient for busier CI pipelines. There are plans
+to improve this in the future, but currently you have to bare with this caveat.
 
 [Genymotion SaaS]: https://cloud.geny.io/
 [`gmsaas`]: https://docs.genymotion.com/gmsaas
 [Genymotion SaaS tutorial]: https://docs.genymotion.com/gmsaas/01_Get_Started
 [Known Issues]: https://docs.genymotion.com/gmsaas/04_Issues/
 [Basic Steps]: https://docs.genymotion.com/saas/04_Basic_Steps/
-[`-u, --cleanup` option]: ../api/detox-cli.md#test
+[`-u, --cleanup` argument]: ../api/detox-cli.md#test
 [`shutdownDevice` property]: ../config/behavior.md

@@ -67,7 +67,7 @@ const sidebars = {
       label: 'Guides',
       items: [
         'parallel-test-execution',
-        'guide/genymotion-cloud',
+        'guide/genymotion-saas',
         'guide/taking-screenshots',
         'mocking',
         'launch-args',

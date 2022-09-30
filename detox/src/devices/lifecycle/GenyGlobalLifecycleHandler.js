@@ -30,7 +30,7 @@ class GenyGlobalLifecycleHandler {
 }
 
 async function doSafeCleanup(instanceLifecycleService, instanceHandles) {
-  logger.info(cleanupLogData, 'Initiating Genymotion cloud instances teardown...');
+  logger.info(cleanupLogData, 'Initiating Genymotion SaaS instances teardown...');
 
   const deletionLeaks = [];
   const killPromises = instanceHandles.map((instanceHandle) =>
@@ -43,7 +43,7 @@ async function doSafeCleanup(instanceLifecycleService, instanceHandles) {
 
 function reportGlobalCleanupSummary(deletionLeaks) {
   if (deletionLeaks.length) {
-    logger.warn(cleanupLogData, 'WARNING! Detected a Genymotion cloud instance leakage, for the following instances:');
+    logger.warn(cleanupLogData, 'WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:');
 
     deletionLeaks.forEach(({ uuid, name, error }) => {
       logger.warn(cleanupLogData, [
