@@ -156,7 +156,13 @@ describe('Allocation driver for Google emulators', () => {
     it('should pre-validate proper AVD configuration', async () => {
       givenValidAVD();
       await allocDriver.allocate(deviceConfig);
-      expect(avdValidator.validate).toHaveBeenCalledWith(avdName);
+      expect(avdValidator.validate).toHaveBeenCalledWith(avdName, undefined);
+    });
+
+    it('should respect headless avd configuration during AVD validation', async () => {
+      givenValidAVD();
+      await allocDriver.allocate({ ...deviceConfig, headless: true });
+      expect(avdValidator.validate).toHaveBeenCalledWith(avdName, true);
     });
 
     it('should throw if AVD configuration is invalid', async () => {
