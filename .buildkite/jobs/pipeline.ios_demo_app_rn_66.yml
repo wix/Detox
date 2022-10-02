@@ -1,0 +1,9 @@
+  - label: ":ios::react: RN.66 + iOS: Demo app"
+    command:
+      - "nvm install"
+      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.ios.sh"
+    env:
+      REACT_NATIVE_VERSION: 0.66.4
+    artifact_paths:
+      - "/Users/builder/work/coverage/**/*.lcov"
+      - "/Users/builder/work/artifacts*.tar.gz"
