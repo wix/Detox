@@ -20,8 +20,8 @@ popd
 # as it runs tests in parallel. Also, it installs test-butler on them -
 # even for forward usage.
 pushd examples/demo-react-native-jest
-run_f "npm run test:android-release-ci"
-DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
+  run_f "npm run test:android-release-ci"
+  DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
 popd
 
 # Early completion if this is just about RN compatibility -
@@ -31,22 +31,25 @@ if [ "$REACT_NATIVE_COMPAT_TEST" = "true" ]; then
 fi
 
 pushd examples/demo-react-native
-run_f "npm run test:android-release-ci"
-DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
+  run_f "npm run test:android-release-ci"
+  DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
+
+  # Run tests with bloated JS bundle:
+  source $(dirname "$0")/demo-rn-bloat-bundle-test.sh
 popd
 
 pushd examples/demo-plugin
-run_f "npm run test:plugin"
+  run_f "npm run test:plugin"
 popd
 
 # Detox Native
 ##
 
 pushd detox
-run_f "npm run build:android-native"
+  run_f "npm run build:android-native"
 popd
 
 pushd examples/demo-pure-native-android
-export ANDROID_SERIAL=`adb devices | grep emulator | head -1 | awk '{print $1}'`
-run_f "./gradlew connectAndroidTest"
+  export ANDROID_SERIAL=`adb devices | grep emulator | head -1 | awk '{print $1}'`
+  run_f "./gradlew connectAndroidTest"
 popd
