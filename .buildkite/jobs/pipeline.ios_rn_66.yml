@@ -1,4 +1,4 @@
-  - label: ":ios:-:six::six: RN_66_iOS"
+  - label: ":ios::detox: RN.66 + iOS: Tests app"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.ios.sh"

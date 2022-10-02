@@ -1,4 +1,4 @@
-  - label: ":android::mushroom:-RN_66_demo_project"
+  - label: ":android::react: RN.66 + Android: Demo app"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.android.sh"

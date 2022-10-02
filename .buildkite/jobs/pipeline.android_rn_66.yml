@@ -1,4 +1,4 @@
-  - label: ":android:-:six::six:-RN_66_android"
+  - label: ":android::detox: RN.66 + Android: Tests app"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.android.sh"
