@@ -12,11 +12,11 @@ class AVDValidator {
     this._emulatorVersionResolver = emulatorVersionResolver;
   }
 
-  async validate(avdName) {
+  async validate(avdName, isHeadless) {
     const avds = await this._avdsResolver.resolve(avdName);
     this._assertAVDs(avds);
     await this._assertAVDMatch(avds, avdName);
-    await this._validateEmulatorVer();
+    await this._validateEmulatorVer(isHeadless);
   }
 
   _assertAVDs(avds) {
@@ -37,8 +37,8 @@ class AVDValidator {
     }
   }
 
-  async _validateEmulatorVer() {
-    const emulatorVersion = await this._emulatorVersionResolver.resolve();
+  async _validateEmulatorVer(isHeadless) {
+    const emulatorVersion = await this._emulatorVersionResolver.resolve(isHeadless);
     if (!emulatorVersion) {
       logger.warn({ event: 'AVD_VALIDATION' }, 'Emulator version detection failed (See previous logs)');
       return;
