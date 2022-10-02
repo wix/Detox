@@ -5,6 +5,7 @@
   "scripts": {
     "start": "react-native start",
     "postinstall": "node scripts/postinstall.js",
+    "bloat-bundle": "node scripts/bloatBundle.js",
     "build:ios": "detox build --configuration ios.sim.debug",
     "build:ios-debug": "detox build --configuration ios.sim.debug",
     "build:ios-release": "detox build --configuration ios.sim.release",
