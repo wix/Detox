@@ -3,9 +3,7 @@ const rnMinorVer = require('./rn-consts').rnVersion.minor;
 
 const _it = {
   withFailureIf: {
-    android: {
-      rn58OrNewer: (spec, specFn) => runOrExpectFailByPredicates(spec, specFn, platformIs('android'), rnVerAtLeast(58)),
-    }
+    android: (spec, specFn) => runOrExpectFailByPredicates(spec, specFn, platformIs('android')),
     iOSWithRNLessThan67: (spec, specFn) => runOrExpectFailByPredicates(spec, specFn, platformIs('ios'), rnVerLessThan(67)),
   },
 };
@@ -21,7 +19,6 @@ function runOrExpectFailByPredicates(spec, specFn, ...predicateFuncs) {
 }
 
 const platformIs = (platform) => () => (device.getPlatform() === platform);
-const rnVerAtLeast = (rnVer) => () => (rnMinorVer >= rnVer);
 const rnVerLessThan = (rnVer) => () => (rnMinorVer < rnVer);
 const allPredicatesTrue = (predicateFuncs) => _.reduce(predicateFuncs, (result, predicate) => (result && predicate()), true);
 
