@@ -6,7 +6,7 @@ describe('Actions - Scroll', () => {
     await element(by.text('Actions')).tap();
   });
 
-  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a small amount in direction', async () => {
+  custom.it.withFailureIf.android('should scroll for a small amount in direction', async () => {
     await expect(element(by.text('Text1'))).toBeVisible();
     await expect(element(by.text('Text4'))).not.toBeVisible();
     await expect(element(by.id('ScrollView161'))).toBeVisible();
@@ -18,7 +18,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('Text4'))).not.toBeVisible();
   });
 
-  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a large amount in direction', async () => {
+  custom.it.withFailureIf.android('should scroll for a large amount in direction', async () => {
     await expect(element(by.text('Text6'))).not.toBeVisible();
     await element(by.id('ScrollView161')).scroll(220, 'down');
     await expect(element(by.text('Text6'))).toBeVisible();
