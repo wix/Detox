@@ -587,4 +587,4 @@ This does not require that your app require iOS 12.2, only that you build and ru
 
 [`detox init`]: api/detox-cli.md#init
 
-[`testRunner` config]: config/testRunner.md
+[`testRunner` config]: config/testRunner.mdx

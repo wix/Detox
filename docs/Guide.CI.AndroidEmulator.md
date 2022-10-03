@@ -141,7 +141,7 @@ Also, be sure to upgrade your emulator executable to the latest version: If it i
 
 If the system allows saving a state (for example, in personal computers or a CI system that can start from prebaked images you can configure), we highly and strongly recommend setting up quick-boot snapshots for any emulator that is used for testing automation.
 
-Quick-boot saves significant time otherwise wasted when emulators cold-boot from scratch. The concept becomes more prominent in environments capable of parallel-executing tests in multiple, concurrently running emulators (as when [Detox is run with multiple Jest workers](config/testRunner.md)).
+Quick-boot saves significant time otherwise wasted when emulators cold-boot from scratch. The concept becomes more prominent in environments capable of parallel-executing tests in multiple, concurrently running emulators (as when [Detox is run with multiple Jest workers](config/testRunner.mdx)).
 
 This is something that we actually recommend applying in the emulator itself rather than using command-line, but we’ll include both options.
 

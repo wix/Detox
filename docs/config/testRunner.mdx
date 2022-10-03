@@ -1,3 +1,5 @@
+import Location from './partials/_location.mdx';
+
 # Test runner
 
 While Detox was created to test mobile applications, effectively it is **not a test runner** – instead, it **runs on top** of a test runner. There are many third-party solutions for running tests, so we're happy to not reinvent the wheel and to devote our time to the mobile domain itself.
@@ -10,31 +12,7 @@ The integration with a test runner is a matter of the configuration, not the imp
 
 ## Location
 
-You can define the `testRunner` config section in two ways: _globally_ and _locally_ (per a configuration):
-
-```javascript title=".detoxrc.js"
-/** @type {Detox.DetoxConfig} */
-module.exports = {
-// highlight-start
-  testRunner: {
-    /* global section */
-  },
-// highlight-end
-  devices: { /* … */ },
-  apps: { /* … */ },
-  configurations: {
-    'ios.sim.debug': {
-      device: 'iphone',
-      app: 'ios.debug',
-// highlight-start
-      testRunner: {
-        /* local (per-configuration) section */
-      },
-// highlight-end
-    },
-  },
-};
-```
+<Location sectionName="testRunner" />
 
 ## Properties
 

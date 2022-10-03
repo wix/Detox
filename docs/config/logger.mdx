@@ -1,0 +1,75 @@
+import Location from './partials/_location.mdx';
+
+# Logger
+
+The `logger` section controls how the printed logs are going to look like in your terminal window.
+
+![](../img/log-example.png)
+
+## Location
+
+<Location sectionName="logger" />
+
+## Properties
+
+## `logger.level` \[enum\]
+
+Possible values: `fatal`, `error`, `warn`, `info`, `debug`, `trace`.
+
+Default: `info`.
+
+Suppresses printing non-important messages in the terminal.
+
+## `logger.overrideConsole` \[boolean\]
+
+Default: `true`.
+
+When enabled, hijacks all the console methods (console.log, console.warn, etc) so that the messages
+printed via them are formatted and saved as Detox logs.
+
+## `logger.options` [BunyanDebugStreamOptions]
+
+Default: varies according to the `logger.level`.
+
+Since Detox is using [bunyan-debug-stream](https://github.com/jwalton/bunyan-debug-stream) for printing logs,
+we decided just to expose all its options for sake of simplicity of customization:
+
+```typescript
+export interface BunyanDebugStreamOptions {
+    colors?: { [key: number]: string | string[] } | false | null;
+    forceColor?: boolean;
+    basepath?: string;
+    basepathReplacement?: string;
+    showProcess?: boolean;
+    showDate?: boolean | ((time: Date, entry: any) => string);
+    showPrefixes?: boolean | ((prefixes: string[]) => string);
+    processName?: string;
+    maxExceptionLines?: number | 'auto';
+    stringifiers?: { [key: string]: Stringifier | null };
+    prefixers?: { [key: string]: Stringifier | null };
+    indent?: string;
+    showLoggerName?: boolean;
+    showPid?: boolean;
+    showLevel?: boolean;
+    showMetadata?: boolean;
+}
+```
+
+There's one caveat inside `logger.options`, however – all the custom functions **must not** use closures! That's
+because they get `eval()`-ed every time the test runner spawns a new child worker process. In other words:
+
+```javascript
+const dontDoThis = date => date.toISOString();
+
+module.exports = {
+  logger: {
+    level: 'debug',
+    options: {
+      // showDate: (date) => dontDoThis(date),
+// highlight-next-line
+      showDate: (date) => date.toISOString(), /* do this instead */
+    },
+  },
+  // ...
+};
+```
