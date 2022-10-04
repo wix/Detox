@@ -1,8 +1,5 @@
 ---
-id: getting-started
-slug: introduction/getting-started
 title: Getting Started
-sidebar_label: Getting Started
 ---
 
 ## Getting Started
@@ -45,8 +42,8 @@ npm install detox-cli --global
 
 Depending on the platform/s you’re aiming at (iOS, Android), take the time to run through these environment setup guides:
 
-- [Android](Introduction.AndroidDevEnv.md)
-- [iOS](Introduction.iOSDevEnv.md)
+- [Android](versioned_docs/version-19.x/Introduction.AndroidDevEnv.md)
+- [iOS](versioned_docs/version-19.x/Introduction.iOSDevEnv.md)
 
 ## Step 2: Add Detox to Your Project
 
@@ -81,8 +78,8 @@ npm install detox --save-dev --no-package-lock
 
 Detox delegates the actual JavaScript test-code execution to a dedicated test-runner. It supports the popular `Jest` and `Mocha` out of the box. You need to choose and set up one of them now, but it _is_ possible to switch later on, should you change your mind.
 
-- **[Jest](https://jestjs.io/) is the recommended test runner for use with Detox**, since it provides parallel test execution and a complete lifecycle integration with Detox. To set up, follow [our comprehensive guide for Jest](Guide.Jest.md).
-- [Mocha](https://mochajs.org/), albeit its integration is less complete, is still lightweight, and a bit easier to set up. To set up, follow [our guide for Mocha](Guide.Mocha.md).
+- **[Jest](https://jestjs.io/) is the recommended test runner for use with Detox**, since it provides parallel test execution and a complete lifecycle integration with Detox. To set up, follow [our comprehensive guide for Jest](versioned_docs/version-19.x/Guide.Jest.md).
+- [Mocha](https://mochajs.org/), albeit its integration is less complete, is still lightweight, and a bit easier to set up. To set up, follow [our guide for Mocha](versioned_docs/version-19.x/Guide.Mocha.md).
 
 > **Note:** Detox is coupled to neither Mocha or Jest, nor with a specific directory structure. Both runners are just a recommendation — with some effort, they can be replaced without touching the internal implementation of Detox itself.
 
@@ -103,8 +100,8 @@ If you prefer to use something other than `.detoxrc.json`—for example, would l
 
 For specific configuration options for each supported platform, see:
 
-- [Android](Introduction.Android.md)
-- [iOS](Introduction.iOS.md)
+- [Android](versioned_docs/version-19.x/Introduction.Android.md)
+- [iOS](versioned_docs/version-19.x/Introduction.iOS.md)
 
 ## Step 3: Build Your App and Run Detox Tests
 
@@ -128,4 +125,4 @@ detox test --configuration <your configuration name>
 
 That’s it. Your first failing Detox test is running!
 
-Next, we’ll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
+Next, we’ll go over usage and how to make this test [actually pass](versioned_docs/version-19.x/Introduction.WritingFirstTest.md).

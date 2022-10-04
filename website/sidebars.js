@@ -27,7 +27,47 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Configuration',
+      label: 'Guides',
+      items: [
+        'guide/parallel-test-execution',
+        'guide/genymotion-saas',
+        'guide/taking-screenshots',
+        'guide/mocking',
+        'guide/launch-args',
+        'guide/mocking-open-with-url',
+        'guide/mocking-user-notifications',
+        'guide/mocking-user-activity',
+        'guide/developing-while-writing-tests',
+        'guide/android-dev-env',
+        'guide/proguard-configuration',
+        'guide/uninstalling',
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Troubleshooting',
+      items: [
+        'troubleshooting/building-the-app',
+        'troubleshooting/running-tests',
+        'troubleshooting/synchronization',
+        'troubleshooting/flakiness',
+      ]
+    },
+    {
+      type: 'doc',
+      id: 'guide/migration',
+    },
+    {
+      type: 'doc',
+      label: 'Contributing',
+      id: 'guide/contributing'
+    },
+  ],
+  apiSidebar: [
+    'cli/index',
+    {
+      type: 'category',
+      label: 'Config file',
       items: [
         'config/overview',
         'config/devices',
@@ -41,64 +81,26 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'API Reference',
+      label: 'Client API',
       items: [
-        'api/detox-cli',
         'api/device',
         'api/matchers',
         'api/actions',
         'api/expect',
         'api/logger',
-        'api/internals',
       ]
     },
+    'api/internals',
     {
       type: 'category',
-      label: 'Troubleshooting',
-      items: [
-        'building-the-app',
-        'running-tests',
-        'synchronization',
-        'flakiness',
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Guides',
-      items: [
-        'parallel-test-execution',
-        'guide/genymotion-saas',
-        'guide/taking-screenshots',
-        'mocking',
-        'launch-args',
-        'mocking-open-with-url',
-        'mocking-user-notifications',
-        'mocking-user-activity',
-        'developing-while-writing-tests',
-        'android-dev-env',
-        'proguard-configuration',
-        'uninstalling',
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Articles',
+      label: 'Tech articles',
       items: [
         'articles/design-principles',
         'articles/how-detox-works',
         'articles/third-party-drivers',
       ]
     },
-    {
-      type: 'doc',
-      id: 'migration',
-    },
-    {
-      type: 'doc',
-      label: 'Contributing',
-      id: 'contributing'
-    },
-  ],
+  ]
 };
 
 module.exports = sidebars;

@@ -4,7 +4,7 @@
 
 ### Fundamentals
 
-**IMPORTANT:** Get your environment properly set up, as explained in our [contribution guide](../../docs/Guide.Contributing.md).
+**IMPORTANT:** Get your environment properly set up, as explained in our [contribution guide](../../docs/guide/contributing.md).
 
 ### Execution Target
 

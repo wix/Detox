@@ -34,7 +34,7 @@ An app config can have the following params:
 | `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                            |
 | `build`              | **\[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience.                                                          |
 | `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                         |
-| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](../Guide.LaunchArgs.md). |
+| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](../guide/launch-args.md). |
 
 To work with multiple apps within the same configuration you should be giving each app its name, e.g.:
 

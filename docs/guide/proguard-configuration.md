@@ -1,8 +1,3 @@
----
-id: proguard-configuration
-slug: guide/proguard-configuration
----
-
 # ProGuard configuration
 
 :::tip

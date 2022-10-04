@@ -1,8 +1,6 @@
 ---
-id: configuration
-slug: api/configuration
+id: overview
 title: Configuration Options
-sidebar_label: Configuration Options
 ---
 
 ## Configuration Options
@@ -52,8 +50,8 @@ to the Detox config file which contains that specific `extends` property, e.g.:
 
 #### Individual Configurations
 
-> NOTE: The configuration format has been significantly updated since [18.3.1](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) in a backward-compatible way.
-> Click [here](https://github.com/wix/Detox/blob/18.3.1/docs/APIRef.Configuration.md) to the reference on the former configuration format.
+> NOTE: The configuration format has been significantly updated since [18.3.1](https://github.com/wix/Detox/blob/18.3.1/docs/config/overview.md) in a backward-compatible way.
+> Click [here](https://github.com/wix/Detox/blob/18.3.1/docs/config/overview.md) to the reference on the former configuration format.
 
 `configurations` holds all the device/app-oriented configurations. To select a specific configuration when running Detox in command-line (i.e. `detox build`, `detox test`), use the `--configuration` argument.
 Note: If there is only one configuration in `configurations`, Detox will default to it.
@@ -225,7 +223,7 @@ An app config can have the following params:
 | `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                          |
 | `build`              | **\[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience.                                                        |
 | `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                       |
-| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](APIRef.LaunchArgs.md). |
+| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](versioned_docs/version-19.x/APIRef.LaunchArgs.md). |
 
 To work with multiple apps within the same configuration you should be giving each app its name, e.g.:
 
@@ -252,7 +250,7 @@ To work with multiple apps within the same configuration you should be giving ea
 }
 ```
 
-After that, you can change the current app in your tests via [device API](APIRef.DeviceObjectAPI.md):
+After that, you can change the current app in your tests via [device API](versioned_docs/version-19.x/APIRef.DeviceObjectAPI.md):
 
 ```js
 await device.selectApp('driver');
@@ -282,7 +280,7 @@ Similar to device configs, any app config can be inlined as well:
 
 #### Artifacts Configuration
 
-See more details in [artifacts doc](APIRef.Artifacts.md).
+See more details in [artifacts doc](versioned_docs/version-19.x/APIRef.Artifacts.md).
 
 Detox can store artifacts such as transient screenshots and device logs.
 You can control artifacts collection via Detox configuration:
@@ -380,7 +378,7 @@ you have a few options to change. These are the default behavior values:
 
 The `launchApp: "auto"` setting can be changed to `"manual"` for cases when you want to debug the
 native codebase when running Detox tests. Usually **you never need that**, but if you do, follow the
-[Debugging Apps in Android Studio During a Test](Guide.DebuggingInAndroidStudio.md) guide to learn
+[Debugging Apps in Android Studio During a Test](versioned_docs/version-19.x/Guide.DebuggingInAndroidStudio.md) guide to learn
 more about this. When set to `manual`, it changes the default value of `reinstallApp` to `false`.
 
 Setting `reinstallApp: false` will make the tests reuse the currently installed app on the device,
@@ -391,7 +389,7 @@ scope, you can set `"exposeGlobals": false` and destructure them respectively fr
 exported Detox interface:
 
 ```js
-const { by, device, expect, element } = require('detox');
+const { by, device, expect, element } = require('./index');
 ```
 
 Also, you can override the behavior in specific Detox configurations:

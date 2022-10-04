@@ -1,4 +1,4 @@
-# Command Line Tools
+# CLI
 
 `detox-cli` lets you operate Detox from command line.
 
@@ -124,7 +124,7 @@ DETOX_CONFIGURATION=ios.debug jest --help
 | --jest-report-specs                           | \[Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.                                                                                                                                                                                      |
 | -H, --headless                                | Launch device in headless mode. Useful when running on CI.                                                                                                                                                                                                                                                |
 | --device-launch-args                          | A list of passthrough-arguments to use when (if) devices (Android emulator / iOS simulator) are launched by Detox.<br />**Note: the value must be specified after an equal sign (`=`) and inside quotes.** Usage example:<br />`--device-launch-args="-http-proxy http://1.1.1.1:8000 -no-snapshot-load"` |
-| --app-launch-args                             | Custom arguments to pass (through) onto the app every time it is launched. The same **note** applies here, as for **--device-launch-args**.<br />See [launch arguments guide](../Guide.LaunchArgs.md) for complete info.                                                                                  |
+| --app-launch-args                             | Custom arguments to pass (through) onto the app every time it is launched. The same **note** applies here, as for **--device-launch-args**.<br />See [launch arguments guide](../guide/launch-args.md) for complete info.                                                                                  |
 | --no-color                                    | Disable colors in log output                                                                                                                                                                                                                                                                              |
 | --use-custom-logger                           | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test runner’s implementation (e.g. Jest).<br />_Default: true_                                                                                                                |
 | --gpu                                         | \[Android Only] Launch Emulator with the specific -gpu \[gpu mode] parameter.                                                                                                                                                                                                                             |

@@ -79,7 +79,7 @@ parameters to disable various side effects and make life easier when debugging:
   The motivation is to disable irrelevant taxing activities on the device such as capturing logs
   screenshots, videos and so on.
   - If your investigation addresses a specific artifact plugin glitch on the native side, then just
-    disable all the other plugins. See [Detox Configuration](APIRef.Configuration.md) document
+    disable all the other plugins. See [Detox Configuration](config/overview.md) document
     for the reference.
 
 ### Run a specific test

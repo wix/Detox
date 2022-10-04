@@ -4,7 +4,7 @@
       "type": "category",
       "label": "Introduction",
       "items": [
-        "getting-started",
+        "introduction/getting-started",
         "ios-dev-env",
         "android-dev-env",
         "ios",
@@ -20,7 +20,7 @@
       "label": "API Reference",
       "items": [
         "detox-cli",
-        "configuration",
+        "config/overview",
         "detox-object-api",
         "device-object-api",
         "test-lifecycle",

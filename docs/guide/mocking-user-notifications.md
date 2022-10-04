@@ -1,11 +1,6 @@
----
-id: mocking-user-notifications
-slug: api/mocking-user-notifications
-title: Mocking User Notifications
-sidebar_label: Mocking User Notifications
----
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
-## Mocking User Notifications
+# Mocking User Notifications
 
 Detox supports mocking user notifications.
 
@@ -98,7 +93,7 @@ There are four types of triggers supported by Detox at this time:
 For convenience, these trigger types are provided as constants in `DetoxConstants`:
 
 ```js
-const DetoxConstants = require('detox').DetoxConstants;
+const DetoxConstants = require('detox/index').DetoxConstants;
 
 const userNotification = {
   "trigger": {

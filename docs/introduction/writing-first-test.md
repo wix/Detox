@@ -76,4 +76,4 @@ Add more test cases to your file by adding `it()` clauses. Add new scenarios by 
 
 ## Step 7: Run Your Tests and Make Sure They Pass
 
-This is usually done by running `detox test` in terminal. If your test is failing, and you don’t understand why, take a look at the [troubleshooting tutorial](../Troubleshooting.RunningTests.md).
+This is usually done by running `detox test` in terminal. If your test is failing, and you don’t understand why, take a look at the [troubleshooting tutorial](../troubleshooting/running-tests.md).

@@ -30,7 +30,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 ### `device.appLaunchArgs`
 
 Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](../config/apps.md)
-and [command-line arguments](detox-cli.md). This access allows, through dedicated methods, for both value-querying and modification:
+and [command-line arguments](../cli/index.md). This access allows, through dedicated methods, for both value-querying and modification:
 
 ```js
 // Modify some of the predefined arguments:
@@ -62,7 +62,7 @@ device.appLaunchArgs.shared.reset();
 device.appLaunchArgs.get(); // ==> {}
 ```
 
-This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](../Guide.LaunchArgs.md) for complete details.
+This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](../guide/launch-args.md) for complete details.
 
 ## Methods
 
@@ -148,7 +148,7 @@ await device.launchApp({url, newInstance: true}); // Launch a new instance of th
 await device.launchApp({url, newInstance: false}); // Reuse existing instance
 ```
 
-Read more [here](../Guide.MockingOpenWithURL.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
+Read more [here](../guide/mocking-open-with-url.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
 #### 4. `userNotification`—Launching with User Notifications
 
@@ -160,7 +160,7 @@ await device.launchApp({userNotification, newInstance: true}); // Launch a new i
 await device.launchApp({userNotification, newInstance: false}); // Reuse existing instance
 ```
 
-Read more [here](../Guide.MockingUserNotifications.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
+Read more [here](../guide/mocking-user-notifications.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
 #### 5. `userActivity`—Launch with User Activity (iOS Only)
 
@@ -172,7 +172,7 @@ await device.launchApp({userActivity: activity, newInstance: true}); //Launch a 
 await device.launchApp({userActivity: activity, newInstance: false}); //Reuse existing instance
 ```
 
-Read more in [here](../Guide.MockingUserActivity.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
+Read more in [here](../guide/mocking-user-activity.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
 #### 6. `delete`—Delete and Reinstall Application Before Launching
 
@@ -197,7 +197,7 @@ await device.launchApp({
 });
 ```
 
-This is the most explicit and straightforward way of setting launch arguments. Refer to the [launch arguments guide](../Guide.LaunchArgs.md) for a complete overview on app launch arguments.
+This is the most explicit and straightforward way of setting launch arguments. Refer to the [launch arguments guide](../guide/launch-args.md) for a complete overview on app launch arguments.
 
 #### 8. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)
 
@@ -331,20 +331,20 @@ await device.uninstallApp('other.bundle.id');
 
 Mock opening the app from URL. `sourceApp` is an optional **iOS-only** parameter to specify source application bundle id.
 
-Read more in [Mocking Open with URL](../Guide.MockingOpenWithURL.md) section.
+Read more in [Mocking Open with URL](../guide/mocking-open-with-url.md) section.
 Check out Detox’s [own test suite](https://github.com/wix/Detox/tree/a9a09246c05733f6b91cfcc0dba05a4714abca92/detox/test/e2e/15.urls.test.js)
 
 ### `device.sendUserNotification(params)`
 
 Mock handling of a user notification previously received in the system, while the app is already running.
 
-Read more in [Mocking User Notifications](../Guide.MockingUserNotifications.md) section.
+Read more in [Mocking User Notifications](../guide/mocking-user-notifications.md) section.
 Check out Detox’s [own test suite](https://github.com/wix/Detox/tree/a9a09246c05733f6b91cfcc0dba05a4714abca92/detox/test/e2e/11.user-notifications.test.js)
 
 ### `device.sendUserActivity(params)` **iOS Only**
 
 Mock handling of received user activity when app is in foreground.
-Read more in [Mocking User Activity](../Guide.MockingUserActivity.md) section.
+Read more in [Mocking User Activity](../guide/mocking-user-activity.md) section.
 Check out Detox’s [own test suite](https://github.com/wix/Detox/tree/a9a09246c05733f6b91cfcc0dba05a4714abca92/detox/test/e2e/18.user-activities.test.js)
 
 ### `device.setOrientation(orientation)`
@@ -392,7 +392,7 @@ await device.enableSynchronization();
 
 ### `device.setURLBlacklist([urls])`
 
-Exclude synchronization with respect to network activity (i.e. don’t wait for network to go idle before moving forward in the test execution) according to **specific** endpoints, denoted as URL reg-exp’s. To disable endpoints at initialization, pass in the black-list as an [app-launch argument](../Guide.LaunchArgs.md) named `detoxURLBlacklistRegex` (as explained [here](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch)).
+Exclude synchronization with respect to network activity (i.e. don’t wait for network to go idle before moving forward in the test execution) according to **specific** endpoints, denoted as URL reg-exp’s. To disable endpoints at initialization, pass in the black-list as an [app-launch argument](../guide/launch-args.md) named `detoxURLBlacklistRegex` (as explained [here](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch)).
 
 ```js
 await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);

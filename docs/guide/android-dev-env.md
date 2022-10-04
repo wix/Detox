@@ -1,11 +1,6 @@
 ---
-id: android-dev-env
-slug: guide/android-dev-env
 title: Setting Up an Android Development & Testing Environment
-sidebar_label: Setting Up an Android Development & Testing Environment
 ---
-
-## Setting Up an Android Development & Testing Environment
 
 This guide provides some core practices to follow in setting up a stable, reliable environment for running automated UI tests using Android emulators (using Detox, in particular) – be it on a personal, _local_ computer, or a powerful CI machine.
 
@@ -77,7 +72,7 @@ Fortunately, the Android team at Google offers a pretty decent alternative: **AO
 
 _Here’s a visual comparison between the two - an SDK 28 (Android 9) AOSP emulator (left) vs. an emulator with Google APIs installed (right):_
 
-![AOSP vs Google-API](img/android/aosp-vs-googleapi.png)
+![AOSP vs Google-API](../img/android/aosp-vs-googleapi.png)
 
 ### Here’s how to install them using the command line
 
@@ -127,13 +122,13 @@ At this point, you should be able to launch the emulator from Android Studio, bu
 
 We won’t go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog  (see `Target` column of the Virtual Device Configuration screen below):
 
-![SDK manager in AS](img/android/aosp-image-as.png)
+![SDK manager in AS](../img/android/aosp-image-as.png)
 
-![Install AOSP in AS](img/android/install-aosp-as.png)
+![Install AOSP in AS](../img/android/install-aosp-as.png)
 
 Also, be sure to upgrade your emulator executable to the latest version: If it isn’t up-to-date, you will get an "Update Available" message under the _status_ column, instead of "Installed":
 
-![Upgrade emulator in AS](img/android/upgrade-emulator-as.png)
+![Upgrade emulator in AS](../img/android/upgrade-emulator-as.png)
 
 **Note:** _It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
 
@@ -141,7 +136,7 @@ Also, be sure to upgrade your emulator executable to the latest version: If it i
 
 If the system allows saving a state (for example, in personal computers or a CI system that can start from prebaked images you can configure), we highly and strongly recommend setting up quick-boot snapshots for any emulator that is used for testing automation.
 
-Quick-boot saves significant time otherwise wasted when emulators cold-boot from scratch. The concept becomes more prominent in environments capable of parallel-executing tests in multiple, concurrently running emulators (as when [Detox is run with multiple Jest workers](config/testRunner.mdx)).
+Quick-boot saves significant time otherwise wasted when emulators cold-boot from scratch. The concept becomes more prominent in environments capable of parallel-executing tests in multiple, concurrently running emulators (as when [Detox is run with multiple Jest workers](../config/testRunner.mdx)).
 
 This is something that we actually recommend applying in the emulator itself rather than using command-line, but we’ll include both options.
 
@@ -157,7 +152,7 @@ Start by launching a freshly baked emulator. Wait for it to go stable.
 
 When running, go to settings (3 dots in the sidebar) > `Snapshots` > `Settings` tab. If not already set, select `Yes` in the `auto-save` option. This should prompt for a restart – choose `Yes`. The emulator should restart **and save a snapshot.**
 
-![Emulator auto-save menu](img/android/snapshot-autosave.png)
+![Emulator auto-save menu](../img/android/snapshot-autosave.png)
 
 Do this again after the emulator is back up, but set `No` in the `auto-save` option. Allow it to restart yet again: it will immediately boot into the state saved as a snapshot earlier.
 
@@ -233,7 +228,7 @@ Assuming you have the APK available in the system, you can dynamically have Deto
 }
 ```
 
-> Refer to our [configuration guide](config/apps.md) for further details on `utilBinaryPaths`.
+> Refer to our [configuration guide](../config/apps.md) for further details on `utilBinaryPaths`.
 
 As per _making_ the APK available - for that, we have no really good solution, for the time being (but it’s in the works). A few options might be:
 

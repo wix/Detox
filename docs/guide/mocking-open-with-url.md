@@ -1,11 +1,6 @@
----
-id: mocking-open-with-url
-slug: api/mocking-open-with-url
-title: Mocking Open With URL (Deep Links)
-sidebar_label: Mocking Open With URL (Deep Links)
----
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
-## Mocking Open With URL (Deep Links)
+# Mocking Open With URL (Deep Links)
 
 You can mock opening the app from URL to test your app’s deep link handling mechanism.
 

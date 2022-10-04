@@ -1,8 +1,4 @@
----
-id: migration
-slug: guide/migration
-title: Migration Guide
----
+# Migration Guide
 
 <!-- markdownlint-configure-file { "ol-prefix": 0 } -->
 
@@ -205,7 +201,7 @@ Let's focus on lines 5-8:
 
    ```js
    module.exports = async () => {
-      await require('detox/runners/jest').globalSetup();
+      await require('detox/runners/jest/index').globalSetup();
       await yourGlobalSetupFunction();
    };
    ```
@@ -218,7 +214,7 @@ Let's focus on lines 5-8:
      try {
        await yourGlobalTeardownFunction();
      } finally {
-       await require('detox/runners/jest').globalTeardown();
+       await require('detox/runners/jest/index').globalTeardown();
      }
    };
    ```
@@ -357,7 +353,7 @@ You’ll need to find those places and apply trivial fixes like shown below:
 
 **Version 19 is not really a breaking change!**
 
-We decided to bump Detox into a major version release, nonetheless, because it is breaking for projects that sport [custom Detox drivers](articles/third-party-drivers.md), such as [`detox-puppeteer`](https://github.com/ouihealth/detox-puppeteer).
+We decided to bump Detox into a major version release, nonetheless, because it is breaking for projects that sport [custom Detox drivers](../articles/third-party-drivers.md), such as [`detox-puppeteer`](https://github.com/ouihealth/detox-puppeteer).
 
 If you are a maintainer of such a project, and you wish to upgrade your Detox dependency to 19 (kudos! :clap:),  follow this step-by-step migration guide; You can refer to [this pull-request](https://github.com/ouihealth/detox-puppeteer/pull/13), which does that for the  `detox-puppeteer` project.
 
@@ -413,7 +409,7 @@ Add the new class to the `module.exports` list, under the name: `ArtifactPlugins
 - Optionally rename your class from `PuppeteerDriver` to `PuppeteerRuntimeDriver`.
 - In the methods remaining in the class accepting the `deviceId` arg: **remove the `deviceId` arg entirely**. This might break your implementation - don’t worry, continue reading.
 - If applicable, change the signature of the class' c'tor to accept the cookie as its 2nd argument (instance previously allocated in `PuppeteerAllocationDriver.allocate()`). Save data from the cookie as part of the driver’s state, in order to unbreak your implementation, following the previous step.
-- Add two methods: `getExternalId()` and `getDeviceName()`. Implement them such that they would comply with the `device.id` and `device.name` [API contracts](api/device.md), respectively.
+- Add two methods: `getExternalId()` and `getDeviceName()`. Implement them such that they would comply with the `device.id` and `device.name` [API contracts](../api/device.md), respectively.
 
 Export the runtime driver class in the `module.exports` list as `RuntimeDriverClass`, **instead of `DriverClass`.**
 
@@ -424,7 +420,7 @@ For issue related to these migrations, approach us by [submitting an issue on Gi
 ## 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
-Please refer to the [configuration doc](config/overview.md) to obtain more details.
+Please refer to the [configuration doc](../config/overview.md) to obtain more details.
 This change is backward-compatible, although the new format is now the recommended option.
 
 ## 18.0
@@ -566,7 +562,7 @@ The following APIs have been deprecated, but is still available
 - `toBeNotVisible()`—deprecated in favor of `not.toBeVisible()` (iOS, Android)
 - `toNotExist()`—deprecated in favor of `not.toExist()` (iOS, Android)
 
-Make sure to read the API reference for [matchers](api/matchers.md), [actions](api/actions.md) and [expectations](api/expect.md).
+Make sure to read the API reference for [matchers](../api/matchers.md), [actions](../api/actions.md) and [expectations](../api/expect.md).
 
 If you see unexpected results, make sure to open an issue.
 
@@ -585,6 +581,6 @@ This does not require that your app require iOS 12.2, only that you build and ru
 
 [Jest]: https://jestjs.io
 
-[`detox init`]: api/detox-cli.md#init
+[`detox init`]: ../cli/index.md#init
 
-[`testRunner` config]: config/testRunner.mdx
+[`testRunner` config]: ../config/testRunner.mdx

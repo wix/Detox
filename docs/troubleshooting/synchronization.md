@@ -1,11 +1,6 @@
----
-id: synchronization
-slug: troubleshooting/synchronization
-title: Dealing With Synchronization Issues in Tests
-sidebar_label: Dealing With Synchronization Issues in Tests
----
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
-## Dealing With Synchronization Issues in Tests
+# Dealing With Synchronization Issues in Tests
 
 Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take variable amount of time to complete. We can’t continue the test until they’ve completed. How can we synchronize the test with these operations?
 
@@ -103,7 +98,7 @@ We always have the fail-safe of turning off automatic synchronization and waitin
 
 This makes sense only if we’re waiting too much.
 
-##### [Controlling the entire synchronization mechanism](api/device.md#devicedisablesynchronization)
+##### [Controlling the entire synchronization mechanism](../api/device.md#devicedisablesynchronization)
 
 The synchronization mechanism can be shut down using
 
@@ -117,7 +112,7 @@ to turn it on again use
 await device.enableSynchronization();
 ```
 
-##### [Controlling network synchronization](api/device.md#deviceseturlblacklisturls)
+##### [Controlling network synchronization](../api/device.md#deviceseturlblacklisturls)
 
 You can skip over synchronizing on certain URLs (for long polling tasks, or websocket connections)
 
@@ -143,7 +138,7 @@ await device.launchApp({
 
 #### How do we wait manually?
 
-This makes sense only if we’re not waiting enough (or if we’ve disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](api/expect.md#withtimeouttimeout).
+This makes sense only if we’re not waiting enough (or if we’ve disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](../api/expect.md#withtimeouttimeout).
 
 ### Tweaking and fine-tuning the synchronization mechanisms
 
@@ -153,7 +148,7 @@ This makes sense only if we’re not waiting enough (or if we’ve disabled auto
 
 When facing a synchronization issue and tweaking doesn’t help, consider modifying your app. When Detox is having trouble synchronizing due to intense non-stopping activity, it may be a sign that your app is abusing resources.
 
-You can also modify your app, for the sake of tests only, by using mocking. Read more [here](https://github.com/wix/Detox/blob/master/docs/Guide.Mocking.md).
+You can also modify your app, for the sake of tests only, by using mocking. Read more [here](../guide/mocking.md).
 
 #### `setTimeout` and `setInterval`
 
@@ -161,4 +156,4 @@ By default, Detox is designed to ignore `setInterval` and will only wait for `se
 
 #### Endless looping animations
 
-By default, Detox will wait until animations complete. If you have an endless looping animation, this may cause Detox to hang. In this case, consider turning off the animation synchronization or remove the endless loop in your E2E build with [mocking](https://github.com/wix/Detox/blob/master/docs/Guide.Mocking.md).
+By default, Detox will wait until animations complete. If you have an endless looping animation, this may cause Detox to hang. In this case, consider turning off the animation synchronization or remove the endless loop in your E2E build with [mocking](../guide/mocking.md).

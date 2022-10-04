@@ -1,11 +1,6 @@
----
-id: mocking-user-activity
-slug: api/mocking-user-activity
-title: Mocking User Activity
-sidebar_label: Mocking User Activity
----
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
-## Mocking User Activity
+# Mocking User Activity
 
 Detox supports mocking user activity for iOS apps.
 
@@ -41,7 +36,7 @@ await device.sendUserActivity(activity)
 **Example:**
 
 ```js
- 
+
 describe('Foreground user activity', () => {
 
 beforeEach(async () => {
@@ -81,7 +76,7 @@ For developer-generated user activities, use a custom `activityType` that is exp
 For system-generated user activities, use set the `activityType` to a predefined constant in Detox, like so:
 
 ```js
-const DetoxConstants = require('detox').DetoxConstants;
+const DetoxConstants = require('detox/index').DetoxConstants;
 
 const userActivityBrowsingWeb = {
   "activityType": DetoxConstants.userActivityTypes.browsingWeb,

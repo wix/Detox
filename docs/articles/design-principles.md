@@ -6,7 +6,7 @@ Traditionally, end-to-end tests on mobile are riddled with inherent issues, maki
 
 - **Detox does gray box, not black box** — Theoretically, it sounds better to test exactly what you ship as a black box. In practice, switching to gray box allows the test framework to monitor the app from the inside and delivers critical wins like fighting flakiness at the core
 
-- **Detox synchronizes with your app’s activity** — By being aware of what your app is doing and synchronizing with it, Detox times its actions, by default, to run only when your app is idle, meaning it has determined that your app has finished its work, such as animations, network requests, React Native load, etc. You can further read on this [here](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.Synchronization.md)
+- **Detox synchronizes with your app’s activity** — By being aware of what your app is doing and synchronizing with it, Detox times its actions, by default, to run only when your app is idle, meaning it has determined that your app has finished its work, such as animations, network requests, React Native load, etc. You can further read on this [here](../troubleshooting/synchronization.md)
 
 - **Built from the ground up for mobile apps, has first-class React Native support** — Detox is built from the ground up for native mobile and has a first-class support for React Native apps
 

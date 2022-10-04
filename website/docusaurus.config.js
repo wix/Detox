@@ -21,6 +21,32 @@ const config = {
       '@docusaurus/preset-classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        blog: {
+          path: 'blog',
+          // Simple use-case: string editUrl
+          // editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
+          // Advanced use-case: functional editUrl
+          editUrl: ({locale, blogDirPath, blogPath, permalink}) =>
+            `https://github.com/wix/Detox/edit/master/website/${blogDirPath}/${blogPath}`,
+          editLocalizedFiles: false,
+          authorsMapPath: 'authors.yml',
+          feedOptions: {
+            type: null,
+          },
+          blogTitle: 'Blog',
+          blogDescription: 'All the important updates and announcements from Detox crew, tips and tricks and everything else that you don\'t want to miss.',
+          blogSidebarCount: 5,
+          blogSidebarTitle: 'All our posts',
+          routeBasePath: 'blog',
+          include: ['**/*.{md,mdx}'],
+          exclude: [
+            '**/_*.*',
+            '**/_*/**',
+          ],
+          postsPerPage: 10,
+          truncateMarker: /<!--\s*(truncate)\s*-->/,
+          showReadingTime: true,
+        },
         docs: {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
@@ -54,20 +80,27 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'getting-started',
+            docId: 'introduction/getting-started',
             position: 'left',
-            label: 'Documentation'
+            label: 'Docs'
+          },
+          {
+            type: 'doc',
+            docId: 'config/overview',
+            position: 'left',
+            label: 'API'
           },
           {
             type: 'docsVersionDropdown',
-            position: 'left',
+            position: 'right',
             dropdownActiveClassDisabled: true,
           },
           {
             href: 'https://github.com/wix/Detox',
-            label: 'GitHub',
-            position: 'right'
-          }
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
+          },
         ]
       },
       algolia: {

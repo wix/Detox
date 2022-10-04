@@ -21,7 +21,7 @@ we’re going to need a _debug_ build:
 detox build -c ios.sim.debug # or android.emu.debug
 ```
 
-Check out [Introduction > Building with Detox](introduction/building-with-detox.mdx) for more details.
+Check out [Introduction > Building with Detox](../introduction/building-with-detox.mdx) for more details.
 
 ### Step 2: Make Sure Your React-Native Packager is Running
 

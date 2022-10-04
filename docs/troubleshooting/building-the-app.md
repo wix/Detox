@@ -1,15 +1,6 @@
----
-id: building-the-app
-slug: troubleshooting/building-the-app
-title: Dealing With Problems With Building the App & Detox
-sidebar_label: Dealing With Problems With Building the App & Detox
----
-
-## Dealing With Problems With Building the App & Detox
+# Dealing With Problems With Building the App & Detox
 
 This page is about issues related to building the app, typically triggered when running `detox build` (and not `detox test`, for example).
-
-For troubleshooting of other issue, refer to our [troubleshooting index](Troubleshooting.md).
 
 ## Android
 
@@ -73,7 +64,7 @@ Of all [Kotlin implementation flavors](https://kotlinlang.org/docs/reference/usi
 ```diff
 dependencies {
 -    androidTestImplementation('com.wix:detox:+')
-+    androidTestImplementation('com.wix:detox:+') { 
++    androidTestImplementation('com.wix:detox:+') {
 +        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 +    }
 }

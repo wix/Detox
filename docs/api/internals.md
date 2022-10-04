@@ -1,4 +1,4 @@
-# Internals
+# Internals API
 
 :::caution
 
