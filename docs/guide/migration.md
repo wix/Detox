@@ -420,7 +420,7 @@ For issue related to these migrations, approach us by [submitting an issue on Gi
 ## 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
-Please refer to the [configuration doc](../config/overview.md) to obtain more details.
+Please refer to the [configuration doc](../config/overview.mdx) to obtain more details.
 This change is backward-compatible, although the new format is now the recommended option.
 
 ## 18.0

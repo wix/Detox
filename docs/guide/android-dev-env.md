@@ -228,7 +228,7 @@ Assuming you have the APK available in the system, you can dynamically have Deto
 }
 ```
 
-> Refer to our [configuration guide](../config/apps.md) for further details on `utilBinaryPaths`.
+> Refer to our [configuration guide](../config/apps.mdx) for further details on `utilBinaryPaths`.
 
 As per _making_ the APK available - for that, we have no really good solution, for the time being (but it’s in the works). A few options might be:
 

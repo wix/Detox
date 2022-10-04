@@ -44,7 +44,7 @@ Taking a screenshot of the entire screen can be done using a device-level API:
 const imagePath = await device.takeScreenshot('opened general section');
 ```
 
-The API immediately returns the path of a temporary, readable image file where the screenshot is stored, all-the-while scheduling the transferring of it to the [artifacts folder](../config/artifacts.md#enabling-artifacts) upon completion of the currently running test.
+The API immediately returns the path of a temporary, readable image file where the screenshot is stored, all-the-while scheduling the transferring of it to the [artifacts folder](../config/artifacts.mdx#enabling-artifacts) upon completion of the currently running test.
 
 **Returns:**
 

@@ -1,29 +1,44 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import Location from './partials/_location-dictionaries.mdx';
+
 # Apps
 
 The format of Detox config allows you to define inside it multiple app configs in a key-value manner, i.e.:
 
-```js
+## Location
+
+<Location sectionName="apps" propertyName="app" />
+
+## Examples
+
+<Tabs groupId="mobileOS">
+  <TabItem value="ios.app" label="ios.app" default>
+
+```json
 {
-  "devices": {
-    // ... see above ...
-  },
-  "apps": {
-    "ios.debug": {
-      "type": "ios.app",
-      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
-    },
-    "android.release": {
-      "type": "android.apk",
-      "binaryPath": "path/to/myApp.apk",
-      "build": "..."
-    }
-  },
-  "configurations": {
-    // ... see above ...
-  }
+  "type": "ios.app",
+  "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+  "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
 }
 ```
+
+  </TabItem>
+  <TabItem value="android.apk" label="android.apk">
+
+```json
+{
+  "type": "android.apk",
+  "binaryPath": "path/to/myApp.apk",
+  "build": "cd android && ./gradlew …"
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Properties
 
 An app config can have the following params:
 
@@ -35,6 +50,9 @@ An app config can have the following params:
 | `build`              | **\[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience.                                                          |
 | `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                         |
 | `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](../guide/launch-args.md). |
+| `reversePorts`       | **(optional, Android only)** An array of TCP ports to reverse, so that the network requests to `localhost:{port}` on Android device are going to be forwarded to the host machine.                                    |
+
+## Multiple apps
 
 To work with multiple apps within the same configuration you should be giving each app its name, e.g.:
 
@@ -70,21 +88,4 @@ await device.launchApp();
 await device.selectApp('passenger');
 await device.launchApp();
 // ... run tests ...
-```
-
-Similar to device configs, any app config can be inlined as well:
-
-```js
-{
-  "configurations": {
-    "ios.sim.debug": {
-      "device": "simulator",
-      "app": {
-        "type": "ios.app",
-        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
-      }
-    }
-  }
-}
 ```

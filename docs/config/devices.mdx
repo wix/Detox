@@ -1,51 +1,79 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import Location from './partials/_location-dictionaries.mdx';
+
 # Devices
 
 The format of Detox config allows you to define inside it multiple device configs in a key-value manner, i.e.:
 
-```js
-module.exports = {
-  "devices": {
-    "simulator": {
-      "type": "ios.simulator",
-      "device": {
-        // one of these or a combination of them
-        "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
-        "type": "iPhone 11 Pro",
-        "name": "MySim",
-        "os": "iOS 13.0"
-      }
-    },
-    "emulator": {
-      "type": "android.emulator",
-      "device": {
-        "avdName": "Pixel_2_API_29"
-      },
-      "utilBinaryPaths": [
-        "optional-property-with/path/to/test-butler-or-anything-else.apk"
-      ]
-    },
-    "android.attached": {
-      "type": "android.attached",
-      "device": {
-        "adbName": "YOGAA1BBB412"
-      }
-    },
-    "android.genycloud": {
-      "type": "android.genycloud",
-      "device": {
-        "recipeUUID": "11111111-2222-3333-4444-555555555555"
-        // or recipeName: "MyRecipeName",
-      }
-    }
+## Location
+
+<Location sectionName="devices" propertyName="device" />
+
+## Examples
+
+<Tabs groupId="deviceType">
+  <TabItem value="ios.simulator" default>
+
+```json
+{
+  "type": "ios.simulator",
+  "device": {
+    // one of these or a combination of them
+    "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
+    "type": "iPhone 11 Pro",
+    "name": "MySim",
+    "os": "iOS 13.0"
   },
-  "apps": {
-    // ... see next API page ...
-  },
-  "configurations": {
-    // ... see previous API page ...
-  }
-};
+}
 ```
+
+  </TabItem>
+  <TabItem value="android.emulator">
+
+```json
+{
+  "type": "android.emulator",
+  "device": {
+    "avdName": "Pixel_2_API_29"
+  },
+  "utilBinaryPaths": [
+    "optional-property-with/path/to/test-butler-or-anything-else.apk"
+  ]
+}
+```
+
+  </TabItem>
+  <TabItem value="android.attached">
+
+```json
+{
+  "type": "android.attached",
+  "device": {
+    "adbName": "YOGAA1BBB412"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="android.genycloud">
+
+```json
+{
+  "type": "android.genycloud",
+  "device": {
+    // one of these:
+    "recipeUUID": "11111111-2222-3333-4444-555555555555"
+    "recipeName": "MyRecipeName",
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Properties
 
 A device config can have the following params:
 
@@ -59,22 +87,3 @@ A device config can have the following params:
 | `gpuMode`            | _Optional. String Literal (<code>auto \| host \| swiftshader\_indirect \| angle\_indirect \| guest</code>). Supported by `android.emulator` only._ <br/> A fixed **string** , which tells [in which GPU mode](https://developer.android.com/studio/run/emulator-acceleration#command-gpu) the emulator should be booted.                                                                                                                                                                            |
 | `headless`           | _Optional. Boolean._ `false` by default. When set to `true`, it tells Detox to boot an Android emulator with `-no-window` option, or to not open the iOS Simulator app when running with Android or iOS respectively.                                                                                                                                                                                                                                                                               |
 | `readonly`           | _Optional. Boolean. Supported by `android.emulator` only._ <br/>  `false` by default. When set to `true`, it forces Detox to boot even a single emulator with `-read-only` option.<br/>**Note**: when used with multiple workers, this setting has no effect — emulators will be booted always with `-read-only`.                                                                                                                                                                                   |
-
-Also, in the Detox `configurations` you can use the device configs as-is, without aliasing:
-
-```js
-{
-  "configurations": {
-    "ios.sim.debug": {
-      "device": {
-        "type": "ios.simulator",
-        "device": {
-          "type": "iPhone 12 Pro"
-        }
-      },
-      "app": "alias-to-app"
-      // ...
-    }
-  }
-}
-```

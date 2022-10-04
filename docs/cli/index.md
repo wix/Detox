@@ -182,5 +182,5 @@ Detox stores a cached version of its framework in `~/Library/Detox`. A different
 [^2]: If `--artifacts-location` path does not end with a slash (`/`) or a backslash, then detox CLI will append to the
     path a subdirectory with configuration name and timestamp (e.g. `artifacts/android.emu.release.2018-06-12 05:52:43Z`).
     In other words, the path with a slash at the end assumes you do not want a subdirectory inside.
-    For more details, please check the [Enabling artifacts](../config/artifacts.md#artifacts).
+    For more details, please check the [Enabling artifacts](../config/artifacts.mdx#artifacts).
     The default value is **artifacts** (plus a subdirectory).
