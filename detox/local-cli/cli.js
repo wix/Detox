@@ -1,8 +1,11 @@
 #!/usr/bin/env node
+const fs = require('fs');
+
+const _ = require('lodash');
 const yargs = require('yargs');
 
+const logger = require('../internals').log.child({ cat: 'cli' });
 const DetoxError = require('../src/errors/DetoxError');
-const logger = require('../src/utils/logger').child({ cat: 'cli' });
 
 yargs
   .scriptName('detox')
@@ -25,12 +28,11 @@ yargs
   .wrap(yargs.terminalWidth() * 0.9)
   .fail(function(msg, err, program) {
     if (err) {
-      const lines = DetoxError.format(err).split('\n');
-      for (const line of lines) {
-        logger.error(line);
-      }
+      logger.error(DetoxError.format(err));
       // eslint-disable-next-line no-console
       console.error('');
+      // @ts-ignore
+      _.attempt(() => fs.unlinkSync(logger.file));
       // eslint-disable-next-line no-process-exit
       process.exit(1);
     }
