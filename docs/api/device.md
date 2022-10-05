@@ -26,7 +26,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 ### `device.appLaunchArgs`
 
 Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](../config/apps.mdx)
-and [command-line arguments](../cli/index.md). This access allows, through dedicated methods, for both value-querying and modification:
+and [command-line arguments](../cli/test.md). This access allows, through dedicated methods, for both value-querying and modification:
 
 ```js
 // Modify some of the predefined arguments:

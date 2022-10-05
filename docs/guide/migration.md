@@ -581,6 +581,6 @@ This does not require that your app require iOS 12.2, only that you build and ru
 
 [Jest]: https://jestjs.io
 
-[`detox init`]: ../cli/index.md#init
+[`detox init`]: ../cli/init.md
 
 [`testRunner` config]: ../config/testRunner.mdx

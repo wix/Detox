@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Mocking Open With URL (Deep Links)
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 You can mock opening the app from URL to test your app’s deep link handling mechanism.
 

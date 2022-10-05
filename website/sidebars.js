@@ -64,7 +64,22 @@ const sidebars = {
     },
   ],
   apiSidebar: [
-    'cli/index',
+    {
+      type: 'category',
+      label: 'Command Line Interface',
+      items: [
+        'cli/overview',
+        'cli/init',
+        'cli/build',
+        'cli/test',
+        'cli/recorder',
+        'cli/build-framework-cache',
+        'cli/clean-framework-cache',
+        'cli/rebuild-framework-cache',
+        'cli/reset-lock-file',
+        'cli/run-server',
+      ]
+    },
     {
       type: 'category',
       label: 'Config file',
@@ -93,7 +108,7 @@ const sidebars = {
     'api/internals',
     {
       type: 'category',
-      label: 'Tech articles',
+      label: 'Tech Articles',
       items: [
         'articles/design-principles',
         'articles/how-detox-works',

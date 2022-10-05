@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Mocking User Activity
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 Detox supports mocking user activity for iOS apps.
 

@@ -1,30 +1,108 @@
 # Logger
 
-TODO: rewrite this document
+Detox Logger API allows you to save your custom messages and events alongside the built-in ones. In addition to being formatted and printed to the console, they can be preserved as artifacts: `detox.log` (plain text) and `detox.trace.json` (Google Chrome Trace Event format) files, if you enable that via CLI argument (`--record-logs`) or via config file (`artifacts.plugins.log.enabled`).
+
+## Properties
+
+### `log.level` \[enum]
+
+Default: `info`.
+
+Possible values: `fatal`, `error`, `warn`, `info`, `debug`, `trace`.
 
 ## Methods
 
-- [`detox.traceCall()`](#detoxtracecall)
-- [`detox.trace.startSection(), detox.trace.endSection()`](#detoxtracestartsection-detoxtraceendsection)
+### `log.*([event,] ...msg)`
+
+Logs an instant message with an optional [event metadata].
+There are six methods for producing log messages varying by log level:
+
+* `log.fatal([event,] ...msg)`
+* `log.error([event,] ...msg)`
+* `log.warn([event,] ...msg)`
+* `log.info([event,] ...msg)`
+* `log.debug([event,] ...msg)`
+* `log.trace([event,] ...msg)`
+
+Example:
 
 ```js
+const { log } = require('detox');
+
+log.info('A simple message');
+// detox[2020] i A simple
+
+log.error({ err: new Error('Test') }, 'An error message');
+// detox[2020] i An error message
+//   err: Test
+```
+
+### `log.*.begin([event,] msg)`
+
+Logs a beginning of a duration event with an optional [event metadata].
+
+```js
+log.info.begin('Login Flow');
+// detox[2020] E Login Flow
+```
+
+TODO: Mention unfinished events and how they look like.
+
+### `log.*.end([event,] msg)`
+
+Logs an end of a duration event with an optional [event metadata].
+
+```js
+log.info.end({ success: true }, 'Login Flow');
+// detox[2020] E Login Flow
+```
+
+### `log.*.complete([event,] msg, callback)`
+
+A convenience method to wrap functions and promises with `log.*.begin([event,] msg)` and `log.*.end([event,] msg)`.
+
+```plain text
+detox[2020] B Your custom event
+detox[2020] E Your custom event
+```
+
+TODO: rewrite this document
+
+## Example
+
+```js
+const { log } = require('detox');
+
 it('Verify sanity things', async () => {
   try {
-    detox.trace.startSection('Turn off notifications');
+    log.info.begin('Turn off notifications');
     await element(by.id('gotoNotifications')).tap();
     await element(by.id('notificationsToggle')).tap();
     await device.pressBack();
   } finally {
-    detox.trace.endSection('Turn off notifications');
+    log.trace.end('Turn off notifications');
   }
 });
 ```
 
-Effectively, `start` and `end` can even be called in two complete different places - such as a `before` and an `after`. But that is discouraged. In fact, **usage of `detox.traceCall()` is the recommended way of tracing things, altogether.**
+Effectively, `begin` and `end` can even be called in two complete different places - such as `beforeEach` and `afterEach`, but that is discouraged.
 
-### Timeline Plugin
+In fact, `log.*.complete()` is the recommended way of tracing things, e.g.:
 
-When enabled using the `--record-timeline all` argument to Detox, the time-line of the entire testing session is recorded, based on trace calls made by Detox internally, and explicit calls made in user test-code, combined.
+```js
+const detox = require('detox');
+
+it('Verify sanity things', async () => {
+  await detox.log.info.complete(('Turn off notifications', async () => {
+    await element(by.id('gotoNotifications')).tap();
+    await element(by.id('notificationsToggle')).tap();
+    await device.pressBack();
+  });
+});
+```
+
+## `detox.trace.json`
+
 The final outcome is a JSON-like file named `detox.trace.json`, which, if loaded into a Chrome-browser tab with the `chrome://tracing` URL, would look something like this:
 
 ![Timeline artifact example](../img/timeline-artifact.png)
@@ -44,9 +122,3 @@ In the above example, the following can be observed:
 1. There were 2 Android emulators used for running the test session, namely `emulator-17800` and `emulator-12466`. They were used by worker 1 and worker 2, respectively.
 1. It took about a total of 54 seconds to initialize and run all the tests.
 1. The first worker took longer to initialize (as depicted by the `detoxInit` section). In particular, that happened because it took longer for the associated emulator too finish bootstrapping (see the child `awaitBoot` section). That suggests there might be a problem with the test execution environment.
-
-### Purpose
-
-**This artifact can be helpful in looking up ways to optimize the execution of your E2E tests.** It may surface shortcomings in the test environment’s ability to run the test, or provide a means to consider different ways of splitting up your tests over test files so as to better utilize parallelism.
-
-The artifact can in fact be even better utilized – to the level of inspecting the inside of your tests, by explicitly calling `trace` via the `detox.traceCall()` and `detox.trace.startSection()`, `detox.trace.endSection()` [APIs](#detoxtracecall) inside your tests.

@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Contributing
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 This guide is about contributing to our codebase.
 
