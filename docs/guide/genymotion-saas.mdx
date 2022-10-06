@@ -215,11 +215,10 @@ We plan to improve this behavior and secure emergency teardown someday, but befo
 should be resolved (see it below). Besides, `Ctrl+C`'ing proves to be useful when you want to leave the device active
 at some point of your test scenario and interact with it manually.
 
-### `behavior.shutdownDevice` is ignored
+### `behavior.shutdownDevice` cannot be disabled
 
-Detox CLI has [`-u, --cleanup` argument], and the behavior config has the respective [`shutdownDevice`
-property], but **none of them has effect** on Genymotion SaaS devices. Detox _always shuts them down_ in the end
-of the test session, unless you abruptly terminate its execution (see the previous caveat).
+Detox CLI has [`-u, --cleanup` argument], and the behavior config has the respective [`shutdownDevice` property], but **none of them can be effectively disabled** on Genymotion SaaS devices.
+Detox _always shuts them down_ in the end of the test session, unless you abruptly terminate its execution (see the previous caveat).
 
 In other words, you can't leave Genymotion SaaS devices up and running after your test session ends. On the ond hand,
 that reduces your chances to forget a running device. On the other hand, that doesn't allow you to keep a pool of

@@ -21,23 +21,25 @@ To fix that, you’d need to return to your app build script:
      …
 // highlight-next-line
          release {
-             minifyEnabled true
+             minifyEnabled true /* (1) */
 
 // highlight-next-line
-             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+   /* (2) */ proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
 // highlight-next-line
-+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
++  /* (3) */ proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
          }
      }
 ```
 
-1. `release` build type is usually expected to have ProGuard enabled
-1. Typical pro-guard definitions. Check out Android docs to get to know more.
-1. Detox-specific additions to pro-guard
+1. `release` build type is typically the one to have ProGuard enabled.
+1. ProGuard files present by default in React Native projects. Check out Android docs to get to know more.
+1. Detox-specific [exclude list](https://github.com/wix/Detox/blob/master/detox/android/detox/proguard-rules.pro) for ProGuard.
 
-:warning: **Note:** In order for Detox to be able to work properly, in `proguard-rules-app.pro`,
-it effectively declares rules that retain most of React-Native’s code
-(i.e. keep it unminified, unobfuscated) in your **production** APK.
+:::info
+
+In order for Detox to be able to work properly, in `proguard-rules-app.pro`, it effectively declares rules that retain most of React-Native’s code (i.e. keep it unminified, unobfuscated) in your **production** APK.
+
+:::
 
 Though generally speaking, this should not be an issue (as React-Native is an open-source project),
 there are ways around that, if it bothers you.
