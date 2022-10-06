@@ -162,6 +162,7 @@ const config = {
         },
       },
       prism: {
+        additionalLanguages: ['gradle', 'ini', 'java'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
       }

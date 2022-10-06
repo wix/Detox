@@ -87,7 +87,7 @@ You can run Detox on Bitrise by creating a new workflow. Below is an example of 
 
 Additionally, you can use a [webhook](https://devcenter.bitrise.io/en/apps/webhooks/adding-incoming-webhooks.html) on Bitrise to post the build status directly into your Slack channel.
 
-```yml
+```yaml
 ---
 format_version: 1.1.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
@@ -160,7 +160,7 @@ GitLab is also a popular git management service which also include a built-in CI
 
 One example of such job can be:
 
-```yml
+```yaml
 detox_e2e:
   stage: test
   image: reactnativecommunity/react-native-android

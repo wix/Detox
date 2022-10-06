@@ -45,7 +45,7 @@ gem install xcpretty
 #### Clone Detox and Submodules
 
 ```bash
-git clone git@github.com:wix/detox.git
+git clone git@github.com:wix/Detox.git
 cd detox
 git submodule update --init --recursive
 ```
@@ -127,7 +127,11 @@ Each build can be triggered separately by running its Gradle assembling task (un
 
 ```bash
 ./gradlew assembleFromSourceDebug
--or-
+```
+
+or:
+
+```bash
 ./gradlew assembleFromBinDebug
 ```
 
@@ -164,7 +168,7 @@ The [documentation website](https://wix.github.io/Detox) is built using [Docusau
 
 To run the website locally, run the following commands:
 
-```bash
+```bash npm2yarn
 cd website
 npm install
 npm start

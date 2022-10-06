@@ -58,7 +58,7 @@ export interface BunyanDebugStreamOptions {
 There's one caveat inside `logger.options`, however – all the custom functions **must not** use closures! That's
 because they get `eval()`-ed every time the test runner spawns a new child worker process. In other words:
 
-```javascript
+```js
 const dontDoThis = date => date.toISOString();
 
 module.exports = {

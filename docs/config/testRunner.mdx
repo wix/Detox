@@ -251,7 +251,7 @@ All the listed properties vary from mandatory to strongly recommended, and below
 
    Change it only if you want to change **the default value**. For instance, you could use different number of workers depending on the environment, e.g.:
 
-   ```javascript
+   ```js
    /** @type {import('@jest/types').Config.InitialOptions} */
    module.exports = {
      // …
@@ -262,7 +262,7 @@ All the listed properties vary from mandatory to strongly recommended, and below
 
 1. `globalSetup` file is essential as it integrates with Detox Internals API. If you need to set up something in addition, you should wrap it like this:
 
-   ```javascript
+   ```js
    module.exports = async () => {
       await require('detox/runners/jest').globalSetup();
       await yourGlobalSetupFunction();
@@ -323,7 +323,7 @@ All the listed properties vary from mandatory to strongly recommended, and below
 Unless `behavior.init.exposeGlobals` is set to `false`, Detox exposes its primitives (`expect`, `device`, ...) globally, and it will override Jest’s global `expect` object.
 If you need to use it nevertheless, import it explicitly:
 
-```javascript
+```js
 import jestExpect from 'expect';
 ```
 
