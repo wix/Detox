@@ -8,7 +8,8 @@ Since we focus on React Native and yet require some test runner under the hood, 
 
 The integration with a test runner is a matter of the configuration, not the implementation – Detox source code has no hard-coded logic for Jest save for a few minor places[^1]. Furthermore, we're looking forward to new third-party integrations with popular test runners as the [Internals API](../api/internals.md) keeps improving.
 
-[^1]: Detox has a few hard-coded default values for Jest: `testRunner.args.$0` (default value: `'jest'`) and `testRunner.inspectBrk` hook (mutates `testRunner.args` to clean `w`, `maxWorkers` and set `runInBand: true` instead). Also `detox test` CLI is aware of Jest boolean arguments (e.g. `-i, --runInBand`, `--bail`, etc.), and it can auto-fix ambiguous commands like `detox test --runInBand e2e/starter.test.js --bail`. In other words, it is aware that `e2e/starter.test.js` is not a value of `--runInBand` parameter. We're looking forward to make the code even more agnostic, but currently these caveats are worth mentioning for the developers of third-party test runner integrations.
+[^1]: Detox has a few hard-coded default values for Jest: [`testRunner.args.$0`] and [`testRunner.inspectBrk`] hook. Also `detox test` CLI is aware of Jest boolean arguments (e.g. `-i, --runInBand`, `--bail`, etc.), and it can auto-fix ambiguous commands like `detox test --runInBand e2e/starter.test.js --bail`.
+We're looking forward to make the code even more agnostic, but currently these caveats are worth mentioning for the developers of third-party test runner integrations.
 
 ## Location
 
@@ -144,6 +145,36 @@ DETOX_CONFIGURATION=ios.sim.debug DETOX_RECORD_LOGS=all jest …
 ```
 
 Nevertheless, even if it is disabled, Detox will keep printing hints how to call your test runner without Detox CLI, so that you can copy and paste the command into your IDE when you want to debug something.
+
+### `testRunner.inspectBrk` \[function]
+
+:::caution
+
+This property is intended primarily for developing integrations with third-party test runners.
+
+:::
+
+Default: _a Jest-specific callback that sets `$0`, `--runInBand` and cleans `-w, --maxWorkers`_.
+
+The provided function is called when [`detox test`](../cli/test.md) is called with `--inspect-brk`.
+Your implementation should prepare [`testRunner.args`] for [debugging with Node.js inspector](../introduction/debugging.mdx), e.g. for Jest that would be:
+
+```js title=".detoxrc.js"
+/* @type {Detox.DetoxConfig} */
+module.exports = {
+  testRunner: {
+    /** @param {Detox.DetoxTestRunnerConfig} config */
+    inspectBrk: (config) => {
+      config.args.$0 = os.platform() === 'win32'
+        ? `node --inspect-brk ./node_modules/jest/bin/jest.js`
+        : `node --inspect-brk ./node_modules/.bin/jest`;
+      config.args.runInBand = true;
+      delete config.args.w;
+      delete config.args.workers;
+    },
+  },
+};
+```
 
 ### `testRunner.jest` \[object]
 
@@ -372,3 +403,7 @@ detox test -c ios.sim.debug -- --help
 # Options:
 # …
 ```
+
+[`testRunner.args`]: #testrunnerargs-object
+[`testRunner.args.$0`]: #testrunnerargs0-string
+[`testRunner.inspectBrk`]: #testrunnerinspectbrk-function
