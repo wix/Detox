@@ -11,6 +11,7 @@
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
 
 declare global {
+    const detox: Detox.DetoxExportWrapper;
     const device: Detox.DetoxExportWrapper['device'];
     const element: Detox.DetoxExportWrapper['element'];
     const waitFor: Detox.DetoxExportWrapper['waitFor'];
@@ -20,6 +21,7 @@ declare global {
 
     namespace NodeJS {
         interface Global {
+            detox: Detox.DetoxExportWrapper;
             device: Detox.DetoxExportWrapper['device'];
             element: Detox.DetoxExportWrapper['element'];
             waitFor: Detox.DetoxExportWrapper['waitFor'];

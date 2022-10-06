@@ -14,11 +14,16 @@ The `logger` section controls how the printed logs are going to look like in you
 
 ## `logger.level` \[enum\]
 
-Possible values: `fatal`, `error`, `warn`, `info`, `debug`, `trace`.
-
 Default: `info`.
 
-Suppresses printing non-important messages in the terminal.
+Possible values in the descending severity order: `fatal`, `error`, `warn`, `info`, `debug`, `trace`.
+
+* Use `info` by default.
+* Use `error` or `warn` when you want to make the output as silent as possible.
+* Use `debug` to control what generally is happening under the hood.
+* Use `trace` when troubleshooting specific issues.
+
+Please note that the log level has no effect on the [generated log files](artifacts.mdx) and their content – it filters only the messages printed to your terminal.
 
 ## `logger.overrideConsole` \[boolean\]
 
