@@ -83,7 +83,7 @@ module.exports = CustomDetoxEnvironment;
 
 If you want, for example:
 
-- to reduce `initTimeout` to 120 seconds,
+- to reduce the init timeout to 120 seconds,
 - remove `SpecReporter` output,
 - remove `WorkerAssignReporter` output,
 
@@ -100,7 +100,7 @@ module.exports = {
     },
 // highlight-start
     jest: {
-      initTimeout: 120000,
+      setupTimeout: 120000,
       reportSpecs: false,
       reportWorkerAssign: false,
     },
@@ -129,7 +129,7 @@ module.exports = CustomDetoxEnvironment;
 
 Pay attention that the import has been changed to `detox/runners/jest` (previously it was `detox/runners/jest-circus`),
 and the reporters (`SpecReporter`, `WorkerAssignReporter`) are no longer exported. You can continue using
-`initTimeout` if you want it there, but you can also delegate that to Detox config like shown earlier.
+`this.initTimeout` if you rename it there to `this.setupTimeout`, but you can also delegate that to Detox config like shown earlier.
 
 ### New Jest config
 

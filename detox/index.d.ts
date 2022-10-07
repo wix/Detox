@@ -139,9 +139,13 @@ declare global {
              */
             jest?: {
                 /**
-                 * Device init timeout
+                 * Environment setup timeout
                  */
-                initTimeout?: number | undefined;
+                setupTimeout?: number | undefined;
+                /**
+                 * Environment teardown timeout
+                 */
+                teardownTimeout?: number | undefined;
                 /**
                  * Insist on CLI-based retry mechanism even when the failed tests have been handled
                  * by jest.retryTimes(n) mechanism from Jest Circus.

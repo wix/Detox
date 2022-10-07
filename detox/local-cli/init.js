@@ -76,7 +76,7 @@ function createDefaultConfigurations() {
         config: 'e2e/jest.config.js',
       },
       jest: {
-        initTimeout: 120000,
+        setupTimeout: 120000,
       },
     },
     apps: {

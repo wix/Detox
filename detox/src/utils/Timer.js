@@ -5,8 +5,9 @@ const Deferred = require('./Deferred');
 
 class Timer {
   /**
-   * @param {string} description - gives more context for thrown errors
-   * @param {number} timeout - maximal allowed duration in milliseconds
+   * @param {object} options
+   * @param {string} options.description - gives more context for thrown errors
+   * @param {number} options.timeout - maximal allowed duration in milliseconds
    */
   constructor({ description, timeout }) {
     /** @private */

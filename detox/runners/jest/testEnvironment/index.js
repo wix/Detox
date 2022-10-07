@@ -1,6 +1,6 @@
 const resolveFrom = require('resolve-from');
 const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
-// @ts-ignore
+/** @type {typeof import('@jest/environment').JestEnvironment} */
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const detox = require('../../../internals');
@@ -34,16 +34,6 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     super(assertJestCircus27(config), assertExistingContext(context));
 
     /** @private */
-    this._timer = null;
-    /** @private */
-    this._listenerFactories = {
-      DetoxInitErrorListener,
-      DetoxPlatformFilterListener,
-      DetoxCoreListener,
-      SpecReporter,
-      WorkerAssignReporter,
-    };
-    /** @private */
     this._shouldManageDetox = detox.getStatus() === 'inactive';
     /** @private */
     this._setupFailed = false;
@@ -52,50 +42,69 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.initTimeout = detox.config.testRunner.jest.initTimeout;
+    this.setupTimeout = detox.config.testRunner.jest.setupTimeout;
+    /** @protected */
+    this.teardownTimeout = detox.config.testRunner.jest.setupTimeout;
     /** @internal */
     log.trace.begin(this.testPath);
 
-    this.setup = log.trace.complete.bind(null, 'set up environment', this.setup.bind(this));
+    const _setup = this.setup.bind(this);
+    this.setup = async () => {
+      await log.trace.complete('set up environment', async () => {
+        try {
+          await Timer.run({
+            description: `setting up Detox environment`,
+            timeout: this.setupTimeout,
+            fn: _setup,
+          });
+        } catch (e) {
+          await this._onSetupFailed(e);
+        }
+      });
+    };
+
     const _teardown = this.teardown.bind(this);
     this.teardown = async () => {
       try {
-        await log.trace.complete('tear down environment', _teardown);
+        await log.trace.complete('tear down environment', async () => {
+          await Timer.run({
+            description: `tearing down Detox environment`,
+            timeout: this.setupTimeout,
+            fn: _teardown,
+          });
+        });
+      } catch (e) {
+        await this._onTeardownFailed(e);
       } finally {
         await log.trace.end();
       }
     };
+
+    this.registerListeners({
+      DetoxInitErrorListener,
+      DetoxPlatformFilterListener,
+      DetoxCoreListener,
+      SpecReporter,
+      WorkerAssignReporter,
+    });
   }
 
   /** @override */
   async setup() {
-    try {
-      await super.setup();
-      await Timer.run({
-        description: `setting up Detox environment`,
-        timeout: this.initTimeout,
-        fn: async () => {
-          await this.initDetox();
-          this._instantiateListeners();
-        },
-      });
-    } catch (e) {
-      this._setupFailed = true;
-      throw e;
-    }
+    await this.initDetox();
+    await this._emitCustomEvent('environment_setup');
   }
 
-  /** @override */
-  async handleTestEvent(event, state) {
+  handleTestEvent = async (event, state) => {
     const { name } = event;
 
     if (SYNC_CIRCUS_EVENTS.has(name)) {
       return this._handleTestEventSync(event, state);
     }
 
-    this._timer = new Timer({
+    const timer = new Timer({
       description: `handling jest-circus "${name}" event`,
-      timeout: state.testTimeout != null ? state.testTimeout : this.initTimeout,
+      timeout: state.testTimeout != null ? state.testTimeout : this.setupTimeout,
     });
 
     try {
@@ -105,7 +114,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         }
 
         try {
-          await this._timer.run(() => listener[name](event, state));
+          await timer.run(() => listener[name](event, state));
         } catch (listenerError) {
           log.error(listenerError);
           break;
@@ -115,28 +124,26 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       this._timer.dispose();
       this._timer = null;
     }
-  }
+  };
 
   /** @override */
   async teardown() {
-    await Timer.run({
-      description: `tearing down Detox environment`,
-      timeout: this.initTimeout,
-      fn: async () => {
-        try {
-          if (this._setupFailed) {
-            await detox.reportFailedTests([this.testPath], false);
-          }
-        } finally {
-          await this.cleanupDetox();
-        }
-      },
-    });
+    try {
+      if (this._setupFailed) {
+        await detox.reportFailedTests([this.testPath], false);
+      }
+    } finally {
+      await this.cleanupDetox();
+    }
   }
 
   /** @protected */
   registerListeners(map) {
-    Object.assign(this._listenerFactories, map);
+    for (const Listener of Object.values(map)) {
+      this.testEventListeners.push(new Listener({
+        env: this,
+      }));
+    }
   }
 
   /**
@@ -153,6 +160,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     } else {
       await detox.installWorker(opts);
     }
+
+    return detox.worker;
   }
 
   /** @protected */
@@ -161,6 +170,50 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       await detox.cleanup();
     } else {
       await detox.uninstallWorker();
+    }
+  }
+
+  /**
+   * @param {Error} e
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _onSetupFailed(e) {
+    try {
+      this._setupFailed = true;
+
+      const timer = new Timer({
+        description: `handling DetoxCircusEnvironment#setup() error`,
+        timeout: this.teardownTimeout,
+      });
+
+      await this._handleTestEventAsync(timer, {
+        name: 'environment_setup_failure',
+        error: e,
+      });
+    } finally {
+      throw e;
+    }
+  }
+
+  /**
+   * @param {Error} e
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _onTeardownFailed(e) {
+    try {
+      const timer = new Timer({
+        description: `handling DetoxCircusEnvironment#teardown() error`,
+        timeout: this.teardownTimeout,
+      });
+
+      await this._handleTestEventAsync(timer, {
+        name: 'environment_setup_failure',
+        error: e,
+      });
+    } finally {
+      throw e;
     }
   }
 
@@ -176,13 +229,30 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   }
 
   /** @private */
-  _instantiateListeners() {
-    for (const Listener of Object.values(this._listenerFactories)) {
-      this.testEventListeners.push(new Listener({
-        env: this,
-      }));
+  async _handleTestEventAsync(timer, event, state = null) {
+    try {
+      const { name } = event;
+
+      for (const listener of this.testEventListeners) {
+        if (typeof listener[name] === 'function') {
+          try {
+            await listener[name](event, state);
+          } catch (listenerError) {
+            log.error(listenerError);
+          }
+        }
+      }
+    } finally {
+      timer.dispose();
     }
   }
+
+  /**
+   * @private
+   */
+  async _emitCustomEvent(name, ...args) {
+  }
+
 }
 
 module.exports = DetoxCircusEnvironment;

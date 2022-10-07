@@ -181,11 +181,12 @@ module.exports = {
 This is an add-on section used by our Jest integration code (but not Detox core itself).
 In other words, if you’re implementing (or using) a custom integration with some other test runner, feel free to define a section for yourself (e.g. `testRunner.mocha`)
 
-### `testRunner.jest.initTimeout` \[number]
+### `testRunner.jest.setupTimeout` \[number]
 
 Default: `300000` (5 minutes).
 
-In the init phase (a part of the [environment setup](https://jestjs.io/docs/configuration/#testenvironment-string)), Detox boots the device and installs the apps. If that takes longer than the specified value, the entire test suite will be considered as failed, e.g.:
+As a part of the [environment setup](https://jestjs.io/docs/configuration/#testenvironment-string)), Detox boots the device and installs the apps.
+If that takes longer than the specified value, the entire test suite will be considered as failed, e.g.:
 
 ```plain text
  FAIL  e2e/starter.test.js
@@ -193,6 +194,12 @@ In the init phase (a part of the [environment setup](https://jestjs.io/docs/conf
 
     Exceeded timeout of 300000ms while setting up Detox environment
 ```
+
+### `testRunner.jest.teardownTimeout` \[number]
+
+Default: `30000` (30 seconds).
+
+If the [environment teardown](https://jestjs.io/docs/configuration/#testenvironment-string)) takes longer than the specified value, Detox will throw a timeout error.
 
 ### `testRunner.jest.reportSpecs` \[boolean | undefined]
 
