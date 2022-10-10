@@ -17,6 +17,10 @@ class DetoxCoreListener {
     this._testRunTimes = 1;
   }
 
+  async environment_setup_failure({ error }) {
+    await detoxInternals.reportFailedTests([this._env.testPath], false);
+  }
+
   async setup() {
     // Workaround to override Jest's expect
     if (detoxInternals.config.behavior.init.exposeGlobals) {

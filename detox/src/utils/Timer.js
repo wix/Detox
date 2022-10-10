@@ -1,65 +1,81 @@
-// @ts-nocheck
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const { DetoxRuntimeError, DetoxInternalError } = require('../errors');
 
 const Deferred = require('./Deferred');
 
 class Timer {
-  /**
-   * @param {object} options
-   * @param {string} options.description - gives more context for thrown errors
-   * @param {number} options.timeout - maximal allowed duration in milliseconds
-   */
-  constructor({ description, timeout }) {
+  constructor() {
     /** @private */
-    this._timeout = timeout;
-    /** @public */
-    this.description = description;
-
-    this._schedule();
+    this._eta = NaN;
+    /** @private */
+    this._timeout = NaN;
+    /** @type {NodeJS.Timer | null} */
+    this._timeoutHandle = null;
+    /** @type {Deferred | null} */
+    this._timeoutDeferred = null;
   }
 
-  _schedule() {
-    this._createdAt = Date.now();
+  clear() {
+    if (this._timeoutHandle) {
+      clearTimeout(this._timeoutHandle);
+      this._timeoutHandle = null;
+    }
+
+    this._eta = NaN;
+    this._timeout = NaN;
+    this._timeoutDeferred = null;
+  }
+
+  get expired() {
+    return this._timeoutDeferred ? this._timeoutDeferred.isResolved() : false;
+  }
+
+  /**
+   * @param {number} timeout - maximal allowed duration in milliseconds
+   */
+  schedule(timeout) {
+    this.clear();
+
+    this._eta = Date.now() + timeout;
+    this._timeout = timeout;
     this._timeoutDeferred = new Deferred();
     this._timeoutHandle = setTimeout(() => {
       this._timeoutDeferred.resolve();
     }, this._timeout);
+
+    return this;
   }
 
-  async run(action) {
+  extend(ms) {
+    if (this.expired) {
+      return this.schedule(ms);
+    }
+
+    clearTimeout(this._timeoutHandle);
+    this._eta += ms;
+    this._timeout += ms;
+    this._timeoutHandle = setTimeout(() => {
+      this._timeoutDeferred.resolve();
+    }, this._eta - Date.now());
+  }
+
+  async run(description, action) {
+    if (!this._timeoutDeferred) {
+      throw new DetoxInternalError('Cannot run a timer action from an uninitialized timer');
+    }
+
     const error = new DetoxRuntimeError({
-      message: `Exceeded timeout of ${this._timeout}ms while ${this.description}`,
+      message: `Exceeded timeout of ${this._timeout}ms while ${description}`,
       noStack: true,
     });
+
+    if (this.expired) {
+      throw error;
+    }
 
     return Promise.race([
       this._timeoutDeferred.promise.then(() => { throw error; }),
       Promise.resolve().then(action),
     ]);
-  }
-
-  dispose() {
-    clearTimeout(this._timeoutHandle);
-  }
-
-  reset(extraDelayMs) {
-    this._timeout = extraDelayMs;
-
-    if (this._timeoutDeferred.status !== Deferred.PENDING) {
-      this._schedule();
-    } else {
-      clearTimeout(this._timeoutHandle);
-      this._timeoutHandle = setTimeout(() => this._timeoutDeferred.resolve(), extraDelayMs);
-    }
-  }
-
-  static async run({ description, timeout, fn }) {
-    const timer = new Timer({ description, timeout });
-    try {
-      await timer.run(fn);
-    } finally {
-      timer.dispose();
-    }
   }
 }
 

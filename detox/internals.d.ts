@@ -92,7 +92,7 @@ declare global {
       testRunnerArgv: Record<string, unknown>;
       override: Partial<Detox.DetoxConfig>;
       /** @inheritDoc */
-      global: NodeJS.Global;
+      global: NodeJS.Global | {};
       /**
        * Worker ID. Used to distinguish allocated workers in parallel test execution environment.
        *
@@ -111,7 +111,7 @@ declare global {
        * {@link DetoxInternals.Facade#setup} might override {@link Console} methods
        * to integrate it with Detox loggeing subsystem.
        */
-      global: NodeJS.Global;
+      global: NodeJS.Global | {};
       /**
        * Worker ID. Used to distinguish allocated workers in parallel test execution environment.
        *
