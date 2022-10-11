@@ -236,15 +236,14 @@ class DetoxPrimaryContext extends DetoxContext {
       const { rootDir } = this[symbols.config].artifacts;
 
       await fs.mkdirp(rootDir);
-      const [out1Stream, out2Stream, out3Stream] = ['detox.log.jsonl', 'detox.log', 'detox.trace.json']
+      const [out1Stream, out2Stream] = ['detox.log', 'detox.trace.json']
         .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
 
       const mergedStream = streamUtils.uniteSessionLogs(sessionId);
 
       await Promise.all([
-        pipe(mergedStream, streamUtils.writeJSONL(), out1Stream),
-        pipe(mergedStream, streamUtils.debugStream(this[symbols.logger].config.options), out2Stream),
-        pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out3Stream),
+        pipe(mergedStream, streamUtils.debugStream(this[symbols.logger].config.options), out1Stream),
+        pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out2Stream),
       ]);
     }
 
