@@ -54,7 +54,9 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       await log.trace.complete('set up environment', async () => {
         try {
           this._timer.schedule(this.setupTimeout);
+          await this._handleTestEventAsync({ name: 'environment_setup_start' });
           await this._timer.run(`setting up Detox environment`, _setup);
+          await this._handleTestEventAsync({ name: 'environment_setup_success' });
         } catch (error) {
           this._timer.schedule(this.teardownTimeout);
           await this._handleTestEventAsync({ name: 'environment_setup_failure', error });
@@ -70,7 +72,9 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       await log.trace.complete('tear down environment', async () => {
         try {
           this._timer.schedule(this.teardownTimeout);
+          await this._handleTestEventAsync({ name: 'environment_teardown_start' });
           await this._timer.run(`tearing down Detox environment`, _teardown);
+          await this._handleTestEventAsync({ name: 'environment_teardown_success' });
         } catch (error) {
           if (this._timer.expired) {
             this._timer.schedule(this.teardownTimeout);
