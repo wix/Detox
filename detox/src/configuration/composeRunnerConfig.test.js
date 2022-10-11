@@ -38,12 +38,14 @@ describe('composeRunnerConfig', () => {
         _: [],
       },
       jest: {
-        initTimeout: 300000,
+        setupTimeout: 300000,
+        teardownTimeout: 30000,
         retryAfterCircusRetries: false,
         reportSpecs: undefined,
         reportWorkerAssign: true,
       },
       retries: 0,
+      bail: false,
       inspectBrk: false,
       forwardEnv: false,
     });
@@ -53,10 +55,11 @@ describe('composeRunnerConfig', () => {
     globalConfig.testRunner = {
       args: { $0: 'nyc jest' },
       jest: {
-        initTimeout: 5000,
+        setupTimeout: 5000,
         retryAfterCircusRetries: true,
         reportSpecs: false,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -68,11 +71,13 @@ describe('composeRunnerConfig', () => {
         _: [],
       },
       jest: {
-        initTimeout: 5000,
+        setupTimeout: 5000,
+        teardownTimeout: 30000,
         retryAfterCircusRetries: true,
         reportSpecs: false,
         reportWorkerAssign: true,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -83,10 +88,12 @@ describe('composeRunnerConfig', () => {
     localConfig.testRunner = {
       args: { $0: 'nyc jest' },
       jest: {
-        initTimeout: 120000,
+        setupTimeout: 120000,
+        teardownTimeout: 30000,
         retryAfterCircusRetries: true,
         reportSpecs: true,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -98,11 +105,13 @@ describe('composeRunnerConfig', () => {
         _: [],
       },
       jest: {
-        initTimeout: 120000,
+        setupTimeout: 120000,
+        teardownTimeout: 30000,
         retryAfterCircusRetries: true,
         reportSpecs: true,
         reportWorkerAssign: true,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -147,7 +156,8 @@ describe('composeRunnerConfig', () => {
     expect(composeRunnerConfig()).toEqual(expect.objectContaining({
       jest: {
         customProperty: 1,
-        initTimeout: 300000,
+        setupTimeout: 300000,
+        teardownTimeout: 30000,
         otherProperty: true,
         retryAfterCircusRetries: false,
         reportSpecs: true,
@@ -179,6 +189,7 @@ describe('composeRunnerConfig', () => {
       jest: {
         reportSpecs: true,
       },
+      bail: true,
       retries: 1,
     };
 
@@ -192,6 +203,7 @@ describe('composeRunnerConfig', () => {
       jest: {
         reportSpecs: false,
       },
+      bail: false,
       retries: 3,
     };
 
@@ -205,11 +217,13 @@ describe('composeRunnerConfig', () => {
         _: ['second.test.js'],
       },
       jest: {
-        initTimeout: 300_000,
+        setupTimeout: 300000,
+        teardownTimeout: 30000,
         retryAfterCircusRetries: false,
         reportSpecs: false,
         reportWorkerAssign: true,
       },
+      bail: false,
       retries: 3,
       inspectBrk: false,
       forwardEnv: false,

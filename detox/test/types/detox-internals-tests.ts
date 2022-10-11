@@ -21,6 +21,7 @@ import {
   onTestFnStart,
   onTestFnSuccess,
   onTestStart,
+  reportTestResults,
   resolveConfig,
   session,
   tracing,
@@ -194,6 +195,23 @@ async function lifecycleTest() {
   await onTestStart({
 
   });
+
+  await reportTestResults([
+    {
+      testFilePath: 'test1',
+      success: true,
+    },
+    {
+      testFilePath: 'test2',
+      success: false,
+    },
+    {
+      testFilePath: 'test1',
+      success: false,
+      testExecError: new Error('Generic test suite failure'),
+      isPermanentFailure: true,
+    },
+  ]);
 }
 
 Promise.all([

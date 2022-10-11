@@ -36,7 +36,7 @@ class DetoxContext {
     };
 
     this[symbols.getStatus] = this[symbols.getStatus].bind(this);
-    this[symbols.reportFailedTests] = this[symbols.reportFailedTests].bind(this);
+    this[symbols.reportTestResults] = this[symbols.reportTestResults].bind(this);
     this[symbols.resolveConfig] = this[symbols.resolveConfig].bind(this);
     this[symbols.installWorker] = this[symbols.installWorker].bind(this);
     this[symbols.uninstallWorker] = this[symbols.uninstallWorker].bind(this);
@@ -103,7 +103,7 @@ class DetoxContext {
     },
   });
   /** @abstract */
-  [symbols.reportFailedTests](_testFilePaths, _permanent) {}
+  [symbols.reportTestResults](_testResults) {}
   /**
    * @abstract
    * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts

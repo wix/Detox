@@ -1,6 +1,6 @@
 const resolveFrom = require('resolve-from');
 const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
-// @ts-ignore
+/** @type {typeof import('@jest/environment').JestEnvironment} */
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const detox = require('../../../internals');
@@ -34,109 +34,93 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     super(assertJestCircus27(config), assertExistingContext(context));
 
     /** @private */
-    this._timer = null;
-    /** @private */
-    this._listenerFactories = {
-      DetoxInitErrorListener,
-      DetoxPlatformFilterListener,
-      DetoxCoreListener,
-      SpecReporter,
-      WorkerAssignReporter,
-    };
-    /** @private */
     this._shouldManageDetox = detox.getStatus() === 'inactive';
     /** @private */
-    this._setupFailed = false;
+    this._timer = new Timer();
+
     /** @internal */
     this.testPath = context.testPath;
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.initTimeout = detox.config.testRunner.jest.initTimeout;
-    /** @internal */
+    this.setupTimeout = detox.config.testRunner.jest.setupTimeout;
+    /** @protected */
+    this.teardownTimeout = detox.config.testRunner.jest.teardownTimeout;
+
     log.trace.begin(this.testPath);
 
-    this.setup = log.trace.complete.bind(null, 'set up environment', this.setup.bind(this));
+    const _setup = this.setup.bind(this);
+    this.setup = async () => {
+      await log.trace.complete('set up environment', async () => {
+        try {
+          this._timer.schedule(this.setupTimeout);
+          await this._timer.run(`setting up Detox environment`, _setup);
+        } catch (error) {
+          this._timer.schedule(this.teardownTimeout);
+          await this._handleTestEventAsync({ name: 'environment_setup_failure', error });
+          throw error;
+        } finally {
+          this._timer.clear();
+        }
+      });
+    };
+
     const _teardown = this.teardown.bind(this);
     this.teardown = async () => {
-      try {
-        await log.trace.complete('tear down environment', _teardown);
-      } finally {
-        await log.trace.end();
-      }
+      await log.trace.complete('tear down environment', async () => {
+        try {
+          this._timer.schedule(this.teardownTimeout);
+          await this._timer.run(`tearing down Detox environment`, _teardown);
+        } catch (error) {
+          if (this._timer.expired) {
+            this._timer.schedule(this.teardownTimeout);
+          }
+
+          await this._handleTestEventAsync({ name: 'environment_teardown_failure', error });
+          throw error;
+        } finally {
+          this._timer.clear();
+          log.trace.end();
+        }
+      });
     };
+
+    this.registerListeners({
+      DetoxInitErrorListener,
+      DetoxPlatformFilterListener,
+      DetoxCoreListener,
+      SpecReporter,
+      WorkerAssignReporter,
+    });
   }
 
   /** @override */
   async setup() {
-    try {
-      await super.setup();
-      await Timer.run({
-        description: `setting up Detox environment`,
-        timeout: this.initTimeout,
-        fn: async () => {
-          await this.initDetox();
-          this._instantiateListeners();
-        },
-      });
-    } catch (e) {
-      this._setupFailed = true;
-      throw e;
-    }
+    await this.initDetox();
   }
 
-  /** @override */
-  async handleTestEvent(event, state) {
-    const { name } = event;
+  handleTestEvent = async (event, state) => {
+    this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
 
-    if (SYNC_CIRCUS_EVENTS.has(name)) {
-      return this._handleTestEventSync(event, state);
+    if (SYNC_CIRCUS_EVENTS.has(event.name)) {
+      this._handleTestEventSync(event, state);
+    } else {
+      await this._handleTestEventAsync(event, state);
     }
-
-    this._timer = new Timer({
-      description: `handling jest-circus "${name}" event`,
-      timeout: state.testTimeout != null ? state.testTimeout : this.initTimeout,
-    });
-
-    try {
-      for (const listener of this.testEventListeners) {
-        if (typeof listener[name] !== 'function') {
-          continue;
-        }
-
-        try {
-          await this._timer.run(() => listener[name](event, state));
-        } catch (listenerError) {
-          log.error(listenerError);
-          break;
-        }
-      }
-    } finally {
-      this._timer.dispose();
-      this._timer = null;
-    }
-  }
+  };
 
   /** @override */
   async teardown() {
-    await Timer.run({
-      description: `tearing down Detox environment`,
-      timeout: this.initTimeout,
-      fn: async () => {
-        try {
-          if (this._setupFailed) {
-            await detox.reportFailedTests([this.testPath], false);
-          }
-        } finally {
-          await this.cleanupDetox();
-        }
-      },
-    });
+    await this.cleanupDetox();
   }
 
   /** @protected */
   registerListeners(map) {
-    Object.assign(this._listenerFactories, map);
+    for (const Listener of Object.values(map)) {
+      this.testEventListeners.push(new Listener({
+        env: this,
+      }));
+    }
   }
 
   /**
@@ -153,6 +137,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     } else {
       await detox.installWorker(opts);
     }
+
+    return detox.worker;
   }
 
   /** @protected */
@@ -176,11 +162,22 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   }
 
   /** @private */
-  _instantiateListeners() {
-    for (const Listener of Object.values(this._listenerFactories)) {
-      this.testEventListeners.push(new Listener({
-        env: this,
-      }));
+  async _handleTestEventAsync(event, state = null) {
+    const description = `handling ${state ? 'jest-circus' : 'jest-environment'} "${event.name}" event`;
+
+    for (const listener of this.testEventListeners) {
+      if (typeof listener[event.name] !== 'function') {
+        continue;
+      }
+
+      try {
+        await this._timer.run(description, () => listener[event.name](event, state));
+      } catch (listenerError) {
+        log.error(listenerError);
+        if (this._timer.expired) {
+          break;
+        }
+      }
     }
   }
 }

@@ -29,9 +29,9 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   //#region Internal members
-  async [symbols.reportFailedTests](testFilePaths, permanent = false) {
+  async [symbols.reportTestResults](testResults) {
     if (this[_ipcClient]) {
-      await this[_ipcClient].reportFailedTests(testFilePaths, permanent);
+      await this[_ipcClient].reportTestResults(testResults);
     } else {
       throw new DetoxInternalError('Detected an attempt to report failed tests using a non-initialized context.');
     }

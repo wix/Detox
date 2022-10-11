@@ -1,4 +1,7 @@
+const { uniqBy } = require('lodash');
 const { IPC } = require('node-ipc');
+
+const { serializeObjectWithError } = require('../utils/errorUtils');
 
 class IPCServer {
   /**
@@ -27,12 +30,12 @@ class IPCServer {
     this._ipc.config.appspace = 'detox.';
     this._ipc.config.logger = (msg) => this._logger.trace(msg);
 
-      await new Promise((resolve) => {
+    await new Promise((resolve) => {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
       this._ipc.server.on('registerWorker', this.onRegisterWorker.bind(this));
-      this._ipc.server.on('failedTests', this.onFailedTests.bind(this));
+      this._ipc.server.on('reportTestResults', this.onReportTestResults.bind(this));
       this._ipc.server.start();
     });
   }
@@ -53,8 +56,7 @@ class IPCServer {
     this._sessionState.contexts.push(id);
 
     this._ipc.server.emit(socket, 'registerContextDone', {
-      failedTestFiles: this._sessionState.failedTestFiles,
-      testFilesToRetry: this._sessionState.testFilesToRetry,
+      testResults: this._sessionState.testResults,
       testSessionIndex: this._sessionState.testSessionIndex,
     });
   }
@@ -73,20 +75,20 @@ class IPCServer {
     }
   }
 
-  onFailedTests({ testFilePaths, permanent }, socket = null) {
-    if (permanent) {
-      this._sessionState.failedTestFiles.push(...testFilePaths);
-    } else {
-      this._sessionState.testFilesToRetry.push(...testFilePaths);
-    }
+  onReportTestResults({ testResults }, socket = null) {
+    const merged = uniqBy([
+      ...testResults.map(r => serializeObjectWithError(r, 'testExecError')),
+      ...this._sessionState.testResults
+    ], 'testFilePath');
+
+    this._sessionState.testResults.splice(0, Infinity, ...merged);
 
     if (socket) {
-      this._ipc.server.emit(socket, 'failedTestsDone', {});
+      this._ipc.server.emit(socket, 'reportTestResultsDone', {});
     }
 
     this._ipc.server.broadcast('sessionStateUpdate', {
-      failedTestFiles: this._sessionState.failedTestFiles,
-      testFilesToRetry: this._sessionState.testFilesToRetry,
+      testResults: this._sessionState.testResults,
     });
   }
 }
