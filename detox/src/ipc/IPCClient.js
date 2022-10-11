@@ -48,16 +48,18 @@ class IPCClient {
   }
 
   async registerWorker(workerId) {
-    await this._emit('registerWorker', { workerId });
+    const sessionState = await this._emit('registerWorker', { workerId });
+    this._state.patch(sessionState);
   }
 
   /**
    * @param {DetoxInternals.DetoxTestFileReport[]} testResults
    */
   async reportTestResults(testResults) {
-    await this._emit('reportTestResults', {
+    const sessionState = await this._emit('reportTestResults', {
       testResults: testResults.map(r => serializeObjectWithError(r, 'testExecError')),
     });
+    this._state.patch(sessionState);
   }
 
   async _connectToServer() {

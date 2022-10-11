@@ -84,7 +84,9 @@ class IPCServer {
     this._sessionState.testResults.splice(0, Infinity, ...merged);
 
     if (socket) {
-      this._ipc.server.emit(socket, 'reportTestResultsDone', {});
+      this._ipc.server.emit(socket, 'reportTestResultsDone', {
+        testResults: this._sessionState.testResults,
+      });
     }
 
     this._ipc.server.broadcast('sessionStateUpdate', {
