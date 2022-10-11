@@ -58,7 +58,12 @@ class DetoxCoreListener {
     log.trace.end({ success: true });
   }
 
-  async hook_failure({ error }) {
+  async hook_failure({ error, hook }) {
+    await detoxInternals.onHookFailure({
+      error,
+      hook: hook.type,
+    });
+
     log.trace.end({ success: false, error });
   }
 
