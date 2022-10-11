@@ -93,4 +93,5 @@ If your app already contains flavors – that makes things a bit trickier, but t
 A special thanks to [@GEllickson-Hover](https://github.com/GEllickson-Hover) for reporting issues related to obfuscation in [#2431](https://github.com/wix/Detox/issues/2431).
 
 [Android Reflection API]: https://developer.android.com/reference/java/lang/reflect/package-summary
+
 [ProGuard minification]: https://developer.android.com/studio/build/shrink-code

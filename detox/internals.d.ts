@@ -54,14 +54,13 @@ declare global {
       onRunFinish(event: unknown): Promise<void>;
 
       /**
-       * Reports to Detox CLI about failed tests that could have been re-run if
+       * Reports to Detox CLI about passed and failed test files.
+       * The failed test files might be re-run again if
        * {@link Detox.DetoxTestRunnerConfig#retries} is set to a non-zero.
        *
-       * @param testFilePaths array of failed test files' paths
-       * @param permanent whether the failure is permanent, and the tests
-       * should not be re-run.
+       * @param testResults - reports about test files
        */
-      reportFailedTests(testFilePaths: string[], permanent?: boolean): Promise<void>;
+      reportTestResults(testResults: DetoxTestFileReport[]): Promise<void>;
       // endregion
 
       readonly config: RuntimeConfig;
@@ -120,25 +119,48 @@ declare global {
       workerId: string;
     };
 
+    type DetoxTestFileReport = {
+      /**
+       * Global or relative path to the failed test file.
+       */
+      testFilePath: string;
+      /**
+       * Whether the test passed or not.
+       */
+      success: boolean;
+      /**
+       * Top-level error if the entire test file failed.
+       */
+      testExecError?: { name?: string; message: string; stack?: string; };
+      /**
+       * If the test failed, it should tell whether the failure is permanent.
+       * Permanent failure means that the test file should not be re-run.
+       *
+       * @default false
+       * @see {Detox.DetoxTestRunnerConfig#retries}
+       */
+      isPermanentFailure?: boolean;
+    };
+
     type SessionState = Readonly<{
       /**
        * Randomly generated ID for the entire Detox test session, including retries.
        */
       id: string;
       /**
-       * Permanently failed test file paths.
+       * Results of test file executions. Primarily used for Detox CLI retry mechanism.
        */
-      failedTestFiles: string[];
-      /**
-       * Failed test file paths suggested to retry via Detox CLI mechanism.
-       */
-      testFilesToRetry: string[];
+      testResults: DetoxTestFileReport[];
       /**
        * Retry index of the test session: 0..retriesCount.
        */
       testSessionIndex: number;
       /**
-       * TODO
+       * Count of Detox contexts with a worker installed.
+       * Oversimplified, it reflects the count of allocated devices in the current test session.
+       *
+       * @see {Facade#init}
+       * @see {Facade#installWorker}
        */
       workersCount: number;
     }>;

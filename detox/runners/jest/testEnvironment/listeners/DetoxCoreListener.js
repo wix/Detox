@@ -14,11 +14,7 @@ class DetoxCoreListener {
     this._startedTests = new WeakSet();
     this._testsFailedBeforeStart = new WeakSet();
     this._env = env;
-    this._testRunTimes = 1;
-  }
-
-  async environment_setup_failure({ error }) {
-    await detoxInternals.reportFailedTests([this._env.testPath], false);
+    this._circusRetryTimes = 1;
   }
 
   async setup() {
@@ -50,7 +46,7 @@ class DetoxCoreListener {
     }
 
     const circusRetryTimes = +this._env.global[RETRY_TIMES];
-    this._testRunTimes = isNaN(circusRetryTimes) ? 1 : 1 + circusRetryTimes;
+    this._circusRetryTimes = isNaN(circusRetryTimes) ? 1 : 1 + circusRetryTimes;
   }
 
   async hook_start(event, state) {
@@ -98,14 +94,6 @@ class DetoxCoreListener {
     }
   }
 
-  async run_finish(_event, state) {
-    const hasFailedTests = this._hasFailedTests(state.rootDescribeBlock);
-    if (hasFailedTests) {
-      const handledByJestCircus = this._testRunTimes > 1 && !detoxInternals.config.testRunner.jest.retryAfterCircusRetries;
-      await detoxInternals.reportFailedTests([this._env.testPath], handledByJestCircus);
-    }
-  }
-
   async _onBeforeActualTestStart(test) {
     if (!test || test.status === 'skip' || this._startedTests.has(test) || this._testsFailedBeforeStart.has(test)) {
       return false;
@@ -131,19 +119,7 @@ class DetoxCoreListener {
 
   _getTestInvocations(test) {
     const { testSessionIndex } = detoxInternals.session;
-    return testSessionIndex * this._testRunTimes + test.invocations;
-  }
-
-  _hasFailedTests(block) {
-    if (block.children) {
-      for (const child of block.children) {
-        if (this._hasFailedTests(child)) {
-          return true;
-        }
-      }
-    }
-
-    return block.errors ? block.errors.length > 0 : false;
+    return testSessionIndex * this._circusRetryTimes + test.invocations;
   }
 
   _getTestMetadata(test) {

@@ -45,6 +45,7 @@ describe('composeRunnerConfig', () => {
         reportWorkerAssign: true,
       },
       retries: 0,
+      bail: false,
       inspectBrk: false,
       forwardEnv: false,
     });
@@ -58,6 +59,7 @@ describe('composeRunnerConfig', () => {
         retryAfterCircusRetries: true,
         reportSpecs: false,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -75,6 +77,7 @@ describe('composeRunnerConfig', () => {
         reportSpecs: false,
         reportWorkerAssign: true,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -90,6 +93,7 @@ describe('composeRunnerConfig', () => {
         retryAfterCircusRetries: true,
         reportSpecs: true,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -107,6 +111,7 @@ describe('composeRunnerConfig', () => {
         reportSpecs: true,
         reportWorkerAssign: true,
       },
+      bail: true,
       retries: 1,
       inspectBrk: true,
       forwardEnv: true,
@@ -184,6 +189,7 @@ describe('composeRunnerConfig', () => {
       jest: {
         reportSpecs: true,
       },
+      bail: true,
       retries: 1,
     };
 
@@ -197,6 +203,7 @@ describe('composeRunnerConfig', () => {
       jest: {
         reportSpecs: false,
       },
+      bail: false,
       retries: 3,
     };
 
@@ -216,6 +223,7 @@ describe('composeRunnerConfig', () => {
         reportSpecs: false,
         reportWorkerAssign: true,
       },
+      bail: false,
       retries: 3,
       inspectBrk: false,
       forwardEnv: false,

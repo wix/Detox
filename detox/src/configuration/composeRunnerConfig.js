@@ -32,6 +32,7 @@ function composeRunnerConfig(opts) {
       retries: 0,
       inspectBrk: inspectBrkHookDefault,
       forwardEnv: false,
+      bail: false,
       jest: {
         setupTimeout: 300000,
         teardownTimeout: 30000,

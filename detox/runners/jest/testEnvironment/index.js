@@ -55,7 +55,6 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         try {
           this._timer.schedule(this.setupTimeout);
           await this._timer.run(`setting up Detox environment`, _setup);
-          await this._handleTestEventAsync({ name: 'environment_setup_success' });
         } catch (error) {
           this._timer.schedule(this.teardownTimeout);
           await this._handleTestEventAsync({ name: 'environment_setup_failure', error });

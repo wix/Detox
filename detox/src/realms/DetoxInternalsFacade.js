@@ -26,7 +26,7 @@ class DetoxInternalsFacade {
     this.onTestFnStart = context[symbols.onTestFnStart];
     this.onTestFnSuccess = context[symbols.onTestFnSuccess];
     this.onTestStart = context[symbols.onTestStart];
-    this.reportFailedTests = context[symbols.reportFailedTests];
+    this.reportTestResults = context[symbols.reportTestResults];
     this.resolveConfig = context[symbols.resolveConfig];
     this.session = context[symbols.session];
     this.tracing = context[symbols.tracing];

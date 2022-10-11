@@ -61,16 +61,17 @@ The naming you can see adheres much to Jest Circus workflow:
 - `onRunDescribeFinish`
 - `onRunFinish`
 
-### Reporting failed tests
+### Reporting test results
 
-`reportFailedTests` reports to Detox CLI about failed tests that could
+`reportTestResults` reports to Detox CLI about failed tests that could
 have been re-run if `--retries` is set to a non-zero.
 
-It takes two arguments:
+It takes one argument, an array of test file reports. Each report is an object with the following properties:
 
-- `testFilePaths` – array of failed test files' paths
-- `permanent` – whether the failure is permanent, and the tests should not be re-run.
-- returns a promise.
+- `testFilePath` (string) — global or relative path to the failed test file;
+- `success` (boolean) — whether the test passed or not;
+- `testExecError` (optional error) — top-level error if the entire test file failed;
+- `isPermanentFailure` (optional boolean) — if the test failed, it should tell whether the failure is permanent. Permanent failure means that the test file should not be re-run.
 
 ## Properties
 

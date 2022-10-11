@@ -46,9 +46,9 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   //#region Internal members
-  async [symbols.reportFailedTests](testFilePaths, permanent = false) {
+  async [symbols.reportTestResults](testResults) {
     if (this[_ipcServer]) {
-      this[_ipcServer].onFailedTests({ testFilePaths, permanent });
+      this[_ipcServer].onReportTestResults({ testResults });
     }
   }
 
@@ -286,8 +286,7 @@ class DetoxPrimaryContext extends DetoxContext {
       return true;
     }
 
-    const { failedTestFiles, testFilesToRetry } = this[$sessionState];
-    return failedTestFiles.length + testFilesToRetry.length > 0;
+    return this[$sessionState].testResults.some(r => !r.success);
   }
 
   async[_resetLockFile]() {

@@ -9,8 +9,7 @@ class SessionState {
     detoxConfigSnapshotPath = '',
     detoxConfig = null,
     detoxIPCServer = '',
-    failedTestFiles = [],
-    testFilesToRetry = [],
+    testResults = [],
     testSessionIndex = 0,
     workersCount = 0
   }) {
@@ -19,8 +18,7 @@ class SessionState {
     this.detoxConfigSnapshotPath = detoxConfigSnapshotPath;
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
-    this.failedTestFiles = failedTestFiles;
-    this.testFilesToRetry = testFilesToRetry;
+    this.testResults = testResults;
     this.testSessionIndex = testSessionIndex;
     this.workersCount = workersCount;
   }
