@@ -18,7 +18,7 @@
  *   readonly onTestFnStart: unique symbol;
  *   readonly onTestFnSuccess: unique symbol;
  *   readonly onTestStart: unique symbol;
- *   readonly reportFailedTests: unique symbol;
+ *   readonly reportTestResults: unique symbol;
  *   readonly resolveConfig: unique symbol;
  *   readonly session: unique symbol;
  *   readonly tracing: unique symbol;
@@ -43,7 +43,7 @@ module.exports = {
   //#endregion
 
   //#region IPC
-  reportFailedTests: Symbol('reportFailedTests'),
+  reportTestResults: Symbol('reportTestResults'),
   //#endregion
 
   //#region Main

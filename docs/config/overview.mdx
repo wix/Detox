@@ -33,7 +33,7 @@ In view of the arguments above, our recommendation to keep Detox configs
 neat and tidy is to keep them inside three key-value dictionaries:
 `devices`, `apps` and `configurations`. See the schematic code below:
 
-```javascript
+```js
 /* @type {Detox.DetoxConfig} */
 module.exports = {
 // highlight-next-line
@@ -67,7 +67,7 @@ When Detox starts, it picks the specified configuration and resolves its aliases
 the application. However, the config file is not limited only to devices and applications – there
 are more sections:
 
-```javascript
+```js
 /* @type {Detox.DetoxConfig} */
 module.exports = {
 // highlight-start
@@ -91,7 +91,7 @@ Aside from mandatory `device` and `app` properties, each configuration can have
 overrides to the global config sections such as `testRunner`, `artifacts`,
 `behavior` and others, e.g.:
 
-```javascript
+```js
 /* @type {Detox.DetoxConfig} */
 module.exports = {
   logger: {
@@ -129,7 +129,7 @@ It should be noted that the aliasing of devices and apps is optional in fact.
 Instead of using keys, you can inline both device and app configs into your
 configuration, e.g.:
 
-```javascript
+```js
 /* @type {Detox.DetoxConfig} */
 module.exports = {
   configurations: {
@@ -152,7 +152,7 @@ module.exports = {
 Besides, there is [basic support](apps.mdx) for tests with multiple applications, if you switch
 to `apps` array (aliased or inlined) instead of `app`, e.g.:
 
-```javascript
+```js
 /* @type {Detox.DetoxConfig} */
 module.exports = {
   apps: { /* ... */ },
@@ -238,7 +238,7 @@ Technically this is not true. You can omit the configuration name if:
 - there is only one configuration in `configurations` dictionary;
 - you set some configuration as a default choice via `selectedConfiguration` property:
 
-  ```javascript
+  ```js
   /* @type {Detox.DetoxConfig} */
   module.exports = {
   // highlight-next-line

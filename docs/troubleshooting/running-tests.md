@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Dealing With Problems With Running Tests
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 This page is about issues related to executing your Detox tests, typically triggered when running `detox test` (and not `detox build`, for example).
 

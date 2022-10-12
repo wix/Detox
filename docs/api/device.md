@@ -3,17 +3,13 @@
 The `device` object is globally available in every test file, unless you use `exposeGlobals: false` in the behavior config,
 and even then you can import it from Detox package:
 
-```javascript
+```js
 const { device } = require('detox');
 ```
 
 It enables control over the current attached device.
 
 ## Public Properties
-
-- [`device.id`](#deviceid)
-- [`device.name`](#devicename)
-- [`device.appLaunchArgs`](#deviceapplaunchargs)
 
 ### `device.id`
 
@@ -30,7 +26,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 ### `device.appLaunchArgs`
 
 Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](../config/apps.mdx)
-and [command-line arguments](../cli/index.md). This access allows, through dedicated methods, for both value-querying and modification:
+and [command-line arguments](../cli/test.md). This access allows, through dedicated methods, for both value-querying and modification:
 
 ```js
 // Modify some of the predefined arguments:
@@ -65,39 +61,6 @@ device.appLaunchArgs.get(); // ==> {}
 This is the most flexible way of editing the launch arguments. Refer to the [launch arguments guide](../guide/launch-args.md) for complete details.
 
 ## Methods
-
-- [`device.selectApp(name)`](#deviceselectappname)
-- [`device.launchApp(params)`](#devicelaunchappparams)
-- [`device.terminateApp()`](#deviceterminateapp)
-- [`device.sendToHome()`](#devicesendtohome)
-- [`device.reloadReactNative()`](#devicereloadreactnative)
-- [`device.installApp()`](#deviceinstallapp)
-- [`device.uninstallApp()`](#deviceuninstallapp)
-- [`device.openURL({url, sourceApp[optional]})`](#deviceopenurlurl-sourceappoptional)
-- [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams-ios-only)
-- [`device.setOrientation(orientation)`](#devicesetorientationorientation)
-- [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
-- [`device.enableSynchronization()`](#deviceenablesynchronization)
-- [`device.disableSynchronization()`](#devicedisablesynchronization)
-- [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
-- [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
-- [`device.getPlatform()`](#devicegetplatform)
-- [`device.takeScreenshot([name])`](#devicetakescreenshotname)
-- [`device.captureViewHierarchy([name])`](#devicecaptureviewhierarchyname)
-- [`device.shake()` **iOS Only**](#deviceshake-ios-only)
-- [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrollmentbool-ios-only)
-- [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
-- [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
-- [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
-- [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
-- [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
-- [`device.setStatusBar()` **iOS Only**](#devicesetstatusbar-ios-only)
-- [`device.resetStatusBar()` **iOS Only**](#deviceresetstatusbar-ios-only)
-- [`device.reverseTcpPort()` **Android Only**](#devicereversetcpport-android-only)
-- [`device.unreverseTcpPort()` **Android Only**](#deviceunreversetcpport-android-only)
-- [`device.pressBack()` **Android Only**](#devicepressback-android-only)
-- [`device.getUiDevice()` **Android Only**](#devicegetuidevice-android-only)
 
 ### `device.selectApp(name)`
 
@@ -225,28 +188,21 @@ await device.launchApp({
 With this API, you can run sets of E2E tests per language. For example:
 
 ```js
-['es-MX', 'fr-FR', 'pt-BR'].forEach(locale => {
-  describe(`Test suite in ${locale}`, () => {
-
-    beforeAll(async () => {
-      await device.launchApp({
-        newInstance: true,
-        languageAndLocale: {
-          language: locale,
-          locale
-        }
-      });
+describe.each([
+  ['es-MX'], ['fr-FR'], ['pt-BR'],
+])(`Test suite (locale: %s)`, (locale) => {
+  beforeAll(async () => {
+    await device.launchApp({
+      newInstance: true,
+      languageAndLocale: {
+        language: locale,
+        locale
+      }
     });
+  });
 
-
-    it('Test A', () => {
-
-    })
-
-    it('Test B', () => {
-
-    })
-
+  test('some description', async () => {
+    // …
   });
 });
 ```

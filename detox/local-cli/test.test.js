@@ -8,6 +8,8 @@ jest.mock('../src/devices/DeviceRegistry');
 jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('./utils/jestInternals');
 
+const cp = require('child_process');
+const cpSpawn = cp.spawn;
 const os = require('os');
 const path = require('path');
 
@@ -27,6 +29,10 @@ describe('CLI', () => {
   let DeviceRegistry;
   let GenyDeviceRegistryFactory;
   let jestInternals;
+
+  afterEach(() => {
+    cp.spawn = cpSpawn;
+  });
 
   beforeEach(() => {
     _cliCallDump = undefined;
@@ -139,11 +145,28 @@ describe('CLI', () => {
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
+    function toTestResult(testFilePath) {
+      return {
+        testFilePath,
+        success: false,
+        isPermanentFailure: false,
+      };
+    }
+
     const context = require('../internals');
-    context.session.testFilesToRetry = ['e2e/failing1.test.js', 'e2e/failing2.test.js'];
-    context.session.testFilesToRetry.splice = jest.fn()
-      .mockImplementationOnce(() => ['e2e/failing1.test.js', 'e2e/failing2.test.js'])
-      .mockImplementationOnce(() => ['e2e/failing2.test.js']);
+
+    jest.spyOn(cp, 'spawn')
+      .mockImplementationOnce((...args) => {
+        context.session.testResults = ['e2e/failing1.test.js', 'e2e/failing2.test.js'].map(toTestResult);
+        return cpSpawn(...args);
+      })
+      .mockImplementationOnce((...args) => {
+        context.session.testResults = ['e2e/failing2.test.js'].map(toTestResult);
+        return cpSpawn(...args);
+      })
+      .mockImplementationOnce((...args) => {
+        return cpSpawn(...args);
+      });
 
     mockExitCode(1);
 
@@ -154,18 +177,35 @@ describe('CLI', () => {
     expect(cliCall(2).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json', 'e2e/failing2.test.js']);
   });
 
-  test.each([['-R'], ['--retries']])('%s <value> should bail if has permanently failed tests', async (__retries) => {
-    const context = require('../internals');
-    context.session.failedTestFiles = ['e2e/failing1.test.js'];
-    context.session.testFilesToRetry = ['e2e/failing2.test.js'];
+  describe('when there are permanently failed tests', () => {
+    beforeEach(() => {
+      const context = require('../internals');
+      context.session.testResults = ['e2e/failing1.test.js', 'e2e/failing2.test.js'].map((testFilePath, index) => ({
+        testFilePath,
+        success: false,
+        isPermanentFailure: index > 0,
+      }));
 
-    mockExitCode(1);
+      mockExitCode(1);
+    });
 
-    await run(__retries, 2).catch(_.noop);
+    test.each([['-R'], ['--retries']])('%s <value> should not bail by default', async (__retries) => {
+      await run(__retries, 2).catch(_.noop);
 
-    expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
-    expect(cliCall(0).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json']);
-    expect(cliCall(1)).toBe(null);
+      expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
+      expect(cliCall(0).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json']);
+      expect(cliCall(1).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json', 'e2e/failing1.test.js']);
+      // note that it does not take the permanently failed test
+    });
+
+    test.each([['-R'], ['--retries']])('%s <value> should bail if configured', async (__retries) => {
+      detoxConfig.testRunner.bail = true;
+      await run(__retries, 2).catch(_.noop);
+
+      expect(cliCall(0).env).not.toHaveProperty('DETOX_RERUN_INDEX');
+      expect(cliCall(0).argv).toEqual([expect.stringMatching(/executable$/), '--config', 'e2e/config.json']);
+      expect(cliCall(1)).toBe(null);
+    });
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should not restart test runner if there are no failing tests paths', async (__retries) => {
@@ -178,7 +218,11 @@ describe('CLI', () => {
 
   test.each([['-R'], ['--retries']])('%s <value> should retain -- <...explicitPassthroughArgs>', async (__retries) => {
     const context = require('../internals');
-    context.session.testFilesToRetry = ['tests/failing.test.js'];
+    context.session.testResults = [{
+      testFilePath: 'tests/failing.test.js',
+      success: false,
+      isPermanentFailure: false,
+    }];
 
     mockExitCode(1);
 

@@ -32,8 +32,10 @@ function composeRunnerConfig(opts) {
       retries: 0,
       inspectBrk: inspectBrkHookDefault,
       forwardEnv: false,
+      bail: false,
       jest: {
-        initTimeout: 300000,
+        setupTimeout: 300000,
+        teardownTimeout: 30000,
         retryAfterCircusRetries: false,
         reportSpecs: undefined,
         reportWorkerAssign: true,

@@ -11,6 +11,7 @@
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
 
 declare global {
+    const detox: Detox.DetoxExportWrapper;
     const device: Detox.DetoxExportWrapper['device'];
     const element: Detox.DetoxExportWrapper['element'];
     const waitFor: Detox.DetoxExportWrapper['waitFor'];
@@ -20,6 +21,7 @@ declare global {
 
     namespace NodeJS {
         interface Global {
+            detox: Detox.DetoxExportWrapper;
             device: Detox.DetoxExportWrapper['device'];
             element: Detox.DetoxExportWrapper['element'];
             waitFor: Detox.DetoxExportWrapper['waitFor'];
@@ -137,9 +139,13 @@ declare global {
              */
             jest?: {
                 /**
-                 * Device init timeout
+                 * Environment setup timeout
                  */
-                initTimeout?: number | undefined;
+                setupTimeout?: number | undefined;
+                /**
+                 * Environment teardown timeout
+                 */
+                teardownTimeout?: number | undefined;
                 /**
                  * Insist on CLI-based retry mechanism even when the failed tests have been handled
                  * by jest.retryTimes(n) mechanism from Jest Circus.
@@ -152,6 +158,16 @@ declare global {
              * Retries count. Zero means a single attempt to run tests.
              */
             retries?: number;
+            /**
+             * When true, tells Detox CLI to cancel next retrying if it gets
+             * at least one report about a permanent test suite failure.
+             * Has no effect, if {@link DetoxTestRunnerConfig#retries} is
+             * undefined or set to zero.
+             *
+             * @default false
+             * @see {DetoxInternals.DetoxTestFileReport#isPermanentFailure}
+             */
+            bail?: boolean;
             /**
              * Custom handler to process --inspect-brk CLI flag.
              * Use it when you rely on another test runner than Jest.

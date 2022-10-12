@@ -5,7 +5,7 @@ const { device } = require('../../../..');
 const PLATFORM_REGEXP = /^:([^:]+):/;
 
 class DetoxPlatformFilterListener {
-  constructor() {
+  setup() {
     this._platform = device.getPlatform();
   }
 

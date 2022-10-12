@@ -1,8 +1,8 @@
 # Parallel Test Execution
 
-Detox can leverage multi worker support of JS test runners ([Jest](http://jestjs.io/docs/en/cli#maxworkers-num),  etc.).
+Detox comes out of the box with multi-worker support thanks to ([Jest's feature](http://jestjs.io/docs/en/cli#maxworkers-num),  etc.).
 
-By default `detox test` will run the test runner with one worker. Worker count can be controlled by adding `--maxWorkers <N>` to `detox test`, read more in [`detox-cli` section](../cli/index.md#test).
+By default `detox test` will run the test runner with one worker. Worker count can be controlled by forwarding `--maxWorkers <N>` to Jest via [`detox test`](../cli/test.md).
 
 ## Device Creation
 

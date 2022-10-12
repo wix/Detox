@@ -47,7 +47,7 @@ actually starting the tests.
 
 By default, Detox config suggests default device types for iOS and Android:
 
-```javascript title=".detoxrc.js"
+```js title=".detoxrc.js"
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   // ...
@@ -212,7 +212,7 @@ which will be picked up by `testRunner` that you just added in the previous step
 Copy the snippet below to create a file under the following path (where `<your.package>` is your actual
 package name):
 
-```typescript title="android/app/src/androidTest/java/com/<your.package>/DetoxTest.java" showLineNumbers
+```java title="android/app/src/androidTest/java/com/<your.package>/DetoxTest.java" showLineNumbers
 // highlight-next-line
 package com.<your.package>; // (1)
 

@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Dealing With Synchronization Issues in Tests
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take variable amount of time to complete. We can’t continue the test until they’ve completed. How can we synchronize the test with these operations?
 

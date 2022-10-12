@@ -1,6 +1,7 @@
 const { IPC } = require('node-ipc');
 
 const { DetoxInternalError } = require('../errors');
+const { serializeObjectWithError } = require('../utils/errorUtils');
 
 class IPCClient {
   constructor({ id, logger, state }) {
@@ -47,15 +48,18 @@ class IPCClient {
   }
 
   async registerWorker(workerId) {
-    await this._emit('registerWorker', { workerId });
+    const sessionState = await this._emit('registerWorker', { workerId });
+    this._state.patch(sessionState);
   }
 
   /**
-   * @param {string[]} testFilePaths
-   * @param {Boolean} permanent
+   * @param {DetoxInternals.DetoxTestFileReport[]} testResults
    */
-  async reportFailedTests(testFilePaths, permanent) {
-    await this._emit('failedTests', { testFilePaths, permanent });
+  async reportTestResults(testResults) {
+    const sessionState = await this._emit('reportTestResults', {
+      testResults: testResults.map(r => serializeObjectWithError(r, 'testExecError')),
+    });
+    this._state.patch(sessionState);
   }
 
   async _connectToServer() {

@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Dealing With Flakiness in Tests
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 > What is a flaky test?
 

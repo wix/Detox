@@ -8,16 +8,16 @@ This page is about issues related to building the app, typically triggered when 
 
 For build errors involving AAPT resource linking failure, such as this one:
 
-```text
+```plain text
 Execution failed for task ':app:processReleaseAndroidTestResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
    > Android resource linking failed
      ERROR:: AAPT: error: resource style/Widget.AppCompat.TextView ...
 ```
 
-Ensure that the following line appears in your app's `buildscript` (`android/app/build.gradle`) in the `dependencies` section:
+Ensure that the following line appears in your app build script in the `dependencies` section:
 
-```groovy
+```gradle title="android/app/build.gradle"
 dependencies {
     // ...
     implementation 'androidx.appcompat:appcompat:1.1.0' // (check what the latest version is!)
@@ -37,9 +37,7 @@ uses-sdk:minSdkVersion 18 cannot be smaller than version 21 declared in library 
 
 Try applying the solution suggested in [this Stack-overflow](https://stackoverflow.com/questions/21032271/how-to-inject-android-configuration-to-each-subproject-with-gradle) post, namely adding this to your root-project's `build.gradle` file (replace `21` those matching your app's `build.gradle`):
 
-```groovy
-// build.gradle
-
+```gradle title="android/build.gradle"
 allprojects {
     afterEvaluate {
         if (it.hasProperty('android')){
@@ -74,7 +72,7 @@ Detox should work with `kotlin-stdlib-jdk7`, as well.
 
 A typical error output formed by `Gradle` in this case is as provided, for example, in [#1380](https://github.com/wix/Detox/issues/1380):
 
-```text
+```plain text
 Could not determine the dependencies of task ':detox:compileDebugAidl'.
 > Could not resolve all task dependencies for configuration ':detox:debugCompileClasspath'.
    > Could not resolve org.jetbrains.kotlin:kotlin-stdlib:1.3.0.
@@ -104,9 +102,9 @@ Could not determine the dependencies of task ':detox:compileDebugAidl'.
 
 Detox requires the Kotlin standard-library as its own dependency. Due to the [many flavors](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
 
-For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
+For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your root build script file:
 
-```groovy
+```gradle title="android/build.gradle"
 buildscript {
     // ...
     ext.detoxKotlinVersion = '1.3.0' // Detox' default is 1.2.0
@@ -118,14 +116,14 @@ buildscript {
 
 If you get an error like this:
 
-```text
+```plain text
 Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
 > com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK META-INF/LICENSE
 ```
 
-You need to add this to the `android` section of your `android/app/build.gradle`:
+You need to add this to the `android` section of your app build script:
 
-```groovy
+```gradle title="android/app/build.gradle"
 packagingOptions {
     exclude 'META-INF/LICENSE'
 }

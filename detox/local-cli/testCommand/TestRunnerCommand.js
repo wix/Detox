@@ -99,13 +99,20 @@ class TestRunnerCommand {
       } catch (e) {
         launchError = e;
 
-        const { failedTestFiles, testFilesToRetry } = detox.session;
-        if (!_.isEmpty(failedTestFiles) || _.isEmpty(testFilesToRetry)) {
+        const failedTestFiles = detox.session.testResults.filter(r => !r.success);
+
+        const { bail } = detox.config.testRunner;
+        if (bail && failedTestFiles.some(r => r.isPermanentFailure)) {
+          throw e;
+        }
+
+        const testFilesToRetry = failedTestFiles.filter(r => !r.isPermanentFailure).map(r => r.testFilePath);
+        if (_.isEmpty(testFilesToRetry)) {
           throw e;
         }
 
         if (--runsLeft > 0) {
-          this._argv._ = testFilesToRetry.splice(0, Infinity);
+          this._argv._ = testFilesToRetry;
           // @ts-ignore
           detox.session.testSessionIndex++; // it is always a primary context, so we can update it
         }

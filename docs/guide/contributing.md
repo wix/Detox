@@ -1,6 +1,6 @@
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 # Contributing
+
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 This guide is about contributing to our codebase.
 
@@ -45,7 +45,7 @@ gem install xcpretty
 #### Clone Detox and Submodules
 
 ```bash
-git clone git@github.com:wix/detox.git
+git clone git@github.com:wix/Detox.git
 cd detox
 git submodule update --init --recursive
 ```
@@ -127,7 +127,11 @@ Each build can be triggered separately by running its Gradle assembling task (un
 
 ```bash
 ./gradlew assembleFromSourceDebug
--or-
+```
+
+or:
+
+```bash
 ./gradlew assembleFromBinDebug
 ```
 
@@ -164,7 +168,7 @@ The [documentation website](https://wix.github.io/Detox) is built using [Docusau
 
 To run the website locally, run the following commands:
 
-```bash
+```bash npm2yarn
 cd website
 npm install
 npm start
@@ -186,52 +190,3 @@ To update a specific version with the latest changes:
 
 1. Remove the version from `versions.json`.
 1. Run `npm run docusaurus docs:version <version>`.
-
-### TODO: Setting Detox up as a compiling dependency
-
-This is an **alternative** to the setup process described under the previous section, on adding Detox as a dependency.
-
-In your project’s `settings.gradle` add:
-
-```groovy
-include ':detox'
-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
-```
-
-In your _root_ `buildscript` (i.e. `android/build.gradle`), register `google()` as a repository lookup point in all projects:
-
-```groovy
-// Note: add the 'allproject' section if it doesn’t exist
-allprojects {
-    repositories {
-        // ...
-        google()
-    }
-}
-```
-
-In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this in `dependencies` section:
-
-```groovy
-dependencies {
-   // ...
-    androidTestImplementation(project(path: ":detox"))
-}
-```
-
-In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this to the `defaultConfig` subsection:
-
-```groovy
-android {
-  // ...
-
-  defaultConfig {
-      // ...
-      testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
-      testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-      missingDimensionStrategy 'detox', 'full'
-  }
-}
-```
-
-Please be aware that the `minSdkVersion` needs to be at least 18.
