@@ -29,6 +29,8 @@ const sidebars = {
       type: 'category',
       label: 'Guides',
       items: [
+        'guide/test-id',
+        'guide/failed-test',
         'guide/parallel-test-execution',
         'guide/genymotion-saas',
         'guide/taking-screenshots',
