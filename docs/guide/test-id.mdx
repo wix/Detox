@@ -1,0 +1,84 @@
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Android from './partials/_find-test-id-android.mdx';
+import IOS from './partials/_find-test-id-ios.mdx';
+
+# Adding testID to your components
+
+:::caution
+This guide is applicable for React Native applications.
+:::
+
+It is always the best idea to match your element by something unique. We recommend using `testID` prop for this purpose if possible.
+
+```jsx
+<View>
+  <TouchableOpacity testID="MyUniqueId123">
+    <Text>Some text</Text>
+  </TouchableOpacity>
+</View>
+```
+
+## Pass testID to your native components
+
+The testID prop is not supported by some of the RN components, so to make sure it will work you need to pass it down and down to your native component.
+
+![Pass testID to native component](../img/passTestID.png)
+
+```jsx
+// App.js
+
+<YourCustomComponent testID="YourCustomComponent" />
+```
+
+```jsx
+// YourCustomComponent.js
+
+<View testID={props.testID}>
+  <Text>Some button</Text>
+</View>
+```
+
+:::tip
+It is good idea to combine passing your testID with adding some unique text to each component (i.e. type of the native component).
+:::
+
+```jsx
+<View testID={props.testID + '.view'}>
+  <Text>Some button</Text>
+</View>
+```
+
+## Generate unique testID for repetetive components
+
+While working with repetetive components by default we will have the same testID for each. To interact with specific one we need to somehow specify which component specifically to interact with.
+
+:::tip Best practice
+We recommend generating unique `testID` for repetetive components over using combined matchers like `.and()`, `atIndex()` or matching element by it's text even if it is unique.
+:::
+
+![testID for repetitive components](../img/repetitiveComponentTestID.png)
+
+```jsx
+<View>
+  <Button testID={props.testID + '.button' + index}>Some button</Button>
+</View>
+```
+
+## Find your testID
+
+Once you are done adding testIDs you need to make sure they actually work in your app. To do it you can use such tools as `View Hierarchy` for iOS and `Layout Inspector` for Android.
+
+<Tabs groupId="appType">
+  <TabItem value="start-expo" label="iOS" default>
+    <IOS />
+  </TabItem>
+  <TabItem value="start-other" label="Android">
+    <Android />
+  </TabItem>
+</Tabs>
+
+:::caution
+Incorrect or absent `testID` is a popular cause for test failure. In case your test can't find your `testID` or you can't see it in tools above it usually means you haven't passed it down to this component. Make sure you pass it down and down to your native component.
+:::
