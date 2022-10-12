@@ -27,10 +27,6 @@ It’s a good idea to get as much information as possible about what’s going o
 detox test --loglevel trace
 ```
 
-#### Enable debugging of synchronization issues
-
-See [here](synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
-
 #### No simulators found (iOS)
 
 In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by Xcode itself. You can list all available simulators using `simctl` by typing `xcrun simctl list` in terminal.
