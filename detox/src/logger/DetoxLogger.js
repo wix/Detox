@@ -55,7 +55,7 @@ class DetoxLogger {
 
       this._sharedConfig.userConfig = this._sharedConfig.userConfig || {
         level: 'info',
-        overrideConsole: 'none',
+        overrideConsole: false,
         options: {
           showDate: false,
           showLoggerName: false,
@@ -143,14 +143,12 @@ class DetoxLogger {
    * @internal
    */
   overrideConsole(sandbox) {
-    const option = this.config.overrideConsole;
-    if (option === 'none') {
+    const enabled = this.config.overrideConsole;
+    if (!enabled) {
       return;
     }
 
-    if ((option === 'sandbox' && sandbox) || option === 'all') {
-      customConsoleLogger.overrideConsoleMethods((sandbox || global).console, this);
-    }
+    customConsoleLogger.overrideConsoleMethods((sandbox || global).console, this);
   }
 
   /**

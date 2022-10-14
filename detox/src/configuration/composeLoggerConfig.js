@@ -14,7 +14,7 @@ function composeLoggerConfig(opts) {
   const items = [
     {
       level: 'info',
-      overrideConsole: 'sandbox',
+      overrideConsole: true,
       options: defaultOptions,
     },
     globalConfig.logger,
@@ -46,7 +46,7 @@ function adaptCLI(cliConfig) {
   }
 
   if (cliConfig.useCustomLogger !== undefined) {
-    result.overrideConsole = cliConfig.useCustomLogger ? 'all' : 'none';
+    result.overrideConsole = cliConfig.useCustomLogger;
   }
 
   if (cliConfig.noColor) {

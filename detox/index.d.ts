@@ -105,9 +105,9 @@ declare global {
         interface DetoxLoggerConfig {
             level?: DetoxLogLevel;
             /**
-             * @default 'sandbox'
+             * @default true
              */
-            overrideConsole?: 'all' | 'sandbox' | 'none';
+            overrideConsole?: boolean;
             options?: BunyanDebugStreamOptions | ((config: Partial<DetoxLoggerConfig>) => BunyanDebugStreamOptions);
         }
 
