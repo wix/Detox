@@ -1,6 +1,6 @@
 {
   "name": "detox-demo-native-android",
-  "version": "19.12.5",
+  "version": "19.12.6",
   "private": true,
   "scripts": {
     "packager": "react-native start",
@@ -8,7 +8,7 @@
     "e2e": "mocha e2e --opts ./e2e/mocha.opts"
   },
   "devDependencies": {
-    "detox": "^19.12.5",
+    "detox": "^19.12.6",
     "mocha": "^6.1.3"
   },
   "detox": {}

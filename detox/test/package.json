@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "19.12.5",
+  "version": "19.12.6",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -52,7 +52,7 @@
     "@types/react-native": "0.69.5",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "detox": "^19.12.5",
+    "detox": "^19.12.6",
     "eslint": "^7.32.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "express": "^4.15.3",
