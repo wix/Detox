@@ -20,4 +20,6 @@ are seeing an issue, it is most likely not an issue with Detox itself, but with 
 an incorrect Detox setup. Genuine issues with Detox can be submitted to [our issue tracker](https://github.com/wix/Detox/issues)
 as usual.
 
-The tutorial below is useful, but is **not enough** to complete the setup with Expo.
+This introduction section is useful for Expo projects, but the next [Project Setup] article, in particular, is **not enough** to complete the setup with Expo.
+
+[Project Setup]: ../project-setup.mdx

@@ -19,16 +19,18 @@ const sidebars = {
       label: 'Introduction',
       items: [
         'introduction/getting-started',
-        'introduction/building-with-detox',
-        'introduction/writing-first-test',
+        'introduction/project-setup',
+        'introduction/your-first-test',
+        'introduction/debugging',
         'introduction/preparing-for-ci',
-        'introduction/debugging'
       ]
     },
     {
       type: 'category',
       label: 'Guides',
       items: [
+        'guide/investigating-test-failure',
+        'guide/test-id',
         'guide/parallel-test-execution',
         'guide/genymotion-saas',
         'guide/taking-screenshots',

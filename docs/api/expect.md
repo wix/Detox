@@ -102,14 +102,6 @@ await expect(element(by.id('switch'))).toHaveToggleValue(true);
 await expect(element(by.id('checkbox'))).toHaveToggleValue(false);
 ```
 
-### `not`
-
-Negates the expectation.
-
-```js
-await expect(element(by.id('UniqueId533'))).not.toBeVisible();
-```
-
 ### `withTimeout(timeout)`
 
 Waits until the expectation is resolved for the specified amount of time. If timeout is reached before resolution, the expectation is failed.
@@ -120,38 +112,16 @@ Waits until the expectation is resolved for the specified amount of time. If tim
 await waitFor(element(by.id('UniqueId204'))).toBeVisible().withTimeout(2000);
 ```
 
-## Deprecated Methods
+## Properties
 
-- [`.toBeNotVisible()`](#tobenotvisible)
-- [`.toNotExist()`](#tonotexist)
-- [`.toBeNotFocused()`](#tobenotfocused)
+### `not`
 
-### `toBeNotVisible()`
-
-**Deprecated:** Use `.not.toBeVisible()` instead.
-
-Expects the element to not be visible on screen.
+Negates the expectation, e.g.:
 
 ```js
-await expect(element(by.id('UniqueId205'))).toBeNotVisible();
-```
-
-### `toNotExist()`
-
-**Deprecated:** Use `.not.toExist()` instead.
-
-Expects the element to not exist within the app’s current UI hierarchy.
-
-```js
-await expect(element(by.id('RandomJunk959'))).toNotExist();
-```
-
-### `toBeNotFocused()`
-
-**Deprecated:** Use `.not.toBeFocused()` instead.
-
-Expects the element not to be the focused element.
-
-```js
-await expect(element(by.id('textFieldId'))).toBeFocused();
+await expect(element(by.id('UniqueId533'))).not.toBeVisible();
+await expect(element(by.id('UniqueId533'))).not.toExist();
+await expect(element(by.id('UniqueId533'))).not.toBeFocused();
+await expect(element(by.id('UniqueId533'))).not.toHaveText('');
+await expect(element(by.id('UniqueId533'))).not.toHaveValue('');
 ```

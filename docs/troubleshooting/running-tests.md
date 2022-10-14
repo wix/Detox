@@ -1,25 +1,8 @@
 # Dealing With Problems With Running Tests
 
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
-
 This page is about issues related to executing your Detox tests, typically triggered when running `detox test` (and not `detox build`, for example).
 
-### Table of Contents
-
-- [Trace Mode](#trace-mode)
-- [Tests execution hangs](#tests-execution-hangs)
-- [No Simulators Found (iOS)](#no-simulators-found-ios)
-- [Syntax Error: Unexpected Token](#syntax-error-unexpected-token)
-- [Can’t Find My Component Even Though I Added a `testID` to Its Props](#cant-find-my-component-even-though-i-added-a-testid-to-its-props)
-- [Test Tries to Find My Component Before It’s Created](#test-tries-to-find-my-component-before-its-created)
-- [Can’t synchronize the test with my app](#cant-synchronize-the-test-with-my-app)
-- [An Element is Not Visible](#an-element-is-not-visible)
-- [Debug View Hierarchy](#debug-view-hierarchy)
-- [Compare to a Working Setup](#compare-to-a-working-setup)
-- [Take a Look at Past Issues](#take-a-look-at-past-issues)
-- [How to Open a New Issue](#how-to-open-a-new-issue)
-
-#### Trace Mode
+## Trace Mode
 
 It’s a good idea to get as much information as possible about what’s going on. We can enable trace mode during tests by running our tests with:
 
@@ -27,11 +10,7 @@ It’s a good idea to get as much information as possible about what’s going o
 detox test --loglevel trace
 ```
 
-#### Enable debugging of synchronization issues
-
-See [here](synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
-
-#### No simulators found (iOS)
+## No simulators found (iOS)
 
 In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by Xcode itself. You can list all available simulators using `simctl` by typing `xcrun simctl list` in terminal.
 
@@ -39,7 +18,7 @@ If you’re missing a simulator, make sure Xcode is installed and use it to down
 
 Once the desired simulator is installed and returned by `xcrun simctl list`, double check its name in the list and make sure this name is found in the `detox` configuration entry in `package.json`. The reference for the configuration options is available [here](../config/devices.mdx).
 
-#### Tests execution hangs
+## Tests execution hangs
 
 **Issue:** A while after running Detox, you get a message about failure to connect to the running app, in the logs:
 
@@ -49,21 +28,21 @@ Detox can’t seem to connect to the test app(s)!
 
 This can be a result of various reasons. It is generally up to you to debug and find the root cause. In any case, below are the common ones.
 
-##### If you do not see your app running on the device
+### If you do not see your app running on the device
 
 - You might have forgotten to run `device.launchApp()` in the beginning of your test.
 - The app might have crashed before Detox has had a chance to connect to it. To get the crash details, you can run Detox tests with `--record-logs all` CLI option and then inspect the device logs in the artifacts' folder.
-- **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](../introduction/building-with-detox.mdx#step-3-android-configuration) in the setup guide.
+- **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](../introduction/project-setup.mdx#step-4-android-configuration) in the setup guide.
 
-##### If you _do_ see your app running on the device
+### If you _do_ see your app running on the device
 
 - **On Android with SDK≥28**, the app’s connection to the Detox test server is blocked due to clear-traffic blockage (as reported in issue [#1450](https://github.com/wix/Detox/issues/1450)).
-  The main step for getting this fixed is to revisit the [associated section](../introduction/building-with-detox.mdx#step-3-android-configuration) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app’s `AndroidManifest.xml`, but **that is highly discouraged**.
+  The main step for getting this fixed is to revisit the [associated section](../introduction/project-setup.mdx#step-4-android-configuration) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app’s `AndroidManifest.xml`, but **that is highly discouraged**.
 - If you’ve applied the above suggestion but the app fails to connect to the Detox test server, nonetheless: Refer to the device’s logs, which should contain messages about failed connection attempts (get them using the `--record-logs all` argument)
 - The app could be running without Detox native code injected. In this case, first, make sure you’re not trying to run in manual launch mode (where this behavior is valid). If so, examine the logs from the device (get them using the `--record-logs all` argument). If you see a crash related to Detox’s native code, you are welcome to report it on our GitHub tracker.
 - If you are in fact debugging your native code integration with Detox, our [Debugging tutorial](../introduction/debugging.mdx) may prove helpful.
 
-#### Syntax Error: Unexpected Token
+## Syntax Error: Unexpected Token
 
 **Issue:** Running tests immediately throws the following error:
 
@@ -84,7 +63,7 @@ child_process.js:531
 
 1. Update Node to a version **8.3.0 or higher**.
 
-#### Can’t Find My Component Even Though I Added a `testID` to Its Props
+## Can’t Find My Component Even Though I Added a `testID` to Its Props
 
 **Issue:** Detox fails to match a component even though it has a `testID`. Detox will throw the following error:
 
@@ -132,7 +111,7 @@ render() {
 }
 ```
 
-#### Test Tries to Find My Component Before It’s Created
+## Test Tries to Find My Component Before It’s Created
 
 **Issue:** Due to a synchronization issue, the test tries to perform an expectation and fails because it runs the expectation too soon. Consider this example:
 
@@ -152,11 +131,11 @@ await element(by.text('Login')).tap();
 await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 ```
 
-#### Can’t synchronize the test with my app
+## Can’t synchronize the test with my app
 
 If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](synchronization.md).
 
-#### An Element is Not Visible
+## An Element is Not Visible
 
 **On iOS**, you may run in a situation, when one of the interactions (tap, scroll, etc.) on an element fails with an error like:
 
@@ -180,7 +159,7 @@ If you are developing a React Native app, then the following applies. If, for in
 
 If you see that your issue cannot be solved via testID replacement or a simple hierarchy rearrangement, then there’s a chance this is a bug in Detox. Make sure to provide your `ui.viewhierarchy` artifact, the generated `DETOX_VISIBILITY_*` pictures and a comprehensive description of the issue backed up with sound arguments.
 
-#### Debug View Hierarchy
+## Debug View Hierarchy
 
 **Issue:** I added the `testID` prop, but I still can’t find the view by id in my tests.
 
@@ -209,7 +188,7 @@ This is the hierarchy viewer, pointing to the native view just mentioned:
 
 ![hierarchy viewer](../img/hierarchy-viewer.jpg)
 
-#### Compare to a Working Setup
+## Compare to a Working Setup
 
 If you feel lost, try starting from a working example for sanity.
 
@@ -217,11 +196,11 @@ There are multiple working examples included in this repo, such as [demo-react-n
 
 First, install, build and make sure the tests are indeed passing. If they are, try comparing this setup with what you have.
 
-#### Take a Look at Past Issues
+## Take a Look at Past Issues
 
 Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93\&q=is%3Aissue) on GitHub. There’s a good chance somebody faced the same problem you are having.
 
-#### How to Open a New Issue
+## How to Open a New Issue
 
 Before opening a new issue, please follow the entire troubleshooting guide and go over past issues.
 
