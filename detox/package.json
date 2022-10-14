@@ -81,7 +81,7 @@
     "yargs-unparser": "^2.0.0"
   },
   "peerDependencies": {
-    "jest": "26.0.x - 26.4.x || ^26.5.2 || 27.x.x || 28.x.x",
+    "jest": "26.0.x - 26.4.x || ^26.5.2 || 27.x.x || 28.x.x || 29.x.x",
     "mocha": ">=6.0.0"
   },
   "peerDependenciesMeta": {
