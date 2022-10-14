@@ -1,18 +1,13 @@
----
-id: building-with-detox
-slug: introduction/building-with-detox
----
-
+import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-import PrepareAppConfigsIos from './partials/_building-with-detox-apps-ios.mdx';
-import PrepareAppConfigsAndroid from './partials/_building-with-detox-apps-android.mdx';
-import PrepareDeviceConfigsIos from './partials/_building-with-detox-devices-ios.mdx';
-import PrepareDeviceConfigsAndroid from './partials/_building-with-detox-devices-android.mdx';
-import DetoxBuild from './partials/_building-with-detox-build.mdx';
+import PrepareAppConfigsIos from './partials/_project-setup-apps-ios.mdx';
+import PrepareAppConfigsAndroid from './partials/_project-setup-apps-android.mdx';
+import PrepareDeviceConfigsIos from './partials/_project-setup-devices-ios.mdx';
+import PrepareDeviceConfigsAndroid from './partials/_project-setup-devices-android.mdx';
 
-# Building with Detox
+# Project Setup
 
 :::info
 
@@ -22,13 +17,64 @@ look for other file locations, use custom build commands and so on.
 
 :::
 
+## Step 1: Bootstrap
+
+<Tabs groupId="appType">
+  <TabItem value="start-rn" label="React Native" default>
+    Go to your project's root folder (where <code>package.json</code> is found) and run:
+  </TabItem>
+  <TabItem value="start-other" label="Native iOS">
+    <p>Create a <code>package.json</code> in your project's root by running this command:</p>
+    <CodeBlock language="bash">
+      npm init -y
+    </CodeBlock>
+    <p>And remember to add the <code>node_modules</code> folder to your <code>.gitignore</code> file.</p>
+    <p>Now you are ready to install the Detox itself. Run:</p>
+  </TabItem>
+</Tabs>
+
+```bash npm2yarn
+npm install detox@20.0.12-prerelease.0 --save-dev
+```
+
+The next step would be to **install a test runner**. Out of the box, Detox offers you first-class integration
+with [Jest](https://jestjs.io), and that is our official recommendation:
+
+```bash npm2yarn
+npm install "jest@>=27.2.5" --save-dev
+```
+
+:::info
+The command above will install the **latest Jest version** regardless of the constraint, but `@>=27.2.5` is
+recommended in the first place to prevent you from getting an incompatible Jest version unknowingly, under influence
+of the existing lock files. Reportedly, `package-lock.json` could restrict `npm install jest` to installing
+an older, unsupported version `26.x`.
+:::
+
+Now, when all the dependencies are installed, initialize Detox in your project:
+
+```bash
+detox init
+```
+
+Normally you should see an output like:
+
+```plain text
+Created a file at path: .detoxrc.js
+Created a file at path: e2e/jest.config.js
+Created a file at path: e2e/starter.test.js
+```
+
+:::tip
+If you see a message like `command not found: detox`, make sure you have [installed Detox command line tools](#1-command-line-tools-detox-cli).
+:::
 After Detox generated these files in your project's root, you still have some work to do with them:
 
 * `.detoxrc.js` – Detox config file;
 * `e2e/jest.config.js` – Jest configuration;
 * `e2e/starter.test.js` – dummy first test.
 
-## Step 1: App configs
+## Step 2: App configs
 
 In this step you need to provide Detox with the right **commands to build** your app for iOS and Android,
 and also the right **paths to the app binaries** so that Detox can install your app on the device before
@@ -43,7 +89,7 @@ actually starting the tests.
     </TabItem>
 </Tabs>
 
-## Step 2: Device configs
+## Step 3: Device configs
 
 By default, Detox config suggests default device types for iOS and Android:
 
@@ -88,12 +134,12 @@ Here's how you can check they are correct and change them if you need something 
     </TabItem>
 </Tabs>
 
-## Step 3: Android configuration
+## Step 4: Android configuration
 
 :::tip
 
 If you want to try out your tests right away on iOS,
-you can skip to [Step 4: Build Your App](#step-4-build-your-app)
+you can skip to [Step 5: Build Your App](#step-4-build-your-app)
 and revisit it when you're ready to move forward with Android.
 
 :::
@@ -301,19 +347,39 @@ If you had no network security config before, it means you also have to register
 
 :trophy: Pat yourself on the back! The hardest part is over, now your Android app is ready to be used with Detox.
 
-## Step 4: Build and run tests
+## Step 5: Build the app
 
 <Tabs groupId="configurationName">
   <TabItem value="ios.sim.debug" label="iOS (Debug)">
-    <DetoxBuild configurationName={'ios.sim.debug'} debug />
+    <CodeBlock language="sh">
+      detox build --configuration ios.sim.debug
+    </CodeBlock>
   </TabItem>
   <TabItem value="ios.sim.release" label="iOS (Release)">
-    <DetoxBuild configurationName={'ios.sim.release'} />
+    <CodeBlock language="sh">
+      detox build --configuration ios.sim.release
+    </CodeBlock>
   </TabItem>
   <TabItem value="android.emu.debug" label="Android (Debug)">
-    <DetoxBuild configurationName={'android.emu.debug'}  debug/>
+    <CodeBlock language="sh">
+      detox build --configuration android.emu.debug
+    </CodeBlock>
   </TabItem>
   <TabItem value="android.emu.release" label="Android (Release)">
-    <DetoxBuild configurationName={'android.emu.release'} />
+    <CodeBlock language="sh">
+      detox build --configuration android.emu.release
+    </CodeBlock>
   </TabItem>
 </Tabs>
+
+:::tip
+
+If the build is failing, try out our [Troubleshooting](../troubleshooting/building-the-app.md) section.
+
+Note that Detox CLI just executes the build command you specified in your Detox config (`.detoxrc.js`)
+for a specific configuration. In the other words, it has no extra logic – it just takes the command and runs it,
+nothing more and nothing less.
+
+:::
+
+Once your build is ready to use, please proceed to the next article.

@@ -1,6 +1,6 @@
-# Investigating test failure
+# Investigating Failures
 
-There a few tricks and tools that help you to understand the reason of the test failure before you resort to debugging.
+There a few tricks and tools that help you to understand the reason of the test failure, even before you resort to debugging.
 
 ## Using Detox test artifacts
 
@@ -27,11 +27,15 @@ In most cases we recommend using `debug` log level to understand the failed test
 
 :::
 
+## Missing elements
+
+If your tests are failing due to non-existent or invisible elements, you can [inspect the native view hierarchy](test-id.mdx#find-your-testid) to understand better the failure reason.
+
 ## More recipes
 
 See [Dealing With Problems With Running Tests](../troubleshooting/running-tests.md) guide for more recipes.
 
-## Use debugger
+## Debugging
 
 If debugging still seems a viable option, please follow our [debugging guide](../introduction/debugging.mdx).
 

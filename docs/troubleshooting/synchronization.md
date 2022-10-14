@@ -80,10 +80,9 @@ You can then obtain this log by running the following command:
 xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='SyncManager'"
 ```
 
-For example, change your `/e2e/init.js` like so:
+For example, change your `device.launchApp()` call like:
 
 ```js
-await detox.init(undefined, { launchApp: false });
 await device.launchApp({
   newInstance: true,
   launchArgs: { 'DTXEnableVerboseSyncSystem': 'YES', 'DTXEnableVerboseSyncResources': 'YES' }

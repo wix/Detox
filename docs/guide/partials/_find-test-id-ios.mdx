@@ -1,33 +1,16 @@
-### 1. Start your app in debug mode
-
-First step is to build and start your app in `debug` mode as you usually do, for example:
-
-```sh
-detox build -c <ios debug configuration name>
-npx react-native start
-npx react-native run-ios
-```
-
-### 2. Open your project in XCode
-
-Open your iOS project (iOS folder for React Native) in XCode.
-
-### 3. Attach to process
-
-Go to Debug > Attach to process > Select the needed process, in most cases you will see it in the top. You will see new device started with your app.
-
-![attach to debug process ios](../../img/ios/attachToProcess.png)
-
-### 4. Open AppDelegate file
-
-![AppDelegate file](../../img/ios/appDelegate.png)
-
-### 5. Click Debug View Hierarchy button
-
-![Debug Hierarchy button](../../img/ios/debugHierarchyButton.png)
-
-### 6. Select the component
-
-Last thing to do - select the component you need and you will see your actual testID value under the `Accessibility Identifier` attribute.
-
-![accessibility attribute with testID value](../../img/ios/accessibilityAttributeIOS.png)
+1. Build and start your app in _debug_ mode as you usually do, e.g.:
+    ```sh
+    detox build -c ios.sim.debug
+    npx react-native start
+    npx react-native run-ios
+    ```
+1. Open your iOS project in Xcode, e.g. `YourProject/ios/YourProject.xcworkspace`.
+1. Go to `Debug > Attach to Process` and select your app process (it is usually on top of the list).
+    ![attach to debug process ios](../../img/ios/attachToProcess.png)
+    You will see a new device started with your app.
+1. Open the `AppDelegate` file:
+    ![AppDelegate file](../../img/ios/appDelegate.png)
+1. Click `Debug View Hierarchy` button on the bottom panel:
+    ![Debug Hierarchy button](../../img/ios/debugHierarchyButton.png)
+1. Select the component you need, and you will see your actual `testID` value under the `Accessibility > Identifier` attribute.
+    ![accessibility attribute with testID value](../../img/ios/accessibilityAttributeIOS.png)

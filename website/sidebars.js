@@ -19,10 +19,10 @@ const sidebars = {
       label: 'Introduction',
       items: [
         'introduction/getting-started',
-        'introduction/building-with-detox',
-        'introduction/writing-first-test',
+        'introduction/project-setup',
+        'introduction/your-first-test',
+        'introduction/debugging',
         'introduction/preparing-for-ci',
-        'introduction/debugging'
       ]
     },
     {

@@ -1,11 +1,6 @@
----
-id: developing-while-writing-tests
-slug: guide/developing-while-writing-tests
-title: Developing Your App While Writing Tests
-sidebar_label: Developing Your App While Writing Tests
----
+# Developing Your App While Writing Tests
 
-## Developing Your App While Writing Tests
+<!-- markdownlint-configure-file { "header-increment": 0 } -->
 
 > If your app requires active development, such as adding testID fields for tests, this is a good workflow. It allows you to work both on your app and your tests at the same time.
 
@@ -21,7 +16,7 @@ we’re going to need a _debug_ build:
 detox build -c ios.sim.debug # or android.emu.debug
 ```
 
-Check out [Introduction > Building with Detox](../introduction/building-with-detox.mdx) for more details.
+Check out [Introduction > Building with Detox](../introduction/project-setup.mdx) for more details.
 
 ### Step 2: Make Sure Your React-Native Packager is Running
 
