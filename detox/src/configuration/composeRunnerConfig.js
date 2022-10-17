@@ -56,11 +56,12 @@ function composeRunnerConfig(opts) {
 
   if (typeof merged.inspectBrk === 'function') {
     if (cliConfig.inspectBrk) {
+      merged.retries = 0;
+      merged.forwardEnv = true;
       merged.inspectBrk(merged);
-      merged.inspectBrk = true;
-    } else {
-      merged.inspectBrk = false;
     }
+
+    delete merged.inspectBrk;
   }
 
   return merged;

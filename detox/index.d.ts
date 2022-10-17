@@ -170,9 +170,9 @@ declare global {
             bail?: boolean;
             /**
              * Custom handler to process --inspect-brk CLI flag.
-             * Use it when you rely on another test runner than Jest.
+             * Use it when you rely on another test runner than Jest to mutate the config.
              */
-            inspectBrk?: boolean | ((config: DetoxTestRunnerConfig) => void);
+            inspectBrk?: (config: DetoxTestRunnerConfig) => void;
             /**
              * Forward environment variables to the spawned test runner
              * accordingly to the given CLI argument overrides.

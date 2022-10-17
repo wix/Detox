@@ -13,35 +13,12 @@ const { escapeSpaces } = require('../../src/utils/shellUtils');
 class TestRunnerCommand {
   constructor() {
     this._argv = {};
-    this._env = {};
+    this._cli2env = {};
     this._envHint = {};
+    this._envFwd = {};
     this._retries = 0;
     /** @type {Detox.DetoxDeviceConfig} */
     this._deviceConfig = null;
-  }
-
-  /**
-   * @param {Detox.DetoxDeviceConfig} config
-   * @returns {this}
-   */
-  setDeviceConfig(config) {
-    this._deviceConfig = config;
-
-    return this;
-  }
-
-  /**
-   * @param {Detox.DetoxTestRunnerConfig} config
-   * @returns {this}
-   */
-  setRunnerConfig(config) {
-    this._argv = config.args;
-    this._retries = config.inspectBrk ? 0 : config.retries;
-    if (config.inspectBrk || config.forwardEnv) {
-      this._env = this._envHint;
-    }
-
-    return this;
   }
 
   /**
@@ -49,7 +26,7 @@ class TestRunnerCommand {
    * @returns {this}
    */
   replicateCLIConfig(cliConfig) {
-    this._envHint = _.omitBy({
+    this._cli2env = _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
       DETOX_ARTIFACTS_LOCATION: cliConfig.artifactsLocation,
       DETOX_CAPTURE_VIEW_HIERARCHY: cliConfig.captureViewHierarchy,
@@ -76,6 +53,37 @@ class TestRunnerCommand {
       DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
       DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
     }, _.isUndefined);
+
+    this._envHint = _(process.env)
+      .mapKeys((_value, key) => key.toUpperCase())
+      .pickBy((_value, key) => key.startsWith('DETOX_'))
+      .omit(['DETOX_CONFIG_SNAPSHOT_PATH'])
+      .value();
+
+    return this;
+  }
+
+  /**
+   * @param {Detox.DetoxDeviceConfig} config
+   * @returns {this}
+   */
+  setDeviceConfig(config) {
+    this._deviceConfig = config;
+
+    return this;
+  }
+
+  /**
+   * @param {Detox.DetoxTestRunnerConfig} config
+   * @returns {this}
+   */
+  setRunnerConfig(config) {
+    this._argv = config.args;
+    this._retries = config.inspectBrk ? 0 : config.retries;
+    if (config.forwardEnv) {
+      this._envFwd = this._cli2env;
+      Object.assign(this._envHint, this._cli2env);
+    }
 
     return this;
   }
@@ -136,7 +144,7 @@ class TestRunnerCommand {
         stdio: 'inherit',
         env: _({})
           .assign(process.env)
-          .assign(this._env)
+          .assign(this._envFwd)
           .omitBy(_.isUndefined)
           .tap(prependNodeModulesBinToPATH)
           .value()

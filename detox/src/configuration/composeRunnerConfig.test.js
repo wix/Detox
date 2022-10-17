@@ -46,7 +46,6 @@ describe('composeRunnerConfig', () => {
       },
       retries: 0,
       bail: false,
-      inspectBrk: false,
       forwardEnv: false,
     });
   });
@@ -61,7 +60,6 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
-      inspectBrk: true,
       forwardEnv: true,
     };
 
@@ -79,7 +77,6 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
-      inspectBrk: true,
       forwardEnv: true,
     });
   });
@@ -95,7 +92,6 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
-      inspectBrk: true,
       forwardEnv: true,
     };
 
@@ -113,7 +109,6 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
-      inspectBrk: true,
       forwardEnv: true,
     });
   });
@@ -131,6 +126,11 @@ describe('composeRunnerConfig', () => {
   });
 
   it('should take --inspect-brk overrides from cliConfig', () => {
+    globalConfig.testRunner = {
+      forwardEnv: false,
+      retries: 1,
+    };
+
     cliConfig.inspectBrk = true;
 
     expect(composeRunnerConfig()).toEqual(expect.objectContaining({
@@ -138,8 +138,23 @@ describe('composeRunnerConfig', () => {
         $0: expect.stringMatching(/--inspect-brk.*jest/),
         runInBand: true,
       }),
-      inspectBrk: true,
+      retries: 0,
+      forwardEnv: true,
     }));
+  });
+
+  it('should provide inspectBrk hook customization', () => {
+    const inspectBrk = jest.fn((config) => {
+      config.hello = true;
+    });
+
+    globalConfig.testRunner = { inspectBrk };
+    cliConfig.inspectBrk = true;
+    const runnerConfig = composeRunnerConfig();
+
+    expect(runnerConfig).not.toHaveProperty('inspectBrk');
+    expect(runnerConfig.hello).toBe(true);
+    expect(inspectBrk).toHaveBeenCalledWith(runnerConfig);
   });
 
   it('should apply --jest-report-specs overrides from cliConfig onto globalConfig and localConfig', () => {
@@ -225,7 +240,6 @@ describe('composeRunnerConfig', () => {
       },
       bail: false,
       retries: 3,
-      inspectBrk: false,
       forwardEnv: false,
     });
   });
