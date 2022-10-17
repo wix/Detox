@@ -17,7 +17,7 @@ class DetoxReporter extends JestVerboseReporter {
       testExecError: testResult.testExecError,
       isPermanentFailure: config.testRunner.jest.retryAfterCircusRetries
         ? false
-        : testResult.testResults.some(r => r.invocations > 1)
+        : testResult.testResults.some(r => r.status === 'failed' && r.invocations > 1)
     }]);
   }
 }
