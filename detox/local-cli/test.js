@@ -16,14 +16,14 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
     };
 
     const config = await detox.resolveConfig(opts);
-    if (!config.testRunner.inspectBrk) {
+    if (!detoxArgs['inspect-brk']) {
       await detox.init(opts);
     }
 
     const runnerCommand = new TestRunnerCommand()
-      .setDeviceConfig(detox.config.device)
-      .replicateCLIConfig(detox.config.cli)
-      .setRunnerConfig(detox.config.testRunner);
+      .setDeviceConfig(config.device)
+      .replicateCLIConfig(config.cli)
+      .setRunnerConfig(config.testRunner);
 
     await runnerCommand.execute();
   } finally {
