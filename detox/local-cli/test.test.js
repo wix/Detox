@@ -122,7 +122,7 @@ describe('CLI', () => {
     });
 
     test('should hint essential environment variables', () => {
-      expect(cliCall().fullCommand).toMatch(/^DETOX_CONFIG_PATH=.*\bexecutable/);
+      expect(cliCall().fullCommand).toMatch(/\bDETOX_CONFIG_PATH=.*\bexecutable\b/);
     });
   });
 
