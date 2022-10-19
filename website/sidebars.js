@@ -68,6 +68,20 @@ const sidebars = {
   apiSidebar: [
     {
       type: 'category',
+      label: 'Config file',
+      items: [
+        'config/overview',
+        'config/devices',
+        'config/apps',
+        'config/artifacts',
+        'config/behavior',
+        'config/logger',
+        'config/session',
+        'config/testRunner',
+      ]
+    },
+    {
+      type: 'category',
       label: 'Command Line Interface',
       items: [
         'cli/overview',
@@ -80,20 +94,6 @@ const sidebars = {
         'cli/rebuild-framework-cache',
         'cli/reset-lock-file',
         'cli/run-server',
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Config file',
-      items: [
-        'config/overview',
-        'config/devices',
-        'config/apps',
-        'config/artifacts',
-        'config/behavior',
-        'config/logger',
-        'config/session',
-        'config/testRunner',
       ]
     },
     {

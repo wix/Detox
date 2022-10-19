@@ -1,7 +1,5 @@
 @startuml
 
-title "detox test → jest --runInBand"
-
 actor User
 boundary "Detox CLI" as CLI
 participant "DetoxPrimaryContext" as Pri
@@ -30,8 +28,8 @@ loop while exitCode != 0 and retries > 0
     Jest0 -> Env: run test file
     Jest0 -> Env: teardown()
     Env -> Sec: uninstallWorker()
-    Sec --> Pri: report failed tests
     deactivate Env
+    Jest0 --> Pri: reportTestResults()
   end loop
   Jest0 -> Sec: cleanup()
   deactivate Sec

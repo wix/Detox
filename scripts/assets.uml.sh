@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-plantuml docs/uml/**/*.uml
+plantuml -tsvg docs/uml/**/*.uml
 mkdir -p docs/img/uml
-mv docs/uml/**/*.png docs/img/uml
+mv docs/uml/**/*.svg docs/img/uml
 

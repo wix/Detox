@@ -1,7 +1,5 @@
 @startuml
 
-title "detox test → jest --maxWorkers N"
-
 actor User
 boundary "Jest (main)" as Jest0
 participant "DetoxPrimaryContext" as Pri
@@ -29,8 +27,8 @@ loop every test file
   JestN -> Env: run test file
   JestN -> Env: teardown()
   Env -> Sec: uninstallWorker()
-  Sec --> Pri: report failed tests
   deactivate Env
+  Jest0 --> Pri: reportTestResults()
 end loop
 deactivate Sec
 deactivate JestN

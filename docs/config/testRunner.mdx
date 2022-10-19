@@ -6,7 +6,7 @@ While Detox was created to test mobile applications, effectively it is **not a t
 
 Since we focus on React Native and yet require some test runner under the hood, the most logical choice was to provide an official integration with Jest, which is the default test runner for such projects. This is why all our guides presume you have Jest under the hood, and the structure generated via  `detox init` is no exception.
 
-The integration with a test runner is a matter of the configuration, not the implementation – Detox source code has no hard-coded logic for Jest save for a few minor places[^1]. Furthermore, we're looking forward to new third-party integrations with popular test runners as the [Internals API](../api/internals.md) keeps improving.
+The integration with a test runner is a matter of the configuration, not the implementation – Detox source code has no hard-coded logic for Jest save for a few minor places[^1]. Furthermore, we're looking forward to new third-party integrations with popular test runners as the [Internals API](../api/internals.mdx) keeps improving.
 
 [^1]: Detox has a few hard-coded default values for Jest: [`testRunner.args.$0`] and [`testRunner.inspectBrk`] hook. Also `detox test` CLI is aware of Jest boolean arguments (e.g. `-i, --runInBand`, `--bail`, etc.), and it can auto-fix ambiguous commands like `detox test --runInBand e2e/starter.test.js --bail`.
 We're looking forward to make the code even more agnostic, but currently these caveats are worth mentioning for the developers of third-party test runner integrations.
@@ -133,11 +133,13 @@ DETOX_CONFIGURATION="…" jest --config e2e/jest.config.js /path/to/your/test.js
 # …
 ```
 
+See also [`-R, --retries`](../cli/test.md#options) in Detox CLI.
+
 ### `testRunner.bail` \[boolean]
 
 Default: `false`.
 
-When true, tells `detox test` to cancel next retrying if it gets at least one report about a [permanent test suite failure](../api/internals.md#reporting-test-results).
+When true, tells `detox test` to cancel next retrying if it gets at least one report about a [permanent test suite failure](../api/internals.mdx#reporting-test-results).
 Has no effect, if [`testRunner.retries`] is undefined or set to zero.
 
 ### `testRunner.forwardEnv` \[boolean]
