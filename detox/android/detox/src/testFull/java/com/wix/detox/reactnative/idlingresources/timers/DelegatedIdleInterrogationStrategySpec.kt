@@ -5,22 +5,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import com.facebook.react.modules.core.TimingModule
 
 private const val BUSY_INTERVAL_MS = 1500L
 
-abstract class TimingModuleStub: NativeModule {
-    abstract fun hasActiveTimersInRange(rangeMs: Long): Boolean
-
-    override fun onCatalystInstanceDestroy() {}
-    override fun getName(): String = "TimersNativeModuleStub"
-    override fun canOverrideExistingModule() = false
-    override fun initialize() {}
-}
-
 object DelegatedIdleInterrogationStrategySpec : Spek({
-    describe("RN62+ timers idle-interrogation strategy") {
+    describe("Timers idle-interrogation strategy") {
 
-        lateinit var timingModule: TimingModuleStub
+        lateinit var timingModule: TimingModule
 
         beforeEachTest {
             timingModule = mock()

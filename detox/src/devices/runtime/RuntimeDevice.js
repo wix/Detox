@@ -1,4 +1,5 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const { forEachSeries } = require('../../utils/p-iteration');
 const { traceCall } = require('../../utils/trace');
 
@@ -19,6 +20,8 @@ class RuntimeDevice {
     this._deviceConfig = deviceConfig;
 
     this._selectedApp = null;
+
+    this.debug = debug;
   }
 
   async init() {
@@ -85,9 +88,8 @@ class RuntimeDevice {
   }
 
   async installUtilBinaries() {
-    await traceCall('installUtilBinaries', () => {
-      forEachSeries(this._utilApps, (app) => app.install(), this);
-    });
+    await traceCall('installUtilBinaries',
+      forEachSeries(this._utilApps, (app) => app.install(), this));
   }
 
   async reinstallApps(appAliases) {

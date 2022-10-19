@@ -154,7 +154,7 @@ class AndroidAppDriver extends TestAppDriver {
    * @param launchInfo { LaunchInfoAndroid }
    */
   async launch(launchInfo) {
-    this._pid = await this._handleLaunchApp({
+    await this._handleLaunchApp({
       manually: false,
       launchInfo,
     });
@@ -165,7 +165,7 @@ class AndroidAppDriver extends TestAppDriver {
    * @param launchInfo { LaunchInfoAndroid }
    */
   async waitForLaunch(launchInfo) {
-    this._pid = await this._handleLaunchApp({
+    await this._handleLaunchApp({
       manually: true,
       launchInfo,
     });
@@ -276,16 +276,13 @@ class AndroidAppDriver extends TestAppDriver {
       ...notificationLaunchArgs,
       ...sessionLaunchArgs,
     };
+    const _launchApp = (manually ? this.__waitForAppLaunch : this.__launchApp).bind(this);
 
     await this._notifyBeforeAppLaunch(adbName, _packageId, launchArgs);
+    await _launchApp(launchArgs);
 
-    if (manually) {
-      await this.__waitForAppLaunch(launchArgs);
-    } else {
-      await this.__launchApp(launchArgs);
-    }
+    const pid = this._pid = await this._waitForProcess();
 
-    const pid = await this._waitForProcess();
     if (manually) {
       log.info({}, `Found the app (${_packageId}) with process ID = ${pid}. Proceeding...`);
     }
@@ -293,7 +290,6 @@ class AndroidAppDriver extends TestAppDriver {
     await this._notifyAppLaunch(adbName, _packageId, launchArgs, pid);
     await this._waitUntilReady();
     await this._notifyAppReady(adbName, _packageId, pid);
-    return pid;
   }
 
   async __launchApp(launchArgs) {
@@ -373,7 +369,15 @@ class AndroidAppDriver extends TestAppDriver {
   /** @override */
   async _waitUntilReady() {
     try {
-      await Promise.race([super._waitUntilReady(), this._instrumentation.waitForCrash()]);
+      await Promise.race([
+        super._waitUntilReady(),
+        this._instrumentation.waitForCrash()
+      ]);
+    } catch (e) {
+      console.warn('An error occurred while waiting for the app to become ready. Waiting for disconnection... Error:\n', e);
+      await this.client.waitUntilDisconnected();
+      console.warn('...app disconnected.');
+      throw e;
     } finally {
       this._instrumentation.abortWaitForCrash();
     }

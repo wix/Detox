@@ -32,18 +32,33 @@ describe('sliceErrorStack(error, fromIndex)', () => {
 });
 
 describe('replaceErrorStack(source, target)', () => {
-  it('should replace error stack in the target error using the source error', () => {
-    function sourceFunction() { throw new Error('Source Error'); }
-    function targetFunction() { throw new Error('Target Error'); }
+
+  function sourceFunction() { throw new Error('Source Error message'); }
+  function targetFunction() { throw new Error('Target Error message'); }
+
+  it('should return the target error', () => {
     const source = _.attempt(sourceFunction);
     const target = _.attempt(targetFunction);
-    expect(target.stack).toMatch(/Target Error/);
-    expect(target.stack).toMatch(/at targetFunction/);
-    expect(target.stack).not.toMatch(/at sourceFunction/);
     expect(errorUtils.replaceErrorStack(source, target)).toBe(target);
-    expect(target.stack).toMatch(/Target Error/);
+  });
+
+  it('should replace error stack in the target error using the source error', () => {
+    const source = _.attempt(sourceFunction);
+    const target = _.attempt(targetFunction);
+
+    errorUtils.replaceErrorStack(source, target);
+    expect(target.stack).toMatch(/Target Error message/);
     expect(target.stack).toMatch(/at sourceFunction/);
     expect(target.stack).not.toMatch(/at targetFunction/);
+  });
+
+  it('should not trim down stack-frames from a (native) stack-trace reported as the message', () => {
+    const nativeStacktrace = 'Target native error:\n  at native.stack.Class.method()';
+    const source = _.attempt(sourceFunction);
+    const target = new Error(nativeStacktrace);
+
+    errorUtils.replaceErrorStack(source, target);
+    expect(target.stack).toMatch(nativeStacktrace);
   });
 
   it('should not ruin already malformed errors', () => {

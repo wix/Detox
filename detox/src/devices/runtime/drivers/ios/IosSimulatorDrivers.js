@@ -126,7 +126,7 @@ class IosSimulatorAppDriver extends IosAppDriver {
    * @param launchInfo { LaunchInfoIosSim }
    */
   async launch(launchInfo) {
-    this._pid = await this._handleLaunchApp({ manually: false, launchInfo });
+    await this._handleLaunchApp({ manually: false, launchInfo });
   }
 
   /**
@@ -134,7 +134,7 @@ class IosSimulatorAppDriver extends IosAppDriver {
    * @param launchInfo { LaunchInfoIosSim }
    */
   async waitForLaunch(launchInfo) {
-    this._pid = await this._handleLaunchApp({ manually: true, launchInfo });
+    await this._handleLaunchApp({ manually: true, launchInfo });
   }
 
   /** @override */
@@ -260,12 +260,9 @@ class IosSimulatorAppDriver extends IosAppDriver {
 
     await this._notifyBeforeAppLaunch(udid, bundleId, launchArgs);
 
-    let pid;
-    if (manually) {
-      pid = await this.__waitForAppLaunch(launchArgs, launchInfo.languageAndLocale);
-    } else {
-      pid = await this.__launchApp(launchArgs, launchInfo.languageAndLocale);
-    }
+    const _launchApp = (manually ? this.__waitForAppLaunch : this.__launchApp).bind(this);
+    const pid = this._pid = await _launchApp(launchArgs, launchInfo.languageAndLocale);
+
     payloadLaunchArgsHandle.cleanup();
 
     await this._notifyAppLaunch(udid, bundleId, launchArgs, pid);

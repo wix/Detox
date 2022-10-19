@@ -36,14 +36,14 @@ detox build --configuration ios.sim.debug
 
 1. Start react-native packager:
 
-    ```sh
-    npm run start
-    ```
+   ```sh
+   npm run start
+   ```
 
-2. Run tests on the demo project:
+1. Run tests on the demo project:
 
-    ```sh
-    detox test --configuration ios.sim.debug
-    ```
+   ```sh
+   detox test --configuration ios.sim.debug
+   ```
 
-    This action will open a new simulator and run the tests on it.
+   This action will open a new simulator and run the tests on it.

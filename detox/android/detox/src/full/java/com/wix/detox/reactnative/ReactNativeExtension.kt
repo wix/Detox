@@ -39,7 +39,7 @@ object ReactNativeExtension {
             reloadReactNativeInBackground(it)
             val reactContext = awaitNewReactNativeContext(it, previousReactContext)
 
-            setupIdlingResources(reactContext, networkSyncEnabled)
+            enableOrDisableSynchronization(reactContext, networkSyncEnabled)
             hackRN50OrHigherWaitForReady()
         }
     }
@@ -58,7 +58,7 @@ object ReactNativeExtension {
         (applicationContext as ReactApplication).let {
             val reactContext = awaitNewReactNativeContext(it, null)
 
-            setupIdlingResources(reactContext)
+            enableOrDisableSynchronization(reactContext)
             hackRN50OrHigherWaitForReady()
         }
     }
@@ -122,6 +122,19 @@ object ReactNativeExtension {
     private fun awaitNewReactNativeContext(reactApplication: ReactApplication, previousReactContext: ReactContext?): ReactContext {
         val rnLoadingMonitor = ReactNativeLoadingMonitor(InstrumentationRegistry.getInstrumentation(), reactApplication, previousReactContext)
         return rnLoadingMonitor.getNewContext()!!
+    }
+
+    private fun enableOrDisableSynchronization(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {
+        if (shouldDisableSynchronization()) {
+            clearAllSynchronization()
+        } else {
+            setupIdlingResources(reactContext, networkSyncEnabled)
+        }
+    }
+
+    private fun shouldDisableSynchronization(): Boolean {
+        val launchArgs = LaunchArgs()
+        return launchArgs.hasEnableSynchronization() && launchArgs.enableSynchronization.equals("0")
     }
 
     private fun setupIdlingResources(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {

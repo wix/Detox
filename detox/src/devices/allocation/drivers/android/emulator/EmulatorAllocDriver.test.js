@@ -34,9 +34,7 @@ describe('Allocation driver for Google emulators', () => {
   let emulatorLauncher;
   let allocationHelper;
   beforeEach(() => {
-    jest.mock('../../../../../utils/trace', () => ({
-      traceCall: (name, fn) => fn(),
-    }));
+    jest.mock('../../../../../utils/trace');
 
     jest.mock('../../../../common/drivers/android/exec/ADB');
     const ADB = require('../../../../common/drivers/android/exec/ADB');
@@ -158,7 +156,13 @@ describe('Allocation driver for Google emulators', () => {
     it('should pre-validate proper AVD configuration', async () => {
       givenValidAVD();
       await allocDriver.allocate(deviceConfig);
-      expect(avdValidator.validate).toHaveBeenCalledWith(avdName);
+      expect(avdValidator.validate).toHaveBeenCalledWith(avdName, undefined);
+    });
+
+    it('should respect headless avd configuration during AVD validation', async () => {
+      givenValidAVD();
+      await allocDriver.allocate({ ...deviceConfig, headless: true });
+      expect(avdValidator.validate).toHaveBeenCalledWith(avdName, true);
     });
 
     it('should throw if AVD configuration is invalid', async () => {

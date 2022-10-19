@@ -1,9 +1,9 @@
-  - label: ":android:-:six::eight:-RN_68_android"
+  - label: ":android:-:six::nine:-RN_69_android"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.68.2
+      REACT_NATIVE_VERSION: 0.69.5
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
       SKIP_UNIT_TESTS: true

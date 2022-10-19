@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const { traceCall } = require('../../utils/trace');
+const { traceCall, traceInvocationCall } = require('../../utils/trace');
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
@@ -63,11 +63,11 @@ class RunnableTestApp extends TestApp {
   }
 
   async launch(launchInfo) {
-    return traceCall('launchApp', () => this._launch(launchInfo));
+    return traceCall('launch app', () => this._launch(launchInfo));
   }
 
   async reloadReactNative() {
-    return this._driver.reloadReactNative();
+    return traceCall('reload React Native', () => this._driver.reloadReactNative());
   }
 
   async enableSynchronization() {
@@ -158,8 +158,8 @@ class RunnableTestApp extends TestApp {
   //    TestAppExpect -> A class that would hold a copy of invocationManager, with methods such as tap() and expectVisible()
   //    TestAppExpectDriver -> A delegate that would generate the proper invocation for tap(), expectVisible(), etc., depending on
   //                           the platform (iOS / Android).
-  async invoke(action) {
-    return this._driver.invoke(action);
+  async invoke(action, traceDescription = 'Unspecified trace section') {
+    return traceInvocationCall(traceDescription, action, this._driver.invoke(action));
   }
 
   // TODO (multiapps) Similar to the notes about invoke(), these artifacts-related methods should probably reside
