@@ -1,9 +1,9 @@
-  - label: ":android::mushroom:-RN_68_demo_project"
+  - label: ":android::mushroom:-RN_69_demo_project"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.68.2
+      REACT_NATIVE_VERSION: 0.69.5
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
     artifact_paths:

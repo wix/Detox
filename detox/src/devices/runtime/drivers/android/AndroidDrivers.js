@@ -373,7 +373,15 @@ class AndroidAppDriver extends TestAppDriver {
   /** @override */
   async _waitUntilReady() {
     try {
-      await Promise.race([super._waitUntilReady(), this._instrumentation.waitForCrash()]);
+      await Promise.race([
+        super._waitUntilReady(),
+        this._instrumentation.waitForCrash()
+      ]);
+    } catch (e) {
+      console.warn('An error occurred while waiting for the app to become ready. Waiting for disconnection... Error:\n', e);
+      await this.client.waitUntilDisconnected();
+      console.warn('...app disconnected.');
+      throw e;
     } finally {
       this._instrumentation.abortWaitForCrash();
     }

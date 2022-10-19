@@ -3,6 +3,7 @@ const Module = require('module');
 const path = require('path');
 
 const resolveFrom = require('resolve-from');
+const semver = require('semver');
 
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
 
@@ -47,7 +48,9 @@ function resolveJestCliArgs() {
 
   try {
     const jestCliManifest = resolveJestDependency(jestLocation, 'jest-cli/package.json');
-    const argsJsFile = path.join(path.dirname(jestCliManifest), 'build/cli/args.js');
+    const jestCliVersion = require(jestCliManifest).version;
+    const argsJsFilePath = semver.gt(jestCliVersion, '29.1.2') ? 'build/args.js' : 'build/cli/args.js';
+    const argsJsFile = path.join(path.dirname(jestCliManifest), argsJsFilePath);
 
     return require(argsJsFile);
   } catch (e) {

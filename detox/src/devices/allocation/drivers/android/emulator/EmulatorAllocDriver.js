@@ -31,7 +31,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   async allocate(deviceConfig) {
     const avdName = deviceConfig.device.avdName;
 
-    await this._avdValidator.validate(avdName);
+    await this._avdValidator.validate(avdName, deviceConfig.headless);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
     const allocResult = await this._allocationHelper.allocateDevice(avdName);
@@ -73,7 +73,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 
   async _launchEmulator(avdName, adbName, isRunning, options) {
     try {
-      await traceCall('emulatorLaunch', () =>
+      await traceCall('emulatorLaunch',
         this._emulatorLauncher.launch(avdName, adbName, isRunning, options));
     } catch (e) {
       await this._allocationHelper.deallocateDevice(adbName);

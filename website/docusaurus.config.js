@@ -25,7 +25,15 @@ const config = {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/wix/Detox/edit/master/docs/',
-          docLayoutComponent: '@site/src/components/CustomLayout'
+          docLayoutComponent: '@site/src/components/CustomLayout',
+          remarkPlugins: [
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+          ],
+        },
+        pages: {
+          remarkPlugins: [
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+          ],
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css')
@@ -63,8 +71,8 @@ const config = {
         ]
       },
       algolia: {
-        appId: 'BH4D9OD16A',
-        apiKey: 'f621c2d74268df173153c887526aebb3',
+        appId: 'KTM5GBP42S',
+        apiKey: 'd01d9c1bae30c64fa2b9bfbdad9adbfd',
         indexName: 'detox'
       },
       footer: {

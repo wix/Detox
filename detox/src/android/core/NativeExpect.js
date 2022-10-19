@@ -1,3 +1,4 @@
+const { expectDescription } = require('../../utils/invocationTraceDescriptions');
 const { MatcherAssertionInteraction } = require('../interactions/native');
 const matchers = require('../matchers/native');
 
@@ -19,7 +20,9 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toBeVisible(pct) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.VisibleMatcher(pct).not : new matchers.VisibleMatcher(pct)).execute();
+    const matcher = new matchers.VisibleMatcher(pct);
+    const traceDescription = expectDescription.toBeVisible(pct);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toBeNotVisible() {
@@ -27,7 +30,9 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toExist() {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.ExistsMatcher().not : new matchers.ExistsMatcher()).execute();
+    const matcher = new matchers.ExistsMatcher();
+    const traceDescription = expectDescription.toExist();
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toNotExist() {
@@ -35,7 +40,9 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveText(text) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.TextMatcher(text).not : new matchers.TextMatcher(text)).execute();
+    const matcher = new matchers.TextMatcher(text);
+    const traceDescription = expectDescription.toHaveText(text);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toNotHaveText(text) {
@@ -43,7 +50,9 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveLabel(value) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.LabelMatcher(value).not : new matchers.LabelMatcher(value)).execute();
+    const matcher = new matchers.LabelMatcher(value);
+    const traceDescription = expectDescription.toHaveLabel(value);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toNotHaveLabel(value) {
@@ -51,7 +60,9 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveId(value) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.IdMatcher(value).not : new matchers.IdMatcher(value)).execute();
+    const matcher = new matchers.IdMatcher(value);
+    const traceDescription = expectDescription.toHaveId(value);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toNotHaveId(value) {
@@ -59,7 +70,9 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveValue(value) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.ValueMatcher(value).not : new matchers.ValueMatcher(value)).execute();
+    const matcher = new matchers.ValueMatcher(value);
+    const traceDescription = expectDescription.toHaveValue(value);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toNotHaveValue(value) {
@@ -67,15 +80,21 @@ class NativeExpectElement extends NativeExpect {
   }
 
   async toHaveToggleValue(value) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.ToggleMatcher(value).not : new matchers.ToggleMatcher(value)).execute();
+    const matcher = new matchers.ToggleMatcher(value);
+    const traceDescription = expectDescription.toHaveToggleValue(value);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toHaveSliderPosition(value, tolerance = 0) {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.SliderPositionMatcher(value, tolerance).not : new matchers.SliderPositionMatcher(value, tolerance)).execute();
+    const matcher = new matchers.SliderPositionMatcher(value, tolerance);
+    const traceDescription = expectDescription.toHaveSliderPosition(value, tolerance);
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toBeFocused() {
-    return await new MatcherAssertionInteraction(this._device, this._element, this._notCondition ? new matchers.FocusMatcher().not : new matchers.FocusMatcher()).execute();
+    const matcher = new matchers.FocusMatcher();
+    const traceDescription = expectDescription.toBeFocused();
+    return await new MatcherAssertionInteraction(this._device, this._element, matcher, this._notCondition, traceDescription).execute();
   }
 
   async toBeNotFocused() {

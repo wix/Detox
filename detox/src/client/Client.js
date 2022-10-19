@@ -34,6 +34,7 @@ class Client {
     this._slowInvocationStatusHandle = null;
     this._whenAppIsConnected = this._invalidState('before connecting to the app');
     this._whenAppIsReady = this._whenAppIsConnected;
+    this._whenAppDisconnected = Deferred.resolved();
     this._isCleaningUp = false;
     this._pendingAppCrash = null;
     this._appTerminationHandle = null;
@@ -205,6 +206,11 @@ class Client {
     }
   }
 
+  /** @async */
+  waitUntilDisconnected() {
+    return this._whenAppDisconnected.promise;
+  }
+
   async waitForBackground() {
     await this.sendAction(new actions.WaitForBackground());
   }
@@ -305,6 +311,8 @@ class Client {
     } else {
       this._whenAppIsConnected = Deferred.resolved();
     }
+
+    this._whenAppDisconnected = new Deferred();
   }
 
   _onAppReady() {
@@ -324,6 +332,10 @@ class Client {
   }
 
   _onBeforeAppCrash({ params }) {
+    if (this._pendingAppCrash) {
+      return;
+    }
+
     this._pendingAppCrash = new DetoxRuntimeError({
       message: 'The app has crashed, see the details below:',
       debugInfo: params.errorDetails,
@@ -342,10 +354,15 @@ class Client {
     this._whenAppIsReady = this._whenAppIsConnected;
 
     if (this._pendingAppCrash) {
+      this._whenAppDisconnected.reject(this._pendingAppCrash);
       this._asyncWebSocket.rejectAll(this._pendingAppCrash);
       this._pendingAppCrash = null;
     } else if (this._asyncWebSocket.hasPendingActions()) {
-      this._asyncWebSocket.rejectAll(new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.'));
+      const error = new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.');
+      this._asyncWebSocket.rejectAll(error);
+      this._whenAppDisconnected.resolve();
+    } else {
+      this._whenAppDisconnected.resolve();
     }
   }
 
