@@ -532,18 +532,12 @@ describe('DetoxWorker', () => {
   });
 
   describe.each([
-    ['onRunStart', null],
     ['onRunDescribeStart', { name: 'testSuiteName' }],
     ['onTestStart', testSummaries.running()],
-    ['onHookStart', null],
     ['onHookFailure', { error: new Error() }],
-    ['onHookSuccess', null],
-    ['onTestFnStart', null],
     ['onTestFnFailure', { error: new Error() }],
-    ['onTestFnSuccess', null],
     ['onTestDone', testSummaries.passed()],
     ['onRunDescribeFinish', { name: 'testSuiteName' }],
-    ['onRunFinish', null],
   ])('when DetoxWorker#@%s(%j) is called', (method, arg) => {
     beforeEach(async () => {
       detox = await new Detox(detoxContext).init();

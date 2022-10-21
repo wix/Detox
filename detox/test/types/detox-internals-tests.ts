@@ -10,16 +10,10 @@ import {
   installWorker,
   log,
   onHookFailure,
-  onHookStart,
-  onHookSuccess,
   onRunDescribeFinish,
   onRunDescribeStart,
-  onRunFinish,
-  onRunStart,
   onTestDone,
   onTestFnFailure,
-  onTestFnStart,
-  onTestFnSuccess,
   onTestStart,
   reportTestResults,
   resolveConfig,
@@ -140,60 +134,36 @@ function configTest() {
 }
 
 async function lifecycleTest() {
-  await onHookFailure({
-    error: new Error('Hook failure'),
-    hook: random<'beforeAll' | 'beforeEach' | 'afterEach' | 'afterAll'>(),
-  });
-
-  await onHookStart({
-    hook: random<'beforeAll' | 'beforeEach' | 'afterEach' | 'afterAll'>(),
-  });
-
-  await onHookSuccess({
-    hook: random<'beforeAll' | 'beforeEach' | 'afterEach' | 'afterAll'>(),
-  });
-
-  await onRunDescribeFinish({
-    name: 'Test suite',
-  });
-
   await onRunDescribeStart({
     name: 'Test suite',
   });
 
-  await onRunFinish({
-
-  });
-
-  await onRunStart({
+  await onTestStart({
     title: 'Some test',
     fullName: 'Test suite > Some test',
     status: 'running',
-    invocations: 0,
-  });
-
-  await onTestDone({
-    title: 'Some test',
-    fullName: 'Test suite > Some test',
-    status: Math.random() < 0.5 ? 'failed' : 'passed',
     invocations: 1,
-    timedOut: false,
   });
 
   await onTestFnFailure({
     error: new Error('Test fn failure'),
   });
 
-  await onTestFnStart({
-
+  await onTestDone({
+    title: 'Some test',
+    fullName: 'Test suite > Some test',
+    status: Math.random() < 0.5 ? 'failed' : 'passed',
+    invocations: 2,
+    timedOut: false,
   });
 
-  await onTestFnSuccess({
-
+  await onHookFailure({
+    error: new Error('Hook failure'),
+    hook: random<'beforeAll' | 'beforeEach' | 'afterEach' | 'afterAll'>(),
   });
 
-  await onTestStart({
-
+  await onRunDescribeFinish({
+    name: 'Test suite',
   });
 
   await reportTestResults([

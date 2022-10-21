@@ -40,18 +40,71 @@ declare global {
       // endregion
 
       // region Lifecycle
-      onRunStart(event: unknown): Promise<void>;
-      onRunDescribeStart(event: unknown): Promise<void>;
-      onTestStart(event: unknown): Promise<void>;
-      onHookStart(event: unknown): Promise<void>;
-      onHookFailure(event: unknown): Promise<void>;
-      onHookSuccess(event: unknown): Promise<void>;
-      onTestFnStart(event: unknown): Promise<void>;
-      onTestFnFailure(event: unknown): Promise<void>;
-      onTestFnSuccess(event: unknown): Promise<void>;
-      onTestDone(event: unknown): Promise<void>;
-      onRunDescribeFinish(event: unknown): Promise<void>;
-      onRunFinish(event: unknown): Promise<void>;
+      /**
+       * Reports that the test runner started executing a test suite, e.g. a `beforeAll` hook or a first test.
+       */
+      onRunDescribeStart(event: {
+        /** Test suite name */
+        name: string;
+      }): Promise<void>;
+      /**
+       * Reports that the test runner started executing a specific test.
+       */
+      onTestStart(event: {
+        /** Test name */
+        title: string;
+        /** Test name including the ancestor suite titles */
+        fullName: string;
+        /**
+         * N-th time this test is running, if there is a retry mechanism.
+         *
+         * @default 1
+         */
+        invocations?: number;
+        status: 'running';
+      }): Promise<void>;
+      /**
+       * Reports about an error in the midst of `beforeAll`, `beforeEach`, `afterEach`, `afterAll` or any other hook.
+       */
+      onHookFailure(event: {
+        error: Error | string;
+        /**
+         * @example 'beforeAll'
+         * @example 'afterEach'
+         */
+        hook: string;
+      }): Promise<void>;
+      /**
+       * Reports about an error in the midst of a test function, `test` or `it`.
+       */
+      onTestFnFailure(event: {
+        error: Error | string;
+      }): Promise<void>;
+      /**
+       * Reports the final status of the test, `passed` or `failed`.
+       */
+      onTestDone(event: {
+        /** Test name */
+        title: string;
+        /** Test name including the ancestor suite titles */
+        fullName: string;
+        /**
+         * N-th time this test is running, if there is a retry mechanism.
+         *
+         * @default 1
+         */
+        invocations?: number;
+        status: 'passed' | 'failed';
+        /** Whether a timeout was the reason for why the test failed. */
+        timedOut?: boolean;
+      }): Promise<void>;
+      /**
+       * Reports that the test runner has finished executing a test suite, e.g. all the `afterAll` hooks have been executed or the last test has finished running.
+       */
+      onRunDescribeFinish(event: {
+        /** Test suite name */
+        name: string;
+      }): Promise<void>;
 
       /**
        * Reports to Detox CLI about passed and failed test files.
@@ -87,6 +140,9 @@ declare global {
 
     type DetoxInitOptions = {
       cwd: string;
+      /**
+       * @internal
+       */
       argv: Record<string, unknown>;
       testRunnerArgv: Record<string, unknown>;
       override: Partial<Detox.DetoxConfig>;

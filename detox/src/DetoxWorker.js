@@ -190,7 +190,6 @@ class DetoxWorker {
     return this._context.log;
   }
 
-  onRunStart = async (...args) => this._artifactsManager.onRunStart(...args);
   onRunDescribeStart = async (...args) => this._artifactsManager.onRunDescribeStart(...args);
   onTestStart = async (testSummary) => {
     if (this._isCleaningUp) return;
@@ -205,12 +204,8 @@ class DetoxWorker {
     if (this._isCleaningUp) return;
     await this._artifactsManager.onTestStart(testSummary);
   };
-  onHookStart = async (...args) => this._artifactsManager.onHookStart(...args);
   onHookFailure = async (...args) => this._artifactsManager.onHookFailure(...args);
-  onHookSuccess = async (...args) => this._artifactsManager.onHookSuccess(...args);
-  onTestFnStart = async (...args) => this._artifactsManager.onTestFnStart(...args);
   onTestFnFailure = async (...args) => this._artifactsManager.onTestFnFailure(...args);
-  onTestFnSuccess = async (...args) => this._artifactsManager.onTestFnSuccess(...args);
   onTestDone = async (testSummary) => {
     if (this._isCleaningUp) return;
     this._validateTestSummary('afterEach', testSummary);
@@ -225,7 +220,6 @@ class DetoxWorker {
     });
   };
   onRunDescribeFinish = async (...args) => this._artifactsManager.onRunDescribeFinish(...args);
-  onRunFinish = async (...args) => this._artifactsManager.onRunFinish(...args);
 
   async _reinstallAppsOnDevice() {
     const appNames = _(this._appsConfig)

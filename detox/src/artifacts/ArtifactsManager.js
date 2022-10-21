@@ -32,19 +32,13 @@ class ArtifactsManager extends EventEmitter {
       'onBootDevice',
       'onCreateExternalArtifact',
       'onHookFailure',
-      'onHookStart',
-      'onHookSuccess',
       'onLaunchApp',
       'onRunDescribeFinish',
       'onRunDescribeStart',
-      'onRunFinish',
-      'onRunStart',
       'onShutdownDevice',
       'onTerminateApp',
       'onTestDone',
       'onTestFnFailure',
-      'onTestFnStart',
-      'onTestFnSuccess',
       'onTestStart',
     ]);
   }
@@ -185,8 +179,6 @@ class ArtifactsManager extends EventEmitter {
     });
   }
 
-  async onRunStart() {}
-
   async onRunDescribeStart(suite) {
     await this._callPlugins('ascending', 'onRunDescribeStart', suite);
   }
@@ -195,21 +187,13 @@ class ArtifactsManager extends EventEmitter {
     await this._callPlugins('ascending', 'onTestStart', testSummary);
   }
 
-  async onHookStart() {}
-
   async onHookFailure(testSummary) {
     await this._callPlugins('plain', 'onHookFailure', testSummary);
   }
 
-  async onHookSuccess() {}
-
-  async onTestFnStart() {}
-
   async onTestFnFailure(testSummary) {
     await this._callPlugins('plain', 'onTestFnFailure', testSummary);
   }
-
-  async onTestFnSuccess() {}
 
   async onTestDone(testSummary) {
     await this._callPlugins('descending', 'onTestDone', testSummary);
@@ -218,8 +202,6 @@ class ArtifactsManager extends EventEmitter {
   async onRunDescribeFinish(suite) {
     await this._callPlugins('descending', 'onRunDescribeFinish', suite);
   }
-
-  async onRunFinish() {}
 
   async onBeforeCleanup() {
     await this._callPlugins('descending', 'onBeforeCleanup');

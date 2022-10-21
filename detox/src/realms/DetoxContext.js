@@ -80,18 +80,12 @@ class DetoxContext {
   //#endregion
 
   //#region Internal members
-  [symbols.onRunStart] = (...args) => this[symbols.worker].onRunStart(...args);
   [symbols.onRunDescribeStart] = (...args) => this[symbols.worker].onRunDescribeStart(...args);
   [symbols.onTestStart] = (...args) => this[symbols.worker].onTestStart(...args);
-  [symbols.onHookStart] = (...args) => this[symbols.worker].onHookStart(...args);
   [symbols.onHookFailure] = (...args) => this[symbols.worker].onHookFailure(...args);
-  [symbols.onHookSuccess] = (...args) => this[symbols.worker].onHookSuccess(...args);
-  [symbols.onTestFnStart] = (...args) => this[symbols.worker].onTestFnStart(...args);
   [symbols.onTestFnFailure] = (...args) => this[symbols.worker].onTestFnFailure(...args);
-  [symbols.onTestFnSuccess] = (...args) => this[symbols.worker].onTestFnSuccess(...args);
   [symbols.onTestDone] = (...args) => this[symbols.worker].onTestDone(...args);
   [symbols.onRunDescribeFinish] = (...args) => this[symbols.worker].onRunDescribeFinish(...args);
-  [symbols.onRunFinish] = (...args) => this[symbols.worker].onRunFinish(...args);
   [symbols.config] = funpermaproxy(() => this[symbols.session].detoxConfig);
   [symbols.session] = funpermaproxy(() => this[$sessionState]);
   [symbols.tracing] = Object.freeze({
