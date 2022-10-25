@@ -41,7 +41,7 @@ class SessionState {
   }
 
   static reviver(key, val) {
-    if (typeof val === 'object' && typeof val.$fn == 'string') {
+    if (typeof val === 'object' && val !== null && typeof val.$fn == 'string') {
       return eval(val.$fn);
     } else {
       return val;
