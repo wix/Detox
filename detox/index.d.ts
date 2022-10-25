@@ -289,7 +289,7 @@ declare global {
         type DetoxAliasedDevice = string | DetoxDeviceConfig;
 
         // endregion DetoxConfig
-
+        // test branch comment
         // Detox exports all methods from detox global and all of the global constants.
         interface DetoxInstance {
             device: Device;
