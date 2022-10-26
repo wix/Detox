@@ -1,8 +1,7 @@
 const fs = require('fs');
+const bundlePath = `${process.argv[2]}`;
 
 function bloatBundle() {
-  const bundlePath = './app.js';
-
   try {
     const debugBundle = fs.openSync(bundlePath, 'a');
     try {
