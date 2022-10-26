@@ -6,7 +6,9 @@ trap "$UPLOAD_ARTIFACT" EXIT
 # Approve unapproved SDK licenses
 yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
-source $(dirname "$0")/demo-projects.sh
+SCRIPTS_PATH="$(dirname "$0")"
+
+source $SCRIPTS_PATH/demo-projects.sh
 
 pushd detox
 run_f "npm run build:android"
@@ -35,7 +37,7 @@ pushd examples/demo-react-native
   DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
 
   # Run tests with bloated JS bundle:
-  source $(dirname "$0")/demo-rn-bloat-bundle-test.sh android
+  source $SCRIPTS_PATH/demo-rn-bloat-bundle-test.sh android
 popd
 
 pushd examples/demo-plugin
