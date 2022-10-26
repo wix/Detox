@@ -1,4 +1,6 @@
 #!/bin/bash -e
+# This script is used to run the demo project' tests with a bloated JS bundle.
+# See the original issue for the motivation behind this: https://github.com/wix/Detox/issues/3507
 
 OS_PLATFORM=$1
 
