@@ -22,6 +22,6 @@ pushd examples/demo-react-native
   run_f "npm run test:ios-release-ci"
 
   # Run tests with bloated JS bundle:
-  source $(dirname "$0")/demo-rn-bloat-bundle-test.sh
+  source $(dirname "$0")/demo-rn-bloat-bundle-test.sh ios
 popd
 

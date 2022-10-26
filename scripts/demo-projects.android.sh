@@ -35,7 +35,7 @@ pushd examples/demo-react-native
   DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:android-release-ci"
 
   # Run tests with bloated JS bundle:
-  source $(dirname "$0")/demo-rn-bloat-bundle-test.sh
+  source $(dirname "$0")/demo-rn-bloat-bundle-test.sh android
 popd
 
 pushd examples/demo-plugin
