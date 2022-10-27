@@ -91,6 +91,12 @@ const config = {
             label: 'API'
           },
           {
+            to: 'showcase',
+            label: 'Showcase',
+            position: 'left',
+            className: 'header-showcase-link'
+          },
+          {
             type: 'docsVersionDropdown',
             position: 'right',
             dropdownActiveClassDisabled: true,
