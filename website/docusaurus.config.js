@@ -31,35 +31,29 @@ const config = {
           editLocalizedFiles: false,
           authorsMapPath: 'authors.yml',
           feedOptions: {
-            type: null,
+            type: null
           },
           blogTitle: 'Blog',
-          blogDescription: 'All the important updates and announcements from Detox crew, tips and tricks and everything else that you don\'t want to miss.',
+          blogDescription:
+            "All the important updates and announcements from Detox crew, tips and tricks and everything else that you don't want to miss.",
           blogSidebarCount: 5,
           blogSidebarTitle: 'All our posts',
           routeBasePath: 'blog',
           include: ['**/*.{md,mdx}'],
-          exclude: [
-            '**/_*.*',
-            '**/_*/**',
-          ],
+          exclude: ['**/_*.*', '**/_*/**'],
           postsPerPage: 10,
           truncateMarker: /<!--\s*(truncate)\s*-->/,
-          showReadingTime: true,
+          showReadingTime: true
         },
         docs: {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/wix/Detox/edit/next/docs/',
           docLayoutComponent: '@site/src/components/CustomLayout',
-          remarkPlugins: [
-            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
-          ],
+          remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         pages: {
-          remarkPlugins: [
-            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
-          ],
+          remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css')
@@ -99,14 +93,14 @@ const config = {
           {
             type: 'docsVersionDropdown',
             position: 'right',
-            dropdownActiveClassDisabled: true,
+            dropdownActiveClassDisabled: true
           },
           {
             href: 'https://github.com/wix/Detox',
             position: 'right',
             className: 'header-github-link',
-            'aria-label': 'GitHub repository',
-          },
+            'aria-label': 'GitHub repository'
+          }
         ]
       },
       algolia: {
@@ -173,8 +167,8 @@ const config = {
       },
       docs: {
         sidebar: {
-          autoCollapseCategories: true,
-        },
+          autoCollapseCategories: true
+        }
       },
       prism: {
         additionalLanguages: ['gradle', 'ini', 'java'],
