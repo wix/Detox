@@ -180,6 +180,11 @@ const config = {
         additionalLanguages: ['gradle', 'ini', 'java'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
+      },
+      colorMode: {
+        defaultMode: 'dark',
+        disableSwitch: false,
+        respectPrefersColorScheme: false
       }
     }),
   scripts: [
