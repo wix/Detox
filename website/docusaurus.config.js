@@ -115,7 +115,7 @@ const config = {
         indexName: 'detox'
       },
       footer: {
-        style: 'dark',
+        style: 'light',
         links: [
           {
             title: 'Docs',
@@ -148,15 +148,24 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/wix/Detox'
+                href: 'https://github.com/wix/Detox',
+                position: 'left',
+                className: 'footer-gh-footer',
+                favicon: '/static/img/showcase/gh-footer-light.svg'
               },
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/detoxe2e/'
+                href: 'https://twitter.com/detoxe2e/',
+                position: 'left',
+                className: 'footer-twitter-footer',
+                favicon: '/static/img/showcase/twitter-footer-light.svg'
               },
               {
                 label: 'Discord',
-                href: 'https://discord.gg/CkD5QKheF5'
+                href: 'https://discord.gg/CkD5QKheF5',
+                position: 'left',
+                className: 'footer-discord-footer',
+                favicon: '/static/img/showcase/discord-footer-light.png'
               }
             ]
           }
