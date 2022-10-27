@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.0.12-prerelease.0",
+  "version": "20.1.0-next-is-hittable-check.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },

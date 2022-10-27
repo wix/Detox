@@ -1,13 +1,13 @@
 {
   "name": "detox-demo-native-android",
-  "version": "20.0.12-prerelease.0",
+  "version": "20.1.0-next-is-hittable-check.0",
   "private": true,
   "scripts": {
     "packager": "react-native start",
     "detox-server": "detox run-server"
   },
   "devDependencies": {
-    "detox": "^20.0.12-prerelease.0"
+    "detox": "^20.1.0-next-is-hittable-check.0"
   },
   "detox": {}
 }
