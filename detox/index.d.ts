@@ -88,9 +88,13 @@ declare global {
                  */
                 reinstallApp?: boolean;
                 /**
-                 * If you wish to run multiple "detox test" commands in parallel,
-                 * make sure they don't delete the shared lock file – only the
-                 * first command should reset the lock file.
+                 * When false, `detox test` command always deletes the shared lock file on start,
+                 * assuming it had been left from the previous, already finished test session.
+                 * The lock file contains information about busy and free devices and ensures
+                 * no device can be used simultaneously by multiple test workers.
+                 *
+                 * Setting it to **true** might be useful when if you need to run multiple
+                 * `detox test` commands in parallel, e.g. test a few configurations at once.
                  *
                  * @default false
                  */
@@ -102,13 +106,43 @@ declare global {
             };
         }
 
+        type _DetoxLoggerOptions = Omit<BunyanDebugStreamOptions, 'out'>;
+
         interface DetoxLoggerConfig {
+            /**
+             * Log level filters the messages printed to your terminal,
+             * and it does not affect the logs written to the artifacts.
+             *
+             * Use `info` by default.
+             * Use `error` or warn when you want to make the output as silent as possible.
+             * Use `debug` to control what generally is happening under the hood.
+             * Use `trace` when troubleshooting specific issues.
+             *
+             * @default 'info'
+             */
             level?: DetoxLogLevel;
             /**
+             * When enabled, hijacks all the console methods (console.log, console.warn, etc)
+             * so that the messages printed via them are formatted and saved as Detox logs.
+             *
              * @default true
              */
             overrideConsole?: boolean;
-            options?: BunyanDebugStreamOptions | ((config: Partial<DetoxLoggerConfig>) => BunyanDebugStreamOptions);
+            /**
+             * Since Detox is using
+             * {@link https://www.npmjs.com/package/bunyan-debug-stream bunyan-debug-stream}
+             * for printing logs, all its options are exposed for sake of simplicity
+             * of customization.
+             *
+             * The only exception is {@link BunyanDebugStreamOptions#out} option,
+             * which is always set to `process.stdout`.
+             *
+             * You can also pass a callback function to override the logger config
+             * programmatically, e.g. depending on the selected log level.
+             *
+             * @see {@link BunyanDebugStreamOptions}
+             */
+            options?: _DetoxLoggerOptions | ((config: Partial<DetoxLoggerConfig>) => _DetoxLoggerOptions);
         }
 
         interface DetoxSessionConfig {
