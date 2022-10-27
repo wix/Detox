@@ -2,6 +2,8 @@ import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+import PrepareBootstrapRN from './partials/_project-setup-bootstrap-rn.mdx';
+import PrepareBootstrapOther from './partials/_project-setup-bootstrap-other.mdx';
 import PrepareAppConfigsIos from './partials/_project-setup-apps-ios.mdx';
 import PrepareAppConfigsAndroid from './partials/_project-setup-apps-android.mdx';
 import PrepareDeviceConfigsIos from './partials/_project-setup-devices-ios.mdx';
@@ -21,35 +23,12 @@ look for other file locations, use custom build commands and so on.
 
 <Tabs groupId="appType">
   <TabItem value="start-rn" label="React Native" default>
-    Go to your project's root folder (where <code>package.json</code> is found) and run:
+    <PrepareBootstrapRN />
   </TabItem>
   <TabItem value="start-other" label="Native iOS">
-    <p>Create a <code>package.json</code> in your project's root by running this command:</p>
-    <CodeBlock language="bash">
-      npm init -y
-    </CodeBlock>
-    <p>And remember to add the <code>node_modules</code> folder to your <code>.gitignore</code> file.</p>
-    <p>Now you are ready to install the Detox itself. Run:</p>
+    <PrepareBootstrapOther />
   </TabItem>
 </Tabs>
-
-```bash npm2yarn
-npm install detox@20.0.12-prerelease.0 --save-dev
-```
-
-The next step would be to **install a test runner**. Out of the box, Detox offers you first-class integration
-with [Jest](https://jestjs.io), and that is our official recommendation:
-
-```bash npm2yarn
-npm install "jest@>=27.2.5" --save-dev
-```
-
-:::info
-The command above will install the **latest Jest version** regardless of the constraint, but `@>=27.2.5` is
-recommended in the first place to prevent you from getting an incompatible Jest version unknowingly, under influence
-of the existing lock files. Reportedly, `package-lock.json` could restrict `npm install jest` to installing
-an older, unsupported version `26.x`.
-:::
 
 Now, when all the dependencies are installed, initialize Detox in your project:
 
@@ -122,6 +101,13 @@ module.exports = {
   },
 };
 ```
+
+:::info
+
+If you plan to use cloud devices instead, check out the [Genymotion SaaS guide](../guide/genymotion-saas.mdx), which will help you to set up remote Android devices.
+This tutorial, however, focuses on devices running locally.
+
+:::
 
 Here's how you can check they are correct and change them if you need something else:
 
