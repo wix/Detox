@@ -6,9 +6,13 @@ const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
 
+// Protected symbols
 const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
+
+//#region Private symbols
 const _ipcClient = Symbol('ipcClient');
 const _shortLifecycle = Symbol('shortLifecycle');
+//#endregion
 
 class DetoxSecondaryContext extends DetoxContext {
   constructor() {
@@ -74,9 +78,9 @@ class DetoxSecondaryContext extends DetoxContext {
 
   /** @override */
   async [symbols.installWorker](opts = {}) {
-    const workerId = opts.workerId = opts.workerId || 'worker';
+    const workerId = opts.workerId || 'worker';
     await this[_ipcClient].registerWorker(workerId);
-    await super[symbols.installWorker](opts);
+    await super[symbols.installWorker]({ ...opts, workerId });
   }
   //#endregion
 

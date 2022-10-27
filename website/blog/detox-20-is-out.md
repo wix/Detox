@@ -155,15 +155,20 @@ In other words, this is a convenience API that tells Detox to run `device.revers
 
 ### Re-launching apps
 
-A long time ago, we introduced `device.relaunchApp()` method. The method itself was identical to `device.launchApp({ newInstance: true })`, so at some point, we deprecated it... for no good reason.
+As we can tell from production experience, using `device.launchApp()` as-is, without passing `newInstance` parameter explicitly, is a source of flakiness in some tests.
 
-We kept seeing people using `device.launchApp(opts)` with an argument, only to pass `{ newInstance: true }`, and that made us change our minds.
-So, Detox 20 officially returns that convenience method to the [Device API][`Device API > relaunchApp`] docs and [to the typings][typings]. Feel free to use it:
+The default `newInstance` value is conditional, in fact – if the app is already running, this method just brings it to the foreground, otherwise, it launches a new instance.
+That often creates undesirable situations, e.g., when a test might restart the app unexpectedly, just because the app had crashed in the previous test.
+
+We plan to change the default behavior in the next major release, so that the `launchApp` will always be re-launching the app, unless you pass `newInstance: false` explicitly, when you want to bring it to the foreground. Therefore, we suggest you to switch everywhere to the new method, `device.relaunchApp()`, which is equivalent to `launchApp({ newInstance: true })`, except for cases when you want to bring the app to the foreground:
 
 ```js
 await device.relaunchApp();
 await device.relaunchApp({ ...opts });
+await device.launchApp({ newInstance: false }); // make it explicit
 ```
+
+This way, you will prepare to the upcoming breaking change in Detox 21.0.0, and you will also get rid of the inconsistency in your tests. All that would be left is to mass-replace `deivce.relaunchApp()` with `device.launchApp()` in your codebase.
 
 ### Read-only emulators by default
 

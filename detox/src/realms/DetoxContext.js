@@ -7,11 +7,13 @@ const symbols = require('../symbols');
 
 const DetoxConstants = require('./DetoxConstants');
 
+//#region Protected symbols
 const $cleanup = Symbol('cleanup');
 const $restoreSessionState = Symbol('restoreSessionState');
 const $sessionState = Symbol('restoreSessionState');
 const $status = Symbol('status');
 const $worker = Symbol('worker');
+//#endregion
 
 class DetoxContext {
   constructor() {

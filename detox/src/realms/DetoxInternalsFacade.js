@@ -15,16 +15,10 @@ class DetoxInternalsFacade {
     this.installWorker = context[symbols.installWorker];
     this.uninstallWorker = context[symbols.uninstallWorker];
     this.onHookFailure = context[symbols.onHookFailure];
-    this.onHookStart = context[symbols.onHookStart];
-    this.onHookSuccess = context[symbols.onHookSuccess];
     this.onRunDescribeFinish = context[symbols.onRunDescribeFinish];
     this.onRunDescribeStart = context[symbols.onRunDescribeStart];
-    this.onRunFinish = context[symbols.onRunFinish];
-    this.onRunStart = context[symbols.onRunStart];
     this.onTestDone = context[symbols.onTestDone];
     this.onTestFnFailure = context[symbols.onTestFnFailure];
-    this.onTestFnStart = context[symbols.onTestFnStart];
-    this.onTestFnSuccess = context[symbols.onTestFnSuccess];
     this.onTestStart = context[symbols.onTestStart];
     this.reportTestResults = context[symbols.reportTestResults];
     this.resolveConfig = context[symbols.resolveConfig];

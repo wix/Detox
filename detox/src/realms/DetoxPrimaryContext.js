@@ -17,8 +17,10 @@ const globSync = glob.sync;
 
 const DetoxContext = require('./DetoxContext');
 
+// Protected symbols
 const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
+//#region Private symbols
 const _finalizeLogs = Symbol('finalizeLogs');
 const _finalizeLogsSync = Symbol('finalizeLogsSync');
 const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
@@ -29,6 +31,7 @@ const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _areLogsEnabled = Symbol('areLogsEnabled');
 const _lifecycleLogger = Symbol('lifecycleLogger');
+//#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
   constructor() {
@@ -140,10 +143,12 @@ class DetoxPrimaryContext extends DetoxContext {
    * @param {Partial<DetoxInternals.DetoxInstallWorkerOptions>} [opts]
    */
   async [symbols.installWorker](opts = {}) {
-    const workerId = this[$sessionState].workerId = opts.workerId = opts.workerId || 'worker';
+    const workerId = opts.workerId || 'worker';
+
+    this[$sessionState].workerId = workerId;
     this[_ipcServer].onRegisterWorker({ workerId });
 
-    await super[symbols.installWorker](opts);
+    await super[symbols.installWorker]({ ...opts, workerId });
   }
 
   /** @override */

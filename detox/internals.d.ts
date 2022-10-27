@@ -6,7 +6,7 @@ declare global {
     type DetoxStatus = 'inactive' | 'init' | 'active' | 'cleanup';
 
     type Facade = {
-      // region Initialization
+      //#region Initialization
       /**
        * Use with a caution, when you still have no config, yet need to avoid {@link Facade#init}
        */
@@ -37,9 +37,9 @@ declare global {
        * This is the phase where the Detox server shuts down.
        */
       cleanup(): Promise<void>;
-      // endregion
+      //#endregion
 
-      // region Lifecycle
+      //#region Lifecycle
       /**
        * Reports that the test runner started executing a test suite, e.g. a `beforeAll` hook or a first test.
        */
@@ -114,7 +114,7 @@ declare global {
        * @param testResults - reports about test files
        */
       reportTestResults(testResults: DetoxTestFileReport[]): Promise<void>;
-      // endregion
+      //#endregion
 
       readonly config: RuntimeConfig;
       readonly log: Detox.Logger;
@@ -131,6 +131,10 @@ declare global {
         createEventStream(): NodeJS.ReadableStream;
       };
 
+      /**
+       * Not documented on purpose.
+       * Provides direct access to the object which holds the device driver, websocket client, matchers, expectations, etc.
+       */
       readonly worker: Worker;
     }
 

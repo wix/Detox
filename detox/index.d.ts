@@ -32,7 +32,7 @@ declare global {
     }
 
     namespace Detox {
-        // region DetoxConfig
+        //#region DetoxConfig
 
         interface DetoxConfig extends DetoxConfigurationCommon {
             /**
@@ -167,25 +167,78 @@ declare global {
                  */
                 [prop: string]: unknown;
             };
+
             /**
-             * Configuration of custom integration features
-             * between Detox and Jest
+             * This is an add-on section used by our Jest integration code (but not Detox core itself).
+             * In other words, if you’re implementing (or using) a custom integration with some other test runner, feel free to define a section for yourself (e.g. `testRunner.mocha`)
              */
             jest?: {
                 /**
                  * Environment setup timeout
+                 *
+                 * As a part of the environment setup, Detox boots the device and installs the apps.
+                 * If that takes longer than the specified value, the entire test suite will be considered as failed, e.g.:
+                 * ```plain text
+                 * FAIL  e2e/starter.test.js
+                 * ● Test suite failed to run
+                 *
+                 * Exceeded timeout of 300000ms while setting up Detox environment
+                 * ```
+                 *
+                 * The default value is 5 minutes.
+                 *
+                 * @default 300000
+                 * @see {@link https://jestjs.io/docs/configuration/#testenvironment-string}
                  */
                 setupTimeout?: number | undefined;
                 /**
-                 * Environment teardown timeout
+                 * Environemnt teardown timeout
+                 *
+                 * If the environment teardown takes longer than the specified value, Detox will throw a timeout error.
+                 * The default value is half a minute.
+                 *
+                 * @default 30000 (30 seconds)
+                 * @see {@link https://jestjs.io/docs/configuration/#testenvironment-string}
                  */
                 teardownTimeout?: number | undefined;
                 /**
-                 * Insist on CLI-based retry mechanism even when the failed tests have been handled
-                 * by jest.retryTimes(n) mechanism from Jest Circus.
+                 * Jest provides an API to re-run individual failed tests: `jest.retryTimes(count)`.
+                 * When Detox detects the use of this API, it suppresses its own CLI retry mechanism controlled via `detox test … --retries <N>` or {@link DetoxTestRunnerConfig#retries}.
+                 * The motivation is simple – activating the both mechanisms is apt to increase your test duration dramatically, if your tests are flaky.
+                 * If you wish nevertheless to use both the mechanisms simultaneously, set it to `true`.
+                 *
+                 * @default false
+                 * @see {@link https://jestjs.io/docs/29.0/jest-object#jestretrytimesnumretries-options}
                  */
                 retryAfterCircusRetries?: boolean;
+                /**
+                 * By default, Jest prints the test names and their status (_passed_ or _failed_) at the very end of the test session.
+                 * When enabled, it makes Detox to print messages like these each time the new test starts and ends:
+                 * ```plain text
+                 * 18:03:36.258 detox[40125] i Sanity: should have welcome screen
+                 * 18:03:37.495 detox[40125] i Sanity: should have welcome screen [OK]
+                 * 18:03:37.496 detox[40125] i Sanity: should show hello screen after tap
+                 * 18:03:38.928 detox[40125] i Sanity: should show hello screen after tap [OK]
+                 * 18:03:38.929 detox[40125] i Sanity: should show world screen after tap
+                 * 18:03:40.351 detox[40125] i Sanity: should show world screen after tap [OK]
+                 * ```
+                 * By default, it is enabled automatically in test sessions with a single worker.
+                 * And vice versa, if multiple tests are executed concurrently, Detox turns it off to avoid confusion in the log.
+                 * Use boolean values, `true` or `false`, to turn off the automatic choice.
+                 *
+                 * @default undefined
+                 */
                 reportSpecs?: boolean | undefined;
+                /**
+                 * In the environment setup phase, Detox boots the device and installs the apps.
+                 * This flag tells Detox to print messages like these every time the device gets assigned to a specific suite:
+                 *
+                 * ```plain text
+                 * 18:03:29.869 detox[40125] i starter.test.js is assigned to 4EC84833-C7EA-4CA3-A6E9-5C30A29EA596 (iPhone 12 Pro Max)
+                 * ```
+                 *
+                 * @default true
+                 */
                 reportWorkerAssign?: boolean | undefined;
             };
             /**
@@ -376,7 +429,7 @@ declare global {
 
         type DetoxAliasedApp = string | DetoxAppConfig;
 
-        // endregion DetoxConfig
+        //#endregion
 
         interface DetoxExportWrapper {
             readonly device: Device;
