@@ -26,8 +26,8 @@ const config = {
           // Simple use-case: string editUrl
           // editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
           // Advanced use-case: functional editUrl
-          editUrl: ({locale, blogDirPath, blogPath, permalink}) =>
-            `https://github.com/wix/Detox/edit/master/website/${blogDirPath}/${blogPath}`,
+          editUrl: ({ locale, blogDirPath, blogPath, permalink }) =>
+            `https://github.com/wix/Detox/edit/next/website/${blogDirPath}/${blogPath}`,
           editLocalizedFiles: false,
           authorsMapPath: 'authors.yml',
           feedOptions: {
@@ -50,7 +50,7 @@ const config = {
         docs: {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/wix/Detox/edit/master/docs/',
+          editUrl: 'https://github.com/wix/Detox/edit/next/docs/',
           docLayoutComponent: '@site/src/components/CustomLayout',
           remarkPlugins: [
             [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
