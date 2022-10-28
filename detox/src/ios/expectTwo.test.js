@@ -580,6 +580,25 @@ describe('expectTwo', () => {
   it('web.element() should throw', async () => {
     expect(() => e.web.element(e.by.id('someId'))).toThrowError(/not support/);
   });
+
+  it(`element(e.by.text('tapMe')).performAccessibilityAction('activate')`, () => {
+    const testCall = e.element(e.by.text('tapMe')).performAccessibilityAction('activate');
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'accessibilityAction',
+        predicate: {
+          type: 'text',
+          value: 'tapMe'
+        },
+        params: [
+          'activate'
+        ]
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
 });
 
 expect.extend({
