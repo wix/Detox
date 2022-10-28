@@ -12,7 +12,7 @@ export default function ShowcaseHero() {
 
         <a href="https://forms.gle/C1BWzd8k5LhogDtM7" target="_blank" className={styles.button}>
           Join the Showcase!
-        </Link>
+        </a>
       </div>
     </section>
   );
