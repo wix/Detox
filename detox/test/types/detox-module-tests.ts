@@ -40,13 +40,6 @@ describe('Test', () => {
         locale: 'en-CA',
       },
     });
-
-    await device.relaunchApp();
-    await device.relaunchApp({
-      launchArgs: {
-        someArg: 42,
-      },
-    });
   });
 
   afterAll(async () => {

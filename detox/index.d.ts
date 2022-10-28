@@ -606,7 +606,7 @@ declare global {
             /**
              * Launch the app.
              *
-             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).
+             * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/next/api/device#devicelaunchappparams).
              *
              * @example
              * // Terminate the app and launch it again. If set to false, the simulator will try to bring app from background,
@@ -627,19 +627,10 @@ declare global {
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
 
             /**
-             * Relaunch the app. Convenience method that calls {@link Device#launchApp}
-             * with { newInstance: true } override.
-             *
-             * @param config
-             * @see Device#launchApp
-             */
-            relaunchApp(config?: Omit<DeviceLaunchAppConfig, 'newInstance'>): Promise<void>;
-
-            /**
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
-             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/next/api/device#devicelaunchappparams) for complete details.
              *
              * @example
              * // With Detox being preconfigured statically to use these arguments in app launch:
@@ -1568,7 +1559,7 @@ declare global {
             delete?: boolean;
             /**
              * Arguments to pass-through into the app.
-             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args) for complete details.
+             * Refer to the [dedicated guide](https://wix.github.io/Detox/docs/next/api/device#devicelaunchappparams) for complete details.
              */
             launchArgs?: Record<string, any>;
             /**

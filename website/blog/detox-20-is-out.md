@@ -153,20 +153,7 @@ module.exports = {
 
 In other words, this is a convenience API that tells Detox to run `device.reverseTcpPort(portNumber)` after installing the app. It should be helpful for anyone who prefers to keep such things as configs rather than as code.
 
-### Re-launching apps
-
-A long time ago, we introduced `device.relaunchApp()` method. The method itself was identical to `device.launchApp({ newInstance: true })`, so at some point, we deprecated it... for no good reason.
-
-We kept seeing people using `device.launchApp(opts)` with an argument, only to pass `{ newInstance: true }`, and that made us change our minds.
-So, Detox 20 officially returns that convenience method to the [Device API][`Device API > relaunchApp`] docs and [to the typings][typings]. Feel free to use it:
-
-```js
-await device.relaunchApp();
-await device.relaunchApp({ ...opts });
-```
-
 ### Read-only emulators by default
-
 
 The `-read-only` flag appeared in [Android emulator 28.0.16](https://developer.android.com/studio/releases/emulator#concurrent-avd). Detox promptly adopted it since the read-only mode allowed it to run multiple instances of a single Android virtual device (AVD) concurrently. This feature helped us to implement parallel test execution support for Android back then.
 
@@ -215,7 +202,6 @@ Detox 20 executes many pending deprecations, so make sure to check out our [Migr
 
 ## Afterword
 
-
 Over the last year and a half, we have established a centralized configuration system for more than 50 projects using Detox at Wix. While it never seemed to be a cakewalk, the entire experience of troubleshooting over a hundred issues across the organization did not leave us unchanged.
 
 We see numerous things to improve in Detox, but most of them boil down to the same thing – **scaling**. Surprisingly, "scaling" makes an excellent umbrella term for nearly every challenge we've been encountering lately:
@@ -239,7 +225,6 @@ Cheers! :wave:
 [`Config file > Device`]: /docs/next/config/devices
 [`Config file > Logger`]: /docs/next/config/logger
 [`Config file > Test runner`]: /docs/next/config/testRunner
-[`Device API > relaunchApp`]: /docs/next/api/device#devicerelaunchappparams
 [`Logger API`]: /docs/next/api/logger
 [reset-lock-file]: /docs/next/cli/reset-lock-file
 [Jest]: https://jestjs.io
