@@ -1,17 +1,5 @@
 [
   {
-    "title": "Hudl",
-    "image": "img/showcase/hudl.webp",
-    "linkGoogle": "https://play.google.com/store/apps/details?id=com.hudl.hudroid",
-    "linkApple": "https://apps.apple.com/us/app/hudl/id412223222"
-  },
-  {
-    "title": "Valora",
-    "image": "img/showcase/valora.webp",
-    "linkGoogle": "https://play.google.com/store/apps/details?id=co.clabs.valora",
-    "linkApple": "https://apps.apple.com/us/app/valora-crypto-wallet/id1520414263"
-  },
-  {
     "title": "Wix Spaces",
     "image": "img/showcase/wix-spaces.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.android",
@@ -24,10 +12,28 @@
     "linkApple": "https://apps.apple.com/us/app/wix-owner-website-builder/id1545924344"
   },
   {
-    "title": "React Native",
-    "image": "img/showcase/react-native.webp",
-    "linkGoogle": "https://play.google.com/store/apps/details?id=com.thesevenitsolutions.reactnative",
-    "linkApple": "https://apps.apple.com/us/app/react-native-components-apis/id1333539401"
+    "title": "Fit by Wix",
+    "image": "img/showcase/wix-fit.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.fitness",
+    "linkApple": "https://apps.apple.com/us/app/fit-by-wix/id1552621043"
+  },
+  {
+    "title": "Dine by Wix",
+    "image": "img/showcase/wix-dine.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.restaurants",
+    "linkApple": "https://apps.apple.com/us/app/dine-by-wix/id1561524113"
+  },
+  {
+    "title": "Hudl",
+    "image": "img/showcase/hudl.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.hudl.hudroid",
+    "linkApple": "https://apps.apple.com/us/app/hudl/id412223222"
+  },
+  {
+    "title": "Valora",
+    "image": "img/showcase/valora.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=co.clabs.valora",
+    "linkApple": "https://apps.apple.com/us/app/valora-crypto-wallet/id1520414263"
   },
   {
     "title": "Rocket Chat",
