@@ -12,6 +12,7 @@ class DetoxWorker {
   constructor(context) {
     this._context = context;
     this._isCleaningUp = false;
+    this._injectedGlobalProperties = [];
     this._config = context[symbols.config];
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(this._config);
     this._client = null;
@@ -134,11 +135,14 @@ class DetoxWorker {
     Object.assign(this, matchers);
 
     if (behaviorConfig.init.exposeGlobals) {
-      Object.assign(DetoxWorker.global, {
+      const injectedGlobals = {
         ...matchers,
         device: this.device,
         detox: this,
-      });
+      };
+
+      this._injectedGlobalProperties = Object.keys(injectedGlobals);
+      Object.assign(DetoxWorker.global, injectedGlobals);
     }
 
     // @ts-ignore
@@ -162,6 +166,10 @@ class DetoxWorker {
 
   async cleanup() {
     this._isCleaningUp = true;
+
+    for (const key of this._injectedGlobalProperties) {
+      delete DetoxWorker.global[key];
+    }
 
     if (this._artifactsManager) {
       await this._artifactsManager.onBeforeCleanup();
@@ -274,7 +282,7 @@ class DetoxWorker {
 }
 
 /**
- * @type {NodeJS.Global}
+ * @type {NodeJS.Global | {}}
  */
 DetoxWorker.global = global;
 

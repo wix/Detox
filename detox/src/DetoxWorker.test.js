@@ -506,6 +506,9 @@ describe('DetoxWorker', () => {
 
         it(`should dump pending network requests`, () =>
           expect(client().dumpPendingRequests).toHaveBeenCalled());
+
+        it(`should clean up the exposed globals`, () =>
+          expect(global).not.toHaveProperty('device'));
       });
     });
 
@@ -527,6 +530,19 @@ describe('DetoxWorker', () => {
           await detox.cleanup();
           expect(deviceAllocator.free).toHaveBeenCalledTimes(1);
         });
+      });
+    });
+
+    describe('when behavior.init.exposeGlobals = false', () => {
+      beforeEach(async () => {
+        detoxConfig.behavior.init.exposeGlobals = false;
+        detox = await new Detox(detoxContext).init();
+      });
+
+      it(`should not clean up the existing global properties`, async () => {
+        global.device = 'foo';
+        await detox.cleanup();
+        expect(global.device).toBe('foo');
       });
     });
   });
