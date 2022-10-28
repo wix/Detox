@@ -32,6 +32,13 @@ class ActionInteraction extends Interaction {
   }
 }
 
+// class AccessibilityActionAction extends Interaction {
+//   constructor(actionName) {
+//     super();
+//     this._call = invoke.callDirectly(DetoxActionApi.accessibilityAction(actionName));
+//   }
+// }
+
 class MatcherAssertionInteraction extends Interaction {
   constructor(invocationManager, element, matcher, notCondition, traceDescription) {
     traceDescription = expectDescription.full(traceDescription, notCondition);

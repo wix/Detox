@@ -138,6 +138,13 @@ class TakeElementScreenshot extends Action {
   }
 }
 
+class AccessibilityActionAction extends Action {
+  constructor(actionName) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.accessibilityAction(actionName));
+  }
+}
+
 module.exports = {
   Action,
   TapAction,
@@ -156,4 +163,5 @@ module.exports = {
   TakeElementScreenshot,
   ScrollToIndex,
   AdjustSliderToPosition,
+  AccessibilityActionAction
 };
