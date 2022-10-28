@@ -24,12 +24,6 @@
     "linkApple": "https://apps.apple.com/us/app/wix-owner-website-builder/id1545924344"
   },
   {
-    "title": "React Native",
-    "image": "img/showcase/react-native.webp",
-    "linkGoogle": "https://play.google.com/store/apps/details?id=com.thesevenitsolutions.reactnative",
-    "linkApple": "https://apps.apple.com/us/app/react-native-components-apis/id1333539401"
-  },
-  {
     "title": "Rocket Chat",
     "image": "img/showcase/rocket-chat.webp",
     "linkGoogle": "https://play.google.com/store/search?q=rocket%20chat&c=apps",
