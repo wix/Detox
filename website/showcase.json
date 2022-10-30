@@ -38,7 +38,7 @@
   {
     "title": "Rocket Chat",
     "image": "img/showcase/rocket-chat.webp",
-    "linkGoogle": "https://play.google.com/store/search?q=rocket%20chat&c=apps",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=chat.rocket.android",
     "linkApple": "https://apps.apple.com/us/app/rocket-chat/id1148741252"
   },
   {
@@ -80,7 +80,7 @@
   {
     "title": "Bolt",
     "image": "img/showcase/bolt.webp",
-    "linkGoogle": "https://play.google.com/store/search?q=bolt&c=apps",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=ee.mtakso.client",
     "linkApple": "https://apps.apple.com/us/app/bolt-fast-affordable-rides/id675033630"
   },
   {
