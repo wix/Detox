@@ -117,7 +117,6 @@ html[data-theme='dark'] {
   background: url('@site/static/img/showcase/showcase-icon-hover.svg') no-repeat;
 }
 
-/* TODO - change the image to stars-light-black here with matching lighter nav color shade black */
 [data-theme='dark'] .header-showcase-link:after {
   background: url('@site/static/img/showcase/showcase-icon-white.svg') no-repeat;
 }
@@ -161,5 +160,5 @@ html[data-theme='dark'] {
 }
 
 .markdown code {
-    white-space: pre;
+  white-space: pre;
 }
