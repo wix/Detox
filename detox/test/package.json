@@ -3,7 +3,7 @@
   "version": "20.0.13-prerelease.0",
   "private": true,
   "engines": {
-    "node": ">=12.10.0"
+    "node": ">=14.5.0"
   },
   "scripts": {
     "lint": "eslint .",
@@ -47,7 +47,7 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^3.0.1",
-    "@types/node": "^12.20.37",
+    "@types/node": "^14.18.33",
     "@types/react": "18.0.0",
     "@types/react-native": "0.69.5",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
