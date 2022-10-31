@@ -66,6 +66,10 @@ html[data-theme='dark'] {
   color: var(--ifm-footer-link-color);
 }
 
+[data-theme='dark'] .footer-gh-footer {
+    background: url(@site/static/img/showcase/gh-footer-dark.svg) no-repeat;
+}
+
 .footer__link-item a {
   text-decoration: none;
 }
@@ -80,10 +84,6 @@ html[data-theme='dark'] {
 
 [data-theme='dark'] .footer-twitter-footer {
   background: url('@site/static/img/showcase/twitter-footer-dark.svg') no-repeat;
-}
-
-[data-theme='dark'] .footer-gh-footer {
-  background: url('@site/static/img/showcase/gh-footer-dark.svg') no-repeat;
 }
 
 .footer-discord-footer {
