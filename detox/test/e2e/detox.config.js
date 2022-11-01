@@ -18,6 +18,7 @@ const config = {
     },
     retries: process.env.CI ? 1 : undefined,
     jest: {
+      setupTimeout: +`${process.env.DETOX_JEST_SETUP_TIMEOUT || 300000}`,
       reportSpecs: process.env.CI ? true : undefined,
     },
   },
