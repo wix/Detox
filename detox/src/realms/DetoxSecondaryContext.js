@@ -11,7 +11,6 @@ const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
 //#region Private symbols
 const _ipcClient = Symbol('ipcClient');
-const _shortLifecycle = Symbol('shortLifecycle');
 //#endregion
 
 class DetoxSecondaryContext extends DetoxContext {
@@ -23,13 +22,6 @@ class DetoxSecondaryContext extends DetoxContext {
      * @type {import('../ipc/IPCClient')}
      */
     this[_ipcClient] = null;
-    /**
-     * @private
-     * @type {undefined | boolean}
-     *
-     * TODO: explain what is short lifecycle and why we need it
-     */
-    this[_shortLifecycle] = false;
   }
 
   //#region Internal members
