@@ -9,7 +9,7 @@ const jestTemplates = require('./templates/jest');
 let exitCode = 0;
 
 module.exports.command = 'init';
-module.exports.desc = 'Scaffold initial E2E test folder structure for Detox';
+module.exports.desc = 'Creates template files to get you started with Detox';
 module.exports.builder = {};
 
 module.exports.handler = async function init() {
