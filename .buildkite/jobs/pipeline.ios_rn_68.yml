@@ -1,9 +1,9 @@
-  - label: ":ios::react: RN.69 + iOS: Demo app"
+  - label: ":ios::detox: RN.68 + iOS: Tests app"
     command:
       - "nvm install"
-      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.ios.sh"
+      - "./scripts/ci.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.69.5
+      REACT_NATIVE_VERSION: 0.68.3
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
