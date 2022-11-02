@@ -1,9 +1,9 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "20.0.13-prerelease.0",
+  "version": "20.0.14-next-is-hittable-check-2.0",
   "private": true,
   "devDependencies": {
-    "detox": "^20.0.13-prerelease.0"
+    "detox": "^20.0.14-next-is-hittable-check-2.0"
   },
   "detox": {
     "specs": "",

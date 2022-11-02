@@ -13,7 +13,7 @@
     "generation",
     "."
   ],
-  "version": "20.0.13-prerelease.0",
+  "version": "20.0.14-next-is-hittable-check-2.0",
   "npmClient": "npm",
   "command": {
     "publish": {
