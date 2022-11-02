@@ -1,6 +1,8 @@
-describe('Example (hello)', () => {
-  beforeEach(async () => {
-    await device.reloadReactNative();
+import { by, device, element, expect } from 'detox';
+
+describe('Test suite 1', () => {
+  beforeAll(async () => {
+    await device.relaunchApp();
   });
 
   it('should have welcome screen', async () => {
@@ -10,10 +12,5 @@ describe('Example (hello)', () => {
   it('should show hello screen after tap', async () => {
     await element(by.id('hello_button')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
-  });
-
-  it('should show world screen after tap', async () => {
-    await element(by.id('world_button')).tap();
-    await expect(element(by.text('World!!!'))).toBeVisible();
   });
 });
