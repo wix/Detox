@@ -42,8 +42,8 @@ npm install detox-cli --global
 
 Depending on the platform/s you’re aiming at (iOS, Android), take the time to run through these environment setup guides:
 
-- [Android](versioned_docs/version-19.x/Introduction.AndroidDevEnv.md)
-- [iOS](versioned_docs/version-19.x/Introduction.iOSDevEnv.md)
+- [Android](../Introduction.AndroidDevEnv.md)
+- [iOS](../Introduction.iOSDevEnv.md)
 
 ## Step 2: Add Detox to Your Project
 

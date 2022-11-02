@@ -37,7 +37,7 @@ detox test --loglevel trace
 
 #### Enable debugging of synchronization issues
 
-See [here](https://github.com/wix/detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
+See [here](Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
 
 #### No simulators found (iOS)
 
@@ -70,8 +70,8 @@ This can be a result of various reasons. It is generally up to you to debug and 
 - If you’ve applied the above suggestion but the app fails to connect to the Detox test server, nonetheless: Refer to the device’s logs, which should contain messages about failed connection attempts (get them using the `--record-logs all` argument)
 - The app could be running without Detox native code injected. In this case, first, make sure you’re not trying to run in manual launch mode (where this behavior is valid). If so, examine the logs from the device (get them using the `--record-logs all` argument). If you see a crash related to Detox’s native code, you are welcome to report it on our GitHub tracker.
 - If you are in fact debugging your native code integration with Detox, these guides may prove helpful:
-  - <https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInAndroidStudio.md>
-  - <https://github.com/wix/Detox/blob/master/docs/Guide.DebuggingInXcode.md>
+  - [Debugging in Android Studio](Guide.DebuggingInAndroidStudio.md)
+  - [Debugging in Xcode](Guide.DebuggingInXcode.md)
 
 #### Syntax Error: Unexpected Token
 

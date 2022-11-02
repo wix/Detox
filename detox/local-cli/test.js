@@ -3,7 +3,7 @@ const detox = require('../internals');
 const TestRunnerCommand = require('./testCommand/TestRunnerCommand');
 
 module.exports.command = 'test';
-module.exports.desc = 'Run your test suite with the test runner specified in package.json';
+module.exports.desc = 'Run your test suites with the test runner specified in the project\'s Detox config';
 module.exports.builder = require('./testCommand/builder');
 module.exports.middlewares = require('./testCommand/middlewares').default;
 
