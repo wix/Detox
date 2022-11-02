@@ -36,7 +36,7 @@ extension Executor {
         execLog("capture view hierarchy failed, reason: \(reason)", type: .error)
         fatalError("capture view hierarchy failed, reason: \(reason)")
 
-      case .boolean, .string, .strings,  .status:
+      case .boolean, .string, .strings, .status, .elementsAttributes(_):
         fatalError("Should never get here")
     }
   }
