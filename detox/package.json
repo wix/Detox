@@ -159,7 +159,22 @@
       "src/utils/pipeCommands.js",
       "src/utils/pressAnyKey.js",
       "src/utils/shellUtils.js",
-      "runners/jest/.*.js"
+      "local-cli/testCommand/TestRunnerCommand.js",
+      "local-cli/testCommand/middlewares.js",
+      "src/DetoxWorker.js",
+      "src/artifacts/ArtifactsManager.js",
+      "src/configuration/composeRunnerConfig.js",
+      "src/devices/lifecycle/GenyGlobalLifecycleHandler.js",
+      "src/errors/DetoxError.js",
+      "src/ipc",
+      "src/logger",
+      "src/realms",
+      "src/utils/Timer.js",
+      "src/utils/envUtils.js",
+      "src/utils/errorUtils.js",
+      "runners/jest/index.js",
+      "runners/jest/reporters",
+      "runners/jest/testEnvironment"
     ],
     "resetMocks": true,
     "resetModules": true,
@@ -177,10 +192,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 0,
-        "branches": 0,
-        "functions": 0,
-        "lines": 0
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
       }
     }
   }

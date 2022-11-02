@@ -408,8 +408,6 @@ declare global {
             os: string;
         }
 
-        type DetoxKnownDeviceType = DetoxBuiltInDeviceConfig['type'];
-
         type DetoxConfiguration = DetoxConfigurationCommon & (
             | DetoxConfigurationSingleApp
             | DetoxConfigurationMultiApps
