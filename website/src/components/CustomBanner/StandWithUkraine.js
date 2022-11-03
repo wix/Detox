@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './StandWithUkraine.module.css';
 import Link from '@docusaurus/Link';
 
-export default function StandWithUkraine(props) {
+const StandWithUkraine = (props) => {
   return (
     <div className={styles.banner}>
       <Link to="https://stand-with-ukraine.pp.ua" className={styles.link}>
@@ -11,4 +11,6 @@ export default function StandWithUkraine(props) {
       </Link>
     </div>
   );
-}
+};
+
+export default StandWithUkraine;

@@ -1,13 +1,6 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
-
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
 
-/* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #048fc0;
   --ifm-color-primary-dark: #253282;
@@ -36,11 +29,11 @@
   width: 24px;
   height: 24px;
   display: flex;
-  background: url('@site/static/img/showcase/gh-nav-light.svg') no-repeat;
+  background: url(@site/static/img/showcase/gh-nav-light.svg) no-repeat;
 }
 
 html[data-theme='dark'] .header-github-link:before {
-  background: url('@site/static/img/showcase/gh-nav-dark.svg') no-repeat;
+  background: url(@site/static/img/showcase/gh-nav-dark.svg) no-repeat;
 }
 
 .footer {
@@ -53,7 +46,6 @@ html[data-theme='dark'] {
 }
 
 [data-theme='dark'] .footer {
-  /* background-color: #1b1b1d; */
   background-color: #202429;
   border-top: 1px solid #313439;
 }
@@ -67,7 +59,7 @@ html[data-theme='dark'] {
 }
 
 [data-theme='dark'] .footer-gh-footer {
-    background: url(@site/static/img/showcase/gh-footer-dark.svg) no-repeat;
+  background: url(@site/static/img/showcase/gh-footer-dark.svg) no-repeat;
 }
 
 .footer__link-item a {
@@ -83,7 +75,7 @@ html[data-theme='dark'] {
 }
 
 [data-theme='dark'] .footer-twitter-footer {
-  background: url('@site/static/img/showcase/twitter-footer-dark.svg') no-repeat;
+  background: url(@site/static/img/showcase/twitter-footer-dark.svg) no-repeat;
 }
 
 .footer-discord-footer {
@@ -95,11 +87,11 @@ html[data-theme='dark'] {
 }
 
 [data-theme='dark'] .footer-discord-footer {
-  background: url('@site/static/img/showcase/discord-footer-dark.svg') no-repeat;
+  background: url(@site/static/img/showcase/discord-footer-dark.svg) no-repeat;
 }
 
 .header-showcase-link:after {
-  background: url('@site/static/img/showcase/showcase-icon-dark.svg') no-repeat;
+  background: url(@site/static/img/showcase/showcase-icon-dark.svg) no-repeat;
   content: '';
   display: inline-flexbox;
   padding-left: 28px;
@@ -110,15 +102,15 @@ html[data-theme='dark'] {
 }
 
 .header-showcase-link:hover::after {
-  background: url('@site/static/img/showcase/showcase-icon-hover.svg') no-repeat;
+  background: url(@site/static/img/showcase/showcase-icon-hover.svg) no-repeat;
 }
 
 [data-theme='dark'] .header-showcase-link:hover::after {
-  background: url('@site/static/img/showcase/showcase-icon-hover.svg') no-repeat;
+  background: url(@site/static/img/showcase/showcase-icon-hover.svg) no-repeat;
 }
 
 [data-theme='dark'] .header-showcase-link:after {
-  background: url('@site/static/img/showcase/showcase-icon-white.svg') no-repeat;
+  background: url(@site/static/img/showcase/showcase-icon-white.svg) no-repeat;
 }
 
 [data-theme='dark'] .navbar {
@@ -126,6 +118,7 @@ html[data-theme='dark'] {
 }
 
 .navbar__link {
+  margin-right: 10px;
   font-weight: 300;
 }
 
@@ -161,4 +154,45 @@ html[data-theme='dark'] {
 
 .markdown code {
   white-space: pre;
+}
+
+.benefits-header {
+  font-family: 'Nunito Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 70px;
+  color: #131419;
+  margin-top: 125px;
+  margin-bottom: 125px;
+}
+
+[data-theme='dark'] .benefits-header {
+  color: #ffffff;
+}
+
+.header-github-link:hover {
+  -webkit-tap-highlight-color: transparent;
+  background-color: #ebedf0;
+  border-radius: 50%;
+  transition: background var(--ifm-transition-fast);
+}
+
+html[data-theme='dark'] .header-github-link:hover {
+  background-color: #444950;
+}
+
+.searchBox_node_modules-\@docusaurus-theme-classic-lib-theme-Navbar-Search-styles-module {
+  padding: var(--ifm-navbar-item-padding-vertical) var(--ifm-navbar-item-padding-horizontal);
+  margin-left: 10px;
+}
+
+.social-buttons {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.flex-jc-fe {
+  display: flex;
+  justify-content: flex-end;
 }
