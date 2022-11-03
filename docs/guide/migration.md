@@ -17,6 +17,90 @@ If you were using Mocha, now you have two options:
 
 You have to upgrade your Jest version to at least 27.2.5 or higher. The recommended choice is 28.x or 29.x.
 
+### All-in-one configs
+
+If you see an error like this:
+
+```plain text
+DetoxConfigError: Configuration "legacy" uses a deprecated all-in-one schema,
+which is not supported by Detox.
+```
+
+You have to extract device and app configs from your configuration, as shown in the example below:
+
+<table>
+<tr>
+  <th>Legacy schema</th>
+  <th>Modern schema</th>
+</tr>
+<tr>
+  <td>
+
+  ```json
+  {
+    "configurations": {
+      "ios.sim.debug": {
+        "type": "ios.simulator",
+        "device": "iPhone 12",
+        "binaryPath": "/some/path/ios.app",
+        "build": "..."
+      },
+      "android.emu.debug": {
+        "type": "android.emulator",
+        "device": "Pixel_30_API",
+        "binaryPath": "/some/path/android.apk",
+        "build": "...",
+        "launchArgs": {}
+      }
+    }
+  }
+  ```
+  </td>
+  <td>
+
+  ```json
+  {
+    "apps": {
+      "ios.debug": {
+        "type": "ios.app",
+        "binaryPath": "/some/path/ios.app",
+        "build": "..."
+      },
+      "android.debug": {
+        "type": "android.apk",
+        "binaryPath": "/some/path/android.apk",
+        "build": "...",
+        "launchArgs": {}
+      }
+    },
+    "devices": {
+      "ios.simulator": {
+        "type": "ios.simulator",
+        "device": { "type": "iPhone 12" }
+      },
+      "android.emulator": {
+        "type": "android.apk",
+        "device": { "avdName": "Pixel_30_API" }
+      }
+    },
+    "configurations": {
+      "ios.sim.debug": {
+        "device": "ios.simulator",
+        "app": "ios.debug"
+      },
+      "android.emu.debug": {
+        "device": "android.emulator",
+        "app": "android.debug"
+      }
+    }
+  }
+  ```
+  </td>
+</tr>
+</table>
+
+For more details refer to the [`Config > Devices`](../config/devices.mdx) and [`Config > Apps`](../config/apps.mdx) sections.
+
 ### `testRunner` config section
 
 Three top-level string properties (`testRunner`, `runnerConfig`, `specs`) have been unified into a complex
