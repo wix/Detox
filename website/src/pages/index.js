@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
 import HomepageFeatures from '../components/HomepageFeatures';
-import StandWithUkraine from '../components/StandWithUkraine';
+import StandWithUkraine from '@site/src/components/CustomBanner/StandWithUkraine';
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
