@@ -1,47 +1,45 @@
 const chalk = require('chalk');
 
 // @ts-ignore
-console.error(chalk.yellow(`
-=========================  THE NEW JOURNEY BEGINS  =============================
+const bold = chalk.bold;
 
-            https://wix.github.io/Detox/docs/next/guide/migration
+function getMaxWidth(text) {
+  const lines = text.split('\n');
+  return lines.reduce((acc, line) => Math.max(acc, line.length), 0);
+}
 
-             _.-;-._              Sorry, traveler from the lands of Detox 19!
-            ;_.JL___;
-            F"-/\\_-7L             Detox 20 comes without old adapters for Jest
-            | a/ e | \\            and Mocha test runners. You have to rearrange
-           ,L,c;,.='/;,           your init code before you can continue your
-        _,-;;S:;:S;;:' '--._      journey.
-       ;. \\;;s:::s;;: .'   /\\
-      /  \\  ;::::;;  /    /  \\    Navigate to the link above and follow the
-     / ,  k ;S';;'S.'    j __,l   migration guide steps.
-  ,---/| /  /S   /S '.   |'   ;
- ,Ljjj |/|.' s .' s   \\  L    |   Sincerely yours,
- LL,_ ]( \\    /    '.  '.||   ;   Detox team.
- ||\\ > /  ;-.'_.-.___\\.-'(|=="(
- JJ," /   |_  [   ]     _]|   /
-  LL\\/   ,' '--'-'-----'  \\  (
-  ||     ;      |          |  >
-  JJ     |      |\\         |,/
-   LL    |      ||       ' |
-   ||    |      ||       . |
-   JJ    /_     ||       ;_|
-    LL   L "==='|i======='_|
-    ||    i----' '-------';
-    JJ    ';-----.------,-'
-     LL     L_.__J,'---;'
-     ||      |   ,|    (
-     JJ     .'=  (|  ,_|
-      LL   /    .'L_    \\
-snd   ||   '---'    '.___>
-Credit: "Gimli" by Shanaka Dias
+function centerText(text, maxWidth = getMaxWidth(text)) {
+  return text
+    .split('\n')
+    .map(line => {
+      const padStart = Math.max(0, Math.floor((maxWidth - line.length) / 2));
+      const padEnd = Math.max(0, maxWidth - line.length - padStart);
+      return ' '.repeat(padStart) + line + ' '.repeat(padEnd);
+    })
+    .join('\n');
+}
 
-            https://wix.github.io/Detox/docs/next/guide/migration
+const header = `\
+=========================  THE NEW JOURNEY BEGINS  =============================`;
 
-=========================  THE NEW JOURNEY BEGINS  =============================
+console.error(centerText(`\
 
-`));
+${bold(header)}
 
-throw Object.assign(new Error(
-  '\n\nPlease follow the new Jest setup guide:\nhttps://github.com/wix/Detox/blob/master/docs/Guide.Jest.md\n\n'
-), { stack: '' });
+https://wix.github.io/Detox/docs/next/guide/migration
+
+Sorry to say that Detox 20 comes without old adapters for Jest.
+You have to rearrange your init code before you can continue your journey.
+
+Navigate to the link and follow the migration guide steps.
+
+Sincerely yours,
+Detox team.
+
+${bold(header)}
+
+`, header.length));
+
+const error = new Error('\nPlease follow the migration guide:\nhttps://wix.github.io/Detox/docs/next/guide/migration\n\n');
+error.stack = '';
+throw error;
