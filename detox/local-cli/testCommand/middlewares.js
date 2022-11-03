@@ -5,7 +5,7 @@ const { getJestBooleanArgs } = require('../utils/jestInternals');
 const { simpleUnquote, extractKnownKeys, disengageBooleanArgs } = require('../utils/yargsUtils');
 
 const testCommandArgs = require('./builder');
-const { DETOX_ARGV_OVERRIDE_NOTICE, DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./warnings');
+const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./warnings');
 
 function applyEnvironmentVariableAddendum(argv, yargs) {
   if (process.env.DETOX_ARGV_OVERRIDE) {
@@ -24,14 +24,6 @@ function applyEnvironmentVariableAddendum(argv, yargs) {
     }
 
     Object.assign(argv, named);
-  }
-
-  return argv;
-}
-
-function warnDeviceAppLaunchArgsDeprecation(argv) {
-  if (argv['device-boot-args'] && process.argv.some(a => a.startsWith('--device-launch-args'))) {
-    log.warn(DEVICE_LAUNCH_ARGS_DEPRECATION);
   }
 
   return argv;
@@ -64,12 +56,10 @@ function splitArgv(argv) {
 // noinspection JSUnusedGlobalSymbols
 module.exports = {
   applyEnvironmentVariableAddendum,
-  warnDeviceAppLaunchArgsDeprecation,
   splitArgv,
 };
 
 module.exports.default = [
   applyEnvironmentVariableAddendum,
-  warnDeviceAppLaunchArgsDeprecation,
   splitArgv,
 ];
