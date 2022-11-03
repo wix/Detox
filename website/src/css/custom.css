@@ -155,3 +155,44 @@ html[data-theme='dark'] {
 .markdown code {
   white-space: pre;
 }
+
+.benefits-header {
+  font-family: 'Nunito Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 70px;
+  color: #131419;
+  margin-top: 125px;
+  margin-bottom: 125px;
+}
+
+[data-theme='dark'] .benefits-header {
+  color: #ffffff;
+}
+
+.header-github-link:hover {
+  -webkit-tap-highlight-color: transparent;
+  background-color: #ebedf0;
+  border-radius: 50%;
+  transition: background var(--ifm-transition-fast);
+}
+
+html[data-theme='dark'] .header-github-link:hover {
+  background-color: #444950;
+}
+
+.searchBox_node_modules-\@docusaurus-theme-classic-lib-theme-Navbar-Search-styles-module {
+  padding: var(--ifm-navbar-item-padding-vertical) var(--ifm-navbar-item-padding-horizontal);
+  margin-left: 10px;
+}
+
+.social-buttons {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.flex-jc-fe {
+  display: flex;
+  justify-content: flex-end;
+}
