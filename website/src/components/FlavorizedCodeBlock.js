@@ -1,13 +1,7 @@
 import React from 'react';
 import CodeBlock from '@theme/CodeBlock';
 
-export default function FlavorizedCodeBlock({
-  flavors,
-  children,
-  header,
-  footer,
-  ...codeBlockProps
-}) {
+const FlavorizedCodeBlock = ({ flavors, children, header, footer, ...codeBlockProps }) => {
   return (
     <CodeBlock {...codeBlockProps}>
       {header}
@@ -15,4 +9,6 @@ export default function FlavorizedCodeBlock({
       {footer}
     </CodeBlock>
   );
-}
+};
+
+export default FlavorizedCodeBlock;
