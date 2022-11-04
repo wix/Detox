@@ -100,7 +100,7 @@ class DetoxCoreListener {
   }
 
   async _onBeforeActualTestStart(test) {
-    if (!test || test.status === 'skip' || this._startedTests.has(test) || this._testsFailedBeforeStart.has(test)) {
+    if (!this._isTestActuallyStarting(test)) {
       return false;
     }
 
@@ -120,6 +120,10 @@ class DetoxCoreListener {
 
     await detoxInternals.onTestStart(metadata);
     return true;
+  }
+
+  _isTestActuallyStarting(test) {
+    return test && test.status !== 'skip' && !this._startedTests.has(test) && !this._testsFailedBeforeStart.has(test);
   }
 
   _getTestInvocations(test) {
