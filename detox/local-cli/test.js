@@ -15,15 +15,15 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
       workerId: null,
     };
 
-    if (!detoxArgs['inspect-brk']) {
+    const config = await detox.resolveConfig(opts);
+    if (!config.cli.inspectBrk) {
       await detox.init(opts);
     }
 
-    const config = await detox.resolveConfig(opts);
-    const runnerCommand = new TestRunnerCommand()
-      .setDeviceConfig(config.device)
-      .replicateCLIConfig(config.cli)
-      .setRunnerConfig(config.testRunner);
+    const runnerCommand = new TestRunnerCommand({
+      config,
+      env: process.env,
+    });
 
     await runnerCommand.execute();
   } finally {

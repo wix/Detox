@@ -11,81 +11,24 @@ const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../.
 const { escapeSpaces } = require('../../src/utils/shellUtils');
 
 class TestRunnerCommand {
-  constructor() {
-    this._argv = {};
-    this._cli2env = {};
-    this._envHint = {};
+  /*
+    @param {object} opts
+    @param {DetoxInternals.RuntimeConfig} opts.config
+    @param {ProcessEnv} [opts.env]
+  */
+  constructor(opts) {
+    const cliConfig = opts.config.cli;
+    const deviceConfig = opts.config.device;
+    const runnerConfig = opts.config.testRunner;
+
+    this._argv = runnerConfig.args;
+    this._retries = runnerConfig.retries;
+    this._envHint = this._buildEnvHint(opts.env);
     this._envFwd = {};
-    this._retries = 0;
-    /** @type {Detox.DetoxDeviceConfig} */
-    this._deviceConfig = null;
-  }
-
-  /**
-   * @param {Partial<Readonly<DetoxInternals.CLIConfig>>} cliConfig
-   * @returns {this}
-   */
-  replicateCLIConfig(cliConfig) {
-    this._cli2env = _.omitBy({
-      DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
-      DETOX_ARTIFACTS_LOCATION: cliConfig.artifactsLocation,
-      DETOX_CAPTURE_VIEW_HIERARCHY: cliConfig.captureViewHierarchy,
-      DETOX_CLEANUP: cliConfig.cleanup,
-      DETOX_CONFIGURATION: cliConfig.configuration,
-      DETOX_CONFIG_PATH: cliConfig.configPath,
-      DETOX_DEBUG_SYNCHRONIZATION: cliConfig.debugSynchronization,
-      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
-      DETOX_DEVICE_NAME: cliConfig.deviceName,
-      DETOX_FORCE_ADB_INSTALL: this._deviceConfig.type.startsWith('android.')
-        ? cliConfig.forceAdbInstall
-        : undefined,
-      DETOX_GPU: cliConfig.gpu,
-      DETOX_HEADLESS: cliConfig.headless,
-      DETOX_KEEP_LOCKFILE: cliConfig.keepLockFile,
-      DETOX_LOGLEVEL: cliConfig.loglevel,
-      DETOX_READ_ONLY_EMU: cliConfig.readonlyEmu,
-      DETOX_RECORD_LOGS: cliConfig.recordLogs,
-      DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
-      DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
-      DETOX_REPORT_SPECS: cliConfig.jestReportSpecs,
-      DETOX_RETRIES: cliConfig.retries,
-      DETOX_REUSE: cliConfig.reuse,
-      DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
-      DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
-    }, _.isUndefined);
-
-    this._envHint = _(process.env)
-      .mapKeys((_value, key) => key.toUpperCase())
-      .pickBy((_value, key) => key.startsWith('DETOX_'))
-      .omit(['DETOX_CONFIG_SNAPSHOT_PATH'])
-      .value();
-
-    return this;
-  }
-
-  /**
-   * @param {Detox.DetoxDeviceConfig} config
-   * @returns {this}
-   */
-  setDeviceConfig(config) {
-    this._deviceConfig = config;
-
-    return this;
-  }
-
-  /**
-   * @param {Detox.DetoxTestRunnerConfig} config
-   * @returns {this}
-   */
-  setRunnerConfig(config) {
-    this._argv = config.args;
-    this._retries = config.inspectBrk ? 0 : config.retries;
-    if (config.forwardEnv) {
-      this._envFwd = this._cli2env;
-      Object.assign(this._envHint, this._cli2env);
+    if (runnerConfig.forwardEnv) {
+      this._envFwd = this._buildEnvOverride(cliConfig, deviceConfig);
+      Object.assign(this._envHint, this._envFwd);
     }
-
-    return this;
   }
 
   async execute() {
@@ -128,6 +71,48 @@ class TestRunnerCommand {
     if (launchError) {
       throw launchError;
     }
+  }
+
+  _buildEnvHint(env = process.env) {
+    return _(env)
+      .mapKeys((_value, key) => key.toUpperCase())
+      .pickBy((_value, key) => key.startsWith('DETOX_'))
+      .omit(['DETOX_CONFIG_SNAPSHOT_PATH'])
+      .value();
+  }
+
+  /**
+   * @param {DetoxInternals.CLIConfig} cliConfig
+   * @param {Detox.DetoxDeviceConfig} deviceConfig
+   */
+  _buildEnvOverride(cliConfig, deviceConfig) {
+    return _.omitBy({
+      DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
+      DETOX_ARTIFACTS_LOCATION: cliConfig.artifactsLocation,
+      DETOX_CAPTURE_VIEW_HIERARCHY: cliConfig.captureViewHierarchy,
+      DETOX_CLEANUP: cliConfig.cleanup,
+      DETOX_CONFIGURATION: cliConfig.configuration,
+      DETOX_CONFIG_PATH: cliConfig.configPath,
+      DETOX_DEBUG_SYNCHRONIZATION: cliConfig.debugSynchronization,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
+      DETOX_DEVICE_NAME: cliConfig.deviceName,
+      DETOX_FORCE_ADB_INSTALL: deviceConfig.type.startsWith('android.')
+        ? cliConfig.forceAdbInstall
+        : undefined,
+      DETOX_GPU: cliConfig.gpu,
+      DETOX_HEADLESS: cliConfig.headless,
+      DETOX_KEEP_LOCKFILE: cliConfig.keepLockFile,
+      DETOX_LOGLEVEL: cliConfig.loglevel,
+      DETOX_READ_ONLY_EMU: cliConfig.readonlyEmu,
+      DETOX_RECORD_LOGS: cliConfig.recordLogs,
+      DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,
+      DETOX_RECORD_VIDEOS: cliConfig.recordVideos,
+      DETOX_REPORT_SPECS: cliConfig.jestReportSpecs,
+      DETOX_RETRIES: cliConfig.retries,
+      DETOX_REUSE: cliConfig.reuse,
+      DETOX_TAKE_SCREENSHOTS: cliConfig.takeScreenshots,
+      DETOX_USE_CUSTOM_LOGGER: cliConfig.useCustomLogger,
+    }, _.isUndefined);
   }
 
   async _spawnTestRunner() {

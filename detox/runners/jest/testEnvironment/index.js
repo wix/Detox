@@ -49,45 +49,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
     log.trace.begin(this.testPath);
 
-    const _setup = this.setup.bind(this);
-    this.setup = async () => {
-      await log.trace.complete('set up environment', async () => {
-        try {
-          this._timer.schedule(this.setupTimeout);
-          await this._handleTestEventAsync({ name: 'environment_setup_start' });
-          await this._timer.run(`setting up Detox environment`, _setup);
-          await this._handleTestEventAsync({ name: 'environment_setup_success' });
-        } catch (error) {
-          this._timer.schedule(this.teardownTimeout);
-          await this._handleTestEventAsync({ name: 'environment_setup_failure', error });
-          throw error;
-        } finally {
-          this._timer.clear();
-        }
-      });
-    };
-
-    const _teardown = this.teardown.bind(this);
-    this.teardown = async () => {
-      await log.trace.complete('tear down environment', async () => {
-        try {
-          this._timer.schedule(this.teardownTimeout);
-          await this._handleTestEventAsync({ name: 'environment_teardown_start' });
-          await this._timer.run(`tearing down Detox environment`, _teardown);
-          await this._handleTestEventAsync({ name: 'environment_teardown_success' });
-        } catch (error) {
-          if (this._timer.expired) {
-            this._timer.schedule(this.teardownTimeout);
-          }
-
-          await this._handleTestEventAsync({ name: 'environment_teardown_failure', error });
-          throw error;
-        } finally {
-          this._timer.clear();
-          log.trace.end();
-        }
-      });
-    };
+    this.setup = this._wrapSetup(this.setup);
+    this.teardown = this._wrapTeardown(this.teardown);
 
     this.registerListeners({
       DetoxInitErrorListener,
@@ -188,6 +151,52 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         }
       }
     }
+  }
+
+  _wrapSetup(fn) {
+    const _setup = fn.bind(this);
+
+    return async () => {
+      await log.trace.complete('set up environment', async () => {
+        try {
+          this._timer.schedule(this.setupTimeout);
+          await this._handleTestEventAsync({ name: 'environment_setup_start' });
+          await this._timer.run(`setting up Detox environment`, _setup);
+          await this._handleTestEventAsync({ name: 'environment_setup_success' });
+        } catch (error) {
+          this._timer.schedule(this.teardownTimeout);
+          await this._handleTestEventAsync({ name: 'environment_setup_failure', error });
+          throw error;
+        } finally {
+          this._timer.clear();
+        }
+      });
+    };
+  }
+
+  _wrapTeardown(fn) {
+    const _teardown = fn.bind(this);
+
+    return async () => {
+      await log.trace.complete('tear down environment', async () => {
+        try {
+          this._timer.schedule(this.teardownTimeout);
+          await this._handleTestEventAsync({ name: 'environment_teardown_start' });
+          await this._timer.run(`tearing down Detox environment`, _teardown);
+          await this._handleTestEventAsync({ name: 'environment_teardown_success' });
+        } catch (error) {
+          if (this._timer.expired) {
+            this._timer.schedule(this.teardownTimeout);
+          }
+
+          await this._handleTestEventAsync({ name: 'environment_teardown_failure', error });
+          throw error;
+        } finally {
+          this._timer.clear();
+          log.trace.end();
+        }
+      });
+    };
   }
 }
 
