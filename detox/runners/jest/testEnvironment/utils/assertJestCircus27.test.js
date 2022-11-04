@@ -9,7 +9,6 @@ describe('assertSupportedVersion', () => {
     ['28.0.0'],
     ['28.1.0'],
     ['29.0.0-next.0'],
-    ['30.0.0'],
   ])('should pass for %j', (version) => {
     expect(() => assertSupportedVersion(version)).not.toThrow();
   });

@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+const resolveFrom = require('resolve-from');
 const semver = require('semver');
 
+const { log } = require('../../../../internals');
 const detoxPackageJson = require('../../../../package.json');
 const { DetoxRuntimeError } = require('../../../../src/errors');
 
@@ -25,6 +27,10 @@ function assertJestCircus27(maybeProjectConfig) {
     });
   }
 
+  const jestManifestPath = resolveFrom(process.cwd(), 'jest/package.json');
+  const jestManifest = require(jestManifestPath);
+  assertSupportedVersion(jestManifest.version);
+
   const circusVersion = require(circusPackageJson).version;
   if (!circusVersion) {
     throw new DetoxRuntimeError({
@@ -33,7 +39,14 @@ function assertJestCircus27(maybeProjectConfig) {
     });
   }
 
-  assertSupportedVersion(circusVersion);
+  if (jestManifest.version !== circusVersion) {
+    log.warn([
+      `jest-circus@${circusVersion} does not match jest@${jestManifest.version}.\n`,
+      `- jest@${jestManifest.version} resolved path:\n\t${jestManifestPath}`,
+      `- jest-circus@${circusVersion} resolved path:\n\t${circusPackageJson}`,
+      `\nPlease make sure that your versions match to avoid unexpected behavior!`,
+    ].join('\n'));
+  }
 
   return maybeProjectConfig;
 }
@@ -41,11 +54,12 @@ function assertJestCircus27(maybeProjectConfig) {
 function assertSupportedVersion(actualVersion) {
   const supportedRange = detoxPackageJson.peerDependencies.jest;
   const minSupportedVersion = semver.minVersion(supportedRange);
+  const action = semver.lt(actualVersion, minSupportedVersion) ? 'upgrade' : 'downgrade';
 
-  if (semver.lt(actualVersion, minSupportedVersion)) {
+  if (!semver.satisfies(actualVersion, supportedRange, { includePrerelease: true })) {
     throw new DetoxRuntimeError({
       message: `Detected an unsupported jest@${actualVersion} version.`,
-      hint: `Please upgrade your Jest test runner to the supported range: ${supportedRange}.`
+      hint: `Please ${action} your Jest test runner to the supported range: ${supportedRange}.`
     });
   }
 }
