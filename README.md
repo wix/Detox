@@ -45,11 +45,12 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That’s where Detox comes into play.
 
-- **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS and Android.
-- **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
+- **Cross Platform:** Write cross-platform end-to-end tests in JavaScript. Currently supports iOS and Android.
+- **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 - **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
-- **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief.
-- **Debuggable:** Modern `async`-`await` API allows breakpoints in asynchronous tests to work as expected.
+- **Made For CI:** Execute your E2E tests on CI platforms like Travis CI, Circle CI or Jenkins without grief.
+- **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
+- **Test Runner Agnostic:** Detox provides a set of APIs to use with any test runner without it. It comes with [Jest](https://jestjs.io) integration out of the box.
 
 ## Supported Versions
 

@@ -210,6 +210,8 @@ Detox 20 executes many pending deprecations, so make sure to check out our [Migr
 * JS: Mocha test runner is no longer supported;
 * JS: discontinued old adapters for Jest (`jest-jasmine`, first generation of `jest-circus` adapter);
 * JS: discontinued `{ permanent: true }` option in `device.appLaunchArgs.*` methods ([#3360](https://github.com/wix/Detox/pull/3360));
+* CLI: dropped `-w, --workers` and `-o, --runner-config` args – see a [dedicated section][Updating command-line scripts] in the migration guide;
+* CLI: dropped deprecated `--device-launch-args` ([#3665](https://github.com/wix/Detox/pull/3665));
 * Config: discontinued kebab-case properties: `test-runner`, `runner-config` ([#3371](https://github.com/wix/Detox/pull/3371))
 * Config: discontinued `skipLegacyWorkersInjections` property ([(#3286)](https://github.com/wix/Detox/pull/3286))
 * Config: deprecated `specs` and `runnerConfig` properties
@@ -257,4 +259,5 @@ Cheers! :wave:
 [Genymotion issues]: https://github.com/wix/Detox/issues/3573
 [Perfetto]: https://ui.perfetto.dev/
 [Migration Guide]: /docs/next/guide/migration#200
+[Updating command-line scripts]: /docs/next/guide/migration#updating-command-line-scripts
 [typings]: https://github.com/wix/Detox/blob/next/detox/index.d.ts

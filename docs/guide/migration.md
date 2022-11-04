@@ -357,6 +357,13 @@ You’ll be able to tell that you’ve run into a situation like this if you see
   https://jestjs.io/docs/cli
 ```
 
+Besides, verify you don't have a deprecated `--device-launch-args` parameter in your scripts.
+It has been superseded by `--device-boot-args`:
+
+```bash
+detox test ... --device-boot-args="arg1 arg2"
+```
+
 ### Revisit environment variables
 
 If you’re relying somewhere in your code on things like `process.env.DETOX_CONFIGURATION` or any other that starts from `DETOX_`, as a matter of a workaround, you can turn on `testRunner.forwardEnv` in your Detox config:
@@ -410,6 +417,20 @@ module.exports = async () => {
   };
 };
 ```
+
+### Miscellaneous
+
+Detox 20 drops `ios.none` driver due to the low demand and legacy code issues.
+If you have been using it, please follow the new [Debugging > Native application code](../introduction/debugging.mdx#native-application-code) tutorial which explains how to use `launchApp: 'manual'` as a replacement for `ios.none`.
+
+If you have been using `{ permanent: true }` option for `device.appLaunch.args.modify` API, please note that it has been removed in PR [#3360](https://github.com/wix/Detox/pull/3360), in favor of `appLaunchArgs.shared`:
+
+```js
+// device.appLaunchArgs.modify({ /* ... */ }, { permanent: true });
+device.appLaunchArgs.shared.modify({ /* ... */ });
+```
+
+---
 
 The hard part is over now, congratulations on finishing the migration!
 Stay tuned for the upcoming minor releases leveraging the recent architectural changes in Detox.

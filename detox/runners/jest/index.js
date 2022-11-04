@@ -1,13 +1,10 @@
-module.exports = {
-  //#region *** Runner Realm ***
+// Lazy require() is used to avoid initializing a bare Detox context when it is not needed.
+// At the moment, this safety measure is not really needed, but it's better to be on the safe side.
 
+module.exports = {
   get DetoxCircusEnvironment() {
     return require('./testEnvironment');
   },
-
-  //#endregion
-
-  //#region *** Worker Realm ***
 
   get globalSetup() {
     return require('./globalSetup');
@@ -16,6 +13,4 @@ module.exports = {
   get globalTeardown() {
     return require('./globalTeardown');
   },
-
-  //#endregion
 };
