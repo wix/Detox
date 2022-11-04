@@ -494,7 +494,7 @@ exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedReversePo
     someApp: {
       type: 'ios.app',
       binaryPath: 'path/to/app',
-      launchArgs: [
+      reversePorts: [
         3000
       ]
     }

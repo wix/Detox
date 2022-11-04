@@ -425,7 +425,7 @@ describe('DetoxConfigErrorComposer', () => {
       });
 
       it('should work with aliased configurations', () => {
-        config.apps.someApp.launchArgs = [3000];
+        config.apps.someApp.reversePorts = [3000];
         builder.setConfigurationName('aliased');
         expect(build(['apps', 'someApp'])).toMatchSnapshot();
       });

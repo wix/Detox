@@ -6,8 +6,6 @@ const _ = require('lodash');
 
 const config = require('../configuration/configurations.mock').validSession;
 
-// TODO: check why it triggers MaxListenersExceededWarning
-
 describe('AsyncWebSocket', () => {
   let AsyncWebSocket;
   let WebSocket;
