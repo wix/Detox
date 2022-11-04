@@ -90,19 +90,11 @@ class TestRunnerCommand {
 
   async execute() {
     let runsLeft = 1 + this._retries;
-    let launchError;
+    let launchError = null;
 
     do {
       try {
-        if (launchError) {
-          const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
-          log.error(
-            `There were failing tests in the following files:\n${list}\n\n` +
-            'Detox CLI is going to restart the test runner with those files...\n'
-          );
-        }
-
-        await this._doExecute();
+        await this._spawnTestRunner();
         launchError = null;
       } catch (e) {
         launchError = e;
@@ -122,7 +114,13 @@ class TestRunnerCommand {
         if (--runsLeft > 0) {
           this._argv._ = testFilesToRetry;
           // @ts-ignore
-          detox.session.testSessionIndex++; // it is always a primary context, so we can update it
+          detox.session.testSessionIndex++; // it is always the primary context, so we can update it
+
+          const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
+          log.error(
+            `There were failing tests in the following files:\n${list}\n\n` +
+            'Detox CLI is going to restart the test runner with those files...\n'
+          );
         }
       }
     } while (launchError && runsLeft > 0);
@@ -132,7 +130,7 @@ class TestRunnerCommand {
     }
   }
 
-  async _doExecute() {
+  async _spawnTestRunner() {
     const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
     const fullCommandWithHint = printEnvironmentVariables(this._envHint) + fullCommand.join(' ');
 

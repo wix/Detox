@@ -13,7 +13,7 @@ class WorkerAssignReporter {
 
   run_start() {
     if (config.testRunner.jest.reportWorkerAssign) {
-      log.info({ cat: 'lifecycle' }, `${this._formatTestName()} is assigned to ${this._formatDeviceName()}`);
+      log.info({ cat: 'lifecycle' }, `${chalk.bold(this._testName)} is assigned to ${this._formatDeviceName()}`);
     }
   }
 
@@ -24,10 +24,6 @@ class WorkerAssignReporter {
       : chalk.blueBright(deviceName);
 
     return formattedDeviceName;
-  }
-
-  _formatTestName() {
-    return chalk.whiteBright(this._testName);
   }
 }
 

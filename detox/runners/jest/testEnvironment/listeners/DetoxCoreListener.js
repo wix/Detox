@@ -11,8 +11,8 @@ const log = detoxInternals.log.child({ cat: 'lifecycle,jest-environment' });
 
 class DetoxCoreListener {
   constructor({ env }) {
-    this._startedTests = new WeakSet();
-    this._testsFailedBeforeStart = new WeakSet();
+    this._startedTests = new Set();
+    this._testsFailedBeforeStart = new Set();
     this._env = env;
     this._circusRetryTimes = 1;
   }

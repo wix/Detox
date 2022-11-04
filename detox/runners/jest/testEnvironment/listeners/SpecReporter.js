@@ -1,4 +1,5 @@
 const chalk = require('chalk').default;
+const noop = require('lodash/noop');
 
 const { config, log, session } = require('../../../../internals');
 const { traceln } = require('../utils/stdout');
@@ -15,16 +16,21 @@ class SpecReporter {
     this._suitesDesc = '';
   }
 
-  get enabled() {
+  setup() {
     const jestSection = config.testRunner.jest;
     const reportSpecs = jestSection && jestSection.reportSpecs;
+    const enabled = reportSpecs !== undefined ? reportSpecs : session.workersCount === 1;
 
-    return reportSpecs !== undefined ? reportSpecs : session.workersCount === 1;
+    if (!enabled) {
+      this.run_describe_start = noop;
+      this.run_describe_finish = noop;
+      this.test_start = noop;
+      this.test_done = noop;
+      this.test_skip = noop;
+    }
   }
 
   run_describe_start(event) {
-    if (!this.enabled) return;
-
     if (event.describeBlock.parent !== undefined) {
       this._onSuiteStart({
         description: event.describeBlock.name,
@@ -33,16 +39,12 @@ class SpecReporter {
   }
 
   run_describe_finish(event) {
-    if (!this.enabled) return;
-
     if (event.describeBlock.parent !== undefined) {
       this._onSuiteEnd();
     }
   }
 
   test_start(event) {
-    if (!this.enabled) return;
-
     const { test } = event;
     this._onTestStart({
       description: test.name,
@@ -51,8 +53,6 @@ class SpecReporter {
   }
 
   test_done(event) {
-    if (!this.enabled) return;
-
     const { test } = event;
     const testInfo = {
       description: test.name,
@@ -62,8 +62,6 @@ class SpecReporter {
   }
 
   test_skip(event) {
-    if (!this.enabled) return;
-
     const testInfo = {
       description: event.test.name,
     };

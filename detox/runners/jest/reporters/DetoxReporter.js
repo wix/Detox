@@ -6,19 +6,30 @@ const { config, reportTestResults } = require('../../../internals');
 
 class DetoxReporter extends JestVerboseReporter {
   /**
+   * @param {import('@jest/test-result').AggregatedResult} results
+   */
+  // @ts-ignore
+  async onRunComplete(_contexts, results) {
+    // @ts-ignore
+    await super.onRunComplete(_contexts, results);
+
+    await reportTestResults(results.testResults.map(r => ({
+      success: !r.failureMessage,
+      testFilePath: r.testFilePath,
+      testExecError: r.testExecError,
+      isPermanentFailure: this._isPermanentFailure(r),
+    })));
+  }
+
+  /**
    * @param {import('@jest/test-result').TestResult} testResult
    */
-  async onTestResult(test, testResult, results) {
-    await super.onTestResult(test, testResult, results);
+  _isPermanentFailure(testResult) {
+    if (config.testRunner.jest.retryAfterCircusRetries) {
+      return false;
+    }
 
-    await reportTestResults([{
-      success: !testResult.failureMessage,
-      testFilePath: testResult.testFilePath,
-      testExecError: testResult.testExecError,
-      isPermanentFailure: config.testRunner.jest.retryAfterCircusRetries
-        ? false
-        : testResult.testResults.some(r => r.status === 'failed' && r.invocations > 1)
-    }]);
+    return testResult.testResults.some(r => r.status === 'failed' && r.invocations > 1);
   }
 }
 
