@@ -1,4 +1,5 @@
 const cp = require('child_process');
+const path = require('path');
 
 const _ = require('lodash');
 const parser = require('yargs-parser');
@@ -55,15 +56,10 @@ class TestRunnerCommand {
         }
 
         if (--runsLeft > 0) {
-          this._argv._ = testFilesToRetry;
           // @ts-ignore
           detox.session.testSessionIndex++; // it is always the primary context, so we can update it
-
-          const list = this._argv._.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
-          log.error(
-            `There were failing tests in the following files:\n${list}\n\n` +
-            'Detox CLI is going to restart the test runner with those files...\n'
-          );
+          this._argv._ = testFilesToRetry;
+          this._logRelaunchError();
         }
       }
     } while (launchError && runsLeft > 0);
@@ -150,6 +146,17 @@ class TestRunnerCommand {
       ...unparse(argv),
       ...unparse({ _: [...passthrough, ...specs] }),
     ].map(String);
+  }
+
+  _logRelaunchError() {
+    const list = this._argv._.map((file, index) => {
+      return `  ${index + 1}. ${file}`;
+    }).join('\n');
+
+    log.error(
+      `There were failing tests in the following files:\n${list}\n\n` +
+      'Detox CLI is going to restart the test runner with those files...\n'
+    );
   }
 }
 

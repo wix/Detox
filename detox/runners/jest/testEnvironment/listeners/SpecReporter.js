@@ -108,7 +108,7 @@ class SpecReporter {
         .concat(suite.description)
         .concat((index === total - 1) ? ': ' : '');
     });
-    this._suitesDesc = chalk.bold.white(this._suitesDesc);
+    this._suitesDesc = chalk.bold(this._suitesDesc);
   }
 
   _traceTest({ description, invocations }, _status = undefined) {
