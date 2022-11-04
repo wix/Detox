@@ -100,6 +100,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @override */
   async setup() {
+    await super.setup();
     await this.initDetox();
   }
 
@@ -115,7 +116,11 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   /** @override */
   async teardown() {
-    await this.cleanupDetox();
+    try {
+      await this.cleanupDetox();
+    } finally {
+      await super.teardown();
+    }
   }
 
   /** @protected */

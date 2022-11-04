@@ -15,11 +15,11 @@ Congrats if you found it earlier than we announced it.
 
 Today we're proud to announce the new major release, **Detox 20**, which brings:
 
-* official support for Genymotion SaaS,
-* improved integration with test runners,
-* configurable logging subsystem,
-* headless mode for iOS via configs and CLI,
-* reversing TCP ports via Android app configs,
+* official support for Genymotion SaaS
+* improved integration with test runners
+* configurable logging subsystem
+* headless mode for iOS via configs and CLI
+* reversing TCP ports via Android app configs
 * and more optimizations to land in the next minor versions.
 
 ## Genymotion SaaS
@@ -28,7 +28,9 @@ Today we're proud to announce the new major release, **Detox 20**, which brings:
 
 Two years ago we [added elementary support][Genymotion PR] for cloud-based Android emulators provided by [Genymotion SaaS] and started a beta testing phase across mobile projects at Wix.
 
-Previously our infra engineers had been maintaining Android virtual devices on CI build agents on their own, so switching to cloud devices cleared up their time for more productive tasks. Another improvement was particularly noticeable for teams with a vast number of tests. We could reduce the duration of their CI pipelines almost by half after they scaled up from 2 parallel devices to 6.
+Previously our mobile infrastructure engineers had been maintaining Android virtual devices on CI build agents on their own, so switching to cloud devices cleared up their time for more productive tasks. Another improvement was particularly noticeable for teams with a vast number of tests. We could reduce the duration of their CI pipelines almost by half after they scaled up from 2 parallel devices to 6[^1].
+
+[^1]: The mentioned threshold is not a hard limit, but rather a point where the return value of scaling up the number of devices starts dramatically diminishing in our case – not only the tests themselves, but installing NPM dependencies and building the projects also takes time.
 
 This positive impact encouraged us to adopt [Genymotion SaaS] for CI as quickly as possible, ignoring some unresolved issues in the initial pull request. For the most part, those were minor problems in global lifecycle management. Yet that made us feel uncertain about releasing it as-is, so we decided to take time and gain more production experience before taking any direction.
 
@@ -145,7 +147,7 @@ module.exports = {
     'android.debug': {
       type: 'android.apk',
       binaryPath: '...',
-      reversePorts: [3000],
+      reversePorts: [8081, 3000],
     },
   },
 };
@@ -218,7 +220,7 @@ Detox 20 executes many pending deprecations, so make sure to check out our [Migr
 * Config: changed [semantics][`Config file > Test runner`] of `testRunner` property
 * Config: dropped support for all-in-one configurations ([#3386](https://github.com/wix/Detox/pull/3386));
 * Android: remove deprecated native IdlePolicyConfig ([#3332](https://github.com/wix/Detox/pull/3332/files))
-* iOS: discontinued `ios.none` device type ([#3361](https://github.com/wix/Detox/pull/3361))
+* iOS: discontinued `ios.none` device type – see the new way to [debug native code][Debugging Native] ([#3361](https://github.com/wix/Detox/pull/3361))
 
 ## Afterword
 
@@ -227,9 +229,9 @@ Over the last year and a half, we have established a centralized configuration s
 
 We see numerous things to improve in Detox, but most of them boil down to the same thing – **scaling**. Surprisingly, "scaling" makes an excellent umbrella term for nearly every challenge we've been encountering lately:
 
-* _scaling up the users' count_ requires us to improve the onboarding and troubleshooting experience;
-* _scaling up the projects' count_ forces us to centralize scattered configs into flexible organization presets;
-* _scaling up the tests' count_ prompts us to optimize the codebase and incline it towards cloud and remote execution.
+* _scaling up the number of users_ requires us to improve the onboarding and troubleshooting experience;
+* _scaling up the number of projects_ forces us to centralize scattered configs into flexible organization presets;
+* _scaling up the number of tests_ prompts us to optimize the codebase and incline it towards cloud and remote execution.
 
 Our core team has been facing challenges of limited human resource constraints and growing scaling needs for a long time. In many ways, that has shaped a specific mindset within the team. We evaluate every discussed feature by asking a simple question: _will it save other people and us time to focus on more important things?_ Teaching a man to fish is better than giving fish, so our success at preventing support issues matters more than our success at solving them ourselves.
 
@@ -260,4 +262,5 @@ Cheers! :wave:
 [Perfetto]: https://ui.perfetto.dev/
 [Migration Guide]: /docs/next/guide/migration#200
 [Updating command-line scripts]: /docs/next/guide/migration#updating-command-line-scripts
+[Debugging Native]: /docs/next/introduction/debugging#native-application-code
 [typings]: https://github.com/wix/Detox/blob/next/detox/index.d.ts

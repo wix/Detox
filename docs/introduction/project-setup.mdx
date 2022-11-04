@@ -191,7 +191,7 @@ means you have version `1.5.30`.
 1. The line adds [Kotlin Gradle plugin](https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-gradle-plugin)
 to the build script. If your project is not entirely new, there's a chance you might have it already, so make sure
 you aren't adding it twice. :wink:
-1. Last, we are adding Detox as a precompiled native dependency, `.aar`. If you need to have Detox as a
+1. Last, we add Detox as a precompiled native dependency, `.aar`. If you need to have Detox as a
 _compiling dependency_ instead, consult the respective section in [Debugging](debugging.mdx#native-application-code) guide.
 
 Now let's move on to the next build script and prepare it:
@@ -231,14 +231,14 @@ Detox relies on
 [Android Reflection API](https://developer.android.com/reference/java/lang/reflect/package-summary)
 to integrate with React Native on Android, that's why you have to exempt some of its native code from
 [ProGuard minification](https://developer.android.com/studio/build/shrink-code).
-Otherwise, you'll be seeing Detox crashing or hanging up infinitely upon an attempt to
+Otherwise, you'll see Detox crashing or hanging up infinitely upon an attempt to
 run tests with your app built in **release mode**.
 
 :::
 
 ### 3.2. Adding an auxiliary Android test
 
-Detox requires from your project to have a single dummy native Android test with some special content,
+Detox requires that your project has a single dummy native Android test with some special content,
 which will be picked up by `testRunner` that you just added in the previous step, so let's create it now.
 
 Copy the snippet below to create a file under the following path (where `<your.package>` is your actual
@@ -282,7 +282,7 @@ You can see there are two lines (1 and 18) that require extra care:
 
 1. Replace with your package name. To look it up, you could copy and paste the first line from `android/app/src/main/java/com/<your.package>/MainActivity.java`.
 1. Usually not the case, but you might have a custom activity name instead of a default `MainActivity`. To check whether it is so or not, open your `android/app/src/main/AndroidManifest.xml`,
-and look up how your main activity is called:
+and check what your main activity is called:
 
 ```plain text
 …

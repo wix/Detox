@@ -357,7 +357,7 @@ You’ll be able to tell that you’ve run into a situation like this if you see
   https://jestjs.io/docs/cli
 ```
 
-Besides, verify you don't have a deprecated `--device-launch-args` parameter in your scripts.
+Besides, verify you don’t have a deprecated `--device-launch-args` parameter in your scripts.
 It has been superseded by `--device-boot-args`:
 
 ```bash
