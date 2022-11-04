@@ -82,7 +82,7 @@ declare global {
                  */
                 exposeGlobals?: boolean;
                 /**
-                 * By default, Detox will uninstall and install the app upon the initialization.
+                 * By default, Detox will uninstall and install the app upon initialization.
                  * If you wish to reuse the existing app for a faster run, set the property to
                  * `false`.
                  */

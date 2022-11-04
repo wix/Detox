@@ -13,28 +13,36 @@ declare global {
       resolveConfig(options?: Partial<DetoxInitOptions>): Promise<RuntimeConfig>;
 
       /**
-       *
+       * Returns one of statuses depending on what’s going with the current Detox context:
+       * 
+       * `inactive` – before `init()` and after `cleanup()` is called.
+       * `init` – while `init()` is executing.
+       * `active` – after `init()` and before `cleanup()` is called.
+       * `cleanup` – while `cleanup()` is executing.
        */
       getStatus(): DetoxStatus;
 
       /**
-       * This is the phase where Detox reads its configuration, starts a server.
+       * Starts a new Detox test session with the provided configuration.
+       * See {@link https://wix.github.io/Detox/docs/next/api/internals} for more details.
        */
       init(options?: Partial<DetoxInitOptions>): Promise<void>;
 
       /**
-       * This is the phase where Detox loads its expectation library and starts a device.
+       * This is the phase where Detox loads its expectation library and boots a device.
+       * You don't need to call it separately unless you use `init({ workerId: null })` override.
        */
       installWorker(options?: Partial<DetoxInstallWorkerOptions>): Promise<void>;
 
       /**
        * Deallocates the device.
+       * Most Client API (device, by, element, expect) will stop working, except for the logger.
        */
       uninstallWorker(): Promise<void>;
 
       /**
-       * The global cleanup phase should happen after all the tests have finished.
-       * This is the phase where the Detox server shuts down.
+       * This method should be called when the main or child process is about to exit.
+       * See {@link https://wix.github.io/Detox/docs/next/api/internals} for more details.
        */
       cleanup(): Promise<void>;
       //#endregion

@@ -85,7 +85,7 @@ That's why it might be better to start the overview from Jest lifecycle first, a
 
 ### Detox lifecycle
 
-On one hand, Detox CLI can be totally agnostic about a test runner under the hood, but that would deprive us of some conveniences.
+Theoretically, Detox CLI could be totally agnostic about the test runner under the hood, but that would deprive us of some convenience.
 For instance, there is a [retry mechanism][testRunner.retries], built into Detox CLI, which can schedule extra runs for failed test files.
 This requirement obliges Detox context to live longer than any test runner, and requires from the test runner to be able to report back to Detox CLI, whereas the resulting child process hierarchy can be broad and multi-tiered, e.g.:
 
@@ -97,7 +97,7 @@ This requirement obliges Detox context to live longer than any test runner, and 
         └── jest-worker (N)
 ```
 
-Even we run Jest directly, without Detox CLI, there's still a one-to-many relationship between its processes:
+Even if we run Jest directly, without Detox CLI, there's still a one-to-many relationship between its processes:
 
 ```plain text
 └── jest ... --maxWorkers N
@@ -121,7 +121,7 @@ This means that not all secondary contexts of Detox are "born equal" – most of
 This is exactly the reason why we call [`init()`][init] in every child process, but sometimes it is not just a simple call, but an [`init({ workerId: null })`][init] override to avoid creating a worker.
 However, the fact of initializing without a worker does not mean we can't call [`installWorker()`][installWorker] later. For example, if it turns out that Jest is running in a single process, then instead of creating two Detox contexts within the same process, we're going to reuse the existing one and just supplement it with the worker itself.
 
-There's one more implicit thing that happens at the very beginning of [`init([options])`][init] method, and this is the config resolution. It is also available as a separate method, [`resolveConfig([options])`][resolveConfig] based on the following considerations.
+There's one more implicit thing that happens at the very beginning of [`init([options])`][init] method, and that is the config resolution. It is also available as a separate method, [`resolveConfig([options])`][resolveConfig] based on the following considerations.
 When you use a test runner directly, without Detox CLI (e.g. `jest …` instead of `detox test …`), then the test runner config gets resolved earlier than Detox config itself. That creates a dangerous scenario for dynamically generated configs:
 
 ```js title="jest.config.js"
@@ -307,7 +307,7 @@ Deallocates the device. Most Client API ([`device`][Device API], [`by`][Matchers
 
 ### `cleanup()` \[Promise]
 
-The global cleanup phase should happen when the main or child process is about to exit. Under the hood, it:
+This method should be called when the main or child process is about to exit. Under the hood, it:
 
 * [uninstalls the worker][uninstallWorker] if there is a worker installed;
 * a secondary Detox context disconnects from the [IPC server];

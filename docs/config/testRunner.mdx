@@ -190,7 +190,7 @@ module.exports = {
 This is an add-on section used by our Jest integration code (but not Detox core itself).
 In other words, if you’re implementing (or using) a custom integration with some other test runner, feel free to define a section for yourself (e.g. `testRunner.mocha`)
 
-### `testRunner.jest.setupTimeout` \[number]
+#### `testRunner.jest.setupTimeout` \[number]
 
 Default: `300000` (5 minutes).
 
@@ -204,13 +204,13 @@ If that takes longer than the specified value, the entire test suite will be con
     Exceeded timeout of 300000ms while setting up Detox environment
 ```
 
-### `testRunner.jest.teardownTimeout` \[number]
+#### `testRunner.jest.teardownTimeout` \[number]
 
 Default: `30000` (30 seconds).
 
 If the [environment teardown](https://jestjs.io/docs/configuration/#testenvironment-string)) takes longer than the specified value, Detox will throw a timeout error.
 
-### `testRunner.jest.reportSpecs` \[boolean | undefined]
+#### `testRunner.jest.reportSpecs` \[boolean | undefined]
 
 Default: `undefined` (auto).
 
@@ -229,7 +229,7 @@ When enabled, it makes Detox to print messages like these each time the new test
 
 By default, it is enabled automatically in test sessions with a single worker. And vice versa, if multiple tests are executed concurrently, Detox turns it off to avoid confusion in the log. Use boolean values, `true` or `false`, to turn off the automatic choice.
 
-### `testRunner.jest.reportWorkerAssign` \[boolean]
+#### `testRunner.jest.reportWorkerAssign` \[boolean]
 
 Default: `true`.
 
@@ -239,7 +239,7 @@ Like already mentioned, in the init phase, Detox boots the device and installs t
 18:03:29.869 detox[40125] i starter.test.js is assigned to 4EC84833-C7EA-4CA3-A6E9-5C30A29EA596 (iPhone 12 Pro Max)
 ```
 
-### `testRunner.jest.retryAfterCircusRetries` \[boolean]
+#### `testRunner.jest.retryAfterCircusRetries` \[boolean]
 
 Default: `false`.
 
