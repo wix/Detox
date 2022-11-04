@@ -1,5 +1,3 @@
-const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('../../src/configuration/utils/warnings');
-
 const DETOX_ARGV_OVERRIDE_NOTICE = `
    _____ _____ ___________
   /  ___|_   _|  _  | ___ \\  $DETOX_ARGV_OVERRIDE is detected
@@ -22,5 +20,4 @@ const DETOX_ARGV_OVERRIDE_NOTICE = `
 
 module.exports = {
   DETOX_ARGV_OVERRIDE_NOTICE,
-  DEVICE_LAUNCH_ARGS_DEPRECATION,
 };

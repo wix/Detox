@@ -327,13 +327,6 @@ describe('CLI', () => {
     expect(logger().warn).not.toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
   });
 
-  test('--device-launch-args should serve as a deprecated alias to --device-boot-args', async () => {
-    await run(`--device-launch-args="--verbose"`);
-    expect(cliCall().env).toHaveProperty('DETOX_DEVICE_BOOT_ARGS');
-    expect(cliCall().fullCommand).toMatch(/\bDETOX_DEVICE_BOOT_ARGS="--verbose" /);
-    expect(logger().warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
-  });
-
   test('--app-launch-args should be passed as an environment variable', async () => {
     await run(`--app-launch-args="--debug yes"`);
     expect(cliCall().env).toHaveProperty('DETOX_APP_LAUNCH_ARGS');

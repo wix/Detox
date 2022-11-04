@@ -1,7 +1,5 @@
 const inspect = require('util').inspect;
 
-const { DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION } = require('./utils/warnings');
-
 jest.mock('../utils/logger');
 
 const J = x => inspect(x);
@@ -77,7 +75,6 @@ describe('collectCliConfig', () => {
     ...asString( ['configuration' ,        'DETOX_CONFIGURATION',          'configuration']),
     ...asNumber( ['debugSynchronization', 'DETOX_DEBUG_SYNCHRONIZATION',  'debug-synchronization']),
     ...asString( ['deviceBootArgs',       'DETOX_DEVICE_BOOT_ARGS',       'device-boot-args']),
-    ...asString( ['deviceBootArgs',       'DETOX_DEVICE_LAUNCH_ARGS',     'device-launch-args']),
     ...asString( ['appLaunchArgs',        'DETOX_APP_LAUNCH_ARGS',        'app-launch-args']),
     ...asString( ['deviceName',           'DETOX_DEVICE_NAME',            'device-name']),
     ...asBoolean(['forceAdbInstall',      'DETOX_FORCE_ADB_INSTALL',      'force-adb-install']),
@@ -115,17 +112,8 @@ describe('collectCliConfig', () => {
     });
 
     describe('as a regular CLI override', () => {
-      if (key === 'deviceLaunchArgs') return;
-
       it(`should not print a warning`, () =>
         expect(logger.warn).not.toHaveBeenCalled());
-    });
-
-    describe('as a deprecated CLI override', () => {
-      if (key !== 'deviceLaunchArgs') return;
-
-      it(`should print a warning`, () =>
-        expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION));
     });
   });
 });

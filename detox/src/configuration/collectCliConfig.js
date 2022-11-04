@@ -1,9 +1,6 @@
 const _ = require('lodash');
 
 const argparse = require('../utils/argparse');
-const log = require('../utils/logger').child({ cat: 'config' });
-
-const { DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION } = require('./utils/warnings');
 
 const asBoolean = (value) => {
   if (typeof value === 'boolean') {
@@ -25,14 +22,6 @@ const asNumber = (value) => {
     : undefined;
 };
 
-const deprecateDeviceLaunchArgs = (value) => {
-  if (value) {
-    log.warn(DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION);
-  }
-
-  return value;
-};
-
 function collectCliConfig({ argv }) {
   const env = (key) => argparse.getArgValue(key);
   const get = (key, fallback) => {
@@ -51,7 +40,7 @@ function collectCliConfig({ argv }) {
     configPath: get('config-path'),
     configuration: get('configuration'),
     debugSynchronization: asNumber(get('debug-synchronization')),
-    deviceBootArgs: get('device-boot-args', deprecateDeviceLaunchArgs(argparse.getEnvValue('device-launch-args'))),
+    deviceBootArgs: get('device-boot-args'),
     appLaunchArgs: get('app-launch-args'),
     deviceName: get('device-name'),
     forceAdbInstall: asBoolean(get('force-adb-install')),

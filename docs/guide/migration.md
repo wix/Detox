@@ -36,65 +36,67 @@ You have to extract device and app configs from your configuration, as shown in 
 <tr>
   <td>
 
-  ```json
-  {
-    "configurations": {
-      "ios.sim.debug": {
-        "type": "ios.simulator",
-        "device": "iPhone 12",
-        "binaryPath": "/some/path/ios.app",
-        "build": "..."
-      },
-      "android.emu.debug": {
-        "type": "android.emulator",
-        "device": "Pixel_30_API",
-        "binaryPath": "/some/path/android.apk",
-        "build": "...",
-        "launchArgs": {}
-      }
+```json
+{
+  "configurations": {
+    "ios.sim.debug": {
+      "type": "ios.simulator",
+      "device": "iPhone 12",
+      "binaryPath": "/some/path/ios.app",
+      "build": "..."
+    },
+    "android.emu.debug": {
+      "type": "android.emulator",
+      "device": "Pixel_30_API",
+      "binaryPath": "/some/path/android.apk",
+      "build": "...",
+      "launchArgs": {}
     }
   }
-  ```
+}
+```
+
   </td>
   <td>
 
-  ```json
-  {
-    "apps": {
-      "ios.debug": {
-        "type": "ios.app",
-        "binaryPath": "/some/path/ios.app",
-        "build": "..."
-      },
-      "android.debug": {
-        "type": "android.apk",
-        "binaryPath": "/some/path/android.apk",
-        "build": "...",
-        "launchArgs": {}
-      }
+```json
+{
+  "apps": {
+    "ios.debug": {
+      "type": "ios.app",
+      "binaryPath": "/some/path/ios.app",
+      "build": "..."
     },
-    "devices": {
-      "ios.simulator": {
-        "type": "ios.simulator",
-        "device": { "type": "iPhone 12" }
-      },
-      "android.emulator": {
-        "type": "android.apk",
-        "device": { "avdName": "Pixel_30_API" }
-      }
+    "android.debug": {
+      "type": "android.apk",
+      "binaryPath": "/some/path/android.apk",
+      "build": "...",
+      "launchArgs": {}
+    }
+  },
+  "devices": {
+    "ios.simulator": {
+      "type": "ios.simulator",
+      "device": { "type": "iPhone 12" }
     },
-    "configurations": {
-      "ios.sim.debug": {
-        "device": "ios.simulator",
-        "app": "ios.debug"
-      },
-      "android.emu.debug": {
-        "device": "android.emulator",
-        "app": "android.debug"
-      }
+    "android.emulator": {
+      "type": "android.apk",
+      "device": { "avdName": "Pixel_30_API" }
+    }
+  },
+  "configurations": {
+    "ios.sim.debug": {
+      "device": "ios.simulator",
+      "app": "ios.debug"
+    },
+    "android.emu.debug": {
+      "device": "android.emulator",
+      "app": "android.debug"
     }
   }
-  ```
+}
+```
+
   </td>
 </tr>
 </table>

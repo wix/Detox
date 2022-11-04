@@ -109,7 +109,6 @@ module.exports = {
     describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.',
   },
   'device-boot-args': {
-    alias: 'device-launch-args',
     group: 'Execution:',
     describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when booted.',
   },
