@@ -89,14 +89,14 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
 
    ```sh
-   $ANDROID_HOME/tools/bin/sdkmanager --install emulator
+   $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install emulator
    ```
 
 1. Install an emulator image without Google APIs:
 
    ```shell
-   $ANDROID_HOME/tools/bin/sdkmanager "system-images;android-28;default;x86_64"
-   $ANDROID_HOME/tools/bin/sdkmanager --licenses
+   $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-28;default;x86_64"
+   $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
    ```
 
    > - With `;android-28;`, we assumed SDK 28 here, but other APIs are supported just the same.
