@@ -49,20 +49,18 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
 
   // On Android SDK 31 `childProcessPromise` never resolves when Emulator boots,
   // so we have to continuosly scan for the process output until we detect that the emulator has booted.
-  const monitorOutputWithTimeout = async (timeoutMs) => {
-    const delayMs = 1000;
-    for (let i = 0; i < Math.floor(timeoutMs / delayMs); i++) {
-      await sleep(delayMs);
+  const monitorOutputWithTimeout = async (timeoutSeconds) => {
+    for (let i = 0; i < timeoutSeconds; i++) {
       const stdoutContent = fs.readFileSync(tempLog, 'utf8');
       if (stdoutContent.includes('boot completed')) {
         return;
       }
+
+      await sleep(1000);
     }
     throw new Error('Could not boot emulator');
   };
-  const monitorOutputWithTimeoutPromise = monitorOutputWithTimeout(
-    3 * 60 * 1000, // 3 mins
-  );
+  const monitorOutputWithTimeoutPromise = monitorOutputWithTimeout(180);
 
   return Promise.race([childProcessPromise, monitorOutputWithTimeoutPromise])
   .then(() => true).catch((err) => {
