@@ -93,7 +93,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    ```
 
 :::note
-In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager `. We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
+In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`. We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
 :::
 
 1. Install an emulator image without Google APIs:
