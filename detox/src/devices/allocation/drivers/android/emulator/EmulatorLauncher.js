@@ -34,7 +34,7 @@ class EmulatorLauncher extends DeviceLauncher {
         retries: 2,
         interval: 100,
         conditionFn: isUnknownEmulatorError,
-      }, () => this._launchEmulator(avdName, launchCommand));
+      }, () => this._launchEmulator(avdName, launchCommand, adbName));
     }
     await this._awaitEmulatorBoot(adbName);
     await this._notifyBootEvent(adbName, avdName, !isRunning);
@@ -58,8 +58,8 @@ class EmulatorLauncher extends DeviceLauncher {
     await this._notifyShutdownCompleted(adbName);
   }
 
-  _launchEmulator(emulatorName, launchCommand) {
-    return launchEmulatorProcess(emulatorName, this._emulatorExec, launchCommand);
+  _launchEmulator(emulatorName, launchCommand, adbName) {
+    return launchEmulatorProcess(emulatorName, this._emulatorExec, launchCommand, this._adb, adbName);
   }
 
   async _awaitEmulatorBoot(adbName) {
