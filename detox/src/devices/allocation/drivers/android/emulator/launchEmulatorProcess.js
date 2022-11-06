@@ -60,7 +60,7 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
     }
     throw new Error('Could not boot emulator');
   };
-  const monitorOutputWithTimeoutPromise = monitorOutputWithTimeout(180);
+  const monitorOutputWithTimeoutPromise = monitorOutputWithTimeout(60);
 
   return Promise.race([childProcessPromise, monitorOutputWithTimeoutPromise])
   .then(() => true).catch((err) => {
