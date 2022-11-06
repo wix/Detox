@@ -40,11 +40,13 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
 
   let bootIndicationLine = 'Adb connected, start proxing data';
 
-  adb.apiLevel(adbName).then((version) => {
-    if (version >= 31) {
-      bootIndicationLine = 'boot completed';
-    }
-  });
+  adb.apiLevel(adbName)
+    .then((version) => {
+      if (version >= 31) {
+        bootIndicationLine = 'boot completed';
+      }
+    })
+    .catch((_) => {});
 
   const tail = new Tail(tempLog, tailOptions)
     .on('line', (line) => {
