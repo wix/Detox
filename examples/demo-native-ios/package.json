@@ -1,9 +1,9 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "20.0.13-is-hittable-over-master.0",
+  "version": "20.0.14-is-hittable-over-master.0",
   "private": true,
   "devDependencies": {
-    "detox": "^20.0.13-is-hittable-over-master.0"
+    "detox": "^20.0.14-is-hittable-over-master.0"
   },
   "detox": {
     "specs": "",
