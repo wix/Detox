@@ -7,11 +7,15 @@ const unitLogger = require('../../../../../utils/logger').child({ __filename });
 
 function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand) {
   let childProcessOutput;
-
+  const BOOT_TIMEOUT_MS = 30 * 1000;
   const portName = emulatorLaunchCommand.port ? `-${emulatorLaunchCommand.port}` : '';
   const tempLog = `./${emulatorName}${portName}.log`;
   const stdout = fs.openSync(tempLog, 'a');
   const stderr = fs.openSync(tempLog, 'a');
+  const linesIndicatingBoot = [
+    'Adb connected, start proxing data',
+    'boot completed'
+  ];
   const tailOptions = {
     useWatchFile: true,
     fsWatchOptions: {
@@ -20,7 +24,7 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
   };
   const tail = new Tail(tempLog, tailOptions)
     .on('line', (line) => {
-      if (line.includes('Adb connected, start proxing data')) {
+      if (linesIndicatingBoot.some((bootedSuccessfully) => line.includes(bootedSuccessfully))) {
         childProcessPromise._cpResolve();
       }
     });
@@ -46,21 +50,27 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
 
   log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 
-  return childProcessPromise.then(() => true).catch((err) => {
-    detach();
+  function bootTimeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-    if (childProcessOutput.includes(`There's another emulator instance running with the current AVD`)) {
-      return false;
-    }
+  return Promise.race([childProcessPromise,
+    bootTimeout(BOOT_TIMEOUT_MS)])
+    .then(() => true).catch((err) => {
+      detach();
 
-    log.error({ event: 'SPAWN_FAIL', error: true, err }, err.message);
-    log.error({ event: 'SPAWN_FAIL', stderr: true }, childProcessOutput);
-    throw err;
-  }).then((coldBoot) => {
-    detach();
-    log.debug({ event: 'SPAWN_SUCCESS', stdout: true }, childProcessOutput);
-    return coldBoot;
-  });
+      if (childProcessOutput.includes(`There's another emulator instance running with the current AVD`)) {
+        return false;
+      }
+
+      log.error({ event: 'SPAWN_FAIL', error: true, err }, err.message);
+      log.error({ event: 'SPAWN_FAIL', stderr: true }, childProcessOutput);
+      throw err;
+    }).then((coldBoot) => {
+      detach();
+      log.debug({ event: 'SPAWN_SUCCESS', stdout: true }, childProcessOutput);
+      return coldBoot;
+    });
 }
 
 module.exports = { launchEmulatorProcess };
