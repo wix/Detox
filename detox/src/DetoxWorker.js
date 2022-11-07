@@ -1,3 +1,4 @@
+const CAF = require('caf');
 const _ = require('lodash');
 
 const Client = require('./client/Client');
@@ -11,7 +12,6 @@ const uuid = require('./utils/uuid');
 class DetoxWorker {
   constructor(context) {
     this._context = context;
-    this._isCleaningUp = false;
     this._injectedGlobalProperties = [];
     this._config = context[symbols.config];
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(this._config);
@@ -32,6 +32,18 @@ class DetoxWorker {
       ],
       onError: this._onEmitError.bind(this),
     });
+
+
+    /** @type {DetoxInternals.RuntimeConfig['apps']} */
+    this._appsConfig = null;
+    /** @type {DetoxInternals.RuntimeConfig['artifacts']} */
+    this._artifactsConfig = null;
+    /** @type {DetoxInternals.RuntimeConfig['behavior']} */
+    this._behaviorConfig = null;
+    /** @type {DetoxInternals.RuntimeConfig['device']} */
+    this._deviceConfig = null;
+    /** @type {DetoxInternals.RuntimeConfig['session']} */
+    this._sessionConfig = null;
 
     /** @type {string} */
     this.id = 'worker';
@@ -54,11 +66,23 @@ class DetoxWorker {
     this.trace = this._context.trace;
     /** @deprecated */
     this.traceCall = this._context.traceCall;
+
+    this._reinstallAppsOnDevice = CAF(this._reinstallAppsOnDevice.bind(this));
+    this._initToken = new CAF.cancelToken();
+
+    this._cafWrap([
+      'init',
+      'onRunDescribeStart',
+      'onTestStart',
+      'onHookFailure',
+      'onTestFnFailure',
+      'onTestDone',
+      'onRunDescribeFinish',
+    ]);
   }
 
-  async init() {
-    if (this._isCleaningUp) return;
-
+  /** @this {DetoxWorker} */
+  init = function* (signal) {
     const {
       apps: appsConfig,
       artifacts: artifactsConfig,
@@ -72,6 +96,7 @@ class DetoxWorker {
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
+    // @ts-ignore
     this._sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
     this._runtimeErrorComposer.appsConfig = this._appsConfig;
 
@@ -83,8 +108,7 @@ class DetoxWorker {
       }
     };
 
-    await this._client.connect();
-    if (this._isCleaningUp) return;
+    yield this._client.connect();
 
     const invocationManager = new InvocationManager(this._client);
 
@@ -101,8 +125,7 @@ class DetoxWorker {
     } = environmentFactory.createFactories(this._deviceConfig);
 
     const envValidator = envValidatorFactory.createValidator();
-    await envValidator.validate();
-    if (this._isCleaningUp) return;
+    yield envValidator.validate();
 
     const commonDeps = {
       invocationManager,
@@ -113,8 +136,7 @@ class DetoxWorker {
 
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
     this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
-    this._deviceCookie = await this._deviceAllocator.allocate(this._deviceConfig);
-    if (this._isCleaningUp) return;
+    this._deviceCookie = yield this._deviceAllocator.allocate(this._deviceConfig);
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
@@ -125,7 +147,6 @@ class DetoxWorker {
         deviceConfig: this._deviceConfig,
         sessionConfig,
       });
-    if (this._isCleaningUp) return;
 
     const matchers = matchersFactory.createMatchers({
       invocationManager,
@@ -146,26 +167,22 @@ class DetoxWorker {
     }
 
     // @ts-ignore
-    await this.device.installUtilBinaries();
-    if (this._isCleaningUp) return;
+    yield this.device.installUtilBinaries();
 
     if (behaviorConfig.init.reinstallApp) {
-      await this._reinstallAppsOnDevice();
-      if (this._isCleaningUp) return;
+      yield this._reinstallAppsOnDevice(signal);
     }
 
     const appAliases = Object.keys(this._appsConfig);
     if (appAliases.length === 1) {
-      await this.device.selectApp(appAliases[0]);
+      yield this.device.selectApp(appAliases[0]);
     } else {
-      await this.device.selectApp(null);
+      yield this.device.selectApp(null);
     }
-
-    return this;
-  }
+  };
 
   async cleanup() {
-    this._isCleaningUp = true;
+    this._initToken.abort('CLEANUP');
 
     for (const key of this._injectedGlobalProperties) {
       delete DetoxWorker.global[key];
@@ -198,38 +215,45 @@ class DetoxWorker {
     return this._context.log;
   }
 
-  onRunDescribeStart = async (...args) => this._artifactsManager.onRunDescribeStart(...args);
-  onTestStart = async (testSummary) => {
-    if (this._isCleaningUp) return;
+  onRunDescribeStart = function* (_signal, ...args) {
+    yield this._artifactsManager.onRunDescribeStart(...args);
+  };
+
+  onTestStart = function* (_signal, testSummary) {
     this._validateTestSummary('beforeEach', testSummary);
 
-    if (this._isCleaningUp) return;
-    await this._dumpUnhandledErrorsIfAny({
+    yield this._dumpUnhandledErrorsIfAny({
       pendingRequests: false,
       testName: testSummary.fullName,
     });
 
-    if (this._isCleaningUp) return;
-    await this._artifactsManager.onTestStart(testSummary);
+    yield this._artifactsManager.onTestStart(testSummary);
   };
-  onHookFailure = async (...args) => this._artifactsManager.onHookFailure(...args);
-  onTestFnFailure = async (...args) => this._artifactsManager.onTestFnFailure(...args);
-  onTestDone = async (testSummary) => {
-    if (this._isCleaningUp) return;
+
+  onHookFailure = function* (_signal, ...args) {
+    yield this._artifactsManager.onHookFailure(...args);
+  };
+
+  onTestFnFailure = function* (_signal, ...args) {
+    yield this._artifactsManager.onTestFnFailure(...args);
+  };
+
+  onTestDone = function* (_signal, testSummary) {
     this._validateTestSummary('afterEach', testSummary);
 
-    if (this._isCleaningUp) return;
-    await this._artifactsManager.onTestDone(testSummary);
+    yield this._artifactsManager.onTestDone(testSummary);
 
-    if (this._isCleaningUp) return;
-    await this._dumpUnhandledErrorsIfAny({
+    yield this._dumpUnhandledErrorsIfAny({
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
   };
-  onRunDescribeFinish = async (...args) => this._artifactsManager.onRunDescribeFinish(...args);
 
-  async _reinstallAppsOnDevice() {
+  onRunDescribeFinish = function* (_signal, ...args) {
+    yield this._artifactsManager.onRunDescribeFinish(...args);
+  };
+
+  *_reinstallAppsOnDevice(_signal) {
     const appNames = _(this._appsConfig)
       .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
       .uniqBy(1)
@@ -237,17 +261,13 @@ class DetoxWorker {
       .value();
 
     for (const appName of appNames) {
-      await this.device.selectApp(appName);
-      if (this._isCleaningUp) return;
-      await this.device.uninstallApp();
-      if (this._isCleaningUp) return;
+      yield this.device.selectApp(appName);
+      yield this.device.uninstallApp();
     }
 
     for (const appName of appNames) {
-      await this.device.selectApp(appName);
-      if (this._isCleaningUp) return;
-      await this.device.installApp();
-      if (this._isCleaningUp) return;
+      yield this.device.selectApp(appName);
+      yield this.device.installApp();
     }
   }
 
@@ -279,6 +299,24 @@ class DetoxWorker {
       error
     );
   }
+
+  _cafWrap(methodNames) {
+    for (const methodName of methodNames) {
+      const cafMethod = CAF(this[methodName].bind(this));
+      this[methodName] = async (...args) => {
+        try {
+          await cafMethod(this._initToken.signal, ...args);
+        } catch (e) {
+          if (e !== 'CLEANUP') {
+            throw e;
+          }
+        }
+
+        return this;
+      };
+    }
+  }
+
 }
 
 /**

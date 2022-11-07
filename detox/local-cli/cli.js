@@ -30,7 +30,7 @@ yargs
     if (err) {
       logger.error(DetoxError.format(err));
       // eslint-disable-next-line no-console
-      console.error('');
+      process.stderr.write('\n');
       // @ts-ignore
       _.attempt(() => fs.unlinkSync(logger.file));
       // eslint-disable-next-line no-process-exit

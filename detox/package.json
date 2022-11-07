@@ -58,6 +58,7 @@
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^3.1.0",
+    "caf": "^15.0.1",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
     "duplexify": "^4.1.2",

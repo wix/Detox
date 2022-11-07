@@ -393,7 +393,7 @@ describe('DetoxWorker', () => {
 
         it(`should stop the execution and skip creation of the invocation manager`, async () => {
           await expect(detox.cleanup()).resolves.not.toThrow();
-          await expect(initPromise).rejects.toThrowError(/Fake error/);
+          await expect(initPromise).resolves.not.toThrow();
           await expect(invocationManager()).not.toBeDefined();
         });
       });
@@ -408,7 +408,7 @@ describe('DetoxWorker', () => {
         it(`should stop the execution and skip allocating the device`, async () => {
           await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
-          await expect(initPromise).resolves.toBe(undefined);
+          await expect(initPromise).resolves.toBe(detox);
           await expect(deviceAllocator.allocate).not.toHaveBeenCalled();
         });
       });
@@ -423,7 +423,7 @@ describe('DetoxWorker', () => {
         it(`should stop the execution and skip uninstall the app`, async () => {
           await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
-          await expect(initPromise).resolves.toBe(undefined);
+          await expect(initPromise).resolves.toBe(detox);
           await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
         });
       });
@@ -438,7 +438,7 @@ describe('DetoxWorker', () => {
         it(`should stop the execution and skip uninstalling the app`, async () => {
           await expect(detox.cleanup()).resolves.not.toThrowError();
           deferred.resolve();
-          await expect(initPromise).resolves.toBe(undefined);
+          await expect(initPromise).resolves.toBe(detox);
           await expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
         });
       });
