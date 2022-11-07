@@ -88,5 +88,11 @@
     "image": "img/showcase/next.jpg",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.nextinsurance",
     "linkApple": "https://apps.apple.com/us/app/next-insurance/id1580721755"
+  },
+  {
+    "title": "PlayerData",
+    "image": "img/showcase/player-data.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=uk.co.playerdata.mobile&hl=en_GB&gl=US",
+    "linkApple": "https://apps.apple.com/gb/app/playerdata-insight/id1462268462#?"
   }
 ]
