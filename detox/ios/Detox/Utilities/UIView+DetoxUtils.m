@@ -427,7 +427,7 @@ DTX_DIRECT_MEMBERS
 
 - (BOOL)_isVisibleAroundPoint:(CGPoint)point error:(NSError* __strong __nullable * __nullable)error {
 	CGRect intersection = CGRectIntersection(
-																					 self.dtx_visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
+	    self.dtx_visibleBounds, CGRectMake(point.x - 0.5, point.y - 0.5, 1, 1));
 	return [self _dtx_testVisibilityInRect:intersection percent:100 error:error];
 }
 
@@ -448,13 +448,16 @@ DTX_DIRECT_MEMBERS
 	}
 
 	if (error) {
+		NSString *hint = [self isDescendantOfView:hitten] ?
+				@"\n- Hint: The Target view is a descendant of the hitten view" : @"";
+
 		NSString *errorMessage =
-		[NSString stringWithFormat:@"Failed to hit view %@at point %@ with `hitTest`.\n" \
+		[NSString stringWithFormat:@"Failed to hit view %@at point %@ with hit-test\n" \
 		 "- Origin view: %@\n" \
 		 "- Absolute origin: %@\n" \
 		 "- Hitten: %@%@\n" \
 		 "- Target view: %@\n" \
-		 "- Relative point: %@",
+		 "- Relative point: %@%@",
 		 self.accessibilityIdentifier ?
 				[NSString stringWithFormat:@"with identifier `%@` ", self.accessibilityIdentifier] :
 				@"",
@@ -466,7 +469,8 @@ DTX_DIRECT_MEMBERS
 				[NSString stringWithFormat:@" (identifier: `%@`)", hitten.accessibilityIdentifier] :
 				@"",
 		 self,
-		 NSStringFromCGPoint(relativePoint)
+		 NSStringFromCGPoint(relativePoint),
+		 hint
 		];
 
 		*error = [NSError errorWithDomain:@"Detox" code:0
