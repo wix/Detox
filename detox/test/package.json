@@ -20,6 +20,7 @@
     "e2e-unhappy:ios": "scripts/ci_unhappy.sh ios",
     "e2e-unhappy:android": "scripts/ci_unhappy.sh android",
     "integration": "jest --clearCache; jest --config integration/jest.config.js",
+    "integration:console": "node integration/utils/printConsole.mjs info",
     "integration-update-snapshots": "npm run integration -- -u",
     "build:ios": "detox build -c ios.sim.release",
     "build:ios-debug": "detox build -c ios.sim.debug",

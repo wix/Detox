@@ -48,6 +48,7 @@ function overrideConsoleMethods(console, bunyanLogger) {
     const log = bunyanLogger;
 
     override(console, 'log', log.info.bind(log));
+    override(console, 'info', log.info.bind(log));
     override(console, 'warn', log.warn.bind(log));
     override(console, 'trace', log.info.bind(log));
     override(console, 'error', log.error.bind(log));

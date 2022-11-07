@@ -50,6 +50,11 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
       expect(bunyanLogger.info).toHaveBeenCalledWith(expectedOrigin, 'OK 200');
     });
 
+    it('should connect: console.info -> logger.info', () => {
+      fakeConsole.info('OK %d', 200);
+      expect(bunyanLogger.info).toHaveBeenCalledWith(expectedOrigin, 'OK 200');
+    });
+
     it('should connect: console.warn -> logger.warn', () => {
       fakeConsole.warn('Warning %d', 301);
       expect(bunyanLogger.warn).toHaveBeenCalledWith(expectedOrigin, 'Warning 301');

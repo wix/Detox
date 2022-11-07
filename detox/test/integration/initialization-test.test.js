@@ -1,7 +1,3 @@
-
-const path = require('path');
-const fs = require('fs-extra');
-const { promisify } = require('util');
 const { execCommand } = require('./utils/exec');
 
 describe('Initialization (context) tests', () => {
