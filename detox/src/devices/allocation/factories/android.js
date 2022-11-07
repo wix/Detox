@@ -21,7 +21,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
 
     const EmulatorLauncher = require('../drivers/android/emulator/EmulatorLauncher');
-    const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, eventEmitter });
+    const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, emulatorVersionResolver, eventEmitter });
 
     const EmulatorAllocationHelper = require('../drivers/android/emulator/EmulatorAllocationHelper');
     const allocationHelper = new EmulatorAllocationHelper(deviceRegistry, freeEmulatorFinder);

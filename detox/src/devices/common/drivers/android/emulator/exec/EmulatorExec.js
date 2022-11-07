@@ -37,6 +37,7 @@ class LaunchCommand extends ExecCommand {
     this._options = options;
     this._args = this._getEmulatorArgs(emulatorName);
     this.port = options.port;
+    this.completionMessage = options.completionMessage;
   }
 
   _getArgs() {

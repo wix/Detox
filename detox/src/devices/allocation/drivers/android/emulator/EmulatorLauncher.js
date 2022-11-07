@@ -11,10 +11,11 @@ const { launchEmulatorProcess } = require('./launchEmulatorProcess');
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
 class EmulatorLauncher extends DeviceLauncher {
-  constructor({ adb, emulatorExec, eventEmitter }) {
+  constructor({ adb, emulatorExec, emulatorVersionResolver, eventEmitter }) {
     super(eventEmitter);
     this._adb = adb;
     this._emulatorExec = emulatorExec;
+    this._emulatorVersionResolver = emulatorVersionResolver;
     traceMethods(log, this, ['_awaitEmulatorBoot']);
   }
 
@@ -31,7 +32,10 @@ class EmulatorLauncher extends DeviceLauncher {
    */
   async launch(avdName, adbName, isRunning, options = { port: undefined }) {
     if (!isRunning) {
-      const launchCommand = new LaunchCommand(avdName, options);
+      const version = await this._emulatorVersionResolver.resolve(options.headless);
+      const completionMessage = version.major >= 29 ? 'emulator: boot completed' : 'emulator: sending boot completed';
+
+      const launchCommand = new LaunchCommand(avdName, { ...options, completionMessage });
       await retry({
         retries: 2,
         interval: 100,
