@@ -1,4 +1,6 @@
 const path = require('path');
+
+const _ = require('lodash');
 const tempfile = require('tempfile');
 const fs = require('fs-extra');
 const { promisify } = require('util');
@@ -14,13 +16,54 @@ describe('Timeline integration test', () => {
   const timelineArtifactPath = path.join(artifactsDirectory, timelineArtifactFilename);
   const clearAllArtifacts = () => remove(artifactsDirectory);
 
-  beforeEach(clearAllArtifacts);
+  let tac;
+
+  beforeAll(clearAllArtifacts);
+
+  beforeAll(async () => {
+    await execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 stub1`);
+    tac = JSON.parse(await readFile(timelineArtifactPath, 'utf8'));
+  });
 
   it('should deterministically produce a timeline artifact', async () => {
-    await execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 stub1`);
-    const timelineArtifactContents = JSON.parse(await readFile(timelineArtifactPath, 'utf8'));
     const sanitizeContext = { pid: new Map(), sessionId: '', cwd: '' };
-    expect(timelineArtifactContents.filter(isLifecycleEvent).map(sanitizeEvent, sanitizeContext)).toMatchSnapshot();
+    expect(tac.filter(isLifecycleEvent).map(sanitizeEvent, sanitizeContext)).toMatchSnapshot();
+  });
+
+  it('should have a credible list of categories', async () => {
+    const cats = _.chain(tac)
+      .flatMap(e => e.cat ? `${e.cat}`.split(',') : [])
+      .uniq()
+      .sort()
+      .value();
+
+    expect(cats).toEqual([
+      'artifact',
+      'artifacts-manager',
+      'cli',
+      'device',
+      'ipc',
+      'ipc-server',
+      'jest-environment',
+      'lifecycle',
+      'user',
+      'ws',
+      'ws-client',
+      'ws-server',
+      'ws-session'
+    ]);
+  });
+
+  it('should have a credible process and thread ids', async () => {
+    const unique = _.mapValues({
+      pid: tac.map(e => e.pid),
+      tid: tac.map(e => e.tid),
+      pid_tid: tac.map(e => `${e.pid}:${e.tid}`),
+    }, v => _.uniq(v).sort());
+
+    expect(unique.pid.length).toBe(3);
+    expect(unique.tid.length).toBeLessThan(unique.pid_tid.length);
+    expect(unique.pid_tid.length).toBeGreaterThan(10);
   });
 });
 
