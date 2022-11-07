@@ -46,13 +46,13 @@ class ArtifactsManager extends EventEmitter {
   _resolveArtifactsPathBuilder(pathBuilder, rootDir) {
     if (typeof pathBuilder === 'string') {
       pathBuilder = resolveModuleFromPath(pathBuilder);
+    }
 
-      if (typeof pathBuilder === 'function') {
-        try {
-          pathBuilder = pathBuilder({ rootDir });
-        } catch (e) {
-          pathBuilder = new pathBuilder({ rootDir });
-        }
+    if (typeof pathBuilder === 'function') {
+      try {
+        pathBuilder = pathBuilder({ rootDir });
+      } catch (e) {
+        pathBuilder = new pathBuilder({ rootDir });
       }
     }
 

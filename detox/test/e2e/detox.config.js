@@ -38,6 +38,7 @@ const config = {
   },
 
   artifacts: {
+    pathBuilder: process.env.DETOX_CUSTOM_PATH_BUILDER,
     plugins: {
       log: 'all',
       screenshot: {
