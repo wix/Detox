@@ -15,10 +15,10 @@ class ArtifactsManagerFactory {
     this._provider = provider;
   }
 
-  createArtifactsManager(artifactsConfig, { eventEmitter, client }) {
+  createArtifactsManager(artifactsConfig, { eventEmitter }) {
     const artifactsManager = new ArtifactsManager(artifactsConfig);
     artifactsManager.subscribeToDeviceEvents(eventEmitter);
-    artifactsManager.registerArtifactPlugins(this._provider.declareArtifactPlugins({ client }));
+    artifactsManager.registerArtifactPlugins(this._provider.declareArtifactPlugins());
     return artifactsManager;
   }
 }

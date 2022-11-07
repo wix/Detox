@@ -17,9 +17,9 @@ class MonitoredInstrumentation {
     this.pendingPromise = Deferred.resolved();
   }
 
-  async launch(deviceId, bundleId, userLaunchArgs) {
+  async launch(deviceId, packageId, userLaunchArgs) {
     this.instrumentationLogsParser = new InstrumentationLogsParser();
-    await this.instrumentation.launch(deviceId, bundleId, userLaunchArgs);
+    await this.instrumentation.launch(deviceId, packageId, userLaunchArgs);
   }
 
   setTerminationFn(userTerminationFn) {

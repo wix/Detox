@@ -65,6 +65,10 @@ class Client {
     return this._serverUrl;
   }
 
+  get sessionId() {
+    return this._sessionId;
+  }
+
   async open() {
     return this._asyncWebSocket.open();
   }

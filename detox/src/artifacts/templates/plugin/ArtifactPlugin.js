@@ -39,6 +39,14 @@ class ArtifactPlugin {
   }
 
   /**
+   * Hook that is called when a RuntimeDevice instance has been created.
+   * @param {RuntimeDevice} _device
+   * @returns {Promise<void>}
+   */
+  async onDeviceCreated(_device) {
+  }
+
+  /**
    * Hook that is called inside device.launchApp() before
    * the current app on the current device is relaunched.
    *

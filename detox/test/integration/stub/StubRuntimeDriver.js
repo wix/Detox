@@ -27,7 +27,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
     return `Stub #${this._deviceId}`;
   }
 
-  getPlatform() {
+  get platform() {
     return 'stub';
   }
 

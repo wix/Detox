@@ -1,9 +1,15 @@
-const AndroidDriver = require('../AndroidDriver');
+// TODO (multiapps)
 
-class AttachedAndroidDriver extends AndroidDriver {
-  getDeviceName() {
+const { AndroidDeviceDriver, AndroidAppDriver } = require('../AndroidDrivers');
+
+class AttachedAndroidDriver extends AndroidDeviceDriver {
+  /** @override */
+  get deviceName() {
     return `AttachedDevice:${this.adbName}`;
   }
 }
 
-module.exports = AttachedAndroidDriver;
+module.exports = {
+  AttachedAndroidDriver,
+
+};

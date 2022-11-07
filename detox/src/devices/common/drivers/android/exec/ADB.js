@@ -127,12 +127,12 @@ class ADB {
     return this.shellSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
   }
 
-  async uninstall(deviceId, appId) {
-    await this.adbCmd(deviceId, `uninstall ${appId}`);
+  async uninstall(deviceId, packageId) {
+    await this.adbCmd(deviceId, `uninstall ${packageId}`);
   }
 
-  async terminate(deviceId, appId) {
-    await this.shell(deviceId, `am force-stop ${appId}`);
+  async terminate(deviceId, packageId) {
+    await this.shell(deviceId, `am force-stop ${packageId}`);
   }
 
   async setLocation(deviceId, lat, lon) {
@@ -157,9 +157,9 @@ class ADB {
     await this.emu(deviceId, `geo fix ${comma}`);
   }
 
-  async pidof(deviceId, bundleId) {
-    const bundleIdRegex = escape.inQuotedRegexp(bundleId) + '$';
-    const command = `ps | grep "${bundleIdRegex}"`;
+  async pidof(deviceId, packageId) {
+    const packageIdRegex = escape.inQuotedRegexp(packageId) + '$';
+    const command = `ps | grep "${packageIdRegex}"`;
     const options = { silent: true };
 
     const processes = await this.shell(deviceId, command, options).catch(() => '');
@@ -298,19 +298,19 @@ class ADB {
     return this.shell(deviceId, 'pm list instrumentation');
   }
 
-  async getInstrumentationRunner(deviceId, bundleId) {
+  async getInstrumentationRunner(deviceId, packageId) {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
-    const instrumentationRunner = this._instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
+    const instrumentationRunner = this._instrumentationRunnerForPackageId(instrumentationRunners, packageId);
     if (instrumentationRunner === 'undefined') {
-      throw new DetoxRuntimeError(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+      throw new DetoxRuntimeError(`No instrumentation runner found on device ${deviceId} for package ${packageId}`);
     }
 
     return instrumentationRunner;
   }
 
-  _instrumentationRunnerForBundleId(instrumentationRunners, bundleId) {
-    const runnerForBundleRegEx = new RegExp(`^instrumentation:(.*) \\(target=${bundleId.replace(new RegExp('\\.', 'g'), '\\.')}\\)$`, 'gm');
-    return _.get(runnerForBundleRegEx.exec(instrumentationRunners), [1], 'undefined');
+  _instrumentationRunnerForPackageId(instrumentationRunners, packageId) {
+    const runnerForPackageRegEx = new RegExp(`^instrumentation:(.*) \\(target=${packageId.replace(new RegExp('\\.', 'g'), '\\.')}\\)$`, 'gm');
+    return _.get(runnerForPackageRegEx.exec(instrumentationRunners), [1], 'undefined');
   }
 
   async shell(deviceId, command, options) {

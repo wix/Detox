@@ -94,6 +94,10 @@ class ArtifactsManager extends EventEmitter {
     deviceEmitter.on('createExternalArtifact', this.onCreateExternalArtifact.bind(this));
   }
 
+  async onDeviceCreated(device) {
+    await this._callPlugins('plain', 'onDeviceCreated', device);
+  }
+
   async onBootDevice(deviceInfo) {
     await this._callPlugins('plain', 'onBootDevice', deviceInfo);
   }

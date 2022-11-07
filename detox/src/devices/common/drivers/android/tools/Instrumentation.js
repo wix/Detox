@@ -15,10 +15,10 @@ class Instrumentation {
     this._onLogData = this._onLogData.bind(this);
   }
 
-  async launch(deviceId, bundleId, userLaunchArgs) {
+  async launch(deviceId, packageId, userLaunchArgs) {
     const spawnArgs = this._getSpawnArgs(userLaunchArgs);
 
-    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
+    const testRunner = await this.adb.getInstrumentationRunner(deviceId, packageId);
 
     this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnArgs, testRunner);
     this.instrumentationProcess.childProcess.stdout.setEncoding('utf8');

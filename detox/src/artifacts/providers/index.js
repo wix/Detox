@@ -1,9 +1,10 @@
 class ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {} // eslint-disable-line no-unused-vars
+  declareArtifactPlugins() {}
 }
 
 class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {
+  /** @override */
+  declareArtifactPlugins() {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
@@ -15,7 +16,7 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
 
     return {
-      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
+      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
@@ -25,19 +26,21 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
 }
 
 class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {
+  /** @override */
+  declareArtifactPlugins() {
     const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
     const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
 
     return {
       timeline: (api) => new TimelineArtifactPlugin({ api }),
-      uiHierarchy: (api) => new IosUIHierarchyPlugin({ api, client }),
+      uiHierarchy: (api) => new IosUIHierarchyPlugin({ api }),
     };
   }
 }
 
 class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {
+  /** @override */
+  declareArtifactPlugins() {
     const serviceLocator = require('../../servicelocator/ios');
     const appleSimUtils = serviceLocator.appleSimUtils;
 
@@ -47,12 +50,12 @@ class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
     const SimulatorRecordVideoPlugin = require('../video/SimulatorRecordVideoPlugin');
 
     return {
-      ...super.declareArtifactPlugins({ client }),
+      ...super.declareArtifactPlugins(),
 
       log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
-      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils, client }),
+      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api }),
     };
   }
 }

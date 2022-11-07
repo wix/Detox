@@ -9,9 +9,8 @@ const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 class IosUIHierarchyPlugin extends ArtifactPlugin {
   /**
    * @param {ArtifactsApi} api
-   * @param {Client} client
    */
-  constructor({ api, client }) {
+  constructor({ api }) {
     super({ api });
 
     this._pendingDeletions = [];
@@ -19,8 +18,10 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
       perTest: {},
       perSession: {},
     };
+  }
 
-    client.setEventCallback('testFailed', this._onInvokeFailure.bind(this));
+  async onDeviceCreated(device) {
+    device.setInvokeFailuresListener(this._onInvokeFailure.bind(this));
   }
 
   async onBeforeLaunchApp(event) {

@@ -5,16 +5,16 @@ class MatchersFactory {
 }
 
 class Android extends MatchersFactory {
-  createMatchers({ invocationManager, runtimeDevice, eventEmitter }) {
+  createMatchers({ runtimeDevice, eventEmitter }) {
     const AndroidExpect = require('../../android/AndroidExpect');
-    return new AndroidExpect({ invocationManager, device: runtimeDevice, emitter: eventEmitter });
+    return new AndroidExpect({ device: runtimeDevice, emitter: eventEmitter });
   }
 }
 
 class Ios extends MatchersFactory {
-  createMatchers({ invocationManager, eventEmitter }) {
+  createMatchers({ runtimeDevice, eventEmitter }) {
     const IosExpect = require('../../ios/expectTwo');
-    return new IosExpect({ invocationManager, emitter: eventEmitter });
+    return new IosExpect({ runtimeDevice, eventEmitter });
   }
 }
 

@@ -1,14 +1,65 @@
+const _ = require('lodash');
+
 const RuntimeDevice = require('../RuntimeDevice');
+const { PredefinedTestApp, UnspecifiedTestApp, UtilApp } = require('../TestApp');
 
 class RuntimeDeviceFactory {
   createRuntimeDevice(deviceCookie, commonDeps, configs) {
-    const deps = this._createDriverDependencies(commonDeps);
-    const runtimeDriver = this._createDriver(deviceCookie, deps, configs);
-    return new RuntimeDevice({ ...commonDeps, ...configs }, runtimeDriver);
+    const apps = this._createApps(deviceCookie, commonDeps, configs);
+
+    const driver = this._createDeviceDriver(deviceCookie, commonDeps, configs);
+
+    const { deviceConfig } = configs;
+    return new RuntimeDevice(apps, { ...commonDeps, driver }, { deviceConfig });
   }
 
-  _createDriverDependencies(commonDeps) { } // eslint-disable-line no-unused-vars
-  _createDriver(deviceCookie, deps, configs) {} // eslint-disable-line no-unused-vars
+  _createApps(deviceCookie, commonDeps, configs) {
+    return {
+      predefinedApps: this._createPredefinedTestApps(deviceCookie, commonDeps, configs),
+      unspecifiedApp: this._createUnspecifiedTestApp(deviceCookie, commonDeps, configs),
+      utilApps: this._createUtilAppsList(deviceCookie, commonDeps, configs),
+    };
+  }
+
+  _createPredefinedTestApps(deviceCookie, commonDeps, configs) {
+    const { appsConfig, behaviorConfig } = configs;
+    return _.mapValues(appsConfig, (appConfig, alias) => {
+      const driver = this._createTestAppDriver(deviceCookie, commonDeps, configs, alias);
+      return new PredefinedTestApp(driver, { appConfig, behaviorConfig }, alias);
+    });
+  }
+
+  _createUnspecifiedTestApp(deviceCookie, commonDeps, configs) {
+    const { behaviorConfig } = configs;
+    const driver = this._createTestAppDriver(deviceCookie, commonDeps, configs, null);
+    return new UnspecifiedTestApp(driver, { behaviorConfig });
+  }
+
+  _createUtilAppsList(deviceCookie, commonDeps, configs) {
+    const { deviceConfig } = configs;
+
+    return (deviceConfig.utilBinaryPaths || []).map((binaryPath) => {
+      const driver = this._createTestAppDriver(deviceCookie, commonDeps, configs, null);
+      const appConfig = { binaryPath };
+      return new UtilApp(driver, { appConfig });
+    });
+  }
+
+  /** @protected */
+  _createAppSessionConfig(sessionConfig, alias) {
+    const { sessionId } = sessionConfig;
+
+    if (alias) {
+      return {
+        ...sessionConfig,
+        sessionId: `${sessionId}:${alias}`,
+      };
+    }
+    return sessionConfig;
+  }
+
+  _createTestAppDriver(_deviceCookie, _commonDeps, _configs, _alias) {}
+  _createDeviceDriver(_deviceCookie, _deps, _configs) {}
 }
 
 module.exports = RuntimeDeviceFactory;
