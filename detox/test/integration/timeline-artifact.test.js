@@ -27,7 +27,7 @@ describe('Timeline integration test', () => {
 
   it('should deterministically produce a timeline artifact', async () => {
     const sanitizeContext = { pid: new Map(), sessionId: '', cwd: '' };
-    expect(tac.filter(isLifecycleEvent).map(sanitizeEvent, sanitizeContext)).toMatchSnapshot();
+    expect(tac.filter(isLifecycleEvent).map(sanitizeEvent.bind(sanitizeContext))).toMatchSnapshot();
   });
 
   it('should have a credible list of categories', async () => {
