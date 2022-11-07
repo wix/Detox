@@ -1,3 +1,5 @@
+const path = require('path');
+
 const _ = require('lodash');
 const argv = require('minimist')(process.argv.slice(2));
 
@@ -81,9 +83,18 @@ function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
   return argArray.join(' ');
 }
 
+function getCurrentCommand() {
+  const cwd = process.cwd();
+
+  return process.argv.slice(1).map((value, index) => {
+    return index ? value : path.relative(cwd, value);
+  }).join(' ');
+}
+
 module.exports = {
   getArgValue,
   getEnvValue,
   getFlag,
   joinArgs,
+  getCurrentCommand,
 };

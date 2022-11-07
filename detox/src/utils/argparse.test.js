@@ -118,4 +118,17 @@ describe('argparse', () => {
       expect(argparse.joinArgs(argsObject, options)).toBe('-version=100 --help');
     });
   });
+
+  describe('getCurrentCommand()', () => {
+    let argparse;
+
+    beforeEach(() => {
+      argparse = require('./argparse');
+    });
+
+    it('should return the current command in relative path format', () => {
+      expect(argparse.getCurrentCommand()).toMatch(/^[^\\/]\S*jest.*$/);
+      expect(argparse.getCurrentCommand()).toContain(process.argv.slice(2).join(' '));
+    });
+  });
 });

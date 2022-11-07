@@ -1,3 +1,5 @@
+const path = require('path');
+
 const resolveFrom = require('resolve-from');
 const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
 /** @type {typeof import('@jest/environment').JestEnvironment} */
@@ -39,7 +41,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     this._timer = new Timer();
 
     /** @internal */
-    this.testPath = context.testPath;
+    this.testPath = path.relative(process.cwd(), context.testPath);
     /** @protected */
     this.testEventListeners = [];
     /** @protected */

@@ -11,6 +11,7 @@ const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
 const symbols = require('../symbols');
+const { getCurrentCommand } = require('../utils/argparse');
 const uuid = require('../utils/uuid');
 
 const globAsync = promisify(glob);
@@ -95,8 +96,9 @@ class DetoxPrimaryContext extends DetoxContext {
     await this[symbols.logger].setConfig(loggerConfig);
 
     this[_lifecycleLogger].trace.begin({
+      cwd: process.cwd(),
       data: this[$sessionState],
-    }, process.argv.slice(1).join(' '));
+    }, getCurrentCommand());
 
     const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
