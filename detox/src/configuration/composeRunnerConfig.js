@@ -120,9 +120,10 @@ function hasEmptyPositionalArgs(value, key) {
  * @param {Detox.DetoxTestRunnerConfig} config
  */
 function inspectBrkHookDefault(config) {
-  config.args.$0 = /* istanbul ignore if */ os.platform() === 'win32'
-    ? `node --inspect-brk ./node_modules/jest/bin/jest.js`
-    : `node --inspect-brk ./node_modules/.bin/jest`;
+  /* istanbul ignore next */
+  config.args.$0 = os.platform() !== 'win32'
+    ? `node --inspect-brk ./node_modules/.bin/jest`
+    : `node --inspect-brk ./node_modules/jest/bin/jest.js`;
   config.args.runInBand = true;
   delete config.args.w;
   delete config.args.workers;

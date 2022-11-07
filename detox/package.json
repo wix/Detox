@@ -164,7 +164,6 @@
       "local-cli/testCommand/middlewares.js",
       "src/DetoxWorker.js",
       "src/artifacts/ArtifactsManager.js",
-      "src/configuration/composeRunnerConfig.js",
       "src/devices/lifecycle/GenyGlobalLifecycleHandler.js",
       "src/errors/DetoxError.js",
       "src/ipc",

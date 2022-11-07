@@ -12,6 +12,7 @@ const cp = require('child_process');
 const cpSpawn = cp.spawn;
 const os = require('os');
 const path = require('path');
+const util = require('util');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
@@ -367,8 +368,6 @@ describe('CLI', () => {
     expect(cliCall().argv.slice(-2)).toEqual(['e2e/01.sanity.test.js', 'e2e/02.sanity.test.js']);
   });
 
-  test.todo('--inspect-brk should work');
-
   test.each([
     ['-d e2eFolder', / e2eFolder$/, /\bDETOX_DEBUG_SYNCHRONIZATION=3000/],
     ['--debug-synchronization e2eFolder', / e2eFolder$/, /\bDETOX_DEBUG_SYNCHRONIZATION=3000/],
@@ -446,15 +445,14 @@ describe('CLI', () => {
     expect(cliCall().argv).toContain('--deepParameter');
   });
 
-  // TODO: revive this test
-  test.skip('--inspect-brk should prepend "node --inspect-brk" to the command', async () => {
-    await run('--inspect-brk');
+  test('--inspect-brk should activate inspectBrk hook', async () => {
+    detoxConfig.testRunner.inspectBrk = (config) => {
+      config.args.customFlag = true;
+      return config;
+    };
 
-    if (process.platform === 'win32') {
-      expect(cliCall().argv).toMatch(/^node --inspect-brk \.\/node_modules\/jest\/bin\/jest\.js/);
-    } else {
-      expect(cliCall().argv).toMatch(/^node --inspect-brk \.\/node_modules\/\.bin\/jest/);
-    }
+    await run('--inspect-brk');
+    expect(cliCall().argv).toContain('--customFlag');
   });
 
   test('should append $DETOX_ARGV_OVERRIDE to detox test ... command and print a warning', async () => {
@@ -524,7 +522,12 @@ describe('CLI', () => {
   }
 
   async function run(...args) {
-    detoxConfigPath = tempfile('.json', JSON.stringify(detoxConfig));
+    let contents = `module.exports = ${util.inspect(detoxConfig, { depth: Infinity })};`;
+    if (detoxConfig.testRunner && detoxConfig.testRunner.inspectBrk) {
+      contents = contents.replace(/\[Function.*\]/m, detoxConfig.testRunner.inspectBrk.toString());
+    }
+
+    detoxConfigPath = tempfile('.js', contents);
     const __configPath = Math.random() > 0.5 ? '-C' : '--config-path';
     return runRaw('test', __configPath, detoxConfigPath, ...args);
   }

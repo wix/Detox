@@ -143,6 +143,23 @@ describe('composeRunnerConfig', () => {
     }));
   });
 
+  it('should not do anything if inspectBrk hook is nullified', () => {
+    globalConfig.testRunner = {
+      args: { $0: 'jest' },
+      retries: 1,
+      inspectBrk: null,
+    };
+
+    cliConfig.inspectBrk = true;
+
+    expect(composeRunnerConfig()).toEqual(expect.objectContaining({
+      args: expect.objectContaining({
+        $0: 'jest',
+      }),
+      retries: 1,
+    }));
+  });
+
   it('should provide inspectBrk hook customization', () => {
     const inspectBrk = jest.fn((config) => {
       config.hello = true;
