@@ -3,7 +3,7 @@
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.68.3
+      REACT_NATIVE_VERSION: 0.68.5
       REACT_NATIVE_COMPAT_TEST: true
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
