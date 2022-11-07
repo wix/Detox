@@ -172,7 +172,6 @@
       "src/realms",
       "src/utils/Timer.js",
       "src/utils/envUtils.js",
-      "src/utils/errorUtils.js",
       "runners/jest/index.js",
       "runners/jest/reporters",
       "runners/jest/testEnvironment"

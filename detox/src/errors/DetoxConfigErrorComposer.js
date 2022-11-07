@@ -664,7 +664,12 @@ Examine your Detox config${this._atPath()}`,
   }
 
   invalidTestRunnerProperty(isGlobal) {
-    const testRunner = _.get(this.contents, ['testRunner']);
+    const testRunner = _.get(
+      isGlobal
+        ? this.contents
+        : this._getSelectedConfiguration(),
+      ['testRunner']
+    );
 
     return new DetoxConfigError({
       message: `testRunner should be an object, not a ${typeof testRunner}`,

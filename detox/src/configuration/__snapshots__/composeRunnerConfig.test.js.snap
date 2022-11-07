@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`composeRunnerConfig unhappy scenarios deprecated "testRunner" in local config 1`] = `
-"testRunner should be an object, not a undefined
+"testRunner should be an object, not a string
 
 HINT: Check that in your Detox config.
 
