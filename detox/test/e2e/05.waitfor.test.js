@@ -30,7 +30,7 @@ describe('WaitFor', () => {
     await expect(element(by.id('deletedFromHierarchyText'))).not.toBeVisible();
   });
 
-  custom.it.withFailureIf.android.rn58OrNewer('should find element by scrolling until it is visible', async () => {
+  custom.it.withFailureIf.android('should find element by scrolling until it is visible', async () => {
     await expect(element(by.text('Text5'))).not.toBeVisible();
     await element(by.id('GoButton')).tap();
     await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down');

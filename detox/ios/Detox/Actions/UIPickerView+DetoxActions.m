@@ -14,7 +14,7 @@
 
 - (void)dtx_setComponent:(NSInteger)component toValue:(id)value
 {
-	[self dtx_assertVisible];
+	[self dtx_assertHittable];
 	
 	DTXViewAssert(self.dataSource != nil && self.delegate != nil, self.dtx_elementDebugAttributes, @"The picker view's data source and/or delegate are nil");
 	
