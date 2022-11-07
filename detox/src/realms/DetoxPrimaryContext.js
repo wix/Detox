@@ -11,6 +11,7 @@ const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
 const symbols = require('../symbols');
+const uuid = require('../utils/uuid');
 
 const globAsync = promisify(glob);
 const globSync = glob.sync;
@@ -31,6 +32,7 @@ const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _areLogsEnabled = Symbol('areLogsEnabled');
 const _lifecycleLogger = Symbol('lifecycleLogger');
+const _sessionFile = Symbol('sessionFile');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -40,6 +42,8 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_dirty] = false;
     this[_wss] = null;
     this[_globalLifecycleHandler] = null;
+    /** Path to file where the initial session object is serialized */
+    this[_sessionFile] = '';
     /**
      * @type {import('../ipc/IPCServer') | null}
      */
@@ -130,8 +134,10 @@ class DetoxPrimaryContext extends DetoxContext {
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
     }
 
-    await fs.writeFile(this[$sessionState].detoxConfigSnapshotPath, this[$sessionState].stringify());
-    process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[$sessionState].detoxConfigSnapshotPath;
+    this[_sessionFile] = temporary.for.json(this[$sessionState].id);
+    await fs.writeFile(this[_sessionFile], this[$sessionState].stringify());
+    process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[_sessionFile];
+    this[_lifecycleLogger].trace(`Serialized the session state at: ${this[_sessionFile]}`);
 
     if (opts.workerId !== null) {
       await this[symbols.installWorker](opts);
@@ -173,7 +179,9 @@ class DetoxPrimaryContext extends DetoxContext {
         this[_ipcServer] = null;
       }
 
-      await fs.remove(this[$sessionState].detoxConfigSnapshotPath);
+      if (this[_sessionFile]) {
+        await fs.remove(this[_sessionFile]);
+      }
 
       if (this[_dirty]) {
         try {
@@ -204,6 +212,10 @@ class DetoxPrimaryContext extends DetoxContext {
       this[_ipcServer].dispose();
     }
 
+    if (this[_sessionFile]) {
+      fs.removeSync(this[_sessionFile]);
+    }
+
     try {
       this[_lifecycleLogger].trace.end({ abortSignal: signal });
       this[_finalizeLogsSync]();
@@ -222,7 +234,7 @@ class DetoxPrimaryContext extends DetoxContext {
    */
   [$restoreSessionState]() {
     return new SessionState({
-      detoxConfigSnapshotPath: temporary.for.json(),
+      id: uuid.UUID(),
       detoxIPCServer: `primary-${process.pid}`,
     });
   }

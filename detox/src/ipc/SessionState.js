@@ -1,12 +1,9 @@
 const cycle = require('json-cycle');
 
-const uuid = require('../utils/uuid');
-
 class SessionState {
   constructor({
-    id = uuid.UUID(),
+    id = '',
     contexts = [],
-    detoxConfigSnapshotPath = '',
     detoxConfig = null,
     detoxIPCServer = '',
     testResults = [],
@@ -15,7 +12,6 @@ class SessionState {
   }) {
     this.id = id;
     this.contexts = contexts;
-    this.detoxConfigSnapshotPath = detoxConfigSnapshotPath;
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
     this.testResults = testResults;
