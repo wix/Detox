@@ -38,7 +38,7 @@
     "@react-native-segmented-control/segmented-control": "2.3.0",
     "moment": "^2.24.0",
     "react": "18.0.0",
-    "react-native": "0.69.5",
+    "react-native": "0.69.7",
     "react-native-gradle-plugin": "^0.0.7",
     "react-native-launch-arguments": "^3.1.0",
     "react-native-webview": "^11.18.1"
@@ -49,7 +49,7 @@
     "@react-native-community/eslint-config": "^3.0.1",
     "@types/node": "^12.20.37",
     "@types/react": "18.0.0",
-    "@types/react-native": "0.69.5",
+    "@types/react-native": "0.69.7",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "detox": "^19.12.6",
