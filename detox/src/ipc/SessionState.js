@@ -1,4 +1,10 @@
+const vm = require('vm');
+
 const cycle = require('json-cycle');
+
+const context = vm.createContext({ require }, {
+  name: 'VM User Context',
+});
 
 class SessionState {
   constructor({
@@ -38,7 +44,7 @@ class SessionState {
 
   static reviver(key, val) {
     if (typeof val === 'object' && val !== null && typeof val.$fn == 'string') {
-      return eval(val.$fn);
+      return vm.runInContext(val.$fn, context);
     } else {
       return val;
     }
