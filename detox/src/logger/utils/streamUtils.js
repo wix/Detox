@@ -3,14 +3,12 @@ const { PassThrough, Transform } = require('stream');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const duplexify = require('duplexify');
 const fs = require('fs-extra');
-const glob = require('glob');
 const multiSort = require('multi-sort-stream');
 const pipe = require('multipipe');
 const JsonlParser = require('stream-json/jsonl/Parser');
 const stripAnsi = require('strip-ansi');
 const { AbstractEventBuilder } = require('trace-event-lib');
 
-const temporary = require('../../artifacts/utils/temporaryPath');
 const log = require('../../utils/logger').child({ cat: 'logger' });
 
 function compareTimestamps(a, b) {
@@ -143,27 +141,40 @@ class SimpleEventBuilder extends AbstractEventBuilder {
   }
 }
 
-function chromeTraceStream() {
+const ERROR_TID = 37707;
+
+function getTidHash({ pid, tid, cat }) {
+  const mainCategory = String(cat).split(',')[0];
+  return `${pid}:${mainCategory}:${tid}`;
+}
+
+function chromeTraceStream(tidHashMap) {
   const knownPids = new Set();
   const knownTids = new Set();
 
   return flatMapTransform((data) => {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const { cat = 'default', msg: name, ph = 'i', pid, tid, time, name: _name, hostname: _hostname, ...args } = data;
+    const { cat: rawCat, msg: name, ph = 'i', pid, tid: rawTid, time, name: _name, hostname: _hostname, ...args } = data;
     const ts = new Date(time).getTime() * 1E3;
+    const cat = rawCat || 'undefined';
+
+    let tid = tidHashMap.get(getTidHash(data));
+    if (tid === undefined) {
+      tid = ERROR_TID;
+    }
 
     const builder = new SimpleEventBuilder();
     if (!knownPids.has(pid)) {
-      builder.process_name(pid === process.pid ? 'primary' : 'secondary', pid);
+      builder.metadata({ pid, ts, name: 'process_name', args: { name: pid === process.pid ? 'primary' : 'secondary' } });
+      builder.metadata({ pid, ts, name: 'process_sort_index', args: { sort_index: knownPids.size } });
       knownPids.add(pid);
     }
 
-    const tidHash = `${pid}:${tid}`;
-    if (!knownTids.has(tidHash)) {
+    if (!knownTids.has(tid)) {
       const primaryCategory = cat.split(',', 1)[0];
-      builder.thread_name(primaryCategory, tid, pid);
-      builder.thread_sort_index(tid, tid, pid);
-      knownTids.add(tidHash);
+      builder.metadata({ pid, tid, ts, name: 'thread_name', args: { name: primaryCategory } });
+      builder.metadata({ pid, tid, ts, name: 'thread_sort_index', args: { sort_index: tid } });
+      knownTids.add(tid);
     }
 
     const event = { ph, name, pid, tid, cat, ts, args };
@@ -207,25 +218,13 @@ function readJSONL() {
 }
 
 /**
- * @param {string} sessionId
+ * @param {string[]} logs
  * @returns {NodeJS.ReadableStream}
  */
-function uniteSessionLogs(sessionId) {
+function uniteSessionLogs(logs) {
   const readable = through();
-
-  glob(temporary.for.jsonl(`${sessionId}.*`), function (err, logs) {
-    if (err) {
-      return readable.emit('error', err);
-    }
-
-    if (logs.length === 0) {
-      return;
-    }
-
-    const jsonlStreams = logs.map(filePath => fs.createReadStream(filePath).pipe(readJSONL()));
-    mergeSortedJSONL(jsonlStreams).pipe(readable);
-  });
-
+  const jsonlStreams = logs.map(filePath => fs.createReadStream(filePath).pipe(readJSONL()));
+  mergeSortedJSONL(jsonlStreams).pipe(readable);
   return readable;
 }
 

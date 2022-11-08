@@ -1,23 +1,9 @@
-const _ = require('lodash');
-
 const ThreadDispatcher = require('./ThreadDispatcher');
 
 class CategoryThreadDispatcher {
-  /**
-   * @param {object} config
-   * @param {Record<string, [number, number?]>} config.categories
-   * @param {Detox.Logger} config.logger
-   */
-  constructor(config) {
-    this.categories = config.categories;
-    this.dispatchers = _.mapValues(this.categories, (range, name) => {
-      return new ThreadDispatcher({
-        name,
-        logger: config.logger,
-        min: range[0],
-        max: range[1] || range[0],
-      });
-    });
+  constructor() {
+    /** @type {Record<string, ThreadDispatcher>} */
+    this._dispatchers = {};
   }
 
   /**
@@ -38,20 +24,12 @@ class CategoryThreadDispatcher {
 
   /** @returns {ThreadDispatcher} */
   _resolveDispatcher(cat) {
-    const mainCategory = cat ? cat.split(',', 1)[0] : '';
-    return this.dispatchers[mainCategory] || this.dispatchers.default;
-  }
-
-  categorize(tid) {
-    return _.findKey(this.categories, ([min, max]) => min <= tid && tid <= max) || 'default';
-  }
-
-  threadize(cat) {
-    if (!cat) {
-      return this.categories.default[0];
+    const mainCategory = cat ? cat.split(',', 1)[0] : 'default';
+    if (!this._dispatchers[mainCategory]) {
+      this._dispatchers[mainCategory] = new ThreadDispatcher(mainCategory);
     }
 
-    return _.find(this.categories, (_, key) => key === cat[0]);
+    return this._dispatchers[mainCategory];
   }
 }
 

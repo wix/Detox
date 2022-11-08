@@ -71,25 +71,7 @@ class DetoxLogger {
         .installFileStream(this.file)
         .installDebugStream(this.config);
 
-      this._sharedConfig.dispatcher = new CategoryThreadDispatcher({
-        logger: this,
-        categories: {
-          'lifecycle': [0],
-          'cli': [1],
-          'logger': [2],
-          'ipc': [29],
-          'ws-server': [50, 99],
-          'ws-client': [100, 149],
-          'device': [150, 159],
-          'artifacts-manager': [300],
-          'artifacts-plugin': [310, 349],
-          'artifact': [350, 399],
-          'child-process': [400, 499],
-          'default': [999],
-          'user': [10000, 10999]
-        },
-      });
-
+      this._sharedConfig.dispatcher = new CategoryThreadDispatcher();
       this._sharedConfig.messageStack = new MessageStack();
 
       this.overrideConsole();
