@@ -31,6 +31,13 @@ describe('ArtifactsManager', () => {
     };
   });
 
+  describe('when created by default', () => {
+    it('should have a default PathBuilder instance', () => {
+      new proxy.ArtifactsManager({ plugins: {} });
+      expect(proxy.ArtifactPathBuilder).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('when plugin factory is registered', () => {
     let artifactsManager, factory, plugin;
 

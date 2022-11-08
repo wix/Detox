@@ -13,12 +13,13 @@ function applyEnvironmentVariableAddendum(argv, yargs) {
 
     const { _: positional, '--': passthrough, ...named } = yargs.parse(process.env.DETOX_ARGV_OVERRIDE);
 
-    if (positional) {
+    if (!_.isEmpty(positional)) {
+      /* istanbul ignore next */
       argv._ = argv._ || [];
       argv._.push(...positional.map(simpleUnquote));
     }
 
-    if (passthrough) {
+    if (!_.isEmpty(passthrough)) {
       argv['--'] = argv['--'] || [];
       argv['--'].push(...passthrough.map(simpleUnquote));
     }

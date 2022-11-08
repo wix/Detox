@@ -108,22 +108,49 @@ describe('CLI', () => {
   ])('given no extra args (%s)', (_platform, deviceType) => {
     beforeEach(async () => {
       singleConfig().device.type = deviceType;
-      await run();
     });
 
-    test('should produce a default command', () => {
-      expect(cliCall().argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
-    });
+    describe('when testRunner.forwardEnv is true', () => {
+      beforeEach(async () => {
+        singleConfig().testRunner = { forwardEnv: true };
+        await run();
+      });
 
-    test('should not override environment variables', () => {
-      expect(cliCall().env).toEqual({
-        DETOX_CONFIG_PATH: expect.any(String),
-        DETOX_CONFIG_SNAPSHOT_PATH: expect.any(String)
+      test('should produce a default command', () => {
+        expect(cliCall().argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
+      });
+
+      test('should override environment variables', () => {
+        expect(cliCall().env).toEqual({
+          DETOX_CONFIG_PATH: expect.any(String),
+          DETOX_CONFIG_SNAPSHOT_PATH: expect.any(String)
+        });
+      });
+
+      test('should hint essential environment variables', () => {
+        expect(cliCall().fullCommand).toMatch(/\bDETOX_CONFIG_PATH=.*\bexecutable\b/);
       });
     });
 
-    test('should hint essential environment variables', () => {
-      expect(cliCall().fullCommand).toMatch(/\bDETOX_CONFIG_PATH=.*\bexecutable\b/);
+    describe('when testRunner.forwardEnv is false', () => {
+      beforeEach(async () => {
+        singleConfig().testRunner = { forwardEnv: false };
+        await run();
+      });
+
+      test('should produce a default command', () => {
+        expect(cliCall().argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
+      });
+
+      test('should not override environment variables', () => {
+        expect(cliCall().env).toEqual({
+          DETOX_CONFIG_SNAPSHOT_PATH: expect.any(String)
+        });
+      });
+
+      test('should not hint essential environment variables', () => {
+        expect(cliCall().fullCommand).not.toMatch(/\bDETOX_CONFIG_PATH=.*\bexecutable\b/);
+      });
     });
   });
 
@@ -465,6 +492,16 @@ describe('CLI', () => {
 
     expect(cliCall().fullCommand).toMatch(/\bDETOX_LOGLEVEL="trace" /);
     expect(cliCall().argv.slice(-3)).toEqual(['--testNamePattern', '[ios] tap', 'e2e/sanity/*.test.js']);
+    expect(logger().warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
+  });
+
+  test('should append $DETOX_ARGV_OVERRIDE "--" part to test runner command', async () => {
+    process.env.PLATFORM = 'ios';
+    process.env.DETOX_ARGV_OVERRIDE = '-- --help';
+
+    await run();
+
+    expect(cliCall().argv.slice(-1)).toEqual(['--help']);
     expect(logger().warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
   });
 

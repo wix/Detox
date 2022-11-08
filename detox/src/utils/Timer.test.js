@@ -4,6 +4,10 @@ const Deferred = require('./Deferred');
 const Timer = require('./Timer');
 
 describe('Timer', () => {
+  it('should not be expired when just created', async () => {
+    await expect(new Timer().expired).toBe(false);
+  });
+
   it('should throw on attempt to run when uninitialized', async () => {
     await expect(new Timer().run('', () => {})).rejects.toThrow(/Cannot run a timer action/);
   });

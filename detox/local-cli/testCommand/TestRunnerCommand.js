@@ -14,7 +14,7 @@ class TestRunnerCommand {
   /*
     @param {object} opts
     @param {DetoxInternals.RuntimeConfig} opts.config
-    @param {ProcessEnv} [opts.env]
+    @param {ProcessEnv} opts.env
   */
   constructor(opts) {
     const cliConfig = opts.config.cli;
@@ -68,7 +68,7 @@ class TestRunnerCommand {
     }
   }
 
-  _buildEnvHint(env = process.env) {
+  _buildEnvHint(env) {
     return _(env)
       .mapKeys((_value, key) => key.toUpperCase())
       .pickBy((_value, key) => key.startsWith('DETOX_'))
@@ -127,7 +127,7 @@ class TestRunnerCommand {
           .tap(prependNodeModulesBinToPATH)
           .value()
       })
-        .on('error', (err) => reject(err))
+        .on('error', /* istanbul ignore next */ (err) => reject(err))
         .on('exit', (code) => code === 0
           ? resolve()
           : reject(new DetoxRuntimeError(`Command failed with exit code = ${code}:\n${fullCommandWithHint}`)
@@ -136,6 +136,7 @@ class TestRunnerCommand {
   }
 
   _buildSpawnArguments() {
+    /* istanbul ignore next */
     const { _: specs = [], '--': passthrough = [], $0, ...argv } = this._argv;
     const { _: $0_, ...$0argv } = parser($0);
 
