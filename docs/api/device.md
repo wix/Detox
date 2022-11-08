@@ -229,10 +229,6 @@ await device.launchApp({
 });
 ```
 
-### `device.relaunchApp(params)`
-
-The method calls `launchApp({newInstance: true})` as a convenience method.
-
 ### `device.terminateApp()`
 
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](../config/overview.mdx).
