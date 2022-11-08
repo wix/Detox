@@ -3,7 +3,7 @@
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.69.5
+      REACT_NATIVE_VERSION: 0.69.7
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"

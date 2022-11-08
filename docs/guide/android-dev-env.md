@@ -83,17 +83,20 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
 1. Preliminary: Upgrade your `emulator` executable to the latest version.
    _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
 
-   ```bash
+   ```sh
    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install emulator
    ```
 
    :::note
-   In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`. We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
+
+   In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`.
+   We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
+
    :::
 
 1. Install an emulator image without Google APIs:
 
-   ```bash
+   ```shell
    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-28;default;x86_64"
    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
    ```
@@ -104,7 +107,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
 
 1. Create an emulator (i.e. AVD - Android Virtual Device):
 
-   ```bash
+   ```shell
    $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
    ```
 

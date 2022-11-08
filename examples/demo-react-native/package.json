@@ -24,7 +24,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.3",
     "react": "18.0.0",
-    "react-native": "0.69.5",
+    "react-native": "0.69.7",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
