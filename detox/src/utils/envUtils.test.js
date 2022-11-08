@@ -1,3 +1,5 @@
+const path = require('path');
+
 const envUtils = require('./envUtils');
 
 describe('envUtils', () => {
@@ -16,10 +18,10 @@ describe('envUtils', () => {
     });
 
     it('should prepend node modules bin to PATH and return that value', () => {
-      const env = { pAtH: '/usr/bin:/bin' };
+      const env = { pAtH: ['/usr/bin', '/bin'].join(path.delimiter) };
       const resultingPath = envUtils.prependNodeModulesBinToPATH(env);
 
-      expect(env.pAtH.split(':')).toEqual([
+      expect(env.pAtH.split(path.delimiter)).toEqual([
         expect.stringMatching(/.*node_modules.*/),
         '/usr/bin',
         '/bin',
