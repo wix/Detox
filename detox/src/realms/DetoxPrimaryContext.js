@@ -1,21 +1,15 @@
-const path = require('path');
 const { URL } = require('url');
-const { promisify } = require('util');
 
 const fs = require('fs-extra');
-const glob = require('glob');
-const pipe = require('multipipe');
 const onSignalExit = require('signal-exit');
 
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
+const DetoxLogFinalizer = require('../logger/utils/DetoxLogFinalizer');
 const symbols = require('../symbols');
 const { getCurrentCommand } = require('../utils/argparse');
 const uuid = require('../utils/uuid');
-
-const globAsync = promisify(glob);
-const globSync = glob.sync;
 
 const DetoxContext = require('./DetoxContext');
 
@@ -23,17 +17,15 @@ const DetoxContext = require('./DetoxContext');
 const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
 //#region Private symbols
-const _finalizeLogs = Symbol('finalizeLogs');
-const _finalizeLogsSync = Symbol('finalizeLogsSync');
 const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
 const _ipcServer = Symbol('ipcServer');
 const _resetLockFile = Symbol('resetLockFile');
 const _wss = Symbol('wss');
 const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
-const _areLogsEnabled = Symbol('areLogsEnabled');
 const _lifecycleLogger = Symbol('lifecycleLogger');
 const _sessionFile = Symbol('sessionFile');
+const _logFinalizer = Symbol('logFinalizer');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -51,6 +43,9 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_ipcServer] = null;
     /** @type {Detox.Logger} */
     this[_lifecycleLogger] = this[symbols.logger].child({ cat: 'lifecycle' });
+    this[_logFinalizer] = new DetoxLogFinalizer({
+      session: this[$sessionState],
+    });
   }
 
   //#region Internal members
@@ -188,7 +183,7 @@ class DetoxPrimaryContext extends DetoxContext {
       if (this[_dirty]) {
         try {
           this[_lifecycleLogger].trace.end();
-          await this[_finalizeLogs]();
+          await this[_logFinalizer].finalize();
         } catch (err) {
           this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
         }
@@ -220,7 +215,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
     try {
       this[_lifecycleLogger].trace.end({ abortSignal: signal });
-      this[_finalizeLogsSync]();
+      this[_logFinalizer].finalizeSync();
     } catch (err) {
       this[symbols.logger].error({ err }, 'Encountered an error while merging the process logs:');
     }
@@ -243,70 +238,6 @@ class DetoxPrimaryContext extends DetoxContext {
   //#endregion
 
   //#region Private members
-  async[_finalizeLogs]() {
-    const sessionId = this[$sessionState].id;
-    const logs = await globAsync(temporary.for.jsonl(`${sessionId}.*`));
-    if (logs.length === 0) {
-      return;
-    }
-
-    if (this[_areLogsEnabled]()) {
-      const streamUtils = require('../logger/utils/streamUtils');
-      const { rootDir } = this[symbols.config].artifacts;
-
-      await fs.mkdirp(rootDir);
-      const [out1Stream, out2Stream] = ['detox.log', 'detox.trace.json']
-        .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
-
-      const mergedStream = streamUtils.uniteSessionLogs(sessionId);
-
-      await Promise.all([
-        pipe(mergedStream, streamUtils.debugStream(this[symbols.logger].config.options), out1Stream),
-        pipe(mergedStream, streamUtils.chromeTraceStream(), streamUtils.writeJSON(), out2Stream),
-      ]);
-    }
-
-    await Promise.all(logs.map(filepath => fs.remove(filepath)));
-  }
-
-  async[_finalizeLogsSync]() {
-    const logsEnabled = this[_areLogsEnabled]();
-
-    const { rootDir } = this[symbols.config].artifacts;
-
-    if (logsEnabled) {
-      fs.mkdirpSync(rootDir);
-    }
-
-    const sessionId = this[$sessionState].id;
-    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
-
-    for (const log of logs) {
-      if (logsEnabled) {
-        fs.moveSync(log, path.join(rootDir, path.basename(log)));
-      } else {
-        fs.removeSync(log);
-      }
-    }
-  }
-
-  [_areLogsEnabled]() {
-    const { rootDir, plugins } = this[symbols.config].artifacts || {};
-    if (!rootDir || !plugins) {
-      return false;
-    }
-
-    if (!plugins.log.enabled) {
-      return false;
-    }
-
-    if (!plugins.log.keepOnlyFailedTestsArtifacts) {
-      return true;
-    }
-
-    return this[$sessionState].testResults.some(r => !r.success);
-  }
-
   async[_resetLockFile]() {
     const DeviceRegistry = require('../devices/DeviceRegistry');
 

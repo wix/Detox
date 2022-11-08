@@ -14,7 +14,7 @@ declare global {
 
       /**
        * Returns one of statuses depending on what’s going with the current Detox context:
-       * 
+       *
        * `inactive` – before `init()` and after `cleanup()` is called.
        * `init` – while `init()` is executing.
        * `active` – after `init()` and before `cleanup()` is called.
@@ -242,7 +242,7 @@ declare global {
        * or equal to "default" if the name is not configured.
        */
       apps: Record<string, Readonly<Detox.DetoxAppConfig>>;
-      artifacts: Readonly<Detox.DetoxArtifactsConfig>;
+      artifacts: Readonly<RuntimeArtifactsConfig>;
       behavior: Readonly<Detox.DetoxBehaviorConfig>;
       cli: Readonly<CLIConfig>;
       device: Readonly<Detox.DetoxDeviceConfig>;
@@ -250,6 +250,19 @@ declare global {
       testRunner: Readonly<Detox.DetoxTestRunnerConfig>;
       session: Readonly<Detox.DetoxSessionConfig>;
     }>;
+
+    type RuntimeArtifactsConfig = {
+      rootDir: string;
+      pathBuilder: string;
+      plugins: Readonly<{
+        log: Readonly<Detox.DetoxLogArtifactsPluginConfig>;
+        screenshot: Readonly<Detox.DetoxScreenshotArtifactsPluginConfig>;
+        video: Readonly<Detox.DetoxVideoArtifactsPluginConfig>;
+        instruments: Readonly<Detox.DetoxInstrumentsArtifactsPluginConfig>;
+        uiHierarchy: Readonly<Detox.DetoxUIHierarchyArtifactsPluginConfig>;
+        [pluginId: string]: unknown;
+      }>;
+    };
 
     type CLIConfig = Readonly<Partial<{
       appLaunchArgs: string;
