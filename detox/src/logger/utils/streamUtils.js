@@ -148,20 +148,29 @@ function getTidHash({ pid, tid, cat }) {
   return `${pid}:${mainCategory}:${tid}`;
 }
 
+function getFixedTID(tidHashMap, event) {
+  let tid = tidHashMap.get(getTidHash(event));
+  if (tid === undefined) {
+    tid = ERROR_TID;
+  }
+
+  return tid;
+}
+
+/**
+ * @param {Map<string, number>} [tidHashMap]
+ */
 function chromeTraceStream(tidHashMap) {
   const knownPids = new Set();
   const knownTids = new Set();
+  const fixTID = tidHashMap ? getFixedTID.bind(null, tidHashMap) : (x) => x.tid;
 
   return flatMapTransform((data) => {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const { cat: rawCat, msg: name, ph = 'i', pid, tid: rawTid, time, name: _name, hostname: _hostname, ...args } = data;
+    const { cat: rawCat, msg: name, ph = 'i', pid, tid: _tid, time, name: _name, hostname: _hostname, ...args } = data;
     const ts = new Date(time).getTime() * 1E3;
     const cat = rawCat || 'undefined';
-
-    let tid = tidHashMap.get(getTidHash(data));
-    if (tid === undefined) {
-      tid = ERROR_TID;
-    }
+    const tid = fixTID(data);
 
     const builder = new SimpleEventBuilder();
     if (!knownPids.has(pid)) {

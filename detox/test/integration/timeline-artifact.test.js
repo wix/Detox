@@ -26,7 +26,7 @@ describe('Timeline integration test', () => {
   });
 
   it('should deterministically produce a timeline artifact', async () => {
-    const sanitizeContext = { pid: new Map(), sessionId: '', cwd: '' };
+    const sanitizeContext = { pid: new Map(), tid: new Map(), sessionId: '', cwd: '' };
     expect(tac.filter(isLifecycleEvent).map(sanitizeEvent.bind(sanitizeContext))).toMatchSnapshot();
   });
 
@@ -71,7 +71,7 @@ function isLifecycleEvent(e) {
   return `${e.cat}`.split(',').includes('lifecycle');
 }
 
-/** @this {{ pid: Map; sessionId: string; cwd: string; }} */
+/** @this {{ pid: Map; tid: Map; sessionId: string; cwd: string; }} */
 function sanitizeEvent(e, ts) {
   const r = { ...e };
   r.args = { ...r.args };
@@ -79,17 +79,19 @@ function sanitizeEvent(e, ts) {
   if (ts === 0) {
     this.sessionId = r.args.data.id;
     this.cwd = r.args.cwd;
-
+    this.name = r.name.replace(/^.*(?=jest)/, '');
   }
 
   r.pid = (this.pid.has(e.pid) ? this.pid : this.pid.set(e.pid, this.pid.size)).get(e.pid);
+  r.tid = (this.tid.has(e.tid) ? this.tid : this.tid.set(e.tid, this.tid.size)).get(e.tid);
   r.ts = ts;
 
   if (r.name) {
     r.name = r.name
       .replace(TMPDIR, '$TMPDIR')
       .replace(this.sessionId, '$SESSION_ID')
-      .replace(this.cwd, '$CWD');
+      .replace(this.cwd, '$CWD')
+      .replace(/DETOX_[A-Z_]+=\S*\s*/g, '');
   }
 
   if (r.args.cwd) {
@@ -99,8 +101,13 @@ function sanitizeEvent(e, ts) {
   if (typeof r.args.error === 'string') {
     r.args.error = r.args.error.split('\n')[0];
   }
+
   if (r.args.data) {
     r.args.data = {};
+  }
+
+  if (r.args.env) {
+    r.args.env = {};
   }
 
   return r;

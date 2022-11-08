@@ -25,20 +25,20 @@ function getStackDump() {
 
 function proxyLog(bunyanLoggerFn) {
   return (...args) => {
-    bunyanLoggerFn({ origin: getOrigin() }, util.format(...args));
+    bunyanLoggerFn({ cat: 'user', origin: getOrigin() }, util.format(...args));
   };
 }
 
 function proxyTracing(bunyanLoggerFn) {
   return (...args) => {
-    bunyanLoggerFn({ origin: getOrigin(), stack: getStackDump() }, util.format(...args));
+    bunyanLoggerFn({ cat: 'user', origin: getOrigin(), stack: getStackDump() }, util.format(...args));
   };
 }
 
 function proxyAssert(bunyanLoggerFn) {
   return (condition, ...args) => {
     if (!condition) {
-      bunyanLoggerFn({ origin: getOrigin() }, 'AssertionError:', util.format(...args));
+      bunyanLoggerFn({ cat: 'user', origin: getOrigin() }, 'AssertionError:', util.format(...args));
     }
   };
 }

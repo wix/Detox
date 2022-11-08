@@ -2,13 +2,14 @@ const funpermaproxy = require('funpermaproxy');
 
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
-const { DetoxLogger, installLegacyTracerInterface } = require('../logger');
+const { DetoxLogger, DetoxLogFinalizer, installLegacyTracerInterface } = require('../logger');
 const symbols = require('../symbols');
 
 const DetoxConstants = require('./DetoxConstants');
 
 //#region Protected symbols
 const $cleanup = Symbol('cleanup');
+const $logFinalizer = Symbol('logFinalizer');
 const $restoreSessionState = Symbol('restoreSessionState');
 const $sessionState = Symbol('restoreSessionState');
 const $status = Symbol('status');
@@ -58,6 +59,10 @@ class DetoxContext {
     this.log = this[symbols.logger].child({ cat: 'user' });
     installLegacyTracerInterface(this.log, this);
 
+    this[$logFinalizer] = new DetoxLogFinalizer({
+      session: this[$sessionState]
+    });
+
     /** @type {import('../DetoxWorker') | null} */
     this[$worker] = null;
   }
@@ -91,12 +96,7 @@ class DetoxContext {
   [symbols.config] = funpermaproxy(() => this[symbols.session].detoxConfig);
   [symbols.session] = funpermaproxy(() => this[$sessionState]);
   [symbols.tracing] = Object.freeze({
-    createEventStream: () => {
-      const streamUtils = require('../logger/utils/streamUtils');
-      return streamUtils
-        .uniteSessionLogs(this[$sessionState].id)
-        .pipe(streamUtils.chromeTraceStream());
-    },
+    createEventStream: () => this[$logFinalizer].createEventStream(),
   });
   /** @abstract */
   [symbols.reportTestResults](_testResults) {}
@@ -175,6 +175,7 @@ class DetoxContext {
 module.exports = DetoxContext;
 module.exports.protected = {
   $cleanup,
+  $logFinalizer,
   $restoreSessionState,
   $status,
   $sessionState,

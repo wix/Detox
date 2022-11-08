@@ -9,6 +9,7 @@ const temporary = require('../../artifacts/utils/temporaryPath');
 
 const globAsync = promisify(glob);
 const globSync = glob.sync;
+const streamUtils = () => require('../../logger/utils/streamUtils');
 
 /**
  * @typedef DetoxLogFinalizerConfig
@@ -21,6 +22,15 @@ class DetoxLogFinalizer {
     this._session = config.session;
   }
 
+  createEventStream() {
+    const sessionId = this._session.id;
+    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
+
+    return streamUtils()
+      .uniteSessionLogs(logs)
+      .pipe(streamUtils().chromeTraceStream());
+  }
+
   async finalize() {
     const sessionId = this._session.id;
     const logs = await globAsync(temporary.for.jsonl(`${sessionId}.*`));
@@ -29,7 +39,6 @@ class DetoxLogFinalizer {
     }
 
     if (this._areLogsEnabled()) {
-      const streamUtils = require('../../logger/utils/streamUtils');
       const rootDir = this._config.artifacts.rootDir;
 
       await fs.mkdirp(rootDir);
@@ -37,11 +46,11 @@ class DetoxLogFinalizer {
         .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
 
       const tidHashMap = await this._scanForThreadIds(logs);
-      const mergedStream = streamUtils.uniteSessionLogs(logs);
+      const mergedStream = streamUtils().uniteSessionLogs(logs);
 
       await Promise.all([
-        pipe(mergedStream, streamUtils.debugStream(this._config.logger.options), out1Stream),
-        pipe(mergedStream, streamUtils.chromeTraceStream(tidHashMap), streamUtils.writeJSON(), out2Stream),
+        pipe(mergedStream, streamUtils().debugStream(this._config.logger.options), out1Stream),
+        pipe(mergedStream, streamUtils().chromeTraceStream(tidHashMap), streamUtils().writeJSON(), out2Stream),
       ]);
     }
 
@@ -68,11 +77,13 @@ class DetoxLogFinalizer {
     }
   }
 
+  /** @private */
   get _config() {
     // The config appears later in the lifecycle, so we need to access it lazily
     return this._session.detoxConfig;
   }
 
+  /** @private */
   _areLogsEnabled() {
     const { rootDir, plugins } = this._config.artifacts;
     if (!rootDir || !plugins) {
@@ -90,11 +101,11 @@ class DetoxLogFinalizer {
     return this._session.testResults.some(r => !r.success);
   }
 
+  /** @private */
   async _scanForThreadIds(logs) {
-    const streamUtils = require('../../logger/utils/streamUtils');
     const processes = await new Promise((resolve, reject) => {
       const result = {};
-      streamUtils.uniteSessionLogs(logs)
+      streamUtils().uniteSessionLogs(logs)
         .on('end', () => resolve(result))
         .on('error', (err) => reject(err))
         .on('data', (event) => {

@@ -6,7 +6,6 @@ const onSignalExit = require('signal-exit');
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
-const DetoxLogFinalizer = require('../logger/utils/DetoxLogFinalizer');
 const symbols = require('../symbols');
 const { getCurrentCommand } = require('../utils/argparse');
 const uuid = require('../utils/uuid');
@@ -14,7 +13,7 @@ const uuid = require('../utils/uuid');
 const DetoxContext = require('./DetoxContext');
 
 // Protected symbols
-const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
+const { $logFinalizer, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
 //#region Private symbols
 const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
@@ -25,7 +24,6 @@ const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _lifecycleLogger = Symbol('lifecycleLogger');
 const _sessionFile = Symbol('sessionFile');
-const _logFinalizer = Symbol('logFinalizer');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -43,9 +41,6 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_ipcServer] = null;
     /** @type {Detox.Logger} */
     this[_lifecycleLogger] = this[symbols.logger].child({ cat: 'lifecycle' });
-    this[_logFinalizer] = new DetoxLogFinalizer({
-      session: this[$sessionState],
-    });
   }
 
   //#region Internal members
@@ -183,7 +178,7 @@ class DetoxPrimaryContext extends DetoxContext {
       if (this[_dirty]) {
         try {
           this[_lifecycleLogger].trace.end();
-          await this[_logFinalizer].finalize();
+          await this[$logFinalizer].finalize();
         } catch (err) {
           this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
         }
@@ -215,7 +210,7 @@ class DetoxPrimaryContext extends DetoxContext {
 
     try {
       this[_lifecycleLogger].trace.end({ abortSignal: signal });
-      this[_logFinalizer].finalizeSync();
+      this[$logFinalizer].finalizeSync();
     } catch (err) {
       this[symbols.logger].error({ err }, 'Encountered an error while merging the process logs:');
     }
