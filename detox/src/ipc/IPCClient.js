@@ -11,14 +11,14 @@ class IPCClient {
     /** @type {import('./SessionState')} */
     this._state = state;
 
-    this._client = null;
+    this._ipc = null;
     this._serverConnection = null;
   }
 
   async init() {
-    this._client = new IPC();
+    this._ipc = new IPC();
 
-    Object.assign(this._client.config, {
+    Object.assign(this._ipc.config, {
       id: this._id,
       appspace: 'detox.',
       logger: (msg) => this._logger.trace(msg),
@@ -33,9 +33,9 @@ class IPCClient {
   async dispose() {
     this._serverConnection = null;
 
-    if (this._client) {
-      this._client.disconnect(this.serverId);
-      this._client = null;
+    if (this._ipc) {
+      this._ipc.disconnect(this.serverId);
+      this._ipc = null;
     }
   }
 
@@ -66,7 +66,7 @@ class IPCClient {
     const serverId = this.serverId;
 
     this._serverConnection = await new Promise((resolve, reject) => {
-      this._client.connectTo(serverId, (client) => {
+      this._ipc.connectTo(serverId, (client) => {
         client.of[serverId]
           .on('error', reject)
           .on('disconnect', () => reject(new DetoxInternalError('IPC server has unexpectedly disconnected.')))
