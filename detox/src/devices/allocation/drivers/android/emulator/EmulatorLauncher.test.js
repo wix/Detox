@@ -57,7 +57,7 @@ describe('Emulator launcher', () => {
 
       it('should launch the specified emulator in a separate process', async () => {
         await uut.launch(avdName, adbName, isRunning);
-        expect(launchEmulatorProcess).toHaveBeenCalledWith(avdName, emulatorExec, expect.anything());
+        expect(launchEmulatorProcess).toHaveBeenCalledWith(avdName, emulatorExec, expect.anything(), adb, adbName);
       });
 
       it('should launch using a specific emulator port, if provided', async () => {
