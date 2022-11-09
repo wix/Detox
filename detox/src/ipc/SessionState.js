@@ -25,12 +25,16 @@ class SessionState {
     this.workersCount = workersCount;
   }
 
-  patch(state) {
-    Object.assign(this, state);
+  patch({ testResults = null, testSessionIndex = null, workersCount = null }) {
+    Object.assign(this,
+      testResults && { testResults },
+      testSessionIndex && { testSessionIndex },
+      workersCount && { workersCount },
+    );
   }
 
   stringify() {
-    return cycle.stringify(this, SessionState.stringifier);
+    return cycle.stringify(this, SessionState._stringifier);
   }
 
   /**
@@ -39,10 +43,10 @@ class SessionState {
   static parse(stringified) {
     const Class = this; // eslint-disable-line unicorn/no-this-assignment
     // @ts-ignore
-    return new Class(cycle.parse(stringified, SessionState.reviver));
+    return new Class(cycle.parse(stringified, SessionState._reviver));
   }
 
-  static reviver(key, val) {
+  static _reviver(key, val) {
     if (typeof val === 'object' && val !== null && typeof val.$fn == 'string') {
       return vm.runInContext(val.$fn, context);
     } else {
@@ -50,7 +54,7 @@ class SessionState {
     }
   }
 
-  static stringifier(key, val) {
+  static _stringifier(key, val) {
     if (typeof val === 'function') {
       return { $fn: `(${val})` };
     } else {
