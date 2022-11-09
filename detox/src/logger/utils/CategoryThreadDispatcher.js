@@ -24,7 +24,7 @@ class CategoryThreadDispatcher {
 
   /** @returns {ThreadDispatcher} */
   _resolveDispatcher(cat) {
-    const mainCategory = cat ? cat.split(',', 1)[0] : 'default';
+    const mainCategory = cat ? cat.split(',', 1)[0] : 'undefined';
     if (!this._dispatchers[mainCategory]) {
       this._dispatchers[mainCategory] = new ThreadDispatcher(mainCategory);
     }

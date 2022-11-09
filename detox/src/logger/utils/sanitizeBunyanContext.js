@@ -6,6 +6,8 @@ const RESERVED_PROPERTIES = [
   'msg',
   'name',
   'pid',
+  'tid',
+  'ph',
   'time',
 ];
 
@@ -22,7 +24,7 @@ function escapeCallback(value, key) {
 }
 
 function sanitizeBunyanContext(context) {
-  return hasReservedProperties(context) ? _.mapKeys(context, escapeCallback) : context;
+  return context && hasReservedProperties(context) ? _.mapKeys(context, escapeCallback) : context;
 }
 
 module.exports = sanitizeBunyanContext;

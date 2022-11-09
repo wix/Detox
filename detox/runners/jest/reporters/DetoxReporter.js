@@ -6,19 +6,20 @@ const { config, reportTestResults } = require('../../../internals');
 
 class DetoxReporter extends JestVerboseReporter {
   /**
-   * @param {import('@jest/test-result').AggregatedResult} results
+   * @param {import('@jest/test-result').Test} test
+   * @param {import('@jest/test-result').TestResult} testResult
+   * @param {import('@jest/test-result').AggregatedResult} aggregatedResult
+   * @return {Promise<void>}
    */
-  // @ts-ignore
-  async onRunComplete(_contexts, results) {
-    // @ts-ignore
-    await super.onRunComplete(_contexts, results);
+  async onTestResult(test, testResult, aggregatedResult) {
+    await super.onTestResult(test, testResult, aggregatedResult);
 
-    await reportTestResults(results.testResults.map(r => ({
-      success: !r.failureMessage,
-      testFilePath: r.testFilePath,
-      testExecError: r.testExecError,
-      isPermanentFailure: this._isPermanentFailure(r),
-    })));
+    await reportTestResults([{
+      success: !testResult.failureMessage,
+      testFilePath: testResult.testFilePath,
+      testExecError: testResult.testExecError,
+      isPermanentFailure: this._isPermanentFailure(testResult),
+    }]);
   }
 
   /**
