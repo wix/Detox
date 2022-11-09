@@ -31,9 +31,9 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
 
   log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 
-  const waitForDevice = adb.waitForDevice(adbName);
+  adb.waitForDevice(adbName).then(() => childProcessPromise._cpResolve());
 
-  return waitForDevice.then(() => true).catch((err) => {
+  return childProcessPromise.then(() => true).catch((err) => {
     detach();
 
     if (childProcessOutput.includes(`There's another emulator instance running with the current AVD`)) {
