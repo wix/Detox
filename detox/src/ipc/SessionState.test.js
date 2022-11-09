@@ -1,0 +1,69 @@
+const SessionState = require('./SessionState');
+
+describe('SessionState', () => {
+  /** @type {SessionState} */
+  let sessionState;
+
+  beforeEach(() => {
+    sessionState = new SessionState({
+      id: '123',
+      contexts: ['context1', 'context2'],
+      detoxConfig: 'config',
+      detoxIPCServer: 'server',
+      testResults: ['result1', 'result2'],
+      testSessionIndex: 1,
+      workersCount: 2,
+    });
+  });
+
+  it('should create the new session state with the given properties', () => {
+    expect(sessionState.id).toEqual('123');
+    expect(sessionState.contexts).toEqual(['context1', 'context2']);
+    expect(sessionState.detoxConfig).toEqual('config');
+    expect(sessionState.detoxIPCServer).toEqual('server');
+    expect(sessionState.testResults).toEqual(['result1', 'result2']);
+    expect(sessionState.testSessionIndex).toEqual(1);
+    expect(sessionState.workersCount).toEqual(2);
+  });
+
+  describe('patch', () => {
+    it('should update the session state', () => {
+      sessionState.patch({
+        testResults: ['result3', 'result4'],
+        testSessionIndex: 2,
+        workersCount: 3,
+      });
+
+      expect(sessionState.testResults).toEqual(['result3', 'result4']);
+      expect(sessionState.testSessionIndex).toEqual(2);
+      expect(sessionState.workersCount).toEqual(3);
+    });
+
+    it('should not update with null params', () => {
+      sessionState.patch({
+        workersCount: 3,
+      });
+
+      expect(sessionState.testResults).toEqual(['result1', 'result2']);
+      expect(sessionState.testSessionIndex).toEqual(1);
+      expect(sessionState.workersCount).toEqual(3);
+    });
+  });
+
+  it('should stringify correctly', () => {
+    const expected = '{"id":"123","contexts":["context1","context2"],"detoxConfig":"config","detoxIPCServer":"server",' +
+      '"testResults":["result1","result2"],"testSessionIndex":1,"workersCount":2}';
+
+    expect(sessionState.stringify()).toEqual(expected);
+  });
+
+  it('should parse stringified session state to class instance', () => {
+    const stringified = '{"id":"123","contexts":["context1","context2"],' +
+      '"detoxConfig":"config","detoxIPCServer":"server","testResults":["result1","result2"],' +
+      '"testSessionIndex":1,"workersCount":2}';
+
+    const parsed = SessionState.parse(stringified);
+
+    expect(parsed).toEqual(sessionState);
+  });
+});
