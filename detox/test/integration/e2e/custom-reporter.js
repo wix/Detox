@@ -12,7 +12,7 @@ class CustomReporter {
         });
     });
 
-    const totalCount = Object.values(counts).reduce((a, b) => a + b);
+    const totalCount = Object.values(counts).reduce((a, b) => a + b, 0);
     console.log(`Collected ${totalCount} trace events during the test run:\n`, JSON.stringify(counts));
   }
 }
