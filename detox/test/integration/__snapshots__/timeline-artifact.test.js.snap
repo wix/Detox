@@ -115,18 +115,6 @@ exports[`Timeline integration test should deterministically produce a timeline a
   },
   {
     "args": {
-      "level": 30,
-      "v": 0,
-    },
-    "cat": "lifecycle",
-    "name": "Stub1: should have welcome screen",
-    "ph": "i",
-    "pid": 1,
-    "tid": 1,
-    "ts": 9,
-  },
-  {
-    "args": {
       "context": "test",
       "fullName": "Stub1 should have welcome screen",
       "invocations": 1,
@@ -137,6 +125,18 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "cat": "lifecycle,jest-environment",
     "name": "should have welcome screen",
     "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 9,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen",
+    "ph": "i",
     "pid": 1,
     "tid": 1,
     "ts": 10,
@@ -188,6 +188,22 @@ exports[`Timeline integration test should deterministically produce a timeline a
   },
   {
     "args": {
+      "functionCode": "async () => {
+    await device.reloadReactNative();
+    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 13,
+  },
+  {
+    "args": {
       "level": 10,
       "success": true,
       "v": 0,
@@ -196,7 +212,30 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 13,
+    "ts": 14,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    try {
+      detox.trace.startSection('Asserting various texts');
+      await expect(element(by.text('Welcome'))).toBeVisible();
+      await expect(element(by.text('Say Hello'))).toBeVisible();
+      await expect(element(by.text('Say World'))).toBeVisible();
+    } finally {
+      detox.trace.endSection('Asserting various texts');
+    }
+    throw new Error(\`I'm only here to make things interesting!\`);
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 15,
   },
   {
     "args": {
@@ -209,7 +248,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 14,
+    "ts": 16,
   },
   {
     "args": {
@@ -222,7 +261,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 15,
+    "ts": 17,
   },
   {
     "args": {
@@ -234,29 +273,97 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "i",
     "pid": 1,
     "tid": 1,
-    "ts": 16,
-  },
-  {
-    "args": {
-      "level": 10,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 1,
-    "tid": 1,
-    "ts": 17,
-  },
-  {
-    "args": {
-      "level": 10,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 1,
-    "tid": 1,
     "ts": 18,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Skipped test",
+      "invocations": 1,
+      "level": 10,
+      "status": "skip",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Skipped test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 19,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 20,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test [SKIPPED]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 21,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Check that todo tests are also traced",
+      "invocations": 1,
+      "level": 10,
+      "status": "todo",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 22,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 23,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 24,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 25,
   },
   {
     "args": {
@@ -268,7 +375,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "B",
     "pid": 1,
     "tid": 1,
-    "ts": 19,
+    "ts": 26,
   },
   {
     "args": {
@@ -279,7 +386,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 20,
+    "ts": 27,
   },
   {
     "args": {
@@ -291,7 +398,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 21,
+    "ts": 28,
   },
   {
     "args": {
@@ -307,7 +414,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 0,
     "tid": 0,
-    "ts": 22,
+    "ts": 29,
   },
   {
     "args": {
@@ -320,7 +427,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 0,
     "tid": 0,
-    "ts": 23,
+    "ts": 30,
   },
   {
     "args": {
@@ -332,7 +439,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 24,
+    "ts": 31,
   },
   {
     "args": {
@@ -344,7 +451,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 25,
+    "ts": 32,
   },
   {
     "args": {
@@ -356,7 +463,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 2,
     "tid": 2,
-    "ts": 26,
+    "ts": 33,
   },
   {
     "args": {
@@ -368,7 +475,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 27,
+    "ts": 34,
   },
   {
     "args": {
@@ -380,7 +487,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 28,
+    "ts": 35,
   },
   {
     "args": {
@@ -392,19 +499,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 29,
-  },
-  {
-    "args": {
-      "level": 30,
-      "v": 0,
-    },
-    "cat": "lifecycle",
-    "name": "Stub1: should have welcome screen",
-    "ph": "i",
-    "pid": 2,
-    "tid": 2,
-    "ts": 30,
+    "ts": 36,
   },
   {
     "args": {
@@ -420,7 +515,19 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 31,
+    "ts": 37,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 38,
   },
   {
     "args": {
@@ -453,111 +560,32 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 32,
-  },
-  {
-    "args": {
-      "level": 10,
-      "success": true,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 2,
-    "tid": 2,
-    "ts": 33,
-  },
-  {
-    "args": {
-      "level": 10,
-      "success": true,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 2,
-    "tid": 2,
-    "ts": 34,
-  },
-  {
-    "args": {
-      "error": "Error: I'm only here to make things interesting!",
-      "level": 10,
-      "success": false,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 2,
-    "tid": 2,
-    "ts": 35,
-  },
-  {
-    "args": {
-      "level": 10,
-      "status": "failed",
-      "timedOut": false,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 2,
-    "tid": 2,
-    "ts": 36,
-  },
-  {
-    "args": {
-      "level": 30,
-      "v": 0,
-    },
-    "cat": "lifecycle",
-    "name": "Stub1: should have welcome screen [FAIL]",
-    "ph": "i",
-    "pid": 2,
-    "tid": 2,
-    "ts": 37,
-  },
-  {
-    "args": {
-      "level": 10,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 2,
-    "tid": 2,
-    "ts": 38,
-  },
-  {
-    "args": {
-      "level": 10,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
-    "pid": 2,
-    "tid": 2,
     "ts": 39,
   },
   {
     "args": {
       "level": 10,
+      "success": true,
       "v": 0,
     },
     "cat": "lifecycle,jest-environment",
-    "name": "tear down environment",
-    "ph": "B",
+    "ph": "E",
     "pid": 2,
     "tid": 2,
     "ts": 40,
   },
   {
     "args": {
+      "functionCode": "async () => {
+    await device.reloadReactNative();
+    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
+  }",
       "level": 10,
       "v": 0,
     },
     "cat": "lifecycle,jest-environment",
-    "ph": "E",
+    "name": "beforeEach",
+    "ph": "B",
     "pid": 2,
     "tid": 2,
     "ts": 41,
@@ -576,6 +604,192 @@ Detox CLI is going to restart the test runner with those files...
   },
   {
     "args": {
+      "functionCode": "async () => {
+    try {
+      detox.trace.startSection('Asserting various texts');
+      await expect(element(by.text('Welcome'))).toBeVisible();
+      await expect(element(by.text('Say Hello'))).toBeVisible();
+      await expect(element(by.text('Say World'))).toBeVisible();
+    } finally {
+      detox.trace.endSection('Asserting various texts');
+    }
+    throw new Error(\`I'm only here to make things interesting!\`);
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 43,
+  },
+  {
+    "args": {
+      "error": "Error: I'm only here to make things interesting!",
+      "level": 10,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 44,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "failed",
+      "timedOut": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 45,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen [FAIL]",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 46,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Skipped test",
+      "invocations": 2,
+      "level": 10,
+      "status": "skip",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Skipped test",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 47,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 48,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test [SKIPPED]",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 49,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Check that todo tests are also traced",
+      "invocations": 2,
+      "level": 10,
+      "status": "todo",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 50,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 51,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 52,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 53,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 54,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 55,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 56,
+  },
+  {
+    "args": {
       "level": 10,
       "v": 0,
     },
@@ -583,7 +797,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 0,
     "tid": 0,
-    "ts": 43,
+    "ts": 57,
   },
 ]
 `;

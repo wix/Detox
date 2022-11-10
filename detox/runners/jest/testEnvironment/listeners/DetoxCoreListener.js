@@ -52,7 +52,6 @@ class DetoxCoreListener {
 
     logTrace({
       context: 'test',
-      mode: test.mode,
       status: metadata.status,
       fullName: metadata.fullName,
       invocations: metadata.invocations,
@@ -145,6 +144,10 @@ class DetoxCoreListener {
   _getTestStatus(test) {
     if (!_.isEmpty(test.errors)) {
       return 'failed';
+    }
+
+    if (this._isTestSkipped(test)) {
+      return test.mode;
     }
 
     if (test.status === 'done') {

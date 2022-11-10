@@ -1,10 +1,22 @@
 const methods = {
   startSection(logger) {
-    return (msg, args) => logger.trace.begin(args, msg);
+    return (msg, args) => {
+      if (args !== undefined) {
+        return logger.trace.begin(args, msg);
+      } else {
+        return logger.trace.begin(msg);
+      }
+    };
   },
 
   endSection(logger) {
-    return (msg, args) => logger.trace.end(args);
+    return (_msg, args) => {
+      if (args !== undefined) {
+        return logger.trace.end(args);
+      } else {
+        return logger.trace.end();
+      }
+    };
   },
 
   traceCall(logger) {

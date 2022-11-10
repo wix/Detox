@@ -21,6 +21,11 @@ describe('Trace util', () => {
       event.args,
       event.msg
     );
+
+    trace.startSection(event.msg);
+    expect(logger().trace.begin).toHaveBeenCalledWith(
+      event.msg
+    );
   });
 
   it('endSection -> logger.trace.end(...)', () => {
@@ -31,6 +36,9 @@ describe('Trace util', () => {
 
     trace.endSection(section.msg, section.args);
     expect(logger().trace.end).toHaveBeenCalledWith(section.args);
+
+    trace.endSection(section.msg);
+    expect(logger().trace.end).toHaveBeenCalledWith();
   });
 
   it('should trace a successful function', async () => {
