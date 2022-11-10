@@ -50,3 +50,6 @@ jobs:
       - name: Unit tests
         run: npm run unit
         working-directory: detox
+      - name: Integration tests
+        run: npm run integration
+        working-directory: detox/test
