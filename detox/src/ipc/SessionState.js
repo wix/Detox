@@ -25,12 +25,8 @@ class SessionState {
     this.workersCount = workersCount;
   }
 
-  patch({ testResults = null, testSessionIndex = null, workersCount = null }) {
-    Object.assign(this,
-      testResults && { testResults },
-      testSessionIndex && { testSessionIndex },
-      workersCount && { workersCount },
-    );
+  patch(state) {
+    Object.assign(this, state);
   }
 
   stringify() {

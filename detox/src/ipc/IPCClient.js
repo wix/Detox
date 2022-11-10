@@ -109,8 +109,8 @@ class IPCClient {
     });
   }
 
-  _onSessionStateUpdate = ({ testResults, workersCount }) => {
-    this._sessionState.patch({ testResults, workersCount });
+  _onSessionStateUpdate = (payload) => {
+    this._state.patch(payload);
   };
 }
 
