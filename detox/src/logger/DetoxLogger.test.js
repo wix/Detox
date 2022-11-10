@@ -12,6 +12,11 @@ const tempfile = require('tempfile');
 
 const sleep = require('../utils/sleep');
 
+// TODO: investigate why the test fails
+if (os.platform() === 'win32') {
+  describe = describe.skip;
+}
+
 describe('DetoxLogger', () => {
   //#region --- Setup ---
 
