@@ -8,7 +8,7 @@ We don’t have any special guidelines - just some setup walk-through!
 
 ### Environment
 
-First, complete our [Getting Started](../introduction/getting-started.mdx) guide.
+First, complete our [Getting Started](introduction/getting-started.mdx) guide.
 
 #### Install the monorepo management tool, `lerna`
 

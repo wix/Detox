@@ -62,7 +62,7 @@ const sidebars = {
     {
       type: 'doc',
       label: 'Contributing',
-      id: 'guide/contributing'
+      id: 'contributing'
     },
   ],
   apiSidebar: [
