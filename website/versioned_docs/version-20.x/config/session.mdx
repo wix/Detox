@@ -1,0 +1,92 @@
+import Location from './partials/_location.mdx';
+
+# Session
+
+:::info Note
+
+It is not recommended to customize this section unless [you are debugging native code](../introduction/debugging.mdx)
+or contributing to the native iOS/Android code of Detox.
+
+:::
+
+The `session` section tells Detox how to set up its web socket server and client. They are used to forward the JSON-serialized expectations and element interactions to the native implementation of Detox side-loaded with the app.
+
+## Location
+
+<Location sectionName="session" />
+
+## Properties
+
+There is one important thing to note when you’ll be defining a session config, e.g.:
+
+### `session.server` \[string]
+
+Default: `ws://localhost:{randomPort}`.
+
+```json
+{
+  "session": {
+// highlight-next-line
+    "server": "ws://localhost:8099"
+  }
+}
+```
+
+When you define a URL for `server`, it automatically sets [`session.autoStart`](#sessionautostart-boolean) to _false_ (mainly due to backward compatibility reasons), so make sure to override it back if you didn’t intend that.
+
+### `session.sessionId` \[string]
+
+Default: a random UUID, e.g. `7731871e-2f07-46bb-acbc-cb0eb6a0ace7`.
+
+Since the Detox server is a single entity, but there can be multiple test workers running multiple devices and apps,
+it needs to understand which connection belongs to which app.
+
+Detox forwards `sessionId` to the app as a launch argument, so the app immediately knows where to connect to.
+
+:::caution
+
+Defining an explicit `sessionId` means you cannot use **multiple workers**,
+since the specified session will become busy for any test worker next to the first one to occupy it.
+
+```json
+{
+  "session": {
+    "server": "ws://localhost:8099",
+// highlight-next-line
+    "sessionId": "YourProjectSessionId"
+  }
+}
+```
+
+:::
+
+### `session.autoStart` \[boolean]
+
+Default: `true` for undefined `session.server`, and `false` for defined.
+
+Controls whether Detox web socket server will be starting automatically.
+If `false`, it is assumed that you will be running it independently via [`detox run-server`](../cli/run-server.md) CLI command.
+
+```diff
+   "session": {
++    "autoStart": true,
+     "server": "ws://localhost:8099",
+     "sessionId": "YourProjectSessionId"
+```
+
+### `session.debugSynchronization` \[number]
+
+Default: `10000`.
+
+Tells Detox how long to wait for the app to become idle until it starts querying it for more details.
+Detox will be printing the list of busy idling resources every time an action takes more than the specified period:
+
+```json
+{
+  "session": {
+    "debugSynchronization": 20000
+  }
+}
+```
+
+To disable this behavior (i.e. querying the app periodically), set the value to `0`.
