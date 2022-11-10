@@ -91,6 +91,7 @@ class DetoxPrimaryContext extends DetoxContext {
       data: this[$sessionState],
     }, getCurrentCommand());
 
+    // TODO IPC Server creation ought to be delegated to a generator/factory.
     const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
@@ -110,6 +111,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_resetLockFile]();
     }
 
+    // TODO Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
     if (sessionConfig.autoStart) {
       this[_wss] = new DetoxServer({
@@ -122,6 +124,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_wss].open();
     }
 
+    // TODO Double check that this config is indeed propogated onto the client create at the detox-worker side
     if (!sessionConfig.server && this[_wss]) {
       // @ts-ignore
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
@@ -132,7 +135,7 @@ class DetoxPrimaryContext extends DetoxContext {
     process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[_sessionFile];
     this[_lifecycleLogger].trace(`Serialized the session state at: ${this[_sessionFile]}`);
 
-    if (opts.workerId !== null) {
+    if (opts.workerId !== null && opts.workerId !== undefined) {
       await this[symbols.installWorker](opts);
     }
   }
