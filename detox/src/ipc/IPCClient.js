@@ -4,12 +4,12 @@ const { DetoxInternalError } = require('../errors');
 const { serializeObjectWithError } = require('../utils/errorUtils');
 
 class IPCClient {
-  constructor({ id, logger, state }) {
+  constructor({ id, logger, sessionState }) {
     this._id = id;
     /** @type {import('../logger/DetoxLogger')} logger */
     this._logger = logger.child({ cat: 'ipc' });
     /** @type {import('./SessionState')} */
-    this._state = state;
+    this._sessionState = sessionState;
 
     this._ipc = null;
     this._serverConnection = null;
@@ -40,7 +40,7 @@ class IPCClient {
   }
 
   get sessionState() {
-    return this._state;
+    return this._sessionState;
   }
 
   get serverId() {
@@ -49,7 +49,7 @@ class IPCClient {
 
   async registerWorker(workerId) {
     const sessionState = await this._emit('registerWorker', { workerId });
-    this._state.patch(sessionState);
+    this._sessionState.patch(sessionState);
   }
 
   /**
@@ -59,7 +59,7 @@ class IPCClient {
     const sessionState = await this._emit('reportTestResults', {
       testResults: testResults.map(r => serializeObjectWithError(r, 'testExecError')),
     });
-    this._state.patch(sessionState);
+    this._sessionState.patch(sessionState);
   }
 
   async _connectToServer() {
@@ -79,7 +79,7 @@ class IPCClient {
 
   async _registerContext() {
     const sessionState = await this._emit('registerContext', { id: this._id });
-    this._state.patch(sessionState);
+    this._sessionState.patch(sessionState);
   }
 
   async _emit(event, payload) {
@@ -110,7 +110,7 @@ class IPCClient {
   }
 
   _onSessionStateUpdate = ({ testResults, workersCount }) => {
-    this._state.patch({ testResults, workersCount });
+    this._sessionState.patch({ testResults, workersCount });
   };
 }
 
