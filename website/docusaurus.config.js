@@ -30,9 +30,6 @@ const config = {
             `https://github.com/wix/Detox/edit/master/website/${blogDirPath}/${blogPath}`,
           editLocalizedFiles: false,
           authorsMapPath: 'authors.yml',
-          feedOptions: {
-            type: null
-          },
           blogTitle: 'Blog',
           blogDescription:
             "All the important updates and announcements from Detox crew, tips and tricks and everything else that you don't want to miss.",
@@ -83,6 +80,11 @@ const config = {
             docId: 'config/overview',
             position: 'left',
             label: 'API'
+          },
+          {
+            to: 'blog',
+            label: 'Blog',
+            position: 'left',
           },
           {
             to: 'showcase',
