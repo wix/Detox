@@ -32,25 +32,19 @@ describe('Timeline integration test', () => {
 
   it('should have a credible list of categories', async () => {
     const cats = _.chain(tac)
-      .flatMap(e => e.cat ? `${e.cat}`.split(',') : [])
+      .flatMap(e => e.cat ? `${e.cat}`.split(',', 1) : [])
       .uniq()
       .sort()
       .value();
 
     expect(cats).toEqual([
-      'artifact',
       'artifacts-manager',
-      'cli',
       'device',
       'ipc',
-      'ipc-server',
-      'jest-environment',
       'lifecycle',
       'user',
-      'ws',
       'ws-client',
       'ws-server',
-      'ws-session'
     ]);
   });
 
