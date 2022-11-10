@@ -19,7 +19,6 @@ describe('AsyncWebSocket', () => {
 
   beforeEach(() => {
     jest.mock('../utils/logger');
-    jest.mock('../utils/trace');
     jest.mock('ws');
     WebSocket = require('ws');
     WebSocket.CONNECTING = 0;

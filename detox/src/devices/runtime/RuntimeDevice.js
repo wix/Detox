@@ -1,7 +1,6 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const log = require('../../utils/logger').child({ cat: 'device' });
-const { traceCall } = require('../../utils/trace');
 const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 
@@ -258,12 +257,12 @@ class RuntimeDevice {
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      await traceCall('installUtilBinaries', this.deviceDriver.installUtilBinaries(paths));
+      await log.trace.complete('installUtilBinaries', this.deviceDriver.installUtilBinaries(paths));
     }
   }
 
   async reloadReactNative() {
-    await traceCall('reload React Native', this.deviceDriver.reloadReactNative());
+    await log.trace.complete('reload React Native', this.deviceDriver.reloadReactNative());
   }
 
   async openURL(params) {

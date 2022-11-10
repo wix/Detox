@@ -18,7 +18,6 @@ describe('Device', () => {
 
   beforeEach(async () => {
     jest.mock('../../utils/logger');
-    jest.mock('../../utils/trace');
 
     jest.mock('../../utils/argparse');
     argparse = require('../../utils/argparse');

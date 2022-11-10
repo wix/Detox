@@ -33,6 +33,7 @@ const DetoxLogFinalizer = require('./DetoxLogFinalizer');
 
 // TODO: investigate why the test fails
 if (require('os').platform() === 'win32') {
+  // eslint-disable-next-line no-global-assign
   describe = describe.skip;
 }
 

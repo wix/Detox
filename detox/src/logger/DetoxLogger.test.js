@@ -14,6 +14,7 @@ const sleep = require('../utils/sleep');
 
 // TODO: investigate why the test fails
 if (os.platform() === 'win32') {
+  // eslint-disable-next-line no-global-assign
   describe = describe.skip;
 }
 

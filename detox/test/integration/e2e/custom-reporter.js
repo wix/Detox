@@ -2,17 +2,18 @@ const { tracing } = require('detox/internals');
 
 class CustomReporter {
   async onRunComplete() {
-    let count = 0;
+    let counts = {};
     await new Promise((resolve, reject) => {
       tracing.createEventStream()
         .on('error', reject)
         .on('end', resolve)
         .on('data', function (e) {
-          count++;
+          counts[e.ph] = (counts[e.ph] || 0) + 1;
         });
     });
 
-    console.log(`Collected ${count} trace events during the test run`);
+    const totalCount = Object.values(counts).reduce((a, b) => a + b);
+    console.log(`Collected ${totalCount} trace events during the test run:\n`, JSON.stringify(counts));
   }
 }
 

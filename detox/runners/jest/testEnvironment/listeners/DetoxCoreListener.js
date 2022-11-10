@@ -41,18 +41,30 @@ class DetoxCoreListener {
   }
 
   async test_start({ test }) {
-    if (!_.isEmpty(test.errors)) {
+    const metadata = this._getTestMetadata(test);
+    if (metadata.status === 'failed') {
       this._testsFailedBeforeStart.add(test);
     }
+
+    const logTrace = this._isTestSkipped(test)
+      ? log.trace
+      : log.trace.begin;
+
+    logTrace({
+      context: 'test',
+      mode: test.mode,
+      status: metadata.status,
+      fullName: metadata.fullName,
+      invocations: metadata.invocations,
+    }, metadata.title);
 
     const circusRetryTimes = +this._env.global[RETRY_TIMES];
     this._circusRetryTimes = isNaN(circusRetryTimes) ? 1 : 1 + circusRetryTimes;
   }
 
   async hook_start(event, state) {
-    if (await this._markActualTestStart(state.currentlyRunningTest)) {
-      log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
-    }
+    await this._onBeforeActualTestStart(state.currentlyRunningTest);
+    log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
   }
 
   async hook_success() {
@@ -69,7 +81,10 @@ class DetoxCoreListener {
   }
 
   async test_fn_start({ test }) {
-    if (await this._markActualTestStart(test)) {
+    await this._onBeforeActualTestStart(test);
+
+    if (!this._testsFailedBeforeStart.has(test)) {
+      // Jest bug workaround: beforeAll hook errors result into an unterminated test_fn_start event.
       log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
     }
   }
@@ -84,61 +99,64 @@ class DetoxCoreListener {
   }
 
   async test_done({ test }) {
-    if (this._startedTests.has(test)) {
-      const failed = test.errors.length > 0;
-      const metadata = {
-        ...this._getTestMetadata(test),
-        status: failed ? 'failed' : 'passed',
-        timedOut: failed ? hasTimedOut(test) : undefined,
-      };
+    const metadata = this._getTestMetadata(test);
 
+    if (this._startedTests.has(test)) {
       await detoxInternals.onTestDone(metadata);
       this._startedTests.delete(test);
-      log.trace.end({
-        status: metadata.status,
-        timedOut: metadata.timedOut,
-      });
     }
+
+    log.trace.end(_.pick(metadata, ['status', 'timedOut']));
   }
 
-  async _markActualTestStart(test) {
+  async _onBeforeActualTestStart(test) {
     if (!this._isTestActuallyStarting(test)) {
-      return false;
+      return;
     }
 
-    const metadata = {
-      ...this._getTestMetadata(test),
-      status: 'running',
-    };
-
     this._startedTests.add(test);
-
-    log.trace.begin({
-      context: 'test',
-      status: metadata.status,
-      fullName: metadata.fullName,
-      invocations: metadata.invocations,
-    }, metadata.title);
-
-    await detoxInternals.onTestStart(metadata);
-    return true;
+    await detoxInternals.onTestStart(this._getTestMetadata(test));
   }
 
   _isTestActuallyStarting(test) {
-    return test && test.status !== 'skip' && !this._startedTests.has(test) && !this._testsFailedBeforeStart.has(test);
+    return test && !this._isTestSkipped(test) && !this._startedTests.has(test) && !this._testsFailedBeforeStart.has(test);
+  }
+
+  _isTestSkipped(test) {
+    return test && (test.mode === 'skip' || test.mode === 'todo');
+  }
+
+  _getTestMetadata(test) {
+    const result = {
+      title: test.name,
+      fullName: getFullTestName(test),
+      status: this._getTestStatus(test),
+      invocations: this._getTestInvocations(test),
+    };
+
+    if (result.status === 'failed') {
+      result.timedOut = hasTimedOut(test);
+    }
+
+    return result;
+  }
+
+  /** @returns { 'failed' | 'passed' | 'running' | 'skip' | 'todo' } */
+  _getTestStatus(test) {
+    if (!_.isEmpty(test.errors)) {
+      return 'failed';
+    }
+
+    if (test.status === 'done') {
+      return 'passed';
+    } else {
+      return test.status || 'running';
+    }
   }
 
   _getTestInvocations(test) {
     const { testSessionIndex } = detoxInternals.session;
     return testSessionIndex * this._circusRetryTimes + test.invocations;
-  }
-
-  _getTestMetadata(test) {
-    return {
-      title: test.name,
-      fullName: getFullTestName(test),
-      invocations: this._getTestInvocations(test),
-    };
   }
 }
 

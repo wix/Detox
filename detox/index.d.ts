@@ -472,8 +472,6 @@ declare global {
                 readonly startSection: (name: string) => void;
                 /** @deprecated */
                 readonly endSection: (name: string) => void;
-                /** @private */
-                readonly invocationCall: (...args: unknown[]) => unknown;
             };
 
             /**
