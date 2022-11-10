@@ -172,12 +172,12 @@ describe('IPC', () => {
           await ipcClient1.dispose();
         });
 
-        it('should throw if test results are reported after dispose', async () => {
+        it('should throw upon reporting test results', async () => {
           const expected = 'IPC server bar has unexpectedly disconnected';
           await expect(ipcClient1.reportTestResults([])).rejects.toThrow(expected);
         });
 
-        it('should throw if worker is registered after dispose', async () => {
+        it('should throw upon registering worker', async () => {
           const expected = 'IPC server bar has unexpectedly disconnected';
           await expect(ipcClient1.registerWorker('foo')).rejects.toThrow(expected);
         });
