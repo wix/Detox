@@ -2,9 +2,9 @@ name: Website
 
 on:
   pull_request:
-    branches: [master, next]
+    branches: [master]
   push:
-    branches: [next]
+    branches: [master]
 
 jobs:
   checks:

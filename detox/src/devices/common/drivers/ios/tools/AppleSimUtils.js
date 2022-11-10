@@ -93,7 +93,7 @@ class AppleSimUtils {
       `(https://developer.apple.com/xcode/). In case you already have the latest Xcode version installed, ` +
       `try run the command: \`sudo xcode-select -s /Applications/Xcode.app\`. If you are running tests from CI, ` +
       `we recommend running them with "--headless" device configuration (see: ` +
-      `https://wix.github.io/Detox/docs/next/cli/test/#options).`
+      `https://wix.github.io/Detox/docs/cli/test/#options).`
     );
   }
 

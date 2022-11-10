@@ -24,7 +24,7 @@ declare global {
 
       /**
        * Starts a new Detox test session with the provided configuration.
-       * See {@link https://wix.github.io/Detox/docs/next/api/internals} for more details.
+       * See {@link https://wix.github.io/Detox/docs/api/internals} for more details.
        */
       init(options?: Partial<DetoxInitOptions>): Promise<void>;
 
@@ -42,7 +42,7 @@ declare global {
 
       /**
        * This method should be called when the main or child process is about to exit.
-       * See {@link https://wix.github.io/Detox/docs/next/api/internals} for more details.
+       * See {@link https://wix.github.io/Detox/docs/api/internals} for more details.
        */
       cleanup(): Promise<void>;
       //#endregion

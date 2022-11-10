@@ -26,7 +26,7 @@ console.error(centerText(`\
 
 ${bold(header)}
 
-https://wix.github.io/Detox/docs/next/guide/migration
+https://wix.github.io/Detox/docs/guide/migration
 
 Sorry to say that Detox 20 comes without old adapters for Jest.
 You have to rearrange your init code before you can continue your journey.
@@ -40,6 +40,6 @@ ${bold(header)}
 
 `, header.length));
 
-const error = new Error('\nPlease follow the migration guide:\nhttps://wix.github.io/Detox/docs/next/guide/migration\n\n');
+const error = new Error('\nPlease follow the migration guide:\nhttps://wix.github.io/Detox/docs/guide/migration\n\n');
 error.stack = '';
 throw error;
