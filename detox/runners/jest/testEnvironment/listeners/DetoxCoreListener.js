@@ -50,8 +50,9 @@ class DetoxCoreListener {
   }
 
   async hook_start(event, state) {
-    await this._onBeforeActualTestStart(state.currentlyRunningTest);
-    log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
+    if (await this._markActualTestStart(state.currentlyRunningTest)) {
+      log.trace.begin({ functionCode: event.hook.fn.toString() }, event.hook.type);
+    }
   }
 
   async hook_success() {
@@ -68,8 +69,9 @@ class DetoxCoreListener {
   }
 
   async test_fn_start({ test }) {
-    await this._onBeforeActualTestStart(test);
-    log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
+    if (await this._markActualTestStart(test)) {
+      log.trace.begin({ functionCode: test.fn.toString() }, 'test_fn');
+    }
   }
 
   async test_fn_success() {
@@ -99,7 +101,7 @@ class DetoxCoreListener {
     }
   }
 
-  async _onBeforeActualTestStart(test) {
+  async _markActualTestStart(test) {
     if (!this._isTestActuallyStarting(test)) {
       return false;
     }
