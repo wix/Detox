@@ -482,7 +482,7 @@ declare global {
              * @param promiseOrFunction Promise or a function that provides a promise.
              * @param args Optional arguments to pass to the trace.
              * @returns The returned value of the traced call.
-             * @see https://wix.github.io/Detox/docs/next/api/detox-object-api/#detoxtracecall.
+             * @see https://wix.github.io/Detox/docs/19.x/api/detox-object-api/#detoxtracecall.
              */
             readonly traceCall: <T>(event: string, action: () => Promise<T>, args?: Record<string, unknown>) => Promise<T>;
         }
