@@ -49,13 +49,13 @@ describe('IPC', () => {
         fail('dispose() should not resolve before all clients are disconnected');
       });
 
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 3000));
     });
 
     it('should resolve dispose() if no clients are connected', async () => {
       setTimeout(() => {
         throw new Error('dispose() should have resolved by now');
-      }, 500);
+      }, 3000);
 
       await ipcServer.dispose();
     });
@@ -69,7 +69,7 @@ describe('IPC', () => {
 
       setTimeout(() => {
         throw new Error('dispose() should have resolved by now');
-      }, 500);
+      }, 3000);
 
       await ipcServer.dispose();
     });
