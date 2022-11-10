@@ -27,8 +27,6 @@ class BunyanLogger {
    * @returns {this}
    */
   installDebugStream(config) {
-    const level = config.level || 'info';
-
     if (this._debugStream) {
       _.remove(this._bunyan['streams'], this._debugStream);
       // @ts-ignore
@@ -36,13 +34,17 @@ class BunyanLogger {
       this._debugStream = null;
     }
 
+    const streamOptions = { out: null, ...config.options };
+    /* istanbul ignore next */
+    if (!streamOptions.out) {
+      // This is a default if-else branch, used everywhere except for the unit tests.
+      streamOptions.out = new PassThrough().pipe(process.stderr);
+    }
+
     this._debugStream = {
       type: 'raw',
-      level,
-      stream: bds.default({
-        ...config.options,
-        out: new PassThrough().pipe(process.stderr),
-      }),
+      level: config.level,
+      stream: bds.default(streamOptions),
     };
 
     this._bunyan.addStream(this._debugStream);
@@ -54,7 +56,9 @@ class BunyanLogger {
    * @returns {this}
    */
   installFileStream(file) {
+    /* istanbul ignore next */
     if (this._fileStream) {
+      // This is an impossible condition, but we keep it here for the sake of completeness.
       throw new DetoxInternalError('Trying to install a second file stream inside already initialized Bunyan logger');
     }
 

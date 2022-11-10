@@ -1,6 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { expectDescription, actionDescription } = require('../../utils/invocationTraceDescriptions');
-const { trace } = require('../../utils/trace');
+const log = require('../../utils/logger').child({ cat: 'ws-client, ws' });
+const traceInvocationCall = require('../../utils/traceInvocationCall').bind(null, log);
 const { ScrollAmountStopAtEdgeAction } = require('../actions/native');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxAssertionApi = require('../espressoapi/DetoxAssertion');
@@ -18,7 +19,7 @@ class Interaction {
   }
 
   async execute() {
-    return trace.invocationCall(this._traceDescription, this._call,
+    return traceInvocationCall(this._traceDescription, this._call,
       this._invocationManager.execute(this._call).then((resultObj) => resultObj ? resultObj.result : undefined));
   }
 }

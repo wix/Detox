@@ -5,8 +5,6 @@ describe('Device allocator', () => {
   /** @type DeviceAllocator */
   let deviceAllocator;
   beforeEach(() => {
-    jest.mock('../../utils/trace');
-
     allocDriver = {
       allocate: jest.fn(),
       free: jest.fn(),

@@ -10,8 +10,6 @@ describe('Exec utils', () => {
     jest.mock('child-process-promise');
     cpp = require('child-process-promise');
 
-    jest.mock('../trace');
-
     exec = require('./exec');
   });
 

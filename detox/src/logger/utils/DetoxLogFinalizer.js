@@ -59,14 +59,16 @@ class DetoxLogFinalizer {
 
   finalizeSync() {
     const sessionId = this._session.id;
-    const rootDir = this._config.artifacts.rootDir;
-    const logsEnabled = this._areLogsEnabled();
+    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
+    if (logs.length === 0) {
+      return;
+    }
 
+    const logsEnabled = this._areLogsEnabled();
+    const rootDir = logsEnabled ? this._config.artifacts.rootDir : '';
     if (logsEnabled) {
       fs.mkdirpSync(rootDir);
     }
-
-    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
 
     for (const log of logs) {
       if (logsEnabled) {
@@ -85,6 +87,10 @@ class DetoxLogFinalizer {
 
   /** @private */
   _areLogsEnabled() {
+    if (!this._config) {
+      return false;
+    }
+
     const { rootDir, plugins } = this._config.artifacts;
     if (!rootDir || !plugins) {
       return false;
@@ -107,7 +113,7 @@ class DetoxLogFinalizer {
       const result = {};
       streamUtils().uniteSessionLogs(logs)
         .on('end', () => resolve(result))
-        .on('error', (err) => reject(err))
+        .on('error', /* istanbul ignore next */ (err) => reject(err))
         .on('data', (event) => {
           const { ph, pid, tid, cat } = event;
           if (ph === 'B' || ph === 'i') {

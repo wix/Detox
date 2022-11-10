@@ -2,7 +2,6 @@ const path = require('path');
 
 const _ = require('lodash');
 
-const temporaryPath = require('../artifacts/utils/temporaryPath');
 const { DetoxInternalError, DetoxError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
 const isPromise = require('../utils/isPromise');
@@ -16,7 +15,7 @@ const sanitizeBunyanContext = require('./utils/sanitizeBunyanContext');
 /**
  * @typedef SharedLoggerConfig
  * @property {string} file
- * @property {Detox.DetoxLoggerConfig} userConfig
+ * @property {Detox.DetoxLoggerConfig} [userConfig]
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
  * @property {MessageStack} [messageStack]
@@ -92,7 +91,7 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    const merged = this._mergeContexts(this._context, overrides);
+    const merged = this._mergeContexts(this._context, sanitizeBunyanContext(overrides));
     return new DetoxLogger(this._sharedConfig, merged);
   }
 
@@ -116,7 +115,6 @@ class DetoxLogger {
     }
 
     _.merge(this.config, config);
-    this._sharedConfig.file = temporaryPath.for.jsonl();
     this._sharedConfig.bunyan.installDebugStream(this.config);
     this.overrideConsole();
   }
@@ -138,14 +136,23 @@ class DetoxLogger {
    */
   _mergeContexts(...contexts) {
     const context = Object.assign({}, ...contexts);
+    const categories = _(contexts).flatMap((c) => {
+      if (c && c.cat) {
+        return _.isArray(c.cat) ? c.cat : c.cat.split(',');
+      }
+
+      return [];
+    }).uniq().join(',');
 
     if (context.error || context.err) {
       context.error = DetoxError.format(context.error || context.err);
       delete context.err;
     }
 
-    if (Array.isArray(context.cat)) {
-      context.cat = context.cat.join(',');
+    if (categories) {
+      context.cat = categories;
+    } else {
+      delete context.cat;
     }
 
     if (context.__filename) {
@@ -153,15 +160,13 @@ class DetoxLogger {
     }
 
     context.ph = context.ph || 'i';
-    context.cat = context.cat || '';
-
     context.tid = this._sharedConfig.dispatcher.resolve(
       context.ph,
       context.cat,
       context.id || 0
     );
 
-    return sanitizeBunyanContext(context);
+    return context;
   }
 
   /**
@@ -182,6 +187,11 @@ class DetoxLogger {
   /** @private */
   _begin(level, ...args) {
     const { context, msg } = this._parseArgs({ ph: 'B' }, args);
+    this._beginInternal(level, context, msg);
+  }
+
+  /** @private */
+  _beginInternal(level, context, msg) {
     this._sharedConfig.messageStack.push(context.tid, msg);
     this._sharedConfig.bunyan.logger[level](context, ...msg);
   }
@@ -189,8 +199,14 @@ class DetoxLogger {
   /** @private */
   _end(level, ...args) {
     let { context, msg } = this._parseArgs({ ph: 'E' }, args);
+    this._endInternal(level, context, msg);
+  }
+
+  /** @private */
+  _endInternal(level, context, msg) {
+    const beginMsg = this._sharedConfig.messageStack.pop(context.tid);
     if (msg.length === 0) {
-      msg = this._sharedConfig.messageStack.pop(context.tid);
+      msg = beginMsg;
     }
 
     this._sharedConfig.bunyan.logger[level](context, ...msg);
@@ -221,14 +237,14 @@ class DetoxLogger {
     });
 
     let result;
-    this[level].begin(context, ...msg);
+    this._beginInternal(level, { ...context, ph: 'B' }, msg);
     try {
       result = typeof action === 'function'
         ? action()
         : action;
 
       if (!isPromise(result)) {
-        end(context);
+        end({ success: true });
       } else {
         result.then(
           () => end({ success: true }),
@@ -250,20 +266,13 @@ class DetoxLogger {
       : _.isObject(args[0])
         ? args[0]
         : undefined;
-    const msg = userContext !== undefined ? args.slice(1) : args;
 
-    if (userContext) {
-      delete userContext.pid;
-      delete userContext.tid;
-      delete userContext.ts;
-      delete userContext.time;
-      delete userContext.ph;
-    }
+    const msg = userContext !== undefined ? args.slice(1) : args;
 
     const context = this._mergeContexts(
       this._context,
       boundContext,
-      userContext,
+      sanitizeBunyanContext(userContext),
     );
 
     return { context, msg };
@@ -280,7 +289,7 @@ class DetoxLogger {
       : undefined;
 
     const cat = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').yellow((value || '').split(',', 1)[0])
+      ? (value) => require('chalk').yellow(`${value}`.split(',', 1)[0])
       : undefined;
 
     const event = level === 'trace' || level === 'debug'

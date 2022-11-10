@@ -32,25 +32,19 @@ describe('Timeline integration test', () => {
 
   it('should have a credible list of categories', async () => {
     const cats = _.chain(tac)
-      .flatMap(e => e.cat ? `${e.cat}`.split(',') : [])
+      .flatMap(e => e.cat ? `${e.cat}`.split(',', 1) : [])
       .uniq()
       .sort()
       .value();
 
     expect(cats).toEqual([
-      'artifact',
       'artifacts-manager',
-      'cli',
       'device',
       'ipc',
-      'ipc-server',
-      'jest-environment',
       'lifecycle',
       'user',
-      'ws',
       'ws-client',
       'ws-server',
-      'ws-session'
     ]);
   });
 
@@ -64,6 +58,17 @@ describe('Timeline integration test', () => {
     expect(unique.pid.length).toBe(3);
     expect(unique.tid.length).toBeLessThan(unique.pid_tid.length);
     expect(unique.pid_tid.length).toBeGreaterThan(10);
+  });
+
+  it('should have balanced begin/end events', () => {
+    for (const lane of _(tac).groupBy('tid').values()) {
+      const beginCount = _.filter(lane, { ph: 'B' }).length;
+      const endCount = _.filter(lane, { ph: 'E' }).length;
+      if (beginCount !== endCount) {
+        const { tid, cat } = lane[0];
+        expect(`imbalanced begin (${beginCount}) vs end (${endCount}) events in thread ${tid} (category: ${cat})`).toBeNull();
+      }
+    }
   });
 });
 

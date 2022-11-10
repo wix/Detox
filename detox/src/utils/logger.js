@@ -1,4 +1,4 @@
 /**
  * @type {Detox.Logger}
  */
-module.exports = require('../..').log;
+module.exports = require('../../internals').log;

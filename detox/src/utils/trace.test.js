@@ -7,7 +7,7 @@ describe('Trace util', () => {
   const logger = () => require('../logger/DetoxLogger').instances[0];
 
   beforeEach(() => {
-    ({ trace, traceCall } = require('./trace'));
+    ({ trace, traceCall } = require('../..'));
   });
 
   it('startSection -> logger.trace.begin(...)', () => {
@@ -21,6 +21,11 @@ describe('Trace util', () => {
       event.args,
       event.msg
     );
+
+    trace.startSection(event.msg);
+    expect(logger().trace.begin).toHaveBeenCalledWith(
+      event.msg
+    );
   });
 
   it('endSection -> logger.trace.end(...)', () => {
@@ -31,6 +36,9 @@ describe('Trace util', () => {
 
     trace.endSection(section.msg, section.args);
     expect(logger().trace.end).toHaveBeenCalledWith(section.args);
+
+    trace.endSection(section.msg);
+    expect(logger().trace.end).toHaveBeenCalledWith();
   });
 
   it('should trace a successful function', async () => {
@@ -38,23 +46,5 @@ describe('Trace util', () => {
 
     expect(traceCall('42-call', functionCall)).toBe(42);
     expect(logger().trace.complete).toHaveBeenCalledWith({}, '42-call', functionCall);
-  });
-
-  describe('invocation call', () => {
-    const sectionName = 'section-name';
-    const args = {
-      cat: 'ws-client,ws-client-invocation',
-      data: {
-        foo: 'bar'
-      },
-      stack: expect.any(String)
-    };
-
-    it('should trace it', async () => {
-      const promise = Promise.resolve(42);
-      const result = await trace.invocationCall(sectionName, { ...args.data }, promise);
-      expect(result).toBe(42);
-      expect(logger().trace.complete).toHaveBeenCalledWith(args, sectionName, promise);
-    });
   });
 });
