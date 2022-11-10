@@ -18,6 +18,8 @@ if (os.platform() === 'win32') {
   describe = describe.skip;
 }
 
+jest.retryTimes(2);
+
 describe('DetoxLogger', () => {
   //#region --- Setup ---
 

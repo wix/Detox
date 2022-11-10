@@ -21,6 +21,7 @@ class RuntimeDevice {
       'disableSynchronization',
       'enableSynchronization',
       'installApp',
+      'installUtilBinaries',
       'launchApp',
       'matchFace',
       'matchFinger',
@@ -257,12 +258,12 @@ class RuntimeDevice {
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      await log.trace.complete('installUtilBinaries', this.deviceDriver.installUtilBinaries(paths));
+      await this.deviceDriver.installUtilBinaries(paths);
     }
   }
 
   async reloadReactNative() {
-    await log.trace.complete('reload React Native', this.deviceDriver.reloadReactNative());
+    await this.deviceDriver.reloadReactNative();
   }
 
   async openURL(params) {
