@@ -1,7 +1,6 @@
 // @ts-nocheck
 const { serializeError } = require('serialize-error');
 
-const DetoxError = require('../../errors/DetoxError');
 const DetoxInternalError = require('../../errors/DetoxInternalError');
 
 class RegisteredConnectionHandler {
@@ -41,7 +40,7 @@ class RegisteredConnectionHandler {
         messageId: action && action.messageId,
       });
     } catch (err) {
-      this._api.log.error('Cannot forward the error details to the tester due to the error:\n' + DetoxError.format(err));
+      this._api.log.error({ err }, 'Cannot forward the error details to the tester due to the error:');
       throw error;
     }
   }

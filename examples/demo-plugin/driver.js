@@ -58,12 +58,10 @@ class LoginApp {
 class PluginApp {
   constructor(deps) {
     this.configuration = deps.sessionConfig;
-    this.client = new Client(this.configuration);
+    this.client = deps.client;
   }
 
   async connect() {
-    await this.client.open();
-
     // NOTE: This is a sample way to handle events in a custom app client, but not needed
     // for the test suite:
     //
@@ -80,8 +78,6 @@ class PluginApp {
     // this.client.setEventCallback('ping', async (json) => {
     //   await this.client.sendAction(new PongAction(json.messageId));
     // });
-
-    await this.client.sendAction(new LoginApp(this.configuration.sessionId));
   }
 }
 

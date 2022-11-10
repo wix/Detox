@@ -12,25 +12,21 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
     const ADBLogcatPlugin = require('../log/android/ADBLogcatPlugin');
     const ADBScreencapPlugin = require('../screenshot/ADBScreencapPlugin');
     const ADBScreenrecorderPlugin = require('../video/ADBScreenrecorderPlugin');
-    const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
 
     return {
       instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
     };
   }
 }
 
 class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
     const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
 
     return {
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
       uiHierarchy: (api) => new IosUIHierarchyPlugin({ api, client }),
     };
   }

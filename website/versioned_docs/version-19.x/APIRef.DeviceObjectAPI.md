@@ -29,7 +29,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 
 #### `device.appLaunchArgs`
 
-Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](APIRef.Configuration.md) and [command-line arguments](APIRef.DetoxCLI.md). This access allows, through dedicated methods, for both value-querying and modification:
+Access the launch-arguments predefined by the user in preliminary, static scopes such as the Detox [configuration file](config/overview.md) and [command-line arguments](APIRef.DetoxCLI.md). This access allows, through dedicated methods, for both value-querying and modification:
 
 ```js
 // Modify some of the predefined arguments:
@@ -101,7 +101,7 @@ This is the most flexible way of editing the launch arguments. Refer to the [lau
 #### `device.selectApp(name)`
 
 Use **only for advanced multi-app configs** when you need to switch between your apps
-within the same test scenario. Refer to the [configuration doc](APIRef.Configuration.md#apps-configurations)
+within the same test scenario. Refer to the [configuration doc](config/overview.md#apps-configurations)
 to discover how to define multiple apps with different `name`s.
 
 ```js
@@ -113,7 +113,7 @@ app that had been running before.
 
 #### `device.launchApp(params)`
 
-Launch the app defined in the current [`configuration`](APIRef.Configuration.md#apps-configurations).
+Launch the app defined in the current [`configuration`](config/overview.md#apps-configurations).
 
 `params`—object, containing one of more of the following keys and values:
 
@@ -239,11 +239,11 @@ With this API, you can run sets of E2E tests per language. For example:
 
 
     it('Test A', () => {
-      
+
     })
 
     it('Test B', () => {
-      
+
     })
 
   });
@@ -258,7 +258,7 @@ Launches the app with the synchronization mechanism enabled or disabled. Useful 
 await device.launchApp({
   newInstance: true,
   launchArgs: { detoxEnableSynchronization: 0 }
-}); 
+});
 ```
 
 ##### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
@@ -269,7 +269,7 @@ Launches the app with a URL blacklist to disable network synchronization on cert
 await device.launchApp({
   newInstance: true,
   launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
-}); 
+});
 ```
 
 #### `device.relaunchApp(params)`
@@ -278,7 +278,7 @@ await device.launchApp({
 
 #### `device.terminateApp()`
 
-By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).
+By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](config/overview.md).
 
 To terminate another app, specify its bundle id
 
@@ -308,7 +308,7 @@ If this is a React Native app, reload the React Native JS bundle. This action is
 
 #### `device.installApp()`
 
-By default, `installApp()` with no params will install the app file defined in the current [`configuration`](APIRef.Configuration.md).
+By default, `installApp()` with no params will install the app file defined in the current [`configuration`](config/overview.md).
 
 To install another app, specify its path
 
@@ -318,7 +318,7 @@ await device.installApp('path/to/other/app');
 
 #### `device.uninstallApp()`
 
-By default, `uninstallApp()` with no params will uninstall the app defined in the current [`configuration`](APIRef.Configuration.md).
+By default, `uninstallApp()` with no params will uninstall the app defined in the current [`configuration`](config/overview.md).
 
 To uninstall another app, specify its bundle id
 

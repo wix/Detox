@@ -1,4 +1,6 @@
 const { isError } = require('lodash');
+const { deserializeError, serializeError } = require('serialize-error');
+
 const CLEAN_AT = /\n\s*at [\s\S]*/m;
 
 function filterErrorStack(error, predicate) {
@@ -38,9 +40,27 @@ function asError(error) {
   return isError(error) ? error : new Error(error);
 }
 
+function serializeObjectWithError(obj, errorKey) {
+  if (obj[errorKey]) {
+    return { ...obj, [errorKey]: serializeError(obj[errorKey]) };
+  }
+
+  return obj;
+}
+
+function deserializeObjectWithError(obj, errorKey) {
+  if (typeof obj[errorKey] === 'object' && !(obj[errorKey] instanceof Error)) {
+    return { ...obj, [errorKey]: deserializeError(obj[errorKey]) };
+  }
+
+  return obj;
+}
+
 module.exports = {
   asError,
   replaceErrorStack,
   filterErrorStack,
   createErrorWithUserStack,
+  serializeObjectWithError,
+  deserializeObjectWithError,
 };

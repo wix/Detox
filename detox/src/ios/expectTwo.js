@@ -8,7 +8,8 @@ const tempfile = require('tempfile');
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
-const { traceInvocationCall } = require('../utils/trace');
+const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
+const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);

@@ -8,7 +8,7 @@ describe('expectTwo', () => {
   let fs;
 
   beforeEach(() => {
-    jest.mock('../utils/trace');
+    jest.mock('../utils/logger');
     jest.mock('fs-extra');
     jest.mock('tempfile');
 

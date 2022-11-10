@@ -8,65 +8,52 @@
 // * Max Komarychev <https://github.com/maxkomarychev>
 // * Dor Ben Baruch <https://github.com/Dor256>
 
+import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
+
 declare global {
+    const detox: Detox.DetoxExportWrapper;
     const device: Detox.DetoxExportWrapper['device'];
     const element: Detox.DetoxExportWrapper['element'];
     const waitFor: Detox.DetoxExportWrapper['waitFor'];
     const expect: Detox.DetoxExportWrapper['expect'];
     const by: Detox.DetoxExportWrapper['by'];
     const web: Detox.DetoxExportWrapper['web'];
-    const detoxCircus: Detox.DetoxCircus;
 
     namespace NodeJS {
         interface Global {
+            detox: Detox.DetoxExportWrapper;
             device: Detox.DetoxExportWrapper['device'];
             element: Detox.DetoxExportWrapper['element'];
             waitFor: Detox.DetoxExportWrapper['waitFor'];
             expect: Detox.DetoxExportWrapper['expect'];
             by: Detox.DetoxExportWrapper['by'];
             web: Detox.DetoxExportWrapper['web'];
-            detoxCircus: Detox.DetoxCircus;
         }
     }
 
     namespace Detox {
-        // region DetoxConfig
+        //#region DetoxConfig
 
-        interface DetoxConfig {
+        interface DetoxConfig extends DetoxConfigurationCommon {
             /**
              * @example extends: './relative/detox.config'
              * @example extends: '@my-org/detox-preset'
              */
             extends?: string;
-            /**
-             * @example testRunner: 'jest'
-             * @example testRunner: 'mocha'
-             */
-            testRunner?: string;
-            /**
-             * Stops passing default `--maxWorkers 1` to the test runner,
-             * presuming that from now on you have that already configured
-             * in your test runner config as a default.
-             */
-            skipLegacyWorkersInjection?: boolean;
-            /**
-             * @example runnerConfig: 'e2e/config.js'
-             */
-            runnerConfig?: string;
-            /**
-             * Optional. A default glob pattern for a test runner to use when no test files are specified.
-             *
-             * @example specs: 'detoxE2E'
-             */
-            specs?: string;
-            artifacts?: DetoxArtifactsConfig;
-            behavior?: DetoxBehaviorConfig;
-            session?: DetoxSessionConfig;
+
             apps?: Record<string, DetoxAppConfig>;
             devices?: Record<string, DetoxDeviceConfig>;
             selectedConfiguration?: string;
             configurations: Record<string, DetoxConfiguration>;
         }
+
+        type DetoxConfigurationCommon = {
+            artifacts?: false | DetoxArtifactsConfig;
+            behavior?: DetoxBehaviorConfig;
+            logger?: DetoxLoggerConfig;
+            session?: DetoxSessionConfig;
+            testRunner?: DetoxTestRunnerConfig;
+        };
 
         interface DetoxArtifactsConfig {
             rootDir?: string;
@@ -76,7 +63,6 @@ declare global {
                 screenshot?: 'none' | 'manual' | 'failing' | 'all' | DetoxScreenshotArtifactsPluginConfig;
                 video?: 'none' | 'failing' | 'all' | DetoxVideoArtifactsPluginConfig;
                 instruments?: 'none' | 'all' | DetoxInstrumentsArtifactsPluginConfig;
-                timeline?: 'none' | 'all' | DetoxTimelineArtifactsPluginConfig;
                 uiHierarchy?: 'disabled' | 'enabled' | DetoxUIHierarchyArtifactsPluginConfig;
 
                 [pluginId: string]: unknown;
@@ -96,16 +82,67 @@ declare global {
                  */
                 exposeGlobals?: boolean;
                 /**
-                 * By default, `await detox.init()` will uninstall and install the app.
+                 * By default, Detox will uninstall and install the app upon initialization.
                  * If you wish to reuse the existing app for a faster run, set the property to
                  * `false`.
                  */
                 reinstallApp?: boolean;
+                /**
+                 * When false, `detox test` command always deletes the shared lock file on start,
+                 * assuming it had been left from the previous, already finished test session.
+                 * The lock file contains information about busy and free devices and ensures
+                 * no device can be used simultaneously by multiple test workers.
+                 *
+                 * Setting it to **true** might be useful when if you need to run multiple
+                 * `detox test` commands in parallel, e.g. test a few configurations at once.
+                 *
+                 * @default false
+                 */
+                keepLockFile?: boolean;
             };
             launchApp?: 'auto' | 'manual';
             cleanup?: {
                 shutdownDevice?: boolean;
             };
+        }
+
+        type _DetoxLoggerOptions = Omit<BunyanDebugStreamOptions, 'out'>;
+
+        interface DetoxLoggerConfig {
+            /**
+             * Log level filters the messages printed to your terminal,
+             * and it does not affect the logs written to the artifacts.
+             *
+             * Use `info` by default.
+             * Use `error` or warn when you want to make the output as silent as possible.
+             * Use `debug` to control what generally is happening under the hood.
+             * Use `trace` when troubleshooting specific issues.
+             *
+             * @default 'info'
+             */
+            level?: DetoxLogLevel;
+            /**
+             * When enabled, hijacks all the console methods (console.log, console.warn, etc)
+             * so that the messages printed via them are formatted and saved as Detox logs.
+             *
+             * @default true
+             */
+            overrideConsole?: boolean;
+            /**
+             * Since Detox is using
+             * {@link https://www.npmjs.com/package/bunyan-debug-stream bunyan-debug-stream}
+             * for printing logs, all its options are exposed for sake of simplicity
+             * of customization.
+             *
+             * The only exception is {@link BunyanDebugStreamOptions#out} option,
+             * which is always set to `process.stdout`.
+             *
+             * You can also pass a callback function to override the logger config
+             * programmatically, e.g. depending on the selected log level.
+             *
+             * @see {@link BunyanDebugStreamOptions}
+             */
+            options?: _DetoxLoggerOptions | ((config: Partial<DetoxLoggerConfig>) => _DetoxLoggerOptions);
         }
 
         interface DetoxSessionConfig {
@@ -115,7 +152,128 @@ declare global {
             sessionId?: string;
         }
 
-        type DetoxAppConfig = (DetoxIosAppConfig | DetoxAndroidAppConfig) & {
+        interface DetoxTestRunnerConfig {
+            args?: {
+                /**
+                 * The command to use for runner: 'jest', 'nyc jest',
+                 */
+                $0: string;
+                /**
+                 * The positional arguments to pass to the runner.
+                 */
+                _?: string[];
+                /**
+                 * Any other properties recognized by test runner
+                 */
+                [prop: string]: unknown;
+            };
+
+            /**
+             * This is an add-on section used by our Jest integration code (but not Detox core itself).
+             * In other words, if you’re implementing (or using) a custom integration with some other test runner, feel free to define a section for yourself (e.g. `testRunner.mocha`)
+             */
+            jest?: {
+                /**
+                 * Environment setup timeout
+                 *
+                 * As a part of the environment setup, Detox boots the device and installs the apps.
+                 * If that takes longer than the specified value, the entire test suite will be considered as failed, e.g.:
+                 * ```plain text
+                 * FAIL  e2e/starter.test.js
+                 * ● Test suite failed to run
+                 *
+                 * Exceeded timeout of 300000ms while setting up Detox environment
+                 * ```
+                 *
+                 * The default value is 5 minutes.
+                 *
+                 * @default 300000
+                 * @see {@link https://jestjs.io/docs/configuration/#testenvironment-string}
+                 */
+                setupTimeout?: number | undefined;
+                /**
+                 * Environemnt teardown timeout
+                 *
+                 * If the environment teardown takes longer than the specified value, Detox will throw a timeout error.
+                 * The default value is half a minute.
+                 *
+                 * @default 30000 (30 seconds)
+                 * @see {@link https://jestjs.io/docs/configuration/#testenvironment-string}
+                 */
+                teardownTimeout?: number | undefined;
+                /**
+                 * Jest provides an API to re-run individual failed tests: `jest.retryTimes(count)`.
+                 * When Detox detects the use of this API, it suppresses its own CLI retry mechanism controlled via `detox test … --retries <N>` or {@link DetoxTestRunnerConfig#retries}.
+                 * The motivation is simple – activating the both mechanisms is apt to increase your test duration dramatically, if your tests are flaky.
+                 * If you wish nevertheless to use both the mechanisms simultaneously, set it to `true`.
+                 *
+                 * @default false
+                 * @see {@link https://jestjs.io/docs/29.0/jest-object#jestretrytimesnumretries-options}
+                 */
+                retryAfterCircusRetries?: boolean;
+                /**
+                 * By default, Jest prints the test names and their status (_passed_ or _failed_) at the very end of the test session.
+                 * When enabled, it makes Detox to print messages like these each time the new test starts and ends:
+                 * ```plain text
+                 * 18:03:36.258 detox[40125] i Sanity: should have welcome screen
+                 * 18:03:37.495 detox[40125] i Sanity: should have welcome screen [OK]
+                 * 18:03:37.496 detox[40125] i Sanity: should show hello screen after tap
+                 * 18:03:38.928 detox[40125] i Sanity: should show hello screen after tap [OK]
+                 * 18:03:38.929 detox[40125] i Sanity: should show world screen after tap
+                 * 18:03:40.351 detox[40125] i Sanity: should show world screen after tap [OK]
+                 * ```
+                 * By default, it is enabled automatically in test sessions with a single worker.
+                 * And vice versa, if multiple tests are executed concurrently, Detox turns it off to avoid confusion in the log.
+                 * Use boolean values, `true` or `false`, to turn off the automatic choice.
+                 *
+                 * @default undefined
+                 */
+                reportSpecs?: boolean | undefined;
+                /**
+                 * In the environment setup phase, Detox boots the device and installs the apps.
+                 * This flag tells Detox to print messages like these every time the device gets assigned to a specific suite:
+                 *
+                 * ```plain text
+                 * 18:03:29.869 detox[40125] i starter.test.js is assigned to 4EC84833-C7EA-4CA3-A6E9-5C30A29EA596 (iPhone 12 Pro Max)
+                 * ```
+                 *
+                 * @default true
+                 */
+                reportWorkerAssign?: boolean | undefined;
+            };
+            /**
+             * Retries count. Zero means a single attempt to run tests.
+             */
+            retries?: number;
+            /**
+             * When true, tells Detox CLI to cancel next retrying if it gets
+             * at least one report about a permanent test suite failure.
+             * Has no effect, if {@link DetoxTestRunnerConfig#retries} is
+             * undefined or set to zero.
+             *
+             * @default false
+             * @see {DetoxInternals.DetoxTestFileReport#isPermanentFailure}
+             */
+            bail?: boolean;
+            /**
+             * Custom handler to process --inspect-brk CLI flag.
+             * Use it when you rely on another test runner than Jest to mutate the config.
+             */
+            inspectBrk?: (config: DetoxTestRunnerConfig) => void;
+            /**
+             * Forward environment variables to the spawned test runner
+             * accordingly to the given CLI argument overrides.
+             *
+             * If false, Detox CLI will be only printing a hint message on
+             * how to start the test runner using environment variables,
+             * in case when a user wants to avoid using Detox CLI.
+             *
+             * @default false
+             */
+            forwardEnv?: boolean;
+        }
+
+        type DetoxAppConfig = (DetoxBuiltInAppConfig | DetoxCustomAppConfig) & {
             /**
              * App name to use with device.selectApp(appName) calls.
              * Can be omitted if you have a single app under the test.
@@ -126,8 +284,6 @@ declare global {
         };
 
         type DetoxDeviceConfig = DetoxBuiltInDeviceConfig | DetoxCustomDriverConfig;
-
-        type DetoxConfiguration = DetoxPlainConfiguration | DetoxAliasedConfiguration;
 
         interface DetoxLogArtifactsPluginConfig {
             enabled?: boolean;
@@ -168,9 +324,7 @@ declare global {
             enabled?: boolean;
         }
 
-        interface DetoxTimelineArtifactsPluginConfig {
-            enabled?: boolean;
-        }
+        type DetoxBuiltInAppConfig = (DetoxIosAppConfig | DetoxAndroidAppConfig);
 
         interface DetoxIosAppConfig {
             type: 'ios.app';
@@ -187,42 +341,31 @@ declare global {
             build?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
+            /**
+             * TCP ports to `adb reverse` upon the installation.
+             * E.g. 8081 - to be able to access React Native packager in Debug mode.
+             *
+             * @example [8081]
+             */
+            reversePorts?: number[];
         }
 
-        interface _DetoxAppConfigFragment {
-            binaryPath: string;
-            bundleId?: string;
-            build?: string;
-            testBinaryPath?: string;
-            launchArgs?: Record<string, any>;
+        interface DetoxCustomAppConfig {
+            type: string;
+
+            [prop: string]: unknown;
         }
 
         type DetoxBuiltInDeviceConfig =
-          | DetoxIosSimulatorDriverConfig
-          | DetoxIosNoneDriverConfig
-          | DetoxAttachedAndroidDriverConfig
-          | DetoxAndroidEmulatorDriverConfig
-          | DetoxGenymotionCloudDriverConfig;
-
-        type DetoxPlainConfiguration = DetoxConfigurationOverrides & (
-          | (DetoxIosSimulatorDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxIosNoneDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxAttachedAndroidDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxAndroidEmulatorDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxGenymotionCloudDriverConfig & _DetoxAppConfigFragment)
-          | (DetoxCustomDriverConfig)
-          );
+            | DetoxIosSimulatorDriverConfig
+            | DetoxAttachedAndroidDriverConfig
+            | DetoxAndroidEmulatorDriverConfig
+            | DetoxGenymotionCloudDriverConfig;
 
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
             device: string | Partial<IosSimulatorQuery>;
             bootArgs?: string;
-        }
-
-        interface DetoxIosNoneDriverConfig {
-            type: 'ios.none';
-            // TODO: check if we need it at all?
-            device?: string | Partial<IosSimulatorQuery>;
         }
 
         interface DetoxSharedAndroidDriverConfig {
@@ -239,8 +382,11 @@ declare global {
             type: 'android.emulator';
             device: string | { avdName: string };
             bootArgs?: string;
-            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
+            gpuMode?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off';
             headless?: boolean;
+            /**
+             * @default true
+             */
             readonly?: boolean;
         }
 
@@ -262,110 +408,143 @@ declare global {
             os: string;
         }
 
-        type DetoxKnownDeviceType = DetoxBuiltInDeviceConfig['type'];
+        type DetoxConfiguration = DetoxConfigurationCommon & (
+            | DetoxConfigurationSingleApp
+            | DetoxConfigurationMultiApps
+            );
 
-        type DetoxConfigurationOverrides = {
-            artifacts?: false | DetoxArtifactsConfig;
-            behavior?: DetoxBehaviorConfig;
-            session?: DetoxSessionConfig;
-        };
-
-        type DetoxAliasedConfiguration =
-          | DetoxAliasedConfigurationSingleApp
-          | DetoxAliasedConfigurationMultiApps;
-
-        interface DetoxAliasedConfigurationSingleApp {
-            type?: never;
+        interface DetoxConfigurationSingleApp {
             device: DetoxAliasedDevice;
-            app: string | DetoxAppConfig;
+            app: DetoxAliasedApp;
         }
 
-        interface DetoxAliasedConfigurationMultiApps {
-            type?: never;
+        interface DetoxConfigurationMultiApps {
             device: DetoxAliasedDevice;
-            apps: string[];
+            apps: DetoxAliasedApp[];
         }
 
         type DetoxAliasedDevice = string | DetoxDeviceConfig;
 
-        // endregion DetoxConfig
+        type DetoxAliasedApp = string | DetoxAppConfig;
 
-        // Detox exports all methods from detox global and all of the global constants.
-        interface DetoxInstance {
-            device: Device;
-            element: ElementFacade;
-            waitFor: WaitForFacade;
-            expect: ExpectFacade;
-            by: ByFacade;
-            web: WebFacade;
+        //#endregion
+
+        interface DetoxExportWrapper {
+            readonly device: Device;
+
+            readonly element: ElementFacade;
+
+            readonly waitFor: WaitForFacade;
+
+            readonly expect: ExpectFacade;
+
+            readonly by: ByFacade;
+
+            readonly web: WebFacade;
+
+            readonly DetoxConstants: {
+                userNotificationTriggers: {
+                    push: 'push';
+                    calendar: 'calendar';
+                    timeInterval: 'timeInterval';
+                    location: 'location';
+                };
+                userActivityTypes: {
+                    searchableItem: string;
+                    browsingWeb: string;
+                },
+                searchableItemActivityIdentifier: string;
+            };
+
+            /**
+             * Detox logger instance. Can be used for saving user logs to the general log file.
+             */
+            readonly log: Logger;
+
+            /**
+             * @deprecated
+             *
+             * Deprecated - use {@link Detox.Logger#trace}
+             * Detox tracer instance. Can be used for building timelines in Google Event Tracing format.
+             */
+            readonly trace: {
+                /** @deprecated */
+                readonly startSection: (name: string) => void;
+                /** @deprecated */
+                readonly endSection: (name: string) => void;
+            };
+
+            /**
+             * Trace a single call, with a given name and arguments.
+             *
+             * @deprecated
+             * @param sectionName The name of the section to trace.
+             * @param promiseOrFunction Promise or a function that provides a promise.
+             * @param args Optional arguments to pass to the trace.
+             * @returns The returned value of the traced call.
+             * @see https://wix.github.io/Detox/docs/next/api/detox-object-api/#detoxtracecall.
+             */
+            readonly traceCall: <T>(event: string, action: () => Promise<T>, args?: Record<string, unknown>) => Promise<T>;
         }
 
-        interface DetoxExportWrapper extends DetoxInstance {
-            /**
-             * The setup phase happens inside detox.init(). This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator
-             *
-             * @param configOverride - this object is deep-merged with the selected Detox configuration from .detoxrc
-             * @example
-             * beforeAll(async () => {
-             *   await detox.init();
-             * });
-             */
-            init(configOverride?: Partial<DetoxConfig>, options?: DetoxInitOptions): Promise<void>;
+        interface Logger {
+            readonly level: DetoxLogLevel;
 
-            beforeEach(...args: any[]): Promise<void>;
+            readonly fatal: _LogMethod;
+            readonly error: _LogMethod;
+            readonly warn: _LogMethod;
+            readonly info: _LogMethod;
+            readonly debug: _LogMethod;
+            readonly trace: _LogMethod;
 
-            afterEach(...args: any[]): Promise<void>;
-
-            /**
-             * The cleanup phase should happen after all the tests have finished.
-             * This is the phase where the Detox server shuts down.
-             *
-             * @example
-             * after(async () => {
-             *  await detox.cleanup();
-             * });
-             */
-            cleanup(): Promise<void>;
-
-            /**
-             * Unstable. API to access an assembled detox config before it gets passed to testRunner
-             * or detox.init(). Use it only if you don't have another option.
-             * @internal
-             */
-            hook(event: 'UNSAFE_configReady', listener: (config: unknown) => void): void;
+            child(context?: Partial<LogEvent>): Logger;
         }
 
-        interface DetoxInitOptions {
-            /**
-             * By default, Detox exports `device`, `expect`, `element`, `by` and `waitFor`
-             * as global variables. If you want to control their initialization manually,
-             * set this property to `false`.
-             *
-             * This is useful when during E2E tests you also need to run regular expectations
-             * in Node.js. Jest's `expect` for instance, will not be overridden by Detox when
-             * this option is used.
-             */
-            initGlobals?: boolean;
-            /**
-             * By default, `await detox.init()` will uninstall and install the app.
-             * If you wish to reuse the existing app for a faster run, set the property to
-             * `false`.
-             */
-            reuse?: boolean;
+        /** @internal */
+        interface _LogMethod extends _LogMethodSignature {
+            readonly begin: _LogMethodSignature;
+            readonly complete: _CompleteMethodSignature;
+            readonly end: _LogMethodSignature;
         }
+
+        /** @internal */
+        interface _LogMethodSignature {
+            (...args: unknown[]): void
+            (event: LogEvent, ...args: unknown[]): void;
+        }
+
+        /** @internal */
+        interface _CompleteMethodSignature {
+            <T>(message: string, action: T | (() => T)): T;
+            <T>(event: LogEvent, message: string, action: T | (() => T)): T;
+        }
+
+        type LogEvent = {
+            /** Use when there's a risk of logging several parallel duration events. */
+            id?: string | number;
+            /** Optional. Event categories (tags) to facilitate filtering. */
+            cat?: string | string[];
+            /** Optional. Color name (applicable in Google Chrome Trace Format) */
+            cname?: string;
+
+            /** Reserved property. Process ID. */
+            pid?: never;
+            /** Reserved property. Thread ID. */
+            tid?: never;
+            /** Reserved property. Timestamp. */
+            ts?: never;
+            /** Reserved property. Event phase. */
+            ph?: never;
+
+            [customProperty: string]: unknown;
+        };
+
+        type DetoxLogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
 
         type Point2D = {
             x: number,
             y: number,
         }
-
-        /**
-         * @deprecated
-         */
-        type AppLaunchArgsOperationOptions = Partial<{
-            /** Changes the scope of the operation: transient or permanent app launch args */
-            permanent: boolean;
-        }>;
 
         /**
          * A construct allowing for the querying and modification of user arguments passed to an app upon launch by Detox.
@@ -414,20 +593,12 @@ declare global {
              * // }
              */
             modify(modifier: object): this;
-            /**
-             * @deprecated Use {@link AppLaunchArgs#shared} instead.
-             */
-            modify(modifier: object, options: AppLaunchArgsOperationOptions): this;
 
             /**
              * Reset all app-specific launch arguments (back to an empty object).
              * If you need to reset the shared launch args, use {@link AppLaunchArgs#shared}.
              */
             reset(): this;
-            /**
-             * @deprecated Use {@link AppLaunchArgs#shared} instead.
-             */
-            reset(options: AppLaunchArgsOperationOptions): this;
 
             /**
              * Get all currently set launch arguments (including shared ones).
@@ -435,10 +606,6 @@ declare global {
              * Note: mutating the values inside the result object is pointless, as it is immutable.
              */
             get(): object;
-            /**
-             * @deprecated Use {@link AppLaunchArgs#shared} instead.
-             */
-            get(options: AppLaunchArgsOperationOptions): object;
         }
 
         /**
@@ -460,12 +627,10 @@ declare global {
              * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
              * as used by simctl (e.g. AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE).
              *
-             * The value will be undefined until the device is properly prepared (i.e. in detox.init())
              */
             id: string;
             /**
              * Holds a descriptive name of the device. Example: emulator-5554 (Pixel_API_29)
-             * The value will be undefined until the device is properly prepared (i.e. in detox.init()).
              */
             name: string;
 
@@ -511,6 +676,16 @@ declare global {
             launchApp(config?: DeviceLaunchAppConfig): Promise<void>;
 
             /**
+             * Relaunch the app. Convenience method that calls {@link Device#launchApp}
+             * with { newInstance: true } override.
+             *
+             * @deprecated
+             * @param config
+             * @see Device#launchApp
+             */
+            relaunchApp(config?: DeviceLaunchAppConfig): Promise<void>;
+
+            /**
              * Access the user-defined launch-arguments predefined through static scopes such as the Detox configuration file and
              * command-line arguments. This access allows - through dedicated methods, for both value-querying and
              * modification (see {@link AppLaunchArgs}).
@@ -535,6 +710,7 @@ declare global {
              * @see AppLaunchArgs
              */
             appLaunchArgs: AppLaunchArgs;
+
             /**
              * Terminate the app.
              *
@@ -899,11 +1075,13 @@ declare global {
              * @example await element(by.text('Product').and(by.id('product_name'));
              */
             and(by: NativeMatcher): NativeMatcher;
+
             /**
              * Find an element by a matcher with a parent matcher
              * @example await element(by.id('Grandson883').withAncestor(by.id('Son883')));
              */
             withAncestor(parentBy: NativeMatcher): NativeMatcher;
+
             /**
              * Find an element by a matcher with a child matcher
              * @example await element(by.id('Son883').withDescendant(by.id('Grandson883')));
@@ -917,6 +1095,7 @@ declare global {
 
         interface ExpectFacade {
             (element: NativeElement): Expect;
+
             (webElement: WebElement): WebExpect;
         }
 
@@ -1011,6 +1190,7 @@ declare global {
              * @example await expect(element(by.id('switch'))).toHaveToggleValue(true);
              */
             toHaveToggleValue(value: boolean): R;
+
             /**
              * Expect components like a Switch to have a value ('0' for off, '1' for on).
              * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
@@ -1047,6 +1227,7 @@ declare global {
              * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
              */
             whileElement(by: NativeMatcher): NativeElement & WaitFor;
+
             // TODO: not sure about & WaitFor - check if we can chain whileElement multiple times
         }
 
@@ -1072,6 +1253,7 @@ declare global {
              */
             longPressAndDrag(duration: number, normalizedPositionX: number, normalizedPositionY: number, targetElement: NativeElement,
                              normalizedTargetPositionX: number, normalizedTargetPositionY: number, speed: Speed, holdDuration: number): Promise<void>;
+
             /**
              * Simulate multiple taps on an element.
              * @param times number of times to tap
@@ -1127,10 +1309,10 @@ declare global {
              * @example await element(by.id('scrollView')).scroll(100, 'up');
              */
             scroll(
-              pixels: number,
-              direction: Direction,
-              startPositionX?: number,
-              startPositionY?: number,
+                pixels: number,
+                direction: Direction,
+                startPositionX?: number,
+                startPositionY?: number
             ): Promise<void>;
 
             /**
@@ -1138,7 +1320,7 @@ declare global {
              * @example await element(by.id('scrollView')).scrollToIndex(10);
              */
             scrollToIndex(
-              index: Number
+                index: Number
             ): Promise<void>;
 
             /**
@@ -1227,7 +1409,7 @@ declare global {
              *   // * on failure, to: <artifacts-location>/✗ Menu items should have Logout/tap on menu.png
              * });
              */
-             takeScreenshot(name: string): Promise<string>;
+            takeScreenshot(name: string): Promise<string>;
 
             /**
              * Gets the native (OS-dependent) attributes of the element.
@@ -1245,7 +1427,7 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-             getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
         }
 
         interface WebExpect<R = Promise<void>> {
@@ -1261,7 +1443,7 @@ declare global {
              * @example
              * await expect(web.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
              */
-            toHaveText(text: string): R
+            toHaveText(text: string): R;
 
             /**
              * Expect the view to exist in the webview DOM tree.
@@ -1282,56 +1464,56 @@ declare global {
         }
 
         interface WebElementActions {
-            tap(): Promise<void>
+            tap(): Promise<void>;
 
             /**
              * @param text to type
              * @param isContentEditable whether its a ContentEditable element, default is false.
              */
-            typeText(text: string, isContentEditable: boolean): Promise<void>
+            typeText(text: string, isContentEditable: boolean): Promise<void>;
 
             /**
              * At the moment not working on content-editable
              * @param text to replace with the old content.
              */
-            replaceText(text: string): Promise<void>
+            replaceText(text: string): Promise<void>;
 
             /**
              * At the moment not working on content-editable
              */
-            clearText(): Promise<void>
+            clearText(): Promise<void>;
 
             /**
              * scrolling to the view, the element top position will be at the top of the screen.
              */
-            scrollToView(): Promise<void>
+            scrollToView(): Promise<void>;
 
             /**
              * Gets the input content
              */
-            getText(): Promise<string>
+            getText(): Promise<string>;
 
             /**
              * Calls the focus function on the element
              */
-            focus(): Promise<void>
+            focus(): Promise<void>;
 
             /**
              * Selects all the input content, works on ContentEditable at the moment.
              */
-            selectAllText(): Promise<void>
+            selectAllText(): Promise<void>;
 
             /**
              * Moves the input cursor / caret to the end of the content, works on ContentEditable at the moment.
              */
-            moveCursorToEnd(): Promise<void>
+            moveCursorToEnd(): Promise<void>;
 
             /**
              * Running a script on the element
              * @param script a method that accept the element as its first arg
              * @example function foo(element) { console.log(element); }
              */
-            runScript(script: string): Promise<any>
+            runScript(script: string): Promise<any>;
 
             /**
              * Running a script on the element that accept args
@@ -1443,25 +1625,6 @@ declare global {
              * Launch config for specifying the native language and locale
              */
             languageAndLocale?: LanguageAndLocale;
-        }
-
-        interface CircusTestEventListenerBase {
-            handleTestEvent(event: any, state: any): Promise<void>;
-        }
-
-        interface DetoxCircus {
-            /**
-             * A get function that Enables access to this instance (single in each worker's scope)
-             */
-            getEnv(): {
-                /**
-                 * Registers a listener such as an adapter or reporter
-                 * @example
-                 * detoxCircus.getEnv().addEventsListener(adapter)
-                 * detoxCircus.getEnv().addEventsListener(assignReporter)
-                 */
-                addEventsListener(listener: CircusTestEventListenerBase): void
-            };
         }
 
         // Element Attributes Shared Among iOS and Android

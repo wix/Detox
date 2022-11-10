@@ -1,4 +1,6 @@
 jest.mock('proper-lockfile');
+jest.mock('signal-exit');
+jest.mock('../src/logger/DetoxLogger');
 
 const path = require('path');
 
@@ -36,5 +38,5 @@ function callCli(modulePath, cmd) {
   });
 }
 
+// @ts-ignore
 global.callCli = callCli;
-global.IS_RUNNING_DETOX_UNIT_TESTS = true;

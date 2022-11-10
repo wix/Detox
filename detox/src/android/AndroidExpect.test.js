@@ -7,7 +7,7 @@ describe('AndroidExpect', () => {
   let device;
 
   beforeEach(() => {
-    jest.mock('../utils/trace');
+    jest.mock('../utils/logger');
     jest.mock('tempfile');
     jest.mock('fs-extra');
 

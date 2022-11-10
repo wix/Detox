@@ -1,12 +1,6 @@
-interface DetoxJestAdapter extends Detox.CircusTestEventListenerBase {
-    detox: Detox.DetoxExportWrapper;
-    beforeEach: () => Promise<void>;
-    afterAll: () => Promise<void>;
-    // These are not publicly used, but are defined in order to overlap with the jasmine.CustomReporter interface (which is a weak interface)
-    specDone: () => void;
-    specStarted: () => void;
-}
-
-declare const adapter: DetoxJestAdapter;
+/***
+ * @deprecated Detox does not support old Jest integrations since v20.0.0
+ */
+declare const adapter: never;
 
 export = adapter;

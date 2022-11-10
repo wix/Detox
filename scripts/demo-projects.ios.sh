@@ -3,7 +3,7 @@
 UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
 trap "$UPLOAD_ARTIFACT" EXIT
 
-SCRIPTS_PATH="$(dirname "$0")"
+SCRIPTS_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 source $SCRIPTS_PATH/demo-projects.sh
 
@@ -14,14 +14,7 @@ pushd examples/demo-react-native
   popd
 
   run_f "npm run build:ios-release"
-popd
-
-pushd examples/demo-react-native-jest
-  run_f "npm run test:ios-release-ci"
-popd
-
-pushd examples/demo-react-native
-  run_f "npm run test:ios-release-ci"
+  run_f "npm run test:ios-release"
 
   # Run tests with bloated JS bundle:
   source $SCRIPTS_PATH/demo-rn-bloat-bundle-test.sh ios

@@ -1,0 +1,426 @@
+import Location from './partials/_location.mdx';
+
+# Test runner
+
+While Detox was created to test mobile applications, effectively it is **not a test runner** – instead, it **runs on top** of a test runner. There are many third-party solutions for running tests, so we're happy to not reinvent the wheel and to devote our time to the mobile domain itself.
+
+Since we focus on React Native and yet require some test runner under the hood, the most logical choice was to provide an official integration with Jest, which is the default test runner for such projects. This is why all our guides presume you have Jest under the hood, and the structure generated via  `detox init` is no exception.
+
+The integration with a test runner is a matter of the configuration, not the implementation – Detox source code has no hard-coded logic for Jest save for a few minor places[^1]. Furthermore, we're looking forward to new third-party integrations with popular test runners as the [Internals API](../api/internals.mdx) keeps improving.
+
+[^1]: Detox has a few hard-coded default values for Jest: [`testRunner.args.$0`] and [`testRunner.inspectBrk`] hook. Also `detox test` CLI is aware of Jest boolean arguments (e.g. `-i, --runInBand`, `--bail`, etc.), and it can auto-fix ambiguous commands like `detox test --runInBand e2e/starter.test.js --bail`.
+We're looking forward to make the code even more agnostic, but currently these caveats are worth mentioning for the developers of third-party test runner integrations.
+
+## Location
+
+<Location sectionName="testRunner" />
+
+## Properties
+
+### `testRunner.args` \[object]
+
+This section is responsible for building the test runner command that is going to be spawned when you run:
+
+```bash
+detox test
+# $0 --key1 value1 … ---keyN valueN ...positionalArguments
+```
+
+For example, this configuration of a test runner:
+
+```json
+{
+  "testRunner": {
+    "args": {
+      "$0": "nyc jest",
+      "bail": true,
+      "config": "e2e/jest.config.js",
+      "_": ["e2e/sanity-tests"]
+    }
+  }
+}
+```
+
+would eventually spawn:
+
+```bash
+nyc jest --bail --config e2e/jest.config.js e2e/sanity-tests
+```
+
+Now, when you have an idea of what it does, let's overview the properties one by one.
+
+### `testRunner.args.$0` \[string]
+
+Default: `jest`.
+
+Defines the beginning of the test runner command, usually just the name of the executable. The path to the executable is resolved according to your `PATH` environment variable.
+
+Although not recommended, you can specify composite commands like `node -r ./preload.js node_modules/.bin/my-runner`.
+
+### `testRunner.args[…]` \[string | number | boolean]
+
+You can define arbitrary arguments in the key-value format, e.g.:
+
+```json
+{
+  "args": {
+    "$0": "jest",
+// highlight-start
+    "color": false,
+    "bail": true,
+    "testTimeout": 60000,
+    "config": "e2e/jest.ci.config.js"
+// highlight-end
+  }
+}
+```
+
+For example, the config above would generate a command like this:
+
+```bash
+jest --no-color --bail --testTimeout 60000 --config e2e/jest.ci.config.js
+```
+
+As you can see, `false` boolean values produce keys prefixed with `--no-`.
+
+### `testRunner.args._` \[string\[]]
+
+Default: `[]`.
+
+This property defines an array of **default** positional arguments to pass to the test runner. Consider an example:
+
+```json
+{
+  "args": {
+    "$0": "jest",
+// highlight-next-line
+    "_": ["e2e/sanity-tests"]
+  }
+}
+```
+
+If you run tests without extra positional arguments, you’ll get `_` contents appended:
+
+```bash
+detox test -c ios.sim.debug
+# jest … e2e/sanity-tests
+```
+
+If you run tests with custom positional arguments, the `_` contents get replaced:
+
+```bash
+detox test e2e/regression-tests
+# jest … e2e/regression-tests
+```
+
+If you use the retry mechanism of `detox test`, be prepared that the failed test file paths will override `_` in all the subsequent re-runs.
+
+### `testRunner.retries` \[number]
+
+Default: `0`.
+
+Tells `detox test` to keep re-running the test runner with failed test files until they pass, or the number of repeated attempts exceeds the specified value:
+
+```bash
+detox test
+DETOX_CONFIGURATION="…" jest --config e2e/jest.config.js e2e/sanity-tests
+# …
+# There were failing tests in the following files:
+#   1. /path/to/your/test.js
+#
+# Detox CLI is going to restart the test runner with those files...
+DETOX_CONFIGURATION="…" jest --config e2e/jest.config.js /path/to/your/test.js
+# …
+```
+
+See also [`-R, --retries`](../cli/test.md#options) in Detox CLI.
+
+### `testRunner.bail` \[boolean]
+
+Default: `false`.
+
+When true, tells `detox test` to cancel next retrying if it gets at least one report about a [permanent test suite failure](../api/internals.mdx#reporting-test-results).
+Has no effect, if [`testRunner.retries`] is undefined or set to zero.
+
+### `testRunner.forwardEnv` \[boolean]
+
+Default: `false`.
+
+When enabled, tells `detox test` to pass command-line arguments as environment variables to the test runner, e.g.:
+
+```bash
+detox test -c ios.sim.debug --record-logs all
+DETOX_CONFIGURATION=ios.sim.debug DETOX_RECORD_LOGS=all jest …
+```
+
+Nevertheless, even if it is disabled, Detox will keep printing hints how to call your test runner without Detox CLI, so that you can copy and paste the command into your IDE when you want to debug something.
+
+### `testRunner.inspectBrk` \[function]
+
+:::caution
+
+This property is intended primarily for developing integrations with third-party test runners.
+
+:::
+
+Default: _a Jest-specific callback that sets `$0`, `--runInBand` and cleans `-w, --maxWorkers`_.
+
+The provided function is called when [`detox test`](../cli/test.md) is called with `--inspect-brk`.
+Your implementation should prepare [`testRunner.args`] for [debugging with Node.js inspector](../introduction/debugging.mdx), e.g. for Jest that would be:
+
+```js title=".detoxrc.js"
+/* @type {Detox.DetoxConfig} */
+module.exports = {
+  testRunner: {
+    /** @param {Detox.DetoxTestRunnerConfig} config */
+    inspectBrk: (config) => {
+      config.args.$0 = os.platform() === 'win32'
+        ? `node --inspect-brk ./node_modules/jest/bin/jest.js`
+        : `node --inspect-brk ./node_modules/.bin/jest`;
+      config.args.runInBand = true;
+      delete config.args.w;
+      delete config.args.workers;
+    },
+  },
+};
+```
+
+### `testRunner.jest` \[object]
+
+This is an add-on section used by our Jest integration code (but not Detox core itself).
+In other words, if you’re implementing (or using) a custom integration with some other test runner, feel free to define a section for yourself (e.g. `testRunner.mocha`)
+
+#### `testRunner.jest.setupTimeout` \[number]
+
+Default: `300000` (5 minutes).
+
+As a part of the [environment setup](https://jestjs.io/docs/configuration/#testenvironment-string)), Detox boots the device and installs the apps.
+If that takes longer than the specified value, the entire test suite will be considered as failed, e.g.:
+
+```plain text
+ FAIL  e2e/starter.test.js
+  ● Test suite failed to run
+
+    Exceeded timeout of 300000ms while setting up Detox environment
+```
+
+#### `testRunner.jest.teardownTimeout` \[number]
+
+Default: `30000` (30 seconds).
+
+If the [environment teardown](https://jestjs.io/docs/configuration/#testenvironment-string)) takes longer than the specified value, Detox will throw a timeout error.
+
+#### `testRunner.jest.reportSpecs` \[boolean | undefined]
+
+Default: `undefined` (auto).
+
+By default, Jest prints the test names and their status (_passed_ or _failed_) at the very end of the test session. This might be fine for sub-second unit tests, but it is uncomfortable to wait a couple of minutes until you actually see anything.
+
+When enabled, it makes Detox to print messages like these each time the new test starts and ends:
+
+```plain text
+18:03:36.258 detox[40125] i Sanity: should have welcome screen
+18:03:37.495 detox[40125] i Sanity: should have welcome screen [OK]
+18:03:37.496 detox[40125] i Sanity: should show hello screen after tap
+18:03:38.928 detox[40125] i Sanity: should show hello screen after tap [OK]
+18:03:38.929 detox[40125] i Sanity: should show world screen after tap
+18:03:40.351 detox[40125] i Sanity: should show world screen after tap [OK]
+```
+
+By default, it is enabled automatically in test sessions with a single worker. And vice versa, if multiple tests are executed concurrently, Detox turns it off to avoid confusion in the log. Use boolean values, `true` or `false`, to turn off the automatic choice.
+
+#### `testRunner.jest.reportWorkerAssign` \[boolean]
+
+Default: `true`.
+
+Like already mentioned, in the init phase, Detox boots the device and installs the apps. This flag tells Detox to print messages like these every time the device gets assigned to a specific suite:
+
+```plain text
+18:03:29.869 detox[40125] i starter.test.js is assigned to 4EC84833-C7EA-4CA3-A6E9-5C30A29EA596 (iPhone 12 Pro Max)
+```
+
+#### `testRunner.jest.retryAfterCircusRetries` \[boolean]
+
+Default: `false`.
+
+Jest provides an API to re-run individual failed tests: [`jest.retryTimes(count)`](https://jestjs.io/docs/29.0/jest-object#jestretrytimesnumretries-options).
+When Detox detects the use of this API, it suppresses its own CLI retry mechanism controlled via `detox test … --retries <N>` or `testRunner.retries`. The motivation is simple – activating the both mechanisms is apt to increase your test duration dramatically, if your tests are flaky.
+
+If you wish nevertheless to use both the mechanisms simultaneously, set it to `true`.
+
+## Jest config
+
+Jest config generated by `detox init` is helpful for understanding how Detox integrates with Jest:
+
+```js title="e2e/jest.config.js"
+/** @type {import('@jest/types').Config.InitialOptions} */
+module.exports = {
+  rootDir: '..',
+  testMatch: ['<rootDir>/e2e/**/*.test.js'],
+  testTimeout: 120000,
+  maxWorkers: 1,
+  globalSetup: 'detox/runners/jest/globalSetup',
+  globalTeardown: 'detox/runners/jest/globalTeardown',
+  reporters: ['detox/runners/jest/reporter'],
+  testEnvironment: 'detox/runners/jest/testEnvironment',
+  verbose: true,
+};
+```
+
+All the listed properties vary from mandatory to strongly recommended, and below we'll be explaining why (and, more importantly, how to customize them correctly). If you need to add extra properties, please consult the [Configuring Jest](https://jestjs.io/docs/configuration) article on its official website.
+
+1. `rootDir` and `testMatch` enforce the convention that your tests have `.test.js` extension and reside somewhere in `e2e` folder together with the Jest config:
+
+   ```plain text
+   ├── …
+   ├── e2e
+   //highlight-start
+   │   ├── feature1.test.js
+   │   ├── feature2
+   │   │   ├── subfeature1.test.js
+   │   │   └── subfeature2.test.js
+   //highlight-end
+   │   ├── …
+   │   └── jest.config.js
+   ├── …
+   ├── .detoxrc.js
+   └── package.json
+   ```
+
+1. `testTimeout: 120000` overrides the default value (5 seconds), which is usually too short to complete a single end-to-end test. Two minutes should be safe enough, but you’re welcome to increase or decrease depending on your needs.
+
+1. `maxWorkers: 1` prevents potential over-allocation of mobile devices according to the default Jest strategy. By default, Jest picks `cpusCount — 1` which is too much (e.g. 6-core laptop would spawn 11 devices). Note that casually you can override it via forwarding command-line argument [`--maxWorkers <N>`](https://jestjs.io/docs/cli#--maxworkersnumstring):
+
+   ```bash
+   detox test … --maxWorkers 2
+   # … jest … --maxWorkers 2
+   ```
+
+   Change it only if you want to change **the default value**. For instance, you could use different number of workers depending on the environment, e.g.:
+
+   ```js
+   /** @type {import('@jest/types').Config.InitialOptions} */
+   module.exports = {
+     // …
+   // highlight-next-line
+     maxWorkers: process.env.CI ? 2 : 1,
+   };
+   ```
+
+1. `globalSetup` file is essential as it integrates with Detox Internals API. If you need to set up something in addition, you should wrap it like this:
+
+   ```js
+   module.exports = async () => {
+      await require('detox/runners/jest').globalSetup();
+      await yourGlobalSetupFunction();
+   };
+   ```
+
+1. `globalTeardown` file is essential as it integrates with Detox Internals API. If you need to tear down something in addition, you should wrap it like this:
+
+   ```js
+   module.exports = async () => {
+     try {
+       await yourGlobalTeardownFunction();
+     } finally {
+       await require('detox/runners/jest').globalTeardown();
+     }
+   };
+   ```
+
+1. `reporters` array should always include a reporter from Detox. We reserve right to add anytime some integration code there. Although currently it is rather empty, not having it puts you under risk every time you upgrade Detox versions.
+
+1. `testEnvironment` is the most important part of the integration. If you need to add something on top of it, please inherit like shown below:
+
+   ```js title="e2e/testEnvironment.js"
+   const { DetoxCircusEnvironment } = require('detox/runners/jest');
+
+   class CustomDetoxEnvironment extends DetoxCircusEnvironment {
+     constructor(config, context) {
+       super(config, context);
+       // custom code
+     }
+
+     async setup(config, context) {
+       await super.setup(config, context);
+       // custom code
+     }
+
+     async handleTestEvent(event, state) {
+       await super.handleTestEvent(event, state);
+       // custom code
+     }
+
+     async teardown(config, context) {
+       try {
+         // custom code
+       } finally {
+         await super.teardown(config, context);
+       }
+     }
+   }
+
+   module.exports = CustomDetoxEnvironment;
+   ```
+
+1. `verbose: true` [disables batching](https://github.com/facebook/jest/issues/8208) of Jest logs and ensures you see the logs in real time.
+
+## Globals
+
+Unless `behavior.init.exposeGlobals` is set to `false`, Detox exposes its primitives (`expect`, `device`, ...) globally, and it will override Jest’s global `expect` object.
+If you need to use it nevertheless, import it explicitly:
+
+```js
+import jestExpect from 'expect';
+```
+
+## Mocking
+
+Don’t use `jest.mock()` or any other similar mocking mechanism. Follow our [Mocking guide](../guide/mocking.md) instead.
+
+## Parallel Test Execution
+
+Detox relies on test runners to execute tests in parallel.
+
+If you’re using Jest under the hood, the easiest way is to specify `-w, --maxWorkers`, e.g.:
+
+```bash
+detox test … --maxWorkers 2
+```
+
+In the other cases, consult your test runner documentation.
+
+## Forwarding CLI arguments
+
+If Detox does not recognize CLI arguments you pass, it forwards them as-is to the underlying test runner, e.g.:
+
+```bash
+detox test -c ios.sim.debug --key1 value1 --key2
+# DETOX_CONFIGURATION=ios.sim.debug jest --key1 value1 --key2
+#
+# ● Unrecognized CLI Parameters:
+#
+#   Following options were not recognized:
+#   ["key1", "key2"]
+#
+#   CLI Options Documentation:
+#   https://jestjs.io/docs/cli
+```
+
+Therefore, if test runner rejects such arguments, it is your responsibility to fix that.
+
+Since there might be argument clashes between Detox and a test runner, you can use `--` (double dash) to forward the arguments as-is, e.g.:
+
+```bash
+detox test -c ios.sim.debug -- --help
+# DETOX_CONFIGURATION=ios.sim.debug jest --help
+# Usage: jest [--config=<pathToConfigFile>] [TestPathPattern]
+#
+# Options:
+# …
+```
+
+[`testRunner.args`]: #testrunnerargs-object
+[`testRunner.args.$0`]: #testrunnerargs0-string
+[`testRunner.inspectBrk`]: #testrunnerinspectbrk-function
+[`testRunner.retries`]: #testrunnerretries-number

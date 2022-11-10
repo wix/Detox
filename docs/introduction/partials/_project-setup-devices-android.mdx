@@ -1,0 +1,85 @@
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+To check if a specific Android virtual device (e.g. `Pixel_3a_API_30_x86`) is installed locally, run:
+
+```bash
+emulator -list-avds
+```
+
+You should see an output like:
+
+```plain text
+// highlight-next-line
+Pixel_3a_API_30_x86
+Pixel_API_30
+```
+
+:::tip
+
+If you see `zsh: command not found` (or a similar message), please go back to
+[Setting up the environment](../getting-started.mdx#setting-up-the-environment) section
+where we were redirecting you to the official **React Native CLI Quickstart**, and make sure you
+have completed it.
+
+Provided you have `ANDROID_SDK_ROOT` (or `ANDROID_HOME`) environment variables
+defined, using an explicit path to `emulator` should help:
+
+<Tabs groupId="desktopOS">
+    <TabItem value="darwin" label="MacOS">
+        <CodeBlock language="bash">
+            $ANDROID_SDK_ROOT/emulator/emulator -list-avds
+        </CodeBlock>
+    </TabItem>
+    <TabItem value="linux" label="Linux">
+        <CodeBlock language="bash">
+            $ANDROID_SDK_ROOT/emulator/emulator -list-avds
+        </CodeBlock>
+    </TabItem>
+    <TabItem value="win32" label="Windows">
+        <CodeBlock language="plain text">
+            %ANDROID_HOME%\emulator\emulator -list-avds
+        </CodeBlock>
+    </TabItem>
+</Tabs>
+
+:::
+
+If you don't see that AVD name, you might use another one from the list – just replace it in Detox config, e.g.:
+
+```diff
+   emulator: {
+     type: 'android.emulator',
+     device: {
+-      avdName: 'Pixel_3a_API_30_x86',
++      avdName: 'Pixel_API_30',
+     },
+   },
+```
+
+If the output is completely blank, then you need to open Android Studio and [create a new virtual device (AVD)](https://developer.android.com/studio/run/managing-avds#createavd)
+first. Experienced users might do that via [`avdmanager`](https://developer.android.com/studio/command-line/avdmanager), if Android Studio is not installed (e.g. on CI).
+
+:::info
+
+If you wish to use an attached Android device (via USB or wireless network), make sure it is available:
+
+```bash
+adb devices
+```
+
+If the device is properly connected, you should get an output like this:
+
+```plain text
+List of devices attached
+2F6315NVPH      device
+```
+
+Assuming the device is available (troubleshooting _adb_ issues is out of scope of this tutorial), you just
+need to use `android.att.*` Detox configurations instead of `android.emu.*` where required.
+
+:warning: If you have multiple devices connected, replace that loose regular expression (`adbName: '.*'`)
+in your Detox config with a specific device name.
+
+:::

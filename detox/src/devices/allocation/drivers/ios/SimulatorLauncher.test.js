@@ -18,13 +18,14 @@ describe('Simulator launcher (helper)', () => {
   describe('launch', () => {
     const type = 'mockType';
     const bootArgs = { mock: 'boot-args' };
+    const headless = true;
 
     const givenBootResultCold = () => applesimutils.boot.mockResolvedValue(true);
     const givenBootResultWarm = () => applesimutils.boot.mockResolvedValue(false);
 
     it('should boot using apple-sim-utils', async () => {
-      await uut.launch(udid, '', bootArgs);
-      expect(applesimutils.boot).toHaveBeenCalledWith(udid, bootArgs);
+      await uut.launch(udid, '', bootArgs, headless);
+      expect(applesimutils.boot).toHaveBeenCalledWith(udid, bootArgs, headless);
     });
 
     it('should fail if apple-sim-utils fails', async () => {
@@ -35,20 +36,26 @@ describe('Simulator launcher (helper)', () => {
 
     it('should emit boot event', async () => {
       givenBootResultWarm();
-      await uut.launch(udid, type, {});
-      expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', expect.objectContaining({ deviceId: udid, type, coldBoot: false }));
+      await uut.launch(udid, type, {}, headless);
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        'bootDevice',
+        expect.objectContaining({ deviceId: udid, type, coldBoot: false, headless })
+      );
     });
 
     it('should emit cold-boot status in boot event', async () => {
       givenBootResultCold();
-      await uut.launch(udid, type, {});
-      expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', expect.objectContaining({ deviceId: udid, type, coldBoot: true }));
+      await uut.launch(udid, type, {}, headless);
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        'bootDevice',
+        expect.objectContaining({ deviceId: udid, type, coldBoot: true, headless })
+      );
     });
 
     it('should fail if emission fails', async () => {
       const error = new Error('mock error');
       eventEmitter.emit.mockRejectedValue(error);
-      await expect(uut.launch(udid, '', bootArgs)).rejects.toThrowError(error);
+      await expect(uut.launch(udid, '', bootArgs, headless)).rejects.toThrowError(error);
     });
   });
 

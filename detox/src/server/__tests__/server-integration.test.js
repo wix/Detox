@@ -4,15 +4,15 @@ const FakeWebSocket = require('../__mocks__/FakeWebSocket');
 describe('Detox server integration', () => {
   let logger;
   /**
-   * @type {typeof require('../DetoxSessionManager')}
+   * @type {typeof import('../DetoxSessionManager')}
    */
   let DetoxSessionManager;
   /**
-   * @type {typeof require('../DetoxSession')}
+   * @type {typeof import('../DetoxSession')}
    */
   let DetoxSession;
   /**
-   * @type {typeof require('../DetoxConnection')}
+   * @type {typeof import('../DetoxConnection')}
    */
   let DetoxConnection;
   /**
@@ -35,10 +35,10 @@ describe('Detox server integration', () => {
     ['app'],
     ['tester']
   ])('%j connects first, and then disconnects', async (role) => {
-    const webSocket = new FakeWebSocket({ remotePort: 8081 });
+    const webSocket = new FakeWebSocket({ localPort: 8000, remotePort: 8081 });
     sessionManager.registerConnection(webSocket, webSocket.socket);
 
-    expect(getLoggerMsg('debug', 0, 1)).toMatchSnapshot();
+    expect(getLoggerMsg('debug', 0)).toMatchSnapshot();
     expect(sessionManager.getSession(webSocket)).toBe(null);
 
     webSocket.mockLogin({ messageId: 100500, role });
@@ -157,8 +157,7 @@ describe('Detox server integration', () => {
       }
     });
 
-    expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-    expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot('CANNOT_FORWARD');
+    expect(getLoggerMsg('warn', 0)).toMatchSnapshot();
 
     // app disconnects
     appSocket.mockClose();
@@ -194,43 +193,37 @@ describe('Detox server integration', () => {
     test('on(message) - malformed data', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage(Buffer.alloc(0));
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('on(message) - no .type', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ some: 'message' });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('login - empty .params', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ type: 'login' });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('login - invalid .role', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ type: 'login', params: { sessionId: 'Session', role: 'Meteora' } });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('login - missing .sessionId', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ type: 'login', params: { sessionId: '', role: 'tester' } });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('login - non-string .sessionId', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ type: 'login', params: { sessionId: { 0: 2 }, role: 'tester' } });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('login twice (as tester)', () => {
@@ -252,16 +245,15 @@ describe('Detox server integration', () => {
       webSocket.mockLogin({ role: 'tester' });
       expect(webSocket.send).toHaveBeenCalledWith(expect.stringContaining('"type":"serverError"'));
 
-      expect(getLoggerMsg('error', 0)).toMatchSnapshot();
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('error')).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('login twice (as app)', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockLogin({ role: 'app' });
       webSocket.mockLogin({ role: 'app' });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('.registerSession - calling twice', () => {
@@ -272,14 +264,13 @@ describe('Detox server integration', () => {
       const newDetoxSession = sessionManager.registerSession(detoxConnection, { role: 'app', sessionId: '10101' });
 
       expect(priorDetoxSession === newDetoxSession).toBe(true); // assert no new sessions were created
-      expect(getLoggerMsg('error', 0)).toMatchSnapshot();
+      expect(getLoggerMsg('error')).toMatchSnapshot();
     });
 
     test('receiving an action before we login', () => {
       sessionManager.registerConnection(webSocket, webSocket.socket);
       webSocket.mockMessage({ type: 'reloadReactNative', messageId: -1000 });
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
 
     test('app dispatches "ready" action before login', async () => {
@@ -295,13 +286,17 @@ describe('Detox server integration', () => {
       delete err.stack;
       webSocket.mockError(err);
 
-      expect(getLoggerMsg('warn', 0, 0)).toEqual({ event: 'WSS_SOCKET_ERROR' });
-      expect(getLoggerMsg('warn', 0, 1)).toMatchSnapshot();
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
     });
   });
 
-  function getLoggerMsg(level, callIndex = 0, argIndex = 0) {
-    return logger[level].mock.calls[callIndex][argIndex];
+  function getLoggerMsg(level, callIndex = 0, argIndex) {
+    const call = logger.log.mock.calls.filter(c => c[0] === level).map(c => c.slice(1))[callIndex];
+    if (argIndex === undefined) {
+      return call;
+    } else {
+      return call[argIndex];
+    }
   }
 
   function aMessage(obj) {

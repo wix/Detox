@@ -34,8 +34,6 @@ describe('Allocation driver for Google emulators', () => {
   let emulatorLauncher;
   let allocationHelper;
   beforeEach(() => {
-    jest.mock('../../../../../utils/trace');
-
     jest.mock('../../../../common/drivers/android/exec/ADB');
     const ADB = require('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();

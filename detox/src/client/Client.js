@@ -9,7 +9,7 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
 const Deferred = require('../utils/Deferred');
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'ws-client,ws' });
 
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');

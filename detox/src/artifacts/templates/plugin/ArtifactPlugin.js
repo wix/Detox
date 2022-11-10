@@ -3,7 +3,7 @@
 
 const _ = require('lodash');
 
-const log = require('../../../utils/logger').child({ __filename });
+const log = require('../../../utils/logger').child({ cat: 'artifacts-plugin,artifacts' });
 
 /***
  * Almost non-opinionated building block for any artifact type

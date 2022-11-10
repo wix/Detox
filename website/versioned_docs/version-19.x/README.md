@@ -2,7 +2,7 @@
 
 ### Introduction
 
-- [Getting Started](Introduction.GettingStarted.md)
+- [Getting Started](introduction/getting-started.md)
 - [Setting Up an iOS Environment](Introduction.iOSDevEnv.md)
 - [Setting Up an Android Development](Introduction.AndroidDevEnv.md)
 - [Detox for iOS](Introduction.iOS.md)
@@ -15,7 +15,7 @@
 ### API Reference
 
 - [Detox Command Line Tools](APIRef.DetoxCLI.md)
-- [Configuration](APIRef.Configuration.md)
+- [Configuration](config/overview.md)
 - [The `detox` Object](APIRef.DetoxObjectAPI.md)
 - [The `device` Object](APIRef.DeviceObjectAPI.md)
 - [Test Lifecycle](APIRef.TestLifecycle.md)

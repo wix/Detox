@@ -36,7 +36,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     }
 
     try {
-      await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs);
+      await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs, deviceConfig.headless);
     } catch (e) {
       await this._deviceRegistry.disposeDevice(udid);
       throw e;

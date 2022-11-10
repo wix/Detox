@@ -18,73 +18,106 @@ const sidebars = {
       type: 'category',
       label: 'Introduction',
       items: [
-        'getting-started',
-        'ios-dev-env',
-        'android-dev-env',
-        'ios',
-        'android',
-        'writing-first-test',
-        'how-detox-works',
-        'design-principles',
-        'workflows'
-      ]
-    },
-    {
-      type: 'category',
-      label: 'API Reference',
-      items: [
-        'detox-cli',
-        'configuration',
-        'detox-object-api',
-        'device-object-api',
-        'test-lifecycle',
-        'matchers',
-        'actions-on-element',
-        'expect',
-        'launch-args',
-        'mocking-open-with-url',
-        'mocking-user-notifications',
-        'mocking-user-activity',
-        'artifacts',
-        'screenshots'
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Troubleshooting',
-      items: [
-        'troubleshooting',
-        'building-the-app',
-        'running-tests',
-        'synchronization',
-        'flakiness',
+        'introduction/getting-started',
+        'introduction/project-setup',
+        'introduction/your-first-test',
+        'introduction/debugging',
+        'introduction/preparing-for-ci',
       ]
     },
     {
       type: 'category',
       label: 'Guides',
       items: [
-        'running-locally',
-        'developing-while-writing-tests',
-        'running-on-ci',
-        'debugging-in-xcode',
-        'debugging-in-android-studio',
-        'mocking',
-        'migration',
-        'jest',
-        'mocha',
-        'parallel-test-execution',
-        'third-party-drivers',
-        'expo',
-        'uninstalling',
+        'guide/investigating-test-failure',
+        'guide/test-id',
+        'guide/parallel-test-execution',
+        'guide/genymotion-saas',
+        'guide/taking-screenshots',
+        'guide/mocking',
+        'guide/launch-args',
+        'guide/mocking-open-with-url',
+        'guide/mocking-user-notifications',
+        'guide/mocking-user-activity',
+        'guide/developing-while-writing-tests',
+        'guide/android-dev-env',
+        'guide/proguard-configuration',
+        'guide/uninstalling',
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Troubleshooting',
+      items: [
+        'troubleshooting/building-the-app',
+        'troubleshooting/running-tests',
+        'troubleshooting/synchronization',
+        'troubleshooting/flakiness',
       ]
     },
     {
       type: 'doc',
+      id: 'guide/migration',
+    },
+    {
+      type: 'doc',
       label: 'Contributing',
-      id: 'contributing'
+      id: 'guide/contributing'
     },
   ],
+  apiSidebar: [
+    {
+      type: 'category',
+      label: 'Config file',
+      items: [
+        'config/overview',
+        'config/devices',
+        'config/apps',
+        'config/artifacts',
+        'config/behavior',
+        'config/logger',
+        'config/session',
+        'config/testRunner',
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Command Line Interface',
+      items: [
+        'cli/overview',
+        'cli/init',
+        'cli/build',
+        'cli/test',
+        'cli/recorder',
+        'cli/build-framework-cache',
+        'cli/clean-framework-cache',
+        'cli/rebuild-framework-cache',
+        'cli/reset-lock-file',
+        'cli/run-server',
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Client API',
+      items: [
+        'api/device',
+        'api/matchers',
+        'api/actions',
+        'api/expect',
+        'api/logger',
+      ]
+    },
+    'api/internals',
+    {
+      type: 'category',
+      label: 'Tech Articles',
+      items: [
+        'articles/design-principles',
+        'articles/how-detox-works',
+        'articles/third-party-drivers',
+      ]
+    },
+  ]
 };
 
 module.exports = sidebars;

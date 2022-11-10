@@ -1,0 +1,35 @@
+```plain text
+18:26:07.024 detox[45214] i Waiting for you to manually launch your app in Android Studio.
+
+Instrumentation class: com.wix.detox.test.test/com.example.DetoxTestAppJUnitRunner
+Instrumentation arguments:
+------------------------------------
+Key            | Value
+------------------------------------
+detoxServer    | ws://localhost:8099
+detoxSessionId | test
+------------------------------------
+
+Press any key to continue...
+```
+
+Now it is time to switch back to Android Studio. You’ll need to run your instrumentation runner with the said arguments,
+this is why you should create a debug configuration of `Android Instrumented Tests` type similar to the one below:
+
+![Android Debug Configuration - Android Instrumented Tests](../../img/android-studio-debug-configuration.png)
+
+Make sure to put breakpoints at the points of interest before you start the app.
+
+After the app is launched, go back to the Terminal where Detox is running and press any key.
+As a result, you are expected to see a confirmation from Detox, e.g.:
+
+```plain text
+Found the app (com.wix.detox-example) with process ID = 16854. Proceeding...
+```
+
+Now the entire test will run as usual until it sends an action to the app, which gets trapped
+in your breakpoint.
+
+![Breakpoint is active](../../img/android-happy-debugging.png)
+
+Happy debugging!

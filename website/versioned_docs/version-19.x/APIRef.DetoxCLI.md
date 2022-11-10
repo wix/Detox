@@ -20,7 +20,7 @@ npm install detox-cli --global
 ### Usage
 
 ```sh
-detox <command> [options] 
+detox <command> [options]
 ```
 
 ### Commands
@@ -75,7 +75,7 @@ Initiating your test suite[^1].
 `detox test [options] <...testFilePaths>`
 
 | Option                                        | Description                                                                                                                                                                                                                                                                                               |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| --------------------------------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | -C, --config-path `<configPath>`              | Specify Detox config file path. If not supplied, detox searches for .detoxrc\[.js] or "detox" section in package.json                                                                                                                                                                                     |
 | -c, --configuration `<device config>`         | Select a device configuration from your defined configurations, if not supplied, and there’s only one configuration, detox will default to it                                                                                                                                                             |
 | -o, --runner-config `<config>`                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest.                                                                                                                                                                                                           |

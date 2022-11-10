@@ -7,7 +7,7 @@ describe('sliceErrorStack(error, fromIndex)', () => {
     function innerFunction() { throw new Error('Source Error'); }
     function outerFunction() { innerFunction(); }
     function attemptFunction() {
-      try { outerFunction(); } catch (e) { console.error('err', e); return e; }
+      try { outerFunction(); } catch (e) { return e; }
     }
 
     const slicer = at => (_line) => --at < 0;
@@ -35,6 +35,7 @@ describe('replaceErrorStack(source, target)', () => {
 
   function sourceFunction() { throw new Error('Source Error message'); }
   function targetFunction() { throw new Error('Target Error message'); }
+  function targetFunction2() { throw new Error(); }
 
   it('should return the target error', () => {
     const source = _.attempt(sourceFunction);
@@ -50,6 +51,16 @@ describe('replaceErrorStack(source, target)', () => {
     expect(target.stack).toMatch(/Target Error message/);
     expect(target.stack).toMatch(/at sourceFunction/);
     expect(target.stack).not.toMatch(/at targetFunction/);
+  });
+
+  it('should replace error stack in a target error missing a message', () => {
+    const source = _.attempt(sourceFunction);
+    const target = _.attempt(targetFunction2);
+
+    errorUtils.replaceErrorStack(source, target);
+    expect(target.message).toBe('');
+    expect(target.stack).toMatch(/at sourceFunction/);
+    expect(target.stack).not.toMatch(/at targetFunction2/);
   });
 
   it('should not trim down stack-frames from a (native) stack-trace reported as the message', () => {
@@ -91,5 +102,25 @@ describe('asError(err)', () => {
     const err = 'non-Error';
     expect(errorUtils.asError(err)).toBeInstanceOf(Error);
     expect(errorUtils.asError(err).message).toBe(err);
+  });
+});
+
+describe('serializeObjectWithError(obj, errorKey)', () => {
+  it('should passthrough a non-error object', () => {
+    const obj = { some: 'value' };
+    expect(errorUtils.serializeObjectWithError(obj, 'error')).toBe(obj);
+  });
+
+  it('should serialize an error object', () => {
+    const obj = { some: 'value', error: new Error('error message') };
+
+    const serialized = errorUtils.serializeObjectWithError(obj, 'error');
+    expect(serialized.error).not.toBeInstanceOf(Error);
+
+    const deserialized = errorUtils.deserializeObjectWithError(serialized, 'error');
+    expect(deserialized.error).toBeInstanceOf(Error);
+
+    expect(deserialized.error).toEqual(obj.error);
+    expect(errorUtils.deserializeObjectWithError(obj, 'error')).toBe(obj);
   });
 });

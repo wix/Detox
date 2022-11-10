@@ -18,7 +18,7 @@ Running Detox on CI is not that different from running it locally. There are two
 
 ### Step 1: Prepare a Release Configuration for Your App
 
-We will need to create a [release device configuration for Detox](APIRef.Configuration.md#device-configurations) inside `package.json` under the `detox` section.
+We will need to create a [release device configuration for Detox](config/overview.md#device-configurations) inside `package.json` under the `detox` section.
 
 **Example:**
 
