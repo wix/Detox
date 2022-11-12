@@ -94,5 +94,10 @@
     "image": "img/showcase/player-data.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=uk.co.playerdata.mobile",
     "linkApple": "https://apps.apple.com/gb/app/playerdata-insight/id1462268462"
+  },
+  {
+    "title": "Expo",
+    "image": "img/showcase/expo.png",
+    "linkWebsite": "https://expo.dev/"
   }
 ]
