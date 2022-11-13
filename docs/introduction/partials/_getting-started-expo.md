@@ -2,24 +2,16 @@
 
 :::caution Note
 
-Expo support with Detox is entirely a community driven effort. We have no specific support in Detox for Expo applications (ejected or otherwise).
-
+Expo integration with Detox is entirely a community-driven effort.
+We have no special support for Expo projects, and we do not maintain any Expo-specific code or documentation.
 :::
 
-There are a few resources on the Internet covering how to set up Detox with Expo apps:
+There is a tutorial on how to set up Detox with Expo projects, which you can find on Expo official documentation site: [Running E2E tests on EAS Build](https://docs.expo.dev/build-reference/e2e-tests/). It is a great starting point for projects that are using Expo.
 
-- <https://github.com/fschoenfeldt/clean-expo-detox-testing>
-- <https://toshev.medium.com/setting-up-detox-with-a-expo-managed-react-native-project-89342dce4df>
-- <https://blog.expo.dev/testing-expo-apps-with-detox-and-react-native-testing-library-7fbdbb82ac87>
+For support on how to use Detox with Expo, you should contact the Expo team or the Expo community.
 
-Unfortunately, we have no capacity to maintain this direction and hold no responsibility for content and
-quality of the mentioned or another available resources.
+If you are experiencing a bug, which you believe is a Detox issue, please [open an issue](https://github.com/wix/Detox/issues) on our GitHub repository.
 
-For support on how to use Detox with Expo, you should contact the Expo team or the Expo community. If you
-are seeing an issue, it is most likely not an issue with Detox itself, but with the Expo runtime or with
-an incorrect Detox setup. Genuine issues with Detox can be submitted to [our issue tracker](https://github.com/wix/Detox/issues)
-as usual.
-
-This introduction section is useful for Expo projects, but the next [Project Setup] article, in particular, is **not enough** to complete the setup with Expo.
+This introduction section is useful for Expo projects, but the next [Project Setup] article, in particular, is **not enough** to complete the setup with Expo. Please follow the [Expo guide](https://docs.expo.dev/build-reference/e2e-tests/) instead.
 
 [Project Setup]: ../project-setup.mdx
