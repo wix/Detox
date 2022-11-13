@@ -9,3 +9,10 @@
   justify-content: center;
   gap: 60px;
 }
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+}
