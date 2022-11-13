@@ -10,19 +10,18 @@ function Showcase() {
 }
 
 const _makeShuffledCardList = () => {
-  return cardList.sort(() => 0.5 - Math.random());
+  const alwaysOnTop = cardList.filter(card => card.shouldStayOnTop);
+  const shuffled = cardList.filter(card => !card.shouldStayOnTop).sort(() => Math.random() - 0.5);
+  return alwaysOnTop.concat(shuffled);
 }
 
-const _makeCard = (props) => {
-  return <Card key={props.title} {...props} />;
-}
+const _makeCard = (props) => <Card key={props.title} {...props} />;
 
-const _makeCardsContainer = (cards) => {
-  return (
+const _makeCardsContainer = (cards) =>
+  (
     <section className={clsx('container', styles.container)}>
       <ul className={clsx('col', 'col--12', styles.list)}>{cards}</ul>
     </section>
   );
-}
 
 export default Showcase;
