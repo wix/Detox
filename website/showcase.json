@@ -3,25 +3,29 @@
     "title": "Wix Spaces",
     "image": "img/showcase/wix-spaces.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.android",
-    "linkApple": "https://apps.apple.com/us/app/spaces-follow-businesses/id1099748482"
+    "linkApple": "https://apps.apple.com/us/app/spaces-follow-businesses/id1099748482",
+    "shouldStayOnTop": true
   },
   {
     "title": "Wix Owner",
     "image": "img/showcase/wix-owner.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.admin",
-    "linkApple": "https://apps.apple.com/us/app/wix-owner-website-builder/id1545924344"
+    "linkApple": "https://apps.apple.com/us/app/wix-owner-website-builder/id1545924344",
+    "shouldStayOnTop": true
   },
   {
     "title": "Fit by Wix",
     "image": "img/showcase/wix-fit.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.fitness",
-    "linkApple": "https://apps.apple.com/us/app/fit-by-wix/id1552621043"
+    "linkApple": "https://apps.apple.com/us/app/fit-by-wix/id1552621043",
+    "shouldStayOnTop": true
   },
   {
     "title": "Dine by Wix",
     "image": "img/showcase/wix-dine.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.restaurants",
-    "linkApple": "https://apps.apple.com/us/app/dine-by-wix/id1561524113"
+    "linkApple": "https://apps.apple.com/us/app/dine-by-wix/id1561524113",
+    "shouldStayOnTop": true
   },
   {
     "title": "Hudl",
@@ -94,5 +98,17 @@
     "image": "img/showcase/player-data.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=uk.co.playerdata.mobile",
     "linkApple": "https://apps.apple.com/gb/app/playerdata-insight/id1462268462"
+  },
+  {
+    "title": "Expo",
+    "image": "img/showcase/expo.png",
+    "linkWebsite": "https://expo.dev/"
+  },
+  {
+    "title": "Currenxie Global Account",
+    "titleFontSize": "1.3rem",
+    "image": "img/showcase/currenxie.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.currenxiemobilereactnative",
+    "linkApple": "https://apps.apple.com/us/app/currenxie-global-account/id1550022183"
   }
 ]
