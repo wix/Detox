@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import Card from './Card';
 import cardList from '@site/showcase.json';
 import styles from './Showcase.module.css';
+import _ from 'lodash';
 
 function Showcase() {
   const cards = _makeShuffledCardList().map(_makeCard)
@@ -10,9 +11,8 @@ function Showcase() {
 }
 
 const _makeShuffledCardList = () => {
-  const alwaysOnTop = cardList.filter(card => card.shouldStayOnTop);
-  const shuffled = cardList.filter(card => !card.shouldStayOnTop).sort(() => Math.random() - 0.5);
-  return alwaysOnTop.concat(shuffled);
+  const partition = _.partition(cardList, 'shouldStayOnTop');
+  return partition[0].concat(_.shuffle(partition[1]));
 }
 
 const _makeCard = (props) => <Card key={props.title} {...props} />;
