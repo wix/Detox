@@ -41,21 +41,15 @@ class GetAttributesTests: DTXTestCase {
     XCTAssertEqual(labelAttributes["type"], AnyCodable("staticText"))
     XCTAssertEqual(labelAttributes["text"], AnyCodable("accessibility label"))
 
-    let normalizedActivationPoint = (
-      labelAttributes["normalizedActivationPoint"] as! AnyCodable
-    ).value as! [String: AnyHashable]
+    let normalizedActivationPoint = labelAttributes["normalizedActivationPoint"]?.value as! [String: AnyHashable]
     XCTAssert(normalizedActivationPoint["x"] is CGFloat)
     XCTAssert(normalizedActivationPoint["y"] is CGFloat)
 
-    let activationPoint = (
-      labelAttributes["activationPoint"] as! AnyCodable
-    ).value as! [String: AnyHashable]
+    let activationPoint = labelAttributes["activationPoint"]?.value as! [String: AnyHashable]
     XCTAssert(activationPoint["x"] is CGFloat)
     XCTAssert(activationPoint["y"] is CGFloat)
 
-    let frame = (
-      labelAttributes["frame"] as! AnyCodable
-    ).value as! [String: AnyHashable]
+    let frame = labelAttributes["frame"]?.value as! [String: AnyHashable]
     let frameOrigin = frame["origin"] as! [String: AnyHashable]
     let frameSize = frame["size"] as! [String: AnyHashable]
     XCTAssert(frameOrigin["x"] is CGFloat)
@@ -78,21 +72,15 @@ class GetAttributesTests: DTXTestCase {
     XCTAssertEqual(sliderAttributes["type"], AnyCodable("slider"))
     XCTAssertEqual(sliderAttributes["text"], AnyCodable("slider label"))
 
-    let normalizedActivationPoint = (
-      sliderAttributes["normalizedActivationPoint"] as! AnyCodable
-    ).value as! [String: AnyHashable]
+    let normalizedActivationPoint = sliderAttributes["normalizedActivationPoint"]?.value as! [String: AnyHashable]
     XCTAssert(normalizedActivationPoint["x"] is CGFloat)
     XCTAssert(normalizedActivationPoint["y"] is CGFloat)
 
-    let activationPoint = (
-      sliderAttributes["activationPoint"] as! AnyCodable
-    ).value as! [String: AnyHashable]
+    let activationPoint = sliderAttributes["activationPoint"]?.value as! [String: AnyHashable]
     XCTAssert(activationPoint["x"] is CGFloat)
     XCTAssert(activationPoint["y"] is CGFloat)
 
-    let frame = (
-      sliderAttributes["frame"] as! AnyCodable
-    ).value as! [String: AnyHashable]
+    let frame = sliderAttributes["frame"]?.value as! [String: AnyHashable]
     let frameOrigin = frame["origin"] as! [String: AnyHashable]
     let frameSize = frame["size"] as! [String: AnyHashable]
     XCTAssert(frameOrigin["x"] is CGFloat)
@@ -103,13 +91,15 @@ class GetAttributesTests: DTXTestCase {
 }
 
 extension GetAttributesTests {
-  private func getLabelElementAttributes() throws -> [String: AnyHashable] {
+  private func getLabelElementAttributes() throws -> [String: AnyCodable] {
     let element = app.staticTexts["labelIdentifier"]
-    return try actionDelegate.getAttributes(from: [element]).value as! [String: AnyHashable]
+    let attributes = try actionDelegate.getAttributes(from: [element])
+    return attributes.value as! [String: AnyCodable]
   }
 
-  private func getSliderElementAttributes() throws -> [String: AnyHashable] {
+  private func getSliderElementAttributes() throws -> [String: AnyCodable] {
     let element = app.sliders["sliderView"]
-    return try actionDelegate.getAttributes(from: [element]).value as! [String: AnyHashable]
+    let attributes = try actionDelegate.getAttributes(from: [element])
+    return attributes.value as! [String: AnyCodable]
   }
 }

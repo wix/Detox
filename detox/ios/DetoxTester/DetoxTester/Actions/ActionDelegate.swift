@@ -177,7 +177,7 @@ class ActionDelegate: ActionDelegateProtocol {
         fatalError("could not find any attributes (no matching elements)")
       }
 
-      return AnyCodable(attributes)
+      return attributes
     }
   }
 
