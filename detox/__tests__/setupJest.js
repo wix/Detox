@@ -4,8 +4,8 @@ jest.mock('../src/logger/DetoxLogger');
 
 const path = require('path');
 
-const yargs = require('yargs');
 const _ = require('lodash');
+const yargs = require('yargs');
 
 function callCli(modulePath, cmd) {
   return new Promise((resolve, reject) => {
