@@ -19,6 +19,8 @@ describe('DetoxLogger', () => {
 
   /** @type {typeof import('./DetoxLogger')} */
   let DetoxLogger;
+  /** @type {import('./DetoxLogger')[]} */
+  let _loggerInstances;
   /** @type {string} */
   let jsonlLogPath;
   /** @type {string} */
@@ -38,7 +40,7 @@ describe('DetoxLogger', () => {
     const { level = 'trace', overrideConsole = false, options } = opts;
     DetoxLogger = require('./DetoxLogger');
 
-    return new DetoxLogger({
+    const instance = new DetoxLogger({
       file: jsonlLogPath,
       userConfig: {
         level,
@@ -52,6 +54,10 @@ describe('DetoxLogger', () => {
         },
       },
     });
+
+    _loggerInstances = _loggerInstances || [];
+    _loggerInstances.push(instance);
+    return instance;
   }
 
   let _env;
@@ -64,8 +70,12 @@ describe('DetoxLogger', () => {
     safetyTimeout = null;
   }
 
-  function teardownSuite() {
+  async function teardownSuite() {
     process.env = _env;
+
+    await Promise.all(_loggerInstances.map((logger) => logger.close()));
+    _loggerInstances = [];
+
     fs.removeSync(jsonlLogPath);
     fs.removeSync(plainLogPath);
   }
@@ -372,6 +382,10 @@ describe('DetoxLogger', () => {
 
     it('should not allow setting config in a child logger', async () => {
       await expect(logger().child().setConfig({ level: 'info' })).rejects.toThrowError(/Trying to set a config in a non-root logger/);
+    });
+
+    it('should not allow closing the entire logging capability from a child logger', async () => {
+      await expect(logger().child().close()).rejects.toThrowError(/Trying to close file streams from a non-root logger/);
     });
 
     it('should escape properties conflicting with Bunyan internal ones', async () => {

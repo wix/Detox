@@ -24,6 +24,7 @@ const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _lifecycleLogger = Symbol('lifecycleLogger');
 const _sessionFile = Symbol('sessionFile');
+const _logFinalError = Symbol('logFinalError');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -178,9 +179,10 @@ class DetoxPrimaryContext extends DetoxContext {
       if (this[_dirty]) {
         try {
           this[_lifecycleLogger].trace.end();
+          await this[symbols.logger].close();
           await this[$logFinalizer].finalize();
         } catch (err) {
-          this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
+          this[_logFinalError](err);
         }
       }
     }
@@ -210,10 +212,15 @@ class DetoxPrimaryContext extends DetoxContext {
 
     try {
       this[_lifecycleLogger].trace.end({ abortSignal: signal });
+      this[symbols.logger].close().catch(this[_logFinalError]);
       this[$logFinalizer].finalizeSync();
     } catch (err) {
-      this[symbols.logger].error({ err }, 'Encountered an error while merging the process logs:');
+      this[_logFinalError](err);
     }
+  };
+
+  [_logFinalError] = (err) => {
+    this[_lifecycleLogger].error(err, 'Encountered an error while merging the process logs:');
   };
 
   //#endregion
