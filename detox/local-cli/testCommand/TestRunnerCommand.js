@@ -8,7 +8,8 @@ const detox = require('../../internals');
 const log = detox.log.child({ cat: ['lifecycle', 'cli'] });
 const { DetoxRuntimeError } = require('../../src/errors');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
-const { escapeSpaces } = require('../../src/utils/shellUtils');
+const { toSimplePath } = require('../../src/utils/pathUtils');
+const { escapeSpaces, useForwardSlashes } = require('../../src/utils/shellUtils');
 
 class TestRunnerCommand {
   /*
@@ -57,8 +58,9 @@ class TestRunnerCommand {
         if (--runsLeft > 0) {
           // @ts-ignore
           detox.session.testSessionIndex++; // it is always the primary context, so we can update it
-          this._argv._ = testFilesToRetry;
-          this._logRelaunchError();
+
+          this._argv._ = testFilesToRetry.map(useForwardSlashes);
+          this._logRelaunchError(testFilesToRetry);
         }
       }
     } while (launchError && runsLeft > 0);
@@ -148,9 +150,9 @@ class TestRunnerCommand {
     ].map(String);
   }
 
-  _logRelaunchError() {
-    const list = this._argv._.map((file, index) => {
-      return `  ${index + 1}. ${file}`;
+  _logRelaunchError(filePaths) {
+    const list = filePaths.map((file, index) => {
+      return `  ${index + 1}. ${toSimplePath(file)}`;
     }).join('\n');
 
     log.error(
