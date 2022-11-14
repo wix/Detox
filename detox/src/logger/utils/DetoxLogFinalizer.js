@@ -1,14 +1,9 @@
 const path = require('path');
-const { promisify } = require('util');
 
 const fs = require('fs-extra');
-const glob = require('glob');
 const pipe = require('multipipe');
 
 const temporary = require('../../artifacts/utils/temporaryPath');
-
-const globAsync = promisify(glob);
-const globSync = glob.sync;
 const streamUtils = () => require('../../logger/utils/streamUtils');
 
 const getMainCategory = require('./getMainCategory');
@@ -26,7 +21,7 @@ class DetoxLogFinalizer {
 
   createEventStream() {
     const sessionId = this._session.id;
-    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
+    const logs = temporary.find.jsonl.sync(`${sessionId}.*`);
 
     return streamUtils()
       .uniteSessionLogs(logs)
@@ -35,7 +30,7 @@ class DetoxLogFinalizer {
 
   async finalize() {
     const sessionId = this._session.id;
-    const logs = await globAsync(temporary.for.jsonl(`${sessionId}.*`));
+    const logs = await temporary.find.jsonl.async(`${sessionId}.*`);
     if (logs.length === 0) {
       return;
     }
@@ -61,7 +56,7 @@ class DetoxLogFinalizer {
 
   finalizeSync() {
     const sessionId = this._session.id;
-    const logs = globSync(temporary.for.jsonl(`${sessionId}.*`));
+    const logs = temporary.find.jsonl.sync(`${sessionId}.*`);
     if (logs.length === 0) {
       return;
     }
@@ -74,10 +69,37 @@ class DetoxLogFinalizer {
 
     for (const log of logs) {
       if (logsEnabled) {
-        fs.moveSync(log, path.join(rootDir, path.basename(log)));
+        const dest = path.join(rootDir, path.basename(log));
+        this._safeMoveSync(log, dest);
       } else {
-        fs.removeSync(log);
+        this._safeRemoveSync(log);
       }
+    }
+  }
+
+  /* istanbul ignore next */
+  _safeMoveSync(src, dest) {
+    // Using console.* instead of logger.* because this is the end of the execution,
+    // and the logger is already closed.
+
+    try {
+      fs.moveSync(src, dest);
+    } catch (moveError) {
+      console.warn(`Failed to move a log file from: ${src}.\nReason: ${moveError.message}`);
+      try {
+        fs.copySync(src, dest);
+      } catch (copyError) {
+        console.warn(`Attempt to copy the file also failed.\nReason: ${copyError.message}`);
+      }
+    }
+  }
+
+  /* istanbul ignore next */
+  _safeRemoveSync(filepath) {
+    try {
+      fs.removeSync(filepath);
+    } catch (removeError) {
+      console.warn(`Failed to remove a log file at: ${filepath}.\nReason: ${removeError.message}`);
     }
   }
 

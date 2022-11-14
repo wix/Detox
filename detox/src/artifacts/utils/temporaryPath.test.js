@@ -1,24 +1,64 @@
 const path = require('path');
 
+const fs = require('fs-extra');
 const tempfile = require('tempfile');
 
 const temporaryPath = require('./temporaryPath');
 
 describe('temporaryPath', () => {
-  it('should create a temporary file like *.detox.png for .png', expectTemporaryFile('png'));
-  it('should create a temporary file like *.detox.log for .log', expectTemporaryFile('log'));
-  it('should create a temporary file like *.detox.mp4 for .mp4', expectTemporaryFile('mp4'));
-  it('should create a temporary file like *.detox.viewhierarchy for .dtxrec', expectTemporaryFile('dtxrec'));
-  it('should create a temporary file like *.detox.viewhierarchy for .viewhierarchy', expectTemporaryFile('viewhierarchy'));
+  describe.each([
+    ['json'],
+    ['jsonl'],
+    ['png'],
+    ['log'],
+    ['mp4'],
+    ['dtxrec'],
+    ['viewhierarchy'],
+  ])('for.%s', (ext) => {
+    it(`should generate a temporary path with the correct extension`, () => {
+      expect(path.dirname(temporaryPath.for[ext]())).toBe(path.dirname(tempfile()));
+      expect(temporaryPath.for[ext]()).toMatch(new RegExp(`.+\\.detox\\.${ext}$`));
+    });
 
-  it('should generate a glob mask for those temporary files', () => {
-    expect(temporaryPath.mask()).toMatch(/\*\.detox\.\*$/);
+    it(`should generate a temporary path with specified name and correct extension`, () => {
+      const basename = Math.random().toString(36).slice(2);
+      const tempPath = temporaryPath.for[ext](basename);
+      expect(path.dirname(temporaryPath.for[ext]())).toBe(path.dirname(tempfile()));
+      expect(path.basename(tempPath, `.detox.${ext}`)).toBe(basename);
+    });
   });
 
-  function expectTemporaryFile(extension) {
-    return function () {
-      expect(path.dirname(temporaryPath.for[extension]())).toBe(path.dirname(tempfile()));
-      expect(temporaryPath.for[extension]()).toMatch(new RegExp(`.+\\.detox\\.${extension}$`));
-    };
-  }
+  describe.each([
+    ['jsonl'],
+  ])('find.%s', (ext) => {
+    let file1, file2;
+
+    beforeEach(async () => {
+      file1 = temporaryPath.for[ext]('ABC.DEF');
+      file2 = temporaryPath.for[ext]('XYZ.DEF');
+      await fs.ensureFile(file1);
+      await fs.ensureFile(file2);
+    });
+
+    afterEach(async () => {
+      await fs.remove(file1);
+      await fs.remove(file2);
+    });
+
+    describe('.sync', () => {
+      it('should find temporary files by mask synchronously', async () => {
+        expect(temporaryPath.find[ext].sync('ABC.DEF')).toEqual([file1]);
+        expect(temporaryPath.find[ext].sync('ABC.*')).toEqual([file1]);
+        expect(temporaryPath.find[ext].sync('*.DEF')).toEqual([file1, file2]);
+      });
+    });
+
+    describe('.async', () => {
+      it('should find temporary files by mask asynchronously', async () => {
+        await expect(temporaryPath.find[ext].async('ABC.DEF')).resolves.toEqual([file1]);
+        await expect(temporaryPath.find[ext].async('ABC.*')).resolves.toEqual([file1]);
+        await expect(temporaryPath.find[ext].async('*.DEF')).resolves.toEqual([file1, file2]);
+      });
+    });
+  });
 });
