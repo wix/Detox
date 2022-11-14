@@ -26,7 +26,6 @@ const glob = require('glob');
 const tempfile = require('tempfile');
 
 const temporary = require('../../artifacts/utils/temporaryPath');
-const sleep = require('../../utils/sleep');
 const DetoxLogger = require('../DetoxLogger');
 
 const DetoxLogFinalizer = require('./DetoxLogFinalizer');
@@ -283,6 +282,6 @@ describe('DetoxLogFinalizer', () => {
     jest.setSystemTime(new Date('2023-01-01T00:00:02.250Z'));
     log2.trace.end();
 
-    await sleep(10);
+    await Promise.all([log1.close(), log2.close()]);
   }
 });

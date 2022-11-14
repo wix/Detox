@@ -120,6 +120,25 @@ class DetoxLogger {
   }
 
   /**
+   * Closes the file descriptors to make sure that the temporary
+   * JSONL files can be moved safely to the directory with the artifacts.
+   * This safety measure is especially important for Windows OS.
+   *
+   * @async
+   * @internal
+   */
+  async close() {
+    if (this._context) {
+      throw new DetoxInternalError(
+        'Trying to close file streams from a non-root logger.\n' +
+        'If you are not fiddling with Detox internals on purpose, yet you see this error, then...'
+      );
+    }
+
+    await this._sharedConfig.bunyan.closeFileStreams();
+  }
+
+  /**
    * @internal
    */
   overrideConsole(sandbox) {
