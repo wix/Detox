@@ -173,7 +173,7 @@ describe('DetoxPrimaryContext', () => {
       await facade.init();
 
       expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringMatching(/.*\.detox\.json/),
+        expect.stringMatching(tempFileRegexp),
         expect.any(String),
       );
 
