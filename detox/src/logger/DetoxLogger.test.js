@@ -233,6 +233,19 @@ describe('DetoxLogger', () => {
       await expect(txt()).resolves.toMatchSnapshot();
     });
 
+    it('should log end duration events correctly for different categories', async () => {
+      const parent = logger();
+      const cat1 = parent.child({ cat: 'cat1' });
+      const cat2 = parent.child({ cat: 'cat2' });
+
+      cat1.info.begin('Activity 1 start');
+      cat2.info.begin('Activity 2 start');
+      cat1.info.end();
+      cat2.info.end();
+
+      await expect(txt()).resolves.toMatchSnapshot();
+    });
+
     it.each([
       ['trace'],
       ['debug'],

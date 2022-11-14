@@ -192,7 +192,7 @@ class DetoxLogger {
 
   /** @private */
   _beginInternal(level, context, msg) {
-    this._sharedConfig.messageStack.push(context.tid, msg);
+    this._sharedConfig.messageStack.push(context, msg);
     this._sharedConfig.bunyan.logger[level](context, ...msg);
   }
 
@@ -204,7 +204,7 @@ class DetoxLogger {
 
   /** @private */
   _endInternal(level, context, msg) {
-    const beginMsg = this._sharedConfig.messageStack.pop(context.tid);
+    const beginMsg = this._sharedConfig.messageStack.pop(context);
     if (msg.length === 0) {
       msg = beginMsg;
     }
