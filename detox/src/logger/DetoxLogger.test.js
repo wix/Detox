@@ -12,12 +12,6 @@ const tempfile = require('tempfile');
 
 const sleep = require('../utils/sleep');
 
-// TODO: investigate why the test fails
-if (os.platform() === 'win32') {
-  // eslint-disable-next-line no-global-assign
-  describe = describe.skip;
-}
-
 jest.retryTimes(2);
 
 describe('DetoxLogger', () => {
@@ -118,6 +112,19 @@ describe('DetoxLogger', () => {
 
     it('should have a log level getter', () => {
       expect(logger().level).toBe('trace'); // set in tests
+    });
+
+    it('should cast non-standard log levels to the closest standard level', async () => {
+      const LoggerClass = logger().constructor;
+      expect(LoggerClass).toBe(DetoxLogger);
+      expect(DetoxLogger.castLevel('trace')).toBe('trace');
+      expect(DetoxLogger.castLevel('debug')).toBe('debug');
+      expect(DetoxLogger.castLevel('verbose')).toBe('debug');
+      expect(DetoxLogger.castLevel('info')).toBe('info');
+      expect(DetoxLogger.castLevel('warn')).toBe('warn');
+      expect(DetoxLogger.castLevel('error')).toBe('error');
+      expect(DetoxLogger.castLevel('fatal')).toBe('fatal');
+      expect(DetoxLogger.castLevel('unknown')).toBe('info');
     });
 
     it('should be able to create a child logger', async () => {
@@ -401,19 +408,6 @@ describe('DetoxLogger', () => {
         v: 0,
       }]);
     });
-  });
-
-  it('should cast non-standard log levels to the closest standard level', async () => {
-    const LoggerClass = logger().constructor;
-    expect(LoggerClass).toBe(DetoxLogger);
-    expect(DetoxLogger.castLevel('trace')).toBe('trace');
-    expect(DetoxLogger.castLevel('debug')).toBe('debug');
-    expect(DetoxLogger.castLevel('verbose')).toBe('debug');
-    expect(DetoxLogger.castLevel('info')).toBe('info');
-    expect(DetoxLogger.castLevel('warn')).toBe('warn');
-    expect(DetoxLogger.castLevel('error')).toBe('error');
-    expect(DetoxLogger.castLevel('fatal')).toBe('fatal');
-    expect(DetoxLogger.castLevel('unknown')).toBe('info');
   });
 
   function anError(msg) {
