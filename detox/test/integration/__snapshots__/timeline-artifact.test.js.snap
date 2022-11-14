@@ -407,7 +407,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     },
     "cat": "lifecycle,cli",
     "name": "There were failing tests in the following files:
-  1. $CWD/integration/e2e/stub1.test.js
+  1. integration/e2e/stub1.test.js
 
 Detox CLI is going to restart the test runner with those files...
 ",

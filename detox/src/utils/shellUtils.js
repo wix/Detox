@@ -1,5 +1,6 @@
 const SPACE = ' ';
 const BACK_SLASH = '\\';
+const FORWARD_SLASH = '/';
 const SINGLE_QUOTE = "'";
 const DOUBLE_QUOTE = '"';
 
@@ -64,6 +65,14 @@ function autoEscapeCmd(str) {
   return escapeWithDoubleQuotedString(str);
 }
 
+function useForwardSlashesCMD(str) {
+  return str.split(BACK_SLASH).join(FORWARD_SLASH);
+}
+
+function useForwardSlashesShell(str) {
+  return str; // already POSIX, so no-op
+}
+
 const hasUnsafeChars = isRunningInCMDEXE()
   /* istanbul ignore next */ ? hasUnsafeCMDChars
   /* istanbul ignore next */ : hasUnsafeShellChars;
@@ -75,6 +84,10 @@ const autoEscape = isRunningInCMDEXE()
 const escapeSpaces = isRunningInCMDEXE()
   /* istanbul ignore next */ ? escapeSpacesCMD
   /* istanbul ignore next */ : escapeSpacesShell;
+
+const usePosixSlashes = isRunningInCMDEXE()
+  /* istanbul ignore next */ ? useForwardSlashesCMD
+  /* istanbul ignore next */ : useForwardSlashesShell;
 
 module.exports = {
   escapeInDoubleQuotedString,
@@ -93,5 +106,9 @@ module.exports = {
   autoEscape: Object.assign(autoEscape, {
     cmd: autoEscapeCmd,
     shell: autoEscapeShell,
+  }),
+  useForwardSlashes: Object.assign(usePosixSlashes, {
+    cmd: useForwardSlashesCMD,
+    shell: useForwardSlashesShell,
   }),
 };
