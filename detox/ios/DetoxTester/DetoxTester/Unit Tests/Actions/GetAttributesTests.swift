@@ -7,7 +7,6 @@ import DetoxInvokeHandler
 import Foundation
 import XCTest
 
-// TODO: fix tests.
 class GetAttributesTests: DTXTestCase {
   var app: XCUIApplication!
   var actionDelegate: ActionDelegate!
