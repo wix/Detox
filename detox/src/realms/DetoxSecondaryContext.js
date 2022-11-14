@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const { DetoxInternalError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
