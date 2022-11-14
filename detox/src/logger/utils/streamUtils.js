@@ -11,6 +11,8 @@ const { AbstractEventBuilder } = require('trace-event-lib');
 
 const log = require('../../utils/logger').child({ cat: 'logger' });
 
+const getMainCategory = require('./getMainCategory');
+
 function compareTimestamps(a, b) {
   return +(a.value.time > b.value.time) - +(a.value.time < b.value.time);
 }
@@ -144,7 +146,7 @@ class SimpleEventBuilder extends AbstractEventBuilder {
 const ERROR_TID = 37707;
 
 function getTidHash({ pid, tid, cat }) {
-  const mainCategory = String(cat).split(',')[0];
+  const mainCategory = getMainCategory(cat);
   return `${pid}:${mainCategory}:${tid}`;
 }
 
@@ -180,8 +182,8 @@ function chromeTraceStream(tidHashMap) {
     }
 
     if (!knownTids.has(tid)) {
-      const primaryCategory = cat.split(',', 1)[0];
-      builder.metadata({ pid, tid, ts, name: 'thread_name', args: { name: primaryCategory } });
+      const mainCategory = getMainCategory(cat);
+      builder.metadata({ pid, tid, ts, name: 'thread_name', args: { name: mainCategory } });
       builder.metadata({ pid, tid, ts, name: 'thread_sort_index', args: { sort_index: tid } });
       knownTids.add(tid);
     }

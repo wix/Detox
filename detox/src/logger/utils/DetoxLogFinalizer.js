@@ -11,6 +11,8 @@ const globAsync = promisify(glob);
 const globSync = glob.sync;
 const streamUtils = () => require('../../logger/utils/streamUtils');
 
+const getMainCategory = require('./getMainCategory');
+
 /**
  * @typedef DetoxLogFinalizerConfig
  * @property {import('../../ipc/SessionState')} session
@@ -118,7 +120,7 @@ class DetoxLogFinalizer {
           const { ph, pid, tid, cat } = event;
           if (ph === 'B' || ph === 'i') {
             const categories = (result[pid] = result[pid] || {});
-            const mainCategory = String(cat).split(',')[0];
+            const mainCategory = getMainCategory(cat);
             const tids = (categories[mainCategory] = categories[mainCategory] || []);
             if (!tids.includes(tid)) {
               tids.push(tid);
