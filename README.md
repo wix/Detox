@@ -56,7 +56,7 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ### Environment
 
-- **OS**: macOS 10.15 (Catalina) or higher
+- **OS**: macOS 10.15 (Catalina) or higher; Ubuntu Linux 20.04 or higher; Windows 10 Version 1803 or higher
 - **Xcode**: 11.0 or higher
   - **iOS Simulator Runtime**: iOS 13.0 or higher
 
