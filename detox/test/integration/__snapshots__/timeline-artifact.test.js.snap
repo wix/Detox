@@ -36,7 +36,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     },
     "cat": "lifecycle,cli",
     "name": "nyc jest --config integration/e2e/config.js stub1",
-    "ph": "i",
+    "ph": "B",
     "pid": 0,
     "tid": 0,
     "ts": 2,
@@ -402,6 +402,20 @@ exports[`Timeline integration test should deterministically produce a timeline a
   },
   {
     "args": {
+      "code": 1,
+      "level": 50,
+      "signal": null,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 29,
+  },
+  {
+    "args": {
       "level": 50,
       "v": 0,
     },
@@ -414,7 +428,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 0,
     "tid": 0,
-    "ts": 29,
+    "ts": 30,
   },
   {
     "args": {
@@ -424,10 +438,10 @@ Detox CLI is going to restart the test runner with those files...
     },
     "cat": "lifecycle,cli",
     "name": "nyc jest --config integration/e2e/config.js $CWD/integration/e2e/stub1.test.js",
-    "ph": "i",
+    "ph": "B",
     "pid": 0,
     "tid": 0,
-    "ts": 30,
+    "ts": 31,
   },
   {
     "args": {
@@ -439,7 +453,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 31,
+    "ts": 32,
   },
   {
     "args": {
@@ -451,7 +465,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 32,
+    "ts": 33,
   },
   {
     "args": {
@@ -463,7 +477,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 2,
     "tid": 2,
-    "ts": 33,
+    "ts": 34,
   },
   {
     "args": {
@@ -475,7 +489,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 34,
+    "ts": 35,
   },
   {
     "args": {
@@ -487,7 +501,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 35,
+    "ts": 36,
   },
   {
     "args": {
@@ -499,7 +513,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 36,
+    "ts": 37,
   },
   {
     "args": {
@@ -515,7 +529,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 37,
+    "ts": 38,
   },
   {
     "args": {
@@ -527,7 +541,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 38,
+    "ts": 39,
   },
   {
     "args": {
@@ -560,7 +574,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 39,
+    "ts": 40,
   },
   {
     "args": {
@@ -572,7 +586,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 2,
     "tid": 2,
-    "ts": 40,
+    "ts": 41,
   },
   {
     "args": {
@@ -588,7 +602,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 41,
+    "ts": 42,
   },
   {
     "args": {
@@ -600,7 +614,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 2,
     "tid": 2,
-    "ts": 42,
+    "ts": 43,
   },
   {
     "args": {
@@ -623,7 +637,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 2,
     "tid": 2,
-    "ts": 43,
+    "ts": 44,
   },
   {
     "args": {
@@ -636,7 +650,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 2,
     "tid": 2,
-    "ts": 44,
+    "ts": 45,
   },
   {
     "args": {
@@ -649,7 +663,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 2,
     "tid": 2,
-    "ts": 45,
+    "ts": 46,
   },
   {
     "args": {
@@ -661,7 +675,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 46,
+    "ts": 47,
   },
   {
     "args": {
@@ -677,7 +691,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 47,
+    "ts": 48,
   },
   {
     "args": {
@@ -689,7 +703,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 48,
+    "ts": 49,
   },
   {
     "args": {
@@ -701,7 +715,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 49,
+    "ts": 50,
   },
   {
     "args": {
@@ -717,7 +731,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 2,
     "tid": 2,
-    "ts": 50,
+    "ts": 51,
   },
   {
     "args": {
@@ -727,17 +741,6 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle",
     "name": "Stub1: Check that todo tests are also traced",
     "ph": "i",
-    "pid": 2,
-    "tid": 2,
-    "ts": 51,
-  },
-  {
-    "args": {
-      "level": 10,
-      "v": 0,
-    },
-    "cat": "lifecycle,jest-environment",
-    "ph": "E",
     "pid": 2,
     "tid": 2,
     "ts": 52,
@@ -759,8 +762,7 @@ Detox CLI is going to restart the test runner with those files...
       "v": 0,
     },
     "cat": "lifecycle,jest-environment",
-    "name": "tear down environment",
-    "ph": "B",
+    "ph": "E",
     "pid": 2,
     "tid": 2,
     "ts": 54,
@@ -771,7 +773,8 @@ Detox CLI is going to restart the test runner with those files...
       "v": 0,
     },
     "cat": "lifecycle,jest-environment",
-    "ph": "E",
+    "name": "tear down environment",
+    "ph": "B",
     "pid": 2,
     "tid": 2,
     "ts": 55,
@@ -779,7 +782,6 @@ Detox CLI is going to restart the test runner with those files...
   {
     "args": {
       "level": 10,
-      "success": true,
       "v": 0,
     },
     "cat": "lifecycle,jest-environment",
@@ -791,13 +793,39 @@ Detox CLI is going to restart the test runner with those files...
   {
     "args": {
       "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 57,
+  },
+  {
+    "args": {
+      "code": 1,
+      "level": 50,
+      "signal": null,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 58,
+  },
+  {
+    "args": {
+      "level": 10,
       "v": 0,
     },
     "cat": "lifecycle",
     "ph": "E",
     "pid": 0,
     "tid": 0,
-    "ts": 57,
+    "ts": 59,
   },
 ]
 `;

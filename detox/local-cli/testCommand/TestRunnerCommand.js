@@ -6,10 +6,11 @@ const unparse = require('yargs-unparser');
 
 const detox = require('../../internals');
 const log = detox.log.child({ cat: ['lifecycle', 'cli'] });
-const { DetoxRuntimeError } = require('../../src/errors');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 const { toSimplePath } = require('../../src/utils/pathUtils');
 const { escapeSpaces, useForwardSlashes } = require('../../src/utils/shellUtils');
+
+const TestRunnerError = require('./TestRunnerError');
 
 class TestRunnerCommand {
   /*
@@ -116,7 +117,7 @@ class TestRunnerCommand {
     const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
     const fullCommandWithHint = printEnvironmentVariables(this._envHint) + fullCommand.join(' ');
 
-    log.info({ env: this._envHint }, fullCommandWithHint);
+    log.info.begin({ env: this._envHint }, fullCommandWithHint);
 
     return new Promise((resolve, reject) => {
       cp.spawn(fullCommand[0], fullCommand.slice(1), {
@@ -130,10 +131,20 @@ class TestRunnerCommand {
           .value()
       })
         .on('error', /* istanbul ignore next */ (err) => reject(err))
-        .on('exit', (code) => code === 0
-          ? resolve()
-          : reject(new DetoxRuntimeError(`Command failed with exit code = ${code}:\n${fullCommandWithHint}`)
-        ));
+        .on('exit', (code, signal) => {
+          if (code === 0) {
+            log.trace.end({ success: true });
+            resolve();
+          } else {
+            const error = new TestRunnerError({
+              command: fullCommandWithHint,
+              code,
+              signal,
+            });
+            log.error.end({ success: false, code, signal }, error.message);
+            reject(error);
+          }
+        });
     });
   }
 
