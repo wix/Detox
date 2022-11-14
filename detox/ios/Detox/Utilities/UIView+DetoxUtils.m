@@ -69,30 +69,30 @@ DTX_DIRECT_MEMBERS
 - (CGPoint)dtx_accessibilityActivationPointInViewCoordinateSpace
 {
 	UIWindow* windowToUse = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
-	
+
 	return [windowToUse.screen.coordinateSpace convertPoint:self.dtx_accessibilityActivationPoint toCoordinateSpace:self.coordinateSpace];
 }
 
 - (CGRect)dtx_contentBounds
 {
 	CGRect contentBounds = self.bounds;
-	
+
 	if(self.clipsToBounds == YES)
 	{
 		return contentBounds;
 	}
-	
+
 	for (UIView* subview in self.subviews) {
 		contentBounds = CGRectUnion(contentBounds, subview.dtx_contentBounds);
 	}
-	
+
 	return contentBounds;
 }
 
 - (CGRect)dtx_visibleBounds
 {
 	CGRect visibleBounds = self.bounds;
-	
+
 	UIView* superview = self.superview;
 	while(superview != nil)
 	{
@@ -101,15 +101,15 @@ DTX_DIRECT_MEMBERS
 			CGRect boundsInSelfCoords = [self convertRect:superview.bounds fromView:superview];
 			visibleBounds = CGRectIntersection(boundsInSelfCoords, visibleBounds);
 		}
-		
+
 		if(CGRectIsEmpty(visibleBounds))
 		{
 			break;
 		}
-		
+
 		superview = superview.superview;
 	}
-	
+
 	return visibleBounds;
 }
 
@@ -134,59 +134,59 @@ DTX_DIRECT_MEMBERS
 - (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView inRect:(CGRect)testedRect drawTestedRect:(BOOL)drawTestedRect
 {
 	UIGraphicsBeginImageContextWithOptions(windowToUse.bounds.size, NO, windowToUse.screen.scale);
-	
+
 	UIWindowScene* scene = windowToUse.windowScene;
 	NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:scene];
 	NSUInteger indexOfTestedWindow = [windows indexOfObject:windowToUse];
-	
+
 	DTXAssert(indexOfTestedWindow != NSNotFound, @"Window hierarchy mutated while iterated; should not happen");
-	
+
 	if(testedView == nil)
 	{
 		[UIColor.blackColor setFill];
 		[[UIBezierPath bezierPathWithRect:windowToUse.bounds] fill];
 	}
-	
+
 	[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
-	
+
 	for (NSUInteger idx = indexOfTestedWindow + 1; idx < windows.count; idx++) {
 		UIWindow* currentWindow = windows[idx];
-		
+
 		[currentWindow dtx_drawViewHierarchyUpToSubview:nil inRect:currentWindow.bounds afterScreenUpdates:NO];
 	}
-	
+
 	//Overlay the keyboard scene windows on top
 	scene = [UIWindowScene _keyboardWindowSceneForScreen:windowToUse.screen create:NO];
 	if(scene != nil)
 	{
 		windows = [UIWindow dtx_allWindowsForScene:scene];
-		
+
 		for (UIWindow* keyboardSceneWindow in windows) {
 			if (![keyboardSceneWindow isEqual: windowToUse]) {
 				[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
 			}
 		}
 	}
-	
+
 	if(drawTestedRect && testedView != nil)
 	{
 		CGContextRef ctx = UIGraphicsGetCurrentContext();
 		CGContextSetLineWidth(ctx, 1);
 		CGContextSetAllowsAntialiasing(ctx, NO);
-		
+
 		CGFloat* lengths = (CGFloat[]){2.0, 2.0};
 		[@[UIColor.systemRedColor, UIColor.whiteColor] enumerateObjectsUsingBlock:^(UIColor * _Nonnull color, NSUInteger idx, BOOL * _Nonnull stop) {
 			CGContextSetLineDash(ctx, idx * 2.0, lengths, 2);
 			[color setStroke];
 			CGContextStrokeRect(ctx, testedRect);
-			
+
 			//			*stop = YES;
 		}];
 	}
-	
+
 	UIImage* rv = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
-	
+
 	return rv;
 }
 
@@ -196,12 +196,12 @@ DTX_DIRECT_MEMBERS
 																				 explanation:(NSString**)explanation {
 	BOOL isRegionObscured = [self isRegionObscuredWithVisiblePixels:visible
 																											totalPixels:total percent:percent];
-	
+
 	if (isRegionObscured) {
 		*explanation = [NSString stringWithFormat:@"View does not pass visibility percent "
 										"threshold (%lu)", (unsigned long)percent];
 	}
-	
+
 	return isRegionObscured;
 }
 
@@ -227,89 +227,89 @@ DTX_DIRECT_MEMBERS
 - (BOOL)_dtx_testVisibilityInRect:(CGRect)rect percent:(NSUInteger)percent
 														error:(NSError* __strong __nullable * __nullable)error {
 	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
-	
+
 	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
 	{
 		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"System alert is shown on screen")}]);
-		
+
 		return NO;
 	}
-	
+
 	UIWindow* windowToUse = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
-	
+
 	if(windowToUse == nil || windowToUse.screen == nil)
 	{
 		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"Either window or screen are nil")}]);
-		
+
 		return NO;
 	}
-	
+
 	if(windowToUse.windowScene == nil)
 	{
 		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"Window scene is nil")}]);
 		return NO;
 	}
-	
+
 	if([self isHiddenOrHasHiddenAncestor] == YES)
 	{
 		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"View is hidden or has hidden ancestor")}]);
-		
+
 		return NO;
 	}
-	
+
 	CGRect testedRegionInWindowCoords = [windowToUse convertRect:rect fromView:self];
-	
+
 	CGRect visibleBounds = self.dtx_visibleBounds;
 	if (CGRectIsEmpty(visibleBounds) ||
 			[self _dtx_isRegionObscured:visibleBounds fromTestedRegion:visibleBounds percent:percent]) {
 		auto errorDescription = [NSString stringWithFormat:@"View is clipped by one or more of its "
 														 "superviews' bounds and does not pass visibility percent "
 														 "threshold (%lu)", (unsigned long)percent];
-		
+
 		auto userInfo = @{ NSLocalizedDescriptionKey: APPLY_PREFIX(errorDescription) };
-		
+
 		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:userInfo];
 		_DTXPopulateError(err);
-		
+
 		return NO;
 	}
-	
+
 	if ([self _dtx_isTestedRegionObscured:testedRegionInWindowCoords
 												 inWindowBounds:windowToUse.bounds percent:percent]) {
 		auto errorDescription = [NSString stringWithFormat:@"View is obscured by its window bounds "
 														 "and does not pass visibility percent threshold (%lu)", (unsigned long)percent];
-		
+
 		auto userInfo = @{ NSLocalizedDescriptionKey: APPLY_PREFIX(errorDescription) };
-		
+
 		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:userInfo];
 		_DTXPopulateError(err);
-		
+
 		return NO;
 	}
-	
+
 	UIImage* image = [self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self inRect:testedRegionInWindowCoords drawTestedRect:NO];
 	image = [image dtx_imageByCroppingInRect:testedRegionInWindowCoords];
-	
+
 	NSUInteger total;
 	NSUInteger visible = [image
 												dtx_numberOfVisiblePixelsWithAlphaThreshold:DetoxPolicy.visibilityPixelAlphaThreshold
 												totalPixels:&total];
-	
+
 	NSString* explanation;
 	if ([self _dtx_isTestedRegionObscuredWithVisiblePixels:visible totalPixels:total percent:percent
 																									ofView:self explanation:&explanation]) {
 		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(explanation)}];
 		_DTXPopulateError(err);
-		
+
 		if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDebugVisibility"])
 		{
 			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:nil inRect:testedRegionInWindowCoords drawTestedRect:NO] dtx_saveToPath:NSURL.visibilityFailingScreenshotsPath fileName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_SCREEN.png", NSStringFromClass(self.class), self]];
 			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self inRect:testedRegionInWindowCoords drawTestedRect:YES] dtx_saveToPath:NSURL.visibilityFailingRectsPath fileName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_TEST.png", NSStringFromClass(self.class), self]];
 		}
-		
+
 		return NO;
 	}
-	
+
 	return YES;
 }
 
@@ -342,7 +342,7 @@ DTX_DIRECT_MEMBERS
 	{
 		rv = (id)rv.nextResponder;
 	}
-	
+
 	return rv;
 }
 
@@ -436,26 +436,26 @@ DTX_DIRECT_MEMBERS
 	CGPoint absOrigin = [originView calcAbsOrigin];
 	CGPoint relativePoint = CGPointMake(point.x - absOrigin.x, point.y - absOrigin.y);
 
-	UIView *hitten = [originView hitTest:relativePoint withEvent:nil];
+	UIView *hit = [originView hitTest:relativePoint withEvent:nil];
 
-	BOOL hitRemainedOnOrigin = !hitten;
+	BOOL hitRemainedOnOrigin = !hit;
 	if (hitRemainedOnOrigin && originView == self) {
 		return YES;
 	}
 
-	if ([hitten isDescendantOfView:self]) {
+	if ([hit isDescendantOfView:self]) {
 		return YES;
 	}
 
 	if (error) {
-		NSString *hint = [self isDescendantOfView:hitten] ?
-				@"\n- Hint: The Target view is a descendant of the hitten view" : @"";
+		NSString *hint = [self isDescendantOfView:hit] ?
+				@"\n- Hint: The Target view is a descendant of the hit view" : @"";
 
 		NSString *errorMessage =
 		[NSString stringWithFormat:@"Failed to hit view %@at point %@ with hit-test\n" \
 		 "- Origin view: %@\n" \
 		 "- Absolute origin: %@\n" \
-		 "- Hitten: %@%@\n" \
+		 "- Hit: %@%@\n" \
 		 "- Target view: %@\n" \
 		 "- Relative point: %@%@",
 		 self.accessibilityIdentifier ?
@@ -464,9 +464,9 @@ DTX_DIRECT_MEMBERS
 		 NSStringFromCGPoint(point),
 		 originView,
 		 NSStringFromCGPoint(absOrigin),
-		 hitten,
-		 hitten.accessibilityIdentifier ?
-				[NSString stringWithFormat:@" (identifier: `%@`)", hitten.accessibilityIdentifier] :
+		 hit,
+		 hit.accessibilityIdentifier ?
+				[NSString stringWithFormat:@" (identifier: `%@`)", hit.accessibilityIdentifier] :
 				@"",
 		 self,
 		 NSStringFromCGPoint(relativePoint),
