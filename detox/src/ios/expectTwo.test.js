@@ -581,8 +581,8 @@ describe('expectTwo', () => {
     expect(() => e.web.element(e.by.id('someId'))).toThrowError(/not support/);
   });
 
-  it(`element(e.by.text('tapMe')).performAccessibilityAction('activate')`, () => {
-    const testCall = e.element(e.by.text('tapMe')).performAccessibilityAction('activate');
+  it(`element(e.by.text('tapMe')).performAccessibilityAction('activate')`, async () => {
+    const testCall = await e.element(e.by.text('tapMe')).performAccessibilityAction('activate');
     const jsonOutput = {
       invocation: {
         type: 'action',

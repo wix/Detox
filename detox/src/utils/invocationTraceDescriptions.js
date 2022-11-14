@@ -24,6 +24,7 @@ module.exports = {
     tapBackspaceKey: () => 'tap on backspace key',
     tapReturnKey: () => 'tap on return key',
     typeText: (value) => `type input text: "${value}"`,
+    performAccessibilityAction: (actionName) => `perform ${actionName} accessibilityAction` 
   },
   expectDescription: {
     waitFor: (actionDescription) => `wait for expectation while ${actionDescription}`,

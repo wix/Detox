@@ -230,7 +230,9 @@ class Element {
 
   performAccessibilityAction(actionName) {
     if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
-    return this.withAction('accessibilityAction', actionName);
+    
+    const traceDescription = actionDescription.performAccessibilityAction(actionName);
+    return this.withAction('accessibilityAction', traceDescription, actionName);
   }
 
   scroll(pixels, direction = 'down', startPositionX = NaN, startPositionY = NaN) {
