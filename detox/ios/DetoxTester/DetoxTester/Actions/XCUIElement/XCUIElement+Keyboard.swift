@@ -9,9 +9,7 @@ import DetoxInvokeHandler
 extension XCUIElement {
   ///
   func tapKey(_ keyType: Action.TapKeyType) throws {
-    if !self.hasFocus {
-      self.tap()
-    }
+    self.focusOnElement()
 
     switch keyType {
       case .returnKey:
@@ -20,6 +18,15 @@ extension XCUIElement {
       case  .backspaceKey:
         typeText(XCUIKeyboardKey.delete.rawValue)
     }
+  }
+
+  private func focusOnElement() {
+    let hasFocus = self.value(forKey: "hasKeyboardFocus") as? Bool ?? false
+    if hasFocus {
+      return
+    }
+
+    self.tap()
   }
 
   ///
@@ -37,9 +44,7 @@ extension XCUIElement {
   }
 
   private func changeText(_ text: String?, shouldClearBefore: Bool) {
-    if !self.hasFocus {
-      self.tap()
-    }
+    self.focusOnElement()
 
     if shouldClearBefore == true {
       guard let currentValue = self.value as? String else {

@@ -108,6 +108,8 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
   private func presentScreen(_ storyboardName: String) {
     let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
     let viewController = storyboard.instantiateInitialViewController()!
+    viewController.modalPresentationStyle = .fullScreen
+
     self.present(viewController, animated: true, completion: nil)
   }
 }

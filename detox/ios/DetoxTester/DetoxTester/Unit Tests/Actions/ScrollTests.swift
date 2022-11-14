@@ -40,6 +40,7 @@ class ScrollTests: DTXTestCase {
   }
 
   func testScrollToTopEdge() throws {
+    try actionDelegate.act(action: Action.scroll(.to(.bottom)), on: scrollView, testCase: self)
     try actionDelegate.act(action: Action.scroll(.to(.top)), on: scrollView, testCase: self)
 
     XCTAssertTrue(app.staticTexts["Top"].isVisible)
