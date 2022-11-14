@@ -47,6 +47,16 @@ function overrideConsoleMethods(console, bunyanLogger) {
   if (!console.__detox_log__) {
     const log = bunyanLogger;
 
+    console.__detox_log__ = {
+      log: console.log,
+      info: console.info,
+      warn: console.warn,
+      trace: console.trace,
+      error: console.error,
+      debug: console.debug,
+      assert: console.assert,
+    };
+
     override(console, 'log', log.info.bind(log));
     override(console, 'info', log.info.bind(log));
     override(console, 'warn', log.warn.bind(log));
@@ -54,13 +64,19 @@ function overrideConsoleMethods(console, bunyanLogger) {
     override(console, 'error', log.error.bind(log));
     override(console, 'debug', log.debug.bind(log));
     override(console, 'assert', log.error.bind(log));
-
-    console.__detox_log__ = log;
   }
 
   return console;
 }
 
+function restoreConsoleMethods(console) {
+  if (console.__detox_log__) {
+    Object.assign(console, console.__detox_log__);
+    delete console.__detox_log__;
+  }
+}
+
 module.exports = {
   overrideConsoleMethods,
+  restoreConsoleMethods,
 };
