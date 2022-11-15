@@ -71,6 +71,45 @@ class BunyanLogger {
 
     return this;
   }
+
+  async closeFileStreams() {
+    const { _closeStream } = BunyanLogger;
+    const internalBunyanStreams = this._bunyan['streams'];
+    const openFileStreams = _.filter(internalBunyanStreams, this._isOpenFileStream);
+    _.remove(internalBunyanStreams, openFileStreams);
+
+    await Promise.all(openFileStreams.map(_closeStream));
+  }
+
+  /** @private */
+  _isOpenFileStream = (bunyanStream) => {
+    switch (bunyanStream.type) {
+      case 'file':
+        return bunyanStream.path && !bunyanStream.stream.destroyed;
+      case 'raw':
+        /* istanbul ignore next */
+        const stream = bunyanStream.stream === this._debugStream.stream
+          ? bunyanStream.stream._out
+          : bunyanStream.stream;
+
+        /* istanbul ignore next */
+        return stream.fd !== undefined && !stream.closed;
+    }
+  };
+
+  /** @private */
+  static _closeStream(bunyanStream) {
+    return new Promise((resolve, reject) => {
+      bunyanStream.stream.end((err) => {
+        /* istanbul ignore next */
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 }
 
 module.exports = BunyanLogger;

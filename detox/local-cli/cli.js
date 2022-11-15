@@ -28,9 +28,12 @@ yargs
   .wrap(yargs.terminalWidth() * 0.9)
   .fail(function(msg, err, program) {
     if (err) {
-      logger.error(DetoxError.format(err));
-      // eslint-disable-next-line no-console
-      process.stderr.write('\n');
+      const message = DetoxError.format(err);
+      if (message) {
+        logger.error(message);
+        process.stderr.write('\n');
+      }
+
       // @ts-ignore
       _.attempt(() => fs.unlinkSync(logger.file));
       // eslint-disable-next-line no-process-exit

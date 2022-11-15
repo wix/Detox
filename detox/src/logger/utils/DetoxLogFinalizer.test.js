@@ -1,22 +1,4 @@
 jest.unmock('../DetoxLogger');
-jest.useFakeTimers({
-  doNotFake: [
-    'nextTick',
-    'performance',
-    'queueMicrotask',
-    'requestAnimationFrame',
-    'cancelAnimationFrame',
-    'requestIdleCallback',
-    'cancelIdleCallback',
-    'setImmediate',
-    'clearImmediate',
-    'setInterval',
-    'clearInterval',
-    'setTimeout',
-    'clearTimeout',
-  ],
-  now: new Date(2023, 0, 1),
-});
 
 const path = require('path');
 const { PassThrough } = require('stream');
@@ -26,16 +8,9 @@ const glob = require('glob');
 const tempfile = require('tempfile');
 
 const temporary = require('../../artifacts/utils/temporaryPath');
-const sleep = require('../../utils/sleep');
 const DetoxLogger = require('../DetoxLogger');
 
 const DetoxLogFinalizer = require('./DetoxLogFinalizer');
-
-// TODO: investigate why the test fails
-if (require('os').platform() === 'win32') {
-  // eslint-disable-next-line no-global-assign
-  describe = describe.skip;
-}
 
 describe('DetoxLogFinalizer', () => {
   /** @type {string[]} */
@@ -44,6 +19,8 @@ describe('DetoxLogFinalizer', () => {
   let session;
   /** @type {import('./DetoxLogFinalizer')} */
   let finalizer;
+  /** @type {import('../DetoxLogger')} */
+  let fakeLogger;
 
   let _env;
 
@@ -70,7 +47,7 @@ describe('DetoxLogFinalizer', () => {
           overrideConsole: false,
           options: {
             ...DetoxLogger.defaultOptions({
-              level: 'info',
+              level: 'trace',
             }),
             showDate: (date) => date.toISOString(),
             colors: false,
@@ -80,7 +57,11 @@ describe('DetoxLogFinalizer', () => {
     };
 
     temporaryFiles = [session.detoxConfig.artifacts.rootDir];
-    finalizer = new DetoxLogFinalizer({ session });
+
+    const FakeLogger = jest.requireMock('../DetoxLogger');
+    fakeLogger = new FakeLogger();
+
+    finalizer = new DetoxLogFinalizer({ session, logger: fakeLogger });
   });
 
   afterEach(async () => {
@@ -104,11 +85,16 @@ describe('DetoxLogFinalizer', () => {
       let plainLog = await fs.readFile(path.join(artifactsDir(), 'detox.log'), 'utf8');
       let traceLog = JSON.parse(await fs.readFile(path.join(artifactsDir(), 'detox.trace.json'), 'utf8'));
 
-      plainLog = plainLog.replace(/detox\[\d+\]/g, 'detox[1234]');
-      traceLog = traceLog.map(t => (t.pid = 1234, t));
+      plainLog = plainLog
+        .replace(new RegExp(`detox\\[${process.pid}]`, 'g'), 'detox[1234]')
+        .replace(new RegExp(`detox\\[${process.pid + 1}]`, 'g'), 'detox[1235]');
 
-      expect(plainLog).toMatchSnapshot();
-      expect(traceLog).toMatchSnapshot();
+      for (const t of traceLog) {
+        t.pid = 1234 + t.pid - process.pid;
+      }
+
+      expect(plainLog).toMatchSnapshot('plain');
+      expect(traceLog).toMatchSnapshot('chrome-trace');
     });
 
     it('should not create logs when they are disabled', async () => {
@@ -138,8 +124,8 @@ describe('DetoxLogFinalizer', () => {
       await createLogFiles();
       await finalizer.finalize();
 
-      const outFiles = glob.sync(path.join(artifactsDir(), '*'));
-      expect(outFiles.map(f => path.basename(f))).toEqual([
+      const outFiles = glob.sync('*', { cwd: artifactsDir() });
+      expect(outFiles).toEqual([
         'detox.log',
         'detox.trace.json',
       ]);
@@ -170,7 +156,7 @@ describe('DetoxLogFinalizer', () => {
       await createLogFiles();
       finalizer.finalizeSync();
 
-      const outFiles = glob.sync(path.join(artifactsDir(), '*'));
+      const outFiles = glob.sync('*', { cwd: artifactsDir() });
       expect(outFiles.map(f => path.extname(f))).toEqual([
         '.jsonl',
         '.jsonl',
@@ -204,7 +190,7 @@ describe('DetoxLogFinalizer', () => {
       await createLogFiles();
       finalizer.finalizeSync();
 
-      const outFiles = glob.sync(path.join(artifactsDir(), '*'));
+      const outFiles = glob.sync('*', { cwd: artifactsDir() });
       expect(outFiles.map(f => path.extname(f))).toEqual([
         '.jsonl',
         '.jsonl',
@@ -249,21 +235,34 @@ describe('DetoxLogFinalizer', () => {
       },
     };
 
-    const log1 = new DetoxLogger({
+    const root1 = new DetoxLogger({
+      unsafeMode: true,
       file: logPath1,
       userConfig,
     });
 
-    const log2 = new DetoxLogger({
+    const root2 = new DetoxLogger({
+      unsafeMode: true,
       file: logPath2,
       userConfig,
     });
+
+    const log1 = root1.child({ pid: process.pid });
+    const log2 = root2.child({ pid: process.pid + 1 });
+
+    jest.useFakeTimers();
 
     jest.setSystemTime(new Date('2023-01-01T00:00:00.000Z'));
     log1.info({ cat: 'main' }, 'msg1');
 
     jest.setSystemTime(new Date('2023-01-01T00:00:01.000Z'));
     log1.trace.begin({ id: 1, cat: 'parallel' }, 'duration1');
+
+    jest.setSystemTime(new Date('2023-01-01T00:00:01.100Z'));
+    log1.trace.begin({ id: 1, cat: 'parallel' }, 'duration1:stacked');
+
+    jest.setSystemTime(new Date('2023-01-01T00:00:01.400Z'));
+    log1.trace.end({ id: 1, cat: 'parallel' }, 'duration1:stacked');
 
     jest.setSystemTime(new Date('2023-01-01T00:00:01.500Z'));
     log1.trace.begin({ id: 2, cat: 'parallel' }, 'duration2');
@@ -275,14 +274,15 @@ describe('DetoxLogFinalizer', () => {
     log1.trace.end({ id: 2, cat: 'parallel' });
 
     jest.setSystemTime(new Date('2023-01-01T00:00:00.500Z'));
-    log2.info.begin('long-duration');
+    log2.info.begin({ cat: 'parallel' }, 'long-duration');
 
     jest.setSystemTime(new Date('2023-01-01T00:00:01.000Z'));
     log2.debug('instant event');
 
     jest.setSystemTime(new Date('2023-01-01T00:00:02.250Z'));
-    log2.trace.end();
+    log2.trace.end({ cat: 'parallel' });
 
-    await sleep(10);
+    jest.useRealTimers();
+    await Promise.all([root1.close(), root2.close()]);
   }
 });

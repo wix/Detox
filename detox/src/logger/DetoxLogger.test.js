@@ -12,12 +12,6 @@ const tempfile = require('tempfile');
 
 const sleep = require('../utils/sleep');
 
-// TODO: investigate why the test fails
-if (os.platform() === 'win32') {
-  // eslint-disable-next-line no-global-assign
-  describe = describe.skip;
-}
-
 jest.retryTimes(2);
 
 describe('DetoxLogger', () => {
@@ -25,6 +19,8 @@ describe('DetoxLogger', () => {
 
   /** @type {typeof import('./DetoxLogger')} */
   let DetoxLogger;
+  /** @type {import('./DetoxLogger')[]} */
+  let _loggerInstances = [];
   /** @type {string} */
   let jsonlLogPath;
   /** @type {string} */
@@ -44,7 +40,7 @@ describe('DetoxLogger', () => {
     const { level = 'trace', overrideConsole = false, options } = opts;
     DetoxLogger = require('./DetoxLogger');
 
-    return new DetoxLogger({
+    const instance = new DetoxLogger({
       file: jsonlLogPath,
       userConfig: {
         level,
@@ -58,6 +54,10 @@ describe('DetoxLogger', () => {
         },
       },
     });
+
+    _loggerInstances = _loggerInstances || [];
+    _loggerInstances.push(instance);
+    return instance;
   }
 
   let _env;
@@ -70,8 +70,12 @@ describe('DetoxLogger', () => {
     safetyTimeout = null;
   }
 
-  function teardownSuite() {
+  async function teardownSuite() {
     process.env = _env;
+
+    await Promise.all(_loggerInstances.map((logger) => logger.close()));
+    _loggerInstances = [];
+
     fs.removeSync(jsonlLogPath);
     fs.removeSync(plainLogPath);
   }
@@ -118,6 +122,19 @@ describe('DetoxLogger', () => {
 
     it('should have a log level getter', () => {
       expect(logger().level).toBe('trace'); // set in tests
+    });
+
+    it('should cast non-standard log levels to the closest standard level', async () => {
+      const LoggerClass = logger().constructor;
+      expect(LoggerClass).toBe(DetoxLogger);
+      expect(DetoxLogger.castLevel('trace')).toBe('trace');
+      expect(DetoxLogger.castLevel('debug')).toBe('debug');
+      expect(DetoxLogger.castLevel('verbose')).toBe('debug');
+      expect(DetoxLogger.castLevel('info')).toBe('info');
+      expect(DetoxLogger.castLevel('warn')).toBe('warn');
+      expect(DetoxLogger.castLevel('error')).toBe('error');
+      expect(DetoxLogger.castLevel('fatal')).toBe('fatal');
+      expect(DetoxLogger.castLevel('unknown')).toBe('info');
     });
 
     it('should be able to create a child logger', async () => {
@@ -380,6 +397,10 @@ describe('DetoxLogger', () => {
       await expect(logger().child().setConfig({ level: 'info' })).rejects.toThrowError(/Trying to set a config in a non-root logger/);
     });
 
+    it('should not allow closing the entire logging capability from a child logger', async () => {
+      await expect(logger().child().close()).rejects.toThrowError(/Trying to close file streams from a non-root logger/);
+    });
+
     it('should escape properties conflicting with Bunyan internal ones', async () => {
       logger().info({
         hostname: 'hostname',
@@ -414,19 +435,26 @@ describe('DetoxLogger', () => {
         v: 0,
       }]);
     });
-  });
 
-  it('should cast non-standard log levels to the closest standard level', async () => {
-    const LoggerClass = logger().constructor;
-    expect(LoggerClass).toBe(DetoxLogger);
-    expect(DetoxLogger.castLevel('trace')).toBe('trace');
-    expect(DetoxLogger.castLevel('debug')).toBe('debug');
-    expect(DetoxLogger.castLevel('verbose')).toBe('debug');
-    expect(DetoxLogger.castLevel('info')).toBe('info');
-    expect(DetoxLogger.castLevel('warn')).toBe('warn');
-    expect(DetoxLogger.castLevel('error')).toBe('error');
-    expect(DetoxLogger.castLevel('fatal')).toBe('fatal');
-    expect(DetoxLogger.castLevel('unknown')).toBe('info');
+    it('should allow creating a logger without a config', async () => {
+      const DetoxLogger = require('./DetoxLogger');
+      const noopFilePath = os.platform() === 'win32' ? 'nul' : '/dev/null';
+      const instance = new DetoxLogger({ file: noopFilePath });
+
+      expect(instance.config).toEqual({
+        level: 'info',
+        overrideConsole: false,
+        options: expect.objectContaining({
+          showDate: false,
+          showLevel: false,
+          showLoggerName: false,
+          showMetadata: false,
+          showPid: false,
+          showPrefixes: false,
+          showProcess: false,
+        }),
+      });
+    });
   });
 
   function anError(msg) {

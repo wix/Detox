@@ -1,9 +1,11 @@
-describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', () => {
+describe('customConsoleLogger', () => {
   let overrideConsoleMethods;
+  let restoreConsoleMethods;
   let fakeConsole, bunyanLogger;
 
   beforeEach(() => {
     overrideConsoleMethods = require('./customConsoleLogger').overrideConsoleMethods;
+    restoreConsoleMethods = require('./customConsoleLogger').restoreConsoleMethods;
 
     fakeConsole = {
       log: jest.fn(),
@@ -90,6 +92,23 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
     it('should not connect console.assert to logger.error, if the condition is true', () => {
       fakeConsole.assert(true, 'Nothing to say');
       expect(bunyanLogger.error).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('- restoring the override -', () => {
+    it('should not throw if the console is not overridden', () => {
+      expect(() => restoreConsoleMethods(fakeConsole)).not.toThrow();
+    });
+
+    it('should work if the console has been overridden', () => {
+      const originalMethods = Object.values(fakeConsole);
+      overrideConsoleMethods(fakeConsole, bunyanLogger);
+      const overridenMethods = Object.values(fakeConsole);
+      restoreConsoleMethods(fakeConsole);
+      const restoredMethods = Object.values(fakeConsole);
+
+      expect(restoredMethods).toEqual(originalMethods);
+      expect(originalMethods).not.toEqual(overridenMethods);
     });
   });
 });

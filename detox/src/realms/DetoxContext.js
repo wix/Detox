@@ -60,7 +60,8 @@ class DetoxContext {
     installLegacyTracerInterface(this.log, this);
 
     this[$logFinalizer] = new DetoxLogFinalizer({
-      session: this[$sessionState]
+      session: this[$sessionState],
+      logger: this[symbols.logger],
     });
 
     /** @type {import('../DetoxWorker') | null} */

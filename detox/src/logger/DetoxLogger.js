@@ -19,11 +19,12 @@ const sanitizeBunyanContext = require('./utils/sanitizeBunyanContext');
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
  * @property {MessageStack} [messageStack]
+ * @property {boolean} [unsafeMode] Disables sanitization of user input, used for integration tests.
  */
 
 class DetoxLogger {
   /**
-   * @param {Pick<SharedLoggerConfig, 'file' | 'userConfig'>} sharedConfig
+   * @param {SharedLoggerConfig} sharedConfig
    * @param {object} [context]
    */
   constructor(sharedConfig, context) {
@@ -91,7 +92,7 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    const merged = this._mergeContexts(this._context, sanitizeBunyanContext(overrides));
+    const merged = this._mergeContexts(this._context, this._sanitizeContext(overrides));
     return new DetoxLogger(this._sharedConfig, merged);
   }
 
@@ -117,6 +118,25 @@ class DetoxLogger {
     _.merge(this.config, config);
     this._sharedConfig.bunyan.installDebugStream(this.config);
     this.overrideConsole();
+  }
+
+  /**
+   * Closes the file descriptors to make sure that the temporary
+   * JSONL files are flushed and contain the last error messages.
+   * This safety measure is especially important for Windows OS.
+   *
+   * @async
+   * @internal
+   */
+  async close() {
+    if (this._context) {
+      throw new DetoxInternalError(
+        'Trying to close file streams from a non-root logger.\n' +
+        'If you are not fiddling with Detox internals on purpose, yet you see this error, then...'
+      );
+    }
+
+    await this._sharedConfig.bunyan.closeFileStreams();
   }
 
   /**
@@ -272,10 +292,19 @@ class DetoxLogger {
     const context = this._mergeContexts(
       this._context,
       boundContext,
-      sanitizeBunyanContext(userContext),
+      this._sanitizeContext(userContext),
     );
 
     return { context, msg };
+  }
+
+  /** @private */
+  _sanitizeContext(context) {
+    if (this._sharedConfig.unsafeMode) {
+      return context;
+    }
+
+    return sanitizeBunyanContext(context);
   }
 
   /** @internal */

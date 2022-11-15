@@ -8,6 +8,10 @@ class DetoxError extends Error {
     this.name = 'DetoxError';
   }
 
+  format() {
+    return this.message;
+  }
+
   static get reportIssue() {
     return 'Please report this issue on our GitHub tracker:\nhttps://github.com/wix/Detox/issues';
   }
@@ -32,7 +36,7 @@ class DetoxError extends Error {
    */
   static format(err, inspectOptions = { depth: 1 }) {
     if (err instanceof DetoxError) {
-      return err.message;
+      return err.format();
     }
 
     if (_.isError(err) && /^Command failed:/.test(err.message)) {
