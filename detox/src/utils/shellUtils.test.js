@@ -6,6 +6,7 @@ const {
   escapeWithSingleQuotedString,
   hasUnsafeChars,
   isRunningInCMDEXE,
+  useForwardSlashes,
 } = require('./shellUtils');
 
 describe('shellUtils', function() {
@@ -125,6 +126,26 @@ describe('shellUtils', function() {
       ["test 'this' string", `'test '"'"'this'"'"' string'`],
     ])('should transform [ %s ] to [ %s ]', (input, expected) => {
       expect(autoEscape.shell(input)).toBe(expected);
+    });
+  });
+
+  describe('useForwardSlashes.cmd', () => {
+    test.each([
+      ['test', 'test'],
+      ['test/suite', 'test/suite'],
+      ['test\\suite', 'test/suite'],
+    ])('should transform [ %s ] to [ %s ]', (input, expected) => {
+      expect(useForwardSlashes.cmd(input)).toBe(expected);
+    });
+  });
+
+  describe('useForwardSlashes.shell', () => {
+    test.each([
+      ['test', 'test'],
+      ['test/suite', 'test/suite'],
+      ['test\\suite', 'test\\suite'],
+    ])('should transform [ %s ] to [ %s ]', (input, expected) => {
+      expect(useForwardSlashes.shell(input)).toBe(expected);
     });
   });
 });

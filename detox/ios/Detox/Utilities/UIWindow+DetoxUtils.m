@@ -7,15 +7,17 @@
 //
 
 #import "UIWindow+DetoxUtils.h"
-#import "NSObject+DetoxUtils.h"
+
 #import "DTXAppleInternals.h"
+#import "NSObject+DetoxUtils.h"
+#import "UIView+DetoxUtils.h"
 
 extern NSArray* DTXChildElements(id element);
 
 static void _DTXElementDescription(NSObject<UIAccessibilityIdentification>* element, NSMutableString* storage)
 {
 	[storage appendFormat:@"<%@: %p", element.class, element];
-	
+
 	if([element __isKindOfUIView])
 	{
 		UIView* view = (id)element;
@@ -27,31 +29,31 @@ static void _DTXElementDescription(NSObject<UIAccessibilityIdentification>* elem
 		CGRect axFrame = [element dtx_bounds];
 		[storage appendFormat:@"; ax.frame = (%g %g; %g %g)", axFrame.origin.x, axFrame.origin.y, axFrame.size.width, axFrame.size.height];
 	}
-	
+
 	NSString* identifier = [element respondsToSelector:@selector(accessibilityIdentifier)] ? [element accessibilityIdentifier] : nil;
 	if(identifier.length > 0)
 	{
 		[storage appendFormat:@"; ax.id = \"%@\"", identifier];
 	}
-	
+
 	NSString* text = [[element dtx_text] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
 	if(text.length > 0)
 	{
 		[storage appendFormat:@"; text = \"%@\"", text];
 	}
-	
+
 	NSString* label = [[element accessibilityLabel] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
 	if(label.length > 0)
 	{
 		[storage appendFormat:@"; ax.label = \"%@\"", label];
 	}
-	
+
 	NSString* value = [[element accessibilityValue] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
 	if(value.length > 0)
 	{
 		[storage appendFormat:@"; ax.value = \"%@\"", value];
 	}
-	
+
 	if([element __isKindOfUIView])
 	{
 		UIView* view = (id)element;
@@ -60,9 +62,9 @@ static void _DTXElementDescription(NSObject<UIAccessibilityIdentification>* elem
 	}
 
 	[storage appendString:@">"];
-	
+
 	//	+ <AnnoyingWindow: 0x7fa2f2c1d760; baseClass = UIWindow; frame = (0 0; 428 926); autoresize = W+H; gestureRecognizers = <NSArray: 0x600002ffb3c0>; layer = <UIWindowLayer: 0x600002781960>>
-	
+
 //	[storage appendString:view.description];
 }
 
@@ -79,10 +81,10 @@ static void _DTXRecursiveDescribe(id element, NSMutableString* storage, NSUInteg
 			[storage appendString:@"   | "];
 		}
 	}
-	
+
 	_DTXElementDescription(element, storage);
 	[storage appendString:@"\n"];
-	
+
 	NSArray* children = DTXChildElements(element);
 	for(id child in children)
 	{
@@ -114,9 +116,9 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 		id x = [self valueForKey:@"_FBSScene"];
 		id y = [x valueForKey:@"identifier"];
 		id z = [self valueForKeyPath:@"session.persistentIdentifier"];
-		
+
 		rv = [NSMutableString stringWithFormat:@"<%@: %p; scene = <%@: %p; identifier: %@>; persistentIdentifier = %@; activationState = %@>\n", self.class, self, [x class], x, y, z, _DTXNSStringFromUISceneActivationState(self.activationState)];
-		
+
 		NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:self];
 		for (UIWindow* window in windows)
 		{
@@ -128,7 +130,7 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 			_DTXRecursiveDescribe(window, rv, 1);
 		}
 	}
-	
+
 	return rv;
 }
 
@@ -136,17 +138,14 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 
 @implementation UIWindow (DetoxUtils)
 
-+ (UIWindow*)dtx_keyWindow
-{
-    UIWindow *foundWindow = nil;
-    NSArray *windows = [[UIApplication sharedApplication]windows];
-    for (UIWindow *window in windows) {
-        if (window.isKeyWindow) {
-            foundWindow = window;
-            break;
-        }
-    }
-    return foundWindow;
++ (UIWindow*)dtx_keyWindow {
+  NSArray *windows = [[UIApplication sharedApplication]windows];
+  for (UIWindow *window in windows) {
+	  if (window.isKeyWindow) {
+		  return window;
+	  }
+  }
+  return nil;
 }
 
 + (id)dtx_keyWindowScene
@@ -169,16 +168,16 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 	if(scene != nil)
 	{
 		NSPredicate* predicate = [NSPredicate predicateWithFormat:@"windowScene == %@", scene];
-		
+
 		UIScene* keyboardScene = [UIWindowScene _keyboardWindowSceneForScreen:[scene screen] create:NO];
 		if(keyboardScene != nil)
 		{
 			predicate = [NSCompoundPredicate orPredicateWithSubpredicates:@[predicate, [NSPredicate predicateWithFormat:@"windowScene == %@", keyboardScene]]];
 		}
-		
+
 		[windows filterUsingPredicate:predicate];
 	}
-	
+
 	return windows;
 }
 
@@ -220,8 +219,42 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 - (NSString *)dtx_shortDescription
 {
 	CGRect frame = self.frame;
-	
+
 	return [NSString stringWithFormat:@"<%@: %p; frame = (%@ %@; %@ %@);>", self.class, self, @(frame.origin.x), @(frame.origin.y), @(frame.size.width), @(frame.size.height)];
+}
+
++ (nullable UIWindow *)dtx_topMostWindowAtPoint:(CGPoint)point {
+  NSArray<UIWindow *> *windows = UIApplication.sharedApplication.windows;
+
+  NSArray<UIWindow *> *visibleWindowsAtPoint = [windows
+    filteredArrayUsingPredicate:[NSPredicate
+	predicateWithBlock:^BOOL(UIWindow *window, NSDictionary<NSString *, id> * _Nullable __unused bindings) {
+	  if (!CGRectContainsPoint(window.frame, point)) {
+		return NO;
+	  }
+
+	  if (![window isVisibleAroundPoint:point]) {
+		return NO;
+	  }
+
+	  UIView * _Nullable hit = [window hitTest:point withEvent:nil];
+	  if (!hit) {
+		// The point lies completely outside the windos's hierarchy.
+		return NO;
+	  }
+
+	  return YES;
+	}]];
+
+  if (!visibleWindowsAtPoint) {
+	return nil;
+  }
+
+  return [[visibleWindowsAtPoint
+	sortedArrayUsingComparator:^NSComparisonResult(UIWindow *window1, UIWindow *window2) {
+	  return window1.windowLevel - window2.windowLevel;
+	}]
+	lastObject];
 }
 
 @end

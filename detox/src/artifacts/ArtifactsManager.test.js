@@ -8,16 +8,12 @@ const testHookError = () => ({ hook: 'beforeEach', error: new Error() });
 const testError = () => ({ error: new Error() });
 
 describe('ArtifactsManager', () => {
-  let proxy, FakePathBuilder;
+  let proxy;
 
   beforeEach(() => {
     jest.mock('fs-extra');
-    jest.mock('./__mocks__/FakePathBuilder');
     jest.mock('./utils/ArtifactPathBuilder');
-    jest.mock('../utils/argparse');
     jest.mock('../utils/logger');
-
-    FakePathBuilder = require('./__mocks__/FakePathBuilder');
 
     proxy = {
       get ArtifactPathBuilder() {
@@ -32,10 +28,14 @@ describe('ArtifactsManager', () => {
       get fs() {
         return require('fs-extra');
       },
-      get argparse() {
-        return require('../utils/argparse');
-      },
     };
+  });
+
+  describe('when created by default', () => {
+    it('should have a default PathBuilder instance', () => {
+      new proxy.ArtifactsManager({ plugins: {} });
+      expect(proxy.ArtifactPathBuilder).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('when plugin factory is registered', () => {
@@ -103,9 +103,8 @@ describe('ArtifactsManager', () => {
         });
       };
 
-      pathBuilder = new FakePathBuilder();
       artifactsManager = new proxy.ArtifactsManager({
-        pathBuilder,
+        pathBuilder: path.join(__dirname, '__mocks__/FakePathBuilder.js'),
         plugins: {
           testPlugin: {
             lifecycle: 'all',
@@ -113,6 +112,8 @@ describe('ArtifactsManager', () => {
         }
       });
       artifactsManager.registerArtifactPlugins({ testPlugin: testPluginFactory });
+      pathBuilder = artifactsManager._pathBuilder;
+      jest.spyOn(pathBuilder, 'buildPathForTestArtifact');
     });
 
     describe('.userConfig', () => {
@@ -236,11 +237,10 @@ describe('ArtifactsManager', () => {
             expect(proxy.logger.warn.mock.calls).toEqual([[
               {
                 err: expect.any(Error),
-                event: 'ERROR',
                 methodName: hookName,
                 plugin: 'testPlugin',
               },
-              expect.stringContaining(`Suppressed error inside function call: testPlugin.${hookName}`)
+              expect.stringContaining(`Suppressed error inside function call.`)
             ]]);
           });
         }
@@ -547,24 +547,6 @@ describe('ArtifactsManager', () => {
     ])(`should subscribe to emitter's %s event`, (eventName) => {
       artifactsManager.subscribeToDeviceEvents(emitter);
       expect(emitter.on).toHaveBeenCalledWith(eventName, expect.any(Function));
-    });
-  });
-
-  describe('stubs', () => {
-    it.each([
-      ['onRunStart'],
-      ['onHookStart'],
-      ['onHookSuccess'],
-      ['onTestFnStart'],
-      ['onTestFnSuccess'],
-      ['onRunFinish'],
-    ])('should have async .%s() stub', (method) => {
-      const artifactsManager = new proxy.ArtifactsManager({
-        pathBuilder: new proxy.ArtifactPathBuilder({ rootDir: '/tmp' }),
-        plugins: {},
-      });
-
-      expect(artifactsManager[method]()).toEqual(Promise.resolve());
     });
   });
 });

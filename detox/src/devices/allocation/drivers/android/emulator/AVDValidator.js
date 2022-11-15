@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const environment = require('../../../../../utils/environment');
-const logger = require('../../../../../utils/logger').child({ __filename });
+const logger = require('../../../../../utils/logger').child({ cat: 'device' });
 
 const REQUIRED_EMULATOR_MAJOR = 29;
 

@@ -8,8 +8,11 @@
     },
     "configurations": {
       "simple": {
-        "type": "android.attached",
-        "device": "Hello from package.json"
+        "device": {
+          "type": "android.attached",
+          "device": "Hello from package.json"
+        },
+        "apps": []
       }
     }
   }

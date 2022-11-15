@@ -41,8 +41,10 @@ jspm_packages
 
 ################
 # JetBrains
+# IDE
 ################
 .idea
+.vscode
 
 ## File-based project format:
 *.iws

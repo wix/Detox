@@ -1,0 +1,19 @@
+Out of the box, Detox offers you a first-class integration with [Jest](https://jestjs.io), the most popular testing framework for React Native. That's why your first step will be to install or update Jest in your project.
+
+Go to your project's root folder, i.e., where `package.json` is found, and run:
+
+```bash npm2yarn
+npm install "jest@^29" --save-dev
+```
+
+:::note Info
+
+The command above will install the **latest supported Jest version**. The `@^29` override is recommended in the first place to prevent you from getting an outdated Jest version unknowingly, under the influence of package lock files. For example, in React Native boilerplate projects, the `package-lock.json` is apt to restrict `npm install jest` to installing an older, unsupported version `26.x`.
+
+:::
+
+Now it's time to install Detox itself:
+
+```bash npm2yarn
+npm install detox --save-dev
+```

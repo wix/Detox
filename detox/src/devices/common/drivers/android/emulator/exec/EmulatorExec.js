@@ -48,7 +48,7 @@ class LaunchCommand extends ExecCommand {
       bootArgs,
       gpuMode = this._getDefaultGPUMode(),
       headless,
-      readonly,
+      readonly = true,
       port,
     } = this._options;
 

@@ -1,9 +1,9 @@
-  - label: ":android:-:six::nine:-RN_69_android"
+  - label: ":android::detox: RN.69 + Android: Tests app"
     command:
       - "nvm install"
       - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.69.5
+      REACT_NATIVE_VERSION: 0.69.7
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
       SKIP_UNIT_TESTS: true

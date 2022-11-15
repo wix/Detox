@@ -2,10 +2,13 @@
 const Module = require('module');
 const path = require('path');
 
+const _ = require('lodash');
 const resolveFrom = require('resolve-from');
 const semver = require('semver');
 
-const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const { DetoxRuntimeError } = require('../../src/errors');
+
+const { extractKnownKeys } = require('./yargsUtils');
 
 const getNodeModulePaths = (dir) => Module._nodeModulePaths(dir);
 
@@ -68,7 +71,15 @@ async function readJestConfig(argv) {
   return readConfig(argv, process.cwd(), false);
 }
 
+function getJestBooleanArgs() {
+  return _(resolveJestCliArgs())
+    .thru(args => args.options)
+    .pickBy(({ type }) => type === 'boolean')
+    .thru(extractKnownKeys)
+    .value();
+}
+
 module.exports = {
-  resolveJestCliArgs,
+  getJestBooleanArgs,
   readJestConfig,
 };

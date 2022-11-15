@@ -2,3 +2,4 @@ node_modules
 Pods
 /detox/ios
 /detox/test/ios
+/website

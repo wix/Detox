@@ -1,6 +1,3 @@
-const detox = require('../../src/index');
-
-const runnerInfo = require('./runnerInfo');
-const DetoxAdapter = runnerInfo.isJestCircus ? require('./DetoxAdapterCircus') : require('./DetoxAdapterJasmine');
-
-module.exports = new DetoxAdapter(detox);
+/** @deprecated */
+/** @type {never} */
+module.exports = require('../deprecation');

@@ -1,0 +1,46 @@
+import CodeBlock from '@theme/CodeBlock';
+
+<>
+  {props.debug && <div>
+
+Since this is a debug configuration, you need to have React Native packager running in parallel before you start
+Detox tests:
+
+```bash
+npm start
+
+> react-native start
+
+#                        #######
+#                   ################
+#                #########     #########
+#            #########             ##########
+#        #########        ######        #########
+#       ##########################################
+#      #####      #####################       #####
+#      #####          ##############          #####
+#      #####    ###       ######       ###    #####
+#      #####    #######            #######    #####
+#      #####    ###########    ###########    #####
+#      #####    ##########################    #####
+#      #####    ##########################    #####
+#      #####      ######################     ######
+#       ######        #############        #######
+#         #########        ####       #########
+#              #########          #########
+#                  ######### #########
+#                       #########
+#
+#
+#                    Welcome to Metro!
+#              Fast - Scalable - Integrated
+```
+
+  </div>}
+</>
+
+Now you can run your first test:
+
+<CodeBlock language="sh">
+  detox test --configuration {props.configurationName}
+</CodeBlock>

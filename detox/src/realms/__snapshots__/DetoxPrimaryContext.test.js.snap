@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxPrimaryContext when not initialized should throw on attempt to get a worker 1`] = `
+"Detox worker instance has not been installed in this context (DetoxPrimaryContext).
+
+HINT: If you are using Detox with Jest according to the latest guide, please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues
+Otherwise, make sure you call detox.installWorker() beforehand."
+`;

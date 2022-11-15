@@ -1,7 +1,6 @@
 const InstrumentsArtifactPlugin = require('../artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('../artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('../artifacts/screenshot/ScreenshotArtifactPlugin');
-const TimelineArtifactPlugin = require('../artifacts/timeline/TimelineArtifactPlugin');
 const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
 
@@ -13,7 +12,6 @@ const defaultArtifactsConfiguration = {
     screenshot: 'manual',
     video: 'none',
     instruments: 'none',
-    timeline: 'none',
     uiHierarchy: 'disabled',
   },
 };
@@ -26,7 +24,6 @@ const allArtifactsConfiguration = {
     screenshot: 'all',
     video: 'all',
     instruments: 'all',
-    timeline: 'all',
     uiHierarchy: 'enabled',
   },
 };
@@ -36,7 +33,6 @@ const pluginsDefaultsResolved = {
   screenshot: ScreenshotArtifactPlugin.parseConfig('manual'),
   video: VideoArtifactPlugin.parseConfig('none'),
   instruments: InstrumentsArtifactPlugin.parseConfig('none'),
-  timeline: TimelineArtifactPlugin.parseConfig('none'),
   uiHierarchy: IosUIHierarchyPlugin.parseConfig('disabled'),
 };
 
@@ -51,7 +47,6 @@ const pluginsAllResolved = {
   screenshot: ScreenshotArtifactPlugin.parseConfig('all'),
   video: VideoArtifactPlugin.parseConfig('all'),
   instruments: InstrumentsArtifactPlugin.parseConfig('all'),
-  timeline: TimelineArtifactPlugin.parseConfig('all'),
   uiHierarchy: IosUIHierarchyPlugin.parseConfig('enabled'),
 };
 

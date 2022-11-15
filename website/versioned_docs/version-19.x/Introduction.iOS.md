@@ -9,7 +9,7 @@ sidebar_label: Detox for iOS
 
 ### 1. Preliminary
 
-Run through the basic steps of the [Getting Started guide](Introduction.GettingStarted.md), such as the environment and tools setup.
+Run through the basic steps of the [Getting Started guide](introduction/getting-started.md), such as the environment and tools setup.
 
 ### 2. Apply Detox Configuration
 
@@ -44,7 +44,7 @@ Whether you’ve selected to apply the configuration in a  `.detoxrc.json` or bu
 
 :::info
 
-For a comprehensive explanation of Detox configuration, see our [dedicated API-reference guide](APIRef.Configuration.md).
+For a comprehensive explanation of Detox configuration, see our [dedicated API-reference guide](config/overview.md).
 
 :::
 

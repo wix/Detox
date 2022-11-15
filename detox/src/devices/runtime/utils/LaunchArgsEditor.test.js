@@ -4,12 +4,8 @@ describe('Device launch-args editor', () => {
   let LaunchArgsEditor;
   /** @type {LaunchArgsEditor} */
   let launchArgsEditor;
-  /** @type {Logger} */
-  let log;
 
   beforeEach(() => {
-    jest.mock('../../../utils/logger');
-    log = require('../../../utils/logger');
     LaunchArgsEditor = require('./LaunchArgsEditor');
     launchArgsEditor = new LaunchArgsEditor();
   });
@@ -71,32 +67,5 @@ describe('Device launch-args editor', () => {
     launchArgsEditor.shared.modify({ a: { b: 'c' } });
     launchArgsEditor.shared.get().a.b = 'd';
     expect(launchArgsEditor.shared.get()).toEqual({ a: { b: 'c' } });
-  });
-
-  describe('deprecation warnings', () => {
-    const warningEvent = { event: 'DEPRECATION' };
-
-    afterEach(() => {
-      expect(log.warn).toHaveBeenCalledTimes(2);
-      expect(log.warn.mock.calls[0][0]).toEqual(warningEvent);
-      expect(log.warn.mock.calls[0][1]).toMatchSnapshot();
-      expect(log.warn.mock.calls[1][0]).toEqual(warningEvent);
-      expect(log.warn.mock.calls[1][1]).toMatchSnapshot();
-    });
-
-    it('should log warnings on .get(options) call', () => {
-      launchArgsEditor.get({});
-      launchArgsEditor.get({ permanent: true });
-    });
-
-    it('should log warnings on .reset(options) call', () => {
-      launchArgsEditor.reset({});
-      launchArgsEditor.reset({ permanent: true });
-    });
-
-    it('should log warnings on .modify(..., options) call', () => {
-      launchArgsEditor.modify({}, {});
-      launchArgsEditor.modify({}, { permanent: true });
-    });
   });
 });

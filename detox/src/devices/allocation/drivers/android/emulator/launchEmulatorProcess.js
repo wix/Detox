@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const _ = require('lodash');
 
-const unitLogger = require('../../../../../utils/logger').child({ __filename });
+const unitLogger = require('../../../../../utils/logger').child({ cat: 'device' });
 
 function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand, adb, adbName) {
   let childProcessOutput;

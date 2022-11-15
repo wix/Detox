@@ -16,8 +16,6 @@ describe('Emulator launcher', () => {
     retry = require('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    jest.mock('../../../../../utils/trace');
-
     const ADB = jest.genMockFromModule('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
     adb.isBootComplete.mockReturnValue(true);

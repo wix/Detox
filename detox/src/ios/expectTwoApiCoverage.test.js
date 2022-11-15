@@ -3,8 +3,6 @@ describe('expectTwo API Coverage', () => {
   let e;
 
   beforeEach(() => {
-    jest.mock('../utils/trace');
-
     const IosExpect = require('./expectTwo');
 
     e = new IosExpect({

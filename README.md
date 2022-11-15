@@ -45,18 +45,18 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That’s where Detox comes into play.
 
-- **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS and Android.
-- **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
+- **Cross Platform:** Write cross-platform end-to-end tests in JavaScript. Currently supports iOS and Android.
+- **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 - **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
-- **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief.
-- **Test Runner Independent:** Use Jest, Mocha, AVA, or any other JavaScript test runner you like (spoiler: we have our favorite).
-- **Debuggable:** Modern `async`-`await` API allows breakpoints in asynchronous tests to work as expected.
+- **Made For CI:** Execute your E2E tests on CI platforms like Travis CI, Circle CI or Jenkins without grief.
+- **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
+- **Test Runner Agnostic:** Detox provides a set of APIs to use with any test runner without it. It comes with [Jest](https://jestjs.io) integration out of the box.
 
 ## Supported Versions
 
 ### Environment
 
-- **OS**: macOS 10.15 (Catalina) or higher
+- **OS**: macOS 10.15 (Catalina) or higher; Ubuntu Linux 20.04 or higher; Windows 10 Version 1803 or higher
 - **Xcode**: 11.0 or higher
   - **iOS Simulator Runtime**: iOS 13.0 or higher
 
@@ -67,8 +67,8 @@ Detox is built from the ground up to support React Native projects as well as pu
 The following React Native versions have been tested:
 
 | iOS             | Android                                                                                                                   |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------|
-| 0.66.x - 0.69.5 | 0.66.x - 0.69.5 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) \* |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 0.68.x - 0.69.7 | 0.68.x - 0.69.7 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) \* |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 

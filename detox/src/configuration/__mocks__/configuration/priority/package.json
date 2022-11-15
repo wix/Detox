@@ -1,10 +1,13 @@
 {
-    "detox": {
-        "configurations": {
-            "simple": {
-                "type": "android.attached",
-                "device": "Hello from package.json"
-            }
-        }
+  "detox": {
+    "configurations": {
+      "simple": {
+        "device": {
+          "type": "android.attached",
+          "device": "Hello from detox-config.json"
+        },
+        "apps": []
+      }
     }
+  }
 }

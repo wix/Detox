@@ -31,7 +31,7 @@ sidebar_label: Detox for Android
 
 #### 1. Preliminary
 
-Run through the basic steps of the [Getting Started guide](Introduction.GettingStarted.md), such as the environment and tools setup.
+Run through the basic steps of the [Getting Started guide](introduction/getting-started.md), such as the environment and tools setup.
 
 #### 2. Apply Detox Configuration
 
@@ -72,7 +72,7 @@ Whether you’ve selected to apply the configuration in a  `.detoxrc.json` or bu
 }
 ```
 
-> For a comprehensive explanation of Detox configuration, refer to the [dedicated API-reference guide](APIRef.Configuration.md).
+> For a comprehensive explanation of Detox configuration, refer to the [dedicated API-reference guide](config/overview.md).
 
 Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main APK type.
 
@@ -169,7 +169,7 @@ dependencies {
 ```groovy
 android {
   // ...
-  
+
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
@@ -228,7 +228,7 @@ _In the app’s `AndroidManifest.xml`_
 
 ```xml
 <manifest>
-  <application 
+  <application
         ...
         android:networkSecurityConfig="@xml/network_security_config">
   </application>
@@ -325,7 +325,7 @@ Assuming you have the APK available in the system, you can dynamically have Deto
 }
 ```
 
-> Refer to our [configuration guide](APIRef.Configuration.md) for further details on `utilBinaryPaths`.
+> Refer to our [configuration guide](config/overview.md) for further details on `utilBinaryPaths`.
 
 As per _making_ the APK available - for that, we have no really good solution, for the time being (but it’s in the works). A few options might be:
 
@@ -378,7 +378,7 @@ In your app’s `buildscript` (i.e. `android/app/build.gradle`) add this to the 
 ```groovy
 android {
   // ...
-  
+
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
