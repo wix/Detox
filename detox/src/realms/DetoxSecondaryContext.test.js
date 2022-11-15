@@ -3,8 +3,7 @@
 const {
   latestInstanceOf,
   throwErrorImpl,
-  suspendCall,
-  doBeforeResolved,
+  withSuspendingMock,
 } = global;
 
 const DETOX_CONFIG_SNAPSHOT_PATH = 'mocked/detox.json';
@@ -115,13 +114,12 @@ describe('DetoxSecondaryContext', () => {
       });
 
       it('should change intermediate status to "cleanup"', async () => {
-        const suspended = suspendCall(ipcClient, 'dispose');
-
         await facade.init();
 
-        await doBeforeResolved(facade.cleanup(), () => {
-          expect(facade.getStatus()).toBe('cleanup');
-          suspended.resolve();
+        await withSuspendingMock(ipcClient, 'dispose', async ({ callSuspended }) => {
+          await callSuspended(facade.cleanup(), () => {
+            expect(facade.getStatus()).toBe('cleanup');
+          });
         });
       });
 

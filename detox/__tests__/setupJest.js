@@ -40,42 +40,44 @@ function callCli(modulePath, cmd) {
 }
 
 /**
- * Override an object's mocked async-function so that its execution would be suspended
- * until actively released by the caller.
+ * A syntactic-sugar wrapper for performing expectations while a tested async method/func is
+ * suspended, based on a "suspending mock".
  *
- * @returns {{resolve, reject}} Handle to suspension, which can release the call either safely (resolve) or erroneously (with reject).
+ * It applies the following technique:
+ *
+ * 1. Setting up an (async) mock function -- which the method under test normally calls, such that it would suspended
+ *    until a provided inner callback is completed.
+ * 2. Calling the method under test, making expectations inside a callback using a custom `callSuspended` function.
+ *
+ * @example
+ * await withSuspendingMock(innerMockObj, 'mockedMethodName', async ({ callSuspended }) => {
+ *   await callSuspended(uut.methodUnderTest(), async () => {
+ *     expect(uut.something()).toEqual('some-expected-result');
+ *
+ *     return 'result-of-suspended-method'; // (Optional)
+ *   }); // Resolve suspended method
+ * }); // Await methodUnderTest's promise
  */
-function suspendCall(obj, func) {
+async function withSuspendingMock(obj, func, callback) {
   let resolve;
-  let reject;
 
-  const promise = new Promise((_resolve, _reject) => { resolve = _resolve; reject = _reject; });
+  const promise = new Promise((_resolve, _reject) => { resolve = _resolve; });
   obj[func].mockImplementation(() => promise);
 
-  return {
-    resolve,
-    reject,
-  };
-}
+  const callSuspended = async (promise, callback) => {
+    const result = await callback();
+    resolve(result);
 
-/**
- * Syntactic sugar for performing some work (e.g. expectations) before a specified async call resolves.
- *
- * @param promise The promise returned by the async call.
- * @param callback The work to do.
- * @returns {Promise<void>}
- */
-async function doBeforeResolved(promise, callback) {
-  await callback();
-  await promise;
+    await promise;
+  };
+
+  await callback({ callSuspended });
 }
 
 // @ts-ignore
 global.callCli = callCli;
 // @ts-ignore
-global.suspendCall = suspendCall;
-// @ts-ignore
-global.doBeforeResolved = doBeforeResolved;
+global.withSuspendingMock = withSuspendingMock;
 
 // @ts-ignore
 global.latestInstanceOf = (clazz) => _.last(clazz.mock.instances);

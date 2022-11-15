@@ -5,8 +5,7 @@ const {
   latestInstanceOf,
   lastCallTo,
   throwErrorImpl,
-  suspendCall,
-  doBeforeResolved,
+  withSuspendingMock,
   uuidRegexp,
   tempFileRegexp,
 } = global;
@@ -267,13 +266,12 @@ describe('DetoxPrimaryContext', () => {
       });
 
       it('should change intermediate status to "cleanup"', async () => {
-        const suspended = suspendCall(ipcServer, 'dispose');
-
         await facade.init();
 
-        await doBeforeResolved(facade.cleanup(), () => {
-          expect(facade.getStatus()).toBe('cleanup');
-          suspended.resolve();
+        await withSuspendingMock(ipcServer, 'dispose', async ({ callSuspended }) => {
+          await callSuspended(facade.cleanup(), () => {
+            expect(facade.getStatus()).toBe('cleanup');
+          });
         });
       });
 
