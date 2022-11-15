@@ -122,7 +122,7 @@ class DetoxLogger {
 
   /**
    * Closes the file descriptors to make sure that the temporary
-   * JSONL files can be moved safely to the directory with the artifacts.
+   * JSONL files are flushed and contain the last error messages.
    * This safety measure is especially important for Windows OS.
    *
    * @async
