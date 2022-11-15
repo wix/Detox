@@ -73,6 +73,7 @@
     "multi-sort-stream": "^1.0.3",
     "multipipe": "^4.0.0",
     "node-ipc": "^9.2.1",
+    "node-osascript": "^2.1.0",
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
