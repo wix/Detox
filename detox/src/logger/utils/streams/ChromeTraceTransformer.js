@@ -1,6 +1,4 @@
-const { Transform } = require('stream');
-
-const { Event, AbstractEventBuilder } = require('trace-event-lib');
+const { AbstractEventBuilder } = require('trace-event-lib');
 
 const getMainCategory = require('../getMainCategory');
 
@@ -66,12 +64,12 @@ class ChromeTraceTransformer {
   /**
    * @param {{ knownPids: Set<number>, knownTids: Set<number> }} state
    * @param {*} bunyanLogRecord
-   * @returns {Event[]}
+   * @returns {import('trace-event-lib').Event[]}
    * @private
    */
   _transformBunyanRecord(state, bunyanLogRecord) {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const { cat: rawCat, msg: name, ph = 'i', pid, tid: _tid, time, name: _name, hostname: _hostname, ...args } = bunyanLogRecord;
+    const { cat: rawCat, msg: name, ph, pid, tid: _tid, time, name: _name, hostname: _hostname, ...args } = bunyanLogRecord;
     const ts = new Date(time).getTime() * 1E3;
     const cat = rawCat || 'undefined';
     const tid = this._resolveGlobalTID(bunyanLogRecord);
@@ -103,6 +101,8 @@ class ChromeTraceTransformer {
     const hash = this._computeThreadHash(event);
     const tid = this._globalThreadMap ? this._globalThreadMap.get(hash) : event.tid;
 
+    // Impossible condition, but anyway it is better to be safe than sorry.
+    /* istanbul ignore next */
     return tid === undefined ? ChromeTraceTransformer.ERROR_TID : tid;
   }
 
@@ -110,6 +110,7 @@ class ChromeTraceTransformer {
     return `${pid}:${getMainCategory(cat)}:${tid}`;
   }
 
+  /* istanbul ignore next */
   static get ERROR_TID() {
     return 37707;
   }

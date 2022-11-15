@@ -15,11 +15,9 @@ const { BunyanTransformer, ChromeTraceTransformer } = require('./streams');
 class DetoxLogFinalizer {
   /** @param {DetoxLogFinalizerConfig} config */
   constructor(config) {
-    this._logger = config.logger;
     this._session = config.session;
     this._bunyanTransformer = new BunyanTransformer(
-      config.logger,
-      this._session.detoxConfig.logger
+      config.logger.child({ cat: 'logger' }),
     );
     this._chromeTransformer = new ChromeTraceTransformer();
   }
@@ -89,7 +87,8 @@ class DetoxLogFinalizer {
 
   _createPlainFileStream() {
     const rootDir = this._config.artifacts.rootDir;
-    const transformer = this._bunyanTransformer.createPlainTransformer();
+    const bunyanOptions = this._config.logger.options;
+    const transformer = this._bunyanTransformer.createPlainTransformer(bunyanOptions);
     const fileStream = fs.createWriteStream(path.join(rootDir, 'detox.log'));
     transformer.readable.pipe(fileStream);
 

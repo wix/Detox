@@ -1,11 +1,10 @@
 const fs = require('fs-extra');
-const { Readable } = require('stream');
-
 const tempfile = require('tempfile');
 
 describe('BunyanTransformer', () => {
   /** @type {import('./BunyanTransformer')} */
   let transformer;
+  let DetoxLogger;
   let logger;
   let temporaryFiles;
 
@@ -13,17 +12,10 @@ describe('BunyanTransformer', () => {
     temporaryFiles = [];
 
     const BunyanTransformer = require('./BunyanTransformer');
-    const DetoxLogger = jest.requireMock('../../DetoxLogger');
 
+    DetoxLogger = jest.requireMock('../../DetoxLogger');
     logger = new DetoxLogger();
-    transformer = new BunyanTransformer(logger, {
-      level: 'trace',
-      options: {
-        ...DetoxLogger.defaultOptions({ level: 'trace' }),
-        showDate: time => time.toISOString(),
-        showLevel: true,
-      },
-    });
+    transformer = new BunyanTransformer(logger);
   });
 
   afterEach(async () => {
@@ -84,7 +76,12 @@ describe('BunyanTransformer', () => {
       { time: '2000-01-01T00:00:00.004Z', pid: 1, msg: 'Event 3', name: 'app', level: 10 },
     ]));
     const logStream = transformer.uniteSessionLogs([logFile]);
-    const plainTransformer = transformer.createPlainTransformer();
+    const plainTransformer = transformer.createPlainTransformer({
+      ...DetoxLogger.defaultOptions({ level: 'trace' }),
+      showDate: time => time.toISOString(),
+      showLevel: true,
+    });
+
     logStream.pipe(plainTransformer.writable);
     await expect(toString(plainTransformer.readable)).resolves.toEqual([
       '2000-01-01T00:00:00.001Z app[1] INFO:  Event 1',
@@ -113,16 +110,6 @@ describe('BunyanTransformer', () => {
     temporaryFiles.push(filename);
     fs.writeFileSync(filename, str);
     return filename;
-  }
-
-  function objectsToStream(objs) {
-    const s = new Readable({ objectMode: true });
-    s._read = () => {};
-    for (const o of objs) {
-      s.push(o);
-    }
-    s.push(null); // eslint-disable-line unicorn/no-array-push-push
-    return s;
   }
 
   /** @async */

@@ -20,7 +20,7 @@ describe('DetoxLogger', () => {
   /** @type {typeof import('./DetoxLogger')} */
   let DetoxLogger;
   /** @type {import('./DetoxLogger')[]} */
-  let _loggerInstances;
+  let _loggerInstances = [];
   /** @type {string} */
   let jsonlLogPath;
   /** @type {string} */
@@ -434,6 +434,26 @@ describe('DetoxLogger', () => {
         time$: 'time',
         v: 0,
       }]);
+    });
+
+    it('should allow creating a logger without a config', async () => {
+      const DetoxLogger = require('./DetoxLogger');
+      const noopFilePath = os.platform() === 'win32' ? 'nul' : '/dev/null';
+      const instance = new DetoxLogger({ file: noopFilePath });
+
+      expect(instance.config).toEqual({
+        level: 'info',
+        overrideConsole: false,
+        options: expect.objectContaining({
+          showDate: false,
+          showLevel: false,
+          showLoggerName: false,
+          showMetadata: false,
+          showPid: false,
+          showPrefixes: false,
+          showProcess: false,
+        }),
+      });
     });
   });
 

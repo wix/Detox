@@ -113,6 +113,31 @@ Array [
   },
   Object {
     "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "name": "duration1:stacked",
+    "ph": "B",
+    "pid": 1234,
+    "tid": 0,
+    "ts": 1672531201100000,
+  },
+  Object {
+    "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "ph": "E",
+    "pid": 1234,
+    "tid": 0,
+    "ts": 1672531201400000,
+  },
+  Object {
+    "args": Object {
       "name": "parallel",
     },
     "name": "thread_name",
@@ -355,6 +380,31 @@ Array [
   },
   Object {
     "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "name": "duration1:stacked",
+    "ph": "B",
+    "pid": 1234,
+    "tid": 1,
+    "ts": 1672531201100000,
+  },
+  Object {
+    "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "ph": "E",
+    "pid": 1234,
+    "tid": 1,
+    "ts": 1672531201400000,
+  },
+  Object {
+    "args": Object {
       "name": "parallel",
     },
     "name": "thread_name",
@@ -429,6 +479,8 @@ exports[`DetoxLogFinalizer finalize should convert JSONL logs to Chrome Trace fo
 2023-01-01T00:00:00.500Z detox[1235] B parallel long-duration
 2023-01-01T00:00:01.000Z detox[1234] B parallel@1 duration1
 2023-01-01T00:00:01.000Z detox[1235] i  instant event
+2023-01-01T00:00:01.100Z detox[1234] B parallel@1 duration1:stacked
+2023-01-01T00:00:01.400Z detox[1234] E parallel@1 duration1:stacked
 2023-01-01T00:00:01.500Z detox[1234] B parallel@2 duration2
 2023-01-01T00:00:02.000Z detox[1234] E parallel@1 duration1
 2023-01-01T00:00:02.250Z detox[1235] E parallel long-duration

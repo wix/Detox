@@ -20,14 +20,9 @@ function flatMapTransform(fn) {
   return new Transform({
     objectMode: true,
     transform(chunk, encoding, callback){
-      const result = fn(chunk, index++);
-      if (Array.isArray(result)) {
-        // eslint-disable-next-line unicorn/no-array-method-this-argument
-        result.forEach(pushThis, this);
-      } else if (result) {
-        this.push(result);
-      }
-
+      const results = fn(chunk, index++);
+      // eslint-disable-next-line unicorn/no-array-method-this-argument
+      results.forEach(pushThis, this);
       callback();
     },
   });

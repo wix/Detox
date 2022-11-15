@@ -1,7 +1,7 @@
 const { Transform } = require('stream');
 
 class JSONLStringer extends Transform {
-  constructor({ replacer = undefined, header = '', delimiter = '\n', footer = '' } = {}) {
+  constructor({ replacer, header, delimiter, footer }) {
     super({ writableObjectMode: true, readableObjectMode: false });
 
     this._replacer = replacer;
@@ -35,6 +35,7 @@ class JSONLStringer extends Transform {
 
   static serializeJSONL() {
     return new JSONLStringer({
+      replacer: undefined,
       header: '',
       delimiter: '\n',
       footer: '',
@@ -43,6 +44,7 @@ class JSONLStringer extends Transform {
 
   static serializeJSON() {
     return new JSONLStringer({
+      replacer: undefined,
       header: '[\n\t',
       delimiter: ',\n\t',
       footer: '\n]\n',

@@ -3,15 +3,16 @@ const JsonlParser = require('stream-json/jsonl/Parser');
 const { through } = require('./transformers');
 
 class DetoxJSONLParser {
-  constructor(logger) {
-    this._logger = logger;
+  constructor(log) {
+    this._log = log;
   }
 
   createTransformer() {
-    const log = this._logger;
+    const log = this._log;
     const readable = through();
     const writable = JsonlParser.make({ checkErrors: true })
       .on('error', (err) => {
+        /* istanbul ignore else */
         if (err instanceof SyntaxError) {
           log.debug({ err });
           readable.end();

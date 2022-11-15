@@ -258,6 +258,12 @@ describe('DetoxLogFinalizer', () => {
     jest.setSystemTime(new Date('2023-01-01T00:00:01.000Z'));
     log1.trace.begin({ id: 1, cat: 'parallel' }, 'duration1');
 
+    jest.setSystemTime(new Date('2023-01-01T00:00:01.100Z'));
+    log1.trace.begin({ id: 1, cat: 'parallel' }, 'duration1:stacked');
+
+    jest.setSystemTime(new Date('2023-01-01T00:00:01.400Z'));
+    log1.trace.end({ id: 1, cat: 'parallel' }, 'duration1:stacked');
+
     jest.setSystemTime(new Date('2023-01-01T00:00:01.500Z'));
     log1.trace.begin({ id: 2, cat: 'parallel' }, 'duration2');
 
