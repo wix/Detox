@@ -19,11 +19,12 @@ const sanitizeBunyanContext = require('./utils/sanitizeBunyanContext');
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
  * @property {MessageStack} [messageStack]
+ * @property {boolean} [unsafeMode] Disables sanitization of user input, used for integration tests.
  */
 
 class DetoxLogger {
   /**
-   * @param {Pick<SharedLoggerConfig, 'file' | 'userConfig'>} sharedConfig
+   * @param {SharedLoggerConfig} sharedConfig
    * @param {object} [context]
    */
   constructor(sharedConfig, context) {
@@ -91,7 +92,7 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    const merged = this._mergeContexts(this._context, sanitizeBunyanContext(overrides));
+    const merged = this._mergeContexts(this._context, this._sanitizeContext(overrides));
     return new DetoxLogger(this._sharedConfig, merged);
   }
 
@@ -291,10 +292,19 @@ class DetoxLogger {
     const context = this._mergeContexts(
       this._context,
       boundContext,
-      sanitizeBunyanContext(userContext),
+      this._sanitizeContext(userContext),
     );
 
     return { context, msg };
+  }
+
+  /** @private */
+  _sanitizeContext(context) {
+    if (this._sharedConfig.unsafeMode) {
+      return context;
+    }
+
+    return sanitizeBunyanContext(context);
   }
 
   /** @internal */

@@ -61,7 +61,6 @@
     "caf": "^15.0.1",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
-    "duplexify": "^4.1.2",
     "find-up": "^4.1.0",
     "fs-extra": "^4.0.2",
     "funpermaproxy": "^1.1.0",

@@ -1,31 +1,35 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const pipe = require('multipipe');
 
 const temporary = require('../../artifacts/utils/temporaryPath');
-const streamUtils = () => require('../../logger/utils/streamUtils');
 
-const getMainCategory = require('./getMainCategory');
+const { BunyanTransformer, ChromeTraceTransformer } = require('./streams');
 
 /**
  * @typedef DetoxLogFinalizerConfig
  * @property {import('../../ipc/SessionState')} session
+ * @property {import('../DetoxLogger')} logger
  */
 
 class DetoxLogFinalizer {
   /** @param {DetoxLogFinalizerConfig} config */
   constructor(config) {
+    this._logger = config.logger;
     this._session = config.session;
+    this._bunyanTransformer = new BunyanTransformer(
+      config.logger,
+      this._session.detoxConfig.logger
+    );
+    this._chromeTransformer = new ChromeTraceTransformer();
   }
 
   createEventStream() {
     const sessionId = this._session.id;
     const logs = temporary.find.jsonl.sync(`${sessionId}.*`);
 
-    return streamUtils()
-      .uniteSessionLogs(logs)
-      .pipe(streamUtils().chromeTraceStream());
+    const toChromeTrace = this._chromeTransformer.createStream();
+    return this._bunyanTransformer.uniteSessionLogs(logs).pipe(toChromeTrace);
   }
 
   async finalize() {
@@ -39,16 +43,22 @@ class DetoxLogFinalizer {
       const rootDir = this._config.artifacts.rootDir;
 
       await fs.mkdirp(rootDir);
-      const [out1Stream, out2Stream] = ['detox.log', 'detox.trace.json']
-        .map((filename) => fs.createWriteStream(path.join(rootDir, filename)));
 
-      const tidHashMap = await this._scanForThreadIds(logs);
-      const mergedStream = streamUtils().uniteSessionLogs(logs);
+      const firstPass = this._bunyanTransformer.uniteSessionLogs(logs);
+      await this._chromeTransformer.scanThreadIDs(firstPass);
 
-      await Promise.all([
-        pipe(mergedStream, streamUtils().debugStream(this._config.logger.options), out1Stream),
-        pipe(mergedStream, streamUtils().chromeTraceStream(tidHashMap), streamUtils().writeJSON(), out2Stream),
-      ]);
+      const secondPass = this._bunyanTransformer.uniteSessionLogs(logs);
+      const outStreams = [this._createPlainFileStream(), this._createChromeTraceStream()];
+
+      await Promise.all(outStreams.map(stream => {
+        return new Promise((resolve, reject) => {
+          stream.target
+            .on('finish', resolve)
+            .on('error', reject);
+
+          secondPass.pipe(stream.writable);
+        });
+      }));
     }
 
     await Promise.all(logs.map(filepath => fs.remove(filepath)));
@@ -75,6 +85,24 @@ class DetoxLogFinalizer {
         this._safeRemoveSync(log);
       }
     }
+  }
+
+  _createPlainFileStream() {
+    const rootDir = this._config.artifacts.rootDir;
+    const transformer = this._bunyanTransformer.createPlainTransformer();
+    const fileStream = fs.createWriteStream(path.join(rootDir, 'detox.log'));
+    transformer.readable.pipe(fileStream);
+
+    return { writable: transformer.writable, target: fileStream };
+  }
+
+  _createChromeTraceStream() {
+    const rootDir = this._config.artifacts.rootDir;
+    const transformer = this._chromeTransformer.createSerializedStream();
+    const fileStream = fs.createWriteStream(path.join(rootDir, 'detox.trace.json'));
+    transformer.readable.pipe(fileStream);
+
+    return { writable: transformer.writable, target: fileStream };
   }
 
   /* istanbul ignore next */
@@ -129,35 +157,6 @@ class DetoxLogFinalizer {
     }
 
     return this._session.testResults.some(r => !r.success);
-  }
-
-  /** @private */
-  async _scanForThreadIds(logs) {
-    const processes = await new Promise((resolve, reject) => {
-      const result = {};
-      streamUtils().uniteSessionLogs(logs)
-        .on('end', () => resolve(result))
-        .on('error', /* istanbul ignore next */ (err) => reject(err))
-        .on('data', (event) => {
-          const { ph, pid, tid, cat } = event;
-          if (ph === 'B' || ph === 'i') {
-            const categories = (result[pid] = result[pid] || {});
-            const mainCategory = getMainCategory(cat);
-            const tids = (categories[mainCategory] = categories[mainCategory] || []);
-            if (!tids.includes(tid)) {
-              tids.push(tid);
-            }
-          }
-        });
-    });
-
-    const tidArray = Object.entries(processes).flatMap(([pid, categories]) => {
-      return Object.entries(categories).flatMap(([category, tids]) => {
-        return tids.map(tid => `${pid}:${category}:${tid}`);
-      });
-    });
-
-    return new Map(tidArray.map((hash, index) => [hash, index]));
   }
 }
 
