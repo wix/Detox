@@ -2,19 +2,18 @@
 const path = require('path');
 
 const exec = require('child-process-promise').exec;
-
 const _ = require('lodash');
+const osascript = require('node-osascript');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const { execAsync } = require('../../../../utils/childProcess');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
-const { execAsync } = require('../../../../utils/childProcess');
 
-const osascript = require('node-osascript');
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -145,7 +144,7 @@ class SimulatorDriver extends IosDriver {
                 repeat until (exists button "Allow" of window 1)
                     delay 1
                 end repeat
-        
+
                 repeat while exists button "Allow" of window 1
                     if exists button "Allow" of window 1 then
                         click button "Allow" of window 1
