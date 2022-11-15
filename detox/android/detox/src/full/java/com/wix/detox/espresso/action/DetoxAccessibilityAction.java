@@ -39,6 +39,7 @@ public class DetoxAccessibilityAction implements ViewAction {
         final int reactTag = view.getId();
         final WritableMap event = Arguments.createMap();
         event.putString("actionName", mActionName);
+
         UIManagerModule uiManager = (UIManagerModule) UIManagerHelper.getUIManager(context, reactTag);
         uiManager.getEventDispatcher().dispatchEvent(new Event(reactTag) {
             @Override
@@ -51,5 +52,8 @@ public class DetoxAccessibilityAction implements ViewAction {
                 rctEventEmitter.receiveEvent(reactTag, "topAccessibilityAction", event);
             }
         });
+
+        int waitTimeMS = 100;
+        uiController.loopMainThreadForAtLeast(waitTimeMS);
     }
 }
