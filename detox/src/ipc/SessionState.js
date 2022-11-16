@@ -9,7 +9,6 @@ const context = vm.createContext({ require }, {
 class SessionState {
   constructor({
     id = '',
-    contexts = [],
     detoxConfig = null,
     detoxIPCServer = '',
     testResults = [],
@@ -17,7 +16,6 @@ class SessionState {
     workersCount = 0
   }) {
     this.id = id;
-    this.contexts = contexts;
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
     this.testResults = testResults;
@@ -30,7 +28,7 @@ class SessionState {
   }
 
   stringify() {
-    return cycle.stringify(this, SessionState.stringifier);
+    return cycle.stringify(this, SessionState._stringifier);
   }
 
   /**
@@ -39,10 +37,10 @@ class SessionState {
   static parse(stringified) {
     const Class = this; // eslint-disable-line unicorn/no-this-assignment
     // @ts-ignore
-    return new Class(cycle.parse(stringified, SessionState.reviver));
+    return new Class(cycle.parse(stringified, SessionState._reviver));
   }
 
-  static reviver(key, val) {
+  static _reviver(key, val) {
     if (typeof val === 'object' && val !== null && typeof val.$fn == 'string') {
       return vm.runInContext(val.$fn, context);
     } else {
@@ -50,7 +48,7 @@ class SessionState {
     }
   }
 
-  static stringifier(key, val) {
+  static _stringifier(key, val) {
     if (typeof val === 'function') {
       return { $fn: `(${val})` };
     } else {
