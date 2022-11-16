@@ -163,7 +163,6 @@
       "runners/jest/testEnvironment",
       "src/DetoxWorker.js",
       "src/logger/utils/streamUtils.js",
-      "src/ipc",
       "src/realms"
     ],
     "resetMocks": true,

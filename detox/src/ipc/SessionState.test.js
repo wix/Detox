@@ -12,7 +12,6 @@ describe('SessionState', () => {
 
     sessionState = new SessionState({
       id: '123',
-      contexts: ['context1', 'context2'],
       detoxConfig: {
         someFunction
       },
@@ -23,9 +22,21 @@ describe('SessionState', () => {
     });
   });
 
+  describe('when created without arguments', () => {
+    it('should have default values', () => {
+      expect(new SessionState({})).toEqual({
+        id: '',
+        detoxConfig: null,
+        detoxIPCServer: '',
+        testResults: [],
+        testSessionIndex: 0,
+        workersCount: 0,
+      });
+    });
+  });
+
   it('should create the new session state with the given properties', () => {
     expect(sessionState.id).toEqual('123');
-    expect(sessionState.contexts).toEqual(['context1', 'context2']);
     expect(sessionState.detoxConfig).toEqual({ someFunction });
     expect(sessionState.detoxIPCServer).toEqual('server');
     expect(sessionState.testResults).toEqual(['result1', 'result2']);
@@ -58,7 +69,7 @@ describe('SessionState', () => {
   });
 
   it('should stringify correctly', () => {
-    const expected = '{"id":"123","contexts":["context1","context2"],' +
+    const expected = '{"id":"123",' +
       '"detoxConfig":{"someFunction":{"$fn":"(() => {\\n      return \'foo\';\\n    })"}},' +
       '"detoxIPCServer":"server","testResults":["result1","result2"],"testSessionIndex":1,"workersCount":2}';
 
@@ -66,7 +77,7 @@ describe('SessionState', () => {
   });
 
   it('should parse stringified session state to class instance', () => {
-    const stringified = '{"id":"123","contexts":["context1","context2"],' +
+    const stringified = '{"id":"123",' +
       '"detoxConfig":{"someFunction":{"$fn":"(() => {\\n      return \'foo\';\\n    })"}},' +
       '"detoxIPCServer":"server","testResults":["result1","result2"],"testSessionIndex":1,"workersCount":2}';
 
@@ -80,6 +91,5 @@ describe('SessionState', () => {
     delete parsed.detoxConfig.someFunction;
     delete sessionState.detoxConfig.someFunction;
     expect(parsed).toEqual(sessionState);
-
   });
 });

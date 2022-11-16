@@ -9,7 +9,6 @@ const context = vm.createContext({ require }, {
 class SessionState {
   constructor({
     id = '',
-    contexts = [],
     detoxConfig = null,
     detoxIPCServer = '',
     testResults = [],
@@ -17,7 +16,6 @@ class SessionState {
     workersCount = 0
   }) {
     this.id = id;
-    this.contexts = contexts;
     this.detoxConfig = detoxConfig;
     this.detoxIPCServer = detoxIPCServer;
     this.testResults = testResults;

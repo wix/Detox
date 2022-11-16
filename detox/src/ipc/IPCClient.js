@@ -34,7 +34,15 @@ class IPCClient {
     this._serverConnection = null;
 
     if (this._ipc) {
-      this._ipc.disconnect(this.serverId);
+      await new Promise((resolve, reject) => {
+        this._ipc.of[this.serverId]
+          // @ts-ignore
+          .once('disconnect', resolve)
+          .once('error', reject);
+
+        this._ipc.disconnect(this.serverId);
+      });
+
       this._ipc = null;
     }
   }
@@ -68,9 +76,9 @@ class IPCClient {
     this._serverConnection = await new Promise((resolve, reject) => {
       this._ipc.connectTo(serverId, (client) => {
         client.of[serverId]
-          .on('error', reject)
-          .on('disconnect', () => reject(new DetoxInternalError('IPC server has unexpectedly disconnected.')))
-          .on('connect', () => resolve(client.of[serverId]));
+          .once('error', reject)
+          .once('disconnect', () => reject(new DetoxInternalError('IPC server has unexpectedly disconnected.')))
+          .once('connect', () => resolve(client.of[serverId]));
       });
     });
 
@@ -90,6 +98,7 @@ class IPCClient {
     return new Promise((resolve, reject) => {
       const server = this._serverConnection;
 
+      /* istanbul ignore next */
       function onError(err) {
         server.off('error', onError);
         server.off(`${event}Done`, onDone);
@@ -110,7 +119,7 @@ class IPCClient {
   }
 
   _onSessionStateUpdate = (payload) => {
-    this._state.patch(payload);
+    this._sessionState.patch(payload);
   };
 }
 
