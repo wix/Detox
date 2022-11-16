@@ -26,6 +26,7 @@ Use [expectations](expect.md) to verify element states.
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
 - [`.getAttributes()`](#getattributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
+- [`.performAccessibilityAction()`](#performaccessibilityactionactionname)
 
 ### `tap(point)`
 
@@ -309,6 +310,16 @@ jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 Takes a screenshot of the matched element. For full details on taking screenshots with Detox, refer to the [screenshots guide](../guide/taking-screenshots.md).
 
 `name`—the name of the screenshot
+
+### `performAccessibilityAction(actionName)`
+
+Triggers an [accessibility action](https://reactnative.dev/docs/accessibility#accessibility-actions).
+
+`actionName`—the name of the accessibility action <br/>
+
+```js
+await element(by.id('scrollView')).performAccessibilityAction("activate");
+```
 
 ## Deprecated Methods
 
