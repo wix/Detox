@@ -8,7 +8,7 @@ const {
   withSuspendingMock,
   uuidRegexp,
   tempFileRegexp,
-} = global;
+} = require('../../__tests__/helpers');
 
 const workerId = 19;
 

@@ -4,7 +4,7 @@ const {
   latestInstanceOf,
   throwErrorImpl,
   withSuspendingMock,
-} = global;
+} = require('../../__tests__/helpers');
 
 const DETOX_CONFIG_SNAPSHOT_PATH = 'mocked/detox.json';
 const sessionState = {

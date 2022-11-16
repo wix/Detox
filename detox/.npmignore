@@ -15,9 +15,9 @@ wallaby.js
 __tests__
 __mocks__
 __snapshots__
-src/**/*.test.js
-src/**/*.mock.js
-src/**/*.mock.json
+**/*.test.js
+**.mock.js
+**.mock.json
 
 ios_src
 
