@@ -83,6 +83,14 @@ describe('ADB', () => {
     });
   });
 
+  it('should await device boot', async () => {
+    await adb.waitForDevice(deviceId);
+
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+      expect.stringContaining(`"${adbBinPath}" -s ${deviceId} wait-for-device`),
+      expect.any(Object));
+  });
+
   it('should install an APK (api≤22)', async () => {
     jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 22);
     await adb.install(deviceId, 'path/to/bin.apk');

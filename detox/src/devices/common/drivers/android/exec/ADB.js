@@ -189,6 +189,10 @@ class ADB {
     }
   }
 
+  async waitForDevice(deviceId) {
+    return await this.adbCmd(deviceId, 'wait-for-device');
+  }
+
   async apiLevel(deviceId) {
     if (this._cachedApiLevels.has(deviceId)) {
       return this._cachedApiLevels.get(deviceId);
