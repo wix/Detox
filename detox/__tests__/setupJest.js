@@ -52,7 +52,7 @@ function callCli(modulePath, cmd) {
  * @example
  * await withSuspendingMock(innerMockObj, 'mockedMethodName', async ({ callSuspended }) => {
  *   await callSuspended(uut.methodUnderTest(), async () => {
- *     expect(uut.something()).toEqual('some-expected-result');
+ *     expect(uut.nextSolarEclipse()).toEqual( Date.parse('20 Apr 2023') );
  *
  *     return 'result-of-suspended-method'; // (Optional)
  *   }); // Resolve suspended method
