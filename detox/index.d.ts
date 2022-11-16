@@ -1375,6 +1375,13 @@ declare global {
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
             /**
+             * Performs a given accessibility action.
+             * @param actionName - name of the accessibility action
+             * @example await element(by.id('view')).performAccessibilityAction('activate');
+             */
+            performAccessibilityAction(actionName: string): Promise<void>
+
+            /**
              * Pinches in the given direction with speed and angle. (iOS only)
              * @param angle value in radiant, default is `0`
              * @example
