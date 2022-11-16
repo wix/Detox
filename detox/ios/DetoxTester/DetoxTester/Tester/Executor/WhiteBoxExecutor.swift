@@ -82,7 +82,7 @@ class WhiteBoxExecutor {
 
       case .verifyVisibility(let element, let threshold):
         let message = createMessage(
-          type: "verifyText",
+          type: "verifyVisibility",
           params: [
             "threshold": AnyCodable(threshold),
             "elementID": AnyCodable(element.identifier)

@@ -60,12 +60,12 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 					fatalError("Error receiving message: \(error.localizedDescription)")
 			case .success(let message):
 				switch message {
-				case .string(let string):
-					self?.receiveAction(json: string)
-				case .data(let data):
-					self?.receiveAction(json: String(data: data, encoding: .utf8)!)
-				@unknown default:
-					fatalError("Unknown websocket message type")
+					case .string(let string):
+						self?.receiveAction(json: string)
+					case .data(let data):
+						self?.receiveAction(json: String(data: data, encoding: .utf8)!)
+					@unknown default:
+						fatalError("Unknown websocket message type")
 				}
 				
 				self?.receive()
