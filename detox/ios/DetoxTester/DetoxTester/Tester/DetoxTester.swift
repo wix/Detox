@@ -30,10 +30,10 @@ import XCTest
   /// The test-case in which the tester is running from.
   fileprivate(set) var testCase: XCTestCase?
 
-  ///
+  /// Callback for handling a server-received-handler message.
   fileprivate(set) var serverDidReceiveHandler: ((Data) -> Void)?
 
-  ///
+  /// Semaphore for waiting the white-box handler to finish its executions.
   static private let whiteBoxClientConnectionSemaphore: DispatchSemaphore = .init(value: 0)
 
   // MARK: - Start

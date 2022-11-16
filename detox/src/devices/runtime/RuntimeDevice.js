@@ -113,12 +113,85 @@ class RuntimeDevice {
   }
 
   async launchApp(params = {}, bundleId = this._bundleId) {
-    return traceCall('launch app', this._doLaunchApp(params, bundleId));
+    const payloadParams = ['url', 'userNotification', 'userActivity'];
+    const hasPayload = this._assertHasSingleParam(payloadParams, params);
+    const newInstance = params.newInstance !== undefined
+      ? params.newInstance
+      : this._processes[bundleId] == null;
+
+    if (params.delete) {
+      await this.terminateApp(bundleId);
+      await this.uninstallApp();
+      await this.installApp();
+    } else if (newInstance) {
+      await this.terminateApp(bundleId);
+    }
+
+    const baseLaunchArgs = {
+      ...this._currentAppLaunchArgs.get(),
+      ...params.launchArgs,
+    };
+
+    if (params.url) {
+      baseLaunchArgs['detoxURLOverride'] = params.url;
+      if (params.sourceApp) {
+        baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
+      }
+    } else if (params.userNotification) {
+      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
+    } else if (params.userActivity) {
+      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
+    }
+
+    if (params.permissions) {
+      await this.deviceDriver.setPermissions(bundleId, params.permissions);
+    }
+
+    if (params.disableTouchIndicators) {
+      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+    }
+
+    if (this._isAppRunning(bundleId) && hasPayload) {
+      await this.deviceDriver.deliverPayload({ ...(params), delayPayload: true });
+    }
+
+    const lock = new Lock();
+    await this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId, function() {
+      lock.release();
+      console.log('Lock just released!');
+    });
+
+    console.log('Waiting for the lock to be released');
+    await lock.acquire();
+    // await lock.acquire();
+    console.log('Can proceed (lock released)');
+
+    if (this._behaviorConfig.launchApp === 'manual') {
+      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+    } else {
+      this._processes[bundleId] = await this.deviceDriver.launchApp(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      console.log('Launched app process:', this._processes[bundleId]);
+      await this.deviceDriver.waitUntilReady();
+      console.log('wait for active');
+      await this.deviceDriver.waitForActive();
+      console.log('App launched. Running test...');
+    }
+
+    await this._emitter.emit('appReady', {
+      deviceId: this.deviceDriver.getExternalId(),
+      bundleId,
+      pid: this._processes[bundleId],
+    });
+
+    if (params.detoxUserNotificationDataURL) {
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
+    }
+
+    if (params.detoxUserActivityDataURL) {
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
+    }
   }
 
-  /**
-   * @deprecated
-   */
   async relaunchApp(params = {}, bundleId) {
     if (params.newInstance === undefined) {
       params['newInstance'] = true;
@@ -304,83 +377,6 @@ class RuntimeDevice {
       throw this._errorComposer.appNotSelected();
     }
     return this._currentApp;
-  }
-
-  async _doLaunchApp(params, bundleId) {
-    const payloadParams = ['url', 'userNotification', 'userActivity'];
-    const hasPayload = this._assertHasSingleParam(payloadParams, params);
-    const newInstance = params.newInstance !== undefined
-      ? params.newInstance
-      : this._processes[bundleId] == null;
-
-    if (params.delete) {
-      await this.terminateApp(bundleId);
-      await this.uninstallApp();
-      await this.installApp();
-    } else if (newInstance) {
-      await this.terminateApp(bundleId);
-    }
-
-    const baseLaunchArgs = {
-      ...this._currentAppLaunchArgs.get(),
-      ...params.launchArgs,
-    };
-
-    if (params.url) {
-      baseLaunchArgs['detoxURLOverride'] = params.url;
-      if (params.sourceApp) {
-        baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
-      }
-    } else if (params.userNotification) {
-      this._createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
-    } else if (params.userActivity) {
-      this._createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
-    }
-
-    if (params.permissions) {
-      await this.deviceDriver.setPermissions(bundleId, params.permissions);
-    }
-
-    if (params.disableTouchIndicators) {
-      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
-    }
-
-    if (this._isAppRunning(bundleId) && hasPayload) {
-      await this.deviceDriver.deliverPayload({ ...params, delayPayload: true });
-    }
-
-    const lock = new Lock();
-    await this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId, function() {
-      lock.release();
-      console.log('Lock just released!');
-    });
-
-    console.log('Waiting for the lock to be released');
-    await lock.acquire();
-    await lock.acquire();
-    console.log('Can proceed (lock released)');
-
-    if (this._behaviorConfig.launchApp === 'manual') {
-      this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
-    } else {
-      this._processes[bundleId] = await this.deviceDriver.launchApp(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
-      await this.deviceDriver.waitUntilReady();
-      await this.deviceDriver.waitForActive();
-    }
-
-    await this._emitter.emit('appReady', {
-      deviceId: this.deviceDriver.getExternalId(),
-      bundleId,
-      pid: this._processes[bundleId],
-    });
-
-    if(params.detoxUserNotificationDataURL) {
-      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
-    }
-
-    if(params.detoxUserActivityDataURL) {
-      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
-    }
   }
 
   async _sendPayload(key, params) {

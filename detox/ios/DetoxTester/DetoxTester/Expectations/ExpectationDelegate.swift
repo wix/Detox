@@ -7,6 +7,7 @@ import DetoxInvokeHandler
 import Foundation
 import XCTest
 
+/// A delegate for expectations that can be performed on an element.
 class ExpectationDelegate: ExpectationDelegateProtocol {
   let app: XCUIApplication
 

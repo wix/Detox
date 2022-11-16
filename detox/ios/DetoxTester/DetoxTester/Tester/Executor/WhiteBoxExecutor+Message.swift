@@ -7,7 +7,7 @@ import Foundation
 import DetoxInvokeHandler
 
 extension WhiteBoxExecutor {
-  // TODO: document.
+  /// A message to be sent to the white-box executor.
   enum Message {
     /// Returns response of `completed` if succsfully done.
     case reloadReactNative
@@ -52,7 +52,7 @@ extension WhiteBoxExecutor {
       onElement: XCUIElement
     )
 
-    ///
+    /// Returns reponse of `elementsAttributes` if succsfully done.
     case requestAttributes(
       ofElements: [XCUIElement]
     )

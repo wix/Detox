@@ -285,7 +285,7 @@ extension WhiteBoxExecutor {
 }
 
 extension WhiteBoxExecutor {
-  ///
+  /// Sets a white-box handler for the given `bundleIdentifier`.
   class func setNewHandler(
     for bundleId: String, withMessageSender sender: AppClientMessageSenderProtocol
   ) {

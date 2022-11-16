@@ -7,6 +7,7 @@ import DetoxInvokeHandler
 import Foundation
 import XCTest
 
+/// A delegate for actions that can be performed on an element.
 class ActionDelegate: ActionDelegateProtocol {
   let app: XCUIApplication
 

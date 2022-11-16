@@ -8,7 +8,7 @@ import XCTest
 import DetoxInvokeHandler
 
 extension XCUIElement {
-  ///
+  /// Pinches the element.
   func pinch(withScale scale: Double, speed: Action.ActionSpeed?, angle: Double?) {
     let angle = radians(from: angle ?? 0)
     rotate(angle, withVelocity: rotateVelocity(fromSpeed: speed, angle: angle))

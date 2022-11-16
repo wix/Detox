@@ -123,64 +123,64 @@ extension ElementAttributes {
   }
 }
 
-///
+/// Represents a point in 2D space.
 struct Point: Codable, Equatable {
-  ///
+  /// The x coordinate of the point.
   let x: CGFloat
 
-  ///
+  /// The y coordinate of the point.
   let y: CGFloat
 }
 
-///
+/// Represents a rectangle in 2D space.
 struct Size: Codable, Equatable {
-  ///
+  /// The width of the rectangle.
   let height: CGFloat
 
-  ///
+  /// The height of the rectangle.
   let width: CGFloat
 }
 
-///
+/// Represents a rectangle in 2D space.
 struct Rect: Codable, Equatable {
-  ///
+  /// The origin of the rectangle.
   let origin: Point
 
-  ///
+  /// The size of the rectangle.
   let size: Size
 }
 
-///
+/// Represents the insets of a rectangle.
 struct EdgeInsets: Codable, Equatable {
-  ///
+  /// The top inset of the rectangle.
   let top: CGFloat
 
-  ///
+  /// The left inset of the rectangle.
   let bottom: CGFloat
 
-  ///
+  /// The right inset of the rectangle.
   let left: CGFloat
 
-  ///
+  /// The bottom inset of the rectangle.
   let right: CGFloat
 }
 
 extension CGPoint {
-  ///
+  /// A `Point` representation of the `CGPoint`.
   var codable: Point {
     .init(x: x, y: y)
   }
 }
 
 extension CGSize {
-  ///
+  /// A `Size` representation of the `CGSize`.
   var codable: Size {
     .init(height: height, width: width)
   }
 }
 
 extension CGRect {
-  ///
+  /// A `Rect` representation of the `CGRect`.
   var codable: Rect {
     .init(
       origin: .init(x: origin.x, y: origin.y),
@@ -190,7 +190,7 @@ extension CGRect {
 }
 
 extension UIEdgeInsets {
-  ///
+  /// An `EdgeInsets` representation of the `UIEdgeInsets`.
   var codable: EdgeInsets {
     .init(top: top, bottom: bottom, left: left, right: right)
   }

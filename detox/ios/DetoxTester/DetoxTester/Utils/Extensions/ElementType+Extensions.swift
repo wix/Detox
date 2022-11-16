@@ -6,6 +6,7 @@
 import Foundation
 
 extension XCUIElement.ElementType {
+  /// Returns the `XCUIElement.ElementType` as a `String`.
   func asString() -> String {
     switch self {
       case .switch:

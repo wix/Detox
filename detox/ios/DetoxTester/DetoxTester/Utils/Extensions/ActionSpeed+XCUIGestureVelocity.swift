@@ -7,6 +7,7 @@ import Foundation
 import DetoxInvokeHandler
 
 extension Action.ActionSpeed {
+  /// Returns the corresponding `XCUIGestureVelocity` for the given `ActionSpeed`.
   var gestureVelocity: XCUIGestureVelocity {
     switch self {
       case .slow:

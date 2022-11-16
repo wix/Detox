@@ -72,6 +72,7 @@ class Client {
   async connect() {
     await this.open();
     const sessionStatus = await this.sendAction(new actions.Login(this._sessionId));
+    console.log('sessionStatus', sessionStatus);
     if (sessionStatus.appConnected) {
       this._onAppConnected();
     }
@@ -186,7 +187,9 @@ class Client {
       this._whenAppIsConnected = new Deferred();
       this._whenAppIsReady = new Deferred();
 
+      console.warn('App is not connected yet. Waiting for it to connect...');
       await this._whenAppIsConnected.promise;
+      console.warn('App is connected. Waiting for it to be ready...');
       // TODO: optimize traffic (!) - we can just listen for 'ready' event
       // if app always sends it upon load completion. On iOS it works,
       // but not on Android. Afterwards, this will suffice:
@@ -197,6 +200,7 @@ class Client {
     // TODO: move to else branch after the optimization
     if (!this._whenAppIsReady.isResolved()) {
       this._whenAppIsReady = new Deferred();
+      console.log('Waiting for app to become ready...');
       await this.sendAction(new actions.Ready());
       this._whenAppIsReady.resolve();
     }
@@ -302,6 +306,7 @@ class Client {
   }
 
   _onAppConnected() {
+    console.log('App connected.');
     if (this._whenAppIsConnected.isPending()) {
       this._whenAppIsConnected.resolve();
     } else {

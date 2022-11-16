@@ -6,7 +6,7 @@
 import Foundation
 
 extension XCUIApplication {
-  ///
+  /// Returns the settings app.
   static var settingsApp: XCUIApplication {
     return XCUIApplication(bundleIdentifier: "com.apple.Preferences")
   }

@@ -9,6 +9,8 @@ import XCTest
 
 // TODO: extract to methods.
 
+/// Extension to `XCUIElementQuery` that adds matching capabilities that uses the white-box handler of Detox
+/// (which are not available in XCUITest).
 extension XCUIElementQuery {
   /// Returns a new query matches the given pattern.
   func matching(
@@ -86,7 +88,7 @@ private extension XCUIElementQuery {
     return matching(predicate)
   }
 
-  ///
+  /// Returns a new query that matches any element with the given identifiers.
   func matching(
     anyIdentifierFrom identifiers: [String]
   ) -> XCUIElementQuery {

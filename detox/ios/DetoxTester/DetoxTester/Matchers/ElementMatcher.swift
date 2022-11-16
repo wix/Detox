@@ -7,6 +7,7 @@ import DetoxInvokeHandler
 import Foundation
 import XCTest
 
+/// A delegate for matching elements.
 class ElementMatcher: ElementMatcherProtocol {
   let app: XCUIApplication
 

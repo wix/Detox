@@ -116,6 +116,7 @@ class DeviceDriverBase {
   }
 
   async waitUntilReady() {
+    console.warn('DeviceDriverBase.waitUntilReady()');
     return await this.client.waitUntilReady();
   }
 

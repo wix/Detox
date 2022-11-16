@@ -5,6 +5,7 @@
 
 import Foundation
 
+/// Namespace for JSON-related utilities.
 struct JSON {
   static let encoder = JSONEncoder()
 }

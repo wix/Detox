@@ -7,7 +7,7 @@ import Foundation
 import DetoxInvokeHandler
 
 extension XCUIElement {
-  ///
+  /// Taps the keyboard key with the given type.
   func tapKey(_ keyType: Action.TapKeyType) throws {
     self.focusOnElement()
 
@@ -29,7 +29,7 @@ extension XCUIElement {
     self.tap()
   }
 
-  ///
+  /// Changes the text in the element with the given text and change type.
   func changeText(_ changeType: Action.ChangeTextType) {
     switch changeType {
       case .clear:

@@ -6,7 +6,7 @@
 import Foundation
 
 extension Executor {
-  ///
+  /// Waits for the given app-state to be reached.
   func waitFor(appState state: AppState, messageId: NSNumber) {
     let hasState = getAppUnderTest().wait(for: state.toXCUIState(), timeout: .minute)
 
@@ -18,7 +18,7 @@ extension Executor {
     sendAction(state.completionMessage(), messageId: messageId)
   }
 
-  ///
+  /// Waits for the app to be idle.
   func waitForIdle(messageId: NSNumber) {
     if isWhiteBoxExecutorAvailable() {
       execute(whiteBoxRequest: .waitUntilReady).assertResponse(equalsTo: .completed)
@@ -29,12 +29,12 @@ extension Executor {
 }
 
 extension Executor {
-  ///
+  /// Enumerates the app states.
   enum AppState {
-    ///
+    /// The app is running in the background.
     case background
 
-    ///
+    /// The app is running in the foreground.
     case foreground
   }
 }

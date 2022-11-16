@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 extension Executor {
-  ///
+  /// Returns the app under test bundle identifier.
   func getAppUnderTestBundleIdentifier() -> String {
     let environment = ProcessInfo.processInfo.environment
     guard let bundleIdentifier = environment[EnvArgKeys.appUnderTest] else {
@@ -18,7 +18,7 @@ extension Executor {
     return bundleIdentifier
   }
 
-  ///
+  /// Returns the app under test.
   func getAppUnderTest() -> XCUIApplication {
     return XCUIApplication(bundleIdentifier: getAppUnderTestBundleIdentifier())
   }

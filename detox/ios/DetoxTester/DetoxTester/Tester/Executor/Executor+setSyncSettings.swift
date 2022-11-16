@@ -6,7 +6,7 @@
 import Foundation
 
 extension Executor {
-  ///
+  /// Sets the sync settings.
   func setSyncSettings(params: [String: AnyHashable], messageId: NSNumber) {
     if isWhiteBoxExecutorAvailable() {
       setWhiteBoxSyncSettings(params: params, messageId: messageId)

@@ -5,8 +5,8 @@
 
 import Foundation
 
-///
+/// Various extensions for `TimeInterval`.
 extension TimeInterval {
-  ///
+  /// Minute in seconds (as `TimeInterval`).
   static let minute: TimeInterval = 60
 }

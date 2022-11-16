@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 extension XCUIElement {
-  ///
+  /// Adjusts the slider to the given value.
   func adjustSlider(to normalizedPosition: Double) {
     guard elementType == .slider else {
       sliders.firstMatch.adjustSlider(to: normalizedPosition)

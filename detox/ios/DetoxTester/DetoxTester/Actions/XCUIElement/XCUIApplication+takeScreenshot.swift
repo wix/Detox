@@ -7,6 +7,7 @@ import Foundation
 import XCTest
 
 extension XCUIApplication {
+  /// Takes a screenshot of the current screen.
   func takeScreenshot(_ imageName: String?, date: Date) throws -> [String: String] {
     let pngImageData = screenshot().pngRepresentation
     let path = try URL.makeScreenshotPath(imageName, date: date)
@@ -17,6 +18,7 @@ extension XCUIApplication {
 }
 
 private extension URL {
+  /// Creates a screenshot path.
   static func makeScreenshotPath(_ imageName: String?, date: Date) throws -> URL {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd--HH-mm-ss-SSS"

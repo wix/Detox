@@ -6,36 +6,36 @@
 import Foundation
 import Network
 
-///
+/// A web-socket server that listens for incoming messages from Detox Server.
 protocol WebSocketServerDelegateProtocol {
-  ///
+  /// Called when a message is received from Detox Server.
   func serverDidReceive(data: Data)
 
-  ///
+  /// Called when the web-socket server is initialized.
   func serverDidInit(onPort: UInt16)
 
-  ///
+  /// Called when the web-socket server is ready to receive messages.
   func serverIsReady()
 
-  ///
+  /// Called when the web-socket server is connected to client.
   func serverDidConnectClient()
 }
 
 /// Manages a web-socket server, assuming there's only one connection.
 class WebSocketServer {
-  ///
+  /// The underlying web-socket listener.
   private let listener: NWListener
 
-  ///
+  /// The client connection.
   private var client: NWConnection?
 
-  ///
+  /// Delegate to notify when the server state changes or a message is received.
   private var delegate: WebSocketServerDelegateProtocol
 
-  ///
+  /// The port the server is listening on.
   public let port: UInt16
 
-  ///
+  /// Creates a new web-socket server.
   private init(withPort port: UInt16, delegate: WebSocketServerDelegateProtocol) throws {
     self.port = port
     self.delegate = delegate
@@ -60,7 +60,7 @@ class WebSocketServer {
     delegate.serverDidInit(onPort: port.rawValue)
   }
 
-  ///
+  /// Starts listening for incoming connections.
   func startServer() {
     listener.newConnectionHandler = { newConnection in
       guard self.client == nil else {
@@ -133,7 +133,7 @@ class WebSocketServer {
     listener.start(queue: .init(label: "XCUITestServerQueue"))
   }
 
-  ///
+  /// Sends a message to the client.
   func sendMessage(data: Data) throws {
     guard let client = client else {
       wsLog("no client is available, can't send message", type: .error)
@@ -169,7 +169,7 @@ extension WebSocketServer {
 }
 
 extension WebSocketServer {
-  ///
+  /// Creates a new web-socket server.
   static func makeServer(
     withDelegate delegate: WebSocketServerDelegateProtocol
   ) -> WebSocketServer {

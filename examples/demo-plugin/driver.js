@@ -168,6 +168,7 @@ class PluginRuntimeDriver extends DeviceDriverBase {
   }
 
   async waitUntilReady() {
+    console.log('Wait until the app connection is ready');
     await this.app.connect();
   }
 }
