@@ -7,6 +7,7 @@ module.exports = {
     longPressAndDrag: (duration, startX, startY, targetElement, endX, endY, speed, holdDuration) =>
       `long press and drag from ${startX}, ${startY} to ${endX}, ${endY} with speed ${speed} and hold duration ${holdDuration}`,
     multiTap: (times) => `tap ${times} times`,
+    performAccessibilityAction: (actionName) => `perform ${actionName} accessibilityAction`,
     pinch: (scale, speed, angle) => `pinch with scale ${scale}, speed ${speed}, and angle ${angle}`,
     pinchWithAngle: (direction, speed, angle) => `pinch with direction ${direction}, speed ${speed}, and angle ${angle}`,
     replaceText: (value) => `replace input text: "${value}"`,
@@ -24,7 +25,6 @@ module.exports = {
     tapBackspaceKey: () => 'tap on backspace key',
     tapReturnKey: () => 'tap on return key',
     typeText: (value) => `type input text: "${value}"`,
-    performAccessibilityAction: (actionName) => `perform ${actionName} accessibilityAction` 
   },
   expectDescription: {
     waitFor: (actionDescription) => `wait for expectation while ${actionDescription}`,
