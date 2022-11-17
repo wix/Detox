@@ -1,11 +1,11 @@
 const tempfile = require('tempfile');
 
+const { callCli } = require('../__tests__/helpers');
+
 describe('build', () => {
-  let execSync, detox, callCli;
+  let execSync, detox;
 
   beforeEach(() => {
-    // @ts-ignore
-    callCli = global.callCli;
     jest.mock('child_process');
     execSync = require('child_process').execSync;
 
