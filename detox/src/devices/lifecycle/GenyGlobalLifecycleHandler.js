@@ -6,7 +6,9 @@ const cleanupLogData = {
 
 class GenyGlobalLifecycleHandler {
   constructor({ deviceCleanupRegistry, instanceLifecycleService }) {
+    /** @private */
     this._deviceCleanupRegistry = deviceCleanupRegistry;
+    /** @private */
     this._instanceLifecycleService = instanceLifecycleService;
   }
 

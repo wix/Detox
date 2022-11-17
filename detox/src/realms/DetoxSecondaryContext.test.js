@@ -1,40 +1,35 @@
-// @ts-nocheck
-
-const {
-  latestInstanceOf,
-  throwErrorImpl,
-  withSuspendingMock,
-} = require('../../__tests__/helpers');
-
-const DETOX_CONFIG_SNAPSHOT_PATH = 'mocked/detox.json';
-const sessionState = {
-  id: 'mocked-session-state',
-};
-
-const workerId = 91;
+const { backupProcessEnv, latestInstanceOf } = require('../../__tests__/helpers');
 
 describe('DetoxSecondaryContext', () => {
-  let fs;
-
-  /** @type {import('../ipc/IPCClient')} */
-  let IPCClient;
-  /** @type {import('../ipc/IPCClient')} */
-  let ipcClient;
+  const DETOX_CONFIG_SNAPSHOT_PATH = 'mocked/detox.json';
+  const WORKER_ID = 91;
 
   /** @type {import('./DetoxInternalsFacade')} */
   let facade;
 
-  let env;
+  /** @type {jest.Mocked<import('fs-extra')>} */
+  let fs;
 
-  const detoxWorker = () => {
-    const DetoxWorker = require('../DetoxWorker');
-    return latestInstanceOf(DetoxWorker);
-  };
+  /** @type {import('../ipc/SessionState')} */
+  let sessionState;
 
-  beforeEach(_initEnv);
-  afterEach(_restoreEnv);
+  /** @type {jest.Mock<import('../ipc/IPCClient')>} */
+  let IPCClient;
+
+  /** @type {jest.Mock<import('../DetoxWorker')>} */
+  let DetoxWorker;
+
+  const detoxWorker = () => latestInstanceOf(DetoxWorker);
+  const ipcClient = () => latestInstanceOf(IPCClient);
+
+  backupProcessEnv();
+
+  beforeEach(() => {
+    Object.assign(process.env, { DETOX_CONFIG_SNAPSHOT_PATH });
+  });
 
   beforeEach(_initMocks);
+
   beforeEach(() => {
     const DetoxSecondaryContext = require('./DetoxSecondaryContext');
     const DetoxInternalsFacade = require('./DetoxInternalsFacade');
@@ -63,22 +58,22 @@ describe('DetoxSecondaryContext', () => {
 
     it('should initialize an IPC client', async () => {
       await facade.init();
-      expect(ipcClient.init).toHaveBeenCalled();
+      expect(ipcClient().init).toHaveBeenCalled();
     });
 
     it('should initialize a worker', async () => {
-      await facade.init({ workerId });
+      await facade.init({ workerId: WORKER_ID });
       expect(detoxWorker().init).toHaveBeenCalled();
     });
 
     it('should register the worker at the client\'s', async () => {
-      await facade.init({ workerId });
-      expect(ipcClient.registerWorker).toHaveBeenCalledWith(workerId);
+      await facade.init({ workerId: WORKER_ID });
+      expect(ipcClient().registerWorker).toHaveBeenCalledWith(WORKER_ID);
     });
 
     describe('given an initialization failure', () => {
       it('should report status as "init"', async () => {
-        ipcClient.init.mockImplementation(() => throwErrorImpl('init error'));
+        IPCClient.prototype.init = jest.fn().mockRejectedValue(new Error('init error'));
 
         await expect(() => facade.init()).rejects.toThrow();
         expect(facade.getStatus()).toBe('init');
@@ -94,7 +89,7 @@ describe('DetoxSecondaryContext', () => {
 
     describe('then cleaned up', () => {
       it('should uninstall an assigned worker', async () => {
-        await facade.init({ workerId });
+        await facade.init({ workerId: WORKER_ID });
         await facade.cleanup();
 
         expect(detoxWorker().cleanup).toHaveBeenCalled();
@@ -104,7 +99,7 @@ describe('DetoxSecondaryContext', () => {
         await facade.init();
         await facade.cleanup();
 
-        expect(ipcClient.dispose).toHaveBeenCalled();
+        expect(ipcClient().dispose).toHaveBeenCalled();
       });
 
       it('should restore status to "inactive"', async () => {
@@ -114,28 +109,29 @@ describe('DetoxSecondaryContext', () => {
       });
 
       it('should change intermediate status to "cleanup"', async () => {
+        expect.assertions(1);
         await facade.init();
 
-        await withSuspendingMock(ipcClient, 'dispose', async ({ callSuspended }) => {
-          await callSuspended(facade.cleanup(), () => {
-            expect(facade.getStatus()).toBe('cleanup');
-          });
+        ipcClient().dispose.mockImplementation(async () => {
+          expect(facade.getStatus()).toBe('cleanup');
         });
+
+        await facade.cleanup();
       });
 
       describe('given a worker clean-up error', () => {
-        const facadeInitWithWorker = async () => facade.init({ workerId });
+        const facadeInitWithWorker = async () => facade.init({ workerId: WORKER_ID });
         const facadeCleanup = async () => expect(() => facade.cleanup()).rejects.toThrow();
 
         beforeEach(async () => {
           await facadeInitWithWorker();
 
-          detoxWorker().cleanup.mockImplementation(throwErrorImpl);
+          detoxWorker().cleanup.mockRejectedValue(new Error(''));
         });
 
         it('should clean-up nonetheless', async () => {
           await facadeCleanup();
-          expect(ipcClient.dispose).toHaveBeenCalled();
+          expect(ipcClient().dispose).toHaveBeenCalled();
         });
 
         it('should restore status to "inactive"', async () => {
@@ -146,28 +142,24 @@ describe('DetoxSecondaryContext', () => {
     });
   });
 
-  function _initEnv() {
-    env = process.env;
-    env.DETOX_CONFIG_SNAPSHOT_PATH = DETOX_CONFIG_SNAPSHOT_PATH;
-  }
-
-  function _restoreEnv() {
-    process.env = { ...env };
-  }
-
   function _initMocks() {
     jest.mock('fs-extra');
-    fs = require('fs-extra');
-    fs.readFileSync.mockImplementation(() => JSON.stringify(sessionState));
+    fs = jest.requireMock('fs-extra');
 
-    // The mocking complexity here is higher than the norm so as to allow for interacting
-    // with both the class and the generated instance as mocks; With the latter - even
-    // before its creation by the tested-unit (i.e. in its init()).
-    const _IPCClient = jest.createMockFromModule('../ipc/IPCClient');
-    const mockIpcClient = ipcClient = new _IPCClient();
-    const MockIpcClient = IPCClient = jest.fn().mockImplementation(() => { return mockIpcClient; });
-    jest.mock('../ipc/IPCClient', () => MockIpcClient);
+    const SessionState = require('../ipc/SessionState');
+    sessionState = new SessionState({ id: 'mocked-session-state' });
+    fs.readFileSync.mockImplementation((filename) => {
+      if (filename === DETOX_CONFIG_SNAPSHOT_PATH) {
+        return sessionState.stringify();
+      }
+
+      return '';
+    });
+
+    jest.mock('../ipc/IPCClient');
+    IPCClient = jest.requireMock('../ipc/IPCClient');
 
     jest.mock('../DetoxWorker');
+    DetoxWorker = jest.requireMock('../DetoxWorker');
   }
 });

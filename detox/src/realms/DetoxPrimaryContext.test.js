@@ -1,62 +1,73 @@
-// @ts-nocheck
 const _ = require('lodash');
 
 const {
+  backupProcessEnv,
   latestInstanceOf,
   lastCallTo,
-  throwErrorImpl,
-  withSuspendingMock,
-  uuidRegexp,
-  tempFileRegexp,
 } = require('../../__tests__/helpers');
 
-const workerId = 19;
-
 describe('DetoxPrimaryContext', () => {
+  //#region Fixtures and constants
+  const UUID_REGEXP_STR = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+  const UUID_REGEXP = new RegExp(`^${UUID_REGEXP_STR}$`);
+  const TEMP_FILE_REGEXP = new RegExp(`.*${UUID_REGEXP_STR}.detox.json$`);
+  const WORKER_ID = 19;
+  const DETOX_CONFIG_BASE = Object.freeze({
+    behavior: {
+      init: {
+        keepLockFile: false,
+      }
+    },
+    device: {
+      type: '',
+    },
+    logger: {},
+    session: {
+      autoStart: false,
+    },
+  });
+  const FIRST_ARGUMENT = 0;
+  //#endregion
+
   let detoxConfigDriver;
 
+  //#region Mocks
+  /** @type {jest.Mocked<import('fs-extra')>} */
   let fs;
-  /** @type {import('../utils/logger')} */
+  /** @type {jest.Mocked<import('signal-exit')>} */
+  let signalExit;
+  /** @type {jest.Mocked<import('../logger')>} */
   let logger;
-
-  /** @type {import('../configuration')} */
+  /** @type {jest.Mocked<import('../configuration')>} */
   let configuration;
-  /** @type {import('../ipc/IPCServer')} */
+  /** @type {jest.Mock<import('../ipc/IPCServer')>} */
   let IPCServer;
-  /** @type {import('../ipc/IPCServer')} */
-  let ipcServer;
-
+  /** @type {jest.Mocked<import('../devices/lifecycle/GenyGlobalLifecycleHandler')>} */
   let globalLifecycleHandler;
-  /** @type {import('../environmentFactory')} */
+  /** @type {jest.Mocked<import('../environmentFactory')>} */
   let environmentFactory;
-  /** @type {import('../devices/DeviceRegistry')} */
+  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
   let deviceRegistryIOS;
-  /** @type {import('../devices/DeviceRegistry')} */
+  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
   let deviceRegistryAndroid;
-  /** @type {import('../devices/DeviceRegistry')} */
+  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
   let deviceRegistryGenyCloud;
-  /** @type {import('../server/DetoxServer')} */
+  /** @type {jest.Mock<import('../server/DetoxServer')>} */
   let DetoxServer;
+  /** @type {jest.Mock<import('../DetoxWorker')>} */
+  let DetoxWorker;
+  //#endregion
 
   /** @type {import('./DetoxInternalsFacade')} */
   let facade;
 
-  let env;
-
   const detoxServer = () => latestInstanceOf(DetoxServer);
-  const detoxWorker = () => {
-    const DetoxWorker = require('../DetoxWorker');
-    return latestInstanceOf(DetoxWorker);
-  };
+  const ipcServer = () => latestInstanceOf(IPCServer);
+  const detoxWorker = () => latestInstanceOf(DetoxWorker);
   const logFinalizer = () => latestInstanceOf(logger.DetoxLogFinalizer);
-  const getSignalHandler = () => {
-    const onSignalExit = require('signal-exit');
-    const [signalHandler] = lastCallTo(onSignalExit);
-    return signalHandler;
-  };
+  const getSignalHandler = () => lastCallTo(signalExit)[FIRST_ARGUMENT];
 
-  beforeEach(() => env = process.env);
-  afterEach(() => process.env = { ...env });
+  backupProcessEnv();
 
   beforeEach(_initDetoxConfig);
   beforeEach(_initExternalMocks);
@@ -75,7 +86,7 @@ describe('DetoxPrimaryContext', () => {
     });
 
     it('should have a basic session with a random id (GUID)', () => {
-      expect(facade.session.id).toMatch(uuidRegexp);
+      expect(facade.session.id).toMatch(UUID_REGEXP);
     });
 
     it('should have an empty config', () => {
@@ -95,7 +106,7 @@ describe('DetoxPrimaryContext', () => {
 
       expect(IPCServer).toHaveBeenCalledWith(expect.objectContaining({
         sessionState: expect.objectContaining({
-          id: expect.stringMatching(uuidRegexp),
+          id: expect.stringMatching(UUID_REGEXP),
           detoxIPCServer: expect.stringMatching(expectedIPCServerName)
         }),
       }));
@@ -103,7 +114,7 @@ describe('DetoxPrimaryContext', () => {
 
     it('should init the IPC server', async () => {
       await facade.init();
-      expect(ipcServer.init).toHaveBeenCalled();
+      expect(ipcServer().init).toHaveBeenCalled();
     });
 
     it('should init the global lifecycle handler', async () => {
@@ -172,7 +183,7 @@ describe('DetoxPrimaryContext', () => {
       await facade.init();
 
       expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringMatching(tempFileRegexp),
+        expect.stringMatching(TEMP_FILE_REGEXP),
         expect.any(String),
       );
 
@@ -186,23 +197,23 @@ describe('DetoxPrimaryContext', () => {
       await facade.init();
 
       expect(process.env.DETOX_CONFIG_SNAPSHOT_PATH).toBeDefined();
-      expect(process.env.DETOX_CONFIG_SNAPSHOT_PATH).toMatch(tempFileRegexp);
+      expect(process.env.DETOX_CONFIG_SNAPSHOT_PATH).toMatch(TEMP_FILE_REGEXP);
     });
 
     it('should install a worker if worker ID has been specified', async () => {
-      await facade.init({ workerId });
-      expect(facade.session).toEqual(expect.objectContaining({ workerId }));
+      await facade.init({ workerId: WORKER_ID });
+      expect(facade.session).toEqual(expect.objectContaining({ workerId: WORKER_ID }));
       expect(detoxWorker().init).toHaveBeenCalled();
     });
 
     it('should register the worker at the IPC server\'s', async () => {
-      await facade.init({ workerId });
-      expect(ipcServer.onRegisterWorker).toHaveBeenCalledWith({ workerId });
+      await facade.init({ workerId: WORKER_ID });
+      expect(ipcServer().onRegisterWorker).toHaveBeenCalledWith({ workerId: WORKER_ID });
     });
 
     describe('given an initialization failure', () => {
       it('should report status as "init"', async () => {
-        ipcServer.init.mockImplementation(() => throwErrorImpl('init error'));
+        IPCServer.prototype.init = jest.fn().mockRejectedValue(new Error('init failed'));
 
         await expect(() => facade.init()).rejects.toThrow();
         expect(facade.getStatus()).toBe('init');
@@ -223,7 +234,7 @@ describe('DetoxPrimaryContext', () => {
 
     describe('then cleaned-up', () => {
       it('should uninstall an assigned worker', async () => {
-        await facade.init({ workerId });
+        await facade.init({ workerId: WORKER_ID });
         await facade.cleanup();
 
         expect(detoxWorker().cleanup).toHaveBeenCalled();
@@ -249,14 +260,14 @@ describe('DetoxPrimaryContext', () => {
         await facade.init();
         await facade.cleanup();
 
-        expect(ipcServer.dispose).toHaveBeenCalled();
+        expect(ipcServer().dispose).toHaveBeenCalled();
       });
 
       it('should delete the context-shared file', async () => {
         await facade.init();
         await facade.cleanup();
 
-        expect(fs.remove).toHaveBeenCalledWith(expect.stringMatching(tempFileRegexp));
+        expect(fs.remove).toHaveBeenCalledWith(expect.stringMatching(TEMP_FILE_REGEXP));
       });
 
       it('should finalize the logger', async () => {
@@ -266,13 +277,14 @@ describe('DetoxPrimaryContext', () => {
       });
 
       it('should change intermediate status to "cleanup"', async () => {
+        expect.assertions(1);
         await facade.init();
 
-        await withSuspendingMock(ipcServer, 'dispose', async ({ callSuspended }) => {
-          await callSuspended(facade.cleanup(), () => {
-            expect(facade.getStatus()).toBe('cleanup');
-          });
+        ipcServer().dispose.mockImplementation(async () => {
+          expect(facade.getStatus()).toBe('cleanup');
         });
+
+        await facade.cleanup();
       });
 
       it('should restore status to "inactive"', async () => {
@@ -282,20 +294,20 @@ describe('DetoxPrimaryContext', () => {
       });
 
       describe('given a worker clean-up error', () => {
-        const facadeInitWithWorker = async () => facade.init({ workerId });
+        const facadeInitWithWorker = async () => facade.init({ workerId: WORKER_ID });
         const facadeCleanup = async () => expect(() => facade.cleanup()).rejects.toThrow();
 
         beforeEach(async () => {
           detoxConfigDriver.givenDetoxServerAutostart();
           await facadeInitWithWorker();
 
-          detoxWorker().cleanup.mockImplementation(throwErrorImpl);
+          detoxWorker().cleanup.mockRejectedValue(new Error(''));
         });
 
         it('should clean-up nonetheless', async () => {
           await facadeCleanup();
           expect(detoxServer().close).toHaveBeenCalled();
-          expect(ipcServer.dispose).toHaveBeenCalled();
+          expect(ipcServer().dispose).toHaveBeenCalled();
         });
 
         it('should restore status to "inactive"', async () => {
@@ -322,10 +334,10 @@ describe('DetoxPrimaryContext', () => {
         expect(detoxServer().close).toHaveBeenCalled());
 
       it('should close the ipc server', async () =>
-        expect(ipcServer.dispose).toHaveBeenCalled());
+        expect(ipcServer().dispose).toHaveBeenCalled());
 
       it('should delete the context-shared file', () =>
-        expect(fs.removeSync).toHaveBeenCalledWith(expect.stringMatching(tempFileRegexp)));
+        expect(fs.removeSync).toHaveBeenCalledWith(expect.stringMatching(TEMP_FILE_REGEXP)));
 
       it('should finalize the logger', async () =>
         expect(logFinalizer().finalizeSync).toHaveBeenCalled());
@@ -345,38 +357,33 @@ describe('DetoxPrimaryContext', () => {
 
         expect(globalLifecycleHandler.emergencyCleanup).not.toHaveBeenCalled();
         expect(detoxServer().close).not.toHaveBeenCalled();
-        expect(ipcServer.dispose).not.toHaveBeenCalled();
+        expect(ipcServer().dispose).not.toHaveBeenCalled();
       });
     });
   });
 
 
   function _initDetoxConfig() {
-    detoxConfigDriver = new DetoxConfigDriver(_.cloneDeep(detoxConfigBase));
+    detoxConfigDriver = new DetoxConfigDriver(_.cloneDeep(DETOX_CONFIG_BASE));
 
     jest.mock('../configuration');
-    configuration = require('../configuration');
+    configuration = jest.requireMock('../configuration');
     configuration.composeDetoxConfig.mockResolvedValue(detoxConfigDriver.detoxConfig);
   }
 
   function _initExternalMocks() {
     jest.mock('signal-exit');
+    signalExit = jest.requireMock('signal-exit');
     jest.mock('fs-extra');
-    fs = require('fs-extra');
+    fs = jest.requireMock('fs-extra');
   }
 
   function _initInternalMocks() {
-    const MockedDetoxLogger = require('../logger/DetoxLogger'); // Already mocked using stub
-    const MockedDetoxLogFinalizer = jest.createMockFromModule('../logger/utils/DetoxLogFinalizer');
-    jest.mock('../logger', () => ({
-      DetoxLogger: MockedDetoxLogger,
-      DetoxLogFinalizer: MockedDetoxLogFinalizer,
-      installLegacyTracerInterface: jest.fn(),
-    }));
-    logger = require('../logger');
+    jest.mock('../logger');
+    logger = jest.requireMock('../logger');
 
     jest.mock('../devices/DeviceRegistry');
-    const DeviceRegistry = require('../devices/DeviceRegistry');
+    const DeviceRegistry = jest.requireMock('../devices/DeviceRegistry');
     deviceRegistryIOS = new DeviceRegistry();
     DeviceRegistry.forIOS.mockReturnValue(deviceRegistryIOS);
 
@@ -384,57 +391,39 @@ describe('DetoxPrimaryContext', () => {
     DeviceRegistry.forAndroid.mockReturnValue(deviceRegistryAndroid);
 
     jest.mock('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-    const genycloudDeviceRegistryFactory = require('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+    const genycloudDeviceRegistryFactory = jest.requireMock('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
     deviceRegistryGenyCloud = new DeviceRegistry();
     genycloudDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(deviceRegistryGenyCloud);
 
     // The mocking complexity here is higher than the norm so as to allow for interacting
     // with both the class and the generated instance as mocks; With the latter - even
     // before its creation by the tested-unit (i.e. in its init()).
-    const _IPCServer = jest.createMockFromModule('../ipc/IPCServer');
-    const mockIpcServer = ipcServer = new _IPCServer();
-    const MockIpcServer = IPCServer = jest.fn().mockImplementation(() => { return mockIpcServer; });
-    jest.mock('../ipc/IPCServer', () => MockIpcServer);
+    jest.mock('../ipc/IPCServer');
+    IPCServer = jest.requireMock('../ipc/IPCServer');
 
-    globalLifecycleHandler = {
-      globalInit: jest.fn(),
-      emergencyCleanup: jest.fn(),
-      globalCleanup: jest.fn(),
-    };
+    const GenyGlobalLifecycleHandler = jest.createMockFromModule('../devices/lifecycle/GenyGlobalLifecycleHandler');
+    globalLifecycleHandler = new GenyGlobalLifecycleHandler();
+
     jest.mock('../environmentFactory');
-    environmentFactory = require('../environmentFactory');
+    environmentFactory = jest.requireMock('../environmentFactory');
     environmentFactory.createGlobalLifecycleHandler.mockReturnValue(globalLifecycleHandler);
 
     jest.mock('../server/DetoxServer');
-    DetoxServer = require('../server/DetoxServer');
+    DetoxServer = jest.requireMock('../server/DetoxServer');
 
     jest.mock('../DetoxWorker');
+    DetoxWorker = jest.requireMock('../DetoxWorker');
   }
-});
 
-const detoxConfigBase = Object.freeze({
-  behavior: {
-    init: {
-      keepLockFile: false,
+  class DetoxConfigDriver {
+    constructor(detoxConfig) {
+      this.detoxConfig = detoxConfig;
     }
-  },
-  device: {
-    type: '',
-  },
-  logger: {},
-  session: {
-    autoStart: false,
-  },
-});
 
-class DetoxConfigDriver {
-  constructor(detoxConfig) {
-    this.detoxConfig = detoxConfig;
+    givenKeepLockFile = (value) => (this.detoxConfig.behavior.init.keepLockFile = value);
+    givenIosSimulatorDevice = () => (this.detoxConfig.device.type = 'ios.simulator');
+    givenGenyCloudDevice = () => (this.detoxConfig.device.type = 'android.genycloud');
+    givenDetoxServerAutostart = () => (this.detoxConfig.session.autoStart = true);
+    givenDetoxServerPort = (port) => (this.detoxConfig.session.server = `http://localhost:${port}`);
   }
-
-  givenKeepLockFile = (value) => (this.detoxConfig.behavior.init.keepLockFile = value);
-  givenIosSimulatorDevice = () => (this.detoxConfig.device.type = 'ios.simulator');
-  givenGenyCloudDevice = () => (this.detoxConfig.device.type = 'android.genycloud');
-  givenDetoxServerAutostart = () => (this.detoxConfig.session.autoStart = true);
-  givenDetoxServerPort = (port) => (this.detoxConfig.session.server = `http://localhost:${port}`);
-}
+});
