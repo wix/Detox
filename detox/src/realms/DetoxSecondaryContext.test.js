@@ -57,7 +57,7 @@ describe('DetoxSecondaryContext', () => {
 
       expect(IPCClient).toHaveBeenCalledWith(expect.objectContaining({
         id: expectedId,
-        state: expect.objectContaining(sessionState),
+        sessionState: expect.objectContaining(sessionState),
       }));
     });
 
