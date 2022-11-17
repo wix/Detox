@@ -37,7 +37,7 @@ class DetoxLogFinalizer {
       return;
     }
 
-    if (this._areLogsEnabled()) {
+    if (this._shouldSaveLogs()) {
       const rootDir = this._config.artifacts.rootDir;
 
       await fs.mkdirp(rootDir);
@@ -69,14 +69,14 @@ class DetoxLogFinalizer {
       return;
     }
 
-    const logsEnabled = this._areLogsEnabled();
-    const rootDir = logsEnabled ? this._config.artifacts.rootDir : '';
-    if (logsEnabled) {
+    const shouldSaveLogs = this._shouldSaveLogs(true);
+    const rootDir = shouldSaveLogs ? this._config.artifacts.rootDir : '';
+    if (shouldSaveLogs) {
       fs.mkdirpSync(rootDir);
     }
 
     for (const log of logs) {
-      if (logsEnabled) {
+      if (shouldSaveLogs) {
         const dest = path.join(rootDir, path.basename(log));
         this._safeMoveSync(log, dest);
       } else {
@@ -137,7 +137,7 @@ class DetoxLogFinalizer {
   }
 
   /** @private */
-  _areLogsEnabled() {
+  _shouldSaveLogs(isEmergencyExit = false) {
     if (!this._config) {
       return false;
     }
@@ -152,6 +152,10 @@ class DetoxLogFinalizer {
     }
 
     if (!plugins.log.keepOnlyFailedTestsArtifacts) {
+      return true;
+    }
+
+    if (isEmergencyExit) {
       return true;
     }
 

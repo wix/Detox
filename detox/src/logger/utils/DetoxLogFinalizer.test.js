@@ -172,20 +172,9 @@ describe('DetoxLogFinalizer', () => {
       expect(fs.existsSync(temporaryFiles[2])).toBe(false);
     });
 
-    it('should not create logs for successful run when configured', async () => {
+    it('should create logs even for successful run when configured to keep failing logs', async () => {
       session.detoxConfig.artifacts.plugins.log.keepOnlyFailedTestsArtifacts = true;
       session.testResults = [{ success: true }];
-
-      await createLogFiles();
-      finalizer.finalizeSync();
-      expect(fs.existsSync(artifactsDir())).toBe(false);
-      expect(fs.existsSync(temporaryFiles[1])).toBe(false);
-      expect(fs.existsSync(temporaryFiles[2])).toBe(false);
-    });
-
-    it('should create logs for failing run when configured', async () => {
-      session.detoxConfig.artifacts.plugins.log.keepOnlyFailedTestsArtifacts = true;
-      session.testResults = [{ success: false }];
 
       await createLogFiles();
       finalizer.finalizeSync();
@@ -195,6 +184,10 @@ describe('DetoxLogFinalizer', () => {
         '.jsonl',
         '.jsonl',
       ]);
+
+      // assert that the temporary files have been moved, not copied
+      expect(fs.existsSync(temporaryFiles[1])).toBe(false);
+      expect(fs.existsSync(temporaryFiles[2])).toBe(false);
     });
   });
 
