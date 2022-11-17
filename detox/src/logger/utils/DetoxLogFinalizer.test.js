@@ -85,14 +85,6 @@ describe('DetoxLogFinalizer', () => {
       let plainLog = await fs.readFile(path.join(artifactsDir(), 'detox.log'), 'utf8');
       let traceLog = JSON.parse(await fs.readFile(path.join(artifactsDir(), 'detox.trace.json'), 'utf8'));
 
-      plainLog = plainLog
-        .replace(new RegExp(`detox\\[${process.pid}]`, 'g'), 'detox[1234]')
-        .replace(new RegExp(`detox\\[${process.pid + 1}]`, 'g'), 'detox[1235]');
-
-      for (const t of traceLog) {
-        t.pid = 1234 + t.pid - process.pid;
-      }
-
       expect(plainLog).toMatchSnapshot('plain');
       expect(traceLog).toMatchSnapshot('chrome-trace');
     });
@@ -247,8 +239,8 @@ describe('DetoxLogFinalizer', () => {
       userConfig,
     });
 
-    const log1 = root1.child({ pid: process.pid });
-    const log2 = root2.child({ pid: process.pid + 1 });
+    const log1 = root1.child({ pid: 1234 });
+    const log2 = root2.child({ pid: 1235 });
 
     jest.useFakeTimers();
 
