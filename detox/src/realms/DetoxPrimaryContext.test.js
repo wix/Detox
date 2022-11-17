@@ -395,9 +395,6 @@ describe('DetoxPrimaryContext', () => {
     deviceRegistryGenyCloud = new DeviceRegistry();
     genycloudDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(deviceRegistryGenyCloud);
 
-    // The mocking complexity here is higher than the norm so as to allow for interacting
-    // with both the class and the generated instance as mocks; With the latter - even
-    // before its creation by the tested-unit (i.e. in its init()).
     jest.mock('../ipc/IPCServer');
     IPCServer = jest.requireMock('../ipc/IPCServer');
 
