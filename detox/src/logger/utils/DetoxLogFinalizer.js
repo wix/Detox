@@ -39,27 +39,33 @@ class DetoxLogFinalizer {
 
     if (this._shouldSaveLogs()) {
       const rootDir = this._config.artifacts.rootDir;
-
-      await fs.mkdirp(rootDir);
-
-      const firstPass = this._bunyanTransformer.uniteSessionLogs(logs);
-      await this._chromeTransformer.scanThreadIDs(firstPass);
-
-      const secondPass = this._bunyanTransformer.uniteSessionLogs(logs);
-      const outStreams = [this._createPlainFileStream(), this._createChromeTraceStream()];
-
-      await Promise.all(outStreams.map(stream => {
-        return new Promise((resolve, reject) => {
-          stream.target
-            .on('finish', resolve)
-            .on('error', reject);
-
-          secondPass.pipe(stream.writable);
-        });
-      }));
+      await this.mergeLogs(logs, rootDir);
     }
 
     await Promise.all(logs.map(filepath => fs.remove(filepath)));
+  }
+
+  async mergeLogs(logs, destinationDirectory) {
+    await fs.mkdirp(destinationDirectory);
+
+    const firstPass = this._bunyanTransformer.uniteSessionLogs(logs);
+    await this._chromeTransformer.scanThreadIDs(firstPass);
+
+    const secondPass = this._bunyanTransformer.uniteSessionLogs(logs);
+    const outStreams = [
+      this._createPlainFileStream(path.join(destinationDirectory, 'detox.log')),
+      this._createChromeTraceStream(path.join(destinationDirectory, 'detox.trace.json'))
+    ];
+
+    await Promise.all(outStreams.map(stream => {
+      return new Promise((resolve, reject) => {
+        stream.target
+          .on('finish', resolve)
+          .on('error', reject);
+
+        secondPass.pipe(stream.writable);
+      });
+    }));
   }
 
   finalizeSync() {
@@ -85,20 +91,18 @@ class DetoxLogFinalizer {
     }
   }
 
-  _createPlainFileStream() {
-    const rootDir = this._config.artifacts.rootDir;
+  _createPlainFileStream(filePath) {
     const bunyanOptions = this._config.logger.options;
     const transformer = this._bunyanTransformer.createPlainTransformer(bunyanOptions);
-    const fileStream = fs.createWriteStream(path.join(rootDir, 'detox.log'));
+    const fileStream = fs.createWriteStream(filePath);
     transformer.readable.pipe(fileStream);
 
     return { writable: transformer.writable, target: fileStream };
   }
 
-  _createChromeTraceStream() {
-    const rootDir = this._config.artifacts.rootDir;
+  _createChromeTraceStream(filePath) {
     const transformer = this._chromeTransformer.createSerializedStream();
-    const fileStream = fs.createWriteStream(path.join(rootDir, 'detox.trace.json'));
+    const fileStream = fs.createWriteStream(filePath);
     transformer.readable.pipe(fileStream);
 
     return { writable: transformer.writable, target: fileStream };
