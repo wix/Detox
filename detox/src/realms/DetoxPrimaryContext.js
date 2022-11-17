@@ -91,7 +91,7 @@ class DetoxPrimaryContext extends DetoxContext {
       data: this[$sessionState],
     }, getCurrentCommand());
 
-    // TODO IPC Server creation ought to be delegated to a generator/factory.
+    // TODO: IPC Server creation ought to be delegated to a generator/factory.
     const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
@@ -111,7 +111,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_resetLockFile]();
     }
 
-    // TODO Detox-server creation ought to be delegated to a generator/factory.
+    // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
     if (sessionConfig.autoStart) {
       this[_wss] = new DetoxServer({
@@ -124,7 +124,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_wss].open();
     }
 
-    // TODO Double check that this config is indeed propogated onto the client create at the detox-worker side
+    // TODO: double check that this config is indeed propogated onto the client create at the detox-worker side
     if (!sessionConfig.server && this[_wss]) {
       // @ts-ignore
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
