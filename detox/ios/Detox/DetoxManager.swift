@@ -226,14 +226,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 						params: [
 							"elementsIDsAndFrames":
 								array.map { element in
-									let frameInWindow = CGRect(
-										origin: element.convert(element.frame.origin, to: nil),
-										size: element.frame.size
-									)
+									let frameInScreen = UIAccessibility.convertToScreenCoordinates(element.bounds, in: element)
 
 									return [
 										"identifier": element.accessibilityIdentifier!,
-										"frame": NSCoder.string(for: frameInWindow)
+										"frame": NSCoder.string(for: frameInScreen)
 									]
 								}
 						],
