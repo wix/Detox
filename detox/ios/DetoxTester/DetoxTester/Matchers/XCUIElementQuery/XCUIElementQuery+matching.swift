@@ -129,6 +129,7 @@ private extension XCUIElementQuery {
       }
 
       let frame = NSCoder.string(for: evaluatedObject.value(forKey: "frame") as! CGRect)
+      matcherLog("inspecting element: \(ElementIdentifierAndFrame(identifier: identifier, frame: frame))")
 
       return identifiersAndFrame.contains(.init(identifier: identifier, frame: frame))
     }
@@ -151,3 +152,5 @@ private extension XCUIElementQuery {
     case matches = "MATCHES"
   }
 }
+
+// DAE38C8E-DD5D-4DE0-8980-21E8E87516A2

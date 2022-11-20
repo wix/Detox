@@ -225,10 +225,17 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 						action: "elementsDidFound",
 						params: [
 							"elementsIDsAndFrames":
-								array.map { [
-									"identifier": $0.accessibilityIdentifier!,
-									"frame": NSCoder.string(for: $0.frame)
-								] }
+								array.map { element in
+									let frameInWindow = CGRect(
+										origin: element.convert(element.frame.origin, to: nil),
+										size: element.frame.size
+									)
+
+									return [
+										"identifier": element.accessibilityIdentifier!,
+										"frame": NSCoder.string(for: frameInWindow)
+									]
+								}
 						],
 						messageId: messageId
 					)

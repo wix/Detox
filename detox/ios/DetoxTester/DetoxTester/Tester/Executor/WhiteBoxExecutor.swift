@@ -119,11 +119,8 @@ class WhiteBoxExecutor {
           params: ["text": AnyCodable(text)]
         )
 
-        whiteExecLog("TEMP LOG: waiting for result.... message: \(message)")
-
         let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
 
-        whiteExecLog("TEMP LOG: result got: \(String(describing: result))")
         let elementsIDsAndFrames: [ElementIdentifierAndFrame] = (
           result["elementsIDsAndFrames"] as? [[String: String]] ?? []
         ).map {
