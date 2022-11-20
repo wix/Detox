@@ -1,7 +1,6 @@
 package com.wix.detox.espresso.registry
 
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.wix.detox.common.UIThread
 import com.wix.detox.reactnative.idlingresources.asynctask.DetoxBusyResource
@@ -26,25 +25,17 @@ class IRStatusInquirer(
     }
 
     private fun checkEspressoRegistry(): List<DetoxBusyResource> {
-        val detoxBusyResourceHelper = DetoxBusyResourceHelper()
-        val busyResources = getBusyRegistryResources()
-
-        if (busyResources.isEmpty()) {
-            return emptyList()
-        }
-
-        return detoxBusyResourceHelper.convertToDetoxBusyResourcesList(busyResources)
-    }
-
-    private fun getBusyRegistryResources(): List<IdlingResource> {
-        return registry.resources.filter { resource ->
+        val espressoBusyResources = registry.resources.filter { resource ->
             !resource.isIdleNow
         }
+
+        val detoxBusyResourceHelper = DetoxBusyResourceHelper()
+        return detoxBusyResourceHelper.convertToDetoxBusyResourcesList(espressoBusyResources)
     }
 
     private fun checkAsyncTasks(): DetoxBusyResource? {
-        val backgroundTasksTag = "bg"
-        val backgroundTasksDescription = "asynctasks"
+        val name = "bg"
+        val description = "asynctasks"
 
         val asyncIsIdle = uiControllerImplReflected.invokeAsyncIsIdle()
         val compatIsIdle = uiControllerImplReflected.invokeCompatIsIdle()
@@ -53,7 +44,7 @@ class IRStatusInquirer(
             return null
         }
 
-        return DetoxBusyResource(backgroundTasksTag, mapOf("reason" to backgroundTasksDescription))
+        return DetoxBusyResource(name, mapOf("reason" to description))
     }
 
     companion object {

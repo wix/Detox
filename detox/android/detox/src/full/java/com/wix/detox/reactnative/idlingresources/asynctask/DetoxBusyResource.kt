@@ -3,25 +3,25 @@ package com.wix.detox.reactnative.idlingresources.asynctask
 import androidx.test.espresso.IdlingResource
 import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 
-class DetoxBusyResource(resource: IdlingResource? = null) {
+class DetoxBusyResource {
     var resourceMap = HashMap<String, Any>()
 
-    init {
-        if (resource != null) {
+    constructor(resource: IdlingResource? = null) {
+        resource?.let{
             val detoxBusyResourceHelper = DetoxBusyResourceHelper()
-            resourceMap.putAll(detoxBusyResourceHelper.formatResource(resource))
+            resourceMap.putAll(detoxBusyResourceHelper.formatResource(it))
         }
     }
 
-    constructor(resource: IdlingResourceDescription?) : this() {
-        if (resource != null) {
-            resourceMap.putAll(resource.json())
+    constructor(idlingResourceDescription: IdlingResourceDescription?) {
+        idlingResourceDescription?.json()?.let {
+            resourceMap.putAll(it)
         }
     }
 
-    constructor(title: String, internalMap: Map<String, Any>) : this() {
-        resourceMap["name"] = title
-        resourceMap["description"] = internalMap
+    constructor(name: String, description: Map<String, Any>) {
+        resourceMap["name"] = name
+        resourceMap["description"] = description
     }
 
     override fun hashCode(): Int {
