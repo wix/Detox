@@ -235,6 +235,27 @@
               {
                 "properties":{
                   "name":{
+                    "const":"bg"
+                  },
+                  "description":{
+                    "type":"object",
+                    "properties":{
+                      "reason":{
+                        "type":"string"
+                      }
+                    },
+                    "additionalProperties":false
+                  }
+                },
+                "required":[
+                  "name",
+                  "description"
+                ],
+                "additionalProperties":false
+              },
+              {
+                "properties":{
+                  "name":{
                     "const":"network"
                   },
                   "description":{
