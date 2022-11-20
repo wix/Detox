@@ -82,7 +82,6 @@ class WhiteBoxExecutor {
         return .completed
 
       case .verifyVisibility(let element, let threshold):
-        // TODO: Element ID + frame
         let message = createMessage(
           type: "verifyVisibility",
           params: [

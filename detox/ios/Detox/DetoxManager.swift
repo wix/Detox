@@ -355,7 +355,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			case "verifyVisibility":
 				let targetIdentifier = params["elementID"] as! String
 				let targetFrame = params["elementFrame"] as! String
-
 				let threshold = params["threshold"] as! NSNumber
 
 				let targetElement = findElement(byIdentifier: targetIdentifier, andFrame: targetFrame)
@@ -413,14 +412,17 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	func findElement(byIdentifier identifier: String, andFrame frame: String) -> UIView {
 		let predicate = NSPredicate { evaluatedObject, _ in
 			guard
-				let evaluatedObject = evaluatedObject as? NSObject,
-				let objectFrame = evaluatedObject.value(forKey: "frame") as? CGRect
+				let element = evaluatedObject as? UIView
 			else {
 				return false
 			}
 
-			return evaluatedObject.accessibilityIdentifier == identifier &&
-				NSCoder.string(for: objectFrame) == frame
+
+			let elementFrameInWindow = UIAccessibility.convertToScreenCoordinates(
+				element.frame, in: element)
+
+			return element.accessibilityIdentifier == identifier &&
+				NSCoder.string(for: elementFrameInWindow) == frame
 		}
 
 		return (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
