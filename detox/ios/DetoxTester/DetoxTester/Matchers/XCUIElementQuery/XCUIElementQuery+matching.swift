@@ -129,8 +129,6 @@ private extension XCUIElementQuery {
       }
 
       let frame = NSCoder.string(for: evaluatedObject.value(forKey: "frame") as! CGRect)
-      matcherLog("inspecting element: \(ElementIdentifierAndFrame(identifier: identifier, frame: frame))")
-
       return identifiersAndFrame.contains(.init(identifier: identifier, frame: frame))
     }
 
