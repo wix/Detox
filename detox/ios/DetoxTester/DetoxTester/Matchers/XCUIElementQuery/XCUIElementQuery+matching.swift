@@ -58,13 +58,13 @@ extension XCUIElementQuery {
           fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
         }
 
-        guard case let .strings(identifiers) = response else {
-          execLog("reponse for white-box is not a string: \(response)", type: .error)
-          fatalError("Reponse is not a string: \(response)")
+        guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
+          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response)", type: .error)
+          fatalError("Reponse is not a [ElementIdentifierAndFrame]: \(response)")
         }
 
-        execLog("found elements with text `\(text)`: \(identifiers)")
-        return matching(anyIdentifierFrom: identifiers)
+        execLog("found elements with text `\(text)`: \(identifiersAndFrames)")
+        return matching(any: identifiersAndFrames)
 
       case .type, .traits, .ancestor, .descendant:
         execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework", type: .error)
@@ -106,6 +106,31 @@ private extension XCUIElementQuery {
       }
 
       return identifiers.contains(identifier)
+    }
+
+    return matching(predicate)
+  }
+
+  /// Returns a new query that matches any element with the given identifiers and frames.
+  func matching(
+    any identifiersAndFrame: [ElementIdentifierAndFrame]
+  ) -> XCUIElementQuery {
+    let predicate = NSPredicate { evaluatedObject, _ in
+      guard
+        let evaluatedObject = evaluatedObject as? NSObject,
+        let identifier = evaluatedObject.value(forKey: "identifier") as? String
+      else {
+        execLog(
+          "cannot run matching on a non UI element: `\(String(describing: evaluatedObject))`",
+          type: .error
+        )
+
+        return false
+      }
+
+      let frame = NSCoder.string(for: evaluatedObject.value(forKey: "frame") as! CGRect)
+
+      return identifiersAndFrame.contains(.init(identifier: identifier, frame: frame))
     }
 
     return matching(predicate)

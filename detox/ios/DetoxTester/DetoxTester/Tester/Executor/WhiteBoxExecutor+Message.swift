@@ -33,7 +33,7 @@ extension WhiteBoxExecutor {
     /// Returns response of `boolean`.
     case verifyText(ofElement: XCUIElement, equals: String)
 
-    /// Returns response of `string`.
+    /// Returns response of `identifiersAndFrames`.
     case findElementsByText(text: String)
 
     /// Returns response of `status`.
