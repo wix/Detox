@@ -73,8 +73,7 @@ class WhiteBoxExecutor {
           type: "setDatePicker",
           params: [
             "timeIntervalSince1970": AnyCodable(date.timeIntervalSince1970),
-            "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame))
+            "elementID": AnyCodable(element.identifier)
           ]
         )
 
@@ -82,13 +81,11 @@ class WhiteBoxExecutor {
         return .completed
 
       case .verifyVisibility(let element, let threshold):
-        // TODO: Element ID + frame
         let message = createMessage(
           type: "verifyVisibility",
           params: [
             "threshold": AnyCodable(threshold),
-            "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame))
+            "elementID": AnyCodable(element.identifier)
           ]
         )
 
@@ -102,8 +99,7 @@ class WhiteBoxExecutor {
           type: "verifyText",
           params: [
             "text": AnyCodable(text),
-            "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame))
+            "elementID": AnyCodable(element.identifier)
           ]
         )
 
@@ -119,22 +115,12 @@ class WhiteBoxExecutor {
           params: ["text": AnyCodable(text)]
         )
 
-        whiteExecLog("TEMP LOG: waiting for result.... message: \(message)")
-
         let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
 
-        whiteExecLog("TEMP LOG: result got: \(String(describing: result))")
-        let elementsIDsAndFrames: [ElementIdentifierAndFrame] = (
-          result["elementsIDsAndFrames"] as? [[String: String]] ?? []
-        ).map {
-          return ElementIdentifierAndFrame(
-            identifier: $0["identifier"],
-            frame: $0["frame"]
-          )
-        }
+        let identifiers: [String] = result["identifiers"] as? [String] ?? []
 
-        return elementsIDsAndFrames.count > 0 ?
-          .identifiersAndFrames(elementsIDsAndFrames) :
+        return identifiers.count > 0 ?
+          .strings(identifiers) :
           .failed(reason: "could not find element with text: \(text)")
 
       case .requestCurrentStatus:
@@ -164,9 +150,7 @@ class WhiteBoxExecutor {
           type: "longPressAndDrag",
           params: [
             "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame)),
             "targetElementID": AnyCodable(targetElement.identifier),
-            "targetElementFrame": AnyCodable(NSCoder.string(for: targetElement.frame)),
             "duration": AnyCodable(duration),
             "normalizedPositionX": (normalizedPositionX != nil) ?
                 AnyCodable(normalizedPositionX!) : nil,
@@ -185,16 +169,10 @@ class WhiteBoxExecutor {
         return .completed
 
       case .requestAttributes(let elements):
-        // TODO: implement in the white-box side.
-        whiteExecLog("get-attributes not implemented yet", type: .error)
-
         let message = createMessage(
           type: "getAttributes",
           params: [
-            "elementIDsAndFrames": AnyCodable(elements.map { [
-              "identifier": AnyCodable($0.identifier),
-              "frame": AnyCodable($0.frame)
-            ] })
+            "elementIDs": AnyCodable(elements.map { $0.identifier })
           ]
         )
 

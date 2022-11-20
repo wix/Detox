@@ -18,9 +18,6 @@ extension WhiteBoxExecutor {
     /// An array of strings response.
     case strings(_ value: [String])
 
-    ///
-    case identifiersAndFrames(_ value: [ElementIdentifierAndFrame])
-
     /// A response of operation completion.
     case completed
 
@@ -38,14 +35,6 @@ extension WhiteBoxExecutor {
   }
 }
 
-///
-struct ElementIdentifierAndFrame: Codable, Equatable {
-  ///
-  let identifier: String?
-
-  /// String representation of the frame.
-  let frame: String?
-}
 
 extension WhiteBoxExecutor.Response {
   /// Asserts that the response equals the given expected response.
