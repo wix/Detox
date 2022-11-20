@@ -220,11 +220,16 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					}
 
 					let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
-					let identifiers : [String] = array.map { $0.accessibilityIdentifier! }
 
 					self.safeSend(
 						action: "elementsDidFound",
-						params: ["identifiers": identifiers],
+						params: [
+							"elementsIDsAndFrames":
+								array.map { [
+									"identifier": $0.accessibilityIdentifier!,
+									"frame": NSCoder.string(for: $0.frame)
+								] }
+						],
 						messageId: messageId
 					)
 				}
@@ -240,15 +245,13 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "setDatePicker":
 				let targetIdentifier = params["elementID"] as! String
-				let predicate = NSPredicate { evaluatedObject, _ in
-					guard let evaluatedObject = evaluatedObject as? NSObject else {
-						return false
-					}
+				let targetFrame = params["elementFrame"] as! String
 
-					return evaluatedObject.accessibilityIdentifier == targetIdentifier
-				}
+				let targetElement = findElement(
+					byIdentifier: targetIdentifier,
+					andFrame: targetFrame
+				) as! UIDatePicker
 
-				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIDatePicker]).first!
 				let timeIntervalSince1970 = (params["timeIntervalSince1970"] as! NSNumber).doubleValue
 				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
 
@@ -283,7 +286,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "longPressAndDrag":
 				let elementIdentifier = params["elementID"] as! String
+				let elementFrame = params["elementFrame"] as! String
+
 				let targetIdentifier = params["targetElementID"] as! String
+				let targetElementFrame = params["targetElementFrame"] as! String
+
 				let duration = params["duration"] as! NSNumber
 				let normalizedPositionX = params["normalizedPositionX"] as? NSNumber
 				let normalizedPositionY = params["normalizedPositionY"] as? NSNumber
@@ -292,25 +299,16 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				let speedParam = params["speed"] as? String
 				let holdDurationParam = params["holdDuration"] as? NSNumber
 
-				let elementPredicate = NSPredicate { evaluatedObject, _ in
-					guard let evaluatedObject = evaluatedObject as? NSObject else {
-						return false
-					}
 
-					return evaluatedObject.accessibilityIdentifier == elementIdentifier
-				}
+				let element = findElement(
+					byIdentifier: elementIdentifier,
+					andFrame: elementFrame
+				)
 
-				let element = (UIView.dtx_findViewsInKeySceneWindows(passing: elementPredicate) as! [UIView]).first!
-
-				let targetPredicate = NSPredicate { evaluatedObject, _ in
-					guard let evaluatedObject = evaluatedObject as? NSObject else {
-						return false
-					}
-
-					return evaluatedObject.accessibilityIdentifier == targetIdentifier
-				}
-
-				let target = (UIView.dtx_findViewsInKeySceneWindows(passing: targetPredicate) as! [UIView]).first!
+				let target = findElement(
+					byIdentifier: targetIdentifier,
+					andFrame: targetElementFrame
+				)
 
 				let normalizedStartingPoint = getNormalizedPoint(xPosition: normalizedPositionX, yPosition: normalizedPositionY)
 				let normalizedTargetingPoint = getNormalizedPoint(xPosition: normalizedTargetPositionX, yPosition: normalizedTargetPositionY)
@@ -352,17 +350,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "verifyVisibility":
 				let targetIdentifier = params["elementID"] as! String
+				let targetFrame = params["elementFrame"] as! String
+
 				let threshold = params["threshold"] as! NSNumber
 
-				let predicate = NSPredicate { evaluatedObject, _ in
-					guard let evaluatedObject = evaluatedObject as? NSObject else {
-						return false
-					}
-
-					return evaluatedObject.accessibilityIdentifier == targetIdentifier
-				}
-
-				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
+				let targetElement = findElement(byIdentifier: targetIdentifier, andFrame: targetFrame)
 
 				self.safeSend(
 					action: "didVerifyVisibility",
@@ -374,17 +366,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "verifyText":
 				let targetIdentifier = params["elementID"] as! String
+				let targetFrame = params["elementFrame"] as! String
+
 				let text = params["text"] as! String
 
-				let predicate = NSPredicate { evaluatedObject, _ in
-					guard let evaluatedObject = evaluatedObject as? NSObject else {
-						return false
-					}
-
-					return evaluatedObject.accessibilityIdentifier == targetIdentifier
-				}
-
-				let targetElement = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
+				let targetElement = findElement(byIdentifier: targetIdentifier, andFrame: targetFrame)
 
 				self.safeSend(
 					action: "didVerifyText",
@@ -418,6 +404,22 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				log.error("Unknown action type received: \(type)")
 				fatalError("Unknown action type received: \(type)")
 		}
+	}
+
+	func findElement(byIdentifier identifier: String, andFrame frame: String) -> UIView {
+		let predicate = NSPredicate { evaluatedObject, _ in
+			guard
+				let evaluatedObject = evaluatedObject as? NSObject,
+				let objectFrame = evaluatedObject.value(forKey: "frame") as? CGRect
+			else {
+				return false
+			}
+
+			return evaluatedObject.accessibilityIdentifier == identifier &&
+				NSCoder.string(for: objectFrame) == frame
+		}
+
+		return (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
 	}
 
 	func getNormalizedPoint(xPosition: NSNumber?, yPosition: NSNumber?) -> CGPoint {
