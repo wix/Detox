@@ -7,7 +7,9 @@ describe('Sync Status Formatter', () => {
         busy_resource: []
       };
 
-      await expect(() => { format(invalidStatus); }).toThrowErrorMatchingSnapshot();
+      await expect(() => {
+        format(invalidStatus);
+      }).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error when `app_status` is invalid', async () => {
@@ -15,7 +17,9 @@ describe('Sync Status Formatter', () => {
         app_status: 'foo'
       };
 
-      await expect(() => { format(invalidStatus); }).toThrowErrorMatchingSnapshot();
+      await expect(() => {
+        format(invalidStatus);
+      }).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error when `app_status` is `busy` but `busy_resources` is missing', async () => {
@@ -23,7 +27,9 @@ describe('Sync Status Formatter', () => {
         app_status: 'busy'
       };
 
-      await expect(() => { format(invalidStatus); }).toThrowErrorMatchingSnapshot();
+      await expect(() => {
+        format(invalidStatus);
+      }).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error when `app_status` is `busy` but `busy_resources` is empty', async () => {
@@ -32,7 +38,9 @@ describe('Sync Status Formatter', () => {
         busy_resources: []
       };
 
-      await expect(() => { format(invalidStatus); }).toThrowErrorMatchingSnapshot();
+      await expect(() => {
+        format(invalidStatus);
+      }).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error when resource `name` is missing', async () => {
@@ -47,7 +55,9 @@ describe('Sync Status Formatter', () => {
         ]
       };
 
-      await expect(() => { format(invalidStatus); }).toThrowErrorMatchingSnapshot();
+      await expect(() => {
+        format(invalidStatus);
+      }).toThrowErrorMatchingSnapshot();
     });
 
     it('should throw error when a busy resource is invalid', async () => {
@@ -60,7 +70,9 @@ describe('Sync Status Formatter', () => {
         ]
       };
 
-      await expect(() => { format(invalidStatus); }).toThrowErrorMatchingSnapshot();
+      await expect(() => {
+        format(invalidStatus);
+      }).toThrowErrorMatchingSnapshot();
     });
   });
 
@@ -369,6 +381,22 @@ describe('Sync Status Formatter', () => {
             name: 'unknown',
             description: {
               identifier: 'foo.bar#baz'
+            }
+          }
+        ]
+      };
+
+      await expect(format(busyStatus)).toMatchSnapshot();
+    });
+
+    it('should format "bg" correctly', async () => {
+      let busyStatus = {
+        app_status: 'busy',
+        busy_resources: [
+          {
+            name: 'bg',
+            description: {
+              reason: 'asynctasks'
             }
           }
         ]
