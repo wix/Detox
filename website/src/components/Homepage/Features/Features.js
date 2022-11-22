@@ -1,12 +1,12 @@
 import React from 'react';
 import './Features.css';
 
-const Features = ({ Svg, title, description }) => {
+const Features = ({ Svg, image, title, description }) => {
+  const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
+
   return (
     <div className="col col--4 features-gap">
-      <div>
-        <Svg className="feature-image" alt={title} />
-      </div>
+      <div>{isSafari ? <img src={image} /> : <Svg className="feature-image" alt={title} />}</div>
       <div>
         <h3>{title}</h3>
         <p>{description}</p>
