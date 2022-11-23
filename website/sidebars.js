@@ -104,6 +104,7 @@ const sidebars = {
         'api/matchers',
         'api/actions',
         'api/expect',
+        'api/webviews',
         'api/logger',
       ]
     },
