@@ -30,7 +30,7 @@ await expect(innerElement).toHaveText('Hello World!');
 
 Web view matchers are used to find elements within a web view.
 
-### Methods
+### Matchers
 
 - [`by.id()`]
 - [`by.className()`]
@@ -75,6 +75,7 @@ webview.element(by.web.name('name'));
 ```
 
 ### `by.xpath(xpath)`
+
 Match elements with the specified XPath.
 
 ```js
@@ -117,7 +118,7 @@ webview.element(by.web.tag('h1').atIndex(1));
 
 Web view actions are used to interact with elements within a web view.
 
-### Methods
+### Actions
 
 - [`tap()`]
 - [`typeText()`]
@@ -265,7 +266,7 @@ const title = await webview.getTitle();
 
 Web view expectations are used to assert the state of elements within a web view.
 
-### Methods
+### Expectations
 
 - [`toHaveText()`]
 - [`toExist()`]
@@ -294,7 +295,6 @@ Negate the expectation.
 ```js
 await expect(webview.element(by.web.id('identifier'))).not.toHaveText('Hello World!');
 ```
-
 
 [matchers]: matchers.md
 
