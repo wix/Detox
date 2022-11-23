@@ -12,7 +12,7 @@ Testing web views is currently supported for **Android** apps only. We are worki
 ## Locating the web view
 
 In order to interact with a web view, you need to first find it using a matcher.
-The same [matchers] that that can be used in order find native views can be used to locate the web views.
+The same [matchers] that that can be used in order find native views can be used to locate the web views, since the web view itself is a native component.
 
 After locating the web view, you can use the [web view matchers] to find elements within the web view, and then use the web view [web view actions] and [web view expectations] to interact with them.
 
