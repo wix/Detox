@@ -1,31 +1,8 @@
 package com.wix.detox.reactnative.idlingresources.asynctask
 
-import androidx.test.espresso.IdlingResource
-import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
-
-class DetoxBusyResource {
-    var resourceMap = HashMap<String, Any>()
-
-    constructor(resource: IdlingResource? = null) {
-        resource?.let{
-            val detoxBusyResourceHelper = DetoxBusyResourceHelper()
-            resourceMap.putAll(detoxBusyResourceHelper.formatResource(it))
-        }
-    }
-
-    constructor(idlingResourceDescription: IdlingResourceDescription?) {
-        idlingResourceDescription?.json()?.let {
-            resourceMap.putAll(it)
-        }
-    }
-
-    constructor(name: String, description: Map<String, Any>) {
-        resourceMap["name"] = name
-        resourceMap["description"] = description
-    }
-
-    override fun hashCode(): Int {
-        return resourceMap.hashCode()
+class DetoxBusyResource(var name: String, var reason: String) {
+    override fun toString(): String {
+        return "DetoxBusyResource(name='$name', reason='$reason')"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -34,12 +11,15 @@ class DetoxBusyResource {
 
         other as DetoxBusyResource
 
-        if (resourceMap != other.resourceMap) return false
+        if (name != other.name) return false
+        if (reason != other.reason) return false
 
         return true
     }
 
-    override fun toString(): String {
-        return "DetoxBusyResource(resourceMap=$resourceMap)"
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + reason.hashCode()
+        return result
     }
 }

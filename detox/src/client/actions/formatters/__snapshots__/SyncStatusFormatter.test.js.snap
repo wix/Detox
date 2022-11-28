@@ -94,8 +94,7 @@ https://github.com/wix/Detox/issues"
 
 exports[`Sync Status Formatter busy status should format "bg" correctly 1`] = `
 "The app is busy with the following tasks:
-• Background threads are busy:
-  - Reason: asynctasks."
+• Background work taking place in asynctasks."
 `;
 
 exports[`Sync Status Formatter busy status should format "bridge" correctly 1`] = `
