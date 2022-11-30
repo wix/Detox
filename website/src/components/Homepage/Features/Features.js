@@ -1,13 +1,10 @@
 import React from 'react';
 import './Features.css';
 
-const Features = ({ Svg, image, title, description }) => {
-  const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
-
-  // not trivial to use svg with safari
+const Features = ({ Svg, title, description }) => {
   return (
     <div className="col col--4 features-gap">
-      <div>{isSafari ? <img src={image} /> : <Svg className="feature-image" alt={title} />}</div>
+      <Svg className="feature-image" alt={title} />
       <div>
         <h3>{title}</h3>
         <p>{description}</p>
