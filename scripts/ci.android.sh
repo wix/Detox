@@ -28,8 +28,6 @@ fi
 
 mkdir -p coverage
 
-run_f "scripts/ci.genycloud-login.sh"
-
 pushd detox/test
 
 run_f "npm run build:android"

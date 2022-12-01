@@ -1,7 +1,7 @@
   - label: ":android::detox: RN.68 + Android: Tests app"
     command:
       - "nvm install"
-      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/ci.android.sh"
+      - "./scripts/ci.android.sh"
     env:
       REACT_NATIVE_VERSION: 0.68.5
       DETOX_DISABLE_POD_INSTALL: true
