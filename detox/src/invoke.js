@@ -1,6 +1,7 @@
 const EarlGrey = require('./invoke/EarlGrey');
 const Espresso = require('./invoke/Espresso');
 const EspressoWeb = require('./invoke/EspressoWeb');
+const EspressoDetox = require('./invoke/EspressoDetox');
 const Invoke = require('./invoke/Invoke');
 
 class InvocationManager {
@@ -18,6 +19,7 @@ module.exports = {
   EarlGrey,
   Espresso: Espresso.target,
   EspressoWeb: EspressoWeb.target,
+  EspressoDetox: EspressoDetox.target,
   IOS: Invoke.genericInvokeObject,
   Android: Invoke.genericInvokeObject,
   call: Invoke.call,

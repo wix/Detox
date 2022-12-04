@@ -19,7 +19,7 @@ class NativeElement {
   }
 
   _selectElementWithMatcher(matcher) {
-    this._call = invoke.call({ type: 'Class', value: 'com.wix.detox.espresso.EspressoDetox' }, 'onView', matcher._call);
+    this._call = invoke.call(invoke.EspressoDetox, 'onView', matcher._call);
   }
 
   atIndex(index) {
