@@ -1,7 +1,7 @@
 const EarlGrey = require('./invoke/EarlGrey');
 const Espresso = require('./invoke/Espresso');
-const EspressoWeb = require('./invoke/EspressoWeb');
 const EspressoDetox = require('./invoke/EspressoDetox');
+const EspressoWeb = require('./invoke/EspressoWeb');
 const Invoke = require('./invoke/Invoke');
 
 class InvocationManager {
