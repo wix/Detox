@@ -4,7 +4,6 @@ import android.view.View
 import androidx.test.espresso.Espresso
 import org.hamcrest.Matcher
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 
 abstract class MultipleViewsActionWithResult<R> : ViewActionWithResult<R> {
@@ -14,10 +13,10 @@ abstract class MultipleViewsActionWithResult<R> : ViewActionWithResult<R> {
         var hasMoreMatchingViews = true
 
         while (hasMoreMatchingViews) {
-            kotlin.runCatching {
+            try {
                 val matcherAtIndex = DetoxMatcher.matcherForAtIndex(index, viewMatcher)
                 Espresso.onView(matcherAtIndex).perform(this)
-            }.onSuccess {
+
                 val actionResult = this.getResult()
 
                 lateinit var actionResultJson: JSONObject
@@ -25,15 +24,15 @@ abstract class MultipleViewsActionWithResult<R> : ViewActionWithResult<R> {
 
                 results.add(actionResultJson)
                 index++
-            }.onFailure {
+            } catch (e: Exception) {
                 if (results.isEmpty()) {
-                    throw it
+                    throw e
                 }
 
                 hasMoreMatchingViews = false
             }
         }
-        
+
         return if (results.size == 1) results.first() else {
             val elementsObject = JSONObject()
             elementsObject.put("elements", JSONArray(results))
