@@ -101,7 +101,7 @@ For issue related to these migrations, approach us by [submitting an issue on Gi
 ### 18.6.0
 
 Detox has normalized the configuration format, so that along with the combined `configurations` object you now can define your `devices` and `apps` separately.
-Please refer to the [configuration doc](https://github.com/wix/Detox/blob/18.6.0/docs/APIRef.Configuration.md) to obtain more details.
+Please refer to the [configuration doc](https://github.com/wix/Detox/blob/18.6.0/docs/config/overview.md) to obtain more details.
 This change is backward-compatible, although the new format is now the recommended option.
 
 ### 18.0
@@ -174,8 +174,8 @@ Cannot find module 'jest-cli/build/cli/args'
 
 If you were using `detox-cli` global package, make sure to upgrade it before proceeding to `detox@17.4.7`.
 
-```sh
-npm -g install detox-cli
+```bash npm2yarn
+npm install detox-cli --global
 ```
 
 If you have an older version of `detox-cli`, then you might see the following error on an attempt to run  `detox test <...args>`:
@@ -373,7 +373,7 @@ If you have Detox ProGuard rules integrated into the `app/build.gradle`, be sure
 ```diff
      buildTypes {
          release {
-         
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 -            proguardFile "${project(':detox').projectDir}/proguard-rules-app.pro"
 +            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
@@ -529,7 +529,7 @@ If your project does not already use Kotlin, add the Kotlin Gradle-plugin to you
 buildscript {
     // ...
     ext.kotlinVersion = '1.3.0'
-    
+
     dependencies {
         // ...
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -726,7 +726,7 @@ Same thing with expectations
 // <=4.x.x
 it('should have welcome screen', () => {
   expect(element(by.text('Welcome'))).toBeVisible();
-  expect(element(by.text('Say Hello'))).toBeVisible(); 
+  expect(element(by.text('Say Hello'))).toBeVisible();
   expect(element(by.text('Say World'))).toBeVisible();
 };
 ```
@@ -825,7 +825,7 @@ The new configuration holds a dictionary of `configurations`.
         "type": "ios.simulator",
         "name": "iPhone 7 Plus"
       }
-    } 
+    }
   }
 ```
 

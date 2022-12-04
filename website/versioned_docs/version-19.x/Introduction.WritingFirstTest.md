@@ -15,7 +15,7 @@ Check out [Detox Recorder](https://github.com/wix/DetoxRecorder), our tool for r
 
 ### Step 1: Prepare a JavaScript File to Hold Your Scenario (Spec)
 
-Every Detox test scenario is usually placed in its own JavaScript file. If you’ve followed the [installation tutorial](Introduction.GettingStarted.md), these files are located in `/e2e/*.spec.js` under your React Native project root. Feel free to place these files wherever you like, this directory structure is just a recommendation.
+Every Detox test scenario is usually placed in its own JavaScript file. If you’ve followed the [installation tutorial](introduction/getting-started.md), these files are located in `/e2e/*.spec.js` under your React Native project root. Feel free to place these files wherever you like, this directory structure is just a recommendation.
 
 If you’re using Mocha as your test runner, these files will simply be executed one by one when you run your tests.
 

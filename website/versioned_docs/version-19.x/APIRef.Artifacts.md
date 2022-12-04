@@ -187,19 +187,19 @@ Hence, for example, if you wish to enable only `testDone` screenshots and leave 
 
 ##### Video Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](config/overview.md#artifacts-configuration).
 
 ##### Log Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](config/overview.md#artifacts-configuration).
 
 ##### Instruments Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](config/overview.md#artifacts-configuration).
 
 ##### UI hierarchy Plugin
 
-To be done. See meanwhile the example in [artifacts configuration section](APIRef.Configuration.md#artifacts-configuration).
+To be done. See meanwhile the example in [artifacts configuration section](config/overview.md#artifacts-configuration).
 
 ##### Timeline Plugin
 

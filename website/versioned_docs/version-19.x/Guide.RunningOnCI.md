@@ -18,7 +18,7 @@ Running Detox on CI is not that different from running it locally. There are two
 
 ### Step 1: Prepare a Release Configuration for Your App
 
-We will need to create a [release device configuration for Detox](APIRef.Configuration.md#device-configurations) inside `package.json` under the `detox` section.
+We will need to create a [release device configuration for Detox](config/overview.md#device-configurations) inside `package.json` under the `detox` section.
 
 **Example:**
 
@@ -94,8 +94,8 @@ install:
 - nvm use $NODE_VERSION
 - nvm alias default $NODE_VERSION
 
-- npm install -g react-native-cli
-- npm install -g detox-cli
+- npm install react-native-cli --global
+- npm install detox-cli --global
 
 script:
 - detox build --configuration ios.sim.release
@@ -190,7 +190,7 @@ detox_e2e:
   image: reactnativecommunity/react-native-android
   variables:
   before_script:
-    - npm i -g envinfo detox-cli && envinfo
+    - npm install envinfo detox-cli --global && envinfo
     # Increase file watcher limit, see more here: https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers#the-technical-details
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
     - mkdir -p /root/.android && touch /root/.android/repositories.cfg

@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
 apply from: '../rninfo.gradle'
 
-//project.ext.react = [:]
 project.ext.react = [
-    enableHermes: rnInfo.isRN60OrHigher
+    enableHermes: true
 ]
 apply from: '../../node_modules/react-native/react.gradle'
 
@@ -81,14 +80,18 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation project(path: ':@react-native-community_slider')
 
-    fromSourceImplementation(project(path: ':ReactAndroid'))
-
     // noinspection GradleDynamicVersion
     fromBinImplementation('com.facebook.react:react-native:+')
+
+    // In order to build from source:
+    // 1. Uncomment the fromSourceImplementation() statement
+    // 2. Uncomment associated section in settings.gradle
+    // 3. Pave through the wilderness
+//    fromSourceImplementation(project(path: ':ReactAndroid'))
 
     implementation project(':AsyncStorage')
     implementation project(':react-native-webview')
@@ -99,19 +102,16 @@ dependencies {
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
-if (rnInfo.isRN60OrHigher) {
-    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
-    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
-    dependencies {
-        def enableHermes = project.ext.react.get('enableHermes', false)
-        if (enableHermes) {
-            def hermesModuleName = rnInfo.isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
-            def hermesPath = "../../node_modules/$hermesModuleName/android/"
-            debugImplementation files(hermesPath + 'hermes-debug.aar')
-            releaseImplementation files(hermesPath + 'hermes-release.aar')
-        } else {
-            implementation 'org.webkit:android-jsc:+'
+// Apply Hermes as our JS engine
+dependencies {
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+        implementation('com.facebook.react:hermes-engine:+') {
+            exclude group: 'com.facebook.fbjni'
         }
+    } else {
+        def hermesPath = '../../node_modules/hermes-engine/android'
+        debugImplementation files("$hermesPath/hermes-debug.aar")
+        releaseImplementation files("$hermesPath/hermes-release.aar")
     }
 }
 

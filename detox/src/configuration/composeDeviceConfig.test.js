@@ -32,10 +32,9 @@ describe('composeDeviceConfig', () => {
   const givenConfigValidationSuccess = () => environmentFactory.validateConfig.mockReturnValue(undefined);
   const givenConfigValidationError = (error) => environmentFactory.validateConfig.mockImplementation(() => { throw error; });
 
-  const KNOWN_CONFIGURATIONS = [['plain'], ['inline'], ['aliased']];
+  const KNOWN_CONFIGURATIONS = [['inline'], ['aliased']];
 
   const KNOWN_DEVICES = [
-    'ios.none',
     'ios.simulator',
     'android.attached',
     'android.emulator',
@@ -43,11 +42,11 @@ describe('composeDeviceConfig', () => {
     './customDriver'
   ];
 
-  const KNOWN_GPU_MODES = ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest'];
+  const KNOWN_GPU_MODES = ['auto', 'host', 'swiftshader_indirect', 'angle_indirect', 'guest', 'off'];
 
   /**
-   * @param {'ios.none' | 'ios.simulator' | 'android.attached' | 'android.emulator' | 'android.genycloud' | './customDriver'} deviceType
-   * @param {'plain' | 'inline' | 'aliased' } configType
+   * @param {'ios.simulator' | 'android.attached' | 'android.emulator' | 'android.genycloud' | './customDriver'} deviceType
+   * @param {'inline' | 'aliased' } configType
    */
   function setConfig(deviceType, configType = 'aliased') {
     const mixins = {
@@ -63,10 +62,6 @@ describe('composeDeviceConfig', () => {
     };
 
     const deviceTemplates = {
-      'ios.none': {
-        type: 'ios.none',
-        ...mixins.iosDevice,
-      },
       'ios.simulator': {
         type: 'ios.simulator',
         ...mixins.iosDevice,
@@ -105,10 +100,6 @@ describe('composeDeviceConfig', () => {
     deviceConfig = _.cloneDeep(deviceTemplates[deviceType] || deviceTemplates[undefined]);
 
     switch (configType) {
-      case 'plain':
-        Object.assign(localConfig, deviceConfig);
-        localConfig.binaryPath = deviceConfig.binaryPath || _.uniqueId('/path/to/app');
-        break;
       case 'inline':
         localConfig.device = deviceConfig;
         break;
@@ -145,46 +136,6 @@ describe('composeDeviceConfig', () => {
 
   describe('by config type', () => {
     describe.each(KNOWN_DEVICES)('given a device (%j)', (deviceType) => {
-      describe('plain', () => {
-        beforeEach(() => {
-          setConfig(deviceType, 'plain');
-
-          // NOTE: these properties are ignored for plain configurations
-          delete deviceConfig.bootArgs;
-          delete deviceConfig.forceAdbInstall;
-          delete deviceConfig.gpu;
-          delete deviceConfig.headless;
-          delete deviceConfig.readonly;
-        });
-
-        it('should extract type and device', () =>
-          expect(compose()).toEqual(deviceConfig));
-
-        // region supported devices
-        if (deviceType === './customDriver') return;
-
-        it('should have a fallback for known devices: .name -> .device', () => {
-          const expected = compose();
-
-          localConfig.name = localConfig.device;
-          delete localConfig.device;
-
-          const actual = compose();
-          expect(actual).toEqual(expected);
-        });
-
-        it('should extract type, utilBinaryPaths and unpack device query', () => {
-          localConfig.device = Object.values(deviceConfig.device).join(', ');
-
-          expect(compose()).toEqual({
-            type: deviceConfig.type,
-            device: deviceConfig.device,
-            utilBinaryPaths: deviceConfig.utilBinaryPaths,
-          });
-        });
-        // endregion
-      });
-
       describe('inlined', () => {
         beforeEach(() => setConfig(deviceType, 'inline'));
 
@@ -228,6 +179,41 @@ describe('composeDeviceConfig', () => {
         });
       });
     });
+
+    describe('given a custom device', () => {
+      describe('inlined', () => {
+        beforeEach(() => setConfig('./customDriver', 'inline'));
+
+        it('should extract type and device', () =>
+          expect(compose()).toEqual(deviceConfig));
+
+        describe('unhappy scenarios', () => {
+          test('should throw on no .type in device config', () => {
+            delete deviceConfig.type;
+            expect(compose).toThrow(errorComposer.missingDeviceType(undefined));
+          });
+        });
+      });
+
+      describe('aliased', () => {
+        beforeEach(() => setConfig('./customDriver', 'aliased'));
+
+        it('should extract type and device', () =>
+          expect(compose()).toEqual(deviceConfig));
+
+        describe('unhappy scenarios', () => {
+          test('should throw if devices are not declared', () => {
+            globalConfig.devices = {};
+            expect(compose).toThrow(errorComposer.thereAreNoDeviceConfigs(localConfig.device));
+          });
+
+          test('should throw on no .type in device config', () => {
+            delete deviceConfig.type;
+            expect(compose).toThrow(errorComposer.missingDeviceType(localConfig.device));
+          });
+        });
+      });
+    });
   });
 
   describe('by device type', () => {
@@ -237,7 +223,6 @@ describe('composeDeviceConfig', () => {
       describe('CLI overrides', () => {
         describe('--device-name', () => {
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
           ])('given iOS (%s) device', (deviceType) => {
             beforeEach(() => setConfig(deviceType, configType));
@@ -308,7 +293,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['android.attached'],
             ['android.genycloud'],
             ['./customDriver'],
@@ -345,7 +329,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
             ['./customDriver'],
           ])('given a non-supported device (%j)', (deviceType) => {
@@ -363,13 +346,16 @@ describe('composeDeviceConfig', () => {
         });
 
         describe('--headless', () => {
-          describe('given android.emulator device', () => {
-            beforeEach(() => setConfig('android.emulator', configType));
+          describe.each([
+            ['ios.simulator'],
+            ['android.emulator']
+          ])('given a supported device type (%j)', (deviceType) => {
+            beforeEach(() => setConfig(deviceType, configType));
 
             it('should override .headless without warnings', () => {
-              cliConfig.headless = true;
+              cliConfig.headless = false;
               expect(compose()).toEqual(expect.objectContaining({
-                headless: true,
+                headless: false,
               }));
 
               expect(logger.warn).not.toHaveBeenCalled();
@@ -377,18 +363,16 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
-            ['ios.simulator'],
             ['android.attached'],
             ['android.genycloud'],
-            ['./customDriver'],
+            ['./customDriver']
           ])('given a non-supported device (%j)', (deviceType) => {
             beforeEach(() => setConfig(deviceType, configType));
 
             it('should print a warning and refuse to override .headless', () => {
-              cliConfig.headless = true;
+              cliConfig.headless = false;
               expect(compose()).not.toEqual(expect.objectContaining({
-                headless: true,
+                headless: false,
               }));
 
               expect(logger.warn).toHaveBeenCalledWith(expect.stringMatching(/--headless.*not supported/));
@@ -411,7 +395,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
             ['android.attached'],
             ['./customDriver'],
@@ -444,7 +427,6 @@ describe('composeDeviceConfig', () => {
           });
 
           describe.each([
-            ['ios.none'],
             ['ios.simulator'],
             ['android.attached'],
             ['android.genycloud'],
@@ -498,12 +480,8 @@ describe('composeDeviceConfig', () => {
           ));
         });
 
-        //region separate device config validation
-        if (configType === 'plain') return;
-
         describe('.bootArgs validation', () => {
           test.each([
-            'ios.none',
             'android.attached',
             'android.genycloud',
           ])('cannot be used for %j device', (deviceType) => {
@@ -536,7 +514,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.forceAdbInstall validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
           ])('cannot be used for iOS device (%j)', (deviceType) => {
             setConfig(deviceType, configType);
@@ -569,7 +546,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.gpuMode validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
             'android.attached',
             'android.genycloud',
@@ -607,22 +583,28 @@ describe('composeDeviceConfig', () => {
 
         describe('.headless validation', () => {
           test.each([
-            'ios.none',
-            'ios.simulator',
             'android.attached',
-            'android.genycloud',
+            'android.genycloud'
           ])('cannot be used for a non-emulator device (%j)', (deviceType) => {
             setConfig(deviceType, configType);
             deviceConfig.headless = true;
             expect(compose).toThrow(errorComposer.unsupportedDeviceProperty(alias(), 'headless'));
           });
 
-          describe('given android.emulator device', () => {
-            beforeEach(() => setConfig('android.emulator', configType));
+          describe.each([
+            'ios.simulator',
+            'android.emulator'
+          ])('given supporting device type (%j)', (deviceType) => {
+            beforeEach(() => setConfig(deviceType, configType));
 
             test(`should throw if value is not a boolean (e.g., string)`, () => {
-              deviceConfig.headless = `${Math.random() > 0.5}`; // string
+              deviceConfig.headless = `${Math.random() > 0.5}`;
               expect(compose).toThrowError(errorComposer.malformedDeviceProperty(alias(), 'headless'));
+            });
+
+            test('should not throw if value is a boolean', () => {
+              deviceConfig.headless = false;
+              expect(compose).not.toThrowError();
             });
           });
 
@@ -635,7 +617,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.readonly validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
             'android.attached',
             'android.genycloud',
@@ -663,7 +644,6 @@ describe('composeDeviceConfig', () => {
 
         describe('.utilBinaryPaths validation', () => {
           test.each([
-            'ios.none',
             'ios.simulator',
           ])('cannot be used for a non-Android device (%j)', (deviceType) => {
             setConfig(deviceType, configType);

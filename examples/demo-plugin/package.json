@@ -1,24 +1,32 @@
 {
   "name": "demo-plugin",
-  "version": "19.7.1",
+  "version": "20.0.3",
   "private": true,
   "scripts": {
     "test:plugin": "detox test --configuration plugin -l verbose"
   },
   "devDependencies": {
-    "detox": "^19.7.1",
+    "detox": "^20.0.3",
     "jest": "^28.0.0"
   },
   "detox": {
-    "test-runner": "jest",
+    "testRunner": {
+      "args": {
+        "config": "e2e/config.json"
+      }
+    },
     "configurations": {
       "plugin": {
-        "binaryPath": "my/random/path",
         "device": {
-          "foo": "bar"
+          "type": "./driver",
+          "binaryPath": "my/random/path",
+          "device": {
+            "foo": "bar"
+          }
         },
-        "name": "plugin-example",
-        "type": "./driver"
+        "app": {
+          "name": "plugin-example"
+        }
       }
     }
   }

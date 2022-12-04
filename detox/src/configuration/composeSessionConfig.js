@@ -1,11 +1,10 @@
 const isValidWebsocketURL = require('../utils/isValidWebsocketURL');
-const uuid = require('../utils/uuid');
 
 /**
  * @param {{
  *  cliConfig: Record<string, any>;
  *  globalConfig: Detox.DetoxConfig;
- *  localConfig: Detox.DetoxConfigurationOverrides;
+ *  localConfig: Detox.DetoxConfiguration;
  *  errorComposer: import('../errors/DetoxConfigErrorComposer');
  * }} options
  */
@@ -44,7 +43,6 @@ async function composeSessionConfig(options) {
 
   const result = {
     autoStart: !session.server,
-    sessionId: uuid.UUID(),
     debugSynchronization: 10000,
 
     ...session,

@@ -16,10 +16,6 @@ describe('Emulator launcher', () => {
     retry = require('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    jest.mock('../../../../../utils/trace', () => ({
-      traceCall: jest.fn().mockImplementation((__, func) => func()),
-    }));
-
     const ADB = jest.genMockFromModule('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
     adb.isBootComplete.mockReturnValue(true);
@@ -59,7 +55,7 @@ describe('Emulator launcher', () => {
 
       it('should launch the specified emulator in a separate process', async () => {
         await uut.launch(avdName, adbName, isRunning);
-        expect(launchEmulatorProcess).toHaveBeenCalledWith(avdName, emulatorExec, expect.anything());
+        expect(launchEmulatorProcess).toHaveBeenCalledWith(avdName, emulatorExec, expect.anything(), adb, adbName);
       });
 
       it('should launch using a specific emulator port, if provided', async () => {

@@ -13,7 +13,7 @@ describe(':ios: Visibility Debug Artifacts', () => {
   it('should not be able to tap an overlayed button', async () => {
     await expectToThrow(
       () => element(by.text('Button 1')).tap(),
-      `View does not pass visibility percent threshold (100%)`,
+      `View is not hittable at its visible point. Error: View is not visible around point.`,
     );
   });
 

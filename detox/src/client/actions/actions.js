@@ -1,6 +1,6 @@
 // @ts-nocheck
 const { DetoxInternalError, DetoxRuntimeError } = require('../../errors');
-const { getDetoxLevel } = require('../../utils/logger');
+const logger = require('../../utils/logger');
 const formatJSONStatus = require('../actions/formatters/SyncStatusFormatter');
 
 class Action {
@@ -201,7 +201,7 @@ class Invoke extends Action {
 
         if (response.params.viewHierarchy) {
           /* istanbul ignore next */
-          if (/^(debug|trace)$/.test(getDetoxLevel())) {
+          if (/^(debug|trace)$/.test(logger.level)) {
             debugInfo = 'View Hierarchy:\n' + response.params.viewHierarchy;
           } else {
             hint = 'To print view hierarchy on failed actions/matches, use log-level verbose or higher.';

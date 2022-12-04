@@ -111,4 +111,13 @@ describe('AVD validator', () => {
       'Emulator version detection failed (See previous logs)'
       );
   });
+
+  it('should run emulator version resolver as headless if required', async () => {
+    givenExpectedAVD();
+    givenProperEmulatorVersion();
+
+    await uut.validate('mock-avd-name', true);
+
+    expect(versionResolver.resolve).toHaveBeenCalledWith(true);
+  });
 });

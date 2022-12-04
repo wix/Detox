@@ -1,4 +1,4 @@
-describe('Allocation driver for Genymotion cloud emulators', () => {
+describe('Allocation driver for Genymotion SaaS emulators', () => {
   const deviceConfig = {
     device: {
       query: 'mock',
@@ -171,6 +171,7 @@ describe('Allocation driver for Genymotion cloud emulators', () => {
       await allocDriver.allocate(deviceConfig);
 
       expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
+      expect(adb.setWiFiToggle).toHaveBeenCalledWith(instance.adbName, true);
     });
 
     it('should inquire the API level', async () => {

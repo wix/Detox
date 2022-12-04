@@ -9,7 +9,7 @@ daysUntilClose: 7
 
 # Issues or Pull Requests with these labels will never be considered stale. Set to `[]` to disable
 exemptLabels:
-  - "type: accepted/enhancement"
+  - "status: accepted"
   - "user: looking for contributors"
   - "📌 pinned"
 
@@ -35,7 +35,7 @@ markComment: >
   
   
   
-  For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
+  For more information on bots in this repository, read [this discussion](https://github.com/wix/Detox/issues/1305).
 
 # Comment to post when removing the stale label.
 # unmarkComment: >
@@ -60,7 +60,7 @@ pulls:
     
     Thank you for your contributions.
     
-    For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
+    For more information on bots in this repository, read [this discussion](https://github.com/wix/Detox/issues/1305).
 
 # issues:
 #   exemptLabels:

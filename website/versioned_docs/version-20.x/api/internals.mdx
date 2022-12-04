@@ -1,0 +1,546 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import LifecycleManyWorkersCLI from './partials/_lifecycle-cli-many-workers.md';
+import LifecycleManyWorkersJest from './partials/_lifecycle-jest-many-workers.md';
+import LifecycleSingleWorkerCLI from './partials/_lifecycle-cli-single-worker.md';
+import LifecycleSingleWorkerJest from './partials/_lifecycle-jest-single-worker.md';
+
+# Internals API
+
+:::caution
+
+This section might be more volatile than the other ones, yet we'll do our best to adhere to Semantic Release standards even here.
+
+:::
+
+Detox Internals might be useful for developing advanced enterprise presets or when you are planning to integrate with a third-party test runner like [Mocha], [Ava], [Vitest] or other ones.
+
+## Lifecycle
+
+The purpose of **Internals API** is mostly to align the lifecycles of Detox and a test runner underneath.
+Although it is generic enough, there is no denying that its design has been influenced by our official integration with Jest test runner.
+That's why it might be better to start the overview from Jest lifecycle first, and then move on to Detox lifecycle and how they fit together.
+
+### Jest lifecycle
+
+![UML sequence diagram](../img/uml/jest-diagram.svg)
+
+1. Jest's main process starts from resolving and evaluating its config file, e.g. `jest.config.js`:
+  ```js
+  module.exports = async function () {
+    return {
+      globalSetup: '/path/to/globalSetup.js',
+      globalTeardown: '/path/to/globalTeardown.js',
+      reporters: ['/path/to/reporter.js'],
+      /* ... jest config ... */
+    };
+  };
+  ```
+1. If a [`globalSetup`][globalSetup] handler is defined, it is resolved and executed in the main process:
+  ```js
+  module.exports = async function () {
+    // ... global setup code ...
+  };
+  ```
+1. The next come [`reporters`][reporters], one of the longest-living entities in the test session. After instantiating reporters, Jest calls their `onRunStart` method:
+  ```js
+  class Reporter {
+    async onRunStart(aggregatedResults, options) {
+      // ... reporter code ...
+    }
+
+    // ...
+  };
+  ```
+1. If Jest is not running in band (see [`-i, --runInBand`][runInBand]), and if it has _N_ [workers][maxWorkers] (_N > 1_), then it spawns _N_ child processes that keep taking test files one after another, running their tests inside and reporting back to the reporters:
+  ```js
+  class Reporter {
+    async onTestFileResult(test, testResult, aggregatedResult) {
+      // ... reporter code ...
+    }
+
+    // ...
+  };
+  ```
+  Otherwise, Jest runs all the tests in the main process without spawning any other processes, but the reporting flow itself remains the same, as can be seen in the diagram:
+
+  ![UML sequence diagram](../img/uml/jest-diagram-runInBand.svg)
+1. After all the tests have been executed, Jest calls `onRunComplete` in the reporters, and this is the final phase for any reporter:
+  ```js
+  class Reporter {
+    async onRunComplete(testContexts, results) {
+      // ... reporter code ...
+    }
+
+    // ...
+  };
+  ```
+1. The last user-controlled hook is the global teardown. If a [`globalTeardown`][globalTeardown] handler is defined, it is resolved and executed in the main process:
+  ```js
+  module.exports = async function () {
+    // ... global teardown code ...
+  };
+  ```
+
+### Detox lifecycle
+
+Theoretically, Detox CLI could be totally agnostic about the test runner under the hood, but that would deprive us of some convenience.
+For instance, there is a [retry mechanism][testRunner.retries], built into Detox CLI, which can schedule extra runs for failed test files.
+This requirement obliges Detox context to live longer than any test runner, and requires from the test runner to be able to report back to Detox CLI, whereas the resulting child process hierarchy can be broad and multi-tiered, e.g.:
+
+```plain text
+└── detox test ...
+    └── jest ... --maxWorkers N
+        ├── jest-worker (1)
+        ├── ...
+        └── jest-worker (N)
+```
+
+Even if we run Jest directly, without Detox CLI, there's still a one-to-many relationship between its processes:
+
+```plain text
+└── jest ... --maxWorkers N
+    ├── jest-worker (1)
+    ├── ...
+    └── jest-worker (N)
+```
+
+So, if we want to be on the safe side, every process should be able to communicate with the root process, where we have the primary context of Detox, and vice versa.
+Retrying failed tests is just one of numerous needs, and there are more:
+
+* the primary context (and workers themselves, at times) needs to know how many workers are there;
+* the workers should request from the primary context to allocate a device and return it back when they are done;
+* any secondary context should be able to tell whether this is a first time it is running, or it is an _N_-th attempt already;
+
+This list can be continued and might expand even more with time, but the point is that Detox contexts will get instantiated as many times as child processes are created during the test session, and it should be something trivial to synchronize the primary and the secondary contexts to ensure a seamless experience.
+
+It is worth mentioning that Jest's main process is ill-suited for taking a device and running the tests, as its purpose is to orchestrate the entire test session and not run the tests themselves.
+This means that not all secondary contexts of Detox are "born equal" – most of them will be allocating a device for running tests, but at least one will be merely communicating with the primary context.
+
+This is exactly the reason why we call [`init()`][init] in every child process, but sometimes it is not just a simple call, but an [`init({ workerId: null })`][init] override to avoid creating a worker.
+However, the fact of initializing without a worker does not mean we can't call [`installWorker()`][installWorker] later. For example, if it turns out that Jest is running in a single process, then instead of creating two Detox contexts within the same process, we're going to reuse the existing one and just supplement it with the worker itself.
+
+There's one more implicit thing that happens at the very beginning of [`init([options])`][init] method, and that is the config resolution. It is also available as a separate method, [`resolveConfig([options])`][resolveConfig] based on the following considerations.
+When you use a test runner directly, without Detox CLI (e.g. `jest …` instead of `detox test …`), then the test runner config gets resolved earlier than Detox config itself. That creates a dangerous scenario for dynamically generated configs:
+
+```js title="jest.config.js"
+const { config } = require('detox/internals');
+
+module.exports = async () => {
+  if (config.device.type === 'ios.simulator') {
+    return { /* iOS-specific preset */ };
+  } else {
+    return { /* Android-specific preset */ };
+  }
+};
+```
+
+The problem in this case is that we are accessing an unresolved (yet) config. Of course, one could assume that it is possible to overcome with a plain [`init()`][init] call like this:
+
+```js title="bad-idea.config.js"
+const { init, config } = require('detox/internals');
+
+module.exports = async () => {
+  await init();
+
+  if (config.device.type === 'ios.simulator') {
+    // ... use config now ...
+  }
+};
+```
+
+This solution will work, but it is rather a bad one, since Jest config resolution is an asymmetrical step compared to `globalSetup` and `globalTeardown`. While solving one problem, it creates another one. Consider running this:
+
+```sh
+jest --config bad-idea.config.js --showConfig
+```
+
+For reference, when Jest runs with a [`--showConfig`][showConfig] option, all it does is _to resolve the config and to print it_. Hence, neither [`globalSetup`][globalSetup] nor [`globalTeardown`][globalTeardown] will be called, and the test runner will hang up since there's no one to call the [`cleanup()`][cleanup] method which stops the [IPC server] used for the communication between the primary and the secondary contexts.
+
+Still, we have to be able to access the config early, and that is exactly why [`init()`][init] method is a composite of [`resolveConfig()`][resolveConfig], the _actual_ init, and [`installWorker()`][installWorker]. We could describe what it does on the high level with the following pseudocode:
+
+```js
+async function init(options = {}) {
+  config = config || await resolveConfig();
+
+  await logger.init(config);
+  await ipcServer.init(config);
+  // ... init more things  ...
+
+  if (options.workerId != null) {
+    await installWorker();
+  }
+}
+```
+
+In other words, it will resolve config only if it has not been resolved before, and install a worker unless it has been forbidden explicitly.
+And even that we can [`installWorker()`][installWorker] later if we ever need it.
+
+Now, when many details are clarified, we can review the actual sequence diagrams step by step. There are four scenarios depending on the initiator (Detox CLI or the test runner itself) and on child process hierarchy (a single process or parent-children).
+
+A few words about the diagram and its conventions:
+* The `ClassName.0`, `ClassName.1`, …, `ClassName.N` suffixes mean the index of the instance of the class created.
+* `DetoxCircusEnvironment.N` is our custom [`testEnvironment`][testEnvironment] created one or multiple times in every Jest worker. Make sure to read about Jest [test environments][testEnvironment] and look at the example section there for better understanding.
+
+<Tabs>
+  <TabItem value="detox test … --maxWorkers N">
+    <LifecycleManyWorkersCLI />
+  </TabItem>
+  <TabItem value="jest … --maxWorkers N">
+    <LifecycleManyWorkersJest />
+  </TabItem>
+  <TabItem value="detox test … --runInBand">
+    <LifecycleSingleWorkerCLI />
+  </TabItem>
+  <TabItem value="jest … --runInBand">
+    <LifecycleSingleWorkerJest />
+  </TabItem>
+</Tabs>
+
+## Methods
+
+:::info
+
+Feel free to browse through [the typings file][typings] provided by Detox.
+
+:::
+
+### `resolveConfig([options])` \[Promise<RuntimeConfig\>]
+
+Use sparingly for cases when you need to read Detox config before [`init()`][init] is called.
+
+If you use Detox with Jest, our default integration, the only place where you might need it is your `jest.config.js`, e.g.:
+
+```js title="jest.config.js"
+const { resolveConfig } = require('detox/internals');
+
+module.exports = async () => {
+  /** @type {DetoxInternals.RuntimeConfig} */
+  const config = await resolveConfig();
+
+  return { /* Jest config */ };
+};
+```
+
+For example, you could use that to evaluate the [`maxWorkers`][maxWorkers] count depending on the device type,
+but please mind, though, that Detox allows to override test runner options via its own config, e.g.:
+
+```js title="detox.config.js"
+/** @type {Detox.DetoxConfig} */
+module.exports = {
+  apps: { /* ... */ },
+  devices: { /* ... */ },
+  configurations: {
+    'ios.sim.release': {
+      app: 'ios.release',
+      device: 'iphone',
+      testRunner: {
+        args: {
+// highlight-next-line
+          maxWorkers: process.env.CI === 'true' ? 3 : undefined,
+        },
+      },
+    },
+    'android.emu.release': {
+      app: 'android.release',
+      device: 'nexus',
+      testRunner: {
+        args: {
+// highlight-next-line
+          maxWorkers: process.env.CI === 'true' ? 2 : undefined,
+        },
+      },
+    },
+  },
+};
+```
+
+This trick shown above allows to forward extra CLI arguments to `jest` conditionally, e.g. when running in CI mode:
+
+```bash
+CI=true detox test -c ios.sim.release
+# jest --config e2e/jest.config.js --maxWorkers 3
+```
+
+### `getStatus()` \[enum]
+
+Returns one of statuses depending on what’s going with the current Detox context:
+
+* `inactive` – before [`init()`][init] and after [`cleanup()`][cleanup] is called.
+* `init` – while [`init()`][init] is executing.
+* `active` – after [`init()`][init] and before [`cleanup()`][cleanup] is called.
+* `cleanup` – while [`cleanup`][cleanup] is executing.
+
+### `init([options])` \[Promise]
+
+This is the phase where:
+
+* a primary Detox context resolves its configuration, starts the logger, IPC server, and more;
+* a secondary Detox context connects to IPC server and registers itself;
+* if `workerId` is not null, [installs the worker][installWorker];
+
+Accepts an optional parameter, `options` object with the following properties, _all optional_ as well:
+
+* `cwd` (string) – current working directory, used to [resolve Detox config][detox config resolution].
+* `argv` (key-value map) – **Internal!**. CLI arguments parsed by Detox CLI.
+* `testRunnerArgv` (key-value map) – CLI arguments to be forwarded to the test runner.
+* `override` (Partial<Detox.DetoxConfig\>) – ad-hoc adjustments to deep merge with the file-based config.
+* `global` – reference to a custom [global][node globals] scope, usually needed when your test runner [uses sandboxing][node vm].
+This prevents creating issues when a Detox context cannot be accessed from within the sandboxed environment.
+* `workerId` – (string \| null) a unique ID, e.g. `worker-1`, `worker-2`. Giving `null` disables installing the worker.
+
+### `installWorker([options])` \[Promise]
+
+This is the phase where Detox loads its expectation library and boots a device. You don't need to call it separately
+unless you use [`init({ workerId: null })`][init] override.
+
+Accepts an optional parameter, `options` object with the following properties, _all optional_ as well:
+
+* `global` – reference to a custom [global][node globals] scope, usually needed when your test runner [uses sandboxing][node vm].
+This prevents creating issues when a Detox context cannot be accessed from within the sandboxed environment.
+* `workerId` – (string \| null) a unique ID, e.g. `worker-1`, `worker-2`. Giving `null` disables installing the worker.
+
+### `uninstallWorker()` \[Promise]
+
+Deallocates the device. Most Client API ([`device`][Device API], [`by`][Matchers API], [`element`][Actions API], [`expect`][Expect API]) will stop working, except for [the logger][Logger API].
+
+### `cleanup()` \[Promise]
+
+This method should be called when the main or child process is about to exit. Under the hood, it:
+
+* [uninstalls the worker][uninstallWorker] if there is a worker installed;
+* a secondary Detox context disconnects from the [IPC server];
+* a primary Detox context stops the IPC server and collects the log artifacts.
+
+## Optional lifecycle
+
+### `reportTestResults(array)` \[Promise]
+
+:::note
+
+This method has an effect only when the tests are run via [Detox CLI][detox test].
+
+:::
+
+Reports to the primary context about failed tests that could have been re-run if [`-R, --retries`][CLI options] mechanism is enabled.
+
+It takes one argument, an array of test file reports. Each report is an object with the following properties:
+
+- `testFilePath` (string) — global or relative path to the failed test file;
+- `success` (boolean) — whether the test passed or not;
+- `testExecError` (optional error) — top-level error, use it only if the entire test file failed, e.g. due to a syntax error or environment setup failure;
+- `isPermanentFailure` (optional boolean) — if the test failed, it should tell whether the failure is permanent. Permanent failure means that the test file should not be re-run. For instance, we use it to [prevent double retries][testRunner.retryAfterCircusRetries]: with Detox CLI and with [`jest.retryTimes()`][retryTimes].
+
+### `onRunDescribeStart(event)` \[Promise]
+
+**Requires an installed worker.**
+Reports that the test runner started executing a test suite, e.g. a `beforeAll` hook or a first test:
+
+```js
+await onRunDescribeStart({
+  name: 'Suite name'
+});
+```
+
+### `onTestStart(event)` \[Promise]
+
+**Requires an installed worker.**
+Reports that the test runner started executing a specific test. Use `invocations` when a test is being re-run after a failure:
+
+```js
+await onTestStart({
+  title: 'should do something expected',
+  fullName: 'Suite name should do something expected',
+  invocations: 1,
+  status: 'running',
+});
+```
+
+### `onHookFailure(event)` \[Promise]
+
+**Requires an installed worker.**
+Reports about an error in the midst of `beforeAll`, `beforeEach`, `afterEach`, `afterAll` or any other hook. We use it, for example, to generate [screenshot artifacts][artifacts docs] like `beforeAllFailure.png`.
+
+```js
+await onHookFailure({
+  error: new Error('Some assertion failed'),
+  hook: 'beforeEach',
+});
+```
+
+### `onTestFnFailure(event)` \[Promise]
+
+**Requires an installed worker.**
+Reports about an error in the midst of a test function. We use it, for example, to generate [screenshot artifacts][artifacts docs] like `testFnFailure.png`.
+
+```js
+await onTestFnFailure({ error: new Error('Some assertion failed') });
+```
+
+### `onTestDone(event)` \[Promise]
+
+**Requires an installed worker.**
+Reports the final status of the test, `passed` or `failed`, e.g.:
+
+```js
+await onTestDone({
+  title: 'should do something expected',
+  fullName: 'Suite name should do something expected',
+  invocations: 1,
+  status: 'failed',
+  timedOut: false,
+});
+```
+
+Besides collecting [log, screenshot and video artifacts][artifacts docs], this hook resets the pending network requests –
+these are usually some actions to which the app did not respond during the test. Setting `timedOut: true` tells Detox to dump those pending requests, if there are any.
+
+If your test runner supports re-running internally the failed tests, and, for example, your test passes on the second attempt, you would call the method with something like this:
+
+```js
+await onTestDone({
+  title: 'should do something expected',
+  fullName: 'Suite name should do something expected',
+  invocations: 2,
+  status: 'passed',
+});
+```
+
+### `onRunDescribeFinish(event)` \[Promise]
+
+**Requires an installed worker.**
+Reports that the test runner has finished executing a test suite, e.g. all the `afterAll` hooks have been executed or the last test has finished running:
+
+```js
+await onRunDescribeFinish({ name: 'Suite name' });
+```
+
+## Properties
+
+### `config` \[RuntimeConfig]
+
+Open [the typings file][typings] and search for `RuntimeConfig`.
+
+For the most part, this config is identical to what we describe in [Config docs], except that it is non-optional.
+In other words, even if you never customized your [Session config], you'll still be able to access some default
+values safely, without null checks.
+
+```js
+const { config } = require('detox/internals');
+typeof config.session.autoStart // "boolean"
+```
+
+### `session` \[SessionState]
+
+The session state contains the following read-only properties:
+
+* `id` (string) – randomly generated ID for the entire Detox test session, including retries.
+* `testResults` (DetoxTestFileReport[]) – results of the prior test file executions, used by Detox CLI retry mechanism.
+* `testSessionIndex` (number) – the retry index of the test session: `0..<retriesCount>`.
+* `workersCount` (number) – count of Detox contexts with a worker installed.
+If we oversimplify it, it reflects the count of allocated devices in the current test session.
+
+The session state, including the resolved config, is serialized by the primary context, so that the secondary Detox contexts can read it synchronously from a file at the earliest point possible.
+After the secondary contexts connect to the IPC server hosted by the primary context, they register themselves and get the up-to-date session state.
+The IPC server broadcasts the updates to all the connected contexts on every action like [`installWorker()`][installWorker] or [`reportTestResults()`][reportTestResults].
+
+### `log` \[Logger]
+
+See [Logger API] for all the details.
+
+The only difference from the Client API here is that you don't have a predefined `user` category, i.e.:
+
+```js
+const { log: logClient } = require('detox');
+const { log: logInternal } = require('detox/internals');
+
+// oversimplified, it looks like:
+logClient == logInternal.child({ cat: 'user' })
+```
+
+For example, we leverage this for adding more `lifecycle` events in our integration with Jest:
+
+```js title="detox/runners/jest/testEnvironment/index.js"
+class DetoxCircusEnvironment extends NodeEnvironment {
+  constructor(config, context) {
+    super(/* ... */);
+    log.trace.begin({ cat: 'lifecycle' }, context.testPath);
+    // ...
+  }
+}
+```
+
+### `tracing`
+
+An advanced API useful for creating reports based on logged Detox events.
+
+#### `tracing.createEventStream()`
+
+Creates a readable stream of the currently recorded events in
+[Chrome Trace Event format](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU).
+
+```js
+const { tracing } = require('detox/internals');
+
+async function processDetoxEvents() {
+  await new Promise((resolve, reject) => {
+    tracing
+      .createEventStream()
+      .on('end', resolve)
+      .on('error', reject)
+      .on('data', (event) => {
+        if (event.ph === 'B') { /* duration event (begin) */ }
+        if (event.ph === 'E') { /* duration event (end) */ }
+        if (event.ph === 'i') { /* instant event */ }
+      });
+  });
+}
+```
+
+Please mind that you'll be getting a snapshot of events aggregated from all the sibling and child processes, and it never will be complete until the very end of the test session.
+
+See also: [`DurationBeginEvent`], [`DurationEndEvent`], [`InstantEvent`].
+
+### `worker` \[object]
+
+Not documented on purpose. Provides direct access to the object which holds the device driver, websocket client, matchers, expectations, etc.
+
+[Mocha]: https://mochajs.org
+[Ava]: https://github.com/avajs/ava
+[Vitest]: https://vitest.dev
+[`DurationBeginEvent`]: https://wix-incubator.github.io/trace-event-lib/interfaces/DurationBeginEvent.html
+[`DurationEndEvent`]: https://wix-incubator.github.io/trace-event-lib/interfaces/DurationEndEvent.html
+[`InstantEvent`]: https://wix-incubator.github.io/trace-event-lib/interfaces/InstantEvent.html
+[globalSetup]: https://jestjs.io/docs/configuration#globalsetup-string
+[globalTeardown]: https://jestjs.io/docs/configuration#globalteardown-string
+[maxWorkers]: https://jestjs.io/docs/configuration#maxworkers-number--string
+[reporters]: https://jestjs.io/docs/configuration#reporters-arraymodulename--modulename-options
+[runInBand]: https://jestjs.io/docs/cli#--runinband
+[showConfig]: https://jestjs.io/docs/cli#--showconfig
+[testEnvironment]: https://jestjs.io/docs/configuration#testenvironment-string
+[resolveConfig]: #resolveconfigoptions-promise
+[getStatus]: #getstatus-enum
+[init]: #initoptions-promise
+[installWorker]: #installworkeroptions-promise
+[uninstallworker]: #uninstallworker-promise
+[reportTestResults]: #reporttestresultsarray-promise
+[cleanup]: #cleanup-promise
+[detox config resolution]: ../config/overview.mdx#path-conventions
+[detox test]: ../cli/test.md
+[CLI options]: ../cli/test.md#options
+[config docs]: ../config/overview.mdx
+[artifacts docs]: ../config/artifacts.mdx
+[Session config]: ../config/session.mdx
+[testRunner.retries]: ../config/testRunner.mdx#testrunnerretries-number
+[testRunner.retryAfterCircusRetries]: ../config/testRunner.mdx#testrunnerjestretryaftercircusretries-boolean
+[IPC server]: https://www.npmjs.com/package/node-ipc
+[Device API]: device.md
+[Matchers API]: matchers.md
+[Actions API]: actions.md
+[Expect API]: expect.md
+[Logger API]: logger.mdx
+[typings]: https://github.com/wix/Detox/blob/master/detox/internals.d.ts
+[node globals]: https://nodejs.org/api/globals.html
+[node vm]: https://nodejs.org/api/vm.html
+[retryTimes]: https://jestjs.io/docs/jest-object#jestretrytimesnumretries-options

@@ -1,0 +1,38 @@
+Here are some known issues you can solve on your own:
+
+1. **DetoxWSClient: Retrying... At connectToServer**
+
+    ```plain text
+    I/DetoxWSClient: At connectToServer
+    D/DetoxWSClient: Retrying...
+    ```
+
+    If you see the repeatedly printed messages like above in Android application logs, it's likely
+    that your port is not reversed. Assuming you're following the tutorial and `detoxServer` address
+    is `ws://localhost:8099` (if not – check what Detox prints you), reverse the port on your device
+    using ADB:
+
+    ```bash
+    adb reverse tcp:8099 tcp:8099
+    ```
+
+1. **Waited for the new RN-context for too long!**
+
+    ```plain text
+    Waited for the new RN-context for too long! (60 seconds)
+    If you think that’s not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests().
+    ```
+
+    If you see an error like above, you can patch Detox code to disable the timeout here:
+
+    ```diff title="detox/android/detox/src/main/java/com/wix/detox/config/DetoxConfig.kt"
+     package com.wix.detox.config
+
+     class DetoxConfig {
+         @JvmField var idlePolicyConfig: DetoxIdlePolicyConfig = DetoxIdlePolicyConfig()
+    -    @JvmField var rnContextLoadTimeoutSec = 60
+    +    @JvmField var rnContextLoadTimeoutSec = Int.MAX_VALUE
+
+         fun apply() {
+             idlePolicyConfig.apply()
+    ```

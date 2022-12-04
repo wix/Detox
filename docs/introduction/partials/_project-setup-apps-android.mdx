@@ -1,0 +1,49 @@
+<!-- markdownlint-configure-file { "no-trailing-punctuation": 0 } -->
+
+import FlavorizedCodeBlock from '@site/src/components/FlavorizedCodeBlock';
+
+Check **binaryPath** and **build** configs for `android.debug` and `android.release` mode in your Detox config:
+
+```js title=".detoxrc.js"
+module.exports = {
+  apps: {
+    'android.debug': {
+      type: 'android.apk',
+      // highlight-start
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug'
+      // highlight-end
+    },
+    'android.release': {
+      type: 'android.apk',
+      // highlight-start
+      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
+      // highlight-end
+    },
+    // ...
+  },
+  // ...
+};
+```
+
+If you have a typical React Native project, these values should already be correct.
+
+On the other hand, if your app has extra [`productFlavors`](https://developer.android.com/studio/build/build-variants#product-flavors)
+(let's imagine you have `driver` and `passenger` flavors of a taxi application), then you should rewrite your apps config
+for both **debug** and **release** configurations, e.g.:
+
+<FlavorizedCodeBlock
+  language="diff"
+  header={'   apps: {\n'}
+  flavors={['Driver', 'Passenger']}
+>
+  {(conf) => `\
+     '${conf.toLowerCase()}.android.debug': {
+       type: 'android.apk',
+-      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
++      binaryPath: 'android/app/build/outputs/apk/${conf.toLowerCase()}/debug/app-${conf.toLowerCase()}-debug.apk',
+-      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug',
++      build: 'cd android && ./gradlew assemble${conf}Debug assemble${conf}DebugAndroidTest -DtestBuildType=debug',
+     },`}
+</FlavorizedCodeBlock>

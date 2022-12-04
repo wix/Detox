@@ -18,6 +18,7 @@ def DEVELOPERS = [
 String _versionName = System.getProperty('version')
 String _flavour = System.getProperty('buildFlavour', PUB_FLAVOUR_FULL_DETOX)
 Boolean _forceLocal = System.getProperty('forceLocal', 'false').toBoolean()
+Boolean _forceSign = System.getProperty('forceSign', 'false').toBoolean()
 
 String _mavenRepoUrl
 Map _mavenCredentials
@@ -28,7 +29,7 @@ def _selectedVariant
 def initLocalPublishing = {
     _mavenRepoUrl = TARGET_LOCAL_DIR
     _mavenCredentials = null
-    _shouldSignArtifacts = false
+    _shouldSignArtifacts = _forceSign
 }
 
 def initMavenPublishing = {
@@ -71,10 +72,8 @@ def shouldPublishVariant = {
 }
 
 def declareArchive = { target ->
-    if (_shouldSignArtifacts) {
-        project.artifacts {
-            archives target
-        }
+    project.artifacts {
+        archives target
     }
 }
 
@@ -103,12 +102,12 @@ tasks.named("dokkaJavadoc") {
         }
     }
 }
-    // Side note / TODO:
-    // Dokka outputs R and BuildConfig; currently, there's nothing to do about it, as issues such as
-    // this on - https://github.com/Kotlin/dokka/issues/419 are still open :-/
-    // We might want to revisit this in the future -- see if they've decided to export a custom classes
-    // suppression config var or something.
 
+// Side note / TODO (revisit because dokka's 419 issue has been resolved, since):
+// Dokka outputs R and BuildConfig; currently, there's nothing to do about it, as issues such as
+// this on - https://github.com/Kotlin/dokka/issues/419 are still open :-/
+// We might want to revisit this in the future -- see if they've decided to export a custom classes
+// suppression config var or something.
 task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from "$buildDir/dokkaDoc"
     classifier = 'javadoc'
@@ -140,13 +139,15 @@ signing {
 
 project.afterEvaluate {
     project.tasks.all { Task task ->
-        android.libraryVariants.all { variant ->
-            String variantName = variant.name.capitalize()
-            if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository") {
-                task.dependsOn "assemble${variantName}"
-                task.dependsOn project.tasks.signArchives
-                task.doFirst {
-                    onPrePublish()
+        android {
+            libraryVariants.all { variant ->
+                String variantName = variant.name.capitalize()
+                if (task.name == "publishMaven${variantName}AarPublicationToMavenRepository".toString()) {
+                    task.dependsOn "assemble${variantName}"
+                    task.dependsOn project.tasks.signArchives
+                    task.doFirst {
+                        onPrePublish()
+                    }
                 }
             }
         }
@@ -243,22 +244,23 @@ publishing {
                         }
                     }
 
-                    // Register all artifacts we've previously registered as archives (i.e. .jar.asc's, .aar.asc's) as published artifacts.
-                    // Note: this relies on preregistering the equivalent generator-tasks as archive artifacts
-                    // inside a project.artifacts { ... } clause.
-                    project.tasks.signArchives.signatureFiles.each {
-                        artifact(it) {
-                            def matcherSrcDocs = (it.file =~ /-(sources|javadoc)\.jar\.asc$/)
-                            def matcherAAR = (it.file =~ /\.aar\.asc$/)
-                            if (matcherSrcDocs.find()) {
-                                classifier = matcherSrcDocs.group(1)
-                                extension = 'jar.asc'
-                            } else if (matcherAAR.find()) {
-                                classifier = null
-                                extension = 'aar.asc'
-                            } else {
-                                classifier = null
-                                extension = null
+                    // Register all artifacts we've previously registered as signed archives (i.e. .jar.asc's, .aar.asc's) as publish-artifacts.
+                    // Note: this relies on preregistering the equivalent generator-tasks as archive artifacts inside a project.artifacts { ... } clause.
+                    if (_shouldSignArtifacts) {
+                        project.tasks.signArchives.signatureFiles.each {
+                            artifact(it) {
+                                def matcherSrcDocs = (it.file =~ /-(sources|javadoc)\.jar\.asc$/)
+                                def matcherAAR = (it.file =~ /\.aar\.asc$/)
+                                if (matcherSrcDocs.find()) {
+                                    classifier = matcherSrcDocs.group(1)
+                                    extension = 'jar.asc'
+                                } else if (matcherAAR.find()) {
+                                    classifier = null
+                                    extension = 'aar.asc'
+                                } else {
+                                    classifier = null
+                                    extension = null
+                                }
                             }
                         }
                     }

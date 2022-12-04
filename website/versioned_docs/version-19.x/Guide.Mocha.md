@@ -20,9 +20,9 @@ Note that while Mocha is lightweight and easy to set up, we nevertheless encoura
 
 #### 1. Install Mocha
 
-Before starting with Mocha setup, be sure to complete the preliminary sections of the [Getting Started](Introduction.GettingStarted.md) guide.
+Before starting with Mocha setup, be sure to complete the preliminary sections of the [Getting Started](introduction/getting-started.md) guide.
 
-```sh
+```bash npm2yarn
 npm install mocha --save-dev --no-package-lock
 ```
 

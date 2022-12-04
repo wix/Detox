@@ -1,0 +1,29 @@
+```json
+{
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator",
+      "device": {
+        "type": "<e.g., iPhone 12 Pro>"
+      }
+    }
+  },
+  "apps": {
+    "ios.debug": {
+      "type": "ios.app",
+      "binaryPath": "<path to your app binary built before>"
+    }
+  },
+  "configurations": {
+// highlight-start
+    "ios.manual": {
+      "device": "simulator",
+      "app": "ios.debug",
+      "behavior": {
+        "launchApp": "manual"
+      }
+    }
+// highlight-end
+  }
+}
+```

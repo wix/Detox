@@ -1,13 +1,22 @@
+/** @type {Detox.DetoxConfig} */
 module.exports = {
-  "test-runner": "mocha",
-  "runner-config": "e2e/.mocharc.json",
-  "specs": process.env.DETOX_EXPOSE_GLOBALS === '0' ? 'e2eExplicitRequire' : 'e2e',
-  "behavior": {
-    "init": {
-      "exposeGlobals": process.env.DETOX_EXPOSE_GLOBALS === '0' ? false : true,
+  logger: {
+    level: process.env.CI ? 'debug' : undefined,
+  },
+  testRunner: {
+    args: {
+      config: 'e2e/jest.config.js',
+      maxWorkers: process.env.CI ? 2 : undefined,
+      _: ['e2e']
     },
   },
-  "apps": {
+  artifacts: {
+    plugins: {
+      log: process.env.CI ? 'failing' : undefined,
+      screenshot: process.env.CI ? 'failing' : undefined,
+    },
+  },
+  apps: {
     "ios.release": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
@@ -29,21 +38,45 @@ module.exports = {
       "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -"
     }
   },
-  "devices": {
-    "simulator": {
-      "type": "ios.simulator",
-      "device": {
-        "type": "iPhone 11 Pro"
+  devices: {
+    simulator: {
+      type: "ios.simulator",
+      headless: Boolean(process.env.CI),
+      device: {
+        type: "iPhone 12 Pro"
       }
     },
-    "emulator": {
-      "type": "android.emulator",
-      "device": {
-        "avdName": "Pixel_API_28"
-      }
+    emulator: {
+      type: "android.emulator",
+      headless: Boolean(process.env.CI),
+      gpuMode: process.env.CI ? 'off' : undefined,
+      device: {
+        avdName: "Pixel_API_28"
+      },
+      utilBinaryPaths: [
+        "./cache/test-butler-app.apk"
+      ],
+    },
+    "genymotion.emulator.uuid": {
+      type: "android.genycloud",
+      device: {
+        recipeUUID: "a50a71d6-da90-4c67-bdfa-5b602b0bbd15"
+      },
+      utilBinaryPaths: [
+        "./cache/test-butler-app.apk"
+      ],
+    },
+    "genymotion.emulator.name": {
+      type: "android.genycloud",
+      device: {
+        recipeName: "Detox_Pixel_API_29"
+      },
+      utilBinaryPaths: [
+        "./cache/test-butler-app.apk"
+      ],
     }
   },
-  "configurations": {
+  configurations: {
     "ios.sim.release": {
       "device": "simulator",
       "app": "ios.release"
@@ -52,9 +85,14 @@ module.exports = {
       "device": "simulator",
       "app": "ios.debug"
     },
-    "ios.none": {
-      "type": "ios.none",
+    "ios.manual": {
+      "type": "ios.manual",
+      "behavior": {
+        "launchApp": "manual"
+      },
+      "artifacts": false,
       "session": {
+        "autoStart": true,
         "server": "ws://localhost:8099",
         "sessionId": "com.wix.demo.react.native"
       }

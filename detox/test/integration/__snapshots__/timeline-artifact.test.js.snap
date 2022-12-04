@@ -1,3 +1,831 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Timeline integration test should deterministically produce a timeline artifact 1`] = `"[{\\"name\\":\\"process_name\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1000,\\"ph\\":\\"M\\",\\"args\\":{\\"name\\":\\"detox\\"}},{\\"name\\":\\"thread_name\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1000,\\"ph\\":\\"M\\",\\"args\\":{\\"name\\":\\"Worker #2\\"}},{\\"name\\":\\"detoxInit\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1100000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"allocateDevice\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1200000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"allocateDevice\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1300000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"appUninstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1400000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"appUninstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1500000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"appInstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1600000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"appInstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1700000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"detoxInit\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1800000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"StubDevice#2\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":1900000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"Stub1\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2000000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"should have welcome screen\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2100000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2200000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2300000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"Navigate to sanity\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2400000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"Navigate to sanity\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2500000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"Asserting various texts\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2600000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"Asserting various texts\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2700000,\\"ph\\":\\"E\\",\\"args\\":{}},{\\"name\\":\\"should have welcome screen\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2800000,\\"ph\\":\\"E\\",\\"args\\":{\\"status\\":\\"failed\\"}},{\\"name\\":\\"Stub1\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":2900000,\\"ph\\":\\"E\\",\\"args\\":{}},{\\"name\\":\\"StubDevice#2\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3000000,\\"ph\\":\\"E\\",\\"args\\":{}},{\\"name\\":\\"process_name\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1000,\\"ph\\":\\"M\\",\\"args\\":{\\"name\\":\\"detox\\"}},{\\"name\\":\\"thread_name\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1000,\\"ph\\":\\"M\\",\\"args\\":{\\"name\\":\\"Worker #1\\"}},{\\"name\\":\\"detoxInit\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1100000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"allocateDevice\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1200000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"allocateDevice\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1300000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"appUninstall\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1400000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"appUninstall\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1500000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"appInstall\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1600000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"appInstall\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1700000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"detoxInit\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1800000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"StubDevice#1\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":1900000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"Stub3\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2000000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"should have welcome screen\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2100000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2200000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2300000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"should have welcome screen\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2400000,\\"ph\\":\\"E\\",\\"args\\":{\\"status\\":\\"passed\\"}},{\\"name\\":\\"should show hello screen after tap\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2500000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2600000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2700000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"should show hello screen after tap\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2800000,\\"ph\\":\\"E\\",\\"args\\":{\\"status\\":\\"passed\\"}},{\\"name\\":\\"should show world screen after tap\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":2900000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":3000000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":3100000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"should show world screen after tap\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":3200000,\\"ph\\":\\"E\\",\\"args\\":{\\"status\\":\\"passed\\"}},{\\"name\\":\\"Stub3\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":3300000,\\"ph\\":\\"E\\",\\"args\\":{}},{\\"name\\":\\"StubDevice#1\\",\\"pid\\":0,\\"tid\\":\\"1\\",\\"ts\\":3400000,\\"ph\\":\\"E\\",\\"args\\":{}},{\\"name\\":\\"process_name\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3100,\\"ph\\":\\"M\\",\\"args\\":{\\"name\\":\\"detox\\"}},{\\"name\\":\\"thread_name\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3100,\\"ph\\":\\"M\\",\\"args\\":{\\"name\\":\\"Worker #2\\"}},{\\"name\\":\\"detoxInit\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3200000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"allocateDevice\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3300000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"allocateDevice\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3400000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"appUninstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3500000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"appUninstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3600000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"appInstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3700000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"appInstall\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3800000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"detoxInit\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":3900000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"StubDevice#2\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4000000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"Stub2\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4100000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"should have welcome screen\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4200000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4300000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4400000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"should have welcome screen\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4500000,\\"ph\\":\\"E\\",\\"args\\":{\\"status\\":\\"passed\\"}},{\\"name\\":\\"should show hello screen after tap\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4600000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4700000,\\"ph\\":\\"B\\",\\"args\\":{}},{\\"name\\":\\"reloadRN\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4800000,\\"ph\\":\\"E\\",\\"args\\":{\\"success\\":true}},{\\"name\\":\\"should show hello screen after tap\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":4900000,\\"ph\\":\\"E\\",\\"args\\":{\\"status\\":\\"passed\\"}},{\\"name\\":\\"Stub2\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":5000000,\\"ph\\":\\"E\\",\\"args\\":{}},{\\"name\\":\\"StubDevice#2\\",\\"pid\\":0,\\"tid\\":\\"2\\",\\"ts\\":5100000,\\"ph\\":\\"E\\",\\"args\\":{}}"`;
+exports[`Timeline integration test should deterministically produce a timeline artifact 1`] = `
+[
+  {
+    "args": {
+      "cwd": "$CWD",
+      "data": {},
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "node_modules/.bin/detox test -c stub --config integration/e2e/config.js -a integration_artifacts/ -R 1 stub1",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 0,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Serialized the session state at: $TMPDIR/$SESSION_ID.detox.json",
+    "ph": "i",
+    "pid": 0,
+    "tid": 0,
+    "ts": 1,
+  },
+  {
+    "args": {
+      "env": {},
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "nyc jest --config integration/e2e/config.js stub1",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 2,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "integration/e2e/stub1.test.js",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 3,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "set up environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 4,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 5,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "stub1.test.js is assigned to Stub #StubDevice#1",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 6,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "run the tests",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 7,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Stub1",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 8,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 should have welcome screen",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "should have welcome screen",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 9,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 10,
+  },
+  {
+    "args": {
+      "functionCode": "() => {
+    if (config.resetModules) {
+      runtime.resetModules();
+    }
+    if (config.clearMocks) {
+      runtime.clearAllMocks();
+    }
+    if (config.resetMocks) {
+      runtime.resetAllMocks();
+      if (
+        config.fakeTimers.enableGlobally &&
+        config.fakeTimers.legacyFakeTimers
+      ) {
+        // during setup, this cannot be null (and it's fine to explode if it is)
+        environment.fakeTimers.useFakeTimers();
+      }
+    }
+    if (config.restoreMocks) {
+      runtime.restoreAllMocks();
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 11,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 12,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    await device.reloadReactNative();
+    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 13,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 14,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    try {
+      detox.trace.startSection('Asserting various texts');
+      await expect(element(by.text('Welcome'))).toBeVisible();
+      await expect(element(by.text('Say Hello'))).toBeVisible();
+      await expect(element(by.text('Say World'))).toBeVisible();
+    } finally {
+      detox.trace.endSection('Asserting various texts');
+    }
+    throw new Error(\`I'm only here to make things interesting!\`);
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 15,
+  },
+  {
+    "args": {
+      "error": "Error: I'm only here to make things interesting!",
+      "level": 10,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 16,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "failed",
+      "timedOut": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 17,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen [FAIL]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 18,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Skipped test",
+      "invocations": 1,
+      "level": 10,
+      "status": "skip",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Skipped test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 19,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 20,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test [SKIPPED]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 21,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Check that todo tests are also traced",
+      "invocations": 1,
+      "level": 10,
+      "status": "todo",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 22,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 23,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 24,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 25,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 26,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 27,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 28,
+  },
+  {
+    "args": {
+      "code": 1,
+      "level": 50,
+      "signal": null,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 29,
+  },
+  {
+    "args": {
+      "level": 50,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "There were failing tests in the following files:
+  1. integration/e2e/stub1.test.js
+
+Detox CLI is going to restart the test runner with those files...
+",
+    "ph": "i",
+    "pid": 0,
+    "tid": 0,
+    "ts": 30,
+  },
+  {
+    "args": {
+      "env": {},
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "nyc jest --config integration/e2e/config.js $CWD/integration/e2e/stub1.test.js",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 31,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "integration/e2e/stub1.test.js",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 32,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "set up environment",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 33,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 34,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "stub1.test.js is assigned to Stub #StubDevice#1",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 35,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "run the tests",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 36,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Stub1",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 37,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 should have welcome screen",
+      "invocations": 2,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "should have welcome screen",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 38,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 39,
+  },
+  {
+    "args": {
+      "functionCode": "() => {
+    if (config.resetModules) {
+      runtime.resetModules();
+    }
+    if (config.clearMocks) {
+      runtime.clearAllMocks();
+    }
+    if (config.resetMocks) {
+      runtime.resetAllMocks();
+      if (
+        config.fakeTimers.enableGlobally &&
+        config.fakeTimers.legacyFakeTimers
+      ) {
+        // during setup, this cannot be null (and it's fine to explode if it is)
+        environment.fakeTimers.useFakeTimers();
+      }
+    }
+    if (config.restoreMocks) {
+      runtime.restoreAllMocks();
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 40,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 41,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    await device.reloadReactNative();
+    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 42,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 43,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    try {
+      detox.trace.startSection('Asserting various texts');
+      await expect(element(by.text('Welcome'))).toBeVisible();
+      await expect(element(by.text('Say Hello'))).toBeVisible();
+      await expect(element(by.text('Say World'))).toBeVisible();
+    } finally {
+      detox.trace.endSection('Asserting various texts');
+    }
+    throw new Error(\`I'm only here to make things interesting!\`);
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 44,
+  },
+  {
+    "args": {
+      "error": "Error: I'm only here to make things interesting!",
+      "level": 10,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 45,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "failed",
+      "timedOut": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 46,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: should have welcome screen [FAIL]",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 47,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Skipped test",
+      "invocations": 2,
+      "level": 10,
+      "status": "skip",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Skipped test",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 48,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 49,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Skipped test [SKIPPED]",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 50,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Stub1 Check that todo tests are also traced",
+      "invocations": 2,
+      "level": 10,
+      "status": "todo",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 51,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Stub1: Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 2,
+    "tid": 2,
+    "ts": 52,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 53,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 54,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 2,
+    "tid": 2,
+    "ts": 55,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 56,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 2,
+    "ts": 57,
+  },
+  {
+    "args": {
+      "code": 1,
+      "level": 50,
+      "signal": null,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 58,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 59,
+  },
+]
+`;

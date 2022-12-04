@@ -18,7 +18,7 @@ const sleep = require('../../../../utils/sleep');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
-const log = logger.child({ __filename });
+const log = logger.child({ cat: 'device' });
 
 /**
  * @typedef AndroidDriverProps
@@ -148,7 +148,15 @@ class AndroidDriver extends DeviceDriverBase {
 
   async waitUntilReady() {
       try {
-        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
+        await Promise.race([
+          super.waitUntilReady(),
+          this.instrumentation.waitForCrash()
+        ]);
+      } catch (e) {
+        log.warn({ error: e }, 'An error occurred while waiting for the app to become ready. Waiting for disconnection...');
+        await this.client.waitUntilDisconnected();
+        log.warn('The app disconnected.');
+        throw e;
       } finally {
         this.instrumentation.abortWaitForCrash();
       }

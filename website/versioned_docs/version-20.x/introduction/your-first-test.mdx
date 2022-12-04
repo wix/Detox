@@ -1,0 +1,223 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import RunningYourTest from './partials/_project-setup-build.mdx';
+
+# Your First Test
+
+The previous articles have addressed the environment and project setup, and now it is time for writing
+and running the tests.
+
+If you are eager to check first whether your build configuration was correct, you can skip writing a test for now and try [running tests](#running-tests) instead, to identify potential [late issues](../troubleshooting/running-tests.md#no-simulators-found-ios) caused by incorrect project configuration.
+
+## Writing a test
+
+This subsection shows how to write a test which can:
+
+* _launch_ the application,
+* _tap_ on a button,
+* and _assert_ that some text appears as a result.
+
+Also, it will familiarize you with commonly used Detox [actions], [assertions] and [matchers] along the way.
+
+### 1. Create a test suite
+
+:::info Note
+
+You can also duplicate and modify a `e2e/starter.test.js` file that was generated automatically by `detox init` command.
+
+:::
+
+Create a new test file under your `e2e` folder and add a similar test suite skeleton:
+
+```js title="e2e/yourTestName.test.js"
+describe('Example', () => {
+  beforeAll(async () => {});
+
+  beforeEach(async () => {});
+
+  it('should test something', async () => {});
+});
+```
+
+### 2. Launch the application
+
+When your test starts, the application is not running yet. You need to call [`device.launchApp()`](../api/device.md#devicelaunchappparams) at least once, e.g. in the `beforeAll` hook:
+
+```js
+describe('Example', () => {
+  beforeAll(async () => {
+    await device.launchApp();
+  });
+
+  // …
+});
+```
+
+If your app supports deep links, you can configure it to [start from a specific screen](../guide/mocking-open-with-url.md).
+
+:::tip
+
+It is a good idea to start every test from a fresh state, since the preceeding ones might leave your application
+in an unpredictable state if they fail.
+
+One way to do it is to launch the app as a new instance in `beforeEach` hook instead:
+
+```js
+beforeEach(async () => {
+  await device.launchApp({ newInstance: true });
+});
+```
+
+The other way is to _reload React Native_ without restarting the app. Like any live reloading, it is apt to cause glitches for more complex apps,
+but for simpler apps it proves to be a quicker way to reset the state between the tests:
+
+```js
+beforeEach(async () => {
+  await device.reloadReactNative();
+});
+```
+
+So, pick your favorite one wisely, on the basis of _speed_ vs _stability_ considerations.
+
+:::
+
+### 3. Match an element
+
+The next step is to [match][matchers] an element you want to interact with.
+
+Detox provides many options to match an element [`by.id()`], [`by.label()`], [`by.text()`] and [more][matchers].
+The most common way to match elements is either by _id_ or _text_:
+
+```js
+element(by.id('YourTestID')); // recommended
+element(by.text('Element text'));
+```
+
+:::info Best practice
+
+Try to use [`by.id()`](../api/matchers.md#byidid) matcher wherever possible.
+[Explore our guide](../guide/test-id.mdx) to learn how to work with `testID` props.
+
+:::
+
+### 4. Perform an action
+
+Detox provides many actions on elements such as [`tap()`], [`swipe()`], [`scroll()`] and [other interactions][actions#more].
+
+Let's tap on an element for the sake of the example:
+
+```jsx
+describe('Example', () => {
+  // …
+
+  it('should tap on a button', async () => {
+    await element(by.id('ButtonID')).tap();
+  });
+});
+```
+
+:::info Note
+
+You don't need to wait or "sleep" after interacting with an element, because Detox already does it for you.
+It synchronises with your application and waits after each action for all the foreground activities to finish before performing any further step.
+
+While convenient, this feature goes sideways at times, for example, when your app has looping animations causing Detox to wait forever.
+This is why you sometimes have to tweak your app specifically for Detox tests, and [there is a special guide](../troubleshooting/synchronization.md) for that.
+
+:::
+
+### 5. Make an assertion
+
+An essential step of any test is _making an assertion_.
+
+Detox provides its own `expect` object, so that you can expect from any element [`toExist()`], [`toBeVisible()`], [`toHaveText()`] and [more various things][assertions#more].
+All the assertions can be inverted with [`not` property](../api/expect.md#not).
+
+Let's assert that our text is shown on a screen using [`toBeVisible()`] function:
+
+```jsx
+describe('Example', () => {
+  beforeAll(async () => {
+    await device.launchApp();
+  });
+
+  beforeEach(async () => {
+    await device.reloadReactNative();
+  });
+
+  it('should tap on button by id and expect some text to be visible', async () => {
+    await element(by.id('ButtonID')).tap();
+    await expect(element(by.text('The button has been pressed'))).toBeVisible();
+  });
+});
+```
+
+Note that instead of matching by text you can assert a specific text on an element with [`toHaveText()`], e.g.:
+
+```jsx
+await expect(element(by.id('TextAfterButtonPressed'))).toHaveText('Button pressed');
+```
+
+## Running tests
+
+<Tabs groupId="configurationName">
+  <TabItem value="ios.sim.debug" label="iOS (Debug)">
+    <RunningYourTest configurationName={'ios.sim.debug'} debug />
+  </TabItem>
+  <TabItem value="ios.sim.release" label="iOS (Release)">
+    <RunningYourTest configurationName={'ios.sim.release'} />
+  </TabItem>
+  <TabItem value="android.emu.debug" label="Android (Debug)">
+    <RunningYourTest configurationName={'android.emu.debug'} debug />
+  </TabItem>
+  <TabItem value="android.emu.release" label="Android (Release)">
+    <RunningYourTest configurationName={'android.emu.release'} />
+  </TabItem>
+</Tabs>
+
+If you haven't changed the generated `e2e/starter.test.js`, you are likely to see errors like this:
+
+```
+ FAIL  e2e/starter.test.js (25.916 s)
+  Example
+    ✕ should have welcome screen (662 ms)
+    ✕ should show hello screen after tap (236 ms)
+    ✕ should show world screen after tap (236 ms)
+
+  ● Example › should have welcome screen
+
+    Test Failed: No elements found for “MATCHER(id == “welcome”)”
+
+    HINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher.
+
+       9 |
+      10 |   it('should have welcome screen', async () => {
+    > 11 |     await expect(element(by.id('welcome'))).toBeVisible();
+         |                                             ^
+      12 |   });
+      13 |
+      14 |   it('should show hello screen after tap', async () => {
+
+      at Object.toBeVisible (e2e/starter.test.js:11:45)
+
+  …
+```
+
+If you have created your own test, and it is failing, examine the error message, check out our [Investigating Failures](../guide/investigating-test-failure.mdx)
+and [Debugging](debugging.mdx) guides, and run your tests again after you fix the issue.
+
+[matchers]: ../api/matchers.md
+[`by.id()`]: ../api/matchers.md#byidid
+[`by.label()`]: ../api/matchers.md#bylabellabel
+[`by.text()`]: ../api/matchers.md#bytexttext
+[actions]: ../api/actions.md
+[`tap()`]: ../api/actions.md#tappoint
+[`swipe()`]: ../api/actions.md#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy
+[`scroll()`]: ../api/actions.md#scrolloffset-direction-startpositionx-startpositiony
+[actions#more]: ../api/actions.md#methods
+[assertions]: ../api/expect.md
+[`toExist()`]: ../api/expect.md#toexist
+[`toBeVisible()`]: ../api/expect.md#tobevisible
+[`toHaveText()`]: ../api/expect.md#tohavetexttext
+[assertions#more]: ../api/expect.md#methods

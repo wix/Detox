@@ -1,0 +1,51 @@
+@startuml
+
+actor User
+boundary "Detox CLI" as CLI
+participant "DetoxPrimaryContext" as Pri
+boundary "Jest (main)" as Jest0
+participant "DetoxSecondaryContext.0" as Sec0
+boundary "Jest (worker N)" as JestN
+participant "DetoxSecondaryContext.N" as SecN
+participant "DetoxCircusEnvironment.N" as Env
+
+User -> CLI: detox test
+activate CLI
+CLI -> Pri: require('detox')
+activate Pri
+CLI -> Pri: init()
+loop while exitCode != 0 and retries > 0
+  CLI -> Jest0: child_process.spawn('jest')
+  activate Jest0
+  Jest0 -> Sec0: require('detox')
+  activate Sec0
+  Jest0 -> Sec0: resolveConfig()
+  Jest0 -> Sec0: init()
+  Jest0 -> JestN: child_process.fork()
+  activate JestN
+  loop every test file
+    JestN -> Env: new()
+    activate Env
+    JestN -> Env: setup()
+    Env -> SecN: require('detox')
+    activate SecN
+    Env -> SecN: init()
+    Env -> SecN: installWorker()
+    SecN --> Pri: register worker
+    JestN -> Env: run test file
+    JestN -> Env: teardown()
+    Env -> SecN: uninstallWorker()
+    deactivate Env
+    Jest0 --> Pri: reportTestResults()
+  end loop
+  deactivate SecN
+  deactivate JestN
+  Jest0 -> Sec0: cleanup()
+  deactivate Sec0
+  deactivate Jest0
+end loop
+CLI -> Pri: cleanup()
+deactivate Pri
+deactivate CLI
+
+@enduml

@@ -189,6 +189,10 @@ class ADB {
     }
   }
 
+  async waitForDevice(deviceId) {
+    return await this.adbCmd(deviceId, 'wait-for-device');
+  }
+
   async apiLevel(deviceId) {
     if (this._cachedApiLevels.has(deviceId)) {
       return this._cachedApiLevels.get(deviceId);
@@ -204,6 +208,11 @@ class ADB {
     await this.shell(deviceId, `settings put global animator_duration_scale 0`);
     await this.shell(deviceId, `settings put global window_animation_scale 0`);
     await this.shell(deviceId, `settings put global transition_animation_scale 0`);
+  }
+
+  async setWiFiToggle(deviceId, state) {
+    const value = (state === true ? 'enable' : 'disable');
+    await this.shell(deviceId, `svc wifi ${value}`);
   }
 
   async screencap(deviceId, path) {

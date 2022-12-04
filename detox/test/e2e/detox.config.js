@@ -1,15 +1,3 @@
-const detox = require('detox');
-
-detox.hook('UNSAFE_configReady', ({ deviceConfig }) => {
-  if (process.env.CI && !process.env.DEMO_MAX_WORKERS) {
-    process.env.DEMO_MAX_WORKERS = ({
-      'ios.simulator': '4',
-      'android.emulator': '3',
-      'android.genycloud': '5',
-    })[deviceConfig.type] || '1';
-  }
-});
-
 const launchArgs = {
   app: 'le',
   goo: 'gle?',
@@ -18,10 +6,22 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
-  testRunner: 'nyc jest',
-  runnerConfig: 'e2e/config.js',
-  specs: 'e2e/*.test.js',
-  skipLegacyWorkersInjection: true,
+  logger: {
+    level: process.env.CI ? 'debug' : undefined,
+  },
+
+  testRunner: {
+    args: {
+      $0: 'nyc jest',
+      config: 'e2e/jest.config.js',
+      _: ['e2e/']
+    },
+    retries: process.env.CI ? 1 : undefined,
+    jest: {
+      setupTimeout: +`${process.env.DETOX_JEST_SETUP_TIMEOUT || 300000}`,
+      reportSpecs: process.env.CI ? true : undefined,
+    },
+  },
 
   behavior: {
     init: {
@@ -38,13 +38,13 @@ const config = {
   },
 
   artifacts: {
+    pathBuilder: process.env.DETOX_CUSTOM_PATH_BUILDER,
     plugins: {
       log: 'all',
       screenshot: {
         shouldTakeAutomaticSnapshots: true,
         takeWhen: {}
       },
-      timeline: 'all',
       uiHierarchy: 'enabled'
     }
   },
@@ -70,6 +70,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
       build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
+      reversePorts: [8081],
     },
 
     'android.debug.withArgs': {
@@ -77,6 +78,7 @@ const config = {
       name: 'exampleWithArgs',
       binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
       build: ':',
+      reversePorts: [8081],
       launchArgs,
     },
 
@@ -85,6 +87,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
       build: 'cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..',
+      reversePorts: [8081],
     },
 
     'android.fromSource.withArgs': {
@@ -92,6 +95,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
       build: ':',
+      reversePorts: [8081],
       launchArgs,
     },
 
@@ -114,15 +118,16 @@ const config = {
   devices: {
     'ios.simulator': {
       type: 'ios.simulator',
+      headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 12 Pro Max'
+        type: 'iPhone 12 Pro Max',
       },
     },
 
     'android.emulator': {
       type: 'android.emulator',
       headless: Boolean(process.env.CI),
-      readonly: true,
+      gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
       },
@@ -144,14 +149,6 @@ const config = {
   },
 
   configurations: {
-    'ios.none': {
-      device: { type: 'ios.none' },
-      app: 'ios.debug',
-      session: {
-        server: 'ws://localhost:8099',
-        sessionId: 'com.wix.detox-example'
-      }
-    },
     'ios.sim.debug': {
       device: 'ios.simulator',
       app: 'ios.debug',
@@ -210,10 +207,12 @@ const config = {
       apps: ['android.release', 'android.release.withArgs'],
     },
     'stub': {
-      type: './integration/stub',
-      name: 'integration-stub',
       device: {
+        type: './integration/stub',
         integ: 'stub'
+      },
+      app: {
+        name: 'example'
       }
     }
   }

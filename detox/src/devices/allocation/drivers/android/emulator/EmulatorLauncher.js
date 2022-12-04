@@ -1,7 +1,8 @@
 // @ts-nocheck
 const { DetoxRuntimeError } = require('../../../../../errors');
+const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const retry = require('../../../../../utils/retry');
-const { traceCall } = require('../../../../../utils/trace');
+const traceMethods = require('../../../../../utils/traceMethods');
 const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
 const { LaunchCommand } = require('../../../../common/drivers/android/emulator/exec/EmulatorExec');
 
@@ -14,6 +15,7 @@ class EmulatorLauncher extends DeviceLauncher {
     super(eventEmitter);
     this._adb = adb;
     this._emulatorExec = emulatorExec;
+    traceMethods(log, this, ['_awaitEmulatorBoot']);
   }
 
   /**
@@ -34,7 +36,7 @@ class EmulatorLauncher extends DeviceLauncher {
         retries: 2,
         interval: 100,
         conditionFn: isUnknownEmulatorError,
-      }, () => this._launchEmulator(avdName, launchCommand));
+      }, () => this._launchEmulator(avdName, launchCommand, adbName));
     }
     await this._awaitEmulatorBoot(adbName);
     await this._notifyBootEvent(adbName, avdName, !isRunning);
@@ -58,16 +60,11 @@ class EmulatorLauncher extends DeviceLauncher {
     await this._notifyShutdownCompleted(adbName);
   }
 
-  _launchEmulator(emulatorName, launchCommand) {
-    return launchEmulatorProcess(emulatorName, this._emulatorExec, launchCommand);
+  _launchEmulator(emulatorName, launchCommand, adbName) {
+    return launchEmulatorProcess(emulatorName, this._emulatorExec, launchCommand, this._adb, adbName);
   }
 
   async _awaitEmulatorBoot(adbName) {
-    await traceCall('awaitBoot', () =>
-      this._waitForBootToComplete(adbName));
-  }
-
-  async _waitForBootToComplete(adbName) {
     await retry({ retries: 240, interval: 2500, shouldUnref: true }, async () => {
       const isBootComplete = await this._adb.isBootComplete(adbName);
 

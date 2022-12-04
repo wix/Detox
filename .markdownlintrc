@@ -1,5 +1,5 @@
 {
-  "first-line-heading": { "level": 2 },
+  "first-line-heading": { "level": 1 },
   "heading-style": { "style": "atx" },
   "hr-style": { "style": "---" },
   "ol-prefix": { "style": "one_or_ordered" },

@@ -1,0 +1,11 @@
+  - label: ":android::react: RN.69 + Android: Demo app"
+    command:
+      - "nvm install"
+      - "./scripts/demo-projects.android.sh"
+    env:
+      REACT_NATIVE_VERSION: 0.69.7
+      DETOX_DISABLE_POD_INSTALL: true
+      DETOX_DISABLE_POSTINSTALL: true
+    artifact_paths:
+      - "/Users/builder/work/coverage/**/*.lcov"
+      - "/Users/builder/work/artifacts*.tar.gz"

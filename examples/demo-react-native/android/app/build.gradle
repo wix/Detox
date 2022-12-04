@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 apply from: '../rninfo.gradle'
 
-//project.ext.react = [:]
 project.ext.react = [
     enableHermes: true
 ]
+
 apply from: '../../node_modules/react-native/react.gradle'
 
 android {
@@ -60,12 +60,8 @@ android {
 }
 
 dependencies {
-    if (rnInfo.isRN60OrHigher) {
-        implementation 'androidx.appcompat:appcompat:1.1.0'
-        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    } else {
-        implementation 'com.android.support:appcompat-v7:28.0.0'
-    }
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
@@ -77,25 +73,15 @@ dependencies {
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
-if (rnInfo.isRN60OrHigher) {
-    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
-    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
-    dependencies {
-        def enableHermes = project.ext.react.get('enableHermes', false)
-        if (enableHermes) {
-            def hermesModuleName = rnInfo.isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
-            def hermesPath = "../../node_modules/$hermesModuleName/android/"
-            debugImplementation files(hermesPath + 'hermes-debug.aar')
-            releaseImplementation files(hermesPath + 'hermes-release.aar')
-        } else {
-            implementation 'org.webkit:android-jsc:+'
+// Apply Hermes as the JS engine
+dependencies {
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+        implementation('com.facebook.react:hermes-engine:+') {
+            exclude group: 'com.facebook.fbjni'
         }
+    } else {
+        def hermesPath = '../../node_modules/hermes-engine/android'
+        debugImplementation files("$hermesPath/hermes-debug.aar")
+        releaseImplementation files("$hermesPath/hermes-release.aar")
     }
-}
-
-// Run this once to be able to run the application with BUCK
-// puts all compile dependencies into folder libs for BUCK to use
-task copyDownloadableDepsToLibs(type: Copy) {
-    from configurations.compile
-    into 'libs'
 }

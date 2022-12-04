@@ -89,24 +89,28 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
 
    ```sh
-   $ANDROID_HOME/tools/bin/sdkmanager --install emulator
+   $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install emulator
    ```
+
+:::note
+In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`. We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
+:::
 
 1. Install an emulator image without Google APIs:
 
    ```shell
-   $ANDROID_HOME/tools/bin/sdkmanager "system-images;android-28;default;x86_64"
-   $ANDROID_HOME/tools/bin/sdkmanager --licenses
+   $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-28;default;x86_64"
+   $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
    ```
 
    > - With `;android-28;`, we assumed SDK 28 here, but other APIs are supported just the same.
    > - The `;default;` part replaces `;google_apis;`, which is the default, and is what matters here.
-   > - If you are running on a M1 you must install a arm64 architecture i.e. `system-images;android-28;default;arm64-v8a`
+   > - If you are running on a M1 you must install an arm64 architecture i.e. `system-images;android-28;default;arm64-v8a`
 
 1. Create an emulator (i.e. AVD - Android Virtual Device):
 
    ```shell
-   $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
+   $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
    ```
 
    > - `Pixel_API_28_AOSP` is just a suggestion for a name. Any name can work here, even `Pixel_API_28` - but you might have to delete an existing non-AOSP emulator, first. In any case, the name used in Detox configuration (typically in `package.json`) should be identical to this one.

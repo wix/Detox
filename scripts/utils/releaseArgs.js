@@ -56,14 +56,17 @@ function getVersionSafe() {
 }
 
 // If theres a npm tag, use it. Otherwise, if releasing from `master` branch, use a `prerelease` prefix for
-// pre-releases, and "latest" otherwise, for non-master branches uses the branch name as the npm-tag.
+// pre-releases, and "latest" otherwise, for non-master branches uses `next` if from the `next` branch and `smoke`
+// otherwise.
 function getReleaseNpmTag() {
   if (RELEASE_NPM_TAG !== 'null') {
     return RELEASE_NPM_TAG;
   } else if (BRANCH === 'master') {
-      return isPreRelease() ? 'prerelease' : 'latest';
+    return isPreRelease() ? 'prerelease' : 'latest';
+  } else if (BRANCH === 'next') {
+    return 'next';
   } else {
-    return BRANCH.trim().replace(/[^a-zA-Z0-9-]/g, '.');
+    return 'smoke';
   }
 }
 

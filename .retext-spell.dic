@@ -1,3 +1,4 @@
+AAPT/M
 AAR/M
 ANR/M
 AOSP/M
@@ -13,7 +14,9 @@ C5
 CLI
 CMD
 CocoaPods
+CommonJS
 Detox
+Docusaurus
 E2E/M
 ES5
 Genymotion
@@ -46,7 +49,10 @@ TLS
 TeamCity
 TypeScript
 UDID/M
+UUID/M
 UI/M
+UML/M
+Vitest
 WebDriver
 Wix
 XCTest
@@ -64,15 +70,17 @@ beforeAll
 beforeEach
 biometric
 blob/M
+blogpost/M
 breakpoint/M
 bundler
+bunyan
 cancelled
 cheatsheet/M
 codebase/M
 config/M
-config/M
 customization/M
 de
+deallocate/M
 debuggable
 dedupe
 destructure/M
@@ -97,6 +105,8 @@ lockfile/M
 macOS
 matcher/M
 minification/M
+minified
+minSdkVersion
 monorepo
 multistep
 natively
@@ -126,6 +136,7 @@ repo/M
 responder/M
 roadmap/M
 runtimes
+se
 snapshotting
 subdirectories
 subdirectory/M
@@ -145,7 +156,10 @@ unminified
 unobfuscated
 unregister/M
 util/M
+v12.x
+v20
 webhook/M
 websocket/M
 xcodebuild
+xcpretty
 ᵃ

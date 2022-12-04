@@ -43,6 +43,18 @@ describe('composeDetoxConfig', () => {
       })).rejects.toThrowError(errorComposer.noConfigurationSpecified());
     });
 
+    it('should throw an error if the local config has the old schema', async () => {
+      try {
+        await configuration.composeDetoxConfig({
+          cwd: path.join(__dirname, '__mocks__/configuration/oldschema'),
+          errorComposer,
+        });
+      } catch (e) {
+        // NOTE: we want errorComposer to be mutated, that's why we assert inside try-catch
+        expect(e).toEqual(errorComposer.configurationShouldNotUseLegacyFormat());
+      }
+    });
+
     it('should return a complete Detox config merged with the file configuration', async () => {
       const config = await configuration.composeDetoxConfig({
         cwd: path.join(__dirname, '__mocks__/configuration/packagejson'),
@@ -52,18 +64,13 @@ describe('composeDetoxConfig', () => {
           cleanup: true,
           reuse: true,
           'record-logs': 'all',
-          'runner-config': 'e2e/.mocharc.js',
         },
-        userParams: {
-          initGlobals: false,
+        testRunnerArgv: {
+          config: 'e2e/jest.config.js',
         },
         override: {
           artifacts: {
-            pathBuilder: class {
-              constructor() {
-                this.testProperty = 42;
-              }
-            },
+            pathBuilder: '@some/pathbuilder-implementation',
             plugins: {
               log: 'none',
               video: 'failing',
@@ -71,9 +78,14 @@ describe('composeDetoxConfig', () => {
           },
           configurations: {
             another: {
-              type: 'ios.simulator',
-              device: 'iPhone X',
-              binaryPath: 'path/to/app',
+              device: {
+                type: 'ios.simulator',
+                device: 'iPhone X'
+              },
+              app: {
+                type: 'ios.app',
+                binaryPath: 'path/to/app',
+              },
             },
           },
         }
@@ -84,10 +96,8 @@ describe('composeDetoxConfig', () => {
           configurationName: 'another',
           filepath: path.join(__dirname, '__mocks__/configuration/packagejson/package.json'),
         },
-        artifactsConfig: {
-          pathBuilder: {
-            testProperty: 42,
-          },
+        artifacts: {
+          pathBuilder: '@some/pathbuilder-implementation',
           plugins: {
             log: {
               enabled: true,
@@ -99,62 +109,45 @@ describe('composeDetoxConfig', () => {
             },
           },
         },
-        behaviorConfig: {
+        behavior: {
           init: {
-            exposeGlobals: false,
+            exposeGlobals: true,
             reinstallApp: false,
           },
           cleanup: {
             shutdownDevice: true,
           }
         },
-        cliConfig: {
+        cli: {
           configuration: 'another',
           deviceName: 'iPhone XS',
           cleanup: true,
           reuse: true,
           recordLogs: 'all',
-          runnerConfig: 'e2e/.mocharc.js',
         },
-        deviceConfig: expect.objectContaining({
+        device: expect.objectContaining({
           type: 'ios.simulator',
           device: {
             type: 'iPhone XS',
           },
         }),
-        runnerConfig: {
-          testRunner: 'mocha',
-          runnerConfig: 'e2e/.mocharc.js',
+        logger: {
+          level: 'info',
+          overrideConsole: true,
+          options: expect.objectContaining({}),
         },
-        sessionConfig: expect.objectContaining({
+        testRunner: {
+          args: {
+            $0: 'jest',
+            config: 'e2e/jest.config.js',
+            _: [],
+          },
+        },
+        session: expect.objectContaining({
           server: 'ws://localhost:9999',
           sessionId: 'external file works',
         }),
       });
-    });
-
-    it('should enable to add hooks on UNSAFE_configReady', async () => {
-      const listener = jest.fn();
-      configuration.hook('UNSAFE_configReady', listener);
-
-      await configuration.composeDetoxConfig({
-        cwd: path.join(__dirname, '__mocks__/configuration/packagejson'),
-        override: {
-          configurations: {
-            simple: {
-              binaryPath: 'path/to/app',
-            },
-          },
-        },
-      });
-
-      expect(listener).toHaveBeenCalledWith(expect.objectContaining({
-        appsConfig: expect.any(Object),
-        artifactsConfig: expect.any(Object),
-        behaviorConfig: expect.any(Object),
-        cliConfig: expect.any(Object),
-        deviceConfig: expect.any(Object),
-      }));
     });
   });
 });

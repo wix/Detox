@@ -2,7 +2,7 @@
 const _ = require('lodash');
 
 const environmentFactory = require('../environmentFactory');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'config' });
 
 /**
  * @param {DetoxConfigErrorComposer} opts.errorComposer
@@ -12,13 +12,8 @@ const log = require('../utils/logger').child({ __filename });
  * @returns {Detox.DetoxDeviceConfig}
  */
 function composeDeviceConfig(opts) {
-  const { localConfig, cliConfig } = opts;
-
-  const deviceConfig = localConfig.type
-    ? composeDeviceConfigFromPlain(opts)
-    : composeDeviceConfigFromAliased(opts);
-
-  applyCLIOverrides(deviceConfig, cliConfig);
+  const deviceConfig = composeDeviceConfigFromAliased(opts);
+  applyCLIOverrides(deviceConfig, opts.cliConfig);
   deviceConfig.device = unpackDeviceQuery(deviceConfig);
 
   return deviceConfig;
@@ -27,29 +22,7 @@ function composeDeviceConfig(opts) {
 /**
  * @param {DetoxConfigErrorComposer} opts.errorComposer
  * @param {Detox.DetoxConfig} opts.globalConfig
- * @param {Detox.DetoxPlainConfiguration} opts.localConfig
- * @returns {Detox.DetoxDeviceConfig}
- */
-function composeDeviceConfigFromPlain(opts) {
-  const { errorComposer, localConfig } = opts;
-
-  const type = localConfig.type;
-  const device = localConfig.device || localConfig.name;
-  const utilBinaryPaths = localConfig.utilBinaryPaths;
-
-  const deviceConfig = type in EXPECTED_DEVICE_MATCHER_PROPS
-    ? _.omitBy({ type, device, utilBinaryPaths }, _.isUndefined)
-    : { ...localConfig };
-
-  validateDeviceConfig({ deviceConfig, errorComposer });
-
-  return deviceConfig;
-}
-
-/**
- * @param {DetoxConfigErrorComposer} opts.errorComposer
- * @param {Detox.DetoxConfig} opts.globalConfig
- * @param {Detox.DetoxAliasedConfiguration} opts.localConfig
+ * @param {Detox.DetoxConfiguration} opts.localConfig
  * @returns {Detox.DetoxDeviceConfig}
  */
 function composeDeviceConfigFromAliased(opts) {
@@ -145,7 +118,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
-    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest)$/)) {
+    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest|off)$/)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
@@ -159,7 +132,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'headless');
     }
 
-    if (deviceConfig.type !== 'android.emulator') {
+    if (deviceConfig.type !== 'ios.simulator' && deviceConfig.type !== 'android.emulator') {
       throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'headless');
     }
   }
@@ -176,6 +149,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 
   if (_.isObject(deviceConfig.device)) {
     const expectedProperties = EXPECTED_DEVICE_MATCHER_PROPS[deviceConfig.type];
+    /* istanbul ignore else */
     if (!_.isEmpty(expectedProperties)) {
       const minimalShape = _.pick(deviceConfig.device, expectedProperties);
 
@@ -187,41 +161,44 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 }
 
 function applyCLIOverrides(deviceConfig, cliConfig) {
-  if (cliConfig.deviceName) {
-    deviceConfig.device = cliConfig.deviceName;
+  _assignCLIConfigIfSupported('device-name', cliConfig.deviceName, deviceConfig, 'device');
+  _assignCLIConfigIfSupported('device-boot-args', cliConfig.deviceBootArgs, deviceConfig, 'bootArgs');
+  _assignCLIConfigIfSupported('headless', cliConfig.headless, deviceConfig, 'headless');
+  _assignCLIConfigIfSupported('force-adb-install', cliConfig.forceAdbInstall, deviceConfig, 'forceAdbInstall');
+  _assignCLIConfigIfSupported('gpu', cliConfig.gpu, deviceConfig, 'gpuMode');
+  _assignCLIConfigIfSupported('readonly-emu', cliConfig.readonlyEmu, deviceConfig, 'readonly');
+}
+
+function _assignCLIConfigIfSupported(argName, argValue, deviceConfig, propertyName) {
+  if (argValue === undefined) {
+    return;
   }
 
   const deviceType = deviceConfig.type;
-  if (cliConfig.deviceBootArgs) {
-    if ((deviceType === 'ios.simulator') || (deviceType === 'android.emulator')) {
-      deviceConfig.bootArgs = cliConfig.deviceBootArgs;
-    } else {
-      log.warn(`--device-boot-args CLI override is not supported by device type = "${deviceType}" and will be ignored`);
-    }
+  const supportedDeviceTypesPrefixes = _supportedDeviceTypesPrefixes(argName);
+  if (!supportedDeviceTypesPrefixes.some((prefix) => deviceType.startsWith(prefix))) {
+    log.warn(`--${argName} CLI override is not supported by device type = "${deviceType}" and will be ignored`);
+    return;
   }
 
-  if (cliConfig.forceAdbInstall !== undefined) {
-    if (deviceType.startsWith('android.')) {
-      deviceConfig.forceAdbInstall = cliConfig.forceAdbInstall;
-    } else {
-      log.warn(`--force-adb-install CLI override is not supported by device type = "${deviceType}" and will be ignored`);
-    }
-  }
+  deviceConfig[propertyName] = argValue;
+}
 
-  const emulatorCLIConfig = _.pick(cliConfig, ['headless', 'gpu', 'readonlyEmu']);
-  const emulatorOverrides = _.omitBy({
-    headless: cliConfig.headless,
-    gpuMode: cliConfig.gpu,
-    readonly: cliConfig.readonlyEmu,
-  }, _.isUndefined);
+function _supportedDeviceTypesPrefixes(argName) {
+  switch (argName) {
+    case 'device-name':
+      return [''];
 
-  if (!_.isEmpty(emulatorOverrides)) {
-    if (deviceType === 'android.emulator') {
-      Object.assign(deviceConfig, emulatorOverrides);
-    } else {
-      const flags = Object.keys(emulatorCLIConfig).map(key => '--' + _.kebabCase(key)).join(', ');
-      log.warn(`${flags} CLI overriding is not supported by device type = "${deviceType}" and will be ignored`);
-    }
+    case 'force-adb-install':
+      return ['android.'];
+
+    case 'gpu':
+    case 'readonly-emu':
+      return ['android.emulator'];
+
+    case 'device-boot-args':
+    case 'headless':
+      return ['ios.simulator', 'android.emulator'];
   }
 }
 
@@ -232,7 +209,6 @@ function unpackDeviceQuery(deviceConfig) {
   }
 
   switch (deviceConfig.type) {
-    case 'ios.none':
     case 'ios.simulator':
       if (_.includes(query, ',')) {
         const [type, os] = _.split(query, /\s*,\s*/);
@@ -252,7 +228,6 @@ function unpackDeviceQuery(deviceConfig) {
 }
 
 const EXPECTED_DEVICE_MATCHER_PROPS = {
-  'ios.none': null,
   'ios.simulator': ['type', 'name', 'id'],
   'android.attached': ['adbName'],
   'android.emulator': ['avdName'],

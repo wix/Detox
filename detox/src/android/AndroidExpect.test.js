@@ -6,6 +6,7 @@ describe('AndroidExpect', () => {
   let device;
 
   beforeEach(() => {
+    jest.mock('../utils/logger');
     jest.mock('tempfile');
     jest.mock('fs-extra');
 
@@ -180,7 +181,9 @@ describe('AndroidExpect', () => {
       });
 
       it('should not tap and long-press given bad args', async () => {
-        await expectToThrow(() => e.element(e.by.id('UniqueId819')).multiTap('NaN'));
+        await [null, undefined, 0, -1, 'NaN'].forEach(item => {
+          expectToThrow(() => e.element(e.by.id('UniqueId819')).multiTap(item));
+        });
       });
 
       it('should press special keys', async () => {

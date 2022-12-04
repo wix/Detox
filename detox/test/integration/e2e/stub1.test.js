@@ -1,7 +1,7 @@
 describe('Stub1', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await detox.traceCall('Navigate to sanity', () => element(by.text('Sanity')).tap());
+    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
   });
 
   it('should have welcome screen', async () => {
@@ -15,4 +15,10 @@ describe('Stub1', () => {
     }
     throw new Error(`I'm only here to make things interesting!`);
   });
+
+  it.skip('Skipped test', async () => {
+    // Checking that skipped tests are also traced
+  });
+
+  it.todo('Check that todo tests are also traced');
 });
