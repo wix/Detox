@@ -215,7 +215,7 @@ Now let's move on to the next build script and prepare it:
      release {
        minifyEnabled true
        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-+      proguardFile "${project(':detox').projectDir}/proguard-rules-app.pro"
++      proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
 
        signingConfig signingConfigs.release
      }
