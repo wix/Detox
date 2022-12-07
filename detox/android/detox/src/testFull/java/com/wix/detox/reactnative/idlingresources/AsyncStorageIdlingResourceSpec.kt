@@ -61,6 +61,10 @@ class AsyncStorageIdlingResourceSpec: Spek({
             assertThat(uut.name).isEqualTo("com.wix.detox.reactnative.idlingresources.AsyncStorageIdlingResource")
         }
 
+        it("should have a debug-name") {
+            assertThat(uut.getDebugName()).isEqualTo("io")
+        }
+
         describe("idle-checking") {
             it("should be idle") {
                 givenIdleSExecutor()
@@ -71,11 +75,6 @@ class AsyncStorageIdlingResourceSpec: Spek({
                 givenAnActiveTask()
                 givenNoPendingTasks()
                 assertThat(uut.isIdleNow).isFalse()
-
-                val expectedDescription = IdlingResourceDescription.Builder()
-                    .name("io")
-                    .build()
-                assertThat(uut.getDescription()).isEqualTo(expectedDescription)
             }
 
             it("should be busy if executor has pending tasks") {
