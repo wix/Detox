@@ -3,13 +3,17 @@ package com.wix.detox.reactnative.idlingresources;
 import android.util.Log;
 import android.view.Choreographer;
 
+import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource;
 import com.wix.detox.reactnative.ReactNativeInfo;
 
-import org.jetbrains.annotations.NotNull;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by simonracz on 25/08/2017.
@@ -51,6 +55,10 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
 
     private final static String METHOD_HAS_ACTIVE_ANIMATIONS = "hasActiveAnimations";
 
+    private final static Map<String, Object> busyHint = new HashMap<String, Object>() {{
+        put("reason", "Animations running on screen");
+    }};
+
     private ResourceCallback callback = null;
     private Object reactContext = null;
 
@@ -63,13 +71,16 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
         return AnimatedModuleIdlingResource.class.getName();
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public IdlingResourceDescription getDescription() {
-        return new IdlingResourceDescription.Builder()
-                .name("ui")
-                .addDescription("reason", "Animations running on screen")
-                .build();
+    public String getDebugName() {
+        return "ui";
+    }
+
+    @Nullable
+    @Override
+    public Map<String, Object> getBusyHint() {
+        return busyHint;
     }
 
     @Override

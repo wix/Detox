@@ -57,9 +57,10 @@ With reasons:
 • must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/6/required\\" with params: {\\"missingProperty\\":\\"description\\"}
 • must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/7/required\\" with params: {\\"missingProperty\\":\\"description\\"}
 • must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/8/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/9/properties/name/const\\" with params: {\\"allowedValue\\":\\"io\\"}
-• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/10/properties/name/const\\" with params: {\\"allowedValue\\":\\"bridge\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/11/required\\" with params: {\\"missingProperty\\":\\"description\\"}
+• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/9/required\\" with params: {\\"missingProperty\\":\\"description\\"}
+• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/10/properties/name/const\\" with params: {\\"allowedValue\\":\\"io\\"}
+• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/11/properties/name/const\\" with params: {\\"allowedValue\\":\\"bridge\\"}
+• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/12/required\\" with params: {\\"missingProperty\\":\\"description\\"}
 • must match a schema in anyOf in path \\"#/oneOf/1/properties/busy_resources/items/anyOf\\" with params: {}
 • must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
 
@@ -83,11 +84,17 @@ With reasons:
 • must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/9/required\\" with params: {\\"missingProperty\\":\\"name\\"}
 • must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/10/required\\" with params: {\\"missingProperty\\":\\"name\\"}
 • must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/11/required\\" with params: {\\"missingProperty\\":\\"name\\"}
+• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/12/required\\" with params: {\\"missingProperty\\":\\"name\\"}
 • must match a schema in anyOf in path \\"#/oneOf/1/properties/busy_resources/items/anyOf\\" with params: {}
 • must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
+`;
+
+exports[`Sync Status Formatter busy status should format "bg" correctly 1`] = `
+"The app is busy with the following tasks:
+• Background work taking place in asynctasks."
 `;
 
 exports[`Sync Status Formatter busy status should format "bridge" correctly 1`] = `

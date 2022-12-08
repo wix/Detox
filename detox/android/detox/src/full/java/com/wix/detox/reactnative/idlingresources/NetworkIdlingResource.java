@@ -5,16 +5,17 @@ import android.view.Choreographer;
 
 import com.facebook.react.bridge.ReactContext;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 
@@ -67,13 +68,18 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
         return NetworkIdlingResource.class.getName();
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public synchronized IdlingResourceDescription getDescription() {
-        return new IdlingResourceDescription.Builder()
-                .name("network")
-                .addDescription("urls", new ArrayList<>(busyResources))
-                .build();
+    public String getDebugName() {
+        return "network";
+    }
+
+    @Nullable
+    @Override
+    public synchronized Map<String, Object> getBusyHint() {
+        return new HashMap<String, Object>() {{
+            put("urls", new ArrayList<>(busyResources));
+        }};
     }
 
     @Override

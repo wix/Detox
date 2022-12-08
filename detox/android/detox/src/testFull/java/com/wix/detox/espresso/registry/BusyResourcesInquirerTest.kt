@@ -4,6 +4,8 @@ import android.os.Looper
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.wix.detox.UTHelpers
+import com.wix.detox.espresso.common.UiControllerImplReflected
+import com.wix.detox.inquiry.DetoxBusyResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -21,10 +23,11 @@ import java.util.concurrent.Executors
 // Fixes: Hangs in UIThread.postFirstSync inside IRStatusInquirer.getAllBusyResources when upgrading robolectric 4.3.x -> 4.4
 // See http://robolectric.org/blog/2019/06/04/paused-looper/ (coming from https://github.com/robolectric/robolectric/releases/tag/robolectric-4.4)
 @LooperMode(LooperMode.Mode.LEGACY)
-class IRStatusInquirerTest {
+class BusyResourcesInquirerTest {
 
     lateinit var registry: IdlingResourceRegistry
-    lateinit var uut: IRStatusInquirer
+    lateinit var uiController: UiControllerImplReflected
+    lateinit var uut: BusyResourcesInquirer
 
     private fun anIdleResource() = mock<IdlingResource> {
         on { isIdleNow } doReturn true
@@ -38,10 +41,22 @@ class IRStatusInquirerTest {
         whenever(registry.resources).doReturn(resources.asList())
     }
 
+    private fun givenRunningAsyncTasks() {
+        whenever(uiController.isAsyncIdleNow()).doReturn(false)
+    }
+
+    private fun givenRunningCompatAsyncTasks() {
+        whenever(uiController.isCompatIdleNow()).doReturn(false)
+    }
+
     @Before
     fun setup() {
         registry = mock()
-        uut = IRStatusInquirer(registry)
+        uiController = mock() {
+            on { isAsyncIdleNow() } doReturn true
+            on { isCompatIdleNow() } doReturn true
+        }
+        uut = BusyResourcesInquirer(registry, uiController)
     }
 
     @Test
@@ -51,13 +66,33 @@ class IRStatusInquirerTest {
     }
 
     @Test
-    fun `should return busy resources if there are some`() {
+    fun `should return busy resources if there are some IR ones`() {
         val resourceIdle = anIdleResource()
         val resourceBusy = aBusyResource()
         givenIdlingResources(resourceIdle, resourceBusy)
 
         val result = uut.getAllBusyResources()
-        assertThat(result).isEqualTo(arrayListOf(resourceBusy))
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result[0] is DetoxBusyResource.BusyIdlingResource)
+        assertThat((result[0] as DetoxBusyResource.BusyIdlingResource).resource).isEqualTo(resourceBusy)
+    }
+
+    @Test
+    fun `should return the async-task busy resource if some async-tasks are running`() {
+        givenRunningAsyncTasks()
+
+        val result = uut.getAllBusyResources()
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result[0] is DetoxBusyResource.BusyAsyncTasks)
+    }
+
+    @Test
+    fun `should return the async-task busy resource if some legacy async-tasks are running`() {
+        givenRunningCompatAsyncTasks()
+
+        val result = uut.getAllBusyResources()
+        assertThat(result.size).isEqualTo(1)
+        assertThat(result[0] is DetoxBusyResource.BusyAsyncTasks)
     }
 
     @Test
@@ -79,13 +114,17 @@ class IRStatusInquirerTest {
         }
         givenIdlingResources(resource)
 
-        var result: List<IdlingResource>? = null
+        var result: List<DetoxBusyResource>? = null
         executor.execute {
             result = uut.getAllBusyResources()
         }
         Thread.sleep(100L) // Give time for the unit to actually post on the main thread (as it's suppose to...)
         Robolectric.flushForegroundThreadScheduler()
         UTHelpers.yieldToOtherThreads(executor)
-        assertThat(result).isEqualTo(arrayListOf(resource)) // Assert (2)
+
+        assertThat(result).isNotNull
+        assertThat(result!!.size).isEqualTo(1)
+        assertThat(result!![0] is DetoxBusyResource.BusyIdlingResource)
+        assertThat((result!![0] as DetoxBusyResource.BusyIdlingResource).resource).isEqualTo(resource)
     }
 }

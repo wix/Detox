@@ -9,12 +9,12 @@ import org.joor.Reflect
 private const val CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule"
 private const val METHOD_GET_NATIVE_MODULE = "getNativeModule"
 private const val METHOD_GET_UI_IMPLEMENTATION = "getUIImplementation"
+private const val METHOD_IS_EMPTY = "isEmpty"
 private const val FIELD_UI_OPERATION_QUEUE = "mOperationsQueue"
 private const val FIELD_DISPATCH_RUNNABLES = "mDispatchUIRunnables"
 private const val FIELD_DISPATCH_RUNNABLES_LOCK = "mDispatchRunnablesLock"
 private const val FIELD_NON_BATCHED_OPS = "mNonBatchedOperations"
 private const val FIELD_NON_BATCHED_OPS_LOCK = "mNonBatchedOperationsLock"
-private const val METHOD_IS_EMPTY = "isEmpty"
 
 class UIManagerModuleReflected(private val reactContext: ReactContext) {
 

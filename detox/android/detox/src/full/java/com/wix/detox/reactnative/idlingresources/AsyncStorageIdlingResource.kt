@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
 import com.wix.detox.reactnative.helpers.RNHelpers
 import org.joor.Reflect
 import java.util.concurrent.Executor
@@ -50,10 +51,7 @@ open class AsyncStorageIdlingResource
     }
 
     override fun getName(): String = javaClass.name
-
-    override fun getDescription(): IdlingResourceDescription {
-        return IdlingResourceDescription.Builder().name("io").build()
-    }
+    override fun getDebugName() = "io"
 
     override fun isIdleNow(): Boolean =
         checkIdle().also { idle ->
