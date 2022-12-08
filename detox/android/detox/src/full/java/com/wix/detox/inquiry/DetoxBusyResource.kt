@@ -85,7 +85,7 @@ sealed class DetoxBusyResource {
         override fun getDescription() =
             DetoxBusyResourceDescription.Builder()
                 .name("bg")
-                .addDescription("reason", "Background work in async-tasks")
+                .addDescription("reason", "native async-tasks")
                 .build()
 
     }

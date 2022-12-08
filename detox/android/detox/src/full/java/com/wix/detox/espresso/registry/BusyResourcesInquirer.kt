@@ -30,10 +30,10 @@ class BusyResourcesInquirer(
             .map { BusyIdlingResource(it) }
 
     private fun getAsyncTasksResource(): BusyAsyncTasks? {
-        val asyncIsIdle = uiControllerImplReflected.isAsyncIdleNow()
-        val compatIsIdle = uiControllerImplReflected.isCompatIdleNow()
-
-        if (asyncIsIdle && compatIsIdle) {
+        // Mind the implicit optimization:
+        // Don't inspect both resources if not necessary (async-tasks is not idle).
+        if (uiControllerImplReflected.isAsyncIdleNow() &&
+            uiControllerImplReflected.isCompatIdleNow()) {
             return null
         }
         return BusyAsyncTasks

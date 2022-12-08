@@ -124,7 +124,7 @@ class DetoxBusyResourceSpec: Spek({
             it("should return a general description") {
                 val expectedDescription = DetoxBusyResourceDescription.Builder()
                     .name("bg")
-                    .addDescription("reason", "Background work in async-tasks")
+                    .addDescription("reason", "native async-tasks")
                     .build()
 
                 assertThat(DetoxBusyResource.BusyAsyncTasks.getDescription()).isEqualTo(expectedDescription)
