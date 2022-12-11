@@ -256,7 +256,7 @@ The script should be a string that contains a valid JavaScript function.
 It will be called with the specified arguments and the element itself as the last argument.
 
 ```js
-const webElement = webview.element(by.web.id('identifier'));
+const webElement = web.element(by.web.id('identifier'));
 await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
   console.log(arg1, arg2, element);
 }`, "foo", 123);
@@ -293,7 +293,7 @@ Web view expectations are used to assert the state of elements within a web view
 Assert that the element has the specified text.
 
 ```js
-await expect(webview.element(by.web.id('identifier'))).toHaveText('Hello World!');
+await expect(web.element(by.web.id('identifier'))).toHaveText('Hello World!');
 ```
 
 ### `toExist()`
@@ -301,7 +301,7 @@ await expect(webview.element(by.web.id('identifier'))).toHaveText('Hello World!'
 Assert that the element exists.
 
 ```js
-await expect(webview.element(by.web.id('identifier'))).toExist();
+await expect(web.element(by.web.id('identifier'))).toExist();
 ```
 
 ### `not`
@@ -309,7 +309,7 @@ await expect(webview.element(by.web.id('identifier'))).toExist();
 Negate the expectation.
 
 ```js
-await expect(webview.element(by.web.id('identifier'))).not.toHaveText('Hello World!');
+await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!');
 ```
 
 [native matchers]: matchers.md
