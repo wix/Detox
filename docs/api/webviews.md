@@ -267,8 +267,7 @@ await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
 Get the current URL of the web view.
 
 ```js
-const webview = web(by.id('webview'));
-const url = await webview.getCurrentUrl();
+const url = await web.element(by.web.id('identifier')).getCurrentUrl();
 ```
 
 ### `getTitle()`
@@ -276,8 +275,7 @@ const url = await webview.getCurrentUrl();
 Get the title of the web view.
 
 ```js
-const webview = web(by.id('webview'));
-const title = await webview.getTitle();
+const title = await web.element(by.web.id('identifier')).getTitle();
 ```
 
 ## Expectations
