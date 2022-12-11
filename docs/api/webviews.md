@@ -259,7 +259,7 @@ It will be called with the specified arguments and the element itself as the las
 const webElement = webview.element(by.web.id('identifier'));
 await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
   console.log(arg1, arg2, element);
-}`, 1, 2);
+}`, "foo", 123);
 ```
 
 ### `getCurrentUrl()`
