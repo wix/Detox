@@ -42,7 +42,7 @@ RCT_EXPORT_METHOD(switchToNativeRoot)
     [label sizeToFit];
     [[newRoot view] addSubview:label];
     label.center = newRoot.view.center;
-    
+
     id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
     [[delegate window]setRootViewController:newRoot];
     [[delegate window] makeKeyAndVisible];
@@ -54,27 +54,27 @@ RCT_EXPORT_METHOD(switchToMultipleReactRoots)
   dispatch_async(dispatch_get_main_queue(), ^{
     id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
     RCTBridge* bridge = ((RCTRootView*)delegate.window.rootViewController.view).bridge;
-    
+
     UIViewController* newRoot = [UIViewController new];
     newRoot.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
     newRoot.tabBarItem.title = @"1";
-    
-    
+
+
     UIViewController* newRoot2 = [UIViewController new];
     newRoot2.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
     newRoot2.tabBarItem.title = @"2";
-    
+
     UIViewController* newRoot3 = [UIViewController new];
     newRoot3.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
     newRoot3.tabBarItem.title = @"3";
-    
+
     UIViewController* newRoot4 = [UIViewController new];
     newRoot4.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
     newRoot4.tabBarItem.title = @"4";
-    
+
     UITabBarController* tbc = [UITabBarController new];
     tbc.viewControllers = @[newRoot, newRoot2, newRoot3, newRoot4];
-    
+
     [[delegate window]setRootViewController:tbc];
     [[delegate window] makeKeyAndVisible];
   });
@@ -93,11 +93,26 @@ RCT_EXPORT_METHOD(presentOverlayWindow) {
     dispatch_async(dispatch_get_main_queue(), ^{
         CGRect screenBounds = UIScreen.mainScreen.bounds;
         overlayWindow = [[UIWindow alloc] initWithFrame:screenBounds];
+        overlayWindow.accessibilityIdentifier = @"OverlayWindow";
 
         [overlayWindow setWindowLevel:UIWindowLevelStatusBar];
         [overlayWindow setHidden:NO];
 
         [overlayWindow makeKeyAndVisible];
+    });
+}
+
+RCT_EXPORT_METHOD(presentOverlayView) {
+    static UIView *overlayView;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        CGRect screenBounds = UIScreen.mainScreen.bounds;
+        overlayView = [[UIView alloc] initWithFrame:screenBounds];
+        overlayView.userInteractionEnabled = YES;
+        overlayView.accessibilityIdentifier = @"OverlayView";
+
+        UIWindow *keyWindow = UIApplication.sharedApplication.keyWindow;
+        [keyWindow addSubview:overlayView];
     });
 }
 
