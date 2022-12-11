@@ -266,6 +266,10 @@ await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
 
 Get the current URL of the web view.
 
+:::note
+Although this action returns the URL of the presented web document, it can be called from an inner element only (for example, an iframe id or the HTML) and not from the root native web view element itself.
+:::
+
 ```js
 const url = await web.element(by.web.id('identifier')).getCurrentUrl();
 ```
@@ -273,6 +277,10 @@ const url = await web.element(by.web.id('identifier')).getCurrentUrl();
 ### `getTitle()`
 
 Get the title of the web view.
+
+:::note
+Although this action returns the title of the presented web document, it can be called from an inner element only (for example, an iframe id or the HTML) and not from the root native web view element itself.
+:::
 
 ```js
 const title = await web.element(by.web.id('identifier')).getTitle();
