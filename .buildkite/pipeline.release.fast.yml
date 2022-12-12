@@ -11,12 +11,12 @@
     command:
       - "nvm install"
       - "npm install"
-      - "JAVA_HOME=/usr/local/opt/openjdk@11/ npm run package:android"
+      - "npm run package:android"
     env:
       DETOX_DISABLE_POSTINSTALL: true
       DETOX_DISABLE_POD_INSTALL: true
     artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
-      
+
   - label: ":shipit: Publish"
     depends_on:
       - 'android_package'
