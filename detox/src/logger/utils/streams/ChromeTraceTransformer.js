@@ -47,6 +47,7 @@ class ChromeTraceTransformer {
    */
   createStream() {
     const transformFn = this._transformBunyanRecord.bind(this, {
+      primaryPid: NaN,
       knownPids: new Set(),
       knownTids: new Set(),
     });
@@ -62,7 +63,7 @@ class ChromeTraceTransformer {
   }
 
   /**
-   * @param {{ knownPids: Set<number>, knownTids: Set<number> }} state
+   * @param {{ knownPids: Set<number>; knownTids: Set<number>; primaryPid: number; }} state
    * @param {*} bunyanLogRecord
    * @returns {import('trace-event-lib').Event[]}
    * @private
@@ -76,7 +77,11 @@ class ChromeTraceTransformer {
 
     const builder = new SimpleEventBuilder();
     if (!state.knownPids.has(pid)) {
-      builder.metadata({ pid, ts, name: 'process_name', args: { name: pid === process.pid ? 'primary' : 'secondary' } });
+      if (Number.isNaN(state.primaryPid)) {
+        state.primaryPid = pid;
+      }
+
+      builder.metadata({ pid, ts, name: 'process_name', args: { name: pid === state.primaryPid ? 'primary' : 'secondary' } });
       builder.metadata({ pid, ts, name: 'process_sort_index', args: { sort_index: state.knownPids.size } });
       state.knownPids.add(pid);
     }
