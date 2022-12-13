@@ -239,7 +239,7 @@ See comments line by line:
 
 2\. If you don’t have `maxWorkers: 1` configured, please add it.
 
-3\. If you removed your test environment in the previous step, `testEnvironment` property.
+3\. If you removed your test environment in the previous step, remove the `testEnvironment` property.
 
 4\. Remove `testRunner` since it is already `jest-circus` by default in Jest 27.x and higher.
 

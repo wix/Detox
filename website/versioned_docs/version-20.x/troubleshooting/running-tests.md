@@ -32,12 +32,12 @@ This can be a result of various reasons. It is generally up to you to debug and 
 
 - You might have forgotten to run `device.launchApp()` in the beginning of your test.
 - The app might have crashed before Detox has had a chance to connect to it. To get the crash details, you can run Detox tests with `--record-logs all` CLI option and then inspect the device logs in the artifacts' folder.
-- **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](../introduction/project-setup.mdx#step-4-android-configuration) in the setup guide.
+- **On Android**, there might be a problem with the native test code in the `DetoxTest.java` file. Revisit the [associated section](../introduction/project-setup.mdx#step-4-additional-android-configuration) in the setup guide.
 
 ### If you _do_ see your app running on the device
 
 - **On Android with SDK≥28**, the app’s connection to the Detox test server is blocked due to clear-traffic blockage (as reported in issue [#1450](https://github.com/wix/Detox/issues/1450)).
-  The main step for getting this fixed is to revisit the [associated section](../introduction/project-setup.mdx#step-4-android-configuration) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app’s `AndroidManifest.xml`, but **that is highly discouraged**.
+  The main step for getting this fixed is to revisit the [associated section](../introduction/project-setup.mdx#step-4-additional-android-configuration) in the setup guide, which discusses network-security. Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app’s `AndroidManifest.xml`, but **that is highly discouraged**.
 - If you’ve applied the above suggestion but the app fails to connect to the Detox test server, nonetheless: Refer to the device’s logs, which should contain messages about failed connection attempts (get them using the `--record-logs all` argument)
 - The app could be running without Detox native code injected. In this case, first, make sure you’re not trying to run in manual launch mode (where this behavior is valid). If so, examine the logs from the device (get them using the `--record-logs all` argument). If you see a crash related to Detox’s native code, you are welcome to report it on our GitHub tracker.
 - If you are in fact debugging your native code integration with Detox, our [Debugging tutorial](../introduction/debugging.mdx) may prove helpful.
