@@ -7,12 +7,13 @@
   overflow: hidden;
   font-family: 'Nunito Sans', sans-serif;
   font-style: normal;
-  background-color: #202429;
+  background-color: #12161b;
   background-image: url(@site/static/img/showcase/showcase-illustration.png);
   background-position-x: center;
   background-position-y: top;
   background-repeat: no-repeat;
   background-size: cover;
+  border-bottom: 1px solid #202429;
 }
 
 .heroBanner h1 {
