@@ -15,6 +15,7 @@
 
 :root[data-theme='dark'] {
   --docusaurus-highlighted-code-line-bg: #414458;
+  --ifm-background-color: #12161b;
 }
 
 .docusaurus-highlight-code-line {
@@ -44,13 +45,9 @@ html[data-theme='dark'] .header-github-link:before {
   border-top: 1px solid #f2eeeee8;
 }
 
-html[data-theme='dark'] {
-  --ifm-background-color: #202429;
-}
-
 [data-theme='dark'] .footer {
-  background-color: #202429;
-  border-top: 1px solid #313439;
+  background-color: #12161b;
+  border-top: 1px solid #202429;
 }
 
 .footer-gh-footer {
@@ -117,7 +114,7 @@ html[data-theme='dark'] {
 }
 
 [data-theme='dark'] .navbar {
-  background-color: #202429;
+  background-color: #12161b;
 }
 
 .navbar__link {
