@@ -45,10 +45,6 @@ html[data-theme='dark'] .header-github-link:before {
   border-top: 1px solid #f2eeeee8;
 }
 
-/* html[data-theme='dark']:root {
-  --ifm-background-color: #12161b;
-} */
-
 [data-theme='dark'] .footer {
   background-color: #12161b;
   border-top: 1px solid #202429;
