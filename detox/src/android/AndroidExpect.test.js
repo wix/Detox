@@ -93,6 +93,19 @@ describe('AndroidExpect', () => {
       await e.expect(e.element(e.by.id('test').or(e.by.id('test2')))).toBeVisible();
     });
 
+    test.each([
+      ['withAncestor'],
+      ['withDescendant'],
+      ['and'],
+    ])(`matcher immutability: %s`, async (combineMethodName) => {
+      const base = e.by.id('test');
+      const modifier = e.by.id('ancestor');
+
+      expect(base[combineMethodName](modifier)).not.toBe(base);
+      expect(base).toEqual(e.by.id('test'));
+      expect(modifier).toEqual(e.by.id('ancestor'));
+    });
+
     it(`should throw for invalid toBeVisible parameters`, async () => {
       await expectToThrow(() =>e.expect(e.element(e.by.label('test'))).toBeVisible(0));
       await expectToThrow(() =>e.expect(e.element(e.by.label('test'))).toBeVisible(120));

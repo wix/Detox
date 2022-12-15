@@ -115,6 +115,19 @@ describe('expectTwo', () => {
     expect(testCall).toDeepEqual(jsonOutput);
   });
 
+  it.each([
+    ['withAncestor'],
+    ['withDescendant'],
+    ['and'],
+  ])(`should produce immutable objects when combining matchers: %s`, async (combineMethodName) => {
+    const base = e.by.id('abc');
+    const modifier = e.by.id('def');
+
+    expect(base[combineMethodName](modifier)).not.toBe(base);
+    expect(base).toEqual(e.by.id('abc'));
+    expect(modifier).toEqual(e.by.id('def'));
+  });
+
   it(`should produce correct JSON for element with ancestor and index matchers`, async () => {
     const testCall = await e.element(e.by.id('child').withAncestor(e.by.id('parent'))).atIndex(0).tap();
     const jsonOutput = {
@@ -577,7 +590,7 @@ expect.extend({
       pass,
       actual: a,
       expected: b,
-      message: () => `${JSON.stringify(a)} does not match 
+      message: () => `${JSON.stringify(a)} does not match
        ${JSON.stringify(b)}`
     };
   }

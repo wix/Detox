@@ -438,8 +438,7 @@ class Matcher {
       throwMatcherError(matcher);
     }
 
-    this.and({ predicate: { type: 'ancestor', predicate: matcher.predicate } });
-    return this;
+    return this.and({ predicate: { type: 'ancestor', predicate: matcher.predicate } });
   }
 
   withDescendant(matcher) {
@@ -447,21 +446,30 @@ class Matcher {
       throwMatcherError(matcher);
     }
 
-    this.and({ predicate: { type: 'descendant', predicate: matcher.predicate } });
-    return this;
+    return this.and({ predicate: { type: 'descendant', predicate: matcher.predicate } });
   }
 
   and(matcher) {
-    const tempPredicate = this.predicate;
-    delete this.predicate;
-    this.predicate = { type: 'and', predicates: [] };
-    this.predicate.predicates.push(tempPredicate);
+    const result = new Matcher();
+
+    result.predicate = {
+      type: 'and',
+      predicates: [
+        ...Matcher.predicates(this),
+        ...Matcher.predicates(matcher),
+      ].map(x => _.cloneDeep(x))
+    };
+
+    return result;
+  }
+
+  /** @private */
+  static *predicates(matcher) {
     if (matcher.predicate.type === 'and') {
-      this.predicate.predicates = this.predicate.predicates.concat(matcher.predicate.predicates);
+      yield* matcher.predicate.predicates;
     } else {
-      this.predicate.predicates.push(matcher.predicate);
+      yield matcher.predicate;
     }
-    return this;
   }
 }
 
