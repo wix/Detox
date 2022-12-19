@@ -196,3 +196,123 @@ html[data-theme='dark'] .header-github-link:hover {
   display: flex;
   justify-content: flex-end;
 }
+
+/* Admonitions */
+.alert--warning {
+  --ifm-alert-background-color: rgba(247, 185, 41, 0.15);
+  --ifm-alert-border-color: #ffeeba;
+  --ifm-alert-border-radius: 5px;
+  font-size: 13px;
+}
+
+[data-theme='dark'] .alert--warning {
+  --ifm-alert-background-color: rgba(247, 186, 41, 0.07);
+  --ifm-alert-border-color: #ffeeba;
+  color: #ffffff;
+}
+
+.alert--info {
+  --ifm-alert-background-color: rgba(62, 119, 228, 0.15);
+  --ifm-alert-border-color: #3e77e4;
+  --ifm-alert-border-radius: 5px;
+}
+
+[data-theme='dark'] .alert--info p {
+  color: #fff;
+}
+
+.alert--danger {
+  --ifm-alert-background-color: rgba(241, 76, 82, 0.15);
+  --ifm-alert-border-color: #f14c52;
+  --ifm-alert-border-radius: 5px;
+  border-top: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme='dark'] .alert--danger p {
+  color: #ffffff;
+}
+
+.alert--danger .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  font-family: 'Nunito Sans', sans-serif;
+  color: #12161b;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  margin-left: -6px;
+}
+
+.alert--secondary {
+  --ifm-alert-background-color: rgba(118, 51, 229, 0.15);
+  --ifm-alert-border-color: #7633e5;
+}
+
+[data-theme='dark'] .alert--secondary p {
+  color: #ffffff;
+}
+
+.alert--success {
+  --ifm-alert-background-color: rgba(62, 191, 114, 0.15);
+  --ifm-alert-border-color: #3ebf72;
+}
+
+[dark-theme='dark'] .alert--success p {
+  color: #ffffff;
+}
+
+html[data-theme='dark'] .alert--success p {
+  color: #ffffff;
+}
+
+.admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  font-family: 'Nunito Sans', sans-serif;
+  color: #12161b;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  margin-left: -6px;
+}
+
+div.admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+div.theme-doc-version-banner {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+}
+
+.admonitionContent_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.admonitionContent_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module p {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+}
+
+.theme-doc-version-banner alert alert--warning margin-bottom--md {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+[data-theme='dark'] .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  color: #ffffff;
+}
+
+.admonitionContent_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module > :last-child {
+  font-family: 'Nunito Sans', sans-serif;
+  color: #12161b;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module span svg {
+  display: none;
+}
