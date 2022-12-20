@@ -29,7 +29,6 @@ class DetoxSession {
   }
 
   set app(value) {
-    console.log('set app', value);
     if (value) {
       this._assertAppIsNotConnected();
       this._app = value;

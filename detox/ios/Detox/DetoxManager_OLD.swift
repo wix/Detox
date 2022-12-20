@@ -224,13 +224,13 @@ public class DetoxManager_OLD : NSObject, WebSocketDelegate {
 		}
 	}
 	
-	func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
+	func webSocket(didFailWith error: Error) {
 		log.error("Web socket failed to connect with error: \(error.localizedDescription)")
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: self.start)
 	}
 	
-	func webSocket(_ webSocket: WebSocket, didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
+	func webSocket(didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
 		let done = "\(type)Done"
 		
 		switch type {
@@ -407,7 +407,7 @@ public class DetoxManager_OLD : NSObject, WebSocketDelegate {
 		}
 	}
 	
-	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
+	func webSocket(didCloseWith reason: String?) {
 		if let reason = reason {
 			log.error("Web socket closed with reason: \(reason)")
 		} else {

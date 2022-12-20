@@ -10,9 +10,9 @@ import Foundation
 
 protocol WebSocketDelegate: AnyObject {
 	func webSocketDidConnect(_ webSocket: WebSocket)
-	func webSocket(_ webSocket: WebSocket, didFailWith error: Error)
-	func webSocket(_ webSocket: WebSocket, didReceiveAction type : String, params: [String: Any], messageId: NSNumber)
-	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?)
+	func webSocket(didFailWith error: Error)
+	func webSocket(didReceiveAction type : String, params: [String: Any], messageId: NSNumber)
+	func webSocket(didCloseWith reason: String?)
 }
 
 class WebSocket : NSObject, URLSessionWebSocketDelegate {
@@ -89,14 +89,14 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			string = nil
 		}
 		
-		delegate?.webSocket(self, didCloseWith: string)
+		delegate?.webSocket(didCloseWith: string)
 	}
 	
 	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 		if let error = error {
-			delegate?.webSocket(self, didFailWith: error)
+			delegate?.webSocket(didFailWith: error)
 		} else {
-			delegate?.webSocket(self, didCloseWith: nil)
+			delegate?.webSocket(didCloseWith: nil)
 		}
 	}
 	
@@ -111,7 +111,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			
 			print("Action received: \(type)")
 			
-			delegate?.webSocket(self, didReceiveAction: type, params: params ?? [:], messageId: messageId)
+			delegate?.webSocket(didReceiveAction: type, params: params ?? [:], messageId: messageId)
 		} catch {
           fatalError("Error decoding receiveAction decode: \(error.localizedDescription)")
 		}

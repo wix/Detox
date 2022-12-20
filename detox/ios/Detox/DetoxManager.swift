@@ -177,13 +177,13 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		}
 	}
 	
-	func webSocket(_ webSocket: WebSocket, didFailWith error: Error) {
+	func webSocket(didFailWith error: Error) {
 		log.error("Web socket failed to connect with error: \(error.localizedDescription)")
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: self.start)
 	}
 	
-	func webSocket(_ webSocket: WebSocket, didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
+	func webSocket(didReceiveAction type: String, params: [String : Any], messageId: NSNumber) {
 		switch type {
 			case "reloadReactNative":
 				guard ReactNativeSupport.isReactNativeApp else {
@@ -417,15 +417,25 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				return false
 			}
 
+			let elementIdentifier = element.accessibilityIdentifier
+			let elementFrame = NSCoder.string(
+				for: CGRect(
+					origin: element.convert(CGPointZero, to: nil),
+					size: element.frame.size
+				)
+			)
 
-			let elementFrameInWindow = UIAccessibility.convertToScreenCoordinates(
-				element.frame, in: element)
-
-			return element.accessibilityIdentifier == identifier &&
-				NSCoder.string(for: elementFrameInWindow) == frame
+			return elementIdentifier == identifier && elementFrame == frame
 		}
 
-		return (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]).first!
+		let matchingViews = UIView.dtx_findViewsInKeySceneWindows(passing: predicate)
+
+		guard let matchingView = (matchingViews as! [UIView]).first else {
+			fatalError("Failed to connect XCUIElement with source UIView with " +
+								 "identifier: `\(identifier)`, frame: `\(frame)`")
+		}
+
+		return matchingView
 	}
 
 	func getNormalizedPoint(xPosition: NSNumber?, yPosition: NSNumber?) -> CGPoint {
@@ -446,7 +456,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		return CGPoint(x: xPos, y: yPos)
 	}
 	
-	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
+	func webSocket(didCloseWith reason: String?) {
 		if let reason = reason {
 			log.error("Web socket closed with reason: \(reason)")
 		} else {
