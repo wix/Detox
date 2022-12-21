@@ -10,6 +10,15 @@ const maxWorkersMap = {
 module.exports = async () => {
   const config = await resolveConfig();
 
+  const reporters = [
+    '<rootDir>/runners/jest/reporter',
+    ['jest-allure2-reporter', { getEnvironmentInfo: false }]
+  ];
+
+  if (process.env.DISABLE_JUNIT_REPORTER !== '1') {
+    reporters.push('<rootDir>/test/node_modules/jest-junit');
+  }
+
   return {
     'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
@@ -22,9 +31,7 @@ module.exports = async () => {
     'globalSetup': '<rootDir>/runners/jest/globalSetup',
     'globalTeardown': '<rootDir>/runners/jest/globalTeardown',
     'testTimeout': 120000,
-    'reporters': process.env.DISABLE_JUNIT_REPORTER === '1'
-      ? ['<rootDir>/runners/jest/reporter']
-      : ['<rootDir>/runners/jest/reporter', '<rootDir>/test/node_modules/jest-junit'],
+    'reporters': reporters,
     'verbose': true,
     'bail': false,
     'maxWorkers': process.env.CI ? maxWorkersMap[config.device.type] || 1 : 1,
