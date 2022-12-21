@@ -35,6 +35,7 @@ cp ../coverage/lcov.info ../../coverage/unit.lcov
 
 run_f "npm run e2e:android:genycloud"
 cp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcov
+allure generate || echo "Allure is not installed"
 
 run_f "npm run e2e:android -- e2e/01* e2e/02* e2e/03.actions*"
 cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
