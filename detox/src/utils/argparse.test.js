@@ -1,92 +1,40 @@
 jest.unmock('process');
 
 describe('argparse', () => {
-  let minimist;
-
-  beforeEach(() => {
-    jest.mock('minimist');
-    minimist = require('minimist');
-  });
-
-  describe('getArgValue()', () => {
-    describe('using env variables', () => {
-      let _env;
-      let argparse;
-
-      beforeEach(() => {
-        _env = process.env;
-
-        process.env = {
-          ..._env,
-          DETOX_FOO_BAR: 'value',
-        };
-
-        minimist.mockReturnValue(undefined);
-        argparse = require('./argparse');
-      });
-
-      afterEach(() => {
-        process.env = _env;
-      });
-
-      it(`nonexistent key should return undefined`, () => {
-        expect(argparse.getArgValue('blah')).not.toBeDefined();
-      });
-
-      it(`existing DETOX_SNAKE_FORMAT key should return its value (kebab-case input)`, () => {
-        expect(argparse.getArgValue('foo-bar')).toBe('value');
-      });
-
-      it(`existing DETOX_SNAKE_FORMAT key should return its value (camelCase input)`, () => {
-        expect(argparse.getArgValue('fooBar')).toBe('value');
-      });
-
-      it('should return undefined if process.env contain something with a string of undefined' ,() => {
-        process.env.DETOX_FOO_BAR = 'undefined';
-        expect(argparse.getArgValue('fooBar')).toBe(undefined);
-      });
-    });
-
-    describe('using arguments', () => {
-      let argparse;
-
-      beforeEach(() => {
-        minimist.mockReturnValue({ 'kebab-case-key': 'a value', 'b': 'shortened' });
-        argparse = require('./argparse');
-      });
-
-      it(`nonexistent key should return undefined result`, () => {
-        expect(argparse.getArgValue('blah')).not.toBeDefined();
-      });
-
-      it(`alias alternative should fiind the result`, () => {
-        expect(argparse.getArgValue('blah', 'b')).toBe('shortened');
-      });
-
-      it(`existing key should return a result`, () => {
-        expect(argparse.getArgValue('kebab-case-key')).toBe('a value');
-      });
-    });
-  });
-
-  describe('getFlag()', () => {
+  describe('getEnvValue()', () => {
+    let _env;
     let argparse;
 
     beforeEach(() => {
-      minimist.mockReturnValue({ 'flag-true': 1, 'flag-false': 0 });
+      _env = process.env;
+
+      process.env = {
+        ..._env,
+        DETOX_FOO_BAR: 'value',
+      };
+
       argparse = require('./argparse');
     });
 
-    it('should return true if flag value is truthy', () => {
-      expect(argparse.getFlag('flag-true')).toBe(true);
+    afterEach(() => {
+      process.env = _env;
     });
 
-    it('should return false if flag is not set', () => {
-      expect(argparse.getFlag('flag-false')).toBe(false);
+    it(`nonexistent key should return undefined`, () => {
+      expect(argparse.getEnvValue('blah')).not.toBeDefined();
     });
 
-    it('should return true if flag is not set', () => {
-      expect(argparse.getFlag('flag-missing')).toBe(false);
+    it(`existing DETOX_SNAKE_FORMAT key should return its value (kebab-case input)`, () => {
+      expect(argparse.getEnvValue('foo-bar')).toBe('value');
+    });
+
+    it(`existing DETOX_SNAKE_FORMAT key should return its value (camelCase input)`, () => {
+      expect(argparse.getEnvValue('fooBar')).toBe('value');
+    });
+
+    it('should return undefined if process.env contain something with a string of undefined' ,() => {
+      process.env.DETOX_FOO_BAR = 'undefined';
+      expect(argparse.getEnvValue('fooBar')).toBe(undefined);
     });
   });
 
@@ -129,6 +77,15 @@ describe('argparse', () => {
     it('should return the current command in relative path format', () => {
       expect(argparse.getCurrentCommand()).toMatch(/^[^\\/]\S*jest.*$/);
       expect(argparse.getCurrentCommand()).toContain(process.argv.slice(2).join(' '));
+    });
+
+    it('should return the rest of the command as-is', () => {
+      process.argv.push(__dirname);
+      try {
+        expect(argparse.getCurrentCommand()).toContain(__dirname);
+      } finally {
+        process.argv.pop();
+      }
     });
   });
 });

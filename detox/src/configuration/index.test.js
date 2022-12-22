@@ -18,7 +18,7 @@ describe('composeDetoxConfig', () => {
 
     args = {};
 
-    require('../utils/argparse').getArgValue.mockImplementation(key => args[key]);
+    require('../utils/argparse').getEnvValue.mockImplementation(key => args[key]);
     configuration = require('./index');
   });
 

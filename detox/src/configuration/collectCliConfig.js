@@ -23,7 +23,7 @@ const asNumber = (value) => {
 };
 
 function collectCliConfig({ argv }) {
-  const env = (key) => argparse.getArgValue(key);
+  const env = (key) => argparse.getEnvValue(key);
   const get = (key, fallback) => {
     const value = argv && Reflect.has(argv, key) ? argv[key] : env(key);
     return value === undefined ? fallback : value;
