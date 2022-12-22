@@ -238,6 +238,45 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					)
 				}
 
+			case "findElementsByType":
+				DTXSyncManager.enqueueMainQueueIdleClosure {
+					let typeString = params["type"] as! String
+					let expectedClass: AnyClass? = NSClassFromString(typeString)
+					let expectedProtocol: Protocol? = NSProtocolFromString(typeString)
+
+					let predicate = NSPredicate { evaluatedObject, _ in
+						guard let evaluatedObject = evaluatedObject as? AnyObject else {
+							return false
+						}
+
+						if let expectedClass = expectedClass {
+							return evaluatedObject.isKind(of: expectedClass)
+						} else if let expectedProtocol = expectedProtocol {
+							return evaluatedObject.conforms(to: expectedProtocol)
+						} else {
+							return false
+						}
+					}
+
+					let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
+
+					self.safeSend(
+						action: "elementsDidFound",
+						params: [
+							"elementsIDsAndFrames":
+								array.map { element in
+									let frameInScreen = UIAccessibility.convertToScreenCoordinates(element.bounds, in: element)
+
+									return [
+										"identifier": element.accessibilityIdentifier!,
+										"frame": NSCoder.string(for: frameInScreen)
+									]
+								}
+						],
+						messageId: messageId
+					)
+				}
+
 			case "requestCurrentStatus":
 				DTXSyncManager.status { status in
 					self.webSocket.sendAction(

@@ -59,15 +59,36 @@ extension XCUIElementQuery {
         }
 
         guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
-          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response)", type: .error)
-          fatalError("Reponse is not a [ElementIdentifierAndFrame]: \(response)")
+          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response), " +
+                  "failed to match the element", type: .info)
+          return matchingNone()
         }
 
         execLog("found elements with text `\(text)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
-      case .type, .traits, .ancestor, .descendant:
-        execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework", type: .error)
+      case .type(let type):
+        let response = whiteBoxMessageHandler(.findElementsByType(type: type))
+        guard let response = response else {
+          execLog(
+            "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
+            type: .error
+          )
+          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
+        }
+
+        guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
+          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response), " +
+                  "failed to match the element", type: .info)
+          return matchingNone()
+        }
+
+        execLog("found elements with type `\(type)`: \(identifiersAndFrames)")
+        return matching(any: identifiersAndFrames)
+
+      case .traits, .ancestor, .descendant:
+        execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework",
+                type: .error)
         fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
     }
   }
@@ -133,6 +154,11 @@ private extension XCUIElementQuery {
     }
 
     return matching(predicate)
+  }
+
+  // TODO: try to improve this function with
+  func matchingNone() -> XCUIElementQuery {
+    return matching(NSPredicate { _,_ in return false })
   }
 
   enum ComparisonParameter: String {

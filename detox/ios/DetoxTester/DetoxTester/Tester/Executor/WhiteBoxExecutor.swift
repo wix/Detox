@@ -133,6 +133,27 @@ class WhiteBoxExecutor {
           .identifiersAndFrames(elementsIDsAndFrames) :
           .failed(reason: "could not find element with text: \(text)")
 
+      case .findElementsByType(let type):
+        let message = createMessage(
+          type: "findElementsByType",
+          params: ["type": AnyCodable(type)]
+        )
+
+        let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
+
+        let elementsIDsAndFrames: [ElementIdentifierAndFrame] = (
+          result["elementsIDsAndFrames"] as? [[String: String]] ?? []
+        ).map {
+          return ElementIdentifierAndFrame(
+            identifier: $0["identifier"],
+            frame: $0["frame"]
+          )
+        }
+
+        return elementsIDsAndFrames.count > 0 ?
+          .identifiersAndFrames(elementsIDsAndFrames) :
+          .failed(reason: "could not find element with type: \(type)")
+
       case .requestCurrentStatus:
         let message = createMessage(type: "requestCurrentStatus")
 

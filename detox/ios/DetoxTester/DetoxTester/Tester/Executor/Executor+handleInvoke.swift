@@ -40,7 +40,9 @@ extension Executor {
     do {
       handlerResult = try handler.handle(params)
     } catch {
-      execLog("invoke error: \(error)", type: .error)
+      execLog("the invoke-handler failed to handle params: \(error)", type: .error)
+
+      // TODO: replace this with a proper failure message to the app...
       fatalError("Error while executing invoke")
     }
 
@@ -50,6 +52,8 @@ extension Executor {
         "failed to handle invoke-handler result: `\(String(describing: handlerResult?.value))`",
         type: .error
       )
+
+      // TODO: replace this with a proper failure message to the app...
       fatalError("Error while executing invoke")
     }
 

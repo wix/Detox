@@ -36,6 +36,9 @@ extension WhiteBoxExecutor {
     /// Returns response of `identifiersAndFrames`.
     case findElementsByText(text: String)
 
+    /// Returns response of `identifiersAndFrames`.
+    case findElementsByType(type: String)
+
     /// Returns response of `status`.
     case requestCurrentStatus
 
