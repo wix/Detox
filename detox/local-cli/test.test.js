@@ -11,17 +11,16 @@ jest.mock('./utils/jestInternals');
 const cp = require('child_process');
 const cpSpawn = cp.spawn;
 const os = require('os');
-const path = require('path');
 const util = require('util');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
-const yargs = require('yargs');
+
+const { buildMockCommand, callCli } = require('../__tests__/helpers');
 
 const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./testCommand/warnings');
 
 describe('CLI', () => {
-  let _cliCallDump;
   let _env;
   let logger;
   let _temporaryFiles;
@@ -31,26 +30,25 @@ describe('CLI', () => {
   let GenyDeviceRegistryFactory;
   let jestInternals;
 
+  let mockExecutable;
+
   afterEach(() => {
     cp.spawn = cpSpawn;
   });
 
   beforeEach(() => {
-    _cliCallDump = undefined;
     _env = process.env;
     _temporaryFiles = [];
 
-    process.env = {
-      ..._env,
-      CLI_TEST_STDOUT: tempfile('.txt'),
-    };
+    process.env = { ..._env };
 
-    const executable = path.relative(process.cwd(), path.join(__dirname, '__mocks__/executable'));
+    mockExecutable = buildMockCommand();
+    _temporaryFiles.push(mockExecutable.options.stdout);
 
     detoxConfig = {
       testRunner: {
         args: {
-          $0: os.platform() === 'win32' ? `node ${executable}` : executable,
+          $0: mockExecutable.cmd,
           config: 'e2e/config.json'
         },
         forwardEnv: true,
@@ -98,7 +96,7 @@ describe('CLI', () => {
   describe('by default', () => {
     test('by default, should attempt to load config from package.json or .detoxrc', async () => {
       const expectedError = /^Cannot run Detox without a configuration/;
-      await expect(runRaw('test')).rejects.toThrowError(expectedError);
+      await expect(callCli('./test', 'test')).rejects.toThrowError(expectedError);
     });
   });
 
@@ -519,45 +517,6 @@ describe('CLI', () => {
     return tempFilePath;
   }
 
-  async function runRaw(...command) {
-    let memArgv;
-
-    try {
-      memArgv = process.argv.splice(2, Infinity, ...command);
-
-      return await new Promise((resolve, reject) => {
-        const testCommand = require('./test');
-        const originalHandler = testCommand.handler;
-
-        const parser = yargs()
-          .scriptName('detox')
-          .parserConfiguration({
-            'boolean-negation': false,
-            'camel-case-expansion': false,
-            'dot-notation': false,
-            'duplicate-arguments-array': false,
-            'populate--': true,
-          })
-          .command({
-            ...testCommand,
-            async handler(argv) {
-              try {
-                await originalHandler(argv);
-                resolve();
-              } catch (e) {
-                reject(e);
-              }
-            },
-          })
-          .wrap(null);
-
-        parser.parse(command, err => err && reject(err));
-      });
-    } finally {
-      memArgv && process.argv.splice(2, Infinity, ...memArgv);
-    }
-  }
-
   async function run(...args) {
     let contents = `module.exports = ${util.inspect(detoxConfig, { depth: Infinity })};`;
     if (detoxConfig.testRunner && detoxConfig.testRunner.inspectBrk) {
@@ -566,18 +525,11 @@ describe('CLI', () => {
 
     detoxConfigPath = tempfile('.js', contents);
     const __configPath = Math.random() > 0.5 ? '-C' : '--config-path';
-    return runRaw('test', __configPath, detoxConfigPath, ...args);
+    await callCli('./test', ['test', __configPath, detoxConfigPath, ...args]);
   }
 
   function cliCall(index = 0) {
-    if (!_cliCallDump) {
-      _cliCallDump = fs.readFileSync(process.env.CLI_TEST_STDOUT, 'utf8')
-        .split('\n')
-        .filter(Boolean)
-        .map(line => JSON.parse(line));
-    }
-
-    const mockCall = _cliCallDump[index];
+    const mockCall = mockExecutable.calls[index];
     if (!mockCall) {
       return null;
     }
@@ -597,6 +549,7 @@ describe('CLI', () => {
   }
 
   function mockExitCode(code) {
-    process.env.CLI_EXIT_CODE = code;
+    mockExecutable.options.exitCode = code;
+    detoxConfig.testRunner.args.$0 = mockExecutable.cmd;
   }
 });
