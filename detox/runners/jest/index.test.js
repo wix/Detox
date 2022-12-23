@@ -1,6 +1,6 @@
 describe('detox/runners/jest', () => {
   it('should lazily require the exported modules', () => {
-    const index = require('./index');
+    const index = jest.requireActual('./index');
 
     jest.mock('./testEnvironment', () => 0);
     jest.mock('./globalSetup', () => 1);

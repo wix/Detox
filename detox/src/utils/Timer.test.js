@@ -1,4 +1,4 @@
-jest.useFakeTimers('modern');
+jest.useFakeTimers();
 
 const Deferred = require('./Deferred');
 const Timer = require('./Timer');

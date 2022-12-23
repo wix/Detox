@@ -559,7 +559,7 @@ describe('Android driver', () => {
     mockInstrumentationDead();
 
     jest.mock('../../../common/drivers/android/exec/ADB');
-    const ADB = require('../../../common/drivers/android/exec/ADB');
+    const ADB = jest.requireMock('../../../common/drivers/android/exec/ADB');
     adb = new ADB();
     adb.adbBin = 'ADB binary mock';
     adb.spawnInstrumentation.mockReturnValue({
@@ -581,7 +581,7 @@ describe('Android driver', () => {
     apkValidator = new ApkValidator();
 
     jest.mock('../../../common/drivers/android/tools/TempFileXfer');
-    const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');
+    const FileXfer = jest.requireMock('../../../common/drivers/android/tools/TempFileXfer');
     fileXfer = new FileXfer();
     fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath);
 

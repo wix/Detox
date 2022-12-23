@@ -40,7 +40,7 @@ describe('SimulatorLogPlugin', () => {
       };
 
       fakeAppleSimUtils = {
-        logStream({ udid, processImagePath, level, stdout, stderr }) { // eslint-disable-line no-unused-vars
+        logStream({ /* udid, processImagePath, level, */ stdout, stderr }) {
           // fs.writeFileSync(fakeSources.stdin, '');
 
           const handle = fs.openSync(fakeSources.stdin, 'r');

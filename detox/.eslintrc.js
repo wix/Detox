@@ -17,7 +17,7 @@ module.exports = {
     node: true
   },
   globals: {
-    'callCli': true,
+    // TODO: remove use of fail() across the project because Jest Circus doesn't support it
     'fail': true
   },
   rules: {
