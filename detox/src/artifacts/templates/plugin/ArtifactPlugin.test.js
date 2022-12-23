@@ -1,5 +1,5 @@
 jest.mock('../../../utils/logger');
-const logger = require('../../../utils/logger');
+const logger = jest.requireMock('../../../utils/logger');
 const testSummaries = require('../../__mocks__/testSummaries.mock');
 const FileArtifact = require('../artifact/FileArtifact');
 

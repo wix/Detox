@@ -64,8 +64,7 @@ class ToggleMatcher extends NativeMatcher {
   }
 }
 
-// TODO
-// Please be aware, that this is just a dummy matcher
+// TODO: Please be aware, that this is just a dummy matcher
 class TraitsMatcher extends NativeMatcher {
   constructor(value) {
     super();
