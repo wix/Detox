@@ -310,19 +310,19 @@ class DetoxLogger {
   /** @internal */
   static defaultOptions({ level }) {
     const ph = level === 'trace' || level === 'debug'
-      ? value => require('chalk').grey(value) + ' '
-      : value => require('chalk').grey(value);
+      ? value => require('chalk').default.grey(value) + ' '
+      : value => require('chalk').default.grey(value);
 
     const id = level === 'trace'
-      ? value => require('chalk').yellow(`@${value}`)
+      ? value => require('chalk').default.yellow(`@${value}`)
       : undefined;
 
     const cat = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').yellow(`${value}`.split(',', 1)[0])
+      ? (value) => require('chalk').default.yellow(`${value}`.split(',', 1)[0])
       : undefined;
 
     const event = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').grey(`:${value}`)
+      ? (value) => require('chalk').default.grey(`:${value}`)
       : undefined;
 
     const identity = x => x;
