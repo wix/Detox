@@ -23,9 +23,9 @@ function isGreyMatcher({ name }) {
   return templateFromString(
     `
   if (
-    typeof ARG !== "object" || 
+    typeof ARG !== "object" ||
     ARG.type !== "Invocation" ||
-    typeof ARG.value !== "object" || 
+    typeof ARG.value !== "object" ||
     typeof ARG.value.target !== "object" ||
     ARG.value.target.value !== "GREYMatchers"
   ) {
@@ -40,9 +40,9 @@ function isGreyAction({ name }) {
   return templateFromString(
     `
   if (
-    typeof ARG !== "object" || 
+    typeof ARG !== "object" ||
     ARG.type !== "Invocation" ||
-    typeof ARG.value !== "object" || 
+    typeof ARG.value !== "object" ||
     typeof ARG.value.target !== "object" ||
     ARG.value.target.value !== "GREYActions"
   ) {
@@ -70,8 +70,8 @@ function isArray({ name }) {
   return templateFromString(
     `
 if (
-  (typeof ARG !== 'object') || 
-  (!ARG instanceof Array)
+  (typeof ARG !== 'object') ||
+  !Array.isArray(ARG)
 ) {
     throw new Error('${name} must be an array, got ' + typeof ARG);
   }

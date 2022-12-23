@@ -52,7 +52,7 @@ class EspressoDetox {
   }
 
   static setURLBlacklist(urls) {
-    if (typeof urls !== 'object' || !urls instanceof Array) {
+    if (typeof urls !== 'object' || !Array.isArray(urls)) {
       throw new Error('urls must be an array, got ' + typeof urls);
     }
 

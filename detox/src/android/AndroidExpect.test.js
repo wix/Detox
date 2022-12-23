@@ -515,6 +515,15 @@ describe('AndroidExpect', () => {
         await e.web.element(e.by.web.tag('tag')).runScriptWithArgs(script, argsArr);
       });
 
+      it('runScriptWithArgs (unhappy paths)', async () => {
+        const script = 'function bar(a,b) {}';
+        const someElement = e.web.element(e.by.web.id('id'));
+
+        await expect(someElement.runScriptWithArgs(script, 42)).rejects.toThrowError(/args must be an array/);
+        await expect(someElement.runScriptWithArgs(script, null)).rejects.toThrowError(/args must be an array/);
+        await expect(someElement.runScriptWithArgs(script, {})).rejects.toThrowError(/args must be an array/);
+      });
+
       it('getCurrentUrl', async () => {
         await e.web.element(e.by.web.id('id')).getCurrentUrl();
         await e.web.element(e.by.web.className('className')).getCurrentUrl();
