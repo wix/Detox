@@ -379,7 +379,7 @@ Takes a screenshot of the device. For full details on taking screenshots with De
 currently opened application to a temporary folder and schedules putting it to
 the artifacts' folder upon the completion of the current test. The file can be
 opened later in Xcode 12.0 and above.
-See [Xcode 12 Release notes: #57933113](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:\~:text=57933113)
+See [Xcode 12 Release notes: #57933113](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113)
 for more details.
 
 The `name` parameter is optional — by default, it equals to `capture`.
