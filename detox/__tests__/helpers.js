@@ -25,7 +25,7 @@ function callCli(modulePath, cmd) {
     return yargs
       .scriptName('detox')
       .parserConfiguration({
-        'boolean-negation': true,
+        'boolean-negation': false,
         'camel-case-expansion': false,
         'dot-notation': false,
         'duplicate-arguments-array': false,
