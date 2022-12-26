@@ -64,6 +64,10 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
+  async optimizedInstallApp(_bundleId, _binaryPath) {
+    throw new DetoxRuntimeError('Optimized app installation is not supported on iOS.');
+  }
+
   async installApp(binaryPath) {
     await this._applesimutils.install(this.udid, getAbsoluteBinaryPath(binaryPath));
   }

@@ -22,4 +22,5 @@ AndroidServiceLocator.fileTransfer = new TempFileTransfer(AndroidServiceLocator.
 AndroidServiceLocator.deviceRegistry = DeviceRegistry.forAndroid();
 AndroidServiceLocator.devicePathBuilder = new AndroidDevicePathBuilder();
 
+
 module.exports = AndroidServiceLocator;

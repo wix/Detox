@@ -260,14 +260,21 @@ class DetoxWorker {
       .map(0)
       .value();
 
-    for (const appName of appNames) {
-      yield this.device.selectApp(appName);
-      yield this.device.uninstallApp();
-    }
+    if (this._behaviorConfig.optimizeAppInstall) {
+      for (const appName of appNames) {
+        yield this.device.selectApp(appName);
+        yield this.device.resetAppState();
+      }
+    } else {
+      for (const appName of appNames) {
+        yield this.device.selectApp(appName);
+        yield this.device.uninstallApp();
+      }
 
-    for (const appName of appNames) {
-      yield this.device.selectApp(appName);
-      yield this.device.installApp();
+      for (const appName of appNames) {
+        yield this.device.selectApp(appName);
+        yield this.device.installApp();
+      }
     }
   }
 

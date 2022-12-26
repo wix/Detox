@@ -25,6 +25,7 @@ describe('composeBehaviorConfig', () => {
         exposeGlobals: true,
         reinstallApp: true,
       },
+      optimizeAppInstall: false,
       launchApp: 'auto',
       cleanup: {
         shutdownDevice: false,
@@ -35,7 +36,7 @@ describe('composeBehaviorConfig', () => {
   describe('if a custom config has only .launchApp = "manual" override', () => {
     beforeEach(() => {
       globalConfig = {
-        behavior: { launchApp: 'manual' }
+        behavior: { launchApp: 'manual' },
       };
     });
 
@@ -56,6 +57,7 @@ describe('composeBehaviorConfig', () => {
             reinstallApp: false,
           },
           launchApp: 'manual',
+          optimizeAppInstall: true,
           cleanup: {
             shutdownDevice: true,
           },
@@ -79,6 +81,7 @@ describe('composeBehaviorConfig', () => {
               keepLockFile: false,
               reinstallApp: true,
             },
+            optimizeAppInstall: false,
             launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
@@ -98,9 +101,10 @@ describe('composeBehaviorConfig', () => {
     describe('if CLI config is set', () => {
       beforeEach(() => {
         cliConfig = {
-          keepLockFile: true,
-          reuse: true,
           cleanup: true,
+          keepLockFile: true,
+          optimizeAppInstall: true,
+          reuse: true,
         };
       });
 
@@ -110,6 +114,7 @@ describe('composeBehaviorConfig', () => {
             keepLockFile: true,
             reinstallApp: false,
           }),
+          optimizeAppInstall: true,
           cleanup: expect.objectContaining({
             shutdownDevice: true,
           }),

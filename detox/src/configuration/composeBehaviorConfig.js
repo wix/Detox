@@ -18,6 +18,7 @@ function composeBehaviorConfig({
           keepLockFile: cliConfig.keepLockFile ? true : undefined,
           reinstallApp: cliConfig.reuse ? false : undefined,
         },
+        optimizeAppInstall: cliConfig.optimizeAppInstall ? true : undefined,
         cleanup: {
           shutdownDevice: cliConfig.cleanup ? true : undefined,
         },
@@ -30,11 +31,12 @@ function composeBehaviorConfig({
           keepLockFile: false,
           reinstallApp: undefined,
         },
+        optimizeAppInstall: false,
         launchApp: 'auto',
         cleanup: {
           shutdownDevice: false,
         },
-      }
+      },
     )
     .tap(config => {
       if (config.init.reinstallApp === undefined) {

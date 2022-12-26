@@ -36,6 +36,7 @@ const log = logger.child({ cat: 'device' });
  * @property appUninstallHelper { AppUninstallHelper }
  * @property devicePathBuilder { AndroidDevicePathBuilder }
  * @property instrumentation { MonitoredInstrumentation }
+ * @property apkHashUtils { ApkHashUtils }
  */
 
 class AndroidDriver extends DeviceDriverBase {
@@ -56,6 +57,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
     this.instrumentation = deps.instrumentation;
+    this.apkHashUtils = deps.apkHashUtils;
 
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
   }
@@ -92,6 +94,16 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
+  async optimizedInstallApp(bundleId, binaryPath, testBinaryPath) {
+    const shouldClearData = await this._shouldClearData(bundleId, binaryPath);
+
+    if (shouldClearData) {
+      await this._clearData(bundleId);
+    } else {
+      await this._reinstallApp(bundleId, binaryPath, testBinaryPath);
+    }
+  }
+
   async launchApp(bundleId, launchArgs, languageAndLocale) {
     return await this._handleLaunchApp({
       manually: false,
@@ -108,28 +120,6 @@ class AndroidDriver extends DeviceDriverBase {
       launchArgs,
       languageAndLocale,
     });
-  }
-
-  async _handleLaunchApp({ manually, bundleId, launchArgs }) {
-    const { adbName } = this;
-
-    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
-
-    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
-
-    if (manually) {
-      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
-    } else {
-      await this._launchApp(adbName, bundleId, launchArgs);
-    }
-
-    const pid = await this._waitForProcess(adbName, bundleId);
-    if (manually) {
-      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
-    }
-
-    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
-    return pid;
   }
 
   async deliverPayload(params) {
@@ -251,6 +241,28 @@ class AndroidDriver extends DeviceDriverBase {
       appBinaryPath,
       testBinaryPath,
     };
+  }
+
+  async _handleLaunchApp({ manually, bundleId, launchArgs }) {
+    const { adbName } = this;
+
+    await this.emitter.emit('beforeLaunchApp', { deviceId: adbName, bundleId, launchArgs });
+
+    launchArgs = await this._modifyArgsForNotificationHandling(adbName, bundleId, launchArgs);
+
+    if (manually) {
+      await this._waitForAppLaunch(adbName, bundleId, launchArgs);
+    } else {
+      await this._launchApp(adbName, bundleId, launchArgs);
+    }
+
+    const pid = await this._waitForProcess(adbName, bundleId);
+    if (manually) {
+      log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
+    }
+
+    await this.emitter.emit('launchApp', { deviceId: adbName, bundleId, launchArgs, pid });
+    return pid;
   }
 
   async _validateAppBinaries(appBinaryPath, testBinaryPath) {
@@ -401,6 +413,33 @@ class AndroidDriver extends DeviceDriverBase {
       `${separator}\n\n` +
       'Press any key to continue...'
     );
+  }
+
+  async _shouldClearData(bundleId, binaryPath) {
+    const params = {
+      adb: this.adb,
+      deviceId: this.adbName,
+      bundleId,
+      binaryPath,
+    };
+
+    const isSameVersionInstalled = await this.apkHashUtils.isHashUpToDate(params);
+    const isPkgInstalled = await this.adb.isPackageInstalled(this.adbName, bundleId);
+    return isPkgInstalled && isSameVersionInstalled;
+  }
+
+  async _clearData(bundleId) {
+    return await this.adb.clearAppData(this.adbName, bundleId);
+  }
+
+  async _reinstallApp(bundleId, binaryPath, testBinaryPath) {
+    await this.installApp(binaryPath, testBinaryPath);
+    await this._saveHashToDevice(bundleId, binaryPath);
+  }
+
+  async _saveHashToDevice(bundleId, binaryPath) {
+    const params = { fileTransfer: this.fileTransfer, deviceId: this.adbName, bundleId, binaryPath };
+    await this.apkHashUtils.saveHashToDevice(params);
   }
 }
 

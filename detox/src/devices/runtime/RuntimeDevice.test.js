@@ -76,6 +76,10 @@ describe('Device', () => {
       expect(this.driver.installApp).not.toHaveBeenCalled();
     }
 
+    expectOptimizedInstallAppCalled() {
+      expect(this.driver.optimizedInstallApp).toHaveBeenCalled();
+    }
+
     expectTerminateCalled() {
       expect(this.driver.terminate).toHaveBeenCalled();
     }
@@ -345,14 +349,34 @@ describe('Device', () => {
       driverMock.expectTerminateCalled();
     });
 
-    it(`(relaunch) with delete=true`, async () => {
+    it(`(relaunch) with delete=true and optimizeAppInstall false`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
-
+      device._behaviorConfig.optimizeAppInstall = false;
       await device.relaunchApp({ delete: true });
 
       driverMock.expectReinstallCalled();
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+    });
+
+    it(`(relaunch) with delete=true and optimizeAppInstall true`, async () => {
+      const expectedArgs = expectedDriverArgs;
+      const device = await aValidDevice();
+      device._behaviorConfig.optimizeAppInstall = true;
+      await device.relaunchApp({ delete: true });
+
+      driverMock.expectOptimizedInstallAppCalled();
+      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+    });
+
+    it(`given behaviorConfig.optimizeAppInstall == true should call optimizedInstallApp`, async () => {
+      const device = await aValidDevice();
+
+      device._behaviorConfig.optimizeAppInstall = true;
+      await device.relaunchApp({ delete: true });
+
+      expect(driverMock.driver.launchApp).toHaveBeenCalled();
+      expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalled();
     });
 
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
@@ -838,6 +862,15 @@ describe('Device', () => {
 
     expect(driverMock.driver.createPayloadFile).toHaveBeenCalledTimes(1);
     expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
+  });
+
+  it('resetAppState should pass to device driver optimizedInstallApp if optimize is active', async () => {
+    const device = await aValidDevice();
+    device._behaviorConfig.optimizeAppInstall = true;
+    await device.resetAppState();
+
+    expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalledWith(bundleId, device._currentApp.binaryPath, device._currentApp.testBinaryPath);
   });
 
   it(`sendUserActivity() should pass to device driver`, async () => {

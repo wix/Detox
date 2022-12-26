@@ -379,6 +379,13 @@ describe('CLI', () => {
     expect(cliCall().fullCommand).toMatch(/\bDETOX_FORCE_ADB_INSTALL=true /);
   });
 
+  test('--optimize-app-install should be passed as environment variable', async () => {
+    singleConfig().device.type = 'android.emulator';
+    await run(`--optimize-app-install`);
+    expect(cliCall().env).toHaveProperty('DETOX_OPTIMIZE_APP_INSTALL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_OPTIMIZE_APP_INSTALL=true /);
+  });
+
   test.each([['-n'], ['--device-name']])('%s <value> should be passed as environment variable', async (__device_name) => {
     await run(__device_name, 'TheDevice');
     expect(cliCall().env).toHaveProperty('DETOX_DEVICE_NAME');

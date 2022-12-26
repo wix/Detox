@@ -187,6 +187,17 @@ describe('DetoxWorker', () => {
         expect(await detox.init()).toBeInstanceOf(Detox));
     });
 
+    describe('with optimizeAppInstall: true', () => {
+      beforeEach(() => {
+        detoxConfig.behavior.optimizeAppInstall = true;
+      });
+
+      it('should call resetAppState', async () => {
+        await init();
+        expect(runtimeDevice.resetAppState).toHaveBeenCalled();
+      });
+    });
+
     describe('with multiple apps', () => {
       beforeEach(() => {
         detoxConfig.apps['extraApp'] = {
@@ -203,9 +214,8 @@ describe('DetoxWorker', () => {
         };
       });
 
-      beforeEach(init);
-
-      it('should install only apps with unique binary paths, and deselect app on device', () => {
+      it('should install only apps with unique binary paths, and deselect app on device', async () => {
+        await init();
         expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
         expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
 
@@ -215,6 +225,18 @@ describe('DetoxWorker', () => {
         expect(runtimeDevice.selectApp.mock.calls[2]).toEqual(['default']);
         expect(runtimeDevice.selectApp.mock.calls[3]).toEqual(['extraApp']);
         expect(runtimeDevice.selectApp.mock.calls[4]).toEqual([null]);
+      });
+
+      it('should call resetAppState for each app for optimizeAppInstall true', async () => {
+        detoxConfig.behavior.optimizeAppInstall = true;
+        await init();
+
+        expect(runtimeDevice.resetAppState).toHaveBeenCalledTimes(2);
+
+        expect(runtimeDevice.selectApp).toHaveBeenCalledTimes(3);
+        expect(runtimeDevice.selectApp.mock.calls[0]).toEqual(['default']);
+        expect(runtimeDevice.selectApp.mock.calls[1]).toEqual(['extraApp']);
+        expect(runtimeDevice.selectApp.mock.calls[2]).toEqual([null]);
       });
     });
 

@@ -101,6 +101,7 @@ class TestRunnerCommand {
       DETOX_HEADLESS: cliConfig.headless,
       DETOX_KEEP_LOCKFILE: cliConfig.keepLockFile,
       DETOX_LOGLEVEL: cliConfig.loglevel,
+      DETOX_OPTIMIZE_APP_INSTALL: cliConfig.optimizeAppInstall,
       DETOX_READ_ONLY_EMU: cliConfig.readonlyEmu,
       DETOX_RECORD_LOGS: cliConfig.recordLogs,
       DETOX_RECORD_PERFORMANCE: cliConfig.recordPerformance,

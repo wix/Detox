@@ -1,4 +1,3 @@
-// @ts-nocheck
 describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
@@ -14,7 +13,7 @@ describe('ADB', () => {
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
     jest.mock('../../../../../utils/environment');
-    require('../../../../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
+    jest.requireMock('../../../../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
 
     jest.mock('../../../../../utils/encoding', () => ({
       encodeBase64: (text) => `base64(${text})`,
@@ -125,6 +124,27 @@ describe('ADB', () => {
   it(`uninstall`, async () => {
     await adb.uninstall('com.package');
     expect(execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+  });
+
+  it('should send correct command to clear app data', async () => {
+    await adb.clearAppData('emulator-5556', 'com.detox.wix.test');
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "pm clear com.detox.wix.test"'),
+      { retries: 1, silent: true, verbosity: 'low' });
+  });
+
+  it('should send correct command to read file with silent running', async () => {
+    await adb.readFile('emulator-5556', 'somefile.txt', true);
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
+      { verbosity: 'low', retries: 1, silent: true });
+  });
+
+  it('should send correct command to read file', async () => {
+    await adb.readFile('emulator-5556', 'somefile.txt', false);
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+      expect.stringContaining('adb" -s emulator-5556 shell "cat somefile.txt"'),
+      { retries: 1 });
   });
 
   it(`terminate`, async () => {
