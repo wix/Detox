@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
@@ -41,7 +42,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
 }
 
 class AndroidAttached extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps, configs) {
     const props = {
       adbName: deviceCookie.adbName,
     };
@@ -52,7 +53,7 @@ class AndroidAttached extends RuntimeDriverFactoryAndroid {
 }
 
 class Genycloud extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps, configs) {
     const props = {
       instance: deviceCookie.instance,
     };

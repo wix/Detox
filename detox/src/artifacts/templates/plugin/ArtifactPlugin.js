@@ -1,5 +1,5 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 // @ts-nocheck
-/* eslint-disable no-unused-vars */
 
 const _ = require('lodash');
 
