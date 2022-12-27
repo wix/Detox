@@ -123,6 +123,8 @@
       "__tests__",
       ".test.js$",
       ".mock.js$",
+      "index.js",
+      "internals.js",
       "local-cli/utils",
       "src/environmentFactory",
       "src/android/espressoapi",

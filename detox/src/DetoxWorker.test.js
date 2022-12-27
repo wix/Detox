@@ -77,7 +77,7 @@ describe('DetoxWorker', () => {
     AsyncEmitter = require('./utils/AsyncEmitter');
 
     Detox = require('./DetoxWorker');
-    const symbols = require('./symbols');
+    const symbols = require('./realms/symbols');
     detoxContext = { log: logger, [symbols.config]: detoxConfig };
   });
 
