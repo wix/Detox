@@ -13,6 +13,7 @@ class TimersIdlingResource @JvmOverloads constructor(
 
     override fun getName(): String = this.javaClass.name
     override fun getDebugName(): String = "timers"
+    override fun getBusyHint(): Map<String, Any>? = null
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         this.callback = callback
