@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 // @ts-nocheck
 const _ = require('lodash');
 const WebSocket = require('ws');
@@ -176,7 +177,7 @@ class AsyncWebSocket {
    * @param {WebSocket.OpenEvent} event
    * @private
    */
-  _onOpen(event) { // eslint-disable-line no-unused-vars
+  _onOpen(event) {
     log.trace(`opened web socket to: ${this._url}`);
     this._opening.resolve();
     this._opening = null;
@@ -268,7 +269,7 @@ class AsyncWebSocket {
    * @param {WebSocket.CloseEvent | null} event
    * @private
    */
-  _onClose(event) { // eslint-disable-line no-unused-vars
+  _onClose(event) {
     if (this._closing) {
       this._closing.resolve();
     }

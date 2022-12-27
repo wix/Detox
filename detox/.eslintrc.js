@@ -54,12 +54,7 @@ module.exports = {
       }
     ],
     'no-prototype-builtins': 'off',
-    'no-unused-vars': [
-      'error',
-      {
-        'argsIgnorePattern': '^_'
-      }
-    ],
+    'no-unused-vars': 'off',
     'node/no-unpublished-require': 'warn',
     'object-curly-spacing': [
       'error',

@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 // @ts-nocheck
 const path = require('path');
 const URL = require('url').URL;
@@ -162,11 +163,11 @@ class AndroidDriver extends DeviceDriverBase {
       }
   }
 
-  async pressBack() { // eslint-disable-line no-unused-vars
+  async pressBack() {
     await this.uiDevice.pressBack();
   }
 
-  async sendToHome(params) { // eslint-disable-line no-unused-vars
+  async sendToHome(params) {
     await this.uiDevice.pressHome();
   }
 
