@@ -1,4 +1,11 @@
-const realm = require('./src/realms');
-const DetoxInternalsFacade = require('./src/realms/DetoxInternalsFacade');
+function create() {
+  const context = require('./index');
+  const DetoxInternalsFacade = require('./src/realms/DetoxInternalsFacade');
 
-module.exports = new DetoxInternalsFacade(realm);
+  return new DetoxInternalsFacade(context);
+}
+
+/** @type {DetoxInternals.Facade} */
+module.exports = global['__detox__']
+  ? global['__detox__'].internalsApi
+  : create();

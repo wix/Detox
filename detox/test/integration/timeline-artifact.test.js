@@ -27,7 +27,7 @@ describe('Timeline integration test', () => {
   beforeAll(clearAllArtifacts);
 
   beforeAll(async () => {
-    await execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 stub1`);
+    await execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 flaky`);
     tac = JSON.parse(await readFile(timelineArtifactPath, 'utf8'));
   });
 

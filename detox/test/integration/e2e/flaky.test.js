@@ -1,4 +1,6 @@
-describe('Stub1', () => {
+const { session } = require('detox/internals');
+
+describe('Flaky', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
@@ -13,12 +15,10 @@ describe('Stub1', () => {
     } finally {
       detox.trace.endSection('Asserting various texts');
     }
-    throw new Error(`I'm only here to make things interesting!`);
+
+    if (session.testSessionIndex === 0) {
+      throw new Error(`I'm only here to make things interesting!`);
+    }
   });
 
-  it.skip('Skipped test', async () => {
-    // Checking that skipped tests are also traced
-  });
-
-  it.todo('Check that todo tests are also traced');
 });
