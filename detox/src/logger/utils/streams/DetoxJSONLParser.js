@@ -14,7 +14,7 @@ class DetoxJSONLParser {
       .on('error', (err) => {
         /* istanbul ignore else */
         if (err instanceof SyntaxError) {
-          log.debug({ err });
+          log.debug({ err }, 'Failed to parse log line:');
           readable.end();
         } else {
           readable.emit('error', err);
