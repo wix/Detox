@@ -66,6 +66,7 @@ describe('DetoxPrimaryContext', () => {
   const detoxWorker = () => latestInstanceOf(DetoxWorker);
   const logFinalizer = () => latestInstanceOf(logger.DetoxLogFinalizer);
   const getSignalHandler = () => lastCallTo(signalExit)[FIRST_ARGUMENT];
+  const facadeInit = () => facade.init({ workerId: null });
 
   backupProcessEnv();
 
@@ -102,7 +103,7 @@ describe('DetoxPrimaryContext', () => {
     it('should create an IPC server with a valid session state', async () => {
       const expectedIPCServerName = `primary-${process.pid}`;
 
-      await facade.init();
+      await facadeInit();
 
       expect(IPCServer).toHaveBeenCalledWith(expect.objectContaining({
         sessionState: expect.objectContaining({
@@ -113,30 +114,30 @@ describe('DetoxPrimaryContext', () => {
     });
 
     it('should init the IPC server', async () => {
-      await facade.init();
+      await facadeInit();
       expect(ipcServer().init).toHaveBeenCalled();
     });
 
     it('should init the global lifecycle handler', async () => {
-      await facade.init();
+      await facadeInit();
       expect(globalLifecycleHandler.globalInit).toHaveBeenCalled();
     });
 
     it('should reset the device registry', async () => {
       detoxConfigDriver.givenIosSimulatorDevice();
-      await facade.init();
+      await facadeInit();
       expect(deviceRegistryIOS.reset).toHaveBeenCalled();
     });
 
     it('should not reset the device registry if opted-out of', async () => {
       detoxConfigDriver.givenKeepLockFile(true);
-      await facade.init();
+      await facadeInit();
       expect(deviceRegistryIOS.reset).not.toHaveBeenCalled();
     });
 
     it('should reset the genymotion global-shutdown device-registry', async () => {
       detoxConfigDriver.givenGenyCloudDevice();
-      await facade.init();
+      await facadeInit();
       expect(deviceRegistryAndroid.reset).toHaveBeenCalled();
       expect(deviceRegistryGenyCloud.reset).toHaveBeenCalled();
     });
@@ -150,7 +151,7 @@ describe('DetoxPrimaryContext', () => {
           standalone: false,
         };
 
-        await facade.init();
+        await facadeInit();
         expect(DetoxServer).toHaveBeenCalledWith(expectedServerArgs);
       });
 
@@ -162,25 +163,25 @@ describe('DetoxPrimaryContext', () => {
           port,
           standalone: false,
         };
-        await facade.init();
+        await facadeInit();
         expect(DetoxServer).toHaveBeenCalledWith(expectedServerArgs);
       });
 
       it('should start the server', async () => {
-        await facade.init();
+        await facadeInit();
         expect(detoxServer().open).toHaveBeenCalled();
       });
     });
 
     describe('given detox-server auto-start disabled via config', () => {
       it('should not create a server', async () => {
-        await facade.init();
+        await facadeInit();
         expect(DetoxServer).not.toHaveBeenCalled();
       });
     });
 
     it('should save the session state onto the context-shared file', async () => {
-      await facade.init();
+      await facadeInit();
 
       expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringMatching(TEMP_FILE_REGEXP),
@@ -194,10 +195,16 @@ describe('DetoxPrimaryContext', () => {
     });
 
     it('should export context-shared file via DETOX_CONFIG_SNAPSHOT_PATH', async () => {
-      await facade.init();
+      await facadeInit();
 
       expect(process.env.DETOX_CONFIG_SNAPSHOT_PATH).toBeDefined();
       expect(process.env.DETOX_CONFIG_SNAPSHOT_PATH).toMatch(TEMP_FILE_REGEXP);
+    });
+
+    it('should install a worker if called without options', async () => {
+      await facade.init();
+      expect(facade.session).toEqual(expect.objectContaining({ workerId: 'worker' }));
+      expect(detoxWorker().init).toHaveBeenCalled();
     });
 
     it('should install a worker if worker ID has been specified', async () => {
@@ -215,7 +222,7 @@ describe('DetoxPrimaryContext', () => {
       it('should report status as "init"', async () => {
         IPCServer.prototype.init = jest.fn().mockRejectedValue(new Error('init failed'));
 
-        await expect(() => facade.init()).rejects.toThrow();
+        await expect(() => facadeInit()).rejects.toThrow();
         expect(facade.getStatus()).toBe('init');
       });
     });
@@ -223,12 +230,12 @@ describe('DetoxPrimaryContext', () => {
 
   describe('when initialized', () => {
     it('should reject further initializations', async () => {
-      await facade.init();
-      await expect(() => facade.init()).rejects.toThrowErrorMatchingSnapshot();
+      await facadeInit();
+      await expect(() => facadeInit()).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it('should change status to "active"', async () => {
-      await facade.init();
+      await facadeInit();
       expect(facade.getStatus()).toBe('active');
     });
 
@@ -241,7 +248,7 @@ describe('DetoxPrimaryContext', () => {
       });
 
       it('should clean up the lifecycle handler', async () => {
-        await facade.init();
+        await facadeInit();
         await facade.cleanup();
 
         expect(globalLifecycleHandler.globalCleanup).toHaveBeenCalled();
@@ -250,35 +257,35 @@ describe('DetoxPrimaryContext', () => {
       it('should close the detox server', async () => {
         detoxConfigDriver.givenDetoxServerAutostart();
 
-        await facade.init();
+        await facadeInit();
         await facade.cleanup();
 
         expect(detoxServer().close).toHaveBeenCalled();
       });
 
       it('should close the ipc server', async () => {
-        await facade.init();
+        await facadeInit();
         await facade.cleanup();
 
         expect(ipcServer().dispose).toHaveBeenCalled();
       });
 
       it('should delete the context-shared file', async () => {
-        await facade.init();
+        await facadeInit();
         await facade.cleanup();
 
         expect(fs.remove).toHaveBeenCalledWith(expect.stringMatching(TEMP_FILE_REGEXP));
       });
 
       it('should finalize the logger', async () => {
-        await facade.init();
+        await facadeInit();
         await facade.cleanup();
         expect(logFinalizer().finalize).toHaveBeenCalled();
       });
 
       it('should change intermediate status to "cleanup"', async () => {
         expect.assertions(1);
-        await facade.init();
+        await facadeInit();
 
         ipcServer().dispose.mockImplementation(async () => {
           expect(facade.getStatus()).toBe('cleanup');
@@ -288,7 +295,7 @@ describe('DetoxPrimaryContext', () => {
       });
 
       it('should restore status to "inactive"', async () => {
-        await facade.init();
+        await facadeInit();
         await facade.cleanup();
         expect(facade.getStatus()).toBe('inactive');
       });
@@ -321,7 +328,7 @@ describe('DetoxPrimaryContext', () => {
       beforeEach(async () => {
         detoxConfigDriver.givenDetoxServerAutostart();
 
-        await facade.init();
+        await facadeInit();
 
         const signalHandler = getSignalHandler();
         signalHandler(123, 'SIGSMT');
@@ -347,7 +354,7 @@ describe('DetoxPrimaryContext', () => {
       let signalHandler;
       beforeEach(async () => {
         detoxConfigDriver.givenDetoxServerAutostart();
-        await facade.init();
+        await facadeInit();
 
         signalHandler = getSignalHandler();
       });
