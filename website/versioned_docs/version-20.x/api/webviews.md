@@ -35,8 +35,8 @@ await expect(innerElement).toHaveText('Hello World!');
 In the example above:
 
 1. We use `web()` function and [`by.id()`] matcher to locate a web view by its accessibility identifier.
-2. We use `myWebView.element()` method and [`by.web.id()`] web matcher to find an HTML element inside that web view.
-3. We run the same expectation (to have text) as in the previous example.
+1. We use `myWebView.element()` method and [`by.web.id()`] web matcher to find an HTML element inside that web view.
+1. We run the same expectation (to have text) as in the previous example.
 
 ## Matchers
 
@@ -319,37 +319,63 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 ```
 
 [native matchers]: matchers.md
+
 [`by.id()`]: matchers.md#byidid
 
 [web view matchers]: webviews.md#matchers
+
 [web view actions]: webviews.md#actions
+
 [web view expectations]: webviews.md#expectations
 
 [`by.web.id()`]: webviews.md#byidid
+
 [`by.web.className()`]: webviews.md#byclassnameclassname
+
 [`by.web.cssSelector()`]: webviews.md#bycssselectorcssselector
+
 [`by.web.name()`]: webviews.md#byname
+
 [`by.web.xpath()`]: webviews.md#byxpathxpath
+
 [`by.web.href()`]: webviews.md#byhrefhref
+
 [`by.web.hrefContains()`]: webviews.md#byhrefcontainshref
+
 [`by.web.tag()`]: webviews.md#bytagtag
+
 [`atIndex()`]: webviews.md#atindexindex
 
 [`tap()`]: webviews.md#tap
+
 [`typeText()`]: webviews.md#typetexttext-iscontenteditable
+
 [content-editable]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contentEditable
+
 [`replaceText()`]: webviews.md#replacetexttext
+
 [`clearText()`]: webviews.md#cleartext
+
 [`selectAllText()`]: webviews.md#selectalltext
+
 [`getText()`]: webviews.md#gettext
+
 [`scrollToView()`]: webviews.md#scrolltoview
+
 [`focus()`]: webviews.md#focus
+
 [`moveCursorToEnd()`]: webviews.md#movecursortoend
+
 [`runScript()`]: webviews.md#runscriptscript
+
 [`runScriptWithArgs()`]: webviews.md#runscriptwithargsscript-args
+
 [`getCurrentUrl()`]: webviews.md#getcurrenturl
+
 [`getTitle()`]: webviews.md#gettitle
 
 [`toHaveText()`]: webviews.md#tohavetexttext
+
 [`toExist()`]: webviews.md#toexist
+
 [`not`]: webviews.md#not
