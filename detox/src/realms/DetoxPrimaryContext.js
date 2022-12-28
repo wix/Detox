@@ -135,7 +135,7 @@ class DetoxPrimaryContext extends DetoxContext {
     process.env.DETOX_CONFIG_SNAPSHOT_PATH = this[_sessionFile];
     this[_lifecycleLogger].trace(`Serialized the session state at: ${this[_sessionFile]}`);
 
-    if (opts.workerId != null) {
+    if (opts.workerId !== null) {
       await this[symbols.installWorker](opts);
     }
   }
