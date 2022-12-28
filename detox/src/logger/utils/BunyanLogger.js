@@ -41,13 +41,14 @@ class BunyanLogger {
       streamOptions.out = new PassThrough().pipe(process.stderr);
     }
 
-    this._debugStream = {
+    this._bunyan.addStream({
       type: 'raw',
       level: config.level,
       stream: bds.default(streamOptions),
-    };
+    });
 
-    this._bunyan.addStream(this._debugStream);
+    this._debugStream = _.last(this._bunyan['streams']);
+
     return this;
   }
 
@@ -93,7 +94,7 @@ class BunyanLogger {
           : bunyanStream.stream;
 
         /* istanbul ignore next */
-        return stream.fd !== undefined && !stream.closed;
+        return stream.fd > 2 && !stream.closed;
     }
   };
 
