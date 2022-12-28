@@ -48,6 +48,12 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
         return "bridge";
     }
 
+    @Nullable
+    @Override
+    public Map<String, Object> getBusyHint() {
+        return null;
+    }
+
     @Override
     protected boolean checkIdle() {
         boolean ret = idleNow.get();
@@ -84,11 +90,5 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
         if (callback != null) {
             callback.onTransitionToIdle();
         }
-    }
-
-    @Nullable
-    @Override
-    public Map<String, Object> getBusyHint() {
-        return null;
     }
 }

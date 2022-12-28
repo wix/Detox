@@ -52,6 +52,7 @@ open class AsyncStorageIdlingResource
 
     override fun getName(): String = javaClass.name
     override fun getDebugName() = "io"
+    override fun getBusyHint(): Map<String, Any>? = null
 
     override fun isIdleNow(): Boolean =
         checkIdle().also { idle ->
