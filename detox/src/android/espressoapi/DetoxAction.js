@@ -194,6 +194,29 @@ class DetoxAction {
     };
   }
 
+  static setDatePickerDate(year, monthOfYear, dayOfMonth) {
+    if (typeof year !== "number") throw new Error("year should be a number, but got " + (year + (" (" + (typeof year + ")"))));
+    if (typeof monthOfYear !== "number") throw new Error("monthOfYear should be a number, but got " + (monthOfYear + (" (" + (typeof monthOfYear + ")"))));
+    if (typeof dayOfMonth !== "number") throw new Error("dayOfMonth should be a number, but got " + (dayOfMonth + (" (" + (typeof dayOfMonth + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "setDatePickerDate",
+      args: [{
+        type: "Integer",
+        value: year
+      }, {
+        type: "Integer",
+        value: monthOfYear
+      }, {
+        type: "Integer",
+        value: dayOfMonth
+      }]
+    };
+  }
+
   static adjustSliderToPosition(newPosition) {
     if (typeof newPosition !== "number") throw new Error("newPosition should be a number, but got " + (newPosition + (" (" + (typeof newPosition + ")"))));
     return {

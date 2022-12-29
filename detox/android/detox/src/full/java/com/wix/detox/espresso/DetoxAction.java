@@ -26,6 +26,7 @@ import androidx.test.espresso.action.CoordinatesProvider;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
+import androidx.test.espresso.contrib.PickerActions;
 
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
@@ -147,6 +148,10 @@ public class DetoxAction {
 
     public static ViewAction scrollToIndex(int index) {
         return new ScrollToIndexAction(index);
+    }
+
+    public static ViewAction setDatePickerDate(int year, int monthOfYear, int dayOfMonth) {
+        return PickerActions.setDate(year, monthOfYear, dayOfMonth);
     }
 
     public static ViewAction adjustSliderToPosition(final double newPosition) {

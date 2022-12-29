@@ -124,6 +124,13 @@ class ScrollToIndex extends Action {
   }
 }
 
+class SetDatePickerDateAction extends Action {
+  constructor(year, monthOfYear, dayOfMonth) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.setDatePickerDate(year, monthOfYear, dayOfMonth));
+  }
+}
+
 class AdjustSliderToPosition extends Action {
   constructor(newPosition) {
     super();
@@ -155,5 +162,6 @@ module.exports = {
   SwipeAction,
   TakeElementScreenshot,
   ScrollToIndex,
+  SetDatePickerDateAction,
   AdjustSliderToPosition,
 };
