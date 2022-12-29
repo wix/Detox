@@ -22,7 +22,7 @@ Use [expectations](expect.md) to verify element states.
 - [`.tapReturnKey()`](#tapreturnkey)
 - [`.tapBackspaceKey()`](#tapbackspacekey)
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
-- [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
+- [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat)
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
 - [`.getAttributes()`](#getattributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
@@ -214,7 +214,7 @@ Sets the element’s specified column to the specified value, using the system�
 
 Values accepted by this method are strings only, and the system will do its best to match complex picker view cells to the string.
 
-This function does not support date pickers. Use [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) instead.
+This function does not support date pickers. Use [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat) instead.
 
 `column`—the element’s column to set (valid input: number, 0 and above) <br/>
 `value`—the string value to set (valid input: string)
@@ -226,18 +226,19 @@ await element(by.id('pickerView')).setColumnToValue(2, "Hello World");
 
 > **Note:** When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles. See [here](device.md#9-languageandlocalelaunch-with-a-specific-language-andor-local-ios-only) for more information.
 
-### `setDatePickerDate(dateString, dateFormat)`  iOS only
+### `setDatePickerDate(dateString, dateFormat)`
 
 Sets the element’s date to the specified date string, parsed using the specified date format.
 
-The specified date string is converted by the system to an [`NSDate`](https://developer.apple.com/documentation/foundation/nsdate) object, using [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter) with the specified date format, or [`NSISO8601DateFormatter`](https://developer.apple.com/documentation/foundation/iso8601dateformatter) in case of ISO 8601 date strings. If you use JavaScript’s [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) or otherwise provide a valid ISO 8601 date string, set the date format to `"ISO8601"`, which is supported as a special case.
+In case of dateFormat set to `"ISO8601"`, the specified date string is converted using JavaScript’s `new Date(dateString)` on Android and [`NSISO8601DateFormatter`](https://developer.apple.com/documentation/foundation/iso8601dateformatter) on iOS. You can use [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) to format a JavaScript date accordingly.
+Other options for dateFormat on iOS are formats that can be parsed by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter). Android does not support other formats than `"ISO8601"`.
 
 `dateString`—the date to set (valid input: valid, parsable date string) <br/>
-`dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` or a valid, parsable date format supported by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter))
+`dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` (**Android and iOS**) or a valid, parsable date format supported by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter)) (**iOS only**)
 
 ```js
 await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601");
-await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
+await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd"); //iOS only
 ```
 
 ### `adjustSliderToPosition(normalizedPosition)`
