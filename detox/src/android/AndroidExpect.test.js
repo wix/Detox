@@ -237,6 +237,16 @@ describe('AndroidExpect', () => {
         await expectToThrow(() => e.element(e.by.id('ScrollView161')).scrollTo('noDirection'));
       });
 
+      it('should setDatePickerDate', async () => {
+        await e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
+      });
+
+      it('should not setDatePickerDate given bad args', async () => {
+        await expectToThrow(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601'));
+        await expectToThrow(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06', 'yyyy-mm-dd'));
+        await expectToThrow(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate(2019, 'ISO8601'));
+      });
+
       it('should swipe', async () => {
         await e.element(e.by.id('ScrollView799')).swipe('down');
         await e.element(e.by.id('ScrollView799')).swipe('down', 'fast');
