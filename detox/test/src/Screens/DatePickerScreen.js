@@ -1,6 +1,10 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, DatePickerIOS } from 'react-native';
+import { Text, View, StyleSheet, DatePickerIOS, TouchableOpacity, Platform } from 'react-native';
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+
+const isAndroid = Platform.OS === 'android';
+const isIos = Platform.OS === 'ios';
 
 export default class DatePickerScreen extends Component {
   constructor(props) {
@@ -34,6 +38,16 @@ export default class DatePickerScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <TouchableOpacity testID='openAndroidDatePicker' onPress={() => {
+            if (!isAndroid) return;
+
+            DateTimePickerAndroid.open({
+              testID: "datePicker44",
+              value: this.state.chosenDate,
+              onChange: (_, newDate) => this.setDate(newDate),
+              mode: "date",
+            });
+        }} >
         <Text style={styles.dateText} testID="utcDateLabel">
           {"Date (UTC): " + this.getDateUTC()}
         </Text>
@@ -43,7 +57,8 @@ export default class DatePickerScreen extends Component {
         <Text style={styles.dateText} testID='localTimeLabel'>
           {"Time: " + this.getTimeLocal()}
         </Text>
-        <DatePickerIOS testID="datePicker" style={styles.datePicker} date={this.state.chosenDate} onDateChange={this.setDate} />
+        </TouchableOpacity>
+        {isIos && <DatePickerIOS testID="datePicker" style={styles.datePicker} date={this.state.chosenDate} onDateChange={this.setDate} />}
       </View>
     );
   }
