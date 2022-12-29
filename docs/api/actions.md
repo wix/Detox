@@ -241,6 +241,14 @@ await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00'
 await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd"); //iOS only
 ```
 
+On Android your DatePicker library might not support setting testID's. In that case you can reference it by the className like this:
+
+```js
+await element(by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601");
+```
+
+Also be aware that on Android only the date is set. The time part from the dateString is ignored.
+
 ### `adjustSliderToPosition(normalizedPosition)`
 
 Manipulates the UI to change the displayed value of the slider element to a new value, based on a normalized position.

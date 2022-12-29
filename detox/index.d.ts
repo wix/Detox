@@ -1365,12 +1365,13 @@ declare global {
             setColumnToValue(column: number, value: string): Promise<void>;
 
             /**
-             * Sets the date of a date picker to a date generated from the provided string and date format. (iOS only)
+             * Sets the date of a date picker to a date generated from the provided string and date format.
              * @param dateString string representing a date in the supplied `dateFormat`
              * @param dateFormat format for the `dateString` supplied
              * @example
              * await expect(element(by.id('datePicker'))).toBeVisible();
-             * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+             * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ"); //iOS example
+             * await element(by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601"); //Android example
              */
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
