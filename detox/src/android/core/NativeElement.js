@@ -113,13 +113,9 @@ class NativeElement {
   }
 
   async setDatePickerDate(dateString, dateFormat) {
-    if (typeof dateString !== 'string') throw new Error('dateString should be a string, but got ' + (dateString + (' (' + (typeof dateString + ')'))));
-    if (typeof dateFormat !== 'string') throw new Error('dateFormat should be a string, but got ' + (dateFormat + (' (' + (typeof dateFormat + ')'))));
     if (dateFormat !== 'ISO8601') throw new Error('dateFormat must be "ISO8601" on android, but got ' + (dateFormat));
 
-    const date = new Date(dateString);
-
-    const action = new actions.SetDatePickerDateAction(date.getFullYear(), date.getMonth() + 1, date.getDate());
+    const action = new actions.SetDatePickerDateAction(dateString);
     const traceDescription = actionDescription.setDatePickerDate();
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }

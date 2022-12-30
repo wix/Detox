@@ -19,6 +19,7 @@ import com.wix.detox.espresso.scroll.ScrollHelper;
 import com.wix.detox.espresso.scroll.SwipeHelper;
 
 import org.hamcrest.Matcher;
+import java.time.ZonedDateTime;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -31,6 +32,7 @@ import androidx.test.espresso.contrib.PickerActions;
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+
 import static org.hamcrest.Matchers.allOf;
 
 
@@ -150,8 +152,9 @@ public class DetoxAction {
         return new ScrollToIndexAction(index);
     }
 
-    public static ViewAction setDatePickerDate(int year, int monthOfYear, int dayOfMonth) {
-        return PickerActions.setDate(year, monthOfYear, dayOfMonth);
+    public static ViewAction setDatePickerDate(String dateString) {
+        ZonedDateTime date = ZonedDateTime.parse(dateString);
+        return PickerActions.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 
     public static ViewAction adjustSliderToPosition(final double newPosition) {
