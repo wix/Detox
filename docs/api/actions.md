@@ -230,24 +230,35 @@ await element(by.id('pickerView')).setColumnToValue(2, "Hello World");
 
 Sets the element’s date to the specified date string, parsed using the specified date format.
 
-In case of dateFormat set to `"ISO8601"`, the specified date string is converted using JavaScript’s `new Date(dateString)` on Android and [`NSISO8601DateFormatter`](https://developer.apple.com/documentation/foundation/iso8601dateformatter) on iOS. You can use [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) to format a JavaScript date accordingly.
-Other options for dateFormat on iOS are formats that can be parsed by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter). Android does not support other formats than `"ISO8601"`.
+The recommended `dateFormat` is `ISO8601`, which is supported on both Android and iOS. To create a `dateString` in this format, use the built-in [`Date.prototype.toISOString()`] method, or specify a literal date string following the `YYYY-MM-DDTHH:mm:ss.sssZ` mask, e.g.:
+
+```js
+const datePicker = element(by.id('datePicker'));
+
+await datePicker.setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
+await datePicker.setDatePickerDate(new Date().toISOString(), 'ISO8601');
+```
+
+On iOS, you can also use any of the date formats supported by [`NSDateFormatter`], e.g.:
+
+```js
+await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd"); // iOS only
+```
 
 `dateString`—the date to set (valid input: valid, parsable date string) <br/>
-`dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` (**Android and iOS**) or a valid, parsable date format supported by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter)) (**iOS only**)
+`dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` (**Android and iOS**), or any format supported by [`NSDateFormatter`] on **iOS**)
+
+:::info
+
+On Android, older versions of a popular [`@react-native-community/datetimepicker`] package don’t support setting [`testID`], so you’ll need either to upgrade to a newer version containing [PR #705] inside, or use the [`by.type`] matcher as a workaround, e.g.:
 
 ```js
-await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601");
-await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd"); //iOS only
+const datePicker = device.getPlatform() === 'android'
+  ? element(by.type('android.widget.DatePicker'))
+  : element(by.id('datePicker'));
 ```
 
-On Android your DatePicker library might not support setting testID's. In that case you can reference it by the className like this:
-
-```js
-await element(by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601");
-```
-
-Also be aware that on Android only the date is set. The time part from the dateString is ignored.
+:::
 
 ### `adjustSliderToPosition(normalizedPosition)`
 
@@ -349,3 +360,10 @@ Simulates a pinch on the element with the provided options.
 ```js
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```
+
+[`testID`]: ../guide/test-id.mdx
+[`by.type`]: ../api/matchers.md#bytypeclassname
+[`Date.prototype.toISOString()`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+[`NSDateFormatter`]: https://developer.apple.com/documentation/foundation/dateformatter
+[`@react-native-community/datetimepicker`]: https://www.npmjs.com/package/@react-native-community/datetimepicker
+[PR #705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705
