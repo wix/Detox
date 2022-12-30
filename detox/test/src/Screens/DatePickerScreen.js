@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, DatePickerIOS, Platform, Button } from 'react-native';
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import { Text, View, StyleSheet, Platform, Button } from 'react-native';
+import { default as DatePicker, DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
@@ -17,7 +17,7 @@ export default class DatePickerScreen extends Component {
     this.setDate = this.setDate.bind(this);
   }
 
-  setDate(newDate) {
+  setDate(e, newDate) {
     this.setState({
       chosenDate: newDate
     });
@@ -60,7 +60,7 @@ export default class DatePickerScreen extends Component {
               }}
             />
         </View>}
-        {isIos && <DatePickerIOS testID="datePicker" style={styles.datePickerIos} date={this.state.chosenDate} onDateChange={this.setDate} />}
+        {isIos && <DatePicker testID="datePicker" style={styles.datePickerIos} value={this.state.chosenDate} onChange={this.setDate} />}
       </View>
     );
   }
