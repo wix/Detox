@@ -110,7 +110,7 @@ describe('AndroidExpect', () => {
       await expectToThrow(() =>e.expect(e.element(e.by.label('test'))).toBeVisible(0));
       await expectToThrow(() =>e.expect(e.element(e.by.label('test'))).toBeVisible(120));
       await expectToThrow(() =>e.waitFor(e.element(e.by.label('test'))).toBeVisible(0));
-      await expectToThrow(() =>e.e.waitFor(e.element(e.by.label('test'))).toBeVisible(120));
+      await expectToThrow(() =>e.waitFor(e.element(e.by.label('test'))).toBeVisible(120));
     });
 
     it(`expect with wrong parameters should throw`, async () => {
@@ -124,9 +124,12 @@ describe('AndroidExpect', () => {
       await expectToThrow(() => e.element(e.by.id(5)));
       await expectToThrow(() => e.element(e.by.type(0)));
       await expectToThrow(() => e.by.traits(1));
-      await expectToThrow(() => e.by.traits(['nonExistentTrait']));
       await expectToThrow(() => e.element(e.by.value(0)));
       await expectToThrow(() => e.element(e.by.text(0)));
+    });
+
+    it.skip(`TODO: matchers with wrong parameters should throw`, async () => {
+      await expectToThrow(() => e.by.traits(['nonExistentTrait']));
       await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
       await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
       await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
@@ -618,11 +621,7 @@ describe('AndroidExpect', () => {
 });
 
 async function expectToThrow(func) {
-  try {
-    await func();
-  } catch (ex) {
-    expect(ex).toBeDefined();
-  }
+  await expect((async () => func())()).rejects.toThrow();
 }
 
 class MockExecutor {
