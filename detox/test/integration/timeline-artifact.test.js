@@ -10,12 +10,6 @@ const TMPDIR = path.dirname(tempfile());
 const readFile = promisify(fs.readFile);
 const remove = promisify(fs.remove);
 
-// TODO: investigate why the test fails
-if (require('os').platform() === 'win32') {
-  // eslint-disable-next-line no-global-assign
-  describe = describe.skip;
-}
-
 describe('Timeline integration test', () => {
   const artifactsDirectory = 'integration_artifacts/'
   const timelineArtifactFilename = 'detox.trace.json';
@@ -90,7 +84,7 @@ function sanitizeEvent(e, ts) {
   if (ts === 0) {
     this.sessionId = r.args.data.id;
     this.cwd = r.args.cwd;
-    this.name = r.name.replace(/^.*(?=jest)/, '');
+    r.name = r.name.replace(/^[^ ]*/, 'detox');
   }
 
   r.pid = (this.pid.has(e.pid) ? this.pid : this.pid.set(e.pid, this.pid.size)).get(e.pid);
@@ -103,6 +97,7 @@ function sanitizeEvent(e, ts) {
       .replace(this.sessionId, '$SESSION_ID')
       .replace(this.cwd, '$CWD')
       .replace(this.cwd.replace(/\\/g, '/'), '$CWD')
+      .replace(/\\/g, '/')
       .replace(/DETOX_[A-Z_]+=\S*\s*/g, '');
   }
 

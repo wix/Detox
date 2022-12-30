@@ -10,7 +10,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
       "v": 0,
     },
     "cat": "lifecycle",
-    "name": "node_modules/.bin/detox test -c stub --config integration/e2e/config.js -a integration_artifacts/ -R 1 flaky",
+    "name": "detox test -c stub --config integration/e2e/config.js -a integration_artifacts/ -R 1 flaky",
     "ph": "B",
     "pid": 0,
     "tid": 0,
