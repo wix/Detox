@@ -1369,9 +1369,9 @@ declare global {
              * @param dateString string representing a date in the supplied `dateFormat`
              * @param dateFormat format for the `dateString` supplied
              * @example
-             * await expect(element(by.id('datePicker'))).toBeVisible();
-             * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ"); //iOS example
-             * await element(by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601"); //Android example
+             * await element(by.id('datePicker')).setDatePickerDate('2023-01-01T00:00:00Z', 'ISO8601');
+             * await element(by.id('datePicker')).setDatePickerDate(new Date().toISOString(), 'ISO8601');
+             * await element(by.id('datePicker')).setDatePickerDate('2023/01/01', "yyyy/MM/dd"); // iOS only
              */
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
