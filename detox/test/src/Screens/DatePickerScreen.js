@@ -1,17 +1,15 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Platform, Button } from 'react-native';
-import { default as DatePicker, DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-
-const isAndroid = Platform.OS === 'android';
-const isIos = Platform.OS === 'ios';
+import { Text, View, StyleSheet, Button, Platform } from 'react-native';
+import { default as DatePicker } from "@react-native-community/datetimepicker";
 
 export default class DatePickerScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      chosenDate: new Date()
+      chosenDate: new Date(),
+      showDatePicker: false
     };
 
     this.setDate = this.setDate.bind(this);
@@ -47,20 +45,21 @@ export default class DatePickerScreen extends Component {
         <Text style={styles.dateText} testID='localTimeLabel'>
           {"Time: " + this.getTimeLocal()}
         </Text>
-        { isAndroid && <View style={styles.openDatePickerButtonContainer}>
+         <View style={styles.openDatePickerButtonContainer}>
             <Button 
               title="Open datepicker"
-              testID='openAndroidDatePicker'
-              onPress={() => {
-                DateTimePickerAndroid.open({
-                  value: this.state.chosenDate,
-                  onChange: (_, newDate) => this.setDate(newDate),
-                  mode: "date",
-                });
-              }}
+              testID='showDatePicker'
+              onPress={() => this.setState({ showDatePicker: true })}
             />
-        </View>}
-        {isIos && <DatePicker testID="datePicker" style={styles.datePickerIos} value={this.state.chosenDate} onChange={this.setDate} />}
+        </View>
+        {this.state.showDatePicker && (
+          <DatePicker 
+            testID="datePicker" 
+            mode='date' 
+            display={Platform.OS === 'ios' ? "spinner" : "default"} 
+            value={this.state.chosenDate} 
+            onChange={this.setDate} />
+        )}
       </View>
     );
   }
@@ -72,10 +71,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  datePickerIos: {
-    width:'100%',
-    height:200
   },
   openDatePickerButtonContainer: {
     paddingTop: 20,
