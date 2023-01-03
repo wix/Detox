@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const { DetoxInternalError, DetoxError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
-const isPromise = require('../utils/isPromise');
+const { isPromiseLike } = require('../utils/isPromise');
 
 const BunyanLogger = require('./utils/BunyanLogger');
 const CategoryThreadDispatcher = require('./utils/CategoryThreadDispatcher');
@@ -263,7 +263,7 @@ class DetoxLogger {
         ? action()
         : action;
 
-      if (!isPromise(result)) {
+      if (!isPromiseLike(result)) {
         end({ success: true });
       } else {
         result.then(

@@ -203,6 +203,10 @@ describe('DetoxLogger', () => {
       expect(asyncResult).toBeInstanceOf(Promise);
       expect(await asyncResult).toBe(168);
 
+      const promiseLike = { then: jest.fn() };
+      const promiseLikeResult = l.fatal.complete('Fatal (pending)', promiseLike);
+      expect(promiseLikeResult).toBe(promiseLike);
+
       try {
         l.error.complete('Error duration (sync)', () => { throw anError('Oops (sync)!'); });
       } catch (e) {}
@@ -224,6 +228,7 @@ describe('DetoxLogger', () => {
         expect.objectContaining({ ph: 'E', time, tid, level: 20, success: true }),
         expect.objectContaining({ msg: 'Trace duration', ph: 'B', time, tid, level: 10 }),
         expect.objectContaining({ ph: 'E', time, tid, level: 10, success: true }),
+        expect.objectContaining({ msg: 'Fatal (pending)', ph: 'B', time, tid, level: 60 }),
         expect.objectContaining({ msg: 'Error duration (sync)', ph: 'B', time, tid, level: 50 }),
         expect.objectContaining({ ph: 'E', time, tid, level: 50, success: false, error: expect.any(String) }),
         expect.objectContaining({ msg: 'Error duration (async)', ph: 'B', time, tid, level: 50 }),

@@ -189,8 +189,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
   {
     "args": {
       "functionCode": "async () => {
-    await device.reloadReactNative();
-    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
+    await log.trace.complete('Navigate to sanity', navigateToSanity);
   }",
       "level": 10,
       "v": 0,
@@ -205,6 +204,66 @@ exports[`Timeline integration test should deterministically produce a timeline a
   {
     "args": {
       "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Navigate to sanity",
+    "ph": "B",
+    "pid": 1,
+    "tid": 2,
+    "ts": 14,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Reloading app",
+    "ph": "i",
+    "pid": 1,
+    "tid": 2,
+    "ts": 15,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Tap on Sanity",
+    "ph": "i",
+    "pid": 1,
+    "tid": 2,
+    "ts": 16,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "I am on Sanity screen",
+    "ph": "i",
+    "pid": 1,
+    "tid": 2,
+    "ts": 17,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "ph": "E",
+    "pid": 1,
+    "tid": 2,
+    "ts": 18,
+  },
+  {
+    "args": {
+      "level": 10,
       "success": true,
       "v": 0,
     },
@@ -212,16 +271,18 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 14,
+    "ts": 19,
   },
   {
     "args": {
       "functionCode": "async () => {
     try {
       detox.trace.startSection('Asserting various texts');
-      await expect(element(by.text('Welcome'))).toBeVisible();
-      await expect(element(by.text('Say Hello'))).toBeVisible();
-      await expect(element(by.text('Say World'))).toBeVisible();
+      await detox.traceCall('by.text()', async () => {
+        await expect(element(by.text('Welcome'))).toBeVisible();
+        await expect(element(by.text('Say Hello'))).toBeVisible();
+        await expect(element(by.text('Say World'))).toBeVisible();
+      });
     } finally {
       detox.trace.endSection('Asserting various texts');
     }
@@ -237,7 +298,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "B",
     "pid": 1,
     "tid": 1,
-    "ts": 15,
+    "ts": 20,
   },
   {
     "args": {
@@ -250,7 +311,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 16,
+    "ts": 21,
   },
   {
     "args": {
@@ -263,7 +324,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 17,
+    "ts": 22,
   },
   {
     "args": {
@@ -275,7 +336,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "i",
     "pid": 1,
     "tid": 1,
-    "ts": 18,
+    "ts": 23,
   },
   {
     "args": {
@@ -286,7 +347,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 19,
+    "ts": 24,
   },
   {
     "args": {
@@ -297,7 +358,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 20,
+    "ts": 25,
   },
   {
     "args": {
@@ -309,7 +370,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "B",
     "pid": 1,
     "tid": 1,
-    "ts": 21,
+    "ts": 26,
   },
   {
     "args": {
@@ -320,7 +381,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 22,
+    "ts": 27,
   },
   {
     "args": {
@@ -332,7 +393,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 1,
     "tid": 1,
-    "ts": 23,
+    "ts": 28,
   },
   {
     "args": {
@@ -346,7 +407,7 @@ exports[`Timeline integration test should deterministically produce a timeline a
     "ph": "E",
     "pid": 0,
     "tid": 0,
-    "ts": 24,
+    "ts": 29,
   },
   {
     "args": {
@@ -362,7 +423,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "i",
     "pid": 0,
     "tid": 0,
-    "ts": 25,
+    "ts": 30,
   },
   {
     "args": {
@@ -375,7 +436,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "B",
     "pid": 0,
     "tid": 0,
-    "ts": 26,
+    "ts": 31,
   },
   {
     "args": {
@@ -386,8 +447,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "integration/e2e/flaky.test.js",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 27,
+    "tid": 3,
+    "ts": 32,
   },
   {
     "args": {
@@ -398,8 +459,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "set up environment",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 28,
+    "tid": 3,
+    "ts": 33,
   },
   {
     "args": {
@@ -410,8 +471,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 29,
+    "tid": 3,
+    "ts": 34,
   },
   {
     "args": {
@@ -422,8 +483,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "flaky.test.js is assigned to Stub #StubDevice#1",
     "ph": "i",
     "pid": 2,
-    "tid": 2,
-    "ts": 30,
+    "tid": 3,
+    "ts": 35,
   },
   {
     "args": {
@@ -434,8 +495,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "run the tests",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 31,
+    "tid": 3,
+    "ts": 36,
   },
   {
     "args": {
@@ -446,8 +507,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "Flaky",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 32,
+    "tid": 3,
+    "ts": 37,
   },
   {
     "args": {
@@ -462,8 +523,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "should have welcome screen",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 33,
+    "tid": 3,
+    "ts": 38,
   },
   {
     "args": {
@@ -474,8 +535,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "Flaky: should have welcome screen",
     "ph": "i",
     "pid": 2,
-    "tid": 2,
-    "ts": 34,
+    "tid": 3,
+    "ts": 39,
   },
   {
     "args": {
@@ -507,8 +568,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "beforeEach",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 35,
+    "tid": 3,
+    "ts": 40,
   },
   {
     "args": {
@@ -519,14 +580,13 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 36,
+    "tid": 3,
+    "ts": 41,
   },
   {
     "args": {
       "functionCode": "async () => {
-    await device.reloadReactNative();
-    await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
+    await log.trace.complete('Navigate to sanity', navigateToSanity);
   }",
       "level": 10,
       "v": 0,
@@ -535,8 +595,68 @@ Detox CLI is going to restart the test runner with those files...
     "name": "beforeEach",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 37,
+    "tid": 3,
+    "ts": 42,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Navigate to sanity",
+    "ph": "B",
+    "pid": 2,
+    "tid": 4,
+    "ts": 43,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Reloading app",
+    "ph": "i",
+    "pid": 2,
+    "tid": 4,
+    "ts": 44,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Tap on Sanity",
+    "ph": "i",
+    "pid": 2,
+    "tid": 4,
+    "ts": 45,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "I am on Sanity screen",
+    "ph": "i",
+    "pid": 2,
+    "tid": 4,
+    "ts": 46,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "ph": "E",
+    "pid": 2,
+    "tid": 4,
+    "ts": 47,
   },
   {
     "args": {
@@ -547,17 +667,19 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 38,
+    "tid": 3,
+    "ts": 48,
   },
   {
     "args": {
       "functionCode": "async () => {
     try {
       detox.trace.startSection('Asserting various texts');
-      await expect(element(by.text('Welcome'))).toBeVisible();
-      await expect(element(by.text('Say Hello'))).toBeVisible();
-      await expect(element(by.text('Say World'))).toBeVisible();
+      await detox.traceCall('by.text()', async () => {
+        await expect(element(by.text('Welcome'))).toBeVisible();
+        await expect(element(by.text('Say Hello'))).toBeVisible();
+        await expect(element(by.text('Say World'))).toBeVisible();
+      });
     } finally {
       detox.trace.endSection('Asserting various texts');
     }
@@ -572,8 +694,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "test_fn",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 39,
+    "tid": 3,
+    "ts": 49,
   },
   {
     "args": {
@@ -584,8 +706,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 40,
+    "tid": 3,
+    "ts": 50,
   },
   {
     "args": {
@@ -596,8 +718,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 41,
+    "tid": 3,
+    "ts": 51,
   },
   {
     "args": {
@@ -608,8 +730,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "Flaky: should have welcome screen [OK]",
     "ph": "i",
     "pid": 2,
-    "tid": 2,
-    "ts": 42,
+    "tid": 3,
+    "ts": 52,
   },
   {
     "args": {
@@ -619,8 +741,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 43,
+    "tid": 3,
+    "ts": 53,
   },
   {
     "args": {
@@ -630,8 +752,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 44,
+    "tid": 3,
+    "ts": 54,
   },
   {
     "args": {
@@ -642,8 +764,8 @@ Detox CLI is going to restart the test runner with those files...
     "name": "tear down environment",
     "ph": "B",
     "pid": 2,
-    "tid": 2,
-    "ts": 45,
+    "tid": 3,
+    "ts": 55,
   },
   {
     "args": {
@@ -653,8 +775,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 46,
+    "tid": 3,
+    "ts": 56,
   },
   {
     "args": {
@@ -665,8 +787,8 @@ Detox CLI is going to restart the test runner with those files...
     "cat": "lifecycle,jest-environment",
     "ph": "E",
     "pid": 2,
-    "tid": 2,
-    "ts": 47,
+    "tid": 3,
+    "ts": 57,
   },
   {
     "args": {
@@ -678,7 +800,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 0,
     "tid": 0,
-    "ts": 48,
+    "ts": 58,
   },
   {
     "args": {
@@ -689,7 +811,7 @@ Detox CLI is going to restart the test runner with those files...
     "ph": "E",
     "pid": 0,
     "tid": 0,
-    "ts": 49,
+    "ts": 59,
   },
 ]
 `;

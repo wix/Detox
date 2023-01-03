@@ -96,6 +96,7 @@ exports[`DetoxLogger - main functionality - should log complete duration events 
 00:00:00.000 detox[PID] E  Debug duration
 00:00:00.000 detox[PID] B  Trace duration
 00:00:00.000 detox[PID] E  Trace duration
+00:00:00.000 detox[PID] B  Fatal (pending)
 00:00:00.000 detox[PID] B  Error duration (sync)
 00:00:00.000 detox[PID] E  Error duration (sync)
   error: Error: Oops (sync)!
