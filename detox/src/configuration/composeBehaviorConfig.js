@@ -18,7 +18,7 @@ function composeBehaviorConfig({
           keepLockFile: cliConfig.keepLockFile ? true : undefined,
           reinstallApp: cliConfig.reuse ? false : undefined,
         },
-        optimizeAppInstall: cliConfig.optimizeAppInstall ? true : undefined,
+        useLegacyLaunchApp: cliConfig.useLegacyLaunchApp ? true : undefined,
         cleanup: {
           shutdownDevice: cliConfig.cleanup ? true : undefined,
         },
@@ -31,7 +31,7 @@ function composeBehaviorConfig({
           keepLockFile: false,
           reinstallApp: undefined,
         },
-        optimizeAppInstall: false,
+        useLegacyLaunchApp: false,
         launchApp: 'auto',
         cleanup: {
           shutdownDevice: false,

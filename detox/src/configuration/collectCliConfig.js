@@ -55,7 +55,7 @@ function collectCliConfig({ argv }) {
     useCustomLogger: asBoolean(get('use-custom-logger')),
     retries: asNumber(get('retries')),
     inspectBrk: asBoolean(get('inspect-brk')),
-    optimizeAppInstall: asBoolean(get('optimize-app-install')),
+    useLegacyLaunchApp: asBoolean(get('use-legacy-launch-app')),
   }, _.isUndefined);
 }
 

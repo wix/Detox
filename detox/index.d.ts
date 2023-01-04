@@ -101,13 +101,10 @@ declare global {
                 keepLockFile?: boolean;
             };
             /**
-             * Avoid installing the app on the device if it has been already installed there.
-             * Instead of reinstalling, it calls Device#resetAppState().
-             * By default, Detox will perform app reinstallation.
-             *
-             * Experimental and available for Android only.
+             * Force using the legacy flow for launchApp - uninstalling and reinstalling the app - instead of
+             * the optimized flow of deleting app data. The optimized flow exists at the moment only on Android.
              */
-            optimizeAppInstall?: boolean;
+            useLegacyLaunchApp?: boolean;
             launchApp?: 'auto' | 'manual';
             cleanup?: {
                 shutdownDevice?: boolean;

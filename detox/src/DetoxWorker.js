@@ -260,12 +260,7 @@ class DetoxWorker {
       .map(0)
       .value();
 
-    if (this._behaviorConfig.optimizeAppInstall) {
-      for (const appName of appNames) {
-        yield this.device.selectApp(appName);
-        yield this.device.resetAppState();
-      }
-    } else {
+    if (this._behaviorConfig.useLegacyLaunchApp) {
       for (const appName of appNames) {
         yield this.device.selectApp(appName);
         yield this.device.uninstallApp();
@@ -274,6 +269,12 @@ class DetoxWorker {
       for (const appName of appNames) {
         yield this.device.selectApp(appName);
         yield this.device.installApp();
+      }
+    } else {
+      for (const appName of appNames) {
+        yield this.device.selectApp(appName);
+        // @ts-ignore
+        yield this.device.resetAppState();
       }
     }
   }

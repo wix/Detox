@@ -281,7 +281,7 @@ declare global {
       jestReportSpecs: boolean;
       keepLockFile: boolean;
       loglevel: string;
-      optimizeAppInstall: boolean;
+      useLegacyLaunchApp: boolean;
       readonlyEmu: boolean;
       recordLogs: string;
       recordPerformance: string;

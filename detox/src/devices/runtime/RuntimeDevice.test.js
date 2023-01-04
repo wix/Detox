@@ -349,30 +349,29 @@ describe('Device', () => {
       driverMock.expectTerminateCalled();
     });
 
-    it(`(relaunch) with delete=true and optimizeAppInstall false`, async () => {
+    it(`(relaunch) with delete=true and useLegacyLaunchApp true`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
-      device._behaviorConfig.optimizeAppInstall = false;
+      device._behaviorConfig.useLegacyLaunchApp = true;
       await device.relaunchApp({ delete: true });
 
       driverMock.expectReinstallCalled();
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
-    it(`(relaunch) with delete=true and optimizeAppInstall true`, async () => {
+    it(`(relaunch) with delete=true should always delete and reinstall`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
-      device._behaviorConfig.optimizeAppInstall = true;
       await device.relaunchApp({ delete: true });
 
       driverMock.expectOptimizedInstallAppCalled();
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
-    it(`given behaviorConfig.optimizeAppInstall == true should call optimizedInstallApp`, async () => {
+    it(`given behaviorConfig.useLegacyLaunchApp == false should call optimizedInstallApp`, async () => {
       const device = await aValidDevice();
 
-      device._behaviorConfig.optimizeAppInstall = true;
+      device._behaviorConfig.useLegacyLaunchApp = false;
       await device.relaunchApp({ delete: true });
 
       expect(driverMock.driver.launchApp).toHaveBeenCalled();
@@ -864,9 +863,9 @@ describe('Device', () => {
     expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it('resetAppState should pass to device driver optimizedInstallApp if optimize is active', async () => {
+  it('resetAppState should pass to device driver optimizedInstallApp if useLegacyLaunchApp is false', async () => {
     const device = await aValidDevice();
-    device._behaviorConfig.optimizeAppInstall = true;
+    device._behaviorConfig.useLegacyLaunchApp = false;
     await device.resetAppState();
 
     expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalledTimes(1);

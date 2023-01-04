@@ -126,10 +126,10 @@ module.exports = {
     group: 'Execution:',
     describe: `[Android Only] Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },
-  'optimize-app-install': {
+  'use-legacy-launch-app': {
     boolean: true,
     group: 'Execution:',
-    describe: `On Android, reinstalls the app only when the APK has changed, otherwise reset the app data.`,
+    describe: `On Android, always reinstall the app, instead of resetting app data.`,
   },
   'inspect-brk': {
     group: 'Debugging:',

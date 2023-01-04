@@ -25,7 +25,6 @@ describe('composeBehaviorConfig', () => {
         exposeGlobals: true,
         reinstallApp: true,
       },
-      optimizeAppInstall: false,
       launchApp: 'auto',
       cleanup: {
         shutdownDevice: false,
@@ -57,7 +56,7 @@ describe('composeBehaviorConfig', () => {
             reinstallApp: false,
           },
           launchApp: 'manual',
-          optimizeAppInstall: true,
+          useLegacyLaunchApp: true,
           cleanup: {
             shutdownDevice: true,
           },
@@ -81,7 +80,6 @@ describe('composeBehaviorConfig', () => {
               keepLockFile: false,
               reinstallApp: true,
             },
-            optimizeAppInstall: false,
             launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
@@ -103,7 +101,7 @@ describe('composeBehaviorConfig', () => {
         cliConfig = {
           cleanup: true,
           keepLockFile: true,
-          optimizeAppInstall: true,
+          useLegacyLaunchApp: true,
           reuse: true,
         };
       });
@@ -114,7 +112,7 @@ describe('composeBehaviorConfig', () => {
             keepLockFile: true,
             reinstallApp: false,
           }),
-          optimizeAppInstall: true,
+          useLegacyLaunchApp: true,
           cleanup: expect.objectContaining({
             shutdownDevice: true,
           }),

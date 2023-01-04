@@ -173,12 +173,6 @@ describe('DetoxWorker', () => {
           eventEmitter: eventEmitter(),
         })));
 
-      it('should select and reinstall the app', () => {
-        expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
-        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
-        expect(runtimeDevice.installApp).toHaveBeenCalled();
-      });
-
       it('should not unselect the app if it is the only one', () => {
         expect(runtimeDevice.selectApp).not.toHaveBeenCalledWith(null);
       });
@@ -187,14 +181,21 @@ describe('DetoxWorker', () => {
         expect(await detox.init()).toBeInstanceOf(Detox));
     });
 
-    describe('with optimizeAppInstall: true', () => {
+    describe('with useLegacyLaunchApp: true', () => {
       beforeEach(() => {
-        detoxConfig.behavior.optimizeAppInstall = true;
+        detoxConfig.behavior.useLegacyLaunchApp = true;
+      });
+
+      it('should select and reinstall the app', async () => {
+        await init();
+        expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
+        expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
+        expect(runtimeDevice.installApp).toHaveBeenCalled();
       });
 
       it('should call resetAppState', async () => {
         await init();
-        expect(runtimeDevice.resetAppState).toHaveBeenCalled();
+        expect(runtimeDevice.resetAppState).not.toHaveBeenCalled();
       });
     });
 
@@ -215,6 +216,7 @@ describe('DetoxWorker', () => {
       });
 
       it('should install only apps with unique binary paths, and deselect app on device', async () => {
+        detoxConfig.behavior.useLegacyLaunchApp = true;
         await init();
         expect(runtimeDevice.uninstallApp).toHaveBeenCalledTimes(2);
         expect(runtimeDevice.installApp).toHaveBeenCalledTimes(2);
@@ -227,8 +229,7 @@ describe('DetoxWorker', () => {
         expect(runtimeDevice.selectApp.mock.calls[4]).toEqual([null]);
       });
 
-      it('should call resetAppState for each app for optimizeAppInstall true', async () => {
-        detoxConfig.behavior.optimizeAppInstall = true;
+      it('should call resetAppState for each app for reinstallApp false', async () => {
         await init();
 
         expect(runtimeDevice.resetAppState).toHaveBeenCalledTimes(2);
