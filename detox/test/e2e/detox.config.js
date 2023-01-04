@@ -27,7 +27,7 @@ const config = {
     init: {
       exposeGlobals: true
     },
-    optimizeAppInstall: process.env.PLATFORM !== 'android',
+    useLegacyLaunchApp: process.env.PLATFORM !== 'android',
     cleanup: {
       shutdownDevice: false
     }
