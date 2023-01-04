@@ -25,6 +25,7 @@ describe('composeBehaviorConfig', () => {
         exposeGlobals: true,
         reinstallApp: true,
       },
+      useLegacyLaunchApp: false,
       launchApp: 'auto',
       cleanup: {
         shutdownDevice: false,
@@ -80,6 +81,7 @@ describe('composeBehaviorConfig', () => {
               keepLockFile: false,
               reinstallApp: true,
             },
+            useLegacyLaunchApp: false,
             launchApp: 'auto',
             cleanup: {
               shutdownDevice: false,
