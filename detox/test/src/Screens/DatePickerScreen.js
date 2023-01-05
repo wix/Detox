@@ -22,7 +22,7 @@ export default class DatePickerScreen extends Component {
   }
 
   getTimeLocal() {
-    return moment(this.state.chosenDate).format("hh:mm");
+    return moment(this.state.chosenDate).format("h:mm A");
   }
 
   getDateLocal() {
@@ -32,7 +32,7 @@ export default class DatePickerScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.dateText} testID="utcDateLabel">
+        <Text style={styles.dateText} testID="localDateLabel">
           {"Date (Local): " + this.getDateLocal()}
         </Text>
         <Text style={styles.dateText} testID='localTimeLabel'>
