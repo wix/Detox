@@ -112,10 +112,8 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }
 
-  async setDatePickerDate(dateString, dateFormat) {
-    if (dateFormat !== 'ISO8601') throw new Error('dateFormat must be "ISO8601" on android, but got ' + (dateFormat));
-
-    const action = new actions.SetDatePickerDateAction(dateString);
+  async setDatePickerDate(dateString, formatString) {
+    const action = new actions.SetDatePickerDateAction(dateString, formatString);
     const traceDescription = actionDescription.setDatePickerDate();
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }

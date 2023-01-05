@@ -1,6 +1,7 @@
 package com.wix.detox.espresso;
 
 import android.view.View;
+import android.os.Build;
 
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
@@ -19,6 +20,8 @@ import com.wix.detox.espresso.scroll.ScrollHelper;
 import com.wix.detox.espresso.scroll.SwipeHelper;
 
 import org.hamcrest.Matcher;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import androidx.test.espresso.UiController;
@@ -152,8 +155,18 @@ public class DetoxAction {
         return new ScrollToIndexAction(index);
     }
 
-    public static ViewAction setDatePickerDate(String dateString) {
-        ZonedDateTime date = ZonedDateTime.parse(dateString);
+    public static ViewAction setDatePickerDate(String dateString, String formatString) {
+        if (Build.VERSION.SDK_INT < 26) {
+            throw new AssertionError("To use DatePicker on Android you must use API 26 or above");
+        }
+
+        if (formatString.equals("ISO8601")) {
+            ZonedDateTime date = ZonedDateTime.parse(dateString);
+            return PickerActions.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+        } 
+            
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatString);
+        LocalDate date = LocalDate.parse(dateString, formatter);
         return PickerActions.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 

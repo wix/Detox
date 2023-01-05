@@ -125,9 +125,9 @@ class ScrollToIndex extends Action {
 }
 
 class SetDatePickerDateAction extends Action {
-  constructor(dateString) {
+  constructor(dateString, formatString) {
     super();
-    this._call = invoke.callDirectly(DetoxActionApi.setDatePickerDate(dateString));
+    this._call = invoke.callDirectly(DetoxActionApi.setDatePickerDate(dateString, formatString));
   }
 }
 

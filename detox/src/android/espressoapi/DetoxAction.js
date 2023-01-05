@@ -194,15 +194,16 @@ class DetoxAction {
     };
   }
 
-  static setDatePickerDate(dateString) {
+  static setDatePickerDate(dateString, formatString) {
     if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
+    if (typeof formatString !== "string") throw new Error("formatString should be a string, but got " + (formatString + (" (" + (typeof formatString + ")"))));
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxAction"
       },
       method: "setDatePickerDate",
-      args: [dateString]
+      args: [dateString, formatString]
     };
   }
 
