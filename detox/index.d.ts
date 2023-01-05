@@ -1371,7 +1371,7 @@ declare global {
              * @example
              * await element(by.id('datePicker')).setDatePickerDate('2023-01-01T00:00:00Z', 'ISO8601');
              * await element(by.id('datePicker')).setDatePickerDate(new Date().toISOString(), 'ISO8601');
-             * await element(by.id('datePicker')).setDatePickerDate('2023/01/01', "yyyy/MM/dd"); // iOS only
+             * await element(by.id('datePicker')).setDatePickerDate('2023/01/01', "yyyy/MM/dd");
              */
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 

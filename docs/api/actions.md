@@ -229,8 +229,9 @@ await element(by.id('pickerView')).setColumnToValue(2, "Hello World");
 ### `setDatePickerDate(dateString, dateFormat)`
 
 Sets the element’s date to the specified date string, parsed using the specified date format.
+(Requires API level 26+ on Android)
 
-The recommended `dateFormat` is `ISO8601`, which is supported on both Android and iOS. To create a `dateString` in this format, use the built-in [`Date.prototype.toISOString()`] method, or specify a literal date string following the `YYYY-MM-DDTHH:mm:ss.sssZ` mask, e.g.:
+The recommended `dateFormat` is `ISO8601`. To create a `dateString` in this format, use the built-in [`Date.prototype.toISOString()`] method, or specify a literal date string following the `YYYY-MM-DDTHH:mm:ss.sssZ` mask, e.g.:
 
 ```js
 const datePicker = element(by.id('datePicker'));
@@ -239,10 +240,10 @@ await datePicker.setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
 await datePicker.setDatePickerDate(new Date().toISOString(), 'ISO8601');
 ```
 
-On iOS, you can also use any of the date formats supported by [`NSDateFormatter`], e.g.:
+You can also use any of the date formats supported by [`NSDateFormatter`] on iOS or [`DateTimeFormatter`] on Android, e.g.:
 
 ```js
-await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd"); // iOS only
+await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
 ```
 
 `dateString`—the date to set (valid input: valid, parsable date string) <br/>
@@ -365,5 +366,6 @@ await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0)
 [`by.type`]: ../api/matchers.md#bytypeclassname
 [`Date.prototype.toISOString()`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
 [`NSDateFormatter`]: https://developer.apple.com/documentation/foundation/dateformatter
+[`DateTimeFormatter`]: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 [`@react-native-community/datetimepicker`]: https://www.npmjs.com/package/@react-native-community/datetimepicker
 [PR #705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705
