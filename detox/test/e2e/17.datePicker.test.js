@@ -1,51 +1,49 @@
+const jestExpect = require('expect').default;
+
 describe('DatePicker', () => {
+  beforeEach(async () => {
+    await device.reloadReactNative();
+    await element(by.text('DatePicker')).tap();
+  });
+
+  describe.each([
+    ['ios', 'compact', 0],
+    ['ios', 'inline', 1],
+    ['ios', 'spinner', 2],
+    ['android', 'calendar', 0],
+    ['android', 'spinner', 1],
+  ])(`:%s: %s mode`, (platform, mode, times) => {
     beforeEach(async () => {
-      await device.reloadReactNative();
-      await element(by.text('DatePicker')).tap();
-      await element(by.id('showDatePicker')).tap();
-    });
-
-    it(':ios: setColumnToValue should not work for a date picker', async () => {
-      let failed = false;
-      try {
-        await element(by.id('datePicker')).setColumnToValue(1, "6");
-        await element(by.id('datePicker')).setColumnToValue(2, "34");
-        await expect(element(by.id('localTimeLabel'))).toHaveText('Time: 06:34');
-      } catch(ex) {
-        failed = true;
-      }
-
-      if(failed === false) {
-        throw new Error('Test should have thrown an error, but did not');
+      for (let i = 0; i < times; i++) {
+        await element(by.id('toggleDatePicker')).tap();
       }
     });
 
-
-      it(':ios: can select dates on a UIDatePicker, format: ISO8601', async () => {
-        await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
-        await expect(element(by.id('utcDateLabel'))).toHaveText('Date (UTC): Feb 6th, 2019');
-        await expect(element(by.id('utcTimeLabel'))).toHaveText('Time (UTC): 1:10 PM');
-      });
-
-      it(':ios: can select dates on a UIDatePicker, format: yyyy/MM/dd HH:mm', async () => {
-        await element(by.id('datePicker')).setDatePickerDate('2019/02/06 13:10', 'yyyy/MM/dd HH:mm');
+    test.each([
+      ['ISO8601', new Date(2019, 1, 6, 14, 10, 0).toISOString()],
+      ['yyyy/MM/dd HH:mm', '2019/02/06 14:10'],
+    ])('can select dates in %j format', async (formatString, dateString) => {
+      if (platform === 'ios') {
+        await element(by.id('datePicker')).setDatePickerDate(dateString, formatString);
         await expect(element(by.id('localDateLabel'))).toHaveText('Date (Local): Feb 6th, 2019');
-        await expect(element(by.id('localTimeLabel'))).toHaveText('Time (Local): 1:10 PM');
-      });
-    
-      it(':android: can select dates on a UIDatePicker, format: ISO8601', async () => {
+        await expect(element(by.id('localTimeLabel'))).toHaveText('Time (Local): 2:10 PM');
+      } else {
+        await element(by.id('openDatePicker')).tap();
         //rn-datepicker does not support testId's on android, so by.type is the only way to match the datepicker right now
         //@see https://github.com/react-native-datetimepicker/datetimepicker#view-props-optional-ios-only
         await element(by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
         await element(by.text('OK')).tap();
 
         await waitFor(element(by.id('utcDateLabel'))).toHaveText('Date (UTC): Feb 6th, 2019').withTimeout(3000);
-      });
+      }
+    });
 
-      it(':android: can select dates on a UIDatePicker, format: yyyy/MM/dd', async () => {
-        await element(by.type('android.widget.DatePicker')).setDatePickerDate('2019/02/06', 'yyyy/MM/dd');
-        await element(by.text('OK')).tap();
+    // Spinner-specific tests
+    if (platform !== 'ios' || mode !== 'spinner') return;
 
-        await waitFor(element(by.id('localDateLabel'))).toHaveText('Date (Local): Feb 6th, 2019').withTimeout(3000);
-      });
+    it('setColumnToValue should not work for a date picker', async () => {
+      const invalidAction = element(by.id('datePicker')).setColumnToValue(1, "6");
+      await jestExpect(invalidAction).rejects.toThrow(/is not an instance of.*UIPickerView/);
+    });
+  });
 });
