@@ -20,9 +20,11 @@ import com.wix.detox.espresso.scroll.ScrollHelper;
 import com.wix.detox.espresso.scroll.SwipeHelper;
 
 import org.hamcrest.Matcher;
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -155,19 +157,19 @@ public class DetoxAction {
         return new ScrollToIndexAction(index);
     }
 
-    public static ViewAction setDatePickerDate(String dateString, String formatString) {
-        if (Build.VERSION.SDK_INT < 26) {
-            throw new AssertionError("To use DatePicker on Android you must use API 26 or above");
-        }
-
+    public static ViewAction setDatePickerDate(String dateString, String formatString) throws ParseException {
         if (formatString.equals("ISO8601")) {
+            if (Build.VERSION.SDK_INT < 26) {
+                throw new AssertionError("To use DatePicker on Android you must use API 26 or above");
+            }
             ZonedDateTime date = ZonedDateTime.parse(dateString);
             return PickerActions.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
         } 
             
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatString);
-        LocalDate date = LocalDate.parse(dateString, formatter);
-        return PickerActions.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+        Date date = new SimpleDateFormat(formatString).parse(dateString);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return PickerActions.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
     }
 
     public static ViewAction adjustSliderToPosition(final double newPosition) {
