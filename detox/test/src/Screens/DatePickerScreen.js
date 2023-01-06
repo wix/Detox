@@ -29,9 +29,23 @@ export default class DatePickerScreen extends Component {
     return moment(this.state.chosenDate).format("MMM Do, YYYY");
   }
 
+  getTimeUTC() {
+    return moment(this.state.chosenDate).utc().format("h:mm A");
+  }
+
+  getDateUTC() {
+    return moment(this.state.chosenDate).utc().format("MMM Do, YYYY");
+  }
+
   render() {
     return (
       <View style={styles.container}>
+        <Text style={styles.dateText} testID="utcDateLabel">
+          {"Date (UTC): " + this.getDateUTC()}
+        </Text>
+        <Text style={styles.dateText} testID='utcTimeLabel'>
+          {"Time (UTC): " + this.getTimeUTC()}
+        </Text>
         <Text style={styles.dateText} testID="localDateLabel">
           {"Date (Local): " + this.getDateLocal()}
         </Text>
