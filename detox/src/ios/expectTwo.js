@@ -7,8 +7,8 @@ const _ = require('lodash');
 const tempfile = require('tempfile');
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
-const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { removeMilliseconds } = require('../utils/dateUtils');
+const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
