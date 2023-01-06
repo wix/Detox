@@ -158,15 +158,13 @@ public class DetoxAction {
     }
 
     public static ViewAction setDatePickerDate(String dateString, String formatString) throws ParseException {
+        Date date;
         if (formatString.equals("ISO8601")) {
-            if (Build.VERSION.SDK_INT < 26) {
-                throw new AssertionError("To use DatePicker on Android you must use API 26 or above");
-            }
-            ZonedDateTime date = ZonedDateTime.parse(dateString);
-            return PickerActions.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
-        } 
+            date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(dateString);
+        } else {
+            date = new SimpleDateFormat(formatString).parse(dateString);
+        }
             
-        Date date = new SimpleDateFormat(formatString).parse(dateString);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return PickerActions.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
