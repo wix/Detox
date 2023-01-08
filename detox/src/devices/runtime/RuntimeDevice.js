@@ -1,6 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const log = require('../../utils/logger').child({ cat: 'device' });
+const shouldUseOptimizedInstall = require('../../utils/shouldUseOptimizedInstall');
 const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 
@@ -121,11 +122,13 @@ class RuntimeDevice {
     if (params.delete) {
       await this.terminateApp(bundleId);
 
-      if (this._behaviorConfig.useLegacyLaunchApp) {
+      const platform = this.getPlatform();
+
+      if (shouldUseOptimizedInstall(platform, this._behaviorConfig.useLegacyLaunchApp)) {
+        await this.resetAppState();
+      } else {
         await this.uninstallApp();
         await this.installApp();
-      } else {
-        await this.resetAppState();
       }
 
     } else if (newInstance) {

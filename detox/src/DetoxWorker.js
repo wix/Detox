@@ -7,6 +7,7 @@ const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
 const symbols = require('./symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
+const shouldUseOptimizedInstall = require('./utils/shouldUseOptimizedInstall');
 const uuid = require('./utils/uuid');
 
 class DetoxWorker {
@@ -260,7 +261,15 @@ class DetoxWorker {
       .map(0)
       .value();
 
-    if (this._behaviorConfig.useLegacyLaunchApp) {
+    const platform = this._config.device.type.split('.')[0];
+
+    if (shouldUseOptimizedInstall(platform, this._behaviorConfig.useLegacyLaunchApp)) {
+      for (const appName of appNames) {
+        yield this.device.selectApp(appName);
+        // @ts-ignore
+        yield this.device.resetAppState();
+      }
+    } else {
       for (const appName of appNames) {
         yield this.device.selectApp(appName);
         yield this.device.uninstallApp();
@@ -269,12 +278,6 @@ class DetoxWorker {
       for (const appName of appNames) {
         yield this.device.selectApp(appName);
         yield this.device.installApp();
-      }
-    } else {
-      for (const appName of appNames) {
-        yield this.device.selectApp(appName);
-        // @ts-ignore
-        yield this.device.resetAppState();
       }
     }
   }

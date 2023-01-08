@@ -229,7 +229,10 @@ describe('DetoxWorker', () => {
         expect(runtimeDevice.selectApp.mock.calls[4]).toEqual([null]);
       });
 
-      it('should call resetAppState for each app for reinstallApp false', async () => {
+      it('should call resetAppState for each app for useLegacyLaunchApp false on android', async () => {
+        detoxConfig.device.type = 'android.emu.fake';
+        detoxConfig.behavior.useLegacyLaunchApp = false;
+
         await init();
 
         expect(runtimeDevice.resetAppState).toHaveBeenCalledTimes(2);

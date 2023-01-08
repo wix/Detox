@@ -76,6 +76,10 @@ describe('Device', () => {
       expect(this.driver.installApp).not.toHaveBeenCalled();
     }
 
+    expectOptimizedInstallAppNotCalled() {
+      expect(this.driver.optimizedInstallApp).not.toHaveBeenCalled();
+    }
+
     expectOptimizedInstallAppCalled() {
       expect(this.driver.optimizedInstallApp).toHaveBeenCalled();
     }
@@ -145,6 +149,7 @@ describe('Device', () => {
           launchArgs,
         },
       },
+      getPlatform: jest.fn,
     });
   }
 
@@ -349,7 +354,7 @@ describe('Device', () => {
       driverMock.expectTerminateCalled();
     });
 
-    it(`(relaunch) with delete=true and useLegacyLaunchApp true`, async () => {
+    it(`(relaunch) with delete=true on android and useLegacyLaunchApp false`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
       device._behaviorConfig.useLegacyLaunchApp = true;
@@ -359,23 +364,27 @@ describe('Device', () => {
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
-    it(`(relaunch) with delete=true should always delete and reinstall`, async () => {
+    it(`(relaunch) with delete=true should delete and reinstall if not optimizedAppInstall`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
+      driverMock.driver.getPlatform.mockReturnValue('ios');
+      device._behaviorConfig.useLegacyLaunchApp = false;
+
       await device.relaunchApp({ delete: true });
 
-      driverMock.expectOptimizedInstallAppCalled();
+      driverMock.expectOptimizedInstallAppNotCalled();
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
-    it(`given behaviorConfig.useLegacyLaunchApp == false should call optimizedInstallApp`, async () => {
+    it(`given behaviorConfig.useLegacyLaunchApp == false and android should call optimizedInstallApp`, async () => {
       const device = await aValidDevice();
 
+      driverMock.driver.getPlatform.mockReturnValue('android');
       device._behaviorConfig.useLegacyLaunchApp = false;
       await device.relaunchApp({ delete: true });
 
       expect(driverMock.driver.launchApp).toHaveBeenCalled();
-      expect(driverMock.driver.optimizedInstallApp).toHaveBeenCalled();
+      driverMock.expectOptimizedInstallAppCalled();
     });
 
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
