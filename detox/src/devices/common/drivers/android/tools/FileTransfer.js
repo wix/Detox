@@ -14,6 +14,7 @@ class FileTransfer {
 
   async send(deviceId, sourcePath, destinationFilename) {
     const destinationPath = path.posix.join(this._dir, destinationFilename);
+    console.log(`yondbg send destinationPath: ${destinationPath}`);
     await this._adb.push(deviceId, sourcePath, destinationPath);
     return destinationPath;
   }

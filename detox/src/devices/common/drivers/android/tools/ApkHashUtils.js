@@ -11,13 +11,21 @@ class ApkHashUtils {
   }
 
   async saveHashToDevice({ fileTransfer, bundleId, deviceId, binaryPath }) {
+    console.log(`yondbg saveHashToDevice start for ${bundleId}`);
     const hashFilename = this._getHashFilename(bundleId);
     console.log(`yondbg saveHashToDevice hashFilename: ${hashFilename}`);
     await this._createLocalHashFile(hashFilename, binaryPath);
+
+    const localFilePath = process.cwd() + '/' + hashFilename;
+    const fileExists = fs.existsSync(localFilePath);
+    console.log(`yondbg saveHashToDevice localFilePath: ${localFilePath}`);
+    console.log(`yondbg saveHashToDevice fileExists: ${fileExists}`);
+
     await fileTransfer.prepareDestinationDir(deviceId);
-    const hashFilePath = process.cwd() + '/' + hashFilename;
-    await fileTransfer.send(deviceId, hashFilePath, hashFilename);
+    await fileTransfer.send(deviceId, localFilePath, hashFilename);
+
     this._deleteLocalHashFile(hashFilename);
+    console.log(`yondbg saveHashToDevice done for ${bundleId}`);
   }
 
   async isHashUpToDate({ deviceId, bundleId, binaryPath }) {
