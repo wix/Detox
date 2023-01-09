@@ -12,6 +12,7 @@ class ApkHashUtils {
 
   async saveHashToDevice({ fileTransfer, bundleId, deviceId, binaryPath }) {
     const hashFilename = this._getHashFilename(bundleId);
+    console.log(`yondbg saveHashToDevice hashFilename: ${hashFilename}`);
     await this._createLocalHashFile(hashFilename, binaryPath);
     await fileTransfer.prepareDestinationDir(deviceId);
     await fileTransfer.send(deviceId, hashFilename, hashFilename);
@@ -20,8 +21,13 @@ class ApkHashUtils {
 
   async isHashUpToDate({ deviceId, bundleId, binaryPath }) {
     const localHash = await generateHash(binaryPath);
+    console.log(`yondbg isHashUpToDate localHash: ${localHash}`);
+    console.log(`yondbg isHashUpToDate cwd is ${process.cwd()}`);
     const destinationPath = path.posix.join(FILE_PATH, this._getHashFilename(bundleId));
+    console.log(`yondbg isHashUpToDate destinationPath: ${destinationPath}`);
     const remoteHash = await this.adb.readFile(deviceId, destinationPath, true);
+    console.log(`yondbg isHashUpToDate remoteHash: ${remoteHash}`);
+    console.log(`yondbg isHashUpToDate localHash === remoteHash: ${localHash === remoteHash}`);
     return localHash === remoteHash;
   }
 
@@ -31,6 +37,7 @@ class ApkHashUtils {
 
   async _createLocalHashFile(hashFilename, binaryPath) {
     const hash = await generateHash(binaryPath);
+    console.log(`yondbg _createLocalHashFile hash: ${hash}`);
     fs.writeFileSync(hashFilename, hash);
   }
 

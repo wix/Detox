@@ -7,6 +7,7 @@ class FileTransfer {
   }
 
   async prepareDestinationDir(deviceId) {
+    console.log(`yondbg prepareDestinationDir this._dir: ${this._dir}`);
     await this._adb.shell(deviceId, `rm -fr ${this._dir}`);
     await this._adb.shell(deviceId, `mkdir -p ${this._dir}`);
   }
