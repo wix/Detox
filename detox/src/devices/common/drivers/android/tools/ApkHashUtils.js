@@ -32,7 +32,7 @@ class ApkHashUtils {
   }
 
   _getHashFilename(bundleId) {
-    return `${bundleId}.hash`;
+    return process.cwd() + '/' + `${bundleId}.hash`;
   }
 
   async _createLocalHashFile(hashFilename, binaryPath) {
