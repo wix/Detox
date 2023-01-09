@@ -137,6 +137,7 @@ class ADB {
   }
 
   async readFile(deviceId, filepath, silent = false) {
+    console.log(`yondbg Reading file ${filepath} on ${deviceId} with silent: ${silent}`);
     if (silent) {
       return await this.shell(deviceId, `cat ${filepath}`, { verbosity: 'low', silent: true }).catch(() => '');
     }

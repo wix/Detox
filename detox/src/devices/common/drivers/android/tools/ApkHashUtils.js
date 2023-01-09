@@ -38,11 +38,23 @@ class ApkHashUtils {
   async _createLocalHashFile(hashFilename, binaryPath) {
     const hash = await generateHash(binaryPath);
     console.log(`yondbg _createLocalHashFile hash: ${hash}`);
-    fs.writeFileSync(hashFilename, hash);
+
+    try {
+      fs.writeFileSync(hashFilename, hash, 'utf8');
+    } catch (e) {
+      console.log(`yondbg _createLocalHashFile error: ${e}`);
+    }
   }
 
   _deleteLocalHashFile(hashFilename) {
-    fs.unlinkSync(hashFilename);
+    const localFilePath = process.cwd() + '/' + hashFilename;
+    const fileExists = fs.existsSync(localFilePath);
+    console.log(`yondbg _deleteLocalHashFile localFilePath: ${localFilePath}`);
+    console.log(`yondbg _deleteLocalHashFile fileExists: ${fileExists}`);
+
+    if (fileExists) {
+      fs.unlinkSync(hashFilename);
+    }
   }
 }
 
