@@ -24,7 +24,7 @@ class ApkHashUtils {
     await fileTransfer.prepareDestinationDir(deviceId);
     await fileTransfer.send(deviceId, localFilePath, hashFilename);
 
-    this._deleteLocalHashFile(hashFilename);
+    // this._deleteLocalHashFile(hashFilename);
     console.log(`yondbg saveHashToDevice done for ${bundleId}`);
   }
 
@@ -56,14 +56,14 @@ class ApkHashUtils {
     }
   }
 
-  _deleteLocalHashFile(hashFilename) {
-    const localFilePath = process.cwd() + '/' + hashFilename;
-    const fileExists = fs.existsSync(localFilePath);
-    console.log(`yondbg _deleteLocalHashFile localFilePath: ${localFilePath}`);
-    console.log(`yondbg _deleteLocalHashFile fileExists: ${fileExists}`);
-
-    fs.unlinkSync(localFilePath);
-  }
+  // _deleteLocalHashFile(hashFilename) {
+  //   const localFilePath = process.cwd() + '/' + hashFilename;
+  //   const fileExists = fs.existsSync(localFilePath);
+  //   console.log(`yondbg _deleteLocalHashFile localFilePath: ${localFilePath}`);
+  //   console.log(`yondbg _deleteLocalHashFile fileExists: ${fileExists}`);
+  //
+  //   fs.unlinkSync(localFilePath);
+  // }
 }
 
 module.exports = ApkHashUtils;

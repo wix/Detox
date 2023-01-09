@@ -55,7 +55,6 @@ describe('apkHashUtils', () => {
       const hashFilePath = process.cwd() + '/' + hashFilename;
       const fs = require('fs');
       const writeFileSpy = jest.spyOn(fs, 'writeFileSync');
-      const deleteFileSpy = jest.spyOn(fs, 'unlinkSync');
 
       const params = {
         fileTransfer,
@@ -70,7 +69,6 @@ describe('apkHashUtils', () => {
       await expect(writeFileSpy).toHaveBeenCalledWith(hashFilename, mockHash, 'utf8');
       await expect(fileTransfer.send).toHaveBeenCalledTimes(1);
       await expect(fileTransfer.send).toHaveBeenCalledWith(mockDeviceId, hashFilePath, hashFilename);
-      await expect(deleteFileSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
