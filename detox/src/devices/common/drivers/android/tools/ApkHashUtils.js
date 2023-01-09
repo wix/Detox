@@ -42,6 +42,7 @@ class ApkHashUtils {
     try {
       fs.writeFileSync(hashFilename, hash, 'utf8');
     } catch (e) {
+      /* istanbul ignore next */
       console.log(`yondbg _createLocalHashFile error: ${e}`);
     }
   }
@@ -52,9 +53,7 @@ class ApkHashUtils {
     console.log(`yondbg _deleteLocalHashFile localFilePath: ${localFilePath}`);
     console.log(`yondbg _deleteLocalHashFile fileExists: ${fileExists}`);
 
-    if (fileExists) {
-      fs.unlinkSync(hashFilename);
-    }
+    fs.unlinkSync(localFilePath);
   }
 }
 
