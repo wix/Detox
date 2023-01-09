@@ -15,7 +15,8 @@ class ApkHashUtils {
     console.log(`yondbg saveHashToDevice hashFilename: ${hashFilename}`);
     await this._createLocalHashFile(hashFilename, binaryPath);
     await fileTransfer.prepareDestinationDir(deviceId);
-    await fileTransfer.send(deviceId, hashFilename, hashFilename);
+    const hashFilePath = process.cwd() + '/' + hashFilename;
+    await fileTransfer.send(deviceId, hashFilePath, hashFilename);
     this._deleteLocalHashFile(hashFilename);
   }
 
@@ -32,7 +33,7 @@ class ApkHashUtils {
   }
 
   _getHashFilename(bundleId) {
-    return process.cwd() + '/' + `${bundleId}.hash`;
+    return `${bundleId}.hash`;
   }
 
   async _createLocalHashFile(hashFilename, binaryPath) {

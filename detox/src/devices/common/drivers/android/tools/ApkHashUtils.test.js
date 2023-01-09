@@ -52,6 +52,7 @@ describe('apkHashUtils', () => {
   describe('saveHashToDevice', () => {
     it('should save hash remotely and delete local hash file', async () => {
       const hashFilename = `${mockBundleId}.hash`;
+      const hashFilePath = process.cwd() + '/' + hashFilename;
       const fs = require('fs');
       const writeFileSpy = jest.spyOn(fs, 'writeFileSync');
       const deleteFileSpy = jest.spyOn(fs, 'unlinkSync');
@@ -68,7 +69,7 @@ describe('apkHashUtils', () => {
       await expect(writeFileSpy).toHaveBeenCalledTimes(1);
       await expect(writeFileSpy).toHaveBeenCalledWith(hashFilename, mockHash, 'utf8');
       await expect(fileTransfer.send).toHaveBeenCalledTimes(1);
-      await expect(fileTransfer.send).toHaveBeenCalledWith(mockDeviceId, hashFilename, hashFilename);
+      await expect(fileTransfer.send).toHaveBeenCalledWith(mockDeviceId, hashFilePath, hashFilename);
       await expect(deleteFileSpy).toHaveBeenCalledTimes(1);
     });
   });
