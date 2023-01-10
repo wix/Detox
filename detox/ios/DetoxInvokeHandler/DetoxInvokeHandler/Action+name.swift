@@ -7,7 +7,7 @@ import Foundation
 
 public extension Action {
   /// Returns the action name.
-  public var name: String {
+  var name: String {
     switch self {
       case .tap:
         return "tap"
