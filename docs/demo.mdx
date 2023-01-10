@@ -1,0 +1,506 @@
+import HomepageHeader from '@site/src/components/Homepage/Header/HomepageHeader';
+
+import '@site/src/css/custom.css';
+import '@site/node_modules/infima/dist/css/default/default.css';
+
+import FlavorizedCodeBlock from '@site/src/components/FlavorizedCodeBlock';
+
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# H1 heading
+
+## H2 heading
+
+### H3 heading
+
+#### H4 heading
+
+##### H5 heading
+
+###### H6 heading
+
+## Admonitions:
+
+:::caution CAUTION
+
+This is a CAUTION admonition with a custom background color, and a border color.
+
+:::
+
+:::danger DANGER
+
+This is a DANGER admonition with a custom background color, and a border color.
+
+:::
+
+:::info INFO
+
+This is an INFO admonition with a custom background color, and a border color.
+
+:::
+
+:::success TIP
+
+This is a TIP admonition with a custom background color, and a border color.
+
+:::
+
+:::note NOTE
+
+This is a NOTE admonition with a custom background color, and a border color.
+
+:::
+
+#### _BELOW is an admonition with code span and a link:_
+
+:::tip
+If you see a message like `command not found: detox`, make sure you have [installed Detox command line tools](#1-command-line-tools-detox-cli).
+:::
+After Detox generated these files in your project's root, you still have some work to do with them:
+
+#### BELOW is an admonition with links in a bullet list with a line of text to show spacing:
+
+:::caution Note
+
+At the moment, Detox does not support non-React Native apps on **Android** due to the blocking issues:
+
+- [Restore support for pure-native/hybrid Projects](https://github.com/wix/Detox/issues/2543)
+- [cannot be cast to com.facebook.react.ReactApplication](https://github.com/wix/Detox/issues/1220)
+- [native android app Process crashes](https://github.com/wix/Detox/issues/1093)
+
+:::
+
+#### _BELOW is an admonition with FlavorizedCodeBlock, links and code spans:_
+
+:::info
+
+If your app uses [CocoaPods] (all modern React Native projects do since `0.60.0`), make sure
+to run `pod install` in your `ios/` folder before building with Detox.
+
+If your project doesn't use the pods, then you won't have any `YourApp.xcworkspace` in your iOS project directory.
+You should search instead for something like `YourApp.xcodeproj` there, and adjust your build command accordingly:
+
+<FlavorizedCodeBlock language="diff" header={'   apps: {\n'} flavors={['Debug', 'Release']}>
+  {(conf) => `\
+     'ios.${conf.toLowerCase()}': {
+       type: 'ios.app',
+       binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/example.app',
+-      build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
++      build: 'xcodebuild -project ios/example.xcodeproj -scheme example -sdk -configuration ${conf} iphonesimulator -derivedDataPath ios/build'
+     },`}
+</FlavorizedCodeBlock>
+
+:::
+
+However, native iOS apps are expected to work fine with Detox, and if that's your case, this introduction will help you in equal measure.
+
+#### _BELOW is an admonition with TABS, bold text, code spans, plain text box, linux text block, bash with highlighting:_
+
+:::tip
+
+If you see `zsh: command not found` (or a similar message), please go back to
+[Setting up the environment](../getting-started.mdx#setting-up-the-environment) section
+where we were redirecting you to the official **React Native CLI Quickstart**, and make sure you
+have completed it.
+
+Provided you have `ANDROID_SDK_ROOT` (or `ANDROID_HOME`) environment variables
+defined, using an explicit path to `emulator` should help:
+
+<Tabs groupId="desktopOS">
+  <TabItem value="darwin" label="MacOS">
+    <CodeBlock language="bash">$ANDROID_SDK_ROOT/emulator/emulator -list-avds</CodeBlock>
+  </TabItem>
+  <TabItem value="linux" label="Linux">
+    <CodeBlock language="bash">$ANDROID_SDK_ROOT/emulator/emulator -list-avds</CodeBlock>
+  </TabItem>
+  <TabItem value="win32" label="Windows">
+    <CodeBlock language="plain text">%ANDROID_HOME%\emulator\emulator -list-avds</CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::
+
+#### _BELOW is an admonition with plain text examples, code spans and emoji:_
+
+:::info
+
+If you wish to use an attached Android device (via USB or wireless network), make sure it is available:
+
+```bash
+adb devices
+```
+
+If the device is properly connected, you should get an output like this:
+
+```plain text
+List of devices attached
+2F6315NVPH      device
+```
+
+Assuming the device is available (troubleshooting _adb_ issues is out of scope of this tutorial), you just
+need to use `android.att.*` Detox configurations instead of `android.emu.*` where required.
+
+:warning: If you have multiple devices connected, replace that loose regular expression (`adbName: '.*'`)
+in your Detox config with a specific device name.
+
+:::
+
+#### _BELOW is an admonition with JS code blocke:_
+
+:::tip
+
+It is a good idea to start every test from a fresh state, since the preceeding ones might leave your application
+in an unpredictable state if they fail.
+
+One way to do it is to launch the app as a new instance in `beforeEach` hook instead:
+
+```js
+beforeEach(async () => {
+  await device.launchApp({ newInstance: true });
+});
+```
+
+The other way is to _reload React Native_ without restarting the app. Like any live reloading, it is apt to cause glitches for more complex apps,
+but for simpler apps it proves to be a quicker way to reset the state between the tests:
+
+```js
+beforeEach(async () => {
+  await device.reloadReactNative();
+});
+```
+
+So, pick your favorite one wisely, on the basis of _speed_ vs _stability_ considerations.
+
+:::
+
+## Tabs with code spans:
+
+<Tabs groupId="configurationName">
+  <TabItem value="ios.sim.debug" label="npm">
+    <CodeBlock language="sh">npm i --package.js</CodeBlock>
+  </TabItem>
+  <TabItem value="ios.sim.release" label="yarn">
+    <CodeBlock language="sh">yarn add axios </CodeBlock>
+  </TabItem>
+</Tabs>
+
+## CodeBlocks, line spacings, links, images, tables, code fragments, headings section, lists:
+
+Here is an example of a text paragraph with link [Jest](https://jestjs.io)
+
+This is a double-spaced line and example of code span `package.json`
+
+```bash npm2yarn
+npm install "jest@^29" --save-dev
+```
+
+#### _ABOVE code snippets have a left side red color and right side black color when using `bash`:_
+
+```bash
+npm start
+
+> react-native start
+
+#                        #######
+#                   ################
+#                #########     #########
+#            #########             ##########
+#        #########        ######        #########
+#       ##########################################
+#      #####      #####################       #####
+#      #####          ##############          #####
+#      #####    ###       ######       ###    #####
+#      #####    #######            #######    #####
+#      #####    ###########    ###########    #####
+#      #####    ##########################    #####
+#      #####    ##########################    #####
+#      #####      ######################     ######
+#       ######        #############        #######
+#         #########        ####       #########
+#              #########          #########
+#                  ######### #########
+#                       #########
+#
+#
+#                    Welcome to Metro!
+#              Fast - Scalable - Integrated
+```
+
+#### _BELOW a plain text code spans:_
+
+```plain text
+Created a file at path: ./package.json
+```
+
+```plain text
+// highlight-next-line
+Pixel_3a_API_30_x86
+Pixel_API_30
+```
+
+#### _ABOVE is a code snippet using `Plain Text` and one with line highlighting:_
+
+```json
+{
+  "devices": {
+    "emulator.oss": {
+      "type": "android.emulator",
+      "device": "...",
+      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"]
+    }
+  }
+}
+```
+
+#### _ABOVE is a code snippet using `JSON`:_
+
+#### _BELOW is a code block title and code block content using JSX:_
+
+````jsx title="/src/components/HelloCodeTitle.js"
+
+```jsx title="/src/components/HelloCodeTitle.js"
+function HelloCodeTitle(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+````
+
+Open `Google Chrome` and go to `chrome://inspect` tab, where you'll see `./node_modules/.bin/jest` as a remote
+target waiting until you click `inspect` to attach to it.
+
+![](./img/inspect-brk.png)
+
+#### _ABOVE is a single spaced line with code snippet and an image:_
+
+#### _BELOW is an H2 heading with code spans:_
+
+## Step 2: Add `build` and `test` Commands to Your CI Script\_:
+
+#### _BELOW is a YAML code block, H3 heading using a bullet point and spacing, and different colors based on hashtags and chars in quotes:_
+
+### • Running Detox on [Travis CI](https://travis-ci.org/)
+
+Detox’s own build is running on Travis, check out Detox’s [`.travis.yml`](https://github.com/wix/Detox/tree/master/.travis.yml) file to see how it’s done.
+
+This is a simple example configuration to get you started with Detox on Travis:
+
+```yaml
+language: objective-c
+osx_image: xcode8.3
+
+branches:
+  only:
+    - master
+
+trigger_map:
+- push_branch: "*"
+  workflow: tests
+workflows:
+  _tests_setup:
+    steps:
+    - activate-ssh-key: {}
+    - git-clone:
+        inputs:
+        - clone_depth: ''
+        title: Git Clone Repo
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+install:
+  - brew tap wix/brew
+    - push_branch: "*"
+
+  - npm install react-native-cli --global
+  - npm install detox-cli --global
+  # That is not compatible with the one that Detox is using ($ANDROID_HOME/tools/bin)
+    - echo yes | $ANDROID_HOME/tools/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64"
+    # Nexus 6P, API 27, XXXHDPI
+
+script:
+  - detox build --configuration ios.sim.release
+  - detox test --configuration ios.sim.release --cleanup
+```
+
+#### _BELOW is an H3 heading using a bullet point with 3 lines of double spacing, code span and links with standard link color:_
+
+### • Running Detox on [Bitrise](https://www.bitrise.io/)
+
+Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](https://blog.bitrise.io/post/how-to-set-up-a-react-native-app-on-bitrise) guide.
+
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise `.yml` file for a workflow called `tests`.
+
+Additionally, you can use a [webhook](https://devcenter.bitrise.io/en/apps/webhooks/adding-incoming-webhooks.html) on Bitrise to post the build status directly into your Slack channel.
+
+#### _BELOW is an H1 page header followed by varied line spacing:_
+
+# Environment Setup
+
+**Welcome to Detox!**
+
+The _Introduction section_ walks you through setting up Detox in your project, one step at a time.
+
+You will find that some steps are longer than the others: some are a couple of paragraphs, while the others look like a dedicated multistep guide.
+Bear with us - it is all necessary, and once set up, it is easy to move forward with writing tests at a high pace.
+
+Please select type of your mobile application before you start the tutorial:
+
+#### _BELOW is an H2 heading with spacing and a single line with an emoji and link, some paragaraph spacings and forced RED styling for line text:_
+
+## React Native CLI Quickstart
+
+Your first step would be to complete the
+[📚 React Native CLI Quickstart Guide](https://reactnative.dev/docs/next/environment-setup).
+
+![](./img/rn-env.png)
+
+<p>
+  Open the link above and switch there to <b>React Native CLI Quickstart</b> tab to see the interactive tutorial for <b>Development OS</b>{' '}
+  and <b>Target OS</b> of your choice.
+</p>
+
+<p>
+  Follow all the steps <span style={{ color: 'red' }}>(yes, even if you have a native app!)</span> and make sure you can create and run
+  React Native apps on virtual testing devices.
+</p>
+
+#### _BELOW is an example of a single line with bold text and a code span with a link and blue link color and also another link:_
+
+This tool is **required** by Detox to work with iOS simulators. The recommended way to install
+[`applesimutils`](https://github.com/wix/AppleSimulatorUtils) is via [Homebrew](https://brew.sh):
+
+#### _BELOW is a single line with code spans bullet list:_
+
+After Detox generated these files in your project's root, you still have some work to do with them:
+
+- `.detoxrc.js` – Detox config file;
+- `e2e/jest.config.js` – Jest configuration;
+- `e2e/starter.test.js` – dummy first test.
+
+#### BELOW is an example of a text line and spacing between an unordered list and code spans:
+
+Assuming you have a regular React Native project, these are the files you normally would need to
+patch or create if they are missing:
+
+- **Build scripts:**
+  - `android/build.gradle`
+  - `android/app/build.gradle`
+- **Native test code:**
+  - `android/app/src/androidTest/java/com/<your.package>/DetoxTest.java`
+- **Manifests:**
+  - `android/app/src/main/AndroidManifest.xml`
+  - `android/app/src/main/res/xml/network_security_config.xml`
+
+### 4.1. Patching build scripts
+
+## FlavorizedCodeBlock variations
+
+Open your Detox config and replace `YOUR_APP` placeholder with the actual app name, e.g.:
+
+<FlavorizedCodeBlock language="diff" title={'.detoxrc.js'} header={'   apps: {\n'} flavors={['Debug', 'Release']}>
+  {(conf) => `\
+     'ios.${conf.toLowerCase()}': {
+       type: 'ios.app',
+-      binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/YOUR_APP.app',
++      binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/example.app',
+-      build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
++      build: 'xcodebuild -workspace ios/example.xcworkspace -scheme example -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
+     },`}
+</FlavorizedCodeBlock>
+
+[cocoapods]: https://cocoapods.org/
+
+```js title=".detoxrc.js"
+module.exports = {
+  apps: {
+    'android.debug': {
+      type: 'android.apk',
+      // highlight-start
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug'
+      // highlight-end
+    },
+    'android.release': {
+      type: 'android.apk',
+      // highlight-start
+      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
+      // highlight-end
+    }
+    // ...
+  }
+  // ...
+};
+```
+
+## Step 3: Device configs
+
+By default, Detox config suggests default device types for iOS and Android:
+
+```js title=".detoxrc.js"
+/** @type {Detox.DetoxConfig} */
+module.exports = {
+  // ...
+  devices: {
+    simulator: {
+      type: 'ios.simulator',
+      device: {
+        // highlight-next-line
+        type: 'iPhone 12'
+      }
+    },
+    attached: {
+      type: 'android.attached',
+      device: {
+        // highlight-next-line
+        adbName: '.*' // any attached device
+      }
+    },
+    emulator: {
+      type: 'android.emulator',
+      device: {
+        // highlight-next-line
+        avdName: 'Pixel_3a_API_30_x86'
+      }
+    }
+  }
+};
+```
+
+#### _BELOW is a JAVA code block with its colors and highlighting for syntax:_
+
+```java title="android/app/src/androidTest/java/com/<your.package>/DetoxTest.java" showLineNumbers
+// highlight-next-line
+package com.<your.package>; // (1)
+
+import com.wix.detox.Detox;
+import com.wix.detox.config.DetoxConfig;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+
+@RunWith(AndroidJUnit4.class)
+@LargeTest
+public class DetoxTest {
+    @Rule // (2)
+// highlight-next-line
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class, false, false);
+
+    @Test
+    public void runDetoxTests() {
+        DetoxConfig detoxConfig = new DetoxConfig();
+        detoxConfig.idlePolicyConfig.masterTimeoutSec = 90;
+        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60;
+        detoxConfig.rnContextLoadTimeoutSec = (BuildConfig.DEBUG ? 180 : 60);
+
+        Detox.runTests(mActivityRule, detoxConfig);
+    }
+}
+```
