@@ -20,7 +20,8 @@ class ElementMatcher: ElementMatcherProtocol {
 
   func match(to pattern: ElementPattern) throws -> [AnyHashable] {
     matcherLog("called to match with pattern: \(pattern)")
-    return app.newQuery().matching(
+
+    return try app.newQuery().matching(
       pattern: pattern,
       whiteBoxMessageHandler: whiteBoxMessageHandler
     ).run()

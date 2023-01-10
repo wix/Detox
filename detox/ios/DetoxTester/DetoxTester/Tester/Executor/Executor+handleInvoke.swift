@@ -40,21 +40,38 @@ extension Executor {
     do {
       handlerResult = try handler.handle(params)
     } catch {
-      execLog("the invoke-handler failed to handle params: \(error)", type: .error)
+      let errorMessage = "the invoke-handler failed to handle params: \(error)"
+      execLog(errorMessage, type: .error)
 
-      // TODO: replace this with a proper failure message to the app...
-      fatalError("Error while executing invoke")
+      // TODO: add "viewHierarchy" param (#3830).
+      sendAction(
+        .reportTestFailed,
+        params: [
+          "details": errorMessage
+        ],
+        messageId: messageId
+      )
+
+      return
     }
 
     guard let result = (handlerResult?.value ?? [:]) as? [String : AnyHashable]
     else {
-      execLog(
-        "failed to handle invoke-handler result: `\(String(describing: handlerResult?.value))`",
-        type: .error
+      let errorMessage =
+        "failed to handle invoke-handler result: `\(String(describing: handlerResult?.value))`"
+
+      execLog(errorMessage, type: .error)
+
+      // TODO: add "viewHierarchy" param (#3830).
+      sendAction(
+        .reportTestFailed,
+        params: [
+          "details": errorMessage
+        ],
+        messageId: messageId
       )
 
-      // TODO: replace this with a proper failure message to the app...
-      fatalError("Error while executing invoke")
+      return
     }
 
     sendAction(

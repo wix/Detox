@@ -15,7 +15,7 @@ extension XCUIElementQuery {
   /// Returns a new query matches the given pattern.
   func matching(
     pattern: ElementPattern, whiteBoxMessageHandler: WhiteBoxMessageHandler
-  ) -> XCUIElementQuery {
+  ) throws -> XCUIElementQuery {
     switch pattern {
       case .label(let label):
         return matching(parameter: .label, byOperator: .equals, toValue: label)
@@ -26,7 +26,10 @@ extension XCUIElementQuery {
       case .and(let patterns):
         var query = self
         for pattern in patterns {
-          query = query.matching(pattern: pattern, whiteBoxMessageHandler: whiteBoxMessageHandler)
+          query = try query.matching(
+            pattern: pattern,
+            whiteBoxMessageHandler: whiteBoxMessageHandler
+          )
         }
         return query
 
@@ -55,7 +58,8 @@ extension XCUIElementQuery {
             "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
             type: .error
           )
-          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
+
+          throw Error.cannotMatchByPattern(pattern: pattern)
         }
 
         guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
@@ -74,7 +78,8 @@ extension XCUIElementQuery {
             "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
             type: .error
           )
-          fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
+
+          throw Error.cannotMatchByPattern(pattern: pattern)
         }
 
         guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
@@ -89,7 +94,8 @@ extension XCUIElementQuery {
       case .traits, .ancestor, .descendant:
         execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework",
                 type: .error)
-        fatalError("Cannot match by this pattern (\(pattern)) type using the XCUITest framework")
+
+        throw Error.cannotMatchByPattern(pattern: pattern)
     }
   }
 }
@@ -156,7 +162,6 @@ private extension XCUIElementQuery {
     return matching(predicate)
   }
 
-  // TODO: try to improve this function with
   func matchingNone() -> XCUIElementQuery {
     return matching(NSPredicate { _,_ in return false })
   }
@@ -176,5 +181,3 @@ private extension XCUIElementQuery {
     case matches = "MATCHES"
   }
 }
-
-// DAE38C8E-DD5D-4DE0-8980-21E8E87516A2

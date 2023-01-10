@@ -48,10 +48,14 @@ extension XCUIElement {
 
     if shouldClearBefore == true {
       guard let currentValue = self.value as? String else {
-        throw XCUIElement.Error.invalidKeyboardTypeActionNonStringValue
+        throw Error.invalidKeyboardTypeActionNonStringValue
       }
 
-      let clearString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentValue.count)
+      let clearString = String(
+        repeating: XCUIKeyboardKey.delete.rawValue,
+        count: currentValue.count
+      )
+
       typeText(clearString)
     }
 

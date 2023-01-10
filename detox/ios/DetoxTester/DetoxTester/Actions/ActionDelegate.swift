@@ -30,7 +30,7 @@ class ActionDelegate: ActionDelegateProtocol {
     testCase: XCTestCase
   ) throws {
     guard let element = element as? XCUIElement else {
-      throw ActionDelegateError.notXCUIElement
+      fatalError("element (\(element) is not an XCUIElement.")
     }
 
     uiLog(
@@ -67,7 +67,7 @@ class ActionDelegate: ActionDelegateProtocol {
         let holdDuration
       ):
         guard let targetElement = targetElement as? XCUIElement else {
-          throw ActionDelegate.ActionDelegateError.notXCUIElement
+          fatalError("target element (\(targetElement) is not an XCUIElement.")
         }
 
         if let response = whiteBoxMessageHandler(
@@ -84,14 +84,13 @@ class ActionDelegate: ActionDelegateProtocol {
           )) {
           response.assertResponse(equalsTo: .completed)
 
-          // TODO: remove log
-          uiLog("long press and drag was executed by the app", type: .debug)
+          uiLog("long press and drag was executed by the app (white-box)", type: .debug)
         } else {
           // Element holding after dragging is not working on XCUITest.
           // See: https://github.com/asafkorem/XCUITestHoldBugReproduction for details regarding
           // this bug.
           uiLog(
-            "long press and drag was executed by XCUITest. Note that the preferred " +
+            "long press and drag was executed by XCUITest (black-box). Note that the preferred " +
             "implementation for this action is invoked only for white-box-handled applications",
             type: .debug
           )
@@ -129,7 +128,7 @@ class ActionDelegate: ActionDelegateProtocol {
         try element.tapKey(type)
 
       case .changeText(let change):
-        element.changeText(change)
+        try element.changeText(change)
 
       case .scroll(let type):
         element.scroll(type, app: app)
@@ -149,9 +148,6 @@ class ActionDelegate: ActionDelegateProtocol {
         element.adjustSlider(to: normalizedPosition)
 
       case .screenshot, .getAttributes:
-        // TODO: remove log
-        uiLog("this action should not be called under `act`: \(action.name)", type: .error)
-
         fatalError("this action should not be called under `act()`")
     }
   }
@@ -163,7 +159,7 @@ class ActionDelegate: ActionDelegateProtocol {
     let mappedElements = elements.compactMap { $0 as? XCUIElement }
     guard mappedElements.count == elements.count
     else {
-      throw ActionDelegateError.notXCUIElement
+      fatalError("some element in the elements list is not an XCUIElement (\(elements)).")
     }
 
     let attributes = mappedElements.map {
@@ -175,7 +171,8 @@ class ActionDelegate: ActionDelegateProtocol {
     } else {
       guard let attributes = attributes.first else {
         uiLog("could not find any attributes (no matching elements)", type: .error)
-        fatalError("could not find any attributes (no matching elements)")
+
+        throw Error.noMatchingElement
       }
 
       return attributes
@@ -187,11 +184,5 @@ class ActionDelegate: ActionDelegateProtocol {
     date: Date = Date.now
   ) throws -> AnyCodable {
     return try AnyCodable(app.takeScreenshot(imageName, date: date))
-  }
-}
-
-extension ActionDelegate {
-  enum ActionDelegateError: Error {
-    case notXCUIElement
   }
 }
