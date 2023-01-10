@@ -30,25 +30,25 @@ extension XCUIElement {
   }
 
   /// Changes the text in the element with the given text and change type.
-  func changeText(_ changeType: Action.ChangeTextType) {
+  func changeText(_ changeType: Action.ChangeTextType) throws {
     switch changeType {
       case .clear:
-        changeText(nil, shouldClearBefore: true)
+        try changeText(nil, shouldClearBefore: true)
 
       case .type(let text):
-        changeText(text, shouldClearBefore: false)
+        try changeText(text, shouldClearBefore: false)
 
       case .replace(let text):
-        changeText(text, shouldClearBefore: true)
+        try changeText(text, shouldClearBefore: true)
     }
   }
 
-  private func changeText(_ text: String?, shouldClearBefore: Bool) {
+  private func changeText(_ text: String?, shouldClearBefore: Bool) throws {
     self.focusOnElement()
 
     if shouldClearBefore == true {
       guard let currentValue = self.value as? String else {
-        fatalError("Tried to clear and type text into a non string value")
+        throw XCUIElement.Error.invalidKeyboardTypeActionNonStringValue
       }
 
       let clearString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentValue.count)

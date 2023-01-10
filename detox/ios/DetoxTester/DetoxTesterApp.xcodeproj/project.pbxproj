@@ -84,6 +84,7 @@
 		60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */; };
 		60F3D47128322EF500732955 /* WebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F3D47028322EF500732955 /* WebSocketServer.swift */; };
 		60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */; };
+		60F96DD8296D75E60047B332 /* XCUIElement+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */; };
 		60F9F9392808369B005DB569 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F9382808369B005DB569 /* Menu.swift */; };
 		60F9F93E2808396D005DB569 /* MenuStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */; };
 		60F9F9402808397C005DB569 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F93F2808397C005DB569 /* MenuViewController.swift */; };
@@ -228,6 +229,7 @@
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60F3D47028322EF500732955 /* WebSocketServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketServer.swift; sourceTree = "<group>"; };
 		60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+getAppUnderTest.swift"; sourceTree = "<group>"; };
+		60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Error.swift"; sourceTree = "<group>"; };
 		60F9F9382808369B005DB569 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MenuStoryboard.storyboard; sourceTree = "<group>"; };
 		60F9F93F2808397C005DB569 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
@@ -671,6 +673,7 @@
 				60FBF5F028184828000B73B1 /* XCUIElement+setColumnToValue.swift */,
 				6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */,
 				60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */,
+				60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */,
 			);
 			path = XCUIElement;
 			sourceTree = "<group>";
@@ -870,6 +873,7 @@
 				60BF52ED281ECBFB00610DBD /* WhiteBoxExecutor.swift in Sources */,
 				605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */,
 				604B94B928313C3200508C27 /* Executor+captureViewHierarchy.swift in Sources */,
+				60F96DD8296D75E60047B332 /* XCUIElement+Error.swift in Sources */,
 				60C7F51027DE0978000D417A /* ServerMessageType.swift in Sources */,
 				60FBF5F128184828000B73B1 /* XCUIElement+setColumnToValue.swift in Sources */,
 				603497AD27F08D9300770EE0 /* Executor+cleanup.swift in Sources */,
