@@ -103,7 +103,7 @@ export default class DatePickerScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 100,
     paddingBottom: 50,
     flexDirection: 'column',
     alignItems: 'center',
