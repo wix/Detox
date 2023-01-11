@@ -50,7 +50,7 @@ public class InvokeHandler {
     switch parsedMessage.type {
       case .action:
         guard let action = parsedMessage.action else {
-          throw Error.invalidActionType
+          fatalError("invalid action type (\(parsedMessage)")
         }
 
         if action == .getAttributes {
@@ -207,7 +207,7 @@ public class InvokeHandler {
         return try adjustSliderAction(params: params)
 
       case .getAttributes:
-        throw Error.invalidActionHandlingRequest
+        throw fatalError("invalid action handling request, cannot handle get-attributes from here")
     }
   }
 
