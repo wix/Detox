@@ -6,13 +6,17 @@
 extension InvokeHandler {
   /// Represents an error caused by `InvokeHandler`.
   public enum Error: Swift.Error {
-    /// Action type is illegal.
-    case invalidActionType
-
     /// No element at specified index.
     case noElementAtIndex(index: Int, elementsCount: Int)
+  }
+}
 
-    /// Invalid action handling request.
-    case invalidActionHandlingRequest
+/// Extends `InvokeHandler.Error` with error description.
+extension InvokeHandler.Error {
+  var localizedDescription: String {
+    switch self {
+      case .noElementAtIndex(let index, let elementsCount):
+        return "Index \(index) beyond bounds [0 .. \(elementsCount)] for given matcher"
+    }
   }
 }

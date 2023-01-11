@@ -40,7 +40,7 @@ extension Executor {
     do {
       handlerResult = try handler.handle(params)
     } catch {
-      let errorMessage = "the invoke-handler failed to handle params: \(error)"
+      let errorMessage = "failed to handle request: \(error)"
       execLog(errorMessage, type: .error)
 
       // TODO: add "viewHierarchy" param (#3830).
@@ -52,13 +52,12 @@ extension Executor {
         messageId: messageId
       )
 
-      return
+      fatalError(errorMessage)
     }
 
     guard let result = (handlerResult?.value ?? [:]) as? [String : AnyHashable]
     else {
-      let errorMessage =
-        "failed to handle invoke-handler result: `\(String(describing: handlerResult?.value))`"
+      let errorMessage = "failed to handle response: `\(String(describing: handlerResult?.value))`"
 
       execLog(errorMessage, type: .error)
 
@@ -71,7 +70,7 @@ extension Executor {
         messageId: messageId
       )
 
-      return
+      fatalError(errorMessage)
     }
 
     sendAction(
