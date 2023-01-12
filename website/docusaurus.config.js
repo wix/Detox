@@ -84,7 +84,7 @@ const config = {
           {
             to: 'blog',
             label: 'Blog',
-            position: 'left',
+            position: 'left'
           },
           {
             to: 'showcase',
