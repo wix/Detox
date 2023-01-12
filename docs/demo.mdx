@@ -13,7 +13,7 @@ import TabItem from '@theme/TabItem';
 :::note
 
 This page is for internal use only. If you are a contributor to the Detox project, you can use this page to test your changes to the website documentation pages
-styling. If you are not a contributor, you can ignore this page. Follow this link to the [Detox Home Page](https://wix.github.io/Detox/)
+styling. If you are not a contributor, you can ignore this page. Follow this link to the [Detox Home Page](/).
 
 :::
 
@@ -53,50 +53,44 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismo
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
 
-## Paragraphs Section
+## Paragraphs section
 
-Dummy double-spaced paragraph example, consectetur adipiscing elit. Curabitur euismod,
+Dummy double-spaced paragraph example, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh tellus a mi.<br/>Integer blandit, enim quis malesuada fringilla, elit augue pellentesque justo, eget euismod elit sapien id magna. Sed molestie ultrices metus, a congue erat.
 
-arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh
+This is a regular text, an _italic text_, a **bold text**, a ***both italic and bold text***, a ~~strikethrough text~~, an `inline code text`, a [simple link](#), and a [`link with inline code`](#).
 
-tellus a mi. Integer blandit, enim quis malesuada fringilla, elit augue
-
-pellentesque justo, eget euismod elit sapien id magna. Sed molestie
-
-ultrices metus, a congue erat.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel **tortor**, bibendum id _pellentesque_ ullamcorper, \*congue** metus. In hac habitasse platea dictumst. Sed auctor, **nunc** eu _pellentesque_ congue, ~~augue est malesuada massa~~, in congue ipsum **mauris\*\* eget `massa` finibus.
-Fusce ~~elementum~~ velit vel **felis** congue, eu _feugiat_ nibh facilisis. Praesent mollis `dolor` id eros [ultrices](#) euismod. Sed ~~euismod~~ posuere **mauris** velit, quis _sodales_ mauris feugiat non. `Consectetur` a ~~ligula~~, ut congue **lacinia**, faucibus _lorem_.
+```plain text
+Here is an example of a code block with plain text.
+// highlight-next-line
+And this is a highlighted line.
+```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh tellus a mi. Integer blandit, enim quis malesuada fringilla, elit augue pellentesque justo, eget euismod elit sapien id magna. Sed molestie ultrices metus, a congue erat.
 
-#### _BELOW is an example of a single line with bold text and a code span with a link and blue link color and also another link:_
+![This is a placeholder image.](https://via.placeholder.com/728x450.png?text=Isquix+ConsecteturAdipiscing.ips+Siquis+lorem)
 
-Consectetur elit curabitur **required** by Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod.
-[Some link](#) is via [Some link](#):
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit:
+  - `dummy.config.js` – dummy config file;
+  - `dummy.test.js` – dummy test file;
+- Donec in dui eget metus aliquet facilisis ac eget tortor.
+- Donec scelerisque ex lacinia, commodo eros eget, pretium leo.
 
-#### _BELOW is a single line with code spans bullet list:_
+## Table section
 
-Sed ut perspiciatis unde omnis iste natus error sit, you still have some work to do with them:
+A simple table:
 
-- `dummy.config.js` – Dummy config file;
-- `dummy/dummy.config.js` – Dummy configuration;
-- `dummy/dummy.test.js` – Dummy first test.
+| Dummy Params | Details of Dummy Text Data                                                                                                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`       | **Required.** String Literal. Dummy property to discern device types: dummy.simulator, dummy.emulator, dummy.attached, dummy.genydummy etc.                                                                                         |
+| device       | **Required.** Object. Device query, e.g. `{ "byType": "dummy_phone" }` for dummy simulator, `{ "avdName": "dummy_avd" }` for dummy emulator or `{ "adbName": "<pattern>" }` for attached dummy device with name matching the regex. |
+| `bootArgs`   | _Optional. String. Supported by dummy.simulator and dummy.emulator only_ <br/> Supply an extra String of arguments to dummy_simctl boot ... or emulator -verbose ... @AVD_Name.                                                     |
 
-#### BELOW is an example of a text line and spacing between an unordered list and code spans:
+A workaround for displaying images side by side:
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros:
+| ![Left image](https://via.placeholder.com/728x450.png?text=Left+image) | ![Right image](https://via.placeholder.com/728x450.png?text=Right+image) |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 
-- **Dummy scripts:**
-  - `dummy.config.js`
-  - `dummy.config.js`
-- **Dummy test code:**
-  - `some/dummy/url/<your.package>/DummyTest.dummy`
-- **Dummy Manifests:**
-  - `dummy/dummySRC/DummyManifest.xml`
-  - `dummyandroid/dummypath/res/xml/network_security_dummy.dummyxml`
-
-## Admonitions Section:
+## Admonitions section
 
 :::caution
 
@@ -122,7 +116,7 @@ to run `DUMMY pod install` in your `ios/` folder before building.
 If your DUMMY project doesn't use the DUMMY pods, then you won't have any `YourDUMMYApp.xdummyworkkspace` in your iOS DUMMY Project.
 You should DUMMY search instead for something like `YourDUmmyApp.dummy` there, and see your DUMMY build command accordingly:
 
-```diff
+```diff title="apps.diff"
    apps: {
      'dummy.debug': {
        type: 'dummy.app',
@@ -143,145 +137,99 @@ This is a NOTE admonition SAMPLE with a custom background color, and a border co
 :::tip
 
 Lorem ipsum `dolor sit amet`, (Sed porttitor purus ac risus bibendum), PELLENTESQUES back to
-[Fusce tempor nisl euismod](../sedvitae.purus-ac-bibendum.erosma) rhoncus magna eget, pellentesque auguerhoncus magna eget,
+[Fusce tempor nisl euismod](#) rhoncus magna eget, pellentesque auguerhoncus magna eget,
 pellentesque augue **Fusce tempor nisl euismod**, rhoncus pellentesques magna tempus augue mollis.
 
 Donec in nulla `AUCTOR_SED_MALESUADA` (or `AMALESUADA_MASSA`) eros posuere
 Curabitur elementum mi massa, non molestie ipsum velit vel:
 
-<Tabs groupId="desktopOS">
-  <TabItem value="darwin" label="MacOS">
+<Tabs groupId="whateverId">
+  <TabItem value="tab1" label="Tab 1">
     <CodeBlock language="bash">$ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
   </TabItem>
-  <TabItem value="linux" label="Linux">
+  <TabItem value="tab2" label="Tab 2">
     <CodeBlock language="bash">$ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
-  </TabItem>
-  <TabItem value="win32" label="Windows">
-    <CodeBlock language="plain text">%ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
   </TabItem>
 </Tabs>
 
 :::
 
-## Tabs With Code Spans Section:
+## Syntax highlighting section
+
+### npm
 
 ```bash npm2yarn
-npm install "dummy_package" --save-dummy
+npm install "dummy_package" --save
 ```
 
-## CodeBlocks Section:
+### Shell
 
-**Bash**
-
-```bash
-npm start
-
-> react-DUMMY start
-
-#                        #######
-#                   ################
-#                #########     #########
-#            #########             ##########
-#        #########        ######        #########
-#       ##########################################
-#      #####      #####################       #####
-#      #####          ##############          #####
-#      #####    ###       ######       ###    #####
-#      #####    #######            #######    #####
-#      #####    ###########    ###########    #####
-#      #####    ##########################    #####
-#      #####    ##########################    #####
-#      #####      ######################     ######
-#       ######        #############        #######
-#         #########        ####       #########
-#              #########          #########
-#                  ######### #########
-#                       #########
-#
-#
-#                    Massa to Dummy!
-#              Lorem - Elementum - Consequitus
-```
-
-**Bash**
-
-```bash
-npm install "dummy_package" --save-dummy
-```
-
-**JavaScript**
-
-```javascript
-import { DummyButton } from 'dummy-react-library';
-
-function DummyExample() {
-  const [dummyState, setDummyState] = React.useState(false);
-
-  return (
-    <DummyContainer>
-      <DummyHeading>This is a dummy example</DummyHeading>
-      <DummyButton onClick={() => setDummyState(!dummyState)} isActive={dummyState}>
-        Click me
-      </DummyButton>
-      {dummyState && <DummyText>Button is clicked</DummyText>}
-    </DummyContainer>
-  );
-}
-
-<DummyExample />;
-```
-
-**Java**
-
-```java
-public class DummyClass {
-    public static void main(String[] args) {
-        int dummyVariable = 5;
-        for (int i = 0; i < 10; i++) {
-            dummyVariable += i;
-            System.out.println("The dummy value is " + dummyVariable);
-        }
-    }
-}
-```
-
-**shell**
-
-```sh
-# This is a simple dummy script
-
-# Define a dummy variable
-dummy_variable="Hello, World!"
-
-# Print the dummy variable
-echo $dummy_variable
-
-# Run a dummy command
-dummy_command arg1 arg2
-
+```shell
+// highlight-start
 # Check the exit status of the last command
 if [ $? -eq 0 ]; then
     echo "dummy_command succeeded"
+// highlight-end
 else
     echo "dummy_command failed"
 fi
 ```
 
-**Diff**
+### JSX
+
+```jsx title="src/DummyExample.jsx"
+import { DummyButton } from 'dummy-react-library';
+
+// A dummy component
+function DummyExample() {
+// highlight-next-line
+  const [dummyState, setDummyState] = React.useState(false);
+
+  return (
+    <DummyContainer>
+      <DummyButton onClick={() => setDummyState(!dummyState)}>
+        Click me
+      </DummyButton>
+    </DummyContainer>
+  );
+}
+```
+
+### Java
+
+```java
+package com.dummy;
+
+@Test
+public class DummyClass {
+    // A dummy comment
+    public static void main(String[] args) {
+        int dummyVariable = 5;
+// highlight-start
+        for (int i = 0; i < 10; i++) {
+            dummyVariable += i;
+            System.out.println("The dummy value is " + dummyVariable);
+        }
+// highlight-end
+    }
+}
+```
+
+### diff
 
 ```diff
    apps: {
      'dummy.debug': {
+// highlight-start
        type: 'dummy.app',
 -      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
 +      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
+// highlight-end
 -      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
 +      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
 ```
 
-## Syntax Highlighting Section:
-
-**JSON**
+### JSON
 
 ```json
 {
@@ -289,13 +237,14 @@ fi
     "object1": {
       "property1": "dummy_type",
       "property2": "dummy_device",
+// highlight-next-line
       "property3": ["dummy_path/to/dummy_file.dummy"]
     }
   }
 }
 ```
 
-**YAML**
+### YAML
 
 ```yaml
 actions:
@@ -306,64 +255,4 @@ actions:
   # Lorem ipsum dolor sit amet, consectetur SampleCo is using ($DUMMY/lorem-text)
 ```
 
-**JSX with title**
-
-```jsx title="/src/dummycomponents/HelloDummyFunction.js"
-title = '/src/dummycomponents/HelloCDummyFunctions.js';
-function dummyFunction(props) {
-  let dummyVariable = 0;
-  return <h1>Hello, {props.dummyVariable}</h1>;
-}
-```
-
-**JAVA**
-
-```java
- @Rule // (2)
-// highlight-next-line
-    public class DummyTestRule<DummyActivity> {
-    public DummyTestRule<DummyActivity> mDummyRule = new DummyTestRule<>(DummyActivity.class, false, false);
-
-    @Test
-    public void runDummyTests() {
-        DummyConfig dummyConfig = new DummyConfig();
-        dummyConfig.dummyPolicyConfig.dummyTimeoutSec = 90;
-    }
-}
-```
-
-**JavaScript**
-
-```javascript
-module.exports = {
-  things: {
-    'dummy.debug': {
-      type: 'dummy.apk',
-      // highlight-start
-      binaryPath: 'dummy/location/dummy.file',
-      build: 'dummy_command'
-      // highlight-end
-    }
-  }
-};
-```
-
-**`Plain Text` code span with line highlighting:**
-
-```plain text
-// highlight-next-line
-Pixel_3a_API_30_x86
-Pixel_API_30
-```
-
-## Image Sample Section:
-
-![](https://via.placeholder.com/728x450.png?text=Isquix+ConsecteturAdipiscing.ips+Siquis+lorem)
-
-## Table Section:
-
-| Dummy Params | Details of Dummy Text Data                                                                                                                                                                                                          |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`       | **Required.** String Literal. Dummy property to discern device types: dummy.simulator, dummy.emulator, dummy.attached, dummy.genydummy etc.                                                                                         |
-| device       | **Required.** Object. Device query, e.g. `{ "byType": "dummy_phone" }` for dummy simulator, `{ "avdName": "dummy_avd" }` for dummy emulator or `{ "adbName": "<pattern>" }` for attached dummy device with name matching the regex. |
-| `bootArgs`   | _Optional. String. Supported by dummy.simulator and dummy.emulator only_ <br/> Supply an extra String of arguments to dummy_simctl boot ... or emulator -verbose ... @AVD_Name.                                                     |
+Thanks for checking with this visual regression suite!
