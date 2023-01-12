@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './HomepageFeatures.module.css';
-import FeatureList from '././FeatureList';
+import FeatureList from './FeatureList';
 import Features from './Features';
 
 const HomepageFeatures = () => {
