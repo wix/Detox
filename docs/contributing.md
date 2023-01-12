@@ -190,3 +190,12 @@ To update a specific version with the latest changes:
 
 1. Remove the version from `versions.json`.
 1. Run `npm run docusaurus docs:version <version>`.
+
+### New Demo Page Added
+
+We are excited to announce that we've added a new Demo page to our documentation site!  
+You can now access it by visiting the [Demo page](/demo) from the navigation menu.
+
+This Demo page serves as a visual representation of the styling and formatting of our documentation.
+
+We hope you'll find this new addition to be a valuable resource as you work with our library.

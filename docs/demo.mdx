@@ -1,3 +1,13 @@
+---
+title: Internal Demo Page for Styling
+description: This page is for internal use only.
+---
+
+<head>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Detox Interal Demo Page</title>
+</head>
+
 import HomepageHeader from '@site/src/components/Homepage/Header/HomepageHeader';
 
 import '@site/src/css/custom.css';
@@ -9,199 +19,162 @@ import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+:::note
+
+This page is for internal use only. If you are a contributor to the Detox project, you can use this page to test your changes to the website documentation pages
+styling. If you are not a contributor, you can ignore this page. Follow this link to the [Detox contributing Page](https://wix.github.io/Detox/docs/contributing)
+
+:::
+
+## Headings Section:
+
 # H1 heading
+
+# Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
 
 ## H2 heading
 
+## Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
 ### H3 heading
+
+### Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
 
 #### H4 heading
 
+#### Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
 ##### H5 heading
+
+##### Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
 
 ###### H6 heading
 
-## Admonitions:
+###### Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
 
-:::caution CAUTION
+## Paragraphs Section:
 
-This is a CAUTION admonition with a custom background color, and a border color.
+Dummy double-spaced paragraph example, consectetur adipiscing elit. Curabitur euismod,
+
+arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh
+
+tellus a mi. Integer blandit, enim quis malesuada fringilla, elit augue
+
+pellentesque justo, eget euismod elit sapien id magna. Sed molestie
+
+ultrices metus, a congue erat.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel **tortor**, bibendum id _pellentesque_ ullamcorper, \*congue** metus. In hac habitasse platea dictumst. Sed auctor, **nunc** eu _pellentesque_ congue, ~~augue est malesuada massa~~, in congue ipsum **mauris\*\* eget `massa` finibus.
+Fusce ~~elementum~~ velit vel **felis** congue, eu _feugiat_ nibh facilisis. Praesent mollis `dolor` id eros [ultrices](#) euismod. Sed ~~euismod~~ posuere **mauris** velit, quis _sodales_ mauris feugiat non. `Consectetur` a ~~ligula~~, ut congue **lacinia**, faucibus _lorem_.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh tellus a mi. Integer blandit, enim quis malesuada fringilla, elit augue pellentesque justo, eget euismod elit sapien id magna. Sed molestie ultrices metus, a congue erat.
+
+#### _BELOW is an example of a single line with bold text and a code span with a link and blue link color and also another link:_
+
+Consectetur elit curabitur **required** by Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod.
+[`dummysilutus`](https://dummyurlpath/DummyAppleSimulatorPathDummy) is via [Dummybrew](https://Dummypath.dummy):
+
+#### _BELOW is a single line with code spans bullet list:_
+
+Sed ut perspiciatis unde omnis iste natus error sit, you still have some work to do with them:
+
+- `dummy.config.js` – Dummy config file;
+- `dummy/dummy.config.js` – Dummy configuration;
+- `dummy/dummy.test.js` – Dummy first test.
+
+#### BELOW is an example of a text line and spacing between an unordered list and code spans:
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros:
+
+- **Dummy scripts:**
+  - `dummy.config.js`
+  - `dummy.config.js`
+- **Dummy test code:**
+  - `some/dummy/url/<your.package>/DummyTest.dummy`
+- **Dummy Manifests:**
+  - `dummy/dummySRC/DummyManifest.xml`
+  - `dummyandroid/dummypath/res/xml/network_security_dummy.dummyxml`
+
+## Admonitions Section:
+
+:::caution
+
+Rhoncus magna eget, pellentesque auguerhoncus magna eget, pellentesque augue **Android** due to DUMMY issues:
+
+- [rhoncus magna eget, pellentesque auguerhoncus magna eget](https://some/url/path)
+- [Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue](https://some/url/path)
+- [pellentesque auguerhoncus magna eget](ttps://some/url/path)
 
 :::
 
 :::danger DANGER
 
-This is a DANGER admonition with a custom background color, and a border color.
+This is a DANGER admonition SAMPLE with a custom background color, and a border color.
 
 :::
-
-:::info INFO
-
-This is an INFO admonition with a custom background color, and a border color.
-
-:::
-
-:::success TIP
-
-This is a TIP admonition with a custom background color, and a border color.
-
-:::
-
-:::note NOTE
-
-This is a NOTE admonition with a custom background color, and a border color.
-
-:::
-
-#### _BELOW is an admonition with code span and a link:_
-
-:::tip
-If you see a message like `command not found: detox`, make sure you have [installed Detox command line tools](#1-command-line-tools-detox-cli).
-:::
-After Detox generated these files in your project's root, you still have some work to do with them:
-
-#### BELOW is an admonition with links in a bullet list with a line of text to show spacing:
-
-:::caution Note
-
-At the moment, Detox does not support non-React Native apps on **Android** due to the blocking issues:
-
-- [Restore support for pure-native/hybrid Projects](https://github.com/wix/Detox/issues/2543)
-- [cannot be cast to com.facebook.react.ReactApplication](https://github.com/wix/Detox/issues/1220)
-- [native android app Process crashes](https://github.com/wix/Detox/issues/1093)
-
-:::
-
-#### _BELOW is an admonition with FlavorizedCodeBlock, links and code spans:_
 
 :::info
 
-If your app uses [CocoaPods] (all modern React Native projects do since `0.60.0`), make sure
-to run `pod install` in your `ios/` folder before building with Detox.
+If your app Dummy uses [DUMMYPods] (all modern React DUMMY projects do since `0.999.0`), make sure
+to run `DUMMY pod install` in your `ios/` folder before building.
 
-If your project doesn't use the pods, then you won't have any `YourApp.xcworkspace` in your iOS project directory.
-You should search instead for something like `YourApp.xcodeproj` there, and adjust your build command accordingly:
+If your DUMMY project doesn't use the DUMMY pods, then you won't have any `YourDUMMYApp.xdummyworkkspace` in your iOS DUMMY Project.
+You should DUMMY search instead for something like `YourDUmmyApp.dummy` there, and see your DUMMY build command accordingly:
 
-<FlavorizedCodeBlock language="diff" header={'   apps: {\n'} flavors={['Debug', 'Release']}>
+<FlavorizedCodeBlock language="diff" title={'.dummyrc.js'} header={'   things: {\n'} flavors={['Debug', 'Release']}>
   {(conf) => `\
-     'ios.${conf.toLowerCase()}': {
-       type: 'ios.app',
-       binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/example.app',
--      build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
-+      build: 'xcodebuild -project ios/example.xcodeproj -scheme example -sdk -configuration ${conf} iphonesimulator -derivedDataPath ios/build'
+     'dummy.${conf.toLowerCase()}': {
+       type: 'dummy.app',
+-      filePath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
++      filePath: 'dummy/build/Products/${conf}-dummyplatform/example.dummy',
      },`}
 </FlavorizedCodeBlock>
 
 :::
 
-However, native iOS apps are expected to work fine with Detox, and if that's your case, this introduction will help you in equal measure.
+:::note NOTE
 
-#### _BELOW is an admonition with TABS, bold text, code spans, plain text box, linux text block, bash with highlighting:_
+This is a NOTE admonition SAMPLE with a custom background color, and a border color.
+
+:::
 
 :::tip
 
-If you see `zsh: command not found` (or a similar message), please go back to
-[Setting up the environment](../getting-started.mdx#setting-up-the-environment) section
-where we were redirecting you to the official **React Native CLI Quickstart**, and make sure you
-have completed it.
+Lorem ipsum `dolor sit amet`, (Sed porttitor purus ac risus bibendum), PELLENTESQUES back to
+[Fusce tempor nisl euismod](../sedvitae.purus-ac-bibendum.erosma) rhoncus magna eget, pellentesque auguerhoncus magna eget,
+pellentesque augue **Fusce tempor nisl euismod**, rhoncus pellentesques magna tempus augue mollis.
 
-Provided you have `ANDROID_SDK_ROOT` (or `ANDROID_HOME`) environment variables
-defined, using an explicit path to `emulator` should help:
+Donec in nulla `AUCTOR_SED_MALESUADA` (or `AMALESUADA_MASSA`) eros posuere
+Curabitur elementum mi massa, non molestie ipsum velit vel:
 
 <Tabs groupId="desktopOS">
   <TabItem value="darwin" label="MacOS">
-    <CodeBlock language="bash">$ANDROID_SDK_ROOT/emulator/emulator -list-avds</CodeBlock>
+    <CodeBlock language="bash">$ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
   </TabItem>
   <TabItem value="linux" label="Linux">
-    <CodeBlock language="bash">$ANDROID_SDK_ROOT/emulator/emulator -list-avds</CodeBlock>
+    <CodeBlock language="bash">$ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
   </TabItem>
   <TabItem value="win32" label="Windows">
-    <CodeBlock language="plain text">%ANDROID_HOME%\emulator\emulator -list-avds</CodeBlock>
+    <CodeBlock language="plain text">%ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
   </TabItem>
 </Tabs>
 
 :::
 
-#### _BELOW is an admonition with plain text examples, code spans and emoji:_
-
-:::info
-
-If you wish to use an attached Android device (via USB or wireless network), make sure it is available:
-
-```bash
-adb devices
-```
-
-If the device is properly connected, you should get an output like this:
-
-```plain text
-List of devices attached
-2F6315NVPH      device
-```
-
-Assuming the device is available (troubleshooting _adb_ issues is out of scope of this tutorial), you just
-need to use `android.att.*` Detox configurations instead of `android.emu.*` where required.
-
-:warning: If you have multiple devices connected, replace that loose regular expression (`adbName: '.*'`)
-in your Detox config with a specific device name.
-
-:::
-
-#### _BELOW is an admonition with JS code blocke:_
-
-:::tip
-
-It is a good idea to start every test from a fresh state, since the preceeding ones might leave your application
-in an unpredictable state if they fail.
-
-One way to do it is to launch the app as a new instance in `beforeEach` hook instead:
-
-```js
-beforeEach(async () => {
-  await device.launchApp({ newInstance: true });
-});
-```
-
-The other way is to _reload React Native_ without restarting the app. Like any live reloading, it is apt to cause glitches for more complex apps,
-but for simpler apps it proves to be a quicker way to reset the state between the tests:
-
-```js
-beforeEach(async () => {
-  await device.reloadReactNative();
-});
-```
-
-So, pick your favorite one wisely, on the basis of _speed_ vs _stability_ considerations.
-
-:::
-
-## Tabs with code spans:
-
-<Tabs groupId="configurationName">
-  <TabItem value="ios.sim.debug" label="npm">
-    <CodeBlock language="sh">npm i --package.js</CodeBlock>
-  </TabItem>
-  <TabItem value="ios.sim.release" label="yarn">
-    <CodeBlock language="sh">yarn add axios </CodeBlock>
-  </TabItem>
-</Tabs>
-
-## CodeBlocks, line spacings, links, images, tables, code fragments, headings section, lists:
-
-Here is an example of a text paragraph with link [Jest](https://jestjs.io)
-
-This is a double-spaced line and example of code span `package.json`
+## Tabs With Code Spans Section:
 
 ```bash npm2yarn
-npm install "jest@^29" --save-dev
+npm install "dummy_package" --save-dummy
 ```
 
-#### _ABOVE code snippets have a left side red color and right side black color when using `bash`:_
+## CodeBlocks Section:
+
+**Bash**
 
 ```bash
 npm start
 
-> react-native start
+> react-DUMMY start
 
 #                        #######
 #                   ################
@@ -224,15 +197,144 @@ npm start
 #                       #########
 #
 #
-#                    Welcome to Metro!
-#              Fast - Scalable - Integrated
+#                    Massa to Dummy!
+#              Lorem - Elementum - Consequitus
 ```
 
-#### _BELOW a plain text code spans:_
+**Bash**
 
-```plain text
-Created a file at path: ./package.json
+```bash
+npm install "dummy_package" --save-dummy
 ```
+
+**JavaScript**
+
+```javascript
+import { DummyButton } from 'dummy-react-library';
+
+function DummyExample() {
+  const [dummyState, setDummyState] = React.useState(false);
+
+  return (
+    <DummyContainer>
+      <DummyHeading>This is a dummy example</DummyHeading>
+      <DummyButton onClick={() => setDummyState(!dummyState)} isActive={dummyState}>
+        Click me
+      </DummyButton>
+      {dummyState && <DummyText>Button is clicked</DummyText>}
+    </DummyContainer>
+  );
+}
+
+<DummyExample />;
+```
+
+**Java**
+
+```java
+public class DummyClass {
+    public static void main(String[] args) {
+        int dummyVariable = 5;
+        for (int i = 0; i < 10; i++) {
+            dummyVariable += i;
+            System.out.println("The dummy value is " + dummyVariable);
+        }
+    }
+}
+```
+
+**shell**
+
+```sh
+# This is a simple dummy script
+
+# Define a dummy variable
+dummy_variable="Hello, World!"
+
+# Print the dummy variable
+echo $dummy_variable
+
+# Run a dummy command
+dummy_command arg1 arg2
+
+# Check the exit status of the last command
+if [ $? -eq 0 ]; then
+    echo "dummy_command succeeded"
+else
+    echo "dummy_command failed"
+fi
+```
+
+## Syntax Highlighting Section:
+
+**JSON**
+
+```json
+{
+  "items": {
+    "object1": {
+      "property1": "dummy_type",
+      "property2": "dummy_device",
+      "property3": ["dummy_path/to/dummy_file.dummy"]
+    }
+  }
+}
+```
+
+**YAML**
+
+```yaml
+actions:
+  - dummy install example
+    - push_dummytext: "*"
+
+  - dummy install example --save global
+  # Lorem ipsum dolor sit amet, consectetur SampleCo is using ($DUMMY/lorem-text)
+```
+
+**JSX with title**
+
+```jsx title="/src/dummycomponents/HelloDummyFunction.js"
+title = '/src/dummycomponents/HelloCDummyFunctions.js';
+function dummyFunction(props) {
+  let dummyVariable = 0;
+  return <h1>Hello, {props.dummyVariable}</h1>;
+}
+```
+
+**JAVA**
+
+```java
+ @Rule // (2)
+// highlight-next-line
+    public class DummyTestRule<DummyActivity> {
+    public DummyTestRule<DummyActivity> mDummyRule = new DummyTestRule<>(DummyActivity.class, false, false);
+
+    @Test
+    public void runDummyTests() {
+        DummyConfig dummyConfig = new DummyConfig();
+        dummyConfig.dummyPolicyConfig.dummyTimeoutSec = 90;
+    }
+}
+```
+
+**JavaScript**
+
+```javascript
+module.exports = {
+  things: {
+    'dummy.debug': {
+      type: 'dummy.apk',
+      // highlight-start
+      binaryPath: 'dummy/location/dummy.file',
+      build: 'dummy_command'
+      // highlight-end
+    }
+  }
+};
+```
+
+**`Plain Text` code span with line highlighting:**
 
 ```plain text
 // highlight-next-line
@@ -240,267 +342,29 @@ Pixel_3a_API_30_x86
 Pixel_API_30
 ```
 
-#### _ABOVE is a code snippet using `Plain Text` and one with line highlighting:_
+## Image Sample Section:
 
-```json
-{
-  "devices": {
-    "emulator.oss": {
-      "type": "android.emulator",
-      "device": "...",
-      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"]
-    }
-  }
-}
-```
+![](https://via.placeholder.com/728x450.png?text=Isquix+ConsecteturAdipiscing.ips+Siquis+lorem)
 
-#### _ABOVE is a code snippet using `JSON`:_
-
-#### _BELOW is a code block title and code block content using JSX:_
-
-````jsx title="/src/components/HelloCodeTitle.js"
-
-```jsx title="/src/components/HelloCodeTitle.js"
-function HelloCodeTitle(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-````
-
-Open `Google Chrome` and go to `chrome://inspect` tab, where you'll see `./node_modules/.bin/jest` as a remote
-target waiting until you click `inspect` to attach to it.
-
-![](./img/inspect-brk.png)
-
-#### _ABOVE is a single spaced line with code snippet and an image:_
-
-#### _BELOW is an H2 heading with code spans:_
-
-## Step 2: Add `build` and `test` Commands to Your CI Script\_:
-
-#### _BELOW is a YAML code block, H3 heading using a bullet point and spacing, and different colors based on hashtags and chars in quotes:_
-
-### • Running Detox on [Travis CI](https://travis-ci.org/)
-
-Detox’s own build is running on Travis, check out Detox’s [`.travis.yml`](https://github.com/wix/Detox/tree/master/.travis.yml) file to see how it’s done.
-
-This is a simple example configuration to get you started with Detox on Travis:
-
-```yaml
-language: objective-c
-osx_image: xcode8.3
-
-branches:
-  only:
-    - master
-
-trigger_map:
-- push_branch: "*"
-  workflow: tests
-workflows:
-  _tests_setup:
-    steps:
-    - activate-ssh-key: {}
-    - git-clone:
-        inputs:
-        - clone_depth: ''
-        title: Git Clone Repo
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
-
-install:
-  - brew tap wix/brew
-    - push_branch: "*"
-
-  - npm install react-native-cli --global
-  - npm install detox-cli --global
-  # That is not compatible with the one that Detox is using ($ANDROID_HOME/tools/bin)
-    - echo yes | $ANDROID_HOME/tools/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64"
-    # Nexus 6P, API 27, XXXHDPI
-
-script:
-  - detox build --configuration ios.sim.release
-  - detox test --configuration ios.sim.release --cleanup
-```
-
-#### _BELOW is an H3 heading using a bullet point with 3 lines of double spacing, code span and links with standard link color:_
-
-### • Running Detox on [Bitrise](https://www.bitrise.io/)
-
-Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](https://blog.bitrise.io/post/how-to-set-up-a-react-native-app-on-bitrise) guide.
-
-You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise `.yml` file for a workflow called `tests`.
-
-Additionally, you can use a [webhook](https://devcenter.bitrise.io/en/apps/webhooks/adding-incoming-webhooks.html) on Bitrise to post the build status directly into your Slack channel.
-
-#### _BELOW is an H1 page header followed by varied line spacing:_
-
-# Environment Setup
-
-**Welcome to Detox!**
-
-The _Introduction section_ walks you through setting up Detox in your project, one step at a time.
-
-You will find that some steps are longer than the others: some are a couple of paragraphs, while the others look like a dedicated multistep guide.
-Bear with us - it is all necessary, and once set up, it is easy to move forward with writing tests at a high pace.
-
-Please select type of your mobile application before you start the tutorial:
-
-#### _BELOW is an H2 heading with spacing and a single line with an emoji and link, some paragaraph spacings and forced RED styling for line text:_
-
-## React Native CLI Quickstart
-
-Your first step would be to complete the
-[📚 React Native CLI Quickstart Guide](https://reactnative.dev/docs/next/environment-setup).
-
-![](./img/rn-env.png)
-
-<p>
-  Open the link above and switch there to <b>React Native CLI Quickstart</b> tab to see the interactive tutorial for <b>Development OS</b>{' '}
-  and <b>Target OS</b> of your choice.
-</p>
-
-<p>
-  Follow all the steps <span style={{ color: 'red' }}>(yes, even if you have a native app!)</span> and make sure you can create and run
-  React Native apps on virtual testing devices.
-</p>
-
-#### _BELOW is an example of a single line with bold text and a code span with a link and blue link color and also another link:_
-
-This tool is **required** by Detox to work with iOS simulators. The recommended way to install
-[`applesimutils`](https://github.com/wix/AppleSimulatorUtils) is via [Homebrew](https://brew.sh):
-
-#### _BELOW is a single line with code spans bullet list:_
-
-After Detox generated these files in your project's root, you still have some work to do with them:
-
-- `.detoxrc.js` – Detox config file;
-- `e2e/jest.config.js` – Jest configuration;
-- `e2e/starter.test.js` – dummy first test.
-
-#### BELOW is an example of a text line and spacing between an unordered list and code spans:
-
-Assuming you have a regular React Native project, these are the files you normally would need to
-patch or create if they are missing:
-
-- **Build scripts:**
-  - `android/build.gradle`
-  - `android/app/build.gradle`
-- **Native test code:**
-  - `android/app/src/androidTest/java/com/<your.package>/DetoxTest.java`
-- **Manifests:**
-  - `android/app/src/main/AndroidManifest.xml`
-  - `android/app/src/main/res/xml/network_security_config.xml`
-
-### 4.1. Patching build scripts
-
-## FlavorizedCodeBlock variations
+## FlavorizedCodeBlock Section:
 
 Open your Detox config and replace `YOUR_APP` placeholder with the actual app name, e.g.:
 
-<FlavorizedCodeBlock language="diff" title={'.detoxrc.js'} header={'   apps: {\n'} flavors={['Debug', 'Release']}>
+<FlavorizedCodeBlock language="diff" title={'.dummyrc.js'} header={'   things: {\n'} flavors={['Debug', 'Release']}>
   {(conf) => `\
-     'ios.${conf.toLowerCase()}': {
-       type: 'ios.app',
--      binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/YOUR_APP.app',
-+      binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/example.app',
--      build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
-+      build: 'xcodebuild -workspace ios/example.xcworkspace -scheme example -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
+     'dummy.${conf.toLowerCase()}': {
+       type: 'dummy.app',
+-      filePath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
++      filePath: 'dummy/build/Products/${conf}-dummyplatform/example.dummy',
+-      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
++      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
      },`}
 </FlavorizedCodeBlock>
 
-[cocoapods]: https://cocoapods.org/
+## Table Section:
 
-```js title=".detoxrc.js"
-module.exports = {
-  apps: {
-    'android.debug': {
-      type: 'android.apk',
-      // highlight-start
-      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug'
-      // highlight-end
-    },
-    'android.release': {
-      type: 'android.apk',
-      // highlight-start
-      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
-      // highlight-end
-    }
-    // ...
-  }
-  // ...
-};
-```
-
-## Step 3: Device configs
-
-By default, Detox config suggests default device types for iOS and Android:
-
-```js title=".detoxrc.js"
-/** @type {Detox.DetoxConfig} */
-module.exports = {
-  // ...
-  devices: {
-    simulator: {
-      type: 'ios.simulator',
-      device: {
-        // highlight-next-line
-        type: 'iPhone 12'
-      }
-    },
-    attached: {
-      type: 'android.attached',
-      device: {
-        // highlight-next-line
-        adbName: '.*' // any attached device
-      }
-    },
-    emulator: {
-      type: 'android.emulator',
-      device: {
-        // highlight-next-line
-        avdName: 'Pixel_3a_API_30_x86'
-      }
-    }
-  }
-};
-```
-
-#### _BELOW is a JAVA code block with its colors and highlighting for syntax:_
-
-```java title="android/app/src/androidTest/java/com/<your.package>/DetoxTest.java" showLineNumbers
-// highlight-next-line
-package com.<your.package>; // (1)
-
-import com.wix.detox.Detox;
-import com.wix.detox.config.DetoxConfig;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
-
-@RunWith(AndroidJUnit4.class)
-@LargeTest
-public class DetoxTest {
-    @Rule // (2)
-// highlight-next-line
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class, false, false);
-
-    @Test
-    public void runDetoxTests() {
-        DetoxConfig detoxConfig = new DetoxConfig();
-        detoxConfig.idlePolicyConfig.masterTimeoutSec = 90;
-        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60;
-        detoxConfig.rnContextLoadTimeoutSec = (BuildConfig.DEBUG ? 180 : 60);
-
-        Detox.runTests(mActivityRule, detoxConfig);
-    }
-}
-```
+| Dummy Params | Details of Dummy Text Data                                                                                                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`       | **Required.** String Literal. Dummy property to discern device types: dummy.simulator, dummy.emulator, dummy.attached, dummy.genydummy etc.                                                                                         |
+| device       | **Required.** Object. Device query, e.g. `{ "byType": "dummy_phone" }` for dummy simulator, `{ "avdName": "dummy_avd" }` for dummy emulator or `{ "adbName": "<pattern>" }` for attached dummy device with name matching the regex. |
+| `bootArgs`   | _Optional. String. Supported by dummy.simulator and dummy.emulator only_ <br/> Supply an extra String of arguments to dummy_simctl boot ... or emulator -verbose ... @AVD_Name.                                                     |
