@@ -10,7 +10,6 @@ description: This page is for internal use only.
 
 import HomepageHeader from '@site/src/components/Homepage/Header/HomepageHeader';
 
-import '@site/src/css/custom.css';
 import '@site/node_modules/infima/dist/css/default/default.css';
 
 import FlavorizedCodeBlock from '@site/src/components/FlavorizedCodeBlock';
@@ -22,7 +21,7 @@ import TabItem from '@theme/TabItem';
 :::note
 
 This page is for internal use only. If you are a contributor to the Detox project, you can use this page to test your changes to the website documentation pages
-styling. If you are not a contributor, you can ignore this page. Follow this link to the [Detox contributing Page](https://wix.github.io/Detox/docs/contributing)
+styling. If you are not a contributor, you can ignore this page. Follow this link to the [Detox Home Page](https://wix.github.io/Detox/)
 
 :::
 
@@ -72,7 +71,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu
 #### _BELOW is an example of a single line with bold text and a code span with a link and blue link color and also another link:_
 
 Consectetur elit curabitur **required** by Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod.
-[`dummysilutus`](https://dummyurlpath/DummyAppleSimulatorPathDummy) is via [Dummybrew](https://Dummypath.dummy):
+[Some link](#) is via [Some link](#):
 
 #### _BELOW is a single line with code spans bullet list:_
 
@@ -101,9 +100,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu
 
 Rhoncus magna eget, pellentesque auguerhoncus magna eget, pellentesque augue **Android** due to DUMMY issues:
 
-- [rhoncus magna eget, pellentesque auguerhoncus magna eget](https://some/url/path)
-- [Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue](https://some/url/path)
-- [pellentesque auguerhoncus magna eget](ttps://some/url/path)
+- [rhoncus magna eget, pellentesque auguerhoncus magna eget](#)
+- [Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue](#)
+- [pellentesque auguerhoncus magna eget](#)
 
 :::
 
@@ -265,6 +264,18 @@ else
 fi
 ```
 
+**Diff**
+
+```diff
+   apps: {
+     'dummy.debug': {
+       type: 'dummy.app',
+-      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
++      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
+-      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
++      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
+```
+
 ## Syntax Highlighting Section:
 
 **JSON**
@@ -345,21 +356,6 @@ Pixel_API_30
 ## Image Sample Section:
 
 ![](https://via.placeholder.com/728x450.png?text=Isquix+ConsecteturAdipiscing.ips+Siquis+lorem)
-
-## FlavorizedCodeBlock Section:
-
-Open your Detox config and replace `YOUR_APP` placeholder with the actual app name, e.g.:
-
-<FlavorizedCodeBlock language="diff" title={'.dummyrc.js'} header={'   things: {\n'} flavors={['Debug', 'Release']}>
-  {(conf) => `\
-     'dummy.${conf.toLowerCase()}': {
-       type: 'dummy.app',
--      filePath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
-+      filePath: 'dummy/build/Products/${conf}-dummyplatform/example.dummy',
--      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
-+      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
-     },`}
-</FlavorizedCodeBlock>
 
 ## Table Section:
 
