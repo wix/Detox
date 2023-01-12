@@ -1,8 +1,15 @@
 const jestExpect = require('expect').default;
 
 describe('DatePicker', () => {
+  let lastTestFailed = false;
+
   beforeEach(async () => {
-    await device.reloadReactNative();
+    if (lastTestFailed) {
+      await device.launchApp({newInstance: true});
+    } else {
+      await device.reloadReactNative();
+    }
+
     await element(by.text('DatePicker')).tap();
   });
 
@@ -20,14 +27,19 @@ describe('DatePicker', () => {
     });
 
     async function setDate(dateString, dateFormat) {
-      if (platform === 'ios') {
-        await element(by.id('datePicker')).setDatePickerDate(dateString, dateFormat);
-      } else {
-        await element(by.id('openDatePicker')).tap();
-        //rn-datepicker does not support testId's on android, so by.type is the only way to match the datepicker right now
-        //@see https://github.com/react-native-datetimepicker/datetimepicker#view-props-optional-ios-only
-        await element(by.type('android.widget.DatePicker')).setDatePickerDate(dateString, dateFormat);
-        await element(by.text('OK')).tap();
+      try {
+        if (platform === 'ios') {
+          await element(by.id('datePicker')).setDatePickerDate(dateString, dateFormat);
+        } else {
+          await element(by.id('openDatePicker')).tap();
+          //rn-datepicker does not support testId's on android, so by.type is the only way to match the datepicker right now
+          //@see https://github.com/react-native-datetimepicker/datetimepicker#view-props-optional-ios-only
+          await element(by.type('android.widget.DatePicker')).setDatePickerDate(dateString, dateFormat);
+          await element(by.text('OK')).tap();
+        }
+      } catch (e) {
+        lastTestFailed = true;
+        throw e;
       }
     }
 
