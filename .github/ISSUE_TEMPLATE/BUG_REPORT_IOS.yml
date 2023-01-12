@@ -45,7 +45,7 @@ body:
       description: "Note: the test runner is Jest by default, unless overridden via testRunner property in your detox configuration file (e.g. package.json, detox.config)."
       value: "Detox version:
       \nReact Native version:
-      \nHas Fabric enabled: (yes/no)
+      \nHas Fabric (React Native's new rendering system) enabled: (yes/no)
       \nNode version:
       \nDevice model:
       \niOS version:
