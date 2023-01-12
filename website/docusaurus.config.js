@@ -45,12 +45,12 @@ const config = {
         docs: {
           path: '../docs',
           sidebarPath: require.resolve('./sidebars.js'),
-          exclude: ['https://wix.github.io/Detox/docs/demo'],
           editUrl: 'https://github.com/wix/Detox/edit/master/docs/',
           docLayoutComponent: '@site/src/components/CustomLayout',
           remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         pages: {
+          ignorePatterns: ['demo.mdx'],
           remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         theme: {
