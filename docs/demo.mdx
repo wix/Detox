@@ -2,10 +2,6 @@
 title: Internal Demo Page for Styling
 ---
 
-import '@site/node_modules/infima/dist/css/default/default.css';
-
-import FlavorizedCodeBlock from '@site/src/components/FlavorizedCodeBlock';
-
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -126,14 +122,15 @@ to run `DUMMY pod install` in your `ios/` folder before building.
 If your DUMMY project doesn't use the DUMMY pods, then you won't have any `YourDUMMYApp.xdummyworkkspace` in your iOS DUMMY Project.
 You should DUMMY search instead for something like `YourDUmmyApp.dummy` there, and see your DUMMY build command accordingly:
 
-<FlavorizedCodeBlock language="diff" title={'.dummyrc.js'} header={'   things: {\n'} flavors={['Debug', 'Release']}>
-  {(conf) => `\
-     'dummy.${conf.toLowerCase()}': {
+```diff
+   apps: {
+     'dummy.debug': {
        type: 'dummy.app',
--      filePath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
-+      filePath: 'dummy/build/Products/${conf}-dummyplatform/example.dummy',
-     },`}
-</FlavorizedCodeBlock>
+-      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
++      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
+-      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
++      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
+```
 
 :::
 
