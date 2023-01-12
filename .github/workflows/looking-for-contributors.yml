@@ -1,0 +1,31 @@
+name: Looking for Contributors
+on:
+    issues:
+        types:
+            - labeled
+jobs:
+    add-comment:
+        if: contains(github.event.label.name, 'looking for contributors')
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+        steps:
+            - name: Add comment
+              uses: peter-evans/create-or-update-comment@v2
+              with:
+                  issue-number: ${{ github.event.issue.number }}
+                  body: |
+                      Hello! We appreciate you bringing this issue to our attention.
+                      It looks like this could be a valuable addition or fix to our project.
+                      We believe that this feature would benefit greatly from contributions from the community,
+                      even from first-time contributors.
+
+                      If you're interested in contributing to this feature,
+                      please take a look at our [contribution guide](https://wix.github.io/Detox/docs/next/contributing).
+                      It has all the information you need to know about how to submit a pull request and contribute to our project.
+
+                      You're also welcome to join our [Discord server](https://discord.gg/CkD5QKheF5)
+                      and discuss this feature with the collaborators or other contributors under the channel 'contributions'.
+
+                      Please feel free to reach out to us if you have any questions, or need help with anything.
+                      We appreciate your feedback and look forward to working with you!
