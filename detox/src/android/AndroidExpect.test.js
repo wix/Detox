@@ -239,6 +239,7 @@ describe('AndroidExpect', () => {
 
       it('should setDatePickerDate', async () => {
         await e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
+        await e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019/02/06', 'YYYY/MM/DD');
       });
 
       it('should not setDatePickerDate given bad args', async () => {
