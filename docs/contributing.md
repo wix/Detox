@@ -193,7 +193,5 @@ To update a specific version with the latest changes:
 
 ##### Inspect Documentation Style Changes
 
-This Demo page serves as a visual representation of the styling and formatting of our documentation.
-You can now access it by visiting the [Demo page](/demo) from the navigation menu.
-
-We hope you'll find it to be a valuable resource as you work with our library.
+This [demo page](demo.mdx) serves as a visual representation of the styling and formatting of our documentation.
+If you are changing the stylesheets, check with it to prevent undesirable visual regressions.
