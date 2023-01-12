@@ -50,7 +50,6 @@ const config = {
           remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         pages: {
-          ignorePatterns: ['demo.mdx'],
           remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         theme: {
