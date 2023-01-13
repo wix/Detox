@@ -340,20 +340,27 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			return
 		case "setOrientation":
 			let orientationString = params["orientation"] as! String
-			let orientation : UIDeviceOrientation
+			let deviceOrientation : UIDeviceOrientation
+			let maskOrientation: UIInterfaceOrientationMask
 			switch orientationString {
 			case "portrait":
-				orientation = .portrait
+				deviceOrientation = .portrait
+				maskOrientation = .portrait
 				break
 			case "landscape":
-				orientation = .landscapeRight
+				deviceOrientation = .landscapeRight
+				maskOrientation = .landscapeRight
 				break
 			default:
 				fatalError("Unknown orientation provided: \(orientationString)")
 			}
 			
 			DTXSyncManager.enqueueMainQueueIdleClosure {
-				UIDevice.dtx_setOrientation(orientation)
+				if #available(iOS 16.0, *) {
+					UIApplication.dtx_setOrientation(maskOrientation)
+				} else {
+					UIDevice.dtx_setOrientation(deviceOrientation)
+				}
 				
 				self.safeSend(action: done, messageId: messageId)
 			}
