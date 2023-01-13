@@ -119,7 +119,7 @@ class NativeElement {
       : rawDateString;
 
     const action = new actions.SetDatePickerDateAction(dateString, formatString);
-    const traceDescription = actionDescription.setDatePickerDate();
+    const traceDescription = actionDescription.setDatePickerDate(dateString, formatString);
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }
 
