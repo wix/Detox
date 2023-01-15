@@ -43,7 +43,7 @@ extension Executor {
       let errorMessage = "XCUITest executor failed to handle request: \(error)"
       execLog(errorMessage, type: .error)
 
-      // TODO: add "viewHierarchy" param (#3830).
+      // TODO: add "viewHierarchy" param (#3830). This should be a white-box command.
       sendAction(
         .reportTestFailed,
         params: [
@@ -52,7 +52,7 @@ extension Executor {
         messageId: messageId
       )
 
-      fatalError(errorMessage)
+      return
     }
 
     guard let result = (handlerResult?.value ?? [:]) as? [String : AnyHashable]
@@ -71,7 +71,7 @@ extension Executor {
         messageId: messageId
       )
 
-      fatalError(errorMessage)
+      return
     }
 
     sendAction(
