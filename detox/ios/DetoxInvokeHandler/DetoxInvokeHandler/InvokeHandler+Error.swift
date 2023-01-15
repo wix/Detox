@@ -16,7 +16,11 @@ extension InvokeHandler.Error: CustomStringConvertible {
   public var description: String {
     switch self {
       case .noElementAtIndex(let index, let elementsCount):
-        return "Index \(index) beyond bounds [0 .. \(elementsCount)] for the given matcher"
+        if (elementsCount == 0) {
+          return "No elements were found for the given matcher"
+        }
+
+        return "Index \(index) beyond bounds [0 .. \(elementsCount - 1)] for the given matcher"
     }
   }
 }

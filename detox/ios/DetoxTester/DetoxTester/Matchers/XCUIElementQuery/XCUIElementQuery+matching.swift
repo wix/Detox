@@ -91,7 +91,27 @@ extension XCUIElementQuery {
         execLog("found elements with type `\(type)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
-      case .traits, .ancestor, .descendant:
+      case .traits(let traits):
+        let response = whiteBoxMessageHandler(.findElementsByTraits(traits: traits))
+        guard let response = response else {
+          execLog(
+            "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
+            type: .error
+          )
+
+          throw Error.cannotMatchByPattern(pattern: pattern)
+        }
+
+        guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
+          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response), " +
+                  "failed to match the element", type: .info)
+          return matchingNone()
+        }
+
+        execLog("found elements with traits `\(traits)`: \(identifiersAndFrames)")
+        return matching(any: identifiersAndFrames)
+
+      case .ancestor, .descendant:
         execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework",
                 type: .error)
 

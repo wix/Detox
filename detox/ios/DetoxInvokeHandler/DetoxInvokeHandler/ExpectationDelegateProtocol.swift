@@ -13,7 +13,7 @@ public protocol ExpectationDelegateProtocol {
   func expect(
     _ expectation: Expectation,
     isTruthy: Bool,
-    on element: AnyHashable,
+    on element: AnyHashable?,
     timeout: Double?
   ) throws
 }

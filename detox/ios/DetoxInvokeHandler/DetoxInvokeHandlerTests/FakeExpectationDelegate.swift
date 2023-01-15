@@ -10,12 +10,12 @@ class FakeExpectationDelegate: ExpectationDelegateProtocol {
 
   var throwCount: UInt = 0
 
-  private(set) var recorder: [(Expectation, Bool, AnyHashable, Double?)] = []
+  private(set) var recorder: [(Expectation, Bool, AnyHashable?, Double?)] = []
 
   func expect(
     _ expectation: Expectation,
     isTruthy: Bool,
-    on element: AnyHashable,
+    on element: AnyHashable?,
     timeout: Double?
   ) throws {
     recorder.append((expectation, isTruthy, element, timeout))

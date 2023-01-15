@@ -61,6 +61,13 @@ public class InvokeHandler {
           return try takeScreenshot(parsedMessage.params)
         }
 
+        guard let element = element else {
+          throw Error.noElementAtIndex(
+            index: parsedMessage.atIndex ?? 0,
+            elementsCount: elements.count - 1
+          )
+        }
+
         try handleAction(
           on: element,
           type: action,
@@ -88,13 +95,10 @@ public class InvokeHandler {
     return try elementMatcher.match(to: pattern)
   }
 
-  private func getElement(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable {
+  private func getElement(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable? {
     let index = index ?? 0
     guard index >= 0, elements.count > index else {
-      throw Error.noElementAtIndex(
-        index: index,
-        elementsCount: elements.count - 1
-      )
+      return nil
     }
 
     return elements[index]
@@ -360,7 +364,7 @@ public class InvokeHandler {
   // MARK: - Handle expectations
 
   private func handleExpectation(
-    on element: AnyHashable,
+    on element: AnyHashable?,
     type: ExpectationType,
     params: [AnyCodable]?,
     modifiers: [MessagePredicateModifiers]?,

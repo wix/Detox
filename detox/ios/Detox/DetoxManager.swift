@@ -277,6 +277,62 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					)
 				}
 
+			case "findElementsByTraits":
+				DTXSyncManager.enqueueMainQueueIdleClosure {
+					let traitsStrings = params["traits"] as! [String]
+
+					var traits: UIAccessibilityTraits = .none
+					let traitStringToTrait: [String: UIAccessibilityTraits] = [
+						"none": .none,
+						"button": .button,
+						"link": .link,
+						"image": .image,
+						"searchField": .searchField,
+						"keyboardKey": .keyboardKey,
+						"staticText": .staticText,
+						"header": .header,
+						"tabBar": .tabBar,
+						"summaryElement": .summaryElement,
+						"selected": .selected,
+						"notEnabled": .notEnabled,
+						"adjustable": .adjustable,
+						"allowsDirectInteraction": .allowsDirectInteraction,
+						"updatesFrequently": .updatesFrequently,
+						"causesPageTurn": .causesPageTurn,
+						"playsSound": .playsSound,
+						"startsMediaSession": .startsMediaSession
+					]
+
+					traitsStrings.forEach { traits.insert(traitStringToTrait[$0]!) }
+
+					let predicate = NSPredicate { evaluatedObject, _ in
+						guard let evaluatedObject = evaluatedObject as? AnyObject else {
+							return false
+						}
+
+						return evaluatedObject.isAccessibilityElement == true &&
+								(evaluatedObject.accessibilityTraits!.rawValue & traits.rawValue) == traits.rawValue
+					}
+
+					let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
+
+					self.safeSend(
+						action: "elementsDidFound",
+						params: [
+							"elementsIDsAndFrames":
+								array.map { element in
+									let frameInScreen = UIAccessibility.convertToScreenCoordinates(element.bounds, in: element)
+
+									return [
+										"identifier": element.accessibilityIdentifier!,
+										"frame": NSCoder.string(for: frameInScreen)
+									]
+								}
+						],
+						messageId: messageId
+					)
+				}
+
 			case "requestCurrentStatus":
 				DTXSyncManager.status { status in
 					self.webSocket.sendAction(
