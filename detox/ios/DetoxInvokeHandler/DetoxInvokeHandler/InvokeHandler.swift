@@ -91,7 +91,10 @@ public class InvokeHandler {
   private func getElement(from elements: [AnyHashable], at index: Int?) throws -> AnyHashable {
     let index = index ?? 0
     guard index >= 0, elements.count > index else {
-      throw Error.noElementAtIndex(index: index, elementsCount: elements.count)
+      throw Error.noElementAtIndex(
+        index: index,
+        elementsCount: elements.count - 1
+      )
     }
 
     return elements[index]

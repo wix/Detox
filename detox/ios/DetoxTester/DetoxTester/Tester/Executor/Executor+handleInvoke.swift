@@ -40,7 +40,7 @@ extension Executor {
     do {
       handlerResult = try handler.handle(params)
     } catch {
-      let errorMessage = "failed to handle request: \(error)"
+      let errorMessage = "XCUITest executor failed to handle request: \(error)"
       execLog(errorMessage, type: .error)
 
       // TODO: add "viewHierarchy" param (#3830).
@@ -57,7 +57,8 @@ extension Executor {
 
     guard let result = (handlerResult?.value ?? [:]) as? [String : AnyHashable]
     else {
-      let errorMessage = "failed to handle response: `\(String(describing: handlerResult?.value))`"
+      let errorMessage = "XCUITest executor failed to handle response: " +
+        "`\(String(describing: handlerResult?.value))`"
 
       execLog(errorMessage, type: .error)
 

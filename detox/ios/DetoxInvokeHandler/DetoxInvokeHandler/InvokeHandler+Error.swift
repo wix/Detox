@@ -12,11 +12,11 @@ extension InvokeHandler {
 }
 
 /// Extends `InvokeHandler.Error` with error description.
-extension InvokeHandler.Error {
-  var localizedDescription: String {
+extension InvokeHandler.Error: CustomStringConvertible {
+  public var description: String {
     switch self {
       case .noElementAtIndex(let index, let elementsCount):
-        return "Index \(index) beyond bounds [0 .. \(elementsCount)] for given matcher"
+        return "Index \(index) beyond bounds [0 .. \(elementsCount)] for the given matcher"
     }
   }
 }

@@ -21,11 +21,10 @@ describe('Matchers', () => {
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
 
-  // TODO(XCUITEST): Handle this case - with a proper test failure handling
-  it.skip('should give a clear error when index-matching fails (i.e. index out of bounds)', async () => {
+  it('should give a clear error when index-matching fails (i.e. index out of bounds)', async () => {
     const expectedMessage = device.getPlatform() === 'android'
       ? 'View at index #3, of those matching MATCHER'
-      : 'Index 3 beyond bounds [0 .. 2] for “MATCHER';
+      : 'Index 3 beyond bounds [0 .. 2] for the given matcher';
 
     await expectToThrow(
       () => element(by.text('Index')).atIndex(3).tap(),
