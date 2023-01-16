@@ -105,7 +105,7 @@ extension ExpectationDelegate {
 
 private extension XCUIElement {
   func assertExists(isTruthy: Bool) {
-    if exists == isTruthy {
+    if exists != isTruthy {
       expectLog(
         "element \(exists ? "is exist" : "is not exist"), expected: \(isTruthy.description)",
         type: .error
@@ -122,7 +122,7 @@ private extension XCUIElement {
   }
 
   func assertIsFocused(isTruthy: Bool) {
-    if hasFocus == isTruthy {
+    if hasFocus != isTruthy {
       expectLog(
         "element \(hasFocus ? "is focused" : "is not focused"), expected: \(isTruthy.description)",
         type: .error

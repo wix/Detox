@@ -117,6 +117,7 @@ extension XCUIElementQuery {
           whiteBoxMessageHandler: whiteBoxMessageHandler
         )
 
+        // TODO: must log descendants to investigate.
         return ancestor.descendants(matching: .any)
 
       case .descendant(let descendantPattern):
@@ -139,6 +140,7 @@ extension XCUIElementQuery {
             return false
           }
 
+          // TODO: must log ancestors and evaluated objects to investigate.
           return matchingDescendants.contains {
             $0.identifier.elementsEqual(identifier) && $0.frame.equalTo(frame)
           }

@@ -28,7 +28,7 @@ public indirect enum ElementPattern: Hashable, Equatable {
   /// Traits pattern, find elements that have the specified accessibility traits.
   case traits([AccessibilityTrait])
 
-  /// Ancestor pattern, find elements that have the specified `pattern` on their ancestor.
+  /// Ancestor pattern, find elements that have the specified `pattern` on one of their ancestors.
   case ancestor(pattern: ElementPattern)
 
   /// descendant pattern, find elements that have the specified `pattern` on one of their descendants.
