@@ -111,11 +111,38 @@ extension XCUIElementQuery {
         execLog("found elements with traits `\(traits)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
-      case .ancestor, .descendant:
-        execLog("Cannot match by this pattern (\(pattern)) type using the XCUITest framework",
-                type: .error)
+      case .ancestor(let ancestorPattern):
+        let ancestor = try matching(
+          pattern: ancestorPattern,
+          whiteBoxMessageHandler: whiteBoxMessageHandler
+        )
 
-        throw Error.cannotMatchByPattern(pattern: pattern)
+        return ancestor.descendants(matching: .any)
+
+      case .descendant(let descendantPattern):
+        let matchingDescendants = try matching(
+          pattern: descendantPattern,
+          whiteBoxMessageHandler: whiteBoxMessageHandler
+        ).run()
+
+        return containing(NSPredicate { evaluatedObject, _ in
+          guard
+            let evaluatedObject = evaluatedObject as? NSObject,
+            let identifier = evaluatedObject.value(forKey: "identifier") as? String,
+            let frame = evaluatedObject.value(forKey: "frame") as? CGRect
+          else {
+            execLog(
+              "cannot run matching on a non UI element: `\(String(describing: evaluatedObject))`",
+              type: .error
+            )
+
+            return false
+          }
+
+          return matchingDescendants.contains {
+            $0.identifier.elementsEqual(identifier) && $0.frame.equalTo(frame)
+          }
+        })
     }
   }
 }
