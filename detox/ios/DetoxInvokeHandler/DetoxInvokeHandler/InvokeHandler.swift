@@ -64,7 +64,7 @@ public class InvokeHandler {
         guard let element = element else {
           throw Error.noElementAtIndex(
             index: parsedMessage.atIndex ?? 0,
-            elementsCount: elements.count - 1
+            elementsCount: elements.count
           )
         }
 

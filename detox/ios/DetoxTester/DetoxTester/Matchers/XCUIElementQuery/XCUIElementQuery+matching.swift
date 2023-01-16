@@ -91,6 +91,7 @@ extension XCUIElementQuery {
         execLog("found elements with type `\(type)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
+      // See: https://developer.apple.com/forums/thread/705396
       case .traits(let traits):
         let response = whiteBoxMessageHandler(.findElementsByTraits(traits: traits))
         guard let response = response else {

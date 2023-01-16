@@ -139,7 +139,12 @@ private extension XCUIElement {
   }
 
   func assertIdentifier(equals value: String, isTruthy: Bool) {
-    let equalsId = identifier == value
+    let postfixRegex = try? NSRegularExpression(pattern: "_detox.*", options: .caseInsensitive)
+    let cleanIdentifier = postfixRegex!.stringByReplacingMatches(
+      in: identifier, range: NSMakeRange(0, identifier.count), withTemplate: "")
+
+    let equalsId = cleanIdentifier == value
+
     if equalsId != isTruthy {
       expectLog(
         "element identifier \(equalsId ? "equals" : "does not equals") the expected identifier, " +
