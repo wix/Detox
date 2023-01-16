@@ -14,7 +14,7 @@ extension Executor {
   func handleInvoke(
     params: [String: AnyHashable],
     messageId: NSNumber
-  ) {
+  ) throws {
     let app = getAppUnderTest()
 
     let whiteBoxMessageHandler: WhiteBoxMessageHandler = { message in
@@ -36,42 +36,12 @@ extension Executor {
       expectationDelegate: ExpectationDelegate(app, whiteBoxMessageHandler: whiteBoxMessageHandler)
     )
 
-    var handlerResult: AnyCodable?
-    do {
-      handlerResult = try handler.handle(params)
-    } catch {
-      let errorMessage = "XCUITest executor failed to handle request: \(error)"
-      execLog(errorMessage, type: .error)
-
-      // TODO: add "viewHierarchy" param (#3830). This should be a white-box command.
-      sendAction(
-        .reportTestFailed,
-        params: [
-          "details": errorMessage
-        ],
-        messageId: messageId
-      )
-
-      return
-    }
+    let handlerResult = try handler.handle(params)
 
     guard let result = (handlerResult?.value ?? [:]) as? [String : AnyHashable]
     else {
-      let errorMessage = "XCUITest executor failed to handle response: " +
-        "`\(String(describing: handlerResult?.value))`"
-
-      execLog(errorMessage, type: .error)
-
-      // TODO: add "viewHierarchy" param (#3830).
-      sendAction(
-        .reportTestFailed,
-        params: [
-          "details": errorMessage
-        ],
-        messageId: messageId
-      )
-
-      return
+      let resultString = String(describing: handlerResult?.value)
+      throw Error.failedToHandleResponse(received: resultString)
     }
 
     sendAction(

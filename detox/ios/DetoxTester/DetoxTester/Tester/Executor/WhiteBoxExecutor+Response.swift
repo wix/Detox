@@ -49,10 +49,29 @@ struct ElementIdentifierAndFrame: Codable, Equatable {
 
 extension WhiteBoxExecutor.Response {
   /// Asserts that the response equals the given expected response.
-  func assertResponse(equalsTo expected: WhiteBoxExecutor.Response) {
+  func assertResponse(equalsTo expected: WhiteBoxExecutor.Response) throws {
     if self != expected {
       whiteExecLog("reponse `\(self)` expected to be `\(expected)`", type: .error)
-      fatalError("reponse `\(self)` expected to be `\(expected)`")
+      throw Error.unexpectedResult(actual: self, expected: expected)
+    }
+  }
+}
+
+extension WhiteBoxExecutor.Response {
+  /// Represents an error related to `WhiteBoxExecutor.Response`.
+  public enum Error: Swift.Error {
+    /// Result does not equal to expected value.
+    case unexpectedResult(actual: WhiteBoxExecutor.Response, expected: WhiteBoxExecutor.Response)
+  }
+}
+
+/// Extends `WhiteBoxExecutor.Response.Error` with error description.
+extension WhiteBoxExecutor.Response.Error: CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .unexpectedResult(let actual, let expected):
+        return "Received unexpected result from the white-box executor: \(actual), " +
+            "expected: \(expected)"
     }
   }
 }

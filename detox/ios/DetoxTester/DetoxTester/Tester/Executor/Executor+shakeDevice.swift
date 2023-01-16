@@ -6,13 +6,14 @@
 import Foundation
 
 extension Executor {
-  func shakeDevice(messageId: NSNumber) {
+  func shakeDevice(messageId: NSNumber) throws {
     if !isWhiteBoxExecutorAvailable() {
       execLog("shake device failed, target app is not white-box handled", type: .error)
       return
     }
 
-    execute(whiteBoxRequest: .shakeDevice).assertResponse(equalsTo: .completed)
+    try execute(whiteBoxRequest: .shakeDevice).assertResponse(equalsTo: .completed)
+    
     sendAction(.reportShakeDeviceDone, messageId: messageId)
   }
 }

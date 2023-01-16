@@ -7,9 +7,9 @@ import Foundation
 
 extension Executor {
   /// Sets the sync settings.
-  func setSyncSettings(params: [String: AnyHashable], messageId: NSNumber) {
+  func setSyncSettings(params: [String: AnyHashable], messageId: NSNumber) throws {
     if isWhiteBoxExecutorAvailable() {
-      setWhiteBoxSyncSettings(params: params, messageId: messageId)
+      try setWhiteBoxSyncSettings(params: params, messageId: messageId)
     } else {
       execLog(
         "unable to set synchronization settings, app cannot be white-box handled",
@@ -20,13 +20,13 @@ extension Executor {
     sendAction(.reportSetSyncSettingsDone, messageId: messageId)
   }
 
-  private func setWhiteBoxSyncSettings(params: [String: AnyHashable], messageId: NSNumber) {
+  private func setWhiteBoxSyncSettings(params: [String: AnyHashable], messageId: NSNumber) throws {
     let waitSecondsForDebugger = params.waitSecondsForDebugger
     if waitSecondsForDebugger != nil {
       Thread.sleep(forTimeInterval: waitSecondsForDebugger!)
     }
 
-    execute(
+    try execute(
       whiteBoxRequest: .setSyncSettings(
         maxTimerWait: params.maxTimerWait,
         blacklistURLs: params.blacklistURLs,

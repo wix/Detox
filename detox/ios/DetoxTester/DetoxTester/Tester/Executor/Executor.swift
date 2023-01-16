@@ -20,57 +20,70 @@ class Executor {
   ) {
     execLog("executes action: \(action)")
 
-    switch action {
-      case .loginSuccess:
-        execLog("successfully logged into Detox server")
+    do {
+      switch action {
+        case .loginSuccess:
+          execLog("successfully logged into Detox server")
 
-      case .disconnect:
-        cleanup(messageId: messageId)
+        case .disconnect:
+          cleanup(messageId: messageId)
 
-      case .setRecordingState:
-        execLog("not implemented yet: \(action)", type: .error)
-        fatalError("not implemented yet")
+        case .setRecordingState:
+          execLog("not implemented yet: \(action)", type: .error)
+          fatalError("not implemented yet")
 
-      case .waitForBackground:
-        waitFor(appState: .background, messageId: messageId)
+        case .waitForBackground:
+          waitFor(appState: .background, messageId: messageId)
 
-      case .waitForIdle:
-        waitForIdle(messageId: messageId)
+        case .waitForIdle:
+          try waitForIdle(messageId: messageId)
 
-      case .setSyncSettings:
-        setSyncSettings(params: params, messageId: messageId)
+        case .setSyncSettings:
+          try setSyncSettings(params: params, messageId: messageId)
 
-      case .deliverPayload:
-        execLog("not implemented yet: \(action)", type: .error)
-        fatalError("not implemented yet")
+        case .deliverPayload:
+          execLog("not implemented yet: \(action)", type: .error)
+          fatalError("not implemented yet")
 
-      case.setOrientation:
-        execLog("not implemented yet: \(action)", type: .error)
-        fatalError("not implemented yet")
+        case.setOrientation:
+          execLog("not implemented yet: \(action)", type: .error)
+          fatalError("not implemented yet")
 
-      case .currentStatus:
-        reportCurrentStatus(messageId: messageId)
+        case .currentStatus:
+          reportCurrentStatus(messageId: messageId)
 
-      case .shakeDevice:
-        shakeDevice(messageId: messageId)
+        case .shakeDevice:
+          try shakeDevice(messageId: messageId)
 
-      case .captureViewHierarchy:
-        captureViewHierarchy(params: params, messageId: messageId)
+        case .captureViewHierarchy:
+          captureViewHierarchy(params: params, messageId: messageId)
 
-      case .waitForActive:
-        waitFor(appState: .foreground, messageId: messageId)
+        case .waitForActive:
+          waitFor(appState: .foreground, messageId: messageId)
 
-      case.reactNativeReload:
-        reactNativeReload(messageId: messageId)
+        case.reactNativeReload:
+          try reactNativeReload(messageId: messageId)
 
-      case .invoke:
-        handleInvoke(params: params, messageId: messageId)
+        case .invoke:
+          try handleInvoke(params: params, messageId: messageId)
 
-      case .isReady:
-        sendAction(.reportReady, messageId: messageId)
+        case .isReady:
+          sendAction(.reportReady, messageId: messageId)
 
-      case .cleanup:
-        cleanup(messageId: messageId)
+        case .cleanup:
+          cleanup(messageId: messageId)
+      }
+    } catch {
+      let errorMessage = "XCUITest executor failed to handle request: \(error)"
+      execLog(errorMessage, type: .error)
+
+      sendAction(
+        .reportTestFailed,
+        params: [
+          "details": errorMessage
+        ],
+        messageId: messageId
+      )
     }
   }
 

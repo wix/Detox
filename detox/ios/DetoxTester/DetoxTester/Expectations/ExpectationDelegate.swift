@@ -79,7 +79,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
           fatalError("Visibility expectation is not supported by the XCUITest target")
         }
 
-        response.assertResponse(equalsTo: .boolean(isTruthy))
+        try response.assertResponse(equalsTo: .boolean(isTruthy))
 
       case .toHaveText(let text):
         guard let element = element else {
@@ -92,7 +92,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
           fatalError("Text expectation is not supported by the XCUITest target")
         }
 
-        response.assertResponse(equalsTo: .boolean(isTruthy))
+        try response.assertResponse(equalsTo: .boolean(isTruthy))
     }
   }
 }

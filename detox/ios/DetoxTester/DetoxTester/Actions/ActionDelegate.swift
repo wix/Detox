@@ -38,7 +38,7 @@ class ActionDelegate: ActionDelegateProtocol {
       "`\(element.debugDescription)`"
     )
 
-    whiteBoxMessageHandler(.waitUntilReady)?.assertResponse(equalsTo: .completed)
+    try whiteBoxMessageHandler(.waitUntilReady)?.assertResponse(equalsTo: .completed)
 
     uiLog("handling action: `\(action.name)`, on element: `\(element.debugDescription)`")
 
@@ -82,7 +82,8 @@ class ActionDelegate: ActionDelegateProtocol {
             holdDuration: holdDuration,
             onElement: element
           )) {
-          response.assertResponse(equalsTo: .completed)
+
+          try response.assertResponse(equalsTo: .completed)
 
           uiLog("long press and drag was executed by the app (white-box)", type: .debug)
         } else {
@@ -138,7 +139,7 @@ class ActionDelegate: ActionDelegateProtocol {
 
       case .setDatePicker(date: let date):
         if let response = whiteBoxMessageHandler(.setDatePicker(toDate: date, onElement: element)) {
-          response.assertResponse(equalsTo: .completed)
+          try response.assertResponse(equalsTo: .completed)
         }
 
       case .pinch(scale: let scale, speed: let speed, angle: let angle):

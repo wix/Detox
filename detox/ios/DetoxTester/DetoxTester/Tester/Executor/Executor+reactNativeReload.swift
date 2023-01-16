@@ -7,10 +7,10 @@ import Foundation
 import XCTest
 
 extension Executor {
-  func reactNativeReload(messageId: NSNumber) {
+  func reactNativeReload(messageId: NSNumber) throws {
     execLog("reloading react-native")
 
-    execute(whiteBoxRequest: .reloadReactNative).assertResponse(equalsTo: .completed)
+    try execute(whiteBoxRequest: .reloadReactNative).assertResponse(equalsTo: .completed)
 
     sendAction(.reportReady, messageId: messageId)
   }
