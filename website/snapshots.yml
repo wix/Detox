@@ -1,0 +1,31 @@
+- name: Home page dark theme
+  url: https://wix.github.io/Detox/
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'dark')
+
+- name: Home page light theme
+  url: https://wix.github.io/Detox/
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'light')
+
+- name: Showcase page dark theme
+  url: https://wix.github.io/Detox/showcase
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'dark')
+
+- name: Showcase page light theme
+  url: https://wix.github.io/Detox/showcase
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'light')
+
+- name: Blog page dark theme
+  url: https://wix.github.io/Detox/blog
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'dark')
+
+- name: Blog page light theme
+  url: https://wix.github.io/Detox/blog
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'light')
+
+- name: Demo page dark theme
+  url: https://wix.github.io/Detox/docs/next/demo
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'dark')
+
+- name: Demo page light theme
+  url: https://wix.github.io/Detox/docs/next/demo
+  execute: document.querySelector('div.toggle_vylO.colorModeToggle_DEke > button').click('data-theme', 'light')
