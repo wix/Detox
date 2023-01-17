@@ -10,7 +10,8 @@ extension Executor {
   func reactNativeReload(messageId: NSNumber) throws {
     execLog("reloading react-native")
 
-    try execute(whiteBoxRequest: .reloadReactNative).assertResponse(equalsTo: .completed)
+    let message = WhiteBoxExecutor.Message.reloadReactNative
+    try execute(whiteBoxRequest: message).assertResponse(equalsTo: .completed, for: message)
 
     sendAction(.reportReady, messageId: messageId)
   }

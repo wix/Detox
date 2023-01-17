@@ -12,7 +12,8 @@ extension Executor {
       return
     }
 
-    try execute(whiteBoxRequest: .shakeDevice).assertResponse(equalsTo: .completed)
+    let message = WhiteBoxExecutor.Message.shakeDevice
+    try execute(whiteBoxRequest: message).assertResponse(equalsTo: .completed, for: message)
     
     sendAction(.reportShakeDeviceDone, messageId: messageId)
   }

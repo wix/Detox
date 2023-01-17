@@ -73,26 +73,24 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
           throw Error.elementNotFound
         }
 
-        guard let response = whiteBoxMessageHandler(
-          .verifyVisibility(ofElement: element, withThreshold: threshold)
-        ) else {
+        let message = WhiteBoxExecutor.Message.verifyVisibility(ofElement: element, withThreshold: threshold)
+        guard let response = whiteBoxMessageHandler(message) else {
           fatalError("Visibility expectation is not supported by the XCUITest target")
         }
 
-        try response.assertResponse(equalsTo: .boolean(isTruthy))
+        try response.assertResponse(equalsTo: .boolean(isTruthy), for: message)
 
       case .toHaveText(let text):
         guard let element = element else {
           throw Error.elementNotFound
         }
 
-        guard let response = whiteBoxMessageHandler(
-          .verifyText(ofElement: element, equals: text)
-        ) else {
+        let message = WhiteBoxExecutor.Message.verifyText(ofElement: element, equals: text)
+        guard let response = whiteBoxMessageHandler(message) else {
           fatalError("Text expectation is not supported by the XCUITest target")
         }
 
-        try response.assertResponse(equalsTo: .boolean(isTruthy))
+        try response.assertResponse(equalsTo: .boolean(isTruthy), for: message)
     }
   }
 }

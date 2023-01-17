@@ -38,7 +38,12 @@ class ActionDelegate: ActionDelegateProtocol {
       "`\(element.debugDescription)`"
     )
 
-    try whiteBoxMessageHandler(.waitUntilReady)?.assertResponse(equalsTo: .completed)
+    try whiteBoxMessageHandler(
+      .waitUntilReady
+    )?.assertResponse(
+      equalsTo: .completed,
+      for: .waitUntilReady
+    )
 
     uiLog("handling action: `\(action.name)`, on element: `\(element.debugDescription)`")
 
@@ -70,20 +75,20 @@ class ActionDelegate: ActionDelegateProtocol {
           fatalError("target element (\(targetElement) is not an XCUIElement.")
         }
 
-        if let response = whiteBoxMessageHandler(
-          .longPressAndDrag(
-            duration: duration,
-            normalizedPositionX: normalizedPositionX,
-            normalizedPositionY: normalizedPositionY,
-            targetElement: targetElement,
-            normalizedTargetPositionX: normalizedTargetPositionX,
-            normalizedTargetPositionY: normalizedTargetPositionY,
-            speed: speed,
-            holdDuration: holdDuration,
-            onElement: element
-          )) {
+        let message = WhiteBoxExecutor.Message.longPressAndDrag(
+          duration: duration,
+          normalizedPositionX: normalizedPositionX,
+          normalizedPositionY: normalizedPositionY,
+          targetElement: targetElement,
+          normalizedTargetPositionX: normalizedTargetPositionX,
+          normalizedTargetPositionY: normalizedTargetPositionY,
+          speed: speed,
+          holdDuration: holdDuration,
+          onElement: element
+        )
 
-          try response.assertResponse(equalsTo: .completed)
+        if let response = whiteBoxMessageHandler(message) {
+          try response.assertResponse(equalsTo: .completed, for: message)
 
           uiLog("long press and drag was executed by the app (white-box)", type: .debug)
         } else {
@@ -138,8 +143,9 @@ class ActionDelegate: ActionDelegateProtocol {
         element.setColumnToValue(value, atIndex: index)
 
       case .setDatePicker(date: let date):
-        if let response = whiteBoxMessageHandler(.setDatePicker(toDate: date, onElement: element)) {
-          try response.assertResponse(equalsTo: .completed)
+        let message = WhiteBoxExecutor.Message.setDatePicker(toDate: date, onElement: element)
+        if let response = whiteBoxMessageHandler(message) {
+          try response.assertResponse(equalsTo: .completed, for: message)
         }
 
       case .pinch(scale: let scale, speed: let speed, angle: let angle):

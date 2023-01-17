@@ -26,13 +26,13 @@ extension Executor {
       Thread.sleep(forTimeInterval: waitSecondsForDebugger!)
     }
 
-    try execute(
-      whiteBoxRequest: .setSyncSettings(
-        maxTimerWait: params.maxTimerWait,
-        blacklistURLs: params.blacklistURLs,
-        disabled: params.disabled
-      )
-    ).assertResponse(equalsTo: .completed)
+    let message = WhiteBoxExecutor.Message.setSyncSettings(
+      maxTimerWait: params.maxTimerWait,
+      blacklistURLs: params.blacklistURLs,
+      disabled: params.disabled
+    )
+
+    try execute(whiteBoxRequest: message).assertResponse(equalsTo: .completed, for: message)
   }
 }
 

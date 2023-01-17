@@ -11,7 +11,10 @@ extension XCUIElement {
   func tap(withNumberOfTaps numberOfTaps: Int) {
     uiLog("requested tap on: `\(self)`, number of taps: \(numberOfTaps)")
 
-    tap(withNumberOfTaps: numberOfTaps, numberOfTouches: 1)
+//    tap(withNumberOfTaps: numberOfTaps, numberOfTouches: 1)
+    for _ in [0 ... numberOfTaps] {
+      tap()
+    }
 
     uiLog("\(self) tapped")
   }
