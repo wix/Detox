@@ -69,7 +69,7 @@
     "glob": "^8.0.3",
     "ini": "^1.3.4",
     "json-cycle": "^1.3.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.11",
     "multi-sort-stream": "^1.0.3",
     "multipipe": "^4.0.0",
     "node-ipc": "^9.2.1",
