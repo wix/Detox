@@ -1,0 +1,258 @@
+---
+title: Internal Demo Page for Styling
+---
+
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<head>
+  <meta name="robots" content="noindex, nofollow" />
+</head>
+
+:::note
+
+This page is for internal use only. If you are a contributor to the Detox project, you can use this page to test your changes to the website documentation pages
+styling. If you are not a contributor, you can ignore this page. Follow this link to the [Detox Home Page](/).
+
+:::
+
+## Headings section
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+### Third level heading
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+### `id` \[string \| number\]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+#### Fourth level heading
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+#### `id` \[string \| number\]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+##### Fifth level heading
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+##### `id` \[string \| number\]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+###### Sixth level heading
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+###### `id` \[string \| number\]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
+
+## Paragraphs section
+
+Dummy double-spaced paragraph example, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh tellus a mi.<br/>Integer blandit, enim quis malesuada fringilla, elit augue pellentesque justo, eget euismod elit sapien id magna. Sed molestie ultrices metus, a congue erat.
+
+This is a regular text, an _italic text_, a **bold text**, a ***both italic and bold text***, a ~~strikethrough text~~, an `inline code text`, a [simple link](#), and a [`link with inline code`](#).
+
+```plain text
+Here is an example of a code block with plain text.
+// highlight-next-line
+And this is a highlighted line.
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh tellus a mi. Integer blandit, enim quis malesuada fringilla, elit augue pellentesque justo, eget euismod elit sapien id magna. Sed molestie ultrices metus, a congue erat.
+
+![This is a placeholder image.](https://via.placeholder.com/728x450.png?text=Isquix+ConsecteturAdipiscing.ips+Siquis+lorem)
+
+- Lorem ipsum dolor sit amet, consectetur adipiscing elit:
+  - `dummy.config.js` – dummy config file;
+  - `dummy.test.js` – dummy test file;
+- Donec in dui eget metus aliquet facilisis ac eget tortor.
+- Donec scelerisque ex lacinia, commodo eros eget, pretium leo.
+
+## Table section
+
+A simple table:
+
+| Dummy Params | Details of Dummy Text Data                                                                                                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`       | **Required.** String Literal. Dummy property to discern device types: dummy.simulator, dummy.emulator, dummy.attached, dummy.genydummy etc.                                                                                         |
+| device       | **Required.** Object. Device query, e.g. `{ "byType": "dummy_phone" }` for dummy simulator, `{ "avdName": "dummy_avd" }` for dummy emulator or `{ "adbName": "<pattern>" }` for attached dummy device with name matching the regex. |
+| `bootArgs`   | _Optional. String. Supported by dummy.simulator and dummy.emulator only_ <br/> Supply an extra String of arguments to dummy_simctl boot ... or emulator -verbose ... @AVD_Name.                                                     |
+
+A workaround for displaying images side by side:
+
+| ![Left image](https://via.placeholder.com/728x450.png?text=Left+image) | ![Right image](https://via.placeholder.com/728x450.png?text=Right+image) |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+
+## Admonitions section
+
+:::caution
+
+Rhoncus magna eget, pellentesque auguerhoncus magna eget, pellentesque augue **Android** due to DUMMY issues:
+
+- [rhoncus magna eget, pellentesque auguerhoncus magna eget](#)
+- [Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue](#)
+- [pellentesque auguerhoncus magna eget](#)
+
+:::
+
+:::danger DANGER
+
+This is a DANGER admonition SAMPLE with a custom background color, and a border color.
+
+:::
+
+:::info
+
+If your app Dummy uses [DUMMYPods] (all modern React DUMMY projects do since `0.999.0`), make sure
+to run `DUMMY pod install` in your `ios/` folder before building.
+
+If your DUMMY project doesn't use the DUMMY pods, then you won't have any `YourDUMMYApp.xdummyworkkspace` in your iOS DUMMY Project.
+You should DUMMY search instead for something like `YourDUmmyApp.dummy` there, and see your DUMMY build command accordingly:
+
+```diff title="apps.diff"
+   apps: {
+     'dummy.debug': {
+       type: 'dummy.app',
+-      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
++      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
+-      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
++      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
+```
+
+:::
+
+:::note NOTE
+
+This is a NOTE admonition SAMPLE with a custom background color, and a border color.
+
+:::
+
+:::tip
+
+Lorem ipsum `dolor sit amet`, (Sed porttitor purus ac risus bibendum), PELLENTESQUES back to
+[Fusce tempor nisl euismod](#) rhoncus magna eget, pellentesque auguerhoncus magna eget,
+pellentesque augue **Fusce tempor nisl euismod**, rhoncus pellentesques magna tempus augue mollis.
+
+Donec in nulla `AUCTOR_SED_MALESUADA` (or `AMALESUADA_MASSA`) eros posuere
+Curabitur elementum mi massa, non molestie ipsum velit vel:
+
+<Tabs groupId="whateverId">
+  <TabItem value="tab1" label="Tab 1">
+    <CodeBlock language="bash">$ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
+  </TabItem>
+  <TabItem value="tab2" label="Tab 2">
+    <CodeBlock language="bash">$ANDACISUS_SED_EGET/rhoncus/tempus -augue-mollis</CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::
+
+## Syntax highlighting section
+
+### npm
+
+```bash npm2yarn
+npm install "dummy_package" --save
+```
+
+### Shell
+
+```shell
+// highlight-start
+# Check the exit status of the last command
+if [ $? -eq 0 ]; then
+    echo "dummy_command succeeded"
+// highlight-end
+else
+    echo "dummy_command failed"
+fi
+```
+
+### JSX
+
+```jsx title="src/DummyExample.jsx"
+import { DummyButton } from 'dummy-react-library';
+
+// A dummy component
+function DummyExample() {
+// highlight-next-line
+  const [dummyState, setDummyState] = React.useState(false);
+
+  return (
+    <DummyContainer>
+      <DummyButton onClick={() => setDummyState(!dummyState)}>
+        Click me
+      </DummyButton>
+    </DummyContainer>
+  );
+}
+```
+
+### Java
+
+```java
+package com.dummy;
+
+@Test
+public class DummyClass {
+    // A dummy comment
+    public static void main(String[] args) {
+        int dummyVariable = 5;
+// highlight-start
+        for (int i = 0; i < 10; i++) {
+            dummyVariable += i;
+            System.out.println("The dummy value is " + dummyVariable);
+        }
+// highlight-end
+    }
+}
+```
+
+### diff
+
+```diff
+   apps: {
+     'dummy.debug': {
+// highlight-start
+       type: 'dummy.app',
+-      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
++      binaryPath: 'dummy/build/Products/${conf}-dummyplatform/YOUR_APP.dummy',
+// highlight-end
+-      build: 'dummy_command -workspace dummy/YOUR_APP.dummyworkspace -scheme YOUR_APP -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
++      build: 'dummy_command -workspace dummy/example.dummyworkspace -scheme example -configuration ${conf} -sdk  dummyplatform -derivedDataPath dummy/build'
+```
+
+### JSON
+
+```json
+{
+  "items": {
+    "object1": {
+      "property1": "dummy_type",
+      "property2": "dummy_device",
+// highlight-next-line
+      "property3": ["dummy_path/to/dummy_file.dummy"]
+    }
+  }
+}
+```
+
+### YAML
+
+```yaml
+actions:
+  - dummy install example
+    - push_dummytext: "*"
+
+  - dummy install example --save global
+  # Lorem ipsum dolor sit amet, consectetur SampleCo is using ($DUMMY/lorem-text)
+```
+
+Thanks for checking with this visual regression suite!
