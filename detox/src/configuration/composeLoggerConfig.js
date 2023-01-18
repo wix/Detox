@@ -35,7 +35,7 @@ function composeLoggerConfig(opts) {
         options: typeof options === 'function' ? options(acc) : options
       });
     },
-    items.reduce((a, b) => _.merge(a, _.omit(b, 'options')))
+    items.reduce((a, b) => _.merge(a, _.omit(b, 'options')), {})
   );
 }
 
