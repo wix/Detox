@@ -29,7 +29,8 @@ extension XCUIElement {
       return
     }
 
-    self.tap()
+    let lowerRightCorner = self.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9))
+    lowerRightCorner.tap()
 
     guard hasKeyboardFocus else {
       throw Error.failedToFocusKeyboardOnElement
@@ -37,50 +38,71 @@ extension XCUIElement {
   }
 
   /// Changes the text in the element with the given text and change type.
-  func changeText(_ changeType: Action.ChangeTextType) throws {
+  func changeText(_ changeType: Action.ChangeTextType, app: XCUIApplication) throws {
+    guard self.value is String else {
+      throw Error.invalidKeyboardTypeActionNonStringValue
+    }
+
     switch changeType {
       case .clear:
-        try changeText(nil, shouldClearBefore: true)
+        try clearText(app: app)
 
       case .type(let text):
-        try changeText(text, shouldClearBefore: false)
+        try addText(text)
 
       case .replace(let text):
-        try changeText(text, shouldClearBefore: true)
+        try pasteText(text, app: app)
     }
   }
 
-  private func changeText(_ text: String?, shouldClearBefore: Bool) throws {
+  private func clearText(app: XCUIApplication) throws {
     try self.focusOnElement()
 
-    if shouldClearBefore == true {
-      guard let currentValue = self.value as? String else {
-        throw Error.invalidKeyboardTypeActionNonStringValue
-      }
+    tap()
 
-      // TODO: that is a temporal solution.
-      for _ in 0...currentValue.count {
-        typeText(XCUIKeyboardKey.delete.rawValue)
-      }
-
-      // TODO: Unfortunately, on RN, this doensn't work as expected (requires investigation):
-//      let clearString = String(
-//        repeating: XCUIKeyboardKey.delete.rawValue,
-//        count: currentValue.count
-//      )
-//
-//      typeText(clearString)
-
-
+    let selectAll = app.menuItems["Select All"]
+    if selectAll.waitForExistence(timeout: 0.5), selectAll.exists {
+      selectAll.tap()
+      typeText(String(XCUIKeyboardKey.delete.rawValue))
     }
+  }
 
-    guard let text = text else {
-      return
-    }
+  private func addText(_ text: String) throws {
+    try self.focusOnElement()
 
     // TODO: Unfortunately, on RN, a simple `typeText(text)` doensn't work as expected. Requires investigation.
     for char in text {
       typeText("\(char)")
+    }
+  }
+
+  private func pasteText(_ text: String, app: XCUIApplication) throws {
+    UIPasteboard.general.string = text
+
+    try self.focusOnElement()
+
+    tap()
+
+    let currentValue = self.value as? String
+    if currentValue?.isEmpty == false {
+      let selectAll = app.menuItems["Select All"]
+      if selectAll.waitForExistence(timeout: 0.5) {
+        selectAll.tap()
+      } else {
+        throw Error.failedToPasteNewText
+      }
+    }
+
+    let paste = app.menuItems["Paste"]
+    if paste.waitForExistence(timeout: 0.5) {
+      paste.tap()
+    } else {
+      throw Error.failedToPasteNewText
+    }
+
+    let allowPaste = XCUIApplication.springBoard.alerts.buttons["Allow Paste"]
+    if allowPaste.waitForExistence(timeout: 0.5) {
+      allowPaste.tap()
     }
   }
 }

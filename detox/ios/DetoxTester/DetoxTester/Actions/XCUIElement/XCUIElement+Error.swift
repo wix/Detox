@@ -13,6 +13,9 @@ extension XCUIElement {
 
     /// Failed to focus on element with the keyboard.
     case failedToFocusKeyboardOnElement
+
+    /// Failed to paste new text on text input.
+    case failedToPasteNewText
   }
 }
 
@@ -24,6 +27,9 @@ extension XCUIElement.Error: CustomStringConvertible {
 
       case .failedToFocusKeyboardOnElement:
         return "Failed to focus on element with the keyboard"
+
+      case .failedToPasteNewText:
+        return "Failed to paste new text on text input"
     }
   }
 }

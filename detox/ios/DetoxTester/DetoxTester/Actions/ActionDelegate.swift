@@ -134,7 +134,7 @@ class ActionDelegate: ActionDelegateProtocol {
         try element.tapKey(type)
 
       case .changeText(let change):
-        try element.changeText(change)
+        try element.changeText(change, app: app)
 
       case .scroll(let type):
         element.scroll(type, app: app)

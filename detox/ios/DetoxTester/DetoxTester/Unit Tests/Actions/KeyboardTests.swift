@@ -37,6 +37,7 @@ class KeyboardTests: DTXTestCase {
     XCTAssertEqual(textField.value as! String, "placeholder text")
   }
 
+  // TODO: Failed due to keyboard open. Disable keyboard before running (we disable on Detox).
   func testChangeText() throws {
     try actionDelegate.act(action: Action.changeText(.type("hello")), on: textField, testCase: self)
 

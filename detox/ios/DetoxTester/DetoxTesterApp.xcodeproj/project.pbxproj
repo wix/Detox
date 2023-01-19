@@ -88,6 +88,7 @@
 		60F96DDB296D77120047B332 /* XCUIElementQuery+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */; };
 		60F96DDD296D9F050047B332 /* ActionDelegate+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */; };
 		60F96DF12975A78E0047B332 /* Executor+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DF02975A78E0047B332 /* Executor+Error.swift */; };
+		60F96DFF2979C3A20047B332 /* XCUIApplication+springBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DFE2979C3A20047B332 /* XCUIApplication+springBoard.swift */; };
 		60F9F9392808369B005DB569 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F9382808369B005DB569 /* Menu.swift */; };
 		60F9F93E2808396D005DB569 /* MenuStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */; };
 		60F9F9402808397C005DB569 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9F93F2808397C005DB569 /* MenuViewController.swift */; };
@@ -236,6 +237,7 @@
 		60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+Error.swift"; sourceTree = "<group>"; };
 		60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionDelegate+Error.swift"; sourceTree = "<group>"; };
 		60F96DF02975A78E0047B332 /* Executor+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+Error.swift"; sourceTree = "<group>"; };
+		60F96DFE2979C3A20047B332 /* XCUIApplication+springBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+springBoard.swift"; sourceTree = "<group>"; };
 		60F9F9382808369B005DB569 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		60F9F93D2808396D005DB569 /* MenuStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MenuStoryboard.storyboard; sourceTree = "<group>"; };
 		60F9F93F2808397C005DB569 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
@@ -594,6 +596,7 @@
 				60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */,
 				60A3B467282D3344002F903B /* TimeInterval+Extensions.swift */,
 				604B94BC28314DE600508C27 /* XCUIApplication+settingsApp.swift */,
+				60F96DFE2979C3A20047B332 /* XCUIApplication+springBoard.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -862,6 +865,7 @@
 				6026FEB52816CD2F00A016A1 /* XCUIElement+Keyboard.swift in Sources */,
 				609AA17A279FE83F008F6617 /* Main.m in Sources */,
 				60A3B44A282AF75D002F903B /* WhiteBoxExecutor+Message.swift in Sources */,
+				60F96DFF2979C3A20047B332 /* XCUIApplication+springBoard.swift in Sources */,
 				60FBF6C7281AC336000B73B1 /* XCUIElement+compare.swift in Sources */,
 				60F96DF12975A78E0047B332 /* Executor+Error.swift in Sources */,
 				605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */,
