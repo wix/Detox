@@ -63,6 +63,9 @@ extension XCUIElement {
       return
     }
 
-    typeText(text)
+    // TODO: Unfortunately, on RN, a simple `typeText(text)` doensn't work as expected. Requires investigation.
+    for char in text {
+      typeText("\(char)")
+    }
   }
 }
