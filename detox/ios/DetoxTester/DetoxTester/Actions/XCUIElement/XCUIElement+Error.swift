@@ -10,5 +10,20 @@ extension XCUIElement {
   public enum Error: Swift.Error {
     /// Tried to type text into a non string value.
     case invalidKeyboardTypeActionNonStringValue
+
+    /// Failed to focus on element with the keyboard.
+    case failedToFocusKeyboardOnElement
+  }
+}
+
+extension XCUIElement.Error: CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .invalidKeyboardTypeActionNonStringValue:
+        return "Cannot type text value into a view without a string value"
+
+      case .failedToFocusKeyboardOnElement:
+        return "Failed to focus on element with the keyboard"
+    }
   }
 }

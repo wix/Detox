@@ -7,9 +7,13 @@ import Foundation
 import DetoxInvokeHandler
 
 extension XCUIElement {
+  private var hasKeyboardFocus: Bool {
+    return self.value(forKey: "hasKeyboardFocus") as? Bool ?? false
+  }
+
   /// Taps the keyboard key with the given type.
   func tapKey(_ keyType: Action.TapKeyType) throws {
-    self.focusOnElement()
+    try self.focusOnElement()
 
     switch keyType {
       case .returnKey:
@@ -20,13 +24,16 @@ extension XCUIElement {
     }
   }
 
-  private func focusOnElement() {
-    let hasFocus = self.value(forKey: "hasKeyboardFocus") as? Bool ?? false
-    if hasFocus {
+  private func focusOnElement() throws {
+    if hasKeyboardFocus {
       return
     }
 
     self.tap()
+
+    guard hasKeyboardFocus else {
+      throw Error.failedToFocusKeyboardOnElement
+    }
   }
 
   /// Changes the text in the element with the given text and change type.
@@ -44,19 +51,27 @@ extension XCUIElement {
   }
 
   private func changeText(_ text: String?, shouldClearBefore: Bool) throws {
-    self.focusOnElement()
+    try self.focusOnElement()
 
     if shouldClearBefore == true {
       guard let currentValue = self.value as? String else {
         throw Error.invalidKeyboardTypeActionNonStringValue
       }
 
-      let clearString = String(
-        repeating: XCUIKeyboardKey.delete.rawValue,
-        count: currentValue.count
-      )
+      // TODO: that is a temporal solution.
+      for _ in 0...currentValue.count {
+        typeText(XCUIKeyboardKey.delete.rawValue)
+      }
 
-      typeText(clearString)
+      // TODO: Unfortunately, on RN, this doensn't work as expected (requires investigation):
+//      let clearString = String(
+//        repeating: XCUIKeyboardKey.delete.rawValue,
+//        count: currentValue.count
+//      )
+//
+//      typeText(clearString)
+
+
     }
 
     guard let text = text else {
