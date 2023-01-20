@@ -60,7 +60,7 @@ extension XCUIElement {
 
     tap()
 
-    let selectAll = app.menuItems["Select All"]
+    let selectAll = app.menuItems[localize("Select All")]
     if selectAll.waitForExistence(timeout: 0.5), selectAll.exists {
       selectAll.tap()
       typeText(String(XCUIKeyboardKey.delete.rawValue))
@@ -85,7 +85,7 @@ extension XCUIElement {
 
     let currentValue = self.value as? String
     if currentValue?.isEmpty == false {
-      let selectAll = app.menuItems["Select All"]
+      let selectAll = app.menuItems[localize("Select All")]
       if selectAll.waitForExistence(timeout: 0.5) {
         selectAll.tap()
       } else {
@@ -93,14 +93,14 @@ extension XCUIElement {
       }
     }
 
-    let paste = app.menuItems["Paste"]
+    let paste = app.menuItems[localize("Paste")]
     if paste.waitForExistence(timeout: 0.5) {
       paste.tap()
     } else {
       throw Error.failedToPasteNewText
     }
 
-    let allowPaste = XCUIApplication.springBoard.alerts.buttons["Allow Paste"]
+    let allowPaste = XCUIApplication.springBoard.alerts.buttons[localize("Allow Paste")]
     if allowPaste.waitForExistence(timeout: 0.5) {
       allowPaste.tap()
     }

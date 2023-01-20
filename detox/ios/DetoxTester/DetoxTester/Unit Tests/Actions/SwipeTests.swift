@@ -47,10 +47,10 @@ class SwipeTests: DTXTestCase {
     XCTAssertEqual(resultLabel.label, "Success!")
   }
 
-  func testCoordinateSwipeRight() throws {
+  func testCoordinateSwipeRight_1() throws {
     let swipe = Action.swipe(
       direction: .right,
-      speed: .fast,
+      speed: .slow,
       normalizedOffset: 0.5,
       normalizedStartingPointX: 0.5,
       normalizedStartingPointY: 0.5
@@ -59,6 +59,20 @@ class SwipeTests: DTXTestCase {
     try actionDelegate.act(action: swipe, on: swipableView, testCase: self)
 
     XCTAssertEqual(resultLabel.label, "Success!")
+  }
+
+  func testCoordinateSwipeRight_2() throws {
+    let swipe = Action.swipe(
+      direction: .right,
+      speed: .fast,
+      normalizedOffset: 0.3,
+      normalizedStartingPointX: 0.3,
+      normalizedStartingPointY: 0.3
+    )
+
+    try actionDelegate.act(action: swipe, on: swipableView, testCase: self)
+
+    XCTAssertNotEqual(resultLabel.label, "Success!")
   }
 
   func testSwipeLeft() throws {

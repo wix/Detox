@@ -71,7 +71,7 @@ extension XCUIElement {
     )
 
     startCoordinate.press(
-      forDuration: 0,
+      forDuration: 0.02,
       thenDragTo: targetCoordinate,
       withVelocity: velocity,
       thenHoldForDuration: 0
@@ -83,7 +83,8 @@ extension XCUIElement {
     direction: Action.SwipeDirection,
     app: XCUIApplication
   ) -> CGVector {
-    let normalizedOffset = normalizedOffset ?? defaultNormalizedOffset(app: app)
+    let normalizedOffset = normalizedOffset != nil ?
+        min(1, max(0, normalizedOffset!)) : defaultNormalizedOffset(app: app)
 
     switch direction {
       case .up:
