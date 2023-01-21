@@ -74,7 +74,12 @@ class WhiteBoxExecutor {
           params: [
             "timeIntervalSince1970": AnyCodable(date.timeIntervalSince1970),
             "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame))
+            "elementFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ])
           ]
         )
 
@@ -87,7 +92,12 @@ class WhiteBoxExecutor {
           params: [
             "threshold": AnyCodable(threshold),
             "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame))
+            "elementFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ])
           ]
         )
 
@@ -102,7 +112,12 @@ class WhiteBoxExecutor {
           params: [
             "text": AnyCodable(text),
             "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame))
+            "elementFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ])
           ]
         )
 
@@ -203,9 +218,19 @@ class WhiteBoxExecutor {
           type: "longPressAndDrag",
           params: [
             "elementID": AnyCodable(element.identifier),
-            "elementFrame": AnyCodable(NSCoder.string(for: element.frame)),
+            "elementFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ]),
             "targetElementID": AnyCodable(targetElement.identifier),
-            "targetElementFrame": AnyCodable(NSCoder.string(for: targetElement.frame)),
+            "targetElementFrame": AnyCodable([
+              targetElement.frame.origin.x,
+              targetElement.frame.origin.y,
+              targetElement.frame.width,
+              targetElement.frame.height
+            ]),
             "duration": AnyCodable(duration),
             "normalizedPositionX": (normalizedPositionX != nil) ?
                 AnyCodable(normalizedPositionX!) : nil,

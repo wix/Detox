@@ -344,7 +344,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "setDatePicker":
 				let targetIdentifier = params["elementID"] as! String
-				let targetFrame = params["elementFrame"] as! String
+				let targetFrame = params["elementFrame"] as! [NSNumber]
 
 				let targetElement = findElement(
 					byIdentifier: targetIdentifier,
@@ -385,10 +385,10 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "longPressAndDrag":
 				let elementIdentifier = params["elementID"] as! String
-				let elementFrame = params["elementFrame"] as! String
+				let elementFrame = params["elementFrame"] as! [NSNumber]
 
 				let targetIdentifier = params["targetElementID"] as! String
-				let targetElementFrame = params["targetElementFrame"] as! String
+				let targetElementFrame = params["targetElementFrame"] as! [NSNumber]
 
 				let duration = params["duration"] as! NSNumber
 				let normalizedPositionX = params["normalizedPositionX"] as? NSNumber
@@ -449,7 +449,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "verifyVisibility":
 				let targetIdentifier = params["elementID"] as! String
-				let targetFrame = params["elementFrame"] as! String
+				let targetFrame = params["elementFrame"] as! [NSNumber]
 				let threshold = params["threshold"] as! NSNumber
 
 				let targetElement = findElement(byIdentifier: targetIdentifier, andFrame: targetFrame)
@@ -464,7 +464,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "verifyText":
 				let targetIdentifier = params["elementID"] as! String
-				let targetFrame = params["elementFrame"] as! String
+				let targetFrame = params["elementFrame"] as! [NSNumber]
 
 				let text = params["text"] as! String
 
@@ -504,7 +504,8 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		}
 	}
 
-	func findElement(byIdentifier identifier: String, andFrame frame: String) -> UIView {
+	func findElement(byIdentifier identifier: String, andFrame frame: [NSNumber]) -> UIView {
+		var allViews = [String: String?]()
 		let predicate = NSPredicate { evaluatedObject, _ in
 			guard
 				let element = evaluatedObject as? UIView
@@ -513,21 +514,32 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			}
 
 			let elementIdentifier = element.accessibilityIdentifier
-			let elementFrame = NSCoder.string(
-				for: CGRect(
-					origin: element.convert(CGPointZero, to: nil),
-					size: element.frame.size
-				)
-			)
 
-			return elementIdentifier == identifier && elementFrame == frame
+			let origin = element.convert(CGPointZero, to: nil)
+
+			let evaluatedFrame = NSCoder.string(for: CGRect(origin: origin, size: element.frame.size))
+			if elementIdentifier != nil {
+				allViews[elementIdentifier!] = evaluatedFrame
+			}
+
+			// Seems like there's some instability between the element's size and the renedered size.
+			guard
+				elementIdentifier == identifier,
+				abs(origin.x - frame[0].doubleValue) < 0.05,
+				abs(origin.y - frame[1].doubleValue) < 0.05,
+				abs(element.frame.width - frame[2].doubleValue) < 5,
+				abs(element.frame.height - frame[3].doubleValue) < 5 else {
+				return false
+			}
+
+			return true
 		}
 
 		let matchingViews = UIView.dtx_findViewsInKeySceneWindows(passing: predicate)
 
 		guard let matchingView = (matchingViews as! [UIView]).first else {
 			fatalError("Failed to connect XCUIElement with source UIView with " +
-								 "identifier: `\(identifier)`, frame: `\(frame)`")
+								 "identifier: `\(identifier)` and frame: `\(frame)`. Found UIViews: \(allViews)")
 		}
 
 		return matchingView
