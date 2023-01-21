@@ -15,52 +15,78 @@ describe('Timeline integration test', () => {
   const timelineArtifactFilename = 'detox.trace.json';
   const timelineArtifactPath = path.join(artifactsDirectory, timelineArtifactFilename);
   const clearAllArtifacts = () => remove(artifactsDirectory);
+  const readTac = async () => {
+    tac = JSON.parse(await readFile(timelineArtifactPath, 'utf8'));
+  };
 
   let tac;
 
-  beforeAll(clearAllArtifacts);
+  describe('Flaky test', () => {
+    beforeAll(clearAllArtifacts);
+    beforeAll(() => execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 flaky`));
+    beforeAll(readTac);
 
-  beforeAll(async () => {
-    await execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 flaky`);
-    tac = JSON.parse(await readFile(timelineArtifactPath, 'utf8'));
+    it('should deterministically produce a timeline artifact', verifyTimelineSnapshot);
+
+    it('should have balanced begin/end events', assertBalancedEvents);
+
+    it('should have a credible list of categories', async () => {
+      const cats = _.chain(tac)
+        .flatMap(e => e.cat ? `${e.cat}`.split(',', 1) : [])
+        .uniq()
+        .sort()
+        .value();
+
+      expect(cats).toEqual([
+        'artifacts-manager',
+        'device',
+        'ipc',
+        'lifecycle',
+        'user',
+        'ws-client',
+        'ws-server',
+      ]);
+    });
+
+    it('should have a credible process and thread ids', async () => {
+      const unique = _.mapValues({
+        pid: tac.map(e => e.pid),
+        tid: tac.map(e => e.tid),
+        pid_tid: tac.map(e => `${e.pid}:${e.tid}`),
+      }, v => _.uniq(v).sort());
+
+      expect(unique.pid.length).toBe(3);
+      expect(unique.tid.length).toBeLessThan(unique.pid_tid.length);
+      expect(unique.pid_tid.length).toBeGreaterThan(10);
+    });
   });
 
-  it('should deterministically produce a timeline artifact', async () => {
+  describe('Skipped test', () => {
+    beforeAll(clearAllArtifacts);
+    beforeAll(() => execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 skipped`));
+    beforeAll(readTac);
+
+    it('should deterministically produce a timeline artifact', verifyTimelineSnapshot);
+
+    it('should have balanced begin/end events', assertBalancedEvents);
+  });
+
+  describe('Focused test', () => {
+    beforeAll(clearAllArtifacts);
+    beforeAll(() => execCommand(`detox test -c stub --config integration/e2e/config.js -a ${artifactsDirectory} -R 1 focused`));
+    beforeAll(readTac);
+
+    it('should deterministically produce a timeline artifact', verifyTimelineSnapshot);
+
+    it('should have balanced begin/end events', assertBalancedEvents);
+  });
+
+  function verifyTimelineSnapshot() {
     const sanitizeContext = { pid: new Map(), tid: new Map(), sessionId: '', cwd: '' };
     expect(tac.filter(isLifecycleEvent).map(sanitizeEvent.bind(sanitizeContext))).toMatchSnapshot();
-  });
+  }
 
-  it('should have a credible list of categories', async () => {
-    const cats = _.chain(tac)
-      .flatMap(e => e.cat ? `${e.cat}`.split(',', 1) : [])
-      .uniq()
-      .sort()
-      .value();
-
-    expect(cats).toEqual([
-      'artifacts-manager',
-      'device',
-      'ipc',
-      'lifecycle',
-      'user',
-      'ws-client',
-      'ws-server',
-    ]);
-  });
-
-  it('should have a credible process and thread ids', async () => {
-    const unique = _.mapValues({
-      pid: tac.map(e => e.pid),
-      tid: tac.map(e => e.tid),
-      pid_tid: tac.map(e => `${e.pid}:${e.tid}`),
-    }, v => _.uniq(v).sort());
-
-    expect(unique.pid.length).toBe(3);
-    expect(unique.tid.length).toBeLessThan(unique.pid_tid.length);
-    expect(unique.pid_tid.length).toBeGreaterThan(10);
-  });
-
-  it('should have balanced begin/end events', () => {
+  function assertBalancedEvents() {
     for (const lane of _(tac).groupBy('tid').values()) {
       const beginCount = _.filter(lane, { ph: 'B' }).length;
       const endCount = _.filter(lane, { ph: 'E' }).length;
@@ -69,7 +95,7 @@ describe('Timeline integration test', () => {
         expect(`imbalanced begin (${beginCount}) vs end (${endCount}) events in thread ${tid} (category: ${cat})`).toBeNull();
       }
     }
-  });
+  }
 });
 
 function isLifecycleEvent(e) {
