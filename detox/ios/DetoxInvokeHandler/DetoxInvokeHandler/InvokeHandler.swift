@@ -399,6 +399,15 @@ public class InvokeHandler {
 
       case .toExist:
         return .toExist
+
+      case .toHaveValue:
+        return try valueExpectation(params: params)
+
+      case .toHaveToggleValue:
+        return try toggleValueExpectation(params: params)
+
+      case .toHaveLabel:
+        return try labelExpectation(params: params)
     }
   }
 
@@ -421,5 +430,20 @@ public class InvokeHandler {
     let normalizedPosition = ((params?.first?.value)! as! NSNumber).doubleValue
     let tolerance = params?.count == 2 ? (params?[1].value as? NSNumber)?.doubleValue : nil
     return .toHaveSliderInPosition(normalizedPosition: normalizedPosition, tolerance: tolerance)
+  }
+
+  private func valueExpectation(params: [AnyCodable]?) throws -> Expectation {
+    let value = (params?.first?.value)! as! String
+    return .toHaveValue(value)
+  }
+
+  private func toggleValueExpectation(params: [AnyCodable]?) throws -> Expectation {
+    let value = (params?.first?.value)! as! Bool
+    return .toHaveToggleValue(value)
+  }
+
+  private func labelExpectation(params: [AnyCodable]?) throws -> Expectation {
+    let label = (params?.first?.value)! as! String
+    return .toHaveLabel(label)
   }
 }

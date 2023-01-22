@@ -24,4 +24,13 @@ public enum ExpectationType: String, Codable, Equatable {
 
   /// Expects the element to exist on the view hierarchy.
   case toExist = "toExist"
+
+  /// Expects the element to have a specified label.
+  case toHaveLabel = "toHaveLabel"
+
+  /// Expects the element to have a specified label.
+  case toHaveValue = "toHaveValue"
+
+  /// Expects the toggle element to have a specified value.
+  case toHaveToggleValue = "toHaveToggleValue"
 }

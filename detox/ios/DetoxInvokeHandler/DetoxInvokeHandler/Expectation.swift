@@ -25,4 +25,13 @@ public enum Expectation: Equatable {
 
   /// Expects the element to exist within the app's current UI hierarchy.
   case toExist
+
+  /// Expects the view's value to equal the given `value`.
+  case toHaveValue(_ value: String)
+
+  /// Expects the view's label to equal the given `label`.
+  case toHaveLabel(_ label: String)
+
+  /// Expects the toggle's value to equal the given `value`.
+  case toHaveToggleValue(_ value: Bool)
 }
