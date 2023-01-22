@@ -9,88 +9,97 @@ import DetoxInvokeHandler
 extension XCUIElement {
   ///
   public var hasKeyboardFocusOnTextField: Bool {
-    return (self.textFields.allElementsBoundByIndex.first(where: { element in
-      element.hasKeyboardFocus
-    }) != nil) || self.hasKeyboardFocus
+    return (textField ?? self).hasKeyboardFocus
   }
 
   private var hasKeyboardFocus: Bool {
-    return self.value(forKey: "hasKeyboardFocus") as? Bool ?? false
+    return value(forKey: "hasKeyboardFocus") as? Bool ?? false
+  }
+
+  private var textField: XCUIElement? {
+    return textFields.allElementsBoundByIndex.first
   }
 
   /// Taps the keyboard key with the given type.
   func tapKey(_ keyType: Action.TapKeyType) throws {
-    try self.focusKeyboard()
+    try focusKeyboard()
 
     switch keyType {
       case .returnKey:
-        self.typeText(XCUIKeyboardKey.return.rawValue)
+        typeText(XCUIKeyboardKey.return.rawValue)
 
       case  .backspaceKey:
-        self.typeText(XCUIKeyboardKey.delete.rawValue)
+        typeText(XCUIKeyboardKey.delete.rawValue)
     }
   }
 
   private func focusKeyboard() throws {
-    if self.hasKeyboardFocusOnTextField {
+    if hasKeyboardFocus == true {
       return
     }
 
-    let lowerRightCorner = self.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9))
-    lowerRightCorner.tap()
+    coordinate(
+      withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9)
+    ).tap()
 
-    guard self.hasKeyboardFocusOnTextField else {
+    guard hasKeyboardFocus == true else {
       throw Error.failedToFocusKeyboardOnElement(element: self)
     }
   }
 
   /// Changes the text in the element with the given text and change type.
   func changeText(_ changeType: Action.ChangeTextType, app: XCUIApplication) throws {
-    guard self.value is String else {
+    if let textField = textField {
+      uiLog("found underlying text field, changing text on the text field (\(textField)")
+      try textField.changeText(changeType, app: app)
+      return
+    }
+
+    guard value is String else {
       throw Error.invalidKeyboardTypeActionNonStringValue
     }
 
     switch changeType {
       case .clear:
-        try self.deleteText(app: app)
+        try deleteText(app: app)
 
       case .type(let text):
-        try self.addText(text)
+        try addText(text)
 
       case .replace(let text):
-        try self.deleteAndPasteText(text, app: app)
+        try deleteAndPasteText(text, app: app)
     }
   }
 
   private func deleteText(app: XCUIApplication) throws {
-    try self.focusKeyboard()
+    try focusKeyboard()
 
-    self.tap()
+    tap()
 
     let selectAll = app.menuItems[localize("Select All")]
     if selectAll.waitForExistence(timeout: 0.5), selectAll.exists {
       selectAll.tap()
-      self.typeText(String(XCUIKeyboardKey.delete.rawValue))
+      typeText(String(XCUIKeyboardKey.delete.rawValue))
     }
   }
 
   private func addText(_ text: String) throws {
-    try self.focusKeyboard()
+    try focusKeyboard()
 
     // TODO: Unfortunately, on RN, a simple `typeText(text)` doensn't work as expected. Requires investigation.
     for char in text {
-      self.typeText("\(char)")
+      typeText("\(char)")
     }
   }
 
   private func deleteAndPasteText(_ text: String, app: XCUIApplication) throws {
     UIPasteboard.general.string = text
 
-    try self.focusKeyboard()
+    try focusKeyboard()
 
-    self.tap()
+    tap()
 
-    let currentValue = self.value as? String
+    let currentValue = value as? String
     if currentValue?.isEmpty == false {
       let selectAll = app.menuItems[localize("Select All")]
       if selectAll.waitForExistence(timeout: 0.5) {
