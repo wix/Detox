@@ -26,9 +26,7 @@ class Executor {
           execLog("successfully logged into Detox server")
 
         case .disconnect:
-          execLog("the tester have disconnected the XCUITest test runner", type: .error)
-          cleanup(messageId: messageId)
-          throw Error.testerDisconnected
+          execLog("the tester have disconnected the XCUITest test runner", type: .debug)
 
         case .setRecordingState:
           execLog("not implemented yet: \(action)", type: .error)
@@ -73,6 +71,7 @@ class Executor {
           sendAction(.reportReady, messageId: messageId)
 
         case .cleanup:
+          execLog("called to cleanup XCUITest runner", type: .debug)
           cleanup(messageId: messageId)
       }
     } catch {

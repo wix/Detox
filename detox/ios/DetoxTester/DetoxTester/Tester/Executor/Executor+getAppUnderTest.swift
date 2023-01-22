@@ -8,7 +8,7 @@ import XCTest
 
 extension Executor {
   /// Returns the app under test bundle identifier.
-  func getAppUnderTestBundleIdentifier() -> String {
+  public func getAppUnderTestBundleIdentifier() -> String {
     let environment = ProcessInfo.processInfo.environment
     guard let bundleIdentifier = environment[EnvArgKeys.appUnderTest] else {
       execLog("app under test is undefined", type: .error)

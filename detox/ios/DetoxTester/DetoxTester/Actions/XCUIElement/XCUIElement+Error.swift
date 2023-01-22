@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import XCTest
 
 extension XCUIElement {
   /// Represents an error caused by `XCUIElement` extensions.
