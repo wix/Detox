@@ -10,6 +10,9 @@ extension Executor {
   public enum Error: Swift.Error {
     /// Executor failed to handle white-box handler response.
     case failedToHandleResponse(received: String)
+
+    /// Tester disconnected from XCUITest executor.
+    case testerDisconnected
   }
 }
 
@@ -19,6 +22,9 @@ extension Executor.Error: CustomStringConvertible {
     switch self {
       case .failedToHandleResponse(let received):
         return "Invalid response received: \(received)"
+
+      case .testerDisconnected:
+        return "Tester disconnected from XCUITest executor"
     }
   }
 }
