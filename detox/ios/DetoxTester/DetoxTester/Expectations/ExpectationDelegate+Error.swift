@@ -12,7 +12,7 @@ extension ExpectationDelegate {
     case elementNotFound
 
     ///
-    case expectationFailed(subject: String, expected: String, actual: String, not: Bool)
+    case expectationFailed(subject: String, expected: String, actual: String, isTruthy: Bool)
   }
 }
 
@@ -22,9 +22,9 @@ extension ExpectationDelegate.Error: CustomStringConvertible {
       case .elementNotFound:
         return "Element was not found"
 
-      case .expectationFailed(let subject, let expected, let actual, let not):
+      case .expectationFailed(let subject, let expected, let actual, let isTruthy):
         return "Expectation failed, expected the element " +
-            "\(not == true ? "not to" : "to") have \(subject) " +
+            "\(isTruthy == true ? "to" : "not to") have \(subject) " +
             "with value: `\(expected)`, got: `\(actual)`"
     }
   }

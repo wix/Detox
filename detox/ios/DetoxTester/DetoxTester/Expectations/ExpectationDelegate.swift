@@ -128,7 +128,7 @@ private extension XCUIElement {
         subject: "existence",
         expected: "truthy",
         actual: exists == true ? "truthy" : "falsy",
-        not: isTruthy
+        isTruthy: isTruthy
       )
     }
 
@@ -138,17 +138,18 @@ private extension XCUIElement {
   }
 
   func assertIsFocused(isTruthy: Bool) throws {
-    if hasFocus != isTruthy {
+    if hasKeyboardFocus != isTruthy {
       expectLog(
-        "element \(hasFocus ? "is focused" : "is not focused"), expected: \(isTruthy.description)",
+        "element \(hasKeyboardFocus ? "is focused" : "is not focused"), " +
+            "expected: \(isTruthy.description)",
         type: .error
       )
 
       throw ExpectationDelegate.Error.expectationFailed(
         subject: "focus",
         expected: "truthy",
-        actual: hasFocus == true ? "truthy" : "falsy",
-        not: isTruthy
+        actual: hasKeyboardFocus == true ? "truthy" : "falsy",
+        isTruthy: isTruthy
       )
     }
   }
@@ -171,7 +172,7 @@ private extension XCUIElement {
         subject: "identifier",
         expected: value,
         actual: cleanIdentifier,
-        not: isTruthy
+        isTruthy: isTruthy
       )
     }
 
@@ -198,8 +199,9 @@ private extension XCUIElement {
       throw ExpectationDelegate.Error.expectationFailed(
         subject: "slider position",
         expected: "in range with normalized position `\(position)` and tolerance `\(tolerance)`",
-        actual: "\(isInRange == true ? "in range" : "not in range") (`\(normalizedSliderPosition)`)",
-        not: isTruthy
+        actual: "\(isInRange == true ? "in range" : "not in range") " +
+            "(`\(normalizedSliderPosition)`)",
+        isTruthy: isTruthy
       )
     }
 
@@ -207,8 +209,7 @@ private extension XCUIElement {
   }
 
   func assertValue(equals value: String, isTruthy: Bool) throws {
-    let selfValue = String(
-      describing: self.value as? CustomStringConvertible & TextOutputStreamable)
+    let selfValue = accessibilityValue ?? self.value as? String
     let equals = selfValue == value
 
     if equals != isTruthy {
@@ -221,8 +222,8 @@ private extension XCUIElement {
       throw ExpectationDelegate.Error.expectationFailed(
         subject: "value",
         expected: value,
-        actual: selfValue,
-        not: isTruthy
+        actual: selfValue ?? "empty",
+        isTruthy: isTruthy
       )
     }
 
@@ -232,7 +233,8 @@ private extension XCUIElement {
   }
 
   func assertLabel(equals value: String, isTruthy: Bool) throws {
-    let equals = self.label == value
+    let selfLabel = accessibilityLabel ?? label
+    let equals = selfLabel == value
 
     if equals != isTruthy {
       expectLog(
@@ -244,8 +246,8 @@ private extension XCUIElement {
       throw ExpectationDelegate.Error.expectationFailed(
         subject: "label",
         expected: value,
-        actual: self.label,
-        not: isTruthy
+        actual: selfLabel,
+        isTruthy: isTruthy
       )
     }
 

@@ -7,7 +7,7 @@ import Foundation
 import DetoxInvokeHandler
 
 extension XCUIElement {
-  private var hasKeyboardFocus: Bool {
+  public var hasKeyboardFocus: Bool {
     return self.value(forKey: "hasKeyboardFocus") as? Bool ?? false
   }
 
