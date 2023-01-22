@@ -138,9 +138,9 @@ private extension XCUIElement {
   }
 
   func assertIsFocused(isTruthy: Bool) throws {
-    if hasKeyboardFocus != isTruthy {
+    if hasKeyboardFocusOnTextField != isTruthy {
       expectLog(
-        "element \(hasKeyboardFocus ? "is focused" : "is not focused"), " +
+        "element \(hasKeyboardFocusOnTextField ? "is focused" : "is not focused"), " +
             "expected: \(isTruthy.description)",
         type: .error
       )
@@ -148,7 +148,7 @@ private extension XCUIElement {
       throw ExpectationDelegate.Error.expectationFailed(
         subject: "focus",
         expected: "truthy",
-        actual: hasKeyboardFocus == true ? "truthy" : "falsy",
+        actual: hasKeyboardFocusOnTextField == true ? "truthy" : "falsy",
         isTruthy: isTruthy
       )
     }

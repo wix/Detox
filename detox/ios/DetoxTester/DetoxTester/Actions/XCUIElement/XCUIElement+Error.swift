@@ -12,7 +12,7 @@ extension XCUIElement {
     case invalidKeyboardTypeActionNonStringValue
 
     /// Failed to focus on element with the keyboard.
-    case failedToFocusKeyboardOnElement
+    case failedToFocusKeyboardOnElement(element: XCUIElement)
 
     /// Failed to paste new text on text input.
     case failedToPasteNewText
@@ -25,8 +25,9 @@ extension XCUIElement.Error: CustomStringConvertible {
       case .invalidKeyboardTypeActionNonStringValue:
         return "Cannot type text value into a view without a string value"
 
-      case .failedToFocusKeyboardOnElement:
-        return "Failed to focus on element with the keyboard"
+      case .failedToFocusKeyboardOnElement(let element):
+        return "Failed to focus on element with the keyboard (element " +
+            "identifier: `\(element.identifier)`)"
 
       case .failedToPasteNewText:
         return "Failed to paste new text on text input"
