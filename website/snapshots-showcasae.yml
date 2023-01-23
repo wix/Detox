@@ -1,0 +1,7 @@
+- name: Showcase page dark theme
+  url: http://localhost:3000/Detox/showcase?shuffle=disabled
+  execute: document.documentElement.setAttribute("data-theme", "dark")
+
+- name: Showcase page light theme
+  url: http://localhost:3000/Detox/showcase?shuffle=disabled
+  execute: document.documentElement.setAttribute("data-theme", "light")
