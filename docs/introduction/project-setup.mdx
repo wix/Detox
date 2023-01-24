@@ -150,36 +150,35 @@ patch or create if they are missing:
 Open your main build script and apply the suggested changes:
 
 ```diff title="android/build.gradle"
- buildscript {
+buildscript {
    ext {
-     buildToolsVersion = "31.0.0"
+     buildToolsVersion = "33.0.0"
 // highlight-next-line
      minSdkVersion = 21 // (1)
-     compileSdkVersion = 30
-     targetSdkVersion = 30
+     compileSdkVersion = 33
+     targetSdkVersion = 33
 // highlight-next-line
-+    kotlinVersion = 'X.Y.Z' // (2)
++    kotlinVersion = "X.Y.Z" // (2)
+     // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
+      ndkVersion = "23.1.7779620"
    }
  …
    dependencies {
-     classpath("com.android.tools.build:gradle:7.1.1")
+     classpath("com.android.tools.build:gradle:7.3.1")
      classpath("com.facebook.react:react-native-gradle-plugin")
-     classpath("de.undercouch:gradle-download-task:5.0.1")
 // highlight-next-line
 +    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion") // (3)
  …
-
- allprojects {
-   repositories {
-   …
-   google()
+}
+allprojects {
+    repositories {
 // highlight-start
-+  maven { // (4)
-+    url("$rootDir/../node_modules/detox/Detox-android")
-+  }
++       maven { // (4)
++           // https://wix.github.io/Detox/docs/introduction/project-setup
++           url("$rootDir/../node_modules/detox/Detox-android")
++       }
 // highlight-end
-   maven { url 'https://www.jitpack.io' }
- }
+}
 ```
 
 Here is the explanation of those changes, numbered 1-4:
@@ -225,7 +224,8 @@ Now let's move on to the next build script and prepare it:
  dependencies {
 +  androidTestImplementation('com.wix:detox:+')
 +  implementation 'androidx.appcompat:appcompat:1.1.0'
-   implementation fileTree(dir: "libs", include: ["*.jar"])
+   // The version of react-native is set by the React Native Gradle Plugin
+   implementation("com.facebook.react:react-android")
 ```
 
 :::info ProGuard notice
