@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import styles from './Card.module.css';
+import styles from './Card.module.scss';
 
 function Card({ className, title, titleFontSize, image, linkGoogle, linkApple, linkGitHub, linkWebsite }) {
   return (
