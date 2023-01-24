@@ -11,7 +11,19 @@ extension XCUIElement {
   func tap(withNumberOfTaps numberOfTaps: Int) {
     uiLog("requested tap on: `\(self)`, number of taps: \(numberOfTaps)")
 
-    tap(withNumberOfTaps: numberOfTaps, numberOfTouches: 1)
+    // TODO: this call is not working as expected on React Native apps.
+    // `tap(withNumberOfTaps: numberOfTaps, numberOfTouches: 1)`
+
+    for tapTime in 1...numberOfTaps {
+      uiLog("tapping on \(self), \(tapTime + 1)/\(numberOfTaps) taps")
+
+      guard self.isHittable else {
+        uiLog("\(self) is no longer hittable", type: .error)
+        return
+      }
+
+      shortPress()
+    }
 
     uiLog("\(self) tapped")
   }
