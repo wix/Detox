@@ -51,7 +51,7 @@ class ScrollTests: DTXTestCase {
     let action = Action.scroll(
       .withParams(
         offset: 100,
-        direction: .bottom,
+        direction: .down,
         startNormalizedPositionX: nil,
         startNormalizedPositionY: nil
       )
@@ -67,7 +67,7 @@ class ScrollTests: DTXTestCase {
     let action = Action.scroll(
       .withParams(
         offset: 500,
-        direction: .bottom,
+        direction: .down,
         startNormalizedPositionX: nil,
         startNormalizedPositionY: nil
       )

@@ -119,7 +119,7 @@ extension Action {
     /// Scroll with given parameters.
     case withParams(
       offset: Double,
-      direction: ScrollToEdgeType,
+      direction: ScrollDirection,
       startNormalizedPositionX: Double?,
       startNormalizedPositionY: Double?
     )
@@ -138,5 +138,20 @@ extension Action {
 
     /// Right edge.
     case right = "right"
+  }
+
+  /// Represents the directions that can be scrolled to in a scroll with direction interaction.
+  public enum ScrollDirection: String, Equatable, Hashable {
+    /// Scroll down.
+    case down = "down"
+
+    /// Scroll up.
+    case up = "up"
+
+    /// Scroll right.
+    case right = "right"
+
+    /// Scroll left.
+    case left = "left"
   }
 }

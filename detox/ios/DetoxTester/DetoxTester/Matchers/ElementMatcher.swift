@@ -21,9 +21,14 @@ class ElementMatcher: ElementMatcherProtocol {
   func match(to pattern: ElementPattern) throws -> [AnyHashable] {
     matcherLog("called to match with pattern: \(pattern)")
 
-    return try app.newQuery().matching(
+    let result: [XCUIElement] = try app.newQuery().matching(
       pattern: pattern,
       whiteBoxMessageHandler: whiteBoxMessageHandler
     ).run()
+
+    matcherLog("matched elements: " +
+      "\(result.map { "\($0.identifier), size: \($0.frame.size), origin: \($0.frame.origin)" } )")
+
+    return result
   }
 }

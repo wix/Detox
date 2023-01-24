@@ -62,10 +62,10 @@ extension XCUIElement {
     fromNormalizedOffsetX normalizedOffsetX: Double?,
     normalizedOffsetY: Double?,
     withOffset offset: CGFloat,
-    toDirection edge: Action.ScrollToEdgeType,
+    toDirection direction: Action.ScrollDirection,
     app: XCUIApplication
   ) {
-    let direction = edge.toDirection()
+    let direction = direction.toSwipeDirection()
     let normalizedOffset = normalize(offset, in: direction, app: app)
 
     swipe(
@@ -96,13 +96,13 @@ extension XCUIElement {
   }
 }
 
-private extension Action.ScrollToEdgeType {
-  func toDirection() -> Action.SwipeDirection {
+private extension Action.ScrollDirection {
+  func toSwipeDirection() -> Action.SwipeDirection {
     switch self {
-      case .top:
+      case .up:
         return .down
 
-      case .bottom:
+      case .down:
         return .up
 
       case .left:

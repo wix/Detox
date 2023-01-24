@@ -20,6 +20,7 @@ class ActionDelegate: ActionDelegateProtocol {
 
   /// Make an action by Detox Tester.
   func act(action: Action, on element: AnyHashable) throws {
+    uiLog("called to act with \(action) on element: \(element)")
     try act(action: action, on: element, testCase: DetoxTester.shared.testCase!)
   }
 
@@ -30,6 +31,7 @@ class ActionDelegate: ActionDelegateProtocol {
     testCase: XCTestCase
   ) throws {
     guard let element = element as? XCUIElement else {
+      uiLog("element (\(element) is not an XCUIElement", type: .error)
       fatalError("element (\(element) is not an XCUIElement.")
     }
 
