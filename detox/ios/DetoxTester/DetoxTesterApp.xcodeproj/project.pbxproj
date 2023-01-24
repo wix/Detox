@@ -49,6 +49,7 @@
 		605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341CD28145FC600C0405D /* CGPoint+Extensions.swift */; };
 		605341D5281525C600C0405D /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341D4281525C600C0405D /* CGRect+Extensions.swift */; };
 		605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341D8281547AC00C0405D /* Encodable+Extensions.swift */; };
+		605980DD298017A200888841 /* XCUIElement+shortPress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605980DC298017A200888841 /* XCUIElement+shortPress.swift */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
@@ -196,6 +197,7 @@
 		605341CD28145FC600C0405D /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		605341D4281525C600C0405D /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		605341D8281547AC00C0405D /* Encodable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Extensions.swift"; sourceTree = "<group>"; };
+		605980DC298017A200888841 /* XCUIElement+shortPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+shortPress.swift"; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
@@ -692,6 +694,7 @@
 				6053419C280EEDBE00C0405D /* XCUIElement+swipe.swift */,
 				60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */,
 				60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */,
+				605980DC298017A200888841 /* XCUIElement+shortPress.swift */,
 			);
 			path = XCUIElement;
 			sourceTree = "<group>";
@@ -923,6 +926,7 @@
 				60BF52D2281E7D0600610DBD /* XCUIElement+query.swift in Sources */,
 				60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */,
 				60FBF608281981F9000B73B1 /* XCUIElement+adjustSlider.swift in Sources */,
+				605980DD298017A200888841 /* XCUIElement+shortPress.swift in Sources */,
 				60A3B448282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift in Sources */,
 				60C7F4F327D8D67D000D417A /* WebSocketClient.swift in Sources */,
 				603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */,

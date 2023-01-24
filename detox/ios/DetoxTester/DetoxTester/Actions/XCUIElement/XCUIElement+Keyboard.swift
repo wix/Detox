@@ -40,7 +40,7 @@ extension XCUIElement {
 
     coordinate(
       withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9)
-    ).tap()
+    ).shortPress()
 
     guard hasKeyboardFocus == true else {
       throw Error.failedToFocusKeyboardOnElement(element: self)
@@ -74,7 +74,7 @@ extension XCUIElement {
   private func deleteText(app: XCUIApplication) throws {
     try focusKeyboard()
 
-    tap()
+    shortPress()
 
     let selectAll = app.menuItems[localize("Select All")]
     if selectAll.waitForExistence(timeout: 0.5), selectAll.exists {
@@ -97,7 +97,7 @@ extension XCUIElement {
 
     try focusKeyboard()
 
-    tap()
+    shortPress()
 
     let currentValue = value as? String
     if currentValue?.isEmpty == false {
