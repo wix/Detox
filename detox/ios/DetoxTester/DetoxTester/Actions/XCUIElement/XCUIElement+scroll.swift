@@ -106,10 +106,10 @@ private extension Action.ScrollDirection {
         return .up
 
       case .left:
-        return .left
+        return .right
 
       case .right:
-        return .right
+        return .left
     }
   }
 }
