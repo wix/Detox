@@ -73,7 +73,7 @@ jobs:
       - name: Lighthouse
         uses: foo-software/lighthouse-check-action@master
         with:
-          urls: 'https://wix.github.io/Detox,https://wix.github.io/Detox/docs/next/demo'
+          urls: 'https://wix.github.io/Detox/,https://wix.github.io/Detox/docs/next/demo/'
           outputDirectory: ${{ github.workspace }}/tmp/artifacts
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
