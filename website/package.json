@@ -20,6 +20,7 @@
     "@docusaurus/remark-plugin-npm2yarn": "^2.2.0",
     "@docusaurus/theme-search-algolia": "^2.2.0",
     "@mdx-js/react": "^1.6.21",
+    "@percy/cli": "^1.17.0",
     "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
     "file-loader": "^6.2.0",
@@ -40,8 +41,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@percy/cli": "^1.17.0"
   }
 }
