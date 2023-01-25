@@ -13,6 +13,9 @@ extension ExpectationDelegate {
 
     ///
     case expectationFailed(subject: String, expected: String, actual: String, isTruthy: Bool)
+
+    ///
+    case reachedExpectationTimeout(errorDescription: String, timeout: Double)
   }
 }
 
@@ -26,6 +29,10 @@ extension ExpectationDelegate.Error: CustomStringConvertible {
         return "Expectation failed, expected the element " +
             "\(isTruthy == true ? "to" : "not to") have \(subject) " +
             "with value: `\(expected)`, got: `\(actual)`"
+
+      case .reachedExpectationTimeout(let errorDescription, let timeout):
+        return "Reached expectation timeout (\(timeout) milliseconds), " +
+            "with error: \(errorDescription)"
     }
   }
 }

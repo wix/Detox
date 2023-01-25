@@ -50,6 +50,7 @@
 		605341D5281525C600C0405D /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341D4281525C600C0405D /* CGRect+Extensions.swift */; };
 		605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605341D8281547AC00C0405D /* Encodable+Extensions.swift */; };
 		605980DD298017A200888841 /* XCUIElement+shortPress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605980DC298017A200888841 /* XCUIElement+shortPress.swift */; };
+		605980EE29814DCF00888841 /* XCUIElement+screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605980ED29814DCF00888841 /* XCUIElement+screenshot.swift */; };
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
@@ -198,6 +199,7 @@
 		605341D4281525C600C0405D /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		605341D8281547AC00C0405D /* Encodable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Extensions.swift"; sourceTree = "<group>"; };
 		605980DC298017A200888841 /* XCUIElement+shortPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+shortPress.swift"; sourceTree = "<group>"; };
+		605980ED29814DCF00888841 /* XCUIElement+screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+screenshot.swift"; sourceTree = "<group>"; };
 		60634AC727C42C3B00274F30 /* DetoxInvokeHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxInvokeHandler.xcodeproj; path = ../DetoxInvokeHandler/DetoxInvokeHandler.xcodeproj; sourceTree = "<group>"; };
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
@@ -605,6 +607,7 @@
 				60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */,
 				60F96E01297AC44A0047B332 /* String+localize.swift */,
 				60F96E05297AE00B0047B332 /* String+BundleIdentifiers.swift */,
+				605980ED29814DCF00888841 /* XCUIElement+screenshot.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -887,6 +890,7 @@
 				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
+				605980EE29814DCF00888841 /* XCUIElement+screenshot.swift in Sources */,
 				60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */,
 				605341D5281525C600C0405D /* CGRect+Extensions.swift in Sources */,
 				60C7F51327DE2318000D417A /* DetoxServerMessageSenderProtocol.swift in Sources */,

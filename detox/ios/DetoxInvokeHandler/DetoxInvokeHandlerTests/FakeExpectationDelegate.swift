@@ -15,10 +15,10 @@ class FakeExpectationDelegate: ExpectationDelegateProtocol {
   func expect(
     _ expectation: Expectation,
     isTruthy: Bool,
-    on element: AnyHashable?,
+    on findElementHandler: () throws -> AnyHashable?,
     timeout: Double?
   ) throws {
-    recorder.append((expectation, isTruthy, element, timeout))
+    recorder.append((expectation, isTruthy, try findElementHandler(), timeout))
 
     if throwCount > 0 {
       throwCount -= 1

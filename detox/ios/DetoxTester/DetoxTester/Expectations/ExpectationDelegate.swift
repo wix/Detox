@@ -19,14 +19,64 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
     self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
+  /// TODO: document
   func expect(
-    _ expectation: Expectation, isTruthy: Bool, on element: AnyHashable?, timeout: Double?
+    _ expectation: Expectation,
+    isTruthy: Bool,
+    on findElementHandler: () throws -> AnyHashable?,
+    timeout: Double?
   ) throws {
-    let element = element as? XCUIElement
+    guard let timeoutMilliseconds = timeout else {
+      let element = try findElementHandler() as? XCUIElement
+      expectLog("expect \(String(describing: element)) \(isTruthy ? "" : "not ")\(expectation)")
 
-    expectLog("expect \(String(describing: element)) \(isTruthy ? "" : "not ")\(expectation), " +
-              "with timeout: \(String(describing: timeout))")
+      try expect(expectation, isTruthy: isTruthy, on: element)
+      return
+    }
 
+    expectLog(
+      "expect element \(isTruthy ? "" : "not ")\(expectation), with timeout " +
+      "of: \(timeoutMilliseconds) milliseconds")
+
+    // We add this grace interval to make amends for a delay in Detox's response to a change.
+    let timeoutGrace: TimeInterval = 0.1
+    let timeoutSeconds = TimeInterval(floatLiteral: timeoutMilliseconds / 1000.0)
+
+    // Sample every 1/2 second, unless the timeout is shorter or very long (then we sample only
+    // 10 times).
+    let samplingInterval = max(min(timeoutSeconds, 0.5), timeoutSeconds / 10)
+
+    let startDate = Date.now
+
+    while true {
+      do {
+        let element = try findElementHandler() as? XCUIElement
+        expectLog("element found for expectation: \(String(describing: element))")
+
+        try expect(expectation, isTruthy: isTruthy, on: element)
+        break
+      } catch {
+        let secondsPassed = Date.now.timeIntervalSince(startDate)
+        if secondsPassed > timeoutSeconds + timeoutGrace {
+          throw Error.reachedExpectationTimeout(
+            errorDescription: String(describing: error), timeout: timeoutMilliseconds)
+        }
+
+        expectLog(
+          "expecation failed with error: `\(error)`, " +
+          "retrying before reaching timeout after \(timeoutSeconds) seconds, " +
+          "passed: \(secondsPassed) seconds.",
+          type: .debug
+        )
+
+        Thread.sleep(forTimeInterval: samplingInterval)
+        continue
+      }
+    }
+  }
+
+  // TODO: refactor
+  private func expect(_ expectation: Expectation, isTruthy: Bool, on element: XCUIElement?) throws {
     switch expectation {
       case .toBeFocused:
         guard let element = element else {

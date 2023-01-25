@@ -38,20 +38,20 @@ public class InvokeHandler {
     return try handle(parsedMessage: parsedMessage)
   }
 
+  // TODO: Refactor, mainly extract to methods :)
   private func handle(parsedMessage: Message) throws -> AnyCodable? {
-    let elements = try findElements(by: parsedMessage.predicate)
-    let element = try getElement(from: elements, at: parsedMessage.atIndex)
-
-    let targetElementPredicate = parsedMessage.targetElement?.predicate
-    let targetElements = targetElementPredicate != nil ?
-        try findElements(by: targetElementPredicate!) : nil
-    let targetElement = targetElements != nil ? try getElement(from: targetElements!, at: 0) : nil
+    let findElementsHandler: () throws -> [AnyHashable] = { [self] in
+      return try findElements(by: parsedMessage.predicate)
+    }
 
     switch parsedMessage.type {
       case .action:
         guard let action = parsedMessage.action else {
           fatalError("invalid action type (\(parsedMessage)")
         }
+
+        let elements = try findElementsHandler()
+        let element = try getElement(from: elements, at: parsedMessage.atIndex)
 
         if action == .getAttributes {
           return try getAttributes(from: elements)
@@ -68,6 +68,12 @@ public class InvokeHandler {
           )
         }
 
+        let targetElementPredicate = parsedMessage.targetElement?.predicate
+        let targetElements = targetElementPredicate != nil ?
+        try findElements(by: targetElementPredicate!) : nil
+        let targetElement = targetElements != nil ?
+            try getElement(from: targetElements!, at: 0) : nil
+
         try handleAction(
           on: element,
           type: action,
@@ -77,11 +83,15 @@ public class InvokeHandler {
         )
 
       case .expectation:
+        let findElementHandler: () throws -> AnyHashable? = { [self] in
+          return try getElement(from: try findElementsHandler(), at: parsedMessage.atIndex)
+        }
         try handleExpectation(
-          on: element, type: parsedMessage.expectation!,
+          on: findElementHandler,
+          type: parsedMessage.expectation!,
           params: parsedMessage.params,
           modifiers: parsedMessage.modifiers,
-          timemout: parsedMessage.timeout
+          timeout: parsedMessage.timeout
         )
     }
 
@@ -133,13 +143,24 @@ public class InvokeHandler {
       return
     }
 
+    var previousScreenshot = (element as? ScreenshotProvidingProtocol)?.screenshotData()
     while (true) {
       do {
         try handleWhileMessage(whileMessage)
       } catch {
         try handleAction(on: element, type: type, params: params, target: targetElement)
 
-        // Continue to next iteration if expectation is not fulfilled.
+        guard
+          let currentScreenshot = (element as? ScreenshotProvidingProtocol)?.screenshotData()
+        else {
+          continue
+        }
+
+        if previousScreenshot?.elementsEqual(currentScreenshot) == true {
+          throw Error.noStateChangeWhileMessage(withError: String(describing: error))
+        }
+
+        previousScreenshot = currentScreenshot
         continue
       }
 
@@ -219,14 +240,16 @@ public class InvokeHandler {
   }
 
   private func handleWhileMessage(_ whileMessage: WhileMessage) throws {
-    let elements = try findElements(by: whileMessage.predicate)
-    let element = try getElement(from: elements, at: whileMessage.atIndex)
+    let findElementHandler: () throws -> AnyHashable? = { [self] in
+      let elements = try findElements(by: whileMessage.predicate)
+      return try getElement(from: elements, at: whileMessage.atIndex)
+    }
 
     try handleExpectation(
-      on: element, type: whileMessage.expectation,
+      on: findElementHandler, type: whileMessage.expectation,
       params: whileMessage.params,
       modifiers: whileMessage.modifiers,
-      timemout: nil
+      timeout: nil
     )
   }
 
@@ -364,19 +387,19 @@ public class InvokeHandler {
   // MARK: - Handle expectations
 
   private func handleExpectation(
-    on element: AnyHashable?,
+    on findElementHandler: () throws -> AnyHashable?,
     type: ExpectationType,
     params: [AnyCodable]?,
     modifiers: [MessagePredicateModifiers]?,
-    timemout: Double?
+    timeout: Double?
   ) throws {
     let isTruthy: Bool = modifiers?.contains(.not) != true
 
     try expectationDelegate.expect(
       expectation(type: type, params: params),
       isTruthy: isTruthy,
-      on: element,
-      timeout: timemout
+      on: findElementHandler,
+      timeout: timeout
     )
   }
 

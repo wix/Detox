@@ -477,7 +477,7 @@ class InvokeHandlerSpec: QuickSpec {
           let expected = (
             Action.scroll(.withParams(
               offset: 1,
-              direction: .bottom,
+              direction: .down,
               startNormalizedPositionX: 2.2,
               startNormalizedPositionY: 1.1
             )),
