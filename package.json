@@ -54,8 +54,5 @@
     "shell-utils": "1.x.x",
     "unified": "^10.1.0"
   },
-  "version": "20.1.2",
-  "dependencies": {
-    "docusaurus-plugin-sass": "^0.2.3"
-  }
+  "version": "20.1.2"
 }
