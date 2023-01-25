@@ -65,7 +65,7 @@ jobs:
           npm run build
           npx docusaurus deploy
   performance:
-    needs: checks
+    needs: gh-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
