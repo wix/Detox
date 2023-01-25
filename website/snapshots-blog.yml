@@ -1,7 +1,0 @@
-- name: Blog page dark theme
-  url: http://localhost:3000/Detox/blog
-  execute: document.documentElement.setAttribute("data-theme", "dark")
-
-- name: Blog page light theme
-  url: http://localhost:3000/Detox/blog
-  execute: document.documentElement.setAttribute("data-theme", "light")

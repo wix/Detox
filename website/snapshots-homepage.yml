@@ -1,7 +1,0 @@
-- name: Home page dark theme
-  url: http://localhost:3000/Detox/
-  execute: document.documentElement.setAttribute("data-theme", "dark")
-
-- name: Home page light theme
-  url: http://localhost:3000/Detox/
-  execute: document.documentElement.setAttribute("data-theme", "light")

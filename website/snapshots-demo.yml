@@ -1,7 +1,0 @@
-- name: Demo page dark theme
-  url: http://localhost:3000/Detox/docs/next/demo
-  execute: document.documentElement.setAttribute("data-theme", "dark")
-
-- name: Demo page light theme
-  url: http://localhost:3000/Detox/docs/next/demo
-  execute: document.documentElement.setAttribute("data-theme", "light")

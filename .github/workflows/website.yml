@@ -20,29 +20,9 @@ jobs:
           cd website/
           npm i
           npm run build
-      - name: Run Percy Snapshot for custom css in src
+      - name: Run Percy Snapshot
         if: contains(github.event.head_commit.modified, '@site/website/src/css')
-        run: npx percy snapshot "@site/website/snapshots-custom-css.yml"
-        with:
-          percy-token: ${{ secrets.PERCY_TOKEN }}
-      - name: Run Percy Snapshot for changes in homepage
-        if: contains(github.event.head_commit.modified, '@site/website/src/homepage/')
-        run: npx percy snapshot "@site/website/snapshots-homepage.yml"
-        with:
-          percy-token: ${{ secrets.PERCY_TOKEN }}
-      - name: Run Percy Snapshot for changes in showcase
-        if: contains(github.event.head_commit.modified, '@site/website/src/showcase/')
-        run: npx percy snapshot "@site/website/snapshots-showcase.yml"
-        with:
-          percy-token: ${{ secrets.PERCY_TOKEN }}
-      - name: Run Percy Snapshot for changes in blog
-        if: contains(github.event.head_commit.modified, '@site/website/blog/')
-        run: npx percy snapshot "@site/website/snapshots-blog.yml"
-        with:
-          percy-token: ${{ secrets.PERCY_TOKEN }}
-      - name: Run Percy Snapshot for changes in demo
-        if: contains(github.event.head_commit.modified, '@site/docs/demo.mdx')
-        run: npx percy snapshot "@site/website/snapshots-demo.yml"
+        run: npx percy snapshot "@site/website/snapshots.yml"
         with:
           percy-token: ${{ secrets.PERCY_TOKEN }}
   gh-release:
