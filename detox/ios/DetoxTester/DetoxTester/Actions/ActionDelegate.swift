@@ -20,8 +20,16 @@ class ActionDelegate: ActionDelegateProtocol {
 
   /// Make an action by Detox Tester.
   func act(action: Action, on element: AnyHashable) throws {
-    uiLog("called to act with \(action) on element: \(element)")
+    uiLog("called to start action: `\(action)` on element: `\(element)`")
     try act(action: action, on: element, testCase: DetoxTester.shared.testCase!)
+
+    uiLog("wait until ready to finish action: `\(action)`, on element: `\(element)`")
+    try whiteBoxMessageHandler(
+      .waitUntilReady
+    )?.assertResponse(
+      equalsTo: .completed,
+      for: .waitUntilReady
+    )
   }
 
   /// Used for unit testing.
@@ -34,18 +42,6 @@ class ActionDelegate: ActionDelegateProtocol {
       uiLog("element (\(element) is not an XCUIElement", type: .error)
       fatalError("element (\(element) is not an XCUIElement.")
     }
-
-    uiLog(
-      "wait until ready to handle action: `\(action.name)`, on element: " +
-      "`\(element.debugDescription)`"
-    )
-
-    try whiteBoxMessageHandler(
-      .waitUntilReady
-    )?.assertResponse(
-      equalsTo: .completed,
-      for: .waitUntilReady
-    )
 
     uiLog("handling action: `\(action.name)`, on element: `\(element.debugDescription)`")
 

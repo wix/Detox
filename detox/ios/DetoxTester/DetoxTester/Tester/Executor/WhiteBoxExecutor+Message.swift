@@ -45,7 +45,7 @@ extension WhiteBoxExecutor {
     /// Returns response of `status`.
     case requestCurrentStatus
 
-    /// Returns reponse of `completed` if succsfully done.
+    /// Returns response of `completed` if successfully done.
     case longPressAndDrag(
       duration: Double,
       normalizedPositionX: Double?,
@@ -58,7 +58,7 @@ extension WhiteBoxExecutor {
       onElement: XCUIElement
     )
 
-    /// Returns reponse of `elementsAttributes` if succsfully done.
+    /// Returns response of `elementsAttributes` if successfully done.
     case requestAttributes(
       ofElements: [XCUIElement]
     )

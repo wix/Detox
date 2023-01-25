@@ -28,7 +28,8 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
   ) throws {
     guard let timeoutMilliseconds = timeout else {
       let element = try findElementHandler() as? XCUIElement
-      expectLog("expect \(String(describing: element)) \(isTruthy ? "" : "not ")\(expectation)")
+      expectLog("expect element `\(String(describing: element?.identifier))` " +
+                "\(isTruthy ? "" : "not ")\(expectation)")
 
       try expect(expectation, isTruthy: isTruthy, on: element)
       return

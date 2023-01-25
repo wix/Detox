@@ -28,13 +28,26 @@ extension WhiteBoxExecutor {
     case completedWithError(message: String)
 
     /// A response of application current status.
-    case status(_ value: [String: AnyHashable])
+    case status(_ value: EquatableDictionary)
 
     /// A response of failed operation.
     case failed(reason: String)
 
     /// A response of elements attributes.
-    case elementsAttributes(_ value: [[String: AnyHashable]])
+    case elementsAttributes(_ value: [EquatableDictionary])
+  }
+
+  ///
+  struct EquatableDictionary: Equatable {
+    static func == (
+      lhs: WhiteBoxExecutor.EquatableDictionary,
+      rhs: WhiteBoxExecutor.EquatableDictionary
+    ) -> Bool {
+      // This is a compromise, instead of comparing all values.
+      return lhs.value.keys == rhs.value.keys
+    }
+
+    let value: [String: Any]
   }
 }
 
@@ -49,7 +62,10 @@ struct ElementIdentifierAndFrame: Codable, Equatable {
 
 extension WhiteBoxExecutor.Response {
   /// Asserts that the response equals the given expected response.
-  func assertResponse(equalsTo expected: WhiteBoxExecutor.Response, for message: WhiteBoxExecutor.Message) throws {
+  func assertResponse(
+    equalsTo expected: WhiteBoxExecutor.Response,
+    for message: WhiteBoxExecutor.Message
+  ) throws {
     if self != expected {
       whiteExecLog(
         "reponse `\(self)` expected to be `\(expected)`, for message: \(message)", type: .error)

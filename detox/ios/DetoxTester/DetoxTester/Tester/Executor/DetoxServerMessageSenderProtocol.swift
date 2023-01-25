@@ -10,7 +10,7 @@ protocol DetoxServerMessageSenderProtocol: AnyObject {
   /// Send action with `type`, `params` and `messageId`.
   func sendAction(
     _ type: ResponseMessageType,
-    params: [String: AnyHashable],
+    params: [String: Any],
     messageId: NSNumber
   )
 

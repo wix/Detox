@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import DetoxInvokeHandler
 
 extension Executor {
   /// Handles test-target current status reporting.
@@ -15,18 +16,20 @@ extension Executor {
 
     let status = execute(whiteBoxRequest: .requestCurrentStatus)
 
-    guard case let .status(statusValue) = status else {
+    guard case let .status(result) = status else {
       execLog("the received current-status has an invalid type", type: .error)
       fatalError("The received current-status has an invalid type")
     }
 
-    let params: [String: AnyHashable] = [
-      "status": ["app_status": "idle"],
+    let params: [String: Any] = [
+      "status": result.value,
       "messageId": messageId
     ]
 
-    // TODO: stop fake the current status!
-    execLog("reporting status with params: \(params). real status result: \(statusValue)")
+    execLog("reporting current app status: \(params)")
+    if (JSONSerialization.isValidJSONObject(params) == false) {
+      execLog("invalid json object detected! (\(params)", type: .error)
+    }
 
     serverMessageSender.sendAction(
       .reportStatus,

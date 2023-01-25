@@ -201,7 +201,7 @@ class WhiteBoxExecutor {
           fatalError("current-status result is invalid")
         }
 
-        return .status(statusResult.mapValues { AnyCodable($0) })
+        return .status(EquatableDictionary(value: statusResult))
 
       case .longPressAndDrag(
         let duration,
@@ -262,8 +262,14 @@ class WhiteBoxExecutor {
           ]
         )
 
-        let attributes = send(message, andExpectToType: "attributes", messageId: 0)["values"]!
-        return .elementsAttributes(attributes as! [[String: AnyHashable]])
+        let attributes = (send(
+          message,
+          andExpectToType: "attributes",
+          messageId: 0
+        )["values"]! as! [[String: Any]]
+        ).map { EquatableDictionary(value: $0) }
+
+        return .elementsAttributes(attributes)
     }
   }
 

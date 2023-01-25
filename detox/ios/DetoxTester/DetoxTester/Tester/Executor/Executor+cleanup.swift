@@ -13,7 +13,7 @@ extension Executor {
       return
     }
 
-    sendAction(.reportCleanupDone, messageId: messageId)
+    try sendAction(.reportCleanupDone, messageId: messageId)
     serverMessageSender.cleanup()
   }
 }

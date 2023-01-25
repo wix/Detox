@@ -48,19 +48,26 @@ class WebSocketClient: NSObject {
     wsLog("sending `\(type.rawValue)` action message (\(messageId.stringValue)), " +
           "with params: `\(params.description)`")
 
-    let jsonData: [String: Any] = [
+    let json: [String: Any] = [
       "type": type.rawValue,
       "params": params,
       "messageId": messageId
     ]
 
     guard let webSocketSessionTask = webSocketSessionTask else {
-      wsLog("web-socket session task is nil, can't send invoke result", type: .error)
+      wsLog("web-socket session task is nil, can't send messages to client", type: .error)
       return
     }
 
     do {
-      let data = try JSONSerialization.data(withJSONObject: jsonData, options: [])
+      wsLog("JSON-serializing message: \(json)", type: .debug)
+
+      let data = try JSONSerialization.data(withJSONObject: json, options: [])
+      wsLog(
+        "message was JSON-serialized, sending: `\(String(data: data, encoding: .utf8)!)`",
+        type: .debug
+      )
+
       let message = URLSessionWebSocketTask.Message.data(data)
 
       webSocketSessionTask.send(message) { error in

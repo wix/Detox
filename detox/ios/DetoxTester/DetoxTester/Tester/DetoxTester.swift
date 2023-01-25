@@ -144,7 +144,7 @@ extension DetoxTester: WebSocketDelegateProtocol {
 extension DetoxTester: DetoxServerMessageSenderProtocol {
   func sendAction(
     _ type: ResponseMessageType,
-    params: [String: AnyHashable],
+    params: [String: Any],
     messageId: NSNumber
   ) {
     guard let webSocket = webSocketClient else {
