@@ -63,4 +63,5 @@ jobs:
           cd website/
           npm i
           npm run build
+          npm run percy
           npx docusaurus deploy
