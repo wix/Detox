@@ -65,7 +65,7 @@ describe('BunyanTransformer', () => {
       { time: new Date('2000-01-01T00:00:01.002Z'), msg: 'b2' },
     ]);
 
-    expect(logger.debug).toHaveBeenCalledWith({ err: expect.any(Error) });
+    expect(logger.debug).toHaveBeenCalledWith({ err: expect.any(Error) }, 'Failed to parse log line:');
     expect(logger.debug).toHaveBeenCalledTimes(1);
   });
 

@@ -7,6 +7,8 @@ const yargs = require('yargs');
 const logger = require('../internals').log.child({ cat: 'cli' });
 const DetoxError = require('../src/errors/DetoxError');
 
+const { isErrorAlreadyLogged } = require('./utils/cliErrorHandling');
+
 yargs
   .scriptName('detox')
   .parserConfiguration({
@@ -28,9 +30,8 @@ yargs
   .wrap(yargs.terminalWidth() * 0.9)
   .fail(function(msg, err, program) {
     if (err) {
-      const message = DetoxError.format(err);
-      if (message) {
-        logger.error(message);
+      if (!isErrorAlreadyLogged(err)) {
+        logger.error(DetoxError.format(err));
         process.stderr.write('\n');
       }
 
