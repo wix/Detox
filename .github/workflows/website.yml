@@ -30,11 +30,12 @@ jobs:
             website:
               - 'website/**'
       - name: Test Build
+        working-directory: ./website
         run: |
-          cd website/
           npm i
           npm run build
       - name: Run Percy Snapshot
+        working-directory: ./website
         if: steps.changes.outputs.website == 'true'
         run: npm run percy
         env:
