@@ -78,7 +78,7 @@ _Here’s a visual comparison between the two - an SDK 28 (Android 9) AOSP emula
 
 While it’s possible to do this using Android Studio, we’ll focus on the command line, as it is also good for _headless_ CI machines.
 
-1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable, or in its successor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn’t set, either set it yourself or run the following commands after `cd`-ing into the home folder.
+1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable, or in its predecessor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn’t set, either set it yourself or run the following commands after `cd`-ing into the home folder.
 
 1. Preliminary: Upgrade your `emulator` executable to the latest version.
    _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
