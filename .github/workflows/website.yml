@@ -3,8 +3,16 @@ name: Website
 on:
   pull_request:
     branches: [master]
+    paths:
+      - '.github/workflows/website.yml'
+      - 'docs/**'
+      - 'website/**'
   push:
     branches: [master]
+    paths:
+      - '.github/workflows/website.yml'
+      - 'docs/**'
+      - 'website/**'
 
 jobs:
   checks:
@@ -15,13 +23,19 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '16.x'
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            website:
+              - 'website/**'
       - name: Test Build
         run: |
           cd website/
           npm i
           npm run build
       - name: Run Percy Snapshot
-        if: contains(github.event.head_commit.modified, '@site/website/src/css')
+        if: steps.changes.outputs.website == 'true'
         run: npx percy snapshot "@site/website/snapshots.yml"
         with:
           percy-token: ${{ secrets.PERCY_TOKEN }}
