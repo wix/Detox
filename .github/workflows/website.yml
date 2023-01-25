@@ -57,6 +57,7 @@ jobs:
         env:
           USE_SSH: true
           GIT_USER: git
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
         run: |
           git config --global user.email "mobile1@wix.com"
           git config --global user.name "mobilewix"
