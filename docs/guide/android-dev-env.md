@@ -92,6 +92,8 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`.
    We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
 
+   The command might also fail if the command-line tools aren't installed. To install the tools using Android Studio, click `Tools > SDK Manager` and select the `SDK Tools` tab. Ensure that `Android SDK Command-line Tools (latest)` is checked and applied.
+
    :::
 
 1. Install an emulator image without Google APIs:
