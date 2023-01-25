@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "percy": "percy snapshot snapshots.yml",
+    "percy": "zx percy.mjs",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
@@ -28,7 +28,8 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-loader-spinner": "^5.3.4",
-    "url-loader": "^4.1.1"
+    "url-loader": "^4.1.1",
+    "zx": "^7.1.1"
   },
   "browserslist": {
     "production": [
