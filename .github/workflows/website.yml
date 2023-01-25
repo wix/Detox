@@ -64,3 +64,11 @@ jobs:
           npm i
           npm run build
           npx docusaurus deploy
+  performance:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          urls: 'https://wix.github.io/Detox'
