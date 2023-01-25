@@ -66,3 +66,19 @@ jobs:
           npm run build
           npm run percy
           npx docusaurus deploy
+  performance:
+    needs: gh-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
+      - name: Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          urls: 'https://wix.github.io/Detox/,https://wix.github.io/Detox/docs/next/demo/'
+          outputDirectory: ${{ github.workspace }}/tmp/artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Lighthouse reports
+          path: ${{ github.workspace }}/tmp/artifacts
