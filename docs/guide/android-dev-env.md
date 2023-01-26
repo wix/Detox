@@ -78,7 +78,7 @@ _Here’s a visual comparison between the two - an SDK 28 (Android 9) AOSP emula
 
 While it’s possible to do this using Android Studio, we’ll focus on the command line, as it is also good for _headless_ CI machines.
 
-1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable, or in its successor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn’t set, either set it yourself or run the following commands after `cd`-ing into the home folder.
+1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable, or in its predecessor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn’t set, either set it yourself or run the following commands after `cd`-ing into the home folder.
 
 1. Preliminary: Upgrade your `emulator` executable to the latest version.
    _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
@@ -92,6 +92,8 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`.
    We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
 
+   The command might also fail if the command-line tools aren't installed. To install the tools using Android Studio, click `Tools > SDK Manager` and select the `SDK Tools` tab. Ensure that `Android SDK Command-line Tools (latest)` is checked and applied.
+
    :::
 
 1. Install an emulator image without Google APIs:
@@ -104,6 +106,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    > - With `;android-28;`, we assumed SDK 28 here, but other APIs are supported just the same.
    > - The `;default;` part replaces `;google_apis;`, which is the default, and is what matters here.
    > - If you are running on a M1 you must install an arm64 architecture i.e. `system-images;android-28;default;arm64-v8a`
+   > - To get a list of available images, run `$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --list`
 
 1. Create an emulator (i.e. AVD - Android Virtual Device):
 
