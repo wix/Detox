@@ -129,7 +129,9 @@ class SimulatorDriver extends IosDriver {
         log.info(`Tests execution finished:\n ${result.stdout.toString()}`);
       })
       .catch(function (err) {
-        log.error(`Error occurred:\n ${err.stderr}`);
+        if (err !== undefined) {
+          log.error(`Error occurred:\n ${err.stderr}`);
+        }
       });
 
     log.info(`Allowing network permissions`);
