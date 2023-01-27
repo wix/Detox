@@ -56,6 +56,7 @@ class Genycloud extends RuntimeDriverFactoryAndroid {
   _createDriver(deviceCookie, deps, configs) {
     const props = {
       instance: deviceCookie.instance,
+      forceAdbInstall: configs.deviceConfig.forceAdbInstall,
     };
 
     const { GenycloudRuntimeDriver } = require('../drivers');

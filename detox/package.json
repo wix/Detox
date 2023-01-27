@@ -146,6 +146,7 @@
       "src/devices/common/drivers/ios/tools",
       "src/devices/runtime/drivers/android/AndroidDriver.js",
       "src/devices/runtime/drivers/android/emulator/EmulatorDriver.js",
+      "src/devices/runtime/drivers/android/genycloud/GenyCloudDriver.js",
       "src/devices/runtime/drivers/DeviceDriverBase.js",
       "src/devices/runtime/drivers/ios",
       "src/devices/runtime/factories",

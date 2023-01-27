@@ -127,6 +127,7 @@ const config = {
     'android.emulator': {
       type: 'android.emulator',
       headless: Boolean(process.env.CI),
+      forceAdbInstall: true,
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
@@ -135,6 +136,7 @@ const config = {
 
     'android.genycloud.uuid': {
       type: 'android.genycloud',
+      forceAdbInstall: true,
       device: {
         recipeUUID: '90450ce0-cdd8-4229-8618-18a1fc195b62',
       },
@@ -142,6 +144,7 @@ const config = {
 
     'android.genycloud.name': {
       type: 'android.genycloud',
+      forceAdbInstall: true,
       device: {
         recipeName: 'Detox_Pixel_3A_API_29',
       },
