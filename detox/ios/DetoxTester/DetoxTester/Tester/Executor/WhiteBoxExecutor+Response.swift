@@ -68,7 +68,7 @@ extension WhiteBoxExecutor.Response {
   ) throws {
     if self != expected {
       whiteExecLog(
-        "reponse `\(self)` expected to be `\(expected)`, for message: \(message)", type: .error)
+        "response `\(self)` expected to be `\(expected)`, for message: \(message)", type: .error)
 
       throw Error.unexpectedResult(actual: self, expected: expected, message: message)
     }

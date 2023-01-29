@@ -241,7 +241,7 @@ extension DetoxTester: AppClientMessageSenderProtocol {
       semaphore.signal()
     }
 
-    // Wait until reponse is received via `serverDidReceiveHandler`.
+    // Wait until response is received via `serverDidReceiveHandler`.
     semaphore.wait()
 
     guard let serverResponse = serverResponse else {

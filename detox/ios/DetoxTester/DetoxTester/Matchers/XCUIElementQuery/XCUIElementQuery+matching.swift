@@ -63,7 +63,7 @@ extension XCUIElementQuery {
         }
 
         guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
-          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response), " +
+          execLog("response for white-box is not [ElementIdentifierAndFrame]: \(response), " +
                   "failed to match the element", type: .info)
           return matchingNone()
         }
@@ -83,7 +83,7 @@ extension XCUIElementQuery {
         }
 
         guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
-          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response), " +
+          execLog("response for white-box is not [ElementIdentifierAndFrame]: \(response), " +
                   "failed to match the element", type: .info)
           return matchingNone()
         }
@@ -104,7 +104,7 @@ extension XCUIElementQuery {
         }
 
         guard case let .identifiersAndFrames(identifiersAndFrames) = response else {
-          execLog("reponse for white-box is not [ElementIdentifierAndFrame]: \(response), " +
+          execLog("response for white-box is not [ElementIdentifierAndFrame]: \(response), " +
                   "failed to match the element", type: .info)
           return matchingNone()
         }
@@ -112,6 +112,7 @@ extension XCUIElementQuery {
         execLog("found elements with traits `\(traits)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
+      // TODO: By Ancestor / Descendant doesn't work as expected. Affects Animation tests and other tests. Investigate...
       case .ancestor(let ancestorPattern):
         let ancestor = try matching(
           pattern: ancestorPattern,

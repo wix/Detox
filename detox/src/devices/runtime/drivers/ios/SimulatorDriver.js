@@ -129,7 +129,7 @@ class SimulatorDriver extends IosDriver {
         log.info(`Tests execution finished:\n ${result.stdout.toString()}`);
       })
       .catch(function (err) {
-        if (err !== undefined) {
+        if (err.stderr !== undefined) {
           log.error(`Error occurred:\n ${err.stderr}`);
         }
       });
