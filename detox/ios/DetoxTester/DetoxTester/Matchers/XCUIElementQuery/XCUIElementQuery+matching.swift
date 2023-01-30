@@ -115,7 +115,7 @@ extension XCUIElementQuery {
 
         // TODO: refactor with descendant api (extract containing block).
       case .ancestor(let ancestorPattern):
-        let identifiersAndFrames = allElementsBoundByIndex.map { ($0.identifier, $0.frame) }
+        let identifiersAndFrames = run().map { ($0.identifier, $0.frame) }
 
         return try app
           .descendants(matching: .any)
@@ -124,7 +124,8 @@ extension XCUIElementQuery {
             whiteBoxMessageHandler: whiteBoxMessageHandler,
             app: app
           )
-          .containing(NSPredicate(block: { evaluatedObject, _ in
+          .descendants(matching: .any)
+          .matching(NSPredicate(block: { evaluatedObject, _ in
             guard
               let evaluatedObject = evaluatedObject as? NSObject,
               let identifier = evaluatedObject.value(forKey: "identifier") as? String,

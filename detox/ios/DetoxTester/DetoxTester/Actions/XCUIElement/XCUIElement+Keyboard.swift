@@ -108,6 +108,10 @@ extension XCUIElement {
       let selectAll = app.menuItems[localize("Select All")]
       if selectAll.waitForExistence(timeout: 0.5) {
         selectAll.tap()
+
+        if let completion = completion {
+          completion()
+        }
       }
     }
   }
