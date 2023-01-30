@@ -23,7 +23,8 @@ class ElementMatcher: ElementMatcherProtocol {
 
     let result: [XCUIElement] = try app.newQuery().matching(
       pattern: pattern,
-      whiteBoxMessageHandler: whiteBoxMessageHandler
+      whiteBoxMessageHandler: whiteBoxMessageHandler,
+      app: app
     ).run()
 
     matcherLog("matched elements: " +

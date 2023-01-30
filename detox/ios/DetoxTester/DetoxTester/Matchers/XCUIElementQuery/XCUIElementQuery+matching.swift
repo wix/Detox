@@ -14,7 +14,7 @@ import XCTest
 extension XCUIElementQuery {
   /// Returns a new query matches the given pattern.
   func matching(
-    pattern: ElementPattern, whiteBoxMessageHandler: WhiteBoxMessageHandler
+    pattern: ElementPattern, whiteBoxMessageHandler: WhiteBoxMessageHandler, app: XCUIApplication
   ) throws -> XCUIElementQuery {
     switch pattern {
       case .label(let label):
@@ -28,7 +28,8 @@ extension XCUIElementQuery {
         for pattern in patterns {
           query = try query.matching(
             pattern: pattern,
-            whiteBoxMessageHandler: whiteBoxMessageHandler
+            whiteBoxMessageHandler: whiteBoxMessageHandler,
+            app: app
           )
         }
         return query
@@ -112,23 +113,46 @@ extension XCUIElementQuery {
         execLog("found elements with traits `\(traits)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
-      // TODO: By Ancestor / Descendant doesn't work as expected. Affects Animation tests and other tests. Investigate...
       case .ancestor(let ancestorPattern):
-        let ancestor = try matching(
-          pattern: ancestorPattern,
-          whiteBoxMessageHandler: whiteBoxMessageHandler
-        )
+        let identifiersAndFrames = allElementsBoundByIndex.map { ($0.identifier, $0.frame) }
 
-        // TODO: must log descendants to investigate.
-        return ancestor.descendants(matching: .any)
+        return try app
+          .descendants(matching: .any)
+          .matching(
+            pattern: ancestorPattern,
+            whiteBoxMessageHandler: whiteBoxMessageHandler,
+            app: app
+          )
+          .containing(NSPredicate(block: { evaluatedObject, _ in
+            guard
+              let evaluatedObject = evaluatedObject as? NSObject,
+              let identifier = evaluatedObject.value(forKey: "identifier") as? String,
+              let frame = evaluatedObject.value(forKey: "frame") as? CGRect
+            else {
+              execLog(
+                "cannot run matching on a non UI element: `\(String(describing: evaluatedObject))`",
+                type: .error
+              )
+
+              return false
+            }
+
+            return identifiersAndFrames.contains { $0.0 == identifier && $0.1.equalTo(frame) }
+          }))
 
       case .descendant(let descendantPattern):
-        let matchingDescendants = try matching(
-          pattern: descendantPattern,
-          whiteBoxMessageHandler: whiteBoxMessageHandler
-        ).run()
+        let descendants = try descendants(matching: .any)
+          .matching(
+            pattern: descendantPattern,
+            whiteBoxMessageHandler: whiteBoxMessageHandler,
+            app: app
+          )
+          .allElementsBoundByIndex
 
-        return containing(NSPredicate { evaluatedObject, _ in
+        let identifiersAndFrames = descendants.map { ($0.identifier, $0.frame) }
+
+        // step back
+        return containing(NSPredicate(block: { evaluatedObject, _ in
           guard
             let evaluatedObject = evaluatedObject as? NSObject,
             let identifier = evaluatedObject.value(forKey: "identifier") as? String,
@@ -142,11 +166,8 @@ extension XCUIElementQuery {
             return false
           }
 
-          // TODO: must log ancestors and evaluated objects to investigate.
-          return matchingDescendants.contains {
-            $0.identifier.elementsEqual(identifier) && $0.frame.equalTo(frame)
-          }
-        })
+          return identifiersAndFrames.contains { $0.0 == identifier && $0.1.equalTo(frame) }
+        }))
     }
   }
 }
