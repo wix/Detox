@@ -76,9 +76,7 @@ extension XCUIElement {
 
     shortPress()
 
-    let selectAll = app.menuItems[localize("Select All")]
-    if selectAll.waitForExistence(timeout: 0.5), selectAll.exists {
-      selectAll.tap()
+    tapOnSelectAllIfPresent(app: app) { [self] in
       typeText(String(XCUIKeyboardKey.delete.rawValue))
     }
   }
@@ -86,7 +84,7 @@ extension XCUIElement {
   private func addText(_ text: String) throws {
     try focusKeyboard()
 
-    // TODO: Unfortunately, on RN, a simple `typeText(text)` doensn't work as expected. Requires investigation.
+    // TODO: Unfortunately, on RN, a simple `typeText(text)` does not work as expected. Investigate.
     for char in text {
       typeText("\(char)")
     }
@@ -97,25 +95,34 @@ extension XCUIElement {
 
     try focusKeyboard()
 
+    // Activates text-view menu options.
     shortPress()
 
+    tapOnSelectAllIfPresent(app: app, completion: nil)
+    try tapOnPasteText(app: app, completion: pressOnAllowPaste)
+  }
+
+  private func tapOnSelectAllIfPresent(app: XCUIApplication, completion: (() -> Void)?) {
     let currentValue = value as? String
     if currentValue?.isEmpty == false {
       let selectAll = app.menuItems[localize("Select All")]
       if selectAll.waitForExistence(timeout: 0.5) {
         selectAll.tap()
-      } else {
-        throw Error.failedToPasteNewText
       }
     }
+  }
 
+  private func tapOnPasteText(app: XCUIApplication, completion: () -> Void) throws {
     let paste = app.menuItems[localize("Paste")]
     if paste.waitForExistence(timeout: 0.5) {
       paste.tap()
+      completion()
     } else {
-      throw Error.failedToPasteNewText
+      throw Error.failedToPasteNewText(onAction: "paste")
     }
+  }
 
+  private func pressOnAllowPaste() {
     let allowPaste = XCUIApplication.springBoard.alerts.buttons[localize("Allow Paste")]
     if allowPaste.waitForExistence(timeout: 0.5) {
       allowPaste.tap()

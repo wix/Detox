@@ -16,7 +16,7 @@ extension XCUIElement {
     case failedToFocusKeyboardOnElement(element: XCUIElement)
 
     /// Failed to paste new text on text input.
-    case failedToPasteNewText
+    case failedToPasteNewText(onAction: String)
   }
 }
 
@@ -30,8 +30,8 @@ extension XCUIElement.Error: CustomStringConvertible {
         return "Failed to focus on element with the keyboard (element " +
             "identifier: `\(element.identifier)`)"
 
-      case .failedToPasteNewText:
-        return "Failed to paste new text on text input"
+      case .failedToPasteNewText(let onAction):
+        return "Failed to paste new text on text input, on action: \(onAction)"
     }
   }
 }
