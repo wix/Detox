@@ -113,6 +113,7 @@ extension XCUIElementQuery {
         execLog("found elements with traits `\(traits)`: \(identifiersAndFrames)")
         return matching(any: identifiersAndFrames)
 
+        // TODO: refactor with descendant api (extract containing block).
       case .ancestor(let ancestorPattern):
         let identifiersAndFrames = allElementsBoundByIndex.map { ($0.identifier, $0.frame) }
 
