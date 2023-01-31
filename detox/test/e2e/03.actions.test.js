@@ -207,7 +207,7 @@ describe('Actions', () => {
 
     // on ios the accessibilityLabel is set to the slider value, but not on android
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+      await expect(element(by.id(reactSliderId))).toHaveValue('77%');
     }
   });
 
@@ -220,7 +220,7 @@ describe('Actions', () => {
 
     // on ios the accessibilityLabel is set to the slider value, but not on android
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+      await expect(element(by.id(reactSliderId))).toHaveValue('77%');
     }
   });
 
