@@ -123,7 +123,7 @@ function _composeCommand(bin, prefix, args) {
 }
 
 async function execAsync(command) {
-  const result = await exec(command);
+  const result = await exec(command, { maxBuffer: 1024 * 5000 });
   return _.trim(result.stdout);
 }
 module.exports = {
