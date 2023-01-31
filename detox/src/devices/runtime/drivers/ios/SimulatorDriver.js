@@ -129,11 +129,11 @@ class SimulatorDriver extends IosDriver {
         log.info(`Tests execution finished:\n ${result.stdout.toString()}`);
       })
       .catch(function (err) {
-        if (err.stderr === undefined) {
+        if (err === undefined) {
           return;
         }
-        log.error(`Error occurred while running the XCUITest test runner: ${err.stderr}\n\n` +
-          `Full error message: ${err}`);
+
+        log.error(`Error occurred while running the XCUITest test runner:\n${err}`);
       });
 
     log.info(`Allowing network permissions`);
