@@ -17,7 +17,7 @@ extension XCUIElement {
   }
 
   private var textField: XCUIElement? {
-    return textFields.allElementsBoundByIndex.first
+    return textFields.run().first
   }
 
   /// Taps the keyboard key with the given type.

@@ -39,6 +39,7 @@ extension XCUIElement {
   }
 
   private func swipe(direction: Action.SwipeDirection, velocity: XCUIGestureVelocity) {
+    uiLog("swiping on direction: \(direction)")
     switch direction {
       case .up:
         swipeUp(velocity: velocity)

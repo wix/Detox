@@ -149,7 +149,7 @@ extension XCUIElementQuery {
             whiteBoxMessageHandler: whiteBoxMessageHandler,
             app: app
           )
-          .allElementsBoundByIndex
+          .run()
 
         let identifiersAndFrames = descendants.map { ($0.identifier, $0.frame) }
 
