@@ -21,4 +21,8 @@
   return NSProcessInfo.processInfo.environment[EnvArgKeys.isDetoxActive].boolValue;
 }
 
+- (NSTimeInterval)executionTimeAllowance {
+  return INFINITY;
+}
+
 @end
