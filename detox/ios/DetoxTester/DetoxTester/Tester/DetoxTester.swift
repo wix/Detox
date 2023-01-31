@@ -65,6 +65,9 @@ import XCTest
       self.webSocketServer = makeWebSocketServer()
       DetoxTester.whiteBoxClientConnectionSemaphore.wait()
 
+      mainLog("connected with app, starting to ping app periodically")
+      self.webSocketServer?.pingPeriodically()
+
       mainLog("connecting with server (main connection)...")
       self.webSocketClient = makeWebSocketClient()
     }

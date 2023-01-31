@@ -35,6 +35,13 @@ class WebSocketServer {
   /// The port the server is listening on.
   public let port: UInt16
 
+
+  ///
+  private let connectionQueue: DispatchQueue = .main
+
+  ///
+  private var pingTimer: Timer?
+
   /// Creates a new web-socket server.
   private init(withPort port: UInt16, delegate: WebSocketServerDelegateProtocol) throws {
     self.port = port
@@ -158,13 +165,69 @@ class WebSocketServer {
       })
     )
   }
+
+  /// Ping the WebSocket periodically.
+  func pingPeriodically() {
+    guard let client = client else {
+      wsLog("no client is available, can't send message", type: .error)
+      fatalError("No client is available, can't send message")
+    }
+
+    ping(interval: 5, toClient: client)
+  }
+
+  private func ping(interval: TimeInterval, toClient client: NWConnection) {
+    pingTimer = .scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+      guard let self = self else {
+        return
+      }
+
+      self.ping(toClient: client)
+    }
+    pingTimer?.tolerance = 0.01
+  }
+
+  /// Ping the WebSocket once.
+  private func ping(toClient client: NWConnection) {
+    wsLog("sending ping to client")
+    let metadata = NWProtocolWebSocket.Metadata(opcode: .ping)
+
+    metadata.setPongHandler(connectionQueue) { error in
+      if let error = error {
+        wsLog("error receiving pong from client: \(error)", type: .error)
+      } else {
+        wsLog("received pong from client")
+      }
+    }
+
+    let context = NWConnection.ContentContext(identifier: "pingContext", metadata: [metadata])
+
+    client.send(
+      content: "ping".data(using: .utf8),
+      contentContext: context,
+      completion: .contentProcessed({ error in
+        if let error = error {
+          wsLog("client error when sending ping: \(error.localizedDescription)", type: .error)
+        }
+      })
+    )
+  }
 }
 
 extension WebSocketServer {
   /// Error associated with websocket server.
   enum Error: Swift.Error {
-    /// Server to establish server due to invalid port.
+    /// Failed to establish server due to invalid port.
     case invalidPort
+  }
+}
+
+extension WebSocketServer.Error: CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .invalidPort:
+        return "Failed to establish server due to invalid port"
+    }
   }
 }
 
