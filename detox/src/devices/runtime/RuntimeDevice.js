@@ -155,16 +155,7 @@ class RuntimeDevice {
       await this.deviceDriver.deliverPayload({ ...(params), delayPayload: true });
     }
 
-    const lock = new Lock();
-    await this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId, function() {
-      lock.release();
-      console.log('Lock just released!');
-    });
-
-    console.log('Waiting for the lock to be released');
-    await lock.acquire();
-    // await lock.acquire();
-    console.log('Can proceed (lock released)');
+    await this.launchTestTarget(bundleId);
 
     if (this._behaviorConfig.launchApp === 'manual') {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
@@ -190,6 +181,19 @@ class RuntimeDevice {
     if (params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
+  }
+
+  async launchTestTarget(bundleId) {
+    const lock = new Lock();
+    await this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId, function() {
+      lock.release();
+      console.log('Lock just released!');
+    });
+
+    console.log('Waiting for the lock to be released');
+    await lock.acquire();
+    // await lock.acquire();
+    console.log('Can proceed (lock released)');
   }
 
   async relaunchApp(params = {}, bundleId) {
