@@ -129,10 +129,11 @@ class SimulatorDriver extends IosDriver {
         log.info(`Tests execution finished:\n ${result.stdout.toString()}`);
       })
       .catch(function (err) {
-        if (err.stderr === undefined || err.stderr === '') {
+        if (err.stderr === undefined) {
           return;
         }
-        log.error(`Error occurred:\n ${err.stderr}`);
+        log.error(`Error occurred while running the XCUITest test runner: ${err.stderr}\n\n` +
+          `Full error message: ${err}`);
       });
 
     log.info(`Allowing network permissions`);
@@ -140,11 +141,6 @@ class SimulatorDriver extends IosDriver {
   }
 
   async allowNetworkPermissionsXCUITest(callback) {
-    // TODO: handle error
-    //  Network permissions are not allowed: Error: 40:97: execution error:
-    //  System Events got an error: Can’t set process "UserNotificationCenter" to true. (-10006)
-    //  + UI Error:
-    //    Do you want the application “DetoxTester-Runner.app” to accept incoming network connections?
     osascript.execute(
       `tell application "System Events"
       set frontmost of process "UserNotificationCenter" to true
