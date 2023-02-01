@@ -47,10 +47,17 @@ class External extends ArtifactsManagerFactory {
   }
 }
 
+class Noop extends ArtifactsManagerFactory {
+  constructor() {
+    super(new EmptyProvider());
+  }
+}
+
 module.exports = {
   ArtifactsManagerFactory,
   Android,
   Ios,
   IosSimulator,
   External,
+  Noop
 };

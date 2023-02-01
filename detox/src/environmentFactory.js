@@ -84,6 +84,14 @@ function _getFactoryClasses(deviceConfig) {
       matchersFactoryClass = matchersFactories.Ios;
       runtimeDeviceFactoryClass = runtimeDeviceFactories.IosSimulator;
       break;
+    
+    case 'android.cloud':
+      envValidatorFactoryClass = envValidationFactories.Noop;
+      deviceAllocatorFactoryClass = deviceAllocationFactories.Noop;
+      artifactsManagerFactoryClass = artifactsManagerFactories.Noop;
+      matchersFactoryClass = matchersFactories.Android;
+      runtimeDeviceFactoryClass = runtimeDeviceFactories.Noop;
+      break;
 
     default: {
       return null;

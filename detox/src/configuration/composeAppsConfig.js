@@ -2,6 +2,8 @@
 const _ = require('lodash');
 const parse = require('yargs-parser');
 
+const logger = require('../../src/utils/logger').child({ cat: 'config' });
+
 const deviceAppTypes = require('./utils/deviceAppTypes');
 
 const CLI_PARSER_OPTIONS = {
@@ -20,7 +22,9 @@ const CLI_PARSER_OPTIONS = {
  */
 function composeAppsConfig(opts) {
   const appsConfig = composeAppsConfigFromAliased(opts);
-  overrideAppLaunchArgs(appsConfig, opts.cliConfig);
+  if (opts.configurationName !== 'android.cloud.release') {
+    overrideAppLaunchArgs(appsConfig, opts.cliConfig);
+  }
 
   return appsConfig;
 }
@@ -91,7 +95,8 @@ function composeAppsConfigFromAliased(opts) {
       errorComposer,
       deviceConfig,
       appConfig,
-      appPath
+      appPath,
+      configurationName
     });
 
     if (!result[appName]) {
@@ -125,9 +130,10 @@ function overrideAppLaunchArgs(appsConfig, cliConfig) {
   }
 }
 
-function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer }) {
+function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer, configurationName }) {
   const deviceType = deviceConfig.type;
   const allowedAppTypes = deviceAppTypes[deviceType];
+  const supportedCloudAppsConfig = ['type', 'app', 'appClient'];
 
   if (allowedAppTypes && !allowedAppTypes.includes(appConfig.type)) {
     throw errorComposer.invalidAppType({
@@ -137,16 +143,31 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer }) 
     });
   }
 
-  if (allowedAppTypes && !appConfig.binaryPath) {
-    throw errorComposer.missingAppBinaryPath(appPath);
-  }
+  if (appConfig.type !== 'android.cloud') {
+    if (allowedAppTypes && !appConfig.binaryPath) {
+      throw errorComposer.missingAppBinaryPath(appPath);
+    }
 
-  if (appConfig.launchArgs && !_.isObject(appConfig.launchArgs)) {
-    throw errorComposer.malformedAppLaunchArgs(appPath);
-  }
+    if (appConfig.launchArgs && !_.isObject(appConfig.launchArgs)) {
+      throw errorComposer.malformedAppLaunchArgs(appPath);
+    }
 
-  if (appConfig.type !== 'android.apk' && appConfig.reversePorts) {
-    throw errorComposer.unsupportedReversePorts(appPath);
+    if (appConfig.type !== 'android.apk' && appConfig.reversePorts) {
+      throw errorComposer.unsupportedReversePorts(appPath);
+    }
+  }
+  else {
+    if (!_.isString(appConfig.app)) {
+      throw errorComposer.invalidCloudAppUrl(appPath);
+    }
+
+    if (!_.isString(appConfig.appClient)) {
+      throw errorComposer.invalidCloudAppClientUrl(appPath);
+    }
+  }
+  const ignoredCloudConfigParams = _.difference(Object.keys(appConfig), supportedCloudAppsConfig);
+  if (configurationName === 'android.cloud.release' && ignoredCloudConfigParams.length > 0 ) {
+    logger.warn(`[AppConfig] The properties ${ignoredCloudConfigParams.join(', ')} are not honoured for device type 'android.cloud'`); 
   }
 }
 
