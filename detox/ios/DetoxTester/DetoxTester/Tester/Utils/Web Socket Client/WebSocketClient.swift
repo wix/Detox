@@ -7,7 +7,7 @@ import Foundation
 
 /// A web socket client.
 class WebSocketClient: NSObject {
-  /// Session idenfier of the web-socket session.
+  /// Session identifier of the web-socket session.
   private var sessionId: String?
 
   /// Web-socket session task.
