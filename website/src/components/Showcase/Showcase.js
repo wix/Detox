@@ -11,7 +11,9 @@ const Showcase = () => {
   const [toRender, setToRender] = useState([<TailSpin />]);
 
   useEffect(() => {
-    setCards(_makeShuffledCardList(cardList).map(_makeCard));
+    const shouldShuffle = new URLSearchParams(window.location.search).get('shuffle') !== 'disabled';
+    const resultingCardList = shouldShuffle ? _makeShuffledCardList(cardList) : cardList;
+    setCards(resultingCardList.map(_makeCard));
   }, []);
 
   useEffect(() => {
@@ -23,9 +25,7 @@ const Showcase = () => {
 
 const _makeShuffledCardList = (cardList) => {
   const partition = _.partition(cardList, 'shouldStayOnTop');
-  const shouldShuffle = new URLSearchParams(window.location.search).get('shuffle');
-  const toConcat = shouldShuffle !== 'disabled' ? _.shuffle(partition[1]) : partition[1];
-  return partition[0].concat(toConcat);
+  return partition[0].concat(_.shuffle(partition[1]));
 };
 
 const _makeCard = (props) => <Card key={props.title} {...props} />;
