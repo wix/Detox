@@ -1,0 +1,51 @@
+{
+	"name": "generation",
+	"version": "20.1.1",
+	"description": "Generate wrapper code for native dependencies",
+	"main": "index.js",
+	"private": true,
+	"scripts": {
+		"build": "./index.js",
+		"pretest": "./check-for-git-changes.sh",
+		"test": "jest",
+		"precommit": "lint-staged",
+		"format": "prettier ./**/*.{js,json,css,md} --write"
+	},
+	"author": "DanielMSchmidt <danielmschmidt92@gmail.com>",
+	"license": "MIT",
+	"lint-staged": {
+		"*.{js,json,css,md}": [
+			"prettier --write",
+			"git add"
+		]
+	},
+	"dependencies": {
+		"@babel/generator": "7.0.0-beta.49",
+		"@babel/template": "7.0.0-beta.49",
+		"@babel/types": "7.0.0-beta.49",
+		"babel-generate-guard-clauses": "3.0.0-1",
+		"java-method-parser": "0.4.7",
+		"remove": "0.1.5",
+		"uuid": "^3.2.1"
+	},
+	"devDependencies": {
+		"jest": "^26.0.0",
+		"lint-staged": "^6.0.0",
+		"prettier": "^1.8.2"
+	},
+	"jest": {
+		"coveragePathIgnorePatterns": [
+			"<rootDir>/index.js"
+		],
+		"resetMocks": true,
+		"resetModules": true,
+		"coverageThreshold": {
+			"global": {
+				"statements": 100,
+				"branches": 100,
+				"functions": 100,
+				"lines": 100
+			}
+		}
+	}
+}

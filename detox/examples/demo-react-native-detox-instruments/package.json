@@ -1,0 +1,18 @@
+{
+  "name": "demo-react-native-detox-instruments",
+  "version": "20.1.1",
+  "private": true,
+  "scripts": {},
+  "devDependencies": {
+    "detox": "^20.1.1"
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim.release": {
+        "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "type": "ios.simulator",
+        "name": "iPhone 11 Pro"
+      }
+    }
+  }
+}

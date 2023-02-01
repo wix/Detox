@@ -1,0 +1,29 @@
+* @d4vidi
+
+# Scripts
+
+*.js @d4vidi @noomorph
+*.ts @d4vidi @noomorph
+*.sh @d4vidi @noomorph
+
+# Android
+
+detox/android/* @d4vidi @jonathanmos
+detox/test/android/* @d4vidi @jonathanmos
+*.java @d4vidi @jonathanmos
+*.kt @d4vidi @jonathanmos
+*.gradle @d4vidi @jonathanmos
+
+# iOS
+
+detox/ios/* @asafkorem
+detox/test/ios/* @asafkorem
+*.h @asafkorem
+*.m @asafkorem
+*.mm @asafkorem
+*.cpp @asafkorem
+*.swift @asafkorem
+*.pch @asafkorem
+*.plist @asafkorem
+*.xcodeproj @asafkorem
+*.xcworkspace @asafkorem

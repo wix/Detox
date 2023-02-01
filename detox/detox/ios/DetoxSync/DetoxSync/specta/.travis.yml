@@ -1,0 +1,8 @@
+language: objective-c
+osx_image: xcode13
+before_install:
+  - gem i slather --no-rdoc
+script:
+  - bundle exec rake specs:ios
+  - bundle exec rake specs:osx
+after_success: slather

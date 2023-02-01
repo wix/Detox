@@ -1,0 +1,46 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '12.4'
+install! 'cocoapods', :deterministic_uuids => false
+
+def shared_pods
+  config = use_native_modules!
+
+    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[8,9].*/)
+      # Flags change depending on the env values.
+      flags = get_default_flags()
+
+      use_react_native!(
+        :path => config[:reactNativePath],
+        :hermes_enabled => flags[:hermes_enabled],
+        :fabric_enabled => flags[:fabric_enabled],
+        # :flipper_configuration => FlipperConfiguration.enabled,
+        # An absolute path to your application root.
+        :app_path => "#{Pod::Config.instance.installation_root}/.."
+      )
+    else
+      use_react_native!(
+        # To enable hermes on iOS, change `false` to `true` and then install pods
+        :hermes_enabled => false,
+      )
+    end
+end
+
+target 'example' do
+  shared_pods
+  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
+
+end
+
+target 'example_ci' do
+  shared_pods
+end
+
+post_install do |installer|
+  react_native_post_install(installer)
+  # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
+  if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end

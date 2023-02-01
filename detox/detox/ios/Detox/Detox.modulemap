@@ -1,0 +1,26 @@
+framework module Detox {
+	umbrella header "Detox.h"
+	export *
+
+	explicit module Private {
+		header "UIView+DetoxMatchers.h"
+		header "UIPickerView+DetoxActions.h"
+		header "UIDatePicker+DetoxActions.h"
+		header "UIScrollView+DetoxActions.h"
+		header "DTXAssertionHandler.h"
+		header "UIView+DetoxUtils.h"
+		header "ReactNativeSupport.h"
+		header "DetoxInstrumentsManager.h"
+		header "DetoxAppDelegateProxy.h"
+		header "UIDevice+DetoxActions.h"
+		header "UISlider+DetoxUtils.h"
+		header "DTXDurationFormatter.h"
+		header "UIWindow+DetoxUtils.h"
+		header "DTXAppleInternals.h"
+		header "NSThread+DetoxUtils.h"
+		header "NSObject+DetoxUtils.h"
+		header "NSObject+DetoxActions.h"
+		header "NSURL+DetoxUtils.h"
+		header "NSURL+DetoxUtils.h"
+	}
+}

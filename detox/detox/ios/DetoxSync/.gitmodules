@@ -1,0 +1,18 @@
+[submodule "DetoxSync/DTXLoggingInfra"]
+	path = DetoxSync/DTXLoggingInfra
+	url = https://LeoNatan@github.com/wix/DTXLoggingInfra.git
+[submodule "DetoxSync/fishhook"]
+	path = DetoxSync/fishhook
+	url = https://github.com/facebook/fishhook
+[submodule "DetoxSync/DTXObjectiveCHelpers"]
+	path = DetoxSync/DTXObjectiveCHelpers
+	url = https://github.com/wix/DTXObjectiveCHelpers.git
+[submodule "DetoxSync/specta"]
+	path = DetoxSync/specta
+	url = https://github.com/specta/specta
+[submodule "DetoxSync/expecta"]
+	path = DetoxSync/expecta
+	url = https://github.com/specta/expecta
+[submodule "DetoxSync/ocmock"]
+	path = DetoxSync/ocmock
+	url = https://github.com/erikdoe/ocmock

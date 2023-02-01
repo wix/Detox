@@ -1,0 +1,20 @@
+name: Broken Links Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  remark:
+    name: Remark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+      - run: npx remark -r .remarkrc.nightly.mjs .

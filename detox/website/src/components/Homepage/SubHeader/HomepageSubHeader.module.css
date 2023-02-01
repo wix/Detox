@@ -1,0 +1,71 @@
+.subHeader {
+  background-color: #171b20;
+  padding: 10px 0;
+  color: #ffffff;
+  font-family: 'Nunito Sans', sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.subText {
+  padding-top: 5px;
+}
+
+.discordButton {
+  background-color: #7289da;
+  background-image: url(@site/static/img/homepage/join-us-white.svg);
+  background-repeat: no-repeat;
+  background-size: 76% 76%;
+  background-position: 50% 62%;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  width: 6rem;
+  border-radius: 0.3rem;
+  margin-right: 20px;
+  margin-top: 7px;
+  cursor: pointer;
+  border-width: 0;
+}
+
+.discordButton:hover {
+  background-color: #819ff8;
+  transition: transform 0.25s ease-in-out;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.twitterFrame {
+  display: flex;
+  align-items: center;
+  padding-top: 8px;
+  padding-left: 5px;
+}
+
+.githubStar {
+  display: flex;
+  align-items: center;
+  padding: 0px;
+  padding-bottom: 7px;
+  font-size: 16px;
+  line-height: 22px;
+  border-radius: 4px;
+  height: 37px;
+}
+
+@media screen and (max-width: 966px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .twitterFrame {
+    display: block;
+    width: 100%;
+    float: none;
+  }
+}

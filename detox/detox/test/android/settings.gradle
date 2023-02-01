@@ -1,0 +1,40 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'DetoxTest'
+include ':app'
+
+includeBuild('../node_modules/react-native-gradle-plugin')
+
+include ':detox'
+project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')
+
+// Technically needed in order to actually build RN from source
+//include ':ReactAndroid'
+//project(':ReactAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native/ReactAndroid')
+//
+//File hermesEnginePath = new File(rootProject.projectDir, '../node_modules/react-native/ReactAndroid/hermes-engine')
+//if (hermesEnginePath.exists()) {
+//    include(':ReactAndroid:hermes-engine')
+//    project(':ReactAndroid:hermes-engine').projectDir = hermesEnginePath
+//}
+
+include ':AsyncStorage'
+project(':AsyncStorage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-async-storage/async-storage/android')
+
+include ':react-native-webview'
+project(':react-native-webview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webview/android')
+
+include ':react-native-community-checkbox'
+project(':react-native-community-checkbox').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/checkbox/android')
+
+include ':react-native-community-geolocation'
+project(':react-native-community-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/geolocation/android')
+
+include ':@react-native-community_slider'
+project(':@react-native-community_slider').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/slider/android')

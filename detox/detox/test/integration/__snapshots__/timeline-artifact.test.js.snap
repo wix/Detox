@@ -1,0 +1,817 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Timeline integration test should deterministically produce a timeline artifact 1`] = `
+[
+  {
+    "args": {
+      "cwd": "$CWD",
+      "data": {},
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "detox test -c stub --config integration/e2e/config.js -a integration_artifacts/ -R 1 flaky",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 0,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Serialized the session state at: $TMPDIR/$SESSION_ID.detox.json",
+    "ph": "i",
+    "pid": 0,
+    "tid": 0,
+    "ts": 1,
+  },
+  {
+    "args": {
+      "env": {},
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "nyc jest --config integration/e2e/config.js flaky",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 2,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "integration/e2e/flaky.test.js",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 3,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "set up environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 4,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 5,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "flaky.test.js is assigned to Stub #StubDevice#1",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 6,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "run the tests",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 7,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Flaky",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 8,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Flaky should have welcome screen",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "should have welcome screen",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 9,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Flaky: should have welcome screen",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 10,
+  },
+  {
+    "args": {
+      "functionCode": "() => {
+    if (config.resetModules) {
+      runtime.resetModules();
+    }
+    if (config.clearMocks) {
+      runtime.clearAllMocks();
+    }
+    if (config.resetMocks) {
+      runtime.resetAllMocks();
+      if (
+        config.fakeTimers.enableGlobally &&
+        config.fakeTimers.legacyFakeTimers
+      ) {
+        // during setup, this cannot be null (and it's fine to explode if it is)
+        environment.fakeTimers.useFakeTimers();
+      }
+    }
+    if (config.restoreMocks) {
+      runtime.restoreAllMocks();
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 11,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 12,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    await log.trace.complete('Navigate to sanity', navigateToSanity);
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 13,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Navigate to sanity",
+    "ph": "B",
+    "pid": 1,
+    "tid": 2,
+    "ts": 14,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Reloading app",
+    "ph": "i",
+    "pid": 1,
+    "tid": 2,
+    "ts": 15,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Tap on Sanity",
+    "ph": "i",
+    "pid": 1,
+    "tid": 2,
+    "ts": 16,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "I am on Sanity screen",
+    "ph": "i",
+    "pid": 1,
+    "tid": 2,
+    "ts": 17,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "ph": "E",
+    "pid": 1,
+    "tid": 2,
+    "ts": 18,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 19,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    try {
+      detox.trace.startSection('Asserting various texts');
+      await detox.traceCall('by.text()', async () => {
+        await expect(element(by.text('Welcome'))).toBeVisible();
+        await expect(element(by.text('Say Hello'))).toBeVisible();
+        await expect(element(by.text('Say World'))).toBeVisible();
+      });
+    } finally {
+      detox.trace.endSection('Asserting various texts');
+    }
+    if (session.testSessionIndex === 0) {
+      throw new Error(\`I'm only here to make things interesting!\`);
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 20,
+  },
+  {
+    "args": {
+      "error": "Error: I'm only here to make things interesting!",
+      "level": 10,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 21,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "failed",
+      "timedOut": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 22,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Flaky: should have welcome screen [FAIL]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 23,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 24,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 25,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 26,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 27,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 28,
+  },
+  {
+    "args": {
+      "code": 1,
+      "level": 50,
+      "signal": null,
+      "success": false,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 29,
+  },
+  {
+    "args": {
+      "level": 50,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "There were failing tests in the following files:
+  1. integration/e2e/flaky.test.js
+
+Detox CLI is going to restart the test runner with those files...
+",
+    "ph": "i",
+    "pid": 0,
+    "tid": 0,
+    "ts": 30,
+  },
+  {
+    "args": {
+      "env": {},
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "nyc jest --config integration/e2e/config.js $CWD/integration/e2e/flaky.test.js",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 31,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "integration/e2e/flaky.test.js",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 32,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "set up environment",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 33,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 34,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "flaky.test.js is assigned to Stub #StubDevice#1",
+    "ph": "i",
+    "pid": 2,
+    "tid": 3,
+    "ts": 35,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "run the tests",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 36,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Flaky",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 37,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Flaky should have welcome screen",
+      "invocations": 2,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "should have welcome screen",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 38,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Flaky: should have welcome screen",
+    "ph": "i",
+    "pid": 2,
+    "tid": 3,
+    "ts": 39,
+  },
+  {
+    "args": {
+      "functionCode": "() => {
+    if (config.resetModules) {
+      runtime.resetModules();
+    }
+    if (config.clearMocks) {
+      runtime.clearAllMocks();
+    }
+    if (config.resetMocks) {
+      runtime.resetAllMocks();
+      if (
+        config.fakeTimers.enableGlobally &&
+        config.fakeTimers.legacyFakeTimers
+      ) {
+        // during setup, this cannot be null (and it's fine to explode if it is)
+        environment.fakeTimers.useFakeTimers();
+      }
+    }
+    if (config.restoreMocks) {
+      runtime.restoreAllMocks();
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 40,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 41,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    await log.trace.complete('Navigate to sanity', navigateToSanity);
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 42,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Navigate to sanity",
+    "ph": "B",
+    "pid": 2,
+    "tid": 4,
+    "ts": 43,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Reloading app",
+    "ph": "i",
+    "pid": 2,
+    "tid": 4,
+    "ts": 44,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "Tap on Sanity",
+    "ph": "i",
+    "pid": 2,
+    "tid": 4,
+    "ts": 45,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "name": "I am on Sanity screen",
+    "ph": "i",
+    "pid": 2,
+    "tid": 4,
+    "ts": 46,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "user,lifecycle",
+    "ph": "E",
+    "pid": 2,
+    "tid": 4,
+    "ts": 47,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 48,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    try {
+      detox.trace.startSection('Asserting various texts');
+      await detox.traceCall('by.text()', async () => {
+        await expect(element(by.text('Welcome'))).toBeVisible();
+        await expect(element(by.text('Say Hello'))).toBeVisible();
+        await expect(element(by.text('Say World'))).toBeVisible();
+      });
+    } finally {
+      detox.trace.endSection('Asserting various texts');
+    }
+    if (session.testSessionIndex === 0) {
+      throw new Error(\`I'm only here to make things interesting!\`);
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 49,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 50,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "passed",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 51,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Flaky: should have welcome screen [OK]",
+    "ph": "i",
+    "pid": 2,
+    "tid": 3,
+    "ts": 52,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 53,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 54,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 2,
+    "tid": 3,
+    "ts": 55,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 56,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 2,
+    "tid": 3,
+    "ts": 57,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 58,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 59,
+  },
+]
+`;

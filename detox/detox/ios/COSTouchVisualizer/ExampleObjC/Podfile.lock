@@ -1,0 +1,16 @@
+PODS:
+  - COSTouchVisualizer (1.0.6)
+
+DEPENDENCIES:
+  - COSTouchVisualizer (from `../COSTouchVisualizer.podspec`)
+
+EXTERNAL SOURCES:
+  COSTouchVisualizer:
+    :path: ../COSTouchVisualizer.podspec
+
+SPEC CHECKSUMS:
+  COSTouchVisualizer: 248b8645474a13d7698dd0223dc593051bf715c9
+
+PODFILE CHECKSUM: 9c382a6853b1ccb79b91a8268f272eb3ffaff4be
+
+COCOAPODS: 1.1.1

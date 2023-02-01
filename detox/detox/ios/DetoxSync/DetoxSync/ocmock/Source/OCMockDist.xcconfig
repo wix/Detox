@@ -1,0 +1,11 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// Settings to build archives
+SKIP_INSTALL = NO
+BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+ 
+// Set the codesign identity for distribution
+CODE_SIGN_STYLE = Manual
+TEAM_IDENTIFIER = 28U2VZ7DF8
+CODE_SIGN_IDENTITY = Apple Development: erik@doernenburg.com (FJTF47J852)

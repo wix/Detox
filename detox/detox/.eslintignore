@@ -1,0 +1,5 @@
+/src/android/espressoapi/**/*.js
+/coverage
+/ios
+/android
+/test

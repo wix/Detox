@@ -1,0 +1,10 @@
+  - label: ":ios::detox: RN.68 + iOS: Tests app"
+    command:
+      - "nvm install"
+      - "./scripts/ci.ios.sh"
+    env:
+      REACT_NATIVE_VERSION: 0.68.5
+    artifact_paths:
+      - "/Users/builder/work/coverage/**/*.lcov"
+      - "/Users/builder/work/allure*.tar.gz"
+      - "/Users/builder/work/artifacts*.tar.gz"

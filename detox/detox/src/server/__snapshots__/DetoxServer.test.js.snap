@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxServer .open() / .close() should WARN log a message upon unsuccessful server closing (error emit case) 1`] = `
+Array [
+  Object {
+    "err": [Error: TEST_ERROR],
+  },
+  "Detox server has been closed abruptly! See the error details below:",
+]
+`;
+
+exports[`DetoxServer .open() / .close() should WARN log a message upon unsuccessful server closing (rejection case) 1`] = `
+Array [
+  Object {
+    "err": [Error: TEST_ERROR],
+  },
+  "Detox server has been closed abruptly! See the error details below:",
+]
+`;
+
+exports[`DetoxServer .open() / .close() should WARN log a message upon unsuccessful server closing (timeout case) 1`] = `
+Array [
+  Object {
+    "err": [DetoxRuntimeError: Detox server close callback was not invoked within the 10000 ms timeout],
+  },
+  "Detox server has been closed abruptly! See the error details below:",
+]
+`;
+
+exports[`DetoxServer should ERROR log messages from wss.Server 1`] = `
+Array [
+  Object {
+    "err": [Error: TEST_ERROR],
+  },
+  "Detox server has got an unhandled error:",
+]
+`;

@@ -1,0 +1,56 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    CFPropertyList (3.0.5)
+      rexml
+    activesupport (7.0.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+    atomos (0.1.3)
+    claide (1.1.0)
+    clamp (1.3.2)
+    colored2 (3.1.2)
+    concurrent-ruby (1.1.9)
+    i18n (1.9.1)
+      concurrent-ruby (~> 1.0)
+    mini_portile2 (2.7.1)
+    minitest (5.15.0)
+    nanaimo (0.3.0)
+    nokogiri (1.13.1)
+      mini_portile2 (~> 2.7.0)
+      racc (~> 1.4)
+    racc (1.6.0)
+    rake (13.0.6)
+    rexml (3.2.5)
+    rouge (2.0.7)
+    slather (2.7.2)
+      CFPropertyList (>= 2.2, < 4)
+      activesupport
+      clamp (~> 1.3)
+      nokogiri (~> 1.12)
+      xcodeproj (~> 1.21)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
+    xcodeproj (1.21.0)
+      CFPropertyList (>= 2.3.3, < 4.0)
+      atomos (~> 0.1.3)
+      claide (>= 1.0.2, < 2.0)
+      colored2 (~> 3.1)
+      nanaimo (~> 0.3.0)
+      rexml (~> 3.2.4)
+    xcpretty (0.3.0)
+      rouge (~> 2.0.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler
+  rake
+  slather
+  xcpretty
+
+BUNDLED WITH
+   2.1.4

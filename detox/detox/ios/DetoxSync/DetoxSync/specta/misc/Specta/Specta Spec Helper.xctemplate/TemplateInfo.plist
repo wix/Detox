@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>AllowedTypes</key>
+    <array>
+        <string>public.objective-c-source</string>
+        <string>public.objective-c-plus-plus-source</string>
+    </array>
+    <key>DefaultCompletionName</key>
+    <string>SpecHelper</string>
+    <key>Description</key>
+    <string>A spec helper category on existing classes containing spec-specific extensions and helper methods</string>
+    <key>Kind</key>
+    <string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
+    <key>MainTemplateFile</key>
+    <string>___FILEBASENAME___.m</string>
+    <key>Platforms</key>
+    <array>
+        <string>com.apple.platform.macosx</string>
+        <string>com.apple.platform.iphoneos</string>
+    </array>
+    <key>BuildableType</key>
+    <string>Test</string>
+    <key>Options</key>
+    <array>
+      <dict>
+        <key>Default</key>
+        <string>NSObject</string>
+        <key>Description</key>
+        <string>Which class to add a helper for</string>
+        <key>Identifier</key>
+        <string>specHelperClass</string>
+        <key>Name</key>
+        <string>Spec helper for</string>
+        <key>Required</key>
+        <true/>
+        <key>Type</key>
+        <string>class</string>
+      </dict>
+      <dict>
+        <key>Default</key>
+        <string>SpecHelper</string>
+        <key>Identifier</key>
+        <string>specHelperCategory</string>
+        <key>Type</key>
+        <string>static</string>
+      </dict>
+      <dict>
+        <key>Default</key>
+        <string>___VARIABLE_specHelperClass:identifier___+___VARIABLE_specHelperCategory:identifier___</string>
+        <key>Identifier</key>
+        <string>productName</string>
+        <key>Type</key>
+        <string>static</string>
+      </dict>
+    </array>
+</dict>
+</plist>

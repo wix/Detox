@@ -1,0 +1,20 @@
+name: "CI"
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+      - run: bundle
+
+      - name: Test iOS
+        run: bundle exec rake specs:ios
+
+      - name: Test macOS
+        run: bundle exec rake specs:osx

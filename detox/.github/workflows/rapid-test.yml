@@ -1,0 +1,60 @@
+name: Rapid Test
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintrc'
+      - '.remarkignore'
+      - '.remarkrc.mjs'
+      - '.retext-spell.dic'
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [master]
+    paths-ignore:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintrc'
+      - '.remarkignore'
+      - '.remarkrc.mjs'
+      - '.retext-spell.dic'
+      - 'docs/**'
+      - '**.md'
+
+jobs:
+
+  js:
+    name: JS & TS
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Bootstrap Lerna
+        run: npx lerna bootstrap --no-ci
+        env:
+          DETOX_DISABLE_POD_INSTALL: true
+          DETOX_DISABLE_POSTINSTALL: true
+      - name: Lint
+        run: npm run lint
+        working-directory: detox
+      - name: Typings
+        run: npm test
+        working-directory: detox/test
+      - name: Unit tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run unit
+        working-directory: detox
+      - name: Unit tests (Windows)
+        if: matrix.os == 'windows-latest'
+        run: npm run unit -- --coverageThreshold "{}"
+        working-directory: detox
+      - name: Integration tests
+        run: npm run integration
+        working-directory: detox/test

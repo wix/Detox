@@ -1,0 +1,39 @@
+name: Doclint
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintrc'
+      - '.remarkignore'
+      - '.remarkrc.mjs'
+      - '.retext-spell.dic'
+      - 'package.json'
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/docs.yml'
+      - '.markdownlintrc'
+      - '.remarkignore'
+      - '.remarkrc.mjs'
+      - '.retext-spell.dic'
+      - 'package.json'
+      - 'docs/**'
+      - '**.md'
+
+jobs:
+  markdownlint:
+    name: Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+      - run: npm run docs:lint

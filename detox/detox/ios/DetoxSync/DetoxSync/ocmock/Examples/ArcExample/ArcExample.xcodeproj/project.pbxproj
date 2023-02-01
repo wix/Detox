@@ -1,0 +1,244 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0351A22A152F65DA005B52FE /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0351A229152F65DA005B52FE /* OCMock.framework */; };
+		035F7F1E14CDBBBC00D21121 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 035F7F1D14CDBBBC00D21121 /* Foundation.framework */; };
+		035F7F2114CDBBBC00D21121 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 035F7F2014CDBBBC00D21121 /* main.m */; };
+		035F7F2514CDBBBC00D21121 /* ArcExample.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 035F7F2414CDBBBC00D21121 /* ArcExample.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		035F7F1714CDBBBC00D21121 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				035F7F2514CDBBBC00D21121 /* ArcExample.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0351A229152F65DA005B52FE /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = /Library/Frameworks/OCMock.framework; sourceTree = "<absolute>"; };
+		035F7F1914CDBBBC00D21121 /* ArcExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ArcExample; sourceTree = BUILT_PRODUCTS_DIR; };
+		035F7F1D14CDBBBC00D21121 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		035F7F2014CDBBBC00D21121 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		035F7F2314CDBBBC00D21121 /* ArcExample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArcExample-Prefix.pch"; sourceTree = "<group>"; };
+		035F7F2414CDBBBC00D21121 /* ArcExample.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ArcExample.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		035F7F1614CDBBBC00D21121 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035F7F1E14CDBBBC00D21121 /* Foundation.framework in Frameworks */,
+				0351A22A152F65DA005B52FE /* OCMock.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		035F7F0E14CDBBBC00D21121 = {
+			isa = PBXGroup;
+			children = (
+				035F7F1F14CDBBBC00D21121 /* ArcExample */,
+				035F7F1C14CDBBBC00D21121 /* Frameworks */,
+				035F7F1A14CDBBBC00D21121 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		035F7F1A14CDBBBC00D21121 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				035F7F1914CDBBBC00D21121 /* ArcExample */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		035F7F1C14CDBBBC00D21121 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0351A229152F65DA005B52FE /* OCMock.framework */,
+				035F7F1D14CDBBBC00D21121 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		035F7F1F14CDBBBC00D21121 /* ArcExample */ = {
+			isa = PBXGroup;
+			children = (
+				035F7F2014CDBBBC00D21121 /* main.m */,
+				035F7F2414CDBBBC00D21121 /* ArcExample.1 */,
+				035F7F2214CDBBBC00D21121 /* Supporting Files */,
+			);
+			path = ArcExample;
+			sourceTree = "<group>";
+		};
+		035F7F2214CDBBBC00D21121 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				035F7F2314CDBBBC00D21121 /* ArcExample-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		035F7F1814CDBBBC00D21121 /* ArcExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 035F7F2814CDBBBC00D21121 /* Build configuration list for PBXNativeTarget "ArcExample" */;
+			buildPhases = (
+				035F7F1514CDBBBC00D21121 /* Sources */,
+				035F7F1614CDBBBC00D21121 /* Frameworks */,
+				035F7F1714CDBBBC00D21121 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ArcExample;
+			productName = ArcExample;
+			productReference = 035F7F1914CDBBBC00D21121 /* ArcExample */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		035F7F1014CDBBBC00D21121 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = ThoughtWorks;
+			};
+			buildConfigurationList = 035F7F1314CDBBBC00D21121 /* Build configuration list for PBXProject "ArcExample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 035F7F0E14CDBBBC00D21121;
+			productRefGroup = 035F7F1A14CDBBBC00D21121 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				035F7F1814CDBBBC00D21121 /* ArcExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		035F7F1514CDBBBC00D21121 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				035F7F2114CDBBBC00D21121 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		035F7F2614CDBBBC00D21121 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		035F7F2714CDBBBC00D21121 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+		035F7F2914CDBBBC00D21121 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ArcExample/ArcExample-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		035F7F2A14CDBBBC00D21121 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ArcExample/ArcExample-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		035F7F1314CDBBBC00D21121 /* Build configuration list for PBXProject "ArcExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035F7F2614CDBBBC00D21121 /* Debug */,
+				035F7F2714CDBBBC00D21121 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		035F7F2814CDBBBC00D21121 /* Build configuration list for PBXNativeTarget "ArcExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035F7F2914CDBBBC00D21121 /* Debug */,
+				035F7F2A14CDBBBC00D21121 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 035F7F1014CDBBBC00D21121 /* Project object */;
+}

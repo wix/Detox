@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AllowedTypes</key>
+	<array>
+		<string>public.objective-c-source</string>
+		<string>public.objective-c-plus-plus-source</string>
+	</array>
+	<key>BuildableType</key>
+	<string>Test</string>
+	<key>DefaultCompletionName</key>
+	<string>Test</string>
+	<key>Description</key>
+	<string>An Objective-C class containing a Specta spec.</string>
+	<key>Kind</key>
+	<string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
+	<key>MainTemplateFile</key>
+	<string>___FILEBASENAME___.m</string>
+	<key>Options</key>
+	<array>
+		<dict>
+			<key>Description</key>
+			<string>The name of the class to spec</string>
+			<key>Identifier</key>
+			<string>specClass</string>
+			<key>Name</key>
+			<string>Class</string>
+			<key>NotPersisted</key>
+			<true/>
+			<key>Required</key>
+			<string>YES</string>
+			<key>Type</key>
+			<string>class</string>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>true</string>
+			<key>Identifier</key>
+			<string>importSpecta</string>
+			<key>Name</key>
+			<string>Import Specta</string>
+			<key>Type</key>
+			<string>checkbox</string>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>true</string>
+			<key>Identifier</key>
+			<string>importExpecta</string>
+			<key>Name</key>
+			<string>Import Expecta</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>RequiredOptions</key>
+			<dict>
+				<key>importSpecta</key>
+				<array>
+					<string>true</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>true</string>
+			<key>Identifier</key>
+			<string>useShorthand</string>
+			<key>Name</key>
+			<string>Use shorthand syntax</string>
+			<key>Type</key>
+			<string>checkbox</string>
+			<key>RequiredOptions</key>
+			<dict>
+				<key>importExpecta</key>
+				<array>
+					<string>true</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>Default</key>
+			<string>___VARIABLE_specClass:identifier___Spec</string>
+			<key>Identifier</key>
+			<string>productName</string>
+			<key>Type</key>
+			<string>static</string>
+		</dict>
+	</array>
+	<key>Platforms</key>
+	<array>
+		<string>com.apple.platform.iphoneos</string>
+	</array>
+	<key>Summary</key>
+	<string>An Objective-C class containing a Specta spec.</string>
+</dict>
+</plist>

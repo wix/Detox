@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Detox Test</string>
+    <string name="app_name_single_instance">Detox Test (SingleInstance)</string>
+    <string name="app_name_crashing">Detox Test (Crashing)</string>
+</resources>

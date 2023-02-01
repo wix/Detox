@@ -1,0 +1,376 @@
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import PrepareBootstrapRN from './partials/_project-setup-bootstrap-rn.mdx';
+import PrepareBootstrapOther from './partials/_project-setup-bootstrap-other.mdx';
+import PrepareAppConfigsIos from './partials/_project-setup-apps-ios.mdx';
+import PrepareAppConfigsAndroid from './partials/_project-setup-apps-android.mdx';
+import PrepareDeviceConfigsIos from './partials/_project-setup-devices-ios.mdx';
+import PrepareDeviceConfigsAndroid from './partials/_project-setup-devices-android.mdx';
+
+# Project Setup
+
+:::info
+
+This article mainly covers standard React Native projects.
+If some steps don't look applicable to your project, please adapt them accordingly, relying on the common sense –
+look for other file locations, use custom build commands and so on.
+
+If you're using **Expo**, please refer to the [setup guide] from their documentation website instead.
+The setup for Expo projects is different and is not covered in this article.
+
+:::
+
+## Step 1: Bootstrap
+
+<Tabs groupId="appType">
+  <TabItem value="start-rn" label="React Native" default>
+    <PrepareBootstrapRN />
+  </TabItem>
+  <TabItem value="start-other" label="Native iOS">
+    <PrepareBootstrapOther />
+  </TabItem>
+</Tabs>
+
+Now, when all the dependencies are installed, initialize Detox in your project:
+
+```bash
+detox init
+```
+
+Normally you should see an output like:
+
+```plain text
+Created a file at path: .detoxrc.js
+Created a file at path: e2e/jest.config.js
+Created a file at path: e2e/starter.test.js
+```
+
+:::tip
+If you see a message like `command not found: detox`, make sure you have [installed Detox command line tools](#1-command-line-tools-detox-cli).
+:::
+After Detox generated these files in your project's root, you still have some work to do with them:
+
+* `.detoxrc.js` – Detox config file;
+* `e2e/jest.config.js` – Jest configuration;
+* `e2e/starter.test.js` – dummy first test.
+
+## Step 2: App configs
+
+In this step you need to provide Detox with the right **commands to build** your app for iOS and Android,
+and also the right **paths to the app binaries** so that Detox can install your app on the device before
+actually starting the tests.
+
+<Tabs groupId="mobileOs">
+    <TabItem value="iOS" label="iOS" default>
+        <PrepareAppConfigsIos />
+    </TabItem>
+    <TabItem value="Android" label="Android">
+        <PrepareAppConfigsAndroid />
+    </TabItem>
+</Tabs>
+
+## Step 3: Device configs
+
+By default, Detox config suggests default device types for iOS and Android:
+
+```js title=".detoxrc.js"
+/** @type {Detox.DetoxConfig} */
+module.exports = {
+  // ...
+  devices: {
+    simulator: {
+      type: 'ios.simulator',
+      device: {
+        // highlight-next-line
+        type: 'iPhone 12',
+      },
+    },
+    attached: {
+      type: 'android.attached',
+      device: {
+        // highlight-next-line
+        adbName: '.*', // any attached device
+      },
+    },
+    emulator: {
+      type: 'android.emulator',
+      device: {
+        // highlight-next-line
+        avdName: 'Pixel_3a_API_30_x86',
+      },
+    },
+  },
+};
+```
+
+:::info
+
+If you plan to use cloud devices instead, check out the [Genymotion SaaS guide](../guide/genymotion-saas.mdx), which will help you to set up remote Android devices.
+This tutorial, however, focuses on devices running locally.
+
+:::
+
+Here's how you can check they are correct and change them if you need something else:
+
+<Tabs groupId="mobileOs">
+    <TabItem value="iOS" label="iOS">
+        <PrepareDeviceConfigsIos />
+    </TabItem>
+    <TabItem value="Android" label="Android" default>
+        <PrepareDeviceConfigsAndroid />
+    </TabItem>
+</Tabs>
+
+## Step 4: Additional Android configuration
+
+:::tip
+
+If you want to try out your tests right away on iOS,
+you can skip to [Step 5: Build the app](#step-5-build-the-app)
+and revisit it when you're ready to move forward with Android.
+
+:::
+
+Assuming you have a regular React Native project, these are the files you normally would need to
+patch or create if they are missing:
+
+* **Build scripts:**
+    * `android/build.gradle`
+    * `android/app/build.gradle`
+* **Native test code:**
+    * `android/app/src/androidTest/java/com/<your.package>/DetoxTest.java`
+* **Manifests:**
+    * `android/app/src/main/AndroidManifest.xml`
+    * `android/app/src/main/res/xml/network_security_config.xml`
+
+### 4.1. Patching build scripts
+
+Open your main build script and apply the suggested changes:
+
+```diff title="android/build.gradle"
+ buildscript {
+   ext {
+     buildToolsVersion = "31.0.0"
+// highlight-next-line
+     minSdkVersion = 21 // (1)
+     compileSdkVersion = 30
+     targetSdkVersion = 30
+// highlight-next-line
++    kotlinVersion = 'X.Y.Z' // (2)
+   }
+ …
+   dependencies {
+     classpath("com.android.tools.build:gradle:7.1.1")
+     classpath("com.facebook.react:react-native-gradle-plugin")
+     classpath("de.undercouch:gradle-download-task:5.0.1")
+// highlight-next-line
++    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion") // (3)
+ …
+
+ allprojects {
+   repositories {
+   …
+   google()
+// highlight-start
++  maven { // (4)
++    url("$rootDir/../node_modules/detox/Detox-android")
++  }
+// highlight-end
+   maven { url 'https://www.jitpack.io' }
+ }
+```
+
+Here is the explanation of those changes, numbered 1-4:
+
+1. Make sure your `minSdkVersion` is at least 18 or higher.
+1. We recommend you to define a global `kotlinVersion` constant you would use in the next step.
+Replace `X.Y.Z` with the actual version number.
+To get one, open **Android Studio**, go to `Preferences > Languages & Frameworks > Kotlin` and
+look at `Current Kotlin plugin version` field. For example, `211-1.5.30-release-408-AS7442.40`
+means you have version `1.5.30`.
+    ![](../img/android/get-kotlin-version.png)
+1. The line adds [Kotlin Gradle plugin](https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-gradle-plugin)
+to the build script. If your project is not entirely new, there's a chance you might have it already, so make sure
+you aren't adding it twice. :wink:
+1. Last, we add Detox as a precompiled native dependency, `.aar`. If you need to have Detox as a
+_compiling dependency_ instead, consult the respective section in [Debugging](debugging.mdx#native-application-code) guide.
+
+Now let's move on to the next build script and prepare it:
+
+```diff title="android/app/build.gradle"
+ …
+
+ android {
+   …
+   defaultConfig {
+     …
+     versionCode 1
+     versionName "1.0"
++    testBuildType System.getProperty('testBuildType', 'debug')
++    testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+   …
+   buildTypes {
+     release {
+       minifyEnabled true
+       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++      proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+
+       signingConfig signingConfigs.release
+     }
+   }
+   …
+
+ dependencies {
++  androidTestImplementation('com.wix:detox:+')
++  implementation 'androidx.appcompat:appcompat:1.1.0'
+   implementation fileTree(dir: "libs", include: ["*.jar"])
+```
+
+:::info ProGuard notice
+
+Detox relies on
+[Android Reflection API](https://developer.android.com/reference/java/lang/reflect/package-summary)
+to integrate with React Native on Android, that's why you have to exempt some of its native code from
+[ProGuard minification](https://developer.android.com/studio/build/shrink-code).
+Otherwise, you'll see Detox crashing or hanging up infinitely upon an attempt to
+run tests with your app built in **release mode**.
+
+:::
+
+### 4.2. Adding an auxiliary Android test
+
+Detox requires that your project has a single dummy native Android test with some special content,
+which will be picked up by `testRunner` that you just added in the previous step, so let's create it now.
+
+Copy the snippet below to create a file under the following path (where `<your.package>` is your actual
+package name):
+
+```java title="android/app/src/androidTest/java/com/<your.package>/DetoxTest.java" showLineNumbers
+// highlight-next-line
+package com.<your.package>; // (1)
+
+import com.wix.detox.Detox;
+import com.wix.detox.config.DetoxConfig;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+
+@RunWith(AndroidJUnit4.class)
+@LargeTest
+public class DetoxTest {
+    @Rule // (2)
+// highlight-next-line
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class, false, false);
+
+    @Test
+    public void runDetoxTests() {
+        DetoxConfig detoxConfig = new DetoxConfig();
+        detoxConfig.idlePolicyConfig.masterTimeoutSec = 90;
+        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60;
+        detoxConfig.rnContextLoadTimeoutSec = (BuildConfig.DEBUG ? 180 : 60);
+
+        Detox.runTests(mActivityRule, detoxConfig);
+    }
+}
+```
+
+You can see there are two lines (1 and 18) that require extra care:
+
+1. Replace with your package name. To look it up, you could copy and paste the first line from `android/app/src/main/java/com/<your.package>/MainActivity.java`.
+1. Usually not the case, but you might have a custom activity name instead of a default `MainActivity`. To check whether it is so or not, open your `android/app/src/main/AndroidManifest.xml`,
+and check what your main activity is called:
+
+```plain text
+…
+  <activity
+// highlight-next-line
+    android:name=".MainActivity"
+    android:label="@string/app_name"
+    android:launchMode="standard"
+```
+
+### 4.3. Enabling unencrypted traffic for Detox
+
+:::info
+
+For Detox to work, its native code running on Android device has to be able to connect to the Node.js host running tests.
+It sends an unencrypted HTTP traffic via virtual `localhost` interface, that's why you need to create a new file which
+adds a couple of exceptions to the security rules.
+
+If properly configured, this approach in no way compromises the security settings of your app.
+For more details, refer to [Android’s security-config guide](https://developer.android.com/training/articles/security-config)
+and the [dedicated article](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html)
+in the Android developers blog.
+
+:::
+
+Create a new network security config file for Android (or patch it if you have one):
+
+```xml title="android/app/src/main/res/xml/network_security_config.xml"
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+</network-security-config>
+```
+
+If you had no network security config before, it means you also have to register it after creation:
+
+```diff title="android/app/src/main/AndroidManifest.xml"
+ <manifest>
+   <application
+   …
++    android:networkSecurityConfig="@xml/network_security_config">
+   </application>
+ </manifest>
+```
+
+:trophy: Pat yourself on the back! The hardest part is over, now your Android app is ready to be used with Detox.
+
+## Step 5: Build the app
+
+<Tabs groupId="configurationName">
+  <TabItem value="ios.sim.debug" label="iOS (Debug)">
+    <CodeBlock language="sh">
+      detox build --configuration ios.sim.debug
+    </CodeBlock>
+  </TabItem>
+  <TabItem value="ios.sim.release" label="iOS (Release)">
+    <CodeBlock language="sh">
+      detox build --configuration ios.sim.release
+    </CodeBlock>
+  </TabItem>
+  <TabItem value="android.emu.debug" label="Android (Debug)">
+    <CodeBlock language="sh">
+      detox build --configuration android.emu.debug
+    </CodeBlock>
+  </TabItem>
+  <TabItem value="android.emu.release" label="Android (Release)">
+    <CodeBlock language="sh">
+      detox build --configuration android.emu.release
+    </CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::tip
+
+If the build is failing, try out our [Troubleshooting](../troubleshooting/building-the-app.md) section.
+
+Note that Detox CLI just executes the build command you specified in your Detox config (`.detoxrc.js`)
+for a specific configuration. In the other words, it has no extra logic – it just takes the command and runs it,
+nothing more and nothing less.
+
+:::
+
+Once your build is ready to use, please proceed to the next article.
+
+[setup guide]: https://docs.expo.dev/build-reference/e2e-tests

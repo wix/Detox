@@ -1,0 +1,12 @@
+[submodule "detox/ios/COSTouchVisualizer"]
+	path = detox/ios/COSTouchVisualizer
+	url = https://github.com/joeblau/COSTouchVisualizer
+[submodule "detox/ios/DTXLoggingInfra"]
+	path = detox/ios/DTXLoggingInfra
+	url = https://github.com/wix/DTXLoggingInfra.git
+[submodule "detox/ios/DetoxSync"]
+	path = detox/ios/DetoxSync
+	url = https://github.com/wix/DetoxSync.git
+[submodule "detox/ios/LNViewHierarchyDumper"]
+	path = detox/ios/LNViewHierarchyDumper
+	url = https://github.com/wix-playground/LNViewHierarchyDumper.git

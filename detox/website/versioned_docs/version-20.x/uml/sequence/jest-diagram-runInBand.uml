@@ -1,0 +1,37 @@
+@startuml
+
+title "jest --runInBand"
+actor User
+boundary "Jest (main)" as Jest0
+participant "jest.config.js" as jestConfig
+participant "globalSetup" as globalSetup
+participant "reporters" as jestReporter
+participant "globalTeardown.js" as globalTeardown
+
+User -> Jest0 : jest ...
+activate Jest0
+Jest0 -> jestConfig: import
+activate jestConfig
+jestConfig -> Jest0: await
+deactivate jestConfig
+Jest0 -> globalSetup: import
+activate globalSetup
+globalSetup -> Jest0: await
+deactivate globalSetup
+Jest0 -> jestReporter: import
+activate jestReporter
+Jest0 -> jestReporter: onRunStart()
+loop every test file
+  Jest0 -> Jest0: runTests()
+  Jest0 -> jestReporter: onTestFileResult()
+end loop
+Jest0 -> jestReporter: onRunComplete()
+deactivate jestReporter
+Jest0 -> globalTeardown: import
+activate globalTeardown
+globalTeardown -> Jest0: await
+deactivate globalTeardown
+
+deactivate Jest0
+
+@enduml

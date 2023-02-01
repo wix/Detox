@@ -1,0 +1,30 @@
+//
+//  DetoxSync.pch
+//  DetoxSync
+//
+//  Created by Leo Natan (Wix) on 8/14/19.
+//  Copyright © 2019 wix. All rights reserved.
+//
+
+#ifndef DetoxSync_pch
+#define DetoxSync_pch
+
+#import "DTXLogging.h"
+#import "Swiftier.h"
+
+#ifdef __OBJC__
+#if __has_include(<Foundation/Foundation.h>)
+#import <Foundation/Foundation.h>
+
+typedef _Atomic(CFRunLoopRef) atomic_cfrunloop;
+
+#import "DTXTypedefs.h"
+#import "CFRunLoopDescription.h"
+#import "DTXSwizzlingHelper.h"
+
+#endif
+#endif
+
+#define DTXAddressInfo detox_sync_DTXAddressInfo
+
+#endif /* DetoxSync_pch */

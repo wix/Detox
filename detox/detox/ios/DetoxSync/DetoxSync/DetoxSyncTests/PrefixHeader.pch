@@ -1,0 +1,28 @@
+//
+//  PrefixHeader.pch
+//  DetoxSync
+//
+//  Created by Asaf Korem on 17/11/2021.
+//  Copyright © 2021 wix. All rights reserved.
+//
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#import <Foundation/Foundation.h>
+#import <Specta/Specta.h>
+#import <Expecta/Expecta.h>
+#import <OCMock/OCMock.h>
+
+#import "Swiftier.h"
+#import "DTXTypedefs.h"
+
+#endif /* PrefixHeader_pch */
+
+#ifdef __cplusplus
+}
+#endif

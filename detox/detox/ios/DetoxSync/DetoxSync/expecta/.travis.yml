@@ -1,0 +1,10 @@
+language: objective-c
+osx_image: xcode10.1
+xcode_project: Expecta.xcodeproj
+
+matrix:
+  include:
+    - xcode_scheme: Expecta
+      xcode_destination: platform=macOS
+    - xcode_scheme: Expecta-iOS
+      xcode_destination: platform=iOS Simulator,OS=12.1,name=iPhone X

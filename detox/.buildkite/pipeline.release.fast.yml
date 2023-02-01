@@ -1,0 +1,30 @@
+  - wait
+  - label: ":ios: Package iOS"
+    key: 'ios_package'
+    command:
+      - "nvm install"
+      - "npm run package:ios"
+    artifact_paths: "/Users/builder/work/detox/*.tbz"
+
+  - label: ":android: Package android"
+    key: 'android_package'
+    command:
+      - "nvm install"
+      - "npm install"
+      - "npm run package:android"
+    env:
+      DETOX_DISABLE_POSTINSTALL: true
+      DETOX_DISABLE_POD_INSTALL: true
+    artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
+
+  - label: ":shipit: Publish"
+    depends_on:
+      - 'android_package'
+      - 'ios_package'
+    command:
+      - "nvm install 16"
+      - "npm install"
+      - "npm run release"
+    env:
+      DETOX_DISABLE_POD_INSTALL: true
+      DETOX_DISABLE_POSTINSTALL: true

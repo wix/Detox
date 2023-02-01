@@ -1,0 +1,29 @@
+{
+  "name": "detox-cli",
+  "version": "20.0.0",
+  "description": "Optional wrapper for Detox CLI, meant to be installed globally",
+  "main": "cli.js",
+  "scripts": {
+    "test": ":"
+  },
+  "bin": {
+    "detox": "./cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wix/detox.git"
+  },
+  "keywords": [
+    "detox",
+    "cli"
+  ],
+  "author": "Yaroslav Serhieiev <yaroslavs@wix.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wix/Detox/issues"
+  },
+  "dependencies": {
+    "chalk": "^4.0.0"
+  },
+  "homepage": "https://github.com/wix/Detox"
+}

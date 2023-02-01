@@ -1,0 +1,5 @@
+___IMPORTHEADER_specHelperClass___
+
+@interface ___VARIABLE_specHelperClass:identifier___ (___VARIABLE_specHelperCategory:identifier___)
+
+@end

@@ -1,0 +1,38 @@
+BasedOnStyle:  WebKit
+#AlignConsecutiveDeclarations: true  (only in instance var declarations)
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+BraceWrapping:
+  AfterCaseLabel:  false
+  AfterControlStatement: Always
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterObjCDeclaration: true
+  AfterStruct:     false
+  AfterUnion:      false
+  BeforeWhile:     true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Allman
+IncludeCategories:
+  - Regex:           '^<[a-z]*'
+    Priority:        -4
+  - Regex:           '^<NS*'
+    Priority:        -3
+  - Regex:           '^<XC*'
+    Priority:        -2
+  - Regex:           '^"NS*'
+    Priority:        -1
+  - Regex:           '.*'
+    Priority:        4
+IndentCaseLabels: true
+MaxEmptyLinesToKeep: 2
+ObjCSpaceAfterProperty: false
+ObjCSpaceBeforeProtocolList: false
+PenaltyBreakAssignment: 50
+PenaltyBreakBeforeFirstCallParameter: 50
+PointerAlignment: Right
+SpaceBeforeParens: Never

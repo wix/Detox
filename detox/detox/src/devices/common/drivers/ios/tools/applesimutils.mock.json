@@ -1,0 +1,24 @@
+{
+  "--list": [
+    {
+      "deviceType" : {
+        "name" : "iPhone X",
+        "bundlePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Platforms\/iPhoneOS.platform\/Developer\/Library\/CoreSimulator\/Profiles\/DeviceTypes\/iPhone X.simdevicetype",
+        "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-X"
+      },
+      "state" : "Shutdown",
+      "isAvailable" : true,
+      "name" : "iPhone X",
+      "udid" : "FBA6D413-0A3D-466F-BF40-ECC019133E43",
+      "os" : {
+        "buildversion" : "16B91",
+        "bundlePath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Platforms\/iPhoneOS.platform\/Developer\/Library\/CoreSimulator\/Profiles\/Runtimes\/iOS.simruntime",
+        "isAvailable" : true,
+        "name" : "iOS 12.1",
+        "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-12-1",
+        "version" : "12.1"
+      }
+    }
+  ]
+}
+

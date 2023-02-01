@@ -1,0 +1,27 @@
+steps:
+  - block: ":partyparrot: Enter the Debug Mode!"
+    prompt: "Detox your mind"
+    if: 'build.message =~ /^debug\$/i'
+    fields:
+      - select: "Ingridients"
+        key: "debug-builds"
+        multiple: true
+        hint: "hey Chef, what are we cooking today?"
+        options:
+          - label: "iOS RN 68"
+            value: "ios_rn_68"
+          - label: "iOS RN 69"
+            value: "ios_rn_69"
+          - label: "Android RN 68"
+            value: "android_rn_68"
+          - label: "Android RN 69"
+            value: "android_rn_69"
+          - label: "Android Demo App RN 68"
+            value: "android_demo_app_rn_68"
+          - label: "Android Demo App RN 69"
+            value: "android_demo_app_rn_69"
+          - label: "iOS Demo App RN 69"
+            value: "ios_demo_app_rn_69"
+
+  - label: "Get Release Pipeline"
+    command: '.buildkite/pipeline.sh debug | buildkite-agent pipeline upload'

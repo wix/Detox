@@ -1,0 +1,530 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		391596C21E8BCFEB00FDD6F5 /* ExtensionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 391596C11E8BCFEB00FDD6F5 /* ExtensionOperation.m */; };
+		391596C51E8BD03A00FDD6F5 /* SetPermissionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 391596C41E8BD03A00FDD6F5 /* SetPermissionOperation.m */; };
+		391596C71E8BD79500FDD6F5 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 391596C61E8BD79500FDD6F5 /* libsqlite3.tbd */; };
+		391596CD1E8BD7E500FDD6F5 /* JPSimulatorHacks.m in Sources */ = {isa = PBXBuildFile; fileRef = 391596CA1E8BD7E500FDD6F5 /* JPSimulatorHacks.m */; };
+		391596CE1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 391596CC1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.m */; };
+		391596D11E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 391596D01E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.m */; };
+		394CDCEC1E8B9A6600A0FC4E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CDCEB1E8B9A6600A0FC4E /* main.m */; };
+		394CDCEF1E8B9A6600A0FC4E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CDCEE1E8B9A6600A0FC4E /* AppDelegate.m */; };
+		394CDCF21E8B9A6600A0FC4E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CDCF11E8B9A6600A0FC4E /* ViewController.m */; };
+		394CDCF51E8B9A6600A0FC4E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 394CDCF31E8B9A6600A0FC4E /* Main.storyboard */; };
+		394CDCF71E8B9A6600A0FC4E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 394CDCF61E8B9A6600A0FC4E /* Assets.xcassets */; };
+		394CDCFA1E8B9A6600A0FC4E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 394CDCF81E8B9A6600A0FC4E /* LaunchScreen.storyboard */; };
+		394CDD1D1E8BA22500A0FC4E /* ActionRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CDD1C1E8BA22500A0FC4E /* ActionRequestHandler.m */; };
+		394CDD231E8BA22500A0FC4E /* Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 394CDD191E8BA22500A0FC4E /* Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		394CDD471E8BC18F00A0FC4E /* SetNotificationPermissionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394CDD461E8BC18F00A0FC4E /* SetNotificationPermissionOperation.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		394CDD211E8BA22500A0FC4E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394CDCDF1E8B9A6600A0FC4E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 394CDD181E8BA22500A0FC4E;
+			remoteInfo = Extension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		394CDD141E8B9BEA00A0FC4E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				394CDD231E8BA22500A0FC4E /* Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		391596C01E8BCFEB00FDD6F5 /* ExtensionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionOperation.h; sourceTree = "<group>"; };
+		391596C11E8BCFEB00FDD6F5 /* ExtensionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtensionOperation.m; sourceTree = "<group>"; };
+		391596C31E8BD03A00FDD6F5 /* SetPermissionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetPermissionOperation.h; sourceTree = "<group>"; };
+		391596C41E8BD03A00FDD6F5 /* SetPermissionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetPermissionOperation.m; sourceTree = "<group>"; };
+		391596C61E8BD79500FDD6F5 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		391596C91E8BD7E500FDD6F5 /* JPSimulatorHacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSimulatorHacks.h; sourceTree = "<group>"; };
+		391596CA1E8BD7E500FDD6F5 /* JPSimulatorHacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSimulatorHacks.m; sourceTree = "<group>"; };
+		391596CB1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPSimulatorHacksDB.h; sourceTree = "<group>"; };
+		391596CC1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPSimulatorHacksDB.m; sourceTree = "<group>"; };
+		391596CF1E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetPhotosPermissionOperation.h; sourceTree = "<group>"; };
+		391596D01E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetPhotosPermissionOperation.m; sourceTree = "<group>"; };
+		394CDCE71E8B9A6600A0FC4E /* DetoxHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		394CDCEB1E8B9A6600A0FC4E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		394CDCED1E8B9A6600A0FC4E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		394CDCEE1E8B9A6600A0FC4E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		394CDCF01E8B9A6600A0FC4E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		394CDCF11E8B9A6600A0FC4E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		394CDCF41E8B9A6600A0FC4E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		394CDCF61E8B9A6600A0FC4E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		394CDCF91E8B9A6600A0FC4E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		394CDCFB1E8B9A6600A0FC4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		394CDD191E8BA22500A0FC4E /* Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Extension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		394CDD1B1E8BA22500A0FC4E /* ActionRequestHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActionRequestHandler.h; sourceTree = "<group>"; };
+		394CDD1C1E8BA22500A0FC4E /* ActionRequestHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionRequestHandler.m; sourceTree = "<group>"; };
+		394CDD201E8BA22500A0FC4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		394CDD2A1E8BA34100A0FC4E /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
+		394CDD421E8BB20D00A0FC4E /* DetoxHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DetoxHelper.entitlements; sourceTree = "<group>"; };
+		394CDD451E8BC18F00A0FC4E /* SetNotificationPermissionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetNotificationPermissionOperation.h; sourceTree = "<group>"; };
+		394CDD461E8BC18F00A0FC4E /* SetNotificationPermissionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetNotificationPermissionOperation.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		394CDCE41E8B9A6600A0FC4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		394CDD161E8BA22500A0FC4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				391596C71E8BD79500FDD6F5 /* libsqlite3.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		391596C81E8BD7D200FDD6F5 /* JP */ = {
+			isa = PBXGroup;
+			children = (
+				391596C91E8BD7E500FDD6F5 /* JPSimulatorHacks.h */,
+				391596CA1E8BD7E500FDD6F5 /* JPSimulatorHacks.m */,
+				391596CB1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.h */,
+				391596CC1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.m */,
+			);
+			path = JP;
+			sourceTree = "<group>";
+		};
+		394CDCDE1E8B9A6600A0FC4E = {
+			isa = PBXGroup;
+			children = (
+				394CDCE91E8B9A6600A0FC4E /* DetoxHelper */,
+				394CDD1A1E8BA22500A0FC4E /* Extension */,
+				394CDCE81E8B9A6600A0FC4E /* Products */,
+				394CDD271E8BA34100A0FC4E /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		394CDCE81E8B9A6600A0FC4E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				394CDCE71E8B9A6600A0FC4E /* DetoxHelper.app */,
+				394CDD191E8BA22500A0FC4E /* Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		394CDCE91E8B9A6600A0FC4E /* DetoxHelper */ = {
+			isa = PBXGroup;
+			children = (
+				394CDD421E8BB20D00A0FC4E /* DetoxHelper.entitlements */,
+				394CDCED1E8B9A6600A0FC4E /* AppDelegate.h */,
+				394CDCEE1E8B9A6600A0FC4E /* AppDelegate.m */,
+				394CDCF01E8B9A6600A0FC4E /* ViewController.h */,
+				394CDCF11E8B9A6600A0FC4E /* ViewController.m */,
+				394CDCF31E8B9A6600A0FC4E /* Main.storyboard */,
+				394CDCF61E8B9A6600A0FC4E /* Assets.xcassets */,
+				394CDCF81E8B9A6600A0FC4E /* LaunchScreen.storyboard */,
+				394CDCFB1E8B9A6600A0FC4E /* Info.plist */,
+				394CDCEA1E8B9A6600A0FC4E /* Supporting Files */,
+			);
+			path = DetoxHelper;
+			sourceTree = "<group>";
+		};
+		394CDCEA1E8B9A6600A0FC4E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				394CDCEB1E8B9A6600A0FC4E /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		394CDD1A1E8BA22500A0FC4E /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				391596C81E8BD7D200FDD6F5 /* JP */,
+				394CDD2A1E8BA34100A0FC4E /* Extension.entitlements */,
+				391596C01E8BCFEB00FDD6F5 /* ExtensionOperation.h */,
+				391596C11E8BCFEB00FDD6F5 /* ExtensionOperation.m */,
+				391596C31E8BD03A00FDD6F5 /* SetPermissionOperation.h */,
+				391596C41E8BD03A00FDD6F5 /* SetPermissionOperation.m */,
+				394CDD451E8BC18F00A0FC4E /* SetNotificationPermissionOperation.h */,
+				394CDD461E8BC18F00A0FC4E /* SetNotificationPermissionOperation.m */,
+				391596CF1E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.h */,
+				391596D01E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.m */,
+				394CDD1B1E8BA22500A0FC4E /* ActionRequestHandler.h */,
+				394CDD1C1E8BA22500A0FC4E /* ActionRequestHandler.m */,
+				394CDD201E8BA22500A0FC4E /* Info.plist */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		394CDD271E8BA34100A0FC4E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				391596C61E8BD79500FDD6F5 /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		394CDCE61E8B9A6600A0FC4E /* DetoxHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 394CDCFE1E8B9A6600A0FC4E /* Build configuration list for PBXNativeTarget "DetoxHelper" */;
+			buildPhases = (
+				394CDCE31E8B9A6600A0FC4E /* Sources */,
+				394CDCE41E8B9A6600A0FC4E /* Frameworks */,
+				394CDCE51E8B9A6600A0FC4E /* Resources */,
+				394CDD141E8B9BEA00A0FC4E /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				394CDD221E8BA22500A0FC4E /* PBXTargetDependency */,
+			);
+			name = DetoxHelper;
+			productName = DetoxHelper;
+			productReference = 394CDCE71E8B9A6600A0FC4E /* DetoxHelper.app */;
+			productType = "com.apple.product-type.application";
+		};
+		394CDD181E8BA22500A0FC4E /* Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 394CDD241E8BA22500A0FC4E /* Build configuration list for PBXNativeTarget "Extension" */;
+			buildPhases = (
+				394CDD151E8BA22500A0FC4E /* Sources */,
+				394CDD161E8BA22500A0FC4E /* Frameworks */,
+				394CDD171E8BA22500A0FC4E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Extension;
+			productName = Extension;
+			productReference = 394CDD191E8BA22500A0FC4E /* Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		394CDCDF1E8B9A6600A0FC4E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = Wix;
+				TargetAttributes = {
+					394CDCE61E8B9A6600A0FC4E = {
+						CreatedOnToolsVersion = 8.3;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.InterAppAudio = {
+								enabled = 0;
+							};
+						};
+					};
+					394CDD181E8BA22500A0FC4E = {
+						CreatedOnToolsVersion = 8.3;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.WAC = {
+								enabled = 0;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 394CDCE21E8B9A6600A0FC4E /* Build configuration list for PBXProject "DetoxHelper" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 394CDCDE1E8B9A6600A0FC4E;
+			productRefGroup = 394CDCE81E8B9A6600A0FC4E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				394CDCE61E8B9A6600A0FC4E /* DetoxHelper */,
+				394CDD181E8BA22500A0FC4E /* Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		394CDCE51E8B9A6600A0FC4E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				394CDCFA1E8B9A6600A0FC4E /* LaunchScreen.storyboard in Resources */,
+				394CDCF71E8B9A6600A0FC4E /* Assets.xcassets in Resources */,
+				394CDCF51E8B9A6600A0FC4E /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		394CDD171E8BA22500A0FC4E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		394CDCE31E8B9A6600A0FC4E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				394CDCF21E8B9A6600A0FC4E /* ViewController.m in Sources */,
+				394CDCEF1E8B9A6600A0FC4E /* AppDelegate.m in Sources */,
+				394CDCEC1E8B9A6600A0FC4E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		394CDD151E8BA22500A0FC4E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				391596C21E8BCFEB00FDD6F5 /* ExtensionOperation.m in Sources */,
+				391596C51E8BD03A00FDD6F5 /* SetPermissionOperation.m in Sources */,
+				394CDD471E8BC18F00A0FC4E /* SetNotificationPermissionOperation.m in Sources */,
+				391596CE1E8BD7E500FDD6F5 /* JPSimulatorHacksDB.m in Sources */,
+				391596D11E8BDD8A00FDD6F5 /* SetPhotosPermissionOperation.m in Sources */,
+				394CDD1D1E8BA22500A0FC4E /* ActionRequestHandler.m in Sources */,
+				391596CD1E8BD7E500FDD6F5 /* JPSimulatorHacks.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		394CDD221E8BA22500A0FC4E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 394CDD181E8BA22500A0FC4E /* Extension */;
+			targetProxy = 394CDD211E8BA22500A0FC4E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		394CDCF31E8B9A6600A0FC4E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				394CDCF41E8B9A6600A0FC4E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		394CDCF81E8B9A6600A0FC4E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				394CDCF91E8B9A6600A0FC4E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		394CDCFC1E8B9A6600A0FC4E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		394CDCFD1E8B9A6600A0FC4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		394CDCFF1E8B9A6600A0FC4E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DetoxHelper/DetoxHelper.entitlements;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = DetoxHelper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		394CDD001E8B9A6600A0FC4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DetoxHelper/DetoxHelper.entitlements;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = DetoxHelper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
+		394CDD251E8BA22500A0FC4E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Extension/Extension.entitlements;
+				DEVELOPMENT_TEAM = "";
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				INFOPLIST_FILE = Extension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxHelper.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		394CDD261E8BA22500A0FC4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Extension/Extension.entitlements;
+				DEVELOPMENT_TEAM = "";
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
+				INFOPLIST_FILE = Extension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxHelper.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		394CDCE21E8B9A6600A0FC4E /* Build configuration list for PBXProject "DetoxHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				394CDCFC1E8B9A6600A0FC4E /* Debug */,
+				394CDCFD1E8B9A6600A0FC4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		394CDCFE1E8B9A6600A0FC4E /* Build configuration list for PBXNativeTarget "DetoxHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				394CDCFF1E8B9A6600A0FC4E /* Debug */,
+				394CDD001E8B9A6600A0FC4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		394CDD241E8BA22500A0FC4E /* Build configuration list for PBXNativeTarget "Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				394CDD251E8BA22500A0FC4E /* Debug */,
+				394CDD261E8BA22500A0FC4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 394CDCDF1E8B9A6600A0FC4E /* Project object */;
+}

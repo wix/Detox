@@ -1,0 +1,19 @@
+{
+  "name": "test-project",
+  "version": "0.0.1",
+  "detox": {
+    "session": {
+      "server": "ws://localhost:9999",
+      "sessionId": "external file works"
+    },
+    "configurations": {
+      "simple": {
+        "device": {
+          "type": "android.attached",
+          "device": "Hello from package.json"
+        },
+        "apps": []
+      }
+    }
+  }
+}

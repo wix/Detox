@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["es2018"],
+    "target": "ES2018",
+    "allowJs": true,
+    "checkJs": true,
+    "jsx": "react-native",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest", "detox"]
+  },
+  "rootDir": ".",
+  "include": [
+    "**/*.js",
+    "**/*.ts"
+  ],
+  "exclude": [
+    "coverage",
+    "e2e/**/*.js",
+    "e2e-unhappy/**/*.js",
+    "integration/**/*.js",
+    "types/*.ts"
+  ]
+}

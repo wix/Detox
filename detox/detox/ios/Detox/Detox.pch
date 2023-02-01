@@ -1,0 +1,24 @@
+//
+//  Detox.pch
+//  Detox
+//
+//  Created by Leo Natan (Wix) on 12/10/17.
+//  Copyright © 2017 Wix. All rights reserved.
+//
+
+#ifndef Detox_pch
+#define Detox_pch
+
+#define DTXAddressInfo detox_DTXAddressInfo
+
+#import "DTXLogging.h"
+
+#import "Swiftier.h"
+
+#ifdef __OBJC__
+#import "DTXAssertionHandler.h"
+#import "NSThread+DetoxUtils.h"
+#import "NSArray+Utils.h"
+#endif
+
+#endif /* Detox_pch */

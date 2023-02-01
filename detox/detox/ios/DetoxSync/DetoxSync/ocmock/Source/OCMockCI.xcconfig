@@ -1,0 +1,8 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// If you change these here you must also update the makefile
+// Note that OBJROOT is not defined in terms of SYMROOT. For some
+// reason that doesn't work; PIFcache files get misplaced.
+//SYMROOT = $(PROJECT_DIR)/../Build
+//OBJROOT = $(PROJECT_DIR)/../Build/Intermediaries

@@ -1,0 +1,1858 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .ambiguousAppAndApps should create an error for aliased configuration 1`] = `
+[DetoxConfigError: You can't have both "app" and "apps" defined in the "aliased" configuration.
+
+HINT: Use "app" if you have a single app to test.
+Use "apps" if you have multiple apps to test.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    aliased: {
+      device: 'aDevice',
+      apps: [Array],
+      app: 'someApp'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .ambiguousAppAndApps should create an error for inlined configuration 1`] = `
+[DetoxConfigError: You can't have both "app" and "apps" defined in the "inlinedMulti" configuration.
+
+HINT: Use "app" if you have a single app to test.
+Use "apps" if you have multiple apps to test.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlinedMulti: {
+      device: [Object],
+      apps: [Array],
+      app: [Object]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .appConfigIsUndefined should take into account if it is "app" missing 1`] = `
+[DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
+
+HINT: It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
+
+{
+  "apps": {
+*-> "myApp": {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp"
+      ...
+    }
+  }
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .appConfigIsUndefined should take into account if it is "apps" array has an empty element 1`] = `
+[DetoxConfigError: Undefined or empty app config in the selected "android.release" configuration:
+
+HINT: It should be an alias to an existing app config in "apps" dictionary, or the config object itself, e.g.:
+
+{
+  "apps": {
+*-> "myApp": {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   "android.release": {
+*---- "apps": [..., "myApp", ...]
+      ...
+    }
+  }
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .cantResolveAppAlias should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Failed to find an app config "anotherApp" in the "apps" dictionary of Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+HINT: Below are the app configurations Detox was able to find:
+* someApp
+
+Check your configuration "aliased":
+
+{
+  device: 'aDevice',
+  apps: [
+    'someApp'
+  ]
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .duplicateAppConfig should help with aliased named apps 1`] = `
+[DetoxConfigError: App collision detected in the selected configuration "aliased".
+
+HINT: Both apps use the same name "TheApp" — try giving each app a unique name.
+
+detox → apps → someApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: 'TheApp'
+}
+
+detox → apps → otherApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .duplicateAppConfig should help with aliased non-named apps 1`] = `
+[DetoxConfigError: App collision detected in the selected configuration "aliased".
+
+HINT: The app configs are missing "name" property that serves to distinct them.
+
+detox → apps → someApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT A NAME>'
+}
+
+detox → apps → otherApp:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .duplicateAppConfig should help with inlined named apps 1`] = `
+[DetoxConfigError: App collision detected in the selected configuration "inlinedMulti".
+
+HINT: Both apps use the same name "TheApp" — try giving each app a unique name.
+
+detox → configurations → inlinedMulti → apps → 0:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: 'TheApp'
+}
+
+detox → configurations → inlinedMulti → apps → 1:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .duplicateAppConfig should help with inlined non-named apps 1`] = `
+[DetoxConfigError: App collision detected in the selected configuration "inlinedMulti".
+
+HINT: The app configs are missing "name" property that serves to distinct them.
+
+detox → configurations → inlinedMulti → apps → 0:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT A NAME>'
+}
+
+detox → configurations → inlinedMulti → apps → 1:
+{
+  type: 'ios.app',
+  binaryPath: 'path/to/app',
+  name: '<GIVE IT ANOTHER NAME>'
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .invalidAppType should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid app "type" property in the app config.
+Expected "ios.app".
+
+HINT: You have a few options:
+1. Replace the value with the suggestion.
+2. Use a correct device type with this app config. Currently you have "ios.simulator".
+
+{
+  apps: {
+    someApp: {
+      type: 'invalid.app',
+      binaryPath: 'path/to/app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .invalidAppType should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid app "type" property in the app config.
+Expected "ios.app".
+
+HINT: You have a few options:
+1. Replace the value with the suggestion.
+2. Use a correct device type with this app config. Currently you have "ios.simulator".
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'invalid.app',
+          binaryPath: 'path/to/app'
+        }
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppLaunchArgs should work with aliased configurations 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: 'path/to/app',
+      launchArgs: 'invalid'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppLaunchArgs should work with inlined configurations 1`] = `
+[DetoxConfigError: Invalid type of "launchArgs" property in the app config.
+Expected an object:
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          launchArgs: 'invalid'
+        }
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .missingAppBinaryPath should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: undefined
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .missingAppBinaryPath should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  configurations: {
+    inlined: {
+      app: {
+        type: 'ios.app',
+        binaryPath: undefined
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .missingAppBinaryPath should create an error for inlined multi-app configuration 1`] = `
+[DetoxConfigError: Missing "binaryPath" property in the app config.
+Expected a string:
+
+{
+  configurations: {
+    inlined: {
+      apps: [
+        undefined
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of the "app" property in the selected configuration "aliased".
+
+HINT: Rename "app" to "apps" if you plan to work with multiple apps.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    aliased: {
+      device: 'aDevice',
+      app: [Array]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .multipleAppsConfigArrayTypo should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of the "app" property in the selected configuration "inlinedMulti".
+
+HINT: Rename "app" to "apps" if you plan to work with multiple apps.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlinedMulti: {
+      device: [Object],
+      app: [Array]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Expected an array in "apps" property in the selected configuration "aliased".
+
+HINT: Rename "apps" to "app" if you plan to work with a single app.
+Otherwise, make sure "apps" contains a valid array of app aliases or inlined app configs.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    aliased: {
+      device: 'aDevice',
+      apps: 'someApp'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .multipleAppsConfigShouldBeArray should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Expected an array in "apps" property in the selected configuration "inlinedMulti".
+
+HINT: Rename "apps" to "app" if you plan to work with a single app.
+Otherwise, make sure "apps" contains a valid array of app aliases or inlined app configs.
+
+Check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlinedMulti: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object]
+      },
+      apps: {
+        type: 'ios.app',
+        binaryPath: 'path/to/app'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .noAppIsDefined should produce Android-specific error message 1`] = `
+[DetoxConfigError: The "android.release" configuration has no defined "app" config.
+
+HINT: There should be an inlined object or an alias to the app config, e.g.:
+
+{
+  "apps": {
+*-->"myApp.android": {
+|     "type": "android.apk",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp.android"
+      ...
+    }
+  }
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .noAppIsDefined should produce a custom error message for unknown device type 1`] = `
+[DetoxConfigError: The "android.release" configuration has no defined "app" config.
+
+HINT: There should be an inlined object or an alias to the app config, e.g.:
+
+{
+  "apps": {
+*-->"myApp": {
+|     "type": "someAppType",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp"
+      ...
+    }
+  }
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .noAppIsDefined should produce iOS-specific error message 1`] = `
+[DetoxConfigError: The "android.release" configuration has no defined "app" config.
+
+HINT: There should be an inlined object or an alias to the app config, e.g.:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "configurations": {
+|   "android.release": {
+*---- "app": "myApp.ios"
+      ...
+    }
+  }
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .thereAreNoAppConfigs should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Cannot use app alias "someApp" since there is no "apps" config in Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+HINT: You should create a dictionary of app configurations in Detox config, e.g.:
+{
+  "apps": {
+*-> "someApp": {
+|     "type": "ios.app", // or "android.apk", or etc...
+|     "binaryPath": "path/to/your/app", // ... and so on
+|   }
+| },
+| "configurations": {
+|   "aliased": {
+*---- "app": "someApp",
+      ...
+    }
+  }
+}
+]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedReversePorts should work with aliased configurations 1`] = `
+[DetoxConfigError: Non-Android app configs cannot have "reversePorts" property:
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: 'path/to/app',
+      reversePorts: [
+        3000
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedReversePorts should work with inlined configurations 1`] = `
+[DetoxConfigError: Non-Android app configs cannot have "reversePorts" property:
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          reversePorts: [Array]
+        }
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .cantResolveDeviceAlias should create a helpful error 1`] = `
+[DetoxConfigError: Failed to find a device config "otherDevice" in the "devices" dictionary of Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+HINT: Below are the device configurations Detox was able to find:
+* aDevice
+
+Check your configuration "aliased":
+
+{
+  device: 'aDevice',
+  apps: [Array]
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .deviceConfigIsUndefined should produce a helpful error 1`] = `
+[DetoxConfigError: Missing "device" property in the selected configuration "aliased":
+
+HINT: It should be an alias to the device config, or the device config itself, e.g.:
+{
+  ...
+  "devices": {
+*-> "myDevice": {
+|     "type": "ios.simulator", // or "android.emulator", or etc...
+|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
+|   }
+| },
+| "configurations": {
+|   "aliased": {
+*---- "device": "myDevice", // or { type: 'ios.simulator', ... }
+      ...
+    },
+    ...
+  }
+}
+
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .invalidDeviceType should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid device type "android.apk" inside your configuration.
+
+HINT: Did you mean to use one of these?
+* ios.simulator
+* android.attached
+* android.emulator
+* android.genycloud
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+Cannot find module 'android.apk' from 'src/errors/DetoxConfigErrorComposer.test.js'
+
+Please check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'android.apk',
+      device: {
+        type: 'iPhone 12'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .invalidDeviceType should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid device type "android.apk" inside your configuration.
+
+HINT: Did you mean to use one of these?
+* ios.simulator
+* android.attached
+* android.emulator
+* android.genycloud
+
+P.S. If you intended to use a third-party driver, please resolve this error:
+
+Cannot find module 'android.apk' from 'src/errors/DetoxConfigErrorComposer.test.js'
+
+Please check your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'android.apk',
+        device: [Object]
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("bootArgs") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "bootArgs" inside the device configuration.
+Expected a string.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      bootArgs: [
+        '--arg'
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("bootArgs") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "bootArgs" inside the device configuration.
+Expected a string.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        bootArgs: [Array]
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("forceAdbInstall") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "forceAdbInstall" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      forceAdbInstall: 'false'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("forceAdbInstall") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "forceAdbInstall" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        forceAdbInstall: 'true'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      gpuMode: true
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
+Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest' | 'off'.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        gpuMode: 'something_odd'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("headless") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "headless" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      headless: 'non-boolean'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("headless") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "headless" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        headless: 'non-boolean'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("readonly") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "readonly" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      readonly: 'non-boolean'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("readonly") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "readonly" inside the device configuration.
+Expected a boolean value.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        readonly: 'non-boolean'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
+Expected an array of strings.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      utilBinaryPaths: [
+        NaN,
+        'valid'
+      ]
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("utilBinaryPaths") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "utilBinaryPaths" inside the device configuration.
+Expected an array of strings.
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: [Object],
+        utilBinaryPaths: [Array]
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty should throw on an unknown argument 1`] = `
+"Composing .malformedDeviceProperty(unknown) is not implemented
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceMatcherProperties should work with aliased configurations 1`] = `
+[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
+
+HINT: It should have the device query to run on, e.g.:
+
+{
+  "type": "ios.simulator",
+  "device": { "foo": ... }
+      // or { "bar": ... }
+}
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceMatcherProperties should work with inlined configurations 1`] = `
+[DetoxConfigError: Invalid or empty "device" matcher inside the device config.
+
+HINT: It should have the device query to run on, e.g.:
+
+{
+  "type": "ios.simulator",
+  "device": { "foo": ... }
+      // or { "bar": ... }
+}
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        }
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceType should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Missing "type" inside the device configuration.
+
+HINT: Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      device: {
+        type: 'iPhone 12'
+      },
+      type: undefined
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceType should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Missing "type" inside the device configuration.
+
+HINT: Usually, "type" property should hold the device type to test on (e.g. "ios.simulator" or "android.emulator").
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        device: [Object],
+        type: undefined
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .thereAreNoDeviceConfigs should create an error with a hint 1`] = `
+[DetoxConfigError: Cannot use device alias "aDevice" since there is no "devices" config in Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+HINT: You should create a dictionary of device configurations in Detox config, e.g.:
+{
+  "devices": {
+*-> "aDevice": {
+|     "type": "ios.simulator", // or "android.emulator", or etc...
+|     "device": { "type": "iPhone 12" }, // or e.g.: { "avdName": "Pixel_API_29" }
+|   }
+| },
+| "configurations": {
+|   "aliased": {
+*---- "device": "aDevice",
+      ...
+    }
+  }
+}
+]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("bootArgs") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "bootArgs" property.
+
+HINT: You can use this property only with the following device types:
+* ios.simulator
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      bootArgs: '--no-window'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("bootArgs") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "bootArgs" property.
+
+HINT: You can use this property only with the following device types:
+* ios.simulator
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        bootArgs: '--no-window'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("forceAdbInstall") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "forceAdbInstall" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      forceAdbInstall: false
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("forceAdbInstall") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "forceAdbInstall" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        forceAdbInstall: true
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "gpuMode" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      gpuMode: 'auto'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "gpuMode" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        gpuMode: 'auto'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("headless") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "headless" property.
+
+HINT: You can use this property only with the following device types:
+* ios.simulator
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      headless: true
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("headless") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "headless" property.
+
+HINT: You can use this property only with the following device types:
+* ios.simulator
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        headless: true
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("readonly") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "readonly" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      readonly: false
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("readonly") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "readonly" property.
+
+HINT: You can use this property only with the following device types:
+* android.emulator
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        readonly: false
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("utilBinaryPaths") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "utilBinaryPaths" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  devices: {
+    aDevice: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 12'
+      },
+      utilBinaryPaths: []
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("utilBinaryPaths") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: The current device type "ios.simulator" does not support "utilBinaryPaths" property.
+
+HINT: You can use this property only with the following device types:
+* android.attached
+* android.emulator
+* android.genycloud
+
+Please fix your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    inlined: {
+      device: {
+        type: 'ios.simulator',
+        device: {
+          type: 'iPhone 12'
+        },
+        utilBinaryPaths: []
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty should throw on an unknown argument 1`] = `
+"Composing .unsupportedDeviceProperty(unknown) is not implemented
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .cannotSkipAutostartWithMissingServer should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: Cannot have both an undefined session.server URL and session.autoStart set to false
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        autoStart: false
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .cannotSkipAutostartWithMissingServer should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: Cannot have both an undefined session.server URL and session.autoStart set to false
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        autoStart: false
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .cannotSkipAutostartWithMissingServer should point to global session if there is one 1`] = `
+[DetoxConfigError: Cannot have both an undefined session.server URL and session.autoStart set to false
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    autoStart: false
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        debugSynchronization: '3000'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidDebugSynchronizationProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        debugSynchronization: '3000'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidDebugSynchronizationProperty should point to global session if there is one 1`] = `
+[DetoxConfigError: session.debugSynchronization should be a positive number
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidServerProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.server property is not a valid WebSocket URL
+
+HINT: Expected something like "ws://localhost:8099".
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'localhost'
+  },
+  configurations: {
+    'android.release': {}
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidServerProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.server property is not a valid WebSocket URL
+
+HINT: Expected something like "ws://localhost:8099".
+Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'localhost'
+  },
+  configurations: {
+    'android.release': {}
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidSessionId should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        sessionId: 234589798234
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidSessionId should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        sessionId: 234589798234
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidSessionId should point to global session if there is one 1`] = `
+[DetoxConfigError: session.sessionId property should be a non-empty string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidTestRunnerProperty should be able to create a global config error 1`] = `
+[DetoxConfigError: testRunner should be an object, not a string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  testRunner: 'jest',
+  configurations: [Object]
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidTestRunnerProperty should be able to create a local config error 1`] = `
+[DetoxConfigError: testRunner should be an object, not a string
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      testRunner: 'mocha'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .cantChooseConfiguration should create an error with --configuration suggestions 1`] = `
+[DetoxConfigError: Cannot determine which configuration to use from Detox config at path:
+/etc/detox/config.js
+
+HINT: Use --configuration to choose one of the following:
+* aliased
+* inlined
+* inlinedMulti]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotBeEmpty should create a helpful error 1`] = `
+[DetoxConfigError: Cannot use an empty configuration "empty".
+
+HINT: A valid configuration should have "device" and "app" properties defined, e.g.:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "path/to/app"
+|   },
+| },
+| "devices": {
+|*->"simulator": {
+||    "type": "ios.simulator",
+||    "device": { type: "iPhone 12" }
+||  },
+||},
+||"configurations": {
+||  "empty": {
+|*--- "device": "simulator",
+*---- "app": "myApp.ios"
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    empty: {},
+    aliased: [Object],
+    inlined: [Object],
+    inlinedMulti: [Object]
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for "android.emulator" device type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.android": {
+|     "type": "android.apk",
+|     "binaryPath": "/path/android.emulator.app",
+|   },
+| },
+| "devices": {
+|*->"emulator": {
+||    "type": "android.emulator",
+||    "device": "some-query(android.emulator)"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "android.emulator" */
+|*--- "device": "emulator",
+*---- "app": "myApp.android",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: 'android.emulator',
+      device: 'some-query(android.emulator)',
+      binaryPath: '/path/android.emulator.app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for "android.genycloud" device type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.android": {
+|     "type": "android.apk",
+|     "binaryPath": "/path/android.genycloud.app",
+|   },
+| },
+| "devices": {
+|*->"emulator": {
+||    "type": "android.genycloud",
+||    "device": "some-query(android.genycloud)"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "android.genycloud" */
+|*--- "device": "emulator",
+*---- "app": "myApp.android",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: 'android.genycloud',
+      device: 'some-query(android.genycloud)',
+      binaryPath: '/path/android.genycloud.app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for "ios.simulator" device type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "/path/ios.simulator.app",
+|   },
+| },
+| "devices": {
+|*->"simulator": {
+||    "type": "ios.simulator",
+||    "device": "some-query(ios.simulator)"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "ios.simulator" */
+|*--- "device": "simulator",
+*---- "app": "myApp.ios",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: 'ios.simulator',
+      device: 'some-query(ios.simulator)',
+      binaryPath: '/path/ios.simulator.app'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for custom driver type should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp": {
+|     "type": "<optional property>",
+|     "binaryPath": "<optional property>",
+|   },
+| },
+| "devices": {
+|*->"myDevice": {
+||    "type": "./custom-driver",
+||    "device": "<optional property>"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "./custom-driver" */
+|*--- "device": "myDevice",
+*---- "app": "myApp",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: {
+    someApp: {}
+  },
+  devices: {
+    aDevice: {}
+  },
+  configurations: {
+    legacy: {
+      type: './custom-driver',
+      webUrl: 'https://example.com'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .configurationShouldNotUseLegacyFormat for missing global .apps and .devices should create a helpful error 1`] = `
+[DetoxConfigError: The "legacy" configuration utilizes a deprecated all-in-one schema, that is not supported by the current version of Detox.
+
+HINT: Remove the "type" property. A valid configuration is expected to have both the "device" and "app" aliases pointing to the corresponding keys in the 'devices' and 'apps' config sections. For example:
+
+{
+  "apps": {
+*-->"myApp.ios": {
+|     "type": "ios.app",
+|     "binaryPath": "/some/path",
+|   },
+| },
+| "devices": {
+|*->"simulator": {
+||    "type": "ios.simulator",
+||    "device": "iPhone 12"
+||  },
+||},
+||"configurations": {
+||  "legacy": {
+||    /* REMOVE (!) "type": "ios.simulator" */
+|*--- "device": "simulator",
+*---- "app": "myApp.ios",
+      ...
+    }
+  }
+}
+Examine your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  apps: undefined,
+  devices: undefined,
+  configurations: {
+    legacy: {
+      type: 'ios.simulator',
+      device: 'iPhone 12',
+      binaryPath: '/some/path'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .failedToReadConfiguration should create a generic error, if I/O error is unknown 1`] = `
+[DetoxConfigError: An error occurred while trying to load Detox config from:
+/home/detox/myproject/.detoxrc.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .failedToReadConfiguration should create a simple error, but with the original intercepted IO error 1`] = `
+[DetoxConfigError: An error occurred while trying to load Detox config from:
+/home/detox/myproject/.detoxrc.json
+
+Error: EISDIR: illegal operation on a directory, read]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted "extends" path 1`] = `
+[DetoxConfigError: Failed to find the base Detox config specified in:
+{
+  "extends": "some-detox-preset"
+}
+
+HINT: Check your Detox config at path:
+package.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationAtGivenPath should create an error with the attempted config path 1`] = `
+[DetoxConfigError: Failed to find Detox config at "./some/detox-config.js"
+
+HINT: Make sure the specified path is correct.]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationSpecified should create error 1, if the configuration file is not package.json 1`] = `
+[DetoxConfigError: Cannot run Detox without a configuration file.
+
+HINT: Make sure to create external .detoxrc.json configuration in the working directory before you run Detox.]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationSpecified should create error 2, if the configuration file is package.json 1`] = `
+[DetoxConfigError: Cannot run Detox without a configuration file.
+
+HINT: Create an external .detoxrc.json configuration, or add "detox" configuration section to your package.json at:
+/home/detox/myproject/package.json]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationWithGivenName should create an error with configuration suggestions 1`] = `
+[DetoxConfigError: Failed to find a configuration named "otherConf" in Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+HINT: Below are the configurations Detox was able to find:
+* aliased
+* inlined
+* inlinedMulti]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationsInside should create a generic error if all is unknown 1`] = `
+[DetoxConfigError: There are no configurations in the given Detox config.
+
+HINT: Examine the config:
+
+{}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationsInside should create an error with Detox config fragment, if the path is not known 1`] = `
+[DetoxConfigError: There are no configurations in the given Detox config.
+
+HINT: Examine the config:
+
+{
+  configurations: {},
+  devices: {
+    aDevice: [Object]
+  },
+  apps: {
+    someApp: [Object]
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from configuration/index) .noConfigurationsInside should create an error with Detox config location hint, if it is known 1`] = `
+[DetoxConfigError: There are no configurations in the given Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+HINT: Examine the config:
+
+{
+  configurations: {},
+  devices: {
+    aDevice: [Object]
+  },
+  apps: {
+    someApp: [Object]
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from local-cli/build) should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: Failed to build the app for the configuration "aliased", because there was no "build" script inside.
+Check contents of your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  build: undefined,
+  type: 'ios.app',
+  binaryPath: 'path/to/app'
+}]
+`;

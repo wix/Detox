@@ -1,0 +1,110 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AsyncWebSocket .close() should throw on a consequent attempt to close the socket 1`] = `
+"Detected an attempt to close an already closing or closed web socket.
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`AsyncWebSocket .close() should throw on a sync socket.close() error 1`] = `
+"Failed to close a connection to the Detox server.
+
+Error: TestError"
+`;
+
+exports[`AsyncWebSocket .close() should throw on an emitted socket.close() error 1`] = `
+"Failed to close a connection to the Detox server.
+
+Error: TestError"
+`;
+
+exports[`AsyncWebSocket .open() should reject if called twice sequentially 1`] = `
+"Cannot open an already open web socket.
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`AsyncWebSocket .open() should reject if called twice simultaneously 1`] = `
+"Cannot open an already opening web socket.
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
+
+exports[`AsyncWebSocket .open() should reject on a constructor error 1`] = `
+"Unexpected error occurred when opening a web socket connection.
+See the error details below.
+
+HINT: Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues
+
+Error: TestError"
+`;
+
+exports[`AsyncWebSocket .open() should reject on an error event 1`] = `
+"Failed to open a connection to the Detox server.
+
+Error: TestError"
+`;
+
+exports[`AsyncWebSocket .send() should throw for a closed connection 1`] = `
+"Cannot send a message over the closed web socket. See the payload below:
+
+HINT: Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues
+
+{
+  type: 'invoke',
+  message: 'a message',
+  messageId: undefined,
+  timeout: 0,
+  isAtomic: true
+}"
+`;
+
+exports[`AsyncWebSocket .send() when opened should fail if the message timeout has expired 1`] = `
+"The pending request #0 (\\"invoke\\") has been rejected due to the following error:
+
+The tester has not received a response within 5000ms timeout to the message:
+
+{
+  type: 'invoke',
+  message: 'a message',
+  messageId: 0,
+  timeout: 0,
+  isAtomic: true
+}"
+`;
+
+exports[`AsyncWebSocket .send() when opened should log an error if the incoming message was completely unexpected 1`] = `
+[DetoxRuntimeError: Unexpected error on an attempt to handle the response received over the web socket.
+
+HINT: Examine the inner error:
+
+Unexpected message received over the web socket: somethingElse
+
+The payload was:
+
+{"type":"somethingElse"}]
+`;
+
+exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 1`] = `
+"The pending request #0 (\\"invoke\\") has been rejected due to the following error:
+
+Failed to deliver the message to the Detox server:
+
+Error: TestError"
+`;
+
+exports[`AsyncWebSocket edge cases should elaborate about null-like messages 1`] = `
+[DetoxRuntimeError: The pending request #0 ("invoke") has been rejected due to the following error:
+
+Unexpected error on an attempt to handle the response received over the web socket.
+
+HINT: Examine the inner error:
+
+Empty or non-typed message received over the web socket.
+
+The payload was:
+
+null]
+`;

@@ -1,0 +1,1366 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		392250E423047179008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 392250E323047179008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.m */; };
+		3923B11E23045B1F009D8780 /* DTXJSTimerSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3923B11C23045B1F009D8780 /* DTXJSTimerSyncResource.h */; };
+		3923B11F23045B1F009D8780 /* DTXJSTimerSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3923B11D23045B1F009D8780 /* DTXJSTimerSyncResource.m */; };
+		3946CD5A2567145F000A3606 /* DTXUISyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946CD582567145F000A3606 /* DTXUISyncResource.h */; };
+		3946CD5B2567145F000A3606 /* DTXUISyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946CD592567145F000A3606 /* DTXUISyncResource.m */; };
+		395AD82424B784BB002B382B /* _DTXTimerTrampoline.h in Headers */ = {isa = PBXBuildFile; fileRef = 395AD82224B784BB002B382B /* _DTXTimerTrampoline.h */; };
+		395AD82524B784BB002B382B /* _DTXTimerTrampoline.m in Sources */ = {isa = PBXBuildFile; fileRef = 395AD82324B784BB002B382B /* _DTXTimerTrampoline.m */; };
+		396C8B1623038CED00979E86 /* CADisplayLink+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 396C8B1423038CED00979E86 /* CADisplayLink+DTXSpy.h */; };
+		396C8B1723038CED00979E86 /* CADisplayLink+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 396C8B1523038CED00979E86 /* CADisplayLink+DTXSpy.m */; };
+		396C8B842304424E00979E86 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 396C8B832304424E00979E86 /* ReactNativeHeaders.h */; };
+		396C8B87230442A300979E86 /* DTXReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 396C8B85230442A300979E86 /* DTXReactNativeSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		396C8B88230442A300979E86 /* DTXReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 396C8B86230442A300979E86 /* DTXReactNativeSupport.m */; };
+		39725B412304870900B991ED /* NSRunLoop+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39725B3F2304870900B991ED /* NSRunLoop+DTXSpy.h */; };
+		39725B422304870900B991ED /* NSRunLoop+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39725B402304870900B991ED /* NSRunLoop+DTXSpy.m */; };
+		397CA5FD22F9F9A1005024D0 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 397CA5FB22F9F9A1005024D0 /* DTXLogging.m */; };
+		397CA5FE22F9F9A1005024D0 /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 397CA5FC22F9F9A1005024D0 /* DTXLogging.h */; };
+		399678CE22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 399678CC22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.h */; };
+		399678CF22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 399678CD22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.m */; };
+		399AE33823B27B2000BF1318 /* CFRunLoopDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 399AE33623B27B2000BF1318 /* CFRunLoopDescription.h */; };
+		399AE33923B27B2000BF1318 /* CFRunLoopDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 399AE33723B27B2000BF1318 /* CFRunLoopDescription.m */; };
+		39A6C13122F9AF8300187B56 /* DTXRunLoopSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A6C12F22F9AF8300187B56 /* DTXRunLoopSyncResource.h */; };
+		39A6C13222F9AF8300187B56 /* DTXRunLoopSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A6C13022F9AF8300187B56 /* DTXRunLoopSyncResource.m */; };
+		39BC7B4F2397F6E200DAF671 /* NSURLConnection+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39BC7B4D2397F6E200DAF671 /* NSURLConnection+DTXSpy.h */; };
+		39BC7B502397F6E200DAF671 /* NSURLConnection+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BC7B4E2397F6E200DAF671 /* NSURLConnection+DTXSpy.m */; };
+		39CC258924BE1AA70058EA64 /* NSURL+DetoxSyncUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CC258724BE1AA70058EA64 /* NSURL+DetoxSyncUtils.h */; };
+		39CC258A24BE1AA70058EA64 /* NSURL+DetoxSyncUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CC258824BE1AA70058EA64 /* NSURL+DetoxSyncUtils.m */; };
+		39DC982E24BB5BB400FFB224 /* dispatch_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 39DC982D24BB5BB400FFB224 /* dispatch_time.c */; };
+		39DE8F5722F707DD00780546 /* DetoxSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F5522F707DD00780546 /* DetoxSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39DE8F9222F707F400780546 /* DTXDispatchQueueSyncResource-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6422F707F400780546 /* DTXDispatchQueueSyncResource-Private.h */; };
+		39DE8F9322F707F400780546 /* DTXDispatchQueueSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6522F707F400780546 /* DTXDispatchQueueSyncResource.h */; };
+		39DE8F9422F707F400780546 /* DTXTimerSyncResource-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6622F707F400780546 /* DTXTimerSyncResource-Private.h */; };
+		39DE8F9522F707F400780546 /* DTXSingleEventSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6722F707F400780546 /* DTXSingleEventSyncResource.h */; };
+		39DE8F9622F707F400780546 /* DTXSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6822F707F400780546 /* DTXSyncResource.h */; };
+		39DE8F9722F707F400780546 /* DTXTimerSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F6922F707F400780546 /* DTXTimerSyncResource.m */; };
+		39DE8F9822F707F400780546 /* DTXDelayedPerformSelectorSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F6A22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.m */; };
+		39DE8F9922F707F400780546 /* DTXSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F6B22F707F400780546 /* DTXSyncResource.m */; };
+		39DE8F9A22F707F400780546 /* DTXSingleEventSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F6C22F707F400780546 /* DTXSingleEventSyncResource.m */; };
+		39DE8F9B22F707F400780546 /* DTXDispatchQueueSyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F6D22F707F400780546 /* DTXDispatchQueueSyncResource.m */; };
+		39DE8F9C22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6E22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.h */; };
+		39DE8F9D22F707F400780546 /* DTXTimerSyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F6F22F707F400780546 /* DTXTimerSyncResource.h */; };
+		39DE8F9E22F707F400780546 /* DTXSyncManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F7122F707F400780546 /* DTXSyncManager.m */; };
+		39DE8F9F22F707F400780546 /* DTXSyncManager-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7222F707F400780546 /* DTXSyncManager-Private.h */; };
+		39DE8FA022F707F400780546 /* DTXSyncManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7322F707F400780546 /* DTXSyncManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39DE8FA122F707F400780546 /* UIGestureRecognizer+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F7522F707F400780546 /* UIGestureRecognizer+DTXSpy.m */; };
+		39DE8FA222F707F400780546 /* NSURLSession+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7622F707F400780546 /* NSURLSession+DTXSpy.h */; };
+		39DE8FA322F707F400780546 /* NSURLSessionTask+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7722F707F400780546 /* NSURLSessionTask+DTXSpy.h */; };
+		39DE8FA422F707F400780546 /* UIAnimation+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7822F707F400780546 /* UIAnimation+DTXSpy.h */; };
+		39DE8FA522F707F400780546 /* UIView+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F7922F707F400780546 /* UIView+DTXSpy.m */; };
+		39DE8FA622F707F400780546 /* CALayer+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7A22F707F400780546 /* CALayer+DTXSpy.h */; };
+		39DE8FA722F707F400780546 /* UIApplication+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7B22F707F400780546 /* UIApplication+DTXSpy.h */; };
+		39DE8FA822F707F400780546 /* UIScrollView+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F7C22F707F400780546 /* UIScrollView+DTXSpy.h */; };
+		39DE8FA922F707F400780546 /* NSTimer+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F7D22F707F400780546 /* NSTimer+DTXSpy.m */; };
+		39DE8FAA22F707F400780546 /* NSObject+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F7E22F707F400780546 /* NSObject+DTXSpy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		39DE8FAB22F707F400780546 /* UIViewController+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F7F22F707F400780546 /* UIViewController+DTXSpy.m */; };
+		39DE8FAC22F707F400780546 /* CAAnimation+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8022F707F400780546 /* CAAnimation+DTXSpy.h */; };
+		39DE8FAD22F707F400780546 /* DispatchQueue+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8122F707F400780546 /* DispatchQueue+DTXSpy.h */; };
+		39DE8FAE22F707F400780546 /* UIGestureRecognizer+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8222F707F400780546 /* UIGestureRecognizer+DTXSpy.h */; };
+		39DE8FAF22F707F400780546 /* NSURLSessionTask+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8322F707F400780546 /* NSURLSessionTask+DTXSpy.m */; };
+		39DE8FB022F707F400780546 /* NSURLSession+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8422F707F400780546 /* NSURLSession+DTXSpy.m */; };
+		39DE8FB122F707F400780546 /* NSTimer+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8522F707F400780546 /* NSTimer+DTXSpy.h */; };
+		39DE8FB222F707F400780546 /* CALayer+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8622F707F400780546 /* CALayer+DTXSpy.m */; };
+		39DE8FB322F707F400780546 /* UIApplication+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8722F707F400780546 /* UIApplication+DTXSpy.m */; };
+		39DE8FB422F707F400780546 /* UIScrollView+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8822F707F400780546 /* UIScrollView+DTXSpy.m */; };
+		39DE8FB522F707F400780546 /* UIView+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8922F707F400780546 /* UIView+DTXSpy.h */; };
+		39DE8FB622F707F400780546 /* UIAnimation+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8A22F707F400780546 /* UIAnimation+DTXSpy.m */; };
+		39DE8FB722F707F400780546 /* DispatchQueue+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8B22F707F400780546 /* DispatchQueue+DTXSpy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		39DE8FB822F707F400780546 /* UIViewController+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8C22F707F400780546 /* UIViewController+DTXSpy.h */; };
+		39DE8FB922F707F400780546 /* CAAnimation+DTXSpy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F8D22F707F400780546 /* CAAnimation+DTXSpy.m */; };
+		39DE8FBA22F707F400780546 /* NSObject+DTXSpy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F8E22F707F400780546 /* NSObject+DTXSpy.h */; };
+		39DE8FBB22F707F400780546 /* DTXOrigDispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F9022F707F400780546 /* DTXOrigDispatch.m */; };
+		39DE8FBC22F707F400780546 /* DTXOrigDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8F9122F707F400780546 /* DTXOrigDispatch.h */; };
+		6017CC9B274AB59F00E17AB1 /* DTXTypedefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 6017CC99274AB59F00E17AB1 /* DTXTypedefs.h */; };
+		6017CC9D274B807000E17AB1 /* DTXTypedefs.h in Sources */ = {isa = PBXBuildFile; fileRef = 6017CC99274AB59F00E17AB1 /* DTXTypedefs.h */; };
+		6017CC9E274B837100E17AB1 /* DTXSyncResource.h in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8F6822F707F400780546 /* DTXSyncResource.h */; };
+		6017CC9F274B837700E17AB1 /* DTXJSTimerSyncResource.h in Sources */ = {isa = PBXBuildFile; fileRef = 3923B11C23045B1F009D8780 /* DTXJSTimerSyncResource.h */; };
+		6017CCA8274BA0C200E17AB1 /* NSArray+Functional.h in Headers */ = {isa = PBXBuildFile; fileRef = 6017CCA6274BA0C200E17AB1 /* NSArray+Functional.h */; };
+		6017CCA9274BA0C200E17AB1 /* NSArray+Functional.m in Sources */ = {isa = PBXBuildFile; fileRef = 6017CCA7274BA0C200E17AB1 /* NSArray+Functional.m */; };
+		6017CCAA274BA27C00E17AB1 /* NSArray+Functional.h in Sources */ = {isa = PBXBuildFile; fileRef = 6017CCA6274BA0C200E17AB1 /* NSArray+Functional.h */; };
+		6017CCAB274BA27C00E17AB1 /* NSArray+Functional.m in Sources */ = {isa = PBXBuildFile; fileRef = 6017CCA7274BA0C200E17AB1 /* NSArray+Functional.m */; };
+		6017CCAE274BA83B00E17AB1 /* NSDictionary+Functional.h in Headers */ = {isa = PBXBuildFile; fileRef = 6017CCAC274BA83B00E17AB1 /* NSDictionary+Functional.h */; };
+		6017CCAF274BA83B00E17AB1 /* NSDictionary+Functional.m in Sources */ = {isa = PBXBuildFile; fileRef = 6017CCAD274BA83B00E17AB1 /* NSDictionary+Functional.m */; };
+		6017CCB0274BA85B00E17AB1 /* NSDictionary+Functional.h in Sources */ = {isa = PBXBuildFile; fileRef = 6017CCAC274BA83B00E17AB1 /* NSDictionary+Functional.h */; };
+		6017CCB1274BA85B00E17AB1 /* NSDictionary+Functional.m in Sources */ = {isa = PBXBuildFile; fileRef = 6017CCAD274BA83B00E17AB1 /* NSDictionary+Functional.m */; };
+		602F956E274528ED00BAFA74 /* DetoxSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39DE8F5222F707DD00780546 /* DetoxSync.framework */; };
+		604A436B271F5004003B22CA /* DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A4368271F5004003B22CA /* DTXAddressInfo.h */; };
+		604A436C271F5004003B22CA /* DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 604A4369271F5004003B22CA /* DTXAddressInfo.mm */; };
+		604A436D271F5004003B22CA /* Swiftier.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A436A271F5004003B22CA /* Swiftier.h */; };
+		604A436F271F506F003B22CA /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 604A436E271F506F003B22CA /* DTXSwizzlingHelper.h */; };
+		6066775F271EFB000008A2C6 /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 6066775D271EFB000008A2C6 /* fishhook.c */; };
+		60667760271EFB000008A2C6 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 6066775E271EFB000008A2C6 /* fishhook.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6097C6AC27467D5D00612E00 /* RCTFakes.m in Sources */ = {isa = PBXBuildFile; fileRef = 6097C6AB27467D5D00612E00 /* RCTFakes.m */; };
+		6097C6B42746815600612E00 /* NSString+SyncResource.h in Sources */ = {isa = PBXBuildFile; fileRef = 60B19FB0272EFCA900AB49E3 /* NSString+SyncResource.h */; };
+		6097C6B52746815600612E00 /* NSString+SyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B19FB1272EFCA900AB49E3 /* NSString+SyncResource.m */; };
+		6097C6B62746815600612E00 /* NSString+SyncStatus.h in Sources */ = {isa = PBXBuildFile; fileRef = 60A9954727314A1700250FA6 /* NSString+SyncStatus.h */; };
+		6097C6B72746815600612E00 /* NSString+SyncStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A9954827314A1700250FA6 /* NSString+SyncStatus.m */; };
+		60A9954927314A1700250FA6 /* NSString+SyncStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 60A9954727314A1700250FA6 /* NSString+SyncStatus.h */; };
+		60A9954A27314A1700250FA6 /* NSString+SyncStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 60A9954827314A1700250FA6 /* NSString+SyncStatus.m */; };
+		60B19FB2272EFCA900AB49E3 /* NSString+SyncResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 60B19FB0272EFCA900AB49E3 /* NSString+SyncResource.h */; };
+		60B19FB3272EFCA900AB49E3 /* NSString+SyncResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 60B19FB1272EFCA900AB49E3 /* NSString+SyncResource.m */; };
+		60D2003827464202009F1794 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D2002C274641F1009F1794 /* OCMock.framework */; };
+		60D2003B2746516E009F1794 /* DTXSyncManagerSpecHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D2003A2746516E009F1794 /* DTXSyncManagerSpecHelpers.m */; };
+		60D2FF9227455A07009F1794 /* DTXSyncManagerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D2FF8527455A07009F1794 /* DTXSyncManagerSpec.m */; };
+		60F75D8927452E8F00DF6C29 /* Specta.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F75D6227452E3300DF6C29 /* Specta.framework */; };
+		60F75D8A27452E9500DF6C29 /* Expecta.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F75D7727452E4200DF6C29 /* Expecta.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		602F956F274528ED00BAFA74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39DE8F4922F707DD00780546 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 39DE8F5122F707DD00780546;
+			remoteInfo = DetoxSync;
+		};
+		60D20023274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0A814632FD000B04273;
+			remoteInfo = OCMock;
+		};
+		60D20025274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03565A3118F0566E003AE91E;
+			remoteInfo = OCMockTests;
+		};
+		60D20027274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0DC14632FF700B04273;
+			remoteInfo = OCMockLib;
+		};
+		60D20029274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D31108AD1828DB8700737925;
+			remoteInfo = OCMockLibTests;
+		};
+		60D2002B274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0B950F11B0080BE00942C38;
+			remoteInfo = "OCMock iOS";
+		};
+		60D2002D274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 817EB1621BD765130047E85A;
+			remoteInfo = "OCMock tvOS";
+		};
+		60D2002F274641F1009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DE97CA022B43EE60098C63F;
+			remoteInfo = "OCMock watchOS";
+		};
+		60D20036274641FB009F1794 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0B950F01B0080BE00942C38;
+			remoteInfo = "OCMock iOS";
+		};
+		60F75D5D27452E3300DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9536CD81968D30B003D1FBA;
+			remoteInfo = Specta;
+		};
+		60F75D5F27452E3300DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9536CE31968D30B003D1FBA;
+			remoteInfo = SpectaTests;
+		};
+		60F75D6127452E3300DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9536D011968D3EE003D1FBA;
+			remoteInfo = "Specta-iOS";
+		};
+		60F75D6327452E3300DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9536D0B1968D3EE003D1FBA;
+			remoteInfo = "Specta-iOSTests";
+		};
+		60F75D6527452E3300DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E91713F119DF07BB00921712;
+			remoteInfo = libSpecta;
+		};
+		60F75D6727452E3300DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E917140919DF07D700921712;
+			remoteInfo = "libSpecta-iOS";
+		};
+		60F75D7427452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 908379791A8B972C009844DA;
+			remoteInfo = Expecta;
+		};
+		60F75D7627452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 908379111A8B9660009844DA;
+			remoteInfo = "Expecta-iOS";
+		};
+		60F75D7827452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3A0A598C1AD4418C003DA3E4;
+			remoteInfo = ExpectaTests;
+		};
+		60F75D7A27452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3A0A59BF1AD441CB003DA3E4;
+			remoteInfo = "Expecta-iOSTests";
+		};
+		60F75D7C27452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9ACDF0C13B2DD520010F4D7;
+			remoteInfo = libExpecta;
+		};
+		60F75D7E27452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E93067CE13B2E6D100EA26FF;
+			remoteInfo = "libExpecta-iOS";
+		};
+		60F75D8027452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9C4416F917FF3F4A00978F09;
+			remoteInfo = libExpectaTests;
+		};
+		60F75D8227452E4200DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E93067DA13B2E6D100EA26FF;
+			remoteInfo = "libExpecta-iOSTests";
+		};
+		60F75D8427452E7600DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E9536D001968D3EE003D1FBA;
+			remoteInfo = "Specta-iOS";
+		};
+		60F75D8627452E7B00DF6C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 908379101A8B9660009844DA;
+			remoteInfo = "Expecta-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		392250E223047161008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RCTNativeAnimatedNodesManager+DTXSpy.h"; sourceTree = "<group>"; };
+		392250E323047179008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RCTNativeAnimatedNodesManager+DTXSpy.m"; sourceTree = "<group>"; };
+		3923B11C23045B1F009D8780 /* DTXJSTimerSyncResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXJSTimerSyncResource.h; sourceTree = "<group>"; };
+		3923B11D23045B1F009D8780 /* DTXJSTimerSyncResource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXJSTimerSyncResource.m; sourceTree = "<group>"; };
+		3946CD582567145F000A3606 /* DTXUISyncResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXUISyncResource.h; sourceTree = "<group>"; };
+		3946CD592567145F000A3606 /* DTXUISyncResource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXUISyncResource.m; sourceTree = "<group>"; };
+		3957930525253A1200A55B31 /* CADisplayLink+DTXSpy-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CADisplayLink+DTXSpy-Private.h"; sourceTree = "<group>"; };
+		395AD82224B784BB002B382B /* _DTXTimerTrampoline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _DTXTimerTrampoline.h; sourceTree = "<group>"; };
+		395AD82324B784BB002B382B /* _DTXTimerTrampoline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _DTXTimerTrampoline.m; sourceTree = "<group>"; };
+		396C8B112303317900979E86 /* DTXSyncResource-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DTXSyncResource-Private.h"; sourceTree = "<group>"; };
+		396C8B1423038CED00979E86 /* CADisplayLink+DTXSpy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CADisplayLink+DTXSpy.h"; sourceTree = "<group>"; };
+		396C8B1523038CED00979E86 /* CADisplayLink+DTXSpy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CADisplayLink+DTXSpy.m"; sourceTree = "<group>"; };
+		396C8B832304424E00979E86 /* ReactNativeHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
+		396C8B85230442A300979E86 /* DTXReactNativeSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXReactNativeSupport.h; sourceTree = "<group>"; };
+		396C8B86230442A300979E86 /* DTXReactNativeSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXReactNativeSupport.m; sourceTree = "<group>"; };
+		396C8B892304434C00979E86 /* DetoxSync.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxSync.pch; sourceTree = "<group>"; };
+		39725B3F2304870900B991ED /* NSRunLoop+DTXSpy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+DTXSpy.h"; sourceTree = "<group>"; };
+		39725B402304870900B991ED /* NSRunLoop+DTXSpy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSRunLoop+DTXSpy.m"; sourceTree = "<group>"; };
+		397CA5FB22F9F9A1005024D0 /* DTXLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTXLogging.m; path = DTXLoggingInfra/DTXLogging.m; sourceTree = SOURCE_ROOT; };
+		397CA5FC22F9F9A1005024D0 /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
+		397CA5FF22F9F9B2005024D0 /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
+		399678CC22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _DTXObjectDeallocHelper.h; sourceTree = "<group>"; };
+		399678CD22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _DTXObjectDeallocHelper.m; sourceTree = "<group>"; };
+		399AE33623B27B2000BF1318 /* CFRunLoopDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRunLoopDescription.h; sourceTree = "<group>"; };
+		399AE33723B27B2000BF1318 /* CFRunLoopDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFRunLoopDescription.m; sourceTree = "<group>"; };
+		39A6C12F22F9AF8300187B56 /* DTXRunLoopSyncResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXRunLoopSyncResource.h; sourceTree = "<group>"; };
+		39A6C13022F9AF8300187B56 /* DTXRunLoopSyncResource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXRunLoopSyncResource.m; sourceTree = "<group>"; };
+		39A6C13322F9AFE700187B56 /* DTXRunLoopSyncResource-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DTXRunLoopSyncResource-Private.h"; sourceTree = "<group>"; };
+		39BC7B4D2397F6E200DAF671 /* NSURLConnection+DTXSpy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURLConnection+DTXSpy.h"; sourceTree = "<group>"; };
+		39BC7B4E2397F6E200DAF671 /* NSURLConnection+DTXSpy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURLConnection+DTXSpy.m"; sourceTree = "<group>"; };
+		39CC258724BE1AA70058EA64 /* NSURL+DetoxSyncUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxSyncUtils.h"; sourceTree = "<group>"; };
+		39CC258824BE1AA70058EA64 /* NSURL+DetoxSyncUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxSyncUtils.m"; sourceTree = "<group>"; };
+		39DC982C24BB5BA900FFB224 /* dispatch_time.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dispatch_time.h; sourceTree = "<group>"; };
+		39DC982D24BB5BB400FFB224 /* dispatch_time.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dispatch_time.c; sourceTree = "<group>"; };
+		39DE8F5222F707DD00780546 /* DetoxSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DetoxSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		39DE8F5522F707DD00780546 /* DetoxSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxSync.h; sourceTree = "<group>"; };
+		39DE8F5622F707DD00780546 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		39DE8F6422F707F400780546 /* DTXDispatchQueueSyncResource-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DTXDispatchQueueSyncResource-Private.h"; sourceTree = "<group>"; };
+		39DE8F6522F707F400780546 /* DTXDispatchQueueSyncResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXDispatchQueueSyncResource.h; sourceTree = "<group>"; };
+		39DE8F6622F707F400780546 /* DTXTimerSyncResource-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DTXTimerSyncResource-Private.h"; sourceTree = "<group>"; };
+		39DE8F6722F707F400780546 /* DTXSingleEventSyncResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXSingleEventSyncResource.h; sourceTree = "<group>"; };
+		39DE8F6822F707F400780546 /* DTXSyncResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXSyncResource.h; sourceTree = "<group>"; };
+		39DE8F6922F707F400780546 /* DTXTimerSyncResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXTimerSyncResource.m; sourceTree = "<group>"; };
+		39DE8F6A22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXDelayedPerformSelectorSyncResource.m; sourceTree = "<group>"; };
+		39DE8F6B22F707F400780546 /* DTXSyncResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXSyncResource.m; sourceTree = "<group>"; };
+		39DE8F6C22F707F400780546 /* DTXSingleEventSyncResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXSingleEventSyncResource.m; sourceTree = "<group>"; };
+		39DE8F6D22F707F400780546 /* DTXDispatchQueueSyncResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXDispatchQueueSyncResource.m; sourceTree = "<group>"; };
+		39DE8F6E22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXDelayedPerformSelectorSyncResource.h; sourceTree = "<group>"; };
+		39DE8F6F22F707F400780546 /* DTXTimerSyncResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXTimerSyncResource.h; sourceTree = "<group>"; };
+		39DE8F7122F707F400780546 /* DTXSyncManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXSyncManager.m; sourceTree = "<group>"; };
+		39DE8F7222F707F400780546 /* DTXSyncManager-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DTXSyncManager-Private.h"; sourceTree = "<group>"; };
+		39DE8F7322F707F400780546 /* DTXSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXSyncManager.h; sourceTree = "<group>"; };
+		39DE8F7522F707F400780546 /* UIGestureRecognizer+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIGestureRecognizer+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F7622F707F400780546 /* NSURLSession+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSession+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F7722F707F400780546 /* NSURLSessionTask+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSessionTask+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F7822F707F400780546 /* UIAnimation+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAnimation+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F7922F707F400780546 /* UIView+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F7A22F707F400780546 /* CALayer+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F7B22F707F400780546 /* UIApplication+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F7C22F707F400780546 /* UIScrollView+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F7D22F707F400780546 /* NSTimer+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F7E22F707F400780546 /* NSObject+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F7F22F707F400780546 /* UIViewController+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8022F707F400780546 /* CAAnimation+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CAAnimation+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F8122F707F400780546 /* DispatchQueue+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DispatchQueue+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F8222F707F400780546 /* UIGestureRecognizer+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIGestureRecognizer+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F8322F707F400780546 /* NSURLSessionTask+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSessionTask+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8422F707F400780546 /* NSURLSession+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSession+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8522F707F400780546 /* NSTimer+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F8622F707F400780546 /* CALayer+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8722F707F400780546 /* UIApplication+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8822F707F400780546 /* UIScrollView+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8922F707F400780546 /* UIView+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F8A22F707F400780546 /* UIAnimation+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAnimation+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8B22F707F400780546 /* DispatchQueue+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DispatchQueue+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8C22F707F400780546 /* UIViewController+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F8D22F707F400780546 /* CAAnimation+DTXSpy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CAAnimation+DTXSpy.m"; sourceTree = "<group>"; };
+		39DE8F8E22F707F400780546 /* NSObject+DTXSpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DTXSpy.h"; sourceTree = "<group>"; };
+		39DE8F9022F707F400780546 /* DTXOrigDispatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXOrigDispatch.m; sourceTree = "<group>"; };
+		39DE8F9122F707F400780546 /* DTXOrigDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXOrigDispatch.h; sourceTree = "<group>"; };
+		6017CC99274AB59F00E17AB1 /* DTXTypedefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTypedefs.h; sourceTree = "<group>"; };
+		6017CCA6274BA0C200E17AB1 /* NSArray+Functional.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+Functional.h"; sourceTree = "<group>"; };
+		6017CCA7274BA0C200E17AB1 /* NSArray+Functional.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Functional.m"; sourceTree = "<group>"; };
+		6017CCAC274BA83B00E17AB1 /* NSDictionary+Functional.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Functional.h"; sourceTree = "<group>"; };
+		6017CCAD274BA83B00E17AB1 /* NSDictionary+Functional.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Functional.m"; sourceTree = "<group>"; };
+		602F956A274528ED00BAFA74 /* DetoxSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		604A4368271F5004003B22CA /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXAddressInfo.h; path = DTXObjectiveCHelpers/DTXAddressInfo.h; sourceTree = SOURCE_ROOT; };
+		604A4369271F5004003B22CA /* DTXAddressInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DTXAddressInfo.mm; path = DTXObjectiveCHelpers/DTXAddressInfo.mm; sourceTree = SOURCE_ROOT; };
+		604A436A271F5004003B22CA /* Swiftier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Swiftier.h; path = DTXObjectiveCHelpers/Swiftier.h; sourceTree = SOURCE_ROOT; };
+		604A436E271F506F003B22CA /* DTXSwizzlingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXSwizzlingHelper.h; path = DTXObjectiveCHelpers/DTXSwizzlingHelper.h; sourceTree = SOURCE_ROOT; };
+		6066775D271EFB000008A2C6 /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
+		6066775E271EFB000008A2C6 /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
+		6097C6AA27467D5D00612E00 /* RCTFakes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTFakes.h; sourceTree = "<group>"; };
+		6097C6AB27467D5D00612E00 /* RCTFakes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTFakes.m; sourceTree = "<group>"; };
+		60A9954727314A1700250FA6 /* NSString+SyncStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+SyncStatus.h"; sourceTree = "<group>"; };
+		60A9954827314A1700250FA6 /* NSString+SyncStatus.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+SyncStatus.m"; sourceTree = "<group>"; };
+		60B19FB0272EFCA900AB49E3 /* NSString+SyncResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+SyncResource.h"; sourceTree = "<group>"; };
+		60B19FB1272EFCA900AB49E3 /* NSString+SyncResource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+SyncResource.m"; sourceTree = "<group>"; };
+		60D20012274641F1009F1794 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = ocmock/Source/OCMock.xcodeproj; sourceTree = SOURCE_ROOT; };
+		60D200392746516E009F1794 /* DTXSyncManagerSpecHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXSyncManagerSpecHelpers.h; sourceTree = "<group>"; };
+		60D2003A2746516E009F1794 /* DTXSyncManagerSpecHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXSyncManagerSpecHelpers.m; sourceTree = "<group>"; };
+		60D2FF8527455A07009F1794 /* DTXSyncManagerSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXSyncManagerSpec.m; sourceTree = "<group>"; };
+		60F75D5427452E3300DF6C29 /* Specta.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Specta.xcodeproj; path = specta/Specta/Specta.xcodeproj; sourceTree = SOURCE_ROOT; };
+		60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Expecta.xcodeproj; path = expecta/Expecta.xcodeproj; sourceTree = SOURCE_ROOT; };
+		60F75D8B2745309700DF6C29 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		39DE8F4F22F707DD00780546 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		602F9567274528ED00BAFA74 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60D2003827464202009F1794 /* OCMock.framework in Frameworks */,
+				60F75D8A27452E9500DF6C29 /* Expecta.framework in Frameworks */,
+				60F75D8927452E8F00DF6C29 /* Specta.framework in Frameworks */,
+				602F956E274528ED00BAFA74 /* DetoxSync.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		392250E123047150008E811D /* Spies */ = {
+			isa = PBXGroup;
+			children = (
+				392250E223047161008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.h */,
+				392250E323047179008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.m */,
+			);
+			path = Spies;
+			sourceTree = "<group>";
+		};
+		396C8B822304422200979E86 /* ReactNativeSupport */ = {
+			isa = PBXGroup;
+			children = (
+				392250E123047150008E811D /* Spies */,
+				39DC2F8623044C3E009E652A /* SyncResources */,
+				396C8B832304424E00979E86 /* ReactNativeHeaders.h */,
+				396C8B85230442A300979E86 /* DTXReactNativeSupport.h */,
+				396C8B86230442A300979E86 /* DTXReactNativeSupport.m */,
+			);
+			path = ReactNativeSupport;
+			sourceTree = "<group>";
+		};
+		39DC2F8623044C3E009E652A /* SyncResources */ = {
+			isa = PBXGroup;
+			children = (
+				3923B11C23045B1F009D8780 /* DTXJSTimerSyncResource.h */,
+				3923B11D23045B1F009D8780 /* DTXJSTimerSyncResource.m */,
+			);
+			path = SyncResources;
+			sourceTree = "<group>";
+		};
+		39DE8F4822F707DD00780546 = {
+			isa = PBXGroup;
+			children = (
+				39DE8F5422F707DD00780546 /* DetoxSync */,
+				602F956B274528ED00BAFA74 /* DetoxSyncTests */,
+				39DE8F5322F707DD00780546 /* Products */,
+				60F75D8827452E8F00DF6C29 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		39DE8F5322F707DD00780546 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				39DE8F5222F707DD00780546 /* DetoxSync.framework */,
+				602F956A274528ED00BAFA74 /* DetoxSyncTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		39DE8F5422F707DD00780546 /* DetoxSync */ = {
+			isa = PBXGroup;
+			children = (
+				39DE8F8F22F707F400780546 /* Utils */,
+				39DE8F7422F707F400780546 /* Spies */,
+				39DE8F6322F707F400780546 /* SyncResources */,
+				39DE8F7022F707F400780546 /* SyncManager */,
+				396C8B822304422200979E86 /* ReactNativeSupport */,
+				396C8B892304434C00979E86 /* DetoxSync.pch */,
+				39DE8F5522F707DD00780546 /* DetoxSync.h */,
+				39DE8F5622F707DD00780546 /* Info.plist */,
+			);
+			path = DetoxSync;
+			sourceTree = "<group>";
+		};
+		39DE8F6322F707F400780546 /* SyncResources */ = {
+			isa = PBXGroup;
+			children = (
+				39DE8F6E22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.h */,
+				39DE8F6A22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.m */,
+				39DE8F6422F707F400780546 /* DTXDispatchQueueSyncResource-Private.h */,
+				39DE8F6522F707F400780546 /* DTXDispatchQueueSyncResource.h */,
+				39DE8F6D22F707F400780546 /* DTXDispatchQueueSyncResource.m */,
+				39A6C13322F9AFE700187B56 /* DTXRunLoopSyncResource-Private.h */,
+				39A6C12F22F9AF8300187B56 /* DTXRunLoopSyncResource.h */,
+				39A6C13022F9AF8300187B56 /* DTXRunLoopSyncResource.m */,
+				39DE8F6722F707F400780546 /* DTXSingleEventSyncResource.h */,
+				39DE8F6C22F707F400780546 /* DTXSingleEventSyncResource.m */,
+				396C8B112303317900979E86 /* DTXSyncResource-Private.h */,
+				39DE8F6822F707F400780546 /* DTXSyncResource.h */,
+				39DE8F6B22F707F400780546 /* DTXSyncResource.m */,
+				39DE8F6622F707F400780546 /* DTXTimerSyncResource-Private.h */,
+				39DE8F6F22F707F400780546 /* DTXTimerSyncResource.h */,
+				39DE8F6922F707F400780546 /* DTXTimerSyncResource.m */,
+				3946CD582567145F000A3606 /* DTXUISyncResource.h */,
+				3946CD592567145F000A3606 /* DTXUISyncResource.m */,
+			);
+			path = SyncResources;
+			sourceTree = "<group>";
+		};
+		39DE8F7022F707F400780546 /* SyncManager */ = {
+			isa = PBXGroup;
+			children = (
+				39DE8F7322F707F400780546 /* DTXSyncManager.h */,
+				39DE8F7222F707F400780546 /* DTXSyncManager-Private.h */,
+				39DE8F7122F707F400780546 /* DTXSyncManager.m */,
+			);
+			path = SyncManager;
+			sourceTree = "<group>";
+		};
+		39DE8F7422F707F400780546 /* Spies */ = {
+			isa = PBXGroup;
+			children = (
+				39DE8F8022F707F400780546 /* CAAnimation+DTXSpy.h */,
+				39DE8F8D22F707F400780546 /* CAAnimation+DTXSpy.m */,
+				396C8B1423038CED00979E86 /* CADisplayLink+DTXSpy.h */,
+				3957930525253A1200A55B31 /* CADisplayLink+DTXSpy-Private.h */,
+				396C8B1523038CED00979E86 /* CADisplayLink+DTXSpy.m */,
+				39DE8F7A22F707F400780546 /* CALayer+DTXSpy.h */,
+				39DE8F8622F707F400780546 /* CALayer+DTXSpy.m */,
+				39DE8F8122F707F400780546 /* DispatchQueue+DTXSpy.h */,
+				39DE8F8B22F707F400780546 /* DispatchQueue+DTXSpy.m */,
+				39DE8F8E22F707F400780546 /* NSObject+DTXSpy.h */,
+				39DE8F7E22F707F400780546 /* NSObject+DTXSpy.m */,
+				39725B3F2304870900B991ED /* NSRunLoop+DTXSpy.h */,
+				39725B402304870900B991ED /* NSRunLoop+DTXSpy.m */,
+				39DE8F8522F707F400780546 /* NSTimer+DTXSpy.h */,
+				39DE8F7D22F707F400780546 /* NSTimer+DTXSpy.m */,
+				39BC7B4D2397F6E200DAF671 /* NSURLConnection+DTXSpy.h */,
+				39BC7B4E2397F6E200DAF671 /* NSURLConnection+DTXSpy.m */,
+				39DE8F7622F707F400780546 /* NSURLSession+DTXSpy.h */,
+				39DE8F8422F707F400780546 /* NSURLSession+DTXSpy.m */,
+				39DE8F7722F707F400780546 /* NSURLSessionTask+DTXSpy.h */,
+				39DE8F8322F707F400780546 /* NSURLSessionTask+DTXSpy.m */,
+				39DE8F7822F707F400780546 /* UIAnimation+DTXSpy.h */,
+				39DE8F8A22F707F400780546 /* UIAnimation+DTXSpy.m */,
+				39DE8F7B22F707F400780546 /* UIApplication+DTXSpy.h */,
+				39DE8F8722F707F400780546 /* UIApplication+DTXSpy.m */,
+				39DE8F8222F707F400780546 /* UIGestureRecognizer+DTXSpy.h */,
+				39DE8F7522F707F400780546 /* UIGestureRecognizer+DTXSpy.m */,
+				39DE8F7C22F707F400780546 /* UIScrollView+DTXSpy.h */,
+				39DE8F8822F707F400780546 /* UIScrollView+DTXSpy.m */,
+				39DE8F8922F707F400780546 /* UIView+DTXSpy.h */,
+				39DE8F7922F707F400780546 /* UIView+DTXSpy.m */,
+				39DE8F8C22F707F400780546 /* UIViewController+DTXSpy.h */,
+				39DE8F7F22F707F400780546 /* UIViewController+DTXSpy.m */,
+			);
+			path = Spies;
+			sourceTree = "<group>";
+		};
+		39DE8F8F22F707F400780546 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6017CCB3274BB00600E17AB1 /* Functional */,
+				399678CC22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.h */,
+				399678CD22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.m */,
+				395AD82224B784BB002B382B /* _DTXTimerTrampoline.h */,
+				395AD82324B784BB002B382B /* _DTXTimerTrampoline.m */,
+				399AE33623B27B2000BF1318 /* CFRunLoopDescription.h */,
+				399AE33723B27B2000BF1318 /* CFRunLoopDescription.m */,
+				39DC982D24BB5BB400FFB224 /* dispatch_time.c */,
+				39DC982C24BB5BA900FFB224 /* dispatch_time.h */,
+				604A4368271F5004003B22CA /* DTXAddressInfo.h */,
+				604A4369271F5004003B22CA /* DTXAddressInfo.mm */,
+				397CA5FC22F9F9A1005024D0 /* DTXLogging.h */,
+				397CA5FB22F9F9A1005024D0 /* DTXLogging.m */,
+				397CA5FF22F9F9B2005024D0 /* DTXLoggingSubsystem.h */,
+				39DE8F9122F707F400780546 /* DTXOrigDispatch.h */,
+				39DE8F9022F707F400780546 /* DTXOrigDispatch.m */,
+				604A436E271F506F003B22CA /* DTXSwizzlingHelper.h */,
+				6066775D271EFB000008A2C6 /* fishhook.c */,
+				6066775E271EFB000008A2C6 /* fishhook.h */,
+				39CC258724BE1AA70058EA64 /* NSURL+DetoxSyncUtils.h */,
+				39CC258824BE1AA70058EA64 /* NSURL+DetoxSyncUtils.m */,
+				604A436A271F5004003B22CA /* Swiftier.h */,
+				60B19FB0272EFCA900AB49E3 /* NSString+SyncResource.h */,
+				60B19FB1272EFCA900AB49E3 /* NSString+SyncResource.m */,
+				60A9954727314A1700250FA6 /* NSString+SyncStatus.h */,
+				60A9954827314A1700250FA6 /* NSString+SyncStatus.m */,
+				6017CC99274AB59F00E17AB1 /* DTXTypedefs.h */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		6017CCB3274BB00600E17AB1 /* Functional */ = {
+			isa = PBXGroup;
+			children = (
+				6017CCA6274BA0C200E17AB1 /* NSArray+Functional.h */,
+				6017CCA7274BA0C200E17AB1 /* NSArray+Functional.m */,
+				6017CCAC274BA83B00E17AB1 /* NSDictionary+Functional.h */,
+				6017CCAD274BA83B00E17AB1 /* NSDictionary+Functional.m */,
+			);
+			name = Functional;
+			sourceTree = "<group>";
+		};
+		602F956B274528ED00BAFA74 /* DetoxSyncTests */ = {
+			isa = PBXGroup;
+			children = (
+				60D200402746668D009F1794 /* Utils */,
+				60D200392746516E009F1794 /* DTXSyncManagerSpecHelpers.h */,
+				60D2003A2746516E009F1794 /* DTXSyncManagerSpecHelpers.m */,
+				60F75D8B2745309700DF6C29 /* PrefixHeader.pch */,
+				60D2FF8527455A07009F1794 /* DTXSyncManagerSpec.m */,
+				60F75D5327452D9E00DF6C29 /* Frameworks */,
+			);
+			path = DetoxSyncTests;
+			sourceTree = "<group>";
+		};
+		60D20013274641F1009F1794 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				60D20024274641F1009F1794 /* OCMock.framework */,
+				60D20026274641F1009F1794 /* OCMockTests.xctest */,
+				60D20028274641F1009F1794 /* libOCMock.a */,
+				60D2002A274641F1009F1794 /* OCMockLibTests.xctest */,
+				60D2002C274641F1009F1794 /* OCMock.framework */,
+				60D2002E274641F1009F1794 /* OCMock.framework */,
+				60D20030274641F1009F1794 /* OCMock.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		60D200402746668D009F1794 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6097C6AA27467D5D00612E00 /* RCTFakes.h */,
+				6097C6AB27467D5D00612E00 /* RCTFakes.m */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		60F75D5327452D9E00DF6C29 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				60D20012274641F1009F1794 /* OCMock.xcodeproj */,
+				60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */,
+				60F75D5427452E3300DF6C29 /* Specta.xcodeproj */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		60F75D5527452E3300DF6C29 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				60F75D5E27452E3300DF6C29 /* Specta.framework */,
+				60F75D6027452E3300DF6C29 /* SpectaTests.xctest */,
+				60F75D6227452E3300DF6C29 /* Specta.framework */,
+				60F75D6427452E3300DF6C29 /* Specta-iOSTests.xctest */,
+				60F75D6627452E3300DF6C29 /* libSpecta.a */,
+				60F75D6827452E3300DF6C29 /* libSpecta.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		60F75D6A27452E4200DF6C29 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				60F75D7527452E4200DF6C29 /* Expecta.framework */,
+				60F75D7727452E4200DF6C29 /* Expecta.framework */,
+				60F75D7927452E4200DF6C29 /* ExpectaTests.xctest */,
+				60F75D7B27452E4200DF6C29 /* Expecta-iOSTests.xctest */,
+				60F75D7D27452E4200DF6C29 /* libExpecta.a */,
+				60F75D7F27452E4200DF6C29 /* libExpecta.a */,
+				60F75D8127452E4200DF6C29 /* libExpectaTests.xctest */,
+				60F75D8327452E4200DF6C29 /* libExpecta-iOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		60F75D8827452E8F00DF6C29 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		39DE8F4D22F707DD00780546 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60667760271EFB000008A2C6 /* fishhook.h in Headers */,
+				39DE8FA022F707F400780546 /* DTXSyncManager.h in Headers */,
+				3923B11E23045B1F009D8780 /* DTXJSTimerSyncResource.h in Headers */,
+				39DE8F9F22F707F400780546 /* DTXSyncManager-Private.h in Headers */,
+				604A436B271F5004003B22CA /* DTXAddressInfo.h in Headers */,
+				39DE8F9322F707F400780546 /* DTXDispatchQueueSyncResource.h in Headers */,
+				39DE8F9622F707F400780546 /* DTXSyncResource.h in Headers */,
+				395AD82424B784BB002B382B /* _DTXTimerTrampoline.h in Headers */,
+				6017CCAE274BA83B00E17AB1 /* NSDictionary+Functional.h in Headers */,
+				39DE8FBA22F707F400780546 /* NSObject+DTXSpy.h in Headers */,
+				39DE8FB122F707F400780546 /* NSTimer+DTXSpy.h in Headers */,
+				39DE8FAC22F707F400780546 /* CAAnimation+DTXSpy.h in Headers */,
+				6017CC9B274AB59F00E17AB1 /* DTXTypedefs.h in Headers */,
+				39DE8F9522F707F400780546 /* DTXSingleEventSyncResource.h in Headers */,
+				39CC258924BE1AA70058EA64 /* NSURL+DetoxSyncUtils.h in Headers */,
+				39DE8F9222F707F400780546 /* DTXDispatchQueueSyncResource-Private.h in Headers */,
+				604A436F271F506F003B22CA /* DTXSwizzlingHelper.h in Headers */,
+				6017CCA8274BA0C200E17AB1 /* NSArray+Functional.h in Headers */,
+				396C8B1623038CED00979E86 /* CADisplayLink+DTXSpy.h in Headers */,
+				396C8B842304424E00979E86 /* ReactNativeHeaders.h in Headers */,
+				39DE8FBC22F707F400780546 /* DTXOrigDispatch.h in Headers */,
+				39A6C13122F9AF8300187B56 /* DTXRunLoopSyncResource.h in Headers */,
+				60A9954927314A1700250FA6 /* NSString+SyncStatus.h in Headers */,
+				39DE8FAD22F707F400780546 /* DispatchQueue+DTXSpy.h in Headers */,
+				399AE33823B27B2000BF1318 /* CFRunLoopDescription.h in Headers */,
+				396C8B87230442A300979E86 /* DTXReactNativeSupport.h in Headers */,
+				39725B412304870900B991ED /* NSRunLoop+DTXSpy.h in Headers */,
+				399678CE22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.h in Headers */,
+				39BC7B4F2397F6E200DAF671 /* NSURLConnection+DTXSpy.h in Headers */,
+				39DE8FA322F707F400780546 /* NSURLSessionTask+DTXSpy.h in Headers */,
+				39DE8F5722F707DD00780546 /* DetoxSync.h in Headers */,
+				39DE8F9422F707F400780546 /* DTXTimerSyncResource-Private.h in Headers */,
+				39DE8F9D22F707F400780546 /* DTXTimerSyncResource.h in Headers */,
+				397CA5FE22F9F9A1005024D0 /* DTXLogging.h in Headers */,
+				39DE8FA222F707F400780546 /* NSURLSession+DTXSpy.h in Headers */,
+				39DE8FA822F707F400780546 /* UIScrollView+DTXSpy.h in Headers */,
+				39DE8FA422F707F400780546 /* UIAnimation+DTXSpy.h in Headers */,
+				39DE8FB522F707F400780546 /* UIView+DTXSpy.h in Headers */,
+				3946CD5A2567145F000A3606 /* DTXUISyncResource.h in Headers */,
+				39DE8FA622F707F400780546 /* CALayer+DTXSpy.h in Headers */,
+				39DE8FA722F707F400780546 /* UIApplication+DTXSpy.h in Headers */,
+				604A436D271F5004003B22CA /* Swiftier.h in Headers */,
+				39DE8FB822F707F400780546 /* UIViewController+DTXSpy.h in Headers */,
+				60B19FB2272EFCA900AB49E3 /* NSString+SyncResource.h in Headers */,
+				39DE8F9C22F707F400780546 /* DTXDelayedPerformSelectorSyncResource.h in Headers */,
+				39DE8FAE22F707F400780546 /* UIGestureRecognizer+DTXSpy.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		39DE8F5122F707DD00780546 /* DetoxSync */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39DE8F5A22F707DD00780546 /* Build configuration list for PBXNativeTarget "DetoxSync" */;
+			buildPhases = (
+				39DE8F4D22F707DD00780546 /* Headers */,
+				39DE8F4E22F707DD00780546 /* Sources */,
+				39DE8F4F22F707DD00780546 /* Frameworks */,
+				39DE8F5022F707DD00780546 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DetoxSync;
+			productName = DetoxSync;
+			productReference = 39DE8F5222F707DD00780546 /* DetoxSync.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		602F9569274528ED00BAFA74 /* DetoxSyncTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 602F9573274528ED00BAFA74 /* Build configuration list for PBXNativeTarget "DetoxSyncTests" */;
+			buildPhases = (
+				602F9566274528ED00BAFA74 /* Sources */,
+				602F9567274528ED00BAFA74 /* Frameworks */,
+				602F9568274528ED00BAFA74 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60D20037274641FB009F1794 /* PBXTargetDependency */,
+				60F75D8727452E7B00DF6C29 /* PBXTargetDependency */,
+				60F75D8527452E7600DF6C29 /* PBXTargetDependency */,
+				602F9570274528ED00BAFA74 /* PBXTargetDependency */,
+			);
+			name = DetoxSyncTests;
+			productName = DetoxSyncTests;
+			productReference = 602F956A274528ED00BAFA74 /* DetoxSyncTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		39DE8F4922F707DD00780546 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1230;
+				ORGANIZATIONNAME = wix;
+				TargetAttributes = {
+					39DE8F5122F707DD00780546 = {
+						CreatedOnToolsVersion = 11.0;
+					};
+					602F9569274528ED00BAFA74 = {
+						CreatedOnToolsVersion = 13.1;
+					};
+				};
+			};
+			buildConfigurationList = 39DE8F4C22F707DD00780546 /* Build configuration list for PBXProject "DetoxSync" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 39DE8F4822F707DD00780546;
+			productRefGroup = 39DE8F5322F707DD00780546 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 60F75D6A27452E4200DF6C29 /* Products */;
+					ProjectRef = 60F75D6927452E4200DF6C29 /* Expecta.xcodeproj */;
+				},
+				{
+					ProductGroup = 60D20013274641F1009F1794 /* Products */;
+					ProjectRef = 60D20012274641F1009F1794 /* OCMock.xcodeproj */;
+				},
+				{
+					ProductGroup = 60F75D5527452E3300DF6C29 /* Products */;
+					ProjectRef = 60F75D5427452E3300DF6C29 /* Specta.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				39DE8F5122F707DD00780546 /* DetoxSync */,
+				602F9569274528ED00BAFA74 /* DetoxSyncTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		60D20024274641F1009F1794 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = 60D20023274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60D20026274641F1009F1794 /* OCMockTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockTests.xctest;
+			remoteRef = 60D20025274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60D20028274641F1009F1794 /* libOCMock.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOCMock.a;
+			remoteRef = 60D20027274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60D2002A274641F1009F1794 /* OCMockLibTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockLibTests.xctest;
+			remoteRef = 60D20029274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60D2002C274641F1009F1794 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = 60D2002B274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60D2002E274641F1009F1794 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = 60D2002D274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60D20030274641F1009F1794 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = 60D2002F274641F1009F1794 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D5E27452E3300DF6C29 /* Specta.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Specta.framework;
+			remoteRef = 60F75D5D27452E3300DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D6027452E3300DF6C29 /* SpectaTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SpectaTests.xctest;
+			remoteRef = 60F75D5F27452E3300DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D6227452E3300DF6C29 /* Specta.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Specta.framework;
+			remoteRef = 60F75D6127452E3300DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D6427452E3300DF6C29 /* Specta-iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Specta-iOSTests.xctest";
+			remoteRef = 60F75D6327452E3300DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D6627452E3300DF6C29 /* libSpecta.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSpecta.a;
+			remoteRef = 60F75D6527452E3300DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D6827452E3300DF6C29 /* libSpecta.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSpecta.a;
+			remoteRef = 60F75D6727452E3300DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D7527452E4200DF6C29 /* Expecta.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Expecta.framework;
+			remoteRef = 60F75D7427452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D7727452E4200DF6C29 /* Expecta.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Expecta.framework;
+			remoteRef = 60F75D7627452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D7927452E4200DF6C29 /* ExpectaTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ExpectaTests.xctest;
+			remoteRef = 60F75D7827452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D7B27452E4200DF6C29 /* Expecta-iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Expecta-iOSTests.xctest";
+			remoteRef = 60F75D7A27452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D7D27452E4200DF6C29 /* libExpecta.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libExpecta.a;
+			remoteRef = 60F75D7C27452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D7F27452E4200DF6C29 /* libExpecta.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libExpecta.a;
+			remoteRef = 60F75D7E27452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D8127452E4200DF6C29 /* libExpectaTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = libExpectaTests.xctest;
+			remoteRef = 60F75D8027452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60F75D8327452E4200DF6C29 /* libExpecta-iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "libExpecta-iOSTests.xctest";
+			remoteRef = 60F75D8227452E4200DF6C29 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		39DE8F5022F707DD00780546 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		602F9568274528ED00BAFA74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		39DE8F4E22F707DD00780546 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39DE8FA922F707F400780546 /* NSTimer+DTXSpy.m in Sources */,
+				399678CF22F9C90400BAF0A8 /* _DTXObjectDeallocHelper.m in Sources */,
+				39DE8FB722F707F400780546 /* DispatchQueue+DTXSpy.m in Sources */,
+				39CC258A24BE1AA70058EA64 /* NSURL+DetoxSyncUtils.m in Sources */,
+				39BC7B502397F6E200DAF671 /* NSURLConnection+DTXSpy.m in Sources */,
+				396C8B1723038CED00979E86 /* CADisplayLink+DTXSpy.m in Sources */,
+				604A436C271F5004003B22CA /* DTXAddressInfo.mm in Sources */,
+				39DE8FB022F707F400780546 /* NSURLSession+DTXSpy.m in Sources */,
+				392250E423047179008E811D /* RCTNativeAnimatedNodesManager+DTXSpy.m in Sources */,
+				39725B422304870900B991ED /* NSRunLoop+DTXSpy.m in Sources */,
+				39DE8FB922F707F400780546 /* CAAnimation+DTXSpy.m in Sources */,
+				39DE8F9922F707F400780546 /* DTXSyncResource.m in Sources */,
+				396C8B88230442A300979E86 /* DTXReactNativeSupport.m in Sources */,
+				39DE8FAF22F707F400780546 /* NSURLSessionTask+DTXSpy.m in Sources */,
+				6017CCA9274BA0C200E17AB1 /* NSArray+Functional.m in Sources */,
+				399AE33923B27B2000BF1318 /* CFRunLoopDescription.m in Sources */,
+				39DE8F9E22F707F400780546 /* DTXSyncManager.m in Sources */,
+				3946CD5B2567145F000A3606 /* DTXUISyncResource.m in Sources */,
+				39DE8FA522F707F400780546 /* UIView+DTXSpy.m in Sources */,
+				39A6C13222F9AF8300187B56 /* DTXRunLoopSyncResource.m in Sources */,
+				3923B11F23045B1F009D8780 /* DTXJSTimerSyncResource.m in Sources */,
+				39DE8F9A22F707F400780546 /* DTXSingleEventSyncResource.m in Sources */,
+				39DE8FBB22F707F400780546 /* DTXOrigDispatch.m in Sources */,
+				6066775F271EFB000008A2C6 /* fishhook.c in Sources */,
+				39DE8FB622F707F400780546 /* UIAnimation+DTXSpy.m in Sources */,
+				6017CCAF274BA83B00E17AB1 /* NSDictionary+Functional.m in Sources */,
+				397CA5FD22F9F9A1005024D0 /* DTXLogging.m in Sources */,
+				39DE8FAA22F707F400780546 /* NSObject+DTXSpy.m in Sources */,
+				60A9954A27314A1700250FA6 /* NSString+SyncStatus.m in Sources */,
+				39DE8FB322F707F400780546 /* UIApplication+DTXSpy.m in Sources */,
+				39DE8F9722F707F400780546 /* DTXTimerSyncResource.m in Sources */,
+				39DC982E24BB5BB400FFB224 /* dispatch_time.c in Sources */,
+				60B19FB3272EFCA900AB49E3 /* NSString+SyncResource.m in Sources */,
+				39DE8F9822F707F400780546 /* DTXDelayedPerformSelectorSyncResource.m in Sources */,
+				39DE8FAB22F707F400780546 /* UIViewController+DTXSpy.m in Sources */,
+				395AD82524B784BB002B382B /* _DTXTimerTrampoline.m in Sources */,
+				39DE8FA122F707F400780546 /* UIGestureRecognizer+DTXSpy.m in Sources */,
+				39DE8F9B22F707F400780546 /* DTXDispatchQueueSyncResource.m in Sources */,
+				39DE8FB222F707F400780546 /* CALayer+DTXSpy.m in Sources */,
+				39DE8FB422F707F400780546 /* UIScrollView+DTXSpy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		602F9566274528ED00BAFA74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6017CCB0274BA85B00E17AB1 /* NSDictionary+Functional.h in Sources */,
+				6017CCB1274BA85B00E17AB1 /* NSDictionary+Functional.m in Sources */,
+				6017CCAA274BA27C00E17AB1 /* NSArray+Functional.h in Sources */,
+				6017CCAB274BA27C00E17AB1 /* NSArray+Functional.m in Sources */,
+				6017CC9F274B837700E17AB1 /* DTXJSTimerSyncResource.h in Sources */,
+				6017CC9E274B837100E17AB1 /* DTXSyncResource.h in Sources */,
+				6017CC9D274B807000E17AB1 /* DTXTypedefs.h in Sources */,
+				6097C6B42746815600612E00 /* NSString+SyncResource.h in Sources */,
+				6097C6B52746815600612E00 /* NSString+SyncResource.m in Sources */,
+				6097C6B62746815600612E00 /* NSString+SyncStatus.h in Sources */,
+				6097C6B72746815600612E00 /* NSString+SyncStatus.m in Sources */,
+				6097C6AC27467D5D00612E00 /* RCTFakes.m in Sources */,
+				60D2003B2746516E009F1794 /* DTXSyncManagerSpecHelpers.m in Sources */,
+				60D2FF9227455A07009F1794 /* DTXSyncManagerSpec.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		602F9570274528ED00BAFA74 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 39DE8F5122F707DD00780546 /* DetoxSync */;
+			targetProxy = 602F956F274528ED00BAFA74 /* PBXContainerItemProxy */;
+		};
+		60D20037274641FB009F1794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "OCMock iOS";
+			targetProxy = 60D20036274641FB009F1794 /* PBXContainerItemProxy */;
+		};
+		60F75D8527452E7600DF6C29 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Specta-iOS";
+			targetProxy = 60F75D8427452E7600DF6C29 /* PBXContainerItemProxy */;
+		};
+		60F75D8727452E7B00DF6C29 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Expecta-iOS";
+			targetProxy = 60F75D8627452E7B00DF6C29 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		39DE8F5822F707DD00780546 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_SWIFT_SYMBOLS = NO;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		39DE8F5922F707DD00780546 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_SWIFT_SYMBOLS = NO;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		39DE8F5B22F707DD00780546 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_PREFIX_HEADER = DetoxSync/DetoxSync.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				INFOPLIST_FILE = DetoxSync/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxSync;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		39DE8F5C22F707DD00780546 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_PREFIX_HEADER = DetoxSync/DetoxSync.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				INFOPLIST_FILE = DetoxSync/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxSync;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		602F9571274528ED00BAFA74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5J684MLCAU;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREFIX_HEADER = DetoxSyncTests/PrefixHeader.pch;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = asafkorem.DetoxSyncTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		602F9572274528ED00BAFA74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5J684MLCAU;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREFIX_HEADER = DetoxSyncTests/PrefixHeader.pch;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = asafkorem.DetoxSyncTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		39DE8F4C22F707DD00780546 /* Build configuration list for PBXProject "DetoxSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39DE8F5822F707DD00780546 /* Debug */,
+				39DE8F5922F707DD00780546 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		39DE8F5A22F707DD00780546 /* Build configuration list for PBXNativeTarget "DetoxSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39DE8F5B22F707DD00780546 /* Debug */,
+				39DE8F5C22F707DD00780546 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		602F9573274528ED00BAFA74 /* Build configuration list for PBXNativeTarget "DetoxSyncTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				602F9571274528ED00BAFA74 /* Debug */,
+				602F9572274528ED00BAFA74 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 39DE8F4922F707DD00780546 /* Project object */;
+}

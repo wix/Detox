@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxRuntimeErrorComposer abortedDetoxInit 1`] = `
+[DetoxRuntimeError: Aborted detox.init() execution, and now running detox.cleanup()
+
+HINT: Most likely, your test runner is tearing down the suite due to the timeout error]
+`;
+
+exports[`DetoxRuntimeErrorComposer cantFindApp - multiple apps 1`] = `
+[DetoxRuntimeError: Can't find an app config with name "steak".
+
+HINT: Maybe you meant one of these app names?
+* fish
+* chips
+* hummus
+* beer]
+`;
+
+exports[`DetoxRuntimeErrorComposer cantFindApp - single app 1`] = `
+[DetoxRuntimeError: Can't find an app config with name "unicorn".
+
+HINT: Actually, you don't have multiple apps defined in your config.
+Hence, either you don't need to call device.selectApp("unicorn") at all,
+or, your apps config is missing that app. See the actual contents:
+
+{
+  default: {
+    type: 'ios.app',
+    binaryPath: 'path/to/app'
+  }
+}]
+`;
+
+exports[`DetoxRuntimeErrorComposer invalidTestSummary - afterEach 1`] = `
+[DetoxRuntimeError: Invalid test summary was passed to detox.afterEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
+testSummary was: 
+
+{
+  weird: [Array]
+}]
+`;
+
+exports[`DetoxRuntimeErrorComposer invalidTestSummary - afterEach 2`] = `
+[DetoxRuntimeError: Invalid test summary was passed to detox.afterEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
+testSummary was: 
+
+{
+  title: 'foo test',
+  fullName: 'suite foo test',
+  status: 'uncertain'
+}]
+`;
+
+exports[`DetoxRuntimeErrorComposer invalidTestSummary - beforeEach 1`] = `
+[DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://wix.github.io/Detox/docs/api/test-lifecycle
+testSummary was: 
+
+deviceName]
+`;
+
+exports[`DetoxRuntimeErrorComposer invalidTestSummaryStatus - afterEach 1`] = `
+[DetoxRuntimeError: Invalid test summary status was passed to detox.afterEach(testSummary). Valid values are: "running", "passed", "failed"
+
+HINT: It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.
+testSummary was: 
+
+{
+  summary: 'invalid stuff'
+}]
+`;

@@ -1,0 +1,43 @@
+buildscript {
+    apply from: './rninfo.gradle'
+
+    def androidGradlePluginVersion =
+        rnInfo.isRN69OrHigher ? '7.1.1'
+            : rnInfo.isRN68OrHigher ? '7.0.4'
+            : '4.2.2'
+
+    println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
+
+    ext {
+        kotlinVersion = '1.6.21'
+        buildToolsVersion = '31.0.0'
+        compileSdkVersion = 31
+        targetSdkVersion = 31
+        minSdkVersion = 21
+    }
+
+    repositories {
+        mavenCentral()
+        google()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
+        classpath 'de.undercouch:gradle-download-task:5.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        maven {
+            url "$rootDir/../node_modules/react-native/android"
+        }
+        maven {
+            url "$rootDir/../node_modules/detox/Detox-android"
+        }
+    }
+}

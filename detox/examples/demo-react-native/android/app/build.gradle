@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+apply from: '../rninfo.gradle'
+
+project.ext.react = [
+    enableHermes: true
+]
+
+apply from: '../../node_modules/react-native/react.gradle'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId 'com.detox.rn.example'
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName '1.0'
+        ndk {
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
+        }
+
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
+    }
+    splits {
+        abi {
+            reset()
+            enable false
+            universalApk false  // If true, also generate a universal APK
+            include 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
+        }
+    }
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "12345678"
+            keyAlias "key0"
+            keyPassword "12345678"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    // noinspection GradleDynamicVersion
+    implementation 'com.facebook.react:react-native:+'
+
+    implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
+
+    // noinspection GradleDynamicVersion
+    androidTestImplementation 'com.wix:detox:+'
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+}
+
+// Apply Hermes as the JS engine
+dependencies {
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+        implementation('com.facebook.react:hermes-engine:+') {
+            exclude group: 'com.facebook.fbjni'
+        }
+    } else {
+        def hermesPath = '../../node_modules/hermes-engine/android'
+        debugImplementation files("$hermesPath/hermes-debug.aar")
+        releaseImplementation files("$hermesPath/hermes-release.aar")
+    }
+}

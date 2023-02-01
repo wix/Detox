@@ -1,0 +1,19 @@
+{
+	"trigger": {
+		"type": "timeInterval",
+		"timeInterval": 30,
+		"repeats": false
+	},
+	"title": "Title",
+	"subtitle": "Subtitle",
+	"body": "Body",
+	"badge": 1,
+	"payload": {
+		"key1": "value1",
+		"key2": "value2"
+	},
+	"category": "com.example.category",
+	"user-text": "Hi there!",
+	"content-available": 0,
+	"action-identifier": "default2"
+}
