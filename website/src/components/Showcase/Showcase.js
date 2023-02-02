@@ -8,6 +8,7 @@ import { TailSpin } from 'react-loader-spinner';
 
 const Showcase = () => {
   const [cards, setCards] = useState([]);
+  const [toRender, setToRender] = useState([<TailSpin />]);
 
   useEffect(() => {
     const shouldShuffle = new URLSearchParams(window.location.search).get('shuffle') !== 'disabled';
@@ -15,7 +16,11 @@ const Showcase = () => {
     setCards(resultingCardList.map(_makeCard));
   }, []);
 
-  return cards.length > 0 ? _makeCardsContainer(cards) : _makeLoadingSpinner();
+  useEffect(() => {
+    setToRender(cards.length > 0 ? _makeCardsContainer(cards) : _makeLoadingSpinner());
+  }, [cards]);
+
+  return toRender;
 };
 
 const _makeShuffledCardList = (cardList) => {
