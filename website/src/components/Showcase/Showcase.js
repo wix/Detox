@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import Card from './Card';
 import cardList from '@site/showcase.json';
-import styles from './Showcase.module.css';
+import styles from './Showcase.module.scss';
 import _ from 'lodash';
 import { TailSpin } from 'react-loader-spinner';
 
