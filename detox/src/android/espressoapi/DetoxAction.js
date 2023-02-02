@@ -233,6 +233,18 @@ class DetoxAction {
     };
   }
 
+  static parseDateISO8601(dateString) {
+    if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "parseDateISO8601",
+      args: [dateString]
+    };
+  }
+
 }
 
 module.exports = DetoxAction;
