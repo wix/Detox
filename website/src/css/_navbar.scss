@@ -1,0 +1,24 @@
+[data-theme='dark'] .navbar {
+  background-color: #12161b;
+}
+
+.navbar__link {
+  margin-right: 10px;
+  font-weight: 300;
+}
+
+.navbar__link--active {
+  text-decoration: none;
+  color: var(--ifm-navbar-link-color);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.navbar__item {
+  padding: 5px;
+  font-weight: 300;
+}
+
+[data-theme='dark'] .navbar__item {
+  padding: 5px;
+  font-weight: 300;
+}
