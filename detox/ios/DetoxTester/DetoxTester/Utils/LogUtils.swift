@@ -8,6 +8,11 @@ import OSLog
 
 // MARK: - Logging methods
 
+/// Logs the given `message` with its `type`, under the test-case logs container.
+func testCaseLog(_ message: String, type: OSLogType = .info) {
+  detoxLog(message: message, container: .testCase, type: type)
+}
+
 /// Logs the given `message` with its `type`, under the web-socket logs container.
 func wsLog(_ message: String, type: OSLogType = .info) {
   detoxLog(message: message, container: .webSocket, type: type)
@@ -64,6 +69,9 @@ fileprivate func detoxLog(message: String, container: OSLog, type: OSLogType) {
 fileprivate extension OSLog {
   private static var subsystem = Bundle.main.bundleIdentifier!
 
+  /// Logs operations related to the test-case lifecycle.
+  static let testCase = OSLog(subsystem: subsystem, category: "TestCaseLifecycle")
+
   /// Logs operations related to the web-socket.
   static let webSocket = OSLog(subsystem: subsystem, category: "WebSocketClient")
 
@@ -90,4 +98,11 @@ fileprivate extension OSLog {
 
   /// Logs operations related to the tester's expectations.
   static let expect = OSLog(subsystem: subsystem, category: "Expectations")
+}
+
+/// Objective-C bridge helper.
+@objc class TestCaseLogger: NSObject {
+  @objc class func log(_ message: String, type: OSLogType = .info) {
+    testCaseLog(message, type: type)
+  }
 }

@@ -26,10 +26,11 @@ class Executor {
           execLog("successfully logged into Detox server")
 
         case .disconnect:
-          execLog("the tester have disconnected the XCUITest test runner", type: .debug)
+          execLog("executor called to disconnect", type: .debug)
+          disconnect(messageId: messageId)
 
         case .setRecordingState:
-          execLog("not implemented yet: \(action)", type: .error)
+          execLog("`setRecordingState` not implemented yet: \(action)", type: .error)
           fatalError("not implemented yet")
 
         case .waitForBackground:
@@ -42,11 +43,12 @@ class Executor {
           try setSyncSettings(params: params, messageId: messageId)
 
         case .deliverPayload:
-          execLog("not implemented yet: \(action)", type: .error)
+          execLog("`deliverPayload` not implemented yet: \(action)", type: .error)
           fatalError("not implemented yet")
 
+        // TODO iOS 16 issue
         case.setOrientation:
-          execLog("not implemented yet: \(action)", type: .error)
+          execLog("`setOrientation` not implemented yet: \(action)", type: .error)
           fatalError("not implemented yet")
 
         case .currentStatus:
@@ -71,7 +73,7 @@ class Executor {
           sendAction(.reportReady, messageId: messageId)
 
         case .cleanup:
-          execLog("called to cleanup XCUITest runner", type: .debug)
+          execLog("executor called to cleanup", type: .debug)
           cleanup(messageId: messageId)
       }
     } catch {

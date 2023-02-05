@@ -6,7 +6,7 @@
 import Foundation
 
 /// Protocol for classes that can be used as a delegate for `WebSocketClient` connection.
-protocol WebSocketDelegateProtocol: AnyObject {
+protocol WebSocketClientDelegateProtocol: AnyObject {
   /// Called when the web-socket did connect.
   func webSocketDidConnect(_ webSocket: WebSocketClient)
 

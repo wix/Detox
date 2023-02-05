@@ -17,6 +17,9 @@ protocol WebSocketServerDelegateProtocol {
   /// Called when the web-socket server is ready to receive messages.
   func serverIsReady()
 
+  /// Called when disconnected from client.
+  func didCloseConnection()
+
   /// Called when the web-socket server is connected to client.
   func serverDidConnectClient()
 }
@@ -36,10 +39,10 @@ class WebSocketServer {
   public let port: UInt16
 
 
-  ///
+  /// The dispatch queue for the connection.
   private let connectionQueue: DispatchQueue = .main
 
-  ///
+  /// Timer for a periodic ping to the connected clients.
   private var pingTimer: Timer?
 
   /// Creates a new web-socket server.
@@ -94,21 +97,21 @@ class WebSocketServer {
       newConnection.stateUpdateHandler = { state in
         switch state {
           case .ready:
-            wsLog("connection with client is ready")
+            wsLog("[new connection update] connection with client is ready")
             self.delegate.serverDidConnectClient()
 
           case .failed(let error):
-            wsLog("connection has failed with error: \(error.localizedDescription)", type: .error)
+            wsLog("[new connection update] connection has failed with error: \(error.localizedDescription)", type: .error)
             fatalError("connection has failed with error: \(error.localizedDescription)")
 
           case .waiting(let error):
-            wsLog("connection is waiting for long time \(error.localizedDescription)", type: .error)
+            wsLog("[new connection update] connection is waiting for long time \(error.localizedDescription)", type: .error)
 
           case .setup, .cancelled, .preparing:
-            wsLog("connection with client state has changed to `\(state)`")
+            wsLog("[new connection update] connection with client state has changed to `\(state)`")
 
           @unknown default:
-            wsLog("connection with client is unknown")
+            wsLog("[new connection update] connection with client is unknown")
         }
       }
 
@@ -119,21 +122,29 @@ class WebSocketServer {
     listener.stateUpdateHandler = { state in
       switch state {
         case .ready:
-          wsLog("tester server is ready")
+          wsLog("[listener state changed] tester server is ready")
           self.delegate.serverIsReady()
 
         case .failed(let error):
-          wsLog("tester server has failed with error: \(error.localizedDescription)", type: .error)
+          wsLog(
+            "[listener state changed] tester server has failed with error: " +
+            "\(error.localizedDescription)",
+            type: .error
+          )
           fatalError("server has failed with error: \(error.localizedDescription)")
 
         case .waiting(let error):
-          wsLog("listener is waiting for long time \(error.localizedDescription)", type: .error)
+          wsLog(
+            "[listener state changed] listener is waiting for long time " +
+            "\(error.localizedDescription)",
+            type: .error
+          )
 
         case .setup, .cancelled:
-          wsLog("server state has changed to `\(state)`")
+          wsLog("[listener state changed] server state has changed to `\(state)`")
 
         @unknown default:
-          wsLog("server state is unknown")
+          wsLog("[listener state changed] server state is unknown")
       }
     }
 
@@ -166,6 +177,19 @@ class WebSocketServer {
     )
   }
 
+  /// Close active connection.
+  func closeClientConnection() {
+    guard let previousClient = self.client else {
+      wsLog("server called to close connection while not connected to any client", type: .error)
+      fatalError("server called to close connection while not connected to any client")
+    }
+
+    wsLog("closing client connection", type: .debug)
+    previousClient.cancel()
+    delegate.didCloseConnection()
+    wsLog("client connection has gracefully closed by the server", type: .debug)
+  }
+
   /// Ping the WebSocket periodically.
   func pingPeriodically() {
     guard let client = client else {
@@ -184,7 +208,7 @@ class WebSocketServer {
 
       self.ping(toClient: client)
     }
-    pingTimer?.tolerance = 0.01
+    pingTimer?.tolerance = 0.02
   }
 
   /// Ping the WebSocket once.

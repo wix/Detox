@@ -7,6 +7,8 @@
 
 @implementation DTXTestCase
 
+// TODO: add logs for test case lifecycle
+
 - (void)setUp {
     self.continueAfterFailure = NO;
 }
@@ -19,6 +21,18 @@
 
 + (BOOL)isDetoxActive {
   return NSProcessInfo.processInfo.environment[EnvArgKeys.isDetoxActive].boolValue;
+}
+
+- (BOOL)tearDownWithError:(NSError *__autoreleasing  _Nullable *)error {
+  [TestCaseLogger log:@"DTXTestCase `tearDownWithError()` called" type:OS_LOG_TYPE_DEBUG];
+
+  return [super tearDownWithError:error];
+}
+
+- (void)tearDown {
+  [TestCaseLogger log:@"DTXTestCase `tearDown()` called" type:OS_LOG_TYPE_DEBUG];
+  
+  [super tearDown];
 }
 
 - (NSTimeInterval)executionTimeAllowance {

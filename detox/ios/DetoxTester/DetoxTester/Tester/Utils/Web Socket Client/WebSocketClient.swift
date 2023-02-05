@@ -14,7 +14,7 @@ class WebSocketClient: NSObject {
   private var webSocketSessionTask: URLSessionWebSocketTask?
 
   /// Called when web-socket state is changes or when receiving messages.
-  weak var delegate: WebSocketDelegateProtocol?
+  weak var delegate: WebSocketClientDelegateProtocol?
 
   /// Web-socket connect to given `server` with given `sessionId`.
   func connect(toServer server: URL, withSessionId sessionId: String) {

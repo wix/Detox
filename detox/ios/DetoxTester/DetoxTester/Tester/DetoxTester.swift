@@ -61,11 +61,11 @@ import XCTest
       self.exec = exec
       self.done = done
 
-      mainLog("connecting with app (white-box connection)...")
+      mainLog("starting web-socket server (for white-box connections)...")
       self.webSocketServer = makeWebSocketServer()
       DetoxTester.whiteBoxClientConnectionSemaphore.wait()
 
-      mainLog("connected with app, starting to ping app periodically")
+      mainLog("starting to pings app periodically")
       self.webSocketServer?.pingPeriodically()
 
       mainLog("connecting with server (main connection)...")
@@ -95,9 +95,9 @@ import XCTest
   }
 }
 
-// MARK: - WebSocketDelegateProtocol
+// MARK: - WebSocketClientDelegateProtocol
 
-extension DetoxTester: WebSocketDelegateProtocol {
+extension DetoxTester: WebSocketClientDelegateProtocol {
   func webSocketDidConnect(_ webSocket: WebSocketClient) {
     mainLog("web-socket did-connect")
 
@@ -160,12 +160,25 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
   }
 
   func cleanup() {
-    guard let webSocket = webSocketClient else {
+    guard let webSocket = webSocketServer else {
       mainLog("web-socket is `nil`, cannot cleanup test target", type: .error)
+      fatalError("Failed clean-up web-socket")
+    }
+
+    mainLog("cleanup(): closing web-socket server connection with app client")
+    webSocket.closeClientConnection()
+
+    mainLog("cleanup(): waiting for next connection to be established")
+    DetoxTester.whiteBoxClientConnectionSemaphore.wait()
+  }
+
+  func disconnect() {
+    guard let webSocket = webSocketClient else {
+      mainLog("web-socket is `nil`, cannot disconnect test target", type: .error)
       fatalError("Failed closing web-socket")
     }
 
-    mainLog("cleanup: closing web-socket connection")
+    mainLog("disconnect(): closing web-socket client connection to the JS tester")
     webSocket.close()
   }
 }
@@ -193,22 +206,17 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
     }
 
     mainLog("tester server is ready on port \(server.port)")
+  }
 
-//    guard webSocketClient != nil else {
-//      mainLog("web-socket client has not initialized yet", type: .error)
-//      fatalError("web-socket client has not initialized yet")
-//    }
-
-//    let port = server.port
-//    client.sendAction(.reportTesterServerStarted, params: ["port": port], messageId: -1000)
+  func didCloseConnection() {
+    mainLog("tester server did close connection to the app client")
+    WhiteBoxExecutor.removeHandler(with: executor.getAppUnderTestBundleIdentifier())
   }
 
   func serverDidConnectClient() {
-    mainLog("tester server did connect to app client")
+    mainLog("tester server did connect to the app client")
 
-    // TODO: revisit. There is an implicit assumption where the there is only one app handled in a
-    // white-box manner.
-
+    // There is an assumption that the app is connected in a white-box manner.
     WhiteBoxExecutor.setNewHandler(
       for: executor.getAppUnderTestBundleIdentifier(),
       withMessageSender: self

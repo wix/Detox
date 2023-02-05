@@ -14,8 +14,11 @@ protocol DetoxServerMessageSenderProtocol: AnyObject {
     messageId: NSNumber
   )
 
-  /// Do cleanup of Detox tester.
+  /// Do cleanup of the Detox tester (close connection with app clients).
   func cleanup()
+
+  /// Do disconnection of the Detox tester (close connection with JS tester server).
+  func disconnect()
 }
 
 /// Type of a web-socket action to be sent from Detox Tester back to Detox Server.
