@@ -228,29 +228,29 @@ await element(by.id('pickerView')).setColumnToValue(2, "Hello World");
 
 ### `setDatePickerDate(dateString, dateFormat)`
 
-Sets the element’s date to the specified date string, parsed using the specified date format.
+Sets the date-picker’s date to the specified date and time.
 
-The recommended `dateFormat` is `ISO8601`. To create a `dateString` in this format, use the built-in [`Date.prototype.toISOString()`] method, or specify a literal date string following the `YYYY-MM-DDTHH:mm:ss.sssZ` mask, e.g.:
+`dateString`—The date to set. Should match the format provided by `dateFormat`.<br/>
+`dateFormat`—The format of `dateString`. Should be either [`'ISO8601'`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString), or an explicit date representation format, as supported by [`NSDateFormatter`] on iOS / [`DateTimeFormatter`] on Android (e.g. `'yyyy/MM/dd'`).
+
+>_The recommended `dateFormat` is `ISO8601`._
+
+Examples:
 
 ```js
 const datePicker = element(by.id('datePicker'));
 
+// ISO8601:
 await datePicker.setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
-await datePicker.setDatePickerDate(new Date().toISOString(), 'ISO8601');
+await datePicker.setDatePickerDate(new Date().toISOString(), 'ISO8601'); // toISOString returns an ISO8601 format with no timezone (UTC-0)
+
+// Explicit format:
+await datePicker.setDatePickerDate('2019/02/06', "yyyy/MM/dd");
 ```
-
-You can also use any of the date formats supported by [`NSDateFormatter`] on iOS or [`DateTimeFormatter`] on Android, e.g.:
-
-```js
-await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
-```
-
-`dateString`—the date to set (valid input: valid, parsable date string) <br/>
-`dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` (**Android and iOS**), or any format supported by [`NSDateFormatter`] on **iOS**)
 
 :::info
 
-On Android, older versions of a popular [`@react-native-community/datetimepicker`] package don’t support setting [`testID`], so you’ll need either to upgrade to a newer version containing [PR #705] inside, or use the [`by.type`] matcher as a workaround, e.g.:
+As far as element-matching is concerned, on Android, older versions of the popular [`@react-native-community/datetimepicker`] package don’t allow for the specification of your own [`testID`] prop for the date-picker component. Therefore, you'd have to either upgrade your package  to a newer version containing [PR datetimepicker#705] inside, or use Detox's [`by.type`] matcher as a workaround. For example:
 
 ```js
 const datePicker = device.getPlatform() === 'android'
@@ -367,4 +367,4 @@ await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0)
 [`NSDateFormatter`]: https://developer.apple.com/documentation/foundation/dateformatter
 [`DateTimeFormatter`]: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 [`@react-native-community/datetimepicker`]: https://www.npmjs.com/package/@react-native-community/datetimepicker
-[PR #705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705
+[PR datetimepicker#705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705
