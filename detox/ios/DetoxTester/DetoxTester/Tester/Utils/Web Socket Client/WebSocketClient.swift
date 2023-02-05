@@ -141,6 +141,7 @@ extension WebSocketClient: URLSessionWebSocketDelegate {
     reason: Data?
   ) {
     let reasonString = reason != nil ? String(data: reason!, encoding: .utf8) : nil
+
     wsLog("web-socket did-close with reason: \(reasonString ?? "none")")
     delegate?.webSocket(self, didCloseWith: reasonString)
   }
@@ -153,7 +154,6 @@ extension WebSocketClient: URLSessionWebSocketDelegate {
     }
 
     wsLog("web-socket did-complete")
-    delegate?.webSocket(self, didCloseWith: nil)
   }
 
   func receiveAction(json: String) {

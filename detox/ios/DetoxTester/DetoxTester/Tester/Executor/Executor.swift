@@ -74,7 +74,7 @@ class Executor {
 
         case .cleanup:
           execLog("executor called to cleanup", type: .debug)
-          cleanup(messageId: messageId)
+          cleanup(params: params, messageId: messageId)
       }
     } catch {
       let errorMessage = "XCUITest executor failed to handle request: \(error)"

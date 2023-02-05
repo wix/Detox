@@ -55,6 +55,7 @@ class RuntimeDevice {
     traceMethods(log, this, methodNames);
     wrapWithStackTraceCutter(this, methodNames);
 
+    this._isTestRunnerConnected = false;
     this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
@@ -184,6 +185,12 @@ class RuntimeDevice {
   }
 
   async launchTestTarget(bundleId) {
+    if (this._isTestRunnerConnected === true) {
+      console.log('already connected to test target...');
+      return;
+    }
+    this._isTestRunnerConnected = true;
+
     const lock = new Lock();
     await this.deviceDriver.launchTestTarget(this._prepareLaunchArgs(), bundleId, function() {
       lock.release();

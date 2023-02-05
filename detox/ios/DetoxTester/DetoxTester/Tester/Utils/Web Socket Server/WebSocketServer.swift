@@ -74,8 +74,8 @@ class WebSocketServer {
   func startServer() {
     listener.newConnectionHandler = { newConnection in
       guard self.client == nil else {
-        wsLog("server is already connected to a client", type: .error)
-        fatalError("server is already connected to a client")
+        wsLog("server is already connected to the client", type: .error)
+        return
       }
 
       wsLog("new connection with tester server")
@@ -187,7 +187,7 @@ class WebSocketServer {
     wsLog("closing client connection", type: .debug)
     previousClient.cancel()
     delegate.didCloseConnection()
-    wsLog("client connection has gracefully closed by the server", type: .debug)
+    wsLog("client connection did close", type: .debug)
   }
 
   /// Ping the WebSocket periodically.

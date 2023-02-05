@@ -133,7 +133,7 @@ class SimulatorDriver extends IosDriver {
           return;
         }
 
-        log.error(`Error occurred while running the XCUITest test runner:\n${err.stderr}`);
+        log.error(`Error occurred while running the XCUITest test runner:\n${err}`);
       });
 
     log.info(`Allowing network permissions`);

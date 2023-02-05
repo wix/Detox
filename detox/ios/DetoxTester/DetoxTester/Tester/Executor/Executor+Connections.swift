@@ -8,19 +8,27 @@ import Foundation
 /// Extends the executor with connection handling methods.
 extension Executor {
   /// Handles app cleanup.
-  func cleanup(messageId: NSNumber) {
+  func cleanup(params: [String: AnyHashable], messageId: NSNumber) {
     guard let serverMessageSender = serverMessageSender else {
       execLog("`serverMessageSender` is nil, can't do cleanup", type: .error)
       return
     }
 
-    execLog("starting cleanup.. (message id: `\(messageId)`)", type: .debug)
+    execLog(
+      "starting cleanup with params: \(String(describing: params)) (message id: `\(messageId)`)",
+      type: .debug
+    )
 
     serverMessageSender.cleanup()
     execLog("cleanup done (message id: `\(messageId)`)", type: .debug)
 
     sendAction(.reportCleanupDone, messageId: messageId)
     execLog("cleanup reported (message id: `\(messageId)`)", type: .debug)
+
+    execLog("stopping runner: \(params.stopRunner)", type: .debug)
+    if (params.stopRunner) {
+      disconnect(messageId: messageId)
+    }
   }
 
   /// Handles test-target disconnection
@@ -34,5 +42,11 @@ extension Executor {
 
     serverMessageSender.disconnect()
     execLog("disconnect done (message id: `\(messageId)`)", type: .debug)
+  }
+}
+
+private extension Dictionary where Key == String, Value == AnyHashable {
+  var stopRunner: Bool {
+    return self["stopRunner"] as? Bool ?? false
   }
 }

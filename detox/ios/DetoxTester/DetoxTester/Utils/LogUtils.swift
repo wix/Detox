@@ -99,10 +99,3 @@ fileprivate extension OSLog {
   /// Logs operations related to the tester's expectations.
   static let expect = OSLog(subsystem: subsystem, category: "Expectations")
 }
-
-/// Objective-C bridge helper.
-@objc class TestCaseLogger: NSObject {
-  @objc class func log(_ message: String, type: OSLogType = .info) {
-    testCaseLog(message, type: type)
-  }
-}

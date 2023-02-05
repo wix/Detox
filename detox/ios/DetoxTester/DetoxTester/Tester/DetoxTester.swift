@@ -63,6 +63,8 @@ import XCTest
 
       mainLog("starting web-socket server (for white-box connections)...")
       self.webSocketServer = makeWebSocketServer()
+
+      // TODO: make sure there's an error message when the app crashes.
       DetoxTester.whiteBoxClientConnectionSemaphore.wait()
 
       mainLog("starting to pings app periodically")
@@ -167,9 +169,6 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
 
     mainLog("cleanup(): closing web-socket server connection with app client")
     webSocket.closeClientConnection()
-
-    mainLog("cleanup(): waiting for next connection to be established")
-    DetoxTester.whiteBoxClientConnectionSemaphore.wait()
   }
 
   func disconnect() {
