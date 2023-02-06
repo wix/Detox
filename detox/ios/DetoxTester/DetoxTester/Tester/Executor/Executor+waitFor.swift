@@ -8,7 +8,10 @@ import Foundation
 extension Executor {
   /// Waits for the given app-state to be reached.
   func waitFor(appState state: AppState, messageId: NSNumber) {
-    let hasState = getAppUnderTest().wait(for: state.toXCUIState(), timeout: .minute)
+    let expectedAppState = state.toXCUIState()
+    execLog("waiting app to run in `\(expectedAppState)`")
+
+    let hasState = getAppUnderTest().wait(for: expectedAppState, timeout: .minute)
 
     guard hasState else {
       execLog("timeout of minute has reached after waiting for app state \(state)", type: .error)

@@ -42,9 +42,6 @@ class WebSocketServer {
   /// The dispatch queue for the connection.
   private let connectionQueue: DispatchQueue = .main
 
-  /// Timer for a periodic ping to the connected clients.
-  private var pingTimer: Timer?
-
   /// Creates a new web-socket server.
   private init(withPort port: UInt16, delegate: WebSocketServerDelegateProtocol) throws {
     self.port = port
@@ -73,9 +70,10 @@ class WebSocketServer {
   /// Starts listening for incoming connections.
   func startServer() {
     listener.newConnectionHandler = { newConnection in
-      guard self.client == nil else {
+      if let previousClient = self.client {
+        // TODO: why do we still have a previous client?
         wsLog("server is already connected to the client", type: .error)
-        return
+        previousClient.cancel()
       }
 
       wsLog("new connection with tester server")
@@ -102,7 +100,6 @@ class WebSocketServer {
 
           case .failed(let error):
             wsLog("[new connection update] connection has failed with error: \(error.localizedDescription)", type: .error)
-            fatalError("connection has failed with error: \(error.localizedDescription)")
 
           case .waiting(let error):
             wsLog("[new connection update] connection is waiting for long time \(error.localizedDescription)", type: .error)
@@ -131,7 +128,6 @@ class WebSocketServer {
             "\(error.localizedDescription)",
             type: .error
           )
-          fatalError("server has failed with error: \(error.localizedDescription)")
 
         case .waiting(let error):
           wsLog(
@@ -188,53 +184,6 @@ class WebSocketServer {
     previousClient.cancel()
     delegate.didCloseConnection()
     wsLog("client connection did close", type: .debug)
-  }
-
-  /// Ping the WebSocket periodically.
-  func pingPeriodically() {
-    guard let client = client else {
-      wsLog("no client is available, can't send message", type: .error)
-      fatalError("No client is available, can't send message")
-    }
-
-    ping(interval: 5, toClient: client)
-  }
-
-  private func ping(interval: TimeInterval, toClient client: NWConnection) {
-    pingTimer = .scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-      guard let self = self else {
-        return
-      }
-
-      self.ping(toClient: client)
-    }
-    pingTimer?.tolerance = 0.02
-  }
-
-  /// Ping the WebSocket once.
-  private func ping(toClient client: NWConnection) {
-    wsLog("sending ping to client")
-    let metadata = NWProtocolWebSocket.Metadata(opcode: .ping)
-
-    metadata.setPongHandler(connectionQueue) { error in
-      if let error = error {
-        wsLog("error receiving pong from client: \(error)", type: .error)
-      } else {
-        wsLog("received pong from client")
-      }
-    }
-
-    let context = NWConnection.ContentContext(identifier: "pingContext", metadata: [metadata])
-
-    client.send(
-      content: "ping".data(using: .utf8),
-      contentContext: context,
-      completion: .contentProcessed({ error in
-        if let error = error {
-          wsLog("client error when sending ping: \(error.localizedDescription)", type: .error)
-        }
-      })
-    )
   }
 }
 

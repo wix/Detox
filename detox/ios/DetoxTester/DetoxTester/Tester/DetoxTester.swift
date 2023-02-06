@@ -67,9 +67,6 @@ import XCTest
       // TODO: make sure there's an error message when the app crashes.
       DetoxTester.whiteBoxClientConnectionSemaphore.wait()
 
-      mainLog("starting to pings app periodically")
-      self.webSocketServer?.pingPeriodically()
-
       mainLog("connecting with server (main connection)...")
       self.webSocketClient = makeWebSocketClient()
     }
