@@ -38,10 +38,6 @@ class WebSocketServer {
   /// The port the server is listening on.
   public let port: UInt16
 
-
-  /// The dispatch queue for the connection.
-  private let connectionQueue: DispatchQueue = .main
-
   /// Creates a new web-socket server.
   private init(withPort port: UInt16, delegate: WebSocketServerDelegateProtocol) throws {
     self.port = port
