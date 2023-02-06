@@ -21,8 +21,8 @@ import XCTest
   /// Finishes the tester operation.
   fileprivate var done: (() -> Void)?
 
-  /// Executes a given closure on the main-thread.
-  fileprivate var exec: ((@escaping () -> Void) -> Void)?
+  /// Executes a given closure synchronically or asynchronically.
+  fileprivate var exec: ((Bool, @escaping () -> Void) -> Void)?
 
   /// Executes the tester operations.
   fileprivate let executor = Executor()
@@ -100,7 +100,7 @@ extension DetoxTester: WebSocketClientDelegateProtocol {
   func webSocketDidConnect(_ webSocket: WebSocketClient) {
     mainLog("web-socket did-connect")
 
-    exec! { [self] in
+    exec! (true) { [self] in
       mainLog("[didConnect] Executes on main thread")
 
       waitUntilAppIsReady(executor.getAppUnderTest())
@@ -124,8 +124,11 @@ extension DetoxTester: WebSocketClientDelegateProtocol {
     mainLog("web-socket received `\(type.rawValue)` message (#\(messageId.stringValue)), " +
             "with params: \(params.description)")
 
-    exec! { [self] in
-      mainLog("`didReceiveAction` was called, executes action: `\(type.rawValue)`")
+    exec! (type.handleAsync) { [self] in
+      mainLog(
+        "`didReceiveAction` was called, executes action (\(type.handleAsync ? "async" : "sync"): " +
+        "`\(type.rawValue)`)"
+      )
       executor.execute(type, params: params, messageId: messageId)
     }
   }
@@ -149,23 +152,23 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
     params: [String: Any],
     messageId: NSNumber
   ) {
-    guard let webSocket = webSocketClient else {
+    guard let webSocketClient = webSocketClient else {
       mainLog("web-socket is `nil`, cannot send action", type: .error)
       fatalError("Failed sending action through web-socket")
     }
 
     mainLog("executor-delegate send action: `\(type)`")
-    webSocket.sendAction(type, params: params, messageId: messageId)
+    webSocketClient.sendAction(type, params: params, messageId: messageId)
   }
 
   func cleanup() {
-    guard let webSocket = webSocketServer else {
+    guard let webSocketServer = webSocketServer else {
       mainLog("web-socket is `nil`, cannot cleanup test target", type: .error)
       fatalError("Failed clean-up web-socket")
     }
 
     mainLog("cleanup(): closing web-socket server connection with app client")
-    webSocket.closeClientConnection()
+    webSocketServer.closeClientConnection()
   }
 
   func disconnect() {
