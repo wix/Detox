@@ -28,6 +28,8 @@ class WhiteBoxExecutor {
   /// Sends a message with given `message` to the application using the internal Detox framework
   /// and synchronically waits for a response.
   func execute(_ message: Message) -> Response {
+    whiteExecLog("white-box executing: \(message)")
+
     switch message {
       case .reloadReactNative:
         send("reloadReactNative", andExpectTo: "reactNativeDidReload")
@@ -55,6 +57,14 @@ class WhiteBoxExecutor {
         return .completed
 
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
+        whiteExecLog(
+          "setting synchronization settings, " +
+          "max-timer-wait: \(String(describing: maxTimerWait)), " +
+          "blacklist-urls: \(String(describing: blacklistURLs)), " +
+          "sync-disabled: \(String(describing: disabled))",
+          type: .debug
+        )
+
         let message = createMessage(
           type: "setSyncSettings",
           params: [
@@ -383,7 +393,6 @@ extension WhiteBoxExecutor {
   ) {
     handlers[bundleIdentifier] = .init(messageSender: sender)
   }
-
 
   /// Removes a white-box handler for a given `bundleIdentifier`.
   class func removeHandler(with bundleIdentifier: String) {

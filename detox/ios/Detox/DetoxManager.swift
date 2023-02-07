@@ -352,7 +352,9 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				) as! UIDatePicker
 
 				let timeIntervalSince1970 = (params["timeIntervalSince1970"] as! NSNumber).doubleValue
-				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
+				targetElement.dtx_adjust(to: .init(timeIntervalSince1970: timeIntervalSince1970))
+				// TODO: why is not the same??
+//				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
 
 				self.safeSend(
 					action: "didSetDatePicker",

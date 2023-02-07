@@ -36,7 +36,7 @@ func WaitUntilDone(
     )
 
     if (runOnMainThread) {
-      asyncQueue.async {
+      asyncQueue.sync {
         syncLog("running on thread: \(Thread.current)")
         syncLog("`exec` started asynchronically", type: .debug)
         toExec()

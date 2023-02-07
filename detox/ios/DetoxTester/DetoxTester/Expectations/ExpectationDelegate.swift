@@ -28,7 +28,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
   ) throws {
     guard let timeoutMilliseconds = timeout else {
       let element = try findElementHandler() as? XCUIElement
-      expectLog("expect element `\(String(describing: element?.identifier))` " +
+      expectLog("expect element `\(String(describing: element?.cleanIdentifier))` " +
                 "\(isTruthy ? "" : "not ")\(expectation)")
 
       try expect(expectation, isTruthy: isTruthy, on: element)
@@ -206,10 +206,6 @@ private extension XCUIElement {
   }
 
   func assertIdentifier(equals value: String, isTruthy: Bool) throws {
-    let postfixRegex = try? NSRegularExpression(pattern: "_detox.*", options: .caseInsensitive)
-    let cleanIdentifier = postfixRegex!.stringByReplacingMatches(
-      in: identifier, range: NSMakeRange(0, identifier.count), withTemplate: "")
-
     let equalsId = cleanIdentifier == value
 
     if equalsId != isTruthy {

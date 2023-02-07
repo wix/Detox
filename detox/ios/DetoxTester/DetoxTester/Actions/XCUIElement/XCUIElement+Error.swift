@@ -28,7 +28,7 @@ extension XCUIElement.Error: CustomStringConvertible {
 
       case .failedToFocusKeyboardOnElement(let element):
         return "Failed to focus on element with the keyboard (element " +
-            "identifier: `\(element.identifier)`)"
+            "identifier: `\(element.cleanIdentifier)`)"
 
       case .failedToPasteNewText(let onAction):
         return "Failed to paste new text on text input, on action: \(onAction)"

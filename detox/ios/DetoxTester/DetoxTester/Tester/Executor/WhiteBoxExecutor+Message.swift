@@ -9,22 +9,22 @@ import DetoxInvokeHandler
 extension WhiteBoxExecutor {
   /// A message to be sent to the white-box executor.
   enum Message {
-    /// Returns response of `completed` if succsfully done.
+    /// Returns response of `completed` if successfully done.
     case reloadReactNative
 
-    /// Returns response of `completed` if succsfully done.
+    /// Returns response of `completed` if successfully done.
     case shakeDevice
 
-    /// Returns response of `completed` or `completedWithError` if succsfully done.
+    /// Returns response of `completed` or `completedWithError` if successfully done.
     case captureViewHierarchy(viewHierarchyURL: URL)
 
-    /// Returns response of `completed` if succsfully done.
+    /// Returns response of `completed` if successfully done.
     case waitUntilReady
 
-    /// Returns response of `completed` if succsfully done.
+    /// Returns response of `completed` if successfully done.
     case setSyncSettings(maxTimerWait: TimeInterval?, blacklistURLs: [String]?, disabled: Bool?)
 
-    /// Returns response of `completed` if succsfully done.
+    /// Returns response of `completed` if successfully done.
     case setDatePicker(toDate: Date, onElement: XCUIElement)
 
     /// Returns response of `boolean`.
@@ -89,15 +89,15 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
 
       case .setDatePicker(toDate: let toDate, onElement: let onElement):
         return "set picker date (to: \(toDate), " +
-          "on element with identifier: `\(onElement.identifier)`"
+          "on element with identifier: `\(onElement.cleanIdentifier)`"
 
       case .verifyVisibility(ofElement: let ofElement, withThreshold: let withThreshold):
         return "expect to be visible with threshold of \(withThreshold)%, " +
-          "for element with identifier: `\(ofElement.identifier)`"
+          "for element with identifier: `\(ofElement.cleanIdentifier)`"
 
       case .verifyText(ofElement: let ofElement, equals: let equals):
         return "expect text to equal `\(equals)`, " +
-          "for element with identifier: `\(ofElement.identifier)`"
+          "for element with identifier: `\(ofElement.cleanIdentifier)`"
 
       case .findElementsByText(text: let text):
         return "match elements by text: `\(text)`"
@@ -116,7 +116,7 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
         normalizedTargetPositionX: _, normalizedTargetPositionY: _, speed: _, holdDuration: _,
         onElement: let onElement
       ):
-        return "long press and drag element with identifier: `\(onElement.identifier)`"
+        return "long press and drag element with identifier: `\(onElement.cleanIdentifier)`"
 
       case .requestAttributes(ofElements: let ofElements):
         return "request attributes for elements with identifiers: " +

@@ -39,8 +39,8 @@ class ActionDelegate: ActionDelegateProtocol {
     testCase: XCTestCase
   ) throws {
     guard let element = element as? XCUIElement else {
-      uiLog("element (\(element) is not an XCUIElement", type: .error)
-      fatalError("element (\(element) is not an XCUIElement.")
+      uiLog("element (\(element)) is not an XCUIElement", type: .error)
+      fatalError("element (\(element)) is not an XCUIElement.")
     }
 
     uiLog("handling action: `\(action.name)`, on element: `\(element.debugDescription)`")
@@ -141,6 +141,7 @@ class ActionDelegate: ActionDelegateProtocol {
         element.setColumnToValue(value, atIndex: index)
 
       case .setDatePicker(date: let date):
+        uiLog("setting date picker to date: \(date)", type: .debug)
         let message = WhiteBoxExecutor.Message.setDatePicker(toDate: date, onElement: element)
         if let response = whiteBoxMessageHandler(message) {
           try response.assertResponse(equalsTo: .completed, for: message)
