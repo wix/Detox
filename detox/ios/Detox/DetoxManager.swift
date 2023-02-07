@@ -200,13 +200,35 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 			case "waitUntilReady":
-				safeSend(action: "isReady", messageId: messageId)
+				DTXSyncManager.enqueueMainQueueIdleClosure {
+					self.safeSend(action: "isReady", messageId: messageId)
+				}
 
 			case "shakeDevice":
 				DTXSyncManager.enqueueMainQueueIdleClosure {
 					UIDevice.dtx_shake()
 					self.safeSend(action: "deviceDidShake", messageId: messageId)
 				}
+
+			case "getAttributes":
+				let elementIDsAndFrames = params["elementIDsAndFrames"] as! [[String: Any]]
+				let elements: [UIView] = elementIDsAndFrames.map { element in
+					let targetIdentifier = element["identifier"] as! String
+					let targetFrame = element["frame"] as! [NSNumber]
+
+					return findElement(
+						byIdentifier: targetIdentifier,
+						andFrame: targetFrame
+					)
+				}
+
+				self.safeSend(
+					action: "attributes",
+					params: [
+						"elements": elements.map { $0.dtx_attributes }
+					],
+					messageId: messageId
+				)
 
 			case "findElementsByText":
 				DTXSyncManager.enqueueMainQueueIdleClosure {

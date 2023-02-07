@@ -8,22 +8,17 @@ import XCTest
 import DetoxInvokeHandler
 
 extension XCUIElement {
-  /// Returns a dictionary object, wrapped as `AnyCodable`, representing various attributes of the
-  /// element.
-  func getAttributes() -> AnyCodable {
+  /// Returns a dictionary object, representing various attributes of the element.
+  func getAttributes() -> [String: Any] {
     let activationPoint = getActivationPoint()
     let normalizedSliderPosition = elementType == .slider ? normalizedSliderPosition : nil
-
-    // TODO: implement `text` attribute(!)
-    // TODO: remove `nil` values.
-    // TODO: Update docs.
 
     let attributes = ElementAttributes(
       text: label,
       accessibilityLabel: label,
       placeholderValue: placeholderValue,
       isEnabled: isEnabled,
-      accessibilityIdentifier: identifier,
+      accessibilityIdentifier: cleanIdentifier,
       isVisible: isVisible,
       accessibilityValue: value as? String ?? String(describing: value),
       activationPoint: activationPoint,
@@ -43,11 +38,9 @@ extension XCUIElement {
       accessibilityHint: accessibilityHint,
       isSelected: isSelected,
       isFocused: hasFocus
-    ).encodeToDictionary().mapValues {
-      AnyCodable($0)
-    }
+    ).encodeToDictionary()
 
-    return AnyCodable(attributes)
+    return attributes
   }
 
   private func getActivationPoint() -> CGPoint {

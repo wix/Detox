@@ -14,4 +14,14 @@ extension CGRect {
       y: origin.y + height / 2
     )
   }
+
+  /// Dictionary representation of the rect.
+  var dictionary: [String: CGFloat] {
+    return [
+      "width": width,
+      "height": height,
+      "x": origin.x,
+      "y": origin.y
+    ]
+  }
 }

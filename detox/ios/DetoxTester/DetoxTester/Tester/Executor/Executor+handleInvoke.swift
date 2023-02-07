@@ -38,7 +38,7 @@ extension Executor {
 
     let handlerResult = try handler.handle(params)
 
-    guard let result = (handlerResult?.value ?? [:]) as? [String : AnyHashable]
+    guard let result = (handlerResult?.value ?? [:]) as? [String : Any]
     else {
       let resultString = String(describing: handlerResult?.value)
       throw Error.failedToHandleResponse(received: resultString)

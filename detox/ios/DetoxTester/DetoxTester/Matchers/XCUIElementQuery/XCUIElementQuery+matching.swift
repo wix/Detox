@@ -48,7 +48,7 @@ extension XCUIElementQuery {
             return false
           }
 
-          return identifier == id || identifier.starts(with: "\(id)_detox:")
+          return removeDetoxPostfix(from: identifier) == id
         }
         return matching(predicate)
 

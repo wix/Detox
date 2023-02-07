@@ -16,7 +16,7 @@ describe('Attributes', () => {
     return async () => {
       currentElement = element(matcher);
       console.log(`DEBUG: getAttributes request`)
-      
+
       const result = await currentElement.getAttributes();
 
       console.log(`DEBUG: getAttributes result: ${result}`)
@@ -218,7 +218,7 @@ describe('Attributes', () => {
           layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
         };
 
-        const innerViews = attributesArray.filter(a => a.identifier);
+        const innerViews = attributesArray.filter(a => a.identifier.startsWith("innerView"));
         expect(innerViews.length).toBe(2);
         expect(innerViews[0]).toMatchObject({ ...viewShape });
         expect(innerViews[1]).toMatchObject({ ...viewShape });

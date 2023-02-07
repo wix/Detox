@@ -27,8 +27,14 @@ class ElementMatcher: ElementMatcherProtocol {
       app: app
     ).run()
 
-    matcherLog("matched elements: " +
-      "\(result.map { "\($0.identifier), size: \($0.frame.size), origin: \($0.frame.origin)" } )")
+    if result.isEmpty {
+      matcherLog("found zero elements", type: .error)
+    } else {
+      matcherLog(
+        "matched elements: " +
+        "\(result.map {"(\($0.identifier), size: \($0.frame.size), origin: \($0.frame.origin))"})"
+      )
+    }
 
     return result
   }

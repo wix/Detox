@@ -259,15 +259,17 @@ class WhiteBoxExecutor {
         return .completed
 
       case .requestAttributes(let elements):
-        // TODO: implement in the white-box side.
-        whiteExecLog("get-attributes not implemented yet", type: .error)
-
         let message = createMessage(
           type: "getAttributes",
           params: [
             "elementIDsAndFrames": AnyCodable(elements.map { [
               "identifier": AnyCodable($0.identifier),
-              "frame": AnyCodable($0.frame)
+              "frame": AnyCodable([
+                $0.frame.origin.x,
+                $0.frame.origin.y,
+                $0.frame.width,
+                $0.frame.height
+              ])
             ] })
           ]
         )
@@ -276,7 +278,7 @@ class WhiteBoxExecutor {
           message,
           andExpectToType: "attributes",
           messageId: 0
-        )["values"]! as! [[String: Any]]
+        )["elements"]! as! [[String: Any]]
         ).map { EquatableDictionary(value: $0) }
 
         return .elementsAttributes(attributes)

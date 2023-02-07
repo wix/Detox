@@ -160,17 +160,37 @@ class ActionDelegate: ActionDelegateProtocol {
 
   // TODO: extract to another file.
   func getAttributes(from elements: [AnyHashable]) throws -> AnyCodable {
-    // TODO: mix XCUITest attributes with the application's attributes.
-
     let mappedElements = elements.compactMap { $0 as? XCUIElement }
     guard mappedElements.count == elements.count
     else {
       fatalError("some element in the elements list is not an XCUIElement (\(elements)).")
     }
 
-    let attributes = mappedElements.map {
-      $0.getAttributes()
+    uiLog("fetching white-box attributes from elements", type: .debug)
+    let whiteBoxAttributes = whiteBoxMessageHandler(.requestAttributes(ofElements: mappedElements))
+    guard case let .elementsAttributes(whiteBoxAttributes) = whiteBoxAttributes else {
+      uiLog(
+        "got invalid white-box attributes: \(String(describing: whiteBoxAttributes))",
+        type: .error
+      )
+      fatalError("Got invalid white-box attributes!")
     }
+
+    let whiteBoxAttributesDictionary = whiteBoxAttributes.map { $0.value }
+
+    uiLog(
+      "got white-box attributes: \(String(describing: whiteBoxAttributesDictionary))",
+      type: .debug
+    )
+
+    let attributes = mappedElements.enumerated().map { (index, element) in
+      let whiteBox = whiteBoxAttributesDictionary[index]
+      let blackBox = element.getAttributes()
+      // Prefer white-box value for backward-compatibility.
+      return whiteBox.merging(blackBox) { (first, _) in first }
+    }
+
+    uiLog("new attributes: \(attributes)", type: .debug)
 
     if attributes.count > 1 {
       return AnyCodable(["elements": attributes])
@@ -181,7 +201,7 @@ class ActionDelegate: ActionDelegateProtocol {
         throw Error.noMatchingElement
       }
 
-      return attributes
+      return AnyCodable(attributes)
     }
   }
 
