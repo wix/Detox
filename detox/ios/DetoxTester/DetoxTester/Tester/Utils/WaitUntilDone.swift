@@ -6,15 +6,15 @@
 import Foundation
 
 /// Blocks the main-thread until `done` block is called. Can execute operations on the current
-/// thread synchronically (without releasing it) by passing false `runOnMainThread` to `exec`,
+/// thread synchronically (without releasing it) by passing false `handleAsync` to `exec`,
 /// otherwise executing the operation asynchronically on an arbitrary thread.
 func WaitUntilDone(
   closure: @escaping (
     _ done: @escaping () -> Void,
-    _ exec: @escaping (_ runOnMainThread: Bool, @escaping () -> Void) -> Void
+    _ exec: @escaping (_ handleAsync: Bool, @escaping () -> Void) -> Void
   ) -> Void
 ) {
-  let dispatchQueue = DispatchQueue(label: "WaitUntilDone Dispatch Queue")
+  let backgroundQueue = DispatchQueue.global(qos: .background)
 
   let semaphore = DispatchSemaphore(value: 0)
 
@@ -28,27 +28,27 @@ func WaitUntilDone(
   // Allow only one exec operation to be handled at once.
   let waitingToExecSemaphore = DispatchSemaphore(value: 1)
 
-  let exec: (Bool, @escaping () -> Void) -> Void = { runOnMainThread, toExec in
+  let exec: (Bool, @escaping () -> Void) -> Void = { handleAsync, toExec in
     syncLog(
-      "`exec` was called (executing \(runOnMainThread ? "asynchronically" : "synchronically")), " +
+      "`exec` was called (executing \(handleAsync ? "asynchronically" : "synchronically")), " +
       "running on thread: \(Thread.current)",
       type: .debug
     )
 
-    if (runOnMainThread) {
-      dispatchQueue.sync {
+    if (handleAsync) {
+      backgroundQueue.async {
         syncLog("running on thread: \(Thread.current)")
         syncLog("`exec` started asynchronically", type: .debug)
         toExec()
       }
     } else {
       waitingToExecSemaphore.wait()
-      syncLog("next synchronous main-thread execution code block was set by `exec`, " +
-              "running on thread: \(Thread.current)", type: .debug)
+      syncLog("next synchronous main-thread execution code block was set by `exec`", type: .debug)
 
       waitingToExec = toExec
-      
+
       semaphore.signal()
+
     }
   }
   
@@ -63,13 +63,12 @@ func WaitUntilDone(
 
   while let toExec = waitingToExec {
     syncLog("`exec` started on thread: \(Thread.current)", type: .debug)
-    
+
     waitingToExec = nil
     waitingToExecSemaphore.signal()
 
-    syncLog("execution started")
     toExec()
-    syncLog("execution ended")
+    syncLog("execution finished")
 
     syncLog("waiting on thread: \(Thread.current)")
     semaphore.wait()
