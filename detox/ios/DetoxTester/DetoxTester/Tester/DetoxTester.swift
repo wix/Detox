@@ -255,8 +255,8 @@ extension DetoxTester: AppClientMessageSenderProtocol {
     semaphore.wait()
 
     guard let serverResponse = serverResponse else {
-      mainLog("server has responsed but return value is nil", type: .error)
-      fatalError("server has responsed but return value is nil")
+      mainLog("server has responded but return value is nil", type: .error)
+      fatalError("server has responded but return value is nil")
     }
     return serverResponse
   }

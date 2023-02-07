@@ -6,15 +6,15 @@
 import Foundation
 
 /// Blocks the main-thread until `done` block is called. Can execute operations on the current
-/// thread synchronically (without releasing it) by passing false `isAsync` to `exec`, otherwise
-/// executing the operation asynchronically on an arbitrary thread.
+/// thread synchronically (without releasing it) by passing false `runOnMainThread` to `exec`,
+/// otherwise executing the operation asynchronically on an arbitrary thread.
 func WaitUntilDone(
   closure: @escaping (
     _ done: @escaping () -> Void,
     _ exec: @escaping (_ runOnMainThread: Bool, @escaping () -> Void) -> Void
   ) -> Void
 ) {
-  let asyncQueue = DispatchQueue(label: "Async Calls Dispatch Queue")
+  let dispatchQueue = DispatchQueue(label: "WaitUntilDone Dispatch Queue")
 
   let semaphore = DispatchSemaphore(value: 0)
 
@@ -36,7 +36,7 @@ func WaitUntilDone(
     )
 
     if (runOnMainThread) {
-      asyncQueue.sync {
+      dispatchQueue.sync {
         syncLog("running on thread: \(Thread.current)")
         syncLog("`exec` started asynchronically", type: .debug)
         toExec()
