@@ -55,7 +55,7 @@ class WebSocketClient: NSObject {
     ]
 
     guard let webSocketSessionTask = webSocketSessionTask else {
-      wsLog("web-socket session task is nil, can't send messages to client", type: .error)
+      wsLog("web-socket session task is nil, can't send messages to client", type: .info)
       return
     }
 
@@ -86,8 +86,8 @@ class WebSocketClient: NSObject {
 
   private func receive() {
     guard let webSocketSessionTask = webSocketSessionTask else {
-      wsLog("web-socket session task is nil, can't receive messages", type: .error)
-      fatalError("web-socket session task is nil, can't receive messages")
+      wsLog("web-socket session task is nil, can't receive messages", type: .info)
+      return
     }
 
     webSocketSessionTask.receive { [weak self] result in

@@ -26,6 +26,7 @@ extension Executor {
     execLog("cleanup reported (message id: `\(messageId)`)", type: .debug)
 
     execLog("stopping runner: \(params.stopRunner)", type: .debug)
+
     if (params.stopRunner) {
       disconnect(messageId: messageId)
     }
