@@ -51,7 +51,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
   }
 
-  async [symbols.resolveConfig](opts = {}) {
+  async [symbols.resolveConfig](opts = { argv: { configuration: process.env.DETOX_DBG_SELECTED_CFG } }) {
     const session = this[$sessionState];
     if (!session.detoxConfig) {
       const configuration = require('../configuration');
