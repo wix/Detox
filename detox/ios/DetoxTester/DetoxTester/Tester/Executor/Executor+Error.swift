@@ -13,6 +13,9 @@ extension Executor {
 
     /// Tester disconnected from XCUITest executor.
     case testerDisconnected
+
+    /// Error when received invalid device orientation.
+    case invalidDeviceOrientation
   }
 }
 
@@ -25,6 +28,9 @@ extension Executor.Error: CustomStringConvertible {
 
       case .testerDisconnected:
         return "Tester disconnected from XCUITest executor"
+
+      case .invalidDeviceOrientation:
+        return "Invalid device orientation received when set device orientation"
     }
   }
 }

@@ -46,10 +46,8 @@ class Executor {
           execLog("`deliverPayload` not implemented yet: \(action)", type: .error)
           fatalError("not implemented yet")
 
-        // TODO iOS 16 issue
         case.setOrientation:
-          execLog("`setOrientation` not implemented yet: \(action)", type: .error)
-          fatalError("not implemented yet")
+          try setDeviceOrientation(params: params, messageId: messageId)
 
         case .currentStatus:
           reportCurrentStatus(messageId: messageId)

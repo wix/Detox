@@ -86,6 +86,7 @@
 		60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */; };
 		60ED001F2990EAC700BC6377 /* ServerMessageType+handleAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED001E2990EAC700BC6377 /* ServerMessageType+handleAsync.swift */; };
 		60ED002A2992476D00BC6377 /* XCUIElement+cleanIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */; };
+		60ED002C2993B58B00BC6377 /* Executor+setOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */; };
 		60F3D47128322EF500732955 /* WebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F3D47028322EF500732955 /* WebSocketServer.swift */; };
 		60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */; };
 		60F96DD8296D75E60047B332 /* XCUIElement+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */; };
@@ -240,6 +241,7 @@
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
 		60ED001E2990EAC700BC6377 /* ServerMessageType+handleAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerMessageType+handleAsync.swift"; sourceTree = "<group>"; };
 		60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+cleanIdentifier.swift"; sourceTree = "<group>"; };
+		60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setOrientation.swift"; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60F3D47028322EF500732955 /* WebSocketServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketServer.swift; sourceTree = "<group>"; };
 		60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+getAppUnderTest.swift"; sourceTree = "<group>"; };
@@ -675,6 +677,7 @@
 				60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */,
 				604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */,
 				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
+				60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */,
 			);
 			name = Handlers;
 			sourceTree = "<group>";
@@ -891,6 +894,7 @@
 				605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */,
 				6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */,
 				604B94BD28314DE600508C27 /* XCUIApplication+Common.swift in Sources */,
+				60ED002C2993B58B00BC6377 /* Executor+setOrientation.swift in Sources */,
 				60FBF6C1281AAA31000B73B1 /* ElementMatchersTests.swift in Sources */,
 				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
 				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,

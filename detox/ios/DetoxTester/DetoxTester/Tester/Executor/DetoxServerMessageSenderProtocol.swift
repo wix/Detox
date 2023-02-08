@@ -25,6 +25,7 @@ protocol DetoxServerMessageSenderProtocol: AnyObject {
 enum ResponseMessageType: String {
   case reportReady = "ready"
   case reportSetSyncSettingsDone = "setSyncSettingsDone"
+  case reportSetOrientationDone = "setOrientationDone"
   case reportWebSocketDidOpen = "login"
   case reportStatus = "currentStatusResult"
   case reportCleanupDone = "cleanupDone"
