@@ -1,5 +1,7 @@
 // All of the following configs are used in the website and documentation provided by the Design team Glyph
 
+// Colors
+
 @mixin detox-colors($prefix) {
   --#{$prefix}-r0: #f14c52ff;
   --#{$prefix}-y0: #f7ba29ff;
@@ -82,5 +84,265 @@
 
   &[data-theme='dark'] {
     @include detox-colors-dark('detox-color');
+  }
+}
+
+// Fonts
+
+@mixin h1-80 {
+  font-family: 'Nunito Sans';
+  font-size: 80px;
+  font-weight: 400;
+}
+
+@mixin h1-96 {
+  font-family: 'Nunito Sans';
+  font-size: 96px;
+  font-weight: 400;
+}
+
+@mixin h2-58 {
+  font-family: 'Nunito Sans';
+  font-size: 58px;
+  font-weight: 700;
+}
+
+@mixin h2-70 {
+  font-family: 'Nunito Sans';
+  font-size: 70px;
+  font-weight: 700;
+}
+
+@mixin h3-40 {
+  font-family: 'Nunito Sans';
+  font-size: 40px;
+  font-weight: 600;
+}
+
+@mixin h3-50 {
+  font-family: 'Nunito Sans';
+  font-size: 50px;
+  font-weight: 600;
+}
+
+@mixin h4-30 {
+  font-family: 'Nunito Sans';
+  font-size: 30px;
+  font-weight: 700;
+}
+
+@mixin h4-40 {
+  font-family: 'Nunito Sans';
+  font-size: 40px;
+  font-weight: 700;
+}
+
+@mixin h5-24 {
+  font-family: 'Nunito Sans';
+  font-size: 24px;
+  font-weight: 400;
+}
+
+@mixin h5-30 {
+  font-family: 'Nunito Sans';
+  font-size: 30px;
+  font-weight: 400;
+}
+
+@mixin t1-20 {
+  font-family: 'Nunito Sans';
+  font-size: 20px;
+  font-weight: 400;
+}
+
+@mixin t1-30 {
+  font-family: 'Nunito Sans';
+  font-size: 30px;
+  font-weight: 400;
+}
+
+@mixin t2-16 {
+  font-family: 'Nunito Sans';
+  font-size: 16px;
+  font-weight: 400;
+}
+
+@mixin t2-26 {
+  font-family: 'Nunito Sans';
+  font-size: 26px;
+  font-weight: 400;
+}
+
+@mixin t3-13 {
+  font-family: 'Nunito Sans';
+  font-size: 13px;
+  font-weight: 400;
+}
+
+@mixin t3-16 {
+  font-family: 'Nunito Sans';
+  font-size: 16px;
+  font-weight: 400;
+}
+
+// Showcase buttons
+
+@mixin showcase-default-btn {
+  background: radial-gradient(103.29deg, #7633e6 -14.83%, #5d71e6 102.26%);
+  border-radius: 10px;
+  width: 217px;
+  height: 50px;
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 100;
+  line-height: 25px;
+  color: #ffffff;
+  text-decoration: none;
+
+  &:hover {
+    background: #7633e5;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  &:active {
+    background: #5c25af;
+    color: #ffffff;
+    text-decoration: none;
+  }
+}
+
+@mixin showcase-store-btn {
+  width: 115px;
+  height: 30px;
+  line-height: 30px;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 300;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+
+  &:hover {
+    background: #7633e5;
+    color: #ffffff;
+    text-decoration: none;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  }
+
+  &:active {
+    background: #5c25af;
+    color: #ffffff;
+    text-decoration: none;
+  }
+}
+
+// Social buttons
+
+@mixin discord-btn {
+  width: 141px;
+  height: 45px;
+  line-height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 50px; // adjust if needed to fit the image
+  color: #ffffff;
+  font-size: 13px;
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  border-radius: 10px;
+  background: #718cd8 url('@site/img/discord-figma.svg') no-repeat left center;
+
+  &:hover {
+    background: #819ff8 url('@site/img/discord-figma.svg') no-repeat left center;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  &:active {
+    background: #536baf;
+    color: #ffffff;
+    text-decoration: none url('@site/img/discord-figma.svg') no-repeat left center;
+  }
+
+  span {
+    padding-left: 10px; // adjust as needed to separate the text from the image
+  }
+}
+
+@mixin twitter-btn {
+  width: 199px;
+  height: 45px;
+  line-height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 50px; // adjust if needed to fit the image
+  color: #ffffff;
+  font-size: 16px;
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 10px;
+  background: #1e9eee url('@site/img/twitter-figma.svg') no-repeat left center;
+
+  &:hover {
+    background: #43b1f7 url('@site/img/twitter-figma.svg') no-repeat left center;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  &:active {
+    background: #536baf url('@site/img/twitter-figma.svg') no-repeat left center;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  span {
+    padding-left: 10px; // adjust as needed to separate the text from the image
+  }
+}
+
+@mixin github-btn {
+  width: 93px;
+  height: 45px;
+  line-height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 50px; // adjust if needed to fit the image
+  color: #ffffff;
+  font-size: 16px;
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 10px;
+  background: #575a5d url('@site/img/gh-star-figma.svg') no-repeat left center;
+
+  &:hover {
+    background: #414c5c url('@site/img/gh-star-figma.svg') no-repeat left center;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  &:active {
+    background: #272e38 url('@site/img/gh-star-figma.svg') no-repeat left center;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  span {
+    padding-left: 10px; // adjust as needed to separate the text from the image
   }
 }
