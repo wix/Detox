@@ -1,9 +1,9 @@
-  - label: ":ios::detox: RN.69 + iOS: Tests app"
+  - label: ":ios::detox: RN .70 + iOS: Tests app"
     command:
       - "nvm install"
       - "./scripts/ci.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.69.7
+      REACT_NATIVE_VERSION: 0.70.7
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/allure*.tar.gz"
