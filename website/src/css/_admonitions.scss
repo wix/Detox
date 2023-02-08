@@ -1,7 +1,5 @@
-@include detox-colors('prefix');
-
 .alert {
-  color: var(--detox-color-a0);
+  @include detox-colors(--detox-color-a0);
 
   &--warning {
     background-color: var(--detox-color-y4a);

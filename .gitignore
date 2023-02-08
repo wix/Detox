@@ -231,3 +231,6 @@ detox/test/artifacts
 Detox-android/
 Detox-ios-src.tbz
 Detox-ios.tbz
+
+# Git VCS 
+website/**/*.css
