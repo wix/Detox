@@ -5,16 +5,16 @@ const log = require('../utils/logger').child({ cat: 'config' });
  * @param {{
  *  localConfig: Detox.DetoxConfiguration;
  *  errorComposer: import('../errors/DetoxConfigErrorComposer');
- *  configurationName: String
+ *  isCloudSession: Boolean
  * }} options
  */
 async function validateCloudAuthConfig(options) {
-    const { errorComposer, localConfig, configurationName } = options;
+    const { errorComposer, localConfig, isCloudSession } = options;
 
     const cloudAuthentication = {
         ...localConfig.cloudAuthentication
     };
-    if (configurationName !== 'android.cloud.release') {
+    if (!isCloudSession) {
         return cloudAuthentication;
     }
     if (!_.isString(cloudAuthentication.username)) {

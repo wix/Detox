@@ -18,11 +18,12 @@ const CLI_PARSER_OPTIONS = {
  * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
  * @param {*} opts.cliConfig
+ * @param {Boolean} opts.isCloudSession
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
 function composeAppsConfig(opts) {
   const appsConfig = composeAppsConfigFromAliased(opts);
-  if (opts.configurationName !== 'android.cloud.release') {
+  if (!opts.isCloudSession) {
     overrideAppLaunchArgs(appsConfig, opts.cliConfig);
   }
 

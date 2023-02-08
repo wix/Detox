@@ -9,11 +9,11 @@ const log = require('../utils/logger').child({ cat: 'config' });
  *  globalConfig: Detox.DetoxConfig;
  *  localConfig: Detox.DetoxConfiguration;
  *  errorComposer: import('../errors/DetoxConfigErrorComposer');
- *  configurationName: String
+ *  isCloudSession: Boolean
  * }} options
  */
 async function composeSessionConfig(options) {
-  const { errorComposer, cliConfig, globalConfig, localConfig, configurationName } = options;
+  const { errorComposer, cliConfig, globalConfig, localConfig, isCloudSession } = options;
   const cloudSupportedCaps = ['server', 'name', 'project', 'build'];
   const session = {
     ...globalConfig.session,
@@ -25,6 +25,9 @@ async function composeSessionConfig(options) {
     if (typeof value !== 'string' || !isValidWebsocketURL(value)) {
       throw errorComposer.invalidServerProperty();
     }
+  }
+  else if (isCloudSession) {
+    throw errorComposer.invalidSessionProperty('server');
   }
 
   if (session.sessionId != null) {
@@ -45,7 +48,7 @@ async function composeSessionConfig(options) {
     session.debugSynchronization = +cliConfig.debugSynchronization;
   }
 
-  if (configurationName === 'android.cloud.release') {
+  if (isCloudSession) {
     if (session.build != null) {
       const value = session.build;
       if (typeof value !== 'string' || value.length === 0) {

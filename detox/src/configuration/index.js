@@ -71,6 +71,8 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
+  const isCloudSession = deviceConfig.type === 'android.cloud';
+
   const appsConfig = composeAppsConfig({
     errorComposer,
     configurationName,
@@ -78,6 +80,7 @@ async function composeDetoxConfig({
     globalConfig,
     localConfig,
     cliConfig,
+    isCloudSession
   });
 
   const artifactsConfig = composeArtifactsConfig({
@@ -85,13 +88,14 @@ async function composeDetoxConfig({
     globalConfig,
     localConfig,
     cliConfig,
+    isCloudSession
   });
 
   const behaviorConfig = composeBehaviorConfig({
     globalConfig,
     localConfig,
     cliConfig,
-    configurationName
+    isCloudSession
   });
 
   const loggerConfig = composeLoggerConfig({
@@ -105,13 +109,13 @@ async function composeDetoxConfig({
     globalConfig,
     localConfig,
     cliConfig,
-    configurationName
+    isCloudSession
   });
 
   const cloudAuthenticationConfig = await validateCloudAuthConfig({
     errorComposer,
     localConfig,
-    configurationName
+    isCloudSession
   });
 
   if (configurationName === 'android.cloud.release') {

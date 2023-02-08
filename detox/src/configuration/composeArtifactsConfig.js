@@ -14,15 +14,17 @@ const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
  * @param {string} configurationName
  * @param {Detox.DetoxConfig} globalConfig
  * @param {Detox.DetoxConfiguration} localConfig
+ * @param {Boolean} isCloudSession
  */
 function composeArtifactsConfig({
   cliConfig,
   configurationName,
   localConfig,
   globalConfig,
+  isCloudSession
 }) {
   const artifactsConfig = _.defaultsDeep(
-    configurationName !== 'android.cloud.release' ? extendArtifactsConfig({
+    !isCloudSession ? extendArtifactsConfig({
       rootDir: cliConfig.artifactsLocation,
       plugins: {
         log: cliConfig.recordLogs,
