@@ -40,12 +40,16 @@ target 'example_ci' do
 end
 
 post_install do |installer|
-  react_native_post_install(
-    installer,
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false
-  )
+  if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
+    react_native_post_install(installer)
+  else
+    react_native_post_install(
+      installer,
+        # Set `mac_catalyst_enabled` to `true` in order to apply patches
+        # necessary for Mac Catalyst builds
+        :mac_catalyst_enabled => false
+    )    
+  end
 
   # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
   if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/) || ENV["REACT_NATIVE_VERSION"].match(/0.7[0].*/)
