@@ -24,12 +24,27 @@
 }
 /*===========*/
 
+/* Restyle gamburger button */
+
 .navbar__toggle {
   width: 40px;
   height: 40px;
   background-color: var(--detox-color-a3);
   border-radius: 10px;
-  display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Restyle search button */
+
+@media (max-width: 769px) {
+  button.DocSearch-Button {
+    background-color: var(--detox-color-a3);
+    height: 40px;
+    border-radius: 10px;
+    padding: 0 10px;
+  }
+  button.DocSearch-Button svg {
+    opacity: 60%;
+  }
 }
