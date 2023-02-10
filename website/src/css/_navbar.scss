@@ -24,7 +24,18 @@
 }
 /*===========*/
 
+/* Fix navbar logo */
+.navbar__logo {
+  height: 26px;
+  margin: 0 10px 0 8px;
+}
+
 /* Restyle gamburger button */
+
+.navbar {
+  position: relative;
+  height: 70px;
+}
 
 .navbar__toggle {
   width: 40px;
@@ -33,18 +44,25 @@
   border-radius: 10px;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  margin-right: 0;
+  top: 15px;
+  right: 25px;
 }
 
 /* Restyle search button */
 
-@media (max-width: 769px) {
+@media (max-width: 768px) {
   button.DocSearch-Button {
     background-color: var(--detox-color-a3);
     height: 40px;
     border-radius: 10px;
     padding: 0 10px;
   }
-  button.DocSearch-Button svg {
+  .DocSearch-Search-Icon {
     opacity: 0.6;
   }
+}
+div.searchBox_node_modules-\@docusaurus-theme-classic-lib-theme-Navbar-Search-styles-module {
+  right: 80px;
 }
