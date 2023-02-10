@@ -30,11 +30,14 @@
   margin: 0 10px 0 8px;
 }
 
-/* Restyle gamburger button */
+/* Restyle hamburger button */
 
 .navbar {
-  position: relative;
   height: 70px;
+}
+
+.navbar__items--right {
+  position: relative;
 }
 
 .navbar__toggle {
@@ -44,10 +47,14 @@
   border-radius: 10px;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  margin-right: 0;
-  top: 15px;
-  right: 25px;
+}
+@media (max-width: 768px) {
+  .navbar__toggle {
+    position: absolute;
+    margin-right: 0;
+    top: 15px;
+    right: 25px;
+  }
 }
 
 /* Restyle search button */
@@ -58,11 +65,11 @@
     height: 40px;
     border-radius: 10px;
     padding: 0 10px;
+    position: absolute;
+    top: -16px;
+    right: 48px;
   }
   .DocSearch-Search-Icon {
     opacity: 0.6;
   }
-}
-div.searchBox_node_modules-\@docusaurus-theme-classic-lib-theme-Navbar-Search-styles-module {
-  right: 80px;
 }
