@@ -68,10 +68,17 @@ class Server {
   }
 }
 
+async function runPercySnapshot() {
+  const { stdout } = await $`percy snapshot snapshots.yml`;
+  const [, buildId] = stdout.match(/Finalized build #(\d+):/m) || [];
+  return buildId || '';
+}
+
 const server = new Server();
 try {
   await server.start();
-  await $`percy snapshot snapshots.yml`
+  const buildId = await runPercySnapshot();
+  await $`percy build:wait --fail-on-changes --build ${buildId}`;
 } finally {
   await server.stop();
 }
