@@ -9,7 +9,7 @@ production = ENV["PRODUCTION"] == "1"
 def shared_pods
   config = use_native_modules!
 
-    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[8,9].*/) || ENV["REACT_NATIVE_VERSION"].match(/0.7[0].*/)
+    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70).*/)
       # Flags change depending on the env values.
       flags = get_default_flags()
 
@@ -52,7 +52,7 @@ post_install do |installer|
   end
 
   # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
-  if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/) || ENV["REACT_NATIVE_VERSION"].match(/0.7[0].*/)
+  if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(66|67|68|69|70).*/)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
