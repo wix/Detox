@@ -4,10 +4,12 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 
+production = ENV["PRODUCTION"] == "1"
+
 def shared_pods
   config = use_native_modules!
 
-    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[8,9].*/)
+    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70).*/)
       # Flags change depending on the env values.
       flags = get_default_flags()
 
@@ -38,9 +40,19 @@ target 'example_ci' do
 end
 
 post_install do |installer|
-  react_native_post_install(installer)
+  if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
+    react_native_post_install(installer)
+  else
+    react_native_post_install(
+      installer,
+        # Set `mac_catalyst_enabled` to `true` in order to apply patches
+        # necessary for Mac Catalyst builds
+        :mac_catalyst_enabled => false
+    )    
+  end
+
   # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
-  if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
+  if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(66|67|68|69|70).*/)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
