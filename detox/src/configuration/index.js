@@ -118,7 +118,7 @@ async function composeDetoxConfig({
     isCloudSession
   });
 
-  if (configurationName === 'android.cloud.release') {
+  if (isCloudSession) {
     const query_param = {
       'device': _.get(deviceConfig, 'device.name'),
       'os': _.get(deviceConfig, 'device.os'),

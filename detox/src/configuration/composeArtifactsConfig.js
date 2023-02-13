@@ -48,7 +48,7 @@ function composeArtifactsConfig({
     artifactsConfig.rootDir
   );
 
-  if (configurationName === 'android.cloud.release') {
+  if (isCloudSession) {
     validateCloudConfig(artifactsConfig);
   }
   return artifactsConfig;

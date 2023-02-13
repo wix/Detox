@@ -36,12 +36,13 @@ function composeAppsConfig(opts) {
  * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
  * @param {Detox.DetoxConfig} opts.globalConfig
  * @param {Detox.DetoxConfiguration} opts.localConfig
+ * @param {Boolean} opts.isCloudSession
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
 function composeAppsConfigFromAliased(opts) {
   /* @type {Record<string, Detox.DetoxAppConfig>} */
   const result = {};
-  const { configurationName, errorComposer, deviceConfig, globalConfig, localConfig } = opts;
+  const { configurationName, errorComposer, deviceConfig, globalConfig, localConfig, isCloudSession } = opts;
 
   const isBuiltinDevice = Boolean(deviceAppTypes[deviceConfig.type]);
   if (localConfig.app == null && localConfig.apps == null) {
@@ -97,7 +98,7 @@ function composeAppsConfigFromAliased(opts) {
       deviceConfig,
       appConfig,
       appPath,
-      configurationName
+      isCloudSession
     });
 
     if (!result[appName]) {
@@ -131,7 +132,7 @@ function overrideAppLaunchArgs(appsConfig, cliConfig) {
   }
 }
 
-function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer, configurationName }) {
+function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer, isCloudSession }) {
   const deviceType = deviceConfig.type;
   const allowedAppTypes = deviceAppTypes[deviceType];
   const supportedCloudAppsConfig = ['type', 'app', 'appClient'];
@@ -167,7 +168,7 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer, co
     }
   }
   const ignoredCloudConfigParams = _.difference(Object.keys(appConfig), supportedCloudAppsConfig);
-  if (configurationName === 'android.cloud.release' && ignoredCloudConfigParams.length > 0 ) {
+  if (isCloudSession && ignoredCloudConfigParams.length > 0 ) {
     logger.warn(`[AppConfig] The properties ${ignoredCloudConfigParams.join(', ')} are not honoured for device type 'android.cloud'`); 
   }
 }
