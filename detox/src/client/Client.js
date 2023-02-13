@@ -251,6 +251,24 @@ class Client {
     await this.sendAction(new actions.DeliverPayload(params));
   }
 
+  async waitForCloudPlatform(params) {
+    try {
+      return await this.sendAction(new actions.CloudPlatform(params));
+    } catch (err) {
+      this._successfulTestRun = false;
+      throw err;
+    }
+  }
+
+  // async waitForCloudAdb(params) {
+  //   try {
+  //     return await this.sendAction(new actions.CloudAdb(params));
+  //   } catch (err) {
+  //     this._successfulTestRun = false;
+  //     throw err;
+  //   }
+  // }
+
   async terminateApp() {
     /* see the property injection from Detox.js */
   }
