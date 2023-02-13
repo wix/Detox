@@ -16,6 +16,6 @@ import Foundation
   /// Environment argument key for accessing the session identifier of the current tests execution.
   static let detoxSessionId = "DETOX_SESSION_ID"
 
-  /// Environment argument key for accessing the application under testing bundle identifier.
-  static let appUnderTest = "APP_UNDER_TEST"
+  /// Environment argument key for accessing the port of the test target server.
+  static let testTargetServerPort = "TEST_TARGET_SERVER_PORT"
 }

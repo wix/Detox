@@ -205,16 +205,15 @@ extension WebSocketServer {
   static func makeServer(
     withDelegate delegate: WebSocketServerDelegateProtocol
   ) -> WebSocketServer {
-    let port: UInt16 = 8797
+    let port: UInt16 = UInt16(self.testTargetServerPort())!
 
     while true {
       do {
         return try WebSocketServer(withPort: port, delegate: delegate)
-        // TODO: consider trying different ports if fails..
-        // i.e: `catch is WebSocketServer.Error { port += 1 ... }`
       } catch {
         wsLog(
-          "failed to create web-socket server: \(error.localizedDescription), port: \(port)",
+          "failed to create web-socket server: \(error.localizedDescription), " +
+          "port is probably taken by another server: \(port)",
           type: .error
         )
         fatalError("Failed to create web-socket server")

@@ -103,6 +103,7 @@ extension DetoxTester: WebSocketClientDelegateProtocol {
     exec! (true) { [self] in
       mainLog("[didConnect] Executes on main thread")
 
+      // TODO: get AUT from the client BEFORE reporting ready :)
       waitUntilAppIsReady(executor.getAppUnderTest())
       webSocket.sendAction(.reportReady, messageId: -1000)
 

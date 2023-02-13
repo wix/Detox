@@ -5,17 +5,11 @@
 
 import Foundation
 
-///
+/// Bundle identifiers for commonly used apps.
 extension String {
-  ///
-  static var springBoard: String { return "com.apple.springboard" }
-
-  ///
+  /// Bundle identifier of the Preferences app (Settings).
   static var settingsApp: String { return "com.apple.Preferences" }
 
-  ///
-  static var appUnderTest: String {
-    let environment = ProcessInfo.processInfo.environment
-    return environment[EnvArgKeys.appUnderTest] ?? "com.wix.DetoxTesterApp"
-  }
+  /// Bundle identifier for the SpringBoard app (iOS Home)
+  static var springBoard: String { return "com.apple.springboard" }
 }

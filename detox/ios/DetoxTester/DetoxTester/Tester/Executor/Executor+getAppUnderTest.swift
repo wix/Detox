@@ -9,11 +9,7 @@ import XCTest
 extension Executor {
   /// Returns the app under test bundle identifier.
   public func getAppUnderTestBundleIdentifier() -> String {
-    let environment = ProcessInfo.processInfo.environment
-    guard let bundleIdentifier = environment[EnvArgKeys.appUnderTest] else {
-      execLog("app under test is undefined", type: .error)
-      fatalError("app under test is undefined")
-    }
+    // TODO: get AUT BundleID
 
     return bundleIdentifier
   }

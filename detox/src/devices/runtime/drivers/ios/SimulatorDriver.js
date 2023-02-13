@@ -3,13 +3,10 @@ const path = require('path');
 
 const exec = require('child-process-promise').exec;
 const _ = require('lodash');
-const osascript = require('node-osascript');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const { execAsync } = require('../../../../utils/childProcess');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
-const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
@@ -107,64 +104,6 @@ class SimulatorDriver extends IosDriver {
 
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
     return pid;
-  }
-
-  async launchTestTarget(launchArgs, bundleId, callback) {
-    const { udid } = this;
-
-    log.info(`Launching XCTest target.. See target logs using:\n` +
-      `\t/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact ` +
-      `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
-
-    let launchCommand = `TEST_RUNNER_IS_DETOX_ACTIVE='1' ` +
-      `TEST_RUNNER_DETOX_SERVER='${launchArgs.detoxServer}' ` +
-      `TEST_RUNNER_DETOX_SESSION_ID='${launchArgs.detoxSessionId}' ` +
-      `TEST_RUNNER_APP_UNDER_TEST='${bundleId}' ` +
-      `xcodebuild -workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace ` +
-      `-scheme DetoxTester -sdk iphonesimulator -allowProvisioningUpdates -destination 'platform=iOS Simulator,id=${udid}' test`;
-    log.info(`Executing: ${launchCommand}`);
-
-    execAsync(launchCommand, { capture: ['stdout', 'stderr'] })
-      .then(function (result) {
-        log.info(`Tests execution finished:\n ${result.stdout.toString()}`);
-      })
-      .catch(function (err) {
-        if (err.stderr === undefined) {
-          return;
-        }
-
-        log.error(`Error occurred while running the XCUITest test runner:\n${err}`);
-      });
-
-    log.info(`Allowing network permissions`);
-    await this.allowNetworkPermissionsXCUITest(callback);
-  }
-
-  async allowNetworkPermissionsXCUITest(callback) {
-    osascript.execute(
-      `tell application "System Events"
-      set frontmost of process "UserNotificationCenter" to true
-        tell process "UserNotificationCenter"
-                repeat until (exists button "Allow" of window 1)
-                    delay 1
-                end repeat
-
-                repeat while exists button "Allow" of window 1
-                    if exists button "Allow" of window 1 then
-                        click button "Allow" of window 1
-                    end if
-                end repeat
-        end tell
-      end tell`,
-      function(err, result, raw) {
-        if (err) {
-          console.error(`Network permissions are not allowed: ${err}`);
-        } else {
-          console.log(`Network permissions are allowed`);
-        }
-
-        callback();
-      });
   }
 
   async terminate(bundleId) {

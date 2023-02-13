@@ -84,6 +84,7 @@
 		60C7F51327DE2318000D417A /* DetoxServerMessageSenderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F51227DE2318000D417A /* DetoxServerMessageSenderProtocol.swift */; };
 		60C7F51F27DE3024000D417A /* libDetoxInvokeHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60C7F51A27DE2EE0000D417A /* libDetoxInvokeHandler.a */; };
 		60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */; };
+		60E7BA3D2998F0A300EC68E3 /* WebSocketServer+config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E7BA3C2998F0A300EC68E3 /* WebSocketServer+config.swift */; };
 		60ED001F2990EAC700BC6377 /* ServerMessageType+handleAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED001E2990EAC700BC6377 /* ServerMessageType+handleAsync.swift */; };
 		60ED002A2992476D00BC6377 /* XCUIElement+cleanIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */; };
 		60ED002C2993B58B00BC6377 /* Executor+setOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */; };
@@ -239,6 +240,7 @@
 		60C7F50F27DE0978000D417A /* ServerMessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMessageType.swift; sourceTree = "<group>"; };
 		60C7F51227DE2318000D417A /* DetoxServerMessageSenderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxServerMessageSenderProtocol.swift; sourceTree = "<group>"; };
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
+		60E7BA3C2998F0A300EC68E3 /* WebSocketServer+config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocketServer+config.swift"; sourceTree = "<group>"; };
 		60ED001E2990EAC700BC6377 /* ServerMessageType+handleAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerMessageType+handleAsync.swift"; sourceTree = "<group>"; };
 		60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+cleanIdentifier.swift"; sourceTree = "<group>"; };
 		60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setOrientation.swift"; sourceTree = "<group>"; };
@@ -446,6 +448,7 @@
 			isa = PBXGroup;
 			children = (
 				60F3D47028322EF500732955 /* WebSocketServer.swift */,
+				60E7BA3C2998F0A300EC68E3 /* WebSocketServer+config.swift */,
 			);
 			path = "Web Socket Server";
 			sourceTree = "<group>";
@@ -901,6 +904,7 @@
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				605980EE29814DCF00888841 /* XCUIElement+screenshot.swift in Sources */,
+				60E7BA3D2998F0A300EC68E3 /* WebSocketServer+config.swift in Sources */,
 				60534177280D8C1800C0405D /* ActionSpeed+XCUIGestureVelocity.swift in Sources */,
 				605341D5281525C600C0405D /* CGRect+Extensions.swift in Sources */,
 				60C7F51327DE2318000D417A /* DetoxServerMessageSenderProtocol.swift in Sources */,
