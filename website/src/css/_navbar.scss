@@ -24,34 +24,36 @@
 }
 /*===========*/
 
-/* Fix navbar logo */
-.navbar__logo {
-  height: 26px;
-  margin: 0 10px 0 8px;
-}
-
-/* Restyle hamburger button */
+/* Restyle logo & hamburger button */
 
 .navbar {
   height: 70px;
+
+  &__items {
+    &--right {
+      position: relative;
+    }
+  }
+
+  &__logo {
+    height: 26px;
+    margin: 0 10px 0 8px;
+  }
+
+  &__toggle {
+    width: 40px;
+    height: 40px;
+    background-color: var(--detox-color-a3);
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
-.navbar__items--right {
-  position: relative;
-}
-
-.navbar__toggle {
-  width: 40px;
-  height: 40px;
-  background-color: var(--detox-color-a3);
-  border-radius: 10px;
-  justify-content: center;
-  align-items: center;
-}
 @media (max-width: 768px) {
   .navbar__toggle {
     position: absolute;
-    margin-right: 0;
+    margin: 0;
     top: 15px;
     right: 25px;
   }
@@ -65,9 +67,6 @@
     height: 40px;
     border-radius: 10px;
     padding: 0 10px;
-    position: absolute;
-    top: -16px;
-    right: 48px;
   }
   .DocSearch-Search-Icon {
     opacity: 0.6;
