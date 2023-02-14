@@ -1,7 +1,8 @@
-const { Lock } = require('semaphore-async-await');
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
-const log = require('../../../../../utils/logger').child({ cat: 'device' });
+const { Lock } = require('semaphore-async-await');
+
+const log = require('../../../../../utils/logger').child({ cat: 'device,xcuitest' });
 
 class XCUITest {
   async launch(simulatorId, detoxServer, detoxSessionId, testTargetServerPort) {
