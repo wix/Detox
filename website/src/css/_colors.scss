@@ -1,0 +1,93 @@
+// Colors
+
+@mixin detox-colors-light($prefix) {
+  --#{$prefix}-r0: #f14c52ff;
+  --#{$prefix}-y0: #f7ba29ff;
+  --#{$prefix}-b0: #3e77e4ff;
+  --#{$prefix}-u0: #7633e5ff;
+  --#{$prefix}-e0: #3ebf72ff;
+
+  --#{$prefix}-r1a: #f14c5289;
+  --#{$prefix}-y1a: #f7ba2989;
+  --#{$prefix}-b1a: #3e77e489;
+  --#{$prefix}-u1a: #7633e589;
+  --#{$prefix}-e1a: #3ebf7289;
+
+  --#{$prefix}-r2a: #f14c5259;
+  --#{$prefix}-y2a: #f7ba2959;
+  --#{$prefix}-b2a: #3e77e459;
+  --#{$prefix}-u2a: #7633e559;
+  --#{$prefix}-e2a: #3ebf7259;
+
+  --#{$prefix}-r3a: #f14c5240;
+  --#{$prefix}-y3a: #f7ba2940;
+  --#{$prefix}-b3a: #3e77e440;
+  --#{$prefix}-u3a: #7633e540;
+  --#{$prefix}-e3a: #3ebf7240;
+
+  --#{$prefix}-r4a: #f14c5226;
+  --#{$prefix}-y4a: #f7ba2926;
+  --#{$prefix}-b4a: #3e77e426;
+  --#{$prefix}-u4a: #7633e526;
+  --#{$prefix}-e4a: #3ebf7226;
+
+  --#{$prefix}-r5a: #f14c5212;
+  --#{$prefix}-y5a: #f7ba2912;
+  --#{$prefix}-b5a: #3e77e412;
+  --#{$prefix}-u5a: #7633e512;
+  --#{$prefix}-e5a: #3ebf7212;
+
+  --#{$prefix}-a0: #12161bff;
+  --#{$prefix}-a1: #babbbdff;
+  --#{$prefix}-a2: #e0e1e1ff;
+  --#{$prefix}-a3: #f1f1f1ff;
+  --#{$prefix}-a4: #fafafaff;
+  --#{$prefix}-a5: #ffffffff;
+
+  --#{$prefix}-p0: #5c25afff;
+  --#{$prefix}-p1: #8157c1ff;
+  --#{$prefix}-p2: #9876cdff;
+  --#{$prefix}-p3: #a789d4ff;
+  --#{$prefix}-p4: #b9a1ddff;
+  --#{$prefix}-p5: #d3c4e9ff;
+}
+
+@mixin ifm-colors($prefix) {
+  --#{$prefix}-color-primary: #048fc0;
+  --#{$prefix}-color-primary-dark: #253282;
+  --#{$prefix}-color-primary-darker: #161360;
+  --#{$prefix}-color-primary-darkest: #150a51;
+  --#{$prefix}-color-primary-light: #6c43a3;
+  --#{$prefix}-color-primary-lighter: #8859c9;
+  --#{$prefix}-color-primary-lightest: #9f6de5;
+  --#{$prefix}-code-font-size: 95%;
+  --#{$prefix}-highlighted-code-line-bg: #d9e5f6;
+}
+
+@mixin detox-colors-dark($prefix) {
+  --#{$prefix}-color-a0: #ffffff;
+  --#{$prefix}-color-a1: #12161b;
+  --#{$prefix}-color-a2: #171b20;
+  --#{$prefix}-color-a3: #202429;
+  --#{$prefix}-color-a4: #313439;
+  --#{$prefix}-color-a5: #575a5d;
+}
+
+@mixin ifm-dark {
+  --ifm-background-color: #12161b;
+}
+
+@mixin docusaurus-dark {
+  --docusaurus-highlighted-code-line-bg: #414458;
+}
+
+:root {
+  @include detox-colors-light('detox-color');
+  @include ifm-colors('ifm');
+
+  &[data-theme='dark'] {
+    @include detox-colors-dark('detox-color');
+    @include ifm-dark;
+    @include docusaurus-dark;
+  }
+}

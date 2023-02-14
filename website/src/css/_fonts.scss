@@ -1,0 +1,100 @@
+// Fonts
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+
+@mixin h1-80 {
+  font-family: 'Nunito Sans';
+  font-size: 80px;
+  font-weight: 400;
+}
+
+@mixin h1-96 {
+  font-family: 'Nunito Sans';
+  font-size: 96px;
+  font-weight: 400;
+}
+
+@mixin h2-58 {
+  font-family: 'Nunito Sans';
+  font-size: 58px;
+  font-weight: 700;
+}
+
+@mixin h2-70 {
+  font-family: 'Nunito Sans';
+  font-size: 70px;
+  font-weight: 700;
+}
+
+@mixin h3-40 {
+  font-family: 'Nunito Sans';
+  font-size: 40px;
+  font-weight: 600;
+}
+
+@mixin h3-50 {
+  font-family: 'Nunito Sans';
+  font-size: 50px;
+  font-weight: 600;
+}
+
+@mixin h4-30 {
+  font-family: 'Nunito Sans';
+  font-size: 30px;
+  font-weight: 700;
+}
+
+@mixin h4-40 {
+  font-family: 'Nunito Sans';
+  font-size: 40px;
+  font-weight: 700;
+}
+
+@mixin h5-24 {
+  font-family: 'Nunito Sans';
+  font-size: 24px;
+  font-weight: 400;
+}
+
+@mixin h5-30 {
+  font-family: 'Nunito Sans';
+  font-size: 30px;
+  font-weight: 400;
+}
+
+@mixin t1-20 {
+  font-family: 'Nunito Sans';
+  font-size: 20px;
+  font-weight: 400;
+}
+
+@mixin t1-30 {
+  font-family: 'Nunito Sans';
+  font-size: 30px;
+  font-weight: 400;
+}
+
+@mixin t2-16 {
+  font-family: 'Nunito Sans';
+  font-size: 16px;
+  font-weight: 400;
+}
+
+@mixin t2-26 {
+  font-family: 'Nunito Sans';
+  font-size: 26px;
+  font-weight: 400;
+}
+
+@mixin t3-13 {
+  font-family: 'Nunito Sans';
+  font-size: 13px;
+  font-weight: 400;
+}
+
+@mixin t3-20 {
+  font-family: 'Nunito Sans';
+  font-size: 20px;
+  font-weight: 400;
+}

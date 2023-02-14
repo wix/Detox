@@ -1,5 +1,5 @@
 .alert {
-  @include detox-colors(--detox-color-a0);
+  @include detox-colors-light(--detox-color-a0);
 
   &--warning {
     background-color: var(--detox-color-y4a);
