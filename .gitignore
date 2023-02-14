@@ -226,11 +226,11 @@ detox/test/artifacts
 /examples/demo-react-native/artifacts
 /examples/demo-react-native-jest/artifacts
 
+# Git VCS 
+/website/**/*.css
+
 ## Final outputs
 
 Detox-android/
 Detox-ios-src.tbz
 Detox-ios.tbz
-
-# Git VCS 
-website/**/*.css
