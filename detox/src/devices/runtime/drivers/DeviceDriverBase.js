@@ -22,6 +22,12 @@ class DeviceDriverBase {
   }
 
   /**
+   * Starts the device driver.
+   */
+  startSession(detoxServer, detoxSessionId) {
+  }
+
+  /**
    * @returns { String | undefined }
    */
   getExternalId() {
@@ -44,10 +50,6 @@ class DeviceDriverBase {
   }
 
   async waitForAppLaunch() {
-    return NaN;
-  }
-
-  async launchTestTarget(_launchArgs, _bundleId, _callback) {
     return NaN;
   }
 

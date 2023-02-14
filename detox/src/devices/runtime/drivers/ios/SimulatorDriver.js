@@ -8,8 +8,10 @@ const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const pressAnyKey = require('../../../../utils/pressAnyKey');
+const log = require('../../../../utils/logger').child({ cat: 'driver' });
 
 const IosDriver = require('./IosDriver');
+const { launchXCUITest } = require('./XCUITestUtils');
 
 
 /**
@@ -40,6 +42,15 @@ class SimulatorDriver extends IosDriver {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
+    this._testTargetServerPort = 8997;
+  }
+
+  startSession(detoxServer, detoxSessionId) {
+    launchXCUITest(this.udid, detoxServer, detoxSessionId, this._testTargetServerPort).then(() => {
+      log.info({ event: 'XCUITEST_LAUNCHED' }, `XCUITest launched on device`);
+    }).catch((error) => {
+      log.error({ event: 'XCUITEST_LAUNCH_FAILED' }, `XCUITest failed to run on device: ${error}`);
+    });
   }
 
   getExternalId() {
@@ -96,7 +107,7 @@ class SimulatorDriver extends IosDriver {
       throw new DetoxRuntimeError({
         message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
         hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
-              `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`,
+          `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`
       });
     } else {
       log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
@@ -174,7 +185,7 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
       artifactName: screenshotName || path.basename(tempPath, '.png'),
-      artifactPath: tempPath,
+      artifactPath: tempPath
     });
 
     return tempPath;
@@ -187,7 +198,7 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'uiHierarchy',
       artifactName: artifactName,
-      artifactPath: viewHierarchyURL,
+      artifactPath: viewHierarchyURL
     });
 
     return viewHierarchyURL;

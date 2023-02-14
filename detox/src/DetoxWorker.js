@@ -180,8 +180,7 @@ class DetoxWorker {
       yield this.device.selectApp(null);
     }
 
-    // TODO: call init method to initialize the test target.
-    // yield this.device.init();
+    yield this.device.startSession();
   };
 
   async cleanup() {

@@ -88,6 +88,10 @@ class RuntimeDevice {
     return this._currentAppLaunchArgs;
   }
 
+  startSession() {
+    this.deviceDriver.startSession(this._sessionConfig.server, this._sessionConfig.sessionId);
+  }
+
   async selectApp(name) {
     if (name === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();
@@ -409,7 +413,6 @@ class RuntimeDevice {
   _prepareLaunchArgs(additionalLaunchArgs) {
     return {
       detoxServer: this._sessionConfig.server,
-      detoxTestTargetServer: `ws://localhost:8797`, // todo: important, should pass only on iOS..
       detoxSessionId: this._sessionConfig.sessionId,
       ...additionalLaunchArgs
     };
