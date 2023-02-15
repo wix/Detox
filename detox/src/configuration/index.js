@@ -121,7 +121,6 @@ async function composeDetoxConfig({
   if (isCloudSession) {
     const query_param = {
       'device': _.get(deviceConfig, 'device.name'),
-      'os': _.get(deviceConfig, 'device.os'),
       'osVersion': _.get(deviceConfig, 'device.osVersion'),
       'name': _.get(sessionConfig, 'name'),
       'project': _.get(sessionConfig, 'project'),

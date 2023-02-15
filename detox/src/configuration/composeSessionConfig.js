@@ -51,19 +51,19 @@ async function composeSessionConfig(options) {
   if (isCloudSession) {
     if (session.build != null) {
       const value = session.build;
-      if (typeof value !== 'string' || value.length === 0) {
+      if (typeof value !== 'string') {
         throw errorComposer.invalidCloudSessionProperty('build');
       }
     }
     if (session.project != null) {
       const value = session.project;
-      if (typeof value !== 'string' || value.length === 0) {
+      if (typeof value !== 'string') {
         throw errorComposer.invalidCloudSessionProperty('project');
       }
     }
     if (session.name != null) {
       const value = session.name;
-      if (typeof value !== 'string' || value.length === 0) {
+      if (typeof value !== 'string') {
         throw errorComposer.invalidCloudSessionProperty('name');
       }
     }

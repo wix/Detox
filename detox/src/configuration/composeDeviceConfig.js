@@ -250,7 +250,7 @@ const EXPECTED_DEVICE_MATCHER_PROPS = {
   'android.attached': ['adbName'],
   'android.emulator': ['avdName'],
   'android.genycloud': ['recipeUUID', 'recipeName'],
-  'android.cloud': ['name', 'os', 'osVersion']
+  'android.cloud': ['name', 'osVersion']
 };
 
 const KNOWN_TYPES = new Set(Object.keys(EXPECTED_DEVICE_MATCHER_PROPS));

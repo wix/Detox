@@ -16,8 +16,7 @@ function composeBehaviorConfig({
   isCloudSession
 }) {
   if (isCloudSession) {
-    cliConfig.reuse = false;
-    cliConfig.cleanup = false;
+    cliConfig.reuse = true;
     logger.warn(`[BehaviorConfig] The 'Behaviour' config section is not supported for device type android.cloud and will be ignored.`);
   }
   return _.chain({})
@@ -28,7 +27,7 @@ function composeBehaviorConfig({
           reinstallApp: cliConfig.reuse ? false : undefined,
         },
         cleanup: {
-          shutdownDevice: cliConfig.cleanup ? true : undefined
+          shutdownDevice: isCloudSession ? false : cliConfig.cleanup ? true : undefined
         },
         launchApp: isCloudSession ? 'auto' : undefined
       },

@@ -1,7 +1,13 @@
+const _ = require('lodash');
+
+// const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const EarlGrey = require('./invoke/EarlGrey');
 const Espresso = require('./invoke/Espresso');
 const EspressoWeb = require('./invoke/EspressoWeb');
 const Invoke = require('./invoke/Invoke');
+const logger = require('./utils/logger');
+
+const log = logger.child({ cat: 'device' });
 
 class InvocationManager {
   constructor(excutionHandler) {
@@ -17,7 +23,14 @@ class InvocationManager {
   // }
 
   async executeCloudPlatform(invocation) {
-    return await this.executionHandler.waitForCloudPlatform(invocation);
+    const response = await this.executionHandler.waitForCloudPlatform(invocation);
+    const status = _.get(response, 'response.success');
+    if (!status) {
+      const message = _.get(response, 'response.message');
+      log.warn({ error: message }, 'An error occurred while waiting for response from cloud');
+      // throw new DetoxRuntimeError(message);
+    }
+    return response;
   }
 }
 

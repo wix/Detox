@@ -15,7 +15,7 @@ const UiDeviceProxy = require('../../../../../android/espressoapi/UiDeviceProxy'
 const logger = require('../../../../../utils/logger');
 // const pressAnyKey = require('../../../../../utils/pressAnyKey');
 // const retry = require('../../../../../utils/retry');
-const sleep = require('../../../../../utils/sleep');
+// const sleep = require('../../../../../utils/sleep');
 // const apkUtils = require('../../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../../DeviceDriverBase');
 
@@ -56,7 +56,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
     // this.appInstallHelper = deps.appInstallHelper;
     // this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
-    this.instrumentation = deps.instrumentation;
+    this.instrumentation = false;
 
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
   }
@@ -145,20 +145,14 @@ class CloudAndroidDriver extends DeviceDriverBase {
     }
   }
 
-  // Check this
   async waitUntilReady() {
     try {
-      await Promise.race([
-        super.waitUntilReady(),
-        this.instrumentation.waitForCrash()
-      ]);
+      await super.waitUntilReady();
     } catch (e) {
       log.warn({ error: e }, 'An error occurred while waiting for the app to become ready. Waiting for disconnection...');
       await this.client.waitUntilDisconnected();
       log.warn('The app disconnected.');
       throw e;
-    } finally {
-      this.instrumentation.abortWaitForCrash();
     }
   }
 
@@ -186,7 +180,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
 
   // Check this
   async cleanup(bundleId) {
-    await this._terminateInstrumentation();
+    await this._terminateInstrumentation(bundleId);
     await super.cleanup(bundleId);
   }
 
@@ -228,7 +222,12 @@ class CloudAndroidDriver extends DeviceDriverBase {
     // const tempPath = temporaryPath.for.png();
     // await this.adb.pull(adbName, pathOnDevice, tempPath);
     // await this.adb.rm(adbName, pathOnDevice);
-    
+    await this.invocationManager.executeCloudPlatform({
+      'method': 'screenshot',
+      'args': {
+        'name': screenshotName
+      }
+    });
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
       artifactName: screenshotName || ''
@@ -302,17 +301,17 @@ class CloudAndroidDriver extends DeviceDriverBase {
   // }
 
   async _launchApp(adbName, bundleId, launchArgs) {
-    if (!this.instrumentation.isRunning()) {
+    if (!this.instrumentation) {
       // await this._launchInstrumentationProcess(adbName, bundleId, launchArgs);
       // launchArgs can be sent as per product
-      await this.invocationManager.executeCloudPlatform({
+      const status = _.get(await this.invocationManager.executeCloudPlatform({
         'method': 'launchApp',
         'args': {
           'bundleId': bundleId,
           'launchArgs': launchArgs
         }
-      });
-      await sleep(500);
+      }), 'response.success');
+      this.instrumentation = status;
     } else if (launchArgs.detoxURLOverride) {
       await this._startActivityWithUrl(launchArgs.detoxURLOverride);
     } else if (launchArgs.detoxUserNotificationDataURL) {
@@ -337,9 +336,13 @@ class CloudAndroidDriver extends DeviceDriverBase {
   //   return serverPort;
   // }
 
-  async _terminateInstrumentation() {
-    await this.instrumentation.terminate();
-    await this.instrumentation.setTerminationFn(null);
+  async _terminateInstrumentation(bundleId) {
+    await this.invocationManager.executeCloudPlatform({
+      'method': 'terminateApp',
+      'args': {
+        'bundleId': bundleId
+      }
+    });
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
