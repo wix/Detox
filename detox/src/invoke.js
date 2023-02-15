@@ -25,10 +25,8 @@ class InvocationManager {
   async executeCloudPlatform(invocation) {
     const response = await this.executionHandler.waitForCloudPlatform(invocation);
     const status = _.get(response, 'response.success');
-    if (!status) {
-      const message = _.get(response, 'response.message');
-      log.warn({ error: message }, 'An error occurred while waiting for response from cloud');
-      // throw new DetoxRuntimeError(message);
+    if (status.toString() === 'false') {
+      log.warn('An error occurred while waiting for response from cloud');
     }
     return response;
   }
