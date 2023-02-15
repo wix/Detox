@@ -545,6 +545,16 @@ class WaitFor {
     return this;
   }
 
+  toBeFocused() {
+    this.expectation = this.expectation.toBeFocused();
+    return this;
+  }
+
+  toBeNotFocused() {
+    this.expectation = this.expectation.toBeNotFocused();
+    return this;
+  }
+
   get not() {
     this.expectation.not;
     return this;
