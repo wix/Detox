@@ -88,10 +88,6 @@ class RuntimeDevice {
     return this._currentAppLaunchArgs;
   }
 
-  startSession() {
-    this.deviceDriver.startSession(this._sessionConfig.server, this._sessionConfig.sessionId);
-  }
-
   async selectApp(name) {
     if (name === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();

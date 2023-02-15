@@ -12,4 +12,9 @@ extension String {
 
   /// Bundle identifier for the SpringBoard app (iOS Home)
   static var springBoard: String { return "com.apple.springboard" }
+
+  /// Bundle identifier for the currently running app.
+  static var selectedApp: String {
+    return ProcessInfo.processInfo.environment[EnvArgKeys.bundleId]!;
+  }
 }

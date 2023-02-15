@@ -100,11 +100,10 @@ extension DetoxTester: WebSocketClientDelegateProtocol {
   func webSocketDidConnect(_ webSocket: WebSocketClient) {
     mainLog("web-socket did-connect")
 
-    exec! (true) { [self] in
+    exec! (true) {
       mainLog("[didConnect] Executes on main thread")
 
-      // TODO: get AUT from the client BEFORE reporting ready :)
-      waitUntilAppIsReady(executor.getAppUnderTest())
+      waitUntilAppIsReady(.selectedApp)
       webSocket.sendAction(.reportReady, messageId: -1000)
 
       mainLog("application is ready, reported as ready")
@@ -181,6 +180,15 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
     mainLog("disconnect(): closing web-socket client connection to the JS tester")
     webSocket.close()
   }
+
+  func terminate() {
+    guard let done = self.done else {
+      mainLog("unexpected call to done", type: .error)
+      fatalError("unexpected call to done, Detox is already done")
+    }
+
+    done()
+  }
 }
 
 // MARK: - WebSocketServerDelegateProtocol
@@ -210,7 +218,7 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
 
   func didCloseConnection() {
     mainLog("tester server did close connection to the app client")
-    WhiteBoxExecutor.removeHandler(with: executor.getAppUnderTestBundleIdentifier())
+    WhiteBoxExecutor.removeHandler(with: .selectedApp)
   }
 
   func serverDidConnectClient() {
@@ -218,7 +226,7 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
 
     // There is an assumption that the app is connected in a white-box manner.
     WhiteBoxExecutor.setNewHandler(
-      for: executor.getAppUnderTestBundleIdentifier(),
+      for: .selectedApp,
       withMessageSender: self
     )
 

@@ -89,7 +89,6 @@
 		60ED002A2992476D00BC6377 /* XCUIElement+cleanIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */; };
 		60ED002C2993B58B00BC6377 /* Executor+setOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */; };
 		60F3D47128322EF500732955 /* WebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F3D47028322EF500732955 /* WebSocketServer.swift */; };
-		60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */; };
 		60F96DD8296D75E60047B332 /* XCUIElement+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */; };
 		60F96DDB296D77120047B332 /* XCUIElementQuery+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */; };
 		60F96DDD296D9F050047B332 /* ActionDelegate+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */; };
@@ -246,7 +245,6 @@
 		60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setOrientation.swift"; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60F3D47028322EF500732955 /* WebSocketServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketServer.swift; sourceTree = "<group>"; };
-		60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+getAppUnderTest.swift"; sourceTree = "<group>"; };
 		60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Error.swift"; sourceTree = "<group>"; };
 		60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+Error.swift"; sourceTree = "<group>"; };
 		60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionDelegate+Error.swift"; sourceTree = "<group>"; };
@@ -669,7 +667,6 @@
 		60FBF61C28198718000B73B1 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				60F482E82805B69700C4F78D /* Executor+getAppUnderTest.swift */,
 				603497AC27F08D9300770EE0 /* Executor+Connections.swift */,
 				6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */,
 				603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */,
@@ -937,7 +934,6 @@
 				6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
-				60F482E92805B69700C4F78D /* Executor+getAppUnderTest.swift in Sources */,
 				60FBF60D28198433000B73B1 /* SliderTests.swift in Sources */,
 				60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */,
 				603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */,

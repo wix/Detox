@@ -19,21 +19,52 @@ protocol DetoxServerMessageSenderProtocol: AnyObject {
 
   /// Do disconnection of the Detox tester (close connection with JS tester server).
   func disconnect()
+
+  ///
+  func terminate()
 }
 
 /// Type of a web-socket action to be sent from Detox Tester back to Detox Server.
 enum ResponseMessageType: String {
+  ///
   case reportReady = "ready"
+
+  ///
   case reportSetSyncSettingsDone = "setSyncSettingsDone"
+
+  ///
   case reportSetOrientationDone = "setOrientationDone"
+
+  ///
   case reportWebSocketDidOpen = "login"
+
+  ///
   case reportStatus = "currentStatusResult"
+
+  ///
   case reportCleanupDone = "cleanupDone"
+
+  ///
   case reportWaitForBackgroundDone = "waitForBackgroundDone"
+
+  ///
   case reportWaitForForegroundDone = "waitForActiveDone"
+
+  ///
   case reportWaitForIdleDone = "waitForIdleDone"
+
+  ///
   case reportInvokeResult = "invokeResult"
+
+  ///
   case reportTestFailed = "testFailed"
+
+  ///
   case reportCaptureViewHierarchyDone = "captureViewHierarchyDone"
+
+  ///
   case reportShakeDeviceDone = "shakeDeviceDone"
+
+  ///
+  case reportWillTerminate = "willTerminate"
 }

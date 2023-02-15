@@ -179,8 +179,6 @@ class DetoxWorker {
     } else {
       yield this.device.selectApp(null);
     }
-
-    yield this.device.startSession();
   };
 
   async cleanup() {

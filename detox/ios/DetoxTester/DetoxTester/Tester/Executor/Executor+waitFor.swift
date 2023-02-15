@@ -11,7 +11,7 @@ extension Executor {
     let expectedAppState = state.toXCUIState()
     execLog("waiting app to run in `\(expectedAppState)`")
 
-    let hasState = getAppUnderTest().wait(for: expectedAppState, timeout: .minute)
+    let hasState = XCUIApplication.selectedApp.wait(for: expectedAppState, timeout: .minute)
 
     guard hasState else {
       execLog("timeout of minute has reached after waiting for app state \(state)", type: .error)

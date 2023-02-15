@@ -16,4 +16,9 @@ extension XCUIApplication {
   static var springBoard: XCUIApplication {
     return XCUIApplication(bundleIdentifier: .springBoard)
   }
+
+  /// Returns the currently running app.
+  static var selectedApp: XCUIApplication {
+    return XCUIApplication(bundleIdentifier: .selectedApp)
+  }
 }

@@ -142,6 +142,24 @@ class Shake extends Action {
   }
 }
 
+class Terminate extends Action {
+  constructor() {
+    super('terminate');
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'willTerminate');
+  }
+}
+
 class SetOrientation extends Action {
   constructor(params) {
     super('setOrientation', params);
@@ -336,4 +354,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
+  Terminate,
 };

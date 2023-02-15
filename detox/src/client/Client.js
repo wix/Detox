@@ -237,6 +237,12 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
+  async terminateIfNeeded() {
+    if (this.isConnected) {
+      await this.sendAction(new actions.Terminate());
+    }
+  }
+
   async setOrientation(orientation) {
     await this.sendAction(new actions.SetOrientation(orientation));
   }

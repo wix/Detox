@@ -8,12 +8,11 @@ import Foundation
 extension Executor {
   /// Used to handle the target application directly (within the app target).
   private var handler: WhiteBoxExecutor? {
-    let bundleIdentifier = getAppUnderTestBundleIdentifier()
-    let handler = WhiteBoxExecutor.getHandler(for: bundleIdentifier)
+    let handler = WhiteBoxExecutor.getHandler(for: .selectedApp)
 
     if handler == nil {
       execLog(
-        "could not find white-box handler for bundle with identifier: \(bundleIdentifier)",
+        "could not find white-box handler for bundle with identifier: \(String.selectedApp)",
         type: .debug
       )
     }

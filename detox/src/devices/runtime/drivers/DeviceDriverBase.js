@@ -22,12 +22,6 @@ class DeviceDriverBase {
   }
 
   /**
-   * Starts the device driver.
-   */
-  startSession(detoxServer, detoxSessionId) {
-  }
-
-  /**
    * @returns { String | undefined }
    */
   getExternalId() {

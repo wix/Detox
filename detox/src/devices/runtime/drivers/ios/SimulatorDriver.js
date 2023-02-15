@@ -45,14 +45,6 @@ class SimulatorDriver extends IosDriver {
     this._testTargetServerPort = 8997;
   }
 
-  startSession(detoxServer, detoxSessionId) {
-    launchXCUITest(this.udid, detoxServer, detoxSessionId, this._testTargetServerPort).then(() => {
-      log.info({ event: 'XCUITEST_LAUNCHED' }, `XCUITest launched on device`);
-    }).catch((error) => {
-      log.error({ event: 'XCUITEST_LAUNCH_FAILED' }, `XCUITest failed to run on device: ${error}`);
-    });
-  }
-
   getExternalId() {
     return this.udid;
   }
@@ -86,6 +78,10 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
+    await launchXCUITest(this.udid, launchArgs.detoxServer, launchArgs.detoxSessionId, bundleId, this._testTargetServerPort);
+
+    launchArgs = this.enrichArgs(launchArgs);
+
     const { udid } = this;
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
@@ -94,8 +90,17 @@ class SimulatorDriver extends IosDriver {
     return pid;
   }
 
+  enrichArgs(args) {
+    return {
+      ...args,
+      detoxTestTargetServer: 'ws://localhost:' + this._testTargetServerPort,
+    };
+  }
+
   async waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
     const { udid } = this;
+
+    launchArgs = this.enrichArgs(launchArgs);
 
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
 
@@ -107,7 +112,7 @@ class SimulatorDriver extends IosDriver {
       throw new DetoxRuntimeError({
         message: `Failed to find a process corresponding to the app bundle identifier (${bundleId}).`,
         hint: `Make sure that the app is running on the device (${udid}), visually or via CLI:\n` +
-          `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`
+              `xcrun simctl spawn ${this.udid} launchctl list | grep -F '${bundleId}'\n`,
       });
     } else {
       log.info({}, `Found the app (${bundleId}) with process ID = ${pid}. Proceeding...`);
@@ -120,6 +125,7 @@ class SimulatorDriver extends IosDriver {
   async terminate(bundleId) {
     const { udid } = this;
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
+    await this.client.terminateIfNeeded();
     await this._applesimutils.terminate(udid, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
   }
@@ -185,7 +191,7 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
       artifactName: screenshotName || path.basename(tempPath, '.png'),
-      artifactPath: tempPath
+      artifactPath: tempPath,
     });
 
     return tempPath;
@@ -198,7 +204,7 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'uiHierarchy',
       artifactName: artifactName,
-      artifactPath: viewHierarchyURL
+      artifactPath: viewHierarchyURL,
     });
 
     return viewHierarchyURL;

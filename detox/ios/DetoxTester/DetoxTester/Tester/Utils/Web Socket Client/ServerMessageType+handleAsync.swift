@@ -15,7 +15,7 @@ extension ServerMessageType {
         return true
 
       case .waitForActive, .waitForBackground, .waitForIdle, .invoke, .isReady, .setOrientation,
-          .shakeDevice, .loginSuccess:
+          .shakeDevice, .loginSuccess, .terminate:
         return false
     }
   }

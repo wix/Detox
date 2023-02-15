@@ -653,11 +653,6 @@ declare global {
             selectApp(app: string): Promise<void>;
 
             /**
-             * Start a new device session.
-             */
-            startSession();
-
-            /**
              * Launch the app.
              *
              * <p>For info regarding launch arguments, refer to the [dedicated guide](https://wix.github.io/Detox/docs/api/launch-args).

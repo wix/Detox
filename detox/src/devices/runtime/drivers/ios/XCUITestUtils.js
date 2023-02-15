@@ -4,11 +4,11 @@ const { Lock } = require('semaphore-async-await');
 
 const log = require('../../../../utils/logger').child({ cat: 'device,xcuitest' });
 
-async function launchXCUITest(simulatorId, detoxServer, detoxSessionId, testTargetServerPort) {
+async function launchXCUITest(simulatorId, detoxServer, detoxSessionId, bundleId, testTargetServerPort) {
   log.debug('[XCUITest] Launch was called');
 
   const lock = new Lock();
-  await _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, testTargetServerPort, () => {
+  await _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, bundleId, testTargetServerPort, () => {
     log.debug('[XCUITest] Releasing lock');
     lock.release();
   });
@@ -16,10 +16,11 @@ async function launchXCUITest(simulatorId, detoxServer, detoxSessionId, testTarg
   log.debug('[XCUITest] Waiting for the lock to be released..');
 
   await lock.acquire();
+  await lock.acquire();
   log.debug('[XCUITest] Lock was released');
 }
 
-async function _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, testTargetServerPort, callback) {
+async function _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, bundleId, testTargetServerPort, callback) {
   log.info(`[XCUITest] Launching test runner. See target logs using:\n` +
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
     `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
@@ -28,6 +29,7 @@ async function _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, testT
     `TEST_RUNNER_DETOX_SERVER='${detoxServer}' ` +
     `TEST_RUNNER_DETOX_SESSION_ID='${detoxSessionId}' ` +
     `TEST_RUNNER_TEST_TARGET_SERVER_PORT='${testTargetServerPort}' ` +
+    `TEST_RUNNER_BUNDLE_ID='${bundleId}' ` +
     `xcodebuild ` +
     `-workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace ` +
     `-scheme DetoxTester ` +

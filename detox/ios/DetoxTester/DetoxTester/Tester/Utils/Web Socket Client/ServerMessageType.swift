@@ -23,4 +23,5 @@ enum ServerMessageType: String {
   case currentStatus = "currentStatus"
   case loginSuccess = "loginSuccess"
   case captureViewHierarchy = "captureViewHierarchy"
+  case terminate = "terminate"
 }

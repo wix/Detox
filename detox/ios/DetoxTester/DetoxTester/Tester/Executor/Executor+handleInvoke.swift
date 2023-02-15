@@ -15,7 +15,7 @@ extension Executor {
     params: [String: AnyHashable],
     messageId: NSNumber
   ) throws {
-    let app = getAppUnderTest()
+    let app = XCUIApplication.selectedApp
 
     let whiteBoxMessageHandler: WhiteBoxMessageHandler = { message in
       if self.isWhiteBoxExecutorAvailable() {

@@ -18,4 +18,7 @@ import Foundation
 
   /// Environment argument key for accessing the port of the test target server.
   static let testTargetServerPort = "TEST_TARGET_SERVER_PORT"
+
+  /// Environment argument key for accessing the bundle identifier of the running app.
+  static let bundleId = "BUNDLE_ID"
 }
