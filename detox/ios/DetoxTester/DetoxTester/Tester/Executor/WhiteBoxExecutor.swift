@@ -202,6 +202,9 @@ class WhiteBoxExecutor {
           .failed(reason: "could not find element with traits: \(traits)")
 
       case .requestCurrentStatus:
+        whiteExecLog(
+          "requesting current status, running on thread: \(Thread.current)", type: .debug)
+
         let message = createMessage(type: "requestCurrentStatus")
 
         let result = send(message, andExpectToType: "currentStatusResult", messageId: 0)

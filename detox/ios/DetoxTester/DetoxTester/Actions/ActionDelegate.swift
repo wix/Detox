@@ -47,7 +47,7 @@ class ActionDelegate: ActionDelegateProtocol {
 
     switch action {
       case .tap(let times):
-        element.tap(withNumberOfTaps: Int(times))
+        try element.tap(withNumberOfTaps: Int(times))
 
       case .tapOnAxis(let x, let y):
         element.tap(on: CGPoint(x: x,y: y))

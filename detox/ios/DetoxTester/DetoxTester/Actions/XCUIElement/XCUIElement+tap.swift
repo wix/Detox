@@ -8,26 +8,31 @@ import XCTest
 
 extension XCUIElement {
   /// Taps on element multiple times.
-  func tap(withNumberOfTaps numberOfTaps: Int) {
+  func tap(withNumberOfTaps numberOfTaps: Int) throws {
     uiLog("requested tap on: `\(self)`, number of taps: \(numberOfTaps)")
+
+    guard self.isHittable else {
+      uiLog("\(self) is not hittable", type: .error)
+      throw Error.elementNotHittable(element: self)
+    }
 
     if numberOfTaps == 1 {
       tap()
-      return
-    }
+    } else {
 
-    // TODO: this call is not working as expected on React Native apps.
-    // `tap(withNumberOfTaps: numberOfTaps, numberOfTouches: 1)`
+      // TODO: this call is not working as expected on React Native apps.
+      // `tap(withNumberOfTaps: numberOfTaps, numberOfTouches: 1)`
 
-    for tapTime in 1...numberOfTaps {
-      uiLog("tapping on \(self), \(tapTime)/\(numberOfTaps) taps")
+      for tapTime in 1...numberOfTaps {
+        uiLog("tapping on \(self), \(tapTime)/\(numberOfTaps) taps")
 
-      guard self.isHittable else {
-        uiLog("\(self) is no longer hittable", type: .error)
-        return
+        guard self.isHittable else {
+          uiLog("\(self) is no longer hittable", type: .error)
+          throw Error.elementNotHittable(element: self)
+        }
+
+        shortPress()
       }
-
-      shortPress()
     }
 
     uiLog("\(self) tapped")

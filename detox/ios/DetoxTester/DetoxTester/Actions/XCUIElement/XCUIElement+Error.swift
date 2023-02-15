@@ -17,6 +17,9 @@ extension XCUIElement {
 
     /// Failed to paste new text on text input.
     case failedToPasteNewText(onAction: String)
+
+    /// Failed to hit an element (element is not hittable).
+    case elementNotHittable(element: XCUIElement)
   }
 }
 
@@ -32,6 +35,10 @@ extension XCUIElement.Error: CustomStringConvertible {
 
       case .failedToPasteNewText(let onAction):
         return "Failed to paste new text on text input, on action: \(onAction)"
+
+      case .elementNotHittable(let element):
+        return "Failed to hit element with identifier `\(element.cleanIdentifier)`, " +
+            "element is not hittable"
     }
   }
 }

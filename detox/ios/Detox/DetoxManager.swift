@@ -200,9 +200,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 			case "waitUntilReady":
-				DTXSyncManager.enqueueMainQueueIdleClosure {
-					self.safeSend(action: "isReady", messageId: messageId)
-				}
+				self.safeSend(action: "isReady", messageId: messageId)
 
 			case "shakeDevice":
 				DTXSyncManager.enqueueMainQueueIdleClosure {
