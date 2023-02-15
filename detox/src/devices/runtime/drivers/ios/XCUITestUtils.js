@@ -42,7 +42,8 @@ async function _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, bundl
 
   exec(command, { maxBuffer: 1024 * 1024 * 500 })
     .then(function (result) {
-      log.info(`[XCUITest] execution finished with result:\n ${result.stdout.toString()}`);
+      log.info(`[XCUITest] execution finished.`);
+      log.debug(`[XCUITest] execution result:\n ${result.stdout.toString()}`);
     })
     .catch(function (error) {
       log.error(`[XCUITest] execution finished with error:\n${error}`);

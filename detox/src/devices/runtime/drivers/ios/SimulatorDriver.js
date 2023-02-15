@@ -78,7 +78,9 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
-    await launchXCUITest(this.udid, launchArgs.detoxServer, launchArgs.detoxSessionId, bundleId, this._testTargetServerPort);
+    if (!this.client.isConnected) {
+      await launchXCUITest(this.udid, launchArgs.detoxServer, launchArgs.detoxSessionId, bundleId, this._testTargetServerPort);
+    }
 
     launchArgs = this.enrichArgs(launchArgs);
 

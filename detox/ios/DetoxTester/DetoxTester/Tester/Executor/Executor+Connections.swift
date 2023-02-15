@@ -36,15 +36,15 @@ extension Executor {
 
   /// Handles test-target disconnection
   func disconnect(messageId: NSNumber) {
-//    guard let serverMessageSender = serverMessageSender else {
-//      execLog("`serverMessageSender` is nil, can't do disconnection", type: .error)
-//      fatalError("`serverMessageSender` is nil, can't do clean disconnection")
-//    }
-//
-//    execLog("starting disconnect.. (message id: `\(messageId)`)", type: .debug)
-//
-//    serverMessageSender.disconnect()
-//    execLog("disconnect done (message id: `\(messageId)`)", type: .debug)
+    guard let serverMessageSender = serverMessageSender else {
+      execLog("`serverMessageSender` is nil, can't do disconnection", type: .error)
+      fatalError("`serverMessageSender` is nil, can't do clean disconnection")
+    }
+
+    execLog("starting disconnect.. (message id: `\(messageId)`)", type: .debug)
+
+    serverMessageSender.terminate()
+    execLog("disconnect done (message id: `\(messageId)`)", type: .debug)
   }
 }
 

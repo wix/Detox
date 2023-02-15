@@ -546,11 +546,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				allViews[elementIdentifier!] = evaluatedFrame
 			}
 
-			// Seems like there's some instability between the element's size and the renedered size.
+			// Seems like there's some instability between the element's size and the rendered size.
 			guard
 				elementIdentifier == identifier,
-				abs(origin.x - frame[0].doubleValue) < 0.05,
-				abs(origin.y - frame[1].doubleValue) < 0.05,
+				abs(origin.x - frame[0].doubleValue) < 1,
+				abs(origin.y - frame[1].doubleValue) < 1,
 				abs(element.frame.width - frame[2].doubleValue) < 5,
 				abs(element.frame.height - frame[3].doubleValue) < 5 else {
 				return false
