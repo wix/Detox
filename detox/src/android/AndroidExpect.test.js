@@ -165,6 +165,8 @@ describe('AndroidExpect', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
 
+      await e.waitFor(e.element(e.by.id('id'))).toBeFocused().withTimeout(0);
+      await e.waitFor(e.element(e.by.id('id'))).toBeNotFocused().withTimeout(0);
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
