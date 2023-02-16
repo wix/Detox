@@ -106,6 +106,7 @@ class SimulatorDriver extends IosDriver {
 
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
 
+    // print xcuitest launch hint
     this._applesimutils.printLaunchHint(udid, bundleId, launchArgs, languageAndLocale);
     await pressAnyKey();
 

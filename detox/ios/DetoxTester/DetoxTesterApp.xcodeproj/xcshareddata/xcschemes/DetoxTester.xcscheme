@@ -74,6 +74,28 @@
             ReferencedContainer = "container:DetoxTesterApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "TEST_RUNNER_TEST_TARGET_SERVER_PORT"
+            value = "8997"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_RUNNER_BUNDLE_ID"
+            value = "com.wix.detox-example"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_RUNNER_DETOX_SERVER"
+            value = "ws://localhost:8099"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TEST_RUNNER_DETOX_SESSION_ID"
+            value = "com.wix.detox-example"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

@@ -20,6 +20,8 @@ async function launchXCUITest(simulatorId, detoxServer, detoxSessionId, bundleId
   log.debug('[XCUITest] Lock was released');
 }
 
+// TODO: add manual launch hint.
+
 async function _runLaunchCommand(simulatorId, detoxServer, detoxSessionId, bundleId, testTargetServerPort, callback) {
   log.info(`[XCUITest] Launching test runner. See target logs using:\n` +
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
