@@ -48,7 +48,9 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}
 	
 	private func safeSend(action: String, params: [String: Any] = [:], messageId: NSNumber) {
+		log.info("safe sending: \(action)")
 		DTXSyncManager.enqueueMainQueueIdleClosure {
+			log.info("safe sending on the main-thread: \(action)")
 			self.webSocket.sendAction(action, params: params, messageId: messageId)
 		}
 	}
@@ -80,7 +82,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		}
 		
 		let options = UserDefaults.standard
-		let detoxServer = options.string(forKey: "detoxTestTargetServer") ?? "ws://localhost:8797"
+		let detoxServer = options.string(forKey: "detoxTestTargetServer") ?? "ws://localhost:8997"
 		let detoxSessionId = options.string(forKey: "detoxSessionId") ?? Bundle.main.bundleIdentifier!
 		
 		webSocket.connect(toServer: URL(string: detoxServer)!, withSessionId: detoxSessionId)
@@ -200,6 +202,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 			case "waitUntilReady":
+				log.info("waiting until ready...")
 				self.safeSend(action: "isReady", messageId: messageId)
 
 			case "shakeDevice":
@@ -354,6 +357,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				}
 
 			case "requestCurrentStatus":
+				log.info("requesting current status")
 				DTXSyncManager.status { status in
 					self.webSocket.sendAction(
 						"currentStatusResult",
