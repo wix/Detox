@@ -78,11 +78,7 @@ const server = new Server();
 try {
   await server.start();
   const buildId = await runPercySnapshot();
-  try {
-    await $`percy build:wait --fail-on-changes --build ${buildId}`;
-  } catch (e) {
-    console.error('@noomorph says: This is a known issue. I contacted already their support team.');
-  }
+  await $`percy build:wait --fail-on-changes --build ${buildId}`;
 } finally {
   await server.stop();
 }
