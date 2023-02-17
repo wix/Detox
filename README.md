@@ -56,7 +56,8 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ### Environment
 
-##### OS:
+**OS:**
+
 - **macOS:** v10.15 (Catalina) or higher
   - **Xcode**: v11.0 or higher
   - **iOS Simulator Runtime**: iOS v13.0 or higher
@@ -69,8 +70,8 @@ Detox is built from the ground up to support React Native projects as well as pu
 
 Detox works, at least officially, with the following React Native versions:
 
-| iOS             | Android                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| iOS             | Android                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | 0.68.x - 0.70.7 | 0.68.x - 0.70.7 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) |
 
 Newer versions, as well as React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page), are most likely supported, but have not been tested out yet.
