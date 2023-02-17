@@ -53,7 +53,7 @@ class Noop extends ArtifactsManagerFactory {
     super(new EmptyProvider());
   }
   createArtifactsManager(artifactsConfig) {
-    const artifactsManager = new CloudArtifactsManager(artifactsConfig);
+    const artifactsManager = new CloudArtifactsManager();
     return artifactsManager;
   }
 }

@@ -41,7 +41,7 @@ class Login extends Action {
   }
 
   get timeout() {
-    return 1000;
+    return 240000;
   }
 
   async handle(response) {
@@ -194,6 +194,13 @@ class CloudPlatform extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'CloudPlatform');
+    const json = JSON.parse(response);
+    const status = json && json.response && json.response.success && json.response.success.toString() === 'true';
+    const log = logger.child({ cat: 'device' });
+    if (!status) {
+      log.warn(json.response.message);
+    }
+    return response;
   }
 }
 

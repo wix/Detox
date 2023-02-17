@@ -84,9 +84,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
     await this._terminateInstrumentation();
   }
 
-  // Check this
   async cleanup(bundleId) {
-    await this._terminateInstrumentation(bundleId);
     await super.cleanup(bundleId);
   }
 
@@ -106,7 +104,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(EspressoDetoxApi.setSynchronization(false));
   }
 
-  // Check this
+  // Throw error if api fails
   async takeScreenshot(screenshotName) {
     await this.invocationManager.executeCloudPlatform({
       'method': 'screenshot',
@@ -136,10 +134,11 @@ class CloudAndroidDriver extends DeviceDriverBase {
           'launchArgs': launchArgs
         }
       });
-      const status = _.get(response, 'response.success');
+      const json = JSON.parse(response);
+      const status = _.get(json, 'response.success');
       this.instrumentation = status;
-      if(status.toString() === 'false')
-        throw new DetoxRuntimeError({ error: _.get(response, 'response.message') });
+      if(!status || status.toString() === 'false')
+        throw new DetoxRuntimeError(_.get(response, 'response.message'));
     } else if (launchArgs.detoxURLOverride) {
       await this._startActivityWithUrl(launchArgs.detoxURLOverride);
     } else {
@@ -147,6 +146,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
     }
   }
 
+  // Do we want to throw error if terminate app fails
   async _terminateInstrumentation(bundleId) {
     await this.invocationManager.executeCloudPlatform({
       'method': 'terminateApp',
