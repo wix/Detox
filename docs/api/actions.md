@@ -233,7 +233,7 @@ Sets the date-picker’s date to the specified date and time.
 `dateString`—The date to set. Should match the format provided by `dateFormat`.<br/>
 `dateFormat`—The format of `dateString`. Should be either [`'ISO8601'`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString), or an explicit date representation format, as supported by [`NSDateFormatter`] on iOS / [`DateTimeFormatter`] on Android (e.g. `'yyyy/MM/dd'`).
 
->_The recommended `dateFormat` is `ISO8601`._
+> _The recommended `dateFormat` is `ISO8601`._
 
 Examples:
 
@@ -362,9 +362,15 @@ await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0)
 ```
 
 [`testID`]: ../guide/test-id.mdx
+
 [`by.type`]: ../api/matchers.md#bytypeclassname
+
 [`Date.prototype.toISOString()`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+
 [`NSDateFormatter`]: https://developer.apple.com/documentation/foundation/dateformatter
+
 [`DateTimeFormatter`]: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
 [`@react-native-community/datetimepicker`]: https://www.npmjs.com/package/@react-native-community/datetimepicker
+
 [PR datetimepicker#705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705

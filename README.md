@@ -56,21 +56,28 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ### Environment
 
-- **OS**: macOS 10.15 (Catalina) or higher; Ubuntu Linux 20.04 or higher; Windows 10 Version 1803 or higher
-- **Xcode**: 11.0 or higher
-  - **iOS Simulator Runtime**: iOS 13.0 or higher
+**OS:**
+
+- **macOS:** v10.15 (Catalina) or higher
+  - **Xcode**: v11.0 or higher
+  - **iOS Simulator Runtime**: iOS v13.0 or higher
+- **Ubuntu linux:** v20.04 or higher
+- **Windows 10:** Version 1803 or higher
 
 ### React Native
 
 Detox is built from the ground up to support React Native projects as well as pure native ones.
 
-The following React Native versions have been tested:
+Detox works, at least officially, with the following React Native versions:
 
-| iOS             | Android                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 0.68.x - 0.69.7 | 0.68.x - 0.69.7 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) \* |
+| iOS             | Android                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 0.68.x - 0.70.7 | 0.68.x - 0.70.7 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) |
 
-Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
+Newer versions, as well as React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page), are most likely supported, but have not been tested out yet.
+Please [submit an issue](https://github.com/wix/Detox/issues/new/choose) if you find specific problems with more recent React Native versions.
+
+For support for React Native 0.71.x, please track [this issue](https://github.com/wix/Detox/issues/3884).
 
 ## Get Started with Detox
 
