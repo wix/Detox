@@ -1,6 +1,7 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+import IntroRN from './partials/_getting-started-rn.md';
 import IntroExpo from './partials/_getting-started-expo.md';
 import IntroOther from './partials/_getting-started-other.mdx';
 
@@ -16,7 +17,9 @@ Bear with us - it is all necessary, and once set up, it is easy to move forward 
 Please select type of your mobile application before you start the tutorial:
 
 <Tabs groupId="appType">
-    <TabItem value="start-rn" label="React Native" default />
+    <TabItem value="start-rn" label="React Native" default>
+        <IntroRN />
+    </TabItem>
     <TabItem value="start-expo" label="Expo">
         <IntroExpo />
     </TabItem>

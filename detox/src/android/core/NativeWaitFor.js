@@ -65,6 +65,14 @@ class NativeWaitForElement extends NativeWaitFor {
   toNotHaveValue(value) {
     return this.not.toHaveValue(value);
   }
+
+  toBeFocused() {
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new matchers.FocusMatcher().not : new matchers.FocusMatcher());
+  }
+
+  toBeNotFocused() {
+    return this.not.toBeFocused();
+  }
 }
 
 module.exports = {

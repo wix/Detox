@@ -165,6 +165,8 @@ describe('AndroidExpect', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
 
+      await e.waitFor(e.element(e.by.id('id'))).toBeFocused().withTimeout(0);
+      await e.waitFor(e.element(e.by.id('id'))).toBeNotFocused().withTimeout(0);
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
@@ -235,6 +237,17 @@ describe('AndroidExpect', () => {
         await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll(100, 0));
         await expectToThrow(() => e.element(e.by.id('ScrollView161')).scrollTo(0));
         await expectToThrow(() => e.element(e.by.id('ScrollView161')).scrollTo('noDirection'));
+      });
+
+      it('should setDatePickerDate', async () => {
+        await e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
+        await e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019/02/06', 'YYYY/MM/DD');
+      });
+
+      it('should not setDatePickerDate given bad args', async () => {
+        await expectToThrow(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06', 'yyyy-mm-dd'));
+        await expectToThrow(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00'));
+        await expectToThrow(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate(2019, 'ISO8601'));
       });
 
       it('should swipe', async () => {

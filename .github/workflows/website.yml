@@ -3,8 +3,16 @@ name: Website
 on:
   pull_request:
     branches: [master]
+    paths:
+      - '.github/workflows/website.yml'
+      - 'docs/**'
+      - 'website/**'
   push:
     branches: [master]
+    paths:
+      - '.github/workflows/website.yml'
+      - 'docs/**'
+      - 'website/**'
 
 jobs:
   checks:
@@ -15,11 +23,23 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '16.x'
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            website:
+              - 'website/**'
       - name: Test Build
+        working-directory: ./website
         run: |
-          cd website/
           npm i
           npm run build
+      - name: Run Percy Snapshot
+        working-directory: ./website
+        if: steps.changes.outputs.website == 'true'
+        run: npm run percy
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
   gh-release:
     if: github.event_name != 'pull_request'
     permissions:
@@ -37,10 +57,28 @@ jobs:
         env:
           USE_SSH: true
           GIT_USER: git
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
         run: |
           git config --global user.email "mobile1@wix.com"
           git config --global user.name "mobilewix"
           cd website/
           npm i
           npm run build
+          npm run percy
           npx docusaurus deploy
+  performance:
+    needs: gh-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
+      - name: Lighthouse
+        uses: foo-software/lighthouse-check-action@master
+        with:
+          urls: 'https://wix.github.io/Detox/,https://wix.github.io/Detox/docs/next/demo/'
+          outputDirectory: ${{ github.workspace }}/tmp/artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Lighthouse reports
+          path: ${{ github.workspace }}/tmp/artifacts

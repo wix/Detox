@@ -1,0 +1,13 @@
+.footer {
+  background-color: #ffffff;
+  border-top: 1px solid #f2eeeee8;
+}
+
+[data-theme='dark'] .footer {
+  background-color: #12161b;
+  border-top: 1px solid #202429;
+}
+
+.footer__link-item a {
+  text-decoration: none;
+}

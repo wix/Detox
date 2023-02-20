@@ -9,6 +9,7 @@ const log = detox.log.child({ cat: ['lifecycle', 'cli'] });
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
 const { toSimplePath } = require('../../src/utils/pathUtils');
 const { escapeSpaces, useForwardSlashes } = require('../../src/utils/shellUtils');
+const { markErrorAsLogged } = require('../utils/cliErrorHandling');
 
 const TestRunnerError = require('./TestRunnerError');
 
@@ -142,7 +143,7 @@ class TestRunnerCommand {
               signal,
             });
             log.error.end({ success: false, code, signal }, error.message);
-            reject(error);
+            reject(markErrorAsLogged(error));
           }
         });
     });

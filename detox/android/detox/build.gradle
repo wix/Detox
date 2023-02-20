@@ -95,6 +95,10 @@ dependencies {
     api('androidx.test.espresso:espresso-web:3.4.0') {
         because 'Web-View testing'
     }
+    api('androidx.test.espresso:espresso-contrib:3.4.0') {
+        because 'Android datepicker support'
+        exclude group: "org.checkerframework", module: "checker"
+    }
     api('androidx.test:rules:1.4.0') {
         because 'of ActivityTestRule. Needed by users *and* internally used by Detox.'
     }

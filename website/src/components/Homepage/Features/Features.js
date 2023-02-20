@@ -1,5 +1,5 @@
 import React from 'react';
-import './Features.css';
+import './Features.scss';
 
 const Features = ({ Svg, title, description }) => {
   return (
