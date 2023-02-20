@@ -65,7 +65,7 @@ describe('WaitFor', () => {
 
   it('should fail test after waiting for element to exist but it doesn\'t at the end', async () => {
     await expect(element(by.id('neverAppearingText'))).not.toExist();
-    await expectToThrow(() => waitFor(element(by.id('neverAppearingText'))).toExist().withTimeout(timeout));
+    await expectToThrow(() => waitFor(element(by.id('neverAppearingText'))).toExist().withTimeout(500));
   });
 
   it('should abort scrolling if element was not found', async () => {
