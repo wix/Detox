@@ -192,7 +192,7 @@ In other words, if you’re implementing (or using) a custom integration with so
 
 #### `testRunner.jest.setupTimeout` \[number]
 
-Default: `300000` (5 minutes).
+Default: `120000` (2 minutes).
 
 As a part of the [environment setup](https://jestjs.io/docs/configuration/#testenvironment-string)), Detox boots the device and installs the apps.
 If that takes longer than the specified value, the entire test suite will be considered as failed, e.g.:
@@ -201,7 +201,7 @@ If that takes longer than the specified value, the entire test suite will be con
  FAIL  e2e/starter.test.js
   ● Test suite failed to run
 
-    Exceeded timeout of 300000ms while setting up Detox environment
+    Exceeded timeout of 120000ms while setting up Detox environment
 ```
 
 #### `testRunner.jest.teardownTimeout` \[number]
