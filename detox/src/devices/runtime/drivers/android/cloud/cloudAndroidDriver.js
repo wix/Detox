@@ -81,7 +81,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
   // }
 
   async terminate(bundleId) {
-    await this._terminateInstrumentation();
+    return await this._terminateInstrumentation();
   }
 
   async cleanup(bundleId) {
@@ -134,7 +134,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
           'launchArgs': launchArgs
         }
       });
-      const json = JSON.parse(response);
+      const json = response;
       const status = _.get(json, 'response.success');
       this.instrumentation = status;
       if(!status || status.toString() === 'false')
@@ -148,7 +148,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
 
   // Do we want to throw error if terminate app fails
   async _terminateInstrumentation(bundleId) {
-    await this.invocationManager.executeCloudPlatform({
+    return await this.invocationManager.executeCloudPlatform({
       'method': 'terminateApp',
       'args': {}
     });
