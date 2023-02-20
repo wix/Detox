@@ -1,9 +1,9 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "20.1.4",
+  "version": "20.1.5",
   "private": true,
   "devDependencies": {
-    "detox": "^20.1.4"
+    "detox": "^20.1.5"
   },
   "detox": {
     "specs": "",
