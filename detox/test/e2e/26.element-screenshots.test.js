@@ -12,9 +12,6 @@ describe('Element screenshots', () => {
 
     const bitmapPath = await element(by.id('fancyElement')).takeScreenshot();
 
-    // save bitmapPath to the screenshotAssetPath:
-    fs.copyFileSync(bitmapPath, screenshotAssetPath);
-
     expectBitmapsToBeEqual(bitmapPath, screenshotAssetPath);
   });
 
@@ -24,9 +21,6 @@ describe('Element screenshots', () => {
     await element(by.id('switchOrientation')).tap();
 
     const bitmapPath = await element(by.id('fancyElement')).takeScreenshot('fancy-element');
-    
-    // save bitmapPath to the screenshotAssetPath:
-    fs.copyFileSync(bitmapPath, screenshotAssetPath);
 
     expectBitmapsToBeEqual(bitmapPath, screenshotAssetPath);
   });
