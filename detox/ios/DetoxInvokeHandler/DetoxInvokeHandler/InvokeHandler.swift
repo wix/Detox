@@ -235,7 +235,7 @@ public class InvokeHandler {
         return try adjustSliderAction(params: params)
 
       case .getAttributes:
-        throw fatalError("invalid action handling request, cannot handle get-attributes from here")
+        fatalError("invalid action handling request, cannot handle get-attributes from here")
     }
   }
 

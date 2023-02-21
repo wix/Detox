@@ -135,7 +135,7 @@ class ActionDelegate: ActionDelegateProtocol {
         try element.changeText(change, app: app)
 
       case .scroll(let type):
-        element.scroll(type, app: app)
+        try element.scroll(type, app: app)
 
       case .setColumnToValue(index: let index, value: let value):
         element.setColumnToValue(value, atIndex: index)

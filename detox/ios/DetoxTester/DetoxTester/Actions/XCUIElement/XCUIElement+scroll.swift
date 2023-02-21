@@ -11,10 +11,15 @@ extension XCUIElement {
   ///
   /// - Note: `scroll(byDeltaX: CGFloat, deltaY: CGFloat)` is not supported in iOS, see:
   /// https://developer.apple.com/documentation/xctest/xcuielement/1500758-scroll
-  func scroll(_ type: Action.ScrollType, app: XCUIApplication) {
+  func scroll(_ type: Action.ScrollType, app: XCUIApplication) throws {
+    if !isHittable {
+      uiLog("scrolling was called, but element is not scrollable", type: .error)
+      throw Error.elementNotScrollable(element: self)
+    }
+
     switch type {
       case .to(let edge):
-        scroll(toEdge: edge, app: app)
+        try scroll(toEdge: edge, app: app)
 
       case .withParams(
         offset: let offset,
@@ -22,7 +27,7 @@ extension XCUIElement {
         startNormalizedPositionX: let normalizedPositionX,
         startNormalizedPositionY: let normalizedPositionY
       ):
-        scroll(
+        try scroll(
           fromNormalizedOffsetX: normalizedPositionX,
           normalizedOffsetY: normalizedPositionY,
           withOffset: offset,
@@ -32,9 +37,14 @@ extension XCUIElement {
     }
   }
 
-  private func scroll(toEdge edge: Action.ScrollToEdgeType, app: XCUIApplication) {
+  private func scroll(toEdge edge: Action.ScrollToEdgeType, app: XCUIApplication) throws {
     var lastPNG = screenshot().pngRepresentation
+    var count = 0
+
     while (true) {
+      uiLog("swipe #\(count) in direction: \(edge)")
+      count += 1
+
       switch edge {
         case .top:
           swipeDown()
@@ -51,6 +61,10 @@ extension XCUIElement {
 
       let newPNG = screenshot().pngRepresentation
       if newPNG == lastPNG {
+        if (count == 1) {
+          throw Error.elementNotScrollable(element: self)
+        }
+
         return
       }
 
@@ -64,9 +78,11 @@ extension XCUIElement {
     withOffset offset: CGFloat,
     toDirection direction: Action.ScrollDirection,
     app: XCUIApplication
-  ) {
+  ) throws {
     let direction = direction.toSwipeDirection()
     let normalizedOffset = normalize(offset, in: direction, app: app)
+
+    var startScreenshot = screenshot().pngRepresentation
 
     swipe(
       direction: direction,
@@ -76,6 +92,12 @@ extension XCUIElement {
       normalizedStartingPointY: normalizedOffsetY,
       app: app
     )
+
+    let endScreenshot = screenshot().pngRepresentation
+
+    if (startScreenshot == endScreenshot) {
+      throw Error.elementNotScrollable(element: self)
+    }
   }
 
   private func normalize(

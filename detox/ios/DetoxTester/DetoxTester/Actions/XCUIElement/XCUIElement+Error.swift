@@ -20,6 +20,9 @@ extension XCUIElement {
 
     /// Failed to hit an element (element is not hittable).
     case elementNotHittable(element: XCUIElement)
+
+    /// Failed to scroll an element (element is not scrollable).
+    case elementNotScrollable(element: XCUIElement)
   }
 }
 
@@ -37,8 +40,14 @@ extension XCUIElement.Error: CustomStringConvertible {
         return "Failed to paste new text on text input, on action: \(onAction)"
 
       case .elementNotHittable(let element):
-        return "Failed to hit element with identifier `\(element.cleanIdentifier)`, " +
-            "element is not hittable"
+        return "Failed to hit element with identifier " +
+          "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`, " +
+          "element is not hittable"
+
+      case .elementNotScrollable(let element):
+        return "Failed to scroll element with identifier " +
+          "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`, " +
+          "element is not scrollable"
     }
   }
 }

@@ -76,24 +76,29 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "TEST_RUNNER_TEST_TARGET_SERVER_PORT"
+            key = "TEST_TARGET_SERVER_PORT"
             value = "8997"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "TEST_RUNNER_BUNDLE_ID"
+            key = "IS_DETOX_ACTIVE"
+            value = "1"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "BUNDLE_ID"
             value = "com.wix.detox-example"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "TEST_RUNNER_DETOX_SERVER"
+            key = "DETOX_SERVER"
             value = "ws://localhost:8099"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "TEST_RUNNER_DETOX_SESSION_ID"
+            key = "DETOX_SESSION_ID"
             value = "com.wix.detox-example"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>

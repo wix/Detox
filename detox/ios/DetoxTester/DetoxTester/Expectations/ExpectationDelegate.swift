@@ -64,7 +64,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
         }
 
         expectLog(
-          "expecation failed with error: `\(error)`, " +
+          "expectation failed with error: `\(error)`, " +
           "retrying before reaching timeout after \(timeoutSeconds) seconds, " +
           "passed: \(secondsPassed) seconds.",
           type: .debug
