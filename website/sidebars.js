@@ -42,6 +42,7 @@ const sidebars = {
         'guide/developing-while-writing-tests',
         'guide/android-dev-env',
         'guide/proguard-configuration',
+        'guide/cucumber-js-integration',
         'guide/uninstalling',
       ]
     },

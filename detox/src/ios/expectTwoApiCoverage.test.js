@@ -223,6 +223,8 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveLabel('value');
       await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
+      await e.waitFor(e.element(e.by.id('id'))).toBeFocused().withTimeout(0);
+      await e.waitFor(e.element(e.by.id('id'))).toBeNotFocused().withTimeout(0);
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
