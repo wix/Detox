@@ -19,11 +19,12 @@ buildscript {
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
-        mavenCentral()
         google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath "com.android.tools.build:gradle:7.3.1"
+        classpath 'com.facebook.react:react-native-gradle-plugin'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
@@ -32,16 +33,16 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        maven {
-            url "$projectDir/../../node_modules/react-native/android"
-        }
-    }
-}
+// allprojects {
+//     repositories {
+//         mavenLocal()
+//         mavenCentral()
+//         google()
+//         maven {
+//             url "$projectDir/../../node_modules/react-native/android"
+//         }
+//     }
+// }
 
 subprojects {
     afterEvaluate { p ->
