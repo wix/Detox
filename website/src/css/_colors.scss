@@ -1,69 +1,83 @@
-// Define the base colors
-$detox-color: (
-  'r': #f14c52,
-  'y': #f7ba29,
-  'b': #3e77e4,
-  'u': #7633e5,
-  'e': #3ebf72
-);
-
-// Define the transparency levels
-$transparency-levels: (1, 0.8, 0.6, 0.5);
-
-// Generate the color map
-$color-map: ();
-@each $color, $value in $detox-color {
-  $color-prefix: $color + '0';
-  $color-map: map-merge(
-    $color-map,
-    (
-      '#{$color-prefix}': (
-        $value,
-        $value
-      )
-    )
-  );
-  @for $i from 1 through 4 {
-    $color-prefix: $color + $i + 'a';
-    $color-value: if(type-of($value) == 'color', rgba($value, nth($transparency-levels, $i)), $value);
-    $color-map: map-merge(
-      $color-map,
-      (
-        '#{$color-prefix}': (
-          $color-value,
-          $color-value
-        )
-      )
+:root {
+  @mixin define-detox-extra-colors() {
+    // Define the base colors
+    $color: (
+      'r': #f14c52,
+      'y': #f7ba29,
+      'b': #3e77e4,
+      'u': #7633e5,
+      'e': #3ebf72
     );
+
+    // Define the transparency levels
+    $alpha: (
+      '0': 1,
+      '1a': 0.54,
+      '2a': 0.35,
+      '3a': 0.25,
+      '4a': 0.15,
+      '5a': 0.7
+    );
+
+    @each $key, $hex in $color {
+      @each $level, $fraction in $alpha {
+        --detox-color-#{$key}#{$level}: #{transparentize($hex, 1 - $fraction)};
+      }
+    }
   }
-}
 
-// Output the color map
-:root {
-  @each $name, $detox-color in $color-map {
-    $base-color: nth($detox-color, 1);
-    $light-color: nth($detox-color, 2);
-    --#{$name}: #{$base-color};
-    --#{$name}-light: #{$light-color};
+  @mixin define-detox-colors($map) {
+    @each $key, $hex in $map {
+      --detox-color-#{$key}: #{$hex};
+    }
   }
-}
 
-// Define the dark mode variables
-$dark-background-color: #12161b;
-$dark-border-color: #323846;
+  @include define-detox-extra-colors();
+  @include define-detox-colors((
+    'p0': #5c25af,
+    'p1': #8157c1,
+    'p2': #9876cd,
+    'p3': #a789d4,
+    'p4': #b9a1dd,
+    'p5': #d3c4e9
+  ));
 
-// Apply the dark mode variables
-:root {
-  --ifm-background-color: $dark-background-color;
-  --docusaurus-highlighted-code-line-bg: #414458;
-  --detox-color-warning-bg: var(--detox-color-y4a);
-  --detox-color-warning-border: var(--detox-color-y0);
-  --detox-color-info-bg: var(--detox-color-b4a);
-  --detox-color-info-border: var(--detox-color-b0);
-  --detox-color-danger-bg: var(--detox-color-r4a);
-  --detox-color-danger-border: var(--detox-color-r0);
-  --detox-color-secondary-bg: var(--detox-color-u4a);
-  --detox-color-secondary-border: var(--detox-color-u0);
-  --detox-color-success-bg: var(--detox-color-e4a);
-  --detox-color-success-border: var(--detox-color-e0);
+  &[data-theme='light'] {
+    @include define-detox-colors((
+      'a0': #12161b,
+      'a1': #babbbd,
+      'a2': #e0e1e1,
+      'a3': #f1f1f1,
+      'a4': #fafafa,
+      'a5': #ffffff
+    ));
+
+    --docusaurus-highlighted-code-line-bg: #d9e5f6;
+  }
+
+  &[data-theme='dark'] {
+    @include define-detox-colors((
+      'a0': #ffffff,
+      'a1': #12161b,
+      'a2': #171b20,
+      'a3': #202429,
+      'a4': #313439,
+      'a5': #575a5d
+    ));
+
+    --docusaurus-highlighted-code-line-bg: #414458;
+    --ifm-background-color: var(--detox-color-a1);
+  }
+
+  --ifm-color-primary: #048fc0;
+
+  --ifm-color-primary-dark: #253282;
+  --ifm-color-primary-darker: #161360;
+  --ifm-color-primary-darkest: #150a51;
+
+  --ifm-color-primary-light: var(--detox-color-p0);
+  --ifm-color-primary-lighter: var(--detox-color-p1);
+  --ifm-color-primary-lightest: var(--detox-color-p2);
+
+  --ifm-code-font-size: 95%;
 }

@@ -226,9 +226,7 @@ detox/test/artifacts
 /examples/demo-react-native/artifacts
 /examples/demo-react-native-jest/artifacts
 
-# Git Version Control
-# This is a file path pattern that matches all CSS files in the 'website' directory and its subdirectories
-# Avoids committing unnecessary files to the repository
+## CSS files are auto-generated
 /website/**/*.css
 
 ## Final outputs
