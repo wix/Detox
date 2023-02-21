@@ -1,93 +1,69 @@
-// Colors
+// Define the base colors
+$detox-color: (
+  'r': #f14c52,
+  'y': #f7ba29,
+  'b': #3e77e4,
+  'u': #7633e5,
+  'e': #3ebf72
+);
 
-@mixin detox-colors-light($prefix) {
-  --#{$prefix}-r0: #f14c52ff;
-  --#{$prefix}-y0: #f7ba29ff;
-  --#{$prefix}-b0: #3e77e4ff;
-  --#{$prefix}-u0: #7633e5ff;
-  --#{$prefix}-e0: #3ebf72ff;
+// Define the transparency levels
+$transparency-levels: (1, 0.8, 0.6, 0.5);
 
-  --#{$prefix}-r1a: #f14c5289;
-  --#{$prefix}-y1a: #f7ba2989;
-  --#{$prefix}-b1a: #3e77e489;
-  --#{$prefix}-u1a: #7633e589;
-  --#{$prefix}-e1a: #3ebf7289;
-
-  --#{$prefix}-r2a: #f14c5259;
-  --#{$prefix}-y2a: #f7ba2959;
-  --#{$prefix}-b2a: #3e77e459;
-  --#{$prefix}-u2a: #7633e559;
-  --#{$prefix}-e2a: #3ebf7259;
-
-  --#{$prefix}-r3a: #f14c5240;
-  --#{$prefix}-y3a: #f7ba2940;
-  --#{$prefix}-b3a: #3e77e440;
-  --#{$prefix}-u3a: #7633e540;
-  --#{$prefix}-e3a: #3ebf7240;
-
-  --#{$prefix}-r4a: #f14c5226;
-  --#{$prefix}-y4a: #f7ba2926;
-  --#{$prefix}-b4a: #3e77e426;
-  --#{$prefix}-u4a: #7633e526;
-  --#{$prefix}-e4a: #3ebf7226;
-
-  --#{$prefix}-r5a: #f14c5212;
-  --#{$prefix}-y5a: #f7ba2912;
-  --#{$prefix}-b5a: #3e77e412;
-  --#{$prefix}-u5a: #7633e512;
-  --#{$prefix}-e5a: #3ebf7212;
-
-  --#{$prefix}-a0: #12161bff;
-  --#{$prefix}-a1: #babbbdff;
-  --#{$prefix}-a2: #e0e1e1ff;
-  --#{$prefix}-a3: #f1f1f1ff;
-  --#{$prefix}-a4: #fafafaff;
-  --#{$prefix}-a5: #ffffffff;
-
-  --#{$prefix}-p0: #5c25afff;
-  --#{$prefix}-p1: #8157c1ff;
-  --#{$prefix}-p2: #9876cdff;
-  --#{$prefix}-p3: #a789d4ff;
-  --#{$prefix}-p4: #b9a1ddff;
-  --#{$prefix}-p5: #d3c4e9ff;
-}
-
-@mixin ifm-colors($prefix) {
-  --#{$prefix}-color-primary: #048fc0;
-  --#{$prefix}-color-primary-dark: #253282;
-  --#{$prefix}-color-primary-darker: #161360;
-  --#{$prefix}-color-primary-darkest: #150a51;
-  --#{$prefix}-color-primary-light: #6c43a3;
-  --#{$prefix}-color-primary-lighter: #8859c9;
-  --#{$prefix}-color-primary-lightest: #9f6de5;
-  --#{$prefix}-code-font-size: 95%;
-  --#{$prefix}-highlighted-code-line-bg: #d9e5f6;
-}
-
-@mixin detox-colors-dark($prefix) {
-  --#{$prefix}-color-a0: #ffffff;
-  --#{$prefix}-color-a1: #12161b;
-  --#{$prefix}-color-a2: #171b20;
-  --#{$prefix}-color-a3: #202429;
-  --#{$prefix}-color-a4: #313439;
-  --#{$prefix}-color-a5: #575a5d;
-}
-
-@mixin ifm-dark {
-  --ifm-background-color: #12161b;
-}
-
-@mixin docusaurus-dark {
-  --docusaurus-highlighted-code-line-bg: #414458;
-}
-
-:root {
-  @include detox-colors-light('detox-color');
-  @include ifm-colors('ifm');
-
-  &[data-theme='dark'] {
-    @include detox-colors-dark('detox-color');
-    @include ifm-dark;
-    @include docusaurus-dark;
+// Generate the color map
+$color-map: ();
+@each $color, $value in $detox-color {
+  $color-prefix: $color + '0';
+  $color-map: map-merge(
+    $color-map,
+    (
+      '#{$color-prefix}': (
+        $value,
+        $value
+      )
+    )
+  );
+  @for $i from 1 through 4 {
+    $color-prefix: $color + $i + 'a';
+    $color-value: if(type-of($value) == 'color', rgba($value, nth($transparency-levels, $i)), $value);
+    $color-map: map-merge(
+      $color-map,
+      (
+        '#{$color-prefix}': (
+          $color-value,
+          $color-value
+        )
+      )
+    );
   }
+}
+
+// Output the color map
+:root {
+  @each $name, $detox-color in $color-map {
+    $base-color: nth($detox-color, 1);
+    $light-color: nth($detox-color, 2);
+    --#{$name}: #{$base-color};
+    --#{$name}-light: #{$light-color};
+  }
+}
+
+// Define the dark mode variables
+$dark-background-color: #12161b;
+$dark-border-color: #323846;
+
+// Apply the dark mode variables
+:root {
+  --ifm-background-color: $dark-background-color;
+  --docusaurus-highlighted-code-line-bg: #414458;
+  --detox-color-warning-bg: var(--detox-color-y4a);
+  --detox-color-warning-border: var(--detox-color-y0);
+  --detox-color-info-bg: var(--detox-color-b4a);
+  --detox-color-info-border: var(--detox-color-b0);
+  --detox-color-danger-bg: var(--detox-color-r4a);
+  --detox-color-danger-border: var(--detox-color-r0);
+  --detox-color-secondary-bg: var(--detox-color-u4a);
+  --detox-color-secondary-border: var(--detox-color-u0);
+  --detox-color-success-bg: var(--detox-color-e4a);
+  --detox-color-success-border: var(--detox-color-e0);
 }
