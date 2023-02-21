@@ -32,7 +32,11 @@ class FakeActionDelegate: ActionDelegateProtocol {
     return attributes[elements]!
   }
 
-  func takeScreenshot(_ imageName: String?, date: Date) throws -> AnyCodable {
+  func takeScreenshot(
+    _ imageName: String?,
+    date: Date,
+    of element: AnyHashable
+  ) throws -> AnyCodable {
     return AnyCodable(imageName ?? defaultImagePath)
   }
 }

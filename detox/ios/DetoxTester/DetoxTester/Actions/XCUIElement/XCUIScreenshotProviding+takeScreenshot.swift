@@ -1,13 +1,13 @@
 //
-//  XCUIApplication+takeScreenshot.swift (DetoxTesterApp)
+//  XCUIScreenshotProviding+takeScreenshot.swift (DetoxTesterApp)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 import XCTest
 
-extension XCUIApplication {
-  /// Takes a screenshot of the current screen.
+extension XCUIScreenshotProviding {
+  /// Takes a screenshot of the current screenshot-providing element.
   func takeScreenshot(_ imageName: String?, date: Date) throws -> [String: String] {
     let pngImageData = screenshot().pngRepresentation
     let path = try URL.makeScreenshotPath(imageName, date: date)

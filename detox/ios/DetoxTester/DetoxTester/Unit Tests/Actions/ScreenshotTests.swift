@@ -21,7 +21,7 @@ class ScreenshotTests: DTXTestCase {
   }
 
   func testScreenshotWithImageName() throws {
-    let result = try actionDelegate.takeScreenshot("foo")
+    let result = try actionDelegate.takeScreenshot("foo", of: "bar")
 
     let expectedPath = FileManager.default.temporaryDirectory
       .appendingPathComponent("elementsScreenshot", isDirectory: true)
@@ -32,7 +32,7 @@ class ScreenshotTests: DTXTestCase {
   func testScreenshotWithoutImageName() throws {
     let someDate = Date.init(timeIntervalSince1970: 123456789.5)
 
-    let result = try actionDelegate.takeScreenshot(nil, date: someDate)
+    let result = try actionDelegate.takeScreenshot(nil, date: someDate, of: "bar")
 
     let expectedPath = FileManager.default.temporaryDirectory
       .appendingPathComponent("elementsScreenshot", isDirectory: true)

@@ -51,21 +51,20 @@ public class InvokeHandler {
         }
 
         let elements = try findElementsHandler()
-        let element = try getElement(from: elements, at: parsedMessage.atIndex)
 
         if action == .getAttributes {
           return try getAttributes(from: elements)
         }
 
-        if action == .takeScreenshot {
-          return try takeScreenshot(parsedMessage.params)
-        }
-
-        guard let element = element else {
+        guard let element = try getElement(from: elements, at: parsedMessage.atIndex) else {
           throw Error.noElementAtIndex(
             index: parsedMessage.atIndex ?? 0,
             elementsCount: elements.count
           )
+        }
+
+        if action == .takeScreenshot {
+          return try takeScreenshot(parsedMessage.params, of: element)
         }
 
         let targetElementPredicate = parsedMessage.targetElement?.predicate
@@ -122,10 +121,11 @@ public class InvokeHandler {
 
   // MARK: - Get attributes
 
-  private func takeScreenshot(_ params: [AnyCodable]?) throws -> AnyCodable {
+  private func takeScreenshot(_ params: [AnyCodable]?, of element: AnyHashable) throws -> AnyCodable {
     return try actionDelegate.takeScreenshot(
       params != nil ? (params![0].value as! String) : nil,
-      date: Date.now
+      date: Date.now,
+      of: element
     )
   }
 

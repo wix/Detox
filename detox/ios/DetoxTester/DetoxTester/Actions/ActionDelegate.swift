@@ -207,8 +207,13 @@ class ActionDelegate: ActionDelegateProtocol {
 
   func takeScreenshot(
     _ imageName: String?,
-    date: Date = Date.now
+    date: Date = Date.now,
+    of element: AnyHashable
   ) throws -> AnyCodable {
-    return try AnyCodable(app.takeScreenshot(imageName, date: date))
+    guard let element = element as? XCUIScreenshotProviding else {
+      throw Error.elementIsNotScreenshotProviding
+    }
+
+    return try AnyCodable(element.takeScreenshot(imageName, date: date))
   }
 }
