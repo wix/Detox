@@ -57,18 +57,6 @@ import XCTest
   private func start(from testCase: XCTestCase) {
     self.testCase = testCase
 
-    // TODO: remove this code block:
-    //
-    let mainThreadInfo = DispatchSource.makeTimerSource()
-    mainThreadInfo.schedule(deadline: .now(), repeating: .seconds(5))
-    mainLog("main thread information timer started")
-    mainThreadInfo.setEventHandler(handler: {
-      mainLog("main thread information: \n- isExecuting: \(Thread.main.isExecuting)\n -threadDictionary: \(Thread.main.threadDictionary)\n - runloop mode: \(String(describing: RunLoop.main.currentMode))")
-    });
-
-    mainThreadInfo.activate()
-    //
-
     WaitUntilDone { [self] done, exec in
       self.exec = exec
       self.done = done
