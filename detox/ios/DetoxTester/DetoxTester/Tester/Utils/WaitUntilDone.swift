@@ -14,7 +14,7 @@ func WaitUntilDone(
     _ exec: @escaping (_ handleAsync: Bool, @escaping () -> Void) -> Void
   ) -> Void
 ) {
-  let backgroundQueue = DispatchQueue.global(qos: .background)
+  let asyncQueue = DispatchQueue.global(qos: .background)
 
   let semaphore = DispatchSemaphore(value: 0)
 
@@ -35,20 +35,19 @@ func WaitUntilDone(
       type: .debug
     )
 
-    if (handleAsync) {
-      backgroundQueue.async {
+    asyncQueue.async {
+      if (handleAsync) {
         syncLog("running on thread: \(Thread.current)")
         syncLog("`exec` started asynchronically", type: .debug)
         toExec()
+      } else {
+        waitingToExecSemaphore.wait()
+        syncLog("next synchronous execution code block was set by `exec`", type: .debug)
+
+        waitingToExec = toExec
+
+        semaphore.signal()
       }
-    } else {
-      waitingToExecSemaphore.wait()
-      syncLog("next synchronous main-thread execution code block was set by `exec`", type: .debug)
-
-      waitingToExec = toExec
-
-      semaphore.signal()
-
     }
   }
   
@@ -70,8 +69,9 @@ func WaitUntilDone(
     toExec()
     syncLog("execution finished")
 
-    syncLog("waiting on thread: \(Thread.current)")
+    syncLog("waiting for next `exec` block to be defined", type: .debug)
     semaphore.wait()
+    syncLog("finished waiting for next `exec` block to be defined", type: .debug)
   }
 
   syncLog("wait-until-done synchronization ended on thread: \(Thread.current)")

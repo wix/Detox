@@ -8,6 +8,8 @@ import UIKit
 
 import DetoxInvokeHandler
 
+/// TODO: refactor
+
 /// Protocol for handling application operations directly from the app itself, in a "white-box"
 /// manner.
 ///
@@ -25,18 +27,28 @@ class WhiteBoxExecutor {
     self.messageSender = messageSender
   }
 
+  /// Message counter for generating message ids.
+  private var messageCounter: Int = 0
+
+  private func createNewMessageId() -> Int {
+    let id = messageCounter
+    messageCounter += 1
+    return id
+  }
+
   /// Sends a message with given `message` to the application using the internal Detox framework
   /// and synchronically waits for a response.
   func execute(_ message: Message) -> Response {
     whiteExecLog("white-box executing: \(message)")
+    let messageId = createNewMessageId()
 
     switch message {
       case .reloadReactNative:
-        send("reloadReactNative", andExpectTo: "reactNativeDidReload")
+        send("reloadReactNative", andExpectTo: "reactNativeDidReload", messageId: messageId)
         return .completed
 
       case .shakeDevice:
-        send("shakeDevice", andExpectTo: "deviceDidShake")
+        send("shakeDevice", andExpectTo: "deviceDidShake", messageId: messageId)
         return .completed
 
       case .captureViewHierarchy(let viewHierarchyURL):
@@ -44,16 +56,17 @@ class WhiteBoxExecutor {
           type: "captureViewHierarchy",
           params: [
             "viewHierarchyURL": AnyCodable(viewHierarchyURL)
-          ]
+          ],
+          messageId: messageId
         )
 
-        let result = send(message, andExpectToType: "didCaptureViewHierarchy", messageId: 0)
+        let result = send(message, andExpectToType: "didCaptureViewHierarchy", messageId: messageId)
         let error = result["error"] as? String
 
         return error != nil ? .completedWithError(message: error!) : .completed
 
       case .waitUntilReady:
-        send("waitUntilReady", andExpectTo: "isReady")
+        send("waitUntilReady", andExpectTo: "isReady", messageId: messageId)
         return .completed
 
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
@@ -71,10 +84,11 @@ class WhiteBoxExecutor {
             "maxTimerWait": maxTimerWait != nil ? AnyCodable(maxTimerWait!) : nil,
             "blacklistURLs": blacklistURLs != nil ? AnyCodable(blacklistURLs!): nil,
             "disabled": disabled != nil ? AnyCodable(disabled!) : nil
-          ]
+          ],
+          messageId: messageId
         )
 
-        let _ = send(message, andExpectToType: "didSetSyncSettings", messageId: 0)
+        let _ = send(message, andExpectToType: "didSetSyncSettings", messageId: messageId)
 
         return .completed
 
@@ -90,10 +104,11 @@ class WhiteBoxExecutor {
               element.frame.width,
               element.frame.height
             ])
-          ]
+          ],
+          messageId: messageId
         )
 
-        let _ = send(message, andExpectToType: "didSetDatePicker", messageId: 0)
+        let _ = send(message, andExpectToType: "didSetDatePicker", messageId: messageId)
         return .completed
 
       case .verifyVisibility(let element, let threshold):
@@ -108,10 +123,11 @@ class WhiteBoxExecutor {
               element.frame.width,
               element.frame.height
             ])
-          ]
+          ],
+          messageId: messageId
         )
 
-        let result = send(message, andExpectToType: "didVerifyVisibility", messageId: 0)
+        let result = send(message, andExpectToType: "didVerifyVisibility", messageId: messageId)
         let isVisible = (result["isVisible"] as! NSNumber).boolValue
 
         return .boolean(isVisible)
@@ -128,10 +144,11 @@ class WhiteBoxExecutor {
               element.frame.width,
               element.frame.height
             ])
-          ]
+          ],
+          messageId: messageId
         )
 
-        let result = send(message, andExpectToType: "didVerifyText", messageId: 0)
+        let result = send(message, andExpectToType: "didVerifyText", messageId: messageId)
         expectLog("result for verify text: \(result)")
         let hasText = (result["hasText"] as! NSNumber).boolValue
 
@@ -140,10 +157,11 @@ class WhiteBoxExecutor {
       case .findElementsByText(let text):
         let message = createMessage(
           type: "findElementsByText",
-          params: ["text": AnyCodable(text)]
+          params: ["text": AnyCodable(text)],
+          messageId: messageId
         )
 
-        let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
+        let result = send(message, andExpectToType: "elementsDidFound", messageId: messageId)
 
         let elementsIDsAndFrames: [ElementIdentifierAndFrame] = (
           result["elementsIDsAndFrames"] as? [[String: String]] ?? []
@@ -161,10 +179,11 @@ class WhiteBoxExecutor {
       case .findElementsByType(let type):
         let message = createMessage(
           type: "findElementsByType",
-          params: ["type": AnyCodable(type)]
+          params: ["type": AnyCodable(type)],
+          messageId: messageId
         )
 
-        let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
+        let result = send(message, andExpectToType: "elementsDidFound", messageId: messageId)
 
         let elementsIDsAndFrames: [ElementIdentifierAndFrame] = (
           result["elementsIDsAndFrames"] as? [[String: String]] ?? []
@@ -179,14 +198,14 @@ class WhiteBoxExecutor {
           .identifiersAndFrames(elementsIDsAndFrames) :
           .failed(reason: "could not find element with type: \(type)")
 
-
       case .findElementsByTraits(let traits):
         let message = createMessage(
           type: "findElementsByTraits",
-          params: ["traits": AnyCodable(traits.map { $0.rawValue })]
+          params: ["traits": AnyCodable(traits.map { $0.rawValue })],
+          messageId: messageId
         )
 
-        let result = send(message, andExpectToType: "elementsDidFound", messageId: 0)
+        let result = send(message, andExpectToType: "elementsDidFound", messageId: messageId)
 
         let elementsIDsAndFrames: [ElementIdentifierAndFrame] = (
           result["elementsIDsAndFrames"] as? [[String: String]] ?? []
@@ -205,9 +224,9 @@ class WhiteBoxExecutor {
         whiteExecLog(
           "requesting current status, running on thread: \(Thread.current)", type: .debug)
 
-        let message = createMessage(type: "requestCurrentStatus")
+        let message = createMessage(type: "requestCurrentStatus", messageId: messageId)
 
-        let result = send(message, andExpectToType: "currentStatusResult", messageId: 0)
+        let result = send(message, andExpectToType: "currentStatusResult", messageId: messageId)
 
         guard let statusResult = result["status"] as? [String: Any] else {
           whiteExecLog("current-status result is invalid: \(result)", type: .error)
@@ -255,10 +274,11 @@ class WhiteBoxExecutor {
                 AnyCodable(normalizedTargetPositionY!) : nil,
             "speed": (speed != nil) ? AnyCodable(speed!.rawValue) : nil,
             "holdDuration": (holdDuration != nil) ? AnyCodable(holdDuration!) : nil
-          ]
+          ],
+          messageId: messageId
         )
 
-        let _ = send(message, andExpectToType: "didLongPressAndDrag", messageId: 0)
+        let _ = send(message, andExpectToType: "didLongPressAndDrag", messageId: messageId)
         return .completed
 
       case .requestAttributes(let elements):
@@ -274,13 +294,14 @@ class WhiteBoxExecutor {
                 $0.frame.height
               ])
             ] })
-          ]
+          ],
+          messageId: messageId
         )
 
         let attributes = (send(
           message,
           andExpectToType: "attributes",
-          messageId: 0
+          messageId: messageId
         )["elements"]! as! [[String: Any]]
         ).map { EquatableDictionary(value: $0) }
 
@@ -288,15 +309,20 @@ class WhiteBoxExecutor {
     }
   }
 
-  private func send(_ stringMessage: String, andExpectTo stringExpected: String) {
+  private func send(
+    _ stringMessage: String,
+    andExpectTo stringExpected: String,
+    messageId: Int
+  ) {
     send(
-      createMessage(type: stringMessage),
-      andExpectTo: createMessage(type: stringExpected)
+      createMessage(type: stringMessage, messageId: messageId),
+      andExpectTo: createMessage(type: stringExpected, messageId: messageId),
+      messageId: messageId
     )
   }
 
   private func createMessage(
-    type: String, params: [String: AnyCodable] = [:], messageId: Int = 0
+    type: String, params: [String: AnyCodable] = [:], messageId: Int
   ) -> [String: AnyCodable] {
     return [
       "type": AnyCodable(type),
@@ -305,8 +331,12 @@ class WhiteBoxExecutor {
     ]
   }
 
-  private func send(_ message: [String: AnyCodable], andExpectTo expected: [String: AnyCodable]) {
-    let response = send(message)
+  private func send(
+    _ message: [String: AnyCodable],
+    andExpectTo expected: [String: AnyCodable],
+    messageId: Int
+  ) {
+    let response = send(message, messageId: messageId)
 
     if response != expected {
       whiteExecLog(
@@ -318,10 +348,13 @@ class WhiteBoxExecutor {
     }
   }
 
-  private func send(_ message: [String: AnyCodable]) -> [String: AnyCodable] {
+  private func send(_ message: [String: AnyCodable], messageId: Int) -> [String: AnyCodable] {
     var result: Data?
     do {
-      result = messageSender.sendMessageToClient(try JSONEncoder().encode(message))
+      result = messageSender.sendMessageToClient(
+        try JSONEncoder().encode(message),
+        messageId: messageId
+      )
     }
     catch {
       whiteExecLog("failed to send the message `\(message)`", type: .error)
@@ -350,17 +383,18 @@ class WhiteBoxExecutor {
 
   private func send(
     _ message: [String: AnyCodable],
-    andExpectToType expectedType: String, messageId expectedMessageId: Int
+    andExpectToType expectedType: String,
+    messageId: Int
   ) -> [String: Any] {
-    let response = send(message)
+    let response = send(message, messageId: messageId)
 
     guard
       response["type"]?.value as? String == expectedType,
-      response["messageId"]?.value as? Int == expectedMessageId
+      response["messageId"]?.value as? Int == messageId
     else {
       whiteExecLog(
         "expected to have message with type `\(String(describing: expectedType))` " +
-        "and message-id: `\(expectedMessageId)`, " +
+        "and message-id: `\(messageId)`, " +
         "got result: \(String(describing: response))",
         type: .error
       )

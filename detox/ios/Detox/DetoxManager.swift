@@ -48,10 +48,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}
 	
 	private func safeSend(action: String, params: [String: Any] = [:], messageId: NSNumber) {
-		log.info("safe sending: \(action)")
+		log.info("safe sending requested: \(action)")
 		DTXSyncManager.enqueueMainQueueIdleClosure {
 			log.info("safe sending on the main-thread: \(action)")
 			self.webSocket.sendAction(action, params: params, messageId: messageId)
+			log.info("did safe sending for action: \(action)")
 		}
 	}
 	

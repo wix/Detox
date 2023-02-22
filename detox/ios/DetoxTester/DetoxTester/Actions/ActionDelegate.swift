@@ -23,13 +23,15 @@ class ActionDelegate: ActionDelegateProtocol {
     uiLog("called to start action: `\(action)` on element: `\(element)`")
     try act(action: action, on: element, testCase: DetoxTester.shared.testCase!)
 
-    uiLog("wait until ready to finish action: `\(action)`, on element: `\(element)`")
+    uiLog("wait until ready to finish action: `\(action)`, on element: `\(element)`", type: .debug)
     try whiteBoxMessageHandler(
       .waitUntilReady
     )?.assertResponse(
       equalsTo: .completed,
       for: .waitUntilReady
     )
+
+    uiLog("finished action: `\(action)`, on element: `\(element)`", type: .debug)
   }
 
   /// Used for unit testing.

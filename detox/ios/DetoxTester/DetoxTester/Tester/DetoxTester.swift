@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import DetoxInvokeHandler
 import XCTest
 
 /// Used for observing Detox web-socket and handling the received messages from the server.
@@ -30,8 +31,8 @@ import XCTest
   /// The test-case in which the tester is running from.
   fileprivate(set) var testCase: XCTestCase?
 
-  /// Callback for handling a server-received-handler message.
-  fileprivate(set) var serverDidReceiveHandler: ((Data) -> Void)?
+  /// Callbacks for handling a server-received-handler message. Should return true if did handled.
+  fileprivate(set) var serverDidReceiveHandlers: [((Data) -> Bool)] = []
 
   /// Semaphore for waiting the white-box handler to finish its executions.
   static private let whiteBoxClientConnectionSemaphore: DispatchSemaphore = .init(value: 0)
@@ -40,7 +41,6 @@ import XCTest
 
   /// Starts Detox Tester operation.
   @objc static func startDetoxTesting(from testCase: XCTestCase) {
-    mainLog("starting detox tester")
     shared.start(from: testCase)
   }
 
@@ -207,12 +207,19 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
 
 extension DetoxTester: WebSocketServerDelegateProtocol {
   func serverDidReceive(data: Data) {
-    guard let handler = serverDidReceiveHandler else {
-      mainLog("there is no handler for handling messages from client", type: .error)
-      return
-    }
+    mainLog("`serverDidReceive` called, executing on handlers")
+    let handlers = serverDidReceiveHandlers
 
-    handler(data)
+    for (index, handler) in handlers.enumerated() {
+      let didHandle = handler(data)
+      if didHandle == true {
+        mainLog("did handled by handler #\(index)", type: .debug)
+        serverDidReceiveHandlers.remove(at: index)
+        break
+      }
+
+      mainLog("did not handled by handler #\(index)", type: .debug)
+    }
   }
 
   func serverDidInit(onPort port: UInt16) {
@@ -249,7 +256,7 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
 // MARK: - AppClientMessageSenderProtocol
 
 extension DetoxTester: AppClientMessageSenderProtocol {
-  func sendMessageToClient(_ data: Data) -> Data {
+  func sendMessageToClient(_ data: Data, messageId: Int) -> Data {
     guard let server = webSocketServer else {
       mainLog("web-socket server has not initialized yet", type: .error)
       fatalError("web-socket server has not initialized yet")
@@ -267,18 +274,53 @@ extension DetoxTester: AppClientMessageSenderProtocol {
 
     let semaphore = DispatchSemaphore(value: 0)
     var serverResponse: Data?
-    serverDidReceiveHandler = { data in
+
+    serverDidReceiveHandlers.append({ data in
+      mainLog(
+        "`serverDidReceiveHandler` got response, checking if relevant for handler",
+        type: .debug
+      )
+
+      var decoded: [String: AnyCodable]!
+      do {
+        decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
+      }
+      catch {
+        mainLog(
+          "response for decoding `data` is invalid, can't be decoded!", type: .error
+        )
+        fatalError("failed to decode `data`")
+      }
+
+      let actualMessageId = decoded["messageId"]?.value as? Int ?? -1
+
+      if (messageId != actualMessageId) {
+        mainLog(
+          "message Id #\(actualMessageId) does not match the message Id #\(messageId)",
+          type: .debug
+        )
+        return false
+      }
+
       serverResponse = data
       semaphore.signal()
-    }
+      return true
+    })
 
     // Wait until response is received via `serverDidReceiveHandler`.
+    mainLog(
+      "waiting for response (`serverDidReceiveHandler`), running on thread: " +
+      "\(Thread.current.debugDescription)",
+      type: .debug
+    )
+
     semaphore.wait()
 
     guard let serverResponse = serverResponse else {
       mainLog("server has responded but return value is nil", type: .error)
       fatalError("server has responded but return value is nil")
     }
+
     return serverResponse
   }
 }
