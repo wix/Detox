@@ -5,7 +5,6 @@ const _ = require('lodash');
 const DetoxApi = require('../../../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../../../android/espressoapi/UiDeviceProxy');
-const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const logger = require('../../../../../utils/logger');
 const DeviceDriverBase = require('../../DeviceDriverBase');
 
@@ -104,14 +103,7 @@ class CloudAndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(EspressoDetoxApi.setSynchronization(false));
   }
 
-  // Throw error if api fails
   async takeScreenshot(screenshotName) {
-    await this.invocationManager.executeCloudPlatform({
-      'method': 'screenshot',
-      'args': {
-        'name': screenshotName
-      }
-    });
 
     return '';
   }
@@ -128,17 +120,12 @@ class CloudAndroidDriver extends DeviceDriverBase {
 
   async _launchApp( bundleId, launchArgs) {
     if (!this.instrumentation) {
-      const response = await this.invocationManager.executeCloudPlatform({
+        await this.invocationManager.executeCloudPlatform({
         'method': 'launchApp',
         'args': {
           'launchArgs': launchArgs
         }
       });
-      const json = response;
-      const status = _.get(json, 'response.success');
-      this.instrumentation = status;
-      if(!status || status.toString() === 'false')
-        throw new DetoxRuntimeError(_.get(response, 'response.message'));
     } else if (launchArgs.detoxURLOverride) {
       await this._startActivityWithUrl(launchArgs.detoxURLOverride);
     } else {

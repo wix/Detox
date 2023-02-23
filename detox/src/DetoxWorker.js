@@ -97,7 +97,7 @@ class DetoxWorker {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     // @ts-ignore
-    this._sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
+    this._sessionConfig.sessionId = uuid.UUID();
     this._runtimeErrorComposer.appsConfig = this._appsConfig;
 
     this._client = new Client(sessionConfig);
