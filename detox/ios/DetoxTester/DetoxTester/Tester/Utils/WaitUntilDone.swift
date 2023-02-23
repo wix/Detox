@@ -6,15 +6,16 @@
 import Foundation
 
 /// Blocks the main-thread until `done` block is called. Can execute operations on the current
-/// thread synchronically (without releasing it) by passing false `handleAsync` to `exec`,
-/// otherwise executing the operation asynchronically on an arbitrary thread.
+/// thread synchronically (without releasing it) by passing false `isBackgroundTask` to `exec`,
+/// otherwise executing the operation asynchronically on an arbitrary background thread.
 func WaitUntilDone(
   closure: @escaping (
     _ done: @escaping () -> Void,
-    _ exec: @escaping (_ handleAsync: Bool, @escaping () -> Void) -> Void
+    _ exec: @escaping (_ isBackgroundTask: Bool, @escaping () -> Void) -> Void
   ) -> Void
 ) {
-  let asyncQueue = DispatchQueue.global(qos: .background)
+  let backgroundQueue = DispatchQueue.global(qos: .background)
+  let execQueue = DispatchQueue(label: "Exec Queue")
 
   let semaphore = DispatchSemaphore(value: 0)
 
@@ -28,19 +29,22 @@ func WaitUntilDone(
   // Allow only one exec operation to be handled at once.
   let waitingToExecSemaphore = DispatchSemaphore(value: 1)
 
-  let exec: (Bool, @escaping () -> Void) -> Void = { handleAsync, toExec in
+  let exec: (Bool, @escaping () -> Void) -> Void = { isBackgroundTask, toExec in
     syncLog(
-      "`exec` was called (executing \(handleAsync ? "asynchronically" : "synchronically")), " +
-      "running on thread: \(Thread.current)",
+      "`exec` was called (executing on \(isBackgroundTask ? "background" : "main exec") queue)",
       type: .debug
     )
 
-    asyncQueue.async {
-      if (handleAsync) {
+    if (isBackgroundTask) {
+      backgroundQueue.async {
         syncLog("running on thread: \(Thread.current)")
         syncLog("`exec` started asynchronically", type: .debug)
         toExec()
-      } else {
+      }
+    } else {
+      execQueue.async {
+        syncLog("running on thread: \(Thread.current)")
+
         waitingToExecSemaphore.wait()
         syncLog("next synchronous execution code block was set by `exec`", type: .debug)
 

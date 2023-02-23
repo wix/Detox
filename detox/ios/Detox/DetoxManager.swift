@@ -367,6 +367,53 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					)
 				}
 
+			case "deliverPayload":
+				let delay = (params["delayPayload"] as? Bool) ?? false
+
+				let closure : () -> Void
+				let sendDoneAction : () -> Void = {
+					self.safeSend(action: "didDeliverPayload", messageId: messageId)
+				}
+
+				if let urlParam = params["url"] as? String {
+					guard let urlToOpen = URL(string: urlParam) else {
+						fatalError("Invalid URL")
+					}
+
+					var options : [UIApplication.LaunchOptionsKey: Any] = [UIApplication.LaunchOptionsKey.url: urlToOpen]
+					if let sourceApp = params["sourceApp"] as? String {
+						options[UIApplication.LaunchOptionsKey.sourceApplication] = sourceApp
+					}
+
+					closure = {
+						DetoxAppDelegateProxy.shared.dispatch(openURL: urlToOpen, options: options, delayUntilActive: delay)
+						sendDoneAction()
+					}
+				} else if let notificationParam = params["detoxUserNotificationDataURL"] as? String {
+					let userNotificationDataURL = URL(fileURLWithPath: notificationParam)
+
+					closure = {
+						DetoxAppDelegateProxy.shared.dispatch(userNotificationFrom: userNotificationDataURL, delayUntilActive: delay)
+						sendDoneAction()
+					}
+				} else if let activityParam = params["detoxUserActivityDataURL"] as? String {
+					let userActivityDataURL = URL(fileURLWithPath: activityParam)
+
+					closure = {
+						DetoxAppDelegateProxy.shared.dispatch(userActivityFrom: userActivityDataURL, delayUntilActive: delay)
+						sendDoneAction()
+					}
+				}
+				else
+				{
+					fatalError("Unknown payload received")
+				}
+
+				guard delay == false else {
+					closure()
+					return
+				}
+
 			case "setDatePicker":
 				let targetIdentifier = params["elementID"] as! String
 				let targetFrame = params["elementFrame"] as! [NSNumber]

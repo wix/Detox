@@ -128,7 +128,11 @@ class SimulatorDriver extends IosDriver {
   async terminate(bundleId) {
     const { udid } = this;
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
+
     await this.client.terminateIfNeeded();
+    // Sleep for 2 seconds to allow the XCUITest to terminate gracefully.
+    await new Promise(resolve => setTimeout(resolve, 200));
+
     await this._applesimutils.terminate(udid, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
   }

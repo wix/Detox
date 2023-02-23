@@ -124,10 +124,10 @@ extension DetoxTester: WebSocketClientDelegateProtocol {
     mainLog("web-socket received `\(type.rawValue)` message (#\(messageId.stringValue)), " +
             "with params: \(params.description)")
 
-    exec! (type.handleAsync) { [self] in
+    exec! (type.isBackgroundTask) { [self] in
       mainLog(
-        "`didReceiveAction` was called, executes action (\(type.handleAsync ? "async" : "sync"): " +
-        "`\(type.rawValue)`)"
+        "`didReceiveAction` was called, executes action `\(type.rawValue)`" +
+        "\(type.isBackgroundTask ? " on the background" : "")"
       )
       executor.execute(type, params: params, messageId: messageId)
     }

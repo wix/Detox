@@ -47,6 +47,30 @@ class WhiteBoxExecutor {
         send("reloadReactNative", andExpectTo: "reactNativeDidReload", messageId: messageId)
         return .completed
 
+      case .deliverPayload(
+        let delayPayload,
+        let url,
+        let sourceApp,
+        let detoxUserNotificationDataURL,
+        let detoxUserActivityDataURL
+      ):
+        let message = createMessage(
+          type: "deliverPayload",
+          params: [
+            "delayPayload": delayPayload != nil ? AnyCodable(delayPayload) : nil,
+            "url": url != nil ? AnyCodable(url) : nil,
+            "sourceApp": sourceApp != nil ? AnyCodable(sourceApp) : nil,
+            "detoxUserNotificationDataURL":
+              detoxUserNotificationDataURL != nil ? AnyCodable(detoxUserNotificationDataURL) : nil,
+            "detoxUserActivityDataURL":
+              detoxUserActivityDataURL != nil ? AnyCodable(detoxUserActivityDataURL) : nil
+          ],
+          messageId: messageId
+        )
+
+        let _ = send(message, andExpectToType: "didDeliverPayload", messageId: messageId)
+        return .completed
+
       case .shakeDevice:
         send("shakeDevice", andExpectTo: "deviceDidShake", messageId: messageId)
         return .completed

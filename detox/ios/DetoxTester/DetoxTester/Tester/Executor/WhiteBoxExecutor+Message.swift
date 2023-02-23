@@ -13,6 +13,15 @@ extension WhiteBoxExecutor {
     case reloadReactNative
 
     /// Returns response of `completed` if successfully done.
+    case deliverPayload(
+      delayPayload: Bool?,
+      url: String?,
+      sourceApp: String?,
+      detoxUserNotificationDataURL: String?,
+      detoxUserActivityDataURL: String?
+    )
+
+    /// Returns response of `completed` if successfully done.
     case shakeDevice
 
     /// Returns response of `completed` or `completedWithError` if successfully done.
@@ -70,6 +79,9 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
     switch self {
       case .reloadReactNative:
         return "reload react native"
+
+      case .deliverPayload:
+        return "deliver payload"
 
       case .shakeDevice:
         return "shake device"

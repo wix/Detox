@@ -30,6 +30,9 @@ enum ResponseMessageType: String {
   case reportReady = "ready"
 
   ///
+  case reportDidDeliverPayload = "deliverPayloadDone"
+
+  ///
   case reportSetSyncSettingsDone = "setSyncSettingsDone"
 
   ///

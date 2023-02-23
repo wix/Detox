@@ -43,8 +43,7 @@ class Executor {
           try setSyncSettings(params: params, messageId: messageId)
 
         case .deliverPayload:
-          execLog("`deliverPayload` not implemented yet: \(action)", type: .error)
-          fatalError("not implemented yet")
+          try deliverPayload(params: params, messageId: messageId)
 
         case.setOrientation:
           try setDeviceOrientation(params: params, messageId: messageId)
@@ -84,10 +83,9 @@ class Executor {
 
           execLog("starting termination.. (message id: `\(messageId)`)", type: .debug)
 
-          serverMessageSender.terminate()
-
           sendAction(.reportWillTerminate, messageId: messageId)
 
+          serverMessageSender.terminate()
       }
     } catch {
       let errorMessage = "XCUITest executor failed to handle request: \(error)"
