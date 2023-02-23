@@ -54,14 +54,14 @@ body:
     id: detox-logs
     attributes:
       label: Detox logs
-      description: Please run your tests using the `--loglevel trace` argument. See [artifacts documentation](https://wix.github.io/Detox/docs/api/artifacts).
+      description: Please run your tests using the `--loglevel trace` argument. See [artifacts documentation](https://wix.github.io/Detox/docs/config/artifacts).
       value: "<details><summary>Detox logs</summary>\n\n```\npaste logs here!\n```\n\n</details>"
   - type: textarea
     id: device-logs
     attributes:
       label: Device logs
-      description: Please run your tests using the `--record-logs all` argument. See [artifacts documentation](https://wix.github.io/Detox/docs/api/artifacts).
-      value: "<details><summary>Device logs</summary>\n\n```\npaste logs here!\n```\n\n</details>"
+      description: Please run your tests using the `--record-logs all` argument and paste the `device.log` file. See [artifacts documentation](https://wix.github.io/Detox/docs/config/artifacts#launch-arguments).
+      value: "<details><summary>Device logs</summary>\n\n```\npaste your device.log here!\n```\n\n</details>"
   - type: textarea
     id: test-artifacts
     attributes:
