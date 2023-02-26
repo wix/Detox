@@ -46,23 +46,25 @@ describe('Network Synchronization', () => {
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
     await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
 
-    await device.setURLBlacklist([]);
+    await device.launchApp({ newInstance: true });
   });
 
-  it(':android: launchArgs with detoxURLBlacklistRegex should set the blacklist', async () => {
+  it('launchArgs with detoxURLBlacklistRegex should set the "black" (synchronization-ignore) list', async () => {
+    const blackListRegexp = '^http://localhost:\\d{4}?\/[a-z]+\/\\d{4}?$';
+
     await device.launchApp({
       newInstance: true,
-      launchArgs: { detoxURLBlacklistRegex: ' \\("^http:\/\/localhost:\\d{4}?\/[a-z]+\/\\d{4}?$"\\)' },
+      launchArgs: { detoxURLBlacklistRegex: `\\("http://meaningless\.first\.url","${blackListRegexp}"\\)` },
     });
 
-    await device.reloadReactNative();
-
-    await element(by.text('Network')).tap();
-    await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
-    await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
-
-    await device.setURLBlacklist([]);
+    try {
+      await element(by.text('Network')).tap();
+      await element(by.id('LongNetworkRequest')).tap();
+      await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
+      await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
+      await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    } finally {
+      await device.launchApp({ newInstance: true });
+    }
   });
 });

@@ -45,12 +45,12 @@ __attribute__((constructor))
 static void detoxConditionalInit()
 {
 	__DTXInstallCrashHandlersIfNeeded();
-	
+
 	//This forces accessibility support in the application.
 	[[[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"] setBool:YES forKey:@"ApplicationAccessibilityEnabled"];
-	
+
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
-	
+
 #if DEBUG
 	if([options boolForKey:@"detoxEnableSyncDebug"])
 	{
@@ -58,30 +58,33 @@ static void detoxConditionalInit()
 		DTXSyncManager.delegate = _detoxSyncDebugger;
 	}
 #endif
-	
+
 	NSMutableDictionary* settings = [NSMutableDictionary new];
-	
+
 	NSString* syncEnabled = [options objectForKey:@"detoxEnableSynchronization"];
 	if(syncEnabled)
 	{
 		settings[@"enabled"] = @([syncEnabled boolValue]);
 	}
-	
-	NSArray *blacklistRegex = [options arrayForKey:@"detoxURLBlacklistRegex"];
+
+	NSString *blacklistRegex = [options stringForKey:@"detoxURLBlacklistRegex"];
 	if (blacklistRegex)
 	{
-		settings[@"blacklistURLs"] = blacklistRegex;
+	    NSCharacterSet* separatorOrUselessChars = [NSCharacterSet characterSetWithCharactersInString:@"()\", "];
+        NSArray* _blacklistArray = [blacklistRegex componentsSeparatedByCharactersInSet:separatorOrUselessChars];
+
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"length>1"];
+        settings[@"blacklistURLs"] = [_blacklistArray filteredArrayUsingPredicate:predicate];
 	}
-	
+
 	NSString* maxTimerWait = [options objectForKey:@"detoxMaxSynchronizedDelay"];
 	settings[@"maxTimerWait"] = @(maxTimerWait ? maxTimerWait.integerValue : 1500);
-	
+
 	NSString* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
 		settings[@"waitForDebugger"] = @([waitForDebugger integerValue]);
 	}
-	
+
 	[DTXDetoxManager.sharedManager startWithSynchronizationSettings:settings];
 }
-
