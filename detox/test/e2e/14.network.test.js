@@ -32,7 +32,7 @@ describe('Network Synchronization', () => {
     await waitFor(driver.longRequest.sendButton).toBeVisible().withTimeout(4000);
 
     await driver.longRequest.sendButton.tap();
-    await driver.longRequest.expectRepliedUnsync();
+    await driver.longRequest.expectRepliedAsync();
 
     await device.enableSynchronization();
   });
@@ -45,7 +45,7 @@ describe('Network Synchronization', () => {
       await device.setURLBlacklist(['.*localhost.*']);
 
       await driver.longRequest.sendButton.tap();
-      await driver.longRequest.expectRepliedUnsync();
+      await driver.longRequest.expectRepliedAsync();
     });
 
     it('launchArgs with detoxURLBlacklistRegex should set the "black" (synchronization-ignore) list', async () => {
@@ -58,7 +58,7 @@ describe('Network Synchronization', () => {
       await element(by.text('Network')).tap();
 
       await driver.longRequest.sendButton.tap();
-      await driver.longRequest.expectRepliedUnsync();
+      await driver.longRequest.expectRepliedAsync();
     });
   });
 });
@@ -74,7 +74,7 @@ const driver = {
     get sendButton() { return element(by.id('LongNetworkRequest')) },
     get repliedText() { return element(by.text('Long Network Request Working!!!')) },
     expectReplied: () => expect(driver.longRequest.repliedText).toBeVisible(),
-    expectRepliedUnsync: async () => {
+    expectRepliedAsync: async () => {
       await expect(driver.longRequest.repliedText).not.toBeVisible();
       await waitFor(driver.longRequest.repliedText).toBeVisible().withTimeout(4000);
     },
