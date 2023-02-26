@@ -23,10 +23,9 @@ class Executor {
     do {
       switch action {
         case .loginSuccess:
-          execLog("successfully logged into Detox server")
+          execLog("successfully logged into Detox server!")
 
         case .disconnect:
-          execLog("executor called to disconnect", type: .debug)
           disconnect(messageId: messageId)
 
         case .setRecordingState:
