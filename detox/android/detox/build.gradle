@@ -99,6 +99,9 @@ dependencies {
         because 'Android datepicker support'
         exclude group: "org.checkerframework", module: "checker"
     }
+    api('org.hamcrest:hamcrest:2.2') {
+        because 'See https://github.com/wix/Detox/issues/3920. Need to force hamcrest 2.2 win in battle of 2.2 vs. 1.3 (specified by Espresso).'
+    }
     api('androidx.test:rules:1.4.0') {
         because 'of ActivityTestRule. Needed by users *and* internally used by Detox.'
     }
@@ -145,7 +148,7 @@ dependencies {
 // Spek (https://spekframework.org/setup-android)
 if (rootProject.hasProperty('isOfficialDetoxLib') ||
     rootProject.hasProperty('isOfficialDetoxApp')) {
-    
+
     apply plugin: 'de.mannodermaus.android-junit5'
 
     android {
