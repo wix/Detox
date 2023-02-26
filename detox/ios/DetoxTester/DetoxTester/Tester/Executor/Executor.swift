@@ -70,22 +70,10 @@ class Executor {
           sendAction(.reportReady, messageId: messageId)
 
         case .cleanup:
-          execLog("executor called to cleanup", type: .debug)
           cleanup(params: params, messageId: messageId)
 
         case .terminate:
-          execLog("terminate called", type: .debug)
-
-          guard let serverMessageSender = serverMessageSender else {
-            execLog("`serverMessageSender` is nil, can't do termination", type: .error)
-            fatalError("`serverMessageSender` is nil, can't do termination")
-          }
-
-          execLog("starting termination.. (message id: `\(messageId)`)", type: .debug)
-
-          sendAction(.reportWillTerminate, messageId: messageId)
-
-          serverMessageSender.terminate()
+          terminate(messageId: messageId)
       }
     } catch {
       let errorMessage = "XCUITest executor failed to handle request: \(error)"
