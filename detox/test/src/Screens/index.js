@@ -22,6 +22,7 @@ import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
 import OverlayScreen from './OverlayScreen';
+import ToastScreen from './ToastScreen'
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
@@ -54,6 +55,7 @@ export {
   LaunchNotificationScreen,
   DeviceScreen,
   OverlayScreen,
+  ToastScreen,
   ElementScreenshotScreen,
   WebViewScreen,
   VirtualizedListStressScreen,
