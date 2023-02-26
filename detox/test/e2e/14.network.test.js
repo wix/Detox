@@ -18,53 +18,65 @@ describe('Network Synchronization', () => {
   });
 
   it('Sync with short network requests - 100ms', async () => {
-    await element(by.id('ShortNetworkRequest')).tap();
-    await expect(element(by.text('Short Network Request Working!!!'))).toBeVisible();
+    await driver.shortRequest.sendButton.tap();
+    await driver.shortRequest.expectReplied();
   });
 
   it('Sync with long network requests - 3000ms', async () => {
-    await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    await driver.longRequest.sendButton.tap();
+    await driver.longRequest.expectReplied();
   });
 
   it('disableSynchronization() should disable sync', async () => {
     await device.disableSynchronization();
-    await waitFor(element(by.id('LongNetworkRequest'))).toBeVisible().withTimeout(4000);
-    await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
-    await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    await waitFor(driver.longRequest.sendButton).toBeVisible().withTimeout(4000);
+
+    await driver.longRequest.sendButton.tap();
+    await driver.longRequest.expectRepliedUnsync();
+
     await device.enableSynchronization();
   });
 
+  describe('URL black-list (endpoints to ignore in network synchronization)', () => {
 
-  it('setURLBlacklist() should disable synchronization for given endpoint', async () => {
-    await device.setURLBlacklist(['.*localhost.*']);
+    afterEach(() => device.launchApp({ delete: true }));
 
-    await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
-    await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    it('setURLBlacklist() should disable synchronization for given endpoint', async () => {
+      await device.setURLBlacklist(['.*localhost.*']);
 
-    await device.launchApp({ delete: true });
-  });
-
-  it('launchArgs with detoxURLBlacklistRegex should set the "black" (synchronization-ignore) list', async () => {
-    const blackListRegexp = '^http://localhost:\\d{4}?\/[a-z]+\/\\d{4}?$';
-
-    await device.launchApp({
-      newInstance: true,
-      launchArgs: { detoxURLBlacklistRegex: `\\("http://meaningless\.first\.url","${blackListRegexp}"\\)` },
+      await driver.longRequest.sendButton.tap();
+      await driver.longRequest.expectRepliedUnsync();
     });
 
-    try {
+    it('launchArgs with detoxURLBlacklistRegex should set the "black" (synchronization-ignore) list', async () => {
+      const blackListRegexp = '^http://localhost:\\d{4}?\/[a-z]+\/\\d{4}?$';
+
+      await device.launchApp({
+        newInstance: true,
+        launchArgs: { detoxURLBlacklistRegex: `\\("http://meaningless\.first\.url","${blackListRegexp}"\\)` },
+      });
       await element(by.text('Network')).tap();
-      await element(by.id('LongNetworkRequest')).tap();
-      await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
-      await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
-      await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
-    } finally {
-      await device.launchApp({ newInstance: true });
-    }
+
+      await driver.longRequest.sendButton.tap();
+      await driver.longRequest.expectRepliedUnsync();
+    });
   });
 });
+
+const driver = {
+  shortRequest: {
+    get sendButton() { return element(by.id('ShortNetworkRequest')) },
+    get repliedText() { return element(by.text('Short Network Request Working!!!')) },
+    expectReplied: () => expect(driver.shortRequest.repliedText).toBeVisible(),
+  },
+
+  longRequest: {
+    get sendButton() { return element(by.id('LongNetworkRequest')) },
+    get repliedText() { return element(by.text('Long Network Request Working!!!')) },
+    expectReplied: () => expect(driver.longRequest.repliedText).toBeVisible(),
+    expectRepliedUnsync: async () => {
+      await expect(driver.longRequest.repliedText).not.toBeVisible();
+      await waitFor(driver.longRequest.repliedText).toBeVisible().withTimeout(4000);
+    },
+  },
+};
