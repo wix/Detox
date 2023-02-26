@@ -31,9 +31,11 @@ class WhiteBoxExecutor {
   private var messageCounter: Int = 0
 
   private func createNewMessageId() -> Int {
-    let id = messageCounter
-    messageCounter += 1
-    return id
+    DispatchQueue(label: "Increase Message ID Queue").sync { [self] in
+      self.messageCounter += 1
+    }
+
+    return messageCounter
   }
 
   /// Sends a message with given `message` to the application using the internal Detox framework
@@ -348,6 +350,8 @@ class WhiteBoxExecutor {
   private func createMessage(
     type: String, params: [String: AnyCodable] = [:], messageId: Int
   ) -> [String: AnyCodable] {
+    whiteExecLog("creating message for `\(type)`", type: .debug)
+
     return [
       "type": AnyCodable(type),
       "params": AnyCodable(params),

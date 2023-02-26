@@ -251,6 +251,7 @@ extension DetoxTester: AppClientMessageSenderProtocol {
     }
 
     do {
+      mainLog("tester is sending message to app client (white-box)..")
       try server.sendMessage(data: data)
     } catch {
       mainLog(
