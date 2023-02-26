@@ -46,7 +46,7 @@ describe('Network Synchronization', () => {
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
     await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
 
-    await device.launchApp({ newInstance: true });
+    await device.launchApp({ delete: true });
   });
 
   it('launchArgs with detoxURLBlacklistRegex should set the "black" (synchronization-ignore) list', async () => {
