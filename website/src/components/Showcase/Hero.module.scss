@@ -1,3 +1,5 @@
+@import '@site/src/css/fonts';
+
 .heroBanner {
   height: 420px;
   width: auto;
@@ -5,8 +7,6 @@
   text-align: center;
   position: relative;
   overflow: hidden;
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
   background-color: #12161b;
   background-image: url(@site/static/img/showcase/showcase-illustration.png);
   background-position-x: center;
@@ -16,17 +16,12 @@
   border-bottom: 1px solid #202429;
 
   h1 {
-    font-family: 'Nunito Sans', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 58px;
+    @include h2;
   }
 
   p {
-    font-family: 'Nunito Sans', sans-serif;
-    font-style: normal;
+    @include t1;
     font-weight: 300;
-    font-size: 20px;
   }
 }
 
@@ -67,12 +62,7 @@
     color: #ffffff;
     text-decoration: none;
 
-    /* T/T2 */
-    font-family: 'Nunito Sans', sans-serif;
-    font-style: normal;
-    font-weight: 100px;
-    font-size: 16px;
-    line-height: 25px;
+    @include t2;
     /* identical to box height, or 156% */
     color: #ffffff;
   }
