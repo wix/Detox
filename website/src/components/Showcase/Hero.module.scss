@@ -23,6 +23,10 @@
     @include t1;
     font-weight: 300;
   }
+
+  a {
+    @include t2;
+  }
 }
 
 .button {

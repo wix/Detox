@@ -1,83 +1,54 @@
-:root {
-  @mixin define-detox-extra-colors() {
-    // Define the base colors
-    $color: (
-      'r': #f14c52,
-      'y': #f7ba29,
-      'b': #3e77e4,
-      'u': #7633e5,
-      'e': #3ebf72
-    );
+@mixin define-detox-extra-colors() {
+  // Define the base colors
+  $color: (
+    'r': #f14c52,
+    'y': #f7ba29,
+    'b': #3e77e4,
+    'u': #7633e5,
+    'e': #3ebf72
+  );
 
-    // Define the transparency levels
-    $alpha: (
-      '0': 1,
-      '1a': 0.54,
-      '2a': 0.35,
-      '3a': 0.25,
-      '4a': 0.15,
-      '5a': 0.7
-    );
+  // Define the transparency levels
+  $alpha: (
+    '0': 1,
+    '1a': 0.54,
+    '2a': 0.35,
+    '3a': 0.25,
+    '4a': 0.15,
+    '5a': 0.7
+  );
 
-    @each $key, $hex in $color {
-      @each $level, $fraction in $alpha {
-        --detox-color-#{$key}#{$level}: #{transparentize($hex, 1 - $fraction)};
-      }
+  @each $key, $hex in $color {
+    @each $level, $fraction in $alpha {
+      --detox-color-#{$key}#{$level}: #{transparentize($hex, 1 - $fraction)};
     }
   }
+}
 
-  @mixin define-detox-colors($map) {
-    @each $key, $hex in $map {
-      --detox-color-#{$key}: #{$hex};
-    }
+@mixin define-detox-colors($map) {
+  @each $key, $hex in $map {
+    --detox-color-#{$key}: #{$hex};
   }
+}
 
-  @include define-detox-extra-colors();
+@mixin define-detox-light-colors() {
   @include define-detox-colors((
-    'p0': #5c25af,
-    'p1': #8157c1,
-    'p2': #9876cd,
-    'p3': #a789d4,
-    'p4': #b9a1dd,
-    'p5': #d3c4e9
+    'a0': #000000,
+    'a1': #babbbd,
+    'a2': #e0e1e1,
+    'a3': #f1f1f1,
+    'a4': #fafafa,
+    'a5': #ffffff
   ));
+}
 
-  &[data-theme='light'] {
-    @include define-detox-colors((
-      'a0': #12161b,
-      'a1': #babbbd,
-      'a2': #e0e1e1,
-      'a3': #f1f1f1,
-      'a4': #fafafa,
-      'a5': #ffffff
-    ));
-
-    --docusaurus-highlighted-code-line-bg: #d9e5f6;
-  }
-
-  &[data-theme='dark'] {
-    @include define-detox-colors((
-      'a0': #ffffff,
-      'a1': #12161b,
-      'a2': #171b20,
-      'a3': #202429,
-      'a4': #313439,
-      'a5': #575a5d
-    ));
-
-    --docusaurus-highlighted-code-line-bg: #414458;
-    --ifm-background-color: var(--detox-color-a1);
-  }
-
-  --ifm-color-primary: #048fc0;
-
-  --ifm-color-primary-dark: #253282;
-  --ifm-color-primary-darker: #161360;
-  --ifm-color-primary-darkest: #150a51;
-
-  --ifm-color-primary-light: var(--detox-color-p0);
-  --ifm-color-primary-lighter: var(--detox-color-p1);
-  --ifm-color-primary-lightest: var(--detox-color-p2);
-
-  --ifm-code-font-size: 95%;
+@mixin define-detox-dark-colors() {
+  @include define-detox-colors((
+    'a0': #ffffff,
+    'a1': #12161b,
+    'a2': #171b20,
+    'a3': #202429,
+    'a4': #313439,
+    'a5': #575a5d
+  ));
 }
