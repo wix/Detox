@@ -159,18 +159,6 @@ class AppleSimUtils {
     );
   }
 
-  async sendToHome(udid) {
-    if (await this._isSpringBoardInaccessible(udid)) {
-      // SpringBoard is not directly accessible by Simctl on iOS 16.0 and above, therefore we launch and terminate the
-      // Settings app instead. This sends the currently open app to the background and brings the home screen to the
-      // foreground.
-      await this._launchAndTerminateSettings(udid);
-      return;
-    }
-
-    await this._launchSpringBoard(udid);
-  }
-
   async _isSpringBoardInaccessible(udid) {
     const device = await this._findDeviceByUDID(udid);
     const majorIOSVersion = parseInt(device.os.version.split('.')[0]);

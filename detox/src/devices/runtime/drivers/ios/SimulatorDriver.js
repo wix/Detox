@@ -158,7 +158,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async sendToHome() {
-    await this._applesimutils.sendToHome(this.udid);
+    return await this.client.sendToHome();
   }
 
   async setLocation(lat, lon) {

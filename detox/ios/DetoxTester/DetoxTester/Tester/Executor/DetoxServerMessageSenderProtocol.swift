@@ -57,6 +57,9 @@ enum ResponseMessageType: String {
   case reportWaitForIdleDone = "waitForIdleDone"
 
   ///
+  case reportSendToHomeDone = "sendToHomeDone"
+
+  ///
   case reportInvokeResult = "invokeResult"
 
   ///

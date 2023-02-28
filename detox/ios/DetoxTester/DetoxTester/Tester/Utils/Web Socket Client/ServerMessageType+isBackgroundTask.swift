@@ -16,7 +16,7 @@ extension ServerMessageType {
       case .disconnect, .setRecordingState, .setSyncSettings, .cleanup, .deliverPayload,
           .reactNativeReload, .captureViewHierarchy, .waitForActive, .waitForBackground,
           .waitForIdle, .invoke, .isReady, .setOrientation,
-          .shakeDevice, .loginSuccess:
+          .shakeDevice, .loginSuccess, .sendToHome:
         return false
     }
   }

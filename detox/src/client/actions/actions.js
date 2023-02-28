@@ -124,6 +124,24 @@ class WaitForActive extends Action {
   }
 }
 
+class SendToHome extends Action {
+  constructor() {
+    super('sendToHome');
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'sendToHomeDone');
+  }
+}
+
 class Shake extends Action {
   constructor() {
     super('shakeDevice');
@@ -343,6 +361,7 @@ module.exports = {
   Login,
   WaitForBackground,
   WaitForActive,
+  SendToHome,
   Ready,
   Invoke,
   ReloadReactNative,

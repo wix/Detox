@@ -59,6 +59,9 @@ class Executor {
         case .waitForActive:
           waitFor(appState: .foreground, messageId: messageId)
 
+        case .sendToHome:
+          sendToHome(messageId: messageId)
+
         case.reactNativeReload:
           try reactNativeReload(messageId: messageId)
 

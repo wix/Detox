@@ -55,6 +55,7 @@
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
 		607C900C29A79E14008FA6EA /* Executor+deliverPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */; };
+		607C901529ADFD14008FA6EA /* Executor+sendToHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */; };
 		609AA17A279FE83F008F6617 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* Main.m */; };
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
@@ -209,6 +210,7 @@
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
 		60634AD927C4339600274F30 /* ExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegate.swift; sourceTree = "<group>"; };
 		607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+deliverPayload.swift"; sourceTree = "<group>"; };
+		607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendToHome.swift"; sourceTree = "<group>"; };
 		609AA14D279F10F4008F6617 /* DetoxTester.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTester.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		609AA179279FE83F008F6617 /* Main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Main.m; sourceTree = "<group>"; };
 		609AA17C279FE932008F6617 /* DetoxTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTester.swift; sourceTree = "<group>"; };
@@ -681,6 +683,7 @@
 				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
 				60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */,
 				607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */,
+				607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */,
 			);
 			name = Handlers;
 			sourceTree = "<group>";
@@ -883,6 +886,7 @@
 				60534156280C177300C0405D /* SwipeTests.swift in Sources */,
 				603497B127F08E6600770EE0 /* Executor+reactNativeReload.swift in Sources */,
 				60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */,
+				607C901529ADFD14008FA6EA /* Executor+sendToHome.swift in Sources */,
 				60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */,
 				609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */,
 				605341A9280F067200C0405D /* ScreenshotTests.swift in Sources */,

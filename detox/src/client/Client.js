@@ -219,6 +219,10 @@ class Client {
     await this.sendAction(new actions.WaitForActive());
   }
 
+  async sendToHome() {
+    await this.sendAction(new actions.SendToHome());
+  }
+
   async captureViewHierarchy({ viewHierarchyURL }) {
     return await this.sendAction(new actions.CaptureViewHierarchy({
       viewHierarchyURL
