@@ -13,14 +13,14 @@ describe(':ios: Visibility Debug Artifacts', () => {
   it('should not be able to tap an overlayed button', async () => {
     await expectToThrow(
       () => element(by.text('Button 1')).tap(),
-      `View is not hittable at its visible point. Error: View is not visible around point.`,
+      `Test Failed: XCUITest executor failed to handle request: Failed to hit element with identifier`,
     );
   });
 
   afterAll(async () => {
     await waitUntilArtifactsManagerIsIdle();
 
-    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_RCTTextView__0x*__SCREEN.png');
-    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_RCTTextView__0x*__TEST.png');
+    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/ImageScreenshot_debug_visibility_screen_*.png');
+    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/ImageScreenshot_debug_visibility_element_rect_*.png');
   });
 });

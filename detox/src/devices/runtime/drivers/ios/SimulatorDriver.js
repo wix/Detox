@@ -78,14 +78,22 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
-    if (!this.client.isConnected) {
-      await launchXCUITest(this.udid, launchArgs.detoxServer, launchArgs.detoxSessionId, bundleId, this._testTargetServerPort);
-    }
-
+    const { udid } = this;
     launchArgs = this.enrichArgs(launchArgs);
 
-    const { udid } = this;
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+
+    if (!this.client.isConnected) {
+      await launchXCUITest(
+        this.udid,
+        launchArgs.detoxServer,
+        launchArgs.detoxSessionId,
+        bundleId,
+        launchArgs.detoxDebugVisibility,
+        this._testTargetServerPort
+      );
+    }
+
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
 

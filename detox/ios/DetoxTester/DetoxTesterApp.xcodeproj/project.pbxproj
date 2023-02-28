@@ -56,6 +56,8 @@
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
 		607C900C29A79E14008FA6EA /* Executor+deliverPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */; };
 		607C901529ADFD14008FA6EA /* Executor+sendToHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */; };
+		607C901729AE01E2008FA6EA /* Executor+handleTestFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */; };
+		607C901929AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */; };
 		609AA17A279FE83F008F6617 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* Main.m */; };
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
@@ -211,6 +213,8 @@
 		60634AD927C4339600274F30 /* ExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegate.swift; sourceTree = "<group>"; };
 		607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+deliverPayload.swift"; sourceTree = "<group>"; };
 		607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendToHome.swift"; sourceTree = "<group>"; };
+		607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleTestFailure.swift"; sourceTree = "<group>"; };
+		607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionDelegate+createDebugArtifacts.swift"; sourceTree = "<group>"; };
 		609AA14D279F10F4008F6617 /* DetoxTester.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTester.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		609AA179279FE83F008F6617 /* Main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Main.m; sourceTree = "<group>"; };
 		609AA17C279FE932008F6617 /* DetoxTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTester.swift; sourceTree = "<group>"; };
@@ -357,6 +361,14 @@
 				605341C12813055A00C0405D /* AccessibilityScreen.storyboard */,
 			);
 			path = "Get Accessibility Attributes";
+			sourceTree = "<group>";
+		};
+		607C901A29AE03C1008FA6EA /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		609AA14E279F10F4008F6617 /* DetoxTester */ = {
@@ -557,6 +569,7 @@
 		60FBF61128198614000B73B1 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				607C901A29AE03C1008FA6EA /* Utils */,
 				60FBF61F281987D7000B73B1 /* XCUIElement */,
 				60634AD327C42E5200274F30 /* ActionDelegate.swift */,
 				60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */,
@@ -671,19 +684,20 @@
 		60FBF61C28198718000B73B1 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */,
 				603497AC27F08D9300770EE0 /* Executor+Connections.swift */,
-				6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */,
+				607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */,
 				603497AE27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift */,
 				603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */,
+				607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */,
 				603497B027F08E6600770EE0 /* Executor+reactNativeReload.swift */,
+				6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */,
 				603497A927F08C3700770EE0 /* Executor+sendAction.swift */,
-				60A3B465282D0439002F903B /* Executor+waitFor.swift */,
-				60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */,
-				604B94B828313C3200508C27 /* Executor+captureViewHierarchy.swift */,
-				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
-				60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */,
-				607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */,
 				607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */,
+				60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */,
+				60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */,
+				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
+				60A3B465282D0439002F903B /* Executor+waitFor.swift */,
 			);
 			name = Handlers;
 			sourceTree = "<group>";
@@ -929,6 +943,7 @@
 				60FBF5FA28192BD1000B73B1 /* PinchTests.swift in Sources */,
 				60A3B444282A56B0002F903B /* WhiteBoxExecutor+Response.swift in Sources */,
 				6053419D280EEDBE00C0405D /* XCUIElement+swipe.swift in Sources */,
+				607C901729AE01E2008FA6EA /* Executor+handleTestFailure.swift in Sources */,
 				6025B474284FA18D0073AE0E /* Executor+reportCurrentStatus.swift in Sources */,
 				60ED001F2990EAC700BC6377 /* ServerMessageType+isBackgroundTask.swift in Sources */,
 				6053419F280EF1DC00C0405D /* XCUIElement+coordinate.swift in Sources */,
@@ -961,6 +976,7 @@
 				60FBF56E2817915B000B73B1 /* ScrollTests.swift in Sources */,
 				60FBF5EA28183A9F000B73B1 /* XCUIElement+isVisible.swift in Sources */,
 				605341A3280F01B000C0405D /* LongPressTests.swift in Sources */,
+				607C901929AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift in Sources */,
 				60BF52D0281E739D00610DBD /* XCUIElementQuery+matching.swift in Sources */,
 				60F96DDD296D9F050047B332 /* ActionDelegate+Error.swift in Sources */,
 				60F3D47128322EF500732955 /* WebSocketServer.swift in Sources */,

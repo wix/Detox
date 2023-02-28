@@ -21,7 +21,13 @@ class ActionDelegate: ActionDelegateProtocol {
   /// Make an action by Detox Tester.
   func act(action: Action, on element: AnyHashable) throws {
     uiLog("called to start action: `\(action)` on element: `\(element)`")
-    try act(action: action, on: element, testCase: DetoxTester.shared.testCase!)
+    do {
+      try act(action: action, on: element, testCase: DetoxTester.shared.testCase!)
+    } catch {
+      uiLog("action failed, creating debug artifacts (if enabled)", type: .debug)
+      let artifacts = try createDebugArtifacts(app: self.app, element: element)
+      throw Error.errorWithDebugArtifacts(underlyingError: error as CustomStringConvertible, artifacts)
+    }
 
     uiLog("wait until ready to finish action: `\(action)`, on element: `\(element)`", type: .debug)
     try whiteBoxMessageHandler(
@@ -216,6 +222,8 @@ class ActionDelegate: ActionDelegateProtocol {
       throw Error.elementIsNotScreenshotProviding
     }
 
-    return try AnyCodable(element.takeScreenshot(imageName, date: date))
+    return try AnyCodable(element.takeScreenshot(
+      imageName, date: date, tempPath: .element
+    ))
   }
 }

@@ -8,29 +8,37 @@ import XCTest
 
 extension XCUIScreenshotProviding {
   /// Takes a screenshot of the current screenshot-providing element.
-  func takeScreenshot(_ imageName: String?, date: Date) throws -> [String: String] {
+  func takeScreenshot(
+    _ imageName: String?,
+    date: Date,
+    tempPath: TempPath
+  ) throws -> [String: String] {
     let pngImageData = screenshot().pngRepresentation
-    let path = try URL.makeScreenshotPath(imageName, date: date)
+    let path = try URL.makeScreenshotPath(imageName, date: date, tempPath: tempPath)
     try pngImageData.write(to: path)
 
     return ["screenshotPath": path.path]
   }
 }
 
-private extension URL {
-  /// Creates a screenshot path.
-  static func makeScreenshotPath(_ imageName: String?, date: Date) throws -> URL {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd--HH-mm-ss-SSS"
+///
+enum TempPath: String {
+  ///
+  case element = "elementsScreenshot"
 
-    let imageName = String(
-      format: "ImageScreenshot_%@.png", imageName ?? dateFormatter.string(from: date)
-    )
+  ///
+  case debugRects = "visibilityFailingRects"
 
-    return try temporaryPath("elementsScreenshot").appendingPathComponent(imageName)
+  ///
+  case debugScreens = "visibilityFailingScreenshots"
+}
+
+extension TempPath {
+  func temporaryPath() throws -> URL {
+    return try temporaryPath(self.rawValue)
   }
 
-  private static func temporaryPath(_ subDirectory: String) throws -> URL {
+  private func temporaryPath(_ subDirectory: String) throws -> URL {
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let temporarySubDirectory = temporaryDirectory.appendingPathComponent(
       subDirectory,
@@ -44,5 +52,23 @@ private extension URL {
     )
 
     return temporarySubDirectory
+  }
+}
+
+private extension URL {
+  /// Creates a screenshot path.
+  static func makeScreenshotPath(
+    _ imageName: String?,
+    date: Date,
+    tempPath: TempPath
+  ) throws -> URL {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd--HH-mm-ss-SSS"
+
+    let imageName = String(
+      format: "ImageScreenshot_%@.png", imageName ?? dateFormatter.string(from: date)
+    )
+
+    return try tempPath.temporaryPath().appendingPathComponent(imageName)
   }
 }

@@ -21,4 +21,7 @@ import Foundation
 
   /// Environment argument key for accessing the bundle identifier of the running app.
   static let bundleId = "BUNDLE_ID"
+
+  /// Environment argument key for accessing the feature toggle for debug visibility artifacts.
+  static let detoxDebugVisibility = "DETOX_DEBUG_VISIBILITY"
 }

@@ -13,6 +13,12 @@ extension ActionDelegate {
 
     /// Element does not conform to protocol `XCUIScreenshotProviding`.
     case elementIsNotScreenshotProviding
+
+    /// Error (`underlyingError`) with debug artifacts.
+    case errorWithDebugArtifacts(
+      underlyingError: CustomStringConvertible,
+      _ artifactsPaths: [String: String]
+    )
   }
 }
 
@@ -25,6 +31,9 @@ extension ActionDelegate.Error: CustomStringConvertible {
 
       case .elementIsNotScreenshotProviding:
         return "Element does not conform to protocol `XCUIScreenshotProviding`"
+
+      case .errorWithDebugArtifacts(let underlyingError, _):
+        return underlyingError.description
     }
   }
 }

@@ -78,16 +78,7 @@ class Executor {
           terminate(messageId: messageId)
       }
     } catch {
-      let errorMessage = "XCUITest executor failed to handle request: \(error)"
-      execLog(errorMessage, type: .error)
-
-      sendAction(
-        .reportTestFailed,
-        params: [
-          "details": errorMessage
-        ],
-        messageId: messageId
-      )
+      handleTestFailure(error: error, messageId: messageId)
     }
   }
 
