@@ -29,8 +29,7 @@ class Executor {
           disconnect(messageId: messageId)
 
         case .setRecordingState:
-          execLog("`setRecordingState` not implemented yet: \(action)", type: .error)
-          fatalError("not implemented yet")
+          try setRecordingState(params: params, messageId: messageId)
 
         case .waitForBackground:
           waitFor(appState: .background, messageId: messageId)

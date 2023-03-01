@@ -58,6 +58,7 @@
 		607C901529ADFD14008FA6EA /* Executor+sendToHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */; };
 		607C901729AE01E2008FA6EA /* Executor+handleTestFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */; };
 		607C901929AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */; };
+		607C902329AF959A008FA6EA /* Executor+setRecordingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C902229AF959A008FA6EA /* Executor+setRecordingState.swift */; };
 		609AA17A279FE83F008F6617 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* Main.m */; };
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
@@ -215,6 +216,7 @@
 		607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendToHome.swift"; sourceTree = "<group>"; };
 		607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleTestFailure.swift"; sourceTree = "<group>"; };
 		607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionDelegate+createDebugArtifacts.swift"; sourceTree = "<group>"; };
+		607C902229AF959A008FA6EA /* Executor+setRecordingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setRecordingState.swift"; sourceTree = "<group>"; };
 		609AA14D279F10F4008F6617 /* DetoxTester.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTester.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		609AA179279FE83F008F6617 /* Main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Main.m; sourceTree = "<group>"; };
 		609AA17C279FE932008F6617 /* DetoxTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTester.swift; sourceTree = "<group>"; };
@@ -698,6 +700,7 @@
 				60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */,
 				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
 				60A3B465282D0439002F903B /* Executor+waitFor.swift */,
+				607C902229AF959A008FA6EA /* Executor+setRecordingState.swift */,
 			);
 			name = Handlers;
 			sourceTree = "<group>";
@@ -911,6 +914,7 @@
 				60F96DF12975A78E0047B332 /* Executor+Error.swift in Sources */,
 				605341C42814124000C0405D /* XCUIElement+getAttributes.swift in Sources */,
 				605341A7280F037200C0405D /* XCUIScreenshotProviding+takeScreenshot.swift in Sources */,
+				607C902329AF959A008FA6EA /* Executor+setRecordingState.swift in Sources */,
 				60FBF5F3281848C0000B73B1 /* WheelPickerTests.swift in Sources */,
 				605341CE28145FC600C0405D /* CGPoint+Extensions.swift in Sources */,
 				6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */,

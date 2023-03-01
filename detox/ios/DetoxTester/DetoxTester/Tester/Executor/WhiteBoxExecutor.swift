@@ -96,6 +96,19 @@ class WhiteBoxExecutor {
         send("waitUntilReady", andExpectTo: "isReady", messageId: messageId)
         return .completed
 
+      case .setRecordingState(let recordingPath, let samplingInterval):
+        let message = createMessage(
+          type: "setRecordingState",
+          params: [
+            "recordingPath": recordingPath != nil ? AnyCodable(recordingPath!) : nil,
+            "samplingInterval": samplingInterval != nil ? AnyCodable(samplingInterval!) : nil
+          ],
+          messageId: messageId
+        )
+        send("setRecordingState", andExpectTo: "didSetRecordingState", messageId: messageId)
+
+        return .completed
+
       case .setSyncSettings(let maxTimerWait, let blacklistURLs, let disabled):
         whiteExecLog(
           "setting synchronization settings, " +

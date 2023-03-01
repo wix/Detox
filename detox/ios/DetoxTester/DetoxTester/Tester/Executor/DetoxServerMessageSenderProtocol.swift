@@ -73,4 +73,7 @@ enum ResponseMessageType: String {
 
   ///
   case reportWillTerminate = "willTerminate"
+
+  ///
+  case reportDidSetRecordingState = "setRecordingStateDone"
 }

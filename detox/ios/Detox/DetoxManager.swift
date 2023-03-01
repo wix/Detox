@@ -552,6 +552,12 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "setRecordingState":
+				handlePerformanceRecording(props: params, isFromLaunch: false) {
+					self.safeSend(action: "didSetRecordingState", messageId: messageId)
+				}
+				return
+
 			case "captureViewHierarchy":
 				let urlString = params["viewHierarchyURL"] as? String
 

@@ -28,6 +28,9 @@ extension WhiteBoxExecutor {
     case captureViewHierarchy(viewHierarchyURL: String?)
 
     /// Returns response of `completed` if successfully done.
+    case setRecordingState(recordingPath: String?, samplingInterval: TimeInterval?)
+
+    /// Returns response of `completed` if successfully done.
     case waitUntilReady
 
     /// Returns response of `completed` if successfully done.
@@ -87,7 +90,7 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
         return "shake device"
 
       case .captureViewHierarchy(viewHierarchyURL: let viewHierarchyURL):
-        return "capture view hierarchy (with destination: \(viewHierarchyURL))"
+        return "capture view hierarchy (with destination: \(String(describing: viewHierarchyURL)))"
 
       case .waitUntilReady:
         return "wait until app is ready"
@@ -133,6 +136,11 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
       case .requestAttributes(ofElements: let ofElements):
         return "request attributes for elements with identifiers: " +
           "\(ofElements.map({ $0.identifier }))"
+
+      case .setRecordingState(recordingPath: let recordingPath, samplingInterval: let samplingInterval):
+        return "request for setting recording state with recording path: " +
+          "`\(String(describing: recordingPath))` and " +
+          "sampling interval: `\(String(describing: samplingInterval))"
     }
   }
 }
