@@ -3,7 +3,8 @@ const custom = require('./utils/custom-it');
 
 describe(':ios: Overlay', () => {
   let showAlertButton;
-  let showOverlayButton;
+  let showOverlayWindowButton;
+  let showOverlayViewButton;
   let verticalScrollView;
 
   beforeEach(async () => {
@@ -12,8 +13,11 @@ describe(':ios: Overlay', () => {
 
     await element(by.text('Overlay')).tap();
 
-    showOverlayButton = await element(by.id('ShowOverlayButton'));
-    await expect(showOverlayButton).toBeVisible();
+    showOverlayWindowButton = await element(by.id('ShowOverlayWindowButton'));
+    await expect(showOverlayWindowButton).toBeVisible();
+
+    showOverlayViewButton = await element(by.id('ShowOverlayViewButton'));
+    await expect(showOverlayViewButton).toBeVisible();
 
     showAlertButton = await element(by.id('ShowDismissibleAlertButton'));
     await expect(showAlertButton).toBeVisible();
@@ -24,7 +28,7 @@ describe(':ios: Overlay', () => {
   describe('default behaviour', () => {
     it('should be able to scroll elements', async () => {
       await verticalScrollView.scrollTo('bottom');
-      await expect(showOverlayButton).not.toBeVisible();
+      await expect(showOverlayWindowButton).not.toBeVisible();
     });
   });
 
@@ -38,7 +42,7 @@ describe(':ios: Overlay', () => {
 
     describe('when shown', () => {
       it('should not be able to tap on elements', async () => {
-        await expectToThrow(() => showOverlayButton.tap());
+        await expectToThrow(() => showOverlayWindowButton.tap());
       });
 
       it('should not be able to scroll elements', async () => {
@@ -52,12 +56,12 @@ describe(':ios: Overlay', () => {
       });
 
       custom.it.withFailureIf.iOSWithRNLessThan67('should be able to tap on elements', async () => {
-        await showOverlayButton.tap();
+        await showOverlayWindowButton.tap();
       });
 
       custom.it.withFailureIf.iOSWithRNLessThan67('should be able to scroll elements', async () => {
         await verticalScrollView.scrollTo('bottom');
-        await expect(showOverlayButton).not.toBeVisible();
+        await expect(showOverlayWindowButton).not.toBeVisible();
       });
     });
   });
@@ -65,17 +69,36 @@ describe(':ios: Overlay', () => {
   describe('overlay window', () => {
     describe('when shown', () => {
       beforeEach(async () => {
-        await showOverlayButton.tap();
+        await showOverlayWindowButton.tap();
       });
 
-      // TODO: this test fails. It is possible to tap on elements when overlay is shown.
-      //  This might be useful in some cases.
-      it.skip('should not be able to tap on elements', async () => {
-        await expectToThrow(() => showOverlayButton.tap());
+      it('should not be able to tap on elements', async () => {
+        await expectToThrow(() => showOverlayWindowButton.tap());
       });
 
       it('should not be able to scroll elements', async () => {
         await expectToThrow(() => verticalScrollView.scrollTo('bottom'));
+      });
+    });
+  });
+
+  describe('overlay view', () => {
+    describe('when shown', () => {
+      beforeEach(async () => {
+        await showOverlayViewButton.tap();
+      });
+
+      it('should be hittable', async () => {
+        const overlayView = await element(by.id('OverlayView'));
+        await overlayView.tap();
+      });
+
+      it('should not be able to tap on elements', async () => {
+        await expectToThrow(() => showOverlayViewButton.tap());
+      });
+
+      it('should not be able to scroll elements', async () => {
+        await expectToThrow(() => showOverlayViewButton.scrollTo('bottom'));
       });
     });
   });

@@ -38,6 +38,12 @@ describe('Global-context lifecycle handler for Genymotion SaaS emulators', () =>
     data: { name },
   });
 
+  describe('global init', () => {
+    it('should do nothing', async () => {
+      await expect(lifecycleHandler.globalInit()).resolves.toBeUndefined();
+    });
+  });
+
   describe('global clean-up', () => {
     const givenDeletionPendingDevices = (rawDevices) => deviceCleanupRegistry.readRegisteredDevices.mockResolvedValue({ rawDevices });
     const givenNoDeletionPendingDevices = () => givenDeletionPendingDevices([]);

@@ -1,6 +1,6 @@
 const funpermaproxy = require('funpermaproxy');
 
-const symbols = require('../symbols');
+const symbols = require('./symbols');
 
 class DetoxInternalsFacade {
   /**

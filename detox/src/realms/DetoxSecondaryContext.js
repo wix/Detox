@@ -1,10 +1,10 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const { DetoxInternalError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
-const symbols = require('../symbols');
 
 const DetoxContext = require('./DetoxContext');
+const symbols = require('./symbols');
 
 // Protected symbols
 const { $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
@@ -43,7 +43,7 @@ class DetoxSecondaryContext extends DetoxContext {
 
     this[_ipcClient] = new IPCClient({
       id: `secondary-${process.pid}`,
-      state: this[$sessionState],
+      sessionState: this[$sessionState],
       logger: this[symbols.logger],
     });
 

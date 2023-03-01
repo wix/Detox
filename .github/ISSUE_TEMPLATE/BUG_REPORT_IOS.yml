@@ -45,6 +45,7 @@ body:
       description: "Note: the test runner is Jest by default, unless overridden via testRunner property in your detox configuration file (e.g. package.json, detox.config)."
       value: "Detox version:
       \nReact Native version:
+      \nHas Fabric (React Native's new rendering system) enabled: (yes/no)
       \nNode version:
       \nDevice model:
       \niOS version:
@@ -61,8 +62,8 @@ body:
     id: device-logs
     attributes:
       label: Device logs
-      description: Please run your tests using the `--record-logs all` argument. See [artifacts documentation](https://wix.github.io/Detox/docs/api/artifacts).
-      value: "<details><summary>Device logs</summary>\n\n```\npaste logs here!\n```\n\n</details>"
+      description: Please run your tests using the `--record-logs all` argument and paste the `device.log` file. See [artifacts documentation](https://wix.github.io/Detox/docs/config/artifacts#launch-arguments).
+      value: "<details><summary>Device logs</summary>\n\n```\npaste your device.log here!\n```\n\n</details>"
   - type: textarea
     id: test-artifacts
     attributes:

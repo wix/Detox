@@ -220,12 +220,16 @@ await device.launchApp({
 
 #### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
 
-Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
+Launches the app with a URL blacklist to disable network synchronization on certain endpoints.
+Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
+
+> Note that due to the complexity of reg-exps and interoperability concerns, the implementation is fairly sensitive to the format of the string of urls.
+> Please do your best to follow the example below:
 
 ```js
 await device.launchApp({
   newInstance: true,
-  launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
+  launchArgs: { detoxURLBlacklistRegex: '\\("^http://192\.168\.1\.253:d{4}/.*","https://e\.crashlytics\.com/spi/v2/events"\\)' },
 });
 ```
 
@@ -379,7 +383,7 @@ Takes a screenshot of the device. For full details on taking screenshots with De
 currently opened application to a temporary folder and schedules putting it to
 the artifacts' folder upon the completion of the current test. The file can be
 opened later in Xcode 12.0 and above.
-See [Xcode 12 Release notes: #57933113](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:\~:text=57933113)
+See [Xcode 12 Release notes: #57933113](https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes#:~:text=57933113)
 for more details.
 
 The `name` parameter is optional — by default, it equals to `capture`.

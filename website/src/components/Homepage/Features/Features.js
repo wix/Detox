@@ -1,12 +1,10 @@
 import React from 'react';
-import './Features.css';
+import './Features.scss';
 
 const Features = ({ Svg, title, description }) => {
   return (
     <div className="col col--4 features-gap">
-      <div>
-        <Svg className="feature-image" alt={title} />
-      </div>
+      <Svg className="feature-image" alt={title} />
       <div>
         <h3>{title}</h3>
         <p>{description}</p>

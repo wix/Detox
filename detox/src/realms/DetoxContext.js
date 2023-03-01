@@ -3,9 +3,9 @@ const funpermaproxy = require('funpermaproxy');
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const { DetoxLogger, DetoxLogFinalizer, installLegacyTracerInterface } = require('../logger');
-const symbols = require('../symbols');
 
 const DetoxConstants = require('./DetoxConstants');
+const symbols = require('./symbols');
 
 //#region Protected symbols
 const $cleanup = Symbol('cleanup');
@@ -60,7 +60,8 @@ class DetoxContext {
     installLegacyTracerInterface(this.log, this);
 
     this[$logFinalizer] = new DetoxLogFinalizer({
-      session: this[$sessionState]
+      session: this[$sessionState],
+      logger: this[symbols.logger],
     });
 
     /** @type {import('../DetoxWorker') | null} */
@@ -134,7 +135,10 @@ class DetoxContext {
    */
   async [symbols.installWorker](opts) {
     if (opts.global) {
-      opts.global['__detox__'] = this;
+      opts.global['__detox__'] = {
+        clientApi: require('../../index'),
+        internalsApi: require('../../internals'),
+      };
       this.log.overrideConsole(opts.global);
     }
 

@@ -40,6 +40,10 @@ describe('composeLoggerConfig', () => {
     });
   });
 
+  it('should never return "options" as a function', () => {
+    expect(composed().options).not.toBeInstanceOf(Function);
+  });
+
   describe.each([
     ['local config'],
     ['global config'],

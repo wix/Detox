@@ -6,11 +6,11 @@ const onSignalExit = require('signal-exit');
 const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
-const symbols = require('../symbols');
 const { getCurrentCommand } = require('../utils/argparse');
 const uuid = require('../utils/uuid');
 
 const DetoxContext = require('./DetoxContext');
+const symbols = require('./symbols');
 
 // Protected symbols
 const { $logFinalizer, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
@@ -24,6 +24,7 @@ const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _lifecycleLogger = Symbol('lifecycleLogger');
 const _sessionFile = Symbol('sessionFile');
+const _logFinalError = Symbol('logFinalError');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -91,6 +92,7 @@ class DetoxPrimaryContext extends DetoxContext {
       data: this[$sessionState],
     }, getCurrentCommand());
 
+    // TODO: IPC Server creation ought to be delegated to a generator/factory.
     const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
@@ -110,6 +112,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_resetLockFile]();
     }
 
+    // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
     if (sessionConfig.autoStart) {
       this[_wss] = new DetoxServer({
@@ -122,6 +125,7 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_wss].open();
     }
 
+    // TODO: double check that this config is indeed propogated onto the client create at the detox-worker side
     if (!sessionConfig.server && this[_wss]) {
       // @ts-ignore
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
@@ -179,9 +183,10 @@ class DetoxPrimaryContext extends DetoxContext {
       if (this[_dirty]) {
         try {
           this[_lifecycleLogger].trace.end();
+          await this[symbols.logger].close();
           await this[$logFinalizer].finalize();
         } catch (err) {
-          this[_lifecycleLogger].error({ err }, 'Encountered an error while merging the process logs:');
+          this[_logFinalError](err);
         }
       }
     }
@@ -211,10 +216,15 @@ class DetoxPrimaryContext extends DetoxContext {
 
     try {
       this[_lifecycleLogger].trace.end({ abortSignal: signal });
+      this[symbols.logger].close().catch(this[_logFinalError]);
       this[$logFinalizer].finalizeSync();
     } catch (err) {
-      this[symbols.logger].error({ err }, 'Encountered an error while merging the process logs:');
+      this[_logFinalError](err);
     }
+  };
+
+  [_logFinalError] = (err) => {
+    this[_lifecycleLogger].error(err, 'Encountered an error while merging the process logs:');
   };
 
   //#endregion

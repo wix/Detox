@@ -24,20 +24,20 @@ class NetworkIdlingResourcesTest {
     // Note: Ideally, we should test that the list of busy resources is protected,
     // rather than testing thread-safety as a whole.
     @Test
-    fun `should return the description in a thread-safe way`() {
+    fun `should return the descriptive data a thread-safe way`() {
         val localExecutor = Executors.newSingleThreadExecutor()
-        var description: IdlingResourceDescription? = null
+        var busyHint: Map<String, Any>? = null
 
         synchronized(uut) {
             localExecutor.submit {
-                description = uut.getDescription()
+                busyHint = uut.getBusyHint()
             }
 
             yieldToOtherThreads(localExecutor)
-            assertThat(description).isNull()
+            assertThat(busyHint).isNull()
         }
         yieldToOtherThreads(localExecutor)
-        assertThat(description).isNotNull()
+        assertThat(busyHint).isNotNull
     }
 
     // Note: Ideally, we should test that the list of busy resources is protected,

@@ -69,7 +69,7 @@ class WebElement {
   static runScriptWithArgs(element, script, args) {
     if (typeof script !== "string") throw new Error("script should be a string, but got " + (script + (" (" + (typeof script + ")"))));
 
-    if (typeof args !== 'object' || !args instanceof Array) {
+    if (typeof args !== 'object' || !Array.isArray(args)) {
       throw new Error('args must be an array, got ' + typeof args);
     }
 

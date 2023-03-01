@@ -1,0 +1,19 @@
+// Header for showcase page
+.header-showcase-link:after {
+  background: url(@site/static/img/showcase/showcase-icon-dark.svg) no-repeat;
+  content: '';
+  display: inline-flexbox;
+  padding-left: 28px;
+}
+
+.header-showcase-link:hover::after {
+  background: url(@site/static/img/showcase/showcase-icon-hover.svg) no-repeat;
+}
+
+[data-theme='dark'] .header-showcase-link:hover::after {
+  background: url(@site/static/img/showcase/showcase-icon-hover.svg) no-repeat;
+}
+
+[data-theme='dark'] .header-showcase-link:after {
+  background: url(@site/static/img/showcase/showcase-icon-white.svg) no-repeat;
+}

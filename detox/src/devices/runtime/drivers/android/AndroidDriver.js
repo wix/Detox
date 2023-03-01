@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 // @ts-nocheck
 const path = require('path');
 const URL = require('url').URL;
@@ -31,7 +32,7 @@ const log = logger.child({ cat: 'device' });
  * @property adb { ADB }
  * @property aapt { AAPT }
  * @property apkValidator { ApkValidator }
- * @property fileXfer { FileXfer }
+ * @property fileTransfer { FileTransfer }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
  * @property devicePathBuilder { AndroidDevicePathBuilder }
@@ -51,7 +52,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = deps.aapt;
     this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
-    this.fileXfer = deps.fileXfer;
+    this.fileTransfer = deps.fileTransfer;
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
@@ -162,11 +163,11 @@ class AndroidDriver extends DeviceDriverBase {
       }
   }
 
-  async pressBack() { // eslint-disable-line no-unused-vars
+  async pressBack() {
     await this.uiDevice.pressBack();
   }
 
-  async sendToHome(params) { // eslint-disable-line no-unused-vars
+  async sendToHome(params) {
     await this.uiDevice.pressHome();
   }
 
@@ -331,8 +332,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
-    await this.fileXfer.prepareDestinationDir(adbName);
-    return await this.fileXfer.send(adbName, dataFileLocalPath, 'notification.json');
+    await this.fileTransfer.prepareDestinationDir(adbName);
+    return await this.fileTransfer.send(adbName, dataFileLocalPath, 'notification.json');
   }
 
   _startActivityWithUrl(url) {

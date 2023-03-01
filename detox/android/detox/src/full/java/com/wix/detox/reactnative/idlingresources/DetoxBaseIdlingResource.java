@@ -1,5 +1,7 @@
 package com.wix.detox.reactnative.idlingresources;
 
+import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class DetoxBaseIdlingResource implements DescriptiveIdlingResource {

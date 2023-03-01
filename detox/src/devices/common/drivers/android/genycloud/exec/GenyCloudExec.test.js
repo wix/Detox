@@ -69,7 +69,7 @@ describe('Genymotion-cloud executable', () => {
     {
       commandName: 'Start Instance',
       commandExecFn: () => uut.startInstance(recipeUUID, instanceName),
-      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances start --stop-when-inactive --no-wait ${recipeUUID} "${instanceName}"`,
+      expectedExec: `"mock/path/to/gmsaas" --format compactjson instances start --no-wait ${recipeUUID} "${instanceName}"`,
       expectedExecOptions: { retries: 0 },
     },
     {

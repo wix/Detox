@@ -15,6 +15,7 @@ const config = {
   favicon: '/img/favicon.ico',
   organizationName: 'wix',
   projectName: 'Detox',
+  plugins: ['docusaurus-plugin-sass'],
 
   presets: [
     [
@@ -53,7 +54,7 @@ const config = {
           remarkPlugins: [[require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]]
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css')
+          customCss: require.resolve('./src/css/custom.scss')
         }
       })
     ]
@@ -84,7 +85,7 @@ const config = {
           {
             to: 'blog',
             label: 'Blog',
-            position: 'left',
+            position: 'left'
           },
           {
             to: 'showcase',

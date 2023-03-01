@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12BDDA602971652D00FDBBA8 /* UIApplication+DetoxActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12BDDA5F2971652D00FDBBA8 /* UIApplication+DetoxActions.swift */; };
 		390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */; };
 		390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */; };
@@ -194,6 +195,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12BDDA5F2971652D00FDBBA8 /* UIApplication+DetoxActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+DetoxActions.swift"; sourceTree = "<group>"; };
 		390D1C981E3A2893007F5F46 /* Detox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Detox.xcconfig; sourceTree = "<group>"; };
 		390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIWindow+DetoxUtils.h"; sourceTree = "<group>"; };
 		390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+DetoxUtils.m"; sourceTree = "<group>"; };
@@ -558,6 +560,7 @@
 				3980D164244DC8F0004812DD /* UIPickerView+DetoxActions.m */,
 				3980D16B244DDCD7004812DD /* UIScrollView+DetoxActions.h */,
 				3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */,
+				12BDDA5F2971652D00FDBBA8 /* UIApplication+DetoxActions.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -872,6 +875,7 @@
 				390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */,
 				3946CD4A2566EBCB000A3606 /* NSObject+DetoxUtils.m in Sources */,
 				3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */,
+				12BDDA602971652D00FDBBA8 /* UIApplication+DetoxActions.swift in Sources */,
 				39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */,
 				396D455225238BB90096E7FA /* UIView+Drawing.m in Sources */,
 				39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */,

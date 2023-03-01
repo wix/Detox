@@ -6,12 +6,12 @@ const cleanupLogData = {
 
 class GenyGlobalLifecycleHandler {
   constructor({ deviceCleanupRegistry, instanceLifecycleService }) {
+    /** @private */
     this._deviceCleanupRegistry = deviceCleanupRegistry;
+    /** @private */
     this._instanceLifecycleService = instanceLifecycleService;
   }
 
-  // TODO: remove this ignore as soon as DetoxPrimaryContext is covered with tests
-  /* istanbul ignore next */
   async globalInit() {}
 
   emergencyCleanup() {

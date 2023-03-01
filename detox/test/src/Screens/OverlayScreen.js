@@ -24,8 +24,12 @@ export default class OverlayScreen extends Component {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => NativeModule.presentOverlayWindow()} style={styles.button} testID='ShowOverlayButton'>
-          <Text style={styles.text}>Show Overlay</Text>
+        <TouchableOpacity onPress={() => NativeModule.presentOverlayWindow()} style={styles.button} testID='ShowOverlayWindowButton'>
+          <Text style={styles.text}>Show Overlay Window</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => NativeModule.presentOverlayView()} style={styles.button} testID='ShowOverlayViewButton'>
+          <Text style={styles.text}>Show Overlay View</Text>
         </TouchableOpacity>
 
         <View style={styles.item}><Text style={styles.itemText}>Text1</Text></View>

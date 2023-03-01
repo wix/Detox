@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
@@ -6,7 +7,7 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
     const apkValidator = serviceLocator.apkValidator;
-    const fileXfer = serviceLocator.fileXfer;
+    const fileTransfer = serviceLocator.fileTransfer;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
 
     const AppInstallHelper = require('../../common/drivers/android/tools/AppInstallHelper');
@@ -18,9 +19,9 @@ class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
       adb,
       aapt,
       apkValidator,
-      fileXfer,
+      fileTransfer,
       devicePathBuilder,
-      appInstallHelper: new AppInstallHelper(adb, fileXfer),
+      appInstallHelper: new AppInstallHelper(adb, fileTransfer),
       appUninstallHelper: new AppUninstallHelper(adb),
       instrumentation: new MonitoredInstrumentation(adb),
     };
@@ -41,7 +42,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
 }
 
 class AndroidAttached extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps, configs) {
     const props = {
       adbName: deviceCookie.adbName,
     };
@@ -52,7 +53,7 @@ class AndroidAttached extends RuntimeDriverFactoryAndroid {
 }
 
 class Genycloud extends RuntimeDriverFactoryAndroid {
-  _createDriver(deviceCookie, deps, configs) { // eslint-disable-line no-unused-vars
+  _createDriver(deviceCookie, deps, configs) {
     const props = {
       instance: deviceCookie.instance,
     };

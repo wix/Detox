@@ -1,4 +1,4 @@
-// @ts-nocheck
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 const ArtifactPlugin = require('./ArtifactPlugin');
 
 /***
@@ -8,6 +8,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
   constructor({ api }) {
     super({ api });
 
+    /** @type {*} */
     this.testRecording = null;
   }
 
@@ -51,7 +52,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
    * @abstract
    * @protected
    */
-  createTestRecording() {}
+  createTestRecording(config) {}
 
   /***
    * @abstract

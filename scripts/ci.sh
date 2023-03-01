@@ -16,3 +16,7 @@ if [ "$1" == 'noGenerate' ]; then
 else
   run_f "lerna run test"
 fi
+
+pushd detox
+allure generate || echo "Allure is not installed"
+popd

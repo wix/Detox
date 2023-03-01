@@ -96,10 +96,18 @@ exports[`DetoxLogger - main functionality - should log complete duration events 
 00:00:00.000 detox[PID] E  Debug duration
 00:00:00.000 detox[PID] B  Trace duration
 00:00:00.000 detox[PID] E  Trace duration
+00:00:00.000 detox[PID] B  Fatal (pending)
 00:00:00.000 detox[PID] B  Error duration (sync)
 00:00:00.000 detox[PID] E  Error duration (sync)
   error: Error: Oops (sync)!
 00:00:00.000 detox[PID] B  Error duration (async)
 00:00:00.000 detox[PID] E  Error duration (async)
   error: Error: Oops (async)!"
+`;
+
+exports[`DetoxLogger - main functionality - should log end duration events correctly for different categories 1`] = `
+"00:00:00.000 detox[PID] B cat1 Activity 1 start
+00:00:00.000 detox[PID] B cat2 Activity 2 start
+00:00:00.000 detox[PID] E cat1 Activity 1 start
+00:00:00.000 detox[PID] E cat2 Activity 2 start"
 `;

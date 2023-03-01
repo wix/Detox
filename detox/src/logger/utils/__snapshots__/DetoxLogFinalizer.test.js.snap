@@ -56,10 +56,30 @@ Array [
   },
   Object {
     "args": Object {
+      "name": "secondary",
+    },
+    "name": "process_name",
+    "ph": "M",
+    "pid": 1234,
+    "tid": 0,
+    "ts": 1672531200500000,
+  },
+  Object {
+    "args": Object {
+      "sort_index": 1,
+    },
+    "name": "process_sort_index",
+    "ph": "M",
+    "pid": 1234,
+    "tid": 0,
+    "ts": 1672531200500000,
+  },
+  Object {
+    "args": Object {
       "level": 30,
       "v": 0,
     },
-    "cat": "undefined",
+    "cat": "parallel",
     "name": "long-duration",
     "ph": "B",
     "pid": 1234,
@@ -90,6 +110,31 @@ Array [
     "pid": 1234,
     "tid": 0,
     "ts": 1672531201000000,
+  },
+  Object {
+    "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "name": "duration1:stacked",
+    "ph": "B",
+    "pid": 1234,
+    "tid": 0,
+    "ts": 1672531201100000,
+  },
+  Object {
+    "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "ph": "E",
+    "pid": 1234,
+    "tid": 0,
+    "ts": 1672531201400000,
   },
   Object {
     "args": Object {
@@ -141,7 +186,7 @@ Array [
       "level": 10,
       "v": 0,
     },
-    "cat": "undefined",
+    "cat": "parallel",
     "ph": "E",
     "pid": 1234,
     "tid": 0,
@@ -162,19 +207,7 @@ Array [
 ]
 `;
 
-exports[`DetoxLogFinalizer finalize should convert JSONL logs to Chrome Trace format 1`] = `
-"2023-01-01T00:00:00.000Z detox[1234] i msg1
-2023-01-01T00:00:00.500Z detox[1234] B long-duration
-2023-01-01T00:00:01.000Z detox[1234] B duration1
-2023-01-01T00:00:01.000Z detox[1234] i instant event
-2023-01-01T00:00:01.500Z detox[1234] B duration2
-2023-01-01T00:00:02.000Z detox[1234] E duration1
-2023-01-01T00:00:02.250Z detox[1234] E long-duration
-2023-01-01T00:00:02.500Z detox[1234] E duration2
-"
-`;
-
-exports[`DetoxLogFinalizer finalize should convert JSONL logs to Chrome Trace format 2`] = `
+exports[`DetoxLogFinalizer finalize should convert JSONL logs to Chrome Trace format: chrome-trace 1`] = `
 Array [
   Object {
     "args": Object {
@@ -230,22 +263,42 @@ Array [
   },
   Object {
     "args": Object {
-      "name": "undefined",
+      "name": "secondary",
     },
-    "name": "thread_name",
+    "name": "process_name",
     "ph": "M",
-    "pid": 1234,
-    "tid": 1,
+    "pid": 1235,
+    "tid": 0,
     "ts": 1672531200500000,
   },
   Object {
     "args": Object {
       "sort_index": 1,
     },
+    "name": "process_sort_index",
+    "ph": "M",
+    "pid": 1235,
+    "tid": 0,
+    "ts": 1672531200500000,
+  },
+  Object {
+    "args": Object {
+      "name": "parallel",
+    },
+    "name": "thread_name",
+    "ph": "M",
+    "pid": 1235,
+    "tid": 3,
+    "ts": 1672531200500000,
+  },
+  Object {
+    "args": Object {
+      "sort_index": 3,
+    },
     "name": "thread_sort_index",
     "ph": "M",
-    "pid": 1234,
-    "tid": 1,
+    "pid": 1235,
+    "tid": 3,
     "ts": 1672531200500000,
   },
   Object {
@@ -253,11 +306,11 @@ Array [
       "level": 30,
       "v": 0,
     },
-    "cat": "undefined",
+    "cat": "parallel",
     "name": "long-duration",
     "ph": "B",
-    "pid": 1234,
-    "tid": 1,
+    "pid": 1235,
+    "tid": 3,
     "ts": 1672531200500000,
   },
   Object {
@@ -267,17 +320,17 @@ Array [
     "name": "thread_name",
     "ph": "M",
     "pid": 1234,
-    "tid": 2,
+    "tid": 1,
     "ts": 1672531201000000,
   },
   Object {
     "args": Object {
-      "sort_index": 2,
+      "sort_index": 1,
     },
     "name": "thread_sort_index",
     "ph": "M",
     "pid": 1234,
-    "tid": 2,
+    "tid": 1,
     "ts": 1672531201000000,
   },
   Object {
@@ -290,7 +343,27 @@ Array [
     "name": "duration1",
     "ph": "B",
     "pid": 1234,
-    "tid": 2,
+    "tid": 1,
+    "ts": 1672531201000000,
+  },
+  Object {
+    "args": Object {
+      "name": "undefined",
+    },
+    "name": "thread_name",
+    "ph": "M",
+    "pid": 1235,
+    "tid": 4,
+    "ts": 1672531201000000,
+  },
+  Object {
+    "args": Object {
+      "sort_index": 4,
+    },
+    "name": "thread_sort_index",
+    "ph": "M",
+    "pid": 1235,
+    "tid": 4,
     "ts": 1672531201000000,
   },
   Object {
@@ -301,9 +374,34 @@ Array [
     "cat": "undefined",
     "name": "instant event",
     "ph": "i",
+    "pid": 1235,
+    "tid": 4,
+    "ts": 1672531201000000,
+  },
+  Object {
+    "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "name": "duration1:stacked",
+    "ph": "B",
     "pid": 1234,
     "tid": 1,
-    "ts": 1672531201000000,
+    "ts": 1672531201100000,
+  },
+  Object {
+    "args": Object {
+      "id": 1,
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "parallel",
+    "ph": "E",
+    "pid": 1234,
+    "tid": 1,
+    "ts": 1672531201400000,
   },
   Object {
     "args": Object {
@@ -312,17 +410,17 @@ Array [
     "name": "thread_name",
     "ph": "M",
     "pid": 1234,
-    "tid": 3,
+    "tid": 2,
     "ts": 1672531201500000,
   },
   Object {
     "args": Object {
-      "sort_index": 3,
+      "sort_index": 2,
     },
     "name": "thread_sort_index",
     "ph": "M",
     "pid": 1234,
-    "tid": 3,
+    "tid": 2,
     "ts": 1672531201500000,
   },
   Object {
@@ -335,7 +433,7 @@ Array [
     "name": "duration2",
     "ph": "B",
     "pid": 1234,
-    "tid": 3,
+    "tid": 2,
     "ts": 1672531201500000,
   },
   Object {
@@ -347,7 +445,7 @@ Array [
     "cat": "parallel",
     "ph": "E",
     "pid": 1234,
-    "tid": 2,
+    "tid": 1,
     "ts": 1672531202000000,
   },
   Object {
@@ -355,10 +453,10 @@ Array [
       "level": 10,
       "v": 0,
     },
-    "cat": "undefined",
+    "cat": "parallel",
     "ph": "E",
-    "pid": 1234,
-    "tid": 1,
+    "pid": 1235,
+    "tid": 3,
     "ts": 1672531202250000,
   },
   Object {
@@ -370,8 +468,22 @@ Array [
     "cat": "parallel",
     "ph": "E",
     "pid": 1234,
-    "tid": 3,
+    "tid": 2,
     "ts": 1672531202500000,
   },
 ]
+`;
+
+exports[`DetoxLogFinalizer finalize should convert JSONL logs to Chrome Trace format: plain 1`] = `
+"2023-01-01T00:00:00.000Z detox[1234] i main msg1
+2023-01-01T00:00:00.500Z detox[1235] B parallel long-duration
+2023-01-01T00:00:01.000Z detox[1234] B parallel@1 duration1
+2023-01-01T00:00:01.000Z detox[1235] i  instant event
+2023-01-01T00:00:01.100Z detox[1234] B parallel@1 duration1:stacked
+2023-01-01T00:00:01.400Z detox[1234] E parallel@1 duration1:stacked
+2023-01-01T00:00:01.500Z detox[1234] B parallel@2 duration2
+2023-01-01T00:00:02.000Z detox[1234] E parallel@1 duration1
+2023-01-01T00:00:02.250Z detox[1235] E parallel long-duration
+2023-01-01T00:00:02.500Z detox[1234] E parallel@2 duration2
+"
 `;

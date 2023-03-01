@@ -172,7 +172,7 @@ describe('DeviceRegistry', () => {
 
     describe('.reset() method', () => {
       it('should create a lock file with an empty array if it does not exist', async () => {
-        expect(await fs.exists(lockfilePath)).toBe(false);
+        expect(fs.existsSync(lockfilePath)).toBe(false);
         await registry.reset();
         expect(await fs.readFile(lockfilePath, 'utf8')).toBe('[]');
       });

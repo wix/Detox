@@ -1,7 +1,7 @@
   - label: ":android::react: RN.68 + Android: Demo app"
     command:
       - "nvm install"
-      - "JAVA_HOME=/usr/local/opt/openjdk@11/ ./scripts/demo-projects.android.sh"
+      - "./scripts/demo-projects.android.sh"
     env:
       REACT_NATIVE_VERSION: 0.68.5
       REACT_NATIVE_COMPAT_TEST: true

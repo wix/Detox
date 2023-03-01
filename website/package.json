@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "percy": "zx percy.mjs",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
@@ -14,19 +15,24 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0",
-    "@docusaurus/preset-classic": "^2.0.0",
-    "@docusaurus/remark-plugin-npm2yarn": "^2.0.0",
-    "@docusaurus/theme-search-algolia": "^2.0.0",
+    "@docusaurus/core": "^2.3.1",
+    "@docusaurus/preset-classic": "^2.3.1",
+    "@docusaurus/remark-plugin-npm2yarn": "^2.3.1",
+    "@docusaurus/theme-search-algolia": "^2.3.1",
     "@mdx-js/react": "^1.6.21",
+    "@percy/cli": "^1.17.0",
     "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
+    "docusaurus-plugin-sass": "^0.2.3",
     "file-loader": "^6.2.0",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-loader-spinner": "^5.3.4",
-    "url-loader": "^4.1.1"
+    "sass": "^1.57.1",
+    "sass-loader": "^13.2.0",
+    "url-loader": "^4.1.1",
+    "zx": "^7.1.1"
   },
   "browserslist": {
     "production": [

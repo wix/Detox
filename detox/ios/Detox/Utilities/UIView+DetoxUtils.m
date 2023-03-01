@@ -394,20 +394,24 @@ DTX_DIRECT_MEMBERS
 
 	CGPoint absPoint = [self calcAbsPointFromLocalPoint:viewPoint];
 
-	UIViewController * _Nullable topMostViewController = [self _topMostViewControllerAtPoint:absPoint];
-	if (!topMostViewController) {
-		if (error) {
-			NSString *description = [NSString stringWithFormat:@"Failed to interact with the screen "
-															 "at point: %@.", NSStringFromCGPoint(viewPoint)];
-			*error = [NSError
-								errorWithDomain:@"Detox" code:0
-								userInfo:@{NSLocalizedDescriptionKey:description}];
+	UIView * _Nullable visibleContainer = [self _topMostViewOverlayAtPoint:absPoint];
+
+	if (!visibleContainer) {
+		UIViewController * _Nullable topMostViewController = [self _topMostViewControllerAtPoint:absPoint];
+		if (!topMostViewController) {
+			if (error) {
+				NSString *description = [NSString stringWithFormat:@"Failed to interact with the screen "
+																 "at point: %@.", NSStringFromCGPoint(viewPoint)];
+				*error = [NSError
+									errorWithDomain:@"Detox" code:0
+									userInfo:@{NSLocalizedDescriptionKey:description}];
+			}
+
+			return NO;
 		}
 
-		return NO;
+		visibleContainer = topMostViewController.view;
 	}
-
-	UIView *visibleContainer = topMostViewController.view;
 
 	if ([self isDescendantOfView:visibleContainer]) {
 		return [self _canHitFromView:self atAbsPoint:absPoint error:error];
@@ -419,6 +423,40 @@ DTX_DIRECT_MEMBERS
 	}
 
 	return [self _canHitFromView:visibleContainer atAbsPoint:absPoint error:error];
+}
+
+- (nullable UIView *)_topMostViewOverlayAtPoint:(CGPoint)point {
+	UIWindow * _Nullable topMostWindow = [UIWindow dtx_topMostWindowAtPoint:point];
+	if (!topMostWindow) {
+		return nil;
+	}
+
+	NSArray<UIView *> *viewsAtPoint =
+			[topMostWindow.subviews filteredArrayUsingPredicate:[NSPredicate
+					predicateWithBlock:^BOOL(UIView *view,
+																	 NSDictionary<NSString *, id> * _Nullable __unused bindings) {
+		if (!CGRectContainsPoint(view.frame, point)) {
+			return NO;
+		}
+
+		if (![view isVisibleAroundPoint:point]) {
+			return NO;
+		}
+
+		UIView * _Nullable hit = [view hitTest:point withEvent:nil];
+		if (!hit) {
+			// The point lies completely outside the view's hierarchy.
+			return NO;
+		}
+
+		return YES;
+	}]];
+
+	if (!viewsAtPoint.count) {
+		return nil;
+	}
+
+	return viewsAtPoint.lastObject;
 }
 
 - (BOOL)isVisibleAroundPoint:(CGPoint)point {

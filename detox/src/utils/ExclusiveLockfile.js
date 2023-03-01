@@ -86,6 +86,7 @@ class ExclusiveLockfile {
    */
   _doRead() {
     const contents = fs.readFileSync(this._lockFilePath, this._options.read);
+    // @ts-ignore Node.js can parse buffer as JSON
     return JSON.parse(contents);
   }
 

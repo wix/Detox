@@ -1,4 +1,5 @@
 const { PassThrough } = require('stream');
+const { promisify } = require('util');
 
 const bunyan = require('bunyan');
 const bds = require('bunyan-debug-stream');
@@ -41,13 +42,14 @@ class BunyanLogger {
       streamOptions.out = new PassThrough().pipe(process.stderr);
     }
 
-    this._debugStream = {
+    this._bunyan.addStream({
       type: 'raw',
       level: config.level,
       stream: bds.default(streamOptions),
-    };
+    });
 
-    this._bunyan.addStream(this._debugStream);
+    this._debugStream = _.last(this._bunyan['streams']);
+
     return this;
   }
 
@@ -71,6 +73,33 @@ class BunyanLogger {
 
     return this;
   }
+
+  async closeFileStreams() {
+    const internalBunyanStreams = this._bunyan['streams'];
+    const openFileStreams = _.filter(internalBunyanStreams, this._isOpenFileStream);
+    _.remove(internalBunyanStreams, openFileStreams);
+
+    await Promise.all(openFileStreams.map(bunyanStream => {
+      const stream = bunyanStream.stream;
+      return promisify(stream.end.bind(stream))();
+    }));
+  }
+
+  /** @private */
+  _isOpenFileStream = (bunyanStream) => {
+    switch (bunyanStream.type) {
+      case 'file':
+        return bunyanStream.path && !bunyanStream.stream.destroyed;
+      case 'raw':
+        /* istanbul ignore next */
+        const stream = bunyanStream.stream === this._debugStream.stream
+          ? bunyanStream.stream._out
+          : bunyanStream.stream;
+
+        /* istanbul ignore next */
+        return stream.fd > 2 && !stream.closed;
+    }
+  };
 }
 
 module.exports = BunyanLogger;

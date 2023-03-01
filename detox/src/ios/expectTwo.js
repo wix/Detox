@@ -7,6 +7,7 @@ const _ = require('lodash');
 const tempfile = require('tempfile');
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
@@ -275,6 +276,9 @@ class Element {
   setDatePickerDate(dateString, dateFormat) {
     if (typeof dateString !== 'string') throw new Error('dateString should be a string, but got ' + (dateString + (' (' + (typeof dateString + ')'))));
     if (typeof dateFormat !== 'string') throw new Error('dateFormat should be a string, but got ' + (dateFormat + (' (' + (typeof dateFormat + ')'))));
+    if (dateFormat === 'ISO8601') {
+      dateString = removeMilliseconds(dateString);
+    }
 
     const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
     return this.withAction('setDatePickerDate', traceDescription, dateString, dateFormat);
@@ -438,8 +442,7 @@ class Matcher {
       throwMatcherError(matcher);
     }
 
-    this.and({ predicate: { type: 'ancestor', predicate: matcher.predicate } });
-    return this;
+    return this.and({ predicate: { type: 'ancestor', predicate: matcher.predicate } });
   }
 
   withDescendant(matcher) {
@@ -447,21 +450,30 @@ class Matcher {
       throwMatcherError(matcher);
     }
 
-    this.and({ predicate: { type: 'descendant', predicate: matcher.predicate } });
-    return this;
+    return this.and({ predicate: { type: 'descendant', predicate: matcher.predicate } });
   }
 
   and(matcher) {
-    const tempPredicate = this.predicate;
-    delete this.predicate;
-    this.predicate = { type: 'and', predicates: [] };
-    this.predicate.predicates.push(tempPredicate);
+    const result = new Matcher();
+
+    result.predicate = {
+      type: 'and',
+      predicates: [
+        ...Matcher.predicates(this),
+        ...Matcher.predicates(matcher),
+      ].map(x => _.cloneDeep(x))
+    };
+
+    return result;
+  }
+
+  /** @private */
+  static *predicates(matcher) {
     if (matcher.predicate.type === 'and') {
-      this.predicate.predicates = this.predicate.predicates.concat(matcher.predicate.predicates);
+      yield* matcher.predicate.predicates;
     } else {
-      this.predicate.predicates.push(matcher.predicate);
+      yield matcher.predicate;
     }
-    return this;
   }
 }
 
@@ -530,6 +542,16 @@ class WaitFor {
 
   toNotHaveValue(value) {
     this.expectation = this.expectation.toNotHaveValue(value);
+    return this;
+  }
+
+  toBeFocused() {
+    this.expectation = this.expectation.toBeFocused();
+    return this;
+  }
+
+  toBeNotFocused() {
+    this.expectation = this.expectation.toBeNotFocused();
     return this;
   }
 

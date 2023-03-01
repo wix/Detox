@@ -6,9 +6,12 @@ const unparse = require('yargs-unparser');
 
 const detox = require('../../internals');
 const log = detox.log.child({ cat: ['lifecycle', 'cli'] });
-const { DetoxRuntimeError } = require('../../src/errors');
 const { printEnvironmentVariables, prependNodeModulesBinToPATH } = require('../../src/utils/envUtils');
-const { escapeSpaces } = require('../../src/utils/shellUtils');
+const { toSimplePath } = require('../../src/utils/pathUtils');
+const { escapeSpaces, useForwardSlashes } = require('../../src/utils/shellUtils');
+const { markErrorAsLogged } = require('../utils/cliErrorHandling');
+
+const TestRunnerError = require('./TestRunnerError');
 
 class TestRunnerCommand {
   /*
@@ -57,8 +60,9 @@ class TestRunnerCommand {
         if (--runsLeft > 0) {
           // @ts-ignore
           detox.session.testSessionIndex++; // it is always the primary context, so we can update it
-          this._argv._ = testFilesToRetry;
-          this._logRelaunchError();
+
+          this._argv._ = testFilesToRetry.map(useForwardSlashes);
+          this._logRelaunchError(testFilesToRetry);
         }
       }
     } while (launchError && runsLeft > 0);
@@ -114,7 +118,7 @@ class TestRunnerCommand {
     const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
     const fullCommandWithHint = printEnvironmentVariables(this._envHint) + fullCommand.join(' ');
 
-    log.info({ env: this._envHint }, fullCommandWithHint);
+    log.info.begin({ env: this._envHint }, fullCommandWithHint);
 
     return new Promise((resolve, reject) => {
       cp.spawn(fullCommand[0], fullCommand.slice(1), {
@@ -128,10 +132,20 @@ class TestRunnerCommand {
           .value()
       })
         .on('error', /* istanbul ignore next */ (err) => reject(err))
-        .on('exit', (code) => code === 0
-          ? resolve()
-          : reject(new DetoxRuntimeError(`Command failed with exit code = ${code}:\n${fullCommandWithHint}`)
-        ));
+        .on('exit', (code, signal) => {
+          if (code === 0) {
+            log.trace.end({ success: true });
+            resolve();
+          } else {
+            const error = new TestRunnerError({
+              command: fullCommandWithHint,
+              code,
+              signal,
+            });
+            log.error.end({ success: false, code, signal }, error.message);
+            reject(markErrorAsLogged(error));
+          }
+        });
     });
   }
 
@@ -148,9 +162,9 @@ class TestRunnerCommand {
     ].map(String);
   }
 
-  _logRelaunchError() {
-    const list = this._argv._.map((file, index) => {
-      return `  ${index + 1}. ${file}`;
+  _logRelaunchError(filePaths) {
+    const list = filePaths.map((file, index) => {
+      return `  ${index + 1}. ${toSimplePath(file)}`;
     }).join('\n');
 
     log.error(

@@ -1,6 +1,32 @@
 const path = require('path');
+const { promisify } = require('util');
 
+const glob = require('glob');
+const _ = require('lodash');
 const tempfile = require('tempfile');
+
+const { useForwardSlashes } = require('../../utils/shellUtils');
+
+const globSync = glob.sync;
+const globAsync = promisify(glob);
+const getRoot = _.once(() => path.dirname(tempfile()));
+
+function createGlobber(ext) {
+  const fullExt = `.detox.${ext}`;
+
+  return {
+    sync: (pattern) => {
+      const cwd = getRoot();
+      const files = globSync(useForwardSlashes(pattern + fullExt), { cwd });
+      return files.map(f => path.join(cwd, f));
+    },
+    async: async (pattern) => {
+      const cwd = getRoot();
+      const files = await globAsync(useForwardSlashes(pattern + fullExt), { cwd });
+      return files.map(f => path.join(cwd, f));
+    },
+  };
+}
 
 function createTempFileBuilderFn(fileExtension) {
   /**
@@ -8,7 +34,7 @@ function createTempFileBuilderFn(fileExtension) {
    */
   return (basename) => {
     return basename
-      ? path.join(path.dirname(tempfile()), `${basename}.detox.${fileExtension}`)
+      ? path.join(getRoot(), `${basename}.detox.${fileExtension}`)
       : tempfile(`.detox.${fileExtension}`);
   };
 }
@@ -23,5 +49,7 @@ module.exports = {
     dtxrec: createTempFileBuilderFn('dtxrec'),
     viewhierarchy: createTempFileBuilderFn('viewhierarchy'),
   },
-  mask: () => path.join(tempfile(), '..') + path.sep + '*.detox.*',
+  find: {
+    jsonl: createGlobber('jsonl'),
+  },
 };

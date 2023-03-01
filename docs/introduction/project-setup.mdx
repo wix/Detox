@@ -17,6 +17,9 @@ This article mainly covers standard React Native projects.
 If some steps don't look applicable to your project, please adapt them accordingly, relying on the common sense –
 look for other file locations, use custom build commands and so on.
 
+If you're using **Expo**, please refer to the [setup guide] from their documentation website instead.
+The setup for Expo projects is different and is not covered in this article.
+
 :::
 
 ## Step 1: Bootstrap
@@ -120,12 +123,12 @@ Here's how you can check they are correct and change them if you need something 
     </TabItem>
 </Tabs>
 
-## Step 4: Android configuration
+## Step 4: Additional Android configuration
 
 :::tip
 
 If you want to try out your tests right away on iOS,
-you can skip to [Step 5: Build Your App](#step-4-build-your-app)
+you can skip to [Step 5: Build the app](#step-5-build-the-app)
 and revisit it when you're ready to move forward with Android.
 
 :::
@@ -142,7 +145,7 @@ patch or create if they are missing:
     * `android/app/src/main/AndroidManifest.xml`
     * `android/app/src/main/res/xml/network_security_config.xml`
 
-### 3.1. Patching build scripts
+### 4.1. Patching build scripts
 
 Open your main build script and apply the suggested changes:
 
@@ -212,7 +215,7 @@ Now let's move on to the next build script and prepare it:
      release {
        minifyEnabled true
        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-+      proguardFile "${project(':detox').projectDir}/proguard-rules-app.pro"
++      proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
 
        signingConfig signingConfigs.release
      }
@@ -236,7 +239,7 @@ run tests with your app built in **release mode**.
 
 :::
 
-### 3.2. Adding an auxiliary Android test
+### 4.2. Adding an auxiliary Android test
 
 Detox requires that your project has a single dummy native Android test with some special content,
 which will be picked up by `testRunner` that you just added in the previous step, so let's create it now.
@@ -293,7 +296,7 @@ and check what your main activity is called:
     android:launchMode="standard"
 ```
 
-### 3.3. Enabling unencrypted traffic for Detox
+### 4.3. Enabling unencrypted traffic for Detox
 
 :::info
 
@@ -369,3 +372,5 @@ nothing more and nothing less.
 :::
 
 Once your build is ready to use, please proceed to the next article.
+
+[setup guide]: https://docs.expo.dev/build-reference/e2e-tests

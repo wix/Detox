@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const { DetoxInternalError, DetoxError } = require('../errors');
 const { shortFormat } = require('../utils/dateUtils');
-const isPromise = require('../utils/isPromise');
+const { isPromiseLike } = require('../utils/isPromise');
 
 const BunyanLogger = require('./utils/BunyanLogger');
 const CategoryThreadDispatcher = require('./utils/CategoryThreadDispatcher');
@@ -19,11 +19,12 @@ const sanitizeBunyanContext = require('./utils/sanitizeBunyanContext');
  * @property {CategoryThreadDispatcher} [dispatcher]
  * @property {BunyanLogger} [bunyan]
  * @property {MessageStack} [messageStack]
+ * @property {boolean} [unsafeMode] Disables sanitization of user input, used for integration tests.
  */
 
 class DetoxLogger {
   /**
-   * @param {Pick<SharedLoggerConfig, 'file' | 'userConfig'>} sharedConfig
+   * @param {SharedLoggerConfig} sharedConfig
    * @param {object} [context]
    */
   constructor(sharedConfig, context) {
@@ -91,7 +92,7 @@ class DetoxLogger {
    * @returns {DetoxLogger}
    */
   child(overrides) {
-    const merged = this._mergeContexts(this._context, sanitizeBunyanContext(overrides));
+    const merged = this._mergeContexts(this._context, this._sanitizeContext(overrides));
     return new DetoxLogger(this._sharedConfig, merged);
   }
 
@@ -117,6 +118,25 @@ class DetoxLogger {
     _.merge(this.config, config);
     this._sharedConfig.bunyan.installDebugStream(this.config);
     this.overrideConsole();
+  }
+
+  /**
+   * Closes the file descriptors to make sure that the temporary
+   * JSONL files are flushed and contain the last error messages.
+   * This safety measure is especially important for Windows OS.
+   *
+   * @async
+   * @internal
+   */
+  async close() {
+    if (this._context) {
+      throw new DetoxInternalError(
+        'Trying to close file streams from a non-root logger.\n' +
+        'If you are not fiddling with Detox internals on purpose, yet you see this error, then...'
+      );
+    }
+
+    await this._sharedConfig.bunyan.closeFileStreams();
   }
 
   /**
@@ -192,7 +212,7 @@ class DetoxLogger {
 
   /** @private */
   _beginInternal(level, context, msg) {
-    this._sharedConfig.messageStack.push(context.tid, msg);
+    this._sharedConfig.messageStack.push(context, msg);
     this._sharedConfig.bunyan.logger[level](context, ...msg);
   }
 
@@ -204,7 +224,7 @@ class DetoxLogger {
 
   /** @private */
   _endInternal(level, context, msg) {
-    const beginMsg = this._sharedConfig.messageStack.pop(context.tid);
+    const beginMsg = this._sharedConfig.messageStack.pop(context);
     if (msg.length === 0) {
       msg = beginMsg;
     }
@@ -243,7 +263,7 @@ class DetoxLogger {
         ? action()
         : action;
 
-      if (!isPromise(result)) {
+      if (!isPromiseLike(result)) {
         end({ success: true });
       } else {
         result.then(
@@ -272,28 +292,37 @@ class DetoxLogger {
     const context = this._mergeContexts(
       this._context,
       boundContext,
-      sanitizeBunyanContext(userContext),
+      this._sanitizeContext(userContext),
     );
 
     return { context, msg };
   }
 
+  /** @private */
+  _sanitizeContext(context) {
+    if (this._sharedConfig.unsafeMode) {
+      return context;
+    }
+
+    return sanitizeBunyanContext(context);
+  }
+
   /** @internal */
   static defaultOptions({ level }) {
     const ph = level === 'trace' || level === 'debug'
-      ? value => require('chalk').grey(value) + ' '
-      : value => require('chalk').grey(value);
+      ? value => require('chalk').default.grey(value) + ' '
+      : value => require('chalk').default.grey(value);
 
     const id = level === 'trace'
-      ? value => require('chalk').yellow(`@${value}`)
+      ? value => require('chalk').default.yellow(`@${value}`)
       : undefined;
 
     const cat = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').yellow(`${value}`.split(',', 1)[0])
+      ? (value) => require('chalk').default.yellow(`${value}`.split(',', 1)[0])
       : undefined;
 
     const event = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').grey(`:${value}`)
+      ? (value) => require('chalk').default.grey(`:${value}`)
       : undefined;
 
     const identity = x => x;

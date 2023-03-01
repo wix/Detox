@@ -11,16 +11,12 @@ describe('Device', () => {
   let errorComposer;
   let emitter;
   let RuntimeDevice;
-  let argparse;
   let Client;
   let client;
   let driverMock;
 
   beforeEach(async () => {
     jest.mock('../../utils/logger');
-
-    jest.mock('../../utils/argparse');
-    argparse = require('../../utils/argparse');
 
     jest.mock('./drivers/DeviceDriverBase');
     DeviceDriverBase = require('./drivers/DeviceDriverBase');
@@ -362,7 +358,6 @@ describe('Device', () => {
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
-      argparse.getArgValue.mockReturnValue(true);
 
       await device.relaunchApp();
 

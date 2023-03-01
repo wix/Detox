@@ -14,10 +14,15 @@ class IPCServer {
     this._logger = logger.child({ cat: 'ipc,ipc-server' });
     this._ipc = null;
     this._workers = new Set();
+    this._contexts = new Set();
   }
 
   get id() {
     return this._sessionState.detoxIPCServer;
+  }
+
+  get contexts() {
+    return [...this._contexts];
   }
 
   get sessionState() {
@@ -45,15 +50,18 @@ class IPCServer {
       return;
     }
 
-    return new Promise((resolve, reject) =>{
+    await new Promise((resolve, reject) =>{
       // @ts-ignore
-      this._ipc.server.server.close(e => e ? reject(e) : resolve());
+      this._ipc.server.server.close(e => /* istanbul ignore next */
+        e ? reject(e) : resolve());
       this._ipc.server.stop();
     });
+
+    this._ipc = null;
   }
 
   onRegisterContext({ id }, socket) {
-    this._sessionState.contexts.push(id);
+    this._contexts.add(id);
 
     this._ipc.server.emit(socket, 'registerContextDone', {
       testResults: this._sessionState.testResults,

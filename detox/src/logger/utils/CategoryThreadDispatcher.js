@@ -1,4 +1,5 @@
 const ThreadDispatcher = require('./ThreadDispatcher');
+const getMainCategory = require('./getMainCategory');
 
 class CategoryThreadDispatcher {
   constructor() {
@@ -24,7 +25,7 @@ class CategoryThreadDispatcher {
 
   /** @returns {ThreadDispatcher} */
   _resolveDispatcher(cat) {
-    const mainCategory = cat ? cat.split(',', 1)[0] : 'undefined';
+    const mainCategory = getMainCategory(cat);
     if (!this._dispatchers[mainCategory]) {
       this._dispatchers[mainCategory] = new ThreadDispatcher(mainCategory);
     }

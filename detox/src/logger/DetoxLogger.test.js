@@ -12,12 +12,6 @@ const tempfile = require('tempfile');
 
 const sleep = require('../utils/sleep');
 
-// TODO: investigate why the test fails
-if (os.platform() === 'win32') {
-  // eslint-disable-next-line no-global-assign
-  describe = describe.skip;
-}
-
 jest.retryTimes(2);
 
 describe('DetoxLogger', () => {
@@ -25,6 +19,8 @@ describe('DetoxLogger', () => {
 
   /** @type {typeof import('./DetoxLogger')} */
   let DetoxLogger;
+  /** @type {import('./DetoxLogger')[]} */
+  let _loggerInstances = [];
   /** @type {string} */
   let jsonlLogPath;
   /** @type {string} */
@@ -44,7 +40,7 @@ describe('DetoxLogger', () => {
     const { level = 'trace', overrideConsole = false, options } = opts;
     DetoxLogger = require('./DetoxLogger');
 
-    return new DetoxLogger({
+    const instance = new DetoxLogger({
       file: jsonlLogPath,
       userConfig: {
         level,
@@ -58,6 +54,10 @@ describe('DetoxLogger', () => {
         },
       },
     });
+
+    _loggerInstances = _loggerInstances || [];
+    _loggerInstances.push(instance);
+    return instance;
   }
 
   let _env;
@@ -70,8 +70,12 @@ describe('DetoxLogger', () => {
     safetyTimeout = null;
   }
 
-  function teardownSuite() {
+  async function teardownSuite() {
     process.env = _env;
+
+    await Promise.all(_loggerInstances.map((logger) => logger.close()));
+    _loggerInstances = [];
+
     fs.removeSync(jsonlLogPath);
     fs.removeSync(plainLogPath);
   }
@@ -118,6 +122,19 @@ describe('DetoxLogger', () => {
 
     it('should have a log level getter', () => {
       expect(logger().level).toBe('trace'); // set in tests
+    });
+
+    it('should cast non-standard log levels to the closest standard level', async () => {
+      const LoggerClass = logger().constructor;
+      expect(LoggerClass).toBe(DetoxLogger);
+      expect(DetoxLogger.castLevel('trace')).toBe('trace');
+      expect(DetoxLogger.castLevel('debug')).toBe('debug');
+      expect(DetoxLogger.castLevel('verbose')).toBe('debug');
+      expect(DetoxLogger.castLevel('info')).toBe('info');
+      expect(DetoxLogger.castLevel('warn')).toBe('warn');
+      expect(DetoxLogger.castLevel('error')).toBe('error');
+      expect(DetoxLogger.castLevel('fatal')).toBe('fatal');
+      expect(DetoxLogger.castLevel('unknown')).toBe('info');
     });
 
     it('should be able to create a child logger', async () => {
@@ -186,6 +203,10 @@ describe('DetoxLogger', () => {
       expect(asyncResult).toBeInstanceOf(Promise);
       expect(await asyncResult).toBe(168);
 
+      const promiseLike = { then: jest.fn() };
+      const promiseLikeResult = l.fatal.complete('Fatal (pending)', promiseLike);
+      expect(promiseLikeResult).toBe(promiseLike);
+
       try {
         l.error.complete('Error duration (sync)', () => { throw anError('Oops (sync)!'); });
       } catch (e) {}
@@ -207,6 +228,7 @@ describe('DetoxLogger', () => {
         expect.objectContaining({ ph: 'E', time, tid, level: 20, success: true }),
         expect.objectContaining({ msg: 'Trace duration', ph: 'B', time, tid, level: 10 }),
         expect.objectContaining({ ph: 'E', time, tid, level: 10, success: true }),
+        expect.objectContaining({ msg: 'Fatal (pending)', ph: 'B', time, tid, level: 60 }),
         expect.objectContaining({ msg: 'Error duration (sync)', ph: 'B', time, tid, level: 50 }),
         expect.objectContaining({ ph: 'E', time, tid, level: 50, success: false, error: expect.any(String) }),
         expect.objectContaining({ msg: 'Error duration (async)', ph: 'B', time, tid, level: 50 }),
@@ -229,6 +251,19 @@ describe('DetoxLogger', () => {
       activity2.warn.end();
 
       activity2.fatal.end(); // testing the fallback, when there is no begin event
+
+      await expect(txt()).resolves.toMatchSnapshot();
+    });
+
+    it('should log end duration events correctly for different categories', async () => {
+      const parent = logger();
+      const cat1 = parent.child({ cat: 'cat1' });
+      const cat2 = parent.child({ cat: 'cat2' });
+
+      cat1.info.begin('Activity 1 start');
+      cat2.info.begin('Activity 2 start');
+      cat1.info.end();
+      cat2.info.end();
 
       await expect(txt()).resolves.toMatchSnapshot();
     });
@@ -367,6 +402,10 @@ describe('DetoxLogger', () => {
       await expect(logger().child().setConfig({ level: 'info' })).rejects.toThrowError(/Trying to set a config in a non-root logger/);
     });
 
+    it('should not allow closing the entire logging capability from a child logger', async () => {
+      await expect(logger().child().close()).rejects.toThrowError(/Trying to close file streams from a non-root logger/);
+    });
+
     it('should escape properties conflicting with Bunyan internal ones', async () => {
       logger().info({
         hostname: 'hostname',
@@ -401,19 +440,26 @@ describe('DetoxLogger', () => {
         v: 0,
       }]);
     });
-  });
 
-  it('should cast non-standard log levels to the closest standard level', async () => {
-    const LoggerClass = logger().constructor;
-    expect(LoggerClass).toBe(DetoxLogger);
-    expect(DetoxLogger.castLevel('trace')).toBe('trace');
-    expect(DetoxLogger.castLevel('debug')).toBe('debug');
-    expect(DetoxLogger.castLevel('verbose')).toBe('debug');
-    expect(DetoxLogger.castLevel('info')).toBe('info');
-    expect(DetoxLogger.castLevel('warn')).toBe('warn');
-    expect(DetoxLogger.castLevel('error')).toBe('error');
-    expect(DetoxLogger.castLevel('fatal')).toBe('fatal');
-    expect(DetoxLogger.castLevel('unknown')).toBe('info');
+    it('should allow creating a logger without a config', async () => {
+      const DetoxLogger = require('./DetoxLogger');
+      const noopFilePath = os.platform() === 'win32' ? 'nul' : '/dev/null';
+      const instance = new DetoxLogger({ file: noopFilePath });
+
+      expect(instance.config).toEqual({
+        level: 'info',
+        overrideConsole: false,
+        options: expect.objectContaining({
+          showDate: false,
+          showLevel: false,
+          showLoggerName: false,
+          showMetadata: false,
+          showPid: false,
+          showPrefixes: false,
+          showProcess: false,
+        }),
+      });
+    });
   });
 
   function anError(msg) {

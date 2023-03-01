@@ -16,7 +16,7 @@ describe('Genymotion-cloud driver', () => {
 
   beforeEach(() => {
     jest.mock('../../../../common/drivers/android/exec/AAPT');
-    const AAPT = require('../../../../common/drivers/android/exec/AAPT');
+    const AAPT = jest.requireMock('../../../../common/drivers/android/exec/AAPT');
     aapt = new AAPT();
     aapt.isTestAPK
       .mockResolvedValueOnce(false)

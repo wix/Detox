@@ -5,6 +5,7 @@ const tempfile = require('tempfile');
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
+const { removeMilliseconds } = require('../../utils/dateUtils');
 const { actionDescription } = require('../../utils/invocationTraceDescriptions');
 const actions = require('../actions/native');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
@@ -109,6 +110,16 @@ class NativeElement {
 
     const action = new actions.ScrollToIndex(index);
     const traceDescription = actionDescription.scrollToIndex(index);
+    return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
+  }
+
+  async setDatePickerDate(rawDateString, formatString) {
+    const dateString = formatString === 'ISO8601'
+      ? removeMilliseconds(rawDateString)
+      : rawDateString;
+
+    const action = new actions.SetDatePickerDateAction(dateString, formatString);
+    const traceDescription = actionDescription.setDatePickerDate(dateString, formatString);
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }
 

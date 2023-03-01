@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "20.0.1",
+  "version": "20.4.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -23,14 +23,14 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.3",
-    "react": "18.0.0",
-    "react-native": "0.69.7",
+    "react": "18.1.0",
+    "react-native": "0.70.7",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
-    "detox": "^20.0.1",
+    "detox": "^20.4.0",
     "fs-extra": "^9.1.0",
     "jest": "^29.2.1",
     "ts-jest": "^29.0.3",

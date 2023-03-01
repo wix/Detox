@@ -190,3 +190,8 @@ To update a specific version with the latest changes:
 
 1. Remove the version from `versions.json`.
 1. Run `npm run docusaurus docs:version <version>`.
+
+##### Inspect Documentation Style Changes
+
+This [demo page](demo.mdx) serves as a visual representation of the styling and formatting of our documentation.
+If you are changing the stylesheets, check with it to prevent undesirable visual regressions.

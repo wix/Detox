@@ -141,6 +141,14 @@ class CustomEnvironment extends DetoxCircusEnvironment {
       OmniListener,
     });
   }
+
+  handleTestEvent(event: Circus.Event, state: Circus.State): void | Promise<void> {
+    if (event.name === 'test_done') {
+      console.log(event.test.name);
+    }
+
+    return super.handleTestEvent(event, state);
+  }
 }
 
 async function main() {

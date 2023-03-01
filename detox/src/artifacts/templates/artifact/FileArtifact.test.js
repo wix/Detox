@@ -130,7 +130,7 @@ describe('FileArtifact', () => {
       it('should remove the temporary file', async () => {
         const fileArtifact = new FileArtifact({ temporaryPath });
         await fileArtifact.discard(destinationPath);
-        expect(await fs.exists(temporaryPath)).toBe(false);
+        expect(fs.existsSync(temporaryPath)).toBe(false);
       });
     });
 
@@ -279,8 +279,8 @@ describe('FileArtifact', () => {
             const result = await FileArtifact.moveTemporaryFile(logger, temporaryPath, destinationPath);
 
             expect(result).toBe(true);
-            expect(await fs.exists(destinationPath)).toBe(true);
-            expect(await fs.exists(temporaryPath)).toBe(false);
+            expect(fs.existsSync(destinationPath)).toBe(true);
+            expect(fs.existsSync(temporaryPath)).toBe(false);
 
             expect(logger.debug).toHaveBeenCalledWith({ event: 'MOVE_FILE' }, expect.any(String));
           });
@@ -296,7 +296,7 @@ describe('FileArtifact', () => {
             const result = await FileArtifact.moveTemporaryFile(logger, temporaryPath, destinationPath);
 
             expect(result).toBe(false);
-            expect(await fs.exists(temporaryPath)).toBe(false);
+            expect(fs.existsSync(temporaryPath)).toBe(false);
             expect(await fs.readFile(destinationPath, 'utf8')).toBe('My file');
 
             expect(logger.warn).toHaveBeenCalledWith({ event: 'MOVE_FILE_EXISTS' }, expect.any(String));
@@ -306,7 +306,7 @@ describe('FileArtifact', () => {
             const result = await FileArtifact.moveTemporaryFile(logger, temporaryPath, destinationPath, true);
 
             expect(result).toBe(true);
-            expect(await fs.exists(temporaryPath)).toBe(false);
+            expect(fs.existsSync(temporaryPath)).toBe(false);
             expect(await fs.readFile(destinationPath, 'utf8')).toBe('My file and more to it');
 
             expect(logger.debug).toHaveBeenCalledWith({ event: 'MOVE_FILE' }, expect.stringContaining('appending'));

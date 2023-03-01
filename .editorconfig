@@ -18,7 +18,7 @@ tab_width = 2
 indent_size = 4
 tab_width = 4
 
-[{*.cjs,*.js}]
+[{*.cjs,*.js,*.mjs}]
 indent_size = 2
 tab_width = 2
 
@@ -26,5 +26,5 @@ tab_width = 2
 indent_size = 2
 tab_width = 2
 
-[{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
+[{*.css, *.scss, *.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
 indent_size = 2

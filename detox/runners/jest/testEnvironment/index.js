@@ -51,6 +51,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
     log.trace.begin(this.testPath);
 
+    this.handleTestEvent = this.handleTestEvent.bind(this);
     this.setup = this._wrapSetup(this.setup);
     this.teardown = this._wrapTeardown(this.teardown);
 
@@ -69,7 +70,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     await this.initDetox();
   }
 
-  handleTestEvent = async (event, state) => {
+  async handleTestEvent(event, state) {
     this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
 
     if (SYNC_CIRCUS_EVENTS.has(event.name)) {
@@ -77,7 +78,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     } else {
       await this._handleTestEventAsync(event, state);
     }
-  };
+  }
 
   /** @override */
   async teardown() {

@@ -4,21 +4,21 @@ const { DetoxInternalError } = require('../errors');
 const { serializeObjectWithError } = require('../utils/errorUtils');
 
 class IPCClient {
-  constructor({ id, logger, state }) {
+  constructor({ id, logger, sessionState }) {
     this._id = id;
     /** @type {import('../logger/DetoxLogger')} logger */
     this._logger = logger.child({ cat: 'ipc' });
     /** @type {import('./SessionState')} */
-    this._state = state;
+    this._sessionState = sessionState;
 
-    this._client = null;
+    this._ipc = null;
     this._serverConnection = null;
   }
 
   async init() {
-    this._client = new IPC();
+    this._ipc = new IPC();
 
-    Object.assign(this._client.config, {
+    Object.assign(this._ipc.config, {
       id: this._id,
       appspace: 'detox.',
       logger: (msg) => this._logger.trace(msg),
@@ -33,14 +33,22 @@ class IPCClient {
   async dispose() {
     this._serverConnection = null;
 
-    if (this._client) {
-      this._client.disconnect(this.serverId);
-      this._client = null;
+    if (this._ipc) {
+      await new Promise((resolve, reject) => {
+        this._ipc.of[this.serverId]
+          // @ts-ignore
+          .once('disconnect', resolve)
+          .once('error', reject);
+
+        this._ipc.disconnect(this.serverId);
+      });
+
+      this._ipc = null;
     }
   }
 
   get sessionState() {
-    return this._state;
+    return this._sessionState;
   }
 
   get serverId() {
@@ -49,7 +57,7 @@ class IPCClient {
 
   async registerWorker(workerId) {
     const sessionState = await this._emit('registerWorker', { workerId });
-    this._state.patch(sessionState);
+    this._sessionState.patch(sessionState);
   }
 
   /**
@@ -59,18 +67,18 @@ class IPCClient {
     const sessionState = await this._emit('reportTestResults', {
       testResults: testResults.map(r => serializeObjectWithError(r, 'testExecError')),
     });
-    this._state.patch(sessionState);
+    this._sessionState.patch(sessionState);
   }
 
   async _connectToServer() {
     const serverId = this.serverId;
 
     this._serverConnection = await new Promise((resolve, reject) => {
-      this._client.connectTo(serverId, (client) => {
+      this._ipc.connectTo(serverId, (client) => {
         client.of[serverId]
-          .on('error', reject)
-          .on('disconnect', () => reject(new DetoxInternalError('IPC server has unexpectedly disconnected.')))
-          .on('connect', () => resolve(client.of[serverId]));
+          .once('error', reject)
+          .once('disconnect', () => reject(new DetoxInternalError('IPC server has unexpectedly disconnected.')))
+          .once('connect', () => resolve(client.of[serverId]));
       });
     });
 
@@ -79,7 +87,7 @@ class IPCClient {
 
   async _registerContext() {
     const sessionState = await this._emit('registerContext', { id: this._id });
-    this._state.patch(sessionState);
+    this._sessionState.patch(sessionState);
   }
 
   async _emit(event, payload) {
@@ -90,6 +98,7 @@ class IPCClient {
     return new Promise((resolve, reject) => {
       const server = this._serverConnection;
 
+      /* istanbul ignore next */
       function onError(err) {
         server.off('error', onError);
         server.off(`${event}Done`, onDone);
@@ -110,7 +119,7 @@ class IPCClient {
   }
 
   _onSessionStateUpdate = (payload) => {
-    this._state.patch(payload);
+    this._sessionState.patch(payload);
   };
 }
 

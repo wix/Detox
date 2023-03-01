@@ -4,6 +4,7 @@ const Ajv = require('ajv');
 const DetoxInternalError = require('../../../errors/DetoxInternalError');
 const statusSchema = require('../SyncStatusSchema.json');
 
+const bgThreadFormatter = require('./sync-resources/BgThreadFormatter');
 const delayedPerformSelectorFormatter = require('./sync-resources/DelayedPerformSelectorFormatter');
 const dispatchQueueFormatter = require('./sync-resources/DispatchQueueFormatter');
 const jsTimersFormatter = require('./sync-resources/JavaScriptTimersFormatter');
@@ -51,6 +52,7 @@ function resourcesDescriptionsFromJSON(jsonDescriptions) {
 }
 
 const resourceFormatters = {
+  bg: bgThreadFormatter,
   delayed_perform_selector: delayedPerformSelectorFormatter,
   dispatch_queue: dispatchQueueFormatter,
   run_loop: runLoopFormatter,

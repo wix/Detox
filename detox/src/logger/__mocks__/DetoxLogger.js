@@ -54,6 +54,10 @@ class FakeLogger {
 
   setConfig() {}
 
+  async close() {
+
+  }
+
   child(opts) {
     this.opts = Object.assign(this.opts, opts);
     return this;
