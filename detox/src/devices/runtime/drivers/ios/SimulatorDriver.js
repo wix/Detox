@@ -90,6 +90,7 @@ class SimulatorDriver extends IosDriver {
         launchArgs.detoxSessionId,
         bundleId,
         launchArgs.detoxDebugVisibility,
+        launchArgs.detoxDisableHierarchyDump,
         this._testTargetServerPort
       );
     }

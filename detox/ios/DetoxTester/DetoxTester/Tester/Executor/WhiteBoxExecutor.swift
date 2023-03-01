@@ -80,16 +80,17 @@ class WhiteBoxExecutor {
       case .captureViewHierarchy(let viewHierarchyURL):
         let message = createMessage(
           type: "captureViewHierarchy",
-          params: [
-            "viewHierarchyURL": AnyCodable(viewHierarchyURL)
-          ],
+          params: (viewHierarchyURL != nil) ? [
+            "viewHierarchyURL": AnyCodable(viewHierarchyURL!)
+          ] : [:],
           messageId: messageId
         )
 
         let result = send(message, andExpectToType: "didCaptureViewHierarchy", messageId: messageId)
+        let path = result["path"] as? String
         let error = result["error"] as? String
 
-        return error != nil ? .completedWithError(message: error!) : .completed
+        return error != nil ? .completedWithError(message: error!) : .string(path!)
 
       case .waitUntilReady:
         send("waitUntilReady", andExpectTo: "isReady", messageId: messageId)

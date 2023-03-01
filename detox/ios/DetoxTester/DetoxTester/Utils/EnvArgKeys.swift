@@ -24,4 +24,8 @@ import Foundation
 
   /// Environment argument key for accessing the feature toggle for debug visibility artifacts.
   static let detoxDebugVisibility = "DETOX_DEBUG_VISIBILITY"
+
+  /// Environment argument key for accessing the feature toggle (opt-out) for view hierarchy dump
+  /// artifact.
+  static let detoxDisableHierarchyDump = "DETOX_DISABLE_VIEW_HIERARCHY_DUMP"
 }

@@ -9,8 +9,10 @@ import Foundation
 extension ActionDelegate {
   ///
   func createDebugArtifacts(app: XCUIApplication, element: AnyHashable) throws -> [String: String] {
-    if shouldCreateDebugArtifacts(app) {
-      uiLog("creating debug artifacts", type: .debug)
+    var artifacts: [String: String] = [:]
+
+    if shouldCreateDebugVisibilityArtifacts(app) {
+      uiLog("creating debug visibility artifacts", type: .debug)
       guard let element = element as? XCUIElement else {
         throw Error.elementIsNotScreenshotProviding
       }
@@ -28,29 +30,24 @@ extension ActionDelegate {
       uiLog("created app screenshot: \(tempAppScreenshot)", type: .debug)
 
       if #available(iOS 16.0, *) {
-        return [
+        artifacts.merge([
           "visibilityFailingScreenshotsURL": try TempPath.debugScreens.temporaryPath().path(),
           "visibilityFailingRectsURL": try TempPath.debugRects.temporaryPath().path()
-        ]
+        ], uniquingKeysWith: { first, _ in first })
       } else {
-        return [
+        artifacts.merge([
           "visibilityFailingScreenshotsURL": try TempPath.debugScreens.temporaryPath().path,
           "visibilityFailingRectsURL": try TempPath.debugRects.temporaryPath().path
-        ]
+        ], uniquingKeysWith: { first, _ in first })
       }
-    } else {
-      return [:]
     }
+
+    return artifacts
   }
 
-  private func shouldCreateDebugArtifacts(_ app: XCUIApplication) -> Bool {
+  private func shouldCreateDebugVisibilityArtifacts(_ app: XCUIApplication) -> Bool {
     let environment = ProcessInfo.processInfo.environment
     let isEnabled = environment[EnvArgKeys.detoxDebugVisibility] == "YES"
-    uiLog(
-      "Checking `detoxDebugVisibility`: " +
-        "\(String(describing: environment[EnvArgKeys.detoxDebugVisibility]))",
-      type: .debug
-    )
     return isEnabled
   }
 

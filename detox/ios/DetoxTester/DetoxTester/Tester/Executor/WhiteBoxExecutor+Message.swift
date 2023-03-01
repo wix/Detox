@@ -24,8 +24,8 @@ extension WhiteBoxExecutor {
     /// Returns response of `completed` if successfully done.
     case shakeDevice
 
-    /// Returns response of `completed` or `completedWithError` if successfully done.
-    case captureViewHierarchy(viewHierarchyURL: URL)
+    /// Returns response of `string` if successfully done, otherwise `completedWithError`.
+    case captureViewHierarchy(viewHierarchyURL: String?)
 
     /// Returns response of `completed` if successfully done.
     case waitUntilReady
@@ -87,7 +87,7 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
         return "shake device"
 
       case .captureViewHierarchy(viewHierarchyURL: let viewHierarchyURL):
-        return "capture view hierarchy (with destination: \(viewHierarchyURL)"
+        return "capture view hierarchy (with destination: \(viewHierarchyURL))"
 
       case .waitUntilReady:
         return "wait until app is ready"

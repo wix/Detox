@@ -335,7 +335,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 						}
 
 						return evaluatedObject.isAccessibilityElement == true &&
-								(evaluatedObject.accessibilityTraits!.rawValue & traits.rawValue) == traits.rawValue
+						(evaluatedObject.accessibilityTraits!.rawValue & traits.rawValue) == traits.rawValue
 					}
 
 					let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView])
@@ -426,7 +426,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				let timeIntervalSince1970 = (params["timeIntervalSince1970"] as! NSNumber).doubleValue
 				targetElement.dtx_adjust(to: .init(timeIntervalSince1970: timeIntervalSince1970))
 				// TODO: why is not the same??
-//				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
+				//				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
 
 				self.safeSend(
 					action: "didSetDatePicker",
@@ -553,7 +553,13 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				)
 
 			case "captureViewHierarchy":
-				let url = URL(fileURLWithPath: params["viewHierarchyURL"] as! String)
+				let urlString = params["viewHierarchyURL"] as? String
+
+				let url = (urlString != nil) ?
+					URL(fileURLWithPath: urlString!) :
+					URL(fileURLWithPath: NSTemporaryDirectory())
+						.appendingPathComponent("\(NSUUID().uuidString).viewhierarchy")
+
 				precondition(url.lastPathComponent.hasSuffix(".viewhierarchy"), "Provided view Hierarchy URL is not in the expected format, ending with “.viewhierarchy”")
 				var errorParam: String?
 				if UserDefaults.standard.bool(forKey: "detoxDisableHierarchyDump") == false {
@@ -568,7 +574,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 				self.safeSend(
 					action: "didCaptureViewHierarchy",
-					params: errorParam != nil ? ["error": errorParam!] : [:],
+					params: errorParam != nil ? ["error": errorParam!] : ["path": url.path],
 					messageId: messageId
 				)
 
