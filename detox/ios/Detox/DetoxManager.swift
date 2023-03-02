@@ -594,7 +594,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}
 
 	func findElement(byIdentifier identifier: String, andFrame frame: [NSNumber]) -> UIView {
-		var allViews = [String: String?]()
+		var matchingFrames = [String: CGRect]()
 		let predicate = NSPredicate { evaluatedObject, _ in
 			guard
 				let element = evaluatedObject as? UIView
@@ -606,32 +606,49 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			let origin = element.convert(CGPointZero, to: nil)
 
-			let evaluatedFrame = NSCoder.string(for: CGRect(origin: origin, size: element.frame.size))
-			if elementIdentifier != nil {
-				allViews[elementIdentifier!] = evaluatedFrame
+			let evaluatedFrame = CGRect(origin: origin, size: element.frame.size)
+			if elementIdentifier == identifier {
+				matchingFrames[elementIdentifier!] = evaluatedFrame
+				return true
 			}
 
-			// Seems like there's some instability between the element's size and the rendered size.
-			guard
-				elementIdentifier == identifier,
-				abs(origin.x - frame[0].doubleValue) < 1,
-				abs(origin.y - frame[1].doubleValue) < 1,
-				abs(element.frame.width - frame[2].doubleValue) < 5,
-				abs(element.frame.height - frame[3].doubleValue) < 5 else {
-				return false
-			}
-
-			return true
+			return false
 		}
 
-		let matchingViews = UIView.dtx_findViewsInKeySceneWindows(passing: predicate)
+		let matchingViews: [UIView] =
+				UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]
 
-		guard let matchingView = (matchingViews as! [UIView]).first else {
+		guard matchingViews.count > 0 else {
 			fatalError("Failed to connect XCUIElement with source UIView with " +
-								 "identifier: `\(identifier)` and frame: `\(frame)`. Found UIViews: \(allViews)")
+								 "identifier: `\(identifier)` and frame: `\(frame)`. " +
+								 "Found UIViews: \(matchingFrames.debugDescription)")
 		}
 
-		return matchingView
+		// There's some instability between the element's size and the rendered size.
+		return matchingViews.sorted {
+			let frameRect = CGRect(
+				x: frame[0].doubleValue,
+				y: frame[1].doubleValue,
+				width: frame[2].doubleValue,
+				height: frame[3].doubleValue
+			)
+
+			return rectIntersectionRatio(r1: $0.frame, r2: frameRect) >
+					rectIntersectionRatio(r1: $1.frame, r2: frameRect)
+		}.first!
+	}
+
+	private func rectIntersectionRatio(r1:CGRect, r2:CGRect) -> CGFloat {
+		if (r1.intersects(r2)) {
+			let interRect = r1.intersection(r2);
+
+			return (
+				(interRect.width * interRect.height) /
+				(((r1.width * r1.height) + (r2.width * r2.height)) / 2.0)
+			)
+		}
+
+		return 0;
 	}
 
 	func getNormalizedPoint(xPosition: NSNumber?, yPosition: NSNumber?) -> CGPoint {
