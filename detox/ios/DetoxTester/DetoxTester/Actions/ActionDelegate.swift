@@ -194,6 +194,7 @@ class ActionDelegate: ActionDelegateProtocol {
     let attributes = mappedElements.enumerated().map { (index, element) in
       let whiteBox = whiteBoxAttributesDictionary[index]
       let blackBox = element.getAttributes()
+
       // Prefer white-box value for backward-compatibility.
       return whiteBox.merging(blackBox) { (first, _) in first }
     }
