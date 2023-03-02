@@ -291,6 +291,7 @@ extension DetoxTester: AppClientMessageSenderProtocol {
         return false
       }
 
+      mainLog("return result from message #\(actualMessageId)", type: .debug)
       serverResponse = data
       semaphore.signal()
       return true
@@ -298,8 +299,8 @@ extension DetoxTester: AppClientMessageSenderProtocol {
 
     // Wait until response is received via `serverDidReceiveHandler`.
     mainLog(
-      "waiting for response (`serverDidReceiveHandler`), running on thread: " +
-      "\(Thread.current.debugDescription)",
+      "waiting for response (`serverDidReceiveHandler`), for message-id #\(messageId). " +
+      "Running on thread: \(Thread.current.debugDescription)",
       type: .debug
     )
 

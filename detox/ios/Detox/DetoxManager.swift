@@ -414,6 +414,9 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					return
 				}
 
+				DTXSyncManager.enqueueMainQueueIdleClosure(closure)
+				return
+
 			case "setDatePicker":
 				let targetIdentifier = params["elementID"] as! String
 				let targetFrame = params["elementFrame"] as! [NSNumber]
