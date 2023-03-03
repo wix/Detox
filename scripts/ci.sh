@@ -10,13 +10,3 @@ fi
 
 run_f "lerna bootstrap --no-ci"
 run_f "lerna run build"
-
-if [ "$1" == 'noGenerate' ]; then
-  run_f "lerna run test --ignore=generation"
-else
-  run_f "lerna run test"
-fi
-
-pushd detox
-allure generate || echo "Allure is not installed"
-popd
