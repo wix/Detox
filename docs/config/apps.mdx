@@ -42,15 +42,16 @@ The format of Detox config allows you to define inside it multiple app configs i
 
 An app config can have the following params:
 
-| Configuration Params | Details                                                                                                                                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`               | Mandatory property to discern app types: `ios.app`, `android.apk`.                                                                                                                                                    |
-| `name`               | Use only when working with multiple apps within the same configuration. See an example below.                                                                                                                         |
-| `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                            |
-| `build`              | **\[optional]** Build command (normally an `xcodebuild` command you use to build your app), which can be called later using Detox CLI tool as a convenience.                                                          |
-| `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                         |
-| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](../guide/launch-args.md). |
-| `reversePorts`       | **(optional, Android only)** An array of TCP ports to reverse, so that the network requests to `localhost:{port}` on Android device are going to be forwarded to the host machine.                                    |
+| Configuration Params | Details                                                                                                                                                                                                                                                                                     |
+| -------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`               | Mandatory property to discern app types: `ios.app`, `android.apk`.                                                                                                                                                                                                                          |
+| `name`               | Use only when working with multiple apps within the same configuration. See an example below.                                                                                                                                                                                               |
+| `binaryPath`         | Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path)                                                                                                                                                                                  |
+| `build`              | **\[optional]** Build command, which can be called using [`detox build`] CLI as a convenience.                                                                                                                                                                                              |
+| `start`              | **\[optional]** Start command, which will be called before [`detox test`] CLI starts, or explicitly via [`detox start`] command.                                                                                                                                                            |
+| `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                                                                                               |
+| `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](../guide/launch-args.md).                                                                      |
+| `reversePorts`       | **(optional, Android only)** An array of TCP ports to reverse, so that the network requests to `localhost:{port}` on Android device are going to be forwarded to the host machine.                                                                                                          |
 
 ## Multiple apps
 
@@ -89,3 +90,7 @@ await device.selectApp('passenger');
 await device.launchApp();
 // ... run tests ...
 ```
+
+[`detox build`]: ../cli/build.md
+[`detox start`]: ../cli/start.md
+[`detox test`]: ../cli/test.md

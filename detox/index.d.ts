@@ -331,6 +331,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
+            start?: string;
             launchArgs?: Record<string, any>;
         }
 
@@ -339,6 +340,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
+            start?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
             /**
