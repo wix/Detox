@@ -88,6 +88,7 @@ const sidebars = {
         'cli/overview',
         'cli/init',
         'cli/build',
+        'cli/start',
         'cli/test',
         'cli/recorder',
         'cli/build-framework-cache',
