@@ -170,7 +170,7 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }
 
-  async performAccessibilityAction(actionName = 'activate') {
+  async performAccessibilityAction(actionName) {
     const traceDescription = actionDescription.performAccessibilityAction(actionName);
     return await new ActionInteraction(this._invocationManager, this, new actions.AccessibilityActionAction(actionName), traceDescription).execute();
   }

@@ -294,10 +294,6 @@ describe('AndroidExpect', () => {
         await e.element(e.by.id('sliderWithASimpleID')).adjustSliderToPosition(75);
       });
 
-      it('should perform accessibility actions (defaults to "activate")', async () => {
-        await e.element(e.by.id('View7991')).performAccessibilityAction();
-      });
-
       it('should perform accessibility actions', async () => {
         await e.element(e.by.id('View7991')).performAccessibilityAction('activate');
       });
