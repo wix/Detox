@@ -18,7 +18,7 @@ function sanitize_android_edge(edge) {
     default:
       throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
   }
-} 
+}
 function sanitize_android_direction(direction) {
   switch (direction) {
     case 'left':
@@ -32,7 +32,7 @@ function sanitize_android_direction(direction) {
     default:
       throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
   }
-} 
+}
 class DetoxAction {
   static multiClick(times) {
     if (typeof times !== "number") throw new Error("times should be a number, but got " + (times + (" (" + (typeof times + ")"))));
@@ -194,6 +194,19 @@ class DetoxAction {
     };
   }
 
+  static setDatePickerDate(dateString, formatString) {
+    if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
+    if (typeof formatString !== "string") throw new Error("formatString should be a string, but got " + (formatString + (" (" + (typeof formatString + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "setDatePickerDate",
+      args: [dateString, formatString]
+    };
+  }
+
   static adjustSliderToPosition(newPosition) {
     if (typeof newPosition !== "number") throw new Error("newPosition should be a number, but got " + (newPosition + (" (" + (typeof newPosition + ")"))));
     return {
@@ -217,6 +230,18 @@ class DetoxAction {
       },
       method: "takeViewScreenshot",
       args: []
+    };
+  }
+
+  static parseDateISO8601(dateString) {
+    if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "parseDateISO8601",
+      args: [dateString]
     };
   }
 

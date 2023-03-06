@@ -226,6 +226,9 @@ detox/test/artifacts
 /examples/demo-react-native/artifacts
 /examples/demo-react-native-jest/artifacts
 
+## CSS files are auto-generated
+/website/**/*.css
+
 ## Final outputs
 
 Detox-android/

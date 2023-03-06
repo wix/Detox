@@ -10,6 +10,7 @@ import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,8 @@ class DetoxRNHost extends ReactNativeHost {
               new RNCWebViewPackage(),
               new NativeModulePackage(),
               new AsyncStoragePackage(),
-              new ReactCheckBoxPackage()
+              new ReactCheckBoxPackage(),
+              new RNDateTimePickerPackage()
       );
    }
 }

@@ -55,6 +55,7 @@ function collectCliConfig({ argv }) {
     useCustomLogger: asBoolean(get('use-custom-logger')),
     retries: asNumber(get('retries')),
     inspectBrk: asBoolean(get('inspect-brk')),
+    start: get('start'),
   }, _.isUndefined);
 }
 

@@ -220,12 +220,16 @@ await device.launchApp({
 
 #### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
 
-Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
+Launches the app with a URL blacklist to disable network synchronization on certain endpoints.
+Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
+
+> Note that due to the complexity of reg-exps and interoperability concerns, the implementation is fairly sensitive to the format of the string of urls.
+> Please do your best to follow the example below:
 
 ```js
 await device.launchApp({
   newInstance: true,
-  launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
+  launchArgs: { detoxURLBlacklistRegex: '\\("^http://192\.168\.1\.253:d{4}/.*","https://e\.crashlytics\.com/spi/v2/events"\\)' },
 });
 ```
 

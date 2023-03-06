@@ -7,6 +7,7 @@ const _ = require('lodash');
 const tempfile = require('tempfile');
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
@@ -282,6 +283,9 @@ class Element {
   setDatePickerDate(dateString, dateFormat) {
     if (typeof dateString !== 'string') throw new Error('dateString should be a string, but got ' + (dateString + (' (' + (typeof dateString + ')'))));
     if (typeof dateFormat !== 'string') throw new Error('dateFormat should be a string, but got ' + (dateFormat + (' (' + (typeof dateFormat + ')'))));
+    if (dateFormat === 'ISO8601') {
+      dateString = removeMilliseconds(dateString);
+    }
 
     const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
     return this.withAction('setDatePickerDate', traceDescription, dateString, dateFormat);
@@ -545,6 +549,16 @@ class WaitFor {
 
   toNotHaveValue(value) {
     this.expectation = this.expectation.toNotHaveValue(value);
+    return this;
+  }
+
+  toBeFocused() {
+    this.expectation = this.expectation.toBeFocused();
+    return this;
+  }
+
+  toBeNotFocused() {
+    this.expectation = this.expectation.toBeNotFocused();
     return this;
   }
 

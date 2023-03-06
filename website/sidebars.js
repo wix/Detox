@@ -42,6 +42,7 @@ const sidebars = {
         'guide/developing-while-writing-tests',
         'guide/android-dev-env',
         'guide/proguard-configuration',
+        'guide/cucumber-js-integration',
         'guide/uninstalling',
       ]
     },
@@ -87,6 +88,7 @@ const sidebars = {
         'cli/overview',
         'cli/init',
         'cli/build',
+        'cli/start',
         'cli/test',
         'cli/recorder',
         'cli/build-framework-cache',

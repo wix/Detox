@@ -1,0 +1,54 @@
+@mixin define-detox-extra-colors() {
+  // Define the base colors
+  $color: (
+    'r': #f14c52,
+    'y': #f7ba29,
+    'b': #3e77e4,
+    'u': #7633e5,
+    'e': #3ebf72
+  );
+
+  // Define the transparency levels
+  $alpha: (
+    '0': 1,
+    '1a': 0.54,
+    '2a': 0.35,
+    '3a': 0.25,
+    '4a': 0.15,
+    '5a': 0.7
+  );
+
+  @each $key, $hex in $color {
+    @each $level, $fraction in $alpha {
+      --detox-color-#{$key}#{$level}: #{transparentize($hex, 1 - $fraction)};
+    }
+  }
+}
+
+@mixin define-detox-colors($map) {
+  @each $key, $hex in $map {
+    --detox-color-#{$key}: #{$hex};
+  }
+}
+
+@mixin define-detox-light-colors() {
+  @include define-detox-colors((
+    'a0': #000000,
+    'a1': #babbbd,
+    'a2': #e0e1e1,
+    'a3': #f1f1f1,
+    'a4': #fafafa,
+    'a5': #ffffff
+  ));
+}
+
+@mixin define-detox-dark-colors() {
+  @include define-detox-colors((
+    'a0': #ffffff,
+    'a1': #12161b,
+    'a2': #171b20,
+    'a3': #202429,
+    'a4': #313439,
+    'a5': #575a5d
+  ));
+}

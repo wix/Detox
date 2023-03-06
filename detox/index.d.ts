@@ -331,6 +331,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
+            start?: string;
             launchArgs?: Record<string, any>;
         }
 
@@ -339,6 +340,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
+            start?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
             /**
@@ -1365,12 +1367,15 @@ declare global {
             setColumnToValue(column: number, value: string): Promise<void>;
 
             /**
-             * Sets the date of a date picker to a date generated from the provided string and date format. (iOS only)
-             * @param dateString string representing a date in the supplied `dateFormat`
-             * @param dateFormat format for the `dateString` supplied
+             * Sets the date of a date-picker according to the specified date-string and format.
+             * @param dateString Textual representation of a date (e.g. '2023/01/01'). Should be in coherence with the format specified by `dateFormat`.
+             * @param dateFormat Format of `dateString`: Generally either 'ISO8601' or an explicitly specified format (e.g. 'yyyy/MM/dd'); It should
+             *      follow the rules of NSDateFormatter for iOS and DateTimeFormatter for Android.
+             * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
              * @example
-             * await expect(element(by.id('datePicker'))).toBeVisible();
-             * await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+             * await element(by.id('datePicker')).setDatePickerDate('2023-01-01T00:00:00Z', 'ISO8601');
+             * await element(by.id('datePicker')).setDatePickerDate(new Date().toISOString(), 'ISO8601');
+             * await element(by.id('datePicker')).setDatePickerDate('2023/01/01', 'yyyy/MM/dd');
              */
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 

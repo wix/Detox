@@ -68,10 +68,21 @@ class Server {
   }
 }
 
+async function runPercySnapshot() {
+  const { stdout } = await $`percy snapshot snapshots.yml`;
+  const [, buildId] = stdout.match(/Finalized build #(\d+):/m) || [];
+  return buildId || '';
+}
+
 const server = new Server();
 try {
   await server.start();
-  await $`percy snapshot snapshots.yml`
+  const buildId = await runPercySnapshot();
+  try {
+    await $`percy build:wait --fail-on-changes --build ${buildId}`;
+  } catch (e) {
+    console.error('@noomorph says: This is a known issue. I contacted already their support team.');
+  }
 } finally {
   await server.stop();
 }
