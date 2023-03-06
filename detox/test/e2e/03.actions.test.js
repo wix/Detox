@@ -26,39 +26,19 @@ describe('Actions', () => {
     await driver.tapsElement.assertTappedOnce();
   });
 
-  it('should perform activate accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('activate');
-    await expect(element(by.text('Accessibility Action activate Working!!!'))).toBeVisible();
-  });
-
-  it('should perform magicTap accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('magicTap');
-    await expect(element(by.text('Accessibility Action magicTap Working!!!'))).toBeVisible();
-  });
-
-  it('should perform escape accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('escape');
-    await expect(element(by.text('Accessibility Action escape Working!!!'))).toBeVisible();
-  });
-
-  it('should perform increment accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('increment');
-    await expect(element(by.text('Accessibility Action increment Working!!!'))).toBeVisible();
-  });
-
-  it('should perform decrement accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('decrement');
-    await expect(element(by.text('Accessibility Action decrement Working!!!'))).toBeVisible();
-  });
-
-  it('should perform longpress accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('longpress');
-    await expect(element(by.text('Accessibility Action longpress Working!!!'))).toBeVisible();
-  });
-
-  it('should perform custom accessibility action', async () => {
-    await element(by.id("View7991")).performAccessibilityAction('custom');
-    await expect(element(by.text('Accessibility Action custom Working!!!'))).toBeVisible();
+  it.each([
+    'activate',
+    'magicTap',
+    'escape',
+    'increment',
+    'decrement',
+    'longpress',
+    'custom',
+  ])('should perform %s accessibilityAction', async actionName => {
+    await element(by.id('View7991')).performAccessibilityAction(actionName);
+    await expect(
+      element(by.text(`Accessibility Action ${actionName} Working!!!`)),
+    ).toBeVisible();
   });
 
   describe('multi-tapping', () => {
