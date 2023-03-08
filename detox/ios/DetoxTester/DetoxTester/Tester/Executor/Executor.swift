@@ -68,7 +68,7 @@ class Executor {
           try handleInvoke(params: params, messageId: messageId)
 
         case .isReady:
-          sendAction(.reportReady, messageId: messageId)
+         try isReady(messageId: messageId)
 
         case .cleanup:
           cleanup(params: params, messageId: messageId)

@@ -16,6 +16,7 @@
 		6026FEB52816CD2F00A016A1 /* XCUIElement+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */; };
 		6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */; };
 		6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */; };
+		602E8C1529B8C625002D0085 /* Executor+isReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602E8C1429B8C625002D0085 /* Executor+isReady.swift */; };
 		603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */; };
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+Connections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+Connections.swift */; };
@@ -173,6 +174,7 @@
 		6026FEB42816CD2E00A016A1 /* XCUIElement+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Keyboard.swift"; sourceTree = "<group>"; };
 		6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+scroll.swift"; sourceTree = "<group>"; };
 		6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ScrollScreen.storyboard; sourceTree = "<group>"; };
+		602E8C1429B8C625002D0085 /* Executor+isReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+isReady.swift"; sourceTree = "<group>"; };
 		603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleInvoke.swift"; sourceTree = "<group>"; };
 		603497A927F08C3700770EE0 /* Executor+sendAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendAction.swift"; sourceTree = "<group>"; };
 		603497AC27F08D9300770EE0 /* Executor+Connections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+Connections.swift"; sourceTree = "<group>"; };
@@ -701,6 +703,7 @@
 				604B94BA28314B6400508C27 /* Executor+shakeDevice.swift */,
 				60A3B465282D0439002F903B /* Executor+waitFor.swift */,
 				607C902229AF959A008FA6EA /* Executor+setRecordingState.swift */,
+				602E8C1429B8C625002D0085 /* Executor+isReady.swift */,
 			);
 			name = Handlers;
 			sourceTree = "<group>";
@@ -967,6 +970,7 @@
 				60BF52D5281E808D00610DBD /* XCUIElementQuery+run.swift in Sources */,
 				60534175280D835100C0405D /* XCUIElement+longPress.swift in Sources */,
 				60BF52D2281E7D0600610DBD /* XCUIElement+query.swift in Sources */,
+				602E8C1529B8C625002D0085 /* Executor+isReady.swift in Sources */,
 				60C7F50727DDF421000D417A /* WaitUntilAppIsReady.swift in Sources */,
 				60FBF608281981F9000B73B1 /* XCUIElement+adjustSlider.swift in Sources */,
 				605980DD298017A200888841 /* XCUIElement+shortPress.swift in Sources */,
