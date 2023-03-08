@@ -195,7 +195,41 @@ extension DetoxTester: DetoxServerMessageSenderProtocol {
 
 extension DetoxTester: WebSocketServerDelegateProtocol {
   func serverDidReceive(data: Data) {
-    mainLog("`serverDidReceive` called, executing on handlers")
+    mainLog("`serverDidReceive` called")
+
+    // `AppWillTerminateWithError` is a special message type, because it send on failure and not by
+    //  demand. This is a quick & dirty workaround to make crash-handling work.
+    // TODO: pass the decoded data to the handlers (`decoded`).
+    // TODO: Refactor (extract).
+
+    var decoded: [String: AnyCodable]!
+    do {
+      decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
+    }
+    catch {
+      mainLog("response for decoding `data` is invalid, can't be decoded!", type: .error)
+      fatalError("failed to decode `data`")
+    }
+
+    mainLog("`serverDidReceive` decoded response: \(decoded.debugDescription)")
+    if (decoded["type"]?.value as! String == "AppWillTerminateWithError") {
+      mainLog("reporting `AppWillTerminateWithError`")
+      let params = decoded["params"]?.value as! [String : Any]
+
+      sendAction(
+        .reportWillTerminateWithError,
+        params: params,
+        messageId: NSNumber(value: decoded["messageId"]?.value as! Int)
+      )
+
+      Thread.sleep(forTimeInterval: 5)
+
+      mainLog("running clean-up and raising fatal-error message", type: .debug)
+      cleanup()
+      fatalError("Crash occurred, error details: \(params)")
+    }
+
+    mainLog("`serverDidReceive` executing on handlers")
     let handlers = serverDidReceiveHandlers
 
     for (index, handler) in handlers.enumerated() {
@@ -221,6 +255,16 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
     }
 
     mainLog("tester server is ready on port \(server.port)")
+
+    mainLog("setting timeout operation (will be cancelled on successful connection)", type: .debug)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+      guard WhiteBoxExecutor.getHandler(for: .selectedApp) != nil else {
+        mainLog("DID TIMEOUT", type: .error)
+        fatalError("Did not connected client after 5 seconds..")
+      }
+
+      mainLog("timeout operation was cancelled", type: .debug)
+    }
   }
 
   func didCloseConnection() {

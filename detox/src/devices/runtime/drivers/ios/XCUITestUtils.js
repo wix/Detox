@@ -37,8 +37,6 @@ async function launchXCUITest(
   log.debug('[XCUITest] Lock was released');
 }
 
-// TODO: add manual launch hint.
-
 async function _runLaunchCommand(
   simulatorId,
   detoxServer,
@@ -49,7 +47,7 @@ async function _runLaunchCommand(
   testTargetServerPort,
   callback
 ) {
-  log.info(`[XCUITest] Launching test runner. See target logs using:\n` +
+  log.info(`Launching XUICTest runner. See target logs using:\n` +
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
     `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
 
@@ -68,15 +66,14 @@ async function _runLaunchCommand(
     `-destination 'platform=iOS Simulator,id=${simulatorId}' ` +
     `test`;
 
-  log.debug(`[XCUITest] Executing: ${command}`);
-
   exec(command, { maxBuffer: 1024 * 1024 * 500 })
     .then(function (result) {
-      log.info(`[XCUITest] execution finished.`);
-      log.debug(`[XCUITest] execution result:\n ${result.stdout.toString()}`);
+      log.info(`XCUITest runner execution finished`);
+      log.debug(`xcodebuild output:\n${result.stdout.toString()}`);
     })
     .catch(function (error) {
-      log.error(`[XCUITest] execution finished with error:\n${error}`);
+      log.error(`xcodebuild error has occurred during XCUITest execution, see debug logs for more details`);
+      log.debug(`xcodebuild error message:\n${error.stderr.toString()}`);
     });
 
   await _allowNetworkPermissionsXCUITest(callback);

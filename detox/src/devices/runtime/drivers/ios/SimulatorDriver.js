@@ -83,6 +83,7 @@ class SimulatorDriver extends IosDriver {
 
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
 
+    log.debug({ event: 'CLIENT_CONNECTED', params: { connected: this.client.isConnected } }, 'client connected: ' + this.client.isConnected);
     if (!this.client.isConnected) {
       await launchXCUITest(
         this.udid,
@@ -139,7 +140,8 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
 
     await this.client.terminateIfNeeded();
-    // Sleep for 2 seconds to allow the XCUITest to terminate gracefully.
+
+    // Sleep for 200 ms to allow the XCUITest to terminate gracefully.
     await new Promise(resolve => setTimeout(resolve, 200));
 
     await this._applesimutils.terminate(udid, bundleId);

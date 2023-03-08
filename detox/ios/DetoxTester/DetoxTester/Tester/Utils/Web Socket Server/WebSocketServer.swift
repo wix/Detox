@@ -95,10 +95,18 @@ class WebSocketServer {
             self.delegate.serverDidConnectClient()
 
           case .failed(let error):
-            wsLog("[new connection update] connection has failed with error: \(error.localizedDescription)", type: .error)
+            wsLog(
+              "[new connection update] connection has failed with error: " +
+              "\(error.localizedDescription)",
+              type: .error
+            )
 
           case .waiting(let error):
-            wsLog("[new connection update] connection is waiting for long time \(error.localizedDescription)", type: .error)
+            wsLog(
+              "[new connection update] connection is waiting for long time " +
+              "\(error.localizedDescription)",
+              type: .error
+            )
 
           case .setup, .cancelled, .preparing:
             wsLog("[new connection update] connection with client state has changed to `\(state)`")

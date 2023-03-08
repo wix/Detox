@@ -17,6 +17,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
     timeout = 0,
     statusLogs = {},
     verbosity = 'normal',
+    maxBuffer = 1024 * 1024,
   } = options;
 
   const trackingId = execsCounter.inc();
@@ -35,7 +36,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
       } else if (statusLogs.retrying) {
         _logExecRetrying(logger, cmd, tryNumber, lastError);
       }
-      result = await exec(cmd, { timeout });
+      result = await exec(cmd, { timeout, maxBuffer });
     });
   } catch (err) {
     const failReason = err.code == null && timeout > 0

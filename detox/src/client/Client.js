@@ -266,7 +266,7 @@ class Client {
   }
 
   async terminateApp() {
-    /* see the property injection from Detox.js */
+    /* see the property injection from DetoxWorker.js */
   }
 
   _scheduleSlowInvocationQuery() {
