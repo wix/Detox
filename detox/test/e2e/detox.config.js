@@ -55,6 +55,7 @@ const config = {
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
       build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      start: 'react-native start',
       bundleId: 'com.wix.detox-example',
     },
 
@@ -87,6 +88,7 @@ const config = {
       name: 'example',
       binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
       build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
+      start: 'react-native start',
       reversePorts: [8081],
     },
 

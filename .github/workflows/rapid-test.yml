@@ -3,58 +3,67 @@ name: Rapid Test
 on:
   push:
     branches: [master]
-    paths-ignore:
-      - '.github/workflows/docs.yml'
-      - '.markdownlintrc'
-      - '.remarkignore'
-      - '.remarkrc.mjs'
-      - '.retext-spell.dic'
-      - 'docs/**'
-      - '**.md'
+    paths:
+        - '.github/workflows/rapid-test.yml'
+        - 'detox/**'
+        - 'generation/**'
   pull_request:
     branches: [master]
-    paths-ignore:
-      - '.github/workflows/docs.yml'
-      - '.markdownlintrc'
-      - '.remarkignore'
-      - '.remarkrc.mjs'
-      - '.retext-spell.dic'
-      - 'docs/**'
-      - '**.md'
+    paths:
+        - '.github/workflows/rapid-test.yml'
+        - 'detox/**'
+        - 'generation/**'
 
 jobs:
 
-  js:
-    name: JS & TS
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node: [14]
-    runs-on: ${{ matrix.os }}
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 14
       - name: Bootstrap Lerna
         run: npx lerna bootstrap --no-ci
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
-      - name: Lint
+      - name: Lint source project
         run: npm run lint
         working-directory: detox
+      - name: Lint test project
+        run: npm run lint
+        working-directory: detox/test
       - name: Typings
         run: npm test
         working-directory: detox/test
-      - name: Unit tests (Linux)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Unit tests
         run: npm run unit
-        working-directory: detox
-      - name: Unit tests (Windows)
-        if: matrix.os == 'windows-latest'
-        run: npm run unit -- --coverageThreshold "{}"
         working-directory: detox
       - name: Integration tests
         run: npm run integration
         working-directory: detox/test
+      - name: Generation tests
+        run: npm test
+        working-directory: generation
+
+  windows:
+      name: Windows
+      runs-on: windows-latest
+      steps:
+          - uses: actions/checkout@v3
+          - uses: actions/setup-node@v3
+            with:
+                node-version: 14
+          - name: Bootstrap Lerna (Light)
+            run: npx lerna bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
+            env:
+                DETOX_DISABLE_POD_INSTALL: true
+                DETOX_DISABLE_POSTINSTALL: true
+          - name: Unit tests
+            run: npm run unit -- --coverageThreshold "{}"
+            working-directory: detox
+          - name: Integration tests
+            run: npm run integration
+            working-directory: detox/test
