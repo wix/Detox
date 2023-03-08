@@ -59,7 +59,7 @@ async function _runLaunchCommand(
     `TEST_RUNNER_DETOX_DEBUG_VISIBILITY='${debugVisibility}' ` +
     `TEST_RUNNER_DETOX_DISABLE_VIEW_HIERARCHY_DUMP='${disableDumpViewHierarchy}' ` +
     `xcodebuild ` +
-    `-workspace ~/Development/Detox/detox/ios/DetoxTester.xcworkspace ` +
+    `-workspace ../ios/DetoxTester.xcworkspace ` +
     `-scheme DetoxTester ` +
     `-sdk iphonesimulator ` +
     `-allowProvisioningUpdates ` +
