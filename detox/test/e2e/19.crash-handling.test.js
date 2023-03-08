@@ -7,14 +7,14 @@ describe('Crash Handling', () => {
     await device.launchApp({ newInstance: true });
   });
 
-  it.skip('Should throw error upon internal app crash', async () => {
+  it('Should throw error upon internal app crash', async () => {
     await device.launchApp({ newInstance: true });
 
     await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
     await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
-  it.skip('Should recover from app crash', async () => {
+  it('Should recover from app crash', async () => {
     await device.launchApp({ newInstance: true });
     await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
 
