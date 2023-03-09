@@ -82,21 +82,8 @@ async function _runLaunchCommand(
 async function _allowNetworkPermissionsXCUITest(callback) {
   log.debug(`[XCUITest] Allowing network permissions`);
 
-  osascript.execute(
-    `tell application "System Events"
-    set frontmost of process "UserNotificationCenter" to true
-      tell process "UserNotificationCenter"
-              repeat until (exists button "Allow" of window 1)
-                  delay 1
-              end repeat
-
-              repeat while exists button "Allow" of window 1
-                  if exists button "Allow" of window 1 then
-                      click button "Allow" of window 1
-                  end if
-              end repeat
-      end tell
-    end tell`,
+  osascript.executeFile(
+    `${__dirname}/allowNetworkPermissionsXCUITest.scpt`,
     function(err, _, __) {
       if (err) {
         log.error(`[XCUITest] Failed to approve network permissions for XCUITest target:\n\t${err}`);
