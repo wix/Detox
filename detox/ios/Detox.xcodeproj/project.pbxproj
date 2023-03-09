@@ -61,12 +61,6 @@
 		3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3980D12D244C41E1004812DD /* IOKit.framework */; };
 		3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D133244C4373004812DD /* UIView+DetoxMatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D134244C4373004812DD /* UIView+DetoxMatchers.m */; };
-		3980D158244C45EA004812DD /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D14B244C45E9004812DD /* Modifier.swift */; };
-		3980D15A244C45EA004812DD /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D153244C45E9004812DD /* Element.swift */; };
-		3980D15B244C45EA004812DD /* InvocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D154244C45E9004812DD /* InvocationManager.swift */; };
-		3980D15C244C45EA004812DD /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D155244C45E9004812DD /* Action.swift */; };
-		3980D15D244C45EA004812DD /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D156244C45E9004812DD /* Expectation.swift */; };
-		3980D15E244C45EA004812DD /* Predicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D157244C45E9004812DD /* Predicate.swift */; };
 		3980D165244DC8F0004812DD /* UIPickerView+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D163244DC8F0004812DD /* UIPickerView+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D166244DC8F0004812DD /* UIPickerView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D164244DC8F0004812DD /* UIPickerView+DetoxActions.m */; };
 		3980D169244DD837004812DD /* UIDatePicker+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D167244DD837004812DD /* UIDatePicker+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -253,12 +247,6 @@
 		3980D12D244C41E1004812DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		3980D133244C4373004812DD /* UIView+DetoxMatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxMatchers.h"; sourceTree = "<group>"; };
 		3980D134244C4373004812DD /* UIView+DetoxMatchers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxMatchers.m"; sourceTree = "<group>"; };
-		3980D14B244C45E9004812DD /* Modifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
-		3980D153244C45E9004812DD /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
-		3980D154244C45E9004812DD /* InvocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvocationManager.swift; sourceTree = "<group>"; };
-		3980D155244C45E9004812DD /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
-		3980D156244C45E9004812DD /* Expectation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
-		3980D157244C45E9004812DD /* Predicate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Predicate.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		3980D162244C689A004812DD /* Detox.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Detox.modulemap; sourceTree = "<group>"; };
 		3980D163244DC8F0004812DD /* UIPickerView+DetoxActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIPickerView+DetoxActions.h"; sourceTree = "<group>"; };
 		3980D164244DC8F0004812DD /* UIPickerView+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIPickerView+DetoxActions.m"; sourceTree = "<group>"; };
@@ -421,7 +409,6 @@
 				3980D12B244C40D2004812DD /* AppleInternals */,
 				3980D12C244C40E2004812DD /* AppleTouchEvents */,
 				39232594247AAAAC00A3D119 /* Assertions */,
-				3980D13C244C44C3004812DD /* Invocation */,
 				396D453C25238B430096E7FA /* Policy */,
 				3980D132244C435B004812DD /* Matchers */,
 				3980D130244C42E7004812DD /* Utilities */,
@@ -569,19 +556,6 @@
 				3980D134244C4373004812DD /* UIView+DetoxMatchers.m */,
 			);
 			path = Matchers;
-			sourceTree = "<group>";
-		};
-		3980D13C244C44C3004812DD /* Invocation */ = {
-			isa = PBXGroup;
-			children = (
-				3980D155244C45E9004812DD /* Action.swift */,
-				3980D153244C45E9004812DD /* Element.swift */,
-				3980D156244C45E9004812DD /* Expectation.swift */,
-				3980D154244C45E9004812DD /* InvocationManager.swift */,
-				3980D14B244C45E9004812DD /* Modifier.swift */,
-				3980D157244C45E9004812DD /* Predicate.swift */,
-			);
-			path = Invocation;
 			sourceTree = "<group>";
 		};
 		39D7BF9124EAE510003E0694 /* Products */ = {
@@ -830,7 +804,6 @@
 				392324E324782AE500A3D119 /* DetoxInit.m in Sources */,
 				39DC985724BB904D00FFB224 /* ReactNativeSupport.m in Sources */,
 				6062B5E42720323700CBDBF0 /* NSArray+Utils.m in Sources */,
-				3980D15C244C45EA004812DD /* Action.swift in Sources */,
 				AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
 				39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */,
@@ -843,11 +816,9 @@
 				39DC984824BB8E8900FFB224 /* DTXLogging.m in Sources */,
 				39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */,
 				397CA78D248010B5005E8A71 /* UISlider+DetoxUtils.m in Sources */,
-				3980D15D244C45EA004812DD /* Expectation.swift in Sources */,
 				3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */,
 				3946CD3F2566EB9E000A3606 /* NSObject+DetoxActions.m in Sources */,
 				395B06E5256D5A5600941716 /* UIView+DetoxSpeedup.m in Sources */,
-				3980D15B244C45EA004812DD /* InvocationManager.swift in Sources */,
 				39DC984924BB8E8900FFB224 /* DTXLogging.swift in Sources */,
 				3946CD452566EBC2000A3606 /* NSObject+DontCrash.m in Sources */,
 				396D455725238BCE0096E7FA /* UIImage+DetoxUtils.m in Sources */,
@@ -855,12 +826,9 @@
 				39EECB7D24C0A5AF009C3364 /* NSThread+DetoxUtils.m in Sources */,
 				60E149C82759038F00519EE4 /* UIResponder+First.m in Sources */,
 				390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */,
-				3980D158244C45EA004812DD /* Modifier.swift in Sources */,
 				39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */,
-				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
 				396D454425238B780096E7FA /* DetoxPolicy.m in Sources */,
-				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
 				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,
 				6062B5E62720323700CBDBF0 /* DTXAddressInfo.mm in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
