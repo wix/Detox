@@ -302,7 +302,7 @@ class CurrentStatus extends Action {
   }
 
   get timeout() {
-    return 10000;
+    return 5000;
   }
 
   async handle(response) {
