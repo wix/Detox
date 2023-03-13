@@ -79,7 +79,6 @@
 		60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */; };
 		60C0202627CBB0A500EF6C1E /* Preview Content in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202127CBB0A500EF6C1E /* Preview Content */; };
 		60C0202727CBB0A500EF6C1E /* DetoxTesterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */; };
-		60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60C0202827CBB20B00EF6C1E /* Assets.xcassets */; };
 		60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0203327CE610100EF6C1E /* WaitUntilDone.swift */; };
 		60C7F4EB27D8A5FE000D417A /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4EA27D8A5FE000D417A /* LogUtils.swift */; };
 		60C7F4F327D8D67D000D417A /* WebSocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C7F4F227D8D67D000D417A /* WebSocketClient.swift */; };
@@ -175,6 +174,7 @@
 		6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+scroll.swift"; sourceTree = "<group>"; };
 		6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ScrollScreen.storyboard; sourceTree = "<group>"; };
 		602E8C1429B8C625002D0085 /* Executor+isReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+isReady.swift"; sourceTree = "<group>"; };
+		602E8C4729BF76E3002D0085 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleInvoke.swift"; sourceTree = "<group>"; };
 		603497A927F08C3700770EE0 /* Executor+sendAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendAction.swift"; sourceTree = "<group>"; };
 		603497AC27F08D9300770EE0 /* Executor+Connections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+Connections.swift"; sourceTree = "<group>"; };
@@ -241,7 +241,6 @@
 		60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		60C0202127CBB0A500EF6C1E /* Preview Content */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Preview Content"; sourceTree = "<group>"; };
 		60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxTesterApp.swift; sourceTree = "<group>"; };
-		60C0202827CBB20B00EF6C1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../../../Downloads/AppIcons/Assets.xcassets; sourceTree = "<group>"; };
 		60C0203327CE610100EF6C1E /* WaitUntilDone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntilDone.swift; sourceTree = "<group>"; };
 		60C7F4EA27D8A5FE000D417A /* LogUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 		60C7F4F227D8D67D000D417A /* WebSocketClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient.swift; sourceTree = "<group>"; };
@@ -450,14 +449,14 @@
 			isa = PBXGroup;
 			children = (
 				60F9F94B28084F1B005DB569 /* Actions Screens */,
+				602E8C4729BF76E3002D0085 /* Assets.xcassets */,
+				60C0201F27CBB0A400EF6C1E /* ContentView.swift */,
+				60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */,
 				60FBF6C2281AAB53000B73B1 /* Matchers Screens */,
 				60F9F93C280837C1005DB569 /* Menu Screen */,
-				6053416B280D760900C0405D /* Utils */,
-				60C0202827CBB20B00EF6C1E /* Assets.xcassets */,
-				60C0201F27CBB0A400EF6C1E /* ContentView.swift */,
 				60C0202027CBB0A400EF6C1E /* Preview Assets.xcassets */,
 				60C0202127CBB0A500EF6C1E /* Preview Content */,
-				60C0202227CBB0A500EF6C1E /* DetoxTesterApp.swift */,
+				6053416B280D760900C0405D /* Utils */,
 			);
 			path = DetoxTesterApp;
 			sourceTree = "<group>";
@@ -891,7 +890,6 @@
 				605341C22813055A00C0405D /* AccessibilityScreen.storyboard in Resources */,
 				6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */,
 				60534161280C581200C0405D /* LongPressAndDragScreen.storyboard in Resources */,
-				60C0202927CBB20B00EF6C1E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
