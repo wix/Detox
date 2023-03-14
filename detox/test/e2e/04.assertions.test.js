@@ -38,7 +38,7 @@ describe('Assertions', () => {
   });
 
   it('should assert an element has (accessibility) id', async () => {
-    await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+    await expect(element(by.text('I contain some text'))).toHaveId('main-text');
   });
 
   it.skip(':ios: should assert an element has (accessibility) value', async () => {
