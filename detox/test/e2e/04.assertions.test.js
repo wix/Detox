@@ -4,6 +4,7 @@ const driver = {
     await element(by.text('Assertions')).tap();
   },
   get textElement() { return element(by.id('main-text')) },
+  get subtextElement() { return element(by.id('subtext-root')) },
   get invisibleTextElement() { return element(by.id('offscreen-text')) },
   get toggleElement() { return element(by.id('toggle')) },
 }
@@ -35,6 +36,10 @@ describe('Assertions', () => {
 
   it('should assert an element has (accessibility) label', async () => {
     await expect(driver.textElement).toHaveLabel('I contain some text');
+  });
+
+  it('should assert a sub-element has a computed (accessibility) label', async () => {
+    await expect(driver.subtextElement).toHaveLabel('This is some subtext');
   });
 
   it('should assert an element has (accessibility) id', async () => {

@@ -3,15 +3,14 @@ package com.wix.detox.espresso.action
 import android.graphics.Rect
 import android.os.Build
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
-import com.wix.detox.common.forEachChild
 import com.wix.detox.espresso.ViewActionWithResult
 import com.wix.detox.espresso.common.SliderHelper
+import com.wix.detox.reactnative.ui.accessibilityLabel
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -49,7 +48,7 @@ private class CommonAttributes {
     fun get(json: JSONObject, view: View) {
         getId(json, view)
         getVisibility(json, view)
-        getContentDescription(json, view)
+        getAccessibilityLabel(json, view)
         getAlpha(json, view)
         getElevation(json, view)
         getHeight(json, view)
@@ -68,8 +67,8 @@ private class CommonAttributes {
         json.put("visible", view.getLocalVisibleRect(Rect()))
     }
 
-    private fun getContentDescription(json: JSONObject, view: View) =
-            resolveLabel(view)?.let {
+    private fun getAccessibilityLabel(json: JSONObject, view: View) =
+            view.accessibilityLabel()?.let {
                 json.put("label", it)
             }
 
@@ -84,18 +83,6 @@ private class CommonAttributes {
     private fun getWidth(json: JSONObject, view: View) = json.put("width", view.width)
     private fun getIsEnabled(json: JSONObject, view: View) = json.put("enabled", view.isEnabled)
     private fun getHasFocus(json: JSONObject, view: View) = json.put("focused", view.isFocused)
-    private fun resolveLabel(view: View): CharSequence? =
-        view.contentDescription ?:
-            if (view is ViewGroup) {
-                val contentDesc = mutableListOf<CharSequence>()
-
-                view.forEachChild { child ->
-                    resolveLabel(child)?.let {
-                        contentDesc.add(it)
-                    }
-                }
-                if (contentDesc.isEmpty()) null else contentDesc.joinToString(" ")
-            } else null
 
     companion object {
         private val visibilityMap = mapOf(View.VISIBLE to "visible", View.INVISIBLE to "invisible", View.GONE to "gone")

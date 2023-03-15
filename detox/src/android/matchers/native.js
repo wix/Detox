@@ -6,7 +6,7 @@ const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAccessibilityLabel(value));
   }
 }
 

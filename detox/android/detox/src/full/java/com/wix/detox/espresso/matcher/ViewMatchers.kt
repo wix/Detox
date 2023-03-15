@@ -11,6 +11,7 @@ import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import kotlin.math.abs
@@ -18,6 +19,9 @@ import kotlin.math.abs
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
+
+fun withAccessibilityLabel(text: String) =
+    WithAccessibilityLabelMatcher(`is`(text))
 
 fun isOfClassName(className: String): Matcher<View> {
     try {
