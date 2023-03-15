@@ -1,11 +1,13 @@
 package com.wix.detox.espresso.action
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.facebook.react.views.slider.ReactSlider
 import com.google.android.material.slider.Slider
+import com.wix.detox.UTHelpers.mockViewHierarchy
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Before
@@ -32,7 +34,7 @@ class GetAttributesActionTest {
     private fun givenNoViewTag() = givenViewTag(null)
     private fun givenVisibility(value: Int) { whenever(view.visibility).doReturn(value) }
     private fun givenVisibilityRectAvailability(value: Boolean) { whenever(view.getLocalVisibleRect(any())).doReturn(value) }
-    private fun givenContentDescription(value: String) { whenever(view.contentDescription).doReturn(value) }
+    private fun givenContentDescription(value: String, v: View = view) { whenever(v.contentDescription).doReturn(value) }
 
     private fun perform(v: View = view): JSONObject {
         uut.perform(null, v)
@@ -119,8 +121,41 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should not return label if content description no set`() {
+    fun `should return label according to children's content-description, recursively`() {
+        val contentDescription1st = "cd.1"
+        val contentDescription2nd = "cd.2"
+        val expectedLabel = "$contentDescription1st $contentDescription2nd"
+
+        val parent: ViewGroup = mock()
+        val sibling1: ViewGroup = mock()
+        val sibling2: ViewGroup = mock<ViewGroup>().also {
+            givenContentDescription(contentDescription2nd, it)
+        }
+        val grandson: View = mock<View>().also {
+            givenContentDescription(contentDescription1st, it)
+        }
+
+        mockViewHierarchy(parent, sibling1, sibling2)
+        mockViewHierarchy(sibling1, grandson)
+
+        val resultJson = perform(parent)
+        assertThat(resultJson.opt("label")).isEqualTo(expectedLabel)
+    }
+
+    @Test
+    fun `should not return label if content description not set`() {
         val resultJson = perform()
+        assertThat(resultJson.opt("label")).isNull()
+    }
+
+    @Test
+    fun `should not return label if content description not set even for child-views`() {
+        val parent: ViewGroup = mock()
+        val child: View = mock()
+
+        mockViewHierarchy(parent, child)
+
+        val resultJson = perform(parent)
         assertThat(resultJson.opt("label")).isNull()
     }
 
