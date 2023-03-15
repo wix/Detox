@@ -10,6 +10,7 @@ const failedToReachTheApp = require('../errors/longreads/failedToReachTheApp');
 const Deferred = require('../utils/Deferred');
 const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
 const log = require('../utils/logger').child({ cat: 'ws-client,ws' });
+const uuid = require('../utils/uuid');
 
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
@@ -29,7 +30,7 @@ class Client {
     this._onUnhandledServerError = this._onUnhandledServerError.bind(this);
     this._logError = this._logError.bind(this);
 
-    this._sessionId = sessionId;
+    this._sessionId = sessionId || uuid.UUID();
     this._slowInvocationTimeout = debugSynchronization;
     this._slowInvocationStatusHandle = null;
     this._whenAppIsConnected = this._invalidState('before connecting to the app');
@@ -59,6 +60,10 @@ class Client {
    */
   get isConnected() {
     return this._asyncWebSocket.isOpen && this._whenAppIsConnected.isResolved();
+  }
+
+  get sessionId() {
+    return this._sessionId;
   }
 
   get serverUrl() {

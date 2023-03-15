@@ -12,7 +12,7 @@ class RuntimeDevice {
     behaviorConfig,
     deviceConfig,
     eventEmitter,
-    sessionConfig,
+    client,
     runtimeErrorComposer,
   }, deviceDriver) {
     const methodNames = [
@@ -56,7 +56,11 @@ class RuntimeDevice {
     this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
-    this._sessionConfig = sessionConfig;
+    this._sessionInfo = {
+      server: client.serverUrl,
+      sessionId: client.sessionId,
+    };
+
     this._emitter = eventEmitter;
     this._errorComposer = runtimeErrorComposer;
 
@@ -401,8 +405,8 @@ class RuntimeDevice {
 
   _prepareLaunchArgs(additionalLaunchArgs) {
     return {
-      detoxServer: this._sessionConfig.server,
-      detoxSessionId: this._sessionConfig.sessionId,
+      detoxServer: this._sessionInfo.server,
+      detoxSessionId: this._sessionInfo.sessionId,
       ...additionalLaunchArgs
     };
   }

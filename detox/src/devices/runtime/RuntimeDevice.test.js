@@ -118,7 +118,10 @@ describe('Device', () => {
         default: configurationsMock.appWithRelativeBinaryPath,
       },
       deviceConfig: configurationsMock.iosSimulatorWithShorthandQuery,
-      sessionConfig: configurationsMock.validSession,
+      client: {
+        sessionId: configurationsMock.validSession.sessionId,
+        serverUrl: configurationsMock.validSession.server,
+      },
     }), overrides);
 
     if (overrides && overrides.appsConfig === null) {

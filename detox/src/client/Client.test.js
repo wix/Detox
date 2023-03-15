@@ -128,6 +128,20 @@ describe('Client', () => {
     });
   });
 
+  describe('.sessionId', () => {
+    it('should return sessionConfig.sessionId', () => {
+      expect(client.sessionId).toBe(sessionConfig.sessionId);
+    });
+
+    it('should return a randomly generated sessionId if not provided', () => {
+      const sessionIdFromConfig = sessionConfig.sessionId;
+      delete sessionConfig.sessionId;
+      client = new Client(sessionConfig);
+      expect(client.sessionId).toMatch(/^[0-9a-f-]{36}$/);
+      expect(client.sessionId).not.toBe(sessionIdFromConfig);
+    });
+  });
+
   describe('.open()', () => {
     it('should open the web socket', async () => {
       mockAws.mockResponse('loginSuccess', {});
