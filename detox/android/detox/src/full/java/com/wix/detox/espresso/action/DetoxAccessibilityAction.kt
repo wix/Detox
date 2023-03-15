@@ -1,59 +1,42 @@
-package com.wix.detox.espresso.action;
+package com.wix.detox.espresso.action
 
-import android.view.View;
+import android.view.View
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.uimanager.events.Event
+import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.wix.detox.espresso.DetoxMatcher
+import org.hamcrest.Matcher
 
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
+class DetoxAccessibilityAction(private val mActionName: String) : ViewAction {
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.uimanager.UIManagerHelper;
-import com.facebook.react.uimanager.UIManagerModule;
-import com.facebook.react.uimanager.events.Event;
-import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.wix.detox.espresso.DetoxMatcher;
+    override fun getConstraints(): Matcher<View> = DetoxMatcher.matcherForNotNull()
 
-import org.hamcrest.Matcher;
+    override fun getDescription(): String = "Dispatch an Accessibility Action"
 
-public class DetoxAccessibilityAction implements ViewAction {
-    String mActionName;
+    override fun perform(uiController: UiController?, view: View?) {
+        val context = view!!.context as ReactContext
+        val reactTag = view.id
+        val event = Arguments.createMap()
+        event.putString("actionName", mActionName)
 
-    public DetoxAccessibilityAction(String actionName) {
-        mActionName = actionName;
-    }
-
-    @Override
-    public Matcher<View> getConstraints() {
-        return DetoxMatcher.matcherForNotNull();
-    }
-
-    @Override
-    public String getDescription() {
-        return "Dispatch an Accessibility Action";
-    }
-
-    @Override
-    public void perform(UiController uiController, View view) {
-        ReactContext context = (ReactContext) view.getContext();
-        final int reactTag = view.getId();
-        final WritableMap event = Arguments.createMap();
-        event.putString("actionName", mActionName);
-
-        UIManagerModule uiManager = (UIManagerModule) UIManagerHelper.getUIManager(context, reactTag);
-        uiManager.getEventDispatcher().dispatchEvent(new Event(reactTag) {
-            @Override
-            public String getEventName() {
-                return "topAccessibilityAction";
+        val uiManager = UIManagerHelper.getUIManager(context, reactTag) as UIManagerModule?
+        uiManager!!.eventDispatcher.dispatchEvent(object : Event<Event<*>>(reactTag) {
+            override fun getEventName(): String {
+                return "topAccessibilityAction"
             }
 
-            @Override
-            public void dispatch(RCTEventEmitter rctEventEmitter) {
-                rctEventEmitter.receiveEvent(reactTag, "topAccessibilityAction", event);
+            @Deprecated("Deprecated in Java")
+            override fun dispatch(rctEventEmitter: RCTEventEmitter) {
+                rctEventEmitter.receiveEvent(reactTag, "topAccessibilityAction", event)
             }
-        });
+        })
 
-        int waitTimeMS = 100;
-        uiController.loopMainThreadForAtLeast(waitTimeMS);
+        val waitTimeMS = 100
+        uiController!!.loopMainThreadForAtLeast(waitTimeMS.toLong())
     }
 }
