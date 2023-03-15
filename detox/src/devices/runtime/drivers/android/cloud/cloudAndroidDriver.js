@@ -120,12 +120,14 @@ class CloudAndroidDriver extends DeviceDriverBase {
 
   async _launchApp( bundleId, launchArgs) {
     if (!this.instrumentation) {
-        await this.invocationManager.executeCloudPlatform({
+      const response = await this.invocationManager.executeCloudPlatform({
         'method': 'launchApp',
         'args': {
           'launchArgs': launchArgs
         }
       });
+      const status = _.get(response, 'response.success');
+      this.instrumentation = status && status.toString() == 'true';
     } else if (launchArgs.detoxURLOverride) {
       await this._startActivityWithUrl(launchArgs.detoxURLOverride);
     } else {
@@ -135,10 +137,12 @@ class CloudAndroidDriver extends DeviceDriverBase {
 
   // Do we want to throw error if terminate app fails
   async _terminateInstrumentation(bundleId) {
-    return await this.invocationManager.executeCloudPlatform({
+    const response = await this.invocationManager.executeCloudPlatform({
       'method': 'terminateApp',
       'args': {}
     });
+    const status = _.get(response, 'response.success');
+    this.instrumentation = !(status && status.toString() == 'true');
   }
 
   _startActivityWithUrl(url) {
