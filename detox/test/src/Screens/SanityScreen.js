@@ -28,10 +28,10 @@ export default class SanityScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 25, marginBottom: 30}}>
-          Welcome
+          ברוכים הבאים!
         </Text>
         {this.renderTestButton('Say Hello', this.onButtonPress.bind(this, 'Hello'))}
-        {this.renderTestButton('Say World', this.onButtonPress.bind(this, 'World'))}
+        {this.renderTestButton('قل مرحبا!', this.onButtonPress.bind(this, 'مرحبا'))}
       </View>
     );
   }
