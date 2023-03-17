@@ -61,7 +61,7 @@
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^3.1.0",
     "caf": "^15.0.1",
-    "chalk": "^2.4.2",
+    "chalk": "^4.0.0",
     "child-process-promise": "^2.2.0",
     "execa": "^5.1.1",
     "find-up": "^4.1.0",

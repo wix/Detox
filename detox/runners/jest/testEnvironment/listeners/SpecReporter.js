@@ -1,4 +1,4 @@
-const chalk = require('chalk').default;
+const chalk = require('chalk');
 const noop = require('lodash/noop');
 
 const { config, log, session } = require('../../../../internals');
