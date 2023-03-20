@@ -124,7 +124,7 @@ public class InvokeHandler {
   private func takeScreenshot(_ params: [AnyCodable]?, of element: AnyHashable) throws -> AnyCodable {
     return try actionDelegate.takeScreenshot(
       params != nil ? (params![0].value as! String) : nil,
-      date: Date.now,
+      date: Date(),
       of: element
     )
   }

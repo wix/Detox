@@ -47,7 +47,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
     // 10 times).
     let samplingInterval = max(min(timeoutSeconds, 0.5), timeoutSeconds / 10)
 
-    let startDate = Date.now
+    let startDate = Date()
 
     while true {
       do {
@@ -57,7 +57,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
         try expect(expectation, isTruthy: isTruthy, on: element)
         break
       } catch {
-        let secondsPassed = Date.now.timeIntervalSince(startDate)
+        let secondsPassed = Date().timeIntervalSince(startDate)
         if secondsPassed > timeoutSeconds + timeoutGrace {
           throw Error.reachedExpectationTimeout(
             errorDescription: String(describing: error), timeout: timeoutMilliseconds)

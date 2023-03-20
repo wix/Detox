@@ -53,7 +53,7 @@ extension ActionDelegate {
 
   private func takeElementScreenshot(
     _ imageName: String?,
-    date: Date = Date.now,
+    date: Date = Date(),
     of element: XCUIElement
   ) throws -> [String: String] {
     return try element.takeScreenshot(
@@ -65,7 +65,7 @@ extension ActionDelegate {
 
   private func takeAppScreenshot(
     _ imageName: String?,
-    date: Date = Date.now,
+    date: Date = Date(),
     of app: XCUIApplication
   ) throws -> [String: String] {
     return try app.takeScreenshot(

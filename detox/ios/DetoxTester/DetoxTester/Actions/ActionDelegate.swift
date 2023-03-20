@@ -216,7 +216,7 @@ class ActionDelegate: ActionDelegateProtocol {
 
   func takeScreenshot(
     _ imageName: String?,
-    date: Date = Date.now,
+    date: Date = Date(),
     of element: AnyHashable
   ) throws -> AnyCodable {
     guard let element = element as? XCUIScreenshotProviding else {
