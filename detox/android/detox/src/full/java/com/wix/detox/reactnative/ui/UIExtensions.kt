@@ -1,25 +1,36 @@
 package com.wix.detox.reactnative.ui
 
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import com.wix.detox.common.forEachChild
 import com.wix.detox.reactnative.utils.isReactNativeObject
 
-fun View.accessibilityLabel(
+fun View.getAccessibilityLabel(
     isReactNativeObjectFn: (Any) -> Boolean = { isReactNativeObject(it) }
 ): CharSequence? =
-    getRawAccessibilityLabel(this) ?:
-        if (this is ViewGroup && isReactNativeObjectFn(this)) {
-            val contentDesc = mutableListOf<CharSequence>()
+    if (isReactNativeObjectFn(this)) {
+        collectChildAccessibilityLabels(this).let { subLabels ->
+            if (subLabels.isEmpty()) null else subLabels.joinToString(" ")
+        }
+    } else {
+        getRawAccessibilityLabel(this)
+    }
 
-            forEachChild { child ->
-                child.accessibilityLabel(isReactNativeObjectFn)?.let {
-                    contentDesc.add(it)
-                }
+private fun collectChildAccessibilityLabels(
+    view: View,
+    subLabels: MutableList<CharSequence> = mutableListOf(),
+): List<CharSequence> {
+    getRawAccessibilityLabel(view).let { rawLabel: CharSequence? ->
+        if (rawLabel != null) {
+            subLabels.add(rawLabel)
+        } else {
+            view.forEachChild { child ->
+                collectChildAccessibilityLabels(child, subLabels)
             }
-            if (contentDesc.isEmpty()) null else contentDesc.joinToString(" ")
-        } else null
+        }
+    }
+    return subLabels
+}
 
 private fun getRawAccessibilityLabel(view: View): CharSequence? =
     if (view.contentDescription != null) {

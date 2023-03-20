@@ -10,7 +10,7 @@ import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
 import com.wix.detox.espresso.common.SliderHelper
-import com.wix.detox.reactnative.ui.accessibilityLabel
+import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -68,7 +68,7 @@ private class CommonAttributes {
     }
 
     private fun getAccessibilityLabel(json: JSONObject, view: View) =
-            view.accessibilityLabel()?.let {
+            view.getAccessibilityLabel()?.let {
                 json.put("label", it)
             }
 

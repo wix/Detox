@@ -4,9 +4,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.wix.detox.UTHelpers.mockViewHierarchy
-import com.wix.detox.reactnative.ui.accessibilityLabel
+import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.assertj.core.api.Assertions
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
@@ -16,23 +15,20 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class UIExtensionsTest {
-    lateinit var view: View
-    lateinit var uut: UIExtensionsTest
+    private val alwaysReactNativeObjFn: (Any) -> Boolean = { true }
+    private val neverReactNativeObjFn: (Any) -> Boolean = { false }
 
-    @Before
-    fun setup() {
-        view = mock()
-    }
-
-    private fun givenContentDescription(value: String, v: View = view) { whenever(v.contentDescription).doReturn(value) }
-    private fun givenText(value: String, v: TextView) { whenever(v.text).doReturn(value) }
+    private fun withContentDescription(value: String, v: View) { whenever(v.contentDescription).doReturn(value) }
+    private fun withText(value: String, v: TextView) { whenever(v.text).doReturn(value) }
 
     @Test
     fun `should return accessibility label according to content-description`() {
-        val contentDescription = "content-description-mock"
-        givenContentDescription(contentDescription)
+        val view: View = mock()
 
-        val label = view.accessibilityLabel()
+        val contentDescription = "content-description-mock"
+        withContentDescription(contentDescription, view)
+
+        val label = view.getAccessibilityLabel()
         Assertions.assertThat(label).isEqualTo(contentDescription)
     }
 
@@ -45,64 +41,66 @@ class UIExtensionsTest {
         val parent: ViewGroup = mock()
         val sibling1: ViewGroup = mock()
         val sibling2: ViewGroup = mock<ViewGroup>().also {
-            givenContentDescription(contentDescription2nd, it)
+            withContentDescription(contentDescription2nd, it)
         }
         val grandchild: View = mock<View>().also {
-            givenContentDescription(contentDescription1st, it)
+            withContentDescription(contentDescription1st, it)
         }
 
         mockViewHierarchy(parent, sibling1, sibling2)
         mockViewHierarchy(sibling1, grandchild)
 
-        val label = parent.accessibilityLabel { true }
+        val label = parent.getAccessibilityLabel(alwaysReactNativeObjFn)
         Assertions.assertThat(label).isEqualTo(expectedLabel)
     }
 
     @Test
-    fun `should return label according to children's text, on top of label`() {
+    fun `should return accessibility label according to children's text, on top of label`() {
         val text = "some mocked text"
 
         val parent: ViewGroup = mock()
         val grandchild: TextView = mock<TextView>().also {
-            givenText(text, it)
+            withText(text, it)
         }
         mockViewHierarchy(parent, grandchild)
 
-        val label = parent.accessibilityLabel { true }
+        val label = parent.getAccessibilityLabel(alwaysReactNativeObjFn)
         Assertions.assertThat(label).isEqualTo(text)
     }
 
     @Test
-    fun `should not return label if content description not set in view nor its descendants`() {
+    fun `should not return accessibility label if content description not set in view nor its descendants`() {
         val parent: ViewGroup = mock()
         val child: View = mock()
 
         mockViewHierarchy(parent, child)
 
-        val label = parent.accessibilityLabel { true }
+        val label = parent.getAccessibilityLabel(alwaysReactNativeObjFn)
         Assertions.assertThat(label).isNull()
     }
 
     @Test
-    fun `should not return label based on children for non-RN views`() {
+    fun `should not return accessibility label based on children for non-RN views`() {
         val childContentDescription = "content-description-mock"
 
         val parent: ViewGroup = mock()
         val child: View = mock<View>().also {
-            givenContentDescription(childContentDescription, it)
+            withContentDescription(childContentDescription, it)
         }
         mockViewHierarchy(parent, child)
 
-        val label = parent.accessibilityLabel { false }
+        val label = parent.getAccessibilityLabel(neverReactNativeObjFn)
         Assertions.assertThat(label).isNull()
     }
 
     @Test
-    fun `should return label for non-RN views`() {
-        val contentDescription = "content-description-mock"
-        givenContentDescription(contentDescription)
+    fun `should return accessibility label for non-RN views`() {
+        val view: View = mock()
 
-        val label = view.accessibilityLabel { false }
+        val contentDescription = "content-description-mock"
+        withContentDescription(contentDescription, view)
+
+        val label = view.getAccessibilityLabel(neverReactNativeObjFn)
         Assertions.assertThat(label).isEqualTo(contentDescription)
     }
 }

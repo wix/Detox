@@ -1,14 +1,12 @@
 package com.wix.detox.espresso.action
 
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.facebook.react.views.slider.ReactSlider
 import com.google.android.material.slider.Slider
-import com.wix.detox.UTHelpers.mockViewHierarchy
-import com.wix.detox.reactnative.ui.accessibilityLabel
+import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Before
@@ -35,7 +33,7 @@ class GetAttributesActionTest {
     private fun givenNoViewTag() = givenViewTag(null)
     private fun givenVisibility(value: Int) { whenever(view.visibility).doReturn(value) }
     private fun givenVisibilityRectAvailability(value: Boolean) { whenever(view.getLocalVisibleRect(any())).doReturn(value) }
-    private fun givenAccessibilityLabel(value: String) { whenever(view.accessibilityLabel()).doReturn(value) }
+    private fun givenAccessibilityLabel(value: String) { whenever(view.getAccessibilityLabel()).doReturn(value) }
 
     private fun perform(v: View = view): JSONObject {
         uut.perform(null, v)
