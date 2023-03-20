@@ -97,7 +97,7 @@ async function _allowNetworkPermissionsXCUITest(callback) {
       callback();
     });
 
-  // After 30 seconds, kill the process:
+  // After 10 seconds, kill the process:
   setTimeout(() => {
     if (didCallback) {
       return;
@@ -108,7 +108,7 @@ async function _allowNetworkPermissionsXCUITest(callback) {
     childProcess.kill();
 
     callback();
-  }, 30000);
+  }, 10000);
 }
 
 module.exports = {
