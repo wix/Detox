@@ -17,6 +17,7 @@
 		6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEB72816DCB300A016A1 /* XCUIElement+scroll.swift */; };
 		6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */; };
 		602E8C1529B8C625002D0085 /* Executor+isReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602E8C1429B8C625002D0085 /* Executor+isReady.swift */; };
+		602E8C4829BF785D002D0085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 602E8C4729BF76E3002D0085 /* Assets.xcassets */; };
 		603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */; };
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+Connections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+Connections.swift */; };
@@ -876,6 +877,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				602E8C4829BF785D002D0085 /* Assets.xcassets in Resources */,
 				60FBF5ED281844DB000B73B1 /* PickerScreen.storyboard in Resources */,
 				60FBF60B281983D8000B73B1 /* SliderScreen.storyboard in Resources */,
 				6053415C280C473400C0405D /* LongPressScreen.storyboard in Resources */,
@@ -1215,6 +1217,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1244,6 +1247,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

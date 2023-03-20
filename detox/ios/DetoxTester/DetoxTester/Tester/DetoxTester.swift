@@ -260,7 +260,7 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
     DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
       guard WhiteBoxExecutor.getHandler(for: .selectedApp) != nil else {
         mainLog("DID TIMEOUT", type: .error)
-        fatalError("Did not connected client after 5 seconds..")
+        fatalError("Did not connected white-box app after 10 seconds..")
       }
 
       mainLog("timeout operation was cancelled", type: .debug)
@@ -275,7 +275,7 @@ extension DetoxTester: WebSocketServerDelegateProtocol {
   func serverDidConnectClient() {
     mainLog("tester server did connect to the app client")
 
-    // There is an assumption that the app is connected in a white-box manner.
+    // We assume that the app is connected in a white-box manner.
     WhiteBoxExecutor.setNewHandler(
       for: .selectedApp,
       withMessageSender: self
