@@ -89,7 +89,7 @@ Explore further about using Detox from our new **[website](https://wix.github.io
 
 ## Core Principles
 
-We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/introduction/design-principles).
+We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/articles/design-principles).
 
 ## Contributing to Detox
 
