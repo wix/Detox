@@ -136,10 +136,11 @@ describe('AndroidExpect', () => {
       jestExpect(() => e.by.value(0)).toThrow();
       jestExpect(() => e.by.text(0)).toThrow();
 
-      jestExpect(() => e.element(e.by.id('test').withAncestor('notAMatcher'))).toThrow('Expected a matcher, got string');
-      jestExpect(() => e.element(e.by.id('test').withDescendant('notAMatcher'))).toThrow('Expected a matcher, got string');
-      jestExpect(() => e.element(e.by.id('test').and('notAMatcher'))).toThrow('Expected a matcher, got string');
-      jestExpect(() => e.element(e.by.id('test').or('notAMatcher'))).toThrow('Expected a matcher, got string');
+      const expectedErrorMsg = 'Expected a matcher, got: \'notAMatcher\'';
+      jestExpect(() => e.element(e.by.id('test').withAncestor('notAMatcher'))).toThrow(expectedErrorMsg);
+      jestExpect(() => e.element(e.by.id('test').withDescendant('notAMatcher'))).toThrow(expectedErrorMsg);
+      jestExpect(() => e.element(e.by.id('test').and('notAMatcher'))).toThrow(expectedErrorMsg);
+      jestExpect(() => e.element(e.by.id('test').or('notAMatcher'))).toThrow(expectedErrorMsg);
     });
 
     it(`waitFor (element)`, async () => {

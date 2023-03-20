@@ -9,9 +9,8 @@ fun View.getAccessibilityLabel(
     isReactNativeObjectFn: (Any) -> Boolean = { isReactNativeObject(it) }
 ): CharSequence? =
     if (isReactNativeObjectFn(this)) {
-        collectChildAccessibilityLabels(this).let { subLabels ->
-            if (subLabels.isEmpty()) null else subLabels.joinToString(" ")
-        }
+        val subLabels = collectChildAccessibilityLabels(this)
+        if (subLabels.isEmpty()) null else subLabels.joinToString(" ")
     } else {
         getRawAccessibilityLabel(this)
     }
@@ -19,8 +18,8 @@ fun View.getAccessibilityLabel(
 private fun collectChildAccessibilityLabels(
     view: View,
     subLabels: MutableList<CharSequence> = mutableListOf(),
-): List<CharSequence> {
-    getRawAccessibilityLabel(view).let { rawLabel: CharSequence? ->
+): List<CharSequence>{
+    getRawAccessibilityLabel(view).let { rawLabel ->
         if (rawLabel != null) {
             subLabels.add(rawLabel)
         } else {
