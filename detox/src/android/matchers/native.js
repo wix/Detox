@@ -57,6 +57,13 @@ class ValueMatcher extends NativeMatcher {
   }
 }
 
+class ExtendedValueMatcher extends NativeMatcher {
+  constructor(value) {
+    super();
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescriptionOrText(value));
+  }
+}
+
 class ToggleMatcher extends NativeMatcher {
   constructor(toggleState) {
     super();
@@ -97,6 +104,7 @@ module.exports = {
   ExistsMatcher,
   TextMatcher,
   ValueMatcher,
+  ExtendedValueMatcher,
   ToggleMatcher,
   FocusMatcher,
   SliderPositionMatcher,

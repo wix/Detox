@@ -48,6 +48,10 @@ public class DetoxMatcher {
         return allOf(withContentDescription(contentDescription), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
+    public static Matcher<View> matcherForContentDescriptionOrText(String contentDescription) {
+        return allOf(anyOf(withContentDescription(contentDescription), withText(contentDescription)), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
     public static Matcher<View> matcherForAccessibilityLabel(String label) {
         return allOf(withAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
     }

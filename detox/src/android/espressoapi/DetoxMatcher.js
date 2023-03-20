@@ -38,6 +38,18 @@ class DetoxMatcher {
     };
   }
 
+  static matcherForContentDescriptionOrText(contentDescription) {
+    if (typeof contentDescription !== "string") throw new Error("contentDescription should be a string, but got " + (contentDescription + (" (" + (typeof contentDescription + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForContentDescriptionOrText",
+      args: [contentDescription]
+    };
+  }
+
   static matcherForAccessibilityLabel(label) {
     if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
     return {

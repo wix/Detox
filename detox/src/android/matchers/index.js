@@ -2,9 +2,9 @@ const native = require('./native');
 const web = require('./web');
 
 module.exports = {
-  accessibilityLabel: (value) => new native.LabelMatcher(value),
   id: (value) => new native.IdMatcher(value),
-  label: (value) => new native.ValueMatcher(value),
+  label: (value) => new native.ExtendedValueMatcher(value),
+  accessibilityLabel: (value) => new native.ExtendedValueMatcher(value),
   text: (value) => new native.TextMatcher(value),
   traits: (value) => new native.TraitsMatcher(value),
   type: (value) => new native.TypeMatcher(value),
