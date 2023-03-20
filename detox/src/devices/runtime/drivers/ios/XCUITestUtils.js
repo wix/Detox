@@ -91,10 +91,11 @@ async function _allowNetworkPermissionsXCUITest(callback) {
         log.error(`[XCUITest] Failed to approve network permissions for XCUITest target:\n\t${err}`);
       } else {
         log.debug(`[XCUITest] Network permissions are allowed`);
+
+        didCallback = true;
+        callback();
       }
 
-      didCallback = true;
-      callback();
     });
 
   // After 10 seconds, kill the process:
