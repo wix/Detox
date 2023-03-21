@@ -16,6 +16,7 @@ function prepareAndBuildFramework () {
     detoxSourcePath="${detoxRootPath}"/ios
     echo "Dev mode, building from ${detoxSourcePath}"
     buildFramework "${detoxSourcePath}"
+    buildTestRunner "${detoxSourcePath}"
   else
     extractFramework
   fi
@@ -40,6 +41,21 @@ function buildFramework () {
     echo "#################################"
     exit 1
   }
+}
+
+function buildTestRunner() {
+    detoxTesterSourcePath="${1}"
+    echo "Building DetoxTester.xctestrun from ${detoxTesterSourcePath} into ${detoxFrameworkDirPath}"
+    mkdir -p "${detoxFrameworkDirPath}"
+    logPath="${detoxFrameworkDirPath}"/detox_ios_tester.log
+    echo "Build log: ${logPath}"
+    echo -n "" > "${logPath}"
+    "${detoxRootPath}"/scripts/build_test_runner.sh "${detoxTesterSourcePath}"/DetoxTester.xcworkspace "${detoxFrameworkDirPath}" &> "${logPath}" || {
+        echo -e "#################################\nError building DetoxTester.xctestrun:\n----------------------------------\n"
+        cat "${logPath}"
+        echo "#################################"
+        exit 1
+    }
 }
 
 function main () {

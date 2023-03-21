@@ -176,6 +176,10 @@ function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
 }
 
+function getXCUITestRunnerPath() {
+  return path.join(getDetoxLibraryRootPath(), 'ios', 'DetoxTester.xcworkspace');
+}
+
 let _iosFrameworkPath;
 async function getFrameworkPath() {
   if (!_iosFrameworkPath) {
@@ -225,6 +229,7 @@ module.exports = {
   getAndroidSdkManagerPath,
   getGmsaasPath,
   getDetoxVersion,
+  getXCUITestRunnerPath,
   getFrameworkPath,
   getAndroidSDKPath,
   getAndroidEmulatorPath,
