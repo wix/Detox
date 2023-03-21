@@ -67,8 +67,8 @@ async function _runLaunchCommand(
 
   // Get firewall global state (Firewall socketfilterfw):
   const state = await exec(`/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate`);
-  const isFirewallOn = state.stdout.toString().trim() !== 'Firewall is off.';
-  if (isFirewallOn) {
+  const isFirewallDisabled = state.stdout.toString().includes('Firewall is disabled');
+  if (!isFirewallDisabled) {
     _allowNetworkPermissionsXCUITest();
   }
 

@@ -82,7 +82,7 @@ extension XCUIElement {
     let direction = direction.toSwipeDirection()
     let normalizedOffset = normalize(offset, in: direction, app: app)
 
-    var startScreenshot = screenshot().pngRepresentation
+    let startScreenshot = screenshot().pngRepresentation
 
     swipe(
       direction: direction,
