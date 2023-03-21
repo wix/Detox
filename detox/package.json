@@ -78,7 +78,6 @@
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
-    "semaphore-async-await": "^1.5.1",
     "semver": "^7.0.0",
     "serialize-error": "^8.0.1",
     "shell-quote": "^1.7.2",

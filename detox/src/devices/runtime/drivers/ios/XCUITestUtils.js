@@ -1,6 +1,5 @@
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
-const { Lock } = require('semaphore-async-await');
 
 const log = require('../../../../utils/logger').child({ cat: 'device,xcuitest' });
 
@@ -15,7 +14,6 @@ async function launchXCUITest(
 ) {
   log.debug('[XCUITest] Launch was called');
 
-  const lock = new Lock();
   await _runLaunchCommand(
     simulatorId,
     detoxServer,
@@ -23,18 +21,10 @@ async function launchXCUITest(
     bundleId,
     debugVisibility,
     disableDumpViewHierarchy,
-    testTargetServerPort,
-    () => {
-      log.debug('[XCUITest] Releasing lock');
-      lock.release();
-    }
+    testTargetServerPort
   );
 
-  log.debug('[XCUITest] Waiting for the lock to be released..');
-
-  await lock.acquire();
-  await lock.acquire();
-  log.debug('[XCUITest] Lock was released');
+  log.debug('[XCUITest] Launch succeeded');
 }
 
 async function _runLaunchCommand(
@@ -44,8 +34,7 @@ async function _runLaunchCommand(
   bundleId,
   debugVisibility,
   disableDumpViewHierarchy,
-  testTargetServerPort,
-  callback
+  testTargetServerPort
 ) {
   log.info(`Launching XUICTest runner. See target logs using:\n` +
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
@@ -76,12 +65,18 @@ async function _runLaunchCommand(
       log.debug(`xcodebuild error message:\n${error.stderr.toString()}`);
     });
 
-  await _allowNetworkPermissionsXCUITest(callback);
+  // Get firewall global state (Firewall socketfilterfw):
+  const state = await exec(`/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate`);
+  const isFirewallOn = state.stdout.toString().trim() !== 'Firewall is off.';
+  if (isFirewallOn) {
+    _allowNetworkPermissionsXCUITest();
+  }
+
+  await _waitForTestTargetServerToStart(testTargetServerPort);
 }
 
-async function _allowNetworkPermissionsXCUITest(callback) {
+function _allowNetworkPermissionsXCUITest() {
   log.debug(`[XCUITest] Allowing network permissions`);
-
   let didCallback = false;
 
   const childProcess = osascript.executeFile(
@@ -91,11 +86,9 @@ async function _allowNetworkPermissionsXCUITest(callback) {
         log.error(`[XCUITest] Failed to approve network permissions for XCUITest target:\n\t${err}`);
       } else {
         log.debug(`[XCUITest] Network permissions are allowed`);
-
-        didCallback = true;
-        callback();
       }
 
+      didCallback = true;
     });
 
   // After 10 seconds, kill the process:
@@ -104,12 +97,26 @@ async function _allowNetworkPermissionsXCUITest(callback) {
       return;
     }
 
-    log.debug(`[XCUITest] Killing the process that allows network permissions`);
+    log.debug(`[XCUITest] Killing the process that allows network permissions (timed-out)`);
     childProcess.stdin.pause();
     childProcess.kill();
 
-    callback();
   }, 10000);
+}
+
+async function _waitForTestTargetServerToStart(testTargetServerPort) {
+  log.debug(`[XCUITest] Waiting for test target server to start on port ${testTargetServerPort}...`);
+  let isServerUp = false;
+  while (!isServerUp) {
+    try {
+      await exec(`nc -z localhost ${testTargetServerPort}`);
+      isServerUp = true;
+    } catch (e) {
+      log.debug(`[XCUITest] Test target server is not up yet, waiting...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+  log.debug(`[XCUITest] Test target server is up and running`);
 }
 
 module.exports = {

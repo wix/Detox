@@ -6,8 +6,6 @@ const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter')
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
-const Lock = require('semaphore-async-await').Lock;
-
 class RuntimeDevice {
   constructor({
     appsConfig,
