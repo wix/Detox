@@ -101,7 +101,7 @@ function _allowNetworkPermissionsXCUITest() {
     childProcess.stdin.pause();
     childProcess.kill();
 
-  }, 10000);
+  }, 30000);
 }
 
 async function _waitForTestTargetServerToStart(testTargetServerPort) {

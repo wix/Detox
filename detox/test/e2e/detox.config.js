@@ -139,7 +139,7 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 12 Pro Max',
+        type: 'iPhone 14 Pro Max'
       },
     },
 
