@@ -58,7 +58,6 @@ async function _runLaunchCommand(
   exec(command, { maxBuffer: 1024 * 1024 * 500 })
     .then(function (result) {
       log.info(`XCUITest runner execution finished`);
-      log.debug(`xcodebuild output:\n${result.stdout.toString()}`);
     })
     .catch(function (error) {
       log.error(`xcodebuild error has occurred during XCUITest execution, see debug logs for more details`);
