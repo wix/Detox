@@ -3,8 +3,8 @@ const web = require('./web');
 
 module.exports = {
   id: (value) => new native.IdMatcher(value),
-  label: (value) => new native.ExtendedValueMatcher(value),
-  accessibilityLabel: (value) => new native.ExtendedValueMatcher(value),
+  label: (value) => new native.ShallowLabelMatcher(value),
+  accessibilityLabel: (value) => new native.ShallowLabelMatcher(value),
   text: (value) => new native.TextMatcher(value),
   traits: (value) => new native.TraitsMatcher(value),
   type: (value) => new native.TypeMatcher(value),

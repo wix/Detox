@@ -26,30 +26,6 @@ class DetoxMatcher {
     };
   }
 
-  static matcherForContentDescription(contentDescription) {
-    if (typeof contentDescription !== "string") throw new Error("contentDescription should be a string, but got " + (contentDescription + (" (" + (typeof contentDescription + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxMatcher"
-      },
-      method: "matcherForContentDescription",
-      args: [contentDescription]
-    };
-  }
-
-  static matcherForContentDescriptionOrText(contentDescription) {
-    if (typeof contentDescription !== "string") throw new Error("contentDescription should be a string, but got " + (contentDescription + (" (" + (typeof contentDescription + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxMatcher"
-      },
-      method: "matcherForContentDescriptionOrText",
-      args: [contentDescription]
-    };
-  }
-
   static matcherForAccessibilityLabel(label) {
     if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
     return {
@@ -59,6 +35,30 @@ class DetoxMatcher {
       },
       method: "matcherForAccessibilityLabel",
       args: [label]
+    };
+  }
+
+  static matcherForShallowAccessibilityLabel(label) {
+    if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForShallowAccessibilityLabel",
+      args: [label]
+    };
+  }
+
+  static matcherForContentDescription(contentDescription) {
+    if (typeof contentDescription !== "string") throw new Error("contentDescription should be a string, but got " + (contentDescription + (" (" + (typeof contentDescription + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForContentDescription",
+      args: [contentDescription]
     };
   }
 

@@ -22,6 +22,7 @@ import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static com.wix.detox.espresso.matcher.ViewMatchers.toHaveSliderPosition;
 import static com.wix.detox.espresso.matcher.ViewMatchers.withAccessibilityLabel;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withShallowAccessibilityLabel;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -44,16 +45,16 @@ public class DetoxMatcher {
         return allOf(withText(text), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
-    public static Matcher<View> matcherForContentDescription(String contentDescription) {
-        return allOf(withContentDescription(contentDescription), withEffectiveVisibility(Visibility.VISIBLE));
-    }
-
-    public static Matcher<View> matcherForContentDescriptionOrText(String contentDescription) {
-        return allOf(anyOf(withContentDescription(contentDescription), withText(contentDescription)), withEffectiveVisibility(Visibility.VISIBLE));
-    }
-
     public static Matcher<View> matcherForAccessibilityLabel(String label) {
         return allOf(withAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
+    public static Matcher<View> matcherForShallowAccessibilityLabel(String label) {
+        return allOf(withShallowAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
+    public static Matcher<View> matcherForContentDescription(String contentDescription) {
+        return allOf(withContentDescription(contentDescription), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForTestId(String testId) {

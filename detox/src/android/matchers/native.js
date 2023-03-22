@@ -10,6 +10,13 @@ class LabelMatcher extends NativeMatcher {
   }
 }
 
+class ShallowLabelMatcher extends NativeMatcher {
+  constructor(value) {
+    super();
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForShallowAccessibilityLabel(value));
+  }
+}
+
 class IdMatcher extends NativeMatcher {
   constructor(value) {
     super();
@@ -57,13 +64,6 @@ class ValueMatcher extends NativeMatcher {
   }
 }
 
-class ExtendedValueMatcher extends NativeMatcher {
-  constructor(value) {
-    super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescriptionOrText(value));
-  }
-}
-
 class ToggleMatcher extends NativeMatcher {
   constructor(toggleState) {
     super();
@@ -97,6 +97,7 @@ class SliderPositionMatcher extends NativeMatcher {
 
 module.exports = {
   LabelMatcher,
+  ShallowLabelMatcher,
   IdMatcher,
   TypeMatcher,
   TraitsMatcher,
@@ -104,7 +105,6 @@ module.exports = {
   ExistsMatcher,
   TextMatcher,
   ValueMatcher,
-  ExtendedValueMatcher,
   ToggleMatcher,
   FocusMatcher,
   SliderPositionMatcher,
