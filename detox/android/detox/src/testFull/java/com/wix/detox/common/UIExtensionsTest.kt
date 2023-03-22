@@ -33,10 +33,11 @@ class UIExtensionsTest {
     }
 
     @Test
-    fun `should return label according to children's content-description, recursively`() {
+    fun `should return accessibility label according to children's content-description, recursively`() {
         val contentDescription1st = "cd.1"
         val contentDescription2nd = "cd.2"
         val expectedLabel = "$contentDescription1st $contentDescription2nd"
+
 
         val parent: ViewGroup = mock()
         val sibling1: ViewGroup = mock()
