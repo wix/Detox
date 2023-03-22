@@ -198,23 +198,6 @@ class CloudPlatform extends Action {
   }
 }
 
-// class CloudAdb extends Action {
-//   constructor(params) {
-//     super('CloudAdb', params);
-//   }
-
-//   get isAtomic() {
-//     return true;
-//   }
-
-//   get timeout() {
-//     return 90000;
-//   }
-
-//   async handle(response) {
-//     this.expectResponseOfType(response, 'CloudAdb');
-//   }
-// }
 
 class Invoke extends Action {
   constructor(params) {
@@ -373,6 +356,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
-  // CloudAdb,
   CloudPlatform
 };

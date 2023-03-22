@@ -74,11 +74,6 @@ class CloudAndroidDriver extends DeviceDriverBase {
     await this.uiDevice.pressHome();
   }
 
-  // Deep to come back
-  // async typeText(text) {
-  //   await this.adb.typeText(this.adbName, text);
-  // }
-
   async terminate(bundleId) {
     return await this._terminateInstrumentation();
   }
@@ -135,7 +130,6 @@ class CloudAndroidDriver extends DeviceDriverBase {
     }
   }
 
-  // Do we want to throw error if terminate app fails
   async _terminateInstrumentation(bundleId) {
     const response = await this.invocationManager.executeCloudPlatform({
       'method': 'terminateApp',

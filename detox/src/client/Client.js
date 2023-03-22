@@ -260,15 +260,6 @@ class Client {
     }
   }
 
-  // async waitForCloudAdb(params) {
-  //   try {
-  //     return await this.sendAction(new actions.CloudAdb(params));
-  //   } catch (err) {
-  //     this._successfulTestRun = false;
-  //     throw err;
-  //   }
-  // }
-
   async terminateApp() {
     /* see the property injection from Detox.js */
   }
