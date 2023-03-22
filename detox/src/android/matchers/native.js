@@ -6,7 +6,14 @@ const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAccessibilityLabel(value));
+  }
+}
+
+class ShallowLabelMatcher extends NativeMatcher {
+  constructor(value) {
+    super();
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForShallowAccessibilityLabel(value));
   }
 }
 
@@ -90,6 +97,7 @@ class SliderPositionMatcher extends NativeMatcher {
 
 module.exports = {
   LabelMatcher,
+  ShallowLabelMatcher,
   IdMatcher,
   TypeMatcher,
   TraitsMatcher,

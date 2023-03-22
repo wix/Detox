@@ -12,15 +12,17 @@ import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
+import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static com.wix.detox.espresso.matcher.ViewMatchers.toHaveSliderPosition;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withAccessibilityLabel;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withShallowAccessibilityLabel;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -41,6 +43,14 @@ public class DetoxMatcher {
     public static Matcher<View> matcherForText(String text) {
         // return anyOf(withText(text), withContentDescription(text));
         return allOf(withText(text), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
+    public static Matcher<View> matcherForAccessibilityLabel(String label) {
+        return allOf(withAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
+    public static Matcher<View> matcherForShallowAccessibilityLabel(String label) {
+        return allOf(withShallowAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForContentDescription(String contentDescription) {

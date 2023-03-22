@@ -1,3 +1,5 @@
+const { inspect } = require('util');
+
 const { DetoxRuntimeError } = require('../../errors');
 const invoke = require('../../invoke');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
@@ -5,7 +7,7 @@ const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 class NativeMatcher {
   static _assertMatcher(matcher) {
     if (!(matcher instanceof NativeMatcher)) {
-      throw new DetoxRuntimeError(`Expected a matcher, got ${typeof matcher}`);
+      throw new DetoxRuntimeError({ message: `Expected a matcher, got: ${inspect(matcher)}` });
     }
   }
 

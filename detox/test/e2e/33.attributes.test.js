@@ -12,16 +12,14 @@ describe('Attributes', () => {
   /**
    * @param {Detox.NativeMatcher} matcher
    */
-  function useMatcher(matcher) {
-    return async () => {
-      currentElement = element(matcher);
-      const result = await currentElement.getAttributes();
-      if ('elements' in result) {
-        attributesArray = result.elements;
-      } else {
-        attributes = await result;
-      }
-    };
+  async function useMatcher(matcher) {
+    currentElement = element(matcher);
+    const result = await currentElement.getAttributes();
+    if ('elements' in result) {
+      attributesArray = result.elements;
+    } else {
+      attributes = await result;
+    }
   }
 
   beforeAll(async () => {
@@ -30,7 +28,7 @@ describe('Attributes', () => {
   });
 
   describe('of a view', () => {
-    beforeAll(useMatcher(by.id('viewId')));
+    beforeAll(() => useMatcher(by.id('viewId')));
 
     it('should have the corresponding shape', () =>
       expect(attributes).toMatchObject({
@@ -60,7 +58,7 @@ describe('Attributes', () => {
   describe('of a text', () => {
     const EXPECTED_TEXT = 'TextView';
 
-    beforeAll(useMatcher(by.id('textViewId')));
+    beforeAll(() => useMatcher(by.id('textViewId')));
 
     it('should have the corresponding shape', () => {
       expect(attributes).toMatchObject({
@@ -89,9 +87,19 @@ describe('Attributes', () => {
     });
   });
 
+  describe('of a text group', () => {
+    const EXPECTED_TEXT = 'InnerText1 InnerText2';
+
+    beforeAll(() => useMatcher(by.id('textGroupRoot')));
+
+    it('should have a label based on text concatenation', () => {
+      expect(attributes).toMatchObject({ label: EXPECTED_TEXT });
+    });
+  });
+
   describe('of a text input', () => {
     describe('(blurred)', () => {
-      beforeAll(useMatcher(by.id('blurredTextInputId')));
+      beforeAll(() => useMatcher(by.id('blurredTextInputId')));
 
       it('should have the corresponding attributes', () => {
         expect(attributes).toMatchObject({
@@ -108,7 +116,7 @@ describe('Attributes', () => {
     });
 
     describe('(focused)', () => {
-      beforeAll(useMatcher(by.id('focusedTextInputId')));
+      beforeAll(() => useMatcher(by.id('focusedTextInputId')));
 
       it('should have the corresponding attributes', () => {
         expect(attributes).toMatchObject({
@@ -126,7 +134,7 @@ describe('Attributes', () => {
   });
 
   describe('of a checkbox', () => {
-    beforeAll(useMatcher(by.id('checkboxId')));
+    beforeAll(() => useMatcher(by.id('checkboxId')));
 
     it(':ios: should have a string .value', async () => {
       expect(await currentElement.getAttributes()).toMatchObject({
@@ -148,7 +156,7 @@ describe('Attributes', () => {
   });
 
   describe('of a legacy slider', () => {
-    beforeAll(useMatcher(by.id('legacySliderId')));
+    beforeAll(() => useMatcher(by.id('legacySliderId')));
 
     it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {
       expect(attributes).toMatchObject({ value: '50%', normalizedSliderPosition: 0.5 });
@@ -160,7 +168,7 @@ describe('Attributes', () => {
   });
 
   describe('of a slider', () => {
-    beforeAll(useMatcher(by.id('sliderId')));
+    beforeAll(() => useMatcher(by.id('sliderId')));
 
     it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {
       expect(attributes).toMatchObject({ value: '50%', normalizedSliderPosition: 0.5 });
@@ -172,7 +180,7 @@ describe('Attributes', () => {
   });
 
   describe('of a date picker', () => {
-    beforeAll(useMatcher(by.id('attrDatePicker')));
+    beforeAll(() => useMatcher(by.id('attrDatePicker')));
 
     it(':ios: should have Date .value', () => {
       expect(attributes).toMatchObject({
@@ -182,7 +190,7 @@ describe('Attributes', () => {
   });
 
   describe('of a scroll view', () => {
-    beforeAll(useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView'))));
+    beforeAll(() => useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView'))));
 
     it(':ios: should have offsets and insets', async () => {
       expect(attributes).toMatchObject({
@@ -195,7 +203,7 @@ describe('Attributes', () => {
 
   describe('of multiple views', () => {
     describe(':ios:', () => {
-      beforeAll(useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView'))));
+      beforeAll(() => useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView'))));
 
       it('should return an object with .elements array', async () => {
         const viewShape = {
