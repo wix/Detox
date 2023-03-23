@@ -253,7 +253,14 @@ class Client {
 
   async waitForCloudPlatform(params) {
     try {
-      return await this.sendAction(new actions.CloudPlatform(params));
+      const response = await this.sendAction(new actions.CloudPlatform(params));
+      if (params['method'] == 'terminateApp') {
+        await this.waitUntilDisconnected();
+      }
+      // else if (params['method'] == 'launchApp') {
+      //   this._onAppConnected();
+      // }
+      return response;
     } catch (err) {
       this._successfulTestRun = false;
       throw err;
