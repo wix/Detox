@@ -34,22 +34,7 @@ class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
 
 class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/ios');
-    const appleSimUtils = serviceLocator.appleSimUtils;
-
-    const SimulatorInstrumentsPlugin = require('../instruments/ios/SimulatorInstrumentsPlugin');
-    const SimulatorLogPlugin = require('../log/ios/SimulatorLogPlugin');
-    const SimulatorScreenshotPlugin = require('../screenshot/SimulatorScreenshotPlugin');
-    const SimulatorRecordVideoPlugin = require('../video/SimulatorRecordVideoPlugin');
-
-    return {
-      ...super.declareArtifactPlugins({ client }),
-
-      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
-      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils, client }),
-      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
-    };
+    return {};
   }
 }
 
