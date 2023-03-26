@@ -14,6 +14,7 @@ extension XCUIScreenshotProviding {
     tempPath: TempPath
   ) throws -> [String: String] {
     let pngImageData = screenshot().pngRepresentation
+    // TODO: maybe path does not exist..
     let path = try URL.makeScreenshotPath(imageName, date: date, tempPath: tempPath)
     try pngImageData.write(to: path)
 

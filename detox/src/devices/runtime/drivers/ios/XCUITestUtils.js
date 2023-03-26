@@ -40,6 +40,7 @@ async function _runLaunchCommand(
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
     `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
 
+  // TODO: build-without-testing -> test-without-building
   let command = `TEST_RUNNER_IS_DETOX_ACTIVE='1' ` +
     `TEST_RUNNER_DETOX_SERVER='${detoxServer}' ` +
     `TEST_RUNNER_DETOX_SESSION_ID='${detoxSessionId}' ` +

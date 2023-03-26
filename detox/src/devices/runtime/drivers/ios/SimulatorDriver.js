@@ -42,6 +42,7 @@ class SimulatorDriver extends IosDriver {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
+    // TODO: allocate unique-per-worker available port.
     this._testTargetServerPort = 8997 + _.random(0, 1000);
   }
 
