@@ -8,7 +8,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.Event
-import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.facebook.react.uimanager.events.RCTModernEventEmitter;
 import com.wix.detox.espresso.DetoxMatcher
 import org.hamcrest.Matcher
 
@@ -30,8 +30,7 @@ class RNDetoxAccessibilityAction(private val mActionName: String) : ViewAction {
                 return "topAccessibilityAction"
             }
 
-            @Deprecated("Deprecated in Java")
-            override fun dispatch(rctEventEmitter: RCTEventEmitter) {
+            override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter) {
                 rctEventEmitter.receiveEvent(reactTag, "topAccessibilityAction", event)
             }
         })
