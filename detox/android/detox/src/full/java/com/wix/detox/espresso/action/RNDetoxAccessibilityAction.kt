@@ -12,7 +12,7 @@ import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.wix.detox.espresso.DetoxMatcher
 import org.hamcrest.Matcher
 
-class DetoxAccessibilityAction(private val mActionName: String) : ViewAction {
+class RNDetoxAccessibilityAction(private val mActionName: String) : ViewAction {
 
     override fun getConstraints(): Matcher<View> = DetoxMatcher.matcherForNotNull()
 

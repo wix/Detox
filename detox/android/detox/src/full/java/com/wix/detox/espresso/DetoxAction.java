@@ -5,7 +5,7 @@ import android.os.Build;
 
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
-import com.wix.detox.espresso.action.DetoxAccessibilityAction;
+import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
@@ -205,7 +205,7 @@ public class DetoxAction {
     }
 
     public static ViewAction accessibilityAction(final String actionName) {
-        return new DetoxAccessibilityAction(actionName);
+        return new RNDetoxAccessibilityAction(actionName);
     }
 
     private static Date parseDateISO8601(String dateString) throws ParseException {
