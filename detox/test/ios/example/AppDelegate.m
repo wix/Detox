@@ -173,7 +173,7 @@ RCT_EXPORT_MODULE();
 	rootView.backgroundColor = UIColor.whiteColor;
 	
 	self.window = [[AnnoyingWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-	self.window.isAccessibilityElement = YES;
+	self.window.isAccessibilityElement = NO;
 	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
 	rootViewController.bridge = rootView.bridge;
 
