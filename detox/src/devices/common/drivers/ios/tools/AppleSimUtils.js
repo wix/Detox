@@ -140,6 +140,9 @@ class AppleSimUtils {
 
   async launch(udid, bundleId, launchArgs, languageAndLocale) {
     const frameworkPath = await environment.getFrameworkPath();
+
+    delete launchArgs.detoxServer;
+
     const result = await this._launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale);
     await this._printLoggingHint(udid, bundleId);
 
@@ -154,18 +157,6 @@ class AppleSimUtils {
       this._mergeLaunchArgs(launchArgs, languageAndLocale).map(keyValue => `  ${quote(keyValue)}\n`).join(''),
       '\nPress any key to continue...'
     );
-  }
-
-  async sendToHome(udid) {
-    if (await this._isSpringBoardInaccessible(udid)) {
-      // SpringBoard is not directly accessible by Simctl on iOS 16.0 and above, therefore we launch and terminate the
-      // Settings app instead. This sends the currently open app to the background and brings the home screen to the
-      // foreground.
-      await this._launchAndTerminateSettings(udid);
-      return;
-    }
-
-    await this._launchSpringBoard(udid);
   }
 
   async _isSpringBoardInaccessible(udid) {

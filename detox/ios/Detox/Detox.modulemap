@@ -4,9 +4,7 @@ framework module Detox {
 
 	explicit module Private {
 		header "UIView+DetoxMatchers.h"
-		header "UIPickerView+DetoxActions.h"
 		header "UIDatePicker+DetoxActions.h"
-		header "UIScrollView+DetoxActions.h"
 		header "DTXAssertionHandler.h"
 		header "UIView+DetoxUtils.h"
 		header "ReactNativeSupport.h"
@@ -14,7 +12,6 @@ framework module Detox {
 		header "DetoxAppDelegateProxy.h"
 		header "UIDevice+DetoxActions.h"
 		header "UISlider+DetoxUtils.h"
-		header "DTXDurationFormatter.h"
 		header "UIWindow+DetoxUtils.h"
 		header "DTXAppleInternals.h"
 		header "NSThread+DetoxUtils.h"

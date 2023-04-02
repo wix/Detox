@@ -11,6 +11,7 @@ describe('Element screenshots', () => {
     const screenshotAssetPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
 
     const bitmapPath = await element(by.id('fancyElement')).takeScreenshot();
+
     expectBitmapsToBeEqual(bitmapPath, screenshotAssetPath);
   });
 
@@ -20,12 +21,14 @@ describe('Element screenshots', () => {
     await element(by.id('switchOrientation')).tap();
 
     const bitmapPath = await element(by.id('fancyElement')).takeScreenshot('fancy-element');
+
     expectBitmapsToBeEqual(bitmapPath, screenshotAssetPath);
   });
 
   function expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath) {
     const bitmapBuffer = fs.readFileSync(bitmapPath);
     const expectedBitmapBuffer = fs.readFileSync(expectedBitmapPath);
+
     if (!bitmapBuffer.equals(expectedBitmapBuffer)) {
       throw new Error(`Expected bitmap at ${bitmapPath} to be equal to ${expectedBitmapPath}, but it is different!`);
     }
