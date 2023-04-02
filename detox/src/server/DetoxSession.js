@@ -61,6 +61,7 @@ class DetoxSession {
   }
 
   notify() {
+    console.log(`notify: pendingAppStatus=${this._pendingAppStatus}, pendingTesterStatus=${this._pendingTesterStatus}\n\n`);
     if (this._pendingTesterStatus === true) {
       this._notifyAboutTesterConnect();
     }
@@ -121,8 +122,10 @@ class DetoxSession {
 
   _notifyAboutAppConnect() {
     log.trace(`app joined session ${this.id}`);
+    console.log(`app joined session ${this.id}`);
 
     if (!this._tester) {
+      console.warn(`app joined session ${this.id} without a tester`);
       return;
     }
 

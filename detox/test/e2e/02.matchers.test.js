@@ -24,7 +24,7 @@ describe('Matchers', () => {
   it('should give a clear error when index-matching fails (i.e. index out of bounds)', async () => {
     const expectedMessage = device.getPlatform() === 'android'
       ? 'View at index #3, of those matching MATCHER'
-      : 'Index 3 beyond bounds [0 .. 2] for “MATCHER';
+      : 'Index 3 beyond bounds [0 .. 2] for the given matcher';
 
     await expectToThrow(
       () => element(by.text('Index')).atIndex(3).tap(),
@@ -41,7 +41,7 @@ describe('Matchers', () => {
 
     await expect(element(byType)).toBeVisible();
     await element(byType).tap();
-    await expect(element(byType)).not.toBeVisible();
+    await expect(element(byType)).not.toExist();
   });
 
   // https://developer.apple.com/documentation/uikit/accessibility/uiaccessibility/accessibility_traits

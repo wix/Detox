@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Keyboard View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController id="Y6W-OH-hqX" customClass="KeyboardViewController" customModule="DetoxTesterApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="placeholder text" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xWj-Me-lbo" userLabel="Text Field">
+                                <rect key="frame" x="159" y="431" width="97" height="34"/>
+                                <accessibility key="accessibilityConfiguration" identifier="textField"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Text Will Be Here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="35V-z7-16I">
+                                <rect key="frame" x="143" y="473" width="129" height="21"/>
+                                <accessibility key="accessibilityConfiguration" identifier="resultLabel"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <accessibility key="accessibilityConfiguration" identifier="screenView"/>
+                        <constraints>
+                            <constraint firstItem="xWj-Me-lbo" firstAttribute="width" secondItem="5EZ-qb-Rvc" secondAttribute="width" multiplier="0.7" id="EXt-es-H26"/>
+                            <constraint firstItem="35V-z7-16I" firstAttribute="centerX" secondItem="xWj-Me-lbo" secondAttribute="centerX" id="GJI-aE-pp2"/>
+                            <constraint firstItem="xWj-Me-lbo" firstAttribute="centerY" secondItem="vDu-zF-Fre" secondAttribute="centerY" id="YfM-FR-INX"/>
+                            <constraint firstItem="xWj-Me-lbo" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="gTW-7l-vZS"/>
+                            <constraint firstItem="35V-z7-16I" firstAttribute="top" secondItem="xWj-Me-lbo" secondAttribute="bottom" constant="15" id="vo1-Y1-ZQc"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="label" destination="35V-z7-16I" id="o5T-6Q-QTM"/>
+                        <outlet property="textField" destination="xWj-Me-lbo" id="chB-05-V2I"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="131.8840579710145" y="67.633928571428569"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

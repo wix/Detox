@@ -7,10 +7,12 @@ const _ = require('lodash');
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
-const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
+const log = require('../../../../utils/logger').child({ cat: 'driver' });
 
 const IosDriver = require('./IosDriver');
+const { launchXCUITest } = require('./XCUITestUtils');
+
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -40,6 +42,8 @@ class SimulatorDriver extends IosDriver {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
+    // TODO: allocate unique-per-worker available port.
+    this._testTargetServerPort = 8997 + _.random(0, 1000);
   }
 
   getExternalId() {
@@ -76,18 +80,44 @@ class SimulatorDriver extends IosDriver {
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
     const { udid } = this;
+    launchArgs = this.enrichArgs(launchArgs);
+
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
+
+    log.debug({ event: 'CLIENT_CONNECTED', params: { connected: this.client.isConnected } }, 'client connected: ' + this.client.isConnected);
+    if (!this.client.isConnected) {
+      await launchXCUITest(
+        this.udid,
+        launchArgs.detoxServer,
+        launchArgs.detoxSessionId,
+        bundleId,
+        launchArgs.detoxDebugVisibility,
+        launchArgs.detoxDisableHierarchyDump,
+        this._testTargetServerPort
+      );
+    }
+
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
 
     return pid;
   }
 
+  enrichArgs(args) {
+    return {
+      ...args,
+      detoxTestTargetServer: 'ws://localhost:' + this._testTargetServerPort,
+    };
+  }
+
   async waitForAppLaunch(bundleId, launchArgs, languageAndLocale) {
     const { udid } = this;
 
+    launchArgs = this.enrichArgs(launchArgs);
+
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
 
+    // print xcuitest launch hint
     this._applesimutils.printLaunchHint(udid, bundleId, launchArgs, languageAndLocale);
     await pressAnyKey();
 
@@ -109,6 +139,12 @@ class SimulatorDriver extends IosDriver {
   async terminate(bundleId) {
     const { udid } = this;
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
+
+    await this.client.terminateIfNeeded();
+
+    // Sleep for 200 ms to allow the XCUITest to terminate gracefully.
+    await new Promise(resolve => setTimeout(resolve, 200));
+
     await this._applesimutils.terminate(udid, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
   }
@@ -134,7 +170,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async sendToHome() {
-    await this._applesimutils.sendToHome(this.udid);
+    return await this.client.sendToHome();
   }
 
   async setLocation(lat, lon) {

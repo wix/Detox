@@ -8,13 +8,11 @@
 
 import Foundation
 
-fileprivate let log = DetoxLog(category: "WebSocket")
-
 protocol WebSocketDelegate: AnyObject {
 	func webSocketDidConnect(_ webSocket: WebSocket)
-	func webSocket(_ webSocket: WebSocket, didFailWith error: Error)
-	func webSocket(_ webSocket: WebSocket, didReceiveAction type : String, params: [String: Any], messageId: NSNumber)
-	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?)
+	func webSocket(didFailWith error: Error)
+	func webSocket(didReceiveAction type : String, params: [String: Any], messageId: NSNumber)
+	func webSocket(didCloseWith reason: String?)
 }
 
 class WebSocket : NSObject, URLSessionWebSocketDelegate {
@@ -30,7 +28,7 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 	
 	func connect(toServer server: URL, withSessionId sessionId: String) {
 		self.sessionId = sessionId
-		
+
 		webSocketSessionTask = urlSession.webSocketTask(with: server)
 		webSocketSessionTask?.resume()
 	}
@@ -47,11 +45,11 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			let message = URLSessionWebSocketTask.Message.data(data)
 			webSocketSessionTask?.send(message) { error in
 				if let error = error {
-					log.error("Error sending message: \(error.localizedDescription)")
+					fatalError("Error sending message: \(error.localizedDescription)")
 				}
 			}
 		} catch {
-			log.error("Error encoding message: \(error.localizedDescription)")
+          fatalError("Error encoding message: \(error.localizedDescription)")
 		}
 	}
 	
@@ -59,15 +57,15 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 		webSocketSessionTask?.receive { [weak self] result in
 			switch result {
 			case .failure(let error as NSError):
-				log.error("Error receiving message: \(error.localizedDescription)")
+					fatalError("Error receiving message: \(error.localizedDescription)")
 			case .success(let message):
 				switch message {
-				case .string(let string):
-					self?.receiveAction(json: string)
-				case .data(let data):
-					self?.receiveAction(json: String(data: data, encoding: .utf8)!)
-				@unknown default:
-					fatalError("Unknown websocket message type")
+					case .string(let string):
+						self?.receiveAction(json: string)
+					case .data(let data):
+						self?.receiveAction(json: String(data: data, encoding: .utf8)!)
+					@unknown default:
+						fatalError("Unknown websocket message type")
 				}
 				
 				self?.receive()
@@ -91,14 +89,14 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			string = nil
 		}
 		
-		delegate?.webSocket(self, didCloseWith: string)
+		delegate?.webSocket(didCloseWith: string)
 	}
 	
 	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 		if let error = error {
-			delegate?.webSocket(self, didFailWith: error)
+			delegate?.webSocket(didFailWith: error)
 		} else {
-			delegate?.webSocket(self, didCloseWith: nil)
+			delegate?.webSocket(didCloseWith: nil)
 		}
 	}
 	
@@ -111,15 +109,15 @@ class WebSocket : NSObject, URLSessionWebSocketDelegate {
 			let params = obj["params"] as? [String: Any]
 			let messageId = obj["messageId"] as! NSNumber
 			
-			log.info("Action received: \(type)")
+			print("Action received: \(type)")
 			
-			delegate?.webSocket(self, didReceiveAction: type, params: params ?? [:], messageId: messageId)
+			delegate?.webSocket(didReceiveAction: type, params: params ?? [:], messageId: messageId)
 		} catch {
-			log.error("Error decoding receiveAction decode: \(error.localizedDescription)")
+          fatalError("Error decoding receiveAction decode: \(error.localizedDescription)")
 		}
 	}
 	
 	func onDidOpen() {
-		sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
+//		sendAction("login", params: ["sessionId": sessionId!, "role": "app"], messageId: 0)
 	}
 }

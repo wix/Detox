@@ -34,7 +34,7 @@
     [super viewDidLoad];
     
 	_items = [NSMutableArray new];
-	for(NSUInteger idx = 0; idx < 15; idx++)
+	for(NSUInteger idx = 0; idx < 5; idx++)
 	{
 		[_items addObject:[@(idx + 1) stringValue]];
 	}
