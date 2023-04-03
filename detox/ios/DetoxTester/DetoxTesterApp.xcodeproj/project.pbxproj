@@ -254,6 +254,7 @@
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
 		60D3D4BB29D9D5D1008CE39E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		60D3D4C129DB0B70008CE39E /* XCUIElement+assertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+assertions.swift"; sourceTree = "<group>"; };
+		60D3D4C329DB2761008CE39E /* XCPointerEventPath+Swizzling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCPointerEventPath+Swizzling.m"; sourceTree = "<group>"; };
 		60E7BA3C2998F0A300EC68E3 /* WebSocketServer+config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocketServer+config.swift"; sourceTree = "<group>"; };
 		60ED001E2990EAC700BC6377 /* ServerMessageType+isBackgroundTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerMessageType+isBackgroundTask.swift"; sourceTree = "<group>"; };
 		60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+cleanIdentifier.swift"; sourceTree = "<group>"; };
@@ -374,6 +375,7 @@
 			isa = PBXGroup;
 			children = (
 				607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */,
+				60D3D4C329DB2761008CE39E /* XCPointerEventPath+Swizzling.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
