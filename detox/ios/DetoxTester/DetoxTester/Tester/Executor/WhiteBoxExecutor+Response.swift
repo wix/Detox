@@ -6,6 +6,7 @@
 import Foundation
 import DetoxInvokeHandler
 
+/// Extends `WhiteBoxExecutor` with response types. These are the responses that the white-box executor can return.
 extension WhiteBoxExecutor {
   /// A response from a white-box executor.
   enum Response: Equatable {
@@ -18,7 +19,7 @@ extension WhiteBoxExecutor {
     /// An array of strings response.
     case strings(_ value: [String])
 
-    ///
+    /// An array of element identifiers and frames response.
     case identifiersAndFrames(_ value: [ElementIdentifierAndFrame])
 
     /// A response of operation completion.
@@ -37,7 +38,7 @@ extension WhiteBoxExecutor {
     case elementsAttributes(_ value: [EquatableDictionary])
   }
 
-  ///
+  /// A dictionary that is equatable. This is a workaround for the fact that `Dictionary` is not.
   struct EquatableDictionary: Equatable {
     static func == (
       lhs: WhiteBoxExecutor.EquatableDictionary,
@@ -51,9 +52,9 @@ extension WhiteBoxExecutor {
   }
 }
 
-///
+/// Represents an element identifier and frame.
 struct ElementIdentifierAndFrame: Codable, Equatable {
-  ///
+  /// Element identifier.
   let identifier: String?
 
   /// String representation of the frame.

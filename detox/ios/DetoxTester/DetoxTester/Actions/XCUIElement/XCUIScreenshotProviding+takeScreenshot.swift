@@ -6,8 +6,11 @@
 import Foundation
 import XCTest
 
+/// Extends `XCUIScreenshotProviding` with a method to take a screenshot of the current element and save it to a
+///  temporary directory.
 extension XCUIScreenshotProviding {
-  /// Takes a screenshot of the current screenshot-providing element.
+  /// Takes a screenshot of the current screenshot-providing element. The screenshot is saved to a temporary directory.
+  ///  The path to the screenshot is returned.
   func takeScreenshot(
     _ imageName: String?,
     date: Date,
@@ -22,19 +25,21 @@ extension XCUIScreenshotProviding {
   }
 }
 
-///
+/// A temporary path. Used for debug visibility artifacts.
 enum TempPath: String {
-  ///
+  /// The path for the element screenshot.
   case element = "elementsScreenshot"
 
-  ///
+  /// The path for element screenshot on failure.
   case debugRects = "visibilityFailingRects"
 
-  ///
+  /// The path for the app screenshot on failure.
   case debugScreens = "visibilityFailingScreenshots"
 }
 
-extension TempPath {
+/// Extends `TempPath` with a method to create a temporary path.
+private extension TempPath {
+  /// Creates a temporary path. The path is created in the temporary directory.
   func temporaryPath() throws -> URL {
     return try temporaryPath(self.rawValue)
   }
@@ -56,6 +61,7 @@ extension TempPath {
   }
 }
 
+/// Extends `URL` with a method to create a screenshot path.
 private extension URL {
   /// Creates a screenshot path.
   static func makeScreenshotPath(

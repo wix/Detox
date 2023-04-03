@@ -5,7 +5,8 @@
 
 import Foundation
 
-///
+/// Extends `ServerMessageType` with a property that determines whether the server message should be handled in a
+///  background manner.
 extension ServerMessageType {
   /// Determines whether the server message should be handled in a background manner.
   var isBackgroundTask: Bool {

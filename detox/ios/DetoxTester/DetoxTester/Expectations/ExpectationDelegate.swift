@@ -8,7 +8,6 @@ import Foundation
 import XCTest
 
 /// A delegate for expectations that can be performed on an element.
-/// TODO: requires refactoring.
 class ExpectationDelegate: ExpectationDelegateProtocol {
   let app: XCUIApplication
 
@@ -19,7 +18,7 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
     self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
-  /// TODO: document
+  /// Performs an expectation on an element.
   func expect(
     _ expectation: Expectation,
     isTruthy: Bool,
@@ -76,7 +75,6 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
     }
   }
 
-  // TODO: refactor
   private func expect(_ expectation: Expectation, isTruthy: Bool, on element: XCUIElement?) throws {
     switch expectation {
       case .toBeFocused:

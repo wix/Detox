@@ -5,9 +5,10 @@
 
 import Foundation
 
-///
+/// Extends `ActionDelegate` with debug visibility artifacts creation.
 extension ActionDelegate {
-  ///
+  /// Creates debug visibility artifacts. Returns a dictionary of artifacts, where the key is the
+  ///  artifact name and the value is the artifact path.
   func createDebugArtifacts(app: XCUIApplication, element: AnyHashable) throws -> [String: String] {
     var artifacts: [String: String] = [:]
 

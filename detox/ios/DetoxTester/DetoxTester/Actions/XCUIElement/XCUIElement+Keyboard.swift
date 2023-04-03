@@ -6,8 +6,9 @@
 import Foundation
 import DetoxInvokeHandler
 
+/// Extends `XCUIElement` with keyboard actions.
 extension XCUIElement {
-  ///
+  /// Indicates whether the text field element has keyboard focus.
   public var hasKeyboardFocusOnTextField: Bool {
     return (textField ?? self).hasKeyboardFocus
   }
