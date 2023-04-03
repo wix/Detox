@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import XCTest
 
 /// Removes `_detox:<UUID>` postfix from a given `identifier`.
 func removeDetoxPostfix(from identifier: String) -> String {

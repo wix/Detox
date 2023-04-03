@@ -105,7 +105,7 @@ class WhiteBoxExecutor {
           ],
           messageId: messageId
         )
-        
+
         let _ = send(message, andExpectToType: "didSetRecordingState", messageId: messageId)
 
         return .completed
