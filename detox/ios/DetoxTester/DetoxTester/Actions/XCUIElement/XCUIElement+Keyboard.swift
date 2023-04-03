@@ -86,10 +86,7 @@ extension XCUIElement {
   private func addText(_ text: String) throws {
     try focusKeyboard()
 
-    // TODO: Unfortunately, on RN, a simple `typeText(text)` does not work as expected. Investigate.
-    for char in text {
-      typeText("\(char)")
-    }
+    typeText(text)
   }
 
   private func deleteAndPasteText(_ text: String, app: XCUIApplication) throws {
