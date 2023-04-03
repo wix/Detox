@@ -5,7 +5,7 @@
 
 import Foundation
 
-///
+/// Extends `XCUIApplication` with common apps.
 extension XCUIApplication {
   /// Returns the settings app.
   static var settingsApp: XCUIApplication {

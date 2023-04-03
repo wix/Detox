@@ -5,21 +5,24 @@
 
 import Foundation
 
+/// Extends `ExpectationDelegate` with error types.
 extension ExpectationDelegate {
-  ///
+  /// An error that can be thrown by the expectation delegate.
   enum Error: Swift.Error {
-    ///
+    /// The element was not found.
     case elementNotFound
 
-    ///
+    /// The expectation failed.
     case expectationFailed(subject: String, expected: String, actual: String, isTruthy: Bool)
 
-    ///
+    /// The expectation timed out.
     case reachedExpectationTimeout(errorDescription: String, timeout: Double)
   }
 }
 
+/// Extends `ExpectationDelegate.Error` with a description.
 extension ExpectationDelegate.Error: CustomStringConvertible {
+  /// A description of the error.
   public var description: String {
     switch self {
       case .elementNotFound:
