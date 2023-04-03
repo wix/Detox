@@ -5,6 +5,7 @@
 
 import Foundation
 import DetoxInvokeHandler
+import XCTest
 
 /// Extends `XCUIElement` with keyboard actions.
 extension XCUIElement {

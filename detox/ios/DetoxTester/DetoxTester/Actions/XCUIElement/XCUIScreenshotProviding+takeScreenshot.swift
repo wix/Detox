@@ -38,7 +38,7 @@ enum TempPath: String {
 }
 
 /// Extends `TempPath` with a method to create a temporary path.
-private extension TempPath {
+extension TempPath {
   /// Creates a temporary path. The path is created in the temporary directory.
   func temporaryPath() throws -> URL {
     return try temporaryPath(self.rawValue)

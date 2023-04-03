@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import XCTest
 
 /// Extends `XCUIApplication` with common apps.
 extension XCUIApplication {
