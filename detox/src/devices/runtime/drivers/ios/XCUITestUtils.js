@@ -77,7 +77,7 @@ async function buildXcodeProject(simulatorId) {
     args: null,
     timeout: 60000,
     statusLogs: {
-      trying: 'Trying to build the XCUITest runner...',
+      trying: 'Building the XCUITest runner...',
       successful: 'XCUITest runner built successfully!',
       retrying: 'Retrying the XCUITest runner build...',
     },
