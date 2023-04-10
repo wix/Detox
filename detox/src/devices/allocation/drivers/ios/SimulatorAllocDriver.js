@@ -16,6 +16,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     this._deviceRegistry = deviceRegistry;
     this._applesimutils = applesimutils;
     this._simulatorLauncher = simulatorLauncher;
+    this._launchInfo = {};
   }
 
   /**
@@ -35,14 +36,18 @@ class SimulatorAllocDriver extends AllocationDriverBase {
       throw new DetoxRuntimeError(`Failed to find device matching ${deviceComment}`);
     }
 
-    try {
-      await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs, deviceConfig.headless);
-    } catch (e) {
-      await this._deviceRegistry.disposeDevice(udid);
-      throw e;
-    }
-
+    this._launchInfo[udid] = { deviceConfig };
     return new IosSimulatorCookie(udid);
+  }
+
+  /**
+   * @param {IosSimulatorCookie} deviceCookie
+   * @returns {Promise<void>}
+   */
+  async postAllocate(deviceCookie) {
+    const { udid } = deviceCookie;
+    const { deviceConfig } = this._launchInfo[udid];
+    await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs, deviceConfig.headless);
   }
 
   /**

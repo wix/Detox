@@ -14,6 +14,12 @@ class AllocationDriverBase {
   async allocate(deviceConfig) {}
 
   /**
+   * @param {DeviceCookie} deviceCookie
+   * @return {Promise<void>}
+   */
+  async postAllocate(deviceCookie) {}
+
+  /**
    * @param cookie { DeviceCookie }
    * @param options { DeallocOptions }
    * @return {Promise<void>}

@@ -17,6 +17,7 @@ class GenyAllocDriver extends AllocationDriverBase {
     this._recipeQuerying = recipeQuerying;
     this._instanceLauncher = instanceLauncher;
     this._instanceAllocationHelper = allocationHelper;
+    this._launchInfo = {};
   }
 
   /**
@@ -28,21 +29,24 @@ class GenyAllocDriver extends AllocationDriverBase {
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
-    const allocResult = await this._instanceAllocationHelper.allocateDevice(recipe);
-    let { instance, isNew } = allocResult;
+    const { instance, isNew } = await this._instanceAllocationHelper.allocateDevice(recipe);
+    this._launchInfo[instance.uuid] = { isNew };
+    return new GenycloudEmulatorCookie(instance);
+  }
 
-    try {
-      instance = await this._instanceLauncher.launch(instance, isNew);
-    } catch (e) {
-      await this._instanceAllocationHelper.deallocateDevice(instance.uuid);
-      throw e;
-    }
-    const { adbName } = instance;
+  /**
+   * @param {GenycloudEmulatorCookie} cookie
+   * @returns {Promise<void>}
+   */
+  async postAllocate(cookie) {
+    const { instance } = cookie;
+    const { isNew } = this._launchInfo[instance.uuid];
+    const readyInstance = cookie.instance = await this._instanceLauncher.launch(instance, isNew);
 
+    const { adbName } = readyInstance;
     await this._adb.disableAndroidAnimations(adbName);
     await this._adb.setWiFiToggle(adbName, true);
     await this._adb.apiLevel(adbName);
-    return new GenycloudEmulatorCookie(instance);
   }
 
   /**

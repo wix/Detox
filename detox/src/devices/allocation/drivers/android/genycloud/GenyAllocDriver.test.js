@@ -10,6 +10,7 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
   let instanceLauncher;
   let GenyInstance;
   let adb;
+
   beforeEach(() => {
     jest.mock('../../../../common/drivers/android/genycloud/services/GenyInstanceLookupService');
     jest.mock('../../../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
@@ -33,8 +34,6 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
 
   let allocDriver;
   beforeEach(() => {
-    jest.mock('../../../../cookies/GenycloudEmulatorCookie');
-
     const GenyAllocDriver = require('./GenyAllocDriver');
     allocDriver = new GenyAllocDriver({ recipeQuerying, allocationHelper, instanceLauncher, adb });
   });
@@ -69,7 +68,6 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
   const givenLaunchResult = (instance) => instanceLauncher.launch.mockResolvedValue(instance);
 
   describe('allocation', () => {
-
     it('should obtain recipe from recipes service', async () => {
       givenRecipe(aRecipe());
       givenReallocationResult(anInstance());
@@ -103,85 +101,82 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
       expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(recipe);
     });
 
-    describe('given an allocation of a fresh cloud instance', () => {
-      it('should launch it', async () => {
-        const expectedIsNew = false;
+    describe('post-allocation', () => {
+      describe('given a fresh cloud instance', () => {
+        it('should launch it', async () => {
+          const expectedIsNew = true;
+          const instance = anInstance();
+          givenRecipe(aRecipe());
+          givenFreshAllocationResult(instance);
+
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await allocDriver.postAllocate(cookie);
+
+          expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
+        });
+
+        it('should fail if launch fails', async () => {
+          givenRecipe(aRecipe());
+          givenFreshAllocationResult(anInstance());
+          givenLaunchError('alloc error mock');
+
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await expect(allocDriver.postAllocate(cookie)).rejects.toThrowError('alloc error mock');
+        });
+      });
+
+      describe('given an existing cloud instance (reused)', () => {
+        it('should launch it', async () => {
+          const expectedIsNew = false;
+          const instance = anInstance();
+          givenRecipe(aRecipe());
+          givenReallocationResult(instance);
+
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await allocDriver.postAllocate(cookie);
+
+          expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
+        });
+      });
+
+      it('should return a cookie based on the launched instance and recipe', async () => {
+        const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
+        const instance = anInstance();
+        const launchedInstance = aLaunchedInstance();
+        givenRecipe(aRecipe());
+        givenReallocationResult(instance);
+        givenLaunchResult(launchedInstance);
+
+        const result = await allocDriver.allocate(deviceConfig);
+        expect(result).toBeInstanceOf(GenycloudEmulatorCookie);
+        expect(result.instance).toBe(instance);
+        expect(result.adbName).toBeUndefined();
+
+        await allocDriver.postAllocate(result);
+        expect(result.adbName).toBe('localhost:1234');
+      });
+
+      it('should prepare the emulators itself', async () => {
         const instance = anInstance();
         givenRecipe(aRecipe());
         givenReallocationResult(instance);
 
-        await allocDriver.allocate(deviceConfig);
+        const cookie = await allocDriver.allocate(deviceConfig);
+        await allocDriver.postAllocate(cookie);
 
-        expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
+        expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
+        expect(adb.setWiFiToggle).toHaveBeenCalledWith(instance.adbName, true);
       });
 
-      it('should fail if launch fails', async () => {
-        givenRecipe(aRecipe());
-        givenFreshAllocationResult(anInstance());
-        givenLaunchError('alloc error mock');
-
-        await expect(allocDriver.allocate(deviceConfig)).rejects.toThrowError('alloc error mock');
-      });
-
-      it('should deallocate the instance if launch fails', async () => {
-        const instance = anInstance();
-
-        givenRecipe(aRecipe());
-        givenFreshAllocationResult(instance);
-        givenLaunchError('alloc error mock');
-
-        try {
-          await allocDriver.allocate(deviceConfig);
-        } catch (e) {}
-        expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
-      });
-    });
-
-    describe('given an allocation of an existing cloud instance (reused)', () => {
-      it('should launch it', async () => {
-        const expectedIsNew = true;
+      it('should inquire the API level', async () => {
         const instance = anInstance();
         givenRecipe(aRecipe());
-        givenFreshAllocationResult(instance);
+        givenReallocationResult(instance);
 
-        await allocDriver.allocate(deviceConfig);
-
-        expect(instanceLauncher.launch).toHaveBeenCalledWith(instance, expectedIsNew);
+        const cookie = await allocDriver.allocate(deviceConfig);
+        await allocDriver.postAllocate(cookie);
+        expect(adb.apiLevel).toHaveBeenCalledWith(instance.adbName);
       });
-    });
-
-    it('should return a cookie based on the launched instance and recipe', async () => {
-      const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
-      const instance = anInstance();
-      const launchedInstance = aLaunchedInstance();
-      givenRecipe(aRecipe());
-      givenReallocationResult(instance);
-      givenLaunchResult(launchedInstance);
-
-      const result = await allocDriver.allocate(deviceConfig);
-      expect(result.constructor.name).toEqual('GenycloudEmulatorCookie');
-      expect(GenycloudEmulatorCookie).toHaveBeenCalledWith(launchedInstance);
-    });
-
-    it('should prepare the emulators itself', async () => {
-      const instance = anInstance();
-      givenRecipe(aRecipe());
-      givenReallocationResult(instance);
-
-      await allocDriver.allocate(deviceConfig);
-
-      expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(instance.adbName);
-      expect(adb.setWiFiToggle).toHaveBeenCalledWith(instance.adbName, true);
-    });
-
-    it('should inquire the API level', async () => {
-      const instance = anInstance();
-      givenRecipe(aRecipe());
-      givenReallocationResult(instance);
-
-      await allocDriver.allocate(deviceConfig);
-
-      expect(adb.apiLevel).toHaveBeenCalledWith(instance.adbName);
     });
   });
 
