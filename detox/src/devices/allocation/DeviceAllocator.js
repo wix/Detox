@@ -24,6 +24,10 @@ class DeviceAllocator {
    * @return {Promise<unknown>}
    */
   postAllocate(deviceCookie) {
+    if (typeof this._driver.postAllocate !== 'function') {
+      return Promise.resolve();
+    }
+
     return this._driver.postAllocate(deviceCookie);
   }
 
