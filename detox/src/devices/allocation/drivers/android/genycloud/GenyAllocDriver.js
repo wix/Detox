@@ -1,18 +1,20 @@
-// @ts-nocheck
-const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const { DetoxRuntimeError } = require('../../../../../errors');
+const Timer = require('../../../../../utils/Timer');
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
 class GenyAllocDriver extends AllocationDriverBase {
 
   /**
-   * @param adb { ADB }
-   * @param recipeQuerying { GenyRecipeQuerying }
-   * @param allocationHelper { GenyInstanceAllocationHelper }
-   * @param instanceLauncher { GenyInstanceLauncher }
+   * @param {object} options
+   * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
+   * @param {import('./GenyRecipeQuerying')} options.recipeQuerying
+   * @param {import('./GenyInstanceAllocationHelper')} options.allocationHelper
+   * @param {import('./GenyInstanceLauncher')} options.instanceLauncher
    */
   constructor({ adb, recipeQuerying, allocationHelper, instanceLauncher }) {
     super();
+
     this._adb = adb;
     this._recipeQuerying = recipeQuerying;
     this._instanceLauncher = instanceLauncher;
@@ -44,9 +46,11 @@ class GenyAllocDriver extends AllocationDriverBase {
     const readyInstance = cookie.instance = await this._instanceLauncher.launch(instance, isNew);
 
     const { adbName } = readyInstance;
-    await this._adb.disableAndroidAnimations(adbName);
-    await this._adb.setWiFiToggle(adbName, true);
-    await this._adb.apiLevel(adbName);
+    await Timer.run(20000, 'waiting for device to respond', async () => {
+      await this._adb.disableAndroidAnimations(adbName);
+      await this._adb.setWiFiToggle(adbName, true);
+      await this._adb.apiLevel(adbName);
+    });
   }
 
   /**
