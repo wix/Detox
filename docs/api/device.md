@@ -229,7 +229,7 @@ Useful if the app makes frequent network calls to blacklisted endpoints upon sta
 ```js
 await device.launchApp({
   newInstance: true,
-  launchArgs: { detoxURLBlacklistRegex: '\\("^http://192\.168\.1\.253:d{4}/.*","https://e\.crashlytics\.com/spi/v2/events"\\)' },
+  launchArgs: { detoxURLBlacklistRegex: '("http://192.168.1.253:d{4}/.*","https://e.crashlytics.com/spi/v2/events")' },
 });
 ```
 
