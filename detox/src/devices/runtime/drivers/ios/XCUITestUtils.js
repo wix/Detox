@@ -7,6 +7,7 @@ const log = require('../../../../utils/logger').child({ cat: 'device,xcuitest' }
 
 async function launchXCUITest(
   simulatorId,
+  isHeadless,
   detoxServer,
   detoxSessionId,
   bundleId,
@@ -18,6 +19,7 @@ async function launchXCUITest(
 
   await _runLaunchCommand(
     simulatorId,
+    isHeadless,
     detoxServer,
     detoxSessionId,
     bundleId,
@@ -31,6 +33,7 @@ async function launchXCUITest(
 
 async function _runLaunchCommand(
   simulatorId,
+  isHeadless,
   detoxServer,
   detoxSessionId,
   bundleId,
@@ -44,7 +47,7 @@ async function _runLaunchCommand(
 
   await buildXcodeProject(simulatorId);
   const spawnedProcess = runXCUITest(
-    simulatorId, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy
+    simulatorId, isHeadless, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy
   ).then(r => {
     log.info(`[XCUITest] XCUITest runner execution finished`);
   }).catch(e => {
@@ -95,11 +98,10 @@ async function buildXcodeProject(simulatorId) {
 }
 
 function runXCUITest(
-  simulatorId, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy,
+  simulatorId, isHeadless, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy,
 ) {
   log.debug(`[XCUITest] Running xcodebuild test with bundle id: ${bundleId}`);
-  const xcodebuildBinary = 'xcodebuild';
-
+  let xcodebuildBinary = 'xcodebuild';
   const xcodebuildFlags = [
     '-workspace', '../ios/DetoxTester.xcworkspace',
     '-scheme', 'DetoxTester',
@@ -123,7 +125,20 @@ function runXCUITest(
     maxBuffer: 1024 * 1024 * 1024
   };
 
-  return spawnAndLog(xcodebuildBinary, xcodebuildFlags, options);
+  return _spawnAndLog(xcodebuildBinary, xcodebuildFlags, options);
+}
+
+function _spawnAndLog(command, args, options, isHeadless) {
+  if (isHeadless) {
+    log.debug(`[XCUITest] Spawning ${command} ${args} in headless mode`);
+    return spawnAndLog(
+      'open',
+      ['-a', '-W', '-F', 'Terminal', '--args', '-c', `${command} ${args.join(' ')}`],
+      options
+    );
+  } else {
+    return spawnAndLog(command, args, options);
+  }
 }
 
 function _allowNetworkPermissionsXCUITest() {

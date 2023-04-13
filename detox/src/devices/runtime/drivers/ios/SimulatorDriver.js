@@ -88,6 +88,7 @@ class SimulatorDriver extends IosDriver {
     if (!this.client.isConnected) {
       await launchXCUITest(
         this.udid,
+        this._headless,
         launchArgs.detoxServer,
         launchArgs.detoxSessionId,
         bundleId,
