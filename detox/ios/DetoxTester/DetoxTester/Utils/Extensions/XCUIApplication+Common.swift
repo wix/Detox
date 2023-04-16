@@ -20,6 +20,11 @@ extension XCUIApplication {
 
   /// Returns the currently running app.
   static var selectedApp: XCUIApplication {
-    return XCUIApplication(bundleIdentifier: .selectedApp)
+    let app = XCUIApplication(bundleIdentifier: .selectedApp)
+
+    // Avoid idle resource synchronization within the XCUITest runner
+    app.launchEnvironment = ["waitForQuiescence": "NO"]
+
+    return app
   }
 }
