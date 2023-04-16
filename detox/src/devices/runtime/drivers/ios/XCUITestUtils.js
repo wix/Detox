@@ -1,5 +1,3 @@
-const { spawn } = require('child_process');
-
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
 
@@ -132,7 +130,7 @@ function runXCUITest(
 }
 
 function _spawnAndLog(xcodebuildBinary, xcodebuildFlags, xcodebuildEnvArgs, options, isHeadless) {
-  if (true) {
+  if (isHeadless) {
     const newCommand = `${xcodebuildBinary} ${xcodebuildFlags.map(
       arg => arg.includes(' ') ? `\\"${arg}\\"` : arg
     ).join(' ')}`;
