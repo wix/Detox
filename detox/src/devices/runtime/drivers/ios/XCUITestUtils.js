@@ -1,3 +1,5 @@
+const { spawn } = require('child_process');
+
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
 
@@ -45,7 +47,7 @@ async function _runLaunchCommand(
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
     `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
 
-  await buildXcodeProject(simulatorId);
+  await buildXcodeProject();
   const spawnedProcess = runXCUITest(
     simulatorId, isHeadless, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy
   ).then(r => {
@@ -65,7 +67,7 @@ async function _runLaunchCommand(
   log.debug(`[XCUITest] Finished waiting for test target server to start, server is up: ${isServerUp}`);
 }
 
-async function buildXcodeProject(simulatorId) {
+async function buildXcodeProject() {
   log.debug(`[XCUITest] Building xcode project`);
   const cmd = `xcodebuild ` +
     `-workspace ../ios/DetoxTester.xcworkspace ` +
@@ -102,8 +104,9 @@ function runXCUITest(
 ) {
   log.debug(`[XCUITest] Running xcodebuild test with bundle id: ${bundleId}`);
   let xcodebuildBinary = 'xcodebuild';
+  const xcworkspace = '/Users/asafk/Development/Detox/detox/ios/DetoxTester.xcworkspace';
   const xcodebuildFlags = [
-    '-workspace', '../ios/DetoxTester.xcworkspace',
+    '-workspace', xcworkspace,
     '-scheme', 'DetoxTester',
     '-sdk', 'iphonesimulator',
     '-allowProvisioningUpdates',
@@ -111,33 +114,46 @@ function runXCUITest(
     'test-without-building'
   ];
 
+  const xcodebuildEnvArgs = {
+    TEST_RUNNER_IS_DETOX_ACTIVE: '1',
+    TEST_RUNNER_DETOX_SERVER: detoxServer,
+    TEST_RUNNER_DETOX_SESSION_ID: detoxSessionId,
+    TEST_RUNNER_TEST_TARGET_SERVER_PORT: testTargetServerPort,
+    TEST_RUNNER_BUNDLE_ID: bundleId,
+    TEST_RUNNER_DETOX_DEBUG_VISIBILITY: debugVisibility,
+    TEST_RUNNER_DETOX_DISABLE_VIEW_HIERARCHY_DUMP: disableDumpViewHierarchy
+  };
+
   const options = {
-    env: {
-      ...process.env,
-      TEST_RUNNER_IS_DETOX_ACTIVE: '1',
-      TEST_RUNNER_DETOX_SERVER: detoxServer,
-      TEST_RUNNER_DETOX_SESSION_ID: detoxSessionId,
-      TEST_RUNNER_TEST_TARGET_SERVER_PORT: testTargetServerPort,
-      TEST_RUNNER_BUNDLE_ID: bundleId,
-      TEST_RUNNER_DETOX_DEBUG_VISIBILITY: debugVisibility,
-      TEST_RUNNER_DETOX_DISABLE_VIEW_HIERARCHY_DUMP: disableDumpViewHierarchy
-    },
     maxBuffer: 1024 * 1024 * 1024
   };
 
-  return _spawnAndLog(xcodebuildBinary, xcodebuildFlags, options);
+  return _spawnAndLog(xcodebuildBinary, xcodebuildFlags, xcodebuildEnvArgs, options, isHeadless);
 }
 
-function _spawnAndLog(command, args, options, isHeadless) {
-  if (isHeadless) {
-    log.debug(`[XCUITest] Spawning ${command} ${args} in headless mode`);
-    return spawnAndLog(
-      'open',
-      ['-a', '-W', '-F', 'Terminal', '--args', '-c', `${command} ${args.join(' ')}`],
-      options
-    );
+function _spawnAndLog(xcodebuildBinary, xcodebuildFlags, xcodebuildEnvArgs, options, isHeadless) {
+  if (true) {
+    const newCommand = `${xcodebuildBinary} ${xcodebuildFlags.map(
+      arg => arg.includes(' ') ? `\\"${arg}\\"` : arg
+    ).join(' ')}`;
+
+    // map xcodebuildEnvArgs object to a string of the form `key1='value1' key2='value2'`
+    const envArgs = Object.keys(xcodebuildEnvArgs).map(
+      key => `${key}='${xcodebuildEnvArgs[key]}'`
+    ).join(' ');
+
+    const newCommandWithEnv = `${envArgs} ${newCommand}`;
+
+    const osascriptFile = `${__dirname}/run_and_close_terminal.scpt`;
+
+    log.debug(`[XCUITest] Executing ${newCommandWithEnv}`);
+
+    return exec(`osascript ${osascriptFile} "${newCommandWithEnv}"`);
   } else {
-    return spawnAndLog(command, args, options);
+    return spawnAndLog('xcodebuild', xcodebuildFlags, {
+      env: { xcodebuildEnvArgs, ...process.env },
+      ...options
+    });
   }
 }
 
