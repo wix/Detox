@@ -1,6 +1,8 @@
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
 
+const { launchd } = require('./launchd');
+
 const { spawnAndLog } = require('../../../../utils/childProcess');
 const { execWithRetriesAndLogs } = require('../../../../utils/childProcess');
 const log = require('../../../../utils/logger').child({ cat: 'device,xcuitest' });
@@ -122,36 +124,28 @@ function runXCUITest(
     TEST_RUNNER_DETOX_DISABLE_VIEW_HIERARCHY_DUMP: disableDumpViewHierarchy
   };
 
+  const env = {
+    ...xcodebuildEnvArgs,
+    ...process.env
+  };
+
   const options = {
+    env,
     maxBuffer: 1024 * 1024 * 1024
   };
 
-  return _spawnAndLog(xcodebuildBinary, xcodebuildFlags, xcodebuildEnvArgs, options, isHeadless);
+  return _launchdOrSpawnAndLog(xcodebuildBinary, xcodebuildFlags, options, isHeadless);
 }
 
-function _spawnAndLog(xcodebuildBinary, xcodebuildFlags, xcodebuildEnvArgs, options, isHeadless) {
-  if (isHeadless) {
-    const newCommand = `${xcodebuildBinary} ${xcodebuildFlags.map(
-      arg => arg.includes(' ') ? `\\"${arg}\\"` : arg
-    ).join(' ')}`;
-
-    // map xcodebuildEnvArgs object to a string of the form `key1='value1' key2='value2'`
-    const envArgs = Object.keys(xcodebuildEnvArgs).map(
-      key => `${key}='${xcodebuildEnvArgs[key]}'`
-    ).join(' ');
-
-    const newCommandWithEnv = `${envArgs} ${newCommand}`;
-
-    const osascriptFile = `${__dirname}/run_and_close_terminal.scpt`;
-
-    log.debug(`[XCUITest] Executing ${newCommandWithEnv}`);
-
-    return exec(`osascript ${osascriptFile} "${newCommandWithEnv}"`);
+function _launchdOrSpawnAndLog(binary, flags, options, isHeadless) {
+  if (true) {
+    return launchd(
+      binary,
+      flags,
+      options
+    );
   } else {
-    return spawnAndLog('xcodebuild', xcodebuildFlags, {
-      env: { xcodebuildEnvArgs, ...process.env },
-      ...options
-    });
+    return spawnAndLog(binary, flags, options);
   }
 }
 
