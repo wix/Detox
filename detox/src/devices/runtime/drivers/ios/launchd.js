@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
+const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const fs = require('fs');
 
 /**
  * Runs the specified command using launchd on macOS.
