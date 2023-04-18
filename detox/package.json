@@ -73,7 +73,7 @@
     "lodash": "^4.17.11",
     "multi-sort-stream": "^1.0.3",
     "multipipe": "^4.0.0",
-    "node-ipc": "^9.2.1",
+    "node-ipc": "9.2.1",
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
