@@ -88,8 +88,8 @@
     "trace-event-lib": "^1.3.1",
     "which": "^1.3.1",
     "ws": "^7.0.0",
-    "yargs": "^16.0.3",
-    "yargs-parser": "^20.2.9",
+    "yargs": "^17.0.0",
+    "yargs-parser": "^21.0.0",
     "yargs-unparser": "^2.0.0"
   },
   "peerDependencies": {
