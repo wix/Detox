@@ -18,7 +18,7 @@ function sanitize_android_edge(edge) {
     default:
       throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
   }
-}
+} 
 function sanitize_android_direction(direction) {
   switch (direction) {
     case 'left':
@@ -32,7 +32,7 @@ function sanitize_android_direction(direction) {
     default:
       throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
   }
-}
+} 
 class DetoxAction {
   static multiClick(times) {
     if (typeof times !== "number") throw new Error("times should be a number, but got " + (times + (" (" + (typeof times + ")"))));
@@ -233,18 +233,6 @@ class DetoxAction {
     };
   }
 
-  static parseDateISO8601(dateString) {
-    if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxAction"
-      },
-      method: "parseDateISO8601",
-      args: [dateString]
-    };
-  }
-
   static accessibilityAction(actionName) {
     if (typeof actionName !== "string") throw new Error("actionName should be a string, but got " + (actionName + (" (" + (typeof actionName + ")"))));
     return {
@@ -254,6 +242,18 @@ class DetoxAction {
       },
       method: "accessibilityAction",
       args: [actionName]
+    };
+  }
+
+  static parseDateISO8601(dateString) {
+    if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "parseDateISO8601",
+      args: [dateString]
     };
   }
 
