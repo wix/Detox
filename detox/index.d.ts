@@ -1381,7 +1381,7 @@ declare global {
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
             /**
-             * Performs a given accessibility action.
+             * Triggers a given [accessibility action]{@link https://reactnative.dev/docs/accessibility#accessibility-actions}.
              * @param actionName - name of the accessibility action
              * @example await element(by.id('view')).performAccessibilityAction('activate');
              */

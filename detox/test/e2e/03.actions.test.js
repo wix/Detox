@@ -34,7 +34,7 @@ describe('Actions', () => {
     'decrement',
     'longpress',
     'custom',
-  ])('should perform %s accessibilityAction', async actionName => {
+  ])('should perform %s accessibilityAction', async (actionName) => {
     await element(by.id('View7991')).performAccessibilityAction(actionName);
     await expect(
       element(by.text(`Accessibility Action ${actionName} Working!!!`)),
