@@ -10,6 +10,7 @@ import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
 import com.wix.detox.espresso.common.SliderHelper
+import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -47,7 +48,7 @@ private class CommonAttributes {
     fun get(json: JSONObject, view: View) {
         getId(json, view)
         getVisibility(json, view)
-        getContentDescription(json, view)
+        getAccessibilityLabel(json, view)
         getAlpha(json, view)
         getElevation(json, view)
         getHeight(json, view)
@@ -66,8 +67,8 @@ private class CommonAttributes {
         json.put("visible", view.getLocalVisibleRect(Rect()))
     }
 
-    private fun getContentDescription(json: JSONObject, view: View) =
-            view.contentDescription?.let {
+    private fun getAccessibilityLabel(json: JSONObject, view: View) =
+            view.getAccessibilityLabel()?.let {
                 json.put("label", it)
             }
 

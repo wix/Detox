@@ -1,4 +1,5 @@
 // @ts-nocheck
+const jestExpect = require('expect').default; // eslint-disable-line
 const _ = require('lodash');
 
 describe('expectTwo', () => {
@@ -595,6 +596,19 @@ describe('expectTwo', () => {
     it(`should return a temporary path to the screenshot`, async () => {
       expect(result).toBe(tmpFilePath);
     });
+  });
+
+  it('toBeVisible() should throw with bad args', async () => {
+    const stubMatcher = e.element(e.by.label('test'));
+    const expectedErrorMsg = 'must be an integer between 1 and 100';
+
+    jestExpect(() => e.expect(stubMatcher).toBeVisible(0)).toThrow(expectedErrorMsg);
+    jestExpect(() => e.expect(stubMatcher).not.toBeVisible(0)).toThrow(expectedErrorMsg);
+    jestExpect(() => e.expect(stubMatcher).toBeVisible(101)).toThrow(expectedErrorMsg);
+    jestExpect(() => e.expect(stubMatcher).not.toBeVisible(101)).toThrow(expectedErrorMsg);
+
+    jestExpect(() => e.waitFor(stubMatcher).toBeVisible(0)).toThrow(expectedErrorMsg);
+    jestExpect(() => e.waitFor(stubMatcher).toBeVisible(101)).toThrow(expectedErrorMsg);
   });
 
   it('by.web should throw', async () => {

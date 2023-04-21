@@ -626,9 +626,8 @@ declare global {
 
         interface Device {
             /**
-             * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
+             * Holds the environment-unique ID of the device, namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS -
              * as used by simctl (e.g. AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE).
-             *
              */
             id: string;
             /**
@@ -1122,39 +1121,39 @@ declare global {
              * expectation with a `not` expects the view's visible area to be smaller than N%.
              * @param pct optional integer ranging from 1 to 100, indicating how much percent of the view should be
              *  visible to the user to be accepted.
-             * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
+             * @example await expect(element(by.id('mainTitle'))).toBeVisible(35);
              */
             toBeVisible(pct?: number): R;
 
             /**
              * Negate the expectation.
-             * @example await expect(element(by.id('UniqueId205'))).not.toBeVisible();
+             * @example await expect(element(by.id('cancelButton'))).not.toBeVisible();
              */
             not: this;
 
             /**
              * Expect the view to not be visible.
-             * @example await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+             * @example await expect(element(by.id('cancelButton'))).toBeNotVisible();
              * @deprecated Use `.not.toBeVisible()` instead.
              */
             toBeNotVisible(): R;
 
             /**
              * Expect the view to exist in the UI hierarchy.
-             * @example await expect(element(by.id('UniqueId205'))).toExist();
+             * @example await expect(element(by.id('okButton'))).toExist();
              */
             toExist(): R;
 
             /**
              * Expect the view to not exist in the UI hierarchy.
-             * @example await expect(element(by.id('RandomJunk959'))).toNotExist();
+             * @example await expect(element(by.id('cancelButton'))).toNotExist();
              * @deprecated Use `.not.toExist()` instead.
              */
             toNotExist(): R;
 
             /**
              * Expect the view to be focused.
-             * @example await expect(element(by.id('loginInput'))).toBeFocused();
+             * @example await expect(element(by.id('emailInput'))).toBeFocused();
              */
             toBeFocused(): R;
 
@@ -1168,21 +1167,23 @@ declare global {
             /**
              * In React Native apps, expect UI component of type <Text> to have text.
              * In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
-             * @example await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+             * @example await expect(element(by.id('mainTitle'))).toHaveText('Welcome back!);
              */
             toHaveText(text: string): R;
 
             /**
-             * It searches by accessibilityLabel on iOS, or by contentDescription on Android.
-             * In React Native it can be set for both platforms by defining an accessibilityLabel on the view.
-             * @example await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
+             * Expects a specific accessibilityLabel, as specified via the `accessibilityLabel` prop in React Native.
+             * On the native side (in both React Native and pure-native apps), that is equivalent to `accessibilityLabel`
+             * on iOS and contentDescription on Android. Refer to Detox's documentation in order to learn about caveats
+             * with accessibility-labels in React Native apps.
+             * @example await expect(element(by.id('submitButton'))).toHaveLabel('Submit');
              */
             toHaveLabel(label: string): R;
 
             /**
              * In React Native apps, expect UI component to have testID with that id.
              * In native iOS apps, expect UI element to have accessibilityIdentifier with that id.
-             * @example await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+             * @example await expect(element(by.text('Submit'))).toHaveId('submitButton');
              */
             toHaveId(id: string): R;
 
@@ -1195,7 +1196,7 @@ declare global {
 
             /**
              * Expect components like a Switch to have a value ('0' for off, '1' for on).
-             * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
+             * @example await expect(element(by.id('temperatureDial'))).toHaveValue('25');
              */
             toHaveValue(value: any): R;
 
@@ -1212,7 +1213,7 @@ declare global {
             /**
              * This API polls using the given expectation continuously until the expectation is met. Use manual synchronization with waitFor only as a last resort.
              * NOTE: Every waitFor call must set a timeout using withTimeout(). Calling waitFor without setting a timeout will do nothing.
-             * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
+             * @example await waitFor(element(by.id('bigButton'))).toExist().withTimeout(2000);
              */
             (element: NativeElement): Expect<WaitFor>;
         }
@@ -1220,13 +1221,13 @@ declare global {
         interface WaitFor {
             /**
              * Waits for the condition to be met until the specified time (millis) have elapsed.
-             * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
+             * @example await waitFor(element(by.id('bigButton'))).toExist().withTimeout(2000);
              */
             withTimeout(millis: number): Promise<void>;
 
             /**
              * Performs the action repeatedly on the element until an expectation is met
-             * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
+             * @example await waitFor(element(by.text('Item #5'))).toBeVisible().whileElement(by.id('itemsList')).scroll(50, 'down');
              */
             whileElement(by: NativeMatcher): NativeElement & WaitFor;
 
@@ -1445,7 +1446,7 @@ declare global {
         interface WebExpect<R = Promise<void>> {
             /**
              * Negate the expectation.
-             * @example await expect(web.element(by.web.id('UniqueId205'))).not.toExist();
+             * @example await expect(web.element(by.web.id('sessionTimeout'))).not.toExist();
              */
             not: this;
 
@@ -1453,13 +1454,13 @@ declare global {
              * Expect the element content to have the `text` supplied
              * @param text expected to be on the element content
              * @example
-             * await expect(web.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
+             * await expect(web.element(by.web.id('checkoutButton'))).toHaveText('Proceed to check out');
              */
             toHaveText(text: string): R;
 
             /**
              * Expect the view to exist in the webview DOM tree.
-             * @example await expect(web.element(by.web.id('UniqueId205'))).toExist();
+             * @example await expect(web.element(by.web.id('submitButton'))).toExist();
              */
             toExist(): R;
         }
@@ -1658,7 +1659,9 @@ declare global {
              */
             text?: string;
             /**
-             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
+             * The label of the element. Largely matches accessibilityLabel for ios, and contentDescription for android.
+             * Refer to Detox's documentation (`toHaveLabel()` subsection) in order to learn about caveats associated with
+             * this property in React Native apps.
              */
             label?: string;
             /**

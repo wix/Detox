@@ -278,7 +278,7 @@ Returns an object, representing various attributes of the element.
 Retrieved attributes are:
 
 - `text`: The text value of any textual element.
-- `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android.
+- `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android. Refer to the [`.toHaveLabel()` API](./expect.md#tohavelabellabel) in order to learn about caveats associated with this attribute in React Native apps.
 - `placeholder`: The placeholder text value of the element. Matches `hint` on android.
 - `enabled`: Whether the element is enabled for user interaction.
 - `identifier`: The identifier of the element. Matches `accessibilityIdentifier` on iOS, and the main view tag, on Android - both commonly **holding the component’s test ID in React Native apps**.

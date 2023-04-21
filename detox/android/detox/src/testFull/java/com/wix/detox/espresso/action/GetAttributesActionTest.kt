@@ -6,6 +6,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.facebook.react.views.slider.ReactSlider
 import com.google.android.material.slider.Slider
+import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Before
@@ -32,7 +33,7 @@ class GetAttributesActionTest {
     private fun givenNoViewTag() = givenViewTag(null)
     private fun givenVisibility(value: Int) { whenever(view.visibility).doReturn(value) }
     private fun givenVisibilityRectAvailability(value: Boolean) { whenever(view.getLocalVisibleRect(any())).doReturn(value) }
-    private fun givenContentDescription(value: String) { whenever(view.contentDescription).doReturn(value) }
+    private fun givenAccessibilityLabel(value: String) { whenever(view.getAccessibilityLabel()).doReturn(value) }
 
     private fun perform(v: View = view): JSONObject {
         uut.perform(null, v)
@@ -110,16 +111,16 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return label according to content-description`() {
-        val contentDescription = "content-description-mock"
-        givenContentDescription(contentDescription)
+    fun `should return label according to accessibilityLabel extension`() {
+        val accessibilityLabel = "label-mock"
+        givenAccessibilityLabel(accessibilityLabel)
 
         val resultJson = perform()
-        assertThat(resultJson.opt("label")).isEqualTo(contentDescription)
+        assertThat(resultJson.opt("label")).isEqualTo(accessibilityLabel)
     }
 
     @Test
-    fun `should not return label if content description no set`() {
+    fun `should not return label if accessibility label is not available`() {
         val resultJson = perform()
         assertThat(resultJson.opt("label")).isNull()
     }

@@ -72,8 +72,6 @@ describe('Allocation driver for Google emulators', () => {
 
   describe('allocation', () => {
     beforeEach(() => {
-      jest.mock('../../../../cookies/AndroidEmulatorCookie');
-
       givenAllocationOfRunningEmulator();
     });
 
@@ -86,69 +84,6 @@ describe('Allocation driver for Google emulators', () => {
       givenAllocationError();
 
       await expect(allocDriver.allocate(deviceConfig)).rejects.toThrowError();
-    });
-
-    describe('given an allocated emulator that is not currently running', () => {
-      beforeEach(() => {
-        givenAllocationOfPlaceholderEmulator();
-      });
-
-      it('should launch it', async () => {
-        await allocDriver.allocate(deviceConfig);
-        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, false, expect.objectContaining({ port: placeholderPort }));
-      });
-
-      it('should pass-through various launch options', async () => {
-        await allocDriver.allocate(extendedDeviceConfig);
-        expect(emulatorLauncher.launch).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.anything(),
-          expect.anything(),
-          expect.objectContaining(launchOptions),
-        );
-      });
-
-      it('should resort to undefined launch options', async () => {
-        const launchOptions = {
-          headless: undefined,
-          readonly: undefined,
-          gpuMode: undefined,
-          bootArgs: undefined,
-        };
-
-        await allocDriver.allocate(deviceConfig);
-        expect(emulatorLauncher.launch).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.anything(),
-          expect.anything(),
-          expect.objectContaining(launchOptions),
-        );
-      });
-
-      it('should deallocate it, if launching fails', async () => {
-        givenEmulatorLaunchError();
-
-        try {
-          await allocDriver.allocate(deviceConfig);
-        } catch (e) {}
-        expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(adbName);
-      });
-
-      it('should rethrow the error, if launching fails', async () => {
-        givenEmulatorLaunchError();
-        await expect(allocDriver.allocate(deviceConfig)).rejects.toThrowError();
-      });
-    });
-
-    describe('given an allocated emulator that is already running', () => {
-      beforeEach(() => {
-        givenAllocationOfRunningEmulator();
-      });
-
-      it('should launch it with isRunning=true', async () => {
-        await allocDriver.allocate(deviceConfig);
-        expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, true, expect.objectContaining({ port: placeholderPort }));
-      });
     });
 
     it('should pre-validate proper AVD configuration', async () => {
@@ -181,29 +116,94 @@ describe('Allocation driver for Google emulators', () => {
       expect(patchAvdSkinConfig).toHaveBeenCalledWith(avdName, majorVersion);
     });
 
-    it('should prepare the emulators itself', async () => {
-      givenAllocationOfRunningEmulator();
-
-      await allocDriver.allocate(deviceConfig);
-
-      expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(adbName);
-      expect(adb.unlockScreen).toHaveBeenCalledWith(adbName);
-    });
-
-    it('should inquire the API level', async () => {
-      givenAllocationOfRunningEmulator();
-
-      await allocDriver.allocate(deviceConfig);
-
-      expect(adb.apiLevel).toHaveBeenCalledWith(adbName);
-    });
-
     it('should return an Android emulator handle', async () => {
       const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
 
       const handle = await allocDriver.allocate(deviceConfig);
-      expect(handle.constructor.name).toEqual('AndroidEmulatorCookie');
-      expect(AndroidEmulatorCookie).toHaveBeenCalledWith(adbName);
+      expect(handle).toBeInstanceOf(AndroidEmulatorCookie);
+      expect(handle.adbName).toBe(adbName);
+    });
+
+    describe('post-allocation', () => {
+      describe('given an allocated emulator that is not currently running', () => {
+        beforeEach(() => {
+          givenAllocationOfPlaceholderEmulator();
+        });
+
+        it('should launch it', async () => {
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await allocDriver.postAllocate(cookie);
+
+          expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, false, expect.objectContaining({ port: placeholderPort }));
+        });
+
+        it('should pass-through various launch options', async () => {
+          const cookie = await allocDriver.allocate(extendedDeviceConfig);
+          await allocDriver.postAllocate(cookie);
+
+          expect(emulatorLauncher.launch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.anything(),
+            expect.anything(),
+            expect.objectContaining(launchOptions),
+          );
+        });
+
+        it('should resort to undefined launch options', async () => {
+          const launchOptions = {
+            headless: undefined,
+            readonly: undefined,
+            gpuMode: undefined,
+            bootArgs: undefined,
+          };
+
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await allocDriver.postAllocate(cookie);
+          expect(emulatorLauncher.launch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.anything(),
+            expect.anything(),
+            expect.objectContaining(launchOptions),
+          );
+        });
+
+        it('should rethrow the error, if launching fails', async () => {
+          givenEmulatorLaunchError();
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await expect(allocDriver.postAllocate(cookie)).rejects.toThrowError();
+        });
+      });
+
+      describe('given an allocated emulator that is already running', () => {
+        beforeEach(() => {
+          givenAllocationOfRunningEmulator();
+        });
+
+        it('should launch it with isRunning=true', async () => {
+          const cookie = await allocDriver.allocate(deviceConfig);
+          await allocDriver.postAllocate(cookie);
+          expect(emulatorLauncher.launch).toHaveBeenCalledWith(avdName, adbName, true, expect.objectContaining({ port: placeholderPort }));
+        });
+      });
+
+      it('should prepare the emulators itself', async () => {
+        givenAllocationOfRunningEmulator();
+
+        const cookie = await allocDriver.allocate(deviceConfig);
+        await allocDriver.postAllocate(cookie);
+
+        expect(adb.disableAndroidAnimations).toHaveBeenCalledWith(adbName);
+        expect(adb.unlockScreen).toHaveBeenCalledWith(adbName);
+      });
+
+      it('should inquire the API level', async () => {
+        givenAllocationOfRunningEmulator();
+
+        const cookie = await allocDriver.allocate(deviceConfig);
+        await allocDriver.postAllocate(cookie);
+
+        expect(adb.apiLevel).toHaveBeenCalledWith(adbName);
+      });
     });
   });
 

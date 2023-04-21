@@ -12,7 +12,10 @@ module.exports = async () => {
 
   const reporters = [
     '<rootDir>/runners/jest/reporter',
-    ['jest-allure2-reporter', { getEnvironmentInfo: false }]
+    ['jest-allure2-reporter', {
+      getEnvironmentInfo: false,
+      overwriteResultsDir: !process.env.CI,
+    }]
   ];
 
   if (process.env.DISABLE_JUNIT_REPORTER !== '1') {
