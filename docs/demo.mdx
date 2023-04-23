@@ -49,6 +49,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismo
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
 
+## Example Heading with Long Code Line
+
+- [`Lorem ipsum dolor sit (amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut)` iIpsum only](#Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.)
+
 ###### `id` \[string \| number\]
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismod accumsan dignissim, risus mi blandit ipsum, id ullamcorper risus urna eget augue.
@@ -57,7 +61,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor, odio euismo
 
 Dummy double-spaced paragraph example, consectetur adipiscing elit. Curabitur euismod, arcu eu commodo tincidunt, est eros auctor augue, eget bibendum nibh tellus a mi.<br/>Integer blandit, enim quis malesuada fringilla, elit augue pellentesque justo, eget euismod elit sapien id magna. Sed molestie ultrices metus, a congue erat.
 
-This is a regular text, an _italic text_, a **bold text**, a ***both italic and bold text***, a ~~strikethrough text~~, an `inline code text`, a [simple link](#), and a [`link with inline code`](#).
+This is a regular text, an _italic text_, a **bold text**, a **_both italic and bold text_**, a ~~strikethrough text~~, an `inline code text`, a [simple link](#), and a [`link with inline code`](#).
 
 ```plain text
 Here is an example of a code block with plain text.
@@ -182,14 +186,12 @@ import { DummyButton } from 'dummy-react-library';
 
 // A dummy component
 function DummyExample() {
-// highlight-next-line
+  // highlight-next-line
   const [dummyState, setDummyState] = React.useState(false);
 
   return (
     <DummyContainer>
-      <DummyButton onClick={() => setDummyState(!dummyState)}>
-        Click me
-      </DummyButton>
+      <DummyButton onClick={() => setDummyState(!dummyState)}>Click me</DummyButton>
     </DummyContainer>
   );
 }
@@ -237,7 +239,7 @@ public class DummyClass {
     "object1": {
       "property1": "dummy_type",
       "property2": "dummy_device",
-// highlight-next-line
+      // highlight-next-line
       "property3": ["dummy_path/to/dummy_file.dummy"]
     }
   }
