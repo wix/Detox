@@ -4,6 +4,16 @@
   padding: 0 var(--ifm-pre-padding);
 }
 
-.markdown code {
-  white-space: pre;
+.markdown {
+  @media (min-width: 768px) {
+    code {
+      white-space: pre;
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    code {
+      white-space: pre-wrap;
+    }
+  }
 }

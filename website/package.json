@@ -23,6 +23,7 @@
     "@percy/cli": "^1.17.0",
     "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
+    "docusaurus": "^1.14.7",
     "docusaurus-plugin-sass": "^0.2.3",
     "file-loader": "^6.2.0",
     "prism-react-renderer": "^1.2.1",
