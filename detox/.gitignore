@@ -1,10 +1,3 @@
-ios/EarlGrey/Demo
-ios/EarlGrey/docs
-ios/EarlGrey/OCHamcrest.framework
-ios/EarlGrey/fishhook
-ios/EarlGrey/Tests/UnitTests/ocmock
-ios/EarlGrey/Tests/UnitTests/TestRig/Resources
-ios/EarlGrey/Tests/FunctionalTests/TestRig/Resources
 Detox.framework
 Detox.framework.tar
 detox-*.aar
