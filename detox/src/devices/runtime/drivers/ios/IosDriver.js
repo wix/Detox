@@ -13,7 +13,11 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setURLBlacklist(blacklistURLs) {
-    await this.client.setSyncSettings({ blacklistURLs: blacklistURLs });
+    await this.client.setSyncSettings({ blacklistURLs });
+  }
+
+  async setMaxTimerWait(maxTimerWait) {
+    await this.client.setSyncSettings({ maxTimerWait });
   }
 
   async enableSynchronization() {

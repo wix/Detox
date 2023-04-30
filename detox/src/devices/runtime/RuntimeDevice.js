@@ -41,6 +41,7 @@ class RuntimeDevice {
       'setOrientation',
       'setStatusBar',
       'setURLBlacklist',
+      'setMaxTimerWait',
       'shake',
       'takeScreenshot',
       'terminateApp',
@@ -306,6 +307,10 @@ class RuntimeDevice {
 
   async setURLBlacklist(urlList) {
     await this.deviceDriver.setURLBlacklist(urlList);
+  }
+
+  async setMaxTimerWait(maxTimerWait) {
+    await this.deviceDriver.setMaxTimerWait(maxTimerWait);
   }
 
   async enableSynchronization() {

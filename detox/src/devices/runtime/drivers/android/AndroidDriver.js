@@ -208,6 +208,12 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(EspressoDetoxApi.setURLBlacklist(urlList));
   }
 
+  async setMaxTimerWait(maxTimerWait) {
+    throw new DetoxRuntimeError({
+      message: `setMaxTimerWait is not supported on Android.`
+    });
+  }
+
   async enableSynchronization() {
     await this.invocationManager.execute(EspressoDetoxApi.setSynchronization(true));
   }

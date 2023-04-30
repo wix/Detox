@@ -149,6 +149,10 @@ class DeviceDriverBase {
     return '';
   }
 
+  async setMaxTimerWait(maxTimerWait) {
+    return '';
+  }
+
   async enableSynchronization() {
     return '';
   }

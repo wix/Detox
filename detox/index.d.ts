@@ -797,6 +797,11 @@ declare global {
             setURLBlacklist(urls: string[]): Promise<void>;
 
             /**
+             * @param maxTimerWait
+             */
+            setMaxTimerWait(maxTimerWait: number): Promise<void>;
+
+            /**
              * Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution.
              *
              * <p/>This API is useful for cases where test assertions must be made in an area of your application where it is okay for it to ever remain partly *busy* (e.g. due to an
