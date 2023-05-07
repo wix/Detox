@@ -26,6 +26,21 @@ describe('Actions', () => {
     await driver.tapsElement.assertTappedOnce();
   });
 
+  it.each([
+    'activate',
+    'magicTap',
+    'escape',
+    'increment',
+    'decrement',
+    'longpress',
+    'custom',
+  ])('should perform %s accessibilityAction', async (actionName) => {
+    await element(by.id('View7991')).performAccessibilityAction(actionName);
+    await expect(
+      element(by.text(`Accessibility Action ${actionName} Working!!!`)),
+    ).toBeVisible();
+  });
+
   describe('multi-tapping', () => {
     it('should multi tap on an element', async () => {
       await driver.tapsElement.multiTap();

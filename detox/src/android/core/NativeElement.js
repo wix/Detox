@@ -169,6 +169,11 @@ class NativeElement {
     const traceDescription = actionDescription.adjustSliderToPosition(newPosition);
     return await new ActionInteraction(this._invocationManager, this, action, traceDescription).execute();
   }
+
+  async performAccessibilityAction(actionName) {
+    const traceDescription = actionDescription.performAccessibilityAction(actionName);
+    return await new ActionInteraction(this._invocationManager, this, new actions.AccessibilityActionAction(actionName), traceDescription).execute();
+  }
 }
 
 module.exports = {

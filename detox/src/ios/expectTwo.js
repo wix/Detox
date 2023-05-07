@@ -229,6 +229,13 @@ class Element {
     return this.withAction('clearText', traceDescription);
   }
 
+  performAccessibilityAction(actionName) {
+    if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
+    
+    const traceDescription = actionDescription.performAccessibilityAction(actionName);
+    return this.withAction('accessibilityAction', traceDescription, actionName);
+  }
+
   scroll(pixels, direction = 'down', startPositionX = NaN, startPositionY = NaN) {
     if (!['left', 'right', 'up', 'down'].some(option => option === direction)) throw new Error('direction should be one of [left, right, up, down], but got ' + direction);
     if (typeof pixels !== 'number') throw new Error('amount of pixels should be a number, but got ' + (pixels + (' (' + (typeof pixels + ')'))));
@@ -657,6 +664,12 @@ class WaitFor {
   setDatePickerDate(dateString, dateFormat) {
     this.action = this.actionableElement.setDatePickerDate(dateString, dateFormat);
     const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
+    return this.waitForWithAction(traceDescription);
+  }
+
+  performAccessibilityAction(actionName) {
+    this.action = this.actionableElement.performAccessibilityAction(actionName);
+    const traceDescription = actionDescription.performAccessibilityAction(actionName);
     return this.waitForWithAction(traceDescription);
   }
 
