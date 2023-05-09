@@ -24,6 +24,8 @@
     "build:android-native": "cd android && ./gradlew publish -Dversion=999.999.999 -DbuildFlavour=coreNative -DforceLocal=true && cd ..",
     "lint": "eslint .",
     "unit": "jest --coverage --verbose",
+    "unit:android-debug": "cd android && ./gradlew testFullDebug",
+    "unit:android-release": "cd android && ./gradlew testFullRelease",
     "pretest": "npm run lint",
     "test": "npm run unit",
     "posttest": "cp coverage/lcov.info coverage/unit.lcov",

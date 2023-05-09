@@ -102,10 +102,10 @@ dependencies {
     api('org.hamcrest:hamcrest:2.2') {
         because 'See https://github.com/wix/Detox/issues/3920. Need to force hamcrest 2.2 win in battle of 2.2 vs. 1.3 (specified by Espresso).'
     }
-    api('androidx.test:rules:1.4.0') {
+    api('androidx.test:rules:1.5.0') {
         because 'of ActivityTestRule. Needed by users *and* internally used by Detox.'
     }
-    api('androidx.test.ext:junit:1.1.3') {
+    api('androidx.test.ext:junit:1.1.5') {
         because 'Needed so as to seamlessly provide AndroidJUnit4 to Detox users. Depends on junit core.'
     }
 
@@ -136,7 +136,7 @@ dependencies {
     testImplementation 'org.json:json:20140107'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.0'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.2'
 
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation "org.jetbrains.kotlin:kotlin-test:$_kotlinVersion"
