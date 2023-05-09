@@ -136,7 +136,7 @@ dependencies {
     testImplementation 'org.json:json:20140107'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.0'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.2'
 
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation "org.jetbrains.kotlin:kotlin-test:$_kotlinVersion"
