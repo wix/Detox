@@ -20,7 +20,7 @@ popd
 
 if [[ $currentRnVersion -ge 66 ]]; then
   pushd detox/android
-  run_f "./gradlew testFullRelease"
+  run_f "npm run unit:android-release"
   popd
 else
   echo "Skipping Android unit tests (react-native version ${currentRnVersion} is not ≥66)"
