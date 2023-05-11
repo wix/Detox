@@ -191,7 +191,7 @@ async function _waitForTestTargetServerToStart(testTargetServerPort, cpPromise) 
   if (!isServerUp) {
     log.error(`[XCUITest] Test target server is not up after 90 seconds, aborting`);
 
-    if (cpPromise.childProcess.kill('SIGTERM')) {
+    if (cpPromise && cpPromise.childProcess && cpPromise.childProcess.kill('SIGTERM')) {
       log.debug(`[XCUITest] Test target process was killed`);
     } else {
       log.debug(`[XCUITest] Test target process was not killed`);
