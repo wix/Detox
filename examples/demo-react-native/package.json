@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "21.0.0-rc.0",
+  "version": "22.0.0-rc.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
-    "detox": "^21.0.0-rc.0",
+    "detox": "^22.0.0-rc.0",
     "fs-extra": "^9.1.0",
     "jest": "^29.2.1",
     "ts-jest": "^29.0.3",
