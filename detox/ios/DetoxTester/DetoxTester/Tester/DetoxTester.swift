@@ -124,6 +124,11 @@ extension DetoxTester: WebSocketClientDelegateProtocol {
     mainLog("web-socket received `\(type.rawValue)` message (#\(messageId.stringValue)), " +
             "with params: \(params.description)")
 
+    // Closes client connection if tester disconnected.
+    if type == .disconnect {
+      webSocket.close()
+    }
+
     exec! (type.isBackgroundTask) { [self] in
       mainLog(
         "`didReceiveAction` was called, executes action `\(type.rawValue)`" +
