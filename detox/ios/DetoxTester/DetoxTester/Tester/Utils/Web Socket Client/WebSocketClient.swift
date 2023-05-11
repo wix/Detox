@@ -32,9 +32,9 @@ class WebSocketClient: NSObject {
     webSocketSessionTask?.resume()
   }
 
-  /// Closes the web-socket connection.
+  /// Closes the web-socket client connection.
   func close() {
-    wsLog("closing server connection")
+    wsLog("closing client connection")
     webSocketSessionTask?.cancel(with: .normalClosure, reason: nil)
     webSocketSessionTask = nil
   }
