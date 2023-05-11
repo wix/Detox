@@ -162,7 +162,7 @@ function _allowNetworkPermissionsXCUITest() {
     });
 
   setTimeout(() => {
-    if (didCallback) {
+    if (didCallback || !childProcess) {
       return;
     }
 
