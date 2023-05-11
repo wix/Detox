@@ -204,6 +204,7 @@ node_modules/
 npm-debug.log
 
 # BUCK
+#
 buck-out/
 \.buckd/
 android/app/libs
@@ -226,11 +227,14 @@ detox/test/artifacts
 /examples/demo-react-native/artifacts
 /examples/demo-react-native-jest/artifacts
 
-## CSS files are auto-generated
+# CSS files are auto-generated
+#
 /website/**/*.css
 
-## Final outputs
-
+# Final native outputs
+#
 Detox-android/
 Detox-ios-src.tbz
 Detox-ios.tbz
+Detox-ios-framework.tbz
+Detox-ios-xcuitest.tbz

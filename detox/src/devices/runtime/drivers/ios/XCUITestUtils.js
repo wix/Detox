@@ -1,15 +1,12 @@
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
 
-const { launchd } = require('./launchd');
-
-const { spawnAndLog } = require('../../../../utils/childProcess');
 const { execWithRetriesAndLogs } = require('../../../../utils/childProcess');
 const log = require('../../../../utils/logger').child({ cat: 'device,xcuitest' });
 
 async function launchXCUITest(
+  xcuitestRunnerPath,
   simulatorId,
-  isHeadless,
   detoxServer,
   detoxSessionId,
   bundleId,
@@ -20,8 +17,8 @@ async function launchXCUITest(
   log.debug('[XCUITest] Launch was called');
 
   await _runLaunchCommand(
+    xcuitestRunnerPath,
     simulatorId,
-    isHeadless,
     detoxServer,
     detoxSessionId,
     bundleId,
@@ -34,8 +31,8 @@ async function launchXCUITest(
 }
 
 async function _runLaunchCommand(
+  xcuitestRunnerPath,
   simulatorId,
-  isHeadless,
   detoxServer,
   detoxSessionId,
   bundleId,
@@ -47,13 +44,19 @@ async function _runLaunchCommand(
     `\t/usr/bin/xcrun simctl spawn ${simulatorId} log stream --level debug --style compact ` +
     `--predicate 'process == "DetoxTester-Runner" && subsystem == "com.wix.DetoxTester.xctrunner"'`);
 
-  await buildXcodeProject();
   const spawnedProcess = runXCUITest(
-    simulatorId, isHeadless, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy
+    xcuitestRunnerPath,
+    simulatorId,
+    detoxServer,
+    detoxSessionId,
+    testTargetServerPort,
+    bundleId,
+    debugVisibility,
+    disableDumpViewHierarchy
   ).then(r => {
     log.info(`[XCUITest] XCUITest runner execution finished`);
   }).catch(e => {
-    log.error(`[XCUITest] xcodebuild error has occurred during XCUITest execution:\n${e.stderr}`);
+    log.error(`[XCUITest] xcodebuild error has occurred during XCUITest execution:\n${e}`);
   });
 
   // Get firewall global state (Firewall socketfilterfw):
@@ -67,54 +70,27 @@ async function _runLaunchCommand(
   log.debug(`[XCUITest] Finished waiting for test target server to start, server is up: ${isServerUp}`);
 }
 
-async function buildXcodeProject() {
-  log.debug(`[XCUITest] Building xcode project`);
-  const cmd = `xcodebuild ` +
-    `-workspace ../ios/DetoxTester.xcworkspace ` +
-    `-scheme DetoxTester ` +
-    `-sdk iphonesimulator ` +
-    `-allowProvisioningUpdates ` +
-    `build-for-testing`;
-
-  const options = {
-    retries: 10,
-    prefix: null,
-    args: null,
-    timeout: 60000,
-    statusLogs: {
-      trying: 'Building the XCUITest runner...',
-      successful: 'XCUITest runner built successfully!',
-      retrying: 'Retrying the XCUITest runner build...',
-    },
-    verbosity: 'debug',
-    maxBuffer: 1024 * 1024 * 1024,
-  };
-
-  try {
-    log.debug(`[XCUITest] Running command: ${cmd}`);
-    await execWithRetriesAndLogs(cmd, options);
-  } catch (err) {
-    log.error(`[XCUITest] Failed to build the project with command: ${cmd}, error:\n${err}`);
-    throw err;
-  }
-}
-
 function runXCUITest(
-  simulatorId, isHeadless, detoxServer, detoxSessionId, testTargetServerPort, bundleId, debugVisibility, disableDumpViewHierarchy,
+  xcuitestRunnerPath,
+  simulatorId,
+  detoxServer,
+  detoxSessionId,
+  testTargetServerPort,
+  bundleId,
+  debugVisibility,
+  disableDumpViewHierarchy,
 ) {
   log.debug(`[XCUITest] Running xcodebuild test with bundle id: ${bundleId}`);
   let xcodebuildBinary = 'xcodebuild';
-  const xcworkspace = '/Users/asafk/Development/Detox/detox/ios/DetoxTester.xcworkspace';
-  const xcodebuildFlags = [
-    '-workspace', xcworkspace,
-    '-scheme', 'DetoxTester',
+  const flags = [
+    '-xctestrun', xcuitestRunnerPath,
     '-sdk', 'iphonesimulator',
     '-allowProvisioningUpdates',
     '-destination', `platform=iOS Simulator,id=${simulatorId}`,
     'test-without-building'
   ];
 
-  const xcodebuildEnvArgs = {
+  const env = {
     TEST_RUNNER_IS_DETOX_ACTIVE: '1',
     TEST_RUNNER_DETOX_SERVER: detoxServer,
     TEST_RUNNER_DETOX_SESSION_ID: detoxSessionId,
@@ -124,29 +100,49 @@ function runXCUITest(
     TEST_RUNNER_DETOX_DISABLE_VIEW_HIERARCHY_DUMP: disableDumpViewHierarchy
   };
 
-  const env = {
-    ...xcodebuildEnvArgs,
-    ...process.env
-  };
-
   const options = {
-    env,
-    maxBuffer: 1024 * 1024 * 1024
+    maxBuffer: 1024 * 1024 * 1024,
+    retries: 1,
+    verbosity: 'high',
   };
 
-  return _launchdOrSpawnAndLog(xcodebuildBinary, xcodebuildFlags, options, isHeadless);
+  const command = `${env.TEST_RUNNER_IS_DETOX_ACTIVE ? Object.keys(env).map(key => `${key}=${env[key]}`).join(' ') : ''} ${xcodebuildBinary} ${flags.map(flag => flag.includes(' ') ? `"${flag}"` : flag).join(' ')}`;
+  log.debug(`[XCUITest] Running command: ${command}`);
+
+  // TODO: consider using this instead of the Terminal approach below.
+  // const isRunningOnTerminal = process.stdout.isTTY;
+  // if (isRunningOnTerminal === true) {
+  //   return execWithRetriesAndLogs(command, options);
+  // }
+  //
+  // log.info(`[XCUITest] Currently not running through the Terminal, will run the xcodebuild command on the Terminal`);
+  return _runCommandInTerminal(command, options);
 }
 
-function _launchdOrSpawnAndLog(binary, flags, options, isHeadless) {
-  if (true) {
-    return launchd(
-      binary,
-      flags,
-      options
-    );
-  } else {
-    return spawnAndLog(binary, flags, options);
-  }
+function _runCommandInTerminal(command, options) {
+  const escapedCommand = command.replace(/"/g, '\\"'); // escape double quotes
+
+  // opens the Terminal app and runs the command in a new window, then closes the window when the command is done running.
+  const appleScript = `
+        tell application "Terminal"
+            if not running then
+                open
+            end if
+
+            activate
+            do script "${escapedCommand}; exit"
+
+            repeat
+                delay 1
+                if not busy of window 1 then
+                    close window 1
+                    exit repeat
+                end if
+            end repeat
+        end tell
+    `;
+
+  return execWithRetriesAndLogs(`osascript -e '${appleScript}'`, options);
 }
 
 function _allowNetworkPermissionsXCUITest() {

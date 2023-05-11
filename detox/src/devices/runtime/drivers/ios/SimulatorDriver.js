@@ -6,9 +6,10 @@ const _ = require('lodash');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const environment = require('../../../../utils/environment');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
-const pressAnyKey = require('../../../../utils/pressAnyKey');
 const log = require('../../../../utils/logger').child({ cat: 'driver' });
+const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
 const { launchXCUITest } = require('./XCUITestUtils');
@@ -27,6 +28,19 @@ const { launchXCUITest } = require('./XCUITestUtils');
  * @property bootArgs { Object }
  */
 
+let SingletonPortToUsageMap = (function () {
+  let instance;
+
+  return {
+    getInstance: function () {
+      if (!instance) {
+        instance = {};
+      }
+      return instance;
+    }
+  };
+})();
+
 class SimulatorDriver extends IosDriver {
   /**
    * @param deps { SimulatorDriverDeps }
@@ -42,8 +56,6 @@ class SimulatorDriver extends IosDriver {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
-    // TODO: allocate unique-per-worker available port.
-    this._testTargetServerPort = 8997 + _.random(0, 1000);
   }
 
   getExternalId() {
@@ -79,6 +91,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
+    const xcuitestRunnerPath = await environment.getXCUITestRunnerPath();
+
     const { udid } = this;
     launchArgs = this.enrichArgs(launchArgs);
 
@@ -87,14 +101,14 @@ class SimulatorDriver extends IosDriver {
     log.debug({ event: 'CLIENT_CONNECTED', params: { connected: this.client.isConnected } }, 'client connected: ' + this.client.isConnected);
     if (!this.client.isConnected) {
       await launchXCUITest(
+        xcuitestRunnerPath,
         this.udid,
-        this._headless,
         launchArgs.detoxServer,
         launchArgs.detoxSessionId,
         bundleId,
         launchArgs.detoxDebugVisibility,
         launchArgs.detoxDisableHierarchyDump,
-        this._testTargetServerPort
+        _.findLast(launchArgs.detoxTestTargetServer.split(':'))
       );
     }
 
@@ -105,9 +119,14 @@ class SimulatorDriver extends IosDriver {
   }
 
   enrichArgs(args) {
+    const detoxServerPort = _.findLast(args.detoxServer.split(':'));
+    const portToUsagesCountMap = SingletonPortToUsageMap.getInstance();
+    const portUsagesCount = portToUsagesCountMap[detoxServerPort] = (portToUsagesCountMap[detoxServerPort] || 0) + 1;
+    const testTargetPort = Number(detoxServerPort) + 1000 * portUsagesCount;
+
     return {
       ...args,
-      detoxTestTargetServer: 'ws://localhost:' + this._testTargetServerPort,
+      detoxTestTargetServer: `ws://localhost:${testTargetPort}`,
     };
   }
 
