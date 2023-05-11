@@ -18,6 +18,7 @@
 		6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */; };
 		602E8C1529B8C625002D0085 /* Executor+isReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602E8C1429B8C625002D0085 /* Executor+isReady.swift */; };
 		602E8C4829BF785D002D0085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 602E8C4729BF76E3002D0085 /* Assets.xcassets */; };
+		6030DBBD2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m in Sources */ = {isa = PBXBuildFile; fileRef = 6030DBBC2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */; };
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+Connections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+Connections.swift */; };
@@ -177,6 +178,8 @@
 		6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ScrollScreen.storyboard; sourceTree = "<group>"; };
 		602E8C1429B8C625002D0085 /* Executor+isReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+isReady.swift"; sourceTree = "<group>"; };
 		602E8C4729BF76E3002D0085 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6030DBBB2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCPointerEventPath+Optimize.h"; sourceTree = "<group>"; };
+		6030DBBC2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCPointerEventPath+Optimize.m"; sourceTree = "<group>"; };
 		603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleInvoke.swift"; sourceTree = "<group>"; };
 		603497A927F08C3700770EE0 /* Executor+sendAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendAction.swift"; sourceTree = "<group>"; };
 		603497AC27F08D9300770EE0 /* Executor+Connections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+Connections.swift"; sourceTree = "<group>"; };
@@ -254,7 +257,6 @@
 		60C7F52F27EA2078000D417A /* XCUIElement+tap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+tap.swift"; sourceTree = "<group>"; };
 		60D3D4BB29D9D5D1008CE39E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		60D3D4C129DB0B70008CE39E /* XCUIElement+assertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+assertions.swift"; sourceTree = "<group>"; };
-		60D3D4C329DB2761008CE39E /* XCPointerEventPath+Swizzling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCPointerEventPath+Swizzling.m"; sourceTree = "<group>"; };
 		60E7BA3C2998F0A300EC68E3 /* WebSocketServer+config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocketServer+config.swift"; sourceTree = "<group>"; };
 		60ED001E2990EAC700BC6377 /* ServerMessageType+isBackgroundTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerMessageType+isBackgroundTask.swift"; sourceTree = "<group>"; };
 		60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+cleanIdentifier.swift"; sourceTree = "<group>"; };
@@ -375,7 +377,8 @@
 			isa = PBXGroup;
 			children = (
 				607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */,
-				60D3D4C329DB2761008CE39E /* XCPointerEventPath+Swizzling.m */,
+				6030DBBB2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.h */,
+				6030DBBC2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -972,6 +975,7 @@
 				6053419F280EF1DC00C0405D /* XCUIElement+coordinate.swift in Sources */,
 				603497AF27F08E0A00770EE0 /* Executor+handleCurrentStatus.swift in Sources */,
 				6026FEB12816C80200A016A1 /* KeyboardTests.swift in Sources */,
+				6030DBBD2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m in Sources */,
 				60A3B468282D3344002F903B /* TimeInterval+Extensions.swift in Sources */,
 				60C01FD827CB992700EF6C1E /* EnvArgKeys.swift in Sources */,
 				60ED002A2992476D00BC6377 /* XCUIElement+cleanIdentifier.swift in Sources */,
