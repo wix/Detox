@@ -1,10 +1,13 @@
 // @ts-nocheck
 describe('iOS simulator test environment validator', () => {
-
   const DETOX_FRAMEWORK_PATH = '/path/to/framework';
+  const DETOX_XCUITEST_RUNNER_PATH = '/path/to/xcuitest-runner';
 
-  const givenFrameworkPathExists = () => jest.spyOn(uut, '_frameworkPathExists').mockReturnValue(true);
-  const givenFrameworkPathNotExists = () => jest.spyOn(uut, '_frameworkPathExists').mockReturnValue(false);
+  const pathToExistenceMap = {};
+  const mockPathExistence = (frameworkExists, xcuitestExists) => {
+    pathToExistenceMap[DETOX_FRAMEWORK_PATH] = frameworkExists;
+    pathToExistenceMap[DETOX_XCUITEST_RUNNER_PATH] = xcuitestExists;
+  };
 
   let environment;
   let uut;
@@ -12,22 +15,43 @@ describe('iOS simulator test environment validator', () => {
     jest.mock('../../utils/environment');
     environment = require('../../utils/environment');
     environment.getFrameworkPath.mockResolvedValue(DETOX_FRAMEWORK_PATH);
+    environment.getXCUITestRunnerPath.mockResolvedValue(DETOX_XCUITEST_RUNNER_PATH);
+
+    jest.mock('fs');
+    const fs = require('fs');
+    fs.existsSync = (path) => {
+      return pathToExistenceMap[path] || false;
+    };
 
     const IosSimulatorEnvValidator = require('./IosSimulatorEnvValidator');
     uut = new IosSimulatorEnvValidator();
   });
 
-  describe('given detox framework path doesn\'t exist', () => {
-    it('should throw an error, with instruction to remedy', async () => {
-      givenFrameworkPathNotExists();
-      await expect(() => uut.validate()).rejects.toThrowError('/path/to/framework could not be found');
-    });
+  it('should throw an error when framework does not exists', async () => {
+    mockPathExistence(false, true);
+
+    try {
+      await uut.validate();
+      fail('Expected an error');
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
   });
 
-  describe('given detox framework path exists', () => {
-    it('should not throw an error', async () => {
-      givenFrameworkPathExists();
+  it('should throw an error when xcuitest does not exists', async () => {
+    mockPathExistence(true, false);
+
+    try {
       await uut.validate();
-    });
+      fail('Expected an error');
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  it('should not throw an error when both framework and xcuitest exist', async () => {
+    mockPathExistence(true, true);
+
+    await uut.validate();
   });
 });

@@ -94,6 +94,9 @@ const sidebars = {
         'cli/build-framework-cache',
         'cli/clean-framework-cache',
         'cli/rebuild-framework-cache',
+        'cli/build-xcuitest-cache',
+        'cli/clean-xcuitest-cache',
+        'cli/rebuild-xcuitest-cache',
         'cli/reset-lock-file',
         'cli/run-server',
       ]

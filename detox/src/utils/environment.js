@@ -188,7 +188,30 @@ async function getFrameworkPath() {
 async function _doGetFrameworkPath() {
   const detoxVersion = getDetoxVersion();
   const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
-  return `${DETOX_LIBRARY_ROOT_PATH}/ios/${sha1}/Detox.framework`;
+  return `${DETOX_LIBRARY_ROOT_PATH}/ios/framework/${sha1}/Detox.framework`;
+}
+
+let _iosXCUITestRunnerPath;
+async function getXCUITestRunnerPath() {
+  if (!_iosXCUITestRunnerPath) {
+    _iosXCUITestRunnerPath = _doGetXCUITestRunnerPath();
+  }
+
+  return _iosXCUITestRunnerPath;
+}
+
+async function _doGetXCUITestRunnerPath() {
+  const detoxVersion = getDetoxVersion();
+  const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
+
+  const derivedDataPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner/${sha1}`;
+
+  const xctestrunPath = (await exec(`find ${derivedDataPath} -name "*.xctestrun" -print -quit`)).stdout.trim();
+  if (!xctestrunPath) {
+    throw new DetoxRuntimeError(`Failed to find .xctestrun file in ${derivedDataPath}`);
+  }
+
+  return xctestrunPath;
 }
 
 function getDetoxLibraryRootPath() {
@@ -226,6 +249,7 @@ module.exports = {
   getGmsaasPath,
   getDetoxVersion,
   getFrameworkPath,
+  getXCUITestRunnerPath,
   getAndroidSDKPath,
   getAndroidEmulatorPath,
   getDetoxLibraryRootPath,
