@@ -28,19 +28,6 @@ const { launchXCUITest } = require('./XCUITestUtils');
  * @property bootArgs { Object }
  */
 
-let SingletonPortToUsageMap = (function () {
-  let instance;
-
-  return {
-    getInstance: function () {
-      if (!instance) {
-        instance = {};
-      }
-      return instance;
-    }
-  };
-})();
-
 class SimulatorDriver extends IosDriver {
   /**
    * @param deps { SimulatorDriverDeps }
@@ -56,6 +43,8 @@ class SimulatorDriver extends IosDriver {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
+    // TODO: allocate unique-per-worker available port.
+    this._testTargetServerPort = 8997 + _.random(0, 1000);
   }
 
   getExternalId() {
@@ -108,7 +97,7 @@ class SimulatorDriver extends IosDriver {
         bundleId,
         launchArgs.detoxDebugVisibility,
         launchArgs.detoxDisableHierarchyDump,
-        _.findLast(launchArgs.detoxTestTargetServer.split(':'))
+        this._testTargetServerPort
       );
     }
 
@@ -119,14 +108,9 @@ class SimulatorDriver extends IosDriver {
   }
 
   enrichArgs(args) {
-    const detoxServerPort = _.findLast(args.detoxServer.split(':'));
-    const portToUsagesCountMap = SingletonPortToUsageMap.getInstance();
-    const portUsagesCount = portToUsagesCountMap[detoxServerPort] = (portToUsagesCountMap[detoxServerPort] || 0) + 1;
-    const testTargetPort = Number(detoxServerPort) + 1000 * portUsagesCount;
-
     return {
       ...args,
-      detoxTestTargetServer: `ws://localhost:${testTargetPort}`,
+      detoxTestTargetServer: 'ws://localhost:' + this._testTargetServerPort,
     };
   }
 
