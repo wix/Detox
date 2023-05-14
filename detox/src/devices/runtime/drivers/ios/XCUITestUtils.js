@@ -109,13 +109,12 @@ function runXCUITest(
   const command = `${env.TEST_RUNNER_IS_DETOX_ACTIVE ? Object.keys(env).map(key => `${key}=${env[key]}`).join(' ') : ''} ${xcodebuildBinary} ${flags.map(flag => flag.includes(' ') ? `"${flag}"` : flag).join(' ')}`;
   log.debug(`[XCUITest] Running command: ${command}`);
 
-  // TODO: consider using this instead of the Terminal approach below.
-  // const isRunningOnTerminal = process.stdout.isTTY;
-  // if (isRunningOnTerminal === true) {
-  //   return execWithRetriesAndLogs(command, options);
-  // }
-  //
-  // log.info(`[XCUITest] Currently not running through the Terminal, will run the xcodebuild command on the Terminal`);
+  const isRunningOnTerminal = process.stdout.isTTY;
+  if (isRunningOnTerminal === true) {
+    return execWithRetriesAndLogs(command, options);
+  }
+
+  log.debug(`[XCUITest] Currently not running through the Terminal, will run the xcodebuild command from the Terminal`);
   return _runCommandInTerminal(command, options);
 }
 
