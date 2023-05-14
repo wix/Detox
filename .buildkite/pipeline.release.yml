@@ -15,7 +15,7 @@ steps:
 
       - select: "VERSION TYPE"
         key: "release-version-type"
-        hint: "A successful build will be released with a version update according to the selected type."
+        hint: "A successful build will be released with a version update according to the selected type. `Bump pre-release version` will bump the pre-release version number (for instance, `19.5.0-preminor.1`)."
         options:
           - label: "Patch"
             value: "patch"
@@ -23,6 +23,8 @@ steps:
             value: "minor"
           - label: "Major"
             value: "major"
+          - label: "Bump pre-release version"
+            value: "release"
 
       - select: "IS DRY RUN?"
         key: "release-dry-run"
