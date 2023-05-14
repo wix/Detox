@@ -55,4 +55,6 @@ public enum ActionType: String, Codable, Equatable {
 
   /// Adjust slider element to specified position.
   case adjustSliderToPosition = "adjustSliderToPosition"
+
+  case performAccessibilityAction = "accessibilityAction"
 }

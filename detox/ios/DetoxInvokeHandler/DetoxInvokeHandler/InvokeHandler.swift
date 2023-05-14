@@ -234,6 +234,9 @@ public class InvokeHandler {
       case .adjustSliderToPosition:
         return try adjustSliderAction(params: params)
 
+      case .performAccessibilityAction:
+        return try performAccessibilityAction(params: params)
+
       case .getAttributes:
         fatalError("invalid action handling request, cannot handle get-attributes from here")
     }
@@ -382,6 +385,10 @@ public class InvokeHandler {
 
   private func adjustSliderAction(params: [AnyCodable]?) throws -> Action {
     return .adjustSlider(normalizedPosition: (params!.first?.value as! NSNumber).doubleValue)
+  }
+
+  private func performAccessibilityAction(params: [AnyCodable]?) throws -> Action {
+    return .performAccessibilityAction(actionName: params!.first?.value as! String)
   }
 
   // MARK: - Handle expectations

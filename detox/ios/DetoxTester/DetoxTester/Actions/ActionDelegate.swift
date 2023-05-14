@@ -161,6 +161,16 @@ class ActionDelegate: ActionDelegateProtocol {
       case .adjustSlider(normalizedPosition: let normalizedPosition):
         element.adjustSlider(to: normalizedPosition)
 
+      case .performAccessibilityAction(actionName: let actionName):
+        let message = WhiteBoxExecutor.Message.performAccessibilityAction(
+          actionName: actionName,
+          onElement: element
+        )
+
+        if let response = whiteBoxMessageHandler(message) {
+          try response.assertResponse(equalsTo: .boolean(true), for: message)
+        }
+
       case .screenshot, .getAttributes:
         fatalError("this action should not be called under `act()`")
     }

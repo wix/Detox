@@ -37,6 +37,8 @@ public extension Action {
         return "pinch"
       case .adjustSlider:
         return "adjustSlider"
+      case .performAccessibilityAction:
+        return "accessibilityAction"
     }
   }
 }

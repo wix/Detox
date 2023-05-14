@@ -152,6 +152,30 @@ class WhiteBoxExecutor {
         let _ = send(message, andExpectToType: "didSetDatePicker", messageId: messageId)
         return .completed
 
+      case .performAccessibilityAction(let actionName, let element):
+        let message = createMessage(
+          type: "performAccessibilityAction",
+          params: [
+            "actionName": AnyCodable(actionName),
+            "elementID": AnyCodable(element.identifier),
+            "elementFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ])
+          ],
+          messageId: messageId
+        )
+
+        let result = send(
+          message,
+          andExpectToType: "didPerformAccessibilityAction",
+          messageId: messageId
+        )
+
+        return .boolean((result["didFound"] as! NSNumber).boolValue)
+
       case .verifyVisibility(let element, let threshold):
         let message = createMessage(
           type: "verifyVisibility",

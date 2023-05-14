@@ -39,6 +39,10 @@ extension WhiteBoxExecutor {
     /// Returns response of `completed` if successfully done.
     case setDatePicker(toDate: Date, onElement: XCUIElement)
 
+    /// Performs custom accessibility action with name `actionName` on the given
+    ///  element (`onElement`).
+    case performAccessibilityAction(actionName: String, onElement: XCUIElement)
+
     /// Returns response of `boolean`.
     case verifyVisibility(ofElement: XCUIElement, withThreshold: Double)
 
@@ -105,6 +109,10 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
       case .setDatePicker(toDate: let toDate, onElement: let onElement):
         return "set picker date (to: \(toDate), " +
           "on element with identifier: `\(onElement.cleanIdentifier)`"
+
+      case .performAccessibilityAction(actionName: let actionName, onElement: let element):
+        return "perform custom accessibility action with name `\(actionName)` " +
+          "on element `\(element.cleanIdentifier)`"
 
       case .verifyVisibility(ofElement: let ofElement, withThreshold: let withThreshold):
         return "expect to be visible with threshold of \(withThreshold)%, " +

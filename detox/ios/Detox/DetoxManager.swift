@@ -436,6 +436,38 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "performAccessibilityAction":
+				let targetIdentifier = params["elementID"] as! String
+				let targetFrame = params["elementFrame"] as! [NSNumber]
+
+				let targetElement = findElement(
+					byIdentifier: targetIdentifier,
+					andFrame: targetFrame
+				)
+
+				let actionName = params["actionName"] as! String
+				guard let action = targetElement.accessibilityCustomActions?.first(where: { $0.name == actionName }) else {
+					self.safeSend(
+						action: "didPerformAccessibilityAction",
+						params: [
+							"didFound": false
+						],
+						messageId: messageId
+					)
+
+					return
+				}
+
+				action.target?.performSelector(onMainThread: action.selector, with: action, waitUntilDone: true)
+
+				self.safeSend(
+					action: "didPerformAccessibilityAction",
+					params: [
+						"didFound": true
+					],
+					messageId: messageId
+				)
+
 			case "setSyncSettings":
 				let maxTimerWait = params["maxTimerWait"] as? NSNumber
 				let blacklistURLs = params["blacklistURLs"] as? [String]

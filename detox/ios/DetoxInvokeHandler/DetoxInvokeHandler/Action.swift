@@ -63,6 +63,10 @@ public enum Action: Equatable, Hashable {
 
   /// Adjust a slider element to the new `normalizedPosition`.
   case adjustSlider(normalizedPosition: Double)
+
+  // TODO: add unit / integration tests.
+  /// Perform a custom accessibility action with `actionName`.
+  case performAccessibilityAction(actionName: String)
 }
 
 extension Action {
