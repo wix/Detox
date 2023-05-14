@@ -5,9 +5,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Internals.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (XCPointerEventPathOptimize)
+@interface XCPointerEventPath (Optimize)
 
 @end
 
