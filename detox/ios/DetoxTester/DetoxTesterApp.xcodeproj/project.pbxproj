@@ -18,7 +18,7 @@
 		6026FEBB2816E9DD00A016A1 /* ScrollScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6026FEBA2816E9DD00A016A1 /* ScrollScreen.storyboard */; };
 		602E8C1529B8C625002D0085 /* Executor+isReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602E8C1429B8C625002D0085 /* Executor+isReady.swift */; };
 		602E8C4829BF785D002D0085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 602E8C4729BF76E3002D0085 /* Assets.xcassets */; };
-		6030DBBD2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m in Sources */ = {isa = PBXBuildFile; fileRef = 6030DBBC2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m */; };
+		6030DBBD2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m in Sources */ = {isa = PBXBuildFile; fileRef = 6030DBBC2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		603497A827F08B5200770EE0 /* Executor+handleInvoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A727F08B5200770EE0 /* Executor+handleInvoke.swift */; };
 		603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497A927F08C3700770EE0 /* Executor+sendAction.swift */; };
 		603497AD27F08D9300770EE0 /* Executor+Connections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603497AC27F08D9300770EE0 /* Executor+Connections.swift */; };
@@ -219,7 +219,6 @@
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
 		60634AD927C4339600274F30 /* ExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegate.swift; sourceTree = "<group>"; };
-		60695E032A10F6ED00F9FD15 /* Internals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Internals.h; sourceTree = "<group>"; };
 		607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+deliverPayload.swift"; sourceTree = "<group>"; };
 		607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendToHome.swift"; sourceTree = "<group>"; };
 		607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleTestFailure.swift"; sourceTree = "<group>"; };
@@ -380,7 +379,6 @@
 				607C901829AE03A2008FA6EA /* ActionDelegate+createDebugArtifacts.swift */,
 				6030DBBB2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.h */,
 				6030DBBC2A07AF7B0020D2AD /* XCPointerEventPath+Optimize.m */,
-				60695E032A10F6ED00F9FD15 /* Internals.h */,
 			);
 			path = Utils;
 			sourceTree = "<group>";

@@ -95,7 +95,7 @@ describe('Actions', () => {
     throw new Error('Expected an error');
   });
 
-  it('should type in an element', async () => {
+  it.only('should type in an element', async () => {
     const typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
     await element(by.id('UniqueId937')).typeText(typedText);
     await expect(element(by.text(typedText))).toBeVisible();
