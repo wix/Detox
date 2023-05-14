@@ -110,12 +110,17 @@ function runXCUITest(
   log.debug(`[XCUITest] Running command: ${command}`);
 
   const isRunningOnTerminal = process.stdout.isTTY;
-  if (isRunningOnTerminal === true) {
-    return execWithRetriesAndLogs(command, options);
+  if (isRunningOnTerminal !== true) {
+    log.debug(`[XCUITest] Currently not running through the Terminal, trying to execute the command from the Terminal`);
+
+    try {
+      return _runCommandInTerminal(command, options);
+    } catch (e) {
+      log.warn(`[XCUITest] Failed to execute the command from the Terminal, falling back to the default execution`);
+    }
   }
 
-  log.debug(`[XCUITest] Currently not running through the Terminal, will run the xcodebuild command from the Terminal`);
-  return _runCommandInTerminal(command, options);
+  return execWithRetriesAndLogs(command, options);
 }
 
 function _runCommandInTerminal(command, options) {
