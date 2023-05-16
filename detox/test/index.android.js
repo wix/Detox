@@ -1,7 +1,7 @@
-import {LaunchArguments} from 'react-native-launch-arguments';
 import {
   AppRegistry,
 } from 'react-native';
+import {LaunchArguments} from 'react-native-launch-arguments';
 
 import example from './src/app';
 
