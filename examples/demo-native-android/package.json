@@ -1,13 +1,13 @@
 {
   "name": "detox-demo-native-android",
-  "version": "21.0.0-rc.2",
+  "version": "21.0.0-rc.3",
   "private": true,
   "scripts": {
     "packager": "react-native start",
     "detox-server": "detox run-server"
   },
   "devDependencies": {
-    "detox": "^21.0.0-rc.2"
+    "detox": "^21.0.0-rc.3"
   },
   "detox": {}
 }
