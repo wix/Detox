@@ -98,6 +98,7 @@ dependencies {
     implementation project(':react-native-community-checkbox')
     implementation project(':react-native-community-geolocation')
     implementation project(':react-native-datetimepicker')
+    implementation project(':react-native-launcharguments')
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
