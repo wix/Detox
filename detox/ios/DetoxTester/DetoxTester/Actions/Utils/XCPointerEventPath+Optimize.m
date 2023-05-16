@@ -46,7 +46,7 @@
                 atOffset:(double)arg2
              typingSpeed:(unsigned long long)arg3
             shouldRedact:(_Bool)arg4 {
-  [self swizzledTypeText:arg1 atOffset:arg2 typingSpeed:100 shouldRedact:arg4];
+  [self swizzledTypeText:arg1 atOffset:arg2 typingSpeed:20 shouldRedact:arg4];
 }
 
 @end
