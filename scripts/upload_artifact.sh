@@ -55,6 +55,7 @@ generate_allure_report() {
 }
 
 cd "$(dirname "$0")/.."
+npm -g install surge
 generate_allure_report detox
 generate_allure_report detox/test
 pack artifacts "detox/test/artifacts" "detoxtest"
