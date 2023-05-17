@@ -34,7 +34,7 @@ upload_to_surge() {
 
   if [ -d "${SURGE_PROJECT}" ]; then
     surge --domain "${SURGE_DOMAIN}" --project "${SURGE_PROJECT}" && \
-    generate_iframe>>"${SURGE_SUBDOMAIN}.html" "http://${SURGE_DOMAIN}" "${IFRAME_TITLE}"
+    generate_iframe>>"${SURGE_SUBDOMAIN}.html" "https://${SURGE_DOMAIN}" "${IFRAME_TITLE}"
   else
     echo "Could not find directory named ${SURGE_PROJECT}."
   fi
