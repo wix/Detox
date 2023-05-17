@@ -7,7 +7,7 @@ on:
         required: false
 
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 3 * * *'
 jobs:
   surge-purge:
     runs-on: ubuntu-latest
@@ -16,6 +16,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
+
+      - name: Install surge
+        run: npm -g install surge
 
       - name: Teardown old domains
         run: npx zx scripts/purge_expired_domains.mjs --olderThan ${{ github.event.inputs.days || '10' }}
