@@ -21,7 +21,7 @@ async function main({ olderThan }) {
       creationDateStr.slice(12, 14)
     )
 
-    const daysDifference = Math.floor((now - creationDate) / (1000 * 60 * 60 * 24))
+    const daysDifference = (now - creationDate) / (1000 * 60 * 60 * 24);
     if (daysDifference > olderThan) {
       console.log(`Deleting ${domain}`)
       await $`surge teardown ${domain}`
@@ -30,5 +30,5 @@ async function main({ olderThan }) {
 }
 
 await main({
-  days: Number(argv.olderThan || '30'),
+  olderThan: argv.olderThan ?? 10,
 });
