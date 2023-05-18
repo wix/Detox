@@ -11,8 +11,9 @@ class exampleAndroid extends example {
   }
 
   async _registerEarlyCrashIfNeeded() {
-    // Never import this at top-level or it would trigger an initialization of the launch-arguments'
-    // native module too early (i.e. before the Activity has been initialized).
+    // Never import this at the index.js (i.e. RN entry point file) at top-level, or it would trigger an
+    // initialization of the launch-arguments' native-module too early (i.e. before the Android Activity has
+    // been initialized; It needs to be at the RESUMED state in order to be accessible from native-modules).
     const {LaunchArguments} = require('react-native-launch-arguments');
 
     if (LaunchArguments.value().simulateEarlyCrash) {
