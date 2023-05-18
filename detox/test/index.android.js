@@ -1,7 +1,6 @@
 import {
   AppRegistry,
 } from 'react-native';
-import {LaunchArguments} from 'react-native-launch-arguments';
 
 import example from './src/app';
 
@@ -12,6 +11,10 @@ class exampleAndroid extends example {
   }
 
   async _registerEarlyCrashIfNeeded() {
+    // Never import this at top-level or it would trigger an initialization of the launch-arguments'
+    // native module too early (i.e. before the Activity has been initialized).
+    const {LaunchArguments} = require('react-native-launch-arguments');
+
     if (LaunchArguments.value().simulateEarlyCrash) {
       console.warn('simulateEarlyCrash=true detected: Will crash in a few seconds from now (all-the-while keeping the app busy)...');
       this._setupBusyFutureCrash();
