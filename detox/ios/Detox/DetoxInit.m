@@ -42,7 +42,7 @@ static DetoxSyncDebugger* _detoxSyncDebugger;
 #endif
 
 __attribute__((constructor))
-static void detoxConditionalInit()
+static void detoxConditionalInit(void)
 {
 	__DTXInstallCrashHandlersIfNeeded();
 	

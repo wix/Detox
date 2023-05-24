@@ -27,7 +27,7 @@
 @end
 
 __attribute__((constructor))
-static void __setupRNSupport()
+static void __setupRNSupport(void)
 {
 	Class cls = NSClassFromString(@"RCTDevSettingsUserDefaultsDataSource");
 	if(cls != nil)
