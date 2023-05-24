@@ -39,8 +39,8 @@ Examples:
 
 ### In-App Arguments Access
 
-On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means.
+Our official recommendation for getting the arguments inside the app is by integrating the [react-native-launch-arguments](https://github.com/iamolegga/react-native-launch-arguments) project, which provides that seamlessly. For those who are interested, here are the underlying details:
 
-On Android, the launch arguments are set as bundle-extra’s into the activity’s intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
+* On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means.
 
-Further, handling of these launch arguments is up to the user’s responsibility and is out of scope for Detox.
+* On Android, the launch arguments are set as bundle-extra’s into the activity’s intent. They are therefore accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
