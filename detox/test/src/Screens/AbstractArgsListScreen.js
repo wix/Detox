@@ -4,7 +4,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import {LaunchArguments} from 'react-native-launch-arguments';
 
 export default class AbstractArgsListScreen extends Component {
 
