@@ -1,5 +1,5 @@
 name: "🛟 I Need Help - Approach the Maintainers"
-description: Ask a general how-to question. WE RECOMMEND ASKING FOR HELP ON DISCORD / STACK-OVERFLOW, FIRST!
+description: Ask a general how-to question. We recommend asking for help on Discord / Stack-Overflow, first!
 labels: ["user: need help"]
 body:
   - type: markdown
