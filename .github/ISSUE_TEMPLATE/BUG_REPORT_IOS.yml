@@ -1,5 +1,5 @@
-name: "Bug Report - iOS"
-description: Create a report to help us improve Detox on iOS
+name: "🐞 Bug Report - iOS"
+description: Report an iOS-specific bug to help us improve Detox
 labels: ["type: bug 🐞", "platform: ios", "status: triage"]
 body:
   - type: markdown
