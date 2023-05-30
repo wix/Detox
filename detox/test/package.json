@@ -42,7 +42,7 @@
     "react": "18.1.0",
     "react-native": "0.70.7",
     "react-native-gradle-plugin": "^0.0.7",
-    "react-native-launch-arguments": "next",
+    "react-native-launch-arguments": "^4.0.0",
     "react-native-webview": "^11.18.1"
   },
   "devDependencies": {
