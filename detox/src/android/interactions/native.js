@@ -2,7 +2,7 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const { expectDescription, actionDescription } = require('../../utils/invocationTraceDescriptions');
 const log = require('../../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../../utils/traceInvocationCall').bind(null, log);
-const { ScrollAmountStopAtEdgeAction } = require('../actions/native');
+const { ScrollAmountStopAtEdgeAction, SwipeAction } = require('../actions/native');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxAssertionApi = require('../espressoapi/DetoxAssertion');
 const EspressoDetoxApi = require('../espressoapi/EspressoDetox');
@@ -91,6 +91,12 @@ class WaitForActionInteraction extends WaitForActionInteractionBase {
   async scroll(amount, direction = 'down', scrollPositionX, scrollPositionY) {
     this._traceDescription = expectDescription.waitFor(actionDescription.scroll(amount, direction, scrollPositionX, scrollPositionY));
     this._prepare(new ScrollAmountStopAtEdgeAction(direction, amount, scrollPositionX, scrollPositionY));
+    await this.execute();
+  }
+
+  async swipe(direction = 'down', speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY) {
+    this._traceDescription = expectDescription.waitFor(actionDescription.swipe(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY));
+    this._prepare(new SwipeAction(direction, speed, normalizedSwipeOffset, normalizedStartingPointX, normalizedStartingPointY));
     await this.execute();
   }
 }
