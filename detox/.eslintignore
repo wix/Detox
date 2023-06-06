@@ -3,3 +3,5 @@
 /ios
 /android
 /test
+/allure-*
+/artifacts
