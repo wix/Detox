@@ -978,7 +978,7 @@ declare global {
              * Find an element by text, useful for text fields, buttons.
              * @example await element(by.text('Tap Me'));
              */
-            text(text: string): NativeMatcher;
+            text(text: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.

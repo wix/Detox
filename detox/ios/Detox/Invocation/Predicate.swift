@@ -16,6 +16,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
     static let predicate = "predicate"
     static let modifiers = "modifiers"
     static let predicates = "predicates"
+    static let isRegex = "isRegex"
   }
 
   struct Kind {
@@ -79,6 +80,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
         }
       case Kind.text:
         let text = dictionaryRepresentation[Keys.value] as! String
+        let isRegex = (dictionaryRepresentation[Keys.isRegex] as? Bool) ?? false
 
         var orPredicates = [
           try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextView.self)),
@@ -96,7 +98,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
         orCompoundPredicate.hidden = true
 
         return AndCompoundPredicate(predicates: [
-          ValuePredicate(kind: kind, modifiers: modifiers, value: text, requiresAccessibilityElement: false),
+          ValuePredicate(kind: kind, modifiers: modifiers, value: text, requiresAccessibilityElement: false, isRegex: isRegex),
           orCompoundPredicate
         ], modifiers: [])
       case Kind.id:
@@ -195,10 +197,12 @@ class KindOfPredicate : Predicate {
 class ValuePredicate : Predicate {
   let value : CustomStringConvertible
   let requiresAccessibilityElement: Bool
+  let isRegex: Bool
 
-  init(kind: String, modifiers: Set<String>, value: CustomStringConvertible, requiresAccessibilityElement: Bool) {
+  init(kind: String, modifiers: Set<String>, value: CustomStringConvertible, requiresAccessibilityElement: Bool, isRegex: Bool = false) {
     self.value = value
     self.requiresAccessibilityElement = requiresAccessibilityElement
+    self.isRegex = isRegex
 
     super.init(kind: kind, modifiers: modifiers)
   }
@@ -209,8 +213,17 @@ class ValuePredicate : Predicate {
         return false
       }
 
-      let value = self.getValue(evaluatedObject, fromKind: self.kind)
-      return value as? NSObject == self.value as? NSObject
+      let evaluatedValue = self.getValue(evaluatedObject, fromKind: self.kind)
+
+      guard let value = self.value as? String, let evaluatedValue = evaluatedValue as? String else {
+        return false
+      }
+
+      if self.isRegex {
+        return evaluatedValue.isMatch(to: value)
+      }
+
+      return evaluatedValue == value
     }
   }
 

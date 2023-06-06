@@ -90,6 +90,7 @@
 		39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
+		39CF46212A2E1F50004A0CA3 /* String+isMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CF46202A2E1F50004A0CA3 /* String+isMatch.swift */; };
 		39D7BF9D24EAE520003E0694 /* LNViewHierarchyDumper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */; };
 		39D7BF9E24EAE520003E0694 /* LNViewHierarchyDumper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
@@ -140,6 +141,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A71946A61C7EF890003B7C4A;
 			remoteInfo = COSTouchVisualizer;
+		};
+		39CF46232A2E1F50004A0CA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 602F956A274528ED00BAFA74;
+			remoteInfo = DetoxSyncTests;
 		};
 		39D7BF9424EAE510003E0694 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -277,6 +285,7 @@
 		39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxInstrumentsManager.h; sourceTree = "<group>"; };
 		39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxInstrumentsManager.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
+		39CF46202A2E1F50004A0CA3 /* String+isMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+isMatch.swift"; sourceTree = "<group>"; };
 		39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LNViewHierarchyDumper.xcodeproj; path = LNViewHierarchyDumper/LNViewHierarchyDumper/LNViewHierarchyDumper.xcodeproj; sourceTree = SOURCE_ROOT; };
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
@@ -533,6 +542,7 @@
 				AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */,
 				60E149C52759038F00519EE4 /* UIResponder+First.h */,
 				60E149C62759038F00519EE4 /* UIResponder+First.m */,
+				39CF46202A2E1F50004A0CA3 /* String+isMatch.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -589,6 +599,7 @@
 			isa = PBXGroup;
 			children = (
 				39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */,
+				39CF46242A2E1F50004A0CA3 /* DetoxSyncTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -758,6 +769,13 @@
 			remoteRef = 393E66E51FC5F3E90092EE89 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		39CF46242A2E1F50004A0CA3 /* DetoxSyncTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DetoxSyncTests.xctest;
+			remoteRef = 39CF46232A2E1F50004A0CA3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -844,6 +862,7 @@
 				39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */,
 				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
+				39CF46212A2E1F50004A0CA3 /* String+isMatch.swift in Sources */,
 				396D454425238B780096E7FA /* DetoxPolicy.m in Sources */,
 				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
 				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,

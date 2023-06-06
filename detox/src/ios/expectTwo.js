@@ -231,7 +231,7 @@ class Element {
 
   performAccessibilityAction(actionName) {
     if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
-    
+
     const traceDescription = actionDescription.performAccessibilityAction(actionName);
     return this.withAction('accessibilityAction', traceDescription, actionName);
   }
@@ -439,8 +439,13 @@ class Matcher {
   }
 
   text(text) {
-    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
-    this.predicate = { type: 'text', value: text };
+    if (Object.prototype.toString.call(text) === '[object RegExp]') {
+      this.predicate = { type: 'text', value: text.toString(), isRegex: true };
+    } else if (typeof text === 'string') {
+      this.predicate = { type: 'text', value: text };
+    } else {
+      throw new Error(`text should be a string, but got ` + (text + (' (' + (typeof text + ')'))));
+    }
     return this;
   }
 
