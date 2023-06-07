@@ -3,6 +3,7 @@
 package com.wix.detox.espresso.matcher
 
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
@@ -51,6 +52,18 @@ fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<V
             val sliderHelper = SliderHelper.create(view)
             val progressPct = sliderHelper.getCurrentProgressPct()
             return (abs(progressPct - expectedValuePct) <= tolerance)
+        }
+    }
+
+fun withRegexPattern(jsRegex: String): Matcher<View> =
+    object: BoundedMatcher<View, TextView>(TextView::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("withRegexPattern($jsRegex)")
+        }
+
+        override fun matchesSafely(view: TextView): Boolean {
+            val text = view.text?.toString()
+            return text?.isMatch(jsRegex) ?: false
         }
     }
 

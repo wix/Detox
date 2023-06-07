@@ -26,6 +26,18 @@ class DetoxMatcher {
     };
   }
 
+  static matcherForRegexText(jsRegex) {
+    if (typeof jsRegex !== "string") throw new Error("jsRegex should be a string, but got " + (jsRegex + (" (" + (typeof jsRegex + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForRegexText",
+      args: [jsRegex]
+    };
+  }
+
   static matcherForAccessibilityLabel(label) {
     if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
     return {

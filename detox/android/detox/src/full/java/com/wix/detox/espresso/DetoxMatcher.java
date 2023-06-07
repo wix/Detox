@@ -23,6 +23,7 @@ import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static com.wix.detox.espresso.matcher.ViewMatchers.toHaveSliderPosition;
 import static com.wix.detox.espresso.matcher.ViewMatchers.withAccessibilityLabel;
 import static com.wix.detox.espresso.matcher.ViewMatchers.withShallowAccessibilityLabel;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withRegexPattern;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -43,6 +44,10 @@ public class DetoxMatcher {
     public static Matcher<View> matcherForText(String text) {
         // return anyOf(withText(text), withContentDescription(text));
         return allOf(withText(text), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
+    public static Matcher<View> matcherForRegexText(String jsRegex) {
+        return allOf(withRegexPattern(jsRegex), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForAccessibilityLabel(String label) {

@@ -2,6 +2,7 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
+const isRegExp = require('../../utils/regexp');
 
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
@@ -53,7 +54,12 @@ class ExistsMatcher extends NativeMatcher {
 class TextMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
+    const isRegex = isRegExp(value);
+    if (isRegex) {
+      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForRegexText(value.toString()));
+    } else {
+      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
+    }
   }
 }
 

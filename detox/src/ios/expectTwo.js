@@ -9,6 +9,7 @@ const tempfile = require('tempfile');
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
+const isRegExp = require('../utils/regexp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
@@ -439,7 +440,7 @@ class Matcher {
   }
 
   text(text) {
-    if (Object.prototype.toString.call(text) === '[object RegExp]') {
+    if (isRegExp(text)) {
       this.predicate = { type: 'text', value: text.toString(), isRegex: true };
     } else if (typeof text === 'string') {
       this.predicate = { type: 'text', value: text };
