@@ -42,19 +42,18 @@ Match elements with the specified text.
 element(by.text('Tap Me'));
 ```
 
-You can use regex, use JS flags in order to:
+You can also use regex with support of the following JS flags:
 
-| Flag | Name	          | Modification                                                                                                                                       |
-|------|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| i    | Ignore Casing	 | Makes the expression search case-insensitively.                                                                                                    |
-| g    | Global         | Makes the expression search for all occurrences.                                                                                                   |
-| s    | Dot All	       | Makes the wild character . match newlines as well.                                                                                                 |
-| m    | Multiline	     | Makes the boundary characters ^ and $ match the beginning and ending of every single line instead of the beginning and ending of the whole string. |
-| y    | Sticky	        | Makes the expression start its searching from the index indicated in its lastIndex property.                                                       |
-| u    | Unicode	       | Makes the expression assume individual characters as code points, not code units, and thus match 32-bit characters as well.                        |
+| Flag | Name          | Modification                                                                                                                                       |
+|------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `i`  | Ignore Casing | Makes the expression search case-insensitively.                                                                                                    |
+| `s`  | Dot All       | Makes the wild character . match newlines as well.                                                                                                 |
+| `m`  | Multiline     | Makes the boundary characters ^ and $ match the beginning and ending of every single line instead of the beginning and ending of the whole string. |
+
+**Note:** JS flags like `g` (global) and `y` (sticky) that are not supported, as well as `u` (unicode) which is always implied, are ignored when parsing input.
 
 ```js
-element(by.text(/Tap [A-Za-z]+/isu));
+element(by.text(/Tap [A-Za-z]+/i));
 ```
 
 ### `by.type(className)`
