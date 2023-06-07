@@ -6,10 +6,10 @@ describe('Matchers', () => {
     await element(by.text('Matchers')).tap();
   });
 
-  it.only('should match elements by text', async () => {
+  it('should match elements by text', async () => {
     await element(by.label('Label')).tap();
     await expect(element(by.text("Label Working!!!"))).toBeVisible();
-    await expect(element(by.text(/^[A-Za-z]* WoRkInG!+$/i))).toBeVisible();
+    await expect(element(by.text(/^[a-z]* working!+$/i))).toBeVisible();
   });
 
   it('should match elements by (accessibility) label', async () => {
