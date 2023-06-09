@@ -7,21 +7,21 @@ const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAccessibilityLabel(value));
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAccessibilityLabel(value.toString(), isRegExp(value)));
   }
 }
 
 class ShallowLabelMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForShallowAccessibilityLabel(value));
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForShallowAccessibilityLabel(value.toString(), isRegExp(value)));
   }
 }
 
 class IdMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(value));
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(value.toString(), isRegExp(value)));
   }
 }
 
@@ -54,12 +54,7 @@ class ExistsMatcher extends NativeMatcher {
 class TextMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    const isRegex = isRegExp(value);
-    if (isRegex) {
-      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForRegexText(value.toString()));
-    } else {
-      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
-    }
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value.toString(), isRegExp(value)));
   }
 }
 

@@ -972,7 +972,7 @@ declare global {
              * // Then match with by.id:
              * await element(by.id('tap_me'));
              */
-            id(id: string): NativeMatcher;
+            id(id: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by text, useful for text fields, buttons.
@@ -984,7 +984,7 @@ declare global {
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
              * @example await element(by.label('Welcome'));
              */
-            label(label: string): NativeMatcher;
+            label(label: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by native view type.
