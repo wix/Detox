@@ -30,6 +30,8 @@ extension String {
 		guard let match = match else {
 			return false
 		}
+		
+		print("🚀\(searchRange == match.range)")
 
 		return searchRange == match.range
 	}

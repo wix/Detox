@@ -410,14 +410,14 @@ class Matcher {
   }
 
   label(label) {
-    if (typeof label !== 'string') throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
-    this.predicate = { type: 'label', value: label };
+    if (typeof label !== 'string' && !isRegExp(label)) throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
+    this.predicate = { type: 'label', value: label.toString(), isRegex: isRegExp(label) };
     return this;
   }
 
   id(id) {
-    if (typeof id !== 'string') throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
-    this.predicate = { type: 'id', value: id };
+    if (typeof id !== 'string' && !isRegExp(id)) throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
+    this.predicate = { type: 'id', value: id.toString(), isRegex: isRegExp(id) };
     return this;
   }
 
@@ -440,13 +440,8 @@ class Matcher {
   }
 
   text(text) {
-    if (isRegExp(text)) {
-      this.predicate = { type: 'text', value: text.toString(), isRegex: true };
-    } else if (typeof text === 'string') {
-      this.predicate = { type: 'text', value: text };
-    } else {
-      throw new Error(`text should be a string, but got ` + (text + (' (' + (typeof text + ')'))));
-    }
+    if (typeof text !== 'string' && !isRegExp(text)) throw new Error(`text should be a string, but got ` + (text + (' (' + (typeof text + ')'))));
+    this.predicate = { type: 'text', value: text.toString(), isRegex: isRegExp(text) };
     return this;
   }
 
