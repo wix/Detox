@@ -219,7 +219,7 @@ class ValuePredicate : Predicate {
       }
 
       if self.isRegex {
-        return evaluatedValue.isMatch(to: value)
+        return evaluatedValue.matchesJSRegex(to: value)
       }
 
       return evaluatedValue == value

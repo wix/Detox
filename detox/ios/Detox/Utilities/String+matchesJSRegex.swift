@@ -1,5 +1,5 @@
 //
-//  String+isMatch.swift (Detox)
+//  String+matchesJSRegex.swift (Detox)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 import Foundation
@@ -14,7 +14,7 @@ extension String {
 	/// Other flags (e.g. g,u,s) are not supported as they do not have equivalents in Swift.
 	///
 	/// - See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-	public func isMatch(to jsRegex: String) -> Bool {
+	public func matchesJSRegex(to jsRegex: String) -> Bool {
 		let flagsChars = flagsChars(from: jsRegex)
 		let pattern = pattern(from: jsRegex, flagsChars: flagsChars)
 		let options = regexOptions(from: flagsChars)
@@ -30,7 +30,7 @@ extension String {
 		guard let match = match else {
 			return false
 		}
-		
+
 		print("🚀\(searchRange == match.range)")
 
 		return searchRange == match.range

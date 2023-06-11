@@ -1,5 +1,22 @@
 package com.wix.detox.espresso.matcher
 
+import android.view.View
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+import androidx.test.espresso.matcher.BoundedMatcher
+
+fun createRegexMatcher(matcherDescription: String, regex: String, extractStringFromView: (view: View) -> String?): Matcher<View> =
+    object : BoundedMatcher<View, View>(View::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("$matcherDescription($regex)")
+        }
+
+        override fun matchesSafely(view: View): Boolean {
+            val extractedString = extractStringFromView(view);
+            return extractedString?.matchesJSRegex(regex) ?: false
+        }
+    }
+
 // Returns whether the whole string matches the given `jsRegex`.
 // JS flags has the format of `/<pattern>/<flags>`.
 // Flags can be either:
@@ -9,23 +26,23 @@ package com.wix.detox.espresso.matcher
 // Other flags (e.g. g,u,s) are not supported as they do not have equivalents in Kotlin.
 //
 // - See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-fun String.isMatch(jsRegex: String): Boolean {
+fun String.matchesJSRegex(jsRegex: String): Boolean {
     val flagsChars = getRegexFlags(jsRegex)
     val options = getRegexOptions(flagsChars)
     val pattern = getRegexPattern(jsRegex)
     return Regex(pattern, options).matches(this)
 }
 
-fun getRegexFlags(jsRegex: String): CharSequence {
+private fun getRegexFlags(jsRegex: String): CharSequence {
     return jsRegex.substringAfterLast("/")
 }
 
-fun getRegexPattern(jsRegex: String): String {
+private fun getRegexPattern(jsRegex: String): String {
     val pattern = jsRegex.substringAfter("/")
     return pattern.substringBeforeLast("/")
 }
 
-fun getRegexOptions(flagsChars: CharSequence): MutableSet<RegexOption> {
+private fun getRegexOptions(flagsChars: CharSequence): MutableSet<RegexOption> {
     val options = mutableSetOf<RegexOption>()
 
     if (flagsChars.contains('i', ignoreCase = true)) {

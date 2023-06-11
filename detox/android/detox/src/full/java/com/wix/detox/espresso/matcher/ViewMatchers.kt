@@ -26,11 +26,20 @@ fun withShallowAccessibilityLabel(label: String, isRegex: Boolean): Matcher<View
 fun withText(text: String, isRegex: Boolean): Matcher<View> =
     if (isRegex) withRegexText(text) else ViewMatchers.withText(text)
 
+private fun withRegexText(jsRegex: String): Matcher<View> =
+    createRegexMatcher("withRegexText", jsRegex) { view -> (view as? TextView)?.text?.toString() }
+
 fun withContentDescription(label: String, isRegex: Boolean): Matcher<View> =
     if (isRegex) withRegexContentDescription(label) else ViewMatchers.withContentDescription(label)
 
+private fun withRegexContentDescription(jsRegex: String): Matcher<View> =
+    createRegexMatcher("withRegexContentDescription", jsRegex) { view -> view.contentDescription?.toString() }
+
 fun withTagValue(testId: String, isRegex: Boolean): Matcher<View> =
     if (isRegex) withRegexTagValue(testId) else ViewMatchers.withTagValue(`is`(testId))
+
+private fun withRegexTagValue(jsRegex: String): Matcher<View> =
+    createRegexMatcher("withRegexTagValue", jsRegex) { view -> view.tag?.toString() }
 
 fun isOfClassName(className: String): Matcher<View> {
     try {
@@ -61,42 +70,6 @@ fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<V
             val sliderHelper = SliderHelper.create(view)
             val progressPct = sliderHelper.getCurrentProgressPct()
             return (abs(progressPct - expectedValuePct) <= tolerance)
-        }
-    }
-
-fun withRegexText(jsRegex: String): Matcher<View> =
-    object: BoundedMatcher<View, TextView>(TextView::class.java) {
-        override fun describeTo(description: Description) {
-            description.appendText("withRegexText($jsRegex)")
-        }
-
-        override fun matchesSafely(view: TextView): Boolean {
-            val text = view.text?.toString()
-            return text?.isMatch(jsRegex) ?: false
-        }
-    }
-
-fun withRegexTagValue(jsRegex: String): Matcher<View> =
-    object: BoundedMatcher<View, View>(View::class.java) {
-        override fun describeTo(description: Description) {
-            description.appendText("withRegexTagValue($jsRegex)")
-        }
-
-        override fun matchesSafely(view: View): Boolean {
-            val tag = view.tag?.toString()
-            return tag?.isMatch(jsRegex) ?: false
-        }
-    }
-
-fun withRegexContentDescription(jsRegex: String): Matcher<View> =
-    object: BoundedMatcher<View, View>(View::class.java) {
-        override fun describeTo(description: Description) {
-            description.appendText("withRegexContentDescription($jsRegex)")
-        }
-
-        override fun matchesSafely(view: View): Boolean {
-            val contentDescription = view.contentDescription?.toString()
-            return contentDescription?.isMatch(jsRegex) ?: false
         }
     }
 
