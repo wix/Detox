@@ -31,7 +31,7 @@ describe('Matchers', () => {
     await expect(element(by.text('ID Working!!!'))).toBeVisible();
   });
 
-  it.only('should match elements by regex (accessibility) id', async () => {
+  it('should match elements by regex (accessibility) id', async () => {
     await element(by.id(/UniqueId\d{3}/)).tap();
     await expect(element(by.text('ID Working!!!'))).toBeVisible();
   });
