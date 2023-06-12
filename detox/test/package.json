@@ -40,7 +40,7 @@
     "@react-native-segmented-control/segmented-control": "2.3.0",
     "moment": "^2.24.0",
     "react": "18.2.0",
-    "react-native": "0.71.8",
+    "react-native": "0.71.10",
     "react-native-gradle-plugin": "^0.0.7",
     "react-native-launch-arguments": "^4.0.0",
     "react-native-webview": "^11.18.1"

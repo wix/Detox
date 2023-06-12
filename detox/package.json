@@ -54,7 +54,7 @@
     "jest-allure2-reporter": "^1.2.1",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.71.8",
+    "react-native": "0.71.10",
     "react-native-codegen": "^0.0.8",
     "typescript": "^4.5.2",
     "wtfnode": "^0.9.1"

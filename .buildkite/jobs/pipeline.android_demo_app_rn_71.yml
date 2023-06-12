@@ -3,7 +3,7 @@
       - "nvm install"
       - "./scripts/demo-projects.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.71.8
+      REACT_NATIVE_VERSION: 0.71.10
       REACT_NATIVE_COMPAT_TEST: true
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true

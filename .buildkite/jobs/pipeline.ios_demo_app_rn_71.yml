@@ -3,7 +3,7 @@
       - "nvm install"
       - "./scripts/demo-projects.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.71.8
+      REACT_NATIVE_VERSION: 0.71.10
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
