@@ -68,7 +68,7 @@ dependencies {
         implementation("com.facebook.react:react-android")
     } else {
         // noinspection GradleDynamicVersion
-        fromBinImplementation('com.facebook.react:react-native:+')
+        implementation('com.facebook.react:react-native:+')
     }
 
     implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
