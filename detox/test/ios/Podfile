@@ -1,11 +1,12 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '12.4'
+platform :ios, '13.0'
+
 install! 'cocoapods', :deterministic_uuids => false
 
 def shared_pods
-  config = use_native_modules!
+    config = use_native_modules!
 
     if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70).*/)
       # Flags change depending on the env values.

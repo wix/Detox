@@ -2,34 +2,41 @@ buildscript {
     apply from: './rninfo.gradle'
 
     def androidGradlePluginVersion =
-            rnInfo.isRN70OrHigher ? '7.2.1'
-            : rnInfo.isRN69OrHigher ? '7.1.1'
-            : rnInfo.isRN68OrHigher ? '7.0.4'
-            : rnInfo.isRN66OrHigher ? '4.2.2'
-            : '4.1.0'
+        rnInfo.isRN71OrHigher ? '7.3.1'
+        : rnInfo.isRN70OrHigher ? '7.2.1'
+        : rnInfo.isRN69OrHigher ? '7.1.1'
+        : rnInfo.isRN68OrHigher ? '7.0.4'
+        : rnInfo.isRN66OrHigher ? '4.2.2'
+        : '4.1.0'
 
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
         isOfficialDetoxApp = true
-        kotlinVersion = '1.6.21'
-        buildToolsVersion = '31.0.0'
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        kotlinVersion = rnInfo.isRN71OrHigher ? '1.8.22' : '1.6.21'
+        buildToolsVersion = '33.0.0'
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         minSdkVersion = 21
-        appCompatVersion = (rnInfo.isRN68OrHigher ? '1.4.2' : '1.3.0')
+        appCompatVersion = rnInfo.isRN68OrHigher ? '1.4.2' : '1.3.0'
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
+        mavenCentral()
         google()
         mavenLocal()
-        mavenCentral()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath 'de.undercouch:gradle-download-task:5.0.1'
+
+        if (rnInfo.isRN71OrHigher) {
+            classpath 'com.facebook.react:react-native-gradle-plugin'
+        } else {
+            classpath 'de.undercouch:gradle-download-task:5.0.1'
+        }
+
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // Needed by Spek (https://spekframework.org/setup-android)
@@ -40,7 +47,14 @@ buildscript {
 
 allprojects {
     repositories {
+        // Which artifact has the RN android-native code, and where does it come from? That's a long story...
+        // In RN<.71, it is strictly com.facebook.react:react-native from node_modules/. It should be excluded from mavenCentral()
+        // In RN≥.71, it is strictly com.facebook.react:react-android in mavenCentral(), and was in fact removed from node_modules/. But
+        //   then what about other deps such as async-storage and community-slider, which still expect :react-native to be available? I
+        //   hate to say this for them we keep jcenter(), which still holds it.
+
         maven {
+            // Empty in RN≥.71, but needed for backwards compatibility.
             url "$rootDir/../../node_modules/react-native/android"
         }
         maven {
@@ -54,6 +68,7 @@ allprojects {
             }
         }
         google()
+        jcenter() // Only needed so that deps that still require :react-native (rather than :react-android) will have a source for that
         mavenLocal()
     }
 }
