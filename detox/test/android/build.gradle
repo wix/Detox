@@ -43,6 +43,10 @@ buildscript {
         // Here in order to enable unit-tests run from Android Studio when working on the test app.
         classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1'
     }
+
+    configurations {
+        all*.exclude group: 'com.facebook.react'
+    }
 }
 
 allprojects {

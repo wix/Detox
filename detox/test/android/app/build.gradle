@@ -103,13 +103,12 @@ dependencies {
     // 3. Pave through the wilderness
 //    fromSourceImplementation(project(path: ':ReactAndroid'))
 
-    implementation(project(path: ':react-native-launcharguments')) { exclude group: 'com.facebook.react', module: 'react-native' }
-    implementation(project(path: ':@react-native-community_slider')) { exclude group: 'com.facebook.react', module: 'react-native' }
-    implementation(project(path: ':AsyncStorage')) { exclude group: 'com.facebook.react', module: 'react-native' }
-    implementation(project(path: ':react-native-webview')) { exclude group: 'com.facebook.react', module: 'react-native' }
-    implementation(project(path: ':react-native-community-checkbox')) { exclude group: 'com.facebook.react', module: 'react-native' }
-    implementation(project(path: ':react-native-community-geolocation')) { exclude group: 'com.facebook.react', module: 'react-native' }
-    implementation(project(path: ':react-native-datetimepicker')) { exclude group: 'com.facebook.react', module: 'react-native' }
+    implementation(project(path: ':@react-native-community_slider')) { exclude group: 'com.facebook.react' }
+    implementation(project(path: ':AsyncStorage')) { exclude group: 'com.facebook.react' }
+    implementation(project(path: ':react-native-webview')) { exclude group: 'com.facebook.react' }
+    implementation(project(path: ':react-native-community-checkbox')) { exclude group: 'com.facebook.react' }
+    implementation(project(path: ':react-native-community-geolocation')) { exclude group: 'com.facebook.react' }
+    implementation(project(path: ':react-native-datetimepicker')) { exclude group: 'com.facebook.react' }
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
