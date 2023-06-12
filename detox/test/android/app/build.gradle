@@ -103,12 +103,12 @@ dependencies {
     // 3. Pave through the wilderness
 //    fromSourceImplementation(project(path: ':ReactAndroid'))
 
-    implementation(project(path: ':@react-native-community_slider')) { exclude group: 'com.facebook.react' }
-    implementation(project(path: ':AsyncStorage')) { exclude group: 'com.facebook.react' }
-    implementation(project(path: ':react-native-webview')) { exclude group: 'com.facebook.react' }
-    implementation(project(path: ':react-native-community-checkbox')) { exclude group: 'com.facebook.react' }
-    implementation(project(path: ':react-native-community-geolocation')) { exclude group: 'com.facebook.react' }
-    implementation(project(path: ':react-native-datetimepicker')) { exclude group: 'com.facebook.react' }
+    implementation(project(path: ':@react-native-community_slider'))
+    implementation(project(path: ':AsyncStorage'))
+    implementation(project(path: ':react-native-webview'))
+    implementation(project(path: ':react-native-community-checkbox'))
+    implementation(project(path: ':react-native-community-geolocation'))
+    implementation(project(path: ':react-native-datetimepicker'))
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
