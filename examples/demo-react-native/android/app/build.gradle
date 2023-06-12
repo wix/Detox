@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 apply from: '../rninfo.gradle'
 
-project.ext.react = [
-    enableHermes: true
-]
-
-apply from: '../../node_modules/react-native/react.gradle'
+if (rnInfo.isRN71OrHigher) {
+    apply plugin: "com.facebook.react"
+} else {
+    apply from: '../../node_modules/react-native/react.gradle'
+}
 
 android {
+    namespace 'com.example'
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
@@ -63,8 +64,12 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    // noinspection GradleDynamicVersion
-    implementation 'com.facebook.react:react-native:+'
+    if (rnInfo.isRN71OrHigher) {
+        implementation("com.facebook.react:react-android")
+    } else {
+        // noinspection GradleDynamicVersion
+        fromBinImplementation('com.facebook.react:react-native:+')
+    }
 
     implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
 
@@ -75,7 +80,9 @@ dependencies {
 
 // Apply Hermes as the JS engine
 dependencies {
-    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+    if (rnInfo.isRN71OrHigher) {
+        implementation("com.facebook.react:hermes-android")
+    } else if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
         implementation('com.facebook.react:hermes-engine:+') {
             exclude group: 'com.facebook.fbjni'
         }

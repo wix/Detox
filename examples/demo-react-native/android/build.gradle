@@ -2,17 +2,19 @@ buildscript {
     apply from: './rninfo.gradle'
 
     def androidGradlePluginVersion =
-        rnInfo.isRN69OrHigher ? '7.1.1'
-            : rnInfo.isRN68OrHigher ? '7.0.4'
-            : '4.2.2'
+        rnInfo.isRN71OrHigher ? '7.3.1' :
+        rnInfo.isRN70OrHigher ? '7.2.1' :
+        rnInfo.isRN69OrHigher ? '7.1.1' :
+        rnInfo.isRN68OrHigher ? '7.0.4' :
+        '4.2.2'
 
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
-        kotlinVersion = '1.6.21'
-        buildToolsVersion = '31.0.0'
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        kotlinVersion = rnInfo.isRN71OrHigher ? '1.8.22' : '1.6.21'
+        buildToolsVersion = '33.0.0'
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         minSdkVersion = 21
     }
 
@@ -23,7 +25,13 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath 'de.undercouch:gradle-download-task:5.0.1'
+
+        if (!rnInfo.isRN71OrHigher) {
+            classpath 'de.undercouch:gradle-download-task:5.0.1'
+        } else {
+            classpath "com.facebook.react:react-native-gradle-plugin"
+        }
+
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
