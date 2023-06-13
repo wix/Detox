@@ -55,22 +55,40 @@ describe('WaitFor', () => {
     }, timeout);
   });
 
-  custom.it.withFailureIf.android('should find element by scrolling until it is visible', async () => {
-    await expect(element(by.text('Text5'))).not.toBeVisible();
-
-    await goButton.tap();
-    await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down');
-    await expect(element(by.text('Text5'))).toBeVisible();
-  });
-
-  it('should fail test after waiting for element to exist but it doesn\'t at the end', async () => {
+  it('should fail with timeout if the element is not visible', async () => {
     await expect(element(by.id('neverAppearingText'))).not.toExist();
     await expectToThrow(() => waitFor(element(by.id('neverAppearingText'))).toExist().withTimeout(500));
   });
 
-  it('should abort scrolling if element was not found', async () => {
-    await goButton.tap();
-    await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down'));
-    await expect(element(by.text('Text1000'))).not.toBeVisible();
+  describe('with scroll', () => {
+    custom.it.withFailureIf.android('should wait until the element is visible', async () => {
+      await expect(element(by.text('Text5'))).not.toBeVisible();
+
+      await goButton.tap();
+      await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down');
+      await expect(element(by.text('Text5'))).toBeVisible();
+    });
+
+    it('should fail if the element is not visible after scrolling ends', async () => {
+      await goButton.tap();
+      await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down'));
+      await expect(element(by.text('Text1000'))).not.toBeVisible();
+    });
+  });
+
+  describe('with swipe', () => {
+    it('should wait until the element is visible', async () => {
+      await expect(element(by.text('Text5'))).not.toBeVisible();
+
+      await goButton.tap();
+      await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView')).swipe('up');
+      await expect(element(by.text('Text5'))).toBeVisible();
+    });
+
+    it('should fail if the element is not visible after swiping ends', async () => {
+      await goButton.tap();
+      await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).swipe('up'));
+      await expect(element(by.text('Text1000'))).not.toBeVisible();
+    });
   });
 });
