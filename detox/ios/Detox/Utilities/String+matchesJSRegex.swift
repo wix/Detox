@@ -31,8 +31,6 @@ extension String {
 			return false
 		}
 
-		print("🚀\(searchRange == match.range)")
-
 		return searchRange == match.range
 	}
 
