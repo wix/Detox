@@ -77,7 +77,7 @@ describe('WaitFor', () => {
   });
 
   describe('with swipe', () => {
-    it('should wait until the element is visible', async () => {
+    custom.it.withFailureIf.android('should wait until the element is visible', async () => {
       await expect(element(by.text('Text5'))).not.toBeVisible();
 
       await goButton.tap();

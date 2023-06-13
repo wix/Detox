@@ -11,17 +11,34 @@ describe(':android: Visibility-bug workaround for waitfor() api', () => {
     await element(by.text('FS Scroll Actions')).tap();
   });
 
-  it('should find element by scrolling until it is visible', async () => {
-    await expect(scrollViewDriver.lastItem()).not.toBeVisible();
-    await waitFor(scrollViewDriver.lastItem()).toBeVisible().whileElement(scrollViewDriver.byId()).scroll(200, 'down');
-    await expect(scrollViewDriver.lastItem()).toBeVisible();
+  describe('with scroll', () => {
+    it('should wait until the element is visible', async () => {
+      await expect(scrollViewDriver.lastItem()).not.toBeVisible();
+      await waitFor(scrollViewDriver.lastItem()).toBeVisible().whileElement(scrollViewDriver.byId()).scroll(200, 'down');
+      await expect(scrollViewDriver.lastItem()).toBeVisible();
+    });
+
+    it('should fail if the element is not visible after scrolling ends', async () => {
+      await expect(scrollViewDriver.fakeItem()).not.toBeVisible();
+      await expectToThrow(() => waitFor(scrollViewDriver.fakeItem()).toBeVisible().whileElement(scrollViewDriver.byId()).scroll(1000, 'down'));
+      await expect(scrollViewDriver.fakeItem()).not.toBeVisible();
+      await expect(scrollViewDriver.lastItem()).toBeVisible();
+    });
   });
 
-  it('should abort scrolling if element was not found', async () => {
-    await expect(scrollViewDriver.fakeItem()).not.toBeVisible();
-    await expectToThrow(() => waitFor(scrollViewDriver.fakeItem()).toBeVisible().whileElement(scrollViewDriver.byId()).scroll(1000, 'down'));
-    await expect(scrollViewDriver.fakeItem()).not.toBeVisible();
-    await expect(scrollViewDriver.lastItem()).toBeVisible();
+  describe('with swipe', () => {
+    it('should wait until the element is visible', async () => {
+      await expect(scrollViewDriver.lastItem()).not.toBeVisible();
+      await waitFor(scrollViewDriver.lastItem()).toBeVisible().whileElement(scrollViewDriver.byId()).swipe('up');
+      await expect(scrollViewDriver.lastItem()).toBeVisible();
+    });
+
+    it('should fail if the element is not visible after swiping ends', async () => {
+      await expect(scrollViewDriver.fakeItem()).not.toBeVisible();
+      await expectToThrow(() => waitFor(scrollViewDriver.fakeItem()).toBeVisible().whileElement(scrollViewDriver.byId()).swipe('up'));
+      await expect(scrollViewDriver.fakeItem()).not.toBeVisible();
+      await expect(scrollViewDriver.lastItem()).toBeVisible();
+    });
   });
 });
 
