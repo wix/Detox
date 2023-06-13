@@ -42,15 +42,15 @@ describe('expectTwo', () => {
     expect(testCall).toDeepEqual(jsonOutput);
   });
 
-  it(`should produce correct JSON for RegExp matcher`, async () => {
-    const testCall = await e.element(e.by.text(/tapMe/g)).tap();
+  it(`should produce correct JSON for RegExp text matcher`, async () => {
+    const testCall = await e.element(e.by.text(/tapMe/)).tap();
     const jsonOutput = {
       invocation: {
         type: 'action',
         action: 'tap',
         predicate: {
           type: 'text',
-          value: '/tapMe/g',
+          value: '/tapMe/',
           isRegex: true,
         }
       }
@@ -109,6 +109,33 @@ describe('expectTwo', () => {
     expect(testCall).toDeepEqual(jsonOutput);
   });
 
+  it(`should produce correct JSON for element with RegExp id and text matchers`, async () => {
+    const testCall = await e.element(e.by.id(/uniqueId/).and(e.by.text(/some text/))).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'and',
+          predicates: [
+            {
+              type: 'id',
+              value: '/uniqueId/',
+              isRegex: true,
+            },
+            {
+              type: 'text',
+              value: '/some text/',
+              isRegex: true,
+            }
+          ]
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
   it(`should produce correct JSON for element with ancestor matcher`, async () => {
     const testCall = await e.element(e.by.id('child').withAncestor(e.by.id('parent'))).tap();
     const jsonOutput = {
@@ -132,6 +159,53 @@ describe('expectTwo', () => {
               }
             }
           ]
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for element with regex ancestor matcher`, async () => {
+    const testCall = await e.element(e.by.id('child').withAncestor(e.by.id(/parent/))).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'and',
+          predicates: [
+            {
+              type: 'id',
+              value: 'child',
+              isRegex: false,
+            },
+            {
+              type: 'ancestor',
+              predicate: {
+                type: 'id',
+                value: '/parent/',
+                isRegex: true,
+              }
+            }
+          ]
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for element with regex label`, async () => {
+    const testCall = await e.element(e.by.label(/tapMe/)).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'label',
+          value: '/tapMe/',
+          isRegex: true,
         }
       }
     };
