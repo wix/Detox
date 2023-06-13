@@ -49,9 +49,9 @@ describe('AndroidExpect', () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel('label');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveLabel('label');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveLabel('label');
-      await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel(/label/);
-      await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveLabel(/label/);
-      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveLabel(/label/);
+      await e.expect(e.element(e.by.accessibilityLabel(/test/))).toHaveLabel(/label/);
+      await e.expect(e.element(e.by.accessibilityLabel(/test/))).toNotHaveLabel(/label/);
+      await e.expect(e.element(e.by.accessibilityLabel(/test/))).not.toHaveLabel(/label/);
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveId('id');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveId('id');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveId('id');
