@@ -29,7 +29,7 @@ Detox tries to eliminate flakiness by automatically synchronizing your tests wit
 
 :::info
 
-In this synchronization process, the [`session.debugSynchronization`](../config/session.mdx#sessiondebugsynchronization-number) setting in your Detox configuration plays a significant role. This setting, enabled by default, keeps an eye on tasks that are keeping the app busy and logs the details if these actions take longer than the specified value to complete. If you need to reduce these logs for troubleshooting test delays or synchronization issues, setting it to zero will disable them.
+In this synchronization process, [`session.debugSynchronization`](../config/session.mdx#sessiondebugsynchronization-number) plays a significant role. This setting, enabled by default, keeps an eye on tasks that are keeping the app busy and logs the details if these actions take longer than the specified value to complete.
 
 :::
 
