@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.facebook.react'
 apply from: '../rninfo.gradle'
 
-project.ext.react = [
-    enableHermes: true
-]
-apply from: '../../node_modules/react-native/react.gradle'
+react {
+  // TODO?
+}
 
 android {
+    namespace 'com.example'
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
@@ -80,18 +82,18 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation project(path: ':@react-native-community_slider')
-
-    // noinspection GradleDynamicVersion
-    fromBinImplementation('com.facebook.react:react-native:+')
+    // The version of react-native is set by the React Native Gradle Plugin
+    fromBinImplementation('com.facebook.react:react-android')
 
     // In order to build from source:
     // 1. Uncomment the fromSourceImplementation() statement
     // 2. Uncomment associated section in settings.gradle
     // 3. Pave through the wilderness
 //    fromSourceImplementation(project(path: ':ReactAndroid'))
+
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation project(path: ':@react-native-community_slider')
 
     implementation project(':AsyncStorage')
     implementation project(':react-native-webview')
@@ -106,15 +108,7 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
-        implementation('com.facebook.react:hermes-engine:+') {
-            exclude group: 'com.facebook.fbjni'
-        }
-    } else {
-        def hermesPath = '../../node_modules/hermes-engine/android'
-        debugImplementation files("$hermesPath/hermes-debug.aar")
-        releaseImplementation files("$hermesPath/hermes-release.aar")
-    }
+    implementation("com.facebook.react:hermes-android")
 }
 
 // Run this once to be able to run the application with BUCK
