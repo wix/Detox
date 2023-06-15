@@ -2,21 +2,21 @@ package com.example;
 
 import android.app.Application;
 
-import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.react.shell.MainReactPackage;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import com.reactnativelauncharguments.LaunchArgumentsPackage;
 
 import java.util.Arrays;
 import java.util.List;
 
-class DetoxRNHost extends ReactNativeHost {
+class DetoxRNHost extends DefaultReactNativeHost {
     protected DetoxRNHost(Application application) {
         super(application);
     }
@@ -24,6 +24,16 @@ class DetoxRNHost extends ReactNativeHost {
     @Override
     public boolean getUseDeveloperSupport() {
         return BuildConfig.DEBUG;
+    }
+
+    @Override
+    protected boolean isNewArchEnabled() {
+        return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+    }
+
+    @Override
+    protected Boolean isHermesEnabled() {
+        return BuildConfig.IS_HERMES_ENABLED;
     }
 
     @Override
