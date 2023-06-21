@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 14
       - name: Bootstrap Lerna
-        run: npx lerna bootstrap --no-ci
+        run: npx lerna@3 bootstrap --no-ci
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
@@ -57,7 +57,7 @@ jobs:
             with:
                 node-version: 14
           - name: Bootstrap Lerna (Light)
-            run: npx lerna bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
+            run: npx lerna@3 bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
             env:
                 DETOX_DISABLE_POD_INSTALL: true
                 DETOX_DISABLE_POSTINSTALL: true
