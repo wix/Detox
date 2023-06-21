@@ -36,7 +36,10 @@ class AppStartCommand {
       }
     };
 
-    this._cpHandle = execa.command(cmd, { stdio: 'inherit', shell: true });
+    this._cpHandle = execa.command(cmd, {
+      stdio: ['ignore', 'inherit', 'inherit'],
+      shell: true
+    });
     this._cpHandle.on('error', onError);
     this._cpHandle.on('exit', (code, signal) => {
       const reason = code == null ? `signal ${signal}` : `code ${code}`;
