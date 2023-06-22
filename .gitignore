@@ -15,6 +15,7 @@ pids
 lib-cov
 
 # Allure reports
+allure-report-*.html
 allure-report
 allure-results
 # Coverage directory used by tools like istanbul

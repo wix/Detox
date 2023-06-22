@@ -19,7 +19,6 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.WritableMap;
 
 public class NativeModule extends ReactContextBaseJavaModule {
 
@@ -79,11 +78,6 @@ public class NativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getLaunchArguments(Promise promise) {
-        promise.resolve(parseIntentExtras("launchArgs"));
-    }
-
-    @ReactMethod
     public void parseNotificationData(String innerKey, Promise promise) {
         Bundle data = getIntentExtras(innerKey);
         data.remove("launchArgs");
@@ -120,11 +114,6 @@ public class NativeModule extends ReactContextBaseJavaModule {
         rnExtension.toggleUISynchronization(enable);
         rnExtension.toggleTimersSynchronization(enable);
         rnExtension.toggleNetworkSynchronization(enable);
-    }
-
-    private WritableMap parseIntentExtras(String bundleKey) {
-        Bundle extras = getIntentExtras(bundleKey);
-        return Arguments.fromBundle(extras);
     }
 
     private Bundle getIntentExtras(String bundleKey) {

@@ -8,5 +8,5 @@
       DETOX_DISABLE_POSTINSTALL: true
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/allure*.tar.gz"
+      - "/Users/builder/work/**/allure-report-*.html"
       - "/Users/builder/work/artifacts*.tar.gz"

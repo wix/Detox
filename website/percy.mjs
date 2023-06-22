@@ -39,7 +39,7 @@ class Server {
       this.childPromise.stdout.on('data', (data) => {
         if (`${data}`.startsWith('[SUCCESS] Serving')) {
           clearTimeout(handle);
-          resolve();
+          setTimeout(resolve, 2000);
         }
       });
     });

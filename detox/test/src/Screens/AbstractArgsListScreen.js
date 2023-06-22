@@ -51,7 +51,7 @@ export default class AbstractArgsListScreen extends Component {
 
   renderArgsList() {
     return _.reduce(this.state.argsList, (result, argValue, argName) => {
-      const _argValue = (_.isArray(argValue) || _.isObject(argValue) ? JSON.stringify(argValue) : argValue);
+      const _argValue = (_.isArray(argValue) || _.isObject(argValue) ? JSON.stringify(argValue) : argValue.toString());
       const itemId = `${this.contextName}-${argName}`;
       const nameId = itemId + '.name';
       const valueId = itemId + '.value';

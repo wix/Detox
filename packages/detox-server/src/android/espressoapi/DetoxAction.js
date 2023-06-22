@@ -233,6 +233,18 @@ class DetoxAction {
     };
   }
 
+  static accessibilityAction(actionName) {
+    if (typeof actionName !== "string") throw new Error("actionName should be a string, but got " + (actionName + (" (" + (typeof actionName + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "accessibilityAction",
+      args: [actionName]
+    };
+  }
+
   static parseDateISO8601(dateString) {
     if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
     return {

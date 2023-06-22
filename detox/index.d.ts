@@ -790,7 +790,7 @@ declare global {
             setLocation(lat: number, lon: number): Promise<void>;
 
             /**
-             * Disable EarlGrey's network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
+             * Disable network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
              */
@@ -1379,6 +1379,13 @@ declare global {
              * await element(by.id('datePicker')).setDatePickerDate('2023/01/01', 'yyyy/MM/dd');
              */
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
+
+            /**
+             * Triggers a given [accessibility action]{@link https://reactnative.dev/docs/accessibility#accessibility-actions}.
+             * @param actionName - name of the accessibility action
+             * @example await element(by.id('view')).performAccessibilityAction('activate');
+             */
+            performAccessibilityAction(actionName: string): Promise<void>
 
             /**
              * Pinches in the given direction with speed and angle. (iOS only)
