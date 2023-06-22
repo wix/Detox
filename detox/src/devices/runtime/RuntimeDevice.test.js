@@ -22,7 +22,7 @@ describe('Device', () => {
     DeviceDriverBase = require('./drivers/DeviceDriverBase');
 
     jest.mock('../../client/Client');
-    Client = require('../../client/Client');
+    Client = require('../../client/AppConnection');
 
     jest.mock('../../utils/AsyncEmitter');
     const AsyncEmitter = require('../../utils/AsyncEmitter');

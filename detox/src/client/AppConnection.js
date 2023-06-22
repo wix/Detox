@@ -14,7 +14,7 @@ const log = require('../utils/logger').child({ cat: 'ws-client,ws' });
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 
-class Client {
+class AppConnection {
   /**
    * @param {number} debugSynchronization
    * @param {string} server
@@ -383,4 +383,4 @@ class Client {
   }
 }
 
-module.exports = Client;
+module.exports = AppConnection;

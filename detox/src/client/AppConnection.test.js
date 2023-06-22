@@ -9,12 +9,12 @@ const Deferred = require('../utils/Deferred');
 
 const actions = require('./actions/actions');
 
-describe('Client', () => {
+describe('AppConnection', () => {
   let log;
   let sessionConfig;
-  let Client;
-  /** @type {Client} */
-  let client;
+  let AppConnection;
+  /** @type {AppConnection} */
+  let appConnection;
   /** @type {AsyncWebSocket} */
   let mockAws;
   let DetoxRuntimeError;
@@ -90,15 +90,15 @@ describe('Client', () => {
       };
     });
 
-    Client = require('./Client');
-    client = new Client(sessionConfig);
+    AppConnection = require('./AppConnection');
+    appConnection = new AppConnection(sessionConfig);
     ({ DetoxInternalError, DetoxRuntimeError } = require('../errors'));
   });
 
   describe('.isConnected', () => {
     it('should be false if the web socket is closed', () => {
       mockAws.isOpen = false;
-      expect(client.isConnected).toBe(false);
+      expect(appConnection.isConnected).toBe(false);
     });
 
     it('should be false if the web socket is closed although app has sent the "appConnected" message previously', () => {
@@ -106,25 +106,25 @@ describe('Client', () => {
       mockAws.mockEventCallback('appConnected');
       mockAws.isOpen = false;
 
-      expect(client.isConnected).toBe(false);
+      expect(appConnection.isConnected).toBe(false);
     });
 
     it('should be false if the server has not sent the "appConnected" message', () => {
       mockAws.isOpen = true;
-      expect(client.isConnected).toBe(false);
+      expect(appConnection.isConnected).toBe(false);
     });
 
     it('should be true if the web socket is open and the server has sent "appConnected" message', () => {
-      expect(client.isConnected).toBe(false);
+      expect(appConnection.isConnected).toBe(false);
       mockAws.isOpen = true;
       mockAws.mockEventCallback('appConnected');
-      expect(client.isConnected).toBe(true);
+      expect(appConnection.isConnected).toBe(true);
     });
   });
 
   describe('.serverUrl', () => {
     it('should return sessionConfig.server', () => {
-      expect(client.serverUrl).toBe(sessionConfig.server);
+      expect(appConnection.serverUrl).toBe(sessionConfig.server);
     });
   });
 
@@ -132,7 +132,7 @@ describe('Client', () => {
     it('should open the web socket', async () => {
       mockAws.mockResponse('loginSuccess', {});
       expect(mockAws.open).not.toHaveBeenCalled();
-      await client.open();
+      await appConnection.open();
       expect(mockAws.open).toHaveBeenCalled();
     });
   });
@@ -141,32 +141,32 @@ describe('Client', () => {
     it('should open the web socket', async () => {
       mockAws.mockResponse('loginSuccess', {});
       expect(mockAws.open).not.toHaveBeenCalled();
-      await client.connect();
+      await appConnection.connect();
       expect(mockAws.open).toHaveBeenCalled();
     });
 
     it('should send "login" action', async () => {
       mockAws.mockResponse('loginSuccess', {});
       expect(mockAws.send).not.toHaveBeenCalled();
-      await client.connect();
+      await appConnection.connect();
       expect(mockAws.send).toHaveBeenCalledWith(new actions.Login(validSession.sessionId), SEND_OPTIONS.TIMED_SHORT);
     });
 
     it('should not consider itself connected to the app if "loginSuccess" params.appConnected = false', async () => {
       mockAws.__appConnected = false;
-      await client.connect();
-      expect(client.isConnected).toBe(false);
+      await appConnection.connect();
+      expect(appConnection.isConnected).toBe(false);
     });
 
     it('should consider itself connected to the app if "loginSuccess" params.appConnected = true', async () => {
       mockAws.__appConnected = true;
-      await client.connect();
-      expect(client.isConnected).toBe(true);
+      await appConnection.connect();
+      expect(appConnection.isConnected).toBe(true);
     });
 
     it('should not schedule "currentStatus" query for the "login" action', async () => {
       mockAws.mockBusy();
-      client.connect();
+      appConnection.connect();
       await Promise.resolve();
       expect(jest.getTimerCount()).toBe(0);
     });
@@ -185,7 +185,7 @@ describe('Client', () => {
     }
 
     beforeEach(async () => {
-      await client.connect();
+      await appConnection.connect();
     });
 
     it('should throw error for actions without isAtomic', async () => {
@@ -238,12 +238,12 @@ describe('Client', () => {
     });
 
     it('should not schedule "currentStatus" query if config.debugSynchronization = 0', async () => {
-      client = new Client({
+      appConnection = new AppConnection({
         ...sessionConfig,
         debugSynchronization: 0,
       });
 
-      await client.connect();
+      await appConnection.connect();
       await simulateInFlightAction();
 
       expect(jest.getTimerCount()).toBe(0);
@@ -290,7 +290,7 @@ describe('Client', () => {
 
     it('should unschedule "currentStatus" query on unforeseen non-async errors', async () => {
       mockAws.mockSyncError('Socket error');
-      await expect(client.sendAction(anAction())).rejects.toThrow('Socket error');
+      await expect(appConnection.sendAction(anAction())).rejects.toThrow('Socket error');
       expect(jest.getTimerCount()).toBe(0);
     });
 
@@ -317,13 +317,13 @@ describe('Client', () => {
       const testError = new Error('GenericServerError');
       mockAws.mockResponse('serverError', { error: serializeError(testError) });
 
-      await expect(client.sendAction(anAction())).rejects.toThrowError('GenericServerError');
+      await expect(appConnection.sendAction(anAction())).rejects.toThrowError('GenericServerError');
     });
 
     it('should pass action to async web socket', async () => {
       mockAws.mockResponse('whateverDone');
       const action = anAction();
-      await client.sendAction(action);
+      await appConnection.sendAction(action);
       expect(mockAws.send).toHaveBeenCalledWith(action, SEND_OPTIONS.DEFAULT);
     });
 
@@ -336,7 +336,7 @@ describe('Client', () => {
         },
       };
       mockAws.mockResponse(response.type, response.params);
-      await client.sendAction(action);
+      await appConnection.sendAction(action);
       expect(action.handle).toHaveBeenCalledWith(response);
     });
 
@@ -345,7 +345,7 @@ describe('Client', () => {
       action.handle.mockResolvedValue(42);
 
       mockAws.mockResponse('whateverDone');
-      await expect(client.sendAction(action)).resolves.toBe(42);
+      await expect(appConnection.sendAction(action)).resolves.toBe(42);
     });
   });
 
@@ -365,12 +365,12 @@ describe('Client', () => {
       ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }],
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
-        await client.connect();
+        await appConnection.connect();
       });
 
       it(`should receive "${expectedResponseType}" from device and resolve`, async () => {
         mockAws.mockResponse(expectedResponseType, expectedResponseParams);
-        await client[methodName](params);
+        await appConnection[methodName](params);
 
         const action = new Action(params);
         expect(mockAws.send).toHaveBeenCalledWith(action, { timeout: expect.any(Number) });
@@ -378,34 +378,34 @@ describe('Client', () => {
 
       it(`should throw on a wrong response from device`, async () => {
         mockAws.mockResponse('boo');
-        await expect(client[methodName](params)).rejects.toThrowError();
+        await expect(appConnection[methodName](params)).rejects.toThrowError();
       });
     });
   });
 
   describe('.waitUntilDisconnected()', () => {
     it(`should be resolved before connecting to the app`, async () => {
-      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      const result = await Promise.race([appConnection.waitUntilDisconnected(), Promise.resolve('pending')]);
       expect(result).not.toBe('pending');
     });
 
     it(`should be pending after connecting to the app`, async () => {
-      await client.connect();
-      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      await appConnection.connect();
+      const result = await Promise.race([appConnection.waitUntilDisconnected(), Promise.resolve('pending')]);
       expect(result).toBe('pending');
     });
 
     it(`should be resolve after the app disconnects`, async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockEventCallback('appDisconnected', {});
-      const result = await Promise.race([client.waitUntilDisconnected(), Promise.resolve('pending')]);
+      const result = await Promise.race([appConnection.waitUntilDisconnected(), Promise.resolve('pending')]);
       expect(result).not.toBe('pending');
     });
   });
 
   describe('.captureViewHierarchy()', () => {
     beforeEach(async () => {
-      await client.connect();
+      await appConnection.connect();
     });
 
     it(`should throw an error if the response has "captureViewHierarchyError" in params`, async () => {
@@ -414,7 +414,7 @@ describe('Client', () => {
       });
 
       const viewHierarchyURL = tempfile('.viewhierarchy');
-      await expect(client.captureViewHierarchy({ viewHierarchyURL })).rejects.toThrowError(/Test error to check/m);
+      await expect(appConnection.captureViewHierarchy({ viewHierarchyURL })).rejects.toThrowError(/Test error to check/m);
     });
   });
 
@@ -423,71 +423,71 @@ describe('Client', () => {
       await simulateInFlightAction();
       expect(jest.getTimerCount()).toBe(1);
 
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(jest.getTimerCount()).toBe(0);
     });
 
     it('should not send cleanup action if it is not connected to the app', async () => {
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.send).not.toHaveBeenCalled();
     });
 
     it('should not send cleanup action if the app is crashing', async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.send.mockReset();
       mockAws.mockEventCallback('AppWillTerminateWithError', {
         params: { errorDetails: new Error() }
       });
 
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.send).not.toHaveBeenCalled();
     });
 
     it('should send cleanup action to the app', async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockResponse('cleanupDone');
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(true), SEND_OPTIONS.TIMED);
     });
 
     it('should send cleanup action (stopRunner=false) to the app if there were failed invocations', async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockResponse('testFailed', { details: 'SomeDetails' });
-      await expect(client.execute(anInvocation)).rejects.toThrowError(/Test Failed.*SomeDetails/);
+      await expect(appConnection.execute(anInvocation)).rejects.toThrowError(/Test Failed.*SomeDetails/);
       mockAws.mockResponse('cleanupDone');
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(false), SEND_OPTIONS.TIMED);
     });
 
     it('should close the websocket upon "cleanupDone" from the app', async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockResponse('cleanupDone');
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.close).toHaveBeenCalled();
     });
 
     it('should close the websocket even if getting "cleanupDone" fails', async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockResponse('serverError');
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.close).toHaveBeenCalled();
     });
 
     it('should close the websocket even on an inner error', async () => {
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockSyncError('MyError');
-      await client.cleanup();
+      await appConnection.cleanup();
       expect(mockAws.close).toHaveBeenCalled();
       expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('MyError'));
     });
 
     it('should not bail even if the world is crashing, instead it should log errors and exit calmly', async () => {
-      await client.connect();
+      await appConnection.connect();
 
       mockAws.send.mockRejectedValue('MyError1');
       mockAws.close.mockRejectedValue('MyError2');
 
-      await client.cleanup();
+      await appConnection.cleanup();
 
       expect(mockAws.close).toHaveBeenCalled();
       expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('MyError1'));
@@ -495,27 +495,27 @@ describe('Client', () => {
     });
 
     it('should delete the injected .terminateApp method', async () => {
-      const injected = client.terminateApp = jest.fn();
-      await client.cleanup();
-      expect(client.terminateApp).not.toBe(injected);
+      const injected = appConnection.terminateApp = jest.fn();
+      await appConnection.cleanup();
+      expect(appConnection.terminateApp).not.toBe(injected);
     });
   });
 
   describe('.execute()', () => {
     beforeEach(async () => {
-      await client.connect();
+      await appConnection.connect();
     });
 
     test(`"invokeResult" on an invocation object should return invokeResult`, async () => {
       mockAws.mockResponse('invokeResult', { result: 'some_result' });
       const invokeObject = anInvocation();
-      const invokeResult = await client.execute(invokeObject);
+      const invokeResult = await appConnection.execute(invokeObject);
       expect(invokeResult).toEqual({ result: 'some_result' });
     });
 
     test(`"invokeResult" on an invocation function should resolve`, async () => {
       mockAws.mockResponse('invokeResult', { result: 'some_result' });
-      const invokeResult = await client.execute(anInvocation);
+      const invokeResult = await appConnection.execute(anInvocation);
       expect(invokeResult).toEqual({ result: 'some_result' });
     });
 
@@ -525,7 +525,7 @@ describe('Client', () => {
     ])(`should throw "testFailed" error with view hierarchy (on --loglevel %s)`, async (loglevel) => {
       log._level.mockReturnValue(loglevel);
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(appConnection.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it.each([
@@ -535,7 +535,7 @@ describe('Client', () => {
     ])(`should throw "testFailed" error without view hierarchy but with a hint (on --loglevel %s)`, async (loglevel) => {
       log._level.mockReturnValue(loglevel);
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
-      const executionPromise = client.execute(anInvocation);
+      const executionPromise = appConnection.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
@@ -543,26 +543,26 @@ describe('Client', () => {
     it(`should throw "testFailed" error even if it has no a view hierarchy`, async () => {
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: undefined });
 
-      const executionPromise = client.execute(anInvocation);
+      const executionPromise = appConnection.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should rethrow an "error" result`, async () => {
       mockAws.mockResponse('error',  { error: 'this is an error' });
-      const executionPromise = client.execute(anInvocation);
+      const executionPromise = appConnection.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
     });
 
     it(`should throw even if a non-error object is thrown`, async () => {
       mockAws.send.mockRejectedValueOnce('non-error');
-      await expect(client.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(appConnection.execute(anInvocation)).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it(`should throw on an unsupported result`, async () => {
       mockAws.mockResponse('unsupportedResult',  { foo: 'bar' });
-      const executionPromise = client.execute(anInvocation);
+      const executionPromise = appConnection.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
       await expect(executionPromise).rejects.toThrowError(DetoxInternalError);
     });
@@ -570,24 +570,24 @@ describe('Client', () => {
 
   describe('.dumpPendingRequests()', () => {
     beforeEach(async () => {
-      await client.connect();
+      await appConnection.connect();
     });
 
     describe('if there was a prior unsuccessful attempt to launch the app launch', () => {
       beforeEach(async () => {
         mockAws.mockEventCallback('appDisconnected');
-        client.waitUntilReady();
+        appConnection.waitUntilReady();
       });
 
       it(`should log an error about the app being unreachable over web sockets`, async () => {
-        await client.dumpPendingRequests();
+        await appConnection.dumpPendingRequests();
         expect(log.error.mock.calls[0][0]).toEqual({ event: 'APP_UNREACHABLE' });
         expect(log.error.mock.calls[0][1]).toMatch(/Detox can't seem to connect to the test app./);
       });
     });
 
     it(`should not dump if there are no pending requests`, async () => {
-      client.dumpPendingRequests();
+      appConnection.dumpPendingRequests();
       expect(log.warn).not.toHaveBeenCalled();
     });
 
@@ -596,7 +596,7 @@ describe('Client', () => {
       currentStatus.message = new actions.CurrentStatus();
       mockAws.inFlightPromises = { 1: currentStatus };
 
-      client.dumpPendingRequests();
+      appConnection.dumpPendingRequests();
       expect(log.warn).not.toHaveBeenCalled();
     });
 
@@ -612,20 +612,20 @@ describe('Client', () => {
       });
 
       it(`should dump generic message if not testName is specified`, async () => {
-        client.dumpPendingRequests();
+        appConnection.dumpPendingRequests();
         expect(log.warn.mock.calls[0][0]).toEqual({ event: 'PENDING_REQUESTS' });
         expect(log.warn.mock.calls[0][1]).toMatch(/Unresponded network requests/);
       });
 
       it(`should dump specific message if testName is specified`, async () => {
-        client.dumpPendingRequests({ testName: 'Login screen should log in' });
+        appConnection.dumpPendingRequests({ testName: 'Login screen should log in' });
         expect(log.warn.mock.calls[0][0]).toEqual({ event: 'PENDING_REQUESTS' });
         expect(log.warn.mock.calls[0][1]).toMatch(/Login screen should log in/);
       });
 
       it(`should reset in flight promises`, async () => {
         expect(mockAws.resetInFlightPromises).not.toHaveBeenCalled();
-        client.dumpPendingRequests();
+        appConnection.dumpPendingRequests();
         expect(mockAws.resetInFlightPromises).toHaveBeenCalled();
       });
     });
@@ -645,14 +645,14 @@ describe('Client', () => {
   describe('.waitUntilReady()', () => {
     it('should wait until connected, then send Ready action', async () => {
       let isReady = false;
-      client.waitUntilReady().then(() => { isReady = true; });
+      appConnection.waitUntilReady().then(() => { isReady = true; });
 
       await fastForwardAllPromises();
       expect(isReady).toBe(false);
       expect(mockAws.send).not.toHaveBeenCalled();
 
       mockAws.__appConnected = false;
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockEventCallback('appConnected');
       mockAws.mockResponse('ready');
       await fastForwardAllPromises();
@@ -662,13 +662,13 @@ describe('Client', () => {
 
     it('should wait until connected and ready, if the app sends ready status beforehand', async () => {
       let isReady = false;
-      client.waitUntilReady().then(() => { isReady = true; });
+      appConnection.waitUntilReady().then(() => { isReady = true; });
 
       mockAws.mockEventCallback('ready');
       await fastForwardAllPromises();
       expect(isReady).toBe(false);
 
-      await client.connect();
+      await appConnection.connect();
       await fastForwardAllPromises();
       expect(isReady).toBe(true);
       expect(mockAws.send).not.toHaveBeenCalledWith(new actions.Ready(), expect.anything());
@@ -677,34 +677,34 @@ describe('Client', () => {
 
   describe('on AppWillTerminateWithError', () => {
     it('should schedule the app termination in 5 seconds, and reject pending', async () => {
-      jest.spyOn(client, 'terminateApp');
+      jest.spyOn(appConnection, 'terminateApp');
 
-      await client.connect();
+      await appConnection.connect();
 
       mockAws.mockEventCallback('AppWillTerminateWithError', {
         params: { errorDetails: 'SIGSEGV whatever' },
       });
-      expect(client.terminateApp).not.toHaveBeenCalled();
+      expect(appConnection.terminateApp).not.toHaveBeenCalled();
       expect(mockAws.rejectAll).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(5000);
       await fastForwardAllPromises();
-      expect(client.terminateApp).toHaveBeenCalled();
+      expect(appConnection.terminateApp).toHaveBeenCalled();
       expect(mockAws.rejectAll).not.toHaveBeenCalled();
 
       mockAws.mockEventCallback('appDisconnected');
       expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
       expect(log.error).not.toHaveBeenCalled();
-      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+      await expect(appConnection.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
     });
 
     it('should log errors if the app termination does not go well', async () => {
-      jest.spyOn(client, 'terminateApp');
-      client.terminateApp.mockImplementation(() => {
+      jest.spyOn(appConnection, 'terminateApp');
+      appConnection.terminateApp.mockImplementation(() => {
         throw new Error('TestError');
       });
 
-      await client.connect();
+      await appConnection.connect();
       mockAws.mockEventCallback('AppWillTerminateWithError', {
         params: { errorDetails: 'SIGSEGV whatever' },
       });
@@ -712,33 +712,33 @@ describe('Client', () => {
       jest.advanceTimersByTime(5000);
       await fastForwardAllPromises();
 
-      expect(client.terminateApp).toHaveBeenCalled();
+      expect(appConnection.terminateApp).toHaveBeenCalled();
       expect(log.error).toHaveBeenCalledWith({ event: 'ERROR' }, expect.stringContaining('TestError'));
     });
 
     it('should unschedule the app termination if it disconnects earlier', async () => {
-      jest.spyOn(client, 'terminateApp');
+      jest.spyOn(appConnection, 'terminateApp');
 
-      await client.connect();
+      await appConnection.connect();
 
       mockAws.mockEventCallback('AppWillTerminateWithError', {
         params: { errorDetails: 'SIGSEGV whatever' },
       });
       mockAws.mockEventCallback('appDisconnected');
 
-      expect(client.terminateApp).not.toHaveBeenCalled();
+      expect(appConnection.terminateApp).not.toHaveBeenCalled();
       expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
 
       jest.advanceTimersByTime(5000);
       await fastForwardAllPromises();
 
-      expect(client.terminateApp).not.toHaveBeenCalled();
+      expect(appConnection.terminateApp).not.toHaveBeenCalled();
     });
 
     it('should ignore consequent AppWillTerminateWithError notifications', async () => {
-      jest.spyOn(client, 'terminateApp');
+      jest.spyOn(appConnection, 'terminateApp');
 
-      await client.connect();
+      await appConnection.connect();
 
       mockAws.mockEventCallback('AppWillTerminateWithError', {
         params: { errorDetails: 'SIGSEGV whatever' },
@@ -750,16 +750,16 @@ describe('Client', () => {
       jest.advanceTimersByTime(5000);
       await fastForwardAllPromises();
 
-      expect(client.terminateApp).toHaveBeenCalledTimes(1);
+      expect(appConnection.terminateApp).toHaveBeenCalledTimes(1);
 
       mockAws.mockEventCallback('appDisconnected');
-      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+      await expect(appConnection.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
     });
   });
 
   describe('on appDisconnected', () => {
     it('should reject pending actions', async () => {
-      await client.connect();
+      await appConnection.connect();
       await simulateInFlightAction(new actions.Invoke(anInvocation()));
       mockAws.mockEventCallback('appDisconnected');
       await fastForwardAllPromises();
@@ -767,16 +767,16 @@ describe('Client', () => {
     });
 
     it('should return .isConnected = false', async () => {
-      await client.connect();
-      expect(client.isConnected).toBe(true);
+      await appConnection.connect();
+      expect(appConnection.isConnected).toBe(true);
       mockAws.mockEventCallback('appDisconnected');
       await fastForwardAllPromises();
-      expect(client.isConnected).toBe(false);
+      expect(appConnection.isConnected).toBe(false);
     });
   });
 
   describe('on unhandled serverError', () => {
-    beforeEach(async () => client.connect());
+    beforeEach(async () => appConnection.connect());
 
     it('should log an error', async () => {
       const testError = new Error('TEST ERROR');
@@ -818,7 +818,7 @@ describe('Client', () => {
     const deferred = mockAws.mockBusy();
     mockAws.hasPendingActions.mockReturnValue(true);
 
-    const sendPromise = client.sendAction(action);
+    const sendPromise = appConnection.sendAction(action);
     await Promise.resolve();
     return { sendPromise, action, deferred };
   }

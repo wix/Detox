@@ -10,7 +10,7 @@ describe('IosUIHierarchyPlugin', () => {
   const testSummary = 'TestSummary';
 
   beforeEach(() => {
-    Client = require('../../client/Client');
+    Client = require('../../client/AppConnection');
     FileArtifact = require('../templates/artifact/FileArtifact');
     IosUIHierarchyPlugin = require('./IosUIHierarchyPlugin');
 

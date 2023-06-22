@@ -73,7 +73,7 @@ describe('DetoxWorker', () => {
 
     logger = require('./utils/logger');
     invoke = require('./invoke');
-    Client = require('./client/Client');
+    Client = require('./client/AppConnection');
     AsyncEmitter = require('./utils/AsyncEmitter');
 
     Detox = require('./DetoxWorker');

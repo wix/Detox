@@ -1,5 +1,5 @@
 const DeviceDriverBase = require('detox/src/devices/runtime/drivers/DeviceDriverBase');
-const Client = require('detox/src/client/Client');
+const Client = require('detox/src/client/AppConnection');
 
 //
 // The following is needed in order to make the various expect() API's work (e.g. element(), waitFor()).

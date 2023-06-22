@@ -1,7 +1,7 @@
 const CAF = require('caf');
 const _ = require('lodash');
 
-const Client = require('./client/Client');
+const Client = require('./client/AppConnection');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
