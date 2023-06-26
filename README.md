@@ -24,15 +24,19 @@ This is a test for a login screen, it runs on a device/simulator like an actual 
 
 ```js
 describe('Login flow', () => {
-  it('should login successfully', async () => {
+  beforeEach(async () => {
     await device.reloadReactNative();
+  });
 
+  it('should login successfully', async () => {
     await element(by.id('email')).typeText('john@example.com');
     await element(by.id('password')).typeText('123456');
-    await element(by.text('Login')).tap();
 
-    await expect(element(by.text('Welcome'))).toBeVisible();
-    await expect(element(by.id('email'))).toNotExist();
+    const loginButton = element(by.text('Login'));
+    await loginButton.tap();
+
+    await expect(loginButton).not.toExist();
+    await expect(element(by.label('Welcome'))).toBeVisible();
   });
 });
 ```
