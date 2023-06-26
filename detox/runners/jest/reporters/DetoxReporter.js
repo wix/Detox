@@ -2,9 +2,14 @@ const resolveFrom = require('resolve-from');
 /** @type {typeof import('@jest/reporters').VerboseReporter} */
 const JestVerboseReporter = require(resolveFrom(process.cwd(), '@jest/reporters')).VerboseReporter;
 
-const { config, reportTestResults } = require('../../../internals');
+const { config, reportTestResults, unsafe_conductEarlyTeardown } = require('../../../internals');
 
 class DetoxReporter extends JestVerboseReporter {
+  constructor(globalConfig) {
+    super(globalConfig);
+    this._shouldWaitForRunner = globalConfig.bail;
+  }
+
   /**
    * @param {import('@jest/test-result').AggregatedResult} results
    */
@@ -19,6 +24,10 @@ class DetoxReporter extends JestVerboseReporter {
       testExecError: r.testExecError,
       isPermanentFailure: this._isPermanentFailure(r),
     })));
+
+    if (this._shouldWaitForRunner) {
+      await unsafe_conductEarlyTeardown();
+    }
   }
 
   /**

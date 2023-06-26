@@ -24,6 +24,7 @@ class DetoxInternalsFacade {
     this.resolveConfig = context[symbols.resolveConfig];
     this.session = context[symbols.session];
     this.tracing = context[symbols.tracing];
+    this.unsafe_conductEarlyTeardown = context[symbols.conductEarlyTeardown];
     this.worker = funpermaproxy(() => context[symbols.worker]);
   }
 }

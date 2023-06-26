@@ -71,6 +71,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   }
 
   async handleTestEvent(event, state) {
+    if (detox.session.unsafe_earlyTeardown) {
+      throw new Error('Cannot handle test event while tearing down a Detox session');
+    }
+
     this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
 
     if (SYNC_CIRCUS_EVENTS.has(event.name)) {

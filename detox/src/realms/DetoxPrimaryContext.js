@@ -51,6 +51,12 @@ class DetoxPrimaryContext extends DetoxContext {
     }
   }
 
+  async [symbols.conductEarlyTeardown]() {
+    if (this[_ipcServer]) {
+      await this[_ipcServer].onConductEarlyTeardown();
+    }
+  }
+
   async [symbols.resolveConfig](opts = {}) {
     const session = this[$sessionState];
     if (!session.detoxConfig) {

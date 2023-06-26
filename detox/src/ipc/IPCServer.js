@@ -38,6 +38,7 @@ class IPCServer {
     await new Promise((resolve) => {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
+      this._ipc.server.on('conductEarlyTeardown', this.onConductEarlyTeardown.bind(this));
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
       this._ipc.server.on('registerWorker', this.onRegisterWorker.bind(this));
       this._ipc.server.on('reportTestResults', this.onReportTestResults.bind(this));
@@ -81,6 +82,33 @@ class IPCServer {
     if (shouldBroadcast) {
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }
+  }
+
+  onConductEarlyTeardown(_data, socket = null) {
+    return new Promise((resolve) => {
+      this._sessionState.unsafe_earlyTeardown = true;
+
+      if (socket) {
+        this._ipc.server.broadcast('sessionStateUpdate', {
+          unsafe_earlyTeardown: true,
+        });
+
+        let workersCount = this._workers.size;
+        this._ipc.server.on('socket.disconnected', () => {
+          workersCount--;
+
+          if (workersCount === 0) {
+            if (socket) {
+              this._ipc.server.emit(socket, 'reportEarlyTeardownDone', {});
+            }
+
+            resolve();
+          }
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   onReportTestResults({ testResults }, socket = null) {
