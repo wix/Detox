@@ -144,11 +144,15 @@ launchctl setenv PATH $PATH
 
 ###### 3. Android Native Unit-Tests
 
-Under `detox/android`:
+Under `detox`:
 
 ```bash
-./gradlew testFullRelease
+npm run unit:android-release
 ```
+
+:::caution Note
+Due to limitations with Robolectric, this currently does not work with JDK 17. Best to use Java 11, as explained in the [Android environment setup guide](./guide/android-dev-env.md).
+:::
 
 ### Detox - Example Projects
 
