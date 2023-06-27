@@ -19,6 +19,7 @@ const sidebars = {
       label: 'Introduction',
       items: [
         'introduction/getting-started',
+        'introduction/environment-setup',
         'introduction/project-setup',
         'introduction/your-first-test',
         'introduction/debugging',

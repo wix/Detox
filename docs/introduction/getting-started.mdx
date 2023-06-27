@@ -1,85 +1,65 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Getting Started
 
-import IntroRN from './partials/_getting-started-rn.md';
-import IntroExpo from './partials/_getting-started-expo.md';
-import IntroOther from './partials/_getting-started-other.mdx';
+## Before You Start
 
-# Environment Setup
+### Overview of Detox
 
-**Welcome to Detox!**
+Detox is an open-source end-to-end (E2E) testing framework for React Native mobile applications.
+Our main goal is to enable the testing of any end-to-end flow in the app, with maximum velocity and zero flakiness.
+Detox tests your mobile app while it's running on a real device or simulator, simulating a real user's interactions.
 
-The _Introduction section_ walks you through setting up Detox in your project, one step at a time.
+![Detox overview](../img/Detox.gif)
 
-You will find that some steps are longer than the others: some are a couple of paragraphs, while the others look like a dedicated multistep guide.
-Bear with us - it is all necessary, and once set up, it is easy to move forward with writing tests at a high pace.
+### What Does a Detox Test Look Like?
 
-Please select type of your mobile application before you start the tutorial:
+This is a test for a login screen, it runs on a device or simulator like an actual user:
 
-<Tabs groupId="appType">
-    <TabItem value="start-rn" label="React Native" default>
-        <IntroRN />
-    </TabItem>
-    <TabItem value="start-expo" label="Expo">
-        <IntroExpo />
-    </TabItem>
-    <TabItem value="start-other" label="Other">
-        <IntroOther />
-    </TabItem>
-</Tabs>
+```js
+describe('Login flow', () => {
+  beforeEach(async () => {
+    await device.reloadReactNative();
+  });
 
-## React Native CLI Quickstart
+  it('should login successfully', async () => {
+    await element(by.id('email')).typeText('john@example.com');
+    await element(by.id('password')).typeText('123456');
 
-Your first step would be to complete the
-[📚 React Native CLI Quickstart Guide](https://reactnative.dev/docs/next/environment-setup).
+    const loginButton = element(by.text('Login'));
+    await loginButton.tap();
 
-![](../img/rn-env.png)
-
-<p>
-    Open the link above and switch there to <b>React Native CLI Quickstart</b> tab to see
-    the interactive tutorial for <b>Development OS</b> and <b>Target OS</b> of your choice.
-</p>
-
-<p>
-    Follow all
-    the steps <span style={{color: 'red'}}>(yes, even if you have a native app!)</span> and
-    make sure you can create and run React Native apps on virtual testing devices.
-</p>
-
-![](../img/rn-env-done.png)
-
-## Detox Prerequisites
-
-To complete the environment setup, you still have 2 steps ahead: installing `detox-cli` and `applesimutils`.
-
-### 1. Command Line Tools (`detox-cli`)
-
-`detox-cli` is merely a script that passes commands through to
-a local Detox executable located at `node_modules/.bin/detox`,
-making it easier to operate Detox from the command line, e.g. `detox test -c ios.sim.debug`.
-
-It should be installed globally, enabling usage of the command line tools outside your npm scripts:
-
-```bash npm2yarn
-npm install detox-cli --global
+    await expect(loginButton).not.toExist();
+    await expect(element(by.label('Welcome'))).toBeVisible();
+  });
+});
 ```
 
-On the other hand, if you are fine with running Detox commands with `npx detox ...`, you may skip installing `detox-cli`.
+### Gray box testing
 
-### 2. [MacOS Only] `applesimutils`
+One of the most challenging aspects of automated testing on mobile is end-to-end testing.
+UI testing frameworks are often not fully-deterministic, since they are built with a "black box" approach, where the test runner has no access to the internals of the app under test, and is unaware of asynchronous operations that take place in the app (such as network requests, animations, etc.).
+This makes it difficult to write reliable E2E tests, and often leads to flaky tests that are hard to debug and maintain.
 
-This tool is **required** by Detox to work with iOS simulators. The recommended way to install
-[`applesimutils`](https://github.com/wix/AppleSimulatorUtils) is via [Homebrew](https://brew.sh):
+To address this issue, Detox adopts a "gray box" testing approach, by having access to the internals of the app under test.
+This allows for more control and predictability in the testing process. For more information, you can read [how Detox works].
 
-```bash
-brew tap wix/brew
-brew install applesimutils
-```
+## Start with Detox
 
-:::info Note
+### Follow the Setup Guides
 
-Make sure to periodically update your version of `applesimutils` to the latest version.
+The following guides in this Introduction section will help you get started with Detox, one step at a time, from setting up your environment to writing and running your first test.
 
-:::
+### Join the Community 🤝
 
-Now, when your environment is ready, let's move to the next section, [Project Setup](project-setup.mdx).
+As an open-source project, Detox encourages and welcomes contributions from the community.
+Whether you're a developer, tester, or just someone who is passionate about making mobile development better, there's a place for you in the Detox community.
+By contributing to Detox, you'll be helping to improve the reliability and user experience of mobile apps, and you'll be part of a team that is dedicated to making mobile development faster and more efficient.
+We welcome all types of contributions, from code and documentation, to bug reports, questions and feature requests.
+
+So, if you're interested to be part of the community, we encourage you to get involved by reading our [contributing guidelines], and join our [Discord server].
+We also have a [Twitter account] where we share updates about the project.
+
+
+[how Detox works]: ../articles/how-detox-works.md
+[contributing guidelines]: contributing.md
+[Discord server]: https://discord.gg/CkD5QKheF5
+[Twitter account]: https://twitter.com/detoxe2e
