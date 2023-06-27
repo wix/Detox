@@ -79,7 +79,7 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinMinVersion"
     //noinspection GradleDynamicVersion
-    compileOnly 'com.facebook.react:react-android:+'
+    compileOnly 'com.facebook.react:react-android:0.71.10' // TODO
 }
 
 // androidx.test deps.
@@ -133,7 +133,7 @@ dependencies {
 dependencies {
     //noinspection GradleDynamicVersion
 //     testImplementation 'com.facebook.react:react-native:+' // Maybe can be removed
-    testImplementation 'com.facebook.react:react-android:+'
+    testImplementation 'com.facebook.react:react-android:0.71.10' // TODO
     testImplementation 'org.json:json:20140107'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158

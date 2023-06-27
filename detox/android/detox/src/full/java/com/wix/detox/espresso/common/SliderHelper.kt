@@ -8,6 +8,7 @@ import com.wix.detox.common.DetoxErrors.DetoxIllegalStateException
 import com.wix.detox.espresso.action.common.ReflectUtils
 import org.joor.Reflect
 
+private const val CLASS_REACT_SLIDER_LEGACY = "com.facebook.react.views.slider.ReactSlider"
 private const val CLASS_REACT_SLIDER_COMMUNITY = "com.reactnativecommunity.slider.ReactSlider"
 
 abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
@@ -44,10 +45,27 @@ abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
                 ?: throw DetoxIllegalStateException("Cannot handle this type of a seek-bar view (Class ${view.javaClass.canonicalName}). " +
                         "Only React Native sliders are currently supported.")
 
-        fun maybeCreate(view: View): SliderHelper? = CommunitySliderHelper(view as AppCompatSeekBar)
+        fun maybeCreate(view: View): SliderHelper? =
+            when {
+// TODO Fix for RN 71 (no bundled ReactSlider)
+//                ReflectUtils.isAssignableFrom(view, CLASS_REACT_SLIDER_LEGACY)
+//                   -> LegacySliderHelper(view as ReactSlider)
+                ReflectUtils.isAssignableFrom(view, CLASS_REACT_SLIDER_COMMUNITY)
+                    -> CommunitySliderHelper(view as AppCompatSeekBar)
+                else
+                   -> null
+            }
     }
 }
 
+//private class LegacySliderHelper(slider: AppCompatSeekBar): SliderHelper(slider) {
+//    override fun setProgressJS(valueJS: Double) {
+//        val reactSliderManager = com.facebook.react.views.slider.ReactSliderManager()
+//        reactSliderManager.updateProperties(slider as ReactSlider, buildStyles("value", valueJS))
+//    }
+//
+//    private fun buildStyles(vararg keysAndValues: Any) = ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
+//}
 
 private class CommunitySliderHelper(slider: AppCompatSeekBar): SliderHelper(slider) {
     override fun setProgressJS(valueJS: Double) {
