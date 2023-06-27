@@ -61,12 +61,7 @@ const sidebars = {
     {
       type: 'doc',
       id: 'guide/migration',
-    },
-    {
-      type: 'doc',
-      label: 'Contributing',
-      id: 'contributing'
-    },
+    }
   ],
   apiSidebar: [
     {
@@ -122,7 +117,16 @@ const sidebars = {
         'articles/third-party-drivers',
       ]
     },
-  ]
+  ],
+  contributeSidebar: [
+    {
+      type: 'category',
+      label: 'Contribute',
+      items: [
+        'contributing',
+      ]
+    },
+  ],
 };
 
 module.exports = sidebars;

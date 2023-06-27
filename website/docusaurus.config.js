@@ -83,6 +83,12 @@ const config = {
             label: 'API'
           },
           {
+            type: 'doc',
+            docId: 'contributing',
+            position: 'left',
+            label: 'Contribute'
+          },
+          {
             to: 'blog',
             label: 'Blog',
             position: 'left'
