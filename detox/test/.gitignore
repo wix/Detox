@@ -38,10 +38,6 @@ local.properties
 node_modules/
 npm-debug.log
 
-# keystore
-*.keystore
-!debug.keystore
-
 # BUCK
 buck-out/
 \.buckd/

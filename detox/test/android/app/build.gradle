@@ -1,24 +1,17 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 apply from: '../rninfo.gradle'
 
-if (rnInfo.isRN71OrHigher) {
-    apply plugin: 'com.facebook.react'
-} else {
-    apply from: '../../node_modules/react-native/react.gradle'
-}
+project.ext.react = [
+    enableHermes: true
+]
+apply from: '../../node_modules/react-native/react.gradle'
 
 android {
-    namespace 'com.example'
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
     }
 
     defaultConfig {
@@ -89,13 +82,10 @@ android {
 dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation project(path: ':@react-native-community_slider')
 
-    if (rnInfo.isRN71OrHigher) {
-        fromBinImplementation "com.facebook.react:react-android:${rnInfo.version}"
-    } else {
-        // noinspection GradleDynamicVersion
-        fromBinImplementation('com.facebook.react:react-native:+')
-    }
+    // noinspection GradleDynamicVersion
+    fromBinImplementation('com.facebook.react:react-native:+')
 
     // In order to build from source:
     // 1. Uncomment the fromSourceImplementation() statement
@@ -103,12 +93,12 @@ dependencies {
     // 3. Pave through the wilderness
 //    fromSourceImplementation(project(path: ':ReactAndroid'))
 
-    implementation(project(path: ':@react-native-community_slider'))
-    implementation(project(path: ':AsyncStorage'))
-    implementation(project(path: ':react-native-webview'))
-    implementation(project(path: ':react-native-community-checkbox'))
-    implementation(project(path: ':react-native-community-geolocation'))
-    implementation(project(path: ':react-native-datetimepicker'))
+    implementation project(':AsyncStorage')
+    implementation project(':react-native-webview')
+    implementation project(':react-native-community-checkbox')
+    implementation project(':react-native-community-geolocation')
+    implementation project(':react-native-datetimepicker')
+    implementation project(':react-native-launcharguments')
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
@@ -116,9 +106,7 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    if (rnInfo.isRN71OrHigher) {
-        implementation "com.facebook.react:hermes-android:${rnInfo.version}"
-    } else if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
+    if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
         implementation('com.facebook.react:hermes-engine:+') {
             exclude group: 'com.facebook.fbjni'
         }
