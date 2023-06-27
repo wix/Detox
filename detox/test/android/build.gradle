@@ -1,7 +1,14 @@
 buildscript {
-    apply from: './rninfo.gradle'
+    apply from: '../../android/rninfo.gradle'
 
-    def androidGradlePluginVersion = '7.3.1'
+    def androidGradlePluginVersion =
+        rnInfo.isRN71OrHigher ? '7.3.1'
+            : rnInfo.isRN70OrHigher ? '7.2.1'
+            : rnInfo.isRN69OrHigher ? '7.1.1'
+            : rnInfo.isRN68OrHigher ? '7.0.4'
+            : '4.2.2'
+
+    println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
         isOfficialDetoxApp = true
@@ -22,7 +29,17 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath("com.facebook.react:react-native-gradle-plugin")
+
+        // In RN .71, they've switched to the gradle plugin they've uploaded to maven-central
+        if (rnInfo.isRN71OrHigher) {
+            classpath 'com.facebook.react:react-native-gradle-plugin'
+        }
+
+        // Gradle task downloader seems to come built-in in newer versions of RN/Gradle
+        if (!rnInfo.isRN71OrHigher) {
+            classpath 'de.undercouch:gradle-download-task:5.0.1'
+        }
+
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // Needed by Spek (https://spekframework.org/setup-android)
@@ -34,7 +51,15 @@ buildscript {
 allprojects {
     repositories {
         google()
-        mavenCentral()
+        mavenCentral() {
+            // In RN below 71, we want RN native code to come from node_modules/ rather
+            // than from maven-central, because there are also older versions over there.
+            if (!rnInfo.isRN71OrHigher) {
+                content {
+                    excludeGroup "com.facebook.react"
+                }
+            }
+        }
         mavenLocal()
     }
 }

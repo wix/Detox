@@ -1,4 +1,6 @@
 buildscript {
+    apply from: './rninfo.gradle'
+
     ext {
         isOfficialDetoxLib = true
         kotlinVersion = '1.8.22'
@@ -23,6 +25,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        // TODO Revisit
+        if (!rnInfo.isRN71OrNewer) {
+            classpath "com.facebook.react:react-native-gradle-plugin"
+        }
         classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
@@ -37,6 +43,14 @@ allprojects {
         google()
         mavenCentral()
         mavenLocal()
+
+        // In RN's below 71, the native code comes from within node_modules/ rather
+        // than from maven-central.
+        if (!rnInfo.isRN71OrNewer) {
+            maven {
+                url "$projectDir/../../node_modules/react-native/android"
+            }
+        }
     }
 }
 
