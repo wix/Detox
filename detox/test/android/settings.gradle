@@ -1,11 +1,3 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-
 rootProject.name = 'DetoxTest'
 include ':app'
 

@@ -1,21 +1,14 @@
 buildscript {
     apply from: './rninfo.gradle'
 
-    def androidGradlePluginVersion =
-            rnInfo.isRN70OrHigher ? '7.2.1'
-            : rnInfo.isRN69OrHigher ? '7.1.1'
-            : rnInfo.isRN68OrHigher ? '7.0.4'
-            : rnInfo.isRN66OrHigher ? '4.2.2'
-            : '4.1.0'
-
-    println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
+    def androidGradlePluginVersion = '7.3.1'
 
     ext {
         isOfficialDetoxApp = true
         kotlinVersion = '1.6.21'
-        buildToolsVersion = '31.0.0'
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        buildToolsVersion = '33.0.0'
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         minSdkVersion = 21
         appCompatVersion = (rnInfo.isRN68OrHigher ? '1.4.2' : '1.3.0')
     }
@@ -23,13 +16,13 @@ buildscript {
 
     repositories {
         google()
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath 'de.undercouch:gradle-download-task:5.0.1'
+        classpath("com.facebook.react:react-native-gradle-plugin")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // Needed by Spek (https://spekframework.org/setup-android)
@@ -40,20 +33,8 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            url "$rootDir/../../node_modules/react-native/android"
-        }
-        maven {
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
-        mavenCentral {
-            // We don't want to fetch react-native from Maven Central as there are
-            // older versions over there.
-            content {
-                excludeGroup "com.facebook.react"
-            }
-        }
         google()
+        mavenCentral()
         mavenLocal()
     }
 }
