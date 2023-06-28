@@ -4,16 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultReactNativeHost;
-import com.facebook.react.shell.MainReactPackage;
-import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
-import com.reactnativecommunity.geolocation.GeolocationPackage;
-import com.reactnativecommunity.slider.ReactSliderPackage;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.reactnativelauncharguments.LaunchArgumentsPackage;
 
-import java.util.Arrays;
 import java.util.List;
 
 class DetoxRNHost extends DefaultReactNativeHost {
@@ -44,16 +35,6 @@ class DetoxRNHost extends DefaultReactNativeHost {
         //     packages.add(new TurboReactPackage() { ... });
         // If you have custom Fabric Components, their ViewManagers should also be loaded here
         // inside a ReactPackage.
-        return Arrays.asList(
-            new MainReactPackage(),
-            new ReactSliderPackage(),
-            new GeolocationPackage(),
-            new RNCWebViewPackage(),
-            new NativeModulePackage(),
-            new AsyncStoragePackage(),
-            new ReactCheckBoxPackage(),
-            new RNDateTimePickerPackage(),
-            new LaunchArgumentsPackage()
-        );
+        return ReactNativeAdapter.getManualLinkedPackages();
     }
 }

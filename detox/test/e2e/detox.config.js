@@ -69,8 +69,8 @@ const config = {
     'android.debug': {
       type: 'android.apk',
       name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
-      build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
+      binaryPath: 'android/app/build/outputs/apk/rnDefault/debug/app-rnDefault-debug.apk',
+      build: 'cd android && ./gradlew assembleRnDefaultDebug assembleRnDefaultDebugAndroidTest -DtestBuildType=debug && cd ..',
       start: 'react-native start',
       reversePorts: [8081],
     },
@@ -78,24 +78,7 @@ const config = {
     'android.debug.withArgs': {
       type: 'android.apk',
       name: 'exampleWithArgs',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
-      build: ':',
-      reversePorts: [8081],
-      launchArgs,
-    },
-
-    'android.fromSource': {
-      type: 'android.apk',
-      name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
-      build: 'cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..',
-      reversePorts: [8081],
-    },
-
-    'android.fromSource.withArgs': {
-      type: 'android.apk',
-      name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
+      binaryPath: 'android/app/build/outputs/apk/rnDefault/debug/app-rnDefault-debug.apk',
       build: ':',
       reversePorts: [8081],
       launchArgs,
@@ -104,14 +87,47 @@ const config = {
     'android.release': {
       type: 'android.apk',
       name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk',
-      build: 'cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..',
+      binaryPath: 'android/app/build/outputs/apk/rnDefault/release/app-rnDefault-release.apk',
+      build: 'cd android && ./gradlew assembleRnDefaultRelease assembleRnDefaultReleaseAndroidTest -DtestBuildType=release && cd ..',
     },
 
     'android.release.withArgs': {
       type: 'android.apk',
       name: 'exampleWithArgs',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk',
+      binaryPath: 'android/app/build/outputs/apk/rnDefault/release/app-rnDefault-release.apk',
+      build: ':',
+      launchArgs,
+    },
+
+    'android.debug.rnLegacy': {
+      type: 'android.apk',
+      name: 'example',
+      binaryPath: 'android/app/build/outputs/apk/rnLegacy/debug/app-rnLegacy-debug.apk',
+      build: 'cd android && ./gradlew assembleRnLegacyDebug assembleRnLegacyDebugAndroidTest -DtestBuildType=debug && cd ..',
+      start: 'react-native start',
+      reversePorts: [8081],
+    },
+
+    'android.debug.rnLegacy.withArgs': {
+      type: 'android.apk',
+      name: 'exampleWithArgs',
+      binaryPath: 'android/app/build/outputs/apk/rnLegacy/debug/app-rnLegacy-debug.apk',
+      build: ':',
+      reversePorts: [8081],
+      launchArgs,
+    },
+
+    'android.release.rnLegacy': {
+      type: 'android.apk',
+      name: 'example',
+      binaryPath: 'android/app/build/outputs/apk/rnLegacy/release/app-rnLegacy-release.apk',
+      build: 'cd android && ./gradlew assembleRnLegacyRelease assembleRnLegacyReleaseAndroidTest -DtestBuildType=release && cd ..',
+    },
+
+    'android.release.rnLegacy.withArgs': {
+      type: 'android.apk',
+      name: 'exampleWithArgs',
+      binaryPath: 'android/app/build/outputs/apk/rnLegacy/release/app-rnLegacy-release.apk',
       build: ':',
       launchArgs,
     },
@@ -192,13 +208,17 @@ const config = {
       device: 'android.emulator',
       apps: ['android.debug', 'android.debug.withArgs'],
     },
-    'android.emu.debug.fromSource': {
+    'android.emu.debug.rnLegacy': {
       device: 'android.emulator',
-      apps: ['android.fromSource', 'android.fromSource.withArgs'],
+      apps: ['android.debug.rnLegacy', 'android.debug.rnLegacy.withArgs'],
     },
     'android.emu.release': {
       device: 'android.emulator',
       apps: ['android.release', 'android.release.withArgs'],
+    },
+    'android.emu.release.rnLegacy': {
+      device: 'android.emulator',
+      apps: ['android.release.rnLegacy', 'android.release.rnLegacy.withArgs'],
     },
     'android.genycloud.debug': {
       device: 'android.genycloud.uuid',
@@ -211,6 +231,10 @@ const config = {
     'android.genycloud.release2': {
       device: 'android.genycloud.name',
       apps: ['android.release', 'android.release.withArgs'],
+    },
+    'android.genycloud.release.rnLegacy': {
+      device: 'android.genycloud.uuid',
+      apps: ['android.release.rnLegacy', 'android.release.rnLegacy.withArgs'],
     },
     'stub': {
       device: {

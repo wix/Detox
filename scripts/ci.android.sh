@@ -18,27 +18,29 @@ pushd detox/test
 run_f "npm run integration"
 popd
 
-if [[ $currentRnVersion -ge 66 ]]; then
-  pushd detox/android
-  run_f "npm run unit:android-release"
-  popd
-else
-  echo "Skipping Android unit tests (react-native version ${currentRnVersion} is not ≥66)"
+pushd detox/android
+run_f "npm run unit:android-release"
+popd
+
+NPM_ANDROID_FLAVOR="android"
+if [[ $currentRnVersion -lt 71 ]]; then
+  NPM_ANDROID_FLAVOR="android-rnLegacy"
 fi
+echo "Selected android flavor '${NPM_ANDROID_FLAVOR}' for npm-scripts (RN version is ${currentRnVersion})"
 
 mkdir -p coverage
 
 pushd detox/test
 
-run_f "npm run build:android"
+run_f "npm run build:${NPM_ANDROID_FLAVOR}"
 
-run_f "npm run e2e:android:genycloud"
+run_f "npm run e2e:${NPM_ANDROID_FLAVOR}:genycloud"
 cp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcov
 
-run_f "npm run e2e:android -- e2e/01* e2e/02* e2e/03.actions*"
+run_f "npm run e2e:${NPM_ANDROID_FLAVOR} -- e2e/01* e2e/02* e2e/03.actions*"
 cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
 
-run_f "scripts/ci_unhappy.sh android"
+run_f "scripts/ci_unhappy.sh ${NPM_ANDROID_FLAVOR}"
 
-# run_f "npm run verify-artifacts:android"
+# run_f "npm run verify-artifacts:${NPM_ANDROID_FLAVOR"
 popd

@@ -66,12 +66,12 @@ android {
         }
     }
     productFlavors {
-        flavorDimensions 'compileRNFromSource'
-        fromSource {
-            dimension 'compileRNFromSource'
+        flavorDimensions 'reactNativeVersion'
+        rnDefault {
+            dimension 'reactNativeVersion'
         }
-        fromBin {
-            dimension 'compileRNFromSource'
+        rnLegacy { // For RN < 71
+            dimension 'reactNativeVersion'
         }
     }
     packagingOptions {
@@ -86,19 +86,10 @@ android {
 }
 
 dependencies {
-    if (rnInfo.isRN71OrHigher) {
-        // The version of react-native is set by the React Native Gradle Plugin
-        fromBinImplementation('com.facebook.react:react-android')
-    } else {
-        // noinspection GradleDynamicVersion
-        fromBinImplementation('com.facebook.react:react-native:+')
-    }
-
-    // In order to build from source:
-    // 1. Uncomment the fromSourceImplementation() statement
-    // 2. Uncomment associated section in settings.gradle
-    // 3. Pave through the wilderness
-//    fromSourceImplementation(project(path: ':ReactAndroid'))
+    // The version of react-native is set by the React Native Gradle Plugin
+    rnDefaultImplementation('com.facebook.react:react-android')
+    // noinspection GradleDynamicVersion
+    rnLegacyImplementation('com.facebook.react:react-native:+')
 
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
@@ -116,16 +107,10 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    if (rnInfo.isRN71OrHigher) {
-        implementation('com.facebook.react:hermes-android')
-    } else if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
-        implementation('com.facebook.react:hermes-engine:+') {
-            exclude group: 'com.facebook.fbjni'
-        }
-    } else {
-        def hermesPath = '../../node_modules/hermes-engine/android'
-        debugImplementation files("$hermesPath/hermes-debug.aar")
-        releaseImplementation files("$hermesPath/hermes-release.aar")
+    rnDefaultImplementation('com.facebook.react:hermes-android')
+    // noinspection GradleDynamicVersion
+    rnLegacyImplementation('com.facebook.react:hermes-engine:+') {
+        exclude group: 'com.facebook.fbjni'
     }
 }
 
