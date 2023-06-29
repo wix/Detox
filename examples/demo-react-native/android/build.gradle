@@ -1,20 +1,11 @@
 buildscript {
-    apply from: './rninfo.gradle'
-
-    def androidGradlePluginVersion =
-        rnInfo.isRN71OrHigher ? '7.3.1' :
-        rnInfo.isRN70OrHigher ? '7.2.1' :
-        rnInfo.isRN69OrHigher ? '7.1.1' :
-        rnInfo.isRN68OrHigher ? '7.0.4' :
-        '4.2.2'
-
-    println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
+    def androidGradlePluginVersion = '7.3.1'
 
     ext {
-        kotlinVersion = rnInfo.isRN71OrHigher ? '1.8.22' : '1.6.21'
-        buildToolsVersion = rnInfo.isRN71OrHigher ? '33.0.0' : '31.0.0'
-        compileSdkVersion = rnInfo.isRN71OrHigher ? 33 : 31
-        targetSdkVersion = rnInfo.isRN71OrHigher ? 33 : 31
+        kotlinVersion = '1.8.22'
+        buildToolsVersion = '33.0.0'
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         minSdkVersion = 21
     }
 
@@ -25,27 +16,18 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-
-        if (!rnInfo.isRN71OrHigher) {
-            classpath 'de.undercouch:gradle-download-task:5.0.1'
-        } else {
-            classpath "com.facebook.react:react-native-gradle-plugin"
-        }
-
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "com.facebook.react:react-native-gradle-plugin"
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
-        mavenCentral()
         google()
-        maven {
-            url "$rootDir/../node_modules/react-native/android"
-        }
+        mavenCentral()
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
         }
+        mavenLocal()
     }
 }

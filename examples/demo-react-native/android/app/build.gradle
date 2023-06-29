@@ -1,23 +1,20 @@
 apply plugin: 'com.android.application'
-apply from: '../rninfo.gradle'
-
-if (rnInfo.isRN71OrHigher) {
-    apply plugin: "com.facebook.react"
-} else {
-    apply from: '../../node_modules/react-native/react.gradle'
-}
+apply plugin: 'com.facebook.react'
 
 android {
     namespace 'com.example'
-    compileSdkVersion rootProject.ext.compileSdkVersion
+
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId 'com.detox.rn.example'
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName '1.0'
+
+        compileSdk rootProject.ext.compileSdkVersion
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
         ndk {
             abiFilters 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
         }
@@ -61,34 +58,16 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    if (rnInfo.isRN71OrHigher) {
-        implementation("com.facebook.react:react-android")
-    } else {
-        // noinspection GradleDynamicVersion
-        implementation('com.facebook.react:react-native:+')
-    }
+    implementation 'com.facebook.react:react-android'
+    // Apply Hermes as the JS engine
+    implementation 'com.facebook.react:hermes-android'
 
-    implementation(project(path: ':AsyncStorage')) // Note: not required unless effectively used by your app
+    implementation(project(path: ':AsyncStorage')) // !!! Note: not required unless effectively used by your app
 
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
-}
-
-// Apply Hermes as the JS engine
-dependencies {
-    if (rnInfo.isRN71OrHigher) {
-        implementation("com.facebook.react:hermes-android")
-    } else if (rnInfo.isRN69OrHigher) { // TODO this is actually likely to work with older RN versions as well
-        implementation('com.facebook.react:hermes-engine:+') {
-            exclude group: 'com.facebook.fbjni'
-        }
-    } else {
-        def hermesPath = '../../node_modules/hermes-engine/android'
-        debugImplementation files("$hermesPath/hermes-debug.aar")
-        releaseImplementation files("$hermesPath/hermes-release.aar")
-    }
 }
