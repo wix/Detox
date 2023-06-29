@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 class ReactNativeAdapter {
-    public static List<ReactPackage> getManualLinkedPackages() {
+    public static List<ReactPackage> getManualLinkPackages() {
         return Arrays.asList(
             new MainReactPackage(),
             new ReactSliderPackage(),

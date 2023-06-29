@@ -25,6 +25,6 @@ class DetoxRNHost extends ReactNativeHost {
         //     packages.add(new TurboReactPackage() { ... });
         // If you have custom Fabric Components, their ViewManagers should also be loaded here
         // inside a ReactPackage.
-        return ReactNativeAdapter.getManualLinkedPackages();
+        return ReactNativeAdapter.getManualLinkPackages();
     }
 }

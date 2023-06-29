@@ -2,9 +2,10 @@ buildscript {
     apply from: '../../android/rninfo.gradle'
 
     def androidGradlePluginVersion =
-        rnInfo.isRN70OrHigher ? '7.3.1'
-            : rnInfo.isRN69OrHigher ? '7.1.1'
-            : '7.0.4'
+        rnInfo.isRN71OrHigher ? '7.3.1' :
+        rnInfo.isRN70OrHigher ? '7.2.1' :
+        rnInfo.isRN69OrHigher ? '7.1.1' :
+                                '7.0.4'
 
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
@@ -56,9 +57,6 @@ allprojects {
         } else {
             maven {
                 url "$rootDir/../../node_modules/react-native/android"
-            }
-            maven {
-                url("$rootDir/../node_modules/jsc-android/dist")
             }
             google()
             mavenCentral() {

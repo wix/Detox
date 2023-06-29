@@ -42,5 +42,5 @@ cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
 
 run_f "scripts/ci_unhappy.sh ${NPM_ANDROID_FLAVOR}"
 
-# run_f "npm run verify-artifacts:${NPM_ANDROID_FLAVOR"
+# run_f "npm run verify-artifacts:${NPM_ANDROID_FLAVOR}"
 popd
