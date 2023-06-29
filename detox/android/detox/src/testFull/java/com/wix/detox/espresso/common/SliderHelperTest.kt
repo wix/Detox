@@ -3,7 +3,6 @@ package com.wix.detox.espresso.common
 import com.facebook.react.views.slider.ReactSlider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
