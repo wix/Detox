@@ -1,6 +1,6 @@
 package com.wix.detox.espresso.common
 
-import android.widget.ProgressBar
+import com.facebook.react.views.slider.ReactSlider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Ignore
@@ -17,10 +17,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class SliderHelperTest {
-// TODO Fix for RN 71 (i.e. no bundled ReactSlider)
-//    lateinit var slider: ReactSlider
-lateinit var slider: ProgressBar
-
+    lateinit var slider: ReactSlider
     lateinit var uut: SliderHelper
 
     @Before
@@ -35,7 +32,6 @@ lateinit var slider: ProgressBar
     }
 
     @Test
-    @Ignore("Should fix for RN 71")
     fun `should properly calculate current progress, in percentage`() {
         givenNativeProgressTraits(current = 20, max = 100)
 
