@@ -25,7 +25,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // TODO Revisit
         if (!rnInfo.isRN71OrNewer) {
             classpath "com.facebook.react:react-native-gradle-plugin"
         }
