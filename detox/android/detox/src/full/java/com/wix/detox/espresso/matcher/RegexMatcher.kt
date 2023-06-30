@@ -29,7 +29,7 @@ class RegexMatcher<T>(private val jsRegex: String) : TypeSafeMatcher<T>() {
 // Other flags (e.g. g,u,s) are not supported as they do not have equivalents in Kotlin.
 //
 // - See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-private fun String.matchesJSRegex(jsRegex: String): Boolean {
+fun String.matchesJSRegex(jsRegex: String): Boolean {
     val flagsChars = getRegexFlags(jsRegex)
     val options = getRegexOptions(flagsChars)
     val pattern = getRegexPattern(jsRegex)
