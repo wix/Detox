@@ -1,21 +1,24 @@
 package com.wix.detox.espresso.matcher
 
-import android.view.View
 import org.hamcrest.Description
-import org.hamcrest.Matcher
-import androidx.test.espresso.matcher.BoundedMatcher
+import org.hamcrest.TypeSafeMatcher
 
-fun createRegexMatcher(matcherDescription: String, regex: String, extractStringFromView: (view: View) -> String?): Matcher<View> =
-    object : BoundedMatcher<View, View>(View::class.java) {
-        override fun describeTo(description: Description) {
-            description.appendText("$matcherDescription($regex)")
-        }
+class RegexMatcher<T>(private val jsRegex: String) : TypeSafeMatcher<T>() {
+    override fun matchesSafely(item: T): Boolean {
+        val stringItem = item.toString()
+        return stringItem.matchesJSRegex(jsRegex)
+    }
 
-        override fun matchesSafely(view: View): Boolean {
-            val extractedString = extractStringFromView(view);
-            return extractedString?.matchesJSRegex(regex) ?: false
+    override fun describeTo(description: Description) {
+        description.appendText("should match the pattern: $jsRegex")
+    }
+
+    companion object {
+        fun <T> matchesRegex(jsRegex: String): RegexMatcher<T> {
+            return RegexMatcher(jsRegex)
         }
     }
+}
 
 // Returns whether the whole string matches the given `jsRegex`.
 // JS flags has the format of `/<pattern>/<flags>`.
@@ -26,7 +29,7 @@ fun createRegexMatcher(matcherDescription: String, regex: String, extractStringF
 // Other flags (e.g. g,u,s) are not supported as they do not have equivalents in Kotlin.
 //
 // - See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-fun String.matchesJSRegex(jsRegex: String): Boolean {
+private fun String.matchesJSRegex(jsRegex: String): Boolean {
     val flagsChars = getRegexFlags(jsRegex)
     val options = getRegexOptions(flagsChars)
     val pattern = getRegexPattern(jsRegex)

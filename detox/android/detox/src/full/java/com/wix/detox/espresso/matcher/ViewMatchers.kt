@@ -3,7 +3,6 @@
 package com.wix.detox.espresso.matcher
 
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
@@ -12,34 +11,28 @@ import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.*
 import org.hamcrest.Matchers.*
 import kotlin.math.abs
+import org.hamcrest.CoreMatchers.`is`
 
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
+fun <T> getRelevantMatcher(value: T, isRegex: Boolean): Matcher<T> =
+    if (isRegex) RegexMatcher.matchesRegex(value.toString()) else `is`(value)
 
-fun withAccessibilityLabel(text: String, isRegex: Boolean) =
-    WithAccessibilityLabelMatcher(`is`(text), text, isRegex)
+fun withAccessibilityLabel(text: String, isRegex: Boolean): Matcher<View> =
+    WithAccessibilityLabelMatcher(getRelevantMatcher(text, isRegex))
 
-fun withShallowAccessibilityLabel(label: String, isRegex: Boolean): Matcher<View>
-    = anyOf(withContentDescription(label, isRegex), withText(label, isRegex))
+fun withShallowAccessibilityLabel(label: String, isRegex: Boolean): Matcher<View> =
+    anyOf(withContentDescription(label, isRegex), withText(label, isRegex))
 
 fun withText(text: String, isRegex: Boolean): Matcher<View> =
-    if (isRegex) withRegexText(text) else ViewMatchers.withText(text)
-
-private fun withRegexText(jsRegex: String): Matcher<View> =
-    createRegexMatcher("withRegexText", jsRegex) { view -> (view as? TextView)?.text?.toString() }
+    ViewMatchers.withText(getRelevantMatcher(text, isRegex))
 
 fun withContentDescription(label: String, isRegex: Boolean): Matcher<View> =
-    if (isRegex) withRegexContentDescription(label) else ViewMatchers.withContentDescription(label)
-
-private fun withRegexContentDescription(jsRegex: String): Matcher<View> =
-    createRegexMatcher("withRegexContentDescription", jsRegex) { view -> view.contentDescription?.toString() }
+    ViewMatchers.withContentDescription(getRelevantMatcher(label, isRegex))
 
 fun withTagValue(testId: String, isRegex: Boolean): Matcher<View> =
-    if (isRegex) withRegexTagValue(testId) else ViewMatchers.withTagValue(`is`(testId))
-
-private fun withRegexTagValue(jsRegex: String): Matcher<View> =
-    createRegexMatcher("withRegexTagValue", jsRegex) { view -> view.tag?.toString() }
+    ViewMatchers.withTagValue(getRelevantMatcher<Any>(testId, isRegex))
 
 fun isOfClassName(className: String): Matcher<View> {
     try {
