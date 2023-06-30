@@ -27,6 +27,12 @@ Detox tries to eliminate flakiness by automatically synchronizing your tests wit
 - Keeping track of timers and waiting until they expire or are cancelled
 - Keeping track of the React Native operations
 
+:::info
+
+In this synchronization process, [`session.debugSynchronization`](../config/session.mdx#sessiondebugsynchronization-number) plays a significant role. This setting, enabled by default, keeps an eye on tasks that are keeping the app busy and logs the details if these actions take longer than the specified value to complete.
+
+:::
+
 ## Architecture
 
 Detox comprises the following components:
