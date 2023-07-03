@@ -144,7 +144,7 @@ launchctl setenv PATH $PATH
 
 ###### 3. Android Native Unit-Tests
 
-Under `detox`:
+Under `detox/`:
 
 ```bash
 npm run unit:android-release
