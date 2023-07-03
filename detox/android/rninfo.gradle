@@ -7,9 +7,6 @@ println "[$project] RNInfo: detected React Native version: $rnVersion (major=$rn
 project.ext.rnInfo = [
     version: rnVersion,
     majorVersion: rnMajorVer,
-    isRN64OrHigher: rnMajorVer >= 64,
-    isRN66OrHigher: rnMajorVer >= 66,
-    isRN68OrHigher: rnMajorVer >= 68,
     isRN69OrHigher: rnMajorVer >= 69,
     isRN70OrHigher: rnMajorVer >= 70,
     isRN71OrHigher: rnMajorVer >= 71,

@@ -13,7 +13,7 @@ def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : _kotlinMinVersion
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
 
-// RN native code comes from either maven-local (in which case, need the *exact* version),
+// RN native code comes from either maven-central (in which case, need the *exact* version),
 // or otherwise from node_modules/, where the version is already aligned, by definition.
 // noinspection GradleDynamicVersion
 def _rnNativeArtifact = rnInfo.isRN71OrHigher

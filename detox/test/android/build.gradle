@@ -16,7 +16,7 @@ buildscript {
         compileSdkVersion = 33
         targetSdkVersion = 33
         minSdkVersion = 21
-        appCompatVersion = (rnInfo.isRN68OrHigher ? '1.4.2' : '1.3.0')
+        appCompatVersion = '1.4.2'
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
@@ -60,10 +60,8 @@ allprojects {
             }
             google()
             mavenCentral() {
-                if (!rnInfo.isRN71OrHigher) {
-                    content {
-                        excludeGroup 'com.facebook.react'
-                    }
+                content {
+                    excludeGroup 'com.facebook.react'
                 }
             }
         }

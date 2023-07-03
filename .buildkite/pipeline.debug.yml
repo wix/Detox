@@ -20,8 +20,6 @@ steps:
             value: "android_rn_70"
           - label: "Android RN 71"
             value: "android_rn_71"
-          - label: "Android Demo App RN 70"
-            value: "android_demo_app_rn_70"
           - label: "Android Demo App RN 71"
             value: "android_demo_app_rn_71"
 
