@@ -4,9 +4,9 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatSeekBar
 import com.facebook.react.bridge.JavaOnlyMap
 import com.facebook.react.uimanager.ReactStylesDiffMap
-import com.facebook.react.views.slider.ReactSlider
 import com.wix.detox.common.DetoxErrors.DetoxIllegalStateException
 import com.wix.detox.espresso.action.common.ReflectUtils
+import com.facebook.react.views.slider.ReactSlider
 import org.joor.Reflect
 
 private const val CLASS_REACT_SLIDER_LEGACY = "com.facebook.react.views.slider.ReactSlider"
@@ -58,7 +58,7 @@ abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
     }
 }
 
-private class LegacySliderHelper(slider: AppCompatSeekBar): SliderHelper(slider) {
+private class LegacySliderHelper(slider: ReactSlider): SliderHelper(slider) {
     override fun setProgressJS(valueJS: Double) {
         val reactSliderManager = com.facebook.react.views.slider.ReactSliderManager()
         reactSliderManager.updateProperties(slider as ReactSlider, buildStyles("value", valueJS))

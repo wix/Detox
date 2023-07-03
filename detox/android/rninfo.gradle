@@ -1,0 +1,25 @@
+import groovy.json.JsonSlurper
+
+def rnVersion = getRNVersion()
+def rnMajorVer = getMajorVersion(rnVersion)
+println "[$project] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
+
+project.ext.rnInfo = [
+    version: rnVersion,
+    majorVersion: rnMajorVer,
+    isRN69OrHigher: rnMajorVer >= 69,
+    isRN70OrHigher: rnMajorVer >= 70,
+    isRN71OrHigher: rnMajorVer >= 71,
+]
+
+private static def getRNVersion() {
+    def jsonSlurper = new JsonSlurper()
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
+    String rnVersion = packageJSON.get('version')
+    return rnVersion
+}
+
+private static def getMajorVersion(semanticVersion) {
+    Integer rnVersionMajor = semanticVersion.split('\\.')[1].toInteger()
+    return rnVersionMajor
+}
