@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "20.9.1",
+  "version": "20.10.0",
   "private": true,
   "engines": {
     "node": ">=14.5.0"
@@ -50,13 +50,13 @@
     "@babel/runtime": "^7.20.0",
     "@react-native-community/eslint-config": "^3.0.1",
     "@tsconfig/react-native": "^2.0.2",
-    "@types/node": "^14.18.33",
     "@types/jest": "^29.2.1",
+    "@types/node": "^14.18.33",
     "@types/react": "^18.0.24",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "cross-env": "^7.0.3",
-    "detox": "^20.9.1",
+    "detox": "^20.10.0",
     "eslint": "^8.41.0",
     "eslint-plugin-unicorn": "^47.0.0",
     "execa": "^5.1.1",
