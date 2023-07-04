@@ -146,7 +146,13 @@ For supported matchers ([`id`](#byidid), [`label`](#bylabellabel), [`text`](#byt
 | `s`  | Dot All       | Makes the wild character `.` match newlines as well.                                                                                                     |
 | `m`  | Multiline     | Makes the boundary characters (`^` and `$`) match the beginning and ending of every single line instead of the beginning and ending of the whole string. |
 
-**Note:** JS flags like `g` (global) and `y` (sticky) that are not supported, as well as `u` (unicode) which is always implied, are ignored when parsing input.
+:::caution Note
+
+Regular expression flags such as `g` (global) and `y` (sticky) that are not supported, as well as `u` (unicode) which is always implied, are ignored when parsing input. 
+
+Pay attention that as of writing this note, Android supports lookbehind assertions in its regular expression implementation, while iOS does not. It's advisable to check the official platform-specific documentation for limitations.
+
+:::
 
 The following sample code snippet matches text starting with "Tap" followed by any number of alphabetic characters, case-insensitively:
 
