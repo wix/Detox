@@ -1,6 +1,6 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
-const isRegExp = require('../../utils/regexp');
+const { isRegExp } = require('../../utils/isRegExp');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 
