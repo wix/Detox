@@ -148,7 +148,7 @@ For supported matchers ([`id`](#byidid), [`label`](#bylabellabel), [`text`](#byt
 
 :::caution Note
 
-Regular expression flags such as `g` (global) and `y` (sticky) that are not supported, as well as `u` (unicode) which is always implied, are ignored when parsing input. 
+Regular expression flags such as `g` (global) and `y` (sticky) that are not supported, as well as `u` (unicode) which is always implied, are ignored when parsing input.
 
 Pay attention that as of writing this note, Android supports lookbehind assertions in its regular expression implementation, while iOS does not. It's advisable to check the official platform-specific documentation for limitations.
 
